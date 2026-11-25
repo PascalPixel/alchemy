@@ -248,7 +248,7 @@ void Actor_UpdateAllOnField(void) {
                 continue;
               standing = 1;
               ground = other->y.fixed + toFIXED(16);
-              object->carrier = other;
+              object->carrier = (union FieldObject *)other;
               break;
             }
           }
@@ -412,7 +412,7 @@ void Actor_MoveWithCarriers(void) {
       FIXED z = actor->z.fixed;
 
       if (actor->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
-        struct Actor *carrier = actor->carrier;
+        struct Actor *carrier = (struct Actor *)actor->carrier;
 
         if (carrier != NULL) {
           if (carrier->stepY != 0) {

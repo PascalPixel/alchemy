@@ -32,12 +32,12 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
   if ((flags & 3) != 0) {
     if ((flags & 3) == ATTACHED_EFFECT_ONCE ||
-        Actor_IsNotAttachedEffect(actor->watchedActor)) {
+        Actor_IsNotAttachedEffect((struct Actor *)actor->watchedActor)) {
       effect = Actor_CreateFar(SPRITE_RAY_ARC, actor->x.fixed, actor->y.fixed,
                                actor->z.fixed);
     }
   } else {
-    effect = actor->watchedActor;
+    effect = (struct Actor *)actor->watchedActor;
     if (effect == 0)
       return;
     Actor_ReleaseFar(effect);
@@ -52,7 +52,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
     Actor_SelectAnimationFar(effect, 1);
-    actor->watchedActor = effect;
+    actor->watchedActor = (union FieldObject *)effect;
     effect->timer = 1;
     break;
   case ATTACHED_EFFECT_ONCE:
@@ -67,7 +67,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   effect->update = (ObjectUpdate)FieldEffect_CopyWatchedActorPosition;
   visual = effect->sprite;
   visual->flags = 0;
-  effect->watchedActor = actor;
+  effect->watchedActor = (union FieldObject *)actor;
 
   // The effect takes sprite priority 1, or the actor's.
   if (flags & ATTACHED_EFFECT_IN_FRONT)
@@ -112,7 +112,7 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   FIXED newZ;
   s32 distance;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   if (target != 0) {
     // Whole pixels, rounded toward zero as a division by FIXED_ONE would.
     deltaX = target->x.fixed - actor->x.fixed;
@@ -146,7 +146,7 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   s32 targetAngle;
   struct Actor *target;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   if (target != NULL) {
     // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -167,7 +167,7 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
 
 /// Keeps an actor turning to face another.
 void Actor_WatchActor(struct Actor *actor, struct Actor *target) {
-  actor->watchedActor = target;
+  actor->watchedActor = (union FieldObject *)target;
   actor->update = Actor_TurnTowardWatchedActor;
 }
 
@@ -219,7 +219,8 @@ void Actor_SetMovementType(struct Actor *actor, s32 kind) {
     kind = (s32)gMovementType_FollowWatchedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    actor->watchedActor = Actor_GetById(gMainRoutineState.leaderActorId);
+    actor->watchedActor =
+        (union FieldObject *)Actor_GetById(gMainRoutineState.leaderActorId);
     kind = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_CLEAR_COLLISION:
@@ -774,7 +775,7 @@ s32 Leader_StepOntoRope(void) {
   leader->acceleration = toFIXED(1);
   leader->speedLimit = toFIXED(2);
   leader->velocityY = toFIXED(4);
-  leader->watchedActor = (struct Actor *)node;
+  leader->watchedActor = (union FieldObject *)node;
   Actor_SelectAnimationFar(leader, ANIM_WALK);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);
@@ -882,7 +883,7 @@ s32 Leader_StepOntoTightrope(void) {
   leader->acceleration = toFIXED(1);
   leader->speedLimit = toFIXED(2);
   leader->velocityY = toFIXED(4);
-  leader->watchedActor = (struct Actor *)node;
+  leader->watchedActor = (union FieldObject *)node;
   Actor_SelectAnimationFar(leader, ANIM_WALK);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);

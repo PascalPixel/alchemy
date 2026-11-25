@@ -91,7 +91,7 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
   FIXED dx;
   FIXED dz;
 
-  anchor = effect->watchedActor;
+  anchor = (struct Actor *)effect->watchedActor;
   {
     FIXED radius = WHIRLWIND_ORBIT_RADIUS;
 
@@ -195,7 +195,7 @@ void FieldPsynergy_Whirlwind(void) {
       leaf = Actor_Spawn(SPRITE_LEAF, pos.x, pos.y, pos.z);
       if (leaf != 0) {
         leaf->update = FieldEffect_CircleAnchor;
-        leaf->watchedActor = orb;
+        leaf->watchedActor = (union ActorOrEffect *)orb;
         leaf->timer = 0;
         leaf->userValue = 0;
         leaf->facing = Random16();

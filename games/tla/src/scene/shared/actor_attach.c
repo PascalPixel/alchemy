@@ -12,7 +12,7 @@ void Actor_Attach(s32 sourceId, s32 id, s32 launchedId, s32 launchFacing,
   Actor_SetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   Actor_SelectAnimation(actor, 1);
-  actor->watchedActor = source;
+  actor->watchedActor = (union FieldObject *)source;
   actor->timer = 0;
   actor->userValue = launchFacing;
   actor->launchedActorId = launchedId;

@@ -330,15 +330,18 @@ struct Actor {
       s16 chargeRow;
     };
   };
-  /// The actor its actor script follows or faces.
-  struct Actor *watchedActor;
+  /// The field object (an actor or a field effect) its actor script follows
+  /// or faces. Scenes also hang other things on it: a rope or tightrope node,
+  /// a hook to call, a sparkle state, a VRAM address or a frame count.
+  union FieldObject *watchedActor;
   ObjectUpdate update; ///< the actor's per-frame hook
   /// What a carrier moved this frame, which Actor_MoveWithCarriers adds to
-  /// an actor riding it, and that actor's carrier.
+  /// an actor riding it, and that actor's carrier: the platform actor it
+  /// stands on, held as a field object.
   s32 stepX;
   s32 stepY;
   s32 stepZ;
-  struct Actor *carrier;
+  union FieldObject *carrier;
 };
 
 STATIC_ASSERT(sizeof(struct Actor) == 128);

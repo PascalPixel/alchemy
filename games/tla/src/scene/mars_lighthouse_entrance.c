@@ -1209,7 +1209,7 @@ void MarsLighthouseEntrance_FlingIceCone(struct Actor *actor) {
 /// An ice cone waits until the dragon face's fireball comes within 32 pixels
 /// across, then is flung away.
 void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *actor) {
-  if (ABS(actor->x.fixed - actor->watchedActor->x.fixed) > toFIXED(32))
+  if (ABS(actor->x.fixed - actor->watchedActor->actor.x.fixed) > toFIXED(32))
     return;
   actor->timer = 0;
   actor->update = (ObjectUpdate)MarsLighthouseEntrance_FlingIceCone;
@@ -1422,12 +1422,18 @@ s32 Scene_Initialize(void) {
           (ObjectUpdate)MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_F)->update =
           (ObjectUpdate)MarsLighthouseEntrance_WaitForDragonFace;
-      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_A)->watchedActor = target;
-      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_B)->watchedActor = target;
-      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_C)->watchedActor = target;
-      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_D)->watchedActor = target;
-      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_E)->watchedActor = target;
-      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_F)->watchedActor = target;
+      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_A)->watchedActor =
+          (union FieldObject *)target;
+      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_B)->watchedActor =
+          (union FieldObject *)target;
+      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_C)->watchedActor =
+          (union FieldObject *)target;
+      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_D)->watchedActor =
+          (union FieldObject *)target;
+      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_E)->watchedActor =
+          (union FieldObject *)target;
+      Actor_Get(ACTOR_VALKYRIE_ICE_CONE_F)->watchedActor =
+          (union FieldObject *)target;
     }
     Actor_Get(ACTOR_UPPER_FLAME_THROWER)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
@@ -1710,7 +1716,7 @@ s32 Actor_Attach(s32 torchId, s32 sparkleId, s32 fireballId, s32 facing,
   Actor_SetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   Actor_SelectAnimation(actor, 1);
-  actor->watchedActor = source;
+  actor->watchedActor = (union FieldObject *)source;
   actor->timer = 0;
   actor->userValue = facing;
   actor->launchedActorId = fireballId;

@@ -166,7 +166,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   FIXED scale;
 
   limit = particle->groundHeight + toFIXED(10);
-  source = particle->watchedActor;
+  source = (struct Actor *)particle->watchedActor;
   if (gMainRoutineState.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + toFIXED(4);
 
@@ -195,7 +195,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   FIXED scale;
 
   limit = particle->groundHeight + toFIXED(10);
-  source = particle->watchedActor;
+  source = (struct Actor *)particle->watchedActor;
   if (gMainRoutineState.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + toFIXED(4);
 
@@ -236,7 +236,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     sprite = actor->sprite;
     actor->motionFlags = 0;
     actor->timer = 0;
-    actor->watchedActor = source;
+    actor->watchedActor = (union ActorOrEffect *)source;
     actor->scaleY = FIXED_ONE * 2 / 5;
     actor->scaleX = FIXED_ONE * 2 / 5;
     if (sprite == NULL)

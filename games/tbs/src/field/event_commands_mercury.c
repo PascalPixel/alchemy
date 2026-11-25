@@ -76,7 +76,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
       Actor_SelectAnimationFar(copy, ANIM_STILL);
       Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
-      copy->watchedActor = previous;
+      copy->watchedActor = (union ActorOrEffect *)previous;
       previous = copy;
     }
   }

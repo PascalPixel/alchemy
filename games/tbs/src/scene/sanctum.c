@@ -1645,7 +1645,7 @@ static void Sanctum_UpdateHealerAfterimage(struct Actor *actor) {
 
 /// Moves a sparkle one step along its ellipse around the Great Healer.
 static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
-  struct Actor *anchor = effect->watchedActor;
+  struct Actor *anchor = (struct Actor *)effect->watchedActor;
   u16 orbitAngle = effect->timer;
   FIXED x;
   FIXED z;
@@ -1684,7 +1684,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
       effect->update = Sanctum_UpdateOrbitingEffect;
       sprite->flags = 0;
       sourceSprite = center->sprite;
-      effect->watchedActor = center;
+      effect->watchedActor = (union ActorOrEffect *)center;
       sprite->image.priority = sourceSprite->image.priority;
     }
   }

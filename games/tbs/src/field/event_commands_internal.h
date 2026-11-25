@@ -73,7 +73,7 @@ enum PendingBattleKind {
 /// Per-frame update of an afterimage: closes half the distance to the actor
 /// it watches, on all three axes.
 static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *afterimage) {
-  struct Actor *target = afterimage->watchedActor;
+  struct Actor *target = (struct Actor *)afterimage->watchedActor;
 
   afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
   afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;

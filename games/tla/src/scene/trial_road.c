@@ -940,7 +940,7 @@ void TrialRoad_ClearJumpCellUnder(s32 id) {
 
 /// Keeps an invisible pillar top on its pillar, so many pixels above it.
 s32 TrialRoad_FollowPillar(struct Actor *actor) {
-  struct Actor *owner = actor->watchedActor;
+  struct Actor *owner = &actor->watchedActor->actor;
 
   SET_ACTOR_POSITION(actor, owner->x.fixed,
                      owner->y.fixed + toFIXED(PILLAR_TOP_HEIGHT(actor)),
@@ -962,12 +962,12 @@ void TrialRoad_AddPillarTop(s32 id) {
     if (actor != NULL) {
       Actor_SetSpriteFlags(actor, 0);
       Actor_StartScript(actor, gTrialRoad_PillarTopScript);
-      actor->watchedActor = owner;
+      actor->watchedActor = (union FieldObject *)owner;
       actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
       actor->motionFlags = 0;
       actor->collisionFlags = 0;
       PILLAR_TOP_HEIGHT(actor) = PILLAR_HEIGHT;
-      owner->watchedActor = actor;
+      owner->watchedActor = (union FieldObject *)actor;
     }
   }
 }
@@ -977,7 +977,7 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
-    actor = actor->watchedActor;
+    actor = &actor->watchedActor->actor;
     if (actor != NULL)
       PILLAR_TOP_HEIGHT(actor) = value;
   }

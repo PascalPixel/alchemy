@@ -612,7 +612,7 @@ extern s32 gMagmaRock_FlameEmberScript[];
 /// embers and blinks red, faster and faster, flashes white, and after 144
 /// frames spits the fireball back.
 void MagmaRock_ThrowEmbers(struct Actor *actor) {
-  struct Actor *linked = actor->watchedActor;
+  struct Actor *linked = &actor->watchedActor->actor;
   s16 *timer = &actor->timer;
 
   if (*timer < 50) {
@@ -733,7 +733,7 @@ void MagmaRock_MoveFireball(struct Actor *actor) {
     actor->rollSide ^= 1;
     partner->timer = 0;
     partner->update = (void *)MagmaRock_ThrowEmbers;
-    partner->watchedActor = actor;
+    partner->watchedActor = (union FieldObject *)actor;
   }
 }
 
@@ -1099,7 +1099,7 @@ void Actor_Release(struct Actor *part);
 /// (MagmaRock_BurnStatue): it rises and sinks with the statue's burning, and is
 /// released once sunk.
 void MagmaRock_RaiseFlamePart(struct Actor *part) {
-  struct Actor *owner = part->watchedActor;
+  struct Actor *owner = &part->watchedActor->actor;
 
   if (owner->timer > FLAME_RISE_FRAME &&
       owner->timer < part->flameLevel * 2 + FLAME_RISE_FRAME + 1) {
@@ -1239,7 +1239,7 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
         struct Actor *flame = parts[i];
 
         flame->flameLevel = 3 - i;
-        flame->watchedActor = actor;
+        flame->watchedActor = (union FieldObject *)actor;
         flame->update = MagmaRock_RaiseFlamePart;
         FieldActor_SetSpriteColor(flame, SPRITE_COLOR_BGR);
       }
@@ -1255,7 +1255,7 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
         struct Actor *flame = parts[0];
 
         flame->flameLevel = 3;
-        flame->watchedActor = actor;
+        flame->watchedActor = (union FieldObject *)actor;
         flame->update = MagmaRock_RaiseFlamePart;
         FieldActor_SetSpriteColor(flame, SPRITE_COLOR_BGR);
       }
@@ -1285,7 +1285,7 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
     }
     fifthPart = Actor_Get(id);
     fifthPart->flameLevel = 4;
-    fifthPart->watchedActor = actor;
+    fifthPart->watchedActor = (union FieldObject *)actor;
     fifthPart->update = MagmaRock_RaiseFlameTop;
     actor->timer++;
   } else if (actor->timer > 364) {
@@ -1824,7 +1824,7 @@ void MagmaRock_LandLeader(void) {
 static inline void AttachPart(struct Actor *part, struct Actor *anchor,
                               u8 order) {
   part->flameLevel = order;
-  part->watchedActor = anchor;
+  part->watchedActor = (union FieldObject *)anchor;
   part->update = MagmaRock_RaiseFlamePart;
   FieldActor_SetSpriteColor(part, SPRITE_COLOR_BGR);
 }
@@ -1869,7 +1869,7 @@ static inline void BuildParts(struct Actor *anchor) {
 void MagmaRock_RebuildFlameParts(u16 id) {
   if (Actor_Get(id)->update != MagmaRock_RaiseFlameTop)
     return;
-  BuildParts(Actor_Get(id)->watchedActor);
+  BuildParts(&Actor_Get(id)->watchedActor->actor);
 }
 
 void MagmaRock_SettleBlocks();

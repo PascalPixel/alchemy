@@ -2068,7 +2068,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     noMotion = 0;
     spark->motionFlags = noMotion;
     spark->sceneWord = toFIXED(122);
-    spark->watchedActor = learner;
+    spark->watchedActor = (union FieldObject *)learner;
     spark->stepsLeft =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RED_TINT);
@@ -2102,7 +2102,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     riser->bounce = riser->x.fixed;
     riser->sceneWord = 0;
     riser->gravity = riser->z.fixed;
-    riser->watchedActor = learner;
+    riser->watchedActor = (union FieldObject *)learner;
     riser->motionFlags = (u16)0;
     riser->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     FieldActor_SetSpriteColor(riser, SPRITE_COLOR_RED_TINT);

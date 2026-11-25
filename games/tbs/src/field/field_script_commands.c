@@ -319,7 +319,7 @@ s32 ActorScript_ApplyRelativePosition(struct Actor *actor) {
 s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
   struct Actor *target;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   actor->facing = Trig_Atan((target->z.fixed - actor->z.fixed),
                             (target->x.fixed - actor->x.fixed));
   actor->scriptCursor++;
@@ -330,7 +330,7 @@ s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
 s32 ActorScript_ApplyWatchedActorPosition(struct Actor *actor) {
   struct Actor *target;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   Actor_SetMoveTarget(actor, target->x.fixed, target->y.fixed, target->z.fixed);
   actor->scriptCursor++;
   return 1;
@@ -374,7 +374,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
   // Use MapGrid_UpdateLayerScroll's viewport origin and the leader's elevation
   // when clamping its ground position to the viewport bounds.
   bounds = gMapGridState[0];
-  leader = cameraActor->watchedActor;
+  leader = (struct Actor *)cameraActor->watchedActor;
   // UB: the bounds read the leader's height before the null check below.
 #ifdef UBFIX
   if (leader == NULL) {
@@ -462,7 +462,7 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   FIXED moveX;
   struct Actor *watchedActor;
 
-  watchedActor = actor->watchedActor;
+  watchedActor = (struct Actor *)actor->watchedActor;
   actor->speedLimit = watchedActor->speedLimit;
   actor->acceleration = watchedActor->acceleration;
   dx = watchedActor->x.fixed - actor->x.fixed;

@@ -93,7 +93,7 @@ void Event_WaitForZoomTransition(void) {
 s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
   struct Actor *host;
 
-  host = actor->watchedActor;
+  host = (struct Actor *)actor->watchedActor;
   if (host != NULL) {
     actor->motionFlags = 0;
     actor->x.fixed = host->x.fixed;
@@ -137,7 +137,7 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
       bubble->userValue = actorId;
       bubble->update =
           (void (*)(struct Actor *))FieldEffect_CopyWatchedActorPosition;
-      bubble->watchedActor = target;
+      bubble->watchedActor = (union FieldObject *)target;
       sprite = bubble->sprite;
       sprite->flags = 0;
 

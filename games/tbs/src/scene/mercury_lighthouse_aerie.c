@@ -1923,7 +1923,7 @@ static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *spark) {
   struct Actor *beacon;
   u16 angle;
 
-  beacon = spark->watchedActor;
+  beacon = (struct Actor *)spark->watchedActor;
   angle = spark->timer;
   spark->x.fixed = beacon->x.fixed +
                    Trig_Cos(angle) * (spark->speedLimit + SPARK_ORBIT_RADIUS);
@@ -1984,7 +1984,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   angle = Random_Next() & 0x0ffff000;
   spark->timer = angle;
   spark->userValue = cycleFrame;
-  spark->watchedActor = beacon;
+  spark->watchedActor = (union ActorOrEffect *)beacon;
   spark->update = MercuryLighthouseAerie_UpdateBeaconSpark;
   spark->speedLimit =
       FIXEDtoINT(Trig_Sin((height & 0xfffff) >> 4) * SPARK_ORBIT_BULGE);

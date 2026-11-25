@@ -540,7 +540,7 @@ s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
 
   struct Actor *target;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   actor->facing = Trig_Atan((target->z.fixed - actor->z.fixed),
                             (target->x.fixed - actor->x.fixed));
   actor->scriptCursor++;
@@ -552,7 +552,7 @@ s32 ActorScript_ApplyWatchedActorPosition(struct Actor *actor) {
 
   struct Actor *target;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   Actor_SetMoveTarget(actor, target->x.fixed, target->y.fixed, target->z.fixed);
   actor->scriptCursor++;
   return 1;
@@ -601,7 +601,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   s16 *region;
 
   bounds = Ram_HeapSlots->mapGrid;
-  leader = camera->watchedActor;
+  leader = (struct Actor *)camera->watchedActor;
   // UB: the bounds read the leader's height before the null check below.
 #ifdef UBFIX
   if (leader == NULL) {
@@ -718,7 +718,7 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
   FIXED moveStep;
 
   bounds = Ram_HeapSlots->mapGrid;
-  leader = camera->watchedActor;
+  leader = (struct Actor *)camera->watchedActor;
   minX = bounds->minX + FIELD_VIEW_FOCUS_X;
   minZ = bounds->minZ + FIELD_VIEW_FOCUS_Y;
   maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
@@ -792,7 +792,7 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   FIXED moveX;
   struct Actor *watchedObject;
 
-  watchedObject = actor->watchedActor;
+  watchedObject = (struct Actor *)actor->watchedActor;
   actor->speedLimit = watchedObject->speedLimit;
   actor->acceleration = watchedObject->acceleration;
   dx = watchedObject->x.fixed - actor->x.fixed;

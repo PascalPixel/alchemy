@@ -615,7 +615,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(40);
   effect = FieldEffect_SpawnMoveHand(eoleo);
   position[0] = key->x.fixed;
-  effect->watchedActor = key;
+  effect->watchedActor = (union FieldObject *)key;
   position[1] = key->y.fixed + toFIXED(16);
   position[2] = key->z.fixed;
   FieldVector_AddPolarOffset(16, FACING_NORTH, position);

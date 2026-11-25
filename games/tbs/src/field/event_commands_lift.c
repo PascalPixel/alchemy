@@ -27,7 +27,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   FieldPsynergy_FadeToCastColor();
   // The caster faces its target while Lift holds it.
-  caster->watchedActor = target;
+  caster->watchedActor = (union ActorOrEffect *)target;
   Actor_StartScriptFar(caster, gFieldEffect_SourceHoldScript);
 
   x = effectState->x;

@@ -5,7 +5,7 @@
 void Whirlwind_CarryLeader(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
-  struct Actor *linked = actor->watchedActor;
+  struct Actor *linked = &actor->watchedActor->actor;
   struct Actor *shadow;
   u8 *p;
   s32 angle;

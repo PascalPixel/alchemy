@@ -27,13 +27,6 @@ struct ParticleSprite;
 struct Position;
 struct Vector3;
 
-/// The actor word at 84 seen as bit fields, for one store (AirsRock_BlowGust).
-struct MotionView {
-  u8 pad[84];
-  u32 kind : 8;
-  u32 flags : 8;
-};
-
 /// A map cell, or a step between cells, kept as one 8-byte pair.
 struct Cell {
   s32 x, z;

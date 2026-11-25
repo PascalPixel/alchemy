@@ -3393,7 +3393,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   angle = Random_Next() & 0xffff000;
   effect->timer = angle;
   effect->userValue = phase;
-  effect->watchedActor = center;
+  effect->watchedActor = (union ActorOrEffect *)center;
   effect->update = VenusLighthouseAerie_UpdateOrbitingEffect;
   effect->speedLimit = FIXEDtoINT(Trig_Sin((drift & 0xfffff) >> 4) * 24);
   sprite->flags = 0;
@@ -3406,7 +3406,7 @@ static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
   struct Actor *anchor;
   s32 spin;
 
-  anchor = actor->watchedActor;
+  anchor = (struct Actor *)actor->watchedActor;
   spin = effect->spin;
   effect->x = anchor->x.fixed + Trig_Cos(spin) * (actor->speedLimit + 28);
   effect->z = Trig_Sin(spin) * 16 + toFIXED(164);

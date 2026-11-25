@@ -225,7 +225,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
       slot->amplitude += toFIXED(1) / 2;
       if (slot->amplitude > toFIXED(2))
         slot->amplitude = toFIXED(2);
-      actor->watchedActor = (struct Actor *)best;
+      actor->watchedActor = (union FieldObject *)best;
       SET_POSITION(&position, best->x, best->y, best->z);
       sprite->rotation = best->angle + turn;
     }
@@ -332,7 +332,7 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
           slot->amplitude += toFIXED(1) / 2;
           if (slot->amplitude > toFIXED(2))
             slot->amplitude = toFIXED(2);
-          actor->watchedActor = (struct Actor *)best;
+          actor->watchedActor = (union FieldObject *)best;
         }
         /* FAKEMATCH(dead): position.x copied onto itself before the copies. */
         position.x = position.x;

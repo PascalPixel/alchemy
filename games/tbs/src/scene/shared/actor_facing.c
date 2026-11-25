@@ -13,7 +13,7 @@ static s32 Scene_TurnTowardTarget(struct Actor *actor) {
   s32 angle;
   struct Actor *target;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   if (target != NULL) {
     actor->steeringFlags = ((u8)~ACTOR_FACES_MOTION & actor->steeringFlags);
     angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,

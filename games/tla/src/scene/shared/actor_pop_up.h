@@ -4,7 +4,7 @@ s32 Actor_PopUp(struct Actor *actor) {
 
   if (frame == 0) {
     Event_PlaySound(SE_WHOOSH);
-    Actor_SelectAnimation(actor->watchedActor, 2);
+    Actor_SelectAnimation((struct Actor *)actor->watchedActor, 2);
     actor->y.fixed =
         Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) + toFIXED(16);
     actor->scaleX = frame;
@@ -18,10 +18,11 @@ s32 Actor_PopUp(struct Actor *actor) {
     {
       s32 half = (actor->timer / 2) & 1;
 
-      Actor_SetSpriteColorMode(actor->watchedActor, half * SPRITE_COLOR_WHITE);
+      Actor_SetSpriteColorMode((struct Actor *)actor->watchedActor,
+                               half * SPRITE_COLOR_WHITE);
     }
   } else {
-    Actor_SelectAnimation(actor->watchedActor, 1);
+    Actor_SelectAnimation((struct Actor *)actor->watchedActor, 1);
     Event_PlaySound(SE_POP_UP);
     actor->y.fixed = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
     actor->watchedActor = 0;

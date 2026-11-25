@@ -39,7 +39,7 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   FIXED newZ;
   s32 distance;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   if (target != NULL) {
     // Whole pixels, rounded toward zero as a division by FIXED_ONE would.
     deltaX = target->x.fixed - actor->x.fixed;
@@ -74,7 +74,7 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   s32 targetAngle;
   struct Actor *target;
 
-  target = actor->watchedActor;
+  target = (struct Actor *)actor->watchedActor;
   if (target != NULL) {
     // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -113,7 +113,8 @@ void Actor_SetMovementType(struct Actor *actor, s32 movement) {
     movement = (s32)gMovementType_FollowWatchedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    actor->watchedActor = Actor_GetById(gMainRoutineState.leaderActorId);
+    actor->watchedActor =
+        (union ActorOrEffect *)Actor_GetById(gMainRoutineState.leaderActorId);
     movement = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:

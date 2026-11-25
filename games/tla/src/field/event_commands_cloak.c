@@ -306,7 +306,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
-  source->watchedActor = target;
+  source->watchedActor = (union FieldObject *)target;
   Actor_StartScriptFar(source, (u32)gFieldEffect_SourceHoldScript);
   SET_POSITION(&position, state->x, state->y + toFIXED(16), state->z);
   actor = FieldEffect_SpawnCarryHand(position.x + toFIXED(32), position.y,

@@ -38,7 +38,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
       light->groundHeight = actor->groundHeight;
       sprite = light->sprite;
       Actor_StartScript(light, gMercuryLighthouse_PillarScript);
-      light->watchedActor = actor;
+      light->watchedActor = (union ActorOrEffect *)actor;
       light->motionFlags = ACTOR_FLOATS;
       light->y.fixed -= toFIXED(1) / 2;
       if (sprite != NULL) {

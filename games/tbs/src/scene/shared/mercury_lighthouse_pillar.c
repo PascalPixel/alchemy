@@ -15,7 +15,7 @@
 /// An actor script call for a charging spark: it rises with the leader,
 /// swelling and shrinking, and is released after SPARK_RISE_FRAMES.
 static s32 MercuryLighthouse_RiseSpark(struct Actor *effect) {
-  struct Actor *anchor = effect->watchedActor;
+  struct Actor *anchor = (struct Actor *)effect->watchedActor;
   s16 step = ++effect->timer;
   FIXED scale;
 
@@ -73,7 +73,7 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   s32 moveDistance;
 
   actor->speedLimit = toFIXED(2);
-  leader = actor->watchedActor;
+  leader = (struct Actor *)actor->watchedActor;
   actor->acceleration = toFIXED(1);
   targetX = leader->x.fixed;
   targetZ = leader->z.fixed;
@@ -133,7 +133,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     Actor_StartScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedActor = leader;
+    spark->watchedActor = (union ActorOrEffect *)leader;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, GOLDEN_RINGS_ANIMATION_FRONT_ARC);
       sprite->flags = 0;
@@ -148,7 +148,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     Actor_StartScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedActor = leader;
+    spark->watchedActor = (union ActorOrEffect *)leader;
     spark->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, GOLDEN_RINGS_ANIMATION_BACK_ARC);
@@ -185,7 +185,7 @@ void MercuryLighthouse_ChargeLights(void) {
 
       actor->groundHeight = leader->groundHeight;
       Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
-      actor->watchedActor = leader;
+      actor->watchedActor = (union ActorOrEffect *)leader;
       actor->motionFlags = ACTOR_FLOATS;
       actor->y.fixed -= toFIXED(1) / 2;
       if (sprite != NULL) {

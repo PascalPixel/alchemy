@@ -471,7 +471,8 @@ s32 Scene_TalkToActor(s32 id) {
     if (!paused) {
       if (talker->script[talker->scriptCursor] == SCRIPT_COMMAND_END) {
         if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
-          talker->watchedActor = Actor_GetById(gMainRoutineState.leaderActorId);
+          talker->watchedActor = (union FieldObject *)Actor_GetById(
+              gMainRoutineState.leaderActorId);
           talker->steeringFlags |= ACTOR_FACES_MOTION;
           Actor_SetMovementType(talker, (s32)gActor_FaceWatchedScript);
         } else if ((s8)placement->talkFacing == TALK_FACING_PARTY_AND_BACK) {

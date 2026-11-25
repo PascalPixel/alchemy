@@ -969,7 +969,7 @@ void PsynergyTest_StartRings(struct Actor *actor, struct SparkleState *state) {
   actor->sceneByte = 0;
   actor->update = PsynergyTest_UpdateRings;
   tile = gVramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
-  actor->watchedActor = (struct Actor *)state;
+  actor->watchedActor = (union FieldObject *)state;
   for (row = 0; row <= 1; row++) {
     col = 1;
     offset = (row * 2) * sizeof(struct EffectSprite);

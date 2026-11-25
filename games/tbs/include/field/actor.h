@@ -44,6 +44,7 @@ enum CenterLineTransition {
 #define ACTOR_COUNT 64
 
 struct Actor;
+union ActorOrEffect;
 
 /// An actor: one of the ACTOR_COUNT people and things on the field (gActors,
 /// HEAP_SLOT_ACTORS), with its actor script, position, motion toward a target,
@@ -157,8 +158,9 @@ struct Actor {
       s16 spinRampFrames; ///< frames the spin has been speeding up for
     };
   };
-  /// The actor its actor script follows or faces.
-  struct Actor *watchedActor;
+  /// The object (an actor or a field effect) its actor script follows or
+  /// faces; field code also keeps an actor handle here.
+  union ActorOrEffect *watchedActor;
   /// Called each frame before its script, while the actor is live.
   void (*update)(struct Actor *actor);
 };

@@ -209,7 +209,7 @@ UNUSED s32 WorldMap_GetCellIndex(FIXED x, FIXED z) {
 /// it watches, growing and shrinking again over SPARK_RISE_FRAMES; returns 0
 /// when done.
 s32 WorldMap_RiseFromAnchor(struct Actor *actor) {
-  struct Actor *parent = actor->watchedActor;
+  struct Actor *parent = (struct Actor *)actor->watchedActor;
   s32 step = ++actor->timer;
   FIXED scale;
 
@@ -244,7 +244,7 @@ void WorldMap_SpawnSparkPair(struct Actor *actor) {
     Actor_StartScript(spark, gWorldMap_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedActor = actor;
+    spark->watchedActor = (union FieldObject *)actor;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 2);
       sprite->flags = 0;
@@ -259,7 +259,7 @@ void WorldMap_SpawnSparkPair(struct Actor *actor) {
     Actor_StartScript(spark, gWorldMap_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedActor = actor;
+    spark->watchedActor = (union FieldObject *)actor;
     spark->layer = 1;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 1);

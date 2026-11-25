@@ -52,7 +52,7 @@ void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    actor->watchedActor = Actor_GetById(watchedActorId);
+    actor->watchedActor = (union ActorOrEffect *)Actor_GetById(watchedActorId);
     Actor_SetMovementType(actor, (s32)gActor_FaceWatchedScript);
   }
 }
@@ -732,7 +732,7 @@ void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   struct Actor *target = Actor_Lookup(targetId & ACTOR_WATCH_ACTOR_MASK);
 
   if (follower != NULL && target != NULL) {
-    follower->watchedActor = target;
+    follower->watchedActor = (union ActorOrEffect *)target;
     if (!(targetId & ACTOR_WATCH_KEEP_MOTION)) {
       follower->timer = FOLLOW_DISTANCE;
       follower->acceleration = target->acceleration * 2;

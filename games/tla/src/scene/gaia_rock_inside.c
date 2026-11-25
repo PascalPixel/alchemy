@@ -1268,7 +1268,7 @@ void GaiaRockInside_FelixLearnsSand(s32 tabletId, s32 adeptId) {
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->sceneWord = toFIXED(122);
-    spark->watchedActor = adept;
+    spark->watchedActor = (union FieldObject *)adept;
     spark->sceneCounter =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, 2);
@@ -1300,7 +1300,7 @@ void GaiaRockInside_FelixLearnsSand(s32 tabletId, s32 adeptId) {
     spark->bounce = spark->x.fixed;
     spark->sceneWord = 0;
     spark->gravity = spark->z.fixed;
-    spark->watchedActor = adept;
+    spark->watchedActor = (union FieldObject *)adept;
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
     Actor_SetSpriteColor(spark, 2);

@@ -2860,7 +2860,7 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleState *state) {
   actor->sceneByte = 0;
   actor->update = Contigo_RaiseSparkle;
   tile = gVramCacheEntries[state->vramEntry].offset >> 5;
-  actor->watchedActor = (struct Actor *)state;
+  actor->watchedActor = (union FieldObject *)state;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = state->sprites + row + row; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);

@@ -95,7 +95,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       Actor_SelectAnimationFar(copy, ANIM_STILL);
       Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
-      copy->watchedActor = prev;
+      copy->watchedActor = (union ActorOrEffect *)prev;
       prev = copy;
     }
   }

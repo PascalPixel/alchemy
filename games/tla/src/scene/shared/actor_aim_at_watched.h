@@ -4,7 +4,7 @@
 /// Aims an actor at the actor it watches, 16 pixels above its feet, to reach
 /// it in AIM_STEPS steps of Actor_StepToWatched.
 s32 Actor_AimAtWatched(struct Actor *actor) {
-  struct Actor *target = actor->watchedActor;
+  struct Actor *target = &actor->watchedActor->actor;
 
   actor->bounce = (target->x.fixed - actor->x.fixed) / AIM_STEPS;
   actor->sceneWord =

@@ -20,7 +20,7 @@
 /// Moves the actor halfway to the actor it watches; a copy of
 /// Actor_MoveHalfwayTowardTarget.
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *actor) {
-  struct Actor *target = actor->watchedActor;
+  struct Actor *target = (struct Actor *)actor->watchedActor;
 
   actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
   actor->y.fixed += (target->y.fixed - actor->y.fixed) / 2;
@@ -95,7 +95,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
       Actor_SelectAnimationFar(copy, ANIM_STILL);
       Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
-      copy->watchedActor = previous;
+      copy->watchedActor = (union FieldObject *)previous;
       previous = copy;
     }
   }

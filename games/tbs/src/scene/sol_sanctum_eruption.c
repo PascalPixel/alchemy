@@ -1836,7 +1836,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->watchedActor = parent;
+      child->watchedActor = (union ActorOrEffect *)parent;
       if (sprite != NULL) {
         Sprite_StartAnimation(sprite, 0);
         sprite->flags = 0;

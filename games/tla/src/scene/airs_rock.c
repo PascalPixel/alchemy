@@ -557,9 +557,7 @@ void AirsRock_BlowGust(void) {
   Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = FIXED_ONE * 17 / 10;
   gust->scaleY = FIXED_ONE / 5;
-  /* FAKEMATCH(signature): the gust's motion flags stored through MotionView, a
-   * view of the actor. */
-  ((struct MotionView *)gust)->flags = 0;
+  gust->motionFlags = 0;
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)effect->target->sprite)->priority;
   Actor_SetMoveTarget(gust, effect->target->x.fixed, effect->target->y.fixed,
@@ -936,7 +934,7 @@ void AirsRock_WhirlwindClearsWall(void) {
 /// ledge at its top; otherwise he drops off where it ends.
 void AirsRock_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
-  struct Actor *ride = leader->watchedActor;
+  struct Actor *ride = &leader->watchedActor->actor;
   struct Actor *statue, *camera;
   s32 rise;
   FIXED dx, dz;
@@ -964,7 +962,7 @@ void AirsRock_RideWhirlwind(void) {
   Sound_Play(SE_STOP_ACTION_SE);
   facing = ride->facing;
   if (facing == FACING_NORTH) {
-    statue = ride->watchedActor;
+    statue = &ride->watchedActor->actor;
     dx = 0;
     dz = 0;
     leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
@@ -1139,7 +1137,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     }
     if (i && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
-      leader->watchedActor = shot;
+      leader->watchedActor = (union FieldObject *)shot;
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
@@ -1153,7 +1151,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
   for (i = ACTOR_FIRST_PLACED; i != FIELD_TREASURE_ACTOR; i++) {
     other = *actors++;
     if (other->script != 0) {
-      launcher = shot->watchedActor;
+      launcher = &shot->watchedActor->actor;
       if (FIELD_CELL(launcher->x.fixed) != FIELD_CELL(other->x.fixed) ||
           FIELD_CELL(launcher->y.fixed) != FIELD_CELL(other->y.fixed) ||
           FIELD_CELL(launcher->z.fixed) != FIELD_CELL(other->z.fixed)) {
@@ -1208,7 +1206,7 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *actor) {
     shot->sceneByte = 0;
     shot->facing = actor->facing;
     shot->update = AirsRock_MoveWhirlwind;
-    shot->watchedActor = actor;
+    shot->watchedActor = (union FieldObject *)actor;
     actor->timer = 0;
     options.priority = 1;
     options.palette = 7;

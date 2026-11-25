@@ -404,7 +404,7 @@ void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
 /// (SC_APPROACH_WATCHED), watching watchedActorHandle.
 void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_ApproachWatchedScript);
-  actor->watchedActor = (struct Actor *)watchedActorHandle;
+  actor->watchedActor = (union ActorOrEffect *)watchedActorHandle;
 }
 
 /// Starts an actor on the script that runs SC_KEY_COUNT every frame.
@@ -443,7 +443,7 @@ void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   if (watchedActorHandle != 0) {
     actor->acceleration = toFIXED(1) / 2;
     actor->speedLimit = toFIXED(4);
-    actor->watchedActor = (struct Actor *)watchedActorHandle;
+    actor->watchedActor = (union ActorOrEffect *)watchedActorHandle;
     actor->timer = 0;
   }
 }

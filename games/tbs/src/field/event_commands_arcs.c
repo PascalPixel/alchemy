@@ -22,7 +22,7 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *arc) {
   s32 frame;
   FIXED scale;
 
-  anchor = arc->watchedActor;
+  anchor = (struct Actor *)arc->watchedActor;
   frame = ++arc->timer;
   if (frame >= CAST_RING_FRAMES) {
     Actor_StartScriptFar(arc, gFieldEffect_SharedParticleScript);
@@ -44,7 +44,7 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
   s32 frame;
   FIXED scale;
 
-  anchor = arc->watchedActor;
+  anchor = (struct Actor *)arc->watchedActor;
   frame = ++arc->timer;
   if (frame >= CAST_RING_FRAMES) {
     Actor_StartScriptFar(arc, gFieldEffect_SharedParticleScript);
@@ -79,7 +79,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     sprite = arc->sprite;
     arc->motionFlags = 0;
     arc->timer = 0;
-    arc->watchedActor = watched;
+    arc->watchedActor = (union ActorOrEffect *)watched;
     arc->scaleX = arc->scaleY = FIXED_ONE / 10;
     if (sprite == 0)
       continue;

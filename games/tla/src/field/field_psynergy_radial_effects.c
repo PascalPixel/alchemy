@@ -110,7 +110,7 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
   FIXED dx;
   FIXED dz;
 
-  anchor = effect->watchedActor;
+  anchor = &effect->watchedActor->actor;
   radius = WHIRLWIND_ORBIT_RADIUS;
   angle = effect->facing;
   dx = Iwram_MulFX(radius, Trig_Cos(angle));
@@ -232,7 +232,7 @@ void FieldPsynergy_Whirlwind(void) {
       leaf = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
       if (leaf != 0) {
         leaf->update = (ObjectUpdate)FieldEffect_CircleAnchor;
-        leaf->watchedActor = orb;
+        leaf->watchedActor = (union FieldObject *)orb;
         leaf->swirlFrames = 0;
         leaf->turnFrames = 0;
         leaf->facing = Random16();
@@ -993,7 +993,7 @@ void Avoid_UpdateRingBackHalf(struct Actor *particle) {
   FIXED scale;
 
   limit = particle->groundHeight + toFIXED(10);
-  source = particle->watchedActor;
+  source = &particle->watchedActor->actor;
   if (gMainRoutineState.mapId == SCENE_CLEAR)
     limit = particle->groundHeight + toFIXED(4);
 
@@ -1022,7 +1022,7 @@ void Avoid_UpdateRingFrontHalf(struct Actor *particle) {
   FIXED scale;
 
   limit = particle->groundHeight + toFIXED(10);
-  source = particle->watchedActor;
+  source = &particle->watchedActor->actor;
   if (gMainRoutineState.mapId == SCENE_CLEAR)
     limit = particle->groundHeight + toFIXED(4);
 
@@ -1063,7 +1063,7 @@ void Avoid_DropRing(struct Actor *source) {
     sprite = (struct DescendingArcSprite *)actor->sprite;
     actor->motionFlags = 0;
     actor->timer = 0;
-    actor->watchedActor = source;
+    actor->watchedActor = (union FieldObject *)source;
     actor->scaleY = FIXED_ONE * 2 / 5;
     actor->scaleX = FIXED_ONE * 2 / 5;
     if (sprite == NULL)

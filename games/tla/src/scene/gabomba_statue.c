@@ -461,7 +461,7 @@ s32 GabombaStatue_TurnTooth(struct Actor *actor) {
   if (next > COG_TOOTH_STEPS - 1)
     next = 0;
   *phase = next;
-  actor->watchedActor = (struct Actor *)GabombaStatue_GetToothPosition;
+  actor->watchedActor = (union FieldObject *)GabombaStatue_GetToothPosition;
   return 1;
 }
 
@@ -505,7 +505,7 @@ enum { CIRCLE_STEP = 16 };
 
 /// Each frame, keeps an actor circling the actor it watches.
 s32 GabombaStatue_CircleOwner(struct Actor *actor) {
-  struct Actor *owner = actor->watchedActor;
+  struct Actor *owner = &actor->watchedActor->actor;
 
   if (owner != NULL) {
     u8 *phase = &actor->sceneCounter;
@@ -1826,7 +1826,7 @@ void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle) {
   Actor_StartScript(charge, gGabombaStatue_ChargeScript);
   Actor_SetSpriteFlags(charge, 0);
   charge->motionFlags = 0;
-  charge->watchedActor = target;
+  charge->watchedActor = (union FieldObject *)target;
   // sceneCounter is its place on the circle, in 256ths of a turn, and
   // sceneByte its own actor id until the run sets chargeState there.
   charge->sceneCounter = angle / (TRIG_TURN / 256);

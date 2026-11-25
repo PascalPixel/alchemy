@@ -67,7 +67,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
-  caster->watchedActor = target;
+  caster->watchedActor = (union ActorOrEffect *)target;
   Actor_StartScriptFar(caster, gFieldEffect_SourceHoldScript);
 
   // The hands appear 32 pixels to either side and move to 16 pixels: the east

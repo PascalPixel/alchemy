@@ -2,7 +2,7 @@
 /// upside down, it rises behind the actor it watches, swelling and shrinking
 /// over half a sine wave, and is released after 32 frames.
 void Actor_GrowDown(struct Actor *actor) {
-  struct Actor *anchor = actor->watchedActor;
+  struct Actor *anchor = (struct Actor *)actor->watchedActor;
   s32 frame = ++actor->timer;
   FIXED amplitude;
 

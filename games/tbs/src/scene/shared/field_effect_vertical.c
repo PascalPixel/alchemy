@@ -16,7 +16,7 @@ static void FieldEffect_RiseRingBackHalf(struct Actor *actor) {
   s32 frame;
   FIXED amplitude;
 
-  anchor = actor->watchedActor;
+  anchor = (struct Actor *)actor->watchedActor;
   actor->timer = actor->timer + 1;
   frame = actor->timer;
 
@@ -39,7 +39,7 @@ static void FieldEffect_RiseRingFrontHalf(struct Actor *actor) {
   s32 frame;
   FIXED amplitude;
 
-  anchor = actor->watchedActor;
+  anchor = (struct Actor *)actor->watchedActor;
   actor->timer = actor->timer + 1;
   frame = actor->timer;
 

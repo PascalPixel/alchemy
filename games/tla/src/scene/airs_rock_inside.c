@@ -684,7 +684,7 @@ void AirsRockInside_PlaceStakes(u16 *list) {
 /// The leader rides a statue's whirlwind along its path until it fades.
 void AirsRockInside_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
-  struct Actor *ride = leader->watchedActor;
+  struct Actor *ride = &leader->watchedActor->actor;
   struct Actor *statue, *dust;
   s32 rise;
   FIXED dx, dz;
@@ -721,7 +721,7 @@ void AirsRockInside_RideWhirlwind(void) {
   facing = ride->facing;
   switch (facing) {
   case FACING_NORTH:
-    statue = ride->watchedActor;
+    statue = &ride->watchedActor->actor;
     dx = 0;
     dz = 0;
     leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
@@ -895,7 +895,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     }
     if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
-      leader->watchedActor = shot;
+      leader->watchedActor = (union FieldObject *)shot;
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
@@ -949,7 +949,7 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *actor) {
     shot->sceneByte = 0;
     shot->facing = actor->facing;
     shot->update = AirsRockInside_MoveWhirlwind;
-    shot->watchedActor = actor;
+    shot->watchedActor = (union FieldObject *)actor;
     actor->timer = 0;
     options.priority = 1;
     options.palette = 7;
@@ -1017,7 +1017,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     }
     if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
-      leader->watchedActor = shot;
+      leader->watchedActor = (union FieldObject *)shot;
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
@@ -1081,7 +1081,7 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *actor) {
     shot->sceneCounter = 0;
     shot->sceneByte = 0;
     shot->facing = actor->facing;
-    shot->watchedActor = actor;
+    shot->watchedActor = (union FieldObject *)actor;
     shot->update = AirsRockInside_MovePooledWhirlwind;
     actor->timer = 0;
     options.priority = 1;
@@ -1249,7 +1249,7 @@ void AirsRockInside_PuffVents(void) {
 /// An actor a gust carries: it rides 8 pixels above the gust, its draw order
 /// flickering.
 void AirsRockInside_FollowGust(struct Actor *actor) {
-  struct Actor *target = actor->watchedActor;
+  struct Actor *target = &actor->watchedActor->actor;
 
   actor->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (gFrameCount & 1);
   SET_ACTOR_POSITION(actor, target->x.fixed, target->y.fixed + toFIXED(8),
@@ -1270,14 +1270,14 @@ void AirsRockInside_SpiralGust(struct Actor *actor);
 /// (GUST_DROP).
 #define PICK_UP(actor, at)                                                     \
   do {                                                                         \
-    (actor)->watchedActor = gust;                                              \
+    (actor)->watchedActor = (union FieldObject *)gust;                         \
     (actor)->update = AirsRockInside_FollowGust;                               \
     (actor)->motionFlags = 0;                                                  \
     (actor)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                       \
     Actor_SetSpriteFlags(actor, 0);                                            \
     ((struct FieldSprite *)(actor)->sprite)->priority =                        \
         ((struct FieldSprite *)gust->sprite)->priority;                        \
-    gust->watchedActor = (actor);                                              \
+    gust->watchedActor = (union FieldObject *)(actor);                         \
     carried = (at);                                                            \
   } while (0)
 
@@ -1312,10 +1312,8 @@ void AirsRockInside_BlowGust(void) {
   gust->scaleX = FIXED_ONE * 17 / 10;
   gust->scaleY = FIXED_ONE / 5;
   gust->motionFlags = 0;
-  /* FAKEMATCH(signature): the target's word read through a long. */
   ((struct FieldSprite *)gust->sprite)->priority =
-      ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)->sprite)
-          ->priority;
+      ((struct FieldSprite *)TARGET(effect)->sprite)->priority;
   Actor_SetMoveTarget(gust, TARGET(effect)->x.fixed, TARGET(effect)->y.fixed,
                       TARGET(effect)->z.fixed - toFIXED(1));
   gust->groundHeight = Map_GetTerrainHeight(0, gust->x.fixed, gust->z.fixed);
@@ -1429,7 +1427,7 @@ void AirsRockInside_BlowGust(void) {
     FieldEvent_Wait(1);
   }
   if (carried != 0) {
-    actor = gust->watchedActor;
+    actor = &gust->watchedActor->actor;
     actor->x.fixed = FIELD_HALF_CELL_ORIGIN(GUST_DROP_X(carried));
     // The x half shifts out, leaving the z one.
     actor->z.fixed = FIELD_HALF_CELL_ORIGIN(carried);
@@ -2643,7 +2641,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->sceneWord = toFIXED(122);
-    spark->watchedActor = sheba;
+    spark->watchedActor = (union FieldObject *)sheba;
     // All spirals end together, 15 frames after the loop's last wait.
     spark->sceneCounter = (ORBITING_SPARKS - i) * ORBITING_SPARK_FRAMES + 15;
     Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
@@ -2676,7 +2674,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
     spark->bounce = spark->x.fixed;
     spark->sceneWord = 0;
     spark->gravity = spark->z.fixed;
-    spark->watchedActor = sheba;
+    spark->watchedActor = (union FieldObject *)sheba;
     spark->motionFlags = 0;
     spark->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);

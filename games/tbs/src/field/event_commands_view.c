@@ -100,7 +100,7 @@ void Event_WaitForZoomTransition(void) {
 UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
   struct Actor *host;
 
-  host = actor->watchedActor;
+  host = (struct Actor *)actor->watchedActor;
   if (host != NULL) {
     actor->motionFlags = 0;
     actor->x.fixed = host->x.fixed;
@@ -149,7 +149,7 @@ void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
           (void (*)(struct Actor *))FieldEffect_CopyWatchedActorPosition;
 #endif
       sprite->flags = 0;
-      bubble->watchedActor = target;
+      bubble->watchedActor = (union ActorOrEffect *)target;
 
       // The bubble takes sprite priority 1, or the actor's: -(m + 1) is ~m,
       // the bits besides the priority.
@@ -202,7 +202,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
                                actor->y.fixed, actor->z.fixed);
     }
   } else {
-    effect = actor->watchedActor;
+    effect = (struct Actor *)actor->watchedActor;
     if (effect == 0)
       return;
     Actor_ReleaseFar(effect);
@@ -217,7 +217,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
     Actor_SelectAnimationFar(effect, 1);
-    actor->watchedActor = effect;
+    actor->watchedActor = (union ActorOrEffect *)effect;
     effect->timer = 1;
     break;
   case ATTACHED_EFFECT_ONCE:
@@ -233,7 +233,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
       (void (*)(struct Actor *))FieldEffect_CopyWatchedActorPosition;
   visual = effect->sprite;
   visual->flags = 0;
-  effect->watchedActor = actor;
+  effect->watchedActor = (union ActorOrEffect *)actor;
 
   // The effect takes sprite priority 1, or the actor's, as an emote bubble
   // does.

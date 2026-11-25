@@ -39,7 +39,7 @@ void Whirlwind_Update(struct Actor *self) {
             near = 1;
           if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
             leader->facing = self->facing;
-            leader->watchedActor = self;
+            leader->watchedActor = (union FieldObject *)self;
             leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
             state->raisedTrigger = RAISED_RIDE_WHIRLWIND;
             gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;

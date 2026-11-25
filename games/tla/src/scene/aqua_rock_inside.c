@@ -1420,7 +1420,7 @@ void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
     noMotion = 0;
     spark->motionFlags = noMotion;
     spark->sceneWord = toFIXED(122);
-    spark->watchedActor = adept;
+    spark->watchedActor = (union FieldObject *)adept;
     spark->sceneCounter =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
@@ -1453,7 +1453,7 @@ void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
     swirl->bounce = swirl->x.fixed;
     swirl->sceneWord = 0;
     swirl->gravity = swirl->z.fixed;
-    swirl->watchedActor = adept;
+    swirl->watchedActor = (union FieldObject *)adept;
     swirl->motionFlags = (u16)0;
     swirl->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpriteColor(swirl, SPRITE_COLOR_RBG);

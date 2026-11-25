@@ -41,7 +41,7 @@ void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
 /// Per-frame update: halves the actor's distance to its watched actor along x,
 /// y and z.
 void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
-  struct Actor *target = actor->watchedActor;
+  struct Actor *target = (struct Actor *)actor->watchedActor;
 
   actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
   {
@@ -154,7 +154,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       Actor_SelectAnimationFar(copy, ANIM_STILL);
       Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
-      copy->watchedActor = prev;
+      copy->watchedActor = (union FieldObject *)prev;
       prev = copy;
     }
   }

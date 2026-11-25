@@ -118,7 +118,7 @@ UNUSED void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
                ->camera;
   if (target != NULL) {
     Actor_StartCameraFar(camera, 0);
-    camera->watchedActor = target;
+    camera->watchedActor = (union FieldObject *)target;
     if (keepCurrentPosition == 0) {
       SET_ACTOR_POSITION(camera, target->x.fixed, target->y.fixed,
                          target->z.fixed);

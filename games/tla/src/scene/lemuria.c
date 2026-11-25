@@ -210,7 +210,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
       other = Actor_Get(gMainRoutineState.leaderActorId);
       if (Position_Distance(&self->x.fixed, &other->x.fixed) <=
               CHILD_WALKS_ON_RANGE ||
-          (Actor_IsFacingNear(self, self->watchedActor,
+          (Actor_IsFacingNear(self, (struct Actor *)self->watchedActor,
                               CHILD_SEES_CHILD_RANGE) == 0 &&
            Actor_IsFacingNear(self, Actor_Get(gMainRoutineState.leaderActorId),
                               CHILD_SEES_LEADER_RANGE) == 0)) {
@@ -792,12 +792,12 @@ s32 Scene_Initialize(void) {
   Actor_SetPosition(ACTOR_SPOILED_CHILD, 40, 952);
   Actor_SetScript(ACTOR_SPOILED_CHILD, gLemuria_FirstWalkerPaces);
   actor = Actor_Get(ACTOR_SPOILED_CHILD);
-  actor->watchedActor = Actor_Get(ACTOR_LONELY_CHILD);
+  actor->watchedActor = (union FieldObject *)Actor_Get(ACTOR_LONELY_CHILD);
   actor->update = Lemuria_NoticeLeader;
   Actor_SetPosition(ACTOR_LONELY_CHILD, 88, 904);
   Actor_SetScript(ACTOR_LONELY_CHILD, gLemuria_SecondWalkerPaces);
   actor = Actor_Get(ACTOR_LONELY_CHILD);
-  actor->watchedActor = Actor_Get(ACTOR_SPOILED_CHILD);
+  actor->watchedActor = (union FieldObject *)Actor_Get(ACTOR_SPOILED_CHILD);
   actor->update = Lemuria_NoticeLeader;
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_SetPosition(ACTOR_MAN_AT_THE_SPRING, 440, 1048);

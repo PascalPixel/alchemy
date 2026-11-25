@@ -22,7 +22,7 @@ void FieldEffect_UpdateMoveHand(struct Actor *hand) {
   s32 turn;
   s32 radius;
 
-  target = hand->watchedActor;
+  target = (struct Actor *)hand->watchedActor;
   if (target != 0) {
     FIXED dx = target->x.fixed - hand->x.fixed;
     FIXED dz = target->z.fixed - hand->z.fixed;
@@ -82,7 +82,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
-  caster->watchedActor = target;
+  caster->watchedActor = (union ActorOrEffect *)target;
   Actor_StartScriptFar(caster, gFieldEffect_SourceHoldScript);
   pusher = FieldEffect_SpawnMoveHand(caster);
   if (pusher == NULL) {
@@ -91,7 +91,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   }
 
   // The hand goes 16 pixels above the target and 16 pixels toward angle.
-  pusher->watchedActor = target;
+  pusher->watchedActor = (union ActorOrEffect *)target;
   SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
   Vector_AddPolarOffset(toFIXED(16), angle, &position);

@@ -440,7 +440,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       actor->timer = angle;
       actor->userValue = phase;
       actor->update = MarsLighthouseAerie_SwingBeaconFlame;
-      actor->watchedActor = anchor;
+      actor->watchedActor = (union FieldObject *)anchor;
       actor->speedLimit = FIXEDtoINT(Math_Sin((offset & 0xfffff) >> 4) *
                                      BEACON_FLAME_SWING_SPREAD);
       sprite->flags = 0;
@@ -454,7 +454,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
 void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *actor) {
   u16 *pangle = (u16 *)&actor->timer;
   u16 angle = *pangle;
-  struct Actor *parent = actor->watchedActor;
+  struct Actor *parent = (struct Actor *)actor->watchedActor;
 
   actor->x.fixed =
       parent->x.fixed +
@@ -3037,7 +3037,7 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *actor,
   actor->sceneByte = 0;
   actor->update = MarsLighthouseAerie_UpdateRisingRings;
   tile = gVramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
-  actor->watchedActor = (struct Actor *)state;
+  actor->watchedActor = (union FieldObject *)state;
   for (row = 0; row <= 1; row++) {
     col = 1;
     offset = (row * 2) * sizeof(struct EffectSprite);

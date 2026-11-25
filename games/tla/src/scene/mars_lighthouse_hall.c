@@ -768,7 +768,7 @@ s32 Scene_Initialize(void) {
         actor->groundHeight = toFIXED(16);
         actor->launchedActorId = ACTOR_FIREBALL;
         actor->userValue = FACING_SOUTH;
-        actor->watchedActor = (struct Actor *)unset;
+        actor->watchedActor = (union FieldObject *)unset;
         Actor_LaunchAhead(actor);
         System_Wait(40);
         MapGrid_SetShake(2, 2, 1);

@@ -906,7 +906,7 @@ void TundariaTower_SpawnDustRing(void);
 
 void Actor_PlaceOnActor(s32 id, s32 target);
 
-union FieldObject *gTundariaTower_Reflection BSS_DATA;
+struct Actor *gTundariaTower_Reflection BSS_DATA;
 volatile s16 gSlideOnIce_Stopped BSS_DATA;
 
 void TundariaTower_ParchLeftWater(void);
@@ -1120,26 +1120,30 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(7, 36, 1, 1, 7, 35);
       }
       {
-        union FieldObject **slot = &gTundariaTower_Reflection;
+        /* FAKEMATCH(temporary): the reflection's global reached through a local
+           pointer; as gTundariaTower_Reflection = effect. */
+        struct Actor **slot = &gTundariaTower_Reflection;
         struct Actor *effect =
             ((struct Actor *)Import_ActorCreate(SPRITE_FELIX, 0, 0, 0));
 
         effect->sceneWord = toFIXED(576);
         effect->update = TundariaTower_ReflectLeader;
-        *slot = (union FieldObject *)effect;
+        *slot = effect;
         effect->motionFlags = 0;
         Scene_SetActorSpritePriority(effect, 3);
       }
       break;
     case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_BURST_BROOCH_NORTH:
     case PILLAR_PUZZLE_MIRROR_ROOM_FOOT: {
-      union FieldObject **slot = &gTundariaTower_Reflection;
+      /* FAKEMATCH(temporary): the reflection's global reached through a local
+         pointer; as gTundariaTower_Reflection = effect. */
+      struct Actor **slot = &gTundariaTower_Reflection;
       struct Actor *effect =
           ((struct Actor *)Import_ActorCreate(SPRITE_FELIX, 0, 0, 0));
 
       effect->sceneWord = toFIXED(624);
       effect->update = TundariaTower_ReflectLeader;
-      *slot = (union FieldObject *)effect;
+      *slot = effect;
       effect->motionFlags = 0;
       Scene_SetActorSpritePriority(effect, 3);
     } break;

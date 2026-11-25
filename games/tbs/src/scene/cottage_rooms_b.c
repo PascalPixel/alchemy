@@ -1233,7 +1233,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
       part = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->watchedActor = parent;
+      child->watchedActor = (union ActorOrEffect *)parent;
       if (part != NULL) {
         sprite = part;
         Sprite_StartAnimation(part, 0);

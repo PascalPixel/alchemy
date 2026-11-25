@@ -40,8 +40,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 id;
   s32 text;
   s32 *p;
-  /* FAKEMATCH(temporary): cleared, a 0 held in a local for every 0 below. */
-  u32 cleared = 0;
+  u16 *spacing = NULL;
 
   window = NULL;
   djinniSprite = gDjinn_ElementSprites[element & 3];
@@ -54,18 +53,18 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     state->dirty = 1;
 
     id = Portrait_GetForSpeaker(djinniSprite);
-    Icon_LoadWithPalette(id, cleared, &slot, &tile, PORTRAIT_PALETTE, cleared);
+    Icon_LoadWithPalette(id, 0, &slot, &tile, PORTRAIT_PALETTE, 0);
 
     // The portrait as a bare OAM entry, pushed each frame: a link word,
     // attributes 0 and 1 (32x32 at y 12) and attribute 2, its tile in
     // PORTRAIT_PALETTE.
     p = entry;
-    *p++ = cleared;
+    *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
     *p = tile | OBJ_PALETTE(PORTRAIT_PALETTE);
 
-    state->speakerVoiceSound = cleared;
-    state->speakerVoiceCountdown = cleared;
+    state->speakerVoiceSound = 0;
+    state->speakerVoiceCountdown = 0;
 
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
@@ -75,9 +74,9 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     text = Message_DecodeAndClearArguments(element + (s32)MsgFoundVenusDjinni);
 
 #ifdef UBFIX
-    Message_Start(window, text, 36, 2, NULL, 0);
+    Message_Start(window, text, 36, 2, spacing, 0);
 #else
-    Message_Start(window, text, 36, 2, cleared);
+    Message_Start(window, text, 36, 2, spacing);
 #endif
 
     Sound_PlayFar(MUS_A_NEW_ALLY);

@@ -460,11 +460,8 @@ s32 DebugBrowser_Portraits(void) {
   s32 glyph;
   s32 tile;
   s32 slot;
-  /* FAKEMATCH(temporary): cancelKey, KEY_B held in a local set in the body
-   * and tested across the loop; as gKeysRepeat & KEY_B. */
-  s32 cancelKey;
-  s32 palette = PORTRAIT_PALETTE + 1; // portrait slot 1's, as slotOffset
-  u32 slotOffset = offsetof(struct WindowState, portraitSprites[1]);
+  s32 portraitSlot = 1;
+  s32 palette = PORTRAIT_PALETTE + portraitSlot;
 
   state = WINDOW_STATE;
   redraw = 1;
@@ -478,8 +475,6 @@ s32 DebugBrowser_Portraits(void) {
   }
   entryCount = characterCount + i;
 
-  /* FAKEMATCH(dead): a zero from the count. */
-  cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
   while (1) {
     if (gKeysRepeat & KEY_LEFT) {
       redraw = 1;
@@ -499,7 +494,7 @@ s32 DebugBrowser_Portraits(void) {
     }
     if (gKeysRepeat & KEY_A)
       break;
-    if (gKeysRepeat & cancelKey)
+    if (gKeysRepeat & KEY_B)
       break;
     if (redraw) {
       redraw = 0;
@@ -510,7 +505,7 @@ s32 DebugBrowser_Portraits(void) {
       else
         glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] +
                 PORTRAIT_SPRITE_MAP_FIRST;
-      slot = *(u16 *)((u8 *)state + slotOffset);
+      slot = state->portraitSprites[portraitSlot];
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);

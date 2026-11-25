@@ -87,12 +87,6 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   u32 column;
   u32 row;
   u16 *cell;
-  /* FAKEMATCH(temporary): table holds the column offsets' address for the
-   * reads in the loop, where the loop's test reads them by name. */
-  const s8 *table;
-  /* FAKEMATCH(temporary): columns, the column offsets' address on its way to
-   * table. */
-  const s8 *columns;
 
   if ((flags & PARTY_STATUS_SHOW_PP) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
@@ -100,12 +94,10 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     shift = PARTY_STATUS_DJINN_WIDTH;
     first = 0;
   }
-  columns = gWindow_PartyColumnOffsets;
   i = first;
-  table = columns;
   if (gWindow_PartyColumnOffsets[i] >= 0) {
-    do {
-      column = table[i] + shift;
+    for (; gWindow_PartyColumnOffsets[i] >= 0; i++) {
+      column = gWindow_PartyColumnOffsets[i] + shift;
       if (column < lastColumn) {
         for (row = 0; row != rows; row++) {
           cell = windowState->tilemap[(s16)window->y + row] +
@@ -118,10 +110,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
             *cell = WINDOW_TILE_DIVIDER_VERTICAL;
         }
       }
-      i++;
-      /* FAKEMATCH(dead): table set again to the address it holds. */
-      table = gWindow_PartyColumnOffsets;
-    } while (gWindow_PartyColumnOffsets[i] >= 0);
+    }
     state = windowState->battleMode;
   }
   {
@@ -138,12 +127,9 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
         column = 0;
       cell = windowState->tilemap[(s16)window->y + window->height - 1] +
              (s16)window->x;
-      column = 1;
       *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
-      while (column < lastColumn) {
-        column++;
+      for (column = 1; column < lastColumn; column++)
         *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM;
-      }
       *cell = WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT;
     }
   }

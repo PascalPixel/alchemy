@@ -1809,9 +1809,7 @@ static void AltinPeak_RestorePoolRoom(void) {
     pillar = Actor_Get(ACTOR_POOL_ROOM_PUDDLE);
     Actor_SetAnimation(ACTOR_POOL_ROOM_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(45, 41, 1, 1, 43, 41);
-    {
-      pillar->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | pillar->priorityFlags;
-    }
+    pillar->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | pillar->priorityFlags;
   }
   if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapGridScrollState *)gMapGridState[0])->flags &= ~DISPCNT_BG1_ON;

@@ -419,14 +419,12 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
     s32 horizontalOrigin;
     s32 verticalOrigin;
 
-    {
-      probe.position.x +=
-          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].x0);
-      probe.position.z +=
-          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].z0);
-      probe.position.x = FIELD_CELL(probe.position.x);
-      probe.position.z = FIELD_CELL(probe.position.z);
-    }
+    probe.position.x +=
+        INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].x0);
+    probe.position.z +=
+        INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].z0);
+    probe.position.x = FIELD_CELL(probe.position.x);
+    probe.position.z = FIELD_CELL(probe.position.z);
     horizontalOrigin = FIELD_CELL(state->layers[1].offsetX);
     verticalOrigin = FIELD_CELL(state->layers[1].offsetY);
 
@@ -440,14 +438,12 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
                                    horizontalExtent, verticalExtent,
                                    CELL_BEHAVIOR_WALL);
 
-    {
-      originalPosition.x +=
-          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].x0);
-      originalPosition.z +=
-          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].z0);
-      originalPosition.x = FIELD_CELL(originalPosition.x);
-      originalPosition.z = FIELD_CELL(originalPosition.z);
-    }
+    originalPosition.x +=
+        INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].x0);
+    originalPosition.z +=
+        INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].z0);
+    originalPosition.x = FIELD_CELL(originalPosition.x);
+    originalPosition.z = FIELD_CELL(originalPosition.z);
     horizontalOrigin += originalPosition.x;
     verticalOrigin += originalPosition.z;
 

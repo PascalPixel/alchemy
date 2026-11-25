@@ -884,23 +884,19 @@ static void CrossboneIsle_RideLog(s32 actorId, s32 dx, s32 dz) {
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   log = Actor_Get(actorId);
   Event_Start();
-  {
-    x = ((leader->x.fixed + INTtoFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
-    z = ((leader->z.fixed + INTtoFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
+  x = ((leader->x.fixed + INTtoFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
+  z = ((leader->z.fixed + INTtoFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
 
-    leader->speedLimit = toFIXED(1);
-    leader->acceleration = toFIXED(1) / 2;
-    FieldActor_SetMoveTargetFX(leader, x, leader->y.fixed, z);
-  }
+  leader->speedLimit = toFIXED(1);
+  leader->acceleration = toFIXED(1) / 2;
+  FieldActor_SetMoveTargetFX(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, ANIM_LEADER_WALK_BACKWARDS);
-  {
-    x = ((log->x.fixed + INTtoFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
-    z = ((log->z.fixed + INTtoFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
+  x = ((log->x.fixed + INTtoFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
+  z = ((log->z.fixed + INTtoFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
 
-    log->speedLimit = toFIXED(1);
-    log->acceleration = toFIXED(1) / 2;
-    FieldActor_SetMoveTargetFX(log, x, log->y.fixed, z);
-  }
+  log->speedLimit = toFIXED(1);
+  log->acceleration = toFIXED(1) / 2;
+  FieldActor_SetMoveTargetFX(log, x, log->y.fixed, z);
   if (dx < 0 || dz < 0) {
     Actor_SelectAnimation(log, FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH);
   } else {

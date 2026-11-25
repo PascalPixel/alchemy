@@ -543,23 +543,19 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   actor = Actor_Get(actorId);
   Event_Start();
-  {
-    x = ((leader->x.fixed + toFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
-    z = ((leader->z.fixed + toFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
+  x = ((leader->x.fixed + toFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
+  z = ((leader->z.fixed + toFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
 
-    leader->speedLimit = toFIXED(1);
-    leader->acceleration = toFIXED(1) / 2;
-    FieldActor_SetMoveTargetFX(leader, x, leader->y.fixed, z);
-  }
+  leader->speedLimit = toFIXED(1);
+  leader->acceleration = toFIXED(1) / 2;
+  FieldActor_SetMoveTargetFX(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, ANIM_LEADER_WALK_BACKWARDS);
-  {
-    x = ((actor->x.fixed + toFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
-    z = ((actor->z.fixed + toFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
+  x = ((actor->x.fixed + toFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
+  z = ((actor->z.fixed + toFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
 
-    actor->speedLimit = toFIXED(1);
-    actor->acceleration = toFIXED(1) / 2;
-    FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
-  }
+  actor->speedLimit = toFIXED(1);
+  actor->acceleration = toFIXED(1) / 2;
+  FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
   if (dx < 0 || dz < 0) {
     Actor_SelectAnimation(actor, FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH);
   } else {

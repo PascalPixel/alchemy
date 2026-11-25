@@ -14,23 +14,19 @@ static void Actor_FloatLogWithLeader(s32 id, s32 dx, s32 dz) {
   leader = Actor_GetById(gMainRoutineState.leaderActorId);
   raft = Actor_GetById(id);
   Event_Start();
-  {
-    x = ((leader->x.fixed + INTtoFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
-    z = ((leader->z.fixed + INTtoFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
+  x = ((leader->x.fixed + INTtoFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
+  z = ((leader->z.fixed + INTtoFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
 
-    leader->speedLimit = toFIXED(1);
-    leader->acceleration = toFIXED(1) / 2;
-    FieldActor_SetMoveTargetFX(leader, x, leader->y.fixed, z);
-  }
+  leader->speedLimit = toFIXED(1);
+  leader->acceleration = toFIXED(1) / 2;
+  FieldActor_SetMoveTargetFX(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, ANIM_LEADER_WALK_BACKWARDS);
-  {
-    x = ((raft->x.fixed + INTtoFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
-    z = ((raft->z.fixed + INTtoFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
+  x = ((raft->x.fixed + INTtoFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
+  z = ((raft->z.fixed + INTtoFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
 
-    raft->speedLimit = toFIXED(1);
-    raft->acceleration = toFIXED(1) / 2;
-    FieldActor_SetMoveTargetFX(raft, x, raft->y.fixed, z);
-  }
+  raft->speedLimit = toFIXED(1);
+  raft->acceleration = toFIXED(1) / 2;
+  FieldActor_SetMoveTargetFX(raft, x, raft->y.fixed, z);
   if (dx < 0 || dz < 0) {
     Actor_SelectAnimation(raft, 4);
   } else {

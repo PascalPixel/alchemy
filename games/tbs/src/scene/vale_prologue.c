@@ -1824,9 +1824,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_SetSpeed(ACTOR_JENNA_CHILD, 0.6);
   Actor_SetDestination(ACTOR_JENNAS_MOTHER, 247, 1210);
   Actor_MoveToAndWait(ACTOR_JENNA_CHILD, 227, 1189);
-  {
-    Actor_Get(ACTOR_JENNAS_MOTHER)->steeringFlags |= ACTOR_FACES_MOTION;
-  }
+  Actor_Get(ACTOR_JENNAS_MOTHER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_JENNA_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_WEST, 10);

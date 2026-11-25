@@ -1596,13 +1596,11 @@ static void Sanctum_ShowHealerAfterimage(void) {
   afterimage->facing = Actor_Get(ACTOR_HEALER)->facing;
   Actor_Get(ACTOR_HEALER_AFTERIMAGE)->update = Sanctum_UpdateHealerAfterimage;
   sprite = Actor_Get(ACTOR_HEALER_AFTERIMAGE)->sprite;
-  {
-    for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
-      struct SpriteAnimation *entry = sprite->entries[entryIndex];
+  for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
+    struct SpriteAnimation *entry = sprite->entries[entryIndex];
 
-      if (entry != NULL && entry->script != 0) {
-        entry->colorMode = SPRITE_COLOR_RED_TINT;
-      }
+    if (entry != NULL && entry->script != 0) {
+      entry->colorMode = SPRITE_COLOR_RED_TINT;
     }
   }
   sprite->dirty = 1;

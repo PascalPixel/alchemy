@@ -1489,9 +1489,7 @@ static void MercuryLighthouse_MoveGapStatueOffDoorway(void) {
   Event_Start();
   if (Actor_Get(ACTOR_GAP_STATUE)->x.fixed / toFIXED(16) == 28) {
     GameFlag_Set(FLAG_PASSAGE_STATUE_MOVED);
-    {
-      MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
-    }
+    MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
   }
   Event_End();
 }

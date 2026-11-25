@@ -785,10 +785,8 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   wait(1);
   if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
     MapGrid_CopyCells(121, 34, 3, 1, 93, 10);
-    {
-      MapGrid_CopyCells(46, 38, 1, 1, 30, 43);
-      MapGrid_CopyCellAttributes(0, 0, 1, 2, 30, 9);
-    }
+    MapGrid_CopyCells(46, 38, 1, 1, 30, 43);
+    MapGrid_CopyCellAttributes(0, 0, 1, 2, 30, 9);
     MapGrid_CopyCellAttributes(26, 3, 1, 2, 10, 8);
     MapGrid_CopyCells(26, 35, 1, 4, 10, 40);
   } else {

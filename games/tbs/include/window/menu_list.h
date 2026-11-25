@@ -67,22 +67,12 @@ struct CursorSprite {
   u16 unused;
 };
 
-/// Gives a menu sprite its shape and clears the rest of its attributes, its
-/// tile and place still to come. The battle lists, the chosen ability's icon,
-/// the status screen and the command row start their sprites so.
-///
-/// The macro ends in an empty asm statement. Every use needs one there: it
-/// keeps what follows from being scheduled above the two stores, and the
-/// literal pools of the chosen ability's icon fall where the ROM has them only
-/// with its four counted bytes. What Camelot's macro held in its place is not
-/// known.
-/* FAKEMATCH(barrier): the empty asm that ends MenuSprite_Initialize. */
+/// Sets sprite shape (attr0/attr1) and clears the remaining fields.
 #define MenuSprite_Initialize(sprite, shape)                                   \
-  {                                                                            \
+  do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \
-    __asm__ volatile("");                                                      \
-  }
+  } while (0)
 
 /// The party status window's layout: its window, its place and size, and what
 /// it shows (PARTY_STATUS_ flags).

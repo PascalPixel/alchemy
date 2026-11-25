@@ -5,9 +5,6 @@
 
 #include "event_commands_internal.h"
 
-/// The World Map block of a 16.16 coordinate.
-#define WORLD_MAP_BLOCK(coordinate) ((coordinate) >> WORLD_MAP_BLOCK_SHIFT)
-
 /// Task of Cloak: when the cell under the leader is not CELL_BEHAVIOR_CLOAK,
 /// requests CLOAK_END. The behavior is byte 2 of a cell (MapGridCell.behavior),
 /// or of a 4-byte gCellTiles entry on the World Map.
@@ -27,19 +24,10 @@ void FieldPsynergy_CheckCloakTile(void) {
     u32 tx;
     u32 ty;
 
-    x = leader->x.fixed;
-    /* FAKEMATCH(dead): the division by toFIXED(WORLD_MAP_BLOCK_PIXELS)
-     * rounded towards zero by hand; as x / toFIXED(WORLD_MAP_BLOCK_PIXELS). */
-    if (x < 0)
-      x += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
-    tx = WORLD_MAP_BLOCK(x) & (WORLD_MAP_BLOCKS_ACROSS - 1);
-
-    y = leader->z.fixed;
-    /* FAKEMATCH(dead): the division by toFIXED(WORLD_MAP_BLOCK_PIXELS)
-     * rounded towards zero by hand; as y / toFIXED(WORLD_MAP_BLOCK_PIXELS). */
-    if (y < 0)
-      y += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
-    ty = WORLD_MAP_BLOCK(y) & (WORLD_MAP_BLOCKS_ACROSS - 1);
+    tx = leader->x.fixed / toFIXED(WORLD_MAP_BLOCK_PIXELS) &
+         (WORLD_MAP_BLOCKS_ACROSS - 1);
+    ty = leader->z.fixed / toFIXED(WORLD_MAP_BLOCK_PIXELS) &
+         (WORLD_MAP_BLOCKS_ACROSS - 1);
 
     cell = (u8 *)&gCellTiles[tx + ty * WORLD_MAP_BLOCKS_ACROSS];
   } else {

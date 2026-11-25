@@ -77,20 +77,8 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     u32 tileX;
     u32 tileY;
 
-    // Rounding toward zero, as a signed division by toFIXED(32) would.
-    fixedX = position.vector.x;
-    /* FAKEMATCH(dead): the division by toFIXED(32) rounded towards zero by
-     * hand; as (fixedX / toFIXED(32)) & 31. */
-    if (fixedX < 0)
-      fixedX += toFIXED(32) - 1;
-    tileX = (FIXEDtoINT(fixedX) >> 5) & 31;
-
-    fixedZ = position.vector.z;
-    /* FAKEMATCH(dead): the division by toFIXED(32) rounded towards zero by
-     * hand; as (fixedZ / toFIXED(32)) & 31. */
-    if (fixedZ < 0)
-      fixedZ += toFIXED(32) - 1;
-    tileY = (FIXEDtoINT(fixedZ) >> 5) & 31;
+    tileX = position.vector.x / toFIXED(32) & 31;
+    tileY = position.vector.z / toFIXED(32) & 31;
 
     tile = (u8 *)gCellTiles + ((tileX + (tileY << 5)) << 2);
   } else {

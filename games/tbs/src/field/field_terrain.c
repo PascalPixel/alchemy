@@ -185,40 +185,18 @@ TERRAIN_DEFINE_STEP(Terrain_GetStepYHeight, pixelY)
 /// x = 8, towards sample 2 at x = 16.
 FIXED Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
-  u32 cellX = pixelX;
   s32 endpointHeight;
   s32 middleHeight;
-  s32 heightDelta;
 
   endpointHeight = CURVE_HEIGHT_FIXED(*samples++);
   middleHeight = CURVE_HEIGHT_FIXED(*samples++);
-  // Each half is 8 pixels: the shift by 3 divides by 8, and the bias of 7
-  // rounds towards zero.
-  if (cellX < CURVE_HALF_STEPS) {
-    heightDelta = (middleHeight - endpointHeight) * cellX;
-    /* FAKEMATCH(dead): the division by 8 rounded towards zero by hand; as
-     * heightDelta / CURVE_HALF_STEPS. */
-    if (heightDelta < 0) {
-      heightDelta += CURVE_HALF_STEPS - 1;
-    }
-    return endpointHeight + (heightDelta >> 3);
-  }
-
-  {
-    s32 offsetPastMiddle;
-
-    endpointHeight = CURVE_HEIGHT_FIXED(*samples);
-    offsetPastMiddle = cellX;
-    endpointHeight -= middleHeight;
-    offsetPastMiddle -= CURVE_HALF_STEPS;
-    heightDelta = endpointHeight * offsetPastMiddle;
-    /* FAKEMATCH(dead): the division by 8 rounded towards zero by hand; as
-     * heightDelta / CURVE_HALF_STEPS. */
-    if (heightDelta < 0) {
-      heightDelta += CURVE_HALF_STEPS - 1;
-    }
-    return middleHeight + (heightDelta >> 3);
-  }
+  // Each half is 8 pixels; the divisions round towards zero.
+  if ((u32)pixelX < CURVE_HALF_STEPS)
+    return endpointHeight +
+           (middleHeight - endpointHeight) * pixelX / CURVE_HALF_STEPS;
+  endpointHeight = CURVE_HEIGHT_FIXED(*samples);
+  return middleHeight + (endpointHeight - middleHeight) *
+                            (pixelX - CURVE_HALF_STEPS) / CURVE_HALF_STEPS;
 }
 
 /// A slope along y that bends at the middle, as TERRAIN_BEND_X does along x.

@@ -244,11 +244,9 @@ close:
 void Shop_DrawStock(struct Window *window, s32 selected) {
   struct ShopState *shop;
   s16 *itemIds;
-  s16 *stockCursor;
   s32 itemCount;
   s32 stockIndex;
   u32 pageSlot;
-  s32 priceX;
   s16 itemId;
   struct ItemDefinition *item;
   struct WindowSprite *icon;
@@ -276,14 +274,10 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
     }
     pageSlot = 0;
     if (stockIndex < (u32)itemCount) {
-      /* FAKEMATCH(temporary): stockCursor, the byte address of
-         itemIds[stockIndex] walked down the page; the plain form reads
-         itemIds[stockIndex] at its use. */
-      stockCursor = (s16 *)(stockIndex * sizeof(s16) + (u32)itemIds);
-      priceX = 16;
+      // Each price sits 16 pixels right of its item.
       for (; pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
-           priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
-        itemId = *stockCursor;
+           pageSlot++, stockIndex++) {
+        itemId = itemIds[stockIndex];
         item = Item_GetDirectFar(itemId);
         icon = WindowSprite_CreateLoadedFar(itemId, ICON_BASE, window,
                                             pageSlot * 32, 0);
@@ -293,7 +287,8 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
           icon->animationStep = 10;
           icon->depth = OAM_DEPTH_FRONT - 2;
         }
-        icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
+        icon =
+            Shop_CreatePriceSprite(item->price, window, pageSlot * 32 + 16, 0);
         icon->depth = OAM_DEPTH_FRONT - 4;
       }
     }

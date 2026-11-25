@@ -1929,6 +1929,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           if (bubble->variant < 0) {
             continue;
           }
+          /* FAKEMATCH(temporary): screen holds &bubbleScreen. */
           screen = &bubbleScreen;
           EffectPosition_ProjectPoint(bubble, screen);
           screen->depth =

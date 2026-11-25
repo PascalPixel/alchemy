@@ -92,7 +92,6 @@
 #include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
-#include "field/world_map_render_state.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

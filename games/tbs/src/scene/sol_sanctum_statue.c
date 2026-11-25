@@ -752,9 +752,8 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
 static void SolSanctumStatue_UpdateScrollingSprites(void) {
   struct MapGridScrollState *grid = gMapGridState[0];
   struct AnimationSpritePart *sprite = sScrollingSprites.parts;
-  s32 *view = grid->view;
-  s32 cameraX = view[0] / toFIXED(1);
-  s32 screenY = 80 - view[1] / toFIXED(1);
+  s32 cameraX = MapGridScrollState_View(grid)[0] / toFIXED(1);
+  s32 screenY = 80 - MapGridScrollState_View(grid)[1] / toFIXED(1);
   s32 scrollX;
   u32 column;
 

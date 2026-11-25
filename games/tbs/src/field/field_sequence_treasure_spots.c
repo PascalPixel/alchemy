@@ -14,20 +14,6 @@ void Actor_SnapToTerrain(void *object) {
   actor->groundHeight = groundHeight;
 }
 
-/// The map grid's state (gMapGridState[0], HEAP_SLOT_MAP_GRID), seen as its
-/// treasure spot list.
-struct MapGridMarkers {
-  /// MapGridScrollState's origin and shake; not named through this view.
-  ///@{
-  s32 *origin;
-  s32 shakeX, shakeY, shakeDecay;
-  ///@}
-  /// MapGridScrollState's markers, read here as (column, row, id) triples,
-  /// ended by TREASURE_SPOT_LIST_END twice: a 16-pixel cell and the subject of
-  /// the trigger there; NULL for a map with none.
-  u8 *markers;
-};
-
 /// The sprites of the actors a map's treasure spots place.
 enum {
   TREASURE_SPOT_CHEST_SPRITE = SPRITE_CHEST,
@@ -48,7 +34,7 @@ enum {
 /// Stone for an examine trigger giving one, until it is taken.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
-  struct MapGridMarkers *grid = gMapGridState[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct FieldState *state = gFieldState;
   s32 markerCount = 0;
   u8 *list = grid->markers;

@@ -1947,8 +1947,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   beacon = Actor_Get(ACTOR_BEACON);
   grid = gMapGridState[0];
   height = toFIXED(Random_Below(48));
-  if (((struct FieldCoordinate *)&grid->view[1])->part[0].integer <=
-      BEACON_SHOWN_VIEW_TOP) {
+  if ((s16)FIXEDtoINT(grid->view[1]) <= BEACON_SHOWN_VIEW_TOP) {
     if (gFrameCount & 1) {
       Import_ActorSetPosition(ACTOR_BEACON, toFIXED(304), toFIXED(144));
       scale = FIXED_ONE;

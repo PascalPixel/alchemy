@@ -119,12 +119,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   FIXED x;
   FIXED y;
 
-  {
-    s32 *view = grid->view;
-
-    viewX = view[0] & FIELD_PIXEL_MASK;
-    viewZ = view[1] & FIELD_PIXEL_MASK;
-  }
+  viewX = MapGridScrollState_View(grid)[0] & FIELD_PIXEL_MASK;
+  viewZ = MapGridScrollState_View(grid)[1] & FIELD_PIXEL_MASK;
   x = actor->x.fixed - viewX;
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,

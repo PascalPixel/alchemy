@@ -296,12 +296,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_INVERSE: {
     s32 cameraX;
 
-    {
-      s32 *view = grid->view;
-
-      cameraX = view[0] & FIELD_PIXEL_MASK;
-      cameraY = view[1] & FIELD_PIXEL_MASK;
-    }
+    cameraX = MapGridScrollState_View(grid)[0] & FIELD_PIXEL_MASK;
+    cameraY = MapGridScrollState_View(grid)[1] & FIELD_PIXEL_MASK;
     // Centred on the leader's place on screen, above its feet.
     actor = Actor_Lookup(gMainRoutineState.leaderActorId);
     centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
@@ -341,12 +337,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     break;
   }
-  case WINDOW_TRANSITION_RIPPLE: {
-    s32 *view = grid->view;
-
-    rippleCameraX = view[0] & FIELD_PIXEL_MASK;
-    rippleCameraY = view[1] & FIELD_PIXEL_MASK;
-  }
+  case WINDOW_TRANSITION_RIPPLE:
+    rippleCameraX = MapGridScrollState_View(grid)[0] & FIELD_PIXEL_MASK;
+    rippleCameraY = MapGridScrollState_View(grid)[1] & FIELD_PIXEL_MASK;
     // Centred on state->centerX and centerY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
@@ -392,12 +385,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER: {
     s32 cameraX;
 
-    {
-      s32 *view = grid->view;
-
-      cameraX = view[0] & FIELD_PIXEL_MASK;
-      cameraY = view[1] & FIELD_PIXEL_MASK;
-    }
+    cameraX = MapGridScrollState_View(grid)[0] & FIELD_PIXEL_MASK;
+    cameraY = MapGridScrollState_View(grid)[1] & FIELD_PIXEL_MASK;
     actor = Actor_Lookup(gMainRoutineState.leaderActorId);
     centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE -
@@ -431,12 +420,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_LOW: {
     s32 cameraX;
 
-    {
-      s32 *view = grid->view;
-
-      cameraX = view[0] & FIELD_PIXEL_MASK;
-      cameraY = view[1] & FIELD_PIXEL_MASK;
-    }
+    cameraX = MapGridScrollState_View(grid)[0] & FIELD_PIXEL_MASK;
+    cameraY = MapGridScrollState_View(grid)[1] & FIELD_PIXEL_MASK;
     actor = Actor_Lookup(gMainRoutineState.leaderActorId);
     centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
     // Centred lower above the leader's feet than WINDOW_TRANSITION_LEADER's.

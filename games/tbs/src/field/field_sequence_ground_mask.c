@@ -17,9 +17,8 @@
 void GroundMask_DrawMarks(void) {
   struct GroundMaskState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_GROUND_MASK);
   struct MapGridScrollState *grid = gMapGridState[0];
-  s32 *view = grid->view;
-  s32 cameraX = (s16)FIXEDtoINT(view[0]);
-  s32 cameraZ = (s16)FIXEDtoINT(view[1]);
+  s32 cameraX = (s16)FIXEDtoINT(MapGridScrollState_View(grid)[0]);
+  s32 cameraZ = (s16)FIXEDtoINT(MapGridScrollState_View(grid)[1]);
   struct AnimationSpritePart *mark = state->marks;
   struct Actor *actor = state->actor;
   FIXED x;

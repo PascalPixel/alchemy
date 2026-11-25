@@ -106,7 +106,7 @@
 #include "field/field_psynergy_state.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
-#include "field/world_map_render_state.h"
+#include "field/perspective.h"
 #include "game/game.h"
 #include "game/inventory.h"
 #include "graphics/graphics.h"
@@ -555,10 +555,10 @@ static s32 WorldMap_SetUpKolimaBridge(struct Actor *actor) {
 /// The actor script of every picture on the map (gWorldMapAlignToMapScript).
 /// It turns the sprite with the map's rotation.
 static s32 WorldMap_AlignToMap(struct Actor *actor) {
-  struct WorldMapRenderState *state = gMapGridState[0];
+  struct WorldMapView *state = gMapGridState[0];
   struct Sprite *sprite = actor->sprite;
 
-  sprite->rotation = state->rotation;
+  sprite->rotation = state->yaw;
   sprite->flags = 0;
   return 1;
 }
@@ -566,11 +566,11 @@ static s32 WorldMap_AlignToMap(struct Actor *actor) {
 /// Iodem's actor script (gWorldMapIodemScript). He turns with the map and
 /// blocks the way, so the leader cannot walk through him.
 static s32 WorldMap_SetUpIodem(struct Actor *actor) {
-  struct WorldMapRenderState *state = gMapGridState[0];
+  struct WorldMapView *state = gMapGridState[0];
   struct Sprite *sprite = actor->sprite;
 
   actor->collisionFlags |= ACTOR_SOLID;
-  sprite->rotation = state->rotation;
+  sprite->rotation = state->yaw;
   return 1;
 }
 

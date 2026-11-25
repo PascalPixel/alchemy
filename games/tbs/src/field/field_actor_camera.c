@@ -56,12 +56,8 @@ void ActorSystem_PlaceSprites(void) {
   // MapGridScrollState owns all three layer cell pointers at their 48-byte
   // stride.
   grid = gMapGridState[0];
-  {
-    s32 *view = grid->view;
-
-    viewX = view[0] & FIELD_PIXEL_MASK;
-    viewZ = view[1] & FIELD_PIXEL_MASK;
-  }
+  viewX = MapGridScrollState_View(grid)[0] & FIELD_PIXEL_MASK;
+  viewZ = MapGridScrollState_View(grid)[1] & FIELD_PIXEL_MASK;
   system = gActorSystemState;
   // Copy the picture decoder (Render_DecodePicture) into its heap slot.
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,

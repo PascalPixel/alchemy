@@ -255,7 +255,7 @@ s32 MapGrid_LoadMap(s32 index) {
     BlendScript_Start((u16 *)MAPGRID_BLEND_SCRIPT);
   }
   // The treasure spot list is not decoded: Field_PlaceTreasureSpots reads it in
-  // place through this pointer (MapGridMarkers.markers).
+  // place through this pointer.
   grid->markers = (u8 *)mapHeader + mapHeader->markers;
   // The header's bounds and origins are in 8-pixel tiles.
   grid->minX = toFIXED(mapHeader->cameraBounds[0] * 8);

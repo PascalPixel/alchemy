@@ -51,6 +51,12 @@ struct MapGridScrollState {
   struct MapGridLayerScroll layers[3]; ///< BG3, BG2 and BG1, in that order
 };
 
+/// The map's view position (MapGridScrollState.view): its left and its top,
+/// x then y, in 16.16 fixed-point pixels.
+static inline FIXED *MapGridScrollState_View(struct MapGridScrollState *grid) {
+  return grid->view;
+}
+
 #include "field/perspective.h"
 
 STATIC_ASSERT(sizeof(struct MapGridLayerScroll) == 48);

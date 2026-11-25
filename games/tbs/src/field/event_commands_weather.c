@@ -23,9 +23,8 @@
 void Weather_UpdateRain(void) {
   struct MapGridScrollState *grid = gMapGridState[0];
   struct WeatherState *state = gWeatherState;
-  s32 *camera = grid->view;
-  s32 cameraX = camera[0];
-  s32 cameraZ = camera[1];
+  s32 cameraX = MapGridScrollState_View(grid)[0];
+  s32 cameraZ = MapGridScrollState_View(grid)[1];
   struct WeatherParticle *particle = state->particles;
   u32 i;
 
@@ -176,9 +175,8 @@ void FieldMotes_Update(void) {
     s32 y;
 
     if (--mote->timer != GROUND_PARTICLE_FREED) {
-      s32 *camera = grid->view;
-      s32 cameraX = camera[0];
-      s32 cameraZ = camera[1];
+      s32 cameraX = MapGridScrollState_View(grid)[0];
+      s32 cameraZ = MapGridScrollState_View(grid)[1];
       u16 age = mote->timer;
       u32 firstJitterDraw;
       u32 secondJitterDraw;

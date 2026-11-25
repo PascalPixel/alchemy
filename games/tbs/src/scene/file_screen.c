@@ -928,8 +928,7 @@ menu_top:;
               s32 row;
 
               glyphColumn = pageGlyphIndex % PASSWORD_SYMBOLS_PER_ROW;
-              // The same division, by the divide routine's own name.
-              row = __divsi3(pageGlyphIndex, PASSWORD_SYMBOLS_PER_ROW);
+              row = pageGlyphIndex / PASSWORD_SYMBOLS_PER_ROW;
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
                               (row << 4) + 2);
             }

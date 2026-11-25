@@ -324,7 +324,7 @@ static s32 Imil_UpdateTremble(struct Actor *actor) {
   case 0:
     actor->scaleX += FIXED_ONE / 16;
     actor->scaleY -= FIXED_ONE / 32;
-    if ((s16)actor->userValue != 0) {
+    if (actor->userValue != 0) {
       actor->timer = (u32)Random_Next() % 40 + 40;
     } else {
       actor->timer = (u32)Random_Next() % 20 + 20;
@@ -1227,8 +1227,8 @@ UNUSED static void Imil_UpdateSpiralIn(struct Actor *actor) {
       buf[0] = gImil_EffectCenter[0];
       buf[1] = gImil_EffectCenter[1] + toFIXED(8);
       buf[2] = gImil_EffectCenter[2];
-      Vector_AddPolarOffset(toFIXED(t),
-                            t * (TRIG_TURN / 32) + (s16)actor->userValue, buf);
+      Vector_AddPolarOffset(toFIXED(t), t * (TRIG_TURN / 32) + actor->userValue,
+                            buf);
       actor->x.fixed = buf[0];
       actor->y.fixed = buf[1];
       actor->z.fixed = buf[2];

@@ -263,9 +263,9 @@ static s32 TolbiShipMast_DriftBird(struct Actor *actor) {
   }
 
   // The bob, between the deck and 16 pixels up.
-  if ((s16)actor->userValue == DRIFT_HELD) {
+  if (actor->userValue == DRIFT_HELD) {
     actor->y.fixed = 0;
-  } else if ((s16)actor->userValue != DRIFT_INCREASING) {
+  } else if (actor->userValue != DRIFT_INCREASING) {
     actor->y.fixed -= Random_Below(toFIXED(3) / 4);
     if (actor->y.fixed < 0) {
       actor->userValue = DRIFT_INCREASING;

@@ -506,7 +506,7 @@ static void WorldMap_CircleFlint(struct Actor *actor) {
     Actor_SetColorMode(actor, SPRITE_COLOR_RED_TINT);
   else
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
-  if ((s16)actor->userValue == 0) {
+  if (actor->userValue == 0) {
     actor->x.fixed = toFIXED(5584);
     actor->y.fixed =
         Iwram_MulFX(Trig_Sin(actor->timer << 3), toFIXED(4)) + toFIXED(16);

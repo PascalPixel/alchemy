@@ -106,10 +106,9 @@ UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
     actor->x.fixed = host->x.fixed;
     actor->y.fixed =
         host->y.fixed +
-        toFIXED(
-            (s8)Resource_GetMetadataRecordFar(
-                (s16)Scene_FindActorPlacement((s16)actor->userValue)->sprite)
-                ->spriteTop) +
+        toFIXED((s8)Resource_GetMetadataRecordFar(
+                    (s16)Scene_FindActorPlacement(actor->userValue)->sprite)
+                    ->spriteTop) +
         toFIXED(8);
     actor->groundHeight = host->groundHeight;
     actor->z.fixed = host->z.fixed;

@@ -239,7 +239,6 @@ const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsC_Triggers; }
 s32 Scene_Initialize(void) {
   struct FieldState *state = gFieldState;
   u32 actorId;
-  u32 entrance;
 
   state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -254,12 +253,10 @@ s32 Scene_Initialize(void) {
     }
   }
 
-  entrance = (u16)gMainRoutineState.entrance;
-
   // By the village's south door the room is the father's house. By the north
   // doorway or up from Kolima Tunnel, the two entrances after it, other cells
   // make it a storeroom and the family is put out of sight.
-  if ((s16)entrance == LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH) {
+  if (gMainRoutineState.entrance == LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH) {
     s32 height;
     s32 width;
     width = 13;
@@ -267,8 +264,9 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellsTo(34, 34, 18, 16, width, height);
     MapGrid_CopyCellsTo(34, 94, 18, 76, width, height);
     MapGrid_CopyCellsTo(94, 34, 78, 16, width, height);
-  } else if (((entrance - LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH) << 16) <=
-             (1u << 16)) {
+  } else if (gMainRoutineState.entrance >=
+                 LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH &&
+             gMainRoutineState.entrance <= LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) {
     s32 height;
     s32 width;
     width = 11;

@@ -7,13 +7,13 @@
 static s32 Scene_LookAboutRandomly(struct Actor *actor) {
   u32 nextTimer;
 
-  if ((s16)actor->userValue == 0) {
+  if (actor->userValue == 0) {
     actor->facing += Random_Below(32768);
     nextTimer = Random_Below(80);
     actor->userValue = nextTimer;
   }
-  if ((s16)actor->userValue != 0) {
-    actor->userValue = (s16)actor->userValue - 1;
+  if (actor->userValue != 0) {
+    actor->userValue--;
   }
   return 1;
 }

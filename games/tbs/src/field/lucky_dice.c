@@ -50,8 +50,8 @@ void Camera_ResetViewDefaults(void) {
   // The eye sits `distance` behind the target along the camera's view.
   Matrix_Initialize();
   Matrix_TranslateVector(&camera->focus[0]);
-  Matrix_RotateY((s16)camera->yaw);
-  Matrix_RotateX((s16)camera->pitch);
+  Matrix_RotateY(camera->yaw);
+  Matrix_RotateX(camera->pitch);
 
   SET_VECTOR(offset, 0, 0, camera->distance);
   Iwram_TransformVector(offset, camera->eye);

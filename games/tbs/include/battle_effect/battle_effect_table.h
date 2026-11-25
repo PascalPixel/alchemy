@@ -139,9 +139,16 @@ extern u8 gDjinnBeams_MotePictures[];
 extern u16 gDjinnBeams_HeadPictures[];
 extern u8 gDjinnBeams_HeadWidths[];
 extern u8 gDjinnBeams_HeadHeights[];
-/// The lobbed shells: two bytes for each mode, and the eighteen pictures of
-/// the tumbling shards, a large set of nine and a small one.
-extern s8 gLobbedShells_Styles[];
+/// Each lobbed shells mode's style (enum LobbedShellsMode,
+/// battle_effect_lobbed_shells.c).
+enum {
+  LOBBED_SHELLS_STYLE_SHATTER, ///< nonzero: the shells burst into shards, not
+                               ///< smoke
+  LOBBED_SHELLS_STYLE_UNUSED   ///< 0 in every row; nothing reads it
+};
+extern s8 gLobbedShells_Styles[][2];
+/// The eighteen pictures of the lobbed shells' tumbling shards, a large set of
+/// nine and a small one.
 extern u8 gLobbedShells_ShardWidths[];
 extern u8 gLobbedShells_ShardHeights[];
 extern u16 gLobbedShells_ShardPictures[];

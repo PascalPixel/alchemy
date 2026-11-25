@@ -114,7 +114,7 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
     if (excludeSent != 0) {
       summary = gSaveState->summary;
       for (file = 0; file < SAVE_FILE_COUNT; file++) {
-        if ((s8)summary[file].sendFlag != 0)
+        if (summary[file].sendFlag != 0)
           count--;
       }
     }
@@ -596,7 +596,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
   for (i = 0; i < 4 && summary->party[i] != -1; i++) {
     struct Sprite *sprite =
         Sprite_CreateFar(Party_GetCharacterSpriteForChildhoodFar(
-            summary->party[i], (s8)summary->childhood));
+            summary->party[i], summary->childhood));
 
     if (sprite != NULL) {
       Sprite_StartAnimationFar(sprite, ANIM_STAND);
@@ -733,7 +733,7 @@ void FileList_DrawDjinnCounts(struct Window *window,
 
   if (window != NULL) {
     for (i = 0; i < 4; i++)
-      Text_DrawNumberAtOffset((s8)summary->djinn[i], 2, window,
+      Text_DrawNumberAtOffset(summary->djinn[i], 2, window,
                               i * FILE_LIST_SPRITE_SPACING * 8, 16);
   }
 }
@@ -856,7 +856,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   if (menuMode == FILE_LIST_CONTINUE) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
-                                 (s8)save->summary[selectedFile].sendFlag != 0);
+                                 save->summary[selectedFile].sendFlag != 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -867,9 +867,9 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       goto done;
     }
   } else if (menuMode == FILE_LIST_BATTLE) {
-    for (i = 0; i < SAVE_FILE_COUNT &&
-                (save->summary[selectedFile].level == 0 ||
-                 (s8)save->summary[selectedFile].djinnCount == 0);
+    for (i = 0;
+         i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
+                                 save->summary[selectedFile].djinnCount == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -882,7 +882,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   } else if (menuMode == FILE_LIST_CLEARED) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
-                                 (s8)save->summary[selectedFile].sendFlag == 0);
+                                 save->summary[selectedFile].sendFlag == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -921,7 +921,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != summary->secondPartPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, y);
-    } else if (menuMode == FILE_LIST_CLEARED && (s8)summary->sendFlag == 0) {
+    } else if (menuMode == FILE_LIST_CLEARED && summary->sendFlag == 0) {
       Text_DrawMessage(MsgSaveNotCleared, fileList, 10, y);
     } else {
       Text_DrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
@@ -946,7 +946,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   if (menuMode == FILE_LIST_CONTINUE) {
     for (i = 0;
-         i < SAVE_FILE_COUNT && ((s8)save->summary[selectedFile].sendFlag != 0);
+         i < SAVE_FILE_COUNT && (save->summary[selectedFile].sendFlag != 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -958,8 +958,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     }
   }
   if (menuMode == FILE_LIST_BATTLE) {
-    for (i = 0; i < SAVE_FILE_COUNT &&
-                ((s8)save->summary[selectedFile].djinnCount == 0);
+    for (i = 0;
+         i < SAVE_FILE_COUNT && (save->summary[selectedFile].djinnCount == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -972,7 +972,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   if (menuMode == FILE_LIST_CLEARED) {
     for (i = 0;
-         i < SAVE_FILE_COUNT && ((s8)save->summary[selectedFile].sendFlag == 0);
+         i < SAVE_FILE_COUNT && (save->summary[selectedFile].sendFlag == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -998,7 +998,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                save->summary[i].secondPartPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, i * 16);
     } else if (menuMode == FILE_LIST_CLEARED &&
-               (s8)save->summary[i].sendFlag == 0) {
+               save->summary[i].sendFlag == 0) {
       Text_DrawMessage(MsgSaveNotCleared, fileList, 10, i * 16);
     } else {
       y = i * 16;
@@ -1041,10 +1041,10 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         FileList_ShowPartySprites(partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
         wait(1);
-        if ((s8)save->summary[selectedFile].djinn[0] +
-                (s8)save->summary[selectedFile].djinn[1] +
-                (s8)save->summary[selectedFile].djinn[2] +
-                (s8)save->summary[selectedFile].djinn[3] !=
+        if (save->summary[selectedFile].djinn[0] +
+                save->summary[selectedFile].djinn[1] +
+                save->summary[selectedFile].djinn[2] +
+                save->summary[selectedFile].djinn[3] !=
             0) {
           if (djinnWindow == NULL)
             djinnWindow = Window_Create(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
@@ -1095,11 +1095,11 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           break;
       } while ((save->summary[selectedFile].level == 0 ||
                 (menuMode == FILE_LIST_CONTINUE &&
-                 (s8)save->summary[selectedFile].sendFlag != 0) ||
+                 save->summary[selectedFile].sendFlag != 0) ||
                 (menuMode == FILE_LIST_BATTLE &&
-                 (s8)save->summary[selectedFile].djinnCount == 0) ||
+                 save->summary[selectedFile].djinnCount == 0) ||
                 (menuMode == FILE_LIST_CLEARED &&
-                 (s8)save->summary[selectedFile].sendFlag == 0)));
+                 save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysRepeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
@@ -1109,11 +1109,11 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           break;
       } while ((save->summary[selectedFile].level == 0 ||
                 (menuMode == FILE_LIST_CONTINUE &&
-                 (s8)save->summary[selectedFile].sendFlag != 0) ||
+                 save->summary[selectedFile].sendFlag != 0) ||
                 (menuMode == FILE_LIST_BATTLE &&
-                 (s8)save->summary[selectedFile].djinnCount == 0) ||
+                 save->summary[selectedFile].djinnCount == 0) ||
                 (menuMode == FILE_LIST_CLEARED &&
-                 (s8)save->summary[selectedFile].sendFlag == 0)));
+                 save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysPressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;

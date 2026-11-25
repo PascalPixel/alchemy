@@ -43,7 +43,8 @@ void BattleCamera_Update(void) {
   if (view->frames != 0) {
     delta = view->targetYaw - camera->yaw;
     delta /= CAMERA_YAW_EASE;
-    camera->yaw += delta;
+    // The step is added to the yaw read as an unsigned halfword.
+    camera->yaw = (u16)camera->yaw + delta;
     view->frames--;
   }
 
@@ -54,8 +55,8 @@ void BattleCamera_Update(void) {
 
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
-  Matrix_RotateY((s16)camera->yaw);
-  Matrix_RotateX((s16)camera->pitch);
+  Matrix_RotateY(camera->yaw);
+  Matrix_RotateX(camera->pitch);
 
   // The eye sits distance behind the focus, along the turned view.
   eyeOffset.x = 0;

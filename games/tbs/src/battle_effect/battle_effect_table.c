@@ -236,17 +236,17 @@ u8 gDjinnBeams_HeadHeights[] = EARTH_WALL_PICTURE_HEIGHTS;
 
 // battle_effect_lobbed_shells.c: Shell explosion rows and shards.
 
-/// Two bytes for each lobbed shell style (enum LobbedShellsMode,
-/// battle_effect_lobbed_shells.c).
-s8 gLobbedShells_Styles[] = {
-    // nonzero: the shells burst into shards, not smoke; unused
-    0, 0, // LOBBED_SHELLS_BONE_CHILLER
-    0, 0, // LOBBED_SHELLS_STICKY_GOO
-    0, 0, // LOBBED_SHELLS_STICKY_POISON
-    1, 0, // LOBBED_SHELLS_ROTTEN_BLOOD
-    1, 0, // LOBBED_SHELLS_MAD_SPATTER
-    0, 0, // LOBBED_SHELLS_DECOMPOSE
-    0, 0, // LOBBED_SHELLS_POISON_INK
+/// Each lobbed shell style (enum LobbedShellsMode,
+/// battle_effect_lobbed_shells.c): the LOBBED_SHELLS_STYLE_ columns.
+s8 gLobbedShells_Styles[][2] = {
+    // shatter, unused
+    {0, 0}, // LOBBED_SHELLS_BONE_CHILLER
+    {0, 0}, // LOBBED_SHELLS_STICKY_GOO
+    {0, 0}, // LOBBED_SHELLS_STICKY_POISON
+    {1, 0}, // LOBBED_SHELLS_ROTTEN_BLOOD
+    {1, 0}, // LOBBED_SHELLS_MAD_SPATTER
+    {0, 0}, // LOBBED_SHELLS_DECOMPOSE
+    {0, 0}, // LOBBED_SHELLS_POISON_INK
 };
 /// Lobbed shells: nine tumbling images in two sets, the second (pictures 9 to
 /// 17) smaller.

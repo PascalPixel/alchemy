@@ -1013,7 +1013,7 @@ static void KolimaForestTree_UpdateOrbitSpark(struct Actor *spark) {
 
   if (age < ORBIT_SPARK_FRAMES) {
     SET_VECTOR(position, spark->targetX, spark->targetY, spark->targetZ);
-    heading = (s16)spark->userValue;
+    heading = spark->userValue;
     Vector_AddPolarOffset(toFIXED(age), age * ORBIT_SPARK_TURN + heading,
                           position);
     spark->x.fixed = position[0];

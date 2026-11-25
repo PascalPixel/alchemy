@@ -2352,7 +2352,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   FieldCamera_MoveTo(175, 96, 1086, 1);
   do {
     wait(1);
-  } while ((s16)actor->userValue != 8);
+  } while (actor->userValue != 8);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   wait(60);
@@ -2590,7 +2590,7 @@ static void ValePrologue_UpdateBoulderShadow(void) {
   shadow->targetX = shadow->x.fixed;
   sprite->offsetY = 10;
   if (gFrameCount & 1) {
-    switch ((s16)source->userValue) {
+    switch (source->userValue) {
     case 1:
     case 5:
       shadow->scaleX += FIXED_ONE / 25;

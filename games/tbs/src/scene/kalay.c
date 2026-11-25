@@ -311,7 +311,7 @@ static s32 Kalay_UpdateWaitingTourist(struct Actor *actor) {
   u32 action;
   u32 nextTimer;
 
-  if ((s16)actor->userValue == 0) {
+  if (actor->userValue == 0) {
     action = Random_Below(8);
     switch (action) {
     case 0:
@@ -328,8 +328,8 @@ static s32 Kalay_UpdateWaitingTourist(struct Actor *actor) {
     nextTimer = Random_Below(80);
     actor->userValue = nextTimer;
   }
-  if ((s16)actor->userValue != 0) {
-    actor->userValue = (s16)actor->userValue - 1;
+  if (actor->userValue != 0) {
+    actor->userValue--;
   }
   return 1;
 }

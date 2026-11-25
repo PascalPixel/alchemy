@@ -135,7 +135,7 @@ static void GomaCavePillar_FightForge(void) {
 static void GomaCavePillar_UpdateFragment(struct Actor *fragment) {
   // GomaCavePillar_SpawnFragment keeps the two rates in speedLimit and
   // acceleration, and the plane in userValue.
-  s16 plane = (s16)fragment->userValue;
+  s16 plane = fragment->userValue;
 
   switch (plane) {
   case PLANE_XY:
@@ -197,7 +197,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   fragment->update = GomaCavePillar_UpdateFragment;
   fragment->speedLimit = firstRate;
   fragment->acceleration = secondRate;
-  fragment->userValue = (u16)place;
+  fragment->userValue = place;
   priority = FRAGMENT_PRIORITY(place);
   switch (priority) {
   case 0:

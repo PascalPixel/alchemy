@@ -39,14 +39,14 @@ struct SaveFileSummary {
   u16 area;          ///< area name number (Area_GetNameIndex)
   u32 playTime;      ///< frames
   u32 coins;
-  u8 djinn[4]; ///< the party's Djinn of each element
+  s8 djinn[4]; ///< the party's Djinn of each element
   s8 party[5]; ///< up to four party members, ended by -1
   /// Copied from MainRoutineState.sendFlag, which saving at the end of the
   /// game sets; the file list for cleared data lists a file without it as not
   /// cleared.
   s8 sendFlag;
   s8 djinnCount; ///< how many Djinn flags (FLAG_DJINN_FIRST on) are set
-  u8 childhood;  ///< FLAG_CHILDHOOD is set; remaps the party's sprites
+  s8 childhood;  ///< FLAG_CHILDHOOD is set; remaps the party's sprites
   /// bits: 15..8 windowBrightness | 7..0 windowHue
   ///@{
   u16 windowHue : 8;        ///< MainRoutineState.windowHue

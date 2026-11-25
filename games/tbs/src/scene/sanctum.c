@@ -184,7 +184,7 @@ static void Sanctum_RemoveCounter(void);
 static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *actor) {
   struct Actor *target;
 
-  target = Actor_Get((s16)actor->timer);
+  target = Actor_Get(actor->timer);
   actor->facing = Trig_Atan(target->z.fixed - actor->z.fixed,
                             target->x.fixed - actor->x.fixed);
   RETURN_UNREAD(0);
@@ -2017,13 +2017,12 @@ static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
 /// fifths, and goes once its frames run out.
 static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   FIXED scale;
-  s32 framesLeft;
 
   // The timer holds the upward step in sixteenths of a pixel.
   spark->y.fixed += spark->timer * (toFIXED(1) / 16);
   spark->targetY = spark->y.fixed;
   scale = 0;
-  switch (((s16)spark->userValue >> 2) & 3) {
+  switch ((spark->userValue >> 2) & 3) {
   case 0:
     scale = FIXED_ONE;
     break;
@@ -2037,9 +2036,7 @@ static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   }
   spark->scaleX = scale;
   spark->scaleY = scale;
-  framesLeft = spark->userValue - 1;
-  spark->userValue = framesLeft;
-  if ((s16)framesLeft <= 0)
+  if (--spark->userValue <= 0)
     Actor_StartScript(spark, gSanctum_SparkEndScript);
 }
 

@@ -465,11 +465,11 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       }
       // The first footprint after a stop is the pair and restarts the sides;
       // each second one faces a half turn round.
-      if ((s16)actor->userValue == FOOTPRINT_BOTH_FEET) {
+      if (actor->userValue == FOOTPRINT_BOTH_FEET) {
         Sprite_StartAnimation(animation, FOOTPRINT_BOTH_FEET);
         actor->userValue = collision;
       }
-      if ((s16)actor->userValue != 0)
+      if (actor->userValue != 0)
         effect->facing = DEGtoANG(180);
       if (movementAnimation == ANIM_LEADER_RUN)
         actor->timer = FOOTPRINT_RUN_INTERVAL;

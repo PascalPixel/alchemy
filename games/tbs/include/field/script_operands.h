@@ -55,7 +55,7 @@ struct ScriptOperands {
   u8 paused;            ///< SW_PAUSED
   u8 retainSpriteCache; ///< keeps the sprite's VRAM; no state value
   u8 repeatCount;       ///< SW_REPEAT, SC_LOOP's count
-  u16 wait;             ///< SW_WAIT, compared as signed
+  s16 wait;             ///< SW_WAIT
   u8 refused;           ///< Actor.refused; no state value
   u8 frozen;            ///< ActorArmView.frozen; no state value
   u8 sceneCounter;      ///< SW_SCENE_COUNTER, kept by scene code

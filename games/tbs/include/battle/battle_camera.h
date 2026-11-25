@@ -26,8 +26,8 @@ struct BattleCamera {
   s32 *followPosition;        ///< when set, followed instead of focus
   FIXED distance;             ///< eye to focus, 16.16 fixed-point pixels
   u8 unusedAfterDistance[16]; ///< no code names it
-  u16 pitch;                  ///< 1/65536 turns
-  u16 yaw;                    ///< 1/65536 turns
+  s16 pitch;                  ///< 1/65536 turns
+  s16 yaw;                    ///< 1/65536 turns
   u8 unusedAfterYaw[20];      ///< no code names it
 };
 

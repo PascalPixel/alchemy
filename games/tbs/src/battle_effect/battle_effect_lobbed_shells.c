@@ -99,7 +99,8 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 #define LOBBED_SHELLS_SHARDS_END_FRAMES 56
 
 /// Nonzero when the style's shells burst into shards instead of smoke.
-#define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Styles[(mode) * 2]
+#define LOBBED_SHELLS_SHATTER(mode)                                            \
+  gLobbedShells_Styles[(mode)][LOBBED_SHELLS_STYLE_SHATTER]
 
 /// Lobs a shell from the user at each target in turn; when it lands the target
 /// flashes and the shell bursts into smoke that drifts up or shards that fly up
@@ -252,7 +253,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               /* FAKEMATCH(temporary): records, a pointer to
                * gLobbedShells_Styles for the one read; as
                * LOBBED_SHELLS_SHATTER(mode). */
-              s8 *records = gLobbedShells_Styles;
+              s8 *records = gLobbedShells_Styles[0];
               s32 groupSlots = 8;
 
               shot->y = 0;

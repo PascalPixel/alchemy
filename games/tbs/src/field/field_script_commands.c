@@ -867,18 +867,7 @@ SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRepeatCount, repeatCount,
                              u8)
 
 /// State value SW_WAIT: sets, adds to or compares the wait counter.
-void ActorScript_SetOrCompareWait(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
-  if (operation == SCRIPT_OPERAND_SET) {
-    state->wait = value;
-    return;
-  }
-  if (operation == SCRIPT_OPERAND_ADD) {
-    state->wait += value;
-    return;
-  }
-  state->conditionResult = (s16)state->wait == (s16)value;
-}
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareWait, wait, s16)
 
 /// State value SW_TIMER: sets, adds to or compares the actor's timer.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareTimer, timer, s16)

@@ -88,9 +88,9 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     if (state->args->variant == EFFECT_VARIANT_STRONGEST &&
         frame < VOLCANO_PILLAR_FRAMES) {
       if (state->args->side == EFFECT_SIDE_ENEMIES)
-        camera->yaw = camera->yaw + VOLCANO_CAMERA_SPIN;
+        camera->yaw += VOLCANO_CAMERA_SPIN;
       else
-        camera->yaw = (s16)camera->yaw - VOLCANO_CAMERA_SPIN;
+        camera->yaw -= VOLCANO_CAMERA_SPIN;
     }
     if (frame == 16)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

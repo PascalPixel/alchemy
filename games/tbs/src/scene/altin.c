@@ -725,13 +725,12 @@ static void Altin_WalkIntoMine(void) {
 /// shakes the screen for a few frames.
 static void Altin_BeastHop(struct Actor *actor) {
   struct Actor *beast = actor;
-  // The frames left of the landing's shake.
-  s16 *shakeFrames = (s16 *)&beast->userValue;
 
-  // timer counts the frames of the hop, and the effect's countdown is set
-  // while the beast is in the air, so that it lands with one splash.
-  if (*shakeFrames != 0) {
-    if (--*shakeFrames == 1)
+  // userValue holds the frames left of the landing's shake, timer counts the
+  // frames of the hop, and the effect's countdown is set while the beast is in
+  // the air, so that it lands with one splash.
+  if (beast->userValue != 0) {
+    if (--beast->userValue == 1)
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   if (beast->velocityY == 0) {
@@ -741,7 +740,7 @@ static void Altin_BeastHop(struct Actor *actor) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
         Sound_Play(SE_SPLASH);
         ((struct FieldEffect *)actor)->countdown = 0;
-        // shakeFrames, set through the field itself: four frames of shake.
+        // Four frames of shake.
         beast->userValue = 4;
         MapGrid_SetShake(0, 1, 1);
       }

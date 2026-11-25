@@ -60,7 +60,7 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
     s32 pos;
 
     for (pos = count - 1; pos > 0; pos--) {
-      if ((s16)entries[pos].priority > (s16)entries[pos - 1].priority) {
+      if (entries[pos].priority > entries[pos - 1].priority) {
         Dma_Set(&entries[pos], &swap, DMA_COPY_WORDS(4), REG_DMA3);
         Dma_Set(&entries[pos - 1], &entries[pos], DMA_COPY_WORDS(4), REG_DMA3);
         Dma_Set(&swap, &entries[pos - 1], DMA_COPY_WORDS(4), REG_DMA3);

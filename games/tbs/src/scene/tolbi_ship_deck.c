@@ -488,7 +488,7 @@ enum TolbiShipDeckDiveStep {
       }                                                                        \
       if (actor->x.fixed > toFIXED(minX) && actor->x.fixed < toFIXED(maxX))    \
         actor->x.fixed += actor->sceneWord;                                    \
-      if ((s16)actor->userValue != 0) {                                        \
+      if (actor->userValue != 0) {                                             \
         actor->y.fixed =                                                       \
             actor->y.fixed - (Random_Below(32768)) - toFIXED(1) / 2;           \
         if (actor->y.fixed < 0)                                                \
@@ -544,7 +544,7 @@ static s32 sOarDepth[8];
 /// Bobs the actor between 4 and 12 pixels high by a random amount
 /// each frame.
 static s32 TolbiShipDeck_Bob(struct Actor *actor) {
-  if ((s16)actor->userValue != 0) {
+  if (actor->userValue != 0) {
     actor->y.fixed -= (Random_Below(32768)) + toFIXED(1) / 2;
     if (actor->y.fixed < toFIXED(4)) {
       actor->userValue = 0;

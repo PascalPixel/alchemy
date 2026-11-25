@@ -1337,13 +1337,12 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// shaking the screen up and down where this one shakes it sideways.
 static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
   struct Actor *beast = updated;
-  // The frames left of the landing's shake.
-  s16 *shakeFrames = (s16 *)&beast->userValue;
 
-  // timer counts the frames of the hop, and the effect's countdown is set
-  // while the beast is in the air, so that it lands with one splash.
-  if (*shakeFrames != 0) {
-    if (--*shakeFrames == 1)
+  // userValue holds the frames left of the landing's shake, timer counts the
+  // frames of the hop, and the effect's countdown is set while the beast is in
+  // the air, so that it lands with one splash.
+  if (beast->userValue != 0) {
+    if (--beast->userValue == 1)
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   if (beast->velocityY == 0) {
@@ -1353,7 +1352,7 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
       if (((struct FieldEffect *)updated)->countdown != 0) {
         Sound_Play(SE_SPLASH);
         ((struct FieldEffect *)updated)->countdown = 0;
-        // shakeFrames, set through the field itself: four frames of shake.
+        // Four frames of shake.
         beast->userValue = 4;
         MapGrid_SetShake(1, 0, 1);
       }
@@ -2517,7 +2516,6 @@ static void AltinPeak_StartCartCountdown(struct Actor *actor) {
 static void AltinPeak_AdvanceCart(struct Actor *actor) {
   s32 angle = TRIG_TURN * 3 / 4;
   FIXED speed;
-  s16 *timer;
   struct FieldPosition position;
   FIXED ahead;
   FIXED behind;
@@ -2525,12 +2523,11 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
   angle &= actor->facing;
   speed = actor->y.fixed / FIXED_ONE;
   speed = gAltinPeak_CartSpeeds[actor->timer - speed + 16];
-  timer = (s16 *)&actor->userValue;
-  if (*timer != 0) {
-    if (--*timer == CART_COUNTDOWN_TURN) {
+  if (actor->userValue != 0) {
+    if (--actor->userValue == CART_COUNTDOWN_TURN) {
       Sound_Play(SE_CART_TURN);
     }
-    if (*timer == 0) {
+    if (actor->userValue == 0) {
       Sound_Play(SE_CART_ROLL);
     }
   }
@@ -2545,7 +2542,7 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
                                &position);
   behind =
       MapGrid_GetTerrainHeight(MAPGRID_LAYER_OVERHEAD, position.x, position.z);
-  if (*timer <= CART_COUNTDOWN_TURN) {
+  if (actor->userValue <= CART_COUNTDOWN_TURN) {
     if (ahead == behind) {
       Actor_SelectAnimation(actor, MINE_CART_ANIMATION_ROLL);
     } else if (ahead > behind) {

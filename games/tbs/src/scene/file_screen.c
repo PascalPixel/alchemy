@@ -1219,8 +1219,8 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[PASSWORD_COINS_BYTE] = (u32)gMainRoutineState.holdings.coins >> 16;
-    out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineState.holdings.coins >> 8;
+    out[PASSWORD_COINS_BYTE] = gMainRoutineState.holdings.coins >> 16;
+    out[PASSWORD_COINS_BYTE + 1] = gMainRoutineState.holdings.coins >> 8;
     out[PASSWORD_COINS_BYTE + 2] = gMainRoutineState.holdings.coins;
   }
 

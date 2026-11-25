@@ -46,9 +46,8 @@ static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
       position.z = particle->targetZ;
       Vector_AddPolarOffset(
           remainingFrames * toFIXED(2),
-          clockwise
-              ? (s16)particle->userValue - remainingFrames * (TRIG_TURN / 32)
-              : (s16)particle->userValue + remainingFrames * (TRIG_TURN / 32),
+          clockwise ? particle->userValue - remainingFrames * (TRIG_TURN / 32)
+                    : particle->userValue + remainingFrames * (TRIG_TURN / 32),
           &position);
       particle->x.fixed = position.x;
       particle->y.fixed = position.y;

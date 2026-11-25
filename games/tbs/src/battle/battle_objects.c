@@ -63,8 +63,8 @@ void BattleObject_UpdateSpritePriorities(void) {
   }
 
   // The camera's turn decides which side is in front: with the yaw in the
-  // first half turn (as a signed halfword), the party.
-  if ((s16)gBattleCamera->yaw >= 0) {
+  // first half turn, not negative, the party.
+  if (gBattleCamera->yaw >= 0) {
     sidePriorities[0] = 1;
     sidePriorities[1] = 2;
   } else {
@@ -207,19 +207,19 @@ UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
   // status appears with no icon shown.
   shownIcon = battleObject->animationEntry;
   if ((shownIcon == 0
-           ? (s16)battleObject->activeStatuses != 0
-           : (((s16)battleObject->activeStatuses >> battleObject->shownStatus) &
+           ? battleObject->activeStatuses != 0
+           : ((battleObject->activeStatuses >> battleObject->shownStatus) &
               1) == 0) ||
       battleObject->cycleTimer == 0) {
     iconAnimation = -1;
     actor = battleObject->actor;
-    if ((s16)battleObject->activeStatuses != 0) {
+    if (battleObject->activeStatuses != 0) {
       // The next status after the shown one, wrapping around.
       previousCondition = battleObject->shownStatus;
       for (iconAnimation = previousCondition + 1;; iconAnimation++) {
         if (iconAnimation > ICON_MAX - 1)
           iconAnimation = 0;
-        if ((((s16)battleObject->activeStatuses >> iconAnimation) & 1) != 0)
+        if (((battleObject->activeStatuses >> iconAnimation) & 1) != 0)
           break;
       }
 
@@ -594,8 +594,8 @@ void BattleCamera_SetDefaultView(void) {
 
   Matrix_Initialize();
   Matrix_TranslateVector(&camera->focus[0]);
-  Matrix_RotateY((s16)camera->yaw);
-  Matrix_RotateX((s16)camera->pitch);
+  Matrix_RotateY(camera->yaw);
+  Matrix_RotateX(camera->pitch);
 
   eyeOffset.x = 0;
   eyeOffset.y = 0;

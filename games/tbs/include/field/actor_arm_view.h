@@ -58,7 +58,7 @@ typedef struct ActorScriptWords ActorScriptWords;
 /// the script as words and the bounce as a union.
 struct ActorArmView {
   const ActorScriptWords *script; ///< null when its slot is released
-  u16 scriptCursor;               ///< in words; read signed
+  s16 scriptCursor;               ///< in words
   u16 facing;                     ///< 1/65536 turns
   FIXED x;                        ///< 16.16 fixed-point pixels
   FIXED y;                        ///< 16.16 fixed-point pixels

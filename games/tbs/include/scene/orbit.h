@@ -102,7 +102,7 @@ typedef struct OrbitingMapActor {
   u8 sceneCounter;
   u8 sceneByte;
   s16 timer;
-  u16 userValue;
+  s16 userValue;
   struct Actor *watchedActor;
   /// Actor's update routine; Scene_FloatNut sets
   /// Scene_UpdateFloatingNut.

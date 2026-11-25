@@ -19,8 +19,8 @@ enum FleeChance {
 /// The random swaps that shuffle the enemies' order each turn.
 #define TURN_ORDER_SWAPS 32
 
-/// An empty action's priority, below every other as the sort reads it (s16).
-#define PRIORITY_LOWEST 32768
+/// An empty action's priority, below every other.
+#define PRIORITY_LOWEST -32768
 
 /// Unused: fills HIGHLIGHT_PALETTE with WINDOW_PALETTE's colours, brightened by
 /// a pulse that rises and falls with the frame count.
@@ -80,8 +80,8 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
 
   Matrix_Initialize();
   Matrix_TranslateVector(&camera->focus[0]);
-  Matrix_RotateY((s16)camera->yaw);
-  Matrix_RotateX((s16)camera->pitch);
+  Matrix_RotateY(camera->yaw);
+  Matrix_RotateX(camera->pitch);
 
   eyeOffset.x = 0;
   eyeOffset.y = 0;
@@ -323,8 +323,7 @@ void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
   do {
     swapCount = 0;
     for (sortIndex = count - 1; sortIndex > 0; sortIndex--) {
-      if ((s16)entries[sortIndex].priority >
-          (s16)entries[sortIndex - 1].priority) {
+      if (entries[sortIndex].priority > entries[sortIndex - 1].priority) {
         struct BattleAction temporary;
 
         Iwram_CopyWords(&temporary, &entries[sortIndex],

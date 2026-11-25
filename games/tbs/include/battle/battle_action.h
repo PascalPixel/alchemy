@@ -28,7 +28,7 @@ struct BattleObject {
   /// character on the enemy side (a link opponent), else 0.
   s32 palette;
   FIXED scale;        ///< 16.16 fixed point, FIXED_ONE full size
-  u16 activeStatuses; ///< a bit per status with an icon (ICON_)
+  s16 activeStatuses; ///< a bit per status with an icon (ICON_)
   u8 shownStatus;     ///< the status whose icon is shown
   s8 cycleTimer;      ///< frames until the next status icon
   struct SpriteAnimation *animationEntry; ///< the status icon's sprite, or NULL
@@ -67,7 +67,7 @@ enum BattleCommand {
 struct BattleAction {
   s16 unitId;
   u16 slot;      ///< in a link battle, unitId as the opponent knows it
-  u16 priority;  ///< from the unit's Agility; higher acts first
+  s16 priority;  ///< from the unit's Agility; higher acts first
   s16 command;   ///< enum BattleCommand
   s16 parameter; ///< an ability id, or COMMAND_ITEM's inventory index (-1 gone)
   s16 target;    ///< the aimed unit's id

@@ -64,7 +64,7 @@ struct PartyHoldings {
   /// The summons the party can call, bit n for summon n: the
   /// DjinnRecoveryTable's summonMask.
   u32 summonMask;
-  s32 coins; ///< 0 to COIN_MAX (Party_AdjustCoins)
+  u32 coins; ///< 0 to COIN_MAX (Party_AdjustCoins)
   /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
   /// Djinn_GetRecoveryTable.
   u8 djinnRecovery[260];

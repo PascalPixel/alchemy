@@ -34,7 +34,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
       pos.z = effectState->z;
       Vector_AddPolarOffset(
           toFIXED(remainingFrames),
-          (s16)particle->userValue + remainingFrames * (TRIG_TURN / 32), &pos);
+          particle->userValue + remainingFrames * (TRIG_TURN / 32), &pos);
       particle->x.fixed = pos.x;
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;

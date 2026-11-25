@@ -1314,11 +1314,11 @@ s32 Scene_Initialize(void) {
 static s32 ColosseumNavampaMatch_AdvanceSleepZ(struct Actor *particle) {
   particle->x.fixed += particle->timer * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
   particle->y.fixed +=
-      (s16)particle->userValue * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
+      particle->userValue * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
   particle->scaleX += FIXED_ONE / 40;
   particle->scaleY += FIXED_ONE / 40;
   particle->timer += 5;
-  particle->userValue = (s16)particle->userValue - 1;
+  particle->userValue--;
   return 0;
 }
 

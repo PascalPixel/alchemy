@@ -189,7 +189,7 @@ static void LemurianShip_SprayUpdate(struct Actor *drop) {
     drift = Random_Next() - Random_Next();
     drop->x.fixed += drift;
     drop->y.fixed += toFIXED(4) / 5;
-  } else if ((s16)drop->userValue != 0) {
+  } else if (drop->userValue != 0) {
     drop->userValue = 0;
     Actor_SelectAnimation(drop, ANIM_DROP_BURST);
     drop->wait = 20;

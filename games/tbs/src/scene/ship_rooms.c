@@ -493,7 +493,7 @@ static s32 ShipRooms_ResetActor(struct Actor *actor) {
 /// going, 1 down and 0 up. It runs every frame for as long as its script
 /// does.
 static s32 ShipRooms_Float(struct Actor *actor) {
-  if ((s16)actor->userValue != 0) {
+  if (actor->userValue != 0) {
     actor->y.fixed -= Random_Below(toFIXED(1) / 2) + toFIXED(1) / 2;
     if (actor->y.fixed < 0) {
       actor->userValue = 0;
@@ -551,7 +551,7 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *actor) {
   struct Actor *captain;
 
   captain = Actor_Get(ACTOR_QUARTERS_CAPTAIN);
-  switch ((s16)actor->userValue) {
+  switch (actor->userValue) {
   case KAJA_PACE_FACE_NORTH_NORTHWEST:
     actor->facing = FACING_NORTH_NORTHWEST;
     actor->userValue++;

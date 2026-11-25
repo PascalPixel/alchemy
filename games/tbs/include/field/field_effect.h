@@ -72,7 +72,7 @@ struct FieldEffect {
   /// Added to the sprite's rotation each frame by the update routines, in
   /// 1/65536 turns per frame; Imil's rising effects keep a drift here instead.
   u16 spin;
-  u16 userValue; ///< Actor's; not named by this view
+  s16 userValue; ///< Actor's; not named by this view
   /// Frames until a scene's update routine releases the effect: 20 for Altin
   /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;

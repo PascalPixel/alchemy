@@ -66,7 +66,7 @@ void Actor_UpdateAll(void) {
       actor->wait--;
     } else {
       for (;;) {
-        s32 cursor = (s16)actor->scriptCursor;
+        s32 cursor = actor->scriptCursor;
 #ifdef UBFIX
         u32 command = actor->script[cursor];
 #else

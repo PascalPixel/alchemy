@@ -548,7 +548,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
     quantityLimit = INVENTORY_STACK_MAX;
     if (item->price != 0)
-      quantityLimit = (u32)gMainRoutineState.holdings.coins / item->price;
+      quantityLimit = gMainRoutineState.holdings.coins / item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
       quantityLimit =

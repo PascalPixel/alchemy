@@ -128,7 +128,7 @@ struct Actor {
       s16 timer;
       /// The side of the player's next footprint (2 after a stop), or scene
       /// scratch.
-      u16 userValue;
+      s16 userValue;
     };
     /// Where SC_WANDER_HOME wanders around, in pixels: where it was created
     /// or placed.

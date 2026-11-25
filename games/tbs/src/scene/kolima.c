@@ -208,7 +208,7 @@ static s32 Kolima_TwinkleGroundSparkle(struct Actor *actor) {
   } else {
     Actor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
   }
-  if ((s16)actor->timer > 1200) {
+  if (actor->timer > 1200) {
     actor->timer = 0;
   }
   return 1;

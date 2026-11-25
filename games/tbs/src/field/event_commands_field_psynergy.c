@@ -117,7 +117,7 @@ void FieldPsynergy_Dispatch(void) {
     if (fieldState->revealActive != 0)
       FieldPsynergy_EndReveal();
     if (gMainRoutineState.haltedActor != effectState->targetId)
-      ((struct Actor *)effectState->target)->paused = 1;
+      effectState->target->paused = 1;
     FieldPsynergy_StartMindReadWave(effectState->casterId, targetId);
     break;
   case FIELD_PSYNERGY_MOVE:
@@ -183,7 +183,7 @@ void FieldPsynergy_FinishMindRead(void) {
   if (effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldPsynergy_StopMindReadWave();
     if (gMainRoutineState.haltedActor != effectState->targetId) {
-      ((struct Actor *)effectState->target)->paused = 0;
+      effectState->target->paused = 0;
     }
   }
 }
@@ -308,7 +308,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       Actor_ReleaseFar(actor);
       return NULL;
     }
-    actor->groundHeight = ((struct Actor *)effectState->caster)->groundHeight;
+    actor->groundHeight = effectState->caster->groundHeight;
     actor->motionFlags = ACTOR_FLOATS;
     actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     actor->sprite->image.priority = 0;

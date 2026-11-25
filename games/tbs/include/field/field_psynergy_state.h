@@ -15,16 +15,16 @@ struct Actor;
 /// The state of a field Psynergy: its caster and target, where it takes place,
 /// the map state it restores and its 24 field effect sprites.
 struct FieldEffectState {
-  s32 angle;         ///< 1/65536 turns
-  FIXED x;           ///< 16.16 fixed-point pixels
-  FIXED y;           ///< 16.16 fixed-point pixels
-  FIXED z;           ///< 16.16 fixed-point pixels
-  void *caster;      ///< the caster's actor
-  void *target;      ///< the target's actor, or NULL
-  s16 casterId;      ///< the caster's actor id
-  s16 targetId;      ///< the target's actor id, -1 for none
-  u16 ability;       ///< the ability id
-  s16 fieldPsynergy; ///< the ability's field kind (FIELD_PSYNERGY_)
+  s32 angle;            ///< 1/65536 turns
+  FIXED x;              ///< 16.16 fixed-point pixels
+  FIXED y;              ///< 16.16 fixed-point pixels
+  FIXED z;              ///< 16.16 fixed-point pixels
+  struct Actor *caster; ///< the caster's actor
+  struct Actor *target; ///< the target's actor, or NULL
+  s16 casterId;         ///< the caster's actor id
+  s16 targetId;         ///< the target's actor id, -1 for none
+  u16 ability;          ///< the ability id
+  s16 fieldPsynergy;    ///< the ability's field kind (FIELD_PSYNERGY_)
   /// Set at the start: Force then aims in front of the caster; cleared once
   /// the target has been dispatched.
   s8 aimAhead;

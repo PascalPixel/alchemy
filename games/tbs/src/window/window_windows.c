@@ -295,18 +295,16 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     }
   }
   if (found != 0) {
+    found->x = x;
     found->y = y;
     found->width = width;
     found->height = height;
-    found->x = x;
     found->sprites.head = NULL;
     found->state = WINDOW_TYPING;
     found->sprites.tailLink = &slot->sprites.head;
     found->opened = 1;
     found->flags = WINDOW_FLAG_OPEN;
-    /* FAKEMATCH(dead): x passed to Text_ResetStyle, which takes nothing and
-     * is declared without a prototype for it; as Text_ResetStyle(). */
-    Text_ResetStyle(x);
+    Text_ResetStyle();
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;
     }

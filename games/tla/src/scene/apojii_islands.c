@@ -1097,12 +1097,9 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
             entry++;
             markers->count++;
             {
-              /* FAKEMATCH(dead): layer 0's terrain from the room's corner in a
-               * local of its own, never read. */
               u8 *terrain = map->layers[0].terrainIds + origin;
 
-              (map->layers[0].terrainIds + origin)[(u16)x + ((u16)z << 7)] =
-                  MAP_SHAPE_MARKED;
+              terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
             }
           }
           x = NEXT_HALFWORD(x);

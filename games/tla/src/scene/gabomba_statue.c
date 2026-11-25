@@ -2604,8 +2604,9 @@ s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
                                           sizeof(struct PuzzleCell));
     s32 code;
 
-    /* FAKEMATCH(dead): occupied read through its address. */
-    if (*(u8 *)&cell->occupied != BLOCK_NONE || cell->blocked != 0)
+    if (cell->occupied != BLOCK_NONE)
+      return 1;
+    if (cell->blocked != 0)
       return 1;
     code = cell->kind;
     code ^= PIECE_STOP;

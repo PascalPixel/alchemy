@@ -112,8 +112,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 *entry;
   s32 palette, handle;
   s32 *word;
-  /* FAKEMATCH(temporary): cleared, a 0 held in a local for every 0 below. */
-  u32 cleared = 0;
+  u16 *spacing = NULL;
 
   window = NULL;
   speaker = gDjinn_ElementSprites[element & 3];
@@ -123,24 +122,24 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     return;
   Window_DrawDividerLine(window, 4, 0, 4, 4);
   state->dirty = 1;
-  Icon_LoadWithPalette(Portrait_GetForSpeaker(speaker), cleared, &handle,
-                       &palette, PORTRAIT_PALETTE, cleared);
+  Icon_LoadWithPalette(Portrait_GetForSpeaker(speaker), 0, &handle, &palette,
+                       PORTRAIT_PALETTE, 0);
   // The portrait as a bare OAM entry, drawn each frame at y 12: a link word,
   // attributes 0 and 1 and attribute 2.
   word = entry;
-  *word++ = cleared;
+  *word++ = 0;
   *word++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
   *word = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
   // No voice blips while the message types.
-  state->voiceSound = cleared;
-  state->voiceCountdown = cleared;
+  state->voiceSound = 0;
+  state->voiceCountdown = 0;
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
                            ABILITY_DJINNI_FIRST,
                        MESSAGE_ARGUMENT_ABILITY);
   JOINED_QUEUE_TEXT(
       window, Message_DecodeAndClearArguments(element + MsgVenusDjinnJoined),
-      36, 2, cleared);
+      36, 2, spacing);
   Sound_PlayFar(MUS_A_NEW_ALLY);
   do {
     Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);

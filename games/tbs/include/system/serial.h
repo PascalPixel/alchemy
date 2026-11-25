@@ -214,14 +214,12 @@ static __inline__ void Serial_ResetTransferState(void) {
   {
     u32 clear = 0;
 
-    /* FAKEMATCH(dead): state set again. */
-    state = &gSerialTransfer;
     Io_Write8(SERIAL_STATUS_RUNNING, &state->status);
     gSerialSendSource = clear;
     gSerialSendSize = clear;
-    gSerialReceiveDestination = clear;
     state->peerFlags = clear;
     state->flags = clear;
+    gSerialReceiveDestination = clear;
     gSerialReceivedSize = clear;
   }
   IRQ_UNLOCK(saved);

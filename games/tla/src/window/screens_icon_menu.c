@@ -448,7 +448,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
-        /* FAKEMATCH(barrier): an empty asm. */
+        CAMELOT_ASM("an asm with no instruction, text unknown: the literal "
+                    "pool after this sprite's stores sits where the ROM has it "
+                    "only if exactly 4 more bytes are counted between the load "
+                    "of the Psynergy icon's x (40) and the call to "
+                    "AbilityIcon_LoadIntoSlot than the instructions emitted, "
+                    "in all six editions; only a one-line asm counts bytes and "
+                    "emits nothing in this compiler; and the second scheduling "
+                    "pass keeps the load before VramCache_AllocEntry on either "
+                    "side of this point, which no length difference can do")
         __asm__ volatile("");
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(parameter, handle);
         state->iconShown[1] = 1;
@@ -519,7 +527,16 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         ((u32 *)&iconSprite->oam)[0] =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         ((u32 *)&iconSprite->oam)[1] = 0;
-        /* FAKEMATCH(barrier): an empty asm. */
+        CAMELOT_ASM("an asm with no instruction, text unknown: the literal "
+                    "pool after this sprite's stores sits where the ROM has it "
+                    "only if exactly 4 more bytes are counted between the load "
+                    "of the summon icon's x (56) and the call to "
+                    "AbilityIcon_LoadIntoSlot than the instructions emitted, "
+                    "in all six editions; only a one-line asm counts bytes and "
+                    "emits nothing in this compiler; and the second scheduling "
+                    "pass keeps the load of state and the row's subtraction on "
+                    "either side of this point, which no length difference can "
+                    "do")
         __asm__ volatile("");
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
@@ -696,7 +713,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         COMMAND_ICON_X(state) = ITEM_CHOSEN_ICON_X;
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        /* FAKEMATCH(barrier): an empty asm. */
+        CAMELOT_ASM("an asm with no instruction, text unknown: the literal "
+                    "pool after this sprite's stores sits where the ROM has it "
+                    "only if exactly 4 more bytes are counted between the load "
+                    "of the item icon's x (48) and the call to "
+                    "ItemIcon_LoadIntoSlot than the instructions emitted, in "
+                    "all six editions; only a one-line asm counts bytes and "
+                    "emits nothing in this compiler; and the second scheduling "
+                    "pass keeps the copy of the window's pointer on either "
+                    "side of this point, which no length difference can do")
         __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;

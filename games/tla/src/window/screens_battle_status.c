@@ -563,7 +563,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 =
         OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): an empty asm. */
+    CAMELOT_ASM("an asm with no instruction, text unknown: the literal pool "
+                "after this sprite's stores sits where the ROM has it only if "
+                "exactly 4 more bytes are counted between the load of the "
+                "figure's x (172) and the call to VramCache_Reload than the "
+                "instructions emitted, in all six editions; only a one-line "
+                "asm counts bytes and emits nothing in this compiler; and the "
+                "second scheduling pass keeps the load of the next pool word "
+                "on either side of this point, which no length difference can "
+                "do")
     asm("");
     cursorSprite.oam.f.tile = VramCache_Reload(cursorSlot, gPointingHandTiles);
     {

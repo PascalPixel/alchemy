@@ -2,12 +2,11 @@
 /// The Mars Lighthouse flame throwers' puffs, which four of its rooms keep a
 /// copy of.
 
-/// The heap slots as FlameThrowers_Puff reads the field state's slot, as a
-/// word.
+/// The heap slots as FlameThrowers_Puff reads the field state's slot, through
+/// a union.
 struct HeapSlotsFieldStateView {
   u8 slotsBefore[offsetof(struct HeapSlots, fieldState)];
   union {
-    s32 word;
     void *pointer;
   } fieldState;
 };
@@ -18,7 +17,10 @@ struct HeapSlotsFieldStateView {
 /// them running; the first frame a flame meets a blocked stop calls the
 /// state's callback.
 void FlameThrowers_Puff(void) {
-  s32 saved[2];
+  struct {
+    struct FieldState *field;
+    FIXED height;
+  } saved;
   struct FlameHitState *state;
   struct FlameThrower *entry;
   struct MapState *map;
@@ -33,10 +35,12 @@ void FlameThrowers_Puff(void) {
   cameraX = view[0];
   cameraX &= FIELD_PIXEL_MASK;
   cameraZ = view[1] & FIELD_PIXEL_MASK;
-  saved[1] = map->origin[1];
-  /* FAKEMATCH(signature): the field state read through a union as a word, so
-     the load stays after the store before it; as Ram_HeapSlots->fieldState. */
-  saved[0] = ((struct HeapSlotsFieldStateView *)Ram_HeapSlots)->fieldState.word;
+  saved.height = map->origin[1];
+  /* FAKEMATCH(signature): the field state read through a union, whose alias
+     set 0 keeps the load after the spilled saved.height store before it; as
+     Ram_HeapSlots->fieldState. */
+  saved.field =
+      ((struct HeapSlotsFieldStateView *)Ram_HeapSlots)->fieldState.pointer;
   if (state->blocked != 0 && state->wasBlocked == 0 && state->onBlocked != 0)
     state->onBlocked();
   state->wasBlocked = state->blocked;
@@ -53,7 +57,7 @@ void FlameThrowers_Puff(void) {
     if (actor == 0)
       continue;
     flag = GameFlag_Get(FLAG_MENU_OPEN);
-    if (((struct FieldState *)saved[0])->psynergy != 0)
+    if (saved.field->psynergy != 0)
       flag |= 1;
     mark = &actor->paused;
     *mark = flag;

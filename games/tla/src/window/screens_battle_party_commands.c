@@ -39,110 +39,96 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
 s32 BattleParty_ChooseReserve(s32 slot) {
   u16 owners[6];
   u16 selected[2];
-  struct BattleState *battle;
-  s32 count;
+  s32 count = BattleParty_PrepareReserveOwnersFar(owners);
+  s32 sel = 0;
+  s32 redraw = 1;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
+  s32 result = 0;
+  struct BattleMenuState *menu = Ram_HeapSlots->battleMenuState;
+  s32 current;
+  s32 newId;
+  s32 i;
 
-  count = BattleParty_PrepareReserveOwnersFar(owners);
-  {
-    s32 sel;
-    s32 redraw;
-    s32 result;
-    struct BattleMenuState *menu;
-    s32 current;
-    s32 newId;
-    s32 i;
-
-    sel = 0;
-    redraw = 1;
-    battle = Ram_HeapSlots->battleState;
-    result = 0;
-    menu = Ram_HeapSlots->battleMenuState;
-    if (count <= 0)
-      return -1;
-    // BattleTarget_RunSelection's PLACE_PARTY | place: the place is its low
-    // byte.
-    slot &= 0xff;
-    current = battle->partyUnits[slot];
-    Sound_PlayFar(SE_MENU_CONFIRM);
-    /* FAKEMATCH(dead): a once-only block; as its body alone. */
-    do {
-      goto test;
-      for (;;) {
-        // Japanese also takes A on the first frame, before the first preview
-        // has been drawn.
-#if TLA_PATCH_1
-        if ((gInput.pressed & KEY_A) && !redraw) {
-#else
-        if (gInput.pressed & KEY_A) {
-#endif
-          // The preview already stands in the slot: a swap that would leave
-          // no one standing is refused.
-          if (BattleUnit_ListLivingIdsFar(BATTLE_SIDE_MASK_PARTY, 0) == 0) {
-            Sound_PlayFar(SE_MENU_ERROR);
-            goto test;
-          }
-          Sound_PlayFar(SE_CHIME);
-          menu->swappedUnit = current;
-          menu->swappedPlace = slot;
-          for (i = 0; i < 8; i++) {
-            if (gMainRoutineState.party[i] == current)
-              gMainRoutineState.party[i] = newId;
-            else if (gMainRoutineState.party[i] == newId)
-              gMainRoutineState.party[i] = current;
-          }
-          goto done;
-        }
-        if (gInput.repeat & KEY_LEFT) {
-          sel = (sel + count - 1) % count;
-          Sound_PlayFar(SE_MENU_CONFIRM);
-          redraw = 1;
-        } else if (gInput.repeat & KEY_RIGHT) {
-          sel = (sel + 1) % count;
-          Sound_PlayFar(SE_MENU_CONFIRM);
-          redraw = 1;
-        }
-        if (redraw) {
-          struct BattleObject *from;
-          struct BattleObject *to;
-          struct Actor *actor;
-          struct Actor *place;
-
-          redraw = 0;
-          newId = battle->partyUnits[slot] = owners[sel];
-          from = BattleObject_GetFar(current);
-          to = BattleObject_GetFar(newId);
-          to->anchorX = from->anchorX;
-          place = (struct Actor *)from->object;
-          actor = (struct Actor *)to->object;
-          to->anchorZ = from->anchorZ;
-          Actor_SetPositionAndResetMotionFar(actor, place->x.fixed,
-                                             place->y.fixed, place->z.fixed);
-          PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
-          BattleObject_PutFar();
-          selected[0] = newId;
-          selected[1] = BATTLE_UNIT_LIST_END;
-          BattleHighlight_SetModesFar(selected, HIGHLIGHT_PULSE);
-          PartyStatus_HighlightMembers(selected);
-        }
-        wait(1);
-      test:
-        newId = battle->partyUnits[slot] = owners[sel];
-        if (gInput.pressed & KEY_B)
-          break;
-      }
+  if (count <= 0)
+    return -1;
+  // BattleTarget_RunSelection's PLACE_PARTY | place: the place is its low
+  // byte.
+  slot &= 0xff;
+  current = battle->partyUnits[slot];
+  Sound_PlayFar(SE_MENU_CONFIRM);
+  for (;;) {
+    newId = battle->partyUnits[slot] = owners[sel];
+    if (gInput.pressed & KEY_B) {
       battle->partyUnits[slot] = current;
       result = -1;
       Sound_PlayFar(SE_MENU_CANCEL);
-    done:
-      selected[0] = BATTLE_UNIT_LIST_END;
-      BattleHighlight_SetModesFar(selected, HIGHLIGHT_OFF);
-      PartyStatus_HighlightMembers(selected);
+      break;
+    }
+    // Japanese also takes A on the first frame, before the first preview
+    // has been drawn.
+#if TLA_PATCH_1
+    if ((gInput.pressed & KEY_A) && !redraw) {
+#else
+    if (gInput.pressed & KEY_A) {
+#endif
+      // The preview already stands in the slot: a swap that would leave
+      // no one standing is refused.
+      if (BattleUnit_ListLivingIdsFar(BATTLE_SIDE_MASK_PARTY, 0) == 0) {
+        Sound_PlayFar(SE_MENU_ERROR);
+        continue;
+      }
+      Sound_PlayFar(SE_CHIME);
+      menu->swappedUnit = current;
+      menu->swappedPlace = slot;
+      for (i = 0; i < 8; i++) {
+        if (gMainRoutineState.party[i] == current)
+          gMainRoutineState.party[i] = newId;
+        else if (gMainRoutineState.party[i] == newId)
+          gMainRoutineState.party[i] = current;
+      }
+      break;
+    }
+    if (gInput.repeat & KEY_LEFT) {
+      sel = (sel + count - 1) % count;
+      Sound_PlayFar(SE_MENU_CONFIRM);
+      redraw = 1;
+    } else if (gInput.repeat & KEY_RIGHT) {
+      sel = (sel + 1) % count;
+      Sound_PlayFar(SE_MENU_CONFIRM);
+      redraw = 1;
+    }
+    if (redraw) {
+      struct BattleObject *from;
+      struct BattleObject *to;
+      struct Actor *actor;
+      struct Actor *place;
+
+      redraw = 0;
+      newId = battle->partyUnits[slot] = owners[sel];
+      from = BattleObject_GetFar(current);
+      to = BattleObject_GetFar(newId);
+      to->anchorX = from->anchorX;
+      place = (struct Actor *)from->object;
+      actor = (struct Actor *)to->object;
+      to->anchorZ = from->anchorZ;
+      Actor_SetPositionAndResetMotionFar(actor, place->x.fixed, place->y.fixed,
+                                         place->z.fixed);
       PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
       BattleObject_PutFar();
-      wait(1);
-    } while (0);
-    return result;
+      selected[0] = newId;
+      selected[1] = BATTLE_UNIT_LIST_END;
+      BattleHighlight_SetModesFar(selected, HIGHLIGHT_PULSE);
+      PartyStatus_HighlightMembers(selected);
+    }
+    wait(1);
   }
+  selected[0] = BATTLE_UNIT_LIST_END;
+  BattleHighlight_SetModesFar(selected, HIGHLIGHT_OFF);
+  PartyStatus_HighlightMembers(selected);
+  PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
+  BattleObject_PutFar();
+  wait(1);
+  return result;
 }
 
 /// Lists the units still standing on the sides in sideMask, party first, into

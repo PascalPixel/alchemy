@@ -615,8 +615,8 @@ void AirsRock_BlowGust(void) {
   newX = effect->target->x.part[0].integer + ((steps * delta.x) << 3);
   newZ = effect->target->z.part[0].integer + ((steps * delta.z) << 3);
   ((struct FieldSprite *)gust->sprite)->priority = 1;
-  /* FAKEMATCH(temporary): cell, a map cell's pair, takes the gust's pixel
-   * target; as newX and newZ at the move target. */
+  // cell now takes the gust's target in pixels: the ROM stores both words in
+  // cell's stack slots before the move.
   cell.x = newX;
   cell.z = newZ;
   gust->speedLimit = toFIXED(4);

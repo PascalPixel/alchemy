@@ -14,25 +14,19 @@
 /// was.
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames) {
-  s32 remainingChannels;
+  s32 i;
   s32 sourceChannel;
   s32 targetChannel;
-  s32 (*divide)(s32, s32);
 
   if (frames > 0) {
-    /* FAKEMATCH(temporary): divide, a local holding Iwram_SignedDivideEntry
-     * across the loop; as Iwram_SignedDivide, as The Broken Seal's twin. */
-    divide = Iwram_SignedDivideEntry;
-    remainingChannels = FADE_CHANNELS - 1;
-    do {
+    for (i = 0; i < FADE_CHANNELS; i++) {
       sourceChannel = *source;
       targetChannel = *target;
-      *step = divide(targetChannel - sourceChannel, frames);
-      remainingChannels--;
+      *step = Iwram_SignedDivide(targetChannel - sourceChannel, frames);
       source++;
       target++;
       step++;
-    } while (remainingChannels >= 0);
+    }
   }
 }
 

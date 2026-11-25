@@ -617,10 +617,7 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   FIXED risen;
-  // Each control is stored through its address, so it stays in the frame.
-  /* FAKEMATCH(temporary): cnt, each register's new value stored through its
-     address; plainly, cnt = .... */
-  u16 cnt;
+  u16 cnt; // each control, read into the frame by Io_Read16
 
   grid = gMapGridState[0];
 
@@ -673,11 +670,14 @@ static void LemurianShip_RaiseTheShip(void) {
   } while (risen < toFIXED(90));
   Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
-  *&cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  Io_Read16(&REG_BG3CNT, &cnt);
+  cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG3CNT = cnt;
-  *&cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  Io_Read16(&REG_BG2CNT, &cnt);
+  cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG2CNT = cnt;
-  *&cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  Io_Read16(&REG_BG1CNT, &cnt);
+  cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   REG_BG1CNT = cnt;
   gOrbGlowActive = 0;
   Sound_Play(SE_STOP_ACTION_SE);
@@ -711,10 +711,7 @@ static void LemurianShip_RaiseTheShip(void) {
 /// and the party are drawn above. The sea starts rippling.
 s32 Scene_Initialize(void) {
   struct MapGridScrollState *grid;
-  // Each control is stored through its address, so it stays in the frame.
-  /* FAKEMATCH(temporary): cnt, each register's new value stored through its
-     address; plainly, cnt = .... */
-  u16 cnt;
+  u16 cnt; // each control, read into the frame by Io_Read16
 
   grid = gMapGridState[0];
   if (gMainRoutineState.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
@@ -759,11 +756,14 @@ s32 Scene_Initialize(void) {
     SET_IMAGE_PRIORITY(actor, 1);
     SET_SHADOW_PRIORITY(actor, 1);
   }
-  *&cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  Io_Read16(&REG_BG3CNT, &cnt);
+  cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   REG_BG3CNT = cnt;
-  *&cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  Io_Read16(&REG_BG2CNT, &cnt);
+  cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG2CNT = cnt;
-  *&cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  Io_Read16(&REG_BG1CNT, &cnt);
+  cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG1CNT = cnt;
   Io_Write16(BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 |
                  BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BD,

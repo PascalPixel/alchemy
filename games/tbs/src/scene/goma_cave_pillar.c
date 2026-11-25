@@ -262,7 +262,7 @@ static inline void GomaCavePillar_DropStumpFragment(void) {
   FIXED fixedZ;
   struct Actor *heightSource;
   struct Actor *xSource;
-  s32 randomX, style, speedBand, bandScaled, fallingSpeed;
+  s32 randomX, style, speedBand, fallingSpeed;
 
   xSource = Actor_Get(ACTOR_STUMP);
   randomX = Random_Next();
@@ -273,14 +273,8 @@ static inline void GomaCavePillar_DropStumpFragment(void) {
   fixedZ += toFIXED(6);
   speedBand = Random_Below(5);
   // speedBand tenths of a pixel a frame.
-  /* FAKEMATCH(temporary): bandScaled, speedBand * 13, a step of
-     speedBand * toFIXED(0.1) worked out by shifts. */
-  bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
-  fallingSpeed = (bandScaled << 6) - bandScaled;
-  fallingSpeed <<= 3;
-  fallingSpeed += speedBand;
+  fallingSpeed = speedBand * -toFIXED(0.1);
   style = Random_Below(2);
-  fallingSpeed = -fallingSpeed;
   GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                fallingSpeed, style, PLANE_XY);
 }
@@ -313,7 +307,7 @@ static void GomaCavePillar_PushStumpOver(void) {
   FIXED fixedZ;
   struct Actor *heightSource;
   struct Actor *stump;
-  s32 style, speedBand, bandScaled, fallingSpeed;
+  s32 style, speedBand, fallingSpeed;
 
   stump = Actor_Get(ACTOR_STUMP);
   column = stump->x.fixed / toFIXED(16);
@@ -352,14 +346,8 @@ static void GomaCavePillar_PushStumpOver(void) {
     fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed + toFIXED(6);
     speedBand = Random_Below(5);
     // A last piece of dust, falling speedBand tenths of a pixel a frame.
-    /* FAKEMATCH(temporary): bandScaled, speedBand * 13, a step of
-       speedBand * toFIXED(0.1) worked out by shifts. */
-    bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
-    fallingSpeed = (bandScaled << 6) - bandScaled;
-    fallingSpeed <<= 3;
-    fallingSpeed += speedBand;
+    fallingSpeed = speedBand * -toFIXED(0.1);
     style = Random_Below(2);
-    fallingSpeed = -fallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                  fallingSpeed, style, PLANE_XY);
     Event_Wait(20);

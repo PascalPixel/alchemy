@@ -226,6 +226,13 @@ struct BattleLinkHeader {
 /// them.
 #define BLEND_SPRITES_OVER_ALL (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
+/// Runs a battle effect by its ability's effect word (Ability.battleEffect):
+/// with EFFECT_BY_ID_RANGE from the second range of kinds
+/// (BattleEffect_RunByIdRangeFar), otherwise from the handler table.
+#define BATTLE_EFFECT_RUN(args, battleEffect)                                  \
+  ((battleEffect) & EFFECT_BY_ID_RANGE ? BattleEffect_RunByIdRangeFar(args)    \
+                                       : BattleEffect_RunFromTableFar(args))
+
 /// The keys that take the player on past a message: A, B, L and R.
 #define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 

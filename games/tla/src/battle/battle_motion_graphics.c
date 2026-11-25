@@ -491,10 +491,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (state.kind != 0) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
-      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-        BattleEffect_RunByIdRangeFar(&state);
-      else
-        BattleEffect_RunFromTableFar(&state);
+      BATTLE_EFFECT_RUN(&state, plan->battleEffect);
     }
     if (saved) {
       BattleMotion_DismissBeast(saved);
@@ -590,10 +587,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       i++;
       fade += BACKGROUND_LEVEL_STEP;
     } while (i < ITEM_DARKEN_FRAMES);
-    if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-      BattleEffect_RunByIdRangeFar(&state);
-    else
-      BattleEffect_RunFromTableFar(&state);
+    BATTLE_EFFECT_RUN(&state, plan->battleEffect);
   } else {
     wait(60);
   }
@@ -765,10 +759,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     if (state.kind) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
-      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-        BattleEffect_RunByIdRangeFar(&state);
-      else
-        BattleEffect_RunFromTableFar(&state);
+      BATTLE_EFFECT_RUN(&state, plan->battleEffect);
     } else {
       BattleBackground_RestorePalette();
     }

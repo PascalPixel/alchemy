@@ -558,10 +558,8 @@ s32 BattleStaging_RunFullScreen(struct BattlePlan *plan, s32 mode) {
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (plan->battleEffect & EFFECT_SUMMON)
       BattleEffect_RunSummonFar((s32 *)&state);
-    else if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-      BattleEffect_RunByIdRangeFar(&state);
     else
-      BattleEffect_RunFromTableFar(&state);
+      BATTLE_EFFECT_RUN(&state, plan->battleEffect);
     BattlePlayback_WaitForReady();
   }
 

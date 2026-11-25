@@ -637,12 +637,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                state->sheet + PROJECTILE_VOLLEY_STREAK_PICTURES,
                                1, 0);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
-      void *palette = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
-      /* FAKEMATCH(temporary): copy, a local holding Iwram_CopyWordsEntry;
-       * as LOAD_BG_PALETTE(RESOURCE_ICE_BLOCK_SHEET). */
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+      LOAD_BG_PALETTE(RESOURCE_ICE_BLOCK_SHEET);
     }
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);

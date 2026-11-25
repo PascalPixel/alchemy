@@ -109,9 +109,9 @@ static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
 
 /// Copies size bytes, rounded down to whole words, from source to
 /// destination.
-static inline s32 Iwram_CopyWords(void *destination, const void *source,
-                                  s32 size) {
-  return Iwram_CopyWordsEntry(destination, source, size);
+static inline void Iwram_CopyWords(void *destination, const void *source,
+                                   s32 size) {
+  Iwram_CopyWordsEntry(destination, source, size);
 }
 
 /// Iwram_FillWords as a statement of its own, as twelve fills in the battle,

@@ -1129,7 +1129,7 @@ union WordBytes {
 /// Finishes a track through the jump table's ply_fine entry. Extended
 /// commands 0 and 3: they end the track as the finish command (0xB1) does.
 void ply_xxx(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
-  MPlayFunc finishSequence = *(&gMPlayJumpTable[MPLAY_JUMP_FINE]);
+  MPlayFunc finishSequence = gMPlayJumpTable[MPLAY_JUMP_FINE];
 
   finishSequence(player, track);
 }

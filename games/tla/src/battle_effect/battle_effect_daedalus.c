@@ -1709,7 +1709,6 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
   s32 burst;
   struct Particle *spark;
   s32 mask;
-  FIXED discX;
   FIXED rayX = toFIXED(66);
   FIXED discY = toFIXED(80);
 
@@ -1735,9 +1734,6 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
   burst = -DAEDALUS_STRIKE_SPARK_FRAME * SPARKS_PER_BURST;
   do {
     if (frame == 0) {
-      /* FAKEMATCH(temporary): the disc's x held in a local set on the first
-         frame; as toFIXED(64) at its use. */
-      discX = toFIXED(64);
       EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
@@ -1855,17 +1851,17 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
       void *vertices;
       struct Particle *ray;
       u8 *cells;
+      FIXED discX = toFIXED(64);
 
-      /* FAKEMATCH(temporary): the disc's x copied into the loop counter i. */
-      i = discX;
-      size = DAEDALUS_STRIKE_DISC_SIZE;
-      if (grow <= DAEDALUS_STRIKE_DISC_SIZE / 2) {
+      if (grow > DAEDALUS_STRIKE_DISC_SIZE / 2) {
+        size = DAEDALUS_STRIKE_DISC_SIZE;
+      } else {
         size = grow * 2;
         cells = gMapGridCellBuffer;
         BattleEffect_DrawShadedCircles(cells, size, FIXED_ONE);
       }
       cells = gMapGridCellBuffer;
-      Canvas_BlitMirroredQuarters(cells, FIXEDtoINT(i), FIXEDtoINT(discY),
+      Canvas_BlitMirroredQuarters(cells, FIXEDtoINT(discX), FIXEDtoINT(discY),
                                   size);
       // Each ray at a random angle, turning a random way, a little after
       // the one before.

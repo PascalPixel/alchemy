@@ -195,13 +195,14 @@ struct SnapshotCopy {
 struct Snapshot {
   u8 listed[8];
   s8 summonBoosts[3][ELEMENT_COUNT];
-  /// The units' SnapshotCopy rows, read as gScriptedBattle_SnapshotBytes, each
-  /// padded to 28 bytes; the last overruns into vitals' unused first rows.
-  u8 statuses[128];
-  struct SnapshotVitals vitals[5];
+  /// One row a unit: 25 status bytes, 28 with the struct's padding.
+  struct SnapshotCopy statuses[5];
+  /// The HP and PP of the last two units (i = 3 and 4).
+  struct SnapshotVitals vitals[2];
 };
 
-STATIC_ASSERT(offsetof(struct Snapshot, vitals) == 148);
+STATIC_ASSERT(offsetof(struct Snapshot, vitals) == 160);
+STATIC_ASSERT(sizeof(struct Snapshot) == 168);
 
 /// The packet the two consoles exchange each turn of a link battle: how many
 /// actions follow, a random check, and the random seed both sides then use.
@@ -287,9 +288,6 @@ enum BattleCastKind {
 /// fixed address: the 168 bytes of EWRAM below the map's cell buffer.
 #define Ram_ScriptedBattleSnapshot                                             \
   FIXED_ADDRESS((struct Snapshot *), 0x0200ff58, gScriptedBattle_Snapshot)
-
-/// The five units' status bytes within the snapshot.
-extern struct SnapshotCopy gScriptedBattle_SnapshotBytes[];
 
 /// The five units Karst and Agatio's battle carries over between its parts:
 /// Felix, Piers and Jenna, and the first two enemies.

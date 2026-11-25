@@ -310,8 +310,6 @@ gOverlayArea:
 	.global gScriptedBattle_Snapshot
 gScriptedBattle_Snapshot:
 	.space 0x00000014
-	.global gScriptedBattle_SnapshotBytes
-gScriptedBattle_SnapshotBytes:
 	.space 0x00000080
 	.space 0x0000000c
 	.space 0x00000002

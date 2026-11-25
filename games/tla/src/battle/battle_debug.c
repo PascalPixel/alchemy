@@ -26,7 +26,7 @@ void ScriptedBattle_SaveUnits(void) {
   struct Snapshot *snapshot = Ram_ScriptedBattleSnapshot;
   s32 i = 0;
   u8 *ids = gScriptedBattle_Units;
-  struct SnapshotCopy *copies = gScriptedBattle_SnapshotBytes;
+  struct SnapshotCopy *copies = Ram_ScriptedBattleSnapshot->statuses;
 
   for (; i <= 4; i++, copies++) {
     struct Unit *unit = Unit_Get(ids[i]);
@@ -35,8 +35,8 @@ void ScriptedBattle_SaveUnits(void) {
     if (BattleUnit_IsListed(ids[i])) {
       snapshot->listed[i] = 1;
       if (i > 2) {
-        snapshot->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
-        snapshot->vitals[i].pp = unit->pp;
+        snapshot->vitals[i - 3].hp = unit->hp > 0 ? unit->hp : 1;
+        snapshot->vitals[i - 3].pp = unit->pp;
       }
       if (i <= 2) {
         for (j = 0; j < ELEMENT_COUNT; j++)
@@ -78,7 +78,7 @@ void ScriptedBattle_RestoreUnits(void) {
   s32 i;
   s32 j;
   struct Snapshot *snapshot = Ram_ScriptedBattleSnapshot;
-  struct SnapshotCopy *copies = gScriptedBattle_SnapshotBytes;
+  struct SnapshotCopy *copies = Ram_ScriptedBattleSnapshot->statuses;
 
   for (i = 0; i <= 4; i++, copies++) {
     struct Unit *unit = Unit_Get(gScriptedBattle_Units[i]);
@@ -115,8 +115,8 @@ void ScriptedBattle_RestoreUnits(void) {
       unit->agilityStage = copies->agilityStage;
       unit->challenge = copies->challenge;
       if (i > 2) {
-        Unit_SetHpFar(unit, snapshot->vitals[i].hp);
-        Unit_SetPpFar(unit, snapshot->vitals[i].pp);
+        Unit_SetHpFar(unit, snapshot->vitals[i - 3].hp);
+        Unit_SetPpFar(unit, snapshot->vitals[i - 3].pp);
       }
     }
   }

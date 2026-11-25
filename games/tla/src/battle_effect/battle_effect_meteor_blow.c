@@ -135,10 +135,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   s32 frame;
   s32 arcAngle;
   s32 j;
-  s32 star;
   s32 i;
-  s32 *starKind;
-  struct MeteorStar *current;
   s32 position[3];
   s32 screen[3];
   s32 point[3];
@@ -218,41 +215,43 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       v->z = FIXEDtoINT(Trig_Cos(j * DEGtoANG(45)) * r);
     }
   }
-  /* FAKEMATCH(dead): a once-only block that places clip, the blitter's clip
-   * flags, at its call; as clip declared with the routine's locals, or
-   * EFFECT_CLIP_BOUNDS at the call. */
+  // The sky: the blitter and the transfer, then the stars on their sphere.
   {
-    s32 clip = EFFECT_CLIP_BOUNDS;
+    s32 transferMode = CANVAS_COPY_AND_DARKEN;
+    s32 star;
+    s32 *starKind;
+    struct MeteorStar *current;
 
-    BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, clip, BLITTER_MAX);
-  }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  // DEAD: both fields are set again before anything reads them; the ROM keeps
-  // the two stores.
-  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_VBLANK + 126);
-  gBgScroll[1].x = 0;
-  background->busy = 1;
-  starKind = &stars->kind;
-  current = stars;
-  for (star = 0; star != METEOR_BLOW_STAR_COUNT;
-       star++, starKind += sizeof(struct MeteorStar) / sizeof(s32), current++) {
-    s32 a = (star & (METEOR_BLOW_STAR_COUNT - 1)) * (TRIG_TURN / 2) /
-            METEOR_BLOW_STAR_COUNT;
-    s32 r = METEOR_BLOW_SKY_RADIUS;
-    s32 b;
+    BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS,
+                              BLITTER_MAX);
+    blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    // DEAD: both fields are set again before anything reads them; the ROM
+    // keeps the two stores.
+    EFFECT_SET_TRANSFER(state, transferMode, CANVAS_FILL_WORD(4));
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_VBLANK + 126);
+    gBgScroll[1].x = 0;
+    background->busy = 1;
+    starKind = &stars->kind;
+    current = stars;
+    for (star = 0; star != METEOR_BLOW_STAR_COUNT; star++,
+        starKind += sizeof(struct MeteorStar) / sizeof(s32), current++) {
+      s32 a = (star & (METEOR_BLOW_STAR_COUNT - 1)) * (TRIG_TURN / 2) /
+              METEOR_BLOW_STAR_COUNT;
+      s32 r = METEOR_BLOW_SKY_RADIUS;
+      s32 b;
 
-    current->y = Trig_Sin(a) * r;
-    r = FIXEDtoINT(Trig_Cos(a) * r);
-    b = Random16() & (DEGtoANG(180) - 1);
-    current->x = Trig_Sin(b) * r;
-    current->z = Trig_Cos(b) * r;
-    if ((star & (METEOR_BLOW_STARS_PER_ORB - 1)) == 0) {
-      *starKind =
-          (star / METEOR_BLOW_STARS_PER_ORB) % METEOR_BLOW_ORB_PICTURE_COUNT;
-    } else {
-      *starKind = METEOR_BLOW_PIXEL_STAR;
+      current->y = Trig_Sin(a) * r;
+      r = FIXEDtoINT(Trig_Cos(a) * r);
+      b = Random16() & (DEGtoANG(180) - 1);
+      current->x = Trig_Sin(b) * r;
+      current->z = Trig_Cos(b) * r;
+      if ((star & (METEOR_BLOW_STARS_PER_ORB - 1)) == 0) {
+        *starKind =
+            (star / METEOR_BLOW_STARS_PER_ORB) % METEOR_BLOW_ORB_PICTURE_COUNT;
+      } else {
+        *starKind = METEOR_BLOW_PIXEL_STAR;
+      }
     }
   }
 

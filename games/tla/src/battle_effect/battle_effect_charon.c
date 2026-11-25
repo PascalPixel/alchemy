@@ -766,9 +766,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             u8 *other;
             s32 swap;
             s32 value;
-            s32 mask;
+            s32 mask = CHARON_DISSOLVE_PAIRS - 1;
 
-            mask = CHARON_DISSOLVE_PAIRS - 1;
+            /* FAKEMATCH(temporary): orderOffset, the constant set again in the
+             * loop; as other += OBJ_64X64_8BPP_BYTES. */
             orderOffset = OBJ_64X64_8BPP_BYTES;
             other = (Random16() & mask) + ORB_BUFFER;
             other += orderOffset;

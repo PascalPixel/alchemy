@@ -1118,7 +1118,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
 /// asks at once. Once he has the turtle he offers to swim the party to his
 /// secret spot again; before, without it, he is just very lonely.
 void Islets_GiveTurtle(void) {
-  struct Actor *leader, *a, *b, *other;
+  struct Actor *leader, *other;
   const u8 *message;
   s32 answer;
 
@@ -1127,10 +1127,9 @@ void Islets_GiveTurtle(void) {
   if (PartyInventory_FindMember(ITEM_LIL_TURTLE) != -1) {
     leader = Actor_GetById(gMainRoutineState.leaderActorId);
     if (GameFlag_Get(FLAG_TURTLE_REFUSED) != 0) {
+      struct Actor *a, *b;
+
       Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
-      /* FAKEMATCH(dead): a set to the splash update, never read: SPAWN sets
-       * it before its use. */
-      a = (struct Actor *)Actor_EmitWadingSplashes;
       leader->update = Actor_EmitWadingSplashes;
       Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 318, 424);
       leader->update = 0;
@@ -1162,6 +1161,8 @@ void Islets_GiveTurtle(void) {
                                    FACING_SOUTH_SOUTHWEST);
       }
     } else {
+      struct Actor *a, *b;
+
       Event_SetMessageId(MsgIMSoVery);
       // "I'm so very sad and lonely. I wish I had a friend to call my own..."
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);

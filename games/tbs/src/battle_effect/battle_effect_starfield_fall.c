@@ -430,6 +430,8 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
         }
       }
       // Seven sparks orbit the falling sprite.
+      /* FAKEMATCH(temporary): the orbit's place set in screen, the embers'
+       * projection, rather than a vector of its own. */
       screen.x = 0;
       screen.y = 0;
       screen.depth = toFIXED(512);

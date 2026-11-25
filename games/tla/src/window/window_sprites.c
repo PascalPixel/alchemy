@@ -325,8 +325,11 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   if (x > (win->width - 2))
     return;
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
-    s32 column;
+    s32 column = (u16)-2;
+    /* FAKEMATCH(temporary): left, a copy of win->x for the one sum; as
+     * win->x. */
     u16 left;
+
     out = WindowSprite_AcquireFree();
     if (out == NULL)
       return;
@@ -336,7 +339,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     slot = &base->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
       *slot = VramCache_FindFreeEntry();
-    column = (u16)-2;
     left = win->x;
     sprite->oam.x = (left + (column + win->width)) * 8 + PAGE_ARROW_OFFSET_X;
 #ifdef UBFIX

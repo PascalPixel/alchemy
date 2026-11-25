@@ -181,9 +181,8 @@ s32 Actor_CrossRope(struct Actor *actor) {
     bestDistance = ROPE_NODE_DISTANCE_NONE;
     if (rope == NULL) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
-      /* FAKEMATCH(dead): the event state slot copied onto itself. */
-      Ram_HeapSlots->fieldState = Ram_HeapSlots->fieldState;
-      goto done;
+      state = Ram_HeapSlots->fieldState;
+      goto report;
     }
     for (count = 0; count < ROPE_NODE_COUNT; count++, node++) {
       if (node->kind == ROPE_NODE_CROSSABLE) {
@@ -230,8 +229,8 @@ s32 Actor_CrossRope(struct Actor *actor) {
       sprite->rotation = best->angle + turn;
     }
   }
-done:
   state = Ram_HeapSlots->fieldState;
+report:
   if (state != NULL) {
     if (collisionFlags & PLAYER_STEP_BLOCKED)
       state->blockedSteps++;

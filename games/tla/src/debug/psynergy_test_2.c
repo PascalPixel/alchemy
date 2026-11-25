@@ -169,18 +169,16 @@ void PsynergyTest2_UpdateRocks(void) {
   s32 i;
   s32 step = -toFIXED(1) / 2;
 
-  i = ROCK_COUNT - 1;
-  do {
+  for (i = 0; i < ROCK_COUNT; i++) {
     if ((u32)particle->variant < ROCK_FRAMES) {
       sprite->oam.index = state->tileBase + ((particle->variant >> 2) & 7) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
       BattleEffect_StepVector3(particle, 63, step);
       particle->variant++;
     }
-    i--;
     sprite++;
     particle++;
-  } while (i >= 0);
+  }
 }
 
 struct SceneEntrance gSceneEntrances[] = {

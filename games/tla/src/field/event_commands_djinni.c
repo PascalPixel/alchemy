@@ -346,17 +346,11 @@ void Djinn_ResolvePending(s32 shown) {
 /// Task: updates the field effect sprites.
 void FieldEffect_UpdateAllSlots(void) {
   struct FieldEffectState *scene;
-  struct FieldParticle *slot;
-  s32 remainingSlots;
+  s32 i;
 
   scene = Ram_HeapSlots->fieldEffectState;
-  remainingSlots = ARRAY_COUNT(scene->particles) - 1;
-  slot = scene->particles;
-  do {
-    remainingSlots -= 1;
-    FieldParticle_Update(slot);
-    slot++;
-  } while (remainingSlots >= 0);
+  for (i = 0; i < (s32)ARRAY_COUNT(scene->particles); i++)
+    FieldParticle_Update(&scene->particles[i]);
 }
 
 /// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and

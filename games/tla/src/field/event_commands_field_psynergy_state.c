@@ -79,17 +79,11 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 /// A task: updates the scene's 24 effect slots.
 void BattleEffect_UpdateAllEffectSlots(void) {
   struct FieldEffectState *scene;
-  struct FieldParticle *slot;
-  s32 remainingSlots;
+  s32 i;
 
   scene = Ram_HeapSlots->fieldEffectState;
-  remainingSlots = ARRAY_COUNT(scene->particles) - 1;
-  slot = scene->particles;
-  do {
-    remainingSlots -= 1;
-    FieldParticle_Update(slot);
-    slot++;
-  } while (remainingSlots >= 0);
+  for (i = 0; i < (s32)ARRAY_COUNT(scene->particles); i++)
+    FieldParticle_Update(&scene->particles[i]);
 }
 
 /// Prepares the state of the field Psynergy for ability (heap slot

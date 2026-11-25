@@ -65,18 +65,17 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 
   // One rising particle a frame into each of the 24 field effect sprites.
   effect = effectState->particles;
-  remaining = ARRAY_COUNT(effectState->particles) - 1;
-  do {
+  for (remaining = 0; remaining < (s32)ARRAY_COUNT(effectState->particles);
+       remaining++) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
     FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
     Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = FIXED_ONE / 2;
     effect->scaleY = Random16() + FIXED_ONE * 3 / 2;
-    remaining--;
     wait(1);
     effect++;
-  } while (remaining >= 0);
+  }
 
   // After 140 frames every particle still in use stops rising.
   wait(140);

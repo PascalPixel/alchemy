@@ -163,17 +163,15 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   if (state->revealActive != 0) {
     // Stop both the marker emitters and the sparkle actors they already made.
     actor = Ram_HeapSlots->actors;
-    i = ACTOR_COUNT - 1;
-    do {
+    for (i = 0; i < ACTOR_COUNT; i++) {
       if (actor->script != NULL) {
         if (actor->update == Reveal_EmitSparkles)
           Actor_ReleaseFar(actor);
         if (actor->script == (s32 *)gItemDisplay_SparkleScript)
           Actor_ReleaseFar(actor);
       }
-      i--;
       actor++;
-    } while (i >= 0);
+    }
   }
   wait(3);
   picture = Actor_CreateFar(SPRITE_UNSEEN_MARKER, position[0],

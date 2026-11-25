@@ -232,17 +232,15 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
     else
       shifted <<= leftShift;
 
-    pixel = 7;
-    do {
+    for (pixel = 0; pixel < 8; pixel++) {
       result <<= 4;
       if (shifted >= 1u << ROW_LAST_PIXEL_SHIFT)
         result += shifted >> ROW_LAST_PIXEL_SHIFT;
       else
         result += fallback >> ROW_LAST_PIXEL_SHIFT;
-      pixel--;
       shifted <<= 4;
       fallback <<= 4;
-    } while (pixel >= 0);
+    }
 
     *output++ = result;
   }

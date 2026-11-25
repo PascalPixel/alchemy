@@ -24,7 +24,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct FieldEffectState *effectState;
   struct FieldParticle *effect;
   FIXED scale;
-  s32 remainingParticles;
+  s32 i;
 
   djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
@@ -57,10 +57,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Actor_ReleaseFar(djinni);
   Sound_PlayFar(SE_SCATTER);
   effect = effectState->particles;
-  remainingParticles = ARRAY_COUNT(effectState->particles) - 1;
   // One a frame, each in a random colour mode from SPRITE_COLOR_NORMAL to
   // SPRITE_COLOR_GREY.
-  do {
+  for (i = 0; i < (s32)ARRAY_COUNT(effectState->particles); i++) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
@@ -69,10 +68,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
-    remainingParticles--;
     wait(1);
     effect++;
-  } while (remainingParticles >= 0);
+  }
 
   wait(60);
   Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);

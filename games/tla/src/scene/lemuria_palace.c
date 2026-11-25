@@ -375,7 +375,7 @@ void LemuriaPalace_FadeMapsOut(void) {
 /// he steps aside, and King Hydros and his council receive the warriors Piers
 /// spoke of.
 s32 LemuriaPalace_MeetKingHydros(void) {
-  s32 answer, frame, framesLeft;
+  s32 answer, frame, growFrame;
   struct Actor *target;
 
   Event_Start();
@@ -1023,12 +1023,10 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Event_Wait(10);
   Actor_Jump(ACTOR_LUNPA, 4, 20);
   // What Lunpa brings out grows to its height over 16 frames.
-  framesLeft = 15;
-  do {
+  for (growFrame = 0; growFrame < 16; growFrame++) {
     Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY += FIXED_ONE / 16;
-    framesLeft--;
     wait(1);
-  } while (framesLeft >= 0);
+  }
   Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY = FIXED_ONE;
   Event_Wait(5);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);

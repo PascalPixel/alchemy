@@ -1134,14 +1134,12 @@ void AquaRockInside_BlockMoaiWithPillar(s32 unused, s32 id) {
       FieldActor_SetSpritePriority(i, 3);
     }
     BlendScript_Suspend();
-    fade = 12;
-    do {
+    for (fade = 12; fade >= 0; fade--) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                           BLEND_ALPHA(fade, BLEND_WEIGHT_MAX),
                           IO_WRITE_HALFWORD);
       System_Wait(4);
-      fade--;
-    } while (fade >= 0);
+    }
     MapGrid_CopyCellAttributes(105, 41, 12, 13, 41, 41);
     MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, 41);
     BlendScript_Resume();

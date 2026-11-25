@@ -1981,12 +1981,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   // "Neener neener neener! Neener neener neener!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   FieldActor_Jump(ACTOR_BRIGGS, 7, 0);
-  frames = 15;
-  do {
+  for (frames = 0; frames < 16; frames++) {
     *(s16 *)&Actor_GetById(ACTOR_BRIGGS)->facing -= TRIG_TURN / 16;
-    frames--;
     System_Wait(1);
-  } while (frames >= 0);
+  }
   Actor_SetAnimation(ACTOR_BRIGGS, ANIM_BRIGGS_PULL_FACE);
   FieldEvent_Wait(7);
   // "Neener neener bleah!"
@@ -2014,15 +2012,13 @@ void EasternAlhafra_BriggsStealsShip(void) {
   MapGrid_CopyCellsLayered(42, 60, 17, 4, 42, 68);
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 64);
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 68);
-  frames = 239;
-  do {
+  for (frames = 0; frames < 240; frames++) {
     map->layers[0].offsetY += step;
     map->layers[1].offsetY += toFIXED(1);
     Actor_GetById(ACTOR_BRIGGS)->z.fixed -= step;
-    frames--;
     Actor_GetById(ACTOR_CHAUCHA)->z.fixed -= step;
     System_Wait(1);
-  } while (frames >= 0);
+  }
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(30);
   Event_End();

@@ -2909,14 +2909,12 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_SetPosition(ACTOR_ETHER, 328, 160);
   FieldActor_Jump(ACTOR_ETHER, 9, 0);
   total = 0;
-  frames = ETHER_GROW_STEPS;
-  do {
+  for (frames = 0; frames <= ETHER_GROW_STEPS; frames++) {
     sprite->scale = Math_Divide(total, ETHER_GROW_STEPS) + FIXED_ONE * 2 / 5;
     ether->facing += FACING_STEP;
     System_Wait(1);
-    frames--;
     total += FIXED_ONE * 3 / 5;
-  } while (frames >= 0);
+  }
   ether->facing = FACING_SOUTH;
   Actor_WalkByAndWait(ACTOR_ETHER, 0, 8);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ETHER), 1);

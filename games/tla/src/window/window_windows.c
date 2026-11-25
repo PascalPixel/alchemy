@@ -58,13 +58,11 @@ void WindowSprite_InitializeFreeList(void) {
   state = WINDOW_STATE;
   out = state->sprites;
   state->freeSprites.head = out;
-  n = WINDOW_SPRITE_COUNT - 2;
-  do {
+  for (n = 0; n < WINDOW_SPRITE_COUNT - 1; n++) {
     next = out + 1;
-    n--;
     out->next = next;
     out = next;
-  } while (n >= 0);
+  }
   next->next = NULL;
   state->freeSprites.tailLink = &next->next;
 }

@@ -500,16 +500,14 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   GroundParticles_Start();
   GroundParticles_SetAnchor(ACTOR_AQUA_STONE);
   Scene_QueueMusic(SE_AMBIENT_WATER);
-  i = 3;
-  do {
+  for (i = 0; i < 4; i++) {
     PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
     Value2((s32 (*)())PaletteFade_SetTarget, PALETTE_TINT_NONE, 0);
     PaletteFade_StartInterpolation(10);
-    i--;
     wait(10);
-  } while (i >= 0);
+  }
   ActorTable_Snapshot();
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |

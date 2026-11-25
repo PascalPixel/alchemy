@@ -511,14 +511,12 @@ void Actor_DetachSpriteScripts(struct MotionObject *object) {
       return;
     case ACTOR_SPRITE_GROUP:
       recordGroups = object->records;
-      remaining = 3;
-      do {
+      for (remaining = 0; remaining < 4; remaining++) {
         recordGroup = *recordGroups++;
         if (recordGroup != NULL) {
           Sprite_DetachScripts(recordGroup);
         }
-        remaining -= 1;
-      } while (remaining >= 0);
+      }
       break;
     }
   }

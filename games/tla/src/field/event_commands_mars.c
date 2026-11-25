@@ -66,8 +66,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // One spark a frame into each field effect sprite.
   effect = effectState->particles;
-  remaining = ARRAY_COUNT(effectState->particles) - 1;
-  do {
+  for (remaining = 0; remaining < (s32)ARRAY_COUNT(effectState->particles);
+       remaining++) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
     FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
@@ -75,10 +75,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
-    remaining--;
     wait(1);
     effect++;
-  } while (remaining >= 0);
+  }
 
   wait(60);
   Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);

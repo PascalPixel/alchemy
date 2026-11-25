@@ -314,12 +314,10 @@ void FieldPsynergy_Pound(void) {
     FieldPsynergy_GrowFromCaster(fist, scene->x, scene->y + lift, scene->z);
     Actor_SelectAnimationFar(fist, 1);
     wait(15);
-    riseFrames = 24;
-    do {
+    for (riseFrames = 0; riseFrames < 25; riseFrames++) {
       fist->y.fixed += toFIXED(1) / 2;
-      riseFrames--;
       wait(1);
-    } while (riseFrames >= 0);
+    }
     wait(15);
     state->state = POUND_FALLS;
     state->timer = 0;

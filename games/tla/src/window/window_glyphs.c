@@ -45,7 +45,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   s32 tileRow;
   s32 tileColumn;
   s32 line;
-  s32 pixelsLeft;
+  s32 column;
   u32 tileLine;
 
   state = WINDOW_STATE;
@@ -161,11 +161,9 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
       line = 0;
       do {
         tileLine = 0;
-        pixelsLeft = 7;
-        do {
+        for (column = 0; column < 8; column++) {
           tileLine = (tileLine << 4) + *pixel--;
-          pixelsLeft--;
-        } while (pixelsLeft >= 0);
+        }
         line++;
         pixel += GLYPH_BUFFER_WIDTH + 8; // the next line's eighth pixel
         *out++ = tileLine;

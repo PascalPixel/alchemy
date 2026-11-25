@@ -667,24 +667,15 @@ void SerialTest_Delay(void) {}
 /// the ROM when A or B is held.
 void SerialTest_Run(void) {
   u16 *tile;
-  s32 value;
-  s32 remaining;
+  s32 column;
   s32 delay;
 
   Sound_PlayFar(MUS_CHAMPA);
   Serial_Initialize();
   // Row 16, columns 0 to 19: the received tiles in WINDOW_PALETTE.
-  remaining = LINK_TEST_TILES - 1;
-  tile = (u16 *)BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK) +
-         16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
-  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) |
-                (LINK_TEST_TILE + LINK_TEST_TILES - 1));
-  do {
-    remaining--;
-    *tile = value;
-    tile--;
-    value--;
-  } while (remaining >= 0);
+  tile = (u16 *)BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK) + 16 * BG_SCREEN_WIDTH;
+  for (column = 0; column < LINK_TEST_TILES; column++)
+    tile[column] = BG_TILE_PALETTE(WINDOW_PALETTE) + LINK_TEST_TILE + column;
   Cpu_Fill32(0, gMapGridCellBuffer, 1024);
   Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
 restart:

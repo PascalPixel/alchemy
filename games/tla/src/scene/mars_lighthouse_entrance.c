@@ -501,14 +501,12 @@ void MarsLighthouseEntrance_GrindIce(void) {
 
   Event_PlaySound(SE_CRUMBLE);
   x = 32;
-  count = 6;
-  do {
+  for (count = 0; count < 7; count++) {
     MapGrid_CopyCellsLayered(x, 125, 3, 3, 39, 85);
     MarsLighthouseEntrance_ScatterIceChips(ACTOR_ICE_SHAFT);
-    count--;
     System_Wait(10);
     x += 3;
-  } while (count >= 0);
+  }
   ActorTable_Snapshot();
   FieldEvent_SetExitRequest(
       MARS_LIGHTHOUSE_ENTRANCE_FUGUE_TO_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_EAST_B);

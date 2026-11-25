@@ -27,13 +27,12 @@
 void String_FormatHex(u32 value) {
   u8 *buffer = gNumberTextBuffer;
   const u8 *digits = gString_HexDigits;
-  s32 index = HEX_DIGITS - 1;
+  s32 index;
 
-  do {
+  for (index = HEX_DIGITS - 1; index >= 0; index--) {
     buffer[index] = digits[value & 0xf];
     value >>= 4;
-    index--;
-  } while (index >= 0);
+  }
   gNumberTextBuffer[HEX_DIGITS] = 0;
 }
 

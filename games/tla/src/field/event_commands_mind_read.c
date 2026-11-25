@@ -635,22 +635,22 @@ void FieldEffect_BurstHand(void *object) {
 /// and taken back at its end. Only the loop over the actors is left; value
 /// goes unused.
 void Actor_SetRevealSpriteColor(s32 value) {
-  struct Actor *actor = Ram_HeapSlots->actors;
-  s32 remainingActors = ACTOR_COUNT - 1;
+  struct Actor *actors = Ram_HeapSlots->actors;
+  s32 i;
 
   // DEAD: The Broken Seal's loop over the actors with what it did to a rock's
   // sprite gone, so its tests do nothing; the ROM keeps its count and its
   // branch.
-  do {
+  for (i = 0; i < ACTOR_COUNT; i++) {
+    struct Actor *actor = &actors[i];
+
     if (actor->script != NULL) {
       u8 kind = actor->spriteStorageKind;
 
       if (kind == ACTOR_SPRITE_ONE) {
       }
     }
-    remainingActors--;
-    actor++;
-  } while (remainingActors >= 0);
+  }
 }
 
 /// How far the leader may walk from where Reveal was cast, in screen pixels up

@@ -356,17 +356,15 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   memberId = record->memberIds;
   maximumCount = record->maximumCounts;
   choiceCursor = choicesBase;
-  remaining = FORMATION_MEMBERS - 1;
-  do {
+  for (remaining = 0; remaining < FORMATION_MEMBERS; remaining++) {
     if (*maximumCount++ != 0) {
       s32 id = *memberId;
 
       count++;
       *choiceCursor++ = id + ENEMY_ID_FIRST;
     }
-    remaining--;
     memberId++;
-  } while (remaining >= 0);
+  }
 
   return choices[(Random16() * count) >> 16];
 }

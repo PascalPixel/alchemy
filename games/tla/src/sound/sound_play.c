@@ -34,12 +34,8 @@ void Sound_Initialize(void) {
   gSoundCommandMask = 0;
   gSound_UnreadByte = 0;
   lastSound = gMusicPlayerLastSound;
-  remaining = MUSIC_PLAYER_COUNT - 1;
-  do {
-    remaining--;
-    *lastSound = 0;
-    lastSound += 1;
-  } while (remaining >= 0);
+  for (remaining = 0; remaining < MUSIC_PLAYER_COUNT; remaining++)
+    *lastSound++ = 0;
   Sound_SetFixedSampleFreq(SOUND_MODE_FREQ_GAME);
 }
 

@@ -472,35 +472,25 @@ void SpriteViewer_LayOutRing(s32 centerX, s32 centerY,
 /// Gives sprite animation slot of each of the viewer's ten sprites the colour
 /// mode value.
 void SpriteViewer_SetLayerColorMode(s32 slot, s32 value) {
-  u8 *base = Ram_HeapSlots->sprites;
-  s32 offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
-               offsetof(struct Sprite, entries);
-  s32 count = 9;
+  struct Sprite *sprites = Ram_HeapSlots->sprites;
+  s32 count;
 
-  do {
-    struct SpriteAnimation *entry = *(struct SpriteAnimation **)(base + offset);
-
-    count--;
-    entry->colorMode = value;
-    base += sizeof(struct Sprite);
-  } while (count >= 0);
+  for (count = 0; count < 10; count++) {
+    sprites->entries[slot & 3]->colorMode = value;
+    sprites++;
+  }
 }
 
 /// Gives sprite animation slot of each of the viewer's ten sprites the drawing
 /// order value.
 void SpriteViewer_SetLayerPriority(s32 slot, s32 value) {
-  u8 *base = Ram_HeapSlots->sprites;
-  s32 offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
-               offsetof(struct Sprite, entries);
-  s32 count = 9;
+  struct Sprite *sprites = Ram_HeapSlots->sprites;
+  s32 count;
 
-  do {
-    struct SpriteAnimation *entry = *(struct SpriteAnimation **)(base + offset);
-
-    count--;
-    entry->priority = value;
-    base += sizeof(struct Sprite);
-  } while (count >= 0);
+  for (count = 0; count < 10; count++) {
+    sprites->entries[slot & 3]->priority = value;
+    sprites++;
+  }
 }
 
 /// Starts animation value on sprite animation slot of each of the viewer's ten
@@ -549,22 +539,17 @@ s32 SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
 /// Sets sprite no on sprite animation slot of each of the viewer's ten sprites,
 /// and resets each sprite animation from its new metadata.
 void SpriteViewer_SetLayerSprite(s32 slot, s32 no) {
-  u8 *base = Ram_HeapSlots->sprites;
-  s32 offset;
+  struct Sprite *sprites = Ram_HeapSlots->sprites;
   s32 count;
 
   Resource_GetMetadataRecordFar(no);
-  offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
-           offsetof(struct Sprite, entries);
-  count = 9;
-  do {
-    struct SpriteAnimation *entry = *(struct SpriteAnimation **)(base + offset);
+  for (count = 0; count < 10; count++) {
+    struct SpriteAnimation *entry = sprites->entries[slot & 3];
 
-    count--;
     entry->animationId = no;
     SpriteAnimation_Reset(entry);
-    base += sizeof(struct Sprite);
-  } while (count >= 0);
+    sprites++;
+  }
 }
 
 extern const struct SpriteScale gSpriteViewer_Scale;

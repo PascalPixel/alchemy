@@ -486,16 +486,10 @@ void TundariaTower_SparkleCenterProng(struct Actor *actor) {
   s32 dy;
 
   if (phase == 0) {
-    {
-      /* FAKEMATCH(temporary): the mask held in a local of its own; as
-       * Random16() & 15. */
-      s32 mask = 15;
-
-      dx = mask & Random16();
-    }
+    dx = (Random16() & 15) - 8;
     dy = Random16() & 7;
     params.type = SPRITE_SPARKLE;
-    FieldEffect_Spawn(actor->x.fixed + (INTtoFIXED(dx - 8)),
+    FieldEffect_Spawn(actor->x.fixed + (INTtoFIXED(dx)),
                       actor->y.fixed + (INTtoFIXED(dy - 8)), actor->z.fixed, 0,
                       toFIXED(1) / 2, phase, EFFECT_USE_TYPE, &params);
   }

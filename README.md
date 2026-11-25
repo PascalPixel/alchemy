@@ -10,8 +10,6 @@ The documentation is hosted at [alchemy.pascalpixel.com](https://alchemy.pascalp
 
 You can also browse it in this repository: start at [`games/README.md`](games/README.md). Each folder has a `README.md` for what’s in it, and the longer pages are in [`docs/`](docs).
 
-<br clear="right" />
-
 ## Build
 
 **macOS**, with [Homebrew](https://brew.sh):

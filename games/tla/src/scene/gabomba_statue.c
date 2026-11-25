@@ -3067,8 +3067,7 @@ void GabombaStatue_SetBlocksRaised(s32 id, s32 show) {
           } else {
             actor->x.fixed = 0;
             actor->z.fixed = 0;
-            /* FAKEMATCH(dead): occupied set through its address. */
-            *(u8 *)&cell->occupied = BLOCK_IN_PLACE;
+            state->cells[row][column].occupied = BLOCK_IN_PLACE;
             MapGrid_CopyCells(BLOCK_IN_PLACE, cell->kind, 1, 1,
                               state->originX + column, state->originZ + row);
           }

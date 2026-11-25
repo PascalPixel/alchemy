@@ -753,7 +753,6 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BeamState));
   struct Actor *carrier = gFieldState->camera;
   struct EffectSprite *sprite;
-  struct EffectSprite *large;
   struct BeamSpark *spark;
   s32 smallEntry;
   s32 largeEntry;
@@ -761,7 +760,6 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   s32 largeTile;
   s32 i;
   s32 age;
-  s32 size;
 
   state->archer = Actor_Get(archerId);
   state->angel = Actor_Get(angelId);
@@ -772,9 +770,8 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   state->smallTile = smallTile;
   spark = state->sparks;
   age = 0;
-  sprite = state->sprites;
-  i = ARRAY_COUNT(state->sparks) - 1;
-  for (; i >= 0; age -= 2, i--, sprite++, spark++) {
+  for (i = 0; i < 32; age -= 2, i++, spark++) {
+    sprite = &state->sprites[i];
     EffectSprite_Init(sprite, 4, 4, OBJ_SIZE_8X8, smallTile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -783,20 +780,17 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
     spark->age = age;
   }
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLDEN_TRIDENT), state);
-  /* FAKEMATCH(temporary): size, the trident's size held in a local before
-   * its entry is found; as TRIDENT_BYTES at the load. */
-  size = TRIDENT_BYTES;
   largeEntry = VramCache_FindFreeEntry();
-  largeTile = Vram_Load(largeEntry, size, state);
+  largeTile = Vram_Load(largeEntry, TRIDENT_BYTES, state);
   state->largeTile = largeTile;
-  large = &state->large;
-  FieldEffectSprite_Init(large, 30, 7, OBJ_SIZE_32X16, largeTile);
-  large->depth = OAM_DEPTH_WINDOW;
-  large->oam.priority = 1;
-  large->oam.fullColor = 1;
-  large->oam.palette = 0;
-  large->scaleX = 0;
-  large->scaleY = 0;
+  sprite = &state->large;
+  FieldEffectSprite_Init(sprite, 30, 7, OBJ_SIZE_32X16, largeTile);
+  sprite->depth = OAM_DEPTH_WINDOW;
+  sprite->oam.priority = 1;
+  sprite->oam.fullColor = 1;
+  sprite->oam.palette = 0;
+  sprite->scaleX = 0;
+  sprite->scaleY = 0;
   if (side == BEAM_LEFT) {
     state->from[0] = toFIXED(152);
     state->from[1] = toFIXED(32);

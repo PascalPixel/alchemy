@@ -42,7 +42,7 @@ help:
 	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
 	  'make compare-tbs        the six ☀️ editions' \
 	  'make compare-editions   all twelve editions' \
-	  'make modern             all twelve editions'\'' C through a current GCC (MODERN_CC)' \
+	  'make modern             all twelve editions'\'' C through GCC 13.2.1 (MODERN_CC)' \
 	  'make test               test the C build tools and the format' \
 	  'make test-linking       add a row to the scene, resource and map lists and link: every name follows' \
 	  'make SHIFT=4 tbs-en     the shift test: everything after the header moves 4 bytes'
@@ -63,7 +63,7 @@ compare-tla: $(addprefix compare-,$(TLA))
 compare-editions: compare-tbs compare-tla
 compare: compare-tbs-en
 
-# make modern: all twelve editions' C through a current GCC (MODERN_CC);
+# make modern: all twelve editions' C through GCC 13.2.1 (MODERN_CC);
 # modern-tbs and modern-tla for one game's six.
 ifndef EDITION
 .PHONY: modern modern-tbs modern-tla
@@ -414,26 +414,27 @@ $(BUILD)/obj/%.o: %.mid $(MID2AGS)
 	$(AS) $(ASFLAGS) -o $@ $(@:.o=.s)
 
 # --- make modern ----------------------------------------------------------
-# The same C through a current GCC, as pret's `make modern`: every file
-# must compile, with no match expected. Errors stop it; warnings are shown.
-
+# The same C through a modern GCC, as pret's `make modern`: every file must
+# compile, with no match expected. Errors stop it; warnings are shown. The GCC
+# is one release, 13.2.1 (Arm's 13.2.rel1, Ubuntu 24.04's gcc-arm-none-eabi),
+# so that its warnings and errors are the same on every machine and in CI.
 MODERN_CC ?= arm-none-eabi-gcc
-# Older current GCC releases do not know this separate diagnostic's name.
-MODERN_DECLARATION_TYPE_ERROR := $(shell $(MODERN_CC) -Werror -Werror=declaration-missing-parameter-type \
-                               -x c -fsyntax-only /dev/null >/dev/null 2>&1 && \
-                               printf '%s' '-Werror=declaration-missing-parameter-type')
+MODERN_GCC_VERSION := 13.2.1
 MODERN_CFLAGS := -mthumb-interwork -mcpu=arm7tdmi -mabi=apcs-gnu -O2 -fno-toplevel-reorder -std=gnu89 \
                  -ffreestanding -nostdinc -fno-zero-initialized-in-bss -fno-tree-loop-distribute-patterns \
                  -DMODERN=1 -Wall -Wextra -Wno-sign-compare -Wno-unused-parameter \
                  -Wno-missing-field-initializers -Wno-pointer-sign -fdiagnostics-plain-output \
-                 -Werror=implicit-int -Werror=missing-parameter-type $(MODERN_DECLARATION_TYPE_ERROR) \
+                 -Werror=implicit-int -Werror=missing-parameter-type \
                  $(INCLUDES) -D$(DEFINE)=1 -I$(BUILD)
 MODERN_OBJS := $(patsubst %.c,$(BUILD)/modern/%.o,$(filter %.c,$(SRCS)))
 
-.PHONY: modern
+.PHONY: modern modern-gcc
 modern: $(MODERN_OBJS)
+modern-gcc:
+	@test "$$($(MODERN_CC) -dumpfullversion 2>/dev/null)" = "$(MODERN_GCC_VERSION)" || \
+	  { echo "make modern: $(MODERN_CC) is not GCC $(MODERN_GCC_VERSION)"; exit 1; }
 
-$(BUILD)/modern/%.o: %.c | $(BUILD)/text/msg_ids.h
+$(BUILD)/modern/%.o: %.c | $(BUILD)/text/msg_ids.h modern-gcc
 	@mkdir -p $(@D)
 	$(MODERN_CC) $(if $(filter $(ARM_C),$<),-marm,-mthumb) $(MODERN_CFLAGS) \
 	    $(if $(filter $(SOUND_C) $(FLASH_C),$<),,-fcall-used-r4) -MMD -MP -c -o $@ $<

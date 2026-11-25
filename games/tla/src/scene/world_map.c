@@ -778,7 +778,7 @@ enum { ACTOR_POND_COINS = 79 };
 /// boat rocks, and otherwise one of the pond's lines. No checking message
 /// comes first (TRIGGER_SUBJECT_OWN_EFFECT).
 void WorldMap_GazeIntoPond(void) {
-  u32 roll = (Random16() << 4) >> 16;
+  s32 roll = (Random16() << 4) >> 16;
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
@@ -811,11 +811,8 @@ void WorldMap_GazeIntoPond(void) {
       actor->z.fixed = position[2];
     }
     FieldActor_ShowItemIconById(ACTOR_POND_COINS, amount);
-    /* FAKEMATCH(dead): the store and the call in a once-only block. */
-    do {
-      state->scoopedItem = amount;
-      Scene_TalkToActor(FIELD_TALK_SILENT | slot);
-    } while (0);
+    state->scoopedItem = amount;
+    Scene_TalkToActor(FIELD_TALK_SILENT | slot);
   } else if (roll == 1) {
     MapGrid_SetShake(3, 5, 1);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -823,7 +820,7 @@ void WorldMap_GazeIntoPond(void) {
     // "The boat's rocking! This thing's dangerous! I almost fell out!"
     Message_ShowCentered((s32)MsgTheBoatS, 1);
   } else {
-    Message_ShowCentered((s32)MsgTheBoatS + (roll >> 1), 1);
+    Message_ShowCentered((s32)MsgTheBoatS + roll / 2, 1);
   }
   Event_End();
 }

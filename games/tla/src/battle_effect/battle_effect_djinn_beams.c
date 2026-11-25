@@ -157,7 +157,6 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   for (frame = 0; frame != args->targetCount * DJINN_BEAMS_TARGET_FRAMES + 116;
        frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraState;
-    s32 prelude;
 
     if (frame == 64)
       Sound_PlayFar(SE_POWER_UP);
@@ -165,15 +164,14 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       EFFECT_SHOW_DAMAGE(0);
 
     // The Djinni sways, then rises away from frame 32.
-    prelude = args->prelude;
-    if (prelude == 1) {
+    if (args->prelude == 1) {
       s32 angle = frame * (TRIG_TURN / 32);
       s32 x = FIXEDtoINT(-Trig_Sin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) +
               djinn[0] + offsetX - DJINNI_WIDTH / 2;
       s32 y = FIXEDtoINT(Trig_Cos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
               djinn[1] - 24;
 
-      BattleEffect_BuildCanvasBlitters(args->side ^ prelude, draw);
+      BattleEffect_BuildCanvasBlitters(args->side ^ 1, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,

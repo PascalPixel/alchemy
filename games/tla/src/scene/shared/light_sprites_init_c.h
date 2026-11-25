@@ -1,7 +1,7 @@
 /// Loads the third set of light pictures (gField_CachedTilesC) into VRAM and
 /// starts drawing the lit actors (none yet), large, each at its own priority.
 void LightSprites_InitC(void) {
-  u8 *buffer = BumpAlloc(2048);
+  u8 *buffer = Heap_CallAlternatePool(Heap_Alloc, 2048);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesC, buffer);

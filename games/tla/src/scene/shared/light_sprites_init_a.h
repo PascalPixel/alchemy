@@ -2,7 +2,7 @@
 /// VRAM and starts drawing the lit actors (none yet), small, each at its own
 /// priority.
 UNUSED void LightSprites_InitA(void) {
-  u8 *buffer = BumpAlloc(3072);
+  u8 *buffer = Heap_CallAlternatePool(Heap_Alloc, 3072);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesA, buffer);

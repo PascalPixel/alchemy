@@ -1621,7 +1621,7 @@ void AquaRock_StartBubbles(void) {
   void *buffer;
 
   Iwram_ClearWordsEntry(state, sizeof(struct AquaRockBubbles));
-  buffer = BumpAlloc(256);
+  buffer = Heap_CallAlternatePool(Heap_Alloc, 256);
   Decompress_TaggedLz(gAquaRock_BubbleTiles, buffer);
   state->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(state->vramEntry, 256, buffer);

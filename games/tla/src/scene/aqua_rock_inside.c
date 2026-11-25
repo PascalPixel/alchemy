@@ -2324,7 +2324,7 @@ void AquaRockInside_StartPillars(void) {
   s32 priority;
 
   Iwram_ClearWordsEntry(&gAquaRockInside_Pillars, sizeof(struct PillarState));
-  buffer = BumpAlloc(3200);
+  buffer = Heap_CallAlternatePool(Heap_Alloc, 3200);
   Decompress_TaggedLz(gAquaRockInside_PillarTiles, buffer);
   gAquaRockInside_Pillars.vramEntry = VramCache_FindFreeEntry();
   Vram_Load(gAquaRockInside_Pillars.vramEntry, 3200, buffer);
@@ -2513,7 +2513,7 @@ void AquaRockInside_StartSplashes(void) {
   s32 priority;
 
   Iwram_ClearWordsEntry(&gAquaRockInside_Splashes, sizeof(struct BeamState));
-  buffer = BumpAlloc(1024);
+  buffer = Heap_CallAlternatePool(Heap_Alloc, 1024);
   Decompress_TaggedLz(gAquaRockInside_SplashTiles, buffer);
   gAquaRockInside_Splashes.vramEntry = VramCache_FindFreeEntry();
   Vram_Load(gAquaRockInside_Splashes.vramEntry, 1024, buffer);

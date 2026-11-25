@@ -25,7 +25,6 @@
 #include "graphics/resource.h"
 #include "scene_ids.h"
 #include "graphics/window_close.h"
-#include "field/call.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"
@@ -57,6 +56,13 @@ s16 gEpiloguePortraitX BSS_DATA ALIGNED(4); ///< the portrait's left, in pixels
 extern const u16 gEpilogueNamePanelPalette[];
 
 void EndingImage_Show(s32 resource, u8 *map, s32 position);
+
+/// EndingImage_Show as the epilogue shows each of its pictures, through an
+/// inline as its waits go through FieldEvent_Wait (event_inline.h).
+static inline void FieldEndingImage_Show(s32 resource, u8 *map, s32 position) {
+  EndingImage_Show(resource, map, position);
+}
+
 #include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -98,7 +104,7 @@ struct Trigger gSceneEvents[] = {
 /// (RESOURCE_GREEN_PANEL) drawn in portrait slot 0's palette, and starts
 /// Epilogue_PlacePortraitFrame.
 void Epilogue_LoadPortraitFrame(void) {
-  void *buffer = BumpAlloc(64 * 64 / 2);
+  void *buffer = Heap_CallAlternatePool(Heap_Alloc, 64 * 64 / 2);
   struct EffectSprite *sprite;
   s32 *slot;
   s32 *tileSlot;
@@ -294,10 +300,8 @@ s32 Scene_Initialize(void) {
   scroll = gBgScroll;
   scroll[3].y = 16;
   scroll[2].y = 16;
-  /* FAKEMATCH(wrapper): most pictures shown through Call3 rather than called
-   * directly. */
-  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_CLIFF_DAY_PICTURE,
-        (s32)Ram_MapCellBuffer, 0);
+  FieldEndingImage_Show(RESOURCE_ENDING_CLIFF_DAY_PICTURE, Ram_MapCellBuffer,
+                        0);
   FieldEvent_Wait(100);
   Epilogue_ShowLine(SPRITE_JENNAS_FATHER, LINE_AT_FOOT, 30);
   Epilogue_ShowLine(SPRITE_JENNAS_MOTHER, LINE_AT_FOOT, 40);
@@ -314,8 +318,8 @@ s32 Scene_Initialize(void) {
   EndingImage_WaitForScroll();
   FieldEvent_Wait(30);
   // The sunset over the cliff, shown already panned to them.
-  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_CLIFF_SUNSET_PICTURE,
-        (s32)Ram_MapCellBuffer, 120);
+  FieldEndingImage_Show(RESOURCE_ENDING_CLIFF_SUNSET_PICTURE, Ram_MapCellBuffer,
+                        120);
   FieldEvent_Wait(120);
   Epilogue_ShowLine(SPRITE_JENNA, LINE_AT_FOOT, 30);
   Epilogue_ShowLine(SPRITE_PIERS, LINE_AT_FOOT, 30);
@@ -352,8 +356,8 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(EPILOGUE_NO_PORTRAIT | SPRITE_BOY_WITH_ORANGE_HAIR,
                     LINE_AT_FOOT, 30);
   Epilogue_ShowLine(SPRITE_GARET, LINE_AT_FOOT, 30);
-  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_VILLAGERS_PICTURE_A,
-        (s32)Ram_MapCellBuffer, 0);
+  FieldEndingImage_Show(RESOURCE_ENDING_VILLAGERS_PICTURE_A, Ram_MapCellBuffer,
+                        0);
   FieldEvent_Wait(60);
   Event_PlaySound(MUS_EPILOGUE_VILLAGERS);
   FieldEvent_Wait(30);
@@ -380,28 +384,27 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(SPRITE_KYLE, LINE_AT_FOOT, 30);
   Epilogue_ShowLine(SPRITE_DORA, LINE_AT_FOOT, 40);
   // No image: the villagers fade to black before the embrace.
-  Call3((void (*)())EndingImage_Show, 0, (s32)Ram_MapCellBuffer, 0);
+  FieldEndingImage_Show(0, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   scroll[3].y = 0;
   scroll[2].y = 0;
   EndingImage_LowerTopStrip(0);
-  EndingImage_Show(RESOURCE_ENDING_EMBRACE_PICTURE, Ram_MapCellBuffer, 0);
+  FieldEndingImage_Show(RESOURCE_ENDING_EMBRACE_PICTURE, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   // The embrace stays until a button is pressed.
   while (gInput.pressed == 0)
     System_Wait(1);
-  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_REUNION_PICTURE,
-        (s32)Ram_MapCellBuffer, 0);
+  FieldEndingImage_Show(RESOURCE_ENDING_REUNION_PICTURE, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
   // The reunion pans 120 pixels right, along the party.
   EndingImage_SetTargetRow(120);
   System_Wait(1);
   EndingImage_WaitForScroll();
   FieldEvent_Wait(180);
-  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_SUNSET_PLAIN_PICTURE,
-        (s32)Ram_MapCellBuffer, 0);
+  FieldEndingImage_Show(RESOURCE_ENDING_SUNSET_PLAIN_PICTURE, Ram_MapCellBuffer,
+                        0);
   FieldEvent_Wait(300);
-  EndingImage_Show(RESOURCE_ENDING_THE_END_PICTURE, Ram_MapCellBuffer, 0);
+  FieldEndingImage_Show(RESOURCE_ENDING_THE_END_PICTURE, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(180);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   gMainRoutineState.messageSpeed = savedSpeed;
@@ -416,7 +419,7 @@ s32 Scene_Initialize(void) {
         break;
     } while (gInput.pressed == 0);
   }
-  EndingImage_Show(0, Ram_MapCellBuffer, 0);
+  FieldEndingImage_Show(0, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Io_Write16(0, &REG_BLDCNT);
   Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);

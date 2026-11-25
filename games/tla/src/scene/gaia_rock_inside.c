@@ -3133,9 +3133,6 @@ typedef struct {
   PathCell cells[GRID_WIDTH * GRID_WIDTH];
 } PathGrid;
 
-/// Takes size bytes of EWRAM's heap (Heap_AllocEwram).
-static inline void *BumpAllocEwram(s32 size) { return Heap_AllocEwram(size); }
-
 /// The maze grid's cell at (x, y), and its address.
 #define AT(x, y) grid->cells[(y) * GRID_WIDTH + (x)]
 #define AT_ADDRESS(x, y)                                                       \
@@ -3163,7 +3160,7 @@ void GaiaRockInside_LayMaze(s32 seed) {
     return;
   gRandomSeed = seed;
 restart:
-  grid = BumpAllocEwram(sizeof *grid);
+  grid = Heap_CallAlternatePool(Heap_AllocEwram, sizeof *grid);
   Iwram_ClearWordsEntry(grid, sizeof *grid);
   // BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28
   // cells and the last row's marks land after the block.

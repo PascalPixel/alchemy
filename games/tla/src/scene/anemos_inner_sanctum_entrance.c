@@ -508,7 +508,7 @@ void LightSprites_Draw(void) {
 /// Sets up the glow sprites from the field's cached tiles D, with no picture
 /// row chosen yet.
 void AnemosInnerSanctumEntrance_StartLightSprites(void) {
-  u8 *buffer = BumpAlloc(6144);
+  u8 *buffer = Heap_CallAlternatePool(Heap_Alloc, 6144);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesD, buffer);

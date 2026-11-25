@@ -709,8 +709,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       s32 x;
       s32 y;
 
-      targetFrame = frame - j * STAT_REDUCTION_TARGET_DELAY;
       object = BattleObject_GetFar(args->targets[j])->object;
+      targetFrame = frame - j * STAT_REDUCTION_TARGET_DELAY;
       if (targetFrame > 0) {
         // DEAD: the view set from the camera a first time, which the second
         // call repeats; the ROM keeps both calls.
@@ -736,9 +736,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
                     SHIELD_HEIGHT);
         }
         // The chime as the sprite breaks.
-        /* FAKEMATCH(temporary): the target's frame worked out again, here and
-         * for the shards' fade below; as targetFrame. */
-        if (frame - j * STAT_REDUCTION_TARGET_DELAY == 24)
+        if (targetFrame == 24)
           Sound_PlayFar(SE_CRACK);
 
         // The shards fly for 36 frames, a shade darker every four.
@@ -746,7 +744,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
           s32 level;
 
           level = 0;
-          if (frame - j * STAT_REDUCTION_TARGET_DELAY > 28) {
+          if (targetFrame > 28) {
             level = (targetFrame - 24) / 4;
             if (level > DIMMED_COPIES - 1)
               level = DIMMED_COPIES - 1;

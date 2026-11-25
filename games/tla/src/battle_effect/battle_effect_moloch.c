@@ -457,10 +457,10 @@ void Iris_ChangeBackdrop(void) {
 /// Where each run of pictures starts in IrisSplashSheet, in bytes.
 enum IrisSplashPicture {
   IRIS_LARGE_RINGS = 0,
-  IRIS_SMALL_RINGS = IRIS_LARGE_RINGS +
-      IRIS_RING_FADES * PICTURE_BYTES(IRIS_LARGE_RING),
-  IRIS_DOTS = IRIS_SMALL_RINGS +
-      IRIS_RING_FADES * PICTURE_BYTES(IRIS_SMALL_RING),
+  IRIS_SMALL_RINGS =
+      IRIS_LARGE_RINGS + IRIS_RING_FADES * PICTURE_BYTES(IRIS_LARGE_RING),
+  IRIS_DOTS =
+      IRIS_SMALL_RINGS + IRIS_RING_FADES * PICTURE_BYTES(IRIS_SMALL_RING),
   IRIS_SPRAY = IRIS_DOTS + IRIS_DOT_FADES * PICTURE_BYTES(IRIS_DOT)
 };
 /// A splash's rings of dots are drawn at this many points around; its ring

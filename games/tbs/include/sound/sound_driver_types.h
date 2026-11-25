@@ -342,7 +342,7 @@ enum SoundChannelFlag {
   SOUND_CHANNEL_SF_STOP = 0x40,
   SOUND_CHANNEL_SF_START = 0x80,
   SOUND_CHANNEL_SF_ON = SOUND_CHANNEL_SF_START | SOUND_CHANNEL_SF_STOP |
-      SOUND_CHANNEL_SF_IEC | SOUND_CHANNEL_SF_ENV
+                        SOUND_CHANNEL_SF_IEC | SOUND_CHANNEL_SF_ENV
 };
 
 /// The envelope phase in a sound channel's status, from release to attack.

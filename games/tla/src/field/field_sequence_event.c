@@ -254,65 +254,64 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     FieldMessage_ShowFar((s32)&MsgItemReceived, FIELD_MESSAGE_ZOOM);
     // "But you can't carry any more items."
     FieldMessage_ShowFar((s32)&MsgItemCannotCarry, FIELD_MESSAGE_ZOOM);
-  retry:
-    {
-      // "What will you drop?"
-      FieldMessage_ShowFar((s32)&MsgItemDropPrompt, FIELD_MESSAGE_ZOOM);
-      result = ItemPicker_RunToDropFar(&member, &slot);
-      if (result == -1) {
-        if (Item_GetDirectFar(item)->flags & ITEM_INDISPENSABLE) {
-          MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-          // "That <item>'s valuable! You must get it!"
-          FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, FIELD_MESSAGE_ZOOM);
-          goto retry;
-        }
+  retry: {
+    // "What will you drop?"
+    FieldMessage_ShowFar((s32)&MsgItemDropPrompt, FIELD_MESSAGE_ZOOM);
+    result = ItemPicker_RunToDropFar(&member, &slot);
+    if (result == -1) {
+      if (Item_GetDirectFar(item)->flags & ITEM_INDISPENSABLE) {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        // "Drop the <item>?"
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1,
-                             FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
-        result = FieldYesNo_Ask(1);
-        Message_CloseFinishedWindowsFar();
-        if (result != 0)
-          goto retry;
-        Item_AdjustRareItemStockFar(item, 1);
-        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        // "Felix drops the <item>."
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);
-        goto done;
-      }
-      // A carried item was picked: drop it (the whole stack) and take the new
-      // one. A party member who already carries INVENTORY_STACK_MAX of the new
-      // item cannot take it: say so and ask again.
-      Unit_Get(member);
-      count = Inventory_GetQuantityFar(member, slot);
-      if (Inventory_CountItemFar(member, item) >= INVENTORY_STACK_MAX) {
-        MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
-        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        // "Empty": the line every edition's text has here, the word for an
-        // empty inventory slot, though the member and item pushed suit a
-        // sentence such as MsgPartyCannotCarry's.
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, FIELD_MESSAGE_ZOOM);
+        // "That <item>'s valuable! You must get it!"
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, FIELD_MESSAGE_ZOOM);
         goto retry;
       }
-      for (i = 0; i < count; i++)
-        Inventory_DiscardFar(member, slot);
-      Unit_RefreshPsynergyFar(member);
-      Unit_CalculateFar(member);
-      owner = PartyInventory_AddFar(item);
-      Sound_PlayFar(MUS_TREASURE_FOUND);
-      if (owner == gMainRoutineState.leaderActorId) {
-        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemReceived,
-                             FIELD_MESSAGE_ZOOM |
-                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
-      } else {
-        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
-#if !TLA_PATCH_3
-        FieldMessage_ShowFar((s32)&MsgItemGiven, GIFT_RECEIVED_MESSAGE_MODE);
-#endif
-      }
+      MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+      // "Drop the <item>?"
+      FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1,
+                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
+      result = FieldYesNo_Ask(1);
+      Message_CloseFinishedWindowsFar();
+      if (result != 0)
+        goto retry;
+      Item_AdjustRareItemStockFar(item, 1);
+      MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+      // "Felix drops the <item>."
+      FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);
+      goto done;
     }
+    // A carried item was picked: drop it (the whole stack) and take the new
+    // one. A party member who already carries INVENTORY_STACK_MAX of the new
+    // item cannot take it: say so and ask again.
+    Unit_Get(member);
+    count = Inventory_GetQuantityFar(member, slot);
+    if (Inventory_CountItemFar(member, item) >= INVENTORY_STACK_MAX) {
+      MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+      // "Empty": the line every edition's text has here, the word for an
+      // empty inventory slot, though the member and item pushed suit a
+      // sentence such as MsgPartyCannotCarry's.
+      FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, FIELD_MESSAGE_ZOOM);
+      goto retry;
+    }
+    for (i = 0; i < count; i++)
+      Inventory_DiscardFar(member, slot);
+    Unit_RefreshPsynergyFar(member);
+    Unit_CalculateFar(member);
+    owner = PartyInventory_AddFar(item);
+    Sound_PlayFar(MUS_TREASURE_FOUND);
+    if (owner == gMainRoutineState.leaderActorId) {
+      MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+      FieldMessage_ShowFar((s32)&MsgItemReceived,
+                           FIELD_MESSAGE_ZOOM |
+                               FIELD_MESSAGE_WAITING_FOR_SOUND);
+    } else {
+      MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+      MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
+#if !TLA_PATCH_3
+      FieldMessage_ShowFar((s32)&MsgItemGiven, GIFT_RECEIVED_MESSAGE_MODE);
+#endif
+    }
+  }
   done:
     state->message = saved;
     return owner;

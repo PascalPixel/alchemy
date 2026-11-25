@@ -536,7 +536,7 @@ void (*const gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1])(
     [BATTLE_EFFECT_TAINT - 1] = BattleEffect_RunTaint,
     [BATTLE_EFFECT_DELUDE - 1] = BattleEffect_RunDelude,
     [BATTLE_EFFECT_UNUSED_ORBITING_SPIRALS -
-     1] = BattleEffect_RunUnusedOrbitingSpirals,
+        1] = BattleEffect_RunUnusedOrbitingSpirals,
     [BATTLE_EFFECT_UNUSED_HEARTRENDER - 1] = BattleEffect_RunHeartrender,
     [BATTLE_EFFECT_PARALYZE - 1] = BattleEffect_RunParalyze,
     [BATTLE_EFFECT_SLEEP - 1] = BattleEffect_RunSleep,
@@ -569,7 +569,7 @@ void (*const gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1])(
     [BATTLE_EFFECT_VORPAL_SLASH - 1] = BattleEffect_RunVorpalSlash,
     [BATTLE_EFFECT_DROWN - 1] = BattleEffect_RunDrown,
     [BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE -
-     1] = BattleEffect_RunUnusedTriangleStrike,
+        1] = BattleEffect_RunUnusedTriangleStrike,
     [BATTLE_EFFECT_ASTRAL_BLAST - 1] = BattleEffect_RunAstralBlast,
     [BATTLE_EFFECT_HEARTBREAK - 1] = BattleEffect_RunHeartbreak,
     [BATTLE_EFFECT_AURA - 1] = BattleEffect_RunAura,
@@ -1201,12 +1201,12 @@ const u8 gProjectileVolley_Modes[][PROJECTILE_VOLLEY_COLUMNS] = {
                                       [PROJECTILE_VOLLEY_DELAY] = 32,
                                       [PROJECTILE_VOLLEY_SPARKS] =
                                           8}, // Stun Sting
-    [PROJECTILE_VOLLEY_CHILL_BREATH] = {[PROJECTILE_VOLLEY_SHOTS] = 60,
-                                        [PROJECTILE_VOLLEY_STEPS] = 12,
-                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
-                                        [PROJECTILE_VOLLEY_DELAY] = 32,
-                                        [PROJECTILE_VOLLEY_SPARKS] =
-                                            4}, // Chill Breath
+    [PROJECTILE_VOLLEY_CHILL_BREATH] =
+        {[PROJECTILE_VOLLEY_SHOTS] = 60,
+         [PROJECTILE_VOLLEY_STEPS] = 12,
+         [PROJECTILE_VOLLEY_STAGGER] = 1,
+         [PROJECTILE_VOLLEY_DELAY] = 32,
+         [PROJECTILE_VOLLEY_SPARKS] = 4}, // Chill Breath
 };
 
 /// Each flash picture's width, in pixels.

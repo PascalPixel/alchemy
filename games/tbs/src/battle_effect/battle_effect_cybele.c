@@ -66,8 +66,8 @@
 enum ThornVineSheetPicture {
   CYBELE_VINE_STEM = CYBELE_VINE_WIDTH * CYBELE_VINE_TIP_HEIGHT,
   /// a thinner vine: its tip, then its stem
-  CYBELE_THIN_VINE = CYBELE_VINE_STEM +
-      CYBELE_VINE_WIDTH * CYBELE_VINE_STEM_HEIGHT
+  CYBELE_THIN_VINE =
+      CYBELE_VINE_STEM + CYBELE_VINE_WIDTH * CYBELE_VINE_STEM_HEIGHT
 };
 
 /// Cybele drops in at the right and thorns fly from her mouth; flowering

@@ -9,6 +9,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - run: sudo apt-get update -q && sudo apt-get install -yq binutils-arm-none-eabi libpng-dev
+      - run: sudo apt-get update -q && sudo apt-get install -yq binutils-arm-none-eabi libpng-dev clang-format-20
       - run: make -j"$(nproc)" compare-editions
       - run: make test

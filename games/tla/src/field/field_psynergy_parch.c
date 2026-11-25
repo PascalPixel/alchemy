@@ -160,13 +160,12 @@ void FieldPsynergy_Parch(void) {
   } else {
     result = PARCH_NOTHING;
   }
-loaded:
-  {
-    void *source = Resource_GetTableEntry(RESOURCE_GLOW_DISC);
-    dst = (u8 *)OBJ_VRAM0 + PARCH_DISC_TILE_OFFSET * TILE_SIZE_4BPP +
-          windowState->glyphTiles * TILE_SIZE_4BPP;
-    Decompress_TaggedLz(source, state);
-  }
+loaded: {
+  void *source = Resource_GetTableEntry(RESOURCE_GLOW_DISC);
+  dst = (u8 *)OBJ_VRAM0 + PARCH_DISC_TILE_OFFSET * TILE_SIZE_4BPP +
+        windowState->glyphTiles * TILE_SIZE_4BPP;
+  Decompress_TaggedLz(source, state);
+}
   Dma_Set(state, dst, DMA_COPY_WORDS(1024), REG_DMA3);
   screen[0] = pos[0];
   screen[1] = pos[1];

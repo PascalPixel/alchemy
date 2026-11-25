@@ -131,8 +131,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   state->dirty = 1;
 
   for (;;) {
-    /* LEFTOVER(template): sprite holds &cursorSprite, as
-     * BattlePsynergyMenu_Run's iconSprite holds its cursor; as &cursorSprite at
+    /* FAKEMATCH(temporary): sprite holds &cursorSprite; as &cursorSprite at
      * each use. */
     struct QueuedSprite *sprite = &cursorSprite;
 

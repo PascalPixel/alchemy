@@ -433,10 +433,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   state.kind = ELEMENT_JUPITER;
   BattleEffect_RunElementPillarFar(&state);
   state.kind = 0;
-  /* LEFTOVER(template): the choice of runner BattleStaging_RunAttack, RunItem
-   * and RunPsynergyCast make under their test of the kind, which is 0 here, as
-   * The Broken Seal's twin keeps it; as BattleEffect_RunFromTableFar(&state)
-   * alone. */
+  /* FAKEMATCH(dead): a never-true test, state.kind being 0, and its arm; as
+   * BattleEffect_RunFromTableFar(&state) alone. */
   if (state.kind)
     BattleEffect_RunByIdRangeFar(&state);
   else

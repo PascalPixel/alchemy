@@ -738,9 +738,8 @@ void MagmaRockInside_TargetStatue(s32 stage) {
   table = gMagmaRockInside_Statues;
   FieldEvent_EndLastingPsynergy(0);
   scene = gMainRoutineState.next;
-  /* LEFTOVER(template): the entrance hall's and Fury's room's branches, empty,
-     the room chain MagmaRockInside_FinishPushingPillar tests with work in
-     each. */
+  // DEAD: the entrance hall's and Fury's room's arms are empty; the ROM keeps
+  // both tests.
   if (scene == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE) {
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_FURY) {
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS) {

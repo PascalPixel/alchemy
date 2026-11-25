@@ -351,6 +351,8 @@ s32 Field_TryJumpForward(void) {
   if ((angle + FACING_STEP) & DEGtoANG(45)) // not facing a quarter turn
     return result;
   angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+  /* FAKEMATCH(temporary): positionWords holds position, the landing's own
+   * address; as position at its two reads. */
   positionWords = position;
 again:
   // The middle of the tile in front, then of the tile beyond.

@@ -751,9 +751,9 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(toFIXED(8), direction, &position);
     if (gDebugMode != 0 && (gInput.held & KEY_L)) {
-      /* LEFTOVER(template): the debug walk takes the key's heading, as
-       * Actor_MoveAsSand's and Actor_SailOnMap's debug branches do before they
-       * use it; nothing reads it here; as the branch left empty. */
+      /* FAKEMATCH(dead): direction takes angle, which it already holds (set
+       * just above), the debug branch's only statement; as the branch left
+       * empty. */
       direction = angle;
     } else {
       SET_POSITION(&leftPosition, actor->x.fixed, actor->y.fixed,

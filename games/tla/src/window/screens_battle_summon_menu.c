@@ -132,8 +132,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* LEFTOVER(template): cur holds &cursorStorage, as BattlePsynergyMenu_Run's
-     * iconSprite holds its cursor; as &cursorStorage at each use. */
+    /* FAKEMATCH(temporary): cur holds &cursorStorage beside sprite, which names
+     * the cursor below; as &cursorStorage at each use. */
     cur = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {

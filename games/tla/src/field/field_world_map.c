@@ -276,8 +276,8 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 cellX, s32 cellY) {
   s32 tile;
 
   perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
-  /* LEFTOVER(template): WorldMap_SetWindowCellTile's read of the followed
-     point, idle here, its pointer never set. */
+  /* FAKEMATCH(dead): a test of followedPosition, never set, and its reads of
+   * the followed point, which nothing uses; as no test at all. */
   if (followedPosition != 0) {
     originX = *followedPosition++;
     originY = followedPosition[1];

@@ -257,7 +257,9 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
     point++;
   }
 
-  /* LEFTOVER(template): size holds 2. */
+  /* LEFTOVER(template): size holds 2, as BattleEffect_RunAstralBlast
+   * (battle_effect_stars.c) sizes the same edge motes by frame; as 2 at the
+   * draw. */
   size = 2;
   corners = (struct Particle *)gMapGridCellBuffer;
   for (frame = 0; frame != SHINING_STAR_FRAMES; frame++) {

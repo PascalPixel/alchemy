@@ -94,18 +94,9 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     s32 shade = 0;
 
     if (frame == 0) {
-      /* FAKEMATCH(temporary): the target and the point it is projected to in
-       * locals; as args->targets[0] and &hit. */
-      s32 actor = args->targets[0];
-      struct ScreenPoint *at = &hit;
-      struct Particle *chip;
-
-      /* FAKEMATCH(dead): the store in a once-only block. */
-      do {
-        chip = (struct Particle *)gMapGridCellBuffer;
-      } while (0);
-      EffectPosition_ProjectBattler(actor, at);
-      for (i = 0; i != HEAVY_BLOW_CHIPS; i++, chip++) {
+      EffectPosition_ProjectBattler(args->targets[0], &hit);
+      for (i = 0; i != HEAVY_BLOW_CHIPS; i++) {
+        struct Particle *chip = &PARTICLES[i];
         s32 angle = Random16();
         s32 speed = 255;
 
@@ -260,33 +251,25 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     // The chips fly from the strike on, each drawn and moved three times a
     // frame; a bounce costs a chip eight frames of its life.
     if (frame >= gHeavyBlow_StrikeFrames[mode]) {
-      i = 0;
-      if (i != gHeavyBlow_ChipCounts[mode]) {
-        /* FAKEMATCH(temporary): blitter, blit[0] held in a local across the
-         * chips' draws; as blit[0] at each call. */
-        DrawRectangle blitter = blit[0];
-        struct Particle *chip = (struct Particle *)gMapGridCellBuffer;
+      for (i = 0; i != gHeavyBlow_ChipCounts[mode]; i++) {
+        struct Particle *chip = &PARTICLES[i];
 
-        do {
-          if (chip->variant >= 0) {
-            blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
-                    FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
-            Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
-            blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
-                    FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
-            Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
-            blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
-                    FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
-            Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
-            if (FIXED_INTEGER_PART(chip->y) > HEAVY_BLOW_GROUND_Y) {
-              chip->velocityY = -chip->velocityY;
-              chip->variant -= 8;
-            }
-            chip->variant--;
+        if (chip->variant >= 0) {
+          blit[0](canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
+                  FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
+          Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
+          blit[0](canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
+                  FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
+          Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
+          blit[0](canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
+                  FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
+          Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
+          if (FIXED_INTEGER_PART(chip->y) > HEAVY_BLOW_GROUND_Y) {
+            chip->velocityY = -chip->velocityY;
+            chip->variant -= 8;
           }
-          i++;
-          chip++;
-        } while (i != gHeavyBlow_ChipCounts[mode]);
+          chip->variant--;
+        }
       }
     }
     if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {

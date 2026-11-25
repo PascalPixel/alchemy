@@ -690,13 +690,12 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
 #if LANGUAGE == LANGUAGE_GERMAN
           case MESSAGE_LOCALIZED_WORD:
-            /* FAKEMATCH(temporary): articleForm holds the operand, which picks
-             * a noun here; the plain form reads it into a noun local. */
+            // A counted noun, singular or plural, by its kind.
             articleForm = decode(&reader) - 1;
-            nameBytes =
-                gLocalizedWord_CountedNouns[(articleForm & 7) * 2 + plural];
-            while (*nameBytes != 0) {
-              TEXT_APPEND(entry, writePosition, *nameBytes++);
+            for (nameBytes = gLocalizedWord_CountedNouns[(articleForm & 7) * 2 +
+                                                         plural];
+                 *nameBytes != 0; nameBytes++) {
+              TEXT_APPEND(entry, writePosition, *nameBytes);
             }
             break;
 #endif

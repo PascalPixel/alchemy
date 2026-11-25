@@ -1592,27 +1592,26 @@ void WorldMap_MeetEcho(void) {
     Actor_Jump(ACTOR_ECHO, 2, 30);
     FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
     count = 0;
-  plead:
-    {
-      i = Event_AskYesNoWithActorAnimation(owner, 0);
+  plead: {
+    i = Event_AskYesNoWithActorAnimation(owner, 0);
 
-      if (count == 7) {
-        if (i == 0) {
-          Actor_Jump(ACTOR_ECHO, 2, 20);
-          Actor_Jump(ACTOR_ECHO, 2, 20);
-          Event_SetMessageId(TUTORIAL_MESSAGE(MsgOhAllRight));
-          Event_ShowMessageAndWait(ACTOR_ECHO, 0);
-          goto joined;
-        }
-      } else if (i == 1) {
+    if (count == 7) {
+      if (i == 0) {
         Actor_Jump(ACTOR_ECHO, 2, 20);
         Actor_Jump(ACTOR_ECHO, 2, 20);
-        Event_SetMessageId(count + TUTORIAL_MESSAGE(MsgOhComeOn));
-        FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
-        count++;
-        goto plead;
+        Event_SetMessageId(TUTORIAL_MESSAGE(MsgOhAllRight));
+        Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+        goto joined;
       }
+    } else if (i == 1) {
+      Actor_Jump(ACTOR_ECHO, 2, 20);
+      Actor_Jump(ACTOR_ECHO, 2, 20);
+      Event_SetMessageId(count + TUTORIAL_MESSAGE(MsgOhComeOn));
+      FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
+      count++;
+      goto plead;
     }
+  }
     Actor_SetAnimationById(owner, ANIM_LEADER_LEAN_BACK);
     Actor_Jump(ACTOR_ECHO, 2, 20);
     Actor_Jump(ACTOR_ECHO, 4, 20);

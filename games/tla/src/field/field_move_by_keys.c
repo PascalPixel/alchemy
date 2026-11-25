@@ -630,18 +630,17 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         }
       }
     }
-  counted:
-    {
-      struct FieldState *state = Ram_HeapSlots->fieldState;
+  counted: {
+    struct FieldState *state = Ram_HeapSlots->fieldState;
 
-      if (state != NULL) {
-        if (collision & PLAYER_STEP_BLOCKED)
-          state->blockedSteps++;
-        else
-          state->blockedSteps = 0;
-        state->heldKeys = gInput.held;
-      }
+    if (state != NULL) {
+      if (collision & PLAYER_STEP_BLOCKED)
+        state->blockedSteps++;
+      else
+        state->blockedSteps = 0;
+      state->heldKeys = gInput.held;
     }
+  }
     Actor_SelectAnimation(actor, SAND_ANIMATION_MOVE);
     if (collision != 0) {
       actor->targetX = ACTOR_NO_TARGET;

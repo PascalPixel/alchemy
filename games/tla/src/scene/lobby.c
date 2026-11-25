@@ -478,15 +478,14 @@ recordNext:
   if (transfer == -1)
     goto failed;
   goto recordTest;
-tableWait:
-  {
-    s32 limit = LOBBY_RECOVERY_RECORD_BYTES;
+tableWait: {
+  s32 limit = LOBBY_RECOVERY_RECORD_BYTES;
 
-    if (gSerialReceivedSize > limit) {
-      result = -1;
-      goto done;
-    }
+  if (gSerialReceivedSize > limit) {
+    result = -1;
+    goto done;
   }
+}
   wait(1);
   if (--timeout < 0 ||
       (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {

@@ -44,11 +44,11 @@
 /// in battle_effect_table.c read the rest.
 enum IceBlockSheetPicture {
   /// After the three crystals and the four large shards.
-  BOREAS_BIG_BLOCK = 24 * 48 + 24 * 38 + 20 * 26 + 12 * 10 + 11 * 16 + 8 * 14 +
-      10 * 15,
+  BOREAS_BIG_BLOCK =
+      24 * 48 + 24 * 38 + 20 * 26 + 12 * 10 + 11 * 16 + 8 * 14 + 10 * 15,
   /// After the big block, the three spray pictures and the seven small shards.
   BOREAS_STREAK = BOREAS_BIG_BLOCK + 24 * 48 + 3 * (16 * 16) + 8 * 4 + 12 * 4 +
-      5 * 3 + 7 * 4 + 7 * 6 + 6 * 12 + 7 * 10
+                  5 * 3 + 7 * 4 + 7 * 6 + 6 * 12 + 7 * 10
 };
 
 /// gBoreas_Points has an x and a y for each of BOREAS_POINTS crystals: the

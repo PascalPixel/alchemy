@@ -254,12 +254,12 @@ enum CottageRoomsDCellBehavior {
 /// The doors of the village, by their index in gAltin_Doors.
 enum {
   /// The Sanctum's door, which leads to SANCTUM_FROM_ALTIN.
-  DOOR_SANCTUM = CELL_BEHAVIOR_ALTIN_SANCTUM_DOOR -
-      CELL_BEHAVIOR_ALTIN_FIRST_DOOR,
+  DOOR_SANCTUM =
+      CELL_BEHAVIOR_ALTIN_SANCTUM_DOOR - CELL_BEHAVIOR_ALTIN_FIRST_DOOR,
   /// The armor shop's door, where Isaac is only lined up with the doorway
   /// before the screen fades, not walked into it.
-  DOOR_ARMOR_SHOP = CELL_BEHAVIOR_ALTIN_ARMOR_SHOP_DOOR -
-      CELL_BEHAVIOR_ALTIN_FIRST_DOOR
+  DOOR_ARMOR_SHOP =
+      CELL_BEHAVIOR_ALTIN_ARMOR_SHOP_DOOR - CELL_BEHAVIOR_ALTIN_FIRST_DOOR
 };
 
 /// The frames from one of the water beast's hops to the next.

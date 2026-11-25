@@ -292,8 +292,7 @@ enum ColosseumSatrageMatchActorId {
   /// lifts' operator runs.
   ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT,
   ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT =
-          ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT +
-      3,
+      ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 3,
   /// Four platforms in the lifts' sprite laid across the water channel at the
   /// Board Walk's south edge, drawn underfoot. Nothing but
   /// Scene_Initialize touches them.

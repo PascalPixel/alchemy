@@ -621,10 +621,10 @@ test-linking: $(LINKING_EDITION)
 	@awk '{ rows[$$1]++ } END { print "test-linking: " rows["scene"] " scenes name the overlay and the map they named, " \
 	      rows["overlay"] " overlays hold their own images: OK" }' $(LINKING_WAS).rows
 
-# Both games' C is as clang-format writes it (AGENTS.md S3). Without
-# clang-format installed the check says so
-# and is skipped.
-CLANG_FORMAT ?= clang-format
+# Both games' C is as clang-format 20 writes it: earlier versions read a cast
+# such as (s32)&x as a bitwise and, whatever .clang-format's TypeNames say.
+# Without clang-format-20 installed the check says so and is skipped.
+CLANG_FORMAT ?= clang-format-20
 FORMATTED := $(shell git ls-files 'games/*.c' 'games/*.h')
 .PHONY: format-check
 format-check:

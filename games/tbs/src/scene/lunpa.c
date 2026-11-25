@@ -140,8 +140,8 @@ enum LunpaFortressGatesRaisedTrigger { RAISED_PARTY_SPOTTED = 91 };
 /// into the doorway.
 enum {
   DOOR_COUNT = 8,
-  DOOR_TEMPLE = CELL_BEHAVIOR_LUNPA_TEMPLE_DOOR -
-      CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR
+  DOOR_TEMPLE =
+      CELL_BEHAVIOR_LUNPA_TEMPLE_DOOR - CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR
 };
 
 /// Lunpa's placed actors, numbered in the order of gLunpaActorPlacements

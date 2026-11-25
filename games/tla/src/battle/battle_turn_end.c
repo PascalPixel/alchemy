@@ -636,114 +636,113 @@ void BattleUnit_DrainDjinn(s32 unitId, s32 all, s32 announce) {
   struct DjinnRecoveryList *pending;
 
   shown = 0;
-again:
-  {
-    count = 0;
-    active = 0;
+again: {
+  count = 0;
+  active = 0;
+  for (element = 0; element < ELEMENT_COUNT; element++) {
+    for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
+      if (Djinn_IsSetFar(unitId, element, djinni)) {
+        elements[count] = element;
+        indices[count] = djinni;
+        count++;
+        active = 1;
+        if (count == DRAIN_CANDIDATE_MAX)
+          goto picked;
+      }
+    }
+  }
+  if (count == 0) {
     for (element = 0; element < ELEMENT_COUNT; element++) {
       for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
-        if (Djinn_IsSetFar(unitId, element, djinni)) {
+        if (Djinn_CanSetFar(unitId, element, djinni)) {
           elements[count] = element;
           indices[count] = djinni;
           count++;
-          active = 1;
           if (count == DRAIN_CANDIDATE_MAX)
             goto picked;
         }
       }
     }
-    if (count == 0) {
-      for (element = 0; element < ELEMENT_COUNT; element++) {
-        for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
-          if (Djinn_CanSetFar(unitId, element, djinni)) {
-            elements[count] = element;
-            indices[count] = djinni;
-            count++;
-            if (count == DRAIN_CANDIDATE_MAX)
-              goto picked;
-          }
-        }
-      }
-    }
-  picked:
-    if (count == 0)
-      return;
-
-    count = ((u32)Battle_RandomFar() * count) >> 16;
-    element = elements[count];
-    djinni = indices[count];
-    if (active) {
-      DjinnRecovery_AddStandbyFar(unitId, element, djinni);
-      Djinn_PutOnStandbyFar(unitId, element, djinni);
-      if (announce) {
-        BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
-        BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
-                                                       djinni +
-                                                       ABILITY_DJINNI_FIRST);
-        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnOnStandby);
-        return;
-      }
-    } else if (announce) {
-      return;
-    }
-
-    list = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
-    for (i = 0; i < list->count; i++) {
-      if (list->entries[i].element == element &&
-          list->entries[i].index == djinni &&
-          list->entries[i].turns == DJINN_RECOVERY_AFTER_BATTLE)
-        list->entries[i].turns = DJINN_RECOVERY_SUMMONED;
-    }
-
-    pending = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
-    for (;;) {
-      owner = -1;
-      for (i = 0; i < pending->count; i++) {
-        if (pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
-          owner = pending->entries[i].unitId;
-          break;
-        }
-      }
-      if (owner == -1)
-        break;
-      recoveryTurn = -1;
-      for (i = 0; i < pending->count; i++) {
-        if (pending->entries[i].unitId == owner &&
-            pending->entries[i].turns > recoveryTurn)
-          recoveryTurn = pending->entries[i].turns;
-      }
-      recoveryTurn++;
-      if (recoveryTurn <= 1)
-        recoveryTurn = 2;
-      for (i = 0; i < pending->count; i++) {
-        if (pending->entries[i].unitId == owner &&
-            pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
-          pending->entries[i].turns = recoveryTurn;
-          recoveryTurn++;
-        }
-      }
-    }
-
-    if (!shown) {
-      shown = 1;
-      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
-      if (!all) {
-        s32 message;
-
-        BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
-                                                       djinni +
-                                                       ABILITY_DJINNI_FIRST);
-        message = (u32)&MsgDjinnDrained;
-        if (unitId < 0 || unitId > ALLY_MAX)
-          message++;
-        BattlePlayback_Push(PLAYBACK_MESSAGE, message);
-      } else {
-        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgAllDjinnDrained);
-      }
-    }
-    if (all)
-      goto again;
   }
+picked:
+  if (count == 0)
+    return;
+
+  count = ((u32)Battle_RandomFar() * count) >> 16;
+  element = elements[count];
+  djinni = indices[count];
+  if (active) {
+    DjinnRecovery_AddStandbyFar(unitId, element, djinni);
+    Djinn_PutOnStandbyFar(unitId, element, djinni);
+    if (announce) {
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+      BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
+                                                     djinni +
+                                                     ABILITY_DJINNI_FIRST);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnOnStandby);
+      return;
+    }
+  } else if (announce) {
+    return;
+  }
+
+  list = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
+  for (i = 0; i < list->count; i++) {
+    if (list->entries[i].element == element &&
+        list->entries[i].index == djinni &&
+        list->entries[i].turns == DJINN_RECOVERY_AFTER_BATTLE)
+      list->entries[i].turns = DJINN_RECOVERY_SUMMONED;
+  }
+
+  pending = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
+  for (;;) {
+    owner = -1;
+    for (i = 0; i < pending->count; i++) {
+      if (pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
+        owner = pending->entries[i].unitId;
+        break;
+      }
+    }
+    if (owner == -1)
+      break;
+    recoveryTurn = -1;
+    for (i = 0; i < pending->count; i++) {
+      if (pending->entries[i].unitId == owner &&
+          pending->entries[i].turns > recoveryTurn)
+        recoveryTurn = pending->entries[i].turns;
+    }
+    recoveryTurn++;
+    if (recoveryTurn <= 1)
+      recoveryTurn = 2;
+    for (i = 0; i < pending->count; i++) {
+      if (pending->entries[i].unitId == owner &&
+          pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
+        pending->entries[i].turns = recoveryTurn;
+        recoveryTurn++;
+      }
+    }
+  }
+
+  if (!shown) {
+    shown = 1;
+    BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+    if (!all) {
+      s32 message;
+
+      BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
+                                                     djinni +
+                                                     ABILITY_DJINNI_FIRST);
+      message = (u32)&MsgDjinnDrained;
+      if (unitId < 0 || unitId > ALLY_MAX)
+        message++;
+      BattlePlayback_Push(PLAYBACK_MESSAGE, message);
+    } else {
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgAllDjinnDrained);
+    }
+  }
+  if (all)
+    goto again;
+}
 }
 
 /// Ends one unit's action: its Djinn on standby are taken off its set, the

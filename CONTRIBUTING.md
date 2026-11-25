@@ -84,7 +84,7 @@ The source is C89 with the old compilers’ GNU extensions, written the way [pre
 - Positions and speeds are plain pixels: `Actor_SetPosition(ACTOR_MIA, 880, 502)`. Fixed-point values are written `toFIXED(0.3)` and angles `DEGtoANG(45)`, after Sega’s SGL.
 - What differs by language is chosen with `LANGUAGE`: text, fonts and layout that fits the text. Every other difference between editions is a patch level, `TBS_PATCH_2` or `TLA_PATCH_1`.
 - A macro that makes more than one call is a comma expression. Wrapped in `do { } while (0)` it compiled differently in every edition.
-- Formatting is clang-format with the repository’s `.clang-format`. `make test` checks it.
+- Formatting is clang-format 20 with the repository’s `.clang-format`. `make test` checks it with `clang-format-20` (earlier versions format some casts differently).
 
 ## Comments
 

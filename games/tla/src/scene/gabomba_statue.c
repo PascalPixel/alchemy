@@ -2995,15 +2995,14 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
       break;
     }
   }
-done:
-  {
-    s32 offset = (nextZ * CHANNEL_COLUMNS + nextX) * sizeof(struct PuzzleCell);
-    piece = GabombaStatue_PickPiece(
-        dir, last, ((struct PuzzleCell *)(cells + offset))->kind);
-    GabombaStatue_WritePiece(nextX, nextZ, piece,
-                             ((struct PuzzleCell *)(cells + offset))->state |
-                                 1 << bit);
-  }
+done: {
+  s32 offset = (nextZ * CHANNEL_COLUMNS + nextX) * sizeof(struct PuzzleCell);
+  piece = GabombaStatue_PickPiece(
+      dir, last, ((struct PuzzleCell *)(cells + offset))->kind);
+  GabombaStatue_WritePiece(nextX, nextZ, piece,
+                           ((struct PuzzleCell *)(cells + offset))->state |
+                               1 << bit);
+}
   return 0;
 }
 

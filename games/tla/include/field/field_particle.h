@@ -71,24 +71,4 @@ enum OutAndBackState {
   OUT_AND_BACK_FLYING_BACK = 3 ///< frees its slot once it arrives
 };
 
-/// Sets newState on every field particle of effectState->member still in use,
-/// walking their state bytes with cursor and counting down count.
-#define FIELD_PARTICLES_SET_ACTIVE_STATE(cursor, count, effectState, member,   \
-                                         newState)                             \
-  {                                                                            \
-    s32 state_ = (newState);                                                   \
-    (cursor) = (void *)(effectState);                                          \
-    (cursor) += offsetof(__typeof__(*(effectState)), member) +                 \
-                offsetof(struct FieldParticle, state);                         \
-    (count) =                                                                  \
-        sizeof((effectState)->member) / sizeof(struct FieldParticle) - 1;      \
-    do {                                                                       \
-      if (((s8 *)(cursor))[offsetof(struct FieldParticle, active) -            \
-                           offsetof(struct FieldParticle, state)] != 0)        \
-        *(cursor) = state_;                                                    \
-      (count)--;                                                               \
-      (cursor) += sizeof(struct FieldParticle);                                \
-    } while ((count) >= 0);                                                    \
-  }
-
 #endif

@@ -548,10 +548,9 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
   Sound_WaitForJingle();
   // Every sparkle still flying makes its last flight.
-  {
-    u8 *entry;
-    FIELD_PARTICLES_SET_ACTIVE_STATE(entry, effectIndex, shop, effects,
-                                     SANCTUM_SPARKLE_LAST_FLIGHT);
+  for (effectIndex = 0; effectIndex < SANCTUM_PARTICLE_COUNT; effectIndex++) {
+    if (shop->effects[effectIndex].active)
+      shop->effects[effectIndex].state = SANCTUM_SPARKLE_LAST_FLIGHT;
   }
 
   wait(20);

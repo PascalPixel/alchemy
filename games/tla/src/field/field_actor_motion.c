@@ -102,10 +102,12 @@ void Actor_UpdateAllOnField(void) {
       object->wait--;
     } else {
       for (;;) {
-        /* FAKEMATCH(signature): the script read through struct
-         * MotionScript, a one-word view; as script[object->scriptCursor]. */
-        u32 command =
-            ((const struct MotionScript *)script)->word[object->scriptCursor];
+        u32 command;
+
+        // The local steps to the command's word; the next pass takes the
+        // script afresh.
+        script += object->scriptCursor;
+        command = *script;
 
         if (command <= SCRIPT_COMMAND_MAX) {
           if (gActorScript_CommandTable[command](object) == 0)

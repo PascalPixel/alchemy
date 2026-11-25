@@ -61,12 +61,6 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor, struct Point *position);
 /// decoded map's planes into its cell words.
 typedef void (*ConvertMapRoutine)(void *destination, void *source, void *saved);
 
-/// The words of an object's script. As in The Broken Seal's ActorScriptWords,
-/// a flat word pointer changes one load's base and index order.
-struct MotionScript {
-  s32 word[1];
-};
-
 /// A point the fixed camera looks from or at.
 struct ActorCameraPoint {
   FIXED x; ///< 16.16 fixed-point pixels

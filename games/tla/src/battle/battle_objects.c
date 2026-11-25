@@ -387,6 +387,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   struct MotionObject *object;
   struct Sprite *record;
   struct Sprite **records;
+  struct Sprite *part;
 
   partyCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, unitIds);
   enemyCount =
@@ -402,9 +403,9 @@ void BattleObject_UpdateSpritePriorities(void) {
         object = slot->object;
         BattleStatusIcon_Cycle(slot);
         if (slot->shadowEntry != 0) {
-          struct Sprite *record = Actor_GetSprite(object, 0);
+          part = Actor_GetSprite(object, 0);
 
-          if (record != 0) {
+          if (part != 0) {
             struct SpriteAnimation *effect;
             s32 effectPriority = 0;
 
@@ -412,13 +413,9 @@ void BattleObject_UpdateSpritePriorities(void) {
             if (object->y != 0)
               effectPriority = SHADOW_HIDDEN_PRIORITY;
             effect = slot->shadowEntry;
-            /* FAKEMATCH(dead): a store the loops below overwrite, behind a
-             * test of slot. */
-            if ((void *)slot == effect)
-              recordIndex = 0;
             if (effect->priority != effectPriority) {
               effect->priority = effectPriority;
-              record->dirty = 1;
+              part->dirty = 1;
             }
           }
         }
@@ -457,7 +454,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         records = object->records;
         for (recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE;
              recordIndex++) {
-          struct Sprite *part = *records++;
+          part = *records++;
 
           if (part != 0) {
             record = part;
@@ -486,7 +483,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         records = object->records;
         for (recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE;
              recordIndex++) {
-          struct Sprite *part = *records++;
+          part = *records++;
 
           if (part != 0) {
             record = part;

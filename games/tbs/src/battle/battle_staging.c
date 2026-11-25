@@ -629,9 +629,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                           struct BattleAction *selection) {
   struct BattleStagingState state;
   struct Actor *actor;
-  /* FAKEMATCH(temporary): one local is both the targets' index and the
-   * dimming's frame count. */
-  s32 targetOrFadeIndex;
+  s32 i;
   s32 inventoryEntry;
   struct Unit *unit;
   struct ItemDefinition *item;
@@ -657,14 +655,13 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   else
     state.effect.side = EFFECT_SIDE_ENEMIES;
 
-  for (targetOrFadeIndex = 0; targetOrFadeIndex != state.effect.targetCount;
-       targetOrFadeIndex++) {
-    struct Sprite *animation = Actor_GetSprite(
-        BattleObject_Get(state.effect.targets[targetOrFadeIndex])->actor, 0);
+  for (i = 0; i != state.effect.targetCount; i++) {
+    struct Sprite *animation =
+        Actor_GetSprite(BattleObject_Get(state.effect.targets[i])->actor, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
-      state.savedAnimationParameters[targetOrFadeIndex][entryIndex] =
+      state.savedAnimationParameters[i][entryIndex] =
           animation->entries[entryIndex]->colorMode;
   }
 
@@ -674,12 +671,12 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   if (state.effect.kind != 0) {
     FIXED fade;
 
-    targetOrFadeIndex = 0;
+    i = 0;
     fade = 0;
     do {
       struct BattleState *battle = gBattleState;
 
-      if (targetOrFadeIndex < 20) {
+      if (i < 20) {
         u16 *palette = battle->palette;
         FIXED value = FIXED_ONE - fade;
 
@@ -688,9 +685,9 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                                     BATTLE_BACKGROUND_COLORS);
       }
       wait(1);
-      targetOrFadeIndex++;
+      i++;
       fade += FIXED_ONE / 60;
-    } while (targetOrFadeIndex < 20);
+    } while (i < 20);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&state.effect);
     else
@@ -700,9 +697,8 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   }
   BattlePlayback_WaitForReady();
   Actor_SelectAnimationFar(actor, POSE_STANDING);
-  for (targetOrFadeIndex = 0; targetOrFadeIndex != state.effect.targetCount;
-       targetOrFadeIndex++)
-    BattleMotion_ReturnToSpot(state.effect.targets[targetOrFadeIndex]);
+  for (i = 0; i != state.effect.targetCount; i++)
+    BattleMotion_ReturnToSpot(state.effect.targets[i]);
 
   // Spend the item, by its use type.
   unit = Unit_GetFar(selection->unitId);

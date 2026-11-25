@@ -123,7 +123,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   struct Window *cursorWindow;
   struct WindowSprite *cursorAnchor;
   s32 itemSlot;
-  s32 result;
+  s32 result = 0;
 
   Shop_InitializeState();
   shop = Ram_HeapSlots->menuState;
@@ -132,12 +132,10 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->listWindow = partyWindow;
   cursorWindow = Window_CreateFar(30, 0, 1, 1, WINDOW_FLAG_INSTANT);
-  /* FAKEMATCH(temporary): result stands for 0, the cursor's y and kind. */
-  result = 0;
   cursorAnchor = WindowSprite_CreateFar(
-      shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, cursorWindow, 0, result);
+      shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, cursorWindow, 0, 0);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-  cursorAnchor->kind = result;
+  cursorAnchor->kind = WINDOW_SPRITE_PLAIN;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   shop->cursorFrames = 1;

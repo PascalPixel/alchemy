@@ -960,9 +960,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
                                    SEPIA_SHADE_DIVISOR);
         red = color * 4 + 5;
         blue = color * 3 + 5;
-        /* FAKEMATCH(dead): two XORs with red that cancel. */
-        green = blue ^ red;
-        green ^= red;
+        green = blue;
         if (red < SEPIA_LEVEL_MIN)
           red = SEPIA_LEVEL_MIN;
         if (blue < SEPIA_LEVEL_MIN) {
@@ -1071,6 +1069,8 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     u32 tintRed;
     u32 tintGreen;
     u32 tintBlue;
+    s32 red;
+    s32 green;
 
     tintRed = RGB_RED(mode);
     tintGreen = RGB_GREEN(mode);
@@ -1096,6 +1096,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     u32 tintRed;
     u32 tintGreen;
     u32 tintBlue;
+    FIXED blendedRed;
+    FIXED blendedGreen;
+    FIXED blendedBlue;
 
     tintRed = RGB_RED(mode);
     tintGreen = RGB_GREEN(mode);
@@ -1106,18 +1109,19 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       color =
           Iwram_SignedDivide((red + RGB_GREEN(color) + RGB_BLUE(color)) << 4,
                              tintRed + tintGreen + tintBlue);
-      red = Iwram_MulFX(INTtoFIXED((color * tintRed) >> 4),
-                        (s32)INTtoFIXED(tintRed) >> 4);
-      green = Iwram_MulFX(INTtoFIXED((color * tintGreen) >> 4),
-                          (s32)INTtoFIXED(tintGreen) >> 4);
-      blue = Iwram_MulFX(INTtoFIXED((color * tintBlue) >> 4),
-                         (s32)INTtoFIXED(tintBlue) >> 4);
-      red = TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)red));
-      green = TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)green));
-      blue = TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)blue));
-      *destination++ = gTitlePaletteFade_ChannelCurve[blue];
-      *destination++ = gTitlePaletteFade_ChannelCurve[green];
-      *destination++ = gTitlePaletteFade_ChannelCurve[red];
+      blendedRed = Iwram_MulFX(INTtoFIXED((color * tintRed) >> 4),
+                               (s32)INTtoFIXED(tintRed) >> 4);
+      blendedGreen = Iwram_MulFX(INTtoFIXED((color * tintGreen) >> 4),
+                                 (s32)INTtoFIXED(tintGreen) >> 4);
+      blendedBlue = Iwram_MulFX(INTtoFIXED((color * tintBlue) >> 4),
+                                (s32)INTtoFIXED(tintBlue) >> 4);
+      blendedRed = TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)blendedRed));
+      blendedGreen =
+          TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)blendedGreen));
+      blendedBlue = TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)blendedBlue));
+      *destination++ = gTitlePaletteFade_ChannelCurve[blendedBlue];
+      *destination++ = gTitlePaletteFade_ChannelCurve[blendedGreen];
+      *destination++ = gTitlePaletteFade_ChannelCurve[blendedRed];
     }
   } else if (mode & PALETTE_TINT_SPLIT) {
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {

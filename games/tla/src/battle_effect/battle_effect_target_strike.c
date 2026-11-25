@@ -870,6 +870,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
       s32 drift;
       s32 speed;
       s32 picture;
+      s32 mirrored;
 
       blade = &state->particles[i];
       drift = blade->velocityX;
@@ -878,25 +879,23 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         speed = -drift;
       picture = speed >> BLADE_RAIN_STEP_SHIFT;
       if (frame < i * 4 + 25) {
-        /* FAKEMATCH(dead): the sign of drift taken by hand as the blitter's
-         * index; as blit[drift < 0]. */
-        blit[(u32)drift >> 31](
-            canvas, state->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
-            FIXEDtoINT(blade->x) - BLADE_RAIN_SWORD_WIDTH / 2,
-            FIXEDtoINT(blade->y) - BLADE_RAIN_SWORD_HEIGHT / 2,
-            BLADE_RAIN_SWORD_WIDTH, BLADE_RAIN_SWORD_HEIGHT);
+        mirrored = drift < 0;
+        blit[mirrored](canvas,
+                       state->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
+                       FIXEDtoINT(blade->x) - BLADE_RAIN_SWORD_WIDTH / 2,
+                       FIXEDtoINT(blade->y) - BLADE_RAIN_SWORD_HEIGHT / 2,
+                       BLADE_RAIN_SWORD_WIDTH, BLADE_RAIN_SWORD_HEIGHT);
         if (frame >= i * 4 + 16) {
           blade->x += blade->velocityX;
           blade->y += blade->velocityY;
         }
       } else {
-        /* FAKEMATCH(dead): the sign of drift taken by hand as the blitter's
-         * index; as blit[drift < 0]. */
-        blit[(u32)drift >> 31](
-            canvas, state->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
-            FIXEDtoINT(blade->x) - BLADE_RAIN_SWORD_WIDTH / 2,
-            FIXEDtoINT(blade->y) - BLADE_RAIN_SWORD_HEIGHT / 2,
-            BLADE_RAIN_SWORD_WIDTH, BLADE_RAIN_SWORD_HEIGHT);
+        mirrored = drift < 0;
+        blit[mirrored](canvas,
+                       state->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
+                       FIXEDtoINT(blade->x) - BLADE_RAIN_SWORD_WIDTH / 2,
+                       FIXEDtoINT(blade->y) - BLADE_RAIN_SWORD_HEIGHT / 2,
+                       BLADE_RAIN_SWORD_WIDTH, BLADE_RAIN_SWORD_HEIGHT);
       }
     }
 

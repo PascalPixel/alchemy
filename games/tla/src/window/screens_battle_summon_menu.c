@@ -75,12 +75,18 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 
   for (index = 0; index < 4; index++) {
-    s32 y = index * 2;
+    s32 y;
+    /* FAKEMATCH(temporary): t, 0 held in a local and then the window's y; as 0
+     * and (s16)window->y at their uses. */
+    u32 t = 0;
 
+    y = index * 2;
     sprite = &sprites[index];
-    MenuSprite_Initialize(*sprite, OBJ_SIZE_16X16);
+    Io_Write32(OBJ_SIZE_16X16, &sprite->oam.word.attr01);
+    sprite->oam.word.attr23 = t;
     sprite->oam.f.x = (s16)window->x * 8 + 8;
-    sprite->oam.f.y = (y + (s16)window->y) * 8 + 4;
+    t = (s16)window->y;
+    sprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (index = 0; index < 4; index++) {
     s32 slot = VramCache_AllocEntry(128);

@@ -122,21 +122,13 @@ struct PartyStatusWindow {
 enum { BATTLE_LIST_ROWS = 5 };
 
 /// Gives a menu sprite its shape and clears the rest of its attributes, its
-/// tile and place still to come. The battle lists, the chosen ability's icon,
-/// the status screen and the command row start their sprites so.
-///
-/// The macro ends in an empty asm statement. Every use needs one there: it
-/// keeps what follows from being scheduled above the two stores, and the
-/// literal pools of the chosen ability's icon fall where the ROM has them only
-/// with its four counted bytes. What Camelot's macro held in its place is not
-/// known.
-/* FAKEMATCH(barrier): the empty asm that ends MenuSprite_Initialize. */
+/// tile and place still to come. The battle lists, the status screen and the
+/// command row start their sprites so.
 #define MenuSprite_Initialize(sprite, shape)                                   \
-  {                                                                            \
+  do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \
-    __asm__ volatile("");                                                      \
-  }
+  } while (0)
 
 /// The battle menus' shared state, in its heap slot.
 #define BATTLE_MENU_STATE                                                      \

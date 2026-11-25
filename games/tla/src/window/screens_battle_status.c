@@ -560,8 +560,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       }
     }
 
-    MenuSprite_Initialize(cursorSprite,
-                          OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+    cursorSprite.oam.word.attr01 =
+        OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+    cursorSprite.oam.word.attr23 = 0;
+    /* FAKEMATCH(barrier): an empty asm. */
+    asm("");
     cursorSprite.oam.f.tile = VramCache_Reload(cursorSlot, gPointingHandTiles);
     {
       s32 bob = gFrameCount & 4;

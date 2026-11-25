@@ -443,10 +443,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create(8, 17, 18, 3,
                                       WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         COMMAND_ICON_X(state) = PSYNERGY_CHOSEN_ICON_X;
-        MenuSprite_Initialize(
-            *iconSprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+        iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
+        /* FAKEMATCH(barrier): an empty asm. */
+        __asm__ volatile("");
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(parameter, handle);
         state->iconShown[1] = 1;
         windowState->textPalette = BASIC_COLORS_PALETTE;
@@ -691,8 +694,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3,
                                       WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         COMMAND_ICON_X(state) = ITEM_CHOSEN_ICON_X;
-        MenuSprite_Initialize(
-            *iconSprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+        /* FAKEMATCH(barrier): an empty asm. */
+        __asm__ volatile("");
+        iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile =

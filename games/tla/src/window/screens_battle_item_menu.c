@@ -107,12 +107,21 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
-    s32 y = i * 2;
+    s32 y;
+    /* FAKEMATCH(temporary): t, 0 held for the icon's attr23 word and then
+     * reused for the window's y. */
+    u32 t = 0;
 
+    y = i * 2;
+    /* FAKEMATCH(dead): an empty once-only block after the row. */
+    do {
+    } while (0);
     iconSprite = &sprites[i];
-    MenuSprite_Initialize(sprites[i], OBJ_SIZE_16X16);
+    sprites[i].oam.word.attr01 = OBJ_SIZE_16X16;
+    sprites[i].oam.word.attr23 = t;
     iconSprite->oam.f.x = (s16)window->x * 8 + 8;
-    iconSprite->oam.f.y = (y + (s16)window->y) * 8 + 4;
+    t = (s16)window->y;
+    iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
   // One icon slot a visible row; paging reloads these same slots.
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {

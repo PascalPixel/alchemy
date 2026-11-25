@@ -77,12 +77,18 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
-    s32 y = i * 2;
+    s32 y;
+    /* FAKEMATCH(temporary): t, 0 held for the icon's attr23 word and then
+     * reused for the window's y; as 0 and (s16)window->y at their uses. */
+    u32 t = 0;
 
+    y = i * 2;
     iconSprite = &sprites[i];
-    MenuSprite_Initialize(sprites[i], OBJ_SIZE_16X16);
+    sprites[i].oam.word.attr01 = OBJ_SIZE_16X16;
+    Io_Write32(t, &iconSprite->oam.word.attr23);
     iconSprite->oam.f.x = (s16)window->x * 8 + 8;
-    iconSprite->oam.f.y = (y + (s16)window->y) * 8 + 4;
+    t = (s16)window->y;
+    iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
   // Reserve one glyph slot per visible row; paging reloads these same slots.
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {

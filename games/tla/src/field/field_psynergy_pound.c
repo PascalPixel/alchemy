@@ -55,21 +55,21 @@ void FieldPsynergy_UpdatePound(void) {
   struct EffectSprite *sprite;
   s32 i;
   s32 red, green;
-  s32 *frames;
 
   state->landed = 0;
   if (state->state == POUND_SHINE_GROWS) {
     // Each colour is a 32nd of a turn further along the cycle, which moves on
     // every other frame.
-    /* FAKEMATCH(temporary): the frame count read through a pointer kept across
-     * the loop. */
-    for (i = 0, frames = &canvas->drawnFrames; i < POUND_SHINE_COLORS; i++) {
-      FIXED phase = INTtoFIXED(9);
+    for (i = 0; i < POUND_SHINE_COLORS; i++) {
+      u32 angle =
+          (INTtoFIXED(((u32)canvas->drawnFrames >> 1) + i) + INTtoFIXED(9)) >>
+          5;
       s32 blue = RGB(0, 0, RGB_LEVEL_MAX);
 
-      red = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + phase) >> 5) *
-            CANVAS_SHINE_SWING;
-      green = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + phase) >> 5) *
+      red = Trig_Sin(angle) * CANVAS_SHINE_SWING;
+      green = Trig_Sin((INTtoFIXED(((u32)canvas->drawnFrames >> 1) + i) +
+                        INTtoFIXED(9)) >>
+                       5) *
               CANVAS_SHINE_SWING;
       red = FIXEDtoINT(red) + CANVAS_SHINE_MIDDLE;
       green = FIXEDtoINT(green) + CANVAS_SHINE_MIDDLE;

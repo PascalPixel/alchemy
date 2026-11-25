@@ -57,7 +57,6 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct Window *listWindow;
   struct Window *iconWindow;
   struct PartyStatusWindow *partyStatus;
-  u32 *entryCursor;
   u32 selectedDjinn;
   u32 blinkPhase;
   s32 firstEntry;
@@ -99,12 +98,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 
   // Pack Djinn state and recovery turns before paging the selection list.
   for (element = 0; element < ELEMENT_COUNT; element++) {
-    for (djinnIndex = 0,
-        entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
-         djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
+    for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
       if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
-        *entryCursor = (u32)DJINN_COMMAND(element, djinnIndex);
-        entryCursor++;
+        djinnEntries[djinnCount] = (u32)DJINN_COMMAND(element, djinnIndex);
         djinnCount++;
       } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
         u32 v;
@@ -123,14 +119,13 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         }
         v = (u32)(DJINN_COMMAND(element, djinnIndex) |
                   BATTLE_DJINN_ENTRY_STANDBY);
-        *entryCursor = v;
+        djinnEntries[djinnCount] = v;
         if (list->entries[k].turns > 0) {
           v |= (u32)(list->entries[k].turns
                      << BATTLE_DJINN_ENTRY_RECOVERY_SHIFT);
-          *entryCursor = v;
+          djinnEntries[djinnCount] = v;
         }
         djinnCount++;
-        entryCursor++;
       }
     }
   }

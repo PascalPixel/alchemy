@@ -57,7 +57,6 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct Window *listWindow;
   struct Window *iconWindow;
   struct PartyStatusWindow *partyStatus;
-  u32 *entryCursor;
   s32 listEntry;
   u32 selectedDjinn;
   u32 blinkPhase;
@@ -101,14 +100,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   unit = Unit_Get(member);
 
   for (element = 0; element <= 3; element++) {
-    /* FAKEMATCH(signature): the entry cursor summed as integers; as
-     * djinnEntries + djinnCount. */
-    for (djinnIndex = 0,
-        entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
-         djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
+    for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
       if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
-        *entryCursor = (u32)DJINN_COMMAND(element, djinnIndex);
-        entryCursor++;
+        djinnEntries[djinnCount] = (u32)DJINN_COMMAND(element, djinnIndex);
         djinnCount++;
       } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
         u32 v;
@@ -124,13 +118,12 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
           }
         }
         v = (u32)(DJINN_COMMAND(element, djinnIndex) | BATTLE_DJINN_UNSET);
-        *entryCursor = v;
+        djinnEntries[djinnCount] = v;
         if (list->entries[k].turns > 0) {
           v |= (u32)(list->entries[k].turns << BATTLE_DJINN_TURNS_SHIFT);
-          *entryCursor = v;
+          djinnEntries[djinnCount] = v;
         }
         djinnCount++;
-        entryCursor++;
       }
     }
   }

@@ -34,8 +34,8 @@ enum {
 /// stays taken.
 s32 Save_InitializeState(void) {
   struct SaveState *state;
-  u32 buffer[4];
-  struct SaveSectorHeader *header;
+  struct SaveSectorHeader header;
+  struct SaveSectorHeader *slot;
   u32 index;
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_SAVE, sizeof(*state));
@@ -60,15 +60,16 @@ s32 Save_InitializeState(void) {
     state->partId[index] = SAVE_PART_NONE;
     state->counter[index] = 0;
     status = Save_ReadSector(index);
-    START_DMA(&state->slot, buffer, DMA_COPY_WORDS(4));
+    START_DMA(&state->slot, &header, DMA_COPY_WORDS(4));
     WAIT_DMA();
-    header = (struct SaveSectorHeader *)buffer;
+    /* FAKEMATCH(temporary): slot holds &header; as header. at its uses. */
+    slot = &header;
 
     // Not a save sector, or one for no part, or a damaged one: it stays free.
-    if (Save_CompareBytes(header->signature, (u8 *)gSave_Signature, 7) != 0)
+    if (Save_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
-    state->counter[index] = header->counter;
-    part = header->partId;
+    state->counter[index] = slot->counter;
+    part = slot->partId;
     if ((u8)part >= SAVE_PART_NONE)
       continue;
     if (status != 0)
@@ -79,7 +80,7 @@ s32 Save_InitializeState(void) {
     // An interrupted replacement can leave both copies valid.
     for (; status < index; status++) {
       if (state->partId[status] == (u8)part) {
-        if (state->counter[status] < header->counter)
+        if (state->counter[status] < slot->counter)
           state->occupied[status] = 0;
         else
           state->occupied[index] = 0;

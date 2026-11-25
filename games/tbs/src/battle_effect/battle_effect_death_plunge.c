@@ -251,6 +251,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
       s32 drift;
       s32 speed;
       s32 picture;
+      s32 mirrored;
 
       blade = &state->particles[i];
       drift = blade->velocityX;
@@ -262,25 +263,21 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         u32 width;
         u32 height;
 
+        mirrored = drift < 0;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gBladeRain_SwordWidths[picture];
         height = gBladeRain_SwordHeights[picture];
-        blit[drift < 0](canvas,
-                        state->sheet + gBladeRain_SwordPictures[picture],
-                        FIXEDtoINT(blade->x) - (width >> 1),
-                        FIXEDtoINT(blade->y) - (height >> 1), width, height);
+        blit[mirrored](canvas, state->sheet + gBladeRain_SwordPictures[picture],
+                       FIXEDtoINT(blade->x) - (width >> 1),
+                       FIXEDtoINT(blade->y) - (height >> 1), width, height);
 #else
-        /* FAKEMATCH(dead): the test drift < 0 written as its sign bit, the
-         * compiler's own instruction; as blit[drift < 0] (the UBFIX form),
-         * which here becomes a conditional add to the table's address. */
-        blit[(u32)drift >> 31](
-            canvas, state->sheet + gBladeRain_SwordPictures[picture],
-            FIXEDtoINT(blade->x) -
-                ((width = gBladeRain_SwordWidths[picture]) >> 1),
-            FIXEDtoINT(blade->y) -
-                ((height = gBladeRain_SwordHeights[picture]) >> 1),
-            width, height);
+        blit[mirrored](canvas, state->sheet + gBladeRain_SwordPictures[picture],
+                       FIXEDtoINT(blade->x) -
+                           ((width = gBladeRain_SwordWidths[picture]) >> 1),
+                       FIXEDtoINT(blade->y) -
+                           ((height = gBladeRain_SwordHeights[picture]) >> 1),
+                       width, height);
 #endif
         if (frame >= i * 4 + 16) {
           blade->x += blade->velocityX;
@@ -290,24 +287,20 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         u32 width;
         u32 height;
 
+        mirrored = drift < 0;
 #ifdef UBFIX
         width = gBladeRain_SwordWidths[picture];
         height = gBladeRain_SwordHeights[picture];
-        blit[drift < 0](
-            canvas, state->sheet + gBladeRain_SwordPictures[picture],
-            FIXEDtoINT(blade->x) - (width >> 1),
-            FIXEDtoINT(blade->y) - (height >> 1), width, height - 4);
+        blit[mirrored](canvas, state->sheet + gBladeRain_SwordPictures[picture],
+                       FIXEDtoINT(blade->x) - (width >> 1),
+                       FIXEDtoINT(blade->y) - (height >> 1), width, height - 4);
 #else
-        /* FAKEMATCH(dead): the test drift < 0 written as its sign bit, the
-         * compiler's own instruction; as blit[drift < 0] (the UBFIX form),
-         * which here becomes a conditional add to the table's address. */
-        blit[(u32)drift >> 31](
-            canvas, state->sheet + gBladeRain_SwordPictures[picture],
-            FIXEDtoINT(blade->x) -
-                ((width = gBladeRain_SwordWidths[picture]) >> 1),
-            FIXEDtoINT(blade->y) -
-                ((height = gBladeRain_SwordHeights[picture]) >> 1),
-            width, height - 4);
+        blit[mirrored](canvas, state->sheet + gBladeRain_SwordPictures[picture],
+                       FIXEDtoINT(blade->x) -
+                           ((width = gBladeRain_SwordWidths[picture]) >> 1),
+                       FIXEDtoINT(blade->y) -
+                           ((height = gBladeRain_SwordHeights[picture]) >> 1),
+                       width, height - 4);
 #endif
       }
     }

@@ -1924,17 +1924,15 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 
         for (i = 0; i != COATLICUE_CLOUD_BUBBLES; i++, bubble++) {
           s32 n;
-          struct ScreenPoint *screen;
 
           if (bubble->variant < 0) {
             continue;
           }
-          /* FAKEMATCH(temporary): screen holds &bubbleScreen. */
-          screen = &bubbleScreen;
-          EffectPosition_ProjectPoint(bubble, screen);
-          screen->depth =
-              FIXED_INTEGER_PART(screen->depth) - COATLICUE_CLOUD_NEAR_DEPTH;
-          n = screen->depth * 6 / COATLICUE_CLOUD_DEPTH_STEP +
+          EffectPosition_ProjectPoint(bubble, &bubbleScreen);
+          bubbleScreen.depth =
+              FIXED_INTEGER_PART(ScreenPoint_Coordinates(&bubbleScreen)[2]) -
+              COATLICUE_CLOUD_NEAR_DEPTH;
+          n = bubbleScreen.depth * 6 / COATLICUE_CLOUD_DEPTH_STEP +
               gCoatlicue_PictureBias[bubble->variant];
           if (n < 0) {
             n = 0;
@@ -1943,24 +1941,28 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             n = BUBBLE_PICTURE_COUNT - 1;
           }
           {
-            s32 x = FIXED_INTEGER_PART(screen->x);
+            s32 x =
+                FIXED_INTEGER_PART(ScreenPoint_Coordinates(&bubbleScreen)[0]);
 
-            screen->y = FIXED_INTEGER_PART(screen->y);
-            screen->x = x + 60;
+            bubbleScreen.y =
+                FIXED_INTEGER_PART(ScreenPoint_Coordinates(&bubbleScreen)[1]);
+            bubbleScreen.x = x + 60;
           }
           if (frame > 539) {
-            screen->y = screen->y + (frame << 4) - 8608;
+            bubbleScreen.y = bubbleScreen.y + (frame << 4) - 8608;
           } else if (frame > 517) {
-            screen->y = screen->y + 16;
+            bubbleScreen.y = bubbleScreen.y + 16;
           } else if (frame <= 453) {
-            screen->y = screen->y + 80;
+            bubbleScreen.y = bubbleScreen.y + 80;
           } else {
-            screen->y = screen->y - frame + 534;
+            bubbleScreen.y = bubbleScreen.y - frame + 534;
           }
           if (bubble->variant <= 1) {
-            BLIT_BUBBLE(COATLICUE_BUBBLE_PICTURES, n, screen->x, screen->y);
+            BLIT_BUBBLE(COATLICUE_BUBBLE_PICTURES, n, bubbleScreen.x,
+                        bubbleScreen.y);
           } else {
-            BLIT_BUBBLE(COATLICUE_DIM_BUBBLE_PICTURES, n, screen->x, screen->y);
+            BLIT_BUBBLE(COATLICUE_DIM_BUBBLE_PICTURES, n, bubbleScreen.x,
+                        bubbleScreen.y);
           }
           if (frame <= 453 || frame >= i / 16 + 540) {
             bubble->y += bubble->velocityY;

@@ -442,8 +442,6 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   FIXED womanY;
   s32 speed;
   s32 frame;
-  void *vertices;
-  struct RenderModel *model;
   struct Shears *shears;
   s32 i;
 
@@ -595,11 +593,10 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       }
     }
 
-    vertices = Heap_AllocEwram(32);
-    model = Render_AllocateModelList(1);
-    /* FAKEMATCH(dead): a once-only block placing shade's declaration after
-     * the allocation. */
+    // The snip, the shears' two blades and the flash, drawn as models.
     {
+      void *vertices = Heap_AllocEwram(32);
+      struct RenderModel *model = Render_AllocateModelList(1);
       s32 shade = 0;
 
       phase = frame - LIFE_SHEAR_SNIP_FRAME;
@@ -698,9 +695,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
           }
         }
       }
+      Heap_Release(model);
+      Heap_Release(vertices);
     }
-    Heap_Release(model);
-    Heap_Release(vertices);
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(state);
   }

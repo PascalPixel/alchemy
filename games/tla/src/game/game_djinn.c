@@ -219,16 +219,11 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 entryIndex;
 
   if (counts != 0) {
-    u8 *slot;
+    s32 element;
 
-    // Each element's count starts at 0, Jupiter's first.
-    slot = counts + 3;
-    *slot = standbyCount;
-    slot = counts + 2;
-    *slot = standbyCount;
-    slot = counts + 1;
-    *slot = standbyCount;
-    counts[0] = standbyCount;
+    // Each element's count starts at 0.
+    for (element = 0; element < ELEMENT_COUNT; element++)
+      counts[element] = 0;
   }
   for (entryIndex = 0; entryIndex != recoveryTable->list.count; entryIndex++) {
     if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE) {

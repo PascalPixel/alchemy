@@ -127,7 +127,6 @@ void RisingParticles_Start(void) {
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherState));
   struct RisingParticle *particle = state->particles;
   volatile u32 fill;
-  s32 priority;
   u8 *tiles;
   u32 i;
   FIXED z;
@@ -157,8 +156,7 @@ void RisingParticles_Start(void) {
     particle->drift = 0;
     particle->timer = i * 2;
   }
-  priority = TASK_PASS_FRAME;
-  Task_Add(RisingParticles_Update, priority);
+  Task_Add(RisingParticles_Update, TASK_PASS_FRAME);
 }
 
 /// Task of FieldMotes_Start: moves and draws the 64 motes in HEAP_SLOT_WEATHER.

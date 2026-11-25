@@ -47,8 +47,9 @@ void Battle_TurnStartNoOp(void) {}
 /// (COMMAND_DAEDALUS): ABILITY_DAEDALUS_STRIKE from a random unit of the
 /// queuing side against every unit of the other, staged as the summon
 /// SUMMON_EFFECT_DAEDALUS_STRIKE. source is the queued BattleActionRecord, read
-/// as halfwords: [0] its unit, [3] its command.
-void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
+/// as halfwords: [0] its unit, [3] its command. Declared s32, though it returns
+/// no value; its one caller reads none.
+s32 BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;
   s32 i;
@@ -193,9 +194,6 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   // Build the action, with the acting unit highlighted, and stage it.
   if (request->command == COMMAND_DAEDALUS) {
     BattleStaging_PlanDaedalus((u16 *)request, &battle->plan);
-    /* FAKEMATCH(dead): an empty once-only block after the call. */
-    do {
-    } while (0);
     result = 0;
   } else {
     actingUnit[0] = request->unitId;

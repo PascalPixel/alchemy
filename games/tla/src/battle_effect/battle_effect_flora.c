@@ -402,7 +402,6 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       posY += toFIXED(1) / 2;
     } else if (frame < FLORA_LEAVE_FRAME) {
       s32 m = frame % 6;
-      s32 m4;
 
       if (m == 1) {
         dx = 1;
@@ -426,19 +425,16 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         dx = 0;
         dy = 0;
       }
-      if ((frame & 3) == 0) {
+      if (frame % 4 == 0) {
         gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y - 2;
       }
-      /* FAKEMATCH(dead): the remainder written out as the division and a
-       * subtraction; as m4 = frame % 4. */
-      m4 = frame - frame / 4 * 4;
-      if (m4 == 1) {
+      if (frame % 4 == 1) {
         gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y - 2;
       }
-      if (m4 == 2) {
+      if (frame % 4 == 2) {
         gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y + 2;
       }
-      if (m4 == 3) {
+      if (frame % 4 == 3) {
         gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y + 2;
       }
     } else {

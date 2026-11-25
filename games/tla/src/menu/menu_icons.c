@@ -172,21 +172,17 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
 void Menu_SetPageArrowsUpDown(s32 index, s32 count) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   struct WindowSprite *arrow;
+  s32 top = index / 4 * 4;
 
-  /* FAKEMATCH(dead): index rounded down to its page by hand, the division's
-   * own instructions written out on the parameter; as index = index / 4 * 4. */
-  if (index < 0)
-    index += 3;
-  index = index >> 2 << 2;
   arrow = menu->pageArrows[0];
   arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-  if (index != 0) {
+  if (top != 0) {
     arrow->motion = WINDOW_SPRITE_MOTION_HOP_UP;
     arrow->animationStep = 0;
   }
   arrow = menu->pageArrows[1];
   arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-  if (index + 4 < count) {
+  if (top + 4 < count) {
     arrow->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
     arrow->animationStep = 0;
   }
@@ -197,21 +193,17 @@ void Menu_SetPageArrowsUpDown(s32 index, s32 count) {
 void Menu_SetPageArrowsLeftRight(s32 index, s32 count) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   struct WindowSprite *arrow;
+  s32 top = index / 4 * 4;
 
-  /* FAKEMATCH(dead): index rounded down to its page by hand, the division's
-   * own instructions written out on the parameter; as index = index / 4 * 4. */
-  if (index < 0)
-    index += 3;
-  index = index >> 2 << 2;
   arrow = menu->pageArrows[0];
   arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-  if (index != 0) {
+  if (top != 0) {
     arrow->motion = WINDOW_SPRITE_MOTION_HOP_LEFT;
     arrow->animationStep = 0;
   }
   arrow = menu->pageArrows[1];
   arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-  if (index + 4 < count) {
+  if (top + 4 < count) {
     arrow->motion = WINDOW_SPRITE_MOTION_HOP_RIGHT;
     arrow->animationStep = 0;
   }

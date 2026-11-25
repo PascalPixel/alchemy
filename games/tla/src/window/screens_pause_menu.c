@@ -210,12 +210,8 @@ s32 DebugBrowser_Portraits(void) {
   s32 glyph;
   s32 tile;
   s32 slot;
-  /* FAKEMATCH(temporary): cancelKey, KEY_B held in a local across the loop. */
-  s32 cancelKey;
-  s32 palette = PORTRAIT_PALETTE + 1;
-  /* FAKEMATCH(temporary): slotOffset, the second portrait slot's offset held
-   * in a local and added to state through a byte pointer. */
-  u32 slotOffset = offsetof(struct WindowState, portraitSprites[1]);
+  s32 portraitSlot = 1;
+  s32 palette = PORTRAIT_PALETTE + portraitSlot;
 
   state = (struct WindowState *)Ram_HeapSlots->windowState;
   redraw = 1;
@@ -228,8 +224,6 @@ s32 DebugBrowser_Portraits(void) {
   for (i = 0; gPortrait_SpriteMap[i * 2] != -1; i++) {
   }
   entryCount = characterCount + i;
-  /* FAKEMATCH(dead): a zero from the count. */
-  cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
   while (1) {
     if (gInput.repeat & KEY_LEFT) {
       redraw = 1;
@@ -249,7 +243,7 @@ s32 DebugBrowser_Portraits(void) {
     }
     if (gInput.repeat & KEY_A)
       break;
-    if (gInput.repeat & cancelKey)
+    if (gInput.repeat & KEY_B)
       break;
     if (redraw) {
       redraw = 0;
@@ -260,7 +254,7 @@ s32 DebugBrowser_Portraits(void) {
       else
         glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] +
                 PORTRAIT_FIRST_SPRITE_PORTRAIT;
-      slot = *(u16 *)((u8 *)state + slotOffset);
+      slot = state->portraitSprites[portraitSlot];
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + (s32)MsgNamesMasterPoi, window, 24, 0);

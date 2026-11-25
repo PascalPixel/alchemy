@@ -1053,11 +1053,9 @@ void ApojiiIslands_StartCellMarkers(void) {
 /// to `level`.
 void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  struct MapLayer *ground = &map->layers[MAPGRID_LAYER_GROUND];
-  struct MapLayer *middle = &map->layers[MAPGRID_LAYER_MIDDLE];
-  struct MapCell *cells = middle->cells;
-  s32 left = ground->offsetX + map->minX;
-  s32 top = ground->offsetY + map->minZ;
+  struct MapCell *cells = MapGrid_GetLayer(MAPGRID_LAYER_MIDDLE)->cells;
+  s32 left = MapGrid_GetLayer(MAPGRID_LAYER_GROUND)->offsetX + map->minX;
+  s32 top = MapGrid_GetLayer(MAPGRID_LAYER_GROUND)->offsetY + map->minZ;
   /* FAKEMATCH(temporary): markers, a pointer standing in for
    * gApojiiIslands_CellMarkers's address; as the table by name. */
   struct CellMarkers *markers = &gApojiiIslands_CellMarkers;

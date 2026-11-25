@@ -735,6 +735,7 @@ s32 Scene_Initialize(void) {
           Event_GetFlag(FLAG_MARS_FLAME_LIT) &&
           Event_GetFlag(FLAG_JUPITER_FLAME_LIT)) {
         struct Actor *actor;
+        u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
         Event_Start();
         FieldEvent_EndLastingPsynergy(0);
@@ -749,10 +750,7 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
         PaletteFade_Interpolate(20);
         System_Wait(20);
-        /* FAKEMATCH(temporary): entrance, read for the last time above, holds
-           the text colour's address. */
-        entrance = (s32)&CENTERED_TEXT_COLOR;
-        *(u16 *)entrance = RGB_WHITE;
+        *color = RGB_WHITE;
         System_Wait(1);
         EventMessage_ShowCentered(
             (s32)MsgMarsLighthouseHallYouHaveProvenYourWorth, 0, 4);

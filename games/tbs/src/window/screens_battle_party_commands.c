@@ -289,9 +289,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         mode = COMMAND_ICON_DEFEND;
       }
       iconSprite = &gBattleMenuState->icons[BATTLE_MENU_ICON_COMMAND];
-      MenuSprite_Initialize(*iconSprite,
-                            OBJ_SIZE_32X32 | OBJ_256_COLORS |
-                                OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+      iconSprite->oam.word.attr01 =
+          OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+      iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.f.tile = CommandIcon_ReloadSlot(largeIconSlot, mode);
       if (mode == COMMAND_ICON_DJINN) {
         iconSprite->oam.f.x = 128;
@@ -370,13 +370,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         windowState = WINDOW_STATE;
         commandWindow = Window_Create(8, 17, 18, 3, MENU_WINDOW_FLAGS);
         state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 40;
-        iconSprite->oam.word.attr01 =
-            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        iconSprite->oam.word.attr23 = 0;
+        MenuSprite_Initialize(
+            *iconSprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        /* FAKEMATCH(barrier): an empty asm. */
-        __asm__ volatile("");
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(parameter, handle);
         state->iconShown[BATTLE_MENU_ICON_ABILITY] = 1;
         windowState->textPalette = BASIC_COLORS_PALETTE;
@@ -454,11 +451,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         ok = (j == ELEMENT_COUNT);
         state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 56;
-        iconSprite->oam.word.attr01 =
-            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH(barrier): an empty asm. */
-        __asm__ volatile("");
+        MenuSprite_Initialize(
+            *iconSprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(
@@ -643,11 +637,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3,
                                       MENU_WINDOW_FLAGS);
         state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 48;
-        iconSprite->oam.word.attr01 =
-            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH(barrier): an empty asm. */
-        __asm__ volatile("");
+        MenuSprite_Initialize(
+            *iconSprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile =

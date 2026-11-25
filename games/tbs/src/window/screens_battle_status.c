@@ -320,24 +320,17 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     {
       struct Sprite *figure = BattleObject_GetFar(member)->actor->sprite;
 
-      figureSprite.oam.word.attr01 =
-          OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      figureSprite.oam.word.attr23 = 0;
-#if TBS_PATCH_4
-      /* FAKEMATCH(barrier): an empty asm. */
-      __asm__("");
-#endif
+      MenuSprite_Initialize(figureSprite,
+                            OBJ_SIZE_64X64 | OBJ_256_COLORS |
+                                OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
       figureSprite.oam.f.tile = figure->image.tile;
       figureSprite.oam.f.x = 172;
       figureSprite.oam.f.y = 56;
       Oam_AddSpriteAtDepth(&figureSprite, OAM_DEPTH_WINDOW);
     }
 
-    cursorSprite.oam.word.attr01 =
-        OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): an empty asm. */
-    __asm__("");
+    MenuSprite_Initialize(cursorSprite,
+                          OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
     cursorSprite.oam.f.x =

@@ -482,7 +482,12 @@ void BattleCommandRow_LoadIcon(struct BattleCommandRowState *state, s32 index,
   BattleCommandRow_LoadIconTiles(&state->palette, icon,
                                  index * COMMAND_ICON_BG_TILES);
   state->entries[index].kind = icon;
-  MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
+  /* FAKEMATCH(dead): the shape and the cleared word stored in a once-only
+   * block; as MenuSprite_Initialize, whose asm this routine does not take. */
+  do {
+    entry->sprite.oam.word.attr01 = OBJ_SIZE_32X32 | OBJ_256_COLORS;
+    entry->sprite.oam.word.attr23 = 0;
+  } while (0);
   entry->sprite.oam.f.tile =
       CommandIcon_ReloadSlot(state->entries[index].resource, icon);
 }

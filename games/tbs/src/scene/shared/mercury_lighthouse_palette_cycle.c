@@ -21,8 +21,8 @@ static void MercuryLighthouse_CyclePalette(void) {
   s32 greenAndBlue;
   volatile u16 *color;
 
-  /* FAKEMATCH(dead): below cleared through its own address, before anything
-     reads it; as below = 0. */
+  // below is a halfword in the frame, written through its address; the ROM
+  // clears it on entry (a store nothing reads).
   *&below = 0;
   if (gFrameCount % 5 != 0)
     return;

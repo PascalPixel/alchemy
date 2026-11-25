@@ -142,15 +142,15 @@ s32 Field_UsePsynergy(u32 code) {
 /// of group and what the leader faces.
 s32 Scene_HasPsynergyTrigger(s32 group) {
   s32 target;
-  s32 eventAddress =
-      (s32)Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER_ANY, (u16)group, &target);
-  return NONZERO(eventAddress);
+
+  if (Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER_ANY, (u16)group, &target))
+    return 1;
+  return 0;
 }
 
 /// Returns whether the scene has an event for item and what the leader faces.
 u32 Scene_HasItemTrigger(u16 item) {
-  s32 eventAddress;
-
-  eventAddress = (s32)Field_FindItemTrigger(item);
-  return NONZERO(eventAddress);
+  if (Field_FindItemTrigger(item))
+    return 1;
+  return 0;
 }

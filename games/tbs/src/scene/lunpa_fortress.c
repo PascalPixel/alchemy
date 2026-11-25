@@ -1329,11 +1329,10 @@ static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId) {
   if (LunpaFortress_IsLeaderAlongGuardsColumn(actorId) != 0) {
     return 1;
   }
-  {
-    s32 alongRow = LunpaFortress_IsLeaderAlongGuardsRow(actorId);
-
-    return NONZERO(alongRow);
+  if (LunpaFortress_IsLeaderAlongGuardsRow(actorId) != 0) {
+    return 1;
   }
+  return 0;
 }
 
 /// Whether the leader is within four cells, walking, of the cell below the

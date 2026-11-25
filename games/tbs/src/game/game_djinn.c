@@ -113,9 +113,9 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
 
 /// Returns 1 when the Djinni is set on the unit.
 u32 Djinn_IsSet(s32 unitId, s32 element, s32 djinnIndex) {
-  s32 set = Unit_Get(unitId)->djinnSet[element] & (1 << djinnIndex);
-
-  return NONZERO(set);
+  if (Unit_Get(unitId)->djinnSet[element] & (1 << djinnIndex))
+    return 1;
+  return 0;
 }
 
 /// Sets a ready Djinni on the unit, counts it and works out the unit's class

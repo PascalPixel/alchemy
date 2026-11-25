@@ -33,11 +33,6 @@
 /// The entries of an array whose size is declared, as pret's global.h has it.
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
 
-/// 1 when `v` is not zero and 0 when it is, without a branch: the sign bit of
-/// `v | -v`. The flag readers, the save checks and the Psynergy tests return
-/// their truth values so. `v` is read twice.
-#define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
-
 /// Data aligned as the ROM places it, where its own type would not.
 #define ALIGNED(n) __attribute__((aligned(n)))
 

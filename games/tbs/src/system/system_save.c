@@ -130,12 +130,12 @@ u32 Save_SelectWriteSector(s32 partId) {
 u32 Save_WriteSector(s32 sector) {
   struct SaveState *state = gSaveState;
   u16 index = sector;
-  s32 result;
 
   if (gProgramFlashSector(index, state->slot.bytes) != 0)
     return 1;
-  result = VerifyFlashSector(index, state->slot.bytes);
-  return NONZERO(result);
+  if (VerifyFlashSector(index, state->slot.bytes) != 0)
+    return 1;
+  return 0;
 }
 
 /// Reads flash sector `index` into the save state's sector buffer. Returns 0
@@ -233,14 +233,15 @@ u32 Save_ReadPart(s32 partId, void *destination) {
 /// erases a file.
 u32 Save_DeletePart(s32 partId) {
   s32 index;
-  s32 deletionResult;
 
   index = Save_FindLatestSector(partId);
   if ((u32)index >= SAVE_SECTOR_COUNT) {
     return 1U;
   }
-  deletionResult = Save_InvalidateSector(index);
-  return NONZERO(deletionResult);
+  if (Save_InvalidateSector(index) != 0) {
+    return 1;
+  }
+  return 0;
 }
 
 /// Sums the first SAVE_CHECKSUM_BYTES payload bytes of the save state's sector

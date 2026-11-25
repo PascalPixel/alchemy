@@ -15,7 +15,9 @@ s32 GameFlag_Get(s32 flag) {
   s32 bit = GAME_FLAG_BIT(flag);
 
   flag = GAME_FLAG_BYTE(flag);
-  return NONZERO(gGameFlagBytes[flag] & bit);
+  if (gGameFlagBytes[flag] & bit)
+    return 1;
+  return 0;
 }
 
 /// Sets `flag` and returns its byte number.
@@ -45,7 +47,9 @@ u32 GameFlag_Toggle(s32 flag) {
   flag = GAME_FLAG_BYTE(flag);
 
   flags[flag] ^= bit;
-  return NONZERO(flags[flag] & bit);
+  if (flags[flag] & bit)
+    return 1;
+  return 0;
 }
 
 /// Returns the whole byte `flag` is in, a counter kept among the flags.

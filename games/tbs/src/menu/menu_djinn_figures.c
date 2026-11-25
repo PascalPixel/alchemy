@@ -64,6 +64,9 @@ DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 /// The figures' full size, and the height they are placed from: 482 pixels.
 #define FIGURE_FULL_SCALE ((u32)FIXED_ONE)
 #define FIGURE_ORIGIN_Y toFIXED(482)
+/// The bit of a figure's y that DjinnFigures_SetSlotPosition sets to turn it
+/// west.
+#define FIGURE_WEST_FLAG 0x8000
 
 /// Task while the top row is up: places its four figures at full size where
 /// the screen has put them.
@@ -96,8 +99,8 @@ void DjinnFigures_UpdateAllPositions(void) {
 }
 
 /// Task while the bottom row is up: places its figures at their fixed scale or
-/// growing toward full size, facing south, or west for a figure whose y is
-/// marked negative (DjinnFigures_SetSlotPosition).
+/// growing toward full size, facing south, or west for a figure whose y
+/// carries FIGURE_WEST_FLAG (DjinnFigures_SetSlotPosition).
 void DjinnFigures_UpdateBottomRow(void) {
   struct ItemMenuState *menu = gMenuState;
   s32 index;
@@ -112,9 +115,6 @@ void DjinnFigures_UpdateBottomRow(void) {
       u32 projectedY = FIGURE_ORIGIN_Y - toFIXED(menu->memberY[index]);
       s32 phase;
       s32 facing;
-      /* FAKEMATCH(temporary): rowY, the figure's y read again into a local for
-       * the facing's test. */
-      s32 rowY;
 
       figure->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale
@@ -132,12 +132,9 @@ void DjinnFigures_UpdateBottomRow(void) {
       placement.height = projectedY;
       placement.y = toFIXED(menu->figureY[index]) + projectedY;
       placement.groundHeight = 0;
-      rowY = menu->figureY[index];
-      /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live.
-       */
-      scale.x = scale.x;
-      facing = FACING_WEST;
-      if (rowY >= 0)
+      if (menu->figureY[index] & FIGURE_WEST_FLAG)
+        facing = FACING_WEST;
+      else
         facing = FACING_SOUTH;
       Render_ApplyProjectedPlacementFar(figure, &placement, &scale, facing);
     }

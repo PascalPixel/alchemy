@@ -4,7 +4,7 @@ The Alchemy project reconstructs the source code of both Golden Sun games on Gam
 
 ## Documentation
 
-<a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/docs.png" align="right" width="400" alt="Alchemy's documentation on the interface: Isaac talks to Garet's sister in Vale, beside the guide's sidebar" /></a>
+[![Alchemy's documentation on the interface: Isaac talks to Garet's sister in Vale, beside the guide's sidebar](https://alchemy.pascalpixel.com/docs.png)](https://alchemy.pascalpixel.com)
 
 The documentation is hosted at [alchemy.pascalpixel.com](https://alchemy.pascalpixel.com), where you can search it. It explains how both games work, written from this source, with recordings from the games themselves.
 

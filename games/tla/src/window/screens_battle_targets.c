@@ -383,9 +383,6 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                              &selectedPosition);
           if (conditionWindow != NULL)
             Window_Close(conditionWindow, 1);
-          /* FAKEMATCH(dead): cancelling updates of conditionWindow. */
-          conditionWindow++;
-          conditionWindow--;
           switch (kind) {
           case TARGET_HINT_SET_DJINNI:
 #if TLA_PATCH_2
@@ -542,8 +539,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                       0, count * 8);
               count++;
             }
-            if (count == 0)
-              goto no_condition;
+            if (count == 0) {
+              Text_SetColor(TEXT_COLOR_RED);
+              Text_DrawMessageAsTiles((s32)MsgEffectNone, conditionWindow, 0,
+                                      0);
+              Text_SetColor(TEXT_COLOR_WHITE);
+            }
             break;
           }
           default:

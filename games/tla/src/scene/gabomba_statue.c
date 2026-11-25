@@ -2615,14 +2615,13 @@ s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
 
 /// Whether a cell beside channel cell (x, z) is taken.
 s32 GabombaStatue_HasTakenNeighbor(s32 x, s32 z) {
-  s32 found;
-
   if (GabombaStatue_IsCellTaken(x, z - 1) ||
       GabombaStatue_IsCellTaken(x, z + 1) ||
       GabombaStatue_IsCellTaken(x - 1, z))
     return 1;
-  found = GabombaStatue_IsCellTaken(x + 1, z);
-  return NONZERO(found);
+  if (GabombaStatue_IsCellTaken(x + 1, z))
+    return 1;
+  return 0;
 }
 
 /// Redraws the channel as the party left it: a raised block's socket open, the

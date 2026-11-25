@@ -248,16 +248,16 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 argument,
 /// it would act on (Scene_SelectPsynergyTarget), at any stage.
 s32 Scene_HasPsynergyTrigger(s32 fieldPsynergy) {
   u16 kind = fieldPsynergy;
-  s32 result = (s32)Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER_ANY, kind,
-                                              Scene_SelectPsynergyTarget(kind));
 
-  return NONZERO(result);
+  if (Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER_ANY, kind,
+                                Scene_SelectPsynergyTarget(kind)))
+    return 1;
+  return 0;
 }
 
 /// Returns whether the scene has an event for item and what the leader faces.
 u32 Scene_HasItemTrigger(u16 item) {
-  s32 result;
-
-  result = (s32)Field_FindItemTrigger(item);
-  return NONZERO(result);
+  if (Field_FindItemTrigger(item))
+    return 1;
+  return 0;
 }

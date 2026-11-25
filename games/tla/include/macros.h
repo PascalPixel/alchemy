@@ -32,11 +32,6 @@
 /// The entries of an array whose size is declared, as pret's global.h has it.
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
 
-/// 1 when `v` is not zero and 0 when it is, without a branch: the sign bit of
-/// `v | -v`. The flag readers and the Psynergy tests return their truth values
-/// so. `v` is read twice.
-#define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
-
 /// One more than `i` as a signed halfword, the step taken in the high half of
 /// a word: the scenes step the halfword counters of their short searches so,
 /// as PushTarget_FillRectangle does.

@@ -403,10 +403,9 @@ void KandoreanTemple_FightFog(void) {
 /// Unused: a cloud of steam's script call, from the steam script's unreached
 /// tail; counts down its life and reports whether any is left.
 u32 KandoreanTemple_CountDownSteam(struct Actor *actor) {
-  s32 left;
-
-  left = --*(s16 *)&actor->userValue;
-  return NONZERO(left);
+  if (--*(s16 *)&actor->userValue)
+    return 1;
+  return 0;
 }
 
 /// A meditating student's update: now and then, every four to eight seconds, an

@@ -255,15 +255,15 @@ u32 Save_ReadPart(s32 partId, void *destination) {
 u32 Save_DeletePart(s32 partId) {
   struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   s32 index;
-  s32 result;
 
   index = Save_FindLatestSector(partId);
   if ((u32)index >= SAVE_SECTOR_COUNT)
     return 1;
   state->sectorCount = 0;
   state->sectorTotal = SAVE_SECTORS_PER_PART;
-  result = Save_InvalidateSector(index);
-  return NONZERO(result);
+  if (Save_InvalidateSector(index))
+    return 1;
+  return 0;
 }
 
 /// Sums the 12,272 payload bytes of the workspace's three-sector buffer, the

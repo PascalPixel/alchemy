@@ -115,13 +115,13 @@ enum { SOUND_FLAG_COUNT = 1024 };
 s32 SoundFlag_Test(s32 sound) {
   s32 mask;
   u8 *bytes;
-  s32 value;
 
   mask = 1 << (7 & sound);
   sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
   bytes = gSoundFlags;
-  value = bytes[sound] & mask;
-  return NONZERO(value);
+  if (bytes[sound] & mask)
+    return 1;
+  return 0;
 }
 
 /// Sets sound `sound`'s bit in gSoundFlags.

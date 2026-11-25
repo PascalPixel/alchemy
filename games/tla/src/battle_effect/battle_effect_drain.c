@@ -134,7 +134,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   s32 variant = args->variant;
 
   // Psy Drain's for any variant past the basic one.
-  BattleEffect_RunDrainMotes(args, NONZERO(variant));
+  BattleEffect_RunDrainMotes(args, variant != 0);
 }
 
 /// Large violet orbs burst from each target in turn, and are pulled into the

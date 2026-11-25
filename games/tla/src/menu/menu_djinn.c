@@ -640,9 +640,10 @@ s32 DjinnMenu_GetEntryState(u32 entry) {
 
   if (Djinn_CanSetFar(owner, element, index) ||
       Djinn_IsSetFar(owner, element, index)) {
-    u32 set = entry & DJINN_ENTRY_IS_SET;
-
-    state = NONZERO(set);
+    if (entry & DJINN_ENTRY_IS_SET)
+      state = DJINNI_STATE_SET;
+    else
+      state = DJINNI_STATE_STANDBY;
   } else {
     state = DJINNI_STATE_RECOVERING;
   }
@@ -754,9 +755,12 @@ void Window_SetInteriorPaletteBitRect(struct Window *panel, s32 x, s32 y,
 /// in HIGHLIGHT_PALETTE when selected and WINDOW_PALETTE otherwise.
 void UiPanel_HighlightGridCell(struct Window *panel, s32 index, s32 row,
                                s32 selected) {
-  s32 palette = NONZERO(selected);
+  s32 palette;
 
-  palette = WINDOW_PALETTE - palette;
+  if (!selected)
+    palette = WINDOW_PALETTE;
+  else
+    palette = HIGHLIGHT_PALETTE;
   Window_SetInteriorPaletteBitRect(panel, index % 4 * DJINN_COLUMN_TILES + 1,
                                    row + 2, GRID_CELL_WIDTH, 1, palette);
 }

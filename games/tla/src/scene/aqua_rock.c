@@ -273,7 +273,7 @@ void AquaRock_AddMoaiWater(s32 id);
 void Actor_EmitRipples(struct Actor *actor);
 
 void AquaRock_KeepLeaderPriority(void);
-void AquaRock_StartBubbles(void);
+s32 AquaRock_StartBubbles(void);
 void GroundParticles_Start(void);
 void AquaRock_MoaiStepAside(void);
 void AquaRock_SetUpStreams(void);
@@ -1251,8 +1251,7 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_IGNORES_RISES;
     Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_FIRST_FISH + 1, 1);
-    /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through Value2. */
-    Value2((s32 (*)())Actor_SetSpritePriority, ACTOR_MOAI_PILLAR, 1);
+    Actor_SetSpritePriority(ACTOR_MOAI_PILLAR, 1);
     AquaRock_StartBubbles();
     GroundParticles_Start();
     if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
@@ -1615,8 +1614,9 @@ void AquaRock_DrawBubbles(void) {
     AquaRock_DrawFallingBubbles();
 }
 
-/// Clears the bubbles, loads their tiles into VRAM and starts their drawing.
-void AquaRock_StartBubbles(void) {
+/// Clears the bubbles, loads their tiles into VRAM and starts their drawing;
+/// returns the drawing task (Task_Add).
+s32 AquaRock_StartBubbles(void) {
   struct AquaRockBubbles *state = &gAquaRock_Bubbles;
   void *buffer;
 
@@ -1626,7 +1626,7 @@ void AquaRock_StartBubbles(void) {
   state->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(state->vramEntry, 256, buffer);
   Heap_Release(buffer);
-  Task_Add(AquaRock_DrawBubbles, TASK_PASS_FRAME);
+  return Task_Add(AquaRock_DrawBubbles, TASK_PASS_FRAME);
 }
 
 /// Sets the actor the bubbles come from, or with 0 none: they fall from the

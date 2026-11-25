@@ -3535,9 +3535,7 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   effect->z += velocityZ;
   effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
   effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
-  {
-    effect->scaleX += effect->scaleRateX;
-  }
+  effect->scaleX += effect->scaleRateX;
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
   sprite->rotation += effect->spin;
@@ -3955,15 +3953,13 @@ void TrialRoad_DrawRaceMap(void) {
   actor = Actor_Lookup(state->rivalId);
   if (actor == NULL || actor->x.fixed == 0)
     return;
-  {
-    // This side's offset adds scrollX where the first marker's subtracts it.
-    // Nothing writes scrollX, and in a render of the race (the stage room by
-    // entrance 31 with FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT set) both columns stand
-    // at the screen's edges with "1P" and "2P" at their feet: it is 0, so the
-    // two agree.
-    MARKER(+state->fade * 6 + state->scrollX + 189,
-           -state->fade * 6 + state->scrollX + 23, 1, RACE_MAP_TILE_2P);
-  }
+  // This side's offset adds scrollX where the first marker's subtracts it.
+  // Nothing writes scrollX, and in a render of the race (the stage room by
+  // entrance 31 with FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT set) both columns stand
+  // at the screen's edges with "1P" and "2P" at their feet: it is 0, so the
+  // two agree.
+  MARKER(+state->fade * 6 + state->scrollX + 189,
+         -state->fade * 6 + state->scrollX + 23, 1, RACE_MAP_TILE_2P);
 }
 
 /// Shows the race map for both sides.

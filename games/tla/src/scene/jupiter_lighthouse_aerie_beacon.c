@@ -926,14 +926,10 @@ void JupiterLighthouse_JennaJoinsTheFight(void) {
   southeast = FACING_SOUTHEAST;
   Actor_SetPositionAndFacing(ACTOR_AGATIO, toFIXED(504), toFIXED(304),
                              southeast);
-  {
-    Actor_SetPositionAndFacing(ACTOR_KARST, toFIXED(520), toFIXED(288),
-                               southeast);
-  }
-  {
-    Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(552), toFIXED(392),
-                               FACING_NORTH);
-  }
+  Actor_SetPositionAndFacing(ACTOR_KARST, toFIXED(520), toFIXED(288),
+                             southeast);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(552), toFIXED(392),
+                             FACING_NORTH);
   Actor_SetAnimation(ACTOR_AGATIO, ANIM_AGATIO_BATTLE_STANCE);
   Actor_SetAnimation(ACTOR_KARST, ANIM_KARST_BATTLE_STANCE);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_LEADER_BATTLE_STANCE);
@@ -1893,10 +1889,8 @@ void JupiterLighthouse_WeBeatThem(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   // "Oh! You're looking better!"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  {
-    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(512), toFIXED(328),
-                               FACING_NORTH);
-  }
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(512), toFIXED(328),
+                             FACING_NORTH);
   Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(536), toFIXED(336),
                              FACING_NORTH);
   Actor_SetPositionAndFacing(ACTOR_GARET, toFIXED(536), toFIXED(352),

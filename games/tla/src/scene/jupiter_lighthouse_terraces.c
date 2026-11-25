@@ -1375,20 +1375,14 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Party_RemoveMember(GARET);
   Party_AddMember(FELIX);
   Actor_SetSpeed(ACTOR_FELIX, 1);
-  {
-    Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(664), toFIXED(88),
-                               FACING_SOUTH);
-  }
-  {
-    Actor_SetPositionAndFacing(ACTOR_KARST, toFIXED(717), toFIXED(208),
-                               FACING_SOUTHEAST);
-  }
+  Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(664), toFIXED(88),
+                             FACING_SOUTH);
+  Actor_SetPositionAndFacing(ACTOR_KARST, toFIXED(717), toFIXED(208),
+                             FACING_SOUTHEAST);
   Actor_SetPositionAndFacing(ACTOR_AGATIO, toFIXED(737), toFIXED(195),
                              FACING_SOUTHEAST);
-  {
-    Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(761), toFIXED(219),
-                               FACING_NORTHWEST);
-  }
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(761), toFIXED(219),
+                             FACING_NORTHWEST);
   Actor_SetPositionAndFacing(ACTOR_IVAN, toFIXED(741), toFIXED(232),
                              FACING_NORTHWEST);
   Actor_SetScript(ACTOR_MIA, (s32)gJupiterLighthouse_MiaScript);

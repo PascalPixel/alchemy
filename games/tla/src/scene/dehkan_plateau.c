@@ -1881,10 +1881,8 @@ void DehkanPlateau_InitializeTightropes(void) {
     GameFlag_Set(FLAG_TIGHTROPES_STAKE_POUNDED);
     GameFlag_Set(FLAG_CRACK_OPENED(1));
     MapGrid_CopyCellTilesIndicesRect(69, 51, 92, 11, 1, 1);
-    {
-      Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616),
-                                 toFIXED(280), FACING_SOUTH);
-    }
+    Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616),
+                               toFIXED(280), FACING_SOUTH);
   }
   if (GameFlag_Get(FLAG_CANNON_CRACKED_PILLARS) != 0) {
     GameFlag_Set(FLAG_PILLAR_CRACKED(0));

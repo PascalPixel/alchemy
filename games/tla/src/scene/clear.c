@@ -1429,14 +1429,12 @@ s32 Clear_EnterPassword(void) {
       for (i = 0, y = 2; i != 4; i++, y += 2)
         Window_DrawDividerLine(grid, 0, y, 18, y);
     }
-    {
-      for (i = 0; i != pages; i++) {
-        s32 tile = i + PAGE_NUMBER_TILE;
+    for (i = 0; i != pages; i++) {
+      s32 tile = i + PAGE_NUMBER_TILE;
 
-        if (i == page)
-          tile = i + PAGE_NUMBER_LIT_TILE;
-        Window_SetTilemapEntry(grid, tile, i - pages + 18, 10, 0);
-      }
+      if (i == page)
+        tile = i + PAGE_NUMBER_LIT_TILE;
+      Window_SetTilemapEntry(grid, tile, i - pages + 18, 10, 0);
     }
     if (length < PASSWORD_SYMBOLS_PER_PAGE)
       count = length;

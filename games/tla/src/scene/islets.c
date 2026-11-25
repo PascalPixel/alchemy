@@ -2245,10 +2245,8 @@ void Islets_InitializeEastTundaria(void) {
     other = Actor_Get(ACTOR_PENGUS);
     other->facing = FACING_SOUTH_SOUTHWEST;
     other->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
-    {
-      Actor_SetPositionAndFacing(ACTOR_PENGULINA, toFIXED(234), toFIXED(204),
-                                 FACING_SOUTH_SOUTHEAST);
-    }
+    Actor_SetPositionAndFacing(ACTOR_PENGULINA, toFIXED(234), toFIXED(204),
+                               FACING_SOUTH_SOUTHEAST);
     Actor_Get(ACTOR_PENGULINA)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     Actor_SetSpeed(ACTOR_PENGUS, 2);
     Actor_SetSpeed(ACTOR_PENGULINA, 1.6);

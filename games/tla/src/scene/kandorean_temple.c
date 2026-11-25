@@ -2547,15 +2547,10 @@ void KandoreanTemple_StartGate(void) {
     Actor_SetPosition(ACTOR_STUDENT_ON_GUARD_DUTY, 0, 0);
     Actor_SetPositionAndFacing(ACTOR_STUDENT_WARY_OF_OUTSIDERS, toFIXED(374),
                                toFIXED(282), FACING_EAST);
-    {
-      Actor_SetPositionAndFacing(ACTOR_STUDENT_ON_THE_FAILED_TEST, toFIXED(272),
-                                 toFIXED(296), FACING_NORTH_NORTHEAST);
-    }
-    {
-      Actor_SetPositionAndFacing(ACTOR_STUDENT_WHO_WOULD_BE_A_MONK,
-                                 toFIXED(216), toFIXED(264),
-                                 FACING_SOUTH_SOUTHEAST);
-    }
+    Actor_SetPositionAndFacing(ACTOR_STUDENT_ON_THE_FAILED_TEST, toFIXED(272),
+                               toFIXED(296), FACING_NORTH_NORTHEAST);
+    Actor_SetPositionAndFacing(ACTOR_STUDENT_WHO_WOULD_BE_A_MONK, toFIXED(216),
+                               toFIXED(264), FACING_SOUTH_SOUTHEAST);
   } else {
     KandoreanTemple_StartMeditating(ACTOR_STUDENT_WARY_OF_OUTSIDERS, 0);
     KandoreanTemple_StartMeditating(ACTOR_STUDENT_ON_THE_FAILED_TEST, 240);
@@ -2582,10 +2577,8 @@ void KandoreanTemple_PoiWaitsByTheNorthRope(void) {
     Call4(Rope_Place, 1, FLAG_NORTH_ROPE_TIED, ACTOR_NORTH_ROPE_EAST_POST,
           ACTOR_NORTH_ROPE_WEST_POST);
   }
-  {
-    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(392), toFIXED(360),
-                               FACING_SOUTH_SOUTHEAST);
-  }
+  Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(392), toFIXED(360),
+                             FACING_SOUTH_SOUTHEAST);
 }
 
 /// Sets up Poi's hall: its ropes, the tested students, Poi and the cave door,
@@ -2628,10 +2621,8 @@ void KandoreanTemple_StartPoisRoom(void) {
       KandoreanTemple_OpenTheCaveDoor();
     if (GameFlag_Get(FLAG_MET_POI)) {
       Actor_SetPosition(ACTOR_POI, 0, 0);
-      {
-        Actor_SetPositionAndFacing(ACTOR_THIRD_TESTED_STUDENT, toFIXED(408),
-                                   toFIXED(664), FACING_NORTH_NORTHWEST);
-      }
+      Actor_SetPositionAndFacing(ACTOR_THIRD_TESTED_STUDENT, toFIXED(408),
+                                 toFIXED(664), FACING_NORTH_NORTHWEST);
     } else if (GameFlag_Get(FLAG_STUDENTS_TESTED)) {
       Actor_SetPosition(ACTOR_POI, 0, 0);
       Actor_SetPosition(ACTOR_THIRD_TESTED_STUDENT, 0, 0);
@@ -2897,10 +2888,8 @@ void KandoreanTemple_PassTheTest(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(gMainRoutineState.leaderActorId, 328, 360);
-  {
-    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(408),
-                               FACING_SOUTH_SOUTHWEST);
-  }
+  Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(408),
+                             FACING_SOUTH_SOUTHWEST);
   Actor_GetById(ACTOR_POIS_ROOM_KRADEN)->facing = FACING_NORTH;
   wait(1);
   Event_StartScreenTransition();
@@ -3012,10 +3001,8 @@ void KandoreanTemple_MeetPoi(void) {
                              FACING_EAST);
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       gMainRoutineState.leaderActorId, toFIXED(376), toFIXED(408), FACING_EAST);
-  {
-    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(454),
-                               FACING_NORTH_NORTHWEST);
-  }
+  Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(454),
+                             FACING_NORTH_NORTHWEST);
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();

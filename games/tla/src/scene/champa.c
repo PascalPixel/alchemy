@@ -464,10 +464,8 @@ void Champa_TakeFeizhisGift(s32 actor) {
 /// it down, and marked as waiting to be taken.
 void Champa_FeizhiHoldsHerGift(void) {
   FieldActor_ShowItemIconById(ACTOR_FEIZHIS_GIFT, ITEM_GOLDEN_RING);
-  {
-    Actor_SetPositionAndFacing(ACTOR_FEIZHIS_GIFT, toFIXED(312), toFIXED(593),
-                               FACING_NORTH);
-  }
+  Actor_SetPositionAndFacing(ACTOR_FEIZHIS_GIFT, toFIXED(312), toFIXED(593),
+                             FACING_NORTH);
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
 
@@ -494,10 +492,8 @@ void Champa_FeizhiArrives(void) {
       Event_Start();
       FieldEvent_EndLastingPsynergy(0);
       FieldEvent_SetMessageId((s32)MsgChampaIsaac);
-      {
-        Actor_SetPositionAndFacing(ACTOR_FEIZHI, toFIXED(314), toFIXED(679),
-                                   FACING_NORTH);
-      }
+      Actor_SetPositionAndFacing(ACTOR_FEIZHI, toFIXED(314), toFIXED(679),
+                                 FACING_NORTH);
       // "Isaac!"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_WalkToAndWait(ACTOR_FELIX, 314, 580);

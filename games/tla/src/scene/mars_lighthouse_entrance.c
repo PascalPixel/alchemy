@@ -1863,11 +1863,8 @@ void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
   Event_PlaySound(SE_SPLASH);
   MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);
-  {
-
-    actor->facing = FACING_SOUTH;
-    actor->motionFlags = 0;
-  }
+  actor->facing = FACING_SOUTH;
+  actor->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
   {
     u32 winout = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |

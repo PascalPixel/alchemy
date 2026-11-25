@@ -1162,10 +1162,8 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
                                facingSouth);
     Actor_SetPositionAndFacing(ACTOR_THIEF_B, toFIXED(10184), toFIXED(9616),
                                facingSouth);
-    {
-      Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(10152), toFIXED(9664),
-                                 FACING_NORTHEAST);
-    }
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(10152), toFIXED(9664),
+                               FACING_NORTHEAST);
     Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(10168), toFIXED(9648),
                                FACING_NORTHWEST);
     EventCamera_FollowActor(ACTOR_FELIX, 0);
@@ -1390,14 +1388,12 @@ void WorldMap_DeliverLohoCannon(void) {
   Actor_Get(ACTOR_LOHO_WORKER_A)->motionFlags = ACTOR_FALLS;
   Actor_Get(ACTOR_LOHO_WORKER_B)->motionFlags = ACTOR_FALLS;
   Actor_Get(ACTOR_LOHO_WORKER_C)->motionFlags = ACTOR_FALLS;
-  {
-    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_A, toFIXED(8913),
-                               toFIXED(5853), FACING_NORTHEAST);
-    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_B, toFIXED(8929),
-                               toFIXED(5869), FACING_NORTHEAST);
-    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_C, toFIXED(8929),
-                               toFIXED(5885), FACING_NORTHEAST);
-  }
+  Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_A, toFIXED(8913), toFIXED(5853),
+                             FACING_NORTHEAST);
+  Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_B, toFIXED(8929), toFIXED(5869),
+                             FACING_NORTHEAST);
+  Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_C, toFIXED(8929), toFIXED(5885),
+                             FACING_NORTHEAST);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_LOHO_WORKER_A, 0.2);
   Actor_SetSpeed(ACTOR_LOHO_WORKER_B, 0.2);
@@ -2157,16 +2153,14 @@ void WorldMap_TakeOff(void) {
   WorldMap_SetUpShip();
   x = Actor_Get(ACTOR_SHIP)->x.fixed / toFIXED(1);
   z = Actor_Get(ACTOR_SHIP)->z.fixed / toFIXED(1);
-  {
-    for (i = 0; i <= 7; i++) {
-      if (Actor_Get(i) != NULL) {
-        gWorldMap_HiddenMembers[i] = i;
-        Actor_Get(i)->scaleX = 0;
-        Actor_SetSpriteFlags(Actor_Get(i), 0);
-        Actor_SetPosition(i, x, z);
-      } else {
-        gWorldMap_HiddenMembers[i] = -1;
-      }
+  for (i = 0; i <= 7; i++) {
+    if (Actor_Get(i) != NULL) {
+      gWorldMap_HiddenMembers[i] = i;
+      Actor_Get(i)->scaleX = 0;
+      Actor_SetSpriteFlags(Actor_Get(i), 0);
+      Actor_SetPosition(i, x, z);
+    } else {
+      gWorldMap_HiddenMembers[i] = -1;
     }
   }
   Actor_Get(ACTOR_KRADEN)->scaleX = 0;

@@ -894,7 +894,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
     frame = 0;
     do {
       s32 growth = frame << 8;
-      s32 count = state->frame;
+      s32 value = state->frame;
       s32 dividend;
       s32 glow;
       u16 *line;
@@ -903,19 +903,19 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
       s32 y;
       s32 hold;
 
-      /* FAKEMATCH(temporary): the division written out on a copy of count. */
-      dividend = count;
-      /* FAKEMATCH(dead): updates of count that cancel out. */
+      /* FAKEMATCH(temporary): the division written out on a copy of value. */
+      dividend = value;
+      /* FAKEMATCH(dead): updates of value that cancel out. */
       if (state) {
-        count++;
-        count--;
+        value++;
+        value--;
       }
       if (dividend < 0)
         dividend += 3;
       glow = dividend >> 2;
-      /* FAKEMATCH(barrier): hold set by an empty asm that reads count and
+      /* FAKEMATCH(barrier): hold set by an empty asm that reads value and
        * clobbers r1, r3 and r6. */
-      asm("" : "=r"(hold) : "r"(count) : "r1", "r3", "r6");
+      asm("" : "=r"(hold) : "r"(value) : "r1", "r3", "r6");
       line = state->backdropLines;
 
       if (mode == STARFIELD_FALL_OUTER_SPACE) {
@@ -940,17 +940,11 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
         *line++ = 0;
       for (; i != BATTLE_VIEW_BOTTOM - 1; i++) {
         s32 green = i - BATTLE_VIEW_TOP;
-        s32 quarter = green / 4;
-        s32 level = quarter + glow;
-        s32 blue;
+        s32 blue = green / 4;
 
-        /* FAKEMATCH(dead): updates of quarter that cancel out. */
-        if (quarter) {
-          quarter++;
-          quarter--;
-        }
-        blue = level - STARFIELD_FALL_GLOW_BLUE_LEVEL;
-        green = level - STARFIELD_FALL_GLOW_GREEN_LEVEL;
+        value = blue + glow;
+        blue = value - STARFIELD_FALL_GLOW_BLUE_LEVEL;
+        green = value - STARFIELD_FALL_GLOW_GREEN_LEVEL;
 
         CLAMP(blue, 0, RGB_LEVEL_MAX);
         CLAMP(green, 0, RGB_LEVEL_MAX);

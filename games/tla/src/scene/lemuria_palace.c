@@ -342,27 +342,17 @@ void LemuriaPalace_FreeMaps(void) {
   VramCache_FreeEntry(gLemuriaPalace_SecondMapVram);
 }
 
-/// Writes the alpha blend weights, REG_BLDALPHA.
-static __inline__ void Blend_WriteAlpha(s32 value) { REG_BLDALPHA = value; }
-
-/// Sets the alpha blend weights (Blend_WriteAlpha).
-#define BLEND_SET_ALPHA(value)                                                 \
-  do {                                                                         \
-    Blend_WriteAlpha(value);                                                   \
-  } while (0)
-
 /// Fades the shown map in over 16 steps of four frames, then lets it shimmer.
 void LemuriaPalace_FadeMapsIn(void) {
   s32 i;
 
-  /* FAKEMATCH(wrapper): BLEND_SET_ALPHA's do-while around each write. */
-  BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
+  Io_Write16(BLEND_ALPHA(0, BLEND_WEIGHT_MAX), &REG_BLDALPHA);
   gLemuriaPalace_MapMode = MAP_MODE_HELD;
   for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
-    BLEND_SET_ALPHA(BLEND_ALPHA(i, BLEND_WEIGHT_MAX - i));
+    Io_Write16(BLEND_ALPHA(i, BLEND_WEIGHT_MAX - i), &REG_BLDALPHA);
     System_Wait(4);
   }
-  BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
+  Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
   gLemuriaPalace_MapMode = MAP_MODE_SHIMMER;
 }
 
@@ -370,16 +360,14 @@ void LemuriaPalace_FadeMapsIn(void) {
 void LemuriaPalace_FadeMapsOut(void) {
   s32 i;
 
-  /* FAKEMATCH(wrapper): BLEND_SET_ALPHA's do-while around each write. */
-  BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
+  Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
   gLemuriaPalace_MapMode = MAP_MODE_HELD;
   for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
-    BLEND_SET_ALPHA((i << 8) | (BLEND_WEIGHT_MAX - i));
+    Io_Write16((i << 8) | (BLEND_WEIGHT_MAX - i), &REG_BLDALPHA);
     System_Wait(3);
   }
-  BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
+  Io_Write16(BLEND_ALPHA(0, BLEND_WEIGHT_MAX), &REG_BLDALPHA);
 }
-#undef BLEND_SET_ALPHA
 
 /// Felix walks up the throne room towards King Hydros, cells (53, 35) and
 /// (54, 35), the first time: the guard steps in front of him, "You are Lord

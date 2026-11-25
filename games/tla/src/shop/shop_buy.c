@@ -115,8 +115,7 @@ next_page:
 #endif
 
 #if TLA_PATCH_1
-      /* FAKEMATCH(temporary): the item shown is kept in stockCount, which the
-       * loop's top reloads. */
+      // stockCount, which the loop's top reloads, holds the item shown.
       stockCount = stockIds[selectionIndex];
       held = PartyInventory_CountItemFar(stockCount);
       heldDefinition = Item_GetDirectFar(stockCount);
@@ -274,11 +273,9 @@ close:
 void Shop_DrawStock(struct Window *window, s32 selected) {
   struct ShopState *shop;
   s16 *itemIds;
-  s16 *stockCursor;
   s32 itemCount;
   s32 stockIndex;
   s32 pageSlot;
-  s32 priceX;
   s16 itemId;
   struct ItemDefinition *item;
   struct WindowSprite *icon;
@@ -305,14 +302,11 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
     }
     pageSlot = 0;
     if (stockIndex < (u32)itemCount) {
-      /* FAKEMATCH(signature): the page's first stock item found as a number,
-       * the list's address plus two bytes an item. */
-      stockCursor = (s16 *)((stockIndex * 2) + (u32)itemIds);
-      priceX = 16;
+      // Each price sits 16 pixels right of its item.
       for (;
            (u32)pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
-           priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
-        itemId = *stockCursor;
+           pageSlot++, stockIndex++) {
+        itemId = itemIds[stockIndex];
         item = Item_GetDirectFar(itemId);
         icon =
             WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
@@ -322,7 +316,8 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
           icon->animationStep = 10;
           icon->depth = OAM_DEPTH_FRONT - 2;
         }
-        icon = Shop_CreatePriceSprite((u16)item->price, window, priceX, 0);
+        icon = Shop_CreatePriceSprite((u16)item->price, window,
+                                      pageSlot * 32 + 16, 0);
         icon->depth = OAM_DEPTH_FRONT - 4;
       }
     }
@@ -775,25 +770,19 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 /// sell what it replaced.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
-  s32 remainingQuantity;
+  s32 i;
   s32 lastAddedSlot;
   struct ItemDefinition *item;
 
-  remainingQuantity = quantity;
   item = Item_GetDirectFar(itemId);
   lastAddedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   Sound_PlayFar(SE_SHOP_PURCHASE);
-  /* FAKEMATCH(temporary): lastAddedSlot, still 0, stands for 0 in the first
-   * test. */
-  if (lastAddedSlot < remainingQuantity) {
-    do {
-      lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
-      Party_AdjustCoinsFar(0 - item->price);
-      remainingQuantity--;
-      Party_AdjustShopCreditFar(item->price);
-      Shop_DrawMoney();
-    } while (remainingQuantity != 0);
+  for (i = 0; i < quantity; i++) {
+    lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
+    Party_AdjustCoinsFar(0 - item->price);
+    Party_AdjustShopCreditFar(item->price);
+    Shop_DrawMoney();
   }
   Shop_ShowKeeperMessageHidingCursor(MsgHereYouGo);
   if (Shop_ConfirmEquip(unitId, lastAddedSlot) != 0) {

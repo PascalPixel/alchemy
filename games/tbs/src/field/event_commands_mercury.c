@@ -111,16 +111,14 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   effect = effectState->particles;
-  i = MERCURY_DROPLETS - 1;
-  do {
+  for (i = 0; i < MERCURY_DROPLETS; i++) {
     FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetAnimation(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_BLUE_TINT);
-    i--;
     wait(1);
     effect++;
-  } while (i >= 0);
+  }
 
   // After 120 frames every droplet still in use takes its last fall.
   wait(120);

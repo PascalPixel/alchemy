@@ -115,10 +115,8 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     // Stop both the marker emitters and the sparkle actors they already made.
     struct Actor *effect = gActors;
 
-    // state now counts the actors left.
-    state = ACTOR_COUNT - 1;
-
-    do {
+    // state now counts the actors.
+    for (state = 0; state < ACTOR_COUNT; state++) {
       if (effect->script != 0) {
         if (effect->update == Reveal_EmitSparkles) {
           Actor_ReleaseFar(effect);
@@ -127,9 +125,8 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
           Actor_ReleaseFar(effect);
         }
       }
-      state--;
       effect++;
-    } while (state >= 0);
+    }
   }
 
   wait(3);
@@ -270,16 +267,15 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 void FieldEffect_ReleaseRevealSparkles(void) {
   if (gFieldState->revealActive != 0) {
     struct Actor *effect = gActors;
-    s32 remainingActors = ACTOR_COUNT - 1;
+    s32 i;
 
-    do {
+    for (i = 0; i < ACTOR_COUNT; i++) {
       if (effect->script != 0) {
         if (effect->script == gFieldEffect_ParticleScript)
           Actor_ReleaseFar(effect);
       }
-      remainingActors--;
       effect++;
-    } while (remainingActors >= 0);
+    }
   }
 }
 

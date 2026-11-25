@@ -1007,18 +1007,17 @@ FileScreen_FillTileGridByGridWidth(const struct Window *window) {
   base = 0;
   do {
     s32 tile = base + TILE_GRID_FIRST_TILE;
-    s32 remaining = TILE_GRID_COLUMNS - 1;
+    s32 column;
 
-    do {
+    for (column = 0; column < TILE_GRID_COLUMNS; column++) {
       s16 value = WINDOW_TILE(tile);
 
-      remaining--;
       *vram = value;
       tile++;
       *mirror = value;
       vram++;
       mirror++;
-    } while (remaining >= 0);
+    }
     row++;
     vram += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
     mirror += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;

@@ -20,7 +20,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *djinni;
   struct FieldEffectState *effectState;
   struct FieldParticle *effect;
-  s32 remaining;
+  s32 i;
   FIXED scale;
   struct Vector3 position;
 
@@ -65,24 +65,22 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 
   // One rising particle a frame into each of the field effect sprites.
   effect = effectState->particles;
-  remaining = PSYNERGY_EFFECT_SLOT_COUNT - 1;
-  do {
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
     FieldParticle_SetAnimation(effect, PARTICLE_ANIMATION_FLICKER);
     Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = FIXED_ONE / 2;
     effect->scaleY = Random16() + FIXED_ONE * 3 / 2;
-    remaining--;
     wait(1);
     effect++;
-  } while (remaining >= 0);
+  }
 
   // After 140 frames every particle still in use stops rising.
   wait(140);
-  for (remaining = 0; remaining < PSYNERGY_EFFECT_SLOT_COUNT; remaining++) {
-    if (effectState->particles[remaining].active)
-      effectState->particles[remaining].state = VENUS_PARTICLE_LAST_RISE;
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
+    if (effectState->particles[i].active)
+      effectState->particles[i].state = VENUS_PARTICLE_LAST_RISE;
   }
 
   // A shake of 1/65536 pixel: in effect the shake stops.
@@ -92,7 +90,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 
   // The motes, 120 pixels above the leader; djinni, gone now, holds each mote
   // and then each spark.
-  for (remaining = 0; remaining < VENUS_DESCENDING_MOTES; remaining++) {
+  for (i = 0; i < VENUS_DESCENDING_MOTES; i++) {
     position.x = leader->x.fixed;
     position.y = leader->y.fixed + toFIXED(120);
     position.z = leader->z.fixed;
@@ -102,7 +100,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->orbitFrames = 100;
-      djinni->orbitAngle = remaining * TRIG_TURN / VENUS_DESCENDING_MOTES;
+      djinni->orbitAngle = i * TRIG_TURN / VENUS_DESCENDING_MOTES;
       djinni->update = FieldEffect_UpdateDescendingOrbitActor;
       djinni->motionFlags = 0;
       Actor_SelectAnimationFar(djinni, 7);
@@ -121,7 +119,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
   // Actor.velocityY), falling, and released after 8 frames; stop at the
   // first that cannot be spawned.
-  for (remaining = 0; remaining <= 7; remaining++) {
+  for (i = 0; i <= 7; i++) {
     djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni == NULL)
       break;

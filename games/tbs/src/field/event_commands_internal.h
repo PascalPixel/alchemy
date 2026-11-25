@@ -82,16 +82,12 @@ static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *afterimage) {
 
 /// Runs the update of each of the 24 field effect sprites.
 static __inline__ void FieldEffect_UpdateEffectSlots(void) {
-  struct FieldParticle *effect;
-  s32 remainingSlots;
+  struct FieldParticle *particles =
+      ((struct FieldEffectState *)gFieldEffectState)->particles;
+  s32 i;
 
-  effect = ((struct FieldEffectState *)gFieldEffectState)->particles;
-  remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
-  do {
-    remainingSlots -= 1;
-    FieldParticle_Update(effect);
-    effect++;
-  } while (remainingSlots >= 0);
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++)
+    FieldParticle_Update(&particles[i]);
 }
 
 /// Defines a per-frame update that spins an actor 1/8 turn a frame while its

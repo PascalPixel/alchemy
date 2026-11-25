@@ -11,9 +11,9 @@
 /// (SPRITE_COLOR_NORMAL).
 void Actor_SetRevealSpriteColor(s32 value) {
   struct Actor *actor = gActors;
-  s32 remainingActors = ACTOR_COUNT - 1;
+  s32 i;
 
-  do {
+  for (i = 0; i < ACTOR_COUNT; i++) {
     if (actor->script != NULL) {
       u8 kind = actor->spriteStorageKind;
 
@@ -27,9 +27,8 @@ void Actor_SetRevealSpriteColor(s32 value) {
         }
       }
     }
-    remainingActors--;
     actor++;
-  } while (remainingActors >= 0);
+  }
 }
 
 /// How far the leader may walk from where Reveal was cast, in screen pixels up

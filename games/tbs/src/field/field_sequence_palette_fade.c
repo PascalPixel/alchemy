@@ -26,21 +26,19 @@
 /// 0 or less step is left as it was.
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames) {
-  s32 remainingChannels;
+  s32 i;
   s32 sourceChannel;
   s32 targetChannel;
 
   if (frames > 0) {
-    remainingChannels = PALETTE_FADE_CHANNELS - 1;
-    do {
+    for (i = 0; i < PALETTE_FADE_CHANNELS; i++) {
       sourceChannel = *source;
       targetChannel = *target;
       *step = Iwram_SignedDivide(targetChannel - sourceChannel, frames);
-      remainingChannels--;
       source++;
       target++;
       step++;
-    } while (remainingChannels >= 0);
+    }
   }
 }
 

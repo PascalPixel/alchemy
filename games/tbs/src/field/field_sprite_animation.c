@@ -595,19 +595,15 @@ struct Sprite *Sprite_Create(s32 id) {
 /// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
 /// its four sprite animations, and then zeroes its 56 bytes.
 void Sprite_Destroy(struct Sprite *sprite) {
-  s32 remaining;
-  struct SpriteAnimation **layer;
+  s32 i;
 
   if (sprite) {
     // Release its VRAM cache entry and sprite animations before clearing the
     // sprite itself.
     if (!sprite->retainCacheEntry)
       VramCache_FreeEntry(sprite->slot);
-    layer = sprite->entries;
-    remaining = ANIM_LAYER_COUNT - 1;
-    do {
-      SpriteAnimation_Clear(*layer++);
-    } while (--remaining >= 0);
+    for (i = 0; i < ANIM_LAYER_COUNT; i++)
+      SpriteAnimation_Clear(sprite->entries[i]);
     Dma_Fill32(0, sprite, sizeof(*sprite));
   }
 }

@@ -14,7 +14,7 @@
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct Vector3 position;
   FIXED scale;
-  s32 remaining;
+  s32 i;
   struct Actor *djinni;
   struct FieldEffectState *effectState;
   struct Actor *leader;
@@ -56,9 +56,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One spark a frame into each of the field effect sprites.
-  effect = effectState->particles;
-  remaining = PSYNERGY_EFFECT_SLOT_COUNT - 1;
-  do {
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
+    effect = &effectState->particles[i];
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
     FieldParticle_SetAnimation(effect, PARTICLE_ANIMATION_FLICKER);
@@ -66,10 +65,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
-    remaining--;
     wait(1);
-    effect++;
-  } while (remaining >= 0);
+  }
 
   wait(60);
   Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
@@ -79,9 +76,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // Every spark still in use stops its fountain.
   wait(20);
-  for (remaining = 0; remaining < PSYNERGY_EFFECT_SLOT_COUNT; remaining++) {
-    if (effectState->particles[remaining].active)
-      effectState->particles[remaining].state = MARS_SPARK_STOPPING;
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
+    if (effectState->particles[i].active)
+      effectState->particles[i].state = MARS_SPARK_STOPPING;
   }
 
   // The leader pulses while the sparks swarm it.
@@ -90,9 +87,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   wait(100);
 
   // Every spark still in use goes.
-  for (remaining = 0; remaining < PSYNERGY_EFFECT_SLOT_COUNT; remaining++) {
-    if (effectState->particles[remaining].active)
-      effectState->particles[remaining].state = MARS_SPARK_LEAVING;
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
+    if (effectState->particles[i].active)
+      effectState->particles[i].state = MARS_SPARK_LEAVING;
   }
 
   // The leader stops pulsing.

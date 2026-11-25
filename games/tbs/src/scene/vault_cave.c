@@ -870,19 +870,18 @@ static void VaultCave_SpawnSplash(struct Actor *source) {
 /// Readies the room of six puddles' drops of water and starts them falling.
 static void VaultCave_StartFrostControlledFalls(void) {
   s32 actorSlot = ACTOR_FIRST_WATER_DROP;
-  s32 remaining = 5;
+  s32 i;
 
-  do {
+  for (i = 0; i < 6; i++) {
     struct Actor *fallingActor;
 
     Actor_SetSpriteFlags(Actor_Get(actorSlot), 0);
     fallingActor = Actor_Get(actorSlot);
     fallingActor->bounce = FIXED_ONE / 10;
     fallingActor->gravity = 0;
-    remaining--;
     fallingActor->y.fixed = toFIXED(255);
     actorSlot++;
-  } while (remaining >= 0);
+  }
 
   Task_AddFrame(VaultCave_UpdateFrostControlledFallingActors, TASK_PASS_FRAME);
 }

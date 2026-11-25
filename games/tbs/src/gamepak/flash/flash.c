@@ -202,13 +202,8 @@ u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
 
 /// Copies `size` bytes out of flash; ReadFlash runs it from a copy in RAM.
 void ReadFlashCore(const u8 *source, u8 *destination, u32 size) {
-  u32 remaining = size - 1;
-
-  if (size != 0) {
-    do {
-      *destination++ = *source++;
-    } while (remaining-- != 0);
-  }
+  while (size-- != 0)
+    *destination++ = *source++;
 }
 
 typedef void (*FlashReadCore)(const u8 *source, u8 *destination, u32 size);

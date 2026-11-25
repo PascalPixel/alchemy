@@ -78,6 +78,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     s32 y;
+    /* FAKEMATCH(temporary): t, 0 held for the icon's attr23 word and then
+     * reused for the window's y; as 0 and (s16)window->y at their uses. */
     u32 t = 0;
 
     y = i * 2;

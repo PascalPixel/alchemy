@@ -337,8 +337,7 @@ s32 Field_TryJumpForward(void) {
   u8 saved = *flags;
   struct FieldState *state = Ram_HeapSlots->fieldState;
   s16 spriteFlags = SPRITE_FLAG_SHADOW;
-  FIXED position[3];
-  s32 *positionWords;
+  struct FieldCoordinate position[3];
   struct Actor *entry;
   struct Actor *platform;
   s32 canJump;
@@ -351,24 +350,21 @@ s32 Field_TryJumpForward(void) {
   if ((angle + FACING_STEP) & DEGtoANG(45)) // not facing a quarter turn
     return result;
   angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-  /* FAKEMATCH(temporary): positionWords holds position, the landing's own
-   * address; as position at its two reads. */
-  positionWords = position;
 again:
   // The middle of the tile in front, then of the tile beyond.
-  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  Vector_AddPolarOffset(toFIXED(16), angle, position);
-  if (MapGrid_CheckCollisionFar(leader, position) == 1)
+  position[0].fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[1].fixed = leader->y.fixed;
+  position[2].fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Vector_AddPolarOffset(toFIXED(16), angle, &position[0].fixed);
+  if (MapGrid_CheckCollisionFar(leader, &position[0].fixed) == 1)
     return -1;
-  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  Vector_AddPolarOffset(toFIXED(32), angle, position);
+  position[0].fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[1].fixed = leader->y.fixed;
+  position[2].fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Vector_AddPolarOffset(toFIXED(32), angle, &position[0].fixed);
   canJump = 0;
-  if (MapGrid_BlocksJump(leader, position) == 0 &&
-      MapGrid_CheckCollisionFar(leader, position) == 0)
+  if (MapGrid_BlocksJump(leader, &position[0].fixed) == 0 &&
+      MapGrid_CheckCollisionFar(leader, &position[0].fixed) == 0)
     canJump = 1;
 
   // A platform 16 pixels below the landing makes it a jump spot.
@@ -387,11 +383,11 @@ again:
         continue;
       if (entry == leader)
         continue;
-      if (FIELD_CELL(position[0] - entry->x.fixed + toFIXED(8)) != 0)
+      if (FIELD_CELL(position[0].fixed - entry->x.fixed + toFIXED(8)) != 0)
         continue;
-      if (FIELD_CELL(position[2] - entry->z.fixed + toFIXED(8)) != 0)
+      if (FIELD_CELL(position[2].fixed - entry->z.fixed + toFIXED(8)) != 0)
         continue;
-      delta = position[1] - entry->y.fixed;
+      delta = position[1].fixed - entry->y.fixed;
       dy = delta - toFIXED(16);
       if (dy >= 0) {
         if (dy <= bound)
@@ -413,13 +409,13 @@ again:
     if (entry->script != NULL &&
         !(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM) && entry != leader &&
         entry->collisionFlags != 0 &&
-        FIELD_CELL(position[0] - entry->x.fixed + toFIXED(8)) == 0 &&
-        FIELD_CELL(position[2] - entry->z.fixed + toFIXED(8)) == 0) {
-      FIXED d = position[1] - entry->y.fixed;
+        FIELD_CELL(position[0].fixed - entry->x.fixed + toFIXED(8)) == 0 &&
+        FIELD_CELL(position[2].fixed - entry->z.fixed + toFIXED(8)) == 0) {
+      FIXED d = position[1].fixed - entry->y.fixed;
       if (d >= 0) {
         if (d < toFIXED(8))
           goto blocked;
-      } else if (entry->y.fixed - position[1] < toFIXED(8)) {
+      } else if (entry->y.fixed - position[1].fixed < toFIXED(8)) {
       blocked:
         canJump = 0;
         break;
@@ -445,8 +441,8 @@ again:
     *flags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & (u8)~SPRITE_FLAG_SHADOW);
     Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId,
-                            ((s16 *)positionWords)[1],
-                            ((s16 *)positionWords)[5]);
+                            position[0].part[0].integer,
+                            position[2].part[0].integer);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
@@ -492,7 +488,8 @@ again:
     if (state != NULL)
       state->walkingDistance +=
           Iwram_MulFX(state->walkingDistanceScale, toFIXED(32));
-    if (MapGrid_GetCellBehaviorAtFar(leader->layer, position[0], position[2]) ==
+    if (MapGrid_GetCellBehaviorAtFar(leader->layer, position[0].fixed,
+                                     position[2].fixed) ==
         CELL_BEHAVIOR_JUMP_FORWARD) {
       Actor_SelectAnimationFar(leader, ANIM_STAND);
       wait(6);

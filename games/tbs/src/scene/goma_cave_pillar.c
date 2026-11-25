@@ -240,10 +240,7 @@ static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
 static void GomaCavePillar_MoveWestPillar(void) {
   s32 x;
 
-  x = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed;
-  if (x < 0)
-    x += toFIXED(16) - 1;
-  x = FIELD_CELL(x);
+  x = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed / toFIXED(16);
   Event_Start();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);

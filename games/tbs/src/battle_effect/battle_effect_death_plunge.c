@@ -271,6 +271,9 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
                         FIXEDtoINT(blade->x) - (width >> 1),
                         FIXEDtoINT(blade->y) - (height >> 1), width, height);
 #else
+        /* FAKEMATCH(dead): the test drift < 0 written as its sign bit, the
+         * compiler's own instruction; as blit[drift < 0] (the UBFIX form),
+         * which here becomes a conditional add to the table's address. */
         blit[(u32)drift >> 31](
             canvas, state->sheet + gBladeRain_SwordPictures[picture],
             FIXEDtoINT(blade->x) -
@@ -295,6 +298,9 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
             FIXEDtoINT(blade->x) - (width >> 1),
             FIXEDtoINT(blade->y) - (height >> 1), width, height - 4);
 #else
+        /* FAKEMATCH(dead): the test drift < 0 written as its sign bit, the
+         * compiler's own instruction; as blit[drift < 0] (the UBFIX form),
+         * which here becomes a conditional add to the table's address. */
         blit[(u32)drift >> 31](
             canvas, state->sheet + gBladeRain_SwordPictures[picture],
             FIXEDtoINT(blade->x) -

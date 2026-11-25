@@ -26,10 +26,7 @@ FIXED Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
                                                                                \
     startHeight = CURVE_HEIGHT_FIXED(samples[0]);                              \
     heightDelta = (CURVE_HEIGHT_FIXED(samples[1]) - startHeight) * (along);    \
-    if (heightDelta < 0) {                                                     \
-      heightDelta += CURVE_FULL_STEPS - 1;                                     \
-    }                                                                          \
-    return startHeight + (heightDelta >> 4);                                   \
+    return startHeight + heightDelta / CURVE_FULL_STEPS;                       \
   }
 
 /// A slope along x.
@@ -145,19 +142,12 @@ FIXED Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
 
   if ((u32)x < CURVE_FULL_STEPS - 1) {
     heightDelta = middleHeight - firstHeight;
-    pixelDifference = heightDelta * x;
-    if (pixelDifference < 0)
-      // Round towards zero, as dividing by 16 would.
-      pixelDifference += CURVE_FULL_STEPS - 1;
-    pixelDifference >>= 4;
+    pixelDifference = heightDelta * x / CURVE_FULL_STEPS;
     return firstHeight + pixelDifference;
   }
   // The second half measures from the diagonal by y - x itself, 1 to 15.
   pixelDifference *= lastHeight - middleHeight;
-  if (pixelDifference < 0)
-    pixelDifference += CURVE_FULL_STEPS - 1;
-  pixelDifference >>= 4;
-  return middleHeight + pixelDifference;
+  return middleHeight + pixelDifference / CURVE_FULL_STEPS;
 }
 
 /// A raised or sunken rounded square: sample 1 where gTerrain_RoundedSquareMask
@@ -206,6 +196,8 @@ FIXED Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   // rounds towards zero.
   if (cellX < CURVE_HALF_STEPS) {
     heightDelta = (middleHeight - endpointHeight) * cellX;
+    /* FAKEMATCH(dead): the division by 8 rounded towards zero by hand; as
+     * heightDelta / CURVE_HALF_STEPS. */
     if (heightDelta < 0) {
       heightDelta += CURVE_HALF_STEPS - 1;
     }
@@ -220,6 +212,8 @@ FIXED Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
     endpointHeight -= middleHeight;
     offsetPastMiddle -= CURVE_HALF_STEPS;
     heightDelta = endpointHeight * offsetPastMiddle;
+    /* FAKEMATCH(dead): the division by 8 rounded towards zero by hand; as
+     * heightDelta / CURVE_HALF_STEPS. */
     if (heightDelta < 0) {
       heightDelta += CURVE_HALF_STEPS - 1;
     }
@@ -242,10 +236,7 @@ FIXED Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   // As TERRAIN_BEND_X: halves of 8 pixels, rounded towards zero.
   if (cellY < CURVE_HALF_STEPS) {
     heightDelta = (middleHeight - endpointHeight) * cellY;
-    if (heightDelta < 0) {
-      heightDelta += CURVE_HALF_STEPS - 1;
-    }
-    return endpointHeight + (heightDelta >> 3);
+    return endpointHeight + heightDelta / CURVE_HALF_STEPS;
   }
 
   endpointHeight = CURVE_HEIGHT_FIXED(*samples);
@@ -253,10 +244,7 @@ FIXED Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   endpointHeight -= middleHeight;
   offsetPastMiddle -= CURVE_HALF_STEPS;
   tailDelta = endpointHeight * offsetPastMiddle;
-  if (tailDelta < 0) {
-    tailDelta += CURVE_HALF_STEPS - 1;
-  }
-  return middleHeight + (tailDelta >> 3);
+  return middleHeight + tailDelta / CURVE_HALF_STEPS;
 }
 
 /// The sample gTerrain_SampleIndexTable picks for (x, y).
@@ -571,17 +559,13 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position, s32 *region) {
   u32 index;
   u32 *blockWord;
 
-  // The bias rounds a negative coordinate towards zero, as division would.
-  if (x < 0)
-    x += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
-  blockX = (x >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1);
+  blockX =
+      (x / toFIXED(WORLD_MAP_BLOCK_PIXELS)) & (WORLD_MAP_BLOCKS_ACROSS - 1);
   y = position->y;
-  if (y < 0)
-    y += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
 
-  index =
-      blockX + ((y >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1)) *
-                   WORLD_MAP_BLOCKS_ACROSS;
+  index = blockX + ((y / toFIXED(WORLD_MAP_BLOCK_PIXELS)) &
+                    (WORLD_MAP_BLOCKS_ACROSS - 1)) *
+                       WORLD_MAP_BLOCKS_ACROSS;
   blockWord = gCellTiles + index;
   // Bit 31 of the block word selects the second bank; the snowfield the
   // third, whatever bit 31 says.

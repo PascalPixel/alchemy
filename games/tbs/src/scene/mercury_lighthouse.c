@@ -1639,10 +1639,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   struct Actor *actor;
   s32 column;
 
-  column = Actor_Get(ACTOR_DOOR_STATUE)->x.fixed;
-  if (column < 0)
-    column += toFIXED(16) - 1;
-  column = FIELD_CELL(column);
+  column = Actor_Get(ACTOR_DOOR_STATUE)->x.fixed / toFIXED(16);
   Event_Start();
   if (column == 51) {
     // Mia turns: "Did you do that?"

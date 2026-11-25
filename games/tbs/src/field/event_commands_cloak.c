@@ -28,11 +28,15 @@ void FieldPsynergy_CheckCloakTile(void) {
     u32 ty;
 
     x = leader->x.fixed;
+    /* FAKEMATCH(dead): the division by toFIXED(WORLD_MAP_BLOCK_PIXELS)
+     * rounded towards zero by hand; as x / toFIXED(WORLD_MAP_BLOCK_PIXELS). */
     if (x < 0)
       x += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
     tx = WORLD_MAP_BLOCK(x) & (WORLD_MAP_BLOCKS_ACROSS - 1);
 
     y = leader->z.fixed;
+    /* FAKEMATCH(dead): the division by toFIXED(WORLD_MAP_BLOCK_PIXELS)
+     * rounded towards zero by hand; as y / toFIXED(WORLD_MAP_BLOCK_PIXELS). */
     if (y < 0)
       y += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
     ty = WORLD_MAP_BLOCK(y) & (WORLD_MAP_BLOCKS_ACROSS - 1);
@@ -47,16 +51,14 @@ void FieldPsynergy_CheckCloakTile(void) {
       cell = (u8 *)gMapGridCellBuffer;
 
     x = leader->x.fixed;
-    if (x < 0)
-      x += toFIXED(MAPGRID_CELL_PIXELS) - 1;
     {
-      u32 tx = FIELD_CELL(x);
+      u32 tx = x / toFIXED(MAPGRID_CELL_PIXELS);
 
       y = leader->z.fixed;
-      if (y < 0)
-        y += toFIXED(MAPGRID_CELL_PIXELS) - 1;
 
-      cell = (u8 *)(cell + ((tx + FIELD_CELL(y) * MAPGRID_SIZE) << 2));
+      cell =
+          (u8 *)(cell +
+                 ((tx + y / toFIXED(MAPGRID_CELL_PIXELS) * MAPGRID_SIZE) << 2));
     }
   }
 

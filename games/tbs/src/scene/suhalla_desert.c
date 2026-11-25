@@ -765,13 +765,13 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
 /// brightening and dimming about once a second.
 static void SuhallaDesert_PulseRevealPalette(void) {
   u16 brightnessFrame = gFrameCount & 63;
-  s32 grey;
+  u16 grey;
 
   if (brightnessFrame > 31)
     brightnessFrame = 64 - brightnessFrame;
   grey = (brightnessFrame >> 1) + 7;
   grey = RGB(grey, grey, grey);
-  SUHALLA_REVEAL_PALETTE_COLOR = ((u32)grey << 16) >> 16;
+  Io_Write16(grey, &SUHALLA_REVEAL_PALETTE_COLOR);
 }
 
 #ifdef UBFIX

@@ -64,7 +64,6 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   u8 targetIndex;
   s16 elementPower;
   s32 randomAdjust;
-  s32 randomDifference;
   s32 amount;
   s32 messageOffset;
 
@@ -136,12 +135,12 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_FORMULA_NO_POWER:
       // The rise varies by -1, 0 (half the time) or 1.
       randomAdjust = Random16_Below(4);
-      if (randomAdjust == 0) {
+      if (randomAdjust == 0)
         randomAdjust = -1;
-      } else {
-        randomDifference = randomAdjust ^ 1;
-        randomAdjust = 1 - (randomDifference != 0);
-      }
+      else if (randomAdjust == 1)
+        randomAdjust = 1;
+      else
+        randomAdjust = 0;
 
       switch (effectId & PSYNERGY_ABILITY_MASK) {
       case ABILITY_POWER_BREAD:

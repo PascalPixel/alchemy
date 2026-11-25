@@ -312,16 +312,14 @@ void Reveal_EmitSparkles(struct Actor *actor) {
 
 /// Returns 1 while Reveal is active, else 0.
 s32 Field_IsRevealActive(struct Actor *interpreter) {
-  s16 revealState;
-  u32 isActive = 0;
   struct FieldState *state = gFieldState;
 
-  if (state != NULL) {
-    revealState = state->revealActive;
-    isActive = (0 - revealState) | revealState;
-    isActive >>= 31;
-  }
-  return isActive;
+  if (state == NULL)
+    return 0;
+  if (state->revealActive != 0)
+    return 1;
+  else
+    return 0;
 }
 
 /// Reveal: marks with sparkles the hidden things within 8 cells left or right

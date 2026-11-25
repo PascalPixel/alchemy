@@ -171,15 +171,10 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     }
 
     // The distance in whole pixels, rounded toward 0.
-    dx = candidate->x.fixed - source->x.fixed;
-    if (dx < 0)
-      dx += FIXED_ONE - 1;
-    dx = FIXEDtoINT(dx);
+    dx = (candidate->x.fixed - source->x.fixed) / FIXED_ONE;
 
     dz = candidate->z.fixed - source->z.fixed;
-    if (dz < 0)
-      dz += FIXED_ONE - 1;
-    pixelZ = FIXEDtoINT(dz);
+    pixelZ = dz / FIXED_ONE;
 
     distance = Iwram_Sqrt(dx * dx + pixelZ * pixelZ);
     if ((candidate->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)

@@ -41,15 +41,11 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
 
   target = (struct Actor *)actor->watchedActor;
   if (target != NULL) {
-    // Whole pixels, rounded toward zero as a division by FIXED_ONE would.
+    // Whole pixels, rounded toward zero.
     deltaX = target->x.fixed - actor->x.fixed;
-    if (deltaX < 0)
-      deltaX += FIXED_ONE - 1;
-    pixelsX = FIXEDtoINT(deltaX);
+    pixelsX = deltaX / FIXED_ONE;
     deltaZ = target->z.fixed - actor->z.fixed;
-    if (deltaZ < 0)
-      deltaZ += FIXED_ONE - 1;
-    pixelsZ = FIXEDtoINT(deltaZ);
+    pixelsZ = deltaZ / FIXED_ONE;
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
     step = actor->timer;
     if (distance >= step) {

@@ -144,12 +144,7 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
     // (left of x = 0 it finds the edge to the right); its middle is 8 pixels
     // in.
     pixelX = actor->x.part[0].integer;
-    columnX = pixelX;
-    if (pixelX < 0) {
-      columnX += 15;
-    }
-    columnX >>= 4;
-    columnX *= 16;
+    columnX = pixelX / 16 * 16;
     offsetInColumn = pixelX - columnX;
     actor->paused = 0;
     Actor_StartIdleFar(actor);
@@ -256,16 +251,8 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z) {
     // the ground is kept.
     if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
       terrainId = actor->layer;
-      tileX = x;
-      if (tileX < 0) {
-        tileX += FIXED_ONE - 1;
-      }
-      tileX = FIXEDtoINT(tileX);
-      tileZ = z;
-      if (tileZ < 0) {
-        tileZ += FIXED_ONE - 1;
-      }
-      tileZ = FIXEDtoINT(tileZ);
+      tileX = x / FIXED_ONE;
+      tileZ = z / FIXED_ONE;
       groundHeight =
           toFIXED(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ));
       actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
@@ -292,17 +279,10 @@ void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z) {
     SET_ACTOR_POSITION(actor, x, y, z);
     if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
       s32 terrainId = actor->layer;
-      tileX = x;
-      if (tileX < 0) {
-        tileX += FIXED_ONE - 1;
-      }
-      tileX = FIXEDtoINT(tileX);
-      tileZ = z;
-      if (tileZ < 0) {
-        tileZ += FIXED_ONE - 1;
-      }
-      groundHeight = toFIXED(
-          MapGrid_GetTerrainHeightFar(terrainId, tileX, FIXEDtoINT(tileZ)));
+      tileX = x / FIXED_ONE;
+      tileZ = z / FIXED_ONE;
+      groundHeight =
+          toFIXED(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ));
       actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
       actor->groundHeight = groundHeight;
     }

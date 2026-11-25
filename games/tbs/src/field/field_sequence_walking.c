@@ -79,11 +79,15 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
     // Rounding toward zero, as a signed division by toFIXED(32) would.
     fixedX = position.vector.x;
+    /* FAKEMATCH(dead): the division by toFIXED(32) rounded towards zero by
+     * hand; as (fixedX / toFIXED(32)) & 31. */
     if (fixedX < 0)
       fixedX += toFIXED(32) - 1;
     tileX = (FIXEDtoINT(fixedX) >> 5) & 31;
 
     fixedZ = position.vector.z;
+    /* FAKEMATCH(dead): the division by toFIXED(32) rounded towards zero by
+     * hand; as (fixedZ / toFIXED(32)) & 31. */
     if (fixedZ < 0)
       fixedZ += toFIXED(32) - 1;
     tileY = (FIXEDtoINT(fixedZ) >> 5) & 31;
@@ -94,17 +98,15 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     tile = (u8 *)gridState->layers[MAPGRID_LAYER_GROUND].cells;
 
     fixedX = position.vector.x;
-    if (fixedX < 0)
-      fixedX += toFIXED(MAPGRID_CELL_PIXELS) - 1;
     {
-      u32 tileX = FIELD_CELL(fixedX);
+      u32 tileX = fixedX / toFIXED(MAPGRID_CELL_PIXELS);
 
       fixedZ = position.vector.z;
-      if (fixedZ < 0)
-        fixedZ += toFIXED(MAPGRID_CELL_PIXELS) - 1;
 
-      tile = (u8 *)((u32)tile +
-                    ((tileX + FIELD_CELL(fixedZ) * MAPGRID_SIZE) << 2));
+      tile =
+          (u8 *)((u32)tile +
+                 ((tileX + fixedZ / toFIXED(MAPGRID_CELL_PIXELS) * MAPGRID_SIZE)
+                  << 2));
     }
   }
 

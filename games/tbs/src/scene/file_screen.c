@@ -411,16 +411,16 @@ static void FileScreen_GetPasswordCharacter(s32 cell, u8 *text) {
 /// town or on the world map: such a save cannot restart at the Sanctum, by L
 /// and Start held as it loads or as a corrupted save is recovered.
 static s32 FileScreen_IsRetreatBlocked(void) {
-  s32 mapDifference;
-
   if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
   if (gMainRoutineState.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
-  mapDifference = gMainRoutineState.next ^ SCENE_WORLD_MAP;
-  return -NONZERO(mapDifference);
+  if (gMainRoutineState.next == SCENE_WORLD_MAP) {
+    return 0;
+  }
+  return -1;
 }
 
 /// The loaded file's scene state as Continue reads it: the play time it holds

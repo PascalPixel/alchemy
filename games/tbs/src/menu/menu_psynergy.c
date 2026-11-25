@@ -318,6 +318,9 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
     u8 kind = action->targetMode;
     // ITEM_USE_MODE_CHOOSE_MEMBER (1) when it targets ABILITY_TARGET_ALLIES,
     // else ITEM_USE_MODE_FROM_FIELD (0).
+    /* FAKEMATCH(temporary): the test kind == ABILITY_TARGET_ALLIES written
+     * out as the compiler's xor, sign bit and subtraction, its difference in
+     * a local of its own; as classification = kind == ABILITY_TARGET_ALLIES. */
     targetModeDifference = kind ^ ABILITY_TARGET_ALLIES;
     classification = (0 - targetModeDifference) | targetModeDifference;
     classification = (u32)classification >> 31;

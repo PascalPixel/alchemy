@@ -186,6 +186,8 @@ s32 Unit_LearnPsynergy(s32 unitId, s32 abilityId) {
   for (index = 0; index < PSYNERGY_SLOTS - 1; index++) {
     s32 masked = unit->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
 
+    /* FAKEMATCH(dead): the test written as an XOR; as masked == ability,
+     * which stores ability in place of masked. */
     if ((masked ^ ability) == 0) {
       unit->psynergy[index].encodedAction = masked;
       found = index;

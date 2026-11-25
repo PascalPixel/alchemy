@@ -125,10 +125,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
@@ -546,7 +546,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
 
   // Load both crescents and set the blend.
   Resource_LoadAndDecompress(RESOURCE_GREY_CRESCENT_SHEET, cells, 1, 1);
@@ -662,23 +662,20 @@ void Canvas_BlitMirroredQuarters(void *source, s32 x, s32 y, s32 size) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
   half = size / 2;
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, source, x - half,
-                                                y - size, half, size);
+  (Ram_HeapSlots->ramCodePaired)(canvas, source, x - half, y - size, half,
+                                 size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, source, x, y - size,
-                                                half, size);
+  (Ram_HeapSlots->ramCodePaired)(canvas, source, x, y - size, half, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, source, x - half, y,
-                                                half, size);
+  (Ram_HeapSlots->ramCodePaired)(canvas, source, x - half, y, half, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, source, x, y, half,
-                                                size);
+  (Ram_HeapSlots->ramCodePaired)(canvas, source, x, y, half, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 }
 #undef FLAME_RING_TEXTURE

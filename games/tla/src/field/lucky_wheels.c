@@ -1553,9 +1553,9 @@ void LuckyWheels_Run(void) {
     }
 
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 8, 7, 3, 1);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    draw[0] = Ram_HeapSlots->ramCode;
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 8, 7, 3, 0);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+    draw[1] = Ram_HeapSlots->ramCodePaired;
     Iwram_FillWordsEntry(canvas, size, 0);
     Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
             DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);

@@ -100,8 +100,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
       column = gWindow_PartyColumnOffsets[i] + shift;
       if (column < lastColumn) {
         for (row = 0; row != rows; row++) {
-          cell = windowState->tilemap[(s16)window->y + row] +
-                 ((s16)window->x + column);
+          cell = windowState->tilemap[window->y + row] + (window->x + column);
           if (row == 0)
             *cell = WINDOW_TILE_BORDER_TOP_TEE;
           else if (row == rows - 1)
@@ -125,8 +124,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
        * to column, which the next lines set again. */
       if (shown > 255)
         column = 0;
-      cell = windowState->tilemap[(s16)window->y + window->height - 1] +
-             (s16)window->x;
+      cell = windowState->tilemap[window->y + window->height - 1] + window->x;
       *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
       for (column = 1; column < lastColumn; column++)
         *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM;
@@ -179,8 +177,8 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
     BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
         BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
-  x += (s16)window->x;
-  y += (s16)window->y;
+  x += window->x;
+  y += window->y;
   for (i = 0; i < PARTY_STATUS_BAR_LENGTH / 8; i++, x++) {
     // This tile's eight pixels: filled up to `length`, empty after.
     tile = state->tilemap[0][y * BG_SCREEN_WIDTH + x];

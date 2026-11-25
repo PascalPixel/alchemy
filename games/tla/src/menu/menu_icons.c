@@ -332,8 +332,8 @@ void Menu_ShowPartyFigures(struct Window *window, s32 originX, s32 originY) {
   Menu_CreatePartyFigures(0);
   for (i = 0; i <= 3; i++) {
     if (menu->memberSprites[i] != NULL) {
-      menu->memberX[i] = (i * 3 + ((s16)window->x + originX)) * 8;
-      menu->memberY[i] = ((s16)window->y + originY) * 8 + 16;
+      menu->memberX[i] = (i * 3 + (window->x + originX)) * 8;
+      menu->memberY[i] = (window->y + originY) * 8 + 16;
       menu->memberScale[i] = FIXED_ONE;
     }
   }
@@ -581,8 +581,8 @@ void MenuIcon_SetActive(s32 active) {
 void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
                              const u8 *enabled) {
   s32 count = 0;
-  s32 iconX = (s16)panel->x * 8 + x + 8;
-  s32 iconY = (s16)panel->y * 8 + y + 8;
+  s32 iconX = panel->x * 8 + x + 8;
+  s32 iconY = panel->y * 8 + y + 8;
   s32 i;
 
   for (i = 0; i < CHARACTER_AILMENT_COUNT; i++) {

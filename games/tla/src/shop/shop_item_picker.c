@@ -516,8 +516,8 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
 void ItemIconGrid_ShowInventory(struct Window *window, s32 x, s32 y,
                                 s32 unitId) {
   struct Unit *unit = Unit_Get(unitId);
-  s32 left = (s16)window->x * 8 + x + 8;
-  s32 top = (s16)window->y * 8 + y + 8;
+  s32 left = window->x * 8 + x + 8;
+  s32 top = window->y * 8 + y + 8;
   s32 i;
 
   ItemIconGrid_LoadItems(unit->inventory, INVENTORY_SLOTS,

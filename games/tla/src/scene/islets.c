@@ -2124,7 +2124,7 @@ void Islets_StartIceberg(s32 id) {
 void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   struct Actor *actor = Actor_Get(id);
   FIXED x = toFIXED(column * 32 + actor->timer);
-  FIXED z = toFIXED(row * 32 + (s16)actor->userValue);
+  FIXED z = toFIXED(row * 32 + actor->userValue);
 
   FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
 }
@@ -2375,7 +2375,8 @@ void Islets_InitializeSeaOfTime(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_DECK_BLOCK_B), 0);
   FieldTask_AddFrame(Islets_SetDeckBlocksByHeight, TASK_PASS_FRAME);
   // At the secret spot, by the ride or from the Islet Cave.
-  if ((u16)(gMainRoutineState.entrance - ENTRANCE_AT_SECRET_SPOT) <= 1) {
+  if (gMainRoutineState.entrance >= ENTRANCE_AT_SECRET_SPOT &&
+      gMainRoutineState.entrance <= ENTRANCE_AT_SECRET_SPOT + 1) {
     Event_SetFlag(FLAG_AT_SECRET_SPOT);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       {

@@ -207,7 +207,7 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   ratio = FIXED_ONE;
   if (scale >= ratio) {
     wrap = BGCNT_WRAP;
-    panX = BACKGROUND_PAN_X + YAW_PARTY_ACTION * 3 + -(s16)camera->yaw * 3;
+    panX = BACKGROUND_PAN_X + YAW_PARTY_ACTION * 3 + -camera->yaw * 3;
   }
   if (scanlines == NULL)
     return;
@@ -290,8 +290,8 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   Projection_Set(focal, nearDepth, focal * 2);
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
-  Matrix_RotateY((s16)camera->yaw);
-  Matrix_RotateX((s16)camera->pitch);
+  Matrix_RotateY(camera->yaw);
+  Matrix_RotateX(camera->pitch);
   eyeOffset[0] = 0;
   eyeOffset[1] = 0;
   eyeOffset[2] = camera->distance;
@@ -341,8 +341,8 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Projection_Set(focal, nearDepth, focal * 2);
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
-  Matrix_RotateY((s16)camera->yaw);
-  Matrix_RotateX((s16)camera->pitch);
+  Matrix_RotateY(camera->yaw);
+  Matrix_RotateX(camera->pitch);
   eyeOffset[0] = 0;
   eyeOffset[1] = 0;
   eyeOffset[2] = focal;
@@ -735,7 +735,7 @@ void ElementGlow_UpdateStarField(void) {
   dest = Ram_HeapSlots->battleCanvas;
   state = (struct StarFieldState *)Ram_HeapSlots->battleEffect;
   state->ready = 0;
-  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw = Ram_HeapSlots->ramCode;
   for (i = 0; i < STAR_FIELD_SPARKS; i++) {
     spark = &state->sparks[i];
     life = spark->life;
@@ -791,7 +791,7 @@ void ElementGlow_UpdateStarField(void) {
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }
-  draw = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw = Ram_HeapSlots->ramCodePaired;
   for (ring = state->rings, ringsLeft = STAR_FIELD_RINGS - 1; ringsLeft >= 0;
        ringsLeft--, ring++) {
     ring->x += ring->velocityX;

@@ -235,25 +235,24 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       index <<= 1;
       entry = (s16 *)(index + (s32)circles);
       half = size >> 1;
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-          canvas, (void *)(*entry + (s32)cells), x - half, y - size, half,
-          size);
+      (Ram_HeapSlots->ramCodePaired)(canvas, (void *)(*entry + (s32)cells),
+                                     x - half, y - size, half, size);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-          canvas, (void *)(*entry + (s32)cells), x, y - size, half, size);
+      (Ram_HeapSlots->ramCodePaired)(canvas, (void *)(*entry + (s32)cells), x,
+                                     y - size, half, size);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       if (i >= SURGE_FIRST_GLOW) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-        ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-            canvas, (void *)(*entry + (s32)cells), x - half, y, half, size);
+        (Ram_HeapSlots->ramCodePaired)(canvas, (void *)(*entry + (s32)cells),
+                                       x - half, y, half, size);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-        ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-            canvas, (void *)(*entry + (s32)cells), x, y, half, size);
+        (Ram_HeapSlots->ramCodePaired)(canvas, (void *)(*entry + (s32)cells), x,
+                                       y, half, size);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
@@ -343,9 +342,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         FIXED sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
         s32 x = INTtoFIXED(center.x / 2 - CANVAS_SIZE / 2) -
                 (gLightSurge_RingSways[i] * sway / FIXED_ONE) *
-                    Trig_Sin((s16)camera->yaw);
+                    Trig_Sin(camera->yaw);
         s32 z = -((gLightSurge_RingSways[i] * sway / FIXED_ONE) *
-                  Trig_Cos((s16)camera->yaw));
+                  Trig_Cos(camera->yaw));
 
         /* FAKEMATCH(dead): a store both arms below overwrite. */
         if (i == 300)

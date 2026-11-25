@@ -390,7 +390,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
   wait(1);
   blit = blits;
-  BattleEffect_BuildCanvasBlitters(0, (void **)blit);
+  BattleEffect_BuildCanvasBlitters(0, blit);
   // The silhouette, in the glow's palettes, goes to BG2's tiles and stays
   // there while the rune circles go to BG1's.
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
@@ -1098,12 +1098,12 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
-    draw[0] = (DrawRectangle)heap->ramCode;
+    draw[0] = heap->ramCode;
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_TRANSPARENT);
-    draw[0] = (DrawRectangle)heap->ramCode;
+    draw[0] = heap->ramCode;
   }
   Resource_LoadAndDecompress(RESOURCE_MAGENTA_SWIRL_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapCellBuffer, 1,
@@ -1182,8 +1182,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 
 /// Draws one quarter of the web with the blitter just built.
 #define DRAW_QUARTER(x, y)                                                     \
-  ((DrawRectangle)Ram_HeapSlots->ramCode)(canvas, state->sheet, x, y, size,    \
-                                          size)
+  (Ram_HeapSlots->ramCode)(canvas, state->sheet, x, y, size, size)
 
 /// A spider web spreads over the targets in four mirrored quarters, fades,
 /// and Impair's effect follows.

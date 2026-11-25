@@ -80,11 +80,11 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  rectangle[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  rectangle[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  rectangle[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  rectangle[1] = Ram_HeapSlots->ramCodePaired;
 
   duration = gGrowth_ColumnCounts[args->variant] * COLUMN_INTERVAL + 56;
 
@@ -288,11 +288,11 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   REG_BG2X = (CANVAS_SIZE / 2 - first.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)heap->ramCode;
+  draw[0] = heap->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)heap->ramCodePaired;
+  draw[1] = heap->ramCodePaired;
   column = state->particles;
   for (i = 0; i != VINE_COLUMNS; i++) {
     column[i].x = gVine_ColumnOffsets[i] + CANVAS_SIZE / 2;
@@ -375,11 +375,11 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw = (DrawRectangle)heap->ramCode;
+  draw = heap->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  drawFlip = (DrawRectangle)heap->ramCodePaired;
+  drawFlip = heap->ramCodePaired;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   frameCount = gThorn_Counts[args->variant] * THORN_INTERVAL + 56;
 

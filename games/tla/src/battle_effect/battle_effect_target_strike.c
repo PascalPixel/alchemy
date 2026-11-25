@@ -168,7 +168,7 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 }
 
 /// The blitter the effect draws with, made in the heap's RAM code slot.
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
+#define BLITTER (Ram_HeapSlots->ramCode)
 
 /// Column `field` of style `mode`'s row of gTargetStrike_Styles.
 #define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Styles[(mode)][(field)]
@@ -807,11 +807,11 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
   blit = draw;
   Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, state->sheet, 1,
                              1);
@@ -989,7 +989,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   // The motes' size grows with the variant, from 1 to 4.
   args->variant++;
   if (args->variant <= 0)
@@ -1016,7 +1016,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       n = frame / 2 % 4; // a pillar picture every 2 frames
       flags = EFFECT_CLIP_BOUNDS;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+      draw[1] = Ram_HeapSlots->ramCodePaired;
       draw[1](canvas, state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 47,
               ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,
               ELEMENT_PILLAR_HALF_HEIGHT);
@@ -1029,7 +1029,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+      draw[1] = Ram_HeapSlots->ramCodePaired;
       n = frame / 2 % 4;
       draw[1](canvas, state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 64,
               ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,

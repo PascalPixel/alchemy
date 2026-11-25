@@ -532,7 +532,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
       icon = menu->sideIcon[1];
       column = (selection % 4) * 3;
       icon->sprite.oam.x = icon->x =
-          (menu->auxiliaryWindow->x + column) * 8 - 2;
+          ((u16)menu->auxiliaryWindow->x + column) * 8 - 2;
       if (browseOnly == 0) {
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[selection], 0,
                          STATUS_PANEL_EXPERIENCE);

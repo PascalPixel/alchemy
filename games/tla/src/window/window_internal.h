@@ -338,8 +338,8 @@ enum BattleTargetHint {
 /// each place their cursor so.
 #define MENU_PLACE_CURSOR(position, window, row, margin, sprite)               \
   do {                                                                         \
-    (position).x = (s16)(window)->x * 8 - (margin);                            \
-    (position).y = ((row) * 2 + (s16)(window)->y) * 8 + 20;                    \
+    (position).x = (window)->x * 8 - (margin);                                 \
+    (position).y = ((row) * 2 + (window)->y) * 8 + 20;                         \
     ((u32 *)(sprite))[1] = OBJ_SIZE_16X16;                                     \
     ((u32 *)(sprite))[2] = 0;                                                  \
   } while (0)

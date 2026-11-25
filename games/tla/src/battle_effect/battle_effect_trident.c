@@ -118,7 +118,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(TRIDENT_WINDOW_TOP, TRIDENT_WINDOW_BOTTOM);
   REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw = Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   blit[0] = draw;
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
@@ -490,7 +490,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             gTrident_GlintFlips[flip & 3] | EFFECT_CLIP_BOUNDS,
                             BLITTER_MAX);
-        ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+        (Ram_HeapSlots->ramCodePaired)(
             canvas, state->sheet + gBattleEffect_GlintPictures[k], x, y,
             gBattleEffect_GlintPictureWidths[k],
             gBattleEffect_GlintPictureHeights[k]);
@@ -633,7 +633,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   state->transferMode = CANVAS_COPY_AND_FADE;
   if (mode == LEAPING_STRIKE_PLANET_DIVER)
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;

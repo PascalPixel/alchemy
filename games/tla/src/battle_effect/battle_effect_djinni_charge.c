@@ -102,11 +102,11 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
     }
-    blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    blit[0] = Ram_HeapSlots->ramCode;
     REG_BLDALPHA = EFFECT_BLEND_ADD;
     EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     target = BattleObject_GetFar(args->targets[0])->object;
-    savedYaw = (s16)camera->yaw;
+    savedYaw = camera->yaw;
     caster = BattleObject_GetFar(args->user)->object;
 
     // The last two particles keep the Djinni's start and its step.

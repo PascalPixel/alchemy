@@ -254,7 +254,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                               gTargetMotes_GlintFlips[flip & 3] |
                                   COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                               BLITTER_MAX);
-          ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+          (Ram_HeapSlots->ramCodePaired)(
               canvas,
               state->sheet + gBattleEffect_GlintPictures[cel] +
                   TARGET_MOTES_GLINT_PICTURES,
@@ -266,10 +266,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      draw[0] = Ram_HeapSlots->ramCode;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+      draw[1] = Ram_HeapSlots->ramCodePaired;
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
@@ -399,10 +399,10 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  drawUpright = (DrawRectangle)Ram_HeapSlots->ramCode;
+  drawUpright = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_TRANSPARENT);
-  drawFlipped = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  drawFlipped = Ram_HeapSlots->ramCodePaired;
 
   // The sheep wait above the screen with a random spin and starting cel.
   for (i = 0; i != SLEEP_SEEDED; i++) {
@@ -537,7 +537,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   state->transferMode = CANVAS_COPY_AND_CLEAR;
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   state->transferValue = 0;
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 

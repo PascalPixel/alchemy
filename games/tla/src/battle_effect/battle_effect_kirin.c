@@ -110,7 +110,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   }
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit = Ram_HeapSlots->ramCode;
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 

@@ -203,8 +203,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       entry->attributes.word =
           OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       entry->tile.value = 0;
-      entry->attributes.bits.x = (s16)window->x * 8 + x;
-      entry->attributes.bits.y = (s16)window->y * 8 + y;
+      entry->attributes.bits.x = window->x * 8 + x;
+      entry->attributes.bits.y = window->y * 8 + y;
       /* FAKEMATCH(dead): advancing and restoring the captured pointer. */
       window++;
       window--;

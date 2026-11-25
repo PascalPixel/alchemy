@@ -347,7 +347,7 @@ s32 ActorScript_TestFlag(struct Actor *interpreter) {
   interpreter->conditionResult =
       GameFlag_Get(interpreter->script[interpreter->scriptCursor + 1]);
   done = 1;
-  interpreter->scriptCursor = (u16)interpreter->scriptCursor + 2;
+  interpreter->scriptCursor += 2;
   return done;
 }
 
@@ -462,7 +462,7 @@ struct Actor *ActorScript_FindOverlappingActor(struct Actor *actor,
 /// SC_POSITION(x, y, z): places the actor at (x, y, z) and stops it; with y -1
 /// an actor that follows the ground is raised by the ground height there.
 s32 ActorScript_SetPositionAndResetMotion(struct Actor *actor) {
-  const s32 *argument = actor->script + (s16)actor->scriptCursor + 1;
+  const s32 *argument = actor->script + actor->scriptCursor + 1;
   s32 x = *argument++;
   s32 y = *argument++;
   s32 z = *argument;
@@ -498,7 +498,7 @@ s32 ActorScript_ResetToOrigin(struct Actor *actor) {
 
 /// SC_MOVE(x, y, z): sends the actor towards (x, y, z).
 s32 ActorScript_ApplyAbsolutePosition(struct Actor *actor) {
-  const s32 *argument = actor->script + (s16)actor->scriptCursor + 1;
+  const s32 *argument = actor->script + actor->scriptCursor + 1;
   s32 x = *argument++;
   s32 y = *argument++;
   s32 z = *argument;
@@ -510,7 +510,7 @@ s32 ActorScript_ApplyAbsolutePosition(struct Actor *actor) {
 
 /// SC_MOVE_XZ(x, z): sends the actor towards (x, z), keeping its height.
 s32 ActorScript_SetMoveTargetXZ(struct Actor *actor) {
-  const s32 *argument = actor->script + (s16)actor->scriptCursor + 1;
+  const s32 *argument = actor->script + actor->scriptCursor + 1;
   s32 x = *argument++;
   s32 z = *argument;
 
@@ -834,7 +834,7 @@ s32 Actor_Wander(struct Actor *actor) {
   s32 dx;
   s32 dz;
 
-  operands = &actor->script[(s16)actor->scriptCursor + 1];
+  operands = &actor->script[actor->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / FIXED_ONE;
@@ -914,7 +914,7 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
   s32 dx;
   s32 dz;
 
-  operands = &actor->script[(s16)actor->scriptCursor + 1];
+  operands = &actor->script[actor->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / FIXED_ONE;
@@ -1134,18 +1134,7 @@ SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRepeatCount, repeatCount,
                              u8)
 
 /// Work value SW_WAIT: sets, adds to or compares the wait counter.
-void ActorScript_SetOrCompareWait(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
-  if (operation == SCRIPT_OPERAND_SET) {
-    state->wait = value;
-    return;
-  }
-  if (operation == SCRIPT_OPERAND_ADD) {
-    state->wait += value;
-    return;
-  }
-  state->conditionResult = (s16)state->wait == (s16)value;
-}
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareWait, wait, s16)
 
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareTimer, timer, s16)
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareUserValue, userValue, s16)

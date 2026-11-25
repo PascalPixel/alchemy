@@ -114,7 +114,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   struct SpritePlacement position;
   struct ScreenPoint target;
-  void *draw[2];
+  DrawRectangle draw[2];
   struct BattleBackgroundState *view;
   void *canvas;
   struct BattleEffectState *state;
@@ -268,42 +268,42 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
           shaft->y += shaft->velocityY;
           shaft->velocityX -= toFIXED(1);
           shaft->velocityY += toFIXED(2);
-          EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
-                              ATALANTA_SHAFT_TOP, x + 4, y - 40);
-          EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+          EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, ATALANTA_SHAFT_TOP,
+                              x + 4, y - 40);
+          EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                               ATALANTA_SHAFT_MIDDLE, x - 16, y - 19);
-          EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+          EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                               ATALANTA_SHAFT_BOTTOM, x - 20, y + 16);
         } else if (frame >= start + ATALANTA_TRAIL_FRAMES) {
           switch (frame - start - ATALANTA_TRAIL_FRAMES) {
           case 0:
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_A, x - 7, y - 14);
             break;
           case 1:
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_B, x - 11, y - 22);
             break;
           case 2:
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_C_TOP, x - 4, y - 31);
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_C_BOTTOM, x - 16, y - 1);
             break;
           case 3:
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_D_TOP, x + 1, y - 38);
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_D_MIDDLE, x - 11, y - 11);
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_D_BOTTOM, x - 19, y + 11);
             break;
           case 4:
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_E_TOP, x + 4, y - 40);
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_E_MIDDLE, x - 10, y - 17);
-            EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                 ATALANTA_SHAFT_FLASH_E_BOTTOM, x - 20, y + 11);
             break;
           }
@@ -319,8 +319,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
               screen.x = (screen.x >> 1) + x;
               screen.y = screen.y + y + ATALANTA_TRAIL_DROP;
               trail->x -= 4;
-              EFFECT_DRAW_MOTE((DrawRectangle)draw[1], canvas, sheet, screen.x,
-                               screen.y, 5);
+              EFFECT_DRAW_MOTE(draw[1], canvas, sheet, screen.x, screen.y, 5);
             }
           }
         }
@@ -379,14 +378,14 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gBattleEffect_EmberStreakPictureWidths[flame];
-            ((DrawRectangle)draw[i & 1])(
+            draw[i & 1](
                 canvas,
                 Ram_MapCellBuffer + gBattleEffect_EmberStreakPictures[flame],
                 shaft->x - (width >> 1) - 8,
                 shaft->y + gBattleEffect_EmberStreakPictureBiasY[flame] - 40,
                 width, gBattleEffect_EmberStreakPictureHeights[flame]);
 #else
-            ((DrawRectangle)draw[i & 1])(
+            draw[i & 1](
                 canvas,
                 Ram_MapCellBuffer + gBattleEffect_EmberStreakPictures[flame],
                 shaft->x -
@@ -397,10 +396,10 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                 width, gBattleEffect_EmberStreakPictureHeights[flame]);
 #endif
             if (shaft->variant < ATALANTA_BURST_SHAFT_FRAMES) {
-              EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+              EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                   ATALANTA_SHAFT_TOP, shaft->x + 4,
                                   shaft->y - 40);
-              EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+              EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                   ATALANTA_SHAFT_MIDDLE, shaft->x - 16,
                                   shaft->y - 19);
             }
@@ -412,15 +411,14 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
           if (shaft->y > 56)
             height = height - shaft->y + 56;
-          EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
-                              ATALANTA_SHAFT_TOP, shaft->x + 4, shaft->y - 40);
-          EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,
+          EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, ATALANTA_SHAFT_TOP,
+                              shaft->x + 4, shaft->y - 40);
+          EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                               ATALANTA_SHAFT_MIDDLE, shaft->x - 16,
                               shaft->y - 19);
           if (height > 0)
-            ((DrawRectangle)draw[0])(
-                canvas, state->sheet + ATALANTA_SHAFT_BOTTOM, shaft->x - 20,
-                shaft->y + 16, ATALANTA_SHAFT_BOTTOM_WIDTH, height);
+            draw[0](canvas, state->sheet + ATALANTA_SHAFT_BOTTOM, shaft->x - 20,
+                    shaft->y + 16, ATALANTA_SHAFT_BOTTOM_WIDTH, height);
           shaft->x -= 6;
           shaft->y += 12;
           if (shaft->y > 79) {

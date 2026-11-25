@@ -359,7 +359,7 @@ UNUSED void Text_DrawWideStringAsTiles(u16 *buffer, const struct Window *window,
     canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
 
-  cell = (((s16)window->y + offsetY + 1) << 5) + ((s16)window->x + offsetX) + 1;
+  cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) { // inside the tilemap
     s32 src;
     s32 dst;

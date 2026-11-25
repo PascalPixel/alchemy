@@ -228,8 +228,8 @@ void Window_DrawOpened(struct Window *window) {
   struct WindowState *state;
 
   state = WINDOW_STATE;
-  x = (s16)window->x;
-  y = (s16)window->y;
+  x = window->x;
+  y = window->y;
   width = window->width;
   height = window->height;
   flags = window->flags;
@@ -334,8 +334,7 @@ void Window_Close(struct Window *window, s32 instant) {
   window->previousHeight = window->height;
 
   if (instant != 0) {
-    Window_EraseBorderRect((s16)window->x, (s16)window->y, window->width,
-                           window->height);
+    Window_EraseBorderRect(window->x, window->y, window->width, window->height);
     window->sprites.head = NULL;
     window->sprites.tailLink = NULL;
     window->width = 0;
@@ -369,8 +368,7 @@ void WindowSprite_PrepareForRedraw(struct Window *window) {
 
 /// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRect(struct Window *window) {
-  Window_DrawBorder((s16)window->x, (s16)window->y, window->width,
-                    window->height);
+  Window_DrawBorder(window->x, window->y, window->width, window->height);
 }
 
 /// Releases every window sprite in a list and empties it. sprites is the list,
@@ -411,9 +409,9 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
 
   state = WINDOW_STATE;
   x = left >> 3;
-  windowX = (s16)window->x;
+  windowX = window->x;
   y = top >> 3;
-  windowY = (s16)window->y;
+  windowY = window->y;
   right += 7;
   bottom += 7;
   right >>= 3;

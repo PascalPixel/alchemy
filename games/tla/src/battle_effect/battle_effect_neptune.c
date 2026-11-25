@@ -157,10 +157,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   view->busy = 1;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
-  blit[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  blit[1] = Ram_HeapSlots->ramCodePaired;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
   for (i = 0; i != PARTICLE_POOL_COUNT; i++)

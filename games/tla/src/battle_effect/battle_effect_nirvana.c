@@ -49,7 +49,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   orb->velocityZ = 0;
   orb->variant = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit = Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SWIRL);
 
@@ -160,7 +160,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  blit = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit = Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   scroll = 0;
   scrollSpeed = 0;
@@ -417,7 +417,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
           else
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          draw[0] = Ram_HeapSlots->ramCode;
           draw[0](canvas, state->sheet, x, 104 - height,
                   SOUL_SHATTER_COLUMN_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -604,7 +604,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   Iwram_ClearWordsEntry(canvas, CANVAS_VIEW_BYTES);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(1);
-  BattleEffect_BuildCanvasBlitters(0, (void **)blitters);
+  BattleEffect_BuildCanvasBlitters(0, blitters);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   mistSheet = Ram_MapCellBuffer + SERAC_MIST;
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, mistSheet, 0, 0);
@@ -718,10 +718,10 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           camera->yaw += turn;
         }
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          if ((s16)camera->yaw < -SERAC_CAMERA_YAW_MAX) {
+          if (camera->yaw < -SERAC_CAMERA_YAW_MAX) {
             camera->yaw = -SERAC_CAMERA_YAW_MAX;
           }
-        } else if ((s16)camera->yaw > SERAC_CAMERA_YAW_MAX) {
+        } else if (camera->yaw > SERAC_CAMERA_YAW_MAX) {
           camera->yaw = SERAC_CAMERA_YAW_MAX;
         }
       }

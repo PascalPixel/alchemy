@@ -164,7 +164,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   BG_PLTT_COLOR(0, 1) = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   state->transferMode = CANVAS_COPY;
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // Wipe the battle away, change the battle background behind it and set out
   // Judgment's sprites in its first pose, then wipe back.
@@ -428,15 +428,14 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       flags = EFFECT_CLIP_BOUNDS;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_ADDITIVE);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-          canvas, state->sheet, JUDGMENT_BURST_X - JUDGMENT_BEAM_WIDTH, y,
-          JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
+      (Ram_HeapSlots->ramCodePaired)(canvas, state->sheet,
+                                     JUDGMENT_BURST_X - JUDGMENT_BEAM_WIDTH, y,
+                                     JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_ADDITIVE);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-          canvas, state->sheet, JUDGMENT_BURST_X, y, JUDGMENT_BEAM_WIDTH,
-          JUDGMENT_BEAM_HEIGHT);
+      (Ram_HeapSlots->ramCodePaired)(canvas, state->sheet, JUDGMENT_BURST_X, y,
+                                     JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
@@ -501,7 +500,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET,
                              state->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
   // The motes are dimmed, though the sweep draws none: a level in the brighter
@@ -709,28 +708,28 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       flags = EFFECT_CLIP_BOUNDS;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      (Ram_HeapSlots->ramCodePaired)(
           canvas, sheet, JUDGMENT_FLARE_X - JUDGMENT_FLARE_WIDTH,
           top - JUDGMENT_FLARE_HEIGHT, JUDGMENT_FLARE_WIDTH,
           JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      (Ram_HeapSlots->ramCodePaired)(
           canvas, sheet, JUDGMENT_FLARE_X - 1, top - JUDGMENT_FLARE_HEIGHT,
           JUDGMENT_FLARE_WIDTH, JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      (Ram_HeapSlots->ramCodePaired)(
           canvas, sheet, JUDGMENT_FLARE_X - JUDGMENT_FLARE_WIDTH, top - 1,
           JUDGMENT_FLARE_WIDTH, JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-          canvas, sheet, JUDGMENT_FLARE_X - 1, top - 1, JUDGMENT_FLARE_WIDTH,
-          JUDGMENT_FLARE_HEIGHT);
+      (Ram_HeapSlots->ramCodePaired)(canvas, sheet, JUDGMENT_FLARE_X - 1,
+                                     top - 1, JUDGMENT_FLARE_WIDTH,
+                                     JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     // It explodes in flashes.
@@ -908,7 +907,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+    draw[1] = Ram_HeapSlots->ramCodePaired;
     if (frame > 85) {
       draw[1](canvas, state->sheet, 0, 0, JUDGMENT_WAVE_SIZE,
               JUDGMENT_WAVE_SIZE);

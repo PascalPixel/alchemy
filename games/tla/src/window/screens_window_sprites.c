@@ -27,8 +27,8 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
     return NULL;
   }
   // Window tiles to screen pixels, wrapped to OAM's 9-bit X and 8-bit Y.
-  x = offsetX + (s16)window->x * 8 + 8;
-  y = offsetY + (s16)window->y * 8 + 8;
+  x = offsetX + window->x * 8 + 8;
+  y = offsetY + window->y * 8 + 8;
   x &= OAM_X_MASK;
   y &= OAM_Y_MASK;
   *(u32 *)&sprite->sprite.oam = OBJ_X(x) | y | oamFlags;

@@ -3,7 +3,7 @@
 /// (Actor_RollAndCrumble), with the launch sound.
 void Actor_LaunchAhead(struct Actor *self) {
   struct Actor *actor = Actor_Get(self->launchedActorId);
-  s32 angle = (s16)self->userValue;
+  s32 angle = self->userValue;
   struct FieldSprite *sprite = actor->sprite;
   FIXED position[3];
 

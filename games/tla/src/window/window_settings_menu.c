@@ -252,8 +252,8 @@ struct Window *SettingsMenu_Open(void) {
   out = WindowSprite_Create(PointingHand_LoadIntoFreeSlot(),
                             WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
   state->cursor.sprite = out;
-  x = (s16)win->x * 8;
-  y = (s16)win->y * 8 + 12;
+  x = win->x * 8;
+  y = win->y * 8 + 12;
   MenuCursor_SetPositionImmediateFar(&state->cursor.cursor, x, y);
 
   x = VramCache_FindFreeEntry();
@@ -286,10 +286,10 @@ struct Window *SettingsMenu_Open(void) {
     out = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
     out->sprite.oam.fullColor = 1;
     state->marker[0].sprite = out;
-    x = (s16)win->x * 8 + OPTION_SLIDER_X;
+    x = win->x * 8 + OPTION_SLIDER_X;
     x += state->option[SETTINGS_ROW_WINDOW_COLOR] * OPTION_SLIDER_WIDTH /
          state->optionCount[SETTINGS_ROW_WINDOW_COLOR];
-    y = (s16)win->y * 8 + 4;
+    y = win->y * 8 + 4;
     MenuCursor_SetPositionImmediateFar(&state->marker[0].cursor, x, y);
   }
 
@@ -299,10 +299,10 @@ struct Window *SettingsMenu_Open(void) {
     out = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
     out->sprite.oam.fullColor = 1;
     state->marker[1].sprite = out;
-    x = (s16)win->x * 8 + OPTION_SLIDER_X;
+    x = win->x * 8 + OPTION_SLIDER_X;
     x += state->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] * OPTION_SLIDER_WIDTH /
          state->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS];
-    y = (s16)win->y * 8 + 20;
+    y = win->y * 8 + 20;
     MenuCursor_SetPositionImmediateFar(&state->marker[1].cursor, x, y);
   }
 
@@ -447,15 +447,15 @@ s32 SettingsMenu_Run(void) {
         CommandIcon_Load(gSettingsMenu_SleepIcons[i], resourceIndex, dimmed);
       }
 
-      x = (s16)settingsWindow->x * 8 + OPTION_SLIDER_X;
+      x = settingsWindow->x * 8 + OPTION_SLIDER_X;
       x += (*windowColor * OPTION_SLIDER_WIDTH) /
            state->optionCount[SETTINGS_ROW_WINDOW_COLOR];
-      y = (s16)settingsWindow->y * 8 + 4;
+      y = settingsWindow->y * 8 + 4;
       MenuCursor_SetFar(&state->marker[0].cursor, x, y, 1);
-      x = (s16)settingsWindow->x * 8 + OPTION_SLIDER_X;
+      x = settingsWindow->x * 8 + OPTION_SLIDER_X;
       x += (*brightness * OPTION_SLIDER_WIDTH) /
            state->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS];
-      y = (s16)settingsWindow->y * 8 + 20;
+      y = settingsWindow->y * 8 + 20;
       MenuCursor_SetFar(&state->marker[1].cursor, x, y, 1);
 
       x = state->option[SETTINGS_ROW_MESSAGE_SPEED] + (s32)MsgMessageSpeedSlow;
@@ -473,9 +473,9 @@ s32 SettingsMenu_Run(void) {
 
       // The cursor goes 3 tiles a row down the window's left edge, the first
       // row's a tile lower; the help window says what the row sets.
-      x = (s16)settingsWindow->x * 8;
+      x = settingsWindow->x * 8;
       {
-        s32 top = (s16)settingsWindow->y;
+        s32 top = settingsWindow->y;
 
         y = (selectedOption * 3 + top) * 8 + 4;
       }
@@ -732,7 +732,7 @@ s32 PauseMenu_Choose(s32 initial) {
         } while (i < rows);
       }
       top = window->y;
-      x = (s16)window->x * 8;
+      x = window->x * 8;
       y = (s16)top;
       y = (selected * 3 + y) * 8 + 16;
       if (-1 == redraw)

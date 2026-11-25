@@ -403,7 +403,7 @@ void KandoreanTemple_FightFog(void) {
 /// Unused: a cloud of steam's script call, from the steam script's unreached
 /// tail; counts down its life and reports whether any is left.
 u32 KandoreanTemple_CountDownSteam(struct Actor *actor) {
-  if (--*(s16 *)&actor->userValue)
+  if (--actor->userValue)
     return 1;
   return 0;
 }
@@ -414,8 +414,7 @@ s32 KandoreanTemple_Meditate(struct Actor *actor) {
   if (actor->timer != 0) {
     actor->timer--;
   } else {
-    Actor_ShowEmoteById((s16)actor->userValue, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                        0);
+    Actor_ShowEmoteById(actor->userValue, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     actor->timer = (Random_Below(240)) + 240;
   }
   return 1;

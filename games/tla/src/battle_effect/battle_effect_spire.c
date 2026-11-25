@@ -36,7 +36,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  blit = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit = Ram_HeapSlots->ramCode;
 
   // The canvas is centred between the first and the last target.
   EffectPosition_ProjectScaledBattler(args->targets[0], &first);

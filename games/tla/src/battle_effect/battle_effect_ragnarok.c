@@ -348,10 +348,10 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   centerX = target.x / 2;
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
 
   // No caller passes a third mode: both abilities draw the sword.
   if (mode != 2)

@@ -365,10 +365,10 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   // Motes keep the brighter of their level and the canvas's; the second
   // blitter, mirrored top to bottom, is loaded but not used.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (mode == MOTE_FOUNTAIN_HEALING)
     resource = RESOURCE_ORANGE_PALETTE_A;

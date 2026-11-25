@@ -86,7 +86,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
-      blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      blitters[0] = Ram_HeapSlots->ramCode;
       if (args->side == EFFECT_SIDE_ENEMIES)
         blitters[0](canvas,
                     state->sheet +
@@ -107,7 +107,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       s32 strip;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-      blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      blitters[0] = Ram_HeapSlots->ramCode;
       if (step > 2)
         step = 2;
       if (args->variant == EFFECT_VARIANT_BASIC)

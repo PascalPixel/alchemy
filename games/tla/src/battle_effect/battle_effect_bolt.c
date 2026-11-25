@@ -16,7 +16,7 @@
 #define BOLT_SPARK_SIZE_FRAMES 16
 
 /// The second blitter, made anew for each glint with its random flip.
-#define BOLT_GLINT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
+#define BOLT_GLINT_BLITTER (Ram_HeapSlots->ramCodePaired)
 
 /// The columns of a gBolt_Counts row, one row a variant.
 enum {
@@ -55,7 +55,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   // The tornado sprite sheet only for its glints.
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,

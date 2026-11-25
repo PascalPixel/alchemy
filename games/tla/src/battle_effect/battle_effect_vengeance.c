@@ -144,11 +144,11 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_ARCHER_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   backgroundX = toFIXED(86);
   speed = toFIXED(16);
@@ -159,9 +159,9 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &targetScreen);
     if (frame <= 31) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        camera->yaw = (s16)camera->yaw - VENGEANCE_CAMERA_TURN;
+        camera->yaw -= VENGEANCE_CAMERA_TURN;
       } else {
-        camera->yaw = (s16)camera->yaw + VENGEANCE_CAMERA_TURN;
+        camera->yaw += VENGEANCE_CAMERA_TURN;
       }
     }
     if (frame >= frames - BLEND_WEIGHT_MAX) {
@@ -464,7 +464,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_TRANSPARENT);
   }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   womanX = 0;
   womanY = 0;
@@ -1009,7 +1009,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkCels, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   if (mode == STAR_SWARM_DJINN_STUN)
     frames = args->targetCount * 8 + 38;
   else
@@ -1202,7 +1202,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
 
   // The blue beam's palette colours the bubble cels.
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -1500,7 +1500,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   }
   zero = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   table = state->backdropLines;

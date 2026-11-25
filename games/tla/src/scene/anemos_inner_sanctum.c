@@ -1561,7 +1561,6 @@ extern u16 gTeleportCircle_ShimmerSlots[];
 /// buttons, their doors open.
 s32 Scene_Initialize(void) {
   s32 scene;
-  s32 entranceHalfword;
   s32 entrance;
 
   gFieldState->transition =
@@ -1675,7 +1674,6 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, 264, 360);
     Call1((void (*)())Actor_PlaceBlocks,
           (s32)gAnemosInnerSanctum_OrihalconChestBlocks);
-    entranceHalfword = (u16)gMainRoutineState.entrance;
     entrance = gMainRoutineState.entrance;
     if (entrance ==
         ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHWEST) {
@@ -1728,8 +1726,10 @@ s32 Scene_Initialize(void) {
             36, -36,
             SCENE_TRANSITION(TRANSITION_WINDOW,
                              WINDOW_TRANSITION_INTERLACED_WIPE));
-    } else if ((u16)(entranceHalfword -
-                     WAY_ORIHALCON_CHEST_CRACKED_FLOOR_TO_SOUTHEAST) <= 1) {
+    } else if (gMainRoutineState.entrance >=
+                   WAY_ORIHALCON_CHEST_CRACKED_FLOOR_TO_SOUTHEAST &&
+               gMainRoutineState.entrance <=
+                   WAY_ORIHALCON_CHEST_CRACKED_FLOOR_TO_SOUTHEAST + 1) {
       CrackedTile_Find(TRIGGER_SECOND_CRACKED_FLOOR, FLAG_SCENE_TEMP_80,
                        FLAG_AREA_TEMP_80, 18, 68);
     }

@@ -280,7 +280,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gMarsLighthouseAerie_AfterBattlePlacements;
   // From the fallen dragon, for the beacon's lighting, or back from Mercury
   // Lighthouse: the three entrances that arrive at the beacon.
-  if ((u16)(gMainRoutineState.entrance - 3) <= 2)
+  if (gMainRoutineState.entrance >= 3 && gMainRoutineState.entrance <= 5)
     return gMarsLighthouseAerie_BeaconPlacements;
   return gMarsLighthouseAerie_Placements;
 }

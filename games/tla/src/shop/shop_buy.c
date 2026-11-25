@@ -206,7 +206,7 @@ next_page:
         continue;
       }
       Inventory_RemoveFar(unitId, capacitySlot);
-      if ((u16)selectedDefinition->price > (u32)gMainRoutineState.coins) {
+      if ((u16)selectedDefinition->price > gMainRoutineState.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
         Shop_ShowKeeperMessageHidingCursor((s32)MsgBuyNotEnoughMoney);
         purchaseResult = -1;
@@ -608,7 +608,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
     quantityLimit = SHOP_STACK_LIMIT;
     if ((u16)item->price != 0)
-      quantityLimit = (u32)gMainRoutineState.coins / (u16)item->price;
+      quantityLimit = gMainRoutineState.coins / (u16)item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
       artifactsInStock = Item_AdjustRareItemStockFar(itemId, 0);

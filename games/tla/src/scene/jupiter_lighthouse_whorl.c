@@ -747,7 +747,8 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // In the east hall the leader is drawn by the cells under him, never hidden
   // behind the rises in front.
-  if ((u16)(gMainRoutineState.entrance - ENTRANCE_EAST_HALL_FIRST) <= 1)
+  if (gMainRoutineState.entrance >= ENTRANCE_EAST_HALL_FIRST &&
+      gMainRoutineState.entrance <= ENTRANCE_EAST_HALL_FIRST + 1)
     Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = FIXED_ONE * 3 / 4;

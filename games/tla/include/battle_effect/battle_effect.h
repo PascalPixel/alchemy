@@ -19,7 +19,7 @@ struct ScreenPoint;
 struct Particle;
 struct MeshTriangle;
 struct MeshVertex;
-struct PoolEntry;
+struct RenderModel;
 struct StripQuad;
 
 /// The summons' sprite formations (BattleEffect_PlaceFormationSprites and
@@ -126,7 +126,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *effect,
 /// keeping the brighter pixel: a whole glow centred there.
 void Canvas_BlitMirroredQuarters(void *source, s32 x, s32 y, s32 size);
 /// Allocates `count` model entries and a cleared one that ends the list.
-struct PoolEntry *Render_AllocateModelList(s32 count);
+struct RenderModel *Render_AllocateModelList(s32 count);
 /// Runs `count` packed vertices through the current transform into screen
 /// coordinates, with the ARM kernel copied into the heap.
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -144,7 +144,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 /// Builds the two usual canvas blitters, mirrored when `flip` is set: out[0]
 /// keeps the brighter level, out[1] adds the levels.
-void BattleEffect_BuildCanvasBlitters(s32 flip, void **out);
+void BattleEffect_BuildCanvasBlitters(s32 flip, DrawRectangle *out);
 /// Shakes the battle view by random offsets in the two ranges, powers of two.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 /// Moves a particle one frame on the screen: its velocity scaled by `damping`

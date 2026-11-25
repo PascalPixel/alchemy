@@ -246,8 +246,8 @@ void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   // A window's position is in tiles, and its interior starts one tile (its
   // frame) in.
   if (window != NULL) {
-    x += (s16)window->x * 8 + 8;
-    y += (s16)window->y * 8 + 8;
+    x += window->x * 8 + 8;
+    y += window->y * 8 + 8;
   }
   MenuCursor_Set(&shop->cursor, x, y, (s8)shop->cursorFrames);
 }

@@ -62,7 +62,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_BuildCanvasBlitters(0, (void **)blitters);
+  BattleEffect_BuildCanvasBlitters(0, blitters);
   Resource_LoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET, state->sheet, 1, 1);
 
   // The star: each half of the sprite sheet's 24-wide picture mirrored left to
@@ -361,7 +361,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   victim = BattleObject_GetFar(args->targets[0])->object;

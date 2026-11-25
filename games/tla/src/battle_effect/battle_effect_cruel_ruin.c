@@ -103,10 +103,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
 
   // The pieces fly out from (32, 60) at a quarter of their distance a
   // frame.
@@ -449,7 +449,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
                         CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   Sound_PlayFar(SE_SPIN);
 
   for (frame = 0; frame != ELEMENT_BURST_FRAMES; frame++) {
@@ -481,7 +481,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             gElementBurst_GlintFlips[i] | EFFECT_CLIP_BOUNDS,
                             mode);
-        draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+        draw[1] = Ram_HeapSlots->ramCodePaired;
         draw[1](canvas,
                 state->sheet + picture * PICTURE_BYTES(ELEMENT_BURST_SPARK),
                 gElementBurst_SparkX[i] + 32,

@@ -454,7 +454,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     actor->timer = 0;
     actor->groundHeight = groundHere;
   }
-  if ((s16)actor->userValue != 0) {
+  if (actor->userValue != 0) {
     if (groundAhead < y) {
       FIXED topZ = cellZ - toFIXED(8);
 

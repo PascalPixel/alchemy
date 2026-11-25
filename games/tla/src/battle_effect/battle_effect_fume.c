@@ -91,7 +91,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The head's place, set at the plume's last segment.
   endX = 0;

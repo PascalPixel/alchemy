@@ -60,7 +60,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 
     // The small font, and the kana's voicing mark drawn as a second glyph
     // after it.
-    if (*(struct Window **)Ram_HeapSlots->battleMessage == window) {
+    if (Ram_HeapSlots->battleMessage->window == window) {
       font = Resource_GetTableEntry(RESOURCE_SMALL_FONT);
       width = 3;
       if (character == ' ')
@@ -86,7 +86,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     GlyphRoutine draw;
     s32 result;
 
-    if (*(struct Window **)Ram_HeapSlots->battleMessage == window) {
+    if (Ram_HeapSlots->battleMessage->window == window) {
       Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
       width = 3;
       if (character == ' ')
@@ -152,8 +152,10 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       sprite = WindowSprite_GetSprite(output);
       if (state->glyphResource == NO_GLYPH_RESOURCE)
         state->glyphResource = VramCache_FindFreeEntry();
-      sprite->oam.x = (window->x << 3) + ((window->width - 2) << 3) + ARROW_X;
-      sprite->oam.y = (window->y << 3) + ((window->height - 2) << 3) + ARROW_Y;
+      sprite->oam.x =
+          ((u16)window->x << 3) + ((window->width - 2) << 3) + ARROW_X;
+      sprite->oam.y =
+          ((u16)window->y << 3) + ((window->height - 2) << 3) + ARROW_Y;
     } else {
       u16 *attr;
 
@@ -163,12 +165,12 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
           DMA_COPY_WORDS(32), REG_DMA3);
       attr = (u16 *)&output->sprite.oam;
       if (state->battleMode & WINDOW_GLYPHS_BLENDED)
-        *attr++ = (y + (spacingY >> 1) + window->y * 8 + GLYPH_Y) |
+        *attr++ = (y + (spacingY >> 1) + (u16)window->y * 8 + GLYPH_Y) |
                   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       else
-        *attr++ = y + (spacingY >> 1) + window->y * 8 + GLYPH_Y;
-      *attr =
-          (x + (spacingX >> 1) + window->x * 8 + GLYPH_X) | GLYPH_SPRITE_SIZE;
+        *attr++ = y + (spacingY >> 1) + (u16)window->y * 8 + GLYPH_Y;
+      *attr = (x + (spacingX >> 1) + (u16)window->x * 8 + GLYPH_X) |
+              GLYPH_SPRITE_SIZE;
       attr[1] = state->glyphTiles + index;
       sprite = WindowSprite_GetSprite(output);
     }
@@ -218,9 +220,9 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
           (void *)(OBJ_VRAM0 + (state->glyphTiles + index) * TILE_SIZE_4BPP),
           DMA_COPY_WORDS(32), REG_DMA3);
   ((u16 *)&output->sprite.oam)[0] =
-      y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
+      y + (spacingY >> 1) + (u16)window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
   ((u16 *)&output->sprite.oam)[1] =
-      (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
+      (x + (spacingX >> 1) + (u16)window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
       GLYPH_SPRITE_SIZE;
   ((u16 *)&output->sprite.oam)[2] = state->glyphTiles + index;
   output->depth = OAM_DEPTH_FRONT - 2;
@@ -263,9 +265,9 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output->kind = WINDOW_SPRITE_PLAIN;
   vram = (void *)(OBJ_VRAM0 + (state->glyphTiles + index) * TILE_SIZE_4BPP);
   ((u16 *)&output->sprite.oam)[0] =
-      y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
+      y + (spacingY >> 1) + (u16)window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
   ((u16 *)&output->sprite.oam)[1] =
-      (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
+      (x + (spacingX >> 1) + (u16)window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
       GLYPH_SPRITE_SIZE;
   ((u16 *)&output->sprite.oam)[2] = state->glyphTiles + index;
   output->depth = OAM_DEPTH_FRONT - 2;
@@ -341,13 +343,13 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       // frame's top edge or a divider, the mark takes another tile.
       u32 line;
 
-      line = ((s16)win->y + y) * BG_SCREEN_WIDTH;
+      line = (win->y + y) * BG_SCREEN_WIDTH;
       // XXX (no evidence): whether a mark ever lands on a top edge or a
       // divider, where this puts tiles 30 and 31 (in window_tiles_tla_ja.png
       // the HP label's second tile and the PP label) or 14 and 15 (the
       // dividers themselves); the render probe stages scenes only, and cannot
       // open a tla-ja window drawn by tiles with a voiced kana on its top line.
-      switch (tilemap[line + ((s16)win->x + x)]) {
+      switch (tilemap[line + (win->x + x)]) {
       case WINDOW_TILE_BORDER_TOP:
         tile -= TEXT_MARK_VOICED - MARK_OVER_BORDER_TILE;
         break;
@@ -365,7 +367,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     x++;
     y++;
 #endif
-    pos = ((s16)win->y + y) * BG_SCREEN_WIDTH + ((s16)win->x + x);
+    pos = (win->y + y) * BG_SCREEN_WIDTH + (win->x + x);
     if (pos < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT)
       *(u16 *)((u32)tilemap + (pos << 1)) = WINDOW_TILE(tile);
   }
@@ -416,14 +418,14 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   case TILEMAP_ENTRY_HIGHLIGHT:
   case TILEMAP_ENTRY_WINDOW:
   case TILEMAP_ENTRY_ICON:
-    index = ((s16)window->y + y) * TILEMAP_WIDTH + ((s16)window->x + x);
+    index = (window->y + y) * TILEMAP_WIDTH + (window->x + x);
     if ((u32)index >= TILEMAP_ENTRIES)
       return;
     *(u16 *)((u8 *)map + (index << 1)) = palette | value;
     return;
   case TILEMAP_ENTRY_PLAIN:
   default:
-    index = ((s16)window->y + y) * TILEMAP_WIDTH + ((s16)window->x + x);
+    index = (window->y + y) * TILEMAP_WIDTH + (window->x + x);
     if ((u32)index >= TILEMAP_ENTRIES)
       return;
     *(u16 *)((u8 *)map + (index << 1)) = value;

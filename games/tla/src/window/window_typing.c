@@ -194,21 +194,21 @@ s32 Message_Type(struct Message *message) {
         }
         window = message->window;
         entryIndex = message->textIndex;
-        x = (s16)window->x;
-        y = (s16)window->y;
+        x = window->x;
+        y = window->y;
         oldWidth = window->width;
         oldHeight = window->height;
         state->pageArrowShown = 0;
         WindowSprite_PrepareForRedraw(window);
         if (message->flags == 0 && (window->width | window->height) != 0)
-          Window_EraseBorderRect((s16)window->x, (s16)window->y, window->width,
+          Window_EraseBorderRect(window->x, window->y, window->width,
                                  window->height);
         entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
         if (state->textBuffer[entryIndex] != 0 &&
             (window->width | window->height) != 0) {
           if (message->flags != 0) {
-            Window_EraseBorderRect((s16)window->x, (s16)window->y,
-                                   window->width, window->height);
+            Window_EraseBorderRect(window->x, window->y, window->width,
+                                   window->height);
           } else {
             Window_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
                                message->spacing, 0);
@@ -228,7 +228,7 @@ s32 Message_Type(struct Message *message) {
             window->width = newWidth;
             window->height = newHeight;
           }
-          Window_DrawBorder((s16)window->x, (s16)window->y, window->width,
+          Window_DrawBorder(window->x, window->y, window->width,
                             window->height);
         }
         message->x = message->startX;

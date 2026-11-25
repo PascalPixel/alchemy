@@ -64,7 +64,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   u8 *sparkles;
-  void *draw[2];
+  DrawRectangle draw[2];
   struct Particle *shard;
   struct Particle *puff;
   u16 *line;
@@ -151,8 +151,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        ((DrawRectangle)
-             draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
+        draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
             canvas, state->sheet, x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         if (shard->y <= FALLING_LAND_Y) {
           if (args->side == EFFECT_SIDE_ENEMIES)
@@ -177,8 +176,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
         if (shard->variant >= 1 &&
             shard->variant <= FALLING_LANDED_LAST_FRAME) {
-          ((DrawRectangle)
-               draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
+          draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
               canvas,
               state->sheet + PICTURE_BYTES(ICE_SHARD) +
                   shard->variant / ICE_SHATTER_PICTURE_FRAMES *
@@ -211,8 +209,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
           s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[picture] >> 1);
           s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[picture] >> 1);
 
-          ((DrawRectangle)
-               draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
+          draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
               canvas, sparkles + gBattleEffect_SparklePictures[picture], x, y,
               gBattleEffect_SparkleSizes[picture],
               gBattleEffect_SparkleSizes[picture]);

@@ -1601,7 +1601,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-      blitters[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
+      blitters[0] = (Ram_HeapSlots->ramCode);
       for (i = 0; i != CHARON_BURSTS_DRAWN; i++) {
         struct Particle *p = &CHARON_BURSTS[i];
 
@@ -1787,9 +1787,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
             }
-            ((DrawRectangle)Ram_HeapSlots->ramCode)(
-                canvas, state->sheet, column->x - halfWidth, column->y,
-                halfWidth, width);
+            (Ram_HeapSlots->ramCode)(canvas, state->sheet,
+                                     column->x - halfWidth, column->y,
+                                     halfWidth, width);
           }
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -1815,7 +1815,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-        blitters[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
+        blitters[0] = (Ram_HeapSlots->ramCode);
         for (i = 0; i != CHARON_COLUMNS; i++) {
           s32 width = 120 - COLUMNS[i].x;
 
@@ -1829,7 +1829,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                             BLITTER_TRANSPARENT);
-        blitters[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
+        blitters[0] = (Ram_HeapSlots->ramCode);
         for (i = 0; i != CHARON_MOTE_COUNT; i++) {
           struct Particle *p = &CHARON_PARTICLES[i];
 

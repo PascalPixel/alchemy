@@ -108,7 +108,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-  draws[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draws[0] = Ram_HeapSlots->ramCode;
 
   for (frame = 0; frame != TUMBLING_QUADS_FRAMES; frame++) {
     if (frame == 8)
@@ -377,7 +377,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
   blit = blitters;
-  BattleEffect_BuildCanvasBlitters(0, (void **)blit);
+  BattleEffect_BuildCanvasBlitters(0, blit);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   skip = 0;
   Iwram_CopyWordsEntry((void *)BG_PLTT,

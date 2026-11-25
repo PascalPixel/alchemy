@@ -25,7 +25,7 @@ enum LobbedShellsMode {
 
 /// Builds the two usual canvas blitters, clipped and mirrored when flip is
 /// nonzero: out[0] keeps the brighter level, out[1] adds the levels.
-void BattleEffect_BuildCanvasBlitters(s32 flip, void **out) {
+void BattleEffect_BuildCanvasBlitters(s32 flip, DrawRectangle *out) {
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     out[0] = Ram_HeapSlots->ramCode;
@@ -183,10 +183,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    draw[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->ramCodePaired;
+    draw[1] = heap->ramCodePaired;
 
     // A mote every eight frames drifts down a pixel a frame, swaying, until
     // it is 8 pixels from the ground.

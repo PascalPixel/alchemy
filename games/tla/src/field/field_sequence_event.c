@@ -385,10 +385,10 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   wait((MESSAGE_SPEED_FAST - gMainRoutineState.messageSpeed) * 3);
 
   if (forceBottom == 0) {
-    s32 bottom = (s16)window->y + window->height;
+    s32 bottom = window->y + window->height;
 
     if (side != NULL) {
-      s32 sideBottom = (s16)side->y + side->height;
+      s32 sideBottom = side->y + side->height;
       if (bottom < sideBottom)
         bottom = sideBottom;
     }

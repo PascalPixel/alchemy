@@ -1544,7 +1544,7 @@ void TrialRoad_UncoverVent(s32 id, s32 phase, s32 frame) {
     s32 height;
 
     actor->x.fixed = toFIXED(actor->timer);
-    actor->z.fixed = toFIXED((s16)actor->userValue);
+    actor->z.fixed = toFIXED(actor->userValue);
     height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
     actor->groundHeight = height;
     actor->y.fixed = height;

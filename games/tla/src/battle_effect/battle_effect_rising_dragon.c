@@ -82,7 +82,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
@@ -384,11 +384,11 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_HEARTBREAK_SHEET, parts, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)heap->ramCode;
+  draw[0] = heap->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)heap->ramCodePaired;
+  draw[1] = heap->ramCodePaired;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   EffectPosition_ProjectScaledBattler(args->targets[0], &target);
 

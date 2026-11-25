@@ -673,7 +673,7 @@ enum TargetStrikeStyle {
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /// The second blitter, the drawing routine in the paired heap slot.
-#define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
+#define ALT_BLITTER (Ram_HeapSlots->ramCodePaired)
 
 /// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror
 /// and blend mode (BLITTER_ADDITIVE to BLITTER_COPY): where both are constants
@@ -900,7 +900,6 @@ struct MeshTriangle {
   u8 unusedB[2]; ///< nothing reads or writes them
 };
 
-struct PoolEntry;
 struct SpriteScale;
 struct StripQuad;
 
@@ -943,7 +942,7 @@ void BattleEffect_ProcessPendingStampTransfer(void);
 
 // djinn_beams.c
 /// Fetches the max and additive blitters, flipped or not.
-void BattleEffect_BuildCanvasBlitters(s32 flip, void **out);
+void BattleEffect_BuildCanvasBlitters(s32 flip, DrawRectangle *out);
 
 // prism.c
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
@@ -1121,7 +1120,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
                                           s32 scale);
 
 // moloch.c
-struct PoolEntry *Render_AllocateModelList(s32 count);
+struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 
 // target_motes.c

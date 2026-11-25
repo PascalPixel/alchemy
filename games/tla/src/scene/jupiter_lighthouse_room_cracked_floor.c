@@ -209,8 +209,8 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))
     JupiterLighthouse_OpenDoor(DOOR_OPEN_AT_ONCE);
-  if ((u16)(gMainRoutineState.entrance - ENTRANCE_CRACKED_TILES_FROM_BELOW) <=
-      ENTRANCE_CRACKED_TILES_FROM_ABOVE - ENTRANCE_CRACKED_TILES_FROM_BELOW) {
+  if (gMainRoutineState.entrance >= ENTRANCE_CRACKED_TILES_FROM_BELOW &&
+      gMainRoutineState.entrance <= ENTRANCE_CRACKED_TILES_FROM_ABOVE) {
     CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
                      FLAG_AREA_TEMP_80, 20, 31);
   } else {

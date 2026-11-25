@@ -12,8 +12,8 @@ struct Window {
   struct WindowSpriteList sprites; ///< the sprites the window carries
   u16 width;                       ///< tiles
   u16 height;                      ///< tiles
-  u16 x;                           ///< tiles
-  u16 y;                           ///< tiles
+  s16 x;                           ///< tiles
+  s16 y;                           ///< tiles
   u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
   /// The animation a message's window-state code sets.
   u16 animation;
@@ -23,13 +23,13 @@ struct Window {
   u16 flags; ///< 0 once closing or free
   /// The zoom's stage: counts down while opening, up to duration while
   /// closing.
-  u16 zoomStage;
+  s16 zoomStage;
 
   s16 duration;       ///< frames of the zoom under way; 0 when none
-  u16 previousX;      ///< tiles
-  u16 previousY;      ///< tiles
-  u16 previousWidth;  ///< tiles
-  u16 previousHeight; ///< tiles
+  s16 previousX;      ///< tiles
+  s16 previousY;      ///< tiles
+  s16 previousWidth;  ///< tiles
+  s16 previousHeight; ///< tiles
 };
 
 STATIC_ASSERT(sizeof(struct Window) == 36);

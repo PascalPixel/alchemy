@@ -38,7 +38,7 @@ struct SaveSummary {
   u16 area;          ///< area name number (Area_GetNameIndex)
   u32 playTime;      ///< frames
   u32 coins;
-  u8 djinn[4];         ///< the party's Djinn of each element
+  s8 djinn[4];         ///< the party's Djinn of each element
   s8 party[5];         ///< up to four party members, ended by -1
   s8 sendFlag;         ///< gMainRoutineState.sendFlag: the file is cleared
   s8 djinnCount;       ///< the Djinn found: their flags from FLAG_DJINN_FIRST

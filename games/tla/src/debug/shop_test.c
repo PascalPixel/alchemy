@@ -281,7 +281,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
       Event_SetMessageId(message + 2);
       // "Whoops! Looks like you've got a full load there! This'll have to..."
       Event_ShowMessageAndWait(actor, 0);
-    } else if ((u32)gMainRoutineState.coins < price) {
+    } else if (gMainRoutineState.coins < price) {
       Event_SetMessageId(message + 3);
       // "You don't enough money! What are you trying to pull? I can't give..."
       Event_ShowMessageAndWait(actor, 0);

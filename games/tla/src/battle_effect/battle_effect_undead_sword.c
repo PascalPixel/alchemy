@@ -113,9 +113,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
           else
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-          (draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode)(
-              canvas, state->sheet, x, UNDEAD_SWORD_GROUND - height,
-              LIME_COLUMN_WIDTH, height);
+          (draw[0] = Ram_HeapSlots->ramCode)(canvas, state->sheet, x,
+                                             UNDEAD_SWORD_GROUND - height,
+                                             LIME_COLUMN_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
@@ -475,9 +475,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   camera = Ram_HeapSlots->cameraState;
-  savedYaw = (s16)camera->yaw;
+  savedYaw = camera->yaw;
   Resource_LoadAndDecompress(RESOURCE_CRACKED_TEXTURE_SHEET, state->sheet, 1,
                              1);
   Picture_MirrorIntoQuadrants(state->sheet, state->sheet + WATER_SHEET_MIRRORED,
@@ -572,11 +572,11 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       }
     }
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      if ((s16)camera->yaw < WATER_SHEET_CAMERA_LIMIT) {
-        camera->yaw = (s16)camera->yaw + WATER_SHEET_CAMERA_TURN;
+      if (camera->yaw < WATER_SHEET_CAMERA_LIMIT) {
+        camera->yaw += WATER_SHEET_CAMERA_TURN;
       }
-    } else if ((s16)camera->yaw > -WATER_SHEET_CAMERA_LIMIT) {
-      camera->yaw = (s16)camera->yaw - WATER_SHEET_CAMERA_TURN;
+    } else if (camera->yaw > -WATER_SHEET_CAMERA_LIMIT) {
+      camera->yaw -= WATER_SHEET_CAMERA_TURN;
     }
 
     if (mode == WATER_SHEET_DREAMTIDE) {
@@ -681,9 +681,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       Matrix_RotateX(WATERY_GRAVE_TILT);
     }
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      Matrix_RotateY((s16)camera->yaw);
+      Matrix_RotateY(camera->yaw);
     } else {
-      Matrix_RotateY((s16)camera->yaw + DEGtoANG(180));
+      Matrix_RotateY(camera->yaw + DEGtoANG(180));
     }
     {
       s32 shift = WATER_SHEET_START_X - frame * 8;
@@ -888,7 +888,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   transfer = BattleEffect_TransferCanvas;
@@ -1164,7 +1164,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   EffectPosition_ProjectBattler(args->targets[0], &pos);
   centerX = pos.x / 2;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, state->sheet, 1, 0);
   cells = gMapGridCellBuffer;
   Resource_LoadAndDecompress(RESOURCE_CRYSTAL_BITMAP_SHEET,

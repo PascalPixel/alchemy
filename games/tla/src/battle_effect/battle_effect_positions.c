@@ -108,7 +108,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   struct BattleCamera *camera;
   s32 kind;
   struct Unit *unit;
-  void *draw[2];
+  DrawRectangle draw[2];
   struct MotionObject *target;
   s32 half;
   s32 frame;
@@ -245,15 +245,13 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       // Six pictures, two frames each, played backwards.
       if (frame <= 11) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          ((DrawRectangle)draw[0])(
-              canvas, state->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
-              screenPosition.x + scrollX - WAVE_WIDTH,
-              screenPosition.y - WAVE_HEIGHT / 2, WAVE_WIDTH, WAVE_HEIGHT);
+          draw[0](canvas, state->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
+                  screenPosition.x + scrollX - WAVE_WIDTH,
+                  screenPosition.y - WAVE_HEIGHT / 2, WAVE_WIDTH, WAVE_HEIGHT);
         else
-          ((DrawRectangle)draw[0])(
-              canvas, state->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
-              screenPosition.x + scrollX, screenPosition.y - WAVE_HEIGHT / 2,
-              WAVE_WIDTH, WAVE_HEIGHT);
+          draw[0](canvas, state->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
+                  screenPosition.x + scrollX,
+                  screenPosition.y - WAVE_HEIGHT / 2, WAVE_WIDTH, WAVE_HEIGHT);
       }
     } else if ((u32)kind <= ATTACK_EFFECT_CLAW ||
                kind == ATTACK_EFFECT_RISING_SLASH ||
@@ -261,15 +259,13 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       // Six pictures, two frames each.
       if (frame <= 11) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          ((DrawRectangle)draw[0])(
-              canvas, state->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
-              screenPosition.x + scrollX - BLUE_ARC_WIDTH,
-              screenPosition.y - 40, BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+          draw[0](canvas, state->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
+                  screenPosition.x + scrollX - BLUE_ARC_WIDTH,
+                  screenPosition.y - 40, BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
         else
-          ((DrawRectangle)draw[0])(
-              canvas, state->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
-              screenPosition.x + scrollX, screenPosition.y - 40, BLUE_ARC_WIDTH,
-              BLUE_ARC_HEIGHT);
+          draw[0](canvas, state->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
+                  screenPosition.x + scrollX, screenPosition.y - 40,
+                  BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
       }
     } else if (kind == ATTACK_EFFECT_THRUST) {
       // Six pictures, three frames each, each reaching further.
@@ -277,27 +273,25 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
         s32 picture = frame / 3;
 
         if (args->side == EFFECT_SIDE_ENEMIES)
-          ((DrawRectangle)draw[0])(
-              canvas, state->sheet + gBeam_Pictures[picture],
-              screenPosition.x + gBeam_PictureReaches[picture] + scrollX - 58,
-              screenPosition.y - gBeam_PictureHeights[picture] / 2,
-              gBeam_PictureWidths[picture], gBeam_PictureHeights[picture]);
+          draw[0](canvas, state->sheet + gBeam_Pictures[picture],
+                  screenPosition.x + gBeam_PictureReaches[picture] + scrollX -
+                      58,
+                  screenPosition.y - gBeam_PictureHeights[picture] / 2,
+                  gBeam_PictureWidths[picture], gBeam_PictureHeights[picture]);
         else
-          ((DrawRectangle)draw[0])(
-              canvas, state->sheet + gBeam_Pictures[picture],
-              screenPosition.x - gBeam_PictureReaches[picture] + scrollX -
-                  gBeam_PictureWidths[picture] + 58,
-              screenPosition.y - gBeam_PictureHeights[picture] / 2,
-              gBeam_PictureWidths[picture], gBeam_PictureHeights[picture]);
+          draw[0](canvas, state->sheet + gBeam_Pictures[picture],
+                  screenPosition.x - gBeam_PictureReaches[picture] + scrollX -
+                      gBeam_PictureWidths[picture] + 58,
+                  screenPosition.y - gBeam_PictureHeights[picture] / 2,
+                  gBeam_PictureWidths[picture], gBeam_PictureHeights[picture]);
       }
     }
     // The yellow orb flashes over the target, six pictures, two frames each.
     if (frame >= 4 && frame <= 15)
-      ((DrawRectangle)draw[0])(canvas,
-                               Ram_MapCellBuffer +
-                                   (frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
-                               anchor.x - 16, anchor.y - YELLOW_ORB_HEIGHT / 2,
-                               YELLOW_ORB_WIDTH, YELLOW_ORB_HEIGHT);
+      draw[0](canvas,
+              Ram_MapCellBuffer + (frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
+              anchor.x - 16, anchor.y - YELLOW_ORB_HEIGHT / 2, YELLOW_ORB_WIDTH,
+              YELLOW_ORB_HEIGHT);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The sparks fly, two to each particle, through the two blitters in turn.
     if (frame >= 4 && frame <= 31) {
@@ -311,8 +305,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
           screen.x += scrollX;
           size >>= 3;
           size += 2;
-          EFFECT_DRAW_FLARE((DrawRectangle)draw[pair & 1], canvas, sheet,
-                            screen.x, screen.y, size);
+          EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, screen.x, screen.y,
+                            size);
           Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 64);
           spark->variant--;
         }
@@ -345,7 +339,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   s32 velocityZ;
   s32 acceleration;
   s32 strength;
-  void *draw[2];
+  DrawRectangle draw[2];
   struct HeapSlots *heap;
   struct MotionObject *object;
   struct MotionObject *target;
@@ -461,8 +455,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
           CLAMP(screen.depth, -CRITICAL_HIT_MOTE_DEPTH,
                 CRITICAL_HIT_MOTE_DEPTH);
           screen.depth += CRITICAL_HIT_MOTE_DEPTH;
-          EFFECT_DRAW_FLARE((DrawRectangle)draw[0], canvas, sheet, screen.x,
-                            screen.y, size);
+          EFFECT_DRAW_FLARE(draw[0], canvas, sheet, screen.x, screen.y, size);
           mote->x -= 4;
         }
       }
@@ -517,18 +510,16 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     screenPosition.y += 16;
     // The slash: a star, an arc, then two crescents.
     if (frame <= 1)
-      ((DrawRectangle)draw[0])(canvas, state->sheet, 0, 0, SLASH_PICTURE_SIZE,
-                               SLASH_PICTURE_SIZE);
+      draw[0](canvas, state->sheet, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     else if (frame <= 3)
-      ((DrawRectangle)draw[0])(canvas, Ram_MapCellBuffer, -4, 0, CANVAS_SIZE,
-                               CANVAS_SIZE);
+      draw[0](canvas, Ram_MapCellBuffer, -4, 0, CANVAS_SIZE, CANVAS_SIZE);
     else if (frame <= 5)
-      ((DrawRectangle)draw[0])(canvas, Ram_MapCellBuffer + CANVAS_BYTES, -4, 0,
-                               CANVAS_SIZE, CANVAS_SIZE);
+      draw[0](canvas, Ram_MapCellBuffer + CANVAS_BYTES, -4, 0, CANVAS_SIZE,
+              CANVAS_SIZE);
     else if (frame <= 7)
-      ((DrawRectangle)draw[0])(
-          canvas, state->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE, 0, 0,
-          SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
+      draw[0](canvas, state->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE, 0,
+              0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The sparks fly, two to each particle, through the two blitters in turn.
     if (frame >= 4 && frame <= 31) {
@@ -543,8 +534,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
           size >>= 3;
           size += 2;
           spot.y += 16;
-          EFFECT_DRAW_FLARE((DrawRectangle)draw[pair & 1], canvas, sheet,
-                            spot.x, spot.y, size);
+          EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, spot.x, spot.y,
+                            size);
           Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 64);
           spark->variant--;
         }

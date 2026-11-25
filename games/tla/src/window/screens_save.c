@@ -790,9 +790,9 @@ void FileList_FillHighlight(struct Window *window, s32 x, s32 y, s32 width,
   struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   s32 sum;
 
-  sum = x + (s16)window->x;
+  sum = x + window->x;
   x = sum + 1;
-  sum = y + (s16)window->y;
+  sum = y + window->y;
   y = sum + 1;
 
   if (x < 0) {
@@ -858,8 +858,8 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
 
     menu->partyMemberIcons[i] = sprite;
     menu->partyMemberX[i] =
-        (x + (s16)window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
-    menu->partyMemberY[i] = (y + (s16)window->y) * 8 + 16;
+        (x + window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
+    menu->partyMemberY[i] = (y + window->y) * 8 + 16;
     menu->partyMemberScale[i] = FIXED_ONE;
   }
 
@@ -917,7 +917,7 @@ void FileList_DrawDjinnCounts(struct Window *win, struct SaveSummary *summary) {
 
   if (win != 0) {
     for (i = 0; i < 4; i++)
-      Text_DrawNumberAtOffset((s8)summary->djinn[i], 2, win,
+      Text_DrawNumberAtOffset(summary->djinn[i], 2, win,
                               i * FILE_LIST_SPRITE_SPACING * 8, 16);
   }
 }
@@ -1135,10 +1135,10 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         FileList_ShowPartySprites((struct Window *)partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
         wait(1);
-        if ((s8)save->summary[selectedFile].djinn[0] +
-                (s8)save->summary[selectedFile].djinn[1] +
-                (s8)save->summary[selectedFile].djinn[2] +
-                (s8)save->summary[selectedFile].djinn[3] !=
+        if (save->summary[selectedFile].djinn[0] +
+                save->summary[selectedFile].djinn[1] +
+                save->summary[selectedFile].djinn[2] +
+                save->summary[selectedFile].djinn[3] !=
             0) {
           if (djinnWindow == NULL)
             djinnWindow = Window_Create(16, 14, 13, 5, WINDOW_FLAG_INSTANT);

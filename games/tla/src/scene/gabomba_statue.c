@@ -1767,8 +1767,10 @@ void GabombaStatue_TurnCogs(s32 direction) {
     GabombaStatue_SetCogTurn(ACTOR_ELIXIR_GREEN_COGS, direction, 0);
     GabombaStatue_SetCogTurn(ACTOR_ELIXIR_BLUE_COGS, direction, 1);
     GabombaStatue_SetCogTurn(ACTOR_FLASHING_COG, direction, 2);
-    if ((u16)(gMainRoutineState.entrance -
-              GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_WEST) > 1)
+    if (gMainRoutineState.entrance <
+            GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_WEST ||
+        gMainRoutineState.entrance >
+            GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_EAST)
       GabombaStatue_SetCogTurn(ACTOR_ELIXIR_PINION_A, direction, 3);
     if (direction == 0)
       MapGrid_CopyCellAttributes(23, 21, 1, 3, 23, 9);
@@ -2425,8 +2427,10 @@ static inline void FieldRope_Place(s32 index, s32 flag, s32 firstPost,
 /// in from the west or the east of Steel's room, the stakes, the flashing
 /// cog raised until both are Pounded, and the two ropes.
 void GabombaStatue_InitializeElixirChest(void) {
-  if ((u16)(gMainRoutineState.entrance -
-            GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_WEST) <= 1) {
+  if (gMainRoutineState.entrance >=
+          GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_WEST &&
+      gMainRoutineState.entrance <=
+          GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_EAST) {
     Actor_SetScript(ACTOR_ELIXIR_PINION_A, gGabombaStatue_PinionReleaseScript);
     Actor_SetScript(ACTOR_ELIXIR_PINION_B, gGabombaStatue_PinionReleaseScript);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
@@ -2449,10 +2453,10 @@ void GabombaStatue_InitializeSteel(void) {
   FieldRope_Place(FIRST_ROPE, FLAG_GABOMBA_FIRST_ROPE_TIED,
                   ACTOR_STEEL_ROPE_POST_A, ACTOR_STEEL_ROPE_POST_B);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    s32 entrance = (u16)gMainRoutineState.entrance;
-
-    if ((u16)(entrance -
-              GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_A) <= 1)
+    if (gMainRoutineState.entrance >=
+            GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_A &&
+        gMainRoutineState.entrance <=
+            GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_B)
       GabombaStatue_LandFromFall();
     if (gMainRoutineState.entrance ==
         GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_A)

@@ -58,10 +58,10 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
 
   for (i = 0; i != VOLCANO_SPARK_POOL; i++)
     PARTICLES[i].variant = 0;
@@ -86,9 +86,9 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     if (args->variant == EFFECT_VARIANT_STRONGEST &&
         frame < VOLCANO_PILLAR_FRAMES) {
       if (args->side == EFFECT_SIDE_ENEMIES)
-        camera->yaw = camera->yaw + VOLCANO_CAMERA_SPIN;
+        camera->yaw += VOLCANO_CAMERA_SPIN;
       else
-        camera->yaw = (s16)camera->yaw - VOLCANO_CAMERA_SPIN;
+        camera->yaw -= VOLCANO_CAMERA_SPIN;
     }
     if (frame == 16)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

@@ -101,7 +101,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   caster = BattleObject_GetFar(args->user)->object;
   transition = Ram_HeapSlots->battleBackground;
   savedScrollX = gBgScroll[1].x;
@@ -235,7 +235,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       else
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+      draw[1] = Ram_HeapSlots->ramCodePaired;
       draw[1](canvas, state->sheet + ODYSSEY_COLOSSAL_SWORD, x, 64,
               ODYSSEY_COLOSSAL_SWORD_WIDTH, ODYSSEY_COLOSSAL_SWORD_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -327,7 +327,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                 BLITTER_MAX);
-          draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+          draw[1] = Ram_HeapSlots->ramCodePaired;
         }
         draw[i](canvas, state->sheet, x - ODYSSEY_SWORD_WIDTH / 2, y,
                 ODYSSEY_SWORD_WIDTH, ODYSSEY_SWORD_HEIGHT);
@@ -526,7 +526,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   // The cloud sprite sheet, moved to the battle background's palettes (which
   // take EmberStreakSheet's colours), drawn into the canvas.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  sheetDraw[0] = Ram_HeapSlots->ramCode;
   palette = Resource_GetTableEntry(RESOURCE_CLOUD_SWIRL_SHEET);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
@@ -557,7 +557,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, clipAndCopy,
                               clipAndCopy);
   }
-  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw = Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_TransferFullScreenImage, TASK_PASS_VBLANK);
   transition->busy = enabled;
   draw(cells, canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE);

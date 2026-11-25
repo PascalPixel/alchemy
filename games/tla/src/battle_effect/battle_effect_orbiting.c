@@ -129,10 +129,10 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  drawBurst = (DrawRectangle)Ram_HeapSlots->ramCode;
+  drawBurst = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
-  drawSmoke = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  drawSmoke = Ram_HeapSlots->ramCodePaired;
 
   for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
     s32 angle;

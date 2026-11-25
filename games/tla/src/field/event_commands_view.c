@@ -101,7 +101,7 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
         host->y.fixed +
         toFIXED((s8)Resource_GetMetadataRecordFarFar(
                     ((struct ActorPlacement *)Scene_FindActorPlacement(
-                         (s16)actor->userValue))
+                         actor->userValue))
                         ->sprite)
                     ->spriteTop) +
         toFIXED(8);

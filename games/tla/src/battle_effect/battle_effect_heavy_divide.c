@@ -64,7 +64,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   caster = BattleObject_GetFar(args->user)->object;
   if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
@@ -371,10 +371,10 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
           mode = BLITTER_ADDITIVE;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
-        draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+        draw[0] = Ram_HeapSlots->ramCode;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-        draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+        draw[1] = Ram_HeapSlots->ramCodePaired;
 
         for (i = 0; i != args->variant * 3 + 4; i++) {
           s32 age = frame - gCool_ColumnStarts[i];
@@ -533,7 +533,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   // DEAD: set again before the transfer starts; the ROM keeps the two stores.
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
@@ -804,7 +804,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
                         CANVAS_FADE_THREE_QUARTERS);
   camera = Ram_HeapSlots->cameraState;
   offset = 0;
-  savedYaw = (s16)camera->yaw;
+  savedYaw = camera->yaw;
   size = 2;
   target = BattleObject_GetFar(args->targets[0])->object;
 
@@ -976,7 +976,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_CYAN_PALETTE),
                        SHEET_PALETTE_BYTES);

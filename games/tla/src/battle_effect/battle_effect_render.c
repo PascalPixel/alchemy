@@ -837,7 +837,9 @@ void Render_ProjectVertices(struct ModelVertex *vertices,
   }
 }
 
-/// A block of the render pool, as Render_AllocateModelList hands it out.
+/// A struct RenderModel as Render_AllocateModelList clears it: head and next
+/// over its kind and flags, tail over its texture scroll and the padding after
+/// it, one word.
 struct PoolEntry {
   s32 head;
   s32 next;
@@ -846,7 +848,7 @@ struct PoolEntry {
 };
 
 /// Allocates count model entries plus a cleared one that ends the list.
-struct PoolEntry *Render_AllocateModelList(s32 count) {
+struct RenderModel *Render_AllocateModelList(s32 count) {
   struct PoolEntry *entries =
       Heap_AllocEwram((count + 1) * sizeof(struct PoolEntry));
   s32 i;
@@ -856,7 +858,7 @@ struct PoolEntry *Render_AllocateModelList(s32 count) {
     entries[i].next = 0;
     entries[i].tail = 0;
   }
-  return entries;
+  return (struct RenderModel *)entries;
 }
 
 /// Copies a texture's pixels into a heap block when IWRAM has room for them;

@@ -293,8 +293,8 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
-  if ((u16)(gMainRoutineState.entrance - ENTRANCE_HOVER_HALL_SOUTH) <=
-      ENTRANCE_HOVER_HALL_NORTH - ENTRANCE_HOVER_HALL_SOUTH) {
+  if (gMainRoutineState.entrance >= ENTRANCE_HOVER_HALL_SOUTH &&
+      gMainRoutineState.entrance <= ENTRANCE_HOVER_HALL_NORTH) {
     CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
                      FLAG_AREA_TEMP_80, 48, 1);
     CrackedTile_PlaceLanding(

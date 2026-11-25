@@ -2236,10 +2236,10 @@ void ShrineOfTheSeaGod_InitializeFootprints(void) {
 void ShrineOfTheSeaGod_InitializeBreath(void) {
   struct Actor *bridge = ShrineOfTheSeaGod_SetUpBridge(ACTOR_LEDGE_ROOM_BRIDGE);
 
-  if ((u16)(gMainRoutineState.entrance -
-            SHRINE_OF_THE_SEA_GOD_BREATH_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_NORTHEAST) <=
-      SHRINE_OF_THE_SEA_GOD_BREATH_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_WEST -
-          SHRINE_OF_THE_SEA_GOD_BREATH_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_NORTHEAST) {
+  if (gMainRoutineState.entrance >=
+          SHRINE_OF_THE_SEA_GOD_BREATH_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_NORTHEAST &&
+      gMainRoutineState.entrance <=
+          SHRINE_OF_THE_SEA_GOD_BREATH_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_WEST) {
     Actor_SetSpritePriority(ACTOR_LEDGE_ROOM_BRIDGE, 3);
     bridge->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {

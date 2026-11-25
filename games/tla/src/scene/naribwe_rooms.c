@@ -294,7 +294,7 @@ void NaribweRooms_TalkToFortuneTeller(void) {
     Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
-      if ((u32)gMainRoutineState.coins > FORTUNE_PRICE - 1) {
+      if (gMainRoutineState.coins > FORTUNE_PRICE - 1) {
         NaribweRooms_ReadFortune();
         Event_End();
       } else {

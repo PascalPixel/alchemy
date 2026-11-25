@@ -86,7 +86,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   {
     struct BattleCamera *camera;
     struct MotionObject *target;

@@ -76,15 +76,15 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   for (index = 0; index < 4; index++) {
     s32 y;
     /* FAKEMATCH(temporary): windowY holds 0 for the icon's attr23 word before
-     * it holds the window's y; as 0 and (s16)window->y at their uses. */
+     * it holds the window's y; as 0 and window->y at their uses. */
     s32 windowY = 0;
 
     y = index * 2;
     sprite = &sprites[index];
     Io_Write32(OBJ_SIZE_16X16, &sprite->oam.word.attr01);
     sprite->oam.word.attr23 = windowY;
-    sprite->oam.f.x = (s16)window->x * 8 + 8;
-    windowY = (s16)window->y;
+    sprite->oam.f.x = window->x * 8 + 8;
+    windowY = window->y;
     sprite->oam.f.y = (y + windowY) * 8 + 4;
   }
   for (index = 0; index < 4; index++) {
@@ -135,11 +135,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       state->holdTilemapUpload = 1;
-      {
-        s32 x = (s16)window->x + 1;
-        Window_HighlightRect(x, (s16)window->y + drawnRow * 2 + 1,
-                             window->width - 2, 1, WINDOW_PALETTE);
-      }
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
+                           window->width - 2, 1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       {
         const struct SummonDefinition *definition;
@@ -230,8 +227,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
       }
-      Window_HighlightRect((s16)window->x + 1,
-                           (s16)window->y + selectedRow * 2 + 1,
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, HIGHLIGHT_PALETTE);
       state->dirty = 1;
       state->holdTilemapUpload = 0;
@@ -259,8 +255,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
         palette = WINDOW_PALETTE - (blink != 0);
         if ((1 << element & mask) == 0)
           palette = WINDOW_PALETTE;
-        Window_HighlightRect((s16)counts->x + element * 2 + 1,
-                             (s16)counts->y + 1, 2, 1, palette);
+        Window_HighlightRect(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
+                             palette);
       }
     }
 
@@ -276,7 +272,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                              window->width - (count + 3) / 4 - 3, -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
-      WINDOW_MARK_TILEMAP_ROW(state, (u32)((s16)window->y - 1));
+      WINDOW_MARK_TILEMAP_ROW(state, window->y - 1);
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);

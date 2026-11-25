@@ -429,7 +429,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   if (battle->keepObjectPriorities != 0)
     return;
 
-  if ((s16)((struct BattleCamera *)Ram_HeapSlots->cameraState)->yaw >= 0) {
+  if (((struct BattleCamera *)Ram_HeapSlots->cameraState)->yaw >= 0) {
     partyPriority = 1;
     enemyPriority = 2;
   } else {
@@ -633,8 +633,8 @@ void BattleCamera_SetDefaultView(void) {
 
   Matrix_Initialize();
   Matrix_TranslateVector(&camera->focus[0]);
-  Matrix_RotateY((s16)camera->yaw);
-  Matrix_RotateX((s16)camera->pitch);
+  Matrix_RotateY(camera->yaw);
+  Matrix_RotateX(camera->pitch);
 
   SET_POSITION(&eyeOffset, 0, 0, camera->distance);
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);

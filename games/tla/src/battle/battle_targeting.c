@@ -465,14 +465,14 @@ void BattleUnit_ClearStatuses(s32 unitId) {
 /// or A, B, L or R is pressed (or held, after 16 frames), then plays the
 /// cursor sound.
 void BattleMessage_WaitForAdvance(void) {
-  struct AdvanceArrowSprite *prompt;
-  struct AdvanceArrowSprite promptStorage;
+  struct MenuSprite *prompt;
+  struct MenuSprite promptStorage;
   s32 frame;
   s32 tileSlot;
   s32 pictureTiles;
   s32 sheet;
   struct Window *window;
-  struct BattleMessageOffset *offset;
+  struct Message *message;
 
   while (!Message_AllTypedFar())
     wait(1);
@@ -484,22 +484,20 @@ void BattleMessage_WaitForAdvance(void) {
   for (frame = 0;; frame++) {
     // Cycle the eight pictures, one every four frames.
     pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
-    window =
-        ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)->window;
-    offset =
-        ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)->offset;
+    window = Ram_HeapSlots->battleMessage->window;
+    message = Ram_HeapSlots->battleMessage->message;
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
     // Both attribute words are set whole: an 8 by 16 arrow of 256 colours,
     // blended with what is behind it.
-    ((u32 *)prompt)[1] =
+    prompt->oam.word.attr01 =
         OBJ_SIZE_8X16 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    ((u32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
-    prompt->x = (s16)window->x * 8 + (offset->x >> 8) + 4;
+    prompt->oam.word.attr23 = 0;
+    prompt->oam.f.tile = VramCache_Reload(tileSlot, pictureTiles);
+    prompt->oam.f.x = window->x * 8 + (message->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames.
-    prompt->y = CURSOR_BOB_Y() + (s16)window->y * 8 + (offset->y >> 8) + 6;
+    prompt->oam.f.y = CURSOR_BOB_Y() + window->y * 8 + (message->y >> 8) + 6;
     Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
@@ -518,8 +516,8 @@ void BattleMessage_WaitForAdvance(void) {
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   struct MenuPoint position;
   s32 pointerTiles;
-  struct CursorSprite promptStorage;
-  struct CursorSprite *prompt;
+  struct MenuSprite promptStorage;
+  struct MenuSprite *prompt;
   s32 tileSlot;
 
   pointerTiles = WindowSprite_GetPointerTilesFar(0);
@@ -535,11 +533,11 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
-    ((s32 *)prompt)[1] = OBJ_SIZE_16X16;
-    ((s32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
-    prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
-    prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
+    prompt->oam.word.attr01 = OBJ_SIZE_16X16;
+    prompt->oam.word.attr23 = 0;
+    prompt->oam.f.tile = VramCache_Reload(tileSlot, pointerTiles);
+    prompt->oam.f.x = position.x + ((gFrameCount & 4) >> 1) - 4;
+    prompt->oam.f.y = position.y - ((gFrameCount & 4) >> 2) - 8;
     Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     if (gInput.pressed & KEY_ADVANCE)
       break;
@@ -555,7 +553,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 void BattleMessage_WaitForTyping(void) {
   while (!Message_AllTypedFar())
     wait(1);
-  ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)->marked = 1;
+  Ram_HeapSlots->battleMessage->marked = 1;
 }
 
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
@@ -618,7 +616,7 @@ u32 BattlePlayback_RunAll(void) {
                                 MESSAGE_ARGUMENT_ABILITY);
         break;
       case PLAYBACK_MARK:
-        ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)->marked = 1;
+        Ram_HeapSlots->battleMessage->marked = 1;
         break;
       case PLAYBACK_CLEAR_ARGUMENTS:
         MessageArgument_ClearAllFar();

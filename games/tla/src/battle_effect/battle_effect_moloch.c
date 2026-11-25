@@ -487,8 +487,8 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
 
   state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[0] = Ram_HeapSlots->ramCode;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
 
   // The drop: one picture of its eight, large or small.
   if (small == 0)
@@ -994,7 +994,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   s16 *camera = Ram_HeapSlots->cameraState;
   s32 savedYaw;
   s32 frame;
-  void *draw[2];
+  DrawRectangle draw[2];
 
   // The first petal slot with no life left, or -1.
   s32 FindFreePetal(void) {
@@ -1122,10 +1122,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           if (offset == (IRIS_GLOW_TEXTURES - 1) * IRIS_TEXTURE_BYTES)
             state->particles[i].variant = 0;
         } else {
-          ((DrawRectangle)draw[0])(
-              canvas,
-              state->sheet + (gBattleEffect_MotePictures[n - 1] + offset),
-              px - n / 2, py - n, n, n * 2);
+          draw[0](canvas,
+                  state->sheet + (gBattleEffect_MotePictures[n - 1] + offset),
+                  px - n / 2, py - n, n, n * 2);
         }
         state->particles[i].x += state->particles[i].velocityX;
         state->particles[i].y += state->particles[i].velocityY;
@@ -1326,8 +1325,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
               u8 *cell = sprites + gBattleEffect_MotePictures[size - 1];
               struct IrisPoint *p = &STREAK(i, j);
 
-              ((DrawRectangle)draw[1])(to, cell, p->xPixels - (size >> 1),
-                                       p->yPixels - size, size, size * 2);
+              draw[1](to, cell, p->xPixels - (size >> 1), p->yPixels - size,
+                      size, size * 2);
             }
           }
         }
@@ -1590,18 +1589,16 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 px = Trig_Sin(a) * radius;
         s32 py = Trig_Cos(a) * radius;
 
-        ((DrawRectangle)draw[0])(
-            canvas,
-            state->sheet +
-                gBattleEffect_MotePictures[IRIS_APPEAR_RING_MOTE - 1],
-            (FIXEDtoINT(px)) + 58, (FIXEDtoINT(py * 2)) + 48,
-            IRIS_APPEAR_RING_MOTE, 2 * IRIS_APPEAR_RING_MOTE);
+        draw[0](canvas,
+                state->sheet +
+                    gBattleEffect_MotePictures[IRIS_APPEAR_RING_MOTE - 1],
+                (FIXEDtoINT(px)) + 58, (FIXEDtoINT(py * 2)) + 48,
+                IRIS_APPEAR_RING_MOTE, 2 * IRIS_APPEAR_RING_MOTE);
       }
       for (i = 0; i != IRIS_FIRST_MOTES; i++) {
-        ((DrawRectangle)draw[0])(canvas,
-                                 state->sheet + gBattleEffect_MotePictures[1],
-                                 (FIXEDtoINT(state->particles[i].x)) - 2,
-                                 (FIXEDtoINT(state->particles[i].y)) - 2, 2, 4);
+        draw[0](canvas, state->sheet + gBattleEffect_MotePictures[1],
+                (FIXEDtoINT(state->particles[i].x)) - 2,
+                (FIXEDtoINT(state->particles[i].y)) - 2, 2, 4);
         state->particles[i].x += state->particles[i].velocityX;
       }
     }
@@ -2153,8 +2150,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
             px = (FIXEDtoINT(px)) + (j >> 1) + CANVAS_SIZE / 2;
             rowY = (FIXEDtoINT(py)) - (j >> 1) + 63;
-            ((DrawRectangle)draw[0])(canvas, state->sheet + tile, px, rowY, 1,
-                                     2);
+            draw[0](canvas, state->sheet + tile, px, rowY, 1, 2);
           }
         }
       }
@@ -2225,8 +2221,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 px = FIXEDtoINT(Iwram_MulFX(sx, cosT) - Iwram_MulFX(sy, sinT));
         s32 py = FIXEDtoINT(Iwram_MulFX(sx, sinT) + Iwram_MulFX(sy, cosT));
 
-        ((DrawRectangle)draw[0])(canvas, state->sheet + tile, px + 101, py + 26,
-                                 IRIS_SWEEP_MOTE, 2 * IRIS_SWEEP_MOTE);
+        draw[0](canvas, state->sheet + tile, px + 101, py + 26, IRIS_SWEEP_MOTE,
+                2 * IRIS_SWEEP_MOTE);
       }
     }
     // The tall ring of motes.
@@ -2244,8 +2240,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 px = FIXEDtoINT(Iwram_MulFX(sx, cosT) - Iwram_MulFX(sy, sinT));
         s32 py = FIXEDtoINT(Iwram_MulFX(sx, sinT) + Iwram_MulFX(sy, cosT));
 
-        ((DrawRectangle)draw[0])(canvas, state->sheet + tile, px + 93, py + 32,
-                                 IRIS_SWEEP_MOTE, 2 * IRIS_SWEEP_MOTE);
+        draw[0](canvas, state->sheet + tile, px + 93, py + 32, IRIS_SWEEP_MOTE,
+                2 * IRIS_SWEEP_MOTE);
       }
     }
     // The cone of light, stretching out to its full length over 64 frames.

@@ -345,8 +345,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
                       BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)heap->ramCode;
-  draw[1] = (DrawRectangle)heap->ramCodePaired;
+  draw[0] = heap->ramCode;
+  draw[1] = heap->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET, state->sheet, 1,
                              1);

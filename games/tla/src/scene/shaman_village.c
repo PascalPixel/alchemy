@@ -931,7 +931,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
       Event_OpenMessage(ACTOR_INN_COUNTER, 0);
       if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                            0) == 0) {
-        if ((u32)gMainRoutineState.coins < price) {
+        if (gMainRoutineState.coins < price) {
           Actor_SetAnimation(ACTOR_INNKEEPER, 6);
           Event_Wait(20);
           Actor_SetAnimation(ACTOR_INNKEEPER, 5);

@@ -365,7 +365,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     // A tile event's actor holds its map cell, marked by this value.
     if (actor->sceneWord == TREASURE_SPOT_ON_CELL) {
       x = toFIXED(actor->timer);
-      z = toFIXED((s16)actor->userValue);
+      z = toFIXED(actor->userValue);
       y = MapGrid_GetTerrainHeightFar(0, x, z);
     } else {
       if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)

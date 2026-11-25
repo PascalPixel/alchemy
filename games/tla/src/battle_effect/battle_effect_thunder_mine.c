@@ -80,7 +80,7 @@ void BattleEffect_RunBallLightning(struct BattleEffectParams *args, s32 mode) {
     REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX / 2);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   ballSize = 0;
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              state->sheet + BALL_LIGHTNING_TORNADO_PICTURES, 1,
@@ -241,7 +241,7 @@ void BattleEffect_RunBallLightning(struct BattleEffectParams *args, s32 mode) {
                      (gBattleEffect_GlintPictureHeights[picture] >> 1);
         s32 flags = EFFECT_CLIP_BOUNDS | gBoltTrail_GlintFlips[Random16() & 3];
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-        ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+        (Ram_HeapSlots->ramCodePaired)(
             canvas,
             state->sheet + BALL_LIGHTNING_TORNADO_PICTURES +
                 gBattleEffect_GlintPictures[picture],
@@ -408,7 +408,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   rects = blitters;
-  BattleEffect_BuildCanvasBlitters(0, (void **)rects);
+  BattleEffect_BuildCanvasBlitters(0, rects);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 1);
@@ -711,7 +711,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
                                   EFFECT_CLIP_BOUNDS |
                                       gMegaera_GlintFlips[flip & 3],
                                   gMegaera_GlintModes[args->variant]);
-              ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+              (Ram_HeapSlots->ramCodePaired)(
                   canvas, MEGAERA_PICTURES + gBattleEffect_GlintPictures[k],
                   glintX - 4, glintY + 40, gBattleEffect_GlintPictureWidths[k],
                   gBattleEffect_GlintPictureHeights[k]);
@@ -722,7 +722,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      rects[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+      rects[1] = Ram_HeapSlots->ramCodePaired;
       if (frame <= 69) {
         for (i = 0, p = PARTICLES; i != MEGAERA_SPARK_COUNT; i++, p++) {
           s32 size;
@@ -869,8 +869,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       flip | EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[0] = Ram_HeapSlots->ramCode;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
   state->cameraDelta = 0;
   state->cameraPhase = 0;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);

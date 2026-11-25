@@ -140,8 +140,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
       state->holdTilemapUpload = 1;
-      Window_HighlightRect((s16)listWindow->x + 1,
-                           (s16)listWindow->y + drawnRow * 2 + 1,
+      Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
                            listWindow->width - 2, 1, WINDOW_PALETTE);
       if (previewPage != 0) {
         Window_Close(messageWindow, 1);
@@ -272,8 +271,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                  listWindow->width - listPages + j - 2, -1, 0);
         }
       }
-      Window_HighlightRect((s16)listWindow->x + 1,
-                           (s16)listWindow->y + selectedRow * 2 + 1,
+      Window_HighlightRect(listWindow->x + 1,
+                           listWindow->y + selectedRow * 2 + 1,
                            listWindow->width - 2, 1, HIGHLIGHT_PALETTE);
       state->dirty = 1;
       state->holdTilemapUpload = 0;
@@ -304,7 +303,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         Window_SetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP_RIGHT,
                                listWindow->width - 2, -1, 0);
       }
-      WINDOW_MARK_TILEMAP_ROW(state, (u32)((s16)listWindow->y - 1));
+      WINDOW_MARK_TILEMAP_ROW(state, listWindow->y - 1);
     }
 
     pressed = gInput.pressed;
@@ -393,7 +392,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                  0);
           Window_SetTilemapEntry(previewWindow, LIST_TILE_PAGES_RIGHT,
                                  previewWindow->width - 2, -1, 0);
-          WINDOW_MARK_TILEMAP_ROW(state, (s16)previewWindow->y);
+          WINDOW_MARK_TILEMAP_ROW(state, previewWindow->y);
         }
         if (previewPage == 0 && previewPages != 0) {
           if (previewWindow != NULL)
@@ -479,10 +478,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 
         if (((1 << i) & standbyElements) == 0)
           palette = WINDOW_PALETTE;
-        Window_HighlightRect(
-            (s16)iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
-            (s16)iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1, 2, 1,
-            palette);
+        Window_HighlightRect(iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
+                             iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1,
+                             2, 1, palette);
       }
     }
     if (gFrameCount & 4) {
@@ -503,8 +501,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     struct PartyStatusWindow *owner = Ram_HeapSlots->partyStatus;
 
     if (owner->flags & 2)
-      Window_HighlightRect((s16)owner->window->x + 1, (s16)owner->window->y + 1,
-                           4, 4, WINDOW_PALETTE);
+      Window_HighlightRect(owner->window->x + 1, owner->window->y + 1, 4, 4,
+                           WINDOW_PALETTE);
   }
   VramCache_FreeEntry(cursorSlot);
   Window_Close(messageWindow, 1);

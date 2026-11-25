@@ -134,11 +134,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_THORN_VINE_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = -(CYBELE_CANVAS_X << 8);
 
@@ -470,7 +470,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
                                  state->sheet + CYBELE_BLAST_PICTURES, 1, 1);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      draw[0] = Ram_HeapSlots->ramCode;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       // ramCodePaired, reached from the slot before it.

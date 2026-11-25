@@ -603,9 +603,11 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
   struct WindowSprite *cursor = menu->sideIcon[0];
 
   cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
-                                     xOffset + menu->auxiliaryWindow->x * 8 + 8;
+                                     xOffset +
+                                     (u16)menu->auxiliaryWindow->x * 8 + 8;
   cursor->sprite.oam.y = cursor->y = gMenuCursor_BobY[CURSOR_BOB_STEP()] +
-                                     yOffset + menu->auxiliaryWindow->y * 8 + 8;
+                                     yOffset +
+                                     (u16)menu->auxiliaryWindow->y * 8 + 8;
 }
 
 /// Slides the hand cursor from where it is to (x, y) inside the menu's top-left
@@ -653,13 +655,13 @@ void MenuCursor_Slide(s32 x, s32 y) {
   do {
     px += dx;
     {
-      s32 spriteX = (px >> 4) + (menu->auxiliaryWindow->x << 3);
+      s32 spriteX = (px >> 4) + ((u16)menu->auxiliaryWindow->x << 3);
 
       cursor->sprite.oam.x = cursor->x = spriteX - 56;
     }
     py += dy;
     cursor->sprite.oam.y = cursor->y =
-        (py >> 4) + (menu->auxiliaryWindow->y << 3) - 56;
+        (py >> 4) + ((u16)menu->auxiliaryWindow->y << 3) - 56;
     steps--;
     if (steps != 0)
       wait(1);
@@ -1066,8 +1068,8 @@ void Window_SetHighlightRect(const struct Window *window, s32 x, s32 y,
                              s32 width, s32 height, u32 palette) {
   struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
 
-  x += (s16)window->x + 1;
-  y += (s16)window->y + 1;
+  x += window->x + 1;
+  y += window->y + 1;
   palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;

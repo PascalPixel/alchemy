@@ -83,7 +83,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   }
   state->transferMode = CANVAS_COPY_AND_FADE;
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // The run, most of the way to the target.

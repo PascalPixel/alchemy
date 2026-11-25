@@ -325,31 +325,31 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      pair[0] = Ram_HeapSlots->ramCode;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
 
-      pair[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+      pair[1] = Ram_HeapSlots->ramCodePaired;
     }
   } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
-    pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    pair[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_TRANSPARENT);
 
-    pair[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+    pair[1] = Ram_HeapSlots->ramCodePaired;
     REG_BLDALPHA = BLEND_ALPHA(16, 3);
   } else if (mode == BURST_SHOWER_MODE_FACES ||
              mode == BURST_SHOWER_MODE_DARKSOL_GASP) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    pair[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 
-    pair[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+    pair[1] = Ram_HeapSlots->ramCodePaired;
   } else {
     BattleEffect_BuildCanvasBlitters(args->side, pair);
   }
@@ -885,7 +885,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                                   gBurstShower_GlintFlips[flip & 3] |
                                       EFFECT_CLIP_BOUNDS,
                                   BLITTER_ADDITIVE);
-              ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+              (Ram_HeapSlots->ramCodePaired)(
                   canvas, state->sheet + gBattleEffect_GlintPictures[cel], x, y,
                   gBattleEffect_GlintPictureWidths[cel],
                   gBattleEffect_GlintPictureHeights[cel]);

@@ -20,24 +20,22 @@ void Window_UpdateZooms(void) {
 
   do {
     if (window->flags != 0) {
-      if ((s16)window->zoomStage != 0) {
+      if (window->zoomStage != 0) {
         Window_DrawZoomBorder(window, 0);
-        window->zoomStage = (s16)window->zoomStage - 1;
+        window->zoomStage--;
       } else if (window->duration != 0) {
         Window_DrawOpened(window);
       }
     } else if (window->duration != 0) {
-      if ((s16)window->zoomStage != window->duration) {
-        Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
-                               (s16)window->previousWidth,
-                               (s16)window->previousHeight);
+      if (window->zoomStage != window->duration) {
+        Window_EraseBorderRect(window->previousX, window->previousY,
+                               window->previousWidth, window->previousHeight);
         Window_DrawZoomBorder(window, 1);
         window->zoomStage++;
         state->dirty = 1;
       } else {
-        Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
-                               (s16)window->previousWidth,
-                               (s16)window->previousHeight);
+        Window_EraseBorderRect(window->previousX, window->previousY,
+                               window->previousWidth, window->previousHeight);
         window->sprites.head = NULL;
         window->sprites.tailLink = NULL;
         window->width = 0;
@@ -83,7 +81,7 @@ void Window_DrawZoomBorder(struct Window *window, s32 savePosition) {
   s32 width;
   s32 height;
 
-  stage = (s16)window->zoomStage;
+  stage = window->zoomStage;
   duration = window->duration;
   remaining = duration - stage;
   // Iwram_DivFX(d, v) is v / d in 16.16 fixed point, as in The Broken
@@ -93,7 +91,7 @@ void Window_DrawZoomBorder(struct Window *window, s32 savePosition) {
   scratch.scaledPart = toFIXED(stage * window->width);
   scratch.scaledDuration = toFIXED(2 * duration);
   scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
-  x = FIXEDtoINT(scratch.result) + (s16)window->x;
+  x = FIXEDtoINT(scratch.result) + window->x;
 
   scratch.scaledPart = toFIXED(remaining * window->width);
   scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
@@ -104,7 +102,7 @@ void Window_DrawZoomBorder(struct Window *window, s32 savePosition) {
   }
   scratch.scaledDuration = toFIXED(2 * window->duration);
   scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
-  y = FIXEDtoINT(scratch.result) + (s16)window->y;
+  y = FIXEDtoINT(scratch.result) + window->y;
 
   scratch.scaledPart = toFIXED(remaining * window->height);
   scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
@@ -317,17 +315,10 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
     Task_Add(WindowSystem_UpdateBattle, TASK_PASS_FRAME);
 }
 
-/// The battle message window (Ram_HeapSlots->battleMessage).
-struct UiMessageSlot {
-  struct Window *window;
-  s32 result; ///< what the last BattleMessage_Continue returned
-  s32 cursor; ///< where the next message starts
-};
-
 /// Closes the battle message window at once, if one is open, and forgets it,
 /// so the next battle message (BattleMessage_Open) opens a new one.
 void BattleMessage_Close(void) {
-  struct UiMessageSlot *slot = Ram_HeapSlots->battleMessage;
+  struct BattleMessageState *slot = Ram_HeapSlots->battleMessage;
 
   if (slot->window != NULL) {
     Window_Close(slot->window, 1);
@@ -342,15 +333,15 @@ s32 Message_Decode(s32 message, s32 clear);
 /// open; a message that decodes to nothing shows nothing.
 void BattleMessage_Open(s32 message) {
   s32 entry;
-  struct UiMessageSlot *slot;
+  struct BattleMessageState *slot;
   struct Window *previous;
   struct Window *window;
   struct WindowState *state;
-  s32 result;
+  struct Message *typing;
 
   state = WINDOW_STATE;
   slot = Ram_HeapSlots->battleMessage;
-  result = 0;
+  typing = NULL;
   // Decoded as a battle message: in Japanese its names are set off and its
   // spaces doubled.
   state->battleMode = WINDOW_BATTLE_MESSAGE;
@@ -363,15 +354,15 @@ void BattleMessage_Open(s32 message) {
                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS);
       slot->window = window;
       Window_MapTextCanvasTiles(0, 15, 30, 6, 1);
-      slot->cursor = result;
+      slot->marked = 0;
     } else {
       window = previous;
     }
     if (window != NULL) {
-      result = (s32)BattleMessage_Continue(window, entry, slot->cursor);
-      slot->result = result;
-      slot->cursor = 0;
-      if (result == 0)
+      typing = BattleMessage_Continue(window, entry, slot->marked);
+      slot->message = typing;
+      slot->marked = 0;
+      if (typing == NULL)
         Window_Close(window, 1);
     }
   }

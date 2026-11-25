@@ -72,7 +72,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw = Ram_HeapSlots->ramCode;
   EFFECT_FOR_EACH_TARGET(member, args)
     battleEffectState->particles[member].variant = 0;
   EFFECT_START_TRANSFER(battleEffectState, CANVAS_COPY_AND_CLEAR, 0);

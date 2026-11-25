@@ -501,7 +501,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                               gEclipse_GlintFlips[Random16() & 3] |
                                   EFFECT_CLIP_BOUNDS,
                               BLITTER_MAX);
-          ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+          (Ram_HeapSlots->ramCodePaired)(
               canvas,
               state->sheet + ECLIPSE_TORNADO_PICTURES +
                   gBattleEffect_GlintPictures[t],
@@ -938,7 +938,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              state->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);

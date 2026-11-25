@@ -1103,29 +1103,27 @@ void AquaRock_ArriveUpStream(void) {
 /// over 16 frames to MOAI_SHAKE.
 void AquaRock_ShakeMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
-  s16 *amplitude;
 
+  // timer is the phase of the shake and userValue its swing.
   actor->timer += DEGtoANG(45);
-  amplitude = (s16 *)&actor->userValue;
-  *amplitude += MOAI_SHAKE / 16;
-  if (*amplitude > MOAI_SHAKE)
-    *amplitude = MOAI_SHAKE;
-  sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), *amplitude);
+  actor->userValue += MOAI_SHAKE / 16;
+  if (actor->userValue > MOAI_SHAKE)
+    actor->userValue = MOAI_SHAKE;
+  sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), actor->userValue);
 }
 
 /// A guardian moai's update once it has moved: the swing dies away over 32
 /// frames.
 void AquaRock_StopShakingMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
-  s16 *amplitude;
 
+  // timer is the phase of the shake and userValue its swing.
   actor->timer += DEGtoANG(45);
-  amplitude = (s16 *)&actor->userValue;
-  *amplitude -= MOAI_SHAKE / 32;
-  if (*amplitude < 0) {
-    *amplitude = 0;
+  actor->userValue -= MOAI_SHAKE / 32;
+  if (actor->userValue < 0) {
+    actor->userValue = 0;
   }
-  sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), *amplitude);
+  sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), actor->userValue);
 }
 
 /// The last guardian moai rocks a sixty-fourth of a turn either way: its sine,

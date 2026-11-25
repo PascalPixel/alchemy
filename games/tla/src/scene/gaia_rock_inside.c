@@ -2378,8 +2378,8 @@ s32 Scene_Initialize(void) {
         Import_EventSetExitRequest(ending);
       }
     }
-    if ((u16)(gMainRoutineState.entrance - ENTRANCE_LAIR) <=
-        ENTRANCE_SERPENT_BEATEN - ENTRANCE_LAIR) {
+    if (gMainRoutineState.entrance >= ENTRANCE_LAIR &&
+        gMainRoutineState.entrance <= ENTRANCE_SERPENT_BEATEN) {
       GameFlag_Set(FLAG_RETREAT_BLOCKED);
       if (Test(FLAG_SERPENT_SLAIN)) {
         Actor_SetAnimationById(ACTOR_SERPENT, 4);

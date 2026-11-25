@@ -544,7 +544,7 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *actor) {
       actor, Iwram_MulFX(Trig_Cos(angle), actor->speedLimit) + toFIXED(214),
       (height * toFIXED(3)) + toFIXED(8), toFIXED(680));
   // Read signed, as the phase is above; the field is declared unsigned.
-  if ((s16)actor->userValue == 0)
+  if (actor->userValue == 0)
     Actor_SelectAnimation(actor, 7);
   if (actor->y.fixed > toFIXED(340))
     actor->userValue = -1;

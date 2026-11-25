@@ -354,10 +354,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           (FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4)) + origin[1] - 24;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ flipX, BLITTER_MAX);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      draw[0] = Ram_HeapSlots->ramCode;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags ^ flipX,
                           additive);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+      draw[1] = Ram_HeapSlots->ramCodePaired;
 
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -393,14 +393,14 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         // Flares turn and close in on the centre.
         if (frame > member * STAT_BOOST_TARGET_DELAY) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          draw[0] = Ram_HeapSlots->ramCode;
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags, additive);
           {
             /* FAKEMATCH(dead): slot set to NULL first, never read. */
-            void **slot = NULL;
+            DrawRectangle *slot = NULL;
 
             slot = &Ram_HeapSlots->ramCodePaired;
-            draw[1] = (DrawRectangle)*slot;
+            draw[1] = *slot;
           }
           if (mode == STAT_BOOST_IMPACT) {
             Matrix_RotateX(-frame * STAT_BOOST_FLARE_SPIN);
@@ -458,7 +458,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                   4 % 6;
 
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
-        draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+        draw[0] = Ram_HeapSlots->ramCode;
         draw[0](canvas,
                 state->sheet + picture * PICTURE_BYTES(GLOW_ORB) +
                     STAT_BOOST_BURST,
@@ -479,7 +479,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                         4 % 7;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          draw[0] = Ram_HeapSlots->ramCode;
           draw[0](canvas,
                   state->sheet + picture * PICTURE_BYTES(DAGGER) +
                       STAT_BOOST_PICTURE,
@@ -499,7 +499,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                         4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          draw[0] = Ram_HeapSlots->ramCode;
           draw[0](canvas,
                   state->sheet + picture * PICTURE_BYTES(VIOLET_STREAK) +
                       STAT_BOOST_PICTURE,
@@ -522,13 +522,13 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
           lowerFlags = drawFlags | COMPOSITE_FLIP_Y;
-          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          draw[0] = Ram_HeapSlots->ramCode;
           // Built for the 128 by 128 canvas, 7 the shift of each side.
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, lowerFlags,
                                     BLITTER_MAX);
           wisp =
               state->sheet + picture * PICTURE_BYTES(WISP) + STAT_BOOST_PICTURE;
-          draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+          draw[1] = Ram_HeapSlots->ramCodePaired;
           draw[0](canvas, wisp, screen.x - WISP_WIDTH / 2, screen.y - 24,
                   WISP_WIDTH, WISP_HEIGHT);
           draw[1](canvas, wisp, screen.x - WISP_WIDTH / 2, screen.y + 8,
@@ -546,7 +546,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                         4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_ADDITIVE);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          draw[0] = Ram_HeapSlots->ramCode;
           draw[0](canvas,
                   state->sheet + picture * PICTURE_BYTES(SHIELD) +
                       STAT_BOOST_PICTURE,

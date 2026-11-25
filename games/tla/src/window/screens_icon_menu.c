@@ -446,8 +446,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
-        iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
-        iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
+        iconSprite->oam.f.x = commandWindow->x * 8 + 8;
+        iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         CAMELOT_ASM("an asm with no instruction, text unknown: the literal "
                     "pool after this sprite's stores sits where the ROM has it "
                     "only if exactly 4 more bytes are counted between the load "
@@ -538,8 +538,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                     "either side of this point, which no length difference can "
                     "do")
         __asm__ volatile("");
-        iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
-        iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
+        iconSprite->oam.f.x = commandWindow->x * 8 + 8;
+        iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(
             summon->abilityId & ACTION_ID_MASK, summonIconSlot);
         state->iconShown[1] = 1;
@@ -724,8 +724,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                     "side of this point, which no length difference can do")
         __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;
-        iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
-        iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
+        iconSprite->oam.f.x = commandWindow->x * 8 + 8;
+        iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile =
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->iconShown[1] = 1;

@@ -378,10 +378,10 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  maxBlend = (DrawRectangle)Ram_HeapSlots->ramCode;
+  maxBlend = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  additive = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  additive = Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE,
@@ -885,7 +885,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
     gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7,
                               COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLITTER_MAX);
-    draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+    draw = Ram_HeapSlots->ramCode;
     EFFECT_SET_TRANSFER(state, transferMode, CANVAS_FILL_WORD(2));
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
     EFFECT_FREE_PARTICLES(i, state->particles, 64);
@@ -1083,7 +1083,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
   REG_BG2CNT =
       BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 0);
   for (i = 0; i != STARFIELD_FALL_FLAME_COUNT; i++) {
     struct Particle *mote = &state->particles[i];

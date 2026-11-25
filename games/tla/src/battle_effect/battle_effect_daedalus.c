@@ -701,7 +701,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     REG_BG2PA = Q_8_8(0.5);
     REG_BG2X = 0;
     blits = blit;
-    BattleEffect_BuildCanvasBlitters(0, (void **)blits);
+    BattleEffect_BuildCanvasBlitters(0, blits);
     state->scrollTimer = 0;
     state->scrollInterval = 5;
     state->scrollStepX = -1;
@@ -1721,7 +1721,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
   BattleEffect_CreateSprites(1, SPRITE_DAEDALUS_ROCKET, 3);
   BattleEffect_ShowLivingTargets(state->args);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   state->fadeFrames = BACKGROUND_DARKEN_FRAMES;

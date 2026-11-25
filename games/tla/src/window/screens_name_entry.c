@@ -78,7 +78,7 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
 
   source = buffer;
   Decompress_TaggedLz(resource, buffer);
-  offset = (((s16)window->y << 5) + (s16)window->x) * 2;
+  offset = ((window->y << 5) + window->x) * 2;
   map = (u16 *)((u8 *)state->tilemap + offset);
   vram = (u16 *)(offset + WINDOW_TILEMAP_VRAM);
   for (row = 0; row < window->height; row++) {
@@ -318,9 +318,9 @@ s32 NameEntry_EditMemberName(s32 member) {
                                  (struct Window *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
-    MenuCursor_SetPositionImmediateFar(
-        keyMotion, (s16)keyboardWindow->x * 8 + 140,
-        (s16)keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
+    MenuCursor_SetPositionImmediateFar(keyMotion, keyboardWindow->x * 8 + 140,
+                                       keyboardWindow->y * 8 +
+                                           NAME_KEY_CURSOR_Y);
   } else {
     keyMotion = &keyCursor.cursor;
   }
@@ -359,8 +359,8 @@ s32 NameEntry_EditMemberName(s32 member) {
                            WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
-      MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
-                        ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
+      MenuCursor_SetFar(keyMotion, (keyboardWindow->x + keyColumn) * 8 - 7,
+                        (keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
@@ -509,11 +509,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       continue;
     }
     {
-      u32 tx = (s16)keyboardWindow->x + keyColumn + 1;
+      u32 tx = keyboardWindow->x + keyColumn + 1;
       u8 *slot;
 
       letter = ((u8 *)render->tilemap +
-                (((s16)keyboardWindow->y + keyRow + 1) << 6))[tx + tx];
+                ((keyboardWindow->y + keyRow + 1) << 6))[tx + tx];
       if (letter == NAME_VOICED_KEY)
         letter = TEXT_MARK_VOICED;
       if (letter == NAME_SEMIVOICED_KEY)
@@ -613,9 +613,9 @@ s32 NameEntry_EditMemberName(s32 member) {
                                  (struct Window *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
-    MenuCursor_SetPositionImmediateFar(
-        keyMotion, (s16)keyboardWindow->x * 8 + 140,
-        (s16)keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
+    MenuCursor_SetPositionImmediateFar(keyMotion, keyboardWindow->x * 8 + 140,
+                                       keyboardWindow->y * 8 +
+                                           NAME_KEY_CURSOR_Y);
   } else {
     keyMotion = &keyCursor.cursor;
   }
@@ -652,8 +652,8 @@ s32 NameEntry_EditMemberName(s32 member) {
                            WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
-      MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
-                        ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
+      MenuCursor_SetFar(keyMotion, (keyboardWindow->x + keyColumn) * 8 - 7,
+                        (keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
@@ -763,9 +763,9 @@ s32 NameEntry_EditMemberName(s32 member) {
       continue;
     }
     {
-      u32 tx = (s16)keyboardWindow->x + keyColumn + 1;
+      u32 tx = keyboardWindow->x + keyColumn + 1;
       u32 letter = ((u8 *)render->tilemap +
-                    (((s16)keyboardWindow->y + keyRow + 1) << 6))[tx << 1];
+                    ((keyboardWindow->y + keyRow + 1) << 6))[tx << 1];
 
       if (letterCount == NAME_MAX_LETTERS)
         continue;

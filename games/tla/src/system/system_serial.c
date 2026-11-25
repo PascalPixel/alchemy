@@ -526,9 +526,9 @@ void LinkBattle_ResetTransferState(void) {
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
   state->status = SERIAL_STATUS_RUNNING;
-  *(u8 *)&state->peerFlags = 0;
+  state->peerFlags = 0;
   gSerialSendSource = 0;
-  *(u8 *)&state->flags = 0;
+  state->flags = 0;
   gSerialSendSize = 0;
   gSerialReceiveDestination = 0;
   gSerialReceivedSize = 0;

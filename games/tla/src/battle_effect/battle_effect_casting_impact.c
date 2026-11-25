@@ -1735,7 +1735,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         EFFECT_RELEASE_BLITTERS();
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             BLITTER_TRANSPARENT);
-        blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+        blitters[0] = Ram_HeapSlots->ramCode;
         if (frame == 0) {
           for (i = 0; i != 16 * SARCOPHAGUS_COFFIN_WIDTH; i++)
             state->sheet[i] = Random16() & 31;
@@ -1824,7 +1824,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
             flags = EFFECT_CLIP_BOUNDS;
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
-            ((DrawRectangle)Ram_HeapSlots->ramCode)(
+            (Ram_HeapSlots->ramCode)(
                 canvas, pictures + m * PICTURE_BYTES(TARGET_STRIKE_BITE),
                 targetPos.x / 2 - TARGET_STRIKE_BITE_WIDTH,
                 TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
@@ -1833,7 +1833,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
           }
-          ((DrawRectangle)Ram_HeapSlots->ramCode)(
+          (Ram_HeapSlots->ramCode)(
               canvas, pictures + m * PICTURE_BYTES(TARGET_STRIKE_BITE),
               targetPos.x / 2, TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
               TARGET_STRIKE_BITE_HEIGHT);
@@ -1887,7 +1887,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_TRANSPARENT);
-        blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+        blitters[0] = Ram_HeapSlots->ramCode;
         scrollPos += scrollSpeed;
         if (frame > 6)
           scrollSpeed = scrollSpeed * 48 / DAMPING_SCALE;
@@ -1947,7 +1947,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_TRANSPARENT);
-        blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+        blitters[0] = Ram_HeapSlots->ramCode;
         scrollPos += scrollSpeed;
         if (frame == 5)
           scrollPos += toFIXED(32);

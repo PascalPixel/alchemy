@@ -373,25 +373,23 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
                             s32 size, s32 index) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-      canvas, (u8 *)(discs[index] + cells), x - (size >> 1), y - size,
-      size >> 1, size);
+  (Ram_HeapSlots->ramCodePaired)(canvas, (u8 *)(discs[index] + cells),
+                                 x - (size >> 1), y - size, size >> 1, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-      canvas, (u8 *)(discs[index] + cells), x, y - size, size >> 1, size);
+  (Ram_HeapSlots->ramCodePaired)(canvas, (u8 *)(discs[index] + cells), x,
+                                 y - size, size >> 1, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-      canvas, (u8 *)(discs[index] + cells), x - (size >> 1), y, size >> 1,
-      size);
+  (Ram_HeapSlots->ramCodePaired)(canvas, (u8 *)(discs[index] + cells),
+                                 x - (size >> 1), y, size >> 1, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-      canvas, (u8 *)(discs[index] + cells), x, y, size >> 1, size);
+  (Ram_HeapSlots->ramCodePaired)(canvas, (u8 *)(discs[index] + cells), x, y,
+                                 size >> 1, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 }
 
@@ -456,7 +454,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   discs = (s16 *)state->sheet;
   if (mode == CANVAS_BURST_SHRED)
     frames = 78;

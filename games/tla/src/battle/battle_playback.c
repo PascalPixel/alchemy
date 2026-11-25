@@ -136,8 +136,7 @@ void BattlePlayback_Run(void) {
                                     MESSAGE_ARGUMENT_ABILITY);
             break;
           case PLAYBACK_MARK:
-            ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)
-                ->marked = 1;
+            Ram_HeapSlots->battleMessage->marked = 1;
             break;
           case PLAYBACK_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
@@ -229,13 +228,12 @@ void BattlePlayback_Run(void) {
     } else if (events->phase == PLAY_ADVANCE) {
       // Show the arrow and wait for the player, as BattleMessage_WaitForAdvance
       // does, but with an opaque arrow.
-      struct AdvanceArrowSprite *prompt = &events->arrow;
+      struct MenuSprite *prompt = &events->arrow;
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
-      struct BattleMessageState *display =
-          (struct BattleMessageState *)Ram_HeapSlots->battleMessage;
+      struct BattleMessageState *display = Ram_HeapSlots->battleMessage;
       struct Window *window = display->window;
-      struct BattleMessageOffset *offset = display->offset;
+      struct Message *message = display->message;
       s32 x = 0;
 
       if (events->arrowResource == -1)
@@ -243,14 +241,15 @@ void BattlePlayback_Run(void) {
       MessageArgument_ClearAllFar();
       IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
       IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
-      ((u32 *)prompt)[1] = PLAYBACK_ARROW_ATTR0;
-      ((u32 *)prompt)[2] = x;
+      prompt->oam.word.attr01 = PLAYBACK_ARROW_ATTR0;
+      prompt->oam.word.attr23 = x;
       /* FAKEMATCH(barrier): an empty asm after x is stored. */
       asm("");
-      prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
-      x = (s16)window->x * 8 + (offset->x >> 8) + 4;
-      prompt->x = x;
-      prompt->y = CURSOR_BOB_Y() + (s16)window->y * 8 + (offset->y >> 8) + 6;
+      prompt->oam.f.tile =
+          VramCache_Reload(events->arrowResource, pictureTiles);
+      x = window->x * 8 + (message->x >> 8) + 4;
+      prompt->oam.f.x = x;
+      prompt->oam.f.y = CURSOR_BOB_Y() + window->y * 8 + (message->y >> 8) + 6;
       if ((gInput.held & KEY_B) || (gInput.pendingPressed & KEY_ADVANCE) ||
           ((u32)(gVBlankCount - events->timer) > 10 &&
            (gInput.held & KEY_ADVANCE))) {

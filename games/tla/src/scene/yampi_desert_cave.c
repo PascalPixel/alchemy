@@ -919,8 +919,8 @@ s32 Scene_Initialize(void) {
     // In the room of fallen columns, by any of its three ways in, the walls'
     // layer (BG2) sinks to the ground's priority, under every actor, and the
     // overhead layer stays over them.
-    if ((u16)(gMainRoutineState.entrance - CRYSTAL_LOG_ROOM_FOOT) <=
-        CRYSTAL_LOG_ROOM_LEDGE_DOORWAY - CRYSTAL_LOG_ROOM_FOOT) {
+    if (gMainRoutineState.entrance >= CRYSTAL_LOG_ROOM_FOOT &&
+        gMainRoutineState.entrance <= CRYSTAL_LOG_ROOM_LEDGE_DOORWAY) {
       REG_BG1CNT &= ~BGCNT_PRIORITY(3);
       REG_BG1CNT |= BGCNT_PRIORITY(1);
       REG_BG2CNT &= ~BGCNT_PRIORITY(3);

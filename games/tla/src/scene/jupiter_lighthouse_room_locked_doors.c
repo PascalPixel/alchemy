@@ -263,9 +263,9 @@ void JupiterLighthouse_CircleUpTheBeam(struct Actor *actor) {
   SET_ACTOR_POSITION(
       actor, Iwram_MulFX(Trig_Cos(angle), actor->speedLimit) + toFIXED(BEAM_X),
       (height * toFIXED(3)) - toFIXED(BEAM_DEPTH), toFIXED(BEAM_Z));
-  if ((s16)actor->userValue == 1)
+  if (actor->userValue == 1)
     Actor_SelectAnimation(actor, ANIM_PARTICLE_TWINKLE);
-  if ((s16)actor->userValue == BEAM_LIGHT_FADE_STEP)
+  if (actor->userValue == BEAM_LIGHT_FADE_STEP)
     Actor_SelectAnimation(actor, ANIM_PARTICLE_FADE);
   if (actor->y.fixed > 0)
     actor->userValue = -1;

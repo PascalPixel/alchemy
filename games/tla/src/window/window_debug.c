@@ -59,8 +59,8 @@ struct Window *DebugSoundTest_Open(void) {
   window = Window_Create(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
   state->cursor.sprite = WindowSprite_Create(
       PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-  MenuCursor_SetPositionImmediateFar(&state->cursor, ((s16)window->x << 3) - 4,
-                                     ((s16)window->y << 3) + 12);
+  MenuCursor_SetPositionImmediateFar(&state->cursor, (window->x << 3) - 4,
+                                     (window->y << 3) + 12);
   return window;
 }
 
@@ -107,8 +107,8 @@ UNUSED s32 DebugSoundTest_Run(void) {
       Text_DrawStringInWindow((u8 *)SoundTest_JingleString, (s32)window, 8, 16);
       Text_DrawStringInWindow((u8 *)SoundTest_SeString, (s32)window, 8, 32);
       Text_DrawStringInWindow((u8 *)SoundTest_EffectString, (s32)window, 8, 48);
-      MenuCursor_SetFar(&state->cursor, ((s16)window->x << 3) - 4,
-                        ((s16)window->y << 3) + (cursor << 4) + 12, 3);
+      MenuCursor_SetFar(&state->cursor, (window->x << 3) - 4,
+                        (window->y << 3) + (cursor << 4) + 12, 3);
     }
     wait(1);
     if (gInput.pressed & KEY_B)
@@ -216,8 +216,8 @@ UNUSED s32 DebugMenu_Run(s32 index) {
       s32 y;
 
       index = (index + 5) % 5;
-      x = (s16)window->x * 8 - 4;
-      y = (s16)window->y;
+      x = window->x * 8 - 4;
+      y = window->y;
       y = (index * 3 + y) * 8 + 16;
       if (moved == -1)
         MenuCursor_SetPositionImmediateFar(&state->cursor, x, y);
@@ -421,8 +421,8 @@ UNUSED s32 DebugWarp_Run(s32 index) {
       s32 y;
 
       index = (index + 9) % 9;
-      x = (s16)window->x * 8 - 4;
-      y = ((s16)window->y << 3) + (index << 4) + 12;
+      x = window->x * 8 - 4;
+      y = (window->y << 3) + (index << 4) + 12;
       if (moved == -1)
         MenuCursor_SetPositionImmediateFar(&state->cursor, x, y);
       else
@@ -559,9 +559,9 @@ UNUSED s32 DebugShortcut_Run(void) {
       column = (column + columns) % columns;
       row = (row + 9) % 9;
       // y holds the window's left edge first.
-      y = (s16)window->x;
+      y = window->x;
       x = (column * 7 + y) * 8 - 4;
-      y = ((s16)window->y << 3) + (row << 4) + 12;
+      y = (window->y << 3) + (row << 4) + 12;
       if (result == -1)
         MenuCursor_SetPositionImmediateFar(&state->cursor, x, y);
       else

@@ -2075,7 +2075,7 @@ void Yallam_UpdateSongGame(void) {
   struct Actor *circlesChild = Actor_Get(ACTOR_CIRCLES_CHILD);
   struct Actor *storyChild = Actor_Get(ACTOR_STORY_CHILD);
   struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
-  s32 command = (s16)songLeader->userValue;
+  s32 command = songLeader->userValue;
 
   switch (command) {
   case SONG_GAME_GO:
@@ -2114,27 +2114,27 @@ void Yallam_PauseSongGame(void) {
 
   actor = Actor_Get(ACTOR_SONG_LEADER);
   gYallam_SavedSongGame[0].timer = actor->timer;
-  gYallam_SavedSongGame[0].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[0].userValue = actor->userValue;
   gYallam_SavedSongGame[0].sceneCounter = actor->sceneCounter;
   gYallam_SavedSongGame[0].sceneByte = actor->sceneByte;
   actor = Actor_Get(ACTOR_GAME_CHILD);
   gYallam_SavedSongGame[1].timer = actor->timer;
-  gYallam_SavedSongGame[1].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[1].userValue = actor->userValue;
   gYallam_SavedSongGame[1].sceneCounter = actor->sceneCounter;
   gYallam_SavedSongGame[1].sceneByte = actor->sceneByte;
   actor = Actor_Get(ACTOR_CIRCLES_CHILD);
   gYallam_SavedSongGame[2].timer = actor->timer;
-  gYallam_SavedSongGame[2].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[2].userValue = actor->userValue;
   gYallam_SavedSongGame[2].sceneCounter = actor->sceneCounter;
   gYallam_SavedSongGame[2].sceneByte = actor->sceneByte;
   actor = Actor_Get(ACTOR_STORY_CHILD);
   gYallam_SavedSongGame[3].timer = actor->timer;
-  gYallam_SavedSongGame[3].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[3].userValue = actor->userValue;
   gYallam_SavedSongGame[3].sceneCounter = actor->sceneCounter;
   gYallam_SavedSongGame[3].sceneByte = actor->sceneByte;
   actor = Actor_Get(gMainRoutineState.leaderActorId);
   gYallam_SavedSongGame[4].timer = actor->timer;
-  gYallam_SavedSongGame[4].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[4].userValue = actor->userValue;
   gYallam_SavedSongGame[4].sceneCounter = actor->sceneCounter;
   gYallam_SavedSongGame[4].sceneByte = actor->sceneByte;
   FieldTask_Remove(Yallam_UpdateSongGame);

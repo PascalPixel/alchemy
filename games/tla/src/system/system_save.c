@@ -146,19 +146,18 @@ u32 Save_WriteSector(s32 sector) {
   if (progress != 0)
     progress(0);
   if (gProgramFlashSector(sector, state->slot) != 0 ||
-      VerifyFlashSector(sector, (s32)state->slot) != 0)
+      VerifyFlashSector(sector, state->slot) != 0)
     return 1;
   if (progress != 0)
     progress(1);
   if (gProgramFlashSector(sector + 1, state->slot + SAVE_SECTOR_SIZE) != 0 ||
-      VerifyFlashSector(sector + 1, (s32)(state->slot + SAVE_SECTOR_SIZE)) != 0)
+      VerifyFlashSector(sector + 1, state->slot + SAVE_SECTOR_SIZE) != 0)
     return 1;
   if (progress != 0)
     progress(1);
   if (gProgramFlashSector(sector + 2, state->slot + 2 * SAVE_SECTOR_SIZE) !=
           0 ||
-      VerifyFlashSector(sector + 2,
-                        (s32)(state->slot + 2 * SAVE_SECTOR_SIZE)) != 0)
+      VerifyFlashSector(sector + 2, state->slot + 2 * SAVE_SECTOR_SIZE) != 0)
     return 1;
   if (progress != 0)
     progress(1);

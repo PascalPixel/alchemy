@@ -51,7 +51,7 @@ struct ScriptOperands {
   u8 paused;
   u8 retainSpriteCache;
   u8 repeatCount; ///< the SC_LOOP count
-  u16 wait;       ///< SC_WAIT's frames left, compared as signed
+  s16 wait;       ///< SC_WAIT's frames left
   u8 refused;     ///< Actor.refused, the blocked frames
   u8 frozen;
   u8 sceneCounter;

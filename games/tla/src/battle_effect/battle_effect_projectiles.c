@@ -116,8 +116,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_MAX);
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  draw[0] = Ram_HeapSlots->ramCode;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
   actor = BattleObject_GetFar(args->user)->object;
   target = BattleObject_GetFar(args->targets[0])->object;
 
@@ -514,7 +514,7 @@ enum ProjectileVolleyComet {
 };
 
 /// The second blitter, loaded again for each draw that needs its own.
-#define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
+#define DRAW_ALTERNATE (Ram_HeapSlots->ramCodePaired)
 
 #define PROJECTILE_VOLLEY_STREAK_PICTURES 8192 ///< wind streaks
 #define PROJECTILE_VOLLEY_DJINNI_PICTURE 26048 ///< the small Mercury Djinni
@@ -607,7 +607,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
 
   // The shot pictures.
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);

@@ -52,8 +52,8 @@ UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
                                       s32 width, s32 height, u32 set) {
   struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
 
-  x += (s16)window->x + 1;
-  y += (s16)window->y + 1;
+  x += window->x + 1;
+  y += window->y + 1;
   set &= 1;
   set = BG_TILE_PALETTE(set);
   if (x < 0) {

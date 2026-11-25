@@ -1916,13 +1916,12 @@ void Prox_MatchCaveHomesPriority(void) {
 void Prox_InitializeCaveHomes(void) {
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-    s32 entrance = (u16)gMainRoutineState.entrance;
-
     if (gMainRoutineState.entrance == PROX_CAVE_HOMES_FROM_PROX_HOUSES_NORTH)
       Prox_ComeDownStairs(0);
-    else if ((u16)(entrance - PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST) <=
-             PROX_CAVE_HOMES_FROM_PROX_HOUSES_SOUTH -
-                 PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST)
+    else if (gMainRoutineState.entrance >=
+                 PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST &&
+             gMainRoutineState.entrance <=
+                 PROX_CAVE_HOMES_FROM_PROX_HOUSES_SOUTH)
       Prox_ComeDownStairs(1);
   }
   FieldEffect_StartBlankOverlay(0);

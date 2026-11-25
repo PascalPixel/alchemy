@@ -187,7 +187,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX - 1);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -326,11 +326,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       if (frame <= 139) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
-        drawAlt = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+        drawAlt = Ram_HeapSlots->ramCodePaired;
       } else {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_MAX);
-        drawAlt = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+        drawAlt = Ram_HeapSlots->ramCodePaired;
       }
       moteCount = count;
       if (moteCount > THOR_RING_MOTES) {
@@ -381,14 +381,14 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       flags = EFFECT_CLIP_BOUNDS;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      (Ram_HeapSlots->ramCodePaired)(
           canvas, state->sheet, CANVAS_SIZE / 2 - THOR_LIGHT_FAN_WIDTH,
           (frame - THOR_BEAM_FRAME) * THOR_BEAM_SPEED - 12,
           THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      (Ram_HeapSlots->ramCodePaired)(
           canvas, state->sheet, CANVAS_SIZE / 2,
           (frame - THOR_BEAM_FRAME) * THOR_BEAM_SPEED - 12,
           THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
@@ -495,7 +495,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
               s32 boltY = (Random16() & 3) + 32;
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
-              ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+              (Ram_HeapSlots->ramCodePaired)(
                   canvas, state->sheet + i % 3 * PICTURE_BYTES(THOR_BOLT),
                   boltX, boltY, THOR_BOLT_WIDTH, THOR_BOLT_HEIGHT);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -547,7 +547,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       {
         // Sparks slow and bounce off the ground, shrinking as they die.
-        DrawRectangle draw = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+        DrawRectangle draw = Ram_HeapSlots->ramCodePaired;
         struct Particle *spark;
         for (i = 0, spark = THOR_PARTICLES; i != THOR_SPARK_COUNT;
              i++, spark++) {
@@ -600,7 +600,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | gThor_CrackleFlips[flip & 3],
                               BLITTER_MAX);
-          ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+          (Ram_HeapSlots->ramCodePaired)(
               canvas, Ram_MapCellBuffer + gBattleEffect_GlintPictures[cell], x,
               y + 56, gBattleEffect_GlintPictureWidths[cell],
               gBattleEffect_GlintPictureHeights[cell]);

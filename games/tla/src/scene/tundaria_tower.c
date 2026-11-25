@@ -742,7 +742,7 @@ void TundariaTower_EndRevealHiddenWay(void) {
   GameFlag_Clear(FLAG_HIDDEN_WAY_REVEALED);
   // The icy wall's part of the map is entered by 6, from the Burst Brooch's
   // room, or 7.
-  if ((u16)(gMainRoutineState.entrance - 6) <= 1) {
+  if (gMainRoutineState.entrance >= 6 && gMainRoutineState.entrance <= 7) {
     MapGrid_CopyCellTilesIndicesRect(39, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 41, 3, 3, 53, 37);
     if (FIELD_CELL(Actor_GetById(gMainRoutineState.leaderActorId)->z.fixed) ==
@@ -763,7 +763,7 @@ void TundariaTower_EndRevealHiddenWay(void) {
 void TundariaTower_RevealHiddenWay(void) {
   BlendScript_Suspend();
   GameFlag_Set(FLAG_HIDDEN_WAY_REVEALED);
-  if ((u16)(gMainRoutineState.entrance - 6) <= 1) {
+  if (gMainRoutineState.entrance >= 6 && gMainRoutineState.entrance <= 7) {
     MapGrid_CopyCellTilesIndicesRect(43, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 37, 3, 3, 53, 37);
     if (FIELD_CELL(Actor_GetById(gMainRoutineState.leaderActorId)->z.fixed) >

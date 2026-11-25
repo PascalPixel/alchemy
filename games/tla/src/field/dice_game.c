@@ -176,8 +176,8 @@ void SuperLuckyDice_ResetViewDefaults(void) {
   // The eye sits `distance` behind the focus along the camera's view.
   Matrix_Initialize();
   Matrix_TranslateVector(&camera->focus[0]);
-  Matrix_RotateY((s16)camera->yaw);
-  Matrix_RotateX((s16)camera->pitch);
+  Matrix_RotateY(camera->yaw);
+  Matrix_RotateX(camera->pitch);
 
   SET_VECTOR(offset, 0, 0, camera->distance);
   Iwram_TransformVector(offset, camera->eye);
@@ -758,7 +758,7 @@ void SuperLuckyDice_Run(void) {
                              8);
   bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
 #if !TLA_PATCH_2
-  if ((u32)bet > (u32)gMainRoutineState.coins)
+  if ((u32)bet > gMainRoutineState.coins)
     bet = gMainRoutineState.coins;
 #endif
   Text_DrawNumberInWindowFar(bet, DICE_COIN_DIGITS, (s32)sprites->betWindow,
@@ -781,7 +781,7 @@ void SuperLuckyDice_Run(void) {
 
     if (state == SUPER_LUCKY_DICE_THROW) {
       if (frame > 17) {
-        if ((u32)gMainRoutineState.coins <
+        if (gMainRoutineState.coins <
             (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
           Window_CloseFar(sprites->helpWindow, 1);
           break;
@@ -797,7 +797,7 @@ void SuperLuckyDice_Run(void) {
           Sound_PlayFar(SE_LUCKY_DICE_THROW);
           DICE_GAME_THROW(dice, spinRate);
           bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
-          if ((u32)bet > (u32)gMainRoutineState.coins)
+          if ((u32)bet > gMainRoutineState.coins)
             bet = gMainRoutineState.coins;
           Text_DrawNumberInWindowFar(bet, DICE_COIN_DIGITS,
                                      (s32)sprites->betWindow, BET_TEXT_X, 5);
@@ -854,7 +854,7 @@ void SuperLuckyDice_Run(void) {
         // first hi-lo game comes only after a win.
         if (hiLoGame == 0) {
           bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
-          if ((u32)bet > (u32)gMainRoutineState.coins)
+          if ((u32)bet > gMainRoutineState.coins)
             bet = gMainRoutineState.coins;
           Text_DrawNumberInWindowFar(bet, DICE_COIN_DIGITS,
                                      (s32)sprites->betWindow, BET_TEXT_X, 5);

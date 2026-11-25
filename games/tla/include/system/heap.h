@@ -18,6 +18,7 @@
 
 struct BattleBackgroundState;
 struct BattleState;
+struct BattleMessageState;
 struct MapState;
 struct Actor;
 struct ActorSystemState;
@@ -69,9 +70,10 @@ struct HeapSlots {
   void *battleCanvas; ///< the running battle effect's pixel canvas
   void *battleSheet;  ///< the running battle effect's tile sheet
   /// A routine run from RAM: the canvas drawing routine
-  /// BattleEffect_BuildBlitter writes, or the world map's copy of
-  /// WorldMap_UpdateAffineLines.
-  void *ramCode;
+  /// BattleEffect_BuildBlitter writes (a DrawRectangle), or the world map's
+  /// copy of WorldMap_UpdateAffineLines, which the world map calls as its own.
+  s32 (*ramCode)(void *destination, const void *source, s32 x, s32 y, s32 width,
+                 s32 height);
   void *fieldState;    ///< a field scene's struct FieldState
   void *paletteCycles; ///< the palette cycles
   void *weather;       ///< the running ground particles, motes or sparkles
@@ -81,11 +83,11 @@ struct HeapSlots {
   /// The palette fade that moves the BG and sprite palettes toward target
   /// colours (struct PaletteFade).
   void *paletteFade;
-  void *unusedAfterPaletteFade;     ///< no code allocates or reads this slot
-  void *lineScroll;                 ///< the line scroll's state
-  void *unusedAfterLineScroll;      ///< no code allocates or reads this slot
-  void *fadeOverlay;                ///< the fade overlay's state
-  void *battleMessage;              ///< the battle message window's state
+  void *unusedAfterPaletteFade; ///< no code allocates or reads this slot
+  void *lineScroll;             ///< the line scroll's state
+  void *unusedAfterLineScroll;  ///< no code allocates or reads this slot
+  void *fadeOverlay;            ///< the fade overlay's state
+  struct BattleMessageState *battleMessage; ///< the battle message window
   void *unusedAfterBattleMessage;   ///< no code allocates or reads this slot
   struct RopeState *rope;           ///< a rope's state
   struct TightropeState *tightrope; ///< a tightrope's state
@@ -100,7 +102,8 @@ struct HeapSlots {
   void *unusedAfterCanvasMap; ///< no code allocates this slot
   /// A second routine as ramCode, released before it: always a
   /// BattleEffect_BuildBlitter routine, the second of a pair.
-  void *ramCodePaired;
+  s32 (*ramCodePaired)(void *destination, const void *source, s32 x, s32 y,
+                       s32 width, s32 height);
   void *unusedAfterRamCodePaired;   ///< no code allocates or reads this slot
   void *unusedBeforeMessageDecoder; ///< no code allocates or reads this slot
   /// The message decoder routine (Text_DecodeSymbol), copied here to run for

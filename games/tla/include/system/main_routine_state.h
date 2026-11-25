@@ -107,7 +107,7 @@ struct MainRoutineState {
   /// the party's DjinnRecoveryTable, which Djinn_GetRecoveryTable returns from
   /// here, its next word running over coins.
   u32 summonMask;
-  s32 coins; ///< at most COIN_MAX (Party_AdjustCoins)
+  u32 coins; ///< at most COIN_MAX (Party_AdjustCoins)
   /// The party's Djinn recovery list (DjinnRecoveryTable from its offers on),
   /// read through Djinn_GetRecoveryTable.
   u8 djinnRecovery[292];

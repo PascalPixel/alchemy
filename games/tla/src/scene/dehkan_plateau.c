@@ -1969,8 +1969,8 @@ void DehkanPlateau_InitializeMintChest(void) {
     MapGrid_CopyCellTilesIndicesRect(67, 3, 94, 28, 1, 5);
     MapGrid_CopyCellTilesIndicesRect(3, 69, 30, 93, 1, 4);
   }
-  if ((u16)(gMainRoutineState.entrance - FIRST_LANDING_ENTRANCE) <=
-      LAST_LANDING_ENTRANCE - FIRST_LANDING_ENTRANCE) {
+  if (gMainRoutineState.entrance >= FIRST_LANDING_ENTRANCE &&
+      gMainRoutineState.entrance <= LAST_LANDING_ENTRANCE) {
     s32 entrance = gMainRoutineState.entrance;
 
     DehkanPlateau_ForgetFall();

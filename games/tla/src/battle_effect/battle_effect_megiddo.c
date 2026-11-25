@@ -150,7 +150,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   flameCorners = (struct ModelVertex *)(state->sheet + MEGIDDO_FLAME_CORNERS);
   flameMesh = state->sheet + MEGIDDO_FLAME_MESH;
   caster = BattleObject_GetFar(args->user)->object;

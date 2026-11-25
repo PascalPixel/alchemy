@@ -1331,7 +1331,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                                   gCatastrophe_GlintFlips[flip & 3] |
                                       EFFECT_CLIP_BOUNDS,
                                   BLITTER_ADDITIVE);
-              ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+              (Ram_HeapSlots->ramCodePaired)(
                   canvas,
                   state->sheet + CATASTROPHE_SWEEP_PICTURES +
                       gBattleEffect_GlintPictures[n],

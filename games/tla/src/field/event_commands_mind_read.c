@@ -1358,7 +1358,7 @@ void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
       SET_POSITION(&pos, particle->targetX, particle->targetY,
                    particle->targetZ);
       Vector_AddPolarOffset(life * toFIXED(2),
-                            (s16)particle->userValue + life * (TRIG_TURN / 32),
+                            particle->userValue + life * (TRIG_TURN / 32),
                             &pos);
       SET_ACTOR_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
@@ -1381,7 +1381,7 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
       SET_POSITION(&pos, particle->targetX, particle->targetY,
                    particle->targetZ);
       Vector_AddPolarOffset(life * toFIXED(2),
-                            (s16)particle->userValue - life * (TRIG_TURN / 32),
+                            particle->userValue - life * (TRIG_TURN / 32),
                             &pos);
       SET_ACTOR_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
@@ -1517,7 +1517,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
       pos.z = effectState->z;
       Vector_AddPolarOffset(
           INTtoFIXED(remainingFrames),
-          (s16)particle->userValue + remainingFrames * (TRIG_TURN / 32), &pos);
+          particle->userValue + remainingFrames * (TRIG_TURN / 32), &pos);
       particle->x.fixed = pos.x;
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;

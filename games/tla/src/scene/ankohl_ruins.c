@@ -1710,9 +1710,8 @@ s32 Scene_Initialize(s32 unused) {
         GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
       s32 width;
 
-      if ((u16)(gMainRoutineState.entrance - FACE_HALVES_HALL_FIRST_ENTRANCE) <=
-          FACE_HALVES_HALL_SOUND_LAST_ENTRANCE -
-              FACE_HALVES_HALL_FIRST_ENTRANCE)
+      if (gMainRoutineState.entrance >= FACE_HALVES_HALL_FIRST_ENTRANCE &&
+          gMainRoutineState.entrance <= FACE_HALVES_HALL_SOUND_LAST_ENTRANCE)
         Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
       width = 12;
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
@@ -1759,9 +1758,9 @@ s32 Scene_Initialize(s32 unused) {
             ANKOHL_RUINS_FACE_HALVES_TO_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_C);
       }
     }
-    if ((u16)(gMainRoutineState.entrance - FACE_HALVES_HALL_FIRST_ENTRANCE) <=
-        ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_B -
-            FACE_HALVES_HALL_FIRST_ENTRANCE)
+    if (gMainRoutineState.entrance >= FACE_HALVES_HALL_FIRST_ENTRANCE &&
+        gMainRoutineState.entrance <=
+            ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_B)
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
   } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
     if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
@@ -1799,8 +1798,10 @@ s32 Scene_Initialize(s32 unused) {
 
       gAnkohlRuins_Sand.level = level;
       // The first sand room's two entrances.
-      if ((u16)(state->entrance -
-                ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_GREAT_FACE) <= 1) {
+      if (state->entrance >=
+              ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_GREAT_FACE &&
+          state->entrance <=
+              ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
         s32 z;
         s32 x;
 
@@ -1817,9 +1818,10 @@ s32 Scene_Initialize(s32 unused) {
         MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, z);
       }
       // The second sand room's two entrances.
-      if ((u16)(state->entrance -
-                ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_SOUTH) <=
-          1) {
+      if (state->entrance >=
+              ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_SOUTH &&
+          state->entrance <=
+              ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_NORTH) {
         s32 z;
         s32 x;
 

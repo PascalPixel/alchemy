@@ -132,8 +132,8 @@ enum GaiaRockPassage {
 /// Whether the party arrives on the next cliffs' great wall side: by its
 /// passage, or down from the mesa (the entrance after it).
 #define ARRIVES_AT_GREAT_WALL()                                                \
-  ((u16)(gMainRoutineState.entrance -                                          \
-         GAIA_ROCK_STATUE_SPOTS_WALL_FROM_VINES) <= 1)
+  (gMainRoutineState.entrance >= GAIA_ROCK_STATUE_SPOTS_WALL_FROM_VINES &&     \
+   gMainRoutineState.entrance <= GAIA_ROCK_STATUE_SPOTS_WALL_FROM_VINES + 1)
 
 /// The whirlwind's circling leaves.
 enum { WHIRLWIND_LEAVES = 16 };

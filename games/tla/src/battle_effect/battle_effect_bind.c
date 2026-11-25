@@ -207,10 +207,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 
     // Two blitters that keep the brighter pixel, the second mirrored.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    draw[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->ramCodePaired;
+    draw[1] = heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
       state->transferValue += CANVAS_FILL_WORD(1);
 
@@ -345,10 +345,10 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
 
     // Two blitters that keep the brighter pixel, the second mirrored.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    draw[0] = Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->ramCodePaired;
+    draw[1] = heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
       state->transferValue += CANVAS_FILL_WORD(1);
 

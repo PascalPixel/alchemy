@@ -710,11 +710,11 @@ counted:
         effectSprite->rotation = footprintAngle + DEGtoANG(90);
         effectSprite->priority = 3;
       }
-      if (*(s16 *)&actor->userValue == FOOTPRINT_BOTH_FEET) {
+      if (actor->userValue == FOOTPRINT_BOTH_FEET) {
         Sprite_StartAnimation(effectSprite, FOOTPRINT_BOTH_FEET);
         actor->userValue = collision;
       }
-      if (*(s16 *)&actor->userValue != 0)
+      if (actor->userValue != 0)
         effect->facing = DEGtoANG(180);
       if (movementAnimation == ANIM_LEADER_RUN)
         actor->timer = 12;

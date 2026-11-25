@@ -224,7 +224,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS,
                               BLITTER_MAX);
-    blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    blit[0] = Ram_HeapSlots->ramCode;
     // DEAD: both fields are set again before anything reads them; the ROM
     // keeps the two stores.
     EFFECT_SET_TRANSFER(state, transferMode, CANVAS_FILL_WORD(4));
@@ -501,7 +501,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(16, 124);
   REG_WIN1V = WIN_RANGE(0, 136);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  blit[0] = Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);

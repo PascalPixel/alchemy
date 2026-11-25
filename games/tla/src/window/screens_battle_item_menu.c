@@ -108,7 +108,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     s32 y;
     /* FAKEMATCH(temporary): windowY holds 0 for the icon's attr23 word before
-     * it holds the window's y; as 0 and (s16)window->y at their uses. */
+     * it holds the window's y; as 0 and window->y at their uses. */
     s32 windowY = 0;
 
     y = i * 2;
@@ -118,8 +118,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     iconSprite = &sprites[i];
     sprites[i].oam.word.attr01 = OBJ_SIZE_16X16;
     sprites[i].oam.word.attr23 = windowY;
-    iconSprite->oam.f.x = (s16)window->x * 8 + 8;
-    windowY = (s16)window->y;
+    iconSprite->oam.f.x = window->x * 8 + 8;
+    windowY = window->y;
     iconSprite->oam.f.y = (y + windowY) * 8 + 4;
   }
   // One icon slot a visible row; paging reloads these same slots.
@@ -143,9 +143,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       state->holdTilemapUpload = 1;
-      Window_HighlightRect((s16)window->x + 1,
-                           (s16)window->y + drawnRow * 2 + 1, window->width - 2,
-                           1, WINDOW_PALETTE);
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
+                           window->width - 2, 1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0) {
         if (Item_CheckBattleUse(member, entries[firstEntry + selectedRow]) == 2)
@@ -197,8 +196,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
               -1, 0);
         }
       }
-      Window_HighlightRect((s16)window->x + 1,
-                           (s16)window->y + selectedRow * 2 + 1,
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, HIGHLIGHT_PALETTE);
       state->dirty = 1;
       state->holdTilemapUpload = 0;
@@ -225,7 +223,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
-      WINDOW_MARK_TILEMAP_ROW(state, (u32)((s16)window->y - 1));
+      WINDOW_MARK_TILEMAP_ROW(state, window->y - 1);
     }
 
     for (i = 0; i < iconCount; i++)

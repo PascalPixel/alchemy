@@ -148,7 +148,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   s32 otherPoint[3];
   struct ScreenPoint pos;
   struct ScreenPoint spot;
-  void *draw[2];
+  DrawRectangle draw[2];
   struct BattleEffectState *state;
   void *canvas;
   s32 frame;
@@ -296,29 +296,27 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
             gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
           // The arc's six pictures.
           if (args->side == EFFECT_SIDE_ENEMIES)
-            ((DrawRectangle)draw[i & 1])(canvas,
-                                         state->sheet +
-                                             FLURRY_BLUE_ARC_PICTURES +
-                                             step * PICTURE_BYTES(BLUE_ARC),
-                                         targetPos.x / 2 - 16, targetPos.y - 40,
-                                         BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+            draw[i & 1](canvas,
+                        state->sheet + FLURRY_BLUE_ARC_PICTURES +
+                            step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 16, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
           else
-            ((DrawRectangle)draw[i & 1])(canvas,
-                                         state->sheet +
-                                             FLURRY_BLUE_ARC_PICTURES +
-                                             step * PICTURE_BYTES(BLUE_ARC),
-                                         targetPos.x / 2 - 32, targetPos.y - 40,
-                                         BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+            draw[i & 1](canvas,
+                        state->sheet + FLURRY_BLUE_ARC_PICTURES +
+                            step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 32, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
         } else {
           // The wave's six pictures.
           if (args->side == EFFECT_SIDE_ENEMIES)
-            ((DrawRectangle)draw[i & 1])(
-                canvas, pictures + step * PICTURE_BYTES(WAVE),
-                targetPos.x / 2 - 16, actorPos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
+            draw[i & 1](canvas, pictures + step * PICTURE_BYTES(WAVE),
+                        targetPos.x / 2 - 16, actorPos.y - 8, WAVE_WIDTH,
+                        WAVE_HEIGHT);
           else
-            ((DrawRectangle)draw[i & 1])(
-                canvas, pictures + step * PICTURE_BYTES(WAVE),
-                targetPos.x / 2 - 32, actorPos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
+            draw[i & 1](canvas, pictures + step * PICTURE_BYTES(WAVE),
+                        targetPos.x / 2 - 32, actorPos.y - 8, WAVE_WIDTH,
+                        WAVE_HEIGHT);
         }
       }
       // The hit; the last strike knocks the target back.
@@ -344,13 +342,13 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       }
       // The orb's six pictures, two frames each.
       if (frame >= start + 2 && frame < start + 14)
-        ((DrawRectangle)draw[0])(
-            canvas,
-            pictures + FLURRY_ORB_PICTURES +
-                ((frame - start - 2) / 2) * PICTURE_BYTES(YELLOW_ORB_PACKED),
-            targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
-            targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2, YELLOW_ORB_PACKED_WIDTH,
-            YELLOW_ORB_PACKED_HEIGHT);
+        draw[0](canvas,
+                pictures + FLURRY_ORB_PICTURES +
+                    ((frame - start - 2) / 2) *
+                        PICTURE_BYTES(YELLOW_ORB_PACKED),
+                targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
+                targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
+                YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
     }
     EFFECT_RELEASE_BLITTERS();
 
@@ -371,8 +369,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         pos.x /= 2;
         size >>= 3;
         size++;
-        EFFECT_DRAW_MOTE((DrawRectangle)draw[(i / 2) & 1], canvas, sheet, pos.x,
-                         pos.y, size);
+        EFFECT_DRAW_MOTE(draw[(i / 2) & 1], canvas, sheet, pos.x, pos.y, size);
         Particle_AdvanceWithGravity3D(mote, 60, -toFIXED(1) / 64);
         if (mote->y < toFIXED(8))
           mote->velocityY = -mote->velocityY / 2;
@@ -400,7 +397,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                               gFlurry_GlintFlips[flip & 3] | COMPOSITE_CLIP_X |
                                   COMPOSITE_CLIP_Y,
                               BLITTER_ADDITIVE);
-          ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+          (Ram_HeapSlots->ramCodePaired)(
               canvas, state->sheet + gBattleEffect_GlintPictures[cel], x, y,
               gBattleEffect_GlintPictureWidths[cel],
               gBattleEffect_GlintPictureHeights[cel]);
@@ -416,14 +413,13 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           struct Particle *puff = &state->particles[i];
 
           if (puff->variant >= 0 && puff->variant < FLURRY_SMOKE_FRAMES) {
-            ((DrawRectangle)draw[0])(
-                canvas,
-                pictures + FLURRY_SMOKE_PICTURES +
-                    (puff->variant / FLURRY_SMOKE_PICTURE_FRAMES) *
-                        PICTURE_BYTES(SMOKE_PUFF),
-                FIXED_INTEGER_PART(puff->x) - SMOKE_PUFF_WIDTH / 2,
-                FIXED_INTEGER_PART(puff->y) - SMOKE_PUFF_HEIGHT / 2,
-                SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
+            draw[0](canvas,
+                    pictures + FLURRY_SMOKE_PICTURES +
+                        (puff->variant / FLURRY_SMOKE_PICTURE_FRAMES) *
+                            PICTURE_BYTES(SMOKE_PUFF),
+                    FIXED_INTEGER_PART(puff->x) - SMOKE_PUFF_WIDTH / 2,
+                    FIXED_INTEGER_PART(puff->y) - SMOKE_PUFF_HEIGHT / 2,
+                    SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
             Particle_AdvanceWithGravity2D(puff, 62, -toFIXED(1) / 16);
           }
           puff->variant++;

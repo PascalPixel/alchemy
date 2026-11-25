@@ -1182,7 +1182,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
                              1, 0);
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   targetObject = BattleObject_GetFar(args->targets[0])->object;

@@ -1024,7 +1024,7 @@ void Party_AddIsaacsParty(void) {
   Party_GiveItemIfMissing(ITEM_CATCH_BEADS, IVAN);
   gMainRoutineState.coins += gMainRoutineState.transferredCoins;
 #if TLA_PATCH_4
-  if ((u32)gMainRoutineState.coins > COIN_MAX)
+  if (gMainRoutineState.coins > COIN_MAX)
     gMainRoutineState.coins = COIN_MAX;
 #endif
 }

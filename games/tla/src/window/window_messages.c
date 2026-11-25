@@ -192,8 +192,8 @@ void Window_ShowFlashFrame(struct Window **window, s32 offset) {
   u8 *source =
       (u8 *)Resource_GetTableEntry(RESOURCE_WINDOW_BORDER_FLASH) + offset;
   struct Window *rect = *window;
-  s32 x = (s16)rect->x;
-  s32 y = (s16)rect->y;
+  s32 x = rect->x;
+  s32 y = rect->y;
   s32 width = rect->width;
   s32 height = rect->height;
 
@@ -221,8 +221,7 @@ void Window_StepSwellEffect(struct Message *message) {
     if (message->countdown == 2) {
       struct Window *window = message->window;
 
-      Window_DrawBorder((s16)window->x, (s16)window->y, window->width,
-                        window->height);
+      Window_DrawBorder(window->x, window->y, window->width, window->height);
     }
     message->countdown--;
     if (message->countdown == 0) {

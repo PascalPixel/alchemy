@@ -49,7 +49,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
                        Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET),
                        SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw = Ram_HeapSlots->ramCode;
 
   EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * BREAK_SHARDS_PER_TARGET);
 
@@ -224,7 +224,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   }
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
+  draw = Ram_HeapSlots->ramCode;
   if (mode == DRAIN_MOTES_TRUE_COLLIDE) {
     // Colours 1 to 63 run from violet down to black, so an orb is dark where
     // its level is highest; the canvas is blended 16:6 and trails.

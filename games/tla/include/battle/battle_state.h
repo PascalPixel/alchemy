@@ -13,38 +13,18 @@
 #include "battle/battle_event.h"
 #include "system/ram_buffer.h"
 #include "battle/battle_action.h"
-
-/// One OAM entry in a sprite list: the arrow that waits for the player to
-/// advance a battle message. The playback pushes it each frame it waits
-/// (Oam_AddSpriteAtDepth), and the three halfwords after the link are OAM
-/// attributes 0 to 2 as bit-fields.
-struct AdvanceArrowSprite {
-  /// The depth slot's next entry, set by Oam_AddSpriteAtDepth.
-  struct AdvanceArrowSprite *next;
-  u16 y : 8;     ///< pixels; bobs with a sine of the frame count
-  u16 flags : 8; ///< attribute 0's high byte: 0xa0, a tall 256-colour sprite
-  u16 x : 9;     ///< pixels
-  /// Attribute 1's flip and size bits; 0, which with the tall shape is 8 by
-  /// 16 pixels.
-  u16 size : 7;
-  u16 tile : 10; ///< the arrow picture's VRAM tile, reloaded each frame
-  /// Attribute 2's priority (bits 1..0) and palette (bits 5..2); 0 here.
-  u16 palette : 6;
-  /// OAM's fourth halfword, the affine parameter slot; cleared with the tile
-  /// word each frame.
-  u16 affineParam;
-};
+#include "window/menu_list.h"
 
 /// The battle event queue and the state of its playback.
 struct BattlePlaybackState {
   struct BattlePlaybackQueue queue;
-  s32 phase;      ///< enum BattlePlaybackPhase, or a message phase
-  s32 eventIndex; ///< the next queued event to play
-  s32 timer;      ///< frames to wait
-  struct AdvanceArrowSprite arrow; ///< the advance arrow
-  s32 arrowResource;    ///< the arrow's resource entry; -1 until it is shown
-  s32 unitId;           ///< the unit of the hit or defeat being played
-  s16 pendingSound;     ///< hit sound (an SE_ id), played on the next hit
+  s32 phase;               ///< enum BattlePlaybackPhase, or a message phase
+  s32 eventIndex;          ///< the next queued event to play
+  s32 timer;               ///< frames to wait
+  struct MenuSprite arrow; ///< the advance arrow
+  s32 arrowResource;       ///< the arrow's resource entry; -1 until it is shown
+  s32 unitId;              ///< the unit of the hit or defeat being played
+  s16 pendingSound;        ///< hit sound (an SE_ id), played on the next hit
   s16 keepPendingSound; ///< while nonzero, a resumed phase keeps pendingSound
   /// Set by PLAYBACK_DJINN_BONUS: enemies felled from then on give the Djinn
   /// bonus, cycling their colours and crying as they fall.
@@ -65,24 +45,20 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
 #define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
 
 struct Window;
+struct Message;
 
-/// The battle message, as far as its offset in the window:
-/// the advance arrow is drawn at the window's corner plus this offset.
-struct BattleMessageOffset {
-  struct Window *window; ///< Message.window; not named here
-  u16 x;                 ///< 1/256 pixels
-  u16 y;                 ///< 1/256 pixels
-};
-
-/// The battle message window: its window, its message and whether the
-/// next message is marked.
+/// The battle message window (heap slot battleMessage): its window, its message
+/// and whether the next message is marked.
 struct BattleMessageState {
-  struct Window *window;              ///< the message window
-  struct BattleMessageOffset *offset; ///< its message
-  s32 marked; ///< set by PLAYBACK_MARK; passed to the next message
+  struct Window *window; ///< the message window
+  /// Its message, as BattleMessage_Continue returned it: the advance arrow is
+  /// drawn at the window's corner plus the message's pen.
+  struct Message *message;
+  /// Set by PLAYBACK_MARK; passed to the next message, which then keeps its
+  /// place (BattleMessage_Continue's keepPosition).
+  s32 marked;
 };
 
-STATIC_ASSERT(sizeof(struct BattleMessageOffset) == 8);
 STATIC_ASSERT(sizeof(struct BattleMessageState) == 12);
 
 /// BattleState.opponentSlots of a party unit with no slot as a link opponent.

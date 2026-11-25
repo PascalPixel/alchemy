@@ -1185,7 +1185,7 @@ s32 Clear_EnterPassword(void) {
     sprite = WindowSprite_Create(entry, WINDOW_SPRITE_SIZE_16X16,
                                  (struct Window *)window, 0, 0);
     Cursor_Attach(&cursorStore, sprite);
-    Cursor_Place(&cursorStore, (s16)window->x * 8 - 2, (s16)window->y * 8 + 12);
+    Cursor_Place(&cursorStore, window->x * 8 - 2, window->y * 8 + 12);
   }
   entry = VramCache_FindFreeEntry();
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
@@ -1195,14 +1195,14 @@ s32 Clear_EnterPassword(void) {
     Cursor_Attach(&gridStore, sprite);
     sprite->depth = OAM_DEPTH_FRONT;
     sprite->sprite.oam.priority = 0;
-    Cursor_Place(&gridStore, (s16)grid->x * 8 - 4, (s16)grid->y * 8 + 12);
+    Cursor_Place(&gridStore, grid->x * 8 - 4, grid->y * 8 + 12);
   }
   height = 1;
   drawColumn = 0;
   drawRow = 0;
   drawMode = 1;
-  cursorX = (s16)window->x * 8 - 8;
-  cursorY = (s16)window->y * 8 + 11;
+  cursorX = window->x * 8 - 8;
+  cursorY = window->y * 8 + 11;
   state = PASSWORD_STATE_ENTERING;
   for (;;) {
     action = PASSWORD_ACTION_NONE;
@@ -1261,11 +1261,11 @@ s32 Clear_EnterPassword(void) {
     Window_SetTextTileRect(window, drawColumn, row, drawMode, height,
                            HIGHLIGHT_PALETTE);
     {
-      s32 x = ((s16)window->x + column) * 8 - 8;
-      s32 y = ((s16)window->y + row) * 8 + 11;
+      s32 x = (window->x + column) * 8 - 8;
+      s32 y = (window->y + row) * 8 + 11;
 
       if (column > 4)
-        x = ((s16)window->x + column) * 8;
+        x = (window->x + column) * 8;
       if (column > 9)
         x += 8;
       if (column > 14)
@@ -1278,13 +1278,13 @@ s32 Clear_EnterPassword(void) {
     Cursor_Show(&cursorStore, cursorX, cursorY);
     {
       s32 cell = cursor % PASSWORD_SYMBOLS_PER_PAGE;
-      s32 y = (cell / PASSWORD_SYMBOLS_PER_ROW * 2 + (s16)grid->y) * 8 - 2;
+      s32 y = (cell / PASSWORD_SYMBOLS_PER_ROW * 2 + grid->y) * 8 - 2;
       s32 col;
       s32 x;
 
       frame = (gVBlankCount >> 1) & 7;
       col = cell % PASSWORD_SYMBOLS_PER_ROW;
-      x = col * 12 + (s16)grid->x * 8 + 16;
+      x = col * 12 + grid->x * 8 + 16;
 
       if (col > 4)
         x += 10;
@@ -1489,7 +1489,7 @@ UNUSED void Clear_FillTileGrid(struct Window *window,
 
   decodedTiles = Heap_AllocEwram(768);
   Decompress_TaggedLz(compressedTiles, decodedTiles);
-  cell = (s16)window->y * BG_SCREEN_WIDTH + (s16)window->x;
+  cell = window->y * BG_SCREEN_WIDTH + window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
   shadow = &state->tilemap[0][cell];
   for (row = 0; row < TILE_GRID_ROWS; row++) {
@@ -1517,7 +1517,7 @@ UNUSED void Clear_FillTileGridInOrder(struct Window *window) {
   s32 cell;
 
   buffer = Heap_AllocEwram(768);
-  cell = (s16)window->y * BG_SCREEN_WIDTH + (s16)window->x;
+  cell = window->y * BG_SCREEN_WIDTH + window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
   shadow = &state->tilemap[0][cell];
   for (row = 0; row < TILE_GRID_ROWS; row++) {
@@ -1868,8 +1868,8 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[PASSWORD_COINS_BYTE] = (u32)gMainRoutineState.coins >> 16;
-    out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineState.coins >> 8;
+    out[PASSWORD_COINS_BYTE] = gMainRoutineState.coins >> 16;
+    out[PASSWORD_COINS_BYTE + 1] = gMainRoutineState.coins >> 8;
     out[PASSWORD_COINS_BYTE + 2] = gMainRoutineState.coins;
   }
   // Silver and Gold carry the stats rows. Each packs two party members in

@@ -689,7 +689,7 @@ void Caverns_ParchAttekaWater(void) {
 /// staircases at cells (28, 5) and (36, 5) lead on by the exits of cells
 /// (28, 0) and (36, 0) instead of their own.
 void Caverns_PrepareAngara(void) {
-  if ((u16)(gMainRoutineState.entrance - 5) <= 1) {
+  if (gMainRoutineState.entrance >= 5 && gMainRoutineState.entrance <= 6) {
     MapGrid_CopyCellAttributes(28, 0, 1, 1, 28, 5);
     Map_CopyCellAttributeRect(36, 0, 1, 1, 36, 5);
   }

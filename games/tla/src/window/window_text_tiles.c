@@ -427,8 +427,8 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       y1 = y2;
       y2 = pos;
     }
-    Window_ClearTextTilesInRect((s16)win->x + x2, (s16)win->y + y1, 1, y2 - y1);
-    cursor = state->tilemap[(s16)win->y + y1] + (s16)win->x + x2;
+    Window_ClearTextTilesInRect(win->x + x2, win->y + y1, 1, y2 - y1);
+    cursor = state->tilemap[win->y + y1] + win->x + x2;
     for (pos = y1; pos <= y2; pos++) {
       tile = *cursor;
       if (pos == y1) {
@@ -500,8 +500,8 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       x1 = x2;
       x2 = pos;
     }
-    Window_ClearTextTilesInRect((s16)win->x + x1, (s16)win->y + y1, x2 - x1, 1);
-    cursor = state->tilemap[(s16)win->y + y1] + (s16)win->x + x1;
+    Window_ClearTextTilesInRect(win->x + x1, win->y + y1, x2 - x1, 1);
+    cursor = state->tilemap[win->y + y1] + win->x + x1;
     for (pos = x1; pos <= x2; pos++) {
       tile = *cursor;
       if (pos == x1) {
@@ -616,8 +616,8 @@ void Text_DrawMessageAsTiles(s32 message, struct Window *window, u32 offsetX,
   canvas->textBuffer[canvas->textBufferEnd] = 0;
   canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
 
-  cell = (((s16)window->y + (offsetY >> 3) + 1) << 5) +
-         ((s16)window->x + (offsetX >> 3)) + 1;
+  cell = ((window->y + (offsetY >> 3) + 1) << 5) +
+         (window->x + (offsetX >> 3)) + 1;
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     byteOffset = cell * 2;
     vramAddress = byteOffset + (s32)WINDOW_TILEMAP_VRAM;
@@ -666,8 +666,8 @@ void Text_DrawStringAtOffset(u8 *text, struct Window *window, s32 offsetX,
   }
   *output = 0;
 
-  cell = (((s16)window->y + ((u32)offsetY >> 3) + 1) << 5) +
-         ((s16)window->x + ((u32)offsetX >> 3)) + 1;
+  cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
+         (window->x + ((u32)offsetX >> 3)) + 1;
   // BUG: the buffer is released only when the text starts on screen; text
   // placed below the screen keeps its buffer taken. BUGFIX releases it either
   // way.
@@ -771,8 +771,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *window,
     output[index + 2] = text[index];
   }
   output[6] = 0;
-  cell = (((s16)window->y + ((u32)offsetY >> 3) + 1) << 5) +
-         ((s16)window->x + ((u32)offsetX >> 3)) + 1;
+  cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
+         (window->x + ((u32)offsetX >> 3)) + 1;
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;

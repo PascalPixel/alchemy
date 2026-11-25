@@ -296,9 +296,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       cursor.groupSize = itemCount;
       break;
     }
-    Window_HighlightRect((s16)statusWindow->x, (s16)statusWindow->y,
-                         statusWindow->width, statusWindow->height,
-                         WINDOW_PALETTE);
+    Window_HighlightRect(statusWindow->x, statusWindow->y, statusWindow->width,
+                         statusWindow->height, WINDOW_PALETTE);
 
     // A turns the page; each list page starts its own group at the top.
     if (gInput.pressed & KEY_A) {
@@ -476,8 +475,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       cursor.helpEntry = stop->entry;
       cursor.column = stop->column;
       cursor.row = stop->row;
-      Window_HighlightRect((s16)statusWindow->x + stop->highlightColumn + 1,
-                           (s16)statusWindow->y + stop->highlightRow + 1,
+      Window_HighlightRect(statusWindow->x + stop->highlightColumn + 1,
+                           statusWindow->y + stop->highlightRow + 1,
                            stop->highlightWidth, 1, HIGHLIGHT_PALETTE);
     } else if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
       cursor.helpEntry =
@@ -500,12 +499,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
               .row;
       if (statusKinds[0] == OWNER_CONDITION_NORMAL)
-        Window_HighlightRect((s16)statusWindow->x + 15,
-                             (s16)statusWindow->y + 1, 10, 1,
+        Window_HighlightRect(statusWindow->x + 15, statusWindow->y + 1, 10, 1,
                              HIGHLIGHT_PALETTE);
       else
-        Window_HighlightRect((s16)statusWindow->x + cursor.column + 1,
-                             (s16)statusWindow->y + cursor.row + 1, 2, 2,
+        Window_HighlightRect(statusWindow->x + cursor.column + 1,
+                             statusWindow->y + cursor.row + 1, 2, 2,
                              HIGHLIGHT_PALETTE);
     } else if (cursor.group == STATUS_CURSOR_PSYNERGY ||
                cursor.group == STATUS_CURSOR_ITEMS) {
@@ -516,16 +514,16 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         cursor.column = -2;
       else
         cursor.column = -1;
-      Window_HighlightRect((s16)statusWindow->x + 1,
-                           (s16)statusWindow->y + cursor.row + 1, 20, 1,
+      Window_HighlightRect(statusWindow->x + 1,
+                           statusWindow->y + cursor.row + 1, 20, 1,
                            HIGHLIGHT_PALETTE);
     } else {
       s32 position = cursor.groupPositions[STATUS_CURSOR_DJINN];
 
       cursor.row = (s8)(position % 3) * 2 + 9;
       cursor.column = (s8)(position / 3) * 7 - 2;
-      Window_HighlightRect((s16)statusWindow->x + cursor.column + 3,
-                           (s16)statusWindow->y + cursor.row + 1, 7, 1,
+      Window_HighlightRect(statusWindow->x + cursor.column + 3,
+                           statusWindow->y + cursor.row + 1, 7, 1,
                            HIGHLIGHT_PALETTE);
     }
     if (cursor.drawnHelpEntry != cursor.helpEntry) {
@@ -576,12 +574,12 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.f.tile = VramCache_Reload(cursorSlot, gPointingHandTiles);
     {
       s32 bob = gFrameCount & 4;
-      s32 x = (s16)statusWindow->x * 8 + cursorPosition.x + 16;
+      s32 x = statusWindow->x * 8 + cursorPosition.x + 16;
 
       cursorSprite.oam.f.x =
           page == STATUS_PAGE_STATS ? x - bob / 4 : x + bob / 4;
     }
-    cursorSprite.oam.f.y = cursorPosition.y + (s16)statusWindow->y * 8 -
+    cursorSprite.oam.f.y = cursorPosition.y + statusWindow->y * 8 -
                            (s32)(gFrameCount & 4) / 4 + 16;
     if (page != STATUS_PAGE_STATS)
       cursorSprite.oam.f.affineIndex = 0;
@@ -640,7 +638,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                    SUMMARY_HELP_CAPACITY);
         }
         WindowSprite_RedrawSavedRect(statusWindow);
-        Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
+        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
                                   helpWindow->width, helpWindow->height, 0);
         Text_FillCanvasBackground();
         Text_DrawWideStringAtOffset(itemText, helpWindow, 0, 20);
@@ -707,7 +705,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoPsynergy, psynergyText,
                                      BATTLE_MENU_MESSAGE_CAPACITY);
           WindowSprite_RedrawSavedRect(statusWindow);
-          Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
+          Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
                                     helpWindow->width, helpWindow->height, 0);
           Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
           if (rowBase != j) {
@@ -771,7 +769,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         u32 entry;
 
         WindowSprite_RedrawSavedRect(statusWindow);
-        Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
+        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
                                   helpWindow->width, helpWindow->height, 0);
         Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
         djinnCount = 0;
@@ -879,7 +877,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       if (redraw != 0) {
         if (page == STATUS_PAGE_STATS) {
           WindowSprite_RedrawSavedRect(statusWindow);
-          Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
+          Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
                                     helpWindow->width, helpWindow->height,
                                     page);
           Window_DrawDividerLine(statusWindow, 0, 14, 29, 14);
@@ -1194,7 +1192,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                            OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         sprite->oam.f.tile = entry[*slot++].offset >> 5;
         sprite->oam.f.x = iconX;
-        sprite->oam.f.y = (s16)statusWindow->y * 8 + 8;
+        sprite->oam.f.y = statusWindow->y * 8 + 8;
         if (statusKinds[i] > OWNER_CONDITION_NORMAL)
           Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
         iconX += 15;
@@ -1214,7 +1212,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             sprite->oam.f.x = 24;
           else
             sprite->oam.f.x = 8;
-          sprite->oam.f.y = (iconRow + (s16)statusWindow->y) * 8 + 68;
+          sprite->oam.f.y = (iconRow + statusWindow->y) * 8 + 68;
           Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
           sprite++;
           iconRow += 2;

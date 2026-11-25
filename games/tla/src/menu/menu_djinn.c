@@ -542,9 +542,9 @@ void Menu_OpenBackdropScreen(void) {
 
   window = menu->listWindow;
   icon = menu->pageArrows[0];
-  x = window->x * 8;
+  x = (u16)window->x * 8;
   icon->sprite.oam.x = icon->x = x;
-  y = window->y * 8 + 4;
+  y = (u16)window->y * 8 + 4;
   icon->sprite.oam.y = icon->y = y;
   icon = menu->pageArrows[1];
   x += 224;
@@ -747,8 +747,8 @@ void DjinnMenu_DrawFirstPage(struct DjinnMenuBackdrop *backdrop) {
 /// tiles from the interior's corner, through Window_HighlightRectFar.
 void Window_SetInteriorPaletteBitRect(struct Window *panel, s32 x, s32 y,
                                       s32 width, s32 height, s32 palette) {
-  Window_HighlightRectFar((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
-                          height, palette);
+  Window_HighlightRectFar(panel->x + x + 1, panel->y + y + 1, width, height,
+                          palette);
 }
 
 /// Highlights the cell of a four-column grid at index's column and row's line,
@@ -826,8 +826,8 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
 /// size in tiles from the interior's corner.
 void Window_SetInteriorRectPalette(struct Window *panel, s32 x, s32 y,
                                    s32 width, s32 height, s32 palette) {
-  Window_SetRectPalette((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
-                        height, palette);
+  Window_SetRectPalette(panel->x + x + 1, panel->y + y + 1, width, height,
+                        palette);
 }
 
 /// Builds a message's render entries and queues them in window; returns 0 when
@@ -890,7 +890,7 @@ s32 DjinnMenu_ShowHelp(void) {
                                      HIGHLIGHT_PALETTE);
     previous = selection;
     for (;;) {
-      MenuCursor_Position(-12, ((s16)list->y + selection) * 8 + 8);
+      MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
       wait(1);
       if (gInput.repeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;

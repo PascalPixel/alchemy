@@ -131,7 +131,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
            * draw; as draw[odd]. */
           blend = odd * 4;
           twice = size * 2;
-          half = (u32)size >> 1;
+          half = size / 2;
           for (; j != 2; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(
                 canvas, graphics + gBattleEffect_MotePictures[size - 1],

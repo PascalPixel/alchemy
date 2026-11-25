@@ -75,17 +75,17 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
   for (index = 0; index < 4; index++) {
     s32 y;
-    /* FAKEMATCH(temporary): t, 0 held in a local and then the window's y; as 0
-     * and (s16)window->y at their uses. */
-    u32 t = 0;
+    /* FAKEMATCH(temporary): windowY holds 0 for the icon's attr23 word before
+     * it holds the window's y; as 0 and (s16)window->y at their uses. */
+    s32 windowY = 0;
 
     y = index * 2;
     sprite = &sprites[index];
     Io_Write32(OBJ_SIZE_16X16, &sprite->oam.word.attr01);
-    sprite->oam.word.attr23 = t;
+    sprite->oam.word.attr23 = windowY;
     sprite->oam.f.x = (s16)window->x * 8 + 8;
-    t = (s16)window->y;
-    sprite->oam.f.y = (y + t) * 8 + 4;
+    windowY = (s16)window->y;
+    sprite->oam.f.y = (y + windowY) * 8 + 4;
   }
   for (index = 0; index < 4; index++) {
     s32 slot = VramCache_AllocEntry(128);

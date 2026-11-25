@@ -19,6 +19,7 @@
 struct BattleBackgroundState;
 struct BattleState;
 struct MapState;
+struct Actor;
 struct ActorSystemState;
 struct ScreenTransitionState;
 struct RopeState;
@@ -32,7 +33,7 @@ struct HeapSlots {
   u8 *matrixStack;        ///< Matrix_Push's save area, one matrix deep
   void *spriteAnimations; ///< the actor system's sprite animations
   void *sprites;          ///< the actor system's sprite pool
-  void *actors;           ///< the 64 actors (struct Actor)
+  struct Actor *actors;   ///< the 64 actors
   struct ActorSystemState *actorSystem; ///< the actor system's state
   void *worldMapAffine;                 ///< the world map's affine state
   /// The field map's scrolling state, or on the world map its perspective view

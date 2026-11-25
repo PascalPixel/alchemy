@@ -719,14 +719,8 @@ void ActorSystem_PlaceSprites(void) {
   system = Ram_HeapSlots->actorSystem;
   originY = map->origin[1];
   Render_LoadDecoder();
-  {
-    // The zero is set before the actors are read.
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    u32 zero = 0;
-
-    actor = Ram_HeapSlots->actors;
-    system->used = zero;
-  }
+  system->used = 0;
+  actor = Ram_HeapSlots->actors;
   for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, actor++) {
     if (actor->script == NULL)
       continue;

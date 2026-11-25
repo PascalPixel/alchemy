@@ -93,9 +93,6 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     if (frame == BREAK_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     for (member = 0; member != args->targetCount; member++) {
-      s32 offset;
-
-      offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
       if (frame == member * DRAIN_TARGET_FRAMES) {
         Sound_PlayFar(SE_CRACK);
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
@@ -103,10 +100,10 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
       }
       // A shard falls and goes out below the ground.
       if (frame > member * DRAIN_TARGET_FRAMES) {
-        struct Particle *shard;
+        for (i = 0; i != BREAK_SHARDS_PER_TARGET; i++) {
+          struct Particle *shard =
+              &PARTICLES[member * BREAK_SHARDS_PER_TARGET + i];
 
-        for (i = 0, shard = (struct Particle *)(Ram_MapCellBuffer + offset);
-             i != BREAK_SHARDS_PER_TARGET; i++) {
           if (shard->variant >= 0) {
             s32 size;
 
@@ -119,7 +116,6 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
                 FIXED_INTEGER_PART(shard->y) > BREAK_SHARD_GROUND)
               shard->variant = -1;
           }
-          shard++;
         }
       }
     }

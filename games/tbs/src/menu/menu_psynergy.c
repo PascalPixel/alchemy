@@ -146,16 +146,18 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     switch (step) {
     // Choose whose Psynergy to look at.
     case PSYNERGY_STEP_MEMBER: {
-      s8 cancelled = -1;
       s32 chosen;
 
       menu->sideRow[0] = 0;
       ItemMenu_DrawMessage(0, MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
-      /* FAKEMATCH(dead): the test written as an XOR. */
-      if ((chosen ^ cancelled) == 0) {
+      if (chosen == -1) {
+        /* FAKEMATCH(dead): chosen cleared though the menu ends before reading
+         * it, as the Item menu's member step clears its own (there the ROM
+         * keeps the store; here it leaves none); as the arm without it. */
+        chosen = 0;
+        useResult = -1;
         done = 1;
-        useResult = cancelled;
       }
       WindowSprite_RedrawSavedRectFar(menu->infoWindow);
       step = PSYNERGY_STEP_LIST;

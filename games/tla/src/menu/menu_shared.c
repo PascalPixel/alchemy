@@ -984,14 +984,12 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   result = -1;
   if (next == 0)
     return result;
-  {
-    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    result = 0;
-    if (++*cursor == count - *page * pageSize)
-      *cursor = result;
-    if (*cursor > pageSize - 1)
-      *cursor = result;
-  }
+  Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+  result = 0;
+  if (++*cursor == count - *page * pageSize)
+    *cursor = result;
+  if (*cursor > pageSize - 1)
+    *cursor = result;
   return 0;
 }
 

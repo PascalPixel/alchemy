@@ -374,15 +374,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             p->variant = 0;
           }
         }
-        {
-          for (i = 0; i != HAURES_PUFFS; i++) {
-            struct Particle *p = &state->particles[i + HAURES_DROPS];
-            p->x = (Random16() & 15) + 24;
-            p->y = Random16() & 7;
-            p->variant = i * 3;
-            p->velocityX = 0;
-            p->velocityY = 0;
-          }
+        for (i = 0; i != HAURES_PUFFS; i++) {
+          struct Particle *p = &state->particles[i + HAURES_DROPS];
+          p->x = (Random16() & 15) + 24;
+          p->y = Random16() & 7;
+          p->variant = i * 3;
+          p->velocityX = 0;
+          p->velocityY = 0;
         }
         // DEAD: the last particle is placed and nothing reads it; the ROM keeps
         // its stores.
@@ -617,22 +615,20 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 6, 6,
                                       EFFECT_CLIP_BOUNDS, BLITTER_MAX);
             draw[1] = Ram_HeapSlots->ramCodePaired;
-            {
-              for (i = 0; i != HAURES_PUFFS; i++) {
-                struct Particle *p = &state->particles[i + HAURES_DROPS];
-                s32 n = (p->variant / HAURES_PUFF_PICTURE_FRAMES) %
-                        HAURES_PUFF_PICTURE_COUNT;
-                u8 *src = state->sheet + gBattleEffect_EmberStreakPictures[n];
-                u32 w = gBattleEffect_EmberStreakPictureWidths[n];
+            for (i = 0; i != HAURES_PUFFS; i++) {
+              struct Particle *p = &state->particles[i + HAURES_DROPS];
+              s32 n = (p->variant / HAURES_PUFF_PICTURE_FRAMES) %
+                      HAURES_PUFF_PICTURE_COUNT;
+              u8 *src = state->sheet + gBattleEffect_EmberStreakPictures[n];
+              u32 w = gBattleEffect_EmberStreakPictureWidths[n];
 
-                draw[1](STAMP_CANVAS(state), src, p->x - (w >> 1),
-                        p->y + gBattleEffect_EmberStreakPictureBiasY[n], w,
-                        gBattleEffect_EmberStreakPictureHeights[n]);
-                if (++p->variant == HAURES_PUFF_FRAMES) {
-                  p->variant = 0;
-                  p->x = (Random16() & 15) + 24;
-                  p->y = Random16() & 7;
-                }
+              draw[1](STAMP_CANVAS(state), src, p->x - (w >> 1),
+                      p->y + gBattleEffect_EmberStreakPictureBiasY[n], w,
+                      gBattleEffect_EmberStreakPictureHeights[n]);
+              if (++p->variant == HAURES_PUFF_FRAMES) {
+                p->variant = 0;
+                p->x = (Random16() & 15) + 24;
+                p->y = Random16() & 7;
               }
             }
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -865,42 +861,40 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         for (i = 0; i != HAURES_SHARDS; i++) {
           gHaures_MoundShades[i] = 1;
         }
-        {
-          for (i = 0; i != HAURES_SHARDS; i++) {
-            struct Particle *p = &state->particles[i];
-            model->mesh = mesh + i * HAURES_SHARD_MESH_BYTES;
-            if ((u32)(FIXED_INTEGER_PART(p->x) + HAURES_SHARD_REACH) <=
-                    DISPLAY_WIDTH / 2 + 2 * HAURES_SHARD_REACH &&
-                FIXEDtoINT(p->y) >= -HAURES_SHARD_REACH &&
-                FIXEDtoINT(p->y) <= BATTLE_VIEW_HEIGHT + HAURES_SHARD_REACH) {
-              Matrix_Initialize();
-              Matrix_Translate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
-              Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-              switch (i & 3) {
-              case 0:
-                Matrix_RotateX(p->z);
-                Matrix_RotateZ(p->z);
-                break;
-              case 1:
-                Matrix_RotateX(p->z);
-                Matrix_RotateZ(-p->z);
-                break;
-              case 2:
-                Matrix_RotateX(p->z);
-                Matrix_RotateY(p->z);
-                break;
-              case 3:
-                Matrix_RotateZ(p->z);
-                Matrix_RotateY(-p->z);
-                break;
-              }
-              Render_TransformVertices(cells + i * HAURES_SHARD_CORNER_BYTES,
-                                       verts, HAURES_SHARD_CORNERS);
-              Render_DrawModelList(model);
+        for (i = 0; i != HAURES_SHARDS; i++) {
+          struct Particle *p = &state->particles[i];
+          model->mesh = mesh + i * HAURES_SHARD_MESH_BYTES;
+          if ((u32)(FIXED_INTEGER_PART(p->x) + HAURES_SHARD_REACH) <=
+                  DISPLAY_WIDTH / 2 + 2 * HAURES_SHARD_REACH &&
+              FIXEDtoINT(p->y) >= -HAURES_SHARD_REACH &&
+              FIXEDtoINT(p->y) <= BATTLE_VIEW_HEIGHT + HAURES_SHARD_REACH) {
+            Matrix_Initialize();
+            Matrix_Translate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
+            Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+            switch (i & 3) {
+            case 0:
+              Matrix_RotateX(p->z);
+              Matrix_RotateZ(p->z);
+              break;
+            case 1:
+              Matrix_RotateX(p->z);
+              Matrix_RotateZ(-p->z);
+              break;
+            case 2:
+              Matrix_RotateX(p->z);
+              Matrix_RotateY(p->z);
+              break;
+            case 3:
+              Matrix_RotateZ(p->z);
+              Matrix_RotateY(-p->z);
+              break;
             }
-            Particle_AdvanceWithGravity3D(p, 62, 0);
-            p->x += toFIXED(4);
+            Render_TransformVertices(cells + i * HAURES_SHARD_CORNER_BYTES,
+                                     verts, HAURES_SHARD_CORNERS);
+            Render_DrawModelList(model);
           }
+          Particle_AdvanceWithGravity3D(p, 62, 0);
+          p->x += toFIXED(4);
         }
         Heap_Release(model);
         Heap_Release(verts);
@@ -941,20 +935,17 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   // DEAD: the claw's six slashes are laid out as textures the charge never
   // draws; the ROM keeps the loading and the copy.
   Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1, 0);
-  {
-    Iwram_ClearWords(buffer, HAURES_ARCS * HAURES_ARC_TEXTURE_BYTES);
-    for (i = 0; i != HAURES_ARCS; i++) {
-      s32 j;
+  Iwram_ClearWords(buffer, HAURES_ARCS * HAURES_ARC_TEXTURE_BYTES);
+  for (i = 0; i != HAURES_ARCS; i++) {
+    s32 j;
 
-      for (j = 0; j != BLUE_ARC_HEIGHT; j++) {
-        s32 m;
+    for (j = 0; j != BLUE_ARC_HEIGHT; j++) {
+      s32 m;
 
-        for (m = 0; m != BLUE_ARC_WIDTH; m++) {
-          buffer[(i * HAURES_ARC_TEXTURE_BYTES) + j * HAURES_ARC_TEXTURE_WIDTH +
-                 m] =
-              state
-                  ->sheet[i * PICTURE_BYTES(BLUE_ARC) + j * BLUE_ARC_WIDTH + m];
-        }
+      for (m = 0; m != BLUE_ARC_WIDTH; m++) {
+        buffer[(i * HAURES_ARC_TEXTURE_BYTES) + j * HAURES_ARC_TEXTURE_WIDTH +
+               m] =
+            state->sheet[i * PICTURE_BYTES(BLUE_ARC) + j * BLUE_ARC_WIDTH + m];
       }
     }
   }
@@ -995,18 +986,16 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       velocity.x = -toFIXED(8);
       velocity.y = 0;
     }
-    {
-      for (i = 0; i != HAURES_SPARK_COUNT; i++) {
-        struct Particle *p = &EXTRA_PARTICLES[i];
-        if (p->variant >= 0) {
-          s32 n = (p->variant >> 3) + 1;
+    for (i = 0; i != HAURES_SPARK_COUNT; i++) {
+      struct Particle *p = &EXTRA_PARTICLES[i];
+      if (p->variant >= 0) {
+        s32 n = (p->variant >> 3) + 1;
 
-          draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                  FIXED_INTEGER_PART(p->x) - n / 2,
-                  FIXED_INTEGER_PART(p->y) - n, n, n * 2);
-          Particle_AdvanceWithGravity2D(p, 63, -toFIXED(1) / 2);
-          p->variant--;
-        }
+        draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
+                FIXED_INTEGER_PART(p->x) - n / 2, FIXED_INTEGER_PART(p->y) - n,
+                n, n * 2);
+        Particle_AdvanceWithGravity2D(p, 63, -toFIXED(1) / 2);
+        p->variant--;
       }
     }
     if (frame <= 39) {

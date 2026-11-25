@@ -794,14 +794,12 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       landingTexture.logWidth = 5;
       landingTexture.logHeight = 5;
       landingTexture.pixels = state->sheet;
-      {
-        model->kind = MODEL_SHADED_MAX;
-        model->mesh = mesh;
-        model->vertices = vertices;
-        model->texture = &landingTexture;
-        model->shade = shade;
-        model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
-      }
+      model->kind = MODEL_SHADED_MAX;
+      model->mesh = mesh;
+      model->vertices = vertices;
+      model->texture = &landingTexture;
+      model->shade = shade;
+      model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
       // The dome swells from half its size, turning.
       {
         s32 s = (frame << 9) + FIXED_ONE / 2;
@@ -831,33 +829,30 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       model->scrollV = shade;
       // Four rings of flame spread from the dome one after another, fading
       // in and out.
-      {
-        for (i = 0; i != 4; i++) {
-          s32 t = frame + 24 - i * 6;
+      for (i = 0; i != 4; i++) {
+        s32 t = frame + 24 - i * 6;
 
-          if (t >= 0 && t < ECLIPSE_RING_FRAMES) {
-            s32 s =
-                gEclipse_RingGrowth[i] * t * (FIXED_ONE / 64) + toFIXED(0.25);
+        if (t >= 0 && t < ECLIPSE_RING_FRAMES) {
+          s32 s = gEclipse_RingGrowth[i] * t * (FIXED_ONE / 64) + toFIXED(0.25);
 
-            shade = 0;
-            if (t < ECLIPSE_RING_FADE_IN) {
-              shade = t * 4 + MODEL_SHADE_INVISIBLE;
-            }
-            if (t > ECLIPSE_RING_FADE_OUT) {
-              shade = (ECLIPSE_RING_FADE_OUT - t) * 4;
-            }
-            model->shade = shade;
-            Matrix_Initialize();
-            Matrix_Translate(-toFIXED(2), toFIXED(32), 0);
-            Matrix_Scale(s / 4, s / 4, s / 4);
-            Matrix_RotateX(ECLIPSE_RING_TILT);
-            Matrix_RotateY((frame + i * 8) * (TRIG_TURN / 64));
-            Matrix_Scale(FIXED_ONE, FIXED_ONE * 6, FIXED_ONE);
-            Matrix_Translate(0, INTtoFIXED(gEclipse_RingHeights[i]), 0);
-            Render_TransformVertices(ECLIPSE_BAND_VERTICES, vertices,
-                                     ECLIPSE_BAND_SEGMENTS * 2);
-            Render_DrawModelList(model);
+          shade = 0;
+          if (t < ECLIPSE_RING_FADE_IN) {
+            shade = t * 4 + MODEL_SHADE_INVISIBLE;
           }
+          if (t > ECLIPSE_RING_FADE_OUT) {
+            shade = (ECLIPSE_RING_FADE_OUT - t) * 4;
+          }
+          model->shade = shade;
+          Matrix_Initialize();
+          Matrix_Translate(-toFIXED(2), toFIXED(32), 0);
+          Matrix_Scale(s / 4, s / 4, s / 4);
+          Matrix_RotateX(ECLIPSE_RING_TILT);
+          Matrix_RotateY((frame + i * 8) * (TRIG_TURN / 64));
+          Matrix_Scale(FIXED_ONE, FIXED_ONE * 6, FIXED_ONE);
+          Matrix_Translate(0, INTtoFIXED(gEclipse_RingHeights[i]), 0);
+          Render_TransformVertices(ECLIPSE_BAND_VERTICES, vertices,
+                                   ECLIPSE_BAND_SEGMENTS * 2);
+          Render_DrawModelList(model);
         }
       }
       Heap_Release(model);

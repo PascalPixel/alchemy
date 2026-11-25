@@ -994,15 +994,13 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       }
       if (frame >= 578 && frame < 594)
         state->scrollStepX = ~((frame - 578) / 8);
-      {
-        for (i = 0; i != 2; i++) {
-          place.x = camera - swayX + bobX + toFIXED(120);
-          place.y = INTtoFIXED(i * DAEDALUS_PIECE_SIZE -
-                               gDaedalus_ShakeOffsets[state->shakeFrames]) +
-                    swayY + bobY + toFIXED(100);
-          Render_ApplyProjectedPlacementFar(
-              state->sprites[DAEDALUS_LEFT_LEG + i], &place, &pieceScale, 0);
-        }
+      for (i = 0; i != 2; i++) {
+        place.x = camera - swayX + bobX + toFIXED(120);
+        place.y = INTtoFIXED(i * DAEDALUS_PIECE_SIZE -
+                             gDaedalus_ShakeOffsets[state->shakeFrames]) +
+                  swayY + bobY + toFIXED(100);
+        Render_ApplyProjectedPlacementFar(state->sprites[DAEDALUS_LEFT_LEG + i],
+                                          &place, &pieceScale, 0);
       }
       if (frame <= 316) {
         struct Particle *p;

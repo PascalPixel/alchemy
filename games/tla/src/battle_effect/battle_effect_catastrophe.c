@@ -697,16 +697,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       spriteScale = gCatastrophe_UnitScale;
       place[3] = 0;
       place[1] = toFIXED(255);
-      {
 
-        for (i = 0; i != CATASTROPHE_DEMON_COUNT; i++) {
-          place[0] = INTtoFIXED(gCatastrophe_DemonX[i]) + toFIXED(8);
-          place[2] = INTtoFIXED(gCatastrophe_DemonZ[i]) + camZ;
-          if (place[2] > toFIXED(16) - 1) {
-            if (place[2] <= toFIXED(168)) {
-              Render_ApplyProjectedPlacementFar(state->sprites[i], place,
-                                                (s32 *)&spriteScale, 0);
-            }
+      for (i = 0; i != CATASTROPHE_DEMON_COUNT; i++) {
+        place[0] = INTtoFIXED(gCatastrophe_DemonX[i]) + toFIXED(8);
+        place[2] = INTtoFIXED(gCatastrophe_DemonZ[i]) + camZ;
+        if (place[2] > toFIXED(16) - 1) {
+          if (place[2] <= toFIXED(168)) {
+            Render_ApplyProjectedPlacementFar(state->sprites[i], place,
+                                              (s32 *)&spriteScale, 0);
           }
         }
       }
@@ -793,17 +791,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         p->variant--;
       }
     }
-    {
-      for (i = 0; i != CATASTROPHE_CANVAS_FLASHES; i++) {
-        u16 t = gCatastrophe_CanvasFlashFrames[i];
+    for (i = 0; i != CATASTROPHE_CANVAS_FLASHES; i++) {
+      u16 t = gCatastrophe_CanvasFlashFrames[i];
 
-        if (frame == t + CATASTROPHE_CANVAS_FLASH_START) {
-          EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
-                              CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
-        }
-        if (frame == t + CATASTROPHE_CANVAS_FLASH_START + 1) {
-          EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-        }
+      if (frame == t + CATASTROPHE_CANVAS_FLASH_START) {
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
+                            CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
+      }
+      if (frame == t + CATASTROPHE_CANVAS_FLASH_START + 1) {
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       }
     }
     if ((u32)(frame - CATASTROPHE_FLICKER_FRAME) <= 55) {
@@ -1789,57 +1785,55 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           // a clap, a shake and debris thrown up where it lands.
           i = 0;
           bolt = state->particles;
-          {
 
-            for (; i != 6; bolt++, i++) {
-              s32 strikeFrame = i * 8 + 16;
+          for (; i != 6; bolt++, i++) {
+            s32 strikeFrame = i * 8 + 16;
 
-              if (frame == strikeFrame) {
-                bolt->x = (Random16() & 31) + 64;
-                bolt->variant = Random16();
-                state->shakeFrames = 4;
-                switch (i & 3) {
-                case 0:
-                  Sound_PlayFar(SE_TOPPLE);
-                  break;
-                case 1:
-                  Sound_PlayFar(SE_THUNDER);
-                  break;
-                case 2:
-                  Sound_PlayFar(SE_BANE_ESCAPE);
-                  break;
-                case 3:
-                  Sound_PlayFar(SE_THUNDER_LOUD);
-                  break;
-                }
-                j = 0;
-                q = (struct Particle *)((i & 7) * (CATASTROPHE_BOLT_DEBRIS *
-                                                   sizeof(struct Particle)) +
-                                        (s32)debris);
-                for (; j != CATASTROPHE_BOLT_DEBRIS; j++, q++) {
-                  s32 angle;
-                  s32 speed;
-
-                  q->x = INTtoFIXED(bolt->x);
-                  q->y = toFIXED(104);
-                  angle = (Random16() & 0x7fff) + DEGtoANG(90);
-                  speed = (Random16() & 127) + 128;
-                  q->velocityX = Trig_Sin(angle) * speed >> 5;
-                  q->velocityY = Trig_Cos(angle) * speed >> 4;
-                  q->variant = CATASTROPHE_DEBRIS_LIFE;
-                }
+            if (frame == strikeFrame) {
+              bolt->x = (Random16() & 31) + 64;
+              bolt->variant = Random16();
+              state->shakeFrames = 4;
+              switch (i & 3) {
+              case 0:
+                Sound_PlayFar(SE_TOPPLE);
+                break;
+              case 1:
+                Sound_PlayFar(SE_THUNDER);
+                break;
+              case 2:
+                Sound_PlayFar(SE_BANE_ESCAPE);
+                break;
+              case 3:
+                Sound_PlayFar(SE_THUNDER_LOUD);
+                break;
               }
-              if (frame >= strikeFrame && frame < strikeFrame + 8) {
-                u8 *src = Ram_MapCellBuffer + CATASTROPHE_BOLT_PICTURES;
+              j = 0;
+              q = (struct Particle *)((i & 7) * (CATASTROPHE_BOLT_DEBRIS *
+                                                 sizeof(struct Particle)) +
+                                      (s32)debris);
+              for (; j != CATASTROPHE_BOLT_DEBRIS; j++, q++) {
+                s32 angle;
+                s32 speed;
 
-                blit[0](canvas,
-                        ((bolt->variant / 2) & 3) *
-                                PICTURE_BYTES(LIGHTNING_BOLT) +
-                            src,
-                        bolt->x - LIGHTNING_BOLT_WIDTH / 2, 0,
-                        LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
-                bolt->variant++;
+                q->x = INTtoFIXED(bolt->x);
+                q->y = toFIXED(104);
+                angle = (Random16() & 0x7fff) + DEGtoANG(90);
+                speed = (Random16() & 127) + 128;
+                q->velocityX = Trig_Sin(angle) * speed >> 5;
+                q->velocityY = Trig_Cos(angle) * speed >> 4;
+                q->variant = CATASTROPHE_DEBRIS_LIFE;
               }
+            }
+            if (frame >= strikeFrame && frame < strikeFrame + 8) {
+              u8 *src = Ram_MapCellBuffer + CATASTROPHE_BOLT_PICTURES;
+
+              blit[0](canvas,
+                      ((bolt->variant / 2) & 3) *
+                              PICTURE_BYTES(LIGHTNING_BOLT) +
+                          src,
+                      bolt->x - LIGHTNING_BOLT_WIDTH / 2, 0,
+                      LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
+              bolt->variant++;
             }
           }
           {

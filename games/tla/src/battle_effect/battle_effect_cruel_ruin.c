@@ -971,323 +971,319 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     p->variant = i * -2;
   }
   {
-    {
-      u8 *pixels = gMapGridCellBuffer;
+    u8 *pixels = gMapGridCellBuffer;
 
-      // The sky: the glow gathers into the orb and rises, the circle of runes
-      // turns round it, rings of fire fly out, rays burst and the ball falls;
-      // A or B skips to its landing.
-      for (frame = 0; frame != 180; frame++) {
-        struct RenderModel *model;
-        void *verts;
-        s32 shade;
+    // The sky: the glow gathers into the orb and rises, the circle of runes
+    // turns round it, rings of fire fly out, rays burst and the ball falls;
+    // A or B skips to its landing.
+    for (frame = 0; frame != 180; frame++) {
+      struct RenderModel *model;
+      void *verts;
+      s32 shade;
 
-        if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 168) {
-          frame = 169;
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 168) {
+        frame = 169;
+      }
+      if (frame == 4) {
+        Sound_PlayFar(SE_SHIMMER);
+      }
+      if (frame == 40) {
+        Sound_PlayFar(SE_CAST);
+      }
+      if (frame == 64) {
+        Sound_PlayFar(SE_DJINNI_SET);
+      }
+      if (frame == 74) {
+        Sound_PlayFar(SE_DJINNI_SET);
+      }
+      if (frame == 84) {
+        Sound_PlayFar(SE_DJINNI_SET);
+      }
+      if (frame == 94) {
+        Sound_PlayFar(SE_DJINNI_SET);
+      }
+      if (frame == 124) {
+        Sound_PlayFar(SE_CLATTER);
+      }
+      for (i = 0; i != 6; i++) {
+        if (frame == 140 + i * 4) {
+          Sound_PlayFar(SE_LAUNCH);
         }
-        if (frame == 4) {
-          Sound_PlayFar(SE_SHIMMER);
-        }
-        if (frame == 40) {
-          Sound_PlayFar(SE_CAST);
-        }
-        if (frame == 64) {
-          Sound_PlayFar(SE_DJINNI_SET);
-        }
-        if (frame == 74) {
-          Sound_PlayFar(SE_DJINNI_SET);
-        }
-        if (frame == 84) {
-          Sound_PlayFar(SE_DJINNI_SET);
-        }
-        if (frame == 94) {
-          Sound_PlayFar(SE_DJINNI_SET);
-        }
-        if (frame == 124) {
-          Sound_PlayFar(SE_CLATTER);
-        }
-        for (i = 0; i != 6; i++) {
-          if (frame == 140 + i * 4) {
-            Sound_PlayFar(SE_LAUNCH);
-          }
-        }
-        if (frame == 169) {
-          Sound_PlayFar(SE_CRASH);
-          state->shakeFrames = 16;
-        }
-        if (frame == 0) {
-          Palette_BrightenSavedBattleBg(0, 0, 0);
-        }
-        if (frame == 32) {
-          fadeRed = 0;
-          fadeGreen = 0;
-          fadeBlue = 0;
-          redStep = -toFIXED(4) / 28;
-          greenStep = -toFIXED(12) / 28;
-          blueStep = -toFIXED(4) / 28;
-          fadeFrames = 28;
-        }
-        if (frame == 124) {
-          fadeRed = toFIXED(RGB_LEVEL_MAX);
-          fadeGreen = toFIXED(8);
-          fadeBlue = -toFIXED(4);
-          redStep = 0;
-          greenStep = 0;
-          blueStep = 0;
-          fadeFrames = 1;
-        }
-        if (frame == 128) {
-          redStep = (-toFIXED(1) - fadeRed) / 16;
-          greenStep = (toFIXED(6) - fadeGreen) / 16;
-          blueStep = -fadeBlue / 16;
-          fadeFrames = 16;
-        }
-        if (frame == 144) {
-          redStep = (-toFIXED(9) - fadeRed) / 8;
-          greenStep = (toFIXED(13) - fadeGreen) / 8;
-          blueStep = (-toFIXED(5) - fadeBlue) / 8;
-          fadeFrames = 8;
-        }
-        if (frame == 156) {
-          redStep = (toFIXED(RGB_LEVEL_MAX) - fadeRed) / 16;
-          greenStep = (toFIXED(8) - fadeGreen) / 16;
-          blueStep = (-toFIXED(4) - fadeBlue) / 16;
-          fadeFrames = 16;
-        }
-        if (fadeFrames > 0) {
-          fadeFrames--;
-          fadeRed += redStep;
-          fadeGreen += greenStep;
-          fadeBlue += blueStep;
-          Palette_BrightenSavedBattleBg(
-              FIXEDtoINT(fadeRed), FIXEDtoINT(fadeGreen), FIXEDtoINT(fadeBlue));
-        }
-        if (frame == 124) {
-          Iwram_FillWords(canvas, CANVAS_BYTES,
-                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-        }
-        if (frame <= 123) {
-          s32 size = CRUEL_RUIN_SKY_GLOW_SIZE;
-          s32 y = CRUEL_RUIN_SKY_GLOW_Y;
-          s32 scale = FIXED_ONE * 2;
+      }
+      if (frame == 169) {
+        Sound_PlayFar(SE_CRASH);
+        state->shakeFrames = 16;
+      }
+      if (frame == 0) {
+        Palette_BrightenSavedBattleBg(0, 0, 0);
+      }
+      if (frame == 32) {
+        fadeRed = 0;
+        fadeGreen = 0;
+        fadeBlue = 0;
+        redStep = -toFIXED(4) / 28;
+        greenStep = -toFIXED(12) / 28;
+        blueStep = -toFIXED(4) / 28;
+        fadeFrames = 28;
+      }
+      if (frame == 124) {
+        fadeRed = toFIXED(RGB_LEVEL_MAX);
+        fadeGreen = toFIXED(8);
+        fadeBlue = -toFIXED(4);
+        redStep = 0;
+        greenStep = 0;
+        blueStep = 0;
+        fadeFrames = 1;
+      }
+      if (frame == 128) {
+        redStep = (-toFIXED(1) - fadeRed) / 16;
+        greenStep = (toFIXED(6) - fadeGreen) / 16;
+        blueStep = -fadeBlue / 16;
+        fadeFrames = 16;
+      }
+      if (frame == 144) {
+        redStep = (-toFIXED(9) - fadeRed) / 8;
+        greenStep = (toFIXED(13) - fadeGreen) / 8;
+        blueStep = (-toFIXED(5) - fadeBlue) / 8;
+        fadeFrames = 8;
+      }
+      if (frame == 156) {
+        redStep = (toFIXED(RGB_LEVEL_MAX) - fadeRed) / 16;
+        greenStep = (toFIXED(8) - fadeGreen) / 16;
+        blueStep = (-toFIXED(4) - fadeBlue) / 16;
+        fadeFrames = 16;
+      }
+      if (fadeFrames > 0) {
+        fadeFrames--;
+        fadeRed += redStep;
+        fadeGreen += greenStep;
+        fadeBlue += blueStep;
+        Palette_BrightenSavedBattleBg(
+            FIXEDtoINT(fadeRed), FIXEDtoINT(fadeGreen), FIXEDtoINT(fadeBlue));
+      }
+      if (frame == 124) {
+        Iwram_FillWords(canvas, CANVAS_BYTES,
+                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      }
+      if (frame <= 123) {
+        s32 size = CRUEL_RUIN_SKY_GLOW_SIZE;
+        s32 y = CRUEL_RUIN_SKY_GLOW_Y;
+        s32 scale = FIXED_ONE * 2;
 
-          if (frame <= 29) {
-            size -= frame * 4;
-          } else {
-            size = 114 - frame * 3;
-          }
-          if (frame > 7) {
-            scale = toFIXED(9) / 4 - frame * (FIXED_ONE / 32);
-          }
-          if (scale < FIXED_ONE / 2) {
-            scale = FIXED_ONE / 2;
-          }
-          if (frame > 35) {
-            y = 20;
-          } else if (frame > 19) {
-            y = (FIXEDtoINT(
-                    Trig_Cos(frame * (TRIG_TURN / 64) - TRIG_TURN * 5 / 16) *
-                    CRUEL_RUIN_SKY_GLOW_RISE)) +
-                (CRUEL_RUIN_SKY_GLOW_Y - CRUEL_RUIN_SKY_GLOW_RISE);
-          }
-          if (size <= 7) {
-            size = 8;
-          }
-          if (frame > 67) {
-            size += (frame - 68) / 6;
-          }
-          BattleEffect_DrawShadedCircles(state->sheet, size, scale);
-          Canvas_BlitMirroredQuarters(state->sheet, 60, y, size);
+        if (frame <= 29) {
+          size -= frame * 4;
+        } else {
+          size = 114 - frame * 3;
         }
-        if (frame > 127) {
-          for (i = 0; i != CRUEL_RUIN_MOTES; i++) {
-            struct Particle *p = &state->particles[CRUEL_RUIN_FIRST_MOTE + i];
-
-            if ((u32)p->variant < CRUEL_RUIN_MOTE_FRAMES) {
-              s32 s =
-                  FIXEDtoINT(Trig_Sin(p->variant * (TRIG_TURN / 64)) * p->z);
-
-              draw[0](canvas,
-                      state->sheet + CRUEL_RUIN_CIRCLES +
-                          gCruelRuin_CirclePictures[s - 1],
-                      p->x - s, p->y - s * 2, s * 2, s * 4);
-            }
-            p->variant++;
-          }
+        if (frame > 7) {
+          scale = toFIXED(9) / 4 - frame * (FIXED_ONE / 32);
         }
-        verts = Heap_AllocEwram(32);
-        model = Render_AllocateModelList(1);
-        {
-          s32 s;
-          s32 t;
-          texture.logWidth = 7;
-          texture.logHeight = 7;
-          model->kind = MODEL_SHADED_MAX;
-          model->texture = &texture;
-          model->mesh = gBattleEffect_LargeSquareMesh;
-          model->vertices = verts;
-          texture.pixels = pixels;
-          shade = 0;
-          model->shade = shade;
-          i = shade;
-
-          for (s = frame * (FIXED_ONE / 2) - toFIXED(32), t = frame - 64;
-               i != CRUEL_RUIN_RINGS;
-               s -= toFIXED(5), i++, t -= CRUEL_RUIN_RING_INTERVAL) {
-            if ((u32)t < CRUEL_RUIN_RING_FRAMES) {
-              s32 sc = toFIXED(8) - s;
-
-              Matrix_Initialize();
-              Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
-              Matrix_Scale(sc / 2, sc, sc);
-              Matrix_RotateY(gCruelRuin_DiscYaws[i]);
-              Matrix_RotateX(gCruelRuin_DiscPitches[i]);
-              Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
-              Render_DrawModelList(model);
-            }
-          }
+        if (scale < FIXED_ONE / 2) {
+          scale = FIXED_ONE / 2;
         }
-        step = frame - 124;
-        if ((u32)step < CRUEL_RUIN_RING_FRAMES) {
-          s32 sc = step * (FIXED_ONE / 2);
-
-          shade = CRUEL_RUIN_RING_SHINE_FRAMES * 8 - step * 8;
-          if (shade > 0) {
-            shade = 0;
-          }
-          model->shade = shade;
-          Matrix_Initialize();
-          Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
-          Matrix_Scale(sc >> 1, sc, sc);
-          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
-          Render_DrawModelList(model);
+        if (frame > 35) {
+          y = 20;
+        } else if (frame > 19) {
+          y = (FIXEDtoINT(
+                  Trig_Cos(frame * (TRIG_TURN / 64) - TRIG_TURN * 5 / 16) *
+                  CRUEL_RUIN_SKY_GLOW_RISE)) +
+              (CRUEL_RUIN_SKY_GLOW_Y - CRUEL_RUIN_SKY_GLOW_RISE);
         }
-        {
-          s32 t = frame - 24;
+        if (size <= 7) {
+          size = 8;
+        }
+        if (frame > 67) {
+          size += (frame - 68) / 6;
+        }
+        BattleEffect_DrawShadedCircles(state->sheet, size, scale);
+        Canvas_BlitMirroredQuarters(state->sheet, 60, y, size);
+      }
+      if (frame > 127) {
+        for (i = 0; i != CRUEL_RUIN_MOTES; i++) {
+          struct Particle *p = &state->particles[CRUEL_RUIN_FIRST_MOTE + i];
 
-          if ((u32)t < CRUEL_RUIN_RUNE_FRAMES) {
-            s32 sc = toFIXED(3) - t * (FIXED_ONE / 32);
+          if ((u32)p->variant < CRUEL_RUIN_MOTE_FRAMES) {
+            s32 s = FIXEDtoINT(Trig_Sin(p->variant * (TRIG_TURN / 64)) * p->z);
 
-            if (sc < FIXED_ONE) {
-              sc = FIXED_ONE;
-            }
-            shade = -32;
-            if (t <= 7) {
-              shade = t * 4 + MODEL_SHADE_INVISIBLE;
-            }
-            if (frame > 63) {
-              shade = 224 - frame * 4;
-            }
-            model->shade = shade;
-            texture.pixels = Ram_MapCellBuffer + CRUEL_RUIN_RUNE_CIRCLE;
-            t <<= 9;
+            draw[0](canvas,
+                    state->sheet + CRUEL_RUIN_CIRCLES +
+                        gCruelRuin_CirclePictures[s - 1],
+                    p->x - s, p->y - s * 2, s * 2, s * 4);
+          }
+          p->variant++;
+        }
+      }
+      verts = Heap_AllocEwram(32);
+      model = Render_AllocateModelList(1);
+      {
+        s32 s;
+        s32 t;
+        texture.logWidth = 7;
+        texture.logHeight = 7;
+        model->kind = MODEL_SHADED_MAX;
+        model->texture = &texture;
+        model->mesh = gBattleEffect_LargeSquareMesh;
+        model->vertices = verts;
+        texture.pixels = pixels;
+        shade = 0;
+        model->shade = shade;
+        i = shade;
+
+        for (s = frame * (FIXED_ONE / 2) - toFIXED(32), t = frame - 64;
+             i != CRUEL_RUIN_RINGS;
+             s -= toFIXED(5), i++, t -= CRUEL_RUIN_RING_INTERVAL) {
+          if ((u32)t < CRUEL_RUIN_RING_FRAMES) {
+            s32 sc = toFIXED(8) - s;
+
             Matrix_Initialize();
             Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
-            Matrix_Scale(sc, sc / 3, sc >> 1);
-            Matrix_RotateZ(t);
-            if (shade > MODEL_SHADE_INVISIBLE) {
-              Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
-              Render_DrawModelList(model);
-            }
-            texture.pixels = state->sheet + CRUEL_RUIN_SWIRL;
-            texture.logWidth = 6;
-            texture.logHeight = 6;
-            model->mesh = gBattleEffect_SquareMesh;
-            if (frame > 63) {
-              shade = frame * 4 + -320;
-              if (shade > 0) {
-                shade = 0;
-              }
-              model->shade = shade;
-              Matrix_Initialize();
-              Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
-              Matrix_Scale(sc, sc >> 1, sc >> 1);
-              Matrix_RotateZ(t);
-              Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
-              Render_DrawModelList(model);
-            }
-          }
-        }
-        if (frame > 123) {
-          texture.logWidth = 5;
-          texture.logHeight = 2;
-          texture.pixels = state->sheet + CRUEL_RUIN_BAND_A;
-          model->mesh = gBattleEffect_SmallSquareMesh;
-          model->kind = MODEL_SHADED_MAX;
-          shade = -16;
-          model->shade = shade;
-          for (i = 0; i != CRUEL_RUIN_RAYS; i++) {
-            struct Particle *p = &state->particles[i];
-
-            if (p->variant >= 0) {
-              s32 sy = p->variant * (FIXED_ONE / 8);
-
-              if (sy > CRUEL_RUIN_RAY_LENGTH_MAX) {
-                sy = CRUEL_RUIN_RAY_LENGTH_MAX;
-              }
-              Matrix_Initialize();
-              Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
-              Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-              Matrix_RotateZ(p->z);
-              Matrix_Scale(CRUEL_RUIN_RAY_WIDTH, sy, FIXED_ONE / 2);
-              Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
-              Render_DrawModelList(model);
-            }
-            p->variant++;
-          }
-          if (frame > 163) {
-            EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
-                                CANVAS_FILL_WORD(1));
-            Palette_BrightenBgEntries(2, 2, 2);
-          }
-          if (frame > 159) {
-            struct Particle *q = &state->particles[CRUEL_RUIN_BALL_PARTICLE];
-            s32 r = frame * 2 + -288;
-
-            if (r > CRUEL_RUIN_BALL_SIZE) {
-              r = CRUEL_RUIN_BALL_SIZE;
-            }
-            if (frame == 160) {
-              q->x = toFIXED(128);
-              q->y = -toFIXED(32);
-            }
-            if (frame <= 171) {
-              q->x += -toFIXED(8);
-              q->y += toFIXED(16);
-              BattleEffect_DrawShadedCircles(state->sheet, r, FIXED_ONE);
-              Canvas_BlitMirroredQuarters(state->sheet,
-                                          FIXED_INTEGER_PART(q->x),
-                                          FIXED_INTEGER_PART(q->y), r);
-            }
-            model->kind = MODEL_SHADED_MAX;
-            shade = 0;
-            model->shade = shade;
-            texture.pixels = state->sheet + CRUEL_RUIN_BAND_B;
-            Matrix_Initialize();
-            Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);
-            Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-            Matrix_RotateZ(TRIG_TURN * 5 / 8);
-            Matrix_Scale(r * CRUEL_RUIN_STREAK_SCALE, FIXED_ONE * 2,
-                         FIXED_ONE / 2);
-            Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
+            Matrix_Scale(sc / 2, sc, sc);
+            Matrix_RotateY(gCruelRuin_DiscYaws[i]);
+            Matrix_RotateX(gCruelRuin_DiscPitches[i]);
+            Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
         }
-        Heap_Release(model);
-        Heap_Release(verts);
-        if (state->shakeFrames > 0) {
-          {
-            s32 shakeY = Random16() % 8 + 28;
-            gBgScroll[1].y = shakeY;
-          }
-          state->shakeFrames--;
-        } else {
-          gBgScroll[1].y = state->savedBg1Y;
-        }
-        BattleEffect_CountDownBattlerTints();
-        WAIT_TRANSFER(state);
-        EFFECT_PRESENT_CANVAS(state);
       }
+      step = frame - 124;
+      if ((u32)step < CRUEL_RUIN_RING_FRAMES) {
+        s32 sc = step * (FIXED_ONE / 2);
+
+        shade = CRUEL_RUIN_RING_SHINE_FRAMES * 8 - step * 8;
+        if (shade > 0) {
+          shade = 0;
+        }
+        model->shade = shade;
+        Matrix_Initialize();
+        Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
+        Matrix_Scale(sc >> 1, sc, sc);
+        Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
+        Render_DrawModelList(model);
+      }
+      {
+        s32 t = frame - 24;
+
+        if ((u32)t < CRUEL_RUIN_RUNE_FRAMES) {
+          s32 sc = toFIXED(3) - t * (FIXED_ONE / 32);
+
+          if (sc < FIXED_ONE) {
+            sc = FIXED_ONE;
+          }
+          shade = -32;
+          if (t <= 7) {
+            shade = t * 4 + MODEL_SHADE_INVISIBLE;
+          }
+          if (frame > 63) {
+            shade = 224 - frame * 4;
+          }
+          model->shade = shade;
+          texture.pixels = Ram_MapCellBuffer + CRUEL_RUIN_RUNE_CIRCLE;
+          t <<= 9;
+          Matrix_Initialize();
+          Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
+          Matrix_Scale(sc, sc / 3, sc >> 1);
+          Matrix_RotateZ(t);
+          if (shade > MODEL_SHADE_INVISIBLE) {
+            Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
+            Render_DrawModelList(model);
+          }
+          texture.pixels = state->sheet + CRUEL_RUIN_SWIRL;
+          texture.logWidth = 6;
+          texture.logHeight = 6;
+          model->mesh = gBattleEffect_SquareMesh;
+          if (frame > 63) {
+            shade = frame * 4 + -320;
+            if (shade > 0) {
+              shade = 0;
+            }
+            model->shade = shade;
+            Matrix_Initialize();
+            Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
+            Matrix_Scale(sc, sc >> 1, sc >> 1);
+            Matrix_RotateZ(t);
+            Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
+            Render_DrawModelList(model);
+          }
+        }
+      }
+      if (frame > 123) {
+        texture.logWidth = 5;
+        texture.logHeight = 2;
+        texture.pixels = state->sheet + CRUEL_RUIN_BAND_A;
+        model->mesh = gBattleEffect_SmallSquareMesh;
+        model->kind = MODEL_SHADED_MAX;
+        shade = -16;
+        model->shade = shade;
+        for (i = 0; i != CRUEL_RUIN_RAYS; i++) {
+          struct Particle *p = &state->particles[i];
+
+          if (p->variant >= 0) {
+            s32 sy = p->variant * (FIXED_ONE / 8);
+
+            if (sy > CRUEL_RUIN_RAY_LENGTH_MAX) {
+              sy = CRUEL_RUIN_RAY_LENGTH_MAX;
+            }
+            Matrix_Initialize();
+            Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
+            Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+            Matrix_RotateZ(p->z);
+            Matrix_Scale(CRUEL_RUIN_RAY_WIDTH, sy, FIXED_ONE / 2);
+            Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
+            Render_DrawModelList(model);
+          }
+          p->variant++;
+        }
+        if (frame > 163) {
+          EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
+                              CANVAS_FILL_WORD(1));
+          Palette_BrightenBgEntries(2, 2, 2);
+        }
+        if (frame > 159) {
+          struct Particle *q = &state->particles[CRUEL_RUIN_BALL_PARTICLE];
+          s32 r = frame * 2 + -288;
+
+          if (r > CRUEL_RUIN_BALL_SIZE) {
+            r = CRUEL_RUIN_BALL_SIZE;
+          }
+          if (frame == 160) {
+            q->x = toFIXED(128);
+            q->y = -toFIXED(32);
+          }
+          if (frame <= 171) {
+            q->x += -toFIXED(8);
+            q->y += toFIXED(16);
+            BattleEffect_DrawShadedCircles(state->sheet, r, FIXED_ONE);
+            Canvas_BlitMirroredQuarters(state->sheet, FIXED_INTEGER_PART(q->x),
+                                        FIXED_INTEGER_PART(q->y), r);
+          }
+          model->kind = MODEL_SHADED_MAX;
+          shade = 0;
+          model->shade = shade;
+          texture.pixels = state->sheet + CRUEL_RUIN_BAND_B;
+          Matrix_Initialize();
+          Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+          Matrix_RotateZ(TRIG_TURN * 5 / 8);
+          Matrix_Scale(r * CRUEL_RUIN_STREAK_SCALE, FIXED_ONE * 2,
+                       FIXED_ONE / 2);
+          Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
+          Render_DrawModelList(model);
+        }
+      }
+      Heap_Release(model);
+      Heap_Release(verts);
+      if (state->shakeFrames > 0) {
+        {
+          s32 shakeY = Random16() % 8 + 28;
+          gBgScroll[1].y = shakeY;
+        }
+        state->shakeFrames--;
+      } else {
+        gBgScroll[1].y = state->savedBg1Y;
+      }
+      BattleEffect_CountDownBattlerTints();
+      WAIT_TRANSFER(state);
+      EFFECT_PRESENT_CANVAS(state);
     }
   }
   {
@@ -1551,15 +1547,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           Render_DrawModelList(model);
         }
       }
-      {
-        streakTexture.logWidth = 6;
-        streakTexture.logHeight = 5;
-        streakTexture.pixels = state->sheet + CRUEL_RUIN_PINK_BAR;
-        Render_BuildQuadStrip(strip, 2, 32, CRUEL_RUIN_RIBBON_QUADS);
-        model->mesh = strip;
-        model->kind = MODEL_SHADED_MAX;
-        model->scrollU = ~CRUEL_RUIN_RIBBON_SCROLL & TEXTURE_SCROLL_MASK;
-      }
+      streakTexture.logWidth = 6;
+      streakTexture.logHeight = 5;
+      streakTexture.pixels = state->sheet + CRUEL_RUIN_PINK_BAR;
+      Render_BuildQuadStrip(strip, 2, 32, CRUEL_RUIN_RIBBON_QUADS);
+      model->mesh = strip;
+      model->kind = MODEL_SHADED_MAX;
+      model->scrollU = ~CRUEL_RUIN_RIBBON_SCROLL & TEXTURE_SCROLL_MASK;
       {
         u8 *cells = gMapGridCellBuffer;
         s32 mask;
@@ -1764,128 +1758,125 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   }
   // The ball falls on the foes, who darken to silhouettes as the wall of
   // light sweeps over them.
-  {
-    for (frame = 0; frame != 140; frame++) {
-      s32 grey = frame - 80;
-      s32 blue = RGB(0, 0, grey);
-      s32 green = RGB(0, grey, 0);
+  for (frame = 0; frame != 140; frame++) {
+    s32 grey = frame - 80;
+    s32 blue = RGB(0, 0, grey);
+    s32 green = RGB(0, grey, 0);
 
-      if (frame == 0) {
-        for (i = 0; i != args->targetCount; i++) {
-          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_NORMAL,
-                                   TINT_KEEP, i, 16);
-        }
+    if (frame == 0) {
+      for (i = 0; i != args->targetCount; i++) {
+        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_NORMAL,
+                                 TINT_KEEP, i, 16);
       }
-      if (frame == 127) {
-        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      }
-      if (frame == 107) {
-        Iwram_FillWords(canvas, CANVAS_BYTES,
-                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      }
-      if (frame > 107) {
-        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
-        Palette_BrightenSavedBattleBg(0, 0, 0);
-      }
-      if (frame == 32) {
-        Sound_PlayFar(SE_SPIN);
-      }
-      if (frame == 48) {
-        state->shakeFrames = 90;
-        Sound_PlayFar(SE_CRASH);
-      }
-      if (frame == 72) {
-        Sound_PlayFar(SE_BANE_ESCAPE);
-      }
-      if (frame <= 109) {
-        struct RenderModel *model;
-        void *verts;
-
-        if (frame > 31) {
-          s32 a = (frame - 32) / 4;
-          s32 b = 0;
-
-          if (frame > 47) {
-            b = (frame - 48) / 2;
-          }
-          Palette_BrightenBattleBg(a, a / 2, b);
-        }
-        if ((u32)(frame - 80) <= 31) {
-          u32 c;
-          u16 *dst = (u16 *)&OBJ_PLTT_COLOR(0, 1);
-
-          i = 0;
-          c = blue | green | (frame - 80);
-          for (; i != CRUEL_RUIN_SPRITE_COLORS - 1; i++) {
-            *dst++ = c;
-          }
-        } else if (frame > 47) {
-          ColorBuffer_ScaleFar((void *)OBJ_PLTT, (void *)OBJ_PLTT,
-                               FIXED_ONE * 15 / 16, CRUEL_RUIN_SPRITE_COLORS);
-        }
-        if (frame > 47) {
-          draw[0](canvas, state->sheet, 216 - frame * 2, 0,
-                  CRUEL_RUIN_SWEEP_SIZE, CRUEL_RUIN_SWEEP_SIZE);
-        }
-        verts = Heap_AllocEwram(32);
-        model = Render_AllocateModelList(1);
-        {
-          s32 shade = 0;
-          burstTexture.logWidth = 5;
-          burstTexture.logHeight = 2;
-          burstTexture.pixels = state->sheet + CRUEL_RUIN_BURST_BAND;
-          model->shade = shade;
-          model->mesh = gBattleEffect_SmallSquareMesh;
-          model->texture = &burstTexture;
-          model->vertices = verts;
-          model->kind = MODEL_SHADED_MAX;
-        }
-        if (frame > 31) {
-          struct Particle *q = &state->particles[CRUEL_RUIN_BALL_PARTICLE];
-          s32 r = frame * 2 - 32;
-
-          if (r > CRUEL_RUIN_BALL_SIZE) {
-            r = CRUEL_RUIN_BALL_SIZE;
-          }
-          if (frame == 32) {
-            q->x = toFIXED(128);
-            q->y = -toFIXED(32);
-          }
-          if (frame <= 43) {
-            q->x += -toFIXED(8);
-            q->y += toFIXED(16);
-            BattleEffect_DrawShadedCircles(
-                state->sheet + CRUEL_RUIN_BURST_CIRCLE, r, FIXED_ONE);
-            Canvas_BlitMirroredQuarters(state->sheet + CRUEL_RUIN_BURST_CIRCLE,
-                                        FIXED_INTEGER_PART(q->x),
-                                        FIXED_INTEGER_PART(q->y), r);
-          }
-          Matrix_Initialize();
-          Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);
-          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-          Matrix_RotateZ(TRIG_TURN * 5 / 8);
-          Matrix_Scale(r * CRUEL_RUIN_STREAK_SCALE, FIXED_ONE * 2,
-                       FIXED_ONE / 2);
-          Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
-          Render_DrawModelList(model);
-        }
-        Heap_Release(model);
-        Heap_Release(verts);
-      }
-      {
-        s32 r = 8;
-
-        if (frame > 130) {
-          r = 2;
-        } else if (frame > 120) {
-          r = 4;
-        } else if (frame > 110) {
-          r = 6;
-        }
-        BattleCamera_Shake(r, r);
-      }
-      EFFECT_PRESENT_CANVAS(state);
     }
+    if (frame == 127) {
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+    }
+    if (frame == 107) {
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+    }
+    if (frame > 107) {
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
+      Palette_BrightenSavedBattleBg(0, 0, 0);
+    }
+    if (frame == 32) {
+      Sound_PlayFar(SE_SPIN);
+    }
+    if (frame == 48) {
+      state->shakeFrames = 90;
+      Sound_PlayFar(SE_CRASH);
+    }
+    if (frame == 72) {
+      Sound_PlayFar(SE_BANE_ESCAPE);
+    }
+    if (frame <= 109) {
+      struct RenderModel *model;
+      void *verts;
+
+      if (frame > 31) {
+        s32 a = (frame - 32) / 4;
+        s32 b = 0;
+
+        if (frame > 47) {
+          b = (frame - 48) / 2;
+        }
+        Palette_BrightenBattleBg(a, a / 2, b);
+      }
+      if ((u32)(frame - 80) <= 31) {
+        u32 c;
+        u16 *dst = (u16 *)&OBJ_PLTT_COLOR(0, 1);
+
+        i = 0;
+        c = blue | green | (frame - 80);
+        for (; i != CRUEL_RUIN_SPRITE_COLORS - 1; i++) {
+          *dst++ = c;
+        }
+      } else if (frame > 47) {
+        ColorBuffer_ScaleFar((void *)OBJ_PLTT, (void *)OBJ_PLTT,
+                             FIXED_ONE * 15 / 16, CRUEL_RUIN_SPRITE_COLORS);
+      }
+      if (frame > 47) {
+        draw[0](canvas, state->sheet, 216 - frame * 2, 0, CRUEL_RUIN_SWEEP_SIZE,
+                CRUEL_RUIN_SWEEP_SIZE);
+      }
+      verts = Heap_AllocEwram(32);
+      model = Render_AllocateModelList(1);
+      {
+        s32 shade = 0;
+        burstTexture.logWidth = 5;
+        burstTexture.logHeight = 2;
+        burstTexture.pixels = state->sheet + CRUEL_RUIN_BURST_BAND;
+        model->shade = shade;
+        model->mesh = gBattleEffect_SmallSquareMesh;
+        model->texture = &burstTexture;
+        model->vertices = verts;
+        model->kind = MODEL_SHADED_MAX;
+      }
+      if (frame > 31) {
+        struct Particle *q = &state->particles[CRUEL_RUIN_BALL_PARTICLE];
+        s32 r = frame * 2 - 32;
+
+        if (r > CRUEL_RUIN_BALL_SIZE) {
+          r = CRUEL_RUIN_BALL_SIZE;
+        }
+        if (frame == 32) {
+          q->x = toFIXED(128);
+          q->y = -toFIXED(32);
+        }
+        if (frame <= 43) {
+          q->x += -toFIXED(8);
+          q->y += toFIXED(16);
+          BattleEffect_DrawShadedCircles(state->sheet + CRUEL_RUIN_BURST_CIRCLE,
+                                         r, FIXED_ONE);
+          Canvas_BlitMirroredQuarters(state->sheet + CRUEL_RUIN_BURST_CIRCLE,
+                                      FIXED_INTEGER_PART(q->x),
+                                      FIXED_INTEGER_PART(q->y), r);
+        }
+        Matrix_Initialize();
+        Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+        Matrix_RotateZ(TRIG_TURN * 5 / 8);
+        Matrix_Scale(r * CRUEL_RUIN_STREAK_SCALE, FIXED_ONE * 2, FIXED_ONE / 2);
+        Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
+        Render_DrawModelList(model);
+      }
+      Heap_Release(model);
+      Heap_Release(verts);
+    }
+    {
+      s32 r = 8;
+
+      if (frame > 130) {
+        r = 2;
+      } else if (frame > 120) {
+        r = 4;
+      } else if (frame > 110) {
+        r = 6;
+      }
+      BattleCamera_Shake(r, r);
+    }
+    EFFECT_PRESENT_CANVAS(state);
   }
   Palette_LoadBasicSpriteColors();
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

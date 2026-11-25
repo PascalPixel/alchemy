@@ -893,7 +893,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
           FIELD_CELL(leader->y.fixed) == FIELD_CELL(shot->y.fixed))
         near = 1;
     }
-    if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
+    if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
       leader->watchedActor = (union FieldObject *)shot;
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -993,13 +993,10 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
           MAPGRID_LAYER_OVERHEAD, FIELD_CELL(shot->x.fixed),
           FIELD_CELL(shot->z.fixed - shot->y.fixed))) ==
       CELL_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END) {
-    Actor_PlaySoundInView(shot, SE_SAND_EMERGE);
+    Call2((void (*)())Actor_PlaySoundInView, (s32)shot, SE_SAND_EMERGE);
     shot->sceneByte = 0;
     shot->update = 0;
     Actor_StartScript(shot, gAirsRockInside_PooledWhirlwindFadesScript);
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
     return;
   }
   if (shot->sceneCounter == 0) {
@@ -1015,7 +1012,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
           FIELD_CELL(leader->y.fixed) == FIELD_CELL(shot->y.fixed))
         near = 1;
     }
-    if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
+    if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
       leader->watchedActor = (union FieldObject *)shot;
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;

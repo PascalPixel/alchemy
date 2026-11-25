@@ -885,11 +885,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     }
     // The Djinni flies to the target in six steps.
     targetObject = BattleObject_GetFar(action->targets[0])->object;
-    {
-      djinnStep[0] = (targetObject->x - djinnPos[0]) / 6;
-      djinnStep[1] = (targetObject->y - djinnPos[1] + toFIXED(30)) / 6;
-      djinnStep[2] = (targetObject->z - djinnPos[2]) / 6;
-    }
+    djinnStep[0] = (targetObject->x - djinnPos[0]) / 6;
+    djinnStep[1] = (targetObject->y - djinnPos[1] + toFIXED(30)) / 6;
+    djinnStep[2] = (targetObject->z - djinnPos[2]) / 6;
     for (i = 0; i != CASTING_IMPACT_SPARKS; i++)
       state->particles[i].variant = 0;
     // Sparks scatter from the target.

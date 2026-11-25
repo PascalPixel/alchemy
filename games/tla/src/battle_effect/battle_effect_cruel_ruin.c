@@ -428,13 +428,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
-  {
-    /* FAKEMATCH(temporary): copy, a local standing for the IWRAM routine's
-     * address. */
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  }
+  Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   for (i = 0; i != ELEMENT_SPIRAL_MOTES; i++) {
     PARTICLES[i].y = toFIXED(128);

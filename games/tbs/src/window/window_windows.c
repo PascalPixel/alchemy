@@ -113,9 +113,8 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   s32 tileIndex;
 
   // Copies pixel rows 4 to 6 of tile sourceTile to rows 0 to 2 of
-  // destinationTile and clears the rest of it.
-  /* FAKEMATCH(dead): a GNU nested function, which takes a link to this
-   * routine's frame that it never reads; as a static routine before it. */
+  // destinationTile and clears the rest of it. A GNU nested function, as in
+  // The Lost Age: each call sets up the static chain (r9) it never reads.
   s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
     sourceTile &= TILE_NUMBER_MASK;
     destinationTile &= TILE_NUMBER_MASK;

@@ -63,7 +63,7 @@
 #include "text/msg_ids.h"
 
 void Actor_StartScript(struct Actor *actor, const s32 *script);
-void WorldMap_LoadTidalWave(void);
+void WorldMap_LoadTidalWave(s32 unused);
 
 #include "shared/tables.h"
 #include "shared/ship_flight.h"
@@ -2014,12 +2014,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetSpeed(ACTOR_IDEJIMA_KRADEN, 1);
   Actor_WalkTo(ACTOR_IDEJIMA_KRADEN, 3608, 7695);
   Event_PlaySound(SE_WAVE_HIGH);
-#ifdef UBFIX
-  WorldMap_LoadTidalWave();
-#else
-  // UB: WorldMap_LoadTidalWave takes no argument, but this call passes 0.
-  ((void (*)(s32))WorldMap_LoadTidalWave)(0);
-#endif
+  WorldMap_LoadTidalWave(0);
   FieldEvent_SetExitRequest(WORLD_MAP_TO_IDEJIMA_NORTHEAST);
 }
 
@@ -2534,7 +2529,7 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
 
 /// Loads the tidal wave's tiles, pictures and palette and sets its
 /// background up.
-void WorldMap_LoadTidalWave(void) {
+void WorldMap_LoadTidalWave(s32 unused) {
   u8 *buffer = Heap_AllocEwram(16384);
   u8 *frames;
   u32 x;

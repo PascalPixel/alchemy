@@ -16,9 +16,8 @@ void Whirlwind_Update(struct Actor *self) {
     return;
   }
   Actor_SetAnimationSpeed(self, ANIM_STEP_NORMAL);
-  /* FAKEMATCH(dead): the timer stepped through its own address; as
-   * ++self->timer. */
-  if ((++*&self->timer & 31) == 31)
+  self->timer++;
+  if ((self->timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
   ((struct FieldSprite *)self->sprite)->priority =
       ((struct FieldSprite *)leader->sprite)->priority;

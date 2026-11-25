@@ -439,7 +439,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
    * field by name. */
   u8 *wakeTimer;
   struct Actor *effect;
-  struct PlayerSprite *sprite;
+  struct Sprite *sprite;
 
   heading = 0;
   count = 0;
@@ -541,7 +541,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         if (sprite != NULL) {
           Sprite_StartAnimation(sprite, DUST_CLOUD_ANIMATION_SCATTER);
           sprite->flags = 0;
-          sprite->priority = 0;
+          sprite->image.priority = 0;
         }
       }
     }
@@ -694,14 +694,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
           Sprite_StartAnimation(sprite, SAND_PUFF_ANIMATION_THIN);
           sprite->flags = 0;
           // DEAD: overwritten by the next line; the ROM keeps its mask and OR.
-          sprite->priority = 2;
-          /* FAKEMATCH(dead): a block that only places the mask's declaration
-           * after the stores. */
-          {
-            u8 mask = 3;
-
-            sprite->priority = state->sandTrailPriority & mask;
-          }
+          sprite->image.priority = 2;
+          sprite->image.priority = state->sandTrailPriority;
         }
         *wakeTimer = 5;
       }

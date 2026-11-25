@@ -82,24 +82,19 @@ void FieldPsynergy_UpdateBurst(void) {
   volatile u16 *palette;
   s32 pos[3];
   s32 i;
-  s32 *frames;
-  s32 red;
-  s32 blue;
 
   state->shake = BURST_STAGE_QUIET;
   if (state->paletteMode == BURST_PALETTE_SHINE) {
     palette = (volatile u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
-    i = 0;
-    /* FAKEMATCH(temporary): the frame count read through a pointer kept
-     * across the loop; as canvas->drawnFrames. */
-    frames = &canvas->drawnFrames;
-    red = RGB_LEVEL_MAX;
-    blue = RGB(0, 0, RGB_LEVEL_MAX);
     // The glow's 32 colours: red and blue full, green on a sine wave a 32nd
     // of a turn on from colour to colour, which moves on a colour every two
     // frames.
-    for (; i < PALETTE_COLORS * 2; i++) {
-      u32 angle = ((((u32)*frames >> 1) + i) * TRIG_TURN + TRIG_TURN * 9) / 32;
+    for (i = 0; i < PALETTE_COLORS * 2; i++) {
+      s32 red = RGB_LEVEL_MAX;
+      s32 blue = RGB(0, 0, RGB_LEVEL_MAX);
+      u32 angle =
+          ((((u32)canvas->drawnFrames >> 1) + i) * TRIG_TURN + TRIG_TURN * 9) /
+          32;
       s32 green = RGB(0,
                       FIXEDtoINT(Trig_Sin(angle) * CANVAS_SHINE_SWING) +
                           CANVAS_SHINE_MIDDLE,

@@ -797,9 +797,9 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor *actor;
   struct FieldSprite *sprite;
   IconTransfer *glyph;
-  u16 *palette;
+  struct PaletteFade *fade;
 
-  palette = (u16 *)Ram_HeapSlots->paletteFade;
+  fade = Ram_HeapSlots->paletteFade;
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   // "Felix used the Mars Star!"
@@ -860,16 +860,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS,
-                  palette);
-  /* FAKEMATCH(dead): a once-only block that places black, the colour the
-   * palette's first entry takes, at its store; as black declared with the
-   * routine's locals. */
-  {
-    s32 black = RGB(0, 0, 0);
-
-    *palette = black;
-  }
+  Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS, fade);
+  fade->palette[0] = RGB(0, 0, 0); // the backdrop
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(160);

@@ -354,6 +354,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   u32 code[8];
   s32 dx, dy, dz;
   s32 ux;
+  s32 uy;
   s32 ex;
   s32 ey;
   s32 uz;
@@ -398,6 +399,8 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
     scale = divide(dividend, Math_SqrtFX(levelSquared)) << 1;
   } while (0);
   ux = mul(dz, scale);
+  /* FAKEMATCH(temporary): u's level Y component, 0, set here; as 0. */
+  uy = 0;
   uz = mul(uz, scale);
 
   // Up axis v is the cross product of d and u.
@@ -414,14 +417,12 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   // Place the three axes in columns; translation uses dot products with
   // eye.
   ex = eye[0];
-  /* FAKEMATCH(barrier): an empty asm on vz that clobbers r9. */
-  asm("" : "+r"(vz) : : "r9");
   ey = eye[1];
   ez = eye[2];
   out[0] = ux;
-  out[3] = 0;
+  out[3] = uy;
   out[6] = uz;
-  out[MATRIX_TRANSLATION_X] = -dot(ex, ux, ez, uz, 0, 0);
+  out[MATRIX_TRANSLATION_X] = -dot(ex, ux, ez, uz, uy, uy);
   out[1] = vx;
   out[4] = vy;
   out[7] = vz;

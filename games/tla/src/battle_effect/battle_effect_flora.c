@@ -145,9 +145,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   s32 spin;
   s32 spread;
   s32 twist;
-  /* FAKEMATCH(signature): petals, gEffectScratch's address held as an
-   * integer, which FLORA_STATE casts back. */
-  s32 petals;
+  u8 *petals;
   s32 i;
   s32 j;
   s32 order;
@@ -177,7 +175,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   state = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   backdrop = Ram_HeapSlots->battleBackground;
-  petals = (s32)gEffectScratch;
+  petals = gEffectScratch;
   source = Ram_MapCellBuffer;
   motes = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -878,14 +876,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     s32 k;
     s32 m;
     s32 t;
-    u8 *sheet;
     s32 hi;
 
     resource = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
     Iwram_CopyWordsEntry((void *)BG_PLTT, resource, PALETTE_BANK_BYTES);
     resource += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(resource, SheetOf(state));
-    sheet = state->sheet + FLORA_STORM_PICTURES;
+    // From here petals points at the storm's petal pictures.
+    petals = state->sheet + FLORA_STORM_PICTURES;
     // Each 8x8 tile of the petal's pictures, two pixels a byte, is unpacked
     // to a byte a pixel at its place in its 16x16 picture.
     i = 0;
@@ -901,14 +899,11 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           k = 0;
           offset = t << 3;
           for (; k != 8; k++, offset += FLORA_PETAL_SIZE) {
-            u8 *d = (u8 *)(offset + (s32)sheet);
-
             for (m = 0; m != 4; m++) {
               hi = state->sheet[i] >> 4 & 0xf;
-              d[0] = state->sheet[i] & 0xf;
-              d[1] = hi;
+              petals[offset + m * 2] = state->sheet[i] & 0xf;
+              petals[offset + m * 2 + 1] = hi;
               i++;
-              d += 2;
             }
           }
         }

@@ -5,6 +5,8 @@
 /// The battle bank's far calls: running a battle, its camera and background,
 /// and how its units move.
 
+struct ScreenPoint;
+
 void DebugBattle_RunMenuFar(void);
 void BattleObject_SpawnObjectsForListFar(s16 *unitIds, s32 refreshPoses);
 void BattleCamera_SetViewFar(s32 x, s32 depth, s32 y, s32 zoom);
@@ -26,7 +28,10 @@ struct BattleObject *BattleObject_GetFar(s32 unitId);
 s32 Battle_RunFar(s32 enemyGroup);
 s32 BattleMotion_ProjectPositionFar(s32 unitId, s32 *projected);
 s32 BattleMotion_ProjectScaledPositionFar(s32 unitId, s32 *projected);
-s32 BattleMotion_ProjectCursorPointFar(s32 unitId, s32 *projected);
+/// Projects the point above a unit, where the target cursor points, onto the
+/// screen.
+s32 BattleMotion_ProjectCursorPointFar(s32 unitId,
+                                       struct ScreenPoint *projected);
 s32 BattleParty_PrepareMembersFar(u16 *unitIds);
 void BattleCamera_SetCommandViewFar(s32 verticalOffset);
 void *Actor_GetSpriteFar(struct Actor *actor, s32 recordIndex);

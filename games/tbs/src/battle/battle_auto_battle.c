@@ -424,12 +424,9 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   state.effect.kind = ELEMENT_JUPITER;
   BattleEffect_RunElementPillarFar(&state.effect);
   state.effect.kind = 0;
-  /* FAKEMATCH(dead): a never-true test, kind being 0, and its arm; as
-   * BattleEffect_RunFromTableFar(&state.effect) alone. */
-  if (state.effect.kind)
-    BattleEffect_RunByIdRangeFar(&state.effect);
-  else
-    BattleEffect_RunFromTableFar(&state.effect);
+  // The blow goes through the dispatch on its kind, which carries no
+  // EFFECT_BY_ID_RANGE: it runs from the handler table.
+  BATTLE_EFFECT_RUN(&state.effect, state.effect.kind);
   Actor_SelectAnimationFar(userActor, POSE_STANDING);
   for (targetIndex = 0; targetIndex != state.effect.targetCount; targetIndex++)
     BattleMotion_ReturnToSpot(state.effect.targets[targetIndex]);

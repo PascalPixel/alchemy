@@ -265,8 +265,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // Aimed at enemies or itself, the cursor starts at the acting unit (at y
   // 128), stays two frames, then eases to the target.
   if (mode != ABILITY_TARGET_ALLIES) {
-    BattleMotion_ProjectCursorPointFar(selection,
-                                       ScreenPoint_Coordinates(&actorPosition));
+    BattleMotion_ProjectCursorPointFar(selection, &actorPosition);
     cursorTracks[0].flags = CURSOR_HOLD_FRAME * 2;
     cursorTracks[0].x = actorPosition.x;
     cursorTracks[0].y = 128;
@@ -284,9 +283,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       /* FAKEMATCH(dead): a test that cannot change t. */
       if (t == 0)
         t = 0;
-      BattleMotion_ProjectCursorPointFar(
-          *(u16 *)((u8 *)candidateIds + t),
-          ScreenPoint_Coordinates(&selectedPosition));
+      BattleMotion_ProjectCursorPointFar(*(u16 *)((u8 *)candidateIds + t),
+                                         &selectedPosition);
     }
     // The cursor: 32 frames (256 bytes each), a frame every four frames,
     // bobbing 2 pixels each way every 16 frames.
@@ -401,9 +399,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       if (candidateIds[targetIndex] <= ALLY_MAX) {
         if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
           unit = Unit_GetFar(candidateIds[targetIndex]);
-          BattleMotion_ProjectCursorPointFar(
-              candidateIds[targetIndex],
-              ScreenPoint_Coordinates(&selectedPosition));
+          BattleMotion_ProjectCursorPointFar(candidateIds[targetIndex],
+                                             &selectedPosition);
           if (conditionWindow != 0)
             Window_Close(conditionWindow, 1);
           /* FAKEMATCH(dead): cancelling updates of conditionWindow. */
@@ -636,8 +633,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         // ENEMY_MYSTERY_MAN and ENEMY_MYSTERY_WOMAN are named "Mystery Man"
         // and "Mystery Woman".
         target = Unit_GetFar(candidateIds[targetIndex]);
-        BattleMotion_ProjectCursorPointFar(
-            candidateIds[targetIndex], ScreenPoint_Coordinates(&namePosition));
+        BattleMotion_ProjectCursorPointFar(candidateIds[targetIndex],
+                                           &namePosition);
         namePosition.y += CURSOR_BOB_Y();
         if (target->id == ENEMY_MYSTERY_WOMAN ||
             target->id == ENEMY_MYSTERY_MAN) {
@@ -670,8 +667,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       for (i = 1; i < targetCount; i++) {
         marker = &firstSprite[i];
         track = &cursorTracks[spreadTrackIndices[i]];
-        BattleMotion_ProjectCursorPointFar(
-            spreadActorIds[i], ScreenPoint_Coordinates(&markerPosition));
+        BattleMotion_ProjectCursorPointFar(spreadActorIds[i], &markerPosition);
         markerPosition.y = markerPosition.y + CURSOR_BOB_Y();
         *marker = *firstSprite;
         if (track->flags & CURSOR_EASING) {

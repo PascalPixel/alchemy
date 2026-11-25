@@ -100,9 +100,9 @@ static inline void *Iwram_Decompress(const void *source, void *destination) {
 
 /// Copies size bytes, rounded down to whole words, from source to
 /// destination.
-static inline s32 Iwram_CopyWords(volatile void *destination,
-                                  const volatile void *source, s32 size) {
-  return Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
+static inline void Iwram_CopyWords(volatile void *destination,
+                                   const volatile void *source, s32 size) {
+  Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
 }
 
 /// Iwram_CopyWords as a statement of its own: how the link battle and the

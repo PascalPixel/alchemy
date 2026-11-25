@@ -342,10 +342,8 @@ s32 BattleStaging_RunFullScreen(struct BattleActionRun *plan, s32 mode) {
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (plan->battleEffect & EFFECT_SUMMON)
       BattleEffect_RunSummonFar(&state.effect);
-    else if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-      BattleEffect_RunByIdRangeFar(&state.effect);
     else
-      BattleEffect_RunFromTableFar(&state.effect);
+      BATTLE_EFFECT_RUN(&state.effect, plan->battleEffect);
     BattlePlayback_WaitForReady();
   }
 
@@ -531,10 +529,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
 
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (state.effect.kind != 0) {
-      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-        BattleEffect_RunByIdRangeFar(&state.effect);
-      else
-        BattleEffect_RunFromTableFar(&state.effect);
+      BATTLE_EFFECT_RUN(&state.effect, plan->battleEffect);
     }
     BattlePlayback_WaitForReady();
     // After a critical hit every unit is shown again and the zoom ends.
@@ -688,10 +683,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
       i++;
       fade += FIXED_ONE / 60;
     } while (i < 20);
-    if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-      BattleEffect_RunByIdRangeFar(&state.effect);
-    else
-      BattleEffect_RunFromTableFar(&state.effect);
+    BATTLE_EFFECT_RUN(&state.effect, plan->battleEffect);
   } else {
     wait(60);
   }
@@ -855,10 +847,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   } else {
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (state.effect.kind) {
-      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-        BattleEffect_RunByIdRangeFar(&state.effect);
-      else
-        BattleEffect_RunFromTableFar(&state.effect);
+      BATTLE_EFFECT_RUN(&state.effect, plan->battleEffect);
     } else {
       BattleBackground_RestorePalette();
     }

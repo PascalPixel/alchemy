@@ -308,20 +308,11 @@ void FieldPsynergy_EndSand(void) {
   struct Actor *owner = effect->caster;
   s32 particleEntry;
   s32 particleTiles;
-  u8 *motionFlags;
-  u8 *rippled;
-  /* FAKEMATCH(temporary): source, the sprite's first entry held in a local for
-   * the decode; as the entry passed to the decode. */
-  void *source;
-  /* FAKEMATCH(temporary): sprite, the leader's first tile, first holding the
-   * picture's size for the decode and the load; as sizeof(state->picture) at
-   * both. */
   s32 sprite;
   struct FieldPsynergyParticle *particle;
   struct EffectSprite *particleSprite;
   u8 *animation;
   s32 pictureOffset;
-  s32 ripple;
   s32 frame;
   s32 i;
   s32 delay;
@@ -347,10 +338,7 @@ void FieldPsynergy_EndSand(void) {
     particle++;
   }
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  /* FAKEMATCH(temporary): motionFlags, a pointer standing in for
-   * owner->motionFlags's address. */
-  motionFlags = &owner->motionFlags;
-  *motionFlags = 0;
+  owner->motionFlags = 0;
   mask = OAM_BELOW_SHAPE_OR_SIZE;
   Actor_SetPositionAndResetMotionFar(
       owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
@@ -367,27 +355,24 @@ void FieldPsynergy_EndSand(void) {
   Sprite_SetFirstAnimationColorModeFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   wait(1);
   Sprite_SetFirstAnimationColorModeFar(owner->sprite, SPRITE_COLOR_NORMAL);
-  source = ((struct Sprite *)owner->sprite)->entries[0];
-  sprite = sizeof(state->picture);
-  FieldPsynergy_DecodePicture(source, state->picture, sprite);
+  FieldPsynergy_DecodePicture(((struct Sprite *)owner->sprite)->entries[0],
+                              state->picture, sizeof(state->picture));
   Sprite_SetFirstAnimationColorModeFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   pictureEntry = VramCache_FindFreeEntry();
-  sprite = VramCache_Load(pictureEntry, sprite, NULL);
+  sprite = VramCache_Load(pictureEntry, sizeof(state->picture), NULL);
   Sand_InitLeaderSprite(&state->leader, sprite);
   wait(1);
 
   frame = 0;
-  rippled = state->sunken;
-  ripple = 0;
-  pictureOffset = sprite * TILE_SIZE_4BPP;
   for (; frame < 78; frame++) {
     if (frame == 0)
       Sound_PlayFar(SE_SAND_END);
     if (frame <= 64) {
-      Picture_SinkColumnsByWave(state->picture, rippled,
-                                SAND_RISE_PHASE - ripple / 2);
+      Picture_SinkColumnsByWave(state->picture, state->sunken,
+                                SAND_RISE_PHASE - frame * 3 / 2);
+      pictureOffset = sprite * TILE_SIZE_4BPP;
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
-          rippled, SAND_PICTURE_SIZE, SAND_PICTURE_SIZE,
+          state->sunken, SAND_PICTURE_SIZE, SAND_PICTURE_SIZE,
           (u8 *)OBJ_VRAM0 + pictureOffset);
       Sand_DrawLeaderSprite(&state->leader);
     }
@@ -400,10 +385,10 @@ void FieldPsynergy_EndSand(void) {
       Sound_PlayFar(SE_SAND_EMERGE);
       if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
         gMainRoutineState.movementMode = LEADER_MOVEMENT_WORLD_MAP;
-        *motionFlags = ACTOR_FALLS;
+        owner->motionFlags = ACTOR_FALLS;
       } else {
         gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
-        *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+        owner->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       }
       if (field->standing == 0)
         Field_RunPsynergyEvent(
@@ -421,7 +406,6 @@ void FieldPsynergy_EndSand(void) {
       particle++;
     }
     wait(1);
-    ripple += 3;
   }
   Actor_SetOthersPaused(owner, 0, ANIM_STEP_NORMAL);
   VramCache_FreeEntry(pictureEntry);

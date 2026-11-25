@@ -21,26 +21,24 @@ s32 Field_TryJumpForward(void) {
   u8 savedMotionFlags = leader->motionFlags;
   struct FieldState *state = gFieldState;
   s32 spriteFlags = SPRITE_FLAG_SHADOW;
-  struct FieldPosition positionStorage;
-  struct FieldPosition *position;
+  struct FieldCoordinate position[3];
   struct Actor *platform;
 
-  /* FAKEMATCH(temporary): position holds &positionStorage; as positionStorage's
-   * members at its uses. */
-  position = &positionStorage;
 again:
   // The middle of the cell in front, then of the cell beyond.
-  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
-               leader->y.fixed,
-               (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
-  Vector_AddPolarOffset(toFIXED(16), angle, position);
-  if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_TOO_HIGH)
+  position[0].fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[1].fixed = leader->y.fixed;
+  position[2].fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Vector_AddPolarOffset(toFIXED(16), angle, &position[0].fixed);
+  if (MapGrid_CheckCollisionFar(leader, (struct FieldPosition *)position) ==
+      COLLISION_TOO_HIGH)
     return -1;
-  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
-               leader->y.fixed,
-               (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
-  Vector_AddPolarOffset(toFIXED(32), angle, position);
-  if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_NONE) {
+  position[0].fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[1].fixed = leader->y.fixed;
+  position[2].fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Vector_AddPolarOffset(toFIXED(32), angle, &position[0].fixed);
+  if (MapGrid_CheckCollisionFar(leader, (struct FieldPosition *)position) ==
+      COLLISION_NONE) {
     // Suspend ground following and the shadow while airborne: 4 pixels a
     // frame up, 3 a frame across.
     if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
@@ -55,10 +53,9 @@ again:
     leader->velocityY = toFIXED(4);
     leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & (u8)~SPRITE_FLAG_SHADOW);
-    Actor_MoveToAndWaitById(
-        gMainRoutineState.leaderActorId,
-        ((struct FieldCoordinate *)&position->x)->part[0].integer,
-        ((struct FieldCoordinate *)&position->z)->part[0].integer);
+    Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId,
+                            position[0].part[0].integer,
+                            position[2].part[0].integer);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
@@ -89,7 +86,8 @@ again:
           Iwram_MulFX(state->walkingDistanceScale, toFIXED(32));
     // Landed on another jump spot: stand, then jump again, testing the gap
     // and the landing afresh.
-    if (MapGrid_GetCellBehaviorAtFar(leader->layer, position->x, position->z) ==
+    if (MapGrid_GetCellBehaviorAtFar(leader->layer, position[0].fixed,
+                                     position[2].fixed) ==
         CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
       Actor_SelectAnimationFar(leader, ANIM_STAND);
       wait(6);

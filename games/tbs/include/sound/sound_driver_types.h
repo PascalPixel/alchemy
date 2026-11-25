@@ -634,4 +634,10 @@ extern const struct Song gSongTable[];
 extern MPlayFunc gMPlayJumpTable[36];
 extern const MPlayFunc gXcmdTable[];
 
+/// The jump table at its fixed address, the first EWRAM after the sound work:
+/// the driver's core (driver.c) reaches it by this number, MPlayExtender by
+/// its name.
+#define Ram_MPlayJumpTable                                                     \
+  FIXED_ADDRESS((MPlayFunc *), 0x02004000, gMPlayJumpTable)
+
 #endif

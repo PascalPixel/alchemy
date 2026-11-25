@@ -191,8 +191,8 @@ s32 LinkBattle_WaitSync(void) {
   if (battle->isLink != 0) {
     u32 other = battle->linkSide ^ 1;
 
-    // gLinkPeerSignatures[other]: the signature starts a peer's payload, after
-    // its record's four bytes of block state.
+    // The signature starts a peer's payload, after its record's four bytes of
+    // block state.
     peer = (u16 *)gSerialPeerPayloads[other].payload;
     signature = (u16 *)gSerialTransfer.payload;
     if (battle->linkPaused == 0) {
@@ -233,7 +233,7 @@ s32 LinkBattle_SyncTurn(void) {
   UNUSED u16 spare[10];
 
   if (battle->isLink != 0) {
-    peer = gLinkPeerSignatures[battle->linkSide ^ 1];
+    peer = (u16 *)gSerialPeerPayloads[battle->linkSide ^ 1].payload;
     signature = (u16 *)gSerialTransfer.payload;
     if (battle->linkPaused != 0)
       return -1;

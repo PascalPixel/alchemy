@@ -50,10 +50,7 @@ gTitleSendOptionEnabled:
 	.space 16
 	.global gSerialPeerPayloads
 gSerialPeerPayloads:
-	.space 4
-	.global gLinkPeerSignatures
-gLinkPeerSignatures:
-	.space 92
+	.space 96
 	.global gSerialSendSource
 gSerialSendSource:
 	.space 16

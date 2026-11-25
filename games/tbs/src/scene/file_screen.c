@@ -433,7 +433,7 @@ struct FileScreenLoadedSceneState {
 };
 
 /// A console's link payload as the cable transfer reads it from
-/// gLinkPeerSignatures.
+/// gSerialPeerPayloads.
 struct SaveLinkGreeting {
   /// The greeting Scene_Initialize waits for: FILE_SCREEN_LINK_LANGUAGE_TAG,
   /// then V, T and S.
@@ -700,7 +700,8 @@ menu_top:;
       limit = LINK_STATUS_HEARD_BOTH;
       for (peerIndex = 0; peerIndex != 4; peerIndex++) {
         u16 *greeting =
-            ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peerIndex].code;
+            ((struct SaveLinkGreeting *)gSerialPeerPayloads[peerIndex].payload)
+                ->code;
 
         greeting[0] = '0';
         greeting[1] = '0';
@@ -716,7 +717,8 @@ menu_top:;
           u32 control = REG_SIOCNT;
           u32 peer = SIO_ID_OF(control) ^ 1;
           u16 *received =
-              ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peer].code;
+              ((struct SaveLinkGreeting *)gSerialPeerPayloads[peer].payload)
+                  ->code;
 
           if (received[0] == FILE_SCREEN_LINK_LANGUAGE_TAG) {
             if (received[1] == 'V') {

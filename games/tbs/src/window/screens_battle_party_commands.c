@@ -119,7 +119,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     transferWords[7] = 'T';
     missedLinkFrames = 0;
     for (;;) {
-      peerSignature = gLinkPeerSignatures[battle->linkSide ^ 1];
+      peerSignature = (u16 *)gSerialPeerPayloads[battle->linkSide ^ 1].payload;
       if (battle->linkPaused != 0) {
         commandCount = -1;
         state->linkTimer = 0;
@@ -775,7 +775,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       state->timerWindow = 0;
     }
     for (;;) {
-      peerSignature = gLinkPeerSignatures[linkBattle->linkSide ^ 1];
+      peerSignature =
+          (u16 *)gSerialPeerPayloads[linkBattle->linkSide ^ 1].payload;
       if (linkBattle->linkPaused != 0) {
         commandCount = -1;
         break;

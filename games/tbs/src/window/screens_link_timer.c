@@ -6,9 +6,9 @@
 
 #define COUNTDOWN_START_FRAMES 900 ///< 15 seconds
 
-/// The partner console's link signature (gLinkPeerSignatures) as the timer
-/// reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its
-/// commands (Battle_CollectPartyCommands), which starts this side's
+/// The partner console's link signature (its payload in gSerialPeerPayloads)
+/// as the timer reads it: halfwords 4 to 7 read "EDVS" once the partner has
+/// chosen its commands (Battle_CollectPartyCommands), which starts this side's
 /// countdown.
 struct LinkSignature {
   u8 exec[8]; ///< halfwords 0 to 3, "EXEC" while the link holds
@@ -88,7 +88,8 @@ void BattleMenu_Update(void) {
     if (timer >= 0)
       goto timer_ready;
     signature =
-        (struct LinkSignature *)gLinkPeerSignatures[runtime->linkSide ^ 1];
+        (struct LinkSignature *)gSerialPeerPayloads[runtime->linkSide ^ 1]
+            .payload;
     if (signature->e != 'E')
       goto signature_done;
     if (signature->d == 'D')

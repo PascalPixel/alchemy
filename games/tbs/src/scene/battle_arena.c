@@ -265,7 +265,7 @@ const s32 gBattleArena_SlotValues[] = {
 #undef PEER_TAG
 
 /// A console's link payload as the Battle Arena reads it from
-/// gLinkPeerSignatures. values[0] is its signature word and values[1] its state
+/// gSerialPeerPayloads. values[0] is its signature word and values[1] its state
 /// word (gBattleArena_SlotValues, placed by gBattleArena_SlotColumns).
 struct LinkPeerPayload {
   s32 values[6]; ///< the payload's words; only 0 and 1 are read here
@@ -340,8 +340,11 @@ static s32 BattleArena_PeerSlotMatches(s32 slot) {
     else
       GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_CHILD);
     {
-      struct LinkPeerPayload *peer = (struct LinkPeerPayload *)
-          gLinkPeerSignatures[GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD) ^ 1];
+      struct LinkPeerPayload *peer =
+          (struct LinkPeerPayload *)
+              gSerialPeerPayloads[GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD) ^
+                                  1]
+                  .payload;
 
       if (peer->values[gBattleArena_SlotColumns[slot]] == *expected)
         return 1;
@@ -380,7 +383,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
       // clear every console's received payload and go idle.
       if (++sBattleArenaWaitFrames > BATTLE_ARENA_PEER_WAIT_FRAMES) {
         for (i = 0; i < 4; i++) {
-          Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
+          Iwram_ClearWords(gSerialPeerPayloads[i].payload, 20);
         }
         sBattleArenaWaitFrames = 0;
         BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);

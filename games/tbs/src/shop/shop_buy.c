@@ -498,9 +498,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
                                             ICON_BASE | ICON_COUNT_ABOVE_ONE |
                                                 ICON_BROKEN | ICON_EQUIPPED,
                                             window, x, y);
-        /* FAKEMATCH(dead): depth written through its taken address; the plain
-           form is icon->depth. */
-        *(u8 *)&icon->depth = OAM_DEPTH_FRONT - 3;
+        icon->depth = OAM_DEPTH_FRONT - 3;
         x += 16;
         if (itemIndex == SHOP_INVENTORY_COLUMNS - 1) {
           x = 8;
@@ -511,9 +509,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
           y += 16;
         }
         itemIndex++;
-        if (itemIndex >= INVENTORY_SLOTS)
-          break;
-        if (unit->inventory[itemIndex] == 0)
+        if (itemIndex >= INVENTORY_SLOTS || unit->inventory[itemIndex] == 0)
           break;
       }
     }

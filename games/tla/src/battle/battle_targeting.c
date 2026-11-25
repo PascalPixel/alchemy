@@ -1372,11 +1372,13 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
             maxHpPercent = 35;
             break;
           case ABILITY_ATALANTA:
-          case ABILITY_MEGAERA:
           case ABILITY_KIRIN:
           case ABILITY_NEREID:
-          case ABILITY_ZAGAN:
           case ABILITY_RAMSES:
+            maxHpPercent = 6;
+            break;
+          case ABILITY_MEGAERA:
+          case ABILITY_ZAGAN:
             maxHpPercent = 6;
             break;
           case ABILITY_TIAMAT:
@@ -2081,10 +2083,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
     // as HP, Sap half.
     case ABILITY_EFFECT_DRAIN_HP:
     case ABILITY_EFFECT_DRAIN_HALF_HP:
-      power = damageDealt;
       amount = actor->hp;
-      /* FAKEMATCH(barrier): an empty asm on amount, the user's hit points. */
-      __asm__("" : "=r"(amount) : "0"(amount));
+      power = damageDealt;
       if (ability->effect == ABILITY_EFFECT_DRAIN_HALF_HP)
         power /= 2;
       drained = power;

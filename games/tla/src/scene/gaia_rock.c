@@ -669,8 +669,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineState.next == SCENE_GAIA_ROCK_STATUE_SPOTS &&
       ARRIVES_AT_GREAT_WALL()) {
-    struct MapLayer *layer =
-        &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[1];
+    struct MapLayer *layer = MapGrid_GetLayer(1);
 
     layer->offsetX = -toFIXED(128);
     layer->offsetY = toFIXED(1096);

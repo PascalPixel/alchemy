@@ -1121,8 +1121,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// the channels' every other frame.
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *layer = MapGrid_GetLayer(2);
   struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
   struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 i;

@@ -850,8 +850,7 @@ void Scroll_HBlank(void) {
 /// Each frame: where Scroll_HBlank's line falls on screen, from the third map
 /// layer's scroll, and how far BG1 is scrolled above and below it.
 void Layer_TrackScroll(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *layer = MapGrid_GetLayer(2);
   s16 y = FIXEDtoINT(layer->y);
 
   // The third layer's picture starts 1024 pixels down the map; the line is

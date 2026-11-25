@@ -1413,8 +1413,7 @@ void Islets_StartWaveDma(void) {
 /// that moves each frame, swaying each line of the water up to 2 pixels either
 /// way.
 void Islets_FillWaveLines(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *layer = MapGrid_GetLayer(2);
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex ^ 1];
   FIXED v[2];
   s32 *count = &v[1];

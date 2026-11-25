@@ -744,8 +744,7 @@ enum { RIPPLE_SWAY_SHIFT = 15 };
 /// A task: fills the back buffer of line scrolls with the water's ripple, a
 /// sine of the line and the frame, and swaps the buffers.
 void Lemuria_FillRippleLines(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[1];
+  struct MapLayer *layer = MapGrid_GetLayer(1);
   s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer ^ 1];
   FIXED v[2];
   s32 *count = &v[1];

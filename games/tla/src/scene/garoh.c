@@ -260,8 +260,7 @@ void Garoh_WavePathLayer(void) {
   // The sine routine itself, called at the address Trig_Sin's far call
   // jumps to.
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[1];
+  struct MapLayer *layer = MapGrid_GetLayer(1);
   u16 *line = gGaroh_WaveLines;
 
   if (gFieldState->revealActive == 0) {

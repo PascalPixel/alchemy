@@ -427,8 +427,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// two pixels a frame, back in x and on in z, and starts again once z passes
 /// 1040.
 void ShamanVillage_DriftSandLayer(void) {
-  struct MapLayer *sand =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *sand = MapGrid_GetLayer(2);
 
   sand->offsetX -= toFIXED(2);
 

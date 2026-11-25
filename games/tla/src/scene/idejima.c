@@ -922,8 +922,7 @@ void Idejima_ApplyWaveLines(void) {
 /// the sine plus one, 0 to 4 pixels: a wave that moves down the screen a row
 /// each frame.
 void Idejima_UpdateWaveLines(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[0];
+  struct MapLayer *layer = MapGrid_GetLayer(0);
   s16 *line = gIdejima_WaveLines[gIdejima_WaveBuffer];
   s32 i;
 
@@ -958,8 +957,7 @@ void Idejima_UseDriftPalette(void) {
 /// and an eighth south each frame, the beacon's cells are copied in and the
 /// ship rocks quickly.
 void DriftScene_Prepare(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[0];
+  struct MapLayer *layer = MapGrid_GetLayer(0);
 
   layer->speedX = toFIXED(1) / 4;
   layer->speedY = toFIXED(1) / 8;

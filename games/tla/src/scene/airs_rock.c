@@ -1490,8 +1490,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
 /// The fog over the wall drifts, thickening and thinning between FOG_WEIGHT
 /// and half that while its lines ripple.
 void AirsRock_DriftFog(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *layer = MapGrid_GetLayer(2);
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   volatile u16 *channel;
@@ -1523,8 +1522,7 @@ void AirsRock_DriftFog(void) {
 /// higher it stands above its foot, while the fog ripples and thickens and
 /// thins as in AirsRock_DriftFog.
 void AirsRock_LiftFog(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *layer = MapGrid_GetLayer(2);
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   FIXED wave;
@@ -1578,8 +1576,7 @@ void AirsRock_LiftFog(void) {
 /// spent.
 void AirsRock_WhirlwindClearsFog(void) {
   u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
-  struct MapLayer *fog =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *fog = MapGrid_GetLayer(2);
   u16 *cell;
   struct Actor *spark;
   s32 i;
@@ -1929,16 +1926,10 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_SECOND_PILLAR_MOVED_WEST))
         Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 872);
       AirsRock_MoveSecondPillar();
-      /* FAKEMATCH(dead): the third layer's offsets and scales stored through
-       * its taken address; as ...->layers[2].offsetX and the rest. */
-      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->offsetX =
-          toFIXED(1408);
-      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->offsetY =
-          toFIXED(576);
-      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->scaleX =
-          FIXED_ONE / 4;
-      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->scaleY =
-          FIXED_ONE / 4;
+      MapGrid_GetLayer(2)->offsetX = toFIXED(1408);
+      MapGrid_GetLayer(2)->offsetY = toFIXED(576);
+      MapGrid_GetLayer(2)->scaleX = FIXED_ONE / 4;
+      MapGrid_GetLayer(2)->scaleY = FIXED_ONE / 4;
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       break;
@@ -1982,16 +1973,10 @@ s32 Scene_Initialize(void) {
         while ((s32)dma->control < 0)
           ;
         Task_AddFrame(AirsRock_DriftFog, TASK_PASS_VBLANK);
-        /* FAKEMATCH(dead): the third layer's speeds and masks stored through
-         * its taken address; as ...->layers[2].speedX and the rest. */
-        (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->speedX =
-            toFIXED(0.25);
-        (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->speedY =
-            -toFIXED(0.5);
-        (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->maskX =
-            FOG_WRAP - 1;
-        (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->maskY =
-            (FOG_WRAP - 1) * MAPGRID_SIZE;
+        MapGrid_GetLayer(2)->speedX = toFIXED(0.25);
+        MapGrid_GetLayer(2)->speedY = -toFIXED(0.5);
+        MapGrid_GetLayer(2)->maskX = FOG_WRAP - 1;
+        MapGrid_GetLayer(2)->maskY = (FOG_WRAP - 1) * MAPGRID_SIZE;
       } else {
         REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
         REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -2008,16 +1993,10 @@ s32 Scene_Initialize(void) {
         LEADER()->z.fixed += toFIXED(16);
       Leader_Lift(-toFIXED(48));
     case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST:
-      /* FAKEMATCH(dead): the third layer's offsets and scales stored through
-       * its taken address; as ...->layers[2].offsetX and the rest. */
-      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->offsetX =
-          toFIXED(1152);
-      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->offsetY =
-          toFIXED(800);
-      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->scaleX =
-          FIXED_ONE * 13 / 16;
-      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->scaleY =
-          FIXED_ONE * 13 / 16;
+      MapGrid_GetLayer(2)->offsetX = toFIXED(1152);
+      MapGrid_GetLayer(2)->offsetY = toFIXED(800);
+      MapGrid_GetLayer(2)->scaleX = FIXED_ONE * 13 / 16;
+      MapGrid_GetLayer(2)->scaleY = FIXED_ONE * 13 / 16;
       if (!GameFlag_Get(FLAG_AIRS_ROCK_TOP_OPENED)) {
         MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
         MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);

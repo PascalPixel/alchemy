@@ -10,6 +10,7 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
+#include "system/heap.h"
 
 /// The map's running blend script, which sets the blend registers over time
 /// (BlendScript_Run, each frame from BlendScript_Start).
@@ -223,6 +224,12 @@ struct MapState {
 /// The map's view position (MapState.view): its left and its top, x then z,
 /// in 16.16 fixed-point pixels.
 static inline FIXED *MapState_View(struct MapState *map) { return map->view; }
+
+/// The map grid's background layer `layer` (MapState.layers), in the map state
+/// of heap slot HEAP_SLOT_MAP_GRID.
+static inline struct MapLayer *MapGrid_GetLayer(s32 layer) {
+  return &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[layer];
+}
 
 /// The bytes of MapState a field map uses: up to its third layer, the last the
 /// field scrolls.

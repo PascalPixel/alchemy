@@ -226,8 +226,7 @@ void LemurianShipDeck_ShowArrival(void) {
 
 /// A task: scrolls the waves' layer half a pixel a frame.
 void LemurianShipDeck_ScrollWaves(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[0];
+  struct MapLayer *layer = MapGrid_GetLayer(0);
   FIXED phase = gLemurianShipDeck_WaveScroll;
 
   layer->offsetX = phase;
@@ -240,8 +239,7 @@ void LemurianShipDeck_ScrollWaves(void) {
 /// A task: bobs the camera's actor and the first map layer together on a sine
 /// wave, a full wave every 128 frames.
 void LemurianShipDeck_BobDeck(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[0];
+  struct MapLayer *layer = MapGrid_GetLayer(0);
   struct Actor *actor = EventCamera_GetActor();
   s32 offset = Math_Sin(gLemurianShipDeck_BobPhase) >> 2;
 

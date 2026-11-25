@@ -798,8 +798,7 @@ void EasternAlhafra_StartWaveDma(void) {
 /// scroll plus a sine of up to 2 pixels that moves up the screen a line each
 /// frame.
 void EasternAlhafra_FillWaveLines(void) {
-  struct MapLayer *layer =
-      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *layer = MapGrid_GetLayer(2);
   u16 *line;
   s32 i = 0;
 

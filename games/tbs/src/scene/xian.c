@@ -349,7 +349,7 @@ static void Xian_TalkToWaterCarrier(void) {
   s32 savedFacing;
   FIXED carrierX;
   s32 carrierCellZ;
-  s32 carrierColumnX;
+  s32 carrierCellX;
   s32 scaleY;
   FIXED scaleX;
 
@@ -418,17 +418,13 @@ static void Xian_TalkToWaterCarrier(void) {
   Sound_Play(SE_SPARKLING_PASSAGE);
   puddle->scaleX = 3 * FIXED_ONE / 10;
   puddle->scaleY = 3 * FIXED_ONE / 10;
-  carrierX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
+  carrierCellX = FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed);
   carrierCellZ = FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed);
-  Actor_SetPositionFX(ACTOR_SPILLED_WATER,
-                      FIELD_CELL_CENTER(FIELD_CELL(carrierX)),
+  Actor_SetPositionFX(ACTOR_SPILLED_WATER, FIELD_CELL_CENTER(carrierCellX),
                       FIELD_CELL_CENTER(carrierCellZ));
-  /* FAKEMATCH(temporary): carrierColumnX, the carrier's x read again into a
-     local of its own; as carrierX read again, the cell's column is reckoned
-     in other registers. */
-  carrierColumnX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
+  carrierX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  MapGrid_CopyCellAttributes(16, 16, 1, 1, FIELD_CELL(carrierColumnX),
+  MapGrid_CopyCellAttributes(16, 16, 1, 1, FIELD_CELL(carrierX),
                              FIELD_CELL(carrier->z.fixed));
   Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 2);
   puddle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

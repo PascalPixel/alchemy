@@ -74,41 +74,32 @@ void Actor_Release(struct Actor *actor);
 void WorldMap_UpdatePlacedActors(void) {
   const struct WorldMapPlace *placement = WorldMapPlaces_GetTable();
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
-  s32 leaderReach = ((struct Sprite *)leader->sprite)->scale * leader->radius;
+  s32 leaderReach = leader->sprite->scale * leader->radius;
   u32 i;
-  s32 next;
   FIXED left, right, top, bottom;
   struct Actor **slot;
   struct FieldState *state = Ram_HeapSlots->fieldState;
   struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = state->camera;
-  s32 zoom = map->zoom;
-  FIXED x = actor->x.fixed;
-  u8 kind = placement->flag;
-  FIXED z = actor->z.fixed;
-  struct Actor **objects = gWorldMap_PlacedActors;
 
-  if (zoom <= FIXED_ONE) {
-    left = x - toFIXED(160);
-    right = x + toFIXED(160);
-    top = z - toFIXED(300);
-    bottom = z + toFIXED(200);
+  if (map->zoom <= FIXED_ONE) {
+    left = actor->x.fixed - toFIXED(160);
+    right = actor->x.fixed + toFIXED(160);
+    top = actor->z.fixed - toFIXED(300);
+    bottom = actor->z.fixed + toFIXED(200);
   } else {
-    left = x - toFIXED(240);
-    right = x + toFIXED(240);
-    top = z - toFIXED(450);
-    bottom = z + toFIXED(300);
+    left = actor->x.fixed - toFIXED(240);
+    right = actor->x.fixed + toFIXED(240);
+    top = actor->z.fixed - toFIXED(450);
+    bottom = actor->z.fixed + toFIXED(300);
   }
-  i = 0;
-  next = kind;
-  slot = objects;
-  /* FAKEMATCH(barrier): an empty asm on leader and state that reads next. */
-  asm("" : "+g"(leader), "+r"(state) : "g"(next));
-  while (next != 0) {
+  for (i = 0, slot = gWorldMap_PlacedActors;
+       i < MAP_SCREEN_PLACE_COUNT && placement->flag != 0;
+       i++, slot++, placement++) {
     FIXED px, pz;
 
     if (placement->value == WORLD_MAP_MARKER_SHIP)
-      goto next;
+      continue;
     actor = *slot;
     px = toFIXED(placement->x);
     pz = toFIXED(placement->z);
@@ -126,10 +117,9 @@ void WorldMap_UpdatePlacedActors(void) {
         if (actor == NULL) {
           struct Sprite *sprite;
 
-          actor = ((struct Actor *)Import_ActorCreate(placement->sprite, px, 0,
-                                                      pz));
+          actor = Import_ActorCreate(placement->sprite, px, 0, pz);
           if (actor == NULL)
-            goto next;
+            continue;
           Actor_StartScript(actor, gWorldMap_PlacedActorScript);
           actor->motionFlags = 0;
           actor->collisionFlags = ACTOR_SOLID;
@@ -140,18 +130,11 @@ void WorldMap_UpdatePlacedActors(void) {
           *slot = actor;
         }
         if (gMainRoutineState.ownerOverride == 0) {
-          s32 scale = ((struct Sprite *)actor->sprite)->scale;
-          FIXED dx;
-          s32 reach;
-          FIXED dz;
+          s32 scale = actor->sprite->scale;
+          FIXED dx = ABS(actor->x.fixed - leader->x.fixed);
 
-          dx = actor->x.fixed - leader->x.fixed;
-          if (dx < 0)
-            dx = leader->x.fixed - actor->x.fixed;
-          reach = leaderReach + actor->radius * scale;
-          dz = actor->z.fixed - leader->z.fixed;
-          if (dz >= 0 ? dx + dz < reach
-                      : dx + (leader->z.fixed - actor->z.fixed) < reach) {
+          if (dx + ABS(actor->z.fixed - leader->z.fixed) <
+              leaderReach + actor->radius * scale) {
             if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
               if (gMainRoutineState.movementMode == LEADER_MOVEMENT_WORLD_SAND)
                 state->psynergy = ACT_PACKED | ABILITY_SAND;
@@ -160,20 +143,13 @@ void WorldMap_UpdatePlacedActors(void) {
             }
           }
         }
-        goto next;
+        continue;
       }
     }
     if (actor != NULL) {
       Actor_Release(actor);
       *slot = NULL;
     }
-  next:
-    i++;
-    slot++;
-    placement++;
-    if (i >= MAP_SCREEN_PLACE_COUNT)
-      break;
-    next = placement->flag;
   }
 }
 

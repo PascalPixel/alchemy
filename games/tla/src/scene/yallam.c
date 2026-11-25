@@ -595,73 +595,156 @@ void Yallam_RunSongPath(s32 actorId) {
   // The stars song: north past the twins and two swirls, then twice round
   // the trunk.
   case 0:
-    /* FAKEMATCH(barrier): an empty asm that clobbers r5; as no asm. */
-    asm("" : : : "r5");
     Actor_SetDestination(actorId, 344, 824);
+    (*timer)++;
+    return;
+  case 1:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 2:
     Actor_SetDestination(actorId, 324, 820);
     (*timer)++;
     return;
+  case 3:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 4:
     Actor_SetDestination(actorId, 320, 808);
+    (*timer)++;
+    return;
+  case 5:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 6:
     Actor_SetDestination(actorId, 324, 796);
     (*timer)++;
     return;
+  case 7:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 8:
     Actor_SetDestination(actorId, 344, 792);
+    (*timer)++;
+    return;
+  case 9:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 10:
     Actor_SetDestination(actorId, 364, 796);
     (*timer)++;
     return;
+  case 11:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 12:
     Actor_SetDestination(actorId, 368, 808);
+    (*timer)++;
+    return;
+  case 13:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 14:
     Actor_SetDestination(actorId, 364, 820);
     (*timer)++;
     return;
+  case 15:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 16:
     Actor_SetDestination(actorId, 344, 824);
+    (*timer)++;
+    return;
+  case 17:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 18:
     Actor_SetDestination(actorId, 324, 820);
     (*timer)++;
     return;
+  case 19:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 20:
     Actor_SetDestination(actorId, 320, 808);
+    (*timer)++;
+    return;
+  case 21:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 22:
     Actor_SetDestination(actorId, 324, 796);
     (*timer)++;
     return;
+  case 23:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 24:
     Actor_SetDestination(actorId, 344, 792);
+    (*timer)++;
+    return;
+  case 25:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 26:
     Actor_SetDestination(actorId, 364, 796);
     (*timer)++;
     return;
+  case 27:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 28:
     Actor_SetDestination(actorId, 368, 808);
+    (*timer)++;
+    return;
+  case 29:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 30:
     Actor_SetDestination(actorId, 364, 820);
     (*timer)++;
     return;
+  case 31:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 32:
     Actor_SetDestination(actorId, 344, 824);
+    (*timer)++;
+    return;
+  case 33:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // East, then three to the north.
@@ -670,16 +753,36 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 364, 820);
     (*timer)++;
     return;
+  case 35:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 36:
     Actor_SetDestination(actorId, 368, 808);
+    (*timer)++;
+    return;
+  case 37:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 38:
     Actor_SetDestination(actorId, 392, 808);
     (*timer)++;
     return;
+  case 39:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 40:
     Actor_SetDestination(actorId, 392, 744);
+    (*timer)++;
+    return;
+  case 41:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // Thrice round, then north to the stars.
@@ -688,132 +791,297 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 372, 740);
     (*timer)++;
     return;
+  case 43:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 44:
     Actor_SetDestination(actorId, 368, 728);
+    (*timer)++;
+    return;
+  case 45:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 46:
     Actor_SetDestination(actorId, 372, 716);
     (*timer)++;
     return;
+  case 47:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 48:
     Actor_SetDestination(actorId, 392, 712);
+    (*timer)++;
+    return;
+  case 49:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 50:
     Actor_SetDestination(actorId, 412, 716);
     (*timer)++;
     return;
+  case 51:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 52:
     Actor_SetDestination(actorId, 416, 728);
+    (*timer)++;
+    return;
+  case 53:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 54:
     Actor_SetDestination(actorId, 412, 740);
     (*timer)++;
     return;
+  case 55:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 56:
     Actor_SetDestination(actorId, 392, 744);
+    (*timer)++;
+    return;
+  case 57:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 58:
     Actor_SetDestination(actorId, 372, 740);
     (*timer)++;
     return;
+  case 59:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 60:
     Actor_SetDestination(actorId, 368, 728);
+    (*timer)++;
+    return;
+  case 61:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 62:
     Actor_SetDestination(actorId, 372, 716);
     (*timer)++;
     return;
+  case 63:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 64:
     Actor_SetDestination(actorId, 392, 712);
+    (*timer)++;
+    return;
+  case 65:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 66:
     Actor_SetDestination(actorId, 412, 716);
     (*timer)++;
     return;
+  case 67:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 68:
     Actor_SetDestination(actorId, 416, 728);
+    (*timer)++;
+    return;
+  case 69:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 70:
     Actor_SetDestination(actorId, 412, 740);
     (*timer)++;
     return;
+  case 71:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 72:
     Actor_SetDestination(actorId, 392, 744);
+    (*timer)++;
+    return;
+  case 73:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 74:
     Actor_SetDestination(actorId, 372, 740);
     (*timer)++;
     return;
+  case 75:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 76:
     Actor_SetDestination(actorId, 368, 728);
+    (*timer)++;
+    return;
+  case 77:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 78:
     Actor_SetDestination(actorId, 372, 716);
     (*timer)++;
     return;
+  case 79:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 80:
     Actor_SetDestination(actorId, 392, 712);
+    (*timer)++;
+    return;
+  case 81:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 82:
     Actor_SetDestination(actorId, 412, 716);
     (*timer)++;
     return;
+  case 83:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 84:
     Actor_SetDestination(actorId, 416, 728);
+    (*timer)++;
+    return;
+  case 85:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 86:
     Actor_SetDestination(actorId, 412, 740);
     (*timer)++;
     return;
+  case 87:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 88:
     Actor_SetDestination(actorId, 392, 744);
+    (*timer)++;
+    return;
+  case 89:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 90:
     Actor_SetDestination(actorId, 372, 740);
     (*timer)++;
     return;
+  case 91:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 92:
     Actor_SetDestination(actorId, 368, 728);
+    (*timer)++;
+    return;
+  case 93:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 94:
     Actor_SetDestination(actorId, 372, 716);
     (*timer)++;
     return;
+  case 95:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 96:
     Actor_SetDestination(actorId, 392, 712);
+    (*timer)++;
+    return;
+  case 97:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 98:
     Actor_SetDestination(actorId, 392, 696);
     (*timer)++;
     return;
+  case 99:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 100:
     Actor_SetDestination(actorId, 412, 692);
+    (*timer)++;
+    return;
+  case 101:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 102:
     Actor_SetDestination(actorId, 416, 680);
     (*timer)++;
     return;
+  case 103:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 104:
     Actor_SetDestination(actorId, 412, 668);
     (*timer)++;
     return;
+  case 105:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 106:
     Actor_SetDestination(actorId, 392, 664);
+    (*timer)++;
+    return;
+  case 107:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // The moon song's opening line.
@@ -821,12 +1089,27 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 372, 668);
     (*timer)++;
     return;
+  case 109:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 110:
     Actor_SetDestination(actorId, 368, 680);
     (*timer)++;
     return;
+  case 111:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 112:
     Actor_SetDestination(actorId, 320, 680);
+    (*timer)++;
+    return;
+  case 113:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // West from the stars past three swirls, then twice round.
@@ -834,72 +1117,162 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 316, 692);
     (*timer)++;
     return;
+  case 115:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 116:
     Actor_SetDestination(actorId, 296, 696);
+    (*timer)++;
+    return;
+  case 117:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 118:
     Actor_SetDestination(actorId, 276, 692);
     (*timer)++;
     return;
+  case 119:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 120:
     Actor_SetDestination(actorId, 272, 680);
+    (*timer)++;
+    return;
+  case 121:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 122:
     Actor_SetDestination(actorId, 276, 668);
     (*timer)++;
     return;
+  case 123:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 124:
     Actor_SetDestination(actorId, 296, 664);
+    (*timer)++;
+    return;
+  case 125:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 126:
     Actor_SetDestination(actorId, 316, 668);
     (*timer)++;
     return;
+  case 127:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 128:
     Actor_SetDestination(actorId, 320, 680);
+    (*timer)++;
+    return;
+  case 129:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 130:
     Actor_SetDestination(actorId, 316, 692);
     (*timer)++;
     return;
+  case 131:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 132:
     Actor_SetDestination(actorId, 296, 696);
+    (*timer)++;
+    return;
+  case 133:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 134:
     Actor_SetDestination(actorId, 276, 692);
     (*timer)++;
     return;
+  case 135:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 136:
     Actor_SetDestination(actorId, 272, 680);
+    (*timer)++;
+    return;
+  case 137:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 138:
     Actor_SetDestination(actorId, 276, 668);
     (*timer)++;
     return;
+  case 139:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 140:
     Actor_SetDestination(actorId, 296, 664);
+    (*timer)++;
+    return;
+  case 141:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 142:
     Actor_SetDestination(actorId, 316, 668);
     (*timer)++;
     return;
+  case 143:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 144:
     Actor_SetDestination(actorId, 320, 680);
+    (*timer)++;
+    return;
+  case 145:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 146:
     Actor_SetDestination(actorId, 316, 692);
     (*timer)++;
     return;
+  case 147:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 148:
     Actor_SetDestination(actorId, 296, 696);
+    (*timer)++;
+    return;
+  case 149:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // South, then one swirl west.
@@ -907,8 +1280,18 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 296, 728);
     (*timer)++;
     return;
+  case 151:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 152:
     Actor_SetDestination(actorId, 272, 728);
+    (*timer)++;
+    return;
+  case 153:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // Thrice round, then south to the moon.
@@ -916,124 +1299,279 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
     return;
+  case 155:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 156:
     Actor_SetDestination(actorId, 248, 744);
+    (*timer)++;
+    return;
+  case 157:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 158:
     Actor_SetDestination(actorId, 228, 740);
     (*timer)++;
     return;
+  case 159:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 160:
     Actor_SetDestination(actorId, 224, 728);
+    (*timer)++;
+    return;
+  case 161:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 162:
     Actor_SetDestination(actorId, 228, 716);
     (*timer)++;
     return;
+  case 163:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 164:
     Actor_SetDestination(actorId, 248, 712);
+    (*timer)++;
+    return;
+  case 165:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 166:
     Actor_SetDestination(actorId, 268, 716);
     (*timer)++;
     return;
+  case 167:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 168:
     Actor_SetDestination(actorId, 272, 728);
+    (*timer)++;
+    return;
+  case 169:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 170:
     Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
     return;
+  case 171:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 172:
     Actor_SetDestination(actorId, 248, 744);
+    (*timer)++;
+    return;
+  case 173:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 174:
     Actor_SetDestination(actorId, 228, 740);
     (*timer)++;
     return;
+  case 175:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 176:
     Actor_SetDestination(actorId, 224, 728);
+    (*timer)++;
+    return;
+  case 177:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 178:
     Actor_SetDestination(actorId, 228, 716);
     (*timer)++;
     return;
+  case 179:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 180:
     Actor_SetDestination(actorId, 248, 712);
+    (*timer)++;
+    return;
+  case 181:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 182:
     Actor_SetDestination(actorId, 268, 716);
     (*timer)++;
     return;
+  case 183:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 184:
     Actor_SetDestination(actorId, 272, 728);
+    (*timer)++;
+    return;
+  case 185:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 186:
     Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
     return;
+  case 187:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 188:
     Actor_SetDestination(actorId, 248, 744);
+    (*timer)++;
+    return;
+  case 189:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 190:
     Actor_SetDestination(actorId, 228, 740);
     (*timer)++;
     return;
+  case 191:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 192:
     Actor_SetDestination(actorId, 224, 728);
+    (*timer)++;
+    return;
+  case 193:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 194:
     Actor_SetDestination(actorId, 228, 716);
     (*timer)++;
     return;
+  case 195:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 196:
     Actor_SetDestination(actorId, 248, 712);
+    (*timer)++;
+    return;
+  case 197:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 198:
     Actor_SetDestination(actorId, 268, 716);
     (*timer)++;
     return;
+  case 199:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 200:
     Actor_SetDestination(actorId, 272, 728);
+    (*timer)++;
+    return;
+  case 201:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 202:
     Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
     return;
+  case 203:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 204:
     Actor_SetDestination(actorId, 248, 744);
+    (*timer)++;
+    return;
+  case 205:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 206:
     Actor_SetDestination(actorId, 248, 760);
     (*timer)++;
     return;
+  case 207:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 208:
     Actor_SetDestination(actorId, 228, 764);
+    (*timer)++;
+    return;
+  case 209:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 210:
     Actor_SetDestination(actorId, 224, 776);
     (*timer)++;
     return;
+  case 211:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 212:
     Actor_SetDestination(actorId, 228, 788);
     (*timer)++;
     return;
+  case 213:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 214:
     Actor_SetDestination(actorId, 248, 792);
+    (*timer)++;
+    return;
+  case 215:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // The sun song's opening line.
@@ -1041,78 +1579,168 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 248, 840);
     (*timer)++;
     return;
+  case 217:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   // South from the moon through two swirls, then twice round.
   case 218:
     Actor_SetDestination(actorId, 228, 844);
+    (*timer)++;
+    return;
+  case 219:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 220:
     Actor_SetDestination(actorId, 224, 856);
     (*timer)++;
     return;
+  case 221:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 222:
     Actor_SetDestination(actorId, 228, 868);
+    (*timer)++;
+    return;
+  case 223:
+    if (Yallam_HasArrived(actor) != 0)
+      actor->timer++;
+  case 224:
+    Actor_SetDestination(actorId, 248, 872);
+    actor->timer++;
+    return;
+  case 225:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 226:
     Actor_SetDestination(actorId, 268, 868);
     (*timer)++;
     return;
+  case 227:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 228:
     Actor_SetDestination(actorId, 272, 856);
+    (*timer)++;
+    return;
+  case 229:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 230:
     Actor_SetDestination(actorId, 268, 844);
     (*timer)++;
     return;
+  case 231:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 232:
     Actor_SetDestination(actorId, 248, 840);
+    (*timer)++;
+    return;
+  case 233:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 234:
     Actor_SetDestination(actorId, 228, 844);
     (*timer)++;
     return;
+  case 235:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 236:
     Actor_SetDestination(actorId, 224, 856);
+    (*timer)++;
+    return;
+  case 237:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 238:
     Actor_SetDestination(actorId, 228, 868);
     (*timer)++;
     return;
-  case 223:
   case 239:
     if (Yallam_HasArrived(actor) != 0)
       actor->timer++;
-  case 224:
   case 240:
     Actor_SetDestination(actorId, 248, 872);
     actor->timer++;
     return;
+  case 241:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 242:
     Actor_SetDestination(actorId, 268, 868);
+    (*timer)++;
+    return;
+  case 243:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 244:
     Actor_SetDestination(actorId, 272, 856);
     (*timer)++;
     return;
+  case 245:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 246:
     Actor_SetDestination(actorId, 268, 844);
+    (*timer)++;
+    return;
+  case 247:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 248:
     Actor_SetDestination(actorId, 248, 840);
     (*timer)++;
     return;
+  case 249:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 250:
     Actor_SetDestination(actorId, 228, 844);
     (*timer)++;
     return;
+  case 251:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 252:
     Actor_SetDestination(actorId, 224, 856);
+    (*timer)++;
+    return;
+  case 253:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // West, then six to the north.
@@ -1121,8 +1749,18 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 200, 856);
     (*timer)++;
     return;
+  case 255:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 256:
     Actor_SetDestination(actorId, 200, 744);
+    (*timer)++;
+    return;
+  case 257:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   // Thrice round, then north to the sun.
@@ -1131,293 +1769,294 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 180, 740);
     (*timer)++;
     return;
+  case 259:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 260:
     Actor_SetDestination(actorId, 176, 728);
+    (*timer)++;
+    return;
+  case 261:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 262:
     Actor_SetDestination(actorId, 180, 716);
     (*timer)++;
     return;
+  case 263:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 264:
     Actor_SetDestination(actorId, 200, 712);
+    (*timer)++;
+    return;
+  case 265:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 266:
     Actor_SetDestination(actorId, 220, 716);
     (*timer)++;
     return;
+  case 267:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 268:
     Actor_SetDestination(actorId, 224, 728);
+    (*timer)++;
+    return;
+  case 269:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 270:
     Actor_SetDestination(actorId, 220, 740);
     (*timer)++;
     return;
+  case 271:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 272:
     Actor_SetDestination(actorId, 200, 744);
+    (*timer)++;
+    return;
+  case 273:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 274:
     Actor_SetDestination(actorId, 180, 740);
     (*timer)++;
     return;
+  case 275:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 276:
     Actor_SetDestination(actorId, 176, 728);
+    (*timer)++;
+    return;
+  case 277:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 278:
     Actor_SetDestination(actorId, 180, 716);
     (*timer)++;
     return;
+  case 279:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 280:
     Actor_SetDestination(actorId, 200, 712);
+    (*timer)++;
+    return;
+  case 281:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 282:
     Actor_SetDestination(actorId, 220, 716);
     (*timer)++;
     return;
+  case 283:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 284:
     Actor_SetDestination(actorId, 224, 728);
+    (*timer)++;
+    return;
+  case 285:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 286:
     Actor_SetDestination(actorId, 220, 740);
     (*timer)++;
     return;
+  case 287:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 288:
     Actor_SetDestination(actorId, 200, 744);
+    (*timer)++;
+    return;
+  case 289:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 290:
     Actor_SetDestination(actorId, 180, 740);
     (*timer)++;
     return;
+  case 291:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 292:
     Actor_SetDestination(actorId, 176, 728);
+    (*timer)++;
+    return;
+  case 293:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 294:
     Actor_SetDestination(actorId, 180, 716);
     (*timer)++;
     return;
+  case 295:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 296:
     Actor_SetDestination(actorId, 200, 712);
+    (*timer)++;
+    return;
+  case 297:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 298:
     Actor_SetDestination(actorId, 220, 716);
     (*timer)++;
     return;
+  case 299:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 300:
     Actor_SetDestination(actorId, 224, 728);
+    (*timer)++;
+    return;
+  case 301:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 302:
     Actor_SetDestination(actorId, 220, 740);
     (*timer)++;
     return;
+  case 303:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 304:
     Actor_SetDestination(actorId, 200, 744);
+    (*timer)++;
+    return;
+  case 305:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 306:
     Actor_SetDestination(actorId, 180, 740);
     (*timer)++;
     return;
+  case 307:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 308:
     Actor_SetDestination(actorId, 176, 728);
+    (*timer)++;
+    return;
+  case 309:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 310:
     Actor_SetDestination(actorId, 180, 716);
     (*timer)++;
     return;
+  case 311:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 312:
     Actor_SetDestination(actorId, 200, 712);
+    (*timer)++;
+    return;
+  case 313:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 314:
     Actor_SetDestination(actorId, 200, 680);
     (*timer)++;
     return;
+  case 315:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 316:
     Actor_SetDestination(actorId, 212, 676);
+    (*timer)++;
+    return;
+  case 317:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 318:
     Actor_SetDestination(actorId, 216, 664);
     (*timer)++;
     return;
+  case 319:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
+    (*timer)++;
+    return;
   case 320:
     Actor_SetDestination(actorId, 212, 652);
+    (*timer)++;
+    return;
+  case 321:
+    if (Yallam_HasArrived(actor) == 0)
+      return;
     (*timer)++;
     return;
   case 322:
     Actor_SetDestination(actorId, 200, 648);
     (*timer)++;
     return;
-  case 1:
-  case 3:
-  case 5:
-  case 7:
-  case 9:
-  case 11:
-  case 13:
-  case 15:
-  case 17:
-  case 19:
-  case 21:
-  case 23:
-  case 25:
-  case 27:
-  case 29:
-  case 31:
-  case 33:
-  case 35:
-  case 37:
-  case 39:
-  case 41:
-  case 43:
-  case 45:
-  case 47:
-  case 49:
-  case 51:
-  case 53:
-  case 55:
-  case 57:
-  case 59:
-  case 61:
-  case 63:
-  case 65:
-  case 67:
-  case 69:
-  case 71:
-  case 73:
-  case 75:
-  case 77:
-  case 79:
-  case 81:
-  case 83:
-  case 85:
-  case 87:
-  case 89:
-  case 91:
-  case 93:
-  case 95:
-  case 97:
-  case 99:
-  case 101:
-  case 103:
-  case 105:
-  case 107:
-  case 109:
-  case 111:
-  case 113:
-  case 115:
-  case 117:
-  case 119:
-  case 121:
-  case 123:
-  case 125:
-  case 127:
-  case 129:
-  case 131:
-  case 133:
-  case 135:
-  case 137:
-  case 139:
-  case 141:
-  case 143:
-  case 145:
-  case 147:
-  case 149:
-  case 151:
-  case 153:
-  case 155:
-  case 157:
-  case 159:
-  case 161:
-  case 163:
-  case 165:
-  case 167:
-  case 169:
-  case 171:
-  case 173:
-  case 175:
-  case 177:
-  case 179:
-  case 181:
-  case 183:
-  case 185:
-  case 187:
-  case 189:
-  case 191:
-  case 193:
-  case 195:
-  case 197:
-  case 199:
-  case 201:
-  case 203:
-  case 205:
-  case 207:
-  case 209:
-  case 211:
-  case 213:
-  case 215:
-  case 217:
-  case 219:
-  case 221:
-  case 225:
-  case 227:
-  case 229:
-  case 231:
-  case 233:
-  case 235:
-  case 237:
-  case 241:
-  case 243:
-  case 245:
-  case 247:
-  case 249:
-  case 251:
-  case 253:
-  case 255:
-  case 257:
-  case 259:
-  case 261:
-  case 263:
-  case 265:
-  case 267:
-  case 269:
-  case 271:
-  case 273:
-  case 275:
-  case 277:
-  case 279:
-  case 281:
-  case 283:
-  case 285:
-  case 287:
-  case 289:
-  case 291:
-  case 293:
-  case 295:
-  case 297:
-  case 299:
-  case 301:
-  case 303:
-  case 305:
-  case 307:
-  case 309:
-  case 311:
-  case 313:
-  case 315:
-  case 317:
-  case 319:
-  case 321:
   case 323:
     if (Yallam_HasArrived(actor) == 0)
       return;

@@ -1432,8 +1432,7 @@ s32 LinkLobby_Initialize(void) {
   wait(1);
   TilesetAnim_Pause(BATTLE_ARENA_GATE_ANIMATION);
   {
-    /* FAKEMATCH(temporary): name holds the payload's address, viewed as
-     * halfwords. */
+    // The payload's halfwords, as every signature's writer holds them.
     u16 *name = (u16 *)gSerialTransfer.payload;
 
     name[4] = 'T';

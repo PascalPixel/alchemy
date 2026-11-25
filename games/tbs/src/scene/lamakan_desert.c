@@ -645,7 +645,6 @@ static void LamakanDesert_BatheInOasis(void) {
   s32 count;
   const s32 *oases;
   s32 total;
-  s32 offset;
   const s32 *oasis;
   s32 nearest;
   s32 distance;
@@ -675,7 +674,6 @@ static void LamakanDesert_BatheInOasis(void) {
   total = count;
   oasis = oases;
   if (count != 0) {
-    offset = 0;
     do {
       distance = LamakanDesert_PixelsToOasis(
           &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, oasis);
@@ -683,19 +681,9 @@ static void LamakanDesert_BatheInOasis(void) {
         best = distance;
         nearest = total - count;
       }
-      offset += 2 * sizeof(s32);
-      oasis = (const s32 *)((const u8 *)oases + offset);
-    } while (--count != 0);
-    /* FAKEMATCH(dead): two self-tests of offset, each with updates that cancel
-     * out. */
-    if (offset) {
-      offset++;
-      offset--;
-    }
-    if (offset) {
-      offset++;
-      offset--;
-    }
+      count--;
+      oasis = &oases[(total - count) * 2];
+    } while (count != 0);
   }
   // The oasis's x, then its z.
   nearest <<= 1;

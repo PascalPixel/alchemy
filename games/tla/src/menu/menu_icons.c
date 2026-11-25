@@ -530,29 +530,23 @@ extern u16 gStatusScreen_StatusIcons[5];
 void MenuIcon_LoadSlots(void) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   struct IconSprite *slot = menu->menuIcons;
-  u16 *ids = gStatusScreen_StatusIcons;
-  u16 *resource = menu->menuIconSlots;
   s32 entry;
   s32 i;
-  s32 offset = 0;
 
   for (i = 0; i < CHARACTER_AILMENT_COUNT; i++) {
     entry = VramCache_FindFreeEntry();
     if (entry < VRAM_CACHE_ENTRY_COUNT) {
       u32 *attributes;
 
-      /* FAKEMATCH(temporary): the table read at a byte offset of its own; as
-       * ids[i]. */
       SelectionIcon_LoadIntoSlotFar(ICON_KIND_PATTERN,
-                                    *(u16 *)(offset + (u32)ids), entry, 0);
+                                    gStatusScreen_StatusIcons[i], entry, 0);
       attributes = (u32 *)&slot->attr;
       *attributes++ = WINDOW_SPRITE_SIZE_16X16;
       *attributes = 0;
       slot->attr.tile = gVramCacheEntries[entry].offset >> 5;
     }
-    *resource++ = entry;
+    menu->menuIconSlots[i] = entry;
     slot++;
-    offset += 2;
   }
   menu->menuIconsShown = ICON_SHOWN;
   Task_Add(MenuIcon_PushSlots, TASK_PASS_FRAME + 10);

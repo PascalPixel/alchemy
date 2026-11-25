@@ -441,8 +441,7 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
             w = TWISTING_COLUMN_FUNNEL_HALF_WIDTH;
           }
           for (i = 0; i != 2; i++) {
-            /* FAKEMATCH(temporary): the depth built on j + j; as -j * 4. */
-            TWISTING_COLUMN_CORNERS[j][i][0] = -(j + j) * 2;
+            TWISTING_COLUMN_CORNERS[j][i][0] = -(j * 2) << 1;
             TWISTING_COLUMN_CORNERS[j][i][1] =
                 (FIXEDtoINT(Trig_Cos((frame + j * 2) * (TRIG_TURN / 64)) *
                             ripple)) +

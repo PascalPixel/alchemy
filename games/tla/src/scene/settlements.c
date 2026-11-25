@@ -791,14 +791,11 @@ void Settlements_CycleWaterColors(void) {
   frame = &gSettlements_WaterColorFrame;
   if (*frame == -1) {
     u16 *colors = gSettlements_LoadedWaterColors;
-    /* FAKEMATCH(temporary): the copy routine held in a local for both
-       copies. */
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy(colors, (void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
-         sizeof(gSettlements_LoadedWaterColors));
-    copy(gSettlements_ShownWaterColors, colors,
-         sizeof(gSettlements_LoadedWaterColors));
+    Iwram_CopyWords(colors, (void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
+                    sizeof(gSettlements_LoadedWaterColors));
+    Iwram_CopyWords(gSettlements_ShownWaterColors, colors,
+                    sizeof(gSettlements_LoadedWaterColors));
     *frame = 0;
   }
   phase = (*frame / 8) % 4;

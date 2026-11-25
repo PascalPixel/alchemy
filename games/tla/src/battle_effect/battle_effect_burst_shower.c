@@ -509,13 +509,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
         break;
       }
-      if (palette != NULL) {
-        /* FAKEMATCH(temporary): copy, a local standing for the IWRAM routine's
-         * address. */
-        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-        copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
-      }
+      if (palette != NULL)
+        Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
     }
   }
 

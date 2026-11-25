@@ -420,7 +420,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
   struct Actor *anchor = Actor_Get(ACTOR_BEACON_FIRE);
   FIXED offset = toFIXED(Random_Below(48));
   struct Actor *actor;
-  struct MarsLighthouseAerieSprite *sprite;
+  struct FieldSprite *sprite;
   u32 phase;
   s32 angle;
 
@@ -443,10 +443,8 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       actor->watchedActor = anchor;
       actor->speedLimit = FIXEDtoINT(Math_Sin((offset & 0xfffff) >> 4) *
                                      BEACON_FLAME_SWING_SPREAD);
-      /* FAKEMATCH(dead): the flags written through their own address. */
-      *(u8 *)&sprite->flags = 0;
-      sprite->priority =
-          ((struct MarsLighthouseAerieSprite *)anchor->sprite)->priority;
+      sprite->flags = 0;
+      sprite->priority = ((struct FieldSprite *)anchor->sprite)->priority;
     }
   }
   gMarsLighthouseAerie_BeaconFlameFrame++;

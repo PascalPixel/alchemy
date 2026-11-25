@@ -503,13 +503,6 @@ void LightSprites_Draw(void) {
   }
 }
 
-/// Takes `size` bytes from the heap for a picture's decompression.
-static inline void *BumpAlloc(s32 size) {
-  /* FAKEMATCH(wrapper): Heap_Alloc through this inline, which loads its size
-   * afresh. */
-  return Heap_Alloc(size);
-}
-
 #include "shared/light_sprites_init_a.h"
 
 /// Sets up the glow sprites from the field's cached tiles D, with no picture

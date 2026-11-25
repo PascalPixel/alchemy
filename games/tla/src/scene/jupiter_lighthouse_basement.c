@@ -358,8 +358,6 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #include "shared/light_sprites_draw.h"
 
-static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
-
 #include "shared/light_sprites_init_a.h"
 
 #include "shared/light_sprites_init_b.h"

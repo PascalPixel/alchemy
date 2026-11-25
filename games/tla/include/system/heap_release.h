@@ -27,6 +27,10 @@ static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
   return allocate(size);
 }
 
+/// Takes `size` bytes from the heap for a picture's decompression, which a
+/// scene loads into VRAM and releases.
+static __inline__ void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+
 /// The EWRAM heap's space, 32 KB from 0x02030000.
 extern u8 gEwramHeap[];
 /// The IWRAM heap's space, from 0x03001300 up to Ram_IwramHeapEnd.

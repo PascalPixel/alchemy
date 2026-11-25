@@ -155,11 +155,6 @@ extern const u8 gAquaRockInside_PillarTiles[];
 extern const u8 gAquaRockInside_SplashTiles[];
 extern u32 gDust_BurstScript[];
 
-/// Takes `size` bytes from the heap for a picture's decompression.
-static inline void *BumpAlloc(s32 size) {
-  /* FAKEMATCH(wrapper): Heap_Alloc through this inline. */
-  return Heap_Alloc(size);
-}
 #include "flags.h"
 #include "djinn_ids.h"
 #include "field/field_sequence_event.h"
@@ -214,7 +209,7 @@ void AquaRockInside_ShowAquariusStone(void);
 void AquaRockInside_AddPillar(s32 id, s32 kind, s32 height);
 
 void FieldEffect_StartBlankOverlay();
-void Tightrope_Place();
+s32 Tightrope_Place();
 
 #include "text/msg_ids.h"
 

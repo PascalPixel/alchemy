@@ -839,8 +839,6 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
 
 #include "shared/light_sprites_draw.h"
 
-static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
-
 #include "shared/light_sprites_init_a.h"
 
 #include "shared/light_sprites_init_b.h"

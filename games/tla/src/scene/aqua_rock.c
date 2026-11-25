@@ -202,11 +202,6 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
 extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
-/// Takes `size` bytes from the heap for a picture's decompression.
-static inline void *BumpAlloc(s32 size) {
-  /* FAKEMATCH(wrapper): Heap_Alloc through this inline. */
-  return Heap_Alloc(size);
-}
 #include "flags.h"
 #include "field/event.h"
 #include "field/field_sequence_event.h"
@@ -1256,6 +1251,7 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_IGNORES_RISES;
     Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_FIRST_FISH + 1, 1);
+    /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through Value2. */
     Value2((s32 (*)())Actor_SetSpritePriority, ACTOR_MOAI_PILLAR, 1);
     AquaRock_StartBubbles();
     GroundParticles_Start();
@@ -1630,7 +1626,7 @@ void AquaRock_StartBubbles(void) {
   state->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(state->vramEntry, 256, buffer);
   Heap_Release(buffer);
-  ((s32 (*)(void *, s32))Task_Add)(AquaRock_DrawBubbles, TASK_PASS_FRAME);
+  Task_Add(AquaRock_DrawBubbles, TASK_PASS_FRAME);
 }
 
 /// Sets the actor the bubbles come from, or with 0 none: they fall from the

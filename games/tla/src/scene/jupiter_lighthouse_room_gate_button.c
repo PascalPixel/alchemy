@@ -242,8 +242,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/light_sprites_draw.h"
 
-static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
-
 #include "shared/light_sprites_init_a.h"
 
 #include "shared/light_sprites_init_b.h"

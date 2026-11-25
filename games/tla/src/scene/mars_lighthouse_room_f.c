@@ -401,7 +401,7 @@ void Actor_Release(void *handle);
 void Actor_DisableById(s32 id);
 void FieldEffect_StartBlankOverlay(s32 a0);
 void Tightrope_Initialize(void);
-void Tightrope_Place(s32 a0, s32 a1, s32 a2);
+s32 Tightrope_Place(s32 a0, s32 a1, s32 a2);
 void Actor_DepartInRing(s32 id);
 void Actor_ArriveInRing(s32 id);
 void Map_CopyPalette(s32 scene, s32 a1);
@@ -1783,9 +1783,6 @@ static inline s32 PushTarget_CheckCollision(struct Actor *actor,
 #include "shared/actor_stop_at_push_target.h"
 
 #include "shared/light_sprites_draw.h"
-
-/// Takes `size` bytes from the heap for a picture's decompression.
-static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_init_a.h"
 

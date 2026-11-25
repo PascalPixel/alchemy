@@ -94,12 +94,6 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Takes `size` bytes from the heap for a picture's decompression.
-static inline void *BumpAlloc(s32 size) {
-  /* FAKEMATCH(wrapper): Heap_Alloc through this inline. */
-  return Heap_Alloc(size);
-}
-
 /// Loads the portraits' frame, a window border round a green panel
 /// (RESOURCE_GREEN_PANEL) drawn in portrait slot 0's palette, and starts
 /// Epilogue_PlacePortraitFrame.

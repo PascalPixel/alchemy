@@ -190,7 +190,7 @@ s32 Scene_TalkToActor(s32 id) {
   struct FieldState *field;
   struct Actor *leader;
   struct Actor *shown;
-  struct ContainerRow *row;
+  s16 *row;
   struct TriggerView *talk;
   s32 point;
   u8 *busy;
@@ -216,20 +216,15 @@ s32 Scene_TalkToActor(s32 id) {
     if (id != SCOOPED_ITEM_ACTOR) {
       row = SceneItem_GetRows();
       if (row != NULL) {
-        /* FAKEMATCH(temporary): p, each field's address in turn, read
-         * through; as row[id - FIELD_TREASURE_ACTOR].type and the rest. */
-        s16 *p;
-
-        p = &row[id - FIELD_TREASURE_ACTOR].type;
-        type = *p;
+        // The actor's row (struct ContainerRow): its type, point, flag and
+        // contents.
+        row += (id - FIELD_TREASURE_ACTOR) * 4;
+        type = *row++;
         index = id;
         found = 1;
-        p = &row[id - FIELD_TREASURE_ACTOR].point;
-        point = *p;
-        p = &row[id - FIELD_TREASURE_ACTOR].flag;
-        flag = *p;
-        p = &row[id - FIELD_TREASURE_ACTOR].contents;
-        contents = *p;
+        point = *row++;
+        flag = *row++;
+        contents = *row;
       }
     } else {
       type = CONTAINER_GROUND;

@@ -322,8 +322,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
     unitIndex = 0;
     if ((spriteId = unitIds[0]) != BATTLE_UNIT_LIST_END) {
       for (;;) {
-        /* FAKEMATCH(dead): object = battleObject->object stored in the test and
-         * never read; as battleObject->object != 0. */
+        // DEAD: object = battleObject->object in the test, never read after it;
+        // the ROM keeps the store.
         if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
             (battleObject = BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)

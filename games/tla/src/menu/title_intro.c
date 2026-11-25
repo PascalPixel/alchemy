@@ -927,8 +927,9 @@ done:
 /// `Golden Sun` `Book Two`, the plunge through the clouds into white, then the
 /// lighthouse in its valley. A key fades it out early, skipping the lighthouse.
 /// Then it clears the screen for what follows and puts back the CPU-load
-/// display it turned off.
-s32 TitleIntro_Run(void) {
+/// display it turned off. `unused`, 1 from the title and 0 before the prologue,
+/// is never read.
+s32 TitleIntro_Run(s32 unused) {
   u8 cpuLoad;
   s32 result;
 

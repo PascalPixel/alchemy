@@ -149,7 +149,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     }
 
     if ((u8)output->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
-      sprite = &output->sprite;
+      sprite = WindowSprite_GetSprite(output);
       if (state->glyphResource == NO_GLYPH_RESOURCE)
         state->glyphResource = VramCache_FindFreeEntry();
       sprite->oam.x = (window->x << 3) + ((window->width - 2) << 3) + ARROW_X;
@@ -170,7 +170,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       *attr =
           (x + (spacingX >> 1) + window->x * 8 + GLYPH_X) | GLYPH_SPRITE_SIZE;
       attr[1] = state->glyphTiles + index;
-      sprite = &output->sprite;
+      sprite = WindowSprite_GetSprite(output);
     }
     output->depth = OAM_DEPTH_FRONT - 2;
     output->x = sprite->oam.x;
@@ -204,7 +204,6 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   u32 spacingX = state->letterSpacing;
   u32 spacingY = state->lineSpacing;
   struct WindowSprite *output;
-  struct QueuedSprite *sprite;
   s32 index;
   s32 width;
 
@@ -224,12 +223,9 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
       GLYPH_SPRITE_SIZE;
   ((u16 *)&output->sprite.oam)[2] = state->glyphTiles + index;
-  /* FAKEMATCH(temporary): sprite holds &output->sprite for the two reads of
-   * its position; as output->sprite.oam.x and .y. */
-  sprite = &output->sprite;
   output->depth = OAM_DEPTH_FRONT - 2;
-  output->x = sprite->oam.x;
-  output->y = sprite->oam.y;
+  output->x = WindowSprite_GetSprite(output)->oam.x;
+  output->y = WindowSprite_GetSprite(output)->oam.y;
   output->index = index;
   output->next = NULL;
   WindowSprite_AppendToList(&window->sprites, output);
@@ -256,7 +252,6 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   u32 spacingX = state->letterSpacing;
   u32 spacingY = state->lineSpacing;
   struct WindowSprite *output;
-  struct QueuedSprite *sprite;
   s32 index;
   void *vram;
 
@@ -273,12 +268,9 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
       GLYPH_SPRITE_SIZE;
   ((u16 *)&output->sprite.oam)[2] = state->glyphTiles + index;
-  /* FAKEMATCH(temporary): sprite holds &output->sprite for the two reads of
-   * its position; as output->sprite.oam.x and .y. */
-  sprite = &output->sprite;
   output->depth = OAM_DEPTH_FRONT - 2;
-  output->x = sprite->oam.x;
-  output->y = sprite->oam.y;
+  output->x = WindowSprite_GetSprite(output)->oam.x;
+  output->y = WindowSprite_GetSprite(output)->oam.y;
   output->index = index;
   output->next = NULL;
   /* FAKEMATCH(dead): motion stored a second time with the 1 it already holds.
@@ -335,7 +327,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       return;
     idx = (out - base->sprites) * 4;
     out->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
-    sprite = &out->sprite;
+    sprite = WindowSprite_GetSprite(out);
     slot = &base->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
       *slot = VramCache_FindFreeEntry();
@@ -462,7 +454,7 @@ extern const u16 gWindowSprite_BounceScales[];
 /// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   s32 scale = Q_8_8(1);
-  struct QueuedSprite *sprite = &windowSprite->sprite;
+  struct QueuedSprite *sprite = WindowSprite_GetSprite(windowSprite);
   struct AffineTransform effect;
 
   switch ((u8)windowSprite->motion) {

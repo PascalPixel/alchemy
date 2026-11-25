@@ -61,6 +61,12 @@ struct WindowSprite {
   struct QueuedSprite sprite; ///< queued at its depth each frame
 };
 
+/// The queued sprite of window sprite `sprite` (WindowSprite.sprite).
+static inline struct QueuedSprite *
+WindowSprite_GetSprite(struct WindowSprite *sprite) {
+  return &sprite->sprite;
+}
+
 /// A list of window sprites: its first sprite and the link to append after.
 struct WindowSpriteList {
   struct WindowSprite *head;

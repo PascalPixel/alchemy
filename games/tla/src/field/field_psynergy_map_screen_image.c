@@ -153,7 +153,7 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
   while (output != NULL) {
     output->x += dx;
     output->y += dy;
-    sprite = &output->sprite;
+    sprite = WindowSprite_GetSprite(output);
     output = output->next;
     sprite->oam.x += dx;
     sprite->oam.y += dy;

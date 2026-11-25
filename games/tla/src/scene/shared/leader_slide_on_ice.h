@@ -9,8 +9,6 @@ void Leader_SlideOnIce(void) {
   FIXED startZ;
   u8 *layer;
   struct Actor *actor;
-  struct Vector3 *position;
-  struct Vector3 *next;
   s32 heading;
   s32 nextBehavior;
   FIXED distance;
@@ -30,10 +28,9 @@ top:
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  position = &probe;
-  position->x = startX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  position->y = actor->y.fixed;
-  position->z = startZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  probe.x = startX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  probe.y = actor->y.fixed;
+  probe.z = startZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   x = startX;
   z = startZ;
   layer = &actor->layer;
@@ -52,10 +49,9 @@ top:
     heading = (s16)FACING_NEAREST_CARDINAL(heading);
   }
   FieldVector_AddPolarOffset(16, heading, &probe);
-  nextBehavior =
-      FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
+  nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z);
   if (nextBehavior == CELL_BEHAVIOR_WALL ||
-      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y.fixed >
+      Map_GetTerrainHeight(*layer, probe.x, probe.z) - actor->y.fixed >
           toFIXED(8)) {
     actor->facing = heading;
     actor->velocityX = 0;
@@ -64,8 +60,8 @@ top:
     actor->z.fixed = startZ;
     goto done;
   }
-  position->x = startX;
-  position->z = startZ;
+  probe.x = startX;
+  probe.z = startZ;
   actor->speedLimit = toFIXED(2);
   actor->acceleration = toFIXED(1) / 10;
   actor->timer = 0;
@@ -76,12 +72,11 @@ top:
   actor->update = Actor_SteerByPad;
   for (;;) {
     FieldVector_AddPolarOffset(16, heading, &probe);
-    next = &probe;
-    nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
+    nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z);
     if (nextBehavior == CELL_BEHAVIOR_WALL) {
       break;
     }
-    if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed >
+    if (Map_GetTerrainHeight(*layer, probe.x, probe.z) - actor->y.fixed >
         toFIXED(8)) {
       break;
     }

@@ -71,6 +71,7 @@ s32 Save_InitializeState(void) {
     status = Save_ReadSector(index);
     SAVE_START_DMA(state->slot, &header, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
     WAIT_DMA();
+    /* FAKEMATCH(temporary): slot holds &header; as header. at its uses. */
     slot = &header;
 
     if (Save_CompareBytes(slot->signature, (u8 *)gSave_Signature,

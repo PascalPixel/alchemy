@@ -476,6 +476,8 @@ void BattleMessage_WaitForAdvance(void) {
 
   while (!Message_AllTypedFar())
     wait(1);
+  /* LEFTOVER(template): prompt holds &promptStorage, as the PLAY_ADVANCE step
+   * of BattlePlayback_Run's prompt holds its arrow. */
   prompt = &promptStorage;
   sheet = (s32)gBattleMessage_AdvanceArrowTiles;
   tileSlot = VramCache_AllocEntry(128);
@@ -525,6 +527,8 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   position.y = y;
   while (!Message_AllTypedFar())
     wait(1);
+  /* LEFTOVER(template): prompt holds &promptStorage, as the PLAY_ADVANCE step
+   * of BattlePlayback_Run's prompt holds its arrow. */
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {

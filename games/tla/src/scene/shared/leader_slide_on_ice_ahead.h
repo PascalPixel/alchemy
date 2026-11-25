@@ -8,11 +8,9 @@ void Leader_SlideOnIceAhead(void) {
   FIXED x;
   FIXED z;
   struct Actor *actor;
-  struct Vector3 *next;
   s32 nextBehavior;
   u8 *layer;
   struct Actor *other;
-  struct Vector3 *position;
   u8 *flags;
   s32 i;
   FIXED startX;
@@ -28,20 +26,17 @@ void Leader_SlideOnIceAhead(void) {
     actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    position = &probe;
-    position->x = startX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    position->y = actor->y.fixed;
-    position->z = startZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    probe.x = startX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    probe.y = actor->y.fixed;
+    probe.z = startZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     x = startX;
     z = startZ;
     layer = &actor->layer;
     startBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, startX, startZ);
-    FieldVector_AddPolarOffset(16, heading, position);
-    nextBehavior =
-        FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
+    FieldVector_AddPolarOffset(16, heading, &probe);
+    nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z);
     if (nextBehavior == CELL_BEHAVIOR_WALL ||
-        Map_GetTerrainHeight(*layer, position->x, position->z) -
-                actor->y.fixed >
+        Map_GetTerrainHeight(*layer, probe.x, probe.z) - actor->y.fixed >
             toFIXED(8)) {
       actor->facing = heading;
       actor->velocityX = 0;
@@ -50,8 +45,8 @@ void Leader_SlideOnIceAhead(void) {
       actor->z.fixed = startZ;
       goto done;
     }
-    position->x = x;
-    position->z = z;
+    probe.x = x;
+    probe.z = z;
     actor->speedLimit = toFIXED(2);
     actor->acceleration = toFIXED(1) / 10;
     actor->timer = 0;
@@ -60,12 +55,11 @@ void Leader_SlideOnIceAhead(void) {
     actor->update = Actor_SteerByPad;
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
-      next = &probe;
-      nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
+      nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z);
       if (nextBehavior == CELL_BEHAVIOR_WALL) {
         break;
       }
-      if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed >
+      if (Map_GetTerrainHeight(*layer, probe.x, probe.z) - actor->y.fixed >
           toFIXED(8)) {
         break;
       }

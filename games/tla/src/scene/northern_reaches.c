@@ -410,7 +410,6 @@ void NorthernReaches_ShatterIceWall(FIXED *blast, FIXED *position,
   struct EffectSprite *flySprite;
   struct ExplosionSpark *sparks;
   struct ExplosionSpark *spark;
-  s32 *timer;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   u8 frameSlot[4];
@@ -456,13 +455,8 @@ void NorthernReaches_ShatterIceWall(FIXED *blast, FIXED *position,
   sparkEntry = VramCache_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 1024, sheet);
   Heap_Release(sheet);
-  /* FAKEMATCH(temporary): timer, a pointer to each spark's age stepped a spark
-   * at a time; as a spark pointer walked. */
-  timer = &sparks->age;
-  for (i = EXPLOSION_SPARK_COUNT - 1; i >= 0; i--) {
-    *timer = -(Random16() << 5 >> 16);
-    timer += sizeof(struct ExplosionSpark) / sizeof(*timer);
-  }
+  for (i = 0; i < EXPLOSION_SPARK_COUNT; i++)
+    sparks[i].age = -(Random16() << 5 >> 16);
   Dma_Set(Field_ExplosionPalette,
           (void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);

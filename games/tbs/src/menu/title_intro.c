@@ -963,12 +963,8 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         green = blue;
         if (red < SEPIA_LEVEL_MIN)
           red = SEPIA_LEVEL_MIN;
-        if (blue < SEPIA_LEVEL_MIN) {
+        if (green < SEPIA_LEVEL_MIN)
           green = SEPIA_LEVEL_MIN;
-          /* FAKEMATCH(dead): two XORs that cancel, green being the minimum. */
-          blue ^= green;
-          blue ^= SEPIA_LEVEL_MIN;
-        }
         if (blue < SEPIA_LEVEL_MIN)
           blue = SEPIA_LEVEL_MIN;
         if (red > SEPIA_LEVEL_MAX)
@@ -1089,8 +1085,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       red = TitlePaletteFade_ClampShiftedChannel(red);
       green = TitlePaletteFade_ClampShiftedChannel(green);
       blue = TitlePaletteFade_ClampShiftedChannel(blue);
-      SET_VECTOR(destination, blue, green, red);
-      destination += 3;
+      *destination++ = blue;
+      *destination++ = green;
+      *destination++ = red;
     }
   } else if (mode & PALETTE_TINT_BLEND) {
     u32 tintRed;

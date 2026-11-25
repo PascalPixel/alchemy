@@ -89,7 +89,9 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
     return 0;
   if ((flags & EXAMINE_TRIGGER_MASK) == TRIGGER_EXAMINE)
     return 0;
-  return NONZERO((result & FIND_TYPE_MASK) ^ FIND_MIMIC);
+  if ((result & FIND_TYPE_MASK) != FIND_MIMIC)
+    return 1;
+  return 0;
 }
 
 /// Returns the first of the scene's triggers of kind for target whose condition

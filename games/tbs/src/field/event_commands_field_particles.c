@@ -108,14 +108,12 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
 /// Returns 1 while a field effect sprite that stops at its target still has one
 /// (it has not arrived), 0 once it has arrived or when it never stops.
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
-  u32 targetX;
-
   if (effect->stopAtTarget == 0) {
     return 0;
   }
-  // Nonzero where the target is not FIELD_EFFECT_SPRITE_NO_TARGET.
-  targetX = effect->targetX ^ (u32)FIELD_EFFECT_SPRITE_NO_TARGET;
-  return NONZERO(targetX);
+  if (effect->targetX != FIELD_EFFECT_SPRITE_NO_TARGET)
+    return 1;
+  return 0;
 }
 
 /// Places a field effect sprite at (x, z), at rest with no target.

@@ -372,8 +372,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       sparkZ = 560 - (Random_Below(16));
       // Rising at 0.6 to 1.05 pixels a frame.
       speedRoll = (Random_Below(4));
-      velocityY = Math_Divide(
-          INTtoFIXED((speedRoll << 4) - speedRoll) + toFIXED(60), 100);
+      velocityY = Math_Divide(INTtoFIXED(speedRoll * 15) + toFIXED(60), 100);
       FieldEffect_Spawn(INTtoFIXED(sparkX), 0, INTtoFIXED(sparkZ), 0, velocityY,
                         0,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |

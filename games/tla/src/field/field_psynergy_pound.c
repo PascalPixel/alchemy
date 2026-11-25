@@ -200,9 +200,6 @@ void FieldPsynergy_Pound(void) {
     SET_POSITION(scene, caster->x.fixed, caster->y.fixed, caster->z.fixed);
     Vector_AddPolarOffset(lift, scene->angle, &scene->x);
   } else if (child->motionFlags & ACTOR_FLOATS) {
-    /* FAKEMATCH(dead): lift cleared under a test of the ground's height. */
-    if (child->groundHeight == 300)
-      lift = 0;
     scene->y = child->groundHeight;
     lift = child->y.fixed - child->groundHeight + toFIXED(32);
   }
@@ -219,16 +216,16 @@ void FieldPsynergy_Pound(void) {
         if (actor != NULL && actor->script != NULL &&
             (actor->collisionFlags & ACTOR_SOLID) &&
             FieldPsynergy_CheckOverlap(&scene->x, 4, &actor->x.fixed,
-                                       actor->radius - 2) >= 0)
-          goto outOfReach;
+                                       actor->radius - 2) >= 0) {
+          inReach = 0;
+          break;
+        }
       }
     }
   } else {
     inReach = 1;
-    if (child != NULL && child->sceneByte != 0) {
-    outOfReach:
+    if (child != NULL && child->sceneByte != 0)
       inReach = 0;
-    }
   }
 
   FieldPsynergy_FadeToCastColor();

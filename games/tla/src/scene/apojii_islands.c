@@ -987,29 +987,22 @@ void ApojiiIslands_DrawCellMarkers(void) {
   COPY_PICTURE(2, 3);
   record = gApojiiIslands_CellMarkers.markers;
   for (i = CELL_MARKERS - 1; i >= 0; i--, record++) {
-    s32 dx, dy, height, z, palette, flip, kind;
-    s32 x, y, left, top, picture;
-    u32 *attr;
-
-    if (record->state == 0)
-      continue;
-    dx = record->x - viewX;
-    height = record->y - viewY;
-    z = record->z - viewZ - viewY;
-    dy = z - height;
-    if (record->y == record->rest && record->state != 2)
-      palette = OBJ_PALETTE(STONE_SPRITE_PALETTE) | OBJ_PRIORITY(3);
-    else
-      palette = OBJ_PALETTE(STONE_SPRITE_PALETTE) | OBJ_PRIORITY(2);
-    y = FIXEDtoINT(dy);
-    /* FAKEMATCH(dead): a once-only block placing link, the queue word's empty
-     * link, after the palette's choice. */
-    {
+    if (record->state != 0) {
+      s32 dx = record->x - viewX;
+      s32 height = record->y - viewY;
+      s32 z = record->z - viewZ - viewY;
+      s32 dy = z - height;
+      s32 palette = record->y == record->rest && record->state != 2
+                        ? OBJ_PALETTE(STONE_SPRITE_PALETTE) | OBJ_PRIORITY(3)
+                        : OBJ_PALETTE(STONE_SPRITE_PALETTE) | OBJ_PRIORITY(2);
+      s32 y = FIXEDtoINT(dy);
       u32 link = 0;
+      s32 x = FIXEDtoINT(dx);
+      s32 left = x - 8;
+      s32 top = y - 8;
+      s32 flip, kind, picture;
+      u32 *attr;
 
-      x = FIXEDtoINT(dx);
-      left = x - 8;
-      top = y - 8;
       if ((u32)(x + 7) > 334)
         continue;
       if ((u32)(y + 39) > 286)

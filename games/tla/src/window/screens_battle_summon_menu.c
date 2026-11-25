@@ -24,7 +24,7 @@
 /// those `standby` can pay for first, each with its Djinn cost by element, the
 /// others in TEXT_COLOR_RED.
 s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
-  struct QueuedSprite cursorStorage;
+  struct MenuSprite cursorStorage;
   struct MenuSprite sprites[4];
   u8 learnedSummons[33];
   u8 orderedSummons[33];
@@ -50,7 +50,6 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   const struct SummonDefinition *summon;
   struct BattleMenuState *navigation;
   struct MenuSprite *sprite;
-  struct QueuedSprite *cur;
   s32 orderedCount;
   s32 id;
   s32 tile;
@@ -132,9 +131,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* FAKEMATCH(temporary): cur holds &cursorStorage beside sprite, which names
-     * the cursor below; as &cursorStorage at each use. */
-    cur = &cursorStorage;
+    sprite = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       state->holdTilemapUpload = 1;
@@ -245,11 +242,11 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
         Oam_AddSpriteAtDepth(&sprites[index], OAM_DEPTH_WINDOW);
     }
 
-    MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, cur);
-    cur->oam.index = VramCache_Reload((u16)cursorHandle, gPointingHandTiles);
-    cur->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    cur->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
-    sprite = (struct MenuSprite *)&cursorStorage;
+    MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, sprite);
+    sprite->oam.f.tile =
+        VramCache_Reload((u16)cursorHandle, gPointingHandTiles);
+    sprite->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    sprite->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
     {

@@ -87,9 +87,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 unusableReason;
   s32 result;
   s32 i;
-  struct QueuedSprite cursorStorage;
+  struct MenuSprite cursorStorage;
   struct MenuSprite *iconSprite;
-  struct QueuedSprite *sprite;
   u16 messageText[64];
   s32 iconSlots[BATTLE_LIST_ROWS];
   struct MenuSprite sprites[BATTLE_LIST_ROWS];
@@ -140,9 +139,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 17);
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as &cursorStorage at
-     * each use. */
-    sprite = &cursorStorage;
+    iconSprite = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       state->holdTilemapUpload = 1;
@@ -234,10 +231,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     for (i = 0; i < iconCount; i++)
       Oam_AddSpriteAtDepth(&sprites[i], OAM_DEPTH_WINDOW);
 
-    MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, sprite);
-    sprite->oam.index = VramCache_Reload(cursorHandle, gPointingHandTiles);
-    sprite->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    sprite->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, iconSprite);
+    iconSprite->oam.f.tile = VramCache_Reload(cursorHandle, gPointingHandTiles);
+    iconSprite->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    iconSprite->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
       Oam_AddSpriteAtDepth(&cursorStorage, OAM_DEPTH_WINDOW + 2);
 

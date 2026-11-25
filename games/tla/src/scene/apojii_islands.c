@@ -1053,13 +1053,11 @@ void ApojiiIslands_StartCellMarkers(void) {
 /// to `level`.
 void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  /* FAKEMATCH(dead): layer 1's cells read through its taken address; as
-   * map->layers[1].cells. */
-  struct MapCell *cells = (&map->layers[1])->cells;
-  /* FAKEMATCH(dead): layer 0's offsets read through its taken address; as
-   * map->layers[0].offsetX and offsetY. */
-  s32 left = (&map->layers[0])->offsetX + map->minX;
-  s32 top = (&map->layers[0])->offsetY + map->minZ;
+  struct MapLayer *ground = &map->layers[MAPGRID_LAYER_GROUND];
+  struct MapLayer *middle = &map->layers[MAPGRID_LAYER_MIDDLE];
+  struct MapCell *cells = middle->cells;
+  s32 left = ground->offsetX + map->minX;
+  s32 top = ground->offsetY + map->minZ;
   /* FAKEMATCH(temporary): markers, a pointer standing in for
    * gApojiiIslands_CellMarkers's address; as the table by name. */
   struct CellMarkers *markers = &gApojiiIslands_CellMarkers;

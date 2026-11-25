@@ -702,21 +702,15 @@ STATIC_ASSERT(sizeof(struct MapGridCellAnimationStep) == 10);
 /// tiles numbers to (destinationX, destinationY) and waits its delay in
 /// frames.
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
-  struct MapGridCellAnimationStep *step =
-      (struct MapGridCellAnimationStep *)steps;
+  // Each entry is read in turn: its source, then its signed y, width, height
+  // and delay (struct MapGridCellAnimationStep).
+  while (*steps != MAPGRID_ANIMATION_STEPS_END) {
+    u16 source = *steps++;
+    s32 sourceY = (s16)*steps++;
+    s32 width = (s16)*steps++;
+    s32 height = (s16)*steps++;
+    s32 delay = (s16)*steps++;
 
-  while (step->source != MAPGRID_ANIMATION_STEPS_END) {
-    u16 source = step->source;
-    /* FAKEMATCH(temporary): rectangle holds &step->y; read as step->y and the
-     * rest, the loads take step as their base instead of a cursor of their
-     * own. */
-    s16 *rectangle = &step->y;
-    s32 sourceY = rectangle[0];
-    s32 width = rectangle[1];
-    s32 height = rectangle[2];
-    s32 delay = rectangle[3];
-
-    step++;
     MapGrid_CopyCellTilesIndicesRect(source, (u16)sourceY, destinationX,
                                      destinationY, (u16)width, (u16)height);
     wait((u16)delay);

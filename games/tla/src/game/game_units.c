@@ -547,6 +547,22 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   (SCENE_STATE_RANDOM_ROWS +                                                   \
    SCENE_STATE_RANDOM_ROW_COUNT * SCENE_STATE_RANDOM_ROW_BYTES)
 
+#if !TLA_PATCH_1
+/// The Japanese release's first two fills of a new game, through `zero`:
+/// gMainRoutineState and the scene state.
+/* FAKEMATCH(wrapper): a Japanese-only inline layer round the first two fills.
+ * Its definition takes two constant-pool labels (gMainRoutineState and
+ * gSceneLocalState) before the deferred functions are compiled, so the pool
+ * symbols of MainRoutineState_InitializeDefaults are numbered two higher, and
+ * reload_cse's lookup of 0x040000d4 meets the one Dma_Set left in r3: the
+ * wait's pointer becomes the ROM's copy of r3. The plain fills with
+ * WaitDma(DMA3) rebuild 0x040000d4 (4 lines in tla-ja). */
+static __inline__ void MainRoutineState_ClearStates(volatile s32 *zero) {
+  Dma_Fill32Cell(*zero, 0, &gMainRoutineState, sizeof(gMainRoutineState));
+  Dma_Fill32Cell(*zero, 0, gSceneLocalState, SCENE_STATE_WORDS * 4);
+}
+#endif
+
 /// Starts a new game's state: clears gMainRoutineState, the scene state and
 /// the snapshots, the flags and the characters by DMA, builds the characters,
 /// sets the defaults (the button layout, Felix and Jenna in the party, their
@@ -559,21 +575,13 @@ void MainRoutineState_InitializeDefaults(void) {
 
   // Clear the state up to the characters, the scene state with its snapshots,
   // and the flags.
+#if TLA_PATCH_1
   Dma_Fill32Cell(zero, 0, &gMainRoutineState, sizeof(gMainRoutineState));
   Dma_Fill32Cell(zero, 0, gSceneLocalState, SCENE_STATE_WORDS * 4);
-#if TLA_PATCH_1
-  WaitDma(DMA3);
 #else
-  {
-    struct DmaRegisters volatile *dma = DMA3;
-    struct DmaRegisters volatile *channel;
-
-    /* FAKEMATCH(barrier): an empty asm copying dma to channel and claiming to
-     * change dma. */
-    asm volatile("" : "=r"(channel), "+r"(dma) : "0"(dma));
-    WaitDma(channel);
-  }
+  MainRoutineState_ClearStates(&zero);
 #endif
+  WaitDma(DMA3);
   Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
   // A new game holds no saved actors.
   gSceneLocalState[SCENE_STATE_SNAPSHOT_SLOTS] = ACTOR_SNAPSHOT_EMPTY;

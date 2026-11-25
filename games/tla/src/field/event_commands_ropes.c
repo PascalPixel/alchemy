@@ -1831,13 +1831,10 @@ void HangingVine_Swing(s32 id) {
     slot->swing = VINE_SWING_CARRYING;
     slot->active = 1;
     // The leader hangs where the bottom link sways.
-    /* FAKEMATCH(dead): the sine taken in a once-only block. */
-    do {
-      sine = Trig_Sin(slot->phase - 5 * VINE_LINK_LAG);
-    } while (0);
-    angle = Iwram_MulFX(sine, slot->swing + slot->swing * 5 / 2);
-    leader->x.fixed = rootX - Iwram_MulFX(Trig_Sin(angle), radius);
-    leader->y.fixed = rootY - Iwram_MulFX(Trig_Cos(angle), radius);
+    sine = Trig_Sin(slot->phase - 5 * VINE_LINK_LAG);
+    angle = IwramMulFX(sine, slot->swing + slot->swing * 5 / 2);
+    leader->x.fixed = rootX - IwramMulFX(Trig_Sin(angle), radius);
+    leader->y.fixed = rootY - IwramMulFX(Trig_Cos(angle), radius);
     leader->targetX = leader->x.fixed;
     leader->targetY = leader->y.fixed;
     heldSprite->rotation = angle;

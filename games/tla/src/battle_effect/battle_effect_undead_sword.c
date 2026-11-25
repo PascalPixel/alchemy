@@ -722,21 +722,19 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != WATERY_GRAVE_PUFFS; i++) {
         struct Particle *smoke = &state->particles[i];
         s32 picture = smoke->variant;
-        struct ScreenPoint *position;
 
         if (picture < 0) {
           continue;
         }
-        /* FAKEMATCH(temporary): position holds &screen. */
-        position = &screen;
-        if (EffectPosition_ProjectPoint(smoke, position) == 0 &&
-            FIXED_INTEGER_PART(position->depth) > WATERY_GRAVE_PUFF_DEPTH) {
-          s32 x = FIXED_INTEGER_PART(position->x);
+        if (EffectPosition_ProjectPoint(smoke, &screen) == 0 &&
+            FIXED_INTEGER_PART(ScreenPoint_Coordinates(&screen)[2]) >
+                WATERY_GRAVE_PUFF_DEPTH) {
+          s32 x = FIXED_INTEGER_PART(ScreenPoint_Coordinates(&screen)[0]);
           s32 y;
 
-          position->x = x + 64;
-          y = FIXED_INTEGER_PART(position->y);
-          position->y = y + 64;
+          screen.x = x + 64;
+          y = FIXED_INTEGER_PART(ScreenPoint_Coordinates(&screen)[1]);
+          screen.y = y + 64;
           blit[0](canvas,
                   state->sheet + WATER_SHEET_SMOKE +
                       picture * PICTURE_BYTES(SMOKE_PUFF),

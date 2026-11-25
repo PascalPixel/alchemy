@@ -8,14 +8,10 @@ void Prong_Sparkle(struct Actor *actor) {
   s32 dy;
 
   if (phase == 0) {
-    {
-      s32 mask = 15;
-
-      dx = mask & Random16();
-    }
+    dx = (Random16() & 15) - 8;
     dy = Random16() & 7;
     options.type = SPRITE_SPARKLE;
-    FieldEffect_Spawn(actor->x.fixed + INTtoFIXED(dx - 8),
+    FieldEffect_Spawn(actor->x.fixed + INTtoFIXED(dx),
                       actor->y.fixed + INTtoFIXED(dy - 8), actor->z.fixed, 0,
                       toFIXED(1) / 2, phase, EFFECT_USE_TYPE, &options);
   }

@@ -626,13 +626,9 @@ void MagmaRock_ThrowEmbers(struct Actor *actor) {
       params.type = SPRITE_FLAME_PUFF;
       params.priority = 1;
       params.script = gMagmaRock_FlameEmberScript;
-      {
-        s32 mask = 15;
-
-        dx = mask & Random16();
-      }
+      dx = (Random16() & 15) - 8;
       dy = Random16() & 31;
-      FieldEffect_Spawn(actor->x.fixed + INTtoFIXED(dx - 8),
+      FieldEffect_Spawn(actor->x.fixed + INTtoFIXED(dx),
                         actor->y.fixed + INTtoFIXED(dy) - toFIXED(8),
                         actor->z.fixed, 0, phase, phase,
                         EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |

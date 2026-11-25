@@ -253,15 +253,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                * gLobbedShells_Styles for the one read; as
                * LOBBED_SHELLS_SHATTER(mode). */
               s8 *records = gLobbedShells_Styles;
-              /* FAKEMATCH(temporary): row, mode * 2 held for the one read; as
-               * mode * 2 at its use. */
-              s32 row;
               s32 groupSlots = 8;
 
               shot->y = 0;
               shot->variant = 1;
-              row = mode * 2;
-              if (records[row] == 0)
+              if (records[mode << 1] == 0)
                 count = LOBBED_SHELLS_SMOKE_PUFFS;
               else
                 count = LOBBED_SHELLS_SHARDS;
@@ -270,10 +266,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               // shards fill two.
               for (i = 0; i != count; i++) {
                 struct Particle *burst;
-                /* FAKEMATCH(temporary): group, k * 4 held for the one index;
-                 * as k * 4 at its use. */
-                s32 group = k * 4;
-                burst = &LOBBED_SHELLS_BURSTS[group * groupSlots + i];
+                burst = &LOBBED_SHELLS_BURSTS[(k << 2) * groupSlots + i];
 
                 SET_POSITION(burst, shot->x, shot->y, shot->z);
                 if (LOBBED_SHELLS_SHATTER(mode) == 0) {

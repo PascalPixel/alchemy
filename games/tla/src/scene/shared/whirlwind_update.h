@@ -48,12 +48,8 @@ void Whirlwind_Update(struct Actor *self) {
             self->sceneByte = 1;
           }
         }
-        self->x.fixed +=
-            ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
-                Trig_Cos(self->facing), self->speedLimit);
-        self->z.fixed +=
-            ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
-                Math_Sin(self->facing), self->speedLimit);
+        self->x.fixed += IwramMulFX(Trig_Cos(self->facing), self->speedLimit);
+        self->z.fixed += IwramMulFX(Math_Sin(self->facing), self->speedLimit);
         return;
       }
     }

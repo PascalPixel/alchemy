@@ -4,6 +4,14 @@
 /// party's PP, the task that drains it while A or B is held aloft, and its
 /// set-up and end.
 
+#include "system/irq.h"
+
+/// Iwram_CopyWords reached through the linked IWRAM code's symbol,
+/// IwramIrqMain, at its offset rather than at its fixed address, as the
+/// Daedalus effect and the item menu reach it.
+#define GAUGE_COPY_WORDS                                                       \
+  ((s32 (*)(void *, const void *, s32))(IwramIrqMain + Iwram_CopyWordsOffset))
+
 /// The gauge's source tiles (gWorldMapPackedTilesC): a bar of four tiles with
 /// its PP line lit, the same bar dark, and a chequered one for no PP. The bar
 /// is filled a pixel a level, eight levels to a tile.
@@ -36,73 +44,64 @@ void Gauge_Draw(s32 progress) {
     return;
   gGauge_Shown = kind + level;
   Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(GAUGE_SIZE));
-  {
-    /* FAKEMATCH(temporary): copy, a local holding Iwram_CopyWordsEntry, its
-     * address loaded once for the three arms; as Iwram_CopyWords. */
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-    if (kind == GAUGE_EMPTY) {
-      copy(gGauge_Tiles, gGauge_SourceTiles[GAUGE_EMPTY_BAR],
-           4 * TILE_SIZE_4BPP);
-    } else {
-      if (kind == GAUGE_SHOWN)
-        copy(gGauge_Tiles, gGauge_SourceTiles[GAUGE_DARK_BAR],
-             4 * TILE_SIZE_4BPP);
-      else
-        copy(gGauge_Tiles, gGauge_SourceTiles[GAUGE_EMPTY_BAR],
-             4 * TILE_SIZE_4BPP);
-      // Whole tiles of the lit bar first, then the rest a pixel at a time.
-      base = 0;
+  if (kind == GAUGE_EMPTY) {
+    GAUGE_COPY_WORDS(gGauge_Tiles, gGauge_SourceTiles[GAUGE_EMPTY_BAR],
+                     4 * TILE_SIZE_4BPP);
+  } else {
+    if (kind == GAUGE_SHOWN)
+      GAUGE_COPY_WORDS(gGauge_Tiles, gGauge_SourceTiles[GAUGE_DARK_BAR],
+                       4 * TILE_SIZE_4BPP);
+    else
+      GAUGE_COPY_WORDS(gGauge_Tiles, gGauge_SourceTiles[GAUGE_EMPTY_BAR],
+                       4 * TILE_SIZE_4BPP);
+    // Whole tiles of the lit bar first, then the rest a pixel at a time.
+    base = 0;
+    count = level;
+    if (count >= GAUGE_TILE_PIXELS) {
+      GAUGE_COPY_WORDS(gGauge_Tiles, gGauge_SourceTiles[GAUGE_LIT_BAR],
+                       TILE_SIZE_4BPP);
+      base = GAUGE_TILE_PIXELS;
+      count -= GAUGE_TILE_PIXELS;
+    }
+    if (level >= 2 * GAUGE_TILE_PIXELS) {
+      GAUGE_COPY_WORDS(gGauge_Tiles[1], gGauge_SourceTiles[GAUGE_LIT_BAR + 1],
+                       TILE_SIZE_4BPP);
       count = level;
-      if (count >= GAUGE_TILE_PIXELS) {
-        Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles[GAUGE_LIT_BAR],
-                             TILE_SIZE_4BPP);
-        base = GAUGE_TILE_PIXELS;
-        count -= GAUGE_TILE_PIXELS;
-      }
-      if (level >= 2 * GAUGE_TILE_PIXELS) {
-        Iwram_CopyWordsEntry(gGauge_Tiles[1],
-                             gGauge_SourceTiles[GAUGE_LIT_BAR + 1],
-                             TILE_SIZE_4BPP);
-        count = level;
-        base = 2 * GAUGE_TILE_PIXELS;
-        count -= 2 * GAUGE_TILE_PIXELS;
-      }
-      if (level >= 3 * GAUGE_TILE_PIXELS) {
-        Iwram_CopyWordsEntry(gGauge_Tiles[2],
-                             gGauge_SourceTiles[GAUGE_LIT_BAR + 2],
-                             TILE_SIZE_4BPP);
-        count = level;
-        base = 3 * GAUGE_TILE_PIXELS;
-        count -= 3 * GAUGE_TILE_PIXELS;
-      }
-      if (level > GAUGE_LEVELS) {
-        Iwram_CopyWordsEntry(gGauge_Tiles[3],
-                             gGauge_SourceTiles[GAUGE_LIT_BAR + 3],
-                             TILE_SIZE_4BPP);
-        base = 0;
-        count = 0;
-      }
-      if (count != 0) {
-        for (i = 0; i < count; i++) {
-          u8 *source =
-              &gGauge_SourceTiles[GAUGE_LIT_BAR + base / GAUGE_TILE_PIXELS][4] +
-              i / 2;
-          u8 *dest = &gGauge_Tiles[base / GAUGE_TILE_PIXELS][4] + i / 2;
-          s32 j;
+      base = 2 * GAUGE_TILE_PIXELS;
+      count -= 2 * GAUGE_TILE_PIXELS;
+    }
+    if (level >= 3 * GAUGE_TILE_PIXELS) {
+      GAUGE_COPY_WORDS(gGauge_Tiles[2], gGauge_SourceTiles[GAUGE_LIT_BAR + 2],
+                       TILE_SIZE_4BPP);
+      count = level;
+      base = 3 * GAUGE_TILE_PIXELS;
+      count -= 3 * GAUGE_TILE_PIXELS;
+    }
+    if (level > GAUGE_LEVELS) {
+      GAUGE_COPY_WORDS(gGauge_Tiles[3], gGauge_SourceTiles[GAUGE_LIT_BAR + 3],
+                       TILE_SIZE_4BPP);
+      base = 0;
+      count = 0;
+    }
+    if (count != 0) {
+      for (i = 0; i < count; i++) {
+        u8 *source =
+            &gGauge_SourceTiles[GAUGE_LIT_BAR + base / GAUGE_TILE_PIXELS][4] +
+            i / 2;
+        u8 *dest = &gGauge_Tiles[base / GAUGE_TILE_PIXELS][4] + i / 2;
+        s32 j;
 
-          if ((i & 1) == 0) {
-            for (j = 1; j <= GAUGE_LINE_ROWS; j++) {
-              *dest = (*dest & RIGHT_PIXEL) | (*source & LEFT_PIXEL);
-              source += 4;
-              dest += 4;
-            }
-          } else {
-            for (j = 0; j < GAUGE_LINE_ROWS; j++) {
-              *dest = (*dest & LEFT_PIXEL) | (*source & RIGHT_PIXEL);
-              source += 4;
-              dest += 4;
-            }
+        if ((i & 1) == 0) {
+          for (j = 1; j <= GAUGE_LINE_ROWS; j++) {
+            *dest = (*dest & RIGHT_PIXEL) | (*source & LEFT_PIXEL);
+            source += 4;
+            dest += 4;
+          }
+        } else {
+          for (j = 0; j < GAUGE_LINE_ROWS; j++) {
+            *dest = (*dest & LEFT_PIXEL) | (*source & RIGHT_PIXEL);
+            source += 4;
+            dest += 4;
           }
         }
       }

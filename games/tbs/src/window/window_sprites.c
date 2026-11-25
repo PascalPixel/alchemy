@@ -219,6 +219,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       *slot = VramCache_FindFreeEntry();
     // 0xfffe and 254 are -2: the arrow sits on the interior's last tile, 4
     // pixels right and 1 up.
+    /* FAKEMATCH(dead): win->width read through its taken address; as
+     * win->width. */
     attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
 #ifdef UBFIX
     // Write row twice, in order.

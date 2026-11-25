@@ -32,7 +32,7 @@
 /// and Right turn them).
 /// The battle commands pass 1 as unused, which no code reads.
 s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
-  struct QueuedSprite cursorSprite;
+  struct MenuSprite cursorSprite;
   u16 messageText[64];
   struct WindowState *state;
   struct Window *previewWindow;
@@ -133,7 +133,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   for (;;) {
     /* FAKEMATCH(temporary): sprite holds &cursorSprite; as &cursorSprite at
      * each use. */
-    struct QueuedSprite *sprite = &cursorSprite;
+    struct MenuSprite *sprite = &cursorSprite;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
         redraw != 0) {
@@ -462,9 +462,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     }
 
     MENU_PLACE_CURSOR(cursorPos, listWindow, selectedRow, 2, sprite);
-    sprite->oam.index = VramCache_Reload(cursorSlot, gPointingHandTiles);
-    sprite->oam.x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
-    sprite->oam.y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite->oam.f.tile = VramCache_Reload(cursorSlot, gPointingHandTiles);
+    sprite->oam.f.x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
+    sprite->oam.f.y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0)
       Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 

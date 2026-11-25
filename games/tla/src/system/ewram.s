@@ -163,8 +163,6 @@ gSoundInfo:
 	.global gMPlayJumpTable
 gMPlayJumpTable:
 	.space 0x00000004
-	.global gSound_JumpCommand
-gSound_JumpCommand:
 	.space 0x00000084
 	.space 0x00000004
 	.space 0x00000004

@@ -647,6 +647,11 @@ extern const struct Song gSongTable[];
 /// The song commands' handlers and the driver's helpers, which SoundInit copies
 /// from gMPlayJumpTableTemplate (MPLAY_JUMP_).
 extern MPlayFunc gMPlayJumpTable[36];
+
+/// The jump table at its fixed address: the driver's core (driver.c) reaches it
+/// by this number, MPlayExtender by its name.
+#define Ram_MPlayJumpTable                                                     \
+  FIXED_ADDRESS((MPlayFunc *), 0x02006800, gMPlayJumpTable)
 /// The extended commands' handlers, by the byte after 0xCD (ply_xcmd).
 extern const MPlayFunc gXcmdTable[];
 

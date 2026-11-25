@@ -340,8 +340,8 @@ enum BattleTargetHint {
   do {                                                                         \
     (position).x = (window)->x * 8 - (margin);                                 \
     (position).y = ((row) * 2 + (window)->y) * 8 + 20;                         \
-    ((u32 *)(sprite))[1] = OBJ_SIZE_16X16;                                     \
-    ((u32 *)(sprite))[2] = 0;                                                  \
+    (sprite)->oam.word.attr01 = OBJ_SIZE_16X16;                                \
+    (sprite)->oam.word.attr23 = 0;                                             \
   } while (0)
 
 #endif

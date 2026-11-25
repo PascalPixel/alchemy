@@ -12,17 +12,15 @@
 /// Detaches a note through the jump table entry installed by the driver
 /// (RealClearChain).
 void ClearChain(struct SoundChannel *note) {
-  /* FAKEMATCH(dead): the entry read through its address. */
   MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
-                  *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN]))(note);
+                  Ram_MPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN])(note);
 }
 
 /// Clears a 64-byte music player or track prefix through the driver's jump
 /// table (SoundMainBTM). Called by MPlayOpen and m4aMPlayImmInit.
 void Clear64byte(void *block) {
-  /* FAKEMATCH(dead): the entry read through its address. */
   MPLAY_FUNC_CAST(void (*)(void *),
-                  *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE]))(block);
+                  Ram_MPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE])(block);
 }
 
 /// The VBlank rate in ten-thousandths of a hertz (SOUND_RATE_E4_UNIT): 59.7275
@@ -80,8 +78,8 @@ void SoundInit(struct SoundInfo *work) {
   work->cgbMute = (void (*)(u8))DummyFunc;
   work->cgbFrequency = (s32 (*)(u8, u8, u8))DummyFunc;
   work->externalVolumePitch = DummyFunc;
-  MPlayJumpTableCopy(gMPlayJumpTable);
-  work->commands = gMPlayJumpTable;
+  MPlayJumpTableCopy(Ram_MPlayJumpTable);
+  work->commands = Ram_MPlayJumpTable;
   // Rate 4 (224 samples a VBlank, 13379 a second) until m4aSoundInit sets
   // the game's mode.
   SampleFreqSet(SOUND_MODE_FREQ_INITIAL);
@@ -1086,8 +1084,7 @@ void ply_memacc(struct MusicPlayerInfo *player,
   }
 
 jump:
-  /* FAKEMATCH(dead): the entry read through its address. */
-  (*(&gMPlayJumpTable[MPLAY_JUMP_GOTO]))(player, track);
+  Ram_MPlayJumpTable[MPLAY_JUMP_GOTO](player, track);
   return;
 skip:
   track->cursor += 4;
@@ -1116,9 +1113,7 @@ union WordBytes {
 /// Finishes a track through the jump table's ply_fine entry. Extended
 /// commands 0 and 3: they end the track as the finish command (0xB1) does.
 void ply_xxx(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
-  MPlayFunc finishSequence = gMPlayJumpTable[MPLAY_JUMP_FINE];
-
-  finishSequence(player, track);
+  Ram_MPlayJumpTable[MPLAY_JUMP_FINE](player, track);
 }
 
 /// Sets the voice's sample or wave from the four bytes that follow, lowest

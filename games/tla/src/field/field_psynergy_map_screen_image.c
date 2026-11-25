@@ -614,20 +614,16 @@ void MapScreen_DrawColumn(s32 column, s32 row) {
 
   for (i = 0; i < IMAGE_DRAWN_ROWS; i++) {
     s32 line = row + i;
-    s32 cell = line;
+    s32 bufferRow = line;
+    s32 cell;
     s32 tile;
-    s32 rowStart;
 
     if (line >= MAP_SCREEN_TILE_ROWS)
-      cell = line - MAP_SCREEN_TILE_ROWS;
+      bufferRow = line - MAP_SCREEN_TILE_ROWS;
+    cell = column + bufferRow * IMAGE_TILES_ACROSS;
     tile = ((column & (BG_SCREEN_WIDTH - 1)) + line * BG_SCREEN_WIDTH +
             MAP_SCREEN_MAP_START) %
            MAP_SCREEN_TILES;
-    cell *= IMAGE_TILES_ACROSS;
-    /* FAKEMATCH(temporary): the row's first cell copied before the column is
-     * added to it; as cell = column + cell. */
-    rowStart = cell;
-    cell = column + rowStart;
     cell *= TILE_SIZE_8BPP;
     tile *= TILE_SIZE_8BPP;
     Dma_Set(Ram_MapCellBuffer + cell,

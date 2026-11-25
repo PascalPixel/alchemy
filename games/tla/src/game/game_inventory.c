@@ -445,6 +445,9 @@ u8 Item_GetTargetMode(s32 itemId) {
 /// ITEM_COUNTER_MAX, and returns the new count (0 for an index from
 /// ITEM_COUNTER_COUNT on).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
+  /* FAKEMATCH(temporary): counterSlot stands for index, which then holds the
+     count returned; the plain form reads index throughout and keeps the count
+     in a local of its own. */
   s32 counterSlot = index;
   u8 *stock = gRareItemStock;
 

@@ -460,6 +460,8 @@ s32 DebugBrowser_Portraits(void) {
   s32 glyph;
   s32 tile;
   s32 slot;
+  /* FAKEMATCH(temporary): cancelKey, KEY_B held in a local set in the body
+   * and tested across the loop; as gKeysRepeat & KEY_B. */
   s32 cancelKey;
   s32 palette = PORTRAIT_PALETTE + 1; // portrait slot 1's, as slotOffset
   u32 slotOffset = offsetof(struct WindowState, portraitSprites[1]);

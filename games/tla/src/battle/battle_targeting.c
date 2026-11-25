@@ -1416,6 +1416,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
         amount =
             Battle_CalculatePsynergyPowerFar(power, elementBonus, FULL_RATE);
         amount *= multiplier;
+        /* FAKEMATCH(dead): the ability kind masked again. */
         switch (kind & ABILITY_FORMULA_MASK) {
         case ABILITY_FORMULA_DAMAGE:
           amount = gRangeFalloff_PsynergyDamage[distance] * amount / 100;

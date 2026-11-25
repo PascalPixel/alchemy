@@ -319,7 +319,6 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 /// ABILITY_TARGET_ALLIES, and otherwise on the field.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   struct AbilityDefinition *action;
-  s32 targetModeDifference;
   s32 classification;
 
   action = Ability_Get(
@@ -327,20 +326,12 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
       ((struct PsynergyMenuState *)Ram_HeapSlots->menuState)->sideAction[0]);
   if (Scene_HasPsynergyTriggerFar(action->fieldPsynergy) != 0)
     return ITEM_USE_MODE_FROM_FIELD;
-  classification = ITEM_USE_MODE_WHOLE_PARTY;
-  if (action->range != ABILITY_RANGE_ALL) {
-    u8 kind = action->targetMode;
-
-    // ITEM_USE_MODE_CHOOSE_MEMBER when it targets ABILITY_TARGET_ALLIES,
-    // ITEM_USE_MODE_FROM_FIELD otherwise.
-    /* FAKEMATCH(temporary): targetModeDifference, the equality test written
-     * out as its store-flag instructions (xor, then the sign of -d | d taken
-     * from 1); as classification = kind == ABILITY_TARGET_ALLIES. */
-    targetModeDifference = kind ^ ABILITY_TARGET_ALLIES;
-    classification = (0 - targetModeDifference) | targetModeDifference;
-    classification = (u32)classification >> 31;
-    classification = 1 - classification;
-  }
+  if (action->range == ABILITY_RANGE_ALL)
+    return ITEM_USE_MODE_WHOLE_PARTY;
+  if (action->targetMode != ABILITY_TARGET_ALLIES)
+    classification = ITEM_USE_MODE_FROM_FIELD;
+  else
+    classification = ITEM_USE_MODE_CHOOSE_MEMBER;
   return classification;
 }
 

@@ -191,7 +191,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetCount++;
     }
   } else if (mode == ABILITY_TARGET_SELF) {
-    candidateIds[0] = (u16)selection;
+    candidateIds[0] = selection;
     targetCount = 1;
   } else {
     for (i = 0; i <= 5 && battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
@@ -268,7 +268,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     BattleMotion_ProjectCursorPointFar(selection,
                                        ScreenPoint_Coordinates(&actorPosition));
     cursorTracks[0].flags = CURSOR_HOLD_FRAME * 2;
-    cursorTracks[0].x = (u8)actorPosition.x;
+    cursorTracks[0].x = actorPosition.x;
     cursorTracks[0].y = 128;
   }
   window = Window_Create(0, TARGET_NAME_WINDOW_ROW, DISPLAY_TILE_WIDTH, 4,
@@ -307,23 +307,23 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                : selectedPosition.x - cursorX) <= 7)
         drawCursors = 1;
       selectedPosition.x = cursorX;
-      cursorTracks[0].x = (u8)cursorX;
-      cursorTracks[0].y = (u8)cursorY;
+      cursorTracks[0].x = cursorX;
+      cursorTracks[0].y = cursorY;
       selectedPosition.y = cursorY;
-    } else if ((u8)cursorTracks[0].flags < CURSOR_HOLD_FRAME) {
-      cursorTracks[0].x = (u8)selectedPosition.x;
+    } else if (cursorTracks[0].flags < CURSOR_HOLD_FRAME) {
+      cursorTracks[0].x = selectedPosition.x;
       selectedPosition.y = y;
-      cursorTracks[0].y = (u8)y;
+      cursorTracks[0].y = y;
       cursorTracks[0].flags = CURSOR_EASING;
     } else {
       selectedPosition.x = cursorTracks[0].x;
       selectedPosition.y = cursorTracks[0].y;
-      cursorTracks[0].flags = (u8)(cursorTracks[0].flags - CURSOR_HOLD_FRAME);
+      cursorTracks[0].flags = cursorTracks[0].flags - CURSOR_HOLD_FRAME;
       if (cursorTracks[0].flags < CURSOR_HOLD_FRAME)
         cursorTracks[0].flags = CURSOR_EASING;
     }
     firstSprite->x = selectedPosition.x - 8;
-    firstSprite->y = (u8)(selectedPosition.y - 16);
+    firstSprite->y = selectedPosition.y - 16;
     Oam_AddSpriteAtDepth(firstSprite, OAM_DEPTH_WINDOW);
     // The other markers' scale: 11/16 beside an aimed one, full size when the
     // action takes every unit.
@@ -363,7 +363,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     if (redraw & TARGET_REDRAW_SPREAD) {
       targetCount = 0;
       for (i = 0; i < TARGET_MARKERS; i++)
-        cursorTracks[i].flags &= (u8)~CURSOR_IN_SPREAD;
+        cursorTracks[i].flags &= ~CURSOR_IN_SPREAD;
       for (i = 0; i < spread; i++) {
         {
           n = targetIndex + i;
@@ -371,10 +371,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             spreadActorIds[targetCount] = candidateIds[n];
             cursorTracks[i].flags |= CURSOR_IN_SPREAD;
             if (cursorTracks[i].index != i) {
-              cursorTracks[i].flags &= (u8)~CURSOR_EASING;
-              cursorTracks[i].index = (s8)i;
+              cursorTracks[i].flags &= ~CURSOR_EASING;
+              cursorTracks[i].index = i;
             }
-            spreadTrackIndices[targetCount] = (u8)i;
+            spreadTrackIndices[targetCount] = i;
             targetCount++;
           }
           if (i != 0 && (n = targetIndex - i) >= 0 &&
@@ -382,10 +382,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             spreadActorIds[targetCount] = candidateIds[n];
             cursorTracks[TARGET_MARKERS - i].flags |= CURSOR_IN_SPREAD;
             if (cursorTracks[TARGET_MARKERS - i].index != -i) {
-              cursorTracks[TARGET_MARKERS - i].flags &= (u8)~CURSOR_EASING;
-              cursorTracks[TARGET_MARKERS - i].index = (s8)-i;
+              cursorTracks[TARGET_MARKERS - i].flags &= ~CURSOR_EASING;
+              cursorTracks[TARGET_MARKERS - i].index = -i;
             }
-            spreadTrackIndices[targetCount] = (u8)(TARGET_MARKERS - i);
+            spreadTrackIndices[targetCount] = TARGET_MARKERS - i;
             targetCount++;
           }
         }

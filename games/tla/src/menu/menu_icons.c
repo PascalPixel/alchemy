@@ -82,9 +82,9 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
 
   if (variant == STAT_ARROW_UP)
-    resource = (u16)menu->resourceSlots[0];
+    resource = menu->resourceSlots[0];
   else
-    resource = (u16)menu->resourceSlots[1];
+    resource = menu->resourceSlots[1];
   arrow =
       WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   if (arrow == 0) {
@@ -108,10 +108,10 @@ s32 Icon_CreateDjinnArrow(struct Window *window, s32 x, s32 y, s32 variant) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
 
   if (variant == STAT_ARROW_UP) {
-    resource = (u16)menu->resourceSlots[0];
+    resource = menu->resourceSlots[0];
     y -= 3;
   } else {
-    resource = (u16)menu->resourceSlots[1];
+    resource = menu->resourceSlots[1];
     y -= 4;
   }
   arrow =

@@ -58,23 +58,17 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   // Scatter the shards around the middle of each body.
   for (member = 0; member != args->targetCount; member++) {
     struct MotionObject *object;
-    s32 offset;
     s32 height;
-    struct Particle *shard;
-    struct ScreenPoint *position;
 
-    offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
-    /* FAKEMATCH(temporary): position holds &screen. */
-    position = &screen;
     object = BattleObject_GetFar(args->targets[member])->object;
     height = BattleUnit_GetEffectHeightFar(args->targets[member]) / 2;
     point[0] = object->x;
     point[1] = height;
     point[2] = object->z;
-    EffectPosition_ProjectPoint(point, position);
+    EffectPosition_ProjectPoint(point, &screen);
     screen.x >>= 1;
-    for (i = 0, shard = (struct Particle *)(Ram_MapCellBuffer + offset);
-         i != BREAK_SHARDS_PER_TARGET; i++) {
+    for (i = 0; i != BREAK_SHARDS_PER_TARGET; i++) {
+      struct Particle *shard = &PARTICLES[member * BREAK_SHARDS_PER_TARGET + i];
       s32 radius;
       s32 angle;
       s32 lift;
@@ -88,7 +82,6 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
       lift = Random16() & 0xff;
       shard->variant = 0;
       shard->velocityY = (-lift - 128) << 10;
-      shard++;
     }
   }
 

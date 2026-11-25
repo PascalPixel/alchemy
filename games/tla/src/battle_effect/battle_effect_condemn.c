@@ -41,9 +41,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 drawReaper;
   s32 pictureColumn;
   s32 pictureRow;
-  /* FAKEMATCH(temporary): cells, the cell buffer's address held in a local for
-   * the crescent sprite sheet's load. */
-  u8 *cells;
+  u8 *cells; // the cell buffer, held across the reveal sheet's load
   s32 frame;
 
   BattleEffect_StartTiledCanvas(BGCNT_WRAP);

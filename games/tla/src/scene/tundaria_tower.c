@@ -1120,30 +1120,24 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(7, 36, 1, 1, 7, 35);
       }
       {
-        /* FAKEMATCH(temporary): the reflection's global reached through a local
-           pointer; as gTundariaTower_Reflection = effect. */
-        struct Actor **slot = &gTundariaTower_Reflection;
-        struct Actor *effect =
-            ((struct Actor *)Import_ActorCreate(SPRITE_FELIX, 0, 0, 0));
+        struct Actor *effect;
 
+        gTundariaTower_Reflection = effect =
+            FieldActor_Create(SPRITE_FELIX, 0, 0, 0);
         effect->sceneWord = toFIXED(576);
         effect->update = TundariaTower_ReflectLeader;
-        *slot = effect;
         effect->motionFlags = 0;
         Scene_SetActorSpritePriority(effect, 3);
       }
       break;
     case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_BURST_BROOCH_NORTH:
     case PILLAR_PUZZLE_MIRROR_ROOM_FOOT: {
-      /* FAKEMATCH(temporary): the reflection's global reached through a local
-         pointer; as gTundariaTower_Reflection = effect. */
-      struct Actor **slot = &gTundariaTower_Reflection;
-      struct Actor *effect =
-          ((struct Actor *)Import_ActorCreate(SPRITE_FELIX, 0, 0, 0));
+      struct Actor *effect;
 
+      gTundariaTower_Reflection = effect =
+          FieldActor_Create(SPRITE_FELIX, 0, 0, 0);
       effect->sceneWord = toFIXED(624);
       effect->update = TundariaTower_ReflectLeader;
-      *slot = effect;
       effect->motionFlags = 0;
       Scene_SetActorSpritePriority(effect, 3);
     } break;

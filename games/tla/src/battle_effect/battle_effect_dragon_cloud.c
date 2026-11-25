@@ -128,16 +128,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
     particle = &state->particles[DRAGON_CLOUD_FIRST_EMBER + i];
     SET_POSITION(particle, actor->x.fixed, 0, actor->z.fixed);
-    if (i >= gDragonCloud_SparkCounts[args->variant]) {
-      particle->velocityX = ((Random16() & 63) - 32) << 14;
-      particle->velocityY = (Random16() & 63) << 12;
-    } else {
-      particle->velocityX = ((Random16() & 63) - 32) << 14;
-      particle->velocityY = (Random16() & 63) << 13;
-    }
-    /* FAKEMATCH(temporary): the depth speed stored through a local of its
-     * own. */
-    Io_Write32(((Random16() & 63) - 32) << 14, &particle->velocityZ);
+    if (i >= gDragonCloud_SparkCounts[args->variant])
+      SET_VELOCITY(particle, ((Random16() & 63) - 32) << 14,
+                   (Random16() & 63) << 12, ((Random16() & 63) - 32) << 14);
+    else
+      SET_VELOCITY(particle, ((Random16() & 63) - 32) << 14,
+                   (Random16() & 63) << 13, ((Random16() & 63) - 32) << 14);
     particle->variant = 1;
   }
 
@@ -158,15 +154,17 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   for (i = 0, angle = -DEGtoANG(90); i != DRAGON_CLOUD_PUFFS;
        angle += TRIG_TURN / 16, i++) {
     particle = &state->particles[i];
-    if (args->side == EFFECT_SIDE_PARTY)
+    if (args->side == EFFECT_SIDE_PARTY) {
       particle->x =
           FIXEDtoINT(Trig_Sin(angle) * DRAGON_CLOUD_PUFF_RADIUS_X) + 88;
-    else
+      particle->y =
+          FIXEDtoINT(Trig_Cos(angle) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40;
+    } else {
       particle->x =
           FIXEDtoINT(-(Trig_Sin(angle) * DRAGON_CLOUD_PUFF_RADIUS_X)) + 16;
-    /* FAKEMATCH(temporary): the puff's y stored through a local of its own. */
-    Io_Write32(FIXEDtoINT(Trig_Cos(angle) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40,
-               &particle->y);
+      particle->y =
+          FIXEDtoINT(Trig_Cos(angle) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40;
+    }
     particle->variant = -(i * 2);
   }
   path = Resource_GetTableEntry(RESOURCE_DRAGON_CLOUD_FLAME_PATH);

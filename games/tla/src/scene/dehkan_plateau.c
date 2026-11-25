@@ -1917,18 +1917,14 @@ extern u16 gDehkanPlateau_FallLandingCells[];
                                             belowOffsetZ, belowSourceZ)        \
   void name(void) {                                                            \
     s32 flag = FLAG_FELL_THROUGH_FIRST;                                        \
-    s32 offset = 0;                                                            \
                                                                                \
     while (1) {                                                                \
       if (GameFlag_Get(flag)) {                                                \
-        /* FAKEMATCH(temporary): the fall's number held in a local; as         \
-         * flag - FLAG_FELL_THROUGH_FIRST at its test. */                      \
         s32 fall = flag - FLAG_FELL_THROUGH_FIRST;                             \
-        u16 *entry = gDehkanPlateau_FallLandingCells;                          \
+        u16 *entry = &gDehkanPlateau_FallLandingCells[fall * 4];               \
         s32 y;                                                                 \
         s32 x;                                                                 \
                                                                                \
-        entry = (u16 *)((u8 *)entry + offset);                                 \
         x = *entry++;                                                          \
         y = *entry++;                                                          \
         MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, 1, 1);                     \
@@ -1946,7 +1942,6 @@ extern u16 gDehkanPlateau_FallLandingCells[];
       }                                                                        \
       if (flag == FLAG_FELL_THROUGH_LAST)                                      \
         return;                                                                \
-      offset += 8;                                                             \
       flag++;                                                                  \
     }                                                                          \
   }

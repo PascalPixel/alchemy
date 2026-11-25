@@ -447,9 +447,8 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
   s32 battleContinues;
   s32 counts[ELEMENT_COUNT];
   struct DjinnRecoveryList *list;
-  /* FAKEMATCH(temporary): the strongest element's local is also the index of
-   * the first loop over the recovery list. */
-  s32 strongestElement;
+  // An index: a recovery list entry's, then the strongest element's.
+  s32 index;
   s32 recoveryTurn;
 
   // The unit's standby Djinn come off its set.
@@ -457,12 +456,11 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
   battleContinues = 0;
   unit = Unit_GetFar(unitId);
   list = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
-  for (strongestElement = 0; strongestElement < list->count;
-       strongestElement++) {
-    if (list->entries[strongestElement].unitId == unitId &&
-        list->entries[strongestElement].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-      Djinn_PutOnStandbyFar(unitId, list->entries[strongestElement].element,
-                            list->entries[strongestElement].index);
+  for (index = 0; index < list->count; index++) {
+    if (list->entries[index].unitId == unitId &&
+        list->entries[index].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+      Djinn_PutOnStandbyFar(unitId, list->entries[index].element,
+                            list->entries[index].index);
     }
   }
   if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) != 0 &&
@@ -520,16 +518,15 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     mostOfOneElement = 0;
     before = Heap_AllocEwram(sizeof(struct Unit));
     Iwram_CopyWords(before, unit, sizeof(struct Unit));
-    strongestElement = -1;
+    index = -1;
     for (i = 0; i < ELEMENT_COUNT; i++) {
       if (counts[i] > mostOfOneElement) {
         mostOfOneElement = counts[i];
-        strongestElement = i;
+        index = i;
       }
     }
-    if (strongestElement >= 0 &&
-        unit->summonBoost[strongestElement] < mostOfOneElement) {
-      unit->summonBoost[strongestElement] = mostOfOneElement;
+    if (index >= 0 && unit->summonBoost[index] < mostOfOneElement) {
+      unit->summonBoost[index] = mostOfOneElement;
     }
     Unit_CalculateFar(unitId);
     for (i = 0; i < ELEMENT_COUNT; i++) {

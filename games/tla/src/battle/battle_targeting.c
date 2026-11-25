@@ -1349,6 +1349,9 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
           s32 maxHpPercent;
 
           maxHpPercent = 0;
+          // The Lost Age's new summons keep arms of their own beside The
+          // Broken Seal's groups of four, also where they share a group's
+          // percentage.
           switch (abilityId) {
           default:
           case ABILITY_COATLICUE:

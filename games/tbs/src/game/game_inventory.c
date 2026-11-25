@@ -389,29 +389,27 @@ u8 Item_GetTargetMode(s32 itemId) {
 /// RARE_ITEM_STOCK_MAX, and returns the new count (0 for an index from
 /// RARE_ITEM_STOCK_COUNT on).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
-  /* FAKEMATCH(temporary): stockIndex stands for index, which then holds the
-     count returned; the plain form reads index throughout and keeps the count
-     in a local of its own. */
-  s32 stockIndex = index;
   u8 *stock = gRareItemStock;
+  s32 value;
+  s32 count;
 
-  index = 0;
-  if (stockIndex < RARE_ITEM_STOCK_COUNT) {
-    s32 value = stock[stockIndex];
+  if (index >= RARE_ITEM_STOCK_COUNT)
+    return 0;
+  value = stock[index];
 
-    value += delta;
+  value += delta;
 
-    if (value < 0) {
-      value = 0;
-    } else if (value > RARE_ITEM_STOCK_MAX) {
-      value = RARE_ITEM_STOCK_MAX;
-      index = RARE_ITEM_STOCK_MAX;
-    } else {
-      index = value;
-    }
-    stock[stockIndex] = value;
+  if (value < 0) {
+    value = 0;
+    count = 0;
+  } else if (value > RARE_ITEM_STOCK_MAX) {
+    value = RARE_ITEM_STOCK_MAX;
+    count = RARE_ITEM_STOCK_MAX;
+  } else {
+    count = value;
   }
-  return index;
+  stock[index] = value;
+  return count;
 }
 
 /// Adds delta to how many of an item the shops' Artifacts offer, and returns

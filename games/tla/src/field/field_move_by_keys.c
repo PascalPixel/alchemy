@@ -293,6 +293,7 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
     collisionFlags = PLAYER_STEP_STOPPED;
     best = (struct TightropeNode *)actor->watchedActor;
     SET_POSITION(&position, actor->x.fixed, best->y, actor->z.fixed);
+    state = Ram_HeapSlots->fieldState;
   } else {
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(toFIXED(8), angle, &position);
@@ -303,8 +304,7 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
     bestDistance = ROPE_NODE_DISTANCE_NONE;
     if (tightrope == NULL) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
-      /* FAKEMATCH(dead): the event state slot copied onto itself. */
-      Ram_HeapSlots->fieldState = Ram_HeapSlots->fieldState;
+      state = Ram_HeapSlots->fieldState;
     } else {
       for (count = 0; count < ROPE_NODE_COUNT; count++, point++) {
         if (point->kind == ROPE_NODE_CROSSABLE) {
@@ -338,9 +338,9 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
         position.x = position.x;
         SET_POSITION(&position, best->x, best->y, best->z);
       }
+      state = Ram_HeapSlots->fieldState;
     }
   }
-  state = Ram_HeapSlots->fieldState;
   if (state != NULL) {
     if (collisionFlags & PLAYER_STEP_BLOCKED)
       state->blockedSteps++;

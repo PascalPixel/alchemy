@@ -42,12 +42,6 @@ struct MarsLighthouseAerieSprite {
   u8 layerCount;
 };
 
-/// The heap slots read as plain words, the field state's among them.
-struct HeapWords {
-  u32 beforeFieldState[27];
-  s32 fieldState;
-};
-
 void MarsLighthouseAerie_TalkToKyle(void);
 
 void MarsLighthouseAerie_FindWhoTheDragonWas(void);

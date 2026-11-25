@@ -117,6 +117,7 @@ enum ArrivalAxis {
 };
 
 union FieldObject;
+struct Sprite;
 
 /// An actor's per-frame hook, called with the actor (Actor_UpdateAllOnField).
 typedef void (*ObjectUpdate)(union FieldObject *object);
@@ -167,9 +168,10 @@ struct Actor {
   /// drifting speed, or the mark of a treasure spot that stands for a map
   /// cell), and scene code a resting height.
   s32 sceneWord;
-  /// Its sprite (a struct FieldSprite) for ACTOR_SPRITE_ONE, or its list of
-  /// sprites for ACTOR_SPRITE_GROUP. Code that reads one kind converts it.
-  void *sprite;
+  /// Its sprite for ACTOR_SPRITE_ONE (read as a struct FieldSprite or a struct
+  /// Sprite), or its list of sprites for ACTOR_SPRITE_GROUP, which code that
+  /// reads it converts.
+  struct Sprite *sprite;
   /// ACTOR_SPRITE_ONE or ACTOR_SPRITE_GROUP in the low four bits, which is all
   /// the field and the scenes test.
   u8 spriteStorageKind;
@@ -334,7 +336,9 @@ struct Actor {
   /// or faces. Scenes also hang other things on it: a rope or tightrope node,
   /// a hook to call, a sparkle state, a VRAM address or a frame count.
   union FieldObject *watchedActor;
-  ObjectUpdate update; ///< the actor's per-frame hook
+  /// The actor's per-frame hook (an ObjectUpdate), kept as a plain pointer as
+  /// the effect options' hook is.
+  void *update;
   /// What a carrier moved this frame, which Actor_MoveWithCarriers adds to
   /// an actor riding it, and that actor's carrier: the platform actor it
   /// stands on, held as a field object.

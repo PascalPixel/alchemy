@@ -3056,8 +3056,8 @@ s32 Scene_PrepareMap(void) {
         plant->collisionFlags = 0;
         Actor_SelectAnimation(plant, ARROW_ANIMATION(angle));
         plant->update = ARROW_UP_OR_DOWN(angle) != 0
-                            ? (ObjectUpdate)GaiaRockInside_PulseUpDownArrow
-                            : (ObjectUpdate)GaiaRockInside_PulseSidewaysArrow;
+                            ? (void *)GaiaRockInside_PulseUpDownArrow
+                            : (void *)GaiaRockInside_PulseSidewaysArrow;
         plant->collisionFlags = 1;
         GameFlag_Set(FLAG_PLANT_POINTING);
       }

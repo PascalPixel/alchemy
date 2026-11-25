@@ -86,7 +86,7 @@ void Actor_UpdateAllOnField(void) {
     if (script == NULL)
       continue;
     if (object->update != NULL) {
-      object->update((union FieldObject *)object);
+      ((ObjectUpdate)object->update)((union FieldObject *)object);
       script = object->script;
     }
     if (script == NULL)

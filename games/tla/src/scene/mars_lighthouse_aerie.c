@@ -2068,7 +2068,6 @@ extern s32 gMarsLighthouseAerie_BeamNarrowScript[];
 /// The Mars Star is cast into the beacon: the beam rises, the fire falls
 /// into it and the beacon is lit.
 void MarsLighthouseAerie_LightBeacon(void) {
-  struct FieldState *later;
   struct MarsLighthouseAerieSprite *sprite;
   struct Actor *star;
   struct Actor *anchor;
@@ -2345,11 +2344,8 @@ void MarsLighthouseAerie_LightBeacon(void) {
   MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
   Actor_FaceDirectionAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, FACING_SOUTH);
-  /* FAKEMATCH(signature): Mia's hook cleared as a plain word, and the field
-     state's address read as one. */
-  *(s32 *)&Actor_Get(ACTOR_MIA)->update = 0;
-  later = (struct FieldState *)((struct HeapWords *)Ram_HeapSlots)->fieldState;
-  later->message++;
+  Actor_Get(ACTOR_MIA)->update = NULL;
+  gFieldState->message++;
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "You... You can't be!"
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);

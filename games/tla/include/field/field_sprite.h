@@ -7,12 +7,17 @@
 #include "fixed_math.h"
 #include "types.h"
 
+struct Sprite;
+struct SpriteAnimation;
+
 /// struct Sprite (field/sprite.h) as the field's scenes read it: its image's
 /// OAM attributes as bit fields, its retain, own-scale and sunk-rows bits, its
 /// layer count and its shadow's first two attributes as bytes, and its
 /// shadow's attribute 2 as bit fields; the first layer is record.
 struct FieldSprite {
-  u8 unused[4]; ///< no code names it
+  /// The link to the next sprite queued at its depth (struct
+  /// AnimationSpritePart's first word).
+  struct Sprite *link;
   /// The image's OAM attributes 0 to 2.
   ///@{
   u16 y : 8; ///< screen pixels
@@ -55,7 +60,7 @@ struct FieldSprite {
   u16 secondPalette : 4;
   ///@}
   u8 unusedAfterSecondPalette[2]; ///< no code names it
-  void *record;                   ///< released by SpriteAnimation_ClearFar
+  struct SpriteAnimation *record; ///< released by SpriteAnimation_ClearFar
 };
 
 /// The depth a sprite the scene draws itself takes past its screen row, just

@@ -1023,7 +1023,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 /* FAKEMATCH(temporary): held stands for the 0 stored. */
                 s32 held;
 
-                /* FAKEMATCH(dead): a once-only loop round the store. */
+                // A once-only loop the ROM keeps, with its counter, its test
+                // against 1 and its branch back.
                 for (n = 0, held = 0; n != 1; n++) {
                   /* FAKEMATCH(dead): updates of held that cancel out. */
                   held ^= n;

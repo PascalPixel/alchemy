@@ -53,7 +53,7 @@ void BattleEffect_RunBallLightning(struct BattleEffectParams *args, s32 mode) {
   u8 *sprites;
   s32 ballSize;
   s32 frames;
-  s32 sparkFloor = BALL_LIGHTNING_SPARK_FLOOR;
+  s32 sparkFloor;
   s32 x;
   s32 y;
   struct ScreenPoint target;
@@ -117,8 +117,7 @@ void BattleEffect_RunBallLightning(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (mode == BALL_LIGHTNING_THUNDER_MINE) {
     frames = 24;
-    /* FAKEMATCH(dead): the row Thunder Mine's sparks bounce at, stored again in
-     * its arm, the value it holds; as the arm without it. */
+    // Only Thunder Mine's sparks bounce: Ball Lightning never reads the floor.
     sparkFloor = BALL_LIGHTNING_SPARK_FLOOR;
   } else {
     frames = 40;

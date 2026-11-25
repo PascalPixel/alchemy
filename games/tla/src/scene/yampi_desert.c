@@ -940,8 +940,8 @@ void YampiDesert_RaiseSandCloud(void) {
 
     point = gYampiDesert_SandCloudPoints;
     for (i = 0; i < SAND_CLOUD_POINTS; i++) {
-      s32 x = *point++ + ((Random16() << 2) >> 16);
-      s32 z = *point++ + ((Random16() << 2) >> 16);
+      s32 x = *point++ + Random_Below(4);
+      s32 z = *point++ + Random_Below(4);
       struct Actor *actor = Import_ActorCreate(
           SPRITE_DUST_CLOUD, INTtoFIXED(x - 2), 0, INTtoFIXED(z - 2));
 
@@ -1512,19 +1512,18 @@ void YampiDesert_CarryLeader(struct Actor *actor, FIXED dx, FIXED dz) {
         sprite = dust->sprite;
         sprite->image.priority = 1;
         if (gInput.held != 0) {
-          dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) + dx;
-          dust->sceneWord = Trig_Sin(((Random16() << 3) >> 16) << 14) + dz;
+          dust->bounce = Trig_Cos(Random_Below(8) << 14) + dx;
+          dust->sceneWord = Trig_Sin(Random_Below(8) << 14) + dz;
           if (gInput.held & KEY_B) {
             dust->bounce += dx;
             dust->sceneWord += dz;
           }
         } else {
-          dust->bounce = (Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1) + dx;
-          dust->sceneWord =
-              (Trig_Sin(((Random16() << 3) >> 16) << 14) >> 1) + dz;
+          dust->bounce = (Trig_Cos(Random_Below(8) << 14) >> 1) + dx;
+          dust->sceneWord = (Trig_Sin(Random_Below(8) << 14) >> 1) + dz;
         }
         dust->gravity = 0;
-        dust->timer = ((Random16() << 9) >> 16) - 256;
+        dust->timer = Random_Below(512) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
         dust->update = FieldEffect_AdvanceMotionAtLeaderPriority;

@@ -568,7 +568,7 @@ void JupiterLighthouse_SpawnBeamParticles(void) {
     actor->motionFlags = 0;
     actor->priorityFlags = 0;
     actor->speedLimit = (Random16() << 2) + toFIXED(6);
-    actor->acceleration = ((Random16() << 11) >> 16) + DEGtoANG(45) / 4;
+    actor->acceleration = Random_Below(2048) + DEGtoANG(45) / 4;
     actor->update = JupiterLighthouse_CircleTheBeam;
     actor->timer = Random16();
     actor->userValue = phase;

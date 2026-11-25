@@ -25,8 +25,6 @@
 /// coordinate lies in, as FIELD_CELL a map grid cell. The world map is 32 by 32
 /// tiles, wrapping, and each layer's tile numbers follow the 1024 before it.
 #define WORLD_MAP_TILE(coordinate) ((coordinate) >> 25)
-/// The world map block, 32 pixels square, a 16.16 coordinate lies in.
-#define WORLD_MAP_BLOCK(coordinate) ((coordinate) >> 21)
 #define WORLD_MAP_TILES_ACROSS 32
 #define WORLD_MAP_LAYER_TILES 1024
 

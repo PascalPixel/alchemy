@@ -241,8 +241,10 @@ s32 StatusScreen_RunPages(void) {
     case STATUS_STEP_EQUIPMENT:
       MenuIcon_SetActive(0);
       result = StatusScreen_RunEquipmentPage();
-      // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
-      step = NONZERO(~result);
+      if (result == -1)
+        step = STATUS_STEP_MEMBER;
+      else
+        step = STATUS_STEP_STATUS;
       break;
     default:
       finished = 1;
@@ -841,7 +843,10 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
   }
 
   // HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
-  palette = WINDOW_PALETTE - NONZERO(invert ^ 1);
+  if (invert == 1)
+    palette = WINDOW_PALETTE;
+  else
+    palette = HIGHLIGHT_PALETTE;
   Window_SetHighlightRect(menu->statusWindow, x, y, width, 1, palette);
 }
 

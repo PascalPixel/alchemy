@@ -1401,7 +1401,7 @@ s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   cells = (u8 *)map->layers[0].cells;
   cell = cells + ((x + (z << 7)) << 2);
   value = cell[2];
-  return IsZero(value ^ CELL_BEHAVIOR_WALL);
+  return value == CELL_BEHAVIOR_WALL;
 }
 
 /// Felix leans on a log in the log stage and it rolls, up to six cells, until
@@ -2609,7 +2609,7 @@ void TrialRoad_DealStageOrder(u32 seed) {
       order[i] = -1;
     for (i = 0; i <= 7; i++) {
       do {
-        offset = ((Random16() << 3) >> 16) * 2;
+        offset = Random_Below(8) * 2;
       } while (*(s16 *)((u8 *)order + offset) != -1);
       *(s16 *)((u8 *)order + offset) = i;
     }
@@ -3589,8 +3589,8 @@ void Dust_Scatter(s32 spread) {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
       }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + (toFIXED(3) / 8));
-      effect->spin = ((Random16() << 9) >> 16) - (TRIG_TURN / 256);
+      effect->velocity.y = -(Random_Below(16384) + (toFIXED(3) / 8));
+      effect->spin = Random_Below(512) - (TRIG_TURN / 256);
       effect->scaleRateX = -(FIXED_ONE / 32);
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = TrialRoad_DriftDust;
@@ -3627,9 +3627,9 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->velocity.y = 0;
       effect->velocity.z = Trig_Sin(i * (TRIG_TURN / 16));
       effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - (toFIXED(3) / 8);
-      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - (toFIXED(3) / 16);
-      effect->spin = ((Random16() << 12) >> 16) - (TRIG_TURN / 32);
+      effect->velocity.x += Random_Below(toFIXED(3) / 4) - (toFIXED(3) / 8);
+      effect->velocity.z += Random_Below(toFIXED(3) / 8) - (toFIXED(3) / 16);
+      effect->spin = Random_Below(4096) - (TRIG_TURN / 32);
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
       effect->update = TrialRoad_DriftDust;
@@ -4020,7 +4020,7 @@ void TrialRoad_PlayRivalRecording(s32 resource) {
 s32 TrialRoad_RivalIsWaiting(void) {
   s32 mode = ((struct TrialRoadReplay *)gSceneState)->mode;
 
-  return IsZero(mode ^ RIVAL_WAITING);
+  return mode == RIVAL_WAITING;
 }
 
 /// Unused: does nothing.

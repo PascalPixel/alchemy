@@ -441,8 +441,8 @@ void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
   if (effect->pause != 0) {
     effect->pause--;
     effect->facing += TRIG_TURN / 32;
-  } else if ((Random16() << 5) >> 16 == 0) {
-    effect->pause = ((Random16() << 4) >> 16) + 8;
+  } else if (Random_Below(32) == 0) {
+    effect->pause = Random_Below(16) + 8;
   }
   if (++effect->timer == 71)
     Actor_StartScript((struct Actor *)effect, gGaiaRock_LeafScript);

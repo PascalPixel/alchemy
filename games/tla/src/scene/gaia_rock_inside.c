@@ -574,7 +574,7 @@ void GaiaRockInside_FlickerPour(struct Actor *actor) {
   scale += FIXEDtoINT(random << 12);
   scale += bias;
   actor->scaleX = scale;
-  actor->scaleY = actor->scaleY + ((Random16() << 12) >> 16) + bias;
+  actor->scaleY = actor->scaleY + Random_Below(4096) + bias;
   scale = actor->scaleX;
   limit = FIXED_ONE / 16 - 1;
   if (scale <= limit)
@@ -673,10 +673,10 @@ s32 GaiaRockInside_CaskBursts(void) {
         Actor_SelectAnimation(dust, 1);
         Actor_StartScript(dust, gGaiaRockInside_BurstScript);
         ((struct FieldSprite *)dust->sprite)->priority = 1;
-        dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1;
-        dust->sceneWord = Math_Sin(((Random16() << 3) >> 16) << 14) >> 1;
+        dust->bounce = Trig_Cos(Random_Below(8) << 14) >> 1;
+        dust->sceneWord = Math_Sin(Random_Below(8) << 14) >> 1;
         dust->gravity = 0;
-        dust->timer = ((Random16() << 9) >> 16) - 256;
+        dust->timer = Random_Below(512) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
         dust->update = FieldEffect_AdvanceMotionAtLeaderPriority;

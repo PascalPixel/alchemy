@@ -1363,7 +1363,7 @@ void DehkanPlateau_CrackPillar(s32 id, s32 standingId, s32 flag) {
     struct Actor *actor;
     struct FieldEffect *effect;
 
-    y = standing->y.fixed - toFIXED(((Random16() * 7) << 1) >> 16);
+    y = standing->y.fixed - toFIXED(Random_Below(14));
     actor = ((struct Actor *)Import_ActorCreate(
         SPRITE_DUST_CLOUD, toFIXED(i * 2) + standing->x.fixed - toFIXED(8),
         y - toFIXED(2), standing->z.fixed));
@@ -1380,8 +1380,8 @@ void DehkanPlateau_CrackPillar(s32 id, s32 standingId, s32 flag) {
       effect->sprite->priority = 1;
       effect->velocity.x = 0;
       effect->velocity.z = 0;
-      effect->velocity.y = -((((u32)Random16() << 14) >> 16) + toFIXED(3) / 8);
-      effect->spin = (((u32)Random16() << 9) >> 16) - 256;
+      effect->velocity.y = -(Random_Below(16384) + toFIXED(3) / 8);
+      effect->spin = Random_Below(512) - 256;
       effect->scaleRateX = -(FIXED_ONE / 32);
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = FieldEffect_AdvanceMotion;
@@ -2027,9 +2027,9 @@ void DehkanPlateau_LandFromFall(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16() * 3) << 14) >> 16;
+    velocity[0] += Random_Below(toFIXED(3) / 4);
     velocity[0] += -(toFIXED(3) / 8);
-    velocity[2] += (((Random16() * 3) << 13) >> 16) + -(toFIXED(3) / 16);
+    velocity[2] += Random_Below(toFIXED(3) / 8) + -(toFIXED(3) / 16);
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |

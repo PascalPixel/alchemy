@@ -778,7 +778,7 @@ enum { ACTOR_POND_COINS = 79 };
 /// boat rocks, and otherwise one of the pond's lines. No checking message
 /// comes first (TRIGGER_SUBJECT_OWN_EFFECT).
 void WorldMap_GazeIntoPond(void) {
-  s32 roll = (Random16() << 4) >> 16;
+  s32 roll = Random_Below(16);
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
@@ -1713,7 +1713,7 @@ void WorldMap_SpawnCollapseDust(void) {
                             z + toFIXED(7260)));
   if (dust != NULL) {
     sprite = dust->sprite;
-    scale = ((Random16() << 15) >> 16) + FIXED_ONE * 6 / 5;
+    scale = Random_Below(32768) + FIXED_ONE * 6 / 5;
     sprite->flags = 0;
     sprite->priority = 2;
     motionFlags = &dust->motionFlags;
@@ -1848,7 +1848,7 @@ void WorldMap_SpawnIdejimaWake(void) {
     spray->x.fixed -= back >> 1;
     spray->z.fixed -= back;
   } else {
-    offset = ((Random16() << 5) >> 16) << 16;
+    offset = Random_Below(32) << 16;
     spray->x.fixed += offset;
     offset = (s32)offset >> 1;
     spray->z.fixed += offset;

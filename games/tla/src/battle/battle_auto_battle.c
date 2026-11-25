@@ -170,8 +170,8 @@ s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
   s32 memberSlot;
 
   (void)action;
-  // The roll's top four bits: flee unless all are clear, 15 in 16.
-  if (((Random16() << 4) >> 16) != 0) {
+  // Flee unless a roll below 16 comes up 0, 15 in 16.
+  if (Random_Below(16) != 0) {
     partySize = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, partyMembers);
     for (memberSlot = 0; memberSlot != partySize; memberSlot++) {
       BattleMotion_SetupEscapeObject(partyMembers[memberSlot]);

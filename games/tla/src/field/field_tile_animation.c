@@ -690,10 +690,7 @@ FIXED Terrain_GetSlopeXHeight(const s8 *samples, s32 position) {
 
   start = samples[0] << CURVE_VALUE_SHIFT;
   delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * position;
-  if (delta < 0) {
-    delta += CURVE_FULL_STEPS - 1;
-  }
-  return start + (delta >> 4);
+  return start + delta / CURVE_FULL_STEPS;
 }
 
 /// A slope along y: from sample 0 at the top to sample 1 at the bottom.
@@ -703,10 +700,7 @@ FIXED Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position) {
 
   base = samples[0] << CURVE_VALUE_SHIFT;
   offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * position;
-  if (offset < 0) {
-    offset += CURVE_FULL_STEPS - 1;
-  }
-  return base + (offset >> 4);
+  return base + offset / CURVE_FULL_STEPS;
 }
 
 /// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
@@ -805,17 +799,11 @@ FIXED Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 x, s32 y) {
 
   if ((u32)x < CURVE_FULL_STEPS - 1) {
     delta = second - first;
-    difference = delta * x;
-    if (difference < 0)
-      difference += CURVE_FULL_STEPS - 1;
-    difference >>= 4;
+    difference = delta * x / CURVE_FULL_STEPS;
     return first + difference;
   } else {
     difference *= third - second;
-    if (difference < 0)
-      difference += CURVE_FULL_STEPS - 1;
-    difference >>= 4;
-    return second + difference;
+    return second + difference / CURVE_FULL_STEPS;
   }
 }
 
@@ -1249,17 +1237,12 @@ s32 MapGrid_IsWallAt(s32 *position) {
 s32 WorldMap_GetBlockCellBehavior(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;
+  u32 index;
 
-  // Rounded towards zero, as a division would.
-  if (x < 0)
-    x += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
-  x = WORLD_MAP_BLOCK(x) & (WORLD_MAP_VIEW_CELLS - 1);
-  if (z < 0)
-    z += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
-  z = WORLD_MAP_BLOCK(z) & (WORLD_MAP_VIEW_CELLS - 1);
-  return ((struct WorldMapBlocks *)gCellTiles)
-      ->blocks[x + z * WORLD_MAP_VIEW_CELLS]
-      .place;
+  index = ((x / toFIXED(WORLD_MAP_CELL_PIXELS)) & (WORLD_MAP_VIEW_CELLS - 1)) +
+          ((z / toFIXED(WORLD_MAP_CELL_PIXELS)) & (WORLD_MAP_VIEW_CELLS - 1)) *
+              WORLD_MAP_VIEW_CELLS;
+  return ((struct WorldMapBlocks *)gCellTiles)->blocks[index].place;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper

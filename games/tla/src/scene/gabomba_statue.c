@@ -2609,8 +2609,7 @@ s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
     if (cell->blocked != 0)
       return 1;
     code = cell->kind;
-    code ^= PIECE_STOP;
-    return 1 - NONZERO(code);
+    return code == PIECE_STOP;
   }
 }
 

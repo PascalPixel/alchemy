@@ -2214,7 +2214,7 @@ void Kibombo_RaiseEmbers(void) {
     s32 value;
 
     if (actor != 0) {
-      actor->bounce = Trig_Cos(((Random16() << 13) >> 16) + TRIG_TURN * 3 / 16);
+      actor->bounce = Trig_Cos(Random_Below(8192) + TRIG_TURN * 3 / 16);
       actor->gravity = toFIXED(1);
       actor->sceneWord = toFIXED(4) - (u16)Random16();
       value = (u16)Random16() + 0xffff8000;

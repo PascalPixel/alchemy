@@ -168,12 +168,7 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
     // (left of x = 0 it finds the edge to the right); its middle is 8 pixels
     // in.
     pixelX = actor->x.part[0].integer;
-    columnX = pixelX;
-    if (pixelX < 0) {
-      columnX += 15;
-    }
-    columnX >>= 4;
-    columnX *= 16;
+    columnX = pixelX / 16 * 16;
     offsetInColumn = pixelX - columnX;
     actor->paused = 0;
     Actor_StartIdleFar(actor);

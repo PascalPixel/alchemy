@@ -1769,8 +1769,8 @@ void MagmaRock_LaunchLeader(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
-    velocity[2] += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
+    velocity[0] += Random_Below(toFIXED(3) / 4) - toFIXED(3) / 8;
+    velocity[2] += Random_Below(toFIXED(3) / 8) - toFIXED(3) / 16;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |

@@ -59,15 +59,10 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
   u32 *block;
   u32 region;
 
-  // The bias rounds a negative coordinate towards zero, as division would.
-  if (x < 0)
-    x += toFIXED(32) - 1;
-  blockX = WORLD_MAP_BLOCK(x) & (WORLD_MAP_VIEW_CELLS - 1);
+  blockX = (x / toFIXED(32)) & (WORLD_MAP_VIEW_CELLS - 1);
   y = position->y;
-  if (y < 0)
-    y += toFIXED(32) - 1;
 
-  index = blockX + ((WORLD_MAP_BLOCK(y) & (WORLD_MAP_VIEW_CELLS - 1)) << 5);
+  index = blockX + (((y / toFIXED(32)) & (WORLD_MAP_VIEW_CELLS - 1)) << 5);
   block = gCellTiles + index;
   if (((u8 *)block)[3] & WORLD_MAP_BLOCK_BEACH)
     rows = TERRAIN_ROWS_BEACH;

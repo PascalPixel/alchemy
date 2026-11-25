@@ -434,8 +434,7 @@ s32 Scene_TalkToActor(s32 id) {
       // A function talk trigger is not run for a stopped actor: it says one
       // of the two lines of its sprite's Halted pair, at random.
       if (talk->result >= TRIGGER_RESULT_MESSAGE_END) {
-        Event_RunMessage(id, Speaker_GetHaltedLines(id) * 2 +
-                                 ((Random16() << 1) >> 16) +
+        Event_RunMessage(id, Speaker_GetHaltedLines(id) * 2 + Random_Below(2) +
                                  (s32)&MsgPonderEllipsis);
         goto resume;
       }

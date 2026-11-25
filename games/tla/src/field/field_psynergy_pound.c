@@ -187,7 +187,6 @@ void FieldPsynergy_Pound(void) {
   s32 inReach;
   FIXED lift;
   s32 glowTile;
-  s32 spot;
   s32 size = POUND_GLOW_SIZE * POUND_GLOW_SIZE / 2;
   s32 riseFrames;
   s32 speed;
@@ -209,9 +208,11 @@ void FieldPsynergy_Pound(void) {
   }
   if (scene->aimAhead != 0) {
     // Field_MeasurePsynergyHeight returns -1 where the spot is out of reach.
-    spot =
-        ~Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x);
-    inReach = NONZERO(spot);
+    if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x) ==
+        -1)
+      inReach = 0;
+    else
+      inReach = 1;
     if (inReach == 1) {
       for (j = 0; j < FIELD_ACTOR_COUNT; j++) {
         actor = field->actors[j];

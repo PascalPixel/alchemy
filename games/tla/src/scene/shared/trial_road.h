@@ -58,7 +58,4 @@ static inline void FieldCyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex,
   TrialRoad_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
 }
 
-/// 1 when value is 0, else 0.
-static __inline__ s32 IsZero(s32 value) { return !value; }
-
 #endif

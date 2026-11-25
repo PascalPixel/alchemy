@@ -206,8 +206,8 @@ loaded: {
       SET_POSITION(particle, pos[0], pos[1], pos[2]);
       Vector_AddPolarOffset(Random16() * 12 + toFIXED(9), Random16(),
                             &particle->x);
-      particle->sway = (Random16() << 5) >> 16;
-      particle->swayRate = ((Random16() << 9) >> 16) + 256;
+      particle->sway = Random_Below(32);
+      particle->swayRate = Random_Below(512) + 256;
       particle->rise = Random16() + toFIXED(1) / 5;
       particle->timer = 0;
       next = (next + 1) & (PARCH_PUFF_COUNT - 1);

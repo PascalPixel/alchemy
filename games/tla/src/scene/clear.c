@@ -228,7 +228,6 @@ void Clear_CheckButtonCodes(void) {
 /// and Start held as it loads or as a corrupted save is recovered.
 s32 Clear_IsRetreatBlocked(void) {
   struct MainRoutineState *party;
-  s32 mode;
 
   if (Event_GetFlag(FLAG_RETREAT_BLOCKED) == 0)
     return 0;
@@ -236,8 +235,9 @@ s32 Clear_IsRetreatBlocked(void) {
 
   if (party->sceneType == SCENE_TYPE_TOWN)
     return 0;
-  mode = party->next ^ SCENE_WORLD_MAP;
-  return -NONZERO(mode);
+  if (party->next == SCENE_WORLD_MAP)
+    return 0;
+  return -1;
 }
 
 #include "text/msg_ids.h"

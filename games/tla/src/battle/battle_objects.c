@@ -164,14 +164,11 @@ void BattleObject_UpdatePose(s32 id) {
   value = POSE_STANDING;
   if (unit->hp != 0) {
     if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
-      value = (unit->side != BATTLE_SIDE_ENEMY) * POSE_PARTY_HELD;
+      value = unit->side == BATTLE_SIDE_ENEMY ? POSE_STILL : POSE_PARTY_HELD;
+  } else if (unit->side == BATTLE_SIDE_ENEMY) {
+    value = POSE_ENEMY_DOWN;
   } else {
-    // Downed: an enemy (whose side is POSE_STANDING's number) keeps
-    // POSE_ENEMY_DOWN, a party member takes the pose before it,
-    // POSE_PARTY_HELD.
-    s32 changed = unit->side ^ value;
-    value = NONZERO(changed);
-    value = POSE_ENEMY_DOWN - value;
+    value = POSE_PARTY_HELD;
   }
 
   Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(id)->object, value);

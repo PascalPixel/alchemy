@@ -290,7 +290,7 @@ void JupiterLighthouse_SendUpBeamLights(void) {
     actor->motionFlags = 0;
     actor->priorityFlags = 0;
     actor->speedLimit = (Random16() << 2) + toFIXED(6);
-    actor->acceleration = ((Random16() << 11) >> 16) + DEGtoANG(45) / 4;
+    actor->acceleration = Random_Below(2048) + DEGtoANG(45) / 4;
     actor->update = (ObjectUpdate)JupiterLighthouse_CircleUpTheBeam;
     actor->timer = Random16();
     actor->userValue = phase;

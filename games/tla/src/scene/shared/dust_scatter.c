@@ -29,8 +29,8 @@ void Dust_Scatter(s32 spread) {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
       }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + (toFIXED(3) / 8));
-      effect->spin = ((Random16() << 9) >> 16) - (TRIG_TURN / 256);
+      effect->velocity.y = -(Random_Below(16384) + (toFIXED(3) / 8));
+      effect->spin = Random_Below(512) - (TRIG_TURN / 256);
       effect->scaleRateX = -FIXED_ONE / 32;
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = FieldEffect_AdvanceMotionAtLeaderPriority;

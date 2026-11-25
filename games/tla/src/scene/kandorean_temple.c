@@ -1171,7 +1171,7 @@ enum VentFrame {
                                                                                \
         if (none != 0)                                                         \
           return;                                                              \
-        *timer += (Random16() << 7) >> 16;                                     \
+        *timer += Random_Below(128);                                           \
         if ((u32)*timer > (Random_Below(10000)) + 10000)                       \
           *timer = none;                                                       \
       }                                                                        \
@@ -2148,9 +2148,9 @@ void KandoreanTemple_LandFromAbove(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(particleIndex * (TRIG_TURN / DUST_RING_PUFFS));
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16() * 3) << 14) >> 16;
+    velocity[0] += Random_Below(toFIXED(3) / 4);
     velocity[0] += -toFIXED(3) / 8;
-    velocity[2] += (((Random16() * 3) << 13) >> 16) + -toFIXED(3) / 16;
+    velocity[2] += Random_Below(toFIXED(3) / 8) + -toFIXED(3) / 16;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |

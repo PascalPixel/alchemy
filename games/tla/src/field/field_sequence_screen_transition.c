@@ -590,10 +590,9 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 /// Returns 1 while ScreenTransition_UpdateScanline is the HBlank handler, that
 /// is, while a centre-line transition runs.
 s32 ScreenTransition_IsScanlineActive(void) {
-  s32 other =
-      (s32)gIrqHandlers[IRQ_HBLANK] ^ (s32)ScreenTransition_UpdateScanline;
-
-  return 1 - NONZERO(other);
+  if (gIrqHandlers[IRQ_HBLANK] == ScreenTransition_UpdateScanline)
+    return TRUE;
+  return FALSE;
 }
 
 /// Clears the map's display-control bits for backgrounds 3, 2 and 1

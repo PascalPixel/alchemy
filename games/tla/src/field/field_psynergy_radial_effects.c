@@ -92,8 +92,8 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   if (effect->turnFrames != 0) {
     effect->turnFrames--;
     effect->facing += TRIG_TURN / 32;
-  } else if ((Random16() << 5) >> 16 == 0) {            // one chance in 32
-    effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
+  } else if (Random_Below(32) == 0) {          // one chance in 32
+    effect->turnFrames = Random_Below(16) + 8; // 8 to 23 frames
   }
   if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
     Actor_StartScriptFar(effect, gFieldEffect_ReleaseScript);

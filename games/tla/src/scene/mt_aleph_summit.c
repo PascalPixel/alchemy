@@ -267,8 +267,8 @@ void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
     dir.y = 0;
     dir.z = Math_Sin(angle) * radius / 256;
     dir.x += dir.x >> 1;
-    dir.x += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
-    dir.z += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
+    dir.x += Random_Below(toFIXED(3) / 4) - toFIXED(3) / 8;
+    dir.z += Random_Below(toFIXED(3) / 8) - toFIXED(3) / 16;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, dir.x,
                       dir.y, dir.z,
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |

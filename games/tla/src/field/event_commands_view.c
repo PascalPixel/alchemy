@@ -163,8 +163,7 @@ s32 Actor_IsNotAttachedEffect(struct Actor *actor) {
       (sprite = actor->sprite) == 0 || sprite->entries[0] == 0)
     return 1;
   value = sprite->entries[0]->animationId;
-  value ^= SPRITE_RAY_ARC;
-  if (value != 0)
+  if (value != SPRITE_RAY_ARC)
     return 1;
   return 0;
 }

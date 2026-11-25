@@ -147,8 +147,8 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
     Vector_AddPolarOffset(toFIXED(120),
-                          ((Random16() * 3 << 11) >> 16) -
-                              ((Random16() * 3 << 11) >> 16) + FACING_NORTH,
+                          Random_Below(TRIG_TURN * 3 / 32) -
+                              Random_Below(TRIG_TURN * 3 / 32) + FACING_NORTH,
                           &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;

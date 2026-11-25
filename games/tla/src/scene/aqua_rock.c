@@ -356,10 +356,14 @@ again:
     b = Random16();
     Vector_AddPolarOffset(distance, actor->facing + (a >> 2) - (b >> 2), &spot);
     // The spot's distance from home in whole pixels, rounded toward zero.
+    /* FAKEMATCH(temporary): x, a copy of spot.x on which the division by
+     * FIXED_ONE is written out by hand; as spot.x / FIXED_ONE. */
     x = spot.x;
     if (x < 0)
       x += FIXED_ONE - 1;
     dx = FIXEDtoINT(x) - actor->timer;
+    /* FAKEMATCH(temporary): coordinate, a copy of spot.z on which the division
+     * by FIXED_ONE is written out by hand; as spot.z / FIXED_ONE. */
     coordinate = spot.z;
     if (coordinate < 0)
       coordinate += FIXED_ONE - 1;

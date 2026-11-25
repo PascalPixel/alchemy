@@ -6,7 +6,7 @@ void WorldMap_JitterTransitionCamera(void) {
   s32 z = actor->z.part[0].integer;
 
   if (gFrameCount % 3 == 0) {
-    switch ((u32)(Random16() << 2) >> 16) {
+    switch (Random_Below(4)) {
     case 0:
       FieldCamera_MoveToFX(toFIXED(x) - toFIXED(1), CAMERA_KEEP,
                            toFIXED(z) + toFIXED(1), 1);

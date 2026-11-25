@@ -791,7 +791,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
       spark = &state->sparks[state->next];
       angle = ((Random16() * 3) >> 2) + DEGtoANG(135);
       radius = toFIXED(64);
-      duration = ((Random16() << 4) >> 16) + 16;
+      duration = Random_Below(16) + 16;
       spark->dx = FIXEDtoINT(Iwram_MulFX(Trig_Cos(angle), radius));
       spark->dy = FIXEDtoINT(-Iwram_MulFX(Math_Sin(angle), radius));
       spark->duration = duration;

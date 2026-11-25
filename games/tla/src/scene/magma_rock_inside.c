@@ -2891,9 +2891,9 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i * FACING_STEP);
       effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
-      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
-      effect->spin = ((Random16() << 12) >> 16) - TRIG_TURN / 32;
+      effect->velocity.x += Random_Below(toFIXED(3) / 4) - toFIXED(3) / 8;
+      effect->velocity.z += Random_Below(toFIXED(3) / 8) - toFIXED(3) / 16;
+      effect->spin = Random_Below(4096) - TRIG_TURN / 32;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
       effect->update = FieldEffect_AdvanceMotionAtLeaderPriority;

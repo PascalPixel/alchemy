@@ -1765,47 +1765,48 @@ s32 Scene_Initialize(void) {
     gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Prox_InitializeHouses();
-  } else if (scene == SCENE_PROX_CAVE_HOMES) {
+    return 0;
+  }
+  if (scene == SCENE_PROX_CAVE_HOMES) {
     gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Prox_InitializeCaveHomes();
-  } else if (scene == SCENE_PROX_CAVES) {
-    /* FAKEMATCH(dead): the leader's 0 derived from scene; as 0. */
-    s32 object = (u32)(u16)scene >> 16;
-
+    return 0;
+  }
+  if (scene == SCENE_PROX_CAVES) {
     gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    FieldEffect_StartBlankOverlay(object);
+    FieldEffect_StartBlankOverlay(0);
+    return 0;
+  }
+  if (!Event_GetFlag(FLAG_MARS_BEACON_LIT))
+    Event_SetFlag(FLAG_STORM_RAGING);
+  if (Event_GetFlag(FLAG_STORM_RAGING)) {
+    Weather_StartRain(1);
   } else {
-    if (!Event_GetFlag(FLAG_MARS_BEACON_LIT))
-      Event_SetFlag(FLAG_STORM_RAGING);
-    if (Event_GetFlag(FLAG_STORM_RAGING)) {
-      Weather_StartRain(1);
-    } else {
-      REG_BLDALPHA = BLEND_ALPHA(8, 12);
-      REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-      Task_Add(Prox_SmokeFromChimneys, TASK_PASS_FRAME);
-      TilesetAnim_Pause(0);
-      TilesetAnim_Pause(1);
-      TilesetAnim_Resume(2);
-      TilesetAnim_Resume(3);
-      TilesetAnim_Resume(4);
-      TilesetAnim_Resume(5);
-      TilesetAnim_Resume(6);
-    }
-    scene = gMainRoutineState.next;
-    if (scene == SCENE_PROX) {
-      if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
-        Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
-      Prox_InitializeTown();
-    } else if (scene == SCENE_PROX_MOLD) {
-      Prox_InitializeMold();
-    }
-    if (Event_GetFlag(FLAG_STORM_RAGING)) {
-      PaletteFade_SetTarget(PALETTE_TINT_MUTED, PALETTES_BG);
-      PaletteFade_StartInterpolation(16);
-      wait(16);
-    }
+    REG_BLDALPHA = BLEND_ALPHA(8, 12);
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
+    Task_Add(Prox_SmokeFromChimneys, TASK_PASS_FRAME);
+    TilesetAnim_Pause(0);
+    TilesetAnim_Pause(1);
+    TilesetAnim_Resume(2);
+    TilesetAnim_Resume(3);
+    TilesetAnim_Resume(4);
+    TilesetAnim_Resume(5);
+    TilesetAnim_Resume(6);
+  }
+  scene = gMainRoutineState.next;
+  if (scene == SCENE_PROX) {
+    if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
+    Prox_InitializeTown();
+  } else if (scene == SCENE_PROX_MOLD) {
+    Prox_InitializeMold();
+  }
+  if (Event_GetFlag(FLAG_STORM_RAGING)) {
+    PaletteFade_SetTarget(PALETTE_TINT_MUTED, PALETTES_BG);
+    PaletteFade_StartInterpolation(16);
+    wait(16);
   }
   return 0;
 }

@@ -1646,6 +1646,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           s32 mask = ~OBJ_TILE_MASK;
           s32 offset = CRUEL_RUIN_CANOPY_CYCLE_BIAS;
           s32 tile = i + offset + phase;
+          s32 v;
+          s32 x;
+
           place[0] = INTtoFIXED(i * CRUEL_RUIN_CANOPY_SIZE) + scrollX;
           place[2] = toFIXED(121) + INTtoFIXED(j * CRUEL_RUIN_CANOPY_SIZE);
           /* FAKEMATCH(dead): a store both arms below overwrite. */
@@ -1687,13 +1690,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               step = tile - cycleStart;
             }
           }
-          /* FAKEMATCH(dead): a once-only block round the tile's update,
-           * declaring v and x. */
-          {
-            s32 v = state->particles[row + step].variant & OBJ_TILE_MASK;
-            s32 x = obj->attr.all & mask;
-            obj->attr.all = x | v;
-          }
+          v = state->particles[row + step].variant & OBJ_TILE_MASK;
+          x = obj->attr.all & mask;
+          obj->attr.all = x | v;
           if (place[0] > toFIXED(256) - 1) {
             place[0] -= toFIXED(288);
           }

@@ -1812,12 +1812,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       first = top - step * 8;
       /* FAKEMATCH(dead): off set to 0. */
       off = 0;
-      /* FAKEMATCH(temporary): the band's first row passed to i through first.
-       */
-      i = first;
-      top = i;
-      for (; i != top + IRIS_BAND_HEIGHT &&
-             (v = (i - top) * 2, i <= CANVAS_SIZE - 1);
+      top = first;
+      for (i = first; i != top + IRIS_BAND_HEIGHT &&
+                      (v = (i - top) * 2, i <= CANVAS_SIZE - 1);
            i++) {
         if (i >= 0) {
           /* FAKEMATCH(dead): i / 3 into dead. */

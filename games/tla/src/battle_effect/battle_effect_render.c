@@ -791,12 +791,9 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   // Block 5, the exit, where both skips of block 3 land.
   COPY(2);
-  /* FAKEMATCH(dead): a block that only declares end at the comparison. */
-  {
-    const u32 *end = (const u32 *)gBlitter_ImmediatePowers;
-
-    return src == end;
-  }
+  if (src == (const u32 *)gBlitter_ImmediatePowers)
+    return TRUE;
+  return FALSE;
 }
 
 /// Unused: nothing calls it. Copies Render_FillMeshKernel

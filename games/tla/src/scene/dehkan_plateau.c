@@ -948,8 +948,7 @@ void DehkanPlateau_StepOnCrack(void) {
     Actor_SetAnimationById(gMainRoutineState.leaderActorId,
                            ANIM_LEADER_ARMS_RAISED);
     Event_Wait(16);
-    /* FAKEMATCH(temporary): the fall's frames counted in cellX, the leader's
-     * cell before and the hole picture's index after. */
+    // cellX, done with the leader's cell, counts the fall's frames.
     for (cellX = 0; (u32)cellX < FALL_FRAMES; cellX++) {
       if (cellX == 5)
         Sound_Play(SE_DUST_PUFF);

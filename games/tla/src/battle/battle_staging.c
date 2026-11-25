@@ -17,22 +17,26 @@
 /// ATTACK_EFFECT_WAVE for Ivan, Mia and Sheba, as their gBattleSprites rows
 /// give, any other none.
 s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
-  s32 effect;
+  s32 effect = 0;
 
-  /* FAKEMATCH(dead): effect set to characterId, a store the next line
-   * overwrites. */
-  effect = characterId;
-  effect = 0;
   switch (characterId) {
   case ISAAC:
+    effect = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_SLASH;
+    break;
   case GARET:
+    effect = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_SLASH;
+    break;
+  case IVAN:
+    effect = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_WAVE;
+    break;
+  case MIA:
+    effect = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_WAVE;
+    break;
   case FELIX:
   case JENNA:
   case PIERS:
     effect = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_SLASH;
     break;
-  case IVAN:
-  case MIA:
   case SHEBA:
     effect = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_WAVE;
     break;

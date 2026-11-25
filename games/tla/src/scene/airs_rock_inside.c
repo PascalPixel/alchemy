@@ -1383,8 +1383,8 @@ void AirsRockInside_BlowGust(void) {
   x = FIXEDtoINT(TARGET(effect)->x.fixed) + ((steps * dir.x) << 3);
   z = FIXEDtoINT(TARGET(effect)->z.fixed) + ((steps * dir.z) << 3);
   ((struct FieldSprite *)gust->sprite)->priority = 1;
-  // cell now takes the gust's target in pixels: the ROM stores both words in
-  // cell's stack slots before the move.
+  // cell takes the gust's target in pixels: the ROM stores both words in
+  // cell's slots before the move, though nothing reads them.
   cell.x = x;
   cell.z = z;
   gust->speedLimit = toFIXED(4);

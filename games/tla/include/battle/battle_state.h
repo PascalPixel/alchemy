@@ -13,11 +13,13 @@
 #include "battle/battle_event.h"
 #include "system/ram_buffer.h"
 #include "battle/battle_action.h"
+#include "window/menu_list.h"
 
 /// One OAM entry in a sprite list: the arrow that waits for the player to
-/// advance a battle message. The playback pushes it each frame it waits
-/// (Oam_AddSpriteAtDepth), and the three halfwords after the link are OAM
-/// attributes 0 to 2 as bit-fields.
+/// advance a battle message, as BattleMessage_WaitForAdvance keeps it. It is
+/// pushed each frame it waits (Oam_AddSpriteAtDepth), and the three halfwords
+/// after the link are OAM attributes 0 to 2 as bit-fields. The playback's own
+/// arrow is a struct MenuSprite, the same layout.
 struct AdvanceArrowSprite {
   /// The depth slot's next entry, set by Oam_AddSpriteAtDepth.
   struct AdvanceArrowSprite *next;
@@ -38,13 +40,13 @@ struct AdvanceArrowSprite {
 /// The battle event queue and the state of its playback.
 struct BattlePlaybackState {
   struct BattlePlaybackQueue queue;
-  s32 phase;      ///< enum BattlePlaybackPhase, or a message phase
-  s32 eventIndex; ///< the next queued event to play
-  s32 timer;      ///< frames to wait
-  struct AdvanceArrowSprite arrow; ///< the advance arrow
-  s32 arrowResource;    ///< the arrow's resource entry; -1 until it is shown
-  s32 unitId;           ///< the unit of the hit or defeat being played
-  s16 pendingSound;     ///< hit sound (an SE_ id), played on the next hit
+  s32 phase;               ///< enum BattlePlaybackPhase, or a message phase
+  s32 eventIndex;          ///< the next queued event to play
+  s32 timer;               ///< frames to wait
+  struct MenuSprite arrow; ///< the advance arrow
+  s32 arrowResource;       ///< the arrow's resource entry; -1 until it is shown
+  s32 unitId;              ///< the unit of the hit or defeat being played
+  s16 pendingSound;        ///< hit sound (an SE_ id), played on the next hit
   s16 keepPendingSound; ///< while nonzero, a resumed phase keeps pendingSound
   /// Set by PLAYBACK_DJINN_BONUS: enemies felled from then on give the Djinn
   /// bonus, cycling their colours and crying as they fall.

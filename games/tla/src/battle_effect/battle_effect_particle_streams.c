@@ -914,8 +914,8 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
         dividend += 3;
       glow = dividend >> 2;
       /* FAKEMATCH(barrier): hold set by an empty asm that reads value and
-       * clobbers r1, r3 and r6. */
-      asm("" : "=r"(hold) : "r"(value) : "r1", "r3", "r6");
+       * clobbers r1 and r6. */
+      asm("" : "=r"(hold) : "r"(value) : "r1", "r6");
       line = state->backdropLines;
 
       if (mode == STARFIELD_FALL_OUTER_SPACE) {

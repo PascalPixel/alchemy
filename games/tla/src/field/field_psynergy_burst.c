@@ -90,6 +90,8 @@ void FieldPsynergy_UpdateBurst(void) {
   if (state->paletteMode == BURST_PALETTE_SHINE) {
     palette = (volatile u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
     i = 0;
+    /* FAKEMATCH(temporary): the frame count read through a pointer kept
+     * across the loop; as canvas->drawnFrames. */
     frames = &canvas->drawnFrames;
     red = RGB_LEVEL_MAX;
     blue = RGB(0, 0, RGB_LEVEL_MAX);

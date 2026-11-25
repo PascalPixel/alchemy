@@ -277,7 +277,8 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     found->sprites.tailLink = &slot->sprites.head;
     found->opened = 1;
     found->flags = WINDOW_FLAG_OPEN;
-    // Text_ResetStyle takes no arguments: x is passed and ignored.
+    /* FAKEMATCH(dead): x passed to Text_ResetStyle, which takes nothing and
+     * is declared without a prototype for it; as Text_ResetStyle(). */
     Text_ResetStyle(x);
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;

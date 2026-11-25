@@ -37,6 +37,8 @@ void Gauge_Draw(s32 progress) {
   gGauge_Shown = kind + level;
   Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(GAUGE_SIZE));
   {
+    /* FAKEMATCH(temporary): copy, a local holding Iwram_CopyWordsEntry, its
+     * address loaded once for the three arms; as Iwram_CopyWords. */
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     if (kind == GAUGE_EMPTY) {

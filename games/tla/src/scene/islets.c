@@ -1169,7 +1169,8 @@ void Islets_GiveTurtle(void) {
                           EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
       Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
       leader->update = Actor_EmitWadingSplashes;
-      // No little turtle yet: SPAWN creates it.
+      /* FAKEMATCH(dead): a cleared, never read: SPAWN sets it before its
+       * use; as nothing. */
       a = 0;
       Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 318, 424);
       leader->update = 0;

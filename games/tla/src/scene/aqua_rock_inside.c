@@ -2235,6 +2235,8 @@ s32 Scene_PrepareMap(void) {
 /// Draws the scene's pillars: a top sprite for each active one and, when it
 /// stands above its base, a column sprite as tall as its height.
 void AquaRockInside_DrawPillars(void) {
+  /* FAKEMATCH(temporary): view, a pointer standing in for map->viewX's
+   * address; as map->viewX and map->viewZ by name. */
   s32 *view = &((struct MapState *)Ram_HeapSlots->mapGrid)->viewX;
   struct PillarState *state = &gAquaRockInside_Pillars;
   s32 viewX = view[0];

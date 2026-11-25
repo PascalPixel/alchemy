@@ -453,45 +453,38 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       }
       if (frame == 60) {
         u16 *color;
+        u16 channelMax = RGB_LEVEL_MAX;
 
         // Into the sky: the red haze, each colour's blue made its red and its
         // red its green and blue, which turns it teal.
         BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                  RESOURCE_RED_HAZE_BACKDROP, 0);
         color = (u16 *)&BG_PLTT_COLOR(6, 0);
-        i = 0;
-        /* FAKEMATCH(dead): a once-only block that places channelMax, the
-         * channels' top level, after color and i are set; as channelMax
-         * declared with color. */
-        {
-          s32 channelMax = RGB_LEVEL_MAX;
+        for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, color++) {
+          s32 entry = *color;
+          s32 red;
+          s32 green;
+          s32 blue;
 
-          for (; i != BATTLE_BACKGROUND_COLORS; i++, color++) {
-            s32 entry = *color;
-            s32 red;
-            s32 green;
-            s32 blue;
-
-            red = channelMax & entry;
-            /* LEFTOVER(template): green, taken and clamped as
-             * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
-             * three channels in their palette loops, and left out of the colour
-             * here; as no green at all. */
-            green = RGB_GREEN((u16)entry);
-            blue = RGB_BLUE((u16)entry);
-            // DEAD: red and blue are already at most 31; the ROM keeps both
-            // compares.
-            if (red > RGB_LEVEL_MAX) {
-              red = RGB_LEVEL_MAX;
-            }
-            if (green > RGB_LEVEL_MAX) {
-              green = RGB_LEVEL_MAX;
-            }
-            if (blue > RGB_LEVEL_MAX) {
-              blue = RGB_LEVEL_MAX;
-            }
-            *color = RGB(blue, red, red);
+          red = channelMax & entry;
+          /* LEFTOVER(template): green, taken and clamped as
+           * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
+           * three channels in their palette loops, and left out of the colour
+           * here; as no green at all. */
+          green = RGB_GREEN((u16)entry);
+          blue = RGB_BLUE((u16)entry);
+          // DEAD: red and blue are already at most 31; the ROM keeps both
+          // compares.
+          if (red > RGB_LEVEL_MAX) {
+            red = RGB_LEVEL_MAX;
           }
+          if (green > RGB_LEVEL_MAX) {
+            green = RGB_LEVEL_MAX;
+          }
+          if (blue > RGB_LEVEL_MAX) {
+            blue = RGB_LEVEL_MAX;
+          }
+          *color = RGB(blue, red, red);
         }
         BattleEffect_BuildRepeatingTilemap();
         gBgScroll[1].y = BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP;

@@ -114,7 +114,7 @@ void BattleMenu_UpdateEachFrame(void) {
     // The window opens the first frame the Status screen is not up.
   timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
-      state->timerWindow = (void *)Link_CreateCountdownLabelWindow();
+      state->timerWindow = (struct Window *)Link_CreateCountdownLabelWindow();
       timer = state->timer;
     }
 

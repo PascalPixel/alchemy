@@ -335,14 +335,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
     mark_visible:
       Window_MarkVisibleTextTiles();
-      {
-        /* FAKEMATCH(temporary): navigation, a block's local holding the battle
-         * menu's state for two stores; as BATTLE_MENU_STATE at each. */
-        struct BattleMenuState *navigation = BATTLE_MENU_STATE;
-
-        navigation->iconShown[0] = 0;
-        navigation->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
-      }
+      BATTLE_MENU_STATE->iconShown[0] = 0;
+      BATTLE_MENU_STATE->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
       highlighted[0] = actorId;
       highlighted[1] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(highlighted, HIGHLIGHT_SELECTED);

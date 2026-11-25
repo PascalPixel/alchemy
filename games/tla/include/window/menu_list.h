@@ -78,7 +78,7 @@ struct BattleMenuState {
   /// status), [1] for a party member's commands.
   s32 commandSelection[2];
   /// The window that shows the link battle's seconds left, or NULL.
-  void *timerWindow;
+  struct Window *timerWindow;
   /// Set while the status screen is open, so the timer opens no window.
   s32 timerHidden;
   /// Frames left to choose commands in a link battle; -1 outside link battles.

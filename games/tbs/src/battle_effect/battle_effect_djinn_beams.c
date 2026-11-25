@@ -115,17 +115,14 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       EFFECT_SHOW_DAMAGE(0);
 
     // The Djinni sways, then rises away.
-    /* FAKEMATCH(temporary): k, the target and row counter below, holding
-     * state->args->prelude; as state->args->prelude at its two uses. */
-    k = state->args->prelude;
-    if (k == 1) {
+    if (state->args->prelude == 1) {
       s32 angle = frame * (TRIG_TURN / 32);
       s32 x = FIXEDtoINT(-Trig_Sin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) +
               djinniX + offsetX - DJINNI_WIDTH / 2;
       s32 y = FIXEDtoINT(Trig_Cos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
               djinniY - 24;
 
-      BattleEffect_BuildCanvasBlitters(state->args->side ^ k, draw);
+      BattleEffect_BuildCanvasBlitters(state->args->side ^ 1, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,

@@ -445,30 +445,27 @@ u8 Item_GetTargetMode(s32 itemId) {
 /// ITEM_COUNTER_MAX, and returns the new count (0 for an index from
 /// ITEM_COUNTER_COUNT on).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
-  /* FAKEMATCH(temporary): counterSlot stands for index, which then holds the
-     count returned; the plain form reads index throughout and keeps the count
-     in a local of its own. */
-  s32 counterSlot = index;
   u8 *stock = gRareItemStock;
+  s32 value;
+  s32 count;
 
-  // From here `index` holds the count returned.
-  index = 0;
-  if (counterSlot < ITEM_COUNTER_COUNT) {
-    s32 value = stock[counterSlot];
+  if (index >= ITEM_COUNTER_COUNT)
+    return 0;
+  value = stock[index];
 
-    value += delta;
+  value += delta;
 
-    if (value < 0) {
-      value = 0;
-    } else if (value > ITEM_COUNTER_MAX) {
-      value = ITEM_COUNTER_MAX;
-      index = ITEM_COUNTER_MAX;
-    } else {
-      index = value;
-    }
-    stock[counterSlot] = value;
+  if (value < 0) {
+    value = 0;
+    count = 0;
+  } else if (value > ITEM_COUNTER_MAX) {
+    value = ITEM_COUNTER_MAX;
+    count = ITEM_COUNTER_MAX;
+  } else {
+    count = value;
   }
-  return index;
+  stock[index] = value;
+  return count;
 }
 
 /// Adds `delta` to how many of a rare item the shops may sell, and returns the

@@ -12,7 +12,7 @@ extern const u16 gSpriteViewer_BackdropColors[8];
 
 void SpriteViewer_SetLayerPriority(s32 slot, s32 value);
 void SpriteViewer_SetLayerColorMode(s32 slot, s32 value);
-void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
+s32 SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
 void SpriteViewer_SetLayerSprite(s32 slot, s32 value);
 void SpriteViewer_LayOutRing(s32 x, s32 z, struct SpritePlacement *out);
 
@@ -131,16 +131,7 @@ restart:
     else
       SpriteViewer_SetLayerPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
     SpriteViewer_SetLayerColorMode(i, layers[i].colorMode);
-    {
-      s32 a;
-
-      /* FAKEMATCH(dead): the index read in a once-only block; as the plain call
-       * with layers[i].animationIndex. */
-      do {
-        a = layers[i].animationIndex;
-      } while (0);
-      SpriteViewer_StartStaggeredAnimations(i, a);
-    }
+    SpriteViewer_StartStaggeredAnimations(i, layers[i].animationIndex);
   }
   SpriteViewer_LayOutRing(x, y, ring);
   Task_Add(SpriteViewer_PlaceRing, TASK_PASS_FRAME);
@@ -515,7 +506,7 @@ void SpriteViewer_SetLayerPriority(s32 slot, s32 value) {
 /// Starts animation value on sprite animation slot of each of the viewer's ten
 /// sprites, each one a frame (16 timer units) behind the last, so the copies
 /// are staggered.
-void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
+s32 SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   s32 zero;
   s32 count;
   s32 offset;
@@ -547,6 +538,12 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
     count += 1;
     state += sizeof(struct Sprite);
   } while (count <= 9);
+#ifdef UBFIX
+  return 0;
+#else
+  // UB: an int routine with no return statement. SpriteViewer_Run's calls
+  // treat r0 as set by it, which is how the ROM schedules their arguments.
+#endif
 }
 
 /// Sets sprite no on sprite animation slot of each of the viewer's ten sprites,

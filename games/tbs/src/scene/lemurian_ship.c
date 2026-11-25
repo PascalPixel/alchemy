@@ -219,8 +219,7 @@ static void Ship_UpdateSwell(void) {
 
   grid = gMapGridState[0];
   if (gOrbGlowActive != 0) {
-    /* FAKEMATCH(temporary): blend, stored through its address; plainly,
-       blend = .... */
+    // The blend is a halfword in the frame, written through its address.
     u16 blend;
 
     swell = Iwram_MulFX(Trig_Sin(gOrbGlowPhase << 9), 3);

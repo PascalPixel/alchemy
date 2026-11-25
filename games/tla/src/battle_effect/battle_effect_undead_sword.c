@@ -1210,7 +1210,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         top += DIAMOND_BERG_DROP_SPEED;
       } else if ((u32)(frame - 24) <= 64) {
         s32 t = frame - 24;
-        s32 beat = t - t / 8 * 8; // t % 8
+        /* FAKEMATCH(dead): the remainder written out as the division and a
+         * subtraction; as beat = t % 8. */
+        s32 beat = t - t / 8 * 8;
 
         if (beat == 4) {
           Sound_PlayFar(SE_POWER_UP);

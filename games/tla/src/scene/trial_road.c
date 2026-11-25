@@ -1641,8 +1641,8 @@ void TrialRoad_DriftWithStream(void) {
   velocity[1] = 0;
   velocity[2] = FIXED_ONE;
   velocity[0] = 0;
-  velocity[0] += ((Random16() << 17) >> 16) - toFIXED(1);
-  velocity[2] += ((Random16() << 16) >> 16) - toFIXED(0.5);
+  velocity[0] += (u16)(Random16() * 2) - toFIXED(1);
+  velocity[2] += (u16)Random16() - toFIXED(0.5);
   FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                     velocity[0], velocity[1], velocity[2],
                     EFFECT_USE_UPDATE | 1, &options);

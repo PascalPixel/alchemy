@@ -429,6 +429,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       if ((frame & 3) == 0) {
         gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y - 2;
       }
+      /* FAKEMATCH(dead): the remainder written out as the division and a
+       * subtraction; as m4 = frame % 4. */
       m4 = frame - frame / 4 * 4;
       if (m4 == 1) {
         gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y - 2;

@@ -631,6 +631,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     landingTexture.pixels = state->sheet + METEOR_BLOW_FLAME_BAND;
     landingTexture.logWidth = 7;
     landingTexture.logHeight = 7;
+    /* FAKEMATCH(dead): meteorX halved by hand, the division's own instructions
+     * written out so the halving is not shared with billowX's; as
+     * meteorX / 2 - CANVAS_SIZE / 2. */
     canvasX = ((meteorX + (s32)((u32)meteorX >> 31)) >> 1) - CANVAS_SIZE / 2;
     for (i = 0; i != 3; i++) {
       s32 start = gMeteorBlow_RingStarts[i] + 8;

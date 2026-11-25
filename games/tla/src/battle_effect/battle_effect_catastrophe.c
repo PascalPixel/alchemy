@@ -899,7 +899,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
 
             j = CATASTROPHE_STRIKES;
             q = &state->particles[CATASTROPHE_STRIKES];
-            half = (bx + (s32)((u32)bx >> 31)) >> 1;
+            half = (span - drift) / 2;
             for (; j != ARRAY_COUNT(state->particles); j++, q++) {
               if (q->variant < 0) {
                 s32 angle;
@@ -1109,7 +1109,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               }
               Matrix_Translate(0, v, 0);
             }
-            Matrix_Translate(((b + (s32)((u32)b >> 31)) >> 1) + toFIXED(5),
+            Matrix_Translate((span - drift) / 2 + toFIXED(5),
                              camZ + toFIXED(220), 0);
             Matrix_Scale(FIXED_ONE, 32000, FIXED_ONE);
             Matrix_RotateZ(frame * (TRIG_TURN / 32));

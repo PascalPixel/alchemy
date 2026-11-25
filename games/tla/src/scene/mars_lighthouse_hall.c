@@ -1225,9 +1225,9 @@ void FlameThrower_SendSpark(struct Vector3 *position, s32 speed,
 
   if (actor != 0) {
     actor->bounce =
-        Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + TRIG_TURN * 3 / 16);
+        Trig_Cos(Random_Below(TRIG_TURN * 3 / 16) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->sceneWord = ((u32)(Random16() << 17) >> 16) + speed;
+    actor->sceneWord = (u16)(Random16() * 2) + speed;
     spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     ((void (*)())Actor_SetupScripted)(actor, 2);

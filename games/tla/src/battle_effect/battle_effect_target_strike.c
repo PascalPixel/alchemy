@@ -878,6 +878,8 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         speed = -drift;
       picture = speed >> BLADE_RAIN_STEP_SHIFT;
       if (frame < i * 4 + 25) {
+        /* FAKEMATCH(dead): the sign of drift taken by hand as the blitter's
+         * index; as blit[drift < 0]. */
         blit[(u32)drift >> 31](
             canvas, state->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
             FIXEDtoINT(blade->x) - BLADE_RAIN_SWORD_WIDTH / 2,
@@ -888,6 +890,8 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
           blade->y += blade->velocityY;
         }
       } else {
+        /* FAKEMATCH(dead): the sign of drift taken by hand as the blitter's
+         * index; as blit[drift < 0]. */
         blit[(u32)drift >> 31](
             canvas, state->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
             FIXEDtoINT(blade->x) - BLADE_RAIN_SWORD_WIDTH / 2,

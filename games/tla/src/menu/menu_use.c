@@ -59,7 +59,6 @@ s32 Ability_ApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
   u8 targetIndex;
   s16 elementPower;
   s32 randomAdjust;
-  s32 randomDifference;
   s32 amount;
   s32 result;
 
@@ -135,9 +134,10 @@ s32 Ability_ApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
       if (randomAdjust == 0) {
         randomAdjust = -1;
       } else {
-        randomDifference = 1 ^ randomAdjust;
-        randomAdjust = (u32)((-randomDifference) | randomDifference) >> 31;
-        randomAdjust = 1 - randomAdjust;
+        if (randomAdjust == 1)
+          randomAdjust = 1;
+        else
+          randomAdjust = 0;
       }
 
       switch (abilityId & PSYNERGY_ABILITY_MASK) {

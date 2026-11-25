@@ -173,6 +173,8 @@ void Menu_SetPageArrowsUpDown(s32 index, s32 count) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   struct WindowSprite *arrow;
 
+  /* FAKEMATCH(dead): index rounded down to its page by hand, the division's
+   * own instructions written out on the parameter; as index = index / 4 * 4. */
   if (index < 0)
     index += 3;
   index = index >> 2 << 2;
@@ -196,6 +198,8 @@ void Menu_SetPageArrowsLeftRight(s32 index, s32 count) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   struct WindowSprite *arrow;
 
+  /* FAKEMATCH(dead): index rounded down to its page by hand, the division's
+   * own instructions written out on the parameter; as index = index / 4 * 4. */
   if (index < 0)
     index += 3;
   index = index >> 2 << 2;

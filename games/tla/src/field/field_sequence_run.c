@@ -200,25 +200,16 @@ s32 FieldSequence_Run(void) {
     }
     arrivalState = gMainRoutineState.teleportState;
     if (arrivalState == TELEPORT_CHOSEN) {
-      /* FAKEMATCH(dead): teleportState set through its address. */
-      *(s8 *)&gMainRoutineState.teleportState = TELEPORT_ARRIVING;
-      /* FAKEMATCH(dead): a once-only loop round the arrival. */
-      do {
-        /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its use. */
-        s32 zero = 0;
-
-        Teleport_PlaySparksAndFade();
-        if (gMainRoutineState.teleportScene != (s16)SCENE_WORLD_MAP)
-          goto clearOwner;
-        /* FAKEMATCH(barrier): an empty asm. */
-        asm("" : : : "r0");
-        if ((value = FlagEntries_GetValue(gMainRoutineState.teleportEntrance)) &
-            PLACE_MARKER_ON_FOOT)
-        clearOwner:
-          gMainRoutineState.ownerOverride = zero;
-        else if (value & PLACE_MARKER_ABOARD)
-          gMainRoutineState.ownerOverride = 1;
-      } while (0);
+      gMainRoutineState.teleportState = TELEPORT_ARRIVING;
+      Teleport_PlaySparksAndFade();
+      if (gMainRoutineState.teleportScene != SCENE_WORLD_MAP)
+        gMainRoutineState.ownerOverride = 0;
+      else if ((value =
+                    FlagEntries_GetValue(gMainRoutineState.teleportEntrance)) &
+               PLACE_MARKER_ON_FOOT)
+        gMainRoutineState.ownerOverride = 0;
+      else if (value & PLACE_MARKER_ABOARD)
+        gMainRoutineState.ownerOverride = 1;
       Event_SetDestination(gMainRoutineState.teleportScene,
                            gMainRoutineState.teleportEntrance);
     } else if (arrivalState == TELEPORT_ARRIVING) {

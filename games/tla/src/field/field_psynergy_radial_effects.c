@@ -1896,17 +1896,15 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
                                  s32 layerIndex) {
   struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
-  struct TouchCell *cell = (struct TouchCell *)field->psynergyCells;
+  s16 *cell = field->psynergyCells;
   s32 ownerHeight = FIELD_CELL(owner->groundHeight);
   struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = &map->layers[layerIndex];
   s32 i;
 
-  /* FAKEMATCH(signature): gSceneLocalState typed as 1491 TouchCells before the
-   * copies. */
-  for (i = 0; cell[i].x != -1; i++) {
-    s32 x = cell[i].x - windowX;
-    s32 z = cell[i].z - windowZ - ownerHeight;
+  for (i = 0; cell[i * 2] != -1; i++) {
+    s32 x = cell[i * 2] - windowX;
+    s32 z = cell[i * 2 + 1] - windowZ - ownerHeight;
 
     x += FIELD_CELL(layer->offsetX);
     z += FIELD_CELL(layer->offsetY);
@@ -1916,8 +1914,8 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 
       MapGrid_CopyCellTilesCellsRectFar(sourceX + x, sourceZ + z, 1, 1,
                                         windowX + x, windowZ + z);
-      MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cell[i].x),
-                        FIELD_CELL_ORIGIN(cell[i].z), 2)
+      MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cell[i * 2]),
+                        FIELD_CELL_ORIGIN(cell[i * 2 + 1]), 2)
           ->collisionCode = 0;
       n = gTouchCopies.count;
       if (n < (s32)ARRAY_COUNT(gTouchCopies.copies)) {
@@ -1925,8 +1923,8 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
         gTouchCopies.copies[n].toZ = sourceZ + z;
         gTouchCopies.copies[n].fromX = windowX + x;
         gTouchCopies.copies[n].fromZ = windowZ + z;
-        gTouchCopies.copies[n].cellX = cell[i].x;
-        gTouchCopies.copies[n].cellZ = cell[i].z;
+        gTouchCopies.copies[n].cellX = cell[i * 2];
+        gTouchCopies.copies[n].cellZ = cell[i * 2 + 1];
         gTouchCopies.count++;
       }
     }

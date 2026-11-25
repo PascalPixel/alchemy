@@ -13,6 +13,9 @@
 #include "field/effect_sprite.h"
 #include "field/field_particle.h"
 #include "field/world_map_marker.h"
+#include "field/actor.h"
+#include "stddef.h"
+#include "static_assert.h"
 
 struct Actor;
 struct SpriteAnimation;
@@ -61,13 +64,24 @@ struct TouchCopy {
   u8 unusedAfterCellZ[2]; ///< no code names it
 };
 
-/// The copies of cells Cyclone blew away, kept after the scene's own state so
-/// that TileCopies_Restore makes them again.
+/// The scene's own state (gSceneLocalState) as far as the copies of cells
+/// Cyclone blew away, kept there so that TileCopies_Restore makes them again.
+/// It opens with the second copy of the play time (Save_BuildFileSummary) and
+/// the actor snapshot's slot ids and actors (gSnapshotObjects, as The Broken
+/// Seal's ActorSnapshot); the copies lie in gInventorySnapshot's spare space.
 struct TouchCopies {
-  struct TouchCell sceneState[1491]; ///< the scene's own state, not read here
+  u32 savedPlayTime;
+  u8 snapshotSlots[ACTOR_SNAPSHOT_CAPACITY];
+  struct Actor snapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
+  /// the snapshot's sprite state, gRareItemStock, gSceneState and the start of
+  /// gInventorySnapshot
+  u8 untilCopies[1832];
   struct TouchCopy copies[64];
   s8 count;
 };
+
+STATIC_ASSERT(offsetof(struct TouchCopies, snapshotObjects) == 36);
+STATIC_ASSERT(offsetof(struct TouchCopies, copies) == 5964);
 
 /// The cells Psynergy moved, kept in the scene's own state (gSceneLocalState).
 #define gTouchCopies (*(struct TouchCopies *)gSceneLocalState)

@@ -31,7 +31,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
   struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct MapLayer *layer = ((struct MapState *)Ram_HeapSlots->mapGrid)->layers;
-  struct TouchCell *cell = (struct TouchCell *)field->psynergyCells;
+  s16 *cell = field->psynergyCells;
   s32 lift;
   s32 scrollX = FIELD_CELL(layer->offsetX);
   s32 scrollZ = FIELD_CELL(layer->offsetY);
@@ -46,14 +46,12 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
   top = z - layerZ;
   lift = -(FIELD_CELL(owner->groundHeight));
 
-  /* FAKEMATCH(signature): gSceneLocalState typed as 1491 TouchCells before the
-   * copies. */
-  for (i = 0; cell[i].x != -1; i++) {
+  for (i = 0; cell[i * 2] != -1; i++) {
     s32 cz, cx, cellX, cellZ;
 
-    cx = cell[i].x;
+    cx = cell[i * 2];
     cellX = cx - scrollX;
-    cz = cell[i].z;
+    cz = cell[i * 2 + 1];
     cellZ = cz + lift - scrollZ;
 
     if (cellX >= left && cellX < left + width && cellZ >= top &&
@@ -72,8 +70,8 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
         gTouchCopies.copies[n].toZ = toZ + dz;
         gTouchCopies.copies[n].fromX = x + dx;
         gTouchCopies.copies[n].fromZ = z + dz;
-        gTouchCopies.copies[n].cellX = cell[i].x;
-        gTouchCopies.copies[n].cellZ = cell[i].z;
+        gTouchCopies.copies[n].cellX = cell[i * 2];
+        gTouchCopies.copies[n].cellZ = cell[i * 2 + 1];
         gTouchCopies.count++;
       }
     }

@@ -1187,19 +1187,18 @@ void LinkLobby_TakeSongRequest(s32 actor) {
       wait(1);
     }
     Window_Close(window, 1);
-    if (song < 0)
+    if (song >= 0) {
+      Event_PlaySound(gLinkLobby_SongRequestSounds[song]);
+    } else {
+      Event_PlaySound(SOUND_FADE_OUT_BGM);
+      wait(120);
+      Event_PlaySound(MUS_TRY_YOUR_LUCK);
+      Event_SetMessageId((s32)MsgLobbyComeBackWhenYoureReady);
+      // "Come back when you're ready to rock!"
+      Event_ShowMessage(actor, 0);
       break;
-    Event_PlaySound(gLinkLobby_SongRequestSounds[song]);
+    }
   }
-  Event_PlaySound(SOUND_FADE_OUT_BGM);
-  wait(120);
-  Event_PlaySound(MUS_TRY_YOUR_LUCK);
-  /* FAKEMATCH(dead): the statement in a once-only block. */
-  do {
-    Event_SetMessageId((s32)MsgLobbyComeBackWhenYoureReady);
-  } while (0);
-  // "Come back when you're ready to rock!"
-  Event_ShowMessage(actor, 0);
   wait(10);
   Event_End();
 }

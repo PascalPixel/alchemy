@@ -292,16 +292,16 @@ void FieldPsynergy_Move(void) {
   effectState = gFieldEffectState;
   caster = effectState->caster;
 
-  /* FAKEMATCH(dead): an empty once-only loop before the call. */
   do {
-  } while (0);
-  FieldPsynergy_FadeToCastColor();
-  hand = FieldEffect_SpawnMoveHand(caster);
-  FieldEffect_GrowHandAndWait(hand);
-  if (hand != 0) {
+    FieldPsynergy_FadeToCastColor();
+    hand = FieldEffect_SpawnMoveHand(caster);
+    FieldEffect_GrowHandAndWait(hand);
+    // With no hand there is nothing to flex.
+    if (hand == 0)
+      break;
     Actor_SelectAnimationFar(hand, MOVE_HAND_ANIMATION_FLEX);
     wait(30);
-  }
+  } while (0);
   FieldPsynergy_FadeFromCastColor();
   FieldEffect_BurstHand(hand);
 }

@@ -19,7 +19,6 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct FieldEffectState *effectState;
   struct Actor *leader;
   struct FieldParticle *effect;
-  s8 *slotState;
 
   djinni = Actor_GetById(djinniId);
   leader = Actor_GetById(gMainRoutineState.leaderActorId);
@@ -80,8 +79,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // Every spark still in use stops its fountain.
   wait(20);
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectState, particles,
-                                   MARS_SPARK_STOPPING);
+  for (remaining = 0; remaining < PSYNERGY_EFFECT_SLOT_COUNT; remaining++) {
+    if (effectState->particles[remaining].active)
+      effectState->particles[remaining].state = MARS_SPARK_STOPPING;
+  }
 
   // The leader pulses while the sparks swarm it.
   wait(60);
@@ -89,14 +90,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   wait(100);
 
   // Every spark still in use goes.
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectState, particles,
-                                   MARS_SPARK_LEAVING);
+  for (remaining = 0; remaining < PSYNERGY_EFFECT_SLOT_COUNT; remaining++) {
+    if (effectState->particles[remaining].active)
+      effectState->particles[remaining].state = MARS_SPARK_LEAVING;
+  }
 
   // The leader stops pulsing.
   wait(10);
-  /* FAKEMATCH(dead): effect, done with the sparks, cleared; nothing reads it
-     again. */
-  effect = NULL;
   leader->update = NULL;
   leader->scaleX = FIXED_ONE;
   leader->scaleY = FIXED_ONE;

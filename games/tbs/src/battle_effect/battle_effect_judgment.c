@@ -4,19 +4,11 @@
 
 #include "battle_effect_internal.h"
 
-/// The bytes of Judgment's state block before its dimmed mote copies.
+/// The bytes of the gathering's pictures at the start of the state's sheet (the
+/// pink burst, the burst's quarters and the tornado sprite sheet); the dimmed
+/// motes, which the gathering's ring of motes steps through as it fades,
+/// follow them. The sweep's wave picture later overwrites the gathering's part.
 #define JUDGMENT_SHEET_BYTES 10000
-
-/// Judgment's state block, laid over struct BattleEffectState from its start;
-/// the sweep's wave picture later overwrites the gathering's part of it.
-struct JudgmentState {
-  /// The gathering's pictures: the pink burst, the burst's quarters and the
-  /// tornado sprite sheet.
-  u8 sheet[JUDGMENT_SHEET_BYTES];
-  /// The dimmed motes, which the gathering's ring of motes steps through as
-  /// it fades.
-  u8 dimmedMotes[DIMMED_COPIES][MOTE_SET_BYTES];
-};
 
 /// The gathering's motes in PARTICLES, then its sparks.
 #define JUDGMENT_MOTES 128
@@ -221,7 +213,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     for (j = 0; j != MOTE_SET_BYTES; j++) {
       s32 v = *src++;
       EFFECT_CAP_LEVEL(v, DIMMED_COPY_CAP(i));
-      ((struct JudgmentState *)state)->dimmedMotes[i][j] = v;
+      state->sheet[JUDGMENT_SHEET_BYTES + i * MOTE_SET_BYTES + j] = v;
     }
   }
 

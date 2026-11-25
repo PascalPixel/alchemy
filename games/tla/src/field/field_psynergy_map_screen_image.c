@@ -743,6 +743,7 @@ s32 MapScreen_Show(s32 mode) {
   s32 screenX;
   s32 screenY;
   struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct WorldMapView *view = Ram_HeapSlots->mapGrid;
   struct FieldState *field = Ram_HeapSlots->fieldState;
   struct ActorSystemState *actorSystem = Ram_HeapSlots->actorSystem;
   s16 blend;
@@ -785,7 +786,7 @@ s32 MapScreen_Show(s32 mode) {
     }
     actorSystem->suspended = 1;
     wait(1);
-    ((struct WorldMapView *)map)->viewHeld = 1;
+    view->viewHeld = 1;
     do {
       /* FAKEMATCH(dead): the read in a once-only block; as the plain statement.
        */
@@ -976,7 +977,7 @@ done:
     actorSystem->suspended = 0;
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
-    ((struct WorldMapView *)map)->viewHeld = 0;
+    view->viewHeld = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     field->transitionFrames = savedDelay;

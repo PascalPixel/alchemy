@@ -1058,40 +1058,32 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   s32 *slot = (s32 *)(gMapGridShapes + MAP_SHAPE_MARKED * 4);
   s32 origin = (FIELD_CELL(map->minZ) << 7) + FIELD_CELL(map->minX);
   struct MapCell *cell;
-  s16 x, z;
+  u16 x, z;
   u32 value;
 
   *slot = level << 8;
   cells += origin;
-  z = 0;
-  if (z < height) {
-    do {
-      cell = cells + ((u16)z << 7);
-      x = 0;
-      if (x < width) {
-        do {
-          value = cell->collisionCode;
-          if (value != 0 && value >= base && value < base + CELL_MARKER_KINDS) {
-            entry->x = FIELD_CELL_ORIGIN((u16)x) + left + toFIXED(8);
-            entry->z = FIELD_CELL_ORIGIN((u16)z) + top + toFIXED(8);
-            entry->rest = restLevel * toFIXED(8);
-            entry->y = level * toFIXED(8);
-            entry->kind = value - base;
-            entry->state = 1;
-            entry++;
-            markers->count++;
-            {
-              u8 *terrain = map->layers[0].terrainIds + origin;
+  for (z = 0; z < height; z++) {
+    cell = cells + (z << 7);
+    for (x = 0; x < width; x++) {
+      value = cell->collisionCode;
+      if (value != 0 && value >= base && value < base + CELL_MARKER_KINDS) {
+        entry->x = FIELD_CELL_ORIGIN(x) + left + toFIXED(8);
+        entry->z = FIELD_CELL_ORIGIN(z) + top + toFIXED(8);
+        entry->rest = restLevel * toFIXED(8);
+        entry->y = level * toFIXED(8);
+        entry->kind = value - base;
+        entry->state = 1;
+        entry++;
+        markers->count++;
+        {
+          u8 *terrain = map->layers[0].terrainIds + origin;
 
-              terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
-            }
-          }
-          x = NEXT_HALFWORD(x);
-          cell++;
-        } while ((u16)x < width);
+          terrain[x + (z << 7)] = MAP_SHAPE_MARKED;
+        }
       }
-      z = NEXT_HALFWORD(z);
-    } while ((u16)z < height);
+      cell++;
+    }
   }
 }
 

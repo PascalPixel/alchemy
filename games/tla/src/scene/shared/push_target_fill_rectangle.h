@@ -19,6 +19,9 @@ s32 PushTarget_FillRectangle(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
+      /* FAKEMATCH(dead): the counter's halfword step written out by hand; as
+       * a u16 counter in for (i = 0; i < PUSH_KINDS; i++), j = i after it
+       * and toX from (u16)mapX, 52 lines off. */
       j = (u16)NEXT_HALFWORD(i);
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);

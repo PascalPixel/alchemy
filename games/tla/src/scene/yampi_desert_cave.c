@@ -226,6 +226,10 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   i = 0;
   if ((u16)sprite != gPushKinds[i]) {
     do {
+      /* FAKEMATCH(dead): the counter's halfword step written out by hand; as
+       * a u16 counter in for (i = 0; i < PUSH_KINDS; i++) with the
+       * rectangle's top and the middle layer's x in an s16 of their own, 22
+       * lines off. */
       kind = (u16)NEXT_HALFWORD(i);
       i = kind;
     } while (kind < PUSH_KINDS && (u16)sprite != gPushKinds[kind]);

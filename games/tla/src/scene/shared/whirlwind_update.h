@@ -1,3 +1,4 @@
+#include "system/irq.h"
 #include "whirlwind_catch.h"
 
 /// A whirlwind's update: it travels forward, catches the leader it reaches and
@@ -47,18 +48,12 @@ void Whirlwind_Update(struct Actor *self) {
             self->sceneByte = 1;
           }
         }
-        {
-          s32 (*multiply)(s32, s32);
-          FIXED cosine = Trig_Cos(self->facing);
-          s32 speed = self->speedLimit;
-          /* FAKEMATCH(dead): the routine address taken inside a once-only
-           * block. */
-          do {
-            multiply = Iwram_MulFX;
-          } while (0);
-          self->x.fixed += multiply(cosine, speed);
-        }
-        self->z.fixed += Iwram_MulFX(Math_Sin(self->facing), self->speedLimit);
+        self->x.fixed +=
+            ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
+                Trig_Cos(self->facing), self->speedLimit);
+        self->z.fixed +=
+            ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
+                Math_Sin(self->facing), self->speedLimit);
         return;
       }
     }

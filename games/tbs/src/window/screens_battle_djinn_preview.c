@@ -160,11 +160,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       sprite->y = 120;
       *(u32 *)&entry->attributes =
           OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      *(u32 *)&entry->tile = 0;
-      /* FAKEMATCH(dead): an empty once-only loop after the two words are
-       * stored. */
-      do {
-      } while (0);
+      Io_Write32(0, &entry->tile.value);
       /* FAKEMATCH(dead): advancing and restoring the captured window. */
       window++;
       window--;

@@ -340,7 +340,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       u16 *pictures = gBattleEffect_FlarePictures;
 
       for (i = 0; i != NEPTUNE_BURST_SPARKS; i++) {
-        /* LEFTOVER(template): r holds 1, the smallest flare's size. */
+        // The smallest flare's size.
         s32 r = 1;
         if (frame >= i / 2 + NEPTUNE_BURST_FRAME) {
           blit[0](canvas, state->sheet + pictures[r - 1] + NEPTUNE_FLARE_SHEET,

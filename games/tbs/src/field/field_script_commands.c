@@ -413,7 +413,9 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
       // Actor_SetMoveTarget but not used for the distance.
       dx = (x - cameraActor->x.fixed) / FIXED_ONE;
       /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
-       * for the distance. */
+       * for the distance, as Actor_SetMoveTarget (field_actor_motion.c)
+       * computes the same three whole-pixel deltas and uses y's in its
+       * distance; as the line removed. */
       dy = (y - cameraActor->y.fixed) / FIXED_ONE;
       dz = (z - cameraActor->z.fixed) / FIXED_ONE;
       distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));

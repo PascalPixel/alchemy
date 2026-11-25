@@ -204,7 +204,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                              state->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
 
   /* LEFTOVER(template): a per-target loop whose count is 1, the first target
-   * only. */
+   * only, as BattleEffect_RunDrain (battle_effect_drain.c) seeds each target's
+   * motes over every target; as its body once with k 0. */
   for (k = 0; k != 1; k++) {
     target = BattleObject_GetFar(state->args->targets[k])->actor;
     for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
@@ -440,7 +441,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     draw[1] = *pairedBlitter;
-    /* LEFTOVER(template): a per-target loop whose count is 1, the user only. */
+    // DEAD: a loop that runs once, for the user; the ROM keeps its counter, its
+    // test against 1 and its branch back.
     for (k = 0; k != 1; k++) {
       user = BattleObject_GetFar(state->args->user)->actor;
       // Smoke puffs rise and spread.

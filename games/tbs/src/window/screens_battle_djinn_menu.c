@@ -133,9 +133,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   state->dirty = 1;
 
   for (;;) {
-    /* LEFTOVER(template): sprite holds &cursorStorage, as
-     * Battle_CollectPartyCommands' iconSprite holds each of its sprites in
-     * turn; as &cursorStorage at each use. */
+    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as &cursorStorage at
+     * each use. */
     struct MenuSprite *sprite = &cursorStorage;
 
     // Rebuild descriptions only when the selection or preview page changes:

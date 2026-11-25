@@ -223,8 +223,9 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       y0 = y1;
       y1 = tmp;
       dx = x1 - x0;
-      /* LEFTOVER(template): dy recomputed after the swap and never read again.
-       */
+      /* LEFTOVER(template): dy recomputed after the swap and never read again,
+       * as the shallow arm's swap below recomputes both deltas and reads dy for
+       * its y step; as the line removed. */
       dy = y1 - y0;
     }
     step = ABS(x1 - x0) * LINE_STEP_ONE / ABS(y1 - y0);
@@ -251,8 +252,9 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       tmp = y0;
       y0 = y1;
       y1 = tmp;
-      /* LEFTOVER(template): dx recomputed after the swap and never read again.
-       */
+      /* LEFTOVER(template): dx recomputed after the swap and never read again,
+       * as the steep arm's swap above recomputes both deltas and reads dx for
+       * its x step; as the line removed. */
       dx = x1 - x0;
       dy = y1 - y0;
     }

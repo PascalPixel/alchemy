@@ -438,8 +438,6 @@ static void GomaCavePillar_JumpGapWest(void) {
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
   target.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
-  /* LEFTOVER(template): destination holds &target, the landing reached through
-   * a pointer. */
   target.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
   target.z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
   if (FieldActor_CheckMovementCollision(leader, &target) == 0) {

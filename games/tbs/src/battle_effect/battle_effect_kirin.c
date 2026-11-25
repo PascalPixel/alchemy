@@ -368,7 +368,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         struct Particle *burst = &PARTICLES[i];
 
         if (burst->variant > 0) {
-          /* LEFTOVER(template): size holds 3, the mote's size. */
+          // The mote's size.
           s32 size = 3;
 
           EFFECT_DRAW_MOTE(blit, canvas, sheet, FIXEDtoINT(burst->x),

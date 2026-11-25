@@ -309,7 +309,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
     for (i = 0; i != DRAGON_FIRE_SPARKS; i++) {
       struct Particle *spark = &state->particles[DRAGON_FIRE_FIRST_SPARK + i];
-      /* LEFTOVER(template): the dot's size held in a local, 1. */
       s32 size = 1;
 
       if (spark->variant >= 0) {
@@ -414,7 +413,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
               DRAGON_FIRE_BURN_PICTURES * DRAGON_FIRE_BURN_FRAMES)
             fireball->variant = 0;
         } else if (fireball->variant == 0) {
-          /* LEFTOVER(template): the ball's size held in a local. */
           s32 size = DRAGON_FIRE_FIREBALL_SIZE;
 
           fireball->x -= direction * 6;

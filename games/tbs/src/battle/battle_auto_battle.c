@@ -424,8 +424,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   state.effect.kind = ELEMENT_JUPITER;
   BattleEffect_RunElementPillarFar(&state.effect);
   state.effect.kind = 0;
-  /* LEFTOVER(template): the choice of runner BattleStaging_RunAttack, RunItem
-   * and RunPsynergyCast make, under their test of the kind, which is 0 here. */
+  /* FAKEMATCH(dead): a never-true test, kind being 0, and its arm; as
+   * BattleEffect_RunFromTableFar(&state.effect) alone. */
   if (state.effect.kind)
     BattleEffect_RunByIdRangeFar(&state.effect);
   else

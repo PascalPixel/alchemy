@@ -110,9 +110,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* LEFTOVER(template): cur holds &cursorStorage, as
-     * Battle_CollectPartyCommands' iconSprite holds each of its sprites in
-     * turn; as &cursorStorage at each use. */
+    /* FAKEMATCH(temporary): cur holds &cursorStorage beside sprite, which names
+     * the cursor below; as &cursorStorage at each use. */
     cur = &cursorStorage;
 
     // Redraw when the page or row changes.

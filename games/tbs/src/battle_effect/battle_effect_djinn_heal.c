@@ -203,7 +203,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
               Projection_Point(spark, &view);
               view.x >>= 1;
-              /* LEFTOVER(template): the clamp and size by depth, idle here. */
+              /* LEFTOVER(template): the clamp and size by depth, idle here, as
+               * BattleEffect_RunHealingMotes (battle_effect_healing.c) clamps
+               * the depth and sizes its motes by it in every mode but Ply,
+               * which overwrites the size as this does; as both lines removed.
+               */
               CLAMP(view.depth, DJINN_HEAL_SPARKLE_DEPTH_NEAR,
                     DJINN_HEAL_SPARKLE_DEPTH_FAR);
               pictureIndex = 3 - (view.depth - DJINN_HEAL_SPARKLE_DEPTH_NEAR) /

@@ -1138,8 +1138,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     startX = (lineWidth - textAdvance) / 2;
 
   // Rasterize each glyph and its one-pixel shadow at the aligned start.
-  /* LEFTOVER(template): sourceBytes rewound to text, as Credits_DrawLine's
-   * measuring pass above opens; this pass walks text itself; as no store. */
+  /* FAKEMATCH(dead): sourceBytes = text, overwritten before it is read; this
+   * pass walks text itself; as no store. */
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *text++) != 0) {

@@ -695,7 +695,7 @@ void ActorSystem_PlaceSprites(void) {
   FIXED dx;
   FIXED dz;
   s32 originY;
-  struct PlacedSprite *sprite;
+  struct Sprite *sprite;
   FIXED screenTop;
   u8 *priorityFlags;
   s32 layer;
@@ -732,7 +732,7 @@ void ActorSystem_PlaceSprites(void) {
         continue;
       if (system->suspended != 0 &&
           !(actor->retainSpriteCache & ACTOR_KEEP_SPRITE_VRAM)) {
-        struct PlacedSprite *frozen = actor->sprite;
+        struct Sprite *frozen = actor->sprite;
 
         VramCache_ReleaseVram(frozen->slot);
         frozen->dirty = kind;
@@ -835,12 +835,12 @@ void ActorSystem_PlaceSprites(void) {
             }
           }
           if (priority != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
-            struct PlacedSprite *placed = actor->sprite;
+            struct Sprite *placed = actor->sprite;
 
             if ((u32)priority > 3)
               priority = 3;
-            placed->priority = priority;
-            placed->shadowPriority = priority;
+            placed->image.priority = priority;
+            placed->shadow.priority = priority;
           }
         }
         layerPlusOne = CELL_LAYER(cells, actor->x.fixed, actor->z.fixed);
@@ -873,7 +873,7 @@ void ActorSystem_PlaceSprites(void) {
       if (actor->retainSpriteCache & ACTOR_COMPOSE_OFF_SCREEN) {
         Sprite_ComposePicture(sprite, actor->facing);
       } else if (!(actor->retainSpriteCache & ACTOR_KEEP_SPRITE_VRAM) &&
-                 !(sprite->retainCacheEntry & 1)) {
+                 !sprite->retainCacheEntry) {
         VramCache_ReleaseVram(sprite->slot);
         sprite->dirty = 1;
       }
@@ -881,9 +881,9 @@ void ActorSystem_PlaceSprites(void) {
       // At (0, 0): not placed; only the sprite's VRAM is given up.
       kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       if (kind == ACTOR_SPRITE_ONE) {
-        struct PlacedSprite *frozen = actor->sprite;
+        struct Sprite *frozen = actor->sprite;
 
-        if (actor->retainSpriteCache == 0 && !(frozen->retainCacheEntry & 1)) {
+        if (actor->retainSpriteCache == 0 && !frozen->retainCacheEntry) {
           VramCache_ReleaseVram(frozen->slot);
           frozen->dirty = kind;
         }

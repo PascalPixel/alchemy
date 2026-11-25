@@ -39,11 +39,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   if (index > ENEMY_ID_MAX - ENEMY_ID_FIRST)
     return 0;
   unit = Unit_Get(unitId);
-  {
-    s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
-
-    clear(unit, BATTLE_UNIT_SIZE);
-  }
+  Iwram_ClearWords(unit, BATTLE_UNIT_SIZE);
   if (index >= ENEMY_COUNT)
     index = 0;
   enemy = &gEnemy_Definitions[index];

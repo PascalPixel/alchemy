@@ -20,6 +20,8 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
   s32 (*divide)(s32, s32);
 
   if (frames > 0) {
+    /* FAKEMATCH(temporary): divide, a local holding Iwram_SignedDivideEntry
+     * across the loop; as Iwram_SignedDivide, as The Broken Seal's twin. */
     divide = Iwram_SignedDivideEntry;
     remainingChannels = FADE_CHANNELS - 1;
     do {
@@ -56,9 +58,7 @@ void PaletteFade_Update(void) {
       *currentChannel++ += *channelDelta++;
     }
   } else {
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-    copy(state->current, state->target, sizeof(state->current));
+    Iwram_CopyWords(state->current, state->target, sizeof(state->current));
     state->duration = 0;
   }
 

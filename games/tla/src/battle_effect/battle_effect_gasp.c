@@ -201,11 +201,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,
                                state->sheet + GASP_FAMILY_VENUS_DJINN_PICTURES,
                                1, 0);
-    {
-      s32 (*clear)(void *, s32) = Iwram_ClearWordsEntry;
-
-      clear(state->sheet, GASP_DJINNI_CEL * GASP_DJINNI_CEL);
-    }
+    Iwram_ClearWords(state->sheet, GASP_DJINNI_CEL * GASP_DJINNI_CEL);
     for (k = 0; k != DJINNI_HEIGHT; k++)
       for (j = 0; j != DJINNI_WIDTH; j++)
         state->sheet[(k + GASP_DJINNI_CEL_MARGIN) * GASP_DJINNI_CEL +

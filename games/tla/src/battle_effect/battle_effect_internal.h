@@ -286,9 +286,8 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define LOAD_BG_PALETTE(resource)                                              \
   {                                                                            \
     void *palette = Resource_GetTableEntry(resource);                          \
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;             \
                                                                                \
-    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                       \
+    Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);            \
   }
 
 /// The damping that keeps a particle's whole speed.

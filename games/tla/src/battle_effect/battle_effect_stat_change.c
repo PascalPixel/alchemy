@@ -281,11 +281,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
     else
       palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
-    {
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
-    }
+    Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
   if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
     Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,

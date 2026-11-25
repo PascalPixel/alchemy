@@ -502,10 +502,9 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
   s32 top;
   u32 row;
   u32 rows;
-  FIXED z;
-  s32 y;
   s32 x;
-  s32 kind;
+  s32 y;
+  FIXED z;
 
   found = 0;
   temporaryActor = NULL;
@@ -523,24 +522,21 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
     top /= toFIXED(16);
     if (level < top) {
       x = FIELD_CELL_CENTER(FIELD_CELL(actor->x.fixed));
+      // A black, see-through crate or capped pillar stands at the ledge
+      // until the actor has stopped.
       if (far == 0) {
         row += 2;
         z = FIELD_CELL_ORIGIN(row + FIELD_CELL(actor->z.fixed)) + toFIXED(2);
         y = FIELD_CELL_ORIGIN(top);
-        kind = SPRITE_CRATE;
+        temporaryActor = Actor_PrepareFX(x, y, z, SPRITE_CRATE);
+        height = actor->z.fixed - z + y;
       } else {
         row += 3;
         z = FIELD_CELL_ORIGIN(row + FIELD_CELL(actor->z.fixed)) - toFIXED(2);
         y = FIELD_CELL_ORIGIN(top);
-        kind = SPRITE_CAPPED_PILLAR;
+        temporaryActor = Actor_PrepareFX(x, y, z, SPRITE_CAPPED_PILLAR);
+        height = actor->z.fixed - z + y;
       }
-      // A black, see-through crate or capped pillar stands at the ledge
-      // until the actor has stopped.
-      temporaryActor = Actor_PrepareFX(x, y, z, kind);
-      height = actor->z.fixed - z + y;
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
       found = 1;
       break;
     }

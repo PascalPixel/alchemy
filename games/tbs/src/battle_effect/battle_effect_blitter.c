@@ -266,7 +266,6 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   u32 *skipBranch;
   u32 *partialRun;
   u32 *fullCellLoop;
-  const u32 *codeEnd;
   s32 wordCount;
 
   // XXX (no evidence): why blitters are generated, perhaps because one
@@ -335,8 +334,9 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   // The template ends where battle_effect_table.c's first table begins, so a
   // complete walk ends at that table.
-  codeEnd = (const u32 *)gBattleEffect_MotePictures;
-  return templateWords == codeEnd;
+  if (templateWords == (const u32 *)gBattleEffect_MotePictures)
+    return TRUE;
+  return FALSE;
 }
 
 #undef PUT

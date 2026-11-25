@@ -313,8 +313,6 @@ gScriptedBattle_Snapshot:
 	.global gScriptedBattle_SnapshotBytes
 gScriptedBattle_SnapshotBytes:
 	.space 0x00000080
-	.global gScriptedBattle_SnapshotVitals
-gScriptedBattle_SnapshotVitals:
 	.space 0x0000000c
 	.space 0x00000002
 	.space 0x00000006

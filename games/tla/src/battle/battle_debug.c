@@ -23,7 +23,7 @@ UNUSED void DebugBattle_RunForever(void) {
 /// begins.
 void ScriptedBattle_SaveUnits(void) {
   s32 j;
-  struct Snapshot *snapshot = &gScriptedBattle_Snapshot;
+  struct Snapshot *snapshot = Ram_ScriptedBattleSnapshot;
   s32 i = 0;
   u8 *ids = gScriptedBattle_Units;
   struct SnapshotCopy *copies = gScriptedBattle_SnapshotBytes;
@@ -36,22 +36,7 @@ void ScriptedBattle_SaveUnits(void) {
       snapshot->listed[i] = 1;
       if (i > 2) {
         snapshot->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
-        {
-          struct SnapshotVitals *pv;
-          u32 pp;
-
-          /* FAKEMATCH(temporary): the PP value held in a local while pv is
-           * built. */
-          pp = (u16)unit->pp;
-          /* FAKEMATCH(signature): j, the boosts' s32 index, holds the PP rows'
-           * address through casts; as a pointer of their own type. */
-          j = (s32)gScriptedBattle_SnapshotVitals;
-          pv = (struct SnapshotVitals *)j + i;
-          /* FAKEMATCH(dead): a store the tag loop's init overwrites. */
-          if (i == 300)
-            j = 0;
-          pv->pp = pp;
-        }
+        snapshot->vitals[i].pp = unit->pp;
       }
       if (i <= 2) {
         for (j = 0; j < ELEMENT_COUNT; j++)
@@ -92,7 +77,7 @@ void ScriptedBattle_SaveUnits(void) {
 void ScriptedBattle_RestoreUnits(void) {
   s32 i;
   s32 j;
-  struct Snapshot *snapshot = &gScriptedBattle_Snapshot;
+  struct Snapshot *snapshot = Ram_ScriptedBattleSnapshot;
   struct SnapshotCopy *copies = gScriptedBattle_SnapshotBytes;
 
   for (i = 0; i <= 4; i++, copies++) {
@@ -131,7 +116,7 @@ void ScriptedBattle_RestoreUnits(void) {
       unit->challenge = copies->challenge;
       if (i > 2) {
         Unit_SetHpFar(unit, snapshot->vitals[i].hp);
-        Unit_SetPpFar(unit, gScriptedBattle_Snapshot.vitals[i].pp);
+        Unit_SetPpFar(unit, snapshot->vitals[i].pp);
       }
     }
   }

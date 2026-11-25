@@ -929,8 +929,9 @@ struct TightropeNode *Tightrope_AllocNode(void) {
 }
 
 /// Lays tightrope slotNo straight between posts firstId and secondId, and
-/// shows the rope wound round both.
-void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
+/// shows the rope wound round both. Declared s32, as the scenes call it, though
+/// it returns no value; no caller reads one.
+s32 Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
   struct TightropeState *state = TIGHTROPE_STATE;
   struct Actor *first = Actor_Lookup(firstId);
   struct Actor *second = Actor_Lookup(secondId);

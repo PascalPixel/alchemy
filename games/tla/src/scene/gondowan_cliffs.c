@@ -201,7 +201,7 @@ void GondowanCliffs_BlowAwayWeeds(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId);
+s32 Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId);
 void Rope_Initialize(void);
 void Geyser_Start(s32 unused, s32 firstTerrain);
 void Tightrope_Initialize(void);
@@ -427,9 +427,7 @@ void GondowanCliffs_SetUpPass(void) {
                          GONDOWAN_CLIFFS_PASS_FROM_WORLD_MAP_NORTH);
   }
   Tightrope_Initialize();
-  /* FAKEMATCH(wrapper): Tightrope_Place called through Value3. */
-  Value3((s32 (*)())Tightrope_Place, 0, ACTOR_PASS_TIGHTROPE_POST_A,
-         ACTOR_PASS_TIGHTROPE_POST_B);
+  Tightrope_Place(0, ACTOR_PASS_TIGHTROPE_POST_A, ACTOR_PASS_TIGHTROPE_POST_B);
   Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors,
                   (s32)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
                   sizeof(gGondowanCliffs_SavedWaterColors));

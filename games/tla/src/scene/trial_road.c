@@ -662,7 +662,7 @@ void TrialRoad_BlockLogs(void);
 void TrialRoad_StartFountains(s32 unused, s32 shape);
 
 void Tightrope_Initialize(void);
-void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId);
+s32 Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId);
 
 extern u32 gTrialRoad_GaspHopScript[];
 

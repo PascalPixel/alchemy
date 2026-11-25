@@ -289,15 +289,11 @@ void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
 /// it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
 /// it standing.
 void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
-  struct TreasureIsleCell *cell;
   struct EffectOptions options;
 
   FieldCamera_SetSpeed(6);
-  /* FAKEMATCH(temporary): cell, the rock's entry, summed by hand from its
-   * offset; as &cells[index]. */
-  cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
-  FieldCamera_MoveToFX(FIELD_CELL_CENTER(cell->x), -1,
-                       FIELD_CELL_CENTER(cell->z), 1);
+  FieldCamera_MoveToFX(FIELD_CELL_CENTER(cells[index].x), -1,
+                       FIELD_CELL_CENTER(cells[index].z), 1);
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(0, 16, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -307,26 +303,28 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   options.priority = 1;
   options.type = SPRITE_WATER_SPRAY;
   options.script = gTreasureIsle_RockDust;
-  FieldEffect_Spawn(FIELD_CELL_CENTER(cell->x), 0,
-                    FIELD_CELL_ORIGIN(cell->z) + toFIXED(20), 0, 0, 0,
+  FieldEffect_Spawn(FIELD_CELL_CENTER(cells[index].x), 0,
+                    FIELD_CELL_ORIGIN(cells[index].z) + toFIXED(20), 0, 0, 0,
                     EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                     &options);
   options.startScaleX = FIXED_ONE * 6 / 10;
-  FieldEffect_Spawn(FIELD_CELL_ORIGIN(cell->x) - toFIXED(2), 0,
-                    FIELD_CELL_CENTER(cell->z), 0, 0, 0,
+  FieldEffect_Spawn(FIELD_CELL_ORIGIN(cells[index].x) - toFIXED(2), 0,
+                    FIELD_CELL_CENTER(cells[index].z), 0, 0, 0,
                     EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                     &options);
-  FieldEffect_Spawn(FIELD_CELL_ORIGIN(cell->x) + toFIXED(18), 0,
-                    FIELD_CELL_CENTER(cell->z), 0, 0, 0,
+  FieldEffect_Spawn(FIELD_CELL_ORIGIN(cells[index].x) + toFIXED(18), 0,
+                    FIELD_CELL_CENTER(cells[index].z), 0, 0, 0,
                     EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                     &options);
   FieldEvent_Wait(10);
-  MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
+  MapGrid_CopyCellsLayered(6, 100, 3, 4, cells[index].x + 63,
+                           cells[index].z - 2);
   FieldEvent_Wait(10);
-  MapGrid_CopyCellsLayered(3, 100, 3, 4, cell->x + 63, cell->z - 2);
+  MapGrid_CopyCellsLayered(3, 100, 3, 4, cells[index].x + 63,
+                           cells[index].z - 2);
   FieldEvent_Wait(10);
   TreasureIsle_SetSpikyRock(cells, index);
 }

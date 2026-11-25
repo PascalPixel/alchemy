@@ -746,7 +746,6 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
   FIXED position[4];
   FIXED vector[3];
   struct ScreenPoint spot;
-  struct ScreenPoint *pos;
   struct ScreenPoint screen;
   struct Scale scale;
   s32 frame;
@@ -1018,13 +1017,12 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
         vector[0] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][0] / 2);
         vector[1] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][1] + frame);
         vector[2] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][2] / 2);
-        /* FAKEMATCH(temporary): pos, standing for &spot. */
-        EffectPosition_ProjectPoint(vector, pos = &spot);
-        pos->x = FIXED_INTEGER_PART(pos->x) + 128;
-        pos->y = FIXED_INTEGER_PART(pos->y) + 60;
+        EffectPosition_ProjectPoint(vector, &spot);
+        spot.x = FIXEDtoINT(spot.x) + 128;
+        spot.y = FIXEDtoINT(spot.y) + 60;
         draw(Ram_MapCellBuffer, state->sheet + STARFIELD_FALL_SMALL_GLOW,
-             pos->x - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
-             pos->y - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
+             spot.x - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
+             spot.y - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
              STARFIELD_FALL_SMALL_GLOW_SIZE, STARFIELD_FALL_SMALL_GLOW_SIZE);
       }
 

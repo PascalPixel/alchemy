@@ -549,56 +549,49 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
 
     // The shears' path: still, a backswing from timer 24 and the strike at
     // 33.
-    i = 0;
-    /* FAKEMATCH(dead): a once-only block placing still's declaration after
-     * i is set. */
-    {
-      s32 still = 0;
+    for (i = 0; i != 1; i++) {
+      shears = &((struct Shears *)state->particles)[i];
+      if (++shears->timer <= 0) {
+        continue;
+      }
+      if (shears->timer == 1) {
+        shears->velocityX = 0;
+        shears->velocityY = 0;
+      }
+      if (shears->timer == 24) {
+        shears->velocityX = -toFIXED(4);
+        shears->velocityY = toFIXED(8);
+      }
+      if (shears->timer == 33) {
+        shears->velocityX = toFIXED(4);
+        shears->velocityY = -toFIXED(8);
+        state->shakeFrames = 4;
+        speed = 0;
+        Sound_PlayFar(SE_IMPACT);
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
+      }
+      if (shears->timer == 35) {
+        shears->velocityX = 0;
+        shears->velocityY = 0;
+      }
+      // From frame 64 they tumble away, turning faster each frame.
+      if (frame > 63) {
+        s32 tumble = (frame - 64) * (TRIG_TURN / 512);
 
-      shears = (struct Shears *)state->particles;
-      for (; i != 1; i++, shears++) {
-        if (++shears->timer <= 0) {
-          continue;
+        shears->velocityY -= toFIXED(1) / 4;
+        if (tumble > TRIG_TURN / 64) {
+          tumble = TRIG_TURN / 64;
         }
-        if (shears->timer == 1) {
-          shears->velocityX = still;
-          shears->velocityY = still;
+        shears->roll -= tumble;
+      }
+      if (shears->timer > 8) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
+          shears->x += shears->velocityX;
+        } else {
+          shears->x -= shears->velocityX;
         }
-        if (shears->timer == 24) {
-          shears->velocityX = -toFIXED(4);
-          shears->velocityY = toFIXED(8);
-        }
-        if (shears->timer == 33) {
-          shears->velocityX = toFIXED(4);
-          shears->velocityY = -toFIXED(8);
-          state->shakeFrames = 4;
-          speed = 0;
-          Sound_PlayFar(SE_IMPACT);
-          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, 0, 8);
-        }
-        if (shears->timer == 35) {
-          shears->velocityX = still;
-          shears->velocityY = still;
-        }
-        // From frame 64 they tumble away, turning faster each frame.
-        if (frame > 63) {
-          s32 tumble = (frame - 64) * (TRIG_TURN / 512);
-
-          shears->velocityY -= toFIXED(1) / 4;
-          if (tumble > TRIG_TURN / 64) {
-            tumble = TRIG_TURN / 64;
-          }
-          shears->roll -= tumble;
-        }
-        if (shears->timer > 8) {
-          if (args->side == EFFECT_SIDE_ENEMIES) {
-            shears->x += shears->velocityX;
-          } else {
-            shears->x -= shears->velocityX;
-          }
-          shears->y += shears->velocityY;
-        }
+        shears->y += shears->velocityY;
       }
     }
 

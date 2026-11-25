@@ -276,13 +276,22 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 cellX, s32 cellY) {
   s32 tile;
 
   perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
-  /* FAKEMATCH(dead): a test of followedPosition, never set, and its reads of
-   * the followed point, which nothing uses; as no test at all. */
+  /* LEFTOVER(template): the followed point, taken and scaled exactly as
+   * WorldMap_SetWindowCellTile above (and The Broken Seal's
+   * WorldMap_SetGridTile) take it for their test of the view; this routine
+   * draws without that test, so nothing reads it; as the routine without these
+   * lines. */
+  originX = 0;
+  originY = 0;
+  followedPosition = perspective->origin;
   if (followedPosition != 0) {
     originX = *followedPosition++;
     originY = followedPosition[1];
   }
 
+  // The followed point and cellX, cellY in 256-pixel steps.
+  originX >>= 24;
+  originY >>= 24;
   x >>= 4;
   y >>= 4;
   cellX >>= 3;

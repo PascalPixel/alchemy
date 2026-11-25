@@ -610,20 +610,18 @@ s32 PartyMemberChooser_ChooseMember(void) {
       result = -1;
       break;
     }
-    {
-      if (gKeysRepeat & KEY_LEFT) {
-        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        if (memberCount > 1) {
-          memberIndex--;
-          redraw = 1;
-        }
+    if (gKeysRepeat & KEY_LEFT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+      if (memberCount > 1) {
+        memberIndex--;
+        redraw = 1;
       }
-      if (gKeysRepeat & KEY_RIGHT) {
-        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        if (memberCount > 1) {
-          memberIndex++;
-          redraw = 1;
-        }
+    }
+    if (gKeysRepeat & KEY_RIGHT) {
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+      if (memberCount > 1) {
+        memberIndex++;
+        redraw = 1;
       }
     }
   }

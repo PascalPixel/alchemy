@@ -957,14 +957,12 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     return result;
   // Forward past the list's last entry or the page's last row wraps to the
   // first row.
-  {
-    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    result = 0;
-    if (++*cursor == count - *page * pageSize)
-      *cursor = result;
-    if (*cursor > pageSize - 1)
-      *cursor = result;
-  }
+  Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+  result = 0;
+  if (++*cursor == count - *page * pageSize)
+    *cursor = result;
+  if (*cursor > pageSize - 1)
+    *cursor = result;
   return 0;
 }
 

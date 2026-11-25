@@ -59,7 +59,7 @@ struct FlameHitState {
   s32 counter; ///< FlameThrowers_AdvanceCounter's count
   s16 active;  ///< set once a flame or fireball has hit the leader
   /// Set when a flame met a blocked slot's actor, and called back once for.
-  u16 blocked;
+  s16 blocked;
   s16 wasBlocked;          ///< blocked as it was the frame before
   u16 hitTrigger;          ///< the step trigger raised when the leader is hit
   u16 flameVramBlock;      ///< the kept flame's VRAM cache entry

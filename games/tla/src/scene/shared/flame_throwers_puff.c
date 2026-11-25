@@ -24,7 +24,6 @@ void FlameThrowers_Puff(void) {
   struct MapState *map;
   s32 *view;
   s32 cameraX, cameraZ;
-  s32 v;
   s32 i;
 
   state = FLAME_THROWERS_STATE;
@@ -36,13 +35,11 @@ void FlameThrowers_Puff(void) {
   cameraZ = view[1] & FIELD_PIXEL_MASK;
   saved[1] = map->origin[1];
   /* FAKEMATCH(signature): the field state read through a union as a word, so
-     the load stays after the stores before it, and blocked tested as signed. */
+     the load stays after the store before it; as Ram_HeapSlots->fieldState. */
   saved[0] = ((struct HeapSlotsFieldStateView *)Ram_HeapSlots)->fieldState.word;
-  if ((s16)state->blocked != 0 && state->wasBlocked == 0 &&
-      state->onBlocked != 0)
+  if (state->blocked != 0 && state->wasBlocked == 0 && state->onBlocked != 0)
     state->onBlocked();
-  v = (u16)state->blocked;
-  state->wasBlocked = v;
+  state->wasBlocked = state->blocked;
   state->blocked = 0;
   for (i = 0; i < 4; i++, entry++) {
     struct Actor *actor;

@@ -74,7 +74,7 @@ static __inline__ s32 Actor_Square(s32 value) { return value * value; }
 /// the ground, floating, and solid actors that refuse to overlap.
 void Actor_UpdateAllOnField(void) {
   struct Actor *actor;
-  const ActorScriptWords *script;
+  const s32 *script;
   s32 actorsLeft;
   FIXED x;
   FIXED y;
@@ -101,14 +101,14 @@ void Actor_UpdateAllOnField(void) {
   for (actorsLeft = ACTOR_COUNT - 1; actorsLeft >= 0; actorsLeft--, actor++) {
     arrivedAtTarget = 0;
 
-    script = (const ActorScriptWords *)actor->script;
+    script = actor->script;
     if (script == NULL)
       continue;
 
     // The update routine runs even for a paused actor, and may release it.
     if (actor->update != NULL) {
       actor->update((struct Actor *)actor);
-      script = (const ActorScriptWords *)actor->script;
+      script = actor->script;
     }
     if (script == NULL)
       continue;
@@ -120,18 +120,17 @@ void Actor_UpdateAllOnField(void) {
       actor->wait--;
     } else {
       for (;;) {
-#ifdef UBFIX
-        command = script[actor->scriptCursor];
-#else
-        command = script->word[actor->scriptCursor];
-#endif
+        // The local steps to the command's word; the next pass takes the
+        // script afresh.
+        script += actor->scriptCursor;
+        command = *script;
         if (command <= SCRIPT_COMMAND_MAX) {
           if (gActorScript_CommandTable[command]((struct Actor *)actor) == 0)
             break;
         } else {
           actor->scriptCursor++;
         }
-        script = (const ActorScriptWords *)actor->script;
+        script = actor->script;
       }
       if (actor->script == NULL)
         continue;

@@ -30,7 +30,6 @@ void WorldMap_StepZoom(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   s16 *duration;
   s32 *from;
-  s16 *step;
   s32 offset;
   s32 delta;
 
@@ -43,14 +42,11 @@ void WorldMap_StepZoom(void) {
     return;
   from = &map->zoomFrom;
   delta = map->zoomTo - *from;
-  step = &map->zoomStep;
-  (*step)++;
-  /* FAKEMATCH(wrapper): the division called by its library name, __divsi3;
-   * as delta * *step / *duration. */
-  offset = *from + __divsi3(delta * *step, *duration);
+  map->zoomStep++;
+  offset = *from + delta * map->zoomStep / *duration;
   map->zoom = Iwram_MulFX(map->farPlane, offset);
   gScanlinePitch = ((struct WorldMapView *)map)->pitch + 1;
-  if (*step == *duration) {
+  if (map->zoomStep == *duration) {
     *duration = 0;
     Task_Remove((TaskFunc)WorldMap_StepZoom);
   }

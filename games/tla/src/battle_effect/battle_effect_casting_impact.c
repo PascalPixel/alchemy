@@ -1749,20 +1749,20 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           h = 0;
         h = SARCOPHAGUS_COFFIN_HEIGHT;
         if (frame > 7) {
-          /* FAKEMATCH(temporary): t, a second count of the rows beside i; as
-           * i. */
-          s32 t;
+          // Each row down the band dissolves one level more than the last.
+          s32 level;
 
           i = 0;
-          t = 0;
+          level = 0;
           row = 112 - frame * 2;
-          for (; i != SARCOPHAGUS_DISSOLVE_ROWS; i++, t++, row++) {
+          for (; i != SARCOPHAGUS_DISSOLVE_ROWS; i++, level++, row++) {
             if (row >= 0 && row < SARCOPHAGUS_COFFIN_HEIGHT) {
               s32 k;
               s32 threshold;
               /* FAKEMATCH(dead): threshold set through its own address; as
-               * threshold = t. */
-              for (k = 0, *&threshold = t; k != SARCOPHAGUS_COFFIN_WIDTH; k++) {
+               * threshold = level. */
+              for (k = 0, *&threshold = level; k != SARCOPHAGUS_COFFIN_WIDTH;
+                   k++) {
                 if (state->sheet[(row & 15) * SARCOPHAGUS_COFFIN_WIDTH + k] <
                     threshold)
                   pictures[row * SARCOPHAGUS_COFFIN_WIDTH + k] = 0;

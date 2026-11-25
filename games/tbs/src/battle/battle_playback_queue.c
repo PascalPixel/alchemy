@@ -58,8 +58,8 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
 
   while (!Message_AllTypedFar())
     wait(1);
-  /* LEFTOVER(template): prompt holds &promptStorage, as the PLAY_ADVANCE step
-   * of BattlePlayback_Run's prompt holds its arrow. */
+  /* FAKEMATCH(temporary): prompt holds &promptStorage; plainly,
+   * promptStorage's members at its uses. */
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
@@ -106,8 +106,8 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   position.y = y;
   while (!Message_AllTypedFar())
     wait(1);
-  /* LEFTOVER(template): prompt holds &promptStorage, as the PLAY_ADVANCE step
-   * of BattlePlayback_Run's prompt holds its arrow. */
+  /* FAKEMATCH(temporary): prompt holds &promptStorage; plainly,
+   * promptStorage's members at its uses. */
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {

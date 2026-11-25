@@ -168,27 +168,14 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       }
       // Four steps a frame.
       for (i = 0, step = state->particles; i != LIQUIFIER_SPARKS; i++, step++) {
-        /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
-        s32 one = 1;
         if (step->variant >= 0) {
-          s32 odd = i & one;
-          s32 size = odd + 2;
-          s32 blend;
-          s32 twice;
-          s32 half;
+          s32 size = (i & 1) + 2;
           s32 j;
 
-          j = 0;
-          /* FAKEMATCH(temporary): blend, odd * 4 held as a byte offset into
-           * draw; as draw[odd]. */
-          blend = odd * 4;
-          twice = size * 2;
-          half = (u32)size >> 1;
-          for (; j != 4; j++) {
-            (*(DrawRectangle *)((u8 *)draw + blend))(
-                canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                FIXED_INTEGER_PART(step->x) - half,
-                FIXED_INTEGER_PART(step->y) - size, size, twice);
+          for (j = 0; j != 4; j++) {
+            EFFECT_DRAW_MOTE(draw[i & 1], canvas, graphics,
+                             FIXED_INTEGER_PART(step->x),
+                             FIXED_INTEGER_PART(step->y), size);
             Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
           }
           step->variant++;

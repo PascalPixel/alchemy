@@ -62,6 +62,13 @@ struct OamData {
   u16 high;
 };
 
+/// A sprite as the depth queue takes it: Oam_AddSpriteAtDepth writes the link
+/// to the next sprite queued at the same depth, and the OAM attributes follow.
+struct QueuedSprite {
+  struct QueuedSprite *next; ///< the next sprite queued at its depth
+  struct OamData oam;
+};
+
 /// WindowSprite.kind: what a window sprite owns besides itself, which
 /// WindowSprite_Release frees.
 enum WindowSpriteKind {
@@ -84,10 +91,7 @@ struct WindowSprite {
   /// The depth slot it is drawn at (Oam_AddSpriteAtDepth): a higher slot is
   /// drawn in front. The windows' glyphs take 254.
   u8 depth;
-  /// The depth queue's link: with oam it is the sprite entry queued each
-  /// frame, read as struct CursorSprite.
-  u8 link[4];
-  struct OamData oam;
+  struct QueuedSprite sprite; ///< queued at its depth each frame
 };
 
 /// A list of window sprites: its first sprite and the link to append after.
@@ -102,7 +106,7 @@ STATIC_ASSERT(offsetof(struct WindowSpriteList, tailLink) == 4);
 STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 12);
 
 STATIC_ASSERT(offsetof(struct WindowSprite, depth) == 15);
-STATIC_ASSERT(offsetof(struct WindowSprite, oam) == 20);
+STATIC_ASSERT(offsetof(struct WindowSprite, sprite) == 16);
 STATIC_ASSERT(sizeof(struct WindowSprite) == 28);
 
 #endif

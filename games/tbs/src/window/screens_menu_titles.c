@@ -41,7 +41,7 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
   second = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x + 32, y);
   second->depth = OAM_DEPTH_FRONT - 2;
   // The right half's tiles, after the left half's 8.
-  second->oam.index += 8;
+  second->sprite.oam.index += 8;
   return first;
 }
 
@@ -53,11 +53,11 @@ void MenuTitle_Bob(struct WindowSprite *sprite) {
   // The VBlank interrupt counts gVBlankCount, so each sprite reads it afresh.
   value = (u8)sprite->y +
           gMenuTitleBobOffsets[(*(volatile u32 *)&gVBlankCount >> 2) & 7];
-  sprite->oam.y = value;
+  sprite->sprite.oam.y = value;
   sprite = sprite->next;
   value = (u8)sprite->y +
           gMenuTitleBobOffsets[(*(volatile u32 *)&gVBlankCount >> 2) & 7];
-  sprite->oam.y = value;
+  sprite->sprite.oam.y = value;
 }
 
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
@@ -89,7 +89,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     CommandIcon_Load(icon, slot, remap);
     sprite = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
-    sprite->oam.fullColor = 1;
+    sprite->sprite.oam.fullColor = 1;
     sprite->depth = OAM_DEPTH_FRONT - 4;
   }
   return sprite;
@@ -106,12 +106,12 @@ void WindowSprite_Pulse(struct WindowSprite *sprite) {
     effect.scaleX = scale;
     effect.scaleY = scale;
     effect.angle = 0;
-    sprite->oam.matrix = OamMatrix_AllocFromTransform(&effect);
+    sprite->sprite.oam.matrix = OamMatrix_AllocFromTransform(&effect);
     // Affine mode 3 doubles the sprite's box, so it moves up and left by 16
     // pixels (-16 in the 16-bit x and 8-bit y) to keep its centre.
-    sprite->oam.affineMode = 3;
-    sprite->oam.x = sprite->x + (u16)-16;
-    sprite->oam.y = (u8)sprite->y + (u8)-16;
+    sprite->sprite.oam.affineMode = 3;
+    sprite->sprite.oam.x = sprite->x + (u16)-16;
+    sprite->sprite.oam.y = (u8)sprite->y + (u8)-16;
     sprite->depth = OAM_DEPTH_FRONT - 3;
   }
 }

@@ -154,7 +154,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       sprite->motion = WINDOW_SPRITE_MOTION_STILL;
       sprite->kind = WINDOW_SPRITE_ICON;
       sprite->index = VramCache_AllocEntry(2 * 2 * TILE_SIZE_4BPP);
-      entry = (struct PreviewSprite *)sprite->link;
+      entry = (struct PreviewSprite *)&sprite->sprite;
       sprite->depth = OAM_DEPTH_WINDOW;
       sprite->x = 120;
       sprite->y = 120;

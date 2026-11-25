@@ -44,12 +44,12 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
     // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
     words[1] =
         ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
-    __builtin_memcpy(&sprite->oam, words, sizeof(words));
+    __builtin_memcpy(&sprite->sprite.oam, words, sizeof(words));
   }
 #else
-  *(u32 *)&sprite->oam = OBJ_X(x) | y | oamFlags;
+  *(u32 *)&sprite->sprite.oam = OBJ_X(x) | y | oamFlags;
   // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
-  ((u32 *)&sprite->oam)[1] =
+  ((u32 *)&sprite->sprite.oam)[1] =
       ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
 #endif
   sprite->depth = OAM_DEPTH_FRONT;
@@ -169,7 +169,7 @@ struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
   Icon_LoadWithPalette(icon, unused, &slot, &tile, palette, 0);
   portrait = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
   if (portrait != NULL) {
-    portrait->oam.palette = palette;
+    portrait->sprite.oam.palette = palette;
     portrait->kind = WINDOW_SPRITE_PORTRAIT;
   }
 

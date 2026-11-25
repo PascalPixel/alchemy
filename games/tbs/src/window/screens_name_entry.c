@@ -318,7 +318,7 @@ s32 NameEntry_EditMemberName(s32 member) {
                                  keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
     sprite->depth = OAM_DEPTH_FRONT;
-    sprite->oam.priority = 0;
+    sprite->sprite.oam.priority = 0;
     // The caret stands after the name, at its width in pixels.
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
                                        Text_SetString(editedName) + 70, 22);
@@ -363,8 +363,8 @@ s32 NameEntry_EditMemberName(s32 member) {
       u32 frame = (gVBlankCount >> 1) & 7;
 
       sprite = nameCaret.sprite;
-      sprite->oam.x = sprite->x + gNameEntry_CaretWave[frame];
-      sprite->oam.y = sprite->y + gNameEntry_CaretWave[(frame + 5) & 7];
+      sprite->sprite.oam.x = sprite->x + gNameEntry_CaretWave[frame];
+      sprite->sprite.oam.y = sprite->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
@@ -582,7 +582,7 @@ s32 NameEntry_EditMemberName(s32 member) {
                                  keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
     sprite->depth = OAM_DEPTH_FRONT;
-    sprite->oam.priority = 0;
+    sprite->sprite.oam.priority = 0;
     // The caret stands after the name: its letters are 10 pixels apart.
     x = 72 + NameEntry_CountLetters(editedName) * 10;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
@@ -628,8 +628,8 @@ s32 NameEntry_EditMemberName(s32 member) {
       u32 frame = (gVBlankCount >> 1) & 7;
 
       sprite = nameCaret.sprite;
-      sprite->oam.x = sprite->x + gNameEntry_CaretWave[frame];
-      sprite->oam.y = sprite->y + gNameEntry_CaretWave[(frame + 5) & 7];
+      sprite->sprite.oam.x = sprite->x + gNameEntry_CaretWave[frame];
+      sprite->sprite.oam.y = sprite->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.

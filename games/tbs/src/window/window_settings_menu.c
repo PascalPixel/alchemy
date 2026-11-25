@@ -412,19 +412,19 @@ struct Window *SettingsMenu_Open(void) {
     y = 0;
     marker = WindowSprite_Create(cacheSlot, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
-    marker->oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
+    marker->sprite.oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
     marker = WindowSprite_Create(cacheSlot, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X + 26, y);
-    marker->oam.index += 4;
-    marker->oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
+    marker->sprite.oam.index += 4;
+    marker->sprite.oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
     y = 16;
     marker = WindowSprite_Create(cacheSlot, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
-    marker->oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
+    marker->sprite.oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
     marker = WindowSprite_Create(cacheSlot, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X + 26, y);
-    marker->oam.index += 4;
-    marker->oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
+    marker->sprite.oam.index += 4;
+    marker->sprite.oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
   }
 
   // The two markers: 16x16 sprites of 256 colours, whose 256 bytes
@@ -434,7 +434,7 @@ struct Window *SettingsMenu_Open(void) {
     VramCache_Load(cacheSlot, 256, 0);
     marker =
         WindowSprite_Create(cacheSlot, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-    marker->oam.fullColor = 1;
+    marker->sprite.oam.fullColor = 1;
     state->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += state->option[SETTINGS_ROW_WINDOW_COLOR] * OPTION_SLIDER_WIDTH /
@@ -448,7 +448,7 @@ struct Window *SettingsMenu_Open(void) {
     VramCache_Load(cacheSlot, 256, 0);
     marker =
         WindowSprite_Create(cacheSlot, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-    marker->oam.fullColor = 1;
+    marker->sprite.oam.fullColor = 1;
     state->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += state->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] * OPTION_SLIDER_WIDTH /

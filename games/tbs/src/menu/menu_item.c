@@ -1163,7 +1163,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       // The marker over the chosen party member, three tiles a party member;
       // no screen makes it, so it is NULL (MenuCursor_Create).
       targetMarker = menu->sideIcons[1];
-      targetMarker->oam.x = targetMarker->x =
+      targetMarker->sprite.oam.x = targetMarker->x =
           ((menu->mainWindow->x + memberIndex * 3) << 3) - 2;
       // Giving: the party member's items and how many of this one they hold.
       if (mode == ITEM_TARGET_GIVE) {
@@ -2391,7 +2391,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
     VramCache_Load(block, 256, 0);
     WindowSprite_CreateFar(block, OUTPUT_SIZE_32X8, window, 48, 32);
     rightDial = WindowSprite_CreateFar(block, OUTPUT_SIZE_32X8, window, 80, 32);
-    rightDial->oam.index += 4;
+    rightDial->sprite.oam.index += 4;
     MenuCursor_Slide(ITEM_GIVE_CURSOR_X, 40);
     while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
       if (changed) {

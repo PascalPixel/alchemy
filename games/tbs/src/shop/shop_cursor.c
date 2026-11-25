@@ -168,11 +168,11 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
   cursorX =
       cursor->x + (cursor->targetX - (s16)cursor->x) * frame / durationFrames;
   sprite->x = cursorX;
-  sprite->oam.x = cursorX;
+  sprite->sprite.oam.x = cursorX;
   cursorY =
       cursor->y + (cursor->targetY - (s16)cursor->y) * frame / durationFrames;
   sprite->y = cursorY;
-  sprite->oam.y = cursorY;
+  sprite->sprite.oam.y = cursorY;
   if (frame == durationFrames) {
     cursor->frames = 0;
     cursor->frame = 0;
@@ -198,13 +198,13 @@ void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
         sprite->x = sprite->x - step;
       else
         sprite->x = sprite->x - 1;
-      sprite->oam.x = sprite->x;
+      sprite->sprite.oam.x = sprite->x;
     } else if (delta < 0) {
       if (step != 0)
         sprite->x = sprite->x + step;
       else
         sprite->x = sprite->x + 1;
-      sprite->oam.x = sprite->x;
+      sprite->sprite.oam.x = sprite->x;
     }
 
     delta = sprite->y - cursor->targetY;
@@ -216,13 +216,13 @@ void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
         sprite->y = sprite->y - step;
       else
         sprite->y = sprite->y - 1;
-      sprite->oam.y = sprite->y;
+      sprite->sprite.oam.y = sprite->y;
     } else if (delta < 0) {
       if (step != 0)
         sprite->y = sprite->y + step;
       else
         sprite->y = sprite->y + 1;
-      sprite->oam.y = sprite->y;
+      sprite->sprite.oam.y = sprite->y;
     }
   }
 }
@@ -248,10 +248,10 @@ void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
   cursor->frames = 1;
   cursor->frame = 0;
   cursor->x = x;
-  cursor->anchor->oam.x = cursor->anchor->x = x;
+  cursor->anchor->sprite.oam.x = cursor->anchor->x = x;
   cursor->targetY = y;
   cursor->y = y;
-  cursor->anchor->oam.y = cursor->anchor->y = y;
+  cursor->anchor->sprite.oam.y = cursor->anchor->y = y;
 }
 
 /// Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen

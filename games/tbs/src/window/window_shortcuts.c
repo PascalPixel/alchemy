@@ -158,7 +158,7 @@ void Debug_SelectShortcuts(void) {
         row = (row + 2) % 2;
         y = (row << 4) + (picks->y << 3) + 28;
         cursor->y = y;
-        cursor->oam.y = y;
+        cursor->sprite.oam.y = y;
         WindowSprite_RedrawSavedRect(picks);
         Window_DrawDividerLine(picks, 1, 2, 17, 2);
         Text_DrawMessageAsTiles(MsgPanelStatusLabel, picks, 48, 0);

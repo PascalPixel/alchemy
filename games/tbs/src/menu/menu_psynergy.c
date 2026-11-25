@@ -524,7 +524,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
       // The marker over the party member, three tiles a party member; no screen
       // makes it, so it is NULL (MenuCursor_Create).
       marker = menu->sideIcon[1];
-      marker->oam.x = marker->x =
+      marker->sprite.oam.x = marker->x =
           (((menu->auxiliaryWindow)->x + selection * 3) << 3) - 2;
       if (targetMode == 0) {
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[selection], 0,

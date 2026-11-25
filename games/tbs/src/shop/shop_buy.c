@@ -614,7 +614,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 0, 0);
       quantitySprite =
           WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 32, 0);
-      quantitySprite->oam.index += 4;
+      quantitySprite->sprite.oam.index += 4;
       for (;;) {
         if (gKeysPressed & KEY_A) {
           Sound_PlayFar(SE_MENU_CONFIRM);

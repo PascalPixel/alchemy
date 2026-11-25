@@ -437,10 +437,10 @@ s32 Icon_CreateHandCursor(struct Window *window, s32 x, s32 y) {
 void Icon_Show(struct WindowSprite *object) {
   if (object != NULL) {
     object->motion = ICON_SHOWN;
-    object->oam.x = object->x;
-    object->oam.y = object->y;
-    object->oam.matrix = 0;
-    object->oam.affineMode = 0;
+    object->sprite.oam.x = object->x;
+    object->sprite.oam.y = object->y;
+    object->sprite.oam.matrix = 0;
+    object->sprite.oam.affineMode = 0;
   }
 }
 
@@ -579,10 +579,12 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuState *menu = gMenuState;
   struct WindowSprite *cursor = menu->sideIcon[0];
 
-  cursor->oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] + xOffset +
-                              (menu->auxiliaryWindow)->x * 8 + 8;
-  cursor->oam.y = cursor->y = gMenuCursor_BobY[CURSOR_BOB_STEP()] + yOffset +
-                              (menu->auxiliaryWindow)->y * 8 + 8;
+  cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
+                                     xOffset + (menu->auxiliaryWindow)->x * 8 +
+                                     8;
+  cursor->sprite.oam.y = cursor->y = gMenuCursor_BobY[CURSOR_BOB_STEP()] +
+                                     yOffset + (menu->auxiliaryWindow)->y * 8 +
+                                     8;
 }
 
 /// Slides the hand cursor from where it is to (x, y) inside the menu's top-left
@@ -606,8 +608,8 @@ void MenuCursor_Slide(s32 x, s32 y) {
   }
   cursor = menu->sideIcon[0];
   {
-    s32 biasedX = cursor->oam.x + 64;
-    s32 biasedY = cursor->oam.y + 64;
+    s32 biasedX = cursor->sprite.oam.x + 64;
+    s32 biasedY = cursor->sprite.oam.y + 64;
 
     cursor->x = biasedX;
     cursor->y = biasedY;
@@ -632,10 +634,10 @@ void MenuCursor_Slide(s32 x, s32 y) {
   do {
     // 64 - 8 = 56: the bias less the window border.
     fineX += stepX;
-    cursor->oam.x = cursor->x =
+    cursor->sprite.oam.x = cursor->x =
         (fineX >> 4) + ((menu->auxiliaryWindow)->x << 3) - 56;
     fineY += stepY;
-    cursor->oam.y = cursor->y =
+    cursor->sprite.oam.y = cursor->y =
         (fineY >> 4) + ((menu->auxiliaryWindow)->y << 3) - 56;
     steps--;
     if (steps != 0)

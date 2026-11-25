@@ -94,9 +94,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader stops pulsing.
   wait(10);
-  /* FAKEMATCH(temporary): effect, done with the sparks, stands for NULL. */
+  /* FAKEMATCH(dead): effect, done with the sparks, cleared; nothing reads it
+     again. */
   effect = NULL;
-  leader->update = (void *)effect;
+  leader->update = NULL;
   leader->scaleX = FIXED_ONE;
   leader->scaleY = FIXED_ONE;
   // Fade the palette back from the tint and free the field effect sprites.

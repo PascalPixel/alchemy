@@ -1253,16 +1253,15 @@ static void McCoyPalace_FaceCompanionsForAudience(void) {
 static void McCoyPalace_McCoyRewardsParty(void) {
   struct Actor *viewCenter;
   struct Actor *actor;
-  s32 advanceAlternateReply;
+  /* FAKEMATCH(dead): the flag starts at 0, which each line sets again before
+     it is read. */
+  s32 advanceAlternateReply = 0;
 
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   viewCenter = FieldCamera_GetActor();
-  /* FAKEMATCH(temporary): advanceAlternateReply holds the 0 the camera's
-     motion flags take; as viewCenter->motionFlags = 0. */
-  advanceAlternateReply = 0;
-  viewCenter->motionFlags = advanceAlternateReply;
+  viewCenter->motionFlags = 0;
   FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);

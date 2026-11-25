@@ -194,17 +194,6 @@ done:
 #define GLYPH_SPRITE_OFFSET_Y (-2)
 #endif
 
-/// The sprite of a glyph a window carries, as Glyph_DrawAsSprite reads it: its
-/// list link, its OAM position and its tile.
-struct GlyphSprite {
-  struct GlyphSprite *next;
-  u16 y : 8;
-  u16 attr0 : 8;
-  u16 x : 9;
-  u16 attr1 : 7;
-  u16 tile;
-};
-
 s32 Text_DrawGlyphPair(s32 code, u32 *tiles);
 
 /// Draws character as a glyph sprite on the window at x, y and returns its
@@ -215,7 +204,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   u32 spacingX = state->letterSpacing;
   u32 spacingY = state->lineSpacing;
   struct WindowSprite *output;
-  struct GlyphSprite *sprite;
+  struct QueuedSprite *sprite;
   s32 index;
   s32 width;
 
@@ -235,10 +224,12 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
       GLYPH_SPRITE_SIZE;
   ((u16 *)&output->sprite.oam)[2] = state->glyphTiles + index;
-  sprite = (struct GlyphSprite *)&output->sprite;
+  /* FAKEMATCH(temporary): sprite holds &output->sprite for the two reads of
+   * its position; as output->sprite.oam.x and .y. */
+  sprite = &output->sprite;
   output->depth = OAM_DEPTH_FRONT - 2;
-  output->x = sprite->x;
-  output->y = sprite->y;
+  output->x = sprite->oam.x;
+  output->y = sprite->oam.y;
   output->index = index;
   output->next = NULL;
   WindowSprite_AppendToList(&window->sprites, output);
@@ -460,19 +451,6 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   }
 }
 
-/// A window sprite's queued sprite as WindowSprite_UpdateScaleAnimation reads
-/// it.
-struct OutputSprite {
-  u32 next;
-  u8 y;
-  u8 affine : 2;
-  u8 mode : 2;
-  u8 mosaicColorsShape : 4;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile;
-};
 extern const u16 gWindowSprite_BounceScales[];
 
 /// The steps of gWindowSprite_BounceScales: a swell to 1.5 times and back.
@@ -482,7 +460,7 @@ extern const u16 gWindowSprite_BounceScales[];
 /// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   s32 scale = Q_8_8(1);
-  struct OutputSprite *sprite = (struct OutputSprite *)&windowSprite->sprite;
+  struct QueuedSprite *sprite = &windowSprite->sprite;
   struct AffineTransform effect;
 
   switch ((u8)windowSprite->motion) {
@@ -509,25 +487,24 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     break;
   }
   if (scale == Q_8_8(1)) {
-    sprite->affineIndex = 0;
-    sprite->affine = OAM_AFFINE_OFF;
-    sprite->x = (u16)windowSprite->x;
-    sprite->y = (u16)windowSprite->y;
+    sprite->oam.matrix = 0;
+    sprite->oam.affineMode = OAM_AFFINE_OFF;
+    sprite->oam.x = windowSprite->x;
+    sprite->oam.y = windowSprite->y;
   } else {
     effect.scaleX = scale;
     effect.scaleY = scale;
     effect.angle = 0;
-    sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
+    sprite->oam.matrix = OamMatrix_AllocFromTransform(&effect);
     if (scale > Q_8_8(1)) {
-      sprite->affine = OAM_AFFINE_DOUBLE_SIZE;
+      sprite->oam.affineMode = OAM_AFFINE_DOUBLE_SIZE;
       // Drawn at double size, so set 8 pixels up and left.
-      /* FAKEMATCH(dead): x read through its taken address. */
-      sprite->x = *(u16 *)&windowSprite->x - 8;
-      sprite->y = (u16)windowSprite->y - 8;
+      sprite->oam.x = windowSprite->x - 8;
+      sprite->oam.y = windowSprite->y - 8;
     } else {
-      sprite->affine = OAM_AFFINE_ON;
-      sprite->x = (u16)windowSprite->x;
-      sprite->y = (u16)windowSprite->y;
+      sprite->oam.affineMode = OAM_AFFINE_ON;
+      sprite->oam.x = windowSprite->x;
+      sprite->oam.y = windowSprite->y;
     }
   }
 }

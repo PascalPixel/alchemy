@@ -1070,16 +1070,13 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       streak->y += streak->velocityY;
       if (FIXEDtoINT(streak->y) >
           HURRICANE_GROUND_Y - HURRICANE_STREAK_HEIGHT) {
-        /* FAKEMATCH(temporary): landing set to the buffer, then advanced. */
-        struct Particle *landing = PARTICLES;
-
-        landing += i;
-        if (landing->variant == -1) {
-          landing->y = toFIXED(HURRICANE_GROUND_Y);
-          landing->variant = 0;
-          landing->x = x;
-          landing->velocityX = (Random16() % 12 - 6) << 15;
-          landing->velocityY = (-Random16() & 7) << 10;
+        puff = PARTICLES;
+        if (puff[i].variant == -1) {
+          puff[i].y = toFIXED(HURRICANE_GROUND_Y);
+          puff[i].variant = 0;
+          puff[i].x = x;
+          puff[i].velocityX = (Random16() % 12 - 6) << 15;
+          puff[i].velocityY = (-Random16() & 7) << 10;
         }
       }
     }

@@ -20,33 +20,31 @@ static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
   u32 *cell = (u32 *)Ram_MapGridCellBuffer + (y * MAPGRID_SIZE + x);
   s32 row;
   s32 col;
-  s32 end;
 
   for (row = destinationY; row < destinationY + height; row++) {
-    col = destinationX;
-    if (col < destinationX + width)
-      do {
-        // A cell's tiles are four tile map entries, two rows of two, 8 bytes;
-        // a cell row of the screen block is two rows of BG_SCREEN_WIDTH
-        // entries, BG_SCREEN_WIDTH words.
-        u16 tile = *cell++ & MAPGRID_CELL_TILES_ID_MASK;
-        u16 picture = tile * 8;
-        s32 index =
-            (plane * SCREEN_BLOCK_CELLS + (row & (SCREEN_BLOCK_CELLS - 1))) *
-                BG_SCREEN_WIDTH +
-            (col & (SCREEN_BLOCK_CELLS - 1));
-        u32 *from;
-        u32 *to;
+    for (col = destinationX; col < destinationX + width; col++) {
+      // A cell's tiles are four tile map entries, two rows of two, 8 bytes;
+      // a cell row of the screen block is two rows of BG_SCREEN_WIDTH
+      // entries, BG_SCREEN_WIDTH words.
+      u32 tile = *cell++ & MAPGRID_CELL_TILES_ID_MASK;
+      s32 index =
+          (plane * SCREEN_BLOCK_CELLS + (row & (SCREEN_BLOCK_CELLS - 1))) *
+              BG_SCREEN_WIDTH +
+          (col & (SCREEN_BLOCK_CELLS - 1));
+      u32 *from;
+      u32 *to;
+      u32 picture;
 
-        to = (u32 *)BG_SCREEN_BLOCK(5) + index;
-        from = (u32 *)(Ram_CellTiles + picture);
-        *to = *from;
-        from = (u32 *)(Ram_CellTiles + 4 + picture);
-        to = (u32 *)(BG_SCREEN_BLOCK(5) + BG_SCREEN_WIDTH * 2) + index;
-        *to = *from;
-        /* FAKEMATCH(temporary): end takes the row's bound where the loop tests
-         * it, apart from the guard's. */
-      } while (end = destinationX + width, ++col < end);
+      to = (u32 *)BG_SCREEN_BLOCK(5) + index;
+      picture = tile * 2;
+      from = (u32 *)Ram_CellTiles;
+      from += picture;
+      *to = *from;
+      from = (u32 *)(Ram_CellTiles + 4);
+      from += picture;
+      to += BG_SCREEN_WIDTH / 2;
+      *to = *from;
+    }
     cell += MAPGRID_SIZE - width;
   }
 }

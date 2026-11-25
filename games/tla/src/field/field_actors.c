@@ -744,12 +744,15 @@ void ActorSystem_PlaceSprites(void) {
       screenTop = dz - actor->y.fixed;
       if (dx > -toFIXED(32) && dx < toFIXED(272) && screenTop > -toFIXED(32) &&
           screenTop < toFIXED(224) &&
-          /* FAKEMATCH(temporary): priorityFlags, a pointer standing in for
-           * actor->priorityFlags's address. */
+          // The ROM keeps &actor->priorityFlags in a stack slot of its own,
+          // ordered among the declared locals' slots and above the slot the
+          // loop body's first statements create. Reload orders slots by
+          // pseudo number, so the source declared a local holding this
+          // address; its type, name and spelling here are not known.
           (priorityFlags = &actor->priorityFlags,
            !(*priorityFlags & ACTOR_PRIORITY_NOT_DRAWN))) {
-        /* FAKEMATCH(temporary): terrainId, a pointer standing in for
-         * actor->layer's address. */
+        // &actor->layer in a declared local, by the same stack-slot evidence
+        // as priorityFlags above; its type and name are not known.
         terrainId = &actor->layer;
         layer = *terrainId & 3;
         cells = map->layers[layer].cells;
@@ -767,8 +770,10 @@ void ActorSystem_PlaceSprites(void) {
           leftPriority = 0;
           rightPriority = 0;
           if (!(*priorityFlags & ACTOR_PRIORITY_IGNORES_RISES)) {
-            /* FAKEMATCH(temporary): basePriority, a pointer standing in for
-             * map->basePriority's address. */
+            // &map->basePriority in a declared local, by the same evidence:
+            // set inside this arm, yet numbered before the loop body's first
+            // statements, so declared at function level or at the loop body's
+            // head. Its type and name are not known.
             basePriority = &map->basePriority;
             priority = *basePriority;
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==

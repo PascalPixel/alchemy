@@ -442,21 +442,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create(8, 17, 18, 3,
                                       WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         COMMAND_ICON_X(state) = PSYNERGY_CHOSEN_ICON_X;
-        iconSprite->oam.word.attr01 =
-            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        iconSprite->oam.word.attr23 = 0;
+        MenuSprite_Initialize(
+            *iconSprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        CAMELOT_ASM("an asm with no instruction, text unknown: the literal "
-                    "pool after this sprite's stores sits where the ROM has it "
-                    "only if exactly 4 more bytes are counted between the load "
-                    "of the Psynergy icon's x (40) and the call to "
-                    "AbilityIcon_LoadIntoSlot than the instructions emitted, "
-                    "in all six editions; only a one-line asm counts bytes and "
-                    "emits nothing in this compiler; and the second scheduling "
-                    "pass keeps the load before VramCache_AllocEntry on either "
-                    "side of this point, which no length difference can do")
-        __asm__ volatile("");
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(parameter, handle);
         state->iconShown[1] = 1;
         windowState->textPalette = BASIC_COLORS_PALETTE;

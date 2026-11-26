@@ -749,8 +749,6 @@ void AnemosInnerSanctum_LightSymbol(void) {
     break;
   }
 
-  /* FAKEMATCH(dead): a block that only declares the Djinn lists and the line's
-   * ends after the blend weights, so they take the frame below them. */
   {
     u8 found[20];
     u8 order[20];

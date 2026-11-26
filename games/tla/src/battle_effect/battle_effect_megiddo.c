@@ -435,8 +435,6 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                         PICTURE_BYTES(MEGIDDO_FIRE_STRIPES);
       } while (0);
       model->mesh = coronaMesh;
-      /* FAKEMATCH(dead): a block that only places the width scale's
-       * declaration before the matrix is reset. */
       {
         FIXED widthScale = FIXED_ONE / 2;
 
@@ -459,8 +457,6 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       t->pixels = state->sheet + MEGIDDO_DUST_BLOB;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = flameMesh;
-      /* FAKEMATCH(dead): a block that only places the shade's declaration
-       * before the flags' store. */
       {
         s32 shade = -24;
 

@@ -836,8 +836,6 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
     sprite->depth = Actor_GetSpriteDepth(leader) - 1;
     spark->age = -1;
   }
-  /* FAKEMATCH(dead): a block that only places firstSlot's declaration at the
-   * store. */
   {
     s32 firstSlot = 0;
 

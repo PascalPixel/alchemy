@@ -323,9 +323,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       figureSprite.oam.word.attr01 =
           OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       figureSprite.oam.word.attr23 = 0;
-      /* FAKEMATCH(barrier): an empty asm after the figure's two stores, which
-       * only es and it need; as no asm. */
-      asm("");
+      ASM_NOTHING();
       figureSprite.oam.f.tile = figure->image.tile;
       figureSprite.oam.f.x = 172;
       figureSprite.oam.f.y = 56;
@@ -335,10 +333,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 =
         OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): an empty asm after the cursor's two stores; the
-     * literal pool needs 4 bytes counted that no instruction emits; as no asm.
-     */
-    asm("");
+    ASM_NOTHING();
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
     cursorSprite.oam.f.x =

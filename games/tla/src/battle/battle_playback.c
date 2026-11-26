@@ -243,9 +243,7 @@ void BattlePlayback_Run(void) {
       IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
       prompt->oam.word.attr01 = PLAYBACK_ARROW_ATTR0;
       prompt->oam.word.attr23 = x;
-      /* FAKEMATCH(barrier): an empty asm after the arrow's two stores keeps the
-       * address copy ahead of the shape's shift; as no asm. */
-      asm("");
+      ASM_NOTHING();
       prompt->oam.f.tile =
           VramCache_Reload(events->arrowResource, pictureTiles);
       x = window->x * 8 + (message->x >> 8) + 4;

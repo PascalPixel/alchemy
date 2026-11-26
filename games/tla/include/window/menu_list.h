@@ -128,9 +128,7 @@ enum { BATTLE_LIST_ROWS = 5 };
   {                                                                            \
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \
-    /* FAKEMATCH(barrier): an empty asm after the two stores; the literal pool \
-     * needs 4 bytes counted that no instruction emits; as no asm. */          \
-    asm("");                                                                   \
+    ASM_NOTHING();                                                             \
   }
 
 /// The battle menus' shared state, in its heap slot.

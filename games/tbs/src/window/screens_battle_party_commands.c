@@ -375,10 +375,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        /* FAKEMATCH(barrier): an empty asm after the icon's two stores; the
-         * literal pool needs 4 bytes counted that no instruction emits; as no
-         * asm. */
-        __asm__ volatile("");
+        ASM_NOTHING();
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(parameter, handle);
         state->iconShown[BATTLE_MENU_ICON_ABILITY] = 1;
         windowState->textPalette = BASIC_COLORS_PALETTE;
@@ -459,10 +456,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH(barrier): an empty asm after the icon's two stores; the
-         * literal pool needs 4 bytes counted that no instruction emits; as no
-         * asm. */
-        __asm__ volatile("");
+        ASM_NOTHING();
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(
@@ -650,10 +644,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH(barrier): an empty asm after the icon's two stores; the
-         * literal pool needs 4 bytes counted that no instruction emits; as no
-         * asm. */
-        __asm__ volatile("");
+        ASM_NOTHING();
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile =

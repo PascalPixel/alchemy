@@ -515,10 +515,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         ((u32 *)&iconSprite->oam)[0] =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         ((u32 *)&iconSprite->oam)[1] = 0;
-        /* FAKEMATCH(barrier): an empty asm after the summon icon's two stores;
-         * the literal pool needs 4 bytes counted that no instruction emits; as
-         * no asm. */
-        __asm__ volatile("");
+        ASM_NOTHING();
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(

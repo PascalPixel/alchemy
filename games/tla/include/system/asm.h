@@ -158,4 +158,13 @@
   /* FAKEMATCH(barrier): an empty asm that rewrites value; as no asm. */       \
   __asm__("" : "+r"(value))
 
+/// The statement that ends a menu sprite's set-up: it emits nothing, and the
+/// compiler counts four bytes for it when it places the next literal pool.
+#define ASM_NOTHING()                                                          \
+  /* FAKEMATCH(barrier): an empty asm; the literal pools after a menu sprite's \
+   * two stores sit where the ROM has them only with four bytes counted that   \
+   * no instruction emits, which nothing else in this compiler does; as no     \
+   * asm. */                                                                   \
+  __asm__ volatile("")
+
 #endif

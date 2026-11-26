@@ -284,6 +284,8 @@ struct CreditsOamEntry {
 STATIC_ASSERT(sizeof(struct CreditsOamEntry) == 8);
 
 /// Credits scroll position in pixels, in the low half of gWaitForFlashWrite.
+/* FAKEMATCH(signature): another name and type for gWaitForFlashWrite, given by
+ * an asm label; as a cast of gWaitForFlashWrite. */
 extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 
 // ewram.s reserves four bytes for each cell. The credits replace the task table

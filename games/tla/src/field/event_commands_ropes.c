@@ -308,6 +308,8 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, FIXED height) {
 
 /* VIEW(ropes): routine Trig_Atan as returning s16; system/system.h has it
  * return s32. */
+/* FAKEMATCH(signature): the second return type reaches Trig_Atan through an
+ * asm label; as Trig_Atan called with its own type. */
 extern s16 Trig_AtanHalfword(s32 x, s32 y) __asm__("Trig_Atan");
 
 /// Lays a rope's nodes along the line between two points again, bowed by half a

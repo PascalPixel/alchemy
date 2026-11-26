@@ -296,12 +296,27 @@ not been compared with SGL in detail yet.
 
 ### Its hardware is taken raw
 
-Camelot's own code makes four BIOS calls: Halt, Stop, CpuSet and SoundBias
-(GBATEK's SWI 02h, 03h, 0Bh and 19h). It never asks the BIOS to divide, take a
-square root or an arctangent, set an affine matrix, decompress or wait for
-VBlank: the library has a routine for each. Even the compiler's own division
-(`__divsi3`, `__udivsi3`, `__modsi3`) is the library's routines under those
-names.
+Each piece of assembly answers something [GBATEK](https://problemkaputt.de/gbatek.htm)
+says about the machine. One fact explains most of them: the cartridge is read
+16 bits at a time and takes 8 cycles to deliver a 32-bit ARM instruction,
+while the 32K of fast RAM delivers one in a single cycle. So code written as
+ARM does not run from the cartridge. It is kept in fast RAM, or copied there
+or onto the stack just before it runs, and what runs from the cartridge is
+Thumb.
+
+| GBATEK says | So the System |
+| --- | --- |
+| The fast RAM is 32K | keeps its books small, and copies a routine into a heap slot only while it is needed |
+| Only ARM code can multiply to a 64-bit product | keeps the 16.16 multiply as an ARM routine in fast RAM, which the Thumb code calls |
+| The BIOS can divide, take roots and arctangents, and unpack data | never asks it to: the library has a routine for each, and even the compiler's own division is the library's |
+| Halt stops the processor until an interrupt; Stop ends only on a key, the cartridge or the cable | halts in a loop until its own VBlank flag is set, and arms the keypad before it sleeps |
+| The BIOS saves r0 to r3, r12 and `lr`, then jumps to an ARM routine | has an ARM interrupt handler in fast RAM that saves r4 itself |
+| A DMA channel is three words: source, destination, control | writes all three with one instruction, and feeds a register a new value every line with HBlank transfers |
+| The tilted layer's origin can be rewritten on every line | gives the World Map's ground its own terms for each line |
+| Sound is two queues of samples; mixing is the program's job | has a mixer in fast RAM, part Nintendo's and part its own |
+
+Camelot's own code makes four BIOS calls in all: Halt, Stop, CpuSet and
+SoundBias (SWI 02h, 03h, 0Bh and 19h).
 
 ### A word on registers
 

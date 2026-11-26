@@ -48,6 +48,8 @@ typedef unsigned long long u64;
 // otherwise expand first and cannot be pasted.
 #define FIXED_LINKED_(symbol, name)                                            \
   ({                                                                           \
+    /* FAKEMATCH(signature): the linked name reached through an asm label, in  \
+     * the modern build only; as the fixed address. */                         \
     extern char symbol[] __asm__(name);                                        \
     void *volatile modern_address = symbol;                                    \
     modern_address;                                                            \
@@ -68,6 +70,5 @@ typedef unsigned long long u64;
 #endif
 /// Marks one of the few proven handwritten helpers inside C; proof says what
 /// no C compiles to. It expands to nothing.
-#define CAMELOT_ASM(proof)
 
 #endif

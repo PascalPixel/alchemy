@@ -94,10 +94,10 @@ void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
       register s32 y __asm__("r1") = depth >> 4;
       register s32 result __asm__("r0");
 
-      CAMELOT_ASM("ldr ip from the table and bl Matrix_CallInThumb, a call "
-                  "through ip that returns in Thumb, which no C call compiles "
-                  "to; its list is the call's: r2 to r4, ip, lr, flags and "
-                  "memory")
+      /* FAKEMATCH(asm): handwritten assembly: ldr ip from the table and bl
+       * Matrix_CallInThumb, a call through ip that returns in Thumb, which no C
+       * call compiles to; its list is the call's: r2 to r4, ip, lr, flags and
+       * memory. */
       __asm__ volatile("ldr\tip, %3\n\tbl\tMatrix_CallInThumb"
                        : "=r"(result)
                        : "r"(x), "r"(y), "m"(table->arcTan2.target)

@@ -298,6 +298,9 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // UB: the casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
+/* FAKEMATCH(signature): the three cells below take other names and types
+ * through asm labels, in the UBFIX build only; as the casts of the other arm.
+ */
 /// The sprite buffer, in gFlashNumRemainingBytes.
 extern struct CreditsOamEntry *
     gCreditsScrollObjects __asm__("gFlashNumRemainingBytes");

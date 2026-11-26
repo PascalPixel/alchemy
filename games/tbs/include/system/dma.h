@@ -70,8 +70,8 @@ struct DmaRegisters {
 
 /// Starts a DMA transfer: stores the source, destination and control words
 /// into `channel`'s registers with one stmia.
-CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc "
-            "pattern emits")
+/* FAKEMATCH(asm): handwritten assembly: stmia of three registers with no paired
+ * ldmia, which no agscc pattern emits. */
 static __inline__ void Dma_Set(const volatile void *source,
                                volatile void *destination, u32 control,
                                volatile u32 *channel) {

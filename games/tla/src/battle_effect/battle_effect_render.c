@@ -434,9 +434,9 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
 // second run copied from the first by its measured length.
 
 /// Copies two words from source to destination with one block load and store.
-CAMELOT_ASM("ldmia and stmia of two registers from r0 to r1 with scratch from "
-            "r2 up, in the shape of Dma_Set: agscc's block moves leave r0 and "
-            "r1 to the allocator")
+/* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of two registers from
+ * r0 to r1 with scratch from r2 up, in the shape of Dma_Set: agscc's block
+ * moves leave r0 and r1 to the allocator. */
 static __inline__ void CopyWords2(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;
@@ -447,9 +447,9 @@ static __inline__ void CopyWords2(const void *source, void *destination) {
 }
 
 /// Copies three words from source to destination with one block load and store.
-CAMELOT_ASM("ldmia and stmia of three registers from r0 to r1 with scratch "
-            "from r2 up, in the shape of Dma_Set: agscc's block moves leave r0 "
-            "and r1 to the allocator")
+/* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of three registers from
+ * r0 to r1 with scratch from r2 up, in the shape of Dma_Set: agscc's block
+ * moves leave r0 and r1 to the allocator. */
 static __inline__ void CopyWords3(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;
@@ -460,8 +460,9 @@ static __inline__ void CopyWords3(const void *source, void *destination) {
 }
 
 /// Copies four words from source to destination with one block load and store.
-CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
-            "three, so a 16-byte struct copy compiles to 12 and 4")
+/* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of four registers:
+ * agscc's block moves stop at three, so a 16-byte struct copy compiles to 12
+ * and 4. */
 static __inline__ void CopyWords4(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;

@@ -34,7 +34,8 @@ static __inline__ void System_SoftReset(void) {
   {                                                                            \
     gVBlankDone &= ~1;                                                         \
     do {                                                                       \
-      CAMELOT_ASM("Halt, which no C compiles to")                              \
+      /* FAKEMATCH(asm): handwritten assembly: Halt, which no C compiles to.   \
+       */                                                                      \
       __asm__ volatile("swi 2");                                               \
     } while (!(gVBlankDone & 1));                                              \
   }
@@ -99,7 +100,8 @@ void wait(s32 frames) {
   s16 savedDisplayControl;
   s16 savedBackdropColor;
 
-  CAMELOT_ASM("read the hardware stack pointer for the proven stack switch")
+  /* FAKEMATCH(asm): handwritten assembly: read the hardware stack pointer for
+   * the stack switch. */
   __asm__ volatile("mov %0, sp" : "=r"(sp));
 
   // Save the caller's stack and continue at the frame-wait stack top
@@ -109,7 +111,8 @@ void wait(s32 frames) {
 
     gSavedStackSize = top - base;
     Dma_Set(base, gSavedStack, DMA_COPY_WORDS(gSavedStackSize >> 2), REG_DMA3);
-    CAMELOT_ASM("the stack switch, a write to sp no C can express")
+    /* FAKEMATCH(asm): handwritten assembly: the stack switch, a write to sp no
+     * C can express. */
     __asm__ volatile("mov sp, %0" : : "r"(top) : "memory");
   }
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
@@ -216,7 +219,8 @@ void wait(s32 frames) {
         gSleepActive = 1;
         Io_Write16(KEYCNT_SHOULDERS_WAKE, &REG_KEYCNT);
         Bios_SoundBiasOff();
-        CAMELOT_ASM("Stop, which no C compiles to")
+        /* FAKEMATCH(asm): handwritten assembly: Stop, which no C compiles to.
+         */
         __asm__ volatile("swi 3");
         Bios_SoundBiasOn();
         Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
@@ -248,7 +252,8 @@ void wait(s32 frames) {
         base++;
         base--;
       }
-      CAMELOT_ASM("read the hardware stack pointer for its restore copy")
+      /* FAKEMATCH(asm): handwritten assembly: read the hardware stack pointer
+       * for its restore copy. */
       __asm__ volatile("mov %0, sp" : "=r"(base));
       /* FAKEMATCH(dead): updates of size by the new base that cancel out,
        * before the size is read again and the copy's size by name. */
@@ -256,8 +261,8 @@ void wait(s32 frames) {
       size -= (u32)base;
       base -= *size;
       sp = base;
-      CAMELOT_ASM(
-          "restore the hardware stack pointer after the proven stack copy")
+      /* FAKEMATCH(asm): handwritten assembly: restore the hardware stack
+       * pointer after the stack copy. */
       __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
       Dma_Set(gSavedStack, base, DMA_COPY_WORDS(gSavedStackSize >> 2),
               REG_DMA3);

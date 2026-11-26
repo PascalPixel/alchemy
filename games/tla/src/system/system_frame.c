@@ -111,9 +111,9 @@ enum {
     Sound_SuspendDirectSoundFar();                                             \
     (entry) = Cart_Start;                                                      \
     Io_Write16(0, &REG_IME);                                                   \
-    CAMELOT_ASM("the cartridge restart transfers control without returning; "  \
-                "the target is in r4 because the jump lists r0 to r2 as "      \
-                "changed while r3 holds REG_IME, which no C call gives")       \
+    /* FAKEMATCH(asm): handwritten assembly: the cartridge restart transfers   \
+     * control without returning; the target is in r4 because the jump lists   \
+     * r0 to r2 as changed while r3 holds REG_IME, which no C call gives. */   \
     __asm__ volatile("bx %0"                                                   \
                      :                                                         \
                      : "r"(entry)                                              \
@@ -123,7 +123,7 @@ enum {
 /// Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
 /// Stop call): the sleep that L, R and Select end.
 static __inline__ void Bios_Stop(void) {
-  CAMELOT_ASM("BIOS Stop has no C instruction.")
+  /* FAKEMATCH(asm): handwritten assembly: BIOS Stop has no C instruction. */
   __asm__ volatile("swi 3");
 }
 
@@ -350,8 +350,9 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 
 /// Copies 16 bytes from `source` to `destination` with one four-register load
 /// and store.
-CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
-            "three, so a 16-byte struct copy compiles to 12 and 4")
+/* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of four registers:
+ * agscc's block moves stop at three, so a 16-byte struct copy compiles to 12
+ * and 4. */
 static __inline__ void Copy16Bytes(const void *source,
                                    volatile void *destination) {
   register const void *src __asm__("r0") = source;

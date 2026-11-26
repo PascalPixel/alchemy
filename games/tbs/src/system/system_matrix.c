@@ -28,7 +28,8 @@ void Matrix_Initialize(void) {
   gMatrixStackTop =
       HeapSlot_AllocEwram(HEAP_SLOT_MATRIX_STACK, sizeof(gCurrentMatrix));
   gMatrixStackDepth = 0;
-  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
+  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
+   * of matrix.h. */
   Matrix_SetCurrentUnit();
 }
 
@@ -64,7 +65,8 @@ void Matrix_Pop(void) {
 /// Resets gCurrentMatrix to the unit matrix. Reached through the far-call
 /// table.
 void Matrix_ResetUnit(void) {
-  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
+  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
+   * of matrix.h. */
   Matrix_SetCurrentUnit();
 }
 
@@ -105,7 +107,8 @@ void Matrix_RotateX(s32 angle) {
   FIXED sine = Trig_Sin(angle);
   FIXED cosine = Trig_Cos(angle);
 
-  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
+  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
+   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[4] = cosine;
   matrix[5] = sine;
@@ -120,7 +123,8 @@ void Matrix_RotateY(s32 angle) {
   FIXED sine = Trig_Sin(angle);
   FIXED cosine = Trig_Cos(angle);
 
-  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
+  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
+   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[0] = cosine;
   matrix[2] = -sine;
@@ -135,7 +139,8 @@ void Matrix_RotateZ(s32 angle) {
   FIXED sine = Trig_Sin(angle);
   FIXED cosine = Trig_Cos(angle);
 
-  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
+  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
+   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[0] = cosine;
   matrix[1] = sine;
@@ -148,7 +153,8 @@ void Matrix_RotateZ(s32 angle) {
 void Matrix_TranslateVector(const FIXED *position) {
   MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
+  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
+   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[MATRIX_TRANSLATION_X] = position[0];
   matrix[MATRIX_TRANSLATION_Y] = position[1];
@@ -160,7 +166,8 @@ void Matrix_TranslateVector(const FIXED *position) {
 void Matrix_ScaleVector(const FIXED *scale) {
   MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
+  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
+   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[0] = scale[0];
   matrix[4] = scale[1];

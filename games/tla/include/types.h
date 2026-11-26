@@ -27,6 +27,10 @@ typedef unsigned long long u64;
 /// RAM still reaches it.
 #define FIXED_LINKED(linked)                                                   \
   ({                                                                           \
+    /* FAKEMATCH(signature): the linked name reached through an asm label, in  \
+     * the modern build only; as the fixed address. */                         \
+    /* FAKEMATCH(barrier): an empty asm that hides the address from the modern \
+     * compiler; as no asm. */                                                 \
     extern char modern_##linked[] __asm__(#linked);                            \
     void *modern_address = modern_##linked;                                    \
     __asm__("" : "+r"(modern_address));                                        \
@@ -46,7 +50,6 @@ typedef unsigned long long u64;
 #endif
 /// Marks one of the few proven handwritten helpers inside C; proof says what
 /// no C compiles to. It expands to nothing.
-#define CAMELOT_ASM(proof)
 
 /// The old compilers' soft frame pointer as an asm clobber, which a current GCC
 /// refuses; there the barrier clobbers memory instead.

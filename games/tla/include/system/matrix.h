@@ -42,7 +42,8 @@ void Matrix_LookAt(FIXED *eye, FIXED *target);
 /// Sets a twelve-word matrix to the unit matrix: FIXED_ONE (1.0) on the
 /// rotation's diagonal, the rest 0.
 static __inline__ void Matrix_SetUnit(void *matrix) {
-  CAMELOT_ASM("three stmia no C store or copy compiles to")
+  /* FAKEMATCH(asm): handwritten assembly: three stmia no C store or copy
+   * compiles to. */
   __asm__ volatile("mov r0, %0\n\tmov r1, #128\n\tmov r2, #0\n\tmov r3, #0\n\t"
                    "mov r4, #0\n\tlsl r1, r1, #9\n\t"
                    "stmia r0!, {r1, r2, r3, r4}\n\t"
@@ -63,7 +64,8 @@ static __inline__ void Matrix_SetUnit(void *matrix) {
 static __inline__ void Matrix_SetCurrentUnit(void) {
   s32 zero;
 
-  CAMELOT_ASM("Matrix_SetUnit's three stmia, applied to the current matrix")
+  /* FAKEMATCH(asm): handwritten assembly: Matrix_SetUnit's three stmia, applied
+   * to the current matrix. */
   __asm__ volatile(MATRIX_UNIT_REGISTER_SETUP "stmia r0!, {r1, r2, %0, r4}\n\t"
                                               "stmia r0!, {r1, r2, %0, r4}\n\t"
                                               "stmia r0!, {r1, r2, %0, r4}"

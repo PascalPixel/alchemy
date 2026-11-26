@@ -47,6 +47,7 @@ Find them with `grep -rn "FAKEMATCH(" games`. The kinds, worst first:
 | ----------- | ------------------------------------------------------- |
 | `signature` | a type that isn’t the real one                          |
 | `volatile`  | `volatile` on something no hardware or interrupt shares |
+| `asm`       | an `asm` statement with instructions                    |
 | `barrier`   | an empty `asm`                                          |
 | `wrapper`   | a call layer with no purpose of its own                 |
 | `temporary` | a local that only stands for another value              |
@@ -101,7 +102,6 @@ These marks are used in the source. Keep them true when you change the code arou
 | `LEFTOVER(frame)`, `LEFTOVER(template)` | Camelot’s own code that does nothing in this edition but still shapes its bytes |
 | `VIEW(part)`                            | One part of a file sees a name differently from the rest; unfinished            |
 | `XXX:`                                  | An open question, with what would settle it                                     |
-| `CAMELOT_ASM("proof")`                  | A helper Camelot wrote in assembly, kept as assembly inside C                   |
 
 Answering an `XXX:` is a good first contribution: `grep -rn "XXX:" games`.
 

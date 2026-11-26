@@ -116,8 +116,8 @@ static inline void Iwram_CopyWords(volatile void *destination,
 #ifdef MODERN
 /// Calls an IWRAM routine that returns through ip instead of lr, with left and
 /// right in r0 and r1, and returns its r0.
-CAMELOT_ASM(
-    "a call that returns through ip, which no procedure-call standard produces")
+/* FAKEMATCH(asm): handwritten assembly: a call that returns through ip, which
+ * no procedure-call standard produces. */
 static inline s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
   s32 result;
 
@@ -133,8 +133,8 @@ static inline s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
   return result;
 }
 #else
-CAMELOT_ASM(
-    "a call that returns through ip, which no procedure-call standard produces")
+/* FAKEMATCH(asm): handwritten assembly: a call that returns through ip, which
+ * no procedure-call standard produces. */
 static __inline__ s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
   register s32 result __asm__("r0") = left;
   register s32 factor __asm__("r1") = right;

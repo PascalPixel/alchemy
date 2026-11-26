@@ -89,6 +89,8 @@ The System is one library, carried from the Saturn to the Game Boy Advance by so
 
 **Three compilers built it.** The Thumb C is GCC’s snapshot of July 2000, the one Red Hat shipped as 2.96. The C compiled as ARM is GCC 2.95.2. Only the sound driver and the save code, which are Nintendo’s libraries, were built by Nintendo’s compiler.
 
+**It was still being worked on between the games.** ☀️ reaches the multiply through a macro that returns through `ip`, so that the caller keeps `lr`. ⚓️ has neither the macro nor that entry point: its compiler calls any routine through a register with `mov lr, rN` and the second half of a `bl`, four bytes and no helper, which no released GCC does. The trick moved from a header into the compiler.
+
 What this predicts, and where it stands:
 
 | It predicts | What we find |

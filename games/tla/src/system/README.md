@@ -245,6 +245,26 @@ It works the other way too, and one scene can serve as several rooms:
 [Increase item and level](../debug/README.md#the-test-scenes) becomes four
 other rooms through four of its entrances.
 
+## Where this library comes from
+
+The same place as The Broken Seal's:
+[its System page](../../../tbs/src/system/README.md#where-this-library-comes-from)
+says what the library is, why it looks like Sega's SGL, and how it shares the
+processor's registers. Three things changed by the time of this game, which
+shows the library was still being worked on.
+
+- **The call through a register moved into the compiler.** The Broken Seal
+  reaches the multiply through a macro that returns through `ip`, so that the
+  caller keeps `lr`. Here there is neither the macro nor that way in: the
+  compiler calls any routine through a register with `mov lr, rN` and the
+  second half of a `bl`, four bytes and no helper, which no released GCC does.
+- **The unit matrix macro was edited.** The System stores it with 1.0 built
+  first; the battle code still has The Broken Seal's order.
+- **Routine addresses are parked in the high registers.** Thumb code can
+  barely use r8 to r11, but the new call takes any register, so
+  `Matrix_BuildLookAt` keeps the addresses of the multiply, the divide and the
+  dot product in r11, r9 and r10 by name.
+
 ## Where the rest is
 
 The cartridge itself, and how its contents are found, is

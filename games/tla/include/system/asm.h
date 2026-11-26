@@ -9,8 +9,8 @@
 ///
 /// They are a library's worth, not a scattering: the System is built to the
 /// shape of Sega's SGL, on the hardware GBATEK describes, and these are the
-/// few operations of it small enough to write in place. CONTRIBUTING.md says
-/// what that rests on.
+/// few operations of it small enough to write in place. The System's README,
+/// src/system/README.md, says what that rests on.
 
 // The BIOS
 //

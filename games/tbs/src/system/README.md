@@ -235,6 +235,67 @@ It works the other way too, and one scene can serve several towns: the
 Sanctums of five towns are one scene that looks at which way in the party
 took.
 
+## Where this library comes from
+
+Nobody outside Camelot has seen their source. This is what the ROMs show when
+you read them beside [SGL's manual](https://www.infochunk.com/saturn/segahtml/sgl/sglr/),
+Sega's library for the Saturn, and [GBATEK](https://problemkaputt.de/gbatek.htm).
+Each line is something you can check in the tree.
+
+The System is one library, carried from the Saturn to the Game Boy Advance by
+someone who wrote assembly as readily as C. It has three layers:
+
+1. **Routines written in assembly**, kept in fast RAM: the multiply, the
+   divide, the square root, the matrix product, the point transform, the fills
+   and the decompressor ([iwram_routines.s](iwram_routines.s)).
+2. **A handful of macros** for what is too small to be worth a call
+   ([system/asm.h](../../include/system/asm.h)).
+3. **C**, which is everything else.
+
+### Its shape is SGL's
+
+| Here | In SGL's manual |
+| --- | --- |
+| `FIXED`, 16.16; angles of 65,536 to the turn; a matrix of twelve words | `FIXED`, `ANGLE`, `MATRIX` |
+| `Matrix_RotateX`, `Y` and `Z` write the same four cells with the same signs | the matrices printed for `slRotX`, `slRotY`, `slRotZ` |
+| The fixed-point divide takes its divisor first and returns b / a | `slDivFX` returns b / a |
+| The unit matrix is stored at a pointer, or at the current matrix | `slUnitMatrix` takes a pointer, or `CURRENT` |
+| `Dma_Set` takes source, destination, count and a fourth word; loops wait on a channel's busy bit | `slDMAXCopy`'s four arguments; `slDMAWait` |
+| The debug text prints strings and hex numbers at a place on the screen | `slPrint`, `slPrintHex` |
+
+### Its hardware is taken raw
+
+Camelot's own code makes four BIOS calls: Halt, Stop, CpuSet and SoundBias
+(GBATEK's SWI 02h, 03h, 0Bh and 19h). It never asks the BIOS to divide, take a
+square root or an arctangent, set an affine matrix, decompress or wait for
+VBlank: the library has a routine for each. Even the compiler's own division
+(`__divsi3`, `__udivsi3`, `__modsi3`) is the library's routines under those
+names.
+
+### A word on registers
+
+The processor has sixteen registers, r0 to r15: slots that each hold one number
+while the code works on it. They are the processor's, the same in every Game
+Boy Advance, and what a register holds changes from one routine to the next.
+What a programmer chooses is the rule for sharing them between a routine and
+whatever it calls.
+
+The usual rule lets a routine destroy r0 to r3 and makes it hand back r4 to
+r11 as it found them. This library moves the line by one: **r0 to r4 are
+scratch.** Every routine written in assembly follows it, the C is compiled
+with an option that says the same (`-fcall-used-r4`), and the macros follow it
+too. A macro takes its arguments in the registers a call would pass them in,
+r0, r1, r2, r3 in order, and destroys nothing a call would keep. So
+`Dma_Set(source, destination, count, channel)` always has those four in r0,
+r1, r2 and r3, in every one of its hundreds of uses.
+
+### Three compilers built it
+
+The C that runs as Thumb code is GCC's snapshot of July 2000, the one Red Hat
+shipped as 2.96. The C that runs as ARM code is GCC 2.95.2. Only the sound
+driver and the save code, which are Nintendo's libraries, came from Nintendo's
+compiler.
+
 ## Where the rest is
 
 The cartridge itself, and how its contents are found, is

@@ -188,13 +188,14 @@
 
 // A statement that emits nothing
 
-/// The statement that ends a menu sprite's set-up: it emits nothing, and the
-/// compiler counts four bytes for it when it places the next literal pool.
+/// The statement that ends a sprite's set-up, a menu sprite's or a battle
+/// effect's: it emits nothing, the compiler counts four bytes for it when it
+/// places the next literal pool, and nothing is scheduled across it.
 #define ASM_NOTHING()                                                          \
   /* FAKEMATCH(barrier): an empty asm; the literal pools after a menu sprite's \
    * two stores sit where the ROM has them only with four bytes counted that   \
-   * no instruction emits, which nothing else in this compiler does; as no     \
-   * asm. */                                                                   \
+   * no instruction emits, which nothing else in this compiler does, and       \
+   * Daedalus's missile sprite needs the same statement; as no asm. */         \
   __asm__ volatile("")
 
 // The modern build

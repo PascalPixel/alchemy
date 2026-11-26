@@ -601,9 +601,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       state->sprites[DAEDALUS_MISSILE] = obj;
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
                       DECODE_BUFFER, 256);
-      /* FAKEMATCH(barrier): an empty asm before the missile's copies; as the
-       * copies alone. */
-      __asm__("");
+      ASM_NOTHING();
       for (i = 0; i != DAEDALUS_MISSILE_COPIES; i++) {
         state->sprites[DAEDALUS_MISSILE + 1 + i] =
             EffectSprite_Acquire(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(15));

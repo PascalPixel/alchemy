@@ -515,16 +515,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         ((u32 *)&iconSprite->oam)[0] =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         ((u32 *)&iconSprite->oam)[1] = 0;
-        CAMELOT_ASM("an asm with no instruction, text unknown: the literal "
-                    "pool after this sprite's stores sits where the ROM has it "
-                    "only if exactly 4 more bytes are counted between the load "
-                    "of the summon icon's x (56) and the call to "
-                    "AbilityIcon_LoadIntoSlot than the instructions emitted, "
-                    "in all six editions; only a one-line asm counts bytes and "
-                    "emits nothing in this compiler; and the second scheduling "
-                    "pass keeps the load of state and the row's subtraction on "
-                    "either side of this point, which no length difference can "
-                    "do")
+        /* FAKEMATCH(barrier): an empty asm after the summon icon's two stores;
+         * the literal pool needs 4 bytes counted that no instruction emits; as
+         * no asm. */
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;

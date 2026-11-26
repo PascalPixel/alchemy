@@ -491,9 +491,8 @@ void BattleMessage_WaitForAdvance(void) {
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
     // Both attribute words are set whole: an 8 by 16 arrow of 256 colours,
     // blended with what is behind it.
-    prompt->oam.word.attr01 =
-        OBJ_SIZE_8X16 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    prompt->oam.word.attr23 = 0;
+    MenuSprite_Initialize(*prompt, OBJ_SIZE_8X16 | OBJ_256_COLORS |
+                                       OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
     prompt->oam.f.tile = VramCache_Reload(tileSlot, pictureTiles);
     prompt->oam.f.x = window->x * 8 + (message->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames.
@@ -533,8 +532,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
-    prompt->oam.word.attr01 = OBJ_SIZE_16X16;
-    prompt->oam.word.attr23 = 0;
+    MenuSprite_Initialize(*prompt, OBJ_SIZE_16X16);
     prompt->oam.f.tile = VramCache_Reload(tileSlot, pointerTiles);
     prompt->oam.f.x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->oam.f.y = position.y - ((gFrameCount & 4) >> 2) - 8;

@@ -323,9 +323,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         BATTLE_MENU_STATE->commandActor = actorId;
         BATTLE_MENU_STATE->commandSelection[1] = 0;
         iconSprite = &BATTLE_MENU_STATE->icons[2];
-        iconSprite->oam.word.attr01 =
-            OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        iconSprite->oam.word.attr23 = 0;
+        MenuSprite_Initialize(
+            *iconSprite, OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         iconSprite->oam.f.tile = Portrait_Load(unit->enemyId, smallIconSlot);
         iconSprite->oam.f.x = BATTLE_PORTRAIT_X;
         iconSprite->oam.f.y = 128;
@@ -711,19 +710,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3,
                                       WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         COMMAND_ICON_X(state) = ITEM_CHOSEN_ICON_X;
-        iconSprite->oam.word.attr01 =
-            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        CAMELOT_ASM("an asm with no instruction, text unknown: the literal "
-                    "pool after this sprite's stores sits where the ROM has it "
-                    "only if exactly 4 more bytes are counted between the load "
-                    "of the item icon's x (48) and the call to "
-                    "ItemIcon_LoadIntoSlot than the instructions emitted, in "
-                    "all six editions; only a one-line asm counts bytes and "
-                    "emits nothing in this compiler; and the second scheduling "
-                    "pass keeps the copy of the window's pointer on either "
-                    "side of this point, which no length difference can do")
-        __asm__ volatile("");
-        iconSprite->oam.word.attr23 = 0;
+        MenuSprite_Initialize(
+            *iconSprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile =

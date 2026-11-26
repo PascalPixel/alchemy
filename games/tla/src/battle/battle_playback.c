@@ -243,7 +243,12 @@ void BattlePlayback_Run(void) {
       IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
       prompt->oam.word.attr01 = PLAYBACK_ARROW_ATTR0;
       prompt->oam.word.attr23 = x;
-      /* FAKEMATCH(barrier): an empty asm after x is stored. */
+      CAMELOT_ASM("an asm with no instruction, text unknown: the one that "
+                  "ends MenuSprite_Initialize, after a menu sprite's two "
+                  "attribute words; here it counts no byte that shows, and "
+                  "the second scheduling pass keeps the copy of the arrow's "
+                  "address ahead of the shape's shift, in all six editions, "
+                  "which no label here does")
       asm("");
       prompt->oam.f.tile =
           VramCache_Reload(events->arrowResource, pictureTiles);

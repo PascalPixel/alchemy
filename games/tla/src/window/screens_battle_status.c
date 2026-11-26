@@ -257,9 +257,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     BattleStatus_DrawPageArrows(STATUS_PAGE_ARROW_VRAM);
     if (redraw != 0)
       Portrait_Load(member, portraitSlot);
-    Io_Write32(OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT),
-               &sprite->oam.word.attr01);
-    sprite->oam.word.attr23 = 0;
+    MenuSprite_Initialize(*sprite,
+                          OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
     sprite->oam.f.tile = gVramCacheEntries[portraitSlot].offset >> 5;
     sprite->oam.f.x = 8;
     sprite->oam.f.y = 24;
@@ -545,9 +544,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     {
       struct SummaryOam *face = BattleObject_GetFar(member)->object->records;
 
-      portraitSprite.oam.word.attr01 =
-          OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      portraitSprite.oam.word.attr23 = 0;
+      MenuSprite_Initialize(portraitSprite,
+                            OBJ_SIZE_64X64 | OBJ_256_COLORS |
+                                OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
       if (face != NULL) {
         portraitSprite.oam.f.tile = face->oam.f.tile;
         portraitSprite.oam.f.x = 172;
@@ -558,19 +557,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       }
     }
 
-    cursorSprite.oam.word.attr01 =
-        OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    cursorSprite.oam.word.attr23 = 0;
-    CAMELOT_ASM("an asm with no instruction, text unknown: the literal pool "
-                "after this sprite's stores sits where the ROM has it only if "
-                "exactly 4 more bytes are counted between the load of the "
-                "figure's x (172) and the call to VramCache_Reload than the "
-                "instructions emitted, in all six editions; only a one-line "
-                "asm counts bytes and emits nothing in this compiler; and the "
-                "second scheduling pass keeps the load of the next pool word "
-                "on either side of this point, which no length difference can "
-                "do")
-    asm("");
+    MenuSprite_Initialize(cursorSprite,
+                          OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
     cursorSprite.oam.f.tile = VramCache_Reload(cursorSlot, gPointingHandTiles);
     {
       s32 bob = gFrameCount & 4;

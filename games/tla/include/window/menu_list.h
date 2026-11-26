@@ -125,10 +125,19 @@ enum { BATTLE_LIST_ROWS = 5 };
 /// tile and place still to come. The battle lists, the status screen and the
 /// command row start their sprites so.
 #define MenuSprite_Initialize(sprite, shape)                                   \
-  do {                                                                         \
+  {                                                                            \
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \
-  } while (0)
+    CAMELOT_ASM(                                                               \
+        "an asm with no instruction, text unknown: after these two stores "    \
+        "the literal pool sits where the ROM has it only if exactly 4 more "   \
+        "bytes are counted than the instructions emitted, at the battle "      \
+        "status cursor and at the command menu's Psynergy and item icons, "    \
+        "in all six editions; only a one-line asm counts bytes and emits "     \
+        "nothing in this compiler; and with it the icon loops of the three "   \
+        "battle lists are the ROM's as plain stores")                          \
+    asm("");                                                                   \
+  }
 
 /// The battle menus' shared state, in its heap slot.
 #define BATTLE_MENU_STATE                                                      \

@@ -111,7 +111,9 @@ enum {
     Sound_SuspendDirectSoundFar();                                             \
     (entry) = Cart_Start;                                                      \
     Io_Write16(0, &REG_IME);                                                   \
-    CAMELOT_ASM("the cartridge restart transfers control without returning.")  \
+    CAMELOT_ASM("the cartridge restart transfers control without returning; "  \
+                "the target is in r4 because the jump lists r0 to r2 as "      \
+                "changed while r3 holds REG_IME, which no C call gives")       \
     __asm__ volatile("bx %0"                                                   \
                      :                                                         \
                      : "r"(entry)                                              \
@@ -135,9 +137,7 @@ void wait(s32 frames) {
   s32 j;
   s16 display;
   s16 backdrop;
-  /* FAKEMATCH(barrier): the restart address in this local and System_Reset's
-   * jump listing changes it does not make; as the address given to the jump
-   * with no clobbers. */
+  // The start address, set at each restart.
   u32 entry;
 
   for (i = 0; i < (u32)frames; i++) {

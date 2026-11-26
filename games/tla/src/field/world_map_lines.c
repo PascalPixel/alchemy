@@ -56,7 +56,7 @@ extern const struct FarCallSystemTable FarCall_RuntimeTable;
 
 /// Calls the Thumb routine whose address is in ip with (x, y) from this ARM
 /// code and returns its result: here the far-call table's arctangent, for the
-/// camera's yaw.
+/// camera's yaw, called from the asm below by name.
 s32 Matrix_CallInThumb(s32 x, s32 y);
 
 /// Builds the world map's per-scanline affine table for one frame: the ground
@@ -86,19 +86,21 @@ void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
     depth = targetZ - eyeZ;
     targetDeltaX -= eyeX;
     {
-      s32 x = targetDeltaX >> 4;
-      s32 y;
-      CAMELOT_ASM("ip holds the target Matrix_CallInThumb jumps to, a "
-                  "linkage no procedure-call standard produces")
-      register void *entry __asm__("ip");
+      // The yaw: the far-call table's arctangent of the view's direction,
+      // called in Thumb through Matrix_CallInThumb with its target in ip.
+      register s32 x __asm__("r0") = targetDeltaX >> 4;
+      register s32 y __asm__("r1") = depth >> 4;
+      register s32 result __asm__("r0");
 
-      /* FAKEMATCH(barrier): an empty asm on targetDeltaX. */
-      __asm__("" : : "r"(targetDeltaX));
-      y = depth >> 4;
-      entry = table->arcTan2.target;
-      CAMELOT_ASM("the empty asm keeps ip set for the call, which C cannot say")
-      __asm__("" : : "r"(entry));
-      angle = (u16)Matrix_CallInThumb(x, y);
+      CAMELOT_ASM("ldr ip from the table and bl Matrix_CallInThumb, a call "
+                  "through ip that returns in Thumb, which no C call compiles "
+                  "to; its list is the call's: r2 to r4, ip, lr, flags and "
+                  "memory")
+      __asm__ volatile("ldr\tip, %3\n\tbl\tMatrix_CallInThumb"
+                       : "=r"(result)
+                       : "r"(x), "r"(y), "m"(table->arcTan2.target)
+                       : "r2", "r3", "r4", "ip", "lr", "cc", "memory");
+      angle = (u16)result;
     }
   }
   // The texture origin: the target at half scale.

@@ -646,9 +646,6 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             iconSprites[j].oam.f.tile =
                 ItemIcon_LoadIntoSlot(item, iconSlots[j]);
           }
-          /* FAKEMATCH(dead): a store nothing reads, which keeps the list loop's
-           * exit on the fill loop's test. */
-          item = 0;
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
                 VramCache_Reload(iconSlots[j], (const void *)-1);
@@ -734,9 +731,6 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                 range--;
               RangeIcon_Draw(statusWindow, 16, j * 2 + 8, range, 0);
             }
-            /* FAKEMATCH(dead): a store nothing reads, which keeps the list
-             * loop's exit on the fill loop's test. */
-            id = 0;
             for (; j <= 3; j++)
               iconSprites[j].oam.f.tile =
                   VramCache_Reload(iconSlots[j], (const void *)-1);

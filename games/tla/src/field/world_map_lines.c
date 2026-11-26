@@ -89,8 +89,8 @@ void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
     {
       // The yaw: the far-call table's arctangent of the view's direction,
       // called in Thumb through Matrix_CallInThumb with its target in ip.
-      THUMB_CALL_ARCTAN(angle, targetDeltaX >> 4, depth >> 4,
-                        table->arcTan2.target);
+      ASM_THUMB_CALL_ARCTAN(angle, targetDeltaX >> 4, depth >> 4,
+                            table->arcTan2.target);
     }
   }
   // The texture origin: the target at half scale.

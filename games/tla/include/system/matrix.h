@@ -39,8 +39,17 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out);
 void Matrix_SetLookAt(FIXED *eye, FIXED *target);
 void Matrix_LookAt(FIXED *eye, FIXED *target);
 
-// Its assembly is in system/asm.h, with the rest.
-#define ASM_PART_MATRIX
 #include "system/asm.h"
+
+/// Sets a twelve-word matrix to the unit matrix: FIXED_ONE (1.0) on the
+/// rotation's diagonal, the rest 0.
+static __inline__ void Matrix_SetUnit(void *matrix) { ASM_MATRIX_UNIT(matrix); }
+
+/// Resets the current matrix to the unit matrix.
+static __inline__ void Matrix_SetCurrentUnit(void) {
+  s32 zero;
+
+  ASM_MATRIX_UNIT_CURRENT(zero, gCurrentMatrix);
+}
 
 #endif

@@ -113,9 +113,28 @@ static inline void Iwram_CopyWords(volatile void *destination,
     Iwram_CopyWords(destination, source, size);                                \
   } while (0)
 
-// Its assembly is in system/asm.h, with the rest.
-#define ASM_PART_IWRAM_CALL
 #include "system/asm.h"
+
+#ifdef MODERN
+/// Calls an IWRAM routine that returns through ip instead of lr, with left and
+/// right in r0 and r1, and returns its r0.
+/* FAKEMATCH(asm): handwritten assembly: a call that returns through ip, which
+ * no procedure-call standard produces. */
+static inline s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
+  s32 result;
+
+  ASM_CALL_RETURN_IP_MODERN(result, left, right, routine);
+  return result;
+}
+#else
+static __inline__ s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
+  ASM_REGISTER(s32 result, "r0") = left;
+  ASM_REGISTER(s32 factor, "r1") = right;
+
+  ASM_CALL_RETURN_IP(result, factor, routine);
+  return result;
+}
+#endif
 
 /// Iwram_MulFX's routine in IWRAM, which returns through ip.
 extern u8 IwramMulFXReturnIp[];

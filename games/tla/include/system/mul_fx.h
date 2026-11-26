@@ -7,9 +7,20 @@
 #include "fixed_math.h"
 #include "types.h"
 
-// Its assembly is in system/asm.h, with the rest.
-#define ASM_PART_MUL_FX
 #include "system/asm.h"
+
+/// Multiplies 16.16 fixed-point values, returning the middle 32 product bits:
+/// IwramMulFX's three instructions written in place.
+static __inline__ FIXED MulFX(FIXED left, FIXED right) {
+  u32 low;
+  s32 high;
+  s32 result;
+
+  ASM_SMULL(high, low, left, right);
+  high = INTtoFIXED(high);
+  ASM_ORR_SHIFTED(result, high, low);
+  return result;
+}
 
 /// The high word of a times b; by RECIPROCAL_OF(d), a quick a / d.
 u32 Math_UnsignedMulHigh(u32 a, u32 b);

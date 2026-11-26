@@ -68,8 +68,18 @@ struct DmaRegisters {
     dma0_[DMA_CONTROL_HALFWORD];                                               \
   }
 
-// Its assembly is in system/asm.h, with the rest.
-#define ASM_PART_DMA
 #include "system/asm.h"
+
+/// Starts a DMA transfer: stores the source, destination and control words
+/// into `channel`'s registers with one stmia.
+static __inline__ void Dma_Set(const volatile void *source,
+                               volatile void *destination, u32 control,
+                               volatile u32 *channel) {
+  ASM_REGISTER(volatile u32 *dma, "r3") = channel;
+  ASM_REGISTER(u32 src, "r0") = (u32)source;
+  ASM_REGISTER(u32 dst, "r1") = (u32)destination;
+  ASM_REGISTER(u32 cnt, "r2") = control;
+  ASM_DMA_STORE(src, cnt, dma, dst);
+}
 
 #endif

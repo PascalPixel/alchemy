@@ -35,7 +35,7 @@ static __inline__ void System_SoftReset(void) {
   {                                                                            \
     gVBlankDone &= ~1;                                                         \
     do {                                                                       \
-      BIOS_HALT();                                                             \
+      ASM_BIOS_HALT();                                                         \
     } while (!(gVBlankDone & 1));                                              \
   }
 
@@ -99,7 +99,7 @@ void wait(s32 frames) {
   s16 savedDisplayControl;
   s16 savedBackdropColor;
 
-  STACK_POINTER_GET(sp);
+  ASM_STACK_POINTER_GET(sp);
 
   // Save the caller's stack and continue at the frame-wait stack top
   base = sp;
@@ -108,7 +108,7 @@ void wait(s32 frames) {
 
     gSavedStackSize = top - base;
     Dma_Set(base, gSavedStack, DMA_COPY_WORDS(gSavedStackSize >> 2), REG_DMA3);
-    STACK_POINTER_SET(top);
+    ASM_STACK_POINTER_SET(top);
   }
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the frame pass's tasks and build this frame's sprites
@@ -214,7 +214,7 @@ void wait(s32 frames) {
         gSleepActive = 1;
         Io_Write16(KEYCNT_SHOULDERS_WAKE, &REG_KEYCNT);
         Bios_SoundBiasOff();
-        BIOS_STOP();
+        ASM_BIOS_STOP();
         Bios_SoundBiasOn();
         Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
         gSleepActive = 0;
@@ -245,14 +245,14 @@ void wait(s32 frames) {
         base++;
         base--;
       }
-      STACK_POINTER_GET(base);
+      ASM_STACK_POINTER_GET(base);
       /* FAKEMATCH(dead): updates of size by the new base that cancel out,
        * before the size is read again and the copy's size by name. */
       size += (u32)base;
       size -= (u32)base;
       base -= *size;
       sp = base;
-      STACK_POINTER_SET(sp);
+      ASM_STACK_POINTER_SET(sp);
       Dma_Set(gSavedStack, base, DMA_COPY_WORDS(gSavedStackSize >> 2),
               REG_DMA3);
       while (DMA3->control & DMA_BUSY)

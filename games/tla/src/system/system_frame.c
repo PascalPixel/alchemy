@@ -111,12 +111,14 @@ enum {
     Sound_SuspendDirectSoundFar();                                             \
     (entry) = Cart_Start;                                                      \
     Io_Write16(0, &REG_IME);                                                   \
-    CART_JUMP(entry);                                                          \
+    ASM_CART_JUMP(entry);                                                      \
   }
 
-// Its assembly is in system/asm.h, with the rest.
-#define ASM_PART_BIOS_STOP
 #include "system/asm.h"
+
+/// Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
+/// Stop call): the sleep that L, R and Select end.
+static __inline__ void Bios_Stop(void) { ASM_BIOS_STOP(); }
 
 /// Frames the debug CPU-load display holds a peak.
 enum { CPU_LOAD_PEAK_FRAMES = 30 };
@@ -339,9 +341,16 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   Io_Write16(held, &gInput.previousHeld);
 }
 
-// Its assembly is in system/asm.h, with the rest.
-#define ASM_PART_COPY_16
 #include "system/asm.h"
+
+/// Copies 16 bytes from `source` to `destination` with one four-register load
+/// and store.
+static __inline__ void Copy16Bytes(const void *source,
+                                   volatile void *destination) {
+  ASM_REGISTER(const void *src, "r0") = source;
+  ASM_REGISTER(volatile void *dst, "r1") = destination;
+  ASM_COPY_WORDS_4(src, dst);
+}
 
 /// The VBlank interrupt handler, installed by System_Initialize.
 void System_VBlankHandler(void) {

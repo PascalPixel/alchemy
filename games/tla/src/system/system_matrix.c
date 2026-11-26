@@ -115,9 +115,13 @@ void Matrix_Rotate(s32 *angles) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-// Its assembly is in system/asm.h, with the rest.
-#define ASM_PART_STORE_UNIT
 #include "system/asm.h"
+
+/// Stores the unit matrix at `matrix`: three runs of 1.0 and three zeros, the
+/// rotation's diagonal and a translation of 0.
+static __inline__ void Matrix_StoreUnit(void *matrix) {
+  ASM_MATRIX_UNIT_STORE(matrix);
+}
 
 /// Rotates gCurrentMatrix about the X axis by `angle`.
 void Matrix_RotateX(s32 angle) {

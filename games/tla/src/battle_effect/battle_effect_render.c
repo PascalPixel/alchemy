@@ -433,9 +433,28 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
 // BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT or a plain copy, and the
 // second run copied from the first by its measured length.
 
-// Its assembly is in system/asm.h, with the rest.
-#define ASM_PART_COPY_WORDS
 #include "system/asm.h"
+
+/// Copies two words from source to destination with one block load and store.
+static __inline__ void CopyWords2(const void *source, void *destination) {
+  ASM_REGISTER(const void *from, "r0") = source;
+  ASM_REGISTER(void *to, "r1") = destination;
+  ASM_COPY_WORDS_2(from, to);
+}
+
+/// Copies three words from source to destination with one block load and store.
+static __inline__ void CopyWords3(const void *source, void *destination) {
+  ASM_REGISTER(const void *from, "r0") = source;
+  ASM_REGISTER(void *to, "r1") = destination;
+  ASM_COPY_WORDS_3(from, to);
+}
+
+/// Copies four words from source to destination with one block load and store.
+static __inline__ void CopyWords4(const void *source, void *destination) {
+  ASM_REGISTER(const void *from, "r0") = source;
+  ASM_REGISTER(void *to, "r1") = destination;
+  ASM_COPY_WORDS_4(from, to);
+}
 
 /// The most bytes a built blitter takes.
 #define BLITTER_BYTES 436

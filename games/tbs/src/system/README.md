@@ -254,14 +254,45 @@ someone who wrote assembly as readily as C. It has three layers:
 
 ### Its shape is SGL's
 
+Set the System beside SGL's manual, routine by routine, and it sorts into
+three kinds. The pattern in them is the heart of the matter.
+
+**Where numbers flow, SGL is kept exactly.** Types, argument orders and
+matrices are the manual's own, down to its quirks.
+
 | Here | In SGL's manual |
 | --- | --- |
 | `FIXED`, 16.16; angles of 65,536 to the turn; a matrix of twelve words | `FIXED`, `ANGLE`, `MATRIX` |
 | `Matrix_RotateX`, `Y` and `Z` write the same four cells with the same signs | the matrices printed for `slRotX`, `slRotY`, `slRotZ` |
 | The fixed-point divide takes its divisor first and returns b / a | `slDivFX` returns b / a |
+| One caller of the arctangent expects a halfword back | `slAtan` returns a 16-bit `ANGLE` |
 | The unit matrix is stored at a pointer, or at the current matrix | `slUnitMatrix` takes a pointer, or `CURRENT` |
-| `Dma_Set` takes source, destination, count and a fourth word; loops wait on a channel's busy bit | `slDMAXCopy`'s four arguments; `slDMAWait` |
-| The debug text prints strings and hex numbers at a place on the screen | `slPrint`, `slPrintHex` |
+| The projection is set from an angle, or as a distance | `slPerspective`, `slSetScreenDist` |
+| `Dma_Set` takes source, destination, count and a fourth word | `slDMAXCopy` |
+
+**The frame is SGL's too.** `wait` runs every registered routine and then
+waits for the next frame, which is SGL's `slExecuteEvent` followed by
+`slSynch`. Register writes are queued during the frame as source, destination
+and control, and carried out in the blanking interrupt, as `slTransferEntry`
+queues its transfers. A routine is given to the interrupt, and taken away
+again with a null pointer, as with `slIntFunction`.
+
+**Where SGL keeps books, the System keeps fewer.** The job is the same each
+time, cut down for a machine with 32K of fast memory.
+
+| SGL | Here |
+| --- | --- |
+| a matrix stack twenty deep | one level |
+| a list of 64 events, each with 128 bytes of work | a table of 20 tasks, sorted by priority |
+| `slLookAt` with a turn about the line of sight | a camera and a target, kept level |
+| debug text at any address | debug text at a cursor |
+
+**And some of it is the cartridge's own.** The decompressors, the overlays
+and their far calls, the heap and the save have no counterpart: the Saturn
+read a disc and had memory to spare.
+
+The World Map's ground, the battle effects' models and the sound calls have
+not been compared with SGL in detail yet.
 
 ### Its hardware is taken raw
 

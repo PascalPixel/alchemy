@@ -15,6 +15,7 @@
 #include "system/projection.h"
 #include "system/io_reg.h"
 #include "field/world_map_affine.h"
+#include "system/asm.h"
 
 /// A 16.16 value in the 8.8 fixed point of the affine registers, rounded
 /// toward zero, and an 8.8 value back in 16.16.
@@ -88,22 +89,8 @@ void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
     {
       // The yaw: the far-call table's arctangent of the view's direction,
       // called in Thumb through Matrix_CallInThumb with its target in ip.
-      /* FAKEMATCH(asm): x pinned to r0 by an asm register name. */
-      register s32 x __asm__("r0") = targetDeltaX >> 4;
-      /* FAKEMATCH(asm): y pinned to r1 by an asm register name. */
-      register s32 y __asm__("r1") = depth >> 4;
-      /* FAKEMATCH(asm): result pinned to r0 by an asm register name. */
-      register s32 result __asm__("r0");
-
-      /* FAKEMATCH(asm): handwritten assembly: ldr ip from the table and bl
-       * Matrix_CallInThumb, a call through ip that returns in Thumb, which no C
-       * call compiles to; its list is the call's: r2 to r4, ip, lr, flags and
-       * memory. */
-      __asm__ volatile("ldr\tip, %3\n\tbl\tMatrix_CallInThumb"
-                       : "=r"(result)
-                       : "r"(x), "r"(y), "m"(table->arcTan2.target)
-                       : "r2", "r3", "r4", "ip", "lr", "cc", "memory");
-      angle = (u16)result;
+      THUMB_CALL_ARCTAN(angle, targetDeltaX >> 4, depth >> 4,
+                        table->arcTan2.target);
     }
   }
   // The texture origin: the target at half scale.

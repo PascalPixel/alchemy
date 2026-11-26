@@ -111,21 +111,12 @@ enum {
     Sound_SuspendDirectSoundFar();                                             \
     (entry) = Cart_Start;                                                      \
     Io_Write16(0, &REG_IME);                                                   \
-    /* FAKEMATCH(asm): handwritten assembly: the cartridge restart transfers   \
-     * control without returning; the target is in r4 because the jump lists   \
-     * r0 to r2 as changed while r3 holds REG_IME, which no C call gives. */   \
-    __asm__ volatile("bx %0"                                                   \
-                     :                                                         \
-                     : "r"(entry)                                              \
-                     : "r0", "r1", "r2", "r3", "ip", "lr");                    \
+    CART_JUMP(entry);                                                          \
   }
 
-/// Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
-/// Stop call): the sleep that L, R and Select end.
-static __inline__ void Bios_Stop(void) {
-  /* FAKEMATCH(asm): handwritten assembly: BIOS Stop has no C instruction. */
-  __asm__ volatile("swi 3");
-}
+// Its assembly is in system/asm.h, with the rest.
+#define ASM_PART_BIOS_STOP
+#include "system/asm.h"
 
 /// Frames the debug CPU-load display holds a peak.
 enum { CPU_LOAD_PEAK_FRAMES = 30 };
@@ -348,22 +339,9 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   Io_Write16(held, &gInput.previousHeld);
 }
 
-/// Copies 16 bytes from `source` to `destination` with one four-register load
-/// and store.
-static __inline__ void Copy16Bytes(const void *source,
-                                   volatile void *destination) {
-  /* FAKEMATCH(asm): src pinned to r0 by an asm register name. */
-  register const void *src __asm__("r0") = source;
-  /* FAKEMATCH(asm): dst pinned to r1 by an asm register name. */
-  register volatile void *dst __asm__("r1") = destination;
-  /* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of four registers:
-   * agscc's block moves stop at three, so a 16-byte struct copy compiles to 12
-   * and 4. */
-  __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
-                   : "+r"(src), "+r"(dst)
-                   :
-                   : "r2", "r3", "r4", "r5", "memory");
-}
+// Its assembly is in system/asm.h, with the rest.
+#define ASM_PART_COPY_16
+#include "system/asm.h"
 
 /// The VBlank interrupt handler, installed by System_Initialize.
 void System_VBlankHandler(void) {

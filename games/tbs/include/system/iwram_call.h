@@ -113,43 +113,9 @@ static inline void Iwram_CopyWords(volatile void *destination,
     Iwram_CopyWords(destination, source, size);                                \
   } while (0)
 
-#ifdef MODERN
-/// Calls an IWRAM routine that returns through ip instead of lr, with left and
-/// right in r0 and r1, and returns its r0.
-/* FAKEMATCH(asm): handwritten assembly: a call that returns through ip, which
- * no procedure-call standard produces. */
-static inline s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
-  s32 result;
-
-  __asm__ volatile("mov r0, %1\n\t"
-                   "mov r1, %2\n\t"
-                   ".align 2\n\t"
-                   "mov ip, pc\n\t"
-                   "bx %3\n\t"
-                   "mov %0, r0"
-                   : "=r"(result)
-                   : "r"(left), "r"(right), "r"(routine)
-                   : "r0", "r1", "r2", "ip", "cc");
-  return result;
-}
-#else
-static __inline__ s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
-  /* FAKEMATCH(asm): result pinned to r0 by an asm register name. */
-  register s32 result __asm__("r0") = left;
-  /* FAKEMATCH(asm): factor pinned to r1 by an asm register name. */
-  register s32 factor __asm__("r1") = right;
-
-  /* FAKEMATCH(asm): handwritten assembly: a call that returns through ip, which
-   * no procedure-call standard produces. */
-  __asm__ volatile(".align 2\n\t"
-                   "mov ip, pc\n\t"
-                   "bx %2\n\t"
-                   : "+r"(result)
-                   : "r"(factor), "r"(routine)
-                   : "r1", "r2", "ip", "cc");
-  return result;
-}
-#endif
+// Its assembly is in system/asm.h, with the rest.
+#define ASM_PART_IWRAM_CALL
+#include "system/asm.h"
 
 /// Iwram_MulFX's routine in IWRAM, which returns through ip.
 extern u8 IwramMulFXReturnIp[];

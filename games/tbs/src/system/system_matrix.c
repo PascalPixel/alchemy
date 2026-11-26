@@ -28,8 +28,6 @@ void Matrix_Initialize(void) {
   gMatrixStackTop =
       HeapSlot_AllocEwram(HEAP_SLOT_MATRIX_STACK, sizeof(gCurrentMatrix));
   gMatrixStackDepth = 0;
-  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
-   * of matrix.h. */
   Matrix_SetCurrentUnit();
 }
 
@@ -64,11 +62,7 @@ void Matrix_Pop(void) {
 
 /// Resets gCurrentMatrix to the unit matrix. Reached through the far-call
 /// table.
-void Matrix_ResetUnit(void) {
-  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
-   * of matrix.h. */
-  Matrix_SetCurrentUnit();
-}
+void Matrix_ResetUnit(void) { Matrix_SetCurrentUnit(); }
 
 /// Rotates gCurrentMatrix by angles[0], angles[1] and angles[2] about the X, Y
 /// and Z axes, in that order, with one combined matrix.
@@ -107,8 +101,6 @@ void Matrix_RotateX(s32 angle) {
   FIXED sine = Trig_Sin(angle);
   FIXED cosine = Trig_Cos(angle);
 
-  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
-   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[4] = cosine;
   matrix[5] = sine;
@@ -123,8 +115,6 @@ void Matrix_RotateY(s32 angle) {
   FIXED sine = Trig_Sin(angle);
   FIXED cosine = Trig_Cos(angle);
 
-  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
-   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[0] = cosine;
   matrix[2] = -sine;
@@ -139,8 +129,6 @@ void Matrix_RotateZ(s32 angle) {
   FIXED sine = Trig_Sin(angle);
   FIXED cosine = Trig_Cos(angle);
 
-  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
-   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[0] = cosine;
   matrix[1] = sine;
@@ -153,8 +141,6 @@ void Matrix_RotateZ(s32 angle) {
 void Matrix_TranslateVector(const FIXED *position) {
   MATRIX matrix;
 
-  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
-   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[MATRIX_TRANSLATION_X] = position[0];
   matrix[MATRIX_TRANSLATION_Y] = position[1];
@@ -166,8 +152,6 @@ void Matrix_TranslateVector(const FIXED *position) {
 void Matrix_ScaleVector(const FIXED *scale) {
   MATRIX matrix;
 
-  /* FAKEMATCH(asm): handwritten assembly: the fixed-register unit matrix store
-   * of matrix.h. */
   Matrix_SetUnit(matrix);
   matrix[0] = scale[0];
   matrix[4] = scale[1];

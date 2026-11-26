@@ -3,6 +3,7 @@
 // Part of system.c.
 
 #include "system_internal.h"
+#include "system/asm.h"
 
 /// The word a soft reset leaves in gCartridgeResetMarker: a date, 4 July 1967,
 /// its digits packed four bits each.
@@ -34,9 +35,7 @@ static __inline__ void System_SoftReset(void) {
   {                                                                            \
     gVBlankDone &= ~1;                                                         \
     do {                                                                       \
-      /* FAKEMATCH(asm): handwritten assembly: Halt, which no C compiles to.   \
-       */                                                                      \
-      __asm__ volatile("swi 2");                                               \
+      BIOS_HALT();                                                             \
     } while (!(gVBlankDone & 1));                                              \
   }
 
@@ -100,9 +99,7 @@ void wait(s32 frames) {
   s16 savedDisplayControl;
   s16 savedBackdropColor;
 
-  /* FAKEMATCH(asm): handwritten assembly: read the hardware stack pointer for
-   * the stack switch. */
-  __asm__ volatile("mov %0, sp" : "=r"(sp));
+  STACK_POINTER_GET(sp);
 
   // Save the caller's stack and continue at the frame-wait stack top
   base = sp;
@@ -111,9 +108,7 @@ void wait(s32 frames) {
 
     gSavedStackSize = top - base;
     Dma_Set(base, gSavedStack, DMA_COPY_WORDS(gSavedStackSize >> 2), REG_DMA3);
-    /* FAKEMATCH(asm): handwritten assembly: the stack switch, a write to sp no
-     * C can express. */
-    __asm__ volatile("mov sp, %0" : : "r"(top) : "memory");
+    STACK_POINTER_SET(top);
   }
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the frame pass's tasks and build this frame's sprites
@@ -219,9 +214,7 @@ void wait(s32 frames) {
         gSleepActive = 1;
         Io_Write16(KEYCNT_SHOULDERS_WAKE, &REG_KEYCNT);
         Bios_SoundBiasOff();
-        /* FAKEMATCH(asm): handwritten assembly: Stop, which no C compiles to.
-         */
-        __asm__ volatile("swi 3");
+        BIOS_STOP();
         Bios_SoundBiasOn();
         Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
         gSleepActive = 0;
@@ -252,18 +245,14 @@ void wait(s32 frames) {
         base++;
         base--;
       }
-      /* FAKEMATCH(asm): handwritten assembly: read the hardware stack pointer
-       * for its restore copy. */
-      __asm__ volatile("mov %0, sp" : "=r"(base));
+      STACK_POINTER_GET(base);
       /* FAKEMATCH(dead): updates of size by the new base that cancel out,
        * before the size is read again and the copy's size by name. */
       size += (u32)base;
       size -= (u32)base;
       base -= *size;
       sp = base;
-      /* FAKEMATCH(asm): handwritten assembly: restore the hardware stack
-       * pointer after the stack copy. */
-      __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
+      STACK_POINTER_SET(sp);
       Dma_Set(gSavedStack, base, DMA_COPY_WORDS(gSavedStackSize >> 2),
               REG_DMA3);
       while (DMA3->control & DMA_BUSY)

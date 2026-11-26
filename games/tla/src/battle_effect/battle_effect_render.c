@@ -433,50 +433,9 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
 // BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT or a plain copy, and the
 // second run copied from the first by its measured length.
 
-/// Copies two words from source to destination with one block load and store.
-static __inline__ void CopyWords2(const void *source, void *destination) {
-  /* FAKEMATCH(asm): from pinned to r0 by an asm register name. */
-  register const void *from __asm__("r0") = source;
-  /* FAKEMATCH(asm): to pinned to r1 by an asm register name. */
-  register void *to __asm__("r1") = destination;
-  /* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of two registers from
-   * r0 to r1 with scratch from r2 up, in the shape of Dma_Set: agscc's block
-   * moves leave r0 and r1 to the allocator. */
-  __asm__ volatile("ldmia %0!, {r2, r3}\n\tstmia %1!, {r2, r3}"
-                   : "+r"(from), "+r"(to)
-                   :
-                   : "r2", "r3", "memory");
-}
-
-/// Copies three words from source to destination with one block load and store.
-static __inline__ void CopyWords3(const void *source, void *destination) {
-  /* FAKEMATCH(asm): from pinned to r0 by an asm register name. */
-  register const void *from __asm__("r0") = source;
-  /* FAKEMATCH(asm): to pinned to r1 by an asm register name. */
-  register void *to __asm__("r1") = destination;
-  /* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of three registers
-   * from r0 to r1 with scratch from r2 up, in the shape of Dma_Set: agscc's
-   * block moves leave r0 and r1 to the allocator. */
-  __asm__ volatile("ldmia %0!, {r2, r3, r4}\n\tstmia %1!, {r2, r3, r4}"
-                   : "+r"(from), "+r"(to)
-                   :
-                   : "r2", "r3", "r4", "memory");
-}
-
-/// Copies four words from source to destination with one block load and store.
-static __inline__ void CopyWords4(const void *source, void *destination) {
-  /* FAKEMATCH(asm): from pinned to r0 by an asm register name. */
-  register const void *from __asm__("r0") = source;
-  /* FAKEMATCH(asm): to pinned to r1 by an asm register name. */
-  register void *to __asm__("r1") = destination;
-  /* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of four registers:
-   * agscc's block moves stop at three, so a 16-byte struct copy compiles to 12
-   * and 4. */
-  __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
-                   : "+r"(from), "+r"(to)
-                   :
-                   : "r2", "r3", "r4", "r5", "memory");
-}
+// Its assembly is in system/asm.h, with the rest.
+#define ASM_PART_COPY_WORDS
+#include "system/asm.h"
 
 /// The most bytes a built blitter takes.
 #define BLITTER_BYTES 436

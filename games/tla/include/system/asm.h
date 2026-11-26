@@ -5,39 +5,31 @@
 /// Every piece of assembly the C holds, one macro to each instruction sequence
 /// and one for a local kept in a register, each a fake match. The helpers that
 /// use them are ordinary inlines in their own headers. No other file has an
-/// asm statement.
+/// asm statement with anything in it.
+///
+/// They are a library's worth, not a scattering: the System is built to the
+/// shape of Sega's SGL, on the hardware GBATEK describes, and these are the
+/// few operations of it small enough to write in place. CONTRIBUTING.md says
+/// what that rests on.
 
-/// Jumps to `entry` and does not return: the cartridge restart.
-#define ASM_CART_JUMP(entry)                                                   \
-  /* FAKEMATCH(asm): the cartridge restart transfers                           \
-   * control without returning; the target is in r4 because the jump lists r0  \
-   * to r2 as changed while r3 holds REG_IME, which no C call gives. */        \
-  __asm__ volatile("bx %0" : : "r"(entry) : "r0", "r1", "r2", "r3", "ip", "lr")
+// The BIOS
+//
+// The BIOS call the game makes in place, by GBATEK's number: SWI 03h, Stop. The
+// BIOS's arithmetic and decompression it never calls: the library brings its
+// own.
 
-/// Calls a far-call table slot in Thumb through Matrix_CallInThumb, with its
-/// target in ip, and leaves the low half of what it returns in `angle`.
-#define ASM_THUMB_CALL_ARCTAN(angle, xValue, yValue, slot)                     \
-  /* FAKEMATCH(asm): x pinned to r0 by an asm register name. */                \
-  register s32 x __asm__("r0") = (xValue);                                     \
-  /* FAKEMATCH(asm): y pinned to r1 by an asm register name. */                \
-  register s32 y __asm__("r1") = (yValue);                                     \
-  /* FAKEMATCH(asm): result pinned to r0 by an asm register name. */           \
-  register s32 result __asm__("r0");                                           \
-                                                                               \
-  /* FAKEMATCH(asm): ldr ip from the table and bl                              \
-   * Matrix_CallInThumb, a call through ip that returns in Thumb, which no C   \
-   * call compiles to; its list is the call's: r2 to r4, ip, lr, flags and     \
-   * memory. */                                                                \
-  __asm__ volatile("ldr\tip, %3\n\tbl\tMatrix_CallInThumb"                     \
-                   : "=r"(result)                                              \
-                   : "r"(x), "r"(y), "m"(slot)                                 \
-                   : "r2", "r3", "r4", "ip", "lr", "cc", "memory");            \
-  (angle) = (u16)result
+/// Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
+/// Stop call).
+#define ASM_BIOS_STOP()                                                        \
+  /* FAKEMATCH(asm): BIOS Stop has no C instruction. */                        \
+  __asm__ volatile("swi 3")
 
-/// Keeps a local in the register named.
-#define ASM_REGISTER(declaration, name)                                        \
-  /* FAKEMATCH(asm): a local pinned to a register by an asm register name. */  \
-  register declaration __asm__(name)
+// DMA
+//
+// A channel's three registers, source, destination and control (GBATEK's
+// DMAxSAD, DMAxDAD and DMAxCNT), written with one instruction. Dma_Set takes
+// its arguments as SGL's slDMAXCopy does, in the registers a call would pass
+// them.
 
 /// Stores source, destination and control into a DMA channel's three registers
 /// with one stmia, and steps the channel pointer back.
@@ -49,33 +41,10 @@
                    : "r"(channel), "r"(destination)                            \
                    : "memory", "cc")
 
-/// Stores the unit matrix at a pointer: three runs of 1.0 and three zeros.
-#define ASM_MATRIX_UNIT(matrix)                                                \
-  /* FAKEMATCH(asm): three stmia no C store or copy                            \
-   * compiles to. */                                                           \
-  __asm__ volatile(                                                            \
-      "mov r0, %0\n\tmov r1, #128\n\tmov r2, #0\n\tmov r3, #0\n\t"             \
-      "mov r4, #0\n\tlsl r1, r1, #9\n\t"                                       \
-      "stmia r0!, {r1, r2, r3, r4}\n\t"                                        \
-      "stmia r0!, {r1, r2, r3, r4}\n\t"                                        \
-      "stmia r0!, {r1, r2, r3, r4}"                                            \
-      :                                                                        \
-      : "r"(matrix)                                                            \
-      : "r0", "r1", "r2", "r3", "r4", "memory")
-
-/// ASM_MATRIX_UNIT with its third zero in a register the compiler picks.
-#define ASM_MATRIX_UNIT_CURRENT(zero, matrix)                                  \
-  /* FAKEMATCH(asm): Matrix_SetUnit's three stmia,                             \
-   * applied to the current matrix. */                                         \
-  __asm__ volatile(                                                            \
-      "mov r0, %1\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"         \
-      "mov %0, #0\n\tmov r4, #0\n\t"                                           \
-      "stmia r0!, {r1, r2, %0, r4}\n\t"                                        \
-      "stmia r0!, {r1, r2, %0, r4}\n\t"                                        \
-      "stmia r0!, {r1, r2, %0, r4}"                                            \
-      : "=l"(zero)                                                             \
-      : "r"(matrix)                                                            \
-      : "r0", "r1", "r2", "r4", "memory")
+// Fixed point
+//
+// SGL's slMulFX. The multiply itself is a routine in IWRAM, which the Thumb C
+// calls; this is the same multiply written out for the C compiled as ARM.
 
 /// The 64-bit product of two words, its halves in any two registers.
 #define ASM_SMULL(high, low, left, right)                                      \
@@ -95,22 +64,24 @@
                    : "=r"(result)                                              \
                    : "r"(high), "r"(low))
 
-/// Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
-/// Stop call).
-#define ASM_BIOS_STOP()                                                        \
-  /* FAKEMATCH(asm): BIOS Stop has no C instruction. */                        \
-  __asm__ volatile("swi 3")
+// The matrix
+//
+// SGL's slUnitMatrix: twelve words, 1.0 on the diagonal. It destroys r0 to r4,
+// the registers every routine of the library treats as scratch.
 
-/// Copies four words with one block load and store.
-#define ASM_COPY_WORDS_4(source, destination)                                  \
-  /* FAKEMATCH(asm): ldmia and stmia of four registers:                        \
-   * agscc's block moves stop at three, so a 16-byte struct copy compiles to   \
-   * 12 and 4. */                                                              \
+/// Stores the unit matrix at a pointer: three runs of 1.0 and three zeros.
+#define ASM_MATRIX_UNIT(matrix)                                                \
+  /* FAKEMATCH(asm): three stmia no C store or copy                            \
+   * compiles to. */                                                           \
   __asm__ volatile(                                                            \
-      "ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"             \
-      : "+r"(source), "+r"(destination)                                        \
+      "mov r0, %0\n\tmov r1, #128\n\tmov r2, #0\n\tmov r3, #0\n\t"             \
+      "mov r4, #0\n\tlsl r1, r1, #9\n\t"                                       \
+      "stmia r0!, {r1, r2, r3, r4}\n\t"                                        \
+      "stmia r0!, {r1, r2, r3, r4}\n\t"                                        \
+      "stmia r0!, {r1, r2, r3, r4}"                                            \
       :                                                                        \
-      : "r2", "r3", "r4", "r5", "memory")
+      : "r"(matrix)                                                            \
+      : "r0", "r1", "r2", "r3", "r4", "memory")
 
 /// ASM_MATRIX_UNIT with 1.0 built before the zeros.
 #define ASM_MATRIX_UNIT_STORE(matrix)                                          \
@@ -125,6 +96,26 @@
       :                                                                        \
       : "r"(matrix)                                                            \
       : "r0", "r1", "r2", "r3", "r4", "memory")
+
+/// ASM_MATRIX_UNIT as the library itself writes it for the current matrix: the
+/// same stores, with r3 left off the list of what it destroys.
+#define ASM_MATRIX_UNIT_CURRENT(matrix)                                        \
+  /* FAKEMATCH(asm): Matrix_SetUnit's three stmia,                             \
+   * applied to the current matrix. */                                         \
+  __asm__ volatile(                                                            \
+      "mov r0, %0\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"         \
+      "mov r3, #0\n\tmov r4, #0\n\t"                                           \
+      "stmia r0!, {r1, r2, r3, r4}\n\t"                                        \
+      "stmia r0!, {r1, r2, r3, r4}\n\t"                                        \
+      "stmia r0!, {r1, r2, r3, r4}"                                            \
+      :                                                                        \
+      : "r"(matrix)                                                            \
+      : "r0", "r1", "r2", "r4", "memory")
+
+// Block copies
+//
+// A few words copied with one load and one store, where the compiler's own
+// block move stops at three.
 
 /// Copies two words with one block load and store.
 #define ASM_COPY_WORDS_2(source, destination)                                  \
@@ -146,6 +137,68 @@
                    :                                                           \
                    : "r2", "r3", "r4", "memory")
 
+/// Copies four words with one block load and store.
+#define ASM_COPY_WORDS_4(source, destination)                                  \
+  /* FAKEMATCH(asm): ldmia and stmia of four registers:                        \
+   * agscc's block moves stop at three, so a 16-byte struct copy compiles to   \
+   * 12 and 4. */                                                              \
+  __asm__ volatile(                                                            \
+      "ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"             \
+      : "+r"(source), "+r"(destination)                                        \
+      :                                                                        \
+      : "r2", "r3", "r4", "r5", "memory")
+
+// The stack and the restart
+//
+// The soft reset's jump to the cartridge's start.
+
+/// Jumps to `entry` and does not return: the cartridge restart.
+#define ASM_CART_JUMP(entry)                                                   \
+  /* FAKEMATCH(asm): the cartridge restart transfers                           \
+   * control without returning; the target is in r4 because the jump lists r0  \
+   * to r2 as changed while r3 holds REG_IME, which no C call gives. */        \
+  __asm__ volatile("bx %0" : : "r"(entry) : "r0", "r1", "r2", "r3", "ip", "lr")
+
+// Registers and calls C cannot name
+
+/// Keeps a local in the register named.
+#define ASM_REGISTER(declaration, name)                                        \
+  /* FAKEMATCH(asm): a local pinned to a register by an asm register name. */  \
+  register declaration __asm__(name)
+
+/// Calls a far-call table slot in Thumb through Matrix_CallInThumb, with its
+/// target in ip, and leaves the low half of what it returns in `angle`.
+#define ASM_THUMB_CALL_ARCTAN(angle, xValue, yValue, slot)                     \
+  /* FAKEMATCH(asm): x pinned to r0 by an asm register name. */                \
+  register s32 x __asm__("r0") = (xValue);                                     \
+  /* FAKEMATCH(asm): y pinned to r1 by an asm register name. */                \
+  register s32 y __asm__("r1") = (yValue);                                     \
+  /* FAKEMATCH(asm): result pinned to r0 by an asm register name. */           \
+  register s32 result __asm__("r0");                                           \
+                                                                               \
+  /* FAKEMATCH(asm): ldr ip from the table and bl                              \
+   * Matrix_CallInThumb, a call through ip that returns in Thumb, which no C   \
+   * call compiles to; its list is the call's: r2 to r4, ip, lr, flags and     \
+   * memory. */                                                                \
+  __asm__ volatile("ldr\tip, %3\n\tbl\tMatrix_CallInThumb"                     \
+                   : "=r"(result)                                              \
+                   : "r"(x), "r"(y), "m"(slot)                                 \
+                   : "r2", "r3", "r4", "ip", "lr", "cc", "memory");            \
+  (angle) = (u16)result
+
+// A statement that emits nothing
+
+/// The statement that ends a menu sprite's set-up: it emits nothing, and the
+/// compiler counts four bytes for it when it places the next literal pool.
+#define ASM_NOTHING()                                                          \
+  /* FAKEMATCH(barrier): an empty asm; the literal pools after a menu sprite's \
+   * two stores sit where the ROM has them only with four bytes counted that   \
+   * no instruction emits, which nothing else in this compiler does; as no     \
+   * asm. */                                                                   \
+  __asm__ volatile("")
+
+// The modern build
+
 /// Declares `symbol` as the bytes at the linked name `name`, whatever type the
 /// name has elsewhere: how the modern build reaches a fixed address.
 #define ASM_LINKED_NAME(symbol, name)                                          \
@@ -157,14 +210,5 @@
 #define ASM_OPAQUE(value)                                                      \
   /* FAKEMATCH(barrier): an empty asm that rewrites value; as no asm. */       \
   __asm__("" : "+r"(value))
-
-/// The statement that ends a menu sprite's set-up: it emits nothing, and the
-/// compiler counts four bytes for it when it places the next literal pool.
-#define ASM_NOTHING()                                                          \
-  /* FAKEMATCH(barrier): an empty asm; the literal pools after a menu sprite's \
-   * two stores sit where the ROM has them only with four bytes counted that   \
-   * no instruction emits, which nothing else in this compiler does; as no     \
-   * asm. */                                                                   \
-  __asm__ volatile("")
 
 #endif

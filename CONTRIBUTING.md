@@ -59,6 +59,47 @@ Assembly lives in one header a game, `include/system/asm.h`, a macro to each ins
 
 Don’t replace a fake match with a worse kind, and don’t add a register pin (`register int x asm("r4")`). Neither is accepted.
 
+## Where the System comes from
+
+Nobody outside Camelot has seen their source. This is what the ROMs show when they are read beside [SGL’s manual](https://www.infochunk.com/saturn/segahtml/sgl/sglr/) and [GBATEK](https://problemkaputt.de/gbatek.htm), and it is why the assembly is kept the way it is. Each line is something you can check in the tree.
+
+The System is one library, carried from the Saturn to the Game Boy Advance by someone who wrote assembly as readily as C. It has three layers:
+
+1. **Routines written in assembly**, resident in IWRAM: the multiply, the divide, the square root, the matrix product, the point transform, the fills and the decompressor. They are `.s` files and stay so.
+2. **A handful of macros** for the operations too small to be worth a call. These are the `ASM_` macros of `include/system/asm.h`.
+3. **C**, which is everything else.
+
+**Its shape is SGL’s.**
+
+- Numbers are 16.16 `FIXED`, angles are 65,536 to the turn, and a matrix is twelve words: a 3×3 rotation, then the translation.
+- `Matrix_RotateX`, `Matrix_RotateY` and `Matrix_RotateZ` write the same four cells, with the same signs, as the matrices SGL prints for `slRotX`, `slRotY` and `slRotZ`.
+- The fixed-point divide takes its divisor first and returns b / a, which is how SGL documents `slDivFX`.
+- One caller of the arctangent was compiled against a prototype that returns a halfword. `slAtan` returns an `ANGLE`, 16 bits.
+- The unit matrix is stored two ways, at a pointer and at the current matrix. `slUnitMatrix` takes a pointer, or `CURRENT`.
+- `Dma_Set` takes source, destination, count and a fourth word, as `slDMAXCopy` does, and the loops that wait on a channel’s busy bit are `slDMAWait`.
+- The debug text prints strings and hex numbers at a place on the screen, as SGL’s `slPrint` and `slPrintHex` do.
+
+**Its hardware is the Game Boy Advance’s, taken raw.**
+
+- Camelot’s own code makes four BIOS calls: Halt, Stop, CpuSet and SoundBias (GBATEK’s SWI 02h, 03h, 0Bh and 19h). It never calls the BIOS to divide, take a square root or an arctangent, set an affine matrix, decompress, or wait for VBlank: the library has a routine for each.
+- The compiler’s own division, `__divsi3`, `__udivsi3` and `__modsi3`, is the library’s routines in IWRAM under those names. libgcc’s are not linked.
+- A DMA channel’s three registers are written as three words with one instruction.
+
+**It has its own calling rule.** Every routine written in assembly saves r5 and up and uses r0 to r4 freely: of the 138 register saves in that assembly, outside the sound driver, none keeps r4 for a caller. The interrupt handler, which must keep whatever a routine may destroy, saves r0 to r4. The Thumb C is compiled with `-fcall-used-r4`, which tells the compiler the same thing, and the unit matrix macro destroys exactly r0 to r4. So a macro behaves as a call to the library would: arguments in the registers a call passes them in, and nothing destroyed that a call would keep. The one exception is the four-word copy, which needs a fifth register and lists r5.
+
+**Three compilers built it.** The Thumb C is GCC’s snapshot of July 2000, the one Red Hat shipped as 2.96. The C compiled as ARM is GCC 2.95.2. Only the sound driver and the save code, which are Nintendo’s libraries, were built by Nintendo’s compiler.
+
+What this predicts, and where it stands:
+
+| It predicts | What we find |
+| --- | --- |
+| A macro is text, so two versions can live in one game | ⚓️’s battle code stores the unit matrix in ☀️’s instruction order while its System uses a newer order |
+| The form the library uses on its own matrix may differ from the one it gives callers | The current-matrix store is the same text with r3 left off its list, and needs no other device |
+| Lines compiled out leave statements that emit nothing | `ASM_NOTHING` after a menu sprite’s two stores; the cartridge also keeps debug rooms, the debug text and a CPU load display |
+| An empty asm left in C is a library macro whose register list we have not found | Open: the three in `Matrix_BuildLookAt`, SGL’s `slLookAt`, sit at its calls to the dot product and the divide |
+
+When you meet assembly that fits none of this, say so in the pull request: it is either a fourth layer or a hole in the theory.
+
 ## Names
 
 | What                     | How it’s written                         |

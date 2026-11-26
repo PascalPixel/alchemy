@@ -47,9 +47,7 @@ static __inline__ void Matrix_SetUnit(void *matrix) { ASM_MATRIX_UNIT(matrix); }
 
 /// Resets the current matrix to the unit matrix.
 static __inline__ void Matrix_SetCurrentUnit(void) {
-  s32 zero;
-
-  ASM_MATRIX_UNIT_CURRENT(zero, gCurrentMatrix);
+  ASM_MATRIX_UNIT_CURRENT(gCurrentMatrix);
 }
 
 #endif

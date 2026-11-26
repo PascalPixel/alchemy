@@ -323,10 +323,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       figureSprite.oam.word.attr01 =
           OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       figureSprite.oam.word.attr23 = 0;
-#if TBS_PATCH_4
-      /* FAKEMATCH(barrier): an empty asm. */
-      __asm__("");
-#endif
+      CAMELOT_ASM("an asm with no instruction, text unknown: the same one "
+                  "that follows the cursor's two attribute words below, where "
+                  "the literal pool proves it; here it counts no byte that "
+                  "shows, and the ROM shows it in the Spanish and Italian "
+                  "editions alone, where the second scheduling pass keeps the "
+                  "copy of the zero ahead of the load of the figure's tile, "
+                  "which no label here does; the other four editions are the "
+                  "ROM's with it or without")
+      asm("");
       figureSprite.oam.f.tile = figure->image.tile;
       figureSprite.oam.f.x = 172;
       figureSprite.oam.f.y = 56;
@@ -336,8 +341,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 =
         OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): an empty asm. */
-    __asm__("");
+    CAMELOT_ASM("an asm with no instruction, text unknown: the literal pool "
+                "after this sprite's stores sits where the ROM has it only if "
+                "exactly 4 more bytes are counted before it than the "
+                "instructions emitted, in all six editions: with none counted "
+                "it comes two instructions later and takes gFrameCount's "
+                "word, with 8 it comes earlier; an unused label counts none; "
+                "only a one-line asm counts bytes and emits nothing in this "
+                "compiler")
+    asm("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
     cursorSprite.oam.f.x =

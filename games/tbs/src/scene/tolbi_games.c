@@ -1010,16 +1010,13 @@ prompt:
       {
         s32 slot = prizeIndex +
                    offsetof(struct MainRoutineState, holdings.prizeWeights) - 1;
-        /* FAKEMATCH(temporary): a byte pointer one past routine, indexed by
-         * slot; as routine->holdings.prizeWeights[prizeIndex]. */
-        s8 *weights = (s8 *)routine + 1;
 
-        if (weights[slot] > 1) {
+        if (routine->holdings.prizeWeights[prizeIndex] > 1) {
           /* FAKEMATCH(dead): the halving in both arms of a test of slot. */
           if (slot)
-            weights[slot] /= 2;
+            routine->holdings.prizeWeights[prizeIndex] /= 2;
           else
-            weights[slot] /= 2;
+            routine->holdings.prizeWeights[prizeIndex] /= 2;
         }
       }
     }

@@ -22,19 +22,19 @@
 @ dispatcher and call-via-r3 entry share the complete MusicPlayer2000 assembly
 @ module.
 @ Why TrackStop is assembly:
-@ Nintendo MusicPlayer2000 TrackStop, checked against pret's public
+@ MusicPlayer2000 TrackStop, checked against pret's public
 @ m4a_1.s. This ordinary Thumb routine is library assembly, not claimed
 @ handwritten game code.
 @ Why ChnVolSetAsm is assembly:
 @ Caller supplies the channel in r4 and track in r5; the routine reads them
-@ without an argument move or save. Equivalent Nintendo MusicPlayer2000
+@ without an argument move or save. Equivalent MusicPlayer2000
 @ ChnVolSetAsm is public in pret m4a_1.s.
 @ Why ply_note is assembly:
-@ Nintendo MusicPlayer2000 ply_note, checked against pret's public m4a_1.s.
+@ MusicPlayer2000 ply_note, checked against pret's public m4a_1.s.
 @ The stack frame and r8-r11 save/restore match the library; this is library
 @ provenance rather than a handwritten game-code assertion.
 @ Why ply_endtie is assembly:
-@ push saves r4/r5 without lr; Nintendo library ply_endtie.
+@ push saves r4/r5 without lr; MusicPlayer2000 library ply_endtie.
 @ Why clear_modM is assembly:
 @ MusicPlayer2000 library assembly (public pret m4a_1.s: clear_modM).
 @ Credited on library provenance, not on a handwritten-instruction claim:

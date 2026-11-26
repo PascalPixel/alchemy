@@ -7,7 +7,7 @@
 	.global Rom_Start
 Rom_Start:
 	b	System_Entry			@ Entry point
-	.space	156				@ Nintendo logo, written by gbafix
+	.space	156				@ The cartridge logo, written by gbafix
 	.ifdef TBS_EDITION_JA
 	.ascii	"OugonTaiyo_A"			@ Game title
 	.else

@@ -83,8 +83,8 @@ which is why the music keeps its tempo when the picture slows down.
 
 ## The sound driver
 
-Under the game's own sound code is Nintendo's standard driver for the
-console. To the driver every sound is a song: tracks of notes with
+Under the game's own sound code is the standard driver of the console's
+development kit. To the driver every sound is a song: tracks of notes with
 instructions among them, read a little further at every VBlank. A note
 plays either a sample, a short recording pitched up or down, or a tone on
 one of the console's four built-in tone generators. A mixer adds every

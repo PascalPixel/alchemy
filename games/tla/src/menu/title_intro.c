@@ -1,9 +1,9 @@
 /// @file
-/// The title intro, the Nintendo and Camelot logos, the title screen and the
-/// palette fade they use. The intro opens on drifting clouds, shows the cards
-/// `Camelot presents` and `Golden Sun` `Book Two` between them, drops through
-/// the clouds into white, and scrolls down the lighthouse in its valley while a
-/// gull flies off towards it and `The Lost Age` comes into focus.
+/// The title intro, the publisher's and Camelot's logos, the title screen and
+/// the palette fade they use. The intro opens on drifting clouds, shows the
+/// cards `Camelot presents` and `Golden Sun` `Book Two` between them, drops
+/// through the clouds into white, and scrolls down the lighthouse in its valley
+/// while a gull flies off towards it and `The Lost Age` comes into focus.
 ///
 /// The gull's frames and path are logo.c; the prompt's levels and the fade's
 /// channel curves are title_intro_tables.c.
@@ -508,7 +508,7 @@ s32 TitleIntro_ShowBookTwoCard(void) {
 /// The scroll that shows the picture's foot.
 #define LIGHTHOUSE_BOTTOM (LIGHTHOUSE_HEIGHT - DISPLAY_HEIGHT)
 /// A screen of tiles in 256 colours: the lighthouse picture's first screen, and
-/// the Nintendo logo and the title screen.
+/// the publisher's logo and the title screen.
 #define SCREEN_TILE_BYTES (DISPLAY_TILE_HEIGHT * LIGHTHOUSE_ROW_BYTES)
 /// The map entry of the two columns past the screen's right edge, which never
 /// show.
@@ -996,7 +996,7 @@ s32 TitleIntro_Run(s32 unused) {
 #define PROMPT_PULSE_FRAMES FRAMES_PER_SECOND
 #define PROMPT_DELAY_FRAMES (2 * FRAMES_PER_SECOND)
 
-/// The Nintendo and Camelot logos are shown as the Golden Sun logo is
+/// The publisher's and Camelot's logos are shown as the Golden Sun logo is
 /// (scene/title.h), on BG2, each resource beginning with its 224 colours.
 #define LOGO_PALETTE_BYTES (LOGO_PALETTE_COLORS * 2)
 
@@ -1123,15 +1123,15 @@ s32 Title_ShowTitleScreen(s32 prompt) {
 /// Unused: an empty entry the far-call table keeps.
 void Title_BeforeLogosNoOp(void) {}
 
-/// The Nintendo logo's first tile: character block 1's, as BG2 numbers its
+/// The publisher logo's first tile: character block 1's, as BG2 numbers its
 /// 256-colour tiles from block 0.
-#define NINTENDO_LOGO_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+#define PUBLISHER_LOGO_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
 
-/// Shows the Nintendo logo with its chime. With mode 0, which is all the title
-/// passes, it appears at once and holds two seconds; any other mode, unused,
-/// waits a second, fades in, holds three seconds and fades out, faster once
-/// skipped. Returns -1 when A or Start skipped it.
-s32 Title_ShowNintendoLogo(s32 mode) {
+/// Shows the publisher's logo with its chime. With mode 0, which is all the
+/// title passes, it appears at once and holds two seconds; any other mode,
+/// unused, waits a second, fades in, holds three seconds and fades out, faster
+/// once skipped. Returns -1 when A or Start skipped it.
+s32 Title_ShowPublisherLogo(s32 mode) {
   s32 result;
   u8 *data;
   u16 *map;
@@ -1143,7 +1143,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
 
   Sound_PlayFar(SE_CHIME);
   gOamCopyEnabled = 1;
-  resource = RESOURCE_NINTENDO_LOGO;
+  resource = RESOURCE_PUBLISHER_LOGO;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
@@ -1159,7 +1159,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   Dma_Set(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1),
           DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
-  tile = NINTENDO_LOGO_TILE;
+  tile = PUBLISHER_LOGO_TILE;
   map = LOGO_MAP;
   for (y = 0; y < DISPLAY_TILE_HEIGHT; y++) {
     for (x = 0; x < DISPLAY_TILE_WIDTH; x++)

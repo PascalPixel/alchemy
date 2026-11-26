@@ -2,7 +2,7 @@
 #define ALCHEMY_TITLE_INTRO_H
 
 /// @file
-/// The Nintendo and Camelot logos, the intro that scrolls in to the title
+/// The publisher's and Camelot's logos, the intro that scrolls in to the title
 /// picture, and the palette fades they use (menu/title_intro.c).
 
 #include "types.h"
@@ -14,7 +14,7 @@ void Title_LoadIntroBackgrounds(void);
 s32 Title_ShowTitleScreen(s32 prompt);
 /// Unused: an empty entry of the title's far-call table, before the logos.
 void Title_BeforeLogosNoOp(void);
-s32 Title_ShowNintendoLogo(s32 fadeOut);
+s32 Title_ShowPublisherLogo(s32 fadeOut);
 s32 Title_ShowCamelotLogo(void);
 /// Unused: an empty entry of the title's far-call table, after
 /// Title_ShowTitleScreen's.

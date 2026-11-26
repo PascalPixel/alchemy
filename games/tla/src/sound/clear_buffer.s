@@ -25,7 +25,7 @@
 @ Why assembly: caller supplies the channel in r4 and track in r5; the routine
 @ reads them (ldrb r1, [r4, #18]; ldrb r0, [r5, #16]) without an argument move
 @ or save, a linkage no procedure-call standard produces.
-@ Why assembly: push saves r4/r5 without lr; Nintendo library ply_endtie.
+@ Why assembly: push saves r4/r5 without lr; MusicPlayer2000 library ply_endtie.
 @ Why assembly: MusicPlayer2000's ld_r3_tp_adr_i_unchecked takes track in r1
 @ and returns the decoded byte in r3 while updating r2/r3, rather than a
 @ standard r0 return.

@@ -1,8 +1,8 @@
 @ Why umul3232H32 is assembly:
-@ Thumb entry switches into ARM in the same function before umull; Nintendo
-@ library umul3232H32.
+@ Thumb entry switches into ARM in the same function before umull;
+@ MusicPlayer2000 library umul3232H32.
 @ Why SoundMain is assembly:
-@ Nintendo MusicPlayer2000 SoundMain entry sets up one stack frame then bx
+@ MusicPlayer2000 SoundMain entry sets up one stack frame then bx
 @ transfers into SoundMainRAM, which consumes its live stack and saved
 @ register state.
 .syntax unified

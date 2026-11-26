@@ -3,8 +3,8 @@ Title_IntroLighthousePicture	intro_lighthouse.gbapal
 	intro_lighthouse.8bpp.plz				4		
 Title_IntroGullSprites	intro_gulls.gbapal						
 	intro_gulls.4bpp.plz			192f63			
-Title_NintendoLogo	nintendo_splash.gbapal	a					
-	nintendo_splash.8bpp.lz	a					
+Title_PublisherLogo	publisher_splash.gbapal	a					
+	publisher_splash.8bpp.lz	a					
 Title_CamelotLogo	camelot_logo.parts.lz	a					
 Title_WorldMapPicture	world_map_picture.strips	b		8f			
 Title_WorldMapPictureLarge	world_map_picture_large.strips	b					

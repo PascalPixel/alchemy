@@ -25,8 +25,8 @@
 /// screen's edge, which never show.
 #define OFFSCREEN_TILE 511
 /// The colours a screen-wide 256-colour picture resource opens with, before its
-/// packed tiles: the Nintendo, Camelot and Golden Sun logos' and the To Be
-/// Continued pictures'.
+/// packed tiles: the publisher's, Camelot's and Golden Sun's logos' and the To
+/// Be Continued pictures'.
 #define LOGO_PALETTE_COLORS 224
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.

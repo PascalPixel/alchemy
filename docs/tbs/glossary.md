@@ -21,8 +21,8 @@ edition "OUGON NO TAIYO STAFF". SGL: none. GBATEK: none.
 
 ### Camelot
 
-Camelot Software Planning made both games, and Nintendo published them. The
-game opens on Nintendo's logo and then Camelot's. Their source was never
+Camelot Software Planning made both games. Each opens on its publisher's
+logo and then Camelot's. Their source was never
 released.
 
 Sources: the game: the credits' "CAMELOT Co.,Ltd.". SGL: none. GBATEK: none.

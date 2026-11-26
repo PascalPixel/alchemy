@@ -66,7 +66,7 @@ Resource_DirectoryTable:
 	resource SubtitleB, Resource_SubtitleB
 	resource SubtitleC, Resource_SubtitleC
 	resource SubtitleD, Resource_SubtitleD
-	resource NintendoLogo, Title_NintendoLogo
+	resource PublisherLogo, Title_PublisherLogo
 	resource CamelotLogo, Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture
 	resource WorldMapPicture, Title_WorldMapPicture

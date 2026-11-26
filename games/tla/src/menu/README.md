@@ -88,8 +88,8 @@ scene can mark a task to keep running regardless.
 
 ## The title intro and the credits
 
-The title intro is the opening that plays before the Title: the Nintendo
-and Camelot screens, a scroll down a tall picture, and the logo
+The title intro is the opening that plays before the Title: the publisher's
+and Camelot's screens, a scroll down a tall picture, and the logo
 coming together. The credits are the staff roll after the ending, with
 battle backgrounds behind the names, and the same code holds two more
 things: the story told in scrolling lines that open

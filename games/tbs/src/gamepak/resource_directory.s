@@ -58,7 +58,7 @@ Resource_DirectoryTable:
 	resource IntroSun, Title_IntroSun
 	resource TitleScreen, Title_TitleScreen
 	resource IntroPeak, Title_IntroPeak
-	resource NintendoLogo, Title_NintendoLogo
+	resource PublisherLogo, Title_PublisherLogo
 	resource CamelotLogo, Title_CamelotLogo
 	resource GoldenSunLogo, Title_GoldenSunLogo
 	resource WorldMapPicture, Field_WorldMapPicture

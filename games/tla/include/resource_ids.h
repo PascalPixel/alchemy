@@ -934,10 +934,10 @@ extern char ResourceId_BlizzardBackdrop;
 
 // The logos, the intro and the title screen.
 
-/// Shown first by Title_ShowNintendoLogo.
-extern char ResourceId_NintendoLogo;
-#define RESOURCE_NINTENDO_LOGO ((s32)&ResourceId_NintendoLogo)
-/// The Camelot logo Title_ShowCamelotLogo shows after Nintendo's.
+/// Shown first by Title_ShowPublisherLogo.
+extern char ResourceId_PublisherLogo;
+#define RESOURCE_PUBLISHER_LOGO ((s32)&ResourceId_PublisherLogo)
+/// The Camelot logo Title_ShowCamelotLogo shows after the publisher's.
 extern char ResourceId_CamelotLogo;
 #define RESOURCE_CAMELOT_LOGO ((s32)&ResourceId_CamelotLogo)
 /// The title's lettering sprites and their colours, which Title_LoadSprites

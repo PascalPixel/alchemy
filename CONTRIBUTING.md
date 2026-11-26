@@ -13,7 +13,7 @@ Things you can help with:
 
 ## What to work from
 
-Your own ROMs, this repository and public documentation. No other project’s Golden Sun work and no leaked Nintendo or Camelot code. Don’t commit, attach or share a ROM, original or modified.
+Your own ROMs, this repository and public documentation. No other project’s Golden Sun work and no leaked code or development kits. Don’t commit, attach or share a ROM, original or modified.
 
 ## Before you send a pull request
 

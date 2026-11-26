@@ -7,7 +7,7 @@
 	.global Rom_Start
 Rom_Start:
 	b	Entry				@ Entry.
-	.space	156				@ Nintendo logo (written by gbafix).
+	.space	156				@ The cartridge logo (written by gbafix).
 	.ifdef TLA_EDITION_JA
 	.ascii	"OUGONTAIYO_B"			@ Game title.
 	.else

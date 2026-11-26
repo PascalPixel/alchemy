@@ -352,7 +352,7 @@
 	export Import_CreditsRun, Credits_RunFar
 @ Title bank (far_call/title.s)
 	export Title_ShowTitleScreen, Title_ShowTitleScreenFar
-	export Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
+	export Title_ShowPublisherLogo, Title_ShowPublisherLogoFar
 	export Import_TitleShowCamelotLogo, Title_ShowCamelotLogoFar
 @ Sound bank (far_call/sound.s)
 	export Sound_Play, Sound_PlayFar

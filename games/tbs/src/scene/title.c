@@ -2,7 +2,7 @@
 /// The Title (SceneId_Title): the screens between scenes that are not on a
 /// map, chosen by entrance.
 ///
-/// - TITLE_AFTER_RUN, at power-on: the Nintendo and Camelot logos and the
+/// - TITLE_AFTER_RUN, at power-on: the publisher's and Camelot's logos and the
 ///   title, looping until a key is pressed, then the File Screen.
 /// - TITLE_FROM_VALE_PLAZA, at the prologue's end: the title held while the
 ///   years pass (MUS_THE_PASSAGE_OF_TIME), then Vale, the party grown up.
@@ -100,8 +100,8 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineState.entrance == TITLE_AFTER_RUN) {
     for (;;) {
       Sound_Play(MUS_SILENCE);
-      // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).
-      Title_ShowNintendoLogo(0);
+      // The publisher's logo, then the Camelot logo (Title_ShowCamelotLogo).
+      Title_ShowPublisherLogo(0);
       Import_TitleShowCamelotLogo(0);
       // With no save file (or no backup memory) there is no title intro.
       if (Save_ScanFileSummaries() > 0) {

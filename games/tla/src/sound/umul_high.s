@@ -1,6 +1,6 @@
 @ Why assembly: its Thumb entry switches into ARM in the same function before
-@ umull (add r2, pc, #0; bx r2); Nintendo library umul3232H32.
-@ Why assembly: Nintendo MusicPlayer2000 SoundMain entry sets up one stack
+@ umull (add r2, pc, #0; bx r2); MusicPlayer2000 library umul3232H32.
+@ Why assembly: MusicPlayer2000 SoundMain entry sets up one stack
 @ frame then bx r3 transfers into SoundMainRAM, which consumes its live
 @ stack and saved register state and returns for it, a linkage no
 @ procedure-call standard produces.

@@ -313,7 +313,7 @@ Thumb.
 | The BIOS saves r0 to r3, r12 and `lr`, then jumps to an ARM routine | has an ARM interrupt handler in fast RAM that saves r4 itself |
 | A DMA channel is three words: source, destination, control | writes all three with one instruction, and feeds a register a new value every line with HBlank transfers |
 | The tilted layer's origin can be rewritten on every line | gives the World Map's ground its own terms for each line |
-| Sound is two queues of samples; mixing is the program's job | has a mixer in fast RAM, part Nintendo's and part its own |
+| Sound is two queues of samples; mixing is the program's job | has a mixer in fast RAM, part the development kit's and part its own |
 
 Camelot's own code makes four BIOS calls in all: Halt, Stop, CpuSet and
 SoundBias (SWI 02h, 03h, 0Bh and 19h).
@@ -339,8 +339,8 @@ r1, r2 and r3, in every one of its hundreds of uses.
 
 The C that runs as Thumb code is GCC's snapshot of July 2000, the one Red Hat
 shipped as 2.96. The C that runs as ARM code is GCC 2.95.2. Only the sound
-driver and the save code, which are Nintendo's libraries, came from Nintendo's
-compiler.
+driver and the save code, which are the development kit's libraries, came
+from the kit's own compiler.
 
 ## Where the rest is
 

@@ -21,8 +21,8 @@ enum DefaultEntrance { ENTRANCE_DEFAULT = 0 };
 
 /// SceneId_Title's entrances, named by what each plays.
 enum {
-  /// The Nintendo and Camelot logos and the intro, then the clear-data screen
-  /// (power-on, and after saving the clear data).
+  /// The publisher's and Camelot's logos and the intro, then the clear-data
+  /// screen (power-on, and after saving the clear data).
   TITLE_START = 1,
   /// The intro without its prompt, then the prologue with Jenna.
   TITLE_PROLOGUE = 2,

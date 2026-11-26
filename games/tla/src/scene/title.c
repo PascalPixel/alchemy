@@ -1,5 +1,5 @@
 /// @file
-/// The title: the Nintendo and Camelot logos, the intro, and the starts it
+/// The title: the publisher's and Camelot's logos, the intro, and the starts it
 /// leads to, the prologue with Jenna or the game with Felix. TITLE_STORY_CRAWL
 /// plays the story crawl a new game opens with, over Vale in the rain, and
 /// TITLE_TO_BE_CONTINUED, which nothing reaches, keeps The Broken Seal's Golden
@@ -74,7 +74,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Save_ScanFileSummaries(void);
-s32 Title_ShowNintendoLogo(s32 mode);
+s32 Title_ShowPublisherLogo(s32 mode);
 void Title_ShowCamelotLogo(s32 unused);
 
 /// The overlay's initialize entry, which plays what the entrance asks for.
@@ -112,7 +112,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineState.entrance == TITLE_START) {
     for (;;) {
       Event_PlaySound(MUS_SILENCE);
-      Title_ShowNintendoLogo(0);
+      Title_ShowPublisherLogo(0);
       Title_ShowCamelotLogo(0);
       // With no save file the intro is skipped. Left alone, the title fades
       // out and the logos play again after two seconds, or a key press.

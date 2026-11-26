@@ -1,7 +1,7 @@
 /// @file
 /// The title intro, the view rising up a peak towards the sun and its lens
 /// flare until the flash into the title picture and its "Press Start" prompt;
-/// the Nintendo and Camelot logos; and the palette fade the intro uses.
+/// the publisher's and Camelot's logos; and the palette fade the intro uses.
 
 #include "menu/title_intro.h"
 #include "macros.h"
@@ -640,15 +640,15 @@ UNUSED void Title_BeforeLogosNoOp(void) {}
 
 #define LOGO_PALETTE_BYTES (LOGO_PALETTE_COLORS * 2)
 
-/// The Nintendo logo's first tile: character block 1's, as BG2 numbers its
+/// The publisher logo's first tile: character block 1's, as BG2 numbers its
 /// 256-colour tiles from block 0.
-#define NINTENDO_LOGO_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+#define PUBLISHER_LOGO_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
 
-/// Shows the Nintendo logo with its chime. Without `fadeOut`, as the title
+/// Shows the publisher's logo with its chime. Without `fadeOut`, as the title
 /// shows it, the logo appears at once and holds two seconds; with it, unused,
 /// the logo fades in after a second of black, holds three seconds and fades
 /// out. Returns -1 when A or Start skipped it.
-s32 Title_ShowNintendoLogo(s32 fadeOut) {
+s32 Title_ShowPublisherLogo(s32 fadeOut) {
   s32 result;
   u8 *resourceData;
   u16 *tilemap;
@@ -660,7 +660,7 @@ s32 Title_ShowNintendoLogo(s32 fadeOut) {
 
   Sound_PlayFar(SE_CHIME);
   gOamCopyEnabled = 1;
-  resourceId = RESOURCE_NINTENDO_LOGO;
+  resourceId = RESOURCE_PUBLISHER_LOGO;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
@@ -678,7 +678,7 @@ s32 Title_ShowNintendoLogo(s32 fadeOut) {
   Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
           DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
-  tileIndex = NINTENDO_LOGO_TILE;
+  tileIndex = PUBLISHER_LOGO_TILE;
   tilemap = (u16 *)BG_SCREEN_BLOCK(PICTURE_SCREEN);
   for (i = 0; i < DISPLAY_TILE_HEIGHT; i++) {
     for (column = 0; column < DISPLAY_TILE_WIDTH; column++)

@@ -11,7 +11,7 @@ table, so tables only ever grow at the end.
 ## The ROM header
 
 The first 192 bytes are the same layout on every Game Boy Advance game: a
-jump to the game's first instruction, the Nintendo logo, a title, a game
+jump to the game's first instruction, the cartridge logo, a title, a game
 code and a checksum. The console checks them before it lets the game run.
 
 Each language is a cartridge of its own, an

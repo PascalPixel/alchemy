@@ -20,8 +20,8 @@ Title_TitleScreen	screen_de.gbapal					it
 	screen_de.8bpp.plz				4	it	
 Title_IntroPeak	intro_peak.gbapal						
 	intro_peak.parts.plz				4		
-Title_NintendoLogo	nintendo_splash.gbapal						
-	nintendo_splash.8bpp.lz						
+Title_PublisherLogo	publisher_splash.gbapal						
+	publisher_splash.8bpp.lz						
 Title_CamelotLogo	camelot_logo_ja.parts.lz					ja	
 Title_GoldenSunLogo	golden_sun_ja.gbapal					ja	
 	golden_sun_ja.8bpp.lz					ja	

@@ -330,7 +330,7 @@
 	export Actor_Lookup, Actor_LookupFar
 	export FieldEffect_StartBlankOverlay, FieldEffect_StartBlankOverlayFar
 	export WorldMap_ReloadPendingAreaGraphics, WorldMap_ReloadPendingAreaGraphicsFar
-	export Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
+	export Title_ShowPublisherLogo, Title_ShowPublisherLogoFar
 	export Title_ShowCamelotLogo, Title_ShowCamelotLogoFar
 	export TitleIntro_Run, TitleIntro_RunFar
 	export FieldPsynergy_FadeFromCastColor, FieldPsynergy_FadeFromCastColorFar

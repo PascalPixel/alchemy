@@ -40,8 +40,9 @@ extern char ResourceId_WindowTiles;
 /// WindowTiles.
 extern char ResourceId_SmallFont;
 #define RESOURCE_SMALL_FONT ((s32)&ResourceId_SmallFont)
-extern char ResourceId_NintendoLogo; ///< Shown first by Title_ShowNintendoLogo.
-#define RESOURCE_NINTENDO_LOGO ((s32)&ResourceId_NintendoLogo)
+extern char
+    ResourceId_PublisherLogo; ///< Shown first by Title_ShowPublisherLogo.
+#define RESOURCE_PUBLISHER_LOGO ((s32)&ResourceId_PublisherLogo)
 /// The Camelot logo's four frames of tiles, which Title_ShowCamelotLogo
 /// cycles.
 extern char ResourceId_CamelotLogo;

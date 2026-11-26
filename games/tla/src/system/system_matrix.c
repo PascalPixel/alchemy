@@ -330,7 +330,7 @@ void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
 void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
-  DotProductRoutine dot;
+  ASM_REGISTER(DotProductRoutine dot, "sl");
   u32 code[8];
   s32 dx, dy, dz;
   s32 ux;
@@ -344,16 +344,16 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 length;
   FIXED levelSquared;
   u32 dividend = (u32)FIXED_ONE << RECIPROCAL_SHIFT;
-  u32 (*divide)(u32 dividend, u32 divisor);
-  s32 (*mul)(s32 a, s32 b);
+  ASM_REGISTER(u32 (*divide)(u32 dividend, u32 divisor), "r9");
+  ASM_REGISTER(s32 (*mul)(s32 a, s32 b), "fp");
 
-  // Copy the dot-product routine to the stack and call it there.
+  // The three routines this calls again and again are kept by address in
+  // registers Thumb code has little other use for; the call through a register
+  // takes any of them. The dot-product routine is copied to the stack and
+  // called there.
   mul = Iwram_MulFX;
-  /* FAKEMATCH(barrier): an empty asm sets dot to code, clobbers r3, r9. */
-  asm("" : "=r"(dot) : "0"((DotProductRoutine)code) : "r3", "r9");
+  dot = (DotProductRoutine)code;
   divide = Iwram_UnsignedDivideEntry;
-  /* FAKEMATCH(barrier): an empty asm on divide, reads dot, clobbers r1. */
-  asm("" : "+r"(divide) : "r"(dot) : "r1");
   Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(8), REG_DMA3);
 
   // The view axis d, pointing from the target back to the eye, normalized:
@@ -391,8 +391,6 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   vx = mul(vx, scale);
   vy = mul(vy, scale);
   vz = mul(vz, scale);
-  /* FAKEMATCH(barrier): an empty asm on dot that clobbers r11. */
-  asm("" : "+r"(dot) : : "r11");
 
   // Place the three axes in columns; translation uses dot products with
   // eye.

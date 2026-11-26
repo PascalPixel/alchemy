@@ -57,7 +57,7 @@ To solve one, write the plain form and build that edition with `make compare-tla
 
 Assembly lives in one header a game, `include/system/asm.h`, a macro to each instruction sequence; no other file has an `asm` with anything in it, and a second name for a symbol is a label where the symbol is defined.
 
-Don’t replace a fake match with a worse kind, and don’t add a register pin (`register int x asm("r4")`). Neither is accepted.
+Don’t replace a fake match with a worse kind. A local the ROM keeps in one named register is declared with `ASM_REGISTER`, and only where the routine matches with nothing else; a bare `register int x asm("r4")` is not accepted.
 
 ## Where the System comes from
 
@@ -98,7 +98,7 @@ What this predicts, and where it stands:
 | A macro is text, so two versions can live in one game | ⚓️’s battle code stores the unit matrix in ☀️’s instruction order while its System uses a newer order |
 | The form the library uses on its own matrix may differ from the one it gives callers | The current-matrix store is the same text with r3 left off its list, and needs no other device |
 | Lines compiled out leave statements that emit nothing | `ASM_NOTHING` after a menu sprite’s two stores; the cartridge also keeps debug rooms, the debug text and a CPU load display |
-| An empty asm left in C is a library macro whose register list we have not found | Open: the three in `Matrix_BuildLookAt`, SGL’s `slLookAt`, sit at its calls to the dot product and the divide |
+| An empty asm left in C stands for something the library’s author wrote plainly | `Matrix_BuildLookAt`, SGL’s `slLookAt`, had three; they were the addresses of the multiply, the divide and the dot product, each kept in a named register. Six others are open |
 
 When you meet assembly that fits none of this, say so in the pull request: it is either a fourth layer or a hole in the theory.
 

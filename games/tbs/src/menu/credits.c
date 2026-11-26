@@ -284,9 +284,7 @@ struct CreditsOamEntry {
 STATIC_ASSERT(sizeof(struct CreditsOamEntry) == 8);
 
 /// Credits scroll position in pixels, in the low half of gWaitForFlashWrite.
-/* FAKEMATCH(asm): another name and type for gWaitForFlashWrite, given by an asm
- * label. */
-extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
+extern u16 gCreditsScrollPosition;
 
 // ewram.s reserves four bytes for each cell. The credits replace the task table
 // and borrow them while flash operations are inactive: a sprite-buffer pointer,
@@ -296,18 +294,15 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // each use of the save, writes gFlash, gProgramFlashSector and
 // gWaitForFlashWrite, and each program routine sets gFlashNumRemainingBytes.
 // UB: the casts alias the flash declarations and store a pointer through
-// a declared u16. UBFIX gives these assembler-backed cells their credits views.
+// a declared u16. UBFIX reads each cell by its credits name instead, which
+// ewram.s gives it beside its flash name.
 #ifdef UBFIX
-/* FAKEMATCH(asm): the three cells below take other names and types through
- * asm labels, in the UBFIX build only.
- */
 /// The sprite buffer, in gFlashNumRemainingBytes.
-extern struct CreditsOamEntry *
-    gCreditsScrollObjects __asm__("gFlashNumRemainingBytes");
+extern struct CreditsOamEntry *gCreditsScrollObjects;
 /// The last line drawn, as a pixel position, in the low half of gFlash.
-extern s16 gCreditsLastLinePosition __asm__("gFlash");
+extern s16 gCreditsLastLinePosition;
 /// 0 until the text ends, then -1, in the low half of gProgramFlashSector.
-extern s16 gCreditsEndOfText __asm__("gProgramFlashSector");
+extern s16 gCreditsEndOfText;
 
 /// The three cells, as the credits read them.
 #define SCROLL_OBJECTS gCreditsScrollObjects

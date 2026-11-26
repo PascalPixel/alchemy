@@ -146,4 +146,16 @@
                    :                                                           \
                    : "r2", "r3", "r4", "memory")
 
+/// Declares `symbol` as the bytes at the linked name `name`, whatever type the
+/// name has elsewhere: how the modern build reaches a fixed address.
+#define ASM_LINKED_NAME(symbol, name)                                          \
+  /* FAKEMATCH(asm): another name for a linked symbol, by an asm label. */     \
+  extern char symbol[] __asm__(name)
+
+/// Hides what `value` holds from the modern compiler, so that it reads it
+/// through a register.
+#define ASM_OPAQUE(value)                                                      \
+  /* FAKEMATCH(barrier): an empty asm that rewrites value; as no asm. */       \
+  __asm__("" : "+r"(value))
+
 #endif

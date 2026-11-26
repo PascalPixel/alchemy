@@ -6,6 +6,7 @@
 /// macros.
 
 #include "stddef.h"
+#include "system/asm.h"
 
 typedef signed char s8;
 typedef unsigned char u8;
@@ -27,13 +28,9 @@ typedef unsigned long long u64;
 /// RAM still reaches it.
 #define FIXED_LINKED(linked)                                                   \
   ({                                                                           \
-    /* FAKEMATCH(asm): the linked name reached through an asm label, in the    \
-     * modern build only. */                                                   \
-    /* FAKEMATCH(barrier): an empty asm that hides the address from the modern \
-     * compiler; as no asm. */                                                 \
-    extern char modern_##linked[] __asm__(#linked);                            \
+    ASM_LINKED_NAME(modern_##linked, #linked);                                 \
     void *modern_address = modern_##linked;                                    \
-    __asm__("" : "+r"(modern_address));                                        \
+    ASM_OPAQUE(modern_address);                                                \
     modern_address;                                                            \
   })
 /// One of Camelot's fixed addresses, as a constant of `type`; `linked` names

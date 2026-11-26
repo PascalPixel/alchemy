@@ -56,6 +56,8 @@
 #else
 OUTPUT_ARCH(arm)
 ENTRY(Entry)
+/* The ropes call Trig_Atan as returning a halfword, under this name. */
+Trig_AtanHalfword = Trig_Atan;
 Decompress_MoveToFrontLzCommandsCodeSize = Decompress_MoveToFrontLzCommandsEnd - Decompress_MoveToFrontLzCommandsCode;
 Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Tile_Decompress4bppCode;
 Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMaskedCode;

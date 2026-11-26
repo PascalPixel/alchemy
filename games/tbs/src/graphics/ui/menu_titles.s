@@ -3,7 +3,14 @@
 	.balign 4
 @ 64x16 text headings, each made of two 32x16 sprites
 	.global gMenuTitlePictures
+@ MenuTitle_LoadFirstTile reaches the table by three more names, one a case.
+	.global gMenuTitlePicturesCaseA
+	.global gMenuTitlePicturesCaseB
+	.global gMenuTitlePicturesCaseC
 gMenuTitlePictures:
+gMenuTitlePicturesCaseA:
+gMenuTitlePicturesCaseB:
+gMenuTitlePicturesCaseC:
 	.4byte gMenuTitle_Save, gMenuTitle_Continue, gMenuTitle_Copy, gMenuTitle_Erase
 	.4byte gMenuTitle_Battle, gMenuTitle_Link, gMenuTitle_Pause, gMenuTitle_Settings
 	.ifdef TBS_EDITION_JA

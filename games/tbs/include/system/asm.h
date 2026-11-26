@@ -114,4 +114,10 @@
                    : "=r"(result)                                              \
                    : "r"(high), "r"(low))
 
+/// Declares `symbol` as the bytes at the linked name `name`, whatever type the
+/// name has elsewhere: how the modern build reaches a fixed address.
+#define ASM_LINKED_NAME(symbol, name)                                          \
+  /* FAKEMATCH(asm): another name for a linked symbol, by an asm label. */     \
+  extern char symbol[] __asm__(name)
+
 #endif

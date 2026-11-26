@@ -7,6 +7,7 @@
 
 #include "config.h"
 #include "stddef.h"
+#include "system/asm.h"
 #include "version.h"
 
 typedef signed char s8;
@@ -48,9 +49,7 @@ typedef unsigned long long u64;
 // otherwise expand first and cannot be pasted.
 #define FIXED_LINKED_(symbol, name)                                            \
   ({                                                                           \
-    /* FAKEMATCH(asm): the linked name reached through an asm label, in the    \
-     * modern build only. */                                                   \
-    extern char symbol[] __asm__(name);                                        \
+    ASM_LINKED_NAME(symbol, name);                                             \
     void *volatile modern_address = symbol;                                    \
     modern_address;                                                            \
   })

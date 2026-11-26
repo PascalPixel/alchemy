@@ -179,16 +179,26 @@ gMPlayTrack_SE7:
 	.space 160
 	.space 64
 	.global gWaitForFlashWrite
+	.global gCreditsScrollPosition
+@ The credits borrow the four flash cells while flash is idle, each under a
+@ name and type of their own.
 gWaitForFlashWrite:
+gCreditsScrollPosition:
 	.space 4
 	.global gProgramFlashSector
+	.global gCreditsEndOfText
 gProgramFlashSector:
+gCreditsEndOfText:
 	.space 4
 	.global gFlash
+	.global gCreditsLastLinePosition
 gFlash:
+gCreditsLastLinePosition:
 	.space 4
 	.global gFlashNumRemainingBytes
+	.global gCreditsScrollObjects
 gFlashNumRemainingBytes:
+gCreditsScrollObjects:
 	.space 4
 	.global gEraseFlashChip
 gEraseFlashChip:

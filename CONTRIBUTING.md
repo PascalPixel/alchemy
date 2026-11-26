@@ -55,6 +55,8 @@ Find them with `grep -rn "FAKEMATCH(" games`. The kinds, worst first:
 
 To solve one, write the plain form and build that edition with `make compare-tla-en`. If it still prints OK, remove the mark and run `make` for all twelve. If it doesn’t, try other ways of writing the same thing: the order of declarations, the type of a local, an `if` turned around.
 
+Assembly lives in one header a game, `include/system/asm.h`, a macro to each instruction sequence; no other file has an `asm` with anything in it, and a second name for a symbol is a label where the symbol is defined.
+
 Don’t replace a fake match with a worse kind, and don’t add a register pin (`register int x asm("r4")`). Neither is accepted.
 
 ## Names

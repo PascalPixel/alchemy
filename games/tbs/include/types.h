@@ -48,8 +48,8 @@ typedef unsigned long long u64;
 // otherwise expand first and cannot be pasted.
 #define FIXED_LINKED_(symbol, name)                                            \
   ({                                                                           \
-    /* FAKEMATCH(signature): the linked name reached through an asm label, in  \
-     * the modern build only; as the fixed address. */                         \
+    /* FAKEMATCH(asm): the linked name reached through an asm label, in the    \
+     * modern build only. */                                                   \
     extern char symbol[] __asm__(name);                                        \
     void *volatile modern_address = symbol;                                    \
     modern_address;                                                            \

@@ -88,10 +88,11 @@ void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
     {
       // The yaw: the far-call table's arctangent of the view's direction,
       // called in Thumb through Matrix_CallInThumb with its target in ip.
-      /* FAKEMATCH(barrier): x, y and result pinned to r0 and r1 by asm register
-       * names; as plain locals. */
+      /* FAKEMATCH(asm): x pinned to r0 by an asm register name. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
+      /* FAKEMATCH(asm): y pinned to r1 by an asm register name. */
       register s32 y __asm__("r1") = depth >> 4;
+      /* FAKEMATCH(asm): result pinned to r0 by an asm register name. */
       register s32 result __asm__("r0");
 
       /* FAKEMATCH(asm): handwritten assembly: ldr ip from the table and bl

@@ -284,8 +284,8 @@ struct CreditsOamEntry {
 STATIC_ASSERT(sizeof(struct CreditsOamEntry) == 8);
 
 /// Credits scroll position in pixels, in the low half of gWaitForFlashWrite.
-/* FAKEMATCH(signature): another name and type for gWaitForFlashWrite, given by
- * an asm label; as a cast of gWaitForFlashWrite. */
+/* FAKEMATCH(asm): another name and type for gWaitForFlashWrite, given by an asm
+ * label. */
 extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 
 // ewram.s reserves four bytes for each cell. The credits replace the task table
@@ -298,8 +298,8 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // UB: the casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
-/* FAKEMATCH(signature): the three cells below take other names and types
- * through asm labels, in the UBFIX build only; as the casts of the other arm.
+/* FAKEMATCH(asm): the three cells below take other names and types through
+ * asm labels, in the UBFIX build only.
  */
 /// The sprite buffer, in gFlashNumRemainingBytes.
 extern struct CreditsOamEntry *

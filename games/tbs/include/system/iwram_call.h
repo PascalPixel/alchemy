@@ -133,12 +133,14 @@ static inline s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
   return result;
 }
 #else
-/* FAKEMATCH(asm): handwritten assembly: a call that returns through ip, which
- * no procedure-call standard produces. */
 static __inline__ s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
+  /* FAKEMATCH(asm): result pinned to r0 by an asm register name. */
   register s32 result __asm__("r0") = left;
+  /* FAKEMATCH(asm): factor pinned to r1 by an asm register name. */
   register s32 factor __asm__("r1") = right;
 
+  /* FAKEMATCH(asm): handwritten assembly: a call that returns through ip, which
+   * no procedure-call standard produces. */
   __asm__ volatile(".align 2\n\t"
                    "mov ip, pc\n\t"
                    "bx %2\n\t"

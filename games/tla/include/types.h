@@ -27,8 +27,8 @@ typedef unsigned long long u64;
 /// RAM still reaches it.
 #define FIXED_LINKED(linked)                                                   \
   ({                                                                           \
-    /* FAKEMATCH(signature): the linked name reached through an asm label, in  \
-     * the modern build only; as the fixed address. */                         \
+    /* FAKEMATCH(asm): the linked name reached through an asm label, in the    \
+     * modern build only. */                                                   \
     /* FAKEMATCH(barrier): an empty asm that hides the address from the modern \
      * compiler; as no asm. */                                                 \
     extern char modern_##linked[] __asm__(#linked);                            \

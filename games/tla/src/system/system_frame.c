@@ -350,13 +350,15 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 
 /// Copies 16 bytes from `source` to `destination` with one four-register load
 /// and store.
-/* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of four registers:
- * agscc's block moves stop at three, so a 16-byte struct copy compiles to 12
- * and 4. */
 static __inline__ void Copy16Bytes(const void *source,
                                    volatile void *destination) {
+  /* FAKEMATCH(asm): src pinned to r0 by an asm register name. */
   register const void *src __asm__("r0") = source;
+  /* FAKEMATCH(asm): dst pinned to r1 by an asm register name. */
   register volatile void *dst __asm__("r1") = destination;
+  /* FAKEMATCH(asm): handwritten assembly: ldmia and stmia of four registers:
+   * agscc's block moves stop at three, so a 16-byte struct copy compiles to 12
+   * and 4. */
   __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
                    : "+r"(src), "+r"(dst)
                    :

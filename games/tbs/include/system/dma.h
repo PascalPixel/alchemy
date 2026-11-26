@@ -70,15 +70,19 @@ struct DmaRegisters {
 
 /// Starts a DMA transfer: stores the source, destination and control words
 /// into `channel`'s registers with one stmia.
-/* FAKEMATCH(asm): handwritten assembly: stmia of three registers with no paired
- * ldmia, which no agscc pattern emits. */
 static __inline__ void Dma_Set(const volatile void *source,
                                volatile void *destination, u32 control,
                                volatile u32 *channel) {
+  /* FAKEMATCH(asm): dma pinned to r3 by an asm register name. */
   register volatile u32 *dma __asm__("r3") = channel;
+  /* FAKEMATCH(asm): src pinned to r0 by an asm register name. */
   register u32 src __asm__("r0") = (u32)source;
+  /* FAKEMATCH(asm): dst pinned to r1 by an asm register name. */
   register u32 dst __asm__("r1") = (u32)destination;
+  /* FAKEMATCH(asm): cnt pinned to r2 by an asm register name. */
   register u32 cnt __asm__("r2") = control;
+  /* FAKEMATCH(asm): handwritten assembly: stmia of three registers with no
+   * paired ldmia, which no agscc pattern emits. */
   __asm__ volatile("stmia %2!, {%0, %3, %1}\n\tsub %2, #12"
                    : "+r"(src), "+r"(cnt)
                    : "r"(dma), "r"(dst)

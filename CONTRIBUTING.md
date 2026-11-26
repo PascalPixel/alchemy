@@ -47,7 +47,7 @@ Find them with `grep -rn "FAKEMATCH(" games`. The kinds, worst first:
 | ----------- | ------------------------------------------------------- |
 | `signature` | a type that isn’t the real one                          |
 | `volatile`  | `volatile` on something no hardware or interrupt shares |
-| `asm`       | an `asm` statement with instructions                    |
+| `asm`       | any other `asm`: instructions, a label, a register name |
 | `barrier`   | an empty `asm`                                          |
 | `wrapper`   | a call layer with no purpose of its own                 |
 | `temporary` | a local that only stands for another value              |

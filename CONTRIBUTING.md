@@ -115,7 +115,7 @@ The rest of each name follows these rules:
 | Constants and macros | `UPPER_SNAKE_CASE`, a macro that is a statement too: `DMA_FILL16`                                  |
 | Files and folders    | lowercase, short, the same in both games                                                           |
 
-A type keeps its tag beside its capital name. A forward declaration is `struct ACTOR;`, and a use is written `struct ACTOR *` where the typedef is not in sight. The old compilers refuse a typedef repeated in two headers. Two globals keep an old `g`, `gWorldMapIodem` and `gWorldMapBlend`, because the linker orders them by a hash of their names.
+A type keeps its tag beside its capital name. A forward declaration is `struct ACTOR;`, and a use is written `struct ACTOR *` where the typedef is not in sight. The old compilers refuse a typedef repeated in two headers. A global without a starting value is placed by the linker in an order hashed from its name, so a rename can move it; `IodemActor` and `WorldMapBlendWork` are named to keep the ROM's order.
 
 Pick a word in this order: the game’s own English text, for anything the player sees; then the term a Game Boy Advance programmer already uses (for hardware, [GBATEK](https://problemkaputt.de/gbatek.htm)’s name); then plain English. Use one word for one thing everywhere. The glossaries in [`docs/tbs/glossary.md`](docs/tbs/glossary.md) and [`docs/tla/glossary.md`](docs/tla/glossary.md) hold the words already settled, each with its sources, and [say where the style comes from](docs/tbs/glossary.md#the-style-and-where-it-comes-from).
 

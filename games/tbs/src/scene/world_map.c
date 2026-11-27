@@ -104,7 +104,7 @@
 #include "text/msg_ids.h"
 
 Sint32				  scInit(void);
-extern Sint32		  gWorldMapIodem;
+extern Sint32		  IodemActor;
 extern Sint32		  CaravanFirstWagonArrives[];
 extern Sint32		  CaravanFirstWagonDeparts[];
 extern Sint32		  CaravanFirstWagonReturns[];
@@ -854,10 +854,10 @@ Sint32 scInit(void)
 			if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
 				if(gmFlagGet(FLAG_BLACK_ORB_RETURNED) == 0 &&
 					gmFlagGet(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) != 0) {
-					gWorldMapIodem = ACTOR_IODEM;
+					IodemActor = ACTOR_IODEM;
 					fdActorSetPos(ACTOR_IODEM, 6036, 3400);
-					fdActorGet(gWorldMapIodem)->facing = FACING_SOUTH_SOUTHEAST;
-					scWorldMapBlockGatewayCaveExit(gWorldMapIodem);
+					fdActorGet(IodemActor)->facing = FACING_SOUTH_SOUTHEAST;
+					scWorldMapBlockGatewayCaveExit(IodemActor);
 				}
 			} else if(gmFlagGet(FLAG_BLACK_ORB_RETURNED) == 0 &&
 				gmFlagGet(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN) == 0) {
@@ -1798,12 +1798,12 @@ static void scWorldMapMeetFlint(void)
 	gmFlagClear(FLAG_DJINN_LESSON_PART_B);
 }
 
-/* Iodem's actor on the world map, set as he comes out to meet the party. These
-   two keep the g of their old names. Neither has a starting value, so the
-   linker places them, and it orders such variables by a hash of their names:
-   under the names WorldMapIodem and WorldMapBlend it puts them the other way
-   round from the ROM. */
-Sint32 gWorldMapIodem;
+/* Iodem's actor on the world map, set as he comes out to meet the party. This
+   and WorldMapBlendWork have no starting value, so the linker places them,
+   and it orders such variables by a hash of their names: under the names
+   WorldMapIodem and WorldMapBlend it puts them the other way round from the
+   ROM, so these two names were chosen to keep the ROM's order. */
+Sint32 IodemActor;
 
 /* Brings Bunza's wagon to a stop and lets Isaac step down, after Hammet's
    return home (kalay.c's scKalayHammetReturnsToPalace). */
@@ -1873,23 +1873,23 @@ static void scWorldMapRunBlackOrbScript(void)
 	ACTOR *leader;
 
 	fdScriptStart();
-	gWorldMapIodem = ACTOR_IODEM;
+	IodemActor = ACTOR_IODEM;
 	scWorldMapBlockGatewayCaveExit(ACTOR_IODEM);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdWorldMapFreeze();
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(leader != NULL) {
-		fdActorSetPosFX(gWorldMapIodem, leader->x.fixed, leader->z.fixed);
+		fdActorSetPosFX(IodemActor, leader->x.fixed, leader->z.fixed);
 	}
-	fdActorSetSpeed(gWorldMapIodem, 1.6);
-	fdActorWalkToAndWait(gWorldMapIodem, 5992, 3448);
-	fdActorFaceDirection(gWorldMapIodem, FACING_EAST, 20);
-	fdActorShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-	fdActorStartRepeatedMotion(gWorldMapIodem, 2);
+	fdActorSetSpeed(IodemActor, 1.6);
+	fdActorWalkToAndWait(IodemActor, 5992, 3448);
+	fdActorFaceDirection(IodemActor, FACING_EAST, 20);
+	fdActorShowEmote(IodemActor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+	fdActorStartRepeatedMotion(IodemActor, 2);
 	fdScriptSetMessageId(MsgWorldMapLook);
 	/* "Look at this!" */
-	fdScriptShowMessageThenWait(gWorldMapIodem | SPEAKER_PORTRAIT_LEFT, 0, 10);
+	fdScriptShowMessageThenWait(IodemActor | SPEAKER_PORTRAIT_LEFT, 0, 10);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
 	fdWorldMapUnfreeze();
 	fdWorldMapStartZoom(toFIXED(7) / 5, 10);
@@ -1899,49 +1899,49 @@ static void scWorldMapRunBlackOrbScript(void)
 	fdScriptWait(40);
 	fdWorldMapFreeze();
 	fdActorSetAttachedEffect(
-		gWorldMapIodem, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		IodemActor, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(60);
-	fdActorRunRepeatedMotion(gWorldMapIodem, 1);
+	fdActorRunRepeatedMotion(IodemActor, 1);
 	/* "What happened?" */
 	fdScriptShowMessageThenWait(
-		gWorldMapIodem | SPEAKER_PORTRAIT_LEFT | SPEAKER_PORTRAIT_RIGHT, 0, 40);
-	fdActorWalkToAndWait(gWorldMapIodem, 5992, 3400);
-	fdActorWalkToAndWait(gWorldMapIodem, 6036, 3400);
-	fdActorFaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 20);
+		IodemActor | SPEAKER_PORTRAIT_LEFT | SPEAKER_PORTRAIT_RIGHT, 0, 40);
+	fdActorWalkToAndWait(IodemActor, 5992, 3400);
+	fdActorWalkToAndWait(IodemActor, 6036, 3400);
+	fdActorFaceDirection(IodemActor, FACING_SOUTH_SOUTHEAST, 20);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorSetScript(ACTOR_PARTY_LEADER, BlackOrbLeaderScript);
 	fdScriptWait(20);
-	fdActorRunRepeatedMotion(gWorldMapIodem, 1);
+	fdActorRunRepeatedMotion(IodemActor, 1);
 	/* "Babi's ship..." */
-	fdScriptShowMessageThenWait(gWorldMapIodem, 0, 10);
+	fdScriptShowMessageThenWait(IodemActor, 0, 10);
 	while(fdActorGet(ACTOR_PARTY_LEADER)->tmr == 0) {
 		sySynch(1);
 	}
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-	fdActorShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-	fdActorRunRepeatedMotion(gWorldMapIodem, 2);
+	fdActorShowEmote(IodemActor, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+	fdActorRunRepeatedMotion(IodemActor, 2);
 	/* "Hm... Perhaps it is time..." */
-	fdScriptShowMessageThenWait(gWorldMapIodem, 0, 10);
-	fdActorFaceDirection(gWorldMapIodem, FACING_WEST, 10);
+	fdScriptShowMessageThenWait(IodemActor, 0, 10);
+	fdActorFaceDirection(IodemActor, FACING_WEST, 10);
 	/* "Isaac, take this... Try to use it." */
-	fdScriptShowMessage(gWorldMapIodem, 0);
+	fdScriptShowMessage(IodemActor, 0);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
-	fdActorGet(gWorldMapIodem)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorWalkToAndWait(gWorldMapIodem, 6028, 3400);
+	fdActorGet(IodemActor)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorWalkToAndWait(IodemActor, 6028, 3400);
 	fdScriptWait(1);
-	fdActorGet(gWorldMapIodem)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(IodemActor)->steeringFlg |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
-	fdActorGet(gWorldMapIodem)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorWalkToAndWait(gWorldMapIodem, 6036, 3400);
+	fdActorGet(IodemActor)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorWalkToAndWait(IodemActor, 6036, 3400);
 	fdScriptWait(1);
-	fdActorGet(gWorldMapIodem)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(IodemActor)->steeringFlg |= ACTOR_FACES_MOTION;
 	gmItemShowFound(ITEM_BLACK_ORB, 3);
 	gmPartyGiveItem(ITEM_BLACK_ORB, 0);
-	fdActorRunRepeatedMotion(gWorldMapIodem, 1);
+	fdActorRunRepeatedMotion(IodemActor, 1);
 	fdScriptSetMessageId(MsgWorldMapNowUseOnShip);
 	/* "Now use it... on the ship." */
-	fdScriptShowMessageThenWait(gWorldMapIodem, 0, 10);
-	fdActorFaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 0);
+	fdScriptShowMessageThenWait(IodemActor, 0, 10);
+	fdActorFaceDirection(IodemActor, FACING_SOUTH_SOUTHEAST, 0);
 	fdWorldMapUnfreeze();
 	fdWorldMapStartZoom(toFIXED(1), 10);
 	fdScriptWait(20);
@@ -2007,7 +2007,7 @@ static void scWorldMapTalkAboutBlackOrb(void)
 	fdActorFaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
 	fdScriptSetMessageId(MsgWorldMapNowUseOnShip);
 	/* "Now use it... on the ship." */
-	fdScriptShowMessage(gWorldMapIodem, 0);
+	fdScriptShowMessage(IodemActor, 0);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHEAST, 0);
 	fdScriptEnd();
 }
@@ -2020,7 +2020,7 @@ static void scWorldMapIodemCallsIsaacBack(void)
 	fdWorldMapFreeze();
 	fdScriptSetMessageId(MsgWorldMapIsaacWhereGoingSaidUse);
 	/* "Isaac, where you going? I said to use the Orb on Babi's ship!" */
-	fdScriptShowMessage(gWorldMapIodem, 0);
+	fdScriptShowMessage(IodemActor, 0);
 	fdWorldMapUnfreeze();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 6008, 3400);
@@ -2112,35 +2112,35 @@ static void scWorldMapUseBlackOrb(void)
 		orb->update = scWorldMapPulseOrbAndSpawnSparks;
 		fdScriptWait(80);
 	}
-	fdActorGet(gWorldMapIodem)->facing = FACING_SOUTH_SOUTHEAST;
-	fdActorShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-	fdActorRunRepeatedMotion(gWorldMapIodem, 2);
+	fdActorGet(IodemActor)->facing = FACING_SOUTH_SOUTHEAST;
+	fdActorShowEmote(IodemActor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+	fdActorRunRepeatedMotion(IodemActor, 2);
 	msg = MsgWorldMapMatter;
 	fdScriptSetMessageId(msg);
 	/* "What's the matter?" */
-	fdScriptShowMessageThenWait(gWorldMapIodem, 0, 80);
+	fdScriptShowMessageThenWait(IodemActor, 0, 80);
 	if(orb != NULL) {
 		fdActorRelease(orb);
 	}
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdScriptWait(40);
-	fdActorJump(gWorldMapIodem, 6, 40);
+	fdActorJump(IodemActor, 6, 40);
 	/* "Strange... Nothing happened. What does it mean?" */
-	fdScriptShowMessageThenWait(gWorldMapIodem, 0, 20);
+	fdScriptShowMessageThenWait(IodemActor, 0, 20);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-	fdActorFaceDirection(gWorldMapIodem, FACING_NORTH_NORTHEAST, 20);
+	fdActorFaceDirection(IodemActor, FACING_NORTH_NORTHEAST, 20);
 	/* "Could Babi have been wrong?" */
 	fdScriptShowMessageThenWait(
-		gWorldMapIodem | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 40);
-	fdActorSetAnimationAndWait(gWorldMapIodem, ANIM_SHAKE_HEAD);
+		IodemActor | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 40);
+	fdActorSetAnimationAndWait(IodemActor, ANIM_SHAKE_HEAD);
 	/* "No. Not Babi..." */
 	fdScriptShowMessageThenWait(
-		gWorldMapIodem | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 20);
-	fdActorFaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 20);
+		IodemActor | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 20);
+	fdActorFaceDirection(IodemActor, FACING_SOUTH_SOUTHEAST, 20);
 	/* "I was wrong-it is not yet time. We must press on to Babi..." */
-	fdScriptShowMessageThenWait(gWorldMapIodem, 0, 10);
-	fdActorSetSpeed(gWorldMapIodem, 0.8);
-	fdActorSetAnimation(gWorldMapIodem, ANIM_WALK);
+	fdScriptShowMessageThenWait(IodemActor, 0, 10);
+	fdActorSetSpeed(IodemActor, 0.8);
+	fdActorSetAnimation(IodemActor, ANIM_WALK);
 	iodem = fdActorGet(ACTOR_IODEM);
 	syFieldActorSetMoveTargetFX(
 		iodem, toFIXED(6010), iodem->y.fixed, toFIXED(3400));
@@ -2148,11 +2148,11 @@ static void scWorldMapUseBlackOrb(void)
 	syFieldActorSetMoveTarget(iodem, 6001, 0, 3416);
 	fdActorWaitForMove(iodem);
 	fdActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
-	fdActorFaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHWEST, 10);
-	fdActorRunRepeatedMotion(gWorldMapIodem, 1);
+	fdActorFaceDirection(IodemActor, FACING_SOUTH_SOUTHWEST, 10);
+	fdActorRunRepeatedMotion(IodemActor, 1);
 	/* "I will take that back, for now." */
-	fdScriptShowMessageThenWait(gWorldMapIodem | SPEAKER_PORTRAIT_LEFT, 0, 20);
-	fdActorSetSpeed(gWorldMapIodem, 1);
+	fdScriptShowMessageThenWait(IodemActor | SPEAKER_PORTRAIT_LEFT, 0, 20);
+	fdActorSetSpeed(IodemActor, 1);
 	fdActorGet(ACTOR_IODEM)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
 	syFieldActorSetMoveTarget(iodem, 5997, 0, 3424);
@@ -2168,25 +2168,25 @@ static void scWorldMapUseBlackOrb(void)
 	FieldStateWork->msg++;
 	gmPartyInventoryDiscard(ITEM_BLACK_ORB);
 	fdScriptWait(20);
-	fdActorSetAnimation(gWorldMapIodem, ANIM_SHAKE_HEAD);
+	fdActorSetAnimation(IodemActor, ANIM_SHAKE_HEAD);
 	/* "We will return to the ship later." */
-	fdScriptShowMessageThenWait(gWorldMapIodem, 0, 10);
+	fdScriptShowMessageThenWait(IodemActor, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-	fdActorSetAnimationAndWait(gWorldMapIodem, ANIM_NOD);
+	fdActorSetAnimationAndWait(IodemActor, ANIM_NOD);
 	/* Iodem walks into Isaac and is taken off the map. */
-	fdActorSetAnimation(gWorldMapIodem, ANIM_WALK);
+	fdActorSetAnimation(IodemActor, ANIM_WALK);
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
 	if(actor != NULL) {
 		fdActorSetDestination(
-			gWorldMapIodem, actor->x.part[0].integer, actor->z.part[0].integer);
+			IodemActor, actor->x.part[0].integer, actor->z.part[0].integer);
 	}
-	fdActorWaitForMoveById(gWorldMapIodem);
-	fdActorSetPos(gWorldMapIodem, 0, 0);
+	fdActorWaitForMoveById(IodemActor);
+	fdActorSetPos(IodemActor, 0, 0);
 	fdWorldMapUnfreeze();
 	fdWorldMapStartZoom(toFIXED(1), 6);
 	fdScriptWait(20);
 	scWorldMapRestoreGatewayCaveExit();
-	fdActorReleaseById(gWorldMapIodem);
+	fdActorReleaseById(IodemActor);
 	gmFlagClear(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
 	gmFlagSet(FLAG_BLACK_ORB_RETURNED);
 	fdScriptEnd();
@@ -2203,7 +2203,7 @@ enum {
 
 /* The second weight of the lighthouse transition's blend (BLEND_ALPHA), which
    the picture's weight flickers over. */
-Uint16 gWorldMapBlend;
+Uint16 WorldMapBlendWork;
 
 /* Queues one picture of the lighthouse transition, a whole tile map, into BG0's
    screen block. */
@@ -2725,17 +2725,17 @@ static void scWorldMapStormDropsParty(void)
 
 /* Run each tick of the lighthouse transition: blends the ball of light over
    the map, its own weight flickering between 12 and 16 sixteenths every two
-   ticks over gWorldMapBlend. */
+   ticks over WorldMapBlendWork. */
 static void scWorldMapUpdateTransitionBlend(void)
 {
 	syIOWriteQueueStore16((Uint32)&REG_BLDCNT,
 		BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
 	if((TickCount & 2) != 0) {
 		syIOWriteQueueStore16(
-			(Uint32)&REG_BLDALPHA, gWorldMapBlend | BLEND_ALPHA(12, 0));
+			(Uint32)&REG_BLDALPHA, WorldMapBlendWork | BLEND_ALPHA(12, 0));
 	} else {
 		syIOWriteQueueStore16(
-			(Uint32)&REG_BLDALPHA, gWorldMapBlend | BLEND_ALPHA(16, 0));
+			(Uint32)&REG_BLDALPHA, WorldMapBlendWork | BLEND_ALPHA(16, 0));
 	}
 }
 
@@ -2821,42 +2821,42 @@ static void scWorldMapPlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE lighthouse)
 	fdScriptWaitTransitionTicks();
 	sySndPlay(SE_GLITTER);
 
-	gWorldMapBlend = BLEND_ALPHA(0, 14);
+	WorldMapBlendWork = BLEND_ALPHA(0, 14);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(6), 2);
-	gWorldMapBlend = BLEND_ALPHA(0, 13);
+	WorldMapBlendWork = BLEND_ALPHA(0, 13);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(5), 2);
-	gWorldMapBlend = BLEND_ALPHA(0, 12);
+	WorldMapBlendWork = BLEND_ALPHA(0, 12);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(4), 2);
-	gWorldMapBlend = BLEND_ALPHA(0, 11);
+	WorldMapBlendWork = BLEND_ALPHA(0, 11);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(3), 2);
-	gWorldMapBlend = BLEND_ALPHA(0, 10);
+	WorldMapBlendWork = BLEND_ALPHA(0, 10);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(2), 2);
-	gWorldMapBlend = BLEND_ALPHA(0, 9);
+	WorldMapBlendWork = BLEND_ALPHA(0, 9);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(1), 2);
-	gWorldMapBlend = BLEND_ALPHA(0, 8);
+	WorldMapBlendWork = BLEND_ALPHA(0, 8);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(0), 140);
 
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(1), 4);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(2), 4);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(3), 4);
-	gWorldMapBlend = BLEND_ALPHA(0, 9);
+	WorldMapBlendWork = BLEND_ALPHA(0, 9);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(4), 4);
-	gWorldMapBlend = BLEND_ALPHA(0, 10);
+	WorldMapBlendWork = BLEND_ALPHA(0, 10);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(5), 4);
-	gWorldMapBlend = BLEND_ALPHA(0, 11);
+	WorldMapBlendWork = BLEND_ALPHA(0, 11);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(6), 4);
-	gWorldMapBlend = BLEND_ALPHA(0, 12);
+	WorldMapBlendWork = BLEND_ALPHA(0, 12);
 	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buf, WORLD_MAP_LIGHT_BALL(7));
 	fdWorldMapLoadAreaGraphics();
 	sySetTickEvent(scWorldMapJitterTransitionCamera, EVENT_PASS_TICK);
 	sySndPlay(SE_RUMBLE);
-	gWorldMapBlend = BLEND_ALPHA(0, 13);
+	WorldMapBlendWork = BLEND_ALPHA(0, 13);
 	fdScriptWait(4);
-	gWorldMapBlend = BLEND_ALPHA(0, 14);
+	WorldMapBlendWork = BLEND_ALPHA(0, 14);
 	fdScriptWait(4);
-	gWorldMapBlend = BLEND_ALPHA(0, 15);
+	WorldMapBlendWork = BLEND_ALPHA(0, 15);
 	fdScriptWait(4);
-	gWorldMapBlend = BLEND_ALPHA(0, 16);
+	WorldMapBlendWork = BLEND_ALPHA(0, 16);
 	fdScriptWait(45);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();

@@ -159,7 +159,9 @@ extern const Uint8                      OwnerStatusLevelString[];
 // The ability of each summon, by its number.
 extern const Uint16                     SummonAbilities[];
 
-// The heading pair's bob (mnTitleBob), in pixels, a step every four Frames.
+// The heading pair's bob (mnTitleBob), in pixels, a step every four
+
+// Frames.
 extern const Uint8                      MenuTitleBobOffsets[];
 
 // The rows the range icons are marked with (mnRangeIconBuildTiles).

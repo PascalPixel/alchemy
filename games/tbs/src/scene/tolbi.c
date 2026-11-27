@@ -10,20 +10,20 @@
 // scInit moves the actors whose places change.
 //
 // - The festival (neither story flag set). The trials have begun at the
-//       colosseum, but Babi is not there, and his soldiers are searching the
-//       town. The first time the party heads up the path toward Babi's Palace,
-//       two of them stop it to show his picture, `Have you seen anyone who
+//   colosseum, but Babi is not there, and his soldiers are searching the
+//   town. The first time the party heads up the path toward Babi's Palace,
+//   two of them stop it to show his picture, `Have you seen anyone who
 // looks like this?`, and go their way whatever it answers
 //       (scTolbiMeetSearchingSoldiers, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI).
 // - Finals day (FLAG_BABI_SAVED), once the party has saved Babi in
-//       Altmiller Cave. He has shown himself at the finals, and the town
+//   Altmiller Cave. He has shown himself at the finals, and the town
 // hurries to the colosseum. The scalper who slept under the archway has moved,
 //       sending people to his buddy for seats.
 // - After Colosso (FLAG_COLOSSO_OVER). The visitors have left, so the family
-//       seen at the festival and four others are moved off the map. Those who
-//       stay talk of the quiet and of the ships that no longer sail the
-//       Karagol. The snack vendor gives away his leftover corn, once
-//       (FLAG_TOLBI_CORN_GIVEN).
+//   seen at the festival and four others are moved off the map. Those who
+//   stay talk of the quiet and of the ships that no longer sail the
+//   Karagol. The snack vendor gives away his leftover corn, once
+//   (FLAG_TOLBI_CORN_GIVEN).
 //
 // In every stage two children run a small loop south-east of the fountain (TolbiOlderBrotherRun,
 // TolbiYoungerSisterRun) and quarrel over their allowance. Each stops when it runs up behind the

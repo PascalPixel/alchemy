@@ -30,7 +30,7 @@
 // Its scene flag:
 //
 // - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout. A return that
-//       keeps the party's position, as after a battle, draws it grown again.
+//   keeps the party's position, as after a battle, draws it grown again.
 
 #include "ability_ids.h"
 #include "flags.h"

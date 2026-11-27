@@ -8,11 +8,11 @@
 // One  appears and stills it. Saturos's group leaves with Jenna and Kraden,
 // rising out of the chamber one by one. Jenna leaves the party.
 // - scSolSanctumEruptionPlayWiseOneRescue: the Wise One has Isaac keep the Mars
-//       Star, then sends Isaac and Garet away in a white flash. It sets
-//       FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from
+//   Star, then sends Isaac and Garet away in a white flash. It sets
+//   FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from
 // then on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED. Then it takes
-//       SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the Luna and Sol
-//       rooms (SceneIdSolSanctumLunaSolRooms).
+// SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the Luna and Sol rooms
+// (SceneIdSolSanctumLunaSolRooms).
 //
 // The effects are the script's own.
 //

@@ -4,21 +4,21 @@
 // same scene is named at STUCCO_ROOMS_B_SANCTUM and STUCCO_ROOMS_B_SANCTUM_NORTH.
 //
 // - Tolbi, the rooms behind the town's doors, which Tolbi's exits
-//       TOLBI_TO_HOUSE_NORTHWEST to TOLBI_TO_HOUSE_SOUTHWEST lead into. This
-//       scene's exits STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI to
-//       STUCCO_ROOMS_B_SANCTUM_TO_TOLBI lead back out. During the festival one
-//       household lines up beds and becomes a makeshift inn, and visitors have
-//       rented another house. The weapon, armor and item shops
-//       (STUCCO_ROOMS_B_WEAPON_SHOP, STUCCO_ROOMS_B_ARMOR_SHOP and
-//       STUCCO_ROOMS_B_ITEM_SHOP) open across their counters. The inn behind
-//       TOLBI_TO_INN is full, `Inn Full / No Vacancies`.
-//       Stairs lead down from it to its basement
-//       (STUCCO_ROOMS_B_INN_TO_INN_PASSAGE and
+//   TOLBI_TO_HOUSE_NORTHWEST to TOLBI_TO_HOUSE_SOUTHWEST lead into. This
+//   scene's exits STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI to
+//   STUCCO_ROOMS_B_SANCTUM_TO_TOLBI lead back out. During the festival one
+//   household lines up beds and becomes a makeshift inn, and visitors have
+//   rented another house. The weapon, armor and item shops
+//   (STUCCO_ROOMS_B_WEAPON_SHOP, STUCCO_ROOMS_B_ARMOR_SHOP and
+//   STUCCO_ROOMS_B_ITEM_SHOP) open across their counters. The inn behind
+//   TOLBI_TO_INN is full, `Inn Full / No Vacancies`.
+//   Stairs lead down from it to its basement
+//   (STUCCO_ROOMS_B_INN_TO_INN_PASSAGE and
 // STUCCO_ROOMS_B_INN_PASSAGE_TO_INN), a passage with two wooden doors in its north wall into the
 // upper guest rooms, and two doorways in its south wall into the lower ones
 // (STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST and the rest).
 // - Tolbi Sanctum, behind TOLBI_TO_SANCTUM (STUCCO_ROOMS_B_SANCTUM), whose
-//       healer opens the sanctum across the counter.
+//   healer opens the sanctum across the counter.
 // STUCCO_ROOMS_B_SANCTUM_NORTH is where a defeat returns the party while Iodem waits at Gondowan
 // Passage.
 //
@@ -26,12 +26,12 @@
 // table (scGetCues) and, after Colosso, an actor placement table of its own.
 //
 // - During the festival Babi is missing and the town is full of visitors,
-//       among them a tour group from Kalay that reserved only two rooms.
+//   among them a tour group from Kalay that reserved only two rooms.
 // - On finals day (FLAG_BABI_SAVED) Babi has shown himself at the finals.
-//       The Spanish and Italian editions add a question about it.
+//   The Spanish and Italian editions add a question about it.
 // - After Colosso (FLAG_COLOSSO_OVER) no ship sails the Karagol, and the
-//       visitors are stranded. One of them says they made it to Tolbi with the
-//       party's help.
+//   visitors are stranded. One of them says they made it to Tolbi with the
+//   party's help.
 //
 // After Colosso two short scripts play, each once, on entering their rooms (scInit).
 //

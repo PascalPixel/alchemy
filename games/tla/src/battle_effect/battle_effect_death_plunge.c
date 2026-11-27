@@ -19,7 +19,7 @@
 // Death Leap's two rings of light, FireRingTexture a quarter turn apart, swell from a quarter of
 // their size by an eighth a tick (toFIXED(1) >> (16
 // - DEATH_LEAP_RING_GROWTH_SHIFT)) and fade DEATH_LEAP_RING_FADE a tick from
-//       DEATH_PLUNGE_LAND_TICK.
+//   DEATH_PLUNGE_LAND_TICK.
 #define DEATH_LEAP_RINGS             2
 #define DEATH_LEAP_RING_GROWTH_SHIFT 13
 #define DEATH_LEAP_RING_FADE         4

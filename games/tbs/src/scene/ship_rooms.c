@@ -5,20 +5,20 @@
 // The map is four rooms, one camera box each:
 //
 // - The passengers' room, the hold where the Colosso tour group waits, down
-//       the stairs from the deck. A ladder behind a railing on its west side
+//   the stairs from the deck. A ladder behind a railing on its west side
 // goes down to the rowing deck, a travelling Healer stands in its south-east
 //       corner, and a barrel beside the stairs holds 23 coins.
 // - The cargo hold, down its own stairs in the middle of the ship, where a
-//       barrel holds a Lucky Medal.
+//   barrel holds a Lucky Medal.
 // - The rowing deck under the passengers' room: eight oarsmen in red
-//       bandanas at their seats, two by two, a drummer keeping time and a
-//       crewman.
+//   bandanas at their seats, two by two, a drummer keeping time and a
+//   crewman.
 // - The captain's cabin, where a jar holds a Nut.
 //
 // In story order:
 //
 // - At Kalay the ship waits for its relief from Tolbi. Walking into the
-//       passengers' room once the tour group is aboard, Isaac overhears
+//   passengers' room once the tour group is aboard, Isaac overhears
 // Ouranos, a huge warrior bound for Colosso who "can't stand water", threaten to go ashore; he and
 // his friend Sean storm off to make the captain sail
 //       (scShipRoomsWatchWarriorsStormOff). If Isaac has not yet overheard the
@@ -31,21 +31,21 @@
 //       Isaac's party asked to guard the oarsmen, and on the rowing deck Kaja
 //       tells them the ship sails without its relief.
 // - The voyage: the captain raises the charm and casts off, Kaja calls the
-//       oarsmen to row, and three times monsters come aboard and attack the
-//       rowing deck. Isaac fights them there, and after each battle an oarsman
-//       lies hurt, so Isaac must ask a passenger in the passengers' room to row
-//       in his place. Each answers in his or her own way, and whoever agrees
-//       follows Isaac down to the empty seat. Kaja warns that the two teams of
-//       rowers must be balanced; the choices decide whether the ship keeps its
-//       course.
+//   oarsmen to row, and three times monsters come aboard and attack the
+//   rowing deck. Isaac fights them there, and after each battle an oarsman
+//   lies hurt, so Isaac must ask a passenger in the passengers' room to row
+//   in his place. Each answers in his or her own way, and whoever agrees
+//   follows Isaac down to the empty seat. Kaja warns that the two teams of
+//   rowers must be balanced; the choices decide whether the ship keeps its
+//   course.
 // - The Kraken: the ship rocks badly, and the crew calls Isaac up on deck to
-//       fight a huge sea monster.
+//   fight a huge sea monster.
 // - If the rowers were badly chosen the ship strays off course to an island,
-//       Crossbone Isle, and waits there while the tour group argues about going
-//       ashore. Back on board, Kaja has the left and right teams change sides
+//   Crossbone Isle, and waits there while the tour group argues about going
+//   ashore. Back on board, Kaja has the left and right teams change sides
 // and the ship sets off for Tolbi.
 // - A defeat at sea brings the party back to the passengers' room with the
-//       voyage's flags cleared, to start the crossing over.
+//   voyage's flags cleared, to start the crossing over.
 //
 // Which actors stand in each room, and which talk and search rows they have, depend on the room
 // entered and the stage of the voyage. The cutscenes are played from scInit by the entrance the
@@ -5443,7 +5443,9 @@ CUE ShipRoomsHoldCuesAtIsland[] = {
     { CUE_TABLE_END },
 };
 
-// The captain's quarters, from the wait at Kalay until the ship reaches Tolbi.
+// The captain's quarters, from the wait at Kalay until the ship reaches
+
+// Tolbi.
 //
 // The Anchor Charm is given back to the captain here.
 CUE ShipRoomsCaptainsQuartersCues[] = {
@@ -5529,7 +5531,9 @@ CUE ShipRoomsRowingDeckCues[] = {
     { CUE_TABLE_END },
 };
 
-// The rowing deck while monsters are belowdecks, where talking to one (ACTOR_ROWING_FIRST_MONSTER and the two after it) fights it.
+// The rowing deck while monsters are belowdecks, where talking to one
+
+// (ACTOR_ROWING_FIRST_MONSTER and the two after it) fights it.
 CUE ShipRoomsRowingDeckCuesMonstersBelowdecks[] = {
     { CUE_STEP, METATILE_BEHAVIOR_SHIP_ROOMS_ROWING_DECK_STAIRS, CONDITION_ALWAYS, SCRIPT_REF(scShipRoomsCallLeaderBackToBeasts) },
     { CUE_TALK, ACTOR_ROWING_FIRST_MONSTER, CONDITION_ALWAYS, SCRIPT_REF(scShipRoomsFightRowingDeckMonsters) },

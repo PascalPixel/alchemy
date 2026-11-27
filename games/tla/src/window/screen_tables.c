@@ -19,7 +19,9 @@ const Uint8 StatusMenuLevelLetterString[] = "L";
 #endif
 
 // clang-format off
-// The kana that take a dakuten, as ranges of first and last font code (charmap_tla_ja.tsv), ending at 0.
+// The kana that take a dakuten, as ranges of first and last font code
+
+// (charmap_tla_ja.tsv), ending at 0.
 const Uint8 NameEntryVoicedMarkRanges[] = {
     182, 196, // カ to ト
     202, 206, // ハ to ホ

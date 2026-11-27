@@ -3002,8 +3002,8 @@ CUE MagmaRockSalamanderTailHighEastCues[] = {
 CUE MagmaRockSalamanderTailLowWestCues[] = {
     {CUE_EXIT, EXIT_LOW_WEST_TO_LOW_EAST_A, CONDITION_ALWAYS, EXIT_LOW_WEST_TO_LOW_EAST_A},
     {CUE_EXIT, EXIT_LOW_WEST_TO_LOW_EAST_B, CONDITION_ALWAYS, EXIT_LOW_WEST_TO_LOW_EAST_B},
-    // Flag 8 comes after the party members' flags and no code sets it, so the
-    // push always answers, as the low east level's does.
+    // Flag 8 comes after the party members' flags and no code sets it, so the push always answers,
+    // as the low east level's does.
     {STEP_CUE_WALKING_INTO(FACING_EAST),
      METATILE_BEHAVIOR_MAGMA_ROCK_PILLAR_PUSH, 0x8,
      SCRIPT_REF(scMagmaRockPushPillarEast)},

@@ -87,7 +87,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 30,
         .level = 5,
-        // Ghost, Vermin, Wild Mushroom, Zombie, Bat, Slime, Skeleton and Will Head.
+        // Ghost, Vermin, Wild Mushroom, Zombie, Bat, Slime, Skeleton and Will
+
+        // Head.
         .formations = {31, 32, 33, 34, 35, 36, 37},
         .weights = {2, 2, 2, 2, 8, 5, 2},
     },
@@ -95,7 +97,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 30,
         .level = 5,
-        // Ghost, Vermin, Wild Mushroom, Zombie, Bat, Slime, Skeleton and Will Head.
+        // Ghost, Vermin, Wild Mushroom, Zombie, Bat, Slime, Skeleton and Will
+
+        // Head.
         .formations = {31, 32, 33, 34, 35, 36, 37},
         .weights = {2, 2, 5, 2, 8, 8, 14},
     },
@@ -315,7 +319,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 38,
         .level = 11,
-        // Ooze, Mauler, Lizard Man, Mole, Spirit, Dirge, Skeleton and Bone Fighter.
+        // Ooze, Mauler, Lizard Man, Mole, Spirit, Dirge, Skeleton and Bone
+
+        // Fighter.
         .formations = {120, 121, 122, 123, 124, 125, 126, 127},
         .weights = {4, 4, 4, 8, 6, 4, 2, 1},
     },
@@ -323,7 +329,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 38,
         .level = 11,
-        // Ooze, Mauler, Lizard Man, Mole, Spirit, Dirge, Skeleton and Bone Fighter.
+        // Ooze, Mauler, Lizard Man, Mole, Spirit, Dirge, Skeleton and Bone
+
+        // Fighter.
         .formations = {120, 121, 122, 123, 124, 125, 126, 127},
         .weights = {1, 2, 2, 3, 6, 6, 3, 2},
     },
@@ -331,7 +339,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 38,
         .level = 11,
-        // Ooze, Mauler, Lizard Man, Mole, Spirit, Dirge, Skeleton and Bone Fighter.
+        // Ooze, Mauler, Lizard Man, Mole, Spirit, Dirge, Skeleton and Bone
+
+        // Fighter.
         .formations = {120, 121, 122, 123, 124, 125, 126, 127},
         .weights = {1, 1, 2, 3, 4, 4, 6, 8},
     },
@@ -379,7 +389,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 45,
         .level = 12,
-        // Dirge, Bone Fighter, Slime Beast, Ape, Tarantula, Calamar and Rat Fighter.
+        // Dirge, Bone Fighter, Slime Beast, Ape, Tarantula, Calamar and Rat
+
+        // Fighter.
         .formations = {148, 149, 150, 151, 152, 153, 154, 155},
         .weights = {6, 6, 4, 2, 1, 1, 1, 1},
     },
@@ -387,7 +399,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 45,
         .level = 13,
-        // Dirge, Bone Fighter, Slime Beast, Ape, Tarantula, Calamar and Rat Fighter.
+        // Dirge, Bone Fighter, Slime Beast, Ape, Tarantula, Calamar and Rat
+
+        // Fighter.
         .formations = {148, 149, 150, 151, 152, 153, 154, 155},
         .weights = {1, 1, 2, 4, 3, 4, 2, 2},
     },
@@ -395,7 +409,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 42,
         .level = 13,
-        // Dirge, Bone Fighter, Slime Beast, Ape, Tarantula, Calamar and Rat Fighter.
+        // Dirge, Bone Fighter, Slime Beast, Ape, Tarantula, Calamar and Rat
+
+        // Fighter.
         .formations = {148, 149, 150, 151, 152, 153, 154, 155},
         .weights = {1, 1, 2, 3, 4, 4, 8, 8},
     },
@@ -481,7 +497,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 40,
         .level = 16,
-        // Fighter Bee, Death Cap, Ravager, Ghost Mage, Undead, Gargoyle and Cave Troll.
+        // Fighter Bee, Death Cap, Ravager, Ghost Mage, Undead, Gargoyle and
+
+        // Cave Troll.
         .formations = {201, 202, 203, 204, 205, 206, 207, 208},
         .weights = {8, 8, 8, 4, 4, 4, 2, 2},
     },
@@ -489,7 +507,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 40,
         .level = 16,
-        // Fighter Bee, Death Cap, Ravager, Ghost Mage, Undead, Gargoyle and Cave Troll.
+        // Fighter Bee, Death Cap, Ravager, Ghost Mage, Undead, Gargoyle and
+
+        // Cave Troll.
         .formations = {201, 202, 203, 204, 205, 206, 207, 208},
         .weights = {2, 2, 2, 4, 4, 4, 8, 8},
     },
@@ -503,7 +523,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     // ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS
     {
         .level = 17,
-        // By slot, 0: Hobgoblin and Virago; 1: Grisly and Succubus; 2: Lich and Fiendish Ghoul; 3: Gryphon.
+        // By slot, 0: Hobgoblin and Virago; 1: Grisly and Succubus; 2: Lich and
+
+        // Fiendish Ghoul; 3: Gryphon.
         .formations = {291, 292, 293, 294},
         .weights = {10, 10, 10, 10},
     },
@@ -677,7 +699,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 30,
         .level = 23,
-        // Cannibal Ghoul, Horned Ghost, Gnome Wizard, Earth Golem, Goblin, Mole Mage and Nightmare.
+        // Cannibal Ghoul, Horned Ghost, Gnome Wizard, Earth Golem, Goblin, Mole
+
+        // Mage and Nightmare.
         .formations = {310, 311, 312, 313, 314, 315, 316, 317},
         .weights = {6, 6, 6, 3, 3, 2, 2, 2},
     },
@@ -685,7 +709,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 30,
         .level = 24,
-        // Cannibal Ghoul, Horned Ghost, Gnome Wizard, Earth Golem, Goblin, Mole Mage and Nightmare.
+        // Cannibal Ghoul, Horned Ghost, Gnome Wizard, Earth Golem, Goblin, Mole
+
+        // Mage and Nightmare.
         .formations = {310, 311, 312, 313, 314, 315, 316, 317},
         .weights = {2, 3, 3, 6, 6, 3, 3, 3},
     },
@@ -693,7 +719,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 30,
         .level = 24,
-        // Cannibal Ghoul, Horned Ghost, Gnome Wizard, Earth Golem, Goblin, Mole Mage and Nightmare.
+        // Cannibal Ghoul, Horned Ghost, Gnome Wizard, Earth Golem, Goblin, Mole
+
+        // Mage and Nightmare.
         .formations = {310, 311, 312, 313, 314, 315, 316, 317},
         .weights = {1, 1, 2, 2, 2, 3, 3, 3},
     },
@@ -701,7 +729,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 30,
         .level = 24,
-        // Cannibal Ghoul, Horned Ghost, Gnome Wizard, Earth Golem, Goblin, Mole Mage and Nightmare.
+        // Cannibal Ghoul, Horned Ghost, Gnome Wizard, Earth Golem, Goblin, Mole
+
+        // Mage and Nightmare.
         .formations = {310, 311, 312, 313, 314, 315, 316, 317},
         .weights = {2, 2, 3, 3, 3, 6, 6, 6},
     },
@@ -725,7 +755,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 35,
         .level = 25,
-        // Gnome Wizard, Plated Rat, Skull Warrior, Willowisp, Orc Lord, Wild Gryphon, Ice Gargoyle, Nightmare, Manticore King and Chimera Mage.
+        // Gnome Wizard, Plated Rat, Skull Warrior, Willowisp, Orc Lord, Wild
+
+        // Gryphon, Ice Gargoyle, Nightmare, Manticore King and Chimera Mage.
         .formations = {328, 329, 330, 331, 332, 333, 334, 335},
         .weights = {6, 6, 6, 4, 4, 4, 2, 2},
     },
@@ -733,7 +765,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 35,
         .level = 25,
-        // Gnome Wizard, Plated Rat, Skull Warrior, Willowisp, Orc Lord, Wild Gryphon, Ice Gargoyle, Nightmare, Manticore King and Chimera Mage.
+        // Gnome Wizard, Plated Rat, Skull Warrior, Willowisp, Orc Lord, Wild
+
+        // Gryphon, Ice Gargoyle, Nightmare, Manticore King and Chimera Mage.
         .formations = {328, 329, 330, 331, 332, 333, 334, 335},
         .weights = {3, 3, 4, 6, 6, 4, 3, 3},
     },
@@ -741,7 +775,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 35,
         .level = 26,
-        // Gnome Wizard, Plated Rat, Skull Warrior, Willowisp, Orc Lord, Wild Gryphon, Ice Gargoyle, Nightmare, Manticore King and Chimera Mage.
+        // Gnome Wizard, Plated Rat, Skull Warrior, Willowisp, Orc Lord, Wild
+
+        // Gryphon, Ice Gargoyle, Nightmare, Manticore King and Chimera Mage.
         .formations = {328, 329, 330, 331, 332, 333, 334, 335},
         .weights = {3, 3, 3, 4, 4, 4, 6, 6},
     },
@@ -749,7 +785,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 34,
         .level = 27,
-        // Wild Gryphon, Grand Golem, Manticore King, Skull Warrior, Chimera Mage, Fenrir, Recluse, Willowisp, Boulder Beast, Thunder Lizard and Ice Gargoyle.
+        // Wild Gryphon, Grand Golem, Manticore King, Skull Warrior, Chimera
+
+        // Mage, Fenrir, Recluse, Willowisp, Boulder Beast, Thunder Lizard and Ice Gargoyle.
         .formations = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {4, 4, 3, 3, 3, 3, 2, 2},
     },
@@ -757,7 +795,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 32,
         .level = 28,
-        // Wild Gryphon, Grand Golem, Manticore King, Skull Warrior, Chimera Mage, Fenrir, Recluse, Willowisp, Boulder Beast, Thunder Lizard and Ice Gargoyle.
+        // Wild Gryphon, Grand Golem, Manticore King, Skull Warrior, Chimera
+
+        // Mage, Fenrir, Recluse, Willowisp, Boulder Beast, Thunder Lizard and Ice Gargoyle.
         .formations = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {3, 3, 4, 4, 3, 3, 2, 2},
     },
@@ -765,7 +805,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 30,
         .level = 29,
-        // Wild Gryphon, Grand Golem, Manticore King, Skull Warrior, Chimera Mage, Fenrir, Recluse, Willowisp, Boulder Beast, Thunder Lizard and Ice Gargoyle.
+        // Wild Gryphon, Grand Golem, Manticore King, Skull Warrior, Chimera
+
+        // Mage, Fenrir, Recluse, Willowisp, Boulder Beast, Thunder Lizard and Ice Gargoyle.
         .formations = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {2, 2, 3, 3, 4, 4, 3, 3},
     },
@@ -773,7 +815,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     {
         .rate = 30,
         .level = 30,
-        // Wild Gryphon, Grand Golem, Manticore King, Skull Warrior, Chimera Mage, Fenrir, Recluse, Willowisp, Boulder Beast, Thunder Lizard and Ice Gargoyle.
+        // Wild Gryphon, Grand Golem, Manticore King, Skull Warrior, Chimera
+
+        // Mage, Fenrir, Recluse, Willowisp, Boulder Beast, Thunder Lizard and Ice Gargoyle.
         .formations = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {2, 2, 2, 3, 3, 3, 4, 4},
     },
@@ -791,7 +835,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     },
     // ENCOUNTER_ZONE_VENUS_DJINN
     {
-        // By slot, 0: Venus Djinni; 1: Venus Djinni; 2: Venus Djinni; 3: Venus Djinni; 4: Venus Djinni; 5: Venus Djinni; 6: Venus Djinni.
+        // By slot, 0: Venus Djinni; 1: Venus Djinni; 2: Venus Djinni; 3: Venus
+
+        // Djinni; 4: Venus Djinni; 5: Venus Djinni; 6: Venus Djinni.
         .formations = {360, 360, 360, 361, 361, 361, 362},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },
@@ -803,7 +849,9 @@ const ENCOUNTER_ZONE EncounterZones[] = {
     },
     // ENCOUNTER_ZONE_MARS_DJINN
     {
-        // By slot, 0: Mars Djinni; 1: Mars Djinni; 2: Mars Djinni; 3: Mars Djinni; 4: Mars Djinni; 5: Mars Djinni; 6: Mars Djinni.
+        // By slot, 0: Mars Djinni; 1: Mars Djinni; 2: Mars Djinni; 3: Mars
+
+        // Djinni; 4: Mars Djinni; 5: Mars Djinni; 6: Mars Djinni.
         .formations = {371, 371, 372, 372, 372, 373, 373},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },

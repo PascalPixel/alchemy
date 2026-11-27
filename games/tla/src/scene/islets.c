@@ -2851,8 +2851,8 @@ Uint32 IsletsPacingSonScript[] = {
 #if FIX_PACING_SON_EAST_END_WAIT
     SC_WAIT(80),
 #else
-    // BUG: SC_SYNC where the west end's SC_WAIT(80) was meant; the walker skips
-    // the bare 80, a word above 63 (field_actor_motion.c), so the boy turns back at once here.
+    // BUG: SC_SYNC where the west end's SC_WAIT(80) was meant; the walker skips the bare 80, a word
+    // above 63 (field_actor_motion.c), so the boy turns back at once here.
     SC_SYNC,
     80,
 #endif

@@ -54,7 +54,9 @@ extern char SceneIdDailaFlooded;
 extern char SceneIdDaila;
 #define SCENE_DAILA ((Sint32)&SceneIdDaila)
 
-// Kandorean Temple The Kandorean Temple's room of the east and west lifts.
+// Kandorean Temple
+
+// The Kandorean Temple's room of the east and west lifts.
 extern char SceneIdKandoreanTempleLifts;
 #define SCENE_KANDOREAN_TEMPLE_LIFTS ((Sint32)&SceneIdKandoreanTempleLifts)
 extern char SceneIdKandoreanTempleMimic;
@@ -148,7 +150,9 @@ extern char SceneIdAirsRockInsideCoinsChest;
 extern char SceneIdAirsRockInsidePsynergyStone;
 #define SCENE_AIRS_ROCK_INSIDE_PSYNERGY_STONE ((Sint32)&SceneIdAirsRockInsidePsynergyStone)
 
-// Alhafra Alhafra itself, the town's one outdoor scene.
+// Alhafra
+
+// Alhafra itself, the town's one outdoor scene.
 extern char SceneIdAlhafra;
 #define SCENE_ALHAFRA ((Sint32)&SceneIdAlhafra)
 extern char SceneIdAlhafraRooms;
@@ -234,7 +238,9 @@ extern char SceneIdGarohWerewolfCave;
 extern char SceneIdAlhafraManor;
 #define SCENE_ALHAFRA_MANOR ((Sint32)&SceneIdAlhafraManor)
 
-// Eastern Alhafra Eastern Alhafra, where Briggs's ship lies.
+// Eastern Alhafra
+
+// Eastern Alhafra, where Briggs's ship lies.
 extern char SceneIdEasternAlhafra;
 #define SCENE_EASTERN_ALHAFRA ((Sint32)&SceneIdEasternAlhafra)
 extern char SceneIdEasternAlhafraShip;
@@ -321,7 +327,9 @@ extern char SceneIdGaiaRockInsidePlatforms;
 extern char SceneIdGaiaRockInsideAltar;
 #define SCENE_GAIA_ROCK_INSIDE_ALTAR ((Sint32)&SceneIdGaiaRockInsideAltar)
 
-// Champa Champa itself, the town's one outdoor scene.
+// Champa
+
+// Champa itself, the town's one outdoor scene.
 extern char SceneIdChampa;
 #define SCENE_CHAMPA ((Sint32)&SceneIdChampa)
 
@@ -433,7 +441,9 @@ extern char SceneIdLemurianShipMainDeck;
 extern char SceneIdMadra;
 #define SCENE_MADRA ((Sint32)&SceneIdMadra)
 
-// Kibombo Mountains The Kibombo Mountains scene where Waft is fought.
+// Kibombo Mountains
+
+// The Kibombo Mountains scene where Waft is fought.
 extern char SceneIdKibomboMountainsWaft;
 #define SCENE_KIBOMBO_MOUNTAINS_WAFT ((Sint32)&SceneIdKibomboMountainsWaft)
 extern char SceneIdKibomboMountainsDiskAxeChest;
@@ -441,7 +451,9 @@ extern char SceneIdKibomboMountainsDiskAxeChest;
 extern char SceneIdKibomboMountainsCavern;
 #define SCENE_KIBOMBO_MOUNTAINS_CAVERN ((Sint32)&SceneIdKibomboMountainsCavern)
 
-// Islet Cave The Islet Cave room where Meld is fought.
+// Islet Cave
+
+// The Islet Cave room where Meld is fought.
 extern char SceneIdIsletCaveHalls;
 #define SCENE_ISLET_CAVE_HALLS ((Sint32)&SceneIdIsletCaveHalls)
 // The Islet Cave room where Serac is fought.
@@ -489,7 +501,9 @@ extern char SceneIdIzumoRuinsFirstRoom;
 extern char SceneIdIzumoRuinsSecondRoom;
 #define SCENE_IZUMO_RUINS_SECOND_ROOM ((Sint32)&SceneIdIzumoRuinsSecondRoom)
 
-// Aqua Rock The room inside Aqua Rock where Steam is fought.
+// Aqua Rock
+
+// The room inside Aqua Rock where Steam is fought.
 extern char SceneIdAquaRockInsideSteam;
 #define SCENE_AQUA_ROCK_INSIDE_STEAM ((Sint32)&SceneIdAquaRockInsideSteam)
 extern char SceneIdAquaRockInsideAquariusStone;

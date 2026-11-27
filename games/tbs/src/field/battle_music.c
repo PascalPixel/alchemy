@@ -34,10 +34,10 @@ const Uint16 EncounterBattleMusic[35] = {
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 6),
     // The Tempest Lizard, in Suhalla Desert's fourth sandstorm.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 7),
-    // The monsters behind the east doors of Crossbone Isle Cave's floors, the
-    // first to the ninth: a Hobgoblin and a Virago; a Grisly and a Succubus; a Lich and a Fiendish
-    // Ghoul; a Gryphon; a Lizard King, a Harridan and a Stone Soldier; a Chimera; an Earth Lizard;
-    // a Poison Toad and a Thunder Lizard; a Cerebus.
+    // The monsters behind the east doors of Crossbone Isle Cave's floors, the first to the ninth: a
+    // Hobgoblin and a Virago; a Grisly and a Succubus; a Lich and a Fiendish Ghoul; a Gryphon; a
+    // Lizard King, a Harridan and a Stone Soldier; a Chimera; an Earth Lizard; a Poison Toad and a
+    // Thunder Lizard; a Cerebus.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 0),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 1),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 2),
@@ -49,8 +49,8 @@ const Uint16 EncounterBattleMusic[35] = {
     ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 4),
 
     ENCOUNTER_BATTLE_MUSIC(MUS_COLOSSEUM_FINALS),
-    // The Colosso finals: Azart with and without the Iron Shield, Satrage with
-    // and without the Chain Mail, Navampa with and without the Claymore.
+    // The Colosso finals: Azart with and without the Iron Shield, Satrage with and without the
+    // Chain Mail, Navampa with and without the Claymore.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 0),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 1),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 2),

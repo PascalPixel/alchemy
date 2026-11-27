@@ -14,8 +14,8 @@
 // In story order:
 //
 // - The day the story begins, three years after the storm (cottage_rooms_b.c),
-//       which took Jenna's family and Isaac's father, Kyle. The game opens with
-//       scValeMendingTheRoof. Under the caption "Three years later...", Isaac
+//   which took Jenna's family and Isaac's father, Kyle. The game opens with
+//   scValeMendingTheRoof. Under the caption "Three years later...", Isaac
 // is mending the roof of his house while Dora, his mother, calls up to him.
 //       Garet, who will travel with him, trains his Psynergy on his training
 //       stone. Jenna comes up from the south, and the two speak of that day
@@ -26,7 +26,7 @@
 //       Alchemy. For the rest of that visit Dora frets about the hole clumsy
 //       Garet left.
 // - Vale before the party leaves. Until Kraden has planned the visit to Sol
-//       Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna turns Isaac back at the
+//   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna turns Isaac back at the
 // steps up Mt. Aleph. The first time Isaac takes the path there, a bearded man in a long robe jumps
 // out from the trees by the river to warn him against
 //       sneaking up the sacred peak. He then walks a beat in front of the
@@ -39,11 +39,11 @@
 //       scolds him for crushing her flowers, and Dora says Isaac can fix the
 // hole later.
 // - After the party has left Vale (FLAG_VALE_PARTY_LEFT), Dora will not open
-//       the door of Isaac's house to him ("My Isaac would keep his promise...
+//   the door of Isaac's house to him ("My Isaac would keep his promise...
 // Go away."). The villagers speak of the tremors and of Kraden, who has not
 //       come back.
 // - Back from Kalay (FLAG_KALAY_REACHED), Garet meets his sister by the
-//       training stone and asks his little brother to protect the family while
+//   training stone and asks his little brother to protect the family while
 // he is gone. A young man asks whether Jenna is back, a woman feels another
 //       tremor, and a man wonders why no travellers have come since the
 // eruption. Isaac's house opens again, and Dora lies ill inside (cottage_rooms_b.c).
@@ -58,12 +58,12 @@
 // The ways out:
 //
 // - The steps in the north-west go up Mt. Aleph to Sol Sanctum's door
-//       (SceneIdSolEntrance).
+//   (SceneIdSolEntrance).
 // - Two ways out at the west edge lead to the part of Vale around Kraden's
-//       cottage (SceneIdValeKradensCottage), and one at the east edge in the
-//       south to the plaza with the Psynergy Stone (SceneIdValePlaza).
+//   cottage (SceneIdValeKradensCottage), and one at the east edge in the
+//   south to the plaza with the Psynergy Stone (SceneIdValePlaza).
 // - The doors of Garet's house, the house north-west of Isaac's, the house of
-//       Jenna's grandparents and the house south of theirs lead into the rooms
+//   Jenna's grandparents and the house south of theirs lead into the rooms
 // of SceneIdCottageRoomsA (cottage_rooms_a.c), and the door of Isaac's house
 //       into SceneIdCottageRoomsB.
 // - The Sanctum's door leads into SceneIdSanctum.

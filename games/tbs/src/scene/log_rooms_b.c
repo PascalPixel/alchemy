@@ -10,25 +10,25 @@
 //
 // The rooms, by entrance:
 // - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST, the gem owner's
-//       house. He wails that a cat ate his precious stone, and his wife says
+//   house. He wails that a cat ate his precious stone, and his wife says
 // she saw the cat get up on the table and paw it. The big pale blue gem that
 //       stood on the round table in front of him on the first visit is gone:
 //       scInit draws the table bare from a copy kept at map metatile
 //       (0, 120) of the overhead layer.
 // - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH, the house of a boy who
-//       doubts the thieves were from Lunpa.
+//   doubts the thieves were from Lunpa.
 // - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST and
-//       LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS, the inn. The girl at the inn offers
-//       Bones there, and a Bone lies on the barrel beside her. Its stairs lead
+//   LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS, the inn. The girl at the inn offers
+//   Bones there, and a Bone lies on the barrel beside her. Its stairs lead
 // to the upstairs room, where a cook works.
 // - LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST, the item shop.
 // - LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH, the weapon and armor
-//       shops.
+//   shops.
 // - LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house.
-//       The mayor welcomes Isaac back and warns that the thieves have escaped
-//       (FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, an area flag, and
-//       FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES). A Mind Read on him before that
-//       plays the welcome first.
+//   The mayor welcomes Isaac back and warns that the thieves have escaped
+//   (FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, an area flag, and
+//   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES). A Mind Read on him before that
+//   plays the welcome first.
 //
 // The Bones are how the party gets the dog in Vault to show its hidden passage. The girl's offer
 // gives one Bone each time it is accepted. FLAG_VAULT_BONE_RECEIVED, shared with log_rooms_a.c,

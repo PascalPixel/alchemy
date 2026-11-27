@@ -14,17 +14,17 @@
 // room below, straight under the leaf (scTreeRoomsStepOnLeaf). Four leaves are torn from the start.
 //
 // - The second floor's web holds nine leaves, and its west and east doors
-//       lead out onto the branches. Its leaves drop Isaac into the entrance
+//   lead out onto the branches. Its leaves drop Isaac into the entrance
 // room.
 // - The third floor, entered from the branches by its south or east door, has
-//       a leaf on a web either side of the Healing Ring's chest, a Psynergy
+//   a leaf on a web either side of the Healing Ring's chest, a Psynergy
 // Stone by its north wall and a vine up to the fourth floor. Its leaves drop him to the second
 // floor. A third web, in the south-west, has only a small
 //       spider on it.
 // - The fourth floor is bare, with a hole in the middle of its floor, the top
-//       of the vine from the third floor, a west door and a south door.
+//   of the vine from the third floor, a west door and a south door.
 // - The fifth floor, the highest, is one great web of ten leaves beside the
-//       Nut's chest, entered by its west or east door. Its leaves drop him to
+//   Nut's chest, entered by its west or east door. Its leaves drop him to
 // the fourth floor.
 //
 // The leaf in the middle of the fifth floor's web is the way to Tret. It drops Isaac through the
@@ -1259,7 +1259,9 @@ const Sint32 *FieldEffectDurationScripts[] = {
     FieldEffectLongScript,
 };
 
-// The party gathers in front of Tret before the battle (scTreeRoomsFightTret), each walking to its own place.
+// The party gathers in front of Tret before the battle
+
+// (scTreeRoomsFightTret), each walking to its own place.
 Sint32 TreeRoomsLeaderGathersActions[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),

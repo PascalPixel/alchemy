@@ -4,18 +4,18 @@
 // Three scenes share this overlay, in the order the pass is crossed:
 //
 // - SuhallaGateCheckpoint (area name Suhalla Gate): the gate itself, a
-//       palisade of logs across the path north from the desert, with a house
-//       in the cliff just past it (rock_rooms.c). The same map holds, in its
-//       own part to the east, the pass's way out toward Venus Lighthouse. Two
-//       soldiers keep the gate.
+//   palisade of logs across the path north from the desert, with a house
+//   in the cliff just past it (rock_rooms.c). The same map holds, in its
+//   own part to the east, the pass's way out toward Venus Lighthouse. Two
+//   soldiers keep the gate.
 // - SuhallaGateDew (area name Suhalla Gate): the cliffs beyond the gate, a
-//       west part and an east part joined by a path. In the west part the first
-//       slide down leads to a chest with a Mint; in the east part the third
-//       slide from the west leads down to Dew, the Mercury Djinni, and green
-//       vines climb back up the cliffs.
+//   west part and an east part joined by a path. In the west part the first
+//   slide down leads to a chest with a Mint; in the east part the third
+//   slide from the west leads down to Dew, the Mercury Djinni, and green
+//   vines climb back up the cliffs.
 // - Gateway Cave (area name Gateway Cave): a cave entered from the cliffs'
-//       east part, two rooms that lead out onto the World Map, with a Psynergy
-//       Stone.
+//   east part, two rooms that lead out onto the World Map, with a Psynergy
+//   Stone.
 //
 // One exit table serves the three scenes. The other getters choose by MainRoutineStateWork.next,
 // and SuhallaGateCheckpoint's actor placements also by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its cue table

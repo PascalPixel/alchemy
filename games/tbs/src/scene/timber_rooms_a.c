@@ -5,15 +5,15 @@
 // follows it:
 //
 // - Suhalla: the inn in the north-west, with its counter, two guest rooms
-//       through doorways at its back and a loft up a ladder; the shop behind
-//       the south-west door; the old couple's house behind the middle door on
-//       the south side; and the house in the south-east corner, whose father
-//       takes in anyone in trouble. The village's exits (SUHALLA_TO_INN,
-//       SUHALLA_TO_SHOP, SUHALLA_TO_HOUSE_SOUTH and
-//       SUHALLA_TO_HOUSE_EAST) lead to the entrances of the same numbers.
+//   through doorways at its back and a loft up a ladder; the shop behind
+//   the south-west door; the old couple's house behind the middle door on
+//   the south side; and the house in the south-east corner, whose father
+//   takes in anyone in trouble. The village's exits (SUHALLA_TO_INN,
+//   SUHALLA_TO_SHOP, SUHALLA_TO_HOUSE_SOUTH and
+//   SUHALLA_TO_HOUSE_EAST) lead to the entrances of the same numbers.
 // - Suhalla Sanctum: rows of stools before the Healer's altar, behind the
-//       arched double door (SUHALLA_TO_SANCTUM). A party defeated in Suhalla
-//       wakes before the Healer (TIMBER_ROOMS_A_SANCTUM_NORTH).
+//   arched double door (SUHALLA_TO_SANCTUM). A party defeated in Suhalla
+//   wakes before the Healer (TIMBER_ROOMS_A_SANCTUM_NORTH).
 //
 // The rooms' people and talk come in two sets, each an actor placement table and a cue table,
 // chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO.
@@ -152,9 +152,10 @@ const ACTOR_PLACE *scGetActorPlacements(void)
     return TimberRoomsAActorPlacements;
 }
 
-// Talking to the shopkeeper across her counter, in the shop behind Suhalla's south-west door, opens
-// her shop. From the side she says theirs is the only store in Suhalla, or, after Babi's audience,
-// asks whether the party is surprised to find so few shops.
+// Talking to the shopkeeper across her counter, in the shop behind
+
+// Suhalla's south-west door, opens her shop. From the side she says theirs is the only store in
+// Suhalla, or, after Babi's audience, asks whether the party is surprised to find so few shops.
 static void scTimberRoomsATalkToMerchant(Sint32 actorId)
 {
     Uint16 facing = FACING_NEAREST_CARDINAL(fdActorGet(ACTOR_PARTY_LEADER)->facing);

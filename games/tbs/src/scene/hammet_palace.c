@@ -7,27 +7,27 @@
 // Lunpa. Between them three flags pick where she stands and what she says:
 //
 // - Ivan's report (HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS),
-//       when the guards at the door bring the party in (kalay.c). It ends by
-//       setting FLAG_IVAN_REPORTED_TO_LAYANA.
+//   when the guards at the door bring the party in (kalay.c). It ends by
+//   setting FLAG_IVAN_REPORTED_TO_LAYANA.
 //
 // - Between the two, until the party has heard in Lunpa that Hammet is held
-//       there (area temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, set by
-//       kalay.c's scripts), Layana talks of Dodonpa's spies.
+//   there (area temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, set by
+//   kalay.c's scripts), Layana talks of Dodonpa's spies.
 //
-//       Afterwards she stands elsewhere in her room, and the first time they
-//       speak she scolds "Isaac, you sneaked into Lunpa? That's far too
-//       dangerous!" (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS). From then on
-//       she talks of Dodonpa's greed.
+//   Afterwards she stands elsewhere in her room, and the first time they
+//   speak she scolds "Isaac, you sneaked into Lunpa? That's far too
+//   dangerous!" (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS). From then on
+//   she talks of Dodonpa's greed.
 //
 // - Hammet's homecoming (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM, the
-//       first time once Hammet is free, FLAG_DODONPA_LOCKED_UP;
-//       FLAG_HAMMET_BACK_HOME_SEEN), in which Hammet sends the party on to
-//       Hesperia.
+//   first time once Hammet is free, FLAG_DODONPA_LOCKED_UP;
+//   FLAG_HAMMET_BACK_HOME_SEEN), in which Hammet sends the party on to
+//   Hesperia.
 //
-//       Afterwards Hammet stands beside Layana. The door to the underground
-//       passage, opened for the party in thanks, is drawn open on entering by
-//       HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
-//       HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM with
+//   Afterwards Hammet stands beside Layana. The door to the underground
+//   passage, opened for the party in thanks, is drawn open on entering by
+//   HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
+//   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM with
 // FLAG_KALAY_TUNNEL_OPEN set.
 //
 // The people of the palace (ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK to ACTOR_ASKING_ABOUT_THE_SILK_TRADE)

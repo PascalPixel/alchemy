@@ -13,20 +13,20 @@
 // one to the next.
 //
 // - The arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
-//       scMercuryLighthouseAeriePartyArrives). The Adepts of the lit element
-//       regain their PP, the aerie shakes, and in a white flash the party lies
+//   scMercuryLighthouseAeriePartyArrives). The Adepts of the lit element
+//   regain their PP, the aerie shakes, and in a white flash the party lies
 // on the east tower top. They get up and gather round Isaac.
 // - The beacon (scMercuryLighthouseAerieConfrontSaturos). Climbing the stairs
-//       to it, Garet sees `It's too late! The lighthouse has already been lit!`
-//       Mia learns that the party came from Vale to recover the Elemental
+//   to it, Garet sees `It's too late! The lighthouse has already been lit!`
+//   Mia learns that the party came from Vale to recover the Elemental
 // Stars, and that Vale protected Sol Sanctum as her clan protects the lighthouse. Jenna calls out
 // from the west tower top, where Kraden, Felix and Menardi hold her. Saturos sends Menardi on to
 // the next lighthouse with the others, and Menardi leaps onto the lift, which sinks with them.
 // Saturos fights the party alone (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2), the light of
 // Mercury weakening his Psynergy.
 // - Back from the battle (MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE,
-//       scMercuryLighthouseAerieAlexAppears): `Isaac, we got him!` Alex, the
-//       apprentice Mia lost, appears. He explains that Saturos, aligned with
+//   scMercuryLighthouseAerieAlexAppears): `Isaac, we got him!` Alex, the
+//   apprentice Mia lost, appears. He explains that Saturos, aligned with
 // Mars, the clan of fire, had his power bound by the lighthouse's water, which
 //       lent Mia, of the Mercury Clan like Alex, endless Psynergy. Alex was
 // only stalling until Saturos recovered. Saturos rises, Alex asks whether the
@@ -37,8 +37,8 @@
 //       FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 //       test).
 // - Leaving. The stairs on the west side of the beacon's tower bring the
-//       lift back up if it is down, and stepping onto it from the
-//       westmost platform rides it down to the ground before Mercury
+//   lift back up if it is down, and stepping onto it from the
+//   westmost platform rides it down to the ground before Mercury
 // Lighthouse, by the Fountain of Healing (SceneIdMercuryLighthouseExterior,
 //       mercury_lighthouse.c). Coming up that way
 //       (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves the

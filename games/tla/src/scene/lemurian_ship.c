@@ -2201,7 +2201,9 @@ Sint16 LemurianShipPillars[] = {
       HALFWORDS(bottom, 0)
 // The SCENE_TABLE_END row of an entrance table, as six words.
 #define ENTRANCE_WORDS_END HALFWORDS(SCENE_TABLE_END, 0), 0, 0, 0, 0, 0
-// A SCENE_REGION row as four words: the box from (minX, minY, minZ) to (maxX, maxY, maxZ) that leaves by exit.
+// A SCENE_REGION row as four words: the box from (minX, minY, minZ) to
+
+// (maxX, maxY, maxZ) that leaves by exit.
 #define REGION_WORDS(minX, minY, minZ, maxX, maxY, maxZ, exit)                 \
   HALFWORDS(minX, minY), HALFWORDS(minZ, maxX), HALFWORDS(maxY, maxZ),         \
       HALFWORDS(CONDITION_ALWAYS, exit)
@@ -2345,7 +2347,9 @@ ACTOR_PLACE LemurianShipLedgeRoomPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-// The room of the pipes' actors, by enum LEMURIAN_SHIP_PIPE_ROOM_ACTOR_ID.
+// The room of the pipes' actors, by enum
+
+// LEMURIAN_SHIP_PIPE_ROOM_ACTOR_ID.
 ACTOR_PLACE LemurianShipPipeRoomPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 552, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 520, FACING_SOUTH, TALK_FACING_PARTY, 0),

@@ -119,11 +119,11 @@ enum
 // The Battle Arena's flags, besides its own above, FLAG_MONSTER_BATTLE, FLAG_LINK_BATTLE and the
 // two byte flags flags.h names:
 // - FLAG_LINK_BATTLE_ARRANGED: a linked battle has been arranged (with
-//       FLAG_LINK_BATTLE): only the first three party members take part
-//       (scBattleArenaPartyContains).
+//   FLAG_LINK_BATTLE): only the first three party members take part
+//   (scBattleArenaPartyContains).
 // - FLAG_AREA_TEMP_E8: the last linked battle broke off (btRun). In a
-//       monster series, the byte flag at FLAG_AREA_TEMP_E8 instead counts the
-//       victories, 0 to 2, towards a stronger monster.
+//   monster series, the byte flag at FLAG_AREA_TEMP_E8 instead counts the
+//   victories, 0 to 2, towards a stronger monster.
 
 // The actors, numbering the rows of BattleArenaActorPlacements and
 // BattleArenaBattleActorPlacements, which list the same people in the same order. The rows of

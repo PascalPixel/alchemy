@@ -99,8 +99,9 @@ static __inline__ void fdEffectUpdateEffectSlots(void)
         }                                                                                          \
     }
 
-// A particle's sprite (SPR), seen as the two fields Douse and Mind Read set on it; each member says
-// which Sprite fields it covers.
+// A particle's sprite (SPR), seen as the two fields Douse and Mind
+
+// Read set on it; each member says which Sprite fields it covers.
 typedef struct WAVE_EFFECT_SPR
 {
     Uint32 linkAndPos[2];    // image.link and its first two attributes

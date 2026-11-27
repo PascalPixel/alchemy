@@ -9,17 +9,17 @@
 // party meets them:
 //
 // - The hall of six statues inside the door. The first time in, the party
-//       finds Mia trying again and again to get past a monster, the Lizard Man,
-//       who steps across the doorway at the north end to block her
-//       (scMercuryLighthouseEntranceLizardManBlocksMia). Spoken to, she says `A
-//       monster inside Mercury Lighthouse? How could this be!?` He sidesteps in
-//       front of Isaac too. Talking to him, Mind Read on him or walking north
+//   finds Mia trying again and again to get past a monster, the Lizard Man,
+//   who steps across the doorway at the north end to block her
+//   (scMercuryLighthouseEntranceLizardManBlocksMia). Spoken to, she says `A
+//   monster inside Mercury Lighthouse? How could this be!?` He sidesteps in
+//   front of Isaac too. Talking to him, Mind Read on him or walking north
 // into him starts the battle. Back from it, Mia nods to Isaac and goes on through the doorway
 // (scMercuryLighthouseEntranceMiaEntersLighthouse,
 //       FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA). Until then, coming in by the
 //       door always plays the Lizard Man's scene.
 // - The goddess's room, beyond the doorway: a great statue of a goddess above
-//       a pool. A white stone post at the pool's south edge reads `He who
+//   a pool. A white stone post at the pool's south edge reads `He who
 // honors the heart of the goddess shall stand at the center of all, like a swan in the center of a
 // rippling pond.` Jumping onto the goddess's hands and
 //       casting Ply on her wakes the pools of the whole floor
@@ -31,14 +31,14 @@
 // the hole upstairs, the first time, Isaac lands on that tile in a burst, and
 //       until Ply has worked the post's words appear.
 // - The twin fountains, north of the goddess's room, two pools under
-//       dragon-head spouts, whose tiles answer only once Ply has worked.
+//   dragon-head spouts, whose tiles answer only once Ply has worked.
 // - Two rooms of waterfalls, west and east. Walking into some waterfalls
-//       carries Isaac to another room: the west room's to the room of the dry
-//       fountain, the east room's left one back to the twin fountains, and its
-//       right one, beside the chest that is a Mimic, to the room whose chest
-//       holds Psynergy Armor across its pool.
+//   carries Isaac to another room: the west room's to the room of the dry
+//   fountain, the east room's left one back to the twin fountains, and its
+//   right one, beside the chest that is a Mimic, to the room whose chest
+//   holds Psynergy Armor across its pool.
 // - The dry fountain's room, which fills with water once the channels
-//       upstairs run (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
+//   upstairs run (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
 //
 // Four doors lead up to SceneIdMercuryLighthouseLower
 // (MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST,

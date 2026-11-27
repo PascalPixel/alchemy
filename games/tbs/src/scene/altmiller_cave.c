@@ -3,22 +3,22 @@
 // Cave. In the order the party goes through them:
 //
 // - The winding passage in from the cave mouth (`AltmillerCaveEntrance`). It
-//       grows darker in steps as the party walks in, until only a circle of
+//   grows darker in steps as the party walks in, until only a circle of
 // light around them is bright. At its end a hole leads into a small chamber, where a torch burns
 // beside the doorway down.
 // - The big dark room below (`AltmillerCaveBabi`). Near its middle an old man
-//       lies on the floor, seen only as a white outline: the invisible Babi
-//       (scAltmillerCaveMeetInvisibleBabi). He asks the party to fetch his
+//   lies on the floor, seen only as a white outline: the invisible Babi
+//   (scAltmillerCaveMeetInvisibleBabi). He asks the party to fetch his
 // draught from the bottom of the cave and tells them the order of the five rocks' colors. The chest
 // on the room's east side is a Mimic.
 // - Two dark rooms with a chest each: the Vial (`AltmillerCaveVialChest`)
-//       and, further down, the Cookie (`AltmillerCaveCookieChest`).
+//   and, further down, the Cookie (`AltmillerCaveCookieChest`).
 // - Between them, a lit hall with a brick floor (`AltmillerCaveSquall`):
-//       three fallen columns to push, a puddle Frost turns into an ice pillar
+//   three fallen columns to push, a puddle Frost turns into an ice pillar
 // to stop them, Squall, a Jupiter Djinni, in the north-west corner, and a stone pillar on a ledge
 // to push into the pit before the way on.
 // - The lit rooms at the bottom (`AltmillerCaveDraught`): a hall of three more
-//       fallen columns, the room of the five rocks (scAltmillerCaveTurnRock),
+//   fallen columns, the room of the five rocks (scAltmillerCaveTurnRock),
 // and behind the wall the rocks open, the Mystic Draught's chest on a stone
 //       table.
 //
@@ -208,7 +208,9 @@ typedef enum ALTMILLER_CAVE_CUE_METATILE
     METATILE_BEHAVIOR_ALTMILLER_CAVE_CHEST                = 100
 } ALTMILLER_CAVE_CUE_METATILE;
 
-// The darkness: BG1 blended over every layer, at the weights BLEND_ALPHA gives each level.
+// The darkness: BG1 blended over every layer, at the weights
+
+// BLEND_ALPHA gives each level.
 #define ALTMILLER_CAVE_DARKNESS_BLEND (BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 // A dark room's weights, which the passage's levels do not use.
 #define ALTMILLER_CAVE_DARK_ALPHA     BLEND_ALPHA(4, 12)

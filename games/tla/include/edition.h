@@ -1242,7 +1242,7 @@
 // changes, instead of closing and reopening it every tick. Because the state is remembered, two
 // more things work:
 // - The all-held prompt gains a second line ('cannot pull the lever'), drawn on
-//       the next tick.
+//   the next tick.
 // - After a losing pull, the 'pull the lever' line is drawn once.
 #ifndef LUCKY_WHEELS_PROMPT_DRAWN_ONCE
 #    define LUCKY_WHEELS_PROMPT_DRAWN_ONCE 0

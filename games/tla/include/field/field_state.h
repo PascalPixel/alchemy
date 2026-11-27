@@ -129,7 +129,9 @@ typedef struct FIELD_STATE
     Sint16               encounter; // the enemy group of a random encounter
     Sint16               psynergy;  // a field Psynergy to use, as unit << 10 | Psynergy
     Sint16               item;      // an item to use, packed as fdUseItem reads it
-    // A raised cue's number for fdRunRaisedCue, or an enum FIELD_RAISED_CUE.
+    // A raised cue's number for fdRunRaisedCue, or an enum
+
+    // FIELD_RAISED_CUE.
     Sint16               raisedCue;
     Sint16               fallenCount;     // the characters who fell this step
     Sint16               survivorCount;   // 0 when the whole party fell

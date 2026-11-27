@@ -1483,7 +1483,9 @@ ALIGNED(4) Uint16 FileScreenPasswordFlags[PASSWORD_FLAGS] = {
     FLAG_VISITED_SICK_DORA, FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES,
 };
 
-// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS, which Silver and Bronze record in PASSWORD_KEY_ITEMS_BYTE.
+// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS, which
+
+// Silver and Bronze record in PASSWORD_KEY_ITEMS_BYTE.
 ALIGNED(4) Uint16 FileScreenPasswordKeyItems[PASSWORD_KEY_ITEMS] = {
     ITEM_ORB_OF_FORCE, ITEM_DOUSE_DROP,
     ITEM_FROST_JEWEL, ITEM_LIFTING_GEM,

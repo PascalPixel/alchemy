@@ -86,7 +86,9 @@ const Sint16 SpeakerDefinitions[][2] ALIGNED(4) = {
       SC_ADD(SW_SCALE_X, toFIXED(1) / 16), SC_ADD(SW_SCALE_Y, -toFIXED(1) / 32), \
       SC_WAIT(2), SC_ADD(SW_SCALE_X, toFIXED(1) / 16),                          \
       SC_ADD(SW_SCALE_Y, -toFIXED(1) / 32), SC_WAIT(4)
-// Three bounces for fdActorStartRepeatedMotion, each squashing the actor (wider, then shorter) and stretching it back over 10 ticks; it starts count bounces from the end.
+// Three bounces for fdActorStartRepeatedMotion, each squashing the actor
+
+// (wider, then shorter) and stretching it back over 10 ticks; it starts count bounces from the end.
 const Sint32 ActorVariantScripts[] = {
     VARIANT_BOUNCE,
     VARIANT_BOUNCE,
@@ -109,7 +111,9 @@ const Uint32 DustPuffShortScript[] = {
     SC_RELEASE,
 };
 
-// The colour of a blinking actor in each of four two-tick steps (fdActorUpdateBlink): white, then its own colours.
+// The colour of a blinking actor in each of four two-tick steps
+
+// (fdActorUpdateBlink): white, then its own colours.
 const Uint8 ActorBlinkSpriteColors[] = {
     SPRITE_COLOR_WHITE,
     SPRITE_COLOR_NORMAL,

@@ -3,7 +3,9 @@
 #include "field/actor_script.h"
 #include "window/screens.h"
 
-// What an examine cue is on (EXAMINE), the control bits 8..4 EXAMINE_CUE() packs it into.
+// What an examine cue is on (EXAMINE), the control bits 8..4
+
+// EXAMINE_CUE() packs it into.
 #define EXAMINE_TARGET(kind)        (((kind) >> 4) & 0x1f)
 // The PP a Psynergy Stone gives each party member, enough to fill it: "The party's PP is fully
 // restored!"

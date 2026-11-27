@@ -13,37 +13,33 @@
 // changed stays changed for the race. Then it sets up the visit that entrance stands for.
 //
 // - COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM, the tour, from the Colosseum's east
-//       passage. The guide (scColosseumAzartMatchExplainFinalsRules) tells the
-//       party that warriors enter without their own equipment and race through
-// the stages to the arena. There the first to arrive takes the better of two
-//       prizes and keeps it for the next match. He pans over the stages if
-// asked. Each stage's attendant names it, the first time with a demonstration.
-//       Isaac appears on the stage to show how it is crossed, or, at the
-//       Pipeworks, a pointer shows how the pipes work. The attendant then
-// offers a place to cheer there. The friend Isaac picks walks to the stage and
-//       leaves the party (scColossoOfferCheeringSpot). When all three are
-// placed, the guide sends Isaac on to the Colosseum's waiting room
-//       (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST).
+//   passage. The guide (scColosseumAzartMatchExplainFinalsRules) tells the
+//   party that warriors enter without their own equipment and race through
+// the stages to the arena. There the first to arrive takes the better of two prizes and keeps it
+// for the next match. He pans over the stages if asked. Each stage's attendant names it, the first
+// time with a demonstration. Isaac appears on the stage to show how it is crossed, or, at the
+// Pipeworks, a pointer shows how the pipes work. The attendant then offers a place to cheer there.
+// The friend Isaac picks walks to the stage and leaves the party (scColossoOfferCheeringSpot). When
+// all three are placed, the guide sends Isaac on to the Colosseum's waiting room
+// (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST).
 // - COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST, after the warriors have marched
-//       out. The lettering reads `Lend a Hand`, and Garet, Ivan and Mia in turn
-//       are the party alone, starting where they chose to cheer. Each may use
-//       Psynergy on the stages for Isaac. Douse on the Pipeworks' west pipe
+//   out. The lettering reads `Lend a Hand`, and Garet, Ivan and Mia in turn
+//   are the party alone, starting where they chose to cheer. Each may use
+//   Psynergy on the stages for Isaac. Douse on the Pipeworks' west pipe
 // fills it, Growth grows the plant before the Broken Bridge, and Move shifts the Rock Challenge's
-// rocks. A friend's turn ends when they use Psynergy
-//       (scColossoTakePlaceForMatch) or tell a stage's attendant they are done
-//       (scColossoAskDoneCheering), and where they stand is kept as their
-// place. After Mia, COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE starts the race.
+// rocks. A friend's turn ends when they use Psynergy (scColossoTakePlaceForMatch) or tell a stage's
+// attendant they are done (scColossoAskDoneCheering), and where they stand is kept as their place.
+// After Mia, COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE starts the race.
 // - COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, the race. After the lettering
-//       `The 1st Match` and a count of three, Isaac runs alone against Azart,
-// who follows a recorded path (scColossoStartOpponent). A gauge at the top of
-//       the screen shows how near each is to the finish
-// (scColossoStartRaceGauge). Azart runs east of the finish, which is 1,304 pixels across, where the
-// prizes stand. His path is the mirror of one through Isaac's own stages, so he is seen only as he
-// comes into the arena. At the arena (scColosseumAzartMatchReachArena) the first to arrive takes
-// the Iron
-//       Shield and the second the Padded Gloves, which Isaac is given and
-// equipped with. Then the two fight. The battle is ENCOUNTER_ZONE_COLOSSO's first or second group,
-// the Azart who has the shield or the one who has not.
+//   `The 1st Match` and a count of three, Isaac runs alone against Azart,
+// who follows a recorded path (scColossoStartOpponent). A gauge at the top of the screen shows how
+// near each is to the finish (scColossoStartRaceGauge). Azart runs east of the finish, which is
+// 1,304 pixels across, where the prizes stand. His path is the mirror of one through Isaac's own
+// stages, so he is seen only as he comes into the arena. At the arena
+// (scColosseumAzartMatchReachArena) the first to arrive takes the Iron Shield and the second the
+// Padded Gloves, which Isaac is given and equipped with. Then the two fight. The battle is
+// ENCOUNTER_ZONE_COLOSSO's first or second group, the Azart who has the shield or the one who has
+// not.
 //
 // A win returns to COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON, which shows the result and sends Isaac
 // back to the Colosseum (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, to

@@ -6,13 +6,14 @@
 // in the order it has in the ROM. Camelot's own files are not recoverable: the ROM shows one
 // object, and these parts are ours, cut where The Broken Seal's are. Where to start:
 //
-//       Shops           shop_run.c: mnShopRun; shop_buy.c: mnShopSelectBuy;
-//                                       shop_sell.c: mnShopSelectSell, which
-// serves repairs too Stock           shop_stock.c: mnShopStockAddArtifacts,
-//       mnShopGiveGameTicket Forge           shop_forge.c; shop_item_picker.c:
-//       mnForgeRun Sanctum         shop_sanctum.c: mnSanctumRun Inn shop_inn.c:
-//       mnInnCheckIn Item picker     shop_item_picker.c: mnItemPickerRun; the
-// item icon grid, mnItemIconGridShowInventory
+// - shops: mnShopRun (shop_run.c), mnShopSelectBuy (shop_buy.c), mnShopSelectSell, which serves
+//   repairs too (shop_sell.c);
+// - stock: mnShopStockAddArtifacts and mnShopGiveGameTicket (shop_stock.c);
+// - the forge: shop_forge.c, and mnForgeRun (shop_item_picker.c);
+// - the sanctum: mnSanctumRun (shop_sanctum.c);
+// - the inn: mnInnCheckIn (shop_inn.c);
+// - the item picker: mnItemPickerRun (shop_item_picker.c), and the item icon grid,
+//   mnItemIconGridShowInventory.
 
 #include "shop_internal.h"
 

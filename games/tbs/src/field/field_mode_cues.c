@@ -2,7 +2,9 @@
 
 #include "field_mode_internal.h"
 
-// What an examine cue is on (EXAMINE), the control bits 8..4 EXAMINE_CUE() packs it into.
+// What an examine cue is on (EXAMINE), the control bits 8..4
+
+// EXAMINE_CUE() packs it into.
 #define EXAMINE_TARGET(kind) (((kind) >> 4) & 0x1f)
 // The item a FIND_ITEM search result holds.
 #define FIND_ITEM_MASK       0xfff

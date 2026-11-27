@@ -955,7 +955,9 @@ Sint32 DailaRoomsExitsOnceTaviIsRescued[] = {
     SCENE_EXITS_END,
 };
 
-// The houses, shops and inn before Tavi is rescued (enum DAILA_ROOMS_ACTOR_ID).
+// The houses, shops and inn before Tavi is rescued (enum
+
+// DAILA_ROOMS_ACTOR_ID).
 ACTOR_PLACE DailaRoomsHousesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),

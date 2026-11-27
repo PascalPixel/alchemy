@@ -6,7 +6,9 @@
 #include "types.h"
 
 // clang-format off
-// Atalanta's flight while she gathers her shafts, a step a tick (RESOURCE_ATALANTA_PATH).
+// Atalanta's flight while she gathers her shafts, a step a tick
+
+// (RESOURCE_ATALANTA_PATH).
 const Sint8 BattleEffectAtalantaPath[][2] = {
     {0, -96}, // starts at x 160
     {0, 95},  // and y 95

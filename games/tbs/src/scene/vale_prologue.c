@@ -8,41 +8,41 @@
 // the scene at that stage on the next arrival:
 //
 // - FLAG_VALE_STORM_SENT_TO_PLAZA: scValePrologueDoraSendsIsaacToThePlaza,
-//       played on the first arrival by
-//       VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA. Dora and Kyle send Isaac
-//       on to the plaza and go to help. Until the flag is set the lightning
-//       waits for the script.
+//   played on the first arrival by
+//   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA. Dora and Kyle send Isaac
+//   on to the plaza and go to help. Until the flag is set the lightning
+//   waits for the script.
 // - FLAG_VALE_STORM_FIRST_ROCK_FELL to FLAG_VALE_STORM_FOURTH_ROCK_FELL, with
-//       the area flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
-//       FLAG_VALE_STORM_FOURTH_ROCK_PASSED: scValePrologueFirstRockFalls to
-//       scValePrologueFourthRockFalls drop a huge rock across a path at four
-//       spots: south of Isaac's house, below the house north-west of it, on the
-//       path along the west edge, and east of Jenna's grandparents' house.
+//   the area flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
+//   FLAG_VALE_STORM_FOURTH_ROCK_PASSED: scValePrologueFirstRockFalls to
+//   scValePrologueFourthRockFalls drop a huge rock across a path at four
+//   spots: south of Isaac's house, below the house north-west of it, on the
+//   path along the west edge, and east of Jenna's grandparents' house.
 // The _FELL flag puts back the rock and the metatile behaviors of the
 // metatiles  it blocks. The _PASSED flag, cleared once the party leaves
 // Vale, keeps  the script from running again.
 // - FLAG_VALE_STORM_BUMPED_INTO_VILLAGER: scValePrologueBumpIntoShovingMan,
-//       the first time Isaac tries the door of the house north-west of his own
-//       (VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH).
+//   the first time Isaac tries the door of the house north-west of his own
+//   (VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH).
 // - FLAG_VALE_STORM_HEARD_GARET, then FLAG_VALE_STORM_GARET_JOINED: Garet is
-//       trying to save his chest of valuables. Talking to him, or walking off
-//       past him, brings him into the party (scValePrologueGaretLeavesHisChest)
-//       and leaves the chest by his door. scValePrologueUnusedGaretJoinsIsaac
+//   trying to save his chest of valuables. Talking to him, or walking off
+//   past him, brings him into the party (scValePrologueGaretLeavesHisChest)
+//   and leaves the chest by his door. scValePrologueUnusedGaretJoinsIsaac
 // is a third way that never plays. With Garet along, a fallen rock and the path
 //       north to Mt. Aleph have him turn Isaac back.
 // - FLAG_VALE_BOULDER_FELL: scValePrologueWatchBoulderFall, the elders
-//       holding back the Boulder with their Psynergy as it slips. From then on
-//       it rests where it slipped to.
+//   holding back the Boulder with their Psynergy as it slips. From then on
+//   it rests where it slipped to.
 // - FLAG_VALE_STORM_SAW_FELIX_HANGING_ON:
-//       scValePrologueWatchAttemptToSaveFelix and
+//   scValePrologueWatchAttemptToSaveFelix and
 // scValePrologueDoraGoesForHelp, Felix clinging on in the river. The plaza (vale_plaza.c) then sets
 // FLAG_VALE_STORM_SENT_TO_AID_ELDERS and sends the boys back.
 // - FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY:
-//       scValePrologueBoulderSweepsThemAway and
-//       scValePrologueShowBoulderSweepingDownriver, the Boulder carrying Felix,
-//       his parents and Kyle away down the river.
+//   scValePrologueBoulderSweepsThemAway and
+//   scValePrologueShowBoulderSweepingDownriver, the Boulder carrying Felix,
+//   his parents and Kyle away down the river.
 // - FLAG_VALE_STORM_GARET_LEFT: scValePrologueGaretFollowsIsaac, as Isaac
-//       leaves for the plaza again. The night ends in vale_plaza.c.
+//   leaves for the plaza again. The night ends in vale_plaza.c.
 //
 // Every way out goes through scValeRequestBackdropExit (shared/vale.c), which stops the lightning
 // first, and each door plays its opening metatiles before it. ValePrologueExits gives each exit's
@@ -291,11 +291,11 @@ typedef enum STORM_NIGHT_AREA_FLAG
 
 // Scene flags, cleared on every ordinary arrival:
 // - FLAG_VALE_ISAACS_DOOR_OPEN: the door of Isaac's house, from which Dora and
-//       Isaac came, stands open.
+//   Isaac came, stands open.
 // - FLAG_VALE_SHOVING_MANS_DOOR_OPEN: the stout man has run out of the door of
-//       VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH, leaving it open.
+//   VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH, leaving it open.
 // - FLAG_VALE_ON_BRIDGE (scene/vale.h, as Vale has it): the leader is on the
-//       rope bridge over the river.
+//   rope bridge over the river.
 
 // 0 while the westernmost elder strains at the Boulder, 1 once he lets go.
 static Sint32 ShakeDone;

@@ -247,7 +247,9 @@ const Sint32 SceneBattleBackgroundRules[] = {
     0,
 };
 
-// The battle music of the story's and the hidden bosses' battles (fdEncounterSelectBattleMusic): a battle takes the music listed last before its key. The search stops at the key or at the end (0), so a battle not listed takes the last music, 0, and the function chooses its own.
+// The battle music of the story's and the hidden bosses' battles
+
+// (fdEncounterSelectBattleMusic): a battle takes the music listed last before its key. The search stops at the key or at the end (0), so a battle not listed takes the last music, 0, and the function chooses its own.
 const Sint16 EncounterBattleMusic[] = {
     ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_DULLAHAN),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_HIDDEN_BOSSES, HIDDEN_BOSS_ANEMOS),

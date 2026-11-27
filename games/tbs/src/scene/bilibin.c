@@ -1388,7 +1388,9 @@ Uint16 *BilibinDoorSteps[] = {
     BilibinSanctumDoorSteps,
 };
 
-// Where each door's opening is drawn on the map grid, in the order of BilibinDoorSteps. The doors are drawn on map layer 1, whose metatiles begin at the map's column 32: the inn's (54, 20) is that layer's (22, 20), the door just above the ground metatile (23, 22) Isaac walks into (render probe Bilibin --entrance 3 --mark-metatiles 22,20,23,21,1).
+// Where each door's opening is drawn on the map grid, in the order of
+
+// BilibinDoorSteps. The doors are drawn on map layer 1, whose metatiles begin at the map's column 32: the inn's (54, 20) is that layer's (22, 20), the door just above the ground metatile (23, 22) Isaac walks into (render probe Bilibin --entrance 3 --mark-metatiles 22,20,23,21,1).
 Sint16 BilibinDoorMetatiles[][2] = {
     {54, 20}, {43, 18}, {37, 19}, {41, 11}, {35, 11}, {49, 9}, {55, 6},
 };

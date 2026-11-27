@@ -406,8 +406,9 @@ typedef enum EXAMINE
 // A mimic chest's battle, with the script's value its slot of ENCOUNTER_ZONE_MIMIC.
 #define FIND_MIMIC            0x00500000
 
-// A script as a Sound value; its address is above CUE_RESULT_MESSAGE_END, so it is never taken for
-// a message.
+// A script as a Sound value; its address is above
+
+// CUE_RESULT_MESSAGE_END, so it is never taken for a message.
 #define SCRIPT_REF(script)    ((Uint32)(script))
 #define CUE_TABLE_END         0xffffffff
 

@@ -17,12 +17,12 @@
 // - The ground shakes, and the villagers wonder where the two are.
 // - Isaac and Garet come down the path and are called over.
 // - Dora's question about Jenna and Kraden is answered the same way whatever
-//       Isaac replies.
+//   Isaac replies.
 // - The Great Healer then opens the sanctum's door
 // (fdMapGridAnimateMetatiles) and  leads everyone in.
 // - The scene's one exit takes the party into the Vale Sanctum
-//       (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
-//       One's quest (SanctumRequestQuestAcceptance).
+//   (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
+//   One's quest (SanctumRequestQuestAcceptance).
 //
 // The tremors are fdMapGridSetShake calls. Each comes with a flash (fdWeatherLastLightning) and
 // SE_CRASH, over a burst of red flashes on the dimmed colours (fdWeatherStartLightningFlash).

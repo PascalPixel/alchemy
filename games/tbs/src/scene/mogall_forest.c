@@ -5,10 +5,10 @@
 // leads into the side paths and back.
 //
 // - The first area (SceneIdMogallForestSign) is entered from the World Map
-//       at the north of its first clearing. The first time, an ape peeks out of
-//       the stump in the middle and dives back in
-//       (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A broken sign by the path reads
-//       `North: Fuchin Temple South: Mogall Prairie...` Force on the stump
+//   at the north of its first clearing. The first time, an ape peeks out of
+//   the stump in the middle and dives back in
+//   (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A broken sign by the path reads
+//   `North: Fuchin Temple South: Mogall Prairie...` Force on the stump
 // sends its ape off south. Two clearings on, by the river, the stump on the west of the south bank
 // holds an ape that attacks. Logs on the south bank are
 //       pushed about until the last one rolls into the river, a stepping place
@@ -16,7 +16,7 @@
 //       east to the second area. A Nut hangs in a tree on the river's east
 // bank.
 // - The second area (SceneIdMogallForestQuartz). In the clearing of two
-//       stumps the west one's ape leads south and the east one's east, to a
+//   stumps the west one's ape leads south and the east one's east, to a
 // pond with an Apple in a chest. South, by the river, Move puts a rock into a
 //       ring on the ground so that the log above it can be pushed on, and
 // another log rolls into the stream. The ape in the stump on the island in the
@@ -24,8 +24,8 @@
 //       third area. Quartz, a Venus Djinni, waits at the bottom of the clearing
 // to be fought.
 // - The third area (SceneIdMogallForestKillerApe). Of three stumps in a row
-//       the east one's ape attacks, the middle one's leads south and the west
-//       one's west, to an Elven Shirt in a chest that a rock moved with Move
+//   the east one's ape attacks, the middle one's leads south and the west
+//   one's west, to an Elven Shirt in a chest that a rock moved with Move
 // and a log pushed east let the party reach. South, two logs on an island roll
 //       into the river and a rock settles with Move, and the ape in the stump
 // on its own island leaps to a lower stump, then leads south. There a lone
@@ -42,8 +42,8 @@
 //       Killer Ape beaten sets FLAG_NYUNPA_ENLIGHTENED. Back at Fuchin Temple
 // the monks then say that Nyunpa has reached enlightenment and passed away.
 // - SceneIdMogallForestSidePaths, also named Mogall Forest: small clearings
-//       that the wrong paths lead into, whose far sides lead back. A Psynergy
-//       Stone lies there.
+//   that the wrong paths lead into, whose far sides lead back. A Psynergy
+//   Stone lies there.
 //
 // The apes that attack, one in the first area and one in the third, start a battle with an Ape
 // (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0). An ape stays gone once out, and logs
@@ -2023,8 +2023,8 @@ CUE MogallForestSidePathsCues[] = {
     EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_EAST),
     EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_SOUTH),
     EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_EAST),
-    // The two exit metatiles whose metatile behaviors are 11 and 12 take exits
-    // 20 and 19, not their own numbers.
+    // The two exit metatiles whose metatile behaviors are 11 and 12 take exits 20 and 19, not their
+    // own numbers.
     {CUE_EXIT, 11, CONDITION_ALWAYS, MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_WEST},
     {CUE_EXIT, 12, CONDITION_ALWAYS, MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_EAST},
     EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_CENTER_CLEARING),

@@ -7,24 +7,24 @@
 //
 // In story order:
 // - On the first arrival (scSolSanctumElementalStarRoomEnterStarRoom) Isaac,
-//       Garet, Jenna and Kraden appear on the middle platform. Kraden names
+//   Garet, Jenna and Kraden appear on the middle platform. Kraden names
 // each star as the view goes to it, is too unsteady on the slippery stone to
 //       fetch them himself, and gives Isaac four Mythril Bags. Jenna leaves the
 //       party and waits with him on the platform, and Kraden calls the boys
 // back if they walk back into the light
 //       (scSolSanctumElementalStarRoomKradenStopsPartyLeaving).
 // - Only the Venus Star can be reached at first. Searching a statue puts its
-//       star in a Mythril Bag; the room shakes and three sunken pillars rise
+//   star in a Mythril Bag; the room shakes and three sunken pillars rise
 // out of the dark as stepping stones to the next. The Venus Star opens the way
 //       to the Mercury Star, and the two open the way to the Jupiter Star.
 // - Taking the Jupiter Star brings out Saturos and Menardi, holding Jenna and
-//       Kraden on the middle platform
-//       (scSolSanctumElementalStarRoomBagJupiterStarAndMeetSaturos). Their
+//   Kraden on the middle platform
+//   (scSolSanctumElementalStarRoomBagJupiterStarAndMeetSaturos). Their
 // masked companion takes off his mask and is Felix, Jenna's brother, and Alex
 //       appears and takes the three stars from Garet. From then on the four
 // stand round Jenna and Kraden, each with a word about the last star.
 // - Taking the Mars Star, in the north west, sets the room quaking, and the
-//       story goes on in the eruption
+//   story goes on in the eruption
 // (scSolSanctumElementalStarRoomTakeMarsStar, SceneIdSolSanctumEruption, sol_sanctum_eruption.c).
 //
 // A star is taken once, because each statue's examine cue row holds only until its flag is set. A

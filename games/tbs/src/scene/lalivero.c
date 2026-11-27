@@ -1288,7 +1288,9 @@ CUE LaliveroCues[] = {
     { CUE_TALK, ACTOR_TORCH, CONDITION_ALWAYS, SCRIPT_REF(scLaliveroTalkToTorch) },
     { EXAMINE_CUE(EXAMINE_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { EXAMINE_CUE(EXAMINE_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    // XXX (no evidence): why this chest opens only facing west, when LaliveroCuesAfterLighthouse opens it from any side; the chest and the ground around it are the same on both visits.
+    // XXX (no evidence): why this chest opens only facing west, when
+
+    // LaliveroCuesAfterLighthouse opens it from any side; the chest and the ground around it are the same on both visits.
     { EXAMINE_CHEST_FACING(FACING_WEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
     { CUE_TABLE_END },
 };

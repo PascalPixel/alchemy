@@ -7,8 +7,8 @@
 // order the party meets them:
 //
 // - The room of keys (SceneIdCrossboneIsleKeys), off the third floor: a
-//       pit full of square stone posts, with a walkway along its north wall.
-//       Four blue doors in a row along the walkway lead to four small rooms
+//   pit full of square stone posts, with a walkway along its north wall.
+//   Four blue doors in a row along the walkway lead to four small rooms
 // with a chest each: 333 coins, the Fairy Ring, a Cookie and a Smoke Bomb, west
 //       to east. A red door on a ledge west of the pit is the way on to the
 //       floor's west door.
@@ -21,28 +21,28 @@
 //       way. The keys taken and the doors opened stay so on later visits.
 //
 // - The statue room (SceneIdCrossboneIsleStatues), off the fourth floor: a
-//       dark hall where five statues of a robed woman stand in circles of light
-//       round braziers.
+//   dark hall where five statues of a robed woman stand in circles of light
+//   round braziers.
 //
-//       The statue in the north-east, the one on the narrow walk in the west
-//       and the one in the middle each guard the few tiles in front of them.
-//       Stepping onto those tiles makes the statue glide onto Isaac with a thud
-//       and shove him back south, then glide home, unless Cloak hides him. The
-//       two statues in the alcoves on the south walkway near the east door
+//   The statue in the north-east, the one on the narrow walk in the west
+//   and the one in the middle each guard the few tiles in front of them.
+//   Stepping onto those tiles makes the statue glide onto Isaac with a thud
+//   and shove him back south, then glide home, unless Cloak hides him. The
+//   two statues in the alcoves on the south walkway near the east door
 // slide sideways to stay in front of Isaac as he walks past, so that he cannot
 //       get by them. Halt stops a statue where it is, and while Reveal lasts
 // the darkness lifts from the whole hall.
 //
 // - Bane's room (SceneIdCrossboneIsleBane), off the sixth floor, where
-//       Bane, a Venus Djinni, waits at the west end of the ledge along the back
-//       wall. Five stone pillars to push or shift with Move, the ladders and a
-//       puddle that Frost freezes into a pillar of ice make the way across the
-//       room. A chest on one pillar holds the Demon Axe.
+//   Bane, a Venus Djinni, waits at the west end of the ledge along the back
+//   wall. Five stone pillars to push or shift with Move, the ladders and a
+//   puddle that Frost freezes into a pillar of ice make the way across the
+//   room. A chest on one pillar holds the Demon Axe.
 //
-//       The first two times Isaac comes near, Bane runs off along the room. The
-//       third time it flees to a ledge in the south-east with three spikes on
-//       it, and there it keeps running round the spikes away from him until
-//       Halt holds it still. Talked to while it is held, Bane joins the party.
+//   The first two times Isaac comes near, Bane runs off along the room. The
+//   third time it flees to a ledge in the south-east with three spikes on
+//   it, and there it keeps running round the spikes away from him until
+//   Halt holds it still. Talked to while it is held, Bane joins the party.
 
 #include "ability_ids.h"
 #include "flags.h"

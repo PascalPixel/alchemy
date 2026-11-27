@@ -33,26 +33,26 @@
 // strangers outside.
 //
 // - Walking past the strangers
-//       (METATILE_BEHAVIOR_KRADENS_COTTAGE_PAST_THE_STRANGERS)
-//       plays
-//       scValeKradensCottageMeetSaturosAndMenardi. The three overhear the two
-//       speak of Sol Sanctum and of using Kraden, confront them and are let go.
-//       The two call each other Saturos and Menardi
-//       (FLAG_MET_SATUROS_AND_MENARDI). The strangers then stand aside, turning
+//   (METATILE_BEHAVIOR_KRADENS_COTTAGE_PAST_THE_STRANGERS)
+//   plays
+//   scValeKradensCottageMeetSaturosAndMenardi. The three overhear the two
+//   speak of Sol Sanctum and of using Kraden, confront them and are let go.
+//   The two call each other Saturos and Menardi
+//   (FLAG_MET_SATUROS_AND_MENARDI). The strangers then stand aside, turning
 // to watch the leader.
 // - Before the cottage
 // (METATILE_BEHAVIOR_KRADENS_COTTAGE_BEFORE_THE_COTTAGE), the  party
 // overhears Kraden wondering  what the strangers know of the Elemental Stars
 // (scValeKradensCottageOverhearKraden, FLAG_KRADEN_WONDERED_ABOUT_STRANGERS).
 // - Talking to Kraden plays scValeKradensCottageKradenPlansSanctumVisit. Garet
-//       brings up Saturos and Menardi. Kraden talks the three into a secret
+//   brings up Saturos and Menardi. Kraden talks the three into a secret
 // look at Sol Sanctum on the forbidden mountain, then goes in to prepare.
 // - VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG then takes the party
-//       into the cottage (SceneIdCottageRoomsB,
-//       COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG).
+//   into the cottage (SceneIdCottageRoomsB,
+//   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG).
 // - Coming back out by VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, Kraden
-//       joins them for Mt. Aleph (scValeKradensCottageKradenSetsOff,
-//       FLAG_SANCTUM_VISIT_PLANNED). From then on he and the strangers are
+//   joins them for Mt. Aleph (scValeKradensCottageKradenSetsOff,
+//   FLAG_SANCTUM_VISIT_PLANNED). From then on he and the strangers are
 // gone.
 //
 // On that day a small boy at the fence hears growls beyond it, and a jar holds an Elixir.
@@ -63,14 +63,14 @@
 // By day the scene has these ways out.
 //
 // - The cottage's door (scValeKradensCottageEnterCottage) leads into the
-//       cottage (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, to
-//       SceneIdCottageRoomsB's
+//   cottage (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, to
+//   SceneIdCottageRoomsB's
 // COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH).
 // - VALE_KRADENS_COTTAGE_TO_VALE_NORTH and VALE_KRADENS_COTTAGE_TO_VALE_SOUTH
-//       go down into the village (SceneIdVale).
+//   go down into the village (SceneIdVale).
 // - VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
-//       VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST go into Vale Cave's way in
-//       (SceneIdValeCaveMouth).
+//   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST go into Vale Cave's way in
+//   (SceneIdValeCaveMouth).
 //
 // Coming back from Vale Cave's way in by VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST clears
 // FLAG_SHOW_AREA_NAME, so the area name is not shown again.

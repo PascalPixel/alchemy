@@ -16,8 +16,9 @@
 #include "window/node_chain.h"
 #include "text/msg_ids.h"
 
-// What the player chose at a shop's counter, in the order of its menu's Buy, Sell, Artifacts and
-// Repair, held in shop->action while it runs.
+// What the player chose at a shop's counter, in the order of its menu's
+
+// Buy, Sell, Artifacts and Repair, held in shop->action while it runs.
 typedef enum SHOP_ACTION
 {
     SHOP_ACTION_BUY,

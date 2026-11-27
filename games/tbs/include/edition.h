@@ -1062,7 +1062,7 @@
 // changes, instead of closing and reopening it every tick. Because the state is remembered, two
 // more things work:
 // - The all-held prompt gains a second line ('cannot pull the lever'), drawn on
-//       the next tick.
+//   the next tick.
 // - After a losing pull, the 'pull the lever' line is drawn once.
 #ifndef LUCKY_WHEELS_PROMPT_DRAWN_ONCE
 #    define LUCKY_WHEELS_PROMPT_DRAWN_ONCE 0
@@ -1353,12 +1353,12 @@
 // At the Suhalla Gate checkpoint after Babi's audience, the three wounded soldiers no longer block
 // the party with their actor collision. The map cells under them become walls instead:
 // - They are placed with scripts that turn collision off and are moved 4 px
-//       nearer the middle of their cells.
+//   nearer the middle of their cells.
 // - On entry, the two cells under each soldier are copied from the wall cells
-//       at (0, 0).
+//   at (0, 0).
 // - When the vanishing soldier goes, his cells are reopened from (29, 19).
 // - The approach cells (7, 26) and (8, 26) are reset from (11, 26) instead of
-//       from (9, 26), which are now the east guard's wall cells.
+//   from (9, 26), which are now the east guard's wall cells.
 #ifndef SUHALLA_GATE_WOUNDED_SOLDIERS_BLOCK_BY_WALL_CELLS
 #    define SUHALLA_GATE_WOUNDED_SOLDIERS_BLOCK_BY_WALL_CELLS 0
 #endif

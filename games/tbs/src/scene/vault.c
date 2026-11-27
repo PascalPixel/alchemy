@@ -10,20 +10,20 @@
 //
 // The story flags change the streets in order:
 // - While the rod is missing, the townspeople talk of the eruption, the
-//       theft and the travelers who left in a hurry. Mind Read on them blames
-//       the three strangers staying at the inn. One of the three loiters in
+//   theft and the travelers who left in a hurry. Mind Read on them blames
+//   the three strangers staying at the inn. One of the three loiters in
 // town until the party has confronted them in the loft
 //       (FLAG_VAULT_THIEVES_ATTACKED). Once the suspects' minds have been read
 //       (FLAG_VAULT_SUSPECTS_MIND_READ), the young man fixing a roof is
 // missing, and a woman walks about looking for him.
 // - While Ivan is helping the search (FLAG_VAULT_IVAN_JOINED_ROD_SEARCH),
-//       leaving by either gate has him stay behind (scVaultIvanStaysBehind).
-//       scInit has him rejoin when the party comes back in by a gate
-//       or out of the Vault Sanctum.
+//   leaving by either gate has him stay behind (scVaultIvanStaysBehind).
+//   scInit has him rejoin when the party comes back in by a gate
+//   or out of the Vault Sanctum.
 // - Once the thieves are jailed, the townspeople thank the party. The dog,
-//       given a Bone (scVaultGiveBoneToDog, FLAG_VAULT_DOG_SHOWN_PASSAGE), runs
-//       to a spot and jumps there three times. The passage it shows opens only
-//       in the later scene.
+//   given a Bone (scVaultGiveBoneToDog, FLAG_VAULT_DOG_SHOWN_PASSAGE), runs
+//   to a spot and jumps there three times. The passage it shows opens only
+//   in the later scene.
 //
 // Sap, a Venus Djinni, hides in the tree east of the bell tower. The first ring since the party
 // came in by a gate (FLAG_VAULT_SAP_CALLED_BY_BELL) calls it out: it leaps onto the cliff top above
@@ -1086,8 +1086,7 @@ Sint32 VaultWomanWantingTheRoofFixedRoute[] = {
     SC_WAIT(240),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
-    // Unused: past the route's end, a solid stroll round her spot that no actor
-    // is given.
+    // Unused: past the route's end, a solid stroll round her spot that no actor is given.
     SC_SPEED(0.4),
     SC_ACCELERATION(0.2),
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),

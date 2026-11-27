@@ -2078,7 +2078,9 @@ Uint16 ClearButtonCode[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
 
-// The second, longer code. With it a new game also names Garet, Ivan and Mia.
+// The second, longer code. With it a new game also names Garet, Ivan and
+
+// Mia.
 Uint16 ClearExtraButtonCode[] = {
     KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
     KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
@@ -2100,7 +2102,9 @@ Uint8 ClearThirdPasswordRow[] = "abcde fghij kmnpq r";
 Uint8 ClearFourthPasswordRow[] = "stuvw xyz!? #&$%+ =";
 #endif
 
-// The six story flags of a password's PASSWORD_FLAGS_BYTE, by The Broken Seal's numbers, which gmDataTransferApply reads them by.
+// The six story flags of a password's PASSWORD_FLAGS_BYTE, by The Broken
+
+// Seal's numbers, which gmDataTransferApply reads them by.
 Uint16 ClearImportedFlags[] = {
     FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP,
     FLAG_BROKEN_SEAL_WON_COLOSSO,

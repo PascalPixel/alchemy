@@ -9,16 +9,16 @@
 // The two rooms, in story order, by the exits that lead in:
 //
 // - Vault (STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_VAULT_REVISIT), the
-//       metatile behind Vault's jail door. Once the party has beaten the three
-//       thieves in the inn's loft (FLAG_VAULT_THIEVES_JAILED, log_rooms_a.c),
-//       coming in from Vault finds them behind the bars. Each has his own talk
-//       and Mind Read. Later Vault becomes its later scene (vault_revisit.c),
-//       whose villagers say the thieves have broken out. Its jail door then
-//       comes in by STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner
-//       instead.
+//   metatile behind Vault's jail door. Once the party has beaten the three
+//   thieves in the inn's loft (FLAG_VAULT_THIEVES_JAILED, log_rooms_a.c),
+//   coming in from Vault finds them behind the bars. Each has his own talk
+//   and Mind Read. Later Vault becomes its later scene (vault_revisit.c),
+//   whose villagers say the thieves have broken out. Its jail door then
+//   comes in by STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner
+//   instead.
 // - Lunpa (STONE_ROOMS_FROM_LUNPA), Lunpa's hidden room, which the town's
-//       hidden passage reaches (lunpa.c). Its six chests are each opened once
-//       (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), and
+//   hidden passage reaches (lunpa.c). Its six chests are each opened once
+//   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), and
 // METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR leads back up into Lunpa.
 // Arriving  this way clears FLAG_SHOW_AREA_NAME, so no area name is shown.
 // The room  uses the thieves' tables, so its chests and exit sit in the same

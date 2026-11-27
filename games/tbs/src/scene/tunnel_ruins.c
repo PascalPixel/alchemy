@@ -7,25 +7,25 @@
 // slides of Babi Lighthouse Entry land, which the area names call Babi Lighthouse.
 //
 // - TunnelRuinsGreatStatue (SceneIdTunnelRuinsGreatStatue) is entered by
-//       the stone door Reveal finds in Babi Lighthouse. Its first room holds a
-//       giant pink statue, with a small model of Venus Lighthouse on the floor
-//       before it: searching it tells the party to seek "the lady's leave", the
-//       great statue in Venus Lighthouse, whose answer opens one of two routes.
-//       South of it, Isaac pushes one of two gold-topped pillars so that he can
-//       hop across their tops past a wall. Beyond, a room of stone columns in a
-//       pit gets one more column for each route opened. One route goes by a
-//       second pair of pillars and a room where Whirlwind blows ivy off a small
-//       pillar, then by the balance and its carved stones to the Oracle's Robe.
-//       The other goes by a room of two pillars that sink onto water crests,
-//       raising stepping stones from a pit, to the Asura's Armor.
+//   the stone door Reveal finds in Babi Lighthouse. Its first room holds a
+//   giant pink statue, with a small model of Venus Lighthouse on the floor
+//   before it: searching it tells the party to seek "the lady's leave", the
+//   great statue in Venus Lighthouse, whose answer opens one of two routes.
+//   South of it, Isaac pushes one of two gold-topped pillars so that he can
+//   hop across their tops past a wall. Beyond, a room of stone columns in a
+//   pit gets one more column for each route opened. One route goes by a
+//   second pair of pillars and a room where Whirlwind blows ivy off a small
+//   pillar, then by the balance and its carved stones to the Oracle's Robe.
+//   The other goes by a room of two pillars that sink onto water crests,
+//   raising stepping stones from a pit, to the Asura's Armor.
 // - TunnelRuinsLadyStatues (SceneIdTunnelRuinsLadyStatues) holds the rest:
-//       Babi Lighthouse's basement with its two grey pillars; the balance, two
-//       platforms Carry weighs down with three carved stones; the two white
-//       statues that Reveal makes vanish from the chests they stand on; a room
-//       of four walkways over a pit; and a pillar to push, Douse and Frost.
-//       Last come five coloured statues of a woman that open the door to Venus
-//       Lighthouse once all five stand on their marks
-//       (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
+//   Babi Lighthouse's basement with its two grey pillars; the balance, two
+//   platforms Carry weighs down with three carved stones; the two white
+//   statues that Reveal makes vanish from the chests they stand on; a room
+//   of four walkways over a pit; and a pillar to push, Douse and Frost.
+//   Last come five coloured statues of a woman that open the door to Venus
+//   Lighthouse once all five stand on their marks
+//   (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 //
 // The getters choose by MainRoutineStateWork.next. The actor placements of TunnelRuinsLadyStatues
 // answer any other scene number, and scGetActorPlacements prepares each table's actors to appear
@@ -35,12 +35,12 @@
 //
 // - It puts each puzzle back as it was left.
 // - It redraws the first room and the walkways for the path the statue in
-//       Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
-//       FLAG_VENUS_LIGHTHOUSE_SECOND_PATH).
+//   Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
+//   FLAG_VENUS_LIGHTHOUSE_SECOND_PATH).
 // - It sets the retreat point.
 // - In the rooms that need it, it starts a ground mask that follows the
-//       leader south of a depth set per room
-//       (scTunnelRuinsUpdateGroundMaskLeader).
+//   leader south of a depth set per room
+//   (scTunnelRuinsUpdateGroundMaskLeader).
 //
 // The walking scripts, keyed on the metatile behaviors under the leader, are shared by both scenes.
 // Walking against a one-metatile gap or a pillar makes Isaac leap over it to the metatile beyond
@@ -55,12 +55,12 @@
 // The rest keep scene flags, which mean different things in each scene:
 //
 // - TunnelRuinsGreatStatue: the two halves of the ivy over the small pillar
-//       blown away (FLAG_TUNNEL_RUINS_IVY_WEST_HALF_GONE and _EAST_HALF_GONE),
+//   blown away (FLAG_TUNNEL_RUINS_IVY_WEST_HALF_GONE and _EAST_HALF_GONE),
 // and in the sinking pillars' room, on the same two flags, the two pillars'
 //       Frost targets frozen; and the south-east pillar soaked by Douse.
 // - TunnelRuinsLadyStatues: the carved stones set on the balance
-//       (FLAG_TUNNEL_RUINS_FIRST_STONE_SET on), and the Douse pillar soaked and
-//       its Frost target frozen.
+//   (FLAG_TUNNEL_RUINS_FIRST_STONE_SET on), and the Douse pillar soaked and
+//   its Frost target frozen.
 //
 // Each balance platform's timer is its weight. Both start at 3. A carved stone set on one adds one
 // to it and takes one from the other. BalancePlatformHeights turns each weight into the platform's
@@ -2453,8 +2453,8 @@ ACTOR_PLACE TunnelRuinsGreatStatueActorPlacements[] = {
         SPRITE_PUDDLE, 0, MOVEMENT_TYPE_STAND, 728, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(
         SPRITE_PUDDLE, 0, MOVEMENT_TYPE_STAND, 728, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
-    // A model of Venus Lighthouse on the floor before the giant statue: the
-    // World Map's tower, at three fifths of its size, with no collision and no shadow.
+    // A model of Venus Lighthouse on the floor before the giant statue: the World Map's tower, at
+    // three fifths of its size, with no collision and no shadow.
     ACTOR_PLACEMENT(SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE,
                     0,
                     (Sint32)TunnelRuinsSmallLighthouseScript,

@@ -8,39 +8,39 @@
 // Here are the rooms in story order, by the exits that lead in:
 //
 // - From the village (SceneIdVale, and on the stormy night
-//       SceneIdValePrologue): the house of Garet's family
-//       (COTTAGE_ROOMS_A_FROM_VALE_EAST), his grandfather the mayor, his
-//       grandmother and his parents; the house of Jenna's grandparents
-//       (COTTAGE_ROOMS_A_FROM_VALE_NORTH); and two more houses
-//       (COTTAGE_ROOMS_A_FROM_VALE_SOUTH and COTTAGE_ROOMS_A_FROM_VALE_WEST).
+//   SceneIdValePrologue): the house of Garet's family
+//   (COTTAGE_ROOMS_A_FROM_VALE_EAST), his grandfather the mayor, his
+//   grandmother and his parents; the house of Jenna's grandparents
+//   (COTTAGE_ROOMS_A_FROM_VALE_NORTH); and two more houses
+//   (COTTAGE_ROOMS_A_FROM_VALE_SOUTH and COTTAGE_ROOMS_A_FROM_VALE_WEST).
 // - From the part of Vale with the Psynergy Stone (SceneIdValePlaza): the
-//       shops (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH), where the item, weapon
+//   shops (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH), where the item, weapon
 // and armor shops each open across a counter, and three houses
 //       (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH,
 //       COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST and
 //       COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST).
 // - Unused: a ninth room drawn at the map's lower left, whose camera box no
-//       entrance gives, so no door leads in.
+//   entrance gives, so no door leads in.
 //
 // The actor placements and cues follow the story:
 //
 // - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out.
-//       scInit removes every resident and flashes the
-//       lightning outside. The doors out to the village lead into the storm's
-//       scene (SceneIdValePrologue) instead (scGetExits). The jars
-//       and the barrel are empty, and six more bookcases than by day can be
-//       read, a notebook called "Study of Alchemy" among them.
+//   scInit removes every resident and flashes the
+//   lightning outside. The doors out to the village lead into the storm's
+//   scene (SceneIdValePrologue) instead (scGetExits). The jars
+//   and the barrel are empty, and six more bookcases than by day can be
+//   read, a notebook called "Study of Alchemy" among them.
 // - Three years later, the day the story begins. The villagers talk of
-//       Kraden's visitors and of Vale's law that keeps Psynergy secret from
-//       outsiders. The jars and the barrel hold coins, an Antidote and a Smoke
-//       Bomb, each found once.
+//   Kraden's visitors and of Vale's law that keeps Psynergy secret from
+//   outsiders. The jars and the barrel hold coins, an Antidote and a Smoke
+//   Bomb, each found once.
 // - After the party has left Vale (FLAG_VALE_PARTY_LEFT), Jenna having been
-//       taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
-//       COTTAGE_ROOMS_A_FROM_VALE_NORTH). The villagers talk of the quest and
+//   taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
+//   COTTAGE_ROOMS_A_FROM_VALE_NORTH). The villagers talk of the quest and
 // of Felix, and the item merchant gives Isaac a Herb as a farewell gift
 //       (FLAG_VALE_FAREWELL_HERB_RECEIVED).
 // - Back from Kalay (FLAG_KALAY_REACHED), with Ivan and Mia in the party. The
-//       first time the party enters Garet's house,
+//   first time the party enters Garet's house,
 // scCottageRoomsAGaretComesHome plays (FLAG_GARET_CAME_HOME). His parents are wondering whether to
 // look for him when his grandmother sees him. The family greets him, Ivan and Mia introduce
 // themselves ("I am Mia, from Imil."), and his father is left pacing. The villagers now worry about

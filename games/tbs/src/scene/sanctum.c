@@ -5,36 +5,34 @@
 // facing north, opens the Sanctum's services; from any other side he only talks.
 //
 // - Vale's Sanctum: the Great Healer, with a Healer on each side of the room
-//       who speaks of Psynergy. After the eruption of Mt. Aleph, the Great
+//   who speaks of Psynergy. After the eruption of Mt. Aleph, the Great
 // Healer brings Isaac and Garet here from Vale (vale_eruption.c, entrance
-//       SANCTUM_FROM_VALE_ERUPTION). Dora and the Mayor are waiting. Isaac and
-//       Garet act out what happened in Sol Sanctum while the room is tinted
-// sepia, the Great Healer tells what the Wise One showed him, and he asks Isaac to take on the
-// quest. For these visits the stone counter is taken away and
-//       the Great Healer stands beside the altar.
+// SANCTUM_FROM_VALE_ERUPTION). Dora and the Mayor are waiting. Isaac and Garet act out what
+// happened in Sol Sanctum while the room is tinted sepia, the Great Healer tells what the Wise One
+// showed him, and he asks Isaac to take on the quest. For these visits the stone counter is taken
+// away and the Great Healer stands beside the altar.
 //
-//       A yes brings the Wise One down over the altar to give Isaac and Garet
-//       their mission; the screen fades to black over the inn's night music,
-// and the two are in Vale's plaza (vale_plaza.c). A no leaves everyone waiting in the room: the
-// Great Healer asks again when spoken to, he warns Isaac as he heads for the door, and stepping out
-// ends the game, "And so the world began drifting toward its fated destruction...", with a choice
-// to start again from the Great Healer (SANCTUM_FROM_QUEST_RESTART, without the acting out) or to
-// go to the file screen. After the party has left Vale (FLAG_VALE_PARTY_LEFT), and again after it
-// has reached Kalay (FLAG_KALAY_REACHED), the three Healers talk of what the eruption and the Wise
-// One changed.
+// A yes brings the Wise One down over the altar to give Isaac and Garet their mission; the screen
+// fades to black over the inn's night music, and the two are in Vale's plaza (vale_plaza.c). A no
+// leaves everyone waiting in the room: the Great Healer asks again when spoken to, he warns Isaac
+// as he heads for the door, and stepping out ends the game, "And so the world began drifting toward
+// its fated destruction...", with a choice to start again from the Great Healer
+// (SANCTUM_FROM_QUEST_RESTART, without the acting out) or to go to the file screen. After the party
+// has left Vale (FLAG_VALE_PARTY_LEFT), and again after it has reached Kalay (FLAG_KALAY_REACHED),
+// the three Healers talk of what the eruption and the Wise One changed.
 // - Vault's Sanctum: the Healer, and a man with long brown hair in a long robe
-//       who wanders the room. A gold statue was stolen from them during the
-//       eruption. Once the party has caught the thieves at the inn
-//       (FLAG_VAULT_THIEVES_JAILED) the statue stands back behind the Healer,
-// and on the party's later visit through Vault (vault_revisit.c) it has been
-//       polished and the Healer worries about earthquakes on Mt. Aleph.
+//   who wanders the room. A gold statue was stolen from them during the
+//   eruption. Once the party has caught the thieves at the inn
+//   (FLAG_VAULT_THIEVES_JAILED) the statue stands back behind the Healer,
+// and on the party's later visit through Vault (vault_revisit.c) it has been polished and the
+// Healer worries about earthquakes on Mt. Aleph.
 // - Bilibin's Sanctum: the Healer and a man like Vault's, who talk of
-//       Kolima's curse, before and after it is lifted
+//   Kolima's curse, before and after it is lifted
 // (FLAG_KOLIMA_CURSE_LIFTED).
 // - Xian's Sanctum: a Healer who came to Xian from very distant lands.
 // - Altin's Sanctum: a Healer who tells of the water-spewing beasts in the
-//       mine, until the party has saved Altin from them
-//       (FLAG_HYDROS_STATUES_DEFEATED).
+//   mine, until the party has saved Altin from them
+//   (FLAG_HYDROS_STATUES_DEFEATED).
 //
 // Entrance SANCTUM_UNUSED, which no exit leads to, places nobody and gives the room the name
 // Sanctum alone.

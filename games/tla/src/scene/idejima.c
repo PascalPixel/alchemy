@@ -5,15 +5,15 @@
 // washed ashore:
 //
 // - Jenna and Kraden reach Idejima and find Menardi's ship without the orb
-//       that moves it. Alex joins them, the beacon is lit, and the tremor tears
-//       Idejima away from Gondowan (scIdejimaBreakAwayFromGondowan, entrance
+//   that moves it. Alex joins them, the beacon is lit, and the tremor tears
+//   Idejima away from Gondowan (scIdejimaBreakAwayFromGondowan, entrance
 // 11).
 // - Adrift, Alex shows Jenna and Kraden that Felix and Sheba have washed up on
-//       the island (scIdejimaFindFelixAndSheba, entrance 12).
+//   the island (scIdejimaFindFelixAndSheba, entrance 12).
 // - Sheba wakes, land comes in sight, and a tidal wave carries the island
-//       onto it (scIdejimaRideTheTidalWave, entrance 13).
+//   onto it (scIdejimaRideTheTidalWave, entrance 13).
 // - Felix wakes on the grass of the island, now run aground on the coast of
-//       Indra near Daila (scIdejimaFelixWakes), with Jenna, Sheba and Kraden
+//   Indra near Daila (scIdejimaFelixWakes), with Jenna, Sheba and Kraden
 // still lying where the wave left them (scIdejimaLayDownTheOthers). Each wakes
 //       when he talks to them (scIdejimaWakeKraden, scIdejimaWakeJenna,
 //       scIdejimaWakeSheba), or runs after him if he heads west without them

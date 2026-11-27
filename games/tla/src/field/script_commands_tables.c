@@ -18,7 +18,9 @@ const Uint16 RopeKeyHeadings[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
 };
 
-// A sine wave of 256 steps and amplitude 4096 that the line scrolls ride (script_commands_line_scroll.c), as The Broken Seal's.
+// A sine wave of 256 steps and amplitude 4096 that the line scrolls ride
+
+// (script_commands_line_scroll.c), as The Broken Seal's.
 const Sint16 LineScrollWaveSine[256] = {
     0, 100, 200, 301, 401, 501, 601, 700,
     799, 897, 995, 1092, 1189, 1284, 1379, 1474,
@@ -54,7 +56,9 @@ const Sint16 LineScrollWaveSine[256] = {
     -799, -700, -601, -501, -401, -301, -200, -100,
 };
 
-// {dx, dy, tile, shape, size} for each of 16 frames of a ground particle (script_commands_weather.c): dx and dy in screen pixels from its spot, tile from its first tile.
+// {dx, dy, tile, shape, size} for each of 16 frames of a ground particle
+
+// (script_commands_weather.c): dx and dy in screen pixels from its spot, tile from its first tile.
 const Sint16 WeatherRainSplashFrames[80] = {
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,

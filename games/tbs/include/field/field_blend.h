@@ -10,8 +10,9 @@
 // to the next flash and whether the thunder is loud.
 typedef struct FIELD_BLEND_STATE
 {
-    // The storm's dark colours (PALETTE_TINT_DIM), as the palette fade's B, G and R channels: each
-    // flash fades back to them.
+    // The storm's dark colours (PALETTE_TINT_DIM), as the palette fade's
+
+    // B, G and R channels: each flash fades back to them.
     Sint16 from[1344];
     Sint16 to[1344];    // the lit colours (PALETTE_TINT_PALE), as from
     Sint16 delta[1344]; // the 12-tick steps from to back to from

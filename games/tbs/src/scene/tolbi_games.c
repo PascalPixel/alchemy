@@ -5,8 +5,8 @@
 // Tolbi), each with its own camera box.
 //
 // - Lucky Dice is played in the small tent with a die on its front. Two
-//       fair-haired young men stand behind the counter at the back. The one on
-//       the left asks ten coins for each level of the party's average level
+//   fair-haired young men stand behind the counter at the back. The one on
+//   the left asks ten coins for each level of the party's average level
 // and, once paid, sends Isaac to the green table to throw. When the game ends
 //       he says how many coins were won or lost, with a fanfare that grows with
 //       the win. Boards on the wall give the rules, and three players, an old
@@ -15,13 +15,13 @@
 //       (FLAG_BABI_SAVED, the finals day), then of the scalpers at the Colosso
 //       finals, and is gone once Colosso is over (FLAG_COLOSSO_OVER).
 // - Lucky Wheels, the slot machine, is played in the room up the stairs
-//       beside the inn. The young woman in green behind its curved counter
-//       takes Game Tickets, and warns when the bag has six free slots or fewer.
-//       When the game ends she hands over an item for each line won, one of the
-//       three of its kind (shirts, boots, rings, or stars and hearts for items;
-//       a moon wins any kind), never the one she gave last time; or, when
-//       nothing was won, offers another game. Green boards by the counter give
-//       the rules and the prizes.
+//   beside the inn. The young woman in green behind its curved counter
+//   takes Game Tickets, and warns when the bag has six free slots or fewer.
+//   When the game ends she hands over an item for each line won, one of the
+//   three of its kind (shirts, boots, rings, or stars and hearts for items;
+//   a moon wins any kind), never the one she gave last time; or, when
+//   nothing was won, offers another game. Green boards by the counter give
+//   the rules and the prizes.
 //
 // Tolbi Spring (SceneIdTolbiSpring) is the fountain in the middle of Tolbi's square, reached
 // through the gate in its railing. Isaac stands on the white step between its two signs and
@@ -328,7 +328,9 @@ const Uint32 *scGetExits(void)
     return TolbiSpringExits;
 }
 
-// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky Wheels rooms.
+// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
+
+// Wheels rooms.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
     if (MainRoutineStateWork.next == SCENE_TOLBI_SPRING)

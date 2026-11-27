@@ -37,28 +37,28 @@
 // And it plays the story's moments on the map, each run by scInit for the entrance another scene
 // sends the party to. In story order:
 // - Leaving Vale (WORLD_MAP_FROM_VALE_PLAZA) sets FLAG_VALE_PARTY_LEFT the
-//       first time.
+//   first time.
 // - Flint, the first Djinni, circles his spot until the party walks up to him
-//       (scWorldMapMeetFlint). He joins and teaches how Djinn are set and put
+//   (scWorldMapMeetFlint). He joins and teaches how Djinn are set and put
 // on standby, and a lesson battle follows.
 // - Hammet's caravan. It plays the first time the party touches Vault
-//       (WORLD_MAP_HAMMETS_CARAVAN_LEAVES). The caravan, cut off from Kalay by
+//   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES). The caravan, cut off from Kalay by
 // the destroyed bridge, turns north for Lunpa as the ground shakes and a rock
 //       falls beside it. Then the party goes on into Vault. It sets
 //       FLAG_LUNPA_GUARDS_SUSPECT_KALAY.
 // - Mercury Lighthouse lit (WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT). The
-//       lighthouse transition plays (scWorldMapPlayLighthouseTransition), then
-//       Mercury Lighthouse Aerie follows
-//       (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
+//   lighthouse transition plays (scWorldMapPlayLighthouseTransition), then
+//   Mercury Lighthouse Aerie follows
+//   (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
 // - Bunza's wagon. Out of West Lunpa Cave (WORLD_MAP_FROM_WEST_LUNPA_CAVE)
-//       Bunza, Hammet and the leader board it and it rolls off
-//       (FLAG_BUNZAS_WAGON_LEFT). At the Kalay Tunnel Entrance
-//       (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader
+//   Bunza, Hammet and the leader board it and it rolls off
+//   (FLAG_BUNZAS_WAGON_LEFT). At the Kalay Tunnel Entrance
+//   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader
 // steps down.
 // - The Tolbi-bound Ship's crossing of the Karagol Sea. Between the ship's
-//       scenes (WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK to
-//       _SAIL_TO_LAND) the map shows the ship sailing west and sends the party
-//       back aboard (FLAG_TOLBI_SHIP_ROWING). A rowing off course takes it
+//   scenes (WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK to
+//   _SAIL_TO_LAND) the map shows the ship sailing west and sends the party
+//   back aboard (FLAG_TOLBI_SHIP_ROWING). A rowing off course takes it
 // north to anchor off the island (WORLD_MAP_FROM_SHIP_ROOMS,
 //       FLAG_TOLBI_SHIP_AT_ISLAND). There
 //       METATILE_BEHAVIOR_WORLD_MAP_CROSSBONE_ISLE leads ashore and
@@ -66,7 +66,7 @@
 //       WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI ends the crossing at Tolbi
 //       (FLAG_TOLBI_SHIP_REACHED_TOLBI).
 // - The Black Orb. Out of Gateway Cave (WORLD_MAP_FROM_GATEWAY_CAVE) Iodem
-//       sees Babi's ship scuttled off the coast and gives Isaac the orb to use
+//   sees Babi's ship scuttled off the coast and gives Isaac the orb to use
 // on it (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER, FLAG_SAW_SHIP_AT_IDEJIMA). He
 //       calls him back if he walks into the cave again. Used on the wreck, the
 //       orb sparkles but nothing happens: Iodem decides it is not yet time,
@@ -75,14 +75,14 @@
 //       WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the orb and leads on
 // by WORLD_MAP_TO_ROCK_ROOMS.
 // - Venus Lighthouse lit (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT). The
-//       lighthouse transition plays, then the party is back at the Lighthouse
-//       Aerie (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT). After the look back
-//       (WORLD_MAP_BEFORE_SHEBAS_FALL) the lighthouse shakes in clouds of dust
-//       before Sheba's fall (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
+//   lighthouse transition plays, then the party is back at the Lighthouse
+//   Aerie (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT). After the look back
+//   (WORLD_MAP_BEFORE_SHEBAS_FALL) the lighthouse shakes in clouds of dust
+//   before Sheba's fall (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
 // - The ending. Once the cleared game is saved (scene/file_screen.c,
-//       WORLD_MAP_FROM_FILE_SCREEN), the island Jenna and Kraden are adrift on
-//       drifts east. WORLD_MAP_JENNA_AND_KRADEN_ADRIFT then shows Alex leading
-//       them to Felix and Sheba before the Title returns.
+//   WORLD_MAP_FROM_FILE_SCREEN), the island Jenna and Kraden are adrift on
+//   drifts east. WORLD_MAP_JENNA_AND_KRADEN_ADRIFT then shows Alex leading
+//   them to Felix and Sheba before the Title returns.
 //
 // WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters off.
 
@@ -3697,8 +3697,8 @@ SCENE_ENTRANCE WorldSceneEntrances[] = {
      -1,
      -1,
      0},
-    // The one row with a camera bound: the view goes no farther north than 128
-    // pixels, where the ship blown off course drifts north (CrossingShipDriftsNorth).
+    // The one row with a camera bound: the view goes no farther north than 128 pixels, where the
+    // ship blown off course drifts north (CrossingShipDriftsNorth).
     {WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND,
      CONDITION_ALWAYS, 7944,
      0, 200,

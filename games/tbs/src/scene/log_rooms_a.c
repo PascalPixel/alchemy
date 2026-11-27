@@ -5,11 +5,11 @@
 // Every room is on one map, each an entrance with a camera box of its own. Vault's doors (vault.c)
 // lead to the entrances named for them:
 // - the gem owner's house, nearest the town's lower gate, where a big pale
-//       blue gem stands on the round table;
+//   blue gem stands on the round table;
 // - the house of a burly grey-haired man and a small boy, in the middle of
-//       town;
+//   town;
 // - the inn, with the guests' room and its two beds upstairs, where the
-//       three strangers stay;
+//   three strangers stay;
 // - the item shop, which is also the home of Grandpa and his wife;
 // - the weapon and armor shop;
 // - the mayor's house, where Ivan is.
@@ -23,14 +23,14 @@
 //
 // The story flags drive the rooms in order:
 // - At the mayor's, talking to Ivan plays scLogRoomsAMeetIvan. He reads
-//       Isaac's mind (FLAG_VAULT_MET_IVAN) and asks for help with the rod. On a
-//       yes he joins the party (scLogRoomsAIvanJoinsRodSearch,
-//       FLAG_VAULT_IVAN_JOINED_ROD_SEARCH).
+//   Isaac's mind (FLAG_VAULT_MET_IVAN) and asks for help with the rod. On a
+//   yes he joins the party (scLogRoomsAIvanJoinsRodSearch,
+//   FLAG_VAULT_IVAN_JOINED_ROD_SEARCH).
 // - In the guests' room upstairs at the inn, the two suspects see Ivan with
-//       the party and run from him round the beds
-//       (scLogRoomsAApproachSuspects). Stepping back out of the room, the party
-//       plans to surround one of them (scLogRoomsADiscussSuspiciousGuests).
-//       Going back in starts the chase (scLogRoomsAStartCorneringSuspects):
+//   the party and run from him round the beds
+//   (scLogRoomsAApproachSuspects). Stepping back out of the room, the party
+//   plans to surround one of them (scLogRoomsADiscussSuspiciousGuests).
+//   Going back in starts the chase (scLogRoomsAStartCorneringSuspects):
 // Garet spreads his arms and Ivan follows, and the suspects dodge between spots
 //       round the beds (LogRoomsAStops). Once one of them has been boxed in
 //       for half a second, Ivan reads both minds
@@ -38,9 +38,9 @@
 //       During the chase the menu only gets Garet's "We don't have time for
 //       that" (scLogRoomsAGaretHasNoTimeForMenu).
 // - In the attic, Move pushes the crate aside (scLogRoomsACheckCrateMoved,
-//       FLAG_VAULT_CRATE_MOVED), and the way behind it leads into the loft
-//       (scLogRoomsAEnterLoft). Cutting free the young man tied up there brings
-//       out the three thieves, who attack
+//   FLAG_VAULT_CRATE_MOVED), and the way behind it leads into the loft
+//   (scLogRoomsAEnterLoft). Cutting free the young man tied up there brings
+//   out the three thieves, who attack
 // (scLogRoomsAFreeVillagerAndFightThieves, FLAG_VAULT_THIEVES_ATTACKED). After a loss the thieves
 // gloat over the fallen party, which comes to in the Vault Sanctum (scLogRoomsALoseToThieves).
 // Coming back up replays the challenge
@@ -50,9 +50,9 @@
 //       stolen goods and the Shaman's Rod, and Ivan leaves the party to rescue
 //       Hammet from Lunpa.
 // - Once the thieves are jailed, the mayor gives the promised Water of Life
-//       (FLAG_VAULT_WATER_OF_LIFE_RECEIVED) and the girl at the inn offers
-//       Bones (FLAG_VAULT_BONE_RECEIVED), with more on the barrel beside her
-//       (scVaultFindBone) for the dog in town.
+//   (FLAG_VAULT_WATER_OF_LIFE_RECEIVED) and the girl at the inn offers
+//   Bones (FLAG_VAULT_BONE_RECEIVED), with more on the barrel beside her
+//   (scVaultFindBone) for the dog in town.
 //
 // The shops and the inn open across their counters when Isaac faces north. Spoken to from anywhere
 // else, their keepers only talk.

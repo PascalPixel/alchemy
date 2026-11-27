@@ -19,19 +19,19 @@
 // In story order:
 //
 // - At Kalay, while the ship waits for its replacement, the captain's anchor
-//       charm, gone from his quarters, lies up here. Searching for it
-//       (METATILE_BEHAVIOR_TOLBI_SHIP_MAST_ANCHOR_CHARM) finds the Anchor Charm
-//       (FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND). It does so only once the party
+//   charm, gone from his quarters, lies up here. Searching for it
+//   (METATILE_BEHAVIOR_TOLBI_SHIP_MAST_ANCHOR_CHARM) finds the Anchor Charm
+//   (FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND). It does so only once the party
 // has confronted the crewman on deck or the warriors have gone to the captain
 //       (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT or
 // FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The lookout is the crewman who hid it. Until the first
 // attack, Mind Read on him has him wonder whether the party has worked out that he was the one.
 // Once the charm is back the setup moves him to his lookout spot.
 // - Under sail, at TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR, he scans
-//       both sides and calls the course clear, which leads below to the
+//   both sides and calls the course clear, which leads below to the
 // cast-off. The first time, the leader is moved out of view. On later departures he stands by.
 // - The attacks. TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK is "Avast!
-//       Monsters sighted!", as three monsters appear where a sparkle twinkles
+//   Monsters sighted!", as three monsters appear where a sparkle twinkles
 // and close in (FLAG_TOLBI_SHIP_MONSTERS_SIGHTED, which plays
 //       MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE). Then comes Sean's
 //       "Monsters!" after a bird swoops at the lookout
@@ -39,9 +39,9 @@
 // dropping in beside the lookout (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK). Each leads below or
 // to the deck.
 // - Land. At TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO the seven birds
-//       (ACTOR_FIRST_BIRD) fly away before "Land ho!". The rowing values of the
-//       passengers chosen to row (TolbiShipPassengerRowValues) decide where
-//       the ship comes in. The balance is those at the first and third seats
+//   (ACTOR_FIRST_BIRD) fly away before "Land ho!". The rowing values of the
+//   passengers chosen to row (TolbiShipPassengerRowValues) decide where
+//   the ship comes in. The balance is those at the first and third seats
 // less those at the second and fourth. A balance of ROWING_BALANCE_OFF_COURSE
 //       takes TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the
 //       island.

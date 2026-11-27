@@ -1685,7 +1685,9 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 }
 
 // clang-format off
-// Briggs and his mate running out to the party once Jenna gives it away (scEasternAlhafraShipMayorArrives).
+// Briggs and his mate running out to the party once Jenna gives it away
+
+// (scEasternAlhafraShipMayorArrives).
 Uint32 EasternAlhafraShipBriggsRunsScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(32, 0, 0),
@@ -1792,8 +1794,7 @@ CUE SceneCues[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE),
      ACTOR_TALL_CRATE, CONDITION_ALWAYS,
      SCRIPT_REF(scEasternAlhafraShipFinishMovingCrate)},
-    // CUE_PUSH and CUE_PUSHED answer any target (fdFindCue):
-    // their 30 is never compared.
+    // CUE_PUSH and CUE_PUSHED answer any target (fdFindCue): their 30 is never compared.
     {CUE_PUSH, 30, CONDITION_ALWAYS, SCRIPT_REF(scEasternAlhafraShipStartMovingCrate)},
     {CUE_PUSHED, 30, CONDITION_ALWAYS, SCRIPT_REF(scEasternAlhafraShipFinishMovingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR),

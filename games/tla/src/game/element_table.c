@@ -68,7 +68,9 @@ const ENEMY_ELEMENT_PRESET EnemyElementPresetTable[] = {
             {.power = 80, .resistance = 90},
         },
     },
-    // Chestbeater, Wild Gorilla, Crazy Gorilla, Wild Wolf, Dire Wolf, White Wolf, Vermin, Mad Vermin, Rat, Armored Rat, Plated Rat, Troll, Cave Troll, Brutal Troll, Mauler, Ravager, Mole, Mad Mole, Mole Mage and Ape
+    // Chestbeater, Wild Gorilla, Crazy Gorilla, Wild Wolf, Dire Wolf, White
+
+    // Wolf, Vermin, Mad Vermin, Rat, Armored Rat, Plated Rat, Troll, Cave Troll, Brutal Troll, Mauler, Ravager, Mole, Mad Mole, Mole Mage and Ape
     [ELEMENT_PRESET_CHESTBEATER] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
@@ -178,7 +180,9 @@ const ENEMY_ELEMENT_PRESET EnemyElementPresetTable[] = {
             {.power = 110, .resistance = 25},
         },
     },
-    // Mummy, Foul Mummy, Grave Wight, Zombie, Undead, Wight, Ghoul, Fiendish Ghoul and Cannibal Ghoul
+    // Mummy, Foul Mummy, Grave Wight, Zombie, Undead, Wight, Ghoul, Fiendish
+
+    // Ghoul and Cannibal Ghoul
     [ELEMENT_PRESET_MUMMY] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
@@ -189,7 +193,9 @@ const ENEMY_ELEMENT_PRESET EnemyElementPresetTable[] = {
             {.power = 80, .resistance = 48},
         },
     },
-    // Skeleton, Bone Fighter, Skull Warrior, Will Head, Death Head and Willowisp
+    // Skeleton, Bone Fighter, Skull Warrior, Will Head, Death Head and
+
+    // Willowisp
     [ELEMENT_PRESET_SKELETON] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
@@ -244,7 +250,9 @@ const ENEMY_ELEMENT_PRESET EnemyElementPresetTable[] = {
             {.power = 90, .resistance = 48},
         },
     },
-    // Aqua Hydra, Hydra, Pyrodra, Poseidon, Poseidon 3, Sea Dragon, Turtle Dragon, Ocean Dragon, Blue Dragon, Cruel Dragon, Dragon, Cerberus, Fenrir, Toadonpa, Poison Toad, Devil Frog, Kraken and Refresh Ball
+    // Aqua Hydra, Hydra, Pyrodra, Poseidon, Poseidon 3, Sea Dragon, Turtle
+
+    // Dragon, Ocean Dragon, Blue Dragon, Cruel Dragon, Dragon, Cerberus, Fenrir, Toadonpa, Poison Toad, Devil Frog, Kraken and Refresh Ball
     [ELEMENT_PRESET_AQUA_HYDRA] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 4, 0, 2},
@@ -385,7 +393,9 @@ const ENEMY_ELEMENT_PRESET EnemyElementPresetTable[] = {
             {.power = 85, .resistance = 72},
         },
     },
-    // Wolfkin Cub, Wolfkin, Skinwalker, Rat Soldier, Rat Fighter and Rat Warrior
+    // Wolfkin Cub, Wolfkin, Skinwalker, Rat Soldier, Rat Fighter and Rat
+
+    // Warrior
     [ELEMENT_PRESET_WOLFKIN_CUB] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 3, 2, 2},

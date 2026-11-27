@@ -525,7 +525,9 @@ typedef enum RED_CRESCENT_PICTURE
 
 // The canvas life cycle, shared by every canvas effect.
 
-// The bytes an effect's state is lent: more than struct BATTLE_EFFECT_STATE holds.
+// The bytes an effect's state is lent: more than struct
+
+// BATTLE_EFFECT_STATE holds.
 #define BATTLE_EFFECT_STATE_SIZE      31612
 
 // The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).

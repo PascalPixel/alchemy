@@ -4,8 +4,9 @@
 // How far a row of btEffectWipeCanvas's wipe lags behind its front, at most: each row lags a random
 // 0 to WIPE_LAG_MAX pixels.
 #define WIPE_LAG_MAX    63
-// Where the across wipe's front stops, three ticks past CANVAS_SIZE + WIPE_LAG_MAX, where the wipe
-// is finished.
+// Where the across wipe's front stops, three ticks past
+
+// CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished.
 #define WIPE_ACROSS_END 256
 
 // Wipes the whole canvas to one colour with a ragged edge, a tick at a time: 23 ticks across, 15

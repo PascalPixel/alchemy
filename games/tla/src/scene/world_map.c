@@ -4049,8 +4049,8 @@ LATE_DATA CUE SceneCues[] = {
      CUE_SUBJECT_OWN_EFFECT | SHIP_SEA_EXAMINE_CODE,
      CONDITION_ALWAYS, SCRIPT_REF(scWorldMapGazeIntoPond)},
     {CUE_STEP, STEP_CUE_AREA(PLACED_DAILA), CONDITION_ALWAYS, SCRIPT_REF(scWorldMapEnterDaila)},
-    // Walking into a place's marker (its slot among WorldMapPlacedActors)
-    // leaves by the exit to that place.
+    // Walking into a place's marker (its slot among WorldMapPlacedActors) leaves by the exit to
+    // that place.
     {CUE_EXIT, STEP_CUE_AREA(1), CONDITION_ALWAYS, WORLD_MAP_TO_KANDOREAN_TEMPLE_GATE},
     {CUE_EXIT, STEP_CUE_AREA(2), CONDITION_ALWAYS, WORLD_MAP_TO_SHRINE_OF_THE_SEA_GOD_ROPE},
     {CUE_EXIT,
@@ -4110,9 +4110,9 @@ LATE_DATA CUE SceneCues[] = {
     {CUE_EXIT, STEP_CUE_AREA(55), CONDITION_ALWAYS, WORLD_MAP_TO_TREASURE_ISLE_ENTRANCE},
     {CUE_EXIT, STEP_CUE_AREA(56), CONDITION_ALWAYS, WORLD_MAP_TO_CAVERNS_ATTEKA},
     {CUE_EXIT, STEP_CUE_AREA(57), CONDITION_ALWAYS, WORLD_MAP_TO_CAVERNS_ANGARA},
-    // XXX: no block of the World Map (games/tla/src/map/world/blocks.tsv) has
-    // place 1, so no metatile seems to answer this row; logging the step cue codes as the leader
-    // walks the shores round Daila would settle it.
+    // XXX: no block of the World Map (games/tla/src/map/world/blocks.tsv) has place 1, so no
+    // metatile seems to answer this row; logging the step cue codes as the leader walks the shores
+    // round Daila would settle it.
     {CUE_EXIT, 1, CONDITION_ALWAYS, WORLD_MAP_TO_DAILA_NORTH},
     {CUE_EXIT,
      WORLD_MAP_TO_DEHKAN_PLATEAU_TIGHTROPES, CONDITION_ALWAYS,

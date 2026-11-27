@@ -1631,7 +1631,9 @@ Sint32 IzumoRoomsHeavingScript[] = {
     -1,
 };
 
-// Kushinada on her seat of stones heaves with sobs as the girl in the Sanctum does, with longer rests.
+// Kushinada on her seat of stones heaves with sobs as the girl in the
+
+// Sanctum does, with longer rests.
 Sint32 IzumoRoomsKushinadaHeavingScript[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),

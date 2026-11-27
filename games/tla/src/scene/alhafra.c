@@ -1487,7 +1487,9 @@ Uint16 AlhafraSecondDoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-// The doors Felix opens by walking into them, a row for each exit number (scAlhafraEnterDoor): the door's opening and its metatile; a row with none opens nothing.
+// The doors Felix opens by walking into them, a row for each exit number
+
+// (scAlhafraEnterDoor): the door's opening and its metatile; a row with none opens nothing.
 MAP_GRID_METATILE_ANIMATION AlhafraDoors[] = {
     {NULL, 0, 0},
     {AlhafraDoorOpening, 27, 37},

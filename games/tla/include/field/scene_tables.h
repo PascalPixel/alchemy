@@ -224,9 +224,10 @@ typedef struct CUE
     Uint32 value;     // a message (FIND_MESSAGE) or a script (SCRIPT_REF)
 } CUE;
 
-// CUE.subject bit 10: a Psynergy cue runs in place of its field Psynergy, as Mind Read on someone
-// who notices it does; an item cue's script shows its own message in place of the "uses" message
-// (MsgActorUsesItem); an examine cue shows no checking message.
+// CUE.subject bit 10: a Psynergy cue runs in place of its field
+
+// Psynergy, as Mind Read on someone who notices it does; an item cue's script shows its own message
+// in place of the "uses" message (MsgActorUsesItem); an examine cue shows no checking message.
 #define CUE_SUBJECT_OWN_EFFECT   0x400
 // The examine code the search finds aboard the ship facing open sea (World Map collision 3), for
 // the World Map's examine cue on it (scWorldMapGazeIntoPond).

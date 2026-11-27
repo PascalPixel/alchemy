@@ -411,8 +411,9 @@ extern Uint8  BoltCounts[][4];
 extern Uint8  BoltGlintFlips[];
 extern Uint8  BoltGlintModes[];
 
-// The volley's three comet sheets: Slash, Wind Slash and Sonic Slash fire the one their variant
-// picks.
+// The volley's three comet sheets: Slash, Wind Slash and Sonic
+
+// Slash fire the one their variant picks.
 typedef enum PROJECTILE_VOLLEY_COMET
 {
     PROJECTILE_VOLLEY_COMET_A, // SlashCometSheet, Slash's

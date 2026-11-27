@@ -123,7 +123,9 @@ SCENE_ENTRANCE KolimaForestGladeEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back.
+// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and
+
+// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back.
 Uint32 KolimaForestGladeExits[] = {
     SCENE_EXITS(KolimaForestGlade),
     SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
@@ -131,7 +133,9 @@ Uint32 KolimaForestGladeExits[] = {
     SCENE_EXITS_END,
 };
 
-// Until the third patch the Nut's actor placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag catching it sets.
+// Until the third patch the Nut's actor placement tested Vale's
+
+// FLAG_VALE_NUT_CAUGHT, not the flag catching it sets.
 ACTOR_PLACE KolimaForestGladeActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         360, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),

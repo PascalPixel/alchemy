@@ -3348,7 +3348,9 @@ Sint32 MagmaRockInsideCirclingSparkScript[] = {
 
 Sint32 scMagmaRockInsideDriftForSteps(ORBIT *object);
 
-// A rising spark's actor script: it circles and drifts for its steps (scMagmaRockInsideDriftForSteps).
+// A rising spark's actor script: it circles and drifts for its steps
+
+// (scMagmaRockInsideDriftForSteps).
 Sint32 MagmaRockInsideOrbitScript[] = {
     SC_CALL(syOrbitUpdate),
     SC_CALL(scActorAimAtWatched),

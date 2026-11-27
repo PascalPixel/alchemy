@@ -2,15 +2,15 @@
 // group, and Jenna and Kraden come out of the lighthouse alone:
 //
 // - Two birds land below the door (scVenusLighthouseEntranceBirdsLand) and fly
-//       off as the party walks past (scVenusLighthouseEntranceBirdsFlyOff).
+//   off as the party walks past (scVenusLighthouseEntranceBirdsFlyOff).
 // - Tolbi's soldiers and the workmen of Lalivero close in. Alex arrives, sends
-//       Jenna and Kraden west to Idejima, throws two soldiers skyward on
+//   Jenna and Kraden west to Idejima, throws two soldiers skyward on
 // columns of water and drives the rest off
 //       (scVenusLighthouseEntranceSoldiersAmbushParty).
 // - On the road west a Ruffian left to wait for backup fights the two
-//       (scVenusLighthouseEntranceRuffianWaitsForBackup). A lost battle in the
-//       prologue wakes them by the door, with Alex come back for them
-//       (scVenusLighthouseEntranceWakeUp).
+//   (scVenusLighthouseEntranceRuffianWaitsForBackup). A lost battle in the
+//   prologue wakes them by the door, with Alex come back for them
+//   (scVenusLighthouseEntranceWakeUp).
 #include "field/actor_script.h"
 #include "field/call.h"
 #include "field/script_inline.h"

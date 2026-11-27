@@ -15,7 +15,7 @@
 //
 // The puzzle is a trap, and the room follows the story flags in order:
 // - Until the center statue has moved (FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED),
-//       the first seal opened cuts away to the Luna and Sol rooms, where the
+//   the first seal opened cuts away to the Luna and Sol rooms, where the
 // trap is sprung
 //       (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED,
 //       FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN). Kraden then comes here to
@@ -25,12 +25,12 @@
 //       too soon closes again. Its statue slides back and the leader jumps
 // clear.
 // - With both beams shining, the floor before the center statue opens
-//       (scSolSanctumStatueOpenCenterHole), and the center statue, moved south
-//       with Move, drops into it (scSolSanctumStatueCenterStatueMoved).
+//   (scSolSanctumStatueOpenCenterHole), and the center statue, moved south
+//   with Move, drops into it (scSolSanctumStatueCenterStatueMoved).
 // - From then on the seals stay open. The first one opened cuts away to the
-//       Luna and Sol rooms with the trap disarmed
-//       (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED), and
-//       Kraden comes here to find the hole
+//   Luna and Sol rooms with the trap disarmed
+//   (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED), and
+//   Kraden comes here to find the hole
 // (scSolSanctumStatueExplainTrapDisarmed,
 //       FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED). Once all four seals are open
 //       (FLAG_SOL_SANCTUM_ALL_SEALS_OPEN), the way on is found in the Luna and

@@ -5,7 +5,9 @@
 #include "types.h"
 
 // clang-format off
-// The byte offset of each lettering picture's palette (enum COLOSSO_LETTERING_PICTURE) among the lettering palettes.
+// The byte offset of each lettering picture's palette (enum
+
+// COLOSSO_LETTERING_PICTURE) among the lettering palettes.
 const Uint8 ColossoLetteringPaletteOffsets[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
     0, 32, 32, 32, 96, 64, 64, 64, 128, 0,

@@ -13,12 +13,12 @@
 // its entrance stands for.
 //
 // - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH, the tour
-//       (scColosseumNavampaMatchIntroduceThirdFinals), from the Colosseum's
+//   (scColosseumNavampaMatchIntroduceThirdFinals), from the Colosseum's
 // east passage after the second win. The attendants describe their stages and
 //       take the friends to cheer, and the guide sends Isaac back to the
 // passage (COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM).
 // - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH, `Lend a Hand`. Garet, Ivan
-//       and Mia in turn may use Psynergy on the stages. Frost freezes the
+//   and Mia in turn may use Psynergy on the stages. Frost freezes the
 // target on the Scales of Justice's eastern ledge so the scales stay tipped. Halt stops the Wall
 // Wedge's operator and with him its pistons. Force knocks the log off the Moving Sidewalk so the
 // belt no longer carries anyone back.
@@ -26,10 +26,10 @@
 //       scales and the stones and the rock on the way. After Mia,
 //       COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE starts the race.
 // - COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND, the race against Navampa,
-//       who follows a recorded path, after the lettering `The 3rd Match` and a
-//       count of three. At the arena the first to arrive takes the Claymore and
-//       the second the Hunter's Sword. The battle is ENCOUNTER_ZONE_COLOSSO's
-//       fifth or sixth group, the Navampa with or without the Claymore.
+//   who follows a recorded path, after the lettering `The 3rd Match` and a
+//   count of three. At the arena the first to arrive takes the Claymore and
+//   the second the Hunter's Sword. The battle is ENCOUNTER_ZONE_COLOSSO's
+//   fifth or sixth group, the Navampa with or without the Claymore.
 //
 // Stepping onto the Scales of Justice's western ledge tips the scales
 // (scColosseumNavampaMatchStepOnScales): the ledge sinks almost to the floor with Isaac on it, and
@@ -2346,7 +2346,9 @@ CUE ColosseumNavampaMatchCues[] = {
     { CUE_TABLE_END },
 };
 
-// Navampa after the last battle (scColosseumNavampaMatchPlayPostBattleReunion).
+// Navampa after the last battle
+
+// (scColosseumNavampaMatchPlayPostBattleReunion).
 //
 // His sprite grows taller and narrower and back, over and over.
 Sint32 ColosseumNavampaMatchOpponentAfterBattle[] = {

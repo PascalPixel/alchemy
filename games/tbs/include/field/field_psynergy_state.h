@@ -46,8 +46,7 @@ typedef struct FIELD_EFFECT_STATE
     Uint8         unusedAfterSavedScript[4];
     Uint8         savedPalette; // the target's first sprite's param, saved likewise
     Uint8
-        // set in two Mercury Lighthouse scenes: Douse lets particles sway
-        // down
+        // set in two Mercury Lighthouse scenes: Douse lets particles sway down
                    lit;
     Sint16         tileSlot;   // resource entry holding the spark tiles
     Uint16         unusedAfterTileSlot;

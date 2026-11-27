@@ -430,7 +430,9 @@ const Uint16 InputDpadAngles[16] = {
 // Move's hand animation by the quarter turns from its side of the target to the push (script_commands_move.c): 3 toward its side, 2 away from it, 1 either way across.
 const Uint8 FieldEffectQuadrantModes[4] = {3, 1, 2, 1};
 
-// Waits 60 ticks and releases the actor. Word +4 is ForceFistScript.
+// Waits 60 ticks and releases the actor. Word +4 is
+
+// ForceFistScript.
 const Sint32 GrowthLeafScript[] = {
     SC_WAIT(60),
     SC_RELEASE,
@@ -439,7 +441,9 @@ const Sint32 GrowthLeafScript[] = {
 // The same four bytes as FieldEffectQuadrantModes; nothing reads them.
 const Uint8 UnusedBattleEffectBytes[4] = {3, 1, 2, 1};
 
-// Waits to arrive, sets off fdEffectSpawnHeavyImpact (script_commands_lift.c) and releases the actor.
+// Waits to arrive, sets off fdEffectSpawnHeavyImpact
+
+// (script_commands_lift.c) and releases the actor.
 const Sint32 ForceFistScript[] = {
     SC_SYNC,
     SC_CALL(fdEffectSpawnHeavyImpact),
@@ -462,7 +466,9 @@ const Sint32 FieldEffectLongEffectScript[] = {
     SC_RELEASE,
 };
 
-// The colour modes a Halted actor flickers through at random (fdPsynergyUpdateHaltedActor, script_commands_halt.c): its own colours twice as often as each of the five channel swaps and grey.
+// The colour modes a Halted actor flickers through at random
+
+// (fdPsynergyUpdateHaltedActor, script_commands_halt.c): its own colours twice as often as each of the five channel swaps and grey.
 const Sint8 HaltFlickerColorModes[8] = {
     SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB, SPRITE_COLOR_RBG,
     SPRITE_COLOR_BGR, SPRITE_COLOR_GBR, SPRITE_COLOR_BRG, SPRITE_COLOR_GREY,

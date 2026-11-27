@@ -1,13 +1,13 @@
 // The Title (SceneIdTitle): the screens between scenes that are not on a map, chosen by entrance.
 //
 // - TITLE_AFTER_RUN, at power-on: the publisher's and Camelot's logos and the
-//       title, looping until a key is pressed, then the File Screen.
+//   title, looping until a key is pressed, then the File Screen.
 // - TITLE_FROM_VALE_PLAZA, at the prologue's end: the title held while the
-//       years pass (MUS_THE_PASSAGE_OF_TIME), then Vale, the party grown up.
+//   years pass (MUS_THE_PASSAGE_OF_TIME), then Vale, the party grown up.
 // - TITLE_FROM_LEMURIAN_SHIP, once the party sails away: the staff credits,
-//       then the File Screen.
+//   then the File Screen.
 // - TITLE_FROM_WORLD_MAP, after the ending on Jenna and Kraden's island: the
-//       Golden Sun logo with "To Be Continued" written in under it from the
+//   Golden Sun logo with "To Be Continued" written in under it from the
 // left, held a minute or until a key, then back to the logos.
 
 #include "scene/title.h"

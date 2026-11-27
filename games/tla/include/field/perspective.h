@@ -16,8 +16,7 @@ typedef struct WORLD_MAP_VIEW
     Sint32  shakeX, shakeY, shakeDecay; // the screen shake, as in MAP_STATE
     Uint8  *script;                     // NULL at load
     Uint16
-        // MAP_STATE's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites at
-        // load
+        // MAP_STATE's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites at load
                   shownLayers;
     Uint8         wideTiles; // MAP_STATE's wideTiles, 0x80 at load
     // As MAP_STATE: footprints, tileset animations and blend script.

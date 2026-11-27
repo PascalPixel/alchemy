@@ -5,48 +5,48 @@
 // its people and scripts by the time of the story. In story order:
 //
 // - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
-//       have gathered in the plaza here. Isaac and Garet come from the river
-//       (Vale, SceneIdValePrologue, by VALE_PROLOGUE_TO_VALE_PLAZA), where
-//       Felix has fallen in. Walking east toward the villagers gathered by the
-//       Psynergy Stone's pond (metatiles (10, 47..53)) plays
-//       scValePlazaSentToAidElders. Garet's grandfather, the mayor, sends
-//       two strongmen to aid the elders holding the Boulder. Then he sends
+//   have gathered in the plaza here. Isaac and Garet come from the river
+//   (Vale, SceneIdValePrologue, by VALE_PROLOGUE_TO_VALE_PLAZA), where
+//   Felix has fallen in. Walking east toward the villagers gathered by the
+//   Psynergy Stone's pond (metatiles (10, 47..53)) plays
+//   scValePlazaSentToAidElders. Garet's grandfather, the mayor, sends
+//   two strongmen to aid the elders holding the Boulder. Then he sends
 // Isaac and Garet back to show Jenna and a strongman whose Psynergy the Psynergy Stone has restored
 // the way to the river
 //       (FLAG_VALE_STORM_SENT_TO_AID_ELDERS). Others have spent their Psynergy,
 //       and one lifts a small rock to show he has a little left
 //       (scValePlazaBoyLiftsSmallRock).
 // - Later the same night, the Boulder has swept Kyle, Jenna's parents and
-//       Felix away and Garet has gone after Isaac (FLAG_VALE_STORM_GARET_LEFT).
-//       Arriving here then plays scValePlazaMeetSurvivingTravelers. Isaac
-//       overhears two strangers saying only the two of them survived Sol
-//       Sanctum's fury. Garet catches up, and the strangers fight the boys to
-//       make them forget (scValePlazaFightTravelers). Win or lose, the battle
-//       returns to VALE_PLAZA_AFTER_TRAVELERS_BATTLE, where the strangers leave
-//       the boys lying in the storm. The storm ends (FLAG_VALE_STORM is
-//       cleared), and VALE_PLAZA_TO_TITLE leads to the title shown after the
-//       prologue, which opens on Vale three years later (scene/title.c). The
-//       game names the two only three years later, as Saturos and Menardi
-//       (vale_kradens_cottage.c). Their sprites here are the same.
+//   Felix away and Garet has gone after Isaac (FLAG_VALE_STORM_GARET_LEFT).
+//   Arriving here then plays scValePlazaMeetSurvivingTravelers. Isaac
+//   overhears two strangers saying only the two of them survived Sol
+//   Sanctum's fury. Garet catches up, and the strangers fight the boys to
+//   make them forget (scValePlazaFightTravelers). Win or lose, the battle
+//   returns to VALE_PLAZA_AFTER_TRAVELERS_BATTLE, where the strangers leave
+//   the boys lying in the storm. The storm ends (FLAG_VALE_STORM is
+//   cleared), and VALE_PLAZA_TO_TITLE leads to the title shown after the
+//   prologue, which opens on Vale three years later (scene/title.c). The
+//   game names the two only three years later, as Saturos and Menardi
+//   (vale_kradens_cottage.c). Their sprites here are the same.
 // - Three years later, the day the story begins. The villagers talk of
-//       meditating on Mt. Aleph, of the travelers who stopped by, and of the
-//       storm, in which Isaac lost his father and Jenna her whole family. One
-//       shows off his Psynergy, shaking the ground
-//       (scValePlazaDemonstratePsynergy).
+//   meditating on Mt. Aleph, of the travelers who stopped by, and of the
+//   storm, in which Isaac lost his father and Jenna her whole family. One
+//   shows off his Psynergy, shaking the ground
+//   (scValePlazaDemonstratePsynergy).
 // - The farewell (VALE_PLAZA_FROM_SANCTUM), once Isaac and Garet have
-//       accepted the Wise One's quest in the Vale Sanctum (sanctum.c).
-//       scValePlazaDepartForQuest restores the party's HP and PP and plays the
-//       village seeing them off at the town gate. Garet's sister gives a Herb.
-//       His brother gives the Catch Beads that Aunty Dora sent, for Dora
+//   accepted the Wise One's quest in the Vale Sanctum (sanctum.c).
+//   scValePlazaDepartForQuest restores the party's HP and PP and plays the
+//   village seeing them off at the town gate. Garet's sister gives a Herb.
+//   His brother gives the Catch Beads that Aunty Dora sent, for Dora
 // herself does not come. VALE_PLAZA_TO_WORLD_MAP leads out to the World Map.
 // - After the party has left (FLAG_VALE_PARTY_LEFT), the villagers point the
-//       way to Vault and talk of the eruption, whose sparkles they take for
-//       crushed Psynergy Stones. A large Psynergy Stone has fallen on the hut,
-//       whose roof scInit redraws. Only now does the town gate lead
-//       out (scValePlazaLeaveThroughTownGate).
+//   way to Vault and talk of the eruption, whose sparkles they take for
+//   crushed Psynergy Stones. A large Psynergy Stone has fallen on the hut,
+//   whose roof scInit redraws. Only now does the town gate lead
+//   out (scValePlazaLeaveThroughTownGate).
 // - Back from Kalay (FLAG_KALAY_REACHED), the villagers welcome Isaac home.
-//       The hut's owner finds the stone gone, leaving a hole in his roof
-//       (scValePlazaPsynergyStoneIsGone), and a door in the north-east opens.
+//   The hut's owner finds the stone gone, leaving a hole in his roof
+//   (scValePlazaPsynergyStoneIsGone), and a door in the north-east opens.
 //
 // Searching the Psynergy Stone, a purple crystal on a rock in the pond in the middle of the plaza
 // (metatile (13, 44)), restores the party's PP at every time but the farewell.
@@ -58,8 +58,8 @@
 // The ways out of the scene:
 //
 // - Six doors lead into three houses and the shop (SceneIdCottageRoomsA),
-//       and into the forge and the inn (SceneIdCottageRoomsB). A seventh, a
-//       doorway in the north-east, opens only once the party is back from
+//   and into the forge and the inn (SceneIdCottageRoomsB). A seventh, a
+//   doorway in the north-east, opens only once the party is back from
 // Kalay.
 // - The path off the west edge, at metatiles (0, 20..21), leads to the rest
 // of  the village (SceneIdVale) or, on the stormy night, back to the
@@ -78,12 +78,12 @@
 // Three debug entrances are in no entrance table and no exit leads to them:
 //
 // - VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE replays the strangers'
-//       departure.
+//   departure.
 // - VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and takes
-//       VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST into Isaac's house
-//       (SceneIdCottageRoomsB).
+//   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST into Isaac's house
+//   (SceneIdCottageRoomsB).
 // - VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of story flags and takes
-//       VALE_PLAZA_TO_BILIBIN (scValePlazaSetProgressFlagsAndExit).
+//   VALE_PLAZA_TO_BILIBIN (scValePlazaSetProgressFlagsAndExit).
 //
 // The hut's owner (ACTOR_HUT_OWNER) is never seen by day after the prologue. scInit hides the
 // storm's Jenna by number without testing FLAG_VALE_STORM, and by day that number is his (a BUG,

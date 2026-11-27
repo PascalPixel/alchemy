@@ -6,16 +6,16 @@
 //
 // README.md in this folder gives the words, prefixes and spellings the parts use. Where to start:
 //
-//       Sprites         field_sprite_draw.c: fdSpriteComposePicture,
-//                                       fdRenderPlaceProjectedSprite;
-// field_sprite_animation.c: fdSpriteCreate, fdSpriteStartAnimation Actors field_actors.c:
-// fdActorCreate, fdActorSystemInit; field_actor_motion.c: fdActorUpdateAllOnField,
-// fdActorSetMoveTarget Actor scripts field_script_commands.c, the SC_ commands of actor_script.h
-// The player field_player_control.c: fdActorUpdatePlayerControl Maps field_map_grid.c:
-// fdMapGridLoadMap, fdMapGridUpdateLayerScroll; field_world_map.c:
-//                                       fdWorldMapInitPerspective,
-// fdWorldMapUpdateView Ground          field_terrain.c:
-// fdMapGridGetTerrainHeight, fdMapGridCheckCollision, fdWorldMapGetCollision
+// - sprites: fdSpriteComposePicture and fdRenderPlaceProjectedSprite (field_sprite_draw.c),
+//   fdSpriteCreate and fdSpriteStartAnimation (field_sprite_animation.c);
+// - actors: fdActorCreate and fdActorSystemInit (field_actors.c), fdActorUpdateAllOnField and
+//   fdActorSetMoveTarget (field_actor_motion.c);
+// - actor scripts: field_script_commands.c, and the SC_ commands of actor_script.h;
+// - the player: fdActorUpdatePlayerControl (field_player_control.c);
+// - maps: fdMapGridLoadMap and fdMapGridUpdateLayerScroll (field_map_grid.c),
+//   fdWorldMapInitPerspective and fdWorldMapUpdateView (field_world_map.c);
+// - the ground: fdMapGridGetTerrainHeight, fdMapGridCheckCollision and fdWorldMapGetCollision
+//   (field_terrain.c).
 
 #include "field_internal.h"
 

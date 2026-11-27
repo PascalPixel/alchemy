@@ -8,13 +8,13 @@
 // placed (CONDITION_IN_VIEW).
 //
 // - Venus Lighthouse Entry (SceneIdVenusLighthouseEntry), outside. The
-//       scholars and Babi's soldiers the wanderers attacked lie hurt and say
+//   scholars and Babi's soldiers the wanderers attacked lie hurt and say
 // what they saw. A soldier who tells of the attack flickers and vanishes
 //       (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and his spot no longer answers a
 //       search. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the
 // open door, leads in.
 // - Venus Lighthouse (SceneIdVenusLighthouseGroundFloor, named by an area
-//       rule of its own), the floor behind the front door, with three scholars.
+//   rule of its own), the floor behind the front door, with three scholars.
 // The great statue (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_GREAT_STATUE) opens
 // one  of two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH). The
 // first time the tick counter's parity picks the path, and each later
@@ -31,29 +31,29 @@
 // whoever walks into it, until Move slides her onto the floor switch  in
 // front of her. Standing on the switch presses it only while he stays.
 // - Venus Lighthouse (SceneIdVenusLighthouseFirstFloor), where the Tunnel
-//       Ruins come up
-//       (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES). A wide
-//       slide of flowing sand carries the party south down its big room, and a
-//       hole drops the leader into the room below.
-//       Three capped pillars are Moved or pushed. Two pillars by a gap are
-//       carried across it, or dropped through the floor. A chest holds the
+//   Ruins come up
+//   (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES). A wide
+//   slide of flowing sand carries the party south down its big room, and a
+//   hole drops the leader into the room below.
+//   Three capped pillars are Moved or pushed. Two pillars by a gap are
+//   carried across it, or dropped through the floor. A chest holds the
 // Thunder Crown, and a Psynergy Stone lies here.
 // - Venus Lighthouse (SceneIdVenusLighthouseSecondFloor). A sparkling
-//       passage takes the leader through in a trail of sparks. A floor switch
-//       slides a wall aside in a cloud of dust the first time
-//       (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED). A pillar Moved or pushed into its
-//       socket sinks, and a light runs from the lady statue along the gold
+//   passage takes the leader through in a trail of sparks. A floor switch
+//   slides a wall aside in a cloud of dust the first time
+//   (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED). A pillar Moved or pushed into its
+//   socket sinks, and a light runs from the lady statue along the gold
 // track over it to open the gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
 // - Venus Lighthouse (SceneIdVenusLighthouseThirdFloor). Three more
-//       sparkling passages, slides of flowing sand, and three pillars carrying
-//       pieces of track that sink into four sockets. With all three sunk two
-//       lights run from the statue, and when the track leads one to the gate it
-//       opens (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
-//       FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY or
-//       FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY for where the pillars
+//   sparkling passages, slides of flowing sand, and three pillars carrying
+//   pieces of track that sink into four sockets. With all three sunk two
+//   lights run from the statue, and when the track leads one to the gate it
+//   opens (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
+//   FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY or
+//   FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY for where the pillars
 // stand). A chest holds Dragon Scales.
 // - Venus Lighthouse (SceneIdVenusLighthouseFourthFloor). A maze of sand
-//       flowing north, south, west and east carries the party each way. A west
+//   flowing north, south, west and east carries the party each way. A west
 // and an east floor switch slide their walls aside
 //       (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
 //       VenusLighthouseThirdFloor also redraws). Carry sets down four floating
@@ -177,8 +177,9 @@ typedef enum VENUS_LIGHTHOUSE_METATILE_BEHAVIOR
     METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST                     = 100,
     // A floor's Psynergy Stone.
     METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_PSYNERGY_STONE            = 110,
-    // VenusLighthouseGroundFloor The first of the six reliefs, whose words
-    // scVenusLighthouseReadRelief shows in their order.
+    // VenusLighthouseGroundFloor
+
+    // The first of the six reliefs, whose words scVenusLighthouseReadRelief shows in their order.
     METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF              = 35,
     METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_GREAT_STATUE              = 41,
     // the band of lightning south of the lady statue
@@ -3940,7 +3941,9 @@ Sint32 VenusGreyPillarScript[] = {
     SC_END,
 };
 
-// The leader's actor script as the lightning strikes him (scVenusLighthouseThrowBackFromLightning). He swells and shrinks ten times, flashing white and crackling (scVenusLighthouseFlashStruckLeader).
+// The leader's actor script as the lightning strikes him
+
+// (scVenusLighthouseThrowBackFromLightning). He swells and shrinks ten times, flashing white and crackling (scVenusLighthouseFlashStruckLeader).
 Sint32 VenusLeaderShockedScript[] = {
     // Seen from behind, his arms flung wide.
     SC_ANIMATION(ANIM_LEADER_CLING),

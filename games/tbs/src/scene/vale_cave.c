@@ -2,17 +2,17 @@
 // three scenes.
 //
 // - The clearing outside (Vale, SceneIdValeCaveMouth), a grassy hillside
-//       reached by the two paths that run north past the west side of Kraden's
+//   reached by the two paths that run north past the west side of Kraden's
 // cottage. The lower path comes in at metatiles (5..7, 22) and the raised
 // path  east of it at (8, 23..25); both lead back down
 // (scValeCaveLeaveRoom). The cave's mouth is a dark opening in the cliff at metatile (8, 10),
 // beside  stacked crates and two logs. The game still calls the clearing
 // Vale, so  arriving here clears FLAG_SHOW_AREA_NAME.
 // - The first room of the cave (SceneIdValeCaveKite), one map holding three
-//       parts that the player meets as separate rooms, joined by passages.
-//       Inside the mouth is a pool crossed by hopping from post to post. Reveal
-//       shows the post missing from the row, at metatile (15, 15)
-//       (scValeCaveRevealHiddenTile). Beyond it, a passage in the north-west
+//   parts that the player meets as separate rooms, joined by passages.
+//   Inside the mouth is a pool crossed by hopping from post to post. Reveal
+//   shows the post missing from the row, at metatile (15, 15)
+//   (scValeCaveRevealHiddenTile). Beyond it, a passage in the north-west
 // leads to a pool with two stacks of crates and a log floating by its north wall. Move or a push
 // sinks the eastern stack into the water, where its top
 //       becomes a square to walk across on the way to Kite's part. Two Moves
@@ -20,13 +20,13 @@
 //       carries him across the pool to the passage on its east side
 //       (scValeCaveRideLogEast).
 // - The room of logs (SceneIdValeCaveLogs). Its southern passage leads round
-//       to a pool between two ledges, each with a log standing on it, and a
+//   to a pool between two ledges, each with a log standing on it, and a
 // third log lying across the floor south of the water. Isaac rolls the two
 //       standing logs into the water, hops down, and pushes the lying log north
 //       into the pool, where it floats and lets him across.
 // - Kite's part of the first room, reached from the room of logs and from
-//       the riding log's pool. The Halt Gem's and the Nut's chests are near the
-//       top of a narrow ridge. Walking down the ridge startles Kite, who hops
+//   the riding log's pool. The Halt Gem's and the Nut's chests are near the
+//   top of a narrow ridge. Walking down the ridge startles Kite, who hops
 // off its south end onto the round floor below, where three mossy rocks stand in a row
 // (scValeCaveKiteRunsOff). Kite then runs round behind the rocks
 //       (scValeCaveKiteRunsBehindRocks) and keeps to their far side as Isaac

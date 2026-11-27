@@ -7,9 +7,9 @@
 // Where to start:
 // - power-up: syInit (system_start_up.c);
 // - ticks: sySynch() and the VBlank handler (system_frame.c), events
-//       (system_event.c);
+//   (system_event.c);
 // - the screen: fades (system_screen_fade.c), sprite depth slots
-//       (system_oam.c), sprite VRAM (system_vram_cache.c);
+//   (system_oam.c), sprite VRAM (system_vram_cache.c);
 // - memory: the heap (system_heap.c);
 // - 3D: syMatrixRotateTranslate and syConvert3Dto2D (system_matrix.c);
 // - saving: syBupWritePart and syBupReadPart (system_bup.c);

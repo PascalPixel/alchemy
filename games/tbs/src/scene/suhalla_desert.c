@@ -4,22 +4,22 @@
 // Three scenes share this overlay and the area name Suhalla Desert:
 //
 // - The north half (SceneIdSuhallaDesertNorth), entered from the World Map
-//       just south of Suhalla at the top of the map. Five sandstorms lie in
+//   just south of Suhalla at the top of the map. Five sandstorms lie in
 // wait: on the west path and on the east path toward the Virtuous Armlet's chest near the top, and
 // three in the south, the middle one beside the chest
 //       the Mimic hides in. The way on leaves by the map's south-west edge.
 // - The south half (SceneIdSuhallaDesertSouth), entered at its east side.
-//       A long valley ends in three ways north, each with a storm: the west way
-//       to a chest with a Cookie, the east way to a chest with a Lucky Medal.
-//       Below lie two cave mouths: by the west one Flash, the Mars Djinni, is
-//       reached over a pit with a pillar Reveal shows, and the east one opens
-//       into a hollow where a great red storm turns. Across the wide plain
-//       south, past a half-buried stone head, a storm gives chase, and near the
-//       way out in the south-east Iodem asks whether to search on for Sheba
-//       (scSuhallaDesertIodemAsksWhetherToPressOn,
-//       FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
+//   A long valley ends in three ways north, each with a storm: the west way
+//   to a chest with a Cookie, the east way to a chest with a Lucky Medal.
+//   Below lie two cave mouths: by the west one Flash, the Mars Djinni, is
+//   reached over a pit with a pillar Reveal shows, and the east one opens
+//   into a hollow where a great red storm turns. Across the wide plain
+//   south, past a half-buried stone head, a storm gives chase, and near the
+//   way out in the south-east Iodem asks whether to search on for Sheba
+//   (scSuhallaDesertIodemAsksWhetherToPressOn,
+//   FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
 // - The caves under the south half (SceneIdSuhallaDesertCaves), which join
-//       its west cave mouth to the hollow of the red storm. They place nothing.
+//   its west cave mouth to the hollow of the red storm. They place nothing.
 //
 // One exit table and, for the two halves, one cue table serve the overlay. The exits in that cue
 // table keep their numbers, which each half's exit rows lead its own way.
@@ -47,15 +47,15 @@
 // Its scene flags:
 //
 // - FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN to
-//       FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN: storms ACTOR_FIRST_SANDSTORM
-//       to ACTOR_LAST_SANDSTORM have risen on this visit.
+//   FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN: storms ACTOR_FIRST_SANDSTORM
+//   to ACTOR_LAST_SANDSTORM have risen on this visit.
 // - FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF: the chasing storm has set
-//       off.
+//   off.
 // - FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM: a storm has caught the leader.
 // - FLAG_SUHALLA_DESERT_CAPTURE_TICKS_LEFT: a byte, the ticks left before
-//       the storm carries the party away.
+//   the storm carries the party away.
 // - FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM: a byte, the storm that caught the
-//       leader.
+//   leader.
 
 #include "ability_ids.h"
 #include "flags.h"

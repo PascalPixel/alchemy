@@ -2750,7 +2750,9 @@ LATE_DATA ACTOR_PLACE ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-// A particle of the column of light (scJupiterLighthouseSpawnBeaconParticle): it climbs a pixel a tick for 16 ticks and is released. Past its end are two more, which nothing here runs.
+// A particle of the column of light
+
+// (scJupiterLighthouseSpawnBeaconParticle): it climbs a pixel a tick for 16 ticks and is released. Past its end are two more, which nothing here runs.
 LATE_DATA Sint32 JupiterLighthouseBeaconParticleScript[] = {
     SC_SET(SW_SCALE_X, toFIXED(0.8)),
     SC_SET(SW_SCALE_Y, toFIXED(0.8)),

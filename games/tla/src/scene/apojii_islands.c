@@ -1080,8 +1080,9 @@ void scApojiiIslandsAddMetatileMarkers(Uint32 base, Sint32 level, Sint32 restLev
     MAP_METATILE        *metatiles = fdMapGridGetLayer(MAPGRID_LAYER_MIDDLE)->metatiles;
     Sint32               left      = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->offsetX + map->minX;
     Sint32               top       = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->offsetY + map->minZ;
-    // FAKEMATCH(temporary): markers, a pointer standing in for ApojiiIslandsMetatileMarkers's
-    // address; as the table by name.
+    // FAKEMATCH(temporary): markers, a pointer standing in for
+
+    // ApojiiIslandsMetatileMarkers's address; as the table by name.
     METATILE_MARKER_SET *markers   = &ApojiiIslandsMetatileMarkers;
     Sint32               width     = FIELD_METATILE(map->maxX - map->minX);
     Sint32               height    = FIELD_METATILE(map->maxZ - map->minZ);

@@ -82,7 +82,9 @@ const Sint16 PortraitCharacterMap[20] = {
     -1, -1,
 };
 
-// A speaker's portrait as PortraitSpriteMap numbers it, from PORTRAIT_JUPITER_DJINNI's.
+// A speaker's portrait as PortraitSpriteMap numbers it, from
+
+// PORTRAIT_JUPITER_DJINNI's.
 #define SPRITE_MAP_PORTRAIT(portrait) ((portrait) - PORTRAIT_JUPITER_DJINNI)
 
 // {sprite, portrait} pairs of the other speakers, ending in -1: mnPortraitGetForSpeaker numbers portrait n of this list PORTRAIT_SPRITE_MAP_FIRST + n, which mnIconLoadWithPalette draws as the row PORTRAIT_JUPITER_DJINNI + n.

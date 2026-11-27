@@ -1,8 +1,10 @@
 // Applying an ability to each of its targets, the battle events queued on the way, and the wait for
 // the player to advance a battle message. Part of battle.c.
 
-// The target's checks, effect and messages A stat stage changes the stat by an eighth of it
-// (gmUnitCalculate), from half at the lowest to one and a half at the highest.
+// The target's checks, effect and messages
+
+// A stat stage changes the stat by an eighth of it (gmUnitCalculate), from half at the lowest to
+// one and a half at the highest.
 #define STAT_STAGE_MIN        -4
 #define STAT_STAGE_MAX        4
 // Zephyr's Agility stage, beyond the usual highest: twice the Agility.

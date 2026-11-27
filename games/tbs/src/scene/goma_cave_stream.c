@@ -5,11 +5,11 @@
 // SceneIdGomaCaveStream's. The two share one exit table.
 //
 // - SceneIdGomaCaveStream, the room a stream runs the length of. The party
-//       walks in from the Goma Cave Entrance
-//       (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at its bottom.
+//   walks in from the Goma Cave Entrance
+//   (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at its bottom.
 //
-//       A stump answers Move. Once it stands on column 24 it spins in place,
-//       leaps, lands with a shake and a ring of dust, then hops on into the
+//   A stump answers Move. Once it stands on column 24 it spins in place,
+//   leaps, lands with a shake and a ring of dust, then hops on into the
 // water with a splash and sinks until its top shows. The metatiles where it
 // lies change (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, a story flag, so it  stays
 // there for good).
@@ -29,9 +29,9 @@
 // leads  back to the plaza (GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA).
 //
 // - SceneIdGomaCaveBridge, the way out, where a wooden bridge crosses the
-//       river. It has no actors and only its two exits. They lead back south
-//       into SceneIdGomaCaveStream and out onto the World Map toward Bilibin
-//       (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
+//   river. It has no actors and only its two exits. They lead back south
+//   into SceneIdGomaCaveStream and out onto the World Map toward Bilibin
+//   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 
 #include "ability_ids.h"
 #include "item_ids.h"

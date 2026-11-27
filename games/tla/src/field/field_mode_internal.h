@@ -118,8 +118,9 @@ typedef enum CONTAINER_KIND
 typedef struct CONTAINER_ROW
 {
     Sint16 type; // CONTAINER_KIND
-    // The scene point it stands on (fdSceneItemFindPos); in Venus Lighthouse the chest on point 0
-    // is "already open" until its flag is set.
+    // The scene point it stands on (fdSceneItemFindPos); in Venus
+
+    // Lighthouse the chest on point 0 is "already open" until its flag is set.
     Sint16 point;
     Sint16 flags; // set once it has been opened; -1 for none
     // The item inside, 0 for none; a Mimic's formation slot; a Psynergy Stone's number; a tablet's

@@ -20,7 +20,9 @@ const Sint16 BattleUnusedCharacterPortraits[][2] = {
     {-1, -1},
 };
 
-// {sprite, portrait} pairs, ending in -1, as in PortraitSpriteMap: the Djinn, shopkeepers, townspeople and named people who speak with a portrait, each portrait counted from PORTRAIT_FIRST_SPRITE_PORTRAIT.
+// {sprite, portrait} pairs, ending in -1, as in PortraitSpriteMap: the
+
+// Djinn, shopkeepers, townspeople and named people who speak with a portrait, each portrait counted from PORTRAIT_FIRST_SPRITE_PORTRAIT.
 const Sint16 BattleUnusedSpritePortraits[][2] = {
     {SPRITE_JUPITER_DJINNI, SPRITE_PORTRAIT_JUPITER_DJINNI},
     {SPRITE_VENUS_DJINNI, SPRITE_PORTRAIT_VENUS_DJINNI},

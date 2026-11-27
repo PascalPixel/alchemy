@@ -2931,7 +2931,9 @@ void scContigoStopSparkle(ACTOR *actor)
 
 #include "shared/field_effect_duration_scripts.c"
 
-// The Lucky Wheels' prizes, three to each icon that wins them (scContigoSelectLuckyWheelsPrize).
+// The Lucky Wheels' prizes, three to each icon that wins them
+
+// (scContigoSelectLuckyWheelsPrize).
 Uint32 ContigoWheelsPrizes[] = {
     ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT,  ITEM_RUNNING_SHIRT,
     ITEM_HYPER_BOOTS,   ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,

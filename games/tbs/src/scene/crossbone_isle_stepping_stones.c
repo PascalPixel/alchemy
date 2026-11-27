@@ -9,42 +9,42 @@
 // order the party meets them:
 //
 // - SceneIdCrossboneIsleSteppingStones, off the first floor: raised squares
-//       over a pit, with four stone pillars on them. Walking into a pillar
+//   over a pit, with four stone pillars on them. Walking into a pillar
 // jumps Isaac across it where there is a square to land on, and otherwise pushes it
 // (scCrossboneIsleSteppingStonesJumpOrPushPillar), so the pillars are
 //       moved until a line of squares leads to each chest and to the far door.
 //
 // - SceneIdCrossboneIsleIcePillars, off the second floor: columns lying
-//       north to south and east to west, pushed by walking into them until the
-//       way to the Mystery Blade's chest is clear.
+//   north to south and east to west, pushed by walking into them until the
+//   way to the Mystery Blade's chest is clear.
 //
 // - SceneIdCrossboneIsleFloodgate, off the fifth floor: a cave with a stream
-//       and a floodgate across it, and logs to roll.
+//   and a floodgate across it, and logs to roll.
 //
-//       Searching the switch beside the floodgate
-//       (scCrossboneIsleSteppingStonesFlipWaterSwitch) closes it, so the water
-//       backs up and the logs float higher, or opens it to drain them back
+//   Searching the switch beside the floodgate
+//   (scCrossboneIsleSteppingStonesFlipWaterSwitch) closes it, so the water
+//   backs up and the logs float higher, or opens it to drain them back
 // down. The water level lasts only while the party stays
 //       (FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED, kept through a battle).
 //
 // - SceneIdCrossboneIsleStackedPillars, off the seventh floor, a cave of
-//       cliffs, ladders and brown pits. Its square pillars are shifted with
+//   cliffs, ladders and brown pits. Its square pillars are shifted with
 // Move and lifted onto ledges with Carry, and one can stand on another; each
 //       settles after every push (scCrossboneIsleSteppingStonesMovePillar).
 // Pushed off a cliff, a pillar drops out of play.
 //
 // - SceneIdCrossboneIsleDragonStatue, off the eighth floor, below a stone
-//       dragon: two logs, a small boulder and three puddles that Frost freezes
-//       into pillars of ice.
+//   dragon: two logs, a small boulder and three puddles that Frost freezes
+//   into pillars of ice.
 //
-//       The puddles are by the west ladder, by the east ladder, and in front of
-//       the dragon under a white platform. Frost on that one lifts the platform
-//       on a pillar of ice, and the dragon breathes fire on the puddle by the
-//       east ladder, melting its ice. It freezes only if Isaac was not standing
-//       in it.
+//   The puddles are by the west ladder, by the east ladder, and in front of
+//   the dragon under a white platform. Frost on that one lifts the platform
+//   on a pillar of ice, and the dragon breathes fire on the puddle by the
+//   east ladder, melting its ice. It freezes only if Isaac was not standing
+//   in it.
 //
-//       Move pushes the small boulder below the logs east until it settles into
-//       the floor two steps along, for good.
+//   Move pushes the small boulder below the logs east until it settles into
+//   the floor two steps along, for good.
 //
 // The other three side rooms are in crossbone_isle_keys.c, and the ninth floor's in
 // crossbone_isle.c.

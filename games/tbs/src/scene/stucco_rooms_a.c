@@ -1,39 +1,35 @@
 // Inside Kalay are the houses and the inn, and the Kalay Sanctum.
 //
 // - Stucco rooms A (SceneIdStuccoRoomsA), a rooms map drawn in stucco,
-//       all of them Kalay's, whose area name is Kalay. It holds every house and
-//       the inn, each entered from its own door in the town (kalay.c) at an
-//       entrance of its own, and left by the matching exit. The inn's
+//   all of them Kalay's, whose area name is Kalay. It holds every house and
+//   the inn, each entered from its own door in the town (kalay.c) at an
+//   entrance of its own, and left by the matching exit. The inn's
 // entrances, STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE to
-//       STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST and
-//       STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE, take the inn's
-//       actor placements and cues. Every other entrance takes the houses'.
-//       The inn is full of tourists on their way to see Colosso in Tolbi. The
-//       innkeeper offers a room when spoken to across the counter. From
-//       elsewhere he asks `Are you going to Tolbi also?`, and the tour's guide
-// in the dining room says `Please finish eating if you are taking the tour!`
-//       Either sets FLAG_KALAY_HEARD_OF_COLOSSO_TOUR, after which leaving the
-// town plays the tour group's departure. Once the tour has left
-//       (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the inn. Two
-//       people are gone from the houses, one of whom was about to join it, and
-//       those who stay say so. Searching the ovens shows what the cooks are
-//       making, except that the oven with roasted eggplant gives a Smoke Bomb.
-// Its find comes first in the table under the same metatile behavior, and a
-// named examine cue ignores its condition, so it answers every time and  the
-// eggplant line is unused. Barrels hold 11 coins and an Elixir. The  inn's
-// table and the houses' both carry these examine cues. The  Smoke Bomb's
+// STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST and
+// STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE, take the inn's actor placements and cues.
+// Every other entrance takes the houses'. The inn is full of tourists on their way to see Colosso
+// in Tolbi. The innkeeper offers a room when spoken to across the counter. From elsewhere he asks
+// `Are you going to Tolbi also?`, and the tour's guide in the dining room says `Please finish
+// eating if you are taking the tour!` Either sets FLAG_KALAY_HEARD_OF_COLOSSO_TOUR, after which
+// leaving the town plays the tour group's departure. Once the tour has left
+// (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the inn. Two people are gone from the
+// houses, one of whom was about to join it, and those who stay say so. Searching the ovens shows
+// what the cooks are making, except that the oven with roasted eggplant gives a Smoke Bomb. Its
+// find comes first in the table under the same metatile behavior, and a named examine cue ignores
+// its condition, so it answers every time and  the eggplant line is unused. Barrels hold 11 coins
+// and an Elixir. The  inn's table and the houses' both carry these examine cues. The  Smoke Bomb's
 // oven is in the easternmost house (metatile (34, 6)), the 11  coins' barrel
 // in the house in the town's lower right corner (metatile  (12, 27)), and
 // the Elixir's barrel in the inn's basement (metatile (24, 40)).
 //
-//       Stairs lead down from the inn to its basement: a passage with two
-// wooden doors in its north wall and two doorways in its south wall, each into a guest room. The
-// rooms behind the south doorways have wooden doors of their own back out, in their north walls.
-// One holds a young man and a woman about to join the tour, the other two men who fled Lalivero;
-// the rooms north of the passage hold Ouranos and Sean, and an empty one.
+// Stairs lead down from the inn to its basement: a passage with two wooden doors in its north wall
+// and two doorways in its south wall, each into a guest room. The rooms behind the south doorways
+// have wooden doors of their own back out, in their north walls. One holds a young man and a woman
+// about to join the tour, the other two men who fled Lalivero; the rooms north of the passage hold
+// Ouranos and Sean, and an empty one.
 // - Kalay Sanctum (SceneIdKalaySanctum), whose healer offers the
-//       Sanctum's services when spoken to across the counter. Its exit leads
-//       back into the town (KALAY_FROM_KALAY_SANCTUM).
+//   Sanctum's services when spoken to across the counter. Its exit leads
+//   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -66,7 +62,9 @@ extern MAP_GRID_METATILE_ANIMATION StuccoRoomsADoorMetatiles[];
 // Unless a note says otherwise, it quotes what its actor says before the Colosso tour leaves.
 typedef enum STUCCO_ROOMS_A_ACTOR_ID
 {
-    // Kalay's houses A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
+    // Kalay's houses
+
+    // A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
     ACTOR_YOUNG_MAN_ON_LUNPA_GONE_BAD = ACTOR_FIRST_PLACED,
     // A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
     ACTOR_WOMAN_SAYING_LUNPA_WAS_KIND,
@@ -124,7 +122,9 @@ typedef enum STUCCO_ROOMS_A_ACTOR_ID
     // SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, as in ship_rooms.c), named by what each says of the other.
     ACTOR_OURANOS,
     ACTOR_SEAN,
-    // The Kalay Sanctum A man in a tall hat (SPRITE_MAN_IN_TALL_HAT).
+    // The Kalay Sanctum
+
+    // A man in a tall hat (SPRITE_MAN_IN_TALL_HAT).
     ACTOR_HEALER = ACTOR_FIRST_PLACED
 } STUCCO_ROOMS_A_ACTOR_ID;
 

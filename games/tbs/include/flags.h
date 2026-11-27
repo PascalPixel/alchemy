@@ -222,7 +222,9 @@
 #define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET               0x821
 // The party has beaten the evil within Tret in Tret Tree and he has spoken with it since, too weak
 // to free Kolima. Set only once that talk ends; from then on his room's passage stays open, and in
-// Kolima Forest Hermes' Water heals him instead of being thrown back.
+// Kolima Forest
+
+// Hermes' Water heals him instead of being thrown back.
 #define FLAG_TRET_DEFEATED                                    0x844
 // Hermes' Water has healed Tret in Kolima Forest, and he has freed Kolima's people from being
 // trees. The forest loses its cursed colors, and the people of Kolima and Bilibin switch to their
@@ -297,7 +299,9 @@
 #define FLAG_DODONPA_LOCKED_UP                                0x941
 // In West Lunpa Cave, Hammet has found Bunza, the Kalay merchant hiding behind a rock, and Bunza
 // has offered his wagon. It plays once; until then Garet keeps the leader from going back up to
-// Lunpa Fortress.
+// Lunpa
+
+// Fortress.
 #define FLAG_LUNPA_CAVE_REUNION_SEEN                          0x94d
 // Bunza's wagon has left West Lunpa Cave, with the party aboard or without.
 #define FLAG_BUNZAS_WAGON_LEFT                                0x94f
@@ -313,9 +317,10 @@
 #define FLAG_GONDOWAN_CAVE_APPLE                              0xfa0
 #define FLAG_GONDOWAN_CAVE_LUCKY_MEDAL                        0xfa1
 
-// Alpine Crossing and Lama Temple At the Alpine Crossing, Feizhi has caught up with the party,
-// found the road blocked as her vision foretold and run ahead calling for Hsu. She is gone from
-// Xian from then on.
+// Alpine Crossing and Lama Temple
+
+// At the Alpine Crossing, Feizhi has caught up with the party, found the road blocked as her vision
+// foretold and run ahead calling for Hsu. She is gone from Xian from then on.
 #define FLAG_FEIZHI_SAW_ROCKSLIDE                             0x8b0
 // Hama has reached Hsu and spoken with him and Feizhi.
 #define FLAG_HAMA_REACHED_HSU                                 0x8b1
@@ -328,8 +333,10 @@
 // The temple's chest.
 #define FLAG_LAMA_TEMPLE_WATER_OF_LIFE                        0xf7a
 
-// Altin The water beast spewing at Altin's houses has stopped as the party came near and hopped
-// away into the flood for good; Altin's setup then removes it.
+// Altin
+
+// The water beast spewing at Altin's houses has stopped as the party came near and hopped away into
+// the flood for good; Altin's setup then removes it.
 #define FLAG_ALTIN_WATER_BEAST_LEFT                           0x8ff
 // Altin's stone statue stands where Move pushes it (altin.c's STONE_STATUE_MOVED_COLUMN). Checked
 // after every Move (scAltinCheckStatueMoved), which clears it if the statue is anywhere else; the
@@ -342,9 +349,11 @@
 // A bed in the houses.
 #define FLAG_ALTIN_SLEEP_BOMB                                 0xf75
 
-// Altin Peak (SceneIdAltinPeakFirstWaterBeast to SceneIdAltinPeakWestExit)
-// AltinPeakFirstWaterBeast's water beast has frozen the puddle in the gap between the cave's two
-// ledges and hopped across it to the west ledge.
+// Altin
+
+// Peak (SceneIdAltinPeakFirstWaterBeast to SceneIdAltinPeakWestExit) AltinPeakFirstWaterBeast's
+// water beast has frozen the puddle in the gap between the cave's two ledges and hopped across it
+// to the west ledge.
 #define FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP               0x904
 // The same beast, once Isaac reached the east ledge by the gap, has hopped away to the west end of
 // its ledge, where it spits water until its battle.
@@ -371,8 +380,10 @@
 // lookup reaches.
 #define FLAG_ALTIN_PEAK_UNUSED_HERB                           0xf05
 
-// Altmiller Cave The party has spoken with the unseen voice in Altmiller Cave, who cannot move and
-// has asked for his draught from deep in the cave, telling the order of the five rocks.
+// Altmiller Cave
+
+// The party has spoken with the unseen voice in Altmiller Cave, who cannot move and has asked for
+// his draught from deep in the cave, telling the order of the five rocks.
 #define FLAG_MET_INVISIBLE_BABI                               0x960
 // Babi has called the party back once as it made to leave without him.
 #define FLAG_BABI_CALLED_PARTY_BACK                           0x961
@@ -388,8 +399,10 @@
 // AltmillerCaveBabi's chest, a Mimic (FIND_MIMIC).
 #define FLAG_ALTMILLER_CAVE_MIMIC_BEATEN                      0xef5
 
-// Babi Lighthouse Arrival through room 2's entrance 10 changes its cell tiles and behaviors;
-// entrances 10 and 11 restore those changes on later visits.
+// Babi Lighthouse
+
+// Arrival through room 2's entrance 10 changes its cell tiles and behaviors; entrances 10 and 11
+// restore those changes on later visits.
 #define FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR             0x980
 // The stone door that Reveal's switch opens stands open. Walking through clears it as the door
 // shuts behind the party.
@@ -406,8 +419,10 @@
 // The building site's chest.
 #define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER                     0xfbc
 
-// Babi Palace The Colosso finals have been fought, won or lost; Babi's Palace, the colosseum, the
-// docks and Gondowan Passage take their after-Colosso people and talk.
+// Babi Palace
+
+// The Colosso finals have been fought, won or lost; Babi's Palace, the colosseum, the docks and
+// Gondowan Passage take their after-Colosso people and talk.
 #define FLAG_COLOSSO_OVER                                     0x950
 // The party won the finals.
 #define FLAG_WON_COLOSSO                                      0x951
@@ -439,8 +454,10 @@
 #define FLAG_BABI_PALACE_LUCKY_MEDAL                          0xf9f
 // A jar in the scholars' room, which is drawn on Vale's layout (cottage_rooms_b.c).
 #define FLAG_BABI_PALACE_HARD_NUT                             0xf9e
-// Bilibin Move has pulled Jill, a tree in the river by Bilibin, ashore; she stays on the bank, and
-// once the curse is lifted she is a child again with the rest of her gang.
+// Bilibin
+
+// Move has pulled Jill, a tree in the river by Bilibin, ashore; she stays on the bank, and once the
+// curse is lifted she is a child again with the rest of her gang.
 #define FLAG_BILIBIN_JILL_RESCUED                             0x848
 // Her thanks, a Hard Nut.
 #define FLAG_BILIBIN_JILL_GIFT_RECEIVED                       0x849
@@ -455,8 +472,10 @@
 // A barrel in the houses (SceneIdCottageRoomsC).
 #define FLAG_BILIBIN_HARD_NUT                                 0xf54
 
-// Colosso The trial attendant in the colosseum's stands has shown the party a warrior failing his
-// trial and explained it; the next time, he shows one clearing his.
+// Colosso
+
+// The trial attendant in the colosseum's stands has shown the party a warrior failing his trial and
+// explained it; the next time, he shows one clearing his.
 #define FLAG_COLOSSO_FAILED_TRIAL_SEEN                        0x8a3
 // The trial attendant has shown the party a warrior clearing his trial; from then on he only talks
 // of the techniques.
@@ -475,8 +494,10 @@
 // Also FLAG_COLOSSO_OVER: the colosseum is closed until next year. Also FLAG_BABI_SAVED: the trials
 // are over, the finals day.
 
-// Kalay The innkeeper or the tour's guide at Kalay's inn has told the party about the Colosso tour
-// to Tolbi; leaving the town then plays the tour group's departure.
+// Kalay
+
+// The innkeeper or the tour's guide at Kalay's inn has told the party about the Colosso tour to
+// Tolbi; leaving the town then plays the tour group's departure.
 #define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR                      0x910
 // The Colosso tour's group has left Kalay without its missing man. Its guests are gone from the
 // inn, the ticket taker at Kalay Docks starts asking for tickets, and Sean and Ouranos lose
@@ -503,7 +524,9 @@
 #define FLAG_STUCCO_ROOMS_A_SMOKE_BOMB_OVEN                   0xf84
 #define FLAG_STUCCO_ROOMS_A_ELIXIR_BARREL                     0xf85
 
-// Imil Megan, Mia's apprentice, told the party Mia went to the old couple's house.
+// Imil
+
+// Megan, Mia's apprentice, told the party Mia went to the old couple's house.
 #define FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE                    0x82a
 // Mia has healed the old man of Imil with Ply before the party, seen Mercury Lighthouse flash and
 // run off to it, the party following. Imil's old couple and Mercury Lighthouse's door statue read
@@ -529,7 +552,9 @@
 // An oven in the houses (SceneIdIceRooms).
 #define FLAG_IMIL_LUCKY_PEPPER                                0xf63
 
-// Fuchin Falls The Dragon's Eye is taken from where it lies in Fuchin Falls Cave's third room.
+// Fuchin Falls
+
+// The Dragon's Eye is taken from where it lies in Fuchin Falls Cave's third room.
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND                   0xf13
 // The Dragon's Eye is set in the eyeless dragon statue in Fuchin Falls Cave, which lights the room
 // and shows its hidden path; the eye is used up.
@@ -539,7 +564,9 @@
 // FuchinFallsCaveArcticBlade's chest.
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE                        0xf6b
 
-// Kalay and Tolbi docks The party has bought its tickets for the ship to Tolbi.
+// Kalay and Tolbi docks
+
+// The party has bought its tickets for the ship to Tolbi.
 #define FLAG_KALAY_DOCKS_TICKET_BOUGHT                        0x8a5
 // The woman waiting on Kalay Docks has asked the party to tell her daughter in Tolbi that the
 // tickets are too dear, and the party agreed; the daughter on Tolbi Docks then asks for the
@@ -566,7 +593,9 @@
 #define FLAG_TOLBI_DOCKS_POTION_CHEST                         0xf96
 // The wooden box on Tolbi Docks.
 #define FLAG_TOLBI_DOCKS_COINS_BOX                            0xf95
-// Kolima The party has seen the curse fall on Kolima, in Kolima or in SceneIdKolimaForestEntrance,
+// Kolima
+
+// The party has seen the curse fall on Kolima, in Kolima or in SceneIdKolimaForestEntrance,
 // whichever it reached first: the sparkles rain down, its Psynergy shields it, and Tret and Laurel
 // speak.
 #define FLAG_KOLIMA_CURSE_WITNESSED                           0x843
@@ -583,7 +612,9 @@
 // A barrel in one of the village's houses (LogRoomsC): 7 coins.
 #define FLAG_KOLIMA_COINS                                     0xf5a
 
-// Kolima Forest Catch took the clearing's Nut.
+// Kolima Forest
+
+// Catch took the clearing's Nut.
 #define FLAG_KOLIMA_FOREST_NUT_CAUGHT                         0xfd3
 // KolimaForestFloodgate's chest.
 #define FLAG_KOLIMA_FOREST_FUR_COAT                           0xf00
@@ -592,7 +623,9 @@
 // Tret Tree's chest on the fifth floor, east of its web (TreeRooms).
 #define FLAG_TRET_TREE_NUT                                    0xf5c
 
-// Lamakan Desert The Manticore, on the third scene, is beaten.
+// Lamakan Desert
+
+// The Manticore, on the third scene, is beaten.
 #define FLAG_LAMAKAN_MANTICORE_BEATEN                         0x90a
 // The desert's chests, set once each is opened.
 #define FLAG_LAMAKAN_DESERT_VULCAN_AXE                        0xf7b
@@ -601,9 +634,11 @@
 #define FLAG_LAMAKAN_DESERT_POTION                            0xf7e
 #define FLAG_LAMAKAN_DESERT_MINT                              0xf7f
 
-// Lalivero The party is back from Venus Lighthouse: set at the Lighthouse Aerie after Sheba's fall,
-// as the party is taken to Lalivero. Lalivero and its buildings then read their tables for after
-// the lighthouse.
+// Lalivero
+
+// The party is back from Venus Lighthouse: set at the Lighthouse Aerie after Sheba's fall, as the
+// party is taken to Lalivero. Lalivero and its buildings then read their tables for after the
+// lighthouse.
 #define FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED                  0x9a7
 // Out of Gateway Cave, Iodem saw a ship off the coast at Idejima, took it for Babi's and handed
 // over the Black Orb (scWorldMapRunBlackOrbScript). Back from Venus Lighthouse, it picks the
@@ -635,9 +670,10 @@
 #define FLAG_TIMBER_ROOMS_B_ANTIDOTE                          0xfba
 // A barrel in TimberRoomsC.
 #define FLAG_TIMBER_ROOMS_C_LUCKY_MEDAL                       0xfbb
-// Lunpa Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then on Lunpa's east
-// guard asks whether the party came from Kalay, and touching Vault on the world map leads straight
-// in.
+// Lunpa
+
+// Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then on Lunpa's east guard
+// asks whether the party came from Kalay, and touching Vault on the world map leads straight in.
 #define FLAG_LUNPA_GUARDS_SUSPECT_KALAY                       0x85a
 // After Donpa's judgment, the left guard at the Lunpa Fortress Gates has half recognized Hammet
 // with the party, then dismissed it; his thoughts afterwards say the man looks like that merchant.
@@ -655,7 +691,9 @@
 // Catch has taken the Nut floating over the town.
 #define FLAG_LUNPA_NUT_CAUGHT                                 0xfd1
 
-// Lunpa Fortress. From FLAG_LUNPA_FORTRESS_CRATES_MOVED to
+// Lunpa
+
+// Fortress. From FLAG_LUNPA_FORTRESS_CRATES_MOVED to
 // FLAG_LUNPA_FORTRESS_METATILE_KEY_ROOM_GUARD_BEATEN, the fortress's state is cleared whenever the
 // party comes back to the gate below it. The party has seen Hammet's rescue up to Dodonpa's trap; a
 // retry after losing the battle skips to the trap.
@@ -717,9 +755,11 @@
 #define FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB                   0xf56
 // Catch has taken the Nut floating outside.
 #define FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT                  0xfd2
-// Mercury Lighthouse Mia, waiting at the statue that blocks Mercury Lighthouse's door, has told the
-// party she senses someone inside, where only she and Alex can enter. From then on she stands
-// facing the door, and talking to her only gets her remark that the statue blocks the entrance.
+// Mercury Lighthouse
+
+// Mia, waiting at the statue that blocks Mercury Lighthouse's door, has told the party she senses
+// someone inside, where only she and Alex can enter. From then on she stands facing the door, and
+// talking to her only gets her remark that the statue blocks the entrance.
 #define FLAG_MIA_SENSED_SOMEONE_INSIDE                        0x870
 // Move has pushed aside the statue before Mercury Lighthouse's door, Mia has learned the word
 // Psynergy, and her Ply has opened the door for her to go in. Afterwards she is gone from outside
@@ -761,8 +801,10 @@
 // The mimic in the entrance's other chest is beaten.
 #define FLAG_MERCURY_LIGHTHOUSE_MIMIC_BEATEN                  0xef0
 
-// Mogall Forest On the party's first arrival in Mogall Forest's first area, an ape has peeked out
-// at the leader and hidden in its stump.
+// Mogall Forest
+
+// On the party's first arrival in Mogall Forest's first area, an ape has peeked out at the leader
+// and hidden in its stump.
 #define FLAG_MOGALL_FOREST_FIRST_APE_SEEN                     0x89c
 // In Mogall Forest's third area, the east ape has come out again and led the party south to the
 // Killer Ape's hiding place, where the Killer Ape then bursts out to fight.
@@ -777,7 +819,9 @@
 #define FLAG_MOGALL_FOREST_APPLE_CHEST                        0xf1b
 // The chest in Mogall Forest's third area.
 #define FLAG_MOGALL_FOREST_ELVEN_SHIRT_CHEST                  0xf1a
-// Suhalla Iodem has questioned the two wounded soldiers in a house in Suhalla, who lost Sheba in a
+// Suhalla
+
+// Iodem has questioned the two wounded soldiers in a house in Suhalla, who lost Sheba in a
 // sandstorm and warn that monsters cause the storms. Stepping into the house sets it even once
 // Iodem has reached Babi Lighthouse, when the script no longer plays; Suhalla Desert and Suhalla
 // Gate read it.
@@ -789,8 +833,10 @@
 // The Smoke Bomb in one of the houses' ovens is found.
 #define FLAG_TIMBER_ROOMS_A_OVEN_SMOKE_BOMB                   0xfb0
 
-// Suhalla Gate The soldier east of Suhalla Gate's passage has gasped that Venus Lighthouse was
-// attacked by strange wanderers, then flickered and vanished for good.
+// Suhalla
+
+// Gate The soldier east of Suhalla Gate's passage has gasped that Venus Lighthouse was attacked by
+// strange wanderers, then flickered and vanished for good.
 #define FLAG_SUHALLA_GATE_SOLDIER_VANISHED                    0x897
 // Iodem has questioned the wounded guards at Suhalla Gate about the strange group that beat them,
 // and the party is sent on after the attackers. The guards then speak as the wounded, and a defeat
@@ -802,8 +848,10 @@
 // The chest beyond the gate, in SuhallaGateDew.
 #define FLAG_SUHALLA_GATE_MINT                                0xfb4
 
-// Suhalla Desert Iodem has told the party that Sheba is nowhere to be found and asked whether to
-// search the desert again or press on to Lalivero.
+// Suhalla Desert
+
+// Iodem has told the party that Sheba is nowhere to be found and asked whether to search the desert
+// again or press on to Lalivero.
 #define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA                   0x9b5
 // The first storm to rise in Suhalla Desert while Iodem travels with the party has brought him out
 // to warn that they must get past the storms to reach Babi Lighthouse.
@@ -815,7 +863,9 @@
 #define FLAG_SUHALLA_DESERT_LUCKY_MEDAL                       0xfb2
 #define FLAG_SUHALLA_DESERT_COOKIE                            0xfb3
 #define FLAG_SUHALLA_DESERT_MIMIC_BEATEN                      0xef6
-// Tolbi The snack vendor has given away her leftover corn.
+// Tolbi
+
+// The snack vendor has given away her leftover corn.
 #define FLAG_TOLBI_CORN_GIVEN                                 0x8bf
 // Babi's soldiers have shown the party his picture.
 #define FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI                  0x8c0
@@ -827,9 +877,11 @@
 #define FLAG_TOLBI_JAR_LUCKY_MEDAL                            0xf98
 #define FLAG_TOLBI_CHEST_POWER_BREAD                          0xf99
 
-// Tolbi rooms: the woman who finds a Lucky Medal after Colosso After Colosso, on the party's first
-// entry into the inn's northeast guest room, a woman has found a Lucky Medal on the floor and
-// hidden it behind the trash pile. She then stands beside that barrel.
+// Tolbi rooms: the woman who finds a Lucky Medal after Colosso
+
+// After Colosso, on the party's first entry into the inn's northeast guest room, a woman has found
+// a Lucky Medal on the floor and hidden it behind the trash pile. She then stands beside that
+// barrel.
 #define FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN                      0x8bc
 // The party has taken the Lucky Medal from the barrel where the woman hid it; she then stops
 // teasing and greets the party, startled.
@@ -840,9 +892,11 @@
 #define FLAG_STUCCO_ROOMS_B_BARREL_VIAL                       0xf9a
 #define FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL                0xf9b
 
-// Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi The ship is at anchor off
-// Crossbone Isle, the rowers resting, until Kaja switches the two teams and the ship sails on. The
-// deck, the hold, the lookout and the world map, where the ship waits by the island, all follow it.
+// Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
+
+// The ship is at anchor off Crossbone Isle, the rowers resting, until Kaja switches the two teams
+// and the ship sails on. The deck, the hold, the lookout and the world map, where the ship waits by
+// the island, all follow it.
 #define FLAG_TOLBI_SHIP_AT_ISLAND                             0x8a0
 // The lookout has sighted the monsters of one of the ship's attacks, and the ship's area plays
 // MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE, the monsters' theme, instead of
@@ -895,7 +949,9 @@
 #define FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL                0xf92
 #define FLAG_TOLBI_SHIP_HOLD_COINS                            0xf93
 #define FLAG_TOLBI_SHIP_QUARTERS_NUT                          0xf94
-// Tunnel Ruins Whirlwind has blown away the third patch of ivy in TunnelRuinsGreatStatue, for good.
+// Tunnel Ruins
+
+// Whirlwind has blown away the third patch of ivy in TunnelRuinsGreatStatue, for good.
 #define FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY                      0x970
 // The north-west of TunnelRuinsGreatStatue's two sinking pillars has gone down into the floor on
 // its column, leaving a puddle in its place.
@@ -920,10 +976,12 @@
 #define FLAG_TUNNEL_RUINS_ORACLES_ROBE                        0xf32
 // A chest in the second scene.
 #define FLAG_TUNNEL_RUINS_ASURAS_ARMOR                        0xf33
-// Vale The prologue's stormy night: lightning over Vale, the rockslide and the monsters loose in
-// the village. It is set when Dora wakes Isaac and on every arrival in the storm's scene, and
-// cleared when the strangers leave the boys lying in the storm; Vale's houses empty and their doors
-// lead into the storm.
+// Vale
+
+// The prologue's stormy night: lightning over Vale, the rockslide and the monsters loose in the
+// village. It is set when Dora wakes Isaac and on every arrival in the storm's scene, and cleared
+// when the strangers leave the boys lying in the storm; Vale's houses empty and their doors lead
+// into the storm.
 #define FLAG_VALE_STORM                                       0x834
 // XXX: the patched editions also set it on beating Lamakan Desert's Manticore; why is not known.
 // The party has reached Kalay: every Kalay scene sets it on entry. Vale's villagers then talk of
@@ -933,8 +991,9 @@
 // Catch has taken the Nut floating in Vale.
 #define FLAG_VALE_NUT_CAUGHT                                  0xfd0
 
-// Vale, Kraden's cottage Kraden has wondered aloud, as the party walks up to his cottage, who the
-// strangers were.
+// Vale, Kraden's cottage
+
+// Kraden has wondered aloud, as the party walks up to his cottage, who the strangers were.
 #define FLAG_KRADEN_WONDERED_ABOUT_STRANGERS                  0x800
 // The man hurt in the rockslide believes he will die.
 #define FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP                  0x82f
@@ -953,8 +1012,10 @@
 // The jar's Elixir by the cottage; after Kalay it is searchable only from the third patch.
 #define FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR                  0xf41
 
-// Vale, the plaza A villager asked whether Isaac is going to Kraden's cottage. "Do you need to go
-// past here? You must be going to Kraden's cottage..."
+// Vale, the plaza
+
+// A villager asked whether Isaac is going to Kraden's cottage. "Do you need to go past here? You
+// must be going to Kraden's cottage..."
 #define FLAG_VALE_ASKED_IF_GOING_TO_KRADEN                    0x806
 // A villager has told Garet off once for crushing her flowers. "Garet, you make me so mad
 // sometimes!"
@@ -966,8 +1027,9 @@
 // warned him off; from then on he watches Isaac and asks again whenever he comes near.
 #define FLAG_VALE_WARNED_AGAINST_MT_ALEPH                     0x823
 
-// Vale on the stormy night, the paths outside The first of the four rocks that fall across the
-// paths (actor ids 11 to 14).
+// Vale on the stormy night, the paths outside
+
+// The first of the four rocks that fall across the paths (actor ids 11 to 14).
 #define FLAG_VALE_STORM_FIRST_ROCK_FELL                       0x830
 // The second rock to fall across the paths.
 #define FLAG_VALE_STORM_SECOND_ROCK_FELL                      0x831
@@ -1005,9 +1067,10 @@
 // As FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT, for the second monster on the paths.
 #define FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT                 0x87f
 
-// Vale, the village On the stormy night, in the plaza, Garet's grandfather sent two villagers to
-// aid the elders holding back the Boulder, and the boys back to the river with Jenna to show the
-// way.
+// Vale, the village
+
+// On the stormy night, in the plaza, Garet's grandfather sent two villagers to aid the elders
+// holding back the Boulder, and the boys back to the river with Jenna to show the way.
 #define FLAG_VALE_STORM_SENT_TO_AID_ELDERS                    0x840
 // Whirlwind blew away the first of the three clumps of ivy (actor ids 8 to 10) in the village.
 #define FLAG_VALE_FIRST_IVY_BLOWN_AWAY                        0x90b
@@ -1016,7 +1079,9 @@
 // Whirlwind blew away the third clump of ivy.
 #define FLAG_VALE_THIRD_IVY_BLOWN_AWAY                        0x90d
 
-// Vale, around Isaac's house Back from Kalay, Mind Read showed that Dora is ill.
+// Vale, around Isaac's house
+
+// Back from Kalay, Mind Read showed that Dora is ill.
 #define FLAG_READ_THOUGHTS_ABOUT_DORA                         0x81c
 // Isaac visited Dora in her sickbed and she got up.
 #define FLAG_VISITED_SICK_DORA                                0x81e
@@ -1032,8 +1097,10 @@
 #define FLAG_VALE_BARREL_COINS                                0x8ae
 #define FLAG_VALE_PSYNERGY_STONE                              0x8af
 
-// Vale, houses and shops After the party has left Vale, the item merchant has given Isaac a Herb as
-// a farewell gift; afterwards he urges Isaac to save Jenna.
+// Vale, houses and shops
+
+// After the party has left Vale, the item merchant has given Isaac a Herb as a farewell gift;
+// afterwards he urges Isaac to save Jenna.
 #define FLAG_VALE_FAREWELL_HERB_RECEIVED                      0x81b
 // Back from Kalay, Garet has surprised his family at home on the party's first visit to his house,
 // and Ivan and Mia have introduced themselves.
@@ -1045,12 +1112,16 @@
 #define FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB                   0xf45
 #define FLAG_COTTAGE_ROOMS_A_JAR_3_COINS                      0xf46
 
-// Vale during the eruption Isaac and Garet have come back down the mountain to the villagers
-// waiting before the sanctum during the eruption, and followed the Great Healer in. Sol Sanctum's
-// entrance then changes the cells before its door.
+// Vale during the eruption
+
+// Isaac and Garet have come back down the mountain to the villagers waiting before the sanctum
+// during the eruption, and followed the Great Healer in. Sol Sanctum's entrance then changes the
+// cells before its door.
 #define FLAG_VALE_RETURNED_FROM_MT_ALEPH                      0x879
 
-// Vale Cave, where Kite hides The second room's chest.
+// Vale
+
+// Cave, where Kite hides The second room's chest.
 #define FLAG_VALE_CAVE_HALT_GEM                               0xfc2
 // The second room's other chest.
 #define FLAG_VALE_CAVE_NUT                                    0xfc3
@@ -1110,7 +1181,9 @@
 #define FLAG_LACQUER_ROOMS_B_ELIXIR_BARREL                    0xf6f
 #define FLAG_LACQUER_ROOMS_B_SLEEP_BOMB_JAR                   0xf70
 
-// Goma Cave The stump at Goma Cave Entrance has leapt out of the way and lies flat.
+// Goma Cave
+
+// The stump at Goma Cave Entrance has leapt out of the way and lies flat.
 #define FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED                   0x860
 // The west stone pillar at Goma Cave Entrance stands one or two columns on from where it starts.
 #define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP          0x861
@@ -1132,9 +1205,11 @@
 // GomaCavePillar's chest.
 #define FLAG_GOMA_CAVE_LUCKY_MEDAL                            0xf4f
 
-// Hammet's palace Set once the guards have brought Ivan and the party to Lady Layana and she has
-// sent everyone back to their posts. Until then Hammet Palace's guards turn the party away at the
-// door; Kalay's scenes set it whenever FLAG_DODONPA_LOCKED_UP is set.
+// Hammet's palace
+
+// Set once the guards have brought Ivan and the party to Lady Layana and she has sent everyone back
+// to their posts. Until then Hammet Palace's guards turn the party away at the door; Kalay's scenes
+// set it whenever FLAG_DODONPA_LOCKED_UP is set.
 #define FLAG_IVAN_REPORTED_TO_LAYANA                          0x912
 // Layana has told the party that going into Lunpa is too dangerous.
 #define FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS            0x913
@@ -1148,9 +1223,11 @@
 #define FLAG_HAMMET_PALACE_WATER_JACKET_CHEST                 0xf86
 #define FLAG_HAMMET_PALACE_NUT_BARREL                         0xf87
 
-// Fuchin Temple and Master Feh's school Nyunpa has died, enlightened, at Fuchin Temple. Mogall
-// Forest sets it once he has taught the party Force and the Killer Ape is beaten; from then on he
-// no longer answers, and the monks grieve.
+// Fuchin Temple and Master Feh's school
+
+// Nyunpa has died, enlightened, at Fuchin Temple. Mogall Forest sets it once he has taught the
+// party Force and the Killer Ape is beaten; from then on he no longer answers, and the monks
+// grieve.
 #define FLAG_NYUNPA_ENLIGHTENED                               0x88f
 // The young man from Kolima at Fuchin Temple asked whether the bridge is open again and the party
 // said yes; from then on he skips the question.
@@ -1190,8 +1267,10 @@
 // The jar in Master Hama's room in Lama Temple.
 #define FLAG_HAMAS_ROOM_COINS_JAR                             0xf6a
 
-// Crossbone Isle The four blue doors in a row, then the red door: each is set once a Blue Key has
-// opened it, four flags from this one.
+// Crossbone Isle
+
+// The four blue doors in a row, then the red door: each is set once a Blue Key has opened it, four
+// flags from this one.
 #define FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN              0x9c0
 // The red door beyond them, once the Red Key has opened it.
 #define FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN                     0x9c4
@@ -1277,9 +1356,10 @@
 #define FLAG_PIRATE_SHIP_MIMIC_BEATEN                         0xef7
 // CrossboneIsleStatues keeps FLAG_SCENE_TEMP_20 set while one of its pursuers is after the leader.
 
-// Sol Sanctum Kraden has found the heart of Sol Sanctum, the mark of the sun on the floor of the
-// Luna and Sol rooms, and talked the others into going a little farther; Retreat is blocked from
-// then on.
+// Sol Sanctum
+
+// Kraden has found the heart of Sol Sanctum, the mark of the sun on the floor of the Luna and Sol
+// rooms, and talked the others into going a little farther; Retreat is blocked from then on.
 #define FLAG_SOL_SANCTUM_FOUND                                0x809
 // Kraden has found the picture of Luna, wondered how the rooms of Luna and Sol are connected and
 // asked Isaac to look farther up the passage; he waits by the picture from then on.
@@ -1359,13 +1439,17 @@
 // The Luna and Sol rooms' chest.
 #define FLAG_SOL_SANCTUM_HERB_FOUND                           0xf40
 
-// Sanctum After the eruption, Isaac has accepted the Great Healer's request in Vale's Sanctum to
-// recover the Elemental Stars, and the Wise One's guidance sends him and Garet off the next day.
-// Vale's field music changes with it.
+// Sanctum
+
+// After the eruption, Isaac has accepted the Great Healer's request in Vale's Sanctum to recover
+// the Elemental Stars, and the Wise One's guidance sends him and Garet off the next day. Vale's
+// field music changes with it.
 #define FLAG_SANCTUM_QUEST_ACCEPTED                           0x9f0
 
-// Venus Lighthouse The wounded soldier at Venus Lighthouse Entry has told of the attack, flickered
-// and vanished; he is gone on every visit after.
+// Venus Lighthouse
+
+// The wounded soldier at Venus Lighthouse Entry has told of the attack, flickered and vanished; he
+// is gone on every visit after.
 #define FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD                     0x981
 // The statue on Venus Lighthouse's ground floor has opened the first of its two paths. One of this
 // and FLAG_VENUS_LIGHTHOUSE_SECOND_PATH is set once the statue has spoken, and each search switches
@@ -1389,7 +1473,9 @@
 // A chest on the ground floor.
 #define FLAG_VENUS_LIGHTHOUSE_CARRY_STONE                     0xf38
 
-// World map The Black Orb did nothing on Babi's ship and was handed back.
+// World map
+
+// The Black Orb did nothing on Babi's ship and was handed back.
 #define FLAG_BLACK_ORB_RETURNED                               0x85d
 // Buried, found by searching.
 #define FLAG_WORLD_MAP_TURTLE_BOOTS                           0xfcf

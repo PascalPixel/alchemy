@@ -9,7 +9,7 @@
 // only talk. In story order:
 //
 // - The ground floor (`LunpaFortressGroundFloor`). A small room inside the
-//       door opens on a long winding hall, where a guard at its west end and
+//   door opens on a long winding hall, where a guard at its west end and
 // two sentries at its east end keep watch; stairs at its west end lead up. Off it are a feast room
 // where Dodonpa's men eat and drink on Hammet's ransom; a winding hall in the north-east, with one
 // guard, and beyond it a room of barrels where a startled old man hides and a barrel holds a Vial;
@@ -18,9 +18,9 @@
 // coins). In the hall at the top of the map a second metatile door shuts off the stairs down to the
 // cave from the rest of the floor.
 // - The upper floor (`LunpaFortressUpperFloor`). Two guards walk to and fro
-//       across the tall west hall in step, one above the other. Past it, three
-//       red-capped guards in a room in the north fight the party together as
-//       three Brigands, and a guard in the doorway of Donpa's room, another in
+//   across the tall west hall in step, one above the other. Past it, three
+//   red-capped guards in a room in the north fight the party together as
+//   three Brigands, and a guard in the doorway of Donpa's room, another in
 // the middle hall and another in the Metatile Key room each fight it as one Brigand. Donpa,
 // Dodonpa's old father, lies asleep in his room; a guard walks the east hall; the Metatile Key lies
 // on a stool just inside a metatile  door of the Metatile Key room, where Catch reaches it from the
@@ -28,8 +28,8 @@
 // the  fortress, talk in their rooms. Stairs from the Metatile Key room lead
 // down  to the north end of the ground floor, by the stairs to the cave.
 // - The cave (`LunpaFortressCave`), a ring of ledges round an underground
-//       lake. Whirlwind blows ivy off two switches hidden in its walls, Reveal
-//       shows them, and each opens a sealed doorway. More ivy hides a passage
+//   lake. Whirlwind blows ivy off two switches hidden in its walls, Reveal
+//   shows them, and each opens a sealed doorway. More ivy hides a passage
 // to the metatiles, and a stack of crates pushed down a corridor fills a gap at
 // its  foot.
 // - The metatiles (`LunpaFortressToadonpa`): a row of three metatiles, the

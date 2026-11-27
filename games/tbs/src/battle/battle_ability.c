@@ -17,8 +17,10 @@ Bool btAbilityEffectAppliesToDowned(Sint32 effect)
     }
 }
 
-// The target's checks, effect and messages Zephyr's Agility stage, beyond the usual highest
-// (STAT_STAGE_MAX, battle_targeting.c): twice the Agility.
+// The target's checks, effect and messages
+
+// Zephyr's Agility stage, beyond the usual highest (STAT_STAGE_MAX, battle_targeting.c): twice the
+// Agility.
 #define AGILITY_STAGE_DOUBLED 8
 
 // The turns a stat change or a status lasts; a status or a lowered stat may end sooner.

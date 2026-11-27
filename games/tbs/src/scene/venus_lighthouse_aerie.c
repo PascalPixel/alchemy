@@ -7,30 +7,30 @@
 //
 // The parts, in the order the entrances chain them:
 // - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
-//       scVenusLighthouseAerieOverhearSaturosAndMenardi). A floating platform
-//       carries Isaac up beside the tower in the north-east onto its top, and
-//       the party overhears Saturos, Menardi, Felix and Sheba arguing at the
-//       beacon, with one yes-or-no question that changes only the reply.
+//   scVenusLighthouseAerieOverhearSaturosAndMenardi). A floating platform
+//   carries Isaac up beside the tower in the north-east onto its top, and
+//   the party overhears Saturos, Menardi, Felix and Sheba arguing at the
+//   beacon, with one yes-or-no question that changes only the reply.
 // - Two rows of three floating platforms bob in the air, one between the
-//       tower and the middle of the aerie and one west of the middle
-//       (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+//   tower and the middle of the aerie and one west of the middle
+//   (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
 // METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS). Isaac jumps from one to the next,
 // and each stops bobbing and dips under him as he lands. FLAG_VENUS_AERIE_ON_PLATFORM is set while
 // he stands on one.
 // - The confrontation, when Isaac walks up to the beacon
-//       (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
-//       scVenusLighthouseAerieConfrontSaturosAndMenardi). The Shaman's Rod is
-//       handed over for Sheba's sake, remembered in FLAG_SHAMANS_ROD_CARRIED_BY
-//       plus the party member who carried it. The first battle follows
-//       (ENCOUNTER_ZONE_SCRIPTED, slot 1, FLAG_AERIE_FIRST_BATTLE_BEGUN).
+//   (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
+//   scVenusLighthouseAerieConfrontSaturosAndMenardi). The Shaman's Rod is
+//   handed over for Sheba's sake, remembered in FLAG_SHAMANS_ROD_CARRIED_BY
+//   plus the party member who carried it. The first battle follows
+//   (ENCOUNTER_ZONE_SCRIPTED, slot 1, FLAG_AERIE_FIRST_BATTLE_BEGUN).
 // - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
-//       scVenusLighthouseAerieCombineSaturosAndMenardi). Saturos throws the
+//   scVenusLighthouseAerieCombineSaturosAndMenardi). Saturos throws the
 // Venus Star into the beacon (ACTOR_VENUS_STAR_SHADOW), Felix and Sheba leave,
 //       and Saturos and Menardi fuse. gmPartyRestorePpInLighthouse refills the
 // PP of Isaac and Garet, inside the lighthouse of their element group, and the
 //       second battle follows (slot 0, FLAG_AERIE_SECOND_BATTLE_BEGUN).
 // - After that (VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE,
-//       scVenusLighthouseAerieFinishSaturosAndMenardiBattle). Saturos and
+//   scVenusLighthouseAerieFinishSaturosAndMenardiBattle). Saturos and
 // Menardi fall into the lighthouse, and the beacon erupts. Its beam
 //       (ACTOR_BEAM_BOTTOM to ACTOR_BEAM_TOP) rises, the aerie splits and its
 //       statues move apart. The light lifts the party away to the World Map's
@@ -39,13 +39,13 @@
 // split is drawn by copying the map's metatiles
 //       (fdMapGridCopyMetatilesTo in scVenusLighthouseAerieEruptBeacon).
 // - A look back (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
-//       scVenusLighthouseAerieShowShebaInDanger). Sheba hangs from the broken
-//       aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the World Map
-//       (WORLD_MAP_BEFORE_SHEBAS_FALL) with its music kept.
+//   scVenusLighthouseAerieShowShebaInDanger). Sheba hangs from the broken
+//   aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the World Map
+//   (WORLD_MAP_BEFORE_SHEBAS_FALL) with its music kept.
 // - Sheba's fall (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP,
-//       scVenusLighthouseAerieStageShebasFall). Sheba and Felix fall, and the
-//       party is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C)
-//       with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED set.
+//   scVenusLighthouseAerieStageShebasFall). Sheba and Felix fall, and the
+//   party is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C)
+//   with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED set.
 //
 // A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives the Shaman's Rod back
 // to whoever carried it and leaves for Lalivero Sanctum (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).

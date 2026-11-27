@@ -12,9 +12,9 @@
 // leaving with the party. Some lines also change while she travels with them (FLAG_IN_PARTY(MIA)).
 //
 // - Imil (SceneIdImil), the village, on both banks of a frozen river that
-//       runs down its middle from a frozen waterfall. A young man shivers and
-//       sneezes in the snow by the north-west house, waiting for Mia, and a
-//       strongman counts out his exercises against the cold on the east ledge.
+//   runs down its middle from a frozen waterfall. A young man shivers and
+//   sneezes in the snow by the north-west house, waiting for Mia, and a
+//   strongman counts out his exercises against the cold on the east ledge.
 //
 // Six doors, whose metatiles are their exits past
 // EXIT_METATILE_BEHAVIOR_OFFSET,  open into the houses, the shops, the inn
@@ -24,10 +24,9 @@
 // into Imil Falls Cave,  where Fever waits. Coming back out of it
 // (IMIL_FROM_IMIL_FALLS_CAVE)  Isaac walks down into the village.
 //
-//       Two events run while the party is here. One makes smoke rise from the
-//       five houses' chimneys, staggered over each second. The other turns
-//       Isaac's footprints in the snow off on the frozen river and on the
-//       raised ground under the big tree, and on elsewhere.
+// Two events run while the party is here. One makes smoke rise from the five houses' chimneys,
+// staggered over each second. The other turns Isaac's footprints in the snow off on the frozen
+// river and on the raised ground under the big tree, and on elsewhere.
 //
 // Stepping onto the river's ice (METATILE_BEHAVIOR_IMIL_ICE) slides Isaac
 // the  way the pad points, turning toward it as he goes, until a bank or a
@@ -36,55 +35,49 @@
 // it west onto the ice, where it stays for the rest of the visit  and stops
 // the last slide beside the way into the cave.
 //
-//       Searching finds 9 coins in the jar outside a house on the upper level,
-// a Vial in a chest above the first house, and a Lucky Medal in the upper left grave by the
-// Sanctum.
+// Searching finds 9 coins in the jar outside a house on the upper level, a Vial in a chest above
+// the first house, and a Lucky Medal in the upper left grave by the Sanctum.
 //
 // - Ice rooms (SceneIdIceRooms), a rooms map drawn in ice, all of them
-//       Imil's: inside the houses, the shops and the inn, whose area name is
-//       Imil. By ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil
-//       Sanctum.
+//   Imil's: inside the houses, the shops and the inn, whose area name is
+//   Imil. By ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil
+//   Sanctum.
 //
-//       While the epidemic lasts the weapon and armor sellers are sick in bed,
-//       their two counters empty. Searching a counter shows the seller in his
-//       bed, saying the shop is closed. The item seller lies sick too, and her
-//       daughter minds the counter for her.
+//   While the epidemic lasts the weapon and armor sellers are sick in bed,
+//   their two counters empty. Searching a counter shows the seller in his
+//   bed, saying the shop is closed. The item seller lies sick too, and her
+//   daughter minds the counter for her.
 //
-//       In the Sanctum Mia's two apprentices keep her place. Justin offers
-//       healing across the counter, the first time saying he can act as the
-//       party's healer (FLAG_IMIL_JUSTIN_OFFERED_HEALING). Megan asks whether
-//       the party has visited the old couple who live near the entrance of
+//   In the Sanctum Mia's two apprentices keep her place. Justin offers
+//   healing across the counter, the first time saying he can act as the
+//   party's healer (FLAG_IMIL_JUSTIN_OFFERED_HEALING). Megan asks whether
+//   the party has visited the old couple who live near the entrance of
 // town, where Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE).
 //
-//       In the old couple's house (ICE_ROOMS_HOUSE_SOUTHWEST) the old man moans
-//       for help, and talking to him sends his wife hurrying to fetch Mia.
-//       Either sets FLAG_IMIL_MIA_SENT_FOR, which changes the couple's lines
-// and where they stand.
+// In the old couple's house (ICE_ROOMS_HOUSE_SOUTHWEST) the old man moans for help, and talking to
+// him sends his wife hurrying to fetch Mia. Either sets FLAG_IMIL_MIA_SENT_FOR, which changes the
+// couple's lines and where they stand.
 //
-//       Mia's healing is this scene's first script. It plays on entering the
-// old couple's house once Megan has told the party where Mia went, before they have met her. The
-// party finds her at the old man's bedside. She heals him with Ply, asks who the party are, and the
-// Mercury Lighthouse flashes. "Was that... the lighthouse?"
+// Mia's healing is this scene's first script. It plays on entering the old couple's house once
+// Megan has told the party where Mia went, before they have met her. The party finds her at the old
+// man's bedside. She heals him with Ply, asks who the party are, and the Mercury Lighthouse
+// flashes. "Was that... the lighthouse?"
 //
-//       She runs out, and the party follows her (FLAG_IMIL_MET_MIA). At the
-//       lighthouse she goes on with them. Afterwards the old man lies in bed
-//       feeling much better, and talking or Mind Read across the bed
-//       (ACTOR_OLD_MANS_BED) reaches him.
+// She runs out, and the party follows her (FLAG_IMIL_MET_MIA). At the lighthouse she goes on with
+// them. Afterwards the old man lies in bed feeling much better, and talking or Mind Read across the
+// bed (ACTOR_OLD_MANS_BED) reaches him.
 //
-//       Once Saturos is beaten the sellers are well and open their shops across
-//       the counters.
+// Once Saturos is beaten the sellers are well and open their shops across the counters.
 //
-//       The second script is Mia's farewell, the first time the party then
-//       enters the Sanctum (FLAG_IMIL_MIA_SAID_FAREWELL). Her apprentices tell
-//       her the lighthouse has been lit, and Mia tells them she will join
-//       Isaac's quest to protect the world. They promise to protect Imil
-//       themselves, as members of the Mercury Clan, and she leaves the village
-//       in their hands, Megan and Justin.
+// The second script is Mia's farewell, the first time the party then enters the Sanctum
+// (FLAG_IMIL_MIA_SAID_FAREWELL). Her apprentices tell her the lighthouse has been lit, and Mia
+// tells them she will join Isaac's quest to protect the world. They promise to protect Imil
+// themselves, as members of the Mercury Clan, and she leaves the village in their hands, Megan and
+// Justin.
 //
-//       Searching finds an Empty Bottle in the chest in the old couple's house,
-// a Sleep Bomb in a barrel in the weapon and armor shop, and Lucky Pepper in
-//       the inn's oven. The oven's find always answers first, so the line about
-//       the stew in it is unused.
+// Searching finds an Empty Bottle in the chest in the old couple's house, a Sleep Bomb in a barrel
+// in the weapon and armor shop, and Lucky Pepper in the inn's oven. The oven's find always answers
+// first, so the line about the stew in it is unused.
 
 #include "ability_ids.h"
 #include "flags.h"

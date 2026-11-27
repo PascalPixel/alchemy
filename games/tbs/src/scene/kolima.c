@@ -2,9 +2,9 @@
 // (log_rooms_c.c), and so is each scene of Kolima Forest.
 //
 // - Kolima (SceneIdKolima), the village of lumberjacks, to which Lord McCoy
-//       has barricaded the road from Bilibin since the trouble began.
+//   has barricaded the road from Bilibin since the trouble began.
 //
-//       The party's first entry from the World Map (KOLIMA_FROM_WORLD_MAP)
+//   The party's first entry from the World Map (KOLIMA_FROM_WORLD_MAP)
 // plays scKolimaWitnessForestCurse, unless the party has already seen it in Kolima Forest
 // (FLAG_KOLIMA_CURSE_WITNESSED). Every villager has been turned into a tree. Sparkles fall from the
 // sky and press the party down until domes of their own Psynergy shield them. Two unseen voices
@@ -32,19 +32,19 @@
 // KOLIMA_TO_KOLIMA_TUNNEL into Kolima Tunnel.
 //
 // - Kolima Tunnel (SceneIdKolimaTunnel), a passage with no one in it from one
-//       of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
-//       (KOLIMA_FROM_KOLIMA_TUNNEL).
+//   of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
+//   (KOLIMA_FROM_KOLIMA_TUNNEL).
 //
-//       It shares the village's cue table, whose exits KOLIMA_TO_WORLD_MAP and
-//       KOLIMA_TO_WORLD_MAP_EAST are, by the same numbers, its two ways out
-//       (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA).
+//   It shares the village's cue table, whose exits KOLIMA_TO_WORLD_MAP and
+//   KOLIMA_TO_WORLD_MAP_EAST are, by the same numbers, its two ways out
+//   (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA).
 //
-//       That table's two jars, an Apple and an Herb (examine cues 100 and
-//       101), are in the village. Only Kolima's layout (kolima's
-//       map.inc) places them, at metatiles (23, 8) and (13, 23).
+//   That table's two jars, an Apple and an Herb (examine cues 100 and
+//   101), are in the village. Only Kolima's layout (kolima's
+//   map.inc) places them, at metatiles (23, 8) and (13, 23).
 //
 // - Kolima Bridge (SceneIdKolimaBridge), "the grand bridge across the
-//       river" and "the pride of Kolima" to the village's armor seller, with
+//   river" and "the pride of Kolima" to the village's armor seller, with
 // the World Map at both ends. It is a drawbridge, standing raised between its
 //       posts.
 //

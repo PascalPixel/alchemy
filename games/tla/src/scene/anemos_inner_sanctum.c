@@ -2085,7 +2085,9 @@ extern Uint32               FieldEffectShortScript[];
 extern Uint32               FieldEffectMediumScript[];
 
 // clang-format off
-// The same three lifetimes as FieldEffectShortScript, MediumScript and LongScript (shared/field_effect_duration_scripts.c), under other names.
+// The same three lifetimes as FieldEffectShortScript, MediumScript and
+
+// LongScript (shared/field_effect_duration_scripts.c), under other names.
 Uint32 AnemosInnerSanctumShortScript[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),

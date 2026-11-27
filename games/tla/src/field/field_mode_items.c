@@ -341,10 +341,11 @@ Sint32 fdSelectPsynergyTarget(Sint32 kind)
     return result;
 }
 
-// Returns the scene's first Psynergy cue (CUE_PSYNERGY) for a field Psynergy kind whose condition
-// holds, whose facing (when it has one) the leader faces, whose stage matches filter
-// (PSYNERGY_CUE_ANY takes any) and whose target is what selector names (fdSelectPsynergyTarget: a
-// metatile, an actor, or anything); NULL when there is none.
+// Returns the scene's first Psynergy cue (CUE_PSYNERGY) for a field
+
+// Psynergy kind whose condition holds, whose facing (when it has one) the leader faces, whose stage
+// matches filter (PSYNERGY_CUE_ANY takes any) and whose target is what selector names
+// (fdSelectPsynergyTarget: a metatile, an actor, or anything); NULL when there is none.
 CUE *fdFindPsynergyCue(Sint32 filter, Sint32 kind, Sint32 selector)
 {
     FIELD_STATE *state  = RamHeapSlots->fieldState;

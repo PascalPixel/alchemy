@@ -9,17 +9,13 @@
 // part. README.md in this folder gives the words, prefixes and spellings the parts use. Where to
 // start:
 //
-//       Party status    screens_party_status.c: mnPartyStatusCreateWindow,
-//                                       mnPartyStatusDraw
-//       Saving          screens_save.c: mnFileListSelectFile,
-// mnSaveToChosenFile Battle menus    mnBattleCollectPartyCommands
-//                                       (screens_battle_party_commands.c),
-// which runs mnBattleCommandRowRun (screens_battle_command_row.c) and the menus of
-// screens_battle_djinn_menu.c, screens_battle_summon_menu.c, screens_battle_item_menu.c,
-// screens_battle_psynergy_menu.c and
-//                                       screens_battle_targets.c
-//       Icon menus      screens_icon_menu.c: mnFieldMenuSelectCommand,
-//                                       mnFileListSelectAction
+// - party status: mnPartyStatusCreateWindow and mnPartyStatusDraw (screens_party_status.c);
+// - saving: mnFileListSelectFile and mnSaveToChosenFile (screens_save.c);
+// - battle menus: mnBattleCollectPartyCommands (screens_battle_party_commands.c), which runs
+//   mnBattleCommandRowRun (screens_battle_command_row.c) and the menus of
+//   screens_battle_djinn_menu.c, screens_battle_summon_menu.c, screens_battle_item_menu.c,
+//   screens_battle_psynergy_menu.c and screens_battle_targets.c;
+// - icon menus: mnFieldMenuSelectCommand and mnFileListSelectAction (screens_icon_menu.c).
 
 #include "screens_internal.h"
 

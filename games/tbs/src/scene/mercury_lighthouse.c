@@ -10,7 +10,7 @@
 // In the order the party meets them:
 //
 // - Outside. The party comes from the World Map up a causeway between two
-//       blue statues standing in the water, past the dry Fountain of Healing
+//   blue statues standing in the water, past the dry Fountain of Healing
 // and its sign, to the lighthouse door. Until the party has met Mia in Imil
 //       (FLAG_IMIL_MET_MIA) the door glows and searching it shows "Strange
 // forces are at work...". Then Mia kneels before it, and a stone statue stands in her way. Spoken
@@ -19,8 +19,8 @@
 //       Garet and Ivan, and opens the door with Ply before going in alone
 //       (FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA).
 // - SceneIdMercuryLighthouseLower: the floor above the goddess's pool. Its
-//       great pool room is set with stepping squares, some marked with a cross.
-//       Stairs from the platform in its middle lead to a ledge where Mia is
+//   great pool room is set with stepping squares, some marked with a cross.
+//   Stairs from the platform in its middle lead to a ledge where Mia is
 // stuck again, before a blue statue that was not there before; Move drops it into the gap at her
 // feet and she joins the party with Fizz, a Mercury Djinni
 //       (FLAG_MIA_JOINED_PARTY). In the pipe room three pipe sections pushed
@@ -36,7 +36,7 @@
 //       (shared/mercury_lighthouse_pillar.c). That is the way across the great
 //       pool room, whose chest holds a Sleep Bomb.
 // - SceneIdMercuryLighthouseMiddle. In the big pipe room one pipe section,
-//       joined, sets water spouting from four pipe ends (FLAG_SPOUTS_RUNNING);
+//   joined, sets water spouting from four pipe ends (FLAG_SPOUTS_RUNNING);
 // a chest there holds a Psy Crystal. In the gate room a blue statue moved onto the floor switch
 // holds the sealed arch on the dais open for good
 //       (FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN), where Isaac standing on the
@@ -46,7 +46,7 @@
 // (FLAG_NORTH_JET_RUNNING). Sleet, a Mercury Djinni, waits in a room of its own and fights when
 // spoken to.
 // - SceneIdMercuryLighthouseUpper. Walking into the third waterfall from the
-//       west of the first room of six waterfalls leads down to Sleet. In the
+//   west of the first room of six waterfalls leads down to Sleet. In the
 // room of jets a pipe pushed along its pool turns the water from one pipe end to another, and each
 // jet pushes a blue statue a step, until it slides into a
 //       square hole and falls to the gate room below
@@ -58,10 +58,10 @@
 //       easternmost leads to a room of vines, where Move pushes a stone statue
 //       off the doorway to the paths outside.
 // - Outside again, high up. The paths end at a waterfall under a rainbow,
-//       whose riddle appears on arrival: "He who honors the goddess of rainbows
-//       shall be guided to the heavens upon wings of fluid grace." Ply on the
-//       blue statue beside it reverses the waterfall, and Mia, Isaac, Garet and
-//       Ivan rise up the water one by one to the Lighthouse Aerie, where
+//   whose riddle appears on arrival: "He who honors the goddess of rainbows
+//   shall be guided to the heavens upon wings of fluid grace." Ply on the
+//   blue statue beside it reverses the waterfall, and Mia, Isaac, Garet and
+//   Ivan rise up the water one by one to the Lighthouse Aerie, where
 // Saturos waits (mercury_lighthouse_aerie.c). Once he is beaten
 //       (FLAG_SATUROS_BEATEN_AT_MERCURY) the lift brings the party down from
 // the aerie to the fountain, which flows again. People come to drink from it,

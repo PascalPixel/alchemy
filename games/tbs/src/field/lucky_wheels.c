@@ -17,8 +17,9 @@
 // The sparks of the jackpot, kept in the map metatile buffer.
 #define LUCKY_WHEELS_SPARKS            ((PARTICLE *)RamMapGridMetatileBuffer)
 
-// Lucky Wheels' own state (LUCKY_WHEELS_STATE), in the heap slot Lucky Dice keeps its sprites in,
-// beside the battle effect slots it borrows.
+// Lucky Wheels' own state (LUCKY_WHEELS_STATE), in the heap slot Lucky
+
+// Dice keeps its sprites in, beside the battle effect slots it borrows.
 #define LUCKY_WHEELS_HEAP_SLOT         HEAP_SLOT_LUCKY_GAME
 
 // The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from its tile 212 in the

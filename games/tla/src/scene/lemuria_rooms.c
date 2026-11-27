@@ -1,17 +1,17 @@
 // Lemuria's rooms (SceneIdLemuriaRooms), a rooms map behind the city's doors:
 //
 // - Piers's uncle's house (LEMURIA_ROOMS_TO_LEMURIA_WEST_A), where Piers comes
-//       home to learn his mother has died (scLemuriaRoomsPiersVisitsUncle) and
+//   home to learn his mother has died (scLemuriaRoomsPiersVisitsUncle) and
 // his uncle sends a bird with a letter to Lunpa
 //       (scLemuriaRoomsLeavePiersToMourn);
 // - a house where a girl who has never left Lemuria lives
-//       (LEMURIA_ROOMS_TO_LEMURIA_WEST_B);
+//   (LEMURIA_ROOMS_TO_LEMURIA_WEST_B);
 // - the Senate's hall (LEMURIA_ROOMS_TO_LEMURIA_WEST_C) and the two rooms
-//       behind its arches (WAY_HALL_WEST_ARCH, WAY_HALL_EAST_ARCH), where the
-//       senators hold to the sealing of Alchemy and scoff at the party's Mind
-//       Read;
+//   behind its arches (WAY_HALL_WEST_ARCH, WAY_HALL_EAST_ARCH), where the
+//   senators hold to the sealing of Alchemy and scoff at the party's Mind
+//   Read;
 // - Lunpa's tower, three rooms one above another, each with its own door to
-//       the city (LEMURIA_ROOMS_TO_LEMURIA_EAST_C, _EAST_A and _EAST_B, from
+//   the city (LEMURIA_ROOMS_TO_LEMURIA_EAST_C, _EAST_A and _EAST_B, from
 // the bottom), joined by stairs and a ladder: in the bottom one, among his
 //       books, Lunpa hears the party out and storms off to the king
 //       (scLemuriaRoomsMeetLunpa).

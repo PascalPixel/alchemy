@@ -259,7 +259,9 @@ FORMATION Formations[] = {
         .maxCounts = {3},
     },
     [54] = {0},
-    // The King Scorpion in the Yampi Desert, and Briggs and a Sea Fighter on Briggs's ship at Alhafra.
+    // The King Scorpion in the Yampi Desert, and Briggs and a Sea Fighter on
+
+    // Briggs's ship at Alhafra.
     [55] = {
         .memberIds = {ENEMY_ROW(ENEMY_KING_SCORPION)},
         .minCounts = {1},

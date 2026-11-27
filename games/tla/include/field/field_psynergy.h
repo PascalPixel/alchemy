@@ -69,9 +69,10 @@ typedef struct BOW_MOTION
 // BOW_STATE.frame while the bow holds its pose and is not drawing.
 #define BOW_TICK_IDLE   999
 
-// The Arrow's state (fdPsynergyArrow, in heap slot HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the
-// arrow and the bow with their motions, the points the arrow flies between, and the phase of its
-// event.
+// The Arrow's state (fdPsynergyArrow, in heap slot
+
+// HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the arrow and the bow with their motions, the points the
+// arrow flies between, and the phase of its event.
 typedef struct BOW_STATE
 {
     Uint8     *tiles;

@@ -2423,7 +2423,9 @@ Uint16 EasternAlhafraUnusedActorList[] = {
     ACTOR_DOCK_CRATE, ACTOR_LIST_END,
 };
 
-// The stake Pound sinks: actor, how its metatile opens (fdActorSetMetatileOpen) and its flag.
+// The stake Pound sinks: actor, how its metatile opens
+
+// (fdActorSetMetatileOpen) and its flag.
 Uint16 EasternAlhafraPoundStakes[] = {
     ACTOR_STAKE, 1, FLAG_EASTERN_ALHAFRA_STAKE_POUNDED, ACTOR_LIST_END,
 };

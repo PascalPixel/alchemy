@@ -1,7 +1,8 @@
-// Effect tables of the field mode module, in the order of The Broken Seal's field_mode_tables.c:
-// the pad's headings, Move's hand animations, four effect scripts and the three of
-// FieldEffectDurationScripts, a paused actor's flicker, the arrow's wobble, the metatiles round a
-// whirlwind and Blaze's tints.
+// Effect tables of the field mode module, in the order of The Broken
+
+// Seal's field_mode_tables.c: the pad's headings, Move's hand animations, four effect scripts and
+// the three of FieldEffectDurationScripts, a paused actor's flicker, the arrow's wobble, the
+// metatiles round a whirlwind and Blaze's tints.
 
 #include "field/actor_script.h"
 #include "field/field.h"
@@ -25,13 +26,17 @@ const Uint8 MoveHandPushPoses[4] = {
     MOVE_HAND_ANIMATION_OPEN,
 };
 
-// Waits 60 ticks and releases the actor; The Broken Seal's FieldEffectBurstParticleActorScript.
+// Waits 60 ticks and releases the actor; The Broken Seal's
+
+// FieldEffectBurstParticleActorScript.
 const Sint32 GrowthLeafScript[] = {
     SC_WAIT(60),
     SC_RELEASE,
 };
 
-// Unused: the same four bytes as MoveHandPushPoses, as in The Broken Seal; nothing reads them.
+// Unused: the same four bytes as MoveHandPushPoses, as in The Broken
+
+// Seal; nothing reads them.
 const Uint8 FieldEffectUnusedQuadrantModes[4] = {3, 1, 2, 1};
 
 // Force's fist: waits to arrive, sets off fdEffectSpawnHeavyImpact and releases the actor.
@@ -57,14 +62,18 @@ const Sint32 FieldEffectLongEffectScript[] = {
     SC_RELEASE,
 };
 
-// The colour modes a halted actor flickers through at random (fdPsynergyUpdateHaltedActor): its own colours twice as often as each of the others.
+// The colour modes a halted actor flickers through at random
+
+// (fdPsynergyUpdateHaltedActor): its own colours twice as often as each of the others.
 const Sint8 HaltFlickerColorModes[8] = {
     SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB,
     SPRITE_COLOR_RBG,    SPRITE_COLOR_BGR,    SPRITE_COLOR_GBR,
     SPRITE_COLOR_BRG,    SPRITE_COLOR_GREY,
 };
 
-// The arrow's wobble once it has struck, a step a tick over eight ticks (fdPsynergyUpdateArrow): turns from its heading, scaled by ArrowWobbleFades.
+// The arrow's wobble once it has struck, a step a tick over eight ticks
+
+// (fdPsynergyUpdateArrow): turns from its heading, scaled by ArrowWobbleFades.
 const Sint32 ArrowWobbleAngles[8] = {
     TRIG_TURN / 16, 0, -TRIG_TURN / 16, -TRIG_TURN / 8,
     -TRIG_TURN * 3 / 16, -TRIG_TURN / 8, -TRIG_TURN / 16, 0,

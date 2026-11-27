@@ -833,7 +833,9 @@ ACTOR_PLACE CavernsAngaraPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-// Osenia Cavern's exit, its two holes walked into from three sides, and Scoop on the sand where the second is dug.
+// Osenia Cavern's exit, its two holes walked into from three sides, and
+
+// Scoop on the sand where the second is dug.
 CUE CavernsOseniaCues[] = {
     {CUE_EXIT, 1, CONDITION_ALWAYS, CAVERNS_OSENIA_TO_WORLD_MAP},
     {STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_BEHAVIOR_WEST_HOLE, CONDITION_ALWAYS, SCRIPT_REF(scCavernsWalkSouthIntoPassage)},

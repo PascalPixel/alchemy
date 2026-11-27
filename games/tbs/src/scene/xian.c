@@ -36,14 +36,14 @@
 //
 // The village's doors and where they lead:
 // - Five doors lead into the houses, shops and inn (SceneIdLacquerRoomsB):
-//       the house at metatile (21, 20), the north and east houses on the water
+//   the house at metatile (21, 20), the north and east houses on the water
 // carrier's street at metatiles (23, 13) and (26, 13), the inn at (25, 26)
 // and  the weapon and armor shop at (13, 11).
 // - The Sanctum's sliding door at metatiles (10, 13) and (11, 13) leads into
 // Xian  Sanctum.
 // - The door at metatile (24, 11) leads into Master Feh's school.
 // - The road south at metatiles (23, 32) and (24, 32) leads out to the World
-//       Map.
+//   Map.
 //
 // Coming back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the Sanctum
 // (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_AREA_NAME, so the name is not shown again.

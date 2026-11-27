@@ -16,22 +16,22 @@
 // visit its entrance stands for.
 //
 // - COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST, the tour
-//       (scColosseumSatrageMatchIntroduceSecondFinals). The guide only greets
+//   (scColosseumSatrageMatchIntroduceSecondFinals). The guide only greets
 // the party, since the first finals match's guide explained the rules. The five
 //       stages' attendants describe their stages and offer a place for each
 //       friend to cheer. The guide then sends Isaac back into the Colosseum
 //       (COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH).
 // - COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST, `Lend a Hand`. Garet, Ivan
-//       and Mia in turn may use Psynergy on the stages. Move shifts the
-//       Mini-Maze's stone pillars and the stone pillar at the foot of The Wall.
-//       Halt stops the lifts' operator and with him the shifting floor. Frost
-//       freezes the Log-Rolling Stage's two puddles into pillars of ice. Growth
-//       grows the sprout at the foot of The Wall into a vine. Force knocks the
-//       tall log by the Board Walk's channel over into the water. After Mia,
-//       COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE starts the race.
+//   and Mia in turn may use Psynergy on the stages. Move shifts the
+//   Mini-Maze's stone pillars and the stone pillar at the foot of The Wall.
+//   Halt stops the lifts' operator and with him the shifting floor. Frost
+//   freezes the Log-Rolling Stage's two puddles into pillars of ice. Growth
+//   grows the sprout at the foot of The Wall into a vine. Force knocks the
+//   tall log by the Board Walk's channel over into the water. After Mia,
+//   COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE starts the race.
 // - COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND, the race against Satrage,
-//       who follows a recorded path, after the lettering `The 2nd Match` and a
-//       count of three. At the arena the first to arrive takes the Chain Mail
+//   who follows a recorded path, after the lettering `The 2nd Match` and a
+//   count of three. At the arena the first to arrive takes the Chain Mail
 // and the second the Cotton Shirt. The battle is ENCOUNTER_ZONE_COLOSSO's third
 //       or fourth group, the Satrage with or without the mail.
 //
@@ -1849,7 +1849,9 @@ ACTOR_PLACE ColosseumSatrageMatchActorPlacements[] = {
 // Set while the lifts stand in their broken pattern rather than in a line.
 Sint32 ColosseumSatrageMatchLiftsApart = 0;
 
-// The ticks into the lifts' cycle (COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_TICKS).
+// The ticks into the lifts' cycle
+
+// (COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_TICKS).
 Uint32 ColosseumSatrageMatchLiftTimer = 0;
 
 CUE ColosseumSatrageMatchCues[] = {

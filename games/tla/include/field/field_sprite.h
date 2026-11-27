@@ -9,9 +9,11 @@
 struct SPR;
 struct SPR_ANIMATION;
 
-// SPR (field/sprite.h) as the field's scenes read it: its image's OAM attributes as bit fields, its
-// retain, own-scale and sunk-rows bits, its layer count and its shadow's first two attributes as
-// bytes, and its shadow's attribute 2 as bit fields; the first layer is record.
+// SPR (field/sprite.h) as the field's scenes read it: its image's
+
+// OAM attributes as bit fields, its retain, own-scale and sunk-rows bits, its layer count and its
+// shadow's first two attributes as bytes, and its shadow's attribute 2 as bit fields; the first
+// layer is record.
 typedef struct FIELD_SPR
 {
     // The link to the next sprite queued at its depth (struct ANIMATION_SPR_PART's first word).

@@ -10,16 +10,14 @@
 // in the files under window/, included here in link order, one group to a part. README.md in this
 // folder gives the words, prefixes and spellings the parts use. Where to start:
 //
-//       Windows         window_windows.c: mnWindowCreate, mnWindowClose;
-//                                       window_borders.c: mnWindowDrawBorder,
-// mnWindowUpdateZooms Messages        window_borders.c: mnMessageOpenWindow,
-//                                       mnFieldMessageShow; window_typing.c:
-//                                       mnMessageType; window_decode.c:
-//                                       mnMessageDecode
-//       Text drawing    window_sprites.c: mnGlyphDraw; window_text_tiles.c:
-//                                       mnTextDrawStringAsTiles,
-// mnTextDrawString Screens         window_selection.c: mnSelectionMenuRun,
-// mnFieldMenuRun; window_settings_menu.c: mnSettingsMenuRun, mnPauseMenuChoose
+// - windows: mnWindowCreate and mnWindowClose (window_windows.c), mnWindowDrawBorder and
+//   mnWindowUpdateZooms (window_borders.c);
+// - messages: mnMessageOpenWindow and mnFieldMessageShow (window_borders.c), mnMessageType
+//   (window_typing.c), mnMessageDecode (window_decode.c);
+// - text drawing: mnGlyphDraw (window_sprites.c), mnTextDrawStringAsTiles and mnTextDrawString
+//   (window_text_tiles.c);
+// - screens: mnSelectionMenuRun and mnFieldMenuRun (window_selection.c), mnSettingsMenuRun and
+//   mnPauseMenuChoose (window_settings_menu.c).
 
 #include "window_internal.h"
 

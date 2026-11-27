@@ -141,7 +141,9 @@ SCENE_ENTRANCE KolimaForestCliffEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-// On into the forest (SceneIdKolimaForestFloodgate) and back (SceneIdKolimaForestGlade).
+// On into the forest (SceneIdKolimaForestFloodgate) and back
+
+// (SceneIdKolimaForestGlade).
 Uint32 KolimaForestCliffExits[] = {
     SCENE_EXITS(KolimaForestCliff),
     SCENE_EXIT(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF),

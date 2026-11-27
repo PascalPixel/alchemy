@@ -44,9 +44,10 @@
 
 void mnWindowSpriteRedrawSavedRectStub(void *window);
 
-// What the player chose at a shop's counter, in the order of its menu's Buy, Sell, Artifacts and
-// Repair, held in shop->action while it runs. The forge, which The Lost Age adds, runs the sell
-// counter's screens as a counter of its own.
+// What the player chose at a shop's counter, in the order of its menu's
+
+// Buy, Sell, Artifacts and Repair, held in shop->action while it runs. The forge, which The Lost
+// Age adds, runs the sell counter's screens as a counter of its own.
 typedef enum SHOP_ACTION
 {
     SHOP_ACTION_BUY,

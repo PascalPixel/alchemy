@@ -23,7 +23,7 @@
 // - The forest's colours return.
 // - Tret frees Kolima's people (FLAG_KOLIMA_CURSE_LIFTED).
 // - He and Laurel tell how the gems that fell from the sky, the Psynergy
-//       Stones, twisted their hearts.
+//   Stones, twisted their hearts.
 // - Laurel warns of an evil forest risen south of the river.
 //
 // The bottle is left empty. Afterwards Tret and Laurel thank the party and worry about what lies

@@ -10,36 +10,36 @@
 // Here are the rooms in story order, by the exits that lead in:
 //
 // - Isaac's house in Vale: its upper floor, where a new game begins
-//       (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, from scene/file_screen.c),
+//   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, from scene/file_screen.c),
 // and its ground floor, entered from Vale (COTTAGE_ROOMS_B_FROM_VALE, from
 //       Vale's VALE_TO_COTTAGE_ROOMS_B and the stormy night's
 //       VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE). The stairs join the two
 //       (COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS and
 //       COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR).
 // - A house in Vale with two beds before a hearth, entered only on the stormy
-//       night, by either of its two doors
-//       (COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST and
-//       COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST).
+//   night, by either of its two doors
+//   (COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST and
+//   COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST).
 // - Kraden's study, the inside of his cottage
-//       (COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH and
-//       COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from
-//       ValeKradensCottage).
+//   (COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH and
+//   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from
+//   ValeKradensCottage).
 // - Vale's inn: the innkeeper's counter on the ground floor
-//       (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST, from ValePlaza's
-//       VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH) and the guest room upstairs
-//       (COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR).
+//   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST, from ValePlaza's
+//   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH) and the guest room upstairs
+//   (COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR).
 // - Vale's forge, where the young smith works beside his mother
-//       (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
+//   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
 // - A second forge room, stocked with sacks and crates beneath weapons and a
-//       shield on its wall. Its doorway in ValePlaza opens only once the party
-//       is back from Kalay (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
+//   shield on its wall. Its doorway in ValePlaza opens only once the party
+//   is back from Kalay (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
 // - Babi's Palace, in Tolbi: the room of Babi's scholars
-//       (COTTAGE_ROOMS_B_FROM_BABI_PALACE).
+//   (COTTAGE_ROOMS_B_FROM_BABI_PALACE).
 //
 // What happens in them follows the story:
 //
 // - The stormy night, three years before the journey, when a new game begins
-//       at COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST (from scene/file_screen.c,
+//   at COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST (from scene/file_screen.c,
 // or ValePlaza's VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST). The setup sets
 //       FLAG_VALE_STORM and plays scCottageRoomsBDoraWakesIsaac. Dora, Isaac's
 //       mother, wakes him because the Mt. Aleph Boulder is going to fall. She
@@ -56,8 +56,8 @@
 //       (ValePrologue) instead of Vale (CottageRoomsBStormExits). Kyle dies
 //       that night, as the village says later.
 // - Vale before the party leaves (FLAG_VALE_PARTY_LEFT clear): from Kraden's
-//       cottage (ValeKradensCottage's
-//       VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG) the party arrives
+//   cottage (ValeKradensCottage's
+//   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG) the party arrives
 // at COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, inside it. There
 //       the Mythril Bag rises and wobbles before Kraden as he prepares for the
 //       visit to Sol Sanctum (vale_kradens_cottage.c).
@@ -68,21 +68,21 @@
 // the talk is of three strange travellers staying there, one of them masked, and the innkeeper
 // offers a room.
 // - After the party has left Vale (FLAG_VALE_PARTY_LEFT): the villagers talk
-//       of the eruption and of Jenna, whom the visitors kidnapped. One asks
-//       whether the masked man was Felix, Jenna's brother, and whether Jenna
+//   of the eruption and of Jenna, whom the visitors kidnapped. One asks
+//   whether the masked man was Felix, Jenna's brother, and whether Jenna
 // can be trusted.
 // - Back from Kalay (FLAG_KALAY_REACHED): Dora lies ill. The innkeeper
-//       welcomes Isaac home, and a burly grey-haired man at the inn
-//       (ACTOR_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's area
-//       flags FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
-//       FLAG_VALE_MAN_SAW_ISAAC_GROWN). Mind Read on either tells of Dora's
-//       illness (FLAG_READ_THOUGHTS_ABOUT_DORA). When Isaac visits her
-//       (FLAG_VISITED_SICK_DORA) she reminds him that he promised not to come
-//       back until his quest was done, and gets up to show she is well. She
+//   welcomes Isaac home, and a burly grey-haired man at the inn
+//   (ACTOR_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's area
+//   flags FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
+//   FLAG_VALE_MAN_SAW_ISAAC_GROWN). Mind Read on either tells of Dora's
+//   illness (FLAG_READ_THOUGHTS_ABOUT_DORA). When Isaac visits her
+//   (FLAG_VISITED_SICK_DORA) she reminds him that he promised not to come
+//   back until his quest was done, and gets up to show she is well. She
 // stays up for that visit (FLAG_VALE_DORA_OUT_OF_BED). The setup otherwise puts
 //       her back in bed, where she dreams of Kyle.
 // - Babi's Palace (COTTAGE_ROOMS_B_FROM_BABI_PALACE, from Babi's Palace's
-//       BABI_PALACE_TO_COTTAGE_ROOMS_B, SceneIdBabiPalace), in Tolbi, whose
+//   BABI_PALACE_TO_COTTAGE_ROOMS_B, SceneIdBabiPalace), in Tolbi, whose
 // lord is Babi: a room of his scholars. They speak of Alchemy, of Kraden, Babi's favourite scholar,
 // and of the Venus Ruins under Babi Lighthouse with a
 //       long tunnel beneath them. They talk differently once the Colosso finals
@@ -1894,7 +1894,9 @@ CUE CottageRoomsBCuesAfterKalay[] = {
     { CUE_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
     { CUE_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
     { CUE_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsBTalkToInnkeeper) },
-    // XXX (no evidence): whether this row was meant to test FLAG_VALE_MAN_SAW_ISAAC_GROWN, as the Mind Read row does.
+    // XXX (no evidence): whether this row was meant to test
+
+    // FLAG_VALE_MAN_SAW_ISAAC_GROWN, as the Mind Read row does.
     { CUE_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, SCRIPT_REF(scCottageRoomsBRemarkIsaacHasGrown) },
     { CUE_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },

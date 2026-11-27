@@ -14,23 +14,23 @@
 // Sol Sanctum (SceneIdSolSanctumReliefs) is the run of rooms behind the door, in the order the
 // party meets them:
 // - The entrance hall, where Kraden welcomes them on the first visit
-//       (scSolSanctumEntranceIntroduceSanctum).
+//   (scSolSanctumEntranceIntroduceSanctum).
 // - Two rooms of stepping stones over water, where Isaac jumps one-metatile
-//       gaps, joined by a corridor (SceneIdSolSanctumCorridor). In the north of
-//       the second lie the chest with the first Small Jewel (metatile (17, 3))
+//   gaps, joined by a corridor (SceneIdSolSanctumCorridor). In the north of
+//   the second lie the chest with the first Small Jewel (metatile (17, 3))
 // and, at metatile (30, 2), a minotaur relief with an empty eye socket. Setting
 //       the jewel in it opens an arched doorway at the end of the west path,
 //       between two lit sconces (metatiles (3, 1) to (5, 2)).
 // - The statue hall, the hall of eleven statues on a checkered floor that the
-//       first relief opens. Kraden searches it for the hidden passage Saturos
+//   first relief opens. Kraden searches it for the hidden passage Saturos
 // and Menardi spoke of (scSolSanctumEntranceKradenSuspectsHiddenPassage). Its
 //       westmost and eastmost statues stand in front of doorways, metatiles
 // (94, 7) and (114, 7), and can be pushed or moved aside: the west one hides a small room with a
 // statue that will not budge, the east one the steps up to the maze (SceneIdSolSanctumMaze) and its
 // chest with the second Small Jewel.
 // - The second relief room, at the maze's far end, where six statues stand in
-//       alcoves across a channel of water. Kraden sees them out of reach
-//       (scSolSanctumEntranceKradenSeesStatuesOutOfReach); Move shifts them.
+//   alcoves across a channel of water. Kraden sees them out of reach
+//   (scSolSanctumEntranceKradenSeesStatuesOutOfReach); Move shifts them.
 // The westmost hides the second minotaur relief, the next a doorway into a
 //       winding passage that leads nowhere. Once a statue is moved, Isaac can
 // jump to its alcove from the stepping stone in the water before it, and push it by hand. Setting
@@ -155,11 +155,11 @@ enum
 
 // Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM: set on entering the second relief
-//       room; the Move rows of the statue hall apply only while it is clear,
-//       which it always is there: only the second room's entrances set it,
-//       every ordinary entrance into the first room clears it, and a return
-//       after a battle comes back by the entrance the party last came in
-//       by, so the condition never stops a Move.
+//   room; the Move rows of the statue hall apply only while it is clear,
+//   which it always is there: only the second room's entrances set it,
+//   every ordinary entrance into the first room clears it, and a return
+//   after a battle comes back by the entrance the party last came in
+//   by, so the condition never stops a Move.
 
 // The metatile behaviors of the metatiles the Sol Sanctum entrance's coord, bg and item cues
 // answer.
@@ -201,8 +201,9 @@ static void scSolSanctumEntranceUpdateEruptionRumbles(void);
 
 Sint32 SolSanctumEntranceRumbleTimer BSS_DATA;
 
-// Returns Sol Entrance's entrances (SceneIdSolEntrance) or Sol Sanctum's
-// (SceneIdSolSanctumReliefs).
+// Returns Sol Entrance's entrances (SceneIdSolEntrance) or Sol
+
+// Sanctum's (SceneIdSolSanctumReliefs).
 const SCENE_ENTRANCE                *scGetEntrances(void)
 {
     Sint16 sceneId = MainRoutineStateWork.next;

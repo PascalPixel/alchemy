@@ -25,8 +25,9 @@ typedef struct FIELD_EFFECT
     FIXED         scaleY;       // 16.16 fixed point, toFIXED(1) full size
     Uint16        radius;       // Actor's; not named by this view
     Uint8         layer;        // Actor's; not named by this view
-    // ACTOR_PRIORITY_FLAG bits: the spawner clears ACTOR_PRIORITY_AUTOMATIC when
-    // EFFECT_USE_PRIORITY sets the sprite's priority.
+    // ACTOR_PRIORITY_FLAG bits: the spawner clears
+
+    // ACTOR_PRIORITY_AUTOMATIC when EFFECT_USE_PRIORITY sets the sprite's priority.
     Uint8         priorityFlags;
     // Actor's velocityX to velocityZ; effects move by velocity instead.
     VECTOR3       objectVelocity;

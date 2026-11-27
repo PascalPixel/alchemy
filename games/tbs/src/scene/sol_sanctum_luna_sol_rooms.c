@@ -14,15 +14,15 @@
 //
 // Kraden's scripts here follow the story flags in order:
 // - scSolSanctumLunaSolRoomsKradenFindsHeartOfSanctum, on the first step onto
-//       the symbol of the sun on the floor (FLAG_SOL_SANCTUM_FOUND). From then
-//       until the way up opens, Retreat is blocked and
-//       scSolSanctumLunaSolRoomsKradenStopsPartyLeaving turns the party back
+//   the symbol of the sun on the floor (FLAG_SOL_SANCTUM_FOUND). From then
+//   until the way up opens, Retreat is blocked and
+//   scSolSanctumLunaSolRoomsKradenStopsPartyLeaving turns the party back
 // from the way out.
 // - scSolSanctumLunaSolRoomsIntroduceSolAndLunaRooms, the first time the party
-//       crosses into the Luna room (FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN).
+//   crosses into the Luna room (FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN).
 // Kraden finds the picture of Luna and stays by it from then on.
 // - Each statue pushed onto a seal in the statue room lights a quarter of the
-//       pictures (FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN to
+//   pictures (FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN to
 // _SOUTHEAST_SEAL_OPEN), and the first one cuts here to Kraden. Before the trap is disarmed, lights
 // fall through the Luna room (scSolSanctumLunaSolRoomsSpringTrap,
 // FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) and every quarter goes dark again. Afterwards the quarter
@@ -31,18 +31,18 @@
 //       FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING). Both take the party back
 // to the statue room by the exit named for the script.
 // - With all four quarters lit, Kraden sees that the picture of Luna has
-//       become Sol (scSolSanctumLunaSolRoomsKradenSeesLunaPictureChange,
-//       FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) and that the floor's symbol has
-//       become Luna (scSolSanctumLunaSolRoomsDiscussFloorSymbolChangingToLuna,
-//       FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN). Searching the symbol then opens
+//   become Sol (scSolSanctumLunaSolRoomsKradenSeesLunaPictureChange,
+//   FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) and that the floor's symbol has
+//   become Luna (scSolSanctumLunaSolRoomsDiscussFloorSymbolChangingToLuna,
+//   FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN). Searching the symbol then opens
 // the floor, and Isaac and Kraden rise through it to the Elemental Star Room
 //       (scSolSanctumLunaSolRoomsRiseToElementalStarRoom,
 //       FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN).
 // - After the eruption, the Wise One sends Isaac and Garet here from the
-//       collapsing Elemental Star Room (SceneIdSolSanctumEruption,
-//       sol_sanctum_eruption.c), and they set off for the way out
-//       (scSolSanctumLunaSolRoomsArriveAfterWiseOnesRescue,
-//       FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN). From then on the rooms rumble.
+//   collapsing Elemental Star Room (SceneIdSolSanctumEruption,
+//   sol_sanctum_eruption.c), and they set off for the way out
+//   (scSolSanctumLunaSolRoomsArriveAfterWiseOnesRescue,
+//   FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN). From then on the rooms rumble.
 //
 // The rooms' colours follow the party. Stepping into the room of Luna fades everything to blue,
 // stepping back into the room of Sol or out into the corridors fades it back, and the passage

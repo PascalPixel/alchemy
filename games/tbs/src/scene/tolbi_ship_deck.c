@@ -14,7 +14,7 @@
 //
 // - at Kalay,
 // - under sail once the first attack is fought off
-//       (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF),
+//   (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF),
 // - while the oars move (FLAG_TOLBI_SHIP_ROWING),
 // - at anchor off Crossbone Isle (FLAG_TOLBI_SHIP_AT_ISLAND),
 // - and at Tolbi (FLAG_TOLBI_SHIP_REACHED_TOLBI).
@@ -27,8 +27,8 @@
 // entrances sail the ship on. In story order:
 //
 // - At Kalay (TOLBI_SHIP_DECK_FROM_KALAY_DOCKS), while the ship waits for
-//       its replacement from Tolbi. Once the tour group has left Kalay
-//       (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking up to the crew
+//   its replacement from Tolbi. Once the tour group has left Kalay
+//   (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking up to the crew
 // (METATILE_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW) plays the captain, Kaja and a
 //       crewman talking over the delay. The captain will sail trusting his
 // anchor charm, and the crewman slips below
@@ -38,13 +38,13 @@
 //       (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) the passengers who promised to
 // row stand on deck.
 // - Setting sail (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY): Kaja
-//       brings word that all is ready ("Preparations... Ready!"), which leads
-//       to the lookout on the mast.
+//   brings word that all is ready ("Preparations... Ready!"), which leads
+//   to the lookout on the mast.
 // - The attacks: sea monsters are sighted
-//       (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS), which leads to
-//       the captain's quarters, where the captain turns the ship. Then monsters
-//       leap aboard (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD), harry
-//       Ouranos and Sean, the warriors bound for Colosso who guard the deck
+//   (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS), which leads to
+//   the captain's quarters, where the captain turns the ship. Then monsters
+//   leap aboard (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD), harry
+//   Ouranos and Sean, the warriors bound for Colosso who guard the deck
 // with Kaja (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK), and drop onto
 //       the deck (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK). Each of
 //       these three leads below to the fight among the oars. At
@@ -53,17 +53,17 @@
 //       TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE, where Kaja thanks Isaac
 //       (FLAG_TOLBI_SHIP_KRAKEN_DEFEATED).
 // - Land: the lookout's call leads either to
-//       TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED and Tolbi, or, by how
-//       the passengers chosen to row pull (tolbi_ship_mast.c), to
-//       TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, where the coast is not
-//       Tolbi's and the crew make for an island. At anchor off it, Crossbone
+//   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED and Tolbi, or, by how
+//   the passengers chosen to row pull (tolbi_ship_mast.c), to
+//   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, where the coast is not
+//   Tolbi's and the crew make for an island. At anchor off it, Crossbone
 // Isle (reached by TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE), Sean asks the
 //       party to scout it (FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED). Back aboard
 //       (TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) the rowers switch sides below and
 // the ship sails on to Tolbi.
 // - At Tolbi (TOLBI_SHIP_DECK_FROM_WORLD_MAP): the passengers who rowed come
-//       up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
-//       leads ashore to Tolbi Docks (SceneIdTolbiDocks).
+//   up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
+//   leads ashore to Tolbi Docks (SceneIdTolbiDocks).
 
 #include "ability_ids.h"
 #include "macros.h"

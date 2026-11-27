@@ -10,32 +10,27 @@
 // messages are "The door is tightly locked." and "Isaac flipped the switch."
 //
 // - SceneIdVaultCavePassage holds the foot of the ladder from Vault
-//       (VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT; Retreat leads there too). Its
-//       right-hand branch ends at a chest that is a Mimic (FIND_MIMIC). Its
-// pool room has a switch on a ledge: flipping it shakes the cave and drains the
-//       pool (scVaultCaveFlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED), and the
-//       water runs down into the floor of the northern room of
-//       SceneIdVaultCaveVambrace, which scInit draws dry until then.
-//       Coming down the ladder from Vault again resets the switch.
+//   (VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT; Retreat leads there too). Its
+//   right-hand branch ends at a chest that is a Mimic (FIND_MIMIC). Its
+// pool room has a switch on a ledge: flipping it shakes the cave and drains the pool
+// (scVaultCaveFlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED), and the water runs down into the floor
+// of the northern room of SceneIdVaultCaveVambrace, which scInit draws dry until then. Coming down
+// the ladder from Vault again resets the switch.
 // - SceneIdVaultCaveVambrace is up the left-hand branch. In the room of two
-//       burning torches, Isaac pushes or Moves the west torch east onto the
-// tile with a fire crest (scVaultCavePushSouthernPillar,
-//       scVaultCaveMoveSouthernPillar): the puzzle chime plays and the wooden
-// gate beyond opens (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). North of it is the room of six
-// puddles, where drops of water fall from the ceiling one at a
-//       time. Frost freezes a puddle into a tall ice pillar whose top Isaac can
-//       leap across, and frozen pillars make a way over the room; a drop
-// landing on one stops on its top. Up on the room's ledge, Whirlwind blows away the ivy over the
-// way to the Vambrace's chest (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY,
-//       kept while the party stays in the cave).
+//   burning torches, Isaac pushes or Moves the west torch east onto the
+// tile with a fire crest (scVaultCavePushSouthernPillar, scVaultCaveMoveSouthernPillar): the puzzle
+// chime plays and the wooden gate beyond opens (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). North of
+// it is the room of six puddles, where drops of water fall from the ceiling one at a time. Frost
+// freezes a puddle into a tall ice pillar whose top Isaac can leap across, and frozen pillars make
+// a way over the room; a drop landing on one stops on its top. Up on the room's ledge, Whirlwind
+// blows away the ivy over the way to the Vambrace's chest (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, kept
+// while the party stays in the cave).
 // - SceneIdVaultCaveMouth leads out to the cave mouth
-//       (VAULT_CAVE_MOUTH_TO_VAULT_REVISIT). In its room of three torches,
-// Isaac must get the lower burning torch north onto the fire crest below the
-//       wooden gate, past the unlit torch in the way, while drops of water fall
-//       on a fixed beat (VaultCaveScheduleTicks). A drop that lands on the
-//       burning torch puts its flame out (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK),
-//       and an unlit torch opens nothing until the room is entered again and
-// the flame comes back.
+//   (VAULT_CAVE_MOUTH_TO_VAULT_REVISIT). In its room of three torches,
+// Isaac must get the lower burning torch north onto the fire crest below the wooden gate, past the
+// unlit torch in the way, while drops of water fall on a fixed beat (VaultCaveScheduleTicks). A
+// drop that lands on the burning torch puts its flame out (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK),
+// and an unlit torch opens nothing until the room is entered again and the flame comes back.
 //
 // Each room has a door that only says it is locked (scVaultCaveShowLockedDoor).
 //
@@ -1186,7 +1181,9 @@ Uint32 VaultCavePassageExits[] = {
     SCENE_EXIT(VAULT_CAVE_PASSAGE_WATER_ROOM_TO_CHEST, VaultCavePassage, VAULT_CAVE_PASSAGE_CHEST_FROM_WATER_ROOM),
     SCENE_EXIT(VAULT_CAVE_PASSAGE_CHEST_TO_WATER_ROOM, VaultCavePassage, VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST),
     SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE),
-    // A second VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, to VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST.
+    // A second VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, to
+
+    // VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST.
     SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, VaultCavePassage, VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST),
     SCENE_EXIT(VAULT_CAVE_PASSAGE_LADDER_TO_CHEST, VaultCavePassage, VAULT_CAVE_PASSAGE_CHEST_FROM_LADDER),
     SCENE_EXIT(VAULT_CAVE_PASSAGE_CHEST_TO_LADDER, VaultCavePassage, VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST),

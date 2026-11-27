@@ -515,7 +515,9 @@ Uint32 McCoyPalaceGroundsExits[] = {
     SCENE_EXITS_END,
 };
 
-// Unused: the getters return it for any scene but SceneIdMcCoyPalaceGrounds, and the overlay serves no other.
+// Unused: the getters return it for any scene but
+
+// SceneIdMcCoyPalaceGrounds, and the overlay serves no other.
 ACTOR_PLACE McCoyPalaceGroundsNoActorPlacements[] = {
     { SCENE_TABLE_END },
 };

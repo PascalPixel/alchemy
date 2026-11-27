@@ -162,8 +162,9 @@ struct SPR;
 // The 152 bytes of IWRAM-resident sound code (0x03000bd8, not the mixer at 0x03007000) that
 // sySoundLoadReverbCode overwrites with a reverb code from IwramSoundReverbCodes.
 extern Uint8 IwramSoundReverbCode[];
-// HEAP_SLOT_SPRITE_ANIMATIONS: the sprite animations (struct SPR_ANIMATION) that
-// fdSpriteAnimationAllocate takes from.
+// HEAP_SLOT_SPRITE_ANIMATIONS: the sprite animations (struct
+
+// SPR_ANIMATION) that fdSpriteAnimationAllocate takes from.
 #define SpriteAnimations ((struct SPR_ANIMATION **)&HeapSlots[HEAP_SLOT_SPRITE_ANIMATIONS])
 // Where the debug text writes next on its 32 by 20 screen in BG0.
 extern Uint16     *DebugTextCursor;

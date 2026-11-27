@@ -21,13 +21,13 @@
 // The gate and the pillars are kept in scene flags, which scInit redraws:
 //
 // - FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate's puddle is frozen,
-//       propping the gate open.
+//   propping the gate open.
 // - FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has lowered the
-//       gate.
+//   gate.
 // - FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
 // - FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen.
 // - FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the puddle in the first
-//       chamber is frozen into a pillar.
+//   chamber is frozen into a pillar.
 //
 // The reunion with Bunza, a Kalay merchant, plays here once (FLAG_LUNPA_CAVE_REUNION_SEEN), after
 // the party has brought Hammet out of Lunpa Fortress (FLAG_DODONPA_LOCKED_UP). On the way back to

@@ -680,8 +680,7 @@ void fdRenderPlaceProjectedSprite(
                 ((Uint32 *)&sprite->image)[1] =
                     (((Uint32 *)&sprite->image)[1] & OAM_ATTR01_KEPT_BITS) | (affine << 8)
                     | OBJ_AFFINE_MATRIX(matrix) |
-                    // OBJ_POSITION as shifts: x's 9 bits into attribute 1, y's
-                    // 8 into attribute 0.
+                    // OBJ_POSITION as shifts: x's 9 bits into attribute 1, y's 8 into attribute 0.
                     ((Uint32)(screen[0] - halfWidth + offsetX) << 23 >> 7)
                     | (Uint8)(screen[1] - halfHeight + offsetY);
                 if (depth == 0)

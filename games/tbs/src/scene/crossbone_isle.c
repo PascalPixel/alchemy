@@ -5,8 +5,8 @@
 // In the order the party meets them:
 //
 // - Crossbone Isle (SceneIdCrossboneIsle), the island. The party lands at
-//       the south (WORLD_MAP_TO_CROSSBONE_ISLE) and walks west to the foot of a
-//       cliff, where Growth on three sprouts, one on each ledge, grows the
+//   the south (WORLD_MAP_TO_CROSSBONE_ISLE) and walks west to the foot of a
+//   cliff, where Growth on three sprouts, one on each ledge, grows the
 // vines that climb it to the top. They stay grown only until the party leaves
 //       the island. Catch takes a Nut from the tree by the waterfall. From the
 //       top, slides lead back down: one to the chest with a coin, one to a log
@@ -17,17 +17,17 @@
 // the top ledge beside the third vine, hides nothing.
 //
 // - Crossbone Isle Cave (SceneIdCrossboneIsleCaveEntrance), the winding
-//       path lit by torches that leads from the cave's mouth down to the first
-//       floor.
+//   path lit by torches that leads from the cave's mouth down to the first
+//   floor.
 //
 // - Crossbone Isle Cave (SceneIdCrossboneIsleFirstFloor to
-//       SceneIdCrossboneIsleNinthFloor), the nine floors, each a hall like the
-//       last. The party comes in at the east end (FLOOR_FROM_PREVIOUS_ROOM) and
-//       leaves down the stairs at the west end (FLOOR_TO_NEXT_ROOM). The middle
-//       of the hall is two raised ledges with a gap between them, each with a
-//       door in the north wall into the floor's side room, and the side room is
-//       the way across. The first time the party walks into the east door
-//       (scCrossboneIsleOpenEastDoor), the monsters behind it attack, a group
+//   SceneIdCrossboneIsleNinthFloor), the nine floors, each a hall like the
+//   last. The party comes in at the east end (FLOOR_FROM_PREVIOUS_ROOM) and
+//   leaves down the stairs at the west end (FLOOR_TO_NEXT_ROOM). The middle
+//   of the hall is two raised ledges with a gap between them, each with a
+//   door in the north wall into the floor's side room, and the side room is
+//   the way across. The first time the party walks into the east door
+//   (scCrossboneIsleOpenEastDoor), the monsters behind it attack, a group
 // of ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS on the first four floors and of
 // ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS on the next five. Back from the battle the door opens
 // and the party walks in, and from then on it simply opens. On the west ledge, at the edge of the
@@ -42,7 +42,7 @@
 //       crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
 //
 // - Crossbone Isle Cave (SceneIdCrossboneIsleFloatingLogs), the ninth
-//       floor's side room: two pools of green water with twelve logs floating
+//   floor's side room: two pools of green water with twelve logs floating
 // on them. Walking onto a log and on along it rolls the log across the pool
 //       with Isaac on top, until the far shore or another log stops it, and he
 // hops from log to log or ashore over a metatile of water. The logs lead to four chests: 999 coins
@@ -50,12 +50,12 @@
 // Life on the ledge between the pools, and the Muramasa in the alcove north of the west pool.
 //
 // - Crossbone Isle Cave (SceneIdCrossboneIslePier), the ledge past the ninth
-//       floor where a wooden pier leads out to the Pirate Ship.
+//   floor where a wooden pier leads out to the Pirate Ship.
 //
 // - Pirate Ship (SceneIdPirateShip), at the bottom. The first chest, at the
-//       foot of the ladder in the middle of the deck, is a Mimic. Climbing the
-//       west stairs onto the raised foredeck sets off the battle with Deadbeard
-//       (scCrossboneIsleFightDeadbeard). Once he is beaten, a chest with the
+//   foot of the ladder in the middle of the deck, is a Mimic. Climbing the
+//   west stairs onto the raised foredeck sets off the battle with Deadbeard
+//   (scCrossboneIsleFightDeadbeard). Once he is beaten, a chest with the
 // Demon Mail stands on the foredeck behind where the battle began.
 //
 // scInit restores each scene as its flags say: the ivy and the vines on the island, each floor's

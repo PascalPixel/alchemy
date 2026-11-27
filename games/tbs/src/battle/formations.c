@@ -4,7 +4,9 @@
 #include "enemy_ids.h"
 
 // clang-format off
-// Each formation by its id, under the areas whose encounter zones (encounter_zones.c) list it or the event battle that starts it; an id left out has no enemies. The Battle Arena's monster battles may draw any formation besides (btFormationSelectLevelMatchedCandidate).
+// Each formation by its id, under the areas whose encounter zones
+
+// (encounter_zones.c) list it or the event battle that starts it; an id left out has no enemies. The Battle Arena's monster battles may draw any formation besides (btFormationSelectLevelMatchedCandidate).
 FORMATION Formations[FORMATION_COUNT] = {
     // Vale, the stormy night
     [1] = {

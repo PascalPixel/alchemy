@@ -1852,7 +1852,9 @@ LATE_DATA ACTOR_PLACE AquaRockSlopesPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-// The Mist Sabre chest's room's actors, in AQUA_ROCK_MIST_SABRE_CHEST_ACTOR_ID's order.
+// The Mist Sabre chest's room's actors, in
+
+// AQUA_ROCK_MIST_SABRE_CHEST_ACTOR_ID's order.
 LATE_DATA ACTOR_PLACE AquaRockMistSabreChestPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WATER_DROP_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1865,7 +1867,9 @@ LATE_DATA ACTOR_PLACE AquaRockMistSabreChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-// The tick counts of the four red moai's streams' cycles (scAquaRockTimeStreams).
+// The tick counts of the four red moai's streams' cycles
+
+// (scAquaRockTimeStreams).
 LATE_DATA Sint32 AquaRockFirstStreamTimer = 0;
 LATE_DATA Sint32 AquaRockSecondStreamTimer = 0;
 LATE_DATA Sint32 AquaRockThirdStreamTimer = 0;
@@ -1895,7 +1899,9 @@ LATE_DATA CUE AquaRockSlopesCues[] = {
     {CUE_TABLE_END},
 };
 
-// The Mist Sabre chest's room's way inside, exits, streams, puddles to Frost, rocks to drop and Water Stone to Douse.
+// The Mist Sabre chest's room's way inside, exits, streams, puddles to
+
+// Frost, rocks to drop and Water Stone to Douse.
 LATE_DATA CUE AquaRockMistSabreChestCues[] = {
     {CUE_STEP, AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST, CONDITION_ALWAYS, SCRIPT_REF(scAquaRockSinkInside)},
     {CUE_EXIT, 2, CONDITION_ALWAYS, AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_A},

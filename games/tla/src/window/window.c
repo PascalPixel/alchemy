@@ -9,14 +9,13 @@
 // which The Lost Age keeps after the settings and Pause menus, where The Broken Seal keeps them in
 // its screens object. Where to start:
 //
-//       Windows         window_windows.c: mnWindowCreate, mnWindowClose;
-//                                       window_borders.c: mnWindowDrawBorder,
-// mnWindowUpdateZooms Messages        window_borders.c: mnMessageOpenWindow,
-// mnFieldMessageShow; window_typing.c: mnMessageUpdateAll; window_decode.c:
-// mnMessageDecode Text drawing    window_sprites.c: mnWindowSpriteUpdateAll;
-//                                       window_text_tiles.c:
-// mnTextDrawStringAsTiles, mnTextDrawString Screens         window_selection.c:
-// mnFieldMenuRun; window_debug.c: mnDebugWarpRun
+// - windows: mnWindowCreate and mnWindowClose (window_windows.c), mnWindowDrawBorder and
+//   mnWindowUpdateZooms (window_borders.c);
+// - messages: mnMessageOpenWindow and mnFieldMessageShow (window_borders.c), mnMessageUpdateAll
+//   (window_typing.c), mnMessageDecode (window_decode.c);
+// - text drawing: mnWindowSpriteUpdateAll (window_sprites.c), mnTextDrawStringAsTiles and
+//   mnTextDrawString (window_text_tiles.c);
+// - screens: mnFieldMenuRun (window_selection.c), mnDebugWarpRun (window_debug.c).
 
 #include "window_internal.h"
 

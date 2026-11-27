@@ -1,7 +1,30 @@
 /* An ability classified for target selection, and a reserve member chosen for a
    party slot. Part of screens.c. */
 
-#include "window/battle_classify_entry_kind.c"
+/* Classifies ability `act`'s effect for target selection: the hint
+   mnBattleTargetRunSelection shows on a party member and starts on (enum
+   BATTLE_TARGET_HINT). */
+Sint32 mnBattleClassifyEntryKind(const ABILITY_DEFINITION *act)
+{
+	Sint32 abilityKind;
+	Sint32 tgtKind;
+
+	tgtKind = TARGET_HINT_NONE;
+	abilityKind = act->flg & ABILITY_FORMULA_MASK;
+	if(abilityKind == ABILITY_FORMULA_HEAL_HP)
+		tgtKind = TARGET_HINT_HP;
+	if(abilityKind == ABILITY_FORMULA_HEAL_PP)
+		tgtKind = TARGET_HINT_PP;
+	if(act->eff == ABILITY_EFFECT_CURE_POISON)
+		tgtKind = TARGET_HINT_CURE_POISON;
+	if(act->eff == ABILITY_EFFECT_RESTORE)
+		tgtKind = TARGET_HINT_RESTORE;
+	if(act->eff == ABILITY_EFFECT_CURE_ALL)
+		tgtKind = TARGET_HINT_CURE_ALL;
+	if(gmBattleIsReviveEffectStub(act->eff) != 0)
+		tgtKind = TARGET_HINT_REVIVE;
+	return tgtKind;
+}
 
 /* Lets the player choose which reserve member takes a party slot in battle,
    previewing each choice in place: left and right cycle through the reserve, A

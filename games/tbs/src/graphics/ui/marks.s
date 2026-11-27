@@ -7,11 +7,11 @@ IconBasePointerTable:
 	.4byte IconCommandFrame, IconCommandFrameRed, IconItemFrame
 	.4byte -1
 IconCommandFrame:
-	.incbin "games/common/graphics/ui/marks/command_frame.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/command_frame.icon4"
 IconCommandFrameRed:
-	.incbin "games/common/graphics/ui/marks/command_frame_red.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/command_frame_red.icon4"
 IconItemFrame:
-	.incbin "games/common/graphics/ui/marks/item_frame.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/item_frame.icon4"
 	.balign 4, 0
 
 @ The equipped, cross and phi marks
@@ -20,16 +20,16 @@ IconMarkPointers:
 	.4byte IconMarkEquip, IconMarkCross, IconMarkCursed
 IconMarkEquip:
 	.ifdef TBS_EDITION_DE
-	.incbin "games/common/graphics/ui/marks/equip_de.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/equip_de.icon4"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "games/common/graphics/ui/marks/equip_de.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/equip_de.icon4"
 	.else
-	.incbin "games/common/graphics/ui/marks/equip.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/equip.icon4"
 	.endif
 	.endif
 IconMarkCross:
-	.incbin "games/common/graphics/ui/marks/cross.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/cross.icon4"
 IconMarkCursed:
 	.incbin "games/tbs/src/graphics/ui/marks/cursed.icon4"
 	.balign 4, 0
@@ -42,31 +42,31 @@ IconDigitPointers:
 	.4byte IconTens1, IconTens2, IconTens3
 	.4byte -1
 IconDigit0:
-	.incbin "games/common/graphics/ui/marks/digit_0.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_0.icon4"
 IconDigit1:
-	.incbin "games/common/graphics/ui/marks/digit_1.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_1.icon4"
 IconDigit2:
-	.incbin "games/common/graphics/ui/marks/digit_2.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_2.icon4"
 IconDigit3:
-	.incbin "games/common/graphics/ui/marks/digit_3.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_3.icon4"
 IconDigit4:
-	.incbin "games/common/graphics/ui/marks/digit_4.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_4.icon4"
 IconDigit5:
-	.incbin "games/common/graphics/ui/marks/digit_5.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_5.icon4"
 IconDigit6:
-	.incbin "games/common/graphics/ui/marks/digit_6.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_6.icon4"
 IconDigit7:
-	.incbin "games/common/graphics/ui/marks/digit_7.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_7.icon4"
 IconDigit8:
-	.incbin "games/common/graphics/ui/marks/digit_8.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_8.icon4"
 IconDigit9:
-	.incbin "games/common/graphics/ui/marks/digit_9.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/digit_9.icon4"
 IconTens1:
-	.incbin "games/common/graphics/ui/marks/tens_1.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/tens_1.icon4"
 IconTens2:
-	.incbin "games/common/graphics/ui/marks/tens_2.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/tens_2.icon4"
 IconTens3:
-	.incbin "games/common/graphics/ui/marks/tens_3.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/tens_3.icon4"
 	.balign 4, 0
 
 	.global IconOverlayPointerTable
@@ -75,5 +75,5 @@ IconOverlayPointerTable:
 	.4byte IconOverlay
 	.endr
 IconOverlay:
-	.incbin "games/common/graphics/ui/marks/overlay.icon4"
+	.incbin "games/tbs/src/graphics/ui/marks/overlay.icon4"
 	.balign 4, 0

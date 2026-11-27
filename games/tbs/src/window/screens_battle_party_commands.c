@@ -6,7 +6,31 @@
 /* The priority an action takes when its Agility roll runs past 32767. */
 #define OVERFLOWED_PRIORITY 2000
 
-#include "window/battle_classify_entry_kind.c"
+/* Classifies ability `act` for the target selection (the `kind` of
+   mnBattleTargetRunSelection, BATTLE_TARGET_HINT), which shows what it would do
+   on a party member and, for the curing and reviving hints, starts on one who
+   needs it. */
+Sint32 mnBattleClassifyEntryKind(const ABILITY_DEFINITION *act)
+{
+	Sint32 abilityKind;
+	Sint32 tgtKind;
+
+	tgtKind = TARGET_HINT_NONE;
+	abilityKind = act->flg & ABILITY_FORMULA_MASK;
+	if(abilityKind == ABILITY_FORMULA_HEAL_HP)
+		tgtKind = TARGET_HINT_HP;
+	if(abilityKind == ABILITY_FORMULA_HEAL_PP)
+		tgtKind = TARGET_HINT_PP;
+	if(act->eff == ABILITY_EFFECT_CURE_POISON)
+		tgtKind = TARGET_HINT_CURE_POISON;
+	if(act->eff == ABILITY_EFFECT_RESTORE)
+		tgtKind = TARGET_HINT_RESTORE;
+	if(act->eff == ABILITY_EFFECT_CURE_ALL)
+		tgtKind = TARGET_HINT_CURE_ALL;
+	if(gmBattleIsReviveEffectStub(act->eff) != 0)
+		tgtKind = TARGET_HINT_REVIVE;
+	return tgtKind;
+}
 
 /* Collects the party's commands for a turn into `commands`, one for each of the
    `commandCnt` units in `actors` (a party member with two actions is listed

@@ -148,7 +148,11 @@ void btEffectRunStormBreathStrong(BATTLE_EFFECT_PARM *args)
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_STORM_BREATH_STRONG);
 }
 
-#include "battle_effect/effect_evil_blessing.c"
+/* Abilities: Evil Blessing. */
+void btEffectRunEvilBlessing(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunBurstShower(args, BURST_SHOWER_MODE_FACES);
+}
 
 /* Abilities: Darksol Gasp. */
 void btEffectRunDarksolGasp(BATTLE_EFFECT_PARM *args)
@@ -156,7 +160,11 @@ void btEffectRunDarksolGasp(BATTLE_EFFECT_PARM *args)
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_DARKSOL_GASP);
 }
 
-#include "battle_effect/effect_deadly_gas.c"
+/* Abilities: Deadly Gas. */
+void btEffectRunDeadlyGas(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunBurstShower(args, BURST_SHOWER_MODE_DJINNI);
+}
 
 /* Abilities: Petra. */
 void btEffectRunPetra(BATTLE_EFFECT_PARM *args)

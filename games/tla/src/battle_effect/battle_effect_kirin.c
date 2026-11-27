@@ -419,4 +419,15 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 #undef KIRIN_BURSTS_FREED
 #undef KIRIN_BURSTS_DRAWN
 
-#include "battle_effect/effect_bg2_affine_scale.c"
+/* Sets BG2's horizontal scale back to one texel a pixel above the stretched
+   lines. */
+void btEffectResetBg2Pa(void)
+{
+	REG_BG2PA = Q_8_8(1);
+}
+
+/* Stretches BG2 to twice its width from the current line down. */
+void btEffectSetBg2AffineScaleHalf(void)
+{
+	REG_BG2PA = Q_8_8(0.5);
+}

@@ -637,7 +637,23 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 #undef PROCNE_DEPTH_FAR
 #undef PROCNE_SPARK_SIZE
 
-#include "battle_effect/effect_dragon_driver_tiamat.c"
+/* Fireballs rain on the targets and a blast of fire sweeps across them, in the
+   LightningBolt colours.
+
+   Abilities: Dragon Driver. */
+void btEffectRunDragonDriver(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunDragonFire(args, DRAGON_FIRE_DRAGON_DRIVER);
+}
+
+/* Tiamat lands while fireballs rain on the targets, breathes fire across them,
+   and bursts away.
+
+   Abilities: Tiamat. */
+void btEffectRunTiamat(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunDragonFire(args, DRAGON_FIRE_TIAMAT);
+}
 
 #define DRAGON_FIRE_TICKS		   208
 /* The breath of fire, then the flash that ends it. */

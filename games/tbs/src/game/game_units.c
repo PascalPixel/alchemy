@@ -45,7 +45,13 @@ typedef struct STAT_STATE {
 /* The distance between `a` and `b`, |a - b|. */
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-#include "game/restart_quest.c"
+/* Starts a new game: clears the main routine's state and restarts at the
+   opening. */
+void gmRestartQuest(void)
+{
+	gmMainRoutineStateInitDefaults();
+	gmMainRoutineRunStub(0);
+}
 
 /* Returns a side's Djinn recovery table, its standby Djinn and their turns to
    recover: the party's (DJINN_RECOVERY_PARTY), kept in MainRoutineStateWork, or

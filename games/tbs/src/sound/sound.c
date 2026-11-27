@@ -248,7 +248,45 @@ void sySndInit(void)
 		MusicPlayerLastSound[i] = 0;
 }
 
-#include "sound/snd_bgm_tempo_and_volume.c"
+/* Plays the music at a tempo scale at once, BGM_UNITY_SCALE its own; its pitch
+   stays. The Lemurian ship slows it to fifteen sixteenths. */
+void sySndSetBGMTempo(Uint16 tempoScale)
+{
+	m4aMPlayTempoControl(&MPlayInfoBGM, tempoScale);
+}
+
+/* Unused: transposes the music's tracks 0 to 7 by `pitch`, in 1/256 semitone.
+   Only a bare stub, which no code names, leads here. */
+void sySndSetBGMPitch(Uint16 pitch)
+{
+	m4aMPlayPitchControl(&MPlayInfoBGM, TRACKS_ALL, pitch);
+}
+
+/* Unused: ramps the music's tempo and pitch together toward `tgtScale`
+   (BGM_UNITY_SCALE its own) by `step` a frame. Only a bare stub, which no code
+   names, leads here. */
+void sySndSetBGMTempoPitchTarget(Uint16 tgtScale, Uint16 step)
+{
+	BgmTempoPitchTarget = tgtScale;
+	BgmTempoPitchStep = step;
+}
+
+/* Unused: sets the music's volume at once (BGM_UNITY_SCALE full), ending any
+   fade toward another. Only a bare stub, which no code names, leads here. */
+void sySndSetBGMVolume(Sint16 volume)
+{
+	m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, volume);
+	BgmVolumeTarget = volume;
+	BgmVolume = volume;
+}
+
+/* Unused: fades the music toward `tgtVolume` (BGM_UNITY_SCALE full) by
+   `step` a frame. Only a bare stub, which no code names, leads here. */
+void sySndSetBGMVolumeTarget(Uint16 tgtVolume, Uint16 step)
+{
+	BgmVolumeTarget = tgtVolume;
+	BgmVolumeStep = step;
+}
 
 /* Returns nonzero while a jingle holds the music: from its start until its
    player falls silent and the music begins to fade back in. */
@@ -257,7 +295,19 @@ Sint32 sySndGetBGMRestoreDelay(void)
 	return BgmRestoreDelay;
 }
 
-#include "sound/snd_music_players.c"
+/* Unused: stops every music player where it is, for sySndResumeAllMusicPlayers
+   to go on from. Only a bare stub, which no code names, leads here. */
+void sySndStopAllMusicPlayers(void)
+{
+	m4aMPlayAllStop();
+}
+
+/* Unused: resumes every music player from where sySndStopAllMusicPlayers
+   stopped it. Only a bare stub, which no code names, leads here. */
+void sySndResumeAllMusicPlayers(void)
+{
+	m4aMPlayAllContinue();
+}
 
 /* Unused: sets SoundCommandMaskWork, or with SOUND_COMMAND_MASK_TOGGLE flips
    the bits given; nothing reads the mask. Only a bare stub, which no code
@@ -280,7 +330,19 @@ Sint32 sySndGetCurrentBGM(void)
 	return CurrentBgm;
 }
 
-#include "sound/snd_wait_for_bgm_restore.c"
+/* Waits until the music has begun to come back after a jingle, giving up after
+   BGM_WAIT_TIMEOUT_TICKS. */
+void sySndWaitForBGMRestore(void)
+{
+	Sint32 ticksWaited = 0;
+
+	do {
+		if(BgmRestoreDelay == 0)
+			break;
+		sySynch(1);
+		ticksWaited++;
+	} while(ticksWaited < BGM_WAIT_TIMEOUT_TICKS);
+}
 
 /* Unused: returns the reverb code sySndPlay gives music `command`:
    SOUND_REVERB_LONG for MUS_THE_BROKEN_SEAL_ENDING, MUS_MAIN_THEME_TITLE and

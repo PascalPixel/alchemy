@@ -7,7 +7,21 @@ typedef enum SWIRL_SWIPE_MODE {
 	SWIRL_SWIPE_SPINNING_BEAT /* magenta; the target is thrown up, 74 ticks */
 } SWIRL_SWIPE_MODE;
 
-#include "battle_effect/effect_beats.c"
+/* A lime swirl sweeps across the first target and knocks it back.
+
+   Abilities: Poison Beat. */
+void btEffectRunPoisonBeat(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunSwirlSwipe(args, SWIRL_SWIPE_POISON_BEAT);
+}
+
+/* A magenta swirl sweeps across the first target and throws it into the air.
+
+   Abilities: Spinning Beat. */
+void btEffectRunSpinningBeat(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunSwirlSwipe(args, SWIRL_SWIPE_SPINNING_BEAT);
+}
 
 /* A swirl sweeps across the first target from the user's side. */
 void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)

@@ -67,7 +67,23 @@ void mnTitleBob(WINDOW_SPR *obj)
 	obj->spr.oam.y = value;
 }
 
-#include "window/command_icon_load.c"
+/* Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB) into
+   VRAM slot `slot`, remapping the colours of its top three rows of tiles by
+   table when `remap` is nonzero. */
+void mnCommandIconLoad(Sint32 icon, Sint32 slot, Sint32 remap)
+{
+	Sint32	size = COMMAND_ICON_BYTES;
+	void   *buf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, size);
+	Uint16 *ofsTbl = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
+
+	if(slot < VRAM_CACHE_ENTRY_COUNT) {
+		syDecompressByteLZ((void *)((Uint32)ofsTbl + ofsTbl[icon]), buf);
+		if(remap != 0)
+			fdSprColRemapPixelsStub(buf, 3 * COMMAND_ICON_TILE_ROW_BYTES);
+		syVRAMCacheLoad(slot, size, buf);
+		syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
+	}
+}
 
 /* Shows command icon `icon` (see mnCommandIconLoad) as a 32x32 256-colour
    sprite at (x, y) in `win`, at depth OAM_DEPTH_FRONT - 4. Returns NULL when
@@ -168,7 +184,67 @@ UNREAD_RESULT mnRangeIconBuildTiles(void)
 	}
 }
 
-#include "window/range_icon_draw.c"
+/* Draws range icon `pattern` across tiles (x, y) to (x + 2, y) of `win`'s
+   interior: its end tile mirrored, its centre tile and its end tile, in the UI
+   palette. */
+UNREAD_RESULT mnRangeIconDraw(
+	WINDOW *win, Sint32 x, Sint32 y, Sint32 pattern, Sint32 unused)
+{
+	Sint32 patternOfs = pattern * 2;
+	Sint32 rightTile = patternOfs + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
+
+	mnWindowSetTilemapEntry(win, TILE_HFLIP | rightTile, x, y, 0);
+	mnWindowSetTilemapEntry(
+		win, patternOfs + WINDOW_TILE(RANGE_ICON_FIRST_TILE), x + 1, y, 0);
+	mnWindowSetTilemapEntry(win, rightTile, x + 2, y, 0);
+}
+
+/* A 4bpp tile row's eighth pixel, in the top four bits of its word. */
+#define ROW_LAST_PIXEL_SHIFT 28
+
+/* Merges two 8x8 4bpp tiles row by row into `output`: `second` moved `shift`
+   pixels (right when positive, left when negative), drawn over `first`, which
+   shows wherever the moved pixel is colour 0. */
+void mnGraphicsMergeShiftedTileRows(
+	Uint32 *first, Uint32 *second, Uint32 *output, Sint32 shift)
+{
+	Sint32 oppositeShift;
+	Sint32 rightShift;
+	Sint32 leftShift;
+	Sint32 row;
+
+	oppositeShift = -shift;
+	row = 0;
+	rightShift = oppositeShift * 4;
+	leftShift = shift * 4;
+
+	for(; row <= 7; row++) {
+		Uint32 result;
+		Uint32 shifted;
+		Uint32 fallback;
+		Sint32 pixel;
+
+		shifted = *second++;
+		result = 0;
+		fallback = *first++;
+		if(shift < 0)
+			shifted >>= rightShift;
+		else
+			shifted <<= leftShift;
+
+		for(pixel = 0; pixel < 8; pixel++) {
+			result <<= 4;
+			if(shifted >= 1u << ROW_LAST_PIXEL_SHIFT)
+				result += shifted >> ROW_LAST_PIXEL_SHIFT;
+			else
+				result += fallback >> ROW_LAST_PIXEL_SHIFT;
+			shifted <<= 4;
+			fallback <<= 4;
+		}
+
+		*output++ = result;
+	}
+}
 
 /* Draws the two page arrows (PageArrowTiles) into the two tiles at VRAM address
    `ofs`, sliding outward: the left arrow 2 or 3 pixels to the left, the
@@ -286,7 +362,39 @@ Sint32 mnMiscIconLoadIntoSlot(Sint32 resource, Sint32 idx)
 	return result;
 }
 
-#include "window/icon_load_into_slot.c"
+/* Builds the icon of inventory item `resource` (the count above one and both
+   marks) in a transfer block taken from HEAP_SLOT_ICON_TRANSFER, reloads VRAM
+   cache entry `idx` with it and returns the entry's first tile. */
+Sint32 mnItemIconLoadIntoSlot(Sint32 resource, Sint32 idx)
+{
+	Sint32		   result;
+	ICON_TRANSFER *state;
+
+	state = syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
+	mnItemIconCompose(
+		resource, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN);
+	result = syVRAMCacheReload(idx, (Sint32)state->tiles);
+	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
+	return result;
+}
+
+/* Builds the icon of ability `resource` in a transfer block taken from
+   HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `idx` with it and returns
+   the entry's first tile. */
+Sint32 mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 idx)
+{
+	Sint32		   tile;
+	Sint32		   slot;
+	Sint32		   result;
+	ICON_TRANSFER *state;
+
+	state = syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
+	slot = idx;
+	mnAbilityBuildIconTiles(resource, 0, &slot, &tile, 1);
+	result = syVRAMCacheReload(idx, (Sint32)state->tiles);
+	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
+	return result;
+}
 
 /* Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any higher
    value shows Isaac's) into VRAM cache entry `cacheSlot`, in PORTRAIT_PALETTE,
@@ -407,7 +515,45 @@ void mnBattleCommandRowLoadIconTiles(
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 }
 
-#include "window/battle_command_row.c"
+/* Loads the command row's icon `idx` as command icon `icon`: as BG1 tiles
+   from tile index * COMMAND_ICON_BG_TILES (mnBattleCommandRowLoadIconTiles),
+   and into the row's shared VRAM cache entry for its 32x32 sprite, which
+   mnBattleCommandRowRun shows only for the selected icon. */
+void mnBattleCommandRowLoadIcon(
+	BATTLE_COMMAND_ROW_STATE *state, Sint32 idx, Uint32 icon)
+{
+	BATTLE_COMMAND_ROW_ICON *entry = &state->entries[idx];
+
+	mnBattleCommandRowLoadIconTiles(
+		&state->pal, icon, idx * COMMAND_ICON_BG_TILES);
+	state->entries[idx].kind = icon;
+	MENU_SPR_INIT(entry->spr, OBJ_SIZE_32X32 | OBJ_256_COLORS);
+	entry->spr.oam.f.tile =
+		mnCommandIconReloadSlot(state->entries[idx].resource, icon);
+}
+
+/* Puts BG1 behind the other layers (priority 3). The command row runs it as an
+   event each VBlank, in the VBlank pass, with mnCommandRowPutBg1InFront at line
+   COMMAND_ROW_TOP * 8, so that BG1 is behind above the strip and in front from
+   it down. */
+void mnCommandRowPutBg1Behind(void)
+{
+	Uint32 value = REG_BG1CNT;
+
+	value &= ~BGCNT_PRIORITY(3);
+	value |= BGCNT_PRIORITY(3);
+	REG_BG1CNT = value;
+}
+
+/* Brings BG1 to the front (priority 0): the command row's VCount handler, run
+   at line COMMAND_ROW_TOP * 8, the top of its icon strip. */
+void mnCommandRowPutBg1InFront(void)
+{
+	Uint32 value = REG_BG1CNT;
+
+	value &= ~BGCNT_PRIORITY(3);
+	REG_BG1CNT = value;
+}
 
 /* Clears BG0's vertical scroll (REG_BG0VOFS) and installs
    mnCommandRowPutBg1InFront, which clears BG1's priority bits, as the VCount

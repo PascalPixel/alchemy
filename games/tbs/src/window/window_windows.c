@@ -11,7 +11,39 @@
 #define TILEMAP_BAND_SIZE (4 * BG_SCREEN_WIDTH * sizeof(Uint16))
 #define TILEMAP_DIRTY_ALL ((1 << (TILEMAP_BANDS + 1)) - 1)
 
-#include "window/window_spr_free_list.c"
+/* Takes the first window sprite from the free list, or returns NULL when every
+   sprite is in use. */
+WINDOW_SPR *mnWindowSprAcquireFree(void)
+{
+	WIN_STATE  *state = WINDOW_STATE;
+	WINDOW_SPR *out = state->freeSprs.head;
+
+	if(out != NULL) {
+		/* Taking the last sprite leaves the list empty. */
+		if(out->next == NULL)
+			state->freeSprs.tailLink = &state->freeSprs.head;
+		state->freeSprs.head = out->next;
+		out->next = NULL;
+	}
+	return out;
+}
+
+/* Returns a window sprite to the end of the free list. A sprite from outside
+   the state block's pool is ignored. */
+void mnWindowSprReleaseFree(WINDOW_SPR *out)
+{
+	WIN_STATE *state = WINDOW_STATE;
+
+	/* freeSprs follows the pool directly, so its address is the pool's end. */
+	if((Uint32)out >= (Uint32)state->sprs &&
+		(Uint32)out < (Uint32)&state->freeSprs.head) {
+		WINDOW_SPR **tail = state->freeSprs.tailLink;
+
+		state->freeSprs.tailLink = &out->next;
+		*tail = out;
+		out->next = NULL;
+	}
+}
 
 /* Links all 64 window sprites of the pool into the free list. */
 void mnWindowSprInitFreeList(void)
@@ -366,7 +398,44 @@ void mnWindowClose(WINDOW *win, Sint32 instant)
 	}
 }
 
-#include "window/window_spr_redraw.c"
+/* Clears a window's contents: redraws it empty and releases the render window
+   sprites it carries. A text canvas window is left alone. */
+void mnWindowSprPrepareForRedraw(WINDOW *win)
+{
+	if(!(WINDOW_FLAG_TEXT_CANVAS & win->flg)) {
+		mnWindowSprRedrawSavedRect(win);
+		mnWindowSprClearList(win);
+	}
+}
+
+/* Redraws a window empty, its border and fill, at its current rectangle. */
+void mnWindowSprRedrawSavedRect(WINDOW *win)
+{
+	mnWindowDrawBorder(win->x, win->y, win->width, win->height);
+}
+
+/* Releases every window sprite in a list and empties it. sprites is the list,
+   or a window (whose sprite list comes first); NULL is ignored. */
+void mnWindowSprClearList(void *sprs)
+{
+	WINDOW_SPR_LIST *list = sprs;
+	WINDOW_SPR		*node;
+	WINDOW_SPR		*next;
+
+	next = NULL;
+	if(list != NULL) {
+		node = list->head;
+		/* Detach the chain before returning its nodes to the shared free
+		   pool. */
+		list->tailLink = &list->head;
+		list->head = next;
+		while(node != NULL) {
+			next = node->next;
+			mnWindowSprRelease(node);
+			node = next;
+		}
+	}
+}
 
 /* Clears an area of a window's interior to the window fill. left, top, right
    and bottom are pixels inside the window, and the area covers every tile they
@@ -421,7 +490,23 @@ UNUSED void mnWindowSprUpdateListTail(WINDOW_SPR_LIST *list)
 	list->tailLink = tail;
 }
 
-#include "window/window_spr_append_to_list.c"
+/* Adds a window sprite to the end of a list; NULL lists are ignored. */
+void mnWindowSprAppendToList(WINDOW_SPR_LIST *list, WINDOW_SPR *node)
+{
+	if(list != NULL) {
+		*list->tailLink = node;
+		/* UB: the new tail is stored as node (next is its first member) through
+		   a WINDOW_SPR * view of tailLink, which keeps both stores in one alias
+		   set and in this order. */
+#if FIX_TYPE_PUNNING
+		/* Store the address of next through the tail link's actual pointer
+		   type. */
+		list->tailLink = &node->next;
+#else
+		*(WINDOW_SPR **)&list->tailLink = node;
+#endif
+	}
+}
 
 /* Frees a window sprite: returns it to the free list, releases its VRAM cache
    entry unless it is a glyph, and for a portrait frees its palette slot too. */
@@ -539,7 +624,18 @@ MESSAGE *mnBattleMessageCont(WINDOW *win, Sint32 entry, Sint32 keepPos)
 	return selected;
 }
 
-#include "window/text_canvas_clear.c"
+/* Clears the text canvas to transparent. */
+Sint32 mnTextClearCanvas(void)
+{
+	return syWordsFill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
+}
+
+/* Fills the text canvas with the window background colour. */
+Sint32 mnTextFillCanvasBackground(void)
+{
+	return syWordsFill(
+		TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, TEXT_CANVAS_BACKGROUND_WORD);
+}
 
 /* Resets the pen and text style of the first idle message, clearing the canvas
    when the message still has a window. */
@@ -568,7 +664,16 @@ void mnMessageResetIdle(void)
 	}
 }
 
-#include "window/message_apply_style.c"
+/* Sets the colour, style and line spacing glyphs are drawn in to the
+   message's. */
+void mnMessageApplyStyle(MESSAGE *msg)
+{
+	WIN_STATE *state = WINDOW_STATE;
+
+	state->colour = msg->colour;
+	state->outline = msg->outline;
+	state->lineSpacing = msg->lineSpacing;
+}
 
 /* Starts a message scrolling its canvas up a line: 12 pixel rows, 6 a tick
    over two ticks (mnMessageType, mnTextScrollCanvasUp), during which the

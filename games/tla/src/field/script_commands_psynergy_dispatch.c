@@ -21,7 +21,20 @@ void fdPsynergyParchOnTarget(Sint32 tgtId);
 void fdPsynergyBurstOnTarget(Sint32 tgtId);
 void fdPsynergyPoundOnTarget(Sint32 tgtId);
 
-#include "field/psynergy_run_handler.c"
+/* Runs one step of the scene's field Psynergy: cast with no target, cast on the
+   chosen target (secondActorId), Mind Read's end, or what a lasting Psynergy
+   does when it ends. */
+void fdPsynergyRunHandler(Sint32 kind)
+{
+	if(kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
+		fdPsynergyRun();
+	else if(kind == FIELD_PSYNERGY_HANDLER_ON_TARGET)
+		fdPsynergyDispatch();
+	else if(kind == FIELD_PSYNERGY_HANDLER_FINISH)
+		fdPsynergyFinishMindRead();
+	else if(kind == FIELD_PSYNERGY_HANDLER_EXTRA)
+		fdPsynergyRunExtraHandler();
+}
 
 /* Runs the field Psynergy animation the scene names, with no target chosen yet:
    each kind runs its effect to the end. */

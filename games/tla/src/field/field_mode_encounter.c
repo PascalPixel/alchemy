@@ -212,7 +212,13 @@ Sint32 fdEncounterRollMapStep(Uint32 terrain, FIXED steps)
 	return fdEncounterCountStepsAndSelectFormation(zone[terrain], steps);
 }
 
-#include "field/encounter_roll_world_map.c"
+/* Rolls a random battle on the World Map, taking the zone from the metatile at
+   pos. Returns the formation to fight, or 0 for no battle. */
+Sint32 fdEncounterRollWorldMap(Sint32 pos, FIXED steps)
+{
+	return fdEncounterCountStepsAndSelectFormation(
+		fdEncounterResolveWorldMapZoneAndBackdrop((void *)pos), steps);
+}
 
 /* Returns the formation in slot (0 to 7) of zone. */
 Uint16 fdEncounterGetFormationAtSlot(Sint32 zone, Sint32 slot)
@@ -369,7 +375,11 @@ void fdWorldMapSetReturnLeavingScene(Sint32 scene, Sint32 entrance)
 	}
 }
 
-#include "field/battle_background_get_selected.c"
+/* Returns the battle background chosen for the current scene. */
+Sint16 fdBattleBackgroundGetSelected(void)
+{
+	return MainRoutineStateWork.battleBg;
+}
 
 /* A battle background rule's word (scene_rules.c's BATTLE_BACKGROUND): bit 31
    marks a battle background, its resource id below; any other word is a

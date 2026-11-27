@@ -37,11 +37,6 @@
  * more than 1,500 are alarms, so that someone looks whether it holds more
  * than one thing.
  *
- * SHARED PARTS. A .c file under games/common, outside the development kit's
- * sdk/, is a part both games share: functions written the same in both, which
- * a C file of each game includes where they stand, so that they stay in that
- * game's own object. Each part is included by a C file of each game.
- *
  * TABLES. A .tsv file is rows of cells divided by tabs and ended by newlines.
  * Its first line is the names of its columns and nothing else: each name is
  * lower-case letters, digits and underscores, with no type after a colon, and
@@ -370,49 +365,6 @@ static int byName(const void *a, const void *b) {
   return one->width - other->width;
 }
 
-/* The C files of games/common outside sdk/, and the C files of each game. */
-static char **parts, **gameFiles;
-static size_t partCount, gameFileCount;
-
-static void note(char ***list, size_t *count, const char *path) {
-  *list = realloc(*list, ++*count * sizeof(**list));
-  if (!*list || !((*list)[*count - 1] = strdup(path)))
-    exit(2);
-}
-
-/* Each shared part is included by a C file of each game. */
-static void checkParts(void) {
-  static const char *const GAMES[] = {"tbs", "tla"};
-  bool *included = calloc(partCount * COUNT(GAMES) + 1, sizeof(*included));
-  if (!included)
-    exit(2);
-  for (size_t i = 0; i < gameFileCount; i++) {
-    size_t size, game = strncmp(gameFiles[i], "games/tbs/", 10) ? 1 : 0;
-    char *text = readText(gameFiles[i], &size);
-    if (!text)
-      continue;
-    for (char *at = strstr(text, "#include \""); at;
-         at = strstr(at + 1, "#include \"")) {
-      const char *name = at + 10, *end = strchr(name, '"');
-      if (!end)
-        break;
-      for (size_t j = 0; j < partCount; j++) {
-        const char *part = parts[j] + strlen("games/common/");
-        if (strlen(part) == (size_t)(end - name) &&
-            !strncmp(part, name, (size_t)(end - name)))
-          included[j * COUNT(GAMES) + game] = true;
-      }
-    }
-    free(text);
-  }
-  for (size_t j = 0; j < partCount; j++)
-    for (size_t game = 0; game < COUNT(GAMES); game++)
-      if (!included[j * COUNT(GAMES) + game])
-        wrong(parts[j], "is a shared part no C file of %s includes",
-              GAMES[game]);
-  free(included);
-}
-
 static void checkNames(void) {
   if (numberedCount)
     qsort(numbered, numberedCount, sizeof(*numbered), byName);
@@ -467,14 +419,6 @@ int main(int argc, char **argv) {
       continue;
     files++;
     checkKind(path);
-    size_t pathLength = strlen(path);
-    bool isC = pathLength > 2 && !strcmp(path + pathLength - 2, ".c");
-    if (isC && !strncmp(path, "games/common/", 13) &&
-        strncmp(path, "games/common/sdk/", 17))
-      note(&parts, &partCount, path);
-    else if (isC && (!strncmp(path, "games/tbs/", 10) ||
-                     !strncmp(path, "games/tla/", 10)))
-      note(&gameFiles, &gameFileCount, path);
     size_t length = strlen(path);
     noteName(path, length, false);
     for (size_t i = 6; i < length; i++)
@@ -482,7 +426,6 @@ int main(int argc, char **argv) {
         noteName(path, i, true);
   }
   checkNames();
-  checkParts();
   for (size_t i = 0; i < tallyCount; i++)
     if (tallies[i].pending || alarms)
       printf("ags-check: %s: %d x %s\n",

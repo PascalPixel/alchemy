@@ -37,7 +37,10 @@ Sint32 btUnitGetPartyAttackEffect(Sint32 characterId)
 	return effect;
 }
 
-#include "battle/turn_start_no_operation.c"
+/* Called by btRun at the start of every turn; does nothing. */
+void btTurnStartNoOperation(void)
+{
+}
 
 /* The plan of the extra action Daedalus queues for the turn's end
    (COMMAND_DAEDALUS): ABILITY_DAEDALUS_STRIKE from a random unit of the queuing

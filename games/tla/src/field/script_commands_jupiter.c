@@ -75,7 +75,30 @@ void fdDjinnRunJupiterJoinEffect(Sint32 djinniId)
 	fdEffectReleaseSlots();
 }
 
-#include "field/effect_pulse_and_ramp.c"
+/* Per-tick update: makes an actor pulse, switching its scale between the two
+   values of FieldEffectPulseScales every 4 ticks. */
+void fdEffectPulseActorScale(ACTOR *actor)
+{
+	const Uint32 *tbl = FieldEffectPulseScales;
+	Uint32		  idx = ((Uint32)FrameCount >> 2) & 1;
+	Uint32		  scale = tbl[idx];
+
+	actor->scaleX = scale;
+	actor->scaleY = scale;
+}
+
+/* Per-tick update: spins an actor ever faster, from 1/16 turn a tick up to
+   just over 1/8 (DEGtoANG(45) + 64), 80 more each tick for 52 ticks. */
+void fdEffectAdvanceAngWithRamp(ACTOR *actor)
+{
+	Uint32 step;
+
+	step = actor->spinRampFrm * 80;
+	actor->facing = actor->facing + step + FACING_STEP;
+	if(step < FACING_STEP) {
+		actor->spinRampFrm = actor->spinRampFrm + 1;
+	}
+}
 
 /* Per-tick update: spins an actor 1/8 turn and shrinks it by 7/1024 a tick,
    releasing it once its scale falls below 3/16, 119 ticks from full size. The

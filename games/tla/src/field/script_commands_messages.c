@@ -265,7 +265,10 @@ Sint32 fdScriptAskYesNoAndShowResponse(Sint32 speaker, Sint32 flg)
 	return result;
 }
 
-#include "field/script_no_operation_update.c"
+/* An empty hook; it does nothing in the released game. */
+void fdScriptNoOperationUpdate(void)
+{
+}
 
 /* fdScriptShowSpeakerMessage and fdScriptShowMessageAtPos move a position
    MESSAGE_POSITION_SHIFT away from the middle row of a MESSAGE_POSITION_WIDTH
@@ -321,7 +324,13 @@ void fdScriptShowSpeakerMessage(Sint32 speaker)
 	state->msg++;
 }
 
-#include "field/script_forward_show_message_at_pos.c"
+/* Unused: nothing calls it; forwards its arguments to
+   fdScriptShowMessageAtPos. */
+void fdScriptForwardShowMessageAtPos(
+	Sint32 unusedA, Sint32 unusedB, Sint32 x, Sint32 y)
+{
+	fdScriptShowMessageAtPos(unusedA, unusedB, x, y);
+}
 
 /* Unused: nothing calls it. It would open the script's message at (x, y), wait
    for it and advance the message index; its units are as unknown as
@@ -354,7 +363,15 @@ void fdScriptShowMessageAtPos(
 	state->msg++;
 }
 
-#include "field/actor_close_portrait.c"
+/* Closes the portrait of an actor's sprite, if it has one. */
+void fdActorClosePortrait(Sint32 actorId)
+{
+	Sint32 spr;
+
+	spr = fdActorGetSprById(actorId);
+	if(spr != -1)
+		mnPortraitCloseWindowStub(spr);
+}
 
 /* The script command "show two messages and wait": two actors speak at once,
    each message at its own (x, y) with its portrait at (portraitX, portraitY),

@@ -32,11 +32,29 @@ void btEffectBuildCanvasBlitters(Sint32 flip, BLITTER_PAIR out)
 	}
 }
 
-#include "battle_effect/effect_berserk.c"
+/* The wall rises wide and shakes the screen hard.
 
-#include "battle_effect/effect_spasm.c"
+   Abilities: Berserk. */
+void btEffectRunBerserk(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunMirroredWall(args, MIRRORED_WALL_BERSERK);
+}
 
-#include "battle_effect/effect_recovery.c"
+/* The wall rises with a long gentle shake and the recovery sound.
+
+   Abilities: Spasm. */
+void btEffectRunSpasm(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunMirroredWall(args, MIRRORED_WALL_SPASM);
+}
+
+/* A wide wall of fire rises without shaking the screen.
+
+   Abilities: Recovery. */
+void btEffectRunRecovery(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunMirroredWall(args, MIRRORED_WALL_RECOVERY);
+}
 
 /* Raises a mirrored wall at the first target's feet while the target glows. */
 void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)

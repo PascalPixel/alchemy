@@ -46,7 +46,14 @@ void fdScriptUpdateDebugSkip(void)
 	}
 }
 
-#include "field/script_wait.c"
+/* Waits the requested ticks through sySynch(), unless debug fast-forward
+   (fdScriptUpdateDebugSkip) is on: the wait scripts use. */
+void fdScriptWait(Sint32 ticks)
+{
+	if(FieldStateWork->fastForward == 0 && ticks != 0) {
+		sySynch(ticks);
+	}
+}
 
 /* Stops the leader where it stands: no horizontal velocity, the normal walking
    speed (1.0) and acceleration (0.5), no destination, and the standing pose, or
@@ -113,7 +120,11 @@ UNUSED void fdScriptNoOperationUpdateA(void)
 {
 }
 
-#include "field/script_no_operation_update.c"
+/* An empty hook; it does nothing in the released game. Only
+   fdScriptRunActorUpdateAndWait calls it. */
+void fdScriptNoOperationUpdate(void)
+{
+}
 
 /* Respawns the scene's actors from an actor placement table and waits one tick
    for them to appear. */
@@ -346,7 +357,13 @@ Sint32 fdPartyInventoryGiveItem(Sint32 item, Sint32 unused)
 	return owner;
 }
 
-#include "field/inventory_try_add_and_return_member.c"
+/* Gives item to one party member. Returns unit, or -1 if its bag is full. */
+Sint32 fdInventoryTryAddAndReturnMember(Sint32 item, Sint32 unused, Sint32 unit)
+{
+	if(gmInventoryAddItemStub(unit, item) >= 0)
+		return unit;
+	return -1;
+}
 
 /* An empty function; nothing in The Broken Seal calls it. */
 void fdInventoryNoOperationCallback(void)
@@ -435,7 +452,12 @@ Sint32 fdScriptAskYesNoWithActorAnimation(Sint32 actorId, Sint32 forceBottom)
 	return answer;
 }
 
-#include "field/yes_no_ask.c"
+/* Asks yes or no at the top of the screen, or at the bottom with atBottom set.
+   Returns 0 for yes, 1 for no. */
+Sint32 fdYesNoAsk(Sint32 atBottom)
+{
+	return mnYesNoMenuRunStub(atBottom, 0, 0, 0);
+}
 
 /* Teaches unit the Psynergy ability and says so with its jingle, waiting for
    the player to read it. */
@@ -470,7 +492,21 @@ void fdScriptFinishScreenTransition(void)
 	fieldState->transitionActive = 0;
 }
 
-#include "field/script_wait_and_destination.c"
+/* Waits as long as the script's screen transition runs. */
+void fdScriptWaitTransitionTicks(void)
+{
+	sySynch(FieldStateWork->transitionFrm);
+}
+
+/* Makes the script leave for the given entrance of the given scene: raises the
+   exit request EXIT_KEEP_DESTINATION and writes MainRoutineStateWork.next and
+   entrance. */
+void fdScriptSetDestination(Sint32 sceneId, Sint32 entrance)
+{
+	FieldStateWork->exit = EXIT_KEEP_DESTINATION;
+	MainRoutineStateWork.next = sceneId;
+	MainRoutineStateWork.entrance = entrance;
+}
 
 /* Makes the script leave and records scene and entrance as the restart
    point. */

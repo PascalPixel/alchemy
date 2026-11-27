@@ -66,7 +66,12 @@
 /* The cursor packed in DJINN_MENU_STATE.selection: column + row * 10. */
 #define DJINN_CURSOR_ROW_STRIDE 10
 
-#include "menu/wrap_index.c"
+/* Wraps a cursor index that has stepped one past either end of modulus entries:
+   -1 becomes modulus - 1 and modulus becomes 0. */
+Sint32 mnWrapIndex(Sint32 value, Sint32 modulus)
+{
+	return (value + modulus) % modulus;
+}
 
 /* Where the first party figure stands, over its Djinn column. */
 #define DJINN_MEMBER_FIGURE_X 32
@@ -527,7 +532,58 @@ MENU_BACKDROP_RESULT mnOpenBackdropScreen(void)
 #endif
 }
 
-#include "menu/psynergy_list_diff.c"
+/* Lists the actions after a preview, marking gains, then appends the losses.
+   The two output counts distinguish gained and lost actions. */
+Sint32 mnPsynergyListDiff(PSYNERGY_ENTRY *before, PSYNERGY_ENTRY *after,
+	Uint16 *actionsOut, Sint32 *gainedCntOut, Sint32 *lostCntOut)
+{
+	Sint32 actionIdx;
+	Sint32 otherIdx;
+	Sint32 actionCnt;
+	Sint32 gainedCnt;
+	Sint32 lostCnt;
+
+	actionCnt = 0;
+	gainedCnt = 0;
+	lostCnt = 0;
+	for(actionIdx = 0;
+		actionIdx < PSYNERGY_SLOTS && after[actionIdx].encodedAction != 0;
+		actionIdx++) {
+		actionsOut[actionCnt] =
+			after[actionIdx].encodedAction & PSYNERGY_ABILITY_MASK;
+		actionCnt++;
+		for(otherIdx = 0; otherIdx < PSYNERGY_SLOTS; otherIdx++) {
+			if(((after[actionIdx].encodedAction ^
+					before[otherIdx].encodedAction) &
+				   PSYNERGY_ABILITY_MASK) == 0)
+				break;
+		}
+		if(otherIdx == PSYNERGY_SLOTS) {
+			gainedCnt++;
+			actionsOut[actionCnt - 1] |= DJINN_PREVIEW_GAINED;
+		}
+	}
+	for(actionIdx = 0;
+		actionIdx < PSYNERGY_SLOTS && before[actionIdx].encodedAction != 0;
+		actionIdx++) {
+		for(otherIdx = 0; otherIdx < PSYNERGY_SLOTS; otherIdx++) {
+			if(((before[actionIdx].encodedAction ^
+					after[otherIdx].encodedAction) &
+				   PSYNERGY_ABILITY_MASK) == 0)
+				break;
+		}
+		if(otherIdx == PSYNERGY_SLOTS) {
+			lostCnt++;
+			actionsOut[actionCnt] =
+				(before[actionIdx].encodedAction & PSYNERGY_ABILITY_MASK) |
+				DJINN_PREVIEW_LOST;
+			actionCnt++;
+		}
+	}
+	*gainedCntOut = gainedCnt;
+	*lostCntOut = lostCnt;
+	return actionCnt;
+}
 
 /* Rebuilds the Djinn lists in table: each party member's packed Djinn entries
    and their count. */

@@ -32,7 +32,15 @@ enum {
 /* SC_LABEL and SC_TO differ only in bit 30; a jump searches for the label. */
 #define SCRIPT_LABEL_KEY_MASK 0xbfffffff
 
-#include "field/actor_script_wait.c"
+/* SC_WAIT(n): waits n ticks; this tick counts as the first. */
+Sint32 fdActorScriptWait(ACTOR *interpreter)
+{
+	Sint16 commandCursor = interpreter->scriptCursor;
+
+	interpreter->wait = interpreter->script[commandCursor + 1] - 1;
+	interpreter->scriptCursor += 2;
+	return 0;
+}
 
 /* SC_SYNC: waits until the actor arrives at its target, or until a solid actor
    has blocked it for 60 ticks (refused is the blocked count, which
@@ -51,7 +59,42 @@ Bool fdActorScriptWaitForArrival(ACTOR *interpreter)
 	return FALSE;
 }
 
-#include "field/actor_script_find_label.c"
+/* SC_CALL(fn): calls fn with the actor. */
+Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
+{
+	Sint16		   initCursor = interpreter->scriptCursor;
+	SCRIPT_COMMAND func = (SCRIPT_COMMAND)interpreter->script[initCursor + 1];
+
+	if(func(interpreter) != 0)
+		return FALSE;
+	if(interpreter->scriptCursor == initCursor)
+		interpreter->scriptCursor = interpreter->scriptCursor + 2;
+	return TRUE;
+}
+
+/* Returns the cursor just past the script's label key (SC_LABEL or SC_TO,
+   matched without the bit that tells them apart), searching its first 1024
+   words, or 0 (the start) when key is 0 or not found, so a missing label
+   restarts the script. Clears the wait. */
+Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
+{
+	Uint32 *scriptWords;
+	Sint32	wordIdx;
+
+	interpreter->wait = 0;
+	if(labelKey == 0) {
+		return 0;
+	}
+
+	labelKey &= SCRIPT_LABEL_KEY_MASK;
+	scriptWords = (Uint32 *)interpreter->script;
+	for(wordIdx = 0; wordIdx < SCRIPT_LABEL_SEARCH_WORDS; wordIdx++) {
+		if(*scriptWords++ == labelKey) {
+			return wordIdx + 1;
+		}
+	}
+	return 0;
+}
 
 /* SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
    moves on; with n = SC_FOREVER it always jumps. */
@@ -82,7 +125,45 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 	return 1;
 }
 
-#include "field/actor_script_jumps.c"
+/* SC_JUMP(to): jumps to label to. */
+Sint32 fdActorScriptJumpToLabel(ACTOR *interpreter)
+{
+	interpreter->scriptCursor = fdActorScriptFindLabel(
+		interpreter, interpreter->script[interpreter->scriptCursor + 1]);
+	return 1;
+}
+
+/* SC_IF(to): jumps to label to when the last test was true. */
+Sint32 fdActorScriptJumpIfTrue(ACTOR *interpreter)
+{
+	Sint32		  commandCursor = interpreter->scriptCursor;
+	const Sint32 *script = interpreter->script;
+	Uint32		  labelKey = script[commandCursor + 1];
+
+	if(interpreter->conditionResult != 0) {
+		interpreter->scriptCursor =
+			fdActorScriptFindLabel(interpreter, labelKey);
+	} else {
+		interpreter->scriptCursor += 2;
+	}
+	return 1;
+}
+
+/* SC_IFNOT(to): jumps to label to when the last test was false. */
+Sint32 fdActorScriptJumpIfFalse(ACTOR *interpreter)
+{
+	Sint32		  commandCursor = interpreter->scriptCursor;
+	const Sint32 *script = interpreter->script;
+	Uint32		  labelKey = script[commandCursor + 1];
+
+	if(interpreter->conditionResult == 0) {
+		interpreter->scriptCursor =
+			fdActorScriptFindLabel(interpreter, labelKey);
+	} else {
+		interpreter->scriptCursor += 2;
+	}
+	return 1;
+}
 
 /* SC_END: hands the actor back to the idle script, ActorScriptEndScript, whose
    lone SC_END runs again each tick. Returns 0. */
@@ -139,7 +220,37 @@ Sint32 fdActorScriptToggleFlagAndTest(ACTOR *interpreter)
 	return 1;
 }
 
-#include "field/actor_script_animation_and_snd.c"
+/* SC_ANIMATION(v): switches the actor's sprites to animation v. */
+Sint32 fdActorScriptSetAnimation(ACTOR *interpreter)
+{
+	fdActorSelectAnimation(
+		interpreter, interpreter->script[interpreter->scriptCursor + 1]);
+	interpreter->scriptCursor += 2;
+	return 1;
+}
+
+/* SC_RELEASE: releases the actor through fdActorRelease, which releases its
+   sprites and zeroes its slot. */
+Sint32 fdActorScriptRelease(ACTOR *interpreter)
+{
+	fdActorRelease(interpreter);
+	return 0;
+}
+
+/* SC_NOP(v): does nothing with its operand. */
+Sint32 fdActorScriptNoOperation(ACTOR *interpreter)
+{
+	interpreter->scriptCursor += 2;
+	return 1;
+}
+
+/* SC_SE(n): sends sound command n. */
+Sint32 fdActorScriptPlaySnd(ACTOR *interpreter)
+{
+	sySndPlayStub(interpreter->script[interpreter->scriptCursor + 1]);
+	interpreter->scriptCursor += 2;
+	return 1;
+}
 
 /* Returns -1 when an actor at position values would overlap a solid actor
    (ACTOR_SOLID), each radius less 2 pixels; otherwise 0. */
@@ -212,7 +323,61 @@ Sint32 fdActorScriptApplyAbsolutePos(ACTOR *interpreter)
 	return fdActorScriptApplyPosCommand(interpreter, fdActorSetMoveTarget);
 }
 
-#include "field/actor_script_positions.c"
+/* SC_MOVE_BY(x, y, z): sends the actor towards its position plus (x, y, z). */
+Sint32 fdActorScriptApplyRelativePos(ACTOR *actor)
+{
+	Uint8  *commandBytes = (Uint8 *)(actor->script + actor->scriptCursor);
+	Sint32 *arguments = (Sint32 *)(commandBytes + 4);
+	Sint32	deltaX = *arguments++;
+	Sint32	deltaY = *arguments++;
+	Sint32	deltaZ = *arguments;
+
+	fdActorSetMoveTarget(actor, actor->x.fixed + deltaX,
+		actor->y.fixed + deltaY, actor->z.fixed + deltaZ);
+	actor->scriptCursor += 4;
+	return 1;
+}
+
+/* SC_FACE_WATCHED: turns the actor to face its watched actor across the
+   ground. */
+Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
+{
+	ACTOR *tgt;
+
+	tgt = (ACTOR *)actor->watchedActor;
+	actor->facing = syAtan(
+		(tgt->z.fixed - actor->z.fixed), (tgt->x.fixed - actor->x.fixed));
+	actor->scriptCursor++;
+	return 1;
+}
+
+/* SC_MOVE_TO_WATCHED: sends the actor towards its watched actor. */
+Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
+{
+	ACTOR *tgt;
+
+	tgt = (ACTOR *)actor->watchedActor;
+	fdActorSetMoveTarget(actor, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
+	actor->scriptCursor++;
+	return 1;
+}
+
+/* SC_MOVE_LOCAL(a, b): sends the actor towards its position plus an offset that
+   is never filled in; the operands are skipped unread. */
+Sint32 fdActorScriptApplyLocalOffsetPos(ACTOR *actor)
+{
+	Sint32 localOfs[3];
+
+	/* BUG: offset is never set, so the target is the position plus whatever the
+	   stack held. */
+#if FIX_UNINITIALIZED_READ
+	localOfs[0] = localOfs[1] = localOfs[2] = 0;
+#endif
+	fdActorSetMoveTarget(actor, actor->x.fixed + localOfs[0],
+		actor->y.fixed + localOfs[1], actor->z.fixed + localOfs[2]);
+	actor->scriptCursor += 3;
+	return 1;
+}
 
 /* SC_CAMERA: keeps the camera actor on its leader (watchedActor), clamped so
    the view stays on the map. */
@@ -628,7 +793,18 @@ typedef enum SCRIPT_OPERAND_OPERATION {
    actor field it sets, adds to or compares. */
 SCRIPT_DEFINE_OPERAND_ADDRESS(fdActorScriptSetOrCompareScriptAddress, scriptAdr)
 
-#include "field/actor_script_set_or_compare_cursor.c"
+/* State value SW_CURSOR: sets, adds to or compares the script cursor. */
+void fdActorScriptSetOrCompareCursor(
+	SCRIPT_OPERANDS *operands, Sint32 operation, Sint32 value)
+{
+	if(operation == SCRIPT_OPERAND_SET) {
+		operands->cursor = value;
+	} else if(operation == SCRIPT_OPERAND_ADD) {
+		operands->cursor = ((Sint16)operands->cursor + value);
+	} else {
+		operands->conditionResult = (Sint16)operands->cursor == (Sint16)value;
+	}
+}
 
 /* State value SW_FACING, and the values 2 and 4 either side of it, which
    actor_script_operands.c points here too: sets, adds to or compares the
@@ -773,7 +949,29 @@ static __inline__ Sint32 fdActorScriptApplyOperandCommand(
 	return 1;
 }
 
-#include "field/actor_script_set_add_compare.c"
+/* SC_SET(w, v): sets state value w to v. */
+Sint32 fdActorScriptApplyOperandSet(ACTOR *interpreter)
+{
+	SCRIPT_OPERANDS *operands = (SCRIPT_OPERANDS *)interpreter;
+
+	return fdActorScriptApplyOperandCommand(operands, SCRIPT_OPERAND_SET);
+}
+
+/* SC_ADD(w, v): adds v to state value w. */
+Sint32 fdActorScriptApplyOperandAdd(ACTOR *interpreter)
+{
+	SCRIPT_OPERANDS *operands = (SCRIPT_OPERANDS *)interpreter;
+
+	return fdActorScriptApplyOperandCommand(operands, SCRIPT_OPERAND_ADD);
+}
+
+/* SC_CMP(w, v): tests whether state value w equals v. */
+Sint32 fdActorScriptApplyOperandCompare(ACTOR *interpreter)
+{
+	SCRIPT_OPERANDS *operands = (SCRIPT_OPERANDS *)interpreter;
+
+	return fdActorScriptApplyOperandCommand(operands, SCRIPT_OPERAND_COMPARE);
+}
 
 #undef SCRIPT_DEFINE_FLAG_COMMAND
 #undef SCRIPT_DEFINE_OPERAND_WORD

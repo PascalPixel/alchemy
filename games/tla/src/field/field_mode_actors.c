@@ -39,7 +39,10 @@ Sint32 fdPartyGetCharacterSpr(Sint32 character)
 	return spr;
 }
 
-#include "field/actor_reserved_no_operation.c"
+/* Does nothing; nothing calls fdActorReservedNoOperationStub. */
+UNUSED void fdActorReservedNoOperation(void)
+{
+}
 
 /* Creates the actors of a scene's actor placement table (ended by sprite -1),
    and records the table among the scene's tables. */

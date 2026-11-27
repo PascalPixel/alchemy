@@ -45,7 +45,29 @@ void btEffectRunBoneCharge(BATTLE_EFFECT_PARM *args)
 	btEffectRunRushingStrike(args, RUSHING_STRIKE_BONE_CHARGE);
 }
 
-#include "battle_effect/effect_rushing_sparks.c"
+/* Rushes the target and scatters sparks in the ice-block palette.
+
+   Abilities: Brute Force. */
+void btEffectRunBruteForce(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_BRUTE_FORCE);
+}
+
+/* Rushes the target and scatters sparks in the pink-burst palette.
+
+   Abilities: Onslaught. */
+void btEffectRunOnslaught(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_ONSLAUGHT);
+}
+
+/* Rushes the target and scatters sparks in the blast palette.
+
+   Abilities: Headbutt. */
+void btEffectRunHeadbutt(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
+}
 
 /* BlueBurstSheet's one picture, the top half of a burst: drawn as it is and
    mirrored top to bottom beneath, a 40x64 burst that follows the user in. */

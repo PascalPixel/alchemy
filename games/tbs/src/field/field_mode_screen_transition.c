@@ -495,7 +495,16 @@ UNUSED void fdScreenTransitionSuspendCallbacks(void)
 	sySuspendEvent(&fdScreenTransitionStartWindowHBlankDMA);
 }
 
-#include "field/screen_transition_allocate_and_clear_state.c"
+/* Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and
+   clears it. */
+SCREEN_TRANSITION_STATE *fdScreenTransitionAllocateAndClearState(void)
+{
+	SCREEN_TRANSITION_STATE *state;
+
+	state = syHeapSlotAllocEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+	DMA_FILL32(0, state, sizeof(*state));
+	return state;
+}
 
 /* Fades the screen in over ticks ticks. mode is a SCENE_TRANSITION: its high
    byte an SCREEN_TRANSITION_STYLE (from black, from the backdrop colour, a
@@ -891,7 +900,20 @@ void fdScreenTransitionFillTilemapAndColTile(Sint32 col)
 	}
 }
 
-#include "field/screen_transition_start_dissolve_held.c"
+/* Unused: nothing calls it, by name or through its stub. Starts a dissolve of
+   the given mode, its value held at 0, and waits two seconds. */
+void fdScreenTransitionStartDissolveHeld(Sint32 mode)
+{
+	SCREEN_TRANSITION_STATE *state;
+
+	state = syHeapSlotAllocEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+	DMA_FILL32(0, state, sizeof(*state));
+	fdScreenTransitionFillTilemapAndColTile(0);
+	state->mode = mode;
+	state->value = 0;
+	sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_TICK);
+	sySynch(120);
+}
 
 #undef TRANSITION_NOISE_EDGE_MAX
 #undef TRANSITION_ELLIPSE_RISE

@@ -143,7 +143,16 @@ void btUnitCollect(void)
 	battle->enemyIds[cnt] = BATTLE_UNIT_LIST_END;
 }
 
-#include "battle/shift_vram_tiles.c"
+/* Unused: moves 16 bytes of VRAM down by 16 and clears the 20 from 12 bytes
+   past where they land. */
+UNUSED Sint32 btShiftVRAMTiles(void)
+{
+	/* XXX (no evidence): what the bytes moved are, tiles of character block 0
+	   or entries of screen block 0; nothing calls this in either game. */
+	syDMAXCopy((const void *)0x06000290, (void *)0x06000280,
+		DMA_COPY_HALFWORDS(8), REG_DMA3);
+	return syWordsClear((void *)0x0600028c, 20);
+}
 
 /* Unused: clears BG0's vertical scroll. */
 UNUSED void btClearBg0Vofs(void)
@@ -151,7 +160,10 @@ UNUSED void btClearBg0Vofs(void)
 	IO_WRITE16(0, &REG_BG0VOFS);
 }
 
-#include "battle/party_battle_setup_no_operation.c"
+/* Does nothing; btRun calls it with 1 as the battle is set up. */
+void btPartyBattleSetupNoOperation(Sint32 unused)
+{
+}
 
 /* Clears the party's battle-only states, and works their stats out again, as a
    battle ends. */
@@ -327,7 +339,10 @@ DJINN_RECOVERY_TABLE *btSummonUpdateAvailability(void)
 	}
 }
 
-#include "battle/summon_reserved_no_operation.c"
+/* Unused: does nothing. */
+UNUSED void btSummonReservedNoOperation(void)
+{
+}
 
 #undef CAMERA_YAW_EASE
 #undef SUMMON_MASK_BITS

@@ -20,7 +20,11 @@ typedef enum DJINNI_LIGHT_STATE {
 	DJINNI_LIGHT_DONE = 4	   /* frees its slot */
 } DJINNI_LIGHT_STATE;
 
-#include "field/effect_advance_spin_ang.c"
+/* Per-tick update: spins an actor 1/8 turn a tick. */
+void fdEffectAdvanceSpinAng(ACTOR *actor)
+{
+	actor->facing += DEGtoANG(45);
+}
 
 /* Per-tick update: halves the actor's distance to its watched actor along x, y
    and z. */

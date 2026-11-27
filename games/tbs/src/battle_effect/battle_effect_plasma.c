@@ -169,7 +169,22 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 	EFFECT_FINISH_CANVAS();
 }
 
-#include "battle_effect/effect_nova_dynamite.c"
+/* Bursts of light go off among the targets, each ringed by fading flashes and
+   throwing sparks.
+
+   Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb. */
+void btEffectRunNova(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunSparkGroups(args, SPARK_GROUPS_NOVA);
+}
+
+/* Orange bursts go off in front of the battle.
+
+   Abilities: Dynamite. */
+void btEffectRunDynamite(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunSparkGroups(args, SPARK_GROUPS_DYNAMITE);
+}
 
 #define SPARK_GROUPS_FLASHES 16 /* flashes kept per burst */
 #define SPARK_GROUPS_SPACING 8	/* ticks between bursts */

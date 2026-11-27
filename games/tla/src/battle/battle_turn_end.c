@@ -313,7 +313,21 @@ Sint32 btDjinnRecoveryCountDown(void)
 	return removed;
 }
 
-#include "battle/turn_end_djinn_count_down.c"
+/* Runs btDjinnRecoveryCountDown twenty times, which sets every recovering
+   Djinni of a party member with HP; those on standby stay so. Returns 0. */
+Sint32 btDjinnRecoveryCountDownTwenty(void)
+{
+	Sint32 turn;
+
+	for(turn = 0; turn < 20; turn++)
+		btDjinnRecoveryCountDown();
+	return 0;
+}
+
+/* Does nothing; btRun calls it at the end of each turn and of the battle. */
+void btTurnEndNoOperation(void)
+{
+}
 
 /* Counts down one side's Djinn recovery at the turn's end: an owner must be in
    the battle; each Djinni that comes back is shown before it is Set: its owner

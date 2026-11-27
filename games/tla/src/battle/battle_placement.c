@@ -449,7 +449,13 @@ void btObjectMake(
 	fdActorStartScriptStub((ACTOR *)object, BattleObjectEmptyScript);
 }
 
-#include "battle/placement_get_step_pair.c"
+/* Unused: reads the battlefield position of a party place. */
+void btPlacementGetStepPair(Sint32 partyPlace, Sint32 *x, Sint32 *y)
+{
+	partyPlace *= 2;
+	*x = BattlePlacementSpots[partyPlace];
+	*y = BattlePlacementSpots[partyPlace + 1];
+}
 
 /* BATTLE_STATE.enemyIds of an enemy that left the battle, and of a place held
    for one: unit ids 254 and 255 in the list. */
@@ -627,4 +633,21 @@ void btUnitRefreshPlacement(void)
 	}
 }
 
-#include "battle/placement_contains_id.c"
+/* Returns 1 if the unit at place is in list. */
+Bool btPlacementContainsId(Sint16 *list, Sint32 place)
+{
+	Uint32 i;
+
+	if(place > ALLY_MAX)
+		place += FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+	i = 0;
+	do {
+		Uint16 unitId = *list++;
+
+		if(unitId == BATTLE_UNIT_LIST_END)
+			break;
+		if(unitId == place)
+			return TRUE;
+	} while(++i < UNIT_MAX);
+	return FALSE;
+}

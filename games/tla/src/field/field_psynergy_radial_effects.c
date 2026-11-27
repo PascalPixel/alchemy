@@ -118,7 +118,27 @@ void fdEffectCircleAnchor(ACTOR *effect)
 	}
 }
 
-#include "field/whirlwind_target.c"
+/* Per-tick update of Whirlwind's target: it shrinks a 512th a tick and, below
+   half its size, is put away at the map's origin. */
+void fdWhirlwindUpdateTarget(ACTOR *actor)
+{
+	Sint32 scale;
+
+	scale = actor->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
+	actor->scaleY = scale;
+	actor->scaleX = scale;
+	if(scale < WHIRLWIND_TARGET_MIN_SCALE) {
+		fdActorSetPosAndResetMotionStub(actor, 0, 0, 0);
+		actor->update = 0;
+	}
+}
+
+/* Runs Whirlwind cast on a target, using the target already stored in the field
+   effect. */
+void fdPsynergyWhirlwindOnTarget(Sint32 unused)
+{
+	fdPsynergyWhirlwind();
+}
 
 void fdWhirlwindUpdateSpentOrb(ACTOR *actor);
 
@@ -474,9 +494,20 @@ void fdPsynergyResumeHaltedActor(Sint32 actorId)
 
 Sint32 fdSpeakerGetHaltedLines(Sint32 id);
 
-#include "field/psynergy_filter_halt_target.c"
+/* Returns no target (-1) when Halt passes actor id over (its sprite has no
+   halted lines, SPEAKER_HALTED_LINES_NONE), else id. */
+Sint32 fdPsynergyFilterHaltTarget(Sint32 id)
+{
+	if(fdSpeakerGetHaltedLines(id) == SPEAKER_HALTED_LINES_NONE)
+		return -1;
+	return id;
+}
 
-#include "field/psynergy_catch_on_target.c"
+/* Catch cast on a target: runs fdPsynergyCatch. */
+void fdPsynergyCatchOnTarget(Sint32 unused)
+{
+	fdPsynergyCatch();
+}
 
 /* The value step tenths of the way from from to to. */
 static __inline__ Sint32 Interpolate(Sint32 from, Sint32 to, Sint32 step)
@@ -818,7 +849,33 @@ void fdPsynergyLash(void)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-#include "field/effect_spin_and_retreat.c"
+/* Per-tick update: spins by FACING_STEP + timer * 80 a tick, speeding up
+   (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
+   tick to just over 1/8 in 52 ticks, as fdEffectAdvanceAngWithRamp. */
+void fdEffectUpdateSpinAng(ACTOR *actor)
+{
+	Uint32 step;
+
+	step = actor->tmr * 80;
+	actor->facing = actor->facing + step + FACING_STEP;
+	if(step < FACING_STEP)
+		actor->tmr = actor->tmr + 1;
+}
+
+/* Per-tick update: spins 1/8 turn a tick as it shrinks, rising a pixel a
+   tick; its sprite is hidden once its scale falls below 3/16. */
+void fdEffectUpdateRetreatCaster(ACTOR *actor)
+{
+	Uint32 scale;
+
+	actor->scaleY -= toFIXED(5) / 512;
+	scale = actor->scaleX - toFIXED(5) / 512;
+	actor->facing += DEGtoANG(45);
+	actor->y.fixed += toFIXED(1);
+	actor->scaleX = scale;
+	if((Sint32)scale < toFIXED(3) / 16)
+		actor->sprStorageKind = ACTOR_SPRITE_NONE;
+}
 
 /* Field effect sprite callback: a particle flies 120 pixels from the main
    actor's screen position (8 pixels lower) in a direction within 1/8 turn of up

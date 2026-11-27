@@ -7,7 +7,23 @@ typedef enum ERUPTION_MODE {
 	ERUPTION_SMOKE_BOMB /* greys, with Mad Blast's counts */
 } ERUPTION_MODE;
 
-#include "battle_effect/effect_smoke_bomb_blast.c"
+/* A fountain of grey motes and puffs of smoke bursts up beside the targets and
+   falls back, flashing each target.
+
+   Abilities: Smoke Bomb, Sleep Bomb. */
+void btEffectRunSmokeBomb(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunEruption(args, ERUPTION_SMOKE_BOMB);
+}
+
+/* A fountain of fire-coloured motes and puffs of smoke bursts up beside the
+   targets and falls back, flashing each target and making it recoil.
+
+   Abilities: Blast, Mad Blast, Fiery Blast. */
+void btEffectRunBlast(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunEruption(args, ERUPTION_BLAST);
+}
 
 /* The columns of a EruptionCounts row. */
 enum {
@@ -219,7 +235,11 @@ void btEffectCreateSprs(Sint32 cnt, Sint32 sprId, Uint32 pri)
 	}
 }
 
-#include "battle_effect/effect_no_operation.c"
+/* Does nothing; Annihilation calls it 10,000 times as a busy wait
+   (btEffectCallNoOperation). */
+void btEffectNoOperation(void)
+{
+}
 
 #undef ERUPTION_MOTE_PICTURES
 #undef ERUPTION_PUFFS

@@ -86,7 +86,32 @@ void sySerialInit(void)
 	IRQ_UNLOCK(savedIme);
 }
 
-#include "system/serial_transfer_timer.c"
+/* Lets the timer start transfers again once a link mode is set, by setting
+   SerialStateWork.transferEnabled. */
+void sySerialEnableTransferTimer(void)
+{
+	SERIAL_STATE *state = &SerialStateWork;
+
+	if(state->mode != 0)
+		state->transferEnabled = 1;
+}
+
+/* Disables the serial and timer 3 interrupts, stops the transfer timer and
+   clears SerialStateWork.transferEnabled. Nothing in the game calls it. */
+void sySerialDisableTransfer(void)
+{
+	SERIAL_STATE *state;
+
+	REG_IME = 0;
+	REG_IE &= (Uint16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
+	REG_IME = 1;
+	REG_SIOCNT16 = SIO_MULTI_MODE | SIO_115200_BPS;
+	/* Timer 3 stopped, with its reload set */
+	REG_TM3CNT = SERIAL_TIMER_RELOAD;
+	REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
+	state = &SerialStateWork;
+	state->transferEnabled = 0;
+}
 
 /* The parent's connection: timer 3, not the serial interrupt, now clocks the
    transfers, in `mode` (SERIAL_MODE_CLOCKING). */
@@ -189,7 +214,28 @@ Sint32 sySerialPollStat(void)
 	return sySerialGetLinkStat(control);
 }
 
-#include "system/serial_exchange_payloads.c"
+/* Once connected (SERIAL_PHASE_CONNECTED), gathers the received payloads into
+   `receive` and builds the next packet from `send`. Called by the VBlank
+   handler while SerialExchangeActive is set, which stores the result in
+   LinkStatusWork. Returns the link status: in bits 0 and 1 the consoles heard
+   from this tick (both: LINK_STATUS_HEARD_BOTH, which the block transfer and
+   sySerialWaitForStatMask wait for), in bits 8 and 9 those heard from since the
+   link began, and LINK_STATUS_CLOCKING, LINK_STATUS_ERROR and
+   LINK_STATUS_EXTRA_CONSOLE. */
+Sint32 sySerialExchangePayloads(void *send, void *receive)
+{
+	volatile Uint32 *siocnt;
+	Uint32			 control;
+
+	siocnt = &REG_SIOCNT;
+	control = *siocnt;
+	if(SerialStateWork.phase == SERIAL_PHASE_CONNECTED) {
+		sySerialCollectReceivedPayloads(receive);
+		sySerialPrepareSendPacket(send);
+		SerialStateWork.packetNum++;
+	}
+	return sySerialGetLinkStat(control);
+}
 
 /* Builds the packet to send in sendBuf[0] (SERIAL_PACKET): the packet number,
    the consoles not yet heard from, the checksum and the 24-byte payload. */
@@ -373,7 +419,24 @@ void sySerialHandleTransferInterrupt(void)
 	}
 }
 
-#include "system/serial_irq_handlers.c"
+/* Clears SerialExchangeActive, which stops the per-tick exchange, and removes
+   the link interrupt handlers. */
+void sySerialRemoveIRQHandlers(void)
+{
+	SerialExchangeActive = 0;
+	syIntFunction(IRQ_SERIAL, 0, 0);
+	syIntFunction(IRQ_TIMER3, 0, 0);
+}
+
+/* Waits a tick at a time until every status bit in `mask` is set in
+   LinkStatusWork, then returns this console's multiplayer id. */
+Uint32 sySerialWaitForStatMask(Sint32 mask)
+{
+	while((mask & LinkStatusWork) != mask) {
+		sySynch(1);
+	}
+	return SIO_ID_OF(REG_SIOCNT);
+}
 
 /* Starts sending `size` bytes from `src` to the partner in blocks of
    SERIAL_BLOCK_BYTES: sets the send source, size and block number that
@@ -443,7 +506,36 @@ void sySerialWaitForReceive(void)
 	}
 }
 
-#include "system/serial_wait_for_transfers.c"
+/* Waits until both the send and the receive have finished, giving up after
+   SERIAL_TRANSFER_TIMEOUT_TICKS ticks. Reached through the stub table. */
+void sySerialWaitForTransfers(void)
+{
+	Uint32 cnt;
+
+	cnt = 0;
+	while(SerialSendSource != 0 || SerialReceiveDestination != 0) {
+		sySynch(1);
+		cnt++;
+		if(cnt >= SERIAL_TRANSFER_TIMEOUT_TICKS)
+			return;
+	}
+}
+
+/* Returns bit 0 while a send runs and bit 1 while a receive runs. The link
+   battle and the Battle Arena poll it between ticks. */
+Sint32 sySerialGetActiveTransfers(void)
+{
+	Sint32 flg;
+
+	flg = 0;
+	if(SerialSendSource != 0) {
+		flg = 1;
+	}
+	if(SerialReceiveDestination != 0) {
+		flg |= 2;
+	}
+	return flg;
+}
 
 /* Clears the serial transfer for a link battle with interrupts off: nothing to
    send or receive, no flags, and status SERIAL_STATUS_RUNNING. */
@@ -585,7 +677,10 @@ void sySerialStepBlockTransfer(void)
 
 extern Uint8 MapGridMetatileBuffer[];
 
-#include "system/serial_test_delay.c"
+/* An empty function the link test calls to waste time. */
+void sySerialTestDelay(void)
+{
+}
 
 /* The link test's block: LINK_TEST_TILES tiles' worth of bytes, shown from tile
    LINK_TEST_TILE of character block 0. */

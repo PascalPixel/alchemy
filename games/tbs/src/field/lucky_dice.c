@@ -77,7 +77,11 @@ UNUSED Sint16 fdFixedPointDivQ8(Sint16 numerator, Sint16 denominator)
 	return (numerator * Q8_ONE) / denominator;
 }
 
-#include "field/fixed_point_reciprocal.c"
+/* Unused: the reciprocal of an 8.8 fixed-point value. */
+UNUSED Sint16 fdFixedPointReciprocal(Sint16 value)
+{
+	return toFIXED(1) / value;
+}
 
 /* Lucky Dice's layout, fitted to each language's text: the coins window at the
    top and its label, the help window (Throw / Quit) and the winnings window at

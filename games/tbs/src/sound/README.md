@@ -74,10 +74,7 @@ sounding note together, with a little echo.
 
 The songs and samples are ordinary files you can open, in
 [`games/tbs/sound`](../../sound): each song is a MIDI file, such as
-`songs/mus_village_theme.mid`, and each sample a WAV. A song or sample
-that The Lost Age has byte for byte, and the wave channel's patterns, are
-one copy in [`games/common/sound`](../../../common/README.md) that both
-games build.
+`songs/mus_village_theme.mid`, and each sample a WAV.
 
 ## Where the code is
 

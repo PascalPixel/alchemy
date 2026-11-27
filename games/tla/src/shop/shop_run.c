@@ -196,7 +196,15 @@ Sint32 mnShopOpenDebugShop(void)
 	return 0;
 }
 
-#include "shop/snd_wait_for_jingle.c"
+/* Waits until the jingle playing has ended and the music it interrupted is
+   back: the inn's night, the sanctum's healing and scripts that wait for a
+   jingle. */
+void mnSndWaitForJingle(void)
+{
+	while(sySndGetBGMRestoreDelayStub() != 0) {
+		sySynch(1);
+	}
+}
 
 /* Turns the weapon shop's line `message` into the one the shop of `shopType`
    says: the armor shop, the item shop and the general store each have their own

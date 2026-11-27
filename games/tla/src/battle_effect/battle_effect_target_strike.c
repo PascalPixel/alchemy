@@ -2,7 +2,106 @@
    Blade Rain, the element pillar the battle raises at a unit's feet, and an
    unused fade-in of the battle background. Part of battle_effect.c. */
 
-#include "battle_effect/effect_target_strikes.c"
+/* One slash strikes the first target among glints, in lightning colours.
+
+   Abilities: Numbing Sting, Paralytail. */
+void btEffectRunNumbingSting(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
+}
+
+/* Fangs bite the first target three times while motes stream out of it and back
+   into the user.
+
+   Abilities: Cannibal Fang. */
+void btEffectRunCannibalFang(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES);
+}
+
+/* Fangs bite the first target once, in lime, with smoke.
+
+   Abilities: Poisonous Bite; Poison Fang. */
+void btEffectRunPoisonousBite(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_BITE);
+}
+
+/* Fangs bite the first target once, with smoke, in Mars Djinn colours.
+
+   Abilities: Rabid Fang. */
+void btEffectRunRabidFang(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_SMOKE_BITE);
+}
+
+/* Fangs bite the first target three times among glints, in lightning colours.
+
+   Abilities: Electric Bite. */
+void btEffectRunElectricBite(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES);
+}
+
+/* One lime slash strikes the first target, with smoke.
+
+   Abilities: Poison Tail; Poison Sting. */
+void btEffectRunPoisonTail(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
+}
+
+/* Fangs bite the first target three times, draining motes back into the user,
+   in Mars Djinn colours.
+
+   Abilities: Vampiric Fang. */
+void btEffectRunVampiricFang(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_DRAIN_BITES);
+}
+
+/* Fangs bite the first target twice, in blue, with sparks.
+
+   Abilities: Double Fang. */
+void btEffectRunDoubleFang(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_BITES);
+}
+
+/* One heavy slash strikes the first target in Mars Djinn colours, throwing
+   sparks.
+
+   Abilities: Mortal Blow. */
+void btEffectRunMortalBlow(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
+}
+
+/* Two slashes strike the first target, throwing sparks, in lightning colours.
+
+   Abilities: Twin Beaks, Gryphon. */
+void btEffectRunTwinBeaks(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
+}
+
+/* Fangs bite the first target three times, in pink, with smoke.
+
+   Abilities: Acid Bite. */
+void btEffectRunAcidBite(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(args, TARGET_STRIKE_STYLE_PINK_SMOKE_BITES);
+}
+
+/* Fangs bite the first target three times, draining motes back into the user,
+   added in Mars Djinn colours.
+
+   Abilities: Drain Fang. */
+void btEffectRunDrainFang(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetStrike(
+		args, TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES);
+}
 
 /* One orange slash strikes the first target with a flash and sparks.
 

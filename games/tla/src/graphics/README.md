@@ -118,10 +118,7 @@ next.
   pictures the summons are drawn from.
 - `font/` holds the letters: one font sheet for each language, a letter to a 16
   by 16 square, with a table of widths beside it so that an `i` takes less
-  room than a `W`. The six sheets The Broken Seal also has are one copy in
-  [`games/common/graphics/font`](../../../common/README.md), and the five
-  `text_tla_*` sheets of this game's own are here; `font/text.s` places the
-  edition's sheet. The staff credits have a font of their own, in
+  room than a `W`. The staff credits have a font of their own, in
   `credits/`.
 - `ui/` is the windows' borders, icons and cursors, `title/` the Title's
   pictures and `ending/` the ending's. A picture with words in it has one

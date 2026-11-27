@@ -4,7 +4,18 @@
 #include "script_commands_internal.h"
 #include "scene/actor_polar_target.h"
 
-#include "field/psynergy_run_handler.c"
+/* Runs one step of the current field Psynergy: an FIELD_PSYNERGY_HANDLER. */
+void fdPsynergyRunHandler(Sint32 kind)
+{
+	if(kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
+		fdPsynergyRun();
+	else if(kind == FIELD_PSYNERGY_HANDLER_ON_TARGET)
+		fdPsynergyDispatch();
+	else if(kind == FIELD_PSYNERGY_HANDLER_FINISH)
+		fdPsynergyFinishMindRead();
+	else if(kind == FIELD_PSYNERGY_HANDLER_EXTRA)
+		fdPsynergyRunExtraHandler();
+}
 
 /* Casts the current field Psynergy with no target: runs the body of its kind
    (effectState->fieldPsynergy). */

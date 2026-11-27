@@ -24,7 +24,23 @@
 #define DJINN_BEAMS_COLUMN_RAMP		  5
 #define DJINN_BEAMS_COLUMN_HALF_WIDTH 6
 
-#include "battle_effect/effect_revive_dew.c"
+/* Motes drift down over each target and a column of light falls on it, in the
+   Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
+
+   Abilities: Revive, Water of Life; Quartz. */
+void btEffectRunRevive(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunDjinnBeams(args, ELEMENT_VENUS);
+}
+
+/* Dew plays Revive's beams of light in the Mercury Djinni's colours, and with a
+   prelude a Mercury Djinni appears first.
+
+   Abilities: Dew. */
+void btEffectRunDew(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunDjinnBeams(args, ELEMENT_MERCURY);
+}
 
 /* When there is a prelude a Djinni appears and rises away; then over each
    target in turn motes drift down and a column of light falls on it. */

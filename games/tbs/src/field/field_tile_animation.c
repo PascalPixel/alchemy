@@ -286,7 +286,18 @@ void fdBlendScriptStart(Uint16 *script)
 		sySetEvent(fdBlendScriptRun, EVENT_PASS_TICK);
 }
 
-#include "field/blend_script_suspend.c"
+/* Suspends the blend script. The lighthouse scenes and Vale's Babi script reach
+   it through fdBlendScriptSuspendStub. */
+void fdBlendScriptSuspend(void)
+{
+	sySuspendEvent(fdBlendScriptRun);
+}
+
+/* Resumes the blend script, through fdBlendScriptResumeStub. */
+void fdBlendScriptResume(void)
+{
+	syResumeEvent(fdBlendScriptRun);
+}
 
 /* Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
    its four entries cleared. */
@@ -356,7 +367,11 @@ UNUSED void fdPaletteCycleStop(void)
 	syHeapSlotRelease(HEAP_SLOT_PALETTE_CYCLES);
 }
 
-#include "field/palette_cycle_start.c"
+/* Unused: starts running the palette cycles each tick. */
+UNUSED void fdPaletteCycleStart(void)
+{
+	sySetEvent(fdPaletteCycleStep, EVENT_PASS_TICK);
+}
 
 /* Each tick: advances each palette cycle whose timer has run out by one
    colour, writing the rotated colours back to the palette. */

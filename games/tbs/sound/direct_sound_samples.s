@@ -97,37 +97,37 @@ SoundWaveRideCymbal:
 	.incbin "games/tbs/sound/direct_sound_samples/ride_cymbal.pcm8.bin"
 	.global SoundWaveSwitch
 SoundWaveSwitch:
-	.incbin "games/common/sound/direct_sound_samples/switch.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/switch.pcm8.bin"
 	.global SoundWaveRumble
 SoundWaveRumble:
-	.incbin "games/common/sound/direct_sound_samples/rumble.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/rumble.pcm8.bin"
 	.global SoundWaveCrash
 SoundWaveCrash:
-	.incbin "games/common/sound/direct_sound_samples/crash.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/crash.pcm8.bin"
 	.global SoundWavePsynergySparkle
 SoundWavePsynergySparkle:
-	.incbin "games/common/sound/direct_sound_samples/psynergy_sparkle.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/psynergy_sparkle.pcm8.bin"
 	.global SoundWaveRoar
 SoundWaveRoar:
-	.incbin "games/common/sound/direct_sound_samples/roar.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/roar.pcm8.bin"
 	.global SoundWaveThunder
 SoundWaveThunder:
-	.incbin "games/common/sound/direct_sound_samples/thunder.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/thunder.pcm8.bin"
 	.global SoundWaveCurse
 SoundWaveCurse:
-	.incbin "games/common/sound/direct_sound_samples/curse.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/curse.pcm8.bin"
 	.global SoundWaveBoom
 SoundWaveBoom:
-	.incbin "games/common/sound/direct_sound_samples/boom.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/boom.pcm8.bin"
 	.global SoundWaveBell
 SoundWaveBell:
-	.incbin "games/common/sound/direct_sound_samples/bell.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/bell.pcm8.bin"
 	.global SoundWaveDrip
 SoundWaveDrip:
-	.incbin "games/common/sound/direct_sound_samples/drip.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/drip.pcm8.bin"
 	.global SoundWaveChime
 SoundWaveChime:
-	.incbin "games/common/sound/direct_sound_samples/chime.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/chime.pcm8.bin"
 	.global SoundWaveColossoLettering
 SoundWaveColossoLettering:
-	.incbin "games/common/sound/direct_sound_samples/colosso_lettering.pcm8.bin"
+	.incbin "games/tbs/sound/direct_sound_samples/colosso_lettering.pcm8.bin"

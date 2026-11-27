@@ -84,7 +84,11 @@ void fdEffectUpdateDriftingFallActor(ACTOR *particle)
 	}
 }
 
-#include "field/psynergy_douse_on_target.c"
+/* Runs Douse cast on a target, through fdPsynergyDouse. */
+void fdPsynergyDouseOnTarget(Sint32 unused)
+{
+	fdPsynergyDouse();
+}
 
 /* A rain cloud rises from 16 pixels above the caster to 32 pixels above the
    destination (80 with childOption, 32 more over a Moai) over GROW_STEPS

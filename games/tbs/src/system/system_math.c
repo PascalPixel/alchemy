@@ -1,6 +1,17 @@
 /* Random numbers, angles and square roots. Part of system.c. */
 
-#include "system/random.c"
+/* Advances the game's random number generator (the C library's classic linear
+   congruential one), stores the new seed and returns its bits 8 to 23, 0 to
+   65535. */
+Uint32 syRandom(void)
+{
+	enum { MULTIPLIER = 1103515245, INCREMENT = 12345 };
+
+	Uint32 value = RandomSeed * MULTIPLIER + INCREMENT;
+
+	RandomSeed = value;
+	return (Uint16)(value >> 8);
+}
 
 /* Moves the point `pos` by `radius` in direction `ang` on the ground
    plane: x by the cosine, z by the sine. */
@@ -117,7 +128,34 @@ ANGLE syAtan(FIXED x, FIXED y)
 /* The bits of a 32-bit value's square root. */
 #define ROOT_BITS 16
 
-#include "system/squart.c"
+/* Returns the integer square root of `value`, rounded down, a bit at a time; a
+   negative `value` gives 0. Reached through the stub table. */
+Sint32 sySquart(Sint32 value)
+{
+	Sint32 trial;
+	Sint32 remainder;
+	Sint32 bit;
+	Sint32 result;
+
+	/* remainder is value - result squared. */
+	remainder = value;
+	result = 0;
+	for(bit = ROOT_BITS - 1; bit >= 0; bit -= 1) {
+		trial = (result << (bit + 1)) + (1 << (bit * 2));
+		if(trial <= remainder) {
+			result |= 1 << bit;
+			remainder -= trial;
+		}
+	}
+	return result;
+}
+
+/* Square root of a 16.16 fixed-point value, in 16.16. The square root of the
+   raw value is the result in 8.8, so the low eight bits are always 0. */
+FIXED sySquartFX(FIXED value)
+{
+	return sySquartIWRAM(value) << 8;
+}
 
 /* Returns the basic sprite palettes (BasicSpritePalettes). */
 const Uint8 *syPaletteGetBasicSprCols(void)

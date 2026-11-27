@@ -405,7 +405,13 @@ void fdScriptShowSpeakerMessage(Sint32 speaker)
 	fieldState->msg++;
 }
 
-#include "field/script_forward_show_message_at_pos.c"
+/* Unused: reached only through a bare stub in field_mode.s; forwards its
+   arguments to fdScriptShowMessageAtPos. */
+void fdScriptForwardShowMessageAtPos(
+	Sint32 unusedA, Sint32 unusedB, Sint32 x, Sint32 y)
+{
+	fdScriptShowMessageAtPos(unusedA, unusedB, x, y);
+}
 
 /* Unused: reached only through a bare stub in field_mode.s. It would open the
    script's message at (x, y), moved and held as MESSAGE_POSITION_WIDTH says,
@@ -439,7 +445,15 @@ void fdScriptShowMessageAtPos(
 	fieldState->msg++;
 }
 
-#include "field/actor_close_portrait.c"
+/* Closes the portrait of an actor's sprite, if it has one. */
+void fdActorClosePortrait(Sint32 actorId)
+{
+	Sint32 spr;
+
+	spr = fdActorGetSprById(actorId);
+	if(spr != -1)
+		mnPortraitCloseWindowStub(spr);
+}
 
 /* Two actors speak at once, each message at its own (x, y) with its portrait at
    (portraitX, portraitY), all in tiles. Waits for A, B, L or R, then closes

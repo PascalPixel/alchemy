@@ -208,7 +208,14 @@ Sint32 mnShopOpenDebugShop(Sint32 unused)
 	return 0;
 }
 
-#include "shop/snd_wait_for_jingle.c"
+/* Waits a tick at a time while a jingle holds back the music, as the inn's
+   does through the night. */
+void mnSndWaitForJingle(void)
+{
+	while(sySndGetBGMRestoreDelayStub() != 0) {
+		sySynch(1);
+	}
+}
 
 /* Shows a shopkeeper's line and waits until it is typed out. The line is given
    as a weapon shop's: an armor or item shop says its own, the same distance on

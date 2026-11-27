@@ -1141,7 +1141,29 @@ void mnTitlePaletteFadeBuildCols(
 	}
 }
 
-#include "menu/title_palette_fade.c"
+/* Allocates the palette fade, saves both hardware palettes in it as the
+   starting colours and adds the event mnTitlePaletteFadeUpdate. */
+void mnTitlePaletteFadeInit(void)
+{
+	TITLE_PALETTE_FADE *buf;
+
+	buf = syHeapSlotAllocEWRAM(HEAP_SLOT_PALETTE_FADE, sizeof(*buf));
+	DMA_FILL32(0, buf, sizeof(*buf));
+	syDMAXCopy(
+		(void *)BG_PLTT, buf, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+	syDMAXCopy((void *)OBJ_PLTT, &buf->pal[BG_PLTT_COLORS],
+		DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+	mnTitlePaletteFadeBuildCols(
+		PALETTE_TINT_NONE, buf->pal, buf->tgt, PALETTES_ALL);
+	sySetEvent(mnTitlePaletteFadeUpdate, EVENT_PASS_TICK);
+}
+
+/* Unused: removes the palette fade's event and frees its buffers. */
+UNUSED void mnTitlePaletteFadeRelease(void)
+{
+	syCloseEvent(&mnTitlePaletteFadeUpdate);
+	syHeapSlotRelease(HEAP_SLOT_PALETTE_FADE);
+}
 
 /* Unused: sets the fade target by tinting the saved background and/or sprite
    palettes with the requested tint. */
@@ -1189,7 +1211,15 @@ void mnTitlePaletteFadeStart(Sint32 ticks)
 	}
 }
 
-#include "menu/title_palette_fade_clamp_channel.c"
+/* Clamps a five-bit colour channel to 0..31. */
+Sint32 mnTitlePaletteFadeClampChannel(Sint32 value)
+{
+	if(value > RGB_LEVEL_MAX)
+		return RGB_LEVEL_MAX;
+	if(value < 0)
+		value = 0;
+	return value;
+}
 
 /* Caps a colour component at a channel's brightest level moved up to the
    components' place. There is no lower bound. */

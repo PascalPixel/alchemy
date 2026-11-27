@@ -3,7 +3,24 @@
 
 #include "field_mode_internal.h"
 
-#include "field/clear_requests.c"
+/* Clears the field's twelve pending requests (see FIELD_STATE). */
+void fdClearRequests(void)
+{
+	FIELD_STATE *state = FieldStateWork;
+
+	state->stepCue = 0;
+	state->pushMetatile = 0;
+	state->exit = 0;
+	state->fieldMenu = 0;
+	state->aButton = 0;
+	state->pauseMenu = 0;
+	state->talk = 0;
+	state->examineMetatile = 0;
+	state->encounter = 0;
+	state->psynergy = 0;
+	state->item = 0;
+	state->raisedCue = 0;
+}
 
 /* Returns the sum of the field's twelve pending requests (counting the talk
    request twice): non-zero while any request is pending. */
@@ -312,7 +329,16 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 	}
 }
 
-#include "field/party_add_pp.c"
+/* Gives each character in the party amount PP (PP regenerates as the party
+   walks). */
+void fdPartyAddPp(Sint32 amount, Sint32 unused)
+{
+	Sint32 partyCnt = gmPartyCountMembersStub();
+	Sint32 partyIdx;
+
+	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++)
+		gmUnitAddPpStub(MainRoutineStateWork.party[partyIdx], amount);
+}
 
 /* Damage past this plays SE_HEAVY_IMPACT rather than SE_IMPACT. */
 #define HEAVY_DAMAGE 10

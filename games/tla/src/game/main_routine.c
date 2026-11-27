@@ -163,7 +163,12 @@ void gmReturnFromMode(Sint32 result)
 	}
 }
 
-#include "game/get_area.c"
+/* Returns the area sceneId belongs to. The scenes of one area share their
+   music, area name and the flags kept while inside it. */
+Sint32 gmGetArea(Sint32 sceneId)
+{
+	return ScenesWork[sceneId].area;
+}
 
 /* Returns the scene's attributes, the last halfword of its ScenesWork row,
    which The Broken Seal leaves 0; the field mode splits it into two nibbles. */
@@ -381,7 +386,11 @@ void gmArrive(Sint32 unused, Sint32 keep)
 	gmFlagRefreshLureCapStub();
 }
 
-#include "game/play_music.c"
+/* Starts the current scene's field music, chosen by fdChooseMusic. */
+void gmPlayMusic(void)
+{
+	sySndPlayStub(MainRoutineStateWork.sceneMusic);
+}
 
 #undef MAIN_ROUTINE_RUN_MINIGAME
 #undef MAP_HEADER_AT

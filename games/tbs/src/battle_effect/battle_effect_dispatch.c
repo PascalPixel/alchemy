@@ -2,7 +2,14 @@
    state and canvas they lend it; and the helpers the summons share for window
    0's ragged edge and the targets' sprites. Part of battle_effect.c. */
 
-#include "battle_effect/effect_call_no_operation.c"
+/* Calls the empty btEffectNoOperation count times: a busy delay. */
+void btEffectCallNoOperation(Sint32 cnt)
+{
+	Sint32 i;
+
+	for(i = 0; i != cnt; i++)
+		btEffectNoOperation();
+}
 
 /* Runs one of the large battle effects, the summons: takes the effect's sheet,
    state and canvas, runs it and frees them again. */

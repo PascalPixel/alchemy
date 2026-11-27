@@ -186,11 +186,9 @@ DEFINE := $(UPPER_$(GAME))_EDITION_$(UPPER_$(LANG))
 ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
-# Two include paths: the game's own, then games/common for what both games
-# share, the development kit's code (#include "sdk/flash.h") and the headers
-# both have unchanged (features.h, stddef.h). A header names its bank folder
-# in its path, as pret's do (#include "field/actor.h"). The linker scripts
-# are preprocessed with the same two.
+# Two include paths: the game's own, then games/common for the development
+# kit's code both games share (#include "sdk/flash.h"). A header names its
+# bank folder in its path, as pret's do (#include "field/actor.h").
 INCLUDES := -Igames/$(GAME)/include -Igames/common
 
 # Game C: alchemy-gcc's GCC of July 2000, one option set per game;
@@ -223,8 +221,8 @@ OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays.list
 # An overlay has no number here: that is its row in the resource directory.
 OVERLAY_LD := games/$(GAME)/src/system/overlay/overlay.ld
 OVERLAY_NAMES := $(shell sed -n 's/^\#\(el\)*if defined(OVERLAY_\([A-Za-z0-9]*\))$$/\2/p' $(OVERLAY_LD))
-LD_CPPFLAGS := -P -lang-asm -nostdinc $(INCLUDES) -D$(DEFINE)=1 $(if $(SHIFT),-DROM_SHIFT=$(SHIFT))
-LD_HEADERS := $(addprefix games/$(GAME)/include/,edition.h fixes.h) games/common/features.h
+LD_CPPFLAGS := -P -lang-asm -nostdinc -Igames/$(GAME)/include -D$(DEFINE)=1 $(if $(SHIFT),-DROM_SHIFT=$(SHIFT))
+LD_HEADERS := $(addprefix games/$(GAME)/include/,edition.h features.h fixes.h)
 LD_SCRIPT := $(BUILD)/ld/main.ld
 LDFLAGS := -T $(LD_SCRIPT)
 OVERLAY_SCRIPT = -T $(BUILD)/ld/overlay_$*.ld

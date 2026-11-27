@@ -155,7 +155,11 @@ void fdActorSystemPlaceSprs(void)
 	syHeapSlotRelease(HEAP_SLOT_TICK_SCRATCH);
 }
 
-#include "field/actor_camera_return_true.c"
+/* Unused: returns 1. */
+UNUSED Sint32 fdActorCameraReturnTrue(void)
+{
+	return 1;
+}
 
 /* Each tick, with the fixed camera: places every actor's sprite, from the 64th
    actor down, facing them by the angle from the eye to the target. */

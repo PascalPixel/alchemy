@@ -3,7 +3,11 @@
 
 #include "script_commands_internal.h"
 
-#include "field/psynergy_force_on_target.c"
+/* Runs Force cast on a target, through fdPsynergyForce. */
+void fdPsynergyForceOnTarget(Sint32 unused)
+{
+	fdPsynergyForce();
+}
 
 /* The flashes that burst from over the caster's head, one every 2 ticks. */
 #define FORCE_FLASHES 12

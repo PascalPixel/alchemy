@@ -11,7 +11,30 @@
    when the next byte is loaded. */
 #define BIT_STREAM_STOP	 (1 << 7)
 
-#include "window/message_decode_raw.c"
+/* Decodes message into text (a Uint16 string) with no length limit: text must
+   have room for the whole message and its terminator. */
+void mnMessageDecodeRawUnbounded(Sint32 msg, Uint16 *text)
+{
+	mnMessageDecodeRaw(msg, text, MESSAGE_CAPACITY_UNLIMITED);
+}
+
+/* Decodes message into destination as a zero-terminated string of at most
+   capacity entries, and returns its length. capacity counts halfwords including
+   the terminator and must be at least 1. */
+Sint32 mnMessageCopyExpanded(Sint32 msg, Uint16 *dst, Uint32 capacity)
+{
+	WIN_STATE *state;
+	Uint32	   cnt;
+
+	state = WINDOW_STATE;
+	state->textBufEnd = 0;
+	mnMessageDecode(msg, 1);
+	for(cnt = 0; cnt < capacity - 1 && (dst[cnt] = state->textBuf[cnt]) != 0;
+		cnt++) {
+	}
+	dst[cnt] = 0;
+	return cnt;
+}
 
 /* Defined in the German, Spanish, French and Italian editions, whose raw
    decoding takes no delta off the operands. */
@@ -225,7 +248,26 @@ void mnMessageArgumentPush(Uint32 value, Uint32 kind)
 	} while(i != limit);
 }
 
-#include "window/message_argument_lookup.c"
+/* Returns the value of the first message argument of kind (MESSAGE_ARGUMENT_),
+   or 0 when there is none. */
+Uint32 mnMessageArgumentLookup(Uint32 kind, Uint32 clear)
+{
+	WIN_STATE *state = WINDOW_STATE;
+	Uint32	   i;
+	Uint32	   value = 0;
+
+	for(i = 0; i < MESSAGE_ARGUMENT_COUNT; i++) {
+		if(state->argumentKinds[i] == kind) {
+			value = state->argumentValues[i];
+			if(clear != 0) {
+				state->argumentValues[i] = 0;
+				state->argumentKinds[i] = MESSAGE_ARGUMENT_NONE;
+			}
+			break;
+		}
+	}
+	return value;
+}
 
 /* Ends a message's pause early, returning 1: when the message waits on a sound
    that has finished, or while A, B, L or R is held. */
@@ -335,7 +377,12 @@ void mnFieldMessageShowCentered(Sint32 msg, Sint32 mode, Sint32 yOfs)
 	}
 }
 
-#include "window/message_decode_and_clear_arguments.c"
+/* Decodes message and empties the argument table; returns where its decoded
+   text starts. The Djinn and party join messages (screens_joined.c) use it. */
+Sint32 mnMessageDecodeAndClearArguments(Sint32 msg)
+{
+	return mnMessageDecode(msg, 1);
+}
 
 /* Points reader at the start of message (its compressed bits and first
    context), running the ARM lookup function from a RAM copy, which it frees
@@ -436,7 +483,17 @@ UNUSED Sint32 mnTextDecodeSymbolInC(MESSAGE_READER *reader)
 	return code;
 }
 
-#include "window/portrait_clear_slots.c"
+/* Marks both portrait slots free (PORTRAIT_SLOT_EMPTY). Only the field engine's
+   setup calls it. */
+void mnPortraitClearSlots(void)
+{
+	WIN_STATE *state = WINDOW_STATE;
+	Sint32	   idx;
+
+	for(idx = 0; idx != ARRAY_COUNT(state->portraitPictures); idx++) {
+		state->portraitPictures[idx] = PORTRAIT_SLOT_EMPTY;
+	}
+}
 
 /* Returns the portrait of a character or another speaker's sprite, or -1 when
    it has none: speakers up to Garet's child sprite take theirs from

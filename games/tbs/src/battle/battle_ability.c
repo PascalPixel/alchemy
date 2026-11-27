@@ -3,7 +3,20 @@
 
 #include "battle_internal.h"
 
-#include "battle/ability_effect_applies_to_downed.c"
+/* Returns 1 for an effect that still applies when the damage has just knocked
+   the target out: the drains. */
+Bool btAbilityEffectAppliesToDowned(Sint32 effect)
+{
+	switch(effect) {
+	case ABILITY_EFFECT_DRAIN_HP:
+	case ABILITY_EFFECT_DRAIN_PP:
+	case ABILITY_EFFECT_DRAIN_HALF_HP:
+	case ABILITY_EFFECT_PSY_LEECH:
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
 
 /* The target's checks, effect and messages */
 /* Zephyr's Agility stage, beyond the usual highest (STAT_STAGE_MAX,
@@ -1241,4 +1254,14 @@ UNREAD_RESULT btAbilityApplyToTarget(BATTLE_ACTION_RUN *plan, Sint32 slot)
 	}
 }
 
-#include "battle/ability_is_psynergy.c"
+/* Returns 1 for an ability that costs PP, and for Psy Drain, which costs
+   none. */
+Uint32 btAbilityIsPsynergy(Sint32 abilityId)
+{
+	Uint8 pp;
+
+	if(abilityId == ABILITY_PSY_DRAIN)
+		return 1;
+	pp = gmAbilityGetDirectStub(abilityId)->ppCost;
+	return pp != 0;
+}

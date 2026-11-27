@@ -28,7 +28,7 @@ For the rest:
 | what a shop sells | [src/shop/shop_stock.c](shop/shop_stock.c) |
 | how an ability looks | its `battle_effect_*.c` file in `src/battle_effect/`, whose opening comment lists the abilities it draws |
 | a picture | a PNG under `src/graphics/` |
-| a tune | a MIDI file under [`sound/songs`](../sound/songs), or under [`games/common/sound/songs`](../../common/sound/songs) when The Lost Age has the same file |
+| a tune | a MIDI file under [`sound/songs`](../sound/songs) |
 | a map | `src/map/<place>/`, a folder of tables named for the scene or place that uses it ([Maps](map/README.md#finding-a-scenes-map)) |
 | the name of a flag, sound, scene, item or sprite | a header in `include/`: `flags.h`, `sounds.h`, `scene_ids.h`, `item_ids.h`, `sprite_ids.h` |
 
@@ -102,11 +102,6 @@ guide to its parts followed by a list of them, and the code is in
 `battle/battle_run.c`, `battle/battle_turn.c` and the rest beside it. A
 part is never built on its own; the file that lists it includes it at its
 place, and the guide at the top of that file is the place to start.
-
-A function both games write the same is a part too, kept once for both in
-[`games/common`](../../common/README.md#functions-both-games-write-the-same):
-the file it belongs to here includes it where it stands, so it is still
-compiled into this game's object, at its place on the cartridge.
 
 ### Overlays
 

@@ -135,7 +135,17 @@ Sint32 btAutoBattleRunAction(BATTLE_ACTION *action)
 	return 0;
 }
 
-#include "battle/object_is_valid_id.c"
+/* Returns 0 for a party member's or an enemy's unit id, -1 for any other. */
+Sint32 btObjectIsValidId(Uint32 unitId)
+{
+	if(unitId <= ALLY_MAX) {
+		return 0;
+	}
+	if(unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE) {
+		return 0;
+	}
+	return -1;
+}
 
 /* Auto battle: the party tries to run, and gets away 15 times in 16. Returns 1
    when it got away. */

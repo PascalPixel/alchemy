@@ -501,7 +501,24 @@ void fdActorAppearInSparks(Sint32 actorId)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-#include "field/particle_update.c"
+/* Updates one field effect sprite: counts its age, runs its callback (after any
+   delay), moves it and draws it. */
+void fdParticleUpdate(FIELD_PARTICLE *effect)
+{
+	if(effect->active != 0) {
+		effect->age++;
+		if(effect->funcDelay != 0)
+			effect->funcDelay--;
+		else if(effect->func != 0)
+			effect->func(effect);
+		if(effect->active != 0) {
+			if(effect->updateMotion != 0)
+				fdParticleUpdateMotion(effect);
+			if(effect->render != 0)
+				fdEffectDrawScaledActor(effect);
+		}
+	}
+}
 
 /* Draws a field effect sprite at its screen position and scale, when it is near
    the screen: x from -32 to 272 pixels and z from -32 to 224, both
@@ -602,7 +619,20 @@ void fdParticleSetPos(FIELD_PARTICLE *effect, Sint32 x, Sint32 z)
 	effect->speed = 0;
 }
 
-#include "field/particle_set_animation.c"
+/* Sets the animation of a field effect sprite. */
+void fdParticleSetAnimation(FIELD_PARTICLE *effect, Sint32 mode)
+{
+	fdSprStartAnimationStub(effect->spr, mode);
+}
+
+/* Gives a field effect sprite its per-tick callback, starting at state 0. */
+void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK func)
+{
+	effect->func = func;
+	effect->funcDelay = 0;
+	effect->age = 0;
+	effect->state = 0;
+}
 
 /* Starts a field particle with a sprite of the given kind at (x, z), at full
    size and in front of everything: it will fly to its target at up to 2 pixels
@@ -641,4 +671,11 @@ void fdParticleInit(FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, Sint32 z)
 	fdParticleSetAnimation(effect, 1);
 }
 
-#include "field/effect_clear_owned_slot.c"
+/* Frees a field effect sprite and its sprite, clearing it to zero
+   (inactive). */
+void fdEffectClearOwnedSlot(FIELD_PARTICLE *effect)
+{
+	if(effect->spr)
+		fdSprDestroyStub(effect->spr);
+	DMA_FILL32(0, effect, sizeof *effect);
+}

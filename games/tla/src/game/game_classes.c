@@ -210,7 +210,12 @@ Sint32 gmClassDetermine(Sint32 character, Uint32 *djinn, Sint32 item)
 	return result;
 }
 
-#include "game/class_get_definition.c"
+/* Returns class `classId`'s definition: its series, element requirements, stat
+   multipliers and the Psynergy it teaches by level. */
+CLASS_DEFINITION *gmClassGetDefinition(Sint32 classId)
+{
+	return (CLASS_DEFINITION *)&ClassDefinitionTable[classId];
+}
 
 /* Works out a character's class again after its Djinn or its class-changing
    item change, then its Psynergy list and its base elements. */

@@ -147,7 +147,12 @@ void gmReturnFromMode(Sint32 result)
 	}
 }
 
-#include "game/get_area.c"
+/* Returns the area sceneId belongs to. The scenes of one area share their
+   music, area name and the flags kept while inside it. */
+Sint32 gmGetArea(Sint32 sceneId)
+{
+	return ScenesWork[sceneId].area;
+}
 
 /* The last two 16-colour background palettes, which the minigame runners save
    and restore around a minigame; palette 15 holds the window colours
@@ -346,7 +351,11 @@ void gmArrive(Sint32 unused, Sint32 keep)
 	gmFlagRefreshLureCapStub();
 }
 
-#include "game/play_music.c"
+/* Starts the current scene's field music, chosen by fdChooseMusic. */
+void gmPlayMusic(void)
+{
+	sySndPlayStub(MainRoutineStateWork.sceneMusic);
+}
 
 #undef EXIT_DEFAULT_SCENE_MASK
 #undef AREA_VISITED_MASK

@@ -93,7 +93,11 @@ void mnWindowFitOnScreen(Sint32 entryIdx, Sint32 *winX, Sint32 *winY,
 	*winY = y;
 }
 
-#include "window/text_measure_message.c"
+/* Decodes message and returns its text's width and height in pixels. */
+void mnTextMeasureMessage(Sint32 msg, Sint32 *x, Sint32 *y)
+{
+	mnTextMeasureDecoded(mnMessageDecode(msg, 0), (Uint32 *)x, (Uint32 *)y, 0);
+}
 
 /* Sizes and places a window for a message's first page. */
 DEFINE_GET_RESOURCE_DIMENSIONS(mnTextGetMessageSize, 0)

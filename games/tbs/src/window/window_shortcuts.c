@@ -65,7 +65,12 @@ void mnAreaNameWindowHide(void)
 	}
 }
 
-#include "window/item_remove_from_inventory.c"
+/* Removes itemId from the party's inventory and returns 0. */
+Sint32 mnItemRemoveFromInventory(Sint32 unused, Sint32 itemId)
+{
+	gmPartyInventoryRemoveStub(itemId);
+	return 0;
+}
 
 /* Returns 1; the overlays reach it through the stub table. */
 Sint32 mnItemReturnTrue(void)

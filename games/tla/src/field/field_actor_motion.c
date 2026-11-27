@@ -3,7 +3,29 @@
 
 #include "field/resource_slot.h"
 
-#include "field/actor_is_target_unset.c"
+/* Returns 1 when the actor has no movement target: none of its target
+   coordinates set, or for an actor moved by the ground (any motion flag)
+   neither its target x nor z. */
+Bool fdActorIsTargetUnset(ACTOR *actor)
+{
+	Sint32 first;
+	Sint32 second;
+
+	/* One compare of three values: all must equal ACTOR_NO_TARGET, or with
+	   motion flags only x and z. */
+	if(actor->motionFlg == 0) {
+		second = actor->tgtX;
+		if(second != ACTOR_NO_TARGET)
+			return FALSE;
+		first = actor->tgtY;
+	} else {
+		first = actor->tgtX;
+		second = ACTOR_NO_TARGET;
+	}
+	if(first != second || actor->tgtZ != first)
+		return FALSE;
+	return TRUE;
+}
 
 /* fdActorIsTargetUnset, for the scenes: 1 once the actor has reached its
    destination. Airs Rock waits on it while the lift carries the leader up. */
@@ -426,7 +448,18 @@ void fdActorMoveWithCarriers(void)
 
 /* Placing an actor, and sending it somewhere. */
 
-#include "field/actor_set_pos_and_reset_motion.c"
+/* Places the actor at (x, y, z), in 16.16 pixels, clears its movement target
+   and stops it. */
+void fdActorSetPosAndResetMotion(ACTOR *actor, FIXED x, FIXED y, FIXED z)
+{
+	actor->z.fixed = z;
+	actor->tgtX = ACTOR_NO_TARGET;
+	actor->tgtY = ACTOR_NO_TARGET;
+	actor->tgtZ = ACTOR_NO_TARGET;
+	actor->x.fixed = x;
+	actor->y.fixed = y;
+	SET_VELOCITY(actor, 0, 0, 0);
+}
 
 /* Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it arrives
    at once. */

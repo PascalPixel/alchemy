@@ -38,7 +38,23 @@ void btEffectBuildCanvasBlitters(Sint32 flip, DRAW_RECTANGLE *out)
 	}
 }
 
-#include "battle_effect/effect_revive_dew.c"
+/* Motes drift down over each target and a column of light falls on it, in the
+   Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
+
+   Abilities: Revive, Water of Life, Lich; Quartz. */
+void btEffectRunRevive(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunDjinnBeams(args, ELEMENT_VENUS);
+}
+
+/* Dew plays Revive's beams of light in the Mercury Djinni's colours, and with a
+   prelude a Mercury Djinni appears first.
+
+   Abilities: Dew. */
+void btEffectRunDew(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunDjinnBeams(args, ELEMENT_MERCURY);
+}
 
 /* Spark plays Revive's beams of light in the Mars Djinni's colours, and with a
    prelude a Mars Djinni appears first.
@@ -274,7 +290,13 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 	btEffectEndCanvasLayer();
 }
 
-#include "battle_effect/effect_mad_spatter.c"
+/* Gold shells arc from the user onto each target in turn and burst into shards.
+
+   Abilities: Mad Spatter. */
+void btEffectRunMadSpatter(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunLobbedShells(args, LOBBED_SHELLS_MAD_SPATTER);
+}
 
 /* A Venus Djinni appears, then four gold shells arc onto each target and burst
    into shards.
@@ -285,7 +307,57 @@ void btEffectRunMud(BATTLE_EFFECT_PARM *args)
 	btEffectRunLobbedShells(args, LOBBED_SHELLS_MUD);
 }
 
-#include "battle_effect/effect_poison_shells.c"
+/* Green shells arc from the user onto each target in turn and burst into smoke,
+   then Dull's effect plays.
+
+   Abilities: Decompose. */
+void btEffectRunDecompose(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunLobbedShells(args, LOBBED_SHELLS_DECOMPOSE);
+}
+
+/* Blue shells arc from the user onto each target in turn and burst into smoke.
+
+   Abilities: Bone Chiller. */
+void btEffectRunBoneChiller(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunLobbedShells(args, LOBBED_SHELLS_BONE_CHILLER);
+}
+
+/* Shells in the spider web's colours arc from the user onto each target in turn
+   and burst into smoke.
+
+   Abilities: Sticky Goo. */
+void btEffectRunStickyGoo(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunLobbedShells(args, LOBBED_SHELLS_STICKY_GOO);
+}
+
+/* Shells in Mars Djinn colours arc from the user onto each target in turn and
+   burst into smoke.
+
+   Abilities: Poison Ink. */
+void btEffectRunPoisonInk(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunLobbedShells(args, LOBBED_SHELLS_POISON_INK);
+}
+
+/* Lime shells arc from the user onto each target in turn and burst into smoke.
+
+   Abilities: Sticky Poison. */
+void btEffectRunStickyPoison(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunLobbedShells(args, LOBBED_SHELLS_STICKY_POISON);
+}
+
+/* Green shells arc from the user onto each target in turn and burst into
+   shards, then Impair's effect plays.
+
+   Abilities: Rotten Blood. */
+void btEffectRunRottenBlood(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
+}
 
 /* Glowing lime shells arc from the user onto each target in turn and burst into
    smoke.

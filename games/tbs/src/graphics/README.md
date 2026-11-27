@@ -107,9 +107,7 @@ the credits melt one into the next.
   ([Battle effects](../battle_effect/README.md)).
 - `font/` holds the letters: one font sheet for each language, a letter to a 16
   by 16 square, with a table of widths beside it so that an `i` takes less
-  room than a `W`. The six sheets are the same in both games, so they are one
-  copy in [`games/common/graphics/font`](../../../common/README.md);
-  `font/text.s` here places the edition's sheet.
+  room than a `W`.
 - `ui/` is the windows' borders, icons and cursors, and `title/` the
   Title's pictures. A picture with words in it has one file for each
   language that needs its own.

@@ -741,7 +741,14 @@ update_actor:
 	return 1;
 }
 
-#include "field/check_configured_keys_and_count.c"
+/* SC_KEY_COUNT: checks the configured keys (fdCheckConfiguredKeys). Returns
+   1. */
+Sint32 fdCheckConfiguredKeysAndCount(ACTOR *actor)
+{
+	fdCheckConfiguredKeys();
+	actor->scriptCursor++;
+	return 1;
+}
 
 /* SC_KEYS: moves an actor 8 pixels at a time by the direction pad, with up and
    down changing its height (y) rather than its depth. */

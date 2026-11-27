@@ -5,7 +5,33 @@
 #include "field/speaker.h"
 #include "graphics/glyph.h"
 
-#include "field/actor_stand_and_face.c"
+/* Clears an actor's destination, starts its idle script and stands it still. */
+void fdActorClearDestinationAndStand(Uint32 actorId)
+{
+	ACTOR *actor = fdActorLookup(actorId);
+
+	if(actor != NULL) {
+		actor->tgtX = ACTOR_NO_TARGET;
+		actor->tgtY = ACTOR_NO_TARGET;
+		actor->tgtZ = ACTOR_NO_TARGET;
+		fdActorStartIdleStub(actor);
+		fdActorSelectAnimationStub(actor, ANIM_STAND);
+	}
+}
+
+/* The script command "actor face direction": the actor turns toward angle
+   (TRIG_TURN a full turn; fdActorStepAng), then the script waits the given
+   number of ticks. */
+void fdActorFaceDirectionById(Sint32 actorId, Sint32 ang, Sint32 ticks)
+{
+	ACTOR *actor = fdActorLookup(actorId);
+
+	if(actor != NULL) {
+		actor->tmr = ang;
+		fdActorStartScriptStub(actor, (const Sint32 *)ActorStepAngleScript);
+		fdScriptWait(ticks);
+	}
+}
 
 /* Turns an actor a step toward angle (ActorStepAngleScript) and waits for the
    script to end. */
@@ -37,7 +63,25 @@ void fdActorSetSprPriority(Uint32 actorId, Sint32 priority)
 	}
 }
 
-#include "field/actor_copy_graphics.c"
+/* Makes the target actor's sprite show the source actor's graphics (its VRAM
+   block and tile). Neither actor is checked for NULL. */
+void fdActorCopyGraphics(Uint32 tgtId, Uint32 srcId)
+{
+	ACTOR *actor;
+	SPR	  *spr;
+	Uint8  vramBlock;
+	Uint32 tile;
+
+	actor = fdActorGetById(srcId);
+	spr = actor->spr;
+	vramBlock = spr->slot;
+	tile = spr->image.tile;
+
+	actor = fdActorGetById(tgtId);
+	spr = actor->spr;
+	spr->slot = vramBlock;
+	spr->image.tile = tile;
+}
 
 /* Stops actor id moving and colliding and hides it. */
 void fdActorDisableById(Uint32 id)
@@ -192,7 +236,12 @@ void fdActorShowItemIconById(Sint32 id, Sint32 item)
 	}
 }
 
-#include "field/script_set_message_id.c"
+/* The script command "set message": the number of the script's next message,
+   written to the field state's message. */
+void fdScriptSetMessageId(Sint32 msg)
+{
+	FieldStateWork->msg = msg;
+}
 
 /* Returns the sprite (the first animation's id) of the actor whose id is key's
    under SPEAKER_ACTOR_MASK, or -1 if there is no such animated actor. */

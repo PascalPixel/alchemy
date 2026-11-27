@@ -363,7 +363,27 @@ ACTOR *fdEffectSpawnMoveHand(ACTOR *caster)
 	return hand;
 }
 
-#include "field/effect_grow_hand_and_wait.c"
+/* Sets an actor's scale at once to full size (its first step of 1/16 past
+   toFIXED(1) - 1: exactly toFIXED(1) from a multiple of 1/16) when it is
+   smaller, then waits, at most 600 ticks, for it to arrive at its target. */
+void fdEffectGrowHandAndWait(ACTOR *actor)
+{
+	FIXED next;
+	FIXED scale;
+
+	if(actor != NULL) {
+		scale = actor->scaleX;
+		if(scale < toFIXED(1)) {
+			do {
+				next = scale + toFIXED(1) / 16;
+				scale = next;
+			} while(next < toFIXED(1));
+			actor->scaleX = next;
+			actor->scaleY = next;
+		}
+		fdActorWaitForMoveStub(actor);
+	}
+}
 
 /* Ends a hand: over 31 ticks it rises 1 pixel, turns 1/8 turn and shrinks by
    1/32 of full size a tick, then bursts into 8 sparkles and is released. */

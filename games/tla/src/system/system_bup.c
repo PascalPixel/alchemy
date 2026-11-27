@@ -345,7 +345,21 @@ Bool syBupInvalidateSector(Sint32 idx)
 	return FALSE;
 }
 
-#include "system/bup_compare_bytes.c"
+/* Compares `cnt` bytes, as memcmp does. */
+Sint32 syBupCompareBytes(Uint8 *left, Uint8 *right, Sint32 cnt)
+{
+	Sint32 difference = 0;
+
+	while(cnt != 0) {
+		difference = *left - *right;
+		if(difference != 0)
+			break;
+		cnt--;
+		left++;
+		right++;
+	}
+	return difference;
+}
 
 /* Returns the highest counter among the copies of part `partId`. */
 Uint32 syBupGetLatestCounter(Sint32 partId)

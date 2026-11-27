@@ -21,7 +21,12 @@
 /* The cursor packed in DJINN_MENU_STATE.selection: column + row * 10. */
 #define DJINN_CURSOR_ROW_STRIDE 10
 
-#include "menu/wrap_index.c"
+/* Wraps a cursor index that has stepped one past either end of modulus entries:
+   -1 becomes modulus - 1 and modulus becomes 0. */
+Sint32 mnWrapIndex(Sint32 value, Sint32 modulus)
+{
+	return (value + modulus) % modulus;
+}
 
 /* Places the four party figures over their Djinn columns, 56 pixels apart from
    x 32, at screen y 61 plus yOfs. Returns that y. */
@@ -552,7 +557,60 @@ void mnOpenBackdropScreen(void)
 #define DJINN_PREVIEW_GAINED 0x8000
 #define DJINN_PREVIEW_LOST	 0x4000
 
-#include "menu/psynergy_list_diff.c"
+/* Lists the Psynergy a party member has after a Djinn change, marking with
+   DJINN_PREVIEW_GAINED those they lacked before, then appends what they had and
+   lose, marked DJINN_PREVIEW_LOST. Returns how many it wrote, and the gains and
+   losses in the two counts. */
+Sint32 mnPsynergyListDiff(PSYNERGY_ENTRY *before, PSYNERGY_ENTRY *after,
+	Uint16 *actionsOut, Sint32 *gainedCntOut, Sint32 *lostCntOut)
+{
+	Sint32 actionIdx;
+	Sint32 otherIdx;
+	Sint32 actionCnt;
+	Sint32 gainedCnt;
+	Sint32 lostCnt;
+
+	actionCnt = 0;
+	gainedCnt = 0;
+	lostCnt = 0;
+	for(actionIdx = 0;
+		actionIdx < PSYNERGY_SLOTS && after[actionIdx].encodedAction != 0;
+		actionIdx++) {
+		actionsOut[actionCnt] =
+			after[actionIdx].encodedAction & PSYNERGY_ABILITY_MASK;
+		actionCnt++;
+		for(otherIdx = 0; otherIdx < PSYNERGY_SLOTS; otherIdx++) {
+			if(((after[actionIdx].encodedAction ^
+					before[otherIdx].encodedAction) &
+				   PSYNERGY_ABILITY_MASK) == 0)
+				break;
+		}
+		if(otherIdx == PSYNERGY_SLOTS) {
+			gainedCnt++;
+			actionsOut[actionCnt - 1] |= DJINN_PREVIEW_GAINED;
+		}
+	}
+	for(actionIdx = 0;
+		actionIdx < PSYNERGY_SLOTS && before[actionIdx].encodedAction != 0;
+		actionIdx++) {
+		for(otherIdx = 0; otherIdx < PSYNERGY_SLOTS; otherIdx++) {
+			if(((before[actionIdx].encodedAction ^
+					after[otherIdx].encodedAction) &
+				   PSYNERGY_ABILITY_MASK) == 0)
+				break;
+		}
+		if(otherIdx == PSYNERGY_SLOTS) {
+			lostCnt++;
+			actionsOut[actionCnt] =
+				(before[actionIdx].encodedAction & PSYNERGY_ABILITY_MASK) |
+				DJINN_PREVIEW_LOST;
+			actionCnt++;
+		}
+	}
+	*gainedCntOut = gainedCnt;
+	*lostCntOut = lostCnt;
+	return actionCnt;
+}
 
 Sint32 mnDjinnListUnitEntries(
 	Uint16 *entriesOut, Sint32 memberId, Sint32 element);

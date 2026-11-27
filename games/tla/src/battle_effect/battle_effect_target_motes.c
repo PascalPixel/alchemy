@@ -21,7 +21,17 @@ typedef enum TARGET_MOTES_MODE {
    plays its six pictures and starts again, a closing mote where it is and a
    rising one at a new point below. */
 
-#include "battle_effect/effect_taint.c"
+/* Lime smoke swirls in on each target, or pink smoke for a stronger variant.
+
+   Abilities: Taint, Poison. */
+void btEffectRunTaint(BATTLE_EFFECT_PARM *args)
+{
+	if(args->variant == EFFECT_VARIANT_BASIC) {
+		btEffectRunTargetMotes(args, TARGET_MOTES_TAINT);
+		return;
+	}
+	btEffectRunTargetMotes(args, TARGET_MOTES_PINK_SMOKE);
+}
 
 /* Pink smoke swirls in on each target, as Taint shows it for a stronger
    variant.
@@ -32,7 +42,54 @@ void btEffectRunPoisonGel(BATTLE_EFFECT_PARM *args)
 	btEffectRunTargetMotes(args, TARGET_MOTES_PINK_SMOKE);
 }
 
-#include "battle_effect/effect_target_motes.c"
+/* Cyan smoke rises around each target.
+
+   Abilities: Delude, Confuse, Mist, Mucous Gel. */
+void btEffectRunDelude(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetMotes(args, TARGET_MOTES_DELUDE);
+}
+
+/* Smoke rises around each target, and glints sparkle near it.
+
+   Abilities: Paralyze. */
+void btEffectRunParalyze(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetMotes(args, TARGET_MOTES_PARALYZE);
+}
+
+/* Hearts close in on each target, turning as they come.
+
+   Abilities: Heartrender. */
+void btEffectRunHeartrender(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetMotes(args, TARGET_MOTES_HEARTRENDER);
+}
+
+/* Glowing orbs spiral in on each target.
+
+   Abilities: Mystic Flame. */
+void btEffectRunMysticFlame(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetMotes(args, TARGET_MOTES_MYSTIC_FLAME);
+}
+
+/* Glowing orbs in Mars Djinn colours rise around each target, and then the user
+   steps up to the first target and strikes it.
+
+   Abilities: Demonfire. */
+void btEffectRunDemonFire(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetMotes(args, TARGET_MOTES_DEMON_FIRE);
+}
+
+/* Thirty-two water drops spiral in on each target.
+
+   Abilities: Drown. */
+void btEffectRunDrown(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunTargetMotes(args, TARGET_MOTES_DROWN);
+}
 
 /* Styles whose motes start in a wide ball, and run on TARGET_MOTES_WIDE_RUN_ON
    ticks after the last target's motes start. */

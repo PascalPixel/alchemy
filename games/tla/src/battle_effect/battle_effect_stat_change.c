@@ -21,7 +21,23 @@ typedef enum STAT_BOOST_MODE {
 	STAT_BOOST_GUARD_AURA /* a pane of light, in grey */
 } STAT_BOOST_MODE;
 
-#include "battle_effect/effect_impact_guard.c"
+/* Light swirls into each target and bursts, then a dagger appears in Mars
+   colours.
+
+   Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge; Kindle. */
+void btEffectRunImpact(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatBoost(args, STAT_BOOST_IMPACT);
+}
+
+/* Light swirls into each target and bursts, then a shield appears in Mars
+   colours.
+
+   Abilities: Guard, Protect, Guardian, Protector; Corona. */
+void btEffectRunGuard(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatBoost(args, STAT_BOOST_GUARD);
+}
 
 /* Light swirls into each target and bursts, then a shield appears in Venus
    colours as the backdrop turns grey.
@@ -38,7 +54,14 @@ void btEffectRunUnusedStatBoost(BATTLE_EFFECT_PARM *args)
 	btEffectRunStatBoost(args, STAT_BOOST_UNUSED);
 }
 
-#include "battle_effect/effect_ward.c"
+/* Light swirls into each target and bursts, then a shield appears in Jupiter
+   colours.
+
+   Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze. */
+void btEffectRunWard(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatBoost(args, STAT_BOOST_WARD);
+}
 
 /* Light swirls into each target and bursts, then a shield appears in Mercury
    colours as the backdrop turns to Jupiter's colours.
@@ -49,7 +72,23 @@ void btEffectRunSteam(BATTLE_EFFECT_PARM *args)
 	btEffectRunStatBoost(args, STAT_BOOST_STEAM);
 }
 
-#include "battle_effect/effect_granite_flash.c"
+/* Light swirls into each target and bursts, then a pane of light appears in
+   Venus colours.
+
+   Abilities: Granite. */
+void btEffectRunGranite(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatBoost(args, STAT_BOOST_GRANITE);
+}
+
+/* Light swirls into each target and bursts, then a pane of light appears in
+   Mars colours.
+
+   Abilities: Flash. */
+void btEffectRunFlash(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatBoost(args, STAT_BOOST_FLASH);
+}
 
 /* Light swirls into each target and bursts, then a pane of light appears in
    Mercury colours.
@@ -69,7 +108,15 @@ void btEffectRunGuardAura(BATTLE_EFFECT_PARM *args)
 	btEffectRunStatBoost(args, STAT_BOOST_GUARD_AURA);
 }
 
-#include "battle_effect/effect_zephyr.c"
+/* Light swirls into each target and bursts, then a gust of wind sweeps across
+   it in the colours already loaded, as this is the one boost that keeps the
+   palette.
+
+   Abilities: Zephyr. */
+void btEffectRunZephyr(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatBoost(args, STAT_BOOST_ZEPHYR);
+}
 
 /* Light swirls into each target and bursts, then a gust of wind sweeps across
    it in Mars colours.
@@ -558,7 +605,32 @@ UNUSED void btEffectRunUnusedStatReduction(void *action)
 	btEffectRunStatReduction(action, STAT_REDUCTION_UNUSED);
 }
 
-#include "battle_effect/effect_stat_lowering.c"
+/* A dagger appears over each target and breaks into shards that fade through
+   darker copies, in the glow orb's colours.
+
+   Abilities: Dull, Blunt. */
+void btEffectRunDull(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatReduction(args, STAT_REDUCTION_DULL);
+}
+
+/* A shield appears over each target and breaks into shards that fade through
+   darker copies, in the glow orb's colours.
+
+   Abilities: Impair, Debilitate. */
+void btEffectRunImpair(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatReduction(args, STAT_REDUCTION_IMPAIR);
+}
+
+/* A shield appears over each target and breaks into fading shards, in the pink
+   burst's colours.
+
+   Abilities: Weaken, Enfeeble. */
+void btEffectRunWeaken(BATTLE_EFFECT_PARM *args)
+{
+	btEffectRunStatReduction(args, STAT_REDUCTION_WEAKEN);
+}
 
 /* Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of
    STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY ticks

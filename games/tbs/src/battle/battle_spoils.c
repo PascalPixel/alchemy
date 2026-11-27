@@ -2,7 +2,27 @@
 
 #include "battle_internal.h"
 
-#include "battle/spoils_rank_item.c"
+/* Returns an item's rank among the spoils: an indispensable item first, then a
+   rare one, then the higher item id; 0 for none. */
+Uint32 btSpoilsRankItem(Uint32 inventoryEntry)
+{
+	Uint32 pri = 0;
+	Uint32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
+	if(itemId == 0)
+		return 0;
+	{
+		Uint8 flg = gmItemGetDirectStub(itemId)->flg;
+
+		if(flg & ITEM_INDISPENSABLE)
+			pri = 1;
+		pri <<= 1;
+		if(flg & ITEM_RARE)
+			pri++;
+		pri <<= 9;
+		pri += itemId;
+	}
+	return pri;
+}
 
 /* Above every item's rank: the search for the lowest of the spoils' four starts
    here. */

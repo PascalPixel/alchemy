@@ -51,68 +51,68 @@ void                         scJupiterLighthouseTeleportToBasement(void);
 // front wall, the pad itself, and the weeds over the Mint.
 enum
 {
-	METATILE_WEEDS_NORTH_OF_THE_TELEPORTER = 30,
-	METATILE_WEEDS_SOUTH_OF_THE_TELEPORTER,
-	METATILE_WEST_WEEDS,
-	METATILE_WEEDS_BELOW_THE_STAIRS,
-	METATILE_EAST_WEEDS,
-	METATILE_TELEPORTER,
-	METATILE_WEEDS_OVER_MINT
+    METATILE_WEEDS_NORTH_OF_THE_TELEPORTER = 30,
+    METATILE_WEEDS_SOUTH_OF_THE_TELEPORTER,
+    METATILE_WEST_WEEDS,
+    METATILE_WEEDS_BELOW_THE_STAIRS,
+    METATILE_EAST_WEEDS,
+    METATILE_TELEPORTER,
+    METATILE_WEEDS_OVER_MINT
 };
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SceneEntrances;
+    return SceneEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
 {
-	return 0;
+    return 0;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SceneExits;
+    return SceneExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ActorPlacements;
+    return ActorPlacements;
 }
 
 // Cyclone cast in the weeds just north of the teleporter pad in the west dead end (metatiles (9,
 // 19), (6, 20) and (7, 20)) scatters those within two metatiles of Felix.
 void scJupiterLighthouseScatterWeedsNorthOfTheTeleporter(void)
 {
-	syFieldTileCopiesCopyTouchedMetatiles(56, 0, 4, 2, 70, 19, 1);
+    syFieldTileCopiesCopyTouchedMetatiles(56, 0, 4, 2, 70, 19, 1);
 }
 
 // Cyclone cast in the weeds just south of the teleporter pad in the west dead end (metatiles (5,
 // 22) to (8, 23)) scatters those within two metatiles of Felix.
 void scJupiterLighthouseScatterWeedsSouthOfTheTeleporter(void)
 {
-	syFieldTileCopiesCopyTouchedMetatiles(56, 0, 4, 2, 69, 22, 1);
+    syFieldTileCopiesCopyTouchedMetatiles(56, 0, 4, 2, 69, 22, 1);
 }
 
 // Cyclone cast in the weeds under the west end of the lighthouse's front wall (metatiles (15, 25)
 // to (17, 27)) scatters those within two metatiles of Felix.
 void scJupiterLighthouseScatterWestWeeds(void)
 {
-	syFieldTileCopiesCopyTouchedMetatiles(56, 0, 3, 3, 79, 25, 1);
+    syFieldTileCopiesCopyTouchedMetatiles(56, 0, 3, 3, 79, 25, 1);
 }
 
 // Cyclone cast in the weeds below the stairs in the middle of the lighthouse's front (metatiles
 // (21, 26) to (25, 28)) scatters those within two metatiles of Felix.
 void scJupiterLighthouseScatterWeedsBelowTheStairs(void)
 {
-	syFieldTileCopiesCopyTouchedMetatiles(56, 0, 5, 3, 85, 26, 1);
+    syFieldTileCopiesCopyTouchedMetatiles(56, 0, 5, 3, 85, 26, 1);
 }
 
 // Cyclone cast in the weeds under the east part of the lighthouse's front (metatiles (30, 26) to
 // (34, 28)) scatters those within two metatiles of Felix.
 void scJupiterLighthouseScatterEastWeeds(void)
 {
-	syFieldTileCopiesCopyTouchedMetatiles(56, 0, 5, 3, 94, 26, 1);
+    syFieldTileCopiesCopyTouchedMetatiles(56, 0, 5, 3, 94, 26, 1);
 }
 
 // Where the Mint lies under the weeds below the west end of the front wall: metatile (17, 27).
@@ -124,25 +124,25 @@ void scJupiterLighthouseScatterEastWeeds(void)
 // metatile west off it, and its green leaf lies in the cleared sand.
 void scJupiterLighthouseScatterWeedsOverMint(void)
 {
-	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+    ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 
-	syFieldTileCopiesCopyTouchedMetatiles(56, 0, 3, 3, 79, 25, 1);
-	if (!fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_MINT))
-	{
-		fdActorSetPos(FIELD_TREASURE_ACTOR, MINT_SPOT_X, MINT_SPOT_Z);
-		if (FIELD_METATILE(leader->x.fixed) == FIELD_METATILE(toFIXED(MINT_SPOT_X))
-		    && FIELD_METATILE(leader->z.fixed) == FIELD_METATILE(toFIXED(MINT_SPOT_Z)))
-		{
-			fdScriptStart();
-			syFieldScriptEndLastingPsynergy(0);
-			fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
-			                         ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-			fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, -16, 0);
-			leader->velocityY = toFIXED(6);
-			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-			fdScriptEnd();
-		}
-	}
+    syFieldTileCopiesCopyTouchedMetatiles(56, 0, 3, 3, 79, 25, 1);
+    if (!fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_MINT))
+    {
+        fdActorSetPos(FIELD_TREASURE_ACTOR, MINT_SPOT_X, MINT_SPOT_Z);
+        if (FIELD_METATILE(leader->x.fixed) == FIELD_METATILE(toFIXED(MINT_SPOT_X))
+            && FIELD_METATILE(leader->z.fixed) == FIELD_METATILE(toFIXED(MINT_SPOT_Z)))
+        {
+            fdScriptStart();
+            syFieldScriptEndLastingPsynergy(0);
+            fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
+                                     ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+            fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, -16, 0);
+            leader->velocityY = toFIXED(6);
+            scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
+            fdScriptEnd();
+        }
+    }
 }
 
 // Cyclone on the purple teleporter pad in the west dead end, metatile (7, 21): the whirlwind lifts
@@ -150,39 +150,39 @@ void scJupiterLighthouseScatterWeedsOverMint(void)
 // lighthouse.
 void scJupiterLighthouseTeleportToBasement(void)
 {
-	syImportScriptSetExitRequest(
-		JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS);
+    syImportScriptSetExitRequest(
+        JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS);
 }
 
 const CUE *scGetCues(void)
 {
-	return SceneCues;
+    return SceneCues;
 }
 
 // Sets up the grounds as the party enters: the fade in, the teleporter's ring when the party
 // arrives by it, and Contigo's shops as where a defeat returns to. Returns 0.
 Sint32 scInit(void)
 {
-	Sint32 keepPos;
+    Sint32 keepPos;
 
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	keepPos                    = fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION);
-	if (keepPos == 0)
-	{
-		if (MainRoutineStateWork.entrance
-		    == JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS)
-			fdActorArriveInRing(MainRoutineStateWork.leaderActorId);
-	}
-	MainRoutineStateWork.restartScene    = SCENE_CONTIGO_SHOPS;
-	MainRoutineStateWork.restartEntrance = CONTIGO_SHOPS_FROM_CONTIGO_NORTHEAST_A;
-	return 0;
+    FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    keepPos                    = fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION);
+    if (keepPos == 0)
+    {
+        if (MainRoutineStateWork.entrance
+            == JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS)
+            fdActorArriveInRing(MainRoutineStateWork.leaderActorId);
+    }
+    MainRoutineStateWork.restartScene    = SCENE_CONTIGO_SHOPS;
+    MainRoutineStateWork.restartEntrance = CONTIGO_SHOPS_FROM_CONTIGO_NORTHEAST_A;
+    return 0;
 }
 
 // Sets the scene's arrival flags before the map is built. Returns 0.
 Sint32 scPrepareMap(void)
 {
-	scSetArrivalFlags(0);
-	return 0;
+    scSetArrivalFlags(0);
+    return 0;
 }
 
 #include "shared/scene_set_arrival_flags.c"
@@ -198,7 +198,7 @@ extern Sint32      PaletteCycleTick;
 // Sets the palette cycle's tick (PaletteCycleTick).
 static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleTick = value;
+    PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -238,7 +238,7 @@ Sint32        fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 // Unused: sets the priority the lit actors' sprites are drawn at; nothing in the entrance calls it.
 UNUSED void scLightSpritesSetPriority(Sint32 value)
 {
-	LightSpritePriority = value;
+    LightSpritePriority = value;
 }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -249,33 +249,33 @@ UNUSED void scLightSpritesSetPriority(Sint32 value)
 #include "shared/scene_entrances_default.c"
 
 Uint32 SceneExits[] = {
-	SCENE_EXITS(JupiterLighthouseEntrance),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_JUPITER_LIGHTHOUSE_ENTRANCE),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST, JupiterLighthouseRoomGateButton, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_ENTRANCE_EAST),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST, JupiterLighthouseRoomGateButton, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_ENTRANCE_WEST),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, JupiterLighthouseBasementTeleporters, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ENTRANCE),
-	SCENE_EXITS_END,
+    SCENE_EXITS(JupiterLighthouseEntrance),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_JUPITER_LIGHTHOUSE_ENTRANCE),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST, JupiterLighthouseRoomGateButton, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_ENTRANCE_EAST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST, JupiterLighthouseRoomGateButton, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_ENTRANCE_WEST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, JupiterLighthouseBasementTeleporters, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ENTRANCE),
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE ActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 360, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 360, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    {SCENE_TABLE_END},
 };
 
 CUE SceneCues[] = {
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP},
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST},
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST},
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_NORTH_OF_THE_TELEPORTER, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWeedsNorthOfTheTeleporter)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_SOUTH_OF_THE_TELEPORTER, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWeedsSouthOfTheTeleporter)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEST_WEEDS, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWestWeeds)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_BELOW_THE_STAIRS, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWeedsBelowTheStairs)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_EAST_WEEDS, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterEastWeeds)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_TELEPORTER, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseTeleportToBasement)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_OVER_MINT, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWeedsOverMint)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS},
+    {PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_NORTH_OF_THE_TELEPORTER, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWeedsNorthOfTheTeleporter)},
+    {PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_SOUTH_OF_THE_TELEPORTER, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWeedsSouthOfTheTeleporter)},
+    {PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEST_WEEDS, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWestWeeds)},
+    {PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_BELOW_THE_STAIRS, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWeedsBelowTheStairs)},
+    {PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_EAST_WEEDS, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterEastWeeds)},
+    {PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_TELEPORTER, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseTeleportToBasement)},
+    {PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_OVER_MINT, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseScatterWeedsOverMint)},
+    {CUE_TABLE_END},
 };
 
 Sint32 PaletteCycleTick = -1;
@@ -283,16 +283,16 @@ Sint32 PaletteCycleTick = -1;
 Sint32 PaletteCyclePausesInScripts = 1;
 
 Sint32 WhirlwindEndScript[] = {
-	SC_ANIMATION(5),
-	SC_WAIT(12),
-	SC_RELEASE,
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 // clang-format on
 
 const Sint32 *FieldEffectDurationScripts[] = {
-	FieldEffectShortScript,
-	FieldEffectMediumScript,
-	FieldEffectLongScript,
+    FieldEffectShortScript,
+    FieldEffectMediumScript,
+    FieldEffectLongScript,
 };
 
 #include "../field/field_effect_move.c"

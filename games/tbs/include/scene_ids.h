@@ -143,7 +143,7 @@ extern char SceneIdMercuryLighthouseAerie;
 #define SCENE_MERCURY_LIGHTHOUSE_AERIE ((Sint32)&SceneIdMercuryLighthouseAerie)
 extern char SceneIdUnusedMercuryLighthouseAerieCopy;
 #define SCENE_UNUSED_MERCURY_LIGHTHOUSE_AERIE_COPY                                                 \
-	((Sint32)&SceneIdUnusedMercuryLighthouseAerieCopy)
+    ((Sint32)&SceneIdUnusedMercuryLighthouseAerieCopy)
 extern char SceneIdFuchinTempleGrounds;
 #define SCENE_FUCHIN_TEMPLE_GROUNDS ((Sint32)&SceneIdFuchinTempleGrounds)
 // A rooms map drawn in red lacquer, of more than one place.

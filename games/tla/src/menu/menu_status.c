@@ -4,10 +4,10 @@
 // The steps of the Status menu (mnStatusScreenRunPages).
 typedef enum STAT_SCREEN_STEP
 {
-	STATUS_STEP_MEMBER    = 0, // choose a party member
-	STATUS_STEP_STATUS    = 1, // their status page
-	STATUS_STEP_PSYNERGY  = 2, // their Psynergy page
-	STATUS_STEP_EQUIPMENT = 3  // their equipment page
+    STATUS_STEP_MEMBER    = 0, // choose a party member
+    STATUS_STEP_STATUS    = 1, // their status page
+    STATUS_STEP_PSYNERGY  = 2, // their Psynergy page
+    STATUS_STEP_EQUIPMENT = 3  // their equipment page
 } STAT_SCREEN_STEP;
 
 // The page modes of mnStatusScreenDrawStatusPage and mnStatusScreenDrawTopRows, in the mode's low
@@ -15,8 +15,8 @@ typedef enum STAT_SCREEN_STEP
 // Resist.
 enum
 {
-	STATUS_PAGE_SUMMARY = 0,
-	STATUS_PAGE_FULL    = 1
+    STATUS_PAGE_SUMMARY = 0,
+    STATUS_PAGE_FULL    = 1
 };
 
 // A bit over the page mode: draw without clearing the window first, as for a window just opened.
@@ -62,31 +62,31 @@ Sint32 mnPartyMemberChooserRun(void);
 // before returning.
 Sint32 mnPartyMemberChooserOpen(void)
 {
-	STAT_SCREEN_STATE *state =
-		(STAT_SCREEN_STATE *)syHeapSlotAllocate(HEAP_SLOT_MENU, MENU_STATE_SIZE);
-	Sint32 result;
-	Sint32 index;
+    STAT_SCREEN_STATE *state =
+        (STAT_SCREEN_STATE *)syHeapSlotAllocate(HEAP_SLOT_MENU, MENU_STATE_SIZE);
+    Sint32 result;
+    Sint32 index;
 
-	RamHeapSlots->actorSystem->suspended = 1;
-	mnWindowDrawBorderStub(0, 0, 30, 20);
-	sySynch(1);
-	mnInitState(0);
+    RamHeapSlots->actorSystem->suspended = 1;
+    mnWindowDrawBorderStub(0, 0, 30, 20);
+    sySynch(1);
+    mnInitState(0);
 
-	state->partyCount = gmPartyListMembersStub(state->memberIds);
-	mnStatusScreenInit(0, 3, 0, 7);
-	state->selectorWindow = mnWindowCreateStub(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-	for (index = 0; index < 4; index++)
-		state->memberY[index] = MENU_MEMBER_Y;
-	state->page = STATUS_SCREEN_PAGE_CHOOSER;
+    state->partyCount = gmPartyListMembersStub(state->memberIds);
+    mnStatusScreenInit(0, 3, 0, 7);
+    state->selectorWindow = mnWindowCreateStub(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
+    for (index = 0; index < 4; index++)
+        state->memberY[index] = MENU_MEMBER_Y;
+    state->page = STATUS_SCREEN_PAGE_CHOOSER;
 
-	result      = mnPartyMemberChooserRun();
+    result      = mnPartyMemberChooserRun();
 
-	mnWindowSpriteClearListStub(state->statusWindow);
-	mnItemMenuClose();
-	RamHeapSlots->actorSystem->suspended = 0;
-	sySynch(1);
-	syHeapSlotRelease(HEAP_SLOT_MENU);
-	return result;
+    mnWindowSpriteClearListStub(state->statusWindow);
+    mnItemMenuClose();
+    RamHeapSlots->actorSystem->suspended = 0;
+    sySynch(1);
+    syHeapSlotRelease(HEAP_SLOT_MENU);
+    return result;
 }
 
 Sint32 mnStatusScreenSelectMember(Sint32 slot);
@@ -94,20 +94,20 @@ Sint32 mnStatusScreenSelectMember(Sint32 slot);
 // The party member chooser's loop. Returns the chosen party member's id, or -1.
 Sint32 mnPartyMemberChooserRun(void)
 {
-	STAT_SCREEN_STATE *state  = RamHeapSlots->menuState;
-	Sint32             result = 0;
+    STAT_SCREEN_STATE *state  = RamHeapSlots->menuState;
+    Sint32             result = 0;
 
-	do
-	{
-		state->selectedSlots[0] = 0;
-		if (mnStatusScreenSelectMember(0) == -1)
-		{
-			result = -1;
-			break;
-		}
-		result = state->selectedIds[0];
-	} while (0);
-	return result;
+    do
+    {
+        state->selectedSlots[0] = 0;
+        if (mnStatusScreenSelectMember(0) == -1)
+        {
+            result = -1;
+            break;
+        }
+        result = state->selectedIds[0];
+    } while (0);
+    return result;
 }
 
 Sint32 mnStatusScreenRunPages(void);
@@ -123,77 +123,77 @@ void   mnIconReleaseSlots(void);
 // Djinn, the Djinn figures, runs the status pages, then puts everything back.
 Sint32 mnStatusScreenRun(void)
 {
-	STAT_SCREEN_STATE *state =
-		(STAT_SCREEN_STATE *)syHeapSlotAllocate(HEAP_SLOT_MENU, MENU_STATE_SIZE);
-	void                    *palette = syHeapAllocateEWRAM(64);
-	void                    *tiles   = syHeapAllocateEWRAM(STATUS_SAVED_TILE_BYTES);
-	Sint32                   result  = -1;
-	HEAP_SLOTS              *heap;
-	SCREEN_TRANSITION_STATE *transition;
-	Uint32                   saved;
-	Uint16                  *page;
+    STAT_SCREEN_STATE *state =
+        (STAT_SCREEN_STATE *)syHeapSlotAllocate(HEAP_SLOT_MENU, MENU_STATE_SIZE);
+    void                    *palette = syHeapAllocateEWRAM(64);
+    void                    *tiles   = syHeapAllocateEWRAM(STATUS_SAVED_TILE_BYTES);
+    Sint32                   result  = -1;
+    HEAP_SLOTS              *heap;
+    SCREEN_TRANSITION_STATE *transition;
+    Uint32                   saved;
+    Uint16                  *page;
 
-	heap                         = RamHeapSlots;
-	transition                   = heap->screenTransition;
-	heap->actorSystem->suspended = 1;
-	mnWindowDrawBorderStub(0, 0, 30, 20);
-	sySynch(1);
-	saved                     = (Uint16)transition->outsideLayers;
-	// Window 0 shows only the windows' layer and the sprites.
-	transition->outsideLayers = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
-	mnSuspendFieldEvents();
-	mnInitState(0);
-	page              = &state->page;
-	*page             = 0;
-	state->partyCount = gmPartyListMembersStub(state->memberIds);
-	mnStatusScreenInit(0, 3, 0, 7);
-	syWordsCopy(palette, (void *)BG_PLTT, 64);
-	syWordsCopy(tiles, (void *)BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
-	mnPaletteLightenHighlight(HIGHLIGHT_PALETTE);
-	syDMAXCopy((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
-	syDMAXCopy((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
-	           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
-	           DMA_COPY_HALFWORDS(1),
-	           REG_DMA3);
-	syDMAXCopy((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
-	syDMAXCopy((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
-	           (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
-	           DMA_COPY_HALFWORDS(1),
-	           REG_DMA3);
-	mnTextUseExtraTilesStub(1);
-	state->selectorWindow = mnWindowCreateStub(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-	if (gmPartySumDjinnCountsStub(result) != 0)
-		mnDjinnFiguresInitTopRow();
-	mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
-	mnIconLoadSlots();
-	mnStartWatchingStart();
-	*page  = 0;
+    heap                         = RamHeapSlots;
+    transition                   = heap->screenTransition;
+    heap->actorSystem->suspended = 1;
+    mnWindowDrawBorderStub(0, 0, 30, 20);
+    sySynch(1);
+    saved                     = (Uint16)transition->outsideLayers;
+    // Window 0 shows only the windows' layer and the sprites.
+    transition->outsideLayers = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
+    mnSuspendFieldEvents();
+    mnInitState(0);
+    page              = &state->page;
+    *page             = 0;
+    state->partyCount = gmPartyListMembersStub(state->memberIds);
+    mnStatusScreenInit(0, 3, 0, 7);
+    syWordsCopy(palette, (void *)BG_PLTT, 64);
+    syWordsCopy(tiles, (void *)BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
+    mnPaletteLightenHighlight(HIGHLIGHT_PALETTE);
+    syDMAXCopy((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
+    syDMAXCopy((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
+               (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
+               DMA_COPY_HALFWORDS(1),
+               REG_DMA3);
+    syDMAXCopy((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
+    syDMAXCopy((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+               (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
+               DMA_COPY_HALFWORDS(1),
+               REG_DMA3);
+    mnTextUseExtraTilesStub(1);
+    state->selectorWindow = mnWindowCreateStub(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
+    if (gmPartySumDjinnCountsStub(result) != 0)
+        mnDjinnFiguresInitTopRow();
+    mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
+    mnIconLoadSlots();
+    mnStartWatchingStart();
+    *page  = 0;
 
-	result = mnStatusScreenRunPages();
+    result = mnStatusScreenRunPages();
 
-	mnStopWatchingStart();
-	mnIconReleaseSlots();
-	mnWindowSpriteClearListStub(state->statusWindow);
-	mnDjinnFiguresReleaseTopRow();
-	mnResumeFieldEvents();
-	mnWindowDrawBorderStub(0, 0, 30, 20);
-	sySynch(1);
-	mnWindowMarkVisibleTextTilesStub();
-	mnTextUseExtraTilesStub(0);
-	syWordsCopy((void *)BG_PLTT, palette, 64);
-	syWordsCopy((void *)BG_CHAR_BLOCK(1), tiles, STATUS_SAVED_TILE_BYTES);
-	syHeapRelease(tiles);
-	syHeapRelease(palette);
-	((WIN_STATE *)heap->windowState)->holdTilemapUpload = 1;
-	mnItemMenuClose();
-	mnWindowDrawBorderStub(0, 0, 30, 20);
-	syHeapSlotRelease(HEAP_SLOT_MENU);
-	heap->actorSystem->suspended = 0;
-	transition->outsideLayers    = saved;
-	sySynch(1);
-	mnWindowEraseBorderRectStub(0, 0, 30, 20);
-	((WIN_STATE *)heap->windowState)->holdTilemapUpload = 0;
-	return result;
+    mnStopWatchingStart();
+    mnIconReleaseSlots();
+    mnWindowSpriteClearListStub(state->statusWindow);
+    mnDjinnFiguresReleaseTopRow();
+    mnResumeFieldEvents();
+    mnWindowDrawBorderStub(0, 0, 30, 20);
+    sySynch(1);
+    mnWindowMarkVisibleTextTilesStub();
+    mnTextUseExtraTilesStub(0);
+    syWordsCopy((void *)BG_PLTT, palette, 64);
+    syWordsCopy((void *)BG_CHAR_BLOCK(1), tiles, STATUS_SAVED_TILE_BYTES);
+    syHeapRelease(tiles);
+    syHeapRelease(palette);
+    ((WIN_STATE *)heap->windowState)->holdTilemapUpload = 1;
+    mnItemMenuClose();
+    mnWindowDrawBorderStub(0, 0, 30, 20);
+    syHeapSlotRelease(HEAP_SLOT_MENU);
+    heap->actorSystem->suspended = 0;
+    transition->outsideLayers    = saved;
+    sySynch(1);
+    mnWindowEraseBorderRectStub(0, 0, 30, 20);
+    ((WIN_STATE *)heap->windowState)->holdTilemapUpload = 0;
+    return result;
 }
 
 void   mnIconSetActive(Sint32 active);
@@ -207,56 +207,56 @@ Sint32 mnStatusScreenRunEquipmentPage(void);
 // or presses Start.
 Sint32 mnStatusScreenRunPages(void)
 {
-	STAT_SCREEN_STATE *state    = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
-	Sint32             step     = STATUS_STEP_MEMBER;
-	Sint32             finished = step;
-	Sint32             result   = 0;
+    STAT_SCREEN_STATE *state    = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
+    Sint32             step     = STATUS_STEP_MEMBER;
+    Sint32             finished = step;
+    Sint32             result   = 0;
 
-	while (!finished && !syGameFlagGet(FLAG_MENU_START_PRESSED))
-	{
-		switch (step)
-		{
-			case STATUS_STEP_MEMBER:
-				state->selectedSlots[0] = finished;
-				sySetEvent(mnUpdatePartyFigures, EVENT_PASS_TICK);
-				mnIconSetActive(1);
-				step = mnStatusScreenSelectMember(0);
-				syCloseEvent(mnUpdatePartyFigures);
-				if (step == -1)
-				{
-					result   = step;
-					finished = 1;
-				}
-				step = STATUS_STEP_STATUS;
-				break;
-			case STATUS_STEP_STATUS:
-				mnIconSetActive(1);
-				result = mnStatusScreenRunStatusPage();
-				step   = result == -1 ? STATUS_STEP_MEMBER : STATUS_STEP_PSYNERGY;
-				break;
-			case STATUS_STEP_PSYNERGY:
-				mnIconSetActive(0);
-				result = mnStatusScreenRunPsynergyPage();
-				step   = STATUS_STEP_MEMBER;
-				if (result != -1)
-					step = STATUS_STEP_EQUIPMENT;
-				break;
-			case STATUS_STEP_EQUIPMENT:
-				mnIconSetActive(0);
-				result = mnStatusScreenRunEquipmentPage();
-				if (result == -1)
-					step = STATUS_STEP_MEMBER;
-				else
-					step = STATUS_STEP_STATUS;
-				break;
-			default: finished = 1; break;
-		}
-	}
+    while (!finished && !syGameFlagGet(FLAG_MENU_START_PRESSED))
+    {
+        switch (step)
+        {
+            case STATUS_STEP_MEMBER:
+                state->selectedSlots[0] = finished;
+                sySetEvent(mnUpdatePartyFigures, EVENT_PASS_TICK);
+                mnIconSetActive(1);
+                step = mnStatusScreenSelectMember(0);
+                syCloseEvent(mnUpdatePartyFigures);
+                if (step == -1)
+                {
+                    result   = step;
+                    finished = 1;
+                }
+                step = STATUS_STEP_STATUS;
+                break;
+            case STATUS_STEP_STATUS:
+                mnIconSetActive(1);
+                result = mnStatusScreenRunStatusPage();
+                step   = result == -1 ? STATUS_STEP_MEMBER : STATUS_STEP_PSYNERGY;
+                break;
+            case STATUS_STEP_PSYNERGY:
+                mnIconSetActive(0);
+                result = mnStatusScreenRunPsynergyPage();
+                step   = STATUS_STEP_MEMBER;
+                if (result != -1)
+                    step = STATUS_STEP_EQUIPMENT;
+                break;
+            case STATUS_STEP_EQUIPMENT:
+                mnIconSetActive(0);
+                result = mnStatusScreenRunEquipmentPage();
+                if (result == -1)
+                    step = STATUS_STEP_MEMBER;
+                else
+                    step = STATUS_STEP_STATUS;
+                break;
+            default: finished = 1; break;
+        }
+    }
 
-	if (syGameFlagGet(FLAG_MENU_START_PRESSED))
-		result = -1;
+    if (syGameFlagGet(FLAG_MENU_START_PRESSED))
+        result = -1;
 
-	return result;
+    return result;
 }
 
 Sint32 mnPartyMemberChooserChooseMember(void);
@@ -266,33 +266,33 @@ Sint32 mnStatusScreenRunPartyRow(void);
 // on the chooser page, else the Status menu's party row.
 Sint32 mnStatusScreenSelectMember(Sint32 slot)
 {
-	STAT_SCREEN_STATE *menu;
-	WINDOW_SPR        *cursor;
-	Sint32             result;
-	Sint32             index;
+    STAT_SCREEN_STATE *menu;
+    WINDOW_SPR        *cursor;
+    Sint32             result;
+    Sint32             index;
 
-	menu                  = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
-	index                 = menu->memberIndex[slot];
-	result                = 0;
-	cursor                = menu->memberCursors[slot];
-	cursor->motion        = ICON_SHOWN;
-	cursor->animationStep = 0;
-	mnWindowSpriteRedrawSavedRectStub(menu->memberWindow);
-	if (syGameFlagGet(FLAG_LINK_BATTLE_ARRANGED))
-		mnWindowDrawDividerLineStub(menu->memberWindow, 9, 1, 9, 3);
-	mnWindowDrawDividerLineStub(menu->memberWindow, 0, 3, 12, 3);
-	if (index == -1)
-		menu->memberIndex[slot] = 0;
-	else
-		mnCursorSlide(index * 24 - 10, 16);
-	if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
-		result = mnPartyMemberChooserChooseMember();
-	else
-		result = mnStatusScreenRunPartyRow();
-	cursor = menu->memberCursors[slot];
-	mnIconShow(cursor);
-	sySynch(1);
-	return result;
+    menu                  = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
+    index                 = menu->memberIndex[slot];
+    result                = 0;
+    cursor                = menu->memberCursors[slot];
+    cursor->motion        = ICON_SHOWN;
+    cursor->animationStep = 0;
+    mnWindowSpriteRedrawSavedRectStub(menu->memberWindow);
+    if (syGameFlagGet(FLAG_LINK_BATTLE_ARRANGED))
+        mnWindowDrawDividerLineStub(menu->memberWindow, 9, 1, 9, 3);
+    mnWindowDrawDividerLineStub(menu->memberWindow, 0, 3, 12, 3);
+    if (index == -1)
+        menu->memberIndex[slot] = 0;
+    else
+        mnCursorSlide(index * 24 - 10, 16);
+    if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
+        result = mnPartyMemberChooserChooseMember();
+    else
+        result = mnStatusScreenRunPartyRow();
+    cursor = menu->memberCursors[slot];
+    mnIconShow(cursor);
+    sySynch(1);
+    return result;
 }
 
 // The Djinn list Select opens from the party row: every Djinni the party has found, a column for
@@ -300,95 +300,95 @@ Sint32 mnStatusScreenSelectMember(Sint32 slot)
 // them, until A, B or Select.
 void mnStatusScreenShowDjinnList(void)
 {
-	DJINN_MENU_STATE *menu = RamHeapSlots->menuState;
-	Sint32            page;
-	Sint32            redraw;
-	Sint32            window;
-	Sint32            element;
-	Sint32            row;
-	Sint32            djinn;
-	Sint32            i;
-	Sint32            pages;
+    DJINN_MENU_STATE *menu = RamHeapSlots->menuState;
+    Sint32            page;
+    Sint32            redraw;
+    Sint32            window;
+    Sint32            element;
+    Sint32            row;
+    Sint32            djinn;
+    Sint32            i;
+    Sint32            pages;
 
-	page  = 0;
-	pages = 2;
-	sySoundPlayStub(SE_MENU_CONFIRM);
-	redraw = 1;
-	mnWindowSpriteRedrawSavedRectStub(menu->helpWindow);
-	mnTextDrawMessageAsTilesStub(MsgButtonReturn, menu->helpWindow, 0, 16);
-	mnTextDrawMessageStub(MsgCurrentDjinn, menu->helpWindow, -96, 132);
-	menu->pageArrows[0]->motion = ICON_HIDDEN;
-	menu->pageArrows[1]->motion = ICON_HIDDEN;
-	mnIconSetActive(0);
-	menu->cursor->motion       = ICON_HIDDEN;
-	menu->secondCursor->motion = ICON_HIDDEN;
-	for (i = 0; i < 4; i++)
-	{
-		menu->slotX[i]   = DJINN_LIST_FIGURE_X(i);
-		menu->slotY[i]   = DJINN_LIST_FIGURE_Y;
-		menu->memberY[i] = MENU_MEMBER_Y;
-	}
-	sySynch(1);
-	while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
-	{
-		if (redraw)
-		{
-			window = menu->window;
-			mnWindowSpriteRedrawSavedRectStub(window);
-			sySynch(1);
-			mnWindowDrawDividerLineStub(window, 0, 11, 28, 11);
-			mnPagedListDrawPageNumbers(window, pages, 1, page, 28);
-			for (element = 0; element < 4; element++)
-			{
-				for (row = 0; row < DJINN_LIST_PAGE_ROWS; row++)
-				{
-					// page * 9: a page of DJINN_LIST_PAGE_ROWS.
-					djinn = element * DJINN_PER_ELEMENT
-					      + (row + (page * 8 + page) + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST;
-					if (syGameFlagGet(FLAG_DJINNI(djinn)))
-					{
-						mnWindowSetTilemapEntryStub(window,
-						                            STATUS_ELEMENT_TILE + element,
-						                            element * (DJINN_LIST_COLUMN_WIDTH / 8) + 1,
-						                            row + 1,
-						                            0);
-						mnTextDrawMessageAsTilesStub(djinn + MsgDjinnName,
-						                             window,
-						                             element * DJINN_LIST_COLUMN_WIDTH + 16,
-						                             row * 8 + 8);
-					}
-				}
-			}
-			((WIN_STATE *)RamHeapSlots->windowState)->dirty = 1;
-			redraw                                          = 0;
-		}
-		mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
-		sySynch(1);
-		if (PerWork.push & (KEY_A | KEY_B | KEY_SELECT))
-			break;
-		if (PerWork.repeat & KEYS_HORIZONTAL)
-		{
-			if (PerWork.repeat & KEY_RIGHT)
-				page++;
-			else
-				page--;
-			page = (page + pages) % pages;
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			syInputResetKeyRepeat();
-			redraw = 1;
-		}
-	}
-	mnWindowSpriteRedrawSavedRectStub(menu->window);
-	mnWindowSpriteClearListStub(menu->helpWindow);
-	for (i = 0; i < 4; i++)
-	{
-		menu->slotX[i] = STATUS_FIGURE_X(i);
-		menu->slotY[i] = STATUS_FIGURE_ROW_Y;
-	}
-	menu->cursor->motion       = ICON_SHOWN;
-	menu->secondCursor->motion = ICON_SHOWN;
-	mnIconSetActive(1);
-	sySoundPlayStub(SE_MENU_CANCEL);
+    page  = 0;
+    pages = 2;
+    sySoundPlayStub(SE_MENU_CONFIRM);
+    redraw = 1;
+    mnWindowSpriteRedrawSavedRectStub(menu->helpWindow);
+    mnTextDrawMessageAsTilesStub(MsgButtonReturn, menu->helpWindow, 0, 16);
+    mnTextDrawMessageStub(MsgCurrentDjinn, menu->helpWindow, -96, 132);
+    menu->pageArrows[0]->motion = ICON_HIDDEN;
+    menu->pageArrows[1]->motion = ICON_HIDDEN;
+    mnIconSetActive(0);
+    menu->cursor->motion       = ICON_HIDDEN;
+    menu->secondCursor->motion = ICON_HIDDEN;
+    for (i = 0; i < 4; i++)
+    {
+        menu->slotX[i]   = DJINN_LIST_FIGURE_X(i);
+        menu->slotY[i]   = DJINN_LIST_FIGURE_Y;
+        menu->memberY[i] = MENU_MEMBER_Y;
+    }
+    sySynch(1);
+    while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
+    {
+        if (redraw)
+        {
+            window = menu->window;
+            mnWindowSpriteRedrawSavedRectStub(window);
+            sySynch(1);
+            mnWindowDrawDividerLineStub(window, 0, 11, 28, 11);
+            mnPagedListDrawPageNumbers(window, pages, 1, page, 28);
+            for (element = 0; element < 4; element++)
+            {
+                for (row = 0; row < DJINN_LIST_PAGE_ROWS; row++)
+                {
+                    // page * 9: a page of DJINN_LIST_PAGE_ROWS.
+                    djinn = element * DJINN_PER_ELEMENT
+                          + (row + (page * 8 + page) + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST;
+                    if (syGameFlagGet(FLAG_DJINNI(djinn)))
+                    {
+                        mnWindowSetTilemapEntryStub(window,
+                                                    STATUS_ELEMENT_TILE + element,
+                                                    element * (DJINN_LIST_COLUMN_WIDTH / 8) + 1,
+                                                    row + 1,
+                                                    0);
+                        mnTextDrawMessageAsTilesStub(djinn + MsgDjinnName,
+                                                     window,
+                                                     element * DJINN_LIST_COLUMN_WIDTH + 16,
+                                                     row * 8 + 8);
+                    }
+                }
+            }
+            ((WIN_STATE *)RamHeapSlots->windowState)->dirty = 1;
+            redraw                                          = 0;
+        }
+        mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
+        sySynch(1);
+        if (PerWork.push & (KEY_A | KEY_B | KEY_SELECT))
+            break;
+        if (PerWork.repeat & KEYS_HORIZONTAL)
+        {
+            if (PerWork.repeat & KEY_RIGHT)
+                page++;
+            else
+                page--;
+            page = (page + pages) % pages;
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            syInputResetKeyRepeat();
+            redraw = 1;
+        }
+    }
+    mnWindowSpriteRedrawSavedRectStub(menu->window);
+    mnWindowSpriteClearListStub(menu->helpWindow);
+    for (i = 0; i < 4; i++)
+    {
+        menu->slotX[i] = STATUS_FIGURE_X(i);
+        menu->slotY[i] = STATUS_FIGURE_ROW_Y;
+    }
+    menu->cursor->motion       = ICON_SHOWN;
+    menu->secondCursor->motion = ICON_SHOWN;
+    mnIconSetActive(1);
+    sySoundPlayStub(SE_MENU_CANCEL);
 }
 
 void   mnStatusScreenShowMemberStatus(Sint32 resource, Sint32 frame);
@@ -400,122 +400,122 @@ Bool   mnStatusScreenMovePartyMember(Sint32 selection, Sint32 direction);
 // first is caught, FLAG_DJINN_FIRST); A chooses the party member and B backs out.
 Sint32 mnStatusScreenRunPartyRow(void)
 {
-	STAT_SCREEN_STATE *menu;
-	Sint32             ownerIndex;
-	Sint32             ownerCount;
-	Sint32             page;
-	Sint32             redraw;
-	Sint32             result;
-	Sint32             rowIndex;
+    STAT_SCREEN_STATE *menu;
+    Sint32             ownerIndex;
+    Sint32             ownerCount;
+    Sint32             page;
+    Sint32             redraw;
+    Sint32             result;
+    Sint32             rowIndex;
 
-	menu       = RamHeapSlots->menuState;
-	ownerIndex = menu->memberIndex[0];
-	ownerCount = menu->memberCount[0];
-	redraw     = 2;
-	result     = 0;
-	page       = menu->page;
-	// DEAD: syUnitGet's result is not used; the ROM keeps the call.
-	syUnitGet(menu->memberIds[ownerIndex]);
-	for (rowIndex = 0; rowIndex < 4; rowIndex++)
-	{
-		menu->rowX[rowIndex] = STATUS_FIGURE_X(rowIndex);
-		menu->rowY[rowIndex] = STATUS_FIGURE_ROW_Y;
-	}
-	mnPaletteLightenHighlight(HIGHLIGHT_PALETTE);
-	syDMAXCopy((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
-	syDMAXCopy((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
-	           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
-	           DMA_COPY_HALFWORDS(1),
-	           REG_DMA3);
-	syDMAXCopy((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
-	syDMAXCopy((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
-	           (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
-	           DMA_COPY_HALFWORDS(1),
-	           REG_DMA3);
-	while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
-	{
-		if (redraw)
-		{
-			mnWindowSpriteRedrawSavedRectStub(menu->selectorWindow);
-			mnTextDrawMessageAsTilesStub(MsgRearrangeHelp, menu->selectorWindow, 0, 0);
-			// The Djinn list opens once Echo, the first Djinni the party meets, has joined.
-			if (syGameFlagGet(FLAG_DJINNI(DJINNI_ECHO)))
-				mnTextDrawMessageAsTilesStub(MsgDjinnListHelp, menu->selectorWindow, 0, 16);
-			mnTextDrawMessageAsTilesStub(MsgRearrangeHelp - 3, menu->selectorWindow, 0, 8);
-			ownerIndex = (ownerIndex + ownerCount) % ownerCount;
-			// DEAD: syUnitGet's result is not used; the ROM keeps the call.
-			syUnitGet(menu->memberIds[ownerIndex]);
-			page = (page + 3) % 3;
-			mnStatusScreenShowMemberStatus(menu->memberIds[ownerIndex], page);
-			mnReloadMemberPortrait(menu, menu->memberIds[ownerIndex]);
-			if (redraw == 2)
-			{
-				mnCreatePartyFigures(ownerIndex / 4 * 4);
-				sySynch(1);
-			}
-			mnMarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
-			redraw = 0;
-		}
-		mnCursorPos((ownerIndex % 4) * 24 - 10, 16);
-		sySynch(1);
-		if (PerWork.push & KEY_A)
-		{
-			sySoundPlayStub(SE_MENU_CONFIRM);
-			result = 1;
-			break;
-		}
-		if (PerWork.push & KEY_B)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			result = -1;
-			break;
-		}
-		if (PerWork.repeat & KEY_R)
-		{
-			if (mnStatusScreenMovePartyMember(ownerIndex, 1))
-			{
-				sySoundPlayStub(SE_MENU_CONFIRM);
-				ownerIndex++;
-				mnCreatePartyFigures(ownerIndex / 4 * 4);
-				mnMarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
-			}
-			else
-			{
-				sySoundPlayStub(SE_MENU_ERROR);
-			}
-			sySynch(1);
-		}
-		else if (PerWork.repeat & KEY_L)
-		{
-			if (mnStatusScreenMovePartyMember(ownerIndex, 0))
-			{
-				sySoundPlayStub(SE_MENU_CONFIRM);
-				ownerIndex--;
-				mnCreatePartyFigures(ownerIndex / 4 * 4);
-				mnMarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
-			}
-			else
-			{
-				sySoundPlayStub(SE_MENU_ERROR);
-			}
-			sySynch(1);
-		}
-		else if ((PerWork.push & KEY_SELECT) && syGameFlagGet(FLAG_DJINNI(DJINNI_ECHO)))
-		{
-			mnStatusScreenShowDjinnList();
-			redraw = 1;
-		}
-		else
-		{
-			redraw = mnMoveGridCursor(&ownerIndex, ownerCount, 4);
-		}
-	}
-	menu->memberIndex[0]        = ownerIndex;
-	menu->selectedMember        = menu->memberIds[ownerIndex];
-	menu->selectedIds[0]        = menu->memberIds[ownerIndex];
-	menu->pageArrows[0]->motion = ICON_HIDDEN;
-	menu->pageArrows[1]->motion = ICON_HIDDEN;
-	return result;
+    menu       = RamHeapSlots->menuState;
+    ownerIndex = menu->memberIndex[0];
+    ownerCount = menu->memberCount[0];
+    redraw     = 2;
+    result     = 0;
+    page       = menu->page;
+    // DEAD: syUnitGet's result is not used; the ROM keeps the call.
+    syUnitGet(menu->memberIds[ownerIndex]);
+    for (rowIndex = 0; rowIndex < 4; rowIndex++)
+    {
+        menu->rowX[rowIndex] = STATUS_FIGURE_X(rowIndex);
+        menu->rowY[rowIndex] = STATUS_FIGURE_ROW_Y;
+    }
+    mnPaletteLightenHighlight(HIGHLIGHT_PALETTE);
+    syDMAXCopy((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
+    syDMAXCopy((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
+               (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
+               DMA_COPY_HALFWORDS(1),
+               REG_DMA3);
+    syDMAXCopy((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
+    syDMAXCopy((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+               (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
+               DMA_COPY_HALFWORDS(1),
+               REG_DMA3);
+    while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
+    {
+        if (redraw)
+        {
+            mnWindowSpriteRedrawSavedRectStub(menu->selectorWindow);
+            mnTextDrawMessageAsTilesStub(MsgRearrangeHelp, menu->selectorWindow, 0, 0);
+            // The Djinn list opens once Echo, the first Djinni the party meets, has joined.
+            if (syGameFlagGet(FLAG_DJINNI(DJINNI_ECHO)))
+                mnTextDrawMessageAsTilesStub(MsgDjinnListHelp, menu->selectorWindow, 0, 16);
+            mnTextDrawMessageAsTilesStub(MsgRearrangeHelp - 3, menu->selectorWindow, 0, 8);
+            ownerIndex = (ownerIndex + ownerCount) % ownerCount;
+            // DEAD: syUnitGet's result is not used; the ROM keeps the call.
+            syUnitGet(menu->memberIds[ownerIndex]);
+            page = (page + 3) % 3;
+            mnStatusScreenShowMemberStatus(menu->memberIds[ownerIndex], page);
+            mnReloadMemberPortrait(menu, menu->memberIds[ownerIndex]);
+            if (redraw == 2)
+            {
+                mnCreatePartyFigures(ownerIndex / 4 * 4);
+                sySynch(1);
+            }
+            mnMarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
+            redraw = 0;
+        }
+        mnCursorPos((ownerIndex % 4) * 24 - 10, 16);
+        sySynch(1);
+        if (PerWork.push & KEY_A)
+        {
+            sySoundPlayStub(SE_MENU_CONFIRM);
+            result = 1;
+            break;
+        }
+        if (PerWork.push & KEY_B)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            result = -1;
+            break;
+        }
+        if (PerWork.repeat & KEY_R)
+        {
+            if (mnStatusScreenMovePartyMember(ownerIndex, 1))
+            {
+                sySoundPlayStub(SE_MENU_CONFIRM);
+                ownerIndex++;
+                mnCreatePartyFigures(ownerIndex / 4 * 4);
+                mnMarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
+            }
+            else
+            {
+                sySoundPlayStub(SE_MENU_ERROR);
+            }
+            sySynch(1);
+        }
+        else if (PerWork.repeat & KEY_L)
+        {
+            if (mnStatusScreenMovePartyMember(ownerIndex, 0))
+            {
+                sySoundPlayStub(SE_MENU_CONFIRM);
+                ownerIndex--;
+                mnCreatePartyFigures(ownerIndex / 4 * 4);
+                mnMarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
+            }
+            else
+            {
+                sySoundPlayStub(SE_MENU_ERROR);
+            }
+            sySynch(1);
+        }
+        else if ((PerWork.push & KEY_SELECT) && syGameFlagGet(FLAG_DJINNI(DJINNI_ECHO)))
+        {
+            mnStatusScreenShowDjinnList();
+            redraw = 1;
+        }
+        else
+        {
+            redraw = mnMoveGridCursor(&ownerIndex, ownerCount, 4);
+        }
+    }
+    menu->memberIndex[0]        = ownerIndex;
+    menu->selectedMember        = menu->memberIds[ownerIndex];
+    menu->selectedIds[0]        = menu->memberIds[ownerIndex];
+    menu->pageArrows[0]->motion = ICON_HIDDEN;
+    menu->pageArrows[1]->motion = ICON_HIDDEN;
+    return result;
 }
 
 void   mnPlaceEntryIconsInGrid(Sint32 x, Sint32 y, Sint32 columns);
@@ -524,107 +524,107 @@ void   mnPlaceEntryIconsInGrid(Sint32 x, Sint32 y, Sint32 columns);
 // status and Psynergy icons; A chooses and B backs out.
 Sint32 mnPartyMemberChooserChooseMember(void)
 {
-	STAT_SCREEN_STATE *menu      = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
-	Sint32             selection = menu->memberIndex[0];
-	Sint32             count     = menu->memberCount[0];
-	Sint32             pending   = 2;
-	Sint32             page      = menu->page;
-	Sint32             result;
+    STAT_SCREEN_STATE *menu      = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
+    Sint32             selection = menu->memberIndex[0];
+    Sint32             count     = menu->memberCount[0];
+    Sint32             pending   = 2;
+    Sint32             page      = menu->page;
+    Sint32             result;
 
-	// DEAD: syUnitGet's result is not used; the ROM keeps the call.
-	syUnitGet(menu->memberIds[selection]);
-	mnWindowSpriteRedrawSavedRectStub(menu->selectorWindow);
-	mnTextDrawMessageAsTilesStub((Sint32)MsgChooseCharacter, menu->selectorWindow, 0, 0);
-	mnTextDrawMessageAsTilesStub((Sint32)MsgChooseCharacter + 1, menu->selectorWindow, 0, 16);
-	while (1)
-	{
-		if (pending)
-		{
-			selection = (selection + count) % count;
-			// DEAD: syUnitGet's result is not used; the ROM keeps the call.
-			syUnitGet(menu->memberIds[selection]);
-			page = (page + 3) % 3;
-			mnStatusScreenShowMemberStatus(menu->memberIds[selection], page);
-			mnReloadMemberPortrait(menu, menu->memberIds[selection]);
-			menu->entryCount = mnPsynergyMenuCollectActions(
-				syUnitGet(menu->memberIds[selection]), menu->entries, PSYNERGY_LIST_ALL);
-			mnPsynergyMenuDrawPsynergyIcons(menu->entries);
-			mnPlaceEntryIconsInGrid(96, 96, 8);
-			mnHideEmptyEntryIcons(menu->entries);
-			if (pending == 2)
-			{
-				mnCreatePartyFigures(selection / 4 * 4);
-				sySynch(1);
-			}
-			mnMarkChosenMember(menu->memberWindow, selection, count);
-		}
-		mnCursorPos((selection % 4) * 24 - 10, 16);
-		sySynch(1);
-		if (PerWork.push & KEY_A)
-		{
-			sySoundPlayStub(SE_MENU_CONFIRM);
-			result = 1;
-			break;
-		}
-		if (PerWork.push & KEY_B)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			result = -1;
-			break;
-		}
-		pending = mnMoveGridCursor(&selection, count, 4);
-	}
-	menu->memberIndex[0] = selection;
-	menu->selectedMember = menu->memberIds[selection];
-	menu->selectedIds[0] = menu->memberIds[selection];
-	return result;
+    // DEAD: syUnitGet's result is not used; the ROM keeps the call.
+    syUnitGet(menu->memberIds[selection]);
+    mnWindowSpriteRedrawSavedRectStub(menu->selectorWindow);
+    mnTextDrawMessageAsTilesStub((Sint32)MsgChooseCharacter, menu->selectorWindow, 0, 0);
+    mnTextDrawMessageAsTilesStub((Sint32)MsgChooseCharacter + 1, menu->selectorWindow, 0, 16);
+    while (1)
+    {
+        if (pending)
+        {
+            selection = (selection + count) % count;
+            // DEAD: syUnitGet's result is not used; the ROM keeps the call.
+            syUnitGet(menu->memberIds[selection]);
+            page = (page + 3) % 3;
+            mnStatusScreenShowMemberStatus(menu->memberIds[selection], page);
+            mnReloadMemberPortrait(menu, menu->memberIds[selection]);
+            menu->entryCount = mnPsynergyMenuCollectActions(
+                syUnitGet(menu->memberIds[selection]), menu->entries, PSYNERGY_LIST_ALL);
+            mnPsynergyMenuDrawPsynergyIcons(menu->entries);
+            mnPlaceEntryIconsInGrid(96, 96, 8);
+            mnHideEmptyEntryIcons(menu->entries);
+            if (pending == 2)
+            {
+                mnCreatePartyFigures(selection / 4 * 4);
+                sySynch(1);
+            }
+            mnMarkChosenMember(menu->memberWindow, selection, count);
+        }
+        mnCursorPos((selection % 4) * 24 - 10, 16);
+        sySynch(1);
+        if (PerWork.push & KEY_A)
+        {
+            sySoundPlayStub(SE_MENU_CONFIRM);
+            result = 1;
+            break;
+        }
+        if (PerWork.push & KEY_B)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            result = -1;
+            break;
+        }
+        pending = mnMoveGridCursor(&selection, count, 4);
+    }
+    menu->memberIndex[0] = selection;
+    menu->selectedMember = menu->memberIds[selection];
+    menu->selectedIds[0] = menu->memberIds[selection];
+    return result;
 }
 
 // Moves the party member at selectedIndex one place later (direction 1) or earlier (0) in the party
 // order. Returns 1, or 0 when it cannot move.
 Bool mnStatusScreenMovePartyMember(Sint32 selectedIndex, Sint32 direction)
 {
-	STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
-	Uint32             reordered[14];
-	Sint32             index;
+    STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
+    Uint32             reordered[14];
+    Sint32             index;
 
-	if (menu->partyCount <= 1)
-		return FALSE;
-	if (direction == 1)
-	{
-		if (selectedIndex == menu->partyCount - 1)
-			return FALSE;
-	}
-	else
-	{
-		if (selectedIndex == 0)
-			return FALSE;
-	}
+    if (menu->partyCount <= 1)
+        return FALSE;
+    if (direction == 1)
+    {
+        if (selectedIndex == menu->partyCount - 1)
+            return FALSE;
+    }
+    else
+    {
+        if (selectedIndex == 0)
+            return FALSE;
+    }
 
-	for (index = 0; index < (Sint32)ARRAY_COUNT(reordered); index++)
-		reordered[index] = 0;
-	for (index = 0; index < *(Uint8 *)&menu->partyCount; index++)
-		reordered[index] = menu->memberIds[index];
+    for (index = 0; index < (Sint32)ARRAY_COUNT(reordered); index++)
+        reordered[index] = 0;
+    for (index = 0; index < *(Uint8 *)&menu->partyCount; index++)
+        reordered[index] = menu->memberIds[index];
 
-	if (direction == 1)
-	{
-		index                        = reordered[selectedIndex];
-		reordered[selectedIndex]     = reordered[selectedIndex + 1];
-		reordered[selectedIndex + 1] = index;
-	}
-	else
-	{
-		index                        = reordered[selectedIndex];
-		reordered[selectedIndex]     = reordered[selectedIndex - 1];
-		reordered[selectedIndex - 1] = index;
-	}
+    if (direction == 1)
+    {
+        index                        = reordered[selectedIndex];
+        reordered[selectedIndex]     = reordered[selectedIndex + 1];
+        reordered[selectedIndex + 1] = index;
+    }
+    else
+    {
+        index                        = reordered[selectedIndex];
+        reordered[selectedIndex]     = reordered[selectedIndex - 1];
+        reordered[selectedIndex - 1] = index;
+    }
 
-	for (index = 0; index < menu->partyCount; index++)
-		gmPartyRemoveMemberStub(menu->memberIds[index]);
-	for (index = 0; index < menu->partyCount; index++)
-		gmPartyAddMemberStub(reordered[index]);
-	menu->partyCount = gmPartyListMembersStub(menu->memberIds);
-	return TRUE;
+    for (index = 0; index < menu->partyCount; index++)
+        gmPartyRemoveMemberStub(menu->memberIds[index]);
+    for (index = 0; index < menu->partyCount; index++)
+        gmPartyAddMemberStub(reordered[index]);
+    menu->partyCount = gmPartyListMembersStub(menu->memberIds);
+    return TRUE;
 }
 
 // Sets up the party row of the Status menu and the party member chooser: the top-left window with
@@ -632,17 +632,17 @@ Bool mnStatusScreenMovePartyMember(Sint32 selectedIndex, Sint32 direction)
 // callers pass four values it does not read.
 void mnStatusScreenInit(Sint32 unusedA, Sint32 unusedB, Sint32 unusedC, Sint32 unusedD)
 {
-	STAT_SCREEN_STATE *state = RamHeapSlots->menuState;
+    STAT_SCREEN_STATE *state = RamHeapSlots->menuState;
 
-	mnShowPartyFigures(mnCursorCreate(state), 2, 2);
-	state->unopenedWindow = 0;
-	state->statusWindow   = 0;
-	state->helpWindow     = 0;
-	state->actionWindow   = 0;
-	state->selectedColumn = 0;
-	state->selectedRow    = 0;
-	state->columnCount    = 8;
-	state->rowCount       = 2;
+    mnShowPartyFigures(mnCursorCreate(state), 2, 2);
+    state->unopenedWindow = 0;
+    state->statusWindow   = 0;
+    state->helpWindow     = 0;
+    state->actionWindow   = 0;
+    state->selectedColumn = 0;
+    state->selectedRow    = 0;
+    state->columnCount    = 8;
+    state->rowCount       = 2;
 }
 
 void mnStatusScreenDrawStatusPage(Sint32 window, Sint32 ownerId, Sint32 mode);
@@ -652,32 +652,32 @@ void mnStatusScreenDrawStatusPage(Sint32 window, Sint32 ownerId, Sint32 mode);
 // not used.
 void mnStatusScreenShowMemberStatus(Sint32 resource, Sint32 frame)
 {
-	Sint32             created;
-	Sint32             handle;
-	void              *object;
-	STAT_SCREEN_STATE *state;
+    Sint32             created;
+    Sint32             handle;
+    void              *object;
+    STAT_SCREEN_STATE *state;
 
-	state   = RamHeapSlots->menuState;
-	created = 0;
-	handle  = state->statusWindow;
-	if (handle == 0)
-	{
-		created = mnWindowUpdateOrCreate(&state->statusWindow, 0, 5, 30, 15, WINDOW_FLAG_INSTANT);
-		handle  = state->statusWindow;
-	}
-	if (created != 0)
-	{
-		object              = mnPortraitCreateStub(resource, 0, 0, handle, 0, 0);
-		state->statusCursor = object;
-		if ((((WINDOW_SPR *)object)->depth = OAM_DEPTH_WINDOW, state->page)
-		    == STATUS_SCREEN_PAGE_CHOOSER)
-		{
-			mnSpawnIconEntries(state, handle);
-		}
-		mnStatusScreenDrawStatusPage(handle, resource, STATUS_PAGE_NO_CLEAR);
-		return;
-	}
-	mnStatusScreenDrawStatusPage(handle, resource, STATUS_PAGE_SUMMARY);
+    state   = RamHeapSlots->menuState;
+    created = 0;
+    handle  = state->statusWindow;
+    if (handle == 0)
+    {
+        created = mnWindowUpdateOrCreate(&state->statusWindow, 0, 5, 30, 15, WINDOW_FLAG_INSTANT);
+        handle  = state->statusWindow;
+    }
+    if (created != 0)
+    {
+        object              = mnPortraitCreateStub(resource, 0, 0, handle, 0, 0);
+        state->statusCursor = object;
+        if ((((WINDOW_SPR *)object)->depth = OAM_DEPTH_WINDOW, state->page)
+            == STATUS_SCREEN_PAGE_CHOOSER)
+        {
+            mnSpawnIconEntries(state, handle);
+        }
+        mnStatusScreenDrawStatusPage(handle, resource, STATUS_PAGE_NO_CLEAR);
+        return;
+    }
+    mnStatusScreenDrawStatusPage(handle, resource, STATUS_PAGE_SUMMARY);
 }
 
 // The switch-characters help follows the A-button label on the help line: Japanese starts it 64
@@ -694,155 +694,155 @@ void mnStatusScreenShowMemberProgressMessage(void *window, Sint32 help, Sint32 f
 // change party member. Returns 1 for A, -1 for B.
 Sint32 mnStatusScreenRunStatusPage(void)
 {
-	STAT_SCREEN_STATE *menu;
-	Sint32             pane;
-	Sint32             result;
-	Sint32             selected;
-	Sint8              count;
-	Bool               hasAilments;
-	Bool               done;
-	Bool               hasDjinn;
-	Bool               redraw;
-	Sint32             member;
-	Sint32             window;
-	Sint32             helpWindow;
-	Sint32             i;
-	Uint8              entries[8];
+    STAT_SCREEN_STATE *menu;
+    Sint32             pane;
+    Sint32             result;
+    Sint32             selected;
+    Sint8              count;
+    Bool               hasAilments;
+    Bool               done;
+    Bool               hasDjinn;
+    Bool               redraw;
+    Sint32             member;
+    Sint32             window;
+    Sint32             helpWindow;
+    Sint32             i;
+    Uint8              entries[8];
 
-	menu     = RamHeapSlots->menuState;
-	pane     = 0;
-	selected = 0;
-	result   = 0;
-	window   = menu->statusWindow;
-	mnWindowUpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
-	helpWindow = menu->helpWindow;
-	if (gmPartySumDjinnCountsStub(-1) != 0)
-		hasDjinn = TRUE;
-	else
-		hasDjinn = FALSE;
-	for (i = 3; i >= 0; i--)
-		menu->rowY[i] = STATUS_FIGURE_FULL_PAGE_ROW_Y;
-	done = FALSE;
-	mnCursorSlide(-10, 88);
+    menu     = RamHeapSlots->menuState;
+    pane     = 0;
+    selected = 0;
+    result   = 0;
+    window   = menu->statusWindow;
+    mnWindowUpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
+    helpWindow = menu->helpWindow;
+    if (gmPartySumDjinnCountsStub(-1) != 0)
+        hasDjinn = TRUE;
+    else
+        hasDjinn = FALSE;
+    for (i = 3; i >= 0; i--)
+        menu->rowY[i] = STATUS_FIGURE_FULL_PAGE_ROW_Y;
+    done = FALSE;
+    mnCursorSlide(-10, 88);
 
-	while (done == 0 && !syGameFlagGet(FLAG_MENU_START_PRESSED))
-	{
-		// DEAD: syUnitGet's result is not used; the ROM keeps the call.
-		syUnitGet(menu->selectedIds[0]);
-		mnStatusScreenDrawStatusPage(window, menu->selectedIds[0], STATUS_PAGE_FULL);
-		count       = mnStatusScreenListStatuses(entries, 1, menu->selectedIds[0]);
-		hasAilments = FALSE;
-		if (count == 0)
-			count = 1;
-		else
-			hasAilments = TRUE;
-		redraw = TRUE;
+    while (done == 0 && !syGameFlagGet(FLAG_MENU_START_PRESSED))
+    {
+        // DEAD: syUnitGet's result is not used; the ROM keeps the call.
+        syUnitGet(menu->selectedIds[0]);
+        mnStatusScreenDrawStatusPage(window, menu->selectedIds[0], STATUS_PAGE_FULL);
+        count       = mnStatusScreenListStatuses(entries, 1, menu->selectedIds[0]);
+        hasAilments = FALSE;
+        if (count == 0)
+            count = 1;
+        else
+            hasAilments = TRUE;
+        redraw = TRUE;
 
-		while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
-		{
-			if (redraw)
-			{
-				Sint32 limit;
+        while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
+        {
+            if (redraw)
+            {
+                Sint32 limit;
 
-				redraw = FALSE;
-				limit  = count;
-				pane   = (pane + 2) % 2;
-				mnWindowSpriteRedrawSavedRectStub(helpWindow);
-				if (pane == 0)
-				{
-					selected = (selected + limit) % limit;
-					if (hasAilments == 0)
-					{
-						// "A:Psynergy" and "L-R:Switch characters"
-						mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 1, window, 0, -24);
-						mnTextDrawMessageAsTilesStub(
-							MsgSwitchCharacterHelp, window, SWITCH_CHARACTER_HELP_X, -24);
-					}
-				}
-				else
-				{
-					if (hasDjinn != 0)
-						selected = (selected + 8) % 8;
-					else
-						selected = (selected + 7) % 7;
-				}
-				mnStatusScreenDrawSelectionCursor(pane, selected, entries, 0);
-				mnWindowSpriteClearListStub(helpWindow);
-				sySynch(1);
-				if (pane == 0)
-					mnStatusScreenDrawSelectionLabels(helpWindow, selected, entries);
-				else
-					mnStatusScreenShowMemberProgressMessage(helpWindow, selected, hasDjinn);
-			}
-			if (pane == 0)
-				mnCursorPos(-10, selected * 16 + 88);
-			else if (selected <= 3)
-				mnCursorPos(24, selected * 8 + 48);
-			else
-				mnCursorPos(48, selected * 8 + 80);
-			sySynch(1);
-			if (PerWork.repeat & KEYS_DPAD)
-				mnStatusScreenDrawSelectionCursor(pane, selected, entries, 1);
-			if (PerWork.push & KEY_A)
-			{
-				sySoundPlayStub(SE_MENU_CONFIRM);
-				done   = TRUE;
-				result = 1;
-				break;
-			}
-			if (PerWork.push & KEY_B)
-			{
-				sySoundPlayStub(SE_MENU_CANCEL);
-				done   = TRUE;
-				result = -1;
-				break;
-			}
-			if (PerWork.repeat & KEY_UP)
-			{
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = TRUE;
-				selected--;
-			}
-			if (PerWork.repeat & KEY_DOWN)
-			{
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = TRUE;
-				selected++;
-			}
-			if (PerWork.repeat & KEY_RIGHT)
-			{
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = TRUE;
-				pane++;
-			}
-			if (PerWork.repeat & KEY_LEFT)
-			{
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = TRUE;
-				pane--;
-			}
-			if ((PerWork.repeat & KEY_R) || (PerWork.repeat & KEY_L))
-			{
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				member = menu->memberIndex[0];
-				if (PerWork.repeat & KEY_R)
-					member++;
-				else
-					member--;
-				member               = (member + menu->partyCount) % menu->partyCount;
-				menu->selectedMember = menu->memberIds[member];
-				menu->selectedIds[0] = menu->memberIds[member];
-				menu->memberIndex[0] = member;
-				mnReloadMemberPortrait(menu, menu->memberIds[member]);
-				break;
-			}
-		}
-	}
-	mnWindowSpritePrepareForRedrawStub(menu->helpWindow);
-	mnWindowSpriteRedrawSavedRectStub(window);
-	for (i = 3; i >= 0; i--)
-		menu->rowY[i] = STATUS_FIGURE_HIDDEN_Y;
-	return result;
+                redraw = FALSE;
+                limit  = count;
+                pane   = (pane + 2) % 2;
+                mnWindowSpriteRedrawSavedRectStub(helpWindow);
+                if (pane == 0)
+                {
+                    selected = (selected + limit) % limit;
+                    if (hasAilments == 0)
+                    {
+                        // "A:Psynergy" and "L-R:Switch characters"
+                        mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 1, window, 0, -24);
+                        mnTextDrawMessageAsTilesStub(
+                            MsgSwitchCharacterHelp, window, SWITCH_CHARACTER_HELP_X, -24);
+                    }
+                }
+                else
+                {
+                    if (hasDjinn != 0)
+                        selected = (selected + 8) % 8;
+                    else
+                        selected = (selected + 7) % 7;
+                }
+                mnStatusScreenDrawSelectionCursor(pane, selected, entries, 0);
+                mnWindowSpriteClearListStub(helpWindow);
+                sySynch(1);
+                if (pane == 0)
+                    mnStatusScreenDrawSelectionLabels(helpWindow, selected, entries);
+                else
+                    mnStatusScreenShowMemberProgressMessage(helpWindow, selected, hasDjinn);
+            }
+            if (pane == 0)
+                mnCursorPos(-10, selected * 16 + 88);
+            else if (selected <= 3)
+                mnCursorPos(24, selected * 8 + 48);
+            else
+                mnCursorPos(48, selected * 8 + 80);
+            sySynch(1);
+            if (PerWork.repeat & KEYS_DPAD)
+                mnStatusScreenDrawSelectionCursor(pane, selected, entries, 1);
+            if (PerWork.push & KEY_A)
+            {
+                sySoundPlayStub(SE_MENU_CONFIRM);
+                done   = TRUE;
+                result = 1;
+                break;
+            }
+            if (PerWork.push & KEY_B)
+            {
+                sySoundPlayStub(SE_MENU_CANCEL);
+                done   = TRUE;
+                result = -1;
+                break;
+            }
+            if (PerWork.repeat & KEY_UP)
+            {
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                redraw = TRUE;
+                selected--;
+            }
+            if (PerWork.repeat & KEY_DOWN)
+            {
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                redraw = TRUE;
+                selected++;
+            }
+            if (PerWork.repeat & KEY_RIGHT)
+            {
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                redraw = TRUE;
+                pane++;
+            }
+            if (PerWork.repeat & KEY_LEFT)
+            {
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                redraw = TRUE;
+                pane--;
+            }
+            if ((PerWork.repeat & KEY_R) || (PerWork.repeat & KEY_L))
+            {
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                member = menu->memberIndex[0];
+                if (PerWork.repeat & KEY_R)
+                    member++;
+                else
+                    member--;
+                member               = (member + menu->partyCount) % menu->partyCount;
+                menu->selectedMember = menu->memberIds[member];
+                menu->selectedIds[0] = menu->memberIds[member];
+                menu->memberIndex[0] = member;
+                mnReloadMemberPortrait(menu, menu->memberIds[member]);
+                break;
+            }
+        }
+    }
+    mnWindowSpritePrepareForRedrawStub(menu->helpWindow);
+    mnWindowSpriteRedrawSavedRectStub(window);
+    for (i = 3; i >= 0; i--)
+        menu->rowY[i] = STATUS_FIGURE_HIDDEN_Y;
+    return result;
 }
 
 #undef SWITCH_CHARACTER_HELP_X
@@ -852,85 +852,85 @@ Sint32 mnStatusScreenRunStatusPage(void)
 // first four status rows or of the rows below.
 void mnStatusScreenDrawSelectionCursor(Sint32 mode, Sint32 selected, Uint8 *entries, Sint32 invert)
 {
-	STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
-	Sint32             count;
-	Sint32             index;
-	Sint32             x;
-	Sint32             y;
-	Sint32             palette;
-	Uint8              width;
+    STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
+    Sint32             count;
+    Sint32             index;
+    Sint32             x;
+    Sint32             y;
+    Sint32             palette;
+    Uint8              width;
 
-	if (mode == 0)
-	{
-		y     = selected * 2 + 5;
-		x     = 0;
-		width = 5;
-		count = 0;
-		for (index = 0; index < CHARACTER_AILMENT_COUNT; index++)
-		{
-			if (entries[index] != 0)
-			{
-				if (selected == count)
-				{
-					width = StatusScreenCursorWidths[index];
-					break;
-				}
-				count++;
-			}
-		}
-	}
-	else if (selected <= 3)
-	{
-		y     = selected;
-		x     = 5;
-		width = 13;
-	}
-	else
-	{
-		y     = selected + 4;
-		x     = 8;
-		width = 20;
-	}
+    if (mode == 0)
+    {
+        y     = selected * 2 + 5;
+        x     = 0;
+        width = 5;
+        count = 0;
+        for (index = 0; index < CHARACTER_AILMENT_COUNT; index++)
+        {
+            if (entries[index] != 0)
+            {
+                if (selected == count)
+                {
+                    width = StatusScreenCursorWidths[index];
+                    break;
+                }
+                count++;
+            }
+        }
+    }
+    else if (selected <= 3)
+    {
+        y     = selected;
+        x     = 5;
+        width = 13;
+    }
+    else
+    {
+        y     = selected + 4;
+        x     = 8;
+        width = 20;
+    }
 
-	// HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
-	if (invert == 1)
-		palette = WINDOW_PALETTE;
-	else
-		palette = HIGHLIGHT_PALETTE;
-	mnWindowSetHighlightRect(menu->statusWindow, x, y, width, 1, palette);
+    // HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
+    if (invert == 1)
+        palette = WINDOW_PALETTE;
+    else
+        palette = HIGHLIGHT_PALETTE;
+    mnWindowSetHighlightRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
 // Writes the advice for the selected status (two lines, for example how to revive a party member
 // who is down) into window target, or that the party member is well when they have no status.
 void mnStatusScreenDrawSelectionLabels(Sint32 target, Sint32 selected, const Uint8 *entries)
 {
-	Sint32 labelCount = 0;
-	Sint32 labelIndex;
+    Sint32 labelCount = 0;
+    Sint32 labelIndex;
 
-	for (labelIndex = 0; labelIndex < CHARACTER_AILMENT_COUNT; labelIndex++)
-	{
-		if (entries[labelIndex] != 0)
-		{
-			if (selected == labelCount)
-			{
-				Sint32 msgId = MsgStatusAdvice + labelIndex * 2;
-				mnTextDrawMessageStub(msgId, target, 0, -1);
-				mnTextDrawMessageStub(msgId + 1, target, 0, 15);
-			}
-			labelCount++;
-		}
-	}
+    for (labelIndex = 0; labelIndex < CHARACTER_AILMENT_COUNT; labelIndex++)
+    {
+        if (entries[labelIndex] != 0)
+        {
+            if (selected == labelCount)
+            {
+                Sint32 msgId = MsgStatusAdvice + labelIndex * 2;
+                mnTextDrawMessageStub(msgId, target, 0, -1);
+                mnTextDrawMessageStub(msgId + 1, target, 0, 15);
+            }
+            labelCount++;
+        }
+    }
 
-	if (labelCount == 0)
-		mnTextDrawMessageStub(MsgStatusNormal, target, 0, 0);
+    if (labelCount == 0)
+        mnTextDrawMessageStub(MsgStatusNormal, target, 0, 0);
 }
 
 // The help line's length, in characters: longer in the European editions.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH)                                \
-	|| (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#	define HELP_LENGTH 80
+    || (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#    define HELP_LENGTH 80
 #else
-#	define HELP_LENGTH 64
+#    define HELP_LENGTH 64
 #endif
 
 // Returns the experience party member memberId needs for level.
@@ -945,18 +945,18 @@ void   mnTextDrawWideStringAtOffsetStub(void *text, void *window, Sint32 x, Sint
 // MsgYourNameAndLevelExperience.
 typedef enum STAT_HELP
 {
-	STATUS_HELP_NAME_AND_LEVEL    = 0, // "Your name and level. Experience..."
-	// "Experience points. You need ... more to reach the next level."
-	STATUS_HELP_EXPERIENCE        = 1,
-	STATUS_HELP_HP                = 2, // "Your current and max Hit Points..."
-	STATUS_HELP_PP                = 3, // "Your Psynergy Points..."
-	// "Your Djinn. This also shows which ones are set."
-	STATUS_HELP_DJINN             = 4,
-	STATUS_HELP_LEVELS            = 5, // "Elemental Levels indicate..."
-	STATUS_HELP_POWER             = 6, // "Power reflects the damage you..."
-	STATUS_HELP_RESIST            = 7, // "Resist reflects your defensive..."
-	// "These are your experience points.", at the highest level.
-	STATUS_HELP_EXPERIENCE_AT_MAX = 8
+    STATUS_HELP_NAME_AND_LEVEL    = 0, // "Your name and level. Experience..."
+    // "Experience points. You need ... more to reach the next level."
+    STATUS_HELP_EXPERIENCE        = 1,
+    STATUS_HELP_HP                = 2, // "Your current and max Hit Points..."
+    STATUS_HELP_PP                = 3, // "Your Psynergy Points..."
+    // "Your Djinn. This also shows which ones are set."
+    STATUS_HELP_DJINN             = 4,
+    STATUS_HELP_LEVELS            = 5, // "Elemental Levels indicate..."
+    STATUS_HELP_POWER             = 6, // "Power reflects the damage you..."
+    STATUS_HELP_RESIST            = 7, // "Resist reflects your defensive..."
+    // "These are your experience points.", at the highest level.
+    STATUS_HELP_EXPERIENCE_AT_MAX = 8
 } STAT_HELP;
 
 // Writes help line help of the status page's right-hand column into window, skipping the Djinn line
@@ -964,27 +964,27 @@ typedef enum STAT_HELP
 // needs, or at the highest level only what they are.
 void mnStatusScreenShowMemberProgressMessage(void *window, Sint32 help, Sint32 full)
 {
-	STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
-	Uint8             *buf;
+    STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
+    Uint8             *buf;
 
-	if (full == 0 && help > STATUS_HELP_PP)
-		help++;
-	if (help == STATUS_HELP_EXPERIENCE)
-	{
-		Uint8 *owner = &menu->selectedIds[0];
-		UNIT  *state = syUnitGet(*owner);
+    if (full == 0 && help > STATUS_HELP_PP)
+        help++;
+    if (help == STATUS_HELP_EXPERIENCE)
+    {
+        Uint8 *owner = &menu->selectedIds[0];
+        UNIT  *state = syUnitGet(*owner);
 
-		if (state->level == UNIT_LEVEL_MAX)
-			help = STATUS_HELP_EXPERIENCE_AT_MAX;
-		else
-			mnMessageArgumentPushStub(gmUnitGetExperienceForLevelStub(*owner, state->level + 1)
-			                              - state->experience,
-			                          MESSAGE_ARGUMENT_NUMBER);
-	}
-	buf = syHeapAllocate(HELP_LENGTH * 2);
-	mnMessageCopyExpandedStub(help + (Sint32)MsgYourNameAndLevelExperience, buf, HELP_LENGTH);
-	mnTextDrawWideStringAtOffsetStub(buf, window, 0, -1);
-	syHeapRelease(buf);
+        if (state->level == UNIT_LEVEL_MAX)
+            help = STATUS_HELP_EXPERIENCE_AT_MAX;
+        else
+            mnMessageArgumentPushStub(gmUnitGetExperienceForLevelStub(*owner, state->level + 1)
+                                          - state->experience,
+                                      MESSAGE_ARGUMENT_NUMBER);
+    }
+    buf = syHeapAllocate(HELP_LENGTH * 2);
+    mnMessageCopyExpandedStub(help + (Sint32)MsgYourNameAndLevelExperience, buf, HELP_LENGTH);
+    mnTextDrawWideStringAtOffsetStub(buf, window, 0, -1);
+    syHeapRelease(buf);
 }
 
 #undef HELP_LENGTH
@@ -1006,96 +1006,96 @@ Sint32             gmUnitGetElementLevelStub(Sint32 ownerId, Sint32 element);
 // not cleared first.
 void               mnStatusScreenDrawStatusPage(Sint32 window, Sint32 ownerId, Sint32 mode)
 {
-	STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
-	UNIT              *unit;
-	Sint32             element;
-	Sint32             djinnRow;
-	Sint32             keepDrawn;
-	Sint32             hasDjinn;
-	Uint8              ailments[8];
+    STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
+    UNIT              *unit;
+    Sint32             element;
+    Sint32             djinnRow;
+    Sint32             keepDrawn;
+    Sint32             hasDjinn;
+    Uint8              ailments[8];
 
-	if (gmPartySumDjinnCountsStub(-1) != 0)
-		hasDjinn = 1;
-	else
-		hasDjinn = 0;
-	unit = syUnitGet(ownerId);
-	// The Djinn row, in tiles: higher on the full page (mode 1), which has the elemental rows below
-	// it.
-	if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL)
-		djinnRow = 7;
-	else
-		djinnRow = 10;
-	menu->statusCursor->motion = ICON_SHOWN;
-	mnStatusScreenDrawTopRows(window, ownerId, mode);
-	mnStatusScreenListStatuses(ailments, 1, ownerId);
-	keepDrawn = mode & STATUS_PAGE_NO_CLEAR;
-	if (keepDrawn == 0)
-		mnWindowClearInteriorTilesStub(window, 0, 40, 96, 96);
-	mnPanelDrawEntryList(window, 0, 40, ailments);
-	if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
-		return;
-	if (keepDrawn == 0)
-	{
-		sySynch(1);
-		mnWindowClearInteriorTilesStub(window, 64, 56, 224, 96);
-	}
-	// The four element icons, then the Djinn counts and, in mode 1, the elemental levels, Power and
-	// Resist.
-	mnTextSetColorStub(TEXT_COLOR_NORMAL);
-	if (mode == STATUS_PAGE_FULL || hasDjinn == 1)
-	{
-		mnWindowSetTilemapEntryStub(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
-		mnWindowSetTilemapEntryStub(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICON);
-		mnWindowSetTilemapEntryStub(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICON);
-		mnWindowSetTilemapEntryStub(window, 4, 27, djinnRow, TILEMAP_ENTRY_ICON);
-	}
-	if (hasDjinn)
-		mnTextDrawMessageAsTilesStub(MsgDjinnLabel, window, 64, (djinnRow + 1) * 8);
-	if (mode == STATUS_PAGE_FULL)
-	{
-		if (!hasDjinn)
-			djinnRow--;
-		MENU_DRAW_STATUS_LABEL(MenuLvString, window, 64, (djinnRow + 2) * 8);
-		mnTextDrawMessageAsTilesStub(MsgPowerLabel, window, 64, (djinnRow + 3) * 8);
-		mnTextDrawMessageAsTilesStub(MsgPowerLabel + 1, window, 64, (djinnRow + 4) * 8);
-	}
-	for (element = 0; element <= 3; element++)
-	{
-		if (hasDjinn)
-			mnTextDrawNumberInWindowStub(unit->djinnHeldCounts[element],
-			                             1,
-			                             window,
-			                             STATUS_ELEMENT_X(element),
-			                             (djinnRow + 1) * 8);
-		if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL)
-		{
-			if (hasDjinn)
-			{
-				mnTextDrawNumberInWindowStub(unit->djinnSetCounts[element],
-				                             1,
-				                             window,
-				                             STATUS_ELEMENT_X(element) - 16,
-				                             (djinnRow + 1) * 8);
-				mnTextDrawStringInWindowStub(
-					MenuSlashString, window, STATUS_ELEMENT_X(element) - 8, (djinnRow + 1) * 8);
-			}
-			mnTextDrawNumberInWindowStub(gmUnitGetElementLevelStub(ownerId, element),
-			                             2,
-			                             window,
-			                             STATUS_ELEMENT_X(element) - 8,
-			                             (djinnRow + 2) * 8);
-			mnTextDrawNumberInWindowStub(unit->element[element].power,
-			                             3,
-			                             window,
-			                             STATUS_ELEMENT_X(element) - 16,
-			                             (djinnRow + 3) * 8);
-			mnTextDrawNumberInWindowStub(unit->element[element].resistance,
-			                             3,
-			                             window,
-			                             STATUS_ELEMENT_X(element) - 16,
-			                             (djinnRow + 4) * 8);
-		}
-	}
+    if (gmPartySumDjinnCountsStub(-1) != 0)
+        hasDjinn = 1;
+    else
+        hasDjinn = 0;
+    unit = syUnitGet(ownerId);
+    // The Djinn row, in tiles: higher on the full page (mode 1), which has the elemental rows below
+    // it.
+    if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL)
+        djinnRow = 7;
+    else
+        djinnRow = 10;
+    menu->statusCursor->motion = ICON_SHOWN;
+    mnStatusScreenDrawTopRows(window, ownerId, mode);
+    mnStatusScreenListStatuses(ailments, 1, ownerId);
+    keepDrawn = mode & STATUS_PAGE_NO_CLEAR;
+    if (keepDrawn == 0)
+        mnWindowClearInteriorTilesStub(window, 0, 40, 96, 96);
+    mnPanelDrawEntryList(window, 0, 40, ailments);
+    if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
+        return;
+    if (keepDrawn == 0)
+    {
+        sySynch(1);
+        mnWindowClearInteriorTilesStub(window, 64, 56, 224, 96);
+    }
+    // The four element icons, then the Djinn counts and, in mode 1, the elemental levels, Power and
+    // Resist.
+    mnTextSetColorStub(TEXT_COLOR_NORMAL);
+    if (mode == STATUS_PAGE_FULL || hasDjinn == 1)
+    {
+        mnWindowSetTilemapEntryStub(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
+        mnWindowSetTilemapEntryStub(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICON);
+        mnWindowSetTilemapEntryStub(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICON);
+        mnWindowSetTilemapEntryStub(window, 4, 27, djinnRow, TILEMAP_ENTRY_ICON);
+    }
+    if (hasDjinn)
+        mnTextDrawMessageAsTilesStub(MsgDjinnLabel, window, 64, (djinnRow + 1) * 8);
+    if (mode == STATUS_PAGE_FULL)
+    {
+        if (!hasDjinn)
+            djinnRow--;
+        MENU_DRAW_STATUS_LABEL(MenuLvString, window, 64, (djinnRow + 2) * 8);
+        mnTextDrawMessageAsTilesStub(MsgPowerLabel, window, 64, (djinnRow + 3) * 8);
+        mnTextDrawMessageAsTilesStub(MsgPowerLabel + 1, window, 64, (djinnRow + 4) * 8);
+    }
+    for (element = 0; element <= 3; element++)
+    {
+        if (hasDjinn)
+            mnTextDrawNumberInWindowStub(unit->djinnHeldCounts[element],
+                                         1,
+                                         window,
+                                         STATUS_ELEMENT_X(element),
+                                         (djinnRow + 1) * 8);
+        if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL)
+        {
+            if (hasDjinn)
+            {
+                mnTextDrawNumberInWindowStub(unit->djinnSetCounts[element],
+                                             1,
+                                             window,
+                                             STATUS_ELEMENT_X(element) - 16,
+                                             (djinnRow + 1) * 8);
+                mnTextDrawStringInWindowStub(
+                    MenuSlashString, window, STATUS_ELEMENT_X(element) - 8, (djinnRow + 1) * 8);
+            }
+            mnTextDrawNumberInWindowStub(gmUnitGetElementLevelStub(ownerId, element),
+                                         2,
+                                         window,
+                                         STATUS_ELEMENT_X(element) - 8,
+                                         (djinnRow + 2) * 8);
+            mnTextDrawNumberInWindowStub(unit->element[element].power,
+                                         3,
+                                         window,
+                                         STATUS_ELEMENT_X(element) - 16,
+                                         (djinnRow + 3) * 8);
+            mnTextDrawNumberInWindowStub(unit->element[element].resistance,
+                                         3,
+                                         window,
+                                         STATUS_ELEMENT_X(element) - 16,
+                                         (djinnRow + 4) * 8);
+        }
+    }
 }
 
 // The HP label: `HP`; `KP` in German, `PV` in Spanish and French, `PS` in Italian.
@@ -1116,44 +1116,44 @@ extern const Uint8 MenuPpString[];
 // experience, HP and PP on the left, Attack, Defense, Agility and Luck on the right.
 void mnStatusScreenDrawTopRows(Sint32 window, Sint32 owner, Sint32 flags)
 {
-	ITEM_MENU_STATE *menu;
-	UNIT            *unit;
+    ITEM_MENU_STATE *menu;
+    UNIT            *unit;
 
-	menu                  = RamHeapSlots->menuState;
-	unit                  = syUnitGet(owner);
-	menu->cursor->motion  = ICON_SHOWN;
-	flags                &= STATUS_PAGE_NO_CLEAR;
-	if (flags == 0)
-		mnWindowClearInteriorTilesStub(window, 0, 0, 128, 40);
-	mnTextDrawStringAtOffsetStub(unit->name, window, 40, 0);
-	mnTextDrawMessageAsTilesStub(unit->classId + (Sint32)MsgClassName, window, 0, 32);
-	MENU_DRAW_STATUS_LABEL(MenuLvString, window, 104, 0);
-	mnTextSetColorStub(TEXT_COLOR_NORMAL);
-	mnTextDrawNumberInWindowStub(unit->level, 2, window, 128, 0);
-	MENU_DRAW_STATUS_LABEL(MenuHpString, window, 40, 16);
-	mnTextDrawNumberInWindowStub(unit->hp, 4, window, 72, 16);
-	mnTextDrawNumberInWindowStub(unit->hpMax, 4, window, 112, 16);
-	mnTextDrawStringInWindowStub(MenuSlashString, window, 104, 16);
-	MENU_DRAW_STATUS_LABEL(MenuPpString, window, 40, 24);
-	mnTextDrawNumberInWindowStub(unit->pp, 4, window, 72, 24);
-	mnTextDrawNumberInWindowStub(unit->ppMax, 4, window, 112, 24);
-	mnTextDrawStringInWindowStub(MenuSlashString, window, 104, 24);
-	mnTextDrawMessageAsTilesStub((Sint32)MsgExpLabel, window, 40, 8);
-	mnTextDrawNumberInWindowStub(unit->experience, 8, window, 80, 8);
-	if (flags == 0)
-	{
-		sySynch(1);
-		mnWindowClearInteriorTilesStub(window, 144, 0, 224, 40);
-	}
-	// "Attack", "Defense", "Agility" and "Luck".
-	mnTextDrawMessageAsTilesStub(STAT_LABEL(0), window, 152, 0);
-	mnTextDrawMessageAsTilesStub(STAT_LABEL(1), window, 152, 8);
-	mnTextDrawMessageAsTilesStub(STAT_LABEL(2), window, 152, 16);
-	mnTextDrawMessageAsTilesStub(STAT_LABEL(3), window, 152, 24);
-	mnTextDrawNumberInWindowStub(unit->attack, STATUS_STAT_DIGITS, window, STATUS_STAT_X, 0);
-	mnTextDrawNumberInWindowStub(unit->defense, STATUS_STAT_DIGITS, window, STATUS_STAT_X, 8);
-	mnTextDrawNumberInWindowStub(unit->agility, STATUS_STAT_DIGITS, window, STATUS_STAT_X, 16);
-	mnTextDrawNumberInWindowStub(unit->luck, STATUS_STAT_DIGITS, window, STATUS_STAT_X, 24);
+    menu                  = RamHeapSlots->menuState;
+    unit                  = syUnitGet(owner);
+    menu->cursor->motion  = ICON_SHOWN;
+    flags                &= STATUS_PAGE_NO_CLEAR;
+    if (flags == 0)
+        mnWindowClearInteriorTilesStub(window, 0, 0, 128, 40);
+    mnTextDrawStringAtOffsetStub(unit->name, window, 40, 0);
+    mnTextDrawMessageAsTilesStub(unit->classId + (Sint32)MsgClassName, window, 0, 32);
+    MENU_DRAW_STATUS_LABEL(MenuLvString, window, 104, 0);
+    mnTextSetColorStub(TEXT_COLOR_NORMAL);
+    mnTextDrawNumberInWindowStub(unit->level, 2, window, 128, 0);
+    MENU_DRAW_STATUS_LABEL(MenuHpString, window, 40, 16);
+    mnTextDrawNumberInWindowStub(unit->hp, 4, window, 72, 16);
+    mnTextDrawNumberInWindowStub(unit->hpMax, 4, window, 112, 16);
+    mnTextDrawStringInWindowStub(MenuSlashString, window, 104, 16);
+    MENU_DRAW_STATUS_LABEL(MenuPpString, window, 40, 24);
+    mnTextDrawNumberInWindowStub(unit->pp, 4, window, 72, 24);
+    mnTextDrawNumberInWindowStub(unit->ppMax, 4, window, 112, 24);
+    mnTextDrawStringInWindowStub(MenuSlashString, window, 104, 24);
+    mnTextDrawMessageAsTilesStub((Sint32)MsgExpLabel, window, 40, 8);
+    mnTextDrawNumberInWindowStub(unit->experience, 8, window, 80, 8);
+    if (flags == 0)
+    {
+        sySynch(1);
+        mnWindowClearInteriorTilesStub(window, 144, 0, 224, 40);
+    }
+    // "Attack", "Defense", "Agility" and "Luck".
+    mnTextDrawMessageAsTilesStub(STAT_LABEL(0), window, 152, 0);
+    mnTextDrawMessageAsTilesStub(STAT_LABEL(1), window, 152, 8);
+    mnTextDrawMessageAsTilesStub(STAT_LABEL(2), window, 152, 16);
+    mnTextDrawMessageAsTilesStub(STAT_LABEL(3), window, 152, 24);
+    mnTextDrawNumberInWindowStub(unit->attack, STATUS_STAT_DIGITS, window, STATUS_STAT_X, 0);
+    mnTextDrawNumberInWindowStub(unit->defense, STATUS_STAT_DIGITS, window, STATUS_STAT_X, 8);
+    mnTextDrawNumberInWindowStub(unit->agility, STATUS_STAT_DIGITS, window, STATUS_STAT_X, 16);
+    mnTextDrawNumberInWindowStub(unit->luck, STATUS_STAT_DIGITS, window, STATUS_STAT_X, 24);
 }
 
 #undef STATUS_STAT_DIGITS
@@ -1168,34 +1168,34 @@ void mnStatusScreenDrawTopRows(Sint32 window, Sint32 owner, Sint32 flags)
 // STATUS_LIST_PAGE_ROWS items to a page. Returns 1.
 Sint32 mnPagedListBuild(PAGED_LIST *result, Sint32 index)
 {
-	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
-	void            *owner;
-	Sint32           count;
-	Sint32           value;
-	Sint32           page;
-	Sint32           row;
-	Sint32           pages;
+    ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
+    void            *owner;
+    Sint32           count;
+    Sint32           value;
+    Sint32           page;
+    Sint32           row;
+    Sint32           pages;
 
-	owner = syUnitGet(menu->sideMember[index]);
-	count = menu->itemCount;
-	value = menu->selectedIndexByMember[menu->sideMember[index]];
+    owner = syUnitGet(menu->sideMember[index]);
+    count = menu->itemCount;
+    value = menu->selectedIndexByMember[menu->sideMember[index]];
 
-	if (value + 1 > count)
-		value = count - 1;
-	if (count == 0)
-		value = 0;
-	page  = value / STATUS_LIST_PAGE_ROWS;
-	row   = value % STATUS_LIST_PAGE_ROWS;
-	pages = count / STATUS_LIST_PAGE_ROWS;
-	if (count % STATUS_LIST_PAGE_ROWS != 0)
-		pages++;
-	result->memberState   = (Sint32)owner;
-	result->page          = page;
-	result->pageCount     = pages;
-	result->row           = row;
-	result->entryCount    = count;
-	result->selectedIndex = value;
-	return 1;
+    if (value + 1 > count)
+        value = count - 1;
+    if (count == 0)
+        value = 0;
+    page  = value / STATUS_LIST_PAGE_ROWS;
+    row   = value % STATUS_LIST_PAGE_ROWS;
+    pages = count / STATUS_LIST_PAGE_ROWS;
+    if (count % STATUS_LIST_PAGE_ROWS != 0)
+        pages++;
+    result->memberState   = (Sint32)owner;
+    result->page          = page;
+    result->pageCount     = pages;
+    result->row           = row;
+    result->entryCount    = count;
+    result->selectedIndex = value;
+    return 1;
 }
 
 #undef STATUS_LIST_PAGE_ROWS
@@ -1216,37 +1216,37 @@ extern const Uint32 MenuPatternRowMasks[][2];
 // marks growing row by row, the second set's leaving row 1 bare.
 void mnBuildPatternTiles(void)
 {
-	Sint32 patternSet;
-	Sint32 patternIndex;
+    Sint32 patternSet;
+    Sint32 patternIndex;
 
-	for (patternSet = 0; patternSet < RANGE_PATTERN_SET_COUNT; patternSet++)
-	{
-		for (patternIndex = 0; patternIndex < RANGE_PATTERN_COUNT; patternIndex++)
-		{
-			Uint32 *tile =
-				(Uint32 *)(BG_CHAR_BLOCK(0) + STATUS_RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP)
-				+ patternSet * (RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_WORDS)
-				+ patternIndex * RANGE_PATTERN_PAIR_WORDS;
-			Sint32 row;
+    for (patternSet = 0; patternSet < RANGE_PATTERN_SET_COUNT; patternSet++)
+    {
+        for (patternIndex = 0; patternIndex < RANGE_PATTERN_COUNT; patternIndex++)
+        {
+            Uint32 *tile =
+                (Uint32 *)(BG_CHAR_BLOCK(0) + STATUS_RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP)
+                + patternSet * (RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_WORDS)
+                + patternIndex * RANGE_PATTERN_PAIR_WORDS;
+            Sint32 row;
 
-			syWordsFillEntry(tile, 2 * TILE_SIZE_4BPP, TEXT_CANVAS_BACKGROUND_WORD);
-			for (row = 1; row <= 7; row++)
-			{
-				Sint32 srcPattern = patternIndex;
+            syWordsFillEntry(tile, 2 * TILE_SIZE_4BPP, TEXT_CANVAS_BACKGROUND_WORD);
+            for (row = 1; row <= 7; row++)
+            {
+                Sint32 srcPattern = patternIndex;
 
-				if (patternSet == 1 && row <= 1)
-					continue;
-				if (patternSet == 0 && patternIndex > row - 2)
-				{
-					srcPattern = row - 2;
-					if (srcPattern < 0)
-						srcPattern = 0;
-				}
-				tile[row]     = mnXorWord(tile[row], MenuPatternRowMasks[srcPattern][0]);
-				tile[row + 8] = mnXorWord(tile[row + 8], MenuPatternRowMasks[srcPattern][1]);
-			}
-		}
-	}
+                if (patternSet == 1 && row <= 1)
+                    continue;
+                if (patternSet == 0 && patternIndex > row - 2)
+                {
+                    srcPattern = row - 2;
+                    if (srcPattern < 0)
+                        srcPattern = 0;
+                }
+                tile[row]     = mnXorWord(tile[row], MenuPatternRowMasks[srcPattern][0]);
+                tile[row + 8] = mnXorWord(tile[row + 8], MenuPatternRowMasks[srcPattern][1]);
+            }
+        }
+    }
 }
 
 // Draws a Psynergy range icon at tile (x, y) of window: three tiles from pair range of the range
@@ -1255,14 +1255,14 @@ void mnBuildPatternTiles(void)
 // RANGE_ICON_ALL for ABILITY_RANGE_ALL (mnPsynergyMenuDrawListPage).
 void mnPsynergyMenuDrawRange(Sint32 window, Sint32 x, Sint32 y, Sint32 range, Sint32 unused)
 {
-	Sint32 n;
-	Sint32 tile;
+    Sint32 n;
+    Sint32 tile;
 
-	n    = range * 2;
-	tile = n + WINDOW_TILE(STATUS_RANGE_ICON_FIRST_TILE) + 1;
-	mnWindowSetTilemapEntryStub(window, TILE_HFLIP | tile, x, y, 0);
-	mnWindowSetTilemapEntryStub(window, n + WINDOW_TILE(STATUS_RANGE_ICON_FIRST_TILE), x + 1, y, 0);
-	mnWindowSetTilemapEntryStub(window, tile, x + 2, y, 0);
+    n    = range * 2;
+    tile = n + WINDOW_TILE(STATUS_RANGE_ICON_FIRST_TILE) + 1;
+    mnWindowSetTilemapEntryStub(window, TILE_HFLIP | tile, x, y, 0);
+    mnWindowSetTilemapEntryStub(window, n + WINDOW_TILE(STATUS_RANGE_ICON_FIRST_TILE), x + 1, y, 0);
+    mnWindowSetTilemapEntryStub(window, tile, x + 2, y, 0);
 }
 
 // The Japanese page lists six abilities rather than five, a row higher, and says where the chosen
@@ -1270,24 +1270,24 @@ void mnPsynergyMenuDrawRange(Sint32 window, Sint32 x, Sint32 y, Sint32 range, Si
 // across it. FIRST_TILE_ROW is the tile row of the page's first ability; USABLE_TOP, USABLE_RIGHT
 // and USABLE_BOTTOM bound that text in pixels inside the window.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#	define STATUS_LIST_PAGE_ROWS    6
-#	define FIRST_TILE_ROW           1
-#	define USABLE_TOP               72
-#	define USABLE_RIGHT             64
-#	define USABLE_BOTTOM            96
+#    define STATUS_LIST_PAGE_ROWS    6
+#    define FIRST_TILE_ROW           1
+#    define USABLE_TOP               72
+#    define USABLE_RIGHT             64
+#    define USABLE_BOTTOM            96
 // まちやダンジョン ("towns and dungeons"), the message two after
 // MsgExpLabel.
-#	define USABLE_IN_FIELD_MESSAGE  ((Sint32)MsgExpLabel + 2)
+#    define USABLE_IN_FIELD_MESSAGE  ((Sint32)MsgExpLabel + 2)
 // せんとう ("battle"), the message after MsgExpLabel.
-#	define USABLE_IN_BATTLE_MESSAGE ((Sint32)MsgExpLabel + 1)
+#    define USABLE_IN_BATTLE_MESSAGE ((Sint32)MsgExpLabel + 1)
 // でつかえます ("can be used"), the message before MsgDjinnListHelp.
-#	define CAN_BE_USED_MESSAGE      ((Sint32)MsgDjinnListHelp - 1)
+#    define CAN_BE_USED_MESSAGE      ((Sint32)MsgDjinnListHelp - 1)
 #else
-#	define STATUS_LIST_PAGE_ROWS 5
-#	define FIRST_TILE_ROW        2
-#	define USABLE_TOP            96
-#	define USABLE_RIGHT          224
-#	define USABLE_BOTTOM         104
+#    define STATUS_LIST_PAGE_ROWS 5
+#    define FIRST_TILE_ROW        2
+#    define USABLE_TOP            96
+#    define USABLE_RIGHT          224
+#    define USABLE_BOTTOM         104
 #endif
 
 // Updates the Psynergy page for the row under the cursor: the Psynergy's description in the info
@@ -1295,121 +1295,121 @@ void mnPsynergyMenuDrawRange(Sint32 window, Sint32 x, Sint32 y, Sint32 range, Si
 // the range icons.
 Sint32 mnPsynergyMenuDrawRangePage(Sint32 window, Sint32 unused, PAGED_LIST *state)
 {
-	PSYNERGY_MENU_STATE *menu;
-	ABILITY_DEFINITION  *ability;
-	Sint32               row;
-	Sint32               base;
+    PSYNERGY_MENU_STATE *menu;
+    ABILITY_DEFINITION  *ability;
+    Sint32               row;
+    Sint32               base;
 
-	menu                 = (PSYNERGY_MENU_STATE *)RamHeapSlots->menuState;
-	state->selectedIndex = state->page * STATUS_LIST_PAGE_ROWS + state->row;
-	// The Japanese release clears the info window; in every edition but the Japanese it redraws the
-	// window's saved rectangle.
+    menu                 = (PSYNERGY_MENU_STATE *)RamHeapSlots->menuState;
+    state->selectedIndex = state->page * STATUS_LIST_PAGE_ROWS + state->row;
+    // The Japanese release clears the info window; in every edition but the Japanese it redraws the
+    // window's saved rectangle.
 #if LANGUAGE != LANGUAGE_JAPANESE
-	mnWindowSpriteRedrawSavedRectStub(menu->infoWindow);
+    mnWindowSpriteRedrawSavedRectStub(menu->infoWindow);
 #else
-	mnWindowSpriteClearListStub(menu->infoWindow);
+    mnWindowSpriteClearListStub(menu->infoWindow);
 #endif
-	sySynch(1);
-	if (menu->psynergies[state->selectedIndex] != 0)
-	{
-		// Japanese draws the description as a resource string.
+    sySynch(1);
+    if (menu->psynergies[state->selectedIndex] != 0)
+    {
+        // Japanese draws the description as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
-		mnTextDrawMessageStub((menu->psynergies[state->selectedIndex] & ACTION_ID_MASK)
-		                          + (Sint32)MsgAbilityDescription,
-		                      (Sint32)menu->infoWindow,
-		                      0,
-		                      0);
+        mnTextDrawMessageStub((menu->psynergies[state->selectedIndex] & ACTION_ID_MASK)
+                                  + (Sint32)MsgAbilityDescription,
+                              (Sint32)menu->infoWindow,
+                              0,
+                              0);
 #else
-		mnTextDrawMessageAsTilesStub((menu->psynergies[state->selectedIndex] & ACTION_ID_MASK)
-		                                 + (Sint32)MsgAbilityDescription,
-		                             (Sint32)menu->infoWindow,
-		                             0,
-		                             0);
+        mnTextDrawMessageAsTilesStub((menu->psynergies[state->selectedIndex] & ACTION_ID_MASK)
+                                         + (Sint32)MsgAbilityDescription,
+                                     (Sint32)menu->infoWindow,
+                                     0,
+                                     0);
 #endif
-		ability = gmAbilityGetDirectStub(menu->psynergies[state->selectedIndex] & ACTION_ID_MASK);
-		mnWindowClearInteriorTilesStub(window, 0, USABLE_TOP, USABLE_RIGHT, USABLE_BOTTOM);
-		row = 0;
+        ability = gmAbilityGetDirectStub(menu->psynergies[state->selectedIndex] & ACTION_ID_MASK);
+        mnWindowClearInteriorTilesStub(window, 0, USABLE_TOP, USABLE_RIGHT, USABLE_BOTTOM);
+        row = 0;
 #if LANGUAGE == LANGUAGE_JAPANESE
-		// One line for each place the ability works, then the end of the sentence on the line below
-		// them.
-		if (ability->fieldPsynergy != 0 || (ability->flags & ABILITY_USABLE_IN_FIELD) != 0)
-		{
-			mnTextDrawMessageAsTilesStub(USABLE_IN_FIELD_MESSAGE, window, 0, USABLE_TOP);
-			row = 1;
-		}
-		if ((ability->flags & ABILITY_USABLE_IN_BATTLE) != 0)
-		{
-			mnTextDrawMessageAsTilesStub(USABLE_IN_BATTLE_MESSAGE, window, 0, row * 8 + USABLE_TOP);
-			row++;
-		}
-		mnTextDrawMessageAsTilesStub(CAN_BE_USED_MESSAGE, window, 0, row * 8 + USABLE_TOP);
+        // One line for each place the ability works, then the end of the sentence on the line below
+        // them.
+        if (ability->fieldPsynergy != 0 || (ability->flags & ABILITY_USABLE_IN_FIELD) != 0)
+        {
+            mnTextDrawMessageAsTilesStub(USABLE_IN_FIELD_MESSAGE, window, 0, USABLE_TOP);
+            row = 1;
+        }
+        if ((ability->flags & ABILITY_USABLE_IN_BATTLE) != 0)
+        {
+            mnTextDrawMessageAsTilesStub(USABLE_IN_BATTLE_MESSAGE, window, 0, row * 8 + USABLE_TOP);
+            row++;
+        }
+        mnTextDrawMessageAsTilesStub(CAN_BE_USED_MESSAGE, window, 0, row * 8 + USABLE_TOP);
 #else
-		// row holds where it works for now: 2 in the field, 1 in battle.
-		if (ability->fieldPsynergy != 0 || (ability->flags & ABILITY_USABLE_IN_FIELD) != 0)
-		{
-			row = 2;
-		}
-		if ((ability->flags & ABILITY_USABLE_IN_BATTLE) != 0)
-		{
-			row |= 1;
-		}
-		if (row == 3)
-		{
-			mnTextDrawMessageAsTilesStub((Sint32)MsgUsableAnywhere, window, 0, USABLE_TOP);
-		}
-		else if (row == 2)
-		{
-			mnTextDrawMessageAsTilesStub((Sint32)MsgUsableInField, window, 0, USABLE_TOP);
-		}
-		else if (row == 1)
-		{
-			mnTextDrawMessageAsTilesStub((Sint32)MsgUsableInBattle, window, 0, USABLE_TOP);
-		}
+        // row holds where it works for now: 2 in the field, 1 in battle.
+        if (ability->fieldPsynergy != 0 || (ability->flags & ABILITY_USABLE_IN_FIELD) != 0)
+        {
+            row = 2;
+        }
+        if ((ability->flags & ABILITY_USABLE_IN_BATTLE) != 0)
+        {
+            row |= 1;
+        }
+        if (row == 3)
+        {
+            mnTextDrawMessageAsTilesStub((Sint32)MsgUsableAnywhere, window, 0, USABLE_TOP);
+        }
+        else if (row == 2)
+        {
+            mnTextDrawMessageAsTilesStub((Sint32)MsgUsableInField, window, 0, USABLE_TOP);
+        }
+        else if (row == 1)
+        {
+            mnTextDrawMessageAsTilesStub((Sint32)MsgUsableInBattle, window, 0, USABLE_TOP);
+        }
 #endif
-	}
+    }
 
-	base = state->page * STATUS_LIST_PAGE_ROWS;
-	for (row = 0; row <= STATUS_LIST_PAGE_ROWS - 1; row++)
-	{
-		if (row == state->row)
-		{
-			ability = gmAbilityGetDirectStub(menu->psynergies[base + row] & ACTION_ID_MASK);
-			if (ability->element != ELEMENT_NONE)
-			{
-				mnWindowSetTilemapEntryStub(
-					window, ability->element + 1, 24, row * 2 + FIRST_TILE_ROW, 0);
-				mnWindowSetHighlightRect(
-					window, 9, row * 2 + FIRST_TILE_ROW, 15, 1, HIGHLIGHT_PALETTE);
-				mnWindowSetHighlightRect(
-					window, 25, row * 2 + FIRST_TILE_ROW, 3, 1, HIGHLIGHT_PALETTE);
-			}
-			else
-			{
-				mnWindowSetHighlightRect(
-					window, 9, row * 2 + FIRST_TILE_ROW, 19, 1, HIGHLIGHT_PALETTE);
-			}
-		}
-		else
-		{
-			ability = gmAbilityGetDirectStub(menu->psynergies[base + row] & ACTION_ID_MASK);
-			if (ability->element != ELEMENT_NONE)
-			{
-				mnWindowSetTilemapEntryStub(
-					window, ability->element + 1, 24, row * 2 + FIRST_TILE_ROW, TILEMAP_ENTRY_ICON);
-				mnWindowSetHighlightRect(
-					window, 9, row * 2 + FIRST_TILE_ROW, 15, 1, WINDOW_PALETTE);
-				mnWindowSetHighlightRect(
-					window, 25, row * 2 + FIRST_TILE_ROW, 3, 1, WINDOW_PALETTE);
-			}
-			else
-			{
-				mnWindowSetHighlightRect(
-					window, 9, row * 2 + FIRST_TILE_ROW, 19, 1, WINDOW_PALETTE);
-			}
-		}
-	}
-	sySynch(1);
-	return 1;
+    base = state->page * STATUS_LIST_PAGE_ROWS;
+    for (row = 0; row <= STATUS_LIST_PAGE_ROWS - 1; row++)
+    {
+        if (row == state->row)
+        {
+            ability = gmAbilityGetDirectStub(menu->psynergies[base + row] & ACTION_ID_MASK);
+            if (ability->element != ELEMENT_NONE)
+            {
+                mnWindowSetTilemapEntryStub(
+                    window, ability->element + 1, 24, row * 2 + FIRST_TILE_ROW, 0);
+                mnWindowSetHighlightRect(
+                    window, 9, row * 2 + FIRST_TILE_ROW, 15, 1, HIGHLIGHT_PALETTE);
+                mnWindowSetHighlightRect(
+                    window, 25, row * 2 + FIRST_TILE_ROW, 3, 1, HIGHLIGHT_PALETTE);
+            }
+            else
+            {
+                mnWindowSetHighlightRect(
+                    window, 9, row * 2 + FIRST_TILE_ROW, 19, 1, HIGHLIGHT_PALETTE);
+            }
+        }
+        else
+        {
+            ability = gmAbilityGetDirectStub(menu->psynergies[base + row] & ACTION_ID_MASK);
+            if (ability->element != ELEMENT_NONE)
+            {
+                mnWindowSetTilemapEntryStub(
+                    window, ability->element + 1, 24, row * 2 + FIRST_TILE_ROW, TILEMAP_ENTRY_ICON);
+                mnWindowSetHighlightRect(
+                    window, 9, row * 2 + FIRST_TILE_ROW, 15, 1, WINDOW_PALETTE);
+                mnWindowSetHighlightRect(
+                    window, 25, row * 2 + FIRST_TILE_ROW, 3, 1, WINDOW_PALETTE);
+            }
+            else
+            {
+                mnWindowSetHighlightRect(
+                    window, 9, row * 2 + FIRST_TILE_ROW, 19, 1, WINDOW_PALETTE);
+            }
+        }
+    }
+    sySynch(1);
+    return 1;
 }
 
 #undef STATUS_LIST_PAGE_ROWS
@@ -1432,85 +1432,85 @@ Sint32 mnPsynergyMenuDrawRangePage(Sint32 window, Sint32 unused, PAGED_LIST *sta
 // then the owner's name, class and level.
 Sint32 mnPsynergyMenuDrawListPage(Sint32 window, Sint32 unused, const PAGED_LIST *res)
 {
-	PSYNERGY_MENU_STATE *menu = RamHeapSlots->menuState;
-	UNIT                *member;
-	Uint32               firstEntry;
-	Uint32               rows;
-	Uint8                row;
-	Sint32               entryIndex;
+    PSYNERGY_MENU_STATE *menu = RamHeapSlots->menuState;
+    UNIT                *member;
+    Uint32               firstEntry;
+    Uint32               rows;
+    Uint8                row;
+    Sint32               entryIndex;
 
-	(void)unused;
+    (void)unused;
 
-	member = syUnitGet(menu->memberIds[0]);
+    member = syUnitGet(menu->memberIds[0]);
 
-	mnWindowSpriteRedrawSavedRectStub(window);
+    mnWindowSpriteRedrawSavedRectStub(window);
 
-	firstEntry = res->page * STATUS_LIST_PAGE_ROWS;
-	rows       = (Uint8)(res->entryCount - firstEntry);
-	if (rows > STATUS_LIST_PAGE_ROWS)
-	{
-		rows = STATUS_LIST_PAGE_ROWS;
-	}
+    firstEntry = res->page * STATUS_LIST_PAGE_ROWS;
+    rows       = (Uint8)(res->entryCount - firstEntry);
+    if (rows > STATUS_LIST_PAGE_ROWS)
+    {
+        rows = STATUS_LIST_PAGE_ROWS;
+    }
 
-	mnSetPageIcons(STATUS_LIST_PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, PAGE_ICONS_Y);
-	mnPagedListDrawPageNumbers(window, res->entryCount, STATUS_LIST_PAGE_ROWS, res->page, 28);
+    mnSetPageIcons(STATUS_LIST_PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, PAGE_ICONS_Y);
+    mnPagedListDrawPageNumbers(window, res->entryCount, STATUS_LIST_PAGE_ROWS, res->page, 28);
 
-	// "PP"
-	mnTextDrawMessageAsTilesStub(
-		(Sint32)MsgPsynergyChooseTarget + 2, window, STATUS_PSYNERGY_PP_HEADING_X, 0);
+    // "PP"
+    mnTextDrawMessageAsTilesStub(
+        (Sint32)MsgPsynergyChooseTarget + 2, window, STATUS_PSYNERGY_PP_HEADING_X, 0);
 
-	row = 0;
-	if (rows > row)
-	{
-		entryIndex = firstEntry;
-		do
-		{
-			ABILITY_DEFINITION *action;
-			Sint32              msgId;
-			Sint32              y;
-			Sint32              range;
-			action = gmAbilityGetDirectStub(PSYNERGY_ABILITY_MASK & menu->psynergies[entryIndex]);
-			msgId = (menu->psynergies[entryIndex] & PSYNERGY_ABILITY_MASK) + (Sint32)MsgAbilityName;
-			y     = row * 16 + FIRST_ROW_Y;
+    row = 0;
+    if (rows > row)
+    {
+        entryIndex = firstEntry;
+        do
+        {
+            ABILITY_DEFINITION *action;
+            Sint32              msgId;
+            Sint32              y;
+            Sint32              range;
+            action = gmAbilityGetDirectStub(PSYNERGY_ABILITY_MASK & menu->psynergies[entryIndex]);
+            msgId = (menu->psynergies[entryIndex] & PSYNERGY_ABILITY_MASK) + (Sint32)MsgAbilityName;
+            y     = row * 16 + FIRST_ROW_Y;
 
-			mnTextDrawMessageAsTilesStub(msgId, window, STATUS_PSYNERGY_NAME_X, y);
-			mnTextDrawNumberAtOffsetStub(action->ppCost, 2, window, STATUS_PSYNERGY_COST_X, y);
+            mnTextDrawMessageAsTilesStub(msgId, window, STATUS_PSYNERGY_NAME_X, y);
+            mnTextDrawNumberAtOffsetStub(action->ppCost, 2, window, STATUS_PSYNERGY_COST_X, y);
 
-			// ABILITY_RANGE_ALL takes the last range icon; range n takes n - 1.
-			range = action->range;
-			if (range == ABILITY_RANGE_ALL)
-			{
-				range = RANGE_ICON_ALL;
-			}
-			else
-			{
-				range--;
-			}
-			mnPsynergyMenuDrawRange(window, 25, row * 2 + FIRST_RANGE_ROW, range, 0);
+            // ABILITY_RANGE_ALL takes the last range icon; range n takes n - 1.
+            range = action->range;
+            if (range == ABILITY_RANGE_ALL)
+            {
+                range = RANGE_ICON_ALL;
+            }
+            else
+            {
+                range--;
+            }
+            mnPsynergyMenuDrawRange(window, 25, row * 2 + FIRST_RANGE_ROW, range, 0);
 
-			row++;
-			entryIndex++;
-		} while (rows > row);
-	}
+            row++;
+            entryIndex++;
+        } while (rows > row);
+    }
 
-	if (menu->psynergyCount == 0)
-	{
-		// "You have no Psynergy."
-		mnTextDrawMessageAsTilesStub(
-			(Sint32)MsgPsynergyChooseForR - 1, window, 96, EMPTY_MESSAGE_Y);
-	}
+    if (menu->psynergyCount == 0)
+    {
+        // "You have no Psynergy."
+        mnTextDrawMessageAsTilesStub(
+            (Sint32)MsgPsynergyChooseForR - 1, window, 96, EMPTY_MESSAGE_Y);
+    }
 
-	mnTextDrawStringAtOffsetStub(member->name, window, 40, 0);
-	mnTextDrawMessageAsTilesStub(member->classId + (Sint32)MsgClassName, window, 0, 32);
-	// Spanish and French draw the level label at an offset, as the owner's name.
+    mnTextDrawStringAtOffsetStub(member->name, window, 40, 0);
+    mnTextDrawMessageAsTilesStub(member->classId + (Sint32)MsgClassName, window, 0, 32);
+    // Spanish and French draw the level label at an offset, as the owner's name.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
-	mnTextDrawStringAtOffsetStub(MenuLvString, window, 0, 48);
+    mnTextDrawStringAtOffsetStub(MenuLvString, window, 0, 48);
 #else
-	mnTextDrawStringInWindowStub(MenuLvString, window, 0, 48);
+    mnTextDrawStringInWindowStub(MenuLvString, window, 0, 48);
 #endif
-	mnTextDrawNumberInWindowStub(member->level, 2, window, 24, 48);
+    mnTextDrawNumberInWindowStub(member->level, 2, window, 24, 48);
 
-	return 1;
+    return 1;
 }
 
 #undef STATUS_LIST_PAGE_ROWS
@@ -1532,99 +1532,99 @@ Sint32 mnPsynergyMenuDrawListPage(Sint32 window, Sint32 unused, const PAGED_LIST
 // where it can be used.
 Sint32 mnStatusScreenRunPsynergyPage(void)
 {
-	PSYNERGY_MENU_STATE *menu;
-	Sint32               result;
-	Sint32               window;
-	Sint32               refresh;
-	Bool                 listNeedsRedraw;
-	Sint32               navigation;
-	Sint32               ownerIndex;
-	PAGED_LIST           state;
+    PSYNERGY_MENU_STATE *menu;
+    Sint32               result;
+    Sint32               window;
+    Sint32               refresh;
+    Bool                 listNeedsRedraw;
+    Sint32               navigation;
+    Sint32               ownerIndex;
+    PAGED_LIST           state;
 
-	menu            = RamHeapSlots->menuState;
-	window          = menu->statusWindow;
-	result          = 0;
-	refresh         = 2;
-	listNeedsRedraw = TRUE;
-	mnWindowUpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
-	mnSpawnIconEntries(menu, menu->msgWindow);
-	// "A:Item" and "L-R:Switch characters"
-	mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 2, window, 0, -24);
-	mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp, window, 64, -24);
-	mnBuildPatternTiles();
-	while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
-	{
-		if (refresh)
-		{
-			if (refresh == 2)
-			{
-				menu->psynergyCount = mnPsynergyMenuCollectActions(
-					syUnitGet(menu->memberIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
-				mnPagedListBuild(&state, 0);
-				mnItemMenuHideAllIcons();
-				mnPsynergyMenuDrawPsynergyIcons(menu->psynergies);
-				listNeedsRedraw = TRUE;
-				sySynch(1);
-			}
-			if (listNeedsRedraw)
-			{
-				listNeedsRedraw = FALSE;
-				mnPsynergyMenuDrawListPage(window, 0, &state);
-			}
-			mnPsynergyMenuDrawRangePage(window, 0, &state);
+    menu            = RamHeapSlots->menuState;
+    window          = menu->statusWindow;
+    result          = 0;
+    refresh         = 2;
+    listNeedsRedraw = TRUE;
+    mnWindowUpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
+    mnSpawnIconEntries(menu, menu->msgWindow);
+    // "A:Item" and "L-R:Switch characters"
+    mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 2, window, 0, -24);
+    mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp, window, 64, -24);
+    mnBuildPatternTiles();
+    while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
+    {
+        if (refresh)
+        {
+            if (refresh == 2)
+            {
+                menu->psynergyCount = mnPsynergyMenuCollectActions(
+                    syUnitGet(menu->memberIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
+                mnPagedListBuild(&state, 0);
+                mnItemMenuHideAllIcons();
+                mnPsynergyMenuDrawPsynergyIcons(menu->psynergies);
+                listNeedsRedraw = TRUE;
+                sySynch(1);
+            }
+            if (listNeedsRedraw)
+            {
+                listNeedsRedraw = FALSE;
+                mnPsynergyMenuDrawListPage(window, 0, &state);
+            }
+            mnPsynergyMenuDrawRangePage(window, 0, &state);
 #if PSYNERGY_PAGE_REDRAWS_HELP
-			// German, Spanish, French and Italian draw the help again after each page.
-			mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 2, window, 0, -24);
-			mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp, window, 64, -24);
+            // German, Spanish, French and Italian draw the help again after each page.
+            mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 2, window, 0, -24);
+            mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp, window, 64, -24);
 #endif
-			refresh = 0;
-		}
-		sySynch(1);
-		navigation = mnPagedListHandleInput(
-			0, state.entryCount, STATUS_LIST_PAGE_ROWS, &state.row, &state.page);
-		mnCursorPos(STATUS_PSYNERGY_CURSOR_X, state.row * 16 + CURSOR_Y);
-		if (navigation == 1)
-		{
-			refresh         = 1;
-			listNeedsRedraw = TRUE;
-		}
-		if (navigation == 0)
-			refresh = 1;
-		if (navigation == -1)
-			refresh = 0;
-		if (PerWork.push & KEY_A)
-		{
-			sySoundPlayStub(SE_MENU_CONFIRM);
-			result = 1;
-			break;
-		}
-		if (PerWork.push & KEY_B)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			result = -1;
-			break;
-		}
-		if ((PerWork.repeat & KEY_R) || (PerWork.repeat & KEY_L))
-		{
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			ownerIndex                                                 = menu->tabIndex[0];
-			menu->selectedIndexByMember[menu->memberTable[ownerIndex]] = state.selectedIndex;
-			if (PerWork.repeat & KEY_R)
-				ownerIndex++;
-			else
-				ownerIndex--;
-			ownerIndex           = (ownerIndex + menu->memberCount) % menu->memberCount;
-			menu->selectedMember = menu->memberTable[ownerIndex];
-			menu->memberIds[0]   = menu->memberTable[ownerIndex];
-			menu->tabIndex[0]    = ownerIndex;
-			mnReloadMemberPortrait(menu, menu->memberTable[ownerIndex]);
-			refresh = 2;
-		}
-	}
-	mnWindowSpritePrepareForRedrawStub(menu->infoWindow);
-	mnWindowSpriteRedrawSavedRectStub(window);
-	mnWindowSpriteClearListStub(menu->msgWindow);
-	return result;
+            refresh = 0;
+        }
+        sySynch(1);
+        navigation = mnPagedListHandleInput(
+            0, state.entryCount, STATUS_LIST_PAGE_ROWS, &state.row, &state.page);
+        mnCursorPos(STATUS_PSYNERGY_CURSOR_X, state.row * 16 + CURSOR_Y);
+        if (navigation == 1)
+        {
+            refresh         = 1;
+            listNeedsRedraw = TRUE;
+        }
+        if (navigation == 0)
+            refresh = 1;
+        if (navigation == -1)
+            refresh = 0;
+        if (PerWork.push & KEY_A)
+        {
+            sySoundPlayStub(SE_MENU_CONFIRM);
+            result = 1;
+            break;
+        }
+        if (PerWork.push & KEY_B)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            result = -1;
+            break;
+        }
+        if ((PerWork.repeat & KEY_R) || (PerWork.repeat & KEY_L))
+        {
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            ownerIndex                                                 = menu->tabIndex[0];
+            menu->selectedIndexByMember[menu->memberTable[ownerIndex]] = state.selectedIndex;
+            if (PerWork.repeat & KEY_R)
+                ownerIndex++;
+            else
+                ownerIndex--;
+            ownerIndex           = (ownerIndex + menu->memberCount) % menu->memberCount;
+            menu->selectedMember = menu->memberTable[ownerIndex];
+            menu->memberIds[0]   = menu->memberTable[ownerIndex];
+            menu->tabIndex[0]    = ownerIndex;
+            mnReloadMemberPortrait(menu, menu->memberTable[ownerIndex]);
+            refresh = 2;
+        }
+    }
+    mnWindowSpritePrepareForRedrawStub(menu->infoWindow);
+    mnWindowSpriteRedrawSavedRectStub(window);
+    mnWindowSpriteClearListStub(menu->msgWindow);
+    return result;
 }
 
 #undef STATUS_LIST_PAGE_ROWS
@@ -1644,108 +1644,108 @@ Sint32 mnStatusScreenRunPsynergyPage(void)
 // item is worn in, if it is.
 Sint32 mnItemMenuDrawEquipPage(Sint32 window, Sint32 unused, PAGED_LIST *state)
 {
-	ITEM_MENU_STATE *menu;
-	ITEM_DEFINITION *item;
-	Sint32           base;
-	Sint32           row;
-	Uint32           entry;
-	Uint32           mask;
+    ITEM_MENU_STATE *menu;
+    ITEM_DEFINITION *item;
+    Sint32           base;
+    Sint32           row;
+    Uint32           entry;
+    Uint32           mask;
 
-	menu                 = RamHeapSlots->menuState;
-	base                 = state->page * STATUS_LIST_PAGE_ROWS;
-	state->selectedIndex = base + state->row;
-	// The Japanese release clears the name's window; in every edition but the Japanese it redraws
-	// the window's saved rectangle.
+    menu                 = RamHeapSlots->menuState;
+    base                 = state->page * STATUS_LIST_PAGE_ROWS;
+    state->selectedIndex = base + state->row;
+    // The Japanese release clears the name's window; in every edition but the Japanese it redraws
+    // the window's saved rectangle.
 #if LANGUAGE != LANGUAGE_JAPANESE
-	mnWindowSpriteRedrawSavedRectStub(menu->infoWindow);
+    mnWindowSpriteRedrawSavedRectStub(menu->infoWindow);
 #else
-	mnWindowSpriteClearListStub(menu->infoWindow);
+    mnWindowSpriteClearListStub(menu->infoWindow);
 #endif
-	sySynch(1);
-	if (menu->items[state->selectedIndex] != 0)
-	{
-		// Japanese draws the name as a resource string.
+    sySynch(1);
+    if (menu->items[state->selectedIndex] != 0)
+    {
+        // Japanese draws the name as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
-		mnTextDrawMessageStub((menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK)
-		                          + (Sint32)MsgItemDescription,
-		                      menu->infoWindow,
-		                      0,
-		                      0);
+        mnTextDrawMessageStub((menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK)
+                                  + (Sint32)MsgItemDescription,
+                              menu->infoWindow,
+                              0,
+                              0);
 #else
-		mnTextDrawMessageAsTilesStub((menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK)
-		                                 + MsgItemDescription,
-		                             menu->infoWindow,
-		                             0,
-		                             0);
+        mnTextDrawMessageAsTilesStub((menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK)
+                                         + MsgItemDescription,
+                                     menu->infoWindow,
+                                     0,
+                                     0);
 #endif
-	}
+    }
 
-	for (row = 0; row < STATUS_LIST_PAGE_ROWS; row++)
-	{
-		if (row == state->row)
-		{
-			entry  = menu->items[state->selectedIndex];
-			mask   = INVENTORY_ITEM_ID_MASK;
-			mask  &= entry;
-			item   = gmItemGetDirectStub(mask);
-			if (item->element != ELEMENT_NONE)
-			{
-				mnWindowSetTilemapEntryStub(window, item->element + 1, 27, row * 2 + 1, 0);
-				mnWindowSetHighlightRect(window, 14, row * 2 + 1, 13, 1, HIGHLIGHT_PALETTE);
-			}
-			else
-			{
-				mnWindowSetHighlightRect(window, 14, row * 2 + 1, 14, 1, HIGHLIGHT_PALETTE);
-			}
-		}
-		else
-		{
-			entry  = menu->items[base + row];
-			mask   = INVENTORY_ITEM_ID_MASK;
-			mask  &= entry;
-			item   = gmItemGetDirectStub(mask);
-			if (item->element != ELEMENT_NONE)
-			{
-				mnWindowSetTilemapEntryStub(
-					window, item->element + 1, 27, row * 2 + 1, TILEMAP_ENTRY_ICON);
-				mnWindowSetHighlightRect(window, 14, row * 2 + 1, 13, 1, WINDOW_PALETTE);
-			}
-			else
-			{
-				mnWindowSetHighlightRect(window, 14, row * 2 + 1, 14, 1, WINDOW_PALETTE);
-			}
-		}
-	}
+    for (row = 0; row < STATUS_LIST_PAGE_ROWS; row++)
+    {
+        if (row == state->row)
+        {
+            entry  = menu->items[state->selectedIndex];
+            mask   = INVENTORY_ITEM_ID_MASK;
+            mask  &= entry;
+            item   = gmItemGetDirectStub(mask);
+            if (item->element != ELEMENT_NONE)
+            {
+                mnWindowSetTilemapEntryStub(window, item->element + 1, 27, row * 2 + 1, 0);
+                mnWindowSetHighlightRect(window, 14, row * 2 + 1, 13, 1, HIGHLIGHT_PALETTE);
+            }
+            else
+            {
+                mnWindowSetHighlightRect(window, 14, row * 2 + 1, 14, 1, HIGHLIGHT_PALETTE);
+            }
+        }
+        else
+        {
+            entry  = menu->items[base + row];
+            mask   = INVENTORY_ITEM_ID_MASK;
+            mask  &= entry;
+            item   = gmItemGetDirectStub(mask);
+            if (item->element != ELEMENT_NONE)
+            {
+                mnWindowSetTilemapEntryStub(
+                    window, item->element + 1, 27, row * 2 + 1, TILEMAP_ENTRY_ICON);
+                mnWindowSetHighlightRect(window, 14, row * 2 + 1, 13, 1, WINDOW_PALETTE);
+            }
+            else
+            {
+                mnWindowSetHighlightRect(window, 14, row * 2 + 1, 14, 1, WINDOW_PALETTE);
+            }
+        }
+    }
 
-	for (row = 0; row <= 3; row++)
-		mnWindowSetHighlightRect(
-			menu->equipWindow, EQUIP_SLOT_X, row * 2 + 1, EQUIP_SLOT_WIDTH, 1, WINDOW_PALETTE);
+    for (row = 0; row <= 3; row++)
+        mnWindowSetHighlightRect(
+            menu->equipWindow, EQUIP_SLOT_X, row * 2 + 1, EQUIP_SLOT_WIDTH, 1, WINDOW_PALETTE);
 
-	if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED)
-	{
-		item = gmItemGetDirectStub(menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK);
-		switch (item->type)
-		{
-			case ITEM_TYPE_WEAPON:
-				mnWindowSetHighlightRect(
-					menu->equipWindow, EQUIP_SLOT_X, 1, EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
-				break;
-			case ITEM_TYPE_HELM:
-				mnWindowSetHighlightRect(
-					menu->equipWindow, EQUIP_SLOT_X, 3, EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
-				break;
-			case ITEM_TYPE_SHIELD:
-				mnWindowSetHighlightRect(
-					menu->equipWindow, EQUIP_SLOT_X, 5, EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
-				break;
-			case ITEM_TYPE_ARMOR:
-				mnWindowSetHighlightRect(
-					menu->equipWindow, EQUIP_SLOT_X, 7, EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
-				break;
-		}
-	}
-	sySynch(1);
-	return 1;
+    if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED)
+    {
+        item = gmItemGetDirectStub(menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK);
+        switch (item->type)
+        {
+            case ITEM_TYPE_WEAPON:
+                mnWindowSetHighlightRect(
+                    menu->equipWindow, EQUIP_SLOT_X, 1, EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
+                break;
+            case ITEM_TYPE_HELM:
+                mnWindowSetHighlightRect(
+                    menu->equipWindow, EQUIP_SLOT_X, 3, EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
+                break;
+            case ITEM_TYPE_SHIELD:
+                mnWindowSetHighlightRect(
+                    menu->equipWindow, EQUIP_SLOT_X, 5, EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
+                break;
+            case ITEM_TYPE_ARMOR:
+                mnWindowSetHighlightRect(
+                    menu->equipWindow, EQUIP_SLOT_X, 7, EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
+                break;
+        }
+    }
+    sySynch(1);
+    return 1;
 }
 
 #undef STATUS_LIST_PAGE_ROWS
@@ -1765,51 +1765,51 @@ Sint32 mnItemMenuDrawEquipPage(Sint32 window, Sint32 unused, PAGED_LIST *state)
 // then the member's name, Attack and Defense.
 Sint32 mnItemMenuDrawItemPage(Sint32 window, Sint32 unused, PAGED_LIST *state)
 {
-	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
-	UNIT            *unit;
-	Uint16          *inventoryEntry;
-	Sint32           firstEntry;
-	Uint32           rowCount;
-	Uint32           rowIndex;
-	Uint8           *msg;
+    ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
+    UNIT            *unit;
+    Uint16          *inventoryEntry;
+    Sint32           firstEntry;
+    Uint32           rowCount;
+    Uint32           rowIndex;
+    Uint8           *msg;
 
-	unit = syUnitGet(menu->sideMember[0]);
-	mnWindowClearInteriorTilesStub(window, 128, 8, 224, 96);
-	firstEntry = state->page * STATUS_LIST_PAGE_ROWS;
-	rowCount   = (Uint8)(state->entryCount - firstEntry);
-	if (rowCount > STATUS_LIST_PAGE_ROWS)
-		rowCount = STATUS_LIST_PAGE_ROWS;
-	mnSetPageIcons(STATUS_LIST_PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, 52);
-	mnPagedListDrawPageNumbers(window, state->entryCount, STATUS_LIST_PAGE_ROWS, state->page, 28);
-	if (menu->itemCount == 0)
-	{
-		mnTextDrawMessageAsTilesStub(MsgItemMenuEmpty, window, EMPTY_MESSAGE_X, 8);
-	}
-	else
-	{
-		rowIndex = 0;
-		if (rowCount > rowIndex)
-		{
-			inventoryEntry = &menu->items[firstEntry];
-			do
-			{
-				mnTextDrawMessageAsTilesStub((*inventoryEntry & INVENTORY_ITEM_ID_MASK)
-				                                 + MsgItemName,
-				                             window,
-				                             ITEM_NAME_X,
-				                             (rowIndex << 4) + 8);
-				rowIndex = (Uint8)(rowIndex + 1);
-				inventoryEntry++;
-			} while (rowCount > rowIndex);
-		}
-	}
-	mnTextDrawStringAtOffsetStub(unit->name, window, 40, 0);
-	msg = MsgStatLabel;
-	mnTextDrawMessageAsTilesStub(msg, window, 32, 16);
-	mnTextDrawMessageAsTilesStub(msg + 1, window, 32, 24);
-	mnTextDrawNumberInWindowStub(unit->attack, 3, window, STAT_X, 16);
-	mnTextDrawNumberInWindowStub(unit->defense, 3, window, STAT_X, 24);
-	return 1;
+    unit = syUnitGet(menu->sideMember[0]);
+    mnWindowClearInteriorTilesStub(window, 128, 8, 224, 96);
+    firstEntry = state->page * STATUS_LIST_PAGE_ROWS;
+    rowCount   = (Uint8)(state->entryCount - firstEntry);
+    if (rowCount > STATUS_LIST_PAGE_ROWS)
+        rowCount = STATUS_LIST_PAGE_ROWS;
+    mnSetPageIcons(STATUS_LIST_PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, 52);
+    mnPagedListDrawPageNumbers(window, state->entryCount, STATUS_LIST_PAGE_ROWS, state->page, 28);
+    if (menu->itemCount == 0)
+    {
+        mnTextDrawMessageAsTilesStub(MsgItemMenuEmpty, window, EMPTY_MESSAGE_X, 8);
+    }
+    else
+    {
+        rowIndex = 0;
+        if (rowCount > rowIndex)
+        {
+            inventoryEntry = &menu->items[firstEntry];
+            do
+            {
+                mnTextDrawMessageAsTilesStub((*inventoryEntry & INVENTORY_ITEM_ID_MASK)
+                                                 + MsgItemName,
+                                             window,
+                                             ITEM_NAME_X,
+                                             (rowIndex << 4) + 8);
+                rowIndex = (Uint8)(rowIndex + 1);
+                inventoryEntry++;
+            } while (rowCount > rowIndex);
+        }
+    }
+    mnTextDrawStringAtOffsetStub(unit->name, window, 40, 0);
+    msg = MsgStatLabel;
+    mnTextDrawMessageAsTilesStub(msg, window, 32, 16);
+    mnTextDrawMessageAsTilesStub(msg + 1, window, 32, 24);
+    mnTextDrawNumberInWindowStub(unit->attack, 3, window, STAT_X, 16);
+    mnTextDrawNumberInWindowStub(unit->defense, 3, window, STAT_X, 24);
+    return 1;
 }
 
 #undef STATUS_LIST_PAGE_ROWS
@@ -1829,108 +1829,108 @@ Sint32 mnItemMenuDrawItemPage(Sint32 window, Sint32 unused, PAGED_LIST *state)
 // beside the equipment window of what they wear.
 Sint32 mnStatusScreenRunEquipmentPage(void)
 {
-	ITEM_MENU_STATE *menu;
-	UNIT            *owner;
-	Sint32           result;
-	Sint32           window;
-	Sint32           refresh;
-	Bool             listNeedsRedraw;
-	Sint32           navigation;
-	Sint32           ownerIndex;
-	Sint32           i;
-	PAGED_LIST       state;
-	Uint16           savedInventory[INVENTORY_SLOTS];
+    ITEM_MENU_STATE *menu;
+    UNIT            *owner;
+    Sint32           result;
+    Sint32           window;
+    Sint32           refresh;
+    Bool             listNeedsRedraw;
+    Sint32           navigation;
+    Sint32           ownerIndex;
+    Sint32           i;
+    PAGED_LIST       state;
+    Uint16           savedInventory[INVENTORY_SLOTS];
 
-	menu            = RamHeapSlots->menuState;
-	window          = menu->statusWindow;
-	result          = 0;
-	refresh         = 2;
-	listNeedsRedraw = TRUE;
-	owner           = syUnitGet(menu->sideMember[0]);
-	mnWindowUpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
-	mnSpawnIconEntries(menu, menu->questionWindow);
-	// "A:Status" and "L-R:Switch characters"
-	mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 3, window, 0, -24);
-	mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp, window, 64, -24);
-	while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
-	{
-		if (refresh)
-		{
-			if (refresh == 2)
-			{
-				owner           = syUnitGet(menu->sideMember[0]);
-				menu->itemCount = mnItemMenuCollectItems(owner, menu->items, 0);
-				mnWindowSpriteRedrawSavedRectStub(window);
-				for (i = 0; i < INVENTORY_SLOTS; i++)
-					savedInventory[i] = owner->inventory[i];
-				mnItemMenuSort(menu->items, 0);
-				mnPagedListBuild(&state, 0);
-				mnItemMenuDrawIcons(menu->items, 0);
-				mnWindowSpriteRedrawSavedRectStub(menu->equipWindow);
-				mnItemMenuDrawEquipment(menu->equipWindow, menu->sideMember[0], 1);
-				listNeedsRedraw = TRUE;
-				sySynch(1);
-			}
-			if (listNeedsRedraw)
-			{
-				listNeedsRedraw = FALSE;
-				mnItemMenuDrawItemPage(window, 0, &state);
-			}
-			mnItemMenuDrawEquipPage(window, 0, &state);
+    menu            = RamHeapSlots->menuState;
+    window          = menu->statusWindow;
+    result          = 0;
+    refresh         = 2;
+    listNeedsRedraw = TRUE;
+    owner           = syUnitGet(menu->sideMember[0]);
+    mnWindowUpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
+    mnSpawnIconEntries(menu, menu->questionWindow);
+    // "A:Status" and "L-R:Switch characters"
+    mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 3, window, 0, -24);
+    mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp, window, 64, -24);
+    while (!syGameFlagGet(FLAG_MENU_START_PRESSED))
+    {
+        if (refresh)
+        {
+            if (refresh == 2)
+            {
+                owner           = syUnitGet(menu->sideMember[0]);
+                menu->itemCount = mnItemMenuCollectItems(owner, menu->items, 0);
+                mnWindowSpriteRedrawSavedRectStub(window);
+                for (i = 0; i < INVENTORY_SLOTS; i++)
+                    savedInventory[i] = owner->inventory[i];
+                mnItemMenuSort(menu->items, 0);
+                mnPagedListBuild(&state, 0);
+                mnItemMenuDrawIcons(menu->items, 0);
+                mnWindowSpriteRedrawSavedRectStub(menu->equipWindow);
+                mnItemMenuDrawEquipment(menu->equipWindow, menu->sideMember[0], 1);
+                listNeedsRedraw = TRUE;
+                sySynch(1);
+            }
+            if (listNeedsRedraw)
+            {
+                listNeedsRedraw = FALSE;
+                mnItemMenuDrawItemPage(window, 0, &state);
+            }
+            mnItemMenuDrawEquipPage(window, 0, &state);
 #if EQUIPMENT_PAGE_REDRAWS_HELP
-			mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 3, window, 0, -24);
-			mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp, window, 64, -24);
+            mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp + 3, window, 0, -24);
+            mnTextDrawMessageAsTilesStub(MsgSwitchCharacterHelp, window, 64, -24);
 #endif
-			refresh = 0;
-		}
-		sySynch(1);
-		navigation = mnPagedListHandleInput(
-			0, state.entryCount, STATUS_LIST_PAGE_ROWS, &state.row, &state.page);
-		mnCursorPos(STATUS_EQUIPMENT_CURSOR_X, state.row * 16 + 52);
-		if (navigation == 1)
-		{
-			refresh         = 1;
-			listNeedsRedraw = TRUE;
-		}
-		if (navigation == 0)
-			refresh = 1;
-		if (navigation == -1)
-			refresh = 0;
-		if (PerWork.push & KEY_A)
-		{
-			sySoundPlayStub(SE_MENU_CONFIRM);
-			result = 1;
-			break;
-		}
-		if (PerWork.push & KEY_B)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			result = -1;
-			break;
-		}
-		if ((PerWork.repeat & KEY_R) || (PerWork.repeat & KEY_L))
-		{
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			ownerIndex                                                       = menu->sideIndex[0];
-			menu->selectedIndexByMember[(Uint16)menu->memberIds[ownerIndex]] = state.selectedIndex;
-			if (PerWork.repeat & KEY_R)
-				ownerIndex++;
-			else
-				ownerIndex--;
-			for (i = 0; i < INVENTORY_SLOTS; i++)
-				owner->inventory[i] = savedInventory[i];
-			ownerIndex           = (ownerIndex + menu->partyCount) % menu->partyCount;
-			menu->selectedMember = (Uint16)menu->memberIds[ownerIndex];
-			menu->sideMember[0]  = (Uint16)menu->memberIds[ownerIndex];
-			menu->sideIndex[0]   = ownerIndex;
-			mnReloadMemberPortrait(menu, (Uint16)menu->memberIds[ownerIndex]);
-			refresh = 2;
-		}
-	}
-	mnWindowSpritePrepareForRedrawStub(menu->infoWindow);
-	mnWindowSpriteRedrawSavedRectStub(window);
-	mnWindowSpriteClearListStub(menu->questionWindow);
-	return result;
+            refresh = 0;
+        }
+        sySynch(1);
+        navigation = mnPagedListHandleInput(
+            0, state.entryCount, STATUS_LIST_PAGE_ROWS, &state.row, &state.page);
+        mnCursorPos(STATUS_EQUIPMENT_CURSOR_X, state.row * 16 + 52);
+        if (navigation == 1)
+        {
+            refresh         = 1;
+            listNeedsRedraw = TRUE;
+        }
+        if (navigation == 0)
+            refresh = 1;
+        if (navigation == -1)
+            refresh = 0;
+        if (PerWork.push & KEY_A)
+        {
+            sySoundPlayStub(SE_MENU_CONFIRM);
+            result = 1;
+            break;
+        }
+        if (PerWork.push & KEY_B)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            result = -1;
+            break;
+        }
+        if ((PerWork.repeat & KEY_R) || (PerWork.repeat & KEY_L))
+        {
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            ownerIndex                                                       = menu->sideIndex[0];
+            menu->selectedIndexByMember[(Uint16)menu->memberIds[ownerIndex]] = state.selectedIndex;
+            if (PerWork.repeat & KEY_R)
+                ownerIndex++;
+            else
+                ownerIndex--;
+            for (i = 0; i < INVENTORY_SLOTS; i++)
+                owner->inventory[i] = savedInventory[i];
+            ownerIndex           = (ownerIndex + menu->partyCount) % menu->partyCount;
+            menu->selectedMember = (Uint16)menu->memberIds[ownerIndex];
+            menu->sideMember[0]  = (Uint16)menu->memberIds[ownerIndex];
+            menu->sideIndex[0]   = ownerIndex;
+            mnReloadMemberPortrait(menu, (Uint16)menu->memberIds[ownerIndex]);
+            refresh = 2;
+        }
+    }
+    mnWindowSpritePrepareForRedrawStub(menu->infoWindow);
+    mnWindowSpriteRedrawSavedRectStub(window);
+    mnWindowSpriteClearListStub(menu->questionWindow);
+    return result;
 }
 
 #undef STATUS_LIST_PAGE_ROWS
@@ -1940,73 +1940,73 @@ Sint32 mnStatusScreenRunEquipmentPage(void)
 // the names of the items worn in them into window; mode 0 also shows their icons at the right.
 void mnItemMenuDrawEquipment(Sint32 window, Sint32 ownerId, Sint32 mode)
 {
-	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
-	Uint8           *items;
+    ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
+    Uint8           *items;
 
-	mnHideEntryIcons();
-	mnItemMenuHideAllIcons();
-	mnTextDrawMessageAsTilesStub(MsgEquipSlotLabels, window, 0, 0);
-	mnTextDrawMessageAsTilesStub(MsgEquipSlotLabels + 1, window, 0, 32);
-	mnTextDrawMessageAsTilesStub(MsgEquipSlotLabels + 2, window, 0, 16);
-	mnTextDrawMessageAsTilesStub(MsgEquipSlotLabels + 3, window, 0, 48);
-	items = (Uint8 *)menu->items;
-	mnItemMenuDrawEquippedItemNames(window, items);
-	if (mode == 0)
-	{
-		sySynch(1);
-		mnItemMenuDrawIcons((Uint16 *)items, 1);
-		mnItemMenuArrangeCategoryItemIcons((Uint16 *)items);
-	}
+    mnHideEntryIcons();
+    mnItemMenuHideAllIcons();
+    mnTextDrawMessageAsTilesStub(MsgEquipSlotLabels, window, 0, 0);
+    mnTextDrawMessageAsTilesStub(MsgEquipSlotLabels + 1, window, 0, 32);
+    mnTextDrawMessageAsTilesStub(MsgEquipSlotLabels + 2, window, 0, 16);
+    mnTextDrawMessageAsTilesStub(MsgEquipSlotLabels + 3, window, 0, 48);
+    items = (Uint8 *)menu->items;
+    mnItemMenuDrawEquippedItemNames(window, items);
+    if (mode == 0)
+    {
+        sySynch(1);
+        mnItemMenuDrawIcons((Uint16 *)items, 1);
+        mnItemMenuArrangeCategoryItemIcons((Uint16 *)items);
+    }
 }
 
 // Writes the name of each equipped item of the inventory into window, below its slot's label: the
 // weapon, the helm, the shield, then the armor.
 void mnItemMenuDrawEquippedItemNames(Sint32 window, Uint16 *items)
 {
-	Sint32 i;
-	Sint32 item;
+    Sint32 i;
+    Sint32 item;
 
-	for (i = 0; i < INVENTORY_SLOTS; i++)
-	{
-		if (items[i] & INVENTORY_EQUIPPED)
-		{
-			item = items[i] & INVENTORY_ITEM_ID_MASK;
-			switch (gmItemGetDirectStub(item)->type)
-			{
-				case ITEM_TYPE_WEAPON:
-					mnTextDrawMessageAsTilesStub(item + MsgItemName, window, 16, 8);
-					break;
-				case ITEM_TYPE_ARMOR:
-					mnTextDrawMessageAsTilesStub(item + MsgItemName, window, 16, 56);
-					break;
-				case ITEM_TYPE_SHIELD:
-					mnTextDrawMessageAsTilesStub(item + MsgItemName, window, 16, 40);
-					break;
-				case ITEM_TYPE_HELM:
-					mnTextDrawMessageAsTilesStub(item + MsgItemName, window, 16, 24);
-					break;
-			}
-		}
-	}
+    for (i = 0; i < INVENTORY_SLOTS; i++)
+    {
+        if (items[i] & INVENTORY_EQUIPPED)
+        {
+            item = items[i] & INVENTORY_ITEM_ID_MASK;
+            switch (gmItemGetDirectStub(item)->type)
+            {
+                case ITEM_TYPE_WEAPON:
+                    mnTextDrawMessageAsTilesStub(item + MsgItemName, window, 16, 8);
+                    break;
+                case ITEM_TYPE_ARMOR:
+                    mnTextDrawMessageAsTilesStub(item + MsgItemName, window, 16, 56);
+                    break;
+                case ITEM_TYPE_SHIELD:
+                    mnTextDrawMessageAsTilesStub(item + MsgItemName, window, 16, 40);
+                    break;
+                case ITEM_TYPE_HELM:
+                    mnTextDrawMessageAsTilesStub(item + MsgItemName, window, 16, 24);
+                    break;
+            }
+        }
+    }
 }
 
 // Places each of the 32 entry icons on the grid.
 void mnPlaceEntryIconsInGrid(Sint32 originX, Sint32 originY, Sint32 columns)
 {
-	Sint32       entryIndex;
-	WINDOW_SPR  *icon;
-	WINDOW_SPR **icons;
+    Sint32       entryIndex;
+    WINDOW_SPR  *icon;
+    WINDOW_SPR **icons;
 
-	for (entryIndex = 0, icons = ((ITEM_MENU_STATE *)RamHeapSlots->menuState)->entryIcons;
-	     entryIndex <= MENU_ENTRY_ICONS - 1;
-	     entryIndex++)
-	{
-		icon = *icons++;
-		if (icon != NULL)
-		{
-			mnPlaceEntryIconInGrid(icon, entryIndex, originX, originY, columns);
-		}
-	}
+    for (entryIndex = 0, icons = ((ITEM_MENU_STATE *)RamHeapSlots->menuState)->entryIcons;
+         entryIndex <= MENU_ENTRY_ICONS - 1;
+         entryIndex++)
+    {
+        icon = *icons++;
+        if (icon != NULL)
+        {
+            mnPlaceEntryIconInGrid(icon, entryIndex, originX, originY, columns);
+        }
+    }
 }
 
 // The side of a cell of the grids mnPlaceEntryIconInGrid places icons in.
@@ -2015,80 +2015,80 @@ void mnPlaceEntryIconsInGrid(Sint32 originX, Sint32 originY, Sint32 columns)
 // Places icon at cell index (an index above 31 is taken as 0) of a grid of ENTRY_ICON_CELL_SIZE
 // square cells, columns wide, from (originX, originY), and shows it.
 void mnPlaceEntryIconInGrid(
-	WINDOW_SPR *icon, Sint32 index, Sint32 originX, Sint32 originY, Sint32 columns)
+    WINDOW_SPR *icon, Sint32 index, Sint32 originX, Sint32 originY, Sint32 columns)
 {
-	Sint32 entryIndex;
+    Sint32 entryIndex;
 
-	entryIndex = index;
-	if (entryIndex > MENU_ENTRY_ICONS - 1)
-	{
-		entryIndex = 0;
-	}
-	icon->y = (entryIndex / columns * ENTRY_ICON_CELL_SIZE) + originY;
-	icon->x = (entryIndex % columns * ENTRY_ICON_CELL_SIZE) + originX;
-	mnIconShow(icon);
+    entryIndex = index;
+    if (entryIndex > MENU_ENTRY_ICONS - 1)
+    {
+        entryIndex = 0;
+    }
+    icon->y = (entryIndex / columns * ENTRY_ICON_CELL_SIZE) + originY;
+    icon->x = (entryIndex % columns * ENTRY_ICON_CELL_SIZE) + originX;
+    mnIconShow(icon);
 }
 
 // Places the icon of each worn weapon, armor, shield and helm at x 216, on its slot's row of
 // mnItemMenuDrawEquipment's window; the others stay off screen.
 void mnItemMenuArrangeCategoryItemIcons(Uint16 *items)
 {
-	ITEM_MENU_STATE *menu;
-	WINDOW_SPR      *icon;
-	Sint32           slotIndex;
+    ITEM_MENU_STATE *menu;
+    WINDOW_SPR      *icon;
+    Sint32           slotIndex;
 
-	menu = RamHeapSlots->menuState;
-	mnHideEntryIcons();
-	for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++)
-	{
-		if (items[slotIndex] != 0 && (items[slotIndex] & INVENTORY_EQUIPPED) != 0)
-		{
-			icon = menu->entryIcons[slotIndex];
-			if (icon != 0)
-			{
-				switch (gmItemGetDirectStub(items[slotIndex] & INVENTORY_ITEM_ID_MASK)->type)
-				{
-					case ITEM_TYPE_WEAPON:
-						icon->x = EQUIPPED_ICON_X;
-						icon->y = EQUIPPED_ICON_Y(0);
-						break;
-					case ITEM_TYPE_ARMOR:
-						icon->x = EQUIPPED_ICON_X;
-						icon->y = EQUIPPED_ICON_Y(3);
-						break;
-					case ITEM_TYPE_SHIELD:
-						icon->x = EQUIPPED_ICON_X;
-						icon->y = EQUIPPED_ICON_Y(2);
-						break;
-					case ITEM_TYPE_HELM:
-						icon->x = EQUIPPED_ICON_X;
-						icon->y = EQUIPPED_ICON_Y(1);
-						break;
-				}
-				mnIconShow(icon);
-			}
-		}
-	}
+    menu = RamHeapSlots->menuState;
+    mnHideEntryIcons();
+    for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++)
+    {
+        if (items[slotIndex] != 0 && (items[slotIndex] & INVENTORY_EQUIPPED) != 0)
+        {
+            icon = menu->entryIcons[slotIndex];
+            if (icon != 0)
+            {
+                switch (gmItemGetDirectStub(items[slotIndex] & INVENTORY_ITEM_ID_MASK)->type)
+                {
+                    case ITEM_TYPE_WEAPON:
+                        icon->x = EQUIPPED_ICON_X;
+                        icon->y = EQUIPPED_ICON_Y(0);
+                        break;
+                    case ITEM_TYPE_ARMOR:
+                        icon->x = EQUIPPED_ICON_X;
+                        icon->y = EQUIPPED_ICON_Y(3);
+                        break;
+                    case ITEM_TYPE_SHIELD:
+                        icon->x = EQUIPPED_ICON_X;
+                        icon->y = EQUIPPED_ICON_Y(2);
+                        break;
+                    case ITEM_TYPE_HELM:
+                        icon->x = EQUIPPED_ICON_X;
+                        icon->y = EQUIPPED_ICON_Y(1);
+                        break;
+                }
+                mnIconShow(icon);
+            }
+        }
+    }
 }
 
 // Moves all 32 entry icons off screen, to (248, 168), before a screen lays them out again.
 void mnHideEntryIcons(void)
 {
-	ITEM_MENU_STATE *menu  = RamHeapSlots->menuState;
-	Sint32           x     = MENU_ICON_HIDDEN_X;
-	WINDOW_SPR     **entry = menu->entryIcons;
-	Sint32           y     = MENU_ICON_HIDDEN_Y;
-	Sint32           i;
+    ITEM_MENU_STATE *menu  = RamHeapSlots->menuState;
+    Sint32           x     = MENU_ICON_HIDDEN_X;
+    WINDOW_SPR     **entry = menu->entryIcons;
+    Sint32           y     = MENU_ICON_HIDDEN_Y;
+    Sint32           i;
 
-	for (i = 0; i < MENU_ENTRY_ICONS; i++)
-	{
-		WINDOW_SPR *object = *entry++;
+    for (i = 0; i < MENU_ENTRY_ICONS; i++)
+    {
+        WINDOW_SPR *object = *entry++;
 
-		if (object != 0)
-		{
-			object->x = x;
-			object->y = y;
-			mnIconShow(object);
-		}
-	}
+        if (object != 0)
+        {
+            object->x = x;
+            object->y = y;
+            mnIconShow(object);
+        }
+    }
 }

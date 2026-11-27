@@ -7,17 +7,17 @@
 // Sends an actor toward the point magnitude (16.16 pixels) away from it in direction angle: sets
 // its move target.
 #define DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(linkage, setMoveTarget)                    \
-	linkage void fdActorSetTargetPosFromMagnitudeAngle(                                            \
-		struct ACTOR *actor, Sint32 magnitude, Sint32 angle)                                       \
-	{                                                                                              \
-		Sint32 pos[3];                                                                             \
+    linkage void fdActorSetTargetPosFromMagnitudeAngle(                                            \
+        struct ACTOR *actor, Sint32 magnitude, Sint32 angle)                                       \
+    {                                                                                              \
+        Sint32 pos[3];                                                                             \
                                                                                                    \
-		if (actor != NULL)                                                                         \
-		{                                                                                          \
-			SET_VECTOR(pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);                       \
-			syVectorAddPolarOffset(magnitude, angle, pos);                                         \
-			setMoveTarget(actor, pos[0], pos[1], pos[2]);                                          \
-		}                                                                                          \
-	}
+        if (actor != NULL)                                                                         \
+        {                                                                                          \
+            SET_VECTOR(pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);                       \
+            syVectorAddPolarOffset(magnitude, angle, pos);                                         \
+            setMoveTarget(actor, pos[0], pos[1], pos[2]);                                          \
+        }                                                                                          \
+    }
 
 #endif

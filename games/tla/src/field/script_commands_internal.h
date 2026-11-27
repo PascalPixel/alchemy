@@ -51,50 +51,50 @@
 // pixel a tick, each tick, and is freed after 12 ticks.
 static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 {
-	// The caller spawns the fragment and places it.
-	if (fragment != NULL)
-	{
-		fragment->motionFlags = ACTOR_FALLS;
-		fragment->gravity     = toFIXED(1) / 10;
-		fdActorSelectAnimationStub(fragment, 0);
-		fragment->wait = 12;
-		fdActorStartScriptStub(fragment, FieldEffectReleaseScript);
-	}
+    // The caller spawns the fragment and places it.
+    if (fragment != NULL)
+    {
+        fragment->motionFlags = ACTOR_FALLS;
+        fragment->gravity     = toFIXED(1) / 10;
+        fdActorSelectAnimationStub(fragment, 0);
+        fragment->wait = 12;
+        fdActorStartScriptStub(fragment, FieldEffectReleaseScript);
+    }
 }
 
 // The states of a Venus Djinni's rising particle (fdEffectUpdateRadialSpread), which
 // fdDjinnRunVenusJoinEffect moves on to VENUS_PARTICLE_LAST_RISE.
 typedef enum VENUS_PARTICLE_STATE
 {
-	VENUS_PARTICLE_AIM       = 0, // starts round the leader, aimed up the screen
-	VENUS_PARTICLE_RISING    = 1, // back to VENUS_PARTICLE_AIM once it arrives
-	VENUS_PARTICLE_LAST_RISE = 2  // freed once it arrives
+    VENUS_PARTICLE_AIM       = 0, // starts round the leader, aimed up the screen
+    VENUS_PARTICLE_RISING    = 1, // back to VENUS_PARTICLE_AIM once it arrives
+    VENUS_PARTICLE_LAST_RISE = 2  // freed once it arrives
 } VENUS_PARTICLE_STATE;
 
 // The states of a Mercury Djinni's droplet (fdEffectUpdateRandomTargetParticle), which
 // fdDjinnRunMercuryJoinEffect moves on to MERCURY_DROPLET_LAST_FALL.
 typedef enum MERCURY_DROPLET_STATE
 {
-	// placed above the leader, aimed at a spot by it
-	MERCURY_DROPLET_AIM       = 0,
-	// Splashes where it lands, then falls again (MERCURY_DROPLET_AIM).
-	MERCURY_DROPLET_FALLING   = 1,
-	// Splashes where it lands, for the last time.
-	MERCURY_DROPLET_LAST_FALL = 2,
-	MERCURY_DROPLET_DONE      = 3 // frees its slot
+    // placed above the leader, aimed at a spot by it
+    MERCURY_DROPLET_AIM       = 0,
+    // Splashes where it lands, then falls again (MERCURY_DROPLET_AIM).
+    MERCURY_DROPLET_FALLING   = 1,
+    // Splashes where it lands, for the last time.
+    MERCURY_DROPLET_LAST_FALL = 2,
+    MERCURY_DROPLET_DONE      = 3 // frees its slot
 } MERCURY_DROPLET_STATE;
 
 // The states of a Mars Djinni's spark (fdEffectUpdateMarsSpark), which fdDjinnRunMarsJoinEffect
 // moves on to MARS_SPARK_STOPPING and then MARS_SPARK_LEAVING.
 typedef enum MARS_SPARK_STATE
 {
-	MARS_SPARK_AIM        = 0, // aimed 120 pixels up the screen from its origin
-	MARS_SPARK_RISING     = 1, // back to MARS_SPARK_AIM once it arrives
-	// Stops where it arrives, hidden, and waits 40 ticks.
-	MARS_SPARK_STOPPING   = 2,
-	MARS_SPARK_AIM_LEADER = 3, // aimed at a point by the leader
-	MARS_SPARK_SWARMING   = 4, // back to MARS_SPARK_AIM_LEADER on arrival
-	MARS_SPARK_LEAVING    = 5  // freed once it arrives
+    MARS_SPARK_AIM        = 0, // aimed 120 pixels up the screen from its origin
+    MARS_SPARK_RISING     = 1, // back to MARS_SPARK_AIM once it arrives
+    // Stops where it arrives, hidden, and waits 40 ticks.
+    MARS_SPARK_STOPPING   = 2,
+    MARS_SPARK_AIM_LEADER = 3, // aimed at a point by the leader
+    MARS_SPARK_SWARMING   = 4, // back to MARS_SPARK_AIM_LEADER on arrival
+    MARS_SPARK_LEAVING    = 5  // freed once it arrives
 } MARS_SPARK_STATE;
 
 // The trailing copies of a moving Djinni or of Force's hand are drawn a little smaller than what

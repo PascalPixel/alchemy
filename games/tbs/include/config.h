@@ -9,9 +9,9 @@
 // Various undefined behavior bugs may or may not prevent compilation with newer compilers. So
 // always fix them when using a modern compiler.
 #if MODERN || defined(BUGFIX)
-#	ifndef UBFIX
-#		define UBFIX
-#	endif
+#    ifndef UBFIX
+#        define UBFIX
+#    endif
 #endif
 
 #endif

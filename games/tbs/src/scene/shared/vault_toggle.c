@@ -14,8 +14,8 @@
 // he walks across the bridge.
 static void scVaultRaisePathToBridge(void)
 {
-	gmFlagSet(FLAG_VAULT_ON_BRIDGE);
-	fdMapGridCopyMetatileAttributes(55, 26, 4, 2, 23, 26);
+    gmFlagSet(FLAG_VAULT_ON_BRIDGE);
+    fdMapGridCopyMetatileAttributes(55, 26, 4, 2, 23, 26);
 }
 
 // Isaac steps off the west end of the rope bridge (metatiles (21, 25) to (21, 27)): the metatiles
@@ -23,6 +23,6 @@ static void scVaultRaisePathToBridge(void)
 // south runs under it.
 static void scVaultLowerPathUnderBridge(void)
 {
-	gmFlagClear(FLAG_VAULT_ON_BRIDGE);
-	fdMapGridCopyMetatileAttributes(23, 23, 4, 2, 23, 26);
+    gmFlagClear(FLAG_VAULT_ON_BRIDGE);
+    fdMapGridCopyMetatileAttributes(23, 23, 4, 2, 23, 26);
 }

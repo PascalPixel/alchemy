@@ -8,25 +8,25 @@
 // Callers pass the actor asking; the search does not use it.
 ACTOR *fdActorFindInMetatile(Sint32 *pos, ACTOR *self)
 {
-	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Uint32       i;
-	ACTOR      **objects;
-	ACTOR       *actor;
+    FIELD_STATE *state = RamHeapSlots->fieldState;
+    Uint32       i;
+    ACTOR      **objects;
+    ACTOR       *actor;
 
-	i       = ACTOR_FIRST_PLACED;
-	objects = &state->actors[ACTOR_FIRST_PLACED];
-	for (; i < FIELD_TREASURE_ACTOR; i++)
-	{
-		actor = *objects++;
-		// UB: fdActorTableClear leaves unused slots null.
+    i       = ACTOR_FIRST_PLACED;
+    objects = &state->actors[ACTOR_FIRST_PLACED];
+    for (; i < FIELD_TREASURE_ACTOR; i++)
+    {
+        actor = *objects++;
+        // UB: fdActorTableClear leaves unused slots null.
 #if FIX_NULL_DEREFERENCE
-		if (actor == NULL)
-			continue;
+        if (actor == NULL)
+            continue;
 #endif
-		if (FIELD_METATILE(pos[0]) == FIELD_METATILE(actor->x.fixed)
-		    && FIELD_METATILE(pos[1]) == FIELD_METATILE(actor->y.fixed)
-		    && FIELD_METATILE(pos[2]) == FIELD_METATILE(actor->z.fixed))
-			return actor;
-	}
-	return NULL;
+        if (FIELD_METATILE(pos[0]) == FIELD_METATILE(actor->x.fixed)
+            && FIELD_METATILE(pos[1]) == FIELD_METATILE(actor->y.fixed)
+            && FIELD_METATILE(pos[2]) == FIELD_METATILE(actor->z.fixed))
+            return actor;
+    }
+    return NULL;
 }

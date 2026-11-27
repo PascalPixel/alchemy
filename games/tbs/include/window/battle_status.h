@@ -12,73 +12,73 @@
 // run of the row it highlights.
 typedef struct BATTLE_SUMMARY_STAT_CURSOR
 {
-	Uint8 entry;           // the help line shown while the cursor is here
-	Uint8 column;          // tiles
-	Uint8 row;             // tiles
-	Uint8 highlightColumn; // tiles
-	Uint8 highlightRow;    // tiles
-	Uint8 highlightWidth;  // tiles
-	Uint8 reserved[2];     // 0 in every row
+    Uint8 entry;           // the help line shown while the cursor is here
+    Uint8 column;          // tiles
+    Uint8 row;             // tiles
+    Uint8 highlightColumn; // tiles
+    Uint8 highlightRow;    // tiles
+    Uint8 highlightWidth;  // tiles
+    Uint8 reserved[2];     // 0 in every row
 } BATTLE_SUMMARY_STAT_CURSOR;
 
 // A cursor stop on the Status screen's equipment or statuses: its help entry and where the cursor
 // points.
 typedef struct BATTLE_SUMMARY_CURSOR
 {
-	Uint8 entry;    // the help line shown while the cursor is here
-	Uint8 column;   // tiles
-	Uint8 row;      // tiles
-	Uint8 reserved; // 0 in every row
+    Uint8 entry;    // the help line shown while the cursor is here
+    Uint8 column;   // tiles
+    Uint8 row;      // tiles
+    Uint8 reserved; // 0 in every row
 } BATTLE_SUMMARY_CURSOR;
 
 // A status the Status screen shows as an icon, which picks both the icon and its help
 // (MsgOwnerStatusConditionHelp + condition).
 typedef enum BATTLE_SUMMARY_STAT
 {
-	OWNER_CONDITION_EMPTY           = -1, // a place with no icon
-	OWNER_CONDITION_NORMAL          = 0,  // no status: "Normal status."
-	OWNER_CONDITION_POISON          = 1,
-	OWNER_CONDITION_DEADLY_POISON   = 2,
-	OWNER_CONDITION_STUN            = 3,
-	OWNER_CONDITION_PSYNERGY_SEALED = 4,
-	OWNER_CONDITION_SLEEP           = 5,
-	OWNER_CONDITION_DELUSION        = 6,
-	OWNER_CONDITION_HAUNT           = 7,
-	OWNER_CONDITION_GRIM_REAPER     = 8, // downed when its turns run out
-	OWNER_CONDITION_ATTACK_UP       = 9,
-	OWNER_CONDITION_ATTACK_DOWN     = 10,
-	OWNER_CONDITION_DEFENSE_UP      = 11,
-	OWNER_CONDITION_DEFENSE_DOWN    = 12,
-	OWNER_CONDITION_RESISTANCE_UP   = 13,
-	OWNER_CONDITION_RESISTANCE_DOWN = 14,
-	OWNER_CONDITION_CURSED_ITEM     = 15,
-	OWNER_CONDITION_DOWNED          = 16,
-	OWNER_CONDITION_AGILITY_UP      = 17,
-	OWNER_CONDITION_AGILITY_DOWN    = 18
+    OWNER_CONDITION_EMPTY           = -1, // a place with no icon
+    OWNER_CONDITION_NORMAL          = 0,  // no status: "Normal status."
+    OWNER_CONDITION_POISON          = 1,
+    OWNER_CONDITION_DEADLY_POISON   = 2,
+    OWNER_CONDITION_STUN            = 3,
+    OWNER_CONDITION_PSYNERGY_SEALED = 4,
+    OWNER_CONDITION_SLEEP           = 5,
+    OWNER_CONDITION_DELUSION        = 6,
+    OWNER_CONDITION_HAUNT           = 7,
+    OWNER_CONDITION_GRIM_REAPER     = 8, // downed when its turns run out
+    OWNER_CONDITION_ATTACK_UP       = 9,
+    OWNER_CONDITION_ATTACK_DOWN     = 10,
+    OWNER_CONDITION_DEFENSE_UP      = 11,
+    OWNER_CONDITION_DEFENSE_DOWN    = 12,
+    OWNER_CONDITION_RESISTANCE_UP   = 13,
+    OWNER_CONDITION_RESISTANCE_DOWN = 14,
+    OWNER_CONDITION_CURSED_ITEM     = 15,
+    OWNER_CONDITION_DOWNED          = 16,
+    OWNER_CONDITION_AGILITY_UP      = 17,
+    OWNER_CONDITION_AGILITY_DOWN    = 18
 } BATTLE_SUMMARY_STAT;
 
 // The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the cursor stops
 // (battle_status_cursors.c) name; the status icons' places follow.
 typedef enum BATTLE_SUMMARY_HELP
 {
-	// The name, whose help says how to switch party members with L and R.
-	OWNER_STATUS_HELP_NAME           = 0,
-	OWNER_STATUS_HELP_LEVEL          = 1, // no cursor stop shows it
-	OWNER_STATUS_HELP_EXPERIENCE     = 2,
-	OWNER_STATUS_HELP_HP             = 3,
-	OWNER_STATUS_HELP_PP             = 4,
-	OWNER_STATUS_HELP_CLASS          = 5,
-	OWNER_STATUS_HELP_DJINN          = 6,
-	OWNER_STATUS_HELP_ELEMENT_LEVEL  = 7,
-	OWNER_STATUS_HELP_POWER          = 8,
-	OWNER_STATUS_HELP_RESIST         = 9,
-	OWNER_STATUS_HELP_ATTACK         = 10,
-	OWNER_STATUS_HELP_DEFENSE        = 11,
-	OWNER_STATUS_HELP_AGILITY        = 12,
-	OWNER_STATUS_HELP_LUCK           = 13,
-	// The first status icon's place: its help is its status's (MsgOwnerStatusConditionHelp).
-	OWNER_STATUS_HELP_CONDITION      = 14,
-	OWNER_STATUS_HELP_LAST_CONDITION = 21 // the eighth icon's place
+    // The name, whose help says how to switch party members with L and R.
+    OWNER_STATUS_HELP_NAME           = 0,
+    OWNER_STATUS_HELP_LEVEL          = 1, // no cursor stop shows it
+    OWNER_STATUS_HELP_EXPERIENCE     = 2,
+    OWNER_STATUS_HELP_HP             = 3,
+    OWNER_STATUS_HELP_PP             = 4,
+    OWNER_STATUS_HELP_CLASS          = 5,
+    OWNER_STATUS_HELP_DJINN          = 6,
+    OWNER_STATUS_HELP_ELEMENT_LEVEL  = 7,
+    OWNER_STATUS_HELP_POWER          = 8,
+    OWNER_STATUS_HELP_RESIST         = 9,
+    OWNER_STATUS_HELP_ATTACK         = 10,
+    OWNER_STATUS_HELP_DEFENSE        = 11,
+    OWNER_STATUS_HELP_AGILITY        = 12,
+    OWNER_STATUS_HELP_LUCK           = 13,
+    // The first status icon's place: its help is its status's (MsgOwnerStatusConditionHelp).
+    OWNER_STATUS_HELP_CONDITION      = 14,
+    OWNER_STATUS_HELP_LAST_CONDITION = 21 // the eighth icon's place
 } BATTLE_SUMMARY_HELP;
 
 STATIC_ASSERT(sizeof(BATTLE_SUMMARY_STAT_CURSOR) == 8);
@@ -111,15 +111,15 @@ extern const Uint8 BattleStatusScreenPvString[];
 // optional five-tile column of standby Djinn counts on its left.
 typedef enum PARTY_STAT_FLAG
 {
-	PARTY_STATUS_HP_ONLY    = 0,  // names and HP
-	PARTY_STATUS_SHOW_PP    = 1,  // add the PP row
-	PARTY_STATUS_SHOW_DJINN = 2,  // add the Djinn column (needs the PP row)
-	PARTY_STATUS_CLOSED     = 9,  // erase the window
-	PARTY_STATUS_KEEP_FLAGS = -1, // redraw with the flags it has
-	// BATTLE_STATE.partyStatus while the party cannot summon.
-	PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
-	// BATTLE_STATE.partyStatus while it can, drawn only while a Djinni is on standby.
-	PARTY_STATUS_SUMMONS    = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
+    PARTY_STATUS_HP_ONLY    = 0,  // names and HP
+    PARTY_STATUS_SHOW_PP    = 1,  // add the PP row
+    PARTY_STATUS_SHOW_DJINN = 2,  // add the Djinn column (needs the PP row)
+    PARTY_STATUS_CLOSED     = 9,  // erase the window
+    PARTY_STATUS_KEEP_FLAGS = -1, // redraw with the flags it has
+    // BATTLE_STATE.partyStatus while the party cannot summon.
+    PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
+    // BATTLE_STATE.partyStatus while it can, drawn only while a Djinni is on standby.
+    PARTY_STATUS_SUMMONS    = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
 } PARTY_STAT_FLAG;
 
 #endif

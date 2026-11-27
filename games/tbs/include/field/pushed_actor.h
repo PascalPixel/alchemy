@@ -28,22 +28,22 @@
 // and a function run during the leader's follow-through.
 typedef struct PUSHED_ACTOR_PROBE
 {
-	// The large thing's row in PushedActorRectangleKinds and PushedActorRectangles, 0 to 5.
-	Sint32    rectangleIndex;
-	Sint32    actorSlot; // the large thing's actor id, 8 to 65
-	// 16.16 pixels while moving; converted to metatiles by rectangle redraws.
-	FIELD_POS pos;
-	// Run as the leader follows the rolling thing, when not null; the probe clears it.
-	void      (*callback)(void);
+    // The large thing's row in PushedActorRectangleKinds and PushedActorRectangles, 0 to 5.
+    Sint32    rectangleIndex;
+    Sint32    actorSlot; // the large thing's actor id, 8 to 65
+    // 16.16 pixels while moving; converted to metatiles by rectangle redraws.
+    FIELD_POS pos;
+    // Run as the leader follows the rolling thing, when not null; the probe clears it.
+    void      (*callback)(void);
 } PUSHED_ACTOR_PROBE;
 
 // A large thing's edges, a row of PushedActorRectangles.
 typedef struct PUSHED_ACTOR_RECTANGLE
 {
-	Sint32 x0; // left edge, pixels from the thing's position
-	Sint32 z0; // top edge, pixels from the thing's position
-	Sint32 x1; // right edge, pixels from the thing's position
-	Sint32 z1; // bottom edge, pixels from the thing's position
+    Sint32 x0; // left edge, pixels from the thing's position
+    Sint32 z0; // top edge, pixels from the thing's position
+    Sint32 x1; // right edge, pixels from the thing's position
+    Sint32 z1; // bottom edge, pixels from the thing's position
 } PUSHED_ACTOR_RECTANGLE;
 
 STATIC_ASSERT(sizeof(PUSHED_ACTOR_PROBE) == 24);

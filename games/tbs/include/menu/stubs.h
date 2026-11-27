@@ -9,7 +9,7 @@ Sint32 mnPsynergyMenuRunStub(void);
 Sint32 mnStatusScreenRunStub(void);
 Sint32 mnPartyMemberChooserOpenStub(void);
 void   mnCreatePartyFiguresStub(
-	  void *src, Sint32 originX, Sint32 originY, Sint32 spacing, Sint32 unused);
+      void *src, Sint32 originX, Sint32 originY, Sint32 spacing, Sint32 unused);
 void   mnReleasePartyFiguresStub(void);
 void   mnIconShowStub(struct WINDOW_SPR *object);
 Sint32 mnDjinnMenuRunStub(void);

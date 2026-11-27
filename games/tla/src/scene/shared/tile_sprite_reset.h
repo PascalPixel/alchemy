@@ -5,10 +5,10 @@
 // script.
 Sint32 scTileSpriteReset(ACTOR *actor)
 {
-	WORLD_MAP_VIEW *view   = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
-	FIELD_SPR      *sprite = actor->sprite;
+    WORLD_MAP_VIEW *view   = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
+    FIELD_SPR      *sprite = actor->sprite;
 
-	sprite->rotation       = view->yaw;
-	sprite->flags          = 0;
-	return 1;
+    sprite->rotation       = view->yaw;
+    sprite->flags          = 0;
+    return 1;
 }

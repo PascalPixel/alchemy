@@ -34,18 +34,18 @@
 // The twelve target strike styles, rows of TargetStrikeStyles.
 typedef enum TARGET_STRIKE_STYLE
 {
-	TARGET_STRIKE_STYLE_BLUE_SPARK_BITES,
-	TARGET_STRIKE_STYLE_LIME_SMOKE_BITE,
-	TARGET_STRIKE_STYLE_PINK_SMOKE_BITES,
-	TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES,
-	TARGET_STRIKE_STYLE_MARS_DRAIN_BITES,
-	TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES,
-	TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH,
-	TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES,
-	TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH,
-	TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH,
-	TARGET_STRIKE_STYLE_MARS_SMOKE_BITE,
-	TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES
+    TARGET_STRIKE_STYLE_BLUE_SPARK_BITES,
+    TARGET_STRIKE_STYLE_LIME_SMOKE_BITE,
+    TARGET_STRIKE_STYLE_PINK_SMOKE_BITES,
+    TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES,
+    TARGET_STRIKE_STYLE_MARS_DRAIN_BITES,
+    TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES,
+    TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH,
+    TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES,
+    TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH,
+    TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH,
+    TARGET_STRIKE_STYLE_MARS_SMOKE_BITE,
+    TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES
 } TARGET_STRIKE_STYLE;
 
 // Where each picture begins in the sprite sheets many effects share: the ten motes and twenty
@@ -66,8 +66,8 @@ extern Uint8  BattleEffectGlintPictureHeights[];
 // Each Ice variant: its shards and how many ticks it runs.
 enum
 {
-	ICE_SHARD_COUNT, // shards that fall
-	ICE_TICKS        // the effect's ticks; the damage shows 16 before
+    ICE_SHARD_COUNT, // shards that fall
+    ICE_TICKS        // the effect's ticks; the damage shows 16 before
 };
 
 extern Uint8 IceCounts[][2];
@@ -75,10 +75,10 @@ extern Uint8 IceCounts[][2];
 // Each Douse variant: its drops, the droplets each splash throws, the spacing and the ticks.
 enum
 {
-	DOUSE_DROP_COUNT,        // drops that fall, of the 64 placed
-	DOUSE_DROPLETS_PER_DROP, // droplets each landing drop throws up
-	DOUSE_DROP_SPACING,      // pixels between drops along the slant
-	DOUSE_TICKS              // the effect's ticks; the damage shows 64 before
+    DOUSE_DROP_COUNT,        // drops that fall, of the 64 placed
+    DOUSE_DROPLETS_PER_DROP, // droplets each landing drop throws up
+    DOUSE_DROP_SPACING,      // pixels between drops along the slant
+    DOUSE_TICKS              // the effect's ticks; the damage shows 64 before
 };
 
 extern Uint8  DouseCounts[][4];
@@ -121,17 +121,17 @@ extern Sint8  SwirlSwipePictureBiasY[];
 // Each gathering-lights mode: the lights per target and the ticks before the targets' turns.
 enum
 {
-	GATHERING_LIGHTS_COUNT, // lights for each target
-	GATHERING_LIGHTS_TICKS  // ticks before the targets' turns
+    GATHERING_LIGHTS_COUNT, // lights for each target
+    GATHERING_LIGHTS_TICKS  // ticks before the targets' turns
 };
 
 // The gathering lights' modes (btEffectRunGatheringLights), each named for the effect that plays
 // it, and its row of GatheringLightsCounts.
 typedef enum GATHERING_LIGHTS_MODE
 {
-	GATHERING_LIGHTS_DEMON_NIGHT, // pink
-	GATHERING_LIGHTS_RUMBLE,      // Mars Djinn colours
-	GATHERING_LIGHTS_HAUNTING     // Mercury Djinn colours
+    GATHERING_LIGHTS_DEMON_NIGHT, // pink
+    GATHERING_LIGHTS_RUMBLE,      // Mars Djinn colours
+    GATHERING_LIGHTS_HAUNTING     // Mercury Djinn colours
 } GATHERING_LIGHTS_MODE;
 
 extern Uint8  GatheringLightsCounts[][2];
@@ -150,9 +150,9 @@ extern Uint8  DjinnBeamsHeadHeights[];
 // Each lobbed shells mode's style (LOBBED_SHELLS_MODE, battle_effect_lobbed_shells.c).
 enum
 {
-	// nonzero: the shells burst into shards, not smoke
-	LOBBED_SHELLS_STYLE_SHATTER,
-	LOBBED_SHELLS_STYLE_UNUSED // 0 in every row; nothing reads it
+    // nonzero: the shells burst into shards, not smoke
+    LOBBED_SHELLS_STYLE_SHATTER,
+    LOBBED_SHELLS_STYLE_UNUSED // 0 in every row; nothing reads it
 };
 
 extern Sint8   LobbedShellsStyles[][2];
@@ -191,8 +191,8 @@ extern Uint16  TiamatFlamePictures[];
 // The foot of each of Nereid's columns of fire.
 enum
 {
-	NEREID_COLUMN_X, // canvas x of the column's middle
-	NEREID_COLUMN_Y  // canvas y of its foot
+    NEREID_COLUMN_X, // canvas x of the column's middle
+    NEREID_COLUMN_Y  // canvas y of its foot
 };
 
 extern Uint8  NereidColumns[][2];
@@ -203,8 +203,8 @@ extern Sint32 NereidGravity[];
 // Each Froth variant: its motes and ticks.
 enum
 {
-	FROTH_BUBBLE_COUNT, // bubbles, at most 30 (battle_effect_vortices.c)
-	FROTH_TICKS         // the effect's ticks; the damage shows 16 before
+    FROTH_BUBBLE_COUNT, // bubbles, at most 30 (battle_effect_vortices.c)
+    FROTH_TICKS         // the effect's ticks; the damage shows 16 before
 };
 
 extern Uint8 VorticesCounts[][2];
@@ -212,9 +212,9 @@ extern Uint8 VorticesCounts[][2];
 // Each Whirlwind variant: its tornadoes, their sway and the screen shake.
 enum
 {
-	WHIRLWIND_TORNADOES, // tornadoes drawn
-	WHIRLWIND_SWAY,      // how far each sways across, in pixels
-	WHIRLWIND_SHAKE      // btCameraShake's range
+    WHIRLWIND_TORNADOES, // tornadoes drawn
+    WHIRLWIND_SWAY,      // how far each sways across, in pixels
+    WHIRLWIND_SHAKE      // btCameraShake's range
 };
 
 extern Uint8 VorticesShapes[][3];
@@ -222,8 +222,8 @@ extern Uint8 VorticesShapes[][3];
 // Where each Prism shard starts in the crystal.
 enum
 {
-	PRISM_SHARD_START_X, // pixels from the crystal's left
-	PRISM_SHARD_START_Y  // pixels from its top
+    PRISM_SHARD_START_X, // pixels from the crystal's left
+    PRISM_SHARD_START_Y  // pixels from its top
 };
 
 extern Uint8 PrismShardStarts[][2];
@@ -231,8 +231,8 @@ extern Uint8 PrismShardStarts[][2];
 // Each Prism variant: its crystals and ticks.
 enum
 {
-	PRISM_CRYSTAL_COUNT, // crystals drawn
-	PRISM_TICKS          // the effect's ticks
+    PRISM_CRYSTAL_COUNT, // crystals drawn
+    PRISM_TICKS          // the effect's ticks
 };
 
 extern Uint8  PrismCounts[][2];
@@ -245,8 +245,8 @@ extern Sint32 PrismShardPictures[];
 // Each Plasma variant: the sparks per pillar and the ticks of shake.
 enum
 {
-	PLASMA_SPARKS,     // sparks each lightning pillar throws
-	PLASMA_SHAKE_TICKS // ticks the screen shakes at each strike
+    PLASMA_SPARKS,     // sparks each lightning pillar throws
+    PLASMA_SHAKE_TICKS // ticks the screen shakes at each strike
 };
 
 extern Uint16 PlasmaSparks[][2];
@@ -259,18 +259,18 @@ extern Uint8  PlasmaCounts[];
 // offset across.
 enum
 {
-	SPARK_GROUPS_SPARKS, // sparks each burst throws
-	SPARK_GROUPS_BURSTS, // bursts, 8 ticks apart
-	SPARK_GROUPS_OFFSET  // burst i's offset across, in pixels, at [2 + i]
+    SPARK_GROUPS_SPARKS, // sparks each burst throws
+    SPARK_GROUPS_BURSTS, // bursts, 8 ticks apart
+    SPARK_GROUPS_OFFSET  // burst i's offset across, in pixels, at [2 + i]
 };
 
 // The spark groups' variants past the three strengths of Blast and Dynamite (EFFECT_VARIANT), which
 // their callers set before the run.
 enum
 {
-	SPARK_GROUPS_SEVERE_BLOW = 3, // 340 sparks and a flash: Severe Blow's
-	// impact and btEffectRunUnusedSevereBlowLeap
-	SPARK_GROUPS_THRASH // 32 sparks: Thrash
+    SPARK_GROUPS_SEVERE_BLOW = 3, // 340 sparks and a flash: Severe Blow's
+    // impact and btEffectRunUnusedSevereBlowLeap
+    SPARK_GROUPS_THRASH // 32 sparks: Thrash
 };
 
 extern Uint16 SparkGroupsShapes[][5];
@@ -289,8 +289,8 @@ extern Uint8  TargetMotesGlintFlips[];
 // mouth, in the left half, opens and shuts; her far eye, in the right, stays as it is.
 enum
 {
-	CYBELE_POSE_FACE_LEFT, // sprite 3's animation: the half with her mouth
-	CYBELE_POSE_FACE_RIGHT // sprite 4's animation
+    CYBELE_POSE_FACE_LEFT, // sprite 3's animation: the half with her mouth
+    CYBELE_POSE_FACE_RIGHT // sprite 4's animation
 };
 
 extern Uint8  CybeleObjectPoses[][2];
@@ -349,8 +349,8 @@ extern Uint16 FireFlarePictures[];
 // Where each ice mound of Frost stands: x and the y of its foot.
 enum
 {
-	FROST_MOUND_X,   // canvas x of the mound's left edge
-	FROST_MOUND_FOOT // canvas y of its foot
+    FROST_MOUND_X,   // canvas x of the mound's left edge
+    FROST_MOUND_FOOT // canvas y of its foot
 };
 
 extern Uint8     FrostMoundSpots[][2];
@@ -415,10 +415,10 @@ extern Uint8  BoltGlintModes[];
 // picks.
 typedef enum PROJECTILE_VOLLEY_COMET
 {
-	PROJECTILE_VOLLEY_COMET_A, // SlashCometSheet, Slash's
-	PROJECTILE_VOLLEY_COMET_B, // WindSlashCometSheet, Wind Slash's
-	// SonicSlashCometSheet, Sonic Slash's and Cutting Edge's
-	PROJECTILE_VOLLEY_COMET_C
+    PROJECTILE_VOLLEY_COMET_A, // SlashCometSheet, Slash's
+    PROJECTILE_VOLLEY_COMET_B, // WindSlashCometSheet, Wind Slash's
+    // SonicSlashCometSheet, Sonic Slash's and Cutting Edge's
+    PROJECTILE_VOLLEY_COMET_C
 } PROJECTILE_VOLLEY_COMET;
 
 // Each comet's picture height.
@@ -428,20 +428,20 @@ extern Uint8 ProjectileVolleyCometHeights[];
 // it; the casting impacts fire two of them.
 typedef enum PROJECTILE_VOLLEY_MODE
 {
-	PROJECTILE_VOLLEY_SLASH,        // comets, picked by the variant
-	PROJECTILE_VOLLEY_SHURIKEN,     // spinning shurikens
-	PROJECTILE_VOLLEY_CRAZY_VOICE,  // bouncing pellets
-	PROJECTILE_VOLLEY_WING_FLUTTER, // yellow sparks
-	PROJECTILE_VOLLEY_WING_BEAT,    // small yellow sparks
-	PROJECTILE_VOLLEY_CUTTING_EDGE, // one large comet in ice colours
-	PROJECTILE_VOLLEY_HEAT_WAVE,    // fireballs trailing embers
-	PROJECTILE_VOLLEY_SLEET,        // ice chips falling from high above
-	// comets, after CASTING_IMPACT_UNUSED_COMETS
-	PROJECTILE_VOLLEY_IMPACT_COMETS,
-	// scattered ice chips; also after CASTING_IMPACT_UNUSED_ICE_CHIPS
-	PROJECTILE_VOLLEY_BLIZZARD,
-	PROJECTILE_VOLLEY_ICE_BLESSING, // ice chips streaming one a tick
-	PROJECTILE_VOLLEY_WING_STROKE   // large yellow sparks, spread up and down
+    PROJECTILE_VOLLEY_SLASH,        // comets, picked by the variant
+    PROJECTILE_VOLLEY_SHURIKEN,     // spinning shurikens
+    PROJECTILE_VOLLEY_CRAZY_VOICE,  // bouncing pellets
+    PROJECTILE_VOLLEY_WING_FLUTTER, // yellow sparks
+    PROJECTILE_VOLLEY_WING_BEAT,    // small yellow sparks
+    PROJECTILE_VOLLEY_CUTTING_EDGE, // one large comet in ice colours
+    PROJECTILE_VOLLEY_HEAT_WAVE,    // fireballs trailing embers
+    PROJECTILE_VOLLEY_SLEET,        // ice chips falling from high above
+    // comets, after CASTING_IMPACT_UNUSED_COMETS
+    PROJECTILE_VOLLEY_IMPACT_COMETS,
+    // scattered ice chips; also after CASTING_IMPACT_UNUSED_ICE_CHIPS
+    PROJECTILE_VOLLEY_BLIZZARD,
+    PROJECTILE_VOLLEY_ICE_BLESSING, // ice chips streaming one a tick
+    PROJECTILE_VOLLEY_WING_STROKE   // large yellow sparks, spread up and down
 } PROJECTILE_VOLLEY_MODE;
 
 // Each projectile volley mode by its columns, the seven pictures of the hit flash (size, step, rise
@@ -475,8 +475,8 @@ extern Uint8  ThorCrackleFlips[];
 // Where each Spire shard starts, before its rock's offset across.
 enum
 {
-	SPIRE_SHARD_X, // canvas x
-	SPIRE_SHARD_Y  // canvas y
+    SPIRE_SHARD_X, // canvas x
+    SPIRE_SHARD_Y  // canvas y
 };
 
 extern Uint8  SpireShardOffsets[][2];
@@ -494,32 +494,32 @@ extern Uint16 SpireShardPictures[];
 // one, two or three strikes as a double or triple blow raises their variant.
 typedef enum FLURRY_MODE
 {
-	FLURRY_BEAR_CLAW,            // five strikes; also Ransack
-	FLURRY_BACTERIA_RUSH,        // seven strikes, in lime
-	FLURRY_FREEBITE_RUSH,        // nine strikes, in blue
-	FLURRY_FLYING_ATTACK,        // one strike, in embers
-	FLURRY_FLYING_ATTACK_DOUBLE, // two
-	FLURRY_FLYING_ATTACK_TRIPLE, // three
-	FLURRY_GUST,                 // one strike, each filling the canvas
-	FLURRY_GUST_DOUBLE,          // two
-	FLURRY_GUST_TRIPLE           // three
+    FLURRY_BEAR_CLAW,            // five strikes; also Ransack
+    FLURRY_BACTERIA_RUSH,        // seven strikes, in lime
+    FLURRY_FREEBITE_RUSH,        // nine strikes, in blue
+    FLURRY_FLYING_ATTACK,        // one strike, in embers
+    FLURRY_FLYING_ATTACK_DOUBLE, // two
+    FLURRY_FLYING_ATTACK_TRIPLE, // three
+    FLURRY_GUST,                 // one strike, each filling the canvas
+    FLURRY_GUST_DOUBLE,          // two
+    FLURRY_GUST_TRIPLE           // three
 } FLURRY_MODE;
 
 // A flurry's arcs, its FLURRY_ARC_SHEET.
 typedef enum FLURRY_ARC
 {
-	// blue arc A, with a wave for the third and fourth of every four strikes
-	FLURRY_ARCS_AND_WAVES,
-	FLURRY_ARCS // blue arc B for every strike
+    // blue arc A, with a wave for the third and fourth of every four strikes
+    FLURRY_ARCS_AND_WAVES,
+    FLURRY_ARCS // blue arc B for every strike
 } FLURRY_ARC;
 
 // Whose palette a flurry takes, its FLURRY_PALETTE.
 typedef enum FLURRY_PAL
 {
-	FLURRY_PALETTE_MARS_DJINNI, // the Mars Djinni sprite sheet's
-	FLURRY_PALETTE_LIME,
-	FLURRY_PALETTE_BLUE_ARC,
-	FLURRY_PALETTE_EMBER        // the ember streak sprite sheet's
+    FLURRY_PALETTE_MARS_DJINNI, // the Mars Djinni sprite sheet's
+    FLURRY_PALETTE_LIME,
+    FLURRY_PALETTE_BLUE_ARC,
+    FLURRY_PALETTE_EMBER        // the ember streak sprite sheet's
 } FLURRY_PAL;
 
 extern Uint8  FlurryStyles[][7];

@@ -3,12 +3,12 @@
 
 // A piece of debris flies for 40 ticks, then blinks ten times and is gone.
 Uint32 DebrisScript[] = {
-	SC_WAIT(40),
-	SC_LABEL(1),
-	SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
-	SC_WAIT(1),
-	SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
-	SC_WAIT(1),
-	SC_LOOP(10, SC_TO(1)),
-	SC_RELEASE,
+    SC_WAIT(40),
+    SC_LABEL(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
+    SC_WAIT(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
+    SC_WAIT(1),
+    SC_LOOP(10, SC_TO(1)),
+    SC_RELEASE,
 };

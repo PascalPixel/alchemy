@@ -2,22 +2,22 @@
 // ACTOR_LIST_END: on a match, makes the row's statue the target and returns its value.
 Sint32 scStatueFindUnderBurst(Uint16 *table)
 {
-	FIELD_EFFECT_STATE *watch    = RamHeapSlots->fieldEffectState;
-	Sint32              result   = 0;
-	Sint32              metatile = fdMapMetatileGetAttributes(
+    FIELD_EFFECT_STATE *watch    = RamHeapSlots->fieldEffectState;
+    Sint32              result   = 0;
+    Sint32              metatile = fdMapMetatileGetAttributes(
                           MAPGRID_LAYER_GROUND, FIELD_METATILE(watch->x), FIELD_METATILE(watch->z))
-	               >> 8;
-	Uint32 id;
+                   >> 8;
+    Uint32 id;
 
-	for (; *table != ACTOR_LIST_END; result = *table++)
-	{
-		id = *table++;
-		if (metatile == *table++)
-		{
-			watch->target = fdActorGet(id);
-			result        = *table;
-			break;
-		}
-	}
-	return result;
+    for (; *table != ACTOR_LIST_END; result = *table++)
+    {
+        id = *table++;
+        if (metatile == *table++)
+        {
+            watch->target = fdActorGet(id);
+            result        = *table;
+            break;
+        }
+    }
+    return result;
 }

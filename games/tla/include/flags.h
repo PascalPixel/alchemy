@@ -292,7 +292,7 @@
 // Whirlwind has blown away, by its placed actor id.
 #define FLAG_APOJII_CAVE_FOLIAGE_FIRST                     0x8e9
 #define FLAG_APOJII_CAVE_FOLIAGE_BLOWN(actor)                                                      \
-	(FLAG_APOJII_CAVE_FOLIAGE_FIRST - ACTOR_FIRST_PLACED + (actor))
+    (FLAG_APOJII_CAVE_FOLIAGE_FIRST - ACTOR_FIRST_PLACED + (actor))
 
 // Set as the mayor of Madra arrives on the ship at Alhafra's eastern harbour, or once the party has
 // fought Briggs there.

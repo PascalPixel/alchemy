@@ -35,21 +35,21 @@
 // and where, how large, at what angle and depth it is drawn.
 typedef struct CANVAS_SPR_STATE
 {
-	EFFECT_SPR sprite;
-	Uint8      unusedAfterSprite[120]; // no code names it
-	Sint32     drawnFrame;
-	Sint32     frame;
-	Sint32     x;                      // whole pixels
-	Sint32     y;
-	Sint32     scaleX;
-	Sint32     scaleY;
-	Sint32     angle;
-	Uint16     tile;
-	Uint8      depth;
-	Uint8      priority;
-	Sint8      mode;
-	Sint8      command;
-	Uint8      unusedAfterCommand[2]; // no code names it
+    EFFECT_SPR sprite;
+    Uint8      unusedAfterSprite[120]; // no code names it
+    Sint32     drawnFrame;
+    Sint32     frame;
+    Sint32     x;                      // whole pixels
+    Sint32     y;
+    Sint32     scaleX;
+    Sint32     scaleY;
+    Sint32     angle;
+    Uint16     tile;
+    Uint8      depth;
+    Uint8      priority;
+    Sint8      mode;
+    Sint8      command;
+    Uint8      unusedAfterCommand[2]; // no code names it
 } CANVAS_SPR_STATE;
 
 STATIC_ASSERT(sizeof(CANVAS_SPR_STATE) == 196);

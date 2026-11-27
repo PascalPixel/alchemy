@@ -128,37 +128,37 @@ void   fdSpriteRemoveAnimationStub(void *state, Sint32 handle);
 // A unit's HP and PP as btScriptedBattleSaveUnits keeps them.
 typedef struct SNAPSHOT_VITALS
 {
-	Uint16 hp;
-	Uint16 pp;
+    Uint16 hp;
+    Uint16 pp;
 } SNAPSHOT_VITALS;
 
 // A unit's 25 status bytes, from its curse to its challenge, kept between the scripted battles.
 typedef struct SNAPSHOT_COPY
 {
-	Sint8 curse;
-	Sint8 poison;
-	Uint8 attackTurns;
-	Sint8 attackStage;
-	Uint8 defenseTurns;
-	Sint8 defenseStage;
-	Uint8 resistanceTurns;
-	Sint8 resistanceStage;
-	Uint8 delusion;
-	Sint8 confusion;
-	Uint8 charm;
-	Uint8 stun;
-	Uint8 sleep;
-	Uint8 psySeal;
-	Uint8 regenerate;
-	Sint8 reflect;
-	Uint8 haunt;
-	Uint8 grimReaper;
-	Uint8 equipBonus[2];
-	Uint8 ready;
-	Uint8 immobile;
-	Uint8 agilityTurns;
-	Sint8 agilityStage;
-	Sint8 challenge;
+    Sint8 curse;
+    Sint8 poison;
+    Uint8 attackTurns;
+    Sint8 attackStage;
+    Uint8 defenseTurns;
+    Sint8 defenseStage;
+    Uint8 resistanceTurns;
+    Sint8 resistanceStage;
+    Uint8 delusion;
+    Sint8 confusion;
+    Uint8 charm;
+    Uint8 stun;
+    Uint8 sleep;
+    Uint8 psySeal;
+    Uint8 regenerate;
+    Sint8 reflect;
+    Uint8 haunt;
+    Uint8 grimReaper;
+    Uint8 equipBonus[2];
+    Uint8 ready;
+    Uint8 immobile;
+    Uint8 agilityTurns;
+    Sint8 agilityStage;
+    Sint8 challenge;
 } SNAPSHOT_COPY;
 
 // What btScriptedBattleSaveUnits keeps of the five units of the scripted battles between them:
@@ -166,12 +166,12 @@ typedef struct SNAPSHOT_COPY
 // HP and PP.
 typedef struct SNAPSHOT
 {
-	Uint8           listed[8];
-	Sint8           summonBoosts[3][ELEMENT_COUNT];
-	// One row a unit: 25 status bytes, 28 with the struct's padding.
-	SNAPSHOT_COPY   statuses[5];
-	// The HP and PP of the last two units (i = 3 and 4).
-	SNAPSHOT_VITALS vitals[2];
+    Uint8           listed[8];
+    Sint8           summonBoosts[3][ELEMENT_COUNT];
+    // One row a unit: 25 status bytes, 28 with the struct's padding.
+    SNAPSHOT_COPY   statuses[5];
+    // The HP and PP of the last two units (i = 3 and 4).
+    SNAPSHOT_VITALS vitals[2];
 } SNAPSHOT;
 
 STATIC_ASSERT(offsetof(SNAPSHOT, vitals) == 160);
@@ -181,10 +181,10 @@ STATIC_ASSERT(sizeof(SNAPSHOT) == 168);
 // random check, and the random seed both sides then use.
 typedef struct BATTLE_LINK_HEADER
 {
-	Sint32 count;
-	Sint32 check;
-	Sint32 seed;
-	Uint8  unused[28]; // no code names it
+    Sint32 count;
+    Sint32 check;
+    Sint32 seed;
+    Uint8  unused[28]; // no code names it
 } BATTLE_LINK_HEADER;
 
 // The camera's yaw while a party member acts, and while an enemy does, in 1/65536 turns: an eighth
@@ -202,8 +202,8 @@ typedef struct BATTLE_LINK_HEADER
 // Runs a battle effect by its ability's effect word (Ability.battleEffect): with EFFECT_BY_ID_RANGE
 // from the second range of kinds (btEffectRunByIdRangeStub), otherwise from the handler table.
 #define BATTLE_EFFECT_RUN(args, battleEffect)                                                      \
-	((battleEffect) & EFFECT_BY_ID_RANGE ? btEffectRunByIdRangeStub(args)                          \
-	                                     : btEffectRunFromTableStub(args))
+    ((battleEffect) & EFFECT_BY_ID_RANGE ? btEffectRunByIdRangeStub(args)                          \
+                                         : btEffectRunFromTableStub(args))
 
 // The keys that take the player on past a message: A, B, L and R.
 #define KEY_ADVANCE             (KEY_A | KEY_B | KEYS_SHOULDERS)
@@ -228,9 +228,9 @@ typedef struct BATTLE_LINK_HEADER
 // BATTLE_PLAN.targetCritical: the critical hit rolled for each target.
 typedef enum BATTLE_CRITICAL
 {
-	CRITICAL_NONE,
-	CRITICAL_HIT,   // an attack's: a quarter more damage
-	CRITICAL_STRONG // an ability's (effects 36 to 40): half as much again
+    CRITICAL_NONE,
+    CRITICAL_HIT,   // an attack's: a quarter more damage
+    CRITICAL_STRONG // an ability's (effects 36 to 40): half as much again
 } BATTLE_CRITICAL;
 
 // BATTLE_PLAN.targetHit while the hit is still to be rolled, as the ability lands; btActionRunBuild
@@ -240,9 +240,9 @@ typedef enum BATTLE_CRITICAL
 // BATTLE_PLAN.failure: why a cast plays no effect, which the staging shows.
 typedef enum BATTLE_ACTION_FAILURE
 {
-	ACTION_FAILURE_NONE,
-	ACTION_FAILURE_SEALED, // "blocked": the user's Psynergy is sealed
-	ACTION_FAILURE_NO_PP   // the user has too little PP
+    ACTION_FAILURE_NONE,
+    ACTION_FAILURE_SEALED, // "blocked": the user's Psynergy is sealed
+    ACTION_FAILURE_NO_PP   // the user has too little PP
 } BATTLE_ACTION_FAILURE;
 
 // btStagingRunFullScreen's mode bit that hides the acting unit too, as the summons do.
@@ -257,9 +257,9 @@ typedef enum BATTLE_ACTION_FAILURE
 // How btStagingRunPsynergyCast shows the caster.
 typedef enum BATTLE_CAST_KIND
 {
-	CAST_PSYNERGY = 0, // the star field gathers on the caster
-	CAST_DJINNI   = 1, // no glow; the effect plays its prelude
-	CAST_ENEMY    = 2  // the element's streaks
+    CAST_PSYNERGY = 0, // the star field gathers on the caster
+    CAST_DJINNI   = 1, // no glow; the effect plays its prelude
+    CAST_ENEMY    = 2  // the element's streaks
 } BATTLE_CAST_KIND;
 
 // The scripted battles' snapshot (btScriptedBattleSaveUnits), reached by its fixed address: the 168
@@ -312,7 +312,7 @@ extern const Uint16 BattleUnitWeaponAnimationsPiers[];
 
 // BG1 during a battle: 256 colours, priority 3, its map in screen block BATTLE_BG1_SCREEN_BLOCK.
 #define BATTLE_BG1CNT                                                                              \
-	(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK))
+    (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK))
 
 // BATTLE_ACTION_RECORD.target of a held unit's lost action (COMMAND_NONE, from
 // btBuildEnemyActions): as a place code, place 0 of the other side, the party's for an enemy and

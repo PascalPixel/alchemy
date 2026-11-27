@@ -19,86 +19,86 @@
 // are drawn back towards it.
 UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state;
-	void                *canvas;
-	FIXED                center[3];
-	SCREEN_POINT         screen;
-	DRAW_RECTANGLE       draw[2];
-	PARTICLE            *star;
-	Sint32               i;
-	Sint32               frame;
+    BATTLE_EFFECT_STATE *state;
+    void                *canvas;
+    FIXED                center[3];
+    SCREEN_POINT         screen;
+    DRAW_RECTANGLE       draw[2];
+    PARTICLE            *star;
+    Sint32               i;
+    Sint32               frame;
 
-	state  = RamHeapSlots->battleEffect;
-	canvas = RamHeapSlots->battleCanvas;
-	btEffectStartCanvasLayer(0);
-	btResourceLoadAndDecompress(RESOURCE_STAR_DOT_SHEET, state->sheet, 1, 1);
-	btEffectBuildCanvasBlitters(args->side ^ 1, draw);
-	for (i = 0; i != SWIRLING_STARS_PLACED; i++)
-	{
-		star = &PARTICLES[i];
-		SET_POSITION(star,
-		             toFIXED((syRandom() & 0xff) - 127),
-		             toFIXED((syRandom() & 0xff) - 127),
-		             toFIXED((syRandom() & 0xff) - 127));
-		SET_VELOCITY(star, 0, 0, 0);
-		star->variant = 0;
-	}
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	SET_VECTOR(center, 0, toFIXED(80), 0);
-	for (frame = 0; frame != SWIRLING_STARS_TICKS; frame++)
-	{
-		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
+    state  = RamHeapSlots->battleEffect;
+    canvas = RamHeapSlots->battleCanvas;
+    btEffectStartCanvasLayer(0);
+    btResourceLoadAndDecompress(RESOURCE_STAR_DOT_SHEET, state->sheet, 1, 1);
+    btEffectBuildCanvasBlitters(args->side ^ 1, draw);
+    for (i = 0; i != SWIRLING_STARS_PLACED; i++)
+    {
+        star = &PARTICLES[i];
+        SET_POSITION(star,
+                     toFIXED((syRandom() & 0xff) - 127),
+                     toFIXED((syRandom() & 0xff) - 127),
+                     toFIXED((syRandom() & 0xff) - 127));
+        SET_VELOCITY(star, 0, 0, 0);
+        star->variant = 0;
+    }
+    EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+    SET_VECTOR(center, 0, toFIXED(80), 0);
+    for (frame = 0; frame != SWIRLING_STARS_TICKS; frame++)
+    {
+        BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
-		EFFECT_VIEW_FROM_CAMERA(camera);
-		syMatrixTranslateVector(center);
-		for (i = 0; i != SWIRLING_STARS_COUNT; i++)
-		{
-			star = &PARTICLES[i];
-			if (frame > i / 4 && star->variant == 0)
-			{
-				Sint32 size;
+        EFFECT_VIEW_FROM_CAMERA(camera);
+        syMatrixTranslateVector(center);
+        for (i = 0; i != SWIRLING_STARS_COUNT; i++)
+        {
+            star = &PARTICLES[i];
+            if (frame > i / 4 && star->variant == 0)
+            {
+                Sint32 size;
 
-				syPushMatrix();
-				switch (i & 3)
-				{
-					case 0: syRotY(frame * SWIRLING_STAR_SPIN(i)); break;
-					case 1: syRotX(-frame * SWIRLING_STAR_SPIN(i)); break;
-					case 2: syRotZ(-frame * SWIRLING_STAR_SPIN(i)); break;
-					case 3:
-						syRotX(-frame * SWIRLING_STAR_SPIN(i));
-						syRotZ(-frame * SWIRLING_STAR_SPIN(i));
-						break;
-				}
-				btEffectPosProjectPoint(star, &screen);
-				screen.x >>= 1;
-				syPopMatrix();
-				CLAMP(screen.depth, SWIRLING_STAR_DEPTH_NEAR, SWIRLING_STAR_DEPTH_FAR);
-				size = SWIRLING_STAR_LARGEST
-				     - (screen.depth - SWIRLING_STAR_DEPTH_NEAR) / SWIRLING_STAR_DEPTH_STEP;
-				draw[0](canvas,
-				        state->sheet
-				            + ((i & 3) * MOTE_SET_BYTES + BattleEffectMotePictures[size - 1]),
-				        screen.x - size / 2,
-				        screen.y - size,
-				        size,
-				        size * 2);
-				btParticleAdvanceWithGravity3D(star, 60, 0);
-				// After 30 ticks a star springs back towards the centre.
-				if (frame > i / 4 + 30)
-				{
-					Sint32 dx        = -star->x >> 8;
-					Sint32 dy        = -star->y >> 8;
-					Sint32 dz        = -star->z >> 8;
+                syPushMatrix();
+                switch (i & 3)
+                {
+                    case 0: syRotY(frame * SWIRLING_STAR_SPIN(i)); break;
+                    case 1: syRotX(-frame * SWIRLING_STAR_SPIN(i)); break;
+                    case 2: syRotZ(-frame * SWIRLING_STAR_SPIN(i)); break;
+                    case 3:
+                        syRotX(-frame * SWIRLING_STAR_SPIN(i));
+                        syRotZ(-frame * SWIRLING_STAR_SPIN(i));
+                        break;
+                }
+                btEffectPosProjectPoint(star, &screen);
+                screen.x >>= 1;
+                syPopMatrix();
+                CLAMP(screen.depth, SWIRLING_STAR_DEPTH_NEAR, SWIRLING_STAR_DEPTH_FAR);
+                size = SWIRLING_STAR_LARGEST
+                     - (screen.depth - SWIRLING_STAR_DEPTH_NEAR) / SWIRLING_STAR_DEPTH_STEP;
+                draw[0](canvas,
+                        state->sheet
+                            + ((i & 3) * MOTE_SET_BYTES + BattleEffectMotePictures[size - 1]),
+                        screen.x - size / 2,
+                        screen.y - size,
+                        size,
+                        size * 2);
+                btParticleAdvanceWithGravity3D(star, 60, 0);
+                // After 30 ticks a star springs back towards the centre.
+                if (frame > i / 4 + 30)
+                {
+                    Sint32 dx        = -star->x >> 8;
+                    Sint32 dy        = -star->y >> 8;
+                    Sint32 dz        = -star->z >> 8;
 
-					star->velocityX += dx;
-					star->velocityY += dy;
-					star->velocityZ += dz;
-				}
-			}
-		}
-		EFFECT_PRESENT_CANVAS(state);
-	}
-	EFFECT_FINISH_CANVAS();
+                    star->velocityX += dx;
+                    star->velocityY += dy;
+                    star->velocityZ += dz;
+                }
+            }
+        }
+        EFFECT_PRESENT_CANVAS(state);
+    }
+    EFFECT_FINISH_CANVAS();
 }
 
 // The burst's six pictures in the sprite sheet, after the smoke's six.
@@ -110,109 +110,109 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 // around it.
 UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state;
-	void                *canvas;
-	void                *palette;
-	Sint32               frame;
-	DRAW_RECTANGLE       drawSmoke;
-	DRAW_RECTANGLE       drawBurst;
-	PARTICLE            *puff;
-	Sint32               i;
-	SCREEN_POINT         screen;
-	FIXED                point[3];
+    BATTLE_EFFECT_STATE *state;
+    void                *canvas;
+    void                *palette;
+    Sint32               frame;
+    DRAW_RECTANGLE       drawSmoke;
+    DRAW_RECTANGLE       drawBurst;
+    PARTICLE            *puff;
+    Sint32               i;
+    SCREEN_POINT         screen;
+    FIXED                point[3];
 
-	state  = RamHeapSlots->battleEffect;
-	canvas = RamHeapSlots->battleCanvas;
-	btEffectStartCanvasLayer(0);
-	btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
-	btResourceLoadAndDecompress(
-		RESOURCE_TARGET_BURST_IMAGE, state->sheet + TARGET_BURST_PICTURES, 0, 0);
-	palette = syResourceGetTableEntry(RESOURCE_PINK_BURST_SHEET);
-	syWordsCopyEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	drawBurst = RamHeapSlots->ramCode;
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	drawSmoke = RamHeapSlots->ramCodePaired;
+    state  = RamHeapSlots->battleEffect;
+    canvas = RamHeapSlots->battleCanvas;
+    btEffectStartCanvasLayer(0);
+    btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
+    btResourceLoadAndDecompress(
+        RESOURCE_TARGET_BURST_IMAGE, state->sheet + TARGET_BURST_PICTURES, 0, 0);
+    palette = syResourceGetTableEntry(RESOURCE_PINK_BURST_SHEET);
+    syWordsCopyEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
+    drawBurst = RamHeapSlots->ramCode;
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+    drawSmoke = RamHeapSlots->ramCodePaired;
 
-	for (i = 0; i != ARRAY_COUNT(state->particles); i++)
-	{
-		Sint32 angle;
-		Sint32 speed;
+    for (i = 0; i != ARRAY_COUNT(state->particles); i++)
+    {
+        Sint32 angle;
+        Sint32 speed;
 
-		puff  = &state->particles[i];
-		angle = syRandom() & TRIG_ANGLE_MASK;
-		speed = syRandom() & 0xff;
-		SET_POSITION(puff, 0, 0, 0);
-		if (i % 6 == 5)
-		{
-			puff->velocityX = 0;
-			puff->velocityY = 0;
-		}
-		else
-		{
-			puff->velocityX = (sySin(angle) * speed) >> 7;
-			puff->velocityY = (syCos(angle) * speed) >> 9;
-		}
-		puff->velocityZ = 0;
-		puff->variant   = 0;
-	}
+        puff  = &state->particles[i];
+        angle = syRandom() & TRIG_ANGLE_MASK;
+        speed = syRandom() & 0xff;
+        SET_POSITION(puff, 0, 0, 0);
+        if (i % 6 == 5)
+        {
+            puff->velocityX = 0;
+            puff->velocityY = 0;
+        }
+        else
+        {
+            puff->velocityX = (sySin(angle) * speed) >> 7;
+            puff->velocityY = (syCos(angle) * speed) >> 9;
+        }
+        puff->velocityZ = 0;
+        puff->variant   = 0;
+    }
 
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for (frame = 0; frame != TARGET_BURSTS_TICKS; frame++)
-	{
-		Sint32         member;
-		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
+    for (frame = 0; frame != TARGET_BURSTS_TICKS; frame++)
+    {
+        Sint32         member;
+        BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
-		EFFECT_FOR_EACH_TARGET(member, args)
-		{
-			MOTION_OBJECT *target;
+        EFFECT_FOR_EACH_TARGET(member, args)
+        {
+            MOTION_OBJECT *target;
 
-			target = btObjectGetStub(args->targets[member])->object;
-			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(point, target->x, toFIXED(20), target->z);
-			syMatrixTranslateVector(point);
-			if (frame >= member * 8 && frame < member * 8 + 40)
-			{
-				for (i = 0; i != 6; i++)
-				{
-					Sint32 picture;
+            target = btObjectGetStub(args->targets[member])->object;
+            EFFECT_VIEW_FROM_CAMERA(camera);
+            SET_VECTOR(point, target->x, toFIXED(20), target->z);
+            syMatrixTranslateVector(point);
+            if (frame >= member * 8 && frame < member * 8 + 40)
+            {
+                for (i = 0; i != 6; i++)
+                {
+                    Sint32 picture;
 
-					// A picture every six ticks, holding the last.
-					puff    = &state->particles[member * 6 + i];
-					picture = puff->variant / 6;
-					if (picture > 5)
-						picture = 5;
-					btEffectPosProjectPoint(puff, &screen);
-					screen.x >>= 1;
-					if (i == 5)
-					{
-						btParticleAdvanceWithGravity3D(puff, 62, toFIXED(1) / 32);
-						drawBurst(canvas,
-						          state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF)
-						              + TARGET_BURST_PICTURES,
-						          screen.x - SMOKE_PUFF_WIDTH / 2,
-						          screen.y - 36,
-						          SMOKE_PUFF_WIDTH,
-						          SMOKE_PUFF_HEIGHT);
-					}
-					else
-					{
-						btParticleAdvanceWithGravity3D(puff, 60, toFIXED(1) / 128);
-						drawSmoke(canvas,
-						          state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
-						          screen.x - SMOKE_PUFF_WIDTH / 2,
-						          screen.y - 36,
-						          SMOKE_PUFF_WIDTH,
-						          SMOKE_PUFF_HEIGHT);
-					}
-					puff->variant++;
-				}
-			}
-		}
-		EFFECT_PRESENT_CANVAS(state);
-	}
-	EFFECT_FINISH_CANVAS();
+                    // A picture every six ticks, holding the last.
+                    puff    = &state->particles[member * 6 + i];
+                    picture = puff->variant / 6;
+                    if (picture > 5)
+                        picture = 5;
+                    btEffectPosProjectPoint(puff, &screen);
+                    screen.x >>= 1;
+                    if (i == 5)
+                    {
+                        btParticleAdvanceWithGravity3D(puff, 62, toFIXED(1) / 32);
+                        drawBurst(canvas,
+                                  state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF)
+                                      + TARGET_BURST_PICTURES,
+                                  screen.x - SMOKE_PUFF_WIDTH / 2,
+                                  screen.y - 36,
+                                  SMOKE_PUFF_WIDTH,
+                                  SMOKE_PUFF_HEIGHT);
+                    }
+                    else
+                    {
+                        btParticleAdvanceWithGravity3D(puff, 60, toFIXED(1) / 128);
+                        drawSmoke(canvas,
+                                  state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
+                                  screen.x - SMOKE_PUFF_WIDTH / 2,
+                                  screen.y - 36,
+                                  SMOKE_PUFF_WIDTH,
+                                  SMOKE_PUFF_HEIGHT);
+                    }
+                    puff->variant++;
+                }
+            }
+        }
+        EFFECT_PRESENT_CANVAS(state);
+    }
+    EFFECT_FINISH_CANVAS();
 }
 
 #undef SWIRLING_STARS_TICKS

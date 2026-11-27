@@ -10,17 +10,17 @@
 // to the next flash and whether the thunder is loud.
 typedef struct FIELD_BLEND_STATE
 {
-	// The storm's dark colours (PALETTE_TINT_WARM), as the colour buffer's B, G and R channels:
-	// each flash fades back to them.
-	Sint16 from[1344];
-	Sint16 to[1344];    // the lit colours (PALETTE_TINT_PALE), as from
-	Sint16 delta[1344]; // the 12-tick steps from to back to from
-	// Ticks to the next flash; below 0 stops the lightning.
-	Sint16 timer;
-	// Nonzero arms the next flash a random 51 to 549 ticks after each, with a thunderclap.
-	Sint16 enabled;
-	Sint16 loud;               // nonzero plays the louder thunderclap
-	Uint8  unusedAfterLoud[2]; // no code names it
+    // The storm's dark colours (PALETTE_TINT_WARM), as the colour buffer's B, G and R channels:
+    // each flash fades back to them.
+    Sint16 from[1344];
+    Sint16 to[1344];    // the lit colours (PALETTE_TINT_PALE), as from
+    Sint16 delta[1344]; // the 12-tick steps from to back to from
+    // Ticks to the next flash; below 0 stops the lightning.
+    Sint16 timer;
+    // Nonzero arms the next flash a random 51 to 549 ticks after each, with a thunderclap.
+    Sint16 enabled;
+    Sint16 loud;               // nonzero plays the louder thunderclap
+    Uint8  unusedAfterLoud[2]; // no code names it
 } FIELD_BLEND_STATE;
 
 STATIC_ASSERT(sizeof(FIELD_BLEND_STATE) == 8072);

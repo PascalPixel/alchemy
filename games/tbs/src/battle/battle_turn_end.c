@@ -7,83 +7,83 @@
 // (btUnitRollCounterEarlyEnd's bias).
 typedef enum EARLY_END_BIAS
 {
-	EARLY_END_ATTACK_DOWN     = 30,
-	EARLY_END_DEFENSE_DOWN    = 20,
-	EARLY_END_RESISTANCE_DOWN = 20,
-	EARLY_END_DELUSION        = 30,
-	EARLY_END_CONFUSION       = 60,
-	EARLY_END_CHARM           = 70,
-	EARLY_END_STUN            = 40,
-	EARLY_END_SLEEP           = 50,
-	EARLY_END_BIND            = 30 // Bind's seal, once Luff's is gone
+    EARLY_END_ATTACK_DOWN     = 30,
+    EARLY_END_DEFENSE_DOWN    = 20,
+    EARLY_END_RESISTANCE_DOWN = 20,
+    EARLY_END_DELUSION        = 30,
+    EARLY_END_CONFUSION       = 60,
+    EARLY_END_CHARM           = 70,
+    EARLY_END_STUN            = 40,
+    EARLY_END_SLEEP           = 50,
+    EARLY_END_BIND            = 30 // Bind's seal, once Luff's is gone
 } EARLY_END_BIAS;
 
 // Rolls whether a stat change or status with five turns or fewer left ends early, at `luck * 3 -
 // turns * 5 + bias` percent, and returns 1 when it does.
 Bool btUnitRollCounterEarlyEnd(Sint32 unitId, Sint32 turns, Sint32 bias)
 {
-	UNIT *unit = gmUnitGetStub(unitId);
+    UNIT *unit = gmUnitGetStub(unitId);
 
-	if (turns <= 5)
-	{
-		// 65536 / 100, rounded down, scales the percentage to the 16-bit random range.
-		Sint32 threshold = ((unit->luck * 3 - turns * 5) + bias) * (65536 / 100);
-		if (threshold >= (gmBattleRandomStub() & 0xffff))
-			return TRUE;
-	}
-	return FALSE;
+    if (turns <= 5)
+    {
+        // 65536 / 100, rounded down, scales the percentage to the 16-bit random range.
+        Sint32 threshold = ((unit->luck * 3 - turns * 5) + bias) * (65536 / 100);
+        if (threshold >= (gmBattleRandomStub() & 0xffff))
+            return TRUE;
+    }
+    return FALSE;
 }
 
 // Counts down an Attack change and returns 1 when it ends; a lowered Attack may recover early.
 Bool btUnitCountDownAttackStage(Sint32 unitId)
 {
-	UNIT *unit = gmUnitGetStub(unitId);
+    UNIT *unit = gmUnitGetStub(unitId);
 
-	if (unit->attackTurns != 0)
-	{
-		unit->attackTurns--;
-		if (unit->attackTurns == 0)
-		{
-			unit->attackStage = 0;
-			return TRUE;
-		}
-		if (unit->attackStage < 0)
-		{
-			if (btUnitRollCounterEarlyEnd(unitId, unit->attackTurns, EARLY_END_ATTACK_DOWN) != 0)
-			{
-				unit->attackStage = 0;
-				unit->attackTurns = 0;
-				return TRUE;
-			}
-		}
-	}
-	return FALSE;
+    if (unit->attackTurns != 0)
+    {
+        unit->attackTurns--;
+        if (unit->attackTurns == 0)
+        {
+            unit->attackStage = 0;
+            return TRUE;
+        }
+        if (unit->attackStage < 0)
+        {
+            if (btUnitRollCounterEarlyEnd(unitId, unit->attackTurns, EARLY_END_ATTACK_DOWN) != 0)
+            {
+                unit->attackStage = 0;
+                unit->attackTurns = 0;
+                return TRUE;
+            }
+        }
+    }
+    return FALSE;
 }
 
 // Defines a stat change's turn-end countdown, as btUnitCountDownAttackStage is, a lowered stat
 // ending early at bias.
 #define DEFINE_COUNT_DOWN_MODIFIER(name, counter, level, bias)                                     \
-	Sint32 name(Sint32 unitId)                                                                     \
-	{                                                                                              \
-		UNIT *unit = gmUnitGetStub(unitId);                                                        \
+    Sint32 name(Sint32 unitId)                                                                     \
+    {                                                                                              \
+        UNIT *unit = gmUnitGetStub(unitId);                                                        \
                                                                                                    \
-		if (unit->counter != 0)                                                                    \
-		{                                                                                          \
-			unit->counter--;                                                                       \
-			if (unit->counter == 0)                                                                \
-			{                                                                                      \
-				unit->level = 0;                                                                   \
-				return 1;                                                                          \
-			}                                                                                      \
-			if (unit->level < 0 && btUnitRollCounterEarlyEnd(unitId, unit->counter, bias) != 0)    \
-			{                                                                                      \
-				unit->level   = 0;                                                                 \
-				unit->counter = 0;                                                                 \
-				return 1;                                                                          \
-			}                                                                                      \
-		}                                                                                          \
-		return 0;                                                                                  \
-	}
+        if (unit->counter != 0)                                                                    \
+        {                                                                                          \
+            unit->counter--;                                                                       \
+            if (unit->counter == 0)                                                                \
+            {                                                                                      \
+                unit->level = 0;                                                                   \
+                return 1;                                                                          \
+            }                                                                                      \
+            if (unit->level < 0 && btUnitRollCounterEarlyEnd(unitId, unit->counter, bias) != 0)    \
+            {                                                                                      \
+                unit->level   = 0;                                                                 \
+                unit->counter = 0;                                                                 \
+                return 1;                                                                          \
+            }                                                                                      \
+        }                                                                                          \
+        return 0;                                                                                  \
+    }
 
 // Counts down a Defense change; btProcessTurnEnd shows `MsgDefNormal` when it returns 1.
 DEFINE_COUNT_DOWN_MODIFIER(btUnitCountDownDefenseStage,
@@ -99,22 +99,22 @@ DEFINE_COUNT_DOWN_MODIFIER(btUnitCountDownResistanceStage,
 // Defines a status's turn-end countdown: returns 1 when `counter` runs out, or clears it and
 // returns 1 when the status ends early at `bias`.
 #define DEFINE_COUNT_DOWN_STATUS(name, counter, bias)                                              \
-	Sint32 name(Sint32 unitId)                                                                     \
-	{                                                                                              \
-		UNIT *unit = gmUnitGetStub(unitId);                                                        \
-		if (unit->counter != 0)                                                                    \
-		{                                                                                          \
-			unit->counter--;                                                                       \
-			if (unit->counter == 0)                                                                \
-				return 1;                                                                          \
-			if (btUnitRollCounterEarlyEnd(unitId, unit->counter, bias) != 0)                       \
-			{                                                                                      \
-				unit->counter = 0;                                                                 \
-				return 1;                                                                          \
-			}                                                                                      \
-		}                                                                                          \
-		return 0;                                                                                  \
-	}
+    Sint32 name(Sint32 unitId)                                                                     \
+    {                                                                                              \
+        UNIT *unit = gmUnitGetStub(unitId);                                                        \
+        if (unit->counter != 0)                                                                    \
+        {                                                                                          \
+            unit->counter--;                                                                       \
+            if (unit->counter == 0)                                                                \
+                return 1;                                                                          \
+            if (btUnitRollCounterEarlyEnd(unitId, unit->counter, bias) != 0)                       \
+            {                                                                                      \
+                unit->counter = 0;                                                                 \
+                return 1;                                                                          \
+            }                                                                                      \
+        }                                                                                          \
+        return 0;                                                                                  \
+    }
 
 // Counts down delusion, which may end early; btProcessTurnEnd shows `MsgCureDelusion` when it
 // returns 1.
@@ -136,122 +136,122 @@ DEFINE_COUNT_DOWN_STATUS(btUnitCountDownSleep, sleep, EARLY_END_SLEEP)
 // is gone, may end early.
 Bool btUnitCountDownPsynergySeal(Sint32 unitId)
 {
-	UNIT *unit = gmUnitGetStub(unitId);
+    UNIT *unit = gmUnitGetStub(unitId);
 
-	if (unit->psySeal != 0)
-	{
-		if (unit->psySeal > PSY_SEAL_BIND_MASK)
-			unit->psySeal -= PSY_SEAL_LUFF_TURN;
-		if (unit->psySeal & PSY_SEAL_BIND_MASK)
-			unit->psySeal--;
-		if (unit->psySeal == 0)
-			return TRUE;
-		if (unit->psySeal <= PSY_SEAL_BIND_MASK
-		    && btUnitRollCounterEarlyEnd(unitId, unit->psySeal, EARLY_END_BIND) != 0)
-		{
-			unit->psySeal = 0;
-			return TRUE;
-		}
-	}
-	return FALSE;
+    if (unit->psySeal != 0)
+    {
+        if (unit->psySeal > PSY_SEAL_BIND_MASK)
+            unit->psySeal -= PSY_SEAL_LUFF_TURN;
+        if (unit->psySeal & PSY_SEAL_BIND_MASK)
+            unit->psySeal--;
+        if (unit->psySeal == 0)
+            return TRUE;
+        if (unit->psySeal <= PSY_SEAL_BIND_MASK
+            && btUnitRollCounterEarlyEnd(unitId, unit->psySeal, EARLY_END_BIND) != 0)
+        {
+            unit->psySeal = 0;
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // Counts down UNIT.regenerate and returns 1 when it runs out; it never ends early. btProcessTurnEnd
 // then shows `MsgRefrainEnd`.
 Bool btUnitCountDownRegenerate(Sint32 unitId)
 {
-	Uint8 *turns = &gmUnitGetStub(unitId)->regenerate;
-	if (*turns != 0)
-	{
-		(*turns)--;
-		if (*turns == 0)
-		{
-			return TRUE;
-		}
-	}
-	return FALSE;
+    Uint8 *turns = &gmUnitGetStub(unitId)->regenerate;
+    if (*turns != 0)
+    {
+        (*turns)--;
+        if (*turns == 0)
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // Counts down Reflect and returns 1 when it runs out; it never ends early. btProcessTurnEnd then
 // shows `MsgReflectEnd`.
 Bool btUnitCountDownReflect(Sint32 unitId)
 {
-	Uint8 *turns = &gmUnitGetStub(unitId)->reflect;
-	if (*turns != 0)
-	{
-		(*turns)--;
-		if (*turns == 0)
-		{
-			return TRUE;
-		}
-	}
-	return FALSE;
+    Uint8 *turns = &gmUnitGetStub(unitId)->reflect;
+    if (*turns != 0)
+    {
+        (*turns)--;
+        if (*turns == 0)
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // Counts down an Agility change and returns 1 when it runs out; it never ends early.
 Bool btUnitCountDownAgilityStage(Sint32 unitId)
 {
-	UNIT  *unit  = gmUnitGetStub(unitId);
-	Uint8 *turns = &unit->agilityTurns;
-	if (*turns != 0)
-	{
-		(*turns)--;
-		if (*turns == 0)
-		{
-			unit->agilityStage = 0;
-			return TRUE;
-		}
-	}
-	return FALSE;
+    UNIT  *unit  = gmUnitGetStub(unitId);
+    Uint8 *turns = &unit->agilityTurns;
+    if (*turns != 0)
+    {
+        (*turns)--;
+        if (*turns == 0)
+        {
+            unit->agilityStage = 0;
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // Brings the party's recovering Djinn one turn nearer, setting each that is ready, and returns 1
 // when any was set.
 Sint32 btDjinnRecoveryCountDown(void)
 {
-	DJINN_RECOVERY_LIST *list    = &gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->list;
-	Bool                 removed = FALSE;
-	Sint32               i;
+    DJINN_RECOVERY_LIST *list    = &gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->list;
+    Bool                 removed = FALSE;
+    Sint32               i;
 
-	for (i = 0; i < list->count; i++)
-	{
-		DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
+    for (i = 0; i < list->count; i++)
+    {
+        DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
 
-		if (entry->turns > 0 && gmUnitGetStub(entry->unitId)->hp != 0)
-			entry->turns--;
-	}
-	// Removing an entry moves the next one into its place, so i advances only past entries that
-	// stay.
-	for (i = 0; i < list->count;)
-	{
-		DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
+        if (entry->turns > 0 && gmUnitGetStub(entry->unitId)->hp != 0)
+            entry->turns--;
+    }
+    // Removing an entry moves the next one into its place, so i advances only past entries that
+    // stay.
+    for (i = 0; i < list->count;)
+    {
+        DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
 
-		if (entry->turns == 0)
-		{
-			Uint8 unitId = entry->unitId;
+        if (entry->turns == 0)
+        {
+            Uint8 unitId = entry->unitId;
 
-			gmDjinnSetStub(unitId, entry->element, entry->index);
-			gmDjinnRecoveryRemoveStub(unitId, entry->element, entry->index);
-			gmUnitCalculateStub(unitId);
-			removed = TRUE;
-		}
-		else
-		{
-			i++;
-		}
-	}
-	return removed;
+            gmDjinnSetStub(unitId, entry->element, entry->index);
+            gmDjinnRecoveryRemoveStub(unitId, entry->element, entry->index);
+            gmUnitCalculateStub(unitId);
+            removed = TRUE;
+        }
+        else
+        {
+            i++;
+        }
+    }
+    return removed;
 }
 
 // Runs btDjinnRecoveryCountDown twenty times, which sets every recovering Djinni of a party member
 // with HP; those on standby stay so. Returns 0.
 Sint32 btDjinnRecoveryCountDownTwenty(void)
 {
-	Sint32 turn;
+    Sint32 turn;
 
-	for (turn = 0; turn < 20; turn++)
-		btDjinnRecoveryCountDown();
-	return 0;
+    for (turn = 0; turn < 20; turn++)
+        btDjinnRecoveryCountDown();
+    return 0;
 }
 
 // Does nothing; btRun calls it at the end of each turn and of the battle.
@@ -263,236 +263,236 @@ void btTurnEndNoOperation(void)
 // changes and statuses, showing each that ends.
 UNREAD_RESULT btProcessTurnEnd(void)
 {
-	BATTLE_STATE        *battle;
-	Sint32               side;
-	Sint32               sideCount;
-	Sint32               count;
-	Sint32               i;
-	DJINN_RECOVERY_LIST *list;
+    BATTLE_STATE        *battle;
+    Sint32               side;
+    Sint32               sideCount;
+    Sint32               count;
+    Sint32               i;
+    DJINN_RECOVERY_LIST *list;
 
-	// Djinn recovery: the party's list, and in a link battle the opponent's too. Only a Djinni
-	// whose unit is on the field with HP counts down.
-	battle    = BattleStateWork;
-	sideCount = (battle->isLink != 0) + 1;
-	for (side = 0; side < sideCount; side++)
-	{
-		list = &gmDjinnGetRecoveryTableStub(side)->list;
-		for (i = 0; i < list->count; i++)
-		{
-			DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
+    // Djinn recovery: the party's list, and in a link battle the opponent's too. Only a Djinni
+    // whose unit is on the field with HP counts down.
+    battle    = BattleStateWork;
+    sideCount = (battle->isLink != 0) + 1;
+    for (side = 0; side < sideCount; side++)
+    {
+        list = &gmDjinnGetRecoveryTableStub(side)->list;
+        for (i = 0; i < list->count; i++)
+        {
+            DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
 
-			if (entry->turns > 0 && btObjectGet(entry->unitId) != 0
-			    && gmUnitGetStub(entry->unitId)->hp != 0)
-				entry->turns--;
-		}
-		// Set each recovered Djinni, with its message and its element's effect.
-		for (i = 0; i < list->count;)
-		{
-			DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
+            if (entry->turns > 0 && btObjectGet(entry->unitId) != 0
+                && gmUnitGetStub(entry->unitId)->hp != 0)
+                entry->turns--;
+        }
+        // Set each recovered Djinni, with its message and its element's effect.
+        for (i = 0; i < list->count;)
+        {
+            DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
 
-			if (entry->turns == 0)
-			{
-				Uint8  unitId = entry->unitId;
-				Sint32 element;
+            if (entry->turns == 0)
+            {
+                Uint8  unitId = entry->unitId;
+                Sint32 element;
 
-				if (btObjectGet(unitId) != 0)
-				{
-					btPlaybackReset();
-					btPlaybackSchedulePhase(30);
-					btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
-					btPlaybackPush(PLAYBACK_ABILITY_NAME,
-					               entry->element * DJINN_PER_ELEMENT + entry->index
-					                   + ABILITY_DJINNI_FIRST);
-					btPlaybackPush(PLAYBACK_SOUND, SE_NOTE_HIGH);
-					btPlaybackPush(PLAYBACK_DRAW_STATUS, 0);
-					PUSH_MESSAGE(MsgDjinnSet);
-					btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
-					sySoundPlayStub(SE_POWER_UP);
-					fdActorSelectAnimationStub(btObjectGet(unitId)->actor, POSE_CAST);
-					fdActorSetAnimationSpeedStub(btObjectGet(unitId)->actor, ANIM_STEP_NORMAL * 2);
-					element = entry->element;
-					gmDjinnSetStub(unitId, element, entry->index);
-					gmDjinnRecoveryRemoveStub(unitId, entry->element, entry->index);
-					gmUnitCalculateStub(unitId);
-					btElementGlowPlay(unitId, element, GLOW_BURST, 0);
-					btPlaybackWaitForReady();
-				}
-			}
-			else
-			{
-				i++;
-			}
-		}
-	}
-	// Fade 0 leaves the palette as it is: this only puts the zoomed background back and rebuilds
-	// its map.
-	btBackgroundSetMode(BATTLE_BACKGROUND_ZOOMED, BattleStateWork->bg, 0);
-	{
-		Sint32           *groupList;
-		BATTLE_SIDE_ORDER order = BattleTurnEndSideOrder;
-		Uint16            unitIds[UNIT_MAX];
-		Sint32            group;
-		Sint32            unitIndex;
+                if (btObjectGet(unitId) != 0)
+                {
+                    btPlaybackReset();
+                    btPlaybackSchedulePhase(30);
+                    btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
+                    btPlaybackPush(PLAYBACK_ABILITY_NAME,
+                                   entry->element * DJINN_PER_ELEMENT + entry->index
+                                       + ABILITY_DJINNI_FIRST);
+                    btPlaybackPush(PLAYBACK_SOUND, SE_NOTE_HIGH);
+                    btPlaybackPush(PLAYBACK_DRAW_STATUS, 0);
+                    PUSH_MESSAGE(MsgDjinnSet);
+                    btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
+                    sySoundPlayStub(SE_POWER_UP);
+                    fdActorSelectAnimationStub(btObjectGet(unitId)->actor, POSE_CAST);
+                    fdActorSetAnimationSpeedStub(btObjectGet(unitId)->actor, ANIM_STEP_NORMAL * 2);
+                    element = entry->element;
+                    gmDjinnSetStub(unitId, element, entry->index);
+                    gmDjinnRecoveryRemoveStub(unitId, entry->element, entry->index);
+                    gmUnitCalculateStub(unitId);
+                    btElementGlowPlay(unitId, element, GLOW_BURST, 0);
+                    btPlaybackWaitForReady();
+                }
+            }
+            else
+            {
+                i++;
+            }
+        }
+    }
+    // Fade 0 leaves the palette as it is: this only puts the zoomed background back and rebuilds
+    // its map.
+    btBackgroundSetMode(BATTLE_BACKGROUND_ZOOMED, BattleStateWork->bg, 0);
+    {
+        Sint32           *groupList;
+        BATTLE_SIDE_ORDER order = BattleTurnEndSideOrder;
+        Uint16            unitIds[UNIT_MAX];
+        Sint32            group;
+        Sint32            unitIndex;
 
-		// Each unit's regeneration and counters, the party's first; the link child takes the
-		// enemies first, so both consoles show the same order.
-		if (battle->isLink != 0 && battle->linkSide != 0)
-		{
-			order.group[0] = BATTLE_SIDE_MASK_ENEMIES;
-			order.group[1] = BATTLE_SIDE_MASK_PARTY;
-		}
-		groupList = order.group;
-		for (group = 0; group <= 1; group++)
-		{
-			count = btUnitListIds(groupList[group], unitIds);
-			for (unitIndex = 0; unitIndex < count; unitIndex++)
-			{
-				Sint32 hpAmount;
-				Sint32 ppAmount;
-				Sint32 unitId = unitIds[unitIndex];
-				UNIT  *unit   = gmUnitGetStub(unitId);
+        // Each unit's regeneration and counters, the party's first; the link child takes the
+        // enemies first, so both consoles show the same order.
+        if (battle->isLink != 0 && battle->linkSide != 0)
+        {
+            order.group[0] = BATTLE_SIDE_MASK_ENEMIES;
+            order.group[1] = BATTLE_SIDE_MASK_PARTY;
+        }
+        groupList = order.group;
+        for (group = 0; group <= 1; group++)
+        {
+            count = btUnitListIds(groupList[group], unitIds);
+            for (unitIndex = 0; unitIndex < count; unitIndex++)
+            {
+                Sint32 hpAmount;
+                Sint32 ppAmount;
+                Sint32 unitId = unitIds[unitIndex];
+                UNIT  *unit   = gmUnitGetStub(unitId);
 
-				if (unit->ready != 0)
-				{
-					unit->ready--;
-				}
-				// Regeneration, capped at the maximum, for a unit still standing.
-				if (unit->hp != 0)
-				{
-					if (unit->hpRegen != 0 && unit->hp != unit->hpMax)
-					{
-						hpAmount = unit->hpRegen;
-						if (unit->hp + hpAmount > unit->hpMax)
-						{
-							hpAmount = unit->hpMax - unit->hp;
-						}
-						gmUnitAddHpStub(unitId, hpAmount);
-						mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-						mnMessageArgumentPushStub(hpAmount, MESSAGE_ARGUMENT_NUMBER);
-						if (unit->hp == unit->hpMax)
-						{
-							mnBattleMessageShowAndWaitStub(MsgHpFull);
-						}
-						else
-						{
-							mnBattleMessageShowAndWaitStub(MsgHpRecover);
-						}
-						sySoundPlayStub(SE_NOTE_HIGH);
-						btMessageWaitForAdvance();
-					}
-					if (unit->ppRegen != 0 && unit->pp != unit->ppMax)
-					{
-						ppAmount = unit->ppRegen;
-						if (unit->pp + ppAmount > unit->ppMax)
-						{
-							ppAmount = unit->ppMax - unit->pp;
-						}
-						gmUnitAddPpStub(unitId, ppAmount);
-						mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-						mnMessageArgumentPushStub(ppAmount, MESSAGE_ARGUMENT_NUMBER);
-						if (unit->pp == unit->ppMax)
-						{
-							mnBattleMessageShowAndWaitStub(MsgPpFull);
-						}
-						else
-						{
-							mnBattleMessageShowAndWaitStub(MsgPpRecover);
-						}
-						sySoundPlayStub(SE_NOTE_HIGH);
-						btMessageWaitForAdvance();
-					}
-				}
-				// Each counter that ends rebuilds the unit's status icons and shows its message;
-				// the end of stun or sleep also sets the unit standing.
-				if (btUnitCountDownAgilityStage(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgAgiNormal);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownAttackStage(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgAtkNormal);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownDefenseStage(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgDefNormal);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownResistanceStage(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgResNormal);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownDelusion(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgCureDelusion);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownConfusion(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgConfusionConscious);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownCharm(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgCharmConscious);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownStun(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					btObjectUpdatePose(unitId);
-					mnBattleMessageShowAndWaitStub(MsgCureStun);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownSleep(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					btObjectUpdatePose(unitId);
-					mnBattleMessageShowAndWaitStub(MsgWakes);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownPsynergySeal(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgCureSeal);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownRegenerate(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgRefrainEnd);
-					btMessageWaitForAdvance();
-				}
-				if (btUnitCountDownReflect(unitId) != 0)
-				{
-					btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
-					mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-					mnBattleMessageShowAndWaitStub(MsgReflectEnd);
-					btMessageWaitForAdvance();
-				}
-			}
-		}
-	}
+                if (unit->ready != 0)
+                {
+                    unit->ready--;
+                }
+                // Regeneration, capped at the maximum, for a unit still standing.
+                if (unit->hp != 0)
+                {
+                    if (unit->hpRegen != 0 && unit->hp != unit->hpMax)
+                    {
+                        hpAmount = unit->hpRegen;
+                        if (unit->hp + hpAmount > unit->hpMax)
+                        {
+                            hpAmount = unit->hpMax - unit->hp;
+                        }
+                        gmUnitAddHpStub(unitId, hpAmount);
+                        mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                        mnMessageArgumentPushStub(hpAmount, MESSAGE_ARGUMENT_NUMBER);
+                        if (unit->hp == unit->hpMax)
+                        {
+                            mnBattleMessageShowAndWaitStub(MsgHpFull);
+                        }
+                        else
+                        {
+                            mnBattleMessageShowAndWaitStub(MsgHpRecover);
+                        }
+                        sySoundPlayStub(SE_NOTE_HIGH);
+                        btMessageWaitForAdvance();
+                    }
+                    if (unit->ppRegen != 0 && unit->pp != unit->ppMax)
+                    {
+                        ppAmount = unit->ppRegen;
+                        if (unit->pp + ppAmount > unit->ppMax)
+                        {
+                            ppAmount = unit->ppMax - unit->pp;
+                        }
+                        gmUnitAddPpStub(unitId, ppAmount);
+                        mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                        mnMessageArgumentPushStub(ppAmount, MESSAGE_ARGUMENT_NUMBER);
+                        if (unit->pp == unit->ppMax)
+                        {
+                            mnBattleMessageShowAndWaitStub(MsgPpFull);
+                        }
+                        else
+                        {
+                            mnBattleMessageShowAndWaitStub(MsgPpRecover);
+                        }
+                        sySoundPlayStub(SE_NOTE_HIGH);
+                        btMessageWaitForAdvance();
+                    }
+                }
+                // Each counter that ends rebuilds the unit's status icons and shows its message;
+                // the end of stun or sleep also sets the unit standing.
+                if (btUnitCountDownAgilityStage(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgAgiNormal);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownAttackStage(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgAtkNormal);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownDefenseStage(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgDefNormal);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownResistanceStage(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgResNormal);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownDelusion(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgCureDelusion);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownConfusion(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgConfusionConscious);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownCharm(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgCharmConscious);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownStun(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    btObjectUpdatePose(unitId);
+                    mnBattleMessageShowAndWaitStub(MsgCureStun);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownSleep(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    btObjectUpdatePose(unitId);
+                    mnBattleMessageShowAndWaitStub(MsgWakes);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownPsynergySeal(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgCureSeal);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownRegenerate(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgRefrainEnd);
+                    btMessageWaitForAdvance();
+                }
+                if (btUnitCountDownReflect(unitId) != 0)
+                {
+                    btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
+                    mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
+                    mnBattleMessageShowAndWaitStub(MsgReflectEnd);
+                    btMessageWaitForAdvance();
+                }
+            }
+        }
+    }
 }
 
 // Ends one unit's action: its Djinn on standby are taken off its set, the Djinn a summon used begin
@@ -500,233 +500,233 @@ UNREAD_RESULT btProcessTurnEnd(void)
 // Reaper.
 UNREAD_RESULT btUnitProcessActionEnd(BATTLE_ACTION_RUN *plan)
 {
-	Sint32               unitId;
-	UNIT                *unit;
-	Sint32               battleContinues;
-	Sint32               counts[ELEMENT_COUNT];
-	DJINN_RECOVERY_LIST *list;
-	// An index: a recovery list entry's, then the strongest element's.
-	Sint32               index;
-	Sint32               recoveryTurn;
+    Sint32               unitId;
+    UNIT                *unit;
+    Sint32               battleContinues;
+    Sint32               counts[ELEMENT_COUNT];
+    DJINN_RECOVERY_LIST *list;
+    // An index: a recovery list entry's, then the strongest element's.
+    Sint32               index;
+    Sint32               recoveryTurn;
 
-	// The unit's standby Djinn come off its set.
-	unitId          = plan->unitId;
-	battleContinues = 0;
-	unit            = gmUnitGetStub(unitId);
-	list            = &gmDjinnGetRecoveryTableStub(unitId < 0 || unitId > ALLY_MAX)->list;
-	for (index = 0; index < list->count; index++)
-	{
-		if (list->entries[index].unitId == unitId
-		    && list->entries[index].turns == DJINN_RECOVERY_AFTER_BATTLE)
-		{
-			gmDjinnPutOnStandbyStub(
-				unitId, list->entries[index].element, list->entries[index].index);
-		}
-	}
-	if (btUnitListLiving(BATTLE_SIDE_MASK_PARTY, 0) != 0
-	    && btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) != 0)
-	{
-		battleContinues = 1;
-	}
-	{
-		Sint32               i;
-		Sint32               holderId;
-		DJINN_RECOVERY_LIST *pending;
-		pending = &gmDjinnGetRecoveryTableStub(unitId < 0 || unitId > ALLY_MAX)->list;
-		// The Djinn a summon used recover one a turn, after those already recovering and no sooner
-		// than in 2 turns.
-		for (i = 0; i < ELEMENT_COUNT; i++)
-		{
-			counts[i] = 0;
-		}
-		for (;;)
-		{
-			holderId = -1;
-			for (i = 0; i < pending->count; i++)
-			{
-				if (pending->entries[i].turns == DJINN_RECOVERY_SUMMONED)
-				{
-					holderId = pending->entries[i].unitId;
-					break;
-				}
-			}
-			if (holderId == -1)
-			{
-				break;
-			}
-			recoveryTurn = -1;
-			for (i = 0; i < pending->count; i++)
-			{
-				if (pending->entries[i].unitId == holderId
-				    && pending->entries[i].turns > recoveryTurn)
-				{
-					recoveryTurn = pending->entries[i].turns;
-				}
-			}
-			recoveryTurn++;
-			if (recoveryTurn <= 1)
-			{
-				recoveryTurn = 2;
-			}
-			for (i = 0; i < pending->count; i++)
-			{
-				if (pending->entries[i].unitId == holderId
-				    && pending->entries[i].turns == DJINN_RECOVERY_SUMMONED)
-				{
-					pending->entries[i].turns = recoveryTurn;
-					counts[pending->entries[i].element]++;
-					recoveryTurn++;
-				}
-			}
-		}
-	}
-	if (battleContinues != 0)
-	{
-		UNIT  *before;
-		Sint32 mostOfOneElement;
-		Sint32 i;
-		// The summon's boost: the element it used most Djinn of rises that many levels.
-		mostOfOneElement = 0;
-		before           = syHeapAllocateEWRAM(sizeof(UNIT));
-		syWordsCopy(before, unit, sizeof(UNIT));
-		index = -1;
-		for (i = 0; i < ELEMENT_COUNT; i++)
-		{
-			if (counts[i] > mostOfOneElement)
-			{
-				mostOfOneElement = counts[i];
-				index            = i;
-			}
-		}
-		if (index >= 0 && unit->summonBoost[index] < mostOfOneElement)
-		{
-			unit->summonBoost[index] = mostOfOneElement;
-		}
-		gmUnitCalculateStub(unitId);
-		for (i = 0; i < ELEMENT_COUNT; i++)
-		{
-			Sint32 gain = unit->element[i].power - before->element[i].power;
+    // The unit's standby Djinn come off its set.
+    unitId          = plan->unitId;
+    battleContinues = 0;
+    unit            = gmUnitGetStub(unitId);
+    list            = &gmDjinnGetRecoveryTableStub(unitId < 0 || unitId > ALLY_MAX)->list;
+    for (index = 0; index < list->count; index++)
+    {
+        if (list->entries[index].unitId == unitId
+            && list->entries[index].turns == DJINN_RECOVERY_AFTER_BATTLE)
+        {
+            gmDjinnPutOnStandbyStub(
+                unitId, list->entries[index].element, list->entries[index].index);
+        }
+    }
+    if (btUnitListLiving(BATTLE_SIDE_MASK_PARTY, 0) != 0
+        && btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) != 0)
+    {
+        battleContinues = 1;
+    }
+    {
+        Sint32               i;
+        Sint32               holderId;
+        DJINN_RECOVERY_LIST *pending;
+        pending = &gmDjinnGetRecoveryTableStub(unitId < 0 || unitId > ALLY_MAX)->list;
+        // The Djinn a summon used recover one a turn, after those already recovering and no sooner
+        // than in 2 turns.
+        for (i = 0; i < ELEMENT_COUNT; i++)
+        {
+            counts[i] = 0;
+        }
+        for (;;)
+        {
+            holderId = -1;
+            for (i = 0; i < pending->count; i++)
+            {
+                if (pending->entries[i].turns == DJINN_RECOVERY_SUMMONED)
+                {
+                    holderId = pending->entries[i].unitId;
+                    break;
+                }
+            }
+            if (holderId == -1)
+            {
+                break;
+            }
+            recoveryTurn = -1;
+            for (i = 0; i < pending->count; i++)
+            {
+                if (pending->entries[i].unitId == holderId
+                    && pending->entries[i].turns > recoveryTurn)
+                {
+                    recoveryTurn = pending->entries[i].turns;
+                }
+            }
+            recoveryTurn++;
+            if (recoveryTurn <= 1)
+            {
+                recoveryTurn = 2;
+            }
+            for (i = 0; i < pending->count; i++)
+            {
+                if (pending->entries[i].unitId == holderId
+                    && pending->entries[i].turns == DJINN_RECOVERY_SUMMONED)
+                {
+                    pending->entries[i].turns = recoveryTurn;
+                    counts[pending->entries[i].element]++;
+                    recoveryTurn++;
+                }
+            }
+        }
+    }
+    if (battleContinues != 0)
+    {
+        UNIT  *before;
+        Sint32 mostOfOneElement;
+        Sint32 i;
+        // The summon's boost: the element it used most Djinn of rises that many levels.
+        mostOfOneElement = 0;
+        before           = syHeapAllocateEWRAM(sizeof(UNIT));
+        syWordsCopy(before, unit, sizeof(UNIT));
+        index = -1;
+        for (i = 0; i < ELEMENT_COUNT; i++)
+        {
+            if (counts[i] > mostOfOneElement)
+            {
+                mostOfOneElement = counts[i];
+                index            = i;
+            }
+        }
+        if (index >= 0 && unit->summonBoost[index] < mostOfOneElement)
+        {
+            unit->summonBoost[index] = mostOfOneElement;
+        }
+        gmUnitCalculateStub(unitId);
+        for (i = 0; i < ELEMENT_COUNT; i++)
+        {
+            Sint32 gain = unit->element[i].power - before->element[i].power;
 
-			if (gain > 0)
-			{
-				btPlaybackReset();
-				btPlaybackSchedulePhase(25);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
-				btPlaybackPush(PLAYBACK_NUMBER, gain);
-				btPlaybackPush(PLAYBACK_SOUND, SE_NOTE_HIGH);
-				// MsgEarthPowerUp and the next three, in ELEMENT order.
-				PUSH_MESSAGE(MsgEarthPowerUp + i);
-				btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
-				sySoundPlayStub(SE_POWER_UP);
-				fdActorSelectAnimationStub(btObjectGet(unitId)->actor, POSE_CAST);
-				fdActorSetAnimationSpeedStub(btObjectGet(unitId)->actor, ANIM_STEP_NORMAL * 2);
-				// The pillar of each element whose power rose, its strength the most Djinn of one
-				// element the summon used, less one.
-				btElementGlowPlay(unitId, i, GLOW_PILLAR, mostOfOneElement - 1);
-				btPlaybackWaitForReady();
-			}
-		}
-		syHeapRelease(before);
-	}
-	// Damage at the action's end: the haunting spirit's, poison's, then the Grim Reaper's
-	// countdown.
-	if (battleContinues != 0)
-	{
-		Sint8 *poison;
-		btPlaybackReset();
-		if (plan->hauntDamage != 0)
-		{
-			btPlaybackPush(PLAYBACK_HIT, unitId);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
-			btPlaybackPush(PLAYBACK_NUMBER, plan->hauntDamage);
-			PUSH_MESSAGE(MsgCurseDamage);
-			if (gmUnitAddHpStub(unitId, -plan->hauntDamage) == 0)
-			{
-				Sint32 msg;
-				btPlaybackPush(PLAYBACK_DEFEAT, unitId);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
-				if (unitId >= 0 && unitId <= ALLY_MAX)
-				{
-					msg = MsgGoesDown;
-				}
-				else
-				{
-					msg = MsgStrengthExhausted;
-				}
-				PUSH_MESSAGE(msg);
-			}
-			else
-			{
-				btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
-			}
-		}
-		btPlaybackRunAll();
-		btPlaybackReset();
-		poison = &unit->poison;
-		// A tenth of the maximum HP, a fifth for deadly poison (POISON_VENOM).
-		if (*poison != 0)
-		{
-			Sint32        damage = unit->hpMax * *poison / 10;
-			BATTLE_STATE *battle = BattleStateWork;
-			btPlaybackPush(PLAYBACK_HIT, unitId);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
-			btPlaybackPush(PLAYBACK_NUMBER, damage);
-			PUSH_MESSAGE(MsgPoisonDamage);
-			// DEAD: *poison is nonzero here, so the hit's sound is always SE_HEAVY_IMPACT; the ROM
-			// keeps the reread of *poison, the compare and both stores.
-			if (*poison != 0)
-			{
-				battle->playback.pendingSound = SE_HEAVY_IMPACT;
-			}
-			else
-			{
-				battle->playback.pendingSound = SE_IMPACT;
-			}
-			if (gmUnitAddHpStub(unitId, -damage) == 0)
-			{
-				Sint32 msg;
-				btPlaybackPush(PLAYBACK_DEFEAT, unitId);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
-				if (unitId >= 0 && unitId <= ALLY_MAX)
-				{
-					msg = MsgGoesDown;
-				}
-				else
-				{
-					msg = MsgStrengthExhausted;
-				}
-				PUSH_MESSAGE(msg);
-			}
-			else
-			{
-				btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
-			}
-		}
-		btPlaybackRunAll();
-		btPlaybackReset();
-		// At 0, "The Grim Reaper calls out to ...!" and the unit falls.
-		if (unit->grimReaper != 0)
-		{
-			if (--unit->grimReaper == 0 && gmUnitAddHpStub(unitId, DEFEAT_HP_CHANGE) == 0)
-			{
-				btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
-				PUSH_MESSAGE(MsgReaperCalls);
-				btPlaybackPush(PLAYBACK_HIT, unitId);
-				btPlaybackPush(PLAYBACK_DEFEAT, unitId);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
-				// MsgGoesDown, "... goes down...", or MsgStrengthExhausted, "...'s strength is
-				// exhausted...", counted from MsgReaperCalls.
-				if (unitId >= 0 && unitId <= ALLY_MAX)
-				{
-					PUSH_MESSAGE(MsgReaperCalls - 3);
-				}
-				else
-				{
-					PUSH_MESSAGE(MsgReaperCalls + 3);
-				}
-			}
-		}
-		btPlaybackRunAll();
-	}
-	gmUnitCalculateStub(unitId);
+            if (gain > 0)
+            {
+                btPlaybackReset();
+                btPlaybackSchedulePhase(25);
+                btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
+                btPlaybackPush(PLAYBACK_NUMBER, gain);
+                btPlaybackPush(PLAYBACK_SOUND, SE_NOTE_HIGH);
+                // MsgEarthPowerUp and the next three, in ELEMENT order.
+                PUSH_MESSAGE(MsgEarthPowerUp + i);
+                btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
+                sySoundPlayStub(SE_POWER_UP);
+                fdActorSelectAnimationStub(btObjectGet(unitId)->actor, POSE_CAST);
+                fdActorSetAnimationSpeedStub(btObjectGet(unitId)->actor, ANIM_STEP_NORMAL * 2);
+                // The pillar of each element whose power rose, its strength the most Djinn of one
+                // element the summon used, less one.
+                btElementGlowPlay(unitId, i, GLOW_PILLAR, mostOfOneElement - 1);
+                btPlaybackWaitForReady();
+            }
+        }
+        syHeapRelease(before);
+    }
+    // Damage at the action's end: the haunting spirit's, poison's, then the Grim Reaper's
+    // countdown.
+    if (battleContinues != 0)
+    {
+        Sint8 *poison;
+        btPlaybackReset();
+        if (plan->hauntDamage != 0)
+        {
+            btPlaybackPush(PLAYBACK_HIT, unitId);
+            btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
+            btPlaybackPush(PLAYBACK_NUMBER, plan->hauntDamage);
+            PUSH_MESSAGE(MsgCurseDamage);
+            if (gmUnitAddHpStub(unitId, -plan->hauntDamage) == 0)
+            {
+                Sint32 msg;
+                btPlaybackPush(PLAYBACK_DEFEAT, unitId);
+                btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
+                if (unitId >= 0 && unitId <= ALLY_MAX)
+                {
+                    msg = MsgGoesDown;
+                }
+                else
+                {
+                    msg = MsgStrengthExhausted;
+                }
+                PUSH_MESSAGE(msg);
+            }
+            else
+            {
+                btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
+            }
+        }
+        btPlaybackRunAll();
+        btPlaybackReset();
+        poison = &unit->poison;
+        // A tenth of the maximum HP, a fifth for deadly poison (POISON_VENOM).
+        if (*poison != 0)
+        {
+            Sint32        damage = unit->hpMax * *poison / 10;
+            BATTLE_STATE *battle = BattleStateWork;
+            btPlaybackPush(PLAYBACK_HIT, unitId);
+            btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
+            btPlaybackPush(PLAYBACK_NUMBER, damage);
+            PUSH_MESSAGE(MsgPoisonDamage);
+            // DEAD: *poison is nonzero here, so the hit's sound is always SE_HEAVY_IMPACT; the ROM
+            // keeps the reread of *poison, the compare and both stores.
+            if (*poison != 0)
+            {
+                battle->playback.pendingSound = SE_HEAVY_IMPACT;
+            }
+            else
+            {
+                battle->playback.pendingSound = SE_IMPACT;
+            }
+            if (gmUnitAddHpStub(unitId, -damage) == 0)
+            {
+                Sint32 msg;
+                btPlaybackPush(PLAYBACK_DEFEAT, unitId);
+                btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
+                if (unitId >= 0 && unitId <= ALLY_MAX)
+                {
+                    msg = MsgGoesDown;
+                }
+                else
+                {
+                    msg = MsgStrengthExhausted;
+                }
+                PUSH_MESSAGE(msg);
+            }
+            else
+            {
+                btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
+            }
+        }
+        btPlaybackRunAll();
+        btPlaybackReset();
+        // At 0, "The Grim Reaper calls out to ...!" and the unit falls.
+        if (unit->grimReaper != 0)
+        {
+            if (--unit->grimReaper == 0 && gmUnitAddHpStub(unitId, DEFEAT_HP_CHANGE) == 0)
+            {
+                btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
+                PUSH_MESSAGE(MsgReaperCalls);
+                btPlaybackPush(PLAYBACK_HIT, unitId);
+                btPlaybackPush(PLAYBACK_DEFEAT, unitId);
+                btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
+                // MsgGoesDown, "... goes down...", or MsgStrengthExhausted, "...'s strength is
+                // exhausted...", counted from MsgReaperCalls.
+                if (unitId >= 0 && unitId <= ALLY_MAX)
+                {
+                    PUSH_MESSAGE(MsgReaperCalls - 3);
+                }
+                else
+                {
+                    PUSH_MESSAGE(MsgReaperCalls + 3);
+                }
+            }
+        }
+        btPlaybackRunAll();
+    }
+    gmUnitCalculateStub(unitId);
 }

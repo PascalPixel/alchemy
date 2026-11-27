@@ -11,38 +11,38 @@
 // SOUND_COMMAND_MASK_TOGGLE the bits to flip in it.
 enum SoundCommandMask
 {
-	SOUND_COMMAND_MASK_TOGGLE = 0x80,
-	SOUND_COMMAND_MASK_BITS   = 0x7f
+    SOUND_COMMAND_MASK_TOGGLE = 0x80,
+    SOUND_COMMAND_MASK_BITS   = 0x7f
 };
 
 // A sound for sySoundPlay: bits 11..0 the sound number, 15..12 flags.
 enum SoundControl
 {
-	SOUND_NUM_MASK     = 0xfff,
-	SOUND_FLAGS_MASK   = 0xf000,
-	SOUND_FLAG_FADE_IN = 0x1000, // music fades in over 64 frames
-	// Sounds from here to SOUND_SE_FIRST are jingles; those below are music, but for
-	// SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM.
-	SOUND_JINGLE_FIRST = MUS_PUZZLE_SOLVED,
-	// Sounds from here but SOUND_FADE_OUT_ACTION_SE each play on the player SongTable names for
-	// them.
-	SOUND_SE_FIRST     = SE_BELL
+    SOUND_NUM_MASK     = 0xfff,
+    SOUND_FLAGS_MASK   = 0xf000,
+    SOUND_FLAG_FADE_IN = 0x1000, // music fades in over 64 frames
+    // Sounds from here to SOUND_SE_FIRST are jingles; those below are music, but for
+    // SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM.
+    SOUND_JINGLE_FIRST = MUS_PUZZLE_SOLVED,
+    // Sounds from here but SOUND_FADE_OUT_ACTION_SE each play on the player SongTable names for
+    // them.
+    SOUND_SE_FIRST     = SE_BELL
 };
 
 // The music players by their row in MPlayTable (sound/music_player_table.s), as a song table row
 // names them (Song.ms).
 enum MusicPlayerId
 {
-	MUSIC_PLAYER_JINGLE    = 0, // MPlayInfoJingle
-	MUSIC_PLAYER_BGM       = 1, // MPlayInfoBGM
-	MUSIC_PLAYER_MENU_SE   = 2, // MPlayInfoMenuSE: the interface's sounds
-	// MPlayInfoActionSE: field and battle actions
-	MUSIC_PLAYER_ACTION_SE = 3,
-	// The first music player a sound on MUSIC_PLAYER_SE_LAST may borrow.
-	MUSIC_PLAYER_SE_FIRST  = 4,
-	// A sound on it takes the first idle music player from here down to MUSIC_PLAYER_SE_FIRST, else
-	// this one (sySoundPlay).
-	MUSIC_PLAYER_SE_LAST   = 7
+    MUSIC_PLAYER_JINGLE    = 0, // MPlayInfoJingle
+    MUSIC_PLAYER_BGM       = 1, // MPlayInfoBGM
+    MUSIC_PLAYER_MENU_SE   = 2, // MPlayInfoMenuSE: the interface's sounds
+    // MPlayInfoActionSE: field and battle actions
+    MUSIC_PLAYER_ACTION_SE = 3,
+    // The first music player a sound on MUSIC_PLAYER_SE_LAST may borrow.
+    MUSIC_PLAYER_SE_FIRST  = 4,
+    // A sound on it takes the first idle music player from here down to MUSIC_PLAYER_SE_FIRST, else
+    // this one (sySoundPlay).
+    MUSIC_PLAYER_SE_LAST   = 7
 };
 
 // The five versions of the IWRAM mixer's last step sySoundLoadReverbCode copies into place, each
@@ -50,18 +50,18 @@ enum MusicPlayerId
 // MusicPlayer2000 calls it.
 enum SoundReverbCode
 {
-	// One value for both channels, from the two buffers together; only the sound test loads it.
-	SOUND_REVERB_MONO,
-	// Each channel's old samples crossed with the other's; only the sound test loads it.
-	SOUND_REVERB_CROSSED,
-	// A quarter of the mix and an eighth of each buffer's old samples carry over: most music and
-	// the Battle Arena.
-	SOUND_REVERB_NORMAL,
-	// An eighth of the mix and a quarter of the old samples carry over: MUS_MAIN_THEME_TITLE,
-	// MUS_TO_BE_CONTINUED and MUS_THE_BROKEN_SEAL_ENDING.
-	SOUND_REVERB_LONG,
-	// Nothing carries over, the mix buffer is cleared: a link battle.
-	SOUND_REVERB_NONE
+    // One value for both channels, from the two buffers together; only the sound test loads it.
+    SOUND_REVERB_MONO,
+    // Each channel's old samples crossed with the other's; only the sound test loads it.
+    SOUND_REVERB_CROSSED,
+    // A quarter of the mix and an eighth of each buffer's old samples carry over: most music and
+    // the Battle Arena.
+    SOUND_REVERB_NORMAL,
+    // An eighth of the mix and a quarter of the old samples carry over: MUS_MAIN_THEME_TITLE,
+    // MUS_TO_BE_CONTINUED and MUS_THE_BROKEN_SEAL_ENDING.
+    SOUND_REVERB_LONG,
+    // Nothing carries over, the mix buffer is cleared: a link battle.
+    SOUND_REVERB_NONE
 };
 
 struct MusicPlayerInfo;

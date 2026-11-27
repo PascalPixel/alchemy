@@ -9,9 +9,9 @@
 // How scJupiterLighthouseLoadPalettes treats a room.
 typedef enum LIGHTHOUSE_PALETTES
 {
-	LIGHTHOUSE_PALETTES_BY_FLAG,    // lit once the lighthouse is
-	LIGHTHOUSE_PALETTES_LIT,        // lit whatever the flag
-	LIGHTHOUSE_PALETTES_KEEP_COPIES // by the flag, keeping the copies it has
+    LIGHTHOUSE_PALETTES_BY_FLAG,    // lit once the lighthouse is
+    LIGHTHOUSE_PALETTES_LIT,        // lit whatever the flag
+    LIGHTHOUSE_PALETTES_KEEP_COPIES // by the flag, keeping the copies it has
 } LIGHTHOUSE_PALETTES;
 
 void scJupiterLighthouseLoadPalettes(Sint32 mode);

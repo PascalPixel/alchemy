@@ -2,30 +2,30 @@
 // as scPillarRaise does.
 void scHeldActorRaiseMetatile()
 {
-	ACTOR          *held = FieldStateWork->movedBlock;
-	Uint8          *metatiles;
-	SHAPE_METATILE *shapes;
-	Sint32          shape;
-	Sint32          level;
-	Sint32          index;
-	Uint8           newShape;
+    ACTOR          *held = FieldStateWork->movedBlock;
+    Uint8          *metatiles;
+    SHAPE_METATILE *shapes;
+    Sint32          shape;
+    Sint32          level;
+    Sint32          index;
+    Uint8           newShape;
 
-	if (held == NULL)
-		return;
-	metatiles = (Uint8 *)((MAP_STATE *)RamHeapSlots->mapGrid)->layers[held->layer].metatiles;
-	shapes    = (SHAPE_METATILE *)RamMapShapeGrid
-	       + (((MAP_METATILE *)metatiles) - (MAP_METATILE *)RamMapMetatileBuffer);
-	shape           = fdMapGridGetTerrainKind(held->layer, held->x.fixed, held->z.fixed);
-	level           = fdMapGetTerrainHeight(held->layer, held->x.fixed, held->z.fixed);
-	index           = fdActorGetMetatileIndex(held);
-	level           = METATILE_HEIGHT_STEPS(level);
-	level          += 4;
-	newShape        = fdMapShapeFindOrAdd(held->layer, shape, level);
-	shapes         += index;
-	index         <<= 2;
-	shapes->shape   = newShape;
-	metatiles      += index;
-	((MAP_METATILE *)metatiles)->attributeB |= MAP_METATILE_JUMP | MAP_METATILE_CLIMBABLE;
-	metatiles                               += MAPGRID_SIZE * sizeof(MAP_METATILE);
-	((MAP_METATILE *)metatiles)->attributeB |= MAP_METATILE_CLIMBABLE;
+    if (held == NULL)
+        return;
+    metatiles = (Uint8 *)((MAP_STATE *)RamHeapSlots->mapGrid)->layers[held->layer].metatiles;
+    shapes    = (SHAPE_METATILE *)RamMapShapeGrid
+           + (((MAP_METATILE *)metatiles) - (MAP_METATILE *)RamMapMetatileBuffer);
+    shape           = fdMapGridGetTerrainKind(held->layer, held->x.fixed, held->z.fixed);
+    level           = fdMapGetTerrainHeight(held->layer, held->x.fixed, held->z.fixed);
+    index           = fdActorGetMetatileIndex(held);
+    level           = METATILE_HEIGHT_STEPS(level);
+    level          += 4;
+    newShape        = fdMapShapeFindOrAdd(held->layer, shape, level);
+    shapes         += index;
+    index         <<= 2;
+    shapes->shape   = newShape;
+    metatiles      += index;
+    ((MAP_METATILE *)metatiles)->attributeB |= MAP_METATILE_JUMP | MAP_METATILE_CLIMBABLE;
+    metatiles                               += MAPGRID_SIZE * sizeof(MAP_METATILE);
+    ((MAP_METATILE *)metatiles)->attributeB |= MAP_METATILE_CLIMBABLE;
 }

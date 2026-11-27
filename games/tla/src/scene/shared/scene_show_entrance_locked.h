@@ -3,8 +3,8 @@
 // with the wings.
 void scShowEntranceLocked(void)
 {
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	mnFieldMessageShow((Sint32)MsgShamanEntranceLocked, 1);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    mnFieldMessageShow((Sint32)MsgShamanEntranceLocked, 1);
+    fdScriptEnd();
 }

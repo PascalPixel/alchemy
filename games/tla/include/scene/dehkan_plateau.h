@@ -81,13 +81,13 @@ void scDehkanPlateauInitRopes(void);
 // it leaves in the ceiling of the cave below.
 typedef enum DEHKAN_PLATEAU_CRACK_FIELD
 {
-	CRACK_STARTS_CRACKED, // nonzero: cracked when the room is first entered
-	CRACK_X,              // its map metatile
-	CRACK_Z,
-	CRACK_HOLE,           // its hole picture, a pair of the room's hole pictures
-	CRACK_HOLE_X,         // the map metatile the hole is drawn at
-	CRACK_HOLE_Z,
-	CRACK_FIELDS
+    CRACK_STARTS_CRACKED, // nonzero: cracked when the room is first entered
+    CRACK_X,              // its map metatile
+    CRACK_Z,
+    CRACK_HOLE,           // its hole picture, a pair of the room's hole pictures
+    CRACK_HOLE_X,         // the map metatile the hole is drawn at
+    CRACK_HOLE_Z,
+    CRACK_FIELDS
 } DEHKAN_PLATEAU_CRACK_FIELD;
 
 // The cracks' pictures and records (each room's crack table).

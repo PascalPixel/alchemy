@@ -6,23 +6,23 @@
 // Unused: the work copy of MPlayContinue (games/common/sdk/sound/sound.c).
 void MPlayContinueWorkCopy(struct MusicPlayerInfo *player)
 {
-	if (player->ident == ID_NUMBER)
-	{
-		player->ident++;
-		player->status &= ~MUSICPLAYER_STATUS_PAUSE;
-		player->ident   = ID_NUMBER;
-	}
+    if (player->ident == ID_NUMBER)
+    {
+        player->ident++;
+        player->status &= ~MUSICPLAYER_STATUS_PAUSE;
+        player->ident   = ID_NUMBER;
+    }
 }
 
 // Unused: the work copy of MPlayFadeOut (games/common/sdk/sound/sound.c).
 void MPlayFadeOutWorkCopy(struct MusicPlayerInfo *player, Uint16 speed)
 {
-	if (player->ident == ID_NUMBER)
-	{
-		player->ident++;
-		player->fadeCounter = speed;
-		player->fadePeriod  = speed;
-		player->fadeVolume  = SOUND_FADE_FULL_VOLUME;
-		player->ident       = ID_NUMBER;
-	}
+    if (player->ident == ID_NUMBER)
+    {
+        player->ident++;
+        player->fadeCounter = speed;
+        player->fadePeriod  = speed;
+        player->fadeVolume  = SOUND_FADE_FULL_VOLUME;
+        player->ident       = ID_NUMBER;
+    }
 }

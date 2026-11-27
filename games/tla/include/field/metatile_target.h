@@ -12,33 +12,33 @@
 // One watched metatile, in map metatiles.
 typedef struct METATILE_TARGET_ENTRY
 {
-	Sint16 x;
-	Sint16 z;
-	Sint16 flags;  // set the first time the leader steps on the metatile
-	Sint16 unused; // no code names it
+    Sint16 x;
+    Sint16 z;
+    Sint16 flags;  // set the first time the leader steps on the metatile
+    Sint16 unused; // no code names it
 } METATILE_TARGET_ENTRY;
 
 // A map's watched metatiles and the sprite drawn over the current one.
 typedef struct METATILE_TARGET
 {
-	// the first entry's flag; each later entry takes the next
-	Sint16                firstFlag;
-	// The first of two flag bytes that keep the leader's metatile, x then z (at flagByte + 8).
-	Sint16                flagByte;
-	// the metatile script marking a watched metatile, kind or kind + 1
-	Sint16                kind;
-	Sint16                x;               // column of the copied metatile, whose row is z + 1
-	Sint16                z;
-	Sint16                count;           // entries in use
-	Sint16                current;         // the entry the leader stands on, or -1
-	Sint16                shown;           // nonzero draws the sprite
-	Sint16                tile;            // resource entry of the sprite's tiles
-	Uint16                unusedAfterTile; // no code names it
-	// The sprite as syOAMAddSpriteAtDepth takes it: the queue's link, then OAM attributes 0 and 1
-	// in one word and attribute 2 in the next.
-	unsigned long         oam[3];
-	// Room for 128, as the ROM spaces Mars Lighthouse room F's table.
-	METATILE_TARGET_ENTRY entries[128];
+    // the first entry's flag; each later entry takes the next
+    Sint16                firstFlag;
+    // The first of two flag bytes that keep the leader's metatile, x then z (at flagByte + 8).
+    Sint16                flagByte;
+    // the metatile script marking a watched metatile, kind or kind + 1
+    Sint16                kind;
+    Sint16                x;               // column of the copied metatile, whose row is z + 1
+    Sint16                z;
+    Sint16                count;           // entries in use
+    Sint16                current;         // the entry the leader stands on, or -1
+    Sint16                shown;           // nonzero draws the sprite
+    Sint16                tile;            // resource entry of the sprite's tiles
+    Uint16                unusedAfterTile; // no code names it
+    // The sprite as syOAMAddSpriteAtDepth takes it: the queue's link, then OAM attributes 0 and 1
+    // in one word and attribute 2 in the next.
+    unsigned long         oam[3];
+    // Room for 128, as the ROM spaces Mars Lighthouse room F's table.
+    METATILE_TARGET_ENTRY entries[128];
 } METATILE_TARGET;
 
 // The bytes of the hole mask's picture (a METATILE_TARGET's tile), the sprite drawn in the OBJ
@@ -50,7 +50,7 @@ typedef struct METATILE_TARGET
 // copy of the cracked tile handler builds its row.
 static inline Sint32 syMetatileTargetMetatileOf(FIXED pos, Sint16 bit)
 {
-	return FIELD_METATILE(pos) | bit;
+    return FIELD_METATILE(pos) | bit;
 }
 
 #endif

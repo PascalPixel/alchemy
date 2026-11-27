@@ -6,15 +6,15 @@
 // Unused: writes value as eight hexadecimal digits (HexDigits) and a terminating null.
 UNUSED static void scStringWriteU32AsHex(Uint8 *text, Uint32 value)
 {
-	Sint32 i;
+    Sint32 i;
 
-	text  += 8;
-	*text  = 0;
-	text--;
-	for (i = 7; i >= 0; i--)
-	{
-		*text   = HexDigits[value & 0xf];
-		value >>= 4;
-		text--;
-	}
+    text  += 8;
+    *text  = 0;
+    text--;
+    for (i = 7; i >= 0; i--)
+    {
+        *text   = HexDigits[value & 0xf];
+        value >>= 4;
+        text--;
+    }
 }

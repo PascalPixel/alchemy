@@ -16,56 +16,56 @@
 // event slots are taken. sySetEvent under the name overlays import it by.
 static inline Sint32 sySetTickEvent(EVENT_FUNC callback, Sint32 priority)
 {
-	return sySetEvent(callback, priority);
+    return sySetEvent(callback, priority);
 }
 
 // sySetTickEvent, for a caller that leaves the slot unread.
 static inline void syFieldSetTickEvent(EVENT_FUNC callback, Sint32 priority)
 {
-	sySetEvent(callback, priority);
+    sySetEvent(callback, priority);
 }
 
 // Decodes a tagged LZ stream (a first byte of 0 or 1) from `src` into `dest`.
 static inline Sint32 syFieldDecompressTaggedLZ(const void *src, void *dest)
 {
-	return syDecompressTaggedLZ(src, dest);
+    return syDecompressTaggedLZ(src, dest);
 }
 
 static inline void fdMessageDecodeRawUnbounded(Sint32 msg, Uint16 *buf)
 {
-	mnMessageDecodeRawUnbounded(msg, buf);
+    mnMessageDecodeRawUnbounded(msg, buf);
 }
 
 static inline void fdSetCameraBounds(Sint32 minX, Sint32 minY, Sint32 maxX, Sint32 maxY)
 {
-	fdMapGridSetCameraBounds(minX, minY, maxX, maxY);
+    fdMapGridSetCameraBounds(minX, minY, maxX, maxY);
 }
 
 static inline Sint32 scFieldGameFlagGetByte(Sint32 flag)
 {
-	return syGameFlagGetByte(flag);
+    return syGameFlagGetByte(flag);
 }
 
 static inline Sint32 syFieldPartyListMembers(Sint16 *owners)
 {
-	return gmPartyListMembers(owners);
+    return gmPartyListMembers(owners);
 }
 
 static inline Sint32 scFieldUnitAddHp(Sint32 owner, Sint32 delta)
 {
-	return gmUnitAddHp(owner, delta);
+    return gmUnitAddHp(owner, delta);
 }
 
 // Lets ticks of the game pass (sySynch()).
 static inline void syWait(Sint32 ticks)
 {
-	sySynch(ticks);
+    sySynch(ticks);
 }
 
 // syCloseEvent, from an overlay.
 static inline void syFieldCloseEvent(EVENT_FUNC callback)
 {
-	syCloseEvent(callback);
+    syCloseEvent(callback);
 }
 
 #endif

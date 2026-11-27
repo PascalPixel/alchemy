@@ -10,23 +10,23 @@
 // depth; returns 0 once it has stopped.
 Bool syOrbitUpdate(ORBIT *object)
 {
-	FIXED z;
+    FIXED z;
 
-	object->angle += object->speed;
-	object->x      = syIWRAMMulFX(syCos(object->angle), object->orbitRadius);
-	z              = syIWRAMMulFX(syMathSin(object->angle), object->orbitRadius);
-	object->x     += object->centreX;
-	object->z      = (z >> 1) + object->centreZ;
-	if (object->growth != ORBIT_GROWTH_FULL && (TickCount & 1))
-	{
-		object->orbitRadius  = object->growth * syMathSin(object->phase * ORBIT_PHASE_UNIT);
-		object->growth      += ORBIT_GROWTH_STEP;
-	}
-	if (object->speed == 0)
-		return FALSE;
-	if (object->growth == ORBIT_GROWTH_FULL)
-		object->speed -= ORBIT_SLOWDOWN;
-	return TRUE;
+    object->angle += object->speed;
+    object->x      = syIWRAMMulFX(syCos(object->angle), object->orbitRadius);
+    z              = syIWRAMMulFX(syMathSin(object->angle), object->orbitRadius);
+    object->x     += object->centreX;
+    object->z      = (z >> 1) + object->centreZ;
+    if (object->growth != ORBIT_GROWTH_FULL && (TickCount & 1))
+    {
+        object->orbitRadius  = object->growth * syMathSin(object->phase * ORBIT_PHASE_UNIT);
+        object->growth      += ORBIT_GROWTH_STEP;
+    }
+    if (object->speed == 0)
+        return FALSE;
+    if (object->growth == ORBIT_GROWTH_FULL)
+        object->speed -= ORBIT_SLOWDOWN;
+    return TRUE;
 }
 
 #undef ORBIT_GROWTH_FULL

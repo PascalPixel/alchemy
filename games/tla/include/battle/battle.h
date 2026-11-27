@@ -175,46 +175,46 @@ struct WORLD_MAP_STATE;
 // semi-transparent, and the battle's blends act on them.
 typedef enum BATTLE_SPR_MODE
 {
-	SPRITE_OPAQUE,
-	SPRITE_SEMI_TRANSPARENT
+    SPRITE_OPAQUE,
+    SPRITE_SEMI_TRANSPARENT
 } BATTLE_SPR_MODE;
 
 // The glows btElementGlowPlay plays about a unit in its element.
 typedef enum BATTLE_ELEMENT_GLOW
 {
-	// The star field gathering on the unit while the background darkens: a cast.
-	GLOW_STAR_FIELD,
-	GLOW_STREAKS, // the element's streaks: an enemy's cast
-	GLOW_PILLAR,  // the element's pillar, at a strength: a summon's boost
-	GLOW_BURST    // the element's burst: a Djinni set
+    // The star field gathering on the unit while the background darkens: a cast.
+    GLOW_STAR_FIELD,
+    GLOW_STREAKS, // the element's streaks: an enemy's cast
+    GLOW_PILLAR,  // the element's pillar, at a strength: a summon's boost
+    GLOW_BURST    // the element's burst: a Djinni set
 } BATTLE_ELEMENT_GLOW;
 
 // btHighlightSetModes's modes: the units listed take one blend and every other unit the other (mode
 // bit 0), and the battle steps the blend each tick (btBackgroundStepHighlightBlend).
 typedef enum BATTLE_HIGHLIGHT
 {
-	HIGHLIGHT_OFF      = 0, // every unit opaque, the blend stopped
-	HIGHLIGHT_SELECTED = 1, // the units listed lighten by the ramp
-	// The units listed, semi-transparent, pulse by the ramp: the reserve member a party command
-	// offers.
-	HIGHLIGHT_PULSE    = 2,
-	HIGHLIGHT_FADE_OUT = 4, // the units listed fade out over 32 ticks
-	HIGHLIGHT_FADE_IN  = 6  // the units listed fade in over 32 ticks
+    HIGHLIGHT_OFF      = 0, // every unit opaque, the blend stopped
+    HIGHLIGHT_SELECTED = 1, // the units listed lighten by the ramp
+    // The units listed, semi-transparent, pulse by the ramp: the reserve member a party command
+    // offers.
+    HIGHLIGHT_PULSE    = 2,
+    HIGHLIGHT_FADE_OUT = 4, // the units listed fade out over 32 ticks
+    HIGHLIGHT_FADE_IN  = 6  // the units listed fade in over 32 ticks
 } BATTLE_HIGHLIGHT;
 
 // The battle sprites' animations (AnimationObjectSelectAnimation numbers) that the battle code
 // picks by name.
 typedef enum BATTLE_POSE
 {
-	// The battler held still: an enemy asleep, stunned or held, or a party member standing again
-	// between turns.
-	POSE_STILL      = 0,
-	POSE_STANDING   = 1,
-	POSE_LEAP       = 2, // running up to a target and leaping
-	POSE_CAST       = 3, // a hand raised to cast or use an item
-	POSE_PARTY_HELD = 4, // asleep, stunned or held; also a downed member
-	POSE_DAMAGE     = 5, // taking damage
-	POSE_ENEMY_DOWN = 5  // a downed enemy stays in its damage pose
+    // The battler held still: an enemy asleep, stunned or held, or a party member standing again
+    // between turns.
+    POSE_STILL      = 0,
+    POSE_STANDING   = 1,
+    POSE_LEAP       = 2, // running up to a target and leaping
+    POSE_CAST       = 3, // a hand raised to cast or use an item
+    POSE_PARTY_HELD = 4, // asleep, stunned or held; also a downed member
+    POSE_DAMAGE     = 5, // taking damage
+    POSE_ENEMY_DOWN = 5  // a downed enemy stays in its damage pose
 } BATTLE_POSE;
 
 // BG1's vertical scroll that sets the battle background in the battle view.

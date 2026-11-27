@@ -15,31 +15,31 @@ struct ACTOR;
 // MercuryLighthouseLower, which the hops and the lights answer.
 typedef enum MERCURY_LIGHTHOUSE_POOL_BEHAVIOR
 {
-	// The pool's heart, which gives the leader lights.
-	METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART = 11,
-	// Out in the water, where ripples spread from the leader.
-	METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER = 21,
-	// A plain stepping square of the pool or the floor at its edge, which takes the leader's
-	// lights.
-	METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP  = 31
+    // The pool's heart, which gives the leader lights.
+    METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART = 11,
+    // Out in the water, where ripples spread from the leader.
+    METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER = 21,
+    // A plain stepping square of the pool or the floor at its edge, which takes the leader's
+    // lights.
+    METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP  = 31
 } MERCURY_LIGHTHOUSE_POOL_BEHAVIOR;
 
 // Published in the scene's slot for the leader's lights while the pillar is active.
 typedef struct MERCURY_LIGHTHOUSE_LIGHTS
 {
-	// The leader's lights, 0 to 3: the heart gives three and each hop into the pool spends one.
-	Sint32        levels;
-	Sint32        poolBehavior; // the pool's metatile behavior, the floor's region
-	// Ticks to the next ripple in METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, 10 to 39; a hop
-	// zeroes it.
-	Sint32        rippleTimer;
-	// 16.16 fixed-point pixels: the centre of the column's metatile, where a sinking leader is put
-	// back.
-	FIXED         targetX;
-	FIXED         targetZ;
-	struct ACTOR *pillar; // the column of light over the leader, or null
-	// The light holding the leader up where they landed in the pool, or null.
-	struct ACTOR *stepEffect;
+    // The leader's lights, 0 to 3: the heart gives three and each hop into the pool spends one.
+    Sint32        levels;
+    Sint32        poolBehavior; // the pool's metatile behavior, the floor's region
+    // Ticks to the next ripple in METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, 10 to 39; a hop
+    // zeroes it.
+    Sint32        rippleTimer;
+    // 16.16 fixed-point pixels: the centre of the column's metatile, where a sinking leader is put
+    // back.
+    FIXED         targetX;
+    FIXED         targetZ;
+    struct ACTOR *pillar; // the column of light over the leader, or null
+    // The light holding the leader up where they landed in the pool, or null.
+    struct ACTOR *stepEffect;
 } MERCURY_LIGHTHOUSE_LIGHTS;
 
 STATIC_ASSERT(sizeof(MERCURY_LIGHTHOUSE_LIGHTS) == 28);

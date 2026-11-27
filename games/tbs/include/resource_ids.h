@@ -96,7 +96,7 @@ extern char ResourceIdMogallForestBackdrop; // Mogall Forest's three scenes.
 // SceneIdMercuryLighthouseAerie.
 extern char ResourceIdMercuryLighthouseAerieBackdrop;
 #define RESOURCE_MERCURY_LIGHTHOUSE_AERIE_BACKDROP                                                 \
-	((Sint32)&ResourceIdMercuryLighthouseAerieBackdrop)
+    ((Sint32)&ResourceIdMercuryLighthouseAerieBackdrop)
 // SceneIdShipRooms.
 extern char ResourceIdTolbiShipRoomsBackdrop;
 #define RESOURCE_TOLBI_SHIP_ROOMS_BACKDROP ((Sint32)&ResourceIdTolbiShipRoomsBackdrop)
@@ -133,7 +133,7 @@ extern char ResourceIdTretTreeBranchBackdrop; // SceneIdTretTreeBranch.
 // storm opening of btTransitionRun, where the enemies alone take part.
 extern char ResourceIdVenusLighthouseAerieStormBackdrop;
 #define RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP                                             \
-	((Sint32)&ResourceIdVenusLighthouseAerieStormBackdrop)
+    ((Sint32)&ResourceIdVenusLighthouseAerieStormBackdrop)
 // World map beaches and shallows; Judgment draws it too.
 extern char ResourceIdBeachBackdrop;
 #define RESOURCE_BEACH_BACKDROP ((Sint32)&ResourceIdBeachBackdrop)
@@ -352,7 +352,7 @@ extern char ResourceIdDefaultTileAnimation;
 // The attributes of the world map's cell tiles, loaded with its default cells.
 extern char ResourceIdDefaultMetatileTilesAttributes;
 #define RESOURCE_DEFAULT_METATILE_TILES_ATTRIBUTES                                                 \
-	((Sint32)&ResourceIdDefaultMetatileTilesAttributes)
+    ((Sint32)&ResourceIdDefaultMetatileTilesAttributes)
 
 // The world map's two graphics sets (WorldMapGraphicsResources), each a palette and five tilesets:
 // fdWorldMapLoadGraphics decodes the first four into char blocks 2 and 3 and the fifth into

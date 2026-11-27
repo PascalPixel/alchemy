@@ -10,49 +10,49 @@
 // while small.
 static void scFieldEffectRiseRingBackHalf(ACTOR *actor)
 {
-	ACTOR *anchor;
-	Sint32 frame;
-	FIXED  amplitude;
+    ACTOR *anchor;
+    Sint32 frame;
+    FIXED  amplitude;
 
-	anchor       = (ACTOR *)actor->watchedActor;
-	actor->timer = actor->timer + 1;
-	frame        = actor->timer;
+    anchor       = (ACTOR *)actor->watchedActor;
+    actor->timer = actor->timer + 1;
+    frame        = actor->timer;
 
-	if (frame >= VERTICAL_EFFECT_TICKS)
-	{
-		fdActorRelease(actor);
-		return;
-	}
+    if (frame >= VERTICAL_EFFECT_TICKS)
+    {
+        fdActorRelease(actor);
+        return;
+    }
 
-	amplitude       = sySin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
-	actor->scaleX   = amplitude;
-	actor->scaleY   = amplitude;
-	actor->x.fixed  = anchor->x.fixed;
-	actor->y.fixed += toFIXED(1);
-	actor->z.fixed  = anchor->z.fixed + (toFIXED(1) - amplitude) * 5 + toFIXED(8);
+    amplitude       = sySin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
+    actor->scaleX   = amplitude;
+    actor->scaleY   = amplitude;
+    actor->x.fixed  = anchor->x.fixed;
+    actor->y.fixed += toFIXED(1);
+    actor->z.fixed  = anchor->z.fixed + (toFIXED(1) - amplitude) * 5 + toFIXED(8);
 }
 
 // The ring's front half, the back half's arc upside down, rising with it.
 static void scFieldEffectRiseRingFrontHalf(ACTOR *actor)
 {
-	ACTOR *anchor;
-	Sint32 frame;
-	FIXED  amplitude;
+    ACTOR *anchor;
+    Sint32 frame;
+    FIXED  amplitude;
 
-	anchor       = (ACTOR *)actor->watchedActor;
-	actor->timer = actor->timer + 1;
-	frame        = actor->timer;
+    anchor       = (ACTOR *)actor->watchedActor;
+    actor->timer = actor->timer + 1;
+    frame        = actor->timer;
 
-	if (frame >= VERTICAL_EFFECT_TICKS)
-	{
-		fdActorRelease(actor);
-		return;
-	}
+    if (frame >= VERTICAL_EFFECT_TICKS)
+    {
+        fdActorRelease(actor);
+        return;
+    }
 
-	amplitude       = sySin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
-	actor->scaleX   = amplitude;
-	actor->scaleY   = -amplitude;
-	actor->x.fixed  = anchor->x.fixed;
-	actor->y.fixed += toFIXED(1);
-	actor->z.fixed  = anchor->z.fixed - (toFIXED(1) - amplitude) * 5 + toFIXED(16);
+    amplitude       = sySin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
+    actor->scaleX   = amplitude;
+    actor->scaleY   = -amplitude;
+    actor->x.fixed  = anchor->x.fixed;
+    actor->y.fixed += toFIXED(1);
+    actor->z.fixed  = anchor->z.fixed - (toFIXED(1) - amplitude) * 5 + toFIXED(16);
 }

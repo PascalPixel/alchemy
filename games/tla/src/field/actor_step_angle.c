@@ -6,21 +6,21 @@
 // within 1/16 turn, otherwise 1/32 turn.
 Sint32 fdActorStepAngle(ACTOR *actor)
 {
-	Sint32 delta = 0;
+    Sint32 delta = 0;
 
-	if (actor != NULL)
-	{
-		Sint32 targetAngle  = (Uint16)actor->timer;
-		Sint32 currentAngle = actor->facing;
-		delta               = (Sint16)(targetAngle - currentAngle);
-		if (delta != 0)
-		{
-			if (delta > TRIG_TURN / 16)
-				delta = TRIG_TURN / 32;
-			if (delta < -(TRIG_TURN / 16))
-				delta = -(TRIG_TURN / 32);
-			actor->facing = currentAngle + delta;
-		}
-	}
-	return delta;
+    if (actor != NULL)
+    {
+        Sint32 targetAngle  = (Uint16)actor->timer;
+        Sint32 currentAngle = actor->facing;
+        delta               = (Sint16)(targetAngle - currentAngle);
+        if (delta != 0)
+        {
+            if (delta > TRIG_TURN / 16)
+                delta = TRIG_TURN / 32;
+            if (delta < -(TRIG_TURN / 16))
+                delta = -(TRIG_TURN / 32);
+            actor->facing = currentAngle + delta;
+        }
+    }
+    return delta;
 }

@@ -41,55 +41,55 @@
 // with the hours right-aligned in three characters, and returns `out`. The time stops at 999:59.
 void *mnStringFormatPlayTime(Sint32 ticks, Uint8 *out)
 {
-	Uint8  digits[64];
-	Uint32 totalMinutes;
-	Uint32 hours;
-	Sint32 minutes;
-	Uint8 *digitsCursor;
-	Uint8 *textCursor;
+    Uint8  digits[64];
+    Uint32 totalMinutes;
+    Uint32 hours;
+    Sint32 minutes;
+    Uint8 *digitsCursor;
+    Uint8 *textCursor;
 
-	totalMinutes = (Uint32)ticks / (TICKS_PER_SECOND * SECONDS_PER_MINUTE);
-	if (totalMinutes > PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
-		totalMinutes = PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1;
+    totalMinutes = (Uint32)ticks / (TICKS_PER_SECOND * SECONDS_PER_MINUTE);
+    if (totalMinutes > PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
+        totalMinutes = PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1;
 
-	hours        = totalMinutes / MINUTES_PER_HOUR;
-	minutes      = totalMinutes % MINUTES_PER_HOUR;
+    hours        = totalMinutes / MINUTES_PER_HOUR;
+    minutes      = totalMinutes % MINUTES_PER_HOUR;
 
-	digitsCursor = mnStringFormatNumber(digits, hours, 3);
-	*out         = *digitsCursor;
-	digitsCursor++;
-	textCursor  = out + 1;
-	*textCursor = *digitsCursor;
-	textCursor++;
-	*textCursor = digitsCursor[1];
-	minutes     = WITH_LEADING_ZERO(minutes);
-	textCursor++;
-	*textCursor  = ':';
+    digitsCursor = mnStringFormatNumber(digits, hours, 3);
+    *out         = *digitsCursor;
+    digitsCursor++;
+    textCursor  = out + 1;
+    *textCursor = *digitsCursor;
+    textCursor++;
+    *textCursor = digitsCursor[1];
+    minutes     = WITH_LEADING_ZERO(minutes);
+    textCursor++;
+    *textCursor  = ':';
 
-	digitsCursor = mnStringFormatNumber(digits, minutes, 2);
-	textCursor++;
-	*textCursor = digitsCursor[0];
-	textCursor++;
-	*textCursor   = digitsCursor[1];
-	textCursor[1] = 0;
+    digitsCursor = mnStringFormatNumber(digits, minutes, 2);
+    textCursor++;
+    *textCursor = digitsCursor[0];
+    textCursor++;
+    *textCursor   = digitsCursor[1];
+    textCursor[1] = 0;
 
-	return out;
+    return out;
 }
 
 // Returns the first save file whose summary shows it empty (level 0), or SAVE_NO_FREE_FILE when all
 // three are in use. The summaries must be loaded.
 Uint32 mnSaveFindFreeFile(void)
 {
-	Uint32            file;
-	BUP_FILE_SUMMARY *summary;
+    Uint32            file;
+    BUP_FILE_SUMMARY *summary;
 
-	summary = BupStateWork->summary;
-	for (file = 0; file < BUP_FILE_COUNT; file++, summary++)
-	{
-		if (summary->level == 0)
-			return file;
-	}
-	return SAVE_NO_FREE_FILE;
+    summary = BupStateWork->summary;
+    for (file = 0; file < BUP_FILE_COUNT; file++, summary++)
+    {
+        if (summary->level == 0)
+            return file;
+    }
+    return SAVE_NO_FREE_FILE;
 }
 
 // Returns how many save files there are, leaving out those whose summary has its send flag set (the
@@ -97,29 +97,29 @@ Uint32 mnSaveFindFreeFile(void)
 // the backup memory cannot be read. It opens and releases the save state itself.
 Sint32 mnSaveCountFilesExcludingSent(Sint32 excludeSent)
 {
-	Sint32            file;
-	Sint32            count;
-	BUP_FILE_SUMMARY *summary;
+    Sint32            file;
+    Sint32            count;
+    BUP_FILE_SUMMARY *summary;
 
-	if (syBupInitState() != 0)
-	{
-		count = SAVE_ERROR_NO_MEMORY;
-	}
-	else
-	{
-		count = syBupLoadFileSummaries();
-		if (excludeSent != 0)
-		{
-			summary = BupStateWork->summary;
-			for (file = 0; file < BUP_FILE_COUNT; file++)
-			{
-				if (summary[file].sendFlag != 0)
-					count--;
-			}
-		}
-	}
-	syBupReleaseState();
-	return count;
+    if (syBupInitState() != 0)
+    {
+        count = SAVE_ERROR_NO_MEMORY;
+    }
+    else
+    {
+        count = syBupLoadFileSummaries();
+        if (excludeSent != 0)
+        {
+            summary = BupStateWork->summary;
+            for (file = 0; file < BUP_FILE_COUNT; file++)
+            {
+                if (summary[file].sendFlag != 0)
+                    count--;
+            }
+        }
+    }
+    syBupReleaseState();
+    return count;
 }
 
 // Loads the save file summaries for the File Screen and returns how many files there are: plus
@@ -127,46 +127,46 @@ Sint32 mnSaveCountFilesExcludingSent(Sint32 excludeSent)
 // when the backup memory cannot be read.
 Sint32 mnSaveScanFileSummaries(void)
 {
-	Sint32 error;
-	Sint32 sentCount;
-	Sint32 fileCount;
+    Sint32 error;
+    Sint32 sentCount;
+    Sint32 fileCount;
 
-	error     = syBupInitState();
-	sentCount = 0;
-	fileCount = SAVE_ERROR_NO_MEMORY;
-	if (error == 0)
-	{
-		Sint32     i;
-		BUP_STATE *state;
+    error     = syBupInitState();
+    sentCount = 0;
+    fileCount = SAVE_ERROR_NO_MEMORY;
+    if (error == 0)
+    {
+        Sint32     i;
+        BUP_STATE *state;
 
-		fileCount                = syBupLoadFileSummaries();
-		state                    = BupStateWork;
-		TitleSendOptionEnabled   = 0;
-		TitleBattleOptionEnabled = 0;
-		for (i = 0; i < BUP_FILE_COUNT; i++)
-		{
-			if (state->summary[i].sendFlag != 0)
-			{
-				TitleSendOptionEnabled = 1;
-				sentCount++;
-			}
-			if (state->summary[i].djinnCount != 0)
-			{
-				TitleBattleOptionEnabled = 1;
-			}
-		}
+        fileCount                = syBupLoadFileSummaries();
+        state                    = BupStateWork;
+        TitleSendOptionEnabled   = 0;
+        TitleBattleOptionEnabled = 0;
+        for (i = 0; i < BUP_FILE_COUNT; i++)
+        {
+            if (state->summary[i].sendFlag != 0)
+            {
+                TitleSendOptionEnabled = 1;
+                sentCount++;
+            }
+            if (state->summary[i].djinnCount != 0)
+            {
+                TitleBattleOptionEnabled = 1;
+            }
+        }
 
-		if ((PerData & (KEY_R | KEY_LEFT)) != (KEY_R | KEY_LEFT))
-		{
-			TitleSendOptionEnabled = 0;
-		}
-	}
-	syBupReleaseState();
-	if (fileCount != 0 && sentCount == fileCount)
-	{
-		return fileCount + SAVE_SCAN_ALL_CLEARED;
-	}
-	return fileCount;
+        if ((PerData & (KEY_R | KEY_LEFT)) != (KEY_R | KEY_LEFT))
+        {
+            TitleSendOptionEnabled = 0;
+        }
+    }
+    syBupReleaseState();
+    if (fileCount != 0 && sentCount == fileCount)
+    {
+        return fileCount + SAVE_SCAN_ALL_CLEARED;
+    }
+    return fileCount;
 }
 
 // Prepares the save buffer for writing: stamps the main routine's state with the time and options,
@@ -175,357 +175,357 @@ Sint32 mnSaveScanFileSummaries(void)
 // found) and its checksum, the sum of BUP_CHECKSUM_WORDS words from GameFlagBytes on.
 Uint32 mnSaveBuildFileSummary(void)
 {
-	Uint16            members[14];
-	BUP_FILE_SUMMARY *summary;
-	UNIT             *leader;
-	Uint8            *src;
-	Uint8            *dest;
-	Uint32           *word;
-	Sint32            i;
-	Uint32            sum = 0;
+    Uint16            members[14];
+    BUP_FILE_SUMMARY *summary;
+    UNIT             *leader;
+    Uint8            *src;
+    Uint8            *dest;
+    Uint32           *word;
+    Sint32            i;
+    Uint32            sum = 0;
 
-	// The summary's header comes before the save buffer.
-	summary = (BUP_FILE_SUMMARY *)((Uint32)BupBuffer - offsetof(BUP_FILE_SUMMARY, name));
-	MainRoutineStateWork.buildStamp = gmBuildStampGetTimeStub(0);
-	MainRoutineStateWork.playTime   = PlayTimeTicks;
-	// A second copy of the play time in the file's second part, which syBupLoadFileSummaries reads
-	// back into BUP_FILE_SUMMARY.secondPartPlayTime: the file list lists a file whose two play
-	// times differ as corrupted. UB: the copy is written through SceneLocalState past its own
-	// bytes, into InventorySnapshotWork's last word; UBFIX writes it through InventorySnapshotWork.
-	{
+    // The summary's header comes before the save buffer.
+    summary = (BUP_FILE_SUMMARY *)((Uint32)BupBuffer - offsetof(BUP_FILE_SUMMARY, name));
+    MainRoutineStateWork.buildStamp = gmBuildStampGetTimeStub(0);
+    MainRoutineStateWork.playTime   = PlayTimeTicks;
+    // A second copy of the play time in the file's second part, which syBupLoadFileSummaries reads
+    // back into BUP_FILE_SUMMARY.secondPartPlayTime: the file list lists a file whose two play
+    // times differ as corrupted. UB: the copy is written through SceneLocalState past its own
+    // bytes, into InventorySnapshotWork's last word; UBFIX writes it through InventorySnapshotWork.
+    {
 #if FIX_POINTER_OUTSIDE_OBJECT
-		Uint32 *copy = (Uint32 *)InventorySnapshotWork;
-		copy[SECOND_PART_PLAY_TIME_WORD - SCENE_LOCAL_STATE_WORDS] = PlayTimeTicks;
+        Uint32 *copy = (Uint32 *)InventorySnapshotWork;
+        copy[SECOND_PART_PLAY_TIME_WORD - SCENE_LOCAL_STATE_WORDS] = PlayTimeTicks;
 #else
-		Uint32 *copy                     = (Uint32 *)SceneLocalState;
-		copy[SECOND_PART_PLAY_TIME_WORD] = PlayTimeTicks;
+        Uint32 *copy                     = (Uint32 *)SceneLocalState;
+        copy[SECOND_PART_PLAY_TIME_WORD] = PlayTimeTicks;
 #endif
-	}
-	MainRoutineStateWork.idleSleepEnabled = IdleSleepEnabled;
+    }
+    MainRoutineStateWork.idleSleepEnabled = IdleSleepEnabled;
 
-	leader                                = gmUnitGetStub(MainRoutineStateWork.leaderActorId);
-	dest                                  = summary->name;
-	src                                   = leader->name;
-	for (i = 0; i < (Sint32)sizeof(summary->name); i++)
-		*dest++ = *src++;
-	summary->level    = leader->level;
-	summary->playTime = MainRoutineStateWork.playTime;
-	summary->area =
-		fdAreaGetNameIndexStub(MainRoutineStateWork.next, MainRoutineStateWork.entrance);
-	summary->classId                = leader->classId;
-	summary->coins                  = MainRoutineStateWork.holdings.coins;
-	summary->djinn[ELEMENT_VENUS]   = gmPartySumDjinnCountsStub(ELEMENT_VENUS);
-	summary->djinn[ELEMENT_MERCURY] = gmPartySumDjinnCountsStub(ELEMENT_MERCURY);
-	summary->djinn[ELEMENT_MARS]    = gmPartySumDjinnCountsStub(ELEMENT_MARS);
-	summary->djinn[ELEMENT_JUPITER] = gmPartySumDjinnCountsStub(ELEMENT_JUPITER);
-	// Up to four party members, ended by -1.
-	gmPartyListMembersStub(members);
-	for (i = 0; i <= 3 && members[i] != BATTLE_UNIT_LIST_END; i++)
-		summary->party[i] = members[i];
-	summary->party[i]         = -1;
-	summary->windowHue        = MainRoutineStateWork.windowHue;
-	summary->windowBrightness = MainRoutineStateWork.windowBrightness;
-	summary->sendFlag         = MainRoutineStateWork.sendFlag;
-	summary->djinnCount       = 0;
-	for (i = FLAG_DJINN_FIRST; i < FLAG_DJINNI(ELEMENT_COUNT * DJINN_PER_ELEMENT); i++)
-	{
-		if (gmFlagGetStub(i))
-			summary->djinnCount++;
-	}
-	summary->childhood = gmFlagGetStub(FLAG_CHILDHOOD) != 0;
-	{
-		Sint32 n;
-		Uint32 ticks;
+    leader                                = gmUnitGetStub(MainRoutineStateWork.leaderActorId);
+    dest                                  = summary->name;
+    src                                   = leader->name;
+    for (i = 0; i < (Sint32)sizeof(summary->name); i++)
+        *dest++ = *src++;
+    summary->level    = leader->level;
+    summary->playTime = MainRoutineStateWork.playTime;
+    summary->area =
+        fdAreaGetNameIndexStub(MainRoutineStateWork.next, MainRoutineStateWork.entrance);
+    summary->classId                = leader->classId;
+    summary->coins                  = MainRoutineStateWork.holdings.coins;
+    summary->djinn[ELEMENT_VENUS]   = gmPartySumDjinnCountsStub(ELEMENT_VENUS);
+    summary->djinn[ELEMENT_MERCURY] = gmPartySumDjinnCountsStub(ELEMENT_MERCURY);
+    summary->djinn[ELEMENT_MARS]    = gmPartySumDjinnCountsStub(ELEMENT_MARS);
+    summary->djinn[ELEMENT_JUPITER] = gmPartySumDjinnCountsStub(ELEMENT_JUPITER);
+    // Up to four party members, ended by -1.
+    gmPartyListMembersStub(members);
+    for (i = 0; i <= 3 && members[i] != BATTLE_UNIT_LIST_END; i++)
+        summary->party[i] = members[i];
+    summary->party[i]         = -1;
+    summary->windowHue        = MainRoutineStateWork.windowHue;
+    summary->windowBrightness = MainRoutineStateWork.windowBrightness;
+    summary->sendFlag         = MainRoutineStateWork.sendFlag;
+    summary->djinnCount       = 0;
+    for (i = FLAG_DJINN_FIRST; i < FLAG_DJINNI(ELEMENT_COUNT * DJINN_PER_ELEMENT); i++)
+    {
+        if (gmFlagGetStub(i))
+            summary->djinnCount++;
+    }
+    summary->childhood = gmFlagGetStub(FLAG_CHILDHOOD) != 0;
+    {
+        Sint32 n;
+        Uint32 ticks;
 
-		ticks   = MainRoutineStateWork.buildStamp;
-		// The checksum's words, counted in fours and multiplied back below.
-		n       = BUP_CHECKSUM_WORDS / 4;
-		i       = 0;
-		n     <<= 2;
-		word    = (Uint32 *)GameFlagBytes;
-		IO_WRITE32(ticks, &summary->buildStamp);
-		// A while loop, entered at its test.
-		goto test;
-		do
-		{
-			sum += *word++;
-			i++;
-		test:;
-		} while (i < n);
-	}
-	summary->checksum = sum;
-	return sum;
+        ticks   = MainRoutineStateWork.buildStamp;
+        // The checksum's words, counted in fours and multiplied back below.
+        n       = BUP_CHECKSUM_WORDS / 4;
+        i       = 0;
+        n     <<= 2;
+        word    = (Uint32 *)GameFlagBytes;
+        IO_WRITE32(ticks, &summary->buildStamp);
+        // A while loop, entered at its test.
+        goto test;
+        do
+        {
+            sum += *word++;
+            i++;
+        test:;
+        } while (i < n);
+    }
+    summary->checksum = sum;
+    return sum;
 }
 
 // Saves the game to the current file (BupSlot): builds the summary and writes both halves of the
 // save buffer, as parts BupSlot and BupSlot + BUP_FILE_COUNT.
 Sint16 mnSaveWriteCurrentFile(void)
 {
-	Sint16 file;
-	Sint16 result;
-	Sint32 error;
+    Sint16 file;
+    Sint16 result;
+    Sint32 error;
 
-	result = 0;
-	file   = BupSlot;
-	if (file != -1)
-	{
-		error = syBupInitState();
-		if (error != 0)
-		{
-			mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-			result = SAVE_ERROR_NO_MEMORY;
-		}
-		else
-		{
-			mnSaveBuildFileSummary();
-			{
-				void  *half = &BupBuffer;
-				Sint32 current;
+    result = 0;
+    file   = BupSlot;
+    if (file != -1)
+    {
+        error = syBupInitState();
+        if (error != 0)
+        {
+            mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
+            result = SAVE_ERROR_NO_MEMORY;
+        }
+        else
+        {
+            mnSaveBuildFileSummary();
+            {
+                void  *half = &BupBuffer;
+                Sint32 current;
 
-				error    = syBupWritePart(BupSlot, half);
-				current  = BupSlot;
-				half     = (char *)half + BUP_PART_BYTES;
-				error   |= syBupWritePart(current + BUP_FILE_COUNT, half);
-				if (error != 0)
-				{
-					mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
-					result = SAVE_ERROR_WRITE;
-				}
-			}
-		}
-		syBupReleaseState();
-		file = result;
-	}
-	return file;
+                error    = syBupWritePart(BupSlot, half);
+                current  = BupSlot;
+                half     = (char *)half + BUP_PART_BYTES;
+                error   |= syBupWritePart(current + BUP_FILE_COUNT, half);
+                if (error != 0)
+                {
+                    mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
+                    result = SAVE_ERROR_WRITE;
+                }
+            }
+        }
+        syBupReleaseState();
+        file = result;
+    }
+    return file;
 }
 
 // Writes both halves of the save buffer, as they are, to save file `file`. Returns 0, or a
 // SAVE_ERROR_* after showing its message.
 Sint32 mnSaveWriteFile(Sint32 file)
 {
-	Sint32 error;
-	Sint16 result = 0;
+    Sint32 error;
+    Sint16 result = 0;
 
-	error         = syBupInitState();
-	if (error != 0)
-	{
-		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else
-	{
-		void *half  = &BupBuffer;
+    error         = syBupInitState();
+    if (error != 0)
+    {
+        mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
+        result = SAVE_ERROR_NO_MEMORY;
+    }
+    else
+    {
+        void *half  = &BupBuffer;
 
-		error       = syBupWritePart(file, half);
-		half        = (char *)half + BUP_PART_BYTES;
-		error      |= syBupWritePart(file + BUP_FILE_COUNT, half);
-		if (error != 0)
-		{
-			mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
-			result = SAVE_ERROR_WRITE;
-		}
-	}
-	syBupReleaseState();
-	return result;
+        error       = syBupWritePart(file, half);
+        half        = (char *)half + BUP_PART_BYTES;
+        error      |= syBupWritePart(file + BUP_FILE_COUNT, half);
+        if (error != 0)
+        {
+            mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
+            result = SAVE_ERROR_WRITE;
+        }
+    }
+    syBupReleaseState();
+    return result;
 }
 
 // Writes the 64-byte save stamp (BattleArenaSaveStamp, which lies in the first half of the save
 // buffer) into the current file's first part, leaving the rest of the part as it was saved.
 Sint32 mnSaveWriteLinkTallies(void)
 {
-	void  *part;
-	Sint32 result;
-	Sint32 error;
-	Uint8 *stamp;
+    void  *part;
+    Sint32 result;
+    Sint32 error;
+    Uint8 *stamp;
 
-	part   = syHeapAllocateEWRAM(BUP_PART_BYTES);
-	result = 0;
-	// BUG: returns without freeing the part buffer.
-	if (BupSlot == -1)
-		return -1;
-	error = syBupInitState();
-	if (error != 0)
-	{
-		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else
-	{
-		error = syBupReadPart(BupSlot, part);
-		// A failed read is reported, but the part is still written below from whatever the buffer
-		// holds.
-		if (error != 0)
-		{
-			mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
-			result = SAVE_ERROR_READ;
-		}
-		// The stamp's place in the part is its place in the save buffer.
-		stamp  = (Uint8 *)part + (Sint32)BattleArenaSaveStamp;
-		stamp -= (Sint32)BupBuffer;
-		syWordsCopy(stamp, BattleArenaSaveStamp, 16);
-		error = syBupWritePart(BupSlot, part);
-		if (error != 0)
-		{
-			mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
-			result = SAVE_ERROR_WRITE;
-		}
-	}
-	syBupReleaseState();
-	syHeapRelease(part);
-	return result;
+    part   = syHeapAllocateEWRAM(BUP_PART_BYTES);
+    result = 0;
+    // BUG: returns without freeing the part buffer.
+    if (BupSlot == -1)
+        return -1;
+    error = syBupInitState();
+    if (error != 0)
+    {
+        mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
+        result = SAVE_ERROR_NO_MEMORY;
+    }
+    else
+    {
+        error = syBupReadPart(BupSlot, part);
+        // A failed read is reported, but the part is still written below from whatever the buffer
+        // holds.
+        if (error != 0)
+        {
+            mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
+            result = SAVE_ERROR_READ;
+        }
+        // The stamp's place in the part is its place in the save buffer.
+        stamp  = (Uint8 *)part + (Sint32)BattleArenaSaveStamp;
+        stamp -= (Sint32)BupBuffer;
+        syWordsCopy(stamp, BattleArenaSaveStamp, 16);
+        error = syBupWritePart(BupSlot, part);
+        if (error != 0)
+        {
+            mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
+            result = SAVE_ERROR_WRITE;
+        }
+    }
+    syBupReleaseState();
+    syHeapRelease(part);
+    return result;
 }
 
 // Asks whether to save over the current file and, on Yes, writes the save stamp into it
 // (mnSaveWriteLinkTallies) and says so.
 UNUSED Sint32 mnSaveConfirmAndProcessSelectedFile(void)
 {
-	Sint32 result;
+    Sint32 result;
 
-	// UB: on No, result is returned without ever being set.
+    // UB: on No, result is returned without ever being set.
 #if FIX_UNINITIALIZED_READ
-	result = 0;
+    result = 0;
 #endif
 
-	mnMessageOpenWindow(MsgOverwriteConfirm, 8, 12, 2);
-	while (mnMessageAllTyped() == 0)
-	{
-		sySynch(1);
-	}
-	if (mnYesNoMenuRun(1, 0, 0, 1))
-	{
-		mnMessageCloseFinishedWindows();
-	}
-	else
-	{
-		mnMessageCloseFinishedWindows();
-		sySoundPlayStub(MUS_SAVED);
-		result = mnSaveWriteLinkTallies();
-		if (result >= 0)
-		{
-			mnFieldMessageShow(MsgGameSaved, FIELD_MESSAGE_ZOOM);
-		}
-	}
-	return result;
+    mnMessageOpenWindow(MsgOverwriteConfirm, 8, 12, 2);
+    while (mnMessageAllTyped() == 0)
+    {
+        sySynch(1);
+    }
+    if (mnYesNoMenuRun(1, 0, 0, 1))
+    {
+        mnMessageCloseFinishedWindows();
+    }
+    else
+    {
+        mnMessageCloseFinishedWindows();
+        sySoundPlayStub(MUS_SAVED);
+        result = mnSaveWriteLinkTallies();
+        if (result >= 0)
+        {
+            mnFieldMessageShow(MsgGameSaved, FIELD_MESSAGE_ZOOM);
+        }
+    }
+    return result;
 }
 
 // The file list's Copy (scene/file_screen.c): lets the player choose a file, reads both of its
 // parts into the save buffer, overwriting it, and writes them to the first empty file.
 Sint32 mnSaveCopyFile(void)
 {
-	Uint32 error;
-	Sint32 file;
-	Sint32 result;
+    Uint32 error;
+    Sint32 file;
+    Sint32 result;
 
-	result = 0;
-	error  = syBupInitState();
-	if (error != 0)
-	{
-		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else
-	{
-		syBupLoadFileSummaries();
-		file = mnFileListSelectFile(0, FILE_LIST_COPY);
-		if (file == -1)
-		{
-			result = file;
-		}
-		else
-		{
-			void *lower = &BupBuffer;
-			void *upper;
+    result = 0;
+    error  = syBupInitState();
+    if (error != 0)
+    {
+        mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
+        result = SAVE_ERROR_NO_MEMORY;
+    }
+    else
+    {
+        syBupLoadFileSummaries();
+        file = mnFileListSelectFile(0, FILE_LIST_COPY);
+        if (file == -1)
+        {
+            result = file;
+        }
+        else
+        {
+            void *lower = &BupBuffer;
+            void *upper;
 
-			error  = syBupReadPart(file, lower);
-			upper  = (Uint8 *)lower + BUP_PART_BYTES;
-			error |= syBupReadPart(file + BUP_FILE_COUNT, upper);
-			if (error != 0)
-			{
-				mnFieldMessageShow(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
-				result = SAVE_ERROR_READ;
-			}
-			else
-			{
-				file = mnSaveFindFreeFile();
-				if (file == SAVE_NO_FREE_FILE)
-				{
-					mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
-					result = SAVE_ERROR_NO_FILE;
-				}
-				else
-				{
-					error  = syBupWritePart(file, lower);
-					error |= syBupWritePart(file + BUP_FILE_COUNT, upper);
-					if (error != 0)
-					{
-						mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
-						result = SAVE_ERROR_WRITE;
-					}
-					else
-					{
-						mnFieldMessageShow(MsgFileCopied, FIELD_MESSAGE_ZOOM);
-					}
-				}
-			}
-		}
-	}
+            error  = syBupReadPart(file, lower);
+            upper  = (Uint8 *)lower + BUP_PART_BYTES;
+            error |= syBupReadPart(file + BUP_FILE_COUNT, upper);
+            if (error != 0)
+            {
+                mnFieldMessageShow(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
+                result = SAVE_ERROR_READ;
+            }
+            else
+            {
+                file = mnSaveFindFreeFile();
+                if (file == SAVE_NO_FREE_FILE)
+                {
+                    mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
+                    result = SAVE_ERROR_NO_FILE;
+                }
+                else
+                {
+                    error  = syBupWritePart(file, lower);
+                    error |= syBupWritePart(file + BUP_FILE_COUNT, upper);
+                    if (error != 0)
+                    {
+                        mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
+                        result = SAVE_ERROR_WRITE;
+                    }
+                    else
+                    {
+                        mnFieldMessageShow(MsgFileCopied, FIELD_MESSAGE_ZOOM);
+                    }
+                }
+            }
+        }
+    }
 
-	syBupReleaseState();
-	return result;
+    syBupReleaseState();
+    return result;
 }
 
 // The file list's Erase (scene/file_screen.c): lets the player choose a file, asks whether to erase
 // it and on Yes deletes both of its parts.
 Sint32 mnSaveEraseSelectedFile(void)
 {
-	Sint32 error;
-	Sint32 file;
-	Sint32 result = 0;
+    Sint32 error;
+    Sint32 file;
+    Sint32 result = 0;
 
-	error         = syBupInitState();
-	if (error != 0)
-	{
-		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else
-	{
-		syBupLoadFileSummaries();
-		file = mnFileListSelectFile(0, FILE_LIST_ERASE);
-		if (file == -1)
-		{
-			result = file;
-		}
-		else
-		{
-			mnMessageOpenWindow(MsgEraseConfirm, 8, 1, 2);
-			while (mnMessageAllTyped() == 0)
-			{
-				sySynch(1);
-			}
-			if (mnYesNoMenuRun(1, 0, 3, 1) != 0)
-			{
-				mnMessageCloseFinishedWindows();
-			}
-			else
-			{
-				mnMessageCloseFinishedWindows();
-				error  = syBupDeletePart(file);
-				error |= syBupDeletePart(file + BUP_FILE_COUNT);
-				if (error != 0)
-				{
-					mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
-					result = SAVE_ERROR_ERASE;
-				}
-				else
-				{
-					mnFieldMessageShow(MsgFileErased, FIELD_MESSAGE_ZOOM);
-				}
-			}
-		}
-	}
-	syBupReleaseState();
-	return result;
+    error         = syBupInitState();
+    if (error != 0)
+    {
+        mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
+        result = SAVE_ERROR_NO_MEMORY;
+    }
+    else
+    {
+        syBupLoadFileSummaries();
+        file = mnFileListSelectFile(0, FILE_LIST_ERASE);
+        if (file == -1)
+        {
+            result = file;
+        }
+        else
+        {
+            mnMessageOpenWindow(MsgEraseConfirm, 8, 1, 2);
+            while (mnMessageAllTyped() == 0)
+            {
+                sySynch(1);
+            }
+            if (mnYesNoMenuRun(1, 0, 3, 1) != 0)
+            {
+                mnMessageCloseFinishedWindows();
+            }
+            else
+            {
+                mnMessageCloseFinishedWindows();
+                error  = syBupDeletePart(file);
+                error |= syBupDeletePart(file + BUP_FILE_COUNT);
+                if (error != 0)
+                {
+                    mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
+                    result = SAVE_ERROR_ERASE;
+                }
+                else
+                {
+                    mnFieldMessageShow(MsgFileErased, FIELD_MESSAGE_ZOOM);
+                }
+            }
+        }
+    }
+    syBupReleaseState();
+    return result;
 }
 
 #if FILE_LIST_GLOW_BAR_CURSOR
@@ -534,39 +534,39 @@ Sint32 mnSaveEraseSelectedFile(void)
 // counter, eight ticks behind the one before.
 void mnFileListUpdatePulse(void)
 {
-	Sint32          *frameCount;
-	volatile Uint16 *palette;
-	Sint32           colour;
-	FIXED            sine;
-	Sint32           i;
+    Sint32          *frameCount;
+    volatile Uint16 *palette;
+    Sint32           colour;
+    FIXED            sine;
+    Sint32           i;
 
-	frameCount = (Sint32 *)&FrameCount;
-	palette    = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
-	i          = 0;
-	do
-	{
-#	if FIX_SIGNED_OVERFLOW
-		// Wrap the tick phase before sySin takes its low sixteen bits.
-		sine = sySin((((Uint32)*frameCount + i * 8U) * (TRIG_TURN * 3 / 256U)) & TRIG_ANGLE_MASK);
-#	else
-		sine = sySin((*frameCount + i * 8) * (TRIG_TURN * 3 / 256));
-#	endif
-		colour = sine / (toFIXED(1) / 4);
-		{
-#	if FIX_UNDEFINED_SHIFT
-			// A negative sine must be shifted as unsigned bits.
-			Uint32 red = (Uint32)colour << 1;
-#	else
-			Uint32 red = colour << 1;
-#	endif
-			Uint32 green  = colour;
+    frameCount = (Sint32 *)&FrameCount;
+    palette    = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
+    i          = 0;
+    do
+    {
+#    if FIX_SIGNED_OVERFLOW
+        // Wrap the tick phase before sySin takes its low sixteen bits.
+        sine = sySin((((Uint32)*frameCount + i * 8U) * (TRIG_TURN * 3 / 256U)) & TRIG_ANGLE_MASK);
+#    else
+        sine = sySin((*frameCount + i * 8) * (TRIG_TURN * 3 / 256));
+#    endif
+        colour = sine / (toFIXED(1) / 4);
+        {
+#    if FIX_UNDEFINED_SHIFT
+            // A negative sine must be shifted as unsigned bits.
+            Uint32 red = (Uint32)colour << 1;
+#    else
+            Uint32 red = colour << 1;
+#    endif
+            Uint32 green  = colour;
 
-			red          += FILE_LIST_GLOW_RED;
-			green        += FILE_LIST_GLOW_GREEN;
-			colour       += FILE_LIST_GLOW_BLUE;
-			IO_WRITE16(RGB(red, green, colour), palette++);
-		}
-	} while (++i <= 3);
+            red          += FILE_LIST_GLOW_RED;
+            green        += FILE_LIST_GLOW_GREEN;
+            colour       += FILE_LIST_GLOW_BLUE;
+            IO_WRITE16(RGB(red, green, colour), palette++);
+        }
+    } while (++i <= 3);
 }
 
 #endif
@@ -576,13 +576,13 @@ void mnFileListUpdatePulse(void)
 // Starts the palette glow (mnFileListUpdatePulse) as an event.
 void mnFileListStartPulse(void)
 {
-	sySetEvent(mnFileListUpdatePulse, EVENT_PASS_TICK);
+    sySetEvent(mnFileListUpdatePulse, EVENT_PASS_TICK);
 }
 
 // Stops the file list's glow (mnFileListUpdatePulse).
 void mnFileListStopPulse(void)
 {
-	syCloseEvent(mnFileListUpdatePulse);
+    syCloseEvent(mnFileListUpdatePulse);
 }
 
 // Fills the `width` x `height` tile rectangle at (x, y) inside `window`, clipped to the screen as
@@ -590,54 +590,54 @@ void mnFileListStopPulse(void)
 // palette mnFileListUpdatePulse animates.
 void mnWindowFillTilemapRect(WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
 {
-	Uint16 *tilemap = (Uint16 *)WindowStateWork[0];
-	Sint32  sum;
+    Uint16 *tilemap = (Uint16 *)WindowStateWork[0];
+    Sint32  sum;
 
-	sum = x + window->x;
-	x   = sum + 1;
-	sum = y + (window)->y;
-	y   = sum + 1;
+    sum = x + window->x;
+    x   = sum + 1;
+    sum = y + (window)->y;
+    y   = sum + 1;
 
-	if (x < 0)
-	{
-		width += x;
-		x      = 0;
-	}
-	if (x + width > DISPLAY_TILE_WIDTH - 1)
-		width = DISPLAY_TILE_WIDTH - x;
+    if (x < 0)
+    {
+        width += x;
+        x      = 0;
+    }
+    if (x + width > DISPLAY_TILE_WIDTH - 1)
+        width = DISPLAY_TILE_WIDTH - x;
 
-	if (y < 0)
-	{
-		height += y;
-		y       = 0;
-	}
-	// BUG: the bottom is tested against the screen's width, so a rectangle ending below row
-	// DISPLAY_TILE_HEIGHT writes past WIN_STATE.tilemap; the one caller, the file list's highlight,
-	// never does.
-#	if FIX_RECT_BOTTOM_CLIP
-	if (y + height > DISPLAY_TILE_HEIGHT - 1)
-#	else
-	if (y + height > DISPLAY_TILE_WIDTH - 1)
-#	endif
-		height = DISPLAY_TILE_HEIGHT - y;
+    if (y < 0)
+    {
+        height += y;
+        y       = 0;
+    }
+    // BUG: the bottom is tested against the screen's width, so a rectangle ending below row
+    // DISPLAY_TILE_HEIGHT writes past WIN_STATE.tilemap; the one caller, the file list's highlight,
+    // never does.
+#    if FIX_RECT_BOTTOM_CLIP
+    if (y + height > DISPLAY_TILE_HEIGHT - 1)
+#    else
+    if (y + height > DISPLAY_TILE_WIDTH - 1)
+#    endif
+        height = DISPLAY_TILE_HEIGHT - y;
 
-	if (width > 0 && height > 0)
-	{
-		// Byte offsets: BG_SCREEN_WIDTH entries of 2 bytes a row.
-		Sint32 yOffset = y * (BG_SCREEN_WIDTH * 2);
-		Sint32 xOffset = x << 1;
-		Sint32 offset  = yOffset + xOffset;
-		do
-		{
-			Sint32  remaining = width;
-			Uint16 *cell      = (Uint16 *)(offset + (Sint32)tilemap);
-			for (; remaining != 0; remaining--)
-				*cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
-			height--;
-			offset += BG_SCREEN_WIDTH * 2;
-		} while (height != 0);
-		((WIN_STATE *)tilemap)->dirty = 1;
-	}
+    if (width > 0 && height > 0)
+    {
+        // Byte offsets: BG_SCREEN_WIDTH entries of 2 bytes a row.
+        Sint32 yOffset = y * (BG_SCREEN_WIDTH * 2);
+        Sint32 xOffset = x << 1;
+        Sint32 offset  = yOffset + xOffset;
+        do
+        {
+            Sint32  remaining = width;
+            Uint16 *cell      = (Uint16 *)(offset + (Sint32)tilemap);
+            for (; remaining != 0; remaining--)
+                *cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
+            height--;
+            offset += BG_SCREEN_WIDTH * 2;
+        } while (height != 0);
+        ((WIN_STATE *)tilemap)->dirty = 1;
+    }
 }
 
 #endif
@@ -650,76 +650,76 @@ void mnWindowFillTilemapRect(WINDOW *window, Sint32 x, Sint32 y, Sint32 width, S
 // (x, y) inside `window`, and starts placing them every tick (mnFileListPlacePartySprites).
 void mnFileListShowPartySprites(WINDOW *window, Sint32 x, Sint32 y, BUP_FILE_SUMMARY *summary)
 {
-	SHOP_STATE *menu = MenuState;
-	Sint32      i;
+    SHOP_STATE *menu = MenuState;
+    Sint32      i;
 
-	for (i = 0; i < 4 && summary->party[i] != -1; i++)
-	{
-		SPR *sprite = fdSpriteCreateStub(
-			fdPartyGetCharacterSpriteForChildhoodStub(summary->party[i], summary->childhood));
+    for (i = 0; i < 4 && summary->party[i] != -1; i++)
+    {
+        SPR *sprite = fdSpriteCreateStub(
+            fdPartyGetCharacterSpriteForChildhoodStub(summary->party[i], summary->childhood));
 
-		if (sprite != NULL)
-		{
-			fdSpriteStartAnimationStub(sprite, ANIM_STAND);
-			sprite->flags          = 0;
-			sprite->image.priority = 0;
-		}
+        if (sprite != NULL)
+        {
+            fdSpriteStartAnimationStub(sprite, ANIM_STAND);
+            sprite->flags          = 0;
+            sprite->image.priority = 0;
+        }
 
-		menu->partyMemberIcons[i] = sprite;
-		menu->partyMemberX[i]     = (x + window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
-		menu->partyMemberY[i]     = (y + window->y) * 8 + 16;
-		menu->partyMemberScale[i] = toFIXED(1);
-	}
+        menu->partyMemberIcons[i] = sprite;
+        menu->partyMemberX[i]     = (x + window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
+        menu->partyMemberY[i]     = (y + window->y) * 8 + 16;
+        menu->partyMemberScale[i] = toFIXED(1);
+    }
 
-	sySetEvent(mnFileListPlacePartySprites, EVENT_PASS_TICK);
+    sySetEvent(mnFileListPlacePartySprites, EVENT_PASS_TICK);
 }
 
 // Stops placing the party sprites of the file list and releases them.
 void mnFileListHidePartySprites(void)
 {
-	SHOP_STATE *menu = MenuState;
-	Sint32      i;
+    SHOP_STATE *menu = MenuState;
+    Sint32      i;
 
-	syCloseEvent(mnFileListPlacePartySprites);
-	for (i = 0; i < 4; i++)
-	{
-		if (menu->partyMemberIcons[i] != NULL)
-		{
-			fdSpriteDestroyStub(menu->partyMemberIcons[i]);
-			menu->partyMemberIcons[i] = NULL;
-		}
-	}
+    syCloseEvent(mnFileListPlacePartySprites);
+    for (i = 0; i < 4; i++)
+    {
+        if (menu->partyMemberIcons[i] != NULL)
+        {
+            fdSpriteDestroyStub(menu->partyMemberIcons[i]);
+            menu->partyMemberIcons[i] = NULL;
+        }
+    }
 }
 
 // An event: draws each party sprite of the file list at its place and scale for this tick.
 void mnFileListPlacePartySprites(void)
 {
-	SHOP_STATE   *menu = MenuState;
-	SPR_SCALE     scale;
-	SPR_PLACEMENT pos;
-	Sint32        index = 0;
-	SPR          *sprite;
+    SHOP_STATE   *menu = MenuState;
+    SPR_SCALE     scale;
+    SPR_PLACEMENT pos;
+    Sint32        index = 0;
+    SPR          *sprite;
 
-	while (1)
-	{
-		sprite = menu->partyMemberIcons[index];
-		if (sprite != 0)
-		{
-			// Offset height and y equally to keep the visible row fixed.
-			scale.x          = menu->partyMemberScale[index];
-			scale.y          = menu->partyMemberScale[index];
-			pos.x            = toFIXED(menu->partyMemberX[index]);
-			pos.height       = toFIXED(500);
-			pos.y            = toFIXED(menu->partyMemberY[index]) + toFIXED(500);
-			pos.groundHeight = 0;
-			fdRenderApplyProjectedPlacementStub(sprite, &pos, &scale, FACING_SOUTH);
-		}
-		index += 1;
-		if (index > 3)
-		{
-			break;
-		}
-	}
+    while (1)
+    {
+        sprite = menu->partyMemberIcons[index];
+        if (sprite != 0)
+        {
+            // Offset height and y equally to keep the visible row fixed.
+            scale.x          = menu->partyMemberScale[index];
+            scale.y          = menu->partyMemberScale[index];
+            pos.x            = toFIXED(menu->partyMemberX[index]);
+            pos.height       = toFIXED(500);
+            pos.y            = toFIXED(menu->partyMemberY[index]) + toFIXED(500);
+            pos.groundHeight = 0;
+            fdRenderApplyProjectedPlacementStub(sprite, &pos, &scale, FACING_SOUTH);
+        }
+        index += 1;
+        if (index > 3)
+        {
+            break;
+        }
+    }
 }
 
 // Shows the four Djinn sprites, one for each element, in a row from tile (x, y) inside `window`,
@@ -727,143 +727,143 @@ void mnFileListPlacePartySprites(void)
 // NULL.
 void mnFileListShowDjinnSprites(WINDOW *window, Sint32 x, Sint32 y)
 {
-	ITEM_MENU_STATE *menu = MenuState;
-	Sint32           i;
+    ITEM_MENU_STATE *menu = MenuState;
+    Sint32           i;
 
-	if (window != NULL)
-	{
-		for (i = 0; i < 4; i++)
-		{
-			SPR *sprite = fdSpriteCreateStub(FileListDjinnSpriteIds[i]);
+    if (window != NULL)
+    {
+        for (i = 0; i < 4; i++)
+        {
+            SPR *sprite = fdSpriteCreateStub(FileListDjinnSpriteIds[i]);
 
-			if (sprite != NULL)
-			{
-				fdSpriteStartAnimationStub(sprite, ANIM_WALK);
-				sprite->flags          = 0;
-				sprite->image.priority = 0;
-			}
+            if (sprite != NULL)
+            {
+                fdSpriteStartAnimationStub(sprite, ANIM_WALK);
+                sprite->flags          = 0;
+                sprite->image.priority = 0;
+            }
 
-			menu->figures[i] = sprite;
-			menu->figureX[i] = (window->x + x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
-			menu->figureY[i] = (window->y + y) * 8 + 16;
-		}
+            menu->figures[i] = sprite;
+            menu->figureX[i] = (window->x + x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
+            menu->figureY[i] = (window->y + y) * 8 + 16;
+        }
 
-		sySetEvent(mnFileListPlaceDjinnSprites, EVENT_PASS_TICK);
-	}
+        sySetEvent(mnFileListPlaceDjinnSprites, EVENT_PASS_TICK);
+    }
 }
 
 // Stops placing the Djinn sprites of the file list and releases them.
 void mnFileListHideDjinnSprites(void)
 {
-	ITEM_MENU_STATE *menu = MenuState;
-	Sint32           i;
+    ITEM_MENU_STATE *menu = MenuState;
+    Sint32           i;
 
-	syCloseEvent(mnFileListPlaceDjinnSprites);
-	for (i = 0; i < 4; i++)
-	{
-		if (menu->figures[i] != NULL)
-		{
-			fdSpriteDestroyStub(menu->figures[i]);
-			menu->figures[i] = NULL;
-		}
-	}
+    syCloseEvent(mnFileListPlaceDjinnSprites);
+    for (i = 0; i < 4; i++)
+    {
+        if (menu->figures[i] != NULL)
+        {
+            fdSpriteDestroyStub(menu->figures[i]);
+            menu->figures[i] = NULL;
+        }
+    }
 }
 
 // An event: draws each Djinn sprite of the file list at its place, at scale 1.0, for this tick.
 void mnFileListPlaceDjinnSprites(void)
 {
-	ITEM_MENU_STATE *menu = MenuState;
-	SPR_SCALE        scale;
-	SPR_PLACEMENT    pos;
-	Sint32           index;
+    ITEM_MENU_STATE *menu = MenuState;
+    SPR_SCALE        scale;
+    SPR_PLACEMENT    pos;
+    Sint32           index;
 
-	for (index = 0; index <= 3; index++)
-	{
-		SPR *sprite = menu->figures[index];
+    for (index = 0; index <= 3; index++)
+    {
+        SPR *sprite = menu->figures[index];
 
-		if (sprite != NULL)
-		{
-			FIXED fullSize   = toFIXED(1);
-			FIXED height     = toFIXED(500);
+        if (sprite != NULL)
+        {
+            FIXED fullSize   = toFIXED(1);
+            FIXED height     = toFIXED(500);
 
-			scale.x          = fullSize;
-			scale.y          = fullSize;
-			pos.x            = toFIXED(menu->figureX[index]);
-			pos.height       = height;
-			pos.y            = toFIXED(menu->figureY[index]) + height;
-			pos.groundHeight = 0;
-			fdRenderApplyProjectedPlacementStub(sprite, &pos, &scale, FACING_SOUTH);
-		}
-	}
+            scale.x          = fullSize;
+            scale.y          = fullSize;
+            pos.x            = toFIXED(menu->figureX[index]);
+            pos.height       = height;
+            pos.y            = toFIXED(menu->figureY[index]) + height;
+            pos.groundHeight = 0;
+            fdRenderApplyProjectedPlacementStub(sprite, &pos, &scale, FACING_SOUTH);
+        }
+    }
 }
 
 // Draws the Djinn counts of save file `summary`, one for each element, two digits each, 24 pixels
 // apart on row 16 of `window`, under the Djinn sprites.
 void mnFileListDrawDjinnCounts(WINDOW *window, BUP_FILE_SUMMARY *summary)
 {
-	Sint32 i;
+    Sint32 i;
 
-	if (window != NULL)
-	{
-		for (i = 0; i < 4; i++)
-			mnTextDrawNumberAtOffset(
-				summary->djinn[i], 2, window, i * FILE_LIST_SPRITE_SPACING * 8, 16);
-	}
+    if (window != NULL)
+    {
+        for (i = 0; i < 4; i++)
+            mnTextDrawNumberAtOffset(
+                summary->djinn[i], 2, window, i * FILE_LIST_SPRITE_SPACING * 8, 16);
+    }
 }
 
 // Where each edition draws the "Lv" label and the coin label, in pixels.
 #define SUMMARY_LEVEL_X BY_LANGUAGE(72, 72, 72, 64, 59, 72)
 #define SUMMARY_COINS_X BY_LANGUAGE(48, 48, 48, 56, 56, 48)
 #define SUMMARY_DRAW_LEVEL                                                                         \
-	BY_LANGUAGE(mnTextDrawStringInWindow,                                                          \
-	            mnTextDrawStringInWindow,                                                          \
-	            mnTextDrawStringInWindow,                                                          \
-	            mnTextDrawStringAtOffset,                                                          \
-	            mnTextDrawStringAtOffset,                                                          \
-	            mnTextDrawStringInWindow)
+    BY_LANGUAGE(mnTextDrawStringInWindow,                                                          \
+                mnTextDrawStringInWindow,                                                          \
+                mnTextDrawStringInWindow,                                                          \
+                mnTextDrawStringAtOffset,                                                          \
+                mnTextDrawStringAtOffset,                                                          \
+                mnTextDrawStringInWindow)
 
 // Draws the summary of save file `summary` into `window`: the leader's name, level and class, the
 // play time and the coins.
 void mnFileListDrawSummary(WINDOW *window, BUP_FILE_SUMMARY *summary)
 {
-	Uint32 playTime[4];
-	Sint32 y;
+    Uint32 playTime[4];
+    Sint32 y;
 
-	if (window != 0)
-	{
-		mnWindowSpritePrepareForRedraw(window);
-		mnWindowDrawDividerLine(window, 0, 4, 13, 4);
-		mnTextDrawStringAtOffset(summary->name, window, 0, 0);
-		y = 0;
-		SUMMARY_DRAW_LEVEL(StatusScreenLevelLetterString, window, SUMMARY_LEVEL_X, 0);
-		mnTextDrawNumberAtOffset(summary->level, 2, window, 80, y);
-		mnTextDrawMessageAsTiles(summary->classId + MsgClassName, window, 0, 16);
+    if (window != 0)
+    {
+        mnWindowSpritePrepareForRedraw(window);
+        mnWindowDrawDividerLine(window, 0, 4, 13, 4);
+        mnTextDrawStringAtOffset(summary->name, window, 0, 0);
+        y = 0;
+        SUMMARY_DRAW_LEVEL(StatusScreenLevelLetterString, window, SUMMARY_LEVEL_X, 0);
+        mnTextDrawNumberAtOffset(summary->level, 2, window, 80, y);
+        mnTextDrawMessageAsTiles(summary->classId + MsgClassName, window, 0, 16);
 #if LANGUAGE == LANGUAGE_JAPANESE
-		// Coins on the third row, then "Play Time:" and the time.
-		y = 32;
-		mnTextDrawNumberInWindow(summary->coins, 6, window, 24, y);
-		mnTextDrawMessageAsTiles(MsgCoins, window, 72, 32);
-		mnTextDrawMessageAsTiles(MsgStatusLabel, window, 0, 48);
-		mnTextDrawStringInWindow(
-			mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime), window, 48, 48);
+        // Coins on the third row, then "Play Time:" and the time.
+        y = 32;
+        mnTextDrawNumberInWindow(summary->coins, 6, window, 24, y);
+        mnTextDrawMessageAsTiles(MsgCoins, window, 72, 32);
+        mnTextDrawMessageAsTiles(MsgStatusLabel, window, 0, 48);
+        mnTextDrawStringInWindow(
+            mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime), window, 48, 48);
 #else
-		// "Play Time:" with the time under it, then the coins.
-		mnTextDrawMessageAsTiles(MsgStatusLabel, window, 0, 32);
-		mnTextDrawStringInWindow(
-			mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime), window, 48, 40);
-		y = 48;
-		mnTextDrawNumberInWindow(summary->coins, 6, window, 0, y);
-#	if LANGUAGE == LANGUAGE_FRENCH
-		// French takes the singular "Pièce" for one coin or none.
-		if (summary->coins > 1)
-			mnTextDrawMessageAsTiles(MsgCoins, window, SUMMARY_COINS_X, 48);
-		else
-			mnTextDrawMessageAsTiles(MsgPiece, window, SUMMARY_COINS_X, 48);
-#	else
-		mnTextDrawMessageAsTiles(MsgCoins, window, SUMMARY_COINS_X, 48);
-#	endif
+        // "Play Time:" with the time under it, then the coins.
+        mnTextDrawMessageAsTiles(MsgStatusLabel, window, 0, 32);
+        mnTextDrawStringInWindow(
+            mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime), window, 48, 40);
+        y = 48;
+        mnTextDrawNumberInWindow(summary->coins, 6, window, 0, y);
+#    if LANGUAGE == LANGUAGE_FRENCH
+        // French takes the singular "Pièce" for one coin or none.
+        if (summary->coins > 1)
+            mnTextDrawMessageAsTiles(MsgCoins, window, SUMMARY_COINS_X, 48);
+        else
+            mnTextDrawMessageAsTiles(MsgPiece, window, SUMMARY_COINS_X, 48);
+#    else
+        mnTextDrawMessageAsTiles(MsgCoins, window, SUMMARY_COINS_X, 48);
+#    endif
 #endif
-	}
+    }
 }
 
 // The file list: lists the three files with each one's leader and area (or why it cannot be chosen)
@@ -871,387 +871,387 @@ void mnFileListDrawSummary(WINDOW *window, BUP_FILE_SUMMARY *summary)
 // palette glow.
 Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
 {
-	WINDOW *fileList;
+    WINDOW *fileList;
 #if FILE_LIST_GLOW_BAR_CURSOR
-	BUP_STATE        *save;
-	WINDOW           *summaryWindow;
-	WINDOW           *partyWindow;
-	WINDOW           *djinnWindow;
-	BUP_FILE_SUMMARY *summary;
-	WINDOW_SPR       *modePicture;
-	Bool              summaryDirty;
-	WIN_STATE        *state;
-	Uint32            buildStamp;
-	SHOP_STATE       *spriteState;
-	Sint32            result;
-	Sint32            i;
-	Sint32            y;
+    BUP_STATE        *save;
+    WINDOW           *summaryWindow;
+    WINDOW           *partyWindow;
+    WINDOW           *djinnWindow;
+    BUP_FILE_SUMMARY *summary;
+    WINDOW_SPR       *modePicture;
+    Bool              summaryDirty;
+    WIN_STATE        *state;
+    Uint32            buildStamp;
+    SHOP_STATE       *spriteState;
+    Sint32            result;
+    Sint32            i;
+    Sint32            y;
 #else
-	WINDOW           *summaryWindow;
-	BUP_STATE        *save;
-	WINDOW           *partyWindow;
-	WINDOW           *djinnWindow;
-	BUP_FILE_SUMMARY *summary;
-	WINDOW_SPR       *modePicture;
-	Sint32            cursorStyle;
-	Bool              summaryDirty;
-	WIN_STATE        *state;
-	Uint32            buildStamp;
-	SHOP_STATE       *spriteState;
-	MENU_CURSOR       fileCursor;
-	Sint32            result;
-	Sint32            i;
-	Sint32            x;
-	Sint32            y;
-	Sint32            vramSlot;
-	WINDOW_SPR       *cursorSprite;
+    WINDOW           *summaryWindow;
+    BUP_STATE        *save;
+    WINDOW           *partyWindow;
+    WINDOW           *djinnWindow;
+    BUP_FILE_SUMMARY *summary;
+    WINDOW_SPR       *modePicture;
+    Sint32            cursorStyle;
+    Bool              summaryDirty;
+    WIN_STATE        *state;
+    Uint32            buildStamp;
+    SHOP_STATE       *spriteState;
+    MENU_CURSOR       fileCursor;
+    Sint32            result;
+    Sint32            i;
+    Sint32            x;
+    Sint32            y;
+    Sint32            vramSlot;
+    WINDOW_SPR       *cursorSprite;
 #endif
 
-	spriteState   = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(*spriteState));
-	save          = BupStateWork;
-	summaryWindow = NULL;
-	partyWindow   = NULL;
-	djinnWindow   = NULL;
-	summaryDirty  = TRUE;
-	state         = WINDOW_STATE;
-	buildStamp    = gmBuildStampGetTimeStub();
-	// Start on the first file the mode allows. BUG: when none is, the jump to done returns
-	// FILE_LIST_NO_FILE without releasing spriteState's HEAP_SLOT_MENU block.
-	if (selectedFile < 0)
-		selectedFile = 0;
+    spriteState   = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(*spriteState));
+    save          = BupStateWork;
+    summaryWindow = NULL;
+    partyWindow   = NULL;
+    djinnWindow   = NULL;
+    summaryDirty  = TRUE;
+    state         = WINDOW_STATE;
+    buildStamp    = gmBuildStampGetTimeStub();
+    // Start on the first file the mode allows. BUG: when none is, the jump to done returns
+    // FILE_LIST_NO_FILE without releasing spriteState's HEAP_SLOT_MENU block.
+    if (selectedFile < 0)
+        selectedFile = 0;
 #if FILE_LIST_GLOW_BAR_CURSOR
-	if (menuMode == FILE_LIST_CONTINUE)
-	{
-		for (i = 0; i < BUP_FILE_COUNT
-		            && (save->summary[selectedFile].level == 0
-		                || save->summary[selectedFile].sendFlag != 0);
-		     i++)
-		{
-			selectedFile++;
-			if (selectedFile == BUP_FILE_COUNT)
-				selectedFile = 0;
-		}
-		if (i == BUP_FILE_COUNT)
-		{
-			result = FILE_LIST_NO_FILE;
-			goto done;
-		}
-	}
-	else if (menuMode == FILE_LIST_BATTLE)
-	{
-		for (i = 0; i < BUP_FILE_COUNT
-		            && (save->summary[selectedFile].level == 0
-		                || save->summary[selectedFile].djinnCount == 0);
-		     i++)
-		{
-			selectedFile++;
-			if (selectedFile == BUP_FILE_COUNT)
-				selectedFile = 0;
-		}
-		if (i == BUP_FILE_COUNT)
-		{
-			result = FILE_LIST_NO_FILE;
-			goto done;
-		}
-	}
-	else if (menuMode == FILE_LIST_CLEARED)
-	{
-		for (i = 0; i < BUP_FILE_COUNT
-		            && (save->summary[selectedFile].level == 0
-		                || save->summary[selectedFile].sendFlag == 0);
-		     i++)
-		{
-			selectedFile++;
-			if (selectedFile == BUP_FILE_COUNT)
-				selectedFile = 0;
-		}
-		if (i == BUP_FILE_COUNT)
-		{
-			result = FILE_LIST_NO_FILE;
-			goto done;
-		}
-	}
-	else if (menuMode != FILE_LIST_SAVE)
-	{
-		for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].level == 0); i++)
-		{
-			selectedFile++;
-			if (selectedFile == BUP_FILE_COUNT)
-				selectedFile = 0;
-		}
-		if (i == BUP_FILE_COUNT)
-		{
-			result = FILE_LIST_NO_FILE;
-			goto done;
-		}
-	}
+    if (menuMode == FILE_LIST_CONTINUE)
+    {
+        for (i = 0; i < BUP_FILE_COUNT
+                    && (save->summary[selectedFile].level == 0
+                        || save->summary[selectedFile].sendFlag != 0);
+             i++)
+        {
+            selectedFile++;
+            if (selectedFile == BUP_FILE_COUNT)
+                selectedFile = 0;
+        }
+        if (i == BUP_FILE_COUNT)
+        {
+            result = FILE_LIST_NO_FILE;
+            goto done;
+        }
+    }
+    else if (menuMode == FILE_LIST_BATTLE)
+    {
+        for (i = 0; i < BUP_FILE_COUNT
+                    && (save->summary[selectedFile].level == 0
+                        || save->summary[selectedFile].djinnCount == 0);
+             i++)
+        {
+            selectedFile++;
+            if (selectedFile == BUP_FILE_COUNT)
+                selectedFile = 0;
+        }
+        if (i == BUP_FILE_COUNT)
+        {
+            result = FILE_LIST_NO_FILE;
+            goto done;
+        }
+    }
+    else if (menuMode == FILE_LIST_CLEARED)
+    {
+        for (i = 0; i < BUP_FILE_COUNT
+                    && (save->summary[selectedFile].level == 0
+                        || save->summary[selectedFile].sendFlag == 0);
+             i++)
+        {
+            selectedFile++;
+            if (selectedFile == BUP_FILE_COUNT)
+                selectedFile = 0;
+        }
+        if (i == BUP_FILE_COUNT)
+        {
+            result = FILE_LIST_NO_FILE;
+            goto done;
+        }
+    }
+    else if (menuMode != FILE_LIST_SAVE)
+    {
+        for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].level == 0); i++)
+        {
+            selectedFile++;
+            if (selectedFile == BUP_FILE_COUNT)
+                selectedFile = 0;
+        }
+        if (i == BUP_FILE_COUNT)
+        {
+            result = FILE_LIST_NO_FILE;
+            goto done;
+        }
+    }
 
-	// The file list, and the mode's sprite above it.
-	DMA_FILL32(0, spriteState, sizeof(*spriteState));
-	mnFileListStartPulse();
-	fileList = mnWindowCreate(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
-	summary  = save->summary;
-	y        = 0;
-	for (i = 0; i < BUP_FILE_COUNT; i++, y += 16, summary++)
-	{
-		if (summary->level == 0)
-		{
-			mnTextDrawMessage(MsgSaveNoData, fileList, 10, y);
-		}
-		else if (summary->buildStamp < buildStamp)
-		{
-			// Saved by an older build: "(Continue from a Sanctum)", since such a file resumes at
-			// MAIN_ROUTINE_STATE.restartScene, not where it was saved (scene/file_screen.c).
-			mnTextDrawMessage(MsgSaveContinue, fileList, 10, y);
-		}
-		else if (summary->playTime != summary->secondPartPlayTime)
-		{
-			mnTextDrawMessage(MsgSaveCorrupted, fileList, 10, y);
-		}
-		else if (menuMode == FILE_LIST_CLEARED && summary->sendFlag == 0)
-		{
-			mnTextDrawMessage(MsgSaveNotCleared, fileList, 10, y);
-		}
-		else
-		{
-			mnTextDrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
-			mnTextDrawMessage(summary->area + MsgDebugAreaName, fileList, 62, y);
-			state->dirty = 1;
-		}
-	}
-	mnWindowDrawDividerLine(fileList, 0, 2, 27, 2);
-	mnWindowDrawDividerLine(fileList, 0, 4, 27, 4);
+    // The file list, and the mode's sprite above it.
+    DMA_FILL32(0, spriteState, sizeof(*spriteState));
+    mnFileListStartPulse();
+    fileList = mnWindowCreate(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
+    summary  = save->summary;
+    y        = 0;
+    for (i = 0; i < BUP_FILE_COUNT; i++, y += 16, summary++)
+    {
+        if (summary->level == 0)
+        {
+            mnTextDrawMessage(MsgSaveNoData, fileList, 10, y);
+        }
+        else if (summary->buildStamp < buildStamp)
+        {
+            // Saved by an older build: "(Continue from a Sanctum)", since such a file resumes at
+            // MAIN_ROUTINE_STATE.restartScene, not where it was saved (scene/file_screen.c).
+            mnTextDrawMessage(MsgSaveContinue, fileList, 10, y);
+        }
+        else if (summary->playTime != summary->secondPartPlayTime)
+        {
+            mnTextDrawMessage(MsgSaveCorrupted, fileList, 10, y);
+        }
+        else if (menuMode == FILE_LIST_CLEARED && summary->sendFlag == 0)
+        {
+            mnTextDrawMessage(MsgSaveNotCleared, fileList, 10, y);
+        }
+        else
+        {
+            mnTextDrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
+            mnTextDrawMessage(summary->area + MsgDebugAreaName, fileList, 62, y);
+            state->dirty = 1;
+        }
+    }
+    mnWindowDrawDividerLine(fileList, 0, 2, 27, 2);
+    mnWindowDrawDividerLine(fileList, 0, 4, 27, 4);
 #else
-	if (menuMode != FILE_LIST_SAVE)
-	{
-		for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].level == 0); i++)
-		{
-			selectedFile++;
-			if (selectedFile == BUP_FILE_COUNT)
-				selectedFile = 0;
-		}
-		if (i == BUP_FILE_COUNT)
-		{
-			result = FILE_LIST_NO_FILE;
-			goto done;
-		}
-	}
-	if (menuMode == FILE_LIST_CONTINUE)
-	{
-		for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].sendFlag != 0); i++)
-		{
-			selectedFile++;
-			if (selectedFile == BUP_FILE_COUNT)
-				selectedFile = 0;
-		}
-		if (i == BUP_FILE_COUNT)
-		{
-			result = FILE_LIST_NO_FILE;
-			goto done;
-		}
-	}
-	if (menuMode == FILE_LIST_BATTLE)
-	{
-		for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].djinnCount == 0); i++)
-		{
-			selectedFile++;
-			if (selectedFile == BUP_FILE_COUNT)
-				selectedFile = 0;
-		}
-		if (i == BUP_FILE_COUNT)
-		{
-			result = FILE_LIST_NO_FILE;
-			goto done;
-		}
-	}
-	if (menuMode == FILE_LIST_CLEARED)
-	{
-		for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].sendFlag == 0); i++)
-		{
-			selectedFile++;
-			if (selectedFile == BUP_FILE_COUNT)
-				selectedFile = 0;
-		}
-		if (i == BUP_FILE_COUNT)
-		{
-			result = FILE_LIST_NO_FILE;
-			goto done;
-		}
-	}
+    if (menuMode != FILE_LIST_SAVE)
+    {
+        for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].level == 0); i++)
+        {
+            selectedFile++;
+            if (selectedFile == BUP_FILE_COUNT)
+                selectedFile = 0;
+        }
+        if (i == BUP_FILE_COUNT)
+        {
+            result = FILE_LIST_NO_FILE;
+            goto done;
+        }
+    }
+    if (menuMode == FILE_LIST_CONTINUE)
+    {
+        for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].sendFlag != 0); i++)
+        {
+            selectedFile++;
+            if (selectedFile == BUP_FILE_COUNT)
+                selectedFile = 0;
+        }
+        if (i == BUP_FILE_COUNT)
+        {
+            result = FILE_LIST_NO_FILE;
+            goto done;
+        }
+    }
+    if (menuMode == FILE_LIST_BATTLE)
+    {
+        for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].djinnCount == 0); i++)
+        {
+            selectedFile++;
+            if (selectedFile == BUP_FILE_COUNT)
+                selectedFile = 0;
+        }
+        if (i == BUP_FILE_COUNT)
+        {
+            result = FILE_LIST_NO_FILE;
+            goto done;
+        }
+    }
+    if (menuMode == FILE_LIST_CLEARED)
+    {
+        for (i = 0; i < BUP_FILE_COUNT && (save->summary[selectedFile].sendFlag == 0); i++)
+        {
+            selectedFile++;
+            if (selectedFile == BUP_FILE_COUNT)
+                selectedFile = 0;
+        }
+        if (i == BUP_FILE_COUNT)
+        {
+            result = FILE_LIST_NO_FILE;
+            goto done;
+        }
+    }
 
-	// The file list, and the mode's sprite above it.
-	DMA_FILL32(0, spriteState, sizeof(*spriteState));
-	fileList = mnWindowCreate(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
+    // The file list, and the mode's sprite above it.
+    DMA_FILL32(0, spriteState, sizeof(*spriteState));
+    fileList = mnWindowCreate(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
 
-	for (i = 0, summary = save->summary; i < BUP_FILE_COUNT; i++, summary++)
-	{
-		if (save->summary[i].level == 0)
-		{
-			mnTextDrawMessage(MsgSaveNoData, fileList, 10, i * 16);
-		}
-		else if (save->summary[i].buildStamp < buildStamp)
-		{
-			// Saved by an older build: see the other editions' list above.
-			mnTextDrawMessage(MsgSaveContinue, fileList, 10, i * 16);
-		}
-		else if (save->summary[i].playTime != save->summary[i].secondPartPlayTime)
-		{
-			mnTextDrawMessage(MsgSaveCorrupted, fileList, 10, i * 16);
-		}
-		else if (menuMode == FILE_LIST_CLEARED && save->summary[i].sendFlag == 0)
-		{
-			mnTextDrawMessage(MsgSaveNotCleared, fileList, 10, i * 16);
-		}
-		else
-		{
-			y = i * 16;
-			mnTextDrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
-			mnTextDrawMessage(save->summary[i].area + MsgDebugAreaName, fileList, 72, y);
-			state->dirty = 1;
-		}
-	}
-	mnWindowDrawDividerLine(fileList, 0, 2, 27, 2);
-	mnWindowDrawDividerLine(fileList, 0, 4, 27, 4);
-	vramSlot = syVRAMCacheFindFreeEntry();
-	if (vramSlot < VRAM_CACHE_ENTRY_COUNT)
-	{
-		syVRAMCacheLoad(vramSlot, 128, PointingHandTiles);
-		x            = -12;
-		y            = selectedFile * 16 + 4;
-		cursorSprite = mnWindowSpriteCreate(vramSlot, WINDOW_SPRITE_SIZE_16X16, fileList, x, y);
-		cursorSprite->motion = WINDOW_SPRITE_MOTION_STILL;
-		fileCursor.anchor    = cursorSprite;
-	}
-	cursorStyle = 1;
+    for (i = 0, summary = save->summary; i < BUP_FILE_COUNT; i++, summary++)
+    {
+        if (save->summary[i].level == 0)
+        {
+            mnTextDrawMessage(MsgSaveNoData, fileList, 10, i * 16);
+        }
+        else if (save->summary[i].buildStamp < buildStamp)
+        {
+            // Saved by an older build: see the other editions' list above.
+            mnTextDrawMessage(MsgSaveContinue, fileList, 10, i * 16);
+        }
+        else if (save->summary[i].playTime != save->summary[i].secondPartPlayTime)
+        {
+            mnTextDrawMessage(MsgSaveCorrupted, fileList, 10, i * 16);
+        }
+        else if (menuMode == FILE_LIST_CLEARED && save->summary[i].sendFlag == 0)
+        {
+            mnTextDrawMessage(MsgSaveNotCleared, fileList, 10, i * 16);
+        }
+        else
+        {
+            y = i * 16;
+            mnTextDrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
+            mnTextDrawMessage(save->summary[i].area + MsgDebugAreaName, fileList, 72, y);
+            state->dirty = 1;
+        }
+    }
+    mnWindowDrawDividerLine(fileList, 0, 2, 27, 2);
+    mnWindowDrawDividerLine(fileList, 0, 4, 27, 4);
+    vramSlot = syVRAMCacheFindFreeEntry();
+    if (vramSlot < VRAM_CACHE_ENTRY_COUNT)
+    {
+        syVRAMCacheLoad(vramSlot, 128, PointingHandTiles);
+        x            = -12;
+        y            = selectedFile * 16 + 4;
+        cursorSprite = mnWindowSpriteCreate(vramSlot, WINDOW_SPRITE_SIZE_16X16, fileList, x, y);
+        cursorSprite->motion = WINDOW_SPRITE_MOTION_STILL;
+        fileCursor.anchor    = cursorSprite;
+    }
+    cursorStyle = 1;
 #endif
-	modePicture = mnTitleCreate(menuMode, fileList, 72, -24);
+    modePicture = mnTitleCreate(menuMode, fileList, 72, -24);
 
-	while (1)
-	{
-		// Show the file under the cursor after it moves.
-		if (summaryDirty != 0)
-		{
-			summaryDirty = FALSE;
-			if (save->summary[selectedFile].level != 0)
-			{
-				mnWindowColorApply(save->summary[selectedFile].windowHue,
-				                   save->summary[selectedFile].windowBrightness);
-				if (summaryWindow == NULL)
-					summaryWindow = mnWindowCreate(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
-				mnFileListDrawSummary(summaryWindow, &save->summary[selectedFile]);
-				sySynch(1);
-				if (partyWindow == NULL)
-					partyWindow = mnWindowCreate(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
-				mnFileListHidePartySprites();
-				mnFileListShowPartySprites(partyWindow, 0, 0, &save->summary[selectedFile]);
-				sySynch(1);
-				if (save->summary[selectedFile].djinn[0] + save->summary[selectedFile].djinn[1]
-				        + save->summary[selectedFile].djinn[2]
-				        + save->summary[selectedFile].djinn[3]
-				    != 0)
-				{
-					if (djinnWindow == NULL)
-						djinnWindow = mnWindowCreate(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
-					mnFileListDrawDjinnCounts(djinnWindow, &save->summary[selectedFile]);
-					mnFileListHideDjinnSprites();
-					mnFileListShowDjinnSprites(djinnWindow, 0, 0);
-				}
-				else
-				{
-					mnFileListHideDjinnSprites();
-					mnWindowClose(djinnWindow, 2);
-					djinnWindow = NULL;
-				}
-			}
-			else
-			{
-				mnWindowColorApply(MainRoutineStateWork.windowHue,
-				                   MainRoutineStateWork.windowBrightness);
-				mnFileListHideDjinnSprites();
-				mnFileListHidePartySprites();
-				mnWindowClose(djinnWindow, 2);
-				mnWindowClose(partyWindow, 2);
-				mnWindowClose(summaryWindow, 2);
-				djinnWindow   = NULL;
-				partyWindow   = NULL;
-				summaryWindow = NULL;
-			}
+    while (1)
+    {
+        // Show the file under the cursor after it moves.
+        if (summaryDirty != 0)
+        {
+            summaryDirty = FALSE;
+            if (save->summary[selectedFile].level != 0)
+            {
+                mnWindowColorApply(save->summary[selectedFile].windowHue,
+                                   save->summary[selectedFile].windowBrightness);
+                if (summaryWindow == NULL)
+                    summaryWindow = mnWindowCreate(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
+                mnFileListDrawSummary(summaryWindow, &save->summary[selectedFile]);
+                sySynch(1);
+                if (partyWindow == NULL)
+                    partyWindow = mnWindowCreate(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
+                mnFileListHidePartySprites();
+                mnFileListShowPartySprites(partyWindow, 0, 0, &save->summary[selectedFile]);
+                sySynch(1);
+                if (save->summary[selectedFile].djinn[0] + save->summary[selectedFile].djinn[1]
+                        + save->summary[selectedFile].djinn[2]
+                        + save->summary[selectedFile].djinn[3]
+                    != 0)
+                {
+                    if (djinnWindow == NULL)
+                        djinnWindow = mnWindowCreate(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
+                    mnFileListDrawDjinnCounts(djinnWindow, &save->summary[selectedFile]);
+                    mnFileListHideDjinnSprites();
+                    mnFileListShowDjinnSprites(djinnWindow, 0, 0);
+                }
+                else
+                {
+                    mnFileListHideDjinnSprites();
+                    mnWindowClose(djinnWindow, 2);
+                    djinnWindow = NULL;
+                }
+            }
+            else
+            {
+                mnWindowColorApply(MainRoutineStateWork.windowHue,
+                                   MainRoutineStateWork.windowBrightness);
+                mnFileListHideDjinnSprites();
+                mnFileListHidePartySprites();
+                mnWindowClose(djinnWindow, 2);
+                mnWindowClose(partyWindow, 2);
+                mnWindowClose(summaryWindow, 2);
+                djinnWindow   = NULL;
+                partyWindow   = NULL;
+                summaryWindow = NULL;
+            }
 #if FILE_LIST_GLOW_BAR_CURSOR
-			mnWindowSpriteRedrawSavedRect(fileList);
-			mnWindowDrawDividerLine(fileList, 0, 2, 27, 2);
-			mnWindowDrawDividerLine(fileList, 0, 4, 27, 4);
-			mnWindowFillTilemapRect(fileList, 0, selectedFile * 2, 26, 1);
-		}
+            mnWindowSpriteRedrawSavedRect(fileList);
+            mnWindowDrawDividerLine(fileList, 0, 2, 27, 2);
+            mnWindowDrawDividerLine(fileList, 0, 4, 27, 4);
+            mnWindowFillTilemapRect(fileList, 0, selectedFile * 2, 26, 1);
+        }
 #else
-			x = fileList->x * 8 - 4;
-			y = (fileList->y << 3) + selectedFile * 16 + 12;
-			mnCursorSetStub(&fileCursor, x, y, cursorStyle);
-			cursorStyle = 3;
-		}
-		mnCursorAdvanceStub(&fileCursor);
+            x = fileList->x * 8 - 4;
+            y = (fileList->y << 3) + selectedFile * 16 + 12;
+            mnCursorSetStub(&fileCursor, x, y, cursorStyle);
+            cursorStyle = 3;
+        }
+        mnCursorAdvanceStub(&fileCursor);
 #endif
-		mnTitleBob(modePicture);
-		sySynch(1);
-		// Up and down move to the previous or next file the mode allows; saving allows every file,
-		// an empty one too.
-		if (PerRepeat & KEY_UP)
-		{
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			summaryDirty = TRUE;
-			do
-			{
-				selectedFile = (selectedFile + BUP_FILE_COUNT - 1) % BUP_FILE_COUNT;
-				if (menuMode == FILE_LIST_SAVE)
-					break;
-			} while (
-				(save->summary[selectedFile].level == 0
-			     || (menuMode == FILE_LIST_CONTINUE && save->summary[selectedFile].sendFlag != 0)
-			     || (menuMode == FILE_LIST_BATTLE && save->summary[selectedFile].djinnCount == 0)
-			     || (menuMode == FILE_LIST_CLEARED && save->summary[selectedFile].sendFlag == 0)));
-		}
-		else if (PerRepeat & KEY_DOWN)
-		{
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			summaryDirty = TRUE;
-			do
-			{
-				selectedFile = (selectedFile + BUP_FILE_COUNT + 1) % BUP_FILE_COUNT;
-				if (menuMode == FILE_LIST_SAVE)
-					break;
-			} while (
-				(save->summary[selectedFile].level == 0
-			     || (menuMode == FILE_LIST_CONTINUE && save->summary[selectedFile].sendFlag != 0)
-			     || (menuMode == FILE_LIST_BATTLE && save->summary[selectedFile].djinnCount == 0)
-			     || (menuMode == FILE_LIST_CLEARED && save->summary[selectedFile].sendFlag == 0)));
-		}
-		else if (PerPush & KEY_B)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			result = -1;
-			break;
-		}
-		else if (PerPush & KEY_A)
-		{
-			sySoundPlayStub(SE_MENU_CONFIRM);
-			result = selectedFile;
-			break;
-		}
-	}
-	// Close the menu and return to the current game's palette glow.
-	mnFileListHideDjinnSprites();
-	mnFileListHidePartySprites();
-	mnWindowClose(djinnWindow, 2);
-	mnWindowClose(partyWindow, 2);
-	mnWindowClose(summaryWindow, 2);
-	mnWindowClose(fileList, 2);
+        mnTitleBob(modePicture);
+        sySynch(1);
+        // Up and down move to the previous or next file the mode allows; saving allows every file,
+        // an empty one too.
+        if (PerRepeat & KEY_UP)
+        {
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            summaryDirty = TRUE;
+            do
+            {
+                selectedFile = (selectedFile + BUP_FILE_COUNT - 1) % BUP_FILE_COUNT;
+                if (menuMode == FILE_LIST_SAVE)
+                    break;
+            } while (
+                (save->summary[selectedFile].level == 0
+                 || (menuMode == FILE_LIST_CONTINUE && save->summary[selectedFile].sendFlag != 0)
+                 || (menuMode == FILE_LIST_BATTLE && save->summary[selectedFile].djinnCount == 0)
+                 || (menuMode == FILE_LIST_CLEARED && save->summary[selectedFile].sendFlag == 0)));
+        }
+        else if (PerRepeat & KEY_DOWN)
+        {
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            summaryDirty = TRUE;
+            do
+            {
+                selectedFile = (selectedFile + BUP_FILE_COUNT + 1) % BUP_FILE_COUNT;
+                if (menuMode == FILE_LIST_SAVE)
+                    break;
+            } while (
+                (save->summary[selectedFile].level == 0
+                 || (menuMode == FILE_LIST_CONTINUE && save->summary[selectedFile].sendFlag != 0)
+                 || (menuMode == FILE_LIST_BATTLE && save->summary[selectedFile].djinnCount == 0)
+                 || (menuMode == FILE_LIST_CLEARED && save->summary[selectedFile].sendFlag == 0)));
+        }
+        else if (PerPush & KEY_B)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            result = -1;
+            break;
+        }
+        else if (PerPush & KEY_A)
+        {
+            sySoundPlayStub(SE_MENU_CONFIRM);
+            result = selectedFile;
+            break;
+        }
+    }
+    // Close the menu and return to the current game's palette glow.
+    mnFileListHideDjinnSprites();
+    mnFileListHidePartySprites();
+    mnWindowClose(djinnWindow, 2);
+    mnWindowClose(partyWindow, 2);
+    mnWindowClose(summaryWindow, 2);
+    mnWindowClose(fileList, 2);
 #if FILE_LIST_GLOW_BAR_CURSOR
-	mnFileListStopPulse();
+    mnFileListStopPulse();
 #endif
-	syHeapSlotRelease(HEAP_SLOT_MENU);
-	mnWindowColorApply(MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
-	sySynch(1);
+    syHeapSlotRelease(HEAP_SLOT_MENU);
+    mnWindowColorApply(MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
+    sySynch(1);
 done:
-	return result;
+    return result;
 }
 
 // The Save command: lets the player choose a file (the current one first), asks whether to save
@@ -1259,128 +1259,128 @@ done:
 // current file.
 Sint32 mnSaveToChosenFile(void)
 {
-	Sint32     result;
-	Sint32     file;
-	Sint32     error;
-	BUP_STATE *state;
+    Sint32     result;
+    Sint32     file;
+    Sint32     error;
+    BUP_STATE *state;
 
-	result = 0;
-	error  = syBupInitState();
-	if (error != 0)
-	{
-		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else
-	{
-		syBupLoadFileSummaries();
-		state = BupStateWork;
-		file  = mnFileListSelectFile(BupSlot, FILE_LIST_SAVE);
-		if (file == -1)
-		{
-			result = file;
-		}
-		else
-		{
-			if (state->summary[file].level != 0)
-			{
-				mnFieldMessageShow(MsgOverwriteConfirm,
-				                   FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN
-				                       | FIELD_MESSAGE_LOWER);
-				while (mnMessageAllTyped() == 0)
-				{
-					sySynch(1);
-				}
-				if (mnYesNoMenuRun(1, 0, 0, 1) != 0)
-				{
-					mnMessageCloseFinishedWindows();
-					goto done;
-				}
-				mnMessageCloseFinishedWindows();
-			}
-			BupSlot = file;
-			sySoundPlayStub(MUS_SAVED);
-			mnFieldMessageShow(MsgSaving,
-			                   FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN | FIELD_MESSAGE_LOWER);
-			while (mnMessageAllTyped() == 0)
-			{
-				sySynch(1);
-			}
-			mnSaveBuildFileSummary();
-			fdActorSnapshotStub();
-			error  = syBupWritePart(file, BupBuffer);
-			error |= syBupWritePart(file + BUP_FILE_COUNT, BupBuffer + BUP_PART_BYTES);
-			mnMessageCloseFinishedWindows();
-			if (error != 0)
-			{
-				mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
-				result = SAVE_ERROR_WRITE;
-			}
-			else
-			{
-				mnFieldMessageShow(MsgGameSaved, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
-			}
-		}
-	}
+    result = 0;
+    error  = syBupInitState();
+    if (error != 0)
+    {
+        mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
+        result = SAVE_ERROR_NO_MEMORY;
+    }
+    else
+    {
+        syBupLoadFileSummaries();
+        state = BupStateWork;
+        file  = mnFileListSelectFile(BupSlot, FILE_LIST_SAVE);
+        if (file == -1)
+        {
+            result = file;
+        }
+        else
+        {
+            if (state->summary[file].level != 0)
+            {
+                mnFieldMessageShow(MsgOverwriteConfirm,
+                                   FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN
+                                       | FIELD_MESSAGE_LOWER);
+                while (mnMessageAllTyped() == 0)
+                {
+                    sySynch(1);
+                }
+                if (mnYesNoMenuRun(1, 0, 0, 1) != 0)
+                {
+                    mnMessageCloseFinishedWindows();
+                    goto done;
+                }
+                mnMessageCloseFinishedWindows();
+            }
+            BupSlot = file;
+            sySoundPlayStub(MUS_SAVED);
+            mnFieldMessageShow(MsgSaving,
+                               FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN | FIELD_MESSAGE_LOWER);
+            while (mnMessageAllTyped() == 0)
+            {
+                sySynch(1);
+            }
+            mnSaveBuildFileSummary();
+            fdActorSnapshotStub();
+            error  = syBupWritePart(file, BupBuffer);
+            error |= syBupWritePart(file + BUP_FILE_COUNT, BupBuffer + BUP_PART_BYTES);
+            mnMessageCloseFinishedWindows();
+            if (error != 0)
+            {
+                mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
+                result = SAVE_ERROR_WRITE;
+            }
+            else
+            {
+                mnFieldMessageShow(MsgGameSaved, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
+            }
+        }
+    }
 done:
-	syBupReleaseState();
-	return result;
+    syBupReleaseState();
+    return result;
 }
 
 // Lets the player choose a file in file list `mode` (see FILE_MENU_MODE) and loads it into the save
 // buffer as the current file, restoring its play time and options.
 Sint32 mnSaveChooseAndLoadFile(Sint32 mode)
 {
-	Sint32 result = 0;
-	Sint32 error  = syBupInitState();
+    Sint32 result = 0;
+    Sint32 error  = syBupInitState();
 
-	if (error != 0)
-	{
-		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else
-	{
-		Sint32 file;
+    if (error != 0)
+    {
+        mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
+        result = SAVE_ERROR_NO_MEMORY;
+    }
+    else
+    {
+        Sint32 file;
 
-		syBupLoadFileSummaries();
-		file = mnFileListSelectFile(BupSlot, mode);
-		if (file == -1)
-		{
-			result = file;
-		}
-		else
-		{
-			void *half  = &BupBuffer;
+        syBupLoadFileSummaries();
+        file = mnFileListSelectFile(BupSlot, mode);
+        if (file == -1)
+        {
+            result = file;
+        }
+        else
+        {
+            void *half  = &BupBuffer;
 
-			error       = syBupReadPart(file, half);
-			half        = (char *)half + BUP_PART_BYTES;
-			error      |= syBupReadPart(file + BUP_FILE_COUNT, half);
-			if (error != 0)
-			{
-				mnFieldMessageShow(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
-				result = SAVE_ERROR_READ;
-			}
-			else
-			{
-				PlayTimeTicks    = MainRoutineStateWork.playTime;
-				IdleSleepEnabled = MainRoutineStateWork.idleSleepEnabled;
-				IdleTicks        = 0;
-				BupSlot          = file;
-			}
-		}
-	}
-	syBupReleaseState();
-	return result;
+            error       = syBupReadPart(file, half);
+            half        = (char *)half + BUP_PART_BYTES;
+            error      |= syBupReadPart(file + BUP_FILE_COUNT, half);
+            if (error != 0)
+            {
+                mnFieldMessageShow(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
+                result = SAVE_ERROR_READ;
+            }
+            else
+            {
+                PlayTimeTicks    = MainRoutineStateWork.playTime;
+                IdleSleepEnabled = MainRoutineStateWork.idleSleepEnabled;
+                IdleTicks        = 0;
+                BupSlot          = file;
+            }
+        }
+    }
+    syBupReleaseState();
+    return result;
 }
 
 // Loads the pointing hand cursor's tiles (PointingHandTiles, 128 bytes) into a free VRAM slot and
 // returns the slot, which the caller frees with syVRAMCacheFreeEntry.
 Sint32 mnPointingHandLoadIntoFreeSlot(void)
 {
-	Sint32 slot;
+    Sint32 slot;
 
-	slot = syVRAMCacheFindFreeEntry();
-	syVRAMCacheLoad(slot, 128, PointingHandTiles);
-	return slot;
+    slot = syVRAMCacheFindFreeEntry();
+    syVRAMCacheLoad(slot, 128, PointingHandTiles);
+    return slot;
 }

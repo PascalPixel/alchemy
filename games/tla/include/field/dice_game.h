@@ -14,44 +14,44 @@ struct WINDOW;
 // One sprite's two OAM words, volatile because they are built in place for the DMA to copy to OAM.
 typedef struct OAM_WORDS
 {
-	volatile Uint32 attr01; // attr0 | attr1 << 16
-	volatile Uint32 attr2;  // attr2 | affine value << 16
+    volatile Uint32 attr01; // attr0 | attr1 << 16
+    volatile Uint32 attr2;  // attr2 | affine value << 16
 } OAM_WORDS;
 
 // A die of the dice game: its place and velocity, 16.16, and its variant.
 typedef struct DICE_PARTICLE
 {
-	FIXED  x;
-	FIXED  y;
-	FIXED  z;
-	FIXED  velocityX;
-	FIXED  velocityY;
-	FIXED  velocityZ;
-	Sint32 variant;
+    FIXED  x;
+    FIXED  y;
+    FIXED  z;
+    FIXED  velocityX;
+    FIXED  velocityY;
+    FIXED  velocityZ;
+    Sint32 variant;
 } DICE_PARTICLE;
 
 // The dice game's four dice.
 typedef struct DICE_STATE
 {
-	DICE_PARTICLE particles[4];
+    DICE_PARTICLE particles[4];
 } DICE_STATE;
 
 // The dice game's state as its drawing reads it: 128 OAM entries and its coins, bet and help
 // windows.
 typedef struct DICE_SPR
 {
-	Uint8          filler[196];
-	OAM_WORDS      oam[128];
-	struct WINDOW *coinsWindow;
-	struct WINDOW *betWindow;
-	struct WINDOW *helpWindow;
+    Uint8          filler[196];
+    OAM_WORDS      oam[128];
+    struct WINDOW *coinsWindow;
+    struct WINDOW *betWindow;
+    struct WINDOW *helpWindow;
 } DICE_SPR;
 
 // The dice games' camera: the eye and the point it looks at, 16.16.
 typedef struct DICE_CAMERA
 {
-	FIXED eye[3];
-	FIXED focus[3];
+    FIXED eye[3];
+    FIXED focus[3];
 } DICE_CAMERA;
 
 // The dice games' numbers, Lucky Dice's and Super Lucky Dice's alike: a die's faces.
@@ -88,47 +88,47 @@ typedef struct DICE_CAMERA
 // windows.
 typedef struct LUCKY_DICE_SPR
 {
-	Uint8          filler[196];
-	OAM_WORDS      oam[128];
-	struct WINDOW *coinsWindow;
-	struct WINDOW *winningsWindow;
-	struct WINDOW *helpWindow;
+    Uint8          filler[196];
+    OAM_WORDS      oam[128];
+    struct WINDOW *coinsWindow;
+    struct WINDOW *winningsWindow;
+    struct WINDOW *helpWindow;
 } LUCKY_DICE_SPR;
 
 // A Lucky Wheels reel: its turn, its 21 symbols, whether it is held and where it stops.
 typedef struct REEL
 {
-	Sint32 pos;
-	Uint8  symbols[21];
-	Uint8  held;
-	Sint8  stop;
+    Sint32 pos;
+    Uint8  symbols[21];
+    Uint8  held;
+    Sint8  stop;
 } REEL;
 
 // Lucky Wheels' effect state: the title letters' particles, the BG and OBJ shades, and its transfer
 // to the screen.
 typedef struct REEL_EFFECT_STATE
 {
-	PARTICLE particles[LUCKY_WHEELS_TITLE_LETTERS];
-	// No code names it.
-	Uint8    unusedAfterParticles[1792 - LUCKY_WHEELS_TITLE_LETTERS * sizeof(PARTICLE)];
-	Uint16   bgShade[256];
-	Uint16   spriteShade[256];
-	Uint8    unusedAfterSpriteShade[27776]; // no code names it
-	Sint32   transferMode;
-	Sint32   transferValue;
-	Uint8    unusedAfterTransferValue[4];   // no code names it
-	Sint32   frame;
-	Uint8    unusedAfterFrame[344];         // no code names it
-	Sint32   transferPending;
+    PARTICLE particles[LUCKY_WHEELS_TITLE_LETTERS];
+    // No code names it.
+    Uint8    unusedAfterParticles[1792 - LUCKY_WHEELS_TITLE_LETTERS * sizeof(PARTICLE)];
+    Uint16   bgShade[256];
+    Uint16   spriteShade[256];
+    Uint8    unusedAfterSpriteShade[27776]; // no code names it
+    Sint32   transferMode;
+    Sint32   transferValue;
+    Uint8    unusedAfterTransferValue[4];   // no code names it
+    Sint32   frame;
+    Uint8    unusedAfterFrame[344];         // no code names it
+    Sint32   transferPending;
 } REEL_EFFECT_STATE;
 
 // The main routine's state from PartyDjinnRecovery on, as Lucky Wheels reads it: the prizes won,
 // kept after the spring game's prize weights.
 typedef struct REEL_SAVE
 {
-	// summons, coins, Djinn recovery, shops, prize weights
-	Uint8 unused[320];
-	Sint8 wonPrizes[16];
+    // summons, coins, Djinn recovery, shops, prize weights
+    Uint8 unused[320];
+    Sint8 wonPrizes[16];
 } REEL_SAVE;
 
 // The Lucky Dice module's functions in the order of its stub table (src/field/lucky_dice_stubs.s).

@@ -7,11 +7,11 @@
 // Prepares the effect state and spark tiles of Move (ABILITY_MOVE) for the script's Psynergy.
 void scStartScriptPsynergy(void)
 {
-	fdPsynergyLoadResources(ABILITY_MOVE, 0);
+    fdPsynergyLoadResources(ABILITY_MOVE, 0);
 }
 
 // Ends the script's Psynergy and releases its effect state.
 void scEndScriptPsynergy(void)
 {
-	fdPsynergyEnd();
+    fdPsynergyEnd();
 }

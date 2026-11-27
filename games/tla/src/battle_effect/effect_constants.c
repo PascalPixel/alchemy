@@ -19,8 +19,8 @@ const SCALE EclipseDragonScale     = UNIT_SCALE;
 // Unused: two more scales after Eclipse's, each word 0x55555556 (2^32 / 3 rounded up); nothing
 // reads them.
 const SCALE EclipseUnusedScales[2] = {
-	{0x55555556, 0x55555556},
-	{0x55555556, 0x55555556},
+    {0x55555556, 0x55555556},
+    {0x55555556, 0x55555556},
 };
 
 // The comets' scale.
@@ -43,12 +43,12 @@ const ROCK_WALL_HEIGHTS RockWallHeights      = {
 
 // The three lines' end points, a pair of points each, in pixels.
 const Sint16 ThorPoints[6][2] = {
-	{8,   135},
-	{184, 135},
-	{128, 135},
-	{96,  32 },
-	{96,  32 },
-	{64,  135},
+    {8,   135},
+    {184, 135},
+    {128, 135},
+    {96,  32 },
+    {96,  32 },
+    {64,  135},
 };
 
 // The scale each of Gaia's rocks starts from before it grows.
@@ -120,8 +120,8 @@ const SCALE DaedalusMachineScale = UNIT_SCALE;
 
 // The scale of Daedalus's missiles, a tenth larger than their pictures.
 const SCALE DaedalusMissileScale = {
-	toFIXED(11) / 10,
-	toFIXED(11) / 10,
+    toFIXED(11) / 10,
+    toFIXED(11) / 10,
 };
 
 // The rocket's scale in Daedalus's second strike, twice its size.
@@ -167,25 +167,25 @@ const SCALE       IrisUnitScale          = UNIT_SCALE;
 
 // The rising pillars' widths, left to right.
 const FIVE_WIDTHS IrisRisingPillarWidths = {
-	{2, 3, 4, 5, 6}
+    {2, 3, 4, 5, 6}
 };
 
 // The widening pillars' widths, left to right.
 const SEVEN_WIDTHS IrisWideningPillarWidths = {
-	{2, 3, 4, 5, 6, 7, 8}
+    {2, 3, 4, 5, 6, 7, 8}
 };
 
 // The narrowing pillars' widths, left to right.
 const SEVEN_WIDTHS IrisNarrowingPillarWidths = {
-	{8, 7, 6, 5, 4, 3, 2}
+    {8, 7, 6, 5, 4, 3, 2}
 };
 
 // The left strip's four spans where petals start, {left, width} in pixels.
 const FOUR_SPANS IrisLeftStripSpans = {
-	{{112, 27}, {104, 28}, {92, 27}, {74, 27}},
+    {{112, 27}, {104, 28}, {92, 27}, {74, 27}},
 };
 
 // The right strip's four spans where petals start, {left, width} in pixels.
 const FOUR_SPANS IrisRightStripSpans = {
-	{{196, 44}, {176, 48}, {152, 45}, {116, 45}},
+    {{196, 44}, {176, 48}, {152, 45}, {116, 45}},
 };

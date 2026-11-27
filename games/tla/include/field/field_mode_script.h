@@ -10,10 +10,10 @@
 // message below 0x10000, else a function).
 typedef struct PENDING_CUE
 {
-	Uint32 key;
-	Uint16 flags;
-	Uint16 condition;
-	Sint32 action;
+    Uint32 key;
+    Uint16 flags;
+    Uint16 condition;
+    Sint32 action;
 } PENDING_CUE;
 
 void   fdScriptRunMessage(Sint32 actor, Sint32 msg);

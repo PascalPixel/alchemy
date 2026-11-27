@@ -32,27 +32,27 @@
 // The rooms' statues, pillar and columns, numbering the rows of ActorPlacements.
 typedef enum JUPITER_LIGHTHOUSE_LEFT_TOWER_ACTOR_ID
 {
-	ACTOR_ARCHER_STATUE = ACTOR_FIRST_PLACED,
-	ACTOR_WINGED_STATUE,
-	ACTOR_PILLAR,
-	// The first of the five blue fallen columns round the Blue Key, two lying north to south and
-	// three west to east.
-	ACTOR_FIRST_COLUMN
+    ACTOR_ARCHER_STATUE = ACTOR_FIRST_PLACED,
+    ACTOR_WINGED_STATUE,
+    ACTOR_PILLAR,
+    // The first of the five blue fallen columns round the Blue Key, two lying north to south and
+    // three west to east.
+    ACTOR_FIRST_COLUMN
 } JUPITER_LIGHTHOUSE_LEFT_TOWER_ACTOR_ID;
 
 // The metatile of the gap in the upper room's floor that the pillar drops into.
 enum
 {
-	PILLAR_GAP_X = 6,
-	PILLAR_GAP_Z = 14
+    PILLAR_GAP_X = 6,
+    PILLAR_GAP_Z = 14
 };
 
 // The room's own metatile behaviors.
 typedef enum JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_METATILE_BEHAVIOR
 {
-	// The floor round the blue fallen columns, metatiles (23, 8) to (37, 15), where walking into a
-	// column pushes it.
-	METATILE_BEHAVIOR_BESIDE_COLUMNS = 30
+    // The floor round the blue fallen columns, metatiles (23, 8) to (37, 15), where walking into a
+    // column pushes it.
+    METATILE_BEHAVIOR_BESIDE_COLUMNS = 30
 } JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_METATILE_BEHAVIOR;
 
 // The ticks the dropped pillar is given to land.
@@ -81,33 +81,33 @@ METATILE_TARGET CrackedTiles BSS_DATA;
 
 const SCENE_ENTRANCE        *scGetEntrances(void)
 {
-	return SceneEntrances;
+    return SceneEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
 {
-	return 0;
+    return 0;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SceneExits;
+    return SceneExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ActorPlacements;
+    return ActorPlacements;
 }
 
 // Where a pushed object comes to rest, read by the push that follows.
 typedef struct PUSH_TARGET
 {
-	FIXED  x;         // 16.16 fixed-point pixels
-	Sint32 y;
-	Sint32 z;
-	Sint32 rectangle; // index into the rectangle table
-	Sint32 id;
-	void  *callback;
+    FIXED  x;         // 16.16 fixed-point pixels
+    Sint32 y;
+    Sint32 z;
+    Sint32 rectangle; // index into the rectangle table
+    Sint32 id;
+    void  *callback;
 } PUSH_TARGET;
 
 Bool scPushTargetFindStop(PUSH_TARGET *target);
@@ -117,18 +117,18 @@ void scPushTargetPush(PUSH_TARGET target);
 // further; on the second it gives way and the party falls through into the column room below.
 void scJupiterLighthouseStepOnCrackedTile(void)
 {
-	if (scCrackedTileStep())
-		syFieldScriptSetExitRequest(THROUGH_CRACKED_TILE);
+    if (scCrackedTileStep())
+        syFieldScriptSetExitRequest(THROUGH_CRACKED_TILE);
 }
 
 // Felix walks into one of the blue fallen columns round the Blue Key and pushes it: it rolls until
 // something stops it (scPushTargetFindStop).
 void scJupiterLighthousePushColumn(void)
 {
-	PUSH_TARGET target;
+    PUSH_TARGET target;
 
-	if (scPushTargetFindStop(&target))
-		scPushTargetPush(target);
+    if (scPushTargetFindStop(&target))
+        scPushTargetPush(target);
 }
 
 // Nothing visible happens as Move takes hold of the standing pillar in the room above the columns;
@@ -143,35 +143,35 @@ void scJupiterLighthouseStartMovingPillar(void)
 // Felix can hop across the gap on top of it. Moved anywhere else, it simply stands where it is put.
 void scJupiterLighthouseFinishMovingPillar(Sint32 unused, Sint32 id)
 {
-	ACTOR *actor = fdActorGet(id);
-	Sint32 i;
+    ACTOR *actor = fdActorGet(id);
+    Sint32 i;
 
-	if (FIELD_METATILE(actor->x.fixed) == PILLAR_GAP_X
-	    && FIELD_METATILE(actor->z.fixed) == PILLAR_GAP_Z)
-	{
-		fdScriptSetFlag(FLAG_PILLAR_IN_GAP);
-		syWait(10);
-		fdScriptPlaySound(SE_HEAVY_IMPACT);
-		i = 0;
-		if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0)
-		{
-			do
-			{
-				syWait(1);
-				i++;
-				if (i > PILLAR_LANDING_TICKS - 1)
-					break;
-			} while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
-		}
-		actor->motionFlags = 0;
-		fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 0);
-		fdMapGridSetMetatileAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
-	}
+    if (FIELD_METATILE(actor->x.fixed) == PILLAR_GAP_X
+        && FIELD_METATILE(actor->z.fixed) == PILLAR_GAP_Z)
+    {
+        fdScriptSetFlag(FLAG_PILLAR_IN_GAP);
+        syWait(10);
+        fdScriptPlaySound(SE_HEAVY_IMPACT);
+        i = 0;
+        if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0)
+        {
+            do
+            {
+                syWait(1);
+                i++;
+                if (i > PILLAR_LANDING_TICKS - 1)
+                    break;
+            } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
+        }
+        actor->motionFlags = 0;
+        fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 0);
+        fdMapGridSetMetatileAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
+    }
 }
 
 const CUE *scGetCues(void)
 {
-	return SceneCues;
+    return SceneCues;
 }
 
 Bool   scPushTargetFillRectangle(Sint32 id);
@@ -182,52 +182,52 @@ Bool   scPushTargetFillRectangle(Sint32 id);
 // room. Returns 0.
 Sint32 scInit(void)
 {
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	fdActorGet(ACTOR_ARCHER_STATUE)->scaleX = toFIXED(3) / 4;
-	fdActorGet(ACTOR_ARCHER_STATUE)->scaleY = toFIXED(3) / 4;
-	scFieldActorSetSpritePriority(ACTOR_FIRST_COLUMN + 1, 3);
-	scFieldActorSetSpritePriority(ACTOR_FIRST_COLUMN + 3, 3);
-	fdActorDisableById(ACTOR_FIRST_COLUMN);
-	fdActorDisableById(ACTOR_FIRST_COLUMN + 1);
-	fdActorDisableById(ACTOR_FIRST_COLUMN + 2);
-	fdActorDisableById(ACTOR_FIRST_COLUMN + 3);
-	fdActorDisableById(ACTOR_FIRST_COLUMN + 4);
-	scPushTargetFillRectangle(ACTOR_FIRST_COLUMN);
-	scPushTargetFillRectangle(ACTOR_FIRST_COLUMN + 1);
-	scPushTargetFillRectangle(ACTOR_FIRST_COLUMN + 2);
-	scPushTargetFillRectangle(ACTOR_FIRST_COLUMN + 3);
-	scPushTargetFillRectangle(ACTOR_FIRST_COLUMN + 4);
-	scCrackedTileFind(METATILE_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 1);
-	if (MainRoutineStateWork.entrance == THROUGH_CRACKED_TILE)
-		scCrackedTilePlaceLanding(
-			19, 0, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-	else if (MainRoutineStateWork.entrance
-	         == JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_NORTH)
-		scCrackedTilePlaceLanding(
-			-20, -22, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-	return 0;
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    fdActorGet(ACTOR_ARCHER_STATUE)->scaleX = toFIXED(3) / 4;
+    fdActorGet(ACTOR_ARCHER_STATUE)->scaleY = toFIXED(3) / 4;
+    scFieldActorSetSpritePriority(ACTOR_FIRST_COLUMN + 1, 3);
+    scFieldActorSetSpritePriority(ACTOR_FIRST_COLUMN + 3, 3);
+    fdActorDisableById(ACTOR_FIRST_COLUMN);
+    fdActorDisableById(ACTOR_FIRST_COLUMN + 1);
+    fdActorDisableById(ACTOR_FIRST_COLUMN + 2);
+    fdActorDisableById(ACTOR_FIRST_COLUMN + 3);
+    fdActorDisableById(ACTOR_FIRST_COLUMN + 4);
+    scPushTargetFillRectangle(ACTOR_FIRST_COLUMN);
+    scPushTargetFillRectangle(ACTOR_FIRST_COLUMN + 1);
+    scPushTargetFillRectangle(ACTOR_FIRST_COLUMN + 2);
+    scPushTargetFillRectangle(ACTOR_FIRST_COLUMN + 3);
+    scPushTargetFillRectangle(ACTOR_FIRST_COLUMN + 4);
+    scCrackedTileFind(METATILE_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 1);
+    if (MainRoutineStateWork.entrance == THROUGH_CRACKED_TILE)
+        scCrackedTilePlaceLanding(
+            19, 0, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
+    else if (MainRoutineStateWork.entrance
+             == JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_NORTH)
+        scCrackedTilePlaceLanding(
+            -20, -22, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
+    return 0;
 }
 
 // Sets the scene's arrival flags, and puts the dropped pillar back in its hole when the party stays
 // in place. Returns 0.
 Sint32 scPrepareMap(void)
 {
-	scSetArrivalFlags(0);
-	if (fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-		fdScriptClearFlag(FLAG_PILLAR_IN_GAP);
-	if (fdScriptGetFlag(FLAG_PILLAR_IN_GAP))
-	{
-		ACTOR *actor        = fdActorGet(ACTOR_PILLAR);
+    scSetArrivalFlags(0);
+    if (fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
+        fdScriptClearFlag(FLAG_PILLAR_IN_GAP);
+    if (fdScriptGetFlag(FLAG_PILLAR_IN_GAP))
+    {
+        ACTOR *actor        = fdActorGet(ACTOR_PILLAR);
 
-		actor->motionFlags  = 0;
-		actor->groundHeight = toFIXED(-PILLAR_SINK_DEPTH);
-		actor->y.fixed      = toFIXED(-PILLAR_SINK_DEPTH);
-		fdActorSetPos(ACTOR_PILLAR, 104, 232);
-		fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 0);
-		fdMapGridSetMetatileAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
-	}
-	return 0;
+        actor->motionFlags  = 0;
+        actor->groundHeight = toFIXED(-PILLAR_SINK_DEPTH);
+        actor->y.fixed      = toFIXED(-PILLAR_SINK_DEPTH);
+        fdActorSetPos(ACTOR_PILLAR, 104, 232);
+        fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 0);
+        fdMapGridSetMetatileAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
+    }
+    return 0;
 }
 
 #include "shared/scene_set_arrival_flags.c"
@@ -243,7 +243,7 @@ extern Sint32      PaletteCycleTick;
 // Sets the palette cycle's tick (PaletteCycleTick).
 static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleTick = value;
+    PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -288,7 +288,7 @@ extern Sint32        PushLeaderSteps[];
 
 static inline Sint32 scPushTargetCheckCollision(ACTOR *actor, Sint32 *pos)
 {
-	return fdMapGridCheckCollision(actor, pos);
+    return fdMapGridCheckCollision(actor, pos);
 }
 
 #include "shared/push_target_find_stop.h"
@@ -314,7 +314,7 @@ void scActorStopAtPushTarget(ACTOR *actor);
 // Sets the priority the lit actors' sprites are drawn at.
 void scLightSpritesSetPriority(Sint32 value)
 {
-	LightSpritePriority = value;
+    LightSpritePriority = value;
 }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -369,55 +369,55 @@ extern Uint32           FieldEffectLongScript[];
 #include "shared/scene_entrances_default.c"
 
 LATE_DATA Uint32 SceneExits[] = {
-	SCENE_EXITS(JupiterLighthouseRoomBlueKey),
-	SCENE_EXIT(1, JupiterLighthouseRoomBlueKey, 2),
-	SCENE_EXIT(2, JupiterLighthouseRoomBlueKey, 1),
-	SCENE_EXIT(3, JupiterLighthouseRoomBlueKey, 4),
-	SCENE_EXIT(4, JupiterLighthouseRoomBlueKey, 3),
-	SCENE_EXIT(5, JupiterLighthouseRoomBlueKey, 6),
-	SCENE_EXIT(6, JupiterLighthouseRoomBlueKey, 5),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES, JupiterLighthouseTerraces, JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_SOUTH),
-	SCENE_EXIT(9, JupiterLighthouseRoomBlueKey, 10),
-	SCENE_EXIT(10, JupiterLighthouseRoomBlueKey, 9),
-	SCENE_EXIT(11, JupiterLighthouseRoomBlueKey, 12),
-	SCENE_EXIT(12, JupiterLighthouseRoomBlueKey, 11),
-	SCENE_EXIT(THROUGH_CRACKED_TILE, JupiterLighthouseRoomBlueKey, THROUGH_CRACKED_TILE),
-	SCENE_EXITS_END,
+    SCENE_EXITS(JupiterLighthouseRoomBlueKey),
+    SCENE_EXIT(1, JupiterLighthouseRoomBlueKey, 2),
+    SCENE_EXIT(2, JupiterLighthouseRoomBlueKey, 1),
+    SCENE_EXIT(3, JupiterLighthouseRoomBlueKey, 4),
+    SCENE_EXIT(4, JupiterLighthouseRoomBlueKey, 3),
+    SCENE_EXIT(5, JupiterLighthouseRoomBlueKey, 6),
+    SCENE_EXIT(6, JupiterLighthouseRoomBlueKey, 5),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES, JupiterLighthouseTerraces, JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_SOUTH),
+    SCENE_EXIT(9, JupiterLighthouseRoomBlueKey, 10),
+    SCENE_EXIT(10, JupiterLighthouseRoomBlueKey, 9),
+    SCENE_EXIT(11, JupiterLighthouseRoomBlueKey, 12),
+    SCENE_EXIT(12, JupiterLighthouseRoomBlueKey, 11),
+    SCENE_EXIT(THROUGH_CRACKED_TILE, JupiterLighthouseRoomBlueKey, THROUGH_CRACKED_TILE),
+    SCENE_EXITS_END,
 };
 
 LATE_DATA ACTOR_PLACE ActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_ARCHER_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 203, 0, 904, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 296, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_ARCHER_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 203, 0, 904, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 296, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 LATE_DATA CUE SceneCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
-	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
-	{CUE_EXIT, 5, CONDITION_ALWAYS, 5},
-	{CUE_EXIT, 6, CONDITION_ALWAYS, 6},
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
-	{CUE_EXIT, 11, CONDITION_ALWAYS, 11},
-	{CUE_EXIT, 12, CONDITION_ALWAYS, 12},
-	{STEP_CUE_WALKING, METATILE_BEHAVIOR_BESIDE_COLUMNS, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthousePushColumn)},
-	{CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnCrackedTile)},
-	{CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE + 1, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnCrackedTile)},
-	{CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE + 2, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnCrackedTile)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStartMovingPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseFinishMovingPillar)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+    {CUE_EXIT, 2, CONDITION_ALWAYS, 2},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {CUE_EXIT, 5, CONDITION_ALWAYS, 5},
+    {CUE_EXIT, 6, CONDITION_ALWAYS, 6},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
+    {CUE_EXIT, 11, CONDITION_ALWAYS, 11},
+    {CUE_EXIT, 12, CONDITION_ALWAYS, 12},
+    {STEP_CUE_WALKING, METATILE_BEHAVIOR_BESIDE_COLUMNS, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthousePushColumn)},
+    {CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnCrackedTile)},
+    {CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE + 1, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnCrackedTile)},
+    {CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE + 2, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnCrackedTile)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseFinishMovingPillar)},
+    {CUE_TABLE_END},
 };
 
 LATE_DATA Sint32 PaletteCycleTick = -1;
@@ -425,14 +425,14 @@ LATE_DATA Sint32 PaletteCycleTick = -1;
 LATE_DATA Sint32 PaletteCyclePausesInScripts = 1;
 
 LATE_DATA Sint32 WhirlwindEndScript[] = {
-	SC_ANIMATION(5),
-	SC_WAIT(12),
-	SC_RELEASE,
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 // clang-format on
 
 LATE_DATA const Sint32 *FieldEffectDurationScripts[] = {
-	FieldEffectShortScript,
-	FieldEffectMediumScript,
-	FieldEffectLongScript,
+    FieldEffectShortScript,
+    FieldEffectMediumScript,
+    FieldEffectLongScript,
 };

@@ -21,66 +21,66 @@
 // resource into a 26 by 5 metatile window and opens the window from the centre.
 void fdHeadingShow(Sint32 heading)
 {
-	Uint16  tile;
-	Sint32 *headings = syResourceGetTableEntry(RESOURCE_HEADINGS);
-	Uint8  *tiles;
-	Uint16 *metatile;
-	Uint32  row, column;
-	Sint32  left, right;
+    Uint16  tile;
+    Sint32 *headings = syResourceGetTableEntry(RESOURCE_HEADINGS);
+    Uint8  *tiles;
+    Uint16 *metatile;
+    Uint32  row, column;
+    Sint32  left, right;
 
-	tile = HEADING_FIRST_TILE;
-	fdScriptWaitTransitionTicks();
-	metatile  = (Uint16 *)BG_SCREEN_BLOCK(4);
-	tiles     = syHeapAllocateEWRAM(HEADING_TILE_BYTES);
-	headings += headings[heading] / 4;
-	syDecompressByteLZ(headings, tiles);
-	syDMAXCopy(tiles, HEADING_TILES, DMA_COPY_WORDS(HEADING_TILE_BYTES / 4), REG_DMA3);
-	syHeapRelease(tiles);
-	REG_DISPCNT &= ~DISPCNT_BG0_ON;
-	DMA_FILL32(HEADING_BLANK_METATILE, metatile, BG_SCREEN_SIZE);
-	metatile = (Uint16 *)BG_SCREEN_BLOCK(4) + HEADING_TOP * BG_SCREEN_WIDTH;
-	for (row = 0; row < HEADING_ROWS; row++)
-	{
-		metatile += HEADING_LEFT;
-		for (column = 0; column < HEADING_COLUMNS; column++)
-		{
-			*metatile++ = (Uint16)(tile++) | HEADING_BLANK_METATILE;
-		}
-		metatile += BG_SCREEN_WIDTH - HEADING_LEFT - HEADING_COLUMNS;
-	}
-	REG_DISPCNT &= ~(DISPCNT_WIN0_ON | DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON);
-	REG_DISPCNT |= DISPCNT_WIN0_ON;
-	REG_WININ    = WININ_WIN0_ALL;
-	REG_WINOUT   = WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ
-	           | WINOUT_WIN01_CLR;
-	REG_WIN0H = WIN_RANGE(DISPLAY_WIDTH / 2, DISPLAY_WIDTH / 2);
-	REG_WIN0V = WIN_RANGE(24, 72);
-	fdPaletteFadeSetSource(PALETTE_TINT_NONE, 0);
-	fdPaletteFadeSetTarget(PALETTE_TINT_DIM_BRIGHT, 0);
-	fdPaletteFadeStartInterpolation(24);
-	REG_DISPCNT ^= DISPCNT_BG0_ON;
-	left         = DISPLAY_WIDTH / 2;
-	right        = DISPLAY_WIDTH / 2;
-	for (column = 0; column < HEADING_OPEN_TICKS; column++)
-	{
-		left      -= HEADING_OPEN_STEP;
-		right     += HEADING_OPEN_STEP;
-		REG_WIN0H  = WIN_RANGE(left, right);
-		sySynch(1);
-	}
+    tile = HEADING_FIRST_TILE;
+    fdScriptWaitTransitionTicks();
+    metatile  = (Uint16 *)BG_SCREEN_BLOCK(4);
+    tiles     = syHeapAllocateEWRAM(HEADING_TILE_BYTES);
+    headings += headings[heading] / 4;
+    syDecompressByteLZ(headings, tiles);
+    syDMAXCopy(tiles, HEADING_TILES, DMA_COPY_WORDS(HEADING_TILE_BYTES / 4), REG_DMA3);
+    syHeapRelease(tiles);
+    REG_DISPCNT &= ~DISPCNT_BG0_ON;
+    DMA_FILL32(HEADING_BLANK_METATILE, metatile, BG_SCREEN_SIZE);
+    metatile = (Uint16 *)BG_SCREEN_BLOCK(4) + HEADING_TOP * BG_SCREEN_WIDTH;
+    for (row = 0; row < HEADING_ROWS; row++)
+    {
+        metatile += HEADING_LEFT;
+        for (column = 0; column < HEADING_COLUMNS; column++)
+        {
+            *metatile++ = (Uint16)(tile++) | HEADING_BLANK_METATILE;
+        }
+        metatile += BG_SCREEN_WIDTH - HEADING_LEFT - HEADING_COLUMNS;
+    }
+    REG_DISPCNT &= ~(DISPCNT_WIN0_ON | DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON);
+    REG_DISPCNT |= DISPCNT_WIN0_ON;
+    REG_WININ    = WININ_WIN0_ALL;
+    REG_WINOUT   = WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ
+               | WINOUT_WIN01_CLR;
+    REG_WIN0H = WIN_RANGE(DISPLAY_WIDTH / 2, DISPLAY_WIDTH / 2);
+    REG_WIN0V = WIN_RANGE(24, 72);
+    fdPaletteFadeSetSource(PALETTE_TINT_NONE, 0);
+    fdPaletteFadeSetTarget(PALETTE_TINT_DIM_BRIGHT, 0);
+    fdPaletteFadeStartInterpolation(24);
+    REG_DISPCNT ^= DISPCNT_BG0_ON;
+    left         = DISPLAY_WIDTH / 2;
+    right        = DISPLAY_WIDTH / 2;
+    for (column = 0; column < HEADING_OPEN_TICKS; column++)
+    {
+        left      -= HEADING_OPEN_STEP;
+        right     += HEADING_OPEN_STEP;
+        REG_WIN0H  = WIN_RANGE(left, right);
+        sySynch(1);
+    }
 }
 
 // Waits up to two seconds, stopping early when a button is pressed.
 void fdScriptWaitTwoSecondsOrPress(void)
 {
-	Uint32 i;
+    Uint32 i;
 
-	for (i = 0; i < 2 * TICKS_PER_SECOND; i++)
-	{
-		sySynch(1);
-		if (PerWork.push != 0)
-			break;
-	}
+    for (i = 0; i < 2 * TICKS_PER_SECOND; i++)
+    {
+        sySynch(1);
+        if (PerWork.push != 0)
+            break;
+    }
 }
 
 // Clears pixel `pixel` (its row times 8 plus its column) of the 4bpp tile at (x, y) of the
@@ -89,17 +89,17 @@ void fdScriptWaitTwoSecondsOrPress(void)
 // + 1 pixels.
 void fdHeadingWipeTilePixel(Sint32 x, Sint32 y, Uint32 pixel)
 {
-	Uint16 *metatile  = (Uint16 *)(HEADING_TILES + (y * HEADING_COLUMNS + x) * TILE_SIZE_4BPP);
+    Uint16 *metatile  = (Uint16 *)(HEADING_TILES + (y * HEADING_COLUMNS + x) * TILE_SIZE_4BPP);
 
-	metatile         += pixel >> 2;
+    metatile         += pixel >> 2;
 
-	switch (pixel & 3)
-	{
-		case 0: *metatile &= 0xfff0; break;
-		case 1: *metatile &= 0xff00; break;
-		case 2: *metatile &= 0xf000; break;
-		case 3: *metatile &= 0; break;
-	}
+    switch (pixel & 3)
+    {
+        case 0: *metatile &= 0xfff0; break;
+        case 1: *metatile &= 0xff00; break;
+        case 2: *metatile &= 0xf000; break;
+        case 3: *metatile &= 0; break;
+    }
 }
 
 extern Sint16 HeadingWipeSteps[];
@@ -113,35 +113,35 @@ extern Sint16 HeadingWipeSteps[];
 // off, clears the screen block, reloads the window tiles and turns BG0 back on.
 void fdHeadingClose(void)
 {
-	Sint32          step = 0;
-	Uint32          x;
-	Uint32          y;
-	volatile Uint32 fill;
+    Sint32          step = 0;
+    Uint32          x;
+    Uint32          y;
+    volatile Uint32 fill;
 
-	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
-	fdPaletteFadeStartInterpolation(24);
-	for (;;)
-	{
-		for (; HeadingWipeSteps[step] >= 0; step++)
-		{
-			for (x = 0; x < HEADING_COLUMNS; x++)
-			{
-				for (y = 0; y < HEADING_ROWS; y++)
-					fdHeadingWipeTilePixel(x, y, HeadingWipeSteps[step]);
-			}
-		}
-		sySynch(2);
-		if (HeadingWipeSteps[step] == HEADING_WIPE_END)
-			break;
-		step++;
-	}
-	REG_DISPCNT ^= DISPCNT_BG0_ON | DISPCNT_WIN0_ON;
-	DMA_FILL32_CELL(fill, HEADING_BLANK_METATILE, (void *)BG_SCREEN_BLOCK(4), BG_SCREEN_SIZE);
-	syDMAXCopy(syResourceGetTableEntry(RESOURCE_WINDOW_TILES),
-	           (void *)BG_CHAR_BLOCK(0),
-	           DMA_COPY_WORDS(2048),
-	           REG_DMA3);
-	REG_DISPCNT ^= DISPCNT_BG0_ON;
+    fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
+    fdPaletteFadeStartInterpolation(24);
+    for (;;)
+    {
+        for (; HeadingWipeSteps[step] >= 0; step++)
+        {
+            for (x = 0; x < HEADING_COLUMNS; x++)
+            {
+                for (y = 0; y < HEADING_ROWS; y++)
+                    fdHeadingWipeTilePixel(x, y, HeadingWipeSteps[step]);
+            }
+        }
+        sySynch(2);
+        if (HeadingWipeSteps[step] == HEADING_WIPE_END)
+            break;
+        step++;
+    }
+    REG_DISPCNT ^= DISPCNT_BG0_ON | DISPCNT_WIN0_ON;
+    DMA_FILL32_CELL(fill, HEADING_BLANK_METATILE, (void *)BG_SCREEN_BLOCK(4), BG_SCREEN_SIZE);
+    syDMAXCopy(syResourceGetTableEntry(RESOURCE_WINDOW_TILES),
+               (void *)BG_CHAR_BLOCK(0),
+               DMA_COPY_WORDS(2048),
+               REG_DMA3);
+    REG_DISPCNT ^= DISPCNT_BG0_ON;
 }
 
 #undef HEADING_COLUMNS

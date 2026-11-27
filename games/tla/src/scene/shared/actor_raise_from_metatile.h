@@ -2,19 +2,19 @@
 // metatile under it 48 pixels, a gap the leader jumps across onto it.
 void scActorRaiseFromMetatile(Sint32 id)
 {
-	ACTOR *actor;
-	Sint32 height;
+    ACTOR *actor;
+    Sint32 height;
 
-	actor                 = fdActorGet(id);
-	actor->motionFlags    = ACTOR_FLOATS;
-	height                = actor->groundHeight;
-	actor->bounce         = 0;
-	actor->y.fixed        = height + toFIXED(32);
-	actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-	height                = fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
-	fdMapGridSetMetatileHeight(actor->x.fixed,
-	                           actor->z.fixed,
-	                           0,
-	                           METATILE_HEIGHT_STEPS(height) + METATILE_HEIGHT_STEPS(toFIXED(48)));
-	fdMapGridSetMetatileAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
+    actor                 = fdActorGet(id);
+    actor->motionFlags    = ACTOR_FLOATS;
+    height                = actor->groundHeight;
+    actor->bounce         = 0;
+    actor->y.fixed        = height + toFIXED(32);
+    actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+    height                = fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+    fdMapGridSetMetatileHeight(actor->x.fixed,
+                               actor->z.fixed,
+                               0,
+                               METATILE_HEIGHT_STEPS(height) + METATILE_HEIGHT_STEPS(toFIXED(48)));
+    fdMapGridSetMetatileAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
 }

@@ -29,92 +29,92 @@ static void   scKolimaPaletteCapture(void);
 // cursed colours too, and shows them.
 void          scKolimaPaletteCurse(Sint32 divisor)
 {
-	Uint16 i;
+    Uint16 i;
 
-	scKolimaPaletteSaveHealthy();
-	for (i = 0; i < PALETTE_FADE_BG_COLORS; i++)
-	{
-		if ((i < BG_COLOR_INDEX(KOLIMA_WATER_PALETTE, 1)
-		     || i > BG_COLOR_INDEX(KOLIMA_WATER_PALETTE, 7))
-		    && (i < BG_COLOR_INDEX(KOLIMA_SECOND_WATER_PALETTE, 1)
-		        || i > BG_COLOR_INDEX(KOLIMA_SECOND_WATER_PALETTE, 8)))
-		{
-			Uint16 *palette = (Uint16 *)&BG_PLTT[i];
-			*palette        = scKolimaPaletteCurseColor(*palette, divisor);
-		}
-	}
-	scKolimaPaletteCapture();
-	scKolimaPaletteSaveCursed();
-	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    scKolimaPaletteSaveHealthy();
+    for (i = 0; i < PALETTE_FADE_BG_COLORS; i++)
+    {
+        if ((i < BG_COLOR_INDEX(KOLIMA_WATER_PALETTE, 1)
+             || i > BG_COLOR_INDEX(KOLIMA_WATER_PALETTE, 7))
+            && (i < BG_COLOR_INDEX(KOLIMA_SECOND_WATER_PALETTE, 1)
+                || i > BG_COLOR_INDEX(KOLIMA_SECOND_WATER_PALETTE, 8)))
+        {
+            Uint16 *palette = (Uint16 *)&BG_PLTT[i];
+            *palette        = scKolimaPaletteCurseColor(*palette, divisor);
+        }
+    }
+    scKolimaPaletteCapture();
+    scKolimaPaletteSaveCursed();
+    fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 }
 
 // One cursed colour: red gains 1 / (4 * divisor) of itself, up to RGB_LEVEL_MAX, and green and blue
 // lose 1 / divisor.
 static Uint16 scKolimaPaletteCurseColor(Uint16 color, Sint32 divisor)
 {
-	Sint16 green = RGB_GREEN(color);
-	Sint16 red   = RGB_RED(color);
-	Sint16 blue  = RGB_BLUE(color);
-	Uint32 packed;
+    Sint16 green = RGB_GREEN(color);
+    Sint16 red   = RGB_RED(color);
+    Sint16 blue  = RGB_BLUE(color);
+    Uint32 packed;
 
-	red   = (red + syMathDivide(red, (divisor << 2)));
-	green = (green - syMathDivide(green, divisor));
-	blue  = (blue - syMathDivide(blue, divisor));
+    red   = (red + syMathDivide(red, (divisor << 2)));
+    green = (green - syMathDivide(green, divisor));
+    blue  = (blue - syMathDivide(blue, divisor));
 
-	if (red > RGB_LEVEL_MAX)
-		red = RGB_LEVEL_MAX;
+    if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
 
-	packed = red | ((blue << BLUE_SHIFT) | (green << GREEN_SHIFT));
-	return packed;
+    packed = red | ((blue << BLUE_SHIFT) | (green << GREEN_SHIFT));
+    return packed;
 }
 
 // Keeps the healthy colours: the palette fade's colours into KolimaPaletteHealthy.
 static void scKolimaPaletteSaveHealthy(void)
 {
-	syDMAXCopy(PaletteFadeState->palette,
-	           KolimaPaletteHealthy,
-	           DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS),
-	           REG_DMA3);
+    syDMAXCopy(PaletteFadeState->palette,
+               KolimaPaletteHealthy,
+               DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS),
+               REG_DMA3);
 }
 
 // Keeps the cursed colours: the palette fade's colours into KolimaPaletteCursed.
 static void scKolimaPaletteSaveCursed(void)
 {
-	syDMAXCopy(PaletteFadeState->palette,
-	           KolimaPaletteCursed,
-	           DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS),
-	           REG_DMA3);
+    syDMAXCopy(PaletteFadeState->palette,
+               KolimaPaletteCursed,
+               DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS),
+               REG_DMA3);
 }
 
 // Copies the palettes on the screen, background and sprites, into the palette fade's buffer as the
 // colours to fade from.
 static void scKolimaPaletteCapture(void)
 {
-	Uint16 *buf = PaletteFadeState->palette;
+    Uint16 *buf = PaletteFadeState->palette;
 
-	syDMAXCopy((const void *)BG_PLTT,
-	           buf,
-	           DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * sizeof(Uint16) / 4),
-	           REG_DMA3);
-	syDMAXCopy((const void *)OBJ_PLTT,
-	           buf + PALETTE_FADE_BG_COLORS,
-	           DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * sizeof(Uint16) / 4),
-	           REG_DMA3);
-	fdPaletteFadeSetSource(PALETTE_TINT_NONE, PALETTES_ALL);
+    syDMAXCopy((const void *)BG_PLTT,
+               buf,
+               DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * sizeof(Uint16) / 4),
+               REG_DMA3);
+    syDMAXCopy((const void *)OBJ_PLTT,
+               buf + PALETTE_FADE_BG_COLORS,
+               DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * sizeof(Uint16) / 4),
+               REG_DMA3);
+    fdPaletteFadeSetSource(PALETTE_TINT_NONE, PALETTES_ALL);
 }
 
 // Makes the healthy colours (second 0) or the cursed ones (second 1) the colours to fade to; the
 // script then fades with fdPaletteFadeStartInterpolation.
 void scKolimaPaletteRestore(Sint32 second)
 {
-	Uint16 *buf = PaletteFadeState->palette;
+    Uint16 *buf = PaletteFadeState->palette;
 
-	if (second)
-		syDMAXCopy(KolimaPaletteCursed, buf, DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
-	else
-		syDMAXCopy(KolimaPaletteHealthy, buf, DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
-	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-	scKolimaPaletteCapture();
+    if (second)
+        syDMAXCopy(KolimaPaletteCursed, buf, DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
+    else
+        syDMAXCopy(KolimaPaletteHealthy, buf, DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
+    fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    scKolimaPaletteCapture();
 }
 
 #undef BG_COLOR_INDEX

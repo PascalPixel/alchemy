@@ -18,103 +18,103 @@ extern const Sint16 PortraitSpriteMap[];
 #ifdef MODERN
 // The screens object calls the window sprite list's functions with no declaration in scope, as its
 // bytes need; a current GCC gets them here.
-#	include "graphics/window_sprite_list.h"
+#    include "graphics/window_sprite_list.h"
 #endif
 
 // One icon of the command row (BATTLE_COMMAND_ROW_STATE): its sprite, where it stands and the
 // command it stands for. screens_menu_titles.c loads it, screens_battle_command_row.c runs the row.
 typedef struct BATTLE_COMMAND_ROW_ICON
 {
-	// The icon as a 32x32 sprite, drawn only while it is selected (pulsing); the others show as
-	// tiles of BG1.
-	MENU_SPR sprite;
-	// resource: the VRAM cache entry its sprite's tiles go into, one 1 KB entry that every icon of
-	// the row shares, reloaded with the selected icon. unused is never read.
-	Uint16   resource, unused;
-	// Screen pixels: the sprite's top left before the pulse moves it.
-	Sint32   posX, posY;
-	Sint32   kind; // its command: MsgCommandName + kind names it
+    // The icon as a 32x32 sprite, drawn only while it is selected (pulsing); the others show as
+    // tiles of BG1.
+    MENU_SPR sprite;
+    // resource: the VRAM cache entry its sprite's tiles go into, one 1 KB entry that every icon of
+    // the row shares, reloaded with the selected icon. unused is never read.
+    Uint16   resource, unused;
+    // Screen pixels: the sprite's top left before the pulse moves it.
+    Sint32   posX, posY;
+    Sint32   kind; // its command: MsgCommandName + kind names it
 } BATTLE_COMMAND_ROW_ICON;
 
 // The pulsing icon's transform: its scale, 8.8 fixed point, and angle.
 typedef struct COMMAND_ROW_AFFINE
 {
-	Uint16 scaleX;
-	Uint16 scaleY;
-	Uint16 angle;
+    Uint16 scaleX;
+    Uint16 scaleY;
+    Uint16 angle;
 } COMMAND_ROW_AFFINE;
 
 // The command row's state: the icons' shared palette, up to six icons, the label window, the
 // pulsing icon's transform and the selection.
 typedef struct BATTLE_COMMAND_ROW_STATE
 {
-	// BG palette slots for the icons' 256-colour pixels, filled as each icon is loaded
-	// (mnBattleCommandRowLoadIconTiles).
-	ICON_PALETTE            palette;
-	BATTLE_COMMAND_ROW_ICON entries[6];
-	void                   *window;
-	Sint32                  iconCount;
-	COMMAND_ROW_AFFINE      affine;
-	Sint32                  affineIndex;
-	Sint32                  selectedIndex;
-	Sint32                  drawnIndex;
-	Sint32                  commandKinds[6];
+    // BG palette slots for the icons' 256-colour pixels, filled as each icon is loaded
+    // (mnBattleCommandRowLoadIconTiles).
+    ICON_PALETTE            palette;
+    BATTLE_COMMAND_ROW_ICON entries[6];
+    void                   *window;
+    Sint32                  iconCount;
+    COMMAND_ROW_AFFINE      affine;
+    Sint32                  affineIndex;
+    Sint32                  selectedIndex;
+    Sint32                  drawnIndex;
+    Sint32                  commandKinds[6];
 } BATTLE_COMMAND_ROW_STATE;
 
 // A sprite as the summary screen queues it (syOAMAddSpriteAtDepth): the depth queue's link, then
 // its OAM attributes as words or as fields.
 typedef struct SUMMARY_OAM
 {
-	Uint8 link[4];
+    Uint8 link[4];
 
-	union
-	{
-		struct
-		{
-			Uint32 attr01;
-			Uint32 attr23;
-		} word;
+    union
+    {
+        struct
+        {
+            Uint32 attr01;
+            Uint32 attr23;
+        } word;
 
-		struct
-		{
-			Uint8  y;
-			Uint8  attr0high;
-			Uint16 x           : 9;
-			Uint16 affineIndex : 5;
-			Uint16 size        : 2;
-			Uint16 tile        : 10;
-			Uint16 priority    : 2;
-			Uint16 palette     : 4;
-			Uint16 high;
-		} f;
-	} oam;
+        struct
+        {
+            Uint8  y;
+            Uint8  attr0high;
+            Uint16 x           : 9;
+            Uint16 affineIndex : 5;
+            Uint16 size        : 2;
+            Uint16 tile        : 10;
+            Uint16 priority    : 2;
+            Uint16 palette     : 4;
+            Uint16 high;
+        } f;
+    } oam;
 } SUMMARY_OAM;
 
 // Where the Status screen's cursor points, in pixels.
 typedef struct SUMMARY_POINT
 {
-	Sint32 x;
-	Sint32 y;
+    Sint32 x;
+    Sint32 y;
 } SUMMARY_POINT;
 
 // The Status screen's cursor: its place in each group, the help entry it shows and where it points.
 typedef struct STAT_CURSOR
 {
-	Sint8  groupPositions[8];
-	Sint32 helpEntry;
-	Sint32 drawnHelpEntry;
-	Sint32 group;
-	Sint32 groupSize;
-	Sint32 column;
-	Sint32 row;
+    Sint8  groupPositions[8];
+    Sint32 helpEntry;
+    Sint32 drawnHelpEntry;
+    Sint32 group;
+    Sint32 groupSize;
+    Sint32 column;
+    Sint32 row;
 } STAT_CURSOR;
 
 // The name entry screen's cursors: the hand on the keyboard and the caret under the name, each a
 // window sprite moved as a MENU_CURSOR.
 typedef union NAME_CURSOR
 {
-	WINDOW_SPR *sprite;
-	MENU_CURSOR cursor;
+    WINDOW_SPR *sprite;
+    MENU_CURSOR cursor;
 } NAME_CURSOR;
 
 // The menus' state (heap slot HEAP_SLOT_MENU) as the file list reads it: the party row of the
@@ -122,12 +122,12 @@ typedef union NAME_CURSOR
 // where each stands and its scale.
 typedef struct FILE_LIST_STATE
 {
-	Uint8  menuScreens[248]; // the windows and lists before the party row
-	// Up to four party sprites, null for none; the row has room for eight.
-	void  *partyMemberIcons[8];
-	Sint16 partyMemberX[8];     // pixels
-	Sint16 partyMemberY[8];     // pixels
-	FIXED  partyMemberScale[4]; // 16.16 fixed point, toFIXED(1) full size
+    Uint8  menuScreens[248]; // the windows and lists before the party row
+    // Up to four party sprites, null for none; the row has room for eight.
+    void  *partyMemberIcons[8];
+    Sint16 partyMemberX[8];     // pixels
+    Sint16 partyMemberY[8];     // pixels
+    FIXED  partyMemberScale[4]; // 16.16 fixed point, toFIXED(1) full size
 } FILE_LIST_STATE;
 
 // The battle menus' message buffers, in halfwords, and the copier that fills them: the Japanese
@@ -174,7 +174,7 @@ extern const Uint8                      PartyStatusDigitTiles[];
 // The window tilemap entry of standby count `n`: a digit, or a tile from DJINN_COUNT_TENS_TILE for
 // 10 on.
 #define DJINN_COUNT_TILE(n)                                                                        \
-	((n) > 9 ? (n) + WINDOW_TILE(DJINN_COUNT_TENS_TILE - 10) : WINDOW_TILE((n) + '0'))
+    ((n) > 9 ? (n) + WINDOW_TILE(DJINN_COUNT_TENS_TILE - 10) : WINDOW_TILE((n) + '0'))
 
 // The saving screen's progress bar: its seven stages, a row of tile numbers each.
 extern const Uint8 WindowProgressBarRows[];
@@ -205,33 +205,33 @@ extern Uint8       mnScanlineWindowBuildSpansCode[];
 // A unit's place projected onto the screen, as the target cursor reads it.
 typedef struct TARGET_POINT
 {
-	Sint32 x;
-	Sint32 y;
-	Sint32 z;
+    Sint32 x;
+    Sint32 y;
+    Sint32 z;
 } TARGET_POINT;
 
 // One of the target cursor's markers: where it stands, whether it shows and which listed unit it
 // marks.
 typedef struct TARGET_TRACK
 {
-	Uint8 x;
-	Uint8 y;
-	Uint8 flags;
-	Sint8 index;
+    Uint8 x;
+    Uint8 y;
+    Uint8 flags;
+    Sint8 index;
 } TARGET_TRACK;
 
 // One line's horizontal window edges, each a WIN_RANGE value.
 typedef struct WINDOW_LINE
 {
-	Uint16 win0; // for WIN0H
-	Uint16 win1; // for WIN1H
+    Uint16 win0; // for WIN0H
+    Uint16 win1; // for WIN1H
 } WINDOW_LINE;
 
 // A page of the icon menu's window shape: one WINDOW_LINE for each of the screen's 160 lines.
 typedef struct WINDOW_BUFFER
 {
-	Uint8       windowInOut[4]; // WININ and WINOUT, not touched here
-	WINDOW_LINE lines[160];
+    Uint8       windowInOut[4]; // WININ and WINOUT, not touched here
+    WINDOW_LINE lines[160];
 } WINDOW_BUFFER;
 
 // The debug icon browser's headings and page label.

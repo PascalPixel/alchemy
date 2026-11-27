@@ -28,52 +28,52 @@ extern CUE            SolSanctumPsynergyStoneCues[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SolSanctumPsynergyStoneEntrances;
+    return SolSanctumPsynergyStoneEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
-	return NULL;
+    return NULL;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SolSanctumPsynergyStoneExits;
+    return SolSanctumPsynergyStoneExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return SolSanctumPsynergyStoneActorPlacements;
+    return SolSanctumPsynergyStoneActorPlacements;
 }
 
 // The exit and the Psynergy Stone.
 const CUE *scGetCues(void)
 {
-	return SolSanctumPsynergyStoneCues;
+    return SolSanctumPsynergyStoneCues;
 }
 
 // Opens the map with the window transition and blocks Retreat.
 Sint32 scInit(void)
 {
-	FIXED shakeX = toFIXED(1);
-	FIXED shakeY = toFIXED(1);
+    FIXED shakeX = toFIXED(1);
+    FIXED shakeY = toFIXED(1);
 
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
-	syImportGameFlagSet(FLAG_RETREAT_BLOCKED);
-	if (gmFlagGet(FLAG_SOL_SANCTUM_ERUPTED) != 0)
-	{
-		fdQueueMusic(SE_RUMBLE);
-		fdMapGridSetScreenShake(shakeX, shakeY, toFIXED(1));
-		fdEffectInitSparkles();
-	}
-	return 0;
+    syImportGameFlagSet(FLAG_RETREAT_BLOCKED);
+    if (gmFlagGet(FLAG_SOL_SANCTUM_ERUPTED) != 0)
+    {
+        fdQueueMusic(SE_RUMBLE);
+        fdMapGridSetScreenShake(shakeX, shakeY, toFIXED(1));
+        fdEffectInitSparkles();
+    }
+    return 0;
 }
 
 SCENE_ENTRANCE SolSanctumPsynergyStoneEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-	{SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE,
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE,
      CONDITION_ALWAYS, 87,
      0, 142,
      FACING_NORTH, 0,
@@ -82,25 +82,25 @@ SCENE_ENTRANCE SolSanctumPsynergyStoneEntrances[] = {
      -1,
      -1,
      0},
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 Uint32 SolSanctumPsynergyStoneExits[] = {
-	SCENE_EXITS(SolSanctumPsynergyStone),
-	SCENE_EXIT(SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE,
+    SCENE_EXITS(SolSanctumPsynergyStone),
+    SCENE_EXIT(SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE,
                SolSanctumStatue,
                SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE),
-	SCENE_EXITS_END,
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE SolSanctumPsynergyStoneActorPlacements[] = {
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 CUE SolSanctumPsynergyStoneCues[] = {
-	{CUE_EXIT,
+    {CUE_EXIT,
      SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, CONDITION_ALWAYS,
      SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE},
-	{EXAMINE_CUE(EXAMINE_SILENT), 100, FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN, FIND_PSYNERGY_STONE},
-	{CUE_TABLE_END},
+    {EXAMINE_CUE(EXAMINE_SILENT), 100, FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN, FIND_PSYNERGY_STONE},
+    {CUE_TABLE_END},
 };

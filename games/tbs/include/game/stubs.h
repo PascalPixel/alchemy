@@ -52,7 +52,7 @@ Sint32                       gmEquipmentRollUnleashStub(struct UNIT *unit);
 Sint32                       gmPartyRemoveMemberStub(Sint32 unitId);
 Sint32                       gmUnitGetAttackElementStub(Sint32 unitId);
 Sint32                       gmBattleRollEffectSuccessStub(
-						  Sint32 caster, Sint32 target, Sint32 element, Sint32 effectId, Sint32 successScale);
+                          Sint32 caster, Sint32 target, Sint32 element, Sint32 effectId, Sint32 successScale);
 Sint32 gmBattleCalculateAttackDamageStub(Sint32 attack,
                                          Sint32 defense,
                                          Sint32 addedPower,

@@ -48,791 +48,791 @@
 // Djinn tutorial's hint follows an unleash.
 Sint32 mnBattleCollectPartyCommands(BATTLE_ACTION *commands, Uint16 *actors, Sint32 commandCount)
 {
-	Uint16             highlighted[2];
-	BATTLE_MENU_STATE *state;
-	BATTLE_ACTION     *commandsOut;
-	Sint32             forcedCount;
-	BATTLE_ACTION     *command;
-	UNIT              *unit;
-	Sint32             target;
-	Sint32             actorId;
-	Sint32             commandKind;
-	Sint32             parameter;
-	Sint32             largeIconSlot;
-	Sint32             smallIconSlot;
-	Sint32             commandIndex;
-	Sint32             summonIconSlot;
-	Sint32             choice;
-	WINDOW            *commandWindow;
+    Uint16             highlighted[2];
+    BATTLE_MENU_STATE *state;
+    BATTLE_ACTION     *commandsOut;
+    Sint32             forcedCount;
+    BATTLE_ACTION     *command;
+    UNIT              *unit;
+    Sint32             target;
+    Sint32             actorId;
+    Sint32             commandKind;
+    Sint32             parameter;
+    Sint32             largeIconSlot;
+    Sint32             smallIconSlot;
+    Sint32             commandIndex;
+    Sint32             summonIconSlot;
+    Sint32             choice;
+    WINDOW            *commandWindow;
 
-	void               btDrawPartyPanelsWithEmptyList(void)
-	{
-		Uint16 data[2];
+    void               btDrawPartyPanelsWithEmptyList(void)
+    {
+        Uint16 data[2];
 
-		data[0] = BATTLE_UNIT_LIST_END;
-		mnPartyStatusHighlightMembers(data);
-		btHighlightSetModesStub(data, HIGHLIGHT_SELECTED);
-	}
+        data[0] = BATTLE_UNIT_LIST_END;
+        mnPartyStatusHighlightMembers(data);
+        btHighlightSetModesStub(data, HIGHLIGHT_SELECTED);
+    }
 
-	target        = PLACE_PARTY;
-	commandsOut   = NULL;
-	choice        = 0;
-	commandKind   = 0;
-	parameter     = 0;
-	largeIconSlot = syVRAMCacheAllocateEntry(COMMAND_ICON_BYTES);
-	smallIconSlot = syVRAMCacheAllocateEntry(512);
-	state         = syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_MENU, sizeof(BATTLE_MENU_STATE));
-	forcedCount   = 0;
-	mnCommandIconReloadSlot(largeIconSlot, 0);
-	mnGraphicsExpandVRAMTilesByColorTable(
-		(Uint16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
-	mnPageArrowsDraw(LIST_PAGE_ARROW_VRAM);
-	mnRangeIconBuildTiles();
-	state->swappedUnit = -1;
-	state->lastTarget  = -1;
-	{
-		BATTLE_STATE *battle = RamHeapSlots->battleState;
-		Sint32        k;
+    target        = PLACE_PARTY;
+    commandsOut   = NULL;
+    choice        = 0;
+    commandKind   = 0;
+    parameter     = 0;
+    largeIconSlot = syVRAMCacheAllocateEntry(COMMAND_ICON_BYTES);
+    smallIconSlot = syVRAMCacheAllocateEntry(512);
+    state         = syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_MENU, sizeof(BATTLE_MENU_STATE));
+    forcedCount   = 0;
+    mnCommandIconReloadSlot(largeIconSlot, 0);
+    mnGraphicsExpandVRAMTilesByColorTable(
+        (Uint16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
+    mnPageArrowsDraw(LIST_PAGE_ARROW_VRAM);
+    mnRangeIconBuildTiles();
+    state->swappedUnit = -1;
+    state->lastTarget  = -1;
+    {
+        BATTLE_STATE *battle = RamHeapSlots->battleState;
+        Sint32        k;
 
-		for (k = 0; k < 8; k++)
-			state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
-		for (k = 0; k < 3; k++)
-			state->iconShown[k] = 0;
-		state->targetViewOffset    = 0;
-		state->viewOffset          = 0;
-		state->commandSelection[0] = 0;
-		state->commandSelection[1] = 0;
-		state->linkTimer           = 0;
-		state->timerHidden         = 0;
-		state->timer               = -1;
-		state->timerWindow         = 0;
-		if (battle->isLink != 0)
-		{
-			Sint32  missedLinkTicks;
-			Uint16 *signature;
+        for (k = 0; k < 8; k++)
+            state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
+        for (k = 0; k < 3; k++)
+            state->iconShown[k] = 0;
+        state->targetViewOffset    = 0;
+        state->viewOffset          = 0;
+        state->commandSelection[0] = 0;
+        state->commandSelection[1] = 0;
+        state->linkTimer           = 0;
+        state->timerHidden         = 0;
+        state->timer               = -1;
+        state->timerWindow         = 0;
+        if (battle->isLink != 0)
+        {
+            Sint32  missedLinkTicks;
+            Uint16 *signature;
 
-			state->linkTimer = 1;
-			signature        = (Uint16 *)SerialTransfer.payload;
-			signature[4]     = 'V';
-			signature[5]     = 'S';
-			signature[6]     = 'S';
-			signature[7]     = 'T';
-			missedLinkTicks  = 0;
-			for (;;)
-			{
-				Uint16 *peerSignature = LinkPeerSignatures[battle->linkSide ^ 1];
+            state->linkTimer = 1;
+            signature        = (Uint16 *)SerialTransfer.payload;
+            signature[4]     = 'V';
+            signature[5]     = 'S';
+            signature[6]     = 'S';
+            signature[7]     = 'T';
+            missedLinkTicks  = 0;
+            for (;;)
+            {
+                Uint16 *peerSignature = LinkPeerSignatures[battle->linkSide ^ 1];
 
-				if (battle->linkPaused != 0)
-				{
-					commandCount     = -1;
-					state->linkTimer = 0;
-					break;
-				}
-				if ((LinkStatusWork & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
-				{
-					if (++missedLinkTicks > LINK_MAX_MISSED_TICKS)
-					{
-						commandCount     = -1;
-						state->linkTimer = 0;
-						break;
-					}
-				}
-				else
-				{
-					missedLinkTicks = 0;
-					if (peerSignature[4] == 'V' && peerSignature[5] == 'S'
-					    && peerSignature[6] == 'S' && peerSignature[7] == 'T')
-						break;
-					if (peerSignature[4] == 'E' && peerSignature[5] == 'D'
-					    && peerSignature[6] == 'V' && peerSignature[7] == 'S')
-						break;
-					if (!(peerSignature[0] == 'E' && peerSignature[1] == 'X'
-					      && peerSignature[2] == 'E' && peerSignature[3] == 'C'))
-					{
-						commandCount     = -1;
-						state->linkTimer = 0;
-						break;
-					}
-				}
-				sySynch(1);
-			}
-		}
-	}
-	sySetEvent(mnBattleMenuUpdateEachTick, EVENT_PASS_TICK);
+                if (battle->linkPaused != 0)
+                {
+                    commandCount     = -1;
+                    state->linkTimer = 0;
+                    break;
+                }
+                if ((LinkStatusWork & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
+                {
+                    if (++missedLinkTicks > LINK_MAX_MISSED_TICKS)
+                    {
+                        commandCount     = -1;
+                        state->linkTimer = 0;
+                        break;
+                    }
+                }
+                else
+                {
+                    missedLinkTicks = 0;
+                    if (peerSignature[4] == 'V' && peerSignature[5] == 'S'
+                        && peerSignature[6] == 'S' && peerSignature[7] == 'T')
+                        break;
+                    if (peerSignature[4] == 'E' && peerSignature[5] == 'D'
+                        && peerSignature[6] == 'V' && peerSignature[7] == 'S')
+                        break;
+                    if (!(peerSignature[0] == 'E' && peerSignature[1] == 'X'
+                          && peerSignature[2] == 'E' && peerSignature[3] == 'C'))
+                    {
+                        commandCount     = -1;
+                        state->linkTimer = 0;
+                        break;
+                    }
+                }
+                sySynch(1);
+            }
+        }
+    }
+    sySetEvent(mnBattleMenuUpdateEachTick, EVENT_PASS_TICK);
 
-	for (;;)
-	{
-		commandsOut = commands;
-		if (commandCount >= 0)
-		{
-			forcedCount  = 0;
-			commandCount = mnBattlePartySplitChoosers(actors, &commandsOut, &forcedCount);
-		}
-		btDrawPartyPanelsWithEmptyList();
-		state->iconShown[2] = 0;
-		state->commandActor = -1;
-		state->tutorialStep = 0;
-		if (syGameFlagGet(FLAG_DJINN_LESSON))
-		{
-			state->tutorialStep  = 1;
-			state->tutorialDelay = 60;
-		}
-		if (commandCount >= 0)
-			choice = mnBattleCommandRowRun(COMMAND_ROW_PARTY, commandCount);
-		else
-			choice = COMMAND_ICON_FIGHT;
+    for (;;)
+    {
+        commandsOut = commands;
+        if (commandCount >= 0)
+        {
+            forcedCount  = 0;
+            commandCount = mnBattlePartySplitChoosers(actors, &commandsOut, &forcedCount);
+        }
+        btDrawPartyPanelsWithEmptyList();
+        state->iconShown[2] = 0;
+        state->commandActor = -1;
+        state->tutorialStep = 0;
+        if (syGameFlagGet(FLAG_DJINN_LESSON))
+        {
+            state->tutorialStep  = 1;
+            state->tutorialDelay = 60;
+        }
+        if (commandCount >= 0)
+            choice = mnBattleCommandRowRun(COMMAND_ROW_PARTY, commandCount);
+        else
+            choice = COMMAND_ICON_FIGHT;
 
-		// B on the party's row: undo the last reserve swap.
-		if (choice == -1)
-		{
-			Sint32        swapped = state->swappedUnit;
-			BATTLE_STATE *battle;
-			Sint32        old;
-			Sint32        shortSwapped;
-			Sint32        k;
+        // B on the party's row: undo the last reserve swap.
+        if (choice == -1)
+        {
+            Sint32        swapped = state->swappedUnit;
+            BATTLE_STATE *battle;
+            Sint32        old;
+            Sint32        shortSwapped;
+            Sint32        k;
 
-			if (swapped == -1)
-				continue;
-			battle                                  = RamHeapSlots->battleState;
-			old                                     = battle->partyUnits[state->swappedPlace];
-			battle->partyUnits[state->swappedPlace] = swapped;
-			shortSwapped                            = (Sint16)swapped;
-			for (k = 0; k < 8; k++)
-			{
-				if (MainRoutineStateWork.party[k] == shortSwapped)
-					MainRoutineStateWork.party[k] = old;
-				else if (MainRoutineStateWork.party[k] == old)
-					MainRoutineStateWork.party[k] = shortSwapped;
-			}
-			mnPartyStatusDraw(RamHeapSlots->battleState->partyStatus);
-			btObjectPutStub();
-			state->swappedUnit = -1;
-			btSummonUpdateAvailabilityStub();
-			BattleMenuStateWork->commandSelection[0] = 1;
-			continue;
-		}
-		// Switch: choose a party place, then the reserve member for it.
-		if (choice == COMMAND_ICON_SWITCH)
-		{
-			sySoundPlayStub(SE_MENU_CONFIRM);
-		choose_place:
-			choice =
-				mnBattleTargetRunSelection(0, ABILITY_TARGET_ALLIES, 1, TARGET_HINT_LAST_TARGET);
-			if (choice == -1)
-				continue;
-			choice = mnBattlePartyChooseReserve(choice);
-			if (choice == -1)
-				goto choose_place;
-			btSummonUpdateAvailabilityStub();
-			BattleMenuStateWork->commandSelection[0] = 0;
-			continue;
-		}
-		// Status: the summary screens of the party and the reserve, or in the debug build with
-		// Start held the enemies'.
-		if (choice == COMMAND_ICON_STATUS)
-		{
-			Uint16 *block = syHeapAllocate(18);
-			Sint32  side;
-			Sint32  count;
+            if (swapped == -1)
+                continue;
+            battle                                  = RamHeapSlots->battleState;
+            old                                     = battle->partyUnits[state->swappedPlace];
+            battle->partyUnits[state->swappedPlace] = swapped;
+            shortSwapped                            = (Sint16)swapped;
+            for (k = 0; k < 8; k++)
+            {
+                if (MainRoutineStateWork.party[k] == shortSwapped)
+                    MainRoutineStateWork.party[k] = old;
+                else if (MainRoutineStateWork.party[k] == old)
+                    MainRoutineStateWork.party[k] = shortSwapped;
+            }
+            mnPartyStatusDraw(RamHeapSlots->battleState->partyStatus);
+            btObjectPutStub();
+            state->swappedUnit = -1;
+            btSummonUpdateAvailabilityStub();
+            BattleMenuStateWork->commandSelection[0] = 1;
+            continue;
+        }
+        // Switch: choose a party place, then the reserve member for it.
+        if (choice == COMMAND_ICON_SWITCH)
+        {
+            sySoundPlayStub(SE_MENU_CONFIRM);
+        choose_place:
+            choice =
+                mnBattleTargetRunSelection(0, ABILITY_TARGET_ALLIES, 1, TARGET_HINT_LAST_TARGET);
+            if (choice == -1)
+                continue;
+            choice = mnBattlePartyChooseReserve(choice);
+            if (choice == -1)
+                goto choose_place;
+            btSummonUpdateAvailabilityStub();
+            BattleMenuStateWork->commandSelection[0] = 0;
+            continue;
+        }
+        // Status: the summary screens of the party and the reserve, or in the debug build with
+        // Start held the enemies'.
+        if (choice == COMMAND_ICON_STATUS)
+        {
+            Uint16 *block = syHeapAllocate(18);
+            Sint32  side;
+            Sint32  count;
 
-			if (DebugMode != 0 && (PerWork.data & KEY_START))
-				side = BATTLE_SIDE_MASK_ENEMIES;
-			else
-				side = BATTLE_SIDE_MASK_PARTY;
-			count = btUnitListIdsStub(side, block);
-			if (side == BATTLE_SIDE_MASK_PARTY)
-				count += btPartyPrepareReserveOwnersStub(block + count);
-			sySynch(1);
-			mnBattleStatusScreenRun(block, count, block[0]);
-			syHeapRelease(block);
-			continue;
-		}
-		// Flee: one COMMAND_FLEE for the party, first in the turn.
-		if (choice == COMMAND_ICON_FLEE)
-		{
-			if (mnBattleRefuseFlee() != 0)
-				continue;
-			commandCount      = 1;
-			command           = commands;
-			command->unitId   = actors[0];
-			forcedCount       = 0;
-			command->priority = FLEE_PRIORITY;
-			command->command  = COMMAND_FLEE;
-			command->param    = 0;
-			command->target   = PLACE_PARTY;
-			break;
-		}
-		if (choice != COMMAND_ICON_FIGHT)
-			break;
-		sySoundPlayStub(SE_CAST);
-		commandIndex = 0;
-		if (commandIndex >= commandCount)
-			break;
+            if (DebugMode != 0 && (PerWork.data & KEY_START))
+                side = BATTLE_SIDE_MASK_ENEMIES;
+            else
+                side = BATTLE_SIDE_MASK_PARTY;
+            count = btUnitListIdsStub(side, block);
+            if (side == BATTLE_SIDE_MASK_PARTY)
+                count += btPartyPrepareReserveOwnersStub(block + count);
+            sySynch(1);
+            mnBattleStatusScreenRun(block, count, block[0]);
+            syHeapRelease(block);
+            continue;
+        }
+        // Flee: one COMMAND_FLEE for the party, first in the turn.
+        if (choice == COMMAND_ICON_FLEE)
+        {
+            if (mnBattleRefuseFlee() != 0)
+                continue;
+            commandCount      = 1;
+            command           = commands;
+            command->unitId   = actors[0];
+            forcedCount       = 0;
+            command->priority = FLEE_PRIORITY;
+            command->command  = COMMAND_FLEE;
+            command->param    = 0;
+            command->target   = PLACE_PARTY;
+            break;
+        }
+        if (choice != COMMAND_ICON_FIGHT)
+            break;
+        sySoundPlayStub(SE_CAST);
+        commandIndex = 0;
+        if (commandIndex >= commandCount)
+            break;
 
-		for (;;)
-		{
-			if (commandIndex == 0)
-			{
-				btDjinnCountStandbyStub(0, state->standbyDjinn[0]);
-			}
-			else
-			{
-				Sint32 k;
+        for (;;)
+        {
+            if (commandIndex == 0)
+            {
+                btDjinnCountStandbyStub(0, state->standbyDjinn[0]);
+            }
+            else
+            {
+                Sint32 k;
 
-				for (k = 0; k < 4; k++)
-					state->standbyDjinn[commandIndex][k] = state->standbyDjinn[commandIndex - 1][k];
-			}
-			command = &commandsOut[commandIndex];
-			actorId = actors[commandIndex];
-			// UB: syUnitGet returns a pointer, not the cast's doubleword result.
+                for (k = 0; k < 4; k++)
+                    state->standbyDjinn[commandIndex][k] = state->standbyDjinn[commandIndex - 1][k];
+            }
+            command = &commandsOut[commandIndex];
+            actorId = actors[commandIndex];
+            // UB: syUnitGet returns a pointer, not the cast's doubleword result.
 #if FIX_FUNCTION_SIGNATURES
-			unit = syUnitGet(actorId);
+            unit = syUnitGet(actorId);
 #else
-			unit = (UNIT *)(Sint32)((Sint64 (*)(Sint32))syUnitGet)(actorId);
+            unit = (UNIT *)(Sint32)((Sint64 (*)(Sint32))syUnitGet)(actorId);
 #endif
-			{
-				MENU_SPR *iconSprite;
+            {
+                MENU_SPR *iconSprite;
 
-				BattleMenuStateWork->commandActor        = actorId;
-				BattleMenuStateWork->commandSelection[1] = 0;
-				iconSprite                               = &BattleMenuStateWork->icons[2];
-				MENU_SPR_INIT(*iconSprite, OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-				iconSprite->oam.f.tile    = mnPortraitLoad(unit->enemyId, smallIconSlot);
-				iconSprite->oam.f.x       = BATTLE_PORTRAIT_X;
-				iconSprite->oam.f.y       = 128;
-				iconSprite->oam.f.palette = PORTRAIT_PALETTE;
-				state->iconShown[2]       = 1;
-			}
+                BattleMenuStateWork->commandActor        = actorId;
+                BattleMenuStateWork->commandSelection[1] = 0;
+                iconSprite                               = &BattleMenuStateWork->icons[2];
+                MENU_SPR_INIT(*iconSprite, OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+                iconSprite->oam.f.tile    = mnPortraitLoad(unit->enemyId, smallIconSlot);
+                iconSprite->oam.f.x       = BATTLE_PORTRAIT_X;
+                iconSprite->oam.f.y       = 128;
+                iconSprite->oam.f.palette = PORTRAIT_PALETTE;
+                state->iconShown[2]       = 1;
+            }
 
-		mark_visible:
-			mnWindowMarkVisibleTextTiles();
-			BattleMenuStateWork->iconShown[0]              = 0;
-			BattleMenuStateWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
-			highlighted[0]                                 = actorId;
-			highlighted[1]                                 = BATTLE_UNIT_LIST_END;
-			btHighlightSetModesStub(highlighted, HIGHLIGHT_SELECTED);
-			mnPartyStatusHighlightMembers(highlighted);
-			sySynch(1);
-			choice = mnBattleCommandRowRun(COMMAND_ROW_MEMBER, 0);
-			sySynch(1);
-			if (choice == -2)
-			{
-				Uint16 *block       = syHeapAllocate(12);
-				Sint32  count       = btUnitListIdsStub(BATTLE_SIDE_MASK_PARTY, block);
+        mark_visible:
+            mnWindowMarkVisibleTextTiles();
+            BattleMenuStateWork->iconShown[0]              = 0;
+            BattleMenuStateWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
+            highlighted[0]                                 = actorId;
+            highlighted[1]                                 = BATTLE_UNIT_LIST_END;
+            btHighlightSetModesStub(highlighted, HIGHLIGHT_SELECTED);
+            mnPartyStatusHighlightMembers(highlighted);
+            sySynch(1);
+            choice = mnBattleCommandRowRun(COMMAND_ROW_MEMBER, 0);
+            sySynch(1);
+            if (choice == -2)
+            {
+                Uint16 *block       = syHeapAllocate(12);
+                Sint32  count       = btUnitListIdsStub(BATTLE_SIDE_MASK_PARTY, block);
 
-				state->iconShown[2] = 0;
-				sySynch(1);
-				mnBattleStatusScreenRun(block, count, actorId);
-				state->iconShown[2] = 1;
-				syHeapRelease(block);
-				continue;
-			}
-			btHighlightSetModesStub(highlighted, HIGHLIGHT_OFF);
-			if (choice == -1)
-			{
-				if (commandIndex == 0)
-					break;
-				commandIndex--;
-				continue;
-			}
-			{
-				MENU_SPR *iconSprite = &BattleMenuStateWork->icons[0];
+                state->iconShown[2] = 0;
+                sySynch(1);
+                mnBattleStatusScreenRun(block, count, actorId);
+                state->iconShown[2] = 1;
+                syHeapRelease(block);
+                continue;
+            }
+            btHighlightSetModesStub(highlighted, HIGHLIGHT_OFF);
+            if (choice == -1)
+            {
+                if (commandIndex == 0)
+                    break;
+                commandIndex--;
+                continue;
+            }
+            {
+                MENU_SPR *iconSprite = &BattleMenuStateWork->icons[0];
 
-				if (BattleMenuStateWork->timer == 0)
-					choice = COMMAND_ICON_DEFEND;
-				iconSprite->oam.word.attr23 = 0;
-				iconSprite->oam.word.attr01 =
-					OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-				iconSprite->oam.f.tile = mnCommandIconReloadSlot(largeIconSlot, choice);
-				if (choice == COMMAND_ICON_DJINN)
-					iconSprite->oam.f.x = 128;
-				else
-					iconSprite->oam.f.x = 96;
-				iconSprite->oam.f.y = 136;
-				state->iconShown[0] = 1;
-			}
+                if (BattleMenuStateWork->timer == 0)
+                    choice = COMMAND_ICON_DEFEND;
+                iconSprite->oam.word.attr23 = 0;
+                iconSprite->oam.word.attr01 =
+                    OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+                iconSprite->oam.f.tile = mnCommandIconReloadSlot(largeIconSlot, choice);
+                if (choice == COMMAND_ICON_DJINN)
+                    iconSprite->oam.f.x = 128;
+                else
+                    iconSprite->oam.f.x = 96;
+                iconSprite->oam.f.y = 136;
+                state->iconShown[0] = 1;
+            }
 
-			switch (choice)
-			{
-				case COMMAND_ICON_ATTACK:
-					commandWindow =
-						mnWindowCreate(11, 17, 11, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
-					mnTextDrawMessageAsTiles(
-						(Sint32)MsgCommandName, commandWindow, BATTLE_COMMAND_NAME_X, 0);
-					COMMAND_ICON_X(state) = ATTACK_ICON_X;
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					choice = mnBattleTargetRunSelection(
-						actorId, ABILITY_TARGET_FOES, 1, TARGET_HINT_NONE);
-					mnWindowClose(commandWindow, 1);
-					if (choice == -1)
-						goto mark_visible;
-					commandKind    = COMMAND_ATTACK;
-					target         = choice;
-					command->range = 1;
-					break;
+            switch (choice)
+            {
+                case COMMAND_ICON_ATTACK:
+                    commandWindow =
+                        mnWindowCreate(11, 17, 11, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
+                    mnTextDrawMessageAsTiles(
+                        (Sint32)MsgCommandName, commandWindow, BATTLE_COMMAND_NAME_X, 0);
+                    COMMAND_ICON_X(state) = ATTACK_ICON_X;
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    choice = mnBattleTargetRunSelection(
+                        actorId, ABILITY_TARGET_FOES, 1, TARGET_HINT_NONE);
+                    mnWindowClose(commandWindow, 1);
+                    if (choice == -1)
+                        goto mark_visible;
+                    commandKind    = COMMAND_ATTACK;
+                    target         = choice;
+                    command->range = 1;
+                    break;
 
-				case COMMAND_ICON_PSYNERGY:
-				{
-					Sint32              k;
-					MENU_SPR           *iconSprite;
-					ABILITY_DEFINITION *ability;
-					WIN_STATE          *windowState;
-					Uint16             *list;
-					Uint8              *pick;
-					Sint32              cost;
-					Sint32              handle;
-					Sint32              count;
-					Sint32              entryValue;
+                case COMMAND_ICON_PSYNERGY:
+                {
+                    Sint32              k;
+                    MENU_SPR           *iconSprite;
+                    ABILITY_DEFINITION *ability;
+                    WIN_STATE          *windowState;
+                    Uint16             *list;
+                    Uint8              *pick;
+                    Sint32              cost;
+                    Sint32              handle;
+                    Sint32              count;
+                    Sint32              entryValue;
 
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					// DEAD: choice cleared before the list sets it; the ROM keeps its mov.
-					choice = 0;
-					BATTLE_MENU_SET_CURSOR(0, 0, 0);
-				psynergy_menu:
-					list                  = state->listAbilities;
-					pick                  = state->listSlots;
-					COMMAND_ICON_X(state) = PSYNERGY_MENU_ICON_X;
-					count                 = 0;
-					for (k = 0;
-					     k != PSYNERGY_SLOTS
-					     && (entryValue = unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK)
-					            != 0;
-					     k++)
-					{
-						if (gmAbilityGetDirectStub(entryValue)->flags & ABILITY_USABLE_IN_BATTLE)
-						{
-							pick[count] = k;
-							list[count] = entryValue;
-							count++;
-						}
-					}
-					pick[count] = 0;
-					list[count] = 0;
-					choice      = mnBattlePsynergyMenuRun(actorId, list, count);
-					if (choice == -1)
-						goto mark_visible;
-					parameter  = unit->psynergy[pick[choice]].encodedAction & PSYNERGY_ABILITY_MASK;
-					ability    = gmAbilityGetDirectStub(parameter);
-					cost       = ability->range;
-					iconSprite = &state->icons[1];
-					handle     = syVRAMCacheAllocateEntry(128);
-					windowState = WINDOW_STATE;
-					commandWindow =
-						mnWindowCreate(8, 17, 18, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
-					COMMAND_ICON_X(state) = PSYNERGY_CHOSEN_ICON_X;
-					MENU_SPR_INIT(*iconSprite,
-					              OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-					iconSprite->oam.f.x      = commandWindow->x * 8 + 8;
-					iconSprite->oam.f.y      = commandWindow->y * 8 + 4;
-					iconSprite->oam.f.tile   = mnAbilityIconLoadIntoSlot(parameter, handle);
-					state->iconShown[1]      = 1;
-					windowState->textPalette = BASIC_COLORS_PALETTE;
-					if (ability->ppCost > unit->pp)
-						mnTextSetColor(TEXT_COLOR_RED);
-					else if (unit->psySeal != 0)
-						mnTextSetColor(TEXT_COLOR_PINK);
-					mnTextDrawMessageAsTiles(
-						parameter + (Sint32)MsgAbilityName, commandWindow, 16, 0);
-					mnTextDrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-					windowState->textPalette = WINDOW_PALETTE;
-					mnTextSetColor(TEXT_COLOR_WHITE);
-					mnWindowSetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
-					mnWindowSetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0, 0);
-					if (ability->element != ELEMENT_NONE)
-						mnWindowSetTilemapEntry(
-							commandWindow, ability->element + ELEMENT_ICON_TILE, 15, 0, 0);
-					command->range = cost;
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					choice = mnBattleTargetRunSelection(
-						actorId, ability->targetMode, cost, mnBattleClassifyEntryKind(ability));
-					state->iconShown[1] = 0;
-					syVRAMCacheFreeEntry(handle);
-					mnWindowClose(commandWindow, 1);
-					if (choice == -1)
-						goto psynergy_menu;
-					commandKind = COMMAND_PSYNERGY;
-					target      = choice;
-					break;
-				}
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    // DEAD: choice cleared before the list sets it; the ROM keeps its mov.
+                    choice = 0;
+                    BATTLE_MENU_SET_CURSOR(0, 0, 0);
+                psynergy_menu:
+                    list                  = state->listAbilities;
+                    pick                  = state->listSlots;
+                    COMMAND_ICON_X(state) = PSYNERGY_MENU_ICON_X;
+                    count                 = 0;
+                    for (k = 0;
+                         k != PSYNERGY_SLOTS
+                         && (entryValue = unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK)
+                                != 0;
+                         k++)
+                    {
+                        if (gmAbilityGetDirectStub(entryValue)->flags & ABILITY_USABLE_IN_BATTLE)
+                        {
+                            pick[count] = k;
+                            list[count] = entryValue;
+                            count++;
+                        }
+                    }
+                    pick[count] = 0;
+                    list[count] = 0;
+                    choice      = mnBattlePsynergyMenuRun(actorId, list, count);
+                    if (choice == -1)
+                        goto mark_visible;
+                    parameter  = unit->psynergy[pick[choice]].encodedAction & PSYNERGY_ABILITY_MASK;
+                    ability    = gmAbilityGetDirectStub(parameter);
+                    cost       = ability->range;
+                    iconSprite = &state->icons[1];
+                    handle     = syVRAMCacheAllocateEntry(128);
+                    windowState = WINDOW_STATE;
+                    commandWindow =
+                        mnWindowCreate(8, 17, 18, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
+                    COMMAND_ICON_X(state) = PSYNERGY_CHOSEN_ICON_X;
+                    MENU_SPR_INIT(*iconSprite,
+                                  OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+                    iconSprite->oam.f.x      = commandWindow->x * 8 + 8;
+                    iconSprite->oam.f.y      = commandWindow->y * 8 + 4;
+                    iconSprite->oam.f.tile   = mnAbilityIconLoadIntoSlot(parameter, handle);
+                    state->iconShown[1]      = 1;
+                    windowState->textPalette = BASIC_COLORS_PALETTE;
+                    if (ability->ppCost > unit->pp)
+                        mnTextSetColor(TEXT_COLOR_RED);
+                    else if (unit->psySeal != 0)
+                        mnTextSetColor(TEXT_COLOR_PINK);
+                    mnTextDrawMessageAsTiles(
+                        parameter + (Sint32)MsgAbilityName, commandWindow, 16, 0);
+                    mnTextDrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
+                    windowState->textPalette = WINDOW_PALETTE;
+                    mnTextSetColor(TEXT_COLOR_WHITE);
+                    mnWindowSetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
+                    mnWindowSetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0, 0);
+                    if (ability->element != ELEMENT_NONE)
+                        mnWindowSetTilemapEntry(
+                            commandWindow, ability->element + ELEMENT_ICON_TILE, 15, 0, 0);
+                    command->range = cost;
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    choice = mnBattleTargetRunSelection(
+                        actorId, ability->targetMode, cost, mnBattleClassifyEntryKind(ability));
+                    state->iconShown[1] = 0;
+                    syVRAMCacheFreeEntry(handle);
+                    mnWindowClose(commandWindow, 1);
+                    if (choice == -1)
+                        goto psynergy_menu;
+                    commandKind = COMMAND_PSYNERGY;
+                    target      = choice;
+                    break;
+                }
 
-				case COMMAND_ICON_SUMMON:
-				{
-					const SUMMON_DEFINITION *summon;
-					ABILITY_DEFINITION      *ability;
-					MENU_SPR                *iconSprite;
-					Sint32                   ok;
-					Sint32                   j;
-					Sint32                   n;
+                case COMMAND_ICON_SUMMON:
+                {
+                    const SUMMON_DEFINITION *summon;
+                    ABILITY_DEFINITION      *ability;
+                    MENU_SPR                *iconSprite;
+                    Sint32                   ok;
+                    Sint32                   j;
+                    Sint32                   n;
 
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					BATTLE_MENU_SET_CURSOR(0, 0, 0);
-				summon_menu:
-					COMMAND_ICON_X(state) = BATTLE_SUMMON_ICON_X;
-					mnPartyStatusHighlightMembers(highlighted);
-					choice = mnBattleSummonMenuRun(0, 0, state->standbyDjinn[commandIndex]);
-					mnPartyStatusHighlightMembers(highlighted);
-					if (choice == -1)
-						goto mark_visible;
-					commandKind = COMMAND_SUMMON;
-					parameter   = choice;
-					sySynch(1);
-					iconSprite     = &state->icons[1];
-					summon         = gmSummonDefinitionGetNearStub(choice);
-					ability        = gmAbilityGetDirectStub(summon->abilityId);
-					summonIconSlot = syVRAMCacheAllocateEntry(128);
-					commandWindow  = mnWindowCreate(SUMMON_WINDOW_X,
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    BATTLE_MENU_SET_CURSOR(0, 0, 0);
+                summon_menu:
+                    COMMAND_ICON_X(state) = BATTLE_SUMMON_ICON_X;
+                    mnPartyStatusHighlightMembers(highlighted);
+                    choice = mnBattleSummonMenuRun(0, 0, state->standbyDjinn[commandIndex]);
+                    mnPartyStatusHighlightMembers(highlighted);
+                    if (choice == -1)
+                        goto mark_visible;
+                    commandKind = COMMAND_SUMMON;
+                    parameter   = choice;
+                    sySynch(1);
+                    iconSprite     = &state->icons[1];
+                    summon         = gmSummonDefinitionGetNearStub(choice);
+                    ability        = gmAbilityGetDirectStub(summon->abilityId);
+                    summonIconSlot = syVRAMCacheAllocateEntry(128);
+                    commandWindow  = mnWindowCreate(SUMMON_WINDOW_X,
                                                    17,
                                                    BATTLE_SUMMON_WINDOW_WIDTH,
                                                    3,
                                                    WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
-					n              = 0;
-					for (j = 0; j <= 3; j++)
-					{
-						if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
-							break;
-					}
-					ok                    = j == 4;
-					COMMAND_ICON_X(state) = SUMMON_CHOSEN_ICON_X;
-					((Uint32 *)&iconSprite->oam)[0] =
-						OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-					((Uint32 *)&iconSprite->oam)[1] = 0;
-					ASM_NOTHING();
-					iconSprite->oam.f.x    = commandWindow->x * 8 + 8;
-					iconSprite->oam.f.y    = commandWindow->y * 8 + 4;
-					iconSprite->oam.f.tile = mnAbilityIconLoadIntoSlot(
-						summon->abilityId & ACTION_ID_MASK, summonIconSlot);
-					state->iconShown[1] = 1;
-					if (ok == 0)
-						mnTextSetColor(TEXT_COLOR_RED);
-					mnTextDrawMessageAsTiles(gmSummonDefinitionGetNearStub(choice)->abilityId
-					                             + (Sint32)MsgAbilityName,
-					                         commandWindow,
-					                         16,
-					                         0);
-					for (j = 0; j <= 3; j++)
-					{
-						if (summon->djinnRequired[j] != 0)
-						{
-							mnWindowSetTilemapEntry(commandWindow,
-							                        j + ELEMENT_ICON_TILE,
-							                        n * 2 + BATTLE_SUMMON_ELEMENT_COLUMN,
-							                        0,
-							                        0);
-							mnWindowPutGlyph(commandWindow,
-							                 summon->djinnRequired[j] + '0',
-							                 n * 2 + BATTLE_SUMMON_COST_COLUMN,
-							                 0,
-							                 GLYPH_DRAW_CHARACTER);
-							n++;
-						}
-					}
-					if (ok != 0)
-						sySoundPlayStub(SE_MENU_CONFIRM);
-					else
-						sySoundPlayStub(SE_MENU_ERROR);
-					choice              = mnBattleTargetRunSelection(actorId,
+                    n              = 0;
+                    for (j = 0; j <= 3; j++)
+                    {
+                        if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
+                            break;
+                    }
+                    ok                    = j == 4;
+                    COMMAND_ICON_X(state) = SUMMON_CHOSEN_ICON_X;
+                    ((Uint32 *)&iconSprite->oam)[0] =
+                        OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+                    ((Uint32 *)&iconSprite->oam)[1] = 0;
+                    ASM_NOTHING();
+                    iconSprite->oam.f.x    = commandWindow->x * 8 + 8;
+                    iconSprite->oam.f.y    = commandWindow->y * 8 + 4;
+                    iconSprite->oam.f.tile = mnAbilityIconLoadIntoSlot(
+                        summon->abilityId & ACTION_ID_MASK, summonIconSlot);
+                    state->iconShown[1] = 1;
+                    if (ok == 0)
+                        mnTextSetColor(TEXT_COLOR_RED);
+                    mnTextDrawMessageAsTiles(gmSummonDefinitionGetNearStub(choice)->abilityId
+                                                 + (Sint32)MsgAbilityName,
+                                             commandWindow,
+                                             16,
+                                             0);
+                    for (j = 0; j <= 3; j++)
+                    {
+                        if (summon->djinnRequired[j] != 0)
+                        {
+                            mnWindowSetTilemapEntry(commandWindow,
+                                                    j + ELEMENT_ICON_TILE,
+                                                    n * 2 + BATTLE_SUMMON_ELEMENT_COLUMN,
+                                                    0,
+                                                    0);
+                            mnWindowPutGlyph(commandWindow,
+                                             summon->djinnRequired[j] + '0',
+                                             n * 2 + BATTLE_SUMMON_COST_COLUMN,
+                                             0,
+                                             GLYPH_DRAW_CHARACTER);
+                            n++;
+                        }
+                    }
+                    if (ok != 0)
+                        sySoundPlayStub(SE_MENU_CONFIRM);
+                    else
+                        sySoundPlayStub(SE_MENU_ERROR);
+                    choice              = mnBattleTargetRunSelection(actorId,
                                                         ability->targetMode,
                                                         ability->range,
                                                         mnBattleClassifyEntryKind(ability));
-					command->range      = ability->range;
-					state->iconShown[1] = 0;
-					syVRAMCacheFreeEntry(summonIconSlot);
-					mnWindowClose(commandWindow, 1);
-					if (choice == -1)
-						goto summon_menu;
-					for (j = 0; j <= 3; j++)
-					{
-						if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
-						{
-							state->standbyDjinn[commandIndex][j] = 0;
-							break;
-						}
-						state->standbyDjinn[commandIndex][j] -= summon->djinnRequired[j];
-					}
-					target = choice;
-					break;
-				}
+                    command->range      = ability->range;
+                    state->iconShown[1] = 0;
+                    syVRAMCacheFreeEntry(summonIconSlot);
+                    mnWindowClose(commandWindow, 1);
+                    if (choice == -1)
+                        goto summon_menu;
+                    for (j = 0; j <= 3; j++)
+                    {
+                        if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
+                        {
+                            state->standbyDjinn[commandIndex][j] = 0;
+                            break;
+                        }
+                        state->standbyDjinn[commandIndex][j] -= summon->djinnRequired[j];
+                    }
+                    target = choice;
+                    break;
+                }
 
-				case COMMAND_ICON_DJINN:
-				{
-					ABILITY_DEFINITION *ability;
-					Sint32              cost;
-					Sint32              element;
-					Sint32              index;
+                case COMMAND_ICON_DJINN:
+                {
+                    ABILITY_DEFINITION *ability;
+                    Sint32              cost;
+                    Sint32              element;
+                    Sint32              index;
 
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					BATTLE_MENU_SET_CURSOR(0, 0, 0);
-				djinn_menu:
-					COMMAND_ICON_X(state)                          = DJINN_MENU_ICON_X;
-					BattleMenuStateWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
-					choice         = mnBattleDjinnMenuRun(actorId, 1);
-					command->range = 0;
-					if (choice == -1)
-						goto mark_visible;
-					parameter                                      = choice;
-					commandKind                                    = COMMAND_DJINN;
-					BattleMenuStateWork->chosenDjinn[commandIndex] = choice;
-					element = DJINN_COMMAND_ELEMENT(parameter);
-					index   = DJINN_COMMAND_INDEX(parameter);
-					if (gmDjinnIsSetStub(actorId, element, index) != 0)
-					{
-						ability = gmAbilityGetDirectStub(gmDjinnGetAbilityIdStub(element, index));
-						cost    = ability->range;
-						commandWindow =
-							mnWindowCreate(11, 17, 10, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
-						COMMAND_ICON_X(state) = DJINN_CHOSEN_ICON_X;
-						mnWindowSetTilemapEntry(
-							commandWindow, element + ELEMENT_ICON_TILE, 0, 0, 0);
-						mnTextDrawMessageAsTiles(element * DJINN_PER_ELEMENT + index
-						                             + (Sint32)MsgDjinnName,
-						                         commandWindow,
-						                         16,
-						                         0);
-						command->range = cost;
-						sySynch(1);
-						sySoundPlayStub(SE_MENU_CONFIRM);
-						choice = mnBattleTargetRunSelection(
-							actorId, ability->targetMode, cost, mnBattleClassifyEntryKind(ability));
-						if (state->tutorialStep != 0)
-						{
-							void *hint = mnMessageShowAndWait(
-								mnDjinnGetGiveTutorialMessage() + DJINN_TUTORIAL_LINE_UNLEASH_HINT,
-								15,
-								8);
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    BATTLE_MENU_SET_CURSOR(0, 0, 0);
+                djinn_menu:
+                    COMMAND_ICON_X(state)                          = DJINN_MENU_ICON_X;
+                    BattleMenuStateWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
+                    choice         = mnBattleDjinnMenuRun(actorId, 1);
+                    command->range = 0;
+                    if (choice == -1)
+                        goto mark_visible;
+                    parameter                                      = choice;
+                    commandKind                                    = COMMAND_DJINN;
+                    BattleMenuStateWork->chosenDjinn[commandIndex] = choice;
+                    element = DJINN_COMMAND_ELEMENT(parameter);
+                    index   = DJINN_COMMAND_INDEX(parameter);
+                    if (gmDjinnIsSetStub(actorId, element, index) != 0)
+                    {
+                        ability = gmAbilityGetDirectStub(gmDjinnGetAbilityIdStub(element, index));
+                        cost    = ability->range;
+                        commandWindow =
+                            mnWindowCreate(11, 17, 10, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
+                        COMMAND_ICON_X(state) = DJINN_CHOSEN_ICON_X;
+                        mnWindowSetTilemapEntry(
+                            commandWindow, element + ELEMENT_ICON_TILE, 0, 0, 0);
+                        mnTextDrawMessageAsTiles(element * DJINN_PER_ELEMENT + index
+                                                     + (Sint32)MsgDjinnName,
+                                                 commandWindow,
+                                                 16,
+                                                 0);
+                        command->range = cost;
+                        sySynch(1);
+                        sySoundPlayStub(SE_MENU_CONFIRM);
+                        choice = mnBattleTargetRunSelection(
+                            actorId, ability->targetMode, cost, mnBattleClassifyEntryKind(ability));
+                        if (state->tutorialStep != 0)
+                        {
+                            void *hint = mnMessageShowAndWait(
+                                mnDjinnGetGiveTutorialMessage() + DJINN_TUTORIAL_LINE_UNLEASH_HINT,
+                                15,
+                                8);
 
-							while (mnMessageAllTyped() == 0)
-								sySynch(1);
-							mnWindowClose(hint, 1);
-							state->tutorialStep++;
-							state->tutorialDelay = 45;
-						}
-						mnWindowClose(commandWindow, 1);
-						if (choice == -1)
-							goto djinn_menu;
-						target = choice;
-						break;
-					}
-					commandWindow =
-						mnWindowCreate(11, 17, 10, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
-					COMMAND_ICON_X(state) = DJINN_CHOSEN_ICON_X;
-					mnTextSetColor(TEXT_COLOR_RED);
-					mnWindowSetTilemapEntry(commandWindow, element + ELEMENT_ICON_TILE, 0, 0, 0);
-					mnTextDrawMessageAsTiles(element * DJINN_PER_ELEMENT + index
-					                             + (Sint32)MsgDjinnName,
-					                         commandWindow,
-					                         16,
-					                         0);
-					mnTextSetColor(TEXT_COLOR_WHITE);
-					command->range = 1;
-					sySynch(1);
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					choice = mnBattleTargetRunSelection(
-						actorId, ABILITY_TARGET_SELF, 0, TARGET_HINT_SET_DJINNI);
-					mnWindowClose(commandWindow, 1);
-					if (choice == -1)
-						goto djinn_menu;
-					target = choice;
-					break;
-				}
+                            while (mnMessageAllTyped() == 0)
+                                sySynch(1);
+                            mnWindowClose(hint, 1);
+                            state->tutorialStep++;
+                            state->tutorialDelay = 45;
+                        }
+                        mnWindowClose(commandWindow, 1);
+                        if (choice == -1)
+                            goto djinn_menu;
+                        target = choice;
+                        break;
+                    }
+                    commandWindow =
+                        mnWindowCreate(11, 17, 10, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
+                    COMMAND_ICON_X(state) = DJINN_CHOSEN_ICON_X;
+                    mnTextSetColor(TEXT_COLOR_RED);
+                    mnWindowSetTilemapEntry(commandWindow, element + ELEMENT_ICON_TILE, 0, 0, 0);
+                    mnTextDrawMessageAsTiles(element * DJINN_PER_ELEMENT + index
+                                                 + (Sint32)MsgDjinnName,
+                                             commandWindow,
+                                             16,
+                                             0);
+                    mnTextSetColor(TEXT_COLOR_WHITE);
+                    command->range = 1;
+                    sySynch(1);
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    choice = mnBattleTargetRunSelection(
+                        actorId, ABILITY_TARGET_SELF, 0, TARGET_HINT_SET_DJINNI);
+                    mnWindowClose(commandWindow, 1);
+                    if (choice == -1)
+                        goto djinn_menu;
+                    target = choice;
+                    break;
+                }
 
-				case COMMAND_ICON_ITEM:
-				{
-					Sint32              k;
-					MENU_SPR           *iconSprite;
-					ABILITY_DEFINITION *ability;
-					Uint16             *list;
-					Uint8              *pick;
-					Sint32              cost;
-					Sint32              handle;
-					Sint32              count;
-					Sint32              entryValue;
-					Sint32              selection;
+                case COMMAND_ICON_ITEM:
+                {
+                    Sint32              k;
+                    MENU_SPR           *iconSprite;
+                    ABILITY_DEFINITION *ability;
+                    Uint16             *list;
+                    Uint8              *pick;
+                    Sint32              cost;
+                    Sint32              handle;
+                    Sint32              count;
+                    Sint32              entryValue;
+                    Sint32              selection;
 
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					// DEAD: choice cleared before the list sets it; the ROM keeps its mov.
-					choice = 0;
-					BATTLE_MENU_SET_CURSOR(0, 0, 0);
-				item_menu:
-					COMMAND_ICON_X(state) = ITEM_MENU_ICON_X;
-					pick                  = state->listSlots;
-					list                  = state->listAbilities;
-					count                 = 0;
-					for (k = 0; k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0; k++)
-					{
-						gmItemGetDirectStub(entryValue);
-						if (mnItemCheckBattleUse(actorId, entryValue) == 0)
-						{
-							list[count]   = entryValue;
-							pick[count++] = k;
-						}
-					}
-					for (k = 0; k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0; k++)
-					{
-						gmItemGetDirectStub(entryValue);
-						if (mnItemCheckBattleUse(actorId, entryValue) != 0)
-						{
-							list[count]   = entryValue;
-							pick[count++] = k;
-						}
-					}
-					list[count] = 0;
-					choice      = mnBattleItemMenuRun(actorId, list, count);
-					if (choice == -1)
-						goto mark_visible;
-					selection = pick[choice];
-					parameter = selection;
-					ability   = gmAbilityGetDirectStub(
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    // DEAD: choice cleared before the list sets it; the ROM keeps its mov.
+                    choice = 0;
+                    BATTLE_MENU_SET_CURSOR(0, 0, 0);
+                item_menu:
+                    COMMAND_ICON_X(state) = ITEM_MENU_ICON_X;
+                    pick                  = state->listSlots;
+                    list                  = state->listAbilities;
+                    count                 = 0;
+                    for (k = 0; k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0; k++)
+                    {
+                        gmItemGetDirectStub(entryValue);
+                        if (mnItemCheckBattleUse(actorId, entryValue) == 0)
+                        {
+                            list[count]   = entryValue;
+                            pick[count++] = k;
+                        }
+                    }
+                    for (k = 0; k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0; k++)
+                    {
+                        gmItemGetDirectStub(entryValue);
+                        if (mnItemCheckBattleUse(actorId, entryValue) != 0)
+                        {
+                            list[count]   = entryValue;
+                            pick[count++] = k;
+                        }
+                    }
+                    list[count] = 0;
+                    choice      = mnBattleItemMenuRun(actorId, list, count);
+                    if (choice == -1)
+                        goto mark_visible;
+                    selection = pick[choice];
+                    parameter = selection;
+                    ability   = gmAbilityGetDirectStub(
                         gmItemGetDirectStub(unit->inventory[selection])->abilityId);
-					cost                  = ability->range;
-					iconSprite            = &state->icons[1];
-					handle                = syVRAMCacheAllocateEntry(128);
-					commandWindow         = mnWindowCreate(9,
+                    cost                  = ability->range;
+                    iconSprite            = &state->icons[1];
+                    handle                = syVRAMCacheAllocateEntry(128);
+                    commandWindow         = mnWindowCreate(9,
                                                    17,
                                                    BATTLE_ITEM_WINDOW_WIDTH,
                                                    3,
                                                    WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
-					COMMAND_ICON_X(state) = ITEM_CHOSEN_ICON_X;
-					MENU_SPR_INIT(*iconSprite,
-					              OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-					iconSprite->oam.f.x = commandWindow->x * 8 + 8;
-					iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-					iconSprite->oam.f.tile =
-						mnItemIconLoadIntoSlot(unit->inventory[selection], handle);
-					state->iconShown[1] = 1;
-					mnTextDrawMessageAsTiles((unit->inventory[selection] & INVENTORY_ITEM_ID_MASK)
-					                             + (Sint32)MsgItemName,
-					                         commandWindow,
-					                         24,
-					                         0);
-					command->range = cost;
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					choice = mnBattleTargetRunSelection(
-						actorId, ability->targetMode, cost, mnBattleClassifyEntryKind(ability));
-					state->iconShown[1] = 0;
-					syVRAMCacheFreeEntry(handle);
-					mnWindowClose(commandWindow, 1);
-					if (choice == -1)
-						goto item_menu;
-					commandKind = COMMAND_ITEM;
-					target      = choice;
-					break;
-				}
+                    COMMAND_ICON_X(state) = ITEM_CHOSEN_ICON_X;
+                    MENU_SPR_INIT(*iconSprite,
+                                  OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+                    iconSprite->oam.f.x = commandWindow->x * 8 + 8;
+                    iconSprite->oam.f.y = commandWindow->y * 8 + 4;
+                    iconSprite->oam.f.tile =
+                        mnItemIconLoadIntoSlot(unit->inventory[selection], handle);
+                    state->iconShown[1] = 1;
+                    mnTextDrawMessageAsTiles((unit->inventory[selection] & INVENTORY_ITEM_ID_MASK)
+                                                 + (Sint32)MsgItemName,
+                                             commandWindow,
+                                             24,
+                                             0);
+                    command->range = cost;
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    choice = mnBattleTargetRunSelection(
+                        actorId, ability->targetMode, cost, mnBattleClassifyEntryKind(ability));
+                    state->iconShown[1] = 0;
+                    syVRAMCacheFreeEntry(handle);
+                    mnWindowClose(commandWindow, 1);
+                    if (choice == -1)
+                        goto item_menu;
+                    commandKind = COMMAND_ITEM;
+                    target      = choice;
+                    break;
+                }
 
-				case COMMAND_ICON_DEFEND: commandKind = COMMAND_DEFEND; break;
-			}
+                case COMMAND_ICON_DEFEND: commandKind = COMMAND_DEFEND; break;
+            }
 
-			sySoundPlayStub(SE_CHIME);
-			command->unitId = actorId;
-			{
-				Sint32 priority = unit->agility;
+            sySoundPlayStub(SE_CHIME);
+            command->unitId = actorId;
+            {
+                Sint32 priority = unit->agility;
 
-				if (priority != 0)
-					priority += (Uint32)(unit->agility * syRandom()) >> 20;
-				command->priority = priority;
-				if (commandIndex != 0 && actors[commandIndex] == actors[commandIndex - 1])
-					command->priority = (Sint16)priority / 2;
-			}
-			// A priority past 32767 reads negative.
-			if (command->priority < 0)
-				command->priority = OVERFLOWED_PRIORITY;
-			command->command = commandKind;
-			command->param   = parameter;
-			command->target  = target;
-			commandIndex++;
-			if (commandIndex < commandCount)
-				continue;
-			break;
-		}
-		if (commandIndex < commandCount)
-			continue;
-		break;
-	}
+                if (priority != 0)
+                    priority += (Uint32)(unit->agility * syRandom()) >> 20;
+                command->priority = priority;
+                if (commandIndex != 0 && actors[commandIndex] == actors[commandIndex - 1])
+                    command->priority = (Sint16)priority / 2;
+            }
+            // A priority past 32767 reads negative.
+            if (command->priority < 0)
+                command->priority = OVERFLOWED_PRIORITY;
+            command->command = commandKind;
+            command->param   = parameter;
+            command->target  = target;
+            commandIndex++;
+            if (commandIndex < commandCount)
+                continue;
+            break;
+        }
+        if (commandIndex < commandCount)
+            continue;
+        break;
+    }
 
-	if (state->linkTimer != 0)
-	{
-		Uint16 *signature = (Uint16 *)SerialTransfer.payload;
+    if (state->linkTimer != 0)
+    {
+        Uint16 *signature = (Uint16 *)SerialTransfer.payload;
 
-		signature[4]      = 'E';
-		signature[5]      = 'D';
-		signature[6]      = 'V';
-		signature[7]      = 'S';
-	}
-	if (state->timerWindow != NULL)
-		mnWindowClose(state->timerWindow, 1);
-	syVRAMCacheFreeEntry(smallIconSlot);
-	syVRAMCacheFreeEntry(largeIconSlot);
-	syCloseEvent(mnBattleMenuUpdateEachTick);
-	if (state->linkTimer != 0)
-	{
-		BATTLE_STATE *link;
+        signature[4]      = 'E';
+        signature[5]      = 'D';
+        signature[6]      = 'V';
+        signature[7]      = 'S';
+    }
+    if (state->timerWindow != NULL)
+        mnWindowClose(state->timerWindow, 1);
+    syVRAMCacheFreeEntry(smallIconSlot);
+    syVRAMCacheFreeEntry(largeIconSlot);
+    syCloseEvent(mnBattleMenuUpdateEachTick);
+    if (state->linkTimer != 0)
+    {
+        BATTLE_STATE *link;
 
-		void          mnLinkDrawWaitingForOpponent(void)
-		{
-			Uint16 text[64];
+        void          mnLinkDrawWaitingForOpponent(void)
+        {
+            Uint16 text[64];
 
-			BATTLE_MENU_MESSAGE_COPY(
-				(Sint32)MsgWaitingForOpponent, text, BATTLE_MENU_MESSAGE_CAPACITY);
-			mnTextDrawWideStringAtOffset(text, state->timerWindow, 0, 4);
-		}
+            BATTLE_MENU_MESSAGE_COPY(
+                (Sint32)MsgWaitingForOpponent, text, BATTLE_MENU_MESSAGE_CAPACITY);
+            mnTextDrawWideStringAtOffset(text, state->timerWindow, 0, 4);
+        }
 
-		// The wait message shows only when the countdown never opened its window, that is while the
-		// partner is still choosing; a timer window was closed above and is only forgotten here.
-		// choice counts the ticks without the link, and past LINK_MAX_MISSED_TICKS gives up (-1).
-		link   = RamHeapSlots->battleState;
-		choice = 0;
-		if (state->timerWindow == NULL && link->linkPaused == 0)
-		{
-			state->timerWindow = mnWindowCreate(0,
-			                                    16,
-			                                    30,
-			                                    4,
-			                                    WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS
-			                                        | WINDOW_FLAG_BORDERED_CANVAS);
-			mnTextFillCanvasBackground();
-			mnLinkDrawWaitingForOpponent();
-		}
-		else
-		{
-			state->timerWindow = NULL;
-		}
-		for (;;)
-		{
-			Uint16 *peerSignature = LinkPeerSignatures[link->linkSide ^ 1];
+        // The wait message shows only when the countdown never opened its window, that is while the
+        // partner is still choosing; a timer window was closed above and is only forgotten here.
+        // choice counts the ticks without the link, and past LINK_MAX_MISSED_TICKS gives up (-1).
+        link   = RamHeapSlots->battleState;
+        choice = 0;
+        if (state->timerWindow == NULL && link->linkPaused == 0)
+        {
+            state->timerWindow = mnWindowCreate(0,
+                                                16,
+                                                30,
+                                                4,
+                                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS
+                                                    | WINDOW_FLAG_BORDERED_CANVAS);
+            mnTextFillCanvasBackground();
+            mnLinkDrawWaitingForOpponent();
+        }
+        else
+        {
+            state->timerWindow = NULL;
+        }
+        for (;;)
+        {
+            Uint16 *peerSignature = LinkPeerSignatures[link->linkSide ^ 1];
 
-			if (link->linkPaused != 0)
-			{
-				commandCount = -1;
-				break;
-			}
-			if ((LinkStatusWork & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
-			{
-				choice++;
-				if (choice > LINK_MAX_MISSED_TICKS)
-				{
-					commandCount = -1;
-					break;
-				}
-			}
-			else
-			{
-				choice = 0;
-				if (peerSignature[4] == 'E' && peerSignature[5] == 'D' && peerSignature[6] == 'V'
-				    && peerSignature[7] == 'S')
-					break;
-				if (!(peerSignature[4] == 'V' && peerSignature[5] == 'S' && peerSignature[6] == 'S'
-				      && peerSignature[7] == 'T'))
-					choice = 1;
-			}
-			sySynch(1);
-		}
-		if (state->timerWindow != NULL)
-			mnWindowClose(state->timerWindow, 1);
-	}
-	btCameraSetCommandViewStub(0);
-	syHeapSlotRelease(HEAP_SLOT_BATTLE_MENU);
-	if (commandCount >= 0)
-		commandCount += forcedCount;
-	return commandCount;
+            if (link->linkPaused != 0)
+            {
+                commandCount = -1;
+                break;
+            }
+            if ((LinkStatusWork & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
+            {
+                choice++;
+                if (choice > LINK_MAX_MISSED_TICKS)
+                {
+                    commandCount = -1;
+                    break;
+                }
+            }
+            else
+            {
+                choice = 0;
+                if (peerSignature[4] == 'E' && peerSignature[5] == 'D' && peerSignature[6] == 'V'
+                    && peerSignature[7] == 'S')
+                    break;
+                if (!(peerSignature[4] == 'V' && peerSignature[5] == 'S' && peerSignature[6] == 'S'
+                      && peerSignature[7] == 'T'))
+                    choice = 1;
+            }
+            sySynch(1);
+        }
+        if (state->timerWindow != NULL)
+            mnWindowClose(state->timerWindow, 1);
+    }
+    btCameraSetCommandViewStub(0);
+    syHeapSlotRelease(HEAP_SLOT_BATTLE_MENU);
+    if (commandCount >= 0)
+        commandCount += forcedCount;
+    return commandCount;
 }
 
 // The icon menus' bottom row, in tiles, where most of them stand; a Yes or No may stand at the top,
@@ -855,140 +855,140 @@ Sint32 mnBattleCollectPartyCommands(BATTLE_ACTION *commands, Uint16 *actors, Sin
 // below a row at the top or above one at the bottom.
 void mnIconMenuDrawIcons(void)
 {
-	ICON_MENU_STATE         *iconMenuState;
-	ICON_MENU_ENTRY         *entry;
-	AFFINE_TRANSFORM         transform;
-	Sint32                   pulseScale;
-	Sint32                   affineIndex;
-	Sint32                   span;
-	Sint32                   spriteY;
-	Uint32                   lastLine;
-	Uint32                   index;
-	// UB: edge steps from one line's window 1 edges to the next line's, past the member it points
-	// into.
-	Uint16                  *edge;
-	SCREEN_TRANSITION_STATE *state;
-	WINDOW_BUFFER           *page;
-	Sint32                   halfWidth;
+    ICON_MENU_STATE         *iconMenuState;
+    ICON_MENU_ENTRY         *entry;
+    AFFINE_TRANSFORM         transform;
+    Sint32                   pulseScale;
+    Sint32                   affineIndex;
+    Sint32                   span;
+    Sint32                   spriteY;
+    Uint32                   lastLine;
+    Uint32                   index;
+    // UB: edge steps from one line's window 1 edges to the next line's, past the member it points
+    // into.
+    Uint16                  *edge;
+    SCREEN_TRANSITION_STATE *state;
+    WINDOW_BUFFER           *page;
+    Sint32                   halfWidth;
 
-	iconMenuState    = RamHeapSlots->iconMenu;
-	entry            = iconMenuState->entries;
-	pulseScale       = WindowSpriteBounceScales[(TickCount * 2) & 31];
-	state            = RamHeapSlots->screenTransition;
-	pulseScale       = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(1.1875);
-	transform.scaleX = pulseScale;
-	transform.scaleY = pulseScale;
-	transform.angle  = 0;
-	affineIndex      = syOAMMatrixAllocateFromTransform(&transform);
-	// Pulse only the selection; the other icons keep their normal OAM shape.
-	for (index = 0; index < iconMenuState->count; index++, entry++)
-	{
-		Uint32 *word;
-		Sint32  drawLayer;
-		Sint32  x;
+    iconMenuState    = RamHeapSlots->iconMenu;
+    entry            = iconMenuState->entries;
+    pulseScale       = WindowSpriteBounceScales[(TickCount * 2) & 31];
+    state            = RamHeapSlots->screenTransition;
+    pulseScale       = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(1.1875);
+    transform.scaleX = pulseScale;
+    transform.scaleY = pulseScale;
+    transform.angle  = 0;
+    affineIndex      = syOAMMatrixAllocateFromTransform(&transform);
+    // Pulse only the selection; the other icons keep their normal OAM shape.
+    for (index = 0; index < iconMenuState->count; index++, entry++)
+    {
+        Uint32 *word;
+        Sint32  drawLayer;
+        Sint32  x;
 
-		x = entry->x;
-		if (x == 0)
-			continue;
-		if (index == iconMenuState->selection)
-		{
-			Sint32 left = x + pulseScale * 7 / 512 - 20;
+        x = entry->x;
+        if (x == 0)
+            continue;
+        if (index == iconMenuState->selection)
+        {
+            Sint32 left = x + pulseScale * 7 / 512 - 20;
 
-			// The icon grows about the middle of its 64-pixel double-size box. On the top row the
-			// box starts above the screen, its y wrapped within OAM's 8 bits, and the icon's top
-			// edge stays at the screen's top.
-			if (entry->y != 0)
-				spriteY = entry->y + pulseScale * 3 / 256 - 20;
-			else
-				spriteY = (pulseScale * 15 / 256 - 30) & OBJ_Y_MASK;
-			word    = &entry->link;
-			*word++ = 0;
-			*word++ = OBJ_AFFINE_MATRIX(affineIndex) | spriteY | OBJ_X(left) | OBJ_SIZE_32X32
-			        | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
-			*word     = VramCacheEntries[entry->slot].offset >> 5;
-			drawLayer = OAM_DEPTH_WINDOW + 6;
-		}
-		else
-		{
-			Uint32 tileOffset;
-			Uint32 attributes;
+            // The icon grows about the middle of its 64-pixel double-size box. On the top row the
+            // box starts above the screen, its y wrapped within OAM's 8 bits, and the icon's top
+            // edge stays at the screen's top.
+            if (entry->y != 0)
+                spriteY = entry->y + pulseScale * 3 / 256 - 20;
+            else
+                spriteY = (pulseScale * 15 / 256 - 30) & OBJ_Y_MASK;
+            word    = &entry->link;
+            *word++ = 0;
+            *word++ = OBJ_AFFINE_MATRIX(affineIndex) | spriteY | OBJ_X(left) | OBJ_SIZE_32X32
+                    | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+            *word     = VramCacheEntries[entry->slot].offset >> 5;
+            drawLayer = OAM_DEPTH_WINDOW + 6;
+        }
+        else
+        {
+            Uint32 tileOffset;
+            Uint32 attributes;
 
-			word       = &entry->link;
-			spriteY    = entry->y;
-			*word++    = 0;
-			attributes = spriteY | OBJ_X(x) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-			tileOffset = VramCacheEntries[entry->slot].offset;
-			*word++    = attributes;
-			*word      = tileOffset >> 5;
-			drawLayer  = OAM_DEPTH_WINDOW + 5;
-		}
-		syOAMAddSpriteAtDepth(entry, drawLayer);
-	}
-	if (state == NULL || state->centreLine != 0 || iconMenuState->count == 0)
-		return;
-	page = (WINDOW_BUFFER *)state->pages[state->page];
-	if (iconMenuState->row == 0)
-	{
-		span       = iconMenuState->entries[iconMenuState->selection].x;
-		halfWidth  = PULSE_OVERHANG_X(pulseScale);
-		span       = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
-		lastLine   = iconMenuState->entries[iconMenuState->selection].y + ICON_ROW_LINES;
-		lastLine  += PULSE_OVERHANG_LINES(pulseScale);
-		edge       = &page->lines[ICON_ROW_LINES].win1;
-		index      = ICON_ROW_LINES;
-		if (index < lastLine)
-		{
-			do
-			{
-				*edge = (*edge & WIN_RANGE_END_MASK) | span;
-				index++;
-				edge += 2;
-			} while (index < lastLine);
-		}
-		span = iconMenuState->entries[0].x;
-		if (iconMenuState->selection == 0)
-			span -= PULSE_OVERHANG_X(pulseScale);
-		span <<= 8;
-		edge   = &page->lines[0].win1;
-		for (index = 0; index < ICON_ROW_LINES; index++)
-		{
-			*edge  = (*edge & WIN_RANGE_END_MASK) | span;
-			edge  += 2;
-		}
-	}
-	else
-	{
-		Sint32 firstLine;
+            word       = &entry->link;
+            spriteY    = entry->y;
+            *word++    = 0;
+            attributes = spriteY | OBJ_X(x) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+            tileOffset = VramCacheEntries[entry->slot].offset;
+            *word++    = attributes;
+            *word      = tileOffset >> 5;
+            drawLayer  = OAM_DEPTH_WINDOW + 5;
+        }
+        syOAMAddSpriteAtDepth(entry, drawLayer);
+    }
+    if (state == NULL || state->centreLine != 0 || iconMenuState->count == 0)
+        return;
+    page = (WINDOW_BUFFER *)state->pages[state->page];
+    if (iconMenuState->row == 0)
+    {
+        span       = iconMenuState->entries[iconMenuState->selection].x;
+        halfWidth  = PULSE_OVERHANG_X(pulseScale);
+        span       = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
+        lastLine   = iconMenuState->entries[iconMenuState->selection].y + ICON_ROW_LINES;
+        lastLine  += PULSE_OVERHANG_LINES(pulseScale);
+        edge       = &page->lines[ICON_ROW_LINES].win1;
+        index      = ICON_ROW_LINES;
+        if (index < lastLine)
+        {
+            do
+            {
+                *edge = (*edge & WIN_RANGE_END_MASK) | span;
+                index++;
+                edge += 2;
+            } while (index < lastLine);
+        }
+        span = iconMenuState->entries[0].x;
+        if (iconMenuState->selection == 0)
+            span -= PULSE_OVERHANG_X(pulseScale);
+        span <<= 8;
+        edge   = &page->lines[0].win1;
+        for (index = 0; index < ICON_ROW_LINES; index++)
+        {
+            *edge  = (*edge & WIN_RANGE_END_MASK) | span;
+            edge  += 2;
+        }
+    }
+    else
+    {
+        Sint32 firstLine;
 
-		span       = iconMenuState->entries[iconMenuState->selection].x;
-		halfWidth  = PULSE_OVERHANG_X(pulseScale);
-		span       = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
-		firstLine  = iconMenuState->entries[iconMenuState->selection].y;
-		firstLine -= PULSE_OVERHANG_LINES(pulseScale);
-		edge       = &page->lines[firstLine].win1;
-		index      = firstLine;
-		if (index < ICON_MENU_BOTTOM_ROW * 8)
-		{
-			do
-			{
-				*edge = (*edge & WIN_RANGE_END_MASK) | span;
-				index++;
-				edge += 2;
-			} while (index < ICON_MENU_BOTTOM_ROW * 8);
-		}
-		span = iconMenuState->entries[0].x;
-		if (iconMenuState->selection == 0)
-			span -= PULSE_OVERHANG_X(pulseScale);
-		span <<= 8;
-		edge   = &page->lines[ICON_MENU_BOTTOM_ROW * 8].win1;
-		for (index = ICON_MENU_BOTTOM_ROW * 8; index < DISPLAY_HEIGHT; index++)
-		{
-			// firstLine, done with, carries the mask that keeps the right edge.
-			firstLine  = WIN_RANGE_END_MASK;
-			*edge      = (*edge & firstLine) | span;
-			edge      += 2;
-		}
-	}
+        span       = iconMenuState->entries[iconMenuState->selection].x;
+        halfWidth  = PULSE_OVERHANG_X(pulseScale);
+        span       = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
+        firstLine  = iconMenuState->entries[iconMenuState->selection].y;
+        firstLine -= PULSE_OVERHANG_LINES(pulseScale);
+        edge       = &page->lines[firstLine].win1;
+        index      = firstLine;
+        if (index < ICON_MENU_BOTTOM_ROW * 8)
+        {
+            do
+            {
+                *edge = (*edge & WIN_RANGE_END_MASK) | span;
+                index++;
+                edge += 2;
+            } while (index < ICON_MENU_BOTTOM_ROW * 8);
+        }
+        span = iconMenuState->entries[0].x;
+        if (iconMenuState->selection == 0)
+            span -= PULSE_OVERHANG_X(pulseScale);
+        span <<= 8;
+        edge   = &page->lines[ICON_MENU_BOTTOM_ROW * 8].win1;
+        for (index = ICON_MENU_BOTTOM_ROW * 8; index < DISPLAY_HEIGHT; index++)
+        {
+            // firstLine, done with, carries the mask that keeps the right edge.
+            firstLine  = WIN_RANGE_END_MASK;
+            *edge      = (*edge & firstLine) | span;
+            edge      += 2;
+        }
+    }
 }
 
 #undef SUMMON_WINDOW_X
@@ -1015,34 +1015,34 @@ void mnIconMenuDrawIcons(void)
 // mnIconMenuClose frees it, and starts the event that draws its icons. Every icon menu starts here.
 void *mnIconMenuOpen(void)
 {
-	void *state = syHeapSlotAllocateEWRAM(HEAP_SLOT_ICON_MENU, sizeof(ICON_MENU_STATE));
+    void *state = syHeapSlotAllocateEWRAM(HEAP_SLOT_ICON_MENU, sizeof(ICON_MENU_STATE));
 
-	DMA_FILL32(0, state, sizeof(ICON_MENU_STATE));
-	sySetEvent((EVENT_FUNC)mnIconMenuDrawIcons, EVENT_PASS_TICK - 10);
-	return state;
+    DMA_FILL32(0, state, sizeof(ICON_MENU_STATE));
+    sySetEvent((EVENT_FUNC)mnIconMenuDrawIcons, EVENT_PASS_TICK - 10);
+    return state;
 }
 
 // Stops drawing the icons, closes the label window and releases each loaded icon before freeing the
 // icon menu's state (HEAP_SLOT_ICON_MENU), then waits a tick.
 void mnIconMenuClose(void)
 {
-	WINDOW          *labelWindow;
-	Sint32           i;
-	ICON_MENU_STATE *state;
+    WINDOW          *labelWindow;
+    Sint32           i;
+    ICON_MENU_STATE *state;
 
-	state = RamHeapSlots->iconMenu;
-	syCloseEvent(mnIconMenuDrawIcons);
-	labelWindow = state->window;
-	if (labelWindow != 0)
-	{
-		mnWindowClose(labelWindow, 2);
-	}
-	for (i = 0; i < state->count; i++)
-	{
-		syVRAMCacheFreeEntry(state->entries[i].slot);
-	}
-	syHeapSlotRelease(HEAP_SLOT_ICON_MENU);
-	sySynch(1U);
+    state = RamHeapSlots->iconMenu;
+    syCloseEvent(mnIconMenuDrawIcons);
+    labelWindow = state->window;
+    if (labelWindow != 0)
+    {
+        mnWindowClose(labelWindow, 2);
+    }
+    for (i = 0; i < state->count; i++)
+    {
+        syVRAMCacheFreeEntry(state->entries[i].slot);
+    }
+    syHeapSlotRelease(HEAP_SLOT_ICON_MENU);
+    sySynch(1U);
 }
 
 // Selects an icon position with wrapped directional input. A returns the position; B or Start
@@ -1050,61 +1050,61 @@ void mnIconMenuClose(void)
 // set a labelBase, else the icon's command name.
 Sint32 mnIconMenuRun(Sint32 init)
 {
-	ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
-	Sint32           resource;
+    ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
+    Sint32           resource;
 
-	state->selection = init;
+    state->selection = init;
 redraw:
-	mnWindowSpritePrepareForRedraw(state->window);
-	if (state->labelBase != 0)
-		resource = state->labelBase + state->selection;
-	else
-		resource = state->commandIcons[state->selection] + (Sint32)MsgCommandName;
-	mnTextDrawMessageAsTiles(resource, state->window, 0, 0);
-	for (;;)
-	{
-		sySynch(1);
-		if (PerWork.push & KEY_A)
-		{
-			sySoundPlayStub(SE_MENU_CONFIRM);
-			return state->selection;
-		}
-		if (PerWork.push & KEY_B)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			return -1;
-		}
-		if (PerWork.push & KEY_START)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			return -1;
-		}
-		if ((PerWork.repeat & KEY_LEFT) || (PerWork.repeat & KEY_UP))
-		{
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			state->selection--;
-			if (state->selection < 0)
-				state->selection = state->count - 1;
-		}
-		else if ((PerWork.repeat & KEY_RIGHT) || (PerWork.repeat & KEY_DOWN))
-		{
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			state->selection++;
-			if (state->selection >= state->count)
-				state->selection = 0;
-		}
-		else
-			continue;
-		goto redraw;
-	}
+    mnWindowSpritePrepareForRedraw(state->window);
+    if (state->labelBase != 0)
+        resource = state->labelBase + state->selection;
+    else
+        resource = state->commandIcons[state->selection] + (Sint32)MsgCommandName;
+    mnTextDrawMessageAsTiles(resource, state->window, 0, 0);
+    for (;;)
+    {
+        sySynch(1);
+        if (PerWork.push & KEY_A)
+        {
+            sySoundPlayStub(SE_MENU_CONFIRM);
+            return state->selection;
+        }
+        if (PerWork.push & KEY_B)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            return -1;
+        }
+        if (PerWork.push & KEY_START)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            return -1;
+        }
+        if ((PerWork.repeat & KEY_LEFT) || (PerWork.repeat & KEY_UP))
+        {
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            state->selection--;
+            if (state->selection < 0)
+                state->selection = state->count - 1;
+        }
+        else if ((PerWork.repeat & KEY_RIGHT) || (PerWork.repeat & KEY_DOWN))
+        {
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            state->selection++;
+            if (state->selection >= state->count)
+                state->selection = 0;
+        }
+        else
+            continue;
+        goto redraw;
+    }
 }
 
 // Returns the distance between lhs and rhs, reusing their supplied difference.
 static inline Sint32 mnAbsoluteDifference(Sint32 difference, Sint32 lhs, Sint32 rhs)
 {
-	if (difference >= 0)
-		return difference;
-	return rhs - lhs;
+    if (difference >= 0)
+        return difference;
+    return rhs - lhs;
 }
 
 // Moves the selection from start to goal one icon at a time with the cursor sound, redrawing the
@@ -1113,70 +1113,70 @@ static inline Sint32 mnAbsoluteDifference(Sint32 difference, Sint32 lhs, Sint32 
 // to watch (mnAnimateSelectionToEntry). Returns goal.
 Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
 {
-	Sint16           resourceBase;
-	Sint16           selection;
-	Sint32           difference;
-	Sint32           resourceId;
-	Sint32           distance;
-	Sint32           pos;
-	Sint32           step;
-	Sint32           delay;
-	const Uint8     *stepDelays;
-	ICON_MENU_STATE *state;
+    Sint16           resourceBase;
+    Sint16           selection;
+    Sint32           difference;
+    Sint32           resourceId;
+    Sint32           distance;
+    Sint32           pos;
+    Sint32           step;
+    Sint32           delay;
+    const Uint8     *stepDelays;
+    ICON_MENU_STATE *state;
 
-	state            = RamHeapSlots->iconMenu;
-	step             = 1;
-	delay            = 12;
-	state->selection = (Sint16)start;
-	if (goal < start)
-		step = -1;
-	pos = start;
+    state            = RamHeapSlots->iconMenu;
+    step             = 1;
+    delay            = 12;
+    state->selection = (Sint16)start;
+    if (goal < start)
+        step = -1;
+    pos = start;
 
-	for (;;)
-	{
-		mnWindowSpritePrepareForRedraw(state->window);
-		resourceBase = state->labelBase;
-		if (resourceBase != 0)
-		{
-			resourceId = resourceBase + state->selection;
-		}
-		else
-		{
-			resourceId = state->commandIcons[state->selection] + (Sint32)MsgCommandName;
-		}
-		mnTextDrawMessageAsTiles(resourceId, state->window, 0, 0);
+    for (;;)
+    {
+        mnWindowSpritePrepareForRedraw(state->window);
+        resourceBase = state->labelBase;
+        if (resourceBase != 0)
+        {
+            resourceId = resourceBase + state->selection;
+        }
+        else
+        {
+            resourceId = state->commandIcons[state->selection] + (Sint32)MsgCommandName;
+        }
+        mnTextDrawMessageAsTiles(resourceId, state->window, 0, 0);
 
-		selection  = state->selection;
-		stepDelays = MenuSelectionStepDelays;
-		difference = selection - goal;
-		distance   = mnAbsoluteDifference(difference, selection, goal);
-		sySynch(stepDelays[distance] + delay);
+        selection  = state->selection;
+        stepDelays = MenuSelectionStepDelays;
+        difference = selection - goal;
+        distance   = mnAbsoluteDifference(difference, selection, goal);
+        sySynch(stepDelays[distance] + delay);
 
-		if (pos == goal)
-			break;
+        if (pos == goal)
+            break;
 
-		state->selection += step;
-		sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-		delay  = 0;
-		pos   += step;
-	}
+        state->selection += step;
+        sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+        delay  = 0;
+        pos   += step;
+    }
 
-	sySynch(48);
-	sySoundPlayStub(SE_MENU_CONFIRM);
-	return goal;
+    sySynch(48);
+    sySoundPlayStub(SE_MENU_CONFIRM);
+    return goal;
 }
 
 // Decodes command icon `index` into the VRAM cache entry `slot`, through a block it allocates and
 // frees.
 void mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 index)
 {
-	Sint32  size        = COMMAND_ICON_BYTES;
-	void   *buf         = syHeapAllocate(size);
-	Uint16 *offsetTable = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
+    Sint32  size        = COMMAND_ICON_BYTES;
+    void   *buf         = syHeapAllocate(size);
+    Uint16 *offsetTable = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
 
-	syDecompressByteLZ((void *)((Uint32)offsetTable + offsetTable[index]), buf);
-	syVRAMCacheLoad(slot, size, buf);
-	syHeapRelease(buf);
+    syDecompressByteLZ((void *)((Uint32)offsetTable + offsetTable[index]), buf);
+    syVRAMCacheLoad(slot, size, buf);
+    syHeapRelease(buf);
 }
 
 // Appends a command icon while the menu has room for one (ICON_MENU_STATE's six entries). It starts
@@ -1184,25 +1184,25 @@ void mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 index)
 // is taken unchecked.
 void mnIconMenuAddIcon(Sint32 icon)
 {
-	ICON_MENU_STATE *state;
-	ICON_MENU_ENTRY *entry;
-	Sint16           index;
-	Sint32           slot;
-	Sint32           y = ICON_MENU_BOTTOM_ROW * 8;
+    ICON_MENU_STATE *state;
+    ICON_MENU_ENTRY *entry;
+    Sint16           index;
+    Sint32           slot;
+    Sint32           y = ICON_MENU_BOTTOM_ROW * 8;
 
-	state              = RamHeapSlots->iconMenu;
-	index              = state->count;
-	if (index < (Sint32)ARRAY_COUNT(state->entries))
-	{
-		state->count++;
-		entry = &state->entries[index];
-		slot  = syVRAMCacheFindFreeEntry();
-		mnCommandIconLoadIntoSlot(slot, icon);
-		entry->x                   = index * 24 + 32;
-		entry->y                   = y;
-		entry->slot                = slot;
-		state->commandIcons[index] = icon;
-	}
+    state              = RamHeapSlots->iconMenu;
+    index              = state->count;
+    if (index < (Sint32)ARRAY_COUNT(state->entries))
+    {
+        state->count++;
+        entry = &state->entries[index];
+        slot  = syVRAMCacheFindFreeEntry();
+        mnCommandIconLoadIntoSlot(slot, icon);
+        entry->x                   = index * 24 + 32;
+        entry->y                   = y;
+        entry->slot                = slot;
+        state->commandIcons[index] = icon;
+    }
 }
 
 // Centres the icons and their label window together on tile row `row`. A nonzero resourceBase is
@@ -1211,53 +1211,53 @@ void mnIconMenuAddIcon(Sint32 icon)
 // centring counts two thirds of the window's width.
 void mnIconMenuCenter(Sint32 row, Sint32 width, Sint32 resourceBase)
 {
-	ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
-	Sint32           x;
-	Sint32           i;
-	Sint32           count;
+    ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
+    Sint32           x;
+    Sint32           i;
+    Sint32           count;
 
-	state->width     = width + 2;
-	state->labelBase = resourceBase;
-	state->row       = row;
-	count            = state->count;
-	x                = DISPLAY_TILE_WIDTH / 2 - (count * 3 + state->width * 2 / 3) / 2;
-	for (i = 0; i < state->count; i++)
-	{
-		ICON_MENU_ENTRY *entry  = &state->entries[i];
+    state->width     = width + 2;
+    state->labelBase = resourceBase;
+    state->row       = row;
+    count            = state->count;
+    x                = DISPLAY_TILE_WIDTH / 2 - (count * 3 + state->width * 2 / 3) / 2;
+    for (i = 0; i < state->count; i++)
+    {
+        ICON_MENU_ENTRY *entry  = &state->entries[i];
 
-		entry->x                = x * 8;
-		entry->y                = row * 8;
-		x                      += 3;
-	}
-	state->window = mnWindowCreate(x, row, state->width, 3, WINDOW_FLAG_INSTANT);
+        entry->x                = x * 8;
+        entry->y                = row * 8;
+        x                      += 3;
+    }
+    state->window = mnWindowCreate(x, row, state->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 // Places the icons three tiles apart from tile (x, y), then opens their label window, `width` + 2
 // tiles wide, just after them.
 void mnIconMenuLayoutIcons(Sint32 x, Sint32 y, Sint32 width, Sint32 resourceBase)
 {
-	ICON_MENU_STATE *state;
-	Sint32           i;
-	ICON_MENU_ENTRY *entry;
+    ICON_MENU_STATE *state;
+    Sint32           i;
+    ICON_MENU_ENTRY *entry;
 
-	state            = RamHeapSlots->iconMenu;
-	state->width     = width + 2;
-	state->labelBase = resourceBase;
-	state->row       = y;
-	for (i = 0; i < state->count; i++)
-	{
-		entry     = &state->entries[i];
-		entry->y  = y << 3;
-		entry->x  = x << 3;
-		x        += 3;
-	}
-	state->window = mnWindowCreate(x, y, state->width, 3, WINDOW_FLAG_INSTANT);
+    state            = RamHeapSlots->iconMenu;
+    state->width     = width + 2;
+    state->labelBase = resourceBase;
+    state->row       = y;
+    for (i = 0; i < state->count; i++)
+    {
+        entry     = &state->entries[i];
+        entry->y  = y << 3;
+        entry->x  = x << 3;
+        x        += 3;
+    }
+    state->window = mnWindowCreate(x, y, state->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 // Reads one entry of a field menu table (MenuTopEntryPositionByCommand).
 static __inline__ Sint32 mnIconMenuReadCommandPos(Sint8 *table, Sint32 index)
 {
-	return table[index];
+    return table[index];
 }
 
 // The field menu's row of icons: Psynergy, Djinn, Item and Status, without Djinn when the party has
@@ -1266,68 +1266,68 @@ static __inline__ Sint32 mnIconMenuReadCommandPos(Sint8 *table, Sint32 index)
 // back.
 Sint32 mnFieldMenuSelectCommand(Sint32 selection)
 {
-	Sint32 group = 0;
-	Sint32 offset;
-	Sint32 groupTriple;
-	Sint32 result;
-	Sint8 *commandPositions;
+    Sint32 group = 0;
+    Sint32 offset;
+    Sint32 groupTriple;
+    Sint32 result;
+    Sint8 *commandPositions;
 
-	if (gmPartySumDjinnCountsStub(-1) == 0)
-	{
-		group = 1;
-	}
+    if (gmPartySumDjinnCountsStub(-1) == 0)
+    {
+        group = 1;
+    }
 
-	groupTriple      = group * 3;
-	commandPositions = MenuTopEntryPositionByCommand;
-	offset           = groupTriple << 1;
-	selection        = mnIconMenuReadCommandPos(commandPositions, selection + offset) - 1;
-	if (selection < 0)
-	{
-		selection = 0;
-	}
+    groupTriple      = group * 3;
+    commandPositions = MenuTopEntryPositionByCommand;
+    offset           = groupTriple << 1;
+    selection        = mnIconMenuReadCommandPos(commandPositions, selection + offset) - 1;
+    if (selection < 0)
+    {
+        selection = 0;
+    }
 
-	mnIconMenuOpen();
-	mnIconMenuAddIcon(COMMAND_ICON_PSYNERGY);
-	if (group == 0)
-	{
-		mnIconMenuAddIcon(COMMAND_ICON_DJINN);
-	}
-	mnIconMenuAddIcon(COMMAND_ICON_ITEM);
-	mnIconMenuAddIcon(COMMAND_ICON_STATUS);
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
-	result = mnIconMenuRun(selection);
-	mnIconMenuClose();
+    mnIconMenuOpen();
+    mnIconMenuAddIcon(COMMAND_ICON_PSYNERGY);
+    if (group == 0)
+    {
+        mnIconMenuAddIcon(COMMAND_ICON_DJINN);
+    }
+    mnIconMenuAddIcon(COMMAND_ICON_ITEM);
+    mnIconMenuAddIcon(COMMAND_ICON_STATUS);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
+    result = mnIconMenuRun(selection);
+    mnIconMenuClose();
 
-	if (result >= 0)
-	{
-		Sint8 *commands = MenuTopEntryCommandByPosition;
-		Sint32 index;
+    if (result >= 0)
+    {
+        Sint8 *commands = MenuTopEntryCommandByPosition;
+        Sint32 index;
 
-		index  = result + offset + 1;
-		result = commands[index];
-	}
+        index  = result + offset + 1;
+        result = commands[index];
+    }
 
-	return result;
+    return result;
 }
 
 // Opens the field command menu and animates from start to the command's icon. Returns the final
 // icon position after closing the menu.
 Sint32 mnAnimateSelectionToEntry(Sint32 start, Sint32 command)
 {
-	mnPartyStatusOpenAndWait();
-	mnIconMenuOpen();
-	mnIconMenuAddIcon(COMMAND_ICON_PSYNERGY);
-	mnIconMenuAddIcon(COMMAND_ICON_DJINN);
-	mnIconMenuAddIcon(COMMAND_ICON_ITEM);
-	mnIconMenuAddIcon(COMMAND_ICON_STATUS);
-	// Only Japanese centres the entries before selecting.
+    mnPartyStatusOpenAndWait();
+    mnIconMenuOpen();
+    mnIconMenuAddIcon(COMMAND_ICON_PSYNERGY);
+    mnIconMenuAddIcon(COMMAND_ICON_DJINN);
+    mnIconMenuAddIcon(COMMAND_ICON_ITEM);
+    mnIconMenuAddIcon(COMMAND_ICON_STATUS);
+    // Only Japanese centres the entries before selecting.
 #if !FIELD_MENU_DEMO_NO_LABEL_WINDOW
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
 #endif
-	command = mnIconMenuAnimateTo(start, command - 1);
-	mnIconMenuClose();
-	mnPartyStatusCloseWithMenu();
-	return command;
+    command = mnIconMenuAnimateTo(start, command - 1);
+    mnIconMenuClose();
+    mnPartyStatusCloseWithMenu();
+    return command;
 }
 
 // The File Screen's row of icons, from the save summaries: New Game, Continue, Copy and Erase for
@@ -1338,51 +1338,51 @@ Sint32 mnAnimateSelectionToEntry(Sint32 start, Sint32 command)
 // backup memory cannot be read.
 Sint32 mnFileListSelectAction(void)
 {
-	Sint32 fileState;
-	Sint32 result;
-	Bool   init;
-	Uint32 group;
+    Sint32 fileState;
+    Sint32 result;
+    Bool   init;
+    Uint32 group;
 
-	group     = 0;
-	init      = FALSE;
-	fileState = mnSaveScanFileSummaries();
-	if (fileState < 0)
-		return -1;
-	if (fileState == 0)
-		return SAVE_ACTION_NEW_GAME;
-	if (fileState == BUP_FILE_COUNT)
-		group = 1;
-	else if (fileState == SAVE_SCAN_ALL_CLEARED + BUP_FILE_COUNT)
-		group = 2;
-	else if (fileState > SAVE_SCAN_ALL_CLEARED)
-		group = 3;
-	else
-		init = TRUE;
-	mnIconMenuOpen();
-	if (group == 0 || group == 3)
-		mnIconMenuAddIcon(COMMAND_ICON_NEW_GAME);
-	if (group <= 1)
-		mnIconMenuAddIcon(COMMAND_ICON_CONTINUE);
-	if (group == 0 || group == 3)
-		mnIconMenuAddIcon(COMMAND_ICON_COPY);
-	mnIconMenuAddIcon(COMMAND_ICON_ERASE);
-	if (TitleBattleOptionEnabled != 0)
-		mnIconMenuAddIcon(COMMAND_ICON_BATTLE);
-	if (TitleUpdateOptionEnabled != 0)
-		mnIconMenuAddIcon(COMMAND_ICON_UPDATE);
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, FILE_SCREEN_ICON_ROW_WIDTH, 0);
-	result = mnIconMenuRun(init);
-	mnIconMenuClose();
-	// The icon position's action, from the group's row of six.
-	if (result >= 0)
-	{
-		Uint32 twice = group * 2;
+    group     = 0;
+    init      = FALSE;
+    fileState = mnSaveScanFileSummaries();
+    if (fileState < 0)
+        return -1;
+    if (fileState == 0)
+        return SAVE_ACTION_NEW_GAME;
+    if (fileState == BUP_FILE_COUNT)
+        group = 1;
+    else if (fileState == SAVE_SCAN_ALL_CLEARED + BUP_FILE_COUNT)
+        group = 2;
+    else if (fileState > SAVE_SCAN_ALL_CLEARED)
+        group = 3;
+    else
+        init = TRUE;
+    mnIconMenuOpen();
+    if (group == 0 || group == 3)
+        mnIconMenuAddIcon(COMMAND_ICON_NEW_GAME);
+    if (group <= 1)
+        mnIconMenuAddIcon(COMMAND_ICON_CONTINUE);
+    if (group == 0 || group == 3)
+        mnIconMenuAddIcon(COMMAND_ICON_COPY);
+    mnIconMenuAddIcon(COMMAND_ICON_ERASE);
+    if (TitleBattleOptionEnabled != 0)
+        mnIconMenuAddIcon(COMMAND_ICON_BATTLE);
+    if (TitleUpdateOptionEnabled != 0)
+        mnIconMenuAddIcon(COMMAND_ICON_UPDATE);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, FILE_SCREEN_ICON_ROW_WIDTH, 0);
+    result = mnIconMenuRun(init);
+    mnIconMenuClose();
+    // The icon position's action, from the group's row of six.
+    if (result >= 0)
+    {
+        Uint32 twice = group * 2;
 
-		result       = MenuSaveSlotActionByPosition[result + (twice + group) * 2];
-	}
-	if (TitleBattleOptionEnabled == 0 && result == SAVE_ACTION_BATTLE)
-		result = SAVE_ACTION_UPDATE;
-	return result;
+        result       = MenuSaveSlotActionByPosition[result + (twice + group) * 2];
+    }
+    if (TitleBattleOptionEnabled == 0 && result == SAVE_ACTION_BATTLE)
+        result = SAVE_ACTION_UPDATE;
+    return result;
 }
 
 // The label area is narrower in Japanese and wider in French.
@@ -1393,48 +1393,48 @@ Sint32 mnFileListSelectAction(void)
 // Bronze two.
 void mnPasswordLevelMenuDrawContents(void)
 {
-	ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
+    ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
 
-	if (state->drawnSelection != state->selection)
-	{
-		state->drawnSelection = state->selection;
-		mnWindowClearInteriorTiles(state->lowerWindow, 8, 40, LABEL_RIGHT, 80);
+    if (state->drawnSelection != state->selection)
+    {
+        state->drawnSelection = state->selection;
+        mnWindowClearInteriorTiles(state->lowerWindow, 8, 40, LABEL_RIGHT, 80);
 
-		// The lines of what each password carries, from "Levels" (MsgPasswordLevel).
-		switch (state->selection)
-		{
-			case PASSWORD_LEVEL_GOLD:
-			{
-				Sint32 text = (Sint32)MsgPasswordLevel;
+        // The lines of what each password carries, from "Levels" (MsgPasswordLevel).
+        switch (state->selection)
+        {
+            case PASSWORD_LEVEL_GOLD:
+            {
+                Sint32 text = (Sint32)MsgPasswordLevel;
 
-				mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 40);
-				mnTextDrawMessageAsTiles(text + 1, state->lowerWindow, 8, 48);
-				mnTextDrawMessageAsTiles(text + 2, state->lowerWindow, 8, 56);
-				mnTextDrawMessageAsTiles(text + 3, state->lowerWindow, 8, 64);
-				text += 4;
-				mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 72);
-				break;
-			}
-			case PASSWORD_LEVEL_SILVER:
-			{
-				Sint32 text = (Sint32)MsgPasswordLevel;
+                mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 40);
+                mnTextDrawMessageAsTiles(text + 1, state->lowerWindow, 8, 48);
+                mnTextDrawMessageAsTiles(text + 2, state->lowerWindow, 8, 56);
+                mnTextDrawMessageAsTiles(text + 3, state->lowerWindow, 8, 64);
+                text += 4;
+                mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 72);
+                break;
+            }
+            case PASSWORD_LEVEL_SILVER:
+            {
+                Sint32 text = (Sint32)MsgPasswordLevel;
 
-				mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 40);
-				mnTextDrawMessageAsTiles(text + 1, state->lowerWindow, 8, 48);
-				text += 2;
-				mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 56);
-				break;
-			}
-			case PASSWORD_LEVEL_BRONZE:
-			{
-				Sint32 text = (Sint32)MsgPasswordLevel;
+                mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 40);
+                mnTextDrawMessageAsTiles(text + 1, state->lowerWindow, 8, 48);
+                text += 2;
+                mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 56);
+                break;
+            }
+            case PASSWORD_LEVEL_BRONZE:
+            {
+                Sint32 text = (Sint32)MsgPasswordLevel;
 
-				mnTextDrawMessageAsTiles(text++, state->lowerWindow, 8, 40);
-				mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 48);
-				break;
-			}
-		}
-	}
+                mnTextDrawMessageAsTiles(text++, state->lowerWindow, 8, 40);
+                mnTextDrawMessageAsTiles(text, state->lowerWindow, 8, 48);
+                break;
+            }
+        }
+    }
 }
 
 // The Spanish descriptions are indented.
@@ -1445,64 +1445,64 @@ void mnPasswordLevelMenuDrawContents(void)
 // with mnWindowSpriteClearList and redraws only when the description changes.
 void mnTransferMethodMenuDrawHelp(void)
 {
-	ICON_MENU_STATE *state   = RamHeapSlots->iconMenu;
-	Sint16          *shown   = &state->drawnSelection;
-	Sint16          *current = &state->selection;
+    ICON_MENU_STATE *state   = RamHeapSlots->iconMenu;
+    Sint16          *shown   = &state->drawnSelection;
+    Sint16          *current = &state->selection;
 
 #if TRANSFER_HELP_SKIPS_EMPTY_WINDOW_REDRAW
-	if (*shown != *current)
-	{
-		if (*current == TRANSFER_METHOD_PASSWORD)
-		{
-			mnWindowSpriteClearList(state->lowerWindow);
-			mnTextDrawMessage((Sint32)MsgPasswordTransferHelp, state->lowerWindow, 8, 4);
-			mnTextDrawMessage((Sint32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0, 16);
-		}
-		else if (*shown == TRANSFER_METHOD_PASSWORD)
-		{
-			mnWindowSpriteClearList(state->lowerWindow);
-			mnTextDrawMessage((Sint32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
-			mnTextDrawMessage((Sint32)MsgCableTransferHelp + 1, state->lowerWindow, 0, 16);
-			mnTextDrawMessage((Sint32)MsgCableTransferHelp + 2, state->lowerWindow, 0, 28);
-		}
-		state->drawnSelection = state->selection;
-	}
+    if (*shown != *current)
+    {
+        if (*current == TRANSFER_METHOD_PASSWORD)
+        {
+            mnWindowSpriteClearList(state->lowerWindow);
+            mnTextDrawMessage((Sint32)MsgPasswordTransferHelp, state->lowerWindow, 8, 4);
+            mnTextDrawMessage((Sint32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0, 16);
+        }
+        else if (*shown == TRANSFER_METHOD_PASSWORD)
+        {
+            mnWindowSpriteClearList(state->lowerWindow);
+            mnTextDrawMessage((Sint32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
+            mnTextDrawMessage((Sint32)MsgCableTransferHelp + 1, state->lowerWindow, 0, 16);
+            mnTextDrawMessage((Sint32)MsgCableTransferHelp + 2, state->lowerWindow, 0, 28);
+        }
+        state->drawnSelection = state->selection;
+    }
 #else
-	if (*shown != *current)
-	{
-		*shown = *current;
-		mnWindowSpritePrepareForRedraw(state->lowerWindow);
-#	if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-		if (*current == TRANSFER_METHOD_PASSWORD)
-		{
-			mnTextDrawMessage((Sint32)MsgPasswordTransferHelp, state->lowerWindow, HELP_X, 4);
-			mnTextDrawMessage((Sint32)MsgPasswordTransferHelp + 1, state->lowerWindow, HELP_X, 16);
-		}
-		else
-		{
-			mnTextDrawMessage((Sint32)MsgCableTransferHelp, state->lowerWindow, HELP_X, 4);
-			mnTextDrawMessage((Sint32)MsgCableTransferHelp + 1, state->lowerWindow, HELP_X, 16);
-			mnTextDrawMessage((Sint32)MsgCableTransferHelp + 2, state->lowerWindow, HELP_X, 28);
-		}
-#	else
-		switch (*current)
-		{
-			case TRANSFER_METHOD_PASSWORD:
-				mnTextDrawMessage((Sint32)MsgPasswordTransferHelp, state->lowerWindow, 0, 4);
-				mnTextDrawMessage((Sint32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0, 16);
-				break;
-			case TRANSFER_METHOD_CABLE:
-				mnTextDrawMessage((Sint32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
-				mnTextDrawMessage((Sint32)MsgCableTransferHelp + 1, state->lowerWindow, 0, 16);
-				mnTextDrawMessage((Sint32)MsgCableTransferHelp + 2, state->lowerWindow, 0, 28);
-				break;
-			default:
-				mnTextDrawMessage((Sint32)MsgClearDataTransferHelp, state->lowerWindow, 0, 4);
-				mnTextDrawMessage((Sint32)MsgClearDataTransferHelp + 1, state->lowerWindow, 0, 16);
-				break;
-		}
-#	endif
-	}
+    if (*shown != *current)
+    {
+        *shown = *current;
+        mnWindowSpritePrepareForRedraw(state->lowerWindow);
+#    if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+        if (*current == TRANSFER_METHOD_PASSWORD)
+        {
+            mnTextDrawMessage((Sint32)MsgPasswordTransferHelp, state->lowerWindow, HELP_X, 4);
+            mnTextDrawMessage((Sint32)MsgPasswordTransferHelp + 1, state->lowerWindow, HELP_X, 16);
+        }
+        else
+        {
+            mnTextDrawMessage((Sint32)MsgCableTransferHelp, state->lowerWindow, HELP_X, 4);
+            mnTextDrawMessage((Sint32)MsgCableTransferHelp + 1, state->lowerWindow, HELP_X, 16);
+            mnTextDrawMessage((Sint32)MsgCableTransferHelp + 2, state->lowerWindow, HELP_X, 28);
+        }
+#    else
+        switch (*current)
+        {
+            case TRANSFER_METHOD_PASSWORD:
+                mnTextDrawMessage((Sint32)MsgPasswordTransferHelp, state->lowerWindow, 0, 4);
+                mnTextDrawMessage((Sint32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0, 16);
+                break;
+            case TRANSFER_METHOD_CABLE:
+                mnTextDrawMessage((Sint32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
+                mnTextDrawMessage((Sint32)MsgCableTransferHelp + 1, state->lowerWindow, 0, 16);
+                mnTextDrawMessage((Sint32)MsgCableTransferHelp + 2, state->lowerWindow, 0, 28);
+                break;
+            default:
+                mnTextDrawMessage((Sint32)MsgClearDataTransferHelp, state->lowerWindow, 0, 4);
+                mnTextDrawMessage((Sint32)MsgClearDataTransferHelp + 1, state->lowerWindow, 0, 16);
+                break;
+        }
+#    endif
+    }
 #endif
 }
 
@@ -1521,13 +1521,13 @@ void mnTransferMethodMenuDrawHelp(void)
 
 // Spanish, French and Italian indent the password's lines and set them closer together.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#	define PASSWORD_TEXT_X      8
-#	define PASSWORD_TEXT_Y      0
-#	define PASSWORD_LINE_HEIGHT 11
+#    define PASSWORD_TEXT_X      8
+#    define PASSWORD_TEXT_Y      0
+#    define PASSWORD_LINE_HEIGHT 11
 #else
-#	define PASSWORD_TEXT_X      0
-#	define PASSWORD_TEXT_Y      4
-#	define PASSWORD_LINE_HEIGHT 12
+#    define PASSWORD_TEXT_X      0
+#    define PASSWORD_TEXT_Y      4
+#    define PASSWORD_LINE_HEIGHT 12
 #endif
 
 // Selects the transfer method or the password level (`mode`, enum SEND_OPTION_MENU), with a heading
@@ -1535,119 +1535,119 @@ void mnTransferMethodMenuDrawHelp(void)
 // runs. Returns the place chosen, or -1 when cancelled.
 Sint32 mnIconMenuChooseSendOption(Sint32 mode)
 {
-	ICON_MENU_STATE *state;
-	WINDOW          *window;
-	Sint32           msg;
-	WINDOW         **upper;
-	Sint32           result;
+    ICON_MENU_STATE *state;
+    WINDOW          *window;
+    Sint32           msg;
+    WINDOW         **upper;
+    Sint32           result;
 
-	mode &= 1;
-	mnIconMenuOpen();
-	state = RamHeapSlots->iconMenu;
-	if (mode == SEND_OPTION_TRANSFER_METHOD)
-	{
-		mnIconMenuAddIcon(COMMAND_ICON_PASSWORD);
-		mnIconMenuAddIcon(COMMAND_ICON_LINK);
-	}
-	else
-	{
-		mnIconMenuAddIcon(COMMAND_ICON_GOLD);
-		mnIconMenuAddIcon(COMMAND_ICON_SILVER);
-		mnIconMenuAddIcon(COMMAND_ICON_BRONZE);
-	}
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, ENTRY_WIDTH, 0);
-	if (mode != SEND_OPTION_TRANSFER_METHOD)
-	{
-		sySetEvent(mnPasswordLevelMenuDrawContents, EVENT_PASS_TICK - 10);
-		state->drawnSelection = -1;
-		window = mnWindowCreate(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, WINDOW_FLAG_INSTANT);
-		msg    = (Sint32)MsgPasswordEntry;
-		upper  = &state->upperWindow;
-		*upper = window;
-		mnTextDrawMessage(msg, window, 0, 4);
-		window = mnWindowCreate(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, WINDOW_FLAG_INSTANT);
-		state->lowerWindow = window;
-		mnTextDrawMessage(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
+    mode &= 1;
+    mnIconMenuOpen();
+    state = RamHeapSlots->iconMenu;
+    if (mode == SEND_OPTION_TRANSFER_METHOD)
+    {
+        mnIconMenuAddIcon(COMMAND_ICON_PASSWORD);
+        mnIconMenuAddIcon(COMMAND_ICON_LINK);
+    }
+    else
+    {
+        mnIconMenuAddIcon(COMMAND_ICON_GOLD);
+        mnIconMenuAddIcon(COMMAND_ICON_SILVER);
+        mnIconMenuAddIcon(COMMAND_ICON_BRONZE);
+    }
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, ENTRY_WIDTH, 0);
+    if (mode != SEND_OPTION_TRANSFER_METHOD)
+    {
+        sySetEvent(mnPasswordLevelMenuDrawContents, EVENT_PASS_TICK - 10);
+        state->drawnSelection = -1;
+        window = mnWindowCreate(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, WINDOW_FLAG_INSTANT);
+        msg    = (Sint32)MsgPasswordEntry;
+        upper  = &state->upperWindow;
+        *upper = window;
+        mnTextDrawMessage(msg, window, 0, 4);
+        window = mnWindowCreate(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, WINDOW_FLAG_INSTANT);
+        state->lowerWindow = window;
+        mnTextDrawMessage(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
 #if LANGUAGE == LANGUAGE_FRENCH
-		// French writes a third line: "Niveaux" (MsgPasswordLevel).
-		mnTextDrawMessage(
-			msg + 2, state->lowerWindow, PASSWORD_TEXT_X, PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
-		msg += 3;
-		mnTextDrawMessage(
-			msg, state->lowerWindow, PASSWORD_TEXT_X, PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT * 2);
+        // French writes a third line: "Niveaux" (MsgPasswordLevel).
+        mnTextDrawMessage(
+            msg + 2, state->lowerWindow, PASSWORD_TEXT_X, PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
+        msg += 3;
+        mnTextDrawMessage(
+            msg, state->lowerWindow, PASSWORD_TEXT_X, PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT * 2);
 #else
-		msg += 2;
-		mnTextDrawMessage(
-			msg, state->lowerWindow, PASSWORD_TEXT_X, PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
+        msg += 2;
+        mnTextDrawMessage(
+            msg, state->lowerWindow, PASSWORD_TEXT_X, PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
 #endif
-	}
-	else
-	{
-		sySetEvent(mnTransferMethodMenuDrawHelp, EVENT_PASS_TICK - 10);
-		state->drawnSelection = -1;
-		window = mnWindowCreate(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, WINDOW_FLAG_INSTANT);
-		upper  = &state->upperWindow;
-		*upper = window;
-		mnTextDrawMessage((Sint32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
-		state->lowerWindow =
-			mnWindowCreate(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, WINDOW_FLAG_INSTANT);
-	}
-	result = mnIconMenuRun(0);
-	if (mode != SEND_OPTION_TRANSFER_METHOD)
-		syCloseEvent(mnPasswordLevelMenuDrawContents);
-	else
-		syCloseEvent(mnTransferMethodMenuDrawHelp);
-	mnWindowSpritePrepareForRedraw(*upper);
-	mnWindowSpritePrepareForRedraw(state->lowerWindow);
-	mnWindowClose(*upper, 2);
-	mnWindowClose(state->lowerWindow, 2);
-	sySynch(1);
-	mnIconMenuClose();
-	return result;
+    }
+    else
+    {
+        sySetEvent(mnTransferMethodMenuDrawHelp, EVENT_PASS_TICK - 10);
+        state->drawnSelection = -1;
+        window = mnWindowCreate(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, WINDOW_FLAG_INSTANT);
+        upper  = &state->upperWindow;
+        *upper = window;
+        mnTextDrawMessage((Sint32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
+        state->lowerWindow =
+            mnWindowCreate(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, WINDOW_FLAG_INSTANT);
+    }
+    result = mnIconMenuRun(0);
+    if (mode != SEND_OPTION_TRANSFER_METHOD)
+        syCloseEvent(mnPasswordLevelMenuDrawContents);
+    else
+        syCloseEvent(mnTransferMethodMenuDrawHelp);
+    mnWindowSpritePrepareForRedraw(*upper);
+    mnWindowSpritePrepareForRedraw(state->lowerWindow);
+    mnWindowClose(*upper, 2);
+    mnWindowClose(state->lowerWindow, 2);
+    sySynch(1);
+    mnIconMenuClose();
+    return result;
 }
 
 // Selects a shop command (Buy, Sell, Artifacts, Repair), centred on the bottom row, starting on
 // position `selection`, and returns the position chosen.
 Sint32 mnSelectShopCommand(Sint32 selection)
 {
-	Sint32 result;
+    Sint32 result;
 
-	mnIconMenuOpen();
-	mnIconMenuAddIcon(COMMAND_ICON_BUY);
-	mnIconMenuAddIcon(COMMAND_ICON_SELL);
-	mnIconMenuAddIcon(COMMAND_ICON_ARTIFACTS);
-	mnIconMenuAddIcon(COMMAND_ICON_REPAIR);
+    mnIconMenuOpen();
+    mnIconMenuAddIcon(COMMAND_ICON_BUY);
+    mnIconMenuAddIcon(COMMAND_ICON_SELL);
+    mnIconMenuAddIcon(COMMAND_ICON_ARTIFACTS);
+    mnIconMenuAddIcon(COMMAND_ICON_REPAIR);
 #if (LANGUAGE == LANGUAGE_GERMAN)
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 8, 0);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 8, 0);
 #elif (LANGUAGE != LANGUAGE_JAPANESE)
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 7, 0);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 7, 0);
 #else
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 6, 0);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 6, 0);
 #endif
-	result = mnIconMenuRun(selection);
-	mnIconMenuClose();
-	return result;
+    result = mnIconMenuRun(selection);
+    mnIconMenuClose();
+    return result;
 }
 
 // Selects a Sanctum service (Revive, Cure Poison, Repel Evil, Remove Curse), centred on the bottom
 // row, starting on position `selection`.
 Sint32 mnSelectSanctumService(Sint32 selection)
 {
-	Sint32 result;
+    Sint32 result;
 
-	mnIconMenuOpen();
-	mnIconMenuAddIcon(COMMAND_ICON_REVIVE);
-	mnIconMenuAddIcon(COMMAND_ICON_CURE_POISON);
-	mnIconMenuAddIcon(COMMAND_ICON_REPEL_EVIL);
-	mnIconMenuAddIcon(COMMAND_ICON_REMOVE_CURSE);
+    mnIconMenuOpen();
+    mnIconMenuAddIcon(COMMAND_ICON_REVIVE);
+    mnIconMenuAddIcon(COMMAND_ICON_CURE_POISON);
+    mnIconMenuAddIcon(COMMAND_ICON_REPEL_EVIL);
+    mnIconMenuAddIcon(COMMAND_ICON_REMOVE_CURSE);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 10, 0);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 10, 0);
 #else
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 8, 0);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 8, 0);
 #endif
-	result = mnIconMenuRun(selection);
-	mnIconMenuClose();
-	return result;
+    result = mnIconMenuRun(selection);
+    mnIconMenuClose();
+    return result;
 }
 
 // Selects Yes or No, starting on `selection`; cancelling answers No. The icons stand on the bottom
@@ -1655,51 +1655,51 @@ Sint32 mnSelectSanctumService(Sint32 selection)
 // names, and `labelWidth` the label window's width, 3 when 0.
 Sint32 mnYesNoMenuRun(Sint32 bottom, Sint32 msg, Sint32 labelWidth, Sint32 selection)
 {
-	Sint32 row;
+    Sint32 row;
 
-	row = 0;
+    row = 0;
 
-	mnIconMenuOpen();
+    mnIconMenuOpen();
 
-	if (labelWidth == 0)
-	{
-		labelWidth = 3;
-	}
-	if (bottom != 0)
-	{
-		row = ICON_MENU_BOTTOM_ROW;
-	}
+    if (labelWidth == 0)
+    {
+        labelWidth = 3;
+    }
+    if (bottom != 0)
+    {
+        row = ICON_MENU_BOTTOM_ROW;
+    }
 
-	mnIconMenuAddIcon(COMMAND_ICON_YES);
-	mnIconMenuAddIcon(COMMAND_ICON_NO);
-	mnIconMenuCenter(row, labelWidth, msg);
+    mnIconMenuAddIcon(COMMAND_ICON_YES);
+    mnIconMenuAddIcon(COMMAND_ICON_NO);
+    mnIconMenuCenter(row, labelWidth, msg);
 
-	selection = mnIconMenuRun(selection);
-	mnIconMenuClose();
-	if (selection == -1)
-	{
-		selection = NO;
-	}
-	return selection;
+    selection = mnIconMenuRun(selection);
+    mnIconMenuClose();
+    if (selection == -1)
+    {
+        selection = NO;
+    }
+    return selection;
 }
 
 // Selects Yes or No with the icons from tile (x, y), starting on `selection`; cancelling answers
 // No.
 Sint32 mnYesNoMenuRunAt(Sint32 x, Sint32 y, Sint32 selection)
 {
-	Sint32 msg = MsgCommandYes;
+    Sint32 msg = MsgCommandYes;
 
-	mnIconMenuOpen();
-	mnIconMenuAddIcon(COMMAND_ICON_YES);
-	mnIconMenuAddIcon(COMMAND_ICON_NO);
-	mnIconMenuLayoutIcons(x, y, 3, msg);
-	selection = mnIconMenuRun(selection);
-	mnIconMenuClose();
-	if (selection == -1)
-	{
-		selection = NO;
-	}
-	return selection;
+    mnIconMenuOpen();
+    mnIconMenuAddIcon(COMMAND_ICON_YES);
+    mnIconMenuAddIcon(COMMAND_ICON_NO);
+    mnIconMenuLayoutIcons(x, y, 3, msg);
+    selection = mnIconMenuRun(selection);
+    mnIconMenuClose();
+    if (selection == -1)
+    {
+        selection = NO;
+    }
+    return selection;
 }
 
 // The label window's width for each language.
@@ -1709,21 +1709,21 @@ Sint32 mnYesNoMenuRunAt(Sint32 x, Sint32 y, Sint32 selection)
 // the position chosen.
 Sint32 mnSelectCoinsOrMedals(Sint32 selection)
 {
-	Sint32 result;
+    Sint32 result;
 
-	mnIconMenuOpen();
-	mnIconMenuAddIcon(COMMAND_ICON_COINS);
-	mnIconMenuAddIcon(COMMAND_ICON_LUCKY_MEDALS);
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, PAIR_WIDTH, 0);
-	result = mnIconMenuRun(selection);
-	mnIconMenuClose();
-	return result;
+    mnIconMenuOpen();
+    mnIconMenuAddIcon(COMMAND_ICON_COINS);
+    mnIconMenuAddIcon(COMMAND_ICON_LUCKY_MEDALS);
+    mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, PAIR_WIDTH, 0);
+    result = mnIconMenuRun(selection);
+    mnIconMenuClose();
+    return result;
 }
 
 // Unused: starts the debug scene and entrance selector as an event.
 UNUSED void mnDebugSceneSelectSchedule(void)
 {
-	sySetEvent(mnDebugSceneSelectRun, EVENT_PASS_TICK);
+    sySetEvent(mnDebugSceneSelectRun, EVENT_PASS_TICK);
 }
 
 #undef LABEL_RIGHT

@@ -4,29 +4,29 @@
 // holds the field.
 void fdPaletteCycleStep(void)
 {
-	Uint16 colors[16];
-	Sint32 phase = (PaletteCycleTick / CYCLE_STEP_TICKS) % CYCLE_PLACES;
-	Sint32 i;
+    Uint16 colors[16];
+    Sint32 phase = (PaletteCycleTick / CYCLE_STEP_TICKS) % CYCLE_PLACES;
+    Sint32 i;
 
-	if (PaletteCyclePausesInScripts != 0)
-	{
-		FIELD_STATE *fieldState = RamHeapSlots->fieldState;
-		Sint16      *state      = &fieldState->psynergy;
+    if (PaletteCyclePausesInScripts != 0)
+    {
+        FIELD_STATE *fieldState = RamHeapSlots->fieldState;
+        Sint16      *state      = &fieldState->psynergy;
 
-		if (*state != 0 && ABILITY_ID(*state) != ABILITY_HOVER)
-			return;
-		if (fieldState->revealActive != 0)
-			return;
-		if (fieldState->pauseMenu != 0)
-			return;
-	}
-	for (i = 0; i <= CYCLE_PLACES - 1; i++)
-		colors[(phase + i) % CYCLE_PLACES] = PaletteCycleColors[i + CYCLE_FIRST_COLOR];
-	syDMAXCopy(colors,
-	           (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
-	           DMA_COPY_WORDS((CYCLE_PLACES - 1) / 2),
-	           REG_DMA3);
-	PaletteCycleTick++;
+        if (*state != 0 && ABILITY_ID(*state) != ABILITY_HOVER)
+            return;
+        if (fieldState->revealActive != 0)
+            return;
+        if (fieldState->pauseMenu != 0)
+            return;
+    }
+    for (i = 0; i <= CYCLE_PLACES - 1; i++)
+        colors[(phase + i) % CYCLE_PLACES] = PaletteCycleColors[i + CYCLE_FIRST_COLOR];
+    syDMAXCopy(colors,
+               (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
+               DMA_COPY_WORDS((CYCLE_PLACES - 1) / 2),
+               REG_DMA3);
+    PaletteCycleTick++;
 }
 
 #undef CYCLE_PALETTE

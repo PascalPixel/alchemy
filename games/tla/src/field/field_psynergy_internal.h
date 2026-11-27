@@ -47,22 +47,22 @@ void fdEffectAdvanceMotion(FIELD_OBJECT *object);
 // drawn at, and its age in ticks (-1 while unused).
 typedef struct WHIRL_SPARK
 {
-	FIXED  x;
-	FIXED  y;
-	FIXED  z;
-	Sint32 angle;            // 1/65536 turns
-	Sint32 unusedAfterAngle; // no code names it
-	FIXED  radius;           // 16.16 fixed-point pixels
-	Sint32 age;
+    FIXED  x;
+    FIXED  y;
+    FIXED  z;
+    Sint32 angle;            // 1/65536 turns
+    Sint32 unusedAfterAngle; // no code names it
+    FIXED  radius;           // 16.16 fixed-point pixels
+    Sint32 age;
 } WHIRL_SPARK;
 
 // The states of a Retreat particle (fdRetreatUpdateSpark).
 typedef enum RETREAT_PARTICLE_STATE
 {
-	RETREAT_PARTICLE_AIM         = 0, // placed on the main actor and aimed
-	RETREAT_PARTICLE_FLYING      = 1, // back to RETREAT_PARTICLE_AIM on arrival
-	// Set by fdPsynergyRetreat: freed on arrival.
-	RETREAT_PARTICLE_LAST_FLIGHT = 2
+    RETREAT_PARTICLE_AIM         = 0, // placed on the main actor and aimed
+    RETREAT_PARTICLE_FLYING      = 1, // back to RETREAT_PARTICLE_AIM on arrival
+    // Set by fdPsynergyRetreat: freed on arrival.
+    RETREAT_PARTICLE_LAST_FLIGHT = 2
 } RETREAT_PARTICLE_STATE;
 
 // The view's sway (fdViewMoveSwing) as fdPsynergyRun casts Tremor and Grind at no object, in 16.16
@@ -77,19 +77,19 @@ typedef enum RETREAT_PARTICLE_STATE
 // its start, then the leader's ride on the whirlwind.
 typedef struct CYCLONE_STATE
 {
-	Uint8  particleBurst[6920];
-	Sint16 count;
-	Uint8  unusedAfterCount[2]; // no code names it
-	ACTOR *follower;            // the actor carried with the leader
-	Sint16 state;               // the stage of the ride; 999 once it ends
-	Sint16 timer;               // ticks into the ride
-	Sint32 angle;               // the whirlwind's turn, 1/65536 turns
-	Sint32 radius;
-	FIXED  from[3];             // where the ride starts, 16.16 pixels
-	FIXED  to[3];               // where it ends, 16.16 pixels
-	// Nonzero runs the particle burst with it: a nearby metatile of kind 1
-	// (fdPsynergyGatherNearbyMetatiles).
-	Sint8  kind;
+    Uint8  particleBurst[6920];
+    Sint16 count;
+    Uint8  unusedAfterCount[2]; // no code names it
+    ACTOR *follower;            // the actor carried with the leader
+    Sint16 state;               // the stage of the ride; 999 once it ends
+    Sint16 timer;               // ticks into the ride
+    Sint32 angle;               // the whirlwind's turn, 1/65536 turns
+    Sint32 radius;
+    FIXED  from[3];             // where the ride starts, 16.16 pixels
+    FIXED  to[3];               // where it ends, 16.16 pixels
+    // Nonzero runs the particle burst with it: a nearby metatile of kind 1
+    // (fdPsynergyGatherNearbyMetatiles).
+    Sint8  kind;
 } CYCLONE_STATE;
 
 // The cycling glow of the Parch disc and the Ring: red stays put while green and blue swing either
@@ -107,10 +107,10 @@ typedef struct CYCLONE_STATE
 // The map screen's marker tiles (fdMapScreenInit draws them).
 typedef enum WORLD_MARKER_TILE
 {
-	WORLD_MARKER_TILE_PARTY   = 0, // where the party is
-	WORLD_MARKER_TILE_SHIP    = 2,
-	// the larger dot on the place nearest the cursor
-	WORLD_MARKER_TILE_NEAREST = 3
+    WORLD_MARKER_TILE_PARTY   = 0, // where the party is
+    WORLD_MARKER_TILE_SHIP    = 2,
+    // the larger dot on the place nearest the cursor
+    WORLD_MARKER_TILE_NEAREST = 3
 } WORLD_MARKER_TILE;
 
 // A 256-colour picture's size in the 16-colour tiles a sprite counts.

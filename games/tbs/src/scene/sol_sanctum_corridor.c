@@ -20,35 +20,35 @@ extern CUE            SolSanctumCorridorCues[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SolSanctumCorridorEntrances;
+    return SolSanctumCorridorEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
-	return NULL;
+    return NULL;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SolSanctumCorridorExits;
+    return SolSanctumCorridorExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return SolSanctumCorridorActorPlacements;
+    return SolSanctumCorridorActorPlacements;
 }
 
 // Returns the passage's two exits, its only scripts.
 const CUE *scGetCues(void)
 {
-	return SolSanctumCorridorCues;
+    return SolSanctumCorridorCues;
 }
 
 #include "shared/sol_sanctum_rumble.c"
 
 SCENE_ENTRANCE SolSanctumCorridorEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST,
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST,
      CONDITION_ALWAYS, 727,
      0, 92,
      FACING_NORTH, 0,
@@ -57,7 +57,7 @@ SCENE_ENTRANCE SolSanctumCorridorEntrances[] = {
      -1,
      -1,
      0},
-	{SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST,
+    {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST,
      CONDITION_ALWAYS, 56,
      0, 616,
      FACING_SOUTH, 0,
@@ -66,26 +66,26 @@ SCENE_ENTRANCE SolSanctumCorridorEntrances[] = {
      -1,
      -1,
      0},
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 Uint32 SolSanctumCorridorExits[] = {
-	SCENE_EXITS(SolSanctumCorridor),
-	SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST,
+    SCENE_EXITS(SolSanctumCorridor),
+    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST,
                SolSanctumReliefs,
                SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST),
-	SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST,
+    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST,
                SolSanctumReliefs,
                SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST),
-	SCENE_EXITS_END,
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE SolSanctumCorridorActorPlacements[] = {
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 CUE SolSanctumCorridorCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST},
-	{CUE_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST},
-	{CUE_TABLE_END},
+    {CUE_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST},
+    {CUE_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST},
+    {CUE_TABLE_END},
 };

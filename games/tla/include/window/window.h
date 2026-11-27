@@ -69,7 +69,7 @@ void    mnWindowSpritePrepareForRedraw(WINDOW *window);
 // Clears an area of a window's interior to the window fill. left, top, right and bottom are pixels
 // inside the window, and the area covers every tile they touch.
 void    mnWindowClearInteriorTiles(
-	   const WINDOW *window, Uint32 left, Uint32 top, Uint32 right, Uint32 bottom);
+       const WINDOW *window, Uint32 left, Uint32 top, Uint32 right, Uint32 bottom);
 // Draws a divider line from tile (x1, y1) to (x2, y2), joining the tick and the dividers already
 // drawn.
 void mnWindowDrawDividerLine(WINDOW *window, Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
@@ -132,7 +132,7 @@ void    mnPortraitCloseWindow(Sint32 speaker);
 Sint32  mnTextGetMessageSize(Sint32 msg, Sint32 *x, Sint32 *y, Uint32 *width, Uint32 *height);
 // Sizes a message's window to hold every page.
 Sint32
-	 mnTextGetMessageSizeAllPages(Sint32 msg, Sint32 *x, Sint32 *y, Uint32 *width, Uint32 *height);
+     mnTextGetMessageSizeAllPages(Sint32 msg, Sint32 *x, Sint32 *y, Uint32 *width, Uint32 *height);
 // Empties the table of message arguments.
 void mnMessageArgumentClearAll(void);
 // Adds a message argument of kind (MESSAGE_ARGUMENT_) with value, dropped when all eight places are
@@ -290,11 +290,11 @@ Sint32 mnPartyStatusHighlightMembers(Uint16 *ids);
 // Builds item icon glyph, over the icon base when withBase is set, and loads it into *cacheSlot (a
 // free slot unless reuse is set). Returns the tile in *tileOut.
 void   mnIconBuildItemIconTiles(
-	  Uint32 glyph, Sint32 withBase, Sint32 *cacheSlot, Sint32 *tileOut, Sint32 reuse);
+      Uint32 glyph, Sint32 withBase, Sint32 *cacheSlot, Sint32 *tileOut, Sint32 reuse);
 // Builds a Psynergy icon, over the icon base when withBase is set, and loads it into *slot, or a
 // free slot unless reuse is set.
 void mnIconBuildAbilityIconTiles(
-	Uint32 glyph, Sint32 withBase, Sint32 *cacheSlot, Sint32 *tileOut, Sint32 reuse);
+    Uint32 glyph, Sint32 withBase, Sint32 *cacheSlot, Sint32 *tileOut, Sint32 reuse);
 // Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM slot and shows it as
 // a 16x16 sprite at (x, y) in `window`.
 WINDOW_SPR        *
@@ -400,7 +400,7 @@ void   mnTextMeasureMessage(Sint32 msg, Sint32 *x, Sint32 *y);
 void   mnWindowHighlightRect(Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 paletteBit);
 // Builds the Psynergy icon of a battle action, as mnIconBuildAbilityIconTiles.
 void   mnAbilityBuildIconTiles(
-	  Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
+      Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
 // Copies the UI's ten digit tiles ('0' to '9', tiles 48 to 57) twice into `dest`, each pixel mapped
 // through GraphicsExpandNibbleTable: first with colour 1 drawn as colour 10, then unchanged.
 void   mnGraphicsExpandVRAMTilesByColorTable(Uint16 *dest);
@@ -454,7 +454,7 @@ void  *mnGlyphAddBlankSprite(WINDOW *window, Sint32 character, Sint32 x, Sint32 
 // The window sprites WIN_STATE keeps, free or in a window.
 enum
 {
-	WINDOW_SPRITE_COUNT = 64
+    WINDOW_SPRITE_COUNT = 64
 };
 
 // The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and with
@@ -470,54 +470,54 @@ enum
 // three text messages, the 64 window sprites, and the decoded message and its arguments.
 typedef struct WIN_STATE
 {
-	Uint16
-		// the text tile the next search for a free one starts at
-					nextTextTile;
-	Uint8           extraTextTiles; // 1 lets text use the second range of tiles
-	// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
-	Uint8           dirty;
-	Uint8           mindRead;          // nonzero widens a message window by 2
-	Uint8           battleMode;        // where the windows are drawn (WINDOW_BATTLE_MODE)
-	Uint8           holdTilemapUpload; // while set, the tilemap is not uploaded
-	Uint8           textPalette;       // text tiles' palette; 15 by default
-	Uint16          tilemap[20][32];   // the windows' BG tilemap
-	WINDOW          windows[WINDOW_COUNT];
-	MESSAGE         msgs[3];
-	WINDOW_SPR      sprites[WINDOW_SPRITE_COUNT];
-	WINDOW_SPR_LIST freeSprites; // the sprites not in any window
-	// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated, bit 1 while the
-	// tilemap shows it, 0 when free.
-	Uint8           textTileState[2 * TEXT_TILES];
-	Uint16          lineSpacing;                   // the current message's, copied in to draw
-	Uint16          unusedAfterLineSpacing;        // set to 1 with the text style; not read
-	Uint16          outline;                       // the current message's, copied in to draw
-	Uint16          colour;                        // the current message's, copied in to draw
-	Uint16          textBuf[TEXT_BUFFER_MASK + 1]; // decoded text, a ring of codes
-	Uint16          letterSpacing;                 // 9 with the text style
-	Uint16          textBufEnd;                    // where the next code goes in textBuf
-	// where the last decoded message began in textBuf
-	Uint16          lastMsgStart;
-	Uint16          glyphResource; // VRAM cache slot of the page arrow; 99 when none
-	Uint16          glyphTiles;    // first of the glyph tiles (cache entry 95)
-	// message argument values (mnMessageArgumentPush)
-	Uint32          argumentValues[8];
-	// the MESSAGE_ARGUMENT_ kind of each; 0 when free
-	Uint16          argumentKinds[8];
-	// picture shown in each portrait slot; 999 when free
-	Uint16          portraitPictures[2];
-	// VRAM cache slot of each portrait slot's picture
-	Uint16          portraitSprites[2];
-	Uint16          speakerVoiceSound;     // first of four voice blip sounds; 0 for none
-	Uint16          speakerVoiceCountdown; // characters until the next voice blip
-	Uint8           pageArrowShown;        // 1 while the next-page arrow is shown
-	Uint8           waitingForSound;       // set while a message waits on its sound
-	// The decode flags set for the next messages (mnMessageSetDecodeFlags):
-	// MESSAGE_DECODE_HALTING_SPEECH and MESSAGE_DECODE_SPACING_AFTER.
-	Uint8           haltingSpeech;
-	Uint8           spacingAfter;
-	// Nonzero lets a tall message fit in 32 pixels, placing its glyphs by y / 320
-	// (MESSAGE.compressLines).
-	Sint8           textMode;
+    Uint16
+        // the text tile the next search for a free one starts at
+                    nextTextTile;
+    Uint8           extraTextTiles; // 1 lets text use the second range of tiles
+    // The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
+    Uint8           dirty;
+    Uint8           mindRead;          // nonzero widens a message window by 2
+    Uint8           battleMode;        // where the windows are drawn (WINDOW_BATTLE_MODE)
+    Uint8           holdTilemapUpload; // while set, the tilemap is not uploaded
+    Uint8           textPalette;       // text tiles' palette; 15 by default
+    Uint16          tilemap[20][32];   // the windows' BG tilemap
+    WINDOW          windows[WINDOW_COUNT];
+    MESSAGE         msgs[3];
+    WINDOW_SPR      sprites[WINDOW_SPRITE_COUNT];
+    WINDOW_SPR_LIST freeSprites; // the sprites not in any window
+    // Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated, bit 1 while the
+    // tilemap shows it, 0 when free.
+    Uint8           textTileState[2 * TEXT_TILES];
+    Uint16          lineSpacing;                   // the current message's, copied in to draw
+    Uint16          unusedAfterLineSpacing;        // set to 1 with the text style; not read
+    Uint16          outline;                       // the current message's, copied in to draw
+    Uint16          colour;                        // the current message's, copied in to draw
+    Uint16          textBuf[TEXT_BUFFER_MASK + 1]; // decoded text, a ring of codes
+    Uint16          letterSpacing;                 // 9 with the text style
+    Uint16          textBufEnd;                    // where the next code goes in textBuf
+    // where the last decoded message began in textBuf
+    Uint16          lastMsgStart;
+    Uint16          glyphResource; // VRAM cache slot of the page arrow; 99 when none
+    Uint16          glyphTiles;    // first of the glyph tiles (cache entry 95)
+    // message argument values (mnMessageArgumentPush)
+    Uint32          argumentValues[8];
+    // the MESSAGE_ARGUMENT_ kind of each; 0 when free
+    Uint16          argumentKinds[8];
+    // picture shown in each portrait slot; 999 when free
+    Uint16          portraitPictures[2];
+    // VRAM cache slot of each portrait slot's picture
+    Uint16          portraitSprites[2];
+    Uint16          speakerVoiceSound;     // first of four voice blip sounds; 0 for none
+    Uint16          speakerVoiceCountdown; // characters until the next voice blip
+    Uint8           pageArrowShown;        // 1 while the next-page arrow is shown
+    Uint8           waitingForSound;       // set while a message waits on its sound
+    // The decode flags set for the next messages (mnMessageSetDecodeFlags):
+    // MESSAGE_DECODE_HALTING_SPEECH and MESSAGE_DECODE_SPACING_AFTER.
+    Uint8           haltingSpeech;
+    Uint8           spacingAfter;
+    // Nonzero lets a tall message fit in 32 pixels, placing its glyphs by y / 320
+    // (MESSAGE.compressLines).
+    Sint8           textMode;
 } WIN_STATE;
 
 STATIC_ASSERT(offsetof(WIN_STATE, tilemap) == 8);
@@ -552,8 +552,8 @@ STATIC_ASSERT(sizeof(WIN_STATE) == 4496);
 // messages decoded next.
 typedef enum MESSAGE_DECODE_FLAG
 {
-	MESSAGE_DECODE_HALTING_SPEECH = 1, // a pause before each character
-	MESSAGE_DECODE_SPACING_AFTER  = 2  // a wide gap after some characters
+    MESSAGE_DECODE_HALTING_SPEECH = 1, // a pause before each character
+    MESSAGE_DECODE_SPACING_AFTER  = 2  // a wide gap after some characters
 } MESSAGE_DECODE_FLAG;
 
 // WIN_STATE.glyphResource while the page arrow has no VRAM cache slot.
@@ -570,18 +570,18 @@ typedef enum MESSAGE_DECODE_FLAG
 // WINDOW_SPR.kind: what a window sprite owns besides itself, which mnWindowSpriteRelease frees.
 typedef enum WINDOW_SPR_KIND
 {
-	// Nothing else to free: a glyph in the window's glyph tiles, or a shop's cursor or arrow, whose
-	// tiles the shop frees.
-	WINDOW_SPRITE_PLAIN    = 0,
-	WINDOW_SPRITE_ICON     = 1, // its own VRAM cache entry
-	WINDOW_SPRITE_PORTRAIT = 2  // a VRAM cache entry and a palette slot
+    // Nothing else to free: a glyph in the window's glyph tiles, or a shop's cursor or arrow, whose
+    // tiles the shop frees.
+    WINDOW_SPRITE_PLAIN    = 0,
+    WINDOW_SPRITE_ICON     = 1, // its own VRAM cache entry
+    WINDOW_SPRITE_PORTRAIT = 2  // a VRAM cache entry and a palette slot
 } WINDOW_SPR_KIND;
 
 // What mnWindowPutGlyph draws.
 typedef enum GLYPH_DRAW_MODE
 {
-	GLYPH_DRAW_CHARACTER  = 0, // the character given, as a tile
-	GLYPH_DRAW_PAGE_ARROW = 1  // the next-page arrow, in the window's corner
+    GLYPH_DRAW_CHARACTER  = 0, // the character given, as a tile
+    GLYPH_DRAW_PAGE_ARROW = 1  // the next-page arrow, in the window's corner
 } GLYPH_DRAW_MODE;
 
 void mnWindowSpriteInitFreeList(void);
@@ -643,13 +643,13 @@ struct MENU_CURSOR;
 // palettes.
 typedef enum TILEMAP_ENTRY_MODE
 {
-	TILEMAP_ENTRY_PLAIN     = 0,
-	TILEMAP_ENTRY_NONE      = 1,
-	TILEMAP_ENTRY_HIGHLIGHT = 2, // in HIGHLIGHT_PALETTE
-	TILEMAP_ENTRY_WINDOW    = 3, // in WINDOW_PALETTE
-	// In palette 1, which the Status screens fill with the basic sprite colours for their element
-	// icons.
-	TILEMAP_ENTRY_ICON      = 4
+    TILEMAP_ENTRY_PLAIN     = 0,
+    TILEMAP_ENTRY_NONE      = 1,
+    TILEMAP_ENTRY_HIGHLIGHT = 2, // in HIGHLIGHT_PALETTE
+    TILEMAP_ENTRY_WINDOW    = 3, // in WINDOW_PALETTE
+    // In palette 1, which the Status screens fill with the basic sprite colours for their element
+    // icons.
+    TILEMAP_ENTRY_ICON      = 4
 } TILEMAP_ENTRY_MODE;
 
 // The window map entry of the first element icon, in BASIC_COLORS_PALETTE; the four elements follow
@@ -660,58 +660,58 @@ typedef enum TILEMAP_ENTRY_MODE
 // (MsgCommandName + icon).
 typedef enum COMMAND_ICON
 {
-	COMMAND_ICON_ATTACK          = 0,
-	COMMAND_ICON_PSYNERGY        = 1,
-	COMMAND_ICON_ITEM            = 2,
-	COMMAND_ICON_DEFEND          = 3,
-	COMMAND_ICON_FLEE            = 4,
-	COMMAND_ICON_YES             = 5,
-	COMMAND_ICON_NO              = 6,
-	COMMAND_ICON_STATUS          = 7,
-	COMMAND_ICON_CHECK           = 8,
-	COMMAND_ICON_USE             = 9,
-	COMMAND_ICON_GIVE            = 10,
-	COMMAND_ICON_DROP            = 11,
-	COMMAND_ICON_SPEAK           = 12,
-	COMMAND_ICON_EQUIP           = 13,
-	COMMAND_ICON_FIGHT           = 14,
-	COMMAND_ICON_DJINN           = 15,
-	COMMAND_ICON_SUMMON          = 16,
-	COMMAND_ICON_BUY             = 17,
-	COMMAND_ICON_SELL            = 18,
-	COMMAND_ICON_ARTIFACTS       = 19,
-	COMMAND_ICON_REPAIR          = 20,
-	COMMAND_ICON_NEW_GAME        = 21,
-	COMMAND_ICON_CONTINUE        = 22,
-	COMMAND_ICON_COPY            = 23,
-	COMMAND_ICON_ERASE           = 24,
-	COMMAND_ICON_REVIVE          = 25,
-	COMMAND_ICON_CURE_POISON     = 26,
-	COMMAND_ICON_REPEL_EVIL      = 27,
-	COMMAND_ICON_REMOVE_CURSE    = 28,
-	COMMAND_ICON_BATTLE          = 29,
-	COMMAND_ICON_SEND            = 30,
-	COMMAND_ICON_UPDATE          = 31,
-	COMMAND_ICON_COINS           = 32,
-	COMMAND_ICON_LUCKY_MEDALS    = 33,
-	// The settings menu's choices and the Pause menu's entries (SettingsMenuSpeedIcons to
-	// SettingsMenuSleepIcons), whose command names are placeholders.
-	COMMAND_ICON_SPEED_SLOW      = 34,
-	COMMAND_ICON_SPEED_NORMAL    = 35,
-	COMMAND_ICON_SPEED_FAST      = 36,
-	COMMAND_ICON_SPEECH_OFF      = 37,
-	COMMAND_ICON_SPEECH_ON       = 38,
-	COMMAND_ICON_AUTO_SLEEP_OFF  = 39,
-	COMMAND_ICON_AUTO_SLEEP_ON   = 40,
-	COMMAND_ICON_SAVE_QUEST      = 41,
-	COMMAND_ICON_SLEEP           = 42,
-	COMMAND_ICON_CHANGE_SETTINGS = 43,
-	COMMAND_ICON_PASSWORD        = 44,
-	COMMAND_ICON_LINK            = 45,
-	COMMAND_ICON_GOLD            = 46,
-	COMMAND_ICON_SILVER          = 47,
-	COMMAND_ICON_BRONZE          = 48,
-	COMMAND_ICON_SWITCH          = 49
+    COMMAND_ICON_ATTACK          = 0,
+    COMMAND_ICON_PSYNERGY        = 1,
+    COMMAND_ICON_ITEM            = 2,
+    COMMAND_ICON_DEFEND          = 3,
+    COMMAND_ICON_FLEE            = 4,
+    COMMAND_ICON_YES             = 5,
+    COMMAND_ICON_NO              = 6,
+    COMMAND_ICON_STATUS          = 7,
+    COMMAND_ICON_CHECK           = 8,
+    COMMAND_ICON_USE             = 9,
+    COMMAND_ICON_GIVE            = 10,
+    COMMAND_ICON_DROP            = 11,
+    COMMAND_ICON_SPEAK           = 12,
+    COMMAND_ICON_EQUIP           = 13,
+    COMMAND_ICON_FIGHT           = 14,
+    COMMAND_ICON_DJINN           = 15,
+    COMMAND_ICON_SUMMON          = 16,
+    COMMAND_ICON_BUY             = 17,
+    COMMAND_ICON_SELL            = 18,
+    COMMAND_ICON_ARTIFACTS       = 19,
+    COMMAND_ICON_REPAIR          = 20,
+    COMMAND_ICON_NEW_GAME        = 21,
+    COMMAND_ICON_CONTINUE        = 22,
+    COMMAND_ICON_COPY            = 23,
+    COMMAND_ICON_ERASE           = 24,
+    COMMAND_ICON_REVIVE          = 25,
+    COMMAND_ICON_CURE_POISON     = 26,
+    COMMAND_ICON_REPEL_EVIL      = 27,
+    COMMAND_ICON_REMOVE_CURSE    = 28,
+    COMMAND_ICON_BATTLE          = 29,
+    COMMAND_ICON_SEND            = 30,
+    COMMAND_ICON_UPDATE          = 31,
+    COMMAND_ICON_COINS           = 32,
+    COMMAND_ICON_LUCKY_MEDALS    = 33,
+    // The settings menu's choices and the Pause menu's entries (SettingsMenuSpeedIcons to
+    // SettingsMenuSleepIcons), whose command names are placeholders.
+    COMMAND_ICON_SPEED_SLOW      = 34,
+    COMMAND_ICON_SPEED_NORMAL    = 35,
+    COMMAND_ICON_SPEED_FAST      = 36,
+    COMMAND_ICON_SPEECH_OFF      = 37,
+    COMMAND_ICON_SPEECH_ON       = 38,
+    COMMAND_ICON_AUTO_SLEEP_OFF  = 39,
+    COMMAND_ICON_AUTO_SLEEP_ON   = 40,
+    COMMAND_ICON_SAVE_QUEST      = 41,
+    COMMAND_ICON_SLEEP           = 42,
+    COMMAND_ICON_CHANGE_SETTINGS = 43,
+    COMMAND_ICON_PASSWORD        = 44,
+    COMMAND_ICON_LINK            = 45,
+    COMMAND_ICON_GOLD            = 46,
+    COMMAND_ICON_SILVER          = 47,
+    COMMAND_ICON_BRONZE          = 48,
+    COMMAND_ICON_SWITCH          = 49
 } COMMAND_ICON;
 
 // Two copies of a tilemap entry, for filling a run of entries a word at a time.
@@ -731,112 +731,112 @@ typedef enum COMMAND_ICON
 // The window border's tiles.
 enum
 {
-	WINDOW_TILE_BLANK                      = WINDOW_TILE(0),
-	// The tick a window flashes with as it swells (mnWindowDrawFlashBorder), which
-	// mnWindowShowFlashFrame loads over tiles 8 to 15.
-	WINDOW_TILE_FLASH_TOP_LEFT             = WINDOW_TILE(8),
-	WINDOW_TILE_FLASH_TOP                  = WINDOW_TILE(9),
-	WINDOW_TILE_FLASH_TOP_RIGHT            = WINDOW_TILE(10),
-	WINDOW_TILE_FLASH_BOTTOM_LEFT          = WINDOW_TILE(11),
-	WINDOW_TILE_FLASH_BOTTOM               = WINDOW_TILE(12),
-	WINDOW_TILE_FLASH_BOTTOM_RIGHT         = WINDOW_TILE(13),
-	WINDOW_TILE_FLASH_LEFT                 = WINDOW_TILE(14),
-	WINDOW_TILE_FLASH_RIGHT                = WINDOW_TILE(15),
-	WINDOW_TILE_BORDER_TOP_LEFT            = WINDOW_TILE(16),
-	WINDOW_TILE_BORDER_TOP                 = WINDOW_TILE(17),
-	WINDOW_TILE_BORDER_TOP_RIGHT           = WINDOW_TILE(18),
-	WINDOW_TILE_BORDER_BOTTOM_LEFT         = WINDOW_TILE(19),
-	WINDOW_TILE_BORDER_BOTTOM              = WINDOW_TILE(20),
-	WINDOW_TILE_BORDER_BOTTOM_RIGHT        = WINDOW_TILE(21),
-	WINDOW_TILE_BORDER_LEFT                = WINDOW_TILE(22),
-	WINDOW_TILE_BORDER_RIGHT               = WINDOW_TILE(23),
-	WINDOW_TILE_BORDER_ROUND_CORNER        = WINDOW_TILE(28),
-	WINDOW_TILE_WINDOW_FILL                = WINDOW_TILE(32),
-	// Divider lines (mnWindowDrawDividerLine) and their joins. a vertical line leaving below
-	WINDOW_TILE_DIVIDER_TEE_DOWN           = WINDOW_TILE(9),
-	// a vertical line leaving above
-	WINDOW_TILE_DIVIDER_TEE_UP             = WINDOW_TILE(10),
-	// a horizontal line leaving right
-	WINDOW_TILE_DIVIDER_TEE_RIGHT          = WINDOW_TILE(11),
-	// a horizontal line leaving left
-	WINDOW_TILE_DIVIDER_TEE_LEFT           = WINDOW_TILE(12),
-	WINDOW_TILE_DIVIDER_CROSS              = WINDOW_TILE(13),
-	WINDOW_TILE_DIVIDER_HORIZONTAL         = WINDOW_TILE(14),
-	WINDOW_TILE_DIVIDER_VERTICAL           = WINDOW_TILE(15),
-	// the top edge meeting a line
-	WINDOW_TILE_BORDER_TOP_TEE             = WINDOW_TILE(24),
-	// the bottom edge meeting a line
-	WINDOW_TILE_BORDER_BOTTOM_TEE          = WINDOW_TILE(25),
-	// the left edge meeting a line
-	WINDOW_TILE_BORDER_LEFT_TEE            = WINDOW_TILE(26),
-	// the right edge meeting a line
-	WINDOW_TILE_BORDER_RIGHT_TEE           = WINDOW_TILE(27),
-	// In battle, the bottom border tiles' lower rows, which mnWindowSystemInitBattle copies to
-	// tiles 128 to 130.
-	WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT  = WINDOW_TILE(128),
-	WINDOW_TILE_BATTLE_BORDER_BOTTOM       = WINDOW_TILE(129),
-	WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(130),
-	// In battle, the tile the command row fills its empty panels with, and mnWindowEraseBorderRect
-	// below row 16.
-	WINDOW_TILE_COMMAND_PANEL              = WINDOW_TILE(127),
+    WINDOW_TILE_BLANK                      = WINDOW_TILE(0),
+    // The tick a window flashes with as it swells (mnWindowDrawFlashBorder), which
+    // mnWindowShowFlashFrame loads over tiles 8 to 15.
+    WINDOW_TILE_FLASH_TOP_LEFT             = WINDOW_TILE(8),
+    WINDOW_TILE_FLASH_TOP                  = WINDOW_TILE(9),
+    WINDOW_TILE_FLASH_TOP_RIGHT            = WINDOW_TILE(10),
+    WINDOW_TILE_FLASH_BOTTOM_LEFT          = WINDOW_TILE(11),
+    WINDOW_TILE_FLASH_BOTTOM               = WINDOW_TILE(12),
+    WINDOW_TILE_FLASH_BOTTOM_RIGHT         = WINDOW_TILE(13),
+    WINDOW_TILE_FLASH_LEFT                 = WINDOW_TILE(14),
+    WINDOW_TILE_FLASH_RIGHT                = WINDOW_TILE(15),
+    WINDOW_TILE_BORDER_TOP_LEFT            = WINDOW_TILE(16),
+    WINDOW_TILE_BORDER_TOP                 = WINDOW_TILE(17),
+    WINDOW_TILE_BORDER_TOP_RIGHT           = WINDOW_TILE(18),
+    WINDOW_TILE_BORDER_BOTTOM_LEFT         = WINDOW_TILE(19),
+    WINDOW_TILE_BORDER_BOTTOM              = WINDOW_TILE(20),
+    WINDOW_TILE_BORDER_BOTTOM_RIGHT        = WINDOW_TILE(21),
+    WINDOW_TILE_BORDER_LEFT                = WINDOW_TILE(22),
+    WINDOW_TILE_BORDER_RIGHT               = WINDOW_TILE(23),
+    WINDOW_TILE_BORDER_ROUND_CORNER        = WINDOW_TILE(28),
+    WINDOW_TILE_WINDOW_FILL                = WINDOW_TILE(32),
+    // Divider lines (mnWindowDrawDividerLine) and their joins. a vertical line leaving below
+    WINDOW_TILE_DIVIDER_TEE_DOWN           = WINDOW_TILE(9),
+    // a vertical line leaving above
+    WINDOW_TILE_DIVIDER_TEE_UP             = WINDOW_TILE(10),
+    // a horizontal line leaving right
+    WINDOW_TILE_DIVIDER_TEE_RIGHT          = WINDOW_TILE(11),
+    // a horizontal line leaving left
+    WINDOW_TILE_DIVIDER_TEE_LEFT           = WINDOW_TILE(12),
+    WINDOW_TILE_DIVIDER_CROSS              = WINDOW_TILE(13),
+    WINDOW_TILE_DIVIDER_HORIZONTAL         = WINDOW_TILE(14),
+    WINDOW_TILE_DIVIDER_VERTICAL           = WINDOW_TILE(15),
+    // the top edge meeting a line
+    WINDOW_TILE_BORDER_TOP_TEE             = WINDOW_TILE(24),
+    // the bottom edge meeting a line
+    WINDOW_TILE_BORDER_BOTTOM_TEE          = WINDOW_TILE(25),
+    // the left edge meeting a line
+    WINDOW_TILE_BORDER_LEFT_TEE            = WINDOW_TILE(26),
+    // the right edge meeting a line
+    WINDOW_TILE_BORDER_RIGHT_TEE           = WINDOW_TILE(27),
+    // In battle, the bottom border tiles' lower rows, which mnWindowSystemInitBattle copies to
+    // tiles 128 to 130.
+    WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT  = WINDOW_TILE(128),
+    WINDOW_TILE_BATTLE_BORDER_BOTTOM       = WINDOW_TILE(129),
+    WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(130),
+    // In battle, the tile the command row fills its empty panels with, and mnWindowEraseBorderRect
+    // below row 16.
+    WINDOW_TILE_COMMAND_PANEL              = WINDOW_TILE(127),
 };
 
 // How a window sprite moves (WINDOW_SPR.motion), run each tick by mnWindowSpriteUpdateAll; 0 is a
 // free window sprite.
 enum
 {
-	WINDOW_SPRITE_MOTION_STILL              = 1,
-	WINDOW_SPRITE_MOTION_PAGE_ARROW         = 2, // the next-page arrow, bobbing
-	WINDOW_SPRITE_MOTION_WOBBLE             = 4, // swings along a small arc
-	WINDOW_SPRITE_MOTION_SHAKE              = 5, // jitters by a pixel every other tick
-	WINDOW_SPRITE_MOTION_POP                = 6, // shown at double size, then normal size
-	WINDOW_SPRITE_MOTION_SPIN               = 7, // turns while circling its place
-	// pulses between 1 and 1.5 times its size
-	WINDOW_SPRITE_MOTION_SWELL              = 9,
-	WINDOW_SPRITE_MOTION_SWELL_HALF         = 10, // the same at half the scale
-	// shrinks from 1.5 times to its size, once
-	WINDOW_SPRITE_MOTION_SHRINK             = 11,
-	WINDOW_SPRITE_MOTION_SHRINK_HALF        = 12, // the same at half the scale
-	WINDOW_SPRITE_MOTION_HIDDEN             = 13, // not drawn
-	// A hop and back, each in a direction of its own.
-	WINDOW_SPRITE_MOTION_HOP_RIGHT          = 14,
-	WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
-	WINDOW_SPRITE_MOTION_HOP_LEFT           = 16,
-	WINDOW_SPRITE_MOTION_HOP_UP             = 17,
-	WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT      = 18,
-	// Still, and drawn only while within 64 pixels of the screen.
-	WINDOW_SPRITE_MOTION_ON_SCREEN          = 19,
+    WINDOW_SPRITE_MOTION_STILL              = 1,
+    WINDOW_SPRITE_MOTION_PAGE_ARROW         = 2, // the next-page arrow, bobbing
+    WINDOW_SPRITE_MOTION_WOBBLE             = 4, // swings along a small arc
+    WINDOW_SPRITE_MOTION_SHAKE              = 5, // jitters by a pixel every other tick
+    WINDOW_SPRITE_MOTION_POP                = 6, // shown at double size, then normal size
+    WINDOW_SPRITE_MOTION_SPIN               = 7, // turns while circling its place
+    // pulses between 1 and 1.5 times its size
+    WINDOW_SPRITE_MOTION_SWELL              = 9,
+    WINDOW_SPRITE_MOTION_SWELL_HALF         = 10, // the same at half the scale
+    // shrinks from 1.5 times to its size, once
+    WINDOW_SPRITE_MOTION_SHRINK             = 11,
+    WINDOW_SPRITE_MOTION_SHRINK_HALF        = 12, // the same at half the scale
+    WINDOW_SPRITE_MOTION_HIDDEN             = 13, // not drawn
+    // A hop and back, each in a direction of its own.
+    WINDOW_SPRITE_MOTION_HOP_RIGHT          = 14,
+    WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
+    WINDOW_SPRITE_MOTION_HOP_LEFT           = 16,
+    WINDOW_SPRITE_MOTION_HOP_UP             = 17,
+    WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT      = 18,
+    // Still, and drawn only while within 64 pixels of the screen.
+    WINDOW_SPRITE_MOTION_ON_SCREEN          = 19,
 };
 
 // Text colours (mnTextSetColor), named as the basic sprite palette (BASIC_COLORS_PALETTE) shows
 // them.
 typedef enum TEXT_COL
 {
-	TEXT_COLOR_RED    = 2,
-	TEXT_COLOR_YELLOW = 4,
-	TEXT_COLOR_PINK   = 9,  // a sealed party member's Psynergy
-	TEXT_COLOR_GREY   = 14,
-	TEXT_COLOR_WHITE  = 15, // a message's colour at start
+    TEXT_COLOR_RED    = 2,
+    TEXT_COLOR_YELLOW = 4,
+    TEXT_COLOR_PINK   = 9,  // a sealed party member's Psynergy
+    TEXT_COLOR_GREY   = 14,
+    TEXT_COLOR_WHITE  = 15, // a message's colour at start
 } TEXT_COL;
 
 // The flags of a UI window (WINDOW.flags), which mnWindowCreate takes as its attributes.
 enum
 {
-	WINDOW_FLAG_OPEN            = 0x1, // the window slot is in use
-	WINDOW_FLAG_INSTANT         = 0x2, // opens and closes at once, with no zoom
-	// Passed beside WINDOW_FLAG_INSTANT by the battle menus and the party status window;
-	// mnWindowCreate never reads it.
-	WINDOW_FLAG_UNREAD          = 0x4,
-	// text is drawn into a canvas of bitmap tiles (mnWindowMapTextCanvasTiles)
-	WINDOW_FLAG_TEXT_CANVAS     = 0x8,
-	// the canvas has a border and a filled background; without it the canvas is transparent and
-	// borderless
-	WINDOW_FLAG_BORDERED_CANVAS = 0x20,
-	WINDOW_FLAG_OUTLINED_TEXT   = 0x40, // the canvas text gets an outline
-	// when a new page resizes the window, its bottom edge stays put
-	WINDOW_FLAG_ANCHOR_BOTTOM   = 0x80,
-	// when a new page resizes the window, its left edge stays put
-	WINDOW_FLAG_FIXED_X         = 0x100,
+    WINDOW_FLAG_OPEN            = 0x1, // the window slot is in use
+    WINDOW_FLAG_INSTANT         = 0x2, // opens and closes at once, with no zoom
+    // Passed beside WINDOW_FLAG_INSTANT by the battle menus and the party status window;
+    // mnWindowCreate never reads it.
+    WINDOW_FLAG_UNREAD          = 0x4,
+    // text is drawn into a canvas of bitmap tiles (mnWindowMapTextCanvasTiles)
+    WINDOW_FLAG_TEXT_CANVAS     = 0x8,
+    // the canvas has a border and a filled background; without it the canvas is transparent and
+    // borderless
+    WINDOW_FLAG_BORDERED_CANVAS = 0x20,
+    WINDOW_FLAG_OUTLINED_TEXT   = 0x40, // the canvas text gets an outline
+    // when a new page resizes the window, its bottom edge stays put
+    WINDOW_FLAG_ANCHOR_BOTTOM   = 0x80,
+    // when a new page resizes the window, its left edge stays put
+    WINDOW_FLAG_FIXED_X         = 0x100,
 };
 
 // The spinning hand of the selection screen and the battle target cursor, 16 by 16 pixels in 256
@@ -859,7 +859,7 @@ Sint32             mnPauseMenuChoose(Sint32 init);
 // Loads a 32x32 icon into sprite tile slot *slot (a free one unless reuse is set) and its colours
 // into sprite palette `palette`; its tile goes to *tile.
 void               mnIconLoadWithPalette(
-				  Uint32 icon, Sint32 unused, Sint32 *slot, Sint32 *tile, Sint32 palette, Sint32 reuse);
+                  Uint32 icon, Sint32 unused, Sint32 *slot, Sint32 *tile, Sint32 palette, Sint32 reuse);
 
 // Lets the player choose the reserve member who takes party slot `slot` in battle.
 Sint32             mnBattlePartyChooseReserve(Sint32 slot);
@@ -919,28 +919,28 @@ void               mnPartyStatusOpenAndWait(void);
 // optional five-tile column of standby Djinn counts on its left.
 typedef enum PARTY_STAT_FLAG
 {
-	PARTY_STATUS_HP_ONLY    = 0,  // names and HP
-	PARTY_STATUS_SHOW_PP    = 1,  // add the PP row
-	PARTY_STATUS_SHOW_DJINN = 2,  // add the Djinn column (needs the PP row)
-	PARTY_STATUS_CLOSED     = 9,  // erase the window
-	PARTY_STATUS_KEEP_FLAGS = -1, // redraw with the flags it has
-	// BATTLE_STATE.partyStatus while the party cannot summon.
-	PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
-	// BATTLE_STATE.partyStatus while it can, drawn only while a Djinni is on standby.
-	PARTY_STATUS_SUMMONS    = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
+    PARTY_STATUS_HP_ONLY    = 0,  // names and HP
+    PARTY_STATUS_SHOW_PP    = 1,  // add the PP row
+    PARTY_STATUS_SHOW_DJINN = 2,  // add the Djinn column (needs the PP row)
+    PARTY_STATUS_CLOSED     = 9,  // erase the window
+    PARTY_STATUS_KEEP_FLAGS = -1, // redraw with the flags it has
+    // BATTLE_STATE.partyStatus while the party cannot summon.
+    PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
+    // BATTLE_STATE.partyStatus while it can, drawn only while a Djinni is on standby.
+    PARTY_STATUS_SUMMONS    = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
 } PARTY_STAT_FLAG;
 
 // Where the windows are drawn (WIN_STATE.battleMode).
 typedef enum WINDOW_BATTLE_MODE
 {
-	WINDOW_FIELD          = 0, // on the field; the field setup clears the block
-	WINDOW_BATTLE         = 1, // in battle, from mnWindowSystemInitBattle
-	// In battle, while mnBattleMessageOpen decodes a battle message: the Japanese decoder then sets
-	// names off with spaces and style codes.
-	WINDOW_BATTLE_MESSAGE = 2,
-	// A flag with WINDOW_BATTLE: glyphs are drawn blended (semi-transparent), while the Djinn
-	// tutorial's line shows over the command row.
-	WINDOW_GLYPHS_BLENDED = 4,
+    WINDOW_FIELD          = 0, // on the field; the field setup clears the block
+    WINDOW_BATTLE         = 1, // in battle, from mnWindowSystemInitBattle
+    // In battle, while mnBattleMessageOpen decodes a battle message: the Japanese decoder then sets
+    // names off with spaces and style codes.
+    WINDOW_BATTLE_MESSAGE = 2,
+    // A flag with WINDOW_BATTLE: glyphs are drawn blended (semi-transparent), while the Djinn
+    // tutorial's line shows over the command row.
+    WINDOW_GLYPHS_BLENDED = 4,
 } WINDOW_BATTLE_MODE;
 
 // WIN_STATE.portraitPictures of a free portrait slot, as mnPortraitClearSlots writes it.
@@ -949,10 +949,10 @@ typedef enum WINDOW_BATTLE_MODE
 // The window mnFieldMessageShowCentered shows its message in.
 typedef enum CENTERED_MESSAGE_MODE
 {
-	// No tick or size: it opens and closes at once.
-	CENTERED_MESSAGE_BARE   = 0,
-	// A zooming window sized to the message, waited for as it closes.
-	CENTERED_MESSAGE_WINDOW = 1
+    // No tick or size: it opens and closes at once.
+    CENTERED_MESSAGE_BARE   = 0,
+    // A zooming window sized to the message, waited for as it closes.
+    CENTERED_MESSAGE_WINDOW = 1
 } CENTERED_MESSAGE_MODE;
 
 // The colour a bare centred message is written in, which a scene sets white again before each one
@@ -962,13 +962,13 @@ typedef enum CENTERED_MESSAGE_MODE
 // The flags mnFieldMessageShow takes.
 typedef enum FIELD_MESSAGE_FLAG
 {
-	FIELD_MESSAGE_ZOOM              = 0x01, // the window zooms open and shut
-	// The window state is busy while it shows.
-	FIELD_MESSAGE_WAITING_FOR_SOUND = 0x02,
-	FIELD_MESSAGE_KEEP_OPEN         = 0x04, // the window is left open
-	FIELD_MESSAGE_LOWER             = 0x08, // 4 tiles below the top rows' centre
-	FIELD_MESSAGE_HOLD_UPLOAD       = 0x20, // the tilemap upload is held off
-	FIELD_MESSAGE_LOWEST            = 0x40  // 12 tiles below the top rows' centre
+    FIELD_MESSAGE_ZOOM              = 0x01, // the window zooms open and shut
+    // The window state is busy while it shows.
+    FIELD_MESSAGE_WAITING_FOR_SOUND = 0x02,
+    FIELD_MESSAGE_KEEP_OPEN         = 0x04, // the window is left open
+    FIELD_MESSAGE_LOWER             = 0x08, // 4 tiles below the top rows' centre
+    FIELD_MESSAGE_HOLD_UPLOAD       = 0x20, // the tilemap upload is held off
+    FIELD_MESSAGE_LOWEST            = 0x40  // 12 tiles below the top rows' centre
 } FIELD_MESSAGE_FLAG;
 
 // The flags a yes-or-no question's message takes: it zooms open, stays open for the Yes/No menu
@@ -979,12 +979,12 @@ typedef enum FIELD_MESSAGE_FLAG
 // when only Change settings shows).
 typedef enum PAUSE_MENU_ENTRY
 {
-	PAUSE_MENU_SAVE_QUEST      = 0,
-	PAUSE_MENU_SLEEP           = 1,
-	PAUSE_MENU_CHANGE_SETTINGS = 2,
-	// In debug mode, R and L also leave the menu with these; mnPauseMenuRun acts on neither.
-	PAUSE_MENU_DEBUG_R         = 20,
-	PAUSE_MENU_DEBUG_L         = 21
+    PAUSE_MENU_SAVE_QUEST      = 0,
+    PAUSE_MENU_SLEEP           = 1,
+    PAUSE_MENU_CHANGE_SETTINGS = 2,
+    // In debug mode, R and L also leave the menu with these; mnPauseMenuRun acts on neither.
+    PAUSE_MENU_DEBUG_R         = 20,
+    PAUSE_MENU_DEBUG_L         = 21
 } PAUSE_MENU_ENTRY;
 
 #define WINDOW_COLOR_COUNT              24 // "Window color" takes 0 to 23
@@ -1015,12 +1015,12 @@ typedef enum PAUSE_MENU_ENTRY
 // mnMessageOpenWindow's window options, in packed's low bits.
 typedef enum MESSAGE_WINDOW_OPTION
 {
-	MESSAGE_WINDOW_ZOOM          = 1, // zoom open rather than appear at once
-	// Set by the shopkeepers' windows and some others; mnMessageOpenWindow never reads it.
-	MESSAGE_WINDOW_UNREAD        = 2,
-	MESSAGE_WINDOW_TEXT_CANVAS   = 8,  // WINDOW_FLAG_TEXT_CANVAS
-	MESSAGE_WINDOW_ANCHOR_BOTTOM = 16, // WINDOW_FLAG_ANCHOR_BOTTOM
-	MESSAGE_WINDOW_FIXED_X       = 32  // WINDOW_FLAG_FIXED_X
+    MESSAGE_WINDOW_ZOOM          = 1, // zoom open rather than appear at once
+    // Set by the shopkeepers' windows and some others; mnMessageOpenWindow never reads it.
+    MESSAGE_WINDOW_UNREAD        = 2,
+    MESSAGE_WINDOW_TEXT_CANVAS   = 8,  // WINDOW_FLAG_TEXT_CANVAS
+    MESSAGE_WINDOW_ANCHOR_BOTTOM = 16, // WINDOW_FLAG_ANCHOR_BOTTOM
+    MESSAGE_WINDOW_FIXED_X       = 32  // WINDOW_FLAG_FIXED_X
 } MESSAGE_WINDOW_OPTION;
 
 // mnPortraitOpenWindow's window is PORTRAIT_WINDOW_TILES tiles square, a tile wider while minds are
@@ -1031,102 +1031,102 @@ typedef enum MESSAGE_WINDOW_OPTION
 // the party.
 typedef enum CHARACTER_PORTRAIT
 {
-	PORTRAIT_ISAAC,
-	PORTRAIT_GARET,
-	PORTRAIT_IVAN,
-	PORTRAIT_MIA,
-	PORTRAIT_FELIX,
-	PORTRAIT_JENNA,
-	PORTRAIT_SHEBA,
-	PORTRAIT_PIERS,
-	PORTRAIT_PIERS_SPEAKING // the one Piers's messages show
+    PORTRAIT_ISAAC,
+    PORTRAIT_GARET,
+    PORTRAIT_IVAN,
+    PORTRAIT_MIA,
+    PORTRAIT_FELIX,
+    PORTRAIT_JENNA,
+    PORTRAIT_SHEBA,
+    PORTRAIT_PIERS,
+    PORTRAIT_PIERS_SPEAKING // the one Piers's messages show
 } CHARACTER_PORTRAIT;
 
 // The other speakers' portraits, from the icon bank's row PORTRAIT_FIRST_SPRITE_ICON on, as
 // PortraitSpriteMap pairs them with sprites; each is named for its picture.
 typedef enum SPR_PORTRAIT
 {
-	SPRITE_PORTRAIT_JUPITER_DJINNI = 0,
-	SPRITE_PORTRAIT_VENUS_DJINNI,
-	SPRITE_PORTRAIT_MARS_DJINNI,
-	SPRITE_PORTRAIT_MERCURY_DJINNI,
-	SPRITE_PORTRAIT_KRADEN,
-	SPRITE_PORTRAIT_SATUROS,
-	SPRITE_PORTRAIT_MENARDI,
-	SPRITE_PORTRAIT_ALEX,
-	SPRITE_PORTRAIT_DORA,
-	SPRITE_PORTRAIT_KYLE,
-	SPRITE_PORTRAIT_WOMAN_IN_GREEN_HEADSCARF,
-	SPRITE_PORTRAIT_WOMAN_WITH_ORANGE_PONYTAIL,
-	SPRITE_PORTRAIT_BOY_WITH_ORANGE_HAIR,
-	SPRITE_PORTRAIT_MAN_IN_TEAL_SHIRT,
-	SPRITE_PORTRAIT_MAN_IN_TALL_HAT,
-	SPRITE_PORTRAIT_BEARDED_MAN_IN_LONG_ROBE,
-	SPRITE_PORTRAIT_BALD_MAN_IN_RED,
-	SPRITE_PORTRAIT_YOUNG_MAN_IN_GREEN,
-	SPRITE_PORTRAIT_WOMAN_WITH_PONYTAIL,
-	SPRITE_PORTRAIT_WOMAN_IN_PINK_APRON,
-	SPRITE_PORTRAIT_MAN_WITH_DARK_HAIR,
-	SPRITE_PORTRAIT_ISAAC_CHILD,
-	SPRITE_PORTRAIT_GARET_CHILD,
-	SPRITE_PORTRAIT_FELIX_CHILD,
-	SPRITE_PORTRAIT_JENNA_CHILD,
-	SPRITE_PORTRAIT_FELIX_MASKED,
-	SPRITE_PORTRAIT_FELIX_ADULT = 27,
-	SPRITE_PORTRAIT_INVISIBLE_BABI,
-	SPRITE_PORTRAIT_FARAN,
-	SPRITE_PORTRAIT_POI,
-	SPRITE_PORTRAIT_RIKI,
-	SPRITE_PORTRAIT_TAVI,
-	SPRITE_PORTRAIT_MADRAS_MAYOR,
-	SPRITE_PORTRAIT_MADRAS_ELDER,
-	SPRITE_PORTRAIT_ALHAFRAS_MAYOR,
-	SPRITE_PORTRAIT_FORTUNE_TELLER,
-	SPRITE_PORTRAIT_AKAFUBU,
-	SPRITE_PORTRAIT_MOAPA,
-	SPRITE_PORTRAIT_MAHA,
-	SPRITE_PORTRAIT_JENNAS_FATHER,
-	SPRITE_PORTRAIT_JENNAS_MOTHER,
-	SPRITE_PORTRAIT_BRIGGS,
-	SPRITE_PORTRAIT_CHAUCHA,
-	SPRITE_PORTRAIT_EOLEO,
-	SPRITE_PORTRAIT_OBABA,
-	SPRITE_PORTRAIT_SUSA,
-	SPRITE_PORTRAIT_LADY_UZUME,
-	SPRITE_PORTRAIT_KUSHINADA,
-	SPRITE_PORTRAIT_HYDROS,
-	SPRITE_PORTRAIT_CONSERVATO,
-	SPRITE_PORTRAIT_KARST,
-	SPRITE_PORTRAIT_AGATIO,
-	SPRITE_PORTRAIT_WEAPON_MERCHANT = 54,
-	SPRITE_PORTRAIT_ARMOR_MERCHANT,
-	SPRITE_PORTRAIT_WOMAN_WITH_TEAL_HEADBAND,
-	SPRITE_PORTRAIT_INNKEEPER,
-	SPRITE_PORTRAIT_INN_WORKER,
-	SPRITE_PORTRAIT_WOMAN_WITH_ORANGE_HAIR,
-	SPRITE_PORTRAIT_ARTIFACT_MERCHANT,
-	SPRITE_PORTRAIT_LUNPA,
-	SPRITE_PORTRAIT_PUELLE,
-	SPRITE_PORTRAIT_MASKED_SHAMAN,
-	SPRITE_PORTRAIT_PROX_ELDER,
-	SPRITE_PORTRAIT_SUNSHINE,
-	SPRITE_PORTRAIT_MAN_WITH_ORANGE_BEARD,
-	SPRITE_PORTRAIT_GIRL_WITH_LONG_BLONDE_HAIR,
-	SPRITE_PORTRAIT_IZUMO_WOMAN_IN_CREAM,
-	SPRITE_PORTRAIT_IZUMO_MAN_IN_RED,
-	SPRITE_PORTRAIT_IZUMO_WOMAN_IN_ORANGE,
-	SPRITE_PORTRAIT_OLD_MAN_WITH_GREY_BEARD,
-	SPRITE_PORTRAIT_OLD_WOMAN_WITH_GREY_HAIR,
-	SPRITE_PORTRAIT_FEIZHI,
-	SPRITE_PORTRAIT_HAMMA,
-	// A row of the icon bank with no picture.
-	SPRITE_PORTRAIT_MISSING = 76
+    SPRITE_PORTRAIT_JUPITER_DJINNI = 0,
+    SPRITE_PORTRAIT_VENUS_DJINNI,
+    SPRITE_PORTRAIT_MARS_DJINNI,
+    SPRITE_PORTRAIT_MERCURY_DJINNI,
+    SPRITE_PORTRAIT_KRADEN,
+    SPRITE_PORTRAIT_SATUROS,
+    SPRITE_PORTRAIT_MENARDI,
+    SPRITE_PORTRAIT_ALEX,
+    SPRITE_PORTRAIT_DORA,
+    SPRITE_PORTRAIT_KYLE,
+    SPRITE_PORTRAIT_WOMAN_IN_GREEN_HEADSCARF,
+    SPRITE_PORTRAIT_WOMAN_WITH_ORANGE_PONYTAIL,
+    SPRITE_PORTRAIT_BOY_WITH_ORANGE_HAIR,
+    SPRITE_PORTRAIT_MAN_IN_TEAL_SHIRT,
+    SPRITE_PORTRAIT_MAN_IN_TALL_HAT,
+    SPRITE_PORTRAIT_BEARDED_MAN_IN_LONG_ROBE,
+    SPRITE_PORTRAIT_BALD_MAN_IN_RED,
+    SPRITE_PORTRAIT_YOUNG_MAN_IN_GREEN,
+    SPRITE_PORTRAIT_WOMAN_WITH_PONYTAIL,
+    SPRITE_PORTRAIT_WOMAN_IN_PINK_APRON,
+    SPRITE_PORTRAIT_MAN_WITH_DARK_HAIR,
+    SPRITE_PORTRAIT_ISAAC_CHILD,
+    SPRITE_PORTRAIT_GARET_CHILD,
+    SPRITE_PORTRAIT_FELIX_CHILD,
+    SPRITE_PORTRAIT_JENNA_CHILD,
+    SPRITE_PORTRAIT_FELIX_MASKED,
+    SPRITE_PORTRAIT_FELIX_ADULT = 27,
+    SPRITE_PORTRAIT_INVISIBLE_BABI,
+    SPRITE_PORTRAIT_FARAN,
+    SPRITE_PORTRAIT_POI,
+    SPRITE_PORTRAIT_RIKI,
+    SPRITE_PORTRAIT_TAVI,
+    SPRITE_PORTRAIT_MADRAS_MAYOR,
+    SPRITE_PORTRAIT_MADRAS_ELDER,
+    SPRITE_PORTRAIT_ALHAFRAS_MAYOR,
+    SPRITE_PORTRAIT_FORTUNE_TELLER,
+    SPRITE_PORTRAIT_AKAFUBU,
+    SPRITE_PORTRAIT_MOAPA,
+    SPRITE_PORTRAIT_MAHA,
+    SPRITE_PORTRAIT_JENNAS_FATHER,
+    SPRITE_PORTRAIT_JENNAS_MOTHER,
+    SPRITE_PORTRAIT_BRIGGS,
+    SPRITE_PORTRAIT_CHAUCHA,
+    SPRITE_PORTRAIT_EOLEO,
+    SPRITE_PORTRAIT_OBABA,
+    SPRITE_PORTRAIT_SUSA,
+    SPRITE_PORTRAIT_LADY_UZUME,
+    SPRITE_PORTRAIT_KUSHINADA,
+    SPRITE_PORTRAIT_HYDROS,
+    SPRITE_PORTRAIT_CONSERVATO,
+    SPRITE_PORTRAIT_KARST,
+    SPRITE_PORTRAIT_AGATIO,
+    SPRITE_PORTRAIT_WEAPON_MERCHANT = 54,
+    SPRITE_PORTRAIT_ARMOR_MERCHANT,
+    SPRITE_PORTRAIT_WOMAN_WITH_TEAL_HEADBAND,
+    SPRITE_PORTRAIT_INNKEEPER,
+    SPRITE_PORTRAIT_INN_WORKER,
+    SPRITE_PORTRAIT_WOMAN_WITH_ORANGE_HAIR,
+    SPRITE_PORTRAIT_ARTIFACT_MERCHANT,
+    SPRITE_PORTRAIT_LUNPA,
+    SPRITE_PORTRAIT_PUELLE,
+    SPRITE_PORTRAIT_MASKED_SHAMAN,
+    SPRITE_PORTRAIT_PROX_ELDER,
+    SPRITE_PORTRAIT_SUNSHINE,
+    SPRITE_PORTRAIT_MAN_WITH_ORANGE_BEARD,
+    SPRITE_PORTRAIT_GIRL_WITH_LONG_BLONDE_HAIR,
+    SPRITE_PORTRAIT_IZUMO_WOMAN_IN_CREAM,
+    SPRITE_PORTRAIT_IZUMO_MAN_IN_RED,
+    SPRITE_PORTRAIT_IZUMO_WOMAN_IN_ORANGE,
+    SPRITE_PORTRAIT_OLD_MAN_WITH_GREY_BEARD,
+    SPRITE_PORTRAIT_OLD_WOMAN_WITH_GREY_HAIR,
+    SPRITE_PORTRAIT_FEIZHI,
+    SPRITE_PORTRAIT_HAMMA,
+    // A row of the icon bank with no picture.
+    SPRITE_PORTRAIT_MISSING = 76
 } SPR_PORTRAIT;
 
 void mnWindowHighlightRectStub(Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 style);
 void mnWindowSetTilemapEntryStub(Sint32 window, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
 WINDOW_SPR *mnWindowSpriteCreateFromResourceStub(
-	Sint32 mode, Sint32 resource, WINDOW *window, Sint32 x, Sint32 y);
+    Sint32 mode, Sint32 resource, WINDOW *window, Sint32 x, Sint32 y);
 void               mnTextDrawMessageStub(Sint32 msg, Sint32 window, Sint32 x, Sint32 y);
 
 // Each main font glyph's width in pixels, from the space (32) on.

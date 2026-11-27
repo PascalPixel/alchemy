@@ -2,18 +2,18 @@
 // then glows in flight.
 void scShipTakeFlight(void)
 {
-	ACTOR *ship = fdActorGet(syFieldPartyGetLeaderActor());
-	Sint32 i;
+    ACTOR *ship = fdActorGet(syFieldPartyGetLeaderActor());
+    Sint32 i;
 
-	fdScriptPlaySound(SE_POWER_UP);
-	scActorSetFlightMode(ship, SHIP_POWERING_UP);
-	for (i = 0; i < 20; i++)
-	{
-		Sint32 behavior = fdWorldMapGetBlockMetatileBehavior(&ship->x.fixed);
+    fdScriptPlaySound(SE_POWER_UP);
+    scActorSetFlightMode(ship, SHIP_POWERING_UP);
+    for (i = 0; i < 20; i++)
+    {
+        Sint32 behavior = fdWorldMapGetBlockMetatileBehavior(&ship->x.fixed);
 
-		if (behavior != 0 && sySceneCueFindActiveRecord(CUE_STEP, behavior) != 0)
-			break;
-		syWait(1);
-	}
-	scActorSetFlightMode(ship, SHIP_IN_FLIGHT);
+        if (behavior != 0 && sySceneCueFindActiveRecord(CUE_STEP, behavior) != 0)
+            break;
+        syWait(1);
+    }
+    scActorSetFlightMode(ship, SHIP_IN_FLIGHT);
 }

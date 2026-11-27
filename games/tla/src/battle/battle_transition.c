@@ -26,7 +26,7 @@
 // at DEGtoANG(45) as the zoom ends.
 #define TRANSITION_TURN_SPEED         360
 #define TRANSITION_START_YAW                                                                       \
-	(TRIG_TURN + DEGtoANG(45) - TRANSITION_OPEN_TICKS * TRANSITION_TURN_SPEED)
+    (TRIG_TURN + DEGtoANG(45) - TRANSITION_OPEN_TICKS * TRANSITION_TURN_SPEED)
 
 // REG_MOSAIC's largest block size, 16 pixels: each of its sizes is a four-bit field holding the
 // size less one.
@@ -34,7 +34,7 @@
 
 // Four affine map entries side by side, a byte each, written a word at a time.
 #define AFFINE_MAP_ENTRIES(first, second, third, fourth)                                           \
-	((fourth) << 24 | (third) << 16 | (second) << 8 | (first))
+    ((fourth) << 24 | (third) << 16 | (second) << 8 | (first))
 // The battle background's image: 32 by 15 tiles of 256 colours, 256 by 120 pixels. The first 256
 // tiles fill character block 2 and the rest block 3.
 #define BACKGROUND_TILE_ROWS        15
@@ -56,45 +56,45 @@
 // four random numbers a tick, which only advances the random number generator. Returns 0.
 Sint32 btTransitionRunMosaicFadeOut(void)
 {
-	Uint16           bg0cnt;
-	Uint16           bg1cnt;
-	Uint16           bg2cnt;
-	Uint16           bg3cnt;
-	Sint32           mosaicSize;
-	volatile Uint16 *registerCursor;
+    Uint16           bg0cnt;
+    Uint16           bg1cnt;
+    Uint16           bg2cnt;
+    Uint16           bg3cnt;
+    Sint32           mosaicSize;
+    volatile Uint16 *registerCursor;
 
-	syIORead16(&REG_BG0CNT, &bg0cnt);
-	REG_BG0CNT     = bg0cnt | BGCNT_MOSAIC;
-	registerCursor = &REG_BG0CNT;
-	syIORead16(++registerCursor, &bg1cnt);
-	*registerCursor = bg1cnt | BGCNT_MOSAIC;
-	syIORead16(++registerCursor, &bg2cnt);
-	*registerCursor = bg2cnt | BGCNT_MOSAIC;
-	syIORead16(++registerCursor, &bg3cnt);
-	*registerCursor  = bg3cnt | BGCNT_MOSAIC;
-	registerCursor  += &REG_BLDCNT - &REG_BG3CNT;
-	*registerCursor  = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_BD
-	                | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3
-	                | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD;
+    syIORead16(&REG_BG0CNT, &bg0cnt);
+    REG_BG0CNT     = bg0cnt | BGCNT_MOSAIC;
+    registerCursor = &REG_BG0CNT;
+    syIORead16(++registerCursor, &bg1cnt);
+    *registerCursor = bg1cnt | BGCNT_MOSAIC;
+    syIORead16(++registerCursor, &bg2cnt);
+    *registerCursor = bg2cnt | BGCNT_MOSAIC;
+    syIORead16(++registerCursor, &bg3cnt);
+    *registerCursor  = bg3cnt | BGCNT_MOSAIC;
+    registerCursor  += &REG_BLDCNT - &REG_BG3CNT;
+    *registerCursor  = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_BD
+                    | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3
+                    | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD;
 
-	syScreenFadeToBlack(16);
-	for (mosaicSize = 0; mosaicSize <= MOSAIC_SIZE_MAX; mosaicSize++)
-	{
-		syRandom();
-		syRandom();
-		syRandom();
-		syRandom();
-		REG_MOSAIC = (mosaicSize << 8) | mosaicSize;
-		sySynch(1);
-	}
+    syScreenFadeToBlack(16);
+    for (mosaicSize = 0; mosaicSize <= MOSAIC_SIZE_MAX; mosaicSize++)
+    {
+        syRandom();
+        syRandom();
+        syRandom();
+        syRandom();
+        REG_MOSAIC = (mosaicSize << 8) | mosaicSize;
+        sySynch(1);
+    }
 
-	REG_DISPCNT = DISPCNT_MODE_1;
-	sySynch(4);
-	REG_BG0CNT = bg0cnt;
-	REG_BG1CNT = bg1cnt;
-	REG_BG2CNT = bg2cnt;
-	REG_BG3CNT = bg3cnt;
-	return 0;
+    REG_DISPCNT = DISPCNT_MODE_1;
+    sySynch(4);
+    REG_BG0CNT = bg0cnt;
+    REG_BG1CNT = bg1cnt;
+    REG_BG2CNT = bg2cnt;
+    REG_BG3CNT = bg3cnt;
+    return 0;
 }
 
 // Builds the zoomed background's 32 by 32 affine map, in which the background picture's two halves
@@ -102,23 +102,23 @@ Sint32 btTransitionRunMosaicFadeOut(void)
 // 0 again, then tile 255 for the rest.
 void btTransitionBuildAffineTilemap(void *tilemap)
 {
-	Uint32 *words = tilemap;
-	Uint32  tiles;
-	Uint32  i;
+    Uint32 *words = tilemap;
+    Uint32  tiles;
+    Uint32  i;
 
-	tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
-	for (i = 0; i < BACKGROUND_UPPER_TILES / 4; i++)
-	{
-		*words++  = tiles;
-		tiles    += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
-	}
-	tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
-	for (i = 0; i < BACKGROUND_LOWER_TILES / 4; i++)
-	{
-		*words++  = tiles;
-		tiles    += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
-	}
-	syWordsFill(words, BACKGROUND_AFFINE_MAP_BYTES - BACKGROUND_TILES, -1);
+    tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
+    for (i = 0; i < BACKGROUND_UPPER_TILES / 4; i++)
+    {
+        *words++  = tiles;
+        tiles    += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
+    }
+    tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
+    for (i = 0; i < BACKGROUND_LOWER_TILES / 4; i++)
+    {
+        *words++  = tiles;
+        tiles    += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
+    }
+    syWordsFill(words, BACKGROUND_AFFINE_MAP_BYTES - BACKGROUND_TILES, -1);
 }
 
 // Builds BG1's flat map of the same picture, in screen block 31: four rows of blank entries, two of
@@ -126,122 +126,122 @@ void btTransitionBuildAffineTilemap(void *tilemap)
 // row, which btBackgroundLoad clears.
 void btTransitionBuildFlatTilemap(Sint32 *dest)
 {
-	Sint32 entry;
-	Uint32 index;
+    Sint32 entry;
+    Uint32 index;
 
-	syWordsFill(dest, 4 * MAP_ROW_BYTES, -1);
-	dest += 4 * MAP_ROW_WORDS;
-	syWordsFill(dest, 2 * MAP_ROW_BYTES, WINDOW_TILE_PAIR(BG1_EDGE_TILE));
-	entry  = TILE_PAIR(BACKGROUND_BG1_FIRST_TILE);
-	dest  += 2 * MAP_ROW_WORDS;
-	index  = 0;
-	do
-	{
-		index++;
-		*dest++  = entry;
-		entry   += TILE_PAIR_STEP;
-	} while (index < BACKGROUND_TILE_ROWS * MAP_ROW_WORDS);
-	syWordsFill(dest, 10 * MAP_ROW_BYTES, WINDOW_TILE_PAIR(BG1_EDGE_TILE));
+    syWordsFill(dest, 4 * MAP_ROW_BYTES, -1);
+    dest += 4 * MAP_ROW_WORDS;
+    syWordsFill(dest, 2 * MAP_ROW_BYTES, WINDOW_TILE_PAIR(BG1_EDGE_TILE));
+    entry  = TILE_PAIR(BACKGROUND_BG1_FIRST_TILE);
+    dest  += 2 * MAP_ROW_WORDS;
+    index  = 0;
+    do
+    {
+        index++;
+        *dest++  = entry;
+        entry   += TILE_PAIR_STEP;
+    } while (index < BACKGROUND_TILE_ROWS * MAP_ROW_WORDS);
+    syWordsFill(dest, 10 * MAP_ROW_BYTES, WINDOW_TILE_PAIR(BG1_EDGE_TILE));
 }
 
 // Copies this tick's BG2CNT word and starts the HBlank DMA of the BG2 lines and the affine block,
 // while the background view is in mode 2.
 void btBackgroundShowZoomedPage(void)
 {
-	BATTLE_AFFINE_HDMA *records;
-	Uint16             *record;
+    BATTLE_AFFINE_HDMA *records;
+    Uint16             *record;
 
-	if ((RamHeapSlots->battleBg)->mode == BATTLE_BACKGROUND_ZOOMED)
-	{
-		records = RamHeapSlots->battleScanlines;
-		record  = records->lines[records->page];
-		syIOWrite16(record[0], &REG_BG2CNT);
-		syDMAXCopy(record + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE, &REG_DMA0SAD);
-		syDMAXCopy(&records->affine, (void *)&REG_BG2PA, DMA_COPY_WORDS(4), REG_DMA3);
-	}
+    if ((RamHeapSlots->battleBg)->mode == BATTLE_BACKGROUND_ZOOMED)
+    {
+        records = RamHeapSlots->battleScanlines;
+        record  = records->lines[records->page];
+        syIOWrite16(record[0], &REG_BG2CNT);
+        syDMAXCopy(record + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE, &REG_DMA0SAD);
+        syDMAXCopy(&records->affine, (void *)&REG_BG2PA, DMA_COPY_WORDS(4), REG_DMA3);
+    }
 }
 
 // Unused: steps the curtain's solid tile through its variants (BattleTransitionCurtainVariants)
 // while the transition timer runs from 1.
 void btTransitionUploadTileVariant(void)
 {
-	Uint32 variant = *(Sint32 *)RamHeapSlots->battleEntryTimer - 1;
+    Uint32 variant = *(Sint32 *)RamHeapSlots->battleEntryTimer - 1;
 
-	if (variant < TRANSITION_CURTAIN_VARIANTS * TRANSITION_VARIANT_TICKS)
-		syDMAXCopy(BattleTransitionCurtainVariants
-		               + variant / TRANSITION_VARIANT_TICKS * TILE_SIZE_4BPP,
-		           CURTAIN_TILE(0),
-		           DMA_COPY_WORDS(TILE_SIZE_4BPP / 4),
-		           REG_DMA3);
+    if (variant < TRANSITION_CURTAIN_VARIANTS * TRANSITION_VARIANT_TICKS)
+        syDMAXCopy(BattleTransitionCurtainVariants
+                       + variant / TRANSITION_VARIANT_TICKS * TILE_SIZE_4BPP,
+                   CURTAIN_TILE(0),
+                   DMA_COPY_WORDS(TILE_SIZE_4BPP / 4),
+                   REG_DMA3);
 }
 
 // Advances the curtain opening by a tick: BG0 slides into place as the camera turns round to the
 // party and zooms out.
 void btTransitionAdvanceOpening(void)
 {
-	Sint32         scroll;
-	BATTLE_CAMERA *camera;
-	Uint32        *timer;
-	Uint32         frame;
-	Uint32         next;
+    Sint32         scroll;
+    BATTLE_CAMERA *camera;
+    Uint32        *timer;
+    Uint32         frame;
+    Uint32         next;
 
-	timer  = (Uint32 *)RamHeapSlots->battleEntryTimer;
-	frame  = *timer;
-	camera = (BATTLE_CAMERA *)RamHeapSlots->cameraState;
-	// BG0's top band rolls down from tick 20 to tick 52.
-	scroll = 52 - frame;
-	if (scroll > TRANSITION_BG0_BAND)
-		scroll = TRANSITION_BG0_BAND;
-	if (scroll < 0)
-		scroll = 0;
-	BgScrollWork[0].y = scroll;
-	if (frame <= TRANSITION_OPEN_TICKS)
-		camera->yaw = frame * TRANSITION_TURN_SPEED + TRANSITION_START_YAW;
-	next = (*timer = *timer + 1);
-	if (next <= TRANSITION_OPEN_TICKS)
-	{
-		btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_TICKS - next);
-		return;
-	}
-	btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
+    timer  = (Uint32 *)RamHeapSlots->battleEntryTimer;
+    frame  = *timer;
+    camera = (BATTLE_CAMERA *)RamHeapSlots->cameraState;
+    // BG0's top band rolls down from tick 20 to tick 52.
+    scroll = 52 - frame;
+    if (scroll > TRANSITION_BG0_BAND)
+        scroll = TRANSITION_BG0_BAND;
+    if (scroll < 0)
+        scroll = 0;
+    BgScrollWork[0].y = scroll;
+    if (frame <= TRANSITION_OPEN_TICKS)
+        camera->yaw = frame * TRANSITION_TURN_SPEED + TRANSITION_START_YAW;
+    next = (*timer = *timer + 1);
+    if (next <= TRANSITION_OPEN_TICKS)
+    {
+        btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_TICKS - next);
+        return;
+    }
+    btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
 }
 
 // Draws the curtain opening from the middle of the screen, one row up and one down every eight
 // ticks.
 void btTransitionDrawRows(void)
 {
-	Uint32  column;
-	Sint32  transitionFrame;
-	Sint32  tileEntry;
-	Uint32  tileRow;
-	Uint16 *tilemap;
+    Uint32  column;
+    Sint32  transitionFrame;
+    Sint32  tileEntry;
+    Uint32  tileRow;
+    Uint16 *tilemap;
 
-	transitionFrame = *(Sint32 *)RamHeapSlots->battleEntryTimer;
-	if (transitionFrame >= 0 && transitionFrame < TRANSITION_OPEN_TICKS)
-	{
-		tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
-		tileRow   = TRANSITION_CURTAIN_MIDDLE_ROW - transitionFrame / 8;
-		tilemap = (Uint16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) + tileRow * BG_SCREEN_WIDTH;
-		for (column = 0; column != BG_SCREEN_WIDTH; column++)
-			tilemap[column] = tileEntry;
+    transitionFrame = *(Sint32 *)RamHeapSlots->battleEntryTimer;
+    if (transitionFrame >= 0 && transitionFrame < TRANSITION_OPEN_TICKS)
+    {
+        tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
+        tileRow   = TRANSITION_CURTAIN_MIDDLE_ROW - transitionFrame / 8;
+        tilemap = (Uint16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) + tileRow * BG_SCREEN_WIDTH;
+        for (column = 0; column != BG_SCREEN_WIDTH; column++)
+            tilemap[column] = tileEntry;
 
-		// The lower half: the same tile flipped vertically.
-		tileEntry |= TILE_VFLIP;
-		tileRow    = transitionFrame / 8 + TRANSITION_CURTAIN_MIDDLE_ROW;
-		if (tileRow <= TRANSITION_CURTAIN_LAST_ROW)
-		{
-			tilemap =
-				(Uint16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) + tileRow * BG_SCREEN_WIDTH;
-			for (column = 0; column != BG_SCREEN_WIDTH; column++)
-				tilemap[column] = tileEntry;
-		}
-	}
+        // The lower half: the same tile flipped vertically.
+        tileEntry |= TILE_VFLIP;
+        tileRow    = transitionFrame / 8 + TRANSITION_CURTAIN_MIDDLE_ROW;
+        if (tileRow <= TRANSITION_CURTAIN_LAST_ROW)
+        {
+            tilemap =
+                (Uint16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) + tileRow * BG_SCREEN_WIDTH;
+            for (column = 0; column != BG_SCREEN_WIDTH; column++)
+                tilemap[column] = tileEntry;
+        }
+    }
 }
 
 // Clears BG0's scroll from the line the VCount interrupt fires on.
 void btTransitionResetBg0Scroll(void)
 {
-	syIOWrite16(0, &REG_BG0VOFS);
+    syIOWrite16(0, &REG_BG0VOFS);
 }
 
 // Opens the battle against formation kind with enemyCount enemies: the curtain opening, then the
@@ -249,187 +249,187 @@ void btTransitionResetBg0Scroll(void)
 // shattering opening over the Serpent's stars.
 void btTransitionRun(Sint32 enemyCount, Sint32 kind)
 {
-	BATTLE_PRESENTATION_STATE state;
-	Uint16                    owners[UNIT_MAX];
-	Uint16                    shown[UNIT_MAX];
-	Sint32                   *timer;
-	BATTLE_STATE             *battle;
-	BATTLE_BACKGROUND_STATE  *view;
-	HEAP_SLOTS               *heap;
-	Sint32                    ownerCount;
-	Sint32                    count;
-	Uint32                    i;
+    BATTLE_PRESENTATION_STATE state;
+    Uint16                    owners[UNIT_MAX];
+    Uint16                    shown[UNIT_MAX];
+    Sint32                   *timer;
+    BATTLE_STATE             *battle;
+    BATTLE_BACKGROUND_STATE  *view;
+    HEAP_SLOTS               *heap;
+    Sint32                    ownerCount;
+    Sint32                    count;
+    Uint32                    i;
 
-	heap  = RamHeapSlots;
-	view  = heap->battleBg;
-	timer = syHeapSlotAllocate(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
-	if ((Uint32)(kind - FORMATION_DOOM_DRAGON_A)
-	    > FORMATION_DOOM_DRAGON_C - FORMATION_DOOM_DRAGON_A)
-	{
-		Sint32 y;
+    heap  = RamHeapSlots;
+    view  = heap->battleBg;
+    timer = syHeapSlotAllocate(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
+    if ((Uint32)(kind - FORMATION_DOOM_DRAGON_A)
+        > FORMATION_DOOM_DRAGON_C - FORMATION_DOOM_DRAGON_A)
+    {
+        Sint32 y;
 
-		syDMAXCopy(BattleTransitionCurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransitionCurtainTiles + 1 * TILE_SIZE_4BPP,
-		           CURTAIN_TILE(2),
-		           DMA_COPY_WORDS(8),
-		           REG_DMA3);
-		syDMAXCopy(BattleTransitionCurtainTiles + 2 * TILE_SIZE_4BPP,
-		           CURTAIN_TILE(3),
-		           DMA_COPY_WORDS(8),
-		           REG_DMA3);
-		syDMAXCopy(BattleTransitionCurtainTiles + 3 * TILE_SIZE_4BPP,
-		           CURTAIN_TILE(4),
-		           DMA_COPY_WORDS(8),
-		           REG_DMA3);
-		syDMAXCopy(BattleTransitionCurtainTiles + 4 * TILE_SIZE_4BPP,
-		           CURTAIN_TILE(5),
-		           DMA_COPY_WORDS(8),
-		           REG_DMA3);
-		syDMAXCopy(BattleTransitionCurtainTiles + 5 * TILE_SIZE_4BPP,
-		           CURTAIN_TILE(6),
-		           DMA_COPY_WORDS(8),
-		           REG_DMA3);
-		syDMAXCopy(BattleTransitionCurtainTiles + 6 * TILE_SIZE_4BPP,
-		           CURTAIN_TILE(7),
-		           DMA_COPY_WORDS(8),
-		           REG_DMA3);
-		view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
-		view->busy          = 0;
-		view->mode          = BATTLE_BACKGROUND_FIXED;
-		REG_DISPCNT         = DISPCNT_MODE_1;
-		IWRAM_FILL_WORDS(CURTAIN_TILE(0), TILE_SIZE_4BPP, PIXELS_4BPP(TRANSITION_CURTAIN_COLOR));
-		IWRAM_FILL_WORDS(CURTAIN_TILE(8), TILE_SIZE_4BPP, 0);
-		REG_BG1CNT  = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);
-		REG_BG0CNT |= BGCNT_PRIORITY(2);
-		view->mode  = BATTLE_BACKGROUND_ZOOMED;
-		// A closed curtain: solid rows 0 to TRANSITION_CURTAIN_LAST_ROW, clear below.
-		{
-			Uint16 *map = (Uint16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN);
+        syDMAXCopy(BattleTransitionCurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8), REG_DMA3);
+        syDMAXCopy(BattleTransitionCurtainTiles + 1 * TILE_SIZE_4BPP,
+                   CURTAIN_TILE(2),
+                   DMA_COPY_WORDS(8),
+                   REG_DMA3);
+        syDMAXCopy(BattleTransitionCurtainTiles + 2 * TILE_SIZE_4BPP,
+                   CURTAIN_TILE(3),
+                   DMA_COPY_WORDS(8),
+                   REG_DMA3);
+        syDMAXCopy(BattleTransitionCurtainTiles + 3 * TILE_SIZE_4BPP,
+                   CURTAIN_TILE(4),
+                   DMA_COPY_WORDS(8),
+                   REG_DMA3);
+        syDMAXCopy(BattleTransitionCurtainTiles + 4 * TILE_SIZE_4BPP,
+                   CURTAIN_TILE(5),
+                   DMA_COPY_WORDS(8),
+                   REG_DMA3);
+        syDMAXCopy(BattleTransitionCurtainTiles + 5 * TILE_SIZE_4BPP,
+                   CURTAIN_TILE(6),
+                   DMA_COPY_WORDS(8),
+                   REG_DMA3);
+        syDMAXCopy(BattleTransitionCurtainTiles + 6 * TILE_SIZE_4BPP,
+                   CURTAIN_TILE(7),
+                   DMA_COPY_WORDS(8),
+                   REG_DMA3);
+        view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
+        view->busy          = 0;
+        view->mode          = BATTLE_BACKGROUND_FIXED;
+        REG_DISPCNT         = DISPCNT_MODE_1;
+        IWRAM_FILL_WORDS(CURTAIN_TILE(0), TILE_SIZE_4BPP, PIXELS_4BPP(TRANSITION_CURTAIN_COLOR));
+        IWRAM_FILL_WORDS(CURTAIN_TILE(8), TILE_SIZE_4BPP, 0);
+        REG_BG1CNT  = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);
+        REG_BG0CNT |= BGCNT_PRIORITY(2);
+        view->mode  = BATTLE_BACKGROUND_ZOOMED;
+        // A closed curtain: solid rows 0 to TRANSITION_CURTAIN_LAST_ROW, clear below.
+        {
+            Uint16 *map = (Uint16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN);
 
-			for (i = 0; i < BG_SCREEN_WIDTH; i++)
-			{
-				Uint32 tile;
-				Uint32 column;
+            for (i = 0; i < BG_SCREEN_WIDTH; i++)
+            {
+                Uint32 tile;
+                Uint32 column;
 
-				if (i <= TRANSITION_CURTAIN_LAST_ROW)
-					tile = TRANSITION_CURTAIN_ENTRY(0);
-				else
-					tile = TRANSITION_CURTAIN_ENTRY(8);
-				for (column = 0; column < BG_SCREEN_WIDTH; column++)
-					*map++ = tile;
-			}
-		}
-		// BG0 starts scrolled up by its band, and BG1 at the same 32 lines,
-		// BATTLE_BACKGROUND_SCROLL_Y.
-		y                 = TRANSITION_BG0_BAND;
-		BgScrollWork[1].x = 8;
-		BgScrollWork[0].y = y;
-		BgScrollWork[1].y = y;
-		sySynch(1);
-		REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
-		REG_WIN0V = WIN_RANGE(0, 136);
-		REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
-		REG_WIN1V = WIN_RANGE(0, 136);
-		REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ
-		          | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_BG2 | WININ_WIN1_OBJ
-		          | WININ_WIN1_CLR;
-		REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
-		syIOWriteQueueStore16((Uint32)&REG_DISPCNT,
-		                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON
-		                          | DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON
-		                          | DISPCNT_WIN1_ON);
-		btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_TICKS);
-		*timer = 0;
-		sySetEvent(btTransitionAdvanceOpening, EVENT_PASS_TICK);
-		sySetEvent(btTransitionDrawRows, EVENT_PASS_VBLANK);
-		syIntFunction(IRQ_VCOUNT, TRANSITION_BG0_BAND, btTransitionResetBg0Scroll);
-		BgScrollWork[0].y = y;
-		sySynch(1);
-		mnPartyStatusCreateWindowStub(RamHeapSlots->battleState->partyStatus);
-		sySynch(20);
-		syIOWriteQueueClearBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(2));
-		syIOWriteQueueSetBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(0));
-		// Karst and Agatio's battles open with no announcement.
-		if ((Uint32)(kind - FORMATION_KARST_AND_AGATIO_A)
-		        <= FORMATION_KARST_AND_AGATIO_C - FORMATION_KARST_AND_AGATIO_A
-		    || kind == FORMATION_KARST_AND_AGATIO_VS_ISAAC)
-			sySynch(60);
-		else
-			btIntroAnnounceEncounter(enemyCount);
-		syCloseEvent(btTransitionAdvanceOpening);
-		syCloseEvent(btTransitionDrawRows);
-		BgScrollWork[0].y = 0;
-		syIntFunction(IRQ_VCOUNT, 0, 0);
-	}
-	else
-	{
-		battle               = heap->battleState;
-		view->bg1ScrollMode  = BATTLE_BACKGROUND_FIXED;
-		view->busy           = 0;
-		// Against the Doom Dragon the party, reserves too, is drawn at seven tenths of its size for
-		// the rest of the battle; nothing sets it back.
-		ownerCount           = btPartyPrepareMembers(owners);
-		ownerCount          += btPartyPrepareReserveOwners(owners + ownerCount);
-		for (i = 0; i != ownerCount; i++)
-		{
-			Sint32         id           = owners[i];
-			BATTLE_OBJECT *battleObject = btObjectGet(id);
-			Uint16         enemyId      = syUnitGet(id)->enemyId;
+                if (i <= TRANSITION_CURTAIN_LAST_ROW)
+                    tile = TRANSITION_CURTAIN_ENTRY(0);
+                else
+                    tile = TRANSITION_CURTAIN_ENTRY(8);
+                for (column = 0; column < BG_SCREEN_WIDTH; column++)
+                    *map++ = tile;
+            }
+        }
+        // BG0 starts scrolled up by its band, and BG1 at the same 32 lines,
+        // BATTLE_BACKGROUND_SCROLL_Y.
+        y                 = TRANSITION_BG0_BAND;
+        BgScrollWork[1].x = 8;
+        BgScrollWork[0].y = y;
+        BgScrollWork[1].y = y;
+        sySynch(1);
+        REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+        REG_WIN0V = WIN_RANGE(0, 136);
+        REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
+        REG_WIN1V = WIN_RANGE(0, 136);
+        REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ
+                  | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_BG2 | WININ_WIN1_OBJ
+                  | WININ_WIN1_CLR;
+        REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
+        syIOWriteQueueStore16((Uint32)&REG_DISPCNT,
+                              DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON
+                                  | DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON
+                                  | DISPCNT_WIN1_ON);
+        btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_TICKS);
+        *timer = 0;
+        sySetEvent(btTransitionAdvanceOpening, EVENT_PASS_TICK);
+        sySetEvent(btTransitionDrawRows, EVENT_PASS_VBLANK);
+        syIntFunction(IRQ_VCOUNT, TRANSITION_BG0_BAND, btTransitionResetBg0Scroll);
+        BgScrollWork[0].y = y;
+        sySynch(1);
+        mnPartyStatusCreateWindowStub(RamHeapSlots->battleState->partyStatus);
+        sySynch(20);
+        syIOWriteQueueClearBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(2));
+        syIOWriteQueueSetBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(0));
+        // Karst and Agatio's battles open with no announcement.
+        if ((Uint32)(kind - FORMATION_KARST_AND_AGATIO_A)
+                <= FORMATION_KARST_AND_AGATIO_C - FORMATION_KARST_AND_AGATIO_A
+            || kind == FORMATION_KARST_AND_AGATIO_VS_ISAAC)
+            sySynch(60);
+        else
+            btIntroAnnounceEncounter(enemyCount);
+        syCloseEvent(btTransitionAdvanceOpening);
+        syCloseEvent(btTransitionDrawRows);
+        BgScrollWork[0].y = 0;
+        syIntFunction(IRQ_VCOUNT, 0, 0);
+    }
+    else
+    {
+        battle               = heap->battleState;
+        view->bg1ScrollMode  = BATTLE_BACKGROUND_FIXED;
+        view->busy           = 0;
+        // Against the Doom Dragon the party, reserves too, is drawn at seven tenths of its size for
+        // the rest of the battle; nothing sets it back.
+        ownerCount           = btPartyPrepareMembers(owners);
+        ownerCount          += btPartyPrepareReserveOwners(owners + ownerCount);
+        for (i = 0; i != ownerCount; i++)
+        {
+            Sint32         id           = owners[i];
+            BATTLE_OBJECT *battleObject = btObjectGet(id);
+            Uint16         enemyId      = syUnitGet(id)->enemyId;
 
-			if (enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON_A
-			    && enemyId != ENEMY_DOOM_DRAGON_E && enemyId != ENEMY_DOOM_DRAGON_H)
-				battleObject->scale = toFIXED(7) / 10;
-		}
-		IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
-		                    DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
-		                    IO_WRITE_HALFWORD);
-		sySynch(1);
-		{
-			Sint32  background = RESOURCE_SERPENT_STARS_BACKDROP;
-			Uint16 *slot       = &battle->bg;
-			Sint32  start      = 0;
+            if (enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON_A
+                && enemyId != ENEMY_DOOM_DRAGON_E && enemyId != ENEMY_DOOM_DRAGON_H)
+                battleObject->scale = toFIXED(7) / 10;
+        }
+        IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
+                            DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
+                            IO_WRITE_HALFWORD);
+        sySynch(1);
+        {
+            Sint32  background = RESOURCE_SERPENT_STARS_BACKDROP;
+            Uint16 *slot       = &battle->bg;
+            Sint32  start      = 0;
 
-			*slot              = background;
-			// The enemies alone take part in the shattering opening.
-			state.count        = btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, (Uint16 *)state.actors);
-			state.actors[state.count] = BATTLE_UNIT_LIST_END;
-			btActorSpawnObjectsForList(state.actors, 0);
-			btEffectRunShatteringOpeningStub(&state);
-			btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
-			*timer = start;
-		}
-		syIntFunction(IRQ_VCOUNT, TRANSITION_BG0_BAND, btTransitionResetBg0Scroll);
-		sySynch(1);
-		sySynch(20);
-		mnPartyStatusCreateWindowStub(RamHeapSlots->battleState->partyStatus);
-		syIOWriteQueueClearBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(2));
-		syIOWriteQueueSetBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(0));
-		REG_BLDCNT   = BLEND_SPRITES_OVER_ALL;
-		count        = btUnitListIds(BATTLE_SIDE_MASK_BOTH, shown);
-		shown[count] = BATTLE_UNIT_LIST_END;
-		btActorSpawnObjectsForList((Sint16 *)shown, 0);
-		count = btUnitListIds(BATTLE_SIDE_MASK_PARTY, shown);
-		for (i = 0; i != count; i++)
-			btHighlightSetSpriteMode(shown[i], SPRITE_SEMI_TRANSPARENT);
-		for (i = 0; i != BLEND_WEIGHT_MAX; i++)
-		{
-			REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
-			sySynch(1);
-		}
-		for (i = 0; i != count; i++)
-			btHighlightSetSpriteMode(shown[i], SPRITE_OPAQUE);
-		btIntroAnnounceEncounter(enemyCount);
-		BgScrollWork[0].y = 0;
-		sySynch(1);
-		syIntFunction(IRQ_VCOUNT, 0, 0);
-	}
-	syIntFunction(IRQ_VCOUNT, 0, 0);
-	REG_BG1CNT = BATTLE_BG1CNT;
-	sySynch(1);
-	REG_BG1CNT         = BATTLE_BG1CNT;
-	REG_BG0CNT        &= ~BGCNT_PRIORITY(2);
-	BgScrollWork[1].x  = 8;
-	REG_DISPCNT =
-		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-	syHeapSlotRelease(HEAP_SLOT_BATTLE_ENTRY_TIMER);
+            *slot              = background;
+            // The enemies alone take part in the shattering opening.
+            state.count        = btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, (Uint16 *)state.actors);
+            state.actors[state.count] = BATTLE_UNIT_LIST_END;
+            btActorSpawnObjectsForList(state.actors, 0);
+            btEffectRunShatteringOpeningStub(&state);
+            btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
+            *timer = start;
+        }
+        syIntFunction(IRQ_VCOUNT, TRANSITION_BG0_BAND, btTransitionResetBg0Scroll);
+        sySynch(1);
+        sySynch(20);
+        mnPartyStatusCreateWindowStub(RamHeapSlots->battleState->partyStatus);
+        syIOWriteQueueClearBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(2));
+        syIOWriteQueueSetBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(0));
+        REG_BLDCNT   = BLEND_SPRITES_OVER_ALL;
+        count        = btUnitListIds(BATTLE_SIDE_MASK_BOTH, shown);
+        shown[count] = BATTLE_UNIT_LIST_END;
+        btActorSpawnObjectsForList((Sint16 *)shown, 0);
+        count = btUnitListIds(BATTLE_SIDE_MASK_PARTY, shown);
+        for (i = 0; i != count; i++)
+            btHighlightSetSpriteMode(shown[i], SPRITE_SEMI_TRANSPARENT);
+        for (i = 0; i != BLEND_WEIGHT_MAX; i++)
+        {
+            REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
+            sySynch(1);
+        }
+        for (i = 0; i != count; i++)
+            btHighlightSetSpriteMode(shown[i], SPRITE_OPAQUE);
+        btIntroAnnounceEncounter(enemyCount);
+        BgScrollWork[0].y = 0;
+        sySynch(1);
+        syIntFunction(IRQ_VCOUNT, 0, 0);
+    }
+    syIntFunction(IRQ_VCOUNT, 0, 0);
+    REG_BG1CNT = BATTLE_BG1CNT;
+    sySynch(1);
+    REG_BG1CNT         = BATTLE_BG1CNT;
+    REG_BG0CNT        &= ~BGCNT_PRIORITY(2);
+    BgScrollWork[1].x  = 8;
+    REG_DISPCNT =
+        DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    syHeapSlotRelease(HEAP_SLOT_BATTLE_ENTRY_TIMER);
 }

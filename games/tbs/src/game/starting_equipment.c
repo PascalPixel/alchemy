@@ -7,6 +7,6 @@
 // definition's items and raises them to their starting level. Felix, Sheba and Piers are left out.
 // clang-format off
 const Sint32 CharacterNewGameIds[6] = {
-	ISAAC, GARET, IVAN, MIA, JENNA, -1,
+    ISAAC, GARET, IVAN, MIA, JENNA, -1,
 };
 // clang-format on

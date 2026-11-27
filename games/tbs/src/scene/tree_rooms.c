@@ -63,13 +63,13 @@ extern Sint16 TreeRoomsMapPatches[];
 // The columns of a row of TreeRoomsMapPatches, six halfwords, whose rows run on until a flag of -1.
 enum
 {
-	MAP_PATCH_FLAG,
-	MAP_PATCH_REDRAWN,
-	MAP_PATCH_SOURCE_X,
-	MAP_PATCH_SOURCE_Y,
-	MAP_PATCH_DESTINATION_X,
-	MAP_PATCH_DESTINATION_Y,
-	MAP_PATCH_ROW_LENGTH
+    MAP_PATCH_FLAG,
+    MAP_PATCH_REDRAWN,
+    MAP_PATCH_SOURCE_X,
+    MAP_PATCH_SOURCE_Y,
+    MAP_PATCH_DESTINATION_X,
+    MAP_PATCH_DESTINATION_Y,
+    MAP_PATCH_ROW_LENGTH
 };
 
 extern Sint32            TreeRoomsLeaderGathersActions[];
@@ -93,9 +93,9 @@ extern Sint32            TreeRoomsTintIndex;
 // and speaks every line after it.
 enum
 {
-	ACTOR_TRET = ACTOR_FIRST_PLACED,
-	// Kept hidden (SPRITE_COLOR_HIDDEN): only a speaker.
-	ACTOR_SECOND_TRET
+    ACTOR_TRET = ACTOR_FIRST_PLACED,
+    // Kept hidden (SPRITE_COLOR_HIDDEN): only a speaker.
+    ACTOR_SECOND_TRET
 };
 
 // The speaker of a message. Every speaker in this scene has SPEAKER_WINDOW_BELOW.
@@ -106,14 +106,14 @@ enum
 // exits, and each leaf's metatile the number of the entrance its fall lands at.
 typedef enum TREE_ROOMS_METATILE_BEHAVIOR
 {
-	// The row in front of Tret's face in the lowest room, (9, 5) to (11, 5).
-	METATILE_BEHAVIOR_TREE_ROOMS_BEFORE_TRET        = 40,
-	// The Healing Ring's chest on the third floor, between its webs (10, 24).
-	METATILE_BEHAVIOR_TREE_ROOMS_HEALING_RING_CHEST = 100,
-	// The Nut's chest on the fifth floor, east of its web (54, 25).
-	METATILE_BEHAVIOR_TREE_ROOMS_NUT_CHEST          = 101,
-	// The Psynergy Stone by the third floor's north wall (9, 21).
-	METATILE_BEHAVIOR_TREE_ROOMS_PSYNERGY_STONE     = 102
+    // The row in front of Tret's face in the lowest room, (9, 5) to (11, 5).
+    METATILE_BEHAVIOR_TREE_ROOMS_BEFORE_TRET        = 40,
+    // The Healing Ring's chest on the third floor, between its webs (10, 24).
+    METATILE_BEHAVIOR_TREE_ROOMS_HEALING_RING_CHEST = 100,
+    // The Nut's chest on the fifth floor, east of its web (54, 25).
+    METATILE_BEHAVIOR_TREE_ROOMS_NUT_CHEST          = 101,
+    // The Psynergy Stone by the third floor's north wall (9, 21).
+    METATILE_BEHAVIOR_TREE_ROOMS_PSYNERGY_STONE     = 102
 } TREE_ROOMS_METATILE_BEHAVIOR;
 
 // How long Isaac spins as he drops through a broken leaf.
@@ -138,19 +138,19 @@ static void scTretPaletteUpdateMapTint(void);
 // open, and the wrathful ones are on his wrathful face.
 typedef enum TREE_ROOMS_FACE_CHANGE
 {
-	TRET_FACE_CHANGE_CLOSE_EYES          = 0,
-	TRET_FACE_CHANGE_OPEN_EYES           = 1,
-	TRET_FACE_CHANGE_LOOK_LEFT           = 2,
-	TRET_FACE_CHANGE_LOOK_RIGHT          = 3,
-	TRET_FACE_CHANGE_BLINK               = 4, // twice
-	TRET_FACE_CHANGE_HALF_CLOSE_EYES     = 5,
-	TRET_FACE_CHANGE_WRATHFUL_CLOSE_EYES = 7,
-	TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES  = 8,
-	TRET_FACE_CHANGE_WRATHFUL_LOOK_RIGHT = 9,
-	TRET_FACE_CHANGE_WRATHFUL_LOOK_LEFT  = 10,
-	TRET_FACE_CHANGE_WRATHFUL_BLINK      = 11, // twice
-	// as TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES
-	TRET_FACE_CHANGE_WRATHFUL_STARE      = 12
+    TRET_FACE_CHANGE_CLOSE_EYES          = 0,
+    TRET_FACE_CHANGE_OPEN_EYES           = 1,
+    TRET_FACE_CHANGE_LOOK_LEFT           = 2,
+    TRET_FACE_CHANGE_LOOK_RIGHT          = 3,
+    TRET_FACE_CHANGE_BLINK               = 4, // twice
+    TRET_FACE_CHANGE_HALF_CLOSE_EYES     = 5,
+    TRET_FACE_CHANGE_WRATHFUL_CLOSE_EYES = 7,
+    TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES  = 8,
+    TRET_FACE_CHANGE_WRATHFUL_LOOK_RIGHT = 9,
+    TRET_FACE_CHANGE_WRATHFUL_LOOK_LEFT  = 10,
+    TRET_FACE_CHANGE_WRATHFUL_BLINK      = 11, // twice
+    // as TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES
+    TRET_FACE_CHANGE_WRATHFUL_STARE      = 12
 } TREE_ROOMS_FACE_CHANGE;
 
 static void                  scTreeRoomsChangeFace(Sint32 change);
@@ -217,7 +217,7 @@ static Sint16               *LastLeaf;
 // Returns the scene's entrances, where the leaves' falls land among them.
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return TreeRoomsEntrances;
+    return TreeRoomsEntrances;
 }
 
 // Returns the tops of the three vines that climb to the room above: from the entrance room to the
@@ -225,19 +225,19 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 // the entrance room. Climbing to between 28 and 36 pixels up one of them takes Isaac through.
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
-	return TreeRoomsRegions;
+    return TreeRoomsRegions;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return TreeRoomsExits;
+    return TreeRoomsExits;
 }
 
 // Returns the party's other slots (Garet, Ivan and, once she has joined, Mia), placed for the
 // scripts, and the two Tret actors.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return TreeRoomsActorPlacements;
+    return TreeRoomsActorPlacements;
 }
 
 // Isaac landing on a leaf on one of Tret Tree's webs tears it the first time. The next time the
@@ -250,50 +250,50 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 // fifth floor's centre leaf, whose fall goes on down through the rooms (scInit).
 static void scTreeRoomsStepOnLeaf(Sint32 leafFlag, Sint32 srcColumn, Sint32 srcRow, Sint32 entrance)
 {
-	Sint32 destColumn;
-	Sint32 destRow;
-	Sint32 leaderActorId;
-	ACTOR *actor;
-	Sint32 spinFrame;
+    Sint32 destColumn;
+    Sint32 destRow;
+    Sint32 leaderActorId;
+    ACTOR *actor;
+    Sint32 spinFrame;
 
-	destColumn    = FIELD_METATILE(MainRoutineStateWork.x) + 64;
-	destRow       = FIELD_METATILE(MainRoutineStateWork.z);
-	leaderActorId = MainRoutineStateWork.leaderActorId;
-	actor         = fdActorGet(leaderActorId);
-	if (entrance == *LastLeaf)
-		return;
-	*LastLeaf = entrance;
-	if (gmFlagGet(leafFlag) == 0)
-	{
-		fdMapGridCopyMetatiles(srcColumn, srcRow, 1, 1, destColumn, destRow);
-		gmFlagSet(leafFlag);
-		return;
-	}
-	// Landing on a torn leaf: draw the hole and spin Isaac down through the web.
-	*LastLeaf = -1;
-	fdMapGridCopyMetatiles(srcColumn, srcRow + 1, 1, 1, destColumn, destRow);
-	sySoundPlay(SE_CURSE_FALL);
-	fdScriptStart();
-	fdScriptSetDestination(SCENE_TREE_ROOMS, entrance);
-	fdActorSetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
-	fdActorSetSpriteFlags(fdActorGet(leaderActorId), 0);
-	fdActorSetAttachedEffect(leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-	fdScriptWait(30);
-	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	actor->motionFlags  = ACTOR_FALLS;
-	actor->groundHeight = -toFIXED(160);
-	actor->gravity      = toFIXED(1) / 2;
-	sySoundPlay(SE_DUST_PUFF);
-	fdScriptWait(3);
-	actor->layer = 2;
-	fdActorSetSpritePriority(leaderActorId, 3);
-	for (spinFrame = 0; spinFrame < LEAF_FALL_SPIN_TICKS; spinFrame++)
-	{
-		actor->facing += 2 * FACING_STEP;
-		sySynch(1);
-	}
-	if (entrance != TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF)
-		gmFlagSet(FLAG_ARRIVE_FALLING);
+    destColumn    = FIELD_METATILE(MainRoutineStateWork.x) + 64;
+    destRow       = FIELD_METATILE(MainRoutineStateWork.z);
+    leaderActorId = MainRoutineStateWork.leaderActorId;
+    actor         = fdActorGet(leaderActorId);
+    if (entrance == *LastLeaf)
+        return;
+    *LastLeaf = entrance;
+    if (gmFlagGet(leafFlag) == 0)
+    {
+        fdMapGridCopyMetatiles(srcColumn, srcRow, 1, 1, destColumn, destRow);
+        gmFlagSet(leafFlag);
+        return;
+    }
+    // Landing on a torn leaf: draw the hole and spin Isaac down through the web.
+    *LastLeaf = -1;
+    fdMapGridCopyMetatiles(srcColumn, srcRow + 1, 1, 1, destColumn, destRow);
+    sySoundPlay(SE_CURSE_FALL);
+    fdScriptStart();
+    fdScriptSetDestination(SCENE_TREE_ROOMS, entrance);
+    fdActorSetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
+    fdActorSetSpriteFlags(fdActorGet(leaderActorId), 0);
+    fdActorSetAttachedEffect(leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+    fdScriptWait(30);
+    fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+    actor->motionFlags  = ACTOR_FALLS;
+    actor->groundHeight = -toFIXED(160);
+    actor->gravity      = toFIXED(1) / 2;
+    sySoundPlay(SE_DUST_PUFF);
+    fdScriptWait(3);
+    actor->layer = 2;
+    fdActorSetSpritePriority(leaderActorId, 3);
+    for (spinFrame = 0; spinFrame < LEAF_FALL_SPIN_TICKS; spinFrame++)
+    {
+        actor->facing += 2 * FACING_STEP;
+        sySynch(1);
+    }
+    if (entrance != TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF)
+        gmFlagSet(FLAG_ARRIVE_FALLING);
 }
 
 // The leaves' step cues, one for each leaf: each passes its flag, the column of its torn picture on
@@ -303,148 +303,148 @@ static void scTreeRoomsStepOnLeaf(Sint32 leafFlag, Sint32 srcColumn, Sint32 srcR
 
 static void scTreeRoomsStepOnSecondFloorLeafA(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 64, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 64, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A);
 }
 
 static void scTreeRoomsStepOnSecondFloorLeafB(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 65, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 65, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B);
 }
 
 // The leaf Isaac can jump to from the floor by the west door.
 static void scTreeRoomsStepOnSecondFloorLeafC(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 66, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 66, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C);
 }
 
 static void scTreeRoomsStepOnSecondFloorLeafD(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN, 67, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN, 67, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D);
 }
 
 static void scTreeRoomsStepOnSecondFloorLeafE(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN, 68, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN, 68, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E);
 }
 
 static void scTreeRoomsStepOnSecondFloorLeafF(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN, 69, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN, 69, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F);
 }
 
 static void scTreeRoomsStepOnSecondFloorLeafG(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN, 70, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN, 70, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G);
 }
 
 static void scTreeRoomsStepOnSecondFloorLeafH(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN, 71, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN, 71, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H);
 }
 
 static void scTreeRoomsStepOnSecondFloorLeafI(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN, 72, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN, 72, 35, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I);
 }
 
 // West of the Healing Ring's chest.
 static void scTreeRoomsStepOnThirdFloorWestLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN, 73, 35, TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN, 73, 35, TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF);
 }
 
 // East of the Healing Ring's chest, below the vine to the fourth floor.
 static void scTreeRoomsStepOnThirdFloorEastLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN, 74, 35, TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN, 74, 35, TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF);
 }
 
 // The way to Tret: the fall goes on through every room below it (scInit) into Tret's room.
 static void scTreeRoomsStepOnFifthFloorCenterLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN,
-	                      79,
-	                      35,
-	                      TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF);
+    scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN,
+                          79,
+                          35,
+                          TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF);
 }
 
 static void scTreeRoomsStepOnFifthFloorNorthwestLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN,
-	                      75,
-	                      35,
-	                      TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF);
+    scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN,
+                          75,
+                          35,
+                          TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF);
 }
 
 static void scTreeRoomsStepOnFifthFloorNorthLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN, 76, 35, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN, 76, 35, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF);
 }
 
 // West of the Nut's chest.
 static void scTreeRoomsStepOnFifthFloorNortheastLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN,
-	                      77,
-	                      35,
-	                      TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF);
+    scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN,
+                          77,
+                          35,
+                          TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF);
 }
 
 static void scTreeRoomsStepOnFifthFloorWestLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN, 78, 35, TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN, 78, 35, TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF);
 }
 
 static void scTreeRoomsStepOnFifthFloorEastLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN, 80, 35, TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN, 80, 35, TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF);
 }
 
 // Its fall lands not straight below but where the west leaf's does, two metatiles further north
 // (metatile (28, 26)).
 static void scTreeRoomsStepOnFifthFloorSouthwestLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN,
-	                      81,
-	                      35,
-	                      TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF);
+    scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN,
+                          81,
+                          35,
+                          TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF);
 }
 
 static void scTreeRoomsStepOnFifthFloorSouthLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(
-		FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN, 82, 35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF);
+    scTreeRoomsStepOnLeaf(
+        FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN, 82, 35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF);
 }
 
 static void scTreeRoomsStepOnFifthFloorSoutheastLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN,
-	                      83,
-	                      35,
-	                      TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF);
+    scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN,
+                          83,
+                          35,
+                          TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF);
 }
 
 // Below the Nut's chest.
 static void scTreeRoomsStepOnFifthFloorFarSoutheastLeaf(void)
 {
-	scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN,
-	                      84,
-	                      35,
-	                      TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF);
+    scTreeRoomsStepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN,
+                          84,
+                          35,
+                          TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF);
 }
 
 // Walking while Isaac stands on a leaf in Tret Tree makes him jump two metatiles that way, over the
@@ -452,14 +452,14 @@ static void scTreeRoomsStepOnFifthFloorFarSoutheastLeaf(void)
 // `LastLeaf` is cleared, so that the leaf he lands on counts as a fresh landing.
 static void scTreeRoomsJumpOffLeaf(void)
 {
-	if (fdTryJumpForward() == 0)
-		*LastLeaf = -1;
+    if (fdTryJumpForward() == 0)
+        *LastLeaf = -1;
 }
 
 // Returns the doors, the vines, the leaves, Tret, Reveal, the chests and the Psynergy Stone.
 const CUE *scGetCues(void)
 {
-	return TreeRoomsCues;
+    return TreeRoomsCues;
 }
 
 // Walking up to Tret's face in the north wall of the lowest room in Tret Tree (metatiles (9, 5) to
@@ -470,76 +470,76 @@ const CUE *scGetCues(void)
 // TREE_ROOMS_AFTER_FIGHT_TRET, where the setup plays scTreeRoomsPlayPostBattleConversation.
 static void scTreeRoomsFightTret(void)
 {
-	Sint32 hasMia;
+    Sint32 hasMia;
 
-	hasMia = gmFlagGet(FLAG_IN_PARTY(MIA));
-	fdScriptStart();
-	sySoundPlay(SOUND_FADE_OUT_BGM);
-	fdScriptSetMessageId(MsgTretHmHrooom);
-	// "Hm HROOOM!!!"
-	fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-	sySoundPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
-	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
-	fdActorSetSpeed(ACTOR_GARET, 1);
-	fdActorSetSpeed(ACTOR_IVAN, 1);
-	fdActorSetSpeed(ACTOR_MIA, 1);
-	fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSpritePriority(ACTOR_MIA, 2);
-	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-	scPlaceAtLeader(ACTOR_GARET);
-	scPlaceAtLeader(ACTOR_IVAN);
-	if (hasMia != 0)
-	{
-		scPlaceAtLeader(ACTOR_MIA);
-		fdActorSetScript(ACTOR_MIA, TreeRoomsMiaGathersActions);
-	}
-	fdActorSetScript(ACTOR_PARTY_LEADER, TreeRoomsLeaderGathersActions);
-	fdActorSetScript(ACTOR_GARET, TreeRoomsGaretGathersActions);
-	fdActorRunScriptAndWait(ACTOR_IVAN, TreeRoomsIvanGathersActions);
-	fdScriptWait(10);
-	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-	fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
-	fdActorSetAnimation(ACTOR_TRET, TRET_FACE_TURNING_WRATHFUL);
-	fdScriptWait(10);
-	fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
-	fdScriptWait(20);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES);
-	// "You! You hoped to find my kindly self?"
-	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
-	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
-	fdActorStartRepeatedMotion(ACTOR_MIA, 2);
-	fdActorStartRepeatedMotion(ACTOR_IVAN, 2);
-	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
-	// "Fools! You should never have come here, and now, you shall never leave!"
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0, 10);
-	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	fdActorStartRepeatedMotion(ACTOR_GARET, 1);
-	fdActorStartRepeatedMotion(ACTOR_MIA, 1);
-	fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
-	// "Your powers protected you in the forest, but now you are in the heart of my power!"
-	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
-	fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdScriptWait(40);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
-	// "Here, you will all become trees, and you'll wither with the rest of us!"
-	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
-	FieldStateWork->transition      = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-	FieldStateWork->transitionFrame = 64;
-	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
-	fdScriptSetAfterBattleDestination(SCENE_TREE_ROOMS, TREE_ROOMS_AFTER_FIGHT_TRET);
-	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, 0);
-	fdScriptEnd();
+    hasMia = gmFlagGet(FLAG_IN_PARTY(MIA));
+    fdScriptStart();
+    sySoundPlay(SOUND_FADE_OUT_BGM);
+    fdScriptSetMessageId(MsgTretHmHrooom);
+    // "Hm HROOOM!!!"
+    fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+    sySoundPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
+    fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
+    fdActorSetSpeed(ACTOR_GARET, 1);
+    fdActorSetSpeed(ACTOR_IVAN, 1);
+    fdActorSetSpeed(ACTOR_MIA, 1);
+    fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    fdActorSetSpritePriority(ACTOR_MIA, 2);
+    fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    scPlaceAtLeader(ACTOR_GARET);
+    scPlaceAtLeader(ACTOR_IVAN);
+    if (hasMia != 0)
+    {
+        scPlaceAtLeader(ACTOR_MIA);
+        fdActorSetScript(ACTOR_MIA, TreeRoomsMiaGathersActions);
+    }
+    fdActorSetScript(ACTOR_PARTY_LEADER, TreeRoomsLeaderGathersActions);
+    fdActorSetScript(ACTOR_GARET, TreeRoomsGaretGathersActions);
+    fdActorRunScriptAndWait(ACTOR_IVAN, TreeRoomsIvanGathersActions);
+    fdScriptWait(10);
+    fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+    fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
+    fdActorSetAnimation(ACTOR_TRET, TRET_FACE_TURNING_WRATHFUL);
+    fdScriptWait(10);
+    fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    fdScriptWait(20);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES);
+    // "You! You hoped to find my kindly self?"
+    fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
+    fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    fdActorStartRepeatedMotion(ACTOR_GARET, 2);
+    fdActorStartRepeatedMotion(ACTOR_MIA, 2);
+    fdActorStartRepeatedMotion(ACTOR_IVAN, 2);
+    fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
+    // "Fools! You should never have come here, and now, you shall never leave!"
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0, 10);
+    fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+    fdActorStartRepeatedMotion(ACTOR_GARET, 1);
+    fdActorStartRepeatedMotion(ACTOR_MIA, 1);
+    fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
+    // "Your powers protected you in the forest, but now you are in the heart of my power!"
+    fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
+    fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdActorSetAttachedEffect(ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdScriptWait(40);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
+    // "Here, you will all become trees, and you'll wither with the rest of us!"
+    fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
+    FieldStateWork->transition      = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+    FieldStateWork->transitionFrame = 64;
+    SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
+    fdScriptSetAfterBattleDestination(SCENE_TREE_ROOMS, TREE_ROOMS_AFTER_FIGHT_TRET);
+    fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, 0);
+    fdScriptEnd();
 }
 
 // After the battle with Tret, the view slides down the middle of his room as a vine grows up out of
@@ -552,216 +552,216 @@ static void scTreeRoomsFightTret(void)
 // Ivan scold Isaac.
 static void scTreeRoomsPlayPostBattleConversation(void)
 {
-	Sint32        hasMia;
-	EVENT_FUNC    sparkTask;
-	const Sint32 *actions;
+    Sint32        hasMia;
+    EVENT_FUNC    sparkTask;
+    const Sint32 *actions;
 
-	hasMia                                = gmFlagGet(FLAG_IN_PARTY(MIA));
-	fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSpritePriority(ACTOR_MIA, 2);
-	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-	gmPartyInventoryFindMember(ITEM_HERMES_WATER);
-	sySoundPlay(SOUND_FADE_OUT_BGM);
-	fdScriptStart();
-	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
-	fdActorSetSpeed(ACTOR_GARET, 0.8);
-	fdActorSetSpeed(ACTOR_IVAN, 0.8);
-	fdActorSetSpeed(ACTOR_MIA, 0.8);
-	fdActorSetPos(ACTOR_PARTY_LEADER, 166, 80);
-	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
-	fdActorSetPos(ACTOR_GARET, 148, 90);
-	fdActorGet(ACTOR_GARET)->facing = FACING_NORTH;
-	fdActorSetPos(ACTOR_IVAN, 182, 90);
-	fdActorGet(ACTOR_IVAN)->facing = FACING_NORTH;
-	if (hasMia != 0)
-	{
-		fdActorSetPos(ACTOR_MIA, 166, 104);
-		fdActorGet(ACTOR_MIA)->facing = FACING_NORTH;
-	}
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
-	sySynch(10);
-	FieldStateWork->transition      = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrame = 48;
-	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionTicks();
-	fdScriptWait(20);
-	fdCameraSetSpeed(1.2);
-	fdCameraMoveTo(168, CAMERA_KEEP, 152, 1);
-	fdCameraWaitForMove();
-	fdScriptWait(10);
-	sySoundPlay(SE_MAP_EXIT);
-	fdMapGridCopyMetatileAttributes(26, 3, 1, 2, 10, 8);
-	fdMapGridCopyMetatiles(26, 38, 1, 1, 10, 43);
-	sySynch(4);
-	fdMapGridCopyMetatiles(26, 37, 1, 2, 10, 42);
-	sySynch(4);
-	fdMapGridCopyMetatiles(26, 36, 1, 3, 10, 41);
-	sySynch(4);
-	fdMapGridCopyMetatiles(26, 35, 1, 4, 10, 40);
-	sySynch(80);
-	fdScriptSetMessageId(MsgTretMmmmm);
-	// "Oh... Mmmmm..."
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
-	fdActorStartRepeatedMotion(ACTOR_MIA, 2);
-	fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
-	fdScriptWait(20);
-	fdCameraMoveTo(168, CAMERA_KEEP, 90, 1);
-	fdCameraWaitForMove();
-	fdScriptWait(40);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_OPEN_EYES);
-	fdScriptWait(60);
-	sySoundPlay(MUS_FOREST_THEME);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
-	// "What has happened to me?"
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-	// "Was I... I see... My heart was all but lost in my rage."
-	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
-	fdScriptWait(40);
-	// "And you defeated the evil within me?"
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-	fdScriptWait(20);
-	// "I thank you. I could not leave this world with so much evil in my heart."
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
-	fdScriptWait(40);
-	// "I am free now to leave the world without regret. Good-bye, great warriors."
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-	fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdScriptWait(60);
-	fdActorRunRepeatedMotion(ACTOR_GARET, 2);
-	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
-	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-	// "Hey! Wait a minute! We can't let Tret die like this!"
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0, 10);
-	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-	// "That's right, Isaac. We still need his help!!"
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0, 20);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
-	fdScriptWait(40);
-	// "...What?"
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
-	fdActorStartRepeatedMotion(ACTOR_MIA, 2);
-	fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
-	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
-	// "Why have you not left me to my dying? Do you need something?"
-	fdScriptOpenMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
-	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-	if (fdScriptAskYesNoWithActorAnimation(0, 0) != 0)
-	{
-		fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-		fdActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
-		fdScriptSetMessageId(MsgTretDoingNowsNot);
-		// "What are you doing, Isaac! Now's not the time to fool around!"
-		fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0);
-		fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
-		fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-		// "That's right, Isaac... We have to save everyone in Kolima!"
-		fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0);
-	}
-	fdScriptWait(20);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
-	fdScriptSetMessageId(MsgTretTurnedPeopleKolima);
-	// "I turned the people of Kolima into trees?"
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-	// "Hroom! I must release them before they die with the forest!"
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
-	fdScriptWait(20);
-	// Tret tries to release the people of Kolima: the room turns purple and sparks swirl out from
-	// his face, then fade.
-	fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
-	fdPaletteFadeStartInterpolation(20);
-	sySynch(40);
-	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
-	fdActorStartRepeatedMotion(ACTOR_MIA, 2);
-	fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
-	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
-	fdScriptWait(20);
-	SparkTick = 0;
-	{
-		FIELD_POS *origin = &SparkOrigin;
-		origin->x         = toFIXED(168);
-		origin->y         = toFIXED(32);
-		sparkTask         = scTreeRoomsSpawnSwirlSparks;
-		origin->z         = toFIXED(52);
-	}
-	sySetTickEvent(sparkTask, EVENT_PASS_TICK);
-	fdScriptWait(220);
-	syCloseEvent(sparkTask);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
-	fdPaletteFadeStartInterpolation(20);
-	sySynch(40);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
-	fdScriptWait(20);
-	// "I can't do it... My power no longer reaches Kolima..."
-	syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
-	// "People of Kolima... Forgive me..."
-	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
-	fdActorRunScriptAndWait(ACTOR_TRET, TreeRoomsFaceSinksActions);
-	fdScriptWait(40);
-	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-	// "Tret's too weak! He doesn't have the power to save Kolima."
-	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0);
-	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
-	// "No! We have to heal him! We can't let the people of Kolima die with the forest!"
-	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0);
-	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
-	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-	fdActorRunRepeatedMotion(ACTOR_GARET, 1);
-	// "Every life in Kolima depends on us!"
-	fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0, 10);
-	fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
-	// "We have to restore Tret and save the people of Kolima!"
-	fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0, 10);
-	if (hasMia != 0)
-	{
-		fdActorRunRepeatedMotion(ACTOR_MIA, 1);
-		// "Let's go, Isaac."
-		fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_MIA), 0, 10);
-	}
-	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-	actions = TreeRoomsWalkBackToLeaderScript;
-	fdActorSetScript(ACTOR_GARET, actions);
-	if (hasMia != 0)
-	{
-		fdActorSetScript(ACTOR_MIA, actions);
-	}
-	fdActorRunScriptAndWait(ACTOR_IVAN, actions);
-	fdScriptWait(20);
-	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-	gmFlagSet(FLAG_TRET_DEFEATED);
-	sySetTickEvent(scTretPaletteUpdateMapTint, EVENT_PASS_TICK);
-	fdScriptEnd();
+    hasMia                                = gmFlagGet(FLAG_IN_PARTY(MIA));
+    fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    fdActorSetSpritePriority(ACTOR_MIA, 2);
+    fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    gmPartyInventoryFindMember(ITEM_HERMES_WATER);
+    sySoundPlay(SOUND_FADE_OUT_BGM);
+    fdScriptStart();
+    fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
+    fdActorSetSpeed(ACTOR_GARET, 0.8);
+    fdActorSetSpeed(ACTOR_IVAN, 0.8);
+    fdActorSetSpeed(ACTOR_MIA, 0.8);
+    fdActorSetPos(ACTOR_PARTY_LEADER, 166, 80);
+    fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
+    fdActorSetPos(ACTOR_GARET, 148, 90);
+    fdActorGet(ACTOR_GARET)->facing = FACING_NORTH;
+    fdActorSetPos(ACTOR_IVAN, 182, 90);
+    fdActorGet(ACTOR_IVAN)->facing = FACING_NORTH;
+    if (hasMia != 0)
+    {
+        fdActorSetPos(ACTOR_MIA, 166, 104);
+        fdActorGet(ACTOR_MIA)->facing = FACING_NORTH;
+    }
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
+    sySynch(10);
+    FieldStateWork->transition      = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    FieldStateWork->transitionFrame = 48;
+    fdScriptStartScreenTransition();
+    fdScriptWaitTransitionTicks();
+    fdScriptWait(20);
+    fdCameraSetSpeed(1.2);
+    fdCameraMoveTo(168, CAMERA_KEEP, 152, 1);
+    fdCameraWaitForMove();
+    fdScriptWait(10);
+    sySoundPlay(SE_MAP_EXIT);
+    fdMapGridCopyMetatileAttributes(26, 3, 1, 2, 10, 8);
+    fdMapGridCopyMetatiles(26, 38, 1, 1, 10, 43);
+    sySynch(4);
+    fdMapGridCopyMetatiles(26, 37, 1, 2, 10, 42);
+    sySynch(4);
+    fdMapGridCopyMetatiles(26, 36, 1, 3, 10, 41);
+    sySynch(4);
+    fdMapGridCopyMetatiles(26, 35, 1, 4, 10, 40);
+    sySynch(80);
+    fdScriptSetMessageId(MsgTretMmmmm);
+    // "Oh... Mmmmm..."
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+    fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    fdActorStartRepeatedMotion(ACTOR_GARET, 2);
+    fdActorStartRepeatedMotion(ACTOR_MIA, 2);
+    fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    fdScriptWait(20);
+    fdCameraMoveTo(168, CAMERA_KEEP, 90, 1);
+    fdCameraWaitForMove();
+    fdScriptWait(40);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_OPEN_EYES);
+    fdScriptWait(60);
+    sySoundPlay(MUS_FOREST_THEME);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
+    // "What has happened to me?"
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+    fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+    // "Was I... I see... My heart was all but lost in my rage."
+    fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
+    fdScriptWait(40);
+    // "And you defeated the evil within me?"
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+    fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+    fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    fdScriptWait(20);
+    // "I thank you. I could not leave this world with so much evil in my heart."
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
+    fdScriptWait(40);
+    // "I am free now to leave the world without regret. Good-bye, great warriors."
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+    fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdActorSetAttachedEffect(ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdScriptWait(60);
+    fdActorRunRepeatedMotion(ACTOR_GARET, 2);
+    fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
+    fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
+    // "Hey! Wait a minute! We can't let Tret die like this!"
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0, 10);
+    fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+    fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+    // "That's right, Isaac. We still need his help!!"
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0, 20);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
+    fdScriptWait(40);
+    // "...What?"
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+    fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    fdActorStartRepeatedMotion(ACTOR_GARET, 2);
+    fdActorStartRepeatedMotion(ACTOR_MIA, 2);
+    fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+    fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
+    // "Why have you not left me to my dying? Do you need something?"
+    fdScriptOpenMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
+    fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+    fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+    if (fdScriptAskYesNoWithActorAnimation(0, 0) != 0)
+    {
+        fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+        fdActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
+        fdScriptSetMessageId(MsgTretDoingNowsNot);
+        // "What are you doing, Isaac! Now's not the time to fool around!"
+        fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0);
+        fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
+        fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+        // "That's right, Isaac... We have to save everyone in Kolima!"
+        fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0);
+    }
+    fdScriptWait(20);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
+    fdScriptSetMessageId(MsgTretTurnedPeopleKolima);
+    // "I turned the people of Kolima into trees?"
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+    // "Hroom! I must release them before they die with the forest!"
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
+    fdScriptWait(20);
+    // Tret tries to release the people of Kolima: the room turns purple and sparks swirl out from
+    // his face, then fade.
+    fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
+    fdPaletteFadeStartInterpolation(20);
+    sySynch(40);
+    fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    fdActorStartRepeatedMotion(ACTOR_GARET, 2);
+    fdActorStartRepeatedMotion(ACTOR_MIA, 2);
+    fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+    fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
+    fdScriptWait(20);
+    SparkTick = 0;
+    {
+        FIELD_POS *origin = &SparkOrigin;
+        origin->x         = toFIXED(168);
+        origin->y         = toFIXED(32);
+        sparkTask         = scTreeRoomsSpawnSwirlSparks;
+        origin->z         = toFIXED(52);
+    }
+    sySetTickEvent(sparkTask, EVENT_PASS_TICK);
+    fdScriptWait(220);
+    syCloseEvent(sparkTask);
+    fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
+    fdPaletteFadeStartInterpolation(20);
+    sySynch(40);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
+    fdScriptWait(20);
+    // "I can't do it... My power no longer reaches Kolima..."
+    syFieldScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
+    // "People of Kolima... Forgive me..."
+    fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
+    fdActorRunScriptAndWait(ACTOR_TRET, TreeRoomsFaceSinksActions);
+    fdScriptWait(40);
+    fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    // "Tret's too weak! He doesn't have the power to save Kolima."
+    fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0);
+    fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
+    // "No! We have to heal him! We can't let the people of Kolima die with the forest!"
+    fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0);
+    fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+    fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
+    fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
+    fdActorRunRepeatedMotion(ACTOR_GARET, 1);
+    // "Every life in Kolima depends on us!"
+    fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0, 10);
+    fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
+    // "We have to restore Tret and save the people of Kolima!"
+    fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0, 10);
+    if (hasMia != 0)
+    {
+        fdActorRunRepeatedMotion(ACTOR_MIA, 1);
+        // "Let's go, Isaac."
+        fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_MIA), 0, 10);
+    }
+    fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+    fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    actions = TreeRoomsWalkBackToLeaderScript;
+    fdActorSetScript(ACTOR_GARET, actions);
+    if (hasMia != 0)
+    {
+        fdActorSetScript(ACTOR_MIA, actions);
+    }
+    fdActorRunScriptAndWait(ACTOR_IVAN, actions);
+    fdScriptWait(20);
+    fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+    gmFlagSet(FLAG_TRET_DEFEATED);
+    sySetTickEvent(scTretPaletteUpdateMapTint, EVENT_PASS_TICK);
+    fdScriptEnd();
 }
 
 // Sets Tret's room and the entrance room for whether Tret is beaten, after playing the conversation
@@ -773,22 +773,22 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 // 3)), and the hole's metatiles take the exit down to Tret from the spare metatile at (0, 0).
 static void scTreeRoomsApplyPostBattleState(Sint32 playRecoveryEvent)
 {
-	if (playRecoveryEvent != 0 && gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
-		scTreeRoomsPlayPostBattleConversation();
+    if (playRecoveryEvent != 0 && gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+        scTreeRoomsPlayPostBattleConversation();
 
-	sySynch(1);
-	if (gmFlagGet(FLAG_TRET_DEFEATED) != 0)
-	{
-		fdMapGridCopyMetatiles(121, 34, 3, 1, 93, 10);
-		fdMapGridCopyMetatiles(46, 38, 1, 1, 30, 43);
-		fdMapGridCopyMetatileAttributes(0, 0, 1, 2, 30, 9);
-		fdMapGridCopyMetatileAttributes(26, 3, 1, 2, 10, 8);
-		fdMapGridCopyMetatiles(26, 35, 1, 4, 10, 40);
-	}
-	else
-	{
-		fdMapGridCopyMetatileAttributes(11, 8, 1, 2, 10, 8);
-	}
+    sySynch(1);
+    if (gmFlagGet(FLAG_TRET_DEFEATED) != 0)
+    {
+        fdMapGridCopyMetatiles(121, 34, 3, 1, 93, 10);
+        fdMapGridCopyMetatiles(46, 38, 1, 1, 30, 43);
+        fdMapGridCopyMetatileAttributes(0, 0, 1, 2, 30, 9);
+        fdMapGridCopyMetatileAttributes(26, 3, 1, 2, 10, 8);
+        fdMapGridCopyMetatiles(26, 35, 1, 4, 10, 40);
+    }
+    else
+    {
+        fdMapGridCopyMetatileAttributes(11, 8, 1, 2, 10, 8);
+    }
 }
 
 // Entering any of Tret Tree's rooms: once Tret is beaten his face is gone from the lowest room, the
@@ -800,95 +800,95 @@ static void scTreeRoomsApplyPostBattleState(Sint32 playRecoveryEvent)
 // first layer to scroll at nine tenths of the pace of the view, offset to the room.
 Sint32 scInit(void)
 {
-	ACTOR                 *tret;
-	ACTOR                 *actor;
-	MAP_GRID_SCROLL_STATE *grid;
-	MAP_GRID_LAYER_SCROLL *layer;
-	FIELD_STATE           *state;
-	Sint32                 entrance;
-	Sint32                 leaderActorId;
-	ACTOR                 *secondTret;
+    ACTOR                 *tret;
+    ACTOR                 *actor;
+    MAP_GRID_SCROLL_STATE *grid;
+    MAP_GRID_LAYER_SCROLL *layer;
+    FIELD_STATE           *state;
+    Sint32                 entrance;
+    Sint32                 leaderActorId;
+    ACTOR                 *secondTret;
 
-	tret     = fdActorGet(ACTOR_TRET);
-	LastLeaf = (Sint16 *)SceneLocalState;
-	scTretPaletteSaveMapColors();
-	tret->motionFlags       = 0;
-	tret->y.fixed           = -toFIXED(10);
-	secondTret              = fdActorGet(ACTOR_SECOND_TRET);
+    tret     = fdActorGet(ACTOR_TRET);
+    LastLeaf = (Sint16 *)SceneLocalState;
+    scTretPaletteSaveMapColors();
+    tret->motionFlags       = 0;
+    tret->y.fixed           = -toFIXED(10);
+    secondTret              = fdActorGet(ACTOR_SECOND_TRET);
 
-	secondTret->motionFlags = 0;
-	secondTret->y.fixed     = -toFIXED(10);
-	fdActorSetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
-	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
-	if (MainRoutineStateWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
-		sySetTickEvent(scTretPaletteUpdateMapTint, EVENT_PASS_TICK);
-	if (gmFlagGet(FLAG_TRET_DEFEATED))
-	{
-		fdActorSetPos(ACTOR_SECOND_TRET, 0, 0);
-		fdActorSetPos(ACTOR_TRET, 0, 0);
-	}
-	if (fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION))
-		scTreeRoomsApplyFlaggedMapPatches();
-	grid            = MapGridState[0];
-	// Match the first layer's parallax offset and scale to the room bounds.
-	layer           = &grid->layers[0];
-	layer->offsetX += syMulFX(grid->minX + toFIXED(160), toFIXED(1) / 10);
-	layer->offsetY += syMulFX(grid->minY + toFIXED(136), toFIXED(1) / 10);
-	layer->scaleX   = toFIXED(9) / 10;
-	layer->scaleY   = toFIXED(9) / 10;
-	// The layout draws four leaves already torn, so the first landing on them breaks them.
-	gmFlagSet(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN);
-	gmFlagSet(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN);
-	gmFlagSet(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN);
-	gmFlagSet(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN);
-	sySynch(1);
-	scTreeRoomsApplyPostBattleState(0);
-	state             = FieldStateWork;
-	state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-	entrance          = MainRoutineStateWork.entrance;
-	leaderActorId     = MainRoutineStateWork.leaderActorId;
-	actor             = fdActorGet(leaderActorId);
-	// Falling through a room, Isaac falls on to the entrance numbered ten lower; at the fall's end
-	// he lands in a ring of dust in Tret's room. TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle
-	// with Tret.
-	if (entrance == TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF || entrance == TREE_ROOMS_FALL_THROUGH_A
-	    || entrance == TREE_ROOMS_FALL_THROUGH_B || entrance == TREE_ROOMS_FALL_THROUGH_C)
-	{
-		fdScriptStartScreenTransition();
-		fdActorSetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
-		fdActorSetSpriteFlags(fdActorGet(leaderActorId), 0);
-		fdActorSetAttachedEffect(leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-		actor->motionFlags  = ACTOR_FALLS;
-		actor->y.fixed      = toFIXED(100);
-		actor->groundHeight = -toFIXED(160);
-		actor->gravity      = toFIXED(1) / 2;
-		sySoundPlay(SE_DUST_PUFF);
-		fdScriptSetDestination(SCENE_TREE_ROOMS, entrance - FALL_ENTRANCE_STEP);
-		fdScriptWait(20);
-		actor->layer = 2;
-		fdActorSetSpritePriority(leaderActorId, 3);
-		fdScriptWait(2);
-		fdActorSetAttachedEffect(leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-		fdScriptWait(8);
-	}
-	else if (entrance == TREE_ROOMS_FALL_LANDING)
-	{
-		if (!gmFlagGet(FLAG_KEEP_PARTY_POSITION))
-			scTreeRoomsLandFromFall();
-	}
-	else if (entrance == TREE_ROOMS_AFTER_FIGHT_TRET)
-	{
-		scTreeRoomsApplyPostBattleState(1);
-	}
-	return 0;
+    secondTret->motionFlags = 0;
+    secondTret->y.fixed     = -toFIXED(10);
+    fdActorSetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
+    scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
+    if (MainRoutineStateWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
+        sySetTickEvent(scTretPaletteUpdateMapTint, EVENT_PASS_TICK);
+    if (gmFlagGet(FLAG_TRET_DEFEATED))
+    {
+        fdActorSetPos(ACTOR_SECOND_TRET, 0, 0);
+        fdActorSetPos(ACTOR_TRET, 0, 0);
+    }
+    if (fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION))
+        scTreeRoomsApplyFlaggedMapPatches();
+    grid            = MapGridState[0];
+    // Match the first layer's parallax offset and scale to the room bounds.
+    layer           = &grid->layers[0];
+    layer->offsetX += syMulFX(grid->minX + toFIXED(160), toFIXED(1) / 10);
+    layer->offsetY += syMulFX(grid->minY + toFIXED(136), toFIXED(1) / 10);
+    layer->scaleX   = toFIXED(9) / 10;
+    layer->scaleY   = toFIXED(9) / 10;
+    // The layout draws four leaves already torn, so the first landing on them breaks them.
+    gmFlagSet(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN);
+    gmFlagSet(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN);
+    gmFlagSet(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN);
+    gmFlagSet(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN);
+    sySynch(1);
+    scTreeRoomsApplyPostBattleState(0);
+    state             = FieldStateWork;
+    state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+    entrance          = MainRoutineStateWork.entrance;
+    leaderActorId     = MainRoutineStateWork.leaderActorId;
+    actor             = fdActorGet(leaderActorId);
+    // Falling through a room, Isaac falls on to the entrance numbered ten lower; at the fall's end
+    // he lands in a ring of dust in Tret's room. TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle
+    // with Tret.
+    if (entrance == TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF || entrance == TREE_ROOMS_FALL_THROUGH_A
+        || entrance == TREE_ROOMS_FALL_THROUGH_B || entrance == TREE_ROOMS_FALL_THROUGH_C)
+    {
+        fdScriptStartScreenTransition();
+        fdActorSetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
+        fdActorSetSpriteFlags(fdActorGet(leaderActorId), 0);
+        fdActorSetAttachedEffect(leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+        fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+        actor->motionFlags  = ACTOR_FALLS;
+        actor->y.fixed      = toFIXED(100);
+        actor->groundHeight = -toFIXED(160);
+        actor->gravity      = toFIXED(1) / 2;
+        sySoundPlay(SE_DUST_PUFF);
+        fdScriptSetDestination(SCENE_TREE_ROOMS, entrance - FALL_ENTRANCE_STEP);
+        fdScriptWait(20);
+        actor->layer = 2;
+        fdActorSetSpritePriority(leaderActorId, 3);
+        fdScriptWait(2);
+        fdActorSetAttachedEffect(leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+        fdScriptWait(8);
+    }
+    else if (entrance == TREE_ROOMS_FALL_LANDING)
+    {
+        if (!gmFlagGet(FLAG_KEEP_PARTY_POSITION))
+            scTreeRoomsLandFromFall();
+    }
+    else if (entrance == TREE_ROOMS_AFTER_FIGHT_TRET)
+    {
+        scTreeRoomsApplyPostBattleState(1);
+    }
+    return 0;
 }
 
 // Saves background palettes 0 to 13, the rooms' own colours, which the light's slow swell inside
 // Tret brightens (scTretPaletteUpdateMapTint).
 static void scTretPaletteSaveMapColors(void)
 {
-	syDMAXCopy((const void *)BG_PLTT, PaletteFadeState->palette, DMA_COPY_WORDS(112), REG_DMA3);
+    syDMAXCopy((const void *)BG_PLTT, PaletteFadeState->palette, DMA_COPY_WORDS(112), REG_DMA3);
 }
 
 // The light inside Tret Tree slowly swells and fades: over a few seconds the walls and floors grow
@@ -899,256 +899,256 @@ static void scTretPaletteSaveMapColors(void)
 // takes a weaker step.
 static void scTretPaletteUpdateMapTint(void)
 {
-	Uint16       *srcColors;
-	Uint16       *destColors;
-	Uint32        colorIndex;
-	Sint32        redStep;
-	Sint32        greenStep;
-	Sint32        blueStep;
-	Sint32        red;
-	Sint32        green;
-	Sint32        blue;
-	Uint32        color;
-	FIELD_STATE  *state;
-	PALETTE_FADE *paletteState;
+    Uint16       *srcColors;
+    Uint16       *destColors;
+    Uint32        colorIndex;
+    Sint32        redStep;
+    Sint32        greenStep;
+    Sint32        blueStep;
+    Sint32        red;
+    Sint32        green;
+    Sint32        blue;
+    Uint32        color;
+    FIELD_STATE  *state;
+    PALETTE_FADE *paletteState;
 
-	state        = FieldStateWork;
-	paletteState = PaletteFadeState;
-	srcColors    = paletteState->palette;
-	if (state->psynergy != 0)
-		return;
-	if ((TickCount & 31) != 0)
-		return;
-	srcColors  += PALETTE_COLORS;
-	destColors  = (Uint16 *)&BG_PLTT_COLOR(1, 0);
-	for (colorIndex = 0; colorIndex < TRET_TINT_COLOR_COUNT; colorIndex++, srcColors++)
-	{
-		redStep   = TreeRoomsTintSteps[TreeRoomsTintIndex];
-		greenStep = TreeRoomsTintSteps[TreeRoomsTintIndex + 1];
-		blueStep  = TreeRoomsTintSteps[TreeRoomsTintIndex + 2];
-		if (colorIndex >= 3 * PALETTE_COLORS)
-		{
-			redStep   -= redStep / 2 + redStep / 3;
-			greenStep -= greenStep / 2 + greenStep / 3;
-			blueStep  -= blueStep / 2 + blueStep / 3;
-		}
-		else if (colorIndex >= 2 * PALETTE_COLORS)
-		{
-			redStep   -= redStep / 3 + redStep / 4;
-			greenStep -= greenStep / 3 + greenStep / 4;
-			blueStep  -= blueStep / 3 + blueStep / 4;
-		}
-		else if (colorIndex >= PALETTE_COLORS)
-		{
-			redStep   -= redStep / 4 + redStep / 5;
-			greenStep -= greenStep / 4 + greenStep / 5;
-			blueStep  -= blueStep / 4 + blueStep / 5;
-		}
-		color  = *srcColors;
-		red    = RGB_RED(color);
-		green  = RGB_GREEN(color);
-		blue   = RGB_BLUE(color);
-		red   += redStep;
-		green += greenStep;
-		blue  += blueStep;
-		if (red > TRET_TINT_CHANNEL_MAX)
-			red = TRET_TINT_CHANNEL_MAX;
-		if (green > TRET_TINT_CHANNEL_MAX)
-			green = TRET_TINT_CHANNEL_MAX;
-		if (blue > TRET_TINT_CHANNEL_MAX)
-			blue = TRET_TINT_CHANNEL_MAX;
-		if (red < 0)
-			red = 0;
-		if (green < 0)
-			green = 0;
-		if (blue < 0)
-			blue = 0;
-		*destColors++ = RGB(red, green, blue);
-	}
-	TreeRoomsTintIndex += (syRandomNext() & 7) * 3;
-	if (TreeRoomsTintSteps[TreeRoomsTintIndex] == TRET_TINT_END)
-		TreeRoomsTintIndex = 0;
+    state        = FieldStateWork;
+    paletteState = PaletteFadeState;
+    srcColors    = paletteState->palette;
+    if (state->psynergy != 0)
+        return;
+    if ((TickCount & 31) != 0)
+        return;
+    srcColors  += PALETTE_COLORS;
+    destColors  = (Uint16 *)&BG_PLTT_COLOR(1, 0);
+    for (colorIndex = 0; colorIndex < TRET_TINT_COLOR_COUNT; colorIndex++, srcColors++)
+    {
+        redStep   = TreeRoomsTintSteps[TreeRoomsTintIndex];
+        greenStep = TreeRoomsTintSteps[TreeRoomsTintIndex + 1];
+        blueStep  = TreeRoomsTintSteps[TreeRoomsTintIndex + 2];
+        if (colorIndex >= 3 * PALETTE_COLORS)
+        {
+            redStep   -= redStep / 2 + redStep / 3;
+            greenStep -= greenStep / 2 + greenStep / 3;
+            blueStep  -= blueStep / 2 + blueStep / 3;
+        }
+        else if (colorIndex >= 2 * PALETTE_COLORS)
+        {
+            redStep   -= redStep / 3 + redStep / 4;
+            greenStep -= greenStep / 3 + greenStep / 4;
+            blueStep  -= blueStep / 3 + blueStep / 4;
+        }
+        else if (colorIndex >= PALETTE_COLORS)
+        {
+            redStep   -= redStep / 4 + redStep / 5;
+            greenStep -= greenStep / 4 + greenStep / 5;
+            blueStep  -= blueStep / 4 + blueStep / 5;
+        }
+        color  = *srcColors;
+        red    = RGB_RED(color);
+        green  = RGB_GREEN(color);
+        blue   = RGB_BLUE(color);
+        red   += redStep;
+        green += greenStep;
+        blue  += blueStep;
+        if (red > TRET_TINT_CHANNEL_MAX)
+            red = TRET_TINT_CHANNEL_MAX;
+        if (green > TRET_TINT_CHANNEL_MAX)
+            green = TRET_TINT_CHANNEL_MAX;
+        if (blue > TRET_TINT_CHANNEL_MAX)
+            blue = TRET_TINT_CHANNEL_MAX;
+        if (red < 0)
+            red = 0;
+        if (green < 0)
+            green = 0;
+        if (blue < 0)
+            blue = 0;
+        *destColors++ = RGB(red, green, blue);
+    }
+    TreeRoomsTintIndex += (syRandomNext() & 7) * 3;
+    if (TreeRoomsTintSteps[TreeRoomsTintIndex] == TRET_TINT_END)
+        TreeRoomsTintIndex = 0;
 }
 
 // Changes Tret's face in the north wall of his room (opening or closing his eyes, blinking, looking
 // aside), six ticks to a picture, and waits twelve ticks after it.
 static void scTreeRoomsChangeFace(Sint32 change)
 {
-	switch (change)
-	{
-		case TRET_FACE_CHANGE_CLOSE_EYES:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
-			break;
-		case TRET_FACE_CHANGE_OPEN_EYES: fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN); break;
-		case TRET_FACE_CHANGE_LOOK_LEFT:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
-			break;
-		case TRET_FACE_CHANGE_LOOK_RIGHT:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
-			break;
-		case TRET_FACE_CHANGE_BLINK:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-			break;
-		case TRET_FACE_CHANGE_HALF_CLOSE_EYES:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
-			break;
-		case TRET_FACE_CHANGE_WRATHFUL_CLOSE_EYES:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
-			break;
-		case TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-			break;
-		case TRET_FACE_CHANGE_WRATHFUL_LOOK_RIGHT:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
-			break;
-		case TRET_FACE_CHANGE_WRATHFUL_LOOK_LEFT:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
-			break;
-		case TRET_FACE_CHANGE_WRATHFUL_BLINK:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
-			sySynch(6);
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-			break;
-		case TRET_FACE_CHANGE_WRATHFUL_STARE:
-			fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-			break;
-	}
-	sySynch(12);
+    switch (change)
+    {
+        case TRET_FACE_CHANGE_CLOSE_EYES:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
+            break;
+        case TRET_FACE_CHANGE_OPEN_EYES: fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN); break;
+        case TRET_FACE_CHANGE_LOOK_LEFT:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
+            break;
+        case TRET_FACE_CHANGE_LOOK_RIGHT:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
+            break;
+        case TRET_FACE_CHANGE_BLINK:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+            break;
+        case TRET_FACE_CHANGE_HALF_CLOSE_EYES:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
+            break;
+        case TRET_FACE_CHANGE_WRATHFUL_CLOSE_EYES:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+            break;
+        case TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+            break;
+        case TRET_FACE_CHANGE_WRATHFUL_LOOK_RIGHT:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
+            break;
+        case TRET_FACE_CHANGE_WRATHFUL_LOOK_LEFT:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
+            break;
+        case TRET_FACE_CHANGE_WRATHFUL_BLINK:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+            sySynch(6);
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+            break;
+        case TRET_FACE_CHANGE_WRATHFUL_STARE:
+            fdActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+            break;
+    }
+    sySynch(12);
 }
 
 // One of the sparks that swirl out from Tret's face as he tries to free the people of Kolima: it
 // spirals outward from his face, shrinking as it goes, and is put away after 80 ticks.
 static void scTreeRoomsUpdateSwirlSpark(ACTOR *spark)
 {
-	FIELD_POS pos;
-	Sint32    frame;
+    FIELD_POS pos;
+    Sint32    frame;
 
-	frame = spark->timer;
-	if (frame <= SWIRL_SPARK_LAST_TICK)
-	{
-		pos.x = spark->targetX;
-		pos.y = spark->targetY;
-		pos.z = spark->targetZ;
-		{
-			Sint32 initAngle = spark->userValue;
+    frame = spark->timer;
+    if (frame <= SWIRL_SPARK_LAST_TICK)
+    {
+        pos.x = spark->targetX;
+        pos.y = spark->targetY;
+        pos.z = spark->targetZ;
+        {
+            Sint32 initAngle = spark->userValue;
 
-			syVectorAddPolarOffset(toFIXED(frame), ((frame * 3) << 8) + initAngle, (FIXED *)&pos);
-		}
-		spark->x.fixed = pos.x;
-		spark->y.fixed = pos.y;
-		spark->z.fixed = pos.z;
-		if (spark->timer <= SWIRL_SPARK_SHRINK_LAST_TICK)
-		{
-			spark->scaleX -= toFIXED(1) / 50;
-			spark->scaleY -= toFIXED(1) / 50;
-		}
-		spark->timer++;
-	}
-	else
-	{
-		syVRAMCacheFreeEntry(spark->sprite->slot);
-		fdActorRelease(spark);
-	}
+            syVectorAddPolarOffset(toFIXED(frame), ((frame * 3) << 8) + initAngle, (FIXED *)&pos);
+        }
+        spark->x.fixed = pos.x;
+        spark->y.fixed = pos.y;
+        spark->z.fixed = pos.z;
+        if (spark->timer <= SWIRL_SPARK_SHRINK_LAST_TICK)
+        {
+            spark->scaleX -= toFIXED(1) / 50;
+            spark->scaleY -= toFIXED(1) / 50;
+        }
+        spark->timer++;
+    }
+    else
+    {
+        syVRAMCacheFreeEntry(spark->sprite->slot);
+        fdActorRelease(spark);
+    }
 }
 
 // Sends out the sparks from Tret's face as he tries to free the people of Kolima: five waves, ten
 // ticks apart, of six, five, four, three and two sparks, each wave with a shimmering sound.
 static void scTreeRoomsSpawnSwirlSparks(void)
 {
-	ACTOR *spark;
-	Uint32 tick;
-	void  *previousResourceEntry;
-	Sint32 wave;
-	Uint32 sparkIndex;
+    ACTOR *spark;
+    Uint32 tick;
+    void  *previousResourceEntry;
+    Sint32 wave;
+    Uint32 sparkIndex;
 
-	tick                  = SparkTick;
-	previousResourceEntry = 0;
-	wave                  = (Sint32)tick / 10;
-	switch (tick)
-	{
-		case 0:
-		case 10:
-		case 20:
-		case 30:
-		case 40:
-			sySoundPlay(SE_SHIMMER);
-			// Waves of 6, 5, 4, 3 and 2 sparks, spread evenly round a turn.
-			for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++)
-			{
-				spark =
-					syFieldActorCreate(SPRITE_SPARKLE, SparkOrigin.x, SparkOrigin.y, SparkOrigin.z);
-				if (spark != NULL)
-				{
-					previousResourceEntry =
-						fdSpriteShareVRAMCacheEntry(spark->sprite, previousResourceEntry);
-					spark->motionFlags            = 0;
-					spark->sprite->image.priority = 0;
-					fdActorSetSpriteFlags(spark, 0);
-					fdActorSelectAnimation(spark, 1);
-					spark->timer      = 0;
-					spark->userValue  = DEGtoANG(360 / (Uint32)(6 - wave) * sparkIndex);
-					spark->targetX    = SparkOrigin.x;
-					spark->targetY    = SparkOrigin.y;
-					spark->targetZ    = SparkOrigin.z;
-					spark->speedLimit = toFIXED(8) / 5;
-					spark->update     = scTreeRoomsUpdateSwirlSpark;
-				}
-			}
-			// fall through
-		case 44: sySoundPlay(SOUND_FADE_OUT_ACTION_SE); break;
-	}
-	if (++SparkTick > 120)
-	{
-		SparkTick = 0;
-	}
+    tick                  = SparkTick;
+    previousResourceEntry = 0;
+    wave                  = (Sint32)tick / 10;
+    switch (tick)
+    {
+        case 0:
+        case 10:
+        case 20:
+        case 30:
+        case 40:
+            sySoundPlay(SE_SHIMMER);
+            // Waves of 6, 5, 4, 3 and 2 sparks, spread evenly round a turn.
+            for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++)
+            {
+                spark =
+                    syFieldActorCreate(SPRITE_SPARKLE, SparkOrigin.x, SparkOrigin.y, SparkOrigin.z);
+                if (spark != NULL)
+                {
+                    previousResourceEntry =
+                        fdSpriteShareVRAMCacheEntry(spark->sprite, previousResourceEntry);
+                    spark->motionFlags            = 0;
+                    spark->sprite->image.priority = 0;
+                    fdActorSetSpriteFlags(spark, 0);
+                    fdActorSelectAnimation(spark, 1);
+                    spark->timer      = 0;
+                    spark->userValue  = DEGtoANG(360 / (Uint32)(6 - wave) * sparkIndex);
+                    spark->targetX    = SparkOrigin.x;
+                    spark->targetY    = SparkOrigin.y;
+                    spark->targetZ    = SparkOrigin.z;
+                    spark->speedLimit = toFIXED(8) / 5;
+                    spark->update     = scTreeRoomsUpdateSwirlSpark;
+                }
+            }
+            // fall through
+        case 44: sySoundPlay(SOUND_FADE_OUT_ACTION_SE); break;
+    }
+    if (++SparkTick > 120)
+    {
+        SparkTick = 0;
+    }
 }
 
 // Tears again each leaf that was torn before a battle, so that the webs look as the party left
 // them.
 static void scTreeRoomsApplyFlaggedMapPatches(void)
 {
-	Sint32 patchOffset;
+    Sint32 patchOffset;
 
-	for (patchOffset  = 0; TreeRoomsMapPatches[patchOffset] != -1;
-	     patchOffset += MAP_PATCH_ROW_LENGTH)
-	{
-		if (gmFlagGet(TreeRoomsMapPatches[patchOffset + MAP_PATCH_FLAG])
-		    && TreeRoomsMapPatches[patchOffset + MAP_PATCH_REDRAWN] != 0)
-			fdMapGridCopyMetatilesTo(TreeRoomsMapPatches[patchOffset + MAP_PATCH_SOURCE_X],
-			                         TreeRoomsMapPatches[patchOffset + MAP_PATCH_SOURCE_Y],
-			                         TreeRoomsMapPatches[patchOffset + MAP_PATCH_DESTINATION_X],
-			                         TreeRoomsMapPatches[patchOffset + MAP_PATCH_DESTINATION_Y],
-			                         1,
-			                         1);
-	}
+    for (patchOffset  = 0; TreeRoomsMapPatches[patchOffset] != -1;
+         patchOffset += MAP_PATCH_ROW_LENGTH)
+    {
+        if (gmFlagGet(TreeRoomsMapPatches[patchOffset + MAP_PATCH_FLAG])
+            && TreeRoomsMapPatches[patchOffset + MAP_PATCH_REDRAWN] != 0)
+            fdMapGridCopyMetatilesTo(TreeRoomsMapPatches[patchOffset + MAP_PATCH_SOURCE_X],
+                                     TreeRoomsMapPatches[patchOffset + MAP_PATCH_SOURCE_Y],
+                                     TreeRoomsMapPatches[patchOffset + MAP_PATCH_DESTINATION_X],
+                                     TreeRoomsMapPatches[patchOffset + MAP_PATCH_DESTINATION_Y],
+                                     1,
+                                     1);
+    }
 }
 
 // Casting Reveal anywhere inside Tret Tree stops the light's slow swell and fade, leaving the
@@ -1156,7 +1156,7 @@ static void scTreeRoomsApplyFlaggedMapPatches(void)
 // leaf into another room.
 static void scTreeRoomsCastReveal(void)
 {
-	syCloseEvent(scTretPaletteUpdateMapTint);
+    syCloseEvent(scTretPaletteUpdateMapTint);
 }
 
 #include "shared/field_effect_advance.c"
@@ -1166,60 +1166,60 @@ static void scTreeRoomsCastReveal(void)
 // white dust as the screen shakes, staggering back in surprise.
 static void scTreeRoomsLandFromFall(void)
 {
-	EFFECT_OPTIONS options;
-	FIELD_POS      velocity;
-	ACTOR         *leader;
-	Uint32         particleIndex;
-	Sint32         velocityX;
-	FIXED          velocityZ;
+    EFFECT_OPTIONS options;
+    FIELD_POS      velocity;
+    ACTOR         *leader;
+    Uint32         particleIndex;
+    Sint32         velocityX;
+    FIXED          velocityZ;
 
-	fdScriptStart();
-	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdMapGridCenterOnFollowedPoint();
-	sySynch(1);
-	fdActorGet(ACTOR_PARTY_LEADER)->y.fixed     = toFIXED(130);
-	fdActorGet(ACTOR_PARTY_LEADER)->gravity     = toFIXED(1) / 2;
-	fdActorGet(ACTOR_PARTY_LEADER)->bounce      = 0;
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
-	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionTicks();
-	sySoundPlay(SE_DUST_PUFF);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdScriptWait(24);
-	leader              = fdActorGet(ACTOR_PARTY_LEADER);
-	options.palette     = SPRITE_COLOR_WHITE;
-	options.update      = scFieldEffectAdvanceMotion;
-	options.startScaleX = toFIXED(4) / 5;
-	options.startScaleY = toFIXED(4) / 5;
-	for (particleIndex = 0; particleIndex <= TRIG_TURN / FACING_STEP; particleIndex++)
-	{
-		velocity.x  = syCos(particleIndex * FACING_STEP);
-		velocity.y  = 0;
-		velocityZ   = sySin(particleIndex * FACING_STEP);
-		velocityX   = velocity.x;
-		velocity.z  = velocityZ;
-		velocityX  += velocityX / 2;
-		velocity.x  = velocityX;
-		fdEffectSpawn(leader->x.fixed,
-		              leader->y.fixed,
-		              leader->z.fixed,
-		              velocityX,
-		              velocity.y,
-		              velocityZ,
-		              EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE
-		                  | EFFECT_SCRIPT_MEDIUM,
-		              &options);
-	}
-	sySoundPlay(SE_THUMP);
-	fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
-	fdMapGridSetShake(5, 5, 1);
-	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdMapGridWaitForShakeToSettle();
-	fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-	fdActorGet(ACTOR_PARTY_LEADER)->gravity = toFIXED(1);
-	fdActorGet(ACTOR_PARTY_LEADER)->bounce  = toFIXED(1) / 4;
-	fdScriptEnd();
+    fdScriptStart();
+    fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+    fdMapGridCenterOnFollowedPoint();
+    sySynch(1);
+    fdActorGet(ACTOR_PARTY_LEADER)->y.fixed     = toFIXED(130);
+    fdActorGet(ACTOR_PARTY_LEADER)->gravity     = toFIXED(1) / 2;
+    fdActorGet(ACTOR_PARTY_LEADER)->bounce      = 0;
+    fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
+    fdScriptStartScreenTransition();
+    fdScriptWaitTransitionTicks();
+    sySoundPlay(SE_DUST_PUFF);
+    fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    fdScriptWait(24);
+    leader              = fdActorGet(ACTOR_PARTY_LEADER);
+    options.palette     = SPRITE_COLOR_WHITE;
+    options.update      = scFieldEffectAdvanceMotion;
+    options.startScaleX = toFIXED(4) / 5;
+    options.startScaleY = toFIXED(4) / 5;
+    for (particleIndex = 0; particleIndex <= TRIG_TURN / FACING_STEP; particleIndex++)
+    {
+        velocity.x  = syCos(particleIndex * FACING_STEP);
+        velocity.y  = 0;
+        velocityZ   = sySin(particleIndex * FACING_STEP);
+        velocityX   = velocity.x;
+        velocity.z  = velocityZ;
+        velocityX  += velocityX / 2;
+        velocity.x  = velocityX;
+        fdEffectSpawn(leader->x.fixed,
+                      leader->y.fixed,
+                      leader->z.fixed,
+                      velocityX,
+                      velocity.y,
+                      velocityZ,
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE
+                          | EFFECT_SCRIPT_MEDIUM,
+                      &options);
+    }
+    sySoundPlay(SE_THUMP);
+    fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+    fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+    fdMapGridSetShake(5, 5, 1);
+    fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+    fdMapGridWaitForShakeToSettle();
+    fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+    fdActorGet(ACTOR_PARTY_LEADER)->gravity = toFIXED(1);
+    fdActorGet(ACTOR_PARTY_LEADER)->bounce  = toFIXED(1) / 4;
+    fdScriptEnd();
 }
 
 #include "shared/field_effect_duration_scripts.c"
@@ -1229,422 +1229,422 @@ static void scTreeRoomsLandFromFall(void)
 // metatile x/y in the map's upper layer.
 // clang-format off
 Sint16 TreeRoomsMapPatches[] = {
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 1, 64, 35, 113, 6,
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 0, 65, 35, 115, 6,
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 1, 66, 35, 110, 8,
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN, 1, 67, 35, 110, 10,
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN, 1, 68, 35, 111, 12,
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN, 1, 69, 35, 113, 12,
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN, 1, 70, 35, 112, 14,
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN, 1, 71, 35, 114, 14,
-	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN, 1, 72, 35, 116, 14,
-	FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN, 1, 73, 35, 71, 23,
-	FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN, 1, 74, 35, 77, 24,
-	FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN, 1, 75, 35, 112, 24,
-	FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN, 0, 76, 35, 114, 24,
-	FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN, 1, 77, 35, 116, 24,
-	FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN, 0, 78, 35, 112, 26,
-	FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN, 1, 79, 35, 114, 26,
-	FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN, 1, 80, 35, 116, 26,
-	FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN, 1, 81, 35, 112, 28,
-	FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN, 1, 82, 35, 114, 28,
-	FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN, 0, 83, 35, 116, 28,
-	FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN, 1, 84, 35, 118, 28,
-	-1, 0,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 1, 64, 35, 113, 6,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 0, 65, 35, 115, 6,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 1, 66, 35, 110, 8,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN, 1, 67, 35, 110, 10,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN, 1, 68, 35, 111, 12,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN, 1, 69, 35, 113, 12,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN, 1, 70, 35, 112, 14,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN, 1, 71, 35, 114, 14,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN, 1, 72, 35, 116, 14,
+    FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN, 1, 73, 35, 71, 23,
+    FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN, 1, 74, 35, 77, 24,
+    FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN, 1, 75, 35, 112, 24,
+    FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN, 0, 76, 35, 114, 24,
+    FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN, 1, 77, 35, 116, 24,
+    FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN, 0, 78, 35, 112, 26,
+    FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN, 1, 79, 35, 114, 26,
+    FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN, 1, 80, 35, 116, 26,
+    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN, 1, 81, 35, 112, 28,
+    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN, 1, 82, 35, 114, 28,
+    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN, 0, 83, 35, 116, 28,
+    FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN, 1, 84, 35, 118, 28,
+    -1, 0,
 };
 
 const Sint32 *FieldEffectDurationScripts[] = {
-	FieldEffectShortScript,
-	FieldEffectMediumScript,
-	FieldEffectLongScript,
+    FieldEffectShortScript,
+    FieldEffectMediumScript,
+    FieldEffectLongScript,
 };
 
 // The party gathers in front of Tret before the battle (scTreeRoomsFightTret), each walking to its own place.
 Sint32 TreeRoomsLeaderGathersActions[] = {
-	SC_ANIMATION(ANIM_WALK),
-	SC_MOVE(166, 0, 80),
-	SC_SYNC,
-	SC_ANIMATION(ANIM_STAND),
-	SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(166, 0, 80),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 Sint32 TreeRoomsGaretGathersActions[] = {
-	SC_ANIMATION(ANIM_WALK),
-	SC_MOVE(148, 0, 90),
-	SC_SYNC,
-	SC_ANIMATION(ANIM_STAND),
-	SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(148, 0, 90),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 Sint32 TreeRoomsIvanGathersActions[] = {
-	SC_ANIMATION(ANIM_WALK),
-	SC_MOVE(182, 0, 90),
-	SC_SYNC,
-	SC_ANIMATION(ANIM_STAND),
-	SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(182, 0, 90),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 Sint32 TreeRoomsMiaGathersActions[] = {
-	SC_ANIMATION(ANIM_WALK),
-	SC_MOVE(166, 0, 104),
-	SC_SYNC,
-	SC_ANIMATION(ANIM_STAND),
-	SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(166, 0, 104),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 // Tret's face sinking into the wall at the end of the conversation after the battle. Eight times it is raised 80 pixels for 4 ticks and lowered 78, a sixteenth smaller each time, and then it is put away.
 Sint32 TreeRoomsFaceSinksActions[] = {
-	SC_SET(SW_MOTION, 0),
-	SC_ADD(SW_Y, toFIXED(80)),
-	SC_WAIT(4),
-	SC_ADD(SW_Y, -toFIXED(78)),
-	SC_ADD(SW_SCALE_X, -toFIXED(1) / 16),
-	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 16),
-	SC_WAIT(4),
-	SC_LOOP(8, SC_TOP),
-	SC_POSITION(0, 0, 0),
-	SC_WAIT(1),
-	SC_END,
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, toFIXED(80)),
+    SC_WAIT(4),
+    SC_ADD(SW_Y, -toFIXED(78)),
+    SC_ADD(SW_SCALE_X, -toFIXED(1) / 16),
+    SC_ADD(SW_SCALE_Y, -toFIXED(1) / 16),
+    SC_WAIT(4),
+    SC_LOOP(8, SC_TOP),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 // Garet, Ivan and Mia walk back into Isaac at the end of the conversation after the battle, and are put away.
 Sint32 TreeRoomsWalkBackToLeaderScript[] = {
-	SC_ANIMATION(ANIM_WALK),
-	SC_MOVE(166, 0, 80),
-	SC_SYNC,
-	SC_POSITION(0, 0, 0),
-	SC_WAIT(1),
-	SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(166, 0, 80),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 // The tint's steps of red, green and blue, three to an entry: a ramp from 0 up to 4 and back.
 Uint32 TreeRoomsTintSteps[] = {
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	1, 0, 0, 1, 0, 0, 1, 0,
-	0, 1, 0, 0, 1, 0, 0, 1,
-	0, 0, 1, 0, 0, 1, 1, 0,
-	1, 1, 0, 1, 1, 0, 1, 1,
-	0, 1, 1, 0, 1, 1, 0, 1,
-	1, 1, 1, 1, 1, 1, 1, 1,
-	1, 1, 1, 1, 1, 1, 2, 1,
-	1, 2, 1, 1, 2, 1, 1, 2,
-	1, 1, 2, 2, 1, 2, 2, 1,
-	2, 2, 2, 3, 2, 2, 3, 2,
-	2, 3, 3, 2, 3, 3, 2, 3,
-	3, 2, 3, 3, 2, 3, 3, 3,
-	3, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 3, 4, 3, 3, 4,
-	3, 3, 4, 3, 3, 4, 3, 3,
-	4, 3, 3, 4, 3, 3, 4, 4,
-	3, 4, 4, 3, 4, 4, 3, 4,
-	4, 3, 4, 4, 3, 4, 4, 3,
-	4, 4, 3, 4, 4, 3, 4, 4,
-	3, 4, 4, 3, 4, 4, 4, 4,
-	4, 4, 4, 4, 4, 4, 4, 4,
-	4, 4, 4, 4, 4, 4, 4, 4,
-	4, 4, 4, 4, 4, 4, 4, 4,
-	4, 4, 4, 4, 4, 4, 4, 4,
-	4, 4, 3, 4, 4, 3, 4, 4,
-	3, 4, 4, 3, 4, 4, 3, 4,
-	4, 3, 4, 4, 3, 4, 4, 3,
-	4, 4, 3, 4, 4, 3, 4, 3,
-	3, 4, 3, 3, 4, 3, 3, 4,
-	3, 3, 4, 3, 3, 4, 3, 3,
-	3, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 3, 3, 3, 3, 3,
-	3, 2, 3, 3, 2, 3, 3, 2,
-	3, 3, 2, 3, 2, 2, 3, 2,
-	2, 2, 2, 2, 2, 2, 1, 2,
-	2, 1, 2, 1, 1, 2, 1, 1,
-	2, 1, 1, 2, 1, 1, 1, 1,
-	1, 1, 1, 1, 1, 1, 1, 1,
-	1, 1, 1, 1, 1, 1, 1, 0,
-	1, 1, 0, 1, 1, 0, 1, 1,
-	0, 1, 1, 0, 1, 1, 0, 1,
-	0, 0, 1, 0, 0, 1, 0, 0,
-	1, 0, 0, 1, 0, 0, 1, 0,
-	0, 1, 0, 0, 99, 99, 99, 99,
-	99, 99, 99, 99, 99, 99, 99, 99,
-	99, 99, 99, 99, 99, 99, 99, 99,
-	99, 99, 99, 99, 99, 99, 99, 99,
-	99, 99, 99, 99, 99, 99, 99, 99,
-	99, 99, 99, 99, 99, 99, 99, 99,
-	99, 99, 99, 99, 99, 99, 99, 99,
-	99, 99, 99, 99, 99, 99, 99, 99,
-	99, 99, 99,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 1, 0, 0, 1, 0,
+    0, 1, 0, 0, 1, 0, 0, 1,
+    0, 0, 1, 0, 0, 1, 1, 0,
+    1, 1, 0, 1, 1, 0, 1, 1,
+    0, 1, 1, 0, 1, 1, 0, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 2, 1,
+    1, 2, 1, 1, 2, 1, 1, 2,
+    1, 1, 2, 2, 1, 2, 2, 1,
+    2, 2, 2, 3, 2, 2, 3, 2,
+    2, 3, 3, 2, 3, 3, 2, 3,
+    3, 2, 3, 3, 2, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 4, 3, 3, 4,
+    3, 3, 4, 3, 3, 4, 3, 3,
+    4, 3, 3, 4, 3, 3, 4, 4,
+    3, 4, 4, 3, 4, 4, 3, 4,
+    4, 3, 4, 4, 3, 4, 4, 3,
+    4, 4, 3, 4, 4, 3, 4, 4,
+    3, 4, 4, 3, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 3, 4, 4, 3, 4, 4,
+    3, 4, 4, 3, 4, 4, 3, 4,
+    4, 3, 4, 4, 3, 4, 4, 3,
+    4, 4, 3, 4, 4, 3, 4, 3,
+    3, 4, 3, 3, 4, 3, 3, 4,
+    3, 3, 4, 3, 3, 4, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3,
+    3, 2, 3, 3, 2, 3, 3, 2,
+    3, 3, 2, 3, 2, 2, 3, 2,
+    2, 2, 2, 2, 2, 2, 1, 2,
+    2, 1, 2, 1, 1, 2, 1, 1,
+    2, 1, 1, 2, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 0,
+    1, 1, 0, 1, 1, 0, 1, 1,
+    0, 1, 1, 0, 1, 1, 0, 1,
+    0, 0, 1, 0, 0, 1, 0, 0,
+    1, 0, 0, 1, 0, 0, 1, 0,
+    0, 1, 0, 0, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99,
 };
 
 SCENE_ENTRANCE TreeRoomsEntrances[] = {
-	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ TREE_ROOMS_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 488, 0, 248, FACING_NORTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 712, 0, 152, FACING_EAST, 0, 672, 0, 944, 272, 0 },
-	{ TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, CONDITION_ALWAYS, 920, 0, 152, FACING_WEST, 0, 672, 0, 944, 272, 0 },
-	{ TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH, CONDITION_ALWAYS, 168, 0, 520, FACING_NORTH, 0, 32, 272, 304, 544, 0 },
-	{ TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST, CONDITION_ALWAYS, 296, 0, 424, FACING_WEST, 0, 32, 272, 304, 544, 0 },
-	{ TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST, CONDITION_ALWAYS, 376, 0, 424, FACING_EAST, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH, CONDITION_ALWAYS, 488, 0, 520, FACING_NORTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST, CONDITION_ALWAYS, 712, 0, 424, FACING_EAST, 0, 672, 272, 960, 544, 0 },
-	{ TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST, CONDITION_ALWAYS, 920, 0, 424, FACING_WEST, 0, 672, 272, 960, 544, 0 },
-	{ TREE_ROOMS_FALL_LANDING, CONDITION_ALWAYS, 168, 0, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
-	{ TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR, CONDITION_ALWAYS, 424, 24, 72, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE, CONDITION_ALWAYS, 744, 0, 88, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-	{ TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR, CONDITION_ALWAYS, 232, 24, 344, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
-	{ TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR, CONDITION_ALWAYS, 552, 0, 360, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_TRET_FROM_ENTRANCE, CONDITION_ALWAYS, 168, 24, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
-	{ TREE_ROOMS_ENTRANCE_FROM_TRET, CONDITION_ALWAYS, 488, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D, CONDITION_ALWAYS, 424, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E, CONDITION_ALWAYS, 440, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F, CONDITION_ALWAYS, 488, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G, CONDITION_ALWAYS, 456, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H, CONDITION_ALWAYS, 488, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF, CONDITION_ALWAYS, 760, 0, 104, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-	{ TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF, CONDITION_ALWAYS, 856, 0, 120, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF, CONDITION_ALWAYS, 456, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF, CONDITION_ALWAYS, 488, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF, CONDITION_ALWAYS, 520, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF, CONDITION_ALWAYS, 520, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF, CONDITION_ALWAYS, 488, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF, CONDITION_ALWAYS, 520, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF, CONDITION_ALWAYS, 552, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF, CONDITION_ALWAYS, 488, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-	{ TREE_ROOMS_FALL_THROUGH_A, CONDITION_ALWAYS, 168, 0, 424, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
-	{ TREE_ROOMS_FALL_THROUGH_B, CONDITION_ALWAYS, 808, 0, 152, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-	{ TREE_ROOMS_FALL_THROUGH_C, CONDITION_ALWAYS, 488, 0, 152, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-	{ TREE_ROOMS_AFTER_FIGHT_TRET, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
-	{ SCENE_TABLE_END },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { TREE_ROOMS_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 488, 0, 248, FACING_NORTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 712, 0, 152, FACING_EAST, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, CONDITION_ALWAYS, 920, 0, 152, FACING_WEST, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH, CONDITION_ALWAYS, 168, 0, 520, FACING_NORTH, 0, 32, 272, 304, 544, 0 },
+    { TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST, CONDITION_ALWAYS, 296, 0, 424, FACING_WEST, 0, 32, 272, 304, 544, 0 },
+    { TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST, CONDITION_ALWAYS, 376, 0, 424, FACING_EAST, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH, CONDITION_ALWAYS, 488, 0, 520, FACING_NORTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST, CONDITION_ALWAYS, 712, 0, 424, FACING_EAST, 0, 672, 272, 960, 544, 0 },
+    { TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST, CONDITION_ALWAYS, 920, 0, 424, FACING_WEST, 0, 672, 272, 960, 544, 0 },
+    { TREE_ROOMS_FALL_LANDING, CONDITION_ALWAYS, 168, 0, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
+    { TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR, CONDITION_ALWAYS, 424, 24, 72, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE, CONDITION_ALWAYS, 744, 0, 88, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR, CONDITION_ALWAYS, 232, 24, 344, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
+    { TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR, CONDITION_ALWAYS, 552, 0, 360, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_TRET_FROM_ENTRANCE, CONDITION_ALWAYS, 168, 24, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
+    { TREE_ROOMS_ENTRANCE_FROM_TRET, CONDITION_ALWAYS, 488, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D, CONDITION_ALWAYS, 424, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E, CONDITION_ALWAYS, 440, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F, CONDITION_ALWAYS, 488, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G, CONDITION_ALWAYS, 456, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H, CONDITION_ALWAYS, 488, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF, CONDITION_ALWAYS, 760, 0, 104, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF, CONDITION_ALWAYS, 856, 0, 120, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF, CONDITION_ALWAYS, 456, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF, CONDITION_ALWAYS, 488, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF, CONDITION_ALWAYS, 520, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF, CONDITION_ALWAYS, 520, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF, CONDITION_ALWAYS, 488, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF, CONDITION_ALWAYS, 520, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF, CONDITION_ALWAYS, 552, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF, CONDITION_ALWAYS, 488, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FALL_THROUGH_A, CONDITION_ALWAYS, 168, 0, 424, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
+    { TREE_ROOMS_FALL_THROUGH_B, CONDITION_ALWAYS, 808, 0, 152, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_FALL_THROUGH_C, CONDITION_ALWAYS, 488, 0, 152, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_AFTER_FIGHT_TRET, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
+    { SCENE_TABLE_END },
 };
 
 SCENE_EXIT_REGION TreeRoomsRegions[] = {
-	{ 420, 28, 68, 428, 36, 76, -1, TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR },
-	{ 228, 28, 338, 236, 36, 346, -1, TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR },
+    { 420, 28, 68, 428, 36, 76, -1, TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR },
+    { 228, 28, 338, 236, 36, 346, -1, TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR },
 #if !ALTIN_LADDER_AND_TRET_VINE_EXITS_ENLARGED
-	{ 163, 28, 148, 171, 36, 156, -1, TREE_ROOMS_TRET_TO_ENTRANCE },
+    { 163, 28, 148, 171, 36, 156, -1, TREE_ROOMS_TRET_TO_ENTRANCE },
 #else
-	{ 159, 24, 144, 175, 40, 160, -1, TREE_ROOMS_TRET_TO_ENTRANCE },
+    { 159, 24, 144, 175, 40, 160, -1, TREE_ROOMS_TRET_TO_ENTRANCE },
 #endif
-	{ -1, 0, 0, 0, 0, 0, 0, 0 },
+    { -1, 0, 0, 0, 0, 0, 0, 0 },
 };
 
 Uint32 TreeRoomsExits[] = {
-	SCENE_EXITS(TreeRooms),
-	SCENE_EXIT(TREE_ROOMS_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_TREE_ROOMS),
-	SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST),
-	SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST),
-	SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH),
-	SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST),
-	SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST),
-	SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH),
-	SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST),
-	SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST),
-	SCENE_EXIT(TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR, TreeRooms, TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE),
-	SCENE_EXIT(TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE, TreeRooms, TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR),
-	SCENE_EXIT(TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR, TreeRooms, TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR),
-	SCENE_EXIT(TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR, TreeRooms, TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR),
-	SCENE_EXIT(TREE_ROOMS_TRET_TO_ENTRANCE, TreeRooms, TREE_ROOMS_ENTRANCE_FROM_TRET),
-	SCENE_EXIT(TREE_ROOMS_ENTRANCE_TO_TRET, TreeRooms, TREE_ROOMS_TRET_FROM_ENTRANCE),
-	SCENE_EXITS_END,
+    SCENE_EXITS(TreeRooms),
+    SCENE_EXIT(TREE_ROOMS_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_TREE_ROOMS),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST),
+    SCENE_EXIT(TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR, TreeRooms, TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE),
+    SCENE_EXIT(TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE, TreeRooms, TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR),
+    SCENE_EXIT(TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR, TreeRooms, TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR),
+    SCENE_EXIT(TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR, TreeRooms, TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR),
+    SCENE_EXIT(TREE_ROOMS_TRET_TO_ENTRANCE, TreeRooms, TREE_ROOMS_ENTRANCE_FROM_TRET),
+    SCENE_EXIT(TREE_ROOMS_ENTRANCE_TO_TRET, TreeRooms, TREE_ROOMS_TRET_FROM_ENTRANCE),
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE TreeRoomsActorPlacements[] = {
-	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-		0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-		0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-		0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-		168, 0, 48, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TRET_RAISED, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-		168, 0, 48, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	{ SCENE_TABLE_END },
+    ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        168, 0, 48, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TRET_RAISED, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        168, 0, 48, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    { SCENE_TABLE_END },
 };
 // clang-format on
 
 CUE TreeRoomsCues[] = {
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH,
      TREE_ROOMS_TO_KOLIMA_FOREST_TREE, CONDITION_ALWAYS,
      TREE_ROOMS_TO_KOLIMA_FOREST_TREE},
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_WEST,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_WEST,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST},
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_EAST,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_EAST,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST},
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH},
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_EAST,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_EAST,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST},
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_WEST,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_WEST,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST},
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH},
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_WEST,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_WEST,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST},
-	{CUE_EXIT | CUE_FLAG_FACING | FACING_EAST,
+    {CUE_EXIT | CUE_FLAG_FACING | FACING_EAST,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST},
-	{CUE_EXIT,
+    {CUE_EXIT,
      TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE, CONDITION_ALWAYS,
      TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE},
-	{CUE_EXIT,
+    {CUE_EXIT,
      TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR, CONDITION_ALWAYS,
      TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR},
-	{CUE_EXIT, TREE_ROOMS_ENTRANCE_TO_TRET, CONDITION_ALWAYS, TREE_ROOMS_ENTRANCE_TO_TRET},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_EXIT, TREE_ROOMS_ENTRANCE_TO_TRET, CONDITION_ALWAYS, TREE_ROOMS_ENTRANCE_TO_TRET},
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsJumpOffLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafA)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafB)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafC)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafD)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafE)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafF)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafG)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafH)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnSecondFloorLeafI)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnThirdFloorWestLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnThirdFloorEastLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorCenterLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorNorthwestLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorNorthLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorNortheastLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorWestLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorEastLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorSouthwestLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorSouthLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorSoutheastLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsStepOnFifthFloorFarSoutheastLeaf)},
-	{CUE_STEP,
+    {CUE_STEP,
      METATILE_BEHAVIOR_TREE_ROOMS_BEFORE_TRET, FLAG_TRET_DEFEATED,
      SCRIPT_REF(scTreeRoomsFightTret)},
-	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS),
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS),
      0, CONDITION_ALWAYS,
      SCRIPT_REF(scTreeRoomsCastReveal)},
-	{EXAMINE_CUE(EXAMINE_CHEST),
+    {EXAMINE_CUE(EXAMINE_CHEST),
      METATILE_BEHAVIOR_TREE_ROOMS_HEALING_RING_CHEST, FLAG_TRET_TREE_HEALING_RING,
      FIND_ITEM(ITEM_HEALING_RING)},
-	{EXAMINE_CUE(EXAMINE_CHEST),
+    {EXAMINE_CUE(EXAMINE_CHEST),
      METATILE_BEHAVIOR_TREE_ROOMS_NUT_CHEST, FLAG_TRET_TREE_NUT,
      FIND_ITEM(ITEM_NUT)},
-	{EXAMINE_CUE(EXAMINE_SILENT),
+    {EXAMINE_CUE(EXAMINE_SILENT),
      METATILE_BEHAVIOR_TREE_ROOMS_PSYNERGY_STONE, FLAG_AREA_TEMP_50,
      FIND_PSYNERGY_STONE},
-	{CUE_TABLE_END},
+    {CUE_TABLE_END},
 };
 
 // Where in TreeRoomsTintSteps the tint is, a random number of entries on each time.

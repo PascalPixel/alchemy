@@ -32,7 +32,7 @@ void               scRockSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 ticks);
 // fdPaletteFadeSetSource, under the name the tower's fades call it by.
 static inline void scTundariaTowerFadeFrom(Sint32 color, Sint32 mode)
 {
-	fdPaletteFadeSetSource(color, mode);
+    fdPaletteFadeSetSource(color, mode);
 }
 
 #endif

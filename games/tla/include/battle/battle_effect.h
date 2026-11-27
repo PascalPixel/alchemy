@@ -29,11 +29,11 @@ void btResourceLoadAndDecompress(Sint32 resourceId, void *target, Sint32 unpack,
 // The flags of a composite draw: clip the picture at the canvas's edges, and mirror it.
 enum
 {
-	COMPOSITE_CLIP_X = 1,
-	COMPOSITE_CLIP_Y = 2,
-	COMPOSITE_FLIP_X = 4,
-	COMPOSITE_FLIP_Y = 8,
-	COMPOSITE_FLIP   = COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y
+    COMPOSITE_CLIP_X = 1,
+    COMPOSITE_CLIP_Y = 2,
+    COMPOSITE_FLIP_X = 4,
+    COMPOSITE_FLIP_Y = 8,
+    COMPOSITE_FLIP   = COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y
 };
 
 // How a blitter btEffectBuildBlitter builds lays a picture on the canvas (its mode):
@@ -41,13 +41,13 @@ enum
 // the two.
 enum
 {
-	BLITTER_ADDITIVE,
-	BLITTER_MAX,
-	BLITTER_TRANSPARENT,
-	BLITTER_COPY
+    BLITTER_ADDITIVE,
+    BLITTER_MAX,
+    BLITTER_TRANSPARENT,
+    BLITTER_COPY
 };
 
 typedef Sint32 (*DRAW_RECTANGLE)(
-	void *destination, const void *source, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
+    void *destination, const void *source, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
 
 #endif

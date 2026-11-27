@@ -5,19 +5,19 @@
 // party's bags are full.
 static void scVaultFindBone(void)
 {
-	fdScriptStart();
-	if (gmPartyInventoryHasSpace() == 0)
-	{
-		fdActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
-		fdScriptWait(20);
-		fdScriptSetMessageId(MsgVaultWowHaveManyThingsArent);
-		// "Wow, you have so many things. Aren't you a greedy lad!"
-		fdScriptShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
-	}
-	else
-	{
-		fdItemDisplayShowItem(ITEM_BONE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
-		fdPartyInventoryGiveItem(ITEM_BONE, 0);
-	}
-	fdScriptEnd();
+    fdScriptStart();
+    if (gmPartyInventoryHasSpace() == 0)
+    {
+        fdActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
+        fdScriptWait(20);
+        fdScriptSetMessageId(MsgVaultWowHaveManyThingsArent);
+        // "Wow, you have so many things. Aren't you a greedy lad!"
+        fdScriptShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
+    }
+    else
+    {
+        fdItemDisplayShowItem(ITEM_BONE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
+        fdPartyInventoryGiveItem(ITEM_BONE, 0);
+    }
+    fdScriptEnd();
 }

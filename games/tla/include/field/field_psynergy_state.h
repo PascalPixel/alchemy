@@ -20,13 +20,13 @@ union FIELD_OBJECT;
 // on the screen, and the ticks since it began (negative before it starts, or while it is free).
 typedef struct FIELD_PSYNERGY_PARTICLE
 {
-	FIXED  x;
-	FIXED  y;
-	FIXED  z;
-	FIXED  velocityX;
-	FIXED  velocityY;
-	FIXED  velocityZ;
-	Sint32 timer;
+    FIXED  x;
+    FIXED  y;
+    FIXED  z;
+    FIXED  velocityX;
+    FIXED  velocityY;
+    FIXED  velocityZ;
+    Sint32 timer;
 } FIELD_PSYNERGY_PARTICLE;
 
 // The effect sprites a field Psynergy has (FIELD_EFFECT_STATE.particles).
@@ -44,23 +44,23 @@ typedef struct FIELD_PSYNERGY_PARTICLE
 // and the stage of the cast.
 typedef struct SCOOP_STATE
 {
-	Uint8                   tiles[1024];
-	Uint8                   picture[SCOOP_PICTURE_SIZE * SCOOP_PICTURE_SIZE];
-	EFFECT_SPR              sprites[SCOOP_PARTICLE_COUNT];
-	FIELD_PSYNERGY_PARTICLE particles[SCOOP_PARTICLE_COUNT];
-	EFFECT_SPR              pictureSprite;
-	// the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends
-	Sint16                  phase;
-	Sint16                  timer; // ticks into the stage
-	Sint16                  particleTile;
-	Sint16                  pictureTile;
-	// SPRITE_SCOOP_HAND, which digs and sinks as it does
-	struct ACTOR           *actor;
-	// SPRITE_BROWN_BOULDER (grey where lit), where it digs
-	struct ACTOR           *other;
-	// The kind of dig: 2 cast on a target; cast at nothing, 1 one time in sixteen (an item turns
-	// up), else 0, or 3 where lit is set.
-	Sint16                  mode;
+    Uint8                   tiles[1024];
+    Uint8                   picture[SCOOP_PICTURE_SIZE * SCOOP_PICTURE_SIZE];
+    EFFECT_SPR              sprites[SCOOP_PARTICLE_COUNT];
+    FIELD_PSYNERGY_PARTICLE particles[SCOOP_PARTICLE_COUNT];
+    EFFECT_SPR              pictureSprite;
+    // the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends
+    Sint16                  phase;
+    Sint16                  timer; // ticks into the stage
+    Sint16                  particleTile;
+    Sint16                  pictureTile;
+    // SPRITE_SCOOP_HAND, which digs and sinks as it does
+    struct ACTOR           *actor;
+    // SPRITE_BROWN_BOULDER (grey where lit), where it digs
+    struct ACTOR           *other;
+    // The kind of dig: 2 cast on a target; cast at nothing, 1 one time in sixteen (an item turns
+    // up), else 0, or 3 where lit is set.
+    Sint16                  mode;
 } SCOOP_STATE;
 
 // The state of a field Psynergy (heap slot HEAP_SLOT_FIELD_EFFECT): its caster and target, where it
@@ -68,59 +68,59 @@ typedef struct SCOOP_STATE
 // lasting Psynergy keeps.
 typedef struct FIELD_EFFECT_STATE
 {
-	// The caster's facing, rounded to four directions, 1/65536 turns.
-	Uint16         angle;
-	// The caster's facing, rounded to eight directions, 1/65536 turns.
-	Uint16         angle8;
-	FIXED          x;             // 16.16 fixed-point pixels
-	FIXED          y;             // 16.16 fixed-point pixels
-	FIXED          z;             // 16.16 fixed-point pixels
-	struct ACTOR  *caster;        // the caster's actor
-	struct ACTOR  *target;        // the target's actor, or NULL
-	Sint16         casterId;      // the caster's actor id
-	Sint16         targetId;      // the target's actor id, -1 for none
-	Sint16         ability;       // the ability id
-	Sint16         fieldPsynergy; // the ability's field Psynergy kind
-	// Set at the start; cleared once the target has been dispatched.
-	Sint8          aimAhead;
-	Uint8          mode;         // where it runs; ACTOR_SYSTEM_WORLD_MAP on the World Map
-	Sint8          flashCaster;  // set at the start: the caster flashes with a sound
-	Sint8          announceName; // set at the start: the ability's name is announced
-	void           (*finishCallback)(void); // run, when set, as the Psynergy ends
-	Uint8          unusedAfterFinish[12];
-	// Set by some scenes before a field Psynergy; it treats the target differently with it.
-	Sint8          sceneVariant;
-	Sint8          childMode; // set by some scenes: the Psynergy leaves the target be
-	Uint8          paddingAfterChildMode[2];
-	// The target's update function and script, saved at the start and restored when the Psynergy
-	// lets it go.
-	void           (*savedCallback)(union FIELD_OBJECT *object);
-	const Sint32  *savedScript;
-	Uint8          savedPalette; // the target's first sprite animation's colour mode
-	// Set in a few scenes (Gabomba Catacombs, Tundaria Tower, Jupiter Lighthouse's aerie, Loho)
-	// before a field Psynergy.
-	Uint8          lit;
-	Uint16         freeBlocks; // 512 less the free VRAM cache blocks at the start
-	// The map's shake and its decay, restored when the field Psynergy ends.
-	Sint32         savedShakeX;
-	Sint32         savedShakeY;
-	Sint32         savedShakeDecay;
-	// Its field effect sprites.
-	FIELD_PARTICLE particles[PSYNERGY_EFFECT_SLOT_COUNT];
-	Sint16         arcTileSlot;            // the VRAM cache entry of the falling arcs' tiles
-	Sint8          msgMode;                // the announcement's box mode: 1, a script adds 8
-	Uint8          msgShown;               // set while the announcement's message is open
-	Uint8          unusedAfterMsgShown[4]; // no code names it
-	// The caster's priority flags and sprite priority, saved at the start and restored as it ends.
-	Uint8          savedPriorityFlags;
-	Uint8          savedSpritePriority;
-	Uint8          unusedAfterSavedSpritePriority[170]; // no code names it
-	// A lasting Psynergy's stage and tick, passed to its script as it runs.
-	Sint16         stage;
-	Sint16         frame;
-	EFFECT_SPR     sprite;         // a field Psynergy's own sprite on screen
-	Sint16         spriteVramSlot; // its VRAM cache entry
-	Sint16         spriteActive;   // nonzero while sprite is drawn
+    // The caster's facing, rounded to four directions, 1/65536 turns.
+    Uint16         angle;
+    // The caster's facing, rounded to eight directions, 1/65536 turns.
+    Uint16         angle8;
+    FIXED          x;             // 16.16 fixed-point pixels
+    FIXED          y;             // 16.16 fixed-point pixels
+    FIXED          z;             // 16.16 fixed-point pixels
+    struct ACTOR  *caster;        // the caster's actor
+    struct ACTOR  *target;        // the target's actor, or NULL
+    Sint16         casterId;      // the caster's actor id
+    Sint16         targetId;      // the target's actor id, -1 for none
+    Sint16         ability;       // the ability id
+    Sint16         fieldPsynergy; // the ability's field Psynergy kind
+    // Set at the start; cleared once the target has been dispatched.
+    Sint8          aimAhead;
+    Uint8          mode;         // where it runs; ACTOR_SYSTEM_WORLD_MAP on the World Map
+    Sint8          flashCaster;  // set at the start: the caster flashes with a sound
+    Sint8          announceName; // set at the start: the ability's name is announced
+    void           (*finishCallback)(void); // run, when set, as the Psynergy ends
+    Uint8          unusedAfterFinish[12];
+    // Set by some scenes before a field Psynergy; it treats the target differently with it.
+    Sint8          sceneVariant;
+    Sint8          childMode; // set by some scenes: the Psynergy leaves the target be
+    Uint8          paddingAfterChildMode[2];
+    // The target's update function and script, saved at the start and restored when the Psynergy
+    // lets it go.
+    void           (*savedCallback)(union FIELD_OBJECT *object);
+    const Sint32  *savedScript;
+    Uint8          savedPalette; // the target's first sprite animation's colour mode
+    // Set in a few scenes (Gabomba Catacombs, Tundaria Tower, Jupiter Lighthouse's aerie, Loho)
+    // before a field Psynergy.
+    Uint8          lit;
+    Uint16         freeBlocks; // 512 less the free VRAM cache blocks at the start
+    // The map's shake and its decay, restored when the field Psynergy ends.
+    Sint32         savedShakeX;
+    Sint32         savedShakeY;
+    Sint32         savedShakeDecay;
+    // Its field effect sprites.
+    FIELD_PARTICLE particles[PSYNERGY_EFFECT_SLOT_COUNT];
+    Sint16         arcTileSlot;            // the VRAM cache entry of the falling arcs' tiles
+    Sint8          msgMode;                // the announcement's box mode: 1, a script adds 8
+    Uint8          msgShown;               // set while the announcement's message is open
+    Uint8          unusedAfterMsgShown[4]; // no code names it
+    // The caster's priority flags and sprite priority, saved at the start and restored as it ends.
+    Uint8          savedPriorityFlags;
+    Uint8          savedSpritePriority;
+    Uint8          unusedAfterSavedSpritePriority[170]; // no code names it
+    // A lasting Psynergy's stage and tick, passed to its script as it runs.
+    Sint16         stage;
+    Sint16         frame;
+    EFFECT_SPR     sprite;         // a field Psynergy's own sprite on screen
+    Sint16         spriteVramSlot; // its VRAM cache entry
+    Sint16         spriteActive;   // nonzero while sprite is drawn
 } FIELD_EFFECT_STATE;
 
 STATIC_ASSERT(sizeof(FIELD_EFFECT_STATE) == 2036);
@@ -141,7 +141,7 @@ STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, spriteActive) == 2034);
 // steps from 0 to 10, one a tick.
 static __inline__ Sint32 fdEffectInterpolate(Sint32 to, Sint32 from, Sint32 step)
 {
-	return from + (to - from) * step / 10;
+    return from + (to - from) * step / 10;
 }
 
 #endif

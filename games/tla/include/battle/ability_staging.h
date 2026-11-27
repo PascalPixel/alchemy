@@ -18,35 +18,35 @@ extern const Uint32 AbilityBattleEffects[];
 // the ability (AbilityStaging where it gives one).
 typedef enum BATTLE_STAGING
 {
-	STAGING_MESSAGES       = 1, // no effect: each target's messages only
-	STAGING_ATTACK         = 2, // the acting unit runs up and strikes
-	STAGING_CAST           = 3, // Psynergy, and Venus, Mercury, Mars, Jupiter
-	STAGING_ITEM           = 4,
-	STAGING_SUMMON         = 5, // the larger summons, the acting unit hidden
-	STAGING_DJINNI         = 6, // a Djinni with no attack (Granite, Quartz...)
-	STAGING_FLEE           = 7, // a unit runs
-	// The action plays as a cast, the caster showing its element's streaks in place of the
-	// gathering star field: an enemy's ability that is not Psynergy and has a battle effect, Slice,
-	// and weapon unleashes such as Blizzard and Titan Blade.
-	STAGING_ENEMY_CAST     = 8,
-	STAGING_FULL_SCREEN    = 9, // Gaia, Rockfall, Procne and their kin
-	// Meld ("Launch a powerful team strike.") and Mold: a second unit (BATTLE_PLAN.partnerId)
-	// strikes as the Djinni is unleashed.
-	STAGING_TEAM_STRIKE    = 10,
-	STAGING_DJINN_RECOVERY = 11, // Eddy: "Speed up Djinn recovery time."
-	STAGING_MEGAERA        = 12, // the summon, then High Impact on its side
-	STAGING_IRIS           = 13, // the summon, then the Aurora Field
-	// Daedalus's strike queued for the turn's end, from no ability's row: only
-	// btStagingPlanDaedalus sets it.
-	STAGING_DAEDALUS       = 14,
-	// The summoned beasts that strike: Wild Wolf, Roc, Orc, Grand Golem, Dinox and Call Zombie
-	// (btMotionCallBeast).
-	STAGING_BEAST_ATTACK   = 15,
-	// The summoned beasts that cast, Emu to Call Dullahan.
-	STAGING_BEAST_CAST     = 16,
-	// Unused: a beast called up (btMotionCallBeast takes 15 to 17) whose call then plays as the
-	// party's Psynergy cast (CAST_PSYNERGY). No ability's row in AbilityStaging gives it.
-	STAGING_BEAST_PSYNERGY = 17
+    STAGING_MESSAGES       = 1, // no effect: each target's messages only
+    STAGING_ATTACK         = 2, // the acting unit runs up and strikes
+    STAGING_CAST           = 3, // Psynergy, and Venus, Mercury, Mars, Jupiter
+    STAGING_ITEM           = 4,
+    STAGING_SUMMON         = 5, // the larger summons, the acting unit hidden
+    STAGING_DJINNI         = 6, // a Djinni with no attack (Granite, Quartz...)
+    STAGING_FLEE           = 7, // a unit runs
+    // The action plays as a cast, the caster showing its element's streaks in place of the
+    // gathering star field: an enemy's ability that is not Psynergy and has a battle effect, Slice,
+    // and weapon unleashes such as Blizzard and Titan Blade.
+    STAGING_ENEMY_CAST     = 8,
+    STAGING_FULL_SCREEN    = 9, // Gaia, Rockfall, Procne and their kin
+    // Meld ("Launch a powerful team strike.") and Mold: a second unit (BATTLE_PLAN.partnerId)
+    // strikes as the Djinni is unleashed.
+    STAGING_TEAM_STRIKE    = 10,
+    STAGING_DJINN_RECOVERY = 11, // Eddy: "Speed up Djinn recovery time."
+    STAGING_MEGAERA        = 12, // the summon, then High Impact on its side
+    STAGING_IRIS           = 13, // the summon, then the Aurora Field
+    // Daedalus's strike queued for the turn's end, from no ability's row: only
+    // btStagingPlanDaedalus sets it.
+    STAGING_DAEDALUS       = 14,
+    // The summoned beasts that strike: Wild Wolf, Roc, Orc, Grand Golem, Dinox and Call Zombie
+    // (btMotionCallBeast).
+    STAGING_BEAST_ATTACK   = 15,
+    // The summoned beasts that cast, Emu to Call Dullahan.
+    STAGING_BEAST_CAST     = 16,
+    // Unused: a beast called up (btMotionCallBeast takes 15 to 17) whose call then plays as the
+    // party's Psynergy cast (CAST_PSYNERGY). No ability's row in AbilityStaging gives it.
+    STAGING_BEAST_PSYNERGY = 17
 } BATTLE_STAGING;
 
 // BATTLE_PLAN.battleEffect: the effect kind in the low twelve bits and its strength (a double or

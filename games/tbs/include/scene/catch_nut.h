@@ -8,14 +8,14 @@
 // leader holds it up and the party gets it.
 static inline void scCatchNut(Sint32 actorId, Sint32 flag)
 {
-	fdScriptStart();
-	fdActorSetPos(actorId, 0, 0);
-	gmFlagSet(flag);
-	// Called by the functions' own names, not through script_inline.h's gmItemShowFound and
-	// gmPartyGiveItem, because those inlines compile differently inside this one.
-	fdItemDisplayShowItem(ITEM_NUT, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
-	fdPartyInventoryGiveItem(ITEM_NUT, 0);
-	fdScriptEnd();
+    fdScriptStart();
+    fdActorSetPos(actorId, 0, 0);
+    gmFlagSet(flag);
+    // Called by the functions' own names, not through script_inline.h's gmItemShowFound and
+    // gmPartyGiveItem, because those inlines compile differently inside this one.
+    fdItemDisplayShowItem(ITEM_NUT, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
+    fdPartyInventoryGiveItem(ITEM_NUT, 0);
+    fdScriptEnd();
 }
 
 #endif

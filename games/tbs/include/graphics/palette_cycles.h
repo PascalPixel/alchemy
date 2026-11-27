@@ -12,20 +12,20 @@
 // every delay + 1 ticks.
 typedef struct PALETTE_CYCLE
 {
-	Uint16 *src;        // the first colour of the run, in BG palette RAM
-	Uint16  pos;        // colours rotated so far, 0 to count - 1
-	Uint16  timer;      // ticks until the next rotation
-	Sint16  delay;      // ticks; the timer restarts from it
-	Uint16  count;      // colours in the run
-	Uint16  colors[16]; // the run's colours as saved when the cycle was added
+    Uint16 *src;        // the first colour of the run, in BG palette RAM
+    Uint16  pos;        // colours rotated so far, 0 to count - 1
+    Uint16  timer;      // ticks until the next rotation
+    Sint16  delay;      // ticks; the timer restarts from it
+    Uint16  count;      // colours in the run
+    Uint16  colors[16]; // the run's colours as saved when the cycle was added
 } PALETTE_CYCLE;
 
 // The palette cycling queue (HEAP_SLOT_PALETTE_CYCLES): four cycles and how many are in use.
 typedef struct PALETTE_CYCLE_STATE
 {
-	PALETTE_CYCLE entries[4];
-	// Cycles in use, 0 to 4; fdPaletteCycleStep advances none of four (a bug).
-	Uint16        count;
+    PALETTE_CYCLE entries[4];
+    // Cycles in use, 0 to 4; fdPaletteCycleStep advances none of four (a bug).
+    Uint16        count;
 } PALETTE_CYCLE_STATE;
 
 STATIC_ASSERT(sizeof(PALETTE_CYCLE) == 44);

@@ -25,64 +25,64 @@ struct MENU_SPR;
 // gives the event already running it that priority.
 static inline Sint32 sySetTickEvent(EVENT_FUNC callback, Sint32 priority)
 {
-	return sySetEvent(callback, priority);
+    return sySetEvent(callback, priority);
 }
 
 // The overlays' names for the functions they import, each the function itself.
 static inline void syFieldMenuArrowCreate(MENU_SPR *cursor, Sint32 *slot)
 {
-	mnArrowCreate(cursor, slot);
+    mnArrowCreate(cursor, slot);
 }
 
 static inline void syFieldMenuArrowSetPos(MENU_SPR *cursor, Sint32 x, Sint32 y)
 {
-	mnArrowSetPos(cursor, x, y);
+    mnArrowSetPos(cursor, x, y);
 }
 
 static inline void mnFieldMessageDecodeRawUnbounded(Sint32 msg, Uint16 *buf)
 {
-	mnMessageDecodeRawUnbounded(msg, buf);
+    mnMessageDecodeRawUnbounded(msg, buf);
 }
 
 static inline void fdSetCameraBounds(Sint32 minX, Sint32 minY, Sint32 maxX, Sint32 maxY)
 {
-	fdMapGridSetCameraBounds(minX, minY, maxX, maxY);
+    fdMapGridSetCameraBounds(minX, minY, maxX, maxY);
 }
 
 static inline void syFieldActorJumpDownLedge(Sint32 actorId, Sint32 mode, Sint32 action)
 {
-	fdActorJumpDownLedge(actorId, mode, action);
+    fdActorJumpDownLedge(actorId, mode, action);
 }
 
 static inline Sint32 syFieldActorCheckMovementCollision(ACTOR *actor, FIELD_POS *pos)
 {
-	return fdMapGridCheckCollision(actor, pos);
+    return fdMapGridCheckCollision(actor, pos);
 }
 
 static inline Sint32 syFieldGameFlagGetByte(Sint32 flag)
 {
-	return gmFlagGetByte(flag);
+    return gmFlagGetByte(flag);
 }
 
 static inline void syFieldGameFlagSetByte(Sint32 flag, Sint32 value)
 {
-	gmFlagSetByte(flag, value);
+    gmFlagSetByte(flag, value);
 }
 
 static inline Sint32 syFieldPartyListMembers(Sint16 *owners)
 {
-	return gmPartyListMembers(owners);
+    return gmPartyListMembers(owners);
 }
 
 static inline Sint32 syFieldUnitAddHp(Sint32 owner, Sint32 delta)
 {
-	return gmUnitAddHp(owner, delta);
+    return gmUnitAddHp(owner, delta);
 }
 
 // Decodes a tagged LZ stream (a first byte of 0 or 1) from `src` into `dest`.
 static inline Sint32 syFieldDecompressTaggedLZ(const void *src, void *dest)
 {
-	return syDecompressTaggedLZ(src, dest);
+    return syDecompressTaggedLZ(src, dest);
 }
 
 static inline void fdLineScrollStartWave(Sint32 mode,
@@ -93,7 +93,7 @@ static inline void fdLineScrollStartWave(Sint32 mode,
                                          Sint32 stepY,
                                          Sint32 ampY)
 {
-	scLineScrollInitWave(mode, frequencyX, stepX, ampX, frequencyY, stepY, ampY);
+    scLineScrollInitWave(mode, frequencyX, stepX, ampX, frequencyY, stepY, ampY);
 }
 
 #endif

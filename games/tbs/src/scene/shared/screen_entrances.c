@@ -2,6 +2,6 @@
 // corner, which nothing walks from.
 
 SCENE_ENTRANCE ScreenEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{SCENE_TABLE_END},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };

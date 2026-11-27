@@ -30,54 +30,54 @@
 // mnShopReleaseState frees it.
 typedef struct SHOP_STATE
 {
-	// no view of the menu state names it (see menu/README.md)
-	Uint8 unused[8];
-	Sint32
-		// the menu screens' chosen party member; not named here
-				   selectedMember;
-	struct WINDOW *moneyWindow; // the coins window
-	// The menu screens' first window and their two sides; not named here.
-	Uint8          menuSides[16];
-	struct WINDOW *itemWindow;
-	// The menu screens' windows, icons and cursor grid; not named here.
-	Uint8          menuWindows[240];
-	SPR           *partyMemberIcons[8]; // the party row's sprites
-	Sint16         partyMemberX[8];     // pixels
-	Sint16         partyMemberY[8];     // pixels
-	FIXED          partyMemberScale[8]; // 16.16 fixed point, toFIXED(1) full size
-	// The menu screens' choices, entries and party and the row of four figures; not named here.
-	Uint8          menuLists[248];
-	Sint16         stockItemIds[129]; // the items on sale, ended by 0
-	Sint16         partyMemberIds[9]; // the party in order (gmPartyListMembers)
-	MENU_CURSOR    cursor;            // the hand cursor
-	// VRAM cache slots of the six cursor icons, loaded when the state is set up and freed with it.
-	Uint16         cursorIcon; // the hand
-	Uint16         prevPageIcon;
-	Uint16         nextPageIcon;
-	Uint16         gemIcon;
-	Uint16         statUpIcon;
-	Uint16         statDownIcon;
-	Uint16         unusedBeforeSelection;   // no view of the menu state names it
-	Uint16         selectedItem;            // the item being bought, sold or repaired
-	Uint8          unusedAfterSelection[4]; // no view of the menu state names it
-	Uint16         keeperGraphics;          // the shopkeeper's animation; picks the portrait
-	Sint8          stockCount;
-	Sint8          partyMemberCount;
-	// The ticks the hand cursor's next move takes (mnCursorPlace): SHOP_CURSOR_ENTER_TICKS into a
-	// new list, then a few a step.
-	Uint8          cursorFrame;
-	// The stock row's type (SHOP_TYPE), which picks the keeper's lines; an inn takes a weapon
-	// shop's, whose lines are given as they are.
-	Uint8          shopType;
-	// The counter chosen (SHOP_ACTION), or at a sanctum the service (enum SANCTUM_SERVICE).
-	Sint8          action;
-	// The party member whose icon flickers through colours in the sanctum's burst, or -1 for none.
-	Sint8          burstMember;
-	// 1 at Xian's shops and inn, whose keepers have lines of their own.
-	Uint8          warriorShop;
-	Uint8          padding[3]; // up to the word effects starts on
-	// the sanctum service's particles
-	FIELD_PARTICLE effects[SANCTUM_PARTICLE_COUNT];
+    // no view of the menu state names it (see menu/README.md)
+    Uint8 unused[8];
+    Sint32
+        // the menu screens' chosen party member; not named here
+                   selectedMember;
+    struct WINDOW *moneyWindow; // the coins window
+    // The menu screens' first window and their two sides; not named here.
+    Uint8          menuSides[16];
+    struct WINDOW *itemWindow;
+    // The menu screens' windows, icons and cursor grid; not named here.
+    Uint8          menuWindows[240];
+    SPR           *partyMemberIcons[8]; // the party row's sprites
+    Sint16         partyMemberX[8];     // pixels
+    Sint16         partyMemberY[8];     // pixels
+    FIXED          partyMemberScale[8]; // 16.16 fixed point, toFIXED(1) full size
+    // The menu screens' choices, entries and party and the row of four figures; not named here.
+    Uint8          menuLists[248];
+    Sint16         stockItemIds[129]; // the items on sale, ended by 0
+    Sint16         partyMemberIds[9]; // the party in order (gmPartyListMembers)
+    MENU_CURSOR    cursor;            // the hand cursor
+    // VRAM cache slots of the six cursor icons, loaded when the state is set up and freed with it.
+    Uint16         cursorIcon; // the hand
+    Uint16         prevPageIcon;
+    Uint16         nextPageIcon;
+    Uint16         gemIcon;
+    Uint16         statUpIcon;
+    Uint16         statDownIcon;
+    Uint16         unusedBeforeSelection;   // no view of the menu state names it
+    Uint16         selectedItem;            // the item being bought, sold or repaired
+    Uint8          unusedAfterSelection[4]; // no view of the menu state names it
+    Uint16         keeperGraphics;          // the shopkeeper's animation; picks the portrait
+    Sint8          stockCount;
+    Sint8          partyMemberCount;
+    // The ticks the hand cursor's next move takes (mnCursorPlace): SHOP_CURSOR_ENTER_TICKS into a
+    // new list, then a few a step.
+    Uint8          cursorFrame;
+    // The stock row's type (SHOP_TYPE), which picks the keeper's lines; an inn takes a weapon
+    // shop's, whose lines are given as they are.
+    Uint8          shopType;
+    // The counter chosen (SHOP_ACTION), or at a sanctum the service (enum SANCTUM_SERVICE).
+    Sint8          action;
+    // The party member whose icon flickers through colours in the sanctum's burst, or -1 for none.
+    Sint8          burstMember;
+    // 1 at Xian's shops and inn, whose keepers have lines of their own.
+    Uint8          warriorShop;
+    Uint8          padding[3]; // up to the word effects starts on
+    // the sanctum service's particles
+    FIELD_PARTICLE effects[SANCTUM_PARTICLE_COUNT];
 } SHOP_STATE;
 
 STATIC_ASSERT(sizeof(SHOP_STATE) == 2672);
@@ -152,10 +152,10 @@ syNodeChainGetNodeAtIndex(struct SELECTION_MENU_CURSOR_VIEW *state);
 // black pixel and a pixel of its colour, in the window sprites' palette.
 typedef enum QUANTITY_BAR_COL
 {
-	QUANTITY_BAR_CHOOSABLE    = 0,  // clear, the window showing through
-	QUANTITY_BAR_HELD         = 2,  // red
-	QUANTITY_BAR_CHOSEN       = 10, // orange
-	QUANTITY_BAR_OUT_OF_REACH = 14, // grey
+    QUANTITY_BAR_CHOOSABLE    = 0,  // clear, the window showing through
+    QUANTITY_BAR_HELD         = 2,  // red
+    QUANTITY_BAR_CHOSEN       = 10, // orange
+    QUANTITY_BAR_OUT_OF_REACH = 14, // grey
 } QUANTITY_BAR_COL;
 
 // The quantity bar and price sprites, the field's tint behind a counter and the hand cursor's moves
@@ -167,9 +167,9 @@ void        mnCursorPlace(struct WINDOW *window, Sint32 x, Sint32 y);
 // What mnShopDrawItemPrice says below an item whose price is 0.
 typedef enum SHOP_PRICE_KIND
 {
-	SHOP_PRICE_KIND_BUY    = 0, // buying: the price, even when it is 0
-	SHOP_PRICE_KIND_SELL   = 1, // selling: the shop does not buy it
-	SHOP_PRICE_KIND_REPAIR = 2  // repairing: it is not broken
+    SHOP_PRICE_KIND_BUY    = 0, // buying: the price, even when it is 0
+    SHOP_PRICE_KIND_SELL   = 1, // selling: the shop does not buy it
+    SHOP_PRICE_KIND_REPAIR = 2  // repairing: it is not broken
 } SHOP_PRICE_KIND;
 
 // Buying, and the windows the other counters share: the coins, an item's price and description, the

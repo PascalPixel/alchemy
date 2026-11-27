@@ -29,8 +29,8 @@ void scColossoWalkActorTo(Sint32 actorId, Sint32 x, Sint32 z);
 // The pointer's glide start on one axis, read signed or unsigned.
 typedef union POINTER_COORDINATE
 {
-	Sint16 signedPixels; // screen pixels
-	Uint16 pixels;       // screen pixels
+    Sint16 signedPixels; // screen pixels
+    Uint16 pixels;       // screen pixels
 } POINTER_COORDINATE;
 
 // The pointer's sprite slot, which each match defines.

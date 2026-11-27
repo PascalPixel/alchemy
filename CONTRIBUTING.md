@@ -72,7 +72,7 @@ Pick a word from the game’s own English text first, then from what Game Boy Ad
 
 ## Layout and comments
 
-Formatting is clang-format 20 with the repository’s [`.clang-format`](.clang-format): a tab for each level, braces on their own lines, and declarations, assignments, macros and comments lined up. `make test` checks it.
+Formatting is clang-format 20 with the repository’s [`.clang-format`](.clang-format): four spaces for each level, braces on their own lines, and declarations, assignments, macros and comments lined up. `make test` checks it.
 
 A comment says what the code does for the game, and is written with `//`, one paragraph wrapped at 100 columns. Only a comment inside a multi-line macro, or with code after it, is `/* ... */`. These marks are used in the source:
 

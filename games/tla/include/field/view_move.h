@@ -21,18 +21,18 @@ struct ACTOR;
 // edges it lies beside, and the actors it carries.
 typedef struct VIEW_MOVE_STATE
 {
-	Sint32        x;         // the view centre's position when the move began
-	Sint32        y;
-	Sint32        z;
-	Sint32        savedMinX; // the map's view bounds when the move began
-	Sint32        savedMaxX;
-	Sint32        savedMinZ;
-	Sint32        savedMaxZ;
-	Sint16        edgeX;              // -1 beside the low edge, 1 beside the high edge, else 0
-	Sint16        edgeZ;
-	struct ACTOR *actors[8];          // the actors near the caster it rocks
-	Uint16        spriteRotations[8]; // each one's sprite rotation, given back after
-	Sint32        count;
+    Sint32        x;         // the view centre's position when the move began
+    Sint32        y;
+    Sint32        z;
+    Sint32        savedMinX; // the map's view bounds when the move began
+    Sint32        savedMaxX;
+    Sint32        savedMinZ;
+    Sint32        savedMaxZ;
+    Sint16        edgeX;              // -1 beside the low edge, 1 beside the high edge, else 0
+    Sint16        edgeZ;
+    struct ACTOR *actors[8];          // the actors near the caster it rocks
+    Uint16        spriteRotations[8]; // each one's sprite rotation, given back after
+    Sint32        count;
 } VIEW_MOVE_STATE;
 
 STATIC_ASSERT(offsetof(VIEW_MOVE_STATE, edgeX) == 28);

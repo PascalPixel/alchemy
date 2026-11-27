@@ -19,7 +19,7 @@ void mnPartyStatusBuildLayoutBounds(Sint32 flags);
 void mnWindowDrawColumnBorders(struct WINDOW *window, Uint32 flags);
 UNREAD_RESULT mnPartyStatusDrawBars(struct WINDOW *window, Sint32 x, Sint32 y, Sint32 length);
 void          mnWindowSetInteriorPaletteBit(
-			 const struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Uint32 set);
+             const struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Uint32 set);
 
 struct BUP_FILE_SUMMARY;
 
@@ -31,7 +31,7 @@ void   mnFileListUpdatePulse(void);
 void   mnFileListStartPulse(void);
 void   mnFileListStopPulse(void);
 void   mnWindowFillTilemapRect(
-	  struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
+      struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
 void mnFileListShowPartySprites(struct WINDOW           *window,
                                 Sint32                   x,
                                 Sint32                   y,
@@ -45,13 +45,13 @@ void mnFileListPlaceDjinnSprites(void);
 // What the file list is choosing a file for, which decides the files the cursor may stop on.
 typedef enum FILE_MENU_MODE
 {
-	FILE_LIST_SAVE,     // saving: any file, empty ones too
-	FILE_LIST_CONTINUE, // continuing: files not yet cleared
-	FILE_LIST_COPY,     // copying: any file with data
-	FILE_LIST_ERASE,    // erasing: any file with data
-	// The title's Battle: files whose party has found a Djinni (BUP_FILE_SUMMARY.djinnCount).
-	FILE_LIST_BATTLE,
-	FILE_LIST_CLEARED // the title's Send: cleared files only
+    FILE_LIST_SAVE,     // saving: any file, empty ones too
+    FILE_LIST_CONTINUE, // continuing: files not yet cleared
+    FILE_LIST_COPY,     // copying: any file with data
+    FILE_LIST_ERASE,    // erasing: any file with data
+    // The title's Battle: files whose party has found a Djinni (BUP_FILE_SUMMARY.djinnCount).
+    FILE_LIST_BATTLE,
+    FILE_LIST_CLEARED // the title's Send: cleared files only
 } FILE_MENU_MODE;
 
 void   mnFileListDrawDjinnCounts(struct WINDOW *window, struct BUP_FILE_SUMMARY *summary);
@@ -61,7 +61,7 @@ Bool   mnNameEntryAcceptsMark(Sint32 mark, Sint32 letter);
 Sint32 mnNameEntryCountLetters(const Uint8 *name);
 void   mnWindowCopyTilemapRegion(const struct WINDOW *window, const void *src);
 void   mnWindowSetInteriorPalette(
-	  const struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Uint32 palette);
+      const struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Uint32 palette);
 Sint32             mnTextSetString(const Uint8 *str);
 void               mnNameEntryDrawName(struct WINDOW *window, Uint8 *name);
 Sint32             mnPartyGetMemberPortraitSprite(Uint32 member);
@@ -106,7 +106,7 @@ Sint32         mnBattleDjinnMenuListChangedAbilities(const struct PSYNERGY_ENTRY
 UNREAD_RESULT
 mnWindowSpriteCreateAbilityIcon(struct WINDOW *window, Sint32 x, Sint32 y, Sint32 abilityId);
 struct WINDOW *mnBattleDjinnMenuShowChangePreview(
-	struct WINDOW *window, Sint32 member, Sint32 encodedDjinn, Sint32 page, Sint32 *pageCount);
+    struct WINDOW *window, Sint32 member, Sint32 encodedDjinn, Sint32 page, Sint32 *pageCount);
 Sint32 mnBattleStatusScreenRun(Uint16 *list, Sint32 listCount, Sint32 member);
 Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused);
 Sint32 mnBattleSummonMenuRun(Sint32 unusedA, Sint32 unusedB, const Uint8 *standby);
@@ -133,50 +133,50 @@ void   mnIconMenuLayoutIcons(Sint32 x, Sint32 y, Sint32 width, Sint32 resourceBa
 // (FieldMenuCommandByPosition).
 typedef enum FIELD_MENU_COMMAND
 {
-	FIELD_MENU_PSYNERGY = 1,
-	FIELD_MENU_DJINN    = 2,
-	FIELD_MENU_ITEM     = 3,
-	FIELD_MENU_STATUS   = 4
+    FIELD_MENU_PSYNERGY = 1,
+    FIELD_MENU_DJINN    = 2,
+    FIELD_MENU_ITEM     = 3,
+    FIELD_MENU_STATUS   = 4
 } FIELD_MENU_COMMAND;
 
 // The title menu's choices, as mnFileListSelectAction returns them (FileListActionByPosition).
 typedef enum FILE_ACTION
 {
-	SAVE_ACTION_NEW_GAME = 0,
-	SAVE_ACTION_CONTINUE = 1,
-	SAVE_ACTION_COPY     = 2,
-	SAVE_ACTION_ERASE    = 3,
-	SAVE_ACTION_BATTLE   = 4,
-	SAVE_ACTION_SEND     = 5
+    SAVE_ACTION_NEW_GAME = 0,
+    SAVE_ACTION_CONTINUE = 1,
+    SAVE_ACTION_COPY     = 2,
+    SAVE_ACTION_ERASE    = 3,
+    SAVE_ACTION_BATTLE   = 4,
+    SAVE_ACTION_SEND     = 5
 } FILE_ACTION;
 
 // What mnIconMenuChooseSendOption offers.
 typedef enum RESOURCE_LAYOUT_MODE
 {
-	SEND_OPTION_TRANSFER_METHOD = 0, // Password or Cable
-	SEND_OPTION_PASSWORD_LEVEL  = 1  // Gold, Silver or Bronze
+    SEND_OPTION_TRANSFER_METHOD = 0, // Password or Cable
+    SEND_OPTION_PASSWORD_LEVEL  = 1  // Gold, Silver or Bronze
 } RESOURCE_LAYOUT_MODE;
 
 // The places of the transfer method menu (SEND_OPTION_TRANSFER_METHOD).
 typedef enum TRANSFER_METHOD
 {
-	TRANSFER_METHOD_PASSWORD = 0,
-	TRANSFER_METHOD_CABLE    = 1
+    TRANSFER_METHOD_PASSWORD = 0,
+    TRANSFER_METHOD_CABLE    = 1
 } TRANSFER_METHOD;
 
 // The places of the password level menu (SEND_OPTION_PASSWORD_LEVEL).
 typedef enum PASSWORD_LEVEL
 {
-	PASSWORD_LEVEL_GOLD   = 0,
-	PASSWORD_LEVEL_SILVER = 1,
-	PASSWORD_LEVEL_BRONZE = 2
+    PASSWORD_LEVEL_GOLD   = 0,
+    PASSWORD_LEVEL_SILVER = 1,
+    PASSWORD_LEVEL_BRONZE = 2
 } PASSWORD_LEVEL;
 
 // What mnYesNoMenuRun and mnYesNoMenuRunAt return.
 typedef enum YES_NO
 {
-	YES = 0,
-	NO  = 1
+    YES = 0,
+    NO  = 1
 } YES_NO;
 
 Sint32 mnFieldMenuSelectCommand(Sint32 selection);

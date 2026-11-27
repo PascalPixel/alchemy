@@ -39,8 +39,8 @@ struct MENU_CURSOR;
 // A background's horizontal and vertical scroll offsets.
 typedef struct SCROLL_PAIR
 {
-	Uint16 x; // pixels
-	Uint16 y; // pixels
+    Uint16 x; // pixels
+    Uint16 y; // pixels
 } SCROLL_PAIR;
 
 // The small down arrow, 16 by 16 (sdown): the item menu's stat drop.
@@ -62,7 +62,7 @@ extern const char  DjinnMenuTextSlash[];
 #define ActorSystemStateWork (*(struct ACTOR_SYSTEM_STATE **)&HeapSlots[HEAP_SLOT_ACTOR_SYSTEM])
 // Heap slot 18: the selection screen while it runs.
 #define SelectionMenuStateWork                                                                     \
-	(*(struct SELECTION_MENU_STATE **)&HeapSlots[HEAP_SLOT_SELECTION_MENU])
+    (*(struct SELECTION_MENU_STATE **)&HeapSlots[HEAP_SLOT_SELECTION_MENU])
 // Nonzero offers Battle on the File Screen, when a file has any of game flags 48 to 127 set.
 extern Sint16       TitleBattleOptionEnabled;
 // The Japanese item menu's help: `L+A:`, before the arrange help.
@@ -164,16 +164,16 @@ void   mnItemMenuDrawItemDetails(struct WINDOW *window, Sint32 inventoryEntry);
 // The item menu's four sort orders (mnItemMenuSort), which L + A cycles through in this order.
 typedef enum LIST_SORT
 {
-	// The equipped items, the items that are not equipment, then the other equipment
-	// (MenuListOrderEquippedThenItems).
-	LIST_SORT_EQUIPPED_THEN_ITEMS     = 0,
-	// The equipped items, the other equipment, then the rest (MenuListOrderEquippedThenEquipment).
-	LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
-	LIST_SORT_EQUIPMENT_FIRST =
-		2, // MenuListOrderEquipmentFirst
-	       // The items that are not equipment first (MenuListOrderItemsFirst).
-	LIST_SORT_ITEMS_FIRST = 3,
-	LIST_SORT_COUNT       = 4
+    // The equipped items, the items that are not equipment, then the other equipment
+    // (MenuListOrderEquippedThenItems).
+    LIST_SORT_EQUIPPED_THEN_ITEMS     = 0,
+    // The equipped items, the other equipment, then the rest (MenuListOrderEquippedThenEquipment).
+    LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
+    LIST_SORT_EQUIPMENT_FIRST =
+        2, // MenuListOrderEquipmentFirst
+           // The items that are not equipment first (MenuListOrderItemsFirst).
+    LIST_SORT_ITEMS_FIRST = 3,
+    LIST_SORT_COUNT       = 4
 } LIST_SORT;
 
 // What the menus share (menu_shared.c): their state, windows, status panel, hand cursor, party
@@ -182,7 +182,7 @@ Sint32 mnResumeFieldEvents(void);
 Sint32 mnSuspendFieldEvents(void);
 void   mnInitState(Sint32 unused);
 Sint32 mnWindowUpdateOrCreate(
-	struct WINDOW **handle, Sint32 x, Sint32 y, Sint32 w, Sint32 h, Sint32 flags);
+    struct WINDOW **handle, Sint32 x, Sint32 y, Sint32 w, Sint32 h, Sint32 flags);
 void mnWindowCloseIfOpen(struct WINDOW **handle, Sint32 instant);
 void mnStatusPanelDraw(struct WINDOW *unused, Sint32 member, Sint32 slot, Sint32 mode);
 void mnTextDrawNumberRightAligned(Sint32 number, struct WINDOW *window, Sint32 x, Sint32 y);
@@ -192,7 +192,7 @@ void mnTextDrawStatComparison(const struct UNIT *after,
                               struct WINDOW     *window);
 
 Sint32
-	 mnIconCreateHandCursorUnusedArgument(struct WINDOW *window, Sint32 unused, Sint32 x, Sint32 y);
+     mnIconCreateHandCursorUnusedArgument(struct WINDOW *window, Sint32 unused, Sint32 x, Sint32 y);
 void mnReloadMemberPortrait(const void *unused, Sint32 unit);
 
 struct WINDOW *mnCursorCreate(void *src);
@@ -204,16 +204,16 @@ void           mnCursorNoOperation(void);
 void           mnPsynergyMenuPlaceEntryIconsDefault(void);
 void           mnPsynergyMenuPlaceEntryIcons(Sint32 originX, Sint32 originY, Sint32 columns);
 void           mnPsynergyMenuPlaceEntryIcon(
-			  struct WINDOW_SPR **slot, Sint32 index, Sint32 originX, Sint32 originY, Sint32 columns);
+              struct WINDOW_SPR **slot, Sint32 index, Sint32 originX, Sint32 originY, Sint32 columns);
 void mnItemMenuPlaceIcon(
-	struct WINDOW_SPR **slot, Sint32 slotIndex, Sint32 originX, Sint32 originY, Sint32 columns);
+    struct WINDOW_SPR **slot, Sint32 slotIndex, Sint32 originX, Sint32 originY, Sint32 columns);
 void   mnItemMenuPlaceIcons(Sint32 layout);
 void   mnItemMenuShowMessage(Sint32 msg, Sint32 x, Sint32 y);
 Sint32 mnItemMenuSort(Uint16 *inventory, Sint32 mode);
 void   mnCopyListOrder(Sint32 mode, Uint8 *order);
 
 Sint32 mnPagedListHandleInput(
-	Sint32 horizontal, Sint32 count, Sint32 pageSize, Sint32 *cursor, Sint32 *page);
+    Sint32 horizontal, Sint32 count, Sint32 pageSize, Sint32 *cursor, Sint32 *page);
 void mnPaletteLightenHighlight(Sint32 paletteNumber);
 void mnPagedListDrawPageNumbers(struct WINDOW *window,
                                 Sint32         itemCount,
@@ -221,7 +221,7 @@ void mnPagedListDrawPageNumbers(struct WINDOW *window,
                                 Sint32         selectedPage,
                                 Sint32         rightEdge);
 void mnWindowSetHighlightRect(
-	const struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Uint32 palette);
+    const struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Uint32 palette);
 void   mnPaletteLoadIconsIntoHighlight(void);
 void   mnSetPageIcons(Sint32 pageSize, Sint32 first, struct WINDOW *window, Sint32 x, Sint32 y);
 void   mnDrawCoins(struct WINDOW *window);
@@ -282,7 +282,7 @@ void   mnItemMenuTryBreak(void);
 Sint32 mnItemMenuOpenDetail(Sint32 itemIndex);
 Sint32 mnItemMenuShowDetails(Sint32 value);
 void   mnItemMenuDrawStat(
-	  Sint32 statChange, Sint32 unused, struct WINDOW *window, Sint32 x, Sint32 y);
+      Sint32 statChange, Sint32 unused, struct WINDOW *window, Sint32 x, Sint32 y);
 void   mnItemMenuPlaceItemWindowBelowItemQuestion(void);
 void   mnItemMenuPlaceItemWindowBelowQuestion(void);
 void   mnItemMenuFitMessageWindowToItemQuestion(void);
@@ -352,7 +352,7 @@ Sint32 mnPagedListBuild(struct PAGED_LIST *result, Sint32 index);
 
 void   mnBuildPatternTiles(void);
 void   mnPsynergyMenuDrawRange(
-	  struct WINDOW *window, Sint32 x, Sint32 y, Sint32 range, Sint32 unused);
+      struct WINDOW *window, Sint32 x, Sint32 y, Sint32 range, Sint32 unused);
 Sint32
 mnStatusScreenShowPsynergyRow(struct WINDOW *window, Sint32 unused, struct PAGED_LIST *state);
 Sint32
@@ -374,7 +374,7 @@ void   mnItemMenuDrawEquipment(struct WINDOW *window, Sint32 memberId, Sint32 mo
 void   mnItemMenuDrawEquippedItemNames(struct WINDOW *window, Uint16 *items);
 void   mnPlaceEntryIconsInGrid(Sint32 originX, Sint32 originY, Sint32 columns);
 void   mnPlaceEntryIconInGrid(
-	  struct WINDOW_SPR *icon, Sint32 index, Sint32 originX, Sint32 originY, Sint32 columns);
+      struct WINDOW_SPR *icon, Sint32 index, Sint32 originX, Sint32 originY, Sint32 columns);
 void   mnItemMenuPlaceEquippedIcons(Uint16 *items);
 void   mnHideEntryIcons(void);
 Sint32 mnStatusScreenCreateStatusIcons(struct WINDOW *window);
@@ -415,10 +415,10 @@ Sint32               mnDjinnMenuBuildLists(void *table);
 void mnDjinnMenuDrawElementList(struct DJINN_LIST_TABLE *table);
 #endif
 Sint32 mnWindowSetInteriorPaletteBitRect(
-	const struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette);
+    const struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette);
 void mnWindowSetRectPalette(Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette);
 void mnWindowSetInteriorRectPalette(
-	void *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette);
+    void *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette);
 Sint32 mnDjinnMenuShowHelp(void);
 Sint32 mnDjinnMenuSelectDjinn(Sint32 mode);
 Sint32 mnDjinnListUnitEntries(Uint16 *entriesOut, Sint32 memberId, Sint32 element);

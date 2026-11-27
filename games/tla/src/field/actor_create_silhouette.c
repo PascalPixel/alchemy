@@ -8,17 +8,17 @@
 // 0, still, skipped by target searches, with no outline or shadow, all black and translucent.
 ACTOR *fdActorCreateSilhouette(FIXED x, FIXED y, FIXED z, Sint32 type)
 {
-	ACTOR *actor = syImportActorCreate(type, x, y, z);
+    ACTOR *actor = syImportActorCreate(type, x, y, z);
 
-	if (actor != NULL)
-	{
-		fdSetActorSpritePriority(actor, 0);
-		actor->motionFlags    = 0;
-		actor->collisionFlags = ACTOR_NOT_TARGETED;
-		fdActorSetSpriteFlags(actor, 0);
-		fdActorSetSpriteColor(actor, SPRITE_COLOR_BLACK);
-		fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
-		return actor;
-	}
-	return NULL;
+    if (actor != NULL)
+    {
+        fdSetActorSpritePriority(actor, 0);
+        actor->motionFlags    = 0;
+        actor->collisionFlags = ACTOR_NOT_TARGETED;
+        fdActorSetSpriteFlags(actor, 0);
+        fdActorSetSpriteColor(actor, SPRITE_COLOR_BLACK);
+        fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
+        return actor;
+    }
+    return NULL;
 }

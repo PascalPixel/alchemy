@@ -12,25 +12,25 @@
 // decoded, its pictures and its animation scripts.
 typedef struct ANIMATION_METADATA
 {
-	Uint8   width;  // pixels
-	Uint8   height; // pixels
-	Uint16  scale;  // 8.8 fixed point, 256 full size
-	// SPR_ANIMATION.kind: the facing table its pictures follow
-	Uint8   drawKind;
-	// The scripts in animation; an animation number at or past it is not played.
-	Uint8   animationCount;
-	Sint8   adjustX; // pixels
-	Sint8   adjustY; // pixels
-	// Pixels from the actor's position up to the top of its sprite (fdActorGetScreenPos).
-	Sint8   spriteTop;
-	// Pixels; half of it is a battle unit's radius, and can be an actor's radius (ACTOR.radius).
-	Uint8   footprint;
-	// an SPR_PICTURE_CODEC, copied to SPR_ANIMATION.mode
-	Uint8   pictureCodec;
-	// The picture pointers; null takes them from the sprite picture cache slot holding the
-	// animation (fdSpritePictureCacheFindByTag).
-	void  **pictures;
-	Uint8 **animation; // the command scripts, one per animation number
+    Uint8   width;  // pixels
+    Uint8   height; // pixels
+    Uint16  scale;  // 8.8 fixed point, 256 full size
+    // SPR_ANIMATION.kind: the facing table its pictures follow
+    Uint8   drawKind;
+    // The scripts in animation; an animation number at or past it is not played.
+    Uint8   animationCount;
+    Sint8   adjustX; // pixels
+    Sint8   adjustY; // pixels
+    // Pixels from the actor's position up to the top of its sprite (fdActorGetScreenPos).
+    Sint8   spriteTop;
+    // Pixels; half of it is a battle unit's radius, and can be an actor's radius (ACTOR.radius).
+    Uint8   footprint;
+    // an SPR_PICTURE_CODEC, copied to SPR_ANIMATION.mode
+    Uint8   pictureCodec;
+    // The picture pointers; null takes them from the sprite picture cache slot holding the
+    // animation (fdSpritePictureCacheFindByTag).
+    void  **pictures;
+    Uint8 **animation; // the command scripts, one per animation number
 } ANIMATION_METADATA;
 
 STATIC_ASSERT(sizeof(ANIMATION_METADATA) == 20);

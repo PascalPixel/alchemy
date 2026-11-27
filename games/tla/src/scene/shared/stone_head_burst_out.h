@@ -3,76 +3,76 @@
 // left walking rather than climbing; `flags` then keeps the head out.
 void scStoneHeadBurstOut(Sint32 id, Sint32 flag)
 {
-	ACTOR *leader  = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Sint32 gravity = leader->gravity;
-	ACTOR *head;
-	Sint32 i;
-	Sint32 frame;
+    ACTOR *leader  = fdActorGet(MainRoutineStateWork.leaderActorId);
+    Sint32 gravity = leader->gravity;
+    ACTOR *head;
+    Sint32 i;
+    Sint32 frame;
 
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	head = fdActorGet(id);
-	scStoneHeadPlace(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);
-	fdActorStartScript(head, StoneHeadRiseScript);
-	for (i = 0; i < STATUE_ROCKS; i++)
-	{
-		ACTOR *rock = scFieldActorCreate(
-			SPRITE_ROCK, leader->x.fixed, leader->y.fixed + toFIXED(16), leader->z.fixed);
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+    head = fdActorGet(id);
+    scStoneHeadPlace(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);
+    fdActorStartScript(head, StoneHeadRiseScript);
+    for (i = 0; i < STATUE_ROCKS; i++)
+    {
+        ACTOR *rock = scFieldActorCreate(
+            SPRITE_ROCK, leader->x.fixed, leader->y.fixed + toFIXED(16), leader->z.fixed);
 
-		if (rock != 0)
-		{
-			Sint32 angle;
-			Sint32 speed;
-			Uint32 size;
-			Sint32 scale;
+        if (rock != 0)
+        {
+            Sint32 angle;
+            Sint32 speed;
+            Uint32 size;
+            Sint32 scale;
 
-			fdActorStartScript(rock, DebrisScript);
-			angle              = syRandom();
-			speed              = syRandom();
-			size               = syRandom();
-			scale              = (size >> 1) + toFIXED(1) / 8;
-			rock->velocityY    = syMulFX(speed * 8, syCos(angle));
-			rock->velocityX    = syMulFX(speed * 8, syMathSin(angle));
-			rock->acceleration = 0;
-			rock->scaleX       = scale;
-			rock->scaleY       = scale;
-			rock->gravity      = toFIXED(33) / 100;
-			rock->bounce       = toFIXED(1) / 2;
-		}
-	}
-	fdScriptPlaySound(SE_STATUE_RISE);
-	fdScriptPlaySound(SE_FLOOR_SWITCH);
-	fdMapGridSetShake(2, 2, 0.9);
-	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
-	                         ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-	fdActorSelectAnimation(leader, ANIM_LEADER_FLAIL);
-	syFieldScriptWait(40);
-	fdScriptPlaySound(SE_DUST_PUFF);
-	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	leader->gravity     = toFIXED(33) / 100;
-	for (frame = 0; frame < 180; frame++)
-	{
-		syWait(1);
-		if (leader->y.fixed <= leader->groundHeight)
-			break;
-	}
-	fdScriptPlaySound(SE_THUMP);
-	leader->gravity = gravity;
-	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId, ATTACHED_EFFECT_REMOVE);
-	fdActorSelectAnimation(leader, ANIM_LEADER_STILL);
-	fdMapGridSetShake(1, 4, 1);
-	syWait(10);
-	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	syWait(20);
-	fdCameraMoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
-	fdCameraWaitForArrival();
-	syFieldScriptWait(20);
-	fdActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-	fdActorSelectAnimation(leader, ANIM_STAND);
-	leader->velocityY = toFIXED(4);
-	syWait(20);
-	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-	fdScriptEnd();
-	fdScriptSetFlag(flag);
+            fdActorStartScript(rock, DebrisScript);
+            angle              = syRandom();
+            speed              = syRandom();
+            size               = syRandom();
+            scale              = (size >> 1) + toFIXED(1) / 8;
+            rock->velocityY    = syMulFX(speed * 8, syCos(angle));
+            rock->velocityX    = syMulFX(speed * 8, syMathSin(angle));
+            rock->acceleration = 0;
+            rock->scaleX       = scale;
+            rock->scaleY       = scale;
+            rock->gravity      = toFIXED(33) / 100;
+            rock->bounce       = toFIXED(1) / 2;
+        }
+    }
+    fdScriptPlaySound(SE_STATUE_RISE);
+    fdScriptPlaySound(SE_FLOOR_SWITCH);
+    fdMapGridSetShake(2, 2, 0.9);
+    fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
+                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+    fdActorSelectAnimation(leader, ANIM_LEADER_FLAIL);
+    syFieldScriptWait(40);
+    fdScriptPlaySound(SE_DUST_PUFF);
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    leader->gravity     = toFIXED(33) / 100;
+    for (frame = 0; frame < 180; frame++)
+    {
+        syWait(1);
+        if (leader->y.fixed <= leader->groundHeight)
+            break;
+    }
+    fdScriptPlaySound(SE_THUMP);
+    leader->gravity = gravity;
+    fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId, ATTACHED_EFFECT_REMOVE);
+    fdActorSelectAnimation(leader, ANIM_LEADER_STILL);
+    fdMapGridSetShake(1, 4, 1);
+    syWait(10);
+    fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+    syWait(20);
+    fdCameraMoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
+    fdCameraWaitForArrival();
+    syFieldScriptWait(20);
+    fdActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+    fdActorSelectAnimation(leader, ANIM_STAND);
+    leader->velocityY = toFIXED(4);
+    syWait(20);
+    MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
+    fdScriptEnd();
+    fdScriptSetFlag(flag);
 }

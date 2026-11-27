@@ -15,8 +15,8 @@
 // scroll.
 enum
 {
-	SELECTION_ARROW_LEFT  = 0,
-	SELECTION_ARROW_RIGHT = 1,
+    SELECTION_ARROW_LEFT  = 0,
+    SELECTION_ARROW_RIGHT = 1,
 };
 
 // The flags the name window opens with: WINDOW_FLAG_INSTANT, and a 4 that mnWindowCreate drops. A
@@ -46,148 +46,148 @@ enum
 // each end and a pointing hand over the chosen target.
 void mnSelectionMenuCreate(void)
 {
-	SELECTION_MENU_STATE *state;
-	SELECTION_SPR        *visual;
-	const Uint8          *table;
-	Sint32                i;
-	Uint16                clear = 0;
+    SELECTION_MENU_STATE *state;
+    SELECTION_SPR        *visual;
+    const Uint8          *table;
+    Sint32                i;
+    Uint16                clear = 0;
 
-	state         = syHeapSlotAllocateEWRAM(HEAP_SLOT_SELECTION_MENU, sizeof(SELECTION_MENU_STATE));
-	state->head   = NULL;
-	state->path   = NULL;
-	state->window = NULL;
-	state->unread = clear;
-	state->top    = clear;
-	// The first list starts from its first entry.
-	state->cursorIndex    = SELECTION_CURSOR_RESET;
-	state->verticalScroll = SELECTION_ROW_HIDDEN;
-	state->count          = clear;
-	state->locked         = SELECTION_YES_NO_AT_BOTTOM;
-	for (i = 0; i != SELECTION_CHOSEN_RECORDS; i++)
-	{
-		state->records[i + SELECTION_RECORD_ROW].kind    = ICON_KIND_NONE;
-		state->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
-	}
-	// The row has two icons more than the chosen ones; i is 5.
-	state->records[i + SELECTION_RECORD_ROW].kind     = ICON_KIND_NONE;
-	state->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;
-	state->records[SELECTION_ARROW_LEFT].kind         = FALSE;
-	state->records[SELECTION_ARROW_RIGHT].kind        = FALSE;
-	state->records[SELECTION_ARROW_LEFT].y            = 0;
-	state->records[SELECTION_ARROW_RIGHT].y           = 0;
-	table                                             = MenuAnimatedCursorTiles;
-	state->records[SELECTION_RECORD_HAND].slot        = syVRAMCacheFindFreeEntry();
-	state->records[SELECTION_RECORD_HAND].tile =
-		syVRAMCacheLoad(state->records[SELECTION_RECORD_HAND].slot, HAND_FRAME_BYTES, table);
-	state->records[SELECTION_RECORD_HAND].kind       = 0;
-	state->records[SELECTION_RECORD_HAND].scale      = 0;
-	state->records[SELECTION_RECORD_LARGE_ICON].kind = ICON_KIND_NONE;
-	visual           = &state->records[SELECTION_RECORD_HAND].sprite;
-	visual->mode     = OBJ_MODE_NORMAL;
-	visual->mosaic   = 0;
-	visual->colors   = 1;
-	visual->affine   = SPRITE_AFFINE_OFF;
-	visual->matrix   = 0;
-	visual->size     = 1;
-	visual->shape    = SPRITE_SHAPE_SQUARE;
-	visual->priority = 0;
+    state         = syHeapSlotAllocateEWRAM(HEAP_SLOT_SELECTION_MENU, sizeof(SELECTION_MENU_STATE));
+    state->head   = NULL;
+    state->path   = NULL;
+    state->window = NULL;
+    state->unread = clear;
+    state->top    = clear;
+    // The first list starts from its first entry.
+    state->cursorIndex    = SELECTION_CURSOR_RESET;
+    state->verticalScroll = SELECTION_ROW_HIDDEN;
+    state->count          = clear;
+    state->locked         = SELECTION_YES_NO_AT_BOTTOM;
+    for (i = 0; i != SELECTION_CHOSEN_RECORDS; i++)
+    {
+        state->records[i + SELECTION_RECORD_ROW].kind    = ICON_KIND_NONE;
+        state->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
+    }
+    // The row has two icons more than the chosen ones; i is 5.
+    state->records[i + SELECTION_RECORD_ROW].kind     = ICON_KIND_NONE;
+    state->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;
+    state->records[SELECTION_ARROW_LEFT].kind         = FALSE;
+    state->records[SELECTION_ARROW_RIGHT].kind        = FALSE;
+    state->records[SELECTION_ARROW_LEFT].y            = 0;
+    state->records[SELECTION_ARROW_RIGHT].y           = 0;
+    table                                             = MenuAnimatedCursorTiles;
+    state->records[SELECTION_RECORD_HAND].slot        = syVRAMCacheFindFreeEntry();
+    state->records[SELECTION_RECORD_HAND].tile =
+        syVRAMCacheLoad(state->records[SELECTION_RECORD_HAND].slot, HAND_FRAME_BYTES, table);
+    state->records[SELECTION_RECORD_HAND].kind       = 0;
+    state->records[SELECTION_RECORD_HAND].scale      = 0;
+    state->records[SELECTION_RECORD_LARGE_ICON].kind = ICON_KIND_NONE;
+    visual           = &state->records[SELECTION_RECORD_HAND].sprite;
+    visual->mode     = OBJ_MODE_NORMAL;
+    visual->mosaic   = 0;
+    visual->colors   = 1;
+    visual->affine   = SPRITE_AFFINE_OFF;
+    visual->matrix   = 0;
+    visual->size     = 1;
+    visual->shape    = SPRITE_SHAPE_SQUARE;
+    visual->priority = 0;
 }
 
 // Empties the selection screen's list of entries. The high cursor bit requests resetting both the
 // list origin and cursor.
 void mnSelectionMenuClear(void)
 {
-	SELECTION_MENU_STATE *state;
+    SELECTION_MENU_STATE *state;
 
-	state         = SelectionMenuStateWork;
-	state->head   = NULL;
-	state->unread = 0;
-	if (state->cursorIndex & SELECTION_CURSOR_RESET)
-	{
-		state->top         = 0;
-		state->cursorIndex = 0;
-	}
-	state->verticalScroll = 0;
-	state->count          = 0;
+    state         = SelectionMenuStateWork;
+    state->head   = NULL;
+    state->unread = 0;
+    if (state->cursorIndex & SELECTION_CURSOR_RESET)
+    {
+        state->top         = 0;
+        state->cursorIndex = 0;
+    }
+    state->verticalScroll = 0;
+    state->count          = 0;
 }
 
 // Adds an entry (kind and id) to the selection screen's list, up to 16. The count starts at 0 when
 // the screen is created or cleared.
 void mnSelectionMenuAddEntry(Uint32 kind, Uint32 base)
 {
-	SELECTION_MENU_STATE *state      = SelectionMenuStateWork;
-	Uint16                entryCount = state->count;
+    SELECTION_MENU_STATE *state      = SelectionMenuStateWork;
+    Uint16                entryCount = state->count;
 
-	if (entryCount != SELECTION_MENU_ENTRY_LIMIT)
-	{
-		state->kinds[entryCount] = kind;
-		state->bases[entryCount] = base;
-		state->count++;
-	}
+    if (entryCount != SELECTION_MENU_ENTRY_LIMIT)
+    {
+        state->kinds[entryCount] = kind;
+        state->bases[entryCount] = base;
+        state->count++;
+    }
 }
 
 // Creates icons for the first five listed entries from top, in a row along the bottom of the
 // screen.
 void mnSelectionMenuBuildEntries(Uint32 unused)
 {
-	SELECTION_MENU_STATE *state = SelectionMenuStateWork;
-	Uint32                count = state->count;
-	Uint32                entryIndex;
-	SELECTION_NODE       *prev = 0;
-	SELECTION_NODE       *node;
-	Sint32                rowPos = 0;
+    SELECTION_MENU_STATE *state = SelectionMenuStateWork;
+    Uint32                count = state->count;
+    Uint32                entryIndex;
+    SELECTION_NODE       *prev = 0;
+    SELECTION_NODE       *node;
+    Sint32                rowPos = 0;
 
-	for (entryIndex = state->top; entryIndex < count; entryIndex++)
-	{
-		Sint32 base = state->bases[entryIndex];
-		Uint32 kind = state->kinds[entryIndex];
+    for (entryIndex = state->top; entryIndex < count; entryIndex++)
+    {
+        Sint32 base = state->bases[entryIndex];
+        Uint32 kind = state->kinds[entryIndex];
 
-		node        = mnSelectionMenuFindFreeIcon(SELECTION_ICON_ROW);
-		if (node == 0)
-			break;
-		mnSelectionMenuSetupIcon(kind, base, node, 0);
-		if (state->head == 0)
-		{
-			state->head = node;
-			node->prev  = 0;
-		}
-		else
-		{
-			prev->next = node;
-			node->prev = prev;
-		}
-		node->next = 0;
-		rowPos++;
-		prev = node;
-		if (rowPos == SELECTION_ROW_SHOWN)
-			break;
-	}
+        node        = mnSelectionMenuFindFreeIcon(SELECTION_ICON_ROW);
+        if (node == 0)
+            break;
+        mnSelectionMenuSetupIcon(kind, base, node, 0);
+        if (state->head == 0)
+        {
+            state->head = node;
+            node->prev  = 0;
+        }
+        else
+        {
+            prev->next = node;
+            node->prev = prev;
+        }
+        node->next = 0;
+        rowPos++;
+        prev = node;
+        if (rowPos == SELECTION_ROW_SHOWN)
+            break;
+    }
 
-	// The row is centred on x 100, at y 140.
-	state->baseX = 100 - rowPos * SELECTION_ICON_SPACING / 2;
-	state->baseY = 140;
-	// rowPos, the row's icon count, now steps an icon's spacing.
-	for (prev = state->head, rowPos = 0; prev != 0; prev = prev->next)
-	{
-		Sint32 x = state->baseX + rowPos;
-		Sint32 y;
+    // The row is centred on x 100, at y 140.
+    state->baseX = 100 - rowPos * SELECTION_ICON_SPACING / 2;
+    state->baseY = 140;
+    // rowPos, the row's icon count, now steps an icon's spacing.
+    for (prev = state->head, rowPos = 0; prev != 0; prev = prev->next)
+    {
+        Sint32 x = state->baseX + rowPos;
+        Sint32 y;
 
-		prev->x       = x;
-		y             = state->baseY;
-		prev->y       = y;
-		prev->targetX = x;
-		prev->targetY = y;
-		// While locked is 0 a yes or no row sits at the top of the screen.
-		if (prev->kind == ICON_KIND_YES_NO && state->locked == 0)
-		{
-			prev->y       = 6;
-			prev->targetY = 6;
-		}
-		prev->dx  = 0;
-		prev->dy  = 0;
-		rowPos   += SELECTION_ICON_SPACING;
-	}
-	mnSelectionMenuLoadLargeIcon();
+        prev->x       = x;
+        y             = state->baseY;
+        prev->y       = y;
+        prev->targetX = x;
+        prev->targetY = y;
+        // While locked is 0 a yes or no row sits at the top of the screen.
+        if (prev->kind == ICON_KIND_YES_NO && state->locked == 0)
+        {
+            prev->y       = 6;
+            prev->targetY = 6;
+        }
+        prev->dx  = 0;
+        prev->dy  = 0;
+        rowPos   += SELECTION_ICON_SPACING;
+    }
+    mnSelectionMenuLoadLargeIcon();
 }
 
 // An empty function, reached only through a bare entry of the window stub table (window/stubs.s).
@@ -198,272 +198,272 @@ void mnSelectionMenuReservedNoOperation(void)
 // Returns a free selection icon record of `kind` (SELECTION_ICON_GROUP), or NULL.
 SELECTION_NODE *mnSelectionMenuFindFreeIcon(Sint32 kind)
 {
-	SELECTION_MENU_STATE *state = SelectionMenuStateWork;
-	Sint32                i;
+    SELECTION_MENU_STATE *state = SelectionMenuStateWork;
+    Sint32                i;
 
-	if (kind != SELECTION_ICON_ROW)
-	{
-		for (i = 0; i != SELECTION_CHOSEN_RECORDS; i++)
-		{
-			if (state->records[i + SELECTION_RECORD_CHOSEN].kind == ICON_KIND_NONE)
-				return &state->records[i + SELECTION_RECORD_CHOSEN];
-		}
-	}
-	else
-	{
-		for (i = 0; i != SELECTION_ROW_RECORDS; i++)
-		{
-			if (state->records[i + SELECTION_RECORD_ROW].kind == ICON_KIND_NONE)
-				return &state->records[i + SELECTION_RECORD_ROW];
-		}
-	}
-	return NULL;
+    if (kind != SELECTION_ICON_ROW)
+    {
+        for (i = 0; i != SELECTION_CHOSEN_RECORDS; i++)
+        {
+            if (state->records[i + SELECTION_RECORD_CHOSEN].kind == ICON_KIND_NONE)
+                return &state->records[i + SELECTION_RECORD_CHOSEN];
+        }
+    }
+    else
+    {
+        for (i = 0; i != SELECTION_ROW_RECORDS; i++)
+        {
+            if (state->records[i + SELECTION_RECORD_ROW].kind == ICON_KIND_NONE)
+                return &state->records[i + SELECTION_RECORD_ROW];
+        }
+    }
+    return NULL;
 }
 
 // Starts drawing the selection screen each tick, in the tick pass (EVENT_PASS_TICK).
 void mnSelectionMenuStartDrawing(void)
 {
-	sySetEvent(mnSelectionMenuDraw, EVENT_PASS_TICK);
+    sySetEvent(mnSelectionMenuDraw, EVENT_PASS_TICK);
 }
 
 // Stops drawing the selection screen.
 void mnSelectionMenuStopDrawing(void)
 {
-	syCloseEvent(mnSelectionMenuDraw);
+    syCloseEvent(mnSelectionMenuDraw);
 }
 
 // The selection screen's per-tick event: slides and draws the row of icons, the large icon over the
 // chosen one, the end arrows, the icons already chosen and the pointing hand.
 void mnSelectionMenuDraw(void)
 {
-	SELECTION_MENU_STATE *state       = SelectionMenuStateWork;
-	SELECTION_SPR        *cursorEntry = &state->records[SELECTION_RECORD_HAND].sprite;
-	SELECTION_NODE       *cursor      = &state->records[SELECTION_RECORD_HAND];
-	SELECTION_NODE       *largeIcon   = &state->records[SELECTION_RECORD_LARGE_ICON];
-	SELECTION_NODE       *node;
-	SELECTION_SPR        *sprite;
-	SELECTION_SPR        *commandSprite;
-	Sint32                entryIndex = 0;
-	Sint32                slot;
-	Sint32                axisStep;
-	SCREEN_POINT          pos;
+    SELECTION_MENU_STATE *state       = SelectionMenuStateWork;
+    SELECTION_SPR        *cursorEntry = &state->records[SELECTION_RECORD_HAND].sprite;
+    SELECTION_NODE       *cursor      = &state->records[SELECTION_RECORD_HAND];
+    SELECTION_NODE       *largeIcon   = &state->records[SELECTION_RECORD_LARGE_ICON];
+    SELECTION_NODE       *node;
+    SELECTION_SPR        *sprite;
+    SELECTION_SPR        *commandSprite;
+    Sint32                entryIndex = 0;
+    Sint32                slot;
+    Sint32                axisStep;
+    SCREEN_POINT          pos;
 
-	node = state->head;
-	// Move and queue the visible row before drawing its overlays.
-	while (node != 0)
-	{
-		sprite         = &node->sprite;
-		sprite->affine = SPRITE_AFFINE_OFF;
-		sprite->matrix = 0;
-		sprite->x      = node->x;
-		sprite->y      = node->y;
-		slot           = OAM_DEPTH_WINDOW;
-		if (state->verticalScroll != 0)
-		{
-			sprite->y += state->verticalScroll;
-		}
-		else if (node->x != node->targetX)
-		{
-			if (node->dx > 0)
-			{
-				if (node->x + node->dx > node->targetX)
-				{
-					node->x = node->targetX;
-				}
-				else
-				{
-					node->x += node->dx;
-				}
-			}
-			else
-			{
-				if (node->x + node->dx < node->targetX)
-				{
-					node->x = node->targetX;
-				}
-				else
-				{
-					node->x += node->dx;
-				}
-			}
-			sprite->x = node->x;
-		}
-		else if (entryIndex == state->cursorIndex)
-		{
-			slot = OAM_DEPTH_WINDOW + 1;
-			if (cursor->kind != ICON_KIND_NONE)
-			{
-				if (btMotionProjectScaledPosStub(node->base, syScreenPointCoordinates(&pos)) != -1)
-				{
-					cursor->targetX = pos.x;
-					cursor->targetY = pos.y;
-					if (cursor->scale == 0)
-					{
-						cursor->x     = pos.x;
-						cursor->y     = pos.y;
-						cursor->scale = 1;
-					}
-				}
-			}
-		}
-		if (node->scale != 0)
-		{
-			if (gmFlagGetStub(FLAG_IN_BATTLE) != 0)
-			{
-				if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
-				{
-					sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
-				}
-				else
-				{
-					sprite->mode = OBJ_MODE_NORMAL;
-				}
-				if (node->kind == ICON_KIND_COMMAND)
-				{
-					sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
-				}
-			}
-			syOAMAddSpriteAtDepth(sprite, slot);
-		}
-		node = node->next;
-		entryIndex++;
-	}
-	// The selected command's large icon owns a separate cached tile block.
-	if (largeIcon->kind != ICON_KIND_NONE)
-	{
-		node                    = mnSelectionMenuGetCursorNode(state);
-		commandSprite           = &largeIcon->sprite;
-		commandSprite->mode     = OBJ_MODE_NORMAL;
-		commandSprite->affine   = SPRITE_AFFINE_OFF;
-		commandSprite->matrix   = 0;
-		commandSprite->mosaic   = 0;
-		commandSprite->colors   = 1;
-		commandSprite->size     = 2;
-		commandSprite->shape    = SPRITE_SHAPE_SQUARE;
-		commandSprite->priority = 0;
-		commandSprite->tile     = largeIcon->tile;
-		// A 32x32 sprite (size 2) over the icon, bobbing by half the cursor's bob; while it zooms
-		// in, the double-size area moves it 16 up and left, wrapped as the 9-bit x and the 8-bit y
-		// wrap.
-		commandSprite->x        = node->x - 4;
-		commandSprite->y        = node->y + (MenuCursorBobOffsets[(FrameCount >> 1) & 15] >> 1) - 4;
-		if (largeIcon->scale != largeIcon->scaleEnd)
-		{
-			state->transform.scaleX  = largeIcon->scale;
-			state->transform.scaleY  = largeIcon->scale;
-			state->transform.angle   = 0;
-			commandSprite->matrix    = syOAMMatrixAllocateFromTransform(&state->transform);
-			commandSprite->affine    = SPRITE_AFFINE_DOUBLE_SIZE;
-			commandSprite->x        += (Uint16)-16;
-			commandSprite->y        += (Uint8)-16;
-			largeIcon->scale        += largeIcon->scaleStep;
-		}
-		if (gmFlagGetStub(FLAG_IN_BATTLE) != 0)
-		{
-			commandSprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
-		}
-		syOAMAddSpriteAtDepth(commandSprite, OAM_DEPTH_WINDOW + 8);
-	}
-	mnSelectionMenuDrawArrow(state, 0);
-	mnSelectionMenuDrawArrow(state, 1);
-	// Chosen entries gather at the top-left independently of the scrolling row.
-	node = state->path;
-	while (node != 0)
-	{
-		sprite = &node->sprite;
-		if (node->x != node->targetX)
-		{
-			node->x += node->dx;
-		}
-		if (node->y != node->targetY)
-		{
-			node->y += node->dy;
-		}
-		sprite->x = node->x;
-		sprite->y = node->y;
-		if (node->scale != node->scaleEnd)
-		{
-			node->scale             += node->scaleStep;
-			state->transform.scaleX  = node->scale;
-			state->transform.scaleY  = node->scale;
-			state->transform.angle   = 0;
-			sprite->matrix           = syOAMMatrixAllocateFromTransform(&state->transform);
-			sprite->affine           = SPRITE_AFFINE_DOUBLE_SIZE;
-			sprite->x               += (Uint16)-8;
-			sprite->y               += (Uint8)-8;
-		}
-		else
-		{
-			sprite->affine = SPRITE_AFFINE_OFF;
-			sprite->matrix = 0;
-		}
-		if (gmFlagGetStub(FLAG_IN_BATTLE) != 0)
-		{
-			if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
-			{
-				sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
-			}
-			else
-			{
-				sprite->mode = OBJ_MODE_NORMAL;
-			}
-			if (node->kind == ICON_KIND_COMMAND)
-			{
-				sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
-			}
-		}
-		syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
-		node = node->next;
-	}
-	// Point at the selected battle target, smoothing each axis separately: the hand covers half the
-	// distance left each tick.
-	if (cursor->kind != ICON_KIND_NONE)
-	{
-		entryIndex = (Sint32)MenuAnimatedCursorTiles;
-		{
-			void *src         = (void *)(entryIndex + (((FrameCount >> 2) & 15) << 8));
+    node = state->head;
+    // Move and queue the visible row before drawing its overlays.
+    while (node != 0)
+    {
+        sprite         = &node->sprite;
+        sprite->affine = SPRITE_AFFINE_OFF;
+        sprite->matrix = 0;
+        sprite->x      = node->x;
+        sprite->y      = node->y;
+        slot           = OAM_DEPTH_WINDOW;
+        if (state->verticalScroll != 0)
+        {
+            sprite->y += state->verticalScroll;
+        }
+        else if (node->x != node->targetX)
+        {
+            if (node->dx > 0)
+            {
+                if (node->x + node->dx > node->targetX)
+                {
+                    node->x = node->targetX;
+                }
+                else
+                {
+                    node->x += node->dx;
+                }
+            }
+            else
+            {
+                if (node->x + node->dx < node->targetX)
+                {
+                    node->x = node->targetX;
+                }
+                else
+                {
+                    node->x += node->dx;
+                }
+            }
+            sprite->x = node->x;
+        }
+        else if (entryIndex == state->cursorIndex)
+        {
+            slot = OAM_DEPTH_WINDOW + 1;
+            if (cursor->kind != ICON_KIND_NONE)
+            {
+                if (btMotionProjectScaledPosStub(node->base, syScreenPointCoordinates(&pos)) != -1)
+                {
+                    cursor->targetX = pos.x;
+                    cursor->targetY = pos.y;
+                    if (cursor->scale == 0)
+                    {
+                        cursor->x     = pos.x;
+                        cursor->y     = pos.y;
+                        cursor->scale = 1;
+                    }
+                }
+            }
+        }
+        if (node->scale != 0)
+        {
+            if (gmFlagGetStub(FLAG_IN_BATTLE) != 0)
+            {
+                if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
+                {
+                    sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
+                }
+                else
+                {
+                    sprite->mode = OBJ_MODE_NORMAL;
+                }
+                if (node->kind == ICON_KIND_COMMAND)
+                {
+                    sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
+                }
+            }
+            syOAMAddSpriteAtDepth(sprite, slot);
+        }
+        node = node->next;
+        entryIndex++;
+    }
+    // The selected command's large icon owns a separate cached tile block.
+    if (largeIcon->kind != ICON_KIND_NONE)
+    {
+        node                    = mnSelectionMenuGetCursorNode(state);
+        commandSprite           = &largeIcon->sprite;
+        commandSprite->mode     = OBJ_MODE_NORMAL;
+        commandSprite->affine   = SPRITE_AFFINE_OFF;
+        commandSprite->matrix   = 0;
+        commandSprite->mosaic   = 0;
+        commandSprite->colors   = 1;
+        commandSprite->size     = 2;
+        commandSprite->shape    = SPRITE_SHAPE_SQUARE;
+        commandSprite->priority = 0;
+        commandSprite->tile     = largeIcon->tile;
+        // A 32x32 sprite (size 2) over the icon, bobbing by half the cursor's bob; while it zooms
+        // in, the double-size area moves it 16 up and left, wrapped as the 9-bit x and the 8-bit y
+        // wrap.
+        commandSprite->x        = node->x - 4;
+        commandSprite->y        = node->y + (MenuCursorBobOffsets[(FrameCount >> 1) & 15] >> 1) - 4;
+        if (largeIcon->scale != largeIcon->scaleEnd)
+        {
+            state->transform.scaleX  = largeIcon->scale;
+            state->transform.scaleY  = largeIcon->scale;
+            state->transform.angle   = 0;
+            commandSprite->matrix    = syOAMMatrixAllocateFromTransform(&state->transform);
+            commandSprite->affine    = SPRITE_AFFINE_DOUBLE_SIZE;
+            commandSprite->x        += (Uint16)-16;
+            commandSprite->y        += (Uint8)-16;
+            largeIcon->scale        += largeIcon->scaleStep;
+        }
+        if (gmFlagGetStub(FLAG_IN_BATTLE) != 0)
+        {
+            commandSprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
+        }
+        syOAMAddSpriteAtDepth(commandSprite, OAM_DEPTH_WINDOW + 8);
+    }
+    mnSelectionMenuDrawArrow(state, 0);
+    mnSelectionMenuDrawArrow(state, 1);
+    // Chosen entries gather at the top-left independently of the scrolling row.
+    node = state->path;
+    while (node != 0)
+    {
+        sprite = &node->sprite;
+        if (node->x != node->targetX)
+        {
+            node->x += node->dx;
+        }
+        if (node->y != node->targetY)
+        {
+            node->y += node->dy;
+        }
+        sprite->x = node->x;
+        sprite->y = node->y;
+        if (node->scale != node->scaleEnd)
+        {
+            node->scale             += node->scaleStep;
+            state->transform.scaleX  = node->scale;
+            state->transform.scaleY  = node->scale;
+            state->transform.angle   = 0;
+            sprite->matrix           = syOAMMatrixAllocateFromTransform(&state->transform);
+            sprite->affine           = SPRITE_AFFINE_DOUBLE_SIZE;
+            sprite->x               += (Uint16)-8;
+            sprite->y               += (Uint8)-8;
+        }
+        else
+        {
+            sprite->affine = SPRITE_AFFINE_OFF;
+            sprite->matrix = 0;
+        }
+        if (gmFlagGetStub(FLAG_IN_BATTLE) != 0)
+        {
+            if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
+            {
+                sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
+            }
+            else
+            {
+                sprite->mode = OBJ_MODE_NORMAL;
+            }
+            if (node->kind == ICON_KIND_COMMAND)
+            {
+                sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
+            }
+        }
+        syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
+        node = node->next;
+    }
+    // Point at the selected battle target, smoothing each axis separately: the hand covers half the
+    // distance left each tick.
+    if (cursor->kind != ICON_KIND_NONE)
+    {
+        entryIndex = (Sint32)MenuAnimatedCursorTiles;
+        {
+            void *src         = (void *)(entryIndex + (((FrameCount >> 2) & 15) << 8));
 
-			cursorEntry->tile = syVRAMCacheLoad(cursor->slot, HAND_FRAME_BYTES, src);
-		}
-		if (cursor->targetX != cursor->x)
-		{
-			axisStep = (cursor->targetX - cursor->x) >> 1;
-			if (axisStep != 0)
-			{
-				cursor->x += axisStep;
-			}
-			else
-			{
-				cursor->x = cursor->targetX;
-			}
-		}
-		if (cursor->targetY != cursor->y)
-		{
-			if ((axisStep = (cursor->targetY - cursor->y) >> 1) != 0)
-			{
-				cursor->y += axisStep;
-			}
-			else
-			{
-				cursor->y = cursor->targetY;
-			}
-		}
-		cursorEntry->y = cursor->y + MenuCursorBobOffsets[(FrameCount >> 2) & 15] - 32;
-		cursorEntry->x = cursor->x - 4;
-		if (gmFlagGetStub(FLAG_IN_BATTLE) != 0)
-		{
-			if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
-			{
-				cursorEntry->mode = OBJ_MODE_SEMI_TRANSPARENT;
-			}
-			else
-			{
-				cursorEntry->mode = OBJ_MODE_NORMAL;
-			}
-		}
-		syOAMAddSpriteAtDepth(cursorEntry, OAM_DEPTH_WINDOW + 8);
-	}
-	state->status += 1;
+            cursorEntry->tile = syVRAMCacheLoad(cursor->slot, HAND_FRAME_BYTES, src);
+        }
+        if (cursor->targetX != cursor->x)
+        {
+            axisStep = (cursor->targetX - cursor->x) >> 1;
+            if (axisStep != 0)
+            {
+                cursor->x += axisStep;
+            }
+            else
+            {
+                cursor->x = cursor->targetX;
+            }
+        }
+        if (cursor->targetY != cursor->y)
+        {
+            if ((axisStep = (cursor->targetY - cursor->y) >> 1) != 0)
+            {
+                cursor->y += axisStep;
+            }
+            else
+            {
+                cursor->y = cursor->targetY;
+            }
+        }
+        cursorEntry->y = cursor->y + MenuCursorBobOffsets[(FrameCount >> 2) & 15] - 32;
+        cursorEntry->x = cursor->x - 4;
+        if (gmFlagGetStub(FLAG_IN_BATTLE) != 0)
+        {
+            if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
+            {
+                cursorEntry->mode = OBJ_MODE_SEMI_TRANSPARENT;
+            }
+            else
+            {
+                cursorEntry->mode = OBJ_MODE_NORMAL;
+            }
+        }
+        syOAMAddSpriteAtDepth(cursorEntry, OAM_DEPTH_WINDOW + 8);
+    }
+    state->status += 1;
 }
 
 // Draws the selection screen's left (index 0) or right (1) arrow, nudged outwards while it flashes
@@ -471,241 +471,241 @@ void mnSelectionMenuDraw(void)
 // the nudge in pixels.
 void mnSelectionMenuDrawArrow(SELECTION_MENU_STATE *state, Sint32 side)
 {
-	Uint32         animationStep = (FrameCount >> 2) & 7;
-	SELECTION_SPR *arrow;
-	const Uint8   *arrowTiles;
-	const Uint8   *tmp;
+    Uint32         animationStep = (FrameCount >> 2) & 7;
+    SELECTION_SPR *arrow;
+    const Uint8   *arrowTiles;
+    const Uint8   *tmp;
 
-	if (state->records[side].kind == ICON_KIND_NONE)
-		return;
-	arrow    = &state->records[side].sprite;
-	arrow->x = state->records[side].x;
-	arrow->y = state->records[side].y;
-	if (side != 0)
-	{
-		arrowTiles = MenuCursorActorTiles;
-		if (state->records[SELECTION_ARROW_RIGHT].base != 0)
-			arrow->x = arrow->x + state->records[SELECTION_ARROW_RIGHT].base;
-	}
-	else
-	{
-		arrowTiles = MenuCursorLeftActorTiles;
-		if (state->records[SELECTION_ARROW_LEFT].base != 0)
-			arrow->x = arrow->x - state->records[SELECTION_ARROW_LEFT].base;
-	}
-	tmp         = arrowTiles + animationStep * ARROW_FRAME_BYTES;
-	arrow->tile = syVRAMCacheLoad(state->records[side].slot, ARROW_FRAME_BYTES, tmp);
-	if (gmFlagGetStub(FLAG_IN_BATTLE))
-	{
-		if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
-			arrow->mode = OBJ_MODE_SEMI_TRANSPARENT;
-		else
-			arrow->mode = OBJ_MODE_NORMAL;
-	}
-	syOAMAddSpriteAtDepth(arrow, OAM_DEPTH_WINDOW - 2);
-	if (state->records[side].base != 0)
-		state->records[side].base--;
+    if (state->records[side].kind == ICON_KIND_NONE)
+        return;
+    arrow    = &state->records[side].sprite;
+    arrow->x = state->records[side].x;
+    arrow->y = state->records[side].y;
+    if (side != 0)
+    {
+        arrowTiles = MenuCursorActorTiles;
+        if (state->records[SELECTION_ARROW_RIGHT].base != 0)
+            arrow->x = arrow->x + state->records[SELECTION_ARROW_RIGHT].base;
+    }
+    else
+    {
+        arrowTiles = MenuCursorLeftActorTiles;
+        if (state->records[SELECTION_ARROW_LEFT].base != 0)
+            arrow->x = arrow->x - state->records[SELECTION_ARROW_LEFT].base;
+    }
+    tmp         = arrowTiles + animationStep * ARROW_FRAME_BYTES;
+    arrow->tile = syVRAMCacheLoad(state->records[side].slot, ARROW_FRAME_BYTES, tmp);
+    if (gmFlagGetStub(FLAG_IN_BATTLE))
+    {
+        if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
+            arrow->mode = OBJ_MODE_SEMI_TRANSPARENT;
+        else
+            arrow->mode = OBJ_MODE_NORMAL;
+    }
+    syOAMAddSpriteAtDepth(arrow, OAM_DEPTH_WINDOW - 2);
+    if (state->records[side].base != 0)
+        state->records[side].base--;
 }
 
 // Opens or refits the name window above the selection row and writes the name of the icon under the
 // cursor, or that nothing is known (ICON_KIND_ABILITY) or held (ICON_KIND_ITEM).
 void mnSelectionMenuOpenNameWindow(Sint32 mode, Uint32 count)
 {
-	SELECTION_MENU_STATE *state;
-	SELECTION_NODE       *node;
-	WINDOW              **slot;
-	WINDOW               *window;
+    SELECTION_MENU_STATE *state;
+    SELECTION_NODE       *node;
+    WINDOW              **slot;
+    WINDOW               *window;
 
-	state  = SelectionMenuStateWork;
-	node   = mnSelectionMenuGetCursorNode(state);
-	slot   = &state->window;
-	window = *slot;
-	if (window == 0)
-	{
-		// A yes or no window, 5 by 3 tiles, from column 17 at the bottom, or the top while locked
-		// is 0.
-		if (mode == ICON_KIND_YES_NO)
-		{
-			if (state->locked != 0)
-			{
-				*slot = mnWindowCreate(17, 17, 5, 3, mode);
-			}
-			else
-			{
-				*slot = mnWindowCreate(17, 0, 5, 3, mode);
-			}
-			state->verticalScroll = 0;
-			state->locked         = SELECTION_YES_NO_AT_BOTTOM;
-		}
-		else
-		{
-			*slot = mnWindowCreate(19 + ((9 - count) >> 1), 17, count + 2, 3, NAME_WINDOW_FLAGS);
-		}
-		mnWindowSpritePrepareForRedraw(state->window);
-	}
-	else
-	{
-		if (count != 0 && window->width != count + 2)
-		{
-			mnWindowClose(window, WINDOW_FLAG_INSTANT);
-			*slot = mnWindowCreate(19 + ((9 - count) >> 1), 17, count + 2, 3, NAME_WINDOW_FLAGS);
-		}
-		mnWindowSpritePrepareForRedraw(state->window);
-	}
-	if (state->count != 0)
-	{
-		mnTextDrawMessageAsTiles(node->msg, state->window, 0, 0);
-	}
-	else
-	{
-		switch (mode)
-		{
-			case ICON_KIND_ABILITY:
-				mnTextDrawMessageAsTiles(MsgAbilityNotKnown, state->window, 0, 0);
-				break;
-			case ICON_KIND_ITEM:
-				mnTextDrawMessageAsTiles(MsgItemNotHeld, state->window, 0, 0);
-				break;
-		}
-	}
+    state  = SelectionMenuStateWork;
+    node   = mnSelectionMenuGetCursorNode(state);
+    slot   = &state->window;
+    window = *slot;
+    if (window == 0)
+    {
+        // A yes or no window, 5 by 3 tiles, from column 17 at the bottom, or the top while locked
+        // is 0.
+        if (mode == ICON_KIND_YES_NO)
+        {
+            if (state->locked != 0)
+            {
+                *slot = mnWindowCreate(17, 17, 5, 3, mode);
+            }
+            else
+            {
+                *slot = mnWindowCreate(17, 0, 5, 3, mode);
+            }
+            state->verticalScroll = 0;
+            state->locked         = SELECTION_YES_NO_AT_BOTTOM;
+        }
+        else
+        {
+            *slot = mnWindowCreate(19 + ((9 - count) >> 1), 17, count + 2, 3, NAME_WINDOW_FLAGS);
+        }
+        mnWindowSpritePrepareForRedraw(state->window);
+    }
+    else
+    {
+        if (count != 0 && window->width != count + 2)
+        {
+            mnWindowClose(window, WINDOW_FLAG_INSTANT);
+            *slot = mnWindowCreate(19 + ((9 - count) >> 1), 17, count + 2, 3, NAME_WINDOW_FLAGS);
+        }
+        mnWindowSpritePrepareForRedraw(state->window);
+    }
+    if (state->count != 0)
+    {
+        mnTextDrawMessageAsTiles(node->msg, state->window, 0, 0);
+    }
+    else
+    {
+        switch (mode)
+        {
+            case ICON_KIND_ABILITY:
+                mnTextDrawMessageAsTiles(MsgAbilityNotKnown, state->window, 0, 0);
+                break;
+            case ICON_KIND_ITEM:
+                mnTextDrawMessageAsTiles(MsgItemNotHeld, state->window, 0, 0);
+                break;
+        }
+    }
 }
 
 // Closes the selection screen and frees its icons, tiles and state block.
 void mnSelectionMenuClose(void)
 {
-	SELECTION_MENU_STATE *state = SelectionMenuStateWork;
-	SELECTION_NODE       *node;
+    SELECTION_MENU_STATE *state = SelectionMenuStateWork;
+    SELECTION_NODE       *node;
 
-	mnSelectionMenuStopDrawing();
-	mnWindowClose(state->window, WINDOW_FLAG_INSTANT);
-	sySynch(1);
-	node = state->head;
-	while (node != 0)
-	{
-		if (node->kind != ICON_KIND_NONE)
-		{
-			syVRAMCacheFreeEntry(node->slot);
-			node->kind = ICON_KIND_NONE;
-		}
-		node = node->next;
-	}
-	node = state->path;
-	while (node != 0)
-	{
-		if (node->kind != ICON_KIND_NONE)
-		{
-			syVRAMCacheFreeEntry(node->slot);
-			node->kind = ICON_KIND_NONE;
-		}
-		node = node->next;
-	}
-	mnSelectionMenuFreeLargeIcon();
-	// An arrow's y is nonzero once mnSelectionMenuSetupArrow has given it a slot.
-	if (state->records[SELECTION_ARROW_LEFT].y != 0)
-	{
-		syVRAMCacheFreeEntry(state->records[SELECTION_ARROW_LEFT].slot);
-		if (state->records[SELECTION_ARROW_LEFT].y != 0)
-		{
-			syVRAMCacheFreeEntry(state->records[SELECTION_ARROW_RIGHT].slot);
-		}
-	}
-	syVRAMCacheFreeEntry(state->records[SELECTION_RECORD_HAND].slot);
-	syHeapSlotRelease(HEAP_SLOT_SELECTION_MENU);
+    mnSelectionMenuStopDrawing();
+    mnWindowClose(state->window, WINDOW_FLAG_INSTANT);
+    sySynch(1);
+    node = state->head;
+    while (node != 0)
+    {
+        if (node->kind != ICON_KIND_NONE)
+        {
+            syVRAMCacheFreeEntry(node->slot);
+            node->kind = ICON_KIND_NONE;
+        }
+        node = node->next;
+    }
+    node = state->path;
+    while (node != 0)
+    {
+        if (node->kind != ICON_KIND_NONE)
+        {
+            syVRAMCacheFreeEntry(node->slot);
+            node->kind = ICON_KIND_NONE;
+        }
+        node = node->next;
+    }
+    mnSelectionMenuFreeLargeIcon();
+    // An arrow's y is nonzero once mnSelectionMenuSetupArrow has given it a slot.
+    if (state->records[SELECTION_ARROW_LEFT].y != 0)
+    {
+        syVRAMCacheFreeEntry(state->records[SELECTION_ARROW_LEFT].slot);
+        if (state->records[SELECTION_ARROW_LEFT].y != 0)
+        {
+            syVRAMCacheFreeEntry(state->records[SELECTION_ARROW_RIGHT].slot);
+        }
+    }
+    syVRAMCacheFreeEntry(state->records[SELECTION_RECORD_HAND].slot);
+    syHeapSlotRelease(HEAP_SLOT_SELECTION_MENU);
 }
 
 // Moves the row of icons to start at pixel (x, y), 16 pixels apart.
 void mnSelectionMenuSetPos(Uint32 x, Uint32 y)
 {
-	SELECTION_MENU_STATE *state = SelectionMenuStateWork;
-	SELECTION_NODE       *node;
+    SELECTION_MENU_STATE *state = SelectionMenuStateWork;
+    SELECTION_NODE       *node;
 
-	state->baseX = x;
-	state->baseY = y;
-	node         = state->head;
-	while (node != 0)
-	{
-		node->x        = x;
-		node->targetX  = x;
-		node->y        = y;
-		node->targetY  = y;
-		node           = node->next;
-		x             += SELECTION_ICON_SPACING;
-	}
+    state->baseX = x;
+    state->baseY = y;
+    node         = state->head;
+    while (node != 0)
+    {
+        node->x        = x;
+        node->targetX  = x;
+        node->y        = y;
+        node->targetY  = y;
+        node           = node->next;
+        x             += SELECTION_ICON_SPACING;
+    }
 }
 
 // Sets up both end arrows of the selection row.
 void mnSetupSelectionBothSides(void)
 {
-	SELECTION_MENU_STATE *state;
+    SELECTION_MENU_STATE *state;
 
-	state = SelectionMenuStateWork;
-	mnSelectionMenuSetupArrow(state, 0);
-	mnSelectionMenuSetupArrow(state, 1);
+    state = SelectionMenuStateWork;
+    mnSelectionMenuSetupArrow(state, 0);
+    mnSelectionMenuSetupArrow(state, 1);
 }
 
 // Sets up the left (index 0) or right (1) arrow of the selection row, shown when there are entries
 // beyond that end.
 void mnSelectionMenuSetupArrow(SELECTION_MENU_STATE *state, Sint32 side)
 {
-	SELECTION_SPR *arrow      = &state->records[side].sprite;
-	const Uint8   *arrowTiles = 0;
-	Uint32         count;
+    SELECTION_SPR *arrow      = &state->records[side].sprite;
+    const Uint8   *arrowTiles = 0;
+    Uint32         count;
 
-	state->records[side].kind = FALSE;
-	if (side != 0)
-	{
-		const Uint8 *right = MenuCursorActorTiles;
+    state->records[side].kind = FALSE;
+    if (side != 0)
+    {
+        const Uint8 *right = MenuCursorActorTiles;
 
-		count              = state->count;
-		if (state->top != 0)
-			count -= state->top;
-		if (count > SELECTION_ROW_SHOWN)
-		{
-			state->records[side].kind = TRUE;
-			count                     = SELECTION_ROW_SHOWN;
-		}
-		arrowTiles = right;
-		// Just past the last of the at most five icons shown.
-		state->records[SELECTION_ARROW_RIGHT].x =
-			state->baseX + SELECTION_ICON_SPACING * (count - 1) + 17;
-	}
-	else
-	{
-		arrowTiles                             = MenuCursorLeftActorTiles;
-		state->records[SELECTION_ARROW_LEFT].x = state->baseX - 9;
-		if (state->top != 0)
-			state->records[SELECTION_ARROW_LEFT].kind = TRUE;
-	}
-	if (state->records[side].y == 0)
-	{
-		state->records[side].slot = syVRAMCacheFindFreeEntry();
-		state->records[side].tile =
-			syVRAMCacheLoad(state->records[side].slot, ARROW_FRAME_BYTES, arrowTiles);
-		state->records[side].y    = state->baseY;
-		state->records[side].base = 0;
-		arrow->mode               = OBJ_MODE_NORMAL;
-		arrow->mosaic             = 0;
-		arrow->colors             = 1;
-		arrow->affine             = SPRITE_AFFINE_OFF;
-		arrow->matrix             = 0;
-		arrow->size               = 0;
-		arrow->shape              = SPRITE_SHAPE_TALL;
-		arrow->priority           = 0;
-	}
+        count              = state->count;
+        if (state->top != 0)
+            count -= state->top;
+        if (count > SELECTION_ROW_SHOWN)
+        {
+            state->records[side].kind = TRUE;
+            count                     = SELECTION_ROW_SHOWN;
+        }
+        arrowTiles = right;
+        // Just past the last of the at most five icons shown.
+        state->records[SELECTION_ARROW_RIGHT].x =
+            state->baseX + SELECTION_ICON_SPACING * (count - 1) + 17;
+    }
+    else
+    {
+        arrowTiles                             = MenuCursorLeftActorTiles;
+        state->records[SELECTION_ARROW_LEFT].x = state->baseX - 9;
+        if (state->top != 0)
+            state->records[SELECTION_ARROW_LEFT].kind = TRUE;
+    }
+    if (state->records[side].y == 0)
+    {
+        state->records[side].slot = syVRAMCacheFindFreeEntry();
+        state->records[side].tile =
+            syVRAMCacheLoad(state->records[side].slot, ARROW_FRAME_BYTES, arrowTiles);
+        state->records[side].y    = state->baseY;
+        state->records[side].base = 0;
+        arrow->mode               = OBJ_MODE_NORMAL;
+        arrow->mosaic             = 0;
+        arrow->colors             = 1;
+        arrow->affine             = SPRITE_AFFINE_OFF;
+        arrow->matrix             = 0;
+        arrow->size               = 0;
+        arrow->shape              = SPRITE_SHAPE_TALL;
+        arrow->priority           = 0;
+    }
 }
 
 // Returns the node at the selection screen's cursor index. cursorIndex is relative to head, not the
 // number of queued entries.
 SELECTION_NODE *mnSelectionMenuGetCursorNode(SELECTION_MENU_STATE *state)
 {
-	SELECTION_NODE *node = state->head;
-	Sint32          i;
+    SELECTION_NODE *node = state->head;
+    Sint32          i;
 
-	for (i = 0; i != state->cursorIndex; ++i)
-	{
-		node = node->next;
-	}
-	return node;
+    for (i = 0; i != state->cursorIndex; ++i)
+    {
+        node = node->next;
+    }
+    return node;
 }
 
 // The selection row's mode that only B leaves: the cursor stays and A chooses nothing.
@@ -724,565 +724,565 @@ SELECTION_NODE *mnSelectionMenuGetCursorNode(SELECTION_MENU_STATE *state)
 // it, cancels with B (-1).
 Sint32 mnSelectionMenuRun(Sint32 mode)
 {
-	SELECTION_MENU_STATE *state = SelectionMenuStateWork;
+    SELECTION_MENU_STATE *state = SelectionMenuStateWork;
 
-	mnSelectionMenuHighlightIcon(state, 0);
-	for (;;)
-	{
-		sySynch(1);
-		// No input while the row is pushed down.
-		if (state->verticalScroll != 0)
-		{
-			continue;
-		}
-		if (mode != SELECTION_FIXED)
-		{
-			if (PerRepeat & KEY_RIGHT)
-			{
-				mnSelectionMenuStepRight(state);
-			}
-			else if (PerRepeat & KEY_LEFT)
-			{
-				mnSelectionMenuStepLeft(state);
-			}
-			else if (PerPush & KEY_A)
-			{
-				return mnConfirmSelection(state);
-			}
-		}
-		if (mode != 0 && (PerPush & KEY_B))
-		{
-			return -1;
-		}
-	}
+    mnSelectionMenuHighlightIcon(state, 0);
+    for (;;)
+    {
+        sySynch(1);
+        // No input while the row is pushed down.
+        if (state->verticalScroll != 0)
+        {
+            continue;
+        }
+        if (mode != SELECTION_FIXED)
+        {
+            if (PerRepeat & KEY_RIGHT)
+            {
+                mnSelectionMenuStepRight(state);
+            }
+            else if (PerRepeat & KEY_LEFT)
+            {
+                mnSelectionMenuStepLeft(state);
+            }
+            else if (PerPush & KEY_A)
+            {
+                return mnConfirmSelection(state);
+            }
+        }
+        if (mode != 0 && (PerPush & KEY_B))
+        {
+            return -1;
+        }
+    }
 }
 
 // mnSelectionMenuRun with the menu's sounds: the cursor's move, a confirm, and on a yes or no row a
 // cancel for no; B, when mode allows it, cancels with its sound.
 Uint32 mnSelectionMenuRunWithSounds(Uint32 mode)
 {
-	SELECTION_MENU_STATE *state = SelectionMenuStateWork;
-	Uint32                result;
+    SELECTION_MENU_STATE *state = SelectionMenuStateWork;
+    Uint32                result;
 
-	for (;;)
-	{
-		sySynch(1);
-		if (state->verticalScroll != 0)
-		{
-			continue;
-		}
+    for (;;)
+    {
+        sySynch(1);
+        if (state->verticalScroll != 0)
+        {
+            continue;
+        }
 
-		if (mode != SELECTION_FIXED)
-		{
-			if (PerRepeat & KEY_RIGHT)
-			{
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				mnSelectionMenuStepRight(state);
-			}
-			else if (PerRepeat & KEY_LEFT)
-			{
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				mnSelectionMenuStepLeft(state);
-			}
+        if (mode != SELECTION_FIXED)
+        {
+            if (PerRepeat & KEY_RIGHT)
+            {
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                mnSelectionMenuStepRight(state);
+            }
+            else if (PerRepeat & KEY_LEFT)
+            {
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                mnSelectionMenuStepLeft(state);
+            }
 
-			if (PerPush & KEY_A)
-			{
-				// On a yes or no row, entry 0 (yes) sounds as a confirm and the other as a cancel.
-				result = state->top + state->cursorIndex;
-				if (state->head->kind == ICON_KIND_YES_NO)
-				{
-					if (result == 0)
-						sySoundPlayStub(SE_MENU_CONFIRM);
-					else
-						sySoundPlayStub(SE_MENU_CANCEL);
-				}
-				else
-				{
-					sySoundPlayStub(SE_MENU_CONFIRM);
-				}
-				return result;
-			}
-		}
+            if (PerPush & KEY_A)
+            {
+                // On a yes or no row, entry 0 (yes) sounds as a confirm and the other as a cancel.
+                result = state->top + state->cursorIndex;
+                if (state->head->kind == ICON_KIND_YES_NO)
+                {
+                    if (result == 0)
+                        sySoundPlayStub(SE_MENU_CONFIRM);
+                    else
+                        sySoundPlayStub(SE_MENU_CANCEL);
+                }
+                else
+                {
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                }
+                return result;
+            }
+        }
 
-		if (mode != 0 && (PerPush & KEY_B))
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			return -1;
-		}
-	}
+        if (mode != 0 && (PerPush & KEY_B))
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            return -1;
+        }
+    }
 }
 
 // Moves the cursor one entry right, scrolling the row at its fourth place. This variant stops at
 // the end; mnSelectionMenuStepRight also wraps around.
 UNUSED void mnMoveSelectionForward(SELECTION_MENU_STATE *state)
 {
-	Uint32 nextEntry = state->top + state->cursorIndex + 1;
+    Uint32 nextEntry = state->top + state->cursorIndex + 1;
 
-	if (nextEntry == state->count)
-	{
-		return;
-	}
-	mnSelectionMenuRedrawIcon(state, state->cursorIndex);
-	state->status = SELECTION_STATUS_SCROLLING;
-	sySynch(1);
-	state->cursorIndex++;
-	if (state->cursorIndex == SELECTION_LAST_PLACE && nextEntry + 1 < state->count)
-	{
-		state->cursorIndex--;
-		state->records[SELECTION_ARROW_RIGHT].base = ARROW_SCROLL_TICKS;
-		state->top++;
-		mnSelectionMenuScroll(state, TRUE);
-		if (state->top + state->cursorIndex + 2 == state->count)
-		{
-			state->records[SELECTION_ARROW_RIGHT].kind = FALSE;
-		}
-		state->records[SELECTION_ARROW_LEFT].kind = TRUE;
-	}
-	state->status = SELECTION_STATUS_SHOWN;
-	mnSelectionMenuHighlightIcon(state, state->cursorIndex);
-	sySynch(1);
-	mnSelectionMenuOpenNameWindow(state->head->kind, 0);
-	sySynch(1);
+    if (nextEntry == state->count)
+    {
+        return;
+    }
+    mnSelectionMenuRedrawIcon(state, state->cursorIndex);
+    state->status = SELECTION_STATUS_SCROLLING;
+    sySynch(1);
+    state->cursorIndex++;
+    if (state->cursorIndex == SELECTION_LAST_PLACE && nextEntry + 1 < state->count)
+    {
+        state->cursorIndex--;
+        state->records[SELECTION_ARROW_RIGHT].base = ARROW_SCROLL_TICKS;
+        state->top++;
+        mnSelectionMenuScroll(state, TRUE);
+        if (state->top + state->cursorIndex + 2 == state->count)
+        {
+            state->records[SELECTION_ARROW_RIGHT].kind = FALSE;
+        }
+        state->records[SELECTION_ARROW_LEFT].kind = TRUE;
+    }
+    state->status = SELECTION_STATUS_SHOWN;
+    mnSelectionMenuHighlightIcon(state, state->cursorIndex);
+    sySynch(1);
+    mnSelectionMenuOpenNameWindow(state->head->kind, 0);
+    sySynch(1);
 }
 
 // Moves the cursor one entry left, scrolling the row at its second place. This variant stops at the
 // beginning; mnSelectionMenuStepLeft also wraps around.
 UNUSED void mnMoveSelectionBackward(SELECTION_MENU_STATE *state)
 {
-	Uint32 cursorIndex;
+    Uint32 cursorIndex;
 
-	if (state->top == 0 && state->cursorIndex == 0)
-	{
-		return;
-	}
-	mnSelectionMenuRedrawIcon(state, state->cursorIndex);
-	state->status = SELECTION_STATUS_SCROLLING;
-	sySynch(1);
-	cursorIndex = state->cursorIndex;
-	if (cursorIndex == 1 && state->top != 0)
-	{
-		state->records[SELECTION_ARROW_LEFT].base = ARROW_SCROLL_TICKS;
-		state->top--;
-		mnSelectionMenuScroll(state, FALSE);
-		if (state->top == 0)
-		{
-			state->records[SELECTION_ARROW_LEFT].kind = FALSE;
-		}
-		state->records[SELECTION_ARROW_RIGHT].kind = cursorIndex;
-	}
-	else
-	{
-		state->cursorIndex--;
-	}
-	state->status = SELECTION_STATUS_SHOWN;
-	mnSelectionMenuHighlightIcon(state, state->cursorIndex);
-	sySynch(1);
-	mnSelectionMenuOpenNameWindow(state->head->kind, 0);
-	sySynch(1);
+    if (state->top == 0 && state->cursorIndex == 0)
+    {
+        return;
+    }
+    mnSelectionMenuRedrawIcon(state, state->cursorIndex);
+    state->status = SELECTION_STATUS_SCROLLING;
+    sySynch(1);
+    cursorIndex = state->cursorIndex;
+    if (cursorIndex == 1 && state->top != 0)
+    {
+        state->records[SELECTION_ARROW_LEFT].base = ARROW_SCROLL_TICKS;
+        state->top--;
+        mnSelectionMenuScroll(state, FALSE);
+        if (state->top == 0)
+        {
+            state->records[SELECTION_ARROW_LEFT].kind = FALSE;
+        }
+        state->records[SELECTION_ARROW_RIGHT].kind = cursorIndex;
+    }
+    else
+    {
+        state->cursorIndex--;
+    }
+    state->status = SELECTION_STATUS_SHOWN;
+    mnSelectionMenuHighlightIcon(state, state->cursorIndex);
+    sySynch(1);
+    mnSelectionMenuOpenNameWindow(state->head->kind, 0);
+    sySynch(1);
 }
 
 // Moves the cursor one entry right, scrolling the row at its edge and wrapping from the last entry
 // to the first.
 void mnSelectionMenuStepRight(SELECTION_MENU_STATE *state)
 {
-	SELECTION_NODE *node;
-	Uint32          entryIndex;
-	Sint32          x;
-	Uint32          end;
+    SELECTION_NODE *node;
+    Uint32          entryIndex;
+    Sint32          x;
+    Uint32          end;
 
-	mnSelectionMenuRedrawIcon(state, state->cursorIndex);
-	state->status = SELECTION_STATUS_SCROLLING;
-	sySynch(1);
-	state->cursorIndex++;
-	// With more entries than the five shown, stepping past the last gathers the icons at the row's
-	// start (12 pixels a tick), refills them from the first entry and fans them out again; stepping
-	// onto the fifth place with more to come scrolls the row instead, the cursor staying on the
-	// fourth.
-	if (state->count > SELECTION_ROW_SHOWN)
-	{
-		end = state->top + state->cursorIndex;
-		if (end == state->count)
-		{
-			node                                      = state->head;
-			state->records[SELECTION_ARROW_LEFT].kind = FALSE;
-			while (node->next != NULL)
-			{
-				node->targetX = state->baseX;
-				node->targetY = state->baseY;
-				node->dx      = -12;
-				node          = node->next;
-			}
-			node->targetX = state->baseX;
-			node->targetY = state->baseY;
-			node->dx      = -12;
-			while (node->targetX != node->x)
-				sySynch(1);
-			node = state->head;
-			if (node != NULL)
-			{
-				entryIndex = 0;
-				do
-				{
-					mnSelectionMenuSetupIcon(
-						state->kinds[entryIndex], state->bases[entryIndex], node, 1);
-					node = node->next;
-					entryIndex++;
-				} while (node != NULL);
-			}
-			state->cursorIndex = 0;
-			state->top         = 0;
-			node               = state->head;
-			x                  = node->x + SELECTION_ICON_SPACING;
-			node               = node->next;
-			while (node != NULL)
-			{
-				node->targetX  = x;
-				node->dx       = 12;
-				node           = node->next;
-				x             += SELECTION_ICON_SPACING;
-			}
-			state->records[SELECTION_ARROW_RIGHT].kind = TRUE;
-		}
-		else if (state->cursorIndex == SELECTION_LAST_PLACE && end + 1 < state->count)
-		{
-			state->cursorIndex--;
-			state->records[SELECTION_ARROW_RIGHT].base = ARROW_SCROLL_TICKS;
-			state->top++;
-			mnSelectionMenuScroll(state, TRUE);
-			if (state->top + state->cursorIndex + 2 == state->count)
-				state->records[SELECTION_ARROW_RIGHT].kind = FALSE;
-			state->records[SELECTION_ARROW_LEFT].kind = TRUE;
-		}
-	}
-	else if (state->cursorIndex == state->count)
-	{
-		state->cursorIndex = 0;
-	}
-	state->status = SELECTION_STATUS_SHOWN;
-	mnSelectionMenuHighlightIcon(state, state->cursorIndex);
-	sySynch(1);
-	mnSelectionMenuOpenNameWindow(state->head->kind, 0);
-	sySynch(1);
+    mnSelectionMenuRedrawIcon(state, state->cursorIndex);
+    state->status = SELECTION_STATUS_SCROLLING;
+    sySynch(1);
+    state->cursorIndex++;
+    // With more entries than the five shown, stepping past the last gathers the icons at the row's
+    // start (12 pixels a tick), refills them from the first entry and fans them out again; stepping
+    // onto the fifth place with more to come scrolls the row instead, the cursor staying on the
+    // fourth.
+    if (state->count > SELECTION_ROW_SHOWN)
+    {
+        end = state->top + state->cursorIndex;
+        if (end == state->count)
+        {
+            node                                      = state->head;
+            state->records[SELECTION_ARROW_LEFT].kind = FALSE;
+            while (node->next != NULL)
+            {
+                node->targetX = state->baseX;
+                node->targetY = state->baseY;
+                node->dx      = -12;
+                node          = node->next;
+            }
+            node->targetX = state->baseX;
+            node->targetY = state->baseY;
+            node->dx      = -12;
+            while (node->targetX != node->x)
+                sySynch(1);
+            node = state->head;
+            if (node != NULL)
+            {
+                entryIndex = 0;
+                do
+                {
+                    mnSelectionMenuSetupIcon(
+                        state->kinds[entryIndex], state->bases[entryIndex], node, 1);
+                    node = node->next;
+                    entryIndex++;
+                } while (node != NULL);
+            }
+            state->cursorIndex = 0;
+            state->top         = 0;
+            node               = state->head;
+            x                  = node->x + SELECTION_ICON_SPACING;
+            node               = node->next;
+            while (node != NULL)
+            {
+                node->targetX  = x;
+                node->dx       = 12;
+                node           = node->next;
+                x             += SELECTION_ICON_SPACING;
+            }
+            state->records[SELECTION_ARROW_RIGHT].kind = TRUE;
+        }
+        else if (state->cursorIndex == SELECTION_LAST_PLACE && end + 1 < state->count)
+        {
+            state->cursorIndex--;
+            state->records[SELECTION_ARROW_RIGHT].base = ARROW_SCROLL_TICKS;
+            state->top++;
+            mnSelectionMenuScroll(state, TRUE);
+            if (state->top + state->cursorIndex + 2 == state->count)
+                state->records[SELECTION_ARROW_RIGHT].kind = FALSE;
+            state->records[SELECTION_ARROW_LEFT].kind = TRUE;
+        }
+    }
+    else if (state->cursorIndex == state->count)
+    {
+        state->cursorIndex = 0;
+    }
+    state->status = SELECTION_STATUS_SHOWN;
+    mnSelectionMenuHighlightIcon(state, state->cursorIndex);
+    sySynch(1);
+    mnSelectionMenuOpenNameWindow(state->head->kind, 0);
+    sySynch(1);
 }
 
 // Moves the cursor one entry left, scrolling the row at its edge and wrapping from the first entry
 // to the last.
 void mnSelectionMenuStepLeft(SELECTION_MENU_STATE *state)
 {
-	SELECTION_NODE *node;
-	Sint32          i;
-	Sint32          kind;
+    SELECTION_NODE *node;
+    Sint32          i;
+    Sint32          kind;
 
-	mnSelectionMenuRedrawIcon(state, state->cursorIndex);
-	state->status = SELECTION_STATUS_SCROLLING;
-	sySynch(1);
-	// As mnSelectionMenuStepRight, mirrored: from the second place with entries before it the row
-	// scrolls back; from the first entry the icons gather at the row's last place (12 pixels a
-	// tick), refill from the last five entries and fan out again, with the cursor on the last.
-	if (state->count > SELECTION_ROW_SHOWN)
-	{
-		if ((state->cursorIndex | state->top) != 0)
-		{
-			if (state->cursorIndex == 1 && state->top != 0)
-			{
-				state->records[SELECTION_ARROW_LEFT].base = ARROW_SCROLL_TICKS;
-				state->top--;
-				mnSelectionMenuScroll(state, FALSE);
-				if (state->top == 0)
-					state->records[SELECTION_ARROW_LEFT].kind = FALSE;
-				state->records[SELECTION_ARROW_RIGHT].kind = TRUE;
-			}
-			else
-			{
-				state->cursorIndex--;
-			}
-		}
-		else
-		{
-			node = state->head;
-			i    = SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
-			// kind, which later takes the head's kind, carries the 0 first.
-			kind = 0;
-			state->records[SELECTION_ARROW_RIGHT].kind = kind;
-			while (node->next != NULL)
-			{
-				node->targetX  = node->x + i;
-				node->dx       = 12;
-				node           = node->next;
-				i             -= SELECTION_ICON_SPACING;
-			}
-			node = state->head;
-			while (node->x != node->targetX)
-				sySynch(1);
-			i = 0;
-			while (i != state->count - SELECTION_ROW_SHOWN)
-				i++;
-			node               = state->head;
-			state->top         = i;
-			state->cursorIndex = SELECTION_LAST_PLACE;
-			while (node != NULL)
-			{
-				mnSelectionMenuSetupIcon(state->kinds[i], state->bases[i], node, 1);
-				node = node->next;
-				i++;
-			}
-			node = state->head;
-			i    = state->baseX;
-			while (node->next != NULL)
-			{
-				node->targetX  = i;
-				node->dx       = -12;
-				node           = node->next;
-				i             += SELECTION_ICON_SPACING;
-			}
-			state->records[SELECTION_ARROW_LEFT].kind = TRUE;
-		}
-	}
-	else if (state->cursorIndex != 0)
-	{
-		state->cursorIndex--;
-	}
-	else
-	{
-		state->cursorIndex = state->count - 1;
-	}
-	state->status = SELECTION_STATUS_SHOWN;
-	mnSelectionMenuHighlightIcon(state, state->cursorIndex);
-	sySynch(1);
-	kind = state->head->kind;
-	mnSelectionMenuOpenNameWindow(kind, 0);
-	sySynch(1);
+    mnSelectionMenuRedrawIcon(state, state->cursorIndex);
+    state->status = SELECTION_STATUS_SCROLLING;
+    sySynch(1);
+    // As mnSelectionMenuStepRight, mirrored: from the second place with entries before it the row
+    // scrolls back; from the first entry the icons gather at the row's last place (12 pixels a
+    // tick), refill from the last five entries and fan out again, with the cursor on the last.
+    if (state->count > SELECTION_ROW_SHOWN)
+    {
+        if ((state->cursorIndex | state->top) != 0)
+        {
+            if (state->cursorIndex == 1 && state->top != 0)
+            {
+                state->records[SELECTION_ARROW_LEFT].base = ARROW_SCROLL_TICKS;
+                state->top--;
+                mnSelectionMenuScroll(state, FALSE);
+                if (state->top == 0)
+                    state->records[SELECTION_ARROW_LEFT].kind = FALSE;
+                state->records[SELECTION_ARROW_RIGHT].kind = TRUE;
+            }
+            else
+            {
+                state->cursorIndex--;
+            }
+        }
+        else
+        {
+            node = state->head;
+            i    = SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
+            // kind, which later takes the head's kind, carries the 0 first.
+            kind = 0;
+            state->records[SELECTION_ARROW_RIGHT].kind = kind;
+            while (node->next != NULL)
+            {
+                node->targetX  = node->x + i;
+                node->dx       = 12;
+                node           = node->next;
+                i             -= SELECTION_ICON_SPACING;
+            }
+            node = state->head;
+            while (node->x != node->targetX)
+                sySynch(1);
+            i = 0;
+            while (i != state->count - SELECTION_ROW_SHOWN)
+                i++;
+            node               = state->head;
+            state->top         = i;
+            state->cursorIndex = SELECTION_LAST_PLACE;
+            while (node != NULL)
+            {
+                mnSelectionMenuSetupIcon(state->kinds[i], state->bases[i], node, 1);
+                node = node->next;
+                i++;
+            }
+            node = state->head;
+            i    = state->baseX;
+            while (node->next != NULL)
+            {
+                node->targetX  = i;
+                node->dx       = -12;
+                node           = node->next;
+                i             += SELECTION_ICON_SPACING;
+            }
+            state->records[SELECTION_ARROW_LEFT].kind = TRUE;
+        }
+    }
+    else if (state->cursorIndex != 0)
+    {
+        state->cursorIndex--;
+    }
+    else
+    {
+        state->cursorIndex = state->count - 1;
+    }
+    state->status = SELECTION_STATUS_SHOWN;
+    mnSelectionMenuHighlightIcon(state, state->cursorIndex);
+    sySynch(1);
+    kind = state->head->kind;
+    mnSelectionMenuOpenNameWindow(kind, 0);
+    sySynch(1);
 }
 
 // Redraws the command icon at row place rowIndex in its plain state, in its own VRAM cache entry.
 // Other kinds of icon are left alone.
 void mnSelectionMenuRedrawIcon(SELECTION_MENU_STATE *state, Uint32 rowIndex)
 {
-	SELECTION_NODE *node = state->head;
-	Uint32          tile;
-	Uint32          value;
+    SELECTION_NODE *node = state->head;
+    Uint32          tile;
+    Uint32          value;
 
-	while (rowIndex != 0)
-	{
-		rowIndex--;
-		node = node->next;
-	}
-	if (node->kind == ICON_KIND_COMMAND || node->kind == ICON_KIND_YES_NO)
-	{
-		Uint32 first = node->msg - MsgCommandName;
+    while (rowIndex != 0)
+    {
+        rowIndex--;
+        node = node->next;
+    }
+    if (node->kind == ICON_KIND_COMMAND || node->kind == ICON_KIND_YES_NO)
+    {
+        Uint32 first = node->msg - MsgCommandName;
 
-		value        = node->slot;
-		mnIconBuildCommandIconTiles(first, 0, &value, &tile, 1);
-	}
+        value        = node->slot;
+        mnIconBuildCommandIconTiles(first, 0, &value, &tile, 1);
+    }
 }
 
 // Redraws the command icon at row place rowIndex and loads its large icon.
 void mnSelectionMenuHighlightIcon(SELECTION_MENU_STATE *state, Uint32 rowIndex)
 {
-	SELECTION_NODE *node = state->head;
-	Uint32          tile;
-	Uint32          value;
+    SELECTION_NODE *node = state->head;
+    Uint32          tile;
+    Uint32          value;
 
-	while (rowIndex != 0)
-	{
-		rowIndex--;
-		node = node->next;
-	}
-	if (node->kind == ICON_KIND_COMMAND || node->kind == ICON_KIND_YES_NO)
-	{
-		Uint32 resource = node->msg - MsgCommandName;
+    while (rowIndex != 0)
+    {
+        rowIndex--;
+        node = node->next;
+    }
+    if (node->kind == ICON_KIND_COMMAND || node->kind == ICON_KIND_YES_NO)
+    {
+        Uint32 resource = node->msg - MsgCommandName;
 
-		value           = node->slot;
-		mnIconBuildCommandIconTiles(resource, 0, &value, &tile, 1);
-		mnSelectionMenuLoadLargeIcon();
-	}
+        value           = node->slot;
+        mnIconBuildCommandIconTiles(resource, 0, &value, &tile, 1);
+        mnSelectionMenuLoadLargeIcon();
+    }
 }
 
 // Stops the battle engine's highlight of units (btHighlightSetModesStub with mode 0);
 // mnConfirmSelection calls it as an entry is chosen.
 void mnClearBattleHighlight(SELECTION_MENU_STATE *state)
 {
-	Uint16          data[6];
-	SELECTION_NODE *node  = state->head;
-	Sint32          count = 0;
+    Uint16          data[6];
+    SELECTION_NODE *node  = state->head;
+    Sint32          count = 0;
 
-	while (node != 0)
-	{
-		node = node->next;
-		count++;
-	}
-	data[count] = BATTLE_UNIT_LIST_END;
-	btHighlightSetModesStub(data, 0);
+    while (node != 0)
+    {
+        node = node->next;
+        count++;
+    }
+    data[count] = BATTLE_UNIT_LIST_END;
+    btHighlightSetModesStub(data, 0);
 }
 
 // Scrolls the row one entry: forward brings an icon in from the right as the leftmost shrinks away,
 // and back the reverse; waits until it has moved.
 void mnSelectionMenuScroll(SELECTION_MENU_STATE *state, Sint32 forward)
 {
-	SELECTION_NODE *node;
-	SELECTION_NODE *last;
-	SELECTION_NODE *first;
-	Sint32          base;
-	Sint32          kind;
-	Uint32          entryIndex;
-	Sint32          rowX;
-	Sint32          rowY;
+    SELECTION_NODE *node;
+    SELECTION_NODE *last;
+    SELECTION_NODE *first;
+    Sint32          base;
+    Sint32          kind;
+    Uint32          entryIndex;
+    Sint32          rowX;
+    Sint32          rowY;
 
-	if (forward != 0)
-	{
-		entryIndex = state->top + SELECTION_LAST_PLACE;
-		base       = state->bases[entryIndex];
-		kind       = state->kinds[entryIndex];
-		node       = mnSelectionMenuFindFreeIcon(SELECTION_ICON_ROW);
-		if (node == NULL)
-			return;
-		mnSelectionMenuSetupIcon(kind, base, node, 0);
-		rowX            = state->baseX;
-		node->x         = rowX + (SELECTION_LAST_PLACE + 1) * SELECTION_ICON_SPACING;
-		rowY            = state->baseY;
-		node->targetX   = rowX + SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
-		node->y         = rowY;
-		node->targetY   = rowY;
-		node->scaleStep = Q_8_8(1) / 8;
-		node->scale     = Q_8_8(1) / 8;
-		node->scaleEnd  = Q_8_8(1);
-		node->dx        = -2;
-		last            = node;
-		node            = state->head;
-		node->scaleStep = -Q_8_8(1) / 8;
-		node->scaleEnd  = 0;
-		for (;;)
-		{
-			node->targetX = node->x - SELECTION_ICON_SPACING;
-			node->dx      = -2;
-			if (node->next == NULL)
-				break;
-			node = node->next;
-		}
-		node->next = last;
-		last->next = NULL;
-		last->prev = node;
-		node       = state->head;
-		do
-		{
-			sySynch(1);
-		} while (node->scale != 0);
-		state->head = node->next;
-		syVRAMCacheFreeEntry(node->slot);
-		node->kind = ICON_KIND_NONE;
-		node       = node->next;
-		node->prev = NULL;
-	}
-	else
-	{
-		entryIndex = state->top;
-		base       = state->bases[entryIndex];
-		kind       = state->kinds[entryIndex];
-		node       = mnSelectionMenuFindFreeIcon(SELECTION_ICON_ROW);
-		if (node == NULL)
-			return;
-		mnSelectionMenuSetupIcon(kind, base, node, 0);
-		node->x         = state->baseX - SELECTION_ICON_SPACING;
-		node->y         = state->baseY;
-		node->targetY   = node->y;
-		node->dx        = 2;
-		node->scale     = Q_8_8(1) / 8;
-		node->scaleStep = Q_8_8(1) / 8;
-		node->targetX   = node->x + SELECTION_ICON_SPACING;
-		node->scaleEnd  = Q_8_8(1);
-		first           = node;
-		node            = state->head;
-		node->prev      = first;
-		first->next     = node;
-		first->prev     = NULL;
-		state->head     = first;
-		node            = first;
-		for (;;)
-		{
-			node->targetX = node->x + SELECTION_ICON_SPACING;
-			node->dx      = 2;
-			if (node->next == NULL)
-				break;
-			node = node->next;
-		}
-		node->scaleEnd  = 0;
-		node->scaleStep = -Q_8_8(1) / 8;
-		node            = state->head;
-		do
-		{
-			sySynch(1);
-		} while (node->scale != Q_8_8(1));
-		while (node->next != NULL)
-			node = node->next;
-		syVRAMCacheFreeEntry(node->slot);
-		node->kind       = ICON_KIND_NONE;
-		node->prev->next = NULL;
-	}
+    if (forward != 0)
+    {
+        entryIndex = state->top + SELECTION_LAST_PLACE;
+        base       = state->bases[entryIndex];
+        kind       = state->kinds[entryIndex];
+        node       = mnSelectionMenuFindFreeIcon(SELECTION_ICON_ROW);
+        if (node == NULL)
+            return;
+        mnSelectionMenuSetupIcon(kind, base, node, 0);
+        rowX            = state->baseX;
+        node->x         = rowX + (SELECTION_LAST_PLACE + 1) * SELECTION_ICON_SPACING;
+        rowY            = state->baseY;
+        node->targetX   = rowX + SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
+        node->y         = rowY;
+        node->targetY   = rowY;
+        node->scaleStep = Q_8_8(1) / 8;
+        node->scale     = Q_8_8(1) / 8;
+        node->scaleEnd  = Q_8_8(1);
+        node->dx        = -2;
+        last            = node;
+        node            = state->head;
+        node->scaleStep = -Q_8_8(1) / 8;
+        node->scaleEnd  = 0;
+        for (;;)
+        {
+            node->targetX = node->x - SELECTION_ICON_SPACING;
+            node->dx      = -2;
+            if (node->next == NULL)
+                break;
+            node = node->next;
+        }
+        node->next = last;
+        last->next = NULL;
+        last->prev = node;
+        node       = state->head;
+        do
+        {
+            sySynch(1);
+        } while (node->scale != 0);
+        state->head = node->next;
+        syVRAMCacheFreeEntry(node->slot);
+        node->kind = ICON_KIND_NONE;
+        node       = node->next;
+        node->prev = NULL;
+    }
+    else
+    {
+        entryIndex = state->top;
+        base       = state->bases[entryIndex];
+        kind       = state->kinds[entryIndex];
+        node       = mnSelectionMenuFindFreeIcon(SELECTION_ICON_ROW);
+        if (node == NULL)
+            return;
+        mnSelectionMenuSetupIcon(kind, base, node, 0);
+        node->x         = state->baseX - SELECTION_ICON_SPACING;
+        node->y         = state->baseY;
+        node->targetY   = node->y;
+        node->dx        = 2;
+        node->scale     = Q_8_8(1) / 8;
+        node->scaleStep = Q_8_8(1) / 8;
+        node->targetX   = node->x + SELECTION_ICON_SPACING;
+        node->scaleEnd  = Q_8_8(1);
+        first           = node;
+        node            = state->head;
+        node->prev      = first;
+        first->next     = node;
+        first->prev     = NULL;
+        state->head     = first;
+        node            = first;
+        for (;;)
+        {
+            node->targetX = node->x + SELECTION_ICON_SPACING;
+            node->dx      = 2;
+            if (node->next == NULL)
+                break;
+            node = node->next;
+        }
+        node->scaleEnd  = 0;
+        node->scaleStep = -Q_8_8(1) / 8;
+        node            = state->head;
+        do
+        {
+            sySynch(1);
+        } while (node->scale != Q_8_8(1));
+        while (node->next != NULL)
+            node = node->next;
+        syVRAMCacheFreeEntry(node->slot);
+        node->kind       = ICON_KIND_NONE;
+        node->prev->next = NULL;
+    }
 }
 
 // Loads the icon of an entry of kind mode (ICON_KIND_COMMAND, ICON_KIND_YES_NO, ICON_KIND_ITEM,
 // ICON_KIND_ABILITY or ICON_KIND_TABLE_ENTRY) into a free sprite tile slot and returns it, or -1.
 Sint32 mnSelectionIconLoad(Sint32 mode, Sint32 value)
 {
-	Sint32 output;
-	Sint32 result = -1;
+    Sint32 output;
+    Sint32 result = -1;
 
-	switch (mode)
-	{
-		case ICON_KIND_COMMAND:
-		case ICON_KIND_YES_NO : mnIconBuildCommandIconTiles(value, 0, &result, &output, 0); break;
-		case ICON_KIND_ITEM:
-			result = syVRAMCacheFindFreeEntry();
-			if (result == VRAM_CACHE_ENTRY_COUNT)
-				return -1;
-			mnItemIconLoadLayersIntoSlot(
-				value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
-			break;
-		case ICON_KIND_TABLE_ENTRY:
-			result = syVRAMCacheFindFreeEntry();
-			if (result == VRAM_CACHE_ENTRY_COUNT)
-				return -1;
-			mnTitleLoadFirstTile(value, 0, result);
-			break;
-		case ICON_KIND_ABILITY: mnAbilityBuildIconTiles(value, 1, &result, &output, 0); break;
-	}
-	return result;
+    switch (mode)
+    {
+        case ICON_KIND_COMMAND:
+        case ICON_KIND_YES_NO : mnIconBuildCommandIconTiles(value, 0, &result, &output, 0); break;
+        case ICON_KIND_ITEM:
+            result = syVRAMCacheFindFreeEntry();
+            if (result == VRAM_CACHE_ENTRY_COUNT)
+                return -1;
+            mnItemIconLoadLayersIntoSlot(
+                value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
+            break;
+        case ICON_KIND_TABLE_ENTRY:
+            result = syVRAMCacheFindFreeEntry();
+            if (result == VRAM_CACHE_ENTRY_COUNT)
+                return -1;
+            mnTitleLoadFirstTile(value, 0, result);
+            break;
+        case ICON_KIND_ABILITY: mnAbilityBuildIconTiles(value, 1, &result, &output, 0); break;
+    }
+    return result;
 }
 
 // Loads the icon of entry, of kind kind, into sprite tile slot slot (a free slot when -1), drawn
 // from baseIcon where the kind takes one, and returns the slot, or -1 when none was free.
 Sint32 mnSelectionIconLoadIntoSlot(Sint32 kind, Sint32 entry, Sint32 slot, Sint32 baseIcon)
 {
-	Sint32 output;
-	Sint32 original = slot;
+    Sint32 output;
+    Sint32 original = slot;
 
-	if (slot == -1)
-	{
-		slot = syVRAMCacheFindFreeEntry();
-		if (slot == VRAM_CACHE_ENTRY_COUNT)
-			return original;
-	}
+    if (slot == -1)
+    {
+        slot = syVRAMCacheFindFreeEntry();
+        if (slot == VRAM_CACHE_ENTRY_COUNT)
+            return original;
+    }
 
-	switch (kind)
-	{
-		case ICON_KIND_COMMAND:
-		case ICON_KIND_YES_NO:
-			mnIconBuildCommandIconTiles(entry, baseIcon, &slot, &output, 1);
-			break;
-		case ICON_KIND_ITEM:
-			mnItemIconLoadLayersIntoSlot(
-				entry, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN | ICON_CURSED, slot);
-			break;
-		case ICON_KIND_EQUIPMENT_ITEM:
-			mnItemIconLoadLayersIntoSlot(
-				entry, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_CURSED, slot);
-			break;
-		case ICON_KIND_ABILITY    : mnAbilityBuildIconTiles(entry, baseIcon, &slot, &output, 1); break;
-		case ICON_KIND_PATTERN    : mnIconBuildMiscellaneousIconTiles(entry, 0, slot); break;
-		case ICON_KIND_TABLE_ENTRY: mnTitleLoadFirstTile(entry, 0, slot); break;
-	}
+    switch (kind)
+    {
+        case ICON_KIND_COMMAND:
+        case ICON_KIND_YES_NO:
+            mnIconBuildCommandIconTiles(entry, baseIcon, &slot, &output, 1);
+            break;
+        case ICON_KIND_ITEM:
+            mnItemIconLoadLayersIntoSlot(
+                entry, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN | ICON_CURSED, slot);
+            break;
+        case ICON_KIND_EQUIPMENT_ITEM:
+            mnItemIconLoadLayersIntoSlot(
+                entry, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_CURSED, slot);
+            break;
+        case ICON_KIND_ABILITY    : mnAbilityBuildIconTiles(entry, baseIcon, &slot, &output, 1); break;
+        case ICON_KIND_PATTERN    : mnIconBuildMiscellaneousIconTiles(entry, 0, slot); break;
+        case ICON_KIND_TABLE_ENTRY: mnTitleLoadFirstTile(entry, 0, slot); break;
+    }
 
-	return slot;
+    return slot;
 }
 
 // Sets up a selection icon for an entry: its icon tiles (in its old slot when reuse is set), its
@@ -1290,156 +1290,156 @@ Sint32 mnSelectionIconLoadIntoSlot(Sint32 kind, Sint32 entry, Sint32 slot, Sint3
 // ID.
 void mnSelectionMenuSetupIcon(Uint32 kind, Sint32 base, SELECTION_NODE *node, Sint32 reuse)
 {
-	Sint32         cacheSlot;
-	Sint32         tile;
-	SELECTION_SPR *sprite;
+    Sint32         cacheSlot;
+    Sint32         tile;
+    SELECTION_SPR *sprite;
 
-	switch (kind)
-	{
-		case ICON_KIND_COMMAND:
-		case ICON_KIND_YES_NO:
-			if (reuse != 0)
-				cacheSlot = node->slot;
-			mnIconBuildCommandIconTiles(base, 0, &cacheSlot, &tile, reuse);
-			node->msg = base + MsgCommandName;
-			break;
-		case ICON_KIND_ITEM:
-			if (reuse != 0)
-				cacheSlot = node->slot;
-			mnIconBuildItemIconTiles(base, 1, &cacheSlot, &tile, reuse);
-			node->msg = base + MsgItemName;
-			break;
-		case ICON_KIND_ABILITY:
-			if (reuse != 0)
-				cacheSlot = node->slot;
-			mnAbilityBuildIconTiles(base, 1, &cacheSlot, &tile, reuse);
-			node->msg = base + MsgAbilityName;
-			break;
-	}
+    switch (kind)
+    {
+        case ICON_KIND_COMMAND:
+        case ICON_KIND_YES_NO:
+            if (reuse != 0)
+                cacheSlot = node->slot;
+            mnIconBuildCommandIconTiles(base, 0, &cacheSlot, &tile, reuse);
+            node->msg = base + MsgCommandName;
+            break;
+        case ICON_KIND_ITEM:
+            if (reuse != 0)
+                cacheSlot = node->slot;
+            mnIconBuildItemIconTiles(base, 1, &cacheSlot, &tile, reuse);
+            node->msg = base + MsgItemName;
+            break;
+        case ICON_KIND_ABILITY:
+            if (reuse != 0)
+                cacheSlot = node->slot;
+            mnAbilityBuildIconTiles(base, 1, &cacheSlot, &tile, reuse);
+            node->msg = base + MsgAbilityName;
+            break;
+    }
 
-	node->base       = base;
-	node->slot       = cacheSlot;
-	node->tile       = tile;
-	node->kind       = kind;
-	node->scale      = Q_8_8(1);
-	node->scaleEnd   = Q_8_8(1);
+    node->base       = base;
+    node->slot       = cacheSlot;
+    node->tile       = tile;
+    node->kind       = kind;
+    node->scale      = Q_8_8(1);
+    node->scaleEnd   = Q_8_8(1);
 
-	sprite           = &node->sprite;
-	sprite->mode     = OBJ_MODE_NORMAL;
-	sprite->colors   = 0;
-	sprite->mosaic   = 0;
+    sprite           = &node->sprite;
+    sprite->mode     = OBJ_MODE_NORMAL;
+    sprite->colors   = 0;
+    sprite->mosaic   = 0;
 
-	sprite->size     = 1;
-	sprite->shape    = SPRITE_SHAPE_SQUARE;
-	sprite->palette  = 0;
-	sprite->tile     = tile;
-	sprite->priority = 0;
+    sprite->size     = 1;
+    sprite->shape    = SPRITE_SHAPE_SQUARE;
+    sprite->palette  = 0;
+    sprite->tile     = tile;
+    sprite->priority = 0;
 }
 
 // Chooses the entry under the cursor: the other icons gather into it and vanish, and it joins the
 // chosen icons at the top left.
 Uint32 mnConfirmSelection(SELECTION_MENU_STATE *state)
 {
-	SELECTION_NODE *node;
-	SELECTION_NODE *other     = NULL;
-	Uint32          nodeIndex = 0;
-	Uint32          chosenIndex;
-	SELECTION_SPR  *sprite;
+    SELECTION_NODE *node;
+    SELECTION_NODE *other     = NULL;
+    Uint32          nodeIndex = 0;
+    Uint32          chosenIndex;
+    SELECTION_SPR  *sprite;
 
-	chosenIndex = state->top + state->cursorIndex;
-	mnClearBattleHighlight(state);
-	mnSelectionMenuRedrawIcon(state, state->cursorIndex);
-	state->status = SELECTION_STATUS_SCROLLING;
-	sySynch(1);
-	state->records[SELECTION_ARROW_LEFT].kind   = FALSE;
-	state->records[SELECTION_ARROW_RIGHT].kind  = FALSE;
-	state->records[SELECTION_RECORD_HAND].kind  = 0;
-	state->records[SELECTION_RECORD_HAND].scale = 0;
-	mnSelectionMenuFreeLargeIcon();
-	node = state->head;
-	for (; node != NULL && state->cursorIndex != nodeIndex; nodeIndex++)
-	{
-		node = node->next;
-	}
-	node->homeX = node->x;
-	node->homeY = node->y;
-	// The others slide halfway in each of two ticks, then vanish.
-	for (other = state->head; other != NULL; other = other->next)
-	{
-		if (other != node)
-		{
-			other->targetX = node->x;
-			other->dx      = (node->x - other->x) >> 1;
-		}
-	}
-	sySynch(2);
-	for (other = state->head; other != NULL; other = other->next)
-	{
-		if (other != node)
-		{
-			syVRAMCacheFreeEntry(other->slot);
-			other->kind = ICON_KIND_NONE;
-		}
-	}
-	state->head   = node;
-	node->prev    = NULL;
-	node->next    = NULL;
-	// The chosen icons line up from x 4, 16 pixels apart; the new one goes after the last, reaching
-	// its place over two ticks, and its record moves to the chosen list.
-	node->targetX = 4;
-	for (other = state->path, nodeIndex = 0; other != NULL; other = other->next)
-	{
-		node->targetX += SELECTION_ICON_SPACING;
-		nodeIndex++;
-	}
-	state->pathTop[nodeIndex]     = state->top;
-	state->pathCursor[nodeIndex]  = state->cursorIndex;
-	node->dx                      = (node->targetX - node->x) >> 1;
-	state->unread                 = 0;
-	state->cursorIndex           |= SELECTION_CURSOR_RESET;
-	sySynch(2);
-	other           = mnSelectionMenuFindFreeIcon(SELECTION_ICON_CHOSEN);
-	other->kind     = node->kind;
-	other->msg      = node->msg;
-	other->base     = node->base;
-	other->slot     = node->slot;
-	other->tile     = node->tile;
-	other->x        = node->x;
-	other->y        = node->y;
-	other->targetX  = other->x;
-	other->targetY  = other->y;
-	other->homeX    = node->homeX;
-	other->homeY    = node->homeY;
-	other->dx       = 0;
-	other->dy       = 0;
-	other->scale    = Q_8_8(1);
-	other->scaleEnd = Q_8_8(1);
-	sprite          = &other->sprite;
-	sprite->mode    = OBJ_MODE_NORMAL;
-	sprite->colors  = 0;
-	sprite->mosaic  = 0;
-	sprite->size    = 1;
-	sprite->shape   = SPRITE_SHAPE_SQUARE;
-	sprite->palette = 0;
-	sprite->tile    = other->tile;
-	node->kind      = ICON_KIND_NONE;
-	state->head     = NULL;
-	if (state->path != NULL)
-	{
-		node = state->path;
-		while (node->next != NULL)
-			node = node->next;
-		node->next  = other;
-		other->prev = node;
-		other->next = NULL;
-	}
-	else
-	{
-		state->path = other;
-		other->prev = NULL;
-		other->next = NULL;
-	}
-	return chosenIndex;
+    chosenIndex = state->top + state->cursorIndex;
+    mnClearBattleHighlight(state);
+    mnSelectionMenuRedrawIcon(state, state->cursorIndex);
+    state->status = SELECTION_STATUS_SCROLLING;
+    sySynch(1);
+    state->records[SELECTION_ARROW_LEFT].kind   = FALSE;
+    state->records[SELECTION_ARROW_RIGHT].kind  = FALSE;
+    state->records[SELECTION_RECORD_HAND].kind  = 0;
+    state->records[SELECTION_RECORD_HAND].scale = 0;
+    mnSelectionMenuFreeLargeIcon();
+    node = state->head;
+    for (; node != NULL && state->cursorIndex != nodeIndex; nodeIndex++)
+    {
+        node = node->next;
+    }
+    node->homeX = node->x;
+    node->homeY = node->y;
+    // The others slide halfway in each of two ticks, then vanish.
+    for (other = state->head; other != NULL; other = other->next)
+    {
+        if (other != node)
+        {
+            other->targetX = node->x;
+            other->dx      = (node->x - other->x) >> 1;
+        }
+    }
+    sySynch(2);
+    for (other = state->head; other != NULL; other = other->next)
+    {
+        if (other != node)
+        {
+            syVRAMCacheFreeEntry(other->slot);
+            other->kind = ICON_KIND_NONE;
+        }
+    }
+    state->head   = node;
+    node->prev    = NULL;
+    node->next    = NULL;
+    // The chosen icons line up from x 4, 16 pixels apart; the new one goes after the last, reaching
+    // its place over two ticks, and its record moves to the chosen list.
+    node->targetX = 4;
+    for (other = state->path, nodeIndex = 0; other != NULL; other = other->next)
+    {
+        node->targetX += SELECTION_ICON_SPACING;
+        nodeIndex++;
+    }
+    state->pathTop[nodeIndex]     = state->top;
+    state->pathCursor[nodeIndex]  = state->cursorIndex;
+    node->dx                      = (node->targetX - node->x) >> 1;
+    state->unread                 = 0;
+    state->cursorIndex           |= SELECTION_CURSOR_RESET;
+    sySynch(2);
+    other           = mnSelectionMenuFindFreeIcon(SELECTION_ICON_CHOSEN);
+    other->kind     = node->kind;
+    other->msg      = node->msg;
+    other->base     = node->base;
+    other->slot     = node->slot;
+    other->tile     = node->tile;
+    other->x        = node->x;
+    other->y        = node->y;
+    other->targetX  = other->x;
+    other->targetY  = other->y;
+    other->homeX    = node->homeX;
+    other->homeY    = node->homeY;
+    other->dx       = 0;
+    other->dy       = 0;
+    other->scale    = Q_8_8(1);
+    other->scaleEnd = Q_8_8(1);
+    sprite          = &other->sprite;
+    sprite->mode    = OBJ_MODE_NORMAL;
+    sprite->colors  = 0;
+    sprite->mosaic  = 0;
+    sprite->size    = 1;
+    sprite->shape   = SPRITE_SHAPE_SQUARE;
+    sprite->palette = 0;
+    sprite->tile    = other->tile;
+    node->kind      = ICON_KIND_NONE;
+    state->head     = NULL;
+    if (state->path != NULL)
+    {
+        node = state->path;
+        while (node->next != NULL)
+            node = node->next;
+        node->next  = other;
+        other->prev = node;
+        other->next = NULL;
+    }
+    else
+    {
+        state->path = other;
+        other->prev = NULL;
+        other->next = NULL;
+    }
+    return chosenIndex;
 }
 
 // Six empty functions; nothing calls the first, the fourth or the fifth. The others are reached
@@ -1471,34 +1471,34 @@ void mnArrowNoOperationCallbackD(void)
 // Sets up a sprite as the right-pointing arrow, in a free tile slot (returned in *slot).
 void mnArrowCreate(MENU_SPR *sprite, Sint32 *slot)
 {
-	const void *data          = MenuCursorActorTiles;
-	Sint32      cacheSlot     = syVRAMCacheFindFreeEntry();
+    const void *data          = MenuCursorActorTiles;
+    Sint32      cacheSlot     = syVRAMCacheFindFreeEntry();
 
-	*slot                     = cacheSlot;
-	sprite->oam.f.tile        = syVRAMCacheLoad(cacheSlot, ARROW_FRAME_BYTES, data);
-	sprite->oam.f.mode        = OBJ_MODE_NORMAL;
-	sprite->oam.f.mosaic      = 0;
-	sprite->oam.f.colors      = 1;
-	sprite->oam.f.affine      = SPRITE_AFFINE_OFF;
-	sprite->oam.f.affineIndex = 0;
-	sprite->oam.f.size        = 0;
-	sprite->oam.f.shape       = SPRITE_SHAPE_TALL;
-	sprite->oam.f.priority    = 0;
+    *slot                     = cacheSlot;
+    sprite->oam.f.tile        = syVRAMCacheLoad(cacheSlot, ARROW_FRAME_BYTES, data);
+    sprite->oam.f.mode        = OBJ_MODE_NORMAL;
+    sprite->oam.f.mosaic      = 0;
+    sprite->oam.f.colors      = 1;
+    sprite->oam.f.affine      = SPRITE_AFFINE_OFF;
+    sprite->oam.f.affineIndex = 0;
+    sprite->oam.f.size        = 0;
+    sprite->oam.f.shape       = SPRITE_SHAPE_TALL;
+    sprite->oam.f.priority    = 0;
 }
 
 // Places an arrow sprite at screen pixel (x, y) and queues it for drawing this tick, at depth slot
 // 252; the caller calls it every tick it shows.
 void mnArrowSetPos(MENU_SPR *sprite, Sint32 x, Sint32 y)
 {
-	sprite->oam.f.x = x;
-	sprite->oam.f.y = y;
-	syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_FRONT - 3);
+    sprite->oam.f.x = x;
+    sprite->oam.f.y = y;
+    syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_FRONT - 3);
 }
 
 // Frees an arrow sprite's tile slot.
 void mnArrowRelease(Sint32 slot)
 {
-	syVRAMCacheFreeEntry(slot);
+    syVRAMCacheFreeEntry(slot);
 }
 
 // Loads the large icon of the command under the cursor, zooming in: 32x32 in 256 colours (32 * 32
@@ -1506,51 +1506,51 @@ void mnArrowRelease(Sint32 slot)
 // mnSelectionMenuDraw shows it at its own size.
 void mnSelectionMenuLoadLargeIcon(void)
 {
-	SELECTION_MENU_STATE *state    = SelectionMenuStateWork;
-	SELECTION_NODE       *selected = mnSelectionMenuGetCursorNode(state);
-	SELECTION_NODE       *largeIcon;
-	ICON_TRANSFER        *buf;
-	Uint8                *table;
-	void                 *resource;
-	Sint32                resourceId;
+    SELECTION_MENU_STATE *state    = SelectionMenuStateWork;
+    SELECTION_NODE       *selected = mnSelectionMenuGetCursorNode(state);
+    SELECTION_NODE       *largeIcon;
+    ICON_TRANSFER        *buf;
+    Uint8                *table;
+    void                 *resource;
+    Sint32                resourceId;
 
-	if (selected->kind != ICON_KIND_COMMAND && selected->kind != ICON_KIND_YES_NO)
-		return;
+    if (selected->kind != ICON_KIND_COMMAND && selected->kind != ICON_KIND_YES_NO)
+        return;
 
-	buf        = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-	largeIcon  = &state->records[SELECTION_RECORD_LARGE_ICON];
-	resourceId = selected->base;
-	// The resource starts with a halfword offset per command icon.
-	table      = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
-	{
-		Uint8 **tiles = &buf->encoded;
-		resource      = table + *(Uint16 *)(table + selected->base * 2);
-		*tiles        = resource;
-	}
-	syDecompressByteLZ(resource, buf);
+    buf        = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+    largeIcon  = &state->records[SELECTION_RECORD_LARGE_ICON];
+    resourceId = selected->base;
+    // The resource starts with a halfword offset per command icon.
+    table      = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
+    {
+        Uint8 **tiles = &buf->encoded;
+        resource      = table + *(Uint16 *)(table + selected->base * 2);
+        *tiles        = resource;
+    }
+    syDecompressByteLZ(resource, buf);
 
-	if (largeIcon->kind == ICON_KIND_NONE)
-		largeIcon->slot = syVRAMCacheFindFreeEntry();
-	largeIcon->tile      = syVRAMCacheLoad(largeIcon->slot, 32 * 32, buf);
-	largeIcon->kind      = ICON_KIND_COMMAND;
-	largeIcon->base      = resourceId;
-	largeIcon->scale     = LARGE_ICON_ZOOM_STEP;
-	largeIcon->scaleStep = LARGE_ICON_ZOOM_STEP;
-	largeIcon->scaleEnd  = 6 * LARGE_ICON_ZOOM_STEP;
-	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
+    if (largeIcon->kind == ICON_KIND_NONE)
+        largeIcon->slot = syVRAMCacheFindFreeEntry();
+    largeIcon->tile      = syVRAMCacheLoad(largeIcon->slot, 32 * 32, buf);
+    largeIcon->kind      = ICON_KIND_COMMAND;
+    largeIcon->base      = resourceId;
+    largeIcon->scale     = LARGE_ICON_ZOOM_STEP;
+    largeIcon->scaleStep = LARGE_ICON_ZOOM_STEP;
+    largeIcon->scaleEnd  = 6 * LARGE_ICON_ZOOM_STEP;
+    syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 }
 
 // Frees the large command icon, if it is shown. The large preview owns a cache slot independently
 // of the visible row icons.
 void mnSelectionMenuFreeLargeIcon(void)
 {
-	SELECTION_NODE *largeIcon = &SelectionMenuStateWork->records[SELECTION_RECORD_LARGE_ICON];
+    SELECTION_NODE *largeIcon = &SelectionMenuStateWork->records[SELECTION_RECORD_LARGE_ICON];
 
-	if (largeIcon->kind != ICON_KIND_NONE)
-	{
-		syVRAMCacheFreeEntry(largeIcon->slot);
-		largeIcon->kind = ICON_KIND_NONE;
-	}
+    if (largeIcon->kind != ICON_KIND_NONE)
+    {
+        syVRAMCacheFreeEntry(largeIcon->slot);
+        largeIcon->kind = ICON_KIND_NONE;
+    }
 }
 
 // Runs the field menu until the player picks something that leaves it, and returns the chosen
@@ -1560,113 +1560,113 @@ void mnSelectionMenuFreeLargeIcon(void)
 // unreachable.
 Sint32 mnFieldMenuRun(void)
 {
-	Sint32       ret;
-	Sint32       selection;
-	FIELD_STATE *field;
+    Sint32       ret;
+    Sint32       selection;
+    FIELD_STATE *field;
 
-	field     = FieldStateWork;
-	selection = 0;
+    field     = FieldStateWork;
+    selection = 0;
 
-	for (;;)
-	{
-		mnPartyStatusOpenAndWait();
-		selection = mnFieldMenuSelectCommand(selection);
-		// German, Spanish, French and Italian: mark the menu open, which pauses Reveal's sparkles,
-		// and, while Reveal is active, clear its sparkles.
+    for (;;)
+    {
+        mnPartyStatusOpenAndWait();
+        selection = mnFieldMenuSelectCommand(selection);
+        // German, Spanish, French and Italian: mark the menu open, which pauses Reveal's sparkles,
+        // and, while Reveal is active, clear its sparkles.
 #if FIELD_MENU_STOPS_REVEAL_SPARKLES
-		field->menuOpen = 1;
-		if (field->revealActive != 0)
-		{
-			fdEffectReleaseRevealSparklesStub();
-			sySynch(1);
-		}
+        field->menuOpen = 1;
+        if (field->revealActive != 0)
+        {
+            fdEffectReleaseRevealSparklesStub();
+            sySynch(1);
+        }
 #endif
 #if FIX_FUNCTION_SIGNATURES
-		// UB: the original reads a void return. The default result is ignored by the only caller,
-		// so give it a defined value after closing the window.
-		mnPartyStatusCloseWithMenu();
-		ret = 0;
+        // UB: the original reads a void return. The default result is ignored by the only caller,
+        // so give it a defined value after closing the window.
+        mnPartyStatusCloseWithMenu();
+        ret = 0;
 #else
-		ret = mnPartyStatusCloseWithMenu();
+        ret = mnPartyStatusCloseWithMenu();
 #endif
 
-		// A screen left without a choice (-1, or nonzero from the Djinn screen) opens the field
-		// menu again.
-		switch (selection)
-		{
-			case 0:
-				ret = fdActorGetCueMetatileAheadOfCurrentStub();
-				if (ret == 0)
-					ret = METATILE_BEHAVIOR_WALL;
-				field->examineMetatile = ret;
-				break;
-			case FIELD_MENU_PSYNERGY:
-				ret = mnPsynergyMenuRunStub();
-				if (ret == -1)
-					continue;
-				break;
-			case FIELD_MENU_DJINN:
-				ret = mnDjinnMenuRunStub();
-				if (ret != 0)
-					continue;
-				break;
-			case FIELD_MENU_ITEM:
-				ret = mnItemMenuRunStub();
-				if (ret == -1)
-					continue;
-				break;
-			case FIELD_MENU_STATUS:
-				ret = mnStatusScreenRunStub();
-				if (ret == -1)
-					continue;
-				break;
-			default: break;
-		}
-		break;
-	}
+        // A screen left without a choice (-1, or nonzero from the Djinn screen) opens the field
+        // menu again.
+        switch (selection)
+        {
+            case 0:
+                ret = fdActorGetCueMetatileAheadOfCurrentStub();
+                if (ret == 0)
+                    ret = METATILE_BEHAVIOR_WALL;
+                field->examineMetatile = ret;
+                break;
+            case FIELD_MENU_PSYNERGY:
+                ret = mnPsynergyMenuRunStub();
+                if (ret == -1)
+                    continue;
+                break;
+            case FIELD_MENU_DJINN:
+                ret = mnDjinnMenuRunStub();
+                if (ret != 0)
+                    continue;
+                break;
+            case FIELD_MENU_ITEM:
+                ret = mnItemMenuRunStub();
+                if (ret == -1)
+                    continue;
+                break;
+            case FIELD_MENU_STATUS:
+                ret = mnStatusScreenRunStub();
+                if (ret == -1)
+                    continue;
+                break;
+            default: break;
+        }
+        break;
+    }
 
 #if FIELD_MENU_STOPS_REVEAL_SPARKLES
-	field->menuOpen = 0;
+    field->menuOpen = 0;
 #endif
-	return ret;
+    return ret;
 }
 
 // Opens the party status window that shows with the field menu (flags 1) and waits a tick.
 void mnPartyStatusOpenAndWait(void)
 {
-	mnPartyStatusCreateWindow(1);
-	sySynch(1);
+    mnPartyStatusCreateWindow(1);
+    sySynch(1);
 }
 
 // Closes the party status window, kept in heap block 16 (PartyStatusState), and frees the block.
 void mnPartyStatusCloseWithMenu(void)
 {
-	mnPartyStatusClose();
+    mnPartyStatusClose();
 }
 
 // Sets up an empty selection screen and waits a tick.
 UNUSED void mnSelectionMenuCreateEmpty(void)
 {
-	mnSelectionMenuCreate();
-	mnSelectionMenuClear();
-	sySynch(1);
+    mnSelectionMenuCreate();
+    mnSelectionMenuClear();
+    sySynch(1);
 }
 
 // Runs a selection row with the cursor on entry initIndex, cancellable, and returns the entry
 // chosen or -1. initIndex is a row index; cancellation returns -1 encoded as Uint32.
 Uint32 mnRunSelectionForValue(Uint32 initIndex)
 {
-	SELECTION_MENU_STATE *state = SelectionMenuStateWork;
-	Uint32                result;
+    SELECTION_MENU_STATE *state = SelectionMenuStateWork;
+    Uint32                result;
 
-	// locked 1: a yes or no row stays at the bottom.
-	state->cursorIndex = initIndex;
-	state->locked      = 1;
-	mnSelectionMenuBuildEntries(initIndex);
-	mnSetupSelectionBothSides();
-	mnSelectionMenuOpenNameWindow(0, SELECTION_ROW_SHOWN);
-	mnSelectionMenuStartDrawing();
-	result = mnSelectionMenuRunWithSounds(1);
-	mnSelectionMenuClose();
-	return result;
+    // locked 1: a yes or no row stays at the bottom.
+    state->cursorIndex = initIndex;
+    state->locked      = 1;
+    mnSelectionMenuBuildEntries(initIndex);
+    mnSetupSelectionBothSides();
+    mnSelectionMenuOpenNameWindow(0, SELECTION_ROW_SHOWN);
+    mnSelectionMenuStartDrawing();
+    result = mnSelectionMenuRunWithSounds(1);
+    mnSelectionMenuClose();
+    return result;
 }

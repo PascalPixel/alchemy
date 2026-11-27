@@ -11,9 +11,9 @@
 // tua".
 typedef enum ITEM_GENDER
 {
-	ITEM_MASCULINE = 0, // also the unnamed items'
-	ITEM_FEMININE  = 1,
-	ITEM_NEUTER    = 2  // German only
+    ITEM_MASCULINE = 0, // also the unnamed items'
+    ITEM_FEMININE  = 1,
+    ITEM_NEUTER    = 2  // German only
 } ITEM_GENDER;
 
 extern const Sint8 ArticleEmpty[];

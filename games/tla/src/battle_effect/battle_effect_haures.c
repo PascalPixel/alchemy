@@ -3,8 +3,8 @@
 // Two corners of the mound: its upper edge, then its lower.
 typedef struct MOUND_VERTEX
 {
-	MODEL_VERTEX upper;
-	MODEL_VERTEX lower;
+    MODEL_VERTEX upper;
+    MODEL_VERTEX lower;
 } MOUND_VERTEX;
 
 // The map cell buffer past its first 16 KB: the rune's picture in the coming, then the charge's
@@ -81,7 +81,7 @@ extern const Uint16 HauresBodyPiecePoints[][2];
 // The rune's scale on a tick: it holds its size at HAURES_RUNE_GROW_TICK until then, and from then
 // grows a sixteenth a tick (its height; it is half as wide).
 #define HAURES_RUNE_SCALE(tick)                                                                    \
-	(((tick) - HAURES_RUNE_GROW_TICK) * (toFIXED(1) / 16) + HAURES_RUNE_HELD_SCALE)
+    (((tick) - HAURES_RUNE_GROW_TICK) * (toFIXED(1) / 16) + HAURES_RUNE_HELD_SCALE)
 #define HAURES_RUNE_GROW_TICK         269
 #define HAURES_RUNE_HELD_SCALE        (toFIXED(7567) / 4096)
 // BlueArcSheetB's six arcs (BLUE_ARC_WIDTH by BLUE_ARC_HEIGHT), each laid in a texture
@@ -141,1150 +141,1150 @@ extern const Uint16 HauresBodyPiecePoints[][2];
 // Abilities: Haures.
 void btEffectRunHaures(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_STATE            *battle;
-	Uint8                   *canvas;
-	BATTLE_EFFECT_STATE     *state;
-	DRAW_RECTANGLE           draw[2];
-	Sint32                   frame;
-	Uint8                   *sprites;
-	BATTLE_BACKGROUND_STATE *background;
-	POINT2_D                 pos;
-	POINT2_D                 velocity;
-	Sint32                   morph;
-	Sint32                   morphStep;
-	Sint32                   dived;
-	Sint32                   i;
-	Sint32                   dropPlace[4];
-	FIXED                    bodyPlace[4];
-	SCALE                    riseScale;
-	SCALE                    chargeScale;
-	SCALE                    orbitScale;
-	MODEL_TEXTURE            texture;
-	MODEL_TEXTURE            burstTexture;
-	MODEL_TEXTURE            wideTexture;
-	MODEL_TEXTURE            bandTexture;
-	FIELD_SPR               *sprite;
-	const Uint8             *particleX;
-	Uint8                   *buf;
-	Uint8                   *shades;
-	Uint16                  *dest;
+    BATTLE_STATE            *battle;
+    Uint8                   *canvas;
+    BATTLE_EFFECT_STATE     *state;
+    DRAW_RECTANGLE           draw[2];
+    Sint32                   frame;
+    Uint8                   *sprites;
+    BATTLE_BACKGROUND_STATE *background;
+    POINT2_D                 pos;
+    POINT2_D                 velocity;
+    Sint32                   morph;
+    Sint32                   morphStep;
+    Sint32                   dived;
+    Sint32                   i;
+    Sint32                   dropPlace[4];
+    FIXED                    bodyPlace[4];
+    SCALE                    riseScale;
+    SCALE                    chargeScale;
+    SCALE                    orbitScale;
+    MODEL_TEXTURE            texture;
+    MODEL_TEXTURE            burstTexture;
+    MODEL_TEXTURE            wideTexture;
+    MODEL_TEXTURE            bandTexture;
+    FIELD_SPR               *sprite;
+    const Uint8             *particleX;
+    Uint8                   *buf;
+    Uint8                   *shades;
+    Uint16                  *dest;
 
-	buf        = MapGridMetatileBuffer;
-	shades     = HauresMoundShades;
-	battle     = RamHeapSlots->battleState;
-	canvas     = RamHeapSlots->battleCanvas;
-	state      = RamHeapSlots->battleEffect;
-	sprites    = RamHeapSlots->battleSheet;
-	background = RamHeapSlots->battleBg;
-	btEffectStartCanvasLayer(0);
-	btEffectConfigureEffectDisplay();
-	PLTT_BACKDROP       = 0;
-	BG_PLTT_COLOR(0, 1) = 0;
-	state->transferMode = CANVAS_COPY;
-	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	btEffectWipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-	REG_BLDCNT             = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	REG_BG2X               = Q_8_8(4);
-	ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
-	btEffectShowLivingTargets(state->args);
-	background->busy  = 1;
-	BgScrollWork[1].x = 0;
-	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	sySetEvent(btEffectProcessPendingStampTransfer, EVENT_PASS_VBLANK);
-	morph     = 0;
-	morphStep = 0;
-	dived     = 0;
-	btEffectCreateSprites(HAURES_CLAW_PIECES, SPRITE_HAURES, 2);
-	for (i = 0; i != HAURES_FLAME_COUNT; i++)
-	{
-		sprite                                 = fdSpriteCreateStub(SPRITE_HAURES_FLAME);
-		state->sprites[HAURES_FIRST_FLAME + i] = sprite;
-		if (sprite != NULL)
-		{
-			sprite->flags = 0;
-			fdSpriteStartAnimationStub(sprite, 0);
-			{
-				FIELD_SPR *added  = state->sprites[HAURES_FIRST_FLAME + i];
+    buf        = MapGridMetatileBuffer;
+    shades     = HauresMoundShades;
+    battle     = RamHeapSlots->battleState;
+    canvas     = RamHeapSlots->battleCanvas;
+    state      = RamHeapSlots->battleEffect;
+    sprites    = RamHeapSlots->battleSheet;
+    background = RamHeapSlots->battleBg;
+    btEffectStartCanvasLayer(0);
+    btEffectConfigureEffectDisplay();
+    PLTT_BACKDROP       = 0;
+    BG_PLTT_COLOR(0, 1) = 0;
+    state->transferMode = CANVAS_COPY;
+    sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
+    btEffectWipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+    REG_BLDCNT             = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    REG_BG2X               = Q_8_8(4);
+    ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
+    btEffectShowLivingTargets(state->args);
+    background->busy  = 1;
+    BgScrollWork[1].x = 0;
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+    sySetEvent(btEffectProcessPendingStampTransfer, EVENT_PASS_VBLANK);
+    morph     = 0;
+    morphStep = 0;
+    dived     = 0;
+    btEffectCreateSprites(HAURES_CLAW_PIECES, SPRITE_HAURES, 2);
+    for (i = 0; i != HAURES_FLAME_COUNT; i++)
+    {
+        sprite                                 = fdSpriteCreateStub(SPRITE_HAURES_FLAME);
+        state->sprites[HAURES_FIRST_FLAME + i] = sprite;
+        if (sprite != NULL)
+        {
+            sprite->flags = 0;
+            fdSpriteStartAnimationStub(sprite, 0);
+            {
+                FIELD_SPR *added  = state->sprites[HAURES_FIRST_FLAME + i];
 
-				added->priority   = 1;
-				added->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-			}
-		}
-	}
-	for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++)
-	{
-		sprite                                       = fdSpriteCreateStub(SPRITE_HAURES_DOT);
-		state->sprites[HAURES_FIRST_DROP_SPRITE + i] = sprite;
-		if (sprite != NULL)
-		{
-			sprite->flags = 0;
-			fdSpriteStartAnimationStub(sprite, 0);
-			{
-				FIELD_SPR *added = state->sprites[HAURES_FIRST_DROP_SPRITE + i];
+                added->priority   = 1;
+                added->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
+            }
+        }
+    }
+    for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++)
+    {
+        sprite                                       = fdSpriteCreateStub(SPRITE_HAURES_DOT);
+        state->sprites[HAURES_FIRST_DROP_SPRITE + i] = sprite;
+        if (sprite != NULL)
+        {
+            sprite->flags = 0;
+            fdSpriteStartAnimationStub(sprite, 0);
+            {
+                FIELD_SPR *added = state->sprites[HAURES_FIRST_DROP_SPRITE + i];
 
-				added->priority  = 1;
-			}
-		}
-	}
-	sprite = btEffectSpriteCreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
-	((FIELD_SPR **)state->sprites)[HAURES_STAMP] = sprite;
-	sprite->objectMode                           = OBJ_MODE_SEMI_TRANSPARENT;
-	STAMP_TILES(state) = VramCacheEntries[sprite->slot].offset + OBJ_VRAM0;
-	{
-		Uint8 *c = state->sheet;
+                added->priority  = 1;
+            }
+        }
+    }
+    sprite = btEffectSpriteCreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
+    ((FIELD_SPR **)state->sprites)[HAURES_STAMP] = sprite;
+    sprite->objectMode                           = OBJ_MODE_SEMI_TRANSPARENT;
+    STAMP_TILES(state) = VramCacheEntries[sprite->slot].offset + OBJ_VRAM0;
+    {
+        Uint8 *c = state->sheet;
 
-		btResourceLoadAndDecompress(RESOURCE_CHAIN_TEXTURE, c, 0, 0);
-		btPictureMirrorIntoQuadrants(c, SCRATCH, HAURES_CHAIN_WIDTH, HAURES_CHAIN_HEIGHT);
-		btResourceLoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, c, 1, 0);
-		for (i = 0; i != HAURES_PUFF_BYTES; i++, c++)
-		{
-			Uint8 v = *c;
+        btResourceLoadAndDecompress(RESOURCE_CHAIN_TEXTURE, c, 0, 0);
+        btPictureMirrorIntoQuadrants(c, SCRATCH, HAURES_CHAIN_WIDTH, HAURES_CHAIN_HEIGHT);
+        btResourceLoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, c, 1, 0);
+        for (i = 0; i != HAURES_PUFF_BYTES; i++, c++)
+        {
+            Uint8 v = *c;
 
-			if (v != 0)
-			{
-				*c = (v >> 2) + HAURES_STAMP_FIRST_COLOR;
-			}
-		}
-	}
-	{
-		Uint32 *w;
-		Uint32  mask;
+            if (v != 0)
+            {
+                *c = (v >> 2) + HAURES_STAMP_FIRST_COLOR;
+            }
+        }
+    }
+    {
+        Uint32 *w;
+        Uint32  mask;
 
-		btResourceLoadAndDecompress(
-			RESOURCE_SWIRL_TEXTURE, w = (Uint32 *)(state->sheet + HAURES_SWIRL_TEXTURE), 0, 0);
-		// Halves the swirl's levels four pixels at a time.
-		mask = PIXELS_8BPP(0x7f);
-		for (i = 0; i != PICTURE_BYTES(HAURES_SWIRL) / 4; i++)
-		{
-			w[i] = (w[i] >> 1) & mask;
-		}
-	}
-	for (i = 0; i != HAURES_MOUND_QUADS; i++)
-	{
-		HauresMoundStrip[i * 8 + 0] = i * 2;
-		HauresMoundStrip[i * 8 + 1] = i * 2 + 1;
-		HauresMoundStrip[i * 8 + 2] = i * 2 + 2;
-		HauresMoundStrip[i * 8 + 4] = i * 2 + 1;
-		HauresMoundStrip[i * 8 + 5] = i * 2 + 3;
-		HauresMoundStrip[i * 8 + 6] = i * 2 + 2;
-	}
-	// The strip ends with a face of no corners, cleared through the end's own name.
-	HauresMoundStripEnd[0] = 0;
-	HauresMoundStripEnd[1] = 0;
-	HauresMoundStripEnd[2] = 0;
-	{
-		dest = &BG_PLTT_COLOR(0, 1);
+        btResourceLoadAndDecompress(
+            RESOURCE_SWIRL_TEXTURE, w = (Uint32 *)(state->sheet + HAURES_SWIRL_TEXTURE), 0, 0);
+        // Halves the swirl's levels four pixels at a time.
+        mask = PIXELS_8BPP(0x7f);
+        for (i = 0; i != PICTURE_BYTES(HAURES_SWIRL) / 4; i++)
+        {
+            w[i] = (w[i] >> 1) & mask;
+        }
+    }
+    for (i = 0; i != HAURES_MOUND_QUADS; i++)
+    {
+        HauresMoundStrip[i * 8 + 0] = i * 2;
+        HauresMoundStrip[i * 8 + 1] = i * 2 + 1;
+        HauresMoundStrip[i * 8 + 2] = i * 2 + 2;
+        HauresMoundStrip[i * 8 + 4] = i * 2 + 1;
+        HauresMoundStrip[i * 8 + 5] = i * 2 + 3;
+        HauresMoundStrip[i * 8 + 6] = i * 2 + 2;
+    }
+    // The strip ends with a face of no corners, cleared through the end's own name.
+    HauresMoundStripEnd[0] = 0;
+    HauresMoundStripEnd[1] = 0;
+    HauresMoundStripEnd[2] = 0;
+    {
+        dest = &BG_PLTT_COLOR(0, 1);
 
-		for (i = 1; i != SHEET_PALETTE_COLORS; i++)
-		{
-			Sint32 b;
-			Sint32 r;
-			Sint32 g;
+        for (i = 1; i != SHEET_PALETTE_COLORS; i++)
+        {
+            Sint32 b;
+            Sint32 r;
+            Sint32 g;
 
-			if (i < HAURES_RED_LEVELS)
-			{
-				b = 0;
-				g = 0;
-				r = i;
-				if (i < 0)
-				{
-					r = 0;
-				}
-				*dest = r;
-			}
-			else
-			{
-				Sint32 t = i - HAURES_RED_LEVELS;
+            if (i < HAURES_RED_LEVELS)
+            {
+                b = 0;
+                g = 0;
+                r = i;
+                if (i < 0)
+                {
+                    r = 0;
+                }
+                *dest = r;
+            }
+            else
+            {
+                Sint32 t = i - HAURES_RED_LEVELS;
 
-				b        = t * 4;
-				g        = t;
-				r        = b;
-				if (r > RGB_LEVEL_MAX)
-				{
-					r = RGB_LEVEL_MAX;
-				}
-				if (b > RGB_LEVEL_MAX)
-				{
-					b = RGB_LEVEL_MAX;
-				}
-			}
-			*dest++ = RGB(r, g, b);
-		}
-	}
-	{
-		dest = &OBJ_PLTT_COLOR(HAURES_STAMP_PALETTE, 0);
+                b        = t * 4;
+                g        = t;
+                r        = b;
+                if (r > RGB_LEVEL_MAX)
+                {
+                    r = RGB_LEVEL_MAX;
+                }
+                if (b > RGB_LEVEL_MAX)
+                {
+                    b = RGB_LEVEL_MAX;
+                }
+            }
+            *dest++ = RGB(r, g, b);
+        }
+    }
+    {
+        dest = &OBJ_PLTT_COLOR(HAURES_STAMP_PALETTE, 0);
 
-		for (i = 0; i != PALETTE_COLORS; i++, dest++)
-		{
-			Sint32 b = i * 3 + 2;
-			Sint32 r = i * 2 + 2;
+        for (i = 0; i != PALETTE_COLORS; i++, dest++)
+        {
+            Sint32 b = i * 3 + 2;
+            Sint32 r = i * 2 + 2;
 
-			if (r > RGB_LEVEL_MAX)
-			{
-				r = RGB_LEVEL_MAX;
-			}
-			if (b > RGB_LEVEL_MAX)
-			{
-				b = RGB_LEVEL_MAX;
-			}
-			*dest = RGB(r, i + 2, b);
-		}
-	}
-	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, RESOURCE_MOSS_CAVE_BACKDROP, 0);
-	// The coming, which A or B skips.
-	frame = 0;
-	if (!(PerWork.repeat & (KEY_A | KEY_B)))
-	{
-		do
-		{
-			Sint32 cut = frame - 267;
+            if (r > RGB_LEVEL_MAX)
+            {
+                r = RGB_LEVEL_MAX;
+            }
+            if (b > RGB_LEVEL_MAX)
+            {
+                b = RGB_LEVEL_MAX;
+            }
+            *dest = RGB(r, i + 2, b);
+        }
+    }
+    btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, RESOURCE_MOSS_CAVE_BACKDROP, 0);
+    // The coming, which A or B skips.
+    frame = 0;
+    if (!(PerWork.repeat & (KEY_A | KEY_B)))
+    {
+        do
+        {
+            Sint32 cut = frame - 267;
 
-			if (frame == 0)
-			{
-				state->transferValue = frame;
-				pos.x                = toFIXED(108);
-				pos.y                = toFIXED(120);
-				velocity.x           = 0;
-				velocity.y           = 0;
-				syWordsCopyEntry(
-					(void *)&BG_PLTT_COLOR(6, 0), battle->palette, sizeof(battle->palette));
-				{
-					Uint8 *q = shades;
+            if (frame == 0)
+            {
+                state->transferValue = frame;
+                pos.x                = toFIXED(108);
+                pos.y                = toFIXED(120);
+                velocity.x           = 0;
+                velocity.y           = 0;
+                syWordsCopyEntry(
+                    (void *)&BG_PLTT_COLOR(6, 0), battle->palette, sizeof(battle->palette));
+                {
+                    Uint8 *q = shades;
 
-					for (i = 0; i != HAURES_MOUND_QUADS; i++, q += 2)
-					{
-						q[0] = 1;
-						q[1] = 1;
-					}
-				}
-				particleX = HauresParticleX;
-				{
-					PARTICLE *p = state->particles;
+                    for (i = 0; i != HAURES_MOUND_QUADS; i++, q += 2)
+                    {
+                        q[0] = 1;
+                        q[1] = 1;
+                    }
+                }
+                particleX = HauresParticleX;
+                {
+                    PARTICLE *p = state->particles;
 
-					for (i = 0; i != HAURES_DROPS; i++, p++, particleX++)
-					{
-						p->x         = toFIXED(*particleX);
-						p->y         = toFIXED(16);
-						p->velocityX = 0;
-						p->velocityY = 0;
-						p->variant   = 0;
-					}
-				}
-				for (i = 0; i != HAURES_PUFFS; i++)
-				{
-					PARTICLE *p  = &state->particles[i + HAURES_DROPS];
-					p->x         = (syRandom() & 15) + 24;
-					p->y         = syRandom() & 7;
-					p->variant   = i * 3;
-					p->velocityX = 0;
-					p->velocityY = 0;
-				}
-				// DEAD: the last particle is placed and nothing reads it; the ROM keeps its stores.
-				{
-					PARTICLE *p = &state->particles[ARRAY_COUNT(state->particles) - 1];
+                    for (i = 0; i != HAURES_DROPS; i++, p++, particleX++)
+                    {
+                        p->x         = toFIXED(*particleX);
+                        p->y         = toFIXED(16);
+                        p->velocityX = 0;
+                        p->velocityY = 0;
+                        p->variant   = 0;
+                    }
+                }
+                for (i = 0; i != HAURES_PUFFS; i++)
+                {
+                    PARTICLE *p  = &state->particles[i + HAURES_DROPS];
+                    p->x         = (syRandom() & 15) + 24;
+                    p->y         = syRandom() & 7;
+                    p->variant   = i * 3;
+                    p->velocityX = 0;
+                    p->velocityY = 0;
+                }
+                // DEAD: the last particle is placed and nothing reads it; the ROM keeps its stores.
+                {
+                    PARTICLE *p = &state->particles[ARRAY_COUNT(state->particles) - 1];
 
-					p->x        = toFIXED(60);
-					p->y        = toFIXED(112);
-					p->variant  = 0;
-				}
-				for (i = 0; i != HAURES_MOUND_POINTS; i++)
-				{
-					HauresMoundCorners[i].upper.x =
-						FIXEDtoINT(-(syCos(i * HAURES_POOL_STEP) * (HAURES_POOL_WIDTH / 2)));
-					HauresMoundCorners[i].upper.y =
-						FIXEDtoINT(-(sySin(i * HAURES_POOL_STEP) * HAURES_POOL_DEPTH));
-					// DEAD: lower.x is set again two lines on; the ROM keeps this store.
-					HauresMoundCorners[i].lower.x = i * 4 - 64;
-					HauresMoundCorners[i].upper.z = 0;
-					HauresMoundCorners[i].lower.x =
-						FIXEDtoINT(-(syCos(i * HAURES_POOL_STEP) * (HAURES_POOL_WIDTH / 2)));
-					HauresMoundCorners[i].lower.y =
-						(Uint32)(sySin(i * HAURES_POOL_STEP) * (HAURES_POOL_DEPTH / 2))
-						/ (toFIXED(1) / 2);
-					HauresMoundCorners[i].lower.z = 0;
-				}
-			}
-			if ((Uint32)frame <= 31)
-			{
-				Sint32 a = frame * 2 / 3 - 35;
+                    p->x        = toFIXED(60);
+                    p->y        = toFIXED(112);
+                    p->variant  = 0;
+                }
+                for (i = 0; i != HAURES_MOUND_POINTS; i++)
+                {
+                    HauresMoundCorners[i].upper.x =
+                        FIXEDtoINT(-(syCos(i * HAURES_POOL_STEP) * (HAURES_POOL_WIDTH / 2)));
+                    HauresMoundCorners[i].upper.y =
+                        FIXEDtoINT(-(sySin(i * HAURES_POOL_STEP) * HAURES_POOL_DEPTH));
+                    // DEAD: lower.x is set again two lines on; the ROM keeps this store.
+                    HauresMoundCorners[i].lower.x = i * 4 - 64;
+                    HauresMoundCorners[i].upper.z = 0;
+                    HauresMoundCorners[i].lower.x =
+                        FIXEDtoINT(-(syCos(i * HAURES_POOL_STEP) * (HAURES_POOL_WIDTH / 2)));
+                    HauresMoundCorners[i].lower.y =
+                        (Uint32)(sySin(i * HAURES_POOL_STEP) * (HAURES_POOL_DEPTH / 2))
+                        / (toFIXED(1) / 2);
+                    HauresMoundCorners[i].lower.z = 0;
+                }
+            }
+            if ((Uint32)frame <= 31)
+            {
+                Sint32 a = frame * 2 / 3 - 35;
 
-				btPaletteBrightenSavedBattleBg(a, a, frame - 35);
-			}
-			if ((Uint32)(frame - 242) <= 21 && (frame & 1))
-			{
-				btPaletteBrightenBattleBg(1, 0, 0);
-			}
-			if (frame == 277)
-			{
-				btPaletteBrightenSavedBattleBg(
-					HAURES_CAVE_FADE_RED, -HAURES_CAVE_FADE_DARK, -HAURES_CAVE_FADE_DARK);
-			}
-			if (frame > 359)
-			{
-				btPaletteBrightenSavedBattleBg(HAURES_CAVE_FADE_RED - (frame - 360) / 4,
-				                               -HAURES_CAVE_FADE_DARK,
-				                               (frame - 360) / 8 - HAURES_CAVE_FADE_DARK);
-			}
-			// A whoosh as each drop lands.
-			if (frame == 48)
-			{
-				sySoundPlayStub(SE_WHOOSH);
-			}
-			if (frame == 74)
-			{
-				sySoundPlayStub(SE_WHOOSH);
-			}
-			if (frame == 100)
-			{
-				sySoundPlayStub(SE_WHOOSH);
-			}
-			if (frame == 126)
-			{
-				sySoundPlayStub(SE_WHOOSH);
-			}
-			if (frame == 140)
-			{
-				sySoundPlayStub(SE_RUMBLE);
-			}
-			if (frame <= 266)
-			{
-				// DEAD: tick <= 639 always holds here; the ROM keeps the compare.
-				if (frame <= 639)
-				{
-					// The drops fall one after another, each bursting into a flame where it lands.
-					dropPlace[1] = 0;
-					dropPlace[3] = 0;
-					{
-						PARTICLE *p = state->particles;
+                btPaletteBrightenSavedBattleBg(a, a, frame - 35);
+            }
+            if ((Uint32)(frame - 242) <= 21 && (frame & 1))
+            {
+                btPaletteBrightenBattleBg(1, 0, 0);
+            }
+            if (frame == 277)
+            {
+                btPaletteBrightenSavedBattleBg(
+                    HAURES_CAVE_FADE_RED, -HAURES_CAVE_FADE_DARK, -HAURES_CAVE_FADE_DARK);
+            }
+            if (frame > 359)
+            {
+                btPaletteBrightenSavedBattleBg(HAURES_CAVE_FADE_RED - (frame - 360) / 4,
+                                               -HAURES_CAVE_FADE_DARK,
+                                               (frame - 360) / 8 - HAURES_CAVE_FADE_DARK);
+            }
+            // A whoosh as each drop lands.
+            if (frame == 48)
+            {
+                sySoundPlayStub(SE_WHOOSH);
+            }
+            if (frame == 74)
+            {
+                sySoundPlayStub(SE_WHOOSH);
+            }
+            if (frame == 100)
+            {
+                sySoundPlayStub(SE_WHOOSH);
+            }
+            if (frame == 126)
+            {
+                sySoundPlayStub(SE_WHOOSH);
+            }
+            if (frame == 140)
+            {
+                sySoundPlayStub(SE_RUMBLE);
+            }
+            if (frame <= 266)
+            {
+                // DEAD: tick <= 639 always holds here; the ROM keeps the compare.
+                if (frame <= 639)
+                {
+                    // The drops fall one after another, each bursting into a flame where it lands.
+                    dropPlace[1] = 0;
+                    dropPlace[3] = 0;
+                    {
+                        PARTICLE *p = state->particles;
 
-						for (i = 0; i != HAURES_DROPS; i++, p++)
-						{
-							if (frame > i * 26)
-							{
-								if (p->variant == 0)
-								{
-									dropPlace[0] = p->x;
-									dropPlace[2] = p->y;
-									fdRenderApplyProjectedPlacementStub(
-										state->sprites[HAURES_FIRST_DROP_SPRITE + (i & 1)],
-										dropPlace,
-										HauresUnitScale,
-										0);
-									btParticleAdvanceWithGravity2D(p, 63, toFIXED(1) / 8);
-									if (FIXED_INTEGER_PART(p->y) >= HAURES_DROP_LAND_Y)
-									{
-										p->variant = 1;
-									}
-								}
-								else if (p->variant < HAURES_FLAME_TICKS)
-								{
-									dropPlace[0] = p->x;
-									dropPlace[2] = p->y;
-									fdSpriteStartAnimationStub(
-										state->sprites[HAURES_FIRST_FLAME + (i & 1)],
-										(p->variant / 6) & 3);
-									fdRenderApplyProjectedPlacementStub(
-										state->sprites[HAURES_FIRST_FLAME + (i & 1)],
-										dropPlace,
-										HauresUnitScale,
-										0);
-									p->variant++;
-								}
-							}
-						}
-					}
-				}
-				// The red swirl turns on the ground under the dark pool, which from tick 74 heaves
-				// up through the mound's shapes and from 236 glows.
-				if (frame > 46)
-				{
-					RENDER_MODEL *model;
-					void         *verts;
-					Sint32        t;
-					Sint32        sh;
-					Sint32        s;
-					Uint8        *strip = HauresMoundStrip;
+                        for (i = 0; i != HAURES_DROPS; i++, p++)
+                        {
+                            if (frame > i * 26)
+                            {
+                                if (p->variant == 0)
+                                {
+                                    dropPlace[0] = p->x;
+                                    dropPlace[2] = p->y;
+                                    fdRenderApplyProjectedPlacementStub(
+                                        state->sprites[HAURES_FIRST_DROP_SPRITE + (i & 1)],
+                                        dropPlace,
+                                        HauresUnitScale,
+                                        0);
+                                    btParticleAdvanceWithGravity2D(p, 63, toFIXED(1) / 8);
+                                    if (FIXED_INTEGER_PART(p->y) >= HAURES_DROP_LAND_Y)
+                                    {
+                                        p->variant = 1;
+                                    }
+                                }
+                                else if (p->variant < HAURES_FLAME_TICKS)
+                                {
+                                    dropPlace[0] = p->x;
+                                    dropPlace[2] = p->y;
+                                    fdSpriteStartAnimationStub(
+                                        state->sprites[HAURES_FIRST_FLAME + (i & 1)],
+                                        (p->variant / 6) & 3);
+                                    fdRenderApplyProjectedPlacementStub(
+                                        state->sprites[HAURES_FIRST_FLAME + (i & 1)],
+                                        dropPlace,
+                                        HauresUnitScale,
+                                        0);
+                                    p->variant++;
+                                }
+                            }
+                        }
+                    }
+                }
+                // The red swirl turns on the ground under the dark pool, which from tick 74 heaves
+                // up through the mound's shapes and from 236 glows.
+                if (frame > 46)
+                {
+                    RENDER_MODEL *model;
+                    void         *verts;
+                    Sint32        t;
+                    Sint32        sh;
+                    Sint32        s;
+                    Uint8        *strip = HauresMoundStrip;
 
-					verts               = syHeapAllocateEWRAM(32);
-					model               = btRenderAllocateModelList(1);
-					texture.logWidth    = 6;
-					t                   = frame - 47;
-					texture.logHeight   = 6;
-					texture.pixels      = state->sheet + HAURES_SWIRL_TEXTURE;
-					sh                  = frame - 111;
-					if (sh > 0)
-					{
-						sh = 0;
-					}
-					model->kind     = MODEL_SHADED_MAX;
-					model->shade    = sh;
-					model->texture  = &texture;
-					model->mesh     = BattleEffectSquareMesh;
-					model->vertices = verts;
-					syInitMatrix();
-					syTranslate(0, toFIXED(36), 0);
-					syRotX(HAURES_SWIRL_TILT);
-					syRotY(-t << 8);
-					s = t * (toFIXED(1) / 64);
-					if (s > HAURES_SWIRL_SCALE_MAX)
-					{
-						s = HAURES_SWIRL_SCALE_MAX;
-					}
-					syMatrixScaleUniform(s);
-					btRenderTransformVertices(BattleEffectGroundSquareCorners, verts, 4);
-					btRenderDrawModelList(model);
-					// DEAD: a second square, textured from the sprite sheet past where ChainTexture
-					// was decoded, is set up and never drawn, the mound's settings replacing it
-					// before the draw; the ROM keeps its stores.
-					texture.logWidth  = 5;
-					texture.logHeight = 5;
-					texture.pixels    = state->sheet + PICTURE_BYTES(HAURES_CHAIN);
-					model->kind       = MODEL_SHADED;
-					model->texture    = &texture;
-					model->mesh       = BattleEffectSmallSquareMeshReversed;
-					model->vertices   = verts;
-					model->shade      = sh;
-					syInitMatrix();
-					syTranslate(0, toFIXED(36), 0);
-					s = t * 3 * (toFIXED(1) / 256) + toFIXED(1) / 64;
-					if (s > HAURES_MOUND_SCALE_MAX)
-					{
-						s = HAURES_MOUND_SCALE_MAX;
-					}
-					syMatrixScaleUniform(s);
-					if (frame > 73)
-					{
-						Sint32        a;
-						Sint32        b;
-						Sint32        n;
-						Sint32        next;
-						MOUND_VERTEX *mound = HauresMoundCorners;
+                    verts               = syHeapAllocateEWRAM(32);
+                    model               = btRenderAllocateModelList(1);
+                    texture.logWidth    = 6;
+                    t                   = frame - 47;
+                    texture.logHeight   = 6;
+                    texture.pixels      = state->sheet + HAURES_SWIRL_TEXTURE;
+                    sh                  = frame - 111;
+                    if (sh > 0)
+                    {
+                        sh = 0;
+                    }
+                    model->kind     = MODEL_SHADED_MAX;
+                    model->shade    = sh;
+                    model->texture  = &texture;
+                    model->mesh     = BattleEffectSquareMesh;
+                    model->vertices = verts;
+                    syInitMatrix();
+                    syTranslate(0, toFIXED(36), 0);
+                    syRotX(HAURES_SWIRL_TILT);
+                    syRotY(-t << 8);
+                    s = t * (toFIXED(1) / 64);
+                    if (s > HAURES_SWIRL_SCALE_MAX)
+                    {
+                        s = HAURES_SWIRL_SCALE_MAX;
+                    }
+                    syMatrixScaleUniform(s);
+                    btRenderTransformVertices(BattleEffectGroundSquareCorners, verts, 4);
+                    btRenderDrawModelList(model);
+                    // DEAD: a second square, textured from the sprite sheet past where ChainTexture
+                    // was decoded, is set up and never drawn, the mound's settings replacing it
+                    // before the draw; the ROM keeps its stores.
+                    texture.logWidth  = 5;
+                    texture.logHeight = 5;
+                    texture.pixels    = state->sheet + PICTURE_BYTES(HAURES_CHAIN);
+                    model->kind       = MODEL_SHADED;
+                    model->texture    = &texture;
+                    model->mesh       = BattleEffectSmallSquareMeshReversed;
+                    model->vertices   = verts;
+                    model->shade      = sh;
+                    syInitMatrix();
+                    syTranslate(0, toFIXED(36), 0);
+                    s = t * 3 * (toFIXED(1) / 256) + toFIXED(1) / 64;
+                    if (s > HAURES_MOUND_SCALE_MAX)
+                    {
+                        s = HAURES_MOUND_SCALE_MAX;
+                    }
+                    syMatrixScaleUniform(s);
+                    if (frame > 73)
+                    {
+                        Sint32        a;
+                        Sint32        b;
+                        Sint32        n;
+                        Sint32        next;
+                        MOUND_VERTEX *mound = HauresMoundCorners;
 
-						if (frame == 74)
-						{
-							morph     = 0;
-							morphStep = 0;
-						}
-						a         = morph % HAURES_MOUND_SHAPES;
-						next      = morph + 1;
-						b         = next % HAURES_MOUND_SHAPES;
-						n         = morphStep;
-						morphStep = n + 1;
-						if (morphStep == HauresMoundMorphSteps[a])
-						{
-							morphStep = 0;
-							morph     = next;
-						}
-						for (i = 0; i != HAURES_MOUND_POINTS; i++)
-						{
-							mound[i].upper.y =
-								-(HauresMoundShapes[i + a * HAURES_MOUND_POINTS]
-							      + n
-							            * (HauresMoundShapes[i + b * HAURES_MOUND_POINTS]
-							               - HauresMoundShapes[i + a * HAURES_MOUND_POINTS])
-							            / HauresMoundMorphSteps[a]);
-						}
-						for (i = 0; i != HAURES_MOUND_POINTS; i++)
-						{
-							HauresMoundCorners[i].upper.x = i * 4 - 64;
-						}
-					}
-					model->flags    = 0;
-					model->kind     = MODEL_SOLID;
-					model->mesh     = strip;
-					model->vertices = buf;
-					if ((Uint32)(frame - 236) <= 31)
-					{
-						Sint32 v = frame - 235;
+                        if (frame == 74)
+                        {
+                            morph     = 0;
+                            morphStep = 0;
+                        }
+                        a         = morph % HAURES_MOUND_SHAPES;
+                        next      = morph + 1;
+                        b         = next % HAURES_MOUND_SHAPES;
+                        n         = morphStep;
+                        morphStep = n + 1;
+                        if (morphStep == HauresMoundMorphSteps[a])
+                        {
+                            morphStep = 0;
+                            morph     = next;
+                        }
+                        for (i = 0; i != HAURES_MOUND_POINTS; i++)
+                        {
+                            mound[i].upper.y =
+                                -(HauresMoundShapes[i + a * HAURES_MOUND_POINTS]
+                                  + n
+                                        * (HauresMoundShapes[i + b * HAURES_MOUND_POINTS]
+                                           - HauresMoundShapes[i + a * HAURES_MOUND_POINTS])
+                                        / HauresMoundMorphSteps[a]);
+                        }
+                        for (i = 0; i != HAURES_MOUND_POINTS; i++)
+                        {
+                            HauresMoundCorners[i].upper.x = i * 4 - 64;
+                        }
+                    }
+                    model->flags    = 0;
+                    model->kind     = MODEL_SOLID;
+                    model->mesh     = strip;
+                    model->vertices = buf;
+                    if ((Uint32)(frame - 236) <= 31)
+                    {
+                        Sint32 v = frame - 235;
 
-						for (i = 0; i != HAURES_MOUND_QUADS; i++)
-						{
-							HauresMoundShades[i * 2]     = v;
-							HauresMoundShades[i * 2 + 1] = v;
-						}
-					}
-					model->shade = (long)shades;
-					btRenderTransformVertices(HauresMoundCorners, buf, HAURES_MOUND_POINTS * 2);
-					btRenderDrawModelList(model);
-					syHeapRelease(model);
-					syHeapRelease(verts);
-				}
-				riseScale    = HauresChargeScale;
-				bodyPlace[3] = 0;
-				// The claw rises out of the mound amid violet puffs of embers.
-				if (frame > HAURES_CLAW_RISE_TICK - 1)
-				{
-					pos.x += velocity.x;
-					pos.y += velocity.y;
-					if (frame <= 159)
-					{
-						velocity.y += -toFIXED(1) / 4;
-					}
-					else if ((Uint32)(frame - 210) <= 13)
-					{
-						velocity.x += -toFIXED(1) / 32;
-						velocity.y += -toFIXED(1) / 16;
-					}
-					else if ((Uint32)(frame - 236) <= 3)
-					{
-						velocity.x += toFIXED(1) / 8;
-						velocity.y += -toFIXED(1) / 4;
-					}
-					velocity.x  = velocity.x * 60 / DAMPING_SCALE;
-					velocity.y  = velocity.y * 60 / DAMPING_SCALE;
-					riseScale.x = toFIXED(1);
-					riseScale.y = toFIXED(1);
-					for (i = 0; i != HAURES_CLAW_PIECES; i++)
-					{
-						bodyPlace[0] = pos.x;
-						bodyPlace[1] = toFIXED(272) - (pos.y + i * toFIXED(32));
-						bodyPlace[2] = toFIXED(256);
-						fdRenderApplyProjectedPlacementStub(
-							state->sprites[i], bodyPlace, (Sint32 *)&riseScale, 0);
-					}
-					if ((Uint32)(frame - HAURES_CLAW_RISE_TICK) <= 116)
-					{
-						btEffectBuildBlitter(
-							HEAP_SLOT_RAM_CODE_PAIRED, 6, 6, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-						draw[1] = RamHeapSlots->ramCodePaired;
-						for (i = 0; i != HAURES_PUFFS; i++)
-						{
-							PARTICLE *p = &state->particles[i + HAURES_DROPS];
-							Sint32    n = (p->variant / HAURES_PUFF_PICTURE_TICKS)
-							         % HAURES_PUFF_PICTURE_COUNT;
-							Uint8 *src = state->sheet + BattleEffectEmberStreakPictures[n];
-							Uint32 w   = BattleEffectEmberStreakPictureWidths[n];
+                        for (i = 0; i != HAURES_MOUND_QUADS; i++)
+                        {
+                            HauresMoundShades[i * 2]     = v;
+                            HauresMoundShades[i * 2 + 1] = v;
+                        }
+                    }
+                    model->shade = (long)shades;
+                    btRenderTransformVertices(HauresMoundCorners, buf, HAURES_MOUND_POINTS * 2);
+                    btRenderDrawModelList(model);
+                    syHeapRelease(model);
+                    syHeapRelease(verts);
+                }
+                riseScale    = HauresChargeScale;
+                bodyPlace[3] = 0;
+                // The claw rises out of the mound amid violet puffs of embers.
+                if (frame > HAURES_CLAW_RISE_TICK - 1)
+                {
+                    pos.x += velocity.x;
+                    pos.y += velocity.y;
+                    if (frame <= 159)
+                    {
+                        velocity.y += -toFIXED(1) / 4;
+                    }
+                    else if ((Uint32)(frame - 210) <= 13)
+                    {
+                        velocity.x += -toFIXED(1) / 32;
+                        velocity.y += -toFIXED(1) / 16;
+                    }
+                    else if ((Uint32)(frame - 236) <= 3)
+                    {
+                        velocity.x += toFIXED(1) / 8;
+                        velocity.y += -toFIXED(1) / 4;
+                    }
+                    velocity.x  = velocity.x * 60 / DAMPING_SCALE;
+                    velocity.y  = velocity.y * 60 / DAMPING_SCALE;
+                    riseScale.x = toFIXED(1);
+                    riseScale.y = toFIXED(1);
+                    for (i = 0; i != HAURES_CLAW_PIECES; i++)
+                    {
+                        bodyPlace[0] = pos.x;
+                        bodyPlace[1] = toFIXED(272) - (pos.y + i * toFIXED(32));
+                        bodyPlace[2] = toFIXED(256);
+                        fdRenderApplyProjectedPlacementStub(
+                            state->sprites[i], bodyPlace, (Sint32 *)&riseScale, 0);
+                    }
+                    if ((Uint32)(frame - HAURES_CLAW_RISE_TICK) <= 116)
+                    {
+                        btEffectBuildBlitter(
+                            HEAP_SLOT_RAM_CODE_PAIRED, 6, 6, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+                        draw[1] = RamHeapSlots->ramCodePaired;
+                        for (i = 0; i != HAURES_PUFFS; i++)
+                        {
+                            PARTICLE *p = &state->particles[i + HAURES_DROPS];
+                            Sint32    n = (p->variant / HAURES_PUFF_PICTURE_TICKS)
+                                     % HAURES_PUFF_PICTURE_COUNT;
+                            Uint8 *src = state->sheet + BattleEffectEmberStreakPictures[n];
+                            Uint32 w   = BattleEffectEmberStreakPictureWidths[n];
 
-							draw[1](STAMP_CANVAS(state),
-							        src,
-							        p->x - (w >> 1),
-							        p->y + BattleEffectEmberStreakPictureBiasY[n],
-							        w,
-							        BattleEffectEmberStreakPictureHeights[n]);
-							if (++p->variant == HAURES_PUFF_TICKS)
-							{
-								p->variant = 0;
-								p->x       = (syRandom() & 15) + 24;
-								p->y       = syRandom() & 7;
-							}
-						}
-						syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
-					}
-					riseScale.x =
-						(frame - HAURES_CLAW_RISE_TICK) * (HAURES_STAMP_GROWTH * 2) + toFIXED(1);
-					if (riseScale.x > toFIXED(4))
-					{
-						riseScale.x = toFIXED(4);
-					}
-					riseScale.y =
-						(frame - HAURES_CLAW_RISE_TICK) * HAURES_STAMP_GROWTH + toFIXED(1);
-					if (riseScale.y > toFIXED(2))
-					{
-						riseScale.y = toFIXED(2);
-					}
-					bodyPlace[0] = pos.x;
-					bodyPlace[1] = toFIXED(120) - pos.y;
-					bodyPlace[2] = toFIXED(128);
-					fdRenderApplyProjectedPlacementStub(
-						state->sprites[HAURES_STAMP], bodyPlace, (Sint32 *)&riseScale, 0);
-				}
-			}
-			if (frame == 267)
-			{
-				sySoundPlayStub(SE_POWER_UP);
-			}
-			if (frame == 271)
-			{
-				sySoundPlayStub(SE_CLATTER);
-			}
-			// The rune flashes and grows behind the dark, and for six ticks the claw slashes across
-			// it, one of BlueArcSheetB's arcs a tick.
-			if ((Uint32)cut <= 9)
-			{
-				RENDER_MODEL *model;
-				void         *verts;
-				Sint32        s;
+                            draw[1](STAMP_CANVAS(state),
+                                    src,
+                                    p->x - (w >> 1),
+                                    p->y + BattleEffectEmberStreakPictureBiasY[n],
+                                    w,
+                                    BattleEffectEmberStreakPictureHeights[n]);
+                            if (++p->variant == HAURES_PUFF_TICKS)
+                            {
+                                p->variant = 0;
+                                p->x       = (syRandom() & 15) + 24;
+                                p->y       = syRandom() & 7;
+                            }
+                        }
+                        syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
+                    }
+                    riseScale.x =
+                        (frame - HAURES_CLAW_RISE_TICK) * (HAURES_STAMP_GROWTH * 2) + toFIXED(1);
+                    if (riseScale.x > toFIXED(4))
+                    {
+                        riseScale.x = toFIXED(4);
+                    }
+                    riseScale.y =
+                        (frame - HAURES_CLAW_RISE_TICK) * HAURES_STAMP_GROWTH + toFIXED(1);
+                    if (riseScale.y > toFIXED(2))
+                    {
+                        riseScale.y = toFIXED(2);
+                    }
+                    bodyPlace[0] = pos.x;
+                    bodyPlace[1] = toFIXED(120) - pos.y;
+                    bodyPlace[2] = toFIXED(128);
+                    fdRenderApplyProjectedPlacementStub(
+                        state->sprites[HAURES_STAMP], bodyPlace, (Sint32 *)&riseScale, 0);
+                }
+            }
+            if (frame == 267)
+            {
+                sySoundPlayStub(SE_POWER_UP);
+            }
+            if (frame == 271)
+            {
+                sySoundPlayStub(SE_CLATTER);
+            }
+            // The rune flashes and grows behind the dark, and for six ticks the claw slashes across
+            // it, one of BlueArcSheetB's arcs a tick.
+            if ((Uint32)cut <= 9)
+            {
+                RENDER_MODEL *model;
+                void         *verts;
+                Sint32        s;
 
-				if (frame == 267)
-				{
-					Uint16 *dest = &BG_PLTT_COLOR(0, 1);
+                if (frame == 267)
+                {
+                    Uint16 *dest = &BG_PLTT_COLOR(0, 1);
 
-					// DEAD: a ramp of reds that MarsDjinnSheet's colours replace before the tick
-					// shows it; the ROM keeps its loop.
-					for (i = 1; i != SHEET_PALETTE_COLORS; i++)
-					{
-						Sint32 v = i;
+                    // DEAD: a ramp of reds that MarsDjinnSheet's colours replace before the tick
+                    // shows it; the ROM keeps its loop.
+                    for (i = 1; i != SHEET_PALETTE_COLORS; i++)
+                    {
+                        Sint32 v = i;
 
-						if (v > RGB_LEVEL_MAX)
-						{
-							v = RGB_LEVEL_MAX;
-						}
-						if (v < 0)
-						{
-							v = 0;
-						}
-						*dest++ = v;
-					}
-					btResourceLoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1, 0);
-					syWordsCopyEntry((void *)BG_PLTT,
-					                 syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET),
-					                 SHEET_PALETTE_BYTES);
-					EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(1));
-				}
-				verts                  = syHeapAllocateEWRAM(32);
-				model                  = btRenderAllocateModelList(1);
-				burstTexture.logWidth  = 7;
-				burstTexture.logHeight = 7;
-				burstTexture.pixels    = SCRATCH;
-				model->shade           = 0;
-				model->kind            = MODEL_SHADED_ADDITIVE;
-				model->texture         = &burstTexture;
-				model->mesh            = BattleEffectLargeSquareMesh;
-				model->vertices        = verts;
-				syInitMatrix();
-				syTranslate(0, -toFIXED(4), 0);
-				s = HAURES_RUNE_HELD_SCALE;
-				if (frame >= HAURES_RUNE_GROW_TICK)
-				{
-					s = HAURES_RUNE_SCALE(frame);
-				}
-				syScale(s >> 1, s, s >> 1);
-				btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
-				btRenderDrawModelList(model);
-				if ((Uint32)cut <= 5)
-				{
-					Sint32 j;
+                        if (v > RGB_LEVEL_MAX)
+                        {
+                            v = RGB_LEVEL_MAX;
+                        }
+                        if (v < 0)
+                        {
+                            v = 0;
+                        }
+                        *dest++ = v;
+                    }
+                    btResourceLoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1, 0);
+                    syWordsCopyEntry((void *)BG_PLTT,
+                                     syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET),
+                                     SHEET_PALETTE_BYTES);
+                    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(1));
+                }
+                verts                  = syHeapAllocateEWRAM(32);
+                model                  = btRenderAllocateModelList(1);
+                burstTexture.logWidth  = 7;
+                burstTexture.logHeight = 7;
+                burstTexture.pixels    = SCRATCH;
+                model->shade           = 0;
+                model->kind            = MODEL_SHADED_ADDITIVE;
+                model->texture         = &burstTexture;
+                model->mesh            = BattleEffectLargeSquareMesh;
+                model->vertices        = verts;
+                syInitMatrix();
+                syTranslate(0, -toFIXED(4), 0);
+                s = HAURES_RUNE_HELD_SCALE;
+                if (frame >= HAURES_RUNE_GROW_TICK)
+                {
+                    s = HAURES_RUNE_SCALE(frame);
+                }
+                syScale(s >> 1, s, s >> 1);
+                btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
+                btRenderDrawModelList(model);
+                if ((Uint32)cut <= 5)
+                {
+                    Sint32 j;
 
-					syWordsClear(buf, PICTURE_BYTES(BLUE_ARC));
-					for (j = 0; j != BLUE_ARC_HEIGHT; j++)
-					{
-						Sint32 m;
+                    syWordsClear(buf, PICTURE_BYTES(BLUE_ARC));
+                    for (j = 0; j != BLUE_ARC_HEIGHT; j++)
+                    {
+                        Sint32 m;
 
-						for (m = 0; m != BLUE_ARC_WIDTH; m++)
-						{
-							buf[j * HAURES_ARC_TEXTURE_WIDTH + m] =
-								state
-									->sheet[cut * PICTURE_BYTES(BLUE_ARC) + j * BLUE_ARC_WIDTH + m];
-						}
-					}
-					if ((Uint32)(frame - 267) <= 5)
-					{
-						burstTexture.logWidth  = 6;
-						burstTexture.logHeight = 7;
-						burstTexture.pixels    = buf;
-						model->mesh            = HauresBurstMesh;
-						syInitMatrix();
-						syTranslate(0, -toFIXED(4), 0);
-						syScale(toFIXED(1.69483), toFIXED(2.61036), toFIXED(2));
-						btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
-						btRenderDrawModelList(model);
-					}
-				}
-				syHeapRelease(model);
-				syHeapRelease(verts);
-			}
-			// Haures rears: the dark breaks into shards that fly apart, and he circles in the
-			// reddened cave until, from tick 397, he dives away.
-			if (frame > 276)
-			{
-				RENDER_MODEL *model;
-				void         *verts;
-				Uint8        *cells;
-				Uint8        *mesh;
+                        for (m = 0; m != BLUE_ARC_WIDTH; m++)
+                        {
+                            buf[j * HAURES_ARC_TEXTURE_WIDTH + m] =
+                                state
+                                    ->sheet[cut * PICTURE_BYTES(BLUE_ARC) + j * BLUE_ARC_WIDTH + m];
+                        }
+                    }
+                    if ((Uint32)(frame - 267) <= 5)
+                    {
+                        burstTexture.logWidth  = 6;
+                        burstTexture.logHeight = 7;
+                        burstTexture.pixels    = buf;
+                        model->mesh            = HauresBurstMesh;
+                        syInitMatrix();
+                        syTranslate(0, -toFIXED(4), 0);
+                        syScale(toFIXED(1.69483), toFIXED(2.61036), toFIXED(2));
+                        btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
+                        btRenderDrawModelList(model);
+                    }
+                }
+                syHeapRelease(model);
+                syHeapRelease(verts);
+            }
+            // Haures rears: the dark breaks into shards that fly apart, and he circles in the
+            // reddened cave until, from tick 397, he dives away.
+            if (frame > 276)
+            {
+                RENDER_MODEL *model;
+                void         *verts;
+                Uint8        *cells;
+                Uint8        *mesh;
 
-				if (frame == 277)
-				{
-					const Uint8 *q;
+                if (frame == 277)
+                {
+                    const Uint8 *q;
 
-					EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-					dived = 1;
-					fdSpriteDestroyStub(state->sprites[0]);
-					fdSpriteDestroyStub(state->sprites[1]);
-					for (i = 0; i != HAURES_FLAME_COUNT; i++)
-					{
-						fdSpriteDestroyStub(state->sprites[HAURES_FIRST_FLAME + i]);
-					}
-					for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++)
-					{
-						fdSpriteDestroyStub(state->sprites[HAURES_FIRST_DROP_SPRITE + i]);
-					}
-					fdSpriteDestroyStub(state->sprites[HAURES_STAMP]);
-					btEffectCreateSprites(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
-					q = HauresPartPoints;
-					{
-						PARTICLE *p = state->particles;
+                    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+                    dived = 1;
+                    fdSpriteDestroyStub(state->sprites[0]);
+                    fdSpriteDestroyStub(state->sprites[1]);
+                    for (i = 0; i != HAURES_FLAME_COUNT; i++)
+                    {
+                        fdSpriteDestroyStub(state->sprites[HAURES_FIRST_FLAME + i]);
+                    }
+                    for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++)
+                    {
+                        fdSpriteDestroyStub(state->sprites[HAURES_FIRST_DROP_SPRITE + i]);
+                    }
+                    fdSpriteDestroyStub(state->sprites[HAURES_STAMP]);
+                    btEffectCreateSprites(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
+                    q = HauresPartPoints;
+                    {
+                        PARTICLE *p = state->particles;
 
-						for (i = 0; i != HAURES_SHARDS; i++, q += HAURES_SHARD_ROW, p++)
-						{
-							Sint32 x = q[0] >> 1;
-							Sint32 y = q[1];
+                        for (i = 0; i != HAURES_SHARDS; i++, q += HAURES_SHARD_ROW, p++)
+                        {
+                            Sint32 x = q[0] >> 1;
+                            Sint32 y = q[1];
 
-							p->x     = toFIXED(x);
-							p->y     = toFIXED(y);
-							{
-								Sint32 velocityY = (HAURES_SHATTER_Y - y) * (toFIXED(1) / 64);
+                            p->x     = toFIXED(x);
+                            p->y     = toFIXED(y);
+                            {
+                                Sint32 velocityY = (HAURES_SHATTER_Y - y) * (toFIXED(1) / 64);
 
-								p->velocityX     = (x - HAURES_SHATTER_X)
-								            << HAURES_SHATTER_SPREAD_X_SHIFT;
-								p->velocityY = velocityY;
-							}
-							p->z          = 0;
-							p->velocityX += ((syRandom() & 31) - 16) << 13;
-							p->velocityY += ((syRandom() & 31) - 16) << 13;
-							p->velocityZ  = (syRandom() & 127) * 5 + 640;
-							if (syRandom() & 1)
-							{
-								p->velocityZ = -p->velocityZ;
-							}
-						}
-					}
-					velocity.x = 0;
-				}
-				BgScrollWork[1].x -= 12;
-				orbitScale         = HauresOrbitScale;
-				bodyPlace[3]       = 0;
-				pos.x              = (sySin(frame << 9) << 3) + toFIXED(108);
-				pos.y              = toFIXED(56) - (syCos(frame << 9) << 3);
-				if (frame > 396)
-				{
-					velocity.x -= (frame - 397) << HAURES_DIVE_PULL_X_SHIFT;
-					pos.x      += velocity.x;
-					velocity.y -= (frame - 397) << HAURES_DIVE_PULL_Y_SHIFT;
-					// BUG: the fall adds the horizontal speed; velocity.y is never used.
+                                p->velocityX     = (x - HAURES_SHATTER_X)
+                                            << HAURES_SHATTER_SPREAD_X_SHIFT;
+                                p->velocityY = velocityY;
+                            }
+                            p->z          = 0;
+                            p->velocityX += ((syRandom() & 31) - 16) << 13;
+                            p->velocityY += ((syRandom() & 31) - 16) << 13;
+                            p->velocityZ  = (syRandom() & 127) * 5 + 640;
+                            if (syRandom() & 1)
+                            {
+                                p->velocityZ = -p->velocityZ;
+                            }
+                        }
+                    }
+                    velocity.x = 0;
+                }
+                BgScrollWork[1].x -= 12;
+                orbitScale         = HauresOrbitScale;
+                bodyPlace[3]       = 0;
+                pos.x              = (sySin(frame << 9) << 3) + toFIXED(108);
+                pos.y              = toFIXED(56) - (syCos(frame << 9) << 3);
+                if (frame > 396)
+                {
+                    velocity.x -= (frame - 397) << HAURES_DIVE_PULL_X_SHIFT;
+                    pos.x      += velocity.x;
+                    velocity.y -= (frame - 397) << HAURES_DIVE_PULL_Y_SHIFT;
+                    // BUG: the fall adds the horizontal speed; velocity.y is never used.
 #if FIX_HAURES_DIVE_VERTICAL_SPEED
-					pos.y += velocity.y;
+                    pos.y += velocity.y;
 #else
-					pos.y += velocity.x;
+                    pos.y += velocity.x;
 #endif
-				}
-				for (i = 0; i != HAURES_BODY_PIECES; i++)
-				{
-					bodyPlace[0] = toFIXED(HauresBodyPiecePoints[i][0]) + pos.x;
-					bodyPlace[1] = toFIXED(272) - (toFIXED(HauresBodyPiecePoints[i][1]) + pos.y);
-					bodyPlace[2] = toFIXED(256);
-					fdRenderApplyProjectedPlacementStub(
-						state->sprites[i], bodyPlace, (Sint32 *)&orbitScale, 0);
-				}
-				verts = syHeapAllocateEWRAM(32);
-				model = btRenderAllocateModelList(1);
-				cells = state->sheet;
-				mesh  = state->sheet + HAURES_SHARD_MESHES;
-				if (frame == 277)
-				{
-					Sint32 j;
+                }
+                for (i = 0; i != HAURES_BODY_PIECES; i++)
+                {
+                    bodyPlace[0] = toFIXED(HauresBodyPiecePoints[i][0]) + pos.x;
+                    bodyPlace[1] = toFIXED(272) - (toFIXED(HauresBodyPiecePoints[i][1]) + pos.y);
+                    bodyPlace[2] = toFIXED(256);
+                    fdRenderApplyProjectedPlacementStub(
+                        state->sprites[i], bodyPlace, (Sint32 *)&orbitScale, 0);
+                }
+                verts = syHeapAllocateEWRAM(32);
+                model = btRenderAllocateModelList(1);
+                cells = state->sheet;
+                mesh  = state->sheet + HAURES_SHARD_MESHES;
+                if (frame == 277)
+                {
+                    Sint32 j;
 
-					for (j = 0; j != HAURES_SHARDS; j++)
-					{
-						for (i = 0; i != HAURES_SHARD_CORNERS; i++)
-						{
-							MODEL_VERTEX *corner =
-								(MODEL_VERTEX *)cells + j * HAURES_SHARD_CORNERS + i;
+                    for (j = 0; j != HAURES_SHARDS; j++)
+                    {
+                        for (i = 0; i != HAURES_SHARD_CORNERS; i++)
+                        {
+                            MODEL_VERTEX *corner =
+                                (MODEL_VERTEX *)cells + j * HAURES_SHARD_CORNERS + i;
 
-							corner->z = 0;
-							corner->x = HauresPartPoints[j * HAURES_SHARD_ROW + i * 2 + 2]
-							          - HauresPartPoints[j * HAURES_SHARD_ROW];
-							corner->y = HauresPartPoints[j * HAURES_SHARD_ROW + i * 2 + 3]
-							          - HauresPartPoints[j * HAURES_SHARD_ROW + 1];
-						}
-						SHARD_FACE(mesh, j, 0)[1] = 1;
-						SHARD_FACE(mesh, j, 0)[2] = 2;
-						SHARD_FACE(mesh, j, 1)[1] = 2;
-						SHARD_FACE(mesh, j, 1)[2] = 3;
-						SHARD_FACE(mesh, j, 0)[0] = 0;
-						SHARD_FACE(mesh, j, 1)[0] = 0;
-						SHARD_FACE(mesh, j, 2)[0] = 0;
-						SHARD_FACE(mesh, j, 2)[1] = 0;
-						SHARD_FACE(mesh, j, 2)[2] = 0;
-					}
-				}
-				// DEAD: the shards are solid and draw no texture; the ROM keeps the stores that set
-				// one up.
-				wideTexture.logWidth  = 8;
-				wideTexture.logHeight = 7;
-				wideTexture.pixels    = buf;
-				model->kind           = MODEL_SOLID;
-				model->texture        = &wideTexture;
-				model->vertices       = verts;
-				model->shade          = (long)shades;
-				{
-					// FAKEMATCH(dead): a never-true test of the byte scroll.
-					Sint32 scroll = model->scrollU;
+                            corner->z = 0;
+                            corner->x = HauresPartPoints[j * HAURES_SHARD_ROW + i * 2 + 2]
+                                      - HauresPartPoints[j * HAURES_SHARD_ROW];
+                            corner->y = HauresPartPoints[j * HAURES_SHARD_ROW + i * 2 + 3]
+                                      - HauresPartPoints[j * HAURES_SHARD_ROW + 1];
+                        }
+                        SHARD_FACE(mesh, j, 0)[1] = 1;
+                        SHARD_FACE(mesh, j, 0)[2] = 2;
+                        SHARD_FACE(mesh, j, 1)[1] = 2;
+                        SHARD_FACE(mesh, j, 1)[2] = 3;
+                        SHARD_FACE(mesh, j, 0)[0] = 0;
+                        SHARD_FACE(mesh, j, 1)[0] = 0;
+                        SHARD_FACE(mesh, j, 2)[0] = 0;
+                        SHARD_FACE(mesh, j, 2)[1] = 0;
+                        SHARD_FACE(mesh, j, 2)[2] = 0;
+                    }
+                }
+                // DEAD: the shards are solid and draw no texture; the ROM keeps the stores that set
+                // one up.
+                wideTexture.logWidth  = 8;
+                wideTexture.logHeight = 7;
+                wideTexture.pixels    = buf;
+                model->kind           = MODEL_SOLID;
+                model->texture        = &wideTexture;
+                model->vertices       = verts;
+                model->shade          = (long)shades;
+                {
+                    // FAKEMATCH(dead): a never-true test of the byte scroll.
+                    Sint32 scroll = model->scrollU;
 
-					if (scroll > 255)
-					{
-						i = 0;
-					}
-				}
-				for (i = 0; i != HAURES_SHARDS; i++)
-				{
-					HauresMoundShades[i] = 1;
-				}
-				for (i = 0; i != HAURES_SHARDS; i++)
-				{
-					PARTICLE *p = &state->particles[i];
-					model->mesh = mesh + i * HAURES_SHARD_MESH_BYTES;
-					if ((Uint32)(FIXED_INTEGER_PART(p->x) + HAURES_SHARD_REACH)
-					        <= DISPLAY_WIDTH / 2 + 2 * HAURES_SHARD_REACH
-					    && FIXEDtoINT(p->y) >= -HAURES_SHARD_REACH
-					    && FIXEDtoINT(p->y) <= BATTLE_VIEW_HEIGHT + HAURES_SHARD_REACH)
-					{
-						syInitMatrix();
-						syTranslate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
-						syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
-						switch (i & 3)
-						{
-							case 0:
-								syRotX(p->z);
-								syRotZ(p->z);
-								break;
-							case 1:
-								syRotX(p->z);
-								syRotZ(-p->z);
-								break;
-							case 2:
-								syRotX(p->z);
-								syRotY(p->z);
-								break;
-							case 3:
-								syRotZ(p->z);
-								syRotY(-p->z);
-								break;
-						}
-						btRenderTransformVertices(
-							cells + i * HAURES_SHARD_CORNER_BYTES, verts, HAURES_SHARD_CORNERS);
-						btRenderDrawModelList(model);
-					}
-					btParticleAdvanceWithGravity3D(p, 62, 0);
-					p->x += toFIXED(4);
-				}
-				syHeapRelease(model);
-				syHeapRelease(verts);
-			}
-			btEffectCountDownBattlerTints();
-			state->transferPending = 1;
-			if (frame <= 266)
-			{
-				state->stampPending = 1;
-			}
-			sySynch(1);
-			frame++;
-		} while (frame != HAURES_COMING_TICKS && !(PerWork.repeat & (KEY_A | KEY_B)));
-	}
-	if (dived == 0)
-	{
-		fdSpriteDestroyStub(state->sprites[0]);
-		fdSpriteDestroyStub(state->sprites[1]);
-		for (i = 0; i != HAURES_FLAME_COUNT; i++)
-		{
-			fdSpriteDestroyStub(state->sprites[HAURES_FIRST_FLAME + i]);
-		}
-		for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++)
-		{
-			fdSpriteDestroyStub(state->sprites[HAURES_FIRST_DROP_SPRITE + i]);
-		}
-		fdSpriteDestroyStub(state->sprites[HAURES_STAMP]);
-	}
-	else
-	{
-		for (i = 0; i != HAURES_BODY_PIECES; i++)
-		{
-			fdSpriteDestroyStub(state->sprites[i]);
-		}
-	}
-	background->busy = 0;
-	syCloseEvent(btEffectProcessPendingStampTransfer);
-	btEffectSetupBlendedDisplay();
-	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
-	btEffectCreateSprites(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
-	syWordsCopyEntry(
-		(void *)BG_PLTT, syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B), SHEET_PALETTE_BYTES);
-	// DEAD: the claw's six slashes are laid out as textures the charge never draws; the ROM keeps
-	// the loading and the copy.
-	btResourceLoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1, 0);
-	syWordsClear(buf, HAURES_ARCS * HAURES_ARC_TEXTURE_BYTES);
-	for (i = 0; i != HAURES_ARCS; i++)
-	{
-		Sint32 j;
+                    if (scroll > 255)
+                    {
+                        i = 0;
+                    }
+                }
+                for (i = 0; i != HAURES_SHARDS; i++)
+                {
+                    HauresMoundShades[i] = 1;
+                }
+                for (i = 0; i != HAURES_SHARDS; i++)
+                {
+                    PARTICLE *p = &state->particles[i];
+                    model->mesh = mesh + i * HAURES_SHARD_MESH_BYTES;
+                    if ((Uint32)(FIXED_INTEGER_PART(p->x) + HAURES_SHARD_REACH)
+                            <= DISPLAY_WIDTH / 2 + 2 * HAURES_SHARD_REACH
+                        && FIXEDtoINT(p->y) >= -HAURES_SHARD_REACH
+                        && FIXEDtoINT(p->y) <= BATTLE_VIEW_HEIGHT + HAURES_SHARD_REACH)
+                    {
+                        syInitMatrix();
+                        syTranslate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
+                        syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
+                        switch (i & 3)
+                        {
+                            case 0:
+                                syRotX(p->z);
+                                syRotZ(p->z);
+                                break;
+                            case 1:
+                                syRotX(p->z);
+                                syRotZ(-p->z);
+                                break;
+                            case 2:
+                                syRotX(p->z);
+                                syRotY(p->z);
+                                break;
+                            case 3:
+                                syRotZ(p->z);
+                                syRotY(-p->z);
+                                break;
+                        }
+                        btRenderTransformVertices(
+                            cells + i * HAURES_SHARD_CORNER_BYTES, verts, HAURES_SHARD_CORNERS);
+                        btRenderDrawModelList(model);
+                    }
+                    btParticleAdvanceWithGravity3D(p, 62, 0);
+                    p->x += toFIXED(4);
+                }
+                syHeapRelease(model);
+                syHeapRelease(verts);
+            }
+            btEffectCountDownBattlerTints();
+            state->transferPending = 1;
+            if (frame <= 266)
+            {
+                state->stampPending = 1;
+            }
+            sySynch(1);
+            frame++;
+        } while (frame != HAURES_COMING_TICKS && !(PerWork.repeat & (KEY_A | KEY_B)));
+    }
+    if (dived == 0)
+    {
+        fdSpriteDestroyStub(state->sprites[0]);
+        fdSpriteDestroyStub(state->sprites[1]);
+        for (i = 0; i != HAURES_FLAME_COUNT; i++)
+        {
+            fdSpriteDestroyStub(state->sprites[HAURES_FIRST_FLAME + i]);
+        }
+        for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++)
+        {
+            fdSpriteDestroyStub(state->sprites[HAURES_FIRST_DROP_SPRITE + i]);
+        }
+        fdSpriteDestroyStub(state->sprites[HAURES_STAMP]);
+    }
+    else
+    {
+        for (i = 0; i != HAURES_BODY_PIECES; i++)
+        {
+            fdSpriteDestroyStub(state->sprites[i]);
+        }
+    }
+    background->busy = 0;
+    syCloseEvent(btEffectProcessPendingStampTransfer);
+    btEffectSetupBlendedDisplay();
+    ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
+    btEffectCreateSprites(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
+    syWordsCopyEntry(
+        (void *)BG_PLTT, syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B), SHEET_PALETTE_BYTES);
+    // DEAD: the claw's six slashes are laid out as textures the charge never draws; the ROM keeps
+    // the loading and the copy.
+    btResourceLoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1, 0);
+    syWordsClear(buf, HAURES_ARCS * HAURES_ARC_TEXTURE_BYTES);
+    for (i = 0; i != HAURES_ARCS; i++)
+    {
+        Sint32 j;
 
-		for (j = 0; j != BLUE_ARC_HEIGHT; j++)
-		{
-			Sint32 m;
+        for (j = 0; j != BLUE_ARC_HEIGHT; j++)
+        {
+            Sint32 m;
 
-			for (m = 0; m != BLUE_ARC_WIDTH; m++)
-			{
-				buf[(i * HAURES_ARC_TEXTURE_BYTES) + j * HAURES_ARC_TEXTURE_WIDTH + m] =
-					state->sheet[i * PICTURE_BYTES(BLUE_ARC) + j * BLUE_ARC_WIDTH + m];
-			}
-		}
-	}
-	btResourceLoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
-	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	REG_BLDALPHA = EFFECT_BLEND_ADD;
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = RamHeapSlots->ramCode;
-	// The charge: three passes through the foes, sparks streaming behind.
-	for (frame = 0; frame != HAURES_TICKS; frame++)
-	{
-		RENDER_MODEL *model;
-		void         *verts;
+            for (m = 0; m != BLUE_ARC_WIDTH; m++)
+            {
+                buf[(i * HAURES_ARC_TEXTURE_BYTES) + j * HAURES_ARC_TEXTURE_WIDTH + m] =
+                    state->sheet[i * PICTURE_BYTES(BLUE_ARC) + j * BLUE_ARC_WIDTH + m];
+            }
+        }
+    }
+    btResourceLoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 0);
+    btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+    draw[0] = RamHeapSlots->ramCode;
+    // The charge: three passes through the foes, sparks streaming behind.
+    for (frame = 0; frame != HAURES_TICKS; frame++)
+    {
+        RENDER_MODEL *model;
+        void         *verts;
 
-		if (frame == 0)
-		{
-			pos.x      = toFIXED(270);
-			pos.y      = -toFIXED(22);
-			velocity.x = -toFIXED(12);
-			velocity.y = toFIXED(6);
-			{
-				Sint32 *variant = &EXTRA_PARTICLES->variant;
+        if (frame == 0)
+        {
+            pos.x      = toFIXED(270);
+            pos.y      = -toFIXED(22);
+            velocity.x = -toFIXED(12);
+            velocity.y = toFIXED(6);
+            {
+                Sint32 *variant = &EXTRA_PARTICLES->variant;
 
-				for (i = 0; i != HAURES_SPARK_COUNT;
-				     i++, variant += sizeof(PARTICLE) / sizeof(Sint32))
-				{
-					*variant = -1;
-				}
-			}
-		}
-		if (frame == 20)
-		{
-			pos.x      = -toFIXED(10);
-			pos.y      = -toFIXED(22);
-			velocity.x = toFIXED(12);
-			velocity.y = toFIXED(6);
-		}
-		if (frame == 40)
-		{
-			pos.x      = toFIXED(260);
-			pos.y      = toFIXED(64);
-			velocity.x = -toFIXED(8);
-			velocity.y = 0;
-		}
-		for (i = 0; i != HAURES_SPARK_COUNT; i++)
-		{
-			PARTICLE *p = &EXTRA_PARTICLES[i];
-			if (p->variant >= 0)
-			{
-				Sint32 n = (p->variant >> 3) + 1;
+                for (i = 0; i != HAURES_SPARK_COUNT;
+                     i++, variant += sizeof(PARTICLE) / sizeof(Sint32))
+                {
+                    *variant = -1;
+                }
+            }
+        }
+        if (frame == 20)
+        {
+            pos.x      = -toFIXED(10);
+            pos.y      = -toFIXED(22);
+            velocity.x = toFIXED(12);
+            velocity.y = toFIXED(6);
+        }
+        if (frame == 40)
+        {
+            pos.x      = toFIXED(260);
+            pos.y      = toFIXED(64);
+            velocity.x = -toFIXED(8);
+            velocity.y = 0;
+        }
+        for (i = 0; i != HAURES_SPARK_COUNT; i++)
+        {
+            PARTICLE *p = &EXTRA_PARTICLES[i];
+            if (p->variant >= 0)
+            {
+                Sint32 n = (p->variant >> 3) + 1;
 
-				draw[0](canvas,
-				        sprites + BattleEffectMotePictures[n - 1],
-				        FIXED_INTEGER_PART(p->x) - n / 2,
-				        FIXED_INTEGER_PART(p->y) - n,
-				        n,
-				        n * 2);
-				btParticleAdvanceWithGravity2D(p, 63, -toFIXED(1) / 2);
-				p->variant--;
-			}
-		}
-		if (frame <= 39)
-		{
-			PARTICLE *p;
+                draw[0](canvas,
+                        sprites + BattleEffectMotePictures[n - 1],
+                        FIXED_INTEGER_PART(p->x) - n / 2,
+                        FIXED_INTEGER_PART(p->y) - n,
+                        n,
+                        n * 2);
+                btParticleAdvanceWithGravity2D(p, 63, -toFIXED(1) / 2);
+                p->variant--;
+            }
+        }
+        if (frame <= 39)
+        {
+            PARTICLE *p;
 
-			// This tick's sparks start at spark tick * HAURES_SPARKS_PER_TICK, three rows of four
-			// on.
-			for (i = 0, p = ((PARTICLE(*)[4])EXTRA_PARTICLES)[frame * 2 + frame];
-			     i != HAURES_SPARKS_PER_TICK;
-			     i++, p++)
-			{
-				Sint32 angle;
-				Sint32 speed;
+            // This tick's sparks start at spark tick * HAURES_SPARKS_PER_TICK, three rows of four
+            // on.
+            for (i = 0, p = ((PARTICLE(*)[4])EXTRA_PARTICLES)[frame * 2 + frame];
+                 i != HAURES_SPARKS_PER_TICK;
+                 i++, p++)
+            {
+                Sint32 angle;
+                Sint32 speed;
 
-				p->x         = toFIXED((syRandom() & 63) - 16) + pos.x / 2;
-				p->y         = toFIXED(syRandom() & 31) + pos.y;
-				angle        = syRandom();
-				speed        = (syRandom() & 127) + 128;
-				p->velocityX = sySin(angle) * speed >> 7;
-				p->velocityY = syCos(angle) * speed >> 6;
-				p->variant   = HAURES_SPARK_LIFE;
-			}
-		}
-		if (frame <= 73)
-		{
-			Sint32 t;
+                p->x         = toFIXED((syRandom() & 63) - 16) + pos.x / 2;
+                p->y         = toFIXED(syRandom() & 31) + pos.y;
+                angle        = syRandom();
+                speed        = (syRandom() & 127) + 128;
+                p->velocityX = sySin(angle) * speed >> 7;
+                p->velocityY = syCos(angle) * speed >> 6;
+                p->variant   = HAURES_SPARK_LIFE;
+            }
+        }
+        if (frame <= 73)
+        {
+            Sint32 t;
 
-			chargeScale  = HauresOpeningScale;
-			bodyPlace[3] = 0;
-			t            = frame - 20;
-			if ((Uint32)t < HAURES_CHARGE_PASS_TICKS)
-			{
-				// Mirrored for the pass from the left.
-				chargeScale.x = -(toFIXED(1) + 1);
-				for (i = 0; i != HAURES_BODY_PIECES; i++)
-				{
-					bodyPlace[0] = pos.x - toFIXED(HauresBodyPiecePoints[i][0]);
-					bodyPlace[1] = toFIXED(272) - (toFIXED(HauresBodyPiecePoints[i][1]) + pos.y);
-					bodyPlace[2] = toFIXED(256);
-					fdRenderApplyProjectedPlacementStub(
-						state->sprites[i], bodyPlace, (Sint32 *)&chargeScale, 0);
-				}
-			}
-			else
-			{
-				for (i = 0; i != HAURES_BODY_PIECES; i++)
-				{
-					bodyPlace[0] = toFIXED(HauresBodyPiecePoints[i][0]) + pos.x;
-					bodyPlace[1] = toFIXED(272) - (toFIXED(HauresBodyPiecePoints[i][1]) + pos.y);
-					bodyPlace[2] = toFIXED(256);
-					fdRenderApplyProjectedPlacementStub(
-						state->sprites[i], bodyPlace, (Sint32 *)&chargeScale, 0);
-				}
-			}
-			pos.x += velocity.x;
-			pos.y += velocity.y;
-			if ((Uint32)frame < HAURES_CHARGE_PASS_TICKS)
-			{
-				velocity.x += -toFIXED(1) / 2;
-				velocity.y += toFIXED(1) / 2;
-			}
-			else if ((Uint32)t < HAURES_CHARGE_PASS_TICKS)
-			{
-				velocity.x += toFIXED(1) / 2;
-				velocity.y += toFIXED(1) / 4;
-			}
-			else if ((Uint32)(frame - 40) < HAURES_CHARGE_PASS_TICKS)
-			{
-				velocity.x += -toFIXED(1) / 2;
-			}
-		}
-		if (frame == 10)
-		{
-			sySoundPlayStub(SE_POWER_UP);
-		}
-		// Each pass strikes the foes, the last hardest.
-		if (frame == 14)
-		{
-			sySoundPlayStub(SE_CLATTER);
-			for (i = 0; i != args->targetCount; i++)
-			{
-				btEffectStartActorMotion(
-					args->targets[i], 1, toFIXED(4), toFIXED(8), toFIXED(4), 150);
-				btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
-				state->shakeFrame = 8;
-			}
-		}
-		if (frame == 30)
-		{
-			sySoundPlayStub(SE_POWER_UP);
-		}
-		if (frame == 34)
-		{
-			sySoundPlayStub(SE_CLATTER);
-			for (i = 0; i != args->targetCount; i++)
-			{
-				btEffectStartActorMotion(
-					args->targets[i], 1, toFIXED(4), toFIXED(8), toFIXED(4), 50);
-				btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
-				state->shakeFrame = 8;
-			}
-		}
-		if (frame == 58)
-		{
-			sySoundPlayStub(SE_CRASH);
-			for (i = 0; i != args->targetCount; i++)
-			{
-				btEffectStartActorMotion(
-					args->targets[i], 1, toFIXED(4), toFIXED(8), toFIXED(4), 200);
-				btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
-				state->shakeFrame = 8;
-			}
-		}
-		// Three streaks of fire across each of the first two passes, then from tick 56 a band of
-		// light that opens over the whole view.
-		verts                 = syHeapAllocateEWRAM(32);
-		model                 = btRenderAllocateModelList(1);
-		model->shade          = -8;
-		model->kind           = MODEL_SHADED_ADDITIVE;
-		model->texture        = &bandTexture;
-		bandTexture.logWidth  = 6;
-		bandTexture.logHeight = 5;
-		model->mesh           = HauresBandMesh;
-		model->vertices       = verts;
-		bandTexture.pixels    = state->sheet;
-		model->scrollU        = (frame * 8) & TEXTURE_SCROLL_MASK;
-		for (i = 0; i != 2; i++)
-		{
-			Sint32 start = HauresBandStarts[i];
+            chargeScale  = HauresOpeningScale;
+            bodyPlace[3] = 0;
+            t            = frame - 20;
+            if ((Uint32)t < HAURES_CHARGE_PASS_TICKS)
+            {
+                // Mirrored for the pass from the left.
+                chargeScale.x = -(toFIXED(1) + 1);
+                for (i = 0; i != HAURES_BODY_PIECES; i++)
+                {
+                    bodyPlace[0] = pos.x - toFIXED(HauresBodyPiecePoints[i][0]);
+                    bodyPlace[1] = toFIXED(272) - (toFIXED(HauresBodyPiecePoints[i][1]) + pos.y);
+                    bodyPlace[2] = toFIXED(256);
+                    fdRenderApplyProjectedPlacementStub(
+                        state->sprites[i], bodyPlace, (Sint32 *)&chargeScale, 0);
+                }
+            }
+            else
+            {
+                for (i = 0; i != HAURES_BODY_PIECES; i++)
+                {
+                    bodyPlace[0] = toFIXED(HauresBodyPiecePoints[i][0]) + pos.x;
+                    bodyPlace[1] = toFIXED(272) - (toFIXED(HauresBodyPiecePoints[i][1]) + pos.y);
+                    bodyPlace[2] = toFIXED(256);
+                    fdRenderApplyProjectedPlacementStub(
+                        state->sprites[i], bodyPlace, (Sint32 *)&chargeScale, 0);
+                }
+            }
+            pos.x += velocity.x;
+            pos.y += velocity.y;
+            if ((Uint32)frame < HAURES_CHARGE_PASS_TICKS)
+            {
+                velocity.x += -toFIXED(1) / 2;
+                velocity.y += toFIXED(1) / 2;
+            }
+            else if ((Uint32)t < HAURES_CHARGE_PASS_TICKS)
+            {
+                velocity.x += toFIXED(1) / 2;
+                velocity.y += toFIXED(1) / 4;
+            }
+            else if ((Uint32)(frame - 40) < HAURES_CHARGE_PASS_TICKS)
+            {
+                velocity.x += -toFIXED(1) / 2;
+            }
+        }
+        if (frame == 10)
+        {
+            sySoundPlayStub(SE_POWER_UP);
+        }
+        // Each pass strikes the foes, the last hardest.
+        if (frame == 14)
+        {
+            sySoundPlayStub(SE_CLATTER);
+            for (i = 0; i != args->targetCount; i++)
+            {
+                btEffectStartActorMotion(
+                    args->targets[i], 1, toFIXED(4), toFIXED(8), toFIXED(4), 150);
+                btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+                state->shakeFrame = 8;
+            }
+        }
+        if (frame == 30)
+        {
+            sySoundPlayStub(SE_POWER_UP);
+        }
+        if (frame == 34)
+        {
+            sySoundPlayStub(SE_CLATTER);
+            for (i = 0; i != args->targetCount; i++)
+            {
+                btEffectStartActorMotion(
+                    args->targets[i], 1, toFIXED(4), toFIXED(8), toFIXED(4), 50);
+                btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+                state->shakeFrame = 8;
+            }
+        }
+        if (frame == 58)
+        {
+            sySoundPlayStub(SE_CRASH);
+            for (i = 0; i != args->targetCount; i++)
+            {
+                btEffectStartActorMotion(
+                    args->targets[i], 1, toFIXED(4), toFIXED(8), toFIXED(4), 200);
+                btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+                state->shakeFrame = 8;
+            }
+        }
+        // Three streaks of fire across each of the first two passes, then from tick 56 a band of
+        // light that opens over the whole view.
+        verts                 = syHeapAllocateEWRAM(32);
+        model                 = btRenderAllocateModelList(1);
+        model->shade          = -8;
+        model->kind           = MODEL_SHADED_ADDITIVE;
+        model->texture        = &bandTexture;
+        bandTexture.logWidth  = 6;
+        bandTexture.logHeight = 5;
+        model->mesh           = HauresBandMesh;
+        model->vertices       = verts;
+        bandTexture.pixels    = state->sheet;
+        model->scrollU        = (frame * 8) & TEXTURE_SCROLL_MASK;
+        for (i = 0; i != 2; i++)
+        {
+            Sint32 start = HauresBandStarts[i];
 
-			if (frame >= start && frame < start + HAURES_STREAK_TICKS)
-			{
-				FIXED  amp = sySin((frame - start) * (DEGtoANG(180) / HAURES_STREAK_TICKS)) / 8;
-				Sint32 x;
-				Sint32 m;
+            if (frame >= start && frame < start + HAURES_STREAK_TICKS)
+            {
+                FIXED  amp = sySin((frame - start) * (DEGtoANG(180) / HAURES_STREAK_TICKS)) / 8;
+                Sint32 x;
+                Sint32 m;
 
-				for (m = 0; m != 3; m++)
-				{
-					Sint32 y = -4;
-					x        = m * 20 - 16;
-					syInitMatrix();
-					if (i == 0)
-					{
-						syTranslate(toFIXED(x), toFIXED(y), 0);
-						syRotZ(-DEGtoANG(45));
-					}
-					else
-					{
-						syTranslate(INTtoFIXED(x - 16), toFIXED(y), 0);
-						syRotZ(HAURES_SECOND_BAND_ROLL);
-					}
-					syScale(toFIXED(3), amp, toFIXED(2));
-					btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
-					btRenderDrawModelList(model);
-				}
-			}
-		}
-		bandTexture.logWidth  = 6;
-		bandTexture.logHeight = 5;
-		model->mesh           = HauresBandMesh;
-		model->kind           = MODEL_SHADED_ADDITIVE;
-		if ((Uint32)(frame - 56) <= 31)
-		{
-			Sint32            sh = 0;
-			Sint32            v;
-			Sint32            left;
-			Sint32            right;
-			PROJECTED_VERTEX *corner = verts;
+                for (m = 0; m != 3; m++)
+                {
+                    Sint32 y = -4;
+                    x        = m * 20 - 16;
+                    syInitMatrix();
+                    if (i == 0)
+                    {
+                        syTranslate(toFIXED(x), toFIXED(y), 0);
+                        syRotZ(-DEGtoANG(45));
+                    }
+                    else
+                    {
+                        syTranslate(INTtoFIXED(x - 16), toFIXED(y), 0);
+                        syRotZ(HAURES_SECOND_BAND_ROLL);
+                    }
+                    syScale(toFIXED(3), amp, toFIXED(2));
+                    btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
+                    btRenderDrawModelList(model);
+                }
+            }
+        }
+        bandTexture.logWidth  = 6;
+        bandTexture.logHeight = 5;
+        model->mesh           = HauresBandMesh;
+        model->kind           = MODEL_SHADED_ADDITIVE;
+        if ((Uint32)(frame - 56) <= 31)
+        {
+            Sint32            sh = 0;
+            Sint32            v;
+            Sint32            left;
+            Sint32            right;
+            PROJECTED_VERTEX *corner = verts;
 
-			if (frame > 79)
-			{
-				sh = (80 - frame) * 8;
-			}
-			model->shade       = sh;
-			model->scrollU     = (frame * 8) & TEXTURE_SCROLL_MASK;
-			bandTexture.pixels = state->sheet;
-			if (frame <= 71)
-			{
-				v = FIXEDtoINT(sySin(frame * (TRIG_TURN / 64) - DEGtoANG(315)) * HAURES_BAND_REACH);
-			}
-			else if (frame > 79)
-			{
-				v = FIXEDtoINT(sySin(frame * (TRIG_TURN / 64) + -TRIG_TURN) * HAURES_BAND_REACH);
-			}
-			else
-			{
-				v = HAURES_BAND_REACH;
-			}
-			left        = HAURES_BAND_INSET;
-			corner[0].y = HAURES_BAND_MIDDLE - v;
-			corner[1].y = HAURES_BAND_MIDDLE - v;
-			right       = CANVAS_SIZE - 1 - HAURES_BAND_INSET;
-			corner[0].x = left;
-			corner[1].x = right;
-			corner[2].x = left;
-			corner[2].y = v + HAURES_BAND_MIDDLE;
-			corner[3].x = right;
-			corner[3].y = v + HAURES_BAND_MIDDLE;
-			btRenderDrawModelList(model);
-		}
-		syHeapRelease(model);
-		syHeapRelease(verts);
-		btCameraShake(8, 8);
-		EFFECT_END_TICK(state);
-	}
-	for (i = 0; i != HAURES_BODY_PIECES; i++)
-	{
-		fdSpriteDestroyStub(state->sprites[i]);
-	}
-	EFFECT_FINISH_CANVAS_ONE_BLITTER();
+            if (frame > 79)
+            {
+                sh = (80 - frame) * 8;
+            }
+            model->shade       = sh;
+            model->scrollU     = (frame * 8) & TEXTURE_SCROLL_MASK;
+            bandTexture.pixels = state->sheet;
+            if (frame <= 71)
+            {
+                v = FIXEDtoINT(sySin(frame * (TRIG_TURN / 64) - DEGtoANG(315)) * HAURES_BAND_REACH);
+            }
+            else if (frame > 79)
+            {
+                v = FIXEDtoINT(sySin(frame * (TRIG_TURN / 64) + -TRIG_TURN) * HAURES_BAND_REACH);
+            }
+            else
+            {
+                v = HAURES_BAND_REACH;
+            }
+            left        = HAURES_BAND_INSET;
+            corner[0].y = HAURES_BAND_MIDDLE - v;
+            corner[1].y = HAURES_BAND_MIDDLE - v;
+            right       = CANVAS_SIZE - 1 - HAURES_BAND_INSET;
+            corner[0].x = left;
+            corner[1].x = right;
+            corner[2].x = left;
+            corner[2].y = v + HAURES_BAND_MIDDLE;
+            corner[3].x = right;
+            corner[3].y = v + HAURES_BAND_MIDDLE;
+            btRenderDrawModelList(model);
+        }
+        syHeapRelease(model);
+        syHeapRelease(verts);
+        btCameraShake(8, 8);
+        EFFECT_END_TICK(state);
+    }
+    for (i = 0; i != HAURES_BODY_PIECES; i++)
+    {
+        fdSpriteDestroyStub(state->sprites[i]);
+    }
+    EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // The two rings sit at y = -36 and y = -18.
@@ -1304,63 +1304,63 @@ void btEffectRunHaures(BATTLE_EFFECT_PARM *args)
 // vertices are 0 ends the list. Coatlicue builds it with 32 segments.
 void btMeshBuildCylinderBand(MESH_VERTEX *vertices, MESH_TRIANGLE *triangles, Sint32 segments)
 {
-	Sint32 ring;
-	Sint32 i;
+    Sint32 ring;
+    Sint32 i;
 
-	for (ring = 0; ring != 2; ring++)
-	{
-		for (i = 0; i != segments; i++)
-		{
-			// The vertex: a point on the ring, CYLINDER_RADIUS out.
-			vertices[ring * segments + i].x =
-				(Uint32)(sySin(i * (TRIG_TURN / segments)) * (CYLINDER_RADIUS / 32))
-				/ (toFIXED(1) / 32);
-			vertices[ring * segments + i].y = ring * RING_SPACING + FIRST_RING_Y;
-			vertices[ring * segments + i].z =
-				(Uint32)(syCos(i * (TRIG_TURN / segments)) * (CYLINDER_RADIUS / 32))
-				/ (toFIXED(1) / 32);
+    for (ring = 0; ring != 2; ring++)
+    {
+        for (i = 0; i != segments; i++)
+        {
+            // The vertex: a point on the ring, CYLINDER_RADIUS out.
+            vertices[ring * segments + i].x =
+                (Uint32)(sySin(i * (TRIG_TURN / segments)) * (CYLINDER_RADIUS / 32))
+                / (toFIXED(1) / 32);
+            vertices[ring * segments + i].y = ring * RING_SPACING + FIRST_RING_Y;
+            vertices[ring * segments + i].z =
+                (Uint32)(syCos(i * (TRIG_TURN / segments)) * (CYLINDER_RADIUS / 32))
+                / (toFIXED(1) / 32);
 
-			// The side from this vertex to the next, as two triangles.
-			if (ring < 1)
-			{
-				MESH_TRIANGLE *triangle =
-					(MESH_TRIANGLE *)((ring * segments + i) * (2 * sizeof(MESH_TRIANGLE))
-				                      + (Uint32)triangles);
-				Sint32 left          = i * COLUMN_WIDTH;
-				Sint32 right         = left + COLUMN_WIDTH - 1;
+            // The side from this vertex to the next, as two triangles.
+            if (ring < 1)
+            {
+                MESH_TRIANGLE *triangle =
+                    (MESH_TRIANGLE *)((ring * segments + i) * (2 * sizeof(MESH_TRIANGLE))
+                                      + (Uint32)triangles);
+                Sint32 left          = i * COLUMN_WIDTH;
+                Sint32 right         = left + COLUMN_WIDTH - 1;
 
-				triangle[0].uv[0][0] = right;
-				triangle[0].uv[0][1] = 0;
-				triangle[0].uv[1][0] = right;
-				triangle[0].uv[1][1] = COLUMN_HEIGHT - 1;
-				triangle[0].uv[2][0] = left;
-				triangle[0].uv[2][1] = COLUMN_HEIGHT - 1;
-				{
-					MESH_TRIANGLE *second = triangle + 1;
+                triangle[0].uv[0][0] = right;
+                triangle[0].uv[0][1] = 0;
+                triangle[0].uv[1][0] = right;
+                triangle[0].uv[1][1] = COLUMN_HEIGHT - 1;
+                triangle[0].uv[2][0] = left;
+                triangle[0].uv[2][1] = COLUMN_HEIGHT - 1;
+                {
+                    MESH_TRIANGLE *second = triangle + 1;
 
-					second->uv[0][0]      = left;
-					second->uv[0][1]      = 0;
-					second->uv[1][0]      = right;
-					second->uv[1][1]      = 0;
-					second->uv[2][0]      = left;
-					second->uv[2][1]      = COLUMN_HEIGHT - 1;
+                    second->uv[0][0]      = left;
+                    second->uv[0][1]      = 0;
+                    second->uv[1][0]      = right;
+                    second->uv[1][1]      = 0;
+                    second->uv[2][0]      = left;
+                    second->uv[2][1]      = COLUMN_HEIGHT - 1;
 
-					// (next, next on ring 1, this on ring 1), then (this, next, this on ring 1).
-					triangle->vertex[0]   = (i + 1) % segments + ring * segments;
-					triangle->vertex[1]   = (i + 1) % segments + segments + ring * segments;
-					triangle->vertex[2]   = i % segments + segments + ring * segments;
-					second->vertex[0]     = i % segments + ring * segments;
-					second->vertex[1]     = (i + 1) % segments + ring * segments;
-					second->vertex[2]     = i % segments + segments + ring * segments;
-				}
-			}
-		}
-	}
+                    // (next, next on ring 1, this on ring 1), then (this, next, this on ring 1).
+                    triangle->vertex[0]   = (i + 1) % segments + ring * segments;
+                    triangle->vertex[1]   = (i + 1) % segments + segments + ring * segments;
+                    triangle->vertex[2]   = i % segments + segments + ring * segments;
+                    second->vertex[0]     = i % segments + ring * segments;
+                    second->vertex[1]     = (i + 1) % segments + ring * segments;
+                    second->vertex[2]     = i % segments + segments + ring * segments;
+                }
+            }
+        }
+    }
 
-	// The end of the list.
-	triangles[segments * 2].vertex[0] = 0;
-	triangles[segments * 2].vertex[1] = 0;
-	triangles[segments * 2].vertex[2] = 0;
+    // The end of the list.
+    triangles[segments * 2].vertex[0] = 0;
+    triangles[segments * 2].vertex[1] = 0;
+    triangles[segments * 2].vertex[2] = 0;
 }
 
 #undef SCRATCH

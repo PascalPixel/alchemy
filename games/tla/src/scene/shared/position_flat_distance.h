@@ -3,8 +3,8 @@
 // members, read here as an array.
 Sint32 scPosFlatDistance(FIXED *a, FIXED *b)
 {
-	Sint32 dx = FIXEDtoINT(a[0] - b[0]);
-	Sint32 dz = FIXEDtoINT(a[2] - b[2]);
+    Sint32 dx = FIXEDtoINT(a[0] - b[0]);
+    Sint32 dz = FIXEDtoINT(a[2] - b[2]);
 
-	return sySquartIWRAM(dx * dx + dz * dz);
+    return sySquartIWRAM(dx * dx + dz * dz);
 }

@@ -110,7 +110,7 @@ extern char SceneIdYampiDesertBlowMaceChest;
 // Yampi Desert Cave
 extern char SceneIdYampiDesertCaveWaterOfLifeChest;
 #define SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST                                                \
-	((Sint32)&SceneIdYampiDesertCaveWaterOfLifeChest)
+    ((Sint32)&SceneIdYampiDesertCaveWaterOfLifeChest)
 extern char SceneIdYampiDesertCaveGuardian;
 #define SCENE_YAMPI_DESERT_CAVE_GUARDIAN ((Sint32)&SceneIdYampiDesertCaveGuardian)
 // The Yampi Desert cave room where Crystal is fought.
@@ -130,7 +130,7 @@ extern char SceneIdAirsRockInsideVialChest;
 #define SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST ((Sint32)&SceneIdAirsRockInsideVialChest)
 extern char SceneIdAirsRockInsideClarityCircletChest;
 #define SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST                                               \
-	((Sint32)&SceneIdAirsRockInsideClarityCircletChest)
+    ((Sint32)&SceneIdAirsRockInsideClarityCircletChest)
 extern char SceneIdAirsRockInsideTightropes;
 #define SCENE_AIRS_ROCK_INSIDE_TIGHTROPES ((Sint32)&SceneIdAirsRockInsideTightropes)
 // The room inside Air's Rock with the tablet that teaches Reveal.
@@ -292,14 +292,14 @@ extern char SceneIdGabombaStatuePinion;
 // Anemos Inner Sanctum
 extern char SceneIdAnemosInnerSanctumDragonSkinChest;
 #define SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST                                               \
-	((Sint32)&SceneIdAnemosInnerSanctumDragonSkinChest)
+    ((Sint32)&SceneIdAnemosInnerSanctumDragonSkinChest)
 extern char SceneIdAnemosInnerSanctumElevator;
 #define SCENE_ANEMOS_INNER_SANCTUM_ELEVATOR ((Sint32)&SceneIdAnemosInnerSanctumElevator)
 extern char SceneIdAnemosInnerSanctumSwitches;
 #define SCENE_ANEMOS_INNER_SANCTUM_SWITCHES ((Sint32)&SceneIdAnemosInnerSanctumSwitches)
 extern char SceneIdAnemosInnerSanctumOrihalconChest;
 #define SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST                                                 \
-	((Sint32)&SceneIdAnemosInnerSanctumOrihalconChest)
+    ((Sint32)&SceneIdAnemosInnerSanctumOrihalconChest)
 extern char SceneIdAnemosInnerSanctumGuardian;
 #define SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN ((Sint32)&SceneIdAnemosInnerSanctumGuardian)
 
@@ -345,7 +345,7 @@ extern char SceneIdMagmaRockInsideGolemCoreChest;
 #define SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST ((Sint32)&SceneIdMagmaRockInsideGolemCoreChest)
 extern char SceneIdMagmaRockInsideSalamanderTailChest;
 #define SCENE_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST                                              \
-	((Sint32)&SceneIdMagmaRockInsideSalamanderTailChest)
+    ((Sint32)&SceneIdMagmaRockInsideSalamanderTailChest)
 extern char SceneIdMagmaRockInsideEmberStone;
 #define SCENE_MAGMA_ROCK_INSIDE_EMBER_STONE ((Sint32)&SceneIdMagmaRockInsideEmberStone)
 // The room inside Magma Rock with the tablet that teaches Blaze.
@@ -498,7 +498,7 @@ extern char SceneIdAquaRockInsideRustySwordChest;
 #define SCENE_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST ((Sint32)&SceneIdAquaRockInsideRustySwordChest)
 extern char SceneIdAquaRockInsideCrystalPowderChest;
 #define SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST                                                \
-	((Sint32)&SceneIdAquaRockInsideCrystalPowderChest)
+    ((Sint32)&SceneIdAquaRockInsideCrystalPowderChest)
 extern char SceneIdAquaRockInsideVialChest;
 #define SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST ((Sint32)&SceneIdAquaRockInsideVialChest)
 // The room inside Aqua Rock with a Psynergy Stone.
@@ -554,19 +554,19 @@ extern char SceneIdMarsLighthouseEntranceFugue;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_FUGUE ((Sint32)&SceneIdMarsLighthouseEntranceFugue)
 extern char SceneIdMarsLighthouseEntranceTeleportLapis;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS                                              \
-	((Sint32)&SceneIdMarsLighthouseEntranceTeleportLapis)
+    ((Sint32)&SceneIdMarsLighthouseEntranceTeleportLapis)
 // The Mars Lighthouse room where Balm is fought.
 extern char SceneIdMarsLighthouseEntranceBalm;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_BALM ((Sint32)&SceneIdMarsLighthouseEntranceBalm)
 extern char SceneIdMarsLighthouseEntranceHiddenCircle;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE                                               \
-	((Sint32)&SceneIdMarsLighthouseEntranceHiddenCircle)
+    ((Sint32)&SceneIdMarsLighthouseEntranceHiddenCircle)
 extern char SceneIdMarsLighthouseEntranceValkyrieMailChest;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST                                         \
-	((Sint32)&SceneIdMarsLighthouseEntranceValkyrieMailChest)
+    ((Sint32)&SceneIdMarsLighthouseEntranceValkyrieMailChest)
 extern char SceneIdMarsLighthouseEntranceSolBladeChest;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST                                             \
-	((Sint32)&SceneIdMarsLighthouseEntranceSolBladeChest)
+    ((Sint32)&SceneIdMarsLighthouseEntranceSolBladeChest)
 // Mars Lighthouse's room of the Mars Star.
 extern char SceneIdMarsLighthouseStarRoom;
 #define SCENE_MARS_LIGHTHOUSE_STAR_ROOM ((Sint32)&SceneIdMarsLighthouseStarRoom)
@@ -811,25 +811,25 @@ extern char SceneIdJupiterLighthouseEntrance;
 #define SCENE_JUPITER_LIGHTHOUSE_ENTRANCE ((Sint32)&SceneIdJupiterLighthouseEntrance)
 extern char SceneIdJupiterLighthouseBasementTeleporters;
 #define SCENE_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS                                              \
-	((Sint32)&SceneIdJupiterLighthouseBasementTeleporters)
+    ((Sint32)&SceneIdJupiterLighthouseBasementTeleporters)
 extern char SceneIdJupiterLighthouseBasementPsynergyStone;
 #define SCENE_JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE                                           \
-	((Sint32)&SceneIdJupiterLighthouseBasementPsynergyStone)
+    ((Sint32)&SceneIdJupiterLighthouseBasementPsynergyStone)
 extern char SceneIdJupiterLighthouseRoomGateButton;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON ((Sint32)&SceneIdJupiterLighthouseRoomGateButton)
 extern char SceneIdJupiterLighthouseRoomBeam;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_BEAM ((Sint32)&SceneIdJupiterLighthouseRoomBeam)
 extern char SceneIdJupiterLighthouseRoomErinyesTunicChest;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST                                          \
-	((Sint32)&SceneIdJupiterLighthouseRoomErinyesTunicChest)
+    ((Sint32)&SceneIdJupiterLighthouseRoomErinyesTunicChest)
 extern char SceneIdJupiterLighthouseRoomLockedDoors;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS                                                 \
-	((Sint32)&SceneIdJupiterLighthouseRoomLockedDoors)
+    ((Sint32)&SceneIdJupiterLighthouseRoomLockedDoors)
 extern char SceneIdJupiterLighthouseRoomRedKey;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_RED_KEY ((Sint32)&SceneIdJupiterLighthouseRoomRedKey)
 extern char SceneIdJupiterLighthouseRoomCrackedFloor;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR                                                \
-	((Sint32)&SceneIdJupiterLighthouseRoomCrackedFloor)
+    ((Sint32)&SceneIdJupiterLighthouseRoomCrackedFloor)
 // The Jupiter Lighthouse room where Whorl is fought.
 extern char SceneIdJupiterLighthouseWhorl;
 #define SCENE_JUPITER_LIGHTHOUSE_WHORL ((Sint32)&SceneIdJupiterLighthouseWhorl)
@@ -837,7 +837,7 @@ extern char SceneIdJupiterLighthouseRoomBlueKey;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY ((Sint32)&SceneIdJupiterLighthouseRoomBlueKey)
 extern char SceneIdJupiterLighthouseRoomPhaetonsBladeChest;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST                                         \
-	((Sint32)&SceneIdJupiterLighthouseRoomPhaetonsBladeChest)
+    ((Sint32)&SceneIdJupiterLighthouseRoomPhaetonsBladeChest)
 
 // Gondowan Settlement
 extern char SceneIdGondowanSettlementCave;

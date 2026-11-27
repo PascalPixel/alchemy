@@ -13,20 +13,20 @@
 // An icon sprite's OAM attributes, as OAM lays them out.
 typedef struct ICON_ATTR
 {
-	Uint8  y;
-	Uint8  attr0High;
-	Uint16 x         : 9;
-	Uint16 attr1High : 7;
-	Uint16 tile      : 10;
-	Uint16 attr2High : 6;
-	Uint16 affineParam; // OAM's fourth halfword, the affine parameter slot
+    Uint8  y;
+    Uint8  attr0High;
+    Uint16 x         : 9;
+    Uint16 attr1High : 7;
+    Uint16 tile      : 10;
+    Uint16 attr2High : 6;
+    Uint16 affineParam; // OAM's fourth halfword, the affine parameter slot
 } ICON_ATTR;
 
 // An icon's sprite: its link in the sprite list and its OAM attributes.
 typedef struct ICON_SPR
 {
-	Uint32    link;
-	ICON_ATTR attribute;
+    Uint32    link;
+    ICON_ATTR attribute;
 } ICON_SPR;
 
 void          mnItemIconLoadLayersIntoSlotStub(Sint32 item, Sint32 mode, Sint32 resource);
@@ -51,6 +51,6 @@ void          mnIconDrawMiscellaneous(Uint32 index);
 // Builds a command icon, overlayIcon over baseIcon, and loads it into a sprite tile slot: *slot, or
 // a free one when reuse is 0.
 void          mnIconBuildCommandIconTiles(
-			 Sint32 overlayIcon, Sint32 baseIcon, Sint32 *slot, Sint32 *tile, Sint32 reuse);
+             Sint32 overlayIcon, Sint32 baseIcon, Sint32 *slot, Sint32 *tile, Sint32 reuse);
 
 #endif

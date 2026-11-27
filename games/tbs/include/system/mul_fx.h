@@ -14,14 +14,14 @@
 // syIWRAMMulFX written out where it is called.
 static __inline__ FIXED syMulFXArm(FIXED left, FIXED right)
 {
-	Uint32 low;
-	Sint32 high;
-	Sint32 result;
+    Uint32 low;
+    Sint32 high;
+    Sint32 result;
 
-	ASM_SMULL(high, low, left, right);
-	high = INTtoFIXED(high);
-	ASM_ORR_SHIFTED(result, high, low);
-	return result;
+    ASM_SMULL(high, low, left, right);
+    high = INTtoFIXED(high);
+    ASM_ORR_SHIFTED(result, high, low);
+    return result;
 }
 
 #endif

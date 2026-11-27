@@ -11,23 +11,23 @@
 typedef struct SPR_PLACEMENT
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	union
-	{
-		struct
-		{
-			FIXED x;            // screen x of the sprite's centre
-			FIXED height;       // how far the image is raised above y
-			FIXED y;            // screen y at the ground; sets the depth slot
-			FIXED groundHeight; // how far the shadow is raised above y
-		};
+    union
+    {
+        struct
+        {
+            FIXED x;            // screen x of the sprite's centre
+            FIXED height;       // how far the image is raised above y
+            FIXED y;            // screen y at the ground; sets the depth slot
+            FIXED groundHeight; // how far the shadow is raised above y
+        };
 
-		FIXED values[4];
-	};
+        FIXED values[4];
+    };
 #else
-	FIXED x;            // screen x of the sprite's centre
-	FIXED height;       // how far the image is raised above y
-	FIXED y;            // screen y at the ground; sets the depth slot
-	FIXED groundHeight; // how far the shadow is raised above y
+    FIXED x;            // screen x of the sprite's centre
+    FIXED height;       // how far the image is raised above y
+    FIXED y;            // screen y at the ground; sets the depth slot
+    FIXED groundHeight; // how far the shadow is raised above y
 #endif
 } SPR_PLACEMENT;
 
@@ -37,9 +37,9 @@ typedef struct SPR_PLACEMENT
 static inline const Sint32 *sySpritePlacementReadValues(const SPR_PLACEMENT *placement)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return placement->values;
+    return placement->values;
 #else
-	return &placement->x;
+    return &placement->x;
 #endif
 }
 
@@ -47,25 +47,25 @@ static inline const Sint32 *sySpritePlacementReadValues(const SPR_PLACEMENT *pla
 static inline Sint32 *sySpritePlacementValues(SPR_PLACEMENT *placement)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return placement->values;
+    return placement->values;
 #else
-	return &placement->x;
+    return &placement->x;
 #endif
 }
 
 // Horizontal and vertical sprite scale; toFIXED(1) is the original size.
 typedef struct SPR_SCALE
 {
-	union
-	{
-		struct
-		{
-			FIXED x;
-			FIXED y;
-		};
+    union
+    {
+        struct
+        {
+            FIXED x;
+            FIXED y;
+        };
 
-		Sint32 values[2];
-	};
+        Sint32 values[2];
+    };
 } SPR_SCALE;
 
 STATIC_ASSERT(sizeof(SPR_PLACEMENT) == 16);

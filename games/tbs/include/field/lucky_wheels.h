@@ -11,16 +11,16 @@
 // anything." Tolbi's attendant gives one of three items of the kind.
 typedef enum LUCKY_WHEELS_PRIZE
 {
-	LUCKY_WHEELS_PRIZE_UNDERSHIRT, // a Mythril, Silk or Running Shirt
-	LUCKY_WHEELS_PRIZE_BOOTS,      // Hyper, Quick or Fur Boots
-	LUCKY_WHEELS_PRIZE_RING,       // an Adept, War or Sleep Ring
-	LUCKY_WHEELS_PRIZE_HEART_ITEM, // a Potion, Vial or Nut
-	LUCKY_WHEELS_PRIZE_STAR_ITEM,  // a Water of Life, Psy Crystal or Elixir
-	LUCKY_WHEELS_PRIZE_ANYTHING,   // one of the five kinds above
-	// Ends the list of prizes; first in it, the last pull won nothing.
-	LUCKY_WHEELS_PRIZE_LIST_END  = -1,
-	// First in the list: the player left at the bet, or Tolbi's attendant has given the prizes.
-	LUCKY_WHEELS_PRIZE_LIST_DONE = -2
+    LUCKY_WHEELS_PRIZE_UNDERSHIRT, // a Mythril, Silk or Running Shirt
+    LUCKY_WHEELS_PRIZE_BOOTS,      // Hyper, Quick or Fur Boots
+    LUCKY_WHEELS_PRIZE_RING,       // an Adept, War or Sleep Ring
+    LUCKY_WHEELS_PRIZE_HEART_ITEM, // a Potion, Vial or Nut
+    LUCKY_WHEELS_PRIZE_STAR_ITEM,  // a Water of Life, Psy Crystal or Elixir
+    LUCKY_WHEELS_PRIZE_ANYTHING,   // one of the five kinds above
+    // Ends the list of prizes; first in it, the last pull won nothing.
+    LUCKY_WHEELS_PRIZE_LIST_END  = -1,
+    // First in the list: the player left at the bet, or Tolbi's attendant has given the prizes.
+    LUCKY_WHEELS_PRIZE_LIST_DONE = -2
 } LUCKY_WHEELS_PRIZE;
 
 // The Lucky Wheels module's function in its stub table (src/field/lucky_wheels_stubs.s).

@@ -20,7 +20,7 @@
 // another pool through its allocator, such as syHeapAllocateEWRAM.
 static __inline__ void *syHeapCallAlternatePool(void *(*allocate)(Sint32), Sint32 size)
 {
-	return allocate(size);
+    return allocate(size);
 }
 
 struct AFFINE_TRANSFORM;
@@ -209,11 +209,11 @@ void               syIdleForever(void);
 // The cartridge's language, from its header (syGetLanguage).
 typedef enum CARTRIDGE_LANGUAGE
 {
-	CARTRIDGE_LANGUAGE_ENGLISH,
-	CARTRIDGE_LANGUAGE_GERMAN,
-	CARTRIDGE_LANGUAGE_FRENCH,
-	CARTRIDGE_LANGUAGE_SPANISH,
-	CARTRIDGE_LANGUAGE_ITALIAN
+    CARTRIDGE_LANGUAGE_ENGLISH,
+    CARTRIDGE_LANGUAGE_GERMAN,
+    CARTRIDGE_LANGUAGE_FRENCH,
+    CARTRIDGE_LANGUAGE_SPANISH,
+    CARTRIDGE_LANGUAGE_ITALIAN
 } CARTRIDGE_LANGUAGE;
 
 Sint32 syGetLanguage(void);
@@ -316,74 +316,74 @@ extern Uint32 RandomSeed;
 // The dma group. DMA channel registers, and the DMA and CPU fills. Fills `size` bytes at
 // `destination` with the halfword `value` by DMA3, from a volatile copy of it on the stack.
 #define DMA_FILL16(value, destination, size)                                                       \
-	{                                                                                              \
-		volatile Uint16 fill_ = (value);                                                           \
-		syDMAXCopy((const void *)&fill_, (destination), DMA_FILL_HALFWORDS((size) / 2), REG_DMA3); \
-	}
+    {                                                                                              \
+        volatile Uint16 fill_ = (value);                                                           \
+        syDMAXCopy((const void *)&fill_, (destination), DMA_FILL_HALFWORDS((size) / 2), REG_DMA3); \
+    }
 
 // Fills `size` bytes at `destination` with the word `value` by DMA3.
 #define DMA_FILL32(value, destination, size)                                                       \
-	{                                                                                              \
-		volatile Uint32 fill_ = (value);                                                           \
-		syDMAXCopy((const void *)&fill_, (destination), DMA_FILL_WORDS((size) / 4), REG_DMA3);     \
-	}
+    {                                                                                              \
+        volatile Uint32 fill_ = (value);                                                           \
+        syDMAXCopy((const void *)&fill_, (destination), DMA_FILL_WORDS((size) / 4), REG_DMA3);     \
+    }
 
 // DMA_FILL32 through the caller's own volatile word `cell`, so a function that fills several blocks
 // keeps one word for all of them and forms its address once.
 #define DMA_FILL32_CELL(cell, value, destination, size)                                            \
-	{                                                                                              \
-		(cell) = (value);                                                                          \
-		syDMAXCopy((const void *)&(cell), (destination), DMA_FILL_WORDS((size) / 4), REG_DMA3);    \
-	}
+    {                                                                                              \
+        (cell) = (value);                                                                          \
+        syDMAXCopy((const void *)&(cell), (destination), DMA_FILL_WORDS((size) / 4), REG_DMA3);    \
+    }
 
 // pret's CpuFill32: repeats one word through the BIOS CpuSet service.
 #define CPU_FILL32(value, destination, size)                                                       \
-	{                                                                                              \
-		volatile Uint32 fill_ = (value);                                                           \
-		BiosCpuSet((const void *)&fill_,                                                           \
-		           (destination),                                                                  \
-		           CPU_SET_32BIT | CPU_SET_SRC_FIXED | ((size) / 4));                              \
-	}
+    {                                                                                              \
+        volatile Uint32 fill_ = (value);                                                           \
+        BiosCpuSet((const void *)&fill_,                                                           \
+                   (destination),                                                                  \
+                   CPU_SET_32BIT | CPU_SET_SRC_FIXED | ((size) / 4));                              \
+    }
 
 // Stops DMA 0, which a scene may have left repeating each HBlank for a line effect: drops its start
 // timing and repeat, then its enable, and reads the control back.
 #define DMA0_STOP()                                                                                \
-	{                                                                                              \
-		volatile Uint16 *dma0_       = REG_DMA0;                                                   \
+    {                                                                                              \
+        volatile Uint16 *dma0_       = REG_DMA0;                                                   \
                                                                                                    \
-		dma0_[DMA_CONTROL_HALFWORD] &= ~DMA_START_TIMING_DRQ_REPEAT;                               \
-		dma0_[DMA_CONTROL_HALFWORD] &= ~DMA_ENABLE;                                                \
-		dma0_[DMA_CONTROL_HALFWORD];                                                               \
-	}
+        dma0_[DMA_CONTROL_HALFWORD] &= ~DMA_START_TIMING_DRQ_REPEAT;                               \
+        dma0_[DMA_CONTROL_HALFWORD] &= ~DMA_ENABLE;                                                \
+        dma0_[DMA_CONTROL_HALFWORD];                                                               \
+    }
 
 // Starts a DMA transfer: stores the source, destination and control words into `channel`'s
 // registers with one stmia.
 static __inline__ void
 syDMAXCopy(const volatile void *src, volatile void *dest, Uint32 control, volatile Uint32 *channel)
 {
-	ASM_REGISTER(volatile Uint32 *dma, "r3") = channel;
-	ASM_REGISTER(Uint32 srcReg, "r0")        = (Uint32)src;
-	ASM_REGISTER(Uint32 destReg, "r1")       = (Uint32)dest;
-	ASM_REGISTER(Uint32 count, "r2")         = control;
-	ASM_DMA_STORE(srcReg, count, dma, destReg);
+    ASM_REGISTER(volatile Uint32 *dma, "r3") = channel;
+    ASM_REGISTER(Uint32 srcReg, "r0")        = (Uint32)src;
+    ASM_REGISTER(Uint32 destReg, "r1")       = (Uint32)dest;
+    ASM_REGISTER(Uint32 count, "r2")         = control;
+    ASM_DMA_STORE(srcReg, count, dma, destReg);
 }
 
 // Waits until `channel`'s transfer is done: SGL's slDMAWait.
 static __inline__ void syDMAWait(DMA_REGISTERS volatile *channel)
 {
-	while ((channel->control & DMA_BUSY) != 0)
-	{
-	}
+    while ((channel->control & DMA_BUSY) != 0)
+    {
+    }
 }
 
 // The io_write group. IO_WRITE8, IO_WRITE16 and IO_WRITE32, writes to a register or memory. Writes
 // a value to a 16-bit register or memory location.
 #define IO_WRITE16(v, reg)                                                                         \
-	do                                                                                             \
-	{                                                                                              \
-		Uint32 value_ = (v);                                                                       \
-		*(reg)        = value_;                                                                    \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        Uint32 value_ = (v);                                                                       \
+        *(reg)        = value_;                                                                    \
+    } while (0)
 
 // Writes a value to a 32-bit register or memory location, in IO_WRITE16's shape.
 #define IO_WRITE32(v, reg)        IO_WRITE16(v, reg)
@@ -403,57 +403,57 @@ static __inline__ void syDMAWait(DMA_REGISTERS volatile *channel)
 
 // Saves the original IME value in saved.
 #define IME_SAVE(ime, saved)                                                                       \
-	do                                                                                             \
-	{                                                                                              \
-		(saved) = *(ime);                                                                          \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        (saved) = *(ime);                                                                          \
+    } while (0)
 
 // Disables interrupts.
 #define IME_DISABLE(ime)                                                                           \
-	do                                                                                             \
-	{                                                                                              \
-		*(ime) = (Uint16)(Uint32)(ime);                                                            \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        *(ime) = (Uint16)(Uint32)(ime);                                                            \
+    } while (0)
 
 // Restores IME from saved.
 #define IME_RESTORE(ime, saved)                                                                    \
-	do                                                                                             \
-	{                                                                                              \
-		*(ime) = (saved);                                                                          \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        *(ime) = (saved);                                                                          \
+    } while (0)
 
 // Disables interrupts and saves IME in saved; IRQ_UNLOCK restores it.
 #define IRQ_LOCK(saved)                                                                            \
-	do                                                                                             \
-	{                                                                                              \
-		volatile Uint16 *ime_;                                                                     \
+    do                                                                                             \
+    {                                                                                              \
+        volatile Uint16 *ime_;                                                                     \
                                                                                                    \
-		IME_SAVE((ime_ = &REG_IME), saved);                                                        \
-		IME_DISABLE(ime_);                                                                         \
-	} while (0)
+        IME_SAVE((ime_ = &REG_IME), saved);                                                        \
+        IME_DISABLE(ime_);                                                                         \
+    } while (0)
 
 // Restores the IME value saved by IRQ_LOCK.
 #define IRQ_UNLOCK(saved)                                                                          \
-	do                                                                                             \
-	{                                                                                              \
-		REG_IME = (saved);                                                                         \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        REG_IME = (saved);                                                                         \
+    } while (0)
 
 // Disables interrupts, keeping IME in a variable of the caller's that an interrupt may read.
 static inline void syIRQLock(volatile Uint32 *saved)
 {
-	Uint16 *ime;
+    Uint16 *ime;
 
-	IME_SAVE((ime = (Uint16 *)&REG_IME), *saved);
-	IME_DISABLE(ime);
+    IME_SAVE((ime = (Uint16 *)&REG_IME), *saved);
+    IME_DISABLE(ime);
 }
 
 // Restores the IME that syIRQLock kept.
 static inline void syIRQUnlock(volatile Uint32 *saved)
 {
-	Uint32 value = *saved;
+    Uint32 value = *saved;
 
-	REG_IME      = value;
+    REG_IME      = value;
 }
 
 // The io_write_queue group. The register write queue that VBlank carries out after each finished
@@ -461,48 +461,48 @@ static inline void syIRQUnlock(volatile Uint32 *saved)
 // is dropped. control is a width (IO_WRITE_BYTE to IO_WRITE_WORD), with IO_WRITE_SET or
 // IO_WRITE_CLEAR to change bits; or a DMA control word.
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                                               \
-	{                                                                                              \
-		IO_WRITE_QUEUE *q = &IoWriteQueueWork;                                                     \
-		Uint32          saved;                                                                     \
-		Sint32          count;                                                                     \
+    {                                                                                              \
+        IO_WRITE_QUEUE *q = &IoWriteQueueWork;                                                     \
+        Uint32          saved;                                                                     \
+        Sint32          count;                                                                     \
                                                                                                    \
-		IRQ_LOCK(saved);                                                                           \
-		count = *&q->count;                                                                        \
-		if (count <= 31)                                                                           \
-		{                                                                                          \
-			Uint32 *entry = q->entries[count];                                                     \
+        IRQ_LOCK(saved);                                                                           \
+        count = *&q->count;                                                                        \
+        if (count <= 31)                                                                           \
+        {                                                                                          \
+            Uint32 *entry = q->entries[count];                                                     \
                                                                                                    \
-			*&q->count    = count + 1;                                                             \
-			*entry++      = (value);                                                               \
-			*entry++      = (address);                                                             \
-			*entry        = (control);                                                             \
-		}                                                                                          \
-		IRQ_UNLOCK(saved);                                                                         \
-	}
+            *&q->count    = count + 1;                                                             \
+            *entry++      = (value);                                                               \
+            *entry++      = (address);                                                             \
+            *entry        = (control);                                                             \
+        }                                                                                          \
+        IRQ_UNLOCK(saved);                                                                         \
+    }
 
 // Like IO_WRITE_QUEUE_PUSH, but keeps IME's address in the caller's ime variable while disabling
 // and restoring interrupts.
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control)                                      \
-	{                                                                                              \
-		IO_WRITE_QUEUE *q;                                                                         \
-		Uint32          saved;                                                                     \
-		Sint32          count;                                                                     \
+    {                                                                                              \
+        IO_WRITE_QUEUE *q;                                                                         \
+        Uint32          saved;                                                                     \
+        Sint32          count;                                                                     \
                                                                                                    \
-		q = &IoWriteQueueWork;                                                                     \
-		IME_SAVE(ime, saved);                                                                      \
-		IME_DISABLE(ime);                                                                          \
-		count = *&q->count;                                                                        \
-		if (count <= 31)                                                                           \
-		{                                                                                          \
-			Uint32 *entry = q->entries[count];                                                     \
+        q = &IoWriteQueueWork;                                                                     \
+        IME_SAVE(ime, saved);                                                                      \
+        IME_DISABLE(ime);                                                                          \
+        count = *&q->count;                                                                        \
+        if (count <= 31)                                                                           \
+        {                                                                                          \
+            Uint32 *entry = q->entries[count];                                                     \
                                                                                                    \
-			*&q->count    = count + 1;                                                             \
-			*entry++      = (value);                                                               \
-			*entry++      = (address);                                                             \
-			*entry        = (control);                                                             \
-		}                                                                                          \
-		IME_RESTORE(ime, saved);                                                                   \
-	}
+            *&q->count    = count + 1;                                                             \
+            *entry++      = (value);                                                               \
+            *entry++      = (address);                                                             \
+            *entry        = (control);                                                             \
+        }                                                                                          \
+        IME_RESTORE(ime, saved);                                                                   \
+    }
 
 #include "system/iwram_call.h"
 #include "game/main_routine.h"
@@ -511,13 +511,13 @@ static inline void syIRQUnlock(volatile Uint32 *saved)
 // toFIXED(1) (1.0) on the rotation's diagonal, the rest 0.
 static __inline__ void syUnitMatrix(MATRIX matrix)
 {
-	ASM_MATRIX_UNIT(matrix);
+    ASM_MATRIX_UNIT(matrix);
 }
 
 // Resets the current matrix to the unit matrix.
 static __inline__ void syUnitMatrixCurrentInline(void)
 {
-	ASM_MATRIX_UNIT_CURRENT(CurrentMatrix);
+    ASM_MATRIX_UNIT_CURRENT(CurrentMatrix);
 }
 
 #include "system/mul_fx.h"
@@ -528,60 +528,60 @@ static __inline__ void syUnitMatrixCurrentInline(void)
 
 // Allocates a heap copy; release it with syHeapRelease when finished.
 #define RAM_CODE_LOAD(to, code, bytes)                                                             \
-	do                                                                                             \
-	{                                                                                              \
-		Uint32 size_;                                                                              \
+    do                                                                                             \
+    {                                                                                              \
+        Uint32 size_;                                                                              \
                                                                                                    \
-		size_ = (Uint32)(bytes);                                                                   \
+        size_ = (Uint32)(bytes);                                                                   \
                                                                                                    \
-		(to)  = syHeapAllocate(size_);                                                             \
-		syDMAXCopy((const void *)(code), (to), DMA_COPY_WORDS(size_ >> 2), REG_DMA3);              \
-	} while (0)
+        (to)  = syHeapAllocate(size_);                                                             \
+        syDMAXCopy((const void *)(code), (to), DMA_COPY_WORDS(size_ >> 2), REG_DMA3);              \
+    } while (0)
 
 // Allocates a heap-slot copy; release it with syHeapSlotRelease.
 #define RAM_CODE_LOAD_SLOT(slot, code, bytes)                                                      \
-	do                                                                                             \
-	{                                                                                              \
-		Uint32 size_;                                                                              \
+    do                                                                                             \
+    {                                                                                              \
+        Uint32 size_;                                                                              \
                                                                                                    \
-		size_ = (Uint32)(bytes);                                                                   \
+        size_ = (Uint32)(bytes);                                                                   \
                                                                                                    \
-		syDMAXCopy((const void *)(code),                                                           \
-		           syHeapSlotAllocate((slot), size_),                                              \
-		           DMA_COPY_WORDS(size_ >> 2),                                                     \
-		           REG_DMA3);                                                                      \
-	} while (0)
+        syDMAXCopy((const void *)(code),                                                           \
+                   syHeapSlotAllocate((slot), size_),                                              \
+                   DMA_COPY_WORDS(size_ >> 2),                                                     \
+                   REG_DMA3);                                                                      \
+    } while (0)
 
 // The serial group. The link cable's runtime: serial packets, registers and transfer state. Adds
 // LINK_STATUS_ERROR to a link status once a transfer has failed.
 static inline Sint32 sySerialAddErrorFlag(Sint32 status)
 {
-	if (SerialStateWork.transferError != 0)
-		status |= LINK_STATUS_ERROR;
-	return status;
+    if (SerialStateWork.transferError != 0)
+        status |= LINK_STATUS_ERROR;
+    return status;
 }
 
 // Abandons any send or receive and clears the block transfer's state, with interrupts held off:
 // what a failed link battle or Battle Arena exchange does.
 static __inline__ void sySerialResetTransferState(void)
 {
-	SERIAL_TRANSFER_STATE *state;
-	Uint32                 saved;
+    SERIAL_TRANSFER_STATE *state;
+    Uint32                 saved;
 
-	state = &SerialTransfer;
-	IRQ_LOCK(saved);
-	{
-		Uint32 clear = 0;
+    state = &SerialTransfer;
+    IRQ_LOCK(saved);
+    {
+        Uint32 clear = 0;
 
-		IO_WRITE8(SERIAL_STATUS_RUNNING, &state->status);
-		SerialSendSource         = clear;
-		SerialSendSize           = clear;
-		state->peerFlags         = clear;
-		state->flags             = clear;
-		SerialReceiveDestination = clear;
-		SerialReceivedSize       = clear;
-	}
-	IRQ_UNLOCK(saved);
+        IO_WRITE8(SERIAL_STATUS_RUNNING, &state->status);
+        SerialSendSource         = clear;
+        SerialSendSize           = clear;
+        state->peerFlags         = clear;
+        state->flags             = clear;
+        SerialReceiveDestination = clear;
+        SerialReceivedSize       = clear;
+    }
+    IRQ_UNLOCK(saved);
 }
 
 #include "system/vector3.h"

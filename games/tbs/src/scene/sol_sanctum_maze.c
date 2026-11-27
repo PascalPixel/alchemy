@@ -27,35 +27,35 @@ extern CUE            SolSanctumMazeCues[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SolSanctumMazeEntrances;
+    return SolSanctumMazeEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
-	return NULL;
+    return NULL;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SolSanctumMazeExits;
+    return SolSanctumMazeExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return SolSanctumMazeActorPlacements;
+    return SolSanctumMazeActorPlacements;
 }
 
 // The exits, and the Small Jewel's chest.
 const CUE *scGetCues(void)
 {
-	return SolSanctumMazeCues;
+    return SolSanctumMazeCues;
 }
 
 #include "shared/sol_sanctum_rumble.c"
 
 SCENE_ENTRANCE SolSanctumMazeEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH,
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH,
      CONDITION_ALWAYS, 424,
      0, 615,
      FACING_SOUTH, 0,
@@ -64,7 +64,7 @@ SCENE_ENTRANCE SolSanctumMazeEntrances[] = {
      -1,
      -1,
      0},
-	{SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH,
+    {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH,
      CONDITION_ALWAYS, 376,
      0, 53,
      FACING_SOUTH, 0,
@@ -73,33 +73,33 @@ SCENE_ENTRANCE SolSanctumMazeEntrances[] = {
      -1,
      -1,
      0},
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 Uint32 SolSanctumMazeExits[] = {
-	SCENE_EXITS(SolSanctumMaze),
-	SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH,
+    SCENE_EXITS(SolSanctumMaze),
+    SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH,
                SolSanctumReliefs,
                SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_WEST),
-	SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH,
+    SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH,
                SolSanctumReliefs,
                SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST),
-	SCENE_EXITS_END,
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE SolSanctumMazeActorPlacements[] = {
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 CUE SolSanctumMazeCues[] = {
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN,
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN,
      SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH, CONDITION_ALWAYS,
      SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH},
-	{CUE_EXIT,
+    {CUE_EXIT,
      SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH, CONDITION_ALWAYS,
      SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH},
-	{EXAMINE_CUE(EXAMINE_CHEST),
+    {EXAMINE_CUE(EXAMINE_CHEST),
      100, FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND,
      FIND_ITEM(ITEM_SMALL_JEWEL)},
-	{CUE_TABLE_END},
+    {CUE_TABLE_END},
 };

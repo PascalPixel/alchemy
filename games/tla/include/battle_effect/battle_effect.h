@@ -68,14 +68,14 @@ struct STRIP_QUAD;
 // named for the summon that keeps it.
 typedef enum SUMMON_FORMATION
 {
-	SUMMON_FORMATION_THOR,    // nine in a 3x3 grid at 32-pixel spacing
-	SUMMON_FORMATION_NEREID,  // twelve in rows of 1, 3, 4 and 4
-	SUMMON_FORMATION_CYBELE,  // eight in rows of 3, 2 and 3
-	SUMMON_FORMATION_TIAMAT,  // eight drawn at 1.25 times their size
-	SUMMON_FORMATION_MEGAERA, // eleven from signed columns
-	SUMMON_FORMATION_MOLOCH,  // twelve in a 4x3 grid
-	// Tiamat's eight when the first target's animation kind is 2.
-	SUMMON_FORMATION_TIAMAT_ALTERNATE
+    SUMMON_FORMATION_THOR,    // nine in a 3x3 grid at 32-pixel spacing
+    SUMMON_FORMATION_NEREID,  // twelve in rows of 1, 3, 4 and 4
+    SUMMON_FORMATION_CYBELE,  // eight in rows of 3, 2 and 3
+    SUMMON_FORMATION_TIAMAT,  // eight drawn at 1.25 times their size
+    SUMMON_FORMATION_MEGAERA, // eleven from signed columns
+    SUMMON_FORMATION_MOLOCH,  // twelve in a 4x3 grid
+    // Tiamat's eight when the first target's animation kind is 2.
+    SUMMON_FORMATION_TIAMAT_ALTERNATE
 } SUMMON_FORMATION;
 
 typedef DRAW_RECTANGLE BLITTER_PAIR[2];
@@ -83,25 +83,25 @@ typedef DRAW_RECTANGLE BLITTER_PAIR[2];
 // A texture as the render jobs take it: 1 << logWidth by 1 << logHeight.
 typedef struct TEXTURE
 {
-	Uint8  logWidth;
-	Uint8  logHeight;
-	Uint16 padding;
-	void  *pixels;
+    Uint8  logWidth;
+    Uint8  logHeight;
+    Uint16 padding;
+    void  *pixels;
 } TEXTURE;
 
 // A point or a velocity, 16.16 pixels.
 typedef struct POINT2_D
 {
-	FIXED x;
-	FIXED y;
+    FIXED x;
+    FIXED y;
 } POINT2_D;
 
 // A sprite's scale across and down, 16.16, as an effect keeps it in a local (SPR_SCALE is the same
 // pair as a union with an array).
 typedef struct SCALE
 {
-	FIXED x;
-	FIXED y;
+    FIXED x;
+    FIXED y;
 } SCALE;
 
 // An effect's variant (BATTLE_EFFECT_PARM.variant): abilities of one family that share an effect,
@@ -109,9 +109,9 @@ typedef struct SCALE
 // that sets its own variants names them beside it.
 typedef enum EFFECT_VARIANT
 {
-	EFFECT_VARIANT_BASIC,    // Quake, Douse, Bolt
-	EFFECT_VARIANT_STRONGER, // Earthquake, Drench, Flash Bolt
-	EFFECT_VARIANT_STRONGEST // Quake Sphere, Deluge, Blue Bolt
+    EFFECT_VARIANT_BASIC,    // Quake, Douse, Bolt
+    EFFECT_VARIANT_STRONGER, // Earthquake, Drench, Flash Bolt
+    EFFECT_VARIANT_STRONGEST // Quake Sphere, Deluge, Blue Bolt
 } EFFECT_VARIANT;
 
 // btMotionApplyKnockback's knockbacks, the columns of the BattleKnockback* tables. Each is named by
@@ -120,20 +120,20 @@ typedef enum EFFECT_VARIANT
 // to at most 4.
 typedef enum BATTLE_KNOCKBACK
 {
-	KNOCKBACK_NUDGE,  // 140 percent, a hop of 3
-	KNOCKBACK_HOP,    // 140 percent, a hop of 6
-	KNOCKBACK_LEAP,   // 150 percent, a hop of 7
-	KNOCKBACK_LAUNCH, // 200 percent, a hop of 10
-	// The hardest: 200 percent at 8 pixels a tick more each tick, to at most 20, with a hop of 5.
-	KNOCKBACK_HURL,
-	// 150 percent, a hop of 2. From here on a unit already in the air takes the new hop too.
-	KNOCKBACK_SKID,
-	KNOCKBACK_BOUNCE, // the spot itself, a hop of 3
-	KNOCKBACK_JOLT,   // the spot itself, a hop of 5.5
-	// Unused: the spot itself, a hop of 10; no knockback names it.
-	KNOCKBACK_LIFT,
-	// Unused: 300 percent, as KNOCKBACK_HURL otherwise; no knockback names it.
-	KNOCKBACK_HURL_FAR
+    KNOCKBACK_NUDGE,  // 140 percent, a hop of 3
+    KNOCKBACK_HOP,    // 140 percent, a hop of 6
+    KNOCKBACK_LEAP,   // 150 percent, a hop of 7
+    KNOCKBACK_LAUNCH, // 200 percent, a hop of 10
+    // The hardest: 200 percent at 8 pixels a tick more each tick, to at most 20, with a hop of 5.
+    KNOCKBACK_HURL,
+    // 150 percent, a hop of 2. From here on a unit already in the air takes the new hop too.
+    KNOCKBACK_SKID,
+    KNOCKBACK_BOUNCE, // the spot itself, a hop of 3
+    KNOCKBACK_JOLT,   // the spot itself, a hop of 5.5
+    // Unused: the spot itself, a hop of 10; no knockback names it.
+    KNOCKBACK_LIFT,
+    // Unused: 300 percent, as KNOCKBACK_HURL otherwise; no knockback names it.
+    KNOCKBACK_HURL_FAR
 } BATTLE_KNOCKBACK;
 
 // Rebuilds the background palette's first ramp as a grey whose channels sway with the tick, each at
@@ -147,7 +147,7 @@ void btEffectEndCanvasLayer(void);
 void btEffectCountDownBattlerTints(void);
 // Tints a unit's battle object, sets its pose and starts its flash timer.
 void btEffectTintBattler(
-	Sint32 actor, Sint32 palette, Sint32 pose, Sint32 timerSlot, Sint32 timerTicks);
+    Sint32 actor, Sint32 palette, Sint32 pose, Sint32 timerSlot, Sint32 timerTicks);
 // Draws the upper left quarter of a shaded disc into `map`, its rings darker outward by a cosine
 // falloff scaled by `scale`.
 void btEffectDrawShadedCircles(Uint8 *map, Sint32 size, FIXED scale);
@@ -307,39 +307,39 @@ void btCameraApplyPhasedDelta(void);
 // words hold.
 typedef struct BATTLE_EFFECT_INDEX_WINDOW
 {
-	Sint32 unusedBefore[3];
-	Sint32 currentValue;
-	Sint32 indexRadius;
-	Sint32 entryLimit;
-	Sint32 unusedAfter[3];
-	Sint16 values[1];
+    Sint32 unusedBefore[3];
+    Sint32 currentValue;
+    Sint32 indexRadius;
+    Sint32 entryLimit;
+    Sint32 unusedAfter[3];
+    Sint16 values[1];
 } BATTLE_EFFECT_INDEX_WINDOW;
 
 // What btEffectRunDjinniEntrance takes added to its element; the element alone plays the 55-tick
 // entrance.
 typedef enum DJINNI_ENTRANCE_LENGTH
 {
-	// The long entrance: 84 ticks instead of 55.
-	DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
+    // The long entrance: 84 ticks instead of 55.
+    DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
 } DJINNI_ENTRANCE_LENGTH;
 
 // Where btEffectRunDjinniEntrance's Djinni appears; the first five anchors stand it 60 pixels up.
 typedef enum DJINNI_ENTRANCE_ANCHOR
 {
-	DJINNI_ANCHOR_OVER_TARGET, // over the first target
-	DJINNI_ANCHOR_TARGET_X,    // at the first target's x, at depth 0
-	DJINNI_ANCHOR_OVER_USER,   // over the user
-	DJINNI_ANCHOR_USER_X,      // at the user's x, at depth 0
-	DJINNI_ANCHOR_CENTRE,      // in the centre of the field
-	DJINNI_ANCHOR_HIGH_USER_X, // at the user's x, 80 pixels up
-	// In the centre: the entrance takes 40 ticks with no fade, and the backdrop brightens from
-	// tick 24.
-	DJINNI_ANCHOR_CENTRE_BRIGHTENING,
-	DJINNI_ANCHOR_LOW_CENTRE, // in the centre, 20 pixels up
-	// Over the first target: the entrance takes 54 ticks.
-	DJINNI_ANCHOR_OVER_TARGET_SHORT,
-	DJINNI_ANCHOR_HIGH_TARGET_X, // at the first target's x, 120 pixels up
-	DJINNI_ANCHOR_LOW_USER_X     // at the user's x, 30 pixels up
+    DJINNI_ANCHOR_OVER_TARGET, // over the first target
+    DJINNI_ANCHOR_TARGET_X,    // at the first target's x, at depth 0
+    DJINNI_ANCHOR_OVER_USER,   // over the user
+    DJINNI_ANCHOR_USER_X,      // at the user's x, at depth 0
+    DJINNI_ANCHOR_CENTRE,      // in the centre of the field
+    DJINNI_ANCHOR_HIGH_USER_X, // at the user's x, 80 pixels up
+    // In the centre: the entrance takes 40 ticks with no fade, and the backdrop brightens from
+    // tick 24.
+    DJINNI_ANCHOR_CENTRE_BRIGHTENING,
+    DJINNI_ANCHOR_LOW_CENTRE, // in the centre, 20 pixels up
+    // Over the first target: the entrance takes 54 ticks.
+    DJINNI_ANCHOR_OVER_TARGET_SHORT,
+    DJINNI_ANCHOR_HIGH_TARGET_X, // at the first target's x, 120 pixels up
+    DJINNI_ANCHOR_LOW_USER_X     // at the user's x, 30 pixels up
 } DJINNI_ENTRANCE_ANCHOR;
 
 // btEffectRunDjinniEntrance's packed argument: which Djinni (an element, plus DJINNI_ENTRANCE_LONG
@@ -353,65 +353,65 @@ typedef enum DJINNI_ENTRANCE_ANCHOR
 // A row of QuakeTimings, one for each variant.
 enum
 {
-	QUAKE_TIMING_TICKS,      // the whole effect
-	QUAKE_TIMING_RISE_TICKS, // how long each pillar stands
-	QUAKE_TIMING_SHAKE       // the camera shake
+    QUAKE_TIMING_TICKS,      // the whole effect
+    QUAKE_TIMING_RISE_TICKS, // how long each pillar stands
+    QUAKE_TIMING_SHAKE       // the camera shake
 };
 
 // The four rock pillars' heights, in pixels.
 typedef struct ROCK_WALL_HEIGHTS
 {
-	Sint32 column[4]; // each pillar's height in pixels
+    Sint32 column[4]; // each pillar's height in pixels
 } ROCK_WALL_HEIGHTS;
 
 // The five widths a rising pillar takes.
 typedef struct FIVE_WIDTHS
 {
-	Sint32 widths[5];
+    Sint32 widths[5];
 } FIVE_WIDTHS;
 
 // The seven widths a widening pillar takes.
 typedef struct SEVEN_WIDTHS
 {
-	Sint32 widths[7];
+    Sint32 widths[7];
 } SEVEN_WIDTHS;
 
 // Where a strip's petals start across, by quarter of its rise: the left edge and the width they
 // spread over.
 typedef struct FOUR_SPANS
 {
-	struct
-	{
-		Sint32 left;
-		Sint32 width;
-	} spans[4];
+    struct
+    {
+        Sint32 left;
+        Sint32 width;
+    } spans[4];
 } FOUR_SPANS;
 
 // A row of FrostTimings, one for each variant.
 enum
 {
-	FROST_TIMING_MOTES,     // the rising motes
-	FROST_TIMING_COLUMNS,   // the pillars
-	FROST_TIMING_BURST_TICK // the tick they burst
+    FROST_TIMING_MOTES,     // the rising motes
+    FROST_TIMING_COLUMNS,   // the pillars
+    FROST_TIMING_BURST_TICK // the tick they burst
 };
 
 // A row of EruptionCounts, one for each variant.
 enum
 {
-	ERUPTION_COUNT_MOTES,
-	ERUPTION_COUNT_PUFFS,
-	ERUPTION_COUNT_TICKS
+    ERUPTION_COUNT_MOTES,
+    ERUPTION_COUNT_PUFFS,
+    ERUPTION_COUNT_TICKS
 };
 
 // A growing column, laid over PARTICLE in state->particles.
 typedef struct DUAL_COLUMN
 {
-	Sint32 x;                    // the root on the canvas
-	Sint32 y;                    // the root on the canvas
-	Uint8  unused[8];            // no code names it
-	Sint32 height;               // the full length
-	Uint8  unusedAfterHeight[4]; // no code names it
-	Sint32 start;                // the tick it starts to grow
+    Sint32 x;                    // the root on the canvas
+    Sint32 y;                    // the root on the canvas
+    Uint8  unused[8];            // no code names it
+    Sint32 height;               // the full length
+    Uint8  unusedAfterHeight[4]; // no code names it
+    Sint32 start;                // the tick it starts to grow
 } DUAL_COLUMN;
 
 // Steps background colours 0 to 63 one level towards a palette resource.

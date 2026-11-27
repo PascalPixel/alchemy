@@ -16,17 +16,17 @@ struct ACTOR;
 // terrain.
 typedef struct WORLD_MAP_BLOCK
 {
-	Uint8 unused[2]; // no code names it
-	Uint8 place;     // METATILE_BEHAVIOR_WALL where the map has no block
-	// the terrain kind and flags (fdWorldMapGetBattleEnvironment)
-	Uint8 unusedAfterPlace;
+    Uint8 unused[2]; // no code names it
+    Uint8 place;     // METATILE_BEHAVIOR_WALL where the map has no block
+    // the terrain kind and flags (fdWorldMapGetBattleEnvironment)
+    Uint8 unusedAfterPlace;
 } WORLD_MAP_BLOCK;
 
 // The world map's blocks, a row of 32 for each z, in the metatile tiles buffer (MetatileTiles)
 // while the world map is shown.
 typedef struct WORLD_MAP_BLOCKS
 {
-	WORLD_MAP_BLOCK blocks[32 * 32];
+    WORLD_MAP_BLOCK blocks[32 * 32];
 } WORLD_MAP_BLOCKS;
 
 // The world map area's four tile sets, decoded one after another into BgTileBuffer and copied to
@@ -42,7 +42,7 @@ typedef struct WORLD_MAP_BLOCKS
 // A map shape entry as MapGridShapes holds it: the shape's kind and its three heights, a byte each
 // (the rows of a map's shapes.tsv).
 #define MAP_SHAPE(shape, height0, height1, height2)                                                \
-	((shape) | (height0) << 8 | (height1) << 16 | (height2) << 24)
+    ((shape) | (height0) << 8 | (height1) << 16 | (height2) << 24)
 
 // The map's animation each tick: its tiles, its blend scripts and the World Map's tints and tile
 // blocks.

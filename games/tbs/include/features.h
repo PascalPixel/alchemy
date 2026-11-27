@@ -17,9 +17,9 @@
 // The value for the edition's language, one given for each.
 #define BY_LANGUAGE(ja, en, de, es, fr, it) BY_LANGUAGE_EXPAND(LANGUAGE, ja, en, de, es, fr, it)
 #define BY_LANGUAGE_EXPAND(language, ja, en, de, es, fr, it)                                       \
-	BY_LANGUAGE_PICK(language, ja, en, de, es, fr, it)
+    BY_LANGUAGE_PICK(language, ja, en, de, es, fr, it)
 #define BY_LANGUAGE_PICK(language, ja, en, de, es, fr, it)                                         \
-	BY_LANGUAGE_##language(ja, en, de, es, fr, it)
+    BY_LANGUAGE_##language(ja, en, de, es, fr, it)
 #define BY_LANGUAGE_0(ja, en, de, es, fr, it) ja
 #define BY_LANGUAGE_1(ja, en, de, es, fr, it) en
 #define BY_LANGUAGE_2(ja, en, de, es, fr, it) de

@@ -22,10 +22,10 @@ struct WINDOW_SPR;
 // other room opens a shop of names its rows itself.
 enum
 {
-	SHOP_DAILA_WEAPONS = 1,
-	SHOP_DAILA_ARMOR   = 2,
-	SHOP_DAILA_ITEMS   = 3,
-	SHOP_IZUMO         = 24
+    SHOP_DAILA_WEAPONS = 1,
+    SHOP_DAILA_ARMOR   = 2,
+    SHOP_DAILA_ITEMS   = 3,
+    SHOP_IZUMO         = 24
 };
 
 // The lines of one shop, as many as the weapon shop's, and of a sanctum, as the debug rooms'
@@ -37,7 +37,7 @@ enum
 // town no other room opens an inn of names its inn itself.
 enum
 {
-	DAILA_INN = 0
+    DAILA_INN = 0
 };
 
 void   mnShopInitState(void);

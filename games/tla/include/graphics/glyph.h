@@ -11,13 +11,13 @@
 // A glyph's height in rows of pixels: 12 in Japanese.
 enum
 {
-	FONT_GLYPH_ROWS = 12
+    FONT_GLYPH_ROWS = 12
 };
 #else
 // A glyph's height in rows of pixels: 15 outside Japanese.
 enum
 {
-	FONT_GLYPH_ROWS = 15
+    FONT_GLYPH_ROWS = 15
 };
 #endif
 
@@ -28,8 +28,8 @@ enum
 // GLYPH_PALETTE_SLOT_FREE for none yet, and how many slots are taken.
 typedef struct ICON_PALETTE
 {
-	Uint8  slot[256];
-	Sint32 count;
+    Uint8  slot[256];
+    Sint32 count;
 } ICON_PALETTE;
 
 STATIC_ASSERT(sizeof(ICON_PALETTE) == 260);
@@ -38,8 +38,8 @@ STATIC_ASSERT(offsetof(ICON_PALETTE, count) == 256);
 // A character of the text font: its width and its rows of pixels.
 typedef struct GLYPH
 {
-	Uint16 width;                 // pixels
-	Uint16 rows[FONT_GLYPH_ROWS]; // its pixels, a halfword a row, top first
+    Uint16 width;                 // pixels
+    Uint16 rows[FONT_GLYPH_ROWS]; // its pixels, a halfword a row, top first
 } __attribute__((packed, aligned(2))) GLYPH;
 
 STATIC_ASSERT(offsetof(GLYPH, rows) == 2);
@@ -52,13 +52,13 @@ extern const GLYPH FontGlyphs[];
 // mnIconDecode unpacks encoded into input, then expands input into tiles.
 typedef struct
 {
-	// The icon unpacked a byte a pixel; a 256-colour command icon (ResourceIdCommandIcons) is
-	// unpacked here by syDecompressByteLZ and used as it is.
-	Uint8  input[1024];
-	Uint8  tiles[512]; // the icon as sprite tiles, ready for VRAM
-	Sint16 width;      // tiles
-	Sint16 height;     // tiles
-	Uint8 *encoded;    // the compressed icon
+    // The icon unpacked a byte a pixel; a 256-colour command icon (ResourceIdCommandIcons) is
+    // unpacked here by syDecompressByteLZ and used as it is.
+    Uint8  input[1024];
+    Uint8  tiles[512]; // the icon as sprite tiles, ready for VRAM
+    Sint16 width;      // tiles
+    Sint16 height;     // tiles
+    Uint8 *encoded;    // the compressed icon
 } ICON_TRANSFER;
 
 STATIC_ASSERT(sizeof(ICON_TRANSFER) == 1544);

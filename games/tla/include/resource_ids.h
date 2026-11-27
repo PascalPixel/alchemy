@@ -789,7 +789,7 @@ extern char ResourceIdCrossboneIsleCaveBackdrop;
 #define RESOURCE_CROSSBONE_ISLE_CAVE_BACKDROP ((Sint32)&ResourceIdCrossboneIsleCaveBackdrop)
 extern char ResourceIdVenusLighthouseAerieStormBackdrop;
 #define RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP                                             \
-	((Sint32)&ResourceIdVenusLighthouseAerieStormBackdrop)
+    ((Sint32)&ResourceIdVenusLighthouseAerieStormBackdrop)
 extern char ResourceIdVenusLighthouseAerieBackdrop;
 #define RESOURCE_VENUS_LIGHTHOUSE_AERIE_BACKDROP ((Sint32)&ResourceIdVenusLighthouseAerieBackdrop)
 extern char ResourceIdVenusLighthouseBackdrop;
@@ -808,7 +808,7 @@ extern char ResourceIdMogallForestBackdrop;
 #define RESOURCE_MOGALL_FOREST_BACKDROP ((Sint32)&ResourceIdMogallForestBackdrop)
 extern char ResourceIdMercuryLighthouseAerieBackdrop;
 #define RESOURCE_MERCURY_LIGHTHOUSE_AERIE_BACKDROP                                                 \
-	((Sint32)&ResourceIdMercuryLighthouseAerieBackdrop)
+    ((Sint32)&ResourceIdMercuryLighthouseAerieBackdrop)
 extern char ResourceIdTolbiShipRoomsBackdrop;
 #define RESOURCE_TOLBI_SHIP_ROOMS_BACKDROP ((Sint32)&ResourceIdTolbiShipRoomsBackdrop)
 extern char ResourceIdImilFuchinFallsBackdrop;
@@ -980,7 +980,7 @@ extern char ResourceIdWorldMapPaletteA;
 // The world map's cell tiles attributes in its first graphics set (WorldMapGraphicsResources).
 extern char ResourceIdDefaultMetatileTilesAttributes;
 #define RESOURCE_DEFAULT_METATILE_TILES_ATTRIBUTES                                                 \
-	((Sint32)&ResourceIdDefaultMetatileTilesAttributes)
+    ((Sint32)&ResourceIdDefaultMetatileTilesAttributes)
 // The colours of the world map's third graphics set (WorldMapGraphicsResources).
 extern char ResourceIdWorldMapPaletteB;
 #define RESOURCE_WORLD_MAP_PALETTE_B ((Sint32)&ResourceIdWorldMapPaletteB)
@@ -1023,7 +1023,7 @@ extern char ResourceIdWorldMapAnimationC;
 // WorldMapGraphicsResources.
 extern char ResourceIdWorldMapMetatileTilesAttributesC;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_C                                             \
-	((Sint32)&ResourceIdWorldMapMetatileTilesAttributesC)
+    ((Sint32)&ResourceIdWorldMapMetatileTilesAttributesC)
 // Tiles 1 of 6 of world map set C, a row of WorldMapGraphicsResources.
 extern char ResourceIdWorldMapTilesC1;
 #define RESOURCE_WORLD_MAP_TILES_C1 ((Sint32)&ResourceIdWorldMapTilesC1)
@@ -1050,7 +1050,7 @@ extern char ResourceIdWorldMapAnimationB;
 // WorldMapGraphicsResources.
 extern char ResourceIdWorldMapMetatileTilesAttributesB;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_B                                             \
-	((Sint32)&ResourceIdWorldMapMetatileTilesAttributesB)
+    ((Sint32)&ResourceIdWorldMapMetatileTilesAttributesB)
 // Tiles 1 of 6 of world map set B, a row of WorldMapGraphicsResources.
 extern char ResourceIdWorldMapTilesB1;
 #define RESOURCE_WORLD_MAP_TILES_B1 ((Sint32)&ResourceIdWorldMapTilesB1)
@@ -1080,7 +1080,7 @@ extern char ResourceIdWorldMapAnimationD;
 // WorldMapGraphicsResources.
 extern char ResourceIdWorldMapMetatileTilesAttributesD;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_D                                             \
-	((Sint32)&ResourceIdWorldMapMetatileTilesAttributesD)
+    ((Sint32)&ResourceIdWorldMapMetatileTilesAttributesD)
 // Tiles 1 of 6 of world map set D, a row of WorldMapGraphicsResources.
 extern char ResourceIdWorldMapTilesD1;
 #define RESOURCE_WORLD_MAP_TILES_D1 ((Sint32)&ResourceIdWorldMapTilesD1)
@@ -1409,10 +1409,10 @@ extern char ResourceIdTrialRoadSandRecording;      // the sand stage
 // the chests, Moapa at the switch first
 extern char ResourceIdTrialRoadChestsMoapaFirstRecording;
 #define RESOURCE_TRIAL_ROAD_CHESTS_MOAPA_FIRST_RECORDING                                           \
-	((Sint32)&ResourceIdTrialRoadChestsMoapaFirstRecording)
+    ((Sint32)&ResourceIdTrialRoadChestsMoapaFirstRecording)
 // the chests, Felix at the switch first
 extern char ResourceIdTrialRoadChestsFelixFirstRecording;
 #define RESOURCE_TRIAL_ROAD_CHESTS_FELIX_FIRST_RECORDING                                           \
-	((Sint32)&ResourceIdTrialRoadChestsFelixFirstRecording)
+    ((Sint32)&ResourceIdTrialRoadChestsFelixFirstRecording)
 
 #endif

@@ -1,10 +1,7 @@
 BasedOnStyle: LLVM
 # As much visible structure as clang-format can give.
 IndentWidth: 4
-TabWidth: 4
-# Tabs for each level, spaces to line things up, so the alignment holds at
-# any tab width.
-UseTab: AlignWithSpaces
+UseTab: Never
 ColumnLimit: 100
 BreakBeforeBraces: Allman
 IndentCaseLabels: true

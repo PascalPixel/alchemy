@@ -12,13 +12,13 @@
 // code reads coordinates as plain words.
 typedef struct FIELD_COORDINATE
 {
-	struct
-	{
-		Uint16 decimal; // 1/65536 pixels
-		Sint16 integer;
-	} part[0];
+    struct
+    {
+        Uint16 decimal; // 1/65536 pixels
+        Sint16 integer;
+    } part[0];
 
-	FIXED fixed; // 16.16 fixed-point pixels
+    FIXED fixed; // 16.16 fixed-point pixels
 } FIELD_COORDINATE;
 
 STATIC_ASSERT(sizeof(FIELD_COORDINATE) == 4);

@@ -4,7 +4,7 @@
 // Sets the race gauge's hold, which keeps the gauge on the screen.
 static void UNUSED scColossoSetGaugeHold(Sint16 hold)
 {
-	COLOSSO_GAUGE_STATE *gauge = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
+    COLOSSO_GAUGE_STATE *gauge = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
 
-	gauge->hold                = hold;
+    gauge->hold                = hold;
 }

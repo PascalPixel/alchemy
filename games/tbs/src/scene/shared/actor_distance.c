@@ -7,11 +7,11 @@
 // read here as an array.
 UNUSED static Sint32 scPosDistance(const Sint32 *first, const Sint32 *second)
 {
-	Sint32 deltaX = FIXEDtoINT(*first++ - *second++);
-	Sint32 deltaY = FIXEDtoINT(*first++ - *second++);
-	Sint32 deltaZ = FIXEDtoINT(*first - *second);
+    Sint32 deltaX = FIXEDtoINT(*first++ - *second++);
+    Sint32 deltaY = FIXEDtoINT(*first++ - *second++);
+    Sint32 deltaZ = FIXEDtoINT(*first - *second);
 
-	return sySquartIWRAM(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+    return sySquartIWRAM(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 }
 
 // The distance in whole pixels between two actors, in all three axes.

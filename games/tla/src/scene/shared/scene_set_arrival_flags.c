@@ -8,10 +8,10 @@
 // area's random encounters and blocks Retreat.
 void scSetArrivalFlags(Sint32 unused)
 {
-	syGameFlagSet(FLAG_IN_JUPITER_LIGHTHOUSE);
-	if (syGameFlagGet(FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY))
-	{
-		syGameFlagSet(FLAG_NO_ENCOUNTERS_IN_AREA);
-		syGameFlagSet(FLAG_RETREAT_BLOCKED);
-	}
+    syGameFlagSet(FLAG_IN_JUPITER_LIGHTHOUSE);
+    if (syGameFlagGet(FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY))
+    {
+        syGameFlagSet(FLAG_NO_ENCOUNTERS_IN_AREA);
+        syGameFlagSet(FLAG_RETREAT_BLOCKED);
+    }
 }

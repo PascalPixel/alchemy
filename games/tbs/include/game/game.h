@@ -77,7 +77,7 @@ Sint32                       gmEquipmentRollUnleash(UNIT *unit);
 Sint32                       gmPartyRemoveMember(Sint32 unitId);
 Sint32                       gmUnitGetAttackElement(Sint32 unitId);
 Sint32                       gmBattleRollEffectSuccess(
-						  Sint32 caster, Sint32 target, Sint32 element, Sint32 effectId, Sint32 successScale);
+                          Sint32 caster, Sint32 target, Sint32 element, Sint32 effectId, Sint32 successScale);
 Sint32 gmBattleCalculateAttackDamage(Sint32 attack,
                                      Sint32 defense,
                                      Sint32 addedPower,
@@ -148,8 +148,8 @@ extern const ABILITY_DEFINITION AbilityDefinitions[];
 // (gmPartyRestorePpInLighthouse).
 typedef enum LIGHTHOUSE_GROUP
 {
-	LIGHTHOUSE_GROUP_VENUS_MARS,     // Isaac, Garet, Felix and Jenna
-	LIGHTHOUSE_GROUP_MERCURY_JUPITER // Ivan, Mia, Sheba and Piers
+    LIGHTHOUSE_GROUP_VENUS_MARS,     // Isaac, Garet, Felix and Jenna
+    LIGHTHOUSE_GROUP_MERCURY_JUPITER // Ivan, Mia, Sheba and Piers
 } LIGHTHOUSE_GROUP;
 
 // Each character's LIGHTHOUSE_GROUP.
@@ -165,8 +165,8 @@ extern Sint16       DjinnElementSprites[];
 // gmUnitCalculateBaseElements reads by whole level, 0 to 15.
 typedef struct ELEMENT_LEVEL_BONUS
 {
-	Uint16 power;      // base power, before the tenths of a level
-	Uint16 resistance; // base resistance, likewise
+    Uint16 power;      // base power, before the tenths of a level
+    Uint16 resistance; // base resistance, likewise
 } ELEMENT_LEVEL_BONUS;
 
 // The power and resistance by element level (element_table.c): a table nothing writes, defined
@@ -198,8 +198,8 @@ extern Uint16                     InventorySnapshotWork[];
 // How many rare items the shops keep a stock of, and the most of each.
 enum
 {
-	RARE_ITEM_STOCK_COUNT = 128,
-	RARE_ITEM_STOCK_MAX   = 99
+    RARE_ITEM_STOCK_COUNT = 128,
+    RARE_ITEM_STOCK_MAX   = 99
 };
 
 // How many of each rare item the shops' Artifacts offer, 0 to RARE_ITEM_STOCK_MAX, by stock number

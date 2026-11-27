@@ -31,71 +31,71 @@ struct WINDOW;
 // listed and the two choices a command makes.
 typedef struct ITEM_MENU_STATE
 {
-	// no view of the menu state names it (see menu/README.md)
-	Uint8          unused[8];
-	Sint32         selectedMember; // the party member chosen
-	struct WINDOW *moneyWindow;    // SHOP_STATE's; not named here
-	struct WINDOW *mainWindow;
-	// The two sides: the party member whose items are shown, and the one an item is given to.
-	WINDOW_SPR    *sideIcons[2];
-	// the party member chosen, in memberIds; -1 for none at
-	Sint8          sideIndex[2];
-	// first
-	Sint8          sideCount[2]; // party members to choose from; 1 at first
-	struct WINDOW *itemWindow;
-	struct WINDOW *statusWindow;
-	struct WINDOW *buttonHelpWindow;
-	struct WINDOW *descriptionWindow;
-	struct WINDOW *equipWindow;
-	struct WINDOW *listWindow;
-	struct WINDOW *unopenedWindow;       // never given a window; only closed
-	struct WINDOW *modalWindow;
-	struct WINDOW *secondUnopenedWindow; // never given a window; only closed
-	WINDOW_SPR    *gridCursor;           // only prepared by name
-	WINDOW_SPR    *entryIcons[MENU_ENTRY_ICONS];
-	WINDOW_SPR    *statusIcons[8];
-	Uint8          unusedAfterIcons[36]; // no view of the menu state names it
-	struct WINDOW *questionWindow;
-	// The cursor grid: its place and its size, 1 by 1 at first.
-	Uint8          selectedColumn;
-	Uint8          selectedRow;
-	Uint8          columnCount;
-	Uint8          rowCount;
-	struct SPR    *memberSprites[8]; // the party members' figures
-	Sint16         memberX[8];       // screen pixels
-	Sint16         memberY[8];       // screen pixels
-	FIXED          memberScale[8];   // 16.16 fixed point, toFIXED(1) full size
-	Uint16         selectedSlots[2]; // each side's inventory slot chosen
-	Uint16         selectedItems[2]; // each side's inventory entry chosen
-	WINDOW_SPR    *cursor;
-	// DJINN_MENU_STATE's backdrop pointer at 388; no view names the rest.
-	Uint8          aroundBackdrop[72];
-	Uint16         items[32];      // the inventory entries listed
-	Uint16         memberIds[8];   // the party in order (gmPartyListMembers)
-	Uint8          itemCount;
-	Uint8          partyCount;
-	Uint8          sideMember[2];  // each side's party member
-	WINDOW_SPR    *selectedItemIcon;
-	Uint16         flags;          // 1 while the item's name and command grid are drawn
-	Sint16         completionFlag; // set to 1 as item commands end; not read by name
-	// The row of four figures the Djinn and status screens show (menu_djinn_figures.c): each one's
-	// sprite and place in screen pixels, and its scale in 16.16, which closes a third of its gap to
-	// toFIXED(1) each tick, or holds -scale while negative.
-	struct SPR    *figures[4];
-	Sint16         figureX[4];
-	Sint16         figureY[4];
-	Sint32         figureScales[4];
-	Uint8          unusedAfterFigures[6]; // DJINN_MENU_STATE's pair; not named here
-	Sint16         msgOffset;             // the item use's result, after MsgItemUseResult
-	Sint8          equipPreview;          // 1 while the stats preview a removal, not an equip
-	// the command chosen last (ITEM_MENU_COMMAND); -1 for none
-	Uint8          listMode;
-	Uint8          unusedAfterListMode[2];   // no view of the menu state names it
-	Sint8          selectedIndexByMember[8]; // each party member's entry chosen last
-	Uint8          mode; // not named through this struct; PSYNERGY_MENU_STATE.mode
-	// SHOP_STATE's stock, party and cursor; not named here
-	Uint8          shopStock[297];
-	Uint16         resourceSlots[2]; // VRAM cache slots of two arrow pictures
+    // no view of the menu state names it (see menu/README.md)
+    Uint8          unused[8];
+    Sint32         selectedMember; // the party member chosen
+    struct WINDOW *moneyWindow;    // SHOP_STATE's; not named here
+    struct WINDOW *mainWindow;
+    // The two sides: the party member whose items are shown, and the one an item is given to.
+    WINDOW_SPR    *sideIcons[2];
+    // the party member chosen, in memberIds; -1 for none at
+    Sint8          sideIndex[2];
+    // first
+    Sint8          sideCount[2]; // party members to choose from; 1 at first
+    struct WINDOW *itemWindow;
+    struct WINDOW *statusWindow;
+    struct WINDOW *buttonHelpWindow;
+    struct WINDOW *descriptionWindow;
+    struct WINDOW *equipWindow;
+    struct WINDOW *listWindow;
+    struct WINDOW *unopenedWindow;       // never given a window; only closed
+    struct WINDOW *modalWindow;
+    struct WINDOW *secondUnopenedWindow; // never given a window; only closed
+    WINDOW_SPR    *gridCursor;           // only prepared by name
+    WINDOW_SPR    *entryIcons[MENU_ENTRY_ICONS];
+    WINDOW_SPR    *statusIcons[8];
+    Uint8          unusedAfterIcons[36]; // no view of the menu state names it
+    struct WINDOW *questionWindow;
+    // The cursor grid: its place and its size, 1 by 1 at first.
+    Uint8          selectedColumn;
+    Uint8          selectedRow;
+    Uint8          columnCount;
+    Uint8          rowCount;
+    struct SPR    *memberSprites[8]; // the party members' figures
+    Sint16         memberX[8];       // screen pixels
+    Sint16         memberY[8];       // screen pixels
+    FIXED          memberScale[8];   // 16.16 fixed point, toFIXED(1) full size
+    Uint16         selectedSlots[2]; // each side's inventory slot chosen
+    Uint16         selectedItems[2]; // each side's inventory entry chosen
+    WINDOW_SPR    *cursor;
+    // DJINN_MENU_STATE's backdrop pointer at 388; no view names the rest.
+    Uint8          aroundBackdrop[72];
+    Uint16         items[32];      // the inventory entries listed
+    Uint16         memberIds[8];   // the party in order (gmPartyListMembers)
+    Uint8          itemCount;
+    Uint8          partyCount;
+    Uint8          sideMember[2];  // each side's party member
+    WINDOW_SPR    *selectedItemIcon;
+    Uint16         flags;          // 1 while the item's name and command grid are drawn
+    Sint16         completionFlag; // set to 1 as item commands end; not read by name
+    // The row of four figures the Djinn and status screens show (menu_djinn_figures.c): each one's
+    // sprite and place in screen pixels, and its scale in 16.16, which closes a third of its gap to
+    // toFIXED(1) each tick, or holds -scale while negative.
+    struct SPR    *figures[4];
+    Sint16         figureX[4];
+    Sint16         figureY[4];
+    Sint32         figureScales[4];
+    Uint8          unusedAfterFigures[6]; // DJINN_MENU_STATE's pair; not named here
+    Sint16         msgOffset;             // the item use's result, after MsgItemUseResult
+    Sint8          equipPreview;          // 1 while the stats preview a removal, not an equip
+    // the command chosen last (ITEM_MENU_COMMAND); -1 for none
+    Uint8          listMode;
+    Uint8          unusedAfterListMode[2];   // no view of the menu state names it
+    Sint8          selectedIndexByMember[8]; // each party member's entry chosen last
+    Uint8          mode; // not named through this struct; PSYNERGY_MENU_STATE.mode
+    // SHOP_STATE's stock, party and cursor; not named here
+    Uint8          shopStock[297];
+    Uint16         resourceSlots[2]; // VRAM cache slots of two arrow pictures
 } ITEM_MENU_STATE;
 
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, sideIcons) == 20);
@@ -135,12 +135,12 @@ STATIC_ASSERT(sizeof(ITEM_MENU_STATE) == 920);
 // below (mnItemMenuChooseCommand).
 typedef enum ITEM_MENU_COMMAND
 {
-	ITEM_COMMAND_USE,
-	ITEM_COMMAND_EQUIP,
-	ITEM_COMMAND_DETAILS, // Details
-	ITEM_COMMAND_GIVE,
-	ITEM_COMMAND_REMOVE,
-	ITEM_COMMAND_DROP
+    ITEM_COMMAND_USE,
+    ITEM_COMMAND_EQUIP,
+    ITEM_COMMAND_DETAILS, // Details
+    ITEM_COMMAND_GIVE,
+    ITEM_COMMAND_REMOVE,
+    ITEM_COMMAND_DROP
 } ITEM_MENU_COMMAND;
 
 #endif

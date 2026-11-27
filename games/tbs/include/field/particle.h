@@ -13,26 +13,26 @@
 typedef struct PARTICLE
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	union
-	{
-		struct
-		{
-			FIXED x; // 16.16 fixed-point pixels
-			FIXED y; // 16.16 fixed-point pixels
-			FIXED z; // 16.16 fixed-point pixels
-		};
+    union
+    {
+        struct
+        {
+            FIXED x; // 16.16 fixed-point pixels
+            FIXED y; // 16.16 fixed-point pixels
+            FIXED z; // 16.16 fixed-point pixels
+        };
 
-		Sint32 coordinates[3];
-	};
+        Sint32 coordinates[3];
+    };
 #else
-	FIXED x; // 16.16 fixed-point pixels
-	FIXED y; // 16.16 fixed-point pixels
-	FIXED z; // 16.16 fixed-point pixels
+    FIXED x; // 16.16 fixed-point pixels
+    FIXED y; // 16.16 fixed-point pixels
+    FIXED z; // 16.16 fixed-point pixels
 #endif
-	FIXED  velocityX; // 16.16 fixed-point pixels per tick
-	FIXED  velocityY; // 16.16 fixed-point pixels per tick
-	FIXED  velocityZ; // 16.16 fixed-point pixels per tick
-	Sint32 variant;   // each animation's own: a size, a countdown, -1 for idle
+    FIXED  velocityX; // 16.16 fixed-point pixels per tick
+    FIXED  velocityY; // 16.16 fixed-point pixels per tick
+    FIXED  velocityZ; // 16.16 fixed-point pixels per tick
+    Sint32 variant;   // each animation's own: a size, a countdown, -1 for idle
 } PARTICLE;
 
 // Returns the particle's three coordinates as an array. UB: indexing from &x crosses the particle's
@@ -40,9 +40,9 @@ typedef struct PARTICLE
 static inline const Sint32 *btParticleCoordinates(const PARTICLE *step)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return step->coordinates;
+    return step->coordinates;
 #else
-	return &step->x;
+    return &step->x;
 #endif
 }
 
@@ -50,22 +50,22 @@ static inline const Sint32 *btParticleCoordinates(const PARTICLE *step)
 typedef struct SCREEN_POINT
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	// Projection writes three coordinates; animations read their named components.
-	union
-	{
-		struct
-		{
-			Sint32 x;     // screen pixels
-			Sint32 y;     // screen pixels
-			Sint32 depth; // projected depth, larger further away
-		};
+    // Projection writes three coordinates; animations read their named components.
+    union
+    {
+        struct
+        {
+            Sint32 x;     // screen pixels
+            Sint32 y;     // screen pixels
+            Sint32 depth; // projected depth, larger further away
+        };
 
-		Sint32 coordinates[3];
-	};
+        Sint32 coordinates[3];
+    };
 #else
-	Sint32 x;     // screen pixels
-	Sint32 y;     // screen pixels
-	Sint32 depth; // projected depth, larger further away
+    Sint32 x;     // screen pixels
+    Sint32 y;     // screen pixels
+    Sint32 depth; // projected depth, larger further away
 #endif
 } SCREEN_POINT;
 
@@ -75,9 +75,9 @@ typedef struct SCREEN_POINT
 static inline Sint32 *syScreenPointCoordinates(SCREEN_POINT *pos)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return pos->coordinates;
+    return pos->coordinates;
 #else
-	return &pos->x;
+    return &pos->x;
 #endif
 }
 

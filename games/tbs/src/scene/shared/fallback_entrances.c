@@ -2,6 +2,6 @@
 // 152), facing south, with no camera bounds. Crossbone Isle keeps the table but never returns it.
 
 SCENE_ENTRANCE SceneFallbackEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{SCENE_TABLE_END},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };

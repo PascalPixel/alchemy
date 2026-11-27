@@ -828,7 +828,7 @@ void   fdActorFallOverWithAnimationById(Sint32 id, Uint32 angle, Sint32 animatio
 // tiles, unscaled and unrotated at depth 255, and the picture's size from its shape, pivoted at
 // (pivotX, pivotY).
 void   fdEffectSpriteInit(
-	  struct EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY, Uint32 attributes, Sint32 tile);
+      struct EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY, Uint32 attributes, Sint32 tile);
 // Draws a field effect's sprite. An unscaled, unrotated sprite needs no affine matrix; any other
 // takes one, and one scaled past 1 is drawn in a double-size box. The picture's pivot is turned and
 // scaled with it, so the pivot stays on the sprite's position. A sprite wholly off screen is not
@@ -935,7 +935,7 @@ void fdActorCycleSpriteColors(struct ACTOR *actor);
 // declares that form itself.
 #ifndef OWN_fdCycloneCopyTouchedMetatiles
 void fdCycloneCopyTouchedMetatiles(
-	Sint32 x, Sint32 z, Sint16 layerIndex, Sint16 width, Sint16 height, Sint32 toX, Sint32 toZ);
+    Sint32 x, Sint32 z, Sint16 layerIndex, Sint16 width, Sint16 height, Sint32 toX, Sint32 toZ);
 #endif
 // Runs fdTeleportPlaySparks, fades the palettes back to the saved ones and waits 10 ticks.
 void             fdTeleportPlaySparksAndFade(void);

@@ -2,14 +2,14 @@
 // still again.
 void fdActorDropAndWait(ACTOR *actor)
 {
-	Uint8 *flags = &actor->motionFlags;
+    Uint8 *flags = &actor->motionFlags;
 
-	*flags       = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	do
-	{
-		sySynch(1);
-	} while (actor->velocityY != 0);
-	sySoundPlay(SE_THUMP);
-	sySynch(10);
-	*flags = 0;
+    *flags       = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    do
+    {
+        sySynch(1);
+    } while (actor->velocityY != 0);
+    sySoundPlay(SE_THUMP);
+    sySynch(10);
+    *flags = 0;
 }

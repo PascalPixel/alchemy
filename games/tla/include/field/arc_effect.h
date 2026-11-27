@@ -19,12 +19,12 @@ struct ACTOR;
 // (fdBattleEffectSpawnScaledArcObjects).
 typedef struct ARC_EFFECT_STATE
 {
-	EFFECT_SPR    sprites[2][2];
-	// ticks since each group was spawned; ARC_GROUP_UNSPAWNED before
-	Sint16        age[2];
-	Sint16        resource; // VRAM cache entry holding the arcs' tiles
-	Sint16        group;    // the group spawned next
-	struct ACTOR *target;   // the actor the last group was spawned over
+    EFFECT_SPR    sprites[2][2];
+    // ticks since each group was spawned; ARC_GROUP_UNSPAWNED before
+    Sint16        age[2];
+    Sint16        resource; // VRAM cache entry holding the arcs' tiles
+    Sint16        group;    // the group spawned next
+    struct ACTOR *target;   // the actor the last group was spawned over
 } ARC_EFFECT_STATE;
 
 void fdBattleEffectSpawnScaledArcObjects(struct ACTOR *target);

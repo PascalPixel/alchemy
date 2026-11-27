@@ -10,12 +10,12 @@
 // ends a parameter set.
 typedef struct DEBUG_PARTY_ENTRY
 {
-	Sint8  owner;
-	Uint8  level;
-	Sint8  djinnCounts[4];
-	Uint16 items[6];
-	Uint16 actions[2];
-	Uint16 unused; // 0 in every row; nothing reads it
+    Sint8  owner;
+    Uint8  level;
+    Sint8  djinnCounts[4];
+    Uint16 items[6];
+    Uint16 actions[2];
+    Uint16 unused; // 0 in every row; nothing reads it
 } DEBUG_PARTY_ENTRY;
 
 // The owner that ends the debug parameter sets.

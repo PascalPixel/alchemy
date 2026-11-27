@@ -62,7 +62,7 @@ extern CUE            TretTreeBranchCues[];
 // once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set.
 enum
 {
-	ACTOR_BREEZE = ACTOR_FIRST_PLACED
+    ACTOR_BREEZE = ACTOR_FIRST_PLACED
 };
 
 // The metatiles at the vines' tops that move Isaac between the branch he walks on and the hidden
@@ -70,18 +70,18 @@ enum
 // (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and the others).
 typedef enum TRET_TREE_BRANCH_METATILE_BEHAVIOR
 {
-	// Beside the west vine's top, on the branch Isaac walks on: metatile (7, 12).
-	METATILE_BEHAVIOR_TRET_JOIN_WEST_VINE       = 10,
-	// On the hidden copy, east of the west vine's top: metatile (8, 17).
-	METATILE_BEHAVIOR_TRET_LEAVE_WEST_VINE      = 11,
-	// Above the northeast vine's top, on the branch: metatile (37, 11).
-	METATILE_BEHAVIOR_TRET_JOIN_NORTHEAST_VINE  = 12,
-	// On the hidden copy, west of the northeast vine's top: metatile (36, 16).
-	METATILE_BEHAVIOR_TRET_LEAVE_NORTHEAST_VINE = 13,
-	// West of the southeast vine's top, on the branch: metatile (41, 20).
-	METATILE_BEHAVIOR_TRET_JOIN_SOUTHEAST_VINE  = 14,
-	// On the hidden copy, west of the southeast vine's top: metatile (40, 26).
-	METATILE_BEHAVIOR_TRET_LEAVE_SOUTHEAST_VINE = 15,
+    // Beside the west vine's top, on the branch Isaac walks on: metatile (7, 12).
+    METATILE_BEHAVIOR_TRET_JOIN_WEST_VINE       = 10,
+    // On the hidden copy, east of the west vine's top: metatile (8, 17).
+    METATILE_BEHAVIOR_TRET_LEAVE_WEST_VINE      = 11,
+    // Above the northeast vine's top, on the branch: metatile (37, 11).
+    METATILE_BEHAVIOR_TRET_JOIN_NORTHEAST_VINE  = 12,
+    // On the hidden copy, west of the northeast vine's top: metatile (36, 16).
+    METATILE_BEHAVIOR_TRET_LEAVE_NORTHEAST_VINE = 13,
+    // West of the southeast vine's top, on the branch: metatile (41, 20).
+    METATILE_BEHAVIOR_TRET_JOIN_SOUTHEAST_VINE  = 14,
+    // On the hidden copy, west of the southeast vine's top: metatile (40, 26).
+    METATILE_BEHAVIOR_TRET_LEAVE_SOUTHEAST_VINE = 15,
 } TRET_TREE_BRANCH_METATILE_BEHAVIOR;
 
 // Starts the clouds drifting above the forest.
@@ -104,27 +104,27 @@ static Uint16 HofsBeforeSplit;
 // starts the battle with it.
 static void   scTretTreeBranchTalkToBreeze(void)
 {
-	fdRequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
+    fdRequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return TretTreeBranchEntrances;
+    return TretTreeBranchEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
-	return NULL;
+    return NULL;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return TretTreeBranchExits;
+    return TretTreeBranchExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return TretTreeBranchActorPlacements;
+    return TretTreeBranchActorPlacements;
 }
 
 // Moves the leader and the camera the same number of metatiles, each set on the ground of the
@@ -133,62 +133,62 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 static void scTretTreeBranchShiftLeaderAndCameraByMetatiles(Sint32 metatileOffsetX,
                                                             Sint32 metatileOffsetZ)
 {
-	FIELD_STATE *state = FieldStateWork;
-	ACTOR       *actor;
-	Sint32       offsetX = metatileOffsetX;
-	Sint32       offsetZ = metatileOffsetZ;
-	FIXED        groundHeight;
+    FIELD_STATE *state = FieldStateWork;
+    ACTOR       *actor;
+    Sint32       offsetX = metatileOffsetX;
+    Sint32       offsetZ = metatileOffsetZ;
+    FIXED        groundHeight;
 
-	actor    = fdActorGet(MainRoutineStateWork.leaderActorId);
-	offsetX *= toFIXED(16);
-	offsetZ *= toFIXED(16);
+    actor    = fdActorGet(MainRoutineStateWork.leaderActorId);
+    offsetX *= toFIXED(16);
+    offsetZ *= toFIXED(16);
 
-	if (actor != NULL)
-	{
-		actor->x.fixed += offsetX;
-		actor->z.fixed += offsetZ;
-		groundHeight    = fdMapGridGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
-		actor->y.fixed  = groundHeight;
-		actor->groundHeight = groundHeight;
-	}
+    if (actor != NULL)
+    {
+        actor->x.fixed += offsetX;
+        actor->z.fixed += offsetZ;
+        groundHeight    = fdMapGridGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+        actor->y.fixed  = groundHeight;
+        actor->groundHeight = groundHeight;
+    }
 
-	actor = state->camera;
-	if (actor != NULL)
-	{
-		actor->x.fixed += offsetX;
-		actor->z.fixed += offsetZ;
-		groundHeight    = fdMapGridGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
-		actor->y.fixed  = groundHeight;
-		actor->groundHeight = groundHeight;
-	}
+    actor = state->camera;
+    if (actor != NULL)
+    {
+        actor->x.fixed += offsetX;
+        actor->z.fixed += offsetZ;
+        groundHeight    = fdMapGridGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+        actor->y.fixed  = groundHeight;
+        actor->groundHeight = groundHeight;
+    }
 }
 
 // On the upper branch beside the west vine's top (metatile (7, 12)), moves Isaac onto the hidden
 // copy that joins the vine, so that Down climbs him down it.
 static void scTretTreeBranchJoinWestVine(void)
 {
-	scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, 5);
+    scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, 5);
 }
 
 // Stepping east off the west vine's top (metatile (8, 17)) moves Isaac back onto the drawn branch,
 // the one to the fifth floor's west door.
 static void scTretTreeBranchLeaveWestVine(void)
 {
-	scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, -5);
+    scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, -5);
 }
 
 // On the northeast vine's top (metatile (37, 11)), on the branch to the fifth floor's east door,
 // moves Isaac onto the hidden copy that joins the vine.
 static void scTretTreeBranchJoinNortheastVine(void)
 {
-	scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, 5);
+    scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, 5);
 }
 
 // Stepping west off the northeast vine's top (metatile (36, 16)) moves Isaac back onto the drawn
 // branch, the one to the fifth floor's east door and Breeze.
 static void scTretTreeBranchLeaveNortheastVine(void)
 {
-	scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, -5);
+    scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, -5);
 }
 
 // At the southeast vine's top (metatile (41, 20)), on the branch from the third floor's east door,
@@ -196,14 +196,14 @@ static void scTretTreeBranchLeaveNortheastVine(void)
 // east door.
 static void scTretTreeBranchJoinSoutheastVine(void)
 {
-	scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, 6);
+    scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, 6);
 }
 
 // Stepping west off the southeast vine's top (metatile (40, 26)) moves Isaac back onto the drawn
 // branch to the third floor's east door.
 static void scTretTreeBranchLeaveSoutheastVine(void)
 {
-	scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, -6);
+    scTretTreeBranchShiftLeaderAndCameraByMetatiles(0, -6);
 }
 
 // Isaac walks into one of the arched doors in Tret's trunk, such as the second floor's west door at
@@ -214,10 +214,10 @@ static void scTretTreeBranchLeaveSoutheastVine(void)
 // the door's metatile carries its own exit number, which the step cue hands on as the exit to take.
 static void scTretTreeBranchEnterTretTreeRooms(void)
 {
-	FIELD_STATE *state = FieldStateWork;
+    FIELD_STATE *state = FieldStateWork;
 
-	sySoundPlay(SE_MAP_EXIT);
-	syImportScriptSetExitRequest(state->stepCue);
+    sySoundPlay(SE_MAP_EXIT);
+    syImportScriptSetExitRequest(state->stepCue);
 }
 
 // The oval round Isaac (WINDOW_TRANSITION_LEADER) in which the leaves in front of the branches are
@@ -230,9 +230,9 @@ static void scTretTreeBranchEnterTretTreeRooms(void)
 // Opens the see-through oval round Isaac, as the scene starts and again after Reveal.
 static inline void scTretTreeBranchSetRevealWindow(SCREEN_TRANSITION_STATE *state)
 {
-	state->insideLayers  = REVEAL_WININ;
-	state->outsideLayers = REVEAL_WINOUT;
-	state->value         = REVEAL_WINDOW_STEPS;
+    state->insideLayers  = REVEAL_WININ;
+    state->outsideLayers = REVEAL_WINOUT;
+    state->value         = REVEAL_WINDOW_STEPS;
 }
 
 // When Reveal wears off, the leaves round Isaac turn see-through again: Reveal drew its own
@@ -240,26 +240,26 @@ static inline void scTretTreeBranchSetRevealWindow(SCREEN_TRANSITION_STATE *stat
 // scInit set them.
 static void scTretTreeBranchRevealFades(void)
 {
-	fdScreenTransitionStartHeldWindow(WINDOW_TRANSITION_LEADER);
+    fdScreenTransitionStartHeldWindow(WINDOW_TRANSITION_LEADER);
 
-	REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	REG_BLDALPHA = BLEND_ALPHA(4, 12);
+    REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-	scTretTreeBranchSetRevealWindow(ScreenTransitionStateWork);
+    scTretTreeBranchSetRevealWindow(ScreenTransitionStateWork);
 }
 
 // Returns the scene's scripts: its eight doors, the six metatiles at the vines' tops, Breeze and
 // Reveal.
 const CUE *scGetCues(void)
 {
-	return TretTreeBranchCues;
+    return TretTreeBranchCues;
 }
 
 // Unused script hook: begins and immediately ends a script.
 static void UNUSED scTretTreeBranchRunEmptyScript(void)
 {
-	fdScriptStart();
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEnd();
 }
 
 // Unused: an empty function nothing refers to, the first of two here.
@@ -275,50 +275,50 @@ static void UNUSED scTretTreeBranchUnusedHookSecond(void)
 // Unused exchange callback: puts held/repeated keys in the transfer header.
 static void UNUSED scTretTreeBranchExchangeInputPacket(void)
 {
-	Uint16 *header = TransferHeader;
+    Uint16 *header = TransferHeader;
 
-	header[0]      = PerData;
-	header[1]      = PerRepeat;
-	sySerialPollAndTransfer(header, TransferData);
+    header[0]      = PerData;
+    header[1]      = PerRepeat;
+    sySerialPollAndTransfer(header, TransferData);
 }
 
 // Opens Tret's branches with a backdrop fade, opens the see-through oval in the leaves round Isaac
 // and starts the clouds drifting.
 Sint32 scInit(void)
 {
-	SCREEN_TRANSITION_STATE *state;
+    SCREEN_TRANSITION_STATE *state;
 
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
-	fdScreenTransitionStartHeldWindow(WINDOW_TRANSITION_LEADER);
+    fdScreenTransitionStartHeldWindow(WINDOW_TRANSITION_LEADER);
 
-	REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	REG_BLDALPHA = BLEND_ALPHA(4, 12);
+    REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-	state        = ScreenTransitionStateWork;
-	scTretTreeBranchSetRevealWindow(state);
+    state        = ScreenTransitionStateWork;
+    scTretTreeBranchSetRevealWindow(state);
 
-	scTretTreeBranchStartBg3Split();
-	return 0;
+    scTretTreeBranchStartBg3Split();
+    return 0;
 }
 
 // At each scanline, picks the background's horizontal scroll: the drifting clouds' above the split,
 // the map's below it.
 static void scTretTreeBranchApplyBg3ScrollAtScanline(void)
 {
-	Uint16 *scrollOffset;
-	Uint32  horizontalScroll;
+    Uint16 *scrollOffset;
+    Uint32  horizontalScroll;
 
-	if (REG_VCOUNT >= SplitLine)
-	{
-		scrollOffset = &HofsAtOrAfterSplit;
-	}
-	else
-	{
-		scrollOffset = &HofsBeforeSplit;
-	}
-	horizontalScroll = *scrollOffset;
-	REG_BG3HOFS      = horizontalScroll;
+    if (REG_VCOUNT >= SplitLine)
+    {
+        scrollOffset = &HofsAtOrAfterSplit;
+    }
+    else
+    {
+        scrollOffset = &HofsBeforeSplit;
+    }
+    horizontalScroll = *scrollOffset;
+    REG_BG3HOFS      = horizontalScroll;
 }
 
 // Each tick, moves the split with the map's vertical scroll, so that it stays at BG3_SPLIT_Y on the
@@ -326,25 +326,25 @@ static void scTretTreeBranchApplyBg3ScrollAtScanline(void)
 // right.
 static void scTretTreeBranchUpdateBg3ScrollSplit(void)
 {
-	MAP_GRID_LAYER_SCROLL *layer =
-		&((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[MAPGRID_LAYER_GROUND];
-	Sint32 horizontalOffset;
+    MAP_GRID_LAYER_SCROLL *layer =
+        &((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[MAPGRID_LAYER_GROUND];
+    Sint32 horizontalOffset;
 
-	SplitLine          = BG3_SPLIT_Y - (Sint16)(FIXEDtoINT(layer->y));
-	HofsAtOrAfterSplit = horizontalOffset = (Sint16)(FIXEDtoINT(layer->x));
-	HofsBeforeSplit                       = horizontalOffset - (TickCount >> 2);
+    SplitLine          = BG3_SPLIT_Y - (Sint16)(FIXEDtoINT(layer->y));
+    HofsAtOrAfterSplit = horizontalOffset = (Sint16)(FIXEDtoINT(layer->x));
+    HofsBeforeSplit                       = horizontalOffset - (TickCount >> 2);
 }
 
 // Starts the clouds drifting: the split is chosen at every scanline and moved every tick.
 static void scTretTreeBranchStartBg3Split(void)
 {
-	syIntFunction(IRQ_HBLANK, 0, scTretTreeBranchApplyBg3ScrollAtScanline);
-	sySetTickEvent(scTretTreeBranchUpdateBg3ScrollSplit, EVENT_PASS_TICK);
+    syIntFunction(IRQ_HBLANK, 0, scTretTreeBranchApplyBg3ScrollAtScanline);
+    sySetTickEvent(scTretTreeBranchUpdateBg3ScrollSplit, EVENT_PASS_TICK);
 }
 
 SCENE_ENTRANCE TretTreeBranchEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST,
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST,
      CONDITION_ALWAYS, 328,
      0, 424,
      FACING_WEST, 0,
@@ -353,7 +353,7 @@ SCENE_ENTRANCE TretTreeBranchEntrances[] = {
      -1,
      -1,
      0},
-	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST,
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST,
      CONDITION_ALWAYS, 424,
      0, 440,
      FACING_EAST, 0,
@@ -362,7 +362,7 @@ SCENE_ENTRANCE TretTreeBranchEntrances[] = {
      -1,
      -1,
      0},
-	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH,
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH,
      CONDITION_ALWAYS, 376,
      0, 360,
      FACING_SOUTH, 0,
@@ -371,7 +371,7 @@ SCENE_ENTRANCE TretTreeBranchEntrances[] = {
      -1,
      -1,
      0},
-	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST,
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST,
      CONDITION_ALWAYS, 424,
      0, 328,
      FACING_EAST, 0,
@@ -380,7 +380,7 @@ SCENE_ENTRANCE TretTreeBranchEntrances[] = {
      -1,
      -1,
      0},
-	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH,
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH,
      CONDITION_ALWAYS, 376,
      0, 264,
      FACING_SOUTH, 0,
@@ -389,7 +389,7 @@ SCENE_ENTRANCE TretTreeBranchEntrances[] = {
      -1,
      -1,
      0},
-	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST,
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST,
      CONDITION_ALWAYS, 328,
      0, 248,
      FACING_WEST, 0,
@@ -398,7 +398,7 @@ SCENE_ENTRANCE TretTreeBranchEntrances[] = {
      -1,
      -1,
      0},
-	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST,
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST,
      CONDITION_ALWAYS, 328,
      0, 152,
      FACING_WEST, 0,
@@ -407,7 +407,7 @@ SCENE_ENTRANCE TretTreeBranchEntrances[] = {
      -1,
      -1,
      0},
-	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST,
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST,
      CONDITION_ALWAYS, 424,
      0, 136,
      FACING_EAST, 0,
@@ -416,98 +416,98 @@ SCENE_ENTRANCE TretTreeBranchEntrances[] = {
      -1,
      -1,
      0},
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 Uint32 TretTreeBranchExits[] = {
-	SCENE_EXITS(TretTreeBranch),
-	SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST,
+    SCENE_EXITS(TretTreeBranch),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST,
                TreeRooms,
                TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST),
-	SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST,
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST,
                TreeRooms,
                TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST),
-	SCENE_EXIT(
-		TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH, TreeRooms, TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH),
-	SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST,
+    SCENE_EXIT(
+        TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH, TreeRooms, TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST,
                TreeRooms,
                TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST),
-	SCENE_EXIT(
-		TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH, TreeRooms, TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH),
-	SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST,
+    SCENE_EXIT(
+        TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH, TreeRooms, TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST,
                TreeRooms,
                TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST),
-	SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST,
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST,
                TreeRooms,
                TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST),
-	SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST,
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST,
                TreeRooms,
                TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST),
-	SCENE_EXITS_END,
+    SCENE_EXITS_END,
 };
 
 // clang-format off
 ACTOR_PLACE TretTreeBranchActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
-		648, 0, 88, FACING_WEST, TALK_FACING_PARTY, 0),
-	{ SCENE_TABLE_END },
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
+        648, 0, 88, FACING_WEST, TALK_FACING_PARTY, 0),
+    { SCENE_TABLE_END },
 };
 // clang-format on
 
 CUE TretTreeBranchCues[] = {
-	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
+    {STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
      TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
-	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
+    {STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
      TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
-	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
+    {STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
      TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
-	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
+    {STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
      TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
-	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
+    {STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
      TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
-	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
+    {STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
      TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
-	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
+    {STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
      TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
-	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
+    {STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
      TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
-	{CUE_STEP,
+    {CUE_STEP,
      METATILE_BEHAVIOR_TRET_JOIN_WEST_VINE, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchJoinWestVine)},
-	{CUE_STEP,
+    {CUE_STEP,
      METATILE_BEHAVIOR_TRET_LEAVE_WEST_VINE, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchLeaveWestVine)},
-	{CUE_STEP,
+    {CUE_STEP,
      METATILE_BEHAVIOR_TRET_JOIN_NORTHEAST_VINE, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchJoinNortheastVine)},
-	{CUE_STEP,
+    {CUE_STEP,
      METATILE_BEHAVIOR_TRET_LEAVE_NORTHEAST_VINE, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchLeaveNortheastVine)},
-	{CUE_STEP,
+    {CUE_STEP,
      METATILE_BEHAVIOR_TRET_JOIN_SOUTHEAST_VINE, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchJoinSoutheastVine)},
-	{CUE_STEP,
+    {CUE_STEP,
      METATILE_BEHAVIOR_TRET_LEAVE_SOUTHEAST_VINE, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchLeaveSoutheastVine)},
-	{CUE_TALK, ACTOR_BREEZE, CONDITION_ALWAYS, SCRIPT_REF(scTretTreeBranchTalkToBreeze)},
-	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END),
+    {CUE_TALK, ACTOR_BREEZE, CONDITION_ALWAYS, SCRIPT_REF(scTretTreeBranchTalkToBreeze)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END),
      0, CONDITION_ALWAYS,
      SCRIPT_REF(scTretTreeBranchRevealFades)},
-	{CUE_TABLE_END},
+    {CUE_TABLE_END},
 };
 
 // Unused: the two steps of a door opening, as Vale's doors have them
 // (ValePrologueSanctumDoorOpens). Nothing on the branch plays them.
 Uint16 TretTreeBranchUnusedMetatileSteps[] = {
-	MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
-	MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
-	MAPGRID_ANIMATION_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };

@@ -11,8 +11,8 @@
 // SELECTION_MENU_CURSOR_VIEW. A chain node seen only as its link to the next.
 typedef struct SELECTION_NODE_LINK_VIEW
 {
-	Uint8                            paddingBeforeNext[4]; // SELECTION_NODE.prev, if it is one
-	struct SELECTION_NODE_LINK_VIEW *next;
+    Uint8                            paddingBeforeNext[4]; // SELECTION_NODE.prev, if it is one
+    struct SELECTION_NODE_LINK_VIEW *next;
 } SELECTION_NODE_LINK_VIEW;
 
 // XXX: likely a SELECTION_MENU_STATE (its row's first icon and the entry under the hand), because
@@ -21,11 +21,11 @@ typedef struct SELECTION_NODE_LINK_VIEW
 // syNodeChainGetNodeAtIndex reads.
 typedef struct SELECTION_MENU_CURSOR_VIEW
 {
-	Uint8 paddingBeforeNode[840];
-	SELECTION_NODE_LINK_VIEW
-	*node;        // SELECTION_MENU_STATE.head, if it is one
-	Uint8  paddingBeforeCount[82];
-	Uint16 count; // SELECTION_MENU_STATE.cursorIndex, if it is one
+    Uint8 paddingBeforeNode[840];
+    SELECTION_NODE_LINK_VIEW
+    *node;        // SELECTION_MENU_STATE.head, if it is one
+    Uint8  paddingBeforeCount[82];
+    Uint16 count; // SELECTION_MENU_STATE.cursorIndex, if it is one
 } SELECTION_MENU_CURSOR_VIEW;
 
 STATIC_ASSERT(sizeof(SELECTION_NODE_LINK_VIEW) == 8);

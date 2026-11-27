@@ -4,12 +4,12 @@
 
 enum
 {
-	// The layers the screen fades take: all but BG0.
-	FADE_GAME_LAYERS = BLDCNT_TGT1_ALL & ~BLDCNT_TGT1_BG0,
-	FADE_LAYER_MASK  = BLDCNT_TGT1_ALL,
-	FADE_BRIGHTEN    = BLDCNT_EFFECT_LIGHTEN,
-	FADE_DARKEN      = BLDCNT_EFFECT_DARKEN,
-	FADE_LEVEL_MAX   = BLEND_FADE_MAX // BLDY's strongest: all white or black
+    // The layers the screen fades take: all but BG0.
+    FADE_GAME_LAYERS = BLDCNT_TGT1_ALL & ~BLDCNT_TGT1_BG0,
+    FADE_LAYER_MASK  = BLDCNT_TGT1_ALL,
+    FADE_BRIGHTEN    = BLDCNT_EFFECT_LIGHTEN,
+    FADE_DARKEN      = BLDCNT_EFFECT_DARKEN,
+    FADE_LEVEL_MAX   = BLEND_FADE_MAX // BLDY's strongest: all white or black
 };
 
 // Steps the screen fade once a VBlank, called by syVBlankHandler: sets BLDCNT to brighten or darken
@@ -18,52 +18,52 @@ enum
 // on.
 void syScreenFadeUpdate(void)
 {
-	if (ScreenFadeFrames != 0)
-	{
-		{
-			volatile Uint16 *blendControl;
-			Uint32           control;
+    if (ScreenFadeFrames != 0)
+    {
+        {
+            volatile Uint16 *blendControl;
+            Uint32           control;
 
-			if (ScreenFadeToWhite != 0)
-			{
-				control      = ScreenFadeLayers | FADE_BRIGHTEN;
-				blendControl = &REG_BLDCNT;
-			}
-			else
-			{
-				control      = ScreenFadeLayers | FADE_DARKEN;
-				blendControl = &REG_BLDCNT;
-			}
-			*blendControl = control;
-		}
-		{
-			Sint32 level;
+            if (ScreenFadeToWhite != 0)
+            {
+                control      = ScreenFadeLayers | FADE_BRIGHTEN;
+                blendControl = &REG_BLDCNT;
+            }
+            else
+            {
+                control      = ScreenFadeLayers | FADE_DARKEN;
+                blendControl = &REG_BLDCNT;
+            }
+            *blendControl = control;
+        }
+        {
+            Sint32 level;
 
-			// level = target + (start - target) * remaining / duration: BLDY moves in a straight
-			// line and reaches the target as remaining reaches 0
-			ScreenFadeFramesLeft--;
-			level  = ScreenFadeTargetLevel;
-			level += (ScreenFadeStartLevel - ScreenFadeTargetLevel) * ScreenFadeFramesLeft
-			       / ScreenFadeFrames;
-			REG_BLDY = level;
-			if (ScreenFadeFramesLeft == 0)
-				ScreenFadeFrames = 0;
-		}
-	}
+            // level = target + (start - target) * remaining / duration: BLDY moves in a straight
+            // line and reaches the target as remaining reaches 0
+            ScreenFadeFramesLeft--;
+            level  = ScreenFadeTargetLevel;
+            level += (ScreenFadeStartLevel - ScreenFadeTargetLevel) * ScreenFadeFramesLeft
+                   / ScreenFadeFrames;
+            REG_BLDY = level;
+            if (ScreenFadeFramesLeft == 0)
+                ScreenFadeFrames = 0;
+        }
+    }
 }
 
 // Fades BG1 to BG3, the sprites and the backdrop from the current target brightness to `level` over
 // `frames` frames.
 #define FADE_DEFINE_BLEND(name, brighten, level)                                                   \
-	void name(Sint32 frames)                                                                       \
-	{                                                                                              \
-		ScreenFadeToWhite     = brighten;                                                          \
-		ScreenFadeLayers      = FADE_GAME_LAYERS;                                                  \
-		ScreenFadeStartLevel  = ScreenFadeTargetLevel;                                             \
-		ScreenFadeTargetLevel = level;                                                             \
-		ScreenFadeFrames      = frames;                                                            \
-		ScreenFadeFramesLeft  = ScreenFadeFrames;                                                  \
-	}
+    void name(Sint32 frames)                                                                       \
+    {                                                                                              \
+        ScreenFadeToWhite     = brighten;                                                          \
+        ScreenFadeLayers      = FADE_GAME_LAYERS;                                                  \
+        ScreenFadeStartLevel  = ScreenFadeTargetLevel;                                             \
+        ScreenFadeTargetLevel = level;                                                             \
+        ScreenFadeFrames      = frames;                                                            \
+        ScreenFadeFramesLeft  = ScreenFadeFrames;                                                  \
+    }
 
 // Fades out to black.
 FADE_DEFINE_BLEND(syScreenFadeToBlack, 0, FADE_LEVEL_MAX)
@@ -88,27 +88,27 @@ FADE_DEFINE_BLEND(syScreenFadeFromWhite, 1, 0)
 // target
 void syScreenFadeStart(Sint8 bright, Sint32 layer, Uint32 start, Sint32 target, Sint32 frames)
 {
-	ScreenFadeToWhite = bright;
-	ScreenFadeLayers  = layer & FADE_LAYER_MASK;
-	if (start > FADE_LEVEL_MAX)
-	{
-		ScreenFadeStartLevel = ScreenFadeTargetLevel;
-	}
-	else
-	{
-		ScreenFadeStartLevel = start;
-	}
-	ScreenFadeTargetLevel = target;
-	ScreenFadeFramesLeft  = (ScreenFadeFrames = frames);
+    ScreenFadeToWhite = bright;
+    ScreenFadeLayers  = layer & FADE_LAYER_MASK;
+    if (start > FADE_LEVEL_MAX)
+    {
+        ScreenFadeStartLevel = ScreenFadeTargetLevel;
+    }
+    else
+    {
+        ScreenFadeStartLevel = start;
+    }
+    ScreenFadeTargetLevel = target;
+    ScreenFadeFramesLeft  = (ScreenFadeFrames = frames);
 }
 
 // Waits a tick at a time until the running fade has finished.
 void syScreenFadeWait(void)
 {
-	while (ScreenFadeFrames != 0)
-	{
-		sySynch(1);
-	}
+    while (ScreenFadeFrames != 0)
+    {
+        sySynch(1);
+    }
 }
 
 #undef FADE_DEFINE_BLEND

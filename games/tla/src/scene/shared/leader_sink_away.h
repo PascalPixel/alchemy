@@ -3,23 +3,23 @@
 // Rock's and the Apojii Islands' passages through water. scLeaderRiseFromWater is the arrival.
 void scLeaderSinkAway(Sint32 entrance)
 {
-	ACTOR  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Sint32 *owner  = &MainRoutineStateWork.leaderActorId;
+    ACTOR  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+    Sint32 *owner  = &MainRoutineStateWork.leaderActorId;
 
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySound(SE_SPARKLING_PASSAGE);
-	leader->update      = (OBJECT_UPDATE)scActorEmitMist;
-	leader->motionFlags = 0;
-	leader->speedLimit  = toFIXED(1) / 5;
-	fdActorSetAnimation(*owner, 2);
-	fdActorSetDestinationOffset(*owner, 0, -8);
-	scFieldActorWaitForMoveById(*owner);
-	scFieldActorSetSpriteColor(fdActorGet(*owner), SPRITE_COLOR_BLUE_TINT);
-	fdActorSetSpriteFlags(fdActorGet(*owner), 0);
-	leader->update = 0;
-	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionTicks();
-	syFieldScriptSetExitRequest(entrance);
-	fdScriptEnd();
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    fdScriptPlaySound(SE_SPARKLING_PASSAGE);
+    leader->update      = (OBJECT_UPDATE)scActorEmitMist;
+    leader->motionFlags = 0;
+    leader->speedLimit  = toFIXED(1) / 5;
+    fdActorSetAnimation(*owner, 2);
+    fdActorSetDestinationOffset(*owner, 0, -8);
+    scFieldActorWaitForMoveById(*owner);
+    scFieldActorSetSpriteColor(fdActorGet(*owner), SPRITE_COLOR_BLUE_TINT);
+    fdActorSetSpriteFlags(fdActorGet(*owner), 0);
+    leader->update = 0;
+    fdScriptFinishScreenTransition();
+    fdScriptWaitTransitionTicks();
+    syFieldScriptSetExitRequest(entrance);
+    fdScriptEnd();
 }

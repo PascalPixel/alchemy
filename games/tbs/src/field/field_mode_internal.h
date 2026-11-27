@@ -30,8 +30,8 @@ extern const SPEAKER_DEFINITION SpeakerDefinitions[];
 // A position syVectorAddPolarOffset moves: as a vector, or as its three coordinates.
 typedef union POLAR_OFFSET_POS
 {
-	VECTOR3 vector;
-	Sint32  coordinates[3];
+    VECTOR3 vector;
+    Sint32  coordinates[3];
 } POLAR_OFFSET_POS;
 
 STATIC_ASSERT(sizeof(POLAR_OFFSET_POS) == 12);
@@ -42,20 +42,20 @@ STATIC_ASSERT(sizeof(POLAR_OFFSET_POS) == 12);
 
 // Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                                              \
-	(mnMessageArgumentPushStub((who), MESSAGE_ARGUMENT_ACTOR),                                     \
-	 mnMessageArgumentPushStub((act), MESSAGE_ARGUMENT_ABILITY),                                   \
-	 mnFieldMessageShowStub((m), FIELD_MESSAGE_ZOOM))
+    (mnMessageArgumentPushStub((who), MESSAGE_ARGUMENT_ACTOR),                                     \
+     mnMessageArgumentPushStub((act), MESSAGE_ARGUMENT_ABILITY),                                   \
+     mnFieldMessageShowStub((m), FIELD_MESSAGE_ZOOM))
 
 // A scene's encounter zones (SceneEncounterRules, encounter_rules.s), ended by scene -1.
 typedef struct SCENE_ENCOUNTER_RULE
 {
-	Sint16 sceneId;                // -1 ends the table
-	Sint16 entrance;               // -1 for any entrance
-	Sint16 flags             : 15; // -1, or a flag that turns the rule off once set
-	Sint16 firstZoneOnGround : 1;  // the first zone is for ground 0, not 1
-	// The first of up to seven consecutive zones, rows of encounter_zones.c; 0 for none on any
-	// ground.
-	Sint16 firstZone;
+    Sint16 sceneId;                // -1 ends the table
+    Sint16 entrance;               // -1 for any entrance
+    Sint16 flags             : 15; // -1, or a flag that turns the rule off once set
+    Sint16 firstZoneOnGround : 1;  // the first zone is for ground 0, not 1
+    // The first of up to seven consecutive zones, rows of encounter_zones.c; 0 for none on any
+    // ground.
+    Sint16 firstZone;
 } SCENE_ENCOUNTER_RULE;
 
 // The scenes' encounter rules; the first that matches the scene and entrance, with its flag unset,
@@ -65,11 +65,11 @@ extern const SCENE_ENCOUNTER_RULE SceneEncounterRules[];
 // A rule choosing a scene's field music (SceneMusicRules, music_rules.s), ended by id -1.
 typedef struct MAP_MUSIC_RULE
 {
-	Sint16 id;            // a scene, or an area
-	Sint16 entrance : 15; // -1 for any entrance
-	Uint16 idIsMap  : 1;  // 1 when id is a scene, 0 when it is an area
-	Sint16 flags;         // -1, or a flag that must be set
-	Sint16 music;         // sounds.h's MUS_ numbers
+    Sint16 id;            // a scene, or an area
+    Sint16 entrance : 15; // -1 for any entrance
+    Uint16 idIsMap  : 1;  // 1 when id is a scene, 0 when it is an area
+    Sint16 flags;         // -1, or a flag that must be set
+    Sint16 music;         // sounds.h's MUS_ numbers
 } MAP_MUSIC_RULE;
 
 // The field music rules; the first that matches the scene or its area, the entrance and the flag
@@ -79,12 +79,12 @@ extern const MAP_MUSIC_RULE SceneMusicRules[];
 // A rule naming the area a scene is in (AreaNameRules, area_name_rules.s), ended by id -1.
 typedef struct AREA_NAME_RULE
 {
-	Sint16 id;            // a scene, or an area
-	Sint16 entrance : 15; // -1 for any entrance
-	Uint16 useMapId : 1;  // 1 when id is a scene, 0 when it is an area
-	// The area name, as an offset that most readers add to MsgDebugAreaName. 0 is the Title's name
-	// (area 0's rule), which a scene no rule matches also gets.
-	Sint32 areaNameIndex;
+    Sint16 id;            // a scene, or an area
+    Sint16 entrance : 15; // -1 for any entrance
+    Uint16 useMapId : 1;  // 1 when id is a scene, 0 when it is an area
+    // The area name, as an offset that most readers add to MsgDebugAreaName. 0 is the Title's name
+    // (area 0's rule), which a scene no rule matches also gets.
+    Sint32 areaNameIndex;
 } AREA_NAME_RULE;
 
 // The area name rules; the first that matches the scene or its area and the entrance gives the
@@ -95,13 +95,13 @@ extern const AREA_NAME_RULE AreaNameRules[];
 // is 0, edges moving from left x0 and right y0 to left x1 and right y1 down the run.
 typedef struct TRANSITION_SPAN
 {
-	Uint16 count; // lines; 0 for an unused run
-	// The (left << 8 | right) pair every line of the run takes, or 0 for the sloped edges below.
-	Uint16 value;
-	Uint8  x0; // screen pixels: the left edge on the run's first line
-	Uint8  x1; // screen pixels: the left edge the run moves toward
-	Uint8  y0; // screen pixels: the right edge on the run's first line
-	Uint8  y1; // screen pixels: the right edge the run moves toward
+    Uint16 count; // lines; 0 for an unused run
+    // The (left << 8 | right) pair every line of the run takes, or 0 for the sloped edges below.
+    Uint16 value;
+    Uint8  x0; // screen pixels: the left edge on the run's first line
+    Uint8  x1; // screen pixels: the left edge the run moves toward
+    Uint8  y0; // screen pixels: the right edge on the run's first line
+    Uint8  y1; // screen pixels: the right edge the run moves toward
 } TRANSITION_SPAN;
 
 // A window transition's value: from 0, the screen covered, it opens to TRANSITION_OPEN and closes
@@ -121,9 +121,9 @@ typedef struct TRANSITION_SPAN
 // written one after another from the top of the screen.
 typedef struct TRANSITION_SHAPE
 {
-	Uint16          first;  // WINOUT while opening, WININ while closing
-	Uint16          second; // WININ while opening, WINOUT while closing
-	TRANSITION_SPAN spans[3];
+    Uint16          first;  // WINOUT while opening, WININ while closing
+    Uint16          second; // WININ while opening, WINOUT while closing
+    TRANSITION_SPAN spans[3];
 } TRANSITION_SHAPE;
 
 extern TRANSITION_SHAPE  ScreenTransitionShapes[TRANSITION_OPEN];

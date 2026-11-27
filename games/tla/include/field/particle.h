@@ -12,26 +12,26 @@
 typedef struct PARTICLE
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	union
-	{
-		struct
-		{
-			FIXED x; // 16.16 fixed-point pixels
-			FIXED y; // 16.16 fixed-point pixels
-			FIXED z; // 16.16 fixed-point pixels
-		};
+    union
+    {
+        struct
+        {
+            FIXED x; // 16.16 fixed-point pixels
+            FIXED y; // 16.16 fixed-point pixels
+            FIXED z; // 16.16 fixed-point pixels
+        };
 
-		Sint32 coordinates[3];
-	};
+        Sint32 coordinates[3];
+    };
 #else
-	FIXED x; // 16.16 fixed-point pixels
-	FIXED y; // 16.16 fixed-point pixels
-	FIXED z; // 16.16 fixed-point pixels
+    FIXED x; // 16.16 fixed-point pixels
+    FIXED y; // 16.16 fixed-point pixels
+    FIXED z; // 16.16 fixed-point pixels
 #endif
-	FIXED  velocityX; // 16.16 fixed-point pixels per tick
-	FIXED  velocityY; // 16.16 fixed-point pixels per tick
-	FIXED  velocityZ; // 16.16 fixed-point pixels per tick
-	Sint32 variant;   // each effect's own
+    FIXED  velocityX; // 16.16 fixed-point pixels per tick
+    FIXED  velocityY; // 16.16 fixed-point pixels per tick
+    FIXED  velocityZ; // 16.16 fixed-point pixels per tick
+    Sint32 variant;   // each effect's own
 } PARTICLE;
 
 // Returns the step's three coordinates as an array. UB: indexing from &x crosses the step's
@@ -39,9 +39,9 @@ typedef struct PARTICLE
 static inline const Sint32 *btParticleCoordinates(const PARTICLE *step)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return step->coordinates;
+    return step->coordinates;
 #else
-	return &step->x;
+    return &step->x;
 #endif
 }
 
@@ -49,22 +49,22 @@ static inline const Sint32 *btParticleCoordinates(const PARTICLE *step)
 typedef struct SCREEN_POINT
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	// Projection writes three coordinates; effects read their named components.
-	union
-	{
-		struct
-		{
-			Sint32 x; // screen pixels
-			Sint32 y; // screen pixels
-			Sint32 depth;
-		};
+    // Projection writes three coordinates; effects read their named components.
+    union
+    {
+        struct
+        {
+            Sint32 x; // screen pixels
+            Sint32 y; // screen pixels
+            Sint32 depth;
+        };
 
-		Sint32 coordinates[3];
-	};
+        Sint32 coordinates[3];
+    };
 #else
-	Sint32 x; // screen pixels
-	Sint32 y; // screen pixels
-	Sint32 depth;
+    Sint32 x; // screen pixels
+    Sint32 y; // screen pixels
+    Sint32 depth;
 #endif
 } SCREEN_POINT;
 
@@ -74,9 +74,9 @@ typedef struct SCREEN_POINT
 static inline Sint32 *syScreenPointCoordinates(SCREEN_POINT *pos)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return pos->coordinates;
+    return pos->coordinates;
 #else
-	return &pos->x;
+    return &pos->x;
 #endif
 }
 

@@ -61,520 +61,520 @@
 // strikes and breaks into shards. The screen fades in the last eight ticks.
 void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	BATTLE_EFFECT_STATE *state;
-	void                *canvas;
-	Uint8               *graphics;
-	DRAW_RECTANGLE       draw[2];
-	FIXED                scale;
-	Sint32               scroll;
-	Sint32               overflow;
-	Sint32               totalTicks;
-	Sint32               frame;
-	SCREEN_POINT         card;
-	SCREEN_POINT         middle;
-	MODEL_TEXTURE        texture;
-	PARTICLE            *step;
-	RENDER_MODEL        *model;
-	void                *vertices;
-	Sint32               i;
-	Sint32               j;
-	Sint32               cardTicks;
-	Sint32               first;
-	Sint32               slot;
+    BATTLE_EFFECT_STATE *state;
+    void                *canvas;
+    Uint8               *graphics;
+    DRAW_RECTANGLE       draw[2];
+    FIXED                scale;
+    Sint32               scroll;
+    Sint32               overflow;
+    Sint32               totalTicks;
+    Sint32               frame;
+    SCREEN_POINT         card;
+    SCREEN_POINT         middle;
+    MODEL_TEXTURE        texture;
+    PARTICLE            *step;
+    RENDER_MODEL        *model;
+    void                *vertices;
+    Sint32               i;
+    Sint32               j;
+    Sint32               cardTicks;
+    Sint32               first;
+    Sint32               slot;
 
-	state    = RamHeapSlots->battleEffect;
-	canvas   = RamHeapSlots->battleCanvas;
-	graphics = RamHeapSlots->battleSheet;
+    state    = RamHeapSlots->battleEffect;
+    canvas   = RamHeapSlots->battleCanvas;
+    graphics = RamHeapSlots->battleSheet;
 
-	// Set up a tiled canvas, filled on the user's side, and a blitter that keeps the brighter pixel
-	// (that adds, for the Sword Card), mirrored to face the targets.
-	btEffectStartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
-	if (args->side == EFFECT_SIDE_ENEMIES)
-		btEffectStartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
-	else
-		btEffectStartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
-	REG_BLDALPHA = BLEND_ALPHA(16, 2);
-	if (mode == CARD_SWORD)
-	{
-		if (args->side == EFFECT_SIDE_ENEMIES)
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-		else
-			EFFECT_LOAD_BLITTER(
-				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-	}
-	else
-	{
-		if (args->side == EFFECT_SIDE_ENEMIES)
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		else
-			EFFECT_LOAD_BLITTER(
-				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	}
-	draw[0]  = RamHeapSlots->ramCode;
-	scale    = 0;
-	scroll   = 0;
-	overflow = 0;
+    // Set up a tiled canvas, filled on the user's side, and a blitter that keeps the brighter pixel
+    // (that adds, for the Sword Card), mirrored to face the targets.
+    btEffectStartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
+    if (args->side == EFFECT_SIDE_ENEMIES)
+        btEffectStartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
+    else
+        btEffectStartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
+    REG_BLDALPHA = BLEND_ALPHA(16, 2);
+    if (mode == CARD_SWORD)
+    {
+        if (args->side == EFFECT_SIDE_ENEMIES)
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
+        else
+            EFFECT_LOAD_BLITTER(
+                HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
+    }
+    else
+    {
+        if (args->side == EFFECT_SIDE_ENEMIES)
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+        else
+            EFFECT_LOAD_BLITTER(
+                HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+    }
+    draw[0]  = RamHeapSlots->ramCode;
+    scale    = 0;
+    scroll   = 0;
+    overflow = 0;
 
-	// Load the card and what comes out of it; the Sword Card makes seven darker copies of its
-	// shards for their fade.
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
-	if (mode == CARD_SLEEP)
-	{
-		btResourceLoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, CARD, 1, 1);
-		btResourceLoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, state->sheet, 0, 0);
-		totalTicks = 96;
-	}
-	else if (mode == CARD_BAFFLE)
-	{
-		btResourceLoadAndDecompress(RESOURCE_BUTTERFLY_CARD_SHEET, CARD, 1, 1);
-		btResourceLoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, state->sheet, 0, 0);
-		totalTicks = 80;
-	}
-	else if (mode == CARD_SWORD)
-	{
-		btResourceLoadAndDecompress(RESOURCE_SWORD_CARD_SHEET, CARD, 1, 1);
-		btResourceLoadAndDecompress(RESOURCE_DAGGER_SHEET, state->sheet, 1, 0);
-		btResourceLoadAndDecompress(
-			RESOURCE_PALETTE_RAMP_IMAGE, state->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
-		for (i = 1; i != DIMMED_COPIES; i++)
-		{
-			for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++)
-			{
-				Sint32 shade = state->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
+    // Load the card and what comes out of it; the Sword Card makes seven darker copies of its
+    // shards for their fade.
+    btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
+    if (mode == CARD_SLEEP)
+    {
+        btResourceLoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, CARD, 1, 1);
+        btResourceLoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, state->sheet, 0, 0);
+        totalTicks = 96;
+    }
+    else if (mode == CARD_BAFFLE)
+    {
+        btResourceLoadAndDecompress(RESOURCE_BUTTERFLY_CARD_SHEET, CARD, 1, 1);
+        btResourceLoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, state->sheet, 0, 0);
+        totalTicks = 80;
+    }
+    else if (mode == CARD_SWORD)
+    {
+        btResourceLoadAndDecompress(RESOURCE_SWORD_CARD_SHEET, CARD, 1, 1);
+        btResourceLoadAndDecompress(RESOURCE_DAGGER_SHEET, state->sheet, 1, 0);
+        btResourceLoadAndDecompress(
+            RESOURCE_PALETTE_RAMP_IMAGE, state->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
+        for (i = 1; i != DIMMED_COPIES; i++)
+        {
+            for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++)
+            {
+                Sint32 shade = state->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
-				if (shade > 0)
-				{
-					shade -= i * SWORD_CARD_SHARD_DIMMING;
-					if (shade <= 0)
-						shade = 1;
-				}
-				state->sheet[STAT_REDUCTION_SHARD_PICTURES + i * STAT_REDUCTION_SHARD_BYTES + j] =
-					shade;
-			}
-		}
-		totalTicks = 116;
-	}
-	else
-	{
-		btResourceLoadAndDecompress(RESOURCE_SKELETON_CARD_SHEET, CARD, 1, 1);
-		btResourceLoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, state->sheet, 1, 0);
-		btResourceLoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, RamMapMetatileBuffer, 1, 0);
-		totalTicks = 88;
-	}
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	if (mode == CARD_BAFFLE)
-		sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
-	REG_BG2PA = Q_8_8(1);
+                if (shade > 0)
+                {
+                    shade -= i * SWORD_CARD_SHARD_DIMMING;
+                    if (shade <= 0)
+                        shade = 1;
+                }
+                state->sheet[STAT_REDUCTION_SHARD_PICTURES + i * STAT_REDUCTION_SHARD_BYTES + j] =
+                    shade;
+            }
+        }
+        totalTicks = 116;
+    }
+    else
+    {
+        btResourceLoadAndDecompress(RESOURCE_SKELETON_CARD_SHEET, CARD, 1, 1);
+        btResourceLoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, state->sheet, 1, 0);
+        btResourceLoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, RamMapMetatileBuffer, 1, 0);
+        totalTicks = 88;
+    }
+    EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+    if (mode == CARD_BAFFLE)
+        sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
+    REG_BG2PA = Q_8_8(1);
 
-	for (frame = 0; frame != totalTicks; frame++)
-	{
-		// Tick 0: find the user and the targets' middle (the Death Card's 32 pixels toward the
-		// user), and scroll the background to the user.
-		if (frame == 0)
-		{
-			sySoundPlayStub(SE_WARP);
-			btEffectPosProjectSprite(args->user, &card);
-			btEffectGetTargetsMidpoint(&middle);
-			if (mode == CARD_DEATH)
-			{
-				if (args->side == EFFECT_SIDE_ENEMIES)
-					middle.x += 32;
-				else
-					middle.x -= 32;
-			}
-			REG_BG2X = (56 - card.x) << 8;
-			scroll   = 56 - card.x;
-			scale    = 0;
-			EFFECT_FREE_PARTICLES(i, state->particles, 64);
-		}
+    for (frame = 0; frame != totalTicks; frame++)
+    {
+        // Tick 0: find the user and the targets' middle (the Death Card's 32 pixels toward the
+        // user), and scroll the background to the user.
+        if (frame == 0)
+        {
+            sySoundPlayStub(SE_WARP);
+            btEffectPosProjectSprite(args->user, &card);
+            btEffectGetTargetsMidpoint(&middle);
+            if (mode == CARD_DEATH)
+            {
+                if (args->side == EFFECT_SIDE_ENEMIES)
+                    middle.x += 32;
+                else
+                    middle.x -= 32;
+            }
+            REG_BG2X = (56 - card.x) << 8;
+            scroll   = 56 - card.x;
+            scale    = 0;
+            EFFECT_FREE_PARTICLES(i, state->particles, 64);
+        }
 
-		// The last eight ticks: the screen fades.
-		if (frame >= totalTicks - 8)
-		{
-			Sint32 fade  = frame - totalTicks + 8;
+        // The last eight ticks: the screen fades.
+        if (frame >= totalTicks - 8)
+        {
+            Sint32 fade  = frame - totalTicks + 8;
 
-			REG_BLDALPHA = ((fade + 8) << 8) | (16 - fade * 2);
-		}
-		if (frame == CARD_FLIGHT_TICKS && mode == CARD_BAFFLE)
-			sySoundPlayStub(SE_ITEM_BREAK);
+            REG_BLDALPHA = ((fade + 8) << 8) | (16 - fade * 2);
+        }
+        if (frame == CARD_FLIGHT_TICKS && mode == CARD_BAFFLE)
+            sySoundPlayStub(SE_ITEM_BREAK);
 
-		// The card flies to the middle, rising and growing; the background follows it as far as it
-		// can scroll.
-		if (frame < CARD_FLIGHT_TICKS)
-		{
-			Sint32 t = frame * (middle.x - card.x);
-			Sint32 q;
-			Sint32 x;
+        // The card flies to the middle, rising and growing; the background follows it as far as it
+        // can scroll.
+        if (frame < CARD_FLIGHT_TICKS)
+        {
+            Sint32 t = frame * (middle.x - card.x);
+            Sint32 q;
+            Sint32 x;
 
-			first  = card.x;
-			q      = t / CARD_FLIGHT_TICKS;
-			first -= CANVAS_SIZE / 2;
-			x      = first + q;
+            first  = card.x;
+            q      = t / CARD_FLIGHT_TICKS;
+            first -= CANVAS_SIZE / 2;
+            x      = first + q;
 
-			if (x < 0)
-			{
-				overflow = x;
-				x        = 0;
-			}
-			else if (x > DISPLAY_WIDTH - CANVAS_SIZE)
-			{
-				overflow = x - (DISPLAY_WIDTH - CANVAS_SIZE);
-				x        = DISPLAY_WIDTH - CANVAS_SIZE;
-			}
-			x        <<= 8;
-			REG_BG2X   = -x;
-			scroll     = -x;
-			card.y--;
-			scale += toFIXED(1) / 64;
-			if (scale > toFIXED(1) / 2)
-				scale = toFIXED(1) / 2;
-		}
+            if (x < 0)
+            {
+                overflow = x;
+                x        = 0;
+            }
+            else if (x > DISPLAY_WIDTH - CANVAS_SIZE)
+            {
+                overflow = x - (DISPLAY_WIDTH - CANVAS_SIZE);
+                x        = DISPLAY_WIDTH - CANVAS_SIZE;
+            }
+            x        <<= 8;
+            REG_BG2X   = -x;
+            scroll     = -x;
+            card.y--;
+            scale += toFIXED(1) / 64;
+            if (scale > toFIXED(1) / 2)
+                scale = toFIXED(1) / 2;
+        }
 
-		if (mode != CARD_SLEEP)
-		{
-			if (mode == CARD_BAFFLE)
-			{
-				// The screen waves, line by line.
-				Sint32 *line = state->bg2xLines;
+        if (mode != CARD_SLEEP)
+        {
+            if (mode == CARD_BAFFLE)
+            {
+                // The screen waves, line by line.
+                Sint32 *line = state->bg2xLines;
 
-				for (i = 0; i != DISPLAY_HEIGHT; i++)
-					*line++ = scroll
-					        - CANVAS_WAVE_BG2X(
-								  sySin(frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 16)) * 4);
-			}
-			else
-			{
-				// The canvas's colours step to the smoke's, then to the Reaper's or the dagger's;
-				// the card dissolves in 16 random steps.
-				Uint8 *steps = CARD_DISSOLVE_STEPS;
+                for (i = 0; i != DISPLAY_HEIGHT; i++)
+                    *line++ = scroll
+                            - CANVAS_WAVE_BG2X(
+                                  sySin(frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 16)) * 4);
+            }
+            else
+            {
+                // The canvas's colours step to the smoke's, then to the Reaper's or the dagger's;
+                // the card dissolves in 16 random steps.
+                Uint8 *steps = CARD_DISSOLVE_STEPS;
 
-				if ((mode == CARD_DEATH || mode == CARD_SWORD)
-				    && (frame >= CARD_FLIGHT_TICKS - 8 && frame < CARD_FLIGHT_TICKS))
-					btEffectStepPaletteToResource(RESOURCE_SMOKE_SHEET);
-				if (frame >= REAPER_RISE_TICK)
-				{
-					if (mode == CARD_DEATH)
-						btEffectStepPaletteToResource(RESOURCE_RED_CRESCENT_SHEET_A);
-					else
-						btEffectStepPaletteToResource(RESOURCE_DAGGER_SHEET);
-				}
-				if (frame == CARD_FLIGHT_TICKS)
-				{
-					for (i = 0; i != 8 * CARD_WIDTH; i++)
-						steps[i] = syRandom() & (CARD_DISSOLVE_TICKS - 1);
-				}
-				if (frame >= CARD_FLIGHT_TICKS && frame < CARD_FLIGHT_TICKS + CARD_DISSOLVE_TICKS)
-				{
-					Uint8 *card = CARD;
+                if ((mode == CARD_DEATH || mode == CARD_SWORD)
+                    && (frame >= CARD_FLIGHT_TICKS - 8 && frame < CARD_FLIGHT_TICKS))
+                    btEffectStepPaletteToResource(RESOURCE_SMOKE_SHEET);
+                if (frame >= REAPER_RISE_TICK)
+                {
+                    if (mode == CARD_DEATH)
+                        btEffectStepPaletteToResource(RESOURCE_RED_CRESCENT_SHEET_A);
+                    else
+                        btEffectStepPaletteToResource(RESOURCE_DAGGER_SHEET);
+                }
+                if (frame == CARD_FLIGHT_TICKS)
+                {
+                    for (i = 0; i != 8 * CARD_WIDTH; i++)
+                        steps[i] = syRandom() & (CARD_DISSOLVE_TICKS - 1);
+                }
+                if (frame >= CARD_FLIGHT_TICKS && frame < CARD_FLIGHT_TICKS + CARD_DISSOLVE_TICKS)
+                {
+                    Uint8 *card = CARD;
 
-					for (i = 0; i != CARD_HEIGHT; i++)
-					{
-						// first, unused after the flight, holds the cleared pixel.
-						for (j = 0; j != CARD_WIDTH; j++)
-						{
-							// FAKEMATCH(dead): first cleared inside the test,
-							// * or'd into the step; as first = 0 at the top of
-							// * the outer body.
-							if (steps[(i & 7) * CARD_WIDTH + j]
-							    == ((frame - CARD_FLIGHT_TICKS) | (first = 0)))
-								card[i * CARD_WIDTH + j] = first;
-						}
-					}
-				}
-			}
-		}
+                    for (i = 0; i != CARD_HEIGHT; i++)
+                    {
+                        // first, unused after the flight, holds the cleared pixel.
+                        for (j = 0; j != CARD_WIDTH; j++)
+                        {
+                            // FAKEMATCH(dead): first cleared inside the test,
+                            // * or'd into the step; as first = 0 at the top of
+                            // * the outer body.
+                            if (steps[(i & 7) * CARD_WIDTH + j]
+                                == ((frame - CARD_FLIGHT_TICKS) | (first = 0)))
+                                card[i * CARD_WIDTH + j] = first;
+                        }
+                    }
+                }
+            }
+        }
 
-		// The card, until its picture takes over.
-		if (mode == CARD_SLEEP)
-			cardTicks = SLEEP_CARD_SHOWN_TICKS;
-		else
-			cardTicks =
-				mode == CARD_SWORD ? CARD_FLIGHT_TICKS + SWORD_CARD_DAGGER_TICKS : CARD_SHOWN_TICKS;
-		if (frame < cardTicks)
-		{
-			vertices          = syHeapAllocateEWRAM(32);
-			model             = btRenderAllocateModelList(1);
-			texture.logWidth  = 5;
-			texture.logHeight = 6;
-			model->vertices   = vertices;
-			texture.pixels    = CARD;
-			model->kind       = MODEL_TEXTURED;
-			model->texture    = &texture;
-			model->mesh       = BattleEffectTallMesh;
-			syInitMatrix();
-			syScale(toFIXED(1), toFIXED(1), toFIXED(1));
-			syTranslate(toFIXED(overflow), toFIXED(card.y) - toFIXED(64), 0);
-			if (frame < CARD_FLIGHT_TICKS)
-			{
-				if (args->side == EFFECT_SIDE_ENEMIES)
-					syRotZ((frame - CARD_SQUARE_TICK) * CARD_SPIN);
-				else
-					syRotZ((CARD_SQUARE_TICK - frame) * CARD_SPIN);
-				syRotX((CARD_SQUARE_TICK - frame) * CARD_SPIN);
-			}
-			else
-			{
-				if (args->side == EFFECT_SIDE_ENEMIES)
-					syRotZ(-TRIG_TURN / 16);
-				else
-					syRotZ(TRIG_TURN / 16);
-				syRotX(TRIG_TURN / 16);
-			}
-			syRotY(CARD_SLANT);
-			syMatrixScaleUniform(scale);
-			syScale(toFIXED(1), toFIXED(2), toFIXED(1));
-			btRenderTransformVertices(BattleEffectSquareCorners, vertices, 4);
-			btRenderDrawModelList(model);
-			syHeapRelease(model);
-			syHeapRelease(vertices);
-		}
+        // The card, until its picture takes over.
+        if (mode == CARD_SLEEP)
+            cardTicks = SLEEP_CARD_SHOWN_TICKS;
+        else
+            cardTicks =
+                mode == CARD_SWORD ? CARD_FLIGHT_TICKS + SWORD_CARD_DAGGER_TICKS : CARD_SHOWN_TICKS;
+        if (frame < cardTicks)
+        {
+            vertices          = syHeapAllocateEWRAM(32);
+            model             = btRenderAllocateModelList(1);
+            texture.logWidth  = 5;
+            texture.logHeight = 6;
+            model->vertices   = vertices;
+            texture.pixels    = CARD;
+            model->kind       = MODEL_TEXTURED;
+            model->texture    = &texture;
+            model->mesh       = BattleEffectTallMesh;
+            syInitMatrix();
+            syScale(toFIXED(1), toFIXED(1), toFIXED(1));
+            syTranslate(toFIXED(overflow), toFIXED(card.y) - toFIXED(64), 0);
+            if (frame < CARD_FLIGHT_TICKS)
+            {
+                if (args->side == EFFECT_SIDE_ENEMIES)
+                    syRotZ((frame - CARD_SQUARE_TICK) * CARD_SPIN);
+                else
+                    syRotZ((CARD_SQUARE_TICK - frame) * CARD_SPIN);
+                syRotX((CARD_SQUARE_TICK - frame) * CARD_SPIN);
+            }
+            else
+            {
+                if (args->side == EFFECT_SIDE_ENEMIES)
+                    syRotZ(-TRIG_TURN / 16);
+                else
+                    syRotZ(TRIG_TURN / 16);
+                syRotX(TRIG_TURN / 16);
+            }
+            syRotY(CARD_SLANT);
+            syMatrixScaleUniform(scale);
+            syScale(toFIXED(1), toFIXED(2), toFIXED(1));
+            btRenderTransformVertices(BattleEffectSquareCorners, vertices, 4);
+            btRenderDrawModelList(model);
+            syHeapRelease(model);
+            syHeapRelease(vertices);
+        }
 
-		if (mode == CARD_BAFFLE)
-		{
-			// The mist pours out, two puffs a tick for 32 ticks; each falls to the ground and
-			// spreads along it.
-			if (frame == CARD_FLIGHT_TICKS)
-			{
-				EFFECT_SHOW_DAMAGE(SE_WHOOSH);
-				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-				REG_BLDALPHA = EFFECT_BLEND_ADD;
-			}
-			if (frame >= CARD_FLIGHT_TICKS && frame < CARD_FLIGHT_TICKS + 32)
-			{
-				Sint32 time = frame - CARD_FLIGHT_TICKS;
+        if (mode == CARD_BAFFLE)
+        {
+            // The mist pours out, two puffs a tick for 32 ticks; each falls to the ground and
+            // spreads along it.
+            if (frame == CARD_FLIGHT_TICKS)
+            {
+                EFFECT_SHOW_DAMAGE(SE_WHOOSH);
+                EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+                REG_BLDALPHA = EFFECT_BLEND_ADD;
+            }
+            if (frame >= CARD_FLIGHT_TICKS && frame < CARD_FLIGHT_TICKS + 32)
+            {
+                Sint32 time = frame - CARD_FLIGHT_TICKS;
 
-				slot        = time * 2;
-				for (i = 0; i != 2; i++)
-				{
-					step            = &state->particles[slot + i];
-					step->x         = toFIXED(64);
-					step->y         = toFIXED(48);
-					step->velocityX = ((syRandom() & 127) - 64) << 11;
-					step->velocityY = ((syRandom() & 127) + 64) << 11;
-					step->variant   = 0;
-				}
-			}
-			for (i = 0; i != ARRAY_COUNT(state->particles); i++)
-			{
-				step = &state->particles[i];
-				if (step->variant >= 0 && step->variant < BAFFLE_PUFF_TICKS)
-				{
-					draw[0](canvas,
-					        state->sheet + step->variant / 4 * PICTURE_BYTES(CLOUD_PUFF),
-					        overflow + FIXED_INTEGER_PART(step->x) - CLOUD_PUFF_WIDTH / 2,
-					        FIXED_INTEGER_PART(step->y) - CLOUD_PUFF_HEIGHT / 2,
-					        CLOUD_PUFF_WIDTH,
-					        CLOUD_PUFF_HEIGHT);
-					btParticleAdvanceWithGravity2D(step, 62, -toFIXED(1) / 16);
-					if (step->y > toFIXED(96))
-					{
-						step->velocityY  = 0;
-						step->y          = toFIXED(96);
-						step->velocityX *= 2;
-					}
-					step->variant++;
-				}
-			}
-		}
+                slot        = time * 2;
+                for (i = 0; i != 2; i++)
+                {
+                    step            = &state->particles[slot + i];
+                    step->x         = toFIXED(64);
+                    step->y         = toFIXED(48);
+                    step->velocityX = ((syRandom() & 127) - 64) << 11;
+                    step->velocityY = ((syRandom() & 127) + 64) << 11;
+                    step->variant   = 0;
+                }
+            }
+            for (i = 0; i != ARRAY_COUNT(state->particles); i++)
+            {
+                step = &state->particles[i];
+                if (step->variant >= 0 && step->variant < BAFFLE_PUFF_TICKS)
+                {
+                    draw[0](canvas,
+                            state->sheet + step->variant / 4 * PICTURE_BYTES(CLOUD_PUFF),
+                            overflow + FIXED_INTEGER_PART(step->x) - CLOUD_PUFF_WIDTH / 2,
+                            FIXED_INTEGER_PART(step->y) - CLOUD_PUFF_HEIGHT / 2,
+                            CLOUD_PUFF_WIDTH,
+                            CLOUD_PUFF_HEIGHT);
+                    btParticleAdvanceWithGravity2D(step, 62, -toFIXED(1) / 16);
+                    if (step->y > toFIXED(96))
+                    {
+                        step->velocityY  = 0;
+                        step->y          = toFIXED(96);
+                        step->velocityX *= 2;
+                    }
+                    step->variant++;
+                }
+            }
+        }
 
-		if (mode == CARD_SLEEP)
-		{
-			// A sheep a tick for 32 ticks tumbles out of the card.
-			if (frame == CARD_FLIGHT_TICKS)
-				sySoundPlayStub(SE_POWER_UP);
-			if (frame == 64)
-				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-			if (frame >= CARD_FLIGHT_TICKS && frame < CARD_FLIGHT_TICKS + 32)
-			{
-				PARTICLE *sheep;
-				Uint32    mask   = 127;
+        if (mode == CARD_SLEEP)
+        {
+            // A sheep a tick for 32 ticks tumbles out of the card.
+            if (frame == CARD_FLIGHT_TICKS)
+                sySoundPlayStub(SE_POWER_UP);
+            if (frame == 64)
+                EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
+            if (frame >= CARD_FLIGHT_TICKS && frame < CARD_FLIGHT_TICKS + 32)
+            {
+                PARTICLE *sheep;
+                Uint32    mask   = 127;
 
-				slot             = frame - CARD_FLIGHT_TICKS;
-				sheep            = &state->particles[slot];
-				sheep->x         = toFIXED(64);
-				sheep->y         = toFIXED(48);
-				sheep->velocityX = ((syRandom() & mask) - 64) << 11;
-				sheep->velocityY = ((syRandom() & mask) - 64) << 11;
-				sheep->variant   = mode;
-			}
-			for (i = 0; i != ARRAY_COUNT(state->particles); i++)
-			{
-				step = &state->particles[i];
-				if (step->variant >= 0 && step->variant < SHEEP_TICKS)
-				{
-					draw[0](canvas,
-					        CARD_SHEEP + (step->variant / 4 & 3) * PICTURE_BYTES(SHEEP),
-					        overflow + FIXED_INTEGER_PART(step->x) - SHEEP_WIDTH / 2,
-					        FIXED_INTEGER_PART(step->y) - SHEEP_HEIGHT / 2,
-					        SHEEP_WIDTH,
-					        SHEEP_HEIGHT);
-					btParticleAdvanceWithGravity2D(step, 62, toFIXED(1) / 8);
-					step->variant++;
-				}
-			}
-		}
+                slot             = frame - CARD_FLIGHT_TICKS;
+                sheep            = &state->particles[slot];
+                sheep->x         = toFIXED(64);
+                sheep->y         = toFIXED(48);
+                sheep->velocityX = ((syRandom() & mask) - 64) << 11;
+                sheep->velocityY = ((syRandom() & mask) - 64) << 11;
+                sheep->variant   = mode;
+            }
+            for (i = 0; i != ARRAY_COUNT(state->particles); i++)
+            {
+                step = &state->particles[i];
+                if (step->variant >= 0 && step->variant < SHEEP_TICKS)
+                {
+                    draw[0](canvas,
+                            CARD_SHEEP + (step->variant / 4 & 3) * PICTURE_BYTES(SHEEP),
+                            overflow + FIXED_INTEGER_PART(step->x) - SHEEP_WIDTH / 2,
+                            FIXED_INTEGER_PART(step->y) - SHEEP_HEIGHT / 2,
+                            SHEEP_WIDTH,
+                            SHEEP_HEIGHT);
+                    btParticleAdvanceWithGravity2D(step, 62, toFIXED(1) / 8);
+                    step->variant++;
+                }
+            }
+        }
 
-		if (mode == CARD_SWORD && frame >= CARD_FLIGHT_TICKS)
-		{
-			Sint32 time = frame - CARD_FLIGHT_TICKS;
+        if (mode == CARD_SWORD && frame >= CARD_FLIGHT_TICKS)
+        {
+            Sint32 time = frame - CARD_FLIGHT_TICKS;
 
-			// The dagger glints.
-			if (time < SWORD_CARD_DAGGER_TICKS)
-				draw[0](canvas,
-				        state->sheet + time / 4 % 6 * PICTURE_BYTES(DAGGER),
-				        overflow + 52,
-				        44,
-				        DAGGER_WIDTH,
-				        DAGGER_HEIGHT);
+            // The dagger glints.
+            if (time < SWORD_CARD_DAGGER_TICKS)
+                draw[0](canvas,
+                        state->sheet + time / 4 % 6 * PICTURE_BYTES(DAGGER),
+                        overflow + 52,
+                        44,
+                        DAGGER_WIDTH,
+                        DAGGER_HEIGHT);
 
-			// It strikes: the screen flashes and the shards burst.
-			if (time == SWORD_CARD_DAGGER_TICKS)
-			{
-				sySoundPlayStub(SE_POWER_UP);
-				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-				state->shakeFrame = 4;
-				syWordsFillEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-				btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 16);
-				for (i = 0; i != SWORD_CARD_PARTICLES; i++)
-				{
-					Sint32 angle     = syRandom() & TRIG_ANGLE_MASK;
-					Sint32 force     = 127;
+            // It strikes: the screen flashes and the shards burst.
+            if (time == SWORD_CARD_DAGGER_TICKS)
+            {
+                sySoundPlayStub(SE_POWER_UP);
+                EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
+                state->shakeFrame = 4;
+                syWordsFillEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+                btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 16);
+                for (i = 0; i != SWORD_CARD_PARTICLES; i++)
+                {
+                    Sint32 angle     = syRandom() & TRIG_ANGLE_MASK;
+                    Sint32 force     = 127;
 
-					// A random force below 128.
-					force           &= syRandom();
+                    // A random force below 128.
+                    force           &= syRandom();
 
-					step             = &state->particles[i];
-					step->x          = toFIXED(64);
-					step->y          = INTtoFIXED(i + SWORD_CARD_SHARD_TOP);
-					step->velocityX  = (syCos(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
-					step->velocityY  = (sySin(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
-					step->variant    = syRandom() & 255;
-				}
-				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-				REG_BLDALPHA = EFFECT_BLEND_ADD;
-			}
+                    step             = &state->particles[i];
+                    step->x          = toFIXED(64);
+                    step->y          = INTtoFIXED(i + SWORD_CARD_SHARD_TOP);
+                    step->velocityX  = (syCos(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
+                    step->velocityY  = (sySin(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
+                    step->variant    = syRandom() & 255;
+                }
+                EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+                REG_BLDALPHA = EFFECT_BLEND_ADD;
+            }
 
-			// The shards tumble through three pictures each and darken.
-			if (time >= SWORD_CARD_DAGGER_TICKS
-			    && time <= SWORD_CARD_DAGGER_TICKS + SWORD_CARD_SHARD_TICKS)
-			{
-				Sint32 fade = 0;
+            // The shards tumble through three pictures each and darken.
+            if (time >= SWORD_CARD_DAGGER_TICKS
+                && time <= SWORD_CARD_DAGGER_TICKS + SWORD_CARD_SHARD_TICKS)
+            {
+                Sint32 fade = 0;
 
-				if (time > SWORD_CARD_DAGGER_TICKS + 4)
-				{
-					fade = (time - SWORD_CARD_DAGGER_TICKS) / 4;
-					if (fade > DIMMED_COPIES - 1)
-						fade = DIMMED_COPIES - 1;
-				}
-				for (i = 0; i != SWORD_CARD_SHARDS; i++)
-				{
-					Sint32 picture;
+                if (time > SWORD_CARD_DAGGER_TICKS + 4)
+                {
+                    fade = (time - SWORD_CARD_DAGGER_TICKS) / 4;
+                    if (fade > DIMMED_COPIES - 1)
+                        fade = DIMMED_COPIES - 1;
+                }
+                for (i = 0; i != SWORD_CARD_SHARDS; i++)
+                {
+                    Sint32 picture;
 
-					step    = &state->particles[i];
-					picture = i % 4 * 3 + (step->variant + time) / 8 % 3;
-					draw[0](canvas,
-					        state->sheet + STAT_REDUCTION_SHARD_PICTURES
-					            + (fade * STAT_REDUCTION_SHARD_BYTES
-					               + StatChangeShardPictures[picture]),
-					        overflow + FIXED_INTEGER_PART(step->x)
-					            - StatChangeShardWidths[picture] / 2,
-					        FIXED_INTEGER_PART(step->y) - StatChangeShardHeights[picture] / 2,
-					        StatChangeShardWidths[picture],
-					        StatChangeShardHeights[picture]);
-					btParticleAdvanceWithGravity2D(step, 60, 0);
-				}
-			}
-		}
+                    step    = &state->particles[i];
+                    picture = i % 4 * 3 + (step->variant + time) / 8 % 3;
+                    draw[0](canvas,
+                            state->sheet + STAT_REDUCTION_SHARD_PICTURES
+                                + (fade * STAT_REDUCTION_SHARD_BYTES
+                                   + StatChangeShardPictures[picture]),
+                            overflow + FIXED_INTEGER_PART(step->x)
+                                - StatChangeShardWidths[picture] / 2,
+                            FIXED_INTEGER_PART(step->y) - StatChangeShardHeights[picture] / 2,
+                            StatChangeShardWidths[picture],
+                            StatChangeShardHeights[picture]);
+                    btParticleAdvanceWithGravity2D(step, 60, 0);
+                }
+            }
+        }
 
-		if (mode == CARD_DEATH)
-		{
-			// The Reaper rises and swings: his scythe cuts a red crescent that fades in four
-			// pictures.
-			if (frame == REAPER_SWING_TICK - 4)
-				sySoundPlayStub(SE_POWER_UP);
-			if (frame == REAPER_SWING_TICK)
-			{
-				sySoundPlayStub(SE_CLATTER);
-				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-				btEffectStartActorMotion(
-					args->targets[0], 1, toFIXED(2), toFIXED(8), toFIXED(2), 110);
-				btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
-				state->shakeFrame = 4;
-			}
-			if (frame >= REAPER_RISE_TICK)
-			{
-				if (frame < REAPER_SWING_TICK)
-				{
-					draw[0](canvas,
-					        state->sheet,
-					        overflow + ReaperPictureX[args->side * 7],
-					        ReaperPictureY[0],
-					        REAPER_SHEET_RAISED_WIDTH,
-					        REAPER_SHEET_RAISED_HEIGHT);
-				}
-				else
-				{
-					if (frame <= REAPER_SWING_TICK + 3)
-						draw[0](canvas,
-						        state->sheet,
-						        overflow + ReaperPictureX[args->side * 7],
-						        ReaperPictureY[0],
-						        REAPER_SHEET_RAISED_WIDTH,
-						        REAPER_SHEET_RAISED_HEIGHT);
-					EFFECT_DRAW_PICTURE(draw[0],
-					                    canvas,
-					                    state->sheet,
-					                    REAPER_SHEET_SWUNG,
-					                    overflow + ReaperPictureX[args->side * 7 + 1],
-					                    ReaperPictureY[1]);
-					if (frame >= REAPER_SWING_TICK && frame <= REAPER_SWING_TICK + 1)
-						syWordsFillEntry(
-							canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-					if (frame >= REAPER_SWING_TICK + 2 && frame <= REAPER_SWING_TICK + 3)
-						EFFECT_DRAW_PICTURE(draw[0],
-						                    canvas,
-						                    state->sheet,
-						                    REAPER_SHEET_CRESCENT,
-						                    overflow + ReaperPictureX[args->side * 7 + 2],
-						                    ReaperPictureY[2]);
-					if (frame >= REAPER_SWING_TICK + 4 && frame <= REAPER_SWING_TICK + 5)
-						EFFECT_DRAW_PICTURE(draw[0],
-						                    canvas,
-						                    RamMapMetatileBuffer,
-						                    RED_CRESCENT_FADE_A,
-						                    overflow + ReaperPictureX[args->side * 7 + 3],
-						                    ReaperPictureY[3]);
-					if (frame >= REAPER_SWING_TICK + 6 && frame <= REAPER_SWING_TICK + 7)
-						EFFECT_DRAW_PICTURE(draw[0],
-						                    canvas,
-						                    RamMapMetatileBuffer,
-						                    RED_CRESCENT_FADE_B,
-						                    overflow + ReaperPictureX[args->side * 7 + 4],
-						                    ReaperPictureY[4]);
-					if (frame >= REAPER_SWING_TICK + 8 && frame <= REAPER_SWING_TICK + 9)
-						EFFECT_DRAW_PICTURE(draw[0],
-						                    canvas,
-						                    RamMapMetatileBuffer,
-						                    RED_CRESCENT_FADE_C,
-						                    overflow + ReaperPictureX[args->side * 7 + 5],
-						                    ReaperPictureY[5]);
-					if (frame >= REAPER_SWING_TICK + 10 && frame <= REAPER_SWING_TICK + 11)
-						EFFECT_DRAW_PICTURE(draw[0],
-						                    canvas,
-						                    RamMapMetatileBuffer,
-						                    RED_CRESCENT_FADE_D,
-						                    overflow + ReaperPictureX[args->side * 7 + 6],
-						                    ReaperPictureY[6]);
-				}
-			}
-		}
-		btCameraShake(4, 4);
-		EFFECT_END_TICK(state);
-	}
+        if (mode == CARD_DEATH)
+        {
+            // The Reaper rises and swings: his scythe cuts a red crescent that fades in four
+            // pictures.
+            if (frame == REAPER_SWING_TICK - 4)
+                sySoundPlayStub(SE_POWER_UP);
+            if (frame == REAPER_SWING_TICK)
+            {
+                sySoundPlayStub(SE_CLATTER);
+                EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
+                btEffectStartActorMotion(
+                    args->targets[0], 1, toFIXED(2), toFIXED(8), toFIXED(2), 110);
+                btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+                state->shakeFrame = 4;
+            }
+            if (frame >= REAPER_RISE_TICK)
+            {
+                if (frame < REAPER_SWING_TICK)
+                {
+                    draw[0](canvas,
+                            state->sheet,
+                            overflow + ReaperPictureX[args->side * 7],
+                            ReaperPictureY[0],
+                            REAPER_SHEET_RAISED_WIDTH,
+                            REAPER_SHEET_RAISED_HEIGHT);
+                }
+                else
+                {
+                    if (frame <= REAPER_SWING_TICK + 3)
+                        draw[0](canvas,
+                                state->sheet,
+                                overflow + ReaperPictureX[args->side * 7],
+                                ReaperPictureY[0],
+                                REAPER_SHEET_RAISED_WIDTH,
+                                REAPER_SHEET_RAISED_HEIGHT);
+                    EFFECT_DRAW_PICTURE(draw[0],
+                                        canvas,
+                                        state->sheet,
+                                        REAPER_SHEET_SWUNG,
+                                        overflow + ReaperPictureX[args->side * 7 + 1],
+                                        ReaperPictureY[1]);
+                    if (frame >= REAPER_SWING_TICK && frame <= REAPER_SWING_TICK + 1)
+                        syWordsFillEntry(
+                            canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+                    if (frame >= REAPER_SWING_TICK + 2 && frame <= REAPER_SWING_TICK + 3)
+                        EFFECT_DRAW_PICTURE(draw[0],
+                                            canvas,
+                                            state->sheet,
+                                            REAPER_SHEET_CRESCENT,
+                                            overflow + ReaperPictureX[args->side * 7 + 2],
+                                            ReaperPictureY[2]);
+                    if (frame >= REAPER_SWING_TICK + 4 && frame <= REAPER_SWING_TICK + 5)
+                        EFFECT_DRAW_PICTURE(draw[0],
+                                            canvas,
+                                            RamMapMetatileBuffer,
+                                            RED_CRESCENT_FADE_A,
+                                            overflow + ReaperPictureX[args->side * 7 + 3],
+                                            ReaperPictureY[3]);
+                    if (frame >= REAPER_SWING_TICK + 6 && frame <= REAPER_SWING_TICK + 7)
+                        EFFECT_DRAW_PICTURE(draw[0],
+                                            canvas,
+                                            RamMapMetatileBuffer,
+                                            RED_CRESCENT_FADE_B,
+                                            overflow + ReaperPictureX[args->side * 7 + 4],
+                                            ReaperPictureY[4]);
+                    if (frame >= REAPER_SWING_TICK + 8 && frame <= REAPER_SWING_TICK + 9)
+                        EFFECT_DRAW_PICTURE(draw[0],
+                                            canvas,
+                                            RamMapMetatileBuffer,
+                                            RED_CRESCENT_FADE_C,
+                                            overflow + ReaperPictureX[args->side * 7 + 5],
+                                            ReaperPictureY[5]);
+                    if (frame >= REAPER_SWING_TICK + 10 && frame <= REAPER_SWING_TICK + 11)
+                        EFFECT_DRAW_PICTURE(draw[0],
+                                            canvas,
+                                            RamMapMetatileBuffer,
+                                            RED_CRESCENT_FADE_D,
+                                            overflow + ReaperPictureX[args->side * 7 + 6],
+                                            ReaperPictureY[6]);
+                }
+            }
+        }
+        btCameraShake(4, 4);
+        EFFECT_END_TICK(state);
+    }
 
-	if (mode == CARD_BAFFLE)
-		syCloseEvent(btEffectArmBg2AffineHBlankDMA);
-	EFFECT_FINISH_CANVAS_ONE_BLITTER();
+    if (mode == CARD_BAFFLE)
+        syCloseEvent(btEffectArmBg2AffineHBlankDMA);
+    EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #undef RED_CRESCENT_BYTES

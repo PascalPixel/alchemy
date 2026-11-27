@@ -17,31 +17,31 @@
 // WORLD_MAP_PLACE.value's markers, besides the marker pictures 1 to 14.
 typedef enum WORLD_MAP_MARKER_KIND
 {
-	WORLD_MAP_MARKER_NONE = 0, // the place is not drawn
-	// The ship's marker, drawn at the ship once it sails and the party is ashore.
-	WORLD_MAP_MARKER_SHIP = 15
+    WORLD_MAP_MARKER_NONE = 0, // the place is not drawn
+    // The ship's marker, drawn at the ship once it sails and the party is ashore.
+    WORLD_MAP_MARKER_SHIP = 15
 } WORLD_MAP_MARKER_KIND;
 
 // A world map destination, keyed by its flag (fdWorldMapMarkPlaceVisited sets
 // FLAG_PLACE_VISITED(flag)); fdWorldMapPlacesGetTable returns them, ended by a zero flag.
 typedef struct WORLD_MAP_PLACE
 {
-	Uint8  flags;
-	Uint8  value; // its markers: low nibble, high nibble on the map screen
-	// The actor the World Map places there (scWorldMapUpdatePlacedActors): its sprite, place in
-	// pixels and facing, and the flag it is shown by (-1 always; bit 12 set: shown while the rest
-	// is set, else while clear).
-	Sint16 sprite;
-	Sint16 x;
-	Sint16 z;
-	Uint16 facing;
-	Sint16 shownFlag;
-	// The scene and entrance whose arrival marks it visited (fdWorldMapMarkPlaceVisited), and whose
-	// area name the map screen shows for it; an entrance of -1 matches any.
-	Sint16 visitScene;
-	Sint16 visitEntrance;
-	Sint16 scene;    // where choosing it leads
-	Sint16 entrance; // that scene's entrance
+    Uint8  flags;
+    Uint8  value; // its markers: low nibble, high nibble on the map screen
+    // The actor the World Map places there (scWorldMapUpdatePlacedActors): its sprite, place in
+    // pixels and facing, and the flag it is shown by (-1 always; bit 12 set: shown while the rest
+    // is set, else while clear).
+    Sint16 sprite;
+    Sint16 x;
+    Sint16 z;
+    Uint16 facing;
+    Sint16 shownFlag;
+    // The scene and entrance whose arrival marks it visited (fdWorldMapMarkPlaceVisited), and whose
+    // area name the map screen shows for it; an entrance of -1 matches any.
+    Sint16 visitScene;
+    Sint16 visitEntrance;
+    Sint16 scene;    // where choosing it leads
+    Sint16 entrance; // that scene's entrance
 } WORLD_MAP_PLACE;
 
 STATIC_ASSERT(offsetof(WORLD_MAP_PLACE, visitScene) == 12);

@@ -7,24 +7,24 @@
 // grows it at its rates and turns its sprite a sixteenth of a turn each tick. Nothing calls it.
 UNUSED void fdEffectAdvanceMotionAndSpin(FIELD_OBJECT *object)
 {
-	FIELD_EFFECT *effect = &object->effect;
-	Sint32        velocityX;
-	Sint32        velocityZ;
-	Sint32        scaleRateX;
+    FIELD_EFFECT *effect = &object->effect;
+    Sint32        velocityX;
+    Sint32        velocityZ;
+    Sint32        scaleRateX;
 
-	// DEAD: the leader looked up and not used; the ROM keeps the call.
-	fdActorGetById(MainRoutineStateWork.leaderActorId);
-	velocityX                 = effect->velocity.x;
-	effect->x                += velocityX;
-	effect->y                += effect->velocity.y;
-	velocityZ                 = effect->velocity.z;
-	effect->z                += velocityZ;
+    // DEAD: the leader looked up and not used; the ROM keeps the call.
+    fdActorGetById(MainRoutineStateWork.leaderActorId);
+    velocityX                 = effect->velocity.x;
+    effect->x                += velocityX;
+    effect->y                += effect->velocity.y;
+    velocityZ                 = effect->velocity.z;
+    effect->z                += velocityZ;
 
-	effect->velocity.x        = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
-	effect->velocity.z        = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
+    effect->velocity.x        = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+    effect->velocity.z        = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 
-	scaleRateX                = effect->scaleRateX;
-	effect->scaleX           += scaleRateX;
-	effect->scaleY           += effect->scaleRateY;
-	effect->sprite->rotation += TRIG_TURN / 16;
+    scaleRateX                = effect->scaleRateX;
+    effect->scaleX           += scaleRateX;
+    effect->scaleY           += effect->scaleRateY;
+    effect->sprite->rotation += TRIG_TURN / 16;
 }

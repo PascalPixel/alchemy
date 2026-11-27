@@ -17,16 +17,16 @@
 // The item menu's four sort orders (mnItemMenuSort), which L + A cycles through in this order.
 typedef enum LIST_SORT
 {
-	// The equipped items, the items that are not equipment, then the other equipment
-	// (MenuListOrderEquippedThenItems).
-	LIST_SORT_EQUIPPED_THEN_ITEMS     = 0,
-	// The equipped items, the other equipment, then the rest (MenuListOrderEquippedThenEquipment).
-	LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
-	LIST_SORT_EQUIPMENT_FIRST =
-		2, // MenuListOrderEquipmentFirst
-	       // The items that are not equipment first (MenuListOrderItemsFirst).
-	LIST_SORT_ITEMS_FIRST = 3,
-	LIST_SORT_COUNT       = 4
+    // The equipped items, the items that are not equipment, then the other equipment
+    // (MenuListOrderEquippedThenItems).
+    LIST_SORT_EQUIPPED_THEN_ITEMS     = 0,
+    // The equipped items, the other equipment, then the rest (MenuListOrderEquippedThenEquipment).
+    LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
+    LIST_SORT_EQUIPMENT_FIRST =
+        2, // MenuListOrderEquipmentFirst
+           // The items that are not equipment first (MenuListOrderItemsFirst).
+    LIST_SORT_ITEMS_FIRST = 3,
+    LIST_SORT_COUNT       = 4
 } LIST_SORT;
 
 // The rows a page of the item and Psynergy lists shows.
@@ -80,8 +80,8 @@ extern Uint8       MenuSelectionStepDelays[];
 // page, CREDITS_MODE_FIRST_PAGE being their first.
 typedef enum CREDITS_MODE
 {
-	CREDITS_MODE_STORY_CRAWL = 1,
-	CREDITS_MODE_FIRST_PAGE  = 2
+    CREDITS_MODE_STORY_CRAWL = 1,
+    CREDITS_MODE_FIRST_PAGE  = 2
 } CREDITS_MODE;
 
 struct WINDOW;

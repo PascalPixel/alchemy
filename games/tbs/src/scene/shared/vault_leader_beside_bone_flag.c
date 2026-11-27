@@ -9,22 +9,22 @@
 // (35, 42), beside the barrel, and clears it anywhere else.
 static void scVaultUpdateLeaderBesideBoneFlag(void)
 {
-	ACTOR *leader = fdActorGetById(ACTOR_PARTY_LEADER);
-	FIXED  fixedX = leader->x.fixed;
-	Sint32 column;
-	Sint32 row;
+    ACTOR *leader = fdActorGetById(ACTOR_PARTY_LEADER);
+    FIXED  fixedX = leader->x.fixed;
+    Sint32 column;
+    Sint32 row;
 
-	row     = fdActorGetById(ACTOR_PARTY_LEADER)->z.fixed;
-	column  = FIELD_METATILE(fixedX);
-	column -= 34;
-	row     = FIELD_METATILE(row);
+    row     = fdActorGetById(ACTOR_PARTY_LEADER)->z.fixed;
+    column  = FIELD_METATILE(fixedX);
+    column -= 34;
+    row     = FIELD_METATILE(row);
 
-	if (column >= 0 && column <= 1 && row > 40 && row <= 42)
-	{
-		gmFlagSet(FLAG_VAULT_LEADER_BESIDE_BONE);
-	}
-	else
-	{
-		gmFlagClear(FLAG_VAULT_LEADER_BESIDE_BONE);
-	}
+    if (column >= 0 && column <= 1 && row > 40 && row <= 42)
+    {
+        gmFlagSet(FLAG_VAULT_LEADER_BESIDE_BONE);
+    }
+    else
+    {
+        gmFlagClear(FLAG_VAULT_LEADER_BESIDE_BONE);
+    }
 }

@@ -5,10 +5,10 @@ typedef void (*QUEUE_FLUSH_ROUTINE)(IO_WRITE_QUEUE *queue, Uint32 count);
 // The queued register writers: each adds a write of `value` to `addr` that the VBlank handler
 // carries out once the tick loop has finished the tick.
 #define IO_QUEUE_DEFINE_WRITE(name, control)                                                       \
-	void name(Uint32 addr, Uint32 value)                                                           \
-	{                                                                                              \
-		IO_WRITE_QUEUE_PUSH(addr, value, control);                                                 \
-	}
+    void name(Uint32 addr, Uint32 value)                                                           \
+    {                                                                                              \
+        IO_WRITE_QUEUE_PUSH(addr, value, control);                                                 \
+    }
 
 // Queues a byte store.
 IO_QUEUE_DEFINE_WRITE(syIOWriteQueueStore8, IO_WRITE_BYTE)
@@ -33,22 +33,22 @@ IO_QUEUE_DEFINE_WRITE(syIOWriteQueueClearBits32, IO_WRITE_CLEAR | IO_WRITE_WORD)
 // the stack.
 void syIOWriteQueueFlushPending(void)
 {
-	IO_WRITE_QUEUE *queue;
-	Uint32          count;
+    IO_WRITE_QUEUE *queue;
+    Uint32          count;
 
-	queue = &IoWriteQueueWork;
-	count = queue->count;
-	if (count != 0)
-	{
-		Uint32              wordCount = (Uint32)syResourceExecuteTransferCodeSize / 4;
-		Uint8               routineBytes[wordCount * 4];
-		QUEUE_FLUSH_ROUTINE routine = (QUEUE_FLUSH_ROUTINE)routineBytes;
+    queue = &IoWriteQueueWork;
+    count = queue->count;
+    if (count != 0)
+    {
+        Uint32              wordCount = (Uint32)syResourceExecuteTransferCodeSize / 4;
+        Uint8               routineBytes[wordCount * 4];
+        QUEUE_FLUSH_ROUTINE routine = (QUEUE_FLUSH_ROUTINE)routineBytes;
 
-		// The function runs from its copy on the stack, which lasts until it ends.
-		syDMAXCopy(syResourceExecuteTransfer, routine, DMA_COPY_WORDS(wordCount), REG_DMA3);
-		routine(queue, count);
-		queue->count = 0;
-	}
+        // The function runs from its copy on the stack, which lasts until it ends.
+        syDMAXCopy(syResourceExecuteTransfer, routine, DMA_COPY_WORDS(wordCount), REG_DMA3);
+        routine(queue, count);
+        queue->count = 0;
+    }
 }
 
 #undef IO_QUEUE_DEFINE_WRITE

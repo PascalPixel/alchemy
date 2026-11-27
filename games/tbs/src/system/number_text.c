@@ -9,6 +9,6 @@ const Uint8 StringHexDigits[] = "0123456789ABCDEF";
 // ones digit is what remains.
 // clang-format off
 const Sint32 StringPowersOfTen[9] = {
-	1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10,
+    1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10,
 };
 // clang-format on

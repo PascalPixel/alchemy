@@ -2,8 +2,8 @@
 // Stone as Douse hits it.
 void scActorFlashWhite(ACTOR *actor)
 {
-	if (TickCount & 2)
-		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
-	else
-		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
+    if (TickCount & 2)
+        fdActorSetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
+    else
+        fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 }

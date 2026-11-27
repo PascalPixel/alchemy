@@ -3,8 +3,8 @@
 // read here as an array.
 Sint32 scPosDistanceAbove(FIXED *a, FIXED *b)
 {
-	Sint32 dx = FIXEDtoINT(*a++ - *b++);
-	Sint32 dy = FIXEDtoINT(*a - *b + toFIXED(6));
+    Sint32 dx = FIXEDtoINT(*a++ - *b++);
+    Sint32 dy = FIXEDtoINT(*a - *b + toFIXED(6));
 
-	return sySquartIWRAM(dx * dx + dy * dy);
+    return sySquartIWRAM(dx * dx + dy * dy);
 }

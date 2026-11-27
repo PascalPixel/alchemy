@@ -16,18 +16,18 @@
 // each label's first tile, and the second tile the HP label always takes.
 enum
 {
-	WINDOW_TILE_HP_LABEL     = WINDOW_TILE(29),
-	WINDOW_TILE_HP_LABEL_END = WINDOW_TILE(30),
-	WINDOW_TILE_PP_LABEL     = WINDOW_TILE(31),
+    WINDOW_TILE_HP_LABEL     = WINDOW_TILE(29),
+    WINDOW_TILE_HP_LABEL_END = WINDOW_TILE(30),
+    WINDOW_TILE_PP_LABEL     = WINDOW_TILE(31),
 };
 
 // The PP label's second tile: the HP label's in English, German and Japanese, a tile of its own in
 // Spanish, French and Italian.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)                                \
-	|| (LANGUAGE == LANGUAGE_ITALIAN)
-#	define WINDOW_TILE_PP_LABEL_END WINDOW_TILE(5)
+    || (LANGUAGE == LANGUAGE_ITALIAN)
+#    define WINDOW_TILE_PP_LABEL_END WINDOW_TILE(5)
 #else
-#	define WINDOW_TILE_PP_LABEL_END WINDOW_TILE_HP_LABEL_END
+#    define WINDOW_TILE_PP_LABEL_END WINDOW_TILE_HP_LABEL_END
 #endif
 
 #endif // ALCHEMY_WINDOW_TILE_H

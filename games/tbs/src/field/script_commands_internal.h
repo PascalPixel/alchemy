@@ -41,11 +41,11 @@ void fdActorSetTargetPosFromMagnitudeAngle(ACTOR *actor, Sint32 magnitude, Sint3
 // What waits in MainRoutineStateWork.pendingDjinni through a battle.
 typedef enum PENDING_BATTLE_KIND
 {
-	// A Djinni battle, by its DJINNI_BATTLE_SCRIPT_FIRST script.
-	PENDING_DJINNI_BATTLE = 0,
-	// A mimic chest's battle, by the chest's flag, which the field mode stores with
-	// CONDITION_FLAG_SET (field_mode_cues.c).
-	PENDING_MIMIC_CHEST   = CONDITION_FLAG_SET
+    // A Djinni battle, by its DJINNI_BATTLE_SCRIPT_FIRST script.
+    PENDING_DJINNI_BATTLE = 0,
+    // A mimic chest's battle, by the chest's flag, which the field mode stores with
+    // CONDITION_FLAG_SET (field_mode_cues.c).
+    PENDING_MIMIC_CHEST   = CONDITION_FLAG_SET
 } PENDING_BATTLE_KIND;
 
 #define DJINN_PENDING_SCRIPT_MASK        0xfff
@@ -64,67 +64,67 @@ typedef enum PENDING_BATTLE_KIND
 // axes.
 static inline void fdEffectMoveAfterimageHalfway(ACTOR *afterimage)
 {
-	ACTOR *target        = (ACTOR *)afterimage->watchedActor;
+    ACTOR *target        = (ACTOR *)afterimage->watchedActor;
 
-	afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
-	afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;
-	afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
+    afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
+    afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;
+    afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
 }
 
 // Runs the update of each of the 24 field effect sprites.
 static __inline__ void fdEffectUpdateEffectSlots(void)
 {
-	FIELD_PARTICLE *particles = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->particles;
-	Sint32          i;
+    FIELD_PARTICLE *particles = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->particles;
+    Sint32          i;
 
-	for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++)
-		fdParticleUpdate(&particles[i]);
+    for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++)
+        fdParticleUpdate(&particles[i]);
 }
 
 // Defines a per-tick update that spins an actor 1/8 turn a tick while its scale changes by step,
 // releasing the actor once the scale falls below toFIXED(1) * 3 / 16. step is negative: from full
 // size the actor lasts (toFIXED(13) / 16) / -step ticks, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                                      \
-	void name(ACTOR *actor)                                                                        \
-	{                                                                                              \
-		Sint32 scale;                                                                              \
+    void name(ACTOR *actor)                                                                        \
+    {                                                                                              \
+        Sint32 scale;                                                                              \
                                                                                                    \
-		scale          = actor->scaleX + step;                                                     \
-		actor->scaleY += step;                                                                     \
-		actor->facing += DEGtoANG(45);                                                             \
-		actor->scaleX  = scale;                                                                    \
-		if (scale < toFIXED(3) / 16)                                                               \
-		{                                                                                          \
-			fdActorReleaseStub(actor);                                                             \
-		}                                                                                          \
-	}
+        scale          = actor->scaleX + step;                                                     \
+        actor->scaleY += step;                                                                     \
+        actor->facing += DEGtoANG(45);                                                             \
+        actor->scaleX  = scale;                                                                    \
+        if (scale < toFIXED(3) / 16)                                                               \
+        {                                                                                          \
+            fdActorReleaseStub(actor);                                                             \
+        }                                                                                          \
+    }
 
 // A particle's sprite (SPR), seen as the two fields Douse and Mind Read set on it; each member says
 // which Sprite fields it covers.
 typedef struct WAVE_EFFECT_SPR
 {
-	Uint32 linkAndPos[2];    // image.link and its first two attributes
-	Uint8  tileLow;          // image.tile's low byte
-	Uint32 tileHigh    : 2;  // image.tile's high bits
-	Uint32 priority    : 2;  // image.priority
-	Uint32 paletteBits : 4;  // image.palette
-	Uint8  attr3ToDirty[28]; // image.attr3 to the sprite's dirty flag
-	Uint8  flags;            // 0 drops shadow and outline
+    Uint32 linkAndPos[2];    // image.link and its first two attributes
+    Uint8  tileLow;          // image.tile's low byte
+    Uint32 tileHigh    : 2;  // image.tile's high bits
+    Uint32 priority    : 2;  // image.priority
+    Uint32 paletteBits : 4;  // image.palette
+    Uint8  attr3ToDirty[28]; // image.attr3 to the sprite's dirty flag
+    Uint8  flags;            // 0 drops shadow and outline
 } WAVE_EFFECT_SPR;
 
 // Move's hand and Carry shed the same short-lived falling particle: it falls under a gravity of 0.1
 // pixel a tick, each tick, and is freed after 12 ticks.
 static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 {
-	// The caller spawns the fragment and places it.
-	if (fragment != NULL)
-	{
-		fragment->motionFlags = ACTOR_FALLS;
-		fragment->gravity     = toFIXED(1) / 10;
-		fdActorSelectAnimationStub(fragment, 0);
-		fragment->wait = 12;
-		fdActorStartScriptStub(fragment, FieldEffectSharedParticleScript);
-	}
+    // The caller spawns the fragment and places it.
+    if (fragment != NULL)
+    {
+        fragment->motionFlags = ACTOR_FALLS;
+        fragment->gravity     = toFIXED(1) / 10;
+        fdActorSelectAnimationStub(fragment, 0);
+        fragment->wait = 12;
+        fdActorStartScriptStub(fragment, FieldEffectSharedParticleScript);
+    }
 }
 
 // The sparkles DEFINE_CLAPPING_HANDS_CAST's casts scatter.
@@ -134,56 +134,56 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 // position and 32 pixels to either side, each facing the middle; the two move 24 pixels inward and
 // clap, and 24 sparkles scatter 8 to 32 pixels.
 #define DEFINE_CLAPPING_HANDS_CAST(name, spawn)                                                    \
-	void name(void)                                                                                \
-	{                                                                                              \
-		FIELD_EFFECT_STATE *effectState;                                                           \
-		ACTOR              *object;                                                                \
-		ACTOR              *pair[2];                                                               \
-		VECTOR3             pos;                                                                   \
-		ACTOR             **walk;                                                                  \
-		Sint32              n;                                                                     \
-		Sint32              distance;                                                              \
+    void name(void)                                                                                \
+    {                                                                                              \
+        FIELD_EFFECT_STATE *effectState;                                                           \
+        ACTOR              *object;                                                                \
+        ACTOR              *pair[2];                                                               \
+        VECTOR3             pos;                                                                   \
+        ACTOR             **walk;                                                                  \
+        Sint32              n;                                                                     \
+        Sint32              distance;                                                              \
                                                                                                    \
-		effectState = FieldEffectStateWork;                                                        \
-		fdPsynergyFadeToCastColor();                                                               \
-		pos.x   = effectState->x;                                                                  \
-		pos.y   = effectState->y + toFIXED(16);                                                    \
-		pos.z   = effectState->z;                                                                  \
-		pair[0] = spawn(pos.x + toFIXED(32), pos.y, pos.z, FACING_WEST);                           \
-		pair[1] = spawn(pos.x - toFIXED(32), pos.y, pos.z, FACING_EAST);                           \
+        effectState = FieldEffectStateWork;                                                        \
+        fdPsynergyFadeToCastColor();                                                               \
+        pos.x   = effectState->x;                                                                  \
+        pos.y   = effectState->y + toFIXED(16);                                                    \
+        pos.z   = effectState->z;                                                                  \
+        pair[0] = spawn(pos.x + toFIXED(32), pos.y, pos.z, FACING_WEST);                           \
+        pair[1] = spawn(pos.x - toFIXED(32), pos.y, pos.z, FACING_EAST);                           \
                                                                                                    \
-		sySynch(15);                                                                               \
-		walk = pair;                                                                               \
-		for (n = 0; n < 2; n++)                                                                    \
-		{                                                                                          \
-			object = *walk++;                                                                      \
-			if (object != 0)                                                                       \
-				fdActorSetTargetPosFromMagnitudeAngle(object, toFIXED(24), object->facing);        \
-		}                                                                                          \
+        sySynch(15);                                                                               \
+        walk = pair;                                                                               \
+        for (n = 0; n < 2; n++)                                                                    \
+        {                                                                                          \
+            object = *walk++;                                                                      \
+            if (object != 0)                                                                       \
+                fdActorSetTargetPosFromMagnitudeAngle(object, toFIXED(24), object->facing);        \
+        }                                                                                          \
                                                                                                    \
-		fdActorWaitForMoveStub(pair[0]);                                                           \
-		sySoundPlayStub(SE_HEAVY_IMPACT);                                                          \
-		for (n = 0; n < CLAP_SPARKLE_COUNT; n++)                                                   \
-		{                                                                                          \
-			pos.x  = effectState->x;                                                               \
-			pos.y  = effectState->y + toFIXED(16);                                                 \
-			pos.z  = effectState->z;                                                               \
-			object = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                            \
-			if (object != 0)                                                                       \
-			{                                                                                      \
-				fdActorStartScriptStub(object, FieldEffectFragmentScript);                         \
-				object->speedLimit   = syRandom() + toFIXED(2);                                    \
-				object->acceleration = toFIXED(2);                                                 \
-				object->motionFlags  = 0;                                                          \
-				distance             = syRandom() * 24 + toFIXED(8);                               \
-				fdActorSetTargetPosFromMagnitudeAngle(object, distance, syRandom());               \
-			}                                                                                      \
-		}                                                                                          \
+        fdActorWaitForMoveStub(pair[0]);                                                           \
+        sySoundPlayStub(SE_HEAVY_IMPACT);                                                          \
+        for (n = 0; n < CLAP_SPARKLE_COUNT; n++)                                                   \
+        {                                                                                          \
+            pos.x  = effectState->x;                                                               \
+            pos.y  = effectState->y + toFIXED(16);                                                 \
+            pos.z  = effectState->z;                                                               \
+            object = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                            \
+            if (object != 0)                                                                       \
+            {                                                                                      \
+                fdActorStartScriptStub(object, FieldEffectFragmentScript);                         \
+                object->speedLimit   = syRandom() + toFIXED(2);                                    \
+                object->acceleration = toFIXED(2);                                                 \
+                object->motionFlags  = 0;                                                          \
+                distance             = syRandom() * 24 + toFIXED(8);                               \
+                fdActorSetTargetPosFromMagnitudeAngle(object, distance, syRandom());               \
+            }                                                                                      \
+        }                                                                                          \
                                                                                                    \
-		fdActorReleaseStub(pair[0]);                                                               \
-		fdActorReleaseStub(pair[1]);                                                               \
-		fdPsynergyFadeFromCastColor();                                                             \
-	}
+        fdActorReleaseStub(pair[0]);                                                               \
+        fdActorReleaseStub(pair[1]);                                                               \
+        fdPsynergyFadeFromCastColor();                                                             \
+    }
 
 #define PSYNERGY_EFFECT_HEIGHT toFIXED(16) // 16 pixels up
 
@@ -191,45 +191,45 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 // (fdEffectUpdateHaltParticle, fdEffectUpdateRadialBurst, fdEffectUpdateOutAndBack).
 typedef enum OUT_AND_BACK_STATE
 {
-	OUT_AND_BACK_AIM_OUT     = 0, // picks the point it flies out to
-	OUT_AND_BACK_FLYING_OUT  = 1, // waits to arrive there
-	OUT_AND_BACK_AIM_BACK    = 2, // picks the point it comes back to
-	OUT_AND_BACK_FLYING_BACK = 3  // frees its slot once it arrives
+    OUT_AND_BACK_AIM_OUT     = 0, // picks the point it flies out to
+    OUT_AND_BACK_FLYING_OUT  = 1, // waits to arrive there
+    OUT_AND_BACK_AIM_BACK    = 2, // picks the point it comes back to
+    OUT_AND_BACK_FLYING_BACK = 3  // frees its slot once it arrives
 } OUT_AND_BACK_STATE;
 
 // The states of a Venus Djinni's rising particle (fdEffectUpdateRadialSpread), which
 // fdDjinnRunVenusJoinEffect moves on to VENUS_PARTICLE_LAST_RISE.
 typedef enum VENUS_PARTICLE_STATE
 {
-	VENUS_PARTICLE_AIM       = 0, // starts round the leader, aimed up the screen
-	VENUS_PARTICLE_RISING    = 1, // back to VENUS_PARTICLE_AIM once it arrives
-	VENUS_PARTICLE_LAST_RISE = 2  // freed once it arrives
+    VENUS_PARTICLE_AIM       = 0, // starts round the leader, aimed up the screen
+    VENUS_PARTICLE_RISING    = 1, // back to VENUS_PARTICLE_AIM once it arrives
+    VENUS_PARTICLE_LAST_RISE = 2  // freed once it arrives
 } VENUS_PARTICLE_STATE;
 
 // The states of a Mercury Djinni's droplet (fdEffectUpdateRandomTargetParticle), which
 // fdDjinnRunMercuryJoinEffect moves on to MERCURY_DROPLET_LAST_FALL.
 typedef enum MERCURY_DROPLET_STATE
 {
-	// placed above the leader, aimed at a spot by it
-	MERCURY_DROPLET_AIM       = 0,
-	// Splashes where it lands, then falls again (MERCURY_DROPLET_AIM).
-	MERCURY_DROPLET_FALLING   = 1,
-	// Splashes where it lands, for the last time.
-	MERCURY_DROPLET_LAST_FALL = 2,
-	MERCURY_DROPLET_DONE      = 3 // frees its slot
+    // placed above the leader, aimed at a spot by it
+    MERCURY_DROPLET_AIM       = 0,
+    // Splashes where it lands, then falls again (MERCURY_DROPLET_AIM).
+    MERCURY_DROPLET_FALLING   = 1,
+    // Splashes where it lands, for the last time.
+    MERCURY_DROPLET_LAST_FALL = 2,
+    MERCURY_DROPLET_DONE      = 3 // frees its slot
 } MERCURY_DROPLET_STATE;
 
 // The states of a Mars Djinni's spark (fdEffectUpdateMarsSpark), which fdDjinnRunMarsJoinEffect
 // moves on to MARS_SPARK_STOPPING and then MARS_SPARK_LEAVING.
 typedef enum MARS_SPARK_STATE
 {
-	MARS_SPARK_AIM        = 0, // aimed 120 pixels up the screen from its origin
-	MARS_SPARK_RISING     = 1, // back to MARS_SPARK_AIM once it arrives
-	// Stops where it arrives, hidden, and waits 40 ticks.
-	MARS_SPARK_STOPPING   = 2,
-	MARS_SPARK_AIM_LEADER = 3, // aimed at a point by the leader
-	MARS_SPARK_SWARMING   = 4, // back to MARS_SPARK_AIM_LEADER on arrival
-	MARS_SPARK_LEAVING    = 5  // freed once it arrives
+    MARS_SPARK_AIM        = 0, // aimed 120 pixels up the screen from its origin
+    MARS_SPARK_RISING     = 1, // back to MARS_SPARK_AIM once it arrives
+    // Stops where it arrives, hidden, and waits 40 ticks.
+    MARS_SPARK_STOPPING   = 2,
+    MARS_SPARK_AIM_LEADER = 3, // aimed at a point by the leader
+    MARS_SPARK_SWARMING   = 4, // back to MARS_SPARK_AIM_LEADER on arrival
+    MARS_SPARK_LEAVING    = 5  // freed once it arrives
 } MARS_SPARK_STATE;
 
 #endif

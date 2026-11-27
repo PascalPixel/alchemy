@@ -56,8 +56,8 @@ struct TILE_MASK;
 // One row's masks for a pair of bar-pattern tiles: a word XORed into each tile's row.
 typedef struct TILE_MASK
 {
-	Uint32 firstTile;
-	Uint32 secondTile;
+    Uint32 firstTile;
+    Uint32 secondTile;
 } TILE_MASK;
 
 // The six row patterns that mark the battle menus' range icons, colour 5 over a colour-4 fill, read
@@ -70,7 +70,7 @@ extern const TILE_MASK   MenuPatternRowMasks[];
 // each tile of a pair, at all four of their XORs, as The Lost Age's twins do (window/screens.h).
 static __inline__ Uint32 mnXorWord(Uint32 word, Uint32 mask)
 {
-	return word ^ mask;
+    return word ^ mask;
 }
 
 // The credits' 8x8 one-bit font, ASCII 32 to 127.
@@ -166,6 +166,6 @@ extern const Sint8  WindowPartyColumnOffsets[];
 // The battle effect module's stub table, declared as a function so that a call reaches its first
 // stub, btEffectBuildBlitterStub; nothing in this game calls it by this name.
 Sint32              btStubsBattleEffect(
-				 Sint32 slot, Sint32 width_shift, Sint32 height_shift, Sint32 flags, Uint32 mode);
+                 Sint32 slot, Sint32 width_shift, Sint32 height_shift, Sint32 flags, Uint32 mode);
 
 #endif

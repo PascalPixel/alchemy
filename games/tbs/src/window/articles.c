@@ -16,14 +16,14 @@ static const Sint8 ArticleDas[]    = "das ";
 
 // The article of each article class.
 const Sint8 *const ArticleTable[8] = {
-	ArticleEmpty,
-	ArticleEin,
-	ArticleEine,
-	ArticleDie,
-	ArticleDas,
-	ArticleEmpty,
-	ArticleEmpty,
-	ArticleEmpty,
+    ArticleEmpty,
+    ArticleEin,
+    ArticleEine,
+    ArticleDie,
+    ArticleDas,
+    ArticleEmpty,
+    ArticleEmpty,
+    ArticleEmpty,
 };
 
 // Counted nouns, each plural before its singular; LocalizedWordCountedNouns
@@ -44,10 +44,10 @@ static const Sint8 PossessiveDeine[]               = "deine ";
 
 // The possessive ("your") for each item gender (LocalizedWordItemGenders).
 const Sint8 *const LocalizedWordItemPossessives[4] = {
-	PossessiveDein,
-	PossessiveDeine,
-	PossessiveDein,
-	ArticleEmpty,
+    PossessiveDein,
+    PossessiveDeine,
+    PossessiveDein,
+    ArticleEmpty,
 };
 
 #elif LANGUAGE == LANGUAGE_SPANISH
@@ -61,11 +61,11 @@ static const Sint8 ArticleLas[]    = "las ";
 
 // The definite article of each article class.
 const Sint8 *const ArticleTable[5] = {
-	ArticleEmpty,
-	ArticleEl,
-	ArticleLa,
-	ArticleLos,
-	ArticleLas,
+    ArticleEmpty,
+    ArticleEl,
+    ArticleLa,
+    ArticleLos,
+    ArticleLas,
 };
 
 static const Sint8 ArticleUn[]          = "un ";
@@ -75,11 +75,11 @@ static const Sint8 ArticleUnas[]        = "unas ";
 
 // The indefinite article of each article class.
 const Sint8 *const ArticleIndefinite[5] = {
-	ArticleEmpty,
-	ArticleUn,
-	ArticleUna,
-	ArticleUnos,
-	ArticleUnas,
+    ArticleEmpty,
+    ArticleUn,
+    ArticleUna,
+    ArticleUnos,
+    ArticleUnas,
 };
 
 static const Sint8 PossessiveTu[]                  = "tu ";
@@ -87,8 +87,8 @@ static const Sint8 PossessiveTus[]                 = "tus ";
 
 // The possessive ("your") for {singular, plural}.
 const Sint8 *const LocalizedWordItemPossessives[2] = {
-	PossessiveTu,
-	PossessiveTus,
+    PossessiveTu,
+    PossessiveTus,
 };
 
 #elif LANGUAGE == LANGUAGE_FRENCH
@@ -105,14 +105,14 @@ static const Sint8 ArticleDes[]    = "des ";
 
 // The article of each article class.
 const Sint8 *const ArticleTable[8] = {
-	ArticleEmpty,
-	ArticleLe,
-	ArticleLa,
-	ArticleL,
-	ArticleLes,
-	ArticleUn,
-	ArticleUne,
-	ArticleDes,
+    ArticleEmpty,
+    ArticleLe,
+    ArticleLa,
+    ArticleL,
+    ArticleLes,
+    ArticleUn,
+    ArticleUne,
+    ArticleDes,
 };
 
 const Sint8 LocalizedWordItemPronoun[] = "vous ";
@@ -152,10 +152,10 @@ static const Sint8 PossessiveLaTua[]               = "la tua ";
 
 // The possessive ("your") for each item gender (LocalizedWordItemGenders).
 const Sint8 *const LocalizedWordItemPossessives[4] = {
-	PossessiveIlTuo,
-	PossessiveLaTua,
-	PossessiveIlTuo,
-	ArticleEmpty,
+    PossessiveIlTuo,
+    PossessiveLaTua,
+    PossessiveIlTuo,
+    ArticleEmpty,
 };
 
 #elif LANGUAGE != LANGUAGE_JAPANESE
@@ -169,14 +169,14 @@ static const Sint8 ArticleThe[]    = "the ";
 
 // The article of each article class.
 const Sint8 *const ArticleTable[8] = {
-	ArticleEmpty,
-	ArticleA,
-	ArticleAn,
-	ArticleSome,
-	ArticleEmpty,
-	ArticleThe,
-	ArticleEmpty,
-	ArticleEmpty,
+    ArticleEmpty,
+    ArticleA,
+    ArticleAn,
+    ArticleSome,
+    ArticleEmpty,
+    ArticleThe,
+    ArticleEmpty,
+    ArticleEmpty,
 };
 
 #endif
@@ -186,38 +186,38 @@ const Sint8 *const ArticleTable[8] = {
 // (dakuten) or the semi-voiced mark (handakuten).
 // clang-format off
 Uint16 FontMarkGlyphCodes[] __attribute__((section(".rodata"))) = {
-	TEXT_MARK_NONE,
-	TEXT_MARK_VOICED,
-	TEXT_MARK_SEMIVOICED,
-	TEXT_MARK_NONE
+    TEXT_MARK_NONE,
+    TEXT_MARK_VOICED,
+    TEXT_MARK_SEMIVOICED,
+    TEXT_MARK_NONE
 };
 #endif
 
 // The next-page arrow's bob (WINDOW_SPRITE_MOTION_PAGE_ARROW): a smooth rise and fall of 8 pixels over 80 ticks.
 const Uint8 WindowSpriteCursorBobOffsets[80] = {
-	0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
-	5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
-	7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7,
-	7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5,
-	5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1,
+    0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
+    5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
+    7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7,
+    7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5,
+    5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1,
 };
 
 // A swing along an arc of radius 4, as {x, y} pairs: x runs 0, 4, 0, -4, 0 while y rises at each side.
 const Sint8 WindowSpriteWobbleOffsets[40] = {
-	0, 4, 1, 4, 2, 3, 3, 2,
-	4, 1, 4, 0, 4, 1, 3, 2,
-	2, 3, 1, 4, 0, 4, -1, 4,
-	-2, 3, -3, 2, -4, 1, -4, 0,
-	-4, 1, -3, 2, -2, 3, -1, 4,
+    0, 4, 1, 4, 2, 3, 3, 2,
+    4, 1, 4, 0, 4, 1, 3, 2,
+    2, 3, 1, 4, 0, 4, -1, 4,
+    -2, 3, -3, 2, -4, 1, -4, 0,
+    -4, 1, -3, 2, -2, 3, -1, 4,
 };
 
 // Unused: 16 bytes after the wobble that nothing reads.
 const Uint8 WindowSpriteWobbleTail[16] = {
-	4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 // A hop of up to 8 pixels over 16 ticks, up for WINDOW_SPRITE_MOTION_HOP_UP and down for the hops down.
 const Uint8 WindowSpriteBounceOffsets[16] = {
-	0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
+    0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
 };
 // clang-format on

@@ -12,26 +12,26 @@
 // colours. `mode` is enum LIGHTHOUSE_PALETTES.
 void scJupiterLighthouseLoadPalettes(Sint32 mode)
 {
-	PaletteCyclePausesInScripts = 1;
-	if (mode != LIGHTHOUSE_PALETTES_KEEP_COPIES)
-	{
-		syWordsCopyEntry(
-			PaletteCycleColors, (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, 0), PALETTE_BYTES);
-		syWordsCopyEntry(
-			PaletteCycleUnlitPalette, (void *)&BG_PLTT_COLOR(UNLIT_PALETTE, 0), PALETTE_BYTES);
-	}
-	if (fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == LIGHTHOUSE_PALETTES_LIT)
-	{
-		scPaletteCycleSetTick(0);
-		sySetEvent(fdPaletteCycleStep, EVENT_PASS_TICK);
-	}
-	else
-	{
-		syDMAXCopy(PaletteCycleUnlitColors,
-		           (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
-		           DMA_COPY_WORDS((CYCLE_PLACES - 1) / 2),
-		           REG_DMA3);
-	}
+    PaletteCyclePausesInScripts = 1;
+    if (mode != LIGHTHOUSE_PALETTES_KEEP_COPIES)
+    {
+        syWordsCopyEntry(
+            PaletteCycleColors, (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, 0), PALETTE_BYTES);
+        syWordsCopyEntry(
+            PaletteCycleUnlitPalette, (void *)&BG_PLTT_COLOR(UNLIT_PALETTE, 0), PALETTE_BYTES);
+    }
+    if (fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == LIGHTHOUSE_PALETTES_LIT)
+    {
+        scPaletteCycleSetTick(0);
+        sySetEvent(fdPaletteCycleStep, EVENT_PASS_TICK);
+    }
+    else
+    {
+        syDMAXCopy(PaletteCycleUnlitColors,
+                   (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
+                   DMA_COPY_WORDS((CYCLE_PLACES - 1) / 2),
+                   REG_DMA3);
+    }
 }
 
 #undef UNLIT_PALETTE

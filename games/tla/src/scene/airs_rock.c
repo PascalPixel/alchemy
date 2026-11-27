@@ -55,13 +55,13 @@
 // What these rooms mark as the collision code (METATILE_CODE) of a metatile on the second layer.
 typedef enum AIRS_ROCK_METATILE_MARK
 {
-	// A barrier a gust blows away is marked this plus its kind, a row of AirsRockGustTargets; the
-	// metatile beyond it holds the barrier's number plus one, which picks its flag.
-	METATILE_MARK_FIRST_GUST_TARGET = 30,
-	// A statue's whirlwind fades here.
-	METATILE_MARK_WHIRLWIND_END     = 212,
-	// A gust stops here with nothing to blow, and a whirlwind's rider cannot land here.
-	METATILE_MARK_BLOCKED           = 255
+    // A barrier a gust blows away is marked this plus its kind, a row of AirsRockGustTargets; the
+    // metatile beyond it holds the barrier's number plus one, which picks its flag.
+    METATILE_MARK_FIRST_GUST_TARGET = 30,
+    // A statue's whirlwind fades here.
+    METATILE_MARK_WHIRLWIND_END     = 212,
+    // A gust stops here with nothing to blow, and a whirlwind's rider cannot land here.
+    METATILE_MARK_BLOCKED           = 255
 } AIRS_ROCK_METATILE_MARK;
 
 // The kinds of barrier a gust sweeps away, each a row of AirsRockGustTargets, by the way the gust
@@ -70,115 +70,115 @@ typedef enum AIRS_ROCK_METATILE_MARK
 // time.
 typedef enum AIRS_ROCK_GUST_BARRIER
 {
-	GUST_BARRIER_BLOWN_NORTH = 0,
-	GUST_BARRIER_BLOWN_SOUTH = 2,
-	GUST_BARRIER_BLOWN_WEST
+    GUST_BARRIER_BLOWN_NORTH = 0,
+    GUST_BARRIER_BLOWN_SOUTH = 2,
+    GUST_BARRIER_BLOWN_WEST
 } AIRS_ROCK_GUST_BARRIER;
 
 // Clears a barrier a gust blew away on an earlier visit: a mound three metatiles wide or a bank
 // three metatiles tall, (x, z) its north-west metatile.
 #define CLEAR_SAND_MOUND(x, z)                                                                     \
-	(fdMapGridCopyMetatilesTo(64, 0, (x) + 64, (z) - 1, 3, 3),                                     \
-	 fdMapGridCopyMetatileAttributes(64, 0, 3, 2, (x) + 64, z),                                    \
-	 fdMapGridCopyMetatileAttributes(64, 0, 3, 2, x, z))
+    (fdMapGridCopyMetatilesTo(64, 0, (x) + 64, (z) - 1, 3, 3),                                     \
+     fdMapGridCopyMetatileAttributes(64, 0, 3, 2, (x) + 64, z),                                    \
+     fdMapGridCopyMetatileAttributes(64, 0, 3, 2, x, z))
 #define CLEAR_SAND_BANK(x, z)                                                                      \
-	(fdMapGridCopyMetatilesTo(64, 0, (x) + 64, (z) - 1, 1, 4),                                     \
-	 fdMapGridCopyMetatileAttributes(64, 0, 1, 3, (x) + 64, z),                                    \
-	 fdMapGridCopyMetatileAttributes(64, 0, 1, 3, x, z))
+    (fdMapGridCopyMetatilesTo(64, 0, (x) + 64, (z) - 1, 1, 4),                                     \
+     fdMapGridCopyMetatileAttributes(64, 0, 1, 3, (x) + 64, z),                                    \
+     fdMapGridCopyMetatileAttributes(64, 0, 1, 3, x, z))
 
 // The Storm Brand chest's room, numbering AirsRockStormBrandChestPlacements.
 typedef enum AIRS_ROCK_STORM_BRAND_CHEST_ACTOR_ID
 {
-	// The huge twister-shaped rock Whirlwind clears the wall's mud with.
-	ACTOR_TWISTER_ROCK_BY_THE_WALL = ACTOR_FIRST_PLACED,
-	// The five Wind Stones, whose gusts Whirlwind strengthens.
-	ACTOR_WIND_STONE_A,
-	ACTOR_WIND_STONE_B,
-	ACTOR_WIND_STONE_C,
-	ACTOR_WIND_STONE_D,
-	ACTOR_WIND_STONE_E
+    // The huge twister-shaped rock Whirlwind clears the wall's mud with.
+    ACTOR_TWISTER_ROCK_BY_THE_WALL = ACTOR_FIRST_PLACED,
+    // The five Wind Stones, whose gusts Whirlwind strengthens.
+    ACTOR_WIND_STONE_A,
+    ACTOR_WIND_STONE_B,
+    ACTOR_WIND_STONE_C,
+    ACTOR_WIND_STONE_D,
+    ACTOR_WIND_STONE_E
 } AIRS_ROCK_STORM_BRAND_CHEST_ACTOR_ID;
 
 // The slopes by the way into the rock, numbering AirsRockEntrancePlacements.
 typedef enum AIRS_ROCK_ENTRANCE_ACTOR_ID
 {
-	// The four statues on the slopes that breathe whirlwinds.
-	ACTOR_FIRST_SLOPE_STATUE = ACTOR_FIRST_PLACED,
-	ACTOR_SECOND_SLOPE_STATUE,
-	ACTOR_THIRD_SLOPE_STATUE,
-	ACTOR_FOURTH_SLOPE_STATUE,
-	// The pillars that drop into the cliff's gaps, each with its FLAG_AIRS_ROCK_PILLAR_PLACED_
-	// flag.
-	ACTOR_FIRST_LEDGE_PILLAR,
-	ACTOR_SECOND_LEDGE_PILLAR,
-	// The puddle Frost freezes into a pillar.
-	ACTOR_PUDDLE,
-	ACTOR_THIRD_LEDGE_PILLAR,
-	ACTOR_FOURTH_LEDGE_PILLAR,
-	// The four statues hung on the cliff that breathe whirlwinds.
-	ACTOR_FIRST_CLIFF_STATUE,
-	ACTOR_SECOND_CLIFF_STATUE,
-	ACTOR_THIRD_CLIFF_STATUE,
-	ACTOR_FOURTH_CLIFF_STATUE,
-	// The statue exhaling little whirlwinds to the left.
-	ACTOR_BREATHING_STATUE,
-	ACTOR_FIFTH_LEDGE_PILLAR
+    // The four statues on the slopes that breathe whirlwinds.
+    ACTOR_FIRST_SLOPE_STATUE = ACTOR_FIRST_PLACED,
+    ACTOR_SECOND_SLOPE_STATUE,
+    ACTOR_THIRD_SLOPE_STATUE,
+    ACTOR_FOURTH_SLOPE_STATUE,
+    // The pillars that drop into the cliff's gaps, each with its FLAG_AIRS_ROCK_PILLAR_PLACED_
+    // flag.
+    ACTOR_FIRST_LEDGE_PILLAR,
+    ACTOR_SECOND_LEDGE_PILLAR,
+    // The puddle Frost freezes into a pillar.
+    ACTOR_PUDDLE,
+    ACTOR_THIRD_LEDGE_PILLAR,
+    ACTOR_FOURTH_LEDGE_PILLAR,
+    // The four statues hung on the cliff that breathe whirlwinds.
+    ACTOR_FIRST_CLIFF_STATUE,
+    ACTOR_SECOND_CLIFF_STATUE,
+    ACTOR_THIRD_CLIFF_STATUE,
+    ACTOR_FOURTH_CLIFF_STATUE,
+    // The statue exhaling little whirlwinds to the left.
+    ACTOR_BREATHING_STATUE,
+    ACTOR_FIFTH_LEDGE_PILLAR
 } AIRS_ROCK_ENTRANCE_ACTOR_ID;
 
 // The Fujin Shield chest's room, numbering AirsRockFujinShieldChestPlacements.
 typedef enum AIRS_ROCK_FUJIN_SHIELD_CHEST_ACTOR_ID
 {
-	// The statues whose whirlwinds carry the party up the cliff.
-	ACTOR_FIRST_BREATHING_STATUE = ACTOR_FIRST_PLACED,
-	ACTOR_SECOND_BREATHING_STATUE,
-	// The left and right of the two pillars on the ledges below the fog.
-	ACTOR_FIRST_PILLAR,
-	ACTOR_SECOND_PILLAR,
-	// The twister rock whose whirlwind clears the fog.
-	ACTOR_TWISTER_ROCK_IN_THE_FOG,
-	ACTOR_THIRD_PILLAR,
-	// The twister rock whose whirlwind opens the way to the top.
-	ACTOR_TWISTER_ROCK_AT_THE_TOP
+    // The statues whose whirlwinds carry the party up the cliff.
+    ACTOR_FIRST_BREATHING_STATUE = ACTOR_FIRST_PLACED,
+    ACTOR_SECOND_BREATHING_STATUE,
+    // The left and right of the two pillars on the ledges below the fog.
+    ACTOR_FIRST_PILLAR,
+    ACTOR_SECOND_PILLAR,
+    // The twister rock whose whirlwind clears the fog.
+    ACTOR_TWISTER_ROCK_IN_THE_FOG,
+    ACTOR_THIRD_PILLAR,
+    // The twister rock whose whirlwind opens the way to the top.
+    ACTOR_TWISTER_ROCK_AT_THE_TOP
 } AIRS_ROCK_FUJIN_SHIELD_CHEST_ACTOR_ID;
 
 // The slopes' own ways in, where the leader climbs between the lower slopes and the cliff above
 // them.
 typedef enum AIRS_ROCK_ENTRANCE_ENTRANCE
 {
-	// At the top of the lower slopes' wall, climbing down from the cliff.
-	ENTRANCE_DOWN_FROM_THE_CLIFF_WEST = 5,
-	ENTRANCE_DOWN_FROM_THE_CLIFF_EAST,
-	// At the foot of the cliff, climbing up from the lower slopes.
-	ENTRANCE_UP_THE_CLIFF_WEST = 10,
-	ENTRANCE_UP_THE_CLIFF_EAST
+    // At the top of the lower slopes' wall, climbing down from the cliff.
+    ENTRANCE_DOWN_FROM_THE_CLIFF_WEST = 5,
+    ENTRANCE_DOWN_FROM_THE_CLIFF_EAST,
+    // At the foot of the cliff, climbing up from the lower slopes.
+    ENTRANCE_UP_THE_CLIFF_WEST = 10,
+    ENTRANCE_UP_THE_CLIFF_EAST
 } AIRS_ROCK_ENTRANCE_ENTRANCE;
 
 // The Fujin Shield chest's room's own ways in: off its ledges onto the paths west of them and back,
 // and up and down its wall into and out of the fog.
 typedef enum AIRS_ROCK_FUJIN_SHIELD_CHEST_ENTRANCE
 {
-	// On the ledges, back from the lower and the upper path.
-	ENTRANCE_LEDGES_FROM_LOWER_PATH = 2,
-	ENTRANCE_LEDGES_FROM_UPPER_PATH,
-	// On the paths, from the ledges.
-	ENTRANCE_LOWER_PATH,
-	ENTRANCE_UPPER_PATH,
-	// On the wall below the fog, climbing down out of it.
-	ENTRANCE_BELOW_THE_FOG_WEST,
-	ENTRANCE_BELOW_THE_FOG_EAST,
-	// On the wall in the fog, climbing up into it; while the fog lasts, the top of the wall leads
-	// back here.
-	ENTRANCE_INTO_THE_FOG_WEST,
-	ENTRANCE_INTO_THE_FOG_EAST,
-	// At the top of the wall in the fog, climbing down from above it.
-	ENTRANCE_DOWN_INTO_THE_FOG_WEST,
-	ENTRANCE_DOWN_INTO_THE_FOG_EAST,
-	// On the wall above the fog, climbing up out of it once it is cleared.
-	ENTRANCE_ABOVE_THE_FOG_WEST,
-	ENTRANCE_ABOVE_THE_FOG_EAST,
-	// Unused: no exit leads here. The way to the top opens at once
-	// (scAirsRockWhirlwindOpensTheTop).
-	ENTRANCE_OPEN_THE_TOP = 99
+    // On the ledges, back from the lower and the upper path.
+    ENTRANCE_LEDGES_FROM_LOWER_PATH = 2,
+    ENTRANCE_LEDGES_FROM_UPPER_PATH,
+    // On the paths, from the ledges.
+    ENTRANCE_LOWER_PATH,
+    ENTRANCE_UPPER_PATH,
+    // On the wall below the fog, climbing down out of it.
+    ENTRANCE_BELOW_THE_FOG_WEST,
+    ENTRANCE_BELOW_THE_FOG_EAST,
+    // On the wall in the fog, climbing up into it; while the fog lasts, the top of the wall leads
+    // back here.
+    ENTRANCE_INTO_THE_FOG_WEST,
+    ENTRANCE_INTO_THE_FOG_EAST,
+    // At the top of the wall in the fog, climbing down from above it.
+    ENTRANCE_DOWN_INTO_THE_FOG_WEST,
+    ENTRANCE_DOWN_INTO_THE_FOG_EAST,
+    // On the wall above the fog, climbing up out of it once it is cleared.
+    ENTRANCE_ABOVE_THE_FOG_WEST,
+    ENTRANCE_ABOVE_THE_FOG_EAST,
+    // Unused: no exit leads here. The way to the top opens at once
+    // (scAirsRockWhirlwindOpensTheTop).
+    ENTRANCE_OPEN_THE_TOP = 99
 } AIRS_ROCK_FUJIN_SHIELD_CHEST_ENTRANCE;
 
 #include "../field/actor_set_sprite_priority.c"
@@ -197,8 +197,8 @@ typedef enum AIRS_ROCK_FUJIN_SHIELD_CHEST_ENTRANCE
 // Clears the actor's sprite flags, as a script's call; always 0.
 Sint32 scAirsRockClearScriptedActorSpriteFlags(Sint32 actorId)
 {
-	fdActorSetSpriteFlags(actorId, 0);
-	return 0;
+    fdActorSetSpriteFlags(actorId, 0);
+    return 0;
 }
 
 #include "../field/map_metatile_get.c"
@@ -215,72 +215,72 @@ Sint32 scAirsRockClearScriptedActorSpriteFlags(Sint32 actorId)
 // its mark.
 void scBlocksUnmarkMetatiles(ACTOR *block)
 {
-	MAP_STATE *map;
+    MAP_STATE *map;
 
-	if (block->sceneByte != 0)
-	{
-		map = RamHeapSlots->mapGrid;
-		if (map != NULL)
-		{
-			MAP_METATILE **metatiles  = &map->layers[2].metatiles;
-			MAP_METATILE  *metatile   = *metatiles;
-			Sint32         x          = FIELD_METATILE(block->x.fixed);
-			Sint32         row        = FIELD_METATILE(block->z.fixed - block->y.fixed);
+    if (block->sceneByte != 0)
+    {
+        map = RamHeapSlots->mapGrid;
+        if (map != NULL)
+        {
+            MAP_METATILE **metatiles  = &map->layers[2].metatiles;
+            MAP_METATILE  *metatile   = *metatiles;
+            Sint32         x          = FIELD_METATILE(block->x.fixed);
+            Sint32         row        = FIELD_METATILE(block->z.fixed - block->y.fixed);
 
-			metatile                 += x + ((row + 1) << 7);
-			metatile->collisionCode   = 0;
-			metatile                  = *metatiles;
-			metatile                 += x + ((row - 1) << 7);
-			metatile->collisionCode   = 0;
-			block->sceneByte          = 0;
-		}
-	}
+            metatile                 += x + ((row + 1) << 7);
+            metatile->collisionCode   = 0;
+            metatile                  = *metatiles;
+            metatile                 += x + ((row - 1) << 7);
+            metatile->collisionCode   = 0;
+            block->sceneByte          = 0;
+        }
+    }
 }
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SceneEntrances;
+    return SceneEntrances;
 }
 
 extern SCENE_REGION AirsRockFujinShieldChestRegions[];
 
 const SCENE_REGION *scGetExitRegions(void)
 {
-	Sint32 scene = MainRoutineStateWork.next;
+    Sint32 scene = MainRoutineStateWork.next;
 
-	if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
-		return AirsRockStormBrandChestRegions;
-	if (scene == SCENE_AIRS_ROCK_ENTRANCE)
-		return AirsRockEntranceRegions;
-	return AirsRockFujinShieldChestRegions;
+    if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
+        return AirsRockStormBrandChestRegions;
+    if (scene == SCENE_AIRS_ROCK_ENTRANCE)
+        return AirsRockEntranceRegions;
+    return AirsRockFujinShieldChestRegions;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SceneExits;
+    return SceneExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	Sint32 scene = MainRoutineStateWork.next;
+    Sint32 scene = MainRoutineStateWork.next;
 
-	if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
-		return AirsRockStormBrandChestPlacements;
-	if (scene == SCENE_AIRS_ROCK_ENTRANCE)
-		return AirsRockEntrancePlacements;
-	return AirsRockFujinShieldChestPlacements;
+    if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
+        return AirsRockStormBrandChestPlacements;
+    if (scene == SCENE_AIRS_ROCK_ENTRANCE)
+        return AirsRockEntrancePlacements;
+    return AirsRockFujinShieldChestPlacements;
 }
 
 // Felix reads a Wind Stone on the first screen: "Beware the Wind Stones." and its warning that the
 // stones magnify the wind.
 void scAirsRockExamineWindStone(void)
 {
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	// "Beware the Wind Stones." "The stones magnify the power of the wind. Use caution when
-	// approaching Air's Rock."
-	mnMessageShowCentered((Sint32)MsgFieldWindStoneWarning, 1);
-	fdScriptEnd();
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    // "Beware the Wind Stones." "The stones magnify the power of the wind. Use caution when
+    // approaching Air's Rock."
+    mnMessageShowCentered((Sint32)MsgFieldWindStoneWarning, 1);
+    fdScriptEnd();
 }
 
 // Felix walks north into the golden door low on the cliff, beside the first pillar's gap (metatile
@@ -288,21 +288,21 @@ void scAirsRockExamineWindStone(void)
 // Rock.
 void scAirsRockEnterTheRock(void)
 {
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySound(SE_DOOR_OPEN);
-	fdMapGridCopyMetatilesTo(64, 64, 83, 35, 1, 2);
-	fdTilesetAnimationResume(0);
-	syFieldScriptWait(45);
-	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
-	fdActorWalkTo(MainRoutineStateWork.leaderActorId, 312, 680);
-	syFieldScriptWait(5);
-	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionTicks();
-	scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-	fdScriptPlaySound(SE_MAP_EXIT);
-	syFieldScriptSetExitRequest(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_INSIDE_HALL);
-	fdScriptEnd();
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    fdScriptPlaySound(SE_DOOR_OPEN);
+    fdMapGridCopyMetatilesTo(64, 64, 83, 35, 1, 2);
+    fdTilesetAnimationResume(0);
+    syFieldScriptWait(45);
+    fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
+    fdActorWalkTo(MainRoutineStateWork.leaderActorId, 312, 680);
+    syFieldScriptWait(5);
+    fdScriptFinishScreenTransition();
+    fdScriptWaitTransitionTicks();
+    scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
+    fdScriptPlaySound(SE_MAP_EXIT);
+    syFieldScriptSetExitRequest(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_INSIDE_HALL);
+    fdScriptEnd();
 }
 
 // Felix casts Move on the left of the two pillars on the ledges below the fog. Nothing more happens
@@ -310,20 +310,20 @@ void scAirsRockEnterTheRock(void)
 // where it started (column 31), so that it is still there when the party comes back.
 void scAirsRockMoveFirstPillar(void)
 {
-	ACTOR *actor;
+    ACTOR *actor;
 
-	actor = fdActorGet(ACTOR_FIRST_PILLAR);
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	if (FIELD_METATILE(actor->x.fixed) == 31)
-	{
-		fdScriptSetFlag(FLAG_FIRST_PILLAR_MOVED_WEST);
-	}
-	else
-	{
-		fdScriptClearFlag(FLAG_FIRST_PILLAR_MOVED_WEST);
-	}
-	fdScriptEnd();
+    actor = fdActorGet(ACTOR_FIRST_PILLAR);
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    if (FIELD_METATILE(actor->x.fixed) == 31)
+    {
+        fdScriptSetFlag(FLAG_FIRST_PILLAR_MOVED_WEST);
+    }
+    else
+    {
+        fdScriptClearFlag(FLAG_FIRST_PILLAR_MOVED_WEST);
+    }
+    fdScriptEnd();
 }
 
 // Felix casts Move on the right of the two pillars on the ledges below the fog, from across the gap
@@ -337,48 +337,48 @@ void scAirsRockMoveFirstPillar(void)
 // (scAirsRockSetLedgeMetatilesByLevel) and, while Felix stands on that level, in the map itself.
 void scAirsRockMoveSecondPillar(void)
 {
-	ACTOR *actor;
-	ACTOR *leader;
-	Sint32 value;
+    ACTOR *actor;
+    ACTOR *leader;
+    Sint32 value;
 
-	actor = fdActorGet(ACTOR_SECOND_PILLAR);
-	value = fdMapMetatileGetAttributes(3, 70, 67);
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	if (FIELD_METATILE(actor->x.fixed) == 32)
-	{
-		fdScriptSetFlag(FLAG_SECOND_PILLAR_MOVED_WEST);
-		value &= METATILE_ATTRIBUTE_BITS;
-		scMapMetatileSetAttributes(4, 70, 67, value);
-		scMapMetatileSetAttributes(2, 33, 54, value);
-	}
-	else
-	{
-		fdScriptClearFlag(FLAG_SECOND_PILLAR_MOVED_WEST);
-		value = METATILE_ATTRIBUTES(METATILE_MARK_BLOCKED, value & METATILE_ATTRIBUTE_BITS);
-		scMapMetatileSetAttributes(4, 70, 67, value);
-		scMapMetatileSetAttributes(2, 33, 54, value);
-	}
-	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	if (METATILE_HEIGHT_STEPS(leader->y.fixed) == 26)
-		fdMapGridCopyMetatileAttributes(70, 67, 1, 1, 33, 54);
-	fdScriptEnd();
+    actor = fdActorGet(ACTOR_SECOND_PILLAR);
+    value = fdMapMetatileGetAttributes(3, 70, 67);
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    if (FIELD_METATILE(actor->x.fixed) == 32)
+    {
+        fdScriptSetFlag(FLAG_SECOND_PILLAR_MOVED_WEST);
+        value &= METATILE_ATTRIBUTE_BITS;
+        scMapMetatileSetAttributes(4, 70, 67, value);
+        scMapMetatileSetAttributes(2, 33, 54, value);
+    }
+    else
+    {
+        fdScriptClearFlag(FLAG_SECOND_PILLAR_MOVED_WEST);
+        value = METATILE_ATTRIBUTES(METATILE_MARK_BLOCKED, value & METATILE_ATTRIBUTE_BITS);
+        scMapMetatileSetAttributes(4, 70, 67, value);
+        scMapMetatileSetAttributes(2, 33, 54, value);
+    }
+    leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+    if (METATILE_HEIGHT_STEPS(leader->y.fixed) == 26)
+        fdMapGridCopyMetatileAttributes(70, 67, 1, 1, 33, 54);
+    fdScriptEnd();
 }
 
 // Felix casts Move on the pillar in the fog: pushed one metatile east into the gap (metatile (11,
 // 17)), it stays there for good, a way across the gap and a shortcut back.
 void scAirsRockMoveThirdPillar(void)
 {
-	ACTOR *actor;
+    ACTOR *actor;
 
-	actor = fdActorGet(ACTOR_THIRD_PILLAR);
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	if (FIELD_HALF_METATILE(actor->x.fixed) == 23)
-	{
-		fdScriptSetFlag(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED);
-	}
-	fdScriptEnd();
+    actor = fdActorGet(ACTOR_THIRD_PILLAR);
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    if (FIELD_HALF_METATILE(actor->x.fixed) == 23)
+    {
+        fdScriptSetFlag(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED);
+    }
+    fdScriptEnd();
 }
 
 // Felix walks south off the edge of the ledges below the fog, in front of the two pillars (metatile
@@ -386,46 +386,46 @@ void scAirsRockMoveThirdPillar(void)
 // face, lets go and drops to the ledge below.
 void scAirsRockDropOffLedge(void)
 {
-	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIXED  z      = leader->z.fixed;
-	Uint32 i;
+    ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+    FIXED  z      = leader->z.fixed;
+    Uint32 i;
 
-	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
-	fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
-	syWait(10);
-	fdActorSelectAnimation(leader, ANIM_STAND);
-	fdActorSetSpriteFlags(leader, 0);
-	leader->motionFlags |= ACTOR_FALLS;
-	leader->velocityY    = toFIXED(4);
-	scFieldActorSetMoveTargetFX(leader, leader->x.fixed, leader->y.fixed, z + toFIXED(12));
-	syWait(6);
-	fdScriptPlaySound(SE_FLOOR_SWITCH);
-	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_SOUTH_SOUTHWEST, 0);
-	leader->motionFlags = 0;
-	for (i = 0; i < 14; i++)
-	{
-		leader->y.fixed -= toFIXED(2);
-		leader->targetY  = leader->y.fixed;
-		syWait(1);
-	}
-	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	leader->velocityY   = toFIXED(3);
-	scFieldActorSetMoveTargetFX(leader, leader->x.fixed, leader->y.fixed, z + toFIXED(16));
-	scFieldActorWaitForMove(leader);
-	fdActorSetSpriteFlags(leader, 1);
-	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
-	fdScriptNoOperation();
+    fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
+    fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
+    syWait(10);
+    fdActorSelectAnimation(leader, ANIM_STAND);
+    fdActorSetSpriteFlags(leader, 0);
+    leader->motionFlags |= ACTOR_FALLS;
+    leader->velocityY    = toFIXED(4);
+    scFieldActorSetMoveTargetFX(leader, leader->x.fixed, leader->y.fixed, z + toFIXED(12));
+    syWait(6);
+    fdScriptPlaySound(SE_FLOOR_SWITCH);
+    fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_SOUTH_SOUTHWEST, 0);
+    leader->motionFlags = 0;
+    for (i = 0; i < 14; i++)
+    {
+        leader->y.fixed -= toFIXED(2);
+        leader->targetY  = leader->y.fixed;
+        syWait(1);
+    }
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    leader->velocityY   = toFIXED(3);
+    scFieldActorSetMoveTargetFX(leader, leader->x.fixed, leader->y.fixed, z + toFIXED(16));
+    scFieldActorWaitForMove(leader);
+    fdActorSetSpriteFlags(leader, 1);
+    fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
+    fdScriptNoOperation();
 }
 
 const CUE *scGetCues(void)
 {
-	Sint32 scene = MainRoutineStateWork.next;
+    Sint32 scene = MainRoutineStateWork.next;
 
-	if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
-		return AirsRockStormBrandChestCues;
-	if (scene == SCENE_AIRS_ROCK_ENTRANCE)
-		return AirsRockEntranceCues;
-	return AirsRockFujinShieldChestCues;
+    if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
+        return AirsRockStormBrandChestCues;
+    if (scene == SCENE_AIRS_ROCK_ENTRANCE)
+        return AirsRockEntranceCues;
+    return AirsRockFujinShieldChestCues;
 }
 
 // Nothing visible happens of its own as Felix starts casting Whirlwind on a Wind Stone or a twister
@@ -433,7 +433,7 @@ const CUE *scGetCues(void)
 // whirlwind (scAirsRockTakeOverWhirlwind).
 void scAirsRockStartWhirlwind(void)
 {
-	fdScriptEndLastingPsynergy(0);
+    fdScriptEndLastingPsynergy(0);
 }
 
 // Nothing visible happens of its own as Felix casts Whirlwind on a Wind Stone or a twister rock;
@@ -441,7 +441,7 @@ void scAirsRockStartWhirlwind(void)
 // stone's or the rock's own (scAirsRockBlowGust and the rest).
 void scAirsRockTakeOverWhirlwind(void)
 {
-	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->sceneVariant = 1;
+    ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->sceneVariant = 1;
 }
 
 // The turn a gust's spark makes each tick: a lap every 32 ticks.
@@ -451,41 +451,41 @@ void scAirsRockTakeOverWhirlwind(void)
 // growing as it rises.
 void scAirsRockSpiralGust(ACTOR *actor)
 {
-	Sint32 radius    = actor->y.fixed;
-	Sint32 step      = actor->speedLimit;
+    Sint32 radius    = actor->y.fixed;
+    Sint32 step      = actor->speedLimit;
 
-	radius         >>= 1;
-	radius          += toFIXED(16);
-	actor->x.fixed   = actor->bounce + syMulFX(syCos((step & 0xff) * GUST_LAP_STEP), radius);
-	actor->z.fixed   = actor->sceneWord
-	               + syMulFX(syMathSin((actor->speedLimit & 0xff) * GUST_LAP_STEP), radius) / 3;
-	actor->y.fixed += actor->gravity;
-	actor->speedLimit++;
+    radius         >>= 1;
+    radius          += toFIXED(16);
+    actor->x.fixed   = actor->bounce + syMulFX(syCos((step & 0xff) * GUST_LAP_STEP), radius);
+    actor->z.fixed   = actor->sceneWord
+                   + syMulFX(syMathSin((actor->speedLimit & 0xff) * GUST_LAP_STEP), radius) / 3;
+    actor->y.fixed += actor->gravity;
+    actor->speedLimit++;
 }
 
 // The same circle on a smaller radius, twice as wide, blinking blue every other two ticks.
 void scAirsRockSpiralSpark(ACTOR *actor)
 {
-	Sint32 radius    = actor->y.fixed;
-	Sint32 step      = actor->speedLimit;
+    Sint32 radius    = actor->y.fixed;
+    Sint32 step      = actor->speedLimit;
 
-	radius         >>= 2;
-	radius          += toFIXED(12);
-	actor->x.fixed   = actor->bounce + syMulFX(syCos((step & 0xff) * GUST_LAP_STEP), radius) * 2;
-	actor->z.fixed =
-		actor->sceneWord + syMulFX(syMathSin((actor->speedLimit & 0xff) * GUST_LAP_STEP), radius);
-	actor->y.fixed += actor->gravity;
-	actor->speedLimit++;
-	scFieldActorSetSpriteColor(actor, ((TickCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
+    radius         >>= 2;
+    radius          += toFIXED(12);
+    actor->x.fixed   = actor->bounce + syMulFX(syCos((step & 0xff) * GUST_LAP_STEP), radius) * 2;
+    actor->z.fixed =
+        actor->sceneWord + syMulFX(syMathSin((actor->speedLimit & 0xff) * GUST_LAP_STEP), radius);
+    actor->y.fixed += actor->gravity;
+    actor->speedLimit++;
+    scFieldActorSetSpriteColor(actor, ((TickCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
 }
 
 // A Whirlwind target's update while the gust gathers: it flickers to the colour mode in sceneCount
 // (a SPR_COL_MODE), at the rate sceneByte sets.
 void scAirsRockFlickerTarget(ACTOR *actor)
 {
-	Uint32 on = ((TickCount & 3) >> actor->sceneByte) & 1;
+    Uint32 on = ((TickCount & 3) >> actor->sceneByte) & 1;
 
-	scFieldActorSetSpriteColor(actor, (Uint8)(on * actor->sceneCount));
+    scFieldActorSetSpriteColor(actor, (Uint8)(on * actor->sceneCount));
 }
 
 // The Whirlwind gust in Air's Rock.
@@ -503,228 +503,228 @@ extern Sint16 AirsRockGustTargets[][4];
 // flag counted from FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN by the metatile beyond it.
 void          scAirsRockBlowGust(void)
 {
-	ACTOR              *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
-	ACTOR              *gust, *spark;
-	VECTOR3             velocity;
-	EFFECT_OPTIONS      glints, dust;
-	CELL                delta, metatile;
-	Sint32              newZ, newX, flag = 0, steps = 0, hit, angle, i;
+    ACTOR              *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
+    ACTOR              *gust, *spark;
+    VECTOR3             velocity;
+    EFFECT_OPTIONS      glints, dust;
+    CELL                delta, metatile;
+    Sint32              newZ, newX, flag = 0, steps = 0, hit, angle, i;
 
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	sySoundPlay(SE_RUSH);
-	gust = scFieldActorCreate(SPRITE_WHIRLWIND, leader->x.fixed, leader->y.fixed, leader->z.fixed);
-	fdActorSelectAnimation(gust, 2);
-	fdActorSetSpriteFlags(gust, 0);
-	gust->scaleX                          = toFIXED(17) / 10;
-	gust->scaleY                          = toFIXED(1) / 5;
-	gust->motionFlags                     = 0;
-	((FIELD_SPR *)gust->sprite)->priority = ((FIELD_SPR *)effect->target->sprite)->priority;
-	fdActorSetMoveTarget(gust,
-	                     effect->target->x.fixed,
-	                     effect->target->y.fixed,
-	                     effect->target->z.fixed - toFIXED(1));
-	while (gust->scaleY < toFIXED(13) / 10)
-	{
-		gust->scaleY += toFIXED(1) / 10;
-		fdScriptWait(1);
-	}
-	fdActorWaitForMove(gust);
-	gust->z.fixed = effect->target->z.fixed - toFIXED(1);
-	while (gust->scaleY < toFIXED(18) / 10)
-	{
-		if ((TickCount & 3) == 0)
-		{
-			spark = scFieldActorCreate(
-				SPRITE_PARTICLE, effect->target->x.fixed, 0, effect->target->z.fixed);
-			spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-			spark->motionFlags    = 0;
-			spark->bounce         = spark->x.fixed;
-			spark->gravity        = toFIXED(4) / 5;
-			spark->sceneWord      = spark->z.fixed;
-			spark->speedLimit     = syRandom() & 0xffff;
-			fdActorSelectAnimation(spark, 7);
-			fdActorStartScript(spark, FieldEffectMediumScript);
-			fdActorSetSpriteFlags(spark, 0);
-			fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
-			spark->update = scAirsRockSpiralGust;
-		}
-		if (TickCount & 1)
-		{
-			gust->scaleX += toFIXED(1) / 100;
-			gust->scaleY += toFIXED(1) / 100;
-			fdActorSetSpriteColor(effect->target, SPRITE_COLOR_HIDDEN);
-		}
-		else
-		{
-			fdActorSetSpriteColor(effect->target, SPRITE_COLOR_GBR);
-		}
-		fdScriptWait(1);
-	}
-	fdActorSetSpriteColor(effect->target, SPRITE_COLOR_NORMAL);
-	sySoundPlay(SE_WHOOSH);
-	metatile.x = FIELD_METATILE(effect->target->x.fixed);
-	metatile.z = FIELD_METATILE(effect->target->z.fixed);
-	// The leader's facing rounded to the nearest of east, south, west and north.
-	angle      = FACING_QUARTER(leader->facing + DEGtoANG(45));
-	delta.x    = FIXEDtoINT(syCos(angle));
-	delta.z    = FIXEDtoINT(sySin(angle));
-	do
-	{
-		hit         = fdMapMetatileGetAttributes(2, metatile.x, metatile.z);
-		hit         = METATILE_CODE(hit);
-		metatile.x += delta.x;
-		metatile.z += delta.z;
-		steps      += 2;
-	} while (hit == 0);
-	flag   = fdMapMetatileGetAttributes(2, metatile.x, metatile.z);
-	flag   = METATILE_CODE(flag);
-	flag  -= 1;
-	steps -= 2;
-	newX   = effect->target->x.part[0].integer + ((steps * delta.x) << 3);
-	newZ   = effect->target->z.part[0].integer + ((steps * delta.z) << 3);
-	((FIELD_SPR *)gust->sprite)->priority = 1;
-	// metatile takes the gust's target in pixels: the ROM stores both words in metatile's slots
-	// before the move, though nothing reads them (a later arm stores its own target there and reads
-	// it back).
-	metatile.x                            = newX;
-	metatile.z                            = newZ;
-	gust->speedLimit                      = toFIXED(4);
-	gust->acceleration                    = toFIXED(4);
-	fdActorSetMoveTarget(gust, INTtoFIXED(metatile.x), gust->y.fixed, INTtoFIXED(metatile.z));
-	fdCameraSetSpeedAndAcceleration(5, 5);
-	fdCameraMoveToFX(INTtoFIXED(newX), -1, toFIXED(newZ), 1);
-	while (fdActorHasArrived(gust) == 0)
-	{
-		if ((TickCount & 1) == 0)
-		{
-			glints.priority = 1;
-			glints.type     = SPRITE_GLINT;
-			glints.palette  = 2;
-			velocity.x      = syCos((TickCount & 0x1ff) * FACING_STEP) << 1;
-			velocity.y      = gust->y.fixed + toFIXED(syRandom() & 31);
-			velocity.z      = sySin((TickCount & 0x1ff) * FACING_STEP);
-			scFieldEffectSpawn(gust->x.fixed,
-			                   velocity.y,
-			                   gust->z.fixed,
-			                   velocity.x,
-			                   0,
-			                   velocity.z,
-			                   EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-			                   &glints);
-		}
-		fdScriptWait(1);
-	}
-	if (hit == METATILE_MARK_BLOCKED)
-	{
-		sySoundPlay(SE_WHOOSH);
-	}
-	else
-	{
-		metatile.x         = gust->x.part[0].integer + delta.x * 48;
-		metatile.z         = gust->z.part[0].integer + delta.z * 48;
-		gust->speedLimit   = toFIXED(1) / 2;
-		gust->acceleration = toFIXED(1) / 2;
-		fdActorSetMoveTarget(gust, INTtoFIXED(metatile.x), gust->y.fixed, INTtoFIXED(metatile.z));
-		sySoundPlay(SE_GUST);
-		hit -= METATILE_MARK_FIRST_GUST_TARGET;
-		while (fdActorHasArrived(gust) == 0)
-		{
-			if ((TickCount & 1) == 0)
-			{
-				dust.priority    = 1;
-				dust.startScaleX = dust.startScaleY = (syRandom() & 0xffff) + toFIXED(1);
-				velocity.x                          = syCos((TickCount & 0x1ff) * FACING_STEP) << 1;
-				velocity.y                          = toFIXED(1);
-				velocity.z                          = sySin((TickCount & 0x1ff) * FACING_STEP);
-				scFieldEffectSpawn(gust->x.fixed,
-				                   gust->y.fixed,
-				                   gust->z.fixed,
-				                   velocity.x,
-				                   velocity.y,
-				                   velocity.z,
-				                   EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
-				                   &dust);
-			}
-			if ((TickCount & 3) == 0)
-			{
-				metatile.x = AirsRockGustTargets[hit][2] + FIELD_METATILE(gust->x.fixed);
-				metatile.z = AirsRockGustTargets[hit][3] + FIELD_METATILE(gust->z.fixed);
-				if (hit & 1)
-				{
-					fdMapGridCopyMetatilesTo(AirsRockGustTargets[hit][0],
-					                         AirsRockGustTargets[hit][1],
-					                         metatile.x,
-					                         metatile.z - 1,
-					                         1,
-					                         3);
-					fdMapGridCopyMetatileAttributes(AirsRockGustTargets[hit][0],
-					                                AirsRockGustTargets[hit][1],
-					                                1,
-					                                2,
-					                                metatile.x,
-					                                metatile.z);
-					fdMapGridCopyMetatileAttributes(AirsRockGustTargets[hit][0],
-					                                AirsRockGustTargets[hit][1],
-					                                1,
-					                                2,
-					                                FIELD_METATILE(gust->x.fixed),
-					                                FIELD_METATILE(gust->z.fixed));
-				}
-				else
-				{
-					fdMapGridCopyMetatilesTo(AirsRockGustTargets[hit][0],
-					                         AirsRockGustTargets[hit][1],
-					                         metatile.x,
-					                         metatile.z - (hit >> 1),
-					                         1,
-					                         1);
-					fdMapGridCopyMetatileAttributes(AirsRockGustTargets[hit][0],
-					                                AirsRockGustTargets[hit][1],
-					                                1,
-					                                1,
-					                                metatile.x,
-					                                metatile.z);
-					fdMapGridCopyMetatileAttributes(AirsRockGustTargets[hit][0],
-					                                AirsRockGustTargets[hit][1],
-					                                1,
-					                                1,
-					                                FIELD_METATILE(gust->x.fixed),
-					                                FIELD_METATILE(gust->z.fixed));
-				}
-				fdMapGridCenterOnFollowedPoint();
-			}
-			fdScriptWait(1);
-		}
-		// Blown south, the sweep clears the row behind the gust, so the row it stops on is cleared
-		// last.
-		if (hit == GUST_BARRIER_BLOWN_SOUTH)
-		{
-			fdMapGridCopyMetatilesTo(
-				AirsRockGustTargets[2][0], AirsRockGustTargets[2][1], metatile.x, metatile.z, 1, 1);
-			fdMapGridCenterOnFollowedPoint();
-		}
-		sySoundPlay(SE_STOP_EXIT_SE);
-		fdScriptSetFlag(flag + FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN);
-	}
-	gust->acceleration = 0;
-	gust->speedLimit   = 0;
-	gust->targetZ      = 0;
-	gust->targetY      = 0;
-	gust->targetX      = 0;
-	for (i = 0; i != 8; i++)
-	{
-		gust->scaleX  -= toFIXED(3) / 20;
-		gust->scaleY  -= toFIXED(1) / 4;
-		gust->y.fixed += toFIXED(7) / 2;
-		fdScriptWait(1);
-	}
-	fdActorRelease(gust);
-	fdScriptWait(30);
-	fdCameraMoveToActorById(MainRoutineStateWork.leaderActorId, 1);
-	fdCameraWaitForArrival();
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    sySoundPlay(SE_RUSH);
+    gust = scFieldActorCreate(SPRITE_WHIRLWIND, leader->x.fixed, leader->y.fixed, leader->z.fixed);
+    fdActorSelectAnimation(gust, 2);
+    fdActorSetSpriteFlags(gust, 0);
+    gust->scaleX                          = toFIXED(17) / 10;
+    gust->scaleY                          = toFIXED(1) / 5;
+    gust->motionFlags                     = 0;
+    ((FIELD_SPR *)gust->sprite)->priority = ((FIELD_SPR *)effect->target->sprite)->priority;
+    fdActorSetMoveTarget(gust,
+                         effect->target->x.fixed,
+                         effect->target->y.fixed,
+                         effect->target->z.fixed - toFIXED(1));
+    while (gust->scaleY < toFIXED(13) / 10)
+    {
+        gust->scaleY += toFIXED(1) / 10;
+        fdScriptWait(1);
+    }
+    fdActorWaitForMove(gust);
+    gust->z.fixed = effect->target->z.fixed - toFIXED(1);
+    while (gust->scaleY < toFIXED(18) / 10)
+    {
+        if ((TickCount & 3) == 0)
+        {
+            spark = scFieldActorCreate(
+                SPRITE_PARTICLE, effect->target->x.fixed, 0, effect->target->z.fixed);
+            spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+            spark->motionFlags    = 0;
+            spark->bounce         = spark->x.fixed;
+            spark->gravity        = toFIXED(4) / 5;
+            spark->sceneWord      = spark->z.fixed;
+            spark->speedLimit     = syRandom() & 0xffff;
+            fdActorSelectAnimation(spark, 7);
+            fdActorStartScript(spark, FieldEffectMediumScript);
+            fdActorSetSpriteFlags(spark, 0);
+            fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
+            spark->update = scAirsRockSpiralGust;
+        }
+        if (TickCount & 1)
+        {
+            gust->scaleX += toFIXED(1) / 100;
+            gust->scaleY += toFIXED(1) / 100;
+            fdActorSetSpriteColor(effect->target, SPRITE_COLOR_HIDDEN);
+        }
+        else
+        {
+            fdActorSetSpriteColor(effect->target, SPRITE_COLOR_GBR);
+        }
+        fdScriptWait(1);
+    }
+    fdActorSetSpriteColor(effect->target, SPRITE_COLOR_NORMAL);
+    sySoundPlay(SE_WHOOSH);
+    metatile.x = FIELD_METATILE(effect->target->x.fixed);
+    metatile.z = FIELD_METATILE(effect->target->z.fixed);
+    // The leader's facing rounded to the nearest of east, south, west and north.
+    angle      = FACING_QUARTER(leader->facing + DEGtoANG(45));
+    delta.x    = FIXEDtoINT(syCos(angle));
+    delta.z    = FIXEDtoINT(sySin(angle));
+    do
+    {
+        hit         = fdMapMetatileGetAttributes(2, metatile.x, metatile.z);
+        hit         = METATILE_CODE(hit);
+        metatile.x += delta.x;
+        metatile.z += delta.z;
+        steps      += 2;
+    } while (hit == 0);
+    flag   = fdMapMetatileGetAttributes(2, metatile.x, metatile.z);
+    flag   = METATILE_CODE(flag);
+    flag  -= 1;
+    steps -= 2;
+    newX   = effect->target->x.part[0].integer + ((steps * delta.x) << 3);
+    newZ   = effect->target->z.part[0].integer + ((steps * delta.z) << 3);
+    ((FIELD_SPR *)gust->sprite)->priority = 1;
+    // metatile takes the gust's target in pixels: the ROM stores both words in metatile's slots
+    // before the move, though nothing reads them (a later arm stores its own target there and reads
+    // it back).
+    metatile.x                            = newX;
+    metatile.z                            = newZ;
+    gust->speedLimit                      = toFIXED(4);
+    gust->acceleration                    = toFIXED(4);
+    fdActorSetMoveTarget(gust, INTtoFIXED(metatile.x), gust->y.fixed, INTtoFIXED(metatile.z));
+    fdCameraSetSpeedAndAcceleration(5, 5);
+    fdCameraMoveToFX(INTtoFIXED(newX), -1, toFIXED(newZ), 1);
+    while (fdActorHasArrived(gust) == 0)
+    {
+        if ((TickCount & 1) == 0)
+        {
+            glints.priority = 1;
+            glints.type     = SPRITE_GLINT;
+            glints.palette  = 2;
+            velocity.x      = syCos((TickCount & 0x1ff) * FACING_STEP) << 1;
+            velocity.y      = gust->y.fixed + toFIXED(syRandom() & 31);
+            velocity.z      = sySin((TickCount & 0x1ff) * FACING_STEP);
+            scFieldEffectSpawn(gust->x.fixed,
+                               velocity.y,
+                               gust->z.fixed,
+                               velocity.x,
+                               0,
+                               velocity.z,
+                               EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                               &glints);
+        }
+        fdScriptWait(1);
+    }
+    if (hit == METATILE_MARK_BLOCKED)
+    {
+        sySoundPlay(SE_WHOOSH);
+    }
+    else
+    {
+        metatile.x         = gust->x.part[0].integer + delta.x * 48;
+        metatile.z         = gust->z.part[0].integer + delta.z * 48;
+        gust->speedLimit   = toFIXED(1) / 2;
+        gust->acceleration = toFIXED(1) / 2;
+        fdActorSetMoveTarget(gust, INTtoFIXED(metatile.x), gust->y.fixed, INTtoFIXED(metatile.z));
+        sySoundPlay(SE_GUST);
+        hit -= METATILE_MARK_FIRST_GUST_TARGET;
+        while (fdActorHasArrived(gust) == 0)
+        {
+            if ((TickCount & 1) == 0)
+            {
+                dust.priority    = 1;
+                dust.startScaleX = dust.startScaleY = (syRandom() & 0xffff) + toFIXED(1);
+                velocity.x                          = syCos((TickCount & 0x1ff) * FACING_STEP) << 1;
+                velocity.y                          = toFIXED(1);
+                velocity.z                          = sySin((TickCount & 0x1ff) * FACING_STEP);
+                scFieldEffectSpawn(gust->x.fixed,
+                                   gust->y.fixed,
+                                   gust->z.fixed,
+                                   velocity.x,
+                                   velocity.y,
+                                   velocity.z,
+                                   EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                                   &dust);
+            }
+            if ((TickCount & 3) == 0)
+            {
+                metatile.x = AirsRockGustTargets[hit][2] + FIELD_METATILE(gust->x.fixed);
+                metatile.z = AirsRockGustTargets[hit][3] + FIELD_METATILE(gust->z.fixed);
+                if (hit & 1)
+                {
+                    fdMapGridCopyMetatilesTo(AirsRockGustTargets[hit][0],
+                                             AirsRockGustTargets[hit][1],
+                                             metatile.x,
+                                             metatile.z - 1,
+                                             1,
+                                             3);
+                    fdMapGridCopyMetatileAttributes(AirsRockGustTargets[hit][0],
+                                                    AirsRockGustTargets[hit][1],
+                                                    1,
+                                                    2,
+                                                    metatile.x,
+                                                    metatile.z);
+                    fdMapGridCopyMetatileAttributes(AirsRockGustTargets[hit][0],
+                                                    AirsRockGustTargets[hit][1],
+                                                    1,
+                                                    2,
+                                                    FIELD_METATILE(gust->x.fixed),
+                                                    FIELD_METATILE(gust->z.fixed));
+                }
+                else
+                {
+                    fdMapGridCopyMetatilesTo(AirsRockGustTargets[hit][0],
+                                             AirsRockGustTargets[hit][1],
+                                             metatile.x,
+                                             metatile.z - (hit >> 1),
+                                             1,
+                                             1);
+                    fdMapGridCopyMetatileAttributes(AirsRockGustTargets[hit][0],
+                                                    AirsRockGustTargets[hit][1],
+                                                    1,
+                                                    1,
+                                                    metatile.x,
+                                                    metatile.z);
+                    fdMapGridCopyMetatileAttributes(AirsRockGustTargets[hit][0],
+                                                    AirsRockGustTargets[hit][1],
+                                                    1,
+                                                    1,
+                                                    FIELD_METATILE(gust->x.fixed),
+                                                    FIELD_METATILE(gust->z.fixed));
+                }
+                fdMapGridCenterOnFollowedPoint();
+            }
+            fdScriptWait(1);
+        }
+        // Blown south, the sweep clears the row behind the gust, so the row it stops on is cleared
+        // last.
+        if (hit == GUST_BARRIER_BLOWN_SOUTH)
+        {
+            fdMapGridCopyMetatilesTo(
+                AirsRockGustTargets[2][0], AirsRockGustTargets[2][1], metatile.x, metatile.z, 1, 1);
+            fdMapGridCenterOnFollowedPoint();
+        }
+        sySoundPlay(SE_STOP_EXIT_SE);
+        fdScriptSetFlag(flag + FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN);
+    }
+    gust->acceleration = 0;
+    gust->speedLimit   = 0;
+    gust->targetZ      = 0;
+    gust->targetY      = 0;
+    gust->targetX      = 0;
+    for (i = 0; i != 8; i++)
+    {
+        gust->scaleX  -= toFIXED(3) / 20;
+        gust->scaleY  -= toFIXED(1) / 4;
+        gust->y.fixed += toFIXED(7) / 2;
+        fdScriptWait(1);
+    }
+    fdActorRelease(gust);
+    fdScriptWait(30);
+    fdCameraMoveToActorById(MainRoutineStateWork.leaderActorId, 1);
+    fdCameraWaitForArrival();
+    fdScriptEnd();
 }
 
 // The line scroll of the great whirlwind or the fog, a halfword a line; three a line while the fog
@@ -741,28 +741,28 @@ Sint16 AirsRockWaveLines[DISPLAY_HEIGHT * 3] BSS_DATA ALIGNED(16);
 // it going west, and it spins.
 void scAirsRockSwirlDust(ACTOR *actor)
 {
-	FIXED scale;
+    FIXED scale;
 
-	actor->y.fixed += actor->gravity;
-	actor->x.fixed += actor->bounce;
-	actor->z.fixed += actor->sceneWord;
-	if (FIELD_HALF_METATILE(actor->x.fixed) <= 39)
-	{
-		actor->bounce += toFIXED(3) / 2;
-		scale          = actor->scaleX + (toFIXED(1) / 20);
-	}
-	else
-	{
-		actor->bounce -= toFIXED(3) / 2;
-		scale          = actor->scaleX - (toFIXED(1) / 50);
-	}
-	actor->scaleX = scale;
-	actor->scaleY = scale;
-	if (actor->bounce > 0)
-		fdSetActorSpritePriority(actor, 1);
-	else
-		fdSetActorSpritePriority(actor, 2);
-	((FIELD_SPR *)actor->sprite)->rotation += TRIG_TURN * 3 / 32;
+    actor->y.fixed += actor->gravity;
+    actor->x.fixed += actor->bounce;
+    actor->z.fixed += actor->sceneWord;
+    if (FIELD_HALF_METATILE(actor->x.fixed) <= 39)
+    {
+        actor->bounce += toFIXED(3) / 2;
+        scale          = actor->scaleX + (toFIXED(1) / 20);
+    }
+    else
+    {
+        actor->bounce -= toFIXED(3) / 2;
+        scale          = actor->scaleX - (toFIXED(1) / 50);
+    }
+    actor->scaleX = scale;
+    actor->scaleY = scale;
+    if (actor->bounce > 0)
+        fdSetActorSpritePriority(actor, 1);
+    else
+        fdSetActorSpritePriority(actor, 2);
+    ((FIELD_SPR *)actor->sprite)->rotation += TRIG_TURN * 3 / 32;
 }
 
 // The bytes of one row of the whirlwind's tiles.
@@ -776,176 +776,176 @@ void scAirsRockSwirlDust(ACTOR *actor)
 // mud away, baring the holds that climb it. The rock turns grey, spent.
 void scAirsRockWhirlwindClearsWall(void)
 {
-	MAIN_ROUTINE_STATE *state;
-	Uint16             *buf = syHeapAllocate(2 * WHIRLWIND_TILE_ROW_SIZE);
-	Uint16             *metatile;
-	ACTOR              *spark;
-	Uint32              i;
-	FIXED               x;
+    MAIN_ROUTINE_STATE *state;
+    Uint16             *buf = syHeapAllocate(2 * WHIRLWIND_TILE_ROW_SIZE);
+    Uint16             *metatile;
+    ACTOR              *spark;
+    Uint32              i;
+    FIXED               x;
 
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	REG_DISPCNT &= ~DISPCNT_BG0_ON;
-	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_TILES), buf);
-	syDMAXCopy(buf,
-	           BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
-	           DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4),
-	           REG_DMA3);
-	syDMAXCopy((Uint8 *)buf + WHIRLWIND_TILE_ROW_SIZE,
-	           BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
-	           DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4),
-	           REG_DMA3);
-	syHeapRelease(buf);
-	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
-	scFieldActorSetSpritePriority(ACTOR_TWISTER_ROCK_BY_THE_WALL, 1);
-	syIOWrite16(BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
-	REG_BG1CNT &= ~BGCNT_PRIORITY(3);
-	REG_BG1CNT |= BGCNT_PRIORITY(2);
-	DMA_FILL16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
-	buf = syHeapAllocate(WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH * sizeof(Uint16));
-	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_MAP), buf);
-	metatile = buf;
-	for (i = 0; i != WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH; i++)
-	{
-		*metatile -= WHIRLWIND_MAP_FIRST_TILE - WHIRLWIND_TOP_TILE;
-		metatile++;
-	}
-	metatile = buf;
-	for (i = 0; i != WHIRLWIND_MAP_HEIGHT; i++)
-	{
-		syDMAXCopy(metatile,
-		           BG_SCREEN_BLOCK(4) + WHIRLWIND_MAP_ROW_OFFSET
-		               + i * BG_SCREEN_WIDTH * sizeof(Uint16),
-		           DMA_COPY_WORDS(WHIRLWIND_MAP_WIDTH / 2),
-		           REG_DMA3);
-		metatile += WHIRLWIND_MAP_WIDTH;
-	}
-	syHeapRelease(buf);
-	fdScriptPlaySound(SE_GLITTER);
-	fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCount = SPRITE_COLOR_BLUE_TINT;
-	fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneByte  = 1;
-	fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update     = scAirsRockFlickerTarget;
-	for (i = 0; i != 45; i++)
-	{
-		if ((TickCount & 3) == 0)
-		{
-			spark = scFieldActorCreate(SPRITE_PARTICLE,
-			                           fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->x.fixed,
-			                           fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->y.fixed,
-			                           fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->z.fixed);
-			((FIELD_SPR *)spark->sprite)->priority =
-				((FIELD_SPR *)fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sprite)->priority;
-			spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-			spark->motionFlags    = 0;
-			spark->bounce         = spark->x.fixed;
-			spark->gravity        = toFIXED(3) / 2;
-			spark->sceneWord      = spark->z.fixed;
-			spark->speedLimit     = syRandom() & 0xffff;
-			fdActorSelectAnimation(spark, 7);
-			fdActorStartScript(spark, FieldEffectMediumScript);
-			fdActorSetSpriteFlags(spark, 0);
-			scFieldActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
-			spark->update = scAirsRockSpiralSpark;
-		}
-		syFieldScriptWait(1);
-	}
-	syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
-	fdCameraWaitForArrival();
-	fdCameraSetSpeed(1);
-	fdCameraMoveTo(330, CAMERA_KEEP, 73, 1);
-	fdCameraWaitForArrival();
-	sySetTickEvent(scAirsRockScrollWave, EVENT_PASS_VBLANK);
-	fdScriptPlaySound(SE_WAVE_HIGH);
-	REG_BLDALPHA  = BLEND_ALPHA(0, 15);
-	REG_BLDCNT    = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	REG_DISPCNT  |= DISPCNT_BG0_ON;
-	fdMapGridSetShake(1, 1, 1);
-	for (i = 0; i != 64; i++)
-	{
-		REG_BLDALPHA = ((BLEND_WEIGHT_MAX - 1 - (i >> 2)) << 8) | (i >> 2);
-		fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCount = syRandom() & 7;
-		syFieldScriptWait(1);
-	}
-	syFieldScriptWait(60);
-	REG_BLDALPHA = BLEND_ALPHA(15, 0);
-	REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3;
-	fdMapGridSetShake(3, 3, 1);
-	{
-		Uint32 j = 0;
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    REG_DISPCNT &= ~DISPCNT_BG0_ON;
+    syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_TILES), buf);
+    syDMAXCopy(buf,
+               BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
+               DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4),
+               REG_DMA3);
+    syDMAXCopy((Uint8 *)buf + WHIRLWIND_TILE_ROW_SIZE,
+               BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
+               DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4),
+               REG_DMA3);
+    syHeapRelease(buf);
+    scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+    scFieldActorSetSpritePriority(ACTOR_TWISTER_ROCK_BY_THE_WALL, 1);
+    syIOWrite16(BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
+    REG_BG1CNT &= ~BGCNT_PRIORITY(3);
+    REG_BG1CNT |= BGCNT_PRIORITY(2);
+    DMA_FILL16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
+    buf = syHeapAllocate(WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH * sizeof(Uint16));
+    syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_MAP), buf);
+    metatile = buf;
+    for (i = 0; i != WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH; i++)
+    {
+        *metatile -= WHIRLWIND_MAP_FIRST_TILE - WHIRLWIND_TOP_TILE;
+        metatile++;
+    }
+    metatile = buf;
+    for (i = 0; i != WHIRLWIND_MAP_HEIGHT; i++)
+    {
+        syDMAXCopy(metatile,
+                   BG_SCREEN_BLOCK(4) + WHIRLWIND_MAP_ROW_OFFSET
+                       + i * BG_SCREEN_WIDTH * sizeof(Uint16),
+                   DMA_COPY_WORDS(WHIRLWIND_MAP_WIDTH / 2),
+                   REG_DMA3);
+        metatile += WHIRLWIND_MAP_WIDTH;
+    }
+    syHeapRelease(buf);
+    fdScriptPlaySound(SE_GLITTER);
+    fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCount = SPRITE_COLOR_BLUE_TINT;
+    fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneByte  = 1;
+    fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update     = scAirsRockFlickerTarget;
+    for (i = 0; i != 45; i++)
+    {
+        if ((TickCount & 3) == 0)
+        {
+            spark = scFieldActorCreate(SPRITE_PARTICLE,
+                                       fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->x.fixed,
+                                       fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->y.fixed,
+                                       fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->z.fixed);
+            ((FIELD_SPR *)spark->sprite)->priority =
+                ((FIELD_SPR *)fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sprite)->priority;
+            spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+            spark->motionFlags    = 0;
+            spark->bounce         = spark->x.fixed;
+            spark->gravity        = toFIXED(3) / 2;
+            spark->sceneWord      = spark->z.fixed;
+            spark->speedLimit     = syRandom() & 0xffff;
+            fdActorSelectAnimation(spark, 7);
+            fdActorStartScript(spark, FieldEffectMediumScript);
+            fdActorSetSpriteFlags(spark, 0);
+            scFieldActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
+            spark->update = scAirsRockSpiralSpark;
+        }
+        syFieldScriptWait(1);
+    }
+    syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
+    fdCameraWaitForArrival();
+    fdCameraSetSpeed(1);
+    fdCameraMoveTo(330, CAMERA_KEEP, 73, 1);
+    fdCameraWaitForArrival();
+    sySetTickEvent(scAirsRockScrollWave, EVENT_PASS_VBLANK);
+    fdScriptPlaySound(SE_WAVE_HIGH);
+    REG_BLDALPHA  = BLEND_ALPHA(0, 15);
+    REG_BLDCNT    = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    REG_DISPCNT  |= DISPCNT_BG0_ON;
+    fdMapGridSetShake(1, 1, 1);
+    for (i = 0; i != 64; i++)
+    {
+        REG_BLDALPHA = ((BLEND_WEIGHT_MAX - 1 - (i >> 2)) << 8) | (i >> 2);
+        fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCount = syRandom() & 7;
+        syFieldScriptWait(1);
+    }
+    syFieldScriptWait(60);
+    REG_BLDALPHA = BLEND_ALPHA(15, 0);
+    REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3;
+    fdMapGridSetShake(3, 3, 1);
+    {
+        Uint32 j = 0;
 
-		do
-		{
-			j++;
-			if ((j & 3) == 0)
-			{
-				VECTOR3        velocity;
-				EFFECT_OPTIONS options;
+        do
+        {
+            j++;
+            if ((j & 3) == 0)
+            {
+                VECTOR3        velocity;
+                EFFECT_OPTIONS options;
 
-				options.priority = 1;
-				options.update   = scAirsRockSwirlDust;
-				velocity.x       = 0;
-				velocity.y       = 0;
-				velocity.z       = -toFIXED(2);
-				x                = toFIXED(syRandom() % 144) + toFIXED(256);
-				scFieldEffectSpawn(x,
-				                   0,
-				                   toFIXED(syRandom() % 144),
-				                   velocity.x,
-				                   velocity.y,
-				                   velocity.z,
-				                   EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
-				                   &options);
-			}
-			REG_BLDALPHA = (((j >> 4) & 0xf) << 8) | (BLEND_WEIGHT_MAX - ((j >> 4) & 0xf));
-			fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCount = syRandom() & 7;
-			syFieldScriptWait(1);
-		} while (j != 255);
-	}
-	fdMapGridCopyMetatilesTo(68, 0, 79, 0, 11, 10);
-	fdMapGridCopyMetatileAttributes(38, 9, 1, 1, 16, 9);
-	fdMapGridCopyMetatileAttributes(38, 9, 1, 1, 24, 9);
-	fdMapGridCenterOnFollowedPoint();
-	syFieldScriptWait(1);
-	REG_BLDCNT   = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	REG_BLDALPHA = BLEND_ALPHA(15, 0);
-	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
-	fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCount = SPRITE_COLOR_GREY;
-	for (i = 0; i != 65; i++)
-	{
-		REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
-		syFieldScriptWait(1);
-	}
-	syFieldCloseEvent(scAirsRockScrollWave);
-	fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneByte = 0;
-	syWait(30);
-	fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = NULL;
-	scFieldActorSetSpriteColor(fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL), SPRITE_COLOR_GREY);
-	syFieldMapGridWaitForShakeToSettle();
-	syFieldScriptWait(60);
-	REG_BLDCNT = 0;
-	syWindowLoadGraphics();
-	syPrintClear();
-	state = &MainRoutineStateWork;
-	mnWindowColorApply(state->windowHue, state->windowBrightness);
-	REG_BG1CNT &= ~BGCNT_PRIORITY(3);
-	REG_BG1CNT |= BGCNT_PRIORITY(1);
-	{
-		Sint32 *ownerId                      = &state->leaderActorId;
+                options.priority = 1;
+                options.update   = scAirsRockSwirlDust;
+                velocity.x       = 0;
+                velocity.y       = 0;
+                velocity.z       = -toFIXED(2);
+                x                = toFIXED(syRandom() % 144) + toFIXED(256);
+                scFieldEffectSpawn(x,
+                                   0,
+                                   toFIXED(syRandom() % 144),
+                                   velocity.x,
+                                   velocity.y,
+                                   velocity.z,
+                                   EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
+                                   &options);
+            }
+            REG_BLDALPHA = (((j >> 4) & 0xf) << 8) | (BLEND_WEIGHT_MAX - ((j >> 4) & 0xf));
+            fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCount = syRandom() & 7;
+            syFieldScriptWait(1);
+        } while (j != 255);
+    }
+    fdMapGridCopyMetatilesTo(68, 0, 79, 0, 11, 10);
+    fdMapGridCopyMetatileAttributes(38, 9, 1, 1, 16, 9);
+    fdMapGridCopyMetatileAttributes(38, 9, 1, 1, 24, 9);
+    fdMapGridCenterOnFollowedPoint();
+    syFieldScriptWait(1);
+    REG_BLDCNT   = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    REG_BLDALPHA = BLEND_ALPHA(15, 0);
+    fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+    fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
+    fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCount = SPRITE_COLOR_GREY;
+    for (i = 0; i != 65; i++)
+    {
+        REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
+        syFieldScriptWait(1);
+    }
+    syFieldCloseEvent(scAirsRockScrollWave);
+    fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneByte = 0;
+    syWait(30);
+    fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = NULL;
+    scFieldActorSetSpriteColor(fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL), SPRITE_COLOR_GREY);
+    syFieldMapGridWaitForShakeToSettle();
+    syFieldScriptWait(60);
+    REG_BLDCNT = 0;
+    syWindowLoadGraphics();
+    syPrintClear();
+    state = &MainRoutineStateWork;
+    mnWindowColorApply(state->windowHue, state->windowBrightness);
+    REG_BG1CNT &= ~BGCNT_PRIORITY(3);
+    REG_BG1CNT |= BGCNT_PRIORITY(1);
+    {
+        Sint32 *ownerId                      = &state->leaderActorId;
 
-		fdActorGet(*ownerId)->priorityFlags &= ~ACTOR_PRIORITY_IGNORES_RISES;
-		fdActorGet(*ownerId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-		{
-			Uint8 *flags = &fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->priorityFlags;
-			Uint8  v     = *flags | ACTOR_PRIORITY_AUTOMATIC;
+        fdActorGet(*ownerId)->priorityFlags &= ~ACTOR_PRIORITY_IGNORES_RISES;
+        fdActorGet(*ownerId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+        {
+            Uint8 *flags = &fdActorGet(ACTOR_TWISTER_ROCK_BY_THE_WALL)->priorityFlags;
+            Uint8  v     = *flags | ACTOR_PRIORITY_AUTOMATIC;
 
-			*flags       = v;
-		}
-		syScriptCameraFollowActor(*ownerId, 1);
-	}
-	fdCameraWaitForArrival();
-	fdScriptSetFlag(FLAG_AIRS_ROCK_WALL_CLEARED);
-	fdScriptEnd();
+            *flags       = v;
+        }
+        syScriptCameraFollowActor(*ownerId, 1);
+    }
+    fdCameraWaitForArrival();
+    fdScriptSetFlag(FLAG_AIRS_ROCK_WALL_CLEARED);
+    fdScriptEnd();
 }
 
 // Felix is caught by one of the little whirlwinds the cliff's statues breathe: he spins round on
@@ -954,154 +954,154 @@ void scAirsRockWhirlwindClearsWall(void)
 // its top; otherwise he drops off where it ends.
 void scAirsRockRideWhirlwind(void)
 {
-	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	ACTOR *ride   = &leader->watchedActor->actor;
-	ACTOR *statue, *camera;
-	Sint32 rise;
-	FIXED  dx, dz;
-	Sint32 moved, i, height;
-	Sint32 angle;
-	Uint16 facing;
+    ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    ACTOR *ride   = &leader->watchedActor->actor;
+    ACTOR *statue, *camera;
+    Sint32 rise;
+    FIXED  dx, dz;
+    Sint32 moved, i, height;
+    Sint32 angle;
+    Uint16 facing;
 
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	leader->motionFlags = ACTOR_FLOATS;
-	fdActorSetSpriteFlags(leader, 0);
-	syGameFlagSet(FLAG_RIDING_WHIRLWIND);
-	sySoundPlay(SE_KIRIN);
-	rise = 0;
-	while (ride->sceneByte != 0)
-	{
-		leader->x.fixed = ride->x.fixed;
-		leader->y.fixed = ride->y.fixed + rise;
-		leader->z.fixed = ride->z.fixed;
-		if (rise < toFIXED(12))
-			rise += toFIXED(1) / 10;
-		leader->facing         = (Uint8)TickCount * FACING_STEP;
-		leader->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
-		sySynch(1);
-	}
-	sySoundPlay(SE_STOP_ACTION_SE);
-	facing = ride->facing;
-	if (facing == FACING_NORTH)
-	{
-		statue                = &ride->watchedActor->actor;
-		dx                    = 0;
-		dz                    = 0;
-		leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
-		leader->x.fixed =
-			FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(leader->x.fixed) & ~1) + 1);
-		leader->y.fixed = FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(ride->y.fixed) & ~1) + 3);
-		leader->z.fixed =
-			FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(leader->z.fixed) & ~1) + 1);
-		for (i = 0; i != 60; i++)
-		{
-			moved = 0;
-			if (PerWork.data & KEY_UP)
-			{
-				dx             = 0;
-				dz             = -toFIXED(16);
-				leader->facing = FACING_NORTH;
-				moved          = 1;
-			}
-			if (PerWork.data & KEY_RIGHT)
-			{
-				dx             = toFIXED(16);
-				dz             = 0;
-				leader->facing = FACING_EAST;
-				moved          = 1;
-			}
-			if (PerWork.data & KEY_LEFT)
-			{
-				dx             = -toFIXED(16);
-				leader->facing = FACING_WEST;
-				dz             = 0;
-				moved          = 1;
-			}
-			if (moved
-			    && METATILE_CODE(fdMapMetatileGetAttributes(
-					   2,
-					   FIELD_METATILE(ride->x.fixed + dx),
-					   FIELD_METATILE(ride->z.fixed - ride->y.fixed + dz)))
-			           != METATILE_MARK_BLOCKED)
-				goto found;
-			sySynch(1);
-		}
-		dx             = 0;
-		leader->facing = FACING_NORTH;
-		dz             = -toFIXED(16);
-		if ((Uint16)METATILE_CODE(
-				fdMapMetatileGetAttributes(2,
-		                                   FIELD_METATILE(ride->x.fixed),
-		                                   FIELD_METATILE(ride->z.fixed - ride->y.fixed + dz)))
-		    == METATILE_MARK_BLOCKED)
-		{
-			dx             = toFIXED(16);
-			dz             = 0;
-			leader->facing = FACING_EAST;
-			if ((Uint16)METATILE_CODE(
-					fdMapMetatileGetAttributes(2,
-			                                   FIELD_METATILE(ride->x.fixed + dx),
-			                                   FIELD_METATILE(ride->z.fixed - ride->y.fixed)))
-			    == METATILE_MARK_BLOCKED)
-			{
-				dx             = -toFIXED(16);
-				leader->facing = FACING_WEST;
-			}
-		}
-	found:
-		// The statue's sceneCount holds the layer of the ledge he lands on.
-		height = fdMapGetTerrainHeight(statue->sceneCount, ride->x.fixed + dx, ride->z.fixed + dz);
-		leader->y.fixed      = height;
-		leader->groundHeight = height;
-		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
-		sySynch(6);
-		sySoundPlay(SE_JUMP);
-		fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
-		leader->speedLimit    = toFIXED(2);
-		leader->acceleration  = toFIXED(1) / 2;
-		leader->velocityY     = toFIXED(4);
-		leader->motionFlags   = ACTOR_FALLS;
-		leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-		leader->layer         = statue->sceneCount;
-		scFieldActorSetMoveTargetFX(
-			leader, leader->x.fixed + dx, leader->y.fixed, leader->z.fixed + dz);
-		fdActorWaitUntilLanded(leader);
-		scFieldActorWaitForMove(leader);
-		fdActorSetSpriteFlags(leader, 1);
-		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	}
-	else
-	{
-		angle           = ride->facing;
-		leader->x.fixed = FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(ride->x.fixed) & ~1)
-		                                             + (angle = FACING_EIGHTH_INDEX(angle)) - 1);
-		leader->z.fixed =
-			FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(ride->z.fixed) & ~1) - (angle & 2) + 1);
-		fdActorSetSpriteFlags(leader, 1);
-		leader->velocityY     = toFIXED(6);
-		leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-		leader->motionFlags   = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-		camera               = fdCameraGetActor();
-		camera->speedLimit   = toFIXED(8);
-		camera->acceleration = toFIXED(1);
-		camera->motionFlags  = 0;
-		scFieldActorSetMoveTargetFX(camera,
-		                            leader->x.fixed,
-		                            fdMapGetTerrainHeight(0, leader->x.fixed, leader->z.fixed),
-		                            leader->z.fixed);
-		fdActorWaitUntilLanded(leader);
-		scFieldActorWaitForMove(camera);
-	}
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-		ACTOR_PRIORITY_IGNORES_RISES;
-	fdScriptClearFlag(FLAG_RIDING_WHIRLWIND);
-	syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
-	fdCameraWaitForArrival();
-	sySynch(10);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    leader->motionFlags = ACTOR_FLOATS;
+    fdActorSetSpriteFlags(leader, 0);
+    syGameFlagSet(FLAG_RIDING_WHIRLWIND);
+    sySoundPlay(SE_KIRIN);
+    rise = 0;
+    while (ride->sceneByte != 0)
+    {
+        leader->x.fixed = ride->x.fixed;
+        leader->y.fixed = ride->y.fixed + rise;
+        leader->z.fixed = ride->z.fixed;
+        if (rise < toFIXED(12))
+            rise += toFIXED(1) / 10;
+        leader->facing         = (Uint8)TickCount * FACING_STEP;
+        leader->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
+        sySynch(1);
+    }
+    sySoundPlay(SE_STOP_ACTION_SE);
+    facing = ride->facing;
+    if (facing == FACING_NORTH)
+    {
+        statue                = &ride->watchedActor->actor;
+        dx                    = 0;
+        dz                    = 0;
+        leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
+        leader->x.fixed =
+            FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(leader->x.fixed) & ~1) + 1);
+        leader->y.fixed = FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(ride->y.fixed) & ~1) + 3);
+        leader->z.fixed =
+            FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(leader->z.fixed) & ~1) + 1);
+        for (i = 0; i != 60; i++)
+        {
+            moved = 0;
+            if (PerWork.data & KEY_UP)
+            {
+                dx             = 0;
+                dz             = -toFIXED(16);
+                leader->facing = FACING_NORTH;
+                moved          = 1;
+            }
+            if (PerWork.data & KEY_RIGHT)
+            {
+                dx             = toFIXED(16);
+                dz             = 0;
+                leader->facing = FACING_EAST;
+                moved          = 1;
+            }
+            if (PerWork.data & KEY_LEFT)
+            {
+                dx             = -toFIXED(16);
+                leader->facing = FACING_WEST;
+                dz             = 0;
+                moved          = 1;
+            }
+            if (moved
+                && METATILE_CODE(fdMapMetatileGetAttributes(
+                       2,
+                       FIELD_METATILE(ride->x.fixed + dx),
+                       FIELD_METATILE(ride->z.fixed - ride->y.fixed + dz)))
+                       != METATILE_MARK_BLOCKED)
+                goto found;
+            sySynch(1);
+        }
+        dx             = 0;
+        leader->facing = FACING_NORTH;
+        dz             = -toFIXED(16);
+        if ((Uint16)METATILE_CODE(
+                fdMapMetatileGetAttributes(2,
+                                           FIELD_METATILE(ride->x.fixed),
+                                           FIELD_METATILE(ride->z.fixed - ride->y.fixed + dz)))
+            == METATILE_MARK_BLOCKED)
+        {
+            dx             = toFIXED(16);
+            dz             = 0;
+            leader->facing = FACING_EAST;
+            if ((Uint16)METATILE_CODE(
+                    fdMapMetatileGetAttributes(2,
+                                               FIELD_METATILE(ride->x.fixed + dx),
+                                               FIELD_METATILE(ride->z.fixed - ride->y.fixed)))
+                == METATILE_MARK_BLOCKED)
+            {
+                dx             = -toFIXED(16);
+                leader->facing = FACING_WEST;
+            }
+        }
+    found:
+        // The statue's sceneCount holds the layer of the ledge he lands on.
+        height = fdMapGetTerrainHeight(statue->sceneCount, ride->x.fixed + dx, ride->z.fixed + dz);
+        leader->y.fixed      = height;
+        leader->groundHeight = height;
+        fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
+        sySynch(6);
+        sySoundPlay(SE_JUMP);
+        fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
+        leader->speedLimit    = toFIXED(2);
+        leader->acceleration  = toFIXED(1) / 2;
+        leader->velocityY     = toFIXED(4);
+        leader->motionFlags   = ACTOR_FALLS;
+        leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+        leader->layer         = statue->sceneCount;
+        scFieldActorSetMoveTargetFX(
+            leader, leader->x.fixed + dx, leader->y.fixed, leader->z.fixed + dz);
+        fdActorWaitUntilLanded(leader);
+        scFieldActorWaitForMove(leader);
+        fdActorSetSpriteFlags(leader, 1);
+        leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    }
+    else
+    {
+        angle           = ride->facing;
+        leader->x.fixed = FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(ride->x.fixed) & ~1)
+                                                     + (angle = FACING_EIGHTH_INDEX(angle)) - 1);
+        leader->z.fixed =
+            FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(ride->z.fixed) & ~1) - (angle & 2) + 1);
+        fdActorSetSpriteFlags(leader, 1);
+        leader->velocityY     = toFIXED(6);
+        leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+        leader->motionFlags   = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+        fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+        camera               = fdCameraGetActor();
+        camera->speedLimit   = toFIXED(8);
+        camera->acceleration = toFIXED(1);
+        camera->motionFlags  = 0;
+        scFieldActorSetMoveTargetFX(camera,
+                                    leader->x.fixed,
+                                    fdMapGetTerrainHeight(0, leader->x.fixed, leader->z.fixed),
+                                    leader->z.fixed);
+        fdActorWaitUntilLanded(leader);
+        scFieldActorWaitForMove(camera);
+    }
+    fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+    fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
+    fdScriptClearFlag(FLAG_RIDING_WHIRLWIND);
+    syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
+    fdCameraWaitForArrival();
+    sySynch(10);
+    fdScriptEnd();
 }
 
 #include "shared/position_flat_distance.h"
@@ -1119,95 +1119,95 @@ extern Uint32 AirsRockWhirlwindFadesScript[];
 // wall or another statue.
 void scAirsRockMoveWhirlwind(ACTOR *shot)
 {
-	ACTOR       *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE *state  = RamHeapSlots->fieldState;
-	FIXED        speed  = toFIXED(3) / 2;
-	Sint32       sound  = SE_SAND_EMERGE;
-	ACTOR       *other, *launcher;
-	Sint32       i;
-	Sint32      *leaderPos;
-	Sint32      *shotPos;
-	ACTOR      **actors;
+    ACTOR       *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    FIELD_STATE *state  = RamHeapSlots->fieldState;
+    FIXED        speed  = toFIXED(3) / 2;
+    Sint32       sound  = SE_SAND_EMERGE;
+    ACTOR       *other, *launcher;
+    Sint32       i;
+    Sint32      *leaderPos;
+    Sint32      *shotPos;
+    ACTOR      **actors;
 
-	if (state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 || state->item != 0
-	    || MainRoutineStateWork.movementMode == LEADER_MOVEMENT_SAND)
-	{
-		fdActorSetAnimationSpeed(shot, 0);
-		return;
-	}
-	fdActorSetAnimationSpeed(shot, ANIM_STEP_NORMAL);
-	if (METATILE_CODE(fdMapMetatileGetAttributes(
-			2, FIELD_METATILE(shot->x.fixed), FIELD_METATILE(shot->z.fixed - shot->y.fixed)))
-	    == METATILE_MARK_WHIRLWIND_END)
-	{
-	end:
-		fdActorPlaySoundInView(shot, sound);
-		shot->sceneByte = 0;
-		shot->update    = 0;
-		if (shot->facing == FACING_NORTH)
-			fdActorStartScript(shot, AirsRockWhirlwindRisesScript);
-		else
-			fdActorStartScript(shot, AirsRockWhirlwindFadesScript);
-		return;
-	}
-	if (shot->sceneCount == 0)
-	{
-		// i first says whether the whirlwind is beside the leader; the loop below reuses it as the
-		// actor index.
-		i         = 0;
-		leaderPos = &leader->x.fixed;
-		shotPos   = &shot->x.fixed;
-		if (MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS)
-		{
-			if (scPosDistanceAbove(leaderPos, shotPos) <= WHIRLWIND_REACH_ON_WALL
-			    && FIELD_METATILE(leader->z.fixed) == FIELD_METATILE(shot->z.fixed))
-				i = 1;
-		}
-		else
-		{
-			if (scPosFlatDistance(leaderPos, shotPos) <= WHIRLWIND_REACH
-			    && FIELD_METATILE(leader->y.fixed) == FIELD_METATILE(shot->y.fixed))
-				i = 1;
-		}
-		if (i && !syGameFlagGet(FLAG_FIELD_HANDLING_REQUESTS))
-		{
-			leader->facing                           = shot->facing;
-			leader->watchedActor                     = (FIELD_OBJECT *)shot;
-			leader->priorityFlags                   &= ~ACTOR_PRIORITY_AUTOMATIC;
-			((FIELD_SPR *)leader->sprite)->priority  = ((FIELD_SPR *)shot->sprite)->priority;
-			state->raisedCue                         = RAISED_RIDE_WHIRLWIND;
-			MainRoutineStateWork.movementMode        = LEADER_MOVEMENT_WALK;
-			shot->sceneCount                         = 1;
-			shot->sceneByte                          = 1;
-		}
-	}
-	actors = &state->actors[ACTOR_FIRST_PLACED];
-	for (i = ACTOR_FIRST_PLACED; i != FIELD_TREASURE_ACTOR; i++)
-	{
-		other = *actors++;
-		if (other->script != 0)
-		{
-			launcher = &shot->watchedActor->actor;
-			if (FIELD_METATILE(launcher->x.fixed) != FIELD_METATILE(other->x.fixed)
-			    || FIELD_METATILE(launcher->y.fixed) != FIELD_METATILE(other->y.fixed)
-			    || FIELD_METATILE(launcher->z.fixed) != FIELD_METATILE(other->z.fixed))
-			{
-				if (scPosFlatDistance(&other->x.fixed, &shot->x.fixed) <= WHIRLWIND_REACH
-				    && FIELD_METATILE(other->y.fixed) == FIELD_METATILE(shot->y.fixed))
-					goto end;
-			}
-		}
-	}
-	if (shot->facing == FACING_NORTH)
-	{
-		shot->x.fixed += syMulFX(syCos(shot->facing), speed);
-		shot->y.fixed -= syMulFX(syMathSin(shot->facing), speed);
-	}
-	else
-	{
-		shot->x.fixed += syMulFX(syCos(shot->facing), speed);
-		shot->z.fixed += syMulFX(syMathSin(shot->facing), speed);
-	}
+    if (state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 || state->item != 0
+        || MainRoutineStateWork.movementMode == LEADER_MOVEMENT_SAND)
+    {
+        fdActorSetAnimationSpeed(shot, 0);
+        return;
+    }
+    fdActorSetAnimationSpeed(shot, ANIM_STEP_NORMAL);
+    if (METATILE_CODE(fdMapMetatileGetAttributes(
+            2, FIELD_METATILE(shot->x.fixed), FIELD_METATILE(shot->z.fixed - shot->y.fixed)))
+        == METATILE_MARK_WHIRLWIND_END)
+    {
+    end:
+        fdActorPlaySoundInView(shot, sound);
+        shot->sceneByte = 0;
+        shot->update    = 0;
+        if (shot->facing == FACING_NORTH)
+            fdActorStartScript(shot, AirsRockWhirlwindRisesScript);
+        else
+            fdActorStartScript(shot, AirsRockWhirlwindFadesScript);
+        return;
+    }
+    if (shot->sceneCount == 0)
+    {
+        // i first says whether the whirlwind is beside the leader; the loop below reuses it as the
+        // actor index.
+        i         = 0;
+        leaderPos = &leader->x.fixed;
+        shotPos   = &shot->x.fixed;
+        if (MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS)
+        {
+            if (scPosDistanceAbove(leaderPos, shotPos) <= WHIRLWIND_REACH_ON_WALL
+                && FIELD_METATILE(leader->z.fixed) == FIELD_METATILE(shot->z.fixed))
+                i = 1;
+        }
+        else
+        {
+            if (scPosFlatDistance(leaderPos, shotPos) <= WHIRLWIND_REACH
+                && FIELD_METATILE(leader->y.fixed) == FIELD_METATILE(shot->y.fixed))
+                i = 1;
+        }
+        if (i && !syGameFlagGet(FLAG_FIELD_HANDLING_REQUESTS))
+        {
+            leader->facing                           = shot->facing;
+            leader->watchedActor                     = (FIELD_OBJECT *)shot;
+            leader->priorityFlags                   &= ~ACTOR_PRIORITY_AUTOMATIC;
+            ((FIELD_SPR *)leader->sprite)->priority  = ((FIELD_SPR *)shot->sprite)->priority;
+            state->raisedCue                         = RAISED_RIDE_WHIRLWIND;
+            MainRoutineStateWork.movementMode        = LEADER_MOVEMENT_WALK;
+            shot->sceneCount                         = 1;
+            shot->sceneByte                          = 1;
+        }
+    }
+    actors = &state->actors[ACTOR_FIRST_PLACED];
+    for (i = ACTOR_FIRST_PLACED; i != FIELD_TREASURE_ACTOR; i++)
+    {
+        other = *actors++;
+        if (other->script != 0)
+        {
+            launcher = &shot->watchedActor->actor;
+            if (FIELD_METATILE(launcher->x.fixed) != FIELD_METATILE(other->x.fixed)
+                || FIELD_METATILE(launcher->y.fixed) != FIELD_METATILE(other->y.fixed)
+                || FIELD_METATILE(launcher->z.fixed) != FIELD_METATILE(other->z.fixed))
+            {
+                if (scPosFlatDistance(&other->x.fixed, &shot->x.fixed) <= WHIRLWIND_REACH
+                    && FIELD_METATILE(other->y.fixed) == FIELD_METATILE(shot->y.fixed))
+                    goto end;
+            }
+        }
+    }
+    if (shot->facing == FACING_NORTH)
+    {
+        shot->x.fixed += syMulFX(syCos(shot->facing), speed);
+        shot->y.fixed -= syMulFX(syMathSin(shot->facing), speed);
+    }
+    else
+    {
+        shot->x.fixed += syMulFX(syCos(shot->facing), speed);
+        shot->z.fixed += syMulFX(syMathSin(shot->facing), speed);
+    }
 }
 
 // A statue's update: while no Psynergy, menu or item is in use it counts ticks, and every
@@ -1215,105 +1215,105 @@ void scAirsRockMoveWhirlwind(ACTOR *shot)
 // puff of dust, with a gust's sound unless the leader is riding one.
 void scAirsRockStatueBreathesWhirlwind(ACTOR *actor)
 {
-	FIELD_STATE   *state = RamHeapSlots->fieldState;
-	ACTOR         *shot;
-	VECTOR3        pos;
-	EFFECT_OPTIONS options;
+    FIELD_STATE   *state = RamHeapSlots->fieldState;
+    ACTOR         *shot;
+    VECTOR3        pos;
+    EFFECT_OPTIONS options;
 
-	if (state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 || state->item != 0)
-		return;
-	if (actor->timer == WHIRLWIND_BREATH_TICKS)
-	{
-		if (!fdScriptGetFlag(FLAG_RIDING_WHIRLWIND))
-			fdActorPlaySoundInView(actor, SE_FLAME_FLARE);
-		if (actor->facing == FACING_NORTH)
-		{
-			pos.x = actor->x.fixed;
-			pos.z = actor->z.fixed;
-		}
-		else
-		{
-			pos.x = actor->x.fixed + syMathMulFX(toFIXED(8), syCos(actor->facing));
-			pos.z = actor->z.fixed + syMathMulFX(toFIXED(8), syMathSin(actor->facing));
-		}
-		shot = scFieldActorCreate(SPRITE_WHIRLWIND, pos.x, actor->y.fixed, pos.z);
-		fdActorSelectAnimation(shot, 2);
-		fdActorSetSpriteFlags(shot, 0);
-		((FIELD_SPR *)shot->sprite)->priority = 1;
-		shot->motionFlags                     = 0;
-		shot->sceneCount                      = 0;
-		shot->sceneByte                       = 0;
-		shot->facing                          = actor->facing;
-		shot->update                          = scAirsRockMoveWhirlwind;
-		shot->watchedActor                    = (FIELD_OBJECT *)actor;
-		actor->timer                          = 0;
-		options.priority                      = 1;
-		options.palette                       = 7;
-		scFieldEffectSpawn(pos.x,
-		                   actor->y.fixed,
-		                   pos.z - toFIXED(6),
-		                   0,
-		                   0,
-		                   0,
-		                   EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-		                   &options);
-	}
-	actor->timer++;
+    if (state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 || state->item != 0)
+        return;
+    if (actor->timer == WHIRLWIND_BREATH_TICKS)
+    {
+        if (!fdScriptGetFlag(FLAG_RIDING_WHIRLWIND))
+            fdActorPlaySoundInView(actor, SE_FLAME_FLARE);
+        if (actor->facing == FACING_NORTH)
+        {
+            pos.x = actor->x.fixed;
+            pos.z = actor->z.fixed;
+        }
+        else
+        {
+            pos.x = actor->x.fixed + syMathMulFX(toFIXED(8), syCos(actor->facing));
+            pos.z = actor->z.fixed + syMathMulFX(toFIXED(8), syMathSin(actor->facing));
+        }
+        shot = scFieldActorCreate(SPRITE_WHIRLWIND, pos.x, actor->y.fixed, pos.z);
+        fdActorSelectAnimation(shot, 2);
+        fdActorSetSpriteFlags(shot, 0);
+        ((FIELD_SPR *)shot->sprite)->priority = 1;
+        shot->motionFlags                     = 0;
+        shot->sceneCount                      = 0;
+        shot->sceneByte                       = 0;
+        shot->facing                          = actor->facing;
+        shot->update                          = scAirsRockMoveWhirlwind;
+        shot->watchedActor                    = (FIELD_OBJECT *)actor;
+        actor->timer                          = 0;
+        options.priority                      = 1;
+        options.palette                       = 7;
+        scFieldEffectSpawn(pos.x,
+                           actor->y.fixed,
+                           pos.z - toFIXED(6),
+                           0,
+                           0,
+                           0,
+                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                           &options);
+    }
+    actor->timer++;
 }
 
 // Nothing visible happens as Felix starts to push one of the cliff's pillars, or casts Move on one;
 // the game takes it off the metatiles it was closing so that it can slide.
 void scAirsRockLiftPillar(void)
 {
-	FIELD_STATE *state = RamHeapSlots->fieldState;
+    FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	fdActorLiftTargetBlock(AirsRockEntrancePillars);
-	scBlocksUnmarkMetatiles(state->movedBlock);
+    fdActorLiftTargetBlock(AirsRockEntrancePillars);
+    scBlocksUnmarkMetatiles(state->movedBlock);
 }
 
 // Once Felix has pushed or moved one of the cliff's pillars: if it now stands over a gap it drops
 // into it with a thump, closing the gap so the party can walk over it, and it stays there for good.
 void scAirsRockPlacePillar(void)
 {
-	ACTOR *actor = FieldStateWork->movedBlock;
-	Sint32 x, z;
+    ACTOR *actor = FieldStateWork->movedBlock;
+    Sint32 x, z;
 
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	fdActorPlaceMovedBlock();
-	scBlocksMarkMetatiles(((Uint8 *)AirsRockEntrancePillars));
-	if (fdMapGetTerrainHeight(2, actor->x.fixed, actor->z.fixed) != actor->y.fixed)
-	{
-		actor->layer       = 2;
-		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		fdActorWaitUntilLanded(actor);
-		fdActorWaitUntilLanded(actor);
-		fdScriptPlaySound(SE_THUMP);
-		actor->motionFlags = 0;
-		actor->layer       = 0;
-	}
-	x = FIELD_METATILE(actor->x.fixed);
-	z = FIELD_METATILE(actor->z.fixed);
-	if (x == 16 && z == 43)
-		fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST);
-	else if (x == 45 && z == 45)
-		fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND);
-	else if (x == 21 && z == 48)
-		fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD);
-	else if (x == 39 && z == 49)
-		fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH);
-	else if (x == 49 && z == 18)
-		fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH);
-	fdScriptEnd();
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    fdActorPlaceMovedBlock();
+    scBlocksMarkMetatiles(((Uint8 *)AirsRockEntrancePillars));
+    if (fdMapGetTerrainHeight(2, actor->x.fixed, actor->z.fixed) != actor->y.fixed)
+    {
+        actor->layer       = 2;
+        actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+        fdActorWaitUntilLanded(actor);
+        fdActorWaitUntilLanded(actor);
+        fdScriptPlaySound(SE_THUMP);
+        actor->motionFlags = 0;
+        actor->layer       = 0;
+    }
+    x = FIELD_METATILE(actor->x.fixed);
+    z = FIELD_METATILE(actor->z.fixed);
+    if (x == 16 && z == 43)
+        fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST);
+    else if (x == 45 && z == 45)
+        fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND);
+    else if (x == 21 && z == 48)
+        fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD);
+    else if (x == 39 && z == 49)
+        fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH);
+    else if (x == 49 && z == 18)
+        fdScriptSetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH);
+    fdScriptEnd();
 }
 
 // Felix casts Frost on the puddle on the cliff and it freezes into a pillar of ice.
 void scAirsRockFreezePuddle(void)
 {
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	fdFlagBlockApplyFlags((Sint32)((Uint8 *)AirsRockFrozenPuddle));
-	fdScriptEnd();
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    fdFlagBlockApplyFlags((Sint32)((Uint8 *)AirsRockFrozenPuddle));
+    fdScriptEnd();
 }
 
 extern Sint32 AirsRockRubbleScript[];
@@ -1326,66 +1326,66 @@ extern Sint32 AirsRockRubbleScript[];
 // A rock crumbles at x, z into rubble that scatters, shaking the screen.
 void scAirsRockCrumbleRock(Sint32 x, Sint32 z)
 {
-	ACTOR         *first, *rock;
-	EFFECT_OPTIONS options;
-	VECTOR3        scatter;
-	Sint32         i;
-	FIXED          radius = toFIXED(64);
+    ACTOR         *first, *rock;
+    EFFECT_OPTIONS options;
+    VECTOR3        scatter;
+    Sint32         i;
+    FIXED          radius = toFIXED(64);
 
-	first                 = scFieldActorCreate(SPRITE_ROCK, x, 0, z);
-	options.priority      = 1;
-	options.startScaleX   = toFIXED(2);
-	options.startScaleY   = toFIXED(2);
-	for (i = 0; i != CRUMBLE_DUST_CLOUDS; i++)
-	{
-		scatter.x = x + toFIXED(syRandom() & 63) - toFIXED(32);
-		scatter.y = (syRandom() & 15) << 12;
-		scatter.z = z + toFIXED(syRandom() & 63) - toFIXED(48);
-		if (i & 3)
-			scFieldEffectSpawn(scatter.x,
-			                   0,
-			                   scatter.z,
-			                   0,
-			                   scatter.y,
-			                   0,
-			                   EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
-			                   &options);
-		else
-			scFieldEffectSpawn(scatter.x,
-			                   0,
-			                   scatter.z,
-			                   0,
-			                   scatter.y,
-			                   0,
-			                   EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
-			                   &options);
-	}
-	for (i = 0; i != CRUMBLE_PIECES; i++)
-	{
-		rock = first;
-		if (i != 0)
-		{
-			rock = scFieldActorCreate(SPRITE_ROCK, x, 0, z);
-			fdSpriteShareVRAMCacheEntry(rock->sprite, first->sprite);
-		}
-		fdActorSetSpriteFlags(rock, 0);
-		fdActorStartScript(rock, AirsRockRubbleScript);
-		fdActorSelectAnimation(rock, 2);
-		rock->velocityY                       = toFIXED(syRandom() & 3) + toFIXED(4);
-		rock->gravity                         = toFIXED(1) / 5;
-		rock->bounce                          = toFIXED(2) / 5;
-		rock->scaleX                          = toFIXED(4) / 5;
-		rock->scaleY                          = toFIXED(4) / 5;
-		rock->speedLimit                      = toFIXED(4) / 5;
-		scatter.y                             = syRandom() & 7;
-		scatter.x                             = syMulFX(syCos(scatter.y * FACING_STEP), radius);
-		scatter.z                             = syMulFX(syMathSin(scatter.y * FACING_STEP), radius);
-		((FIELD_SPR *)rock->sprite)->priority = 1;
-		scFieldActorSetMoveTargetFX(
-			rock, rock->x.fixed + scatter.x, rock->y.fixed, rock->z.fixed + scatter.z);
-	}
-	fdMapGridSetShake(5, 7, 1);
-	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+    first                 = scFieldActorCreate(SPRITE_ROCK, x, 0, z);
+    options.priority      = 1;
+    options.startScaleX   = toFIXED(2);
+    options.startScaleY   = toFIXED(2);
+    for (i = 0; i != CRUMBLE_DUST_CLOUDS; i++)
+    {
+        scatter.x = x + toFIXED(syRandom() & 63) - toFIXED(32);
+        scatter.y = (syRandom() & 15) << 12;
+        scatter.z = z + toFIXED(syRandom() & 63) - toFIXED(48);
+        if (i & 3)
+            scFieldEffectSpawn(scatter.x,
+                               0,
+                               scatter.z,
+                               0,
+                               scatter.y,
+                               0,
+                               EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
+                               &options);
+        else
+            scFieldEffectSpawn(scatter.x,
+                               0,
+                               scatter.z,
+                               0,
+                               scatter.y,
+                               0,
+                               EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
+                               &options);
+    }
+    for (i = 0; i != CRUMBLE_PIECES; i++)
+    {
+        rock = first;
+        if (i != 0)
+        {
+            rock = scFieldActorCreate(SPRITE_ROCK, x, 0, z);
+            fdSpriteShareVRAMCacheEntry(rock->sprite, first->sprite);
+        }
+        fdActorSetSpriteFlags(rock, 0);
+        fdActorStartScript(rock, AirsRockRubbleScript);
+        fdActorSelectAnimation(rock, 2);
+        rock->velocityY                       = toFIXED(syRandom() & 3) + toFIXED(4);
+        rock->gravity                         = toFIXED(1) / 5;
+        rock->bounce                          = toFIXED(2) / 5;
+        rock->scaleX                          = toFIXED(4) / 5;
+        rock->scaleY                          = toFIXED(4) / 5;
+        rock->speedLimit                      = toFIXED(4) / 5;
+        scatter.y                             = syRandom() & 7;
+        scatter.x                             = syMulFX(syCos(scatter.y * FACING_STEP), radius);
+        scatter.z                             = syMulFX(syMathSin(scatter.y * FACING_STEP), radius);
+        ((FIELD_SPR *)rock->sprite)->priority = 1;
+        scFieldActorSetMoveTargetFX(
+            rock, rock->x.fixed + scatter.x, rock->y.fixed, rock->z.fixed + scatter.z);
+    }
+    fdMapGridSetShake(5, 7, 1);
+    fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
 // Felix casts Whirlwind on the twister rock at the top of Air's Rock: it glows, the light turns
@@ -1394,151 +1394,151 @@ void scAirsRockCrumbleRock(Sint32 x, Sint32 z)
 // rock turns grey, spent.
 void scAirsRockWhirlwindOpensTheTop(void)
 {
-	Uint16 *buf = syHeapAllocate(LIGHTNING_TILES * TILE_SIZE_4BPP);
-	Uint16 *metatile;
-	ACTOR  *spark;
-	Uint32  i;
+    Uint16 *buf = syHeapAllocate(LIGHTNING_TILES * TILE_SIZE_4BPP);
+    Uint16 *metatile;
+    ACTOR  *spark;
+    Uint32  i;
 
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	REG_DISPCNT &= ~DISPCNT_BG0_ON;
-	syIOWrite16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
-	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_LIGHTNING_TILES), buf);
-	syDMAXCopy(buf,
-	           (void *)BG_CHAR_BLOCK(0),
-	           DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4),
-	           REG_DMA3);
-	syHeapRelease(buf);
-	DMA_FILL16(0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK), BG_SCREEN_SIZE);
-	buf = syHeapAllocate(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(Uint16));
-	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_LIGHTNING_MAP), buf);
-	metatile = buf;
-	// The map's tile numbers less 512.
-	for (i = 0; i != LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS; i++)
-	{
-		*metatile &= 0xfcff;
-		metatile++;
-	}
-	metatile = buf;
-	for (i = 0; i != LIGHTNING_MAP_ROWS; i++)
-	{
-		syDMAXCopy(metatile,
-		           (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) + i * MAP_ROW_BYTES),
-		           DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(Uint16) / 4),
-		           REG_DMA3);
-		metatile += LIGHTNING_MAP_COLUMNS;
-	}
-	syHeapRelease(buf);
-	fdScriptPlaySound(SE_GLITTER);
-	fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sceneCount = SPRITE_COLOR_BLUE_TINT;
-	fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sceneByte  = 1;
-	fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update     = scAirsRockFlickerTarget;
-	for (i = 0; i != 45; i++)
-	{
-		if ((TickCount & 3) == 0)
-		{
-			spark = (scFieldActorCreate(SPRITE_PARTICLE,
-			                            fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->x.fixed,
-			                            fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->y.fixed,
-			                            fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->z.fixed));
-			((FIELD_SPR *)spark->sprite)->priority =
-				((FIELD_SPR *)fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sprite)->priority;
-			spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-			spark->motionFlags    = 0;
-			spark->bounce         = spark->x.fixed;
-			spark->gravity        = toFIXED(3) / 2;
-			spark->sceneWord      = spark->z.fixed;
-			spark->speedLimit     = syRandom() & 0xffff;
-			fdActorSelectAnimation(spark, 7);
-			fdActorStartScript(spark, FieldEffectMediumScript);
-			fdActorSetSpriteFlags(spark, 0);
-			scFieldActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
-			spark->update = scAirsRockSpiralSpark;
-		}
-		syFieldScriptWait(1);
-	}
-	fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
-	fdPaletteFadeInterpolate(60);
-	syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
-	fdCameraWaitForArrival();
-	fdCameraSetSpeed(1);
-	fdCameraMoveTo(536, CAMERA_KEEP, 216, 1);
-	fdCameraWaitForArrival();
-	fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update = 0;
-	scFieldActorSetSpriteColor(fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP), SPRITE_COLOR_GREY);
-	REG_BLDALPHA      = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX);
-	REG_BLDCNT        = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	BgScrollWork[0].x = -120;
-	BgScrollWork[0].y = 16;
-	syWait(30);
-	fdScriptPlaySound(SE_ITEM_BREAK);
-	fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
-	fdPaletteFadeInterpolate(1);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->facing = FACING_SOUTH;
-	syWait(1);
-	fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
-	fdPaletteFadeInterpolate(8);
-	REG_DISPCNT |= DISPCNT_BG0_ON;
-	fdMapGridCopyMetatilesTo(52, 12, 29, 9, 9, 9);
-	fdMapGridCopyMetatilesTo(52, 76, 29, 73, 9, 9);
-	scAirsRockCrumbleRock(toFIXED(552), toFIXED(228));
-	for (i = 0; i != BLEND_WEIGHT_MAX * 2; i++)
-	{
-		REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - (i >> 1), BLEND_WEIGHT_MAX);
-		syWait(1);
-	}
-	BgScrollWork[0].x = -84;
-	BgScrollWork[0].y = 0;
-	syWait(1);
-	fdScriptPlaySound(SE_ITEM_BREAK);
-	fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
-	fdPaletteFadeInterpolate(1);
-	syWait(1);
-	fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
-	fdPaletteFadeInterpolate(8);
-	REG_DISPCNT |= DISPCNT_BG0_ON;
-	fdMapGridCopyMetatilesTo(52, 22, 29, 9, 9, 9);
-	fdMapGridCopyMetatilesTo(52, 86, 29, 73, 9, 9);
-	scAirsRockCrumbleRock(toFIXED(520), toFIXED(242));
-	for (i = 0; i != BLEND_WEIGHT_MAX * 2; i++)
-	{
-		REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - (i >> 1), BLEND_WEIGHT_MAX);
-		syWait(1);
-	}
-	fdScriptPlaySound(SE_CRASH);
-	fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
-	fdPaletteFadeInterpolate(1);
-	REG_DISPCNT &= ~DISPCNT_BG0_ON;
-	syFieldScriptWait(20);
-	scAirsRockCrumbleRock(toFIXED(512), toFIXED(198));
-	scAirsRockCrumbleRock(toFIXED(562), toFIXED(242));
-	scAirsRockCrumbleRock(toFIXED(521), toFIXED(223));
-	fdMapGridCopyMetatilesTo(62, 2, 29, 9, 9, 9);
-	fdMapGridCopyMetatileAttributes(62, 2, 9, 9, 29, 9);
-	fdMapGridCopyMetatilesTo(62, 66, 29, 73, 9, 9);
-	fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
-	fdPaletteFadeInterpolate(60);
-	syWait(60);
-	fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-	fdPaletteFadeInterpolate(60);
-	syWait(70);
-	syWindowLoadGraphics();
-	syPrintClear();
-	syFieldWindowColorApply(MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
-	REG_BLDCNT         = 0;
-	REG_DISPCNT       |= DISPCNT_BG0_ON;
-	BgScrollWork[0].x  = 0;
-	BgScrollWork[0].y  = 0;
-	fdScriptSetFlag(FLAG_AIRS_ROCK_TOP_OPENED);
-	fdScriptEnd();
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    REG_DISPCNT &= ~DISPCNT_BG0_ON;
+    syIOWrite16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
+    syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_LIGHTNING_TILES), buf);
+    syDMAXCopy(buf,
+               (void *)BG_CHAR_BLOCK(0),
+               DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4),
+               REG_DMA3);
+    syHeapRelease(buf);
+    DMA_FILL16(0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK), BG_SCREEN_SIZE);
+    buf = syHeapAllocate(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(Uint16));
+    syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_LIGHTNING_MAP), buf);
+    metatile = buf;
+    // The map's tile numbers less 512.
+    for (i = 0; i != LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS; i++)
+    {
+        *metatile &= 0xfcff;
+        metatile++;
+    }
+    metatile = buf;
+    for (i = 0; i != LIGHTNING_MAP_ROWS; i++)
+    {
+        syDMAXCopy(metatile,
+                   (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) + i * MAP_ROW_BYTES),
+                   DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(Uint16) / 4),
+                   REG_DMA3);
+        metatile += LIGHTNING_MAP_COLUMNS;
+    }
+    syHeapRelease(buf);
+    fdScriptPlaySound(SE_GLITTER);
+    fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sceneCount = SPRITE_COLOR_BLUE_TINT;
+    fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sceneByte  = 1;
+    fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update     = scAirsRockFlickerTarget;
+    for (i = 0; i != 45; i++)
+    {
+        if ((TickCount & 3) == 0)
+        {
+            spark = (scFieldActorCreate(SPRITE_PARTICLE,
+                                        fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->x.fixed,
+                                        fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->y.fixed,
+                                        fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->z.fixed));
+            ((FIELD_SPR *)spark->sprite)->priority =
+                ((FIELD_SPR *)fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sprite)->priority;
+            spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+            spark->motionFlags    = 0;
+            spark->bounce         = spark->x.fixed;
+            spark->gravity        = toFIXED(3) / 2;
+            spark->sceneWord      = spark->z.fixed;
+            spark->speedLimit     = syRandom() & 0xffff;
+            fdActorSelectAnimation(spark, 7);
+            fdActorStartScript(spark, FieldEffectMediumScript);
+            fdActorSetSpriteFlags(spark, 0);
+            scFieldActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
+            spark->update = scAirsRockSpiralSpark;
+        }
+        syFieldScriptWait(1);
+    }
+    fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
+    fdPaletteFadeInterpolate(60);
+    syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
+    fdCameraWaitForArrival();
+    fdCameraSetSpeed(1);
+    fdCameraMoveTo(536, CAMERA_KEEP, 216, 1);
+    fdCameraWaitForArrival();
+    fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update = 0;
+    scFieldActorSetSpriteColor(fdActorGet(ACTOR_TWISTER_ROCK_AT_THE_TOP), SPRITE_COLOR_GREY);
+    REG_BLDALPHA      = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX);
+    REG_BLDCNT        = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    BgScrollWork[0].x = -120;
+    BgScrollWork[0].y = 16;
+    syWait(30);
+    fdScriptPlaySound(SE_ITEM_BREAK);
+    fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
+    fdPaletteFadeInterpolate(1);
+    fdActorGet(MainRoutineStateWork.leaderActorId)->facing = FACING_SOUTH;
+    syWait(1);
+    fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
+    fdPaletteFadeInterpolate(8);
+    REG_DISPCNT |= DISPCNT_BG0_ON;
+    fdMapGridCopyMetatilesTo(52, 12, 29, 9, 9, 9);
+    fdMapGridCopyMetatilesTo(52, 76, 29, 73, 9, 9);
+    scAirsRockCrumbleRock(toFIXED(552), toFIXED(228));
+    for (i = 0; i != BLEND_WEIGHT_MAX * 2; i++)
+    {
+        REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - (i >> 1), BLEND_WEIGHT_MAX);
+        syWait(1);
+    }
+    BgScrollWork[0].x = -84;
+    BgScrollWork[0].y = 0;
+    syWait(1);
+    fdScriptPlaySound(SE_ITEM_BREAK);
+    fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
+    fdPaletteFadeInterpolate(1);
+    syWait(1);
+    fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
+    fdPaletteFadeInterpolate(8);
+    REG_DISPCNT |= DISPCNT_BG0_ON;
+    fdMapGridCopyMetatilesTo(52, 22, 29, 9, 9, 9);
+    fdMapGridCopyMetatilesTo(52, 86, 29, 73, 9, 9);
+    scAirsRockCrumbleRock(toFIXED(520), toFIXED(242));
+    for (i = 0; i != BLEND_WEIGHT_MAX * 2; i++)
+    {
+        REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - (i >> 1), BLEND_WEIGHT_MAX);
+        syWait(1);
+    }
+    fdScriptPlaySound(SE_CRASH);
+    fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
+    fdPaletteFadeInterpolate(1);
+    REG_DISPCNT &= ~DISPCNT_BG0_ON;
+    syFieldScriptWait(20);
+    scAirsRockCrumbleRock(toFIXED(512), toFIXED(198));
+    scAirsRockCrumbleRock(toFIXED(562), toFIXED(242));
+    scAirsRockCrumbleRock(toFIXED(521), toFIXED(223));
+    fdMapGridCopyMetatilesTo(62, 2, 29, 9, 9, 9);
+    fdMapGridCopyMetatileAttributes(62, 2, 9, 9, 29, 9);
+    fdMapGridCopyMetatilesTo(62, 66, 29, 73, 9, 9);
+    fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
+    fdPaletteFadeInterpolate(60);
+    syWait(60);
+    fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    fdPaletteFadeInterpolate(60);
+    syWait(70);
+    syWindowLoadGraphics();
+    syPrintClear();
+    syFieldWindowColorApply(MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
+    REG_BLDCNT         = 0;
+    REG_DISPCNT       |= DISPCNT_BG0_ON;
+    BgScrollWork[0].x  = 0;
+    BgScrollWork[0].y  = 0;
+    fdScriptSetFlag(FLAG_AIRS_ROCK_TOP_OPENED);
+    fdScriptEnd();
 }
 
 // The fog's blend weight at its thickest; it breathes down to half that.
@@ -1550,83 +1550,83 @@ void scAirsRockWhirlwindOpensTheTop(void)
 // lines ripple.
 void scAirsRockDriftFog(void)
 {
-	MAP_LAYER       *layer = fdMapGridGetLayer(2);
-	Sint16          *line  = AirsRockWaveLines;
-	Sint32           i;
-	volatile Uint16 *channel;
+    MAP_LAYER       *layer = fdMapGridGetLayer(2);
+    Sint16          *line  = AirsRockWaveLines;
+    Sint32           i;
+    volatile Uint16 *channel;
 
-	REG_BLDALPHA = BLEND_ALPHA(AirsRockFogAlpha, BLEND_WEIGHT_MAX);
-	if ((*RamTickCount & 15) == 0)
-	{
-		AirsRockFogAlpha += AirsRockFogAlphaStep;
-		if (AirsRockFogAlpha == FOG_WEIGHT || AirsRockFogAlpha == FOG_WEIGHT / 2)
-			AirsRockFogAlphaStep *= -1;
-	}
-	for (i = 0; i != DISPLAY_HEIGHT; i++)
-	{
-		*line = FIXEDtoINT(layer->x)
-		      + (syMathSin((i + (Uint8)*RamTickCount + FIXEDtoINT(layer->y)) << 9)
-		         >> FOG_RIPPLE_SHIFT);
-		line++;
-	}
-	line         = AirsRockWaveLines;
-	REG_BG1HOFS  = line[0];
-	channel      = REG_DMA0;
-	channel[5]  &= ~DMA_START_TIMING_DRQ_REPEAT;
-	channel[5]  &= ~DMA_ENABLE;
-	channel[5];
-	syDMAXCopy(
-		line + 1, (void *)&REG_BG1HOFS, DMA_HBLANK_HALFWORD_PER_LINE, (volatile Uint32 *)channel);
+    REG_BLDALPHA = BLEND_ALPHA(AirsRockFogAlpha, BLEND_WEIGHT_MAX);
+    if ((*RamTickCount & 15) == 0)
+    {
+        AirsRockFogAlpha += AirsRockFogAlphaStep;
+        if (AirsRockFogAlpha == FOG_WEIGHT || AirsRockFogAlpha == FOG_WEIGHT / 2)
+            AirsRockFogAlphaStep *= -1;
+    }
+    for (i = 0; i != DISPLAY_HEIGHT; i++)
+    {
+        *line = FIXEDtoINT(layer->x)
+              + (syMathSin((i + (Uint8)*RamTickCount + FIXEDtoINT(layer->y)) << 9)
+                 >> FOG_RIPPLE_SHIFT);
+        line++;
+    }
+    line         = AirsRockWaveLines;
+    REG_BG1HOFS  = line[0];
+    channel      = REG_DMA0;
+    channel[5]  &= ~DMA_START_TIMING_DRQ_REPEAT;
+    channel[5]  &= ~DMA_ENABLE;
+    channel[5];
+    syDMAXCopy(
+        line + 1, (void *)&REG_BG1HOFS, DMA_HBLANK_HALFWORD_PER_LINE, (volatile Uint32 *)channel);
 }
 
 // As the fog lifts, the great whirlwind sways and scatters the more the higher it stands above its
 // foot, while the fog ripples and thickens and thins as in scAirsRockDriftFog.
 void scAirsRockLiftFog(void)
 {
-	MAP_LAYER       *layer = fdMapGridGetLayer(2);
-	Sint16          *line  = AirsRockWaveLines;
-	Sint32           i;
-	FIXED            wave;
-	Sint32           spread, value;
-	Sint16          *table;
-	volatile Uint16 *channel;
+    MAP_LAYER       *layer = fdMapGridGetLayer(2);
+    Sint16          *line  = AirsRockWaveLines;
+    Sint32           i;
+    FIXED            wave;
+    Sint32           spread, value;
+    Sint16          *table;
+    volatile Uint16 *channel;
 
-	for (i = 0; i != DISPLAY_HEIGHT; i++)
-	{
-		spread   = (DISPLAY_HEIGHT - i) >> 2;
-		wave     = syMathSin((i + (Uint8)TickCount) << 8);
-		// Swayed by up to half the line's height above the foot, less 4, and jittered by up to a
-		// quarter of the lines below; a line swung past WAVE_SCROLL_MAX or WAVE_SCROLL_MIN is
-		// pulled back by as much.
-		value    = (syMulFX(wave, (WAVE_SCROLL_CALM_LINE - i) * (toFIXED(1) / 64)) >> 11) - 4;
-		line[0]  = value;
-		line[0] += syRandom() % (spread * 2) - spread;
-		if (line[0] > WAVE_SCROLL_MAX)
-			line[0] -= WAVE_SCROLL_MAX;
-		else if (line[0] < WAVE_SCROLL_MIN)
-			line[0] -= WAVE_SCROLL_MIN;
-		line[1]  = 0;
-		value    = wave + FIXEDtoINT(layer->y);
-		line[2]  = FIXEDtoINT(layer->x) + (value >> FOG_RIPPLE_SHIFT);
-		line    += 3;
-	}
-	REG_BLDALPHA = BLEND_ALPHA(AirsRockLiftingFogAlpha, BLEND_WEIGHT_MAX);
-	if ((TickCount & 15) == 0)
-	{
-		AirsRockLiftingFogAlpha += AirsRockLiftingFogAlphaStep;
-		if (AirsRockLiftingFogAlpha == FOG_WEIGHT || AirsRockLiftingFogAlpha == FOG_WEIGHT / 2)
-			AirsRockLiftingFogAlphaStep *= -1;
-	}
-	table                            = AirsRockWaveLines;
-	*(volatile Uint16 *)REG_BG0HOFS  = table[0];
-	table                           += 2;
-	REG_BG1HOFS                      = table[0];
-	channel                          = REG_DMA0;
-	channel[5]                      &= ~DMA_START_TIMING_DRQ_REPEAT;
-	channel[5]                      &= ~DMA_ENABLE;
-	channel[5];
-	syDMAXCopy(
-		table + 1, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE + 2, (volatile Uint32 *)channel);
+    for (i = 0; i != DISPLAY_HEIGHT; i++)
+    {
+        spread   = (DISPLAY_HEIGHT - i) >> 2;
+        wave     = syMathSin((i + (Uint8)TickCount) << 8);
+        // Swayed by up to half the line's height above the foot, less 4, and jittered by up to a
+        // quarter of the lines below; a line swung past WAVE_SCROLL_MAX or WAVE_SCROLL_MIN is
+        // pulled back by as much.
+        value    = (syMulFX(wave, (WAVE_SCROLL_CALM_LINE - i) * (toFIXED(1) / 64)) >> 11) - 4;
+        line[0]  = value;
+        line[0] += syRandom() % (spread * 2) - spread;
+        if (line[0] > WAVE_SCROLL_MAX)
+            line[0] -= WAVE_SCROLL_MAX;
+        else if (line[0] < WAVE_SCROLL_MIN)
+            line[0] -= WAVE_SCROLL_MIN;
+        line[1]  = 0;
+        value    = wave + FIXEDtoINT(layer->y);
+        line[2]  = FIXEDtoINT(layer->x) + (value >> FOG_RIPPLE_SHIFT);
+        line    += 3;
+    }
+    REG_BLDALPHA = BLEND_ALPHA(AirsRockLiftingFogAlpha, BLEND_WEIGHT_MAX);
+    if ((TickCount & 15) == 0)
+    {
+        AirsRockLiftingFogAlpha += AirsRockLiftingFogAlphaStep;
+        if (AirsRockLiftingFogAlpha == FOG_WEIGHT || AirsRockLiftingFogAlpha == FOG_WEIGHT / 2)
+            AirsRockLiftingFogAlphaStep *= -1;
+    }
+    table                            = AirsRockWaveLines;
+    *(volatile Uint16 *)REG_BG0HOFS  = table[0];
+    table                           += 2;
+    REG_BG1HOFS                      = table[0];
+    channel                          = REG_DMA0;
+    channel[5]                      &= ~DMA_START_TIMING_DRQ_REPEAT;
+    channel[5]                      &= ~DMA_ENABLE;
+    channel[5];
+    syDMAXCopy(
+        table + 1, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE + 2, (volatile Uint32 *)channel);
 }
 
 // Felix casts Whirlwind on the twister rock at the foot of the foggy wall: a great whirlwind rises
@@ -1634,147 +1634,147 @@ void scAirsRockLiftFog(void)
 // it. The rock turns grey, spent.
 void scAirsRockWhirlwindClearsFog(void)
 {
-	Uint16    *buf = syHeapAllocate(2 * WHIRLWIND_TILE_ROW_SIZE);
-	MAP_LAYER *fog = fdMapGridGetLayer(2);
-	Uint16    *metatile;
-	ACTOR     *spark;
-	Sint32     i;
-	Sint32     z;
+    Uint16    *buf = syHeapAllocate(2 * WHIRLWIND_TILE_ROW_SIZE);
+    MAP_LAYER *fog = fdMapGridGetLayer(2);
+    Uint16    *metatile;
+    ACTOR     *spark;
+    Sint32     i;
+    Sint32     z;
 
-	fdScriptStart();
-	syFieldScriptEndLastingPsynergy(0);
-	REG_DISPCNT &= ~DISPCNT_BG0_ON;
-	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_TILES), buf);
-	syDMAXCopy(buf,
-	           BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
-	           DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4),
-	           REG_DMA3);
-	syDMAXCopy((Uint8 *)buf + WHIRLWIND_TILE_ROW_SIZE,
-	           BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
-	           DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4),
-	           REG_DMA3);
-	syHeapRelease(buf);
-	syIOWrite16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
-	DMA_FILL16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
-	buf = syHeapAllocate(WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH * sizeof(Uint16));
-	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_MAP), buf);
-	metatile = buf;
-	for (i = 0; i != WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH; i++)
-	{
-		*metatile -= WHIRLWIND_MAP_FIRST_TILE - WHIRLWIND_TOP_TILE;
-		metatile++;
-	}
-	metatile = buf;
-	for (i = 0; i != WHIRLWIND_MAP_HEIGHT; i++)
-	{
-		syDMAXCopy(metatile,
-		           BG_SCREEN_BLOCK(4) + WHIRLWIND_MAP_ROW_OFFSET
-		               + i * BG_SCREEN_WIDTH * sizeof(Uint16),
-		           DMA_COPY_WORDS(WHIRLWIND_MAP_WIDTH / 2),
-		           REG_DMA3);
-		metatile += WHIRLWIND_MAP_WIDTH;
-	}
-	syHeapRelease(buf);
-	fdScriptPlaySound(SE_GLITTER);
-	fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCount = SPRITE_COLOR_BLUE_TINT;
-	fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneByte  = 1;
-	fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update     = scAirsRockFlickerTarget;
-	for (i = 0; i != 45; i++)
-	{
-		Sint32 low = TickCount & 3;
+    fdScriptStart();
+    syFieldScriptEndLastingPsynergy(0);
+    REG_DISPCNT &= ~DISPCNT_BG0_ON;
+    syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_TILES), buf);
+    syDMAXCopy(buf,
+               BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
+               DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4),
+               REG_DMA3);
+    syDMAXCopy((Uint8 *)buf + WHIRLWIND_TILE_ROW_SIZE,
+               BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
+               DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4),
+               REG_DMA3);
+    syHeapRelease(buf);
+    syIOWrite16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
+    DMA_FILL16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
+    buf = syHeapAllocate(WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH * sizeof(Uint16));
+    syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_MAP), buf);
+    metatile = buf;
+    for (i = 0; i != WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH; i++)
+    {
+        *metatile -= WHIRLWIND_MAP_FIRST_TILE - WHIRLWIND_TOP_TILE;
+        metatile++;
+    }
+    metatile = buf;
+    for (i = 0; i != WHIRLWIND_MAP_HEIGHT; i++)
+    {
+        syDMAXCopy(metatile,
+                   BG_SCREEN_BLOCK(4) + WHIRLWIND_MAP_ROW_OFFSET
+                       + i * BG_SCREEN_WIDTH * sizeof(Uint16),
+                   DMA_COPY_WORDS(WHIRLWIND_MAP_WIDTH / 2),
+                   REG_DMA3);
+        metatile += WHIRLWIND_MAP_WIDTH;
+    }
+    syHeapRelease(buf);
+    fdScriptPlaySound(SE_GLITTER);
+    fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCount = SPRITE_COLOR_BLUE_TINT;
+    fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneByte  = 1;
+    fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update     = scAirsRockFlickerTarget;
+    for (i = 0; i != 45; i++)
+    {
+        Sint32 low = TickCount & 3;
 
-		if (low == 0)
-		{
-			spark = (scFieldActorCreate(SPRITE_PARTICLE,
-			                            fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->x.fixed,
-			                            fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->y.fixed,
-			                            fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->z.fixed));
-			((FIELD_SPR *)spark->sprite)->priority =
-				((FIELD_SPR *)fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sprite)->priority;
-			spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-			spark->motionFlags    = 0;
-			spark->bounce         = spark->x.fixed;
-			spark->gravity        = toFIXED(3) / 2;
-			spark->sceneWord      = spark->z.fixed;
-			spark->speedLimit     = syRandom() & 0xffff;
-			fdActorSelectAnimation(spark, 7);
-			fdActorStartScript(spark, FieldEffectMediumScript);
-			fdActorSetSpriteFlags(spark, 0);
-			scFieldActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
-			spark->update = scAirsRockSpiralSpark;
-		}
-		syFieldScriptWait(1);
-	}
-	syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
-	fdCameraWaitForArrival();
-	fdCameraSetSpeed(1);
-	fdCameraMoveTo(152, CAMERA_KEEP, 144, 1);
-	fdCameraWaitForArrival();
-	syFieldCloseEvent(scAirsRockDriftFog);
-	REG_BG1CNT &= ~BGCNT_PRIORITY(3);
-	REG_BG1CNT |= BGCNT_PRIORITY(0);
-	fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
-	fdPaletteFadeInterpolate(1);
-	syWait(1);
-	fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-	fdPaletteFadeInterpolate(8);
-	sySetTickEvent(scAirsRockLiftFog, EVENT_PASS_VBLANK);
-	fdScriptPlaySound(SE_WAVE_HIGH);
-	REG_DISPCNT |= DISPCNT_BG0_ON;
-	fdMapGridSetShake(3, 3, 1);
-	z = -toFIXED(1) / 2;
-	for (i = toFIXED(1) / 4; i != toFIXED(9) / 2; i += toFIXED(1) / 64, z -= toFIXED(1) / 64)
-	{
-		fog->speedX                                           = i;
-		fog->speedY                                           = z;
-		fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCount = syRandom() & 7;
-		syWait(1);
-	}
-	syFieldCloseEvent(scAirsRockLiftFog);
-	sySetTickEvent(scAirsRockScrollWave, EVENT_PASS_VBLANK);
-	REG_BLDALPHA = BLEND_ALPHA(FOG_WEIGHT, 0);
-	REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	// The fog thins a weight every 32 ticks, to none.
-	for (i = 0; i != (FOG_WEIGHT << 5) + 1; i++)
-	{
-		REG_BLDALPHA = BLEND_ALPHA(FOG_WEIGHT - (i >> 5), BLEND_WEIGHT_MAX);
-		fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCount = syRandom() & 7;
-		syFieldScriptWait(1);
-	}
-	REG_DISPCNT &= ~DISPCNT_BG1_ON;
-	syWait(30);
-	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
-	REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
-	REG_BLDCNT   = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCount = SPRITE_COLOR_GREY;
-	for (i = 0; i != 129; i++)
-	{
-		REG_BLDALPHA = ((i >> 3) << 8) | (BLEND_WEIGHT_MAX - (i >> 3));
-		syFieldScriptWait(1);
-	}
-	syFieldCloseEvent(scAirsRockScrollWave);
-	fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneByte = 0;
-	syWait(30);
-	fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = NULL;
-	scFieldActorSetSpriteColor(fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG), SPRITE_COLOR_GREY);
-	syFieldMapGridWaitForShakeToSettle();
-	syFieldScriptWait(60);
-	REG_BLDCNT = 0;
-	syWindowLoadGraphics();
-	syPrintClear();
-	syFieldWindowColorApply(MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
-	REG_BG1CNT                                                    &= ~BGCNT_PRIORITY(3);
-	REG_BG1CNT                                                    |= BGCNT_PRIORITY(1);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags &= ~ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags      |= ACTOR_PRIORITY_AUTOMATIC;
-	syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
-	fdCameraWaitForArrival();
-	fdScriptSetFlag(FLAG_AIRS_ROCK_FOG_CLEARED);
-	fdScriptEnd();
+        if (low == 0)
+        {
+            spark = (scFieldActorCreate(SPRITE_PARTICLE,
+                                        fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->x.fixed,
+                                        fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->y.fixed,
+                                        fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->z.fixed));
+            ((FIELD_SPR *)spark->sprite)->priority =
+                ((FIELD_SPR *)fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sprite)->priority;
+            spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+            spark->motionFlags    = 0;
+            spark->bounce         = spark->x.fixed;
+            spark->gravity        = toFIXED(3) / 2;
+            spark->sceneWord      = spark->z.fixed;
+            spark->speedLimit     = syRandom() & 0xffff;
+            fdActorSelectAnimation(spark, 7);
+            fdActorStartScript(spark, FieldEffectMediumScript);
+            fdActorSetSpriteFlags(spark, 0);
+            scFieldActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
+            spark->update = scAirsRockSpiralSpark;
+        }
+        syFieldScriptWait(1);
+    }
+    syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
+    fdCameraWaitForArrival();
+    fdCameraSetSpeed(1);
+    fdCameraMoveTo(152, CAMERA_KEEP, 144, 1);
+    fdCameraWaitForArrival();
+    syFieldCloseEvent(scAirsRockDriftFog);
+    REG_BG1CNT &= ~BGCNT_PRIORITY(3);
+    REG_BG1CNT |= BGCNT_PRIORITY(0);
+    fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
+    fdPaletteFadeInterpolate(1);
+    syWait(1);
+    fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
+    fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    fdPaletteFadeInterpolate(8);
+    sySetTickEvent(scAirsRockLiftFog, EVENT_PASS_VBLANK);
+    fdScriptPlaySound(SE_WAVE_HIGH);
+    REG_DISPCNT |= DISPCNT_BG0_ON;
+    fdMapGridSetShake(3, 3, 1);
+    z = -toFIXED(1) / 2;
+    for (i = toFIXED(1) / 4; i != toFIXED(9) / 2; i += toFIXED(1) / 64, z -= toFIXED(1) / 64)
+    {
+        fog->speedX                                           = i;
+        fog->speedY                                           = z;
+        fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCount = syRandom() & 7;
+        syWait(1);
+    }
+    syFieldCloseEvent(scAirsRockLiftFog);
+    sySetTickEvent(scAirsRockScrollWave, EVENT_PASS_VBLANK);
+    REG_BLDALPHA = BLEND_ALPHA(FOG_WEIGHT, 0);
+    REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    // The fog thins a weight every 32 ticks, to none.
+    for (i = 0; i != (FOG_WEIGHT << 5) + 1; i++)
+    {
+        REG_BLDALPHA = BLEND_ALPHA(FOG_WEIGHT - (i >> 5), BLEND_WEIGHT_MAX);
+        fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCount = syRandom() & 7;
+        syFieldScriptWait(1);
+    }
+    REG_DISPCNT &= ~DISPCNT_BG1_ON;
+    syWait(30);
+    fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
+    REG_BLDCNT   = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+    fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+    fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCount = SPRITE_COLOR_GREY;
+    for (i = 0; i != 129; i++)
+    {
+        REG_BLDALPHA = ((i >> 3) << 8) | (BLEND_WEIGHT_MAX - (i >> 3));
+        syFieldScriptWait(1);
+    }
+    syFieldCloseEvent(scAirsRockScrollWave);
+    fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneByte = 0;
+    syWait(30);
+    fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = NULL;
+    scFieldActorSetSpriteColor(fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG), SPRITE_COLOR_GREY);
+    syFieldMapGridWaitForShakeToSettle();
+    syFieldScriptWait(60);
+    REG_BLDCNT = 0;
+    syWindowLoadGraphics();
+    syPrintClear();
+    syFieldWindowColorApply(MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
+    REG_BG1CNT                                                    &= ~BGCNT_PRIORITY(3);
+    REG_BG1CNT                                                    |= BGCNT_PRIORITY(1);
+    fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags &= ~ACTOR_PRIORITY_IGNORES_RISES;
+    fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+    fdActorGet(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags      |= ACTOR_PRIORITY_AUTOMATIC;
+    syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
+    fdCameraWaitForArrival();
+    fdScriptSetFlag(FLAG_AIRS_ROCK_FOG_CLEARED);
+    fdScriptEnd();
 }
 
 extern Sint32 AirsRockLeaderLevel;
@@ -1788,22 +1788,22 @@ extern Sint32 AirsRockLeaderLevel;
 // level they hold the edge he drops off (scAirsRockDropOffLedge).
 void scAirsRockSetLedgeMetatilesByLevel(void)
 {
-	ACTOR *actor = fdActorGet(syFieldPartyGetLeaderActor());
-	Sint32 level;
+    ACTOR *actor = fdActorGet(syFieldPartyGetLeaderActor());
+    Sint32 level;
 
-	actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-	level                 = FIXEDtoINT(actor->y.fixed + toFIXED(32)) / CLIMB_LEVEL_HEIGHT;
-	if (AirsRockLeaderLevel != level)
-	{
-		switch (level)
-		{
-			case 3: fdMapGridCopyMetatileAttributes(64, 64, 21, 3, 27, 54); break;
-			case 2: fdMapGridCopyMetatileAttributes(64, 67, 21, 3, 27, 54); break;
-			case 1: fdMapGridCopyMetatileAttributes(64, 70, 21, 3, 27, 54); break;
-			case 0: fdMapGridCopyMetatileAttributes(64, 73, 21, 3, 27, 54); break;
-		}
-		AirsRockLeaderLevel = level;
-	}
+    actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+    level                 = FIXEDtoINT(actor->y.fixed + toFIXED(32)) / CLIMB_LEVEL_HEIGHT;
+    if (AirsRockLeaderLevel != level)
+    {
+        switch (level)
+        {
+            case 3: fdMapGridCopyMetatileAttributes(64, 64, 21, 3, 27, 54); break;
+            case 2: fdMapGridCopyMetatileAttributes(64, 67, 21, 3, 27, 54); break;
+            case 1: fdMapGridCopyMetatileAttributes(64, 70, 21, 3, 27, 54); break;
+            case 0: fdMapGridCopyMetatileAttributes(64, 73, 21, 3, 27, 54); break;
+        }
+        AirsRockLeaderLevel = level;
+    }
 }
 
 #include "shared/leader_lift.h"
@@ -1817,298 +1817,298 @@ void scAirsRockSetLedgeMetatilesByLevel(void)
 // Sets a statue breathing whirlwinds (scAirsRockStatueBreathesWhirlwind), its count started at
 // `ticks` of WHIRLWIND_BREATH_TICKS.
 #define START_BREATHING(id, ticks)                                                                 \
-	(fdActorGetById(id)->timer  = (ticks),                                                         \
-	 fdActorGetById(id)->update = scAirsRockStatueBreathesWhirlwind,                               \
-	 fdActorSetSpriteFlags(fdActorGetById(id), 0))
+    (fdActorGetById(id)->timer  = (ticks),                                                         \
+     fdActorGetById(id)->update = scAirsRockStatueBreathesWhirlwind,                               \
+     fdActorSetSpriteFlags(fdActorGetById(id), 0))
 
 // The same for a statue hung on the cliff at the given height.
 #define HANG_BREATHING(id, height, ticks)                                                          \
-	(fdActorGetById(id)->motionFlags = 0,                                                          \
-	 fdActorGetById(id)->y.fixed     = (height),                                                   \
-	 START_BREATHING(id, ticks))
+    (fdActorGetById(id)->motionFlags = 0,                                                          \
+     fdActorGetById(id)->y.fixed     = (height),                                                   \
+     START_BREATHING(id, ticks))
 
 Sint32 scInit(void)
 {
-	ACTOR                  *leader;
-	volatile DMA_REGISTERS *dma;
+    ACTOR                  *leader;
+    volatile DMA_REGISTERS *dma;
 
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	MainRoutineStateWork.retreatScene     = SCENE_AIRS_ROCK_STORM_BRAND_CHEST;
-	MainRoutineStateWork.retreatEntrance  = AIRS_ROCK_STORM_BRAND_CHEST_FROM_WORLD_MAP;
-	LEADER()->priorityFlags              |= ACTOR_PRIORITY_IGNORES_RISES;
-	if (MainRoutineStateWork.next == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
-	{
-		switch (MainRoutineStateWork.entrance)
-		{
-			case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_WEST:
-			case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_A:
-			case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_B:
-				scLeaderLift(toFIXED(88));
-		}
-		// The barriers already blown away stay gone.
-		if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN))
-			CLEAR_SAND_MOUND(49, 12);
-		if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 1))
-			CLEAR_SAND_BANK(6, 40);
-		if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 2))
-			CLEAR_SAND_BANK(39, 39);
-		if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 3))
-			CLEAR_SAND_BANK(23, 44);
-		if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 4))
-		{
-			// The bank at (6, 52), the one a gust blows south through: its edits start a row lower
-			// than the other banks'.
-			fdMapGridCopyMetatilesTo(64, 0, 70, 52, 1, 4);
-			fdMapGridCopyMetatileAttributes(64, 0, 1, 3, 70, 52);
-			fdMapGridCopyMetatileAttributes(64, 0, 1, 3, 6, 53);
-		}
-		if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 5))
-			CLEAR_SAND_MOUND(15, 50);
-		if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 6))
-			CLEAR_SAND_BANK(39, 49);
-		if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 7))
-			CLEAR_SAND_MOUND(47, 53);
-		if (syGameFlagGet(FLAG_AIRS_ROCK_WALL_CLEARED))
-		{
-			fdMapGridCopyMetatilesTo(68, 0, 79, 0, 11, 10);
-			fdMapGridCopyMetatileAttributes(38, 9, 1, 1, 16, 9);
-			fdMapGridCopyMetatileAttributes(38, 9, 1, 1, 24, 9);
-			fdActorSetSpriteColor(fdActorGetById(ACTOR_TWISTER_ROCK_BY_THE_WALL),
-			                      SPRITE_COLOR_GREY);
-		}
-	}
-	if (MainRoutineStateWork.next == SCENE_AIRS_ROCK_ENTRANCE)
-	{
-		switch (MainRoutineStateWork.entrance)
-		{
-			case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_B:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-					LEADER()->z.fixed += toFIXED(16);
-				scLeaderLift(-toFIXED(72));
-				goto breathing;
-			case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_WEST:
-			case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_A:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-					LEADER()->z.fixed += toFIXED(16);
-				scLeaderLift(-toFIXED(40));
-				goto breathing;
-			case ENTRANCE_DOWN_FROM_THE_CLIFF_WEST:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-				{
-					LEADER()->x.fixed += toFIXED(48);
-					LEADER()->y.fixed += toFIXED(16);
-				}
-			case ENTRANCE_DOWN_FROM_THE_CLIFF_EAST: scLeaderLift(toFIXED(56));
-			case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_INSIDE_HALL:
-			breathing:
-				START_BREATHING(ACTOR_FIRST_SLOPE_STATUE, 60);
-				START_BREATHING(ACTOR_SECOND_SLOPE_STATUE, 180);
-				START_BREATHING(ACTOR_THIRD_SLOPE_STATUE, 0);
-				START_BREATHING(ACTOR_FOURTH_SLOPE_STATUE, 60);
-				if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST))
-					fdActorSetPos(ACTOR_FIRST_LEDGE_PILLAR, 264, 696);
-				if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND))
-					fdActorSetPos(ACTOR_SECOND_LEDGE_PILLAR, 728, 728);
-				if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD))
-					fdActorSetPos(ACTOR_THIRD_LEDGE_PILLAR, 344, 776);
-				if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH))
-					fdActorSetPos(ACTOR_FOURTH_LEDGE_PILLAR, 632, 792);
-				fdActorPlaceBlocks(AirsRockEntrancePillars);
-				scBlocksMarkMetatiles(AirsRockEntrancePillars);
-				fdFlagBlockPlaceAll(AirsRockFrozenPuddle);
-				break;
-			case ENTRANCE_UP_THE_CLIFF_EAST:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-				{
-					LEADER()->x.fixed += toFIXED(16);
-					LEADER()->y.fixed -= toFIXED(16);
-				}
-			case ENTRANCE_UP_THE_CLIFF_WEST:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-					LEADER()->z.fixed += toFIXED(16);
-				scLeaderLift(-toFIXED(56));
-			case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_FUJIN_SHIELD_CHEST_B:
-				if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH))
-					fdActorSetPos(ACTOR_FIFTH_LEDGE_PILLAR, 792, 296);
-				fdActorPlaceBlocks(AirsRockEntrancePillars);
-				scBlocksMarkMetatiles(AirsRockEntrancePillars);
-				HANG_BREATHING(ACTOR_FIRST_CLIFF_STATUE, toFIXED(16), 60);
-				HANG_BREATHING(ACTOR_THIRD_CLIFF_STATUE, toFIXED(80), 90);
-				HANG_BREATHING(ACTOR_SECOND_CLIFF_STATUE, -toFIXED(48), 100);
-				HANG_BREATHING(ACTOR_FOURTH_CLIFF_STATUE, toFIXED(144), 180);
-				fdActorGetById(ACTOR_BREATHING_STATUE)->motionFlags = 0;
-				fdActorGetById(ACTOR_BREATHING_STATUE)->y.fixed     = -toFIXED(144);
-				fdActorSetSpritePriority(ACTOR_BREATHING_STATUE, 2);
-				fdActorGetById(ACTOR_BREATHING_STATUE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-				fdActorGetById(ACTOR_BREATHING_STATUE)->timer          = 180;
-				fdActorGetById(ACTOR_BREATHING_STATUE)->sceneCount     = 1;
-				fdActorGetById(ACTOR_BREATHING_STATUE)->update = scAirsRockStatueBreathesWhirlwind;
-				fdActorSetSpriteFlags(fdActorGetById(ACTOR_BREATHING_STATUE), 0);
-				break;
-		}
-	}
-	if (MainRoutineStateWork.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST)
-	{
-		switch (MainRoutineStateWork.entrance)
-		{
-			case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_ENTRANCE:
-			case ENTRANCE_LEDGES_FROM_LOWER_PATH:
-			case ENTRANCE_LEDGES_FROM_UPPER_PATH:
-				sySetTickEvent(scAirsRockSetLedgeMetatilesByLevel, EVENT_PASS_TICK);
-				fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->motionFlags = 0;
-				fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->y.fixed     = -toFIXED(8);
-				fdActorSetSpritePriority(ACTOR_FIRST_BREATHING_STATUE, 2);
-				fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->timer      = 60;
-				fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->sceneCount = 0;
-				fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->update =
-					scAirsRockStatueBreathesWhirlwind;
-				fdActorSetSpriteFlags(fdActorGetById(ACTOR_FIRST_BREATHING_STATUE), 0);
-				fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->motionFlags = 0;
-				fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->y.fixed     = -toFIXED(8);
-				fdActorSetSpritePriority(ACTOR_SECOND_BREATHING_STATUE, 2);
-				fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->timer      = 180;
-				fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->sceneCount = 0;
-				fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->update =
-					scAirsRockStatueBreathesWhirlwind;
-				fdActorSetSpriteFlags(fdActorGetById(ACTOR_SECOND_BREATHING_STATUE), 0);
-				fdActorGetById(ACTOR_FIRST_PILLAR)->layer = 2;
-				fdActorSetSpritePriority(ACTOR_FIRST_PILLAR, 1);
-				fdActorGetById(ACTOR_FIRST_PILLAR)->y.fixed = toFIXED(208);
-				fdActorGetById(ACTOR_FIRST_PILLAR)->groundHeight =
-					fdActorGetById(ACTOR_FIRST_PILLAR)->y.fixed;
-				fdActorGetById(ACTOR_SECOND_PILLAR)->layer = 2;
-				fdActorSetSpritePriority(ACTOR_SECOND_PILLAR, 1);
-				fdActorGetById(ACTOR_SECOND_PILLAR)->y.fixed = toFIXED(208);
-				fdActorGetById(ACTOR_SECOND_PILLAR)->groundHeight =
-					fdActorGetById(ACTOR_SECOND_PILLAR)->y.fixed;
-				if (syGameFlagGet(FLAG_FIRST_PILLAR_MOVED_WEST))
-					fdActorSetPos(ACTOR_FIRST_PILLAR, 504, 872);
-				if (syGameFlagGet(FLAG_SECOND_PILLAR_MOVED_WEST))
-					fdActorSetPos(ACTOR_SECOND_PILLAR, 520, 872);
-				scAirsRockMoveSecondPillar();
-				fdMapGridGetLayer(2)->offsetX = toFIXED(1408);
-				fdMapGridGetLayer(2)->offsetY = toFIXED(576);
-				fdMapGridGetLayer(2)->scaleX  = toFIXED(1) / 4;
-				fdMapGridGetLayer(2)->scaleY  = toFIXED(1) / 4;
-				fdMapGridCenterOnFollowedPoint();
-				syWait(1);
-				break;
-			case ENTRANCE_BELOW_THE_FOG_WEST:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-					LEADER()->y.fixed += toFIXED(24);
-			case ENTRANCE_BELOW_THE_FOG_EAST: scLeaderLift(toFIXED(72));
-			case ENTRANCE_LOWER_PATH:
-			case ENTRANCE_UPPER_PATH:
-				fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
-				break;
-			case ENTRANCE_INTO_THE_FOG_WEST:
-			case ENTRANCE_INTO_THE_FOG_EAST:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-					LEADER()->z.fixed += toFIXED(16);
-				scLeaderLift(-toFIXED(24));
-				goto fog;
-			case ENTRANCE_DOWN_INTO_THE_FOG_WEST:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-					LEADER()->x.fixed += toFIXED(48);
-			case ENTRANCE_DOWN_INTO_THE_FOG_EAST:
-				scLeaderLift(toFIXED(144));
-			fog:
-				REG_BG1CNT &= ~BGCNT_PRIORITY(3);
-				REG_BG1CNT |= BGCNT_PRIORITY(1);
-				REG_BG2CNT &= ~BGCNT_PRIORITY(3);
-				REG_BG2CNT |= BGCNT_PRIORITY(2);
-				REG_BG3CNT &= ~BGCNT_PRIORITY(3);
-				REG_BG3CNT |= BGCNT_PRIORITY(3);
-				fdActorGetById(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags |=
-					ACTOR_PRIORITY_UNDERFOOT;
-				fdEffectStartBlankOverlay(0);
-				if (syGameFlagGet(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED))
-					fdActorSetPos(ACTOR_THIRD_PILLAR, 184, 280);
-				if (!syGameFlagGet(FLAG_AIRS_ROCK_FOG_CLEARED))
-				{
-					FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-					REG_BLDALPHA               = BLEND_ALPHA(FOG_WEIGHT, BLEND_WEIGHT_MAX);
-					REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-					dma        = (volatile DMA_REGISTERS *)REG_DMA0;
-					while ((Sint32)dma->control < 0)
-						;
-					sySetTickEvent(scAirsRockDriftFog, EVENT_PASS_VBLANK);
-					fdMapGridGetLayer(2)->speedX = toFIXED(0.25);
-					fdMapGridGetLayer(2)->speedY = -toFIXED(0.5);
-					fdMapGridGetLayer(2)->maskX  = FOG_WRAP - 1;
-					fdMapGridGetLayer(2)->maskY  = (FOG_WRAP - 1) * MAPGRID_SIZE;
-				}
-				else
-				{
-					REG_BLDALPHA  = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
-					REG_BLDCNT    = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-					REG_DISPCNT  &= ~DISPCNT_BG1_ON;
-					fdActorSetSpriteColor(fdActorGetById(ACTOR_TWISTER_ROCK_IN_THE_FOG),
-					                      SPRITE_COLOR_GREY);
-				}
-				break;
-			case ENTRANCE_ABOVE_THE_FOG_WEST:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-					LEADER()->y.fixed -= toFIXED(32);
-			case ENTRANCE_ABOVE_THE_FOG_EAST:
-				if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-					LEADER()->z.fixed += toFIXED(16);
-				scLeaderLift(-toFIXED(48));
-			case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST:
-				fdMapGridGetLayer(2)->offsetX = toFIXED(1152);
-				fdMapGridGetLayer(2)->offsetY = toFIXED(800);
-				fdMapGridGetLayer(2)->scaleX  = toFIXED(13) / 16;
-				fdMapGridGetLayer(2)->scaleY  = toFIXED(13) / 16;
-				if (!syGameFlagGet(FLAG_AIRS_ROCK_TOP_OPENED))
-				{
-					fdMapGridCopyMetatilesTo(29, 9, 62, 2, 9, 9);
-					fdMapGridCopyMetatileAttributes(29, 9, 9, 9, 62, 2);
-					fdMapGridCopyMetatilesTo(29, 73, 62, 66, 9, 9);
-					fdMapGridCopyMetatilesTo(52, 2, 29, 9, 9, 9);
-					fdMapGridCopyMetatileAttributes(52, 2, 9, 9, 29, 9);
-					fdMapGridCopyMetatilesTo(52, 66, 29, 73, 9, 9);
-				}
-				else
-				{
-					fdActorSetSpriteColor(fdActorGetById(ACTOR_TWISTER_ROCK_AT_THE_TOP),
-					                      SPRITE_COLOR_GREY);
-				}
-				fdActorSetSpritePriority(ACTOR_TWISTER_ROCK_AT_THE_TOP, 1);
-				fdMapGridCenterOnFollowedPoint();
-				syWait(1);
-				if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-				{
-					leader          = LEADER();
-					leader->layer   = 0;
-					leader->y.fixed = leader->groundHeight = fdMapGetTerrainHeight(
-						0, leader->x.fixed, leader->z.fixed - leader->y.fixed);
-					syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
-				}
-				break;
-			case ENTRANCE_OPEN_THE_TOP:
-				fdMapGridCopyMetatilesTo(29, 9, 62, 2, 9, 9);
-				fdMapGridCopyMetatileAttributes(29, 9, 9, 9, 62, 2);
-				fdMapGridCopyMetatilesTo(29, 73, 62, 66, 9, 9);
-				fdMapGridCopyMetatilesTo(52, 2, 29, 9, 9, 9);
-				fdMapGridCopyMetatileAttributes(52, 2, 9, 9, 29, 9);
-				fdMapGridCopyMetatilesTo(52, 66, 29, 73, 9, 9);
-				fdScriptStartScreenTransition();
-				fdScriptWaitTransitionTicks();
-				scAirsRockWhirlwindOpensTheTop();
-				break;
-		}
-	}
-	return 0;
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    MainRoutineStateWork.retreatScene     = SCENE_AIRS_ROCK_STORM_BRAND_CHEST;
+    MainRoutineStateWork.retreatEntrance  = AIRS_ROCK_STORM_BRAND_CHEST_FROM_WORLD_MAP;
+    LEADER()->priorityFlags              |= ACTOR_PRIORITY_IGNORES_RISES;
+    if (MainRoutineStateWork.next == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
+    {
+        switch (MainRoutineStateWork.entrance)
+        {
+            case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_WEST:
+            case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_A:
+            case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_B:
+                scLeaderLift(toFIXED(88));
+        }
+        // The barriers already blown away stay gone.
+        if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN))
+            CLEAR_SAND_MOUND(49, 12);
+        if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 1))
+            CLEAR_SAND_BANK(6, 40);
+        if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 2))
+            CLEAR_SAND_BANK(39, 39);
+        if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 3))
+            CLEAR_SAND_BANK(23, 44);
+        if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 4))
+        {
+            // The bank at (6, 52), the one a gust blows south through: its edits start a row lower
+            // than the other banks'.
+            fdMapGridCopyMetatilesTo(64, 0, 70, 52, 1, 4);
+            fdMapGridCopyMetatileAttributes(64, 0, 1, 3, 70, 52);
+            fdMapGridCopyMetatileAttributes(64, 0, 1, 3, 6, 53);
+        }
+        if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 5))
+            CLEAR_SAND_MOUND(15, 50);
+        if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 6))
+            CLEAR_SAND_BANK(39, 49);
+        if (syGameFlagGet(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 7))
+            CLEAR_SAND_MOUND(47, 53);
+        if (syGameFlagGet(FLAG_AIRS_ROCK_WALL_CLEARED))
+        {
+            fdMapGridCopyMetatilesTo(68, 0, 79, 0, 11, 10);
+            fdMapGridCopyMetatileAttributes(38, 9, 1, 1, 16, 9);
+            fdMapGridCopyMetatileAttributes(38, 9, 1, 1, 24, 9);
+            fdActorSetSpriteColor(fdActorGetById(ACTOR_TWISTER_ROCK_BY_THE_WALL),
+                                  SPRITE_COLOR_GREY);
+        }
+    }
+    if (MainRoutineStateWork.next == SCENE_AIRS_ROCK_ENTRANCE)
+    {
+        switch (MainRoutineStateWork.entrance)
+        {
+            case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_B:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                    LEADER()->z.fixed += toFIXED(16);
+                scLeaderLift(-toFIXED(72));
+                goto breathing;
+            case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_WEST:
+            case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_A:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                    LEADER()->z.fixed += toFIXED(16);
+                scLeaderLift(-toFIXED(40));
+                goto breathing;
+            case ENTRANCE_DOWN_FROM_THE_CLIFF_WEST:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                {
+                    LEADER()->x.fixed += toFIXED(48);
+                    LEADER()->y.fixed += toFIXED(16);
+                }
+            case ENTRANCE_DOWN_FROM_THE_CLIFF_EAST: scLeaderLift(toFIXED(56));
+            case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_INSIDE_HALL:
+            breathing:
+                START_BREATHING(ACTOR_FIRST_SLOPE_STATUE, 60);
+                START_BREATHING(ACTOR_SECOND_SLOPE_STATUE, 180);
+                START_BREATHING(ACTOR_THIRD_SLOPE_STATUE, 0);
+                START_BREATHING(ACTOR_FOURTH_SLOPE_STATUE, 60);
+                if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST))
+                    fdActorSetPos(ACTOR_FIRST_LEDGE_PILLAR, 264, 696);
+                if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND))
+                    fdActorSetPos(ACTOR_SECOND_LEDGE_PILLAR, 728, 728);
+                if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD))
+                    fdActorSetPos(ACTOR_THIRD_LEDGE_PILLAR, 344, 776);
+                if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH))
+                    fdActorSetPos(ACTOR_FOURTH_LEDGE_PILLAR, 632, 792);
+                fdActorPlaceBlocks(AirsRockEntrancePillars);
+                scBlocksMarkMetatiles(AirsRockEntrancePillars);
+                fdFlagBlockPlaceAll(AirsRockFrozenPuddle);
+                break;
+            case ENTRANCE_UP_THE_CLIFF_EAST:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                {
+                    LEADER()->x.fixed += toFIXED(16);
+                    LEADER()->y.fixed -= toFIXED(16);
+                }
+            case ENTRANCE_UP_THE_CLIFF_WEST:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                    LEADER()->z.fixed += toFIXED(16);
+                scLeaderLift(-toFIXED(56));
+            case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_FUJIN_SHIELD_CHEST_B:
+                if (syGameFlagGet(FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH))
+                    fdActorSetPos(ACTOR_FIFTH_LEDGE_PILLAR, 792, 296);
+                fdActorPlaceBlocks(AirsRockEntrancePillars);
+                scBlocksMarkMetatiles(AirsRockEntrancePillars);
+                HANG_BREATHING(ACTOR_FIRST_CLIFF_STATUE, toFIXED(16), 60);
+                HANG_BREATHING(ACTOR_THIRD_CLIFF_STATUE, toFIXED(80), 90);
+                HANG_BREATHING(ACTOR_SECOND_CLIFF_STATUE, -toFIXED(48), 100);
+                HANG_BREATHING(ACTOR_FOURTH_CLIFF_STATUE, toFIXED(144), 180);
+                fdActorGetById(ACTOR_BREATHING_STATUE)->motionFlags = 0;
+                fdActorGetById(ACTOR_BREATHING_STATUE)->y.fixed     = -toFIXED(144);
+                fdActorSetSpritePriority(ACTOR_BREATHING_STATUE, 2);
+                fdActorGetById(ACTOR_BREATHING_STATUE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+                fdActorGetById(ACTOR_BREATHING_STATUE)->timer          = 180;
+                fdActorGetById(ACTOR_BREATHING_STATUE)->sceneCount     = 1;
+                fdActorGetById(ACTOR_BREATHING_STATUE)->update = scAirsRockStatueBreathesWhirlwind;
+                fdActorSetSpriteFlags(fdActorGetById(ACTOR_BREATHING_STATUE), 0);
+                break;
+        }
+    }
+    if (MainRoutineStateWork.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST)
+    {
+        switch (MainRoutineStateWork.entrance)
+        {
+            case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_ENTRANCE:
+            case ENTRANCE_LEDGES_FROM_LOWER_PATH:
+            case ENTRANCE_LEDGES_FROM_UPPER_PATH:
+                sySetTickEvent(scAirsRockSetLedgeMetatilesByLevel, EVENT_PASS_TICK);
+                fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->motionFlags = 0;
+                fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->y.fixed     = -toFIXED(8);
+                fdActorSetSpritePriority(ACTOR_FIRST_BREATHING_STATUE, 2);
+                fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->timer      = 60;
+                fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->sceneCount = 0;
+                fdActorGetById(ACTOR_FIRST_BREATHING_STATUE)->update =
+                    scAirsRockStatueBreathesWhirlwind;
+                fdActorSetSpriteFlags(fdActorGetById(ACTOR_FIRST_BREATHING_STATUE), 0);
+                fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->motionFlags = 0;
+                fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->y.fixed     = -toFIXED(8);
+                fdActorSetSpritePriority(ACTOR_SECOND_BREATHING_STATUE, 2);
+                fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->timer      = 180;
+                fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->sceneCount = 0;
+                fdActorGetById(ACTOR_SECOND_BREATHING_STATUE)->update =
+                    scAirsRockStatueBreathesWhirlwind;
+                fdActorSetSpriteFlags(fdActorGetById(ACTOR_SECOND_BREATHING_STATUE), 0);
+                fdActorGetById(ACTOR_FIRST_PILLAR)->layer = 2;
+                fdActorSetSpritePriority(ACTOR_FIRST_PILLAR, 1);
+                fdActorGetById(ACTOR_FIRST_PILLAR)->y.fixed = toFIXED(208);
+                fdActorGetById(ACTOR_FIRST_PILLAR)->groundHeight =
+                    fdActorGetById(ACTOR_FIRST_PILLAR)->y.fixed;
+                fdActorGetById(ACTOR_SECOND_PILLAR)->layer = 2;
+                fdActorSetSpritePriority(ACTOR_SECOND_PILLAR, 1);
+                fdActorGetById(ACTOR_SECOND_PILLAR)->y.fixed = toFIXED(208);
+                fdActorGetById(ACTOR_SECOND_PILLAR)->groundHeight =
+                    fdActorGetById(ACTOR_SECOND_PILLAR)->y.fixed;
+                if (syGameFlagGet(FLAG_FIRST_PILLAR_MOVED_WEST))
+                    fdActorSetPos(ACTOR_FIRST_PILLAR, 504, 872);
+                if (syGameFlagGet(FLAG_SECOND_PILLAR_MOVED_WEST))
+                    fdActorSetPos(ACTOR_SECOND_PILLAR, 520, 872);
+                scAirsRockMoveSecondPillar();
+                fdMapGridGetLayer(2)->offsetX = toFIXED(1408);
+                fdMapGridGetLayer(2)->offsetY = toFIXED(576);
+                fdMapGridGetLayer(2)->scaleX  = toFIXED(1) / 4;
+                fdMapGridGetLayer(2)->scaleY  = toFIXED(1) / 4;
+                fdMapGridCenterOnFollowedPoint();
+                syWait(1);
+                break;
+            case ENTRANCE_BELOW_THE_FOG_WEST:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                    LEADER()->y.fixed += toFIXED(24);
+            case ENTRANCE_BELOW_THE_FOG_EAST: scLeaderLift(toFIXED(72));
+            case ENTRANCE_LOWER_PATH:
+            case ENTRANCE_UPPER_PATH:
+                fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+                break;
+            case ENTRANCE_INTO_THE_FOG_WEST:
+            case ENTRANCE_INTO_THE_FOG_EAST:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                    LEADER()->z.fixed += toFIXED(16);
+                scLeaderLift(-toFIXED(24));
+                goto fog;
+            case ENTRANCE_DOWN_INTO_THE_FOG_WEST:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                    LEADER()->x.fixed += toFIXED(48);
+            case ENTRANCE_DOWN_INTO_THE_FOG_EAST:
+                scLeaderLift(toFIXED(144));
+            fog:
+                REG_BG1CNT &= ~BGCNT_PRIORITY(3);
+                REG_BG1CNT |= BGCNT_PRIORITY(1);
+                REG_BG2CNT &= ~BGCNT_PRIORITY(3);
+                REG_BG2CNT |= BGCNT_PRIORITY(2);
+                REG_BG3CNT &= ~BGCNT_PRIORITY(3);
+                REG_BG3CNT |= BGCNT_PRIORITY(3);
+                fdActorGetById(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags |=
+                    ACTOR_PRIORITY_UNDERFOOT;
+                fdEffectStartBlankOverlay(0);
+                if (syGameFlagGet(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED))
+                    fdActorSetPos(ACTOR_THIRD_PILLAR, 184, 280);
+                if (!syGameFlagGet(FLAG_AIRS_ROCK_FOG_CLEARED))
+                {
+                    FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+                    REG_BLDALPHA               = BLEND_ALPHA(FOG_WEIGHT, BLEND_WEIGHT_MAX);
+                    REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+                    dma        = (volatile DMA_REGISTERS *)REG_DMA0;
+                    while ((Sint32)dma->control < 0)
+                        ;
+                    sySetTickEvent(scAirsRockDriftFog, EVENT_PASS_VBLANK);
+                    fdMapGridGetLayer(2)->speedX = toFIXED(0.25);
+                    fdMapGridGetLayer(2)->speedY = -toFIXED(0.5);
+                    fdMapGridGetLayer(2)->maskX  = FOG_WRAP - 1;
+                    fdMapGridGetLayer(2)->maskY  = (FOG_WRAP - 1) * MAPGRID_SIZE;
+                }
+                else
+                {
+                    REG_BLDALPHA  = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
+                    REG_BLDCNT    = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+                    REG_DISPCNT  &= ~DISPCNT_BG1_ON;
+                    fdActorSetSpriteColor(fdActorGetById(ACTOR_TWISTER_ROCK_IN_THE_FOG),
+                                          SPRITE_COLOR_GREY);
+                }
+                break;
+            case ENTRANCE_ABOVE_THE_FOG_WEST:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                    LEADER()->y.fixed -= toFIXED(32);
+            case ENTRANCE_ABOVE_THE_FOG_EAST:
+                if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                    LEADER()->z.fixed += toFIXED(16);
+                scLeaderLift(-toFIXED(48));
+            case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST:
+                fdMapGridGetLayer(2)->offsetX = toFIXED(1152);
+                fdMapGridGetLayer(2)->offsetY = toFIXED(800);
+                fdMapGridGetLayer(2)->scaleX  = toFIXED(13) / 16;
+                fdMapGridGetLayer(2)->scaleY  = toFIXED(13) / 16;
+                if (!syGameFlagGet(FLAG_AIRS_ROCK_TOP_OPENED))
+                {
+                    fdMapGridCopyMetatilesTo(29, 9, 62, 2, 9, 9);
+                    fdMapGridCopyMetatileAttributes(29, 9, 9, 9, 62, 2);
+                    fdMapGridCopyMetatilesTo(29, 73, 62, 66, 9, 9);
+                    fdMapGridCopyMetatilesTo(52, 2, 29, 9, 9, 9);
+                    fdMapGridCopyMetatileAttributes(52, 2, 9, 9, 29, 9);
+                    fdMapGridCopyMetatilesTo(52, 66, 29, 73, 9, 9);
+                }
+                else
+                {
+                    fdActorSetSpriteColor(fdActorGetById(ACTOR_TWISTER_ROCK_AT_THE_TOP),
+                                          SPRITE_COLOR_GREY);
+                }
+                fdActorSetSpritePriority(ACTOR_TWISTER_ROCK_AT_THE_TOP, 1);
+                fdMapGridCenterOnFollowedPoint();
+                syWait(1);
+                if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+                {
+                    leader          = LEADER();
+                    leader->layer   = 0;
+                    leader->y.fixed = leader->groundHeight = fdMapGetTerrainHeight(
+                        0, leader->x.fixed, leader->z.fixed - leader->y.fixed);
+                    syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
+                }
+                break;
+            case ENTRANCE_OPEN_THE_TOP:
+                fdMapGridCopyMetatilesTo(29, 9, 62, 2, 9, 9);
+                fdMapGridCopyMetatileAttributes(29, 9, 9, 9, 62, 2);
+                fdMapGridCopyMetatilesTo(29, 73, 62, 66, 9, 9);
+                fdMapGridCopyMetatilesTo(52, 2, 29, 9, 9, 9);
+                fdMapGridCopyMetatileAttributes(52, 2, 9, 9, 29, 9);
+                fdMapGridCopyMetatilesTo(52, 66, 29, 73, 9, 9);
+                fdScriptStartScreenTransition();
+                fdScriptWaitTransitionTicks();
+                scAirsRockWhirlwindOpensTheTop();
+                break;
+        }
+    }
+    return 0;
 }
 
 Sint32 scPrepareMap(void)
 {
-	if (MainRoutineStateWork.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST)
-	{
-		scAirsRockSetLedgeMetatilesByLevel();
-	}
-	return 0;
+    if (MainRoutineStateWork.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST)
+    {
+        scAirsRockSetLedgeMetatilesByLevel();
+    }
+    return 0;
 }
 
 #undef WAVE_SCROLL
@@ -2126,230 +2126,230 @@ Sint32 scPrepareMap(void)
 
 // The five pillars on the entrance's ledges that Move pushes, ended by -1.
 Sint16 AirsRockEntrancePillars[] = {
-	ACTOR_FIRST_LEDGE_PILLAR,  ACTOR_SECOND_LEDGE_PILLAR, ACTOR_THIRD_LEDGE_PILLAR,
-	ACTOR_FOURTH_LEDGE_PILLAR, ACTOR_FIFTH_LEDGE_PILLAR,  -1,
+    ACTOR_FIRST_LEDGE_PILLAR,  ACTOR_SECOND_LEDGE_PILLAR, ACTOR_THIRD_LEDGE_PILLAR,
+    ACTOR_FOURTH_LEDGE_PILLAR, ACTOR_FIFTH_LEDGE_PILLAR,  -1,
 };
 
 const Sint32 *FieldEffectDurationScripts[] = {
-	FieldEffectShortScript,
-	FieldEffectMediumScript,
-	FieldEffectLongScript,
+    FieldEffectShortScript,
+    FieldEffectMediumScript,
+    FieldEffectLongScript,
 };
 
 Sint32 AirsRockWindStoneScript[] = {
-	SC_SET(SW_SCALE_Y, toFIXED(3) / 2),
-	SC_ANIMATION(2),
-	SC_CALL((Sint32)scAirsRockClearScriptedActorSpriteFlags),
-	SC_END,
+    SC_SET(SW_SCALE_Y, toFIXED(3) / 2),
+    SC_ANIMATION(2),
+    SC_CALL((Sint32)scAirsRockClearScriptedActorSpriteFlags),
+    SC_END,
 };
 
 Uint32 AirsRockWhirlwindFadesScript[] = {
-	SC_ANIMATION(5),
-	SC_WAIT(12),
-	SC_RELEASE,
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 
 Uint32 AirsRockWhirlwindRisesScript[] = {
-	SC_WAIT(60),
-	SC_ANIMATION(5),
-	SC_WAIT(12),
-	SC_RELEASE,
+    SC_WAIT(60),
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 
 Sint32 AirsRockRubbleScript[] = {
-	SC_WAIT(1),
-	SC_ADD(SW_SCALE_X, -toFIXED(1) / 50),
-	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 50),
-	SC_LOOP(32, SC_TOP),
-	SC_WAIT(1),
-	SC_POSITION(0, 0, 0),
-	SC_WAIT(1),
-	SC_RELEASE,
+    SC_WAIT(1),
+    SC_ADD(SW_SCALE_X, -toFIXED(1) / 50),
+    SC_ADD(SW_SCALE_Y, -toFIXED(1) / 50),
+    SC_LOOP(32, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_RELEASE,
 };
 
 // The puddle Frost freezes into a pillar, and the flag set while it stands (fdFlagBlockPlaceAll).
 Sint16 AirsRockFrozenPuddle[] = {
-	ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, -1, 0,
+    ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, -1, 0,
 };
 
 #include "shared/scene_entrances_default.c"
 
 SCENE_REGION AirsRockStormBrandChestRegions[] = {
-	{256, 96, 144, 272, 112, 160, CONDITION_ALWAYS, 2},
-	{608, 96, 144, 624, 112, 160, CONDITION_ALWAYS, 3},
-	{864, 96, 144, 880, 112, 160, CONDITION_ALWAYS, 4},
-	{SCENE_TABLE_END},
+    {256, 96, 144, 272, 112, 160, CONDITION_ALWAYS, 2},
+    {608, 96, 144, 624, 112, 160, CONDITION_ALWAYS, 3},
+    {864, 96, 144, 880, 112, 160, CONDITION_ALWAYS, 4},
+    {SCENE_TABLE_END},
 };
 
 SCENE_REGION AirsRockEntranceRegions[] = {
-	{256, -192, 816, 272, -176, 832, CONDITION_ALWAYS, 1},
-	{608, -192, 816, 624, -176, 832, CONDITION_ALWAYS, 2},
-	{864, -192, 816, 880, -176, 832, CONDITION_ALWAYS, 3},
-	{624, 176, 704, 640, 192, 720, CONDITION_ALWAYS, 5},
-	{784, 160, 688, 800, 176, 704, CONDITION_ALWAYS, 6},
-	{624, -200, 320, 640, -184, 336, CONDITION_ALWAYS, 7},
-	{784, -216, 304, 800, -200, 320, CONDITION_ALWAYS, 8},
-	{SCENE_TABLE_END},
+    {256, -192, 816, 272, -176, 832, CONDITION_ALWAYS, 1},
+    {608, -192, 816, 624, -176, 832, CONDITION_ALWAYS, 2},
+    {864, -192, 816, 880, -176, 832, CONDITION_ALWAYS, 3},
+    {624, 176, 704, 640, 192, 720, CONDITION_ALWAYS, 5},
+    {784, 160, 688, 800, 176, 704, CONDITION_ALWAYS, 6},
+    {624, -200, 320, 640, -184, 336, CONDITION_ALWAYS, 7},
+    {784, -216, 304, 800, -200, 320, CONDITION_ALWAYS, 8},
+    {SCENE_TABLE_END},
 };
 
 SCENE_REGION AirsRockFujinShieldChestRegions[] = {
-	{144, -96, 304, 160, -80, 320, CONDITION_ALWAYS, 6},
-	{208, -96, 304, 224, -80, 320, CONDITION_ALWAYS, 7},
-	{144, -80, 304, 160, -64, 320, CONDITION_ALWAYS, 8},
-	{208, -80, 304, 224, -64, 320, CONDITION_ALWAYS, 9},
-	{144, 160, 192, 160, 176, 208, CONDITION_ALWAYS, 10},
-	{208, 160, 192, 224, 176, 208, CONDITION_ALWAYS, 11},
-	{144, 160, 192, 160, 176, 208, CONDITION_ALWAYS, 10},
-	{208, 160, 192, 224, 176, 208, CONDITION_ALWAYS, 11},
-	{528, -96, 304, 544, -80, 320, CONDITION_ALWAYS, 12},
-	{592, -96, 304, 608, -80, 320, CONDITION_ALWAYS, 13},
-	{SCENE_TABLE_END},
+    {144, -96, 304, 160, -80, 320, CONDITION_ALWAYS, 6},
+    {208, -96, 304, 224, -80, 320, CONDITION_ALWAYS, 7},
+    {144, -80, 304, 160, -64, 320, CONDITION_ALWAYS, 8},
+    {208, -80, 304, 224, -64, 320, CONDITION_ALWAYS, 9},
+    {144, 160, 192, 160, 176, 208, CONDITION_ALWAYS, 10},
+    {208, 160, 192, 224, 176, 208, CONDITION_ALWAYS, 11},
+    {144, 160, 192, 160, 176, 208, CONDITION_ALWAYS, 10},
+    {208, 160, 192, 224, 176, 208, CONDITION_ALWAYS, 11},
+    {528, -96, 304, 544, -80, 320, CONDITION_ALWAYS, 12},
+    {592, -96, 304, 608, -80, 320, CONDITION_ALWAYS, 13},
+    {SCENE_TABLE_END},
 };
 
 Uint32 SceneExits[] = {
-	SCENE_EXITS(AirsRockStormBrandChest),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_STORM_BRAND_CHEST_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_AIRS_ROCK_STORM_BRAND_CHEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_STORM_BRAND_CHEST_TO_AIRS_ROCK_ENTRANCE_WEST, AirsRockEntrance, AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_WEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_STORM_BRAND_CHEST_TO_AIRS_ROCK_ENTRANCE_EAST_A, AirsRockEntrance, AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_A, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_STORM_BRAND_CHEST_TO_AIRS_ROCK_ENTRANCE_EAST_B, AirsRockEntrance, AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_B, EXIT_FLAG_NONE),
-	SCENE_EXITS(AirsRockEntrance),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_STORM_BRAND_CHEST_WEST, AirsRockStormBrandChest, AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_WEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_STORM_BRAND_CHEST_EAST_A, AirsRockStormBrandChest, AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_A, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_STORM_BRAND_CHEST_EAST_B, AirsRockStormBrandChest, AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_B, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_INSIDE_HALL, AirsRockInsideHall, AIRS_ROCK_INSIDE_HALL_FROM_AIRS_ROCK_ENTRANCE, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(5, AirsRockEntrance, ENTRANCE_UP_THE_CLIFF_WEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(6, AirsRockEntrance, ENTRANCE_UP_THE_CLIFF_EAST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(7, AirsRockEntrance, ENTRANCE_DOWN_FROM_THE_CLIFF_WEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(8, AirsRockEntrance, ENTRANCE_DOWN_FROM_THE_CLIFF_EAST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_FUJIN_SHIELD_CHEST_A, AirsRockFujinShieldChest, AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_ENTRANCE, EXIT_FLAG_NONE),
-	SCENE_EXITS(AirsRockFujinShieldChest),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_FUJIN_SHIELD_CHEST_TO_AIRS_ROCK_ENTRANCE, AirsRockEntrance, AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_FUJIN_SHIELD_CHEST_B, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(2, AirsRockFujinShieldChest, ENTRANCE_LOWER_PATH, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(3, AirsRockFujinShieldChest, ENTRANCE_UPPER_PATH, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(4, AirsRockFujinShieldChest, ENTRANCE_LEDGES_FROM_LOWER_PATH, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(5, AirsRockFujinShieldChest, ENTRANCE_LEDGES_FROM_UPPER_PATH, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(6, AirsRockFujinShieldChest, ENTRANCE_INTO_THE_FOG_WEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(7, AirsRockFujinShieldChest, ENTRANCE_INTO_THE_FOG_EAST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(8, AirsRockFujinShieldChest, ENTRANCE_BELOW_THE_FOG_WEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(9, AirsRockFujinShieldChest, ENTRANCE_BELOW_THE_FOG_EAST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(10, AirsRockFujinShieldChest, ENTRANCE_INTO_THE_FOG_WEST, FLAG_AIRS_ROCK_FOG_CLEARED),
-	SCENE_EXIT_UNLESS(11, AirsRockFujinShieldChest, ENTRANCE_INTO_THE_FOG_EAST, FLAG_AIRS_ROCK_FOG_CLEARED),
-	SCENE_EXIT_UNLESS(10, AirsRockFujinShieldChest, ENTRANCE_ABOVE_THE_FOG_WEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(11, AirsRockFujinShieldChest, ENTRANCE_ABOVE_THE_FOG_EAST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(12, AirsRockFujinShieldChest, ENTRANCE_DOWN_INTO_THE_FOG_WEST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(13, AirsRockFujinShieldChest, ENTRANCE_DOWN_INTO_THE_FOG_EAST, EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(AIRS_ROCK_FUJIN_SHIELD_CHEST_TO_AIRS_ROCK_INSIDE_VIAL_CHEST, AirsRockInsideVialChest, AIRS_ROCK_INSIDE_VIAL_CHEST_FROM_AIRS_ROCK_FUJIN_SHIELD_CHEST, EXIT_FLAG_NONE),
-	SCENE_EXITS_END,
+    SCENE_EXITS(AirsRockStormBrandChest),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_STORM_BRAND_CHEST_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_AIRS_ROCK_STORM_BRAND_CHEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_STORM_BRAND_CHEST_TO_AIRS_ROCK_ENTRANCE_WEST, AirsRockEntrance, AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_STORM_BRAND_CHEST_TO_AIRS_ROCK_ENTRANCE_EAST_A, AirsRockEntrance, AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_STORM_BRAND_CHEST_TO_AIRS_ROCK_ENTRANCE_EAST_B, AirsRockEntrance, AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_B, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRockEntrance),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_STORM_BRAND_CHEST_WEST, AirsRockStormBrandChest, AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_STORM_BRAND_CHEST_EAST_A, AirsRockStormBrandChest, AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_STORM_BRAND_CHEST_EAST_B, AirsRockStormBrandChest, AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_INSIDE_HALL, AirsRockInsideHall, AIRS_ROCK_INSIDE_HALL_FROM_AIRS_ROCK_ENTRANCE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AirsRockEntrance, ENTRANCE_UP_THE_CLIFF_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AirsRockEntrance, ENTRANCE_UP_THE_CLIFF_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AirsRockEntrance, ENTRANCE_DOWN_FROM_THE_CLIFF_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AirsRockEntrance, ENTRANCE_DOWN_FROM_THE_CLIFF_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_FUJIN_SHIELD_CHEST_A, AirsRockFujinShieldChest, AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_ENTRANCE, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRockFujinShieldChest),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_FUJIN_SHIELD_CHEST_TO_AIRS_ROCK_ENTRANCE, AirsRockEntrance, AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_FUJIN_SHIELD_CHEST_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRockFujinShieldChest, ENTRANCE_LOWER_PATH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AirsRockFujinShieldChest, ENTRANCE_UPPER_PATH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AirsRockFujinShieldChest, ENTRANCE_LEDGES_FROM_LOWER_PATH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AirsRockFujinShieldChest, ENTRANCE_LEDGES_FROM_UPPER_PATH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AirsRockFujinShieldChest, ENTRANCE_INTO_THE_FOG_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AirsRockFujinShieldChest, ENTRANCE_INTO_THE_FOG_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AirsRockFujinShieldChest, ENTRANCE_BELOW_THE_FOG_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AirsRockFujinShieldChest, ENTRANCE_BELOW_THE_FOG_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, AirsRockFujinShieldChest, ENTRANCE_INTO_THE_FOG_WEST, FLAG_AIRS_ROCK_FOG_CLEARED),
+    SCENE_EXIT_UNLESS(11, AirsRockFujinShieldChest, ENTRANCE_INTO_THE_FOG_EAST, FLAG_AIRS_ROCK_FOG_CLEARED),
+    SCENE_EXIT_UNLESS(10, AirsRockFujinShieldChest, ENTRANCE_ABOVE_THE_FOG_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, AirsRockFujinShieldChest, ENTRANCE_ABOVE_THE_FOG_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, AirsRockFujinShieldChest, ENTRANCE_DOWN_INTO_THE_FOG_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, AirsRockFujinShieldChest, ENTRANCE_DOWN_INTO_THE_FOG_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(AIRS_ROCK_FUJIN_SHIELD_CHEST_TO_AIRS_ROCK_INSIDE_VIAL_CHEST, AirsRockInsideVialChest, AIRS_ROCK_INSIDE_VIAL_CHEST_FROM_AIRS_ROCK_FUJIN_SHIELD_CHEST, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE AirsRockStormBrandChestPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 920, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 376, 0, 808, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 632, 0, 888, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 872, 0, 856, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 920, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 376, 0, 808, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 632, 0, 888, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockWindStoneScript, 872, 0, 856, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 ACTOR_PLACE AirsRockEntrancePlacements[] = {
-	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 680, 0, 296, FACING_WEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 648, 0, 296, FACING_WEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 712, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
-	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SCENE_TABLE_END},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 680, 0, 296, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 648, 0, 296, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 712, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SCENE_TABLE_END},
 };
 
 ACTOR_PLACE AirsRockFujinShieldChestPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 904, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 712, 0, 904, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 872, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 152, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 904, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 712, 0, 904, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 872, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 152, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 CUE AirsRockStormBrandChestCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
-	{CUE_EXAMINE, 20, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockExamineWindStone)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_TWISTER_ROCK_BY_THE_WALL, FLAG_AIRS_ROCK_WALL_CLEARED, SCRIPT_REF(scAirsRockStartWhirlwind)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TWISTER_ROCK_BY_THE_WALL, FLAG_AIRS_ROCK_WALL_CLEARED, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_TWISTER_ROCK_BY_THE_WALL, FLAG_AIRS_ROCK_WALL_CLEARED, SCRIPT_REF(scAirsRockWhirlwindClearsWall)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_A, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_A, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_A, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_B, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_B, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_B, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_C, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_C, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_C, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_D, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_D, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_D, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_E, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_E, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_E, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+    {CUE_EXAMINE, 20, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockExamineWindStone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_TWISTER_ROCK_BY_THE_WALL, FLAG_AIRS_ROCK_WALL_CLEARED, SCRIPT_REF(scAirsRockStartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TWISTER_ROCK_BY_THE_WALL, FLAG_AIRS_ROCK_WALL_CLEARED, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_TWISTER_ROCK_BY_THE_WALL, FLAG_AIRS_ROCK_WALL_CLEARED, SCRIPT_REF(scAirsRockWhirlwindClearsWall)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_A, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_A, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_A, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_B, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_B, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_B, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_C, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_C, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_C, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_D, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_D, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_D, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_WIND_STONE_E, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockStartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WIND_STONE_E, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WIND_STONE_E, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockBlowGust)},
+    {CUE_TABLE_END},
 };
 
 CUE AirsRockEntranceCues[] = {
-	{STEP_CUE_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockEnterTheRock)},
-	{CUE_EXIT, 2, CONDITION_ALWAYS, 9},
-	{CUE_PUSH, 0, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockLiftPillar)},
-	{CUE_PUSHED, 0, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockPlacePillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, SCRIPT_REF(scAirsRockLiftPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, SCRIPT_REF(scAirsRockPlacePillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND, SCRIPT_REF(scAirsRockLiftPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND, SCRIPT_REF(scAirsRockPlacePillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THIRD_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD, SCRIPT_REF(scAirsRockLiftPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD, SCRIPT_REF(scAirsRockPlacePillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FOURTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH, SCRIPT_REF(scAirsRockLiftPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH, SCRIPT_REF(scAirsRockPlacePillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, SCRIPT_REF(scAirsRockFreezePuddle)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIFTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH, SCRIPT_REF(scAirsRockLiftPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIFTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH, SCRIPT_REF(scAirsRockPlacePillar)},
-	{CUE_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockRideWhirlwind)},
-	{CUE_TABLE_END},
+    {STEP_CUE_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockEnterTheRock)},
+    {CUE_EXIT, 2, CONDITION_ALWAYS, 9},
+    {CUE_PUSH, 0, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockLiftPillar)},
+    {CUE_PUSHED, 0, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockPlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, SCRIPT_REF(scAirsRockLiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, SCRIPT_REF(scAirsRockPlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND, SCRIPT_REF(scAirsRockLiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND, SCRIPT_REF(scAirsRockPlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THIRD_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD, SCRIPT_REF(scAirsRockLiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD, SCRIPT_REF(scAirsRockPlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FOURTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH, SCRIPT_REF(scAirsRockLiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH, SCRIPT_REF(scAirsRockPlacePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, SCRIPT_REF(scAirsRockFreezePuddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIFTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH, SCRIPT_REF(scAirsRockLiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIFTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH, SCRIPT_REF(scAirsRockPlacePillar)},
+    {CUE_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockRideWhirlwind)},
+    {CUE_TABLE_END},
 };
 
 CUE AirsRockFujinShieldChestCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
-	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
-	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
-	{CUE_EXIT, 4, CONDITION_ALWAYS, 4},
-	{CUE_EXIT, 5, CONDITION_ALWAYS, 5},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 14},
-	{STEP_CUE_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockDropOffLedge)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockMoveFirstPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockMoveSecondPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_PILLAR, FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED, SCRIPT_REF(scAirsRockMoveThirdPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_TWISTER_ROCK_IN_THE_FOG, FLAG_AIRS_ROCK_FOG_CLEARED, SCRIPT_REF(scAirsRockStartWhirlwind)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TWISTER_ROCK_IN_THE_FOG, FLAG_AIRS_ROCK_FOG_CLEARED, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_TWISTER_ROCK_IN_THE_FOG, FLAG_AIRS_ROCK_FOG_CLEARED, SCRIPT_REF(scAirsRockWhirlwindClearsFog)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_TWISTER_ROCK_AT_THE_TOP, FLAG_AIRS_ROCK_TOP_OPENED, SCRIPT_REF(scAirsRockStartWhirlwind)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TWISTER_ROCK_AT_THE_TOP, FLAG_AIRS_ROCK_TOP_OPENED, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_TWISTER_ROCK_AT_THE_TOP, FLAG_AIRS_ROCK_TOP_OPENED, SCRIPT_REF(scAirsRockWhirlwindOpensTheTop)},
-	{CUE_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockRideWhirlwind)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+    {CUE_EXIT, 2, CONDITION_ALWAYS, 2},
+    {CUE_EXIT, 3, CONDITION_ALWAYS, 3},
+    {CUE_EXIT, 4, CONDITION_ALWAYS, 4},
+    {CUE_EXIT, 5, CONDITION_ALWAYS, 5},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 14},
+    {STEP_CUE_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockDropOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockMoveFirstPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockMoveSecondPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_PILLAR, FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED, SCRIPT_REF(scAirsRockMoveThirdPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_TWISTER_ROCK_IN_THE_FOG, FLAG_AIRS_ROCK_FOG_CLEARED, SCRIPT_REF(scAirsRockStartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TWISTER_ROCK_IN_THE_FOG, FLAG_AIRS_ROCK_FOG_CLEARED, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_TWISTER_ROCK_IN_THE_FOG, FLAG_AIRS_ROCK_FOG_CLEARED, SCRIPT_REF(scAirsRockWhirlwindClearsFog)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_TWISTER_ROCK_AT_THE_TOP, FLAG_AIRS_ROCK_TOP_OPENED, SCRIPT_REF(scAirsRockStartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TWISTER_ROCK_AT_THE_TOP, FLAG_AIRS_ROCK_TOP_OPENED, SCRIPT_REF(scAirsRockTakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_TWISTER_ROCK_AT_THE_TOP, FLAG_AIRS_ROCK_TOP_OPENED, SCRIPT_REF(scAirsRockWhirlwindOpensTheTop)},
+    {CUE_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockRideWhirlwind)},
+    {CUE_TABLE_END},
 };
 
 // The kinds of barrier a gust sweeps away (AIRS_ROCK_GUST_BARRIER), a row each: the map metatile the cleared ground's picture is copied from, and how far the barrier's pictures lie from the metatiles the gust crosses, 64 metatiles east. An odd kind clears a column three metatiles tall, an even one a metatile; no barrier is of kind 1.
 Sint16 AirsRockGustTargets[][4] = {
-	{64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0},
+    {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0},
 };
 // clang-format on
 

@@ -14,7 +14,7 @@
 // in the model's corner list, and the texture point (u across, v down, in texels) each corner
 // shows.
 #define MESH_FACE(a, b, c, ua, va, ub, vb, uc, vc)                                                 \
-	(a) | (b) << 8, (c), (ua) | (va) << 8, (ub) | (vb) << 8, (uc) | (vc) << 8, 0
+    (a) | (b) << 8, (c), (ua) | (va) << 8, (ub) | (vb) << 8, (uc) | (vc) << 8, 0
 // A face of no corners ends a textured mesh.
 #define MESH_END                                             0, 0, 0, 0, 0, 0
 
@@ -70,7 +70,7 @@ const Uint8  SpireShardHeights[]  = {11, 6, 10, 11, 10, 7, 17, 21, 12, 21, 17, 1
 
 // Each shard picture's byte offset in Spire's sprite sheet.
 const Uint16 SpireShardPictures[] = {
-	0, 55, 121, 221, 298, 368, 452, 673, 862, 1090, 1342, 1631, 1917, 2157, 2413, 2623};
+    0, 55, 121, 221, 298, 368, 452, 673, 862, 1090, 1342, 1631, 1917, 2157, 2413, 2623};
 
 // Each shard picture's byte offset in a shade of the stat change's sprite sheet.
 const Uint16 StatChangeShardPictures[] = {0, 120, 180, 258, 298, 352, 408, 471, 567, 607, 631, 661};
@@ -157,9 +157,9 @@ const Uint8  ShatteringOpeningPieceHeights[]  = {23, 47, 25, 40, 20, 53, 28, 29,
 
 // Each piece picture's byte offset in Death Plunge's sprite sheet.
 const Uint16 ShatteringOpeningPiecePictures[] = {
-	0,     483,   1423,  2023,  3223,  3923,  7580,  8112,  8779,  8986,  9294,  10449,
-	10619, 10943, 11069, 11174, 11282, 11503, 13538, 14678, 15703, 18103, 19292, 19442,
-	20702, 21528, 21733, 22565, 23715, 24114, 25234, 25330, 27781, 27946};
+    0,     483,   1423,  2023,  3223,  3923,  7580,  8112,  8779,  8986,  9294,  10449,
+    10619, 10943, 11069, 11174, 11282, 11503, 13538, 14678, 15703, 18103, 19292, 19442,
+    20702, 21528, 21733, 22565, 23715, 24114, 25234, 25330, 27781, 27946};
 
 // Each piece's starting x, in pixels.
 const Uint8        ShatteringOpeningPieceStartX[] = {0,  21, 28, 46, 70, 51, 0,  13, 37, 77, 87,
@@ -339,7 +339,7 @@ const Uint8 LobbedShellsShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7
 
 // Each shard picture's height, in pixels.
 const Uint8 LobbedShellsShardHeights[] = {
-	12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4, 3, 3};
+    12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4, 3, 3};
 
 // Each shard picture's byte offset in the sprite sheet.
 const Uint16 LobbedShellsShardPictures[] = {0,
@@ -442,10 +442,10 @@ const Uint8  VorticesCounts[][2] = {
 // Whirlwind, by variant: the WHIRLWIND_ columns. The sway is in pixels each way; the shake is
 // btCameraShake's horizontal range, the vertical twice that.
 const Uint8 VorticesShapes[][3] = {
-	// tornadoes, sway, screen shake
-	[EFFECT_VARIANT_BASIC]     = {1, 16, 2}, // Whirlwind, Gale
-	[EFFECT_VARIANT_STRONGER]  = {2, 24, 2}, // Tornado, Typhoon
-	[EFFECT_VARIANT_STRONGEST] = {4, 32, 4}, // Tempest, Hurricane
+    // tornadoes, sway, screen shake
+    [EFFECT_VARIANT_BASIC]     = {1, 16, 2}, // Whirlwind, Gale
+    [EFFECT_VARIANT_STRONGER]  = {2, 24, 2}, // Tornado, Typhoon
+    [EFFECT_VARIANT_STRONGEST] = {4, 32, 4}, // Tempest, Hurricane
 };
 
 // The crystals, the ticks and the tick the damage shows, three for each variant
@@ -465,12 +465,12 @@ const Uint8  PlasmaCounts[]         = {1, 3, 7};
 // Five halfwords for each variant: the sparks in each burst, the bursts, and each burst's x offset
 // in pixels.
 const Uint16 SparkGroupsShapes[][5] = {
-	{128, 1, 16, 0,  0 },
-	{255, 1, 16, 0,  0 },
-	{192, 3, 0,  24, 48},
-	{340, 1, 16, 24, 48},
-	{32,  1, 16, 0,  0 },
-	{200, 1, 16, 24, 48}
+    {128, 1, 16, 0,  0 },
+    {255, 1, 16, 0,  0 },
+    {192, 3, 0,  24, 48},
+    {340, 1, 16, 24, 48},
+    {32,  1, 16, 0,  0 },
+    {200, 1, 16, 24, 48}
 };
 
 // The flash burst's picture for each three ticks of a flash, by number.
@@ -509,18 +509,18 @@ const Uint16 ZaganChargePoints[][2]  = {
 
 // Where each sprite of the galloping Zagan sits, x and y, in pixels.
 const Uint16 ZaganGallopPoints[][2] = {
-	{0,  16},
-	{0,  48},
-	{32, 0 },
-	{32, 32},
-	{32, 64},
-	{64, 0 },
-	{64, 32},
-	{64, 64},
-	{64, 96},
-	{96, 0 },
-	{96, 64},
-	{96, 96}
+    {0,  16},
+    {0,  48},
+    {32, 0 },
+    {32, 32},
+    {32, 64},
+    {64, 0 },
+    {64, 32},
+    {64, 64},
+    {64, 96},
+    {96, 0 },
+    {96, 64},
+    {96, 96}
 };
 
 // The tick each dust ring starts on, counted from the blow.
@@ -1051,7 +1051,7 @@ const Uint8  RaySparks[][2]       = {
 
 // Eruption's counts, by variant.
 const Uint8 EruptionCounts[][3] = {
-	{16,  8,  72},
+    {16,  8,  72},
     {32,  16, 80},
     {128, 32, 88}
 };
@@ -1385,7 +1385,7 @@ const Uint8 UlyssesPictureWidths[]  = {12, 9, 6, 5, 8, 9, 12, 9, 8, 8, 8, 10, 11
 
 // Each Ulysses picture's height, in pixels.
 const Uint8 UlyssesPictureHeights[] = {
-	18, 17, 15, 12, 14, 15, 16, 13, 8, 4, 4, 6, 9, 9, 10, 10, 13, 16};
+    18, 17, 15, 12, 14, 15, 16, 13, 8, 4, 4, 6, 9, 9, 10, 10, 13, 16};
 
 // Each Ulysses picture's byte offset in Ulysses's sprite sheet.
 const Uint16 UlyssesPictures[]          = {0,
@@ -1635,7 +1635,7 @@ const Uint8  CastingImpactBitePictures[]     = {0, 1, 2, 3};
 
 // Each Raiden's Wrath picture's byte offset in the casting impacts' sprite sheet.
 const Uint16 CastingImpactRaidensWrathPictures[] = {
-	8448, 8712, 11462, 16646, 16646, 24351, 24351, 28201, 28201, 28201};
+    8448, 8712, 11462, 16646, 16646, 24351, 24351, 28201, 28201, 28201};
 
 // Each Raiden's Wrath picture's width, in pixels.
 const Uint16 CastingImpactRaidensWrathWidths[]  = {24, 55, 64, 115, 115, 70, 70, 22, 22, 22};
@@ -1766,7 +1766,7 @@ const Sint16 StarfieldFallOrbitPoints[][3]     = {
 
 // Each fireball's point, x and y, in pixels.
 const Sint16 StarfieldFallFireballPoints[][2] = {
-	{32,  32 },
+    {32,  32 },
     {48,  96 },
     {80,  80 },
     {112, 100},
@@ -1954,7 +1954,7 @@ const Uint8  DjinniChargeEntranceFlags[]  = {2, 10, 0, 0};
 
 // The debris's gravities, in pixels a tick each tick: negative, so it rises.
 const Sint32 DjinniChargeDebrisGravity[4] = {
-	-toFIXED(1) / 8, -toFIXED(1) / 16, -toFIXED(1) / 32, -toFIXED(1) / 64};
+    -toFIXED(1) / 8, -toFIXED(1) / 16, -toFIXED(1) / 32, -toFIXED(1) / 64};
 
 // How far along its path the streak's head is at each step, in sixteenths.
 const Sint8        GaspFamilyStreakSteps[]          = {0, 0, 1, 2, 4, 6, 9, 12, 16, 0, 0, 0};
@@ -1973,57 +1973,57 @@ const Uint8        CharonFlashTicks[]               = {16, 60, 108, 0, 0};
 
 // A band of sixteen corners: an octagon below and one above.
 const MODEL_VERTEX BattleEffectOctagonBandCorners[] = {
-	{0,   -8, 32 },
-	{22,  -8, 22 },
-	{31,  -8, 0  },
-	{22,  -8, -22},
-	{0,   -8, -31},
-	{-22, -8, -22},
-	{-31, -8, 0  },
-	{-22, -8, 22 },
-	{0,   8,  32 },
-	{22,  8,  22 },
-	{31,  8,  0  },
-	{22,  8,  -22},
-	{0,   8,  -31},
-	{-22, 8,  -22},
-	{-31, 8,  0  },
-	{-22, 8,  22 }
+    {0,   -8, 32 },
+    {22,  -8, 22 },
+    {31,  -8, 0  },
+    {22,  -8, -22},
+    {0,   -8, -31},
+    {-22, -8, -22},
+    {-31, -8, 0  },
+    {-22, -8, 22 },
+    {0,   8,  32 },
+    {22,  8,  22 },
+    {31,  8,  0  },
+    {22,  8,  -22},
+    {0,   8,  -31},
+    {-22, 8,  -22},
+    {-31, 8,  0  },
+    {-22, 8,  22 }
 };
 
 // The ripple's 32 corners: a ring of sixteen below and one above.
 const MODEL_VERTEX BattleEffectCylinderCorners[] = {
-	{0,   -8, 31 },
+    {0,   -8, 31 },
     {12,  -8, 29 },
     {22,  -8, 22 },
     {29,  -8, 12 },
     {31,  -8, 0  },
     {29,  -8, -12},
-	{22,  -8, -22},
+    {22,  -8, -22},
     {12,  -8, -29},
     {0,   -8, -31},
     {-13, -8, -29},
     {-23, -8, -22},
     {-30, -8, -12},
-	{-32, -8, 0  },
+    {-32, -8, 0  },
     {-30, -8, 13 },
     {-23, -8, 23 },
     {-13, -8, 30 },
     {0,   8,  31 },
     {12,  8,  29 },
-	{22,  8,  22 },
+    {22,  8,  22 },
     {29,  8,  12 },
     {31,  8,  0  },
     {29,  8,  -12},
     {22,  8,  -22},
     {12,  8,  -29},
-	{0,   8,  -31},
+    {0,   8,  -31},
     {-13, 8,  -29},
     {-23, 8,  -22},
     {-30, 8,  -12},
     {-32, 8,  0  },
     {-30, 8,  13 },
-	{-23, 8,  23 },
+    {-23, 8,  23 },
     {-13, 8,  30 }
 };
 
@@ -2122,22 +2122,22 @@ const MODEL_VERTEX GeodeRingCorners[]         = {
 
 // A ring's corners: eight about the edge and eight within.
 const MODEL_VERTEX BattleEffectRingCorners[] = {
-	{0,   -8, 38 },
-	{26,  -8, 26 },
-	{37,  -8, 0  },
-	{26,  -8, -26},
-	{0,   -8, -37},
-	{-26, -8, -26},
-	{-37, -8, 0  },
-	{-26, -8, 26 },
-	{0,   0,  32 },
-	{22,  0,  22 },
-	{31,  0,  0  },
-	{22,  0,  -22},
-	{0,   0,  -31},
-	{-22, 0,  -22},
-	{-31, 0,  0  },
-	{-22, 0,  22 }
+    {0,   -8, 38 },
+    {26,  -8, 26 },
+    {37,  -8, 0  },
+    {26,  -8, -26},
+    {0,   -8, -37},
+    {-26, -8, -26},
+    {-37, -8, 0  },
+    {-26, -8, 26 },
+    {0,   0,  32 },
+    {22,  0,  22 },
+    {31,  0,  0  },
+    {22,  0,  -22},
+    {0,   0,  -31},
+    {-22, 0,  -22},
+    {-31, 0,  0  },
+    {-22, 0,  22 }
 };
 
 // The ring's mesh.
@@ -2165,14 +2165,14 @@ const Uint16       BattleEffectTriangleMesh[]    = {256, 2, 0, 0};
 
 // A small triangle lying on the ground: its three corners.
 const MODEL_VERTEX BattleEffectTriangleCorners[] = {
-	{-6, 0, -6},
+    {-6, 0, -6},
     {6,  0, -6},
     {-6, 0, 6 }
 };
 
 // A beam 127 tall, 12 wide at the top and 4 at its foot: its four corners.
 const MODEL_VERTEX BattleEffectTaperedBeamCorners[] = {
-	{-6, 127, 0},
+    {-6, 127, 0},
     {6,  127, 0},
     {-2, 0,   0},
     {2,  0,   0}
@@ -2180,7 +2180,7 @@ const MODEL_VERTEX BattleEffectTaperedBeamCorners[] = {
 
 // A beam 127 tall and 12 wide standing on the origin: its four corners.
 const MODEL_VERTEX BattleEffectBeamCorners[] = {
-	{-6, 127, 0},
+    {-6, 127, 0},
     {6,  127, 0},
     {-6, 0,   0},
     {6,  0,   0}
@@ -2188,7 +2188,7 @@ const MODEL_VERTEX BattleEffectBeamCorners[] = {
 
 // A beam 131 tall and 12 wide reaching below the origin: its four corners.
 const MODEL_VERTEX BattleEffectLongBeamCorners[] = {
-	{6,  127, 0},
+    {6,  127, 0},
     {-6, 127, 0},
     {6,  -4,  0},
     {-6, -4,  0}
@@ -2196,7 +2196,7 @@ const MODEL_VERTEX BattleEffectLongBeamCorners[] = {
 
 // A 64 by 64 square about the origin: its four corners.
 const MODEL_VERTEX BattleEffectSquareCorners[] = {
-	{-32, -32, 0},
+    {-32, -32, 0},
     {32,  -32, 0},
     {-32, 32,  0},
     {32,  32,  0}
@@ -2204,7 +2204,7 @@ const MODEL_VERTEX BattleEffectSquareCorners[] = {
 
 // A 64 by 64 square standing on the origin: its four corners.
 const MODEL_VERTEX BattleEffectStandingSquareCorners[] = {
-	{-32, -64, 0},
+    {-32, -64, 0},
     {32,  -64, 0},
     {-32, 0,   0},
     {32,  0,   0}
@@ -2212,7 +2212,7 @@ const MODEL_VERTEX BattleEffectStandingSquareCorners[] = {
 
 // The fan flame's corners, as signed x, y and z.
 const MODEL_VERTEX LegendFanFlameCorners[] = {
-	{-16, 64, -64},
+    {-16, 64, -64},
     {16,  64, -64},
     {-16, 56, 0  },
     {16,  56, 0  }
@@ -2220,7 +2220,7 @@ const MODEL_VERTEX LegendFanFlameCorners[] = {
 
 // A 128 by 128 square lying on the ground about the origin: its four corners.
 const MODEL_VERTEX BattleEffectGroundSquareCorners[] = {
-	{-64, 0, -64},
+    {-64, 0, -64},
     {64,  0, -64},
     {-64, 0, 64 },
     {64,  0, 64 }
@@ -2228,19 +2228,19 @@ const MODEL_VERTEX BattleEffectGroundSquareCorners[] = {
 
 // A small square's mesh.
 const Uint16 BattleEffectSmallSquareMesh[] = {
-	MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31), MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31), MESH_END};
+    MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31), MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31), MESH_END};
 
 // The small square's mesh with its triangles wound the other way.
 const Uint16 BattleEffectSmallSquareMeshReversed[] = {
-	MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31), MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31), MESH_END};
+    MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31), MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31), MESH_END};
 
 // A column's mesh.
 const Uint16 BattleEffectColumnMesh[] = {
-	MESH_FACE(1, 3, 2, 31, 0, 31, 119, 0, 119), MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 119), MESH_END};
+    MESH_FACE(1, 3, 2, 31, 0, 31, 119, 0, 119), MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 119), MESH_END};
 
 // The sword's mesh.
 const Uint16 HeavyBlowSwordMesh[] = {
-	MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 127), MESH_FACE(1, 3, 2, 31, 0, 31, 127, 0, 127), MESH_END};
+    MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 127), MESH_FACE(1, 3, 2, 31, 0, 31, 127, 0, 127), MESH_END};
 
 // A tall quad's mesh.
 const Uint16 BattleEffectTallMesh[] = {MESH_FACE(0, 1, 2, 0, 1, 31, 1, 0, 63),
@@ -2256,11 +2256,11 @@ const Uint16 HauresBandMesh[]       = {
 
 // The burst's mesh.
 const Uint16 CatastropheForkMesh[] = {
-	MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 47), MESH_FACE(1, 3, 2, 31, 0, 31, 47, 0, 47), MESH_END};
+    MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 47), MESH_FACE(1, 3, 2, 31, 0, 31, 47, 0, 47), MESH_END};
 
 // A square's mesh.
 const Uint16 BattleEffectSquareMesh[] = {
-	MESH_FACE(1, 3, 2, 63, 1, 63, 63, 1, 63), MESH_FACE(0, 1, 2, 1, 1, 63, 1, 1, 63), MESH_END};
+    MESH_FACE(1, 3, 2, 63, 1, 63, 63, 1, 63), MESH_FACE(0, 1, 2, 1, 1, 63, 1, 1, 63), MESH_END};
 
 // A large square's mesh.
 const Uint16 BattleEffectLargeSquareMesh[]  = {MESH_FACE(1, 3, 2, 127, 0, 127, 127, 0, 127),
@@ -2303,7 +2303,7 @@ const Uint8  RagingHeatStyles[][4]          = {
 
 // Juggle's style, one row a mode.
 const Uint8 JuggleStyles[][7] = {
-	{1, 24, 4,  64, 32,  4,  0},
+    {1, 24, 4,  64, 32,  4,  0},
     {2, 32, 8,  32, 64,  8,  0},
     {2, 48, 16, 32, 128, 16, 0}
 };
@@ -2331,11 +2331,11 @@ const Sint8  FloraBloomY[]          = {0, 0, 0, 12, 0, 0};
 
 // The dagger's mesh.
 const Uint16 SabreDanceDaggerMesh[] = {
-	MESH_FACE(0, 1, 2, 6, 0, 25, 0, 6, 31), MESH_FACE(1, 3, 2, 25, 0, 25, 31, 6, 31), MESH_END};
+    MESH_FACE(0, 1, 2, 6, 0, 25, 0, 6, 31), MESH_FACE(1, 3, 2, 25, 0, 25, 31, 6, 31), MESH_END};
 
 // The dagger, 32 by 80 pixels from (-16, -16) to (16, 64), the point down: its four corners.
 const MODEL_VERTEX SabreDanceDaggerCorners[] = {
-	{-16, -16, 0},
+    {-16, -16, 0},
     {16,  -16, 0},
     {-16, 64,  0},
     {16,  64,  0}
@@ -2343,24 +2343,24 @@ const MODEL_VERTEX SabreDanceDaggerCorners[] = {
 
 // Each Fume level's row, one column a FUME_LEVEL_COLUMN.
 const Uint16 FumeLevels[][FUME_COLUMNS] = {
-	{16384, 16, 24, 96,  8,  4096 },
+    {16384, 16, 24, 96,  8,  4096 },
     {24576, 16, 48, 192, 16, 8192 },
     {40768, 32, 38, 256, 32, 16384}
 };
 
 // The early drops' gravities, in pixels a tick each tick: negative, so they rise.
 const Sint32 OceanFistDropGravity[4] = {
-	-toFIXED(1) / 8, -toFIXED(1) / 4, -toFIXED(1) / 4, -toFIXED(1) / 2};
+    -toFIXED(1) / 8, -toFIXED(1) / 4, -toFIXED(1) / 4, -toFIXED(1) / 2};
 
 // The size of the burst at the user, by mode (RUSHING_STRIKE_MODE): it is drawn twice this wide and
 // tall. Stun Muscle's and Living Armor's are the largest.
 const Sint32 RushingStrikeScales[] = {
-	toFIXED(0.5), toFIXED(0.5), toFIXED(0.5), toFIXED(0.5), toFIXED(0.84742), toFIXED(0.80518)};
+    toFIXED(0.5), toFIXED(0.5), toFIXED(0.5), toFIXED(0.5), toFIXED(0.84742), toFIXED(0.80518)};
 
 // The wall's size, by mode (MIRRORED_WALL_MODE): it is drawn at twice this, Spasm's the smallest,
 // Berserk's and Recovery's a ninth larger, and Sack's two fifths larger.
 const Sint32 MirroredWallScales[] = {
-	toFIXED(0.60682), toFIXED(0.67371), toFIXED(0.67371), toFIXED(0.84742)};
+    toFIXED(0.60682), toFIXED(0.67371), toFIXED(0.67371), toFIXED(0.84742)};
 
 // The wall's shade, by mode.
 const Sint32 MirroredWallShades[]       = {-8, -8, -8, 0};
@@ -2388,16 +2388,16 @@ const Uint8  DaedalusBirdStarts[][2]    = {
 
 // Each bird's speed, x and y, in 65,536ths of a pixel a tick: up and to the left.
 const Sint32 DaedalusBirdSpeeds[][2] = {
-	{-120000, -70000},
-	{-117000, -68000},
-	{-120000, -70000},
-	{-117000, -68000},
-	{-80000,  -80000},
-	{-80000,  -95000},
-	{-100000, -80000},
-	{-100000, -90000},
-	{-120000, -95000},
-	{-100000, -95000}
+    {-120000, -70000},
+    {-117000, -68000},
+    {-120000, -70000},
+    {-117000, -68000},
+    {-80000,  -80000},
+    {-80000,  -95000},
+    {-100000, -80000},
+    {-100000, -90000},
+    {-120000, -95000},
+    {-100000, -95000}
 };
 
 // The tick each bird appears on.
@@ -2423,10 +2423,10 @@ const Uint8  DaedalusRightLegPoints[][2] = {
 
 // Each splash's point, x and y, in pixels.
 const Uint8 DaedalusSplashPoints[][6][2] = {
-	{{60, 64}, {58, 72}, {56, 80}, {54, 88}, {54, 96}, {56, 104}},
-	{{78, 56}, {78, 64}, {80, 72}, {82, 80}, {84, 88}, {84, 96} },
-	{{76, 60}, {74, 60}, {72, 60}, {70, 60}, {68, 60}, {66, 60} },
-	{{60, 64}, {61, 64}, {62, 63}, {63, 62}, {64, 61}, {66, 60} }
+    {{60, 64}, {58, 72}, {56, 80}, {54, 88}, {54, 96}, {56, 104}},
+    {{78, 56}, {78, 64}, {80, 72}, {82, 80}, {84, 88}, {84, 96} },
+    {{76, 60}, {74, 60}, {72, 60}, {70, 60}, {68, 60}, {66, 60} },
+    {{60, 64}, {61, 64}, {62, 63}, {63, 62}, {64, 61}, {66, 60} }
 };
 
 // The tick each particle starts on.
@@ -2449,11 +2449,11 @@ const Uint16 LifeShearPaleBladeMesh[]   = {MESH_FACE(1, 3, 2, 127, 14, 127, 53, 
 
 // The orange blade's mesh.
 const Uint16 LifeShearOrangeBladeMesh[] = {
-	MESH_FACE(1, 3, 2, 127, 0, 127, 31, 0, 31), MESH_FACE(0, 1, 2, 0, 0, 127, 0, 0, 31), MESH_END};
+    MESH_FACE(1, 3, 2, 127, 0, 127, 31, 0, 31), MESH_FACE(0, 1, 2, 0, 0, 127, 0, 0, 31), MESH_END};
 
 // The scythe, 128 by 32 pixels: its four corners.
 const MODEL_VERTEX LifeShearBladeCorners[] = {
-	{-81, -16, 0},
+    {-81, -16, 0},
     {47,  -16, 0},
     {-81, 16,  0},
     {47,  16,  0}
@@ -2474,7 +2474,7 @@ const Uint8  BubbleColumnPictureHeights[] = {
 
 // The glowing oval's fifteen pictures: their byte offsets in the sprite sheet.
 const Uint16 BubbleColumnPictures[] = {
-	0, 512, 962, 1354, 1692, 1980, 2222, 2422, 2584, 2712, 2810, 2882, 2932, 2964, 2988};
+    0, 512, 962, 1354, 1692, 1980, 2222, 2422, 2584, 2712, 2810, 2882, 2932, 2964, 2988};
 
 // Each Coatlicue picture's width, in pixels.
 const Uint8  CoatlicuePictureWidths[]  = {16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 4, 3};
@@ -2546,7 +2546,7 @@ const Uint16 CatastropheFlashTicks[]   = {
 
 // How long each flash of the first act lasts, in ticks.
 const Uint16 CatastropheFlashLengths[] = {
-	8, 2, 2, 16, 2, 2, 2, 10, 2, 16, 4, 8, 10, 12, 2, 2, 10, 4};
+    8, 2, 2, 16, 2, 2, 2, 10, 2, 16, 4, 8, 10, 12, 2, 2, 10, 4};
 
 // Each of the demon's sprites: its x, in pixels.
 const Uint8  CatastropheDemonX[]  = {0,  32,  64, 96, 32, 64,  96,  128, 64, 96, 128, 160, 32, 64,
@@ -2583,7 +2583,7 @@ const Uint8  CatastropheForkPictures[]     = {0, 1, 0, 1, 0, 0, 1, 0};
 
 // The ticks the canvas flashes on.
 const Uint16 CatastropheCanvasFlashTicks[] = {
-	246, 249, 254, 258, 260, 264, 266, 269, 272, 275, 278, 280, 282, 284, 287, 290, 292};
+    246, 249, 254, 258, 260, 264, 266, 269, 272, 275, 278, 280, 282, 284, 287, 290, 292};
 
 // Each step's x, in pixels, a row of twelve for each strike.
 const Uint8  CatastropheStrikeX[]       = {71, 71, 71, 70, 70, 70, 70, 70, 70, 69, 69, 0,
@@ -2801,18 +2801,18 @@ const Sint32       TridentSpins[]        = {5528,
 
 // The prong's corners, as signed x, y and z.
 const MODEL_VERTEX TridentProngCorners[] = {
-	{-6,  127, 0},
-	{6,   127, 0},
-	{-6,  -4,  0},
-	{6,   -4,  0},
-	{-6,  127, 0},
-	{6,   127, 0},
-	{-6,  0,   0},
-	{6,   0,   0},
-	{-10, 127, 0},
-	{2,   127, 0},
-	{-10, -1,  0},
-	{2,   -1,  0}
+    {-6,  127, 0},
+    {6,   127, 0},
+    {-6,  -4,  0},
+    {6,   -4,  0},
+    {-6,  127, 0},
+    {6,   127, 0},
+    {-6,  0,   0},
+    {6,   0,   0},
+    {-10, 127, 0},
+    {2,   127, 0},
+    {-10, -1,  0},
+    {2,   -1,  0}
 };
 
 // The flips a glint may be drawn with, one picked at random.
@@ -2960,7 +2960,7 @@ const Uint16       IrisPillarMesh[]      = {MESH_FACE(0, 1, 2, 0, 0, 15, 0, 0, 1
 
 // The particle's corners, as signed x, y and z.
 const MODEL_VERTEX IrisParticleCorners[] = {
-	{-4, -8, 0},
+    {-4, -8, 0},
     {4,  -8, 0},
     {-4, 8,  0},
     {4,  8,  0}
@@ -2968,7 +2968,7 @@ const MODEL_VERTEX IrisParticleCorners[] = {
 
 // The particle's mesh.
 const Uint16 IrisParticleMesh[] = {
-	MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 63), MESH_FACE(2, 1, 3, 0, 63, 31, 0, 31, 63), MESH_END};
+    MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 63), MESH_FACE(2, 1, 3, 0, 63, 31, 0, 31, 63), MESH_END};
 
 // The ticks the Psynergy sound plays on.
 const Uint8  IrisPsynergySoundTicks[] = {84, 93, 108, 111, 116, 132, 135, 141, 153, 158, 171, 0};
@@ -3006,7 +3006,7 @@ const Uint16 IrisStreakAngles[] = {DEGtoANG(90) + 2000,
 
 // How far each streak's heading turns, in 65,536ths of a turn, two thirds of this a tick.
 const Sint16 IrisStreakSpeeds[] = {
-	-406, 64, 380, -326, 64, -64, 380, 64, -84, -64, 94, -94, -64, 64, -64};
+    -406, 64, 380, -326, 64, -64, 380, 64, -84, -64, 94, -94, -64, 64, -64};
 
 // The spray picture's columns, left to right: the level each is filled with, dimmest at the edges.
 const Uint8        IrisLineShades[]       = {23, 47, 56, 63, 63, 56, 47, 23};
@@ -3040,30 +3040,30 @@ const Uint8        IrisDropPictureSteps[] = {1, 1, 1, 1, 2, 2};
 
 // The left strip's corners, as signed x, y and z.
 const MODEL_VERTEX IrisLeftStripCorners[] = {
-	{-6,  -64, 0},
-	{18,  -64, 0},
-	{-9,  -32, 0},
-	{15,  -32, 0},
-	{-13, 0,   0},
-	{8,   0,   0},
-	{-19, 32,  0},
-	{-1,  32,  0},
-	{-28, 64,  0},
-	{-12, 64,  0}
+    {-6,  -64, 0},
+    {18,  -64, 0},
+    {-9,  -32, 0},
+    {15,  -32, 0},
+    {-13, 0,   0},
+    {8,   0,   0},
+    {-19, 32,  0},
+    {-1,  32,  0},
+    {-28, 64,  0},
+    {-12, 64,  0}
 };
 
 // The right strip's corners, as signed x, y and z.
 const MODEL_VERTEX IrisRightStripCorners[] = {
-	{35,  -64, 0},
-	{72,  -64, 0},
-	{28,  -32, 0},
-	{66,  -32, 0},
-	{18,  0,   0},
-	{51,  0,   0},
-	{6,   32,  0},
-	{33,  32,  0},
-	{-12, 64,  0},
-	{9,   64,  0}
+    {35,  -64, 0},
+    {72,  -64, 0},
+    {28,  -32, 0},
+    {66,  -32, 0},
+    {18,  0,   0},
+    {51,  0,   0},
+    {6,   32,  0},
+    {33,  32,  0},
+    {-12, 64,  0},
+    {9,   64,  0}
 };
 
 // The strip's mesh.
@@ -3079,14 +3079,14 @@ const Uint16       IrisStripMesh[]   = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 15),
 
 // The cone's corners, as signed x, y and z.
 const MODEL_VERTEX IrisConeCorners[] = {
-	{0,   -40, 0},
-	{-5,  -4,  0},
-	{5,   -4,  0},
-	{-10, 16,  0},
-	{10,  16,  0},
-	{-20, 32,  0},
-	{20,  32,  0},
-	{0,   0,   0}
+    {0,   -40, 0},
+    {-5,  -4,  0},
+    {5,   -4,  0},
+    {-10, 16,  0},
+    {10,  16,  0},
+    {-20, 32,  0},
+    {20,  32,  0},
+    {0,   0,   0}
 };
 
 // The cone's mesh.

@@ -7,338 +7,338 @@
 
 // The words of a partial run, one pixel at a time, forwards or mirrored.
 #define BLITTER_PARTIAL_RUN(mode, flags)                                                           \
-	switch (mode)                                                                                  \
-	{                                                                                              \
-		default:                                                                                   \
-		case COMPOSITE_COPY:                                                                       \
-			if (((flags) & COMPOSITE_FLIP_X) != 0)                                                 \
-			{                                                                                      \
-				COPY_FROM(BattleEffectCopyReverse, 2);                                             \
-			}                                                                                      \
-			else                                                                                   \
-			{                                                                                      \
-				COPY_FROM(BattleEffectCopyForward, 2);                                             \
-			}                                                                                      \
-			break;                                                                                 \
-		case COMPOSITE_TRANSPARENT:                                                                \
-			if (((flags) & COMPOSITE_FLIP_X) != 0)                                                 \
-			{                                                                                      \
-				COPY_FROM(BattleEffectTransparentReverse, 4);                                      \
-			}                                                                                      \
-			else                                                                                   \
-			{                                                                                      \
-				COPY_FROM(BattleEffectTransparentForward, 4);                                      \
-			}                                                                                      \
-			break;                                                                                 \
-		case COMPOSITE_LIGHTEN:                                                                    \
-			if (((flags) & COMPOSITE_FLIP_X) != 0)                                                 \
-			{                                                                                      \
-				COPY_FROM(BattleEffectMaxReverse, 4);                                              \
-			}                                                                                      \
-			else                                                                                   \
-			{                                                                                      \
-				COPY_FROM(BattleEffectMaxForward, 4);                                              \
-			}                                                                                      \
-			break;                                                                                 \
-		case COMPOSITE_ADDITIVE:                                                                   \
-			if (((flags) & COMPOSITE_FLIP_X) != 0)                                                 \
-			{                                                                                      \
-				COPY_FROM(BattleEffectAdditiveReverse, 6);                                         \
-			}                                                                                      \
-			else                                                                                   \
-			{                                                                                      \
-				COPY_FROM(BattleEffectAdditiveForward, 6);                                         \
-			}                                                                                      \
-			break;                                                                                 \
-	}
+    switch (mode)                                                                                  \
+    {                                                                                              \
+        default:                                                                                   \
+        case COMPOSITE_COPY:                                                                       \
+            if (((flags) & COMPOSITE_FLIP_X) != 0)                                                 \
+            {                                                                                      \
+                COPY_FROM(BattleEffectCopyReverse, 2);                                             \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                COPY_FROM(BattleEffectCopyForward, 2);                                             \
+            }                                                                                      \
+            break;                                                                                 \
+        case COMPOSITE_TRANSPARENT:                                                                \
+            if (((flags) & COMPOSITE_FLIP_X) != 0)                                                 \
+            {                                                                                      \
+                COPY_FROM(BattleEffectTransparentReverse, 4);                                      \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                COPY_FROM(BattleEffectTransparentForward, 4);                                      \
+            }                                                                                      \
+            break;                                                                                 \
+        case COMPOSITE_LIGHTEN:                                                                    \
+            if (((flags) & COMPOSITE_FLIP_X) != 0)                                                 \
+            {                                                                                      \
+                COPY_FROM(BattleEffectMaxReverse, 4);                                              \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                COPY_FROM(BattleEffectMaxForward, 4);                                              \
+            }                                                                                      \
+            break;                                                                                 \
+        case COMPOSITE_ADDITIVE:                                                                   \
+            if (((flags) & COMPOSITE_FLIP_X) != 0)                                                 \
+            {                                                                                      \
+                COPY_FROM(BattleEffectAdditiveReverse, 6);                                         \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                COPY_FROM(BattleEffectAdditiveForward, 6);                                         \
+            }                                                                                      \
+            break;                                                                                 \
+    }
 
 // The template walk, written once and expanded twice: first to count the words, then to write them.
 #define BLITTER_WALK()                                                                             \
-	/* Block 1, the entry code (blitter_fragments.s describes the registers).                      \
-	 */                                                                                            \
-	COPY(3);                                                                                       \
-	if (mode == COMPOSITE_ADDITIVE)                                                                \
-	{                                                                                              \
-		COPY_FROM(BattleEffectMask, 3);                                                            \
-	}                                                                                              \
+    /* Block 1, the entry code (blitter_fragments.s describes the registers).                      \
+     */                                                                                            \
+    COPY(3);                                                                                       \
+    if (mode == COMPOSITE_ADDITIVE)                                                                \
+    {                                                                                              \
+        COPY_FROM(BattleEffectMask, 3);                                                            \
+    }                                                                                              \
                                                                                                    \
-	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X)                                              \
-	{                                                                                              \
-		COPY_FROM(templateWords, 3);                                                               \
-	}                                                                                              \
-	templateWords += 3;                                                                            \
-	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y)                                              \
-	{                                                                                              \
-		COPY_FROM(templateWords, 4);                                                               \
-	}                                                                                              \
-	templateWords += 4;                                                                            \
-	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP)                                                \
-	{                                                                                              \
-		COPY_FROM(templateWords, 3);                                                               \
-	}                                                                                              \
-	templateWords += 3;                                                                            \
-	if ((flags & COMPOSITE_FLIP) == 0)                                                             \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-	}                                                                                              \
-	templateWords += 1;                                                                            \
+    if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X)                                              \
+    {                                                                                              \
+        COPY_FROM(templateWords, 3);                                                               \
+    }                                                                                              \
+    templateWords += 3;                                                                            \
+    if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y)                                              \
+    {                                                                                              \
+        COPY_FROM(templateWords, 4);                                                               \
+    }                                                                                              \
+    templateWords += 4;                                                                            \
+    if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP)                                                \
+    {                                                                                              \
+        COPY_FROM(templateWords, 3);                                                               \
+    }                                                                                              \
+    templateWords += 3;                                                                            \
+    if ((flags & COMPOSITE_FLIP) == 0)                                                             \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+    }                                                                                              \
+    templateWords += 1;                                                                            \
                                                                                                    \
-	/* Block 2, the vertical clip: the height enters the last two words. */                        \
-	if ((flags & BLITTER_CLIP_Y) != 0)                                                             \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-		PUT(templateWords[1]);                                                                     \
-		if ((flags & COMPOSITE_FLIP_Y) != 0)                                                       \
-		{                                                                                          \
-			PUT(templateWords[2]);                                                                 \
-		}                                                                                          \
-		else                                                                                       \
-		{                                                                                          \
-			PUT(templateWords[3]);                                                                 \
-		}                                                                                          \
-		PUT(templateWords[4]);                                                                     \
-		PUT(templateWords[5]);                                                                     \
-		PUT(templateWords[6] + (1 << heightShift));                                                \
-		PUT(templateWords[7] + (1 << heightShift));                                                \
-	}                                                                                              \
-	templateWords += 8;                                                                            \
+    /* Block 2, the vertical clip: the height enters the last two words. */                        \
+    if ((flags & BLITTER_CLIP_Y) != 0)                                                             \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+        PUT(templateWords[1]);                                                                     \
+        if ((flags & COMPOSITE_FLIP_Y) != 0)                                                       \
+        {                                                                                          \
+            PUT(templateWords[2]);                                                                 \
+        }                                                                                          \
+        else                                                                                       \
+        {                                                                                          \
+            PUT(templateWords[3]);                                                                 \
+        }                                                                                          \
+        PUT(templateWords[4]);                                                                     \
+        PUT(templateWords[5]);                                                                     \
+        PUT(templateWords[6] + (1 << heightShift));                                                \
+        PUT(templateWords[7] + (1 << heightShift));                                                \
+    }                                                                                              \
+    templateWords += 8;                                                                            \
                                                                                                    \
-	/* Block 3, the columns: the empty-rows skip, the width mask or the twelve                     \
-	 * clip words, the empty-columns skip, then the rest of the set-up. */                         \
-	PUT(*templateWords++);                                                                         \
-	MARK(emptyRowsBranch);                                                                         \
-	PUT(*templateWords++);                                                                         \
+    /* Block 3, the columns: the empty-rows skip, the width mask or the twelve                     \
+     * clip words, the empty-columns skip, then the rest of the set-up. */                         \
+    PUT(*templateWords++);                                                                         \
+    MARK(emptyRowsBranch);                                                                         \
+    PUT(*templateWords++);                                                                         \
                                                                                                    \
-	if ((flags & BLITTER_CLIP_X) == 0)                                                             \
-	{                                                                                              \
-		PUT(templateWords[0] + (1 << widthShift) - 1);                                             \
-	}                                                                                              \
-	templateWords += 1;                                                                            \
-	if ((flags & BLITTER_CLIP_X) != 0)                                                             \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-		PUT(templateWords[1]);                                                                     \
-		if ((flags & COMPOSITE_FLIP_X) != 0)                                                       \
-		{                                                                                          \
-			PUT(templateWords[2]);                                                                 \
-			PUT(templateWords[3]);                                                                 \
-		}                                                                                          \
-		else                                                                                       \
-		{                                                                                          \
-			PUT(templateWords[4]);                                                                 \
-			PUT(templateWords[5]);                                                                 \
-		}                                                                                          \
-		PUT(templateWords[6]);                                                                     \
-		PUT(templateWords[7]);                                                                     \
-		PUT(templateWords[8] + BlitterImmediatePowers[widthShift]);                                \
-		if ((flags & COMPOSITE_FLIP_X) != 0)                                                       \
-		{                                                                                          \
-			PUT(templateWords[9]);                                                                 \
-		}                                                                                          \
-		else                                                                                       \
-		{                                                                                          \
-			PUT(templateWords[10]);                                                                \
-		}                                                                                          \
-		PUT(templateWords[11] + BlitterImmediatePowers[widthShift]);                               \
-	}                                                                                              \
-	templateWords += 12;                                                                           \
+    if ((flags & BLITTER_CLIP_X) == 0)                                                             \
+    {                                                                                              \
+        PUT(templateWords[0] + (1 << widthShift) - 1);                                             \
+    }                                                                                              \
+    templateWords += 1;                                                                            \
+    if ((flags & BLITTER_CLIP_X) != 0)                                                             \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+        PUT(templateWords[1]);                                                                     \
+        if ((flags & COMPOSITE_FLIP_X) != 0)                                                       \
+        {                                                                                          \
+            PUT(templateWords[2]);                                                                 \
+            PUT(templateWords[3]);                                                                 \
+        }                                                                                          \
+        else                                                                                       \
+        {                                                                                          \
+            PUT(templateWords[4]);                                                                 \
+            PUT(templateWords[5]);                                                                 \
+        }                                                                                          \
+        PUT(templateWords[6]);                                                                     \
+        PUT(templateWords[7]);                                                                     \
+        PUT(templateWords[8] + BlitterImmediatePowers[widthShift]);                                \
+        if ((flags & COMPOSITE_FLIP_X) != 0)                                                       \
+        {                                                                                          \
+            PUT(templateWords[9]);                                                                 \
+        }                                                                                          \
+        else                                                                                       \
+        {                                                                                          \
+            PUT(templateWords[10]);                                                                \
+        }                                                                                          \
+        PUT(templateWords[11] + BlitterImmediatePowers[widthShift]);                               \
+    }                                                                                              \
+    templateWords += 12;                                                                           \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	MARK(emptyColumnsBranch);                                                                      \
-	PUT(*templateWords++);                                                                         \
+    PUT(*templateWords++);                                                                         \
+    MARK(emptyColumnsBranch);                                                                      \
+    PUT(*templateWords++);                                                                         \
                                                                                                    \
-	COPY(6);                                                                                       \
+    COPY(6);                                                                                       \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	if ((flags & BLITTER_CLIP_X) == 0)                                                             \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-	}                                                                                              \
-	templateWords += 1;                                                                            \
+    PUT(*templateWords++);                                                                         \
+    if ((flags & BLITTER_CLIP_X) == 0)                                                             \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+    }                                                                                              \
+    templateWords += 1;                                                                            \
                                                                                                    \
-	COPY(5);                                                                                       \
+    COPY(5);                                                                                       \
                                                                                                    \
-	/* Block 4, the row loop: its head, the leading partial run, the full-cell                     \
-	 * loop, the trailing partial run and the step back to the head. */                            \
-	MARK(rowLoop);                                                                                 \
-	PUT(templateWords[0]);                                                                         \
-	PUT(templateWords[1] + (1 << (heightShift - 3)) - 1);                                          \
-	PUT(templateWords[2] + ((widthShift - 3) << 7));                                               \
-	PUT(templateWords[3]);                                                                         \
-	templateWords += 4;                                                                            \
+    /* Block 4, the row loop: its head, the leading partial run, the full-cell                     \
+     * loop, the trailing partial run and the step back to the head. */                            \
+    MARK(rowLoop);                                                                                 \
+    PUT(templateWords[0]);                                                                         \
+    PUT(templateWords[1] + (1 << (heightShift - 3)) - 1);                                          \
+    PUT(templateWords[2] + ((widthShift - 3) << 7));                                               \
+    PUT(templateWords[3]);                                                                         \
+    templateWords += 4;                                                                            \
                                                                                                    \
-	if ((flags & BLITTER_CLIP_X) == 0)                                                             \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-	}                                                                                              \
-	templateWords += 1;                                                                            \
+    if ((flags & BLITTER_CLIP_X) == 0)                                                             \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+    }                                                                                              \
+    templateWords += 1;                                                                            \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	MARK(skipBranch);                                                                              \
-	PUT(*templateWords++);                                                                         \
-	if ((flags & COMPOSITE_FLIP_X) != 0)                                                           \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-	}                                                                                              \
-	else                                                                                           \
-	{                                                                                              \
-		PUT(templateWords[1]);                                                                     \
-	}                                                                                              \
-	templateWords += 2;                                                                            \
+    PUT(*templateWords++);                                                                         \
+    MARK(skipBranch);                                                                              \
+    PUT(*templateWords++);                                                                         \
+    if ((flags & COMPOSITE_FLIP_X) != 0)                                                           \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+    }                                                                                              \
+    else                                                                                           \
+    {                                                                                              \
+        PUT(templateWords[1]);                                                                     \
+    }                                                                                              \
+    templateWords += 2;                                                                            \
                                                                                                    \
-	MARK(partialRun);                                                                              \
-	BLITTER_PARTIAL_RUN(mode, flags);                                                              \
-	templateWords += 4;                                                                            \
+    MARK(partialRun);                                                                              \
+    BLITTER_PARTIAL_RUN(mode, flags);                                                              \
+    templateWords += 4;                                                                            \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	PUT_BRANCH(partialRun);                                                                        \
-	PUT(*templateWords++);                                                                         \
-	if ((flags & BLITTER_CLIP_X) == 0)                                                             \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-		PUT(templateWords[1]);                                                                     \
-	}                                                                                              \
-	templateWords += 2;                                                                            \
-	PATCH(skipBranch);                                                                             \
+    PUT(*templateWords++);                                                                         \
+    PUT_BRANCH(partialRun);                                                                        \
+    PUT(*templateWords++);                                                                         \
+    if ((flags & BLITTER_CLIP_X) == 0)                                                             \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+        PUT(templateWords[1]);                                                                     \
+    }                                                                                              \
+    templateWords += 2;                                                                            \
+    PATCH(skipBranch);                                                                             \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	MARK(skipBranch);                                                                              \
-	PUT(*templateWords++);                                                                         \
+    PUT(*templateWords++);                                                                         \
+    MARK(skipBranch);                                                                              \
+    PUT(*templateWords++);                                                                         \
                                                                                                    \
-	MARK(fullCellLoop);                                                                            \
-	/* The words of the full-cell loop body, eight pixels per pass: the copy                       \
-	 * fragment eight times, or the mode's 8-pixel fragment (the 4-pixel                           \
-	 * maximum and colour fragments twice). */                                                     \
-	switch (mode)                                                                                  \
-	{                                                                                              \
-		default:                                                                                   \
-		case COMPOSITE_COPY:                                                                       \
-		{                                                                                          \
-			Sint32 i;                                                                              \
+    MARK(fullCellLoop);                                                                            \
+    /* The words of the full-cell loop body, eight pixels per pass: the copy                       \
+     * fragment eight times, or the mode's 8-pixel fragment (the 4-pixel                           \
+     * maximum and colour fragments twice). */                                                     \
+    switch (mode)                                                                                  \
+    {                                                                                              \
+        default:                                                                                   \
+        case COMPOSITE_COPY:                                                                       \
+        {                                                                                          \
+            Sint32 i;                                                                              \
                                                                                                    \
-			for (i = 0; i < 8; i++)                                                                \
-			{                                                                                      \
-				if ((flags & COMPOSITE_FLIP_X) != 0)                                               \
-				{                                                                                  \
-					COPY_FROM(BattleEffectCopyReverse, 2);                                         \
-				}                                                                                  \
-				else                                                                               \
-				{                                                                                  \
-					COPY_FROM(BattleEffectCopyForward, 2);                                         \
-				}                                                                                  \
-			}                                                                                      \
-		}                                                                                          \
-		break;                                                                                     \
-		case COMPOSITE_TRANSPARENT:                                                                \
-			if ((flags & COMPOSITE_FLIP_X) != 0)                                                   \
-			{                                                                                      \
-				COPY_FROM(BattleEffectTransparent8Reverse, 25);                                    \
-			}                                                                                      \
-			else                                                                                   \
-			{                                                                                      \
-				COPY_FROM(BattleEffectTransparent8Forward, 25);                                    \
-			}                                                                                      \
-			break;                                                                                 \
-		case COMPOSITE_LIGHTEN:                                                                    \
-			if ((flags & COMPOSITE_FLIP_X) != 0)                                                   \
-			{                                                                                      \
-				COPY_TWICE(BattleEffectMax4Reverse, 16);                                           \
-			}                                                                                      \
-			else                                                                                   \
-			{                                                                                      \
-				COPY_TWICE(BattleEffectMax4Forward, 16);                                           \
-			}                                                                                      \
-			break;                                                                                 \
-		case COMPOSITE_ADDITIVE:                                                                   \
-			if ((flags & COMPOSITE_FLIP_X) != 0)                                                   \
-			{                                                                                      \
-				COPY_TWICE(BattleEffectColorReverse, 14);                                          \
-			}                                                                                      \
-			else                                                                                   \
-			{                                                                                      \
-				COPY_TWICE(BattleEffectColorForward, 14);                                          \
-			}                                                                                      \
-			break;                                                                                 \
-	}                                                                                              \
-	templateWords += 4;                                                                            \
+            for (i = 0; i < 8; i++)                                                                \
+            {                                                                                      \
+                if ((flags & COMPOSITE_FLIP_X) != 0)                                               \
+                {                                                                                  \
+                    COPY_FROM(BattleEffectCopyReverse, 2);                                         \
+                }                                                                                  \
+                else                                                                               \
+                {                                                                                  \
+                    COPY_FROM(BattleEffectCopyForward, 2);                                         \
+                }                                                                                  \
+            }                                                                                      \
+        }                                                                                          \
+        break;                                                                                     \
+        case COMPOSITE_TRANSPARENT:                                                                \
+            if ((flags & COMPOSITE_FLIP_X) != 0)                                                   \
+            {                                                                                      \
+                COPY_FROM(BattleEffectTransparent8Reverse, 25);                                    \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                COPY_FROM(BattleEffectTransparent8Forward, 25);                                    \
+            }                                                                                      \
+            break;                                                                                 \
+        case COMPOSITE_LIGHTEN:                                                                    \
+            if ((flags & COMPOSITE_FLIP_X) != 0)                                                   \
+            {                                                                                      \
+                COPY_TWICE(BattleEffectMax4Reverse, 16);                                           \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                COPY_TWICE(BattleEffectMax4Forward, 16);                                           \
+            }                                                                                      \
+            break;                                                                                 \
+        case COMPOSITE_ADDITIVE:                                                                   \
+            if ((flags & COMPOSITE_FLIP_X) != 0)                                                   \
+            {                                                                                      \
+                COPY_TWICE(BattleEffectColorReverse, 14);                                          \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                COPY_TWICE(BattleEffectColorForward, 14);                                          \
+            }                                                                                      \
+            break;                                                                                 \
+    }                                                                                              \
+    templateWords += 4;                                                                            \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	if ((flags & BLITTER_CLIP_X) == 0)                                                             \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-		PUT(templateWords[1]);                                                                     \
-	}                                                                                              \
-	templateWords += 2;                                                                            \
+    PUT(*templateWords++);                                                                         \
+    if ((flags & BLITTER_CLIP_X) == 0)                                                             \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+        PUT(templateWords[1]);                                                                     \
+    }                                                                                              \
+    templateWords += 2;                                                                            \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	PUT_BRANCH(fullCellLoop);                                                                      \
-	PATCH(skipBranch);                                                                             \
+    PUT(*templateWords++);                                                                         \
+    PUT_BRANCH(fullCellLoop);                                                                      \
+    PATCH(skipBranch);                                                                             \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	MARK(skipBranch);                                                                              \
-	PUT(*templateWords++);                                                                         \
-	if ((flags & COMPOSITE_FLIP_X) != 0)                                                           \
-	{                                                                                              \
-		PUT(templateWords[0]);                                                                     \
-	}                                                                                              \
-	else                                                                                           \
-	{                                                                                              \
-		PUT(templateWords[1]);                                                                     \
-	}                                                                                              \
-	templateWords += 2;                                                                            \
+    PUT(*templateWords++);                                                                         \
+    MARK(skipBranch);                                                                              \
+    PUT(*templateWords++);                                                                         \
+    if ((flags & COMPOSITE_FLIP_X) != 0)                                                           \
+    {                                                                                              \
+        PUT(templateWords[0]);                                                                     \
+    }                                                                                              \
+    else                                                                                           \
+    {                                                                                              \
+        PUT(templateWords[1]);                                                                     \
+    }                                                                                              \
+    templateWords += 2;                                                                            \
                                                                                                    \
-	MARK(partialRun);                                                                              \
-	BLITTER_PARTIAL_RUN(mode, flags);                                                              \
-	templateWords += 4;                                                                            \
+    MARK(partialRun);                                                                              \
+    BLITTER_PARTIAL_RUN(mode, flags);                                                              \
+    templateWords += 4;                                                                            \
                                                                                                    \
-	PUT(*templateWords++);                                                                         \
-	PUT_BRANCH(partialRun);                                                                        \
-	PATCH(skipBranch);                                                                             \
+    PUT(*templateWords++);                                                                         \
+    PUT_BRANCH(partialRun);                                                                        \
+    PATCH(skipBranch);                                                                             \
                                                                                                    \
-	COPY(3);                                                                                       \
+    COPY(3);                                                                                       \
                                                                                                    \
-	PUT_BRANCH(rowLoop);                                                                           \
-	PATCH(emptyRowsBranch);                                                                        \
-	PATCH(emptyColumnsBranch);                                                                     \
+    PUT_BRANCH(rowLoop);                                                                           \
+    PATCH(emptyRowsBranch);                                                                        \
+    PATCH(emptyColumnsBranch);                                                                     \
                                                                                                    \
-	/* Block 5, the exit, where both skips of block 3 land. */                                     \
-	PUT(*templateWords++);                                                                         \
-	PUT(*templateWords++)
+    /* Block 5, the exit, where both skips of block 3 land. */                                     \
+    PUT(*templateWords++);                                                                         \
+    PUT(*templateWords++)
 
 // Writes a drawing function for the canvas into heap slot `slot`, built from the template
 // BlitterTemplate for one clip, mirroring and blend mode.
 Sint32
 btEffectBuildBlitter(Sint32 slot, Sint32 widthShift, Sint32 heightShift, Sint32 flags, Uint32 mode)
 {
-	const Uint32 *templateWords;
-	Uint32       *codeWords;
-	Uint32       *emptyRowsBranch;
-	Uint32       *emptyColumnsBranch;
-	Uint32       *rowLoop;
-	Uint32       *skipBranch;
-	Uint32       *partialRun;
-	Uint32       *fullCellLoop;
-	Sint32        wordCount;
+    const Uint32 *templateWords;
+    Uint32       *codeWords;
+    Uint32       *emptyRowsBranch;
+    Uint32       *emptyColumnsBranch;
+    Uint32       *rowLoop;
+    Uint32       *skipBranch;
+    Uint32       *partialRun;
+    Uint32       *fullCellLoop;
+    Sint32        wordCount;
 
-	// XXX (no evidence): why blitters are generated, perhaps because one function testing every
-	// option for every pixel would be too slow and IWRAM too small to keep one blitter for each
-	// combination; the ROM holds the builder, not its author's reasons.
+    // XXX (no evidence): why blitters are generated, perhaps because one function testing every
+    // option for every pixel would be too slow and IWRAM too small to keep one blitter for each
+    // combination; the ROM holds the builder, not its author's reasons.
 #define PUT(word) wordCount++
 #define COPY(n)                                                                                    \
-	wordCount     += (n);                                                                          \
-	templateWords += (n)
+    wordCount     += (n);                                                                          \
+    templateWords += (n)
 #define COPY_FROM(from, n) wordCount += (n)
 #define COPY_TWICE(from, n)                                                                        \
-	wordCount += (n);                                                                              \
-	wordCount += (n)
+    wordCount += (n);                                                                              \
+    wordCount += (n)
 #define PUT_BRANCH(target) wordCount++
 #define MARK(site)
 #define PATCH(site)
 
-	wordCount     = 0;
-	templateWords = BlitterTemplate;
+    wordCount     = 0;
+    templateWords = BlitterTemplate;
 
-	BLITTER_WALK();
+    BLITTER_WALK();
 
 #undef PUT
 #undef COPY
@@ -349,48 +349,48 @@ btEffectBuildBlitter(Sint32 slot, Sint32 widthShift, Sint32 heightShift, Sint32 
 #undef PATCH
 
 #define PUT(word)                                                                                  \
-	do                                                                                             \
-	{                                                                                              \
-		*codeWords++ = (word);                                                                     \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        *codeWords++ = (word);                                                                     \
+    } while (0)
 #define COPY(n)                                                                                    \
-	do                                                                                             \
-	{                                                                                              \
-		syDMAXCopy(templateWords, codeWords, DMA_COPY_WORDS(n), REG_DMA3);                         \
-		codeWords     += (n);                                                                      \
-		templateWords += (n);                                                                      \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        syDMAXCopy(templateWords, codeWords, DMA_COPY_WORDS(n), REG_DMA3);                         \
+        codeWords     += (n);                                                                      \
+        templateWords += (n);                                                                      \
+    } while (0)
 #define COPY_FROM(from, n)                                                                         \
-	syDMAXCopy(from, codeWords, DMA_COPY_WORDS(n), REG_DMA3);                                      \
-	codeWords += (n)
+    syDMAXCopy(from, codeWords, DMA_COPY_WORDS(n), REG_DMA3);                                      \
+    codeWords += (n)
 #define COPY_TWICE(from, n)                                                                        \
-	{                                                                                              \
-		const Uint32 *part = (from);                                                               \
-		syDMAXCopy(part, codeWords, DMA_COPY_WORDS(n), REG_DMA3);                                  \
-		codeWords += (n);                                                                          \
-		syDMAXCopy(part, codeWords, DMA_COPY_WORDS(n), REG_DMA3);                                  \
-		codeWords += (n);                                                                          \
-	}
+    {                                                                                              \
+        const Uint32 *part = (from);                                                               \
+        syDMAXCopy(part, codeWords, DMA_COPY_WORDS(n), REG_DMA3);                                  \
+        codeWords += (n);                                                                          \
+        syDMAXCopy(part, codeWords, DMA_COPY_WORDS(n), REG_DMA3);                                  \
+        codeWords += (n);                                                                          \
+    }
 #define PUT_BRANCH(target)                                                                         \
-	*codeWords = *templateWords++ + BRANCH_FIELD(codeWords, target);                               \
-	codeWords++
+    *codeWords = *templateWords++ + BRANCH_FIELD(codeWords, target);                               \
+    codeWords++
 #define MARK(site) site = codeWords
 #define PATCH(site)                                                                                \
-	do                                                                                             \
-	{                                                                                              \
-		*(site) |= BRANCH_FIELD(site, codeWords);                                                  \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        *(site) |= BRANCH_FIELD(site, codeWords);                                                  \
+    } while (0)
 
-	codeWords     = syHeapSlotAllocate(slot, wordCount << 2);
-	templateWords = BlitterTemplate;
+    codeWords     = syHeapSlotAllocate(slot, wordCount << 2);
+    templateWords = BlitterTemplate;
 
-	BLITTER_WALK();
+    BLITTER_WALK();
 
-	// The template ends where battle_effect_table.c's first table begins, so a complete walk ends
-	// at that table.
-	if (templateWords == (const Uint32 *)BattleEffectMotePictures)
-		return TRUE;
-	return FALSE;
+    // The template ends where battle_effect_table.c's first table begins, so a complete walk ends
+    // at that table.
+    if (templateWords == (const Uint32 *)BattleEffectMotePictures)
+        return TRUE;
+    return FALSE;
 }
 
 #undef PUT

@@ -16,12 +16,12 @@
 // A row of SpeakerDefinitions: a sprite's voice and the lines it says while Halted.
 typedef struct SPEAKER_DEFINITION
 {
-	Uint16 id; // the sprite id
-	// The voice: a message plays SE_VOICE_FIRST + value as it types (fdSpeakerGetVoice).
-	Uint8  value;
-	// The pair of lines from MsgPonderEllipsis it says when talked to while Halted with no script
-	// for that (fdSpeakerGetHaltedLines).
-	Uint8  haltedLines;
+    Uint16 id; // the sprite id
+    // The voice: a message plays SE_VOICE_FIRST + value as it types (fdSpeakerGetVoice).
+    Uint8  value;
+    // The pair of lines from MsgPonderEllipsis it says when talked to while Halted with no script
+    // for that (fdSpeakerGetHaltedLines).
+    Uint8  haltedLines;
 } SPEAKER_DEFINITION;
 
 // SPEAKER_DEFINITION.value of a sprite that makes no sound as it speaks.

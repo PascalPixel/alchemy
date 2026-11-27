@@ -65,66 +65,66 @@ typedef void (*ITEM_CUE_CALLBACK)(Sint32 item, Sint32 actor, Sint32 slot);
 // An actor's home, as an actor placement sets it (ACTOR.homeX and homeZ).
 typedef struct SPAWN_ACTOR
 {
-	Uint8  unused[100]; // no code names it
-	Sint16 homeX;
-	Sint16 homeZ;
+    Uint8  unused[100]; // no code names it
+    Sint16 homeX;
+    Sint16 homeZ;
 } SPAWN_ACTOR;
 
 // An actor placement as fdAssignViewFlags reads it: its sprite, its condition and its place.
 typedef struct VIEWED_PLACEMENT
 {
-	Sint16 sprite;              // -1 ends the table
-	Sint16 condition;
-	Uint8  unusedAfterFlags[4]; // no code names it
-	Sint32 x;
-	Uint8  unusedAfterX[4];     // no code names it
-	Sint32 z;
-	Uint8  unusedAfterZ[4];     // no code names it
+    Sint16 sprite;              // -1 ends the table
+    Sint16 condition;
+    Uint8  unusedAfterFlags[4]; // no code names it
+    Sint32 x;
+    Uint8  unusedAfterX[4];     // no code names it
+    Sint32 z;
+    Uint8  unusedAfterZ[4];     // no code names it
 } VIEWED_PLACEMENT;
 
 // A row of the scenes' encounter rules (SceneEncounterRules): a scene and entrance and, while a
 // flag is clear, the encounter zones of its two kinds of ground.
 typedef struct SCENE_ENCOUNTER_RULE
 {
-	Sint16 scene;
-	Sint16 entrance;   // -1 for any
-	Sint16 flags;      // -1 for none; the rule applies while the flag is clear
-	Uint8  groundZone; // ordinary ground
-	Uint8  secondZone; // MAP_METATILE_SECOND_ZONE metatiles
+    Sint16 scene;
+    Sint16 entrance;   // -1 for any
+    Sint16 flags;      // -1 for none; the rule applies while the flag is clear
+    Uint8  groundZone; // ordinary ground
+    Uint8  secondZone; // MAP_METATILE_SECOND_ZONE metatiles
 } SCENE_ENCOUNTER_RULE;
 
 // A point that syVectorAddPolarOffset moves as three coordinates and the item display reads as a
 // Vector3.
 typedef union POLAR_OFFSET_POS
 {
-	VECTOR3 vector;
-	Sint32  coordinates[3];
+    VECTOR3 vector;
+    Sint32  coordinates[3];
 } POLAR_OFFSET_POS;
 
 // What a scene's container actor is, CONTAINER_ROW.type, named by what the leader checks when
 // talking to it.
 typedef enum CONTAINER_KIND
 {
-	CONTAINER_CHEST          = 128, // "checked the chest..."
-	CONTAINER_MIMIC          = 129, // a chest that is "really a Mimic!"
-	CONTAINER_PSYNERGY_STONE = 130, // restores the party's PP
-	// "There's something buried here!": the Scoop spot, actor 79.
-	CONTAINER_GROUND         = 131,
-	CONTAINER_STONE_TABLET   = 132, // a summon tablet
-	CONTAINER_POND           = 133  // "...gazed into the pond..."
+    CONTAINER_CHEST          = 128, // "checked the chest..."
+    CONTAINER_MIMIC          = 129, // a chest that is "really a Mimic!"
+    CONTAINER_PSYNERGY_STONE = 130, // restores the party's PP
+    // "There's something buried here!": the Scoop spot, actor 79.
+    CONTAINER_GROUND         = 131,
+    CONTAINER_STONE_TABLET   = 132, // a summon tablet
+    CONTAINER_POND           = 133  // "...gazed into the pond..."
 } CONTAINER_KIND;
 
 // A row of the scene's container table (fdSceneItemGetRows), numbered from actor 64.
 typedef struct CONTAINER_ROW
 {
-	Sint16 type; // CONTAINER_KIND
-	// The scene point it stands on (fdSceneItemFindPos); in Venus Lighthouse the chest on point 0
-	// is "already open" until its flag is set.
-	Sint16 point;
-	Sint16 flags; // set once it has been opened; -1 for none
-	// The item inside, 0 for none; a Mimic's formation slot; a Psynergy Stone's number; a tablet's
-	// summon.
-	Sint16 contents;
+    Sint16 type; // CONTAINER_KIND
+    // The scene point it stands on (fdSceneItemFindPos); in Venus Lighthouse the chest on point 0
+    // is "already open" until its flag is set.
+    Sint16 point;
+    Sint16 flags; // set once it has been opened; -1 for none
+    // The item inside, 0 for none; a Mimic's formation slot; a Psynergy Stone's number; a tablet's
+    // summon.
+    Sint16 contents;
 } CONTAINER_ROW;
 
 // CONTAINER_ROW.contents and FIELD_STATE.scoopedItem: coins rather than an item, their count in the
@@ -142,14 +142,14 @@ typedef struct CONTAINER_ROW
 // condition holds; a row with minX -1 ends the list.
 typedef struct MAP_REGION
 {
-	Sint16 minX;
-	Sint16 minY;
-	Sint16 minZ;
-	Sint16 maxX;
-	Sint16 maxY;
-	Sint16 maxZ;
-	Sint16 condition;
-	Sint16 value;
+    Sint16 minX;
+    Sint16 minY;
+    Sint16 minZ;
+    Sint16 maxX;
+    Sint16 maxY;
+    Sint16 maxZ;
+    Sint16 condition;
+    Sint16 value;
 } MAP_REGION;
 
 // Each scene's encounters by scene, entrance and flag, ended by scene -1 (encounter_rules.s).
@@ -178,13 +178,13 @@ extern const Uint8                FieldExamineCueMessageOffsets[];
 // The chest sprite's animations, for the targets and treasure spot parts.
 enum
 {
-	TREASURE_SPOT_CHEST_OPEN          = 2, // standing open
-	TREASURE_SPOT_CHEST_OPENING       = 4, // its lid lifting
-	// closing again on what nobody could carry
-	TREASURE_SPOT_CHEST_CLOSING       = 5,
-	// its lid lifting on nothing inside
-	TREASURE_SPOT_CHEST_OPENING_EMPTY = 6,
-	TREASURE_SPOT_CHEST_MIMIC         = 7 // jumping up as a mimic
+    TREASURE_SPOT_CHEST_OPEN          = 2, // standing open
+    TREASURE_SPOT_CHEST_OPENING       = 4, // its lid lifting
+    // closing again on what nobody could carry
+    TREASURE_SPOT_CHEST_CLOSING       = 5,
+    // its lid lifting on nothing inside
+    TREASURE_SPOT_CHEST_OPENING_EMPTY = 6,
+    TREASURE_SPOT_CHEST_MIMIC         = 7 // jumping up as a mimic
 };
 
 #endif

@@ -10,10 +10,10 @@
 // rewrites every entry each tick.
 typedef struct TITLE_SPR
 {
-	// [0] the queue link syOAMAddSpriteAtDepth writes; [1] OAM attribute 0 (y, mode and shape) in
-	// the low half and attribute 1 (x) in the high half; [2] attribute 2 (the tile, and the
-	// palette).
-	Uint32 attribute[3];
+    // [0] the queue link syOAMAddSpriteAtDepth writes; [1] OAM attribute 0 (y, mode and shape) in
+    // the low half and attribute 1 (x) in the high half; [2] attribute 2 (the tile, and the
+    // palette).
+    Uint32 attribute[3];
 } TITLE_SPR;
 
 // Ticks since the lettering's reveal began; a column appears every two.

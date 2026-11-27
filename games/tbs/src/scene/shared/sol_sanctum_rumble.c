@@ -7,20 +7,20 @@
 // shakes, and the weather's sparkles start (fdEffectInitSparkles).
 Sint32 scInit(void)
 {
-	FIELD_STATE *state;
+    FIELD_STATE *state;
 
-	FIXED        shakeX     = toFIXED(1);
-	FIXED        shakeY     = toFIXED(1);
-	FIXED        shakeDecay = toFIXED(1);
+    FIXED        shakeX     = toFIXED(1);
+    FIXED        shakeY     = toFIXED(1);
+    FIXED        shakeDecay = toFIXED(1);
 
-	state                   = FieldStateWork;
-	state->transition      = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	state->transitionFrame = MAP_TRANSITION_TICKS;
-	if (gmFlagGet(FLAG_SOL_SANCTUM_ERUPTED) != 0)
-	{
-		fdQueueMusic(SE_RUMBLE);
-		fdMapGridSetScreenShake(shakeX, shakeY, shakeDecay);
-		fdEffectInitSparkles();
-	}
-	return 0;
+    state                   = FieldStateWork;
+    state->transition      = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    state->transitionFrame = MAP_TRANSITION_TICKS;
+    if (gmFlagGet(FLAG_SOL_SANCTUM_ERUPTED) != 0)
+    {
+        fdQueueMusic(SE_RUMBLE);
+        fdMapGridSetScreenShake(shakeX, shakeY, shakeDecay);
+        fdEffectInitSparkles();
+    }
+    return 0;
 }

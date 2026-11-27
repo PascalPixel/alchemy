@@ -3,9 +3,9 @@
 // read here as an array.
 Sint32 scPosDistance(FIXED *first, FIXED *second)
 {
-	Sint32 deltaX = FIXEDtoINT(*first++ - *second++);
-	Sint32 deltaY = FIXEDtoINT(*first++ - *second++);
-	Sint32 deltaZ = FIXEDtoINT(*first - *second);
+    Sint32 deltaX = FIXEDtoINT(*first++ - *second++);
+    Sint32 deltaY = FIXEDtoINT(*first++ - *second++);
+    Sint32 deltaZ = FIXEDtoINT(*first - *second);
 
-	return sySquartIWRAM(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+    return sySquartIWRAM(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 }

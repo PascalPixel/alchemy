@@ -14,10 +14,10 @@ typedef Sint32 ANGLE;
 // The coordinate indices and their count, as SGL types them.
 enum
 {
-	X,
-	Y,
-	Z,
-	XYZ
+    X,
+    Y,
+    Z,
+    XYZ
 };
 
 // A direction or a scale in three 16.16 coordinates, as SGL types one.

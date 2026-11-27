@@ -47,18 +47,18 @@
 // REG_DISPCNT's video modes and bits: each _ON bit shows its layer or turns its window on.
 typedef enum DISPLAY_CONTROL
 {
-	DISPCNT_MODE_0     = 0x0000, // four text backgrounds
-	DISPCNT_MODE_1     = 0x0001, // BG0 and BG1 text, BG2 affine
-	DISPCNT_MODE_2     = 0x0002, // BG2 and BG3 affine
-	DISPCNT_OBJ_1D_MAP = 0x0040, // sprite tiles in one run, not a 2D sheet
-	DISPCNT_BG0_ON     = 0x0100,
-	DISPCNT_BG1_ON     = 0x0200,
-	DISPCNT_BG2_ON     = 0x0400,
-	DISPCNT_BG3_ON     = 0x0800,
-	DISPCNT_OBJ_ON     = 0x1000,
-	DISPCNT_WIN0_ON    = 0x2000,
-	DISPCNT_WIN1_ON    = 0x4000,
-	DISPCNT_OBJWIN_ON  = 0x8000 // the sprite window OBJ_MODE_WINDOW draws
+    DISPCNT_MODE_0     = 0x0000, // four text backgrounds
+    DISPCNT_MODE_1     = 0x0001, // BG0 and BG1 text, BG2 affine
+    DISPCNT_MODE_2     = 0x0002, // BG2 and BG3 affine
+    DISPCNT_OBJ_1D_MAP = 0x0040, // sprite tiles in one run, not a 2D sheet
+    DISPCNT_BG0_ON     = 0x0100,
+    DISPCNT_BG1_ON     = 0x0200,
+    DISPCNT_BG2_ON     = 0x0400,
+    DISPCNT_BG3_ON     = 0x0800,
+    DISPCNT_OBJ_ON     = 0x1000,
+    DISPCNT_WIN0_ON    = 0x2000,
+    DISPCNT_WIN1_ON    = 0x4000,
+    DISPCNT_OBJWIN_ON  = 0x8000 // the sprite window OBJ_MODE_WINDOW draws
 } DISPLAY_CONTROL;
 
 // REG_DISPCNT's three video mode bits, which hold a DISPCNT_MODE_ value.
@@ -351,10 +351,10 @@ typedef enum DISPLAY_CONTROL
 #define DMA_COPY_HALFWORDS_DOWN(n)     ((DMA_ENABLE | DMA_SRC_DEC | DMA_DEST_DEC) << 16 | (n))
 // A halfword each HBlank, as for a scroll or a window edge.
 #define DMA_HBLANK_HALFWORD_PER_LINE                                                               \
-	((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)
+    ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)
 // n words each HBlank, as for the affine registers of a background written together.
 #define DMA_HBLANK_WORDS_PER_LINE(n)                                                               \
-	((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT) << 16 | (n))
+    ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT) << 16 | (n))
 // A word each HBlank, as for a pair of registers written together.
 #define DMA_HBLANK_WORD_PER_LINE DMA_HBLANK_WORDS_PER_LINE(1)
 
@@ -378,9 +378,9 @@ Sint32 __modsi3(Sint32 numerator, Sint32 denominator);
 // A sprite's mode, OAM attribute 0's bits 11..10.
 typedef enum SPR_MODE
 {
-	OBJ_MODE_NORMAL           = 0,
-	OBJ_MODE_SEMI_TRANSPARENT = 1, // blended as BLDCNT's first target
-	OBJ_MODE_WINDOW           = 2  // drawn into the OBJ window, not shown
+    OBJ_MODE_NORMAL           = 0,
+    OBJ_MODE_SEMI_TRANSPARENT = 1, // blended as BLDCNT's first target
+    OBJ_MODE_WINDOW           = 2  // drawn into the OBJ window, not shown
 } SPR_MODE;
 
 // A sprite's attributes 0 and 1 as one word, attr0 | attr1 << 16, the way functions that build
@@ -433,20 +433,20 @@ typedef enum SPR_MODE
 // rest) holds them set for a pressed key.
 typedef enum KEY_MASK
 {
-	KEY_A           = 0x001,
-	KEY_B           = 0x002,
-	KEY_SELECT      = 0x004,
-	KEY_START       = 0x008,
-	KEY_RIGHT       = 0x010,
-	KEY_LEFT        = 0x020,
-	KEY_UP          = 0x040,
-	KEY_DOWN        = 0x080,
-	KEY_R           = 0x100,
-	KEY_L           = 0x200,
-	KEYS_HORIZONTAL = KEY_RIGHT | KEY_LEFT,
-	KEYS_VERTICAL   = KEY_UP | KEY_DOWN,
-	KEYS_DPAD       = KEYS_HORIZONTAL | KEYS_VERTICAL,
-	KEYS_SHOULDERS  = KEY_R | KEY_L
+    KEY_A           = 0x001,
+    KEY_B           = 0x002,
+    KEY_SELECT      = 0x004,
+    KEY_START       = 0x008,
+    KEY_RIGHT       = 0x010,
+    KEY_LEFT        = 0x020,
+    KEY_UP          = 0x040,
+    KEY_DOWN        = 0x080,
+    KEY_R           = 0x100,
+    KEY_L           = 0x200,
+    KEYS_HORIZONTAL = KEY_RIGHT | KEY_LEFT,
+    KEYS_VERTICAL   = KEY_UP | KEY_DOWN,
+    KEYS_DPAD       = KEYS_HORIZONTAL | KEYS_VERTICAL,
+    KEYS_SHOULDERS  = KEY_R | KEY_L
 } KEY_MASK;
 
 #define KEYS_MASK             0x3ff // the ten keys' bits; KEYINPUT reads 0 for a held key
@@ -536,7 +536,7 @@ typedef enum KEY_MASK
 // run at once.
 typedef enum EVENT_LIMITS
 {
-	EVENT_COUNT = 20
+    EVENT_COUNT = 20
 } EVENT_LIMITS;
 
 typedef void (*EVENT_FUNC)(void);
@@ -545,10 +545,10 @@ typedef void (*EVENT_FUNC)(void);
 // EVENT_FLAG_KEEP_RUNNING keeps it running while overlay events are suspended.
 typedef struct EVENT
 {
-	Uint32 callback;
-	Uint16 priority;
-	Uint8  flags;
-	Uint8  reserved;
+    Uint32 callback;
+    Uint16 priority;
+    Uint8  flags;
+    Uint8  reserved;
 } EVENT;
 
 STATIC_ASSERT(sizeof(EVENT) == 8);
@@ -586,21 +586,21 @@ STATIC_ASSERT(offsetof(EVENT, flags) == 6);
 // interrupt sources: each one's bit number in IE and IF, and its slot in IrqHandlers.
 enum
 {
-	IRQ_VBLANK,
-	IRQ_HBLANK,
-	IRQ_VCOUNT,
-	IRQ_TIMER0,
-	IRQ_TIMER1,
-	IRQ_TIMER2,
-	IRQ_TIMER3,
-	IRQ_SERIAL,
-	IRQ_DMA0,
-	IRQ_DMA1,
-	IRQ_DMA2,
-	IRQ_DMA3,
-	IRQ_KEYPAD,
-	IRQ_GAMEPAK,
-	IRQ_COUNT
+    IRQ_VBLANK,
+    IRQ_HBLANK,
+    IRQ_VCOUNT,
+    IRQ_TIMER0,
+    IRQ_TIMER1,
+    IRQ_TIMER2,
+    IRQ_TIMER3,
+    IRQ_SERIAL,
+    IRQ_DMA0,
+    IRQ_DMA1,
+    IRQ_DMA2,
+    IRQ_DMA3,
+    IRQ_KEYPAD,
+    IRQ_GAMEPAK,
+    IRQ_COUNT
 };
 
 // The interrupt sources' bits in REG_IE and REG_IF.
@@ -629,17 +629,17 @@ typedef void (*INTERRUPT_HANDLER)(void);
 // The heap's 64 slots, the first two holding the next free EWRAM and IWRAM addresses.
 typedef union HEAP_STATE
 {
-	struct
-	{
-		void *nextEwram; // the EWRAM pool's next free byte, up to EWRAM_END
-		// the IWRAM pool's next free byte, up to the heap's end
-		void *nextIwram;
-		void *blocks[62]; // heap slots 2 to 63
-	} heap;
+    struct
+    {
+        void *nextEwram; // the EWRAM pool's next free byte, up to EWRAM_END
+        // the IWRAM pool's next free byte, up to the heap's end
+        void *nextIwram;
+        void *blocks[62]; // heap slots 2 to 63
+    } heap;
 
-						  // Each slot's block once allocated, else null; slots 0 and 1 are the pool
-	// pointers.
-	void *slots[64];
+                          // Each slot's block once allocated, else null; slots 0 and 1 are the pool
+    // pointers.
+    void *slots[64];
 } HEAP_STATE;
 
 STATIC_ASSERT(sizeof(HEAP_STATE) == 256);
@@ -649,127 +649,127 @@ STATIC_ASSERT(offsetof(HEAP_STATE, heap.blocks) == 8);
 // The heap slots shared across folders, by index into HeapSlots.
 typedef enum HEAP_SLOT
 {
-	HEAP_SLOT_MATRIX_STACK              = 2, // The 3D transform's one saved level.
-	// The sprite animations (SPR_ANIMATION) of the actor system's sprites (SpriteAnimations).
-	HEAP_SLOT_SPRITE_ANIMATIONS         = 3,
-	// The actor system's sprite pool (SPR).
-	HEAP_SLOT_SPRITES                   = 4,
-	// The 64 actors (ACTOR).
-	HEAP_SLOT_ACTORS                    = 5,
-	// The actor system's state (ACTOR_SYSTEM_STATE, ActorSystemStateWork), taken by
-	// fdActorSystemInit.
-	HEAP_SLOT_ACTOR_SYSTEM              = 6,
-	// The world map's affine state (WORLD_MAP_AFFINE_STATE).
-	HEAP_SLOT_WORLD_MAP_AFFINE          = 7,
-	// The field map's scrolling state (MAP_GRID_SCROLL_STATE), or on the world map its perspective
-	// view (WORLD_MAP_VIEW); MapGridState.
-	HEAP_SLOT_MAP_GRID                  = 8,
-	// A battle's BATTLE_STATE (BattleStateWork), from btRun to the next scene change.
-	HEAP_SLOT_BATTLE                    = 9,
-	// The battle background's scanline state (BATTLE_AFFINE_HDMA).
-	HEAP_SLOT_BATTLE_SCANLINES          = 10,
-	// Unused: 640 bytes btRun allocates with the battle's other blocks, which nothing reads or
-	// writes.
-	HEAP_SLOT_BATTLE_UNUSED             = 11,
-	// The 3D camera (BATTLE_CAMERA, BattleCameraWork) of a battle, the world map or Lucky Dice.
-	HEAP_SLOT_CAMERA                    = 12,
-	// A scratch buffer, usually 1 KB, that a picture is decoded into and released as soon as its
-	// tiles are in VRAM.
-	HEAP_SLOT_TILE_SCRATCH              = 14,
-	// The window renderer's state (WIN_STATE, WindowStateWork).
-	HEAP_SLOT_WINDOW                    = 15,
-	// The party status window's layout (PARTY_STAT_WINDOW).
-	HEAP_SLOT_PARTY_STATUS              = 16,
-	// The buffers an icon or portrait is decoded through (ICON_TRANSFER).
-	HEAP_SLOT_ICON_TRANSFER             = 17,
-	// The selection screen's state (SELECTION_MENU_STATE).
-	HEAP_SLOT_SELECTION_MENU            = 18,
-	// The selection state mnAllocateSelectionState allocates, which nothing calls.
-	HEAP_SLOT_SELECTION_STATE           = 19,
-	// The settings menu's state (SETTINGS_MENU_STATE, OptionMenuState).
-	HEAP_SLOT_SETTINGS_MENU             = 20,
-	// Mind Read's wave state (MIND_READ_STATE, MindReadStateWork).
-	HEAP_SLOT_MIND_READ                 = 22,
-	// A field scene's FIELD_STATE, which scenes read as FIELD_STATE (FieldStateWork); fdModeRun
-	// takes it and frees it on the way out.
-	HEAP_SLOT_FIELD                     = 27,
-	// The palette cycles (PALETTE_CYCLE_STATE).
-	HEAP_SLOT_PALETTE_CYCLES            = 28,
-	// The running ground particles, motes or sparkles (struct WEATHER_STATE).
-	HEAP_SLOT_WEATHER                   = 29,
-	// The field's colour blend state (FieldBlendStateWork): the struct FIELD_BLEND_STATE the
-	// storm's lightning and fdWeatherStartLightningFlash allocate.
-	HEAP_SLOT_FIELD_BLEND               = 30,
-	// The screen transition (SCREEN_TRANSITION_STATE, ScreenTransitionStateWork): the window edges
-	// and dissolve of a scene change.
-	HEAP_SLOT_SCREEN_TRANSITION         = 31,
-	// The palette fade (PaletteFadeState) that moves the BG and sprite palettes toward target
-	// colours: the PALETTE_FADE fdPaletteFadeInit allocates on scene load, or the title intro's
-	// TITLE_PALETTE_FADE.
-	HEAP_SLOT_PALETTE_FADE              = 32,
-	// The floating lights of Sol Sanctum's Elemental Star room (struct SOL_SANCTUM_LIGHT_LIST,
-	// sol_sanctum_elemental_star_lights.c).
-	HEAP_SLOT_SOL_SANCTUM_LIGHTS        = 33,
-	// The line scroll's state (LINE_SCROLL_STATE).
-	HEAP_SLOT_LINE_SCROLL               = 34,
-	// Where Mercury Lighthouse keeps a pointer to the state of the lights that carry the leader
-	// over its pools (MERCURY_LIGHTHOUSE_LIGHTS).
-	HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,
-	// The ground mask's state (GROUND_MASK_STATE).
-	HEAP_SLOT_GROUND_MASK               = 36,
-	// The battle message window's state (BATTLE_MESSAGE_STATE).
-	HEAP_SLOT_BATTLE_MESSAGE            = 37,
-	// The running battle effect's own state (BattleEffectStateWork). Lucky Dice keeps its own state
-	// in this slot and the next two.
-	HEAP_SLOT_BATTLE_EFFECT             = 39,
-	// The running battle effect's pixel canvas.
-	HEAP_SLOT_BATTLE_CANVAS             = 40,
-	// The running battle effect's tile sheet, or its set of mote metatiles.
-	HEAP_SLOT_BATTLE_SHEET              = 41,
-	// The battle's entry transition timer, in ticks (BattleEntryTimer).
-	HEAP_SLOT_BATTLE_ENTRY_TIMER        = 42,
-	// The title intro's state (INTRO_STATE).
-	HEAP_SLOT_TITLE_INTRO               = 43,
-	// The battle background's view and entry transition (32 bytes), from btRun.
-	HEAP_SLOT_BATTLE_BACKGROUND         = 44,
-	// Lucky Dice's sprites (1,560 bytes), for as long as the game runs.
-	HEAP_SLOT_LUCKY_GAME                = 45,
-	// A function run from RAM: the canvas drawing function btEffectBuildBlitter writes, called as a
-	// DRAW_RECTANGLE and released before its canvas, or the world map's copy of
-	// fdWorldMapUpdateAffineLines.
-	HEAP_SLOT_RAM_CODE                  = 46,
-	// A second function as HEAP_SLOT_RAM_CODE, released before it: always a btEffectBuildBlitter
-	// function, the second of a pair whose first is in HEAP_SLOT_RAM_CODE.
-	HEAP_SLOT_RAM_CODE_PAIRED           = 47,
-	// Copied field row drawer or window tile decoder, released after each call.
-	HEAP_SLOT_RAM_CODE_TEMP             = 49,
-	// The message decoder function (TextDecodeSymbol), copied here to run for the length of one
-	// message's decoding (mnMessageDecode), or of one mnMessageDecodeRaw call when the slot is
-	// empty.
-	HEAP_SLOT_MESSAGE_DECODER           = 50,
-	// The save state (BUP_STATE), from syBupInitState to syBupReleaseState around each save, load,
-	// copy or delete and each scan of the files, as the main menu's (mnSaveScanFileSummaries).
-	HEAP_SLOT_BUP                       = 51,
-	// Lives for one tick: sySynch() builds the OAM list in it, and the field sprite decoder keeps
-	// its code there between its own uses.
-	HEAP_SLOT_TICK_SCRATCH              = 52,
-	// A RAM copy of fdTileCopyStrided, which uploads field sprite pictures to VRAM; loaded with the
-	// animation pools.
-	HEAP_SLOT_PICTURE_UPLOADER          = 53,
-	// Each linked console's party (ENEMY_UNITS_SIZE bytes), from the Battle Arena and btRun.
-	HEAP_SLOT_ENEMY_UNITS               = 54,
-	// The menu state (MENU_STATE_SIZE bytes) shared by the field menu's screens and the shop; each
-	// takes it on opening and releases it on closing.
-	HEAP_SLOT_MENU                      = 55,
-	// The Psynergy effect's state (FIELD_EFFECT_STATE, FieldEffectStateWork).
-	HEAP_SLOT_FIELD_EFFECT              = 56,
-	// The battle command menus' state (BATTLE_MENU_STATE).
-	HEAP_SLOT_BATTLE_MENU               = 57,
-	// A command icon menu's state (ICON_MENU_STATE).
-	HEAP_SLOT_ICON_MENU                 = 58,
-	// The Colosso finals' race state (COLOSSO_RACE_STATE), which ColossoState reads by its own
-	// name.
-	HEAP_SLOT_COLOSSO_RACE              = 59
+    HEAP_SLOT_MATRIX_STACK              = 2, // The 3D transform's one saved level.
+    // The sprite animations (SPR_ANIMATION) of the actor system's sprites (SpriteAnimations).
+    HEAP_SLOT_SPRITE_ANIMATIONS         = 3,
+    // The actor system's sprite pool (SPR).
+    HEAP_SLOT_SPRITES                   = 4,
+    // The 64 actors (ACTOR).
+    HEAP_SLOT_ACTORS                    = 5,
+    // The actor system's state (ACTOR_SYSTEM_STATE, ActorSystemStateWork), taken by
+    // fdActorSystemInit.
+    HEAP_SLOT_ACTOR_SYSTEM              = 6,
+    // The world map's affine state (WORLD_MAP_AFFINE_STATE).
+    HEAP_SLOT_WORLD_MAP_AFFINE          = 7,
+    // The field map's scrolling state (MAP_GRID_SCROLL_STATE), or on the world map its perspective
+    // view (WORLD_MAP_VIEW); MapGridState.
+    HEAP_SLOT_MAP_GRID                  = 8,
+    // A battle's BATTLE_STATE (BattleStateWork), from btRun to the next scene change.
+    HEAP_SLOT_BATTLE                    = 9,
+    // The battle background's scanline state (BATTLE_AFFINE_HDMA).
+    HEAP_SLOT_BATTLE_SCANLINES          = 10,
+    // Unused: 640 bytes btRun allocates with the battle's other blocks, which nothing reads or
+    // writes.
+    HEAP_SLOT_BATTLE_UNUSED             = 11,
+    // The 3D camera (BATTLE_CAMERA, BattleCameraWork) of a battle, the world map or Lucky Dice.
+    HEAP_SLOT_CAMERA                    = 12,
+    // A scratch buffer, usually 1 KB, that a picture is decoded into and released as soon as its
+    // tiles are in VRAM.
+    HEAP_SLOT_TILE_SCRATCH              = 14,
+    // The window renderer's state (WIN_STATE, WindowStateWork).
+    HEAP_SLOT_WINDOW                    = 15,
+    // The party status window's layout (PARTY_STAT_WINDOW).
+    HEAP_SLOT_PARTY_STATUS              = 16,
+    // The buffers an icon or portrait is decoded through (ICON_TRANSFER).
+    HEAP_SLOT_ICON_TRANSFER             = 17,
+    // The selection screen's state (SELECTION_MENU_STATE).
+    HEAP_SLOT_SELECTION_MENU            = 18,
+    // The selection state mnAllocateSelectionState allocates, which nothing calls.
+    HEAP_SLOT_SELECTION_STATE           = 19,
+    // The settings menu's state (SETTINGS_MENU_STATE, OptionMenuState).
+    HEAP_SLOT_SETTINGS_MENU             = 20,
+    // Mind Read's wave state (MIND_READ_STATE, MindReadStateWork).
+    HEAP_SLOT_MIND_READ                 = 22,
+    // A field scene's FIELD_STATE, which scenes read as FIELD_STATE (FieldStateWork); fdModeRun
+    // takes it and frees it on the way out.
+    HEAP_SLOT_FIELD                     = 27,
+    // The palette cycles (PALETTE_CYCLE_STATE).
+    HEAP_SLOT_PALETTE_CYCLES            = 28,
+    // The running ground particles, motes or sparkles (struct WEATHER_STATE).
+    HEAP_SLOT_WEATHER                   = 29,
+    // The field's colour blend state (FieldBlendStateWork): the struct FIELD_BLEND_STATE the
+    // storm's lightning and fdWeatherStartLightningFlash allocate.
+    HEAP_SLOT_FIELD_BLEND               = 30,
+    // The screen transition (SCREEN_TRANSITION_STATE, ScreenTransitionStateWork): the window edges
+    // and dissolve of a scene change.
+    HEAP_SLOT_SCREEN_TRANSITION         = 31,
+    // The palette fade (PaletteFadeState) that moves the BG and sprite palettes toward target
+    // colours: the PALETTE_FADE fdPaletteFadeInit allocates on scene load, or the title intro's
+    // TITLE_PALETTE_FADE.
+    HEAP_SLOT_PALETTE_FADE              = 32,
+    // The floating lights of Sol Sanctum's Elemental Star room (struct SOL_SANCTUM_LIGHT_LIST,
+    // sol_sanctum_elemental_star_lights.c).
+    HEAP_SLOT_SOL_SANCTUM_LIGHTS        = 33,
+    // The line scroll's state (LINE_SCROLL_STATE).
+    HEAP_SLOT_LINE_SCROLL               = 34,
+    // Where Mercury Lighthouse keeps a pointer to the state of the lights that carry the leader
+    // over its pools (MERCURY_LIGHTHOUSE_LIGHTS).
+    HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,
+    // The ground mask's state (GROUND_MASK_STATE).
+    HEAP_SLOT_GROUND_MASK               = 36,
+    // The battle message window's state (BATTLE_MESSAGE_STATE).
+    HEAP_SLOT_BATTLE_MESSAGE            = 37,
+    // The running battle effect's own state (BattleEffectStateWork). Lucky Dice keeps its own state
+    // in this slot and the next two.
+    HEAP_SLOT_BATTLE_EFFECT             = 39,
+    // The running battle effect's pixel canvas.
+    HEAP_SLOT_BATTLE_CANVAS             = 40,
+    // The running battle effect's tile sheet, or its set of mote metatiles.
+    HEAP_SLOT_BATTLE_SHEET              = 41,
+    // The battle's entry transition timer, in ticks (BattleEntryTimer).
+    HEAP_SLOT_BATTLE_ENTRY_TIMER        = 42,
+    // The title intro's state (INTRO_STATE).
+    HEAP_SLOT_TITLE_INTRO               = 43,
+    // The battle background's view and entry transition (32 bytes), from btRun.
+    HEAP_SLOT_BATTLE_BACKGROUND         = 44,
+    // Lucky Dice's sprites (1,560 bytes), for as long as the game runs.
+    HEAP_SLOT_LUCKY_GAME                = 45,
+    // A function run from RAM: the canvas drawing function btEffectBuildBlitter writes, called as a
+    // DRAW_RECTANGLE and released before its canvas, or the world map's copy of
+    // fdWorldMapUpdateAffineLines.
+    HEAP_SLOT_RAM_CODE                  = 46,
+    // A second function as HEAP_SLOT_RAM_CODE, released before it: always a btEffectBuildBlitter
+    // function, the second of a pair whose first is in HEAP_SLOT_RAM_CODE.
+    HEAP_SLOT_RAM_CODE_PAIRED           = 47,
+    // Copied field row drawer or window tile decoder, released after each call.
+    HEAP_SLOT_RAM_CODE_TEMP             = 49,
+    // The message decoder function (TextDecodeSymbol), copied here to run for the length of one
+    // message's decoding (mnMessageDecode), or of one mnMessageDecodeRaw call when the slot is
+    // empty.
+    HEAP_SLOT_MESSAGE_DECODER           = 50,
+    // The save state (BUP_STATE), from syBupInitState to syBupReleaseState around each save, load,
+    // copy or delete and each scan of the files, as the main menu's (mnSaveScanFileSummaries).
+    HEAP_SLOT_BUP                       = 51,
+    // Lives for one tick: sySynch() builds the OAM list in it, and the field sprite decoder keeps
+    // its code there between its own uses.
+    HEAP_SLOT_TICK_SCRATCH              = 52,
+    // A RAM copy of fdTileCopyStrided, which uploads field sprite pictures to VRAM; loaded with the
+    // animation pools.
+    HEAP_SLOT_PICTURE_UPLOADER          = 53,
+    // Each linked console's party (ENEMY_UNITS_SIZE bytes), from the Battle Arena and btRun.
+    HEAP_SLOT_ENEMY_UNITS               = 54,
+    // The menu state (MENU_STATE_SIZE bytes) shared by the field menu's screens and the shop; each
+    // takes it on opening and releases it on closing.
+    HEAP_SLOT_MENU                      = 55,
+    // The Psynergy effect's state (FIELD_EFFECT_STATE, FieldEffectStateWork).
+    HEAP_SLOT_FIELD_EFFECT              = 56,
+    // The battle command menus' state (BATTLE_MENU_STATE).
+    HEAP_SLOT_BATTLE_MENU               = 57,
+    // A command icon menu's state (ICON_MENU_STATE).
+    HEAP_SLOT_ICON_MENU                 = 58,
+    // The Colosso finals' race state (COLOSSO_RACE_STATE), which ColossoState reads by its own
+    // name.
+    HEAP_SLOT_COLOSSO_RACE              = 59
 } HEAP_SLOT;
 
 // The room an effect gives its glow pictures: HEAP_SLOT_BATTLE_SHEET's size, and where an effect's
@@ -792,7 +792,7 @@ struct SCREEN_TRANSITION_STATE;
 #define FieldBlendStateWork (*(void *(*)[]) & HeapSlots[HEAP_SLOT_FIELD_BLEND])
 // The screen transition's state, heap slot HEAP_SLOT_SCREEN_TRANSITION.
 #define ScreenTransitionStateWork                                                                  \
-	(*(struct SCREEN_TRANSITION_STATE **)&HeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
+    (*(struct SCREEN_TRANSITION_STATE **)&HeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
 // HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in ticks.
 #define BattleEntryTimer     (*(Sint32 **)&HeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 // The running Psynergy effect's state (FIELD_EFFECT_STATE), heap slot HEAP_SLOT_FIELD_EFFECT.
@@ -803,20 +803,20 @@ struct SCREEN_TRANSITION_STATE;
 // turns.
 typedef struct AFFINE_TRANSFORM
 {
-	// 8.8 fixed point, read signed: negative mirrors the sprite
-	Uint16 scaleX;
-	Uint16 scaleY;  // 8.8 fixed point, read signed
-	Uint16 angle;   // 1/65536 turns
-	Uint16 padding; // never read; keeps the struct 8 bytes
+    // 8.8 fixed point, read signed: negative mirrors the sprite
+    Uint16 scaleX;
+    Uint16 scaleY;  // 8.8 fixed point, read signed
+    Uint16 angle;   // 1/65536 turns
+    Uint16 padding; // never read; keeps the struct 8 bytes
 } AFFINE_TRANSFORM;
 
 // One OAM rotation-scaling matrix: pa, pb, pc and pd in 8.8 fixed point, the inverse of the
 // transform the sprite is drawn with.
 typedef union OAM_MATRIX
 {
-	Sint16 coefficients[4]; // pa, pb, pc and pd
-	// pa and pb, then pc and pd, written whole when only the diagonal is set.
-	Uint32 rows[2];
+    Sint16 coefficients[4]; // pa, pb, pc and pd
+    // pa and pb, then pc and pd, written whole when only the diagonal is set.
+    Uint32 rows[2];
 } OAM_MATRIX;
 
 STATIC_ASSERT(sizeof(AFFINE_TRANSFORM) == 8);
@@ -828,9 +828,9 @@ STATIC_ASSERT(sizeof(OAM_MATRIX) == 8);
 // (DMAxSAD, DMAxDAD, DMAxCNT).
 typedef struct DMA_REGISTERS
 {
-	Uint32 src;
-	Uint32 dest;
-	Uint32 control; // The count in the low half, DMAxCNT_H's flags above it.
+    Uint32 src;
+    Uint32 dest;
+    Uint32 control; // The count in the low half, DMAxCNT_H's flags above it.
 } DMA_REGISTERS;
 
 // DMA3, the channel the game copies with, as its three registers.
@@ -845,34 +845,34 @@ typedef struct DMA_REGISTERS
 // its target, and the target.
 typedef struct STUB
 {
-	Uint32 stub;
-	Uint32 target;
+    Uint32 stub;
+    Uint32 target;
 } STUB;
 
 // An entry of the system library's table whose two-argument target the world map's tilt calls, the
 // arctangent.
 typedef struct ARC_TAN_STUB
 {
-	Uint32 stub;
-	Sint32 (*target)(Sint32 x, Sint32 y);
+    Uint32 stub;
+    Sint32 (*target)(Sint32 x, Sint32 y);
 } ARC_TAN_STUB;
 
 // An entry of the system library's table whose one-argument target the world map's tilt calls, the
 // sine or the cosine.
 typedef struct TRIG_STUB
 {
-	Uint32 stub;
-	Sint32 (*target)(Sint32 angle);
+    Uint32 stub;
+    Sint32 (*target)(Sint32 angle);
 } TRIG_STUB;
 
 // The start of the system library's stub table, as far as syCos.
 typedef struct SYSTEM_STUB_TABLE
 {
-	STUB         preceding[8];
-	ARC_TAN_STUB arcTan2;
-	STUB         squareRoots[2];
-	TRIG_STUB    sin;
-	TRIG_STUB    cos;
+    STUB         preceding[8];
+    ARC_TAN_STUB arcTan2;
+    STUB         squareRoots[2];
+    TRIG_STUB    sin;
+    TRIG_STUB    cos;
 } SYSTEM_STUB_TABLE;
 
 STATIC_ASSERT(sizeof(STUB) == 8);
@@ -895,10 +895,10 @@ STATIC_ASSERT(offsetof(SYSTEM_STUB_TABLE, cos) == 96);
 // syIOWriteQueueFlushPending empties it.
 typedef struct IO_WRITE_QUEUE
 {
-	Uint16 count; // Entries waiting, at most 32.
-	Uint16 pad;
-	// Each entry is the value, the address and the control word, in that order.
-	Uint32 entries[32][3];
+    Uint16 count; // Entries waiting, at most 32.
+    Uint16 pad;
+    // Each entry is the value, the address and the control word, in that order.
+    Uint32 entries[32][3];
 } IO_WRITE_QUEUE;
 
 // A control word's bits 16 and 17 give a register write's width and bits 18 and 19 its operation;
@@ -919,32 +919,32 @@ typedef struct IO_WRITE_QUEUE
 // at its fixed address, and one typed inline per function that every call goes through. The
 // IWRAM-resident functions at their fixed addresses, each called through the inline below it.
 #define syFixedDivEntry                                                                            \
-	FIXED_ADDRESS((Sint32 (*)(Sint32 divisor, Sint32 value)), 0x0300013c, syIWRAMDivFX)
+    FIXED_ADDRESS((Sint32 (*)(Sint32 divisor, Sint32 value)), 0x0300013c, syIWRAMDivFX)
 #define syWordsClearEntry                                                                          \
-	FIXED_ADDRESS((Sint32 (*)(void *dest, Sint32 size)), 0x03000164, syIWRAMWordsClear)
+    FIXED_ADDRESS((Sint32 (*)(void *dest, Sint32 size)), 0x03000164, syIWRAMWordsClear)
 #define syWordsFillEntry                                                                           \
-	FIXED_ADDRESS((Sint32 (*)(void *dest, Sint32 size, Uint32 value)), 0x03000168, syIWRAMWordsFill)
+    FIXED_ADDRESS((Sint32 (*)(void *dest, Sint32 size, Uint32 value)), 0x03000168, syIWRAMWordsFill)
 #define sySquartEntry FIXED_ADDRESS((Sint32 (*)(Sint32 value)), 0x030001d8, syIWRAMSquart)
 #define syDecompressBitRuns                                                                        \
-	FIXED_ADDRESS((Sint32 (*)(const void *bits, void *destination, Sint32 value)),                 \
-	              0x03000214,                                                                      \
-	              syIWRAMExpandBitRuns)
+    FIXED_ADDRESS((Sint32 (*)(const void *bits, void *destination, Sint32 value)),                 \
+                  0x03000214,                                                                      \
+                  syIWRAMExpandBitRuns)
 // Reads all three word-aligned coordinates before writing the result. Input may be an array or a
 // record's coordinate prefix; output may overlap it.
 #define syVectorTransformEntry                                                                     \
-	FIXED_ADDRESS(                                                                                 \
-		(Sint32 (*)(const void *vector, Sint32 *result)), 0x03000250, syIWRAMTransformVector)
+    FIXED_ADDRESS(                                                                                 \
+        (Sint32 (*)(const void *vector, Sint32 *result)), 0x03000250, syIWRAMTransformVector)
 #define syMultiMatrixEntry                                                                         \
-	FIXED_ADDRESS((void (*)(const FIXED *matrix)), 0x030002c0, syIWRAMMultiMatrix)
+    FIXED_ADDRESS((void (*)(const FIXED *matrix)), 0x030002c0, syIWRAMMultiMatrix)
 #define syIntegerDivideEntry                                                                       \
-	FIXED_ADDRESS((Sint32 (*)(Sint32 dividend, Sint32 divisor)), 0x03000380, syIWRAMSignedDivide)
+    FIXED_ADDRESS((Sint32 (*)(Sint32 dividend, Sint32 divisor)), 0x03000380, syIWRAMSignedDivide)
 #define syIntegerDivideUnsignedEntry                                                               \
-	FIXED_ADDRESS((Uint32 (*)(Uint32 dividend, Uint32 divisor)), 0x030003f0, syIWRAMUnsignedDivide)
+    FIXED_ADDRESS((Uint32 (*)(Uint32 dividend, Uint32 divisor)), 0x030003f0, syIWRAMUnsignedDivide)
 #define syDecompressSpritePictureEntry                                                             \
-	FIXED_ADDRESS((void *(*)(const void *src, void *dest)), 0x030005c0, syIWRAMDecompress)
+    FIXED_ADDRESS((void *(*)(const void *src, void *dest)), 0x030005c0, syIWRAMDecompress)
 #define syWordsCopyEntry                                                                           \
-	FIXED_ADDRESS(                                                                                 \
-		(Sint32 (*)(void *dest, const void *src, Sint32 size)), 0x03001388, syIWRAMWordsCopy)
+    FIXED_ADDRESS(                                                                                 \
+        (Sint32 (*)(void *dest, const void *src, Sint32 size)), 0x03001388, syIWRAMWordsCopy)
 
 // Three IWRAM functions' distances in bytes from syIWRAMIRQMain, for code that calls them from the
 // interrupt handler's address.
@@ -956,27 +956,27 @@ typedef struct IO_WRITE_QUEUE
 // rotation, then the translation's x, y and z.
 enum
 {
-	MATRIX_TRANSLATION_X = 9,
-	MATRIX_TRANSLATION_Y = 10,
-	MATRIX_TRANSLATION_Z = 11,
-	MATRIX_WORDS         = 12
+    MATRIX_TRANSLATION_X = 9,
+    MATRIX_TRANSLATION_Y = 10,
+    MATRIX_TRANSLATION_Z = 11,
+    MATRIX_WORDS         = 12
 };
 
 // The oam_words group. OAM_WORDS, a sprite entry a function builds by hand and DMA copies to OAM.
 // One sprite's two OAM words. volatile: the words are built in place for the DMA to copy to OAM.
 typedef struct OAM_WORDS
 {
-	volatile Uint32 attr01; // attr0 | attr1 << 16
-	volatile Uint32 attr2;  // attr2 | affine value << 16
+    volatile Uint32 attr01; // attr0 | attr1 << 16
+    volatile Uint32 attr2;  // attr2 | affine value << 16
 } OAM_WORDS;
 
 // The point group. Point, a position in 16.16 fixed point. A position in three coordinates, each
 // in 16.16 fixed point.
 typedef struct POS
 {
-	FIXED x; // 16.16 fixed point
-	FIXED y; // 16.16 fixed point
-	FIXED z; // 16.16 fixed point
+    FIXED x; // 16.16 fixed point
+    FIXED y; // 16.16 fixed point
+    FIXED z; // 16.16 fixed point
 } POS;
 
 STATIC_ASSERT(sizeof(POS) == 12);
@@ -988,13 +988,13 @@ STATIC_ASSERT(offsetof(POS, z) == 8);
 // near and far depths, and the screen point the view centres on.
 typedef struct PROJECTION
 {
-	// The focal length in 16.16 pixels: 80, half the screen height, over the tangent of half the
-	// vertical field of view (syPerspective).
-	FIXED  focal;
-	FIXED  near;    // nearer points are not drawn; 16.16 along the view axis
-	FIXED  far;     // farther points are not drawn; 16.16 along the view axis
-	Sint32 centerX; // screen pixels
-	Sint32 centerY; // screen pixels
+    // The focal length in 16.16 pixels: 80, half the screen height, over the tangent of half the
+    // vertical field of view (syPerspective).
+    FIXED  focal;
+    FIXED  near;    // nearer points are not drawn; 16.16 along the view axis
+    FIXED  far;     // farther points are not drawn; 16.16 along the view axis
+    Sint32 centerX; // screen pixels
+    Sint32 centerY; // screen pixels
 } PROJECTION;
 
 STATIC_ASSERT(sizeof(PROJECTION) == 20);
@@ -1029,11 +1029,11 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
 
 // IWRAM variables the code reaches as constants; German moves them 16 bytes up.
 #if IWRAM_LAYOUT_SHIFT
-#	define RamBgScroll         FIXED_ADDRESS((Uint8 *), 0x03001ae0, BgScrollWork)
-#	define RamVramCacheEntries FIXED_ADDRESS((Uint8 *), 0x03001b20, VramCacheEntries)
+#    define RamBgScroll         FIXED_ADDRESS((Uint8 *), 0x03001ae0, BgScrollWork)
+#    define RamVramCacheEntries FIXED_ADDRESS((Uint8 *), 0x03001b20, VramCacheEntries)
 #else
-#	define RamBgScroll         FIXED_ADDRESS((Uint8 *), 0x03001ad0, BgScrollWork)
-#	define RamVramCacheEntries FIXED_ADDRESS((Uint8 *), 0x03001b10, VramCacheEntries)
+#    define RamBgScroll         FIXED_ADDRESS((Uint8 *), 0x03001ad0, BgScrollWork)
+#    define RamVramCacheEntries FIXED_ADDRESS((Uint8 *), 0x03001b10, VramCacheEntries)
 #endif
 
 // State pointers in HeapSlots, by name, from the heap group's slot numbers.
@@ -1055,15 +1055,15 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
 // payload.
 typedef struct SERIAL_PACKET
 {
-	// SERIAL_STATE's packet number when the packet was built
-	Uint8  packetNumber;
-	// The consoles heard from before but not this tick (receivedMask ^ currentMask); a receiver
-	// complements it once the checksum is good.
-	Uint8  missingMask;
-	// The complement of the sum of the packet's first 14 halfwords, taken with this field 0.
-	Uint16 checksum;
-	Uint8  payload[24];
-	Uint8  reservedTail[4]; // past the 14 halfwords sent; never written
+    // SERIAL_STATE's packet number when the packet was built
+    Uint8  packetNumber;
+    // The consoles heard from before but not this tick (receivedMask ^ currentMask); a receiver
+    // complements it once the checksum is good.
+    Uint8  missingMask;
+    // The complement of the sum of the packet's first 14 halfwords, taken with this field 0.
+    Uint16 checksum;
+    Uint8  payload[24];
+    Uint8  reservedTail[4]; // past the 14 halfwords sent; never written
 } SERIAL_PACKET;
 
 STATIC_ASSERT(sizeof(SERIAL_PACKET) == 32);
@@ -1076,28 +1076,28 @@ STATIC_ASSERT(offsetof(SERIAL_PACKET, reservedTail) == 28);
 // SERIAL_STATE.phase.
 typedef enum SERIAL_PHASE
 {
-	SERIAL_PHASE_SEARCHING = 0, // looking for the partner
-	SERIAL_PHASE_CONNECTED = 1
+    SERIAL_PHASE_SEARCHING = 0, // looking for the partner
+    SERIAL_PHASE_CONNECTED = 1
 } SERIAL_PHASE;
 
 // SERIAL_STATE.mode: how this console takes part in the link.
 typedef enum SERIAL_MODE
 {
-	SERIAL_MODE_CHILD    = 0,
-	// SIO_MULTI_SD alone of SIOCNT's SIO_START and SIO_MULTI_SD: this console armed timer 3 and
-	// clocks the transfers.
-	SERIAL_MODE_CLOCKING = SIO_MULTI_SD
+    SERIAL_MODE_CHILD    = 0,
+    // SIO_MULTI_SD alone of SIOCNT's SIO_START and SIO_MULTI_SD: this console armed timer 3 and
+    // clocks the transfers.
+    SERIAL_MODE_CLOCKING = SIO_MULTI_SD
 } SERIAL_MODE;
 
 // The link status bits sySerialExchangePayloads returns.
 typedef enum LINK_STAT
 {
-	LINK_STATUS_HEARD_BOTH    = 3,    // both consoles heard from this tick
-	LINK_STATUS_CLOCKING      = 0x80, // this console clocks the transfers
-	// The last transfer interrupt found SIOCNT's error bit (SIO_ERROR) set.
-	LINK_STATUS_ERROR         = 0x1000,
-	// SIOCNT's multiplayer id is 2 or more.
-	LINK_STATUS_EXTRA_CONSOLE = 0x2000
+    LINK_STATUS_HEARD_BOTH    = 3,    // both consoles heard from this tick
+    LINK_STATUS_CLOCKING      = 0x80, // this console clocks the transfers
+    // The last transfer interrupt found SIOCNT's error bit (SIO_ERROR) set.
+    LINK_STATUS_ERROR         = 0x1000,
+    // SIOCNT's multiplayer id is 2 or more.
+    LINK_STATUS_EXTRA_CONSOLE = 0x2000
 } LINK_STAT;
 
 // The bytes of one packet buffer in SERIAL_STATE.storage.
@@ -1107,41 +1107,41 @@ typedef enum LINK_STAT
 // packet buffers the interrupt handler fills.
 typedef struct SERIAL_STATE
 {
-	// An SERIAL_MODE; SERIAL_MODE_CLOCKING adds LINK_STATUS_CLOCKING to the link status.
-	Uint8   mode;
-	Uint8   phase;        // an SERIAL_PHASE
-	Uint8   receivedMask; // the consoles heard from since the link began
-	Uint8   currentMask;  // the consoles heard from this tick
-	// Each console's SERIAL_CHANNEL_FLAG bits, set by the transfer interrupt and cleared each tick.
-	Uint8   channelFlags[4];
-	// Nonzero lets a new packet restart timer 3.
-	Uint8   transferEnabled;
-	// SIOCNT's error bit (SIO_ERROR), which multiplayer mode sets when a transfer fails, copied by
-	// each transfer interrupt; nonzero adds LINK_STATUS_ERROR to the link status and refuses the
-	// packets heard meanwhile.
-	Uint8   transferError;
-	Uint8   reservedAfterError;
-	// The packet number, counted up each tick once connected.
-	Uint8   packetNumber;
-	Uint8   reservedAfterPacketNumber[8];
-	// The halfword of sendBuf[1] sent next; -1 between packets, when system_serial.c's
-	// SERIAL_IDLE_HALFWORD is sent and the two send buffers swap.
-	Sint32  sendIndex;
-	// Each console's next halfword in its incomingBuf; -1 after an idle system_serial.c's
-	// SERIAL_IDLE_HALFWORD.
-	Sint32  receiveIndex[2];
-	Uint8   reservedAfterReceiveIndex[8];
-	// The packet being built ([0]) and the packet being sent ([1]).
-	Uint16 *sendBuf[2];
-	// Each console's packet being received; two are used.
-	Uint16 *incomingBuf[4];
-	// Each console's last complete packet, swapped in by the interrupt.
-	Uint16 *readyBuf[4];
-	// The packets the tick code checks and copies, swapped with readyBuf each tick.
-	Uint16 *pendingBuf[4];
-	// The buffers' memory: two 32-byte send buffers, then 96 bytes a console for its incoming,
-	// ready and pending packets.
-	Uint8   storage[SERIAL_PACKET_BYTES * 8];
+    // An SERIAL_MODE; SERIAL_MODE_CLOCKING adds LINK_STATUS_CLOCKING to the link status.
+    Uint8   mode;
+    Uint8   phase;        // an SERIAL_PHASE
+    Uint8   receivedMask; // the consoles heard from since the link began
+    Uint8   currentMask;  // the consoles heard from this tick
+    // Each console's SERIAL_CHANNEL_FLAG bits, set by the transfer interrupt and cleared each tick.
+    Uint8   channelFlags[4];
+    // Nonzero lets a new packet restart timer 3.
+    Uint8   transferEnabled;
+    // SIOCNT's error bit (SIO_ERROR), which multiplayer mode sets when a transfer fails, copied by
+    // each transfer interrupt; nonzero adds LINK_STATUS_ERROR to the link status and refuses the
+    // packets heard meanwhile.
+    Uint8   transferError;
+    Uint8   reservedAfterError;
+    // The packet number, counted up each tick once connected.
+    Uint8   packetNumber;
+    Uint8   reservedAfterPacketNumber[8];
+    // The halfword of sendBuf[1] sent next; -1 between packets, when system_serial.c's
+    // SERIAL_IDLE_HALFWORD is sent and the two send buffers swap.
+    Sint32  sendIndex;
+    // Each console's next halfword in its incomingBuf; -1 after an idle system_serial.c's
+    // SERIAL_IDLE_HALFWORD.
+    Sint32  receiveIndex[2];
+    Uint8   reservedAfterReceiveIndex[8];
+    // The packet being built ([0]) and the packet being sent ([1]).
+    Uint16 *sendBuf[2];
+    // Each console's packet being received; two are used.
+    Uint16 *incomingBuf[4];
+    // Each console's last complete packet, swapped in by the interrupt.
+    Uint16 *readyBuf[4];
+    // The packets the tick code checks and copies, swapped with readyBuf each tick.
+    Uint16 *pendingBuf[4];
+    // The buffers' memory: two 32-byte send buffers, then 96 bytes a console for its incoming,
+    // ready and pending packets.
+    Uint8   storage[SERIAL_PACKET_BYTES * 8];
 } SERIAL_STATE;
 
 STATIC_ASSERT(sizeof(SERIAL_STATE) == 352);
@@ -1154,25 +1154,25 @@ STATIC_ASSERT(offsetof(SERIAL_STATE, storage) == 96);
 // tick.
 typedef enum SERIAL_CHANNEL_FLAG
 {
-	SERIAL_CHANNEL_PACKET_COMPLETE = 1, // its fourteenth halfword arrived
-	// a transfer interrupt found SIOCNT's error bit (SIO_ERROR) set
-	SERIAL_CHANNEL_ERROR           = 2
+    SERIAL_CHANNEL_PACKET_COMPLETE = 1, // its fourteenth halfword arrived
+    // a transfer interrupt found SIOCNT's error bit (SIO_ERROR) set
+    SERIAL_CHANNEL_ERROR           = 2
 } SERIAL_CHANNEL_FLAG;
 
 // SERIAL_TRANSFER_STATE.flags: how far this console's receive has got.
 typedef enum SERIAL_RECEIVE_STATE
 {
-	SERIAL_RECEIVE_IDLE   = 0,
-	SERIAL_RECEIVE_ACTIVE = 1,
-	SERIAL_RECEIVE_DONE   = 2 // the last block taken
+    SERIAL_RECEIVE_IDLE   = 0,
+    SERIAL_RECEIVE_ACTIVE = 1,
+    SERIAL_RECEIVE_DONE   = 2 // the last block taken
 } SERIAL_RECEIVE_STATE;
 
 // SERIAL_TRANSFER_STATE.peerFlags: the kind of block this console sends.
 typedef enum SERIAL_SEND_STATE
 {
-	SERIAL_SEND_IDLE = 0,
-	SERIAL_SEND_MORE = 1, // a block with more to follow
-	SERIAL_SEND_LAST = 2
+    SERIAL_SEND_IDLE = 0,
+    SERIAL_SEND_MORE = 1, // a block with more to follow
+    SERIAL_SEND_LAST = 2
 } SERIAL_SEND_STATE;
 
 // SERIAL_TRANSFER_STATE.active and SerialBlockNumber hold a block number in their low seven bits,
@@ -1188,15 +1188,15 @@ typedef enum SERIAL_SEND_STATE
 // status and flags, and a 20-byte block.
 typedef struct SERIAL_TRANSFER_STATE
 {
-	// The number of the block in payload; as receiver, the one it expects with bit 7 set to ask for
-	// a resend; 1 when a transfer starts.
-	Uint8 active;
-	// SERIAL_STATUS_RUNNING when started, plus 1 for a receive; the receiver counts blocks (status
-	// + 1, with bit 7) and sets 0 after the last.
-	Uint8 status;
-	Uint8 flags;       // the receive state, an SERIAL_RECEIVE_STATE
-	Uint8 peerFlags;   // the send state, an SERIAL_SEND_STATE
-	Uint8 payload[20]; // one block of the data sent
+    // The number of the block in payload; as receiver, the one it expects with bit 7 set to ask for
+    // a resend; 1 when a transfer starts.
+    Uint8 active;
+    // SERIAL_STATUS_RUNNING when started, plus 1 for a receive; the receiver counts blocks (status
+    // + 1, with bit 7) and sets 0 after the last.
+    Uint8 status;
+    Uint8 flags;       // the receive state, an SERIAL_RECEIVE_STATE
+    Uint8 peerFlags;   // the send state, an SERIAL_SEND_STATE
+    Uint8 payload[20]; // one block of the data sent
 } SERIAL_TRANSFER_STATE;
 
 STATIC_ASSERT(sizeof(SERIAL_TRANSFER_STATE) == 24);
@@ -1211,22 +1211,22 @@ STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, payload) == 4);
 typedef struct VECTOR3
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	union
-	{
-		struct
-		{
-			Sint32 x;
-			Sint32 y;
-			Sint32 z;
-		};
+    union
+    {
+        struct
+        {
+            Sint32 x;
+            Sint32 y;
+            Sint32 z;
+        };
 
-		// x, y and z, as syVector3Coordinates returns them
-		Sint32 coordinates[3];
-	};
+        // x, y and z, as syVector3Coordinates returns them
+        Sint32 coordinates[3];
+    };
 #else
-	Sint32 x;
-	Sint32 y;
-	Sint32 z;
+    Sint32 x;
+    Sint32 y;
+    Sint32 z;
 #endif
 } VECTOR3;
 
@@ -1240,37 +1240,37 @@ STATIC_ASSERT(offsetof(VECTOR3, z) == 8);
 // entries own.
 typedef enum VRAM_CACHE_LIMITS
 {
-	// Cache entries; syVRAMCacheFindFreeEntry returns this when none is free.
-	VRAM_CACHE_ENTRY_COUNT    = 96,
-	VRAM_BLOCK_COUNT          = 512, // blocks of sprite VRAM
-	VRAM_BLOCK_BYTES          = 64,
-	VRAM_BLOCK_OWNER_FREE     = 255, // VramCacheBlockOwners of a free block
-	                                 // VRAM_CACHE_ENTRY.offset of a free entry.
-	VRAM_CACHE_OFFSET_FREE    = 65535,
-	// The largest size an entry has while it holds no blocks: syVRAMCacheReleaseVRAM leaves 1,
-	// which keeps the entry taken.
-	VRAM_CACHE_SIZE_NO_BLOCKS = 16,
-	// The most bytes syVRAMCacheLoad takes at once: 128 blocks, a quarter of sprite VRAM.
-	VRAM_CACHE_LOAD_MAX       = 8192
+    // Cache entries; syVRAMCacheFindFreeEntry returns this when none is free.
+    VRAM_CACHE_ENTRY_COUNT    = 96,
+    VRAM_BLOCK_COUNT          = 512, // blocks of sprite VRAM
+    VRAM_BLOCK_BYTES          = 64,
+    VRAM_BLOCK_OWNER_FREE     = 255, // VramCacheBlockOwners of a free block
+                                     // VRAM_CACHE_ENTRY.offset of a free entry.
+    VRAM_CACHE_OFFSET_FREE    = 65535,
+    // The largest size an entry has while it holds no blocks: syVRAMCacheReleaseVRAM leaves 1,
+    // which keeps the entry taken.
+    VRAM_CACHE_SIZE_NO_BLOCKS = 16,
+    // The most bytes syVRAMCacheLoad takes at once: 128 blocks, a quarter of sprite VRAM.
+    VRAM_CACHE_LOAD_MAX       = 8192
 } VRAM_CACHE_LIMITS;
 
 // The cache entries kept for one use each, loaded by number.
 typedef enum VRAM_CACHE_FIXED_ENTRY
 {
-	// The actors' shared shadow (ActorShadowTiles), each sprite animation's part 1
-	// (fdActorSystemConfigure).
-	VRAM_CACHE_ENTRY_ACTOR_SHADOW = 93,
-	// The ground mask's solid tiles (fdEffectStartGroundMask).
-	VRAM_CACHE_ENTRY_GROUND_MASK  = 94,
-	// The window sprites' glyph tiles (WIN_STATE.glyphTiles).
-	VRAM_CACHE_ENTRY_GLYPH_TILES  = 95
+    // The actors' shared shadow (ActorShadowTiles), each sprite animation's part 1
+    // (fdActorSystemConfigure).
+    VRAM_CACHE_ENTRY_ACTOR_SHADOW = 93,
+    // The ground mask's solid tiles (fdEffectStartGroundMask).
+    VRAM_CACHE_ENTRY_GROUND_MASK  = 94,
+    // The window sprites' glyph tiles (WIN_STATE.glyphTiles).
+    VRAM_CACHE_ENTRY_GLYPH_TILES  = 95
 } VRAM_CACHE_FIXED_ENTRY;
 
 // A sprite slot of the VRAM cache: the size of its block and where the block starts in sprite VRAM.
 typedef struct VRAM_CACHE_ENTRY
 {
-	Uint16 size;   // bytes
-	Uint16 offset; // bytes from the start of sprite VRAM
+    Uint16 size;   // bytes
+    Uint16 offset; // bytes from the start of sprite VRAM
 } VRAM_CACHE_ENTRY;
 
 STATIC_ASSERT(sizeof(VRAM_CACHE_ENTRY) == 4);

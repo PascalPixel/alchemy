@@ -5,13 +5,13 @@
 
 // The script of an actor that does nothing.
 const Sint32 ActorIdleScript[] = {
-	SC_END,
+    SC_END,
 };
 
 // The leader's placement and the end of its table, which the field copies into its state as it
 // starts. Only the idle script survives the copy: fdActorResetForLeader writes the leader's own
 // sprite, condition, spot and heading over the rest of the first row.
 const ACTOR_PLACE FieldDefaultPlacements[] = {
-	ACTOR_PLACEMENT(0, CONDITION_ALWAYS, (Sint32)ActorIdleScript, 300, 0, 300, 23472, 0, 0),
-	{SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
+    ACTOR_PLACEMENT(0, CONDITION_ALWAYS, (Sint32)ActorIdleScript, 300, 0, 300, 23472, 0, 0),
+    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };

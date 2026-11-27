@@ -4,9 +4,9 @@
 // party walked into.
 static void scLeaveByExit(void)
 {
-	FIELD_STATE *state = FieldStateWork;
-	Sint16      *cue   = (Sint16 *)&state->stepCue;
+    FIELD_STATE *state = FieldStateWork;
+    Sint16      *cue   = (Sint16 *)&state->stepCue;
 
-	syImportScriptSetExitRequest(*cue);
-	sySoundPlay(SE_MAP_EXIT);
+    syImportScriptSetExitRequest(*cue);
+    sySoundPlay(SE_MAP_EXIT);
 }

@@ -16,59 +16,59 @@ Uint32 KolimaCurseDustState  BSS_DATA;
 // the dust is centred, with SE_GLITTER every 64 ticks.
 void                         scKolimaUpdateCurseDust(void)
 {
-	ACTOR  *actor = NULL;
-	Sint32 *origin;
-	SPR    *sprite;
-	Sint32  x;
-	FIXED   z;
+    ACTOR  *actor = NULL;
+    Sint32 *origin;
+    SPR    *sprite;
+    Sint32  x;
+    FIXED   z;
 
-	switch (KolimaCurseDustState)
-	{
-		case KOLIMA_DUST_CLOSING:
-			if (KolimaCurseDustWidth < 15000)
-				KolimaCurseDustWidth += 50;
-			if (KolimaCurseDustOffset > toFIXED(60))
-				KolimaCurseDustOffset -= toFIXED(1) / 4;
-			break;
-		case KOLIMA_DUST_CLOSING_WIDE:
-			if (KolimaCurseDustWidth < 30000)
-				KolimaCurseDustWidth += 50;
-			if (KolimaCurseDustOffset > toFIXED(24))
-				KolimaCurseDustOffset -= toFIXED(1) / 4;
-			break;
-		case KOLIMA_DUST_DRIFTING:
-			if (KolimaCurseDustOffset < -toFIXED(128))
-			{
-				KolimaCurseDustState = KOLIMA_DUST_CENTRED;
-			}
-			else
-			{
-				KolimaCurseDustWidth  += 50;
-				KolimaCurseDustOffset -= toFIXED(1) / 4;
-			}
-			break;
-	}
-	if ((TickCount & 7) == 0 && (actor = syFieldActorCreate(SPRITE_SPARKLE, 0, 0, 0)) != 0)
-	{
-		origin = ((MAP_GRID_SCROLL_STATE *)MapGridState[0])->origin;
-		if ((TickCount & 63) == 0)
-			sySoundPlay(SE_GLITTER);
-		if (KolimaCurseDustState != KOLIMA_DUST_CENTRED)
-			x = origin[0] + ((syRandomBelow(KolimaCurseDustWidth)) << 8) + KolimaCurseDustOffset;
-		else
-			x = origin[0] + (syRandomNext() << 8) - toFIXED(128);
-		z                       = origin[2] + (syRandomNext() << 8) - toFIXED(128);
-		actor->motionFlags      = 0;
-		actor->y.fixed          = toFIXED(160);
-		sprite                  = actor->sprite;
-		actor->scaleX           = toFIXED(9) / 10;
-		actor->scaleY           = toFIXED(9) / 10;
-		actor->x.fixed          = x;
-		actor->z.fixed          = z;
-		sprite->flags           = 0;
-		actor->priorityFlags   &= ~ACTOR_PRIORITY_AUTOMATIC;
-		sprite->image.priority  = 1;
-		fdActorSelectAnimation(actor, 1);
-		fdActorStartScript(actor, KolimaCurseDustScript);
-	}
+    switch (KolimaCurseDustState)
+    {
+        case KOLIMA_DUST_CLOSING:
+            if (KolimaCurseDustWidth < 15000)
+                KolimaCurseDustWidth += 50;
+            if (KolimaCurseDustOffset > toFIXED(60))
+                KolimaCurseDustOffset -= toFIXED(1) / 4;
+            break;
+        case KOLIMA_DUST_CLOSING_WIDE:
+            if (KolimaCurseDustWidth < 30000)
+                KolimaCurseDustWidth += 50;
+            if (KolimaCurseDustOffset > toFIXED(24))
+                KolimaCurseDustOffset -= toFIXED(1) / 4;
+            break;
+        case KOLIMA_DUST_DRIFTING:
+            if (KolimaCurseDustOffset < -toFIXED(128))
+            {
+                KolimaCurseDustState = KOLIMA_DUST_CENTRED;
+            }
+            else
+            {
+                KolimaCurseDustWidth  += 50;
+                KolimaCurseDustOffset -= toFIXED(1) / 4;
+            }
+            break;
+    }
+    if ((TickCount & 7) == 0 && (actor = syFieldActorCreate(SPRITE_SPARKLE, 0, 0, 0)) != 0)
+    {
+        origin = ((MAP_GRID_SCROLL_STATE *)MapGridState[0])->origin;
+        if ((TickCount & 63) == 0)
+            sySoundPlay(SE_GLITTER);
+        if (KolimaCurseDustState != KOLIMA_DUST_CENTRED)
+            x = origin[0] + ((syRandomBelow(KolimaCurseDustWidth)) << 8) + KolimaCurseDustOffset;
+        else
+            x = origin[0] + (syRandomNext() << 8) - toFIXED(128);
+        z                       = origin[2] + (syRandomNext() << 8) - toFIXED(128);
+        actor->motionFlags      = 0;
+        actor->y.fixed          = toFIXED(160);
+        sprite                  = actor->sprite;
+        actor->scaleX           = toFIXED(9) / 10;
+        actor->scaleY           = toFIXED(9) / 10;
+        actor->x.fixed          = x;
+        actor->z.fixed          = z;
+        sprite->flags           = 0;
+        actor->priorityFlags   &= ~ACTOR_PRIORITY_AUTOMATIC;
+        sprite->image.priority  = 1;
+        fdActorSelectAnimation(actor, 1);
+        fdActorStartScript(actor, KolimaCurseDustScript);
+    }
 }

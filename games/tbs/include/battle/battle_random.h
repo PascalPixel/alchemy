@@ -14,9 +14,9 @@ extern Sint32 BattleRandomSeed;
 // Sets BattleRandomSeed, as every write to it does: a new battle's 0, the seed a link turn
 // exchanges and each roll's next seed.
 #define SET_RANDOM_SEED(seed)                                                                      \
-	do                                                                                             \
-	{                                                                                              \
-		BattleRandomSeed = (seed);                                                                 \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        BattleRandomSeed = (seed);                                                                 \
+    } while (0)
 
 #endif

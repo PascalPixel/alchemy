@@ -37,7 +37,7 @@ mnMessageStart(WINDOW *window, Sint32 entry, Sint32 x, Sint32 y, Uint16 *spacing
 void mnTextDrawWideStringInWindow(Sint16 *text, WINDOW *window, Sint32 x, Sint32 y);
 void mnWindowPutGlyph(WINDOW *window, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode);
 void mnTextDrawPrefixedNumberAtOffset(
-	Sint32 value, const WINDOW *window, Sint32 offsetX, Sint32 offsetY, Sint32 variant);
+    Sint32 value, const WINDOW *window, Sint32 offsetX, Sint32 offsetY, Sint32 variant);
 #endif
 
 // Edition-specific text and window layout values: places and widths in tiles, except where a note
@@ -51,7 +51,7 @@ void mnTextDrawPrefixedNumberAtOffset(
 
 // Where the Djinni preview's old stats start in their number text, and their column.
 #define DJINN_PREVIEW_STAT_DIGIT_OFFSET                                                            \
-	JAPANESE_OR(NUMBER_TEXT_FOUR_PLACES, NUMBER_TEXT_THREE_PLACES)
+    JAPANESE_OR(NUMBER_TEXT_FOUR_PLACES, NUMBER_TEXT_THREE_PLACES)
 #define DJINN_PREVIEW_STAT_X         JAPANESE_OR(4, 6)
 
 // The x of the preview's ":Psynergy Gained" prompt, in pixels.
@@ -100,36 +100,36 @@ void mnTextDrawPrefixedNumberAtOffset(
 // hand's spot, `margin` pixels left of the window and 20 below the row's top, and `sprite` becomes
 // a plain 16x16 sprite, its position still to come.
 #define MENU_PLACE_CURSOR(position, window, row, margin, sprite)                                   \
-	do                                                                                             \
-	{                                                                                              \
-		(position).x            = (window)->x * 8 - (margin);                                      \
-		(position).y            = ((row) * 2 + (window)->y) * 8 + 20;                              \
-		((Uint32 *)(sprite))[1] = OBJ_SIZE_16X16;                                                  \
-		((Uint32 *)(sprite))[2] = 0;                                                               \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        (position).x            = (window)->x * 8 - (margin);                                      \
+        (position).y            = ((row) * 2 + (window)->y) * 8 + 20;                              \
+        ((Uint32 *)(sprite))[1] = OBJ_SIZE_16X16;                                                  \
+        ((Uint32 *)(sprite))[2] = 0;                                                               \
+    } while (0)
 
 // The chosen item's window.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH     \
-	|| LANGUAGE == LANGUAGE_ITALIAN
-#	define BATTLE_ITEM_WINDOW_WIDTH 16
+    || LANGUAGE == LANGUAGE_ITALIAN
+#    define BATTLE_ITEM_WINDOW_WIDTH 16
 #else
-#	define BATTLE_ITEM_WINDOW_WIDTH 15
+#    define BATTLE_ITEM_WINDOW_WIDTH 15
 #endif
 
 // The password level menu (mnIconMenuChooseSendOption, SEND_OPTION_PASSWORD_LEVEL): its heading
 // window ("Password Selection") and, outside the Japanese edition, the explanation window under it.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
-#	define PASSWORD_LEVEL_WINDOW_X     7
-#	define PASSWORD_LEVEL_WINDOW_WIDTH 17
+#    define PASSWORD_LEVEL_WINDOW_X     7
+#    define PASSWORD_LEVEL_WINDOW_WIDTH 17
 #elif LANGUAGE == LANGUAGE_SPANISH
-#	define PASSWORD_LEVEL_WINDOW_X     5
-#	define PASSWORD_LEVEL_WINDOW_WIDTH 21
+#    define PASSWORD_LEVEL_WINDOW_X     5
+#    define PASSWORD_LEVEL_WINDOW_WIDTH 21
 #elif LANGUAGE == LANGUAGE_FRENCH
-#	define PASSWORD_LEVEL_WINDOW_X     5
-#	define PASSWORD_LEVEL_WINDOW_WIDTH 22
+#    define PASSWORD_LEVEL_WINDOW_X     5
+#    define PASSWORD_LEVEL_WINDOW_WIDTH 22
 #else
-#	define PASSWORD_LEVEL_WINDOW_X     9
-#	define PASSWORD_LEVEL_WINDOW_WIDTH 13
+#    define PASSWORD_LEVEL_WINDOW_X     9
+#    define PASSWORD_LEVEL_WINDOW_WIDTH 13
 #endif
 
 // The password level menu's explanation window ("The data stored in your password depends on which
@@ -147,15 +147,15 @@ void mnTextDrawPrefixedNumberAtOffset(
 
 // The transfer method menu's help window, in tiles.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH    \
-	|| LANGUAGE == LANGUAGE_ITALIAN
-#	define TRANSFER_HELP_WINDOW_X     1
-#	define TRANSFER_HELP_WINDOW_WIDTH 28
+    || LANGUAGE == LANGUAGE_ITALIAN
+#    define TRANSFER_HELP_WINDOW_X     1
+#    define TRANSFER_HELP_WINDOW_WIDTH 28
 #elif LANGUAGE == LANGUAGE_GERMAN
-#	define TRANSFER_HELP_WINDOW_X     0
-#	define TRANSFER_HELP_WINDOW_WIDTH 30
+#    define TRANSFER_HELP_WINDOW_X     0
+#    define TRANSFER_HELP_WINDOW_WIDTH 30
 #else
-#	define TRANSFER_HELP_WINDOW_X     5
-#	define TRANSFER_HELP_WINDOW_WIDTH 21
+#    define TRANSFER_HELP_WINDOW_X     5
+#    define TRANSFER_HELP_WINDOW_WIDTH 21
 #endif
 
 // The width inside the border of the name window under the shop's commands and the Sanctum's
@@ -175,17 +175,17 @@ void mnTextDrawPrefixedNumberAtOffset(
 // (PAGE_NUMBER_TILE): the page arrows, and the summon list's element icon.
 enum
 {
-	// Element icon: + ELEMENT, in BASIC_COLORS_PALETTE.
-	LIST_TILE_SUMMON_ELEMENT = BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1,
-	// Left arrow, tile 820, which mnPageArrowsDraw slides.
-	LIST_TILE_PAGES_LEFT     = WINDOW_TILE(820),
-	LIST_TILE_PAGES_RIGHT    = WINDOW_TILE(821) // Right arrow, tile 821
+    // Element icon: + ELEMENT, in BASIC_COLORS_PALETTE.
+    LIST_TILE_SUMMON_ELEMENT = BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1,
+    // Left arrow, tile 820, which mnPageArrowsDraw slides.
+    LIST_TILE_PAGES_LEFT     = WINDOW_TILE(820),
+    LIST_TILE_PAGES_RIGHT    = WINDOW_TILE(821) // Right arrow, tile 821
 };
 
 // The battle lists' two page arrow tiles in VRAM, which mnPageArrowsDraw draws each tick
 // (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT).
 #define LIST_PAGE_ARROW_VRAM                                                                       \
-	((Sint32)BG_CHAR_BLOCK(0) + (LIST_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
+    ((Sint32)BG_CHAR_BLOCK(0) + (LIST_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
 
 // What mnBattleCommandRowRun returns besides the command icon chosen.
 #define COMMAND_ROW_CANCELLED -1 // B, in a party member's row
@@ -195,29 +195,29 @@ enum
 // The two battle command rows mnBattleCommandRowRun runs.
 typedef enum COMMAND_ROW_MODE
 {
-	COMMAND_ROW_PARTY  = 0, // the start of a turn: Fight, Flee and Status
-	// a party member's commands; any mode but 0 is this row
-	COMMAND_ROW_MEMBER = 1
+    COMMAND_ROW_PARTY  = 0, // the start of a turn: Fight, Flee and Status
+    // a party member's commands; any mode but 0 is this row
+    COMMAND_ROW_MEMBER = 1
 } COMMAND_ROW_MODE;
 
 // What mnBattleTargetRunSelection shows on a party member for the action being aimed
 // (mnBattleClassifyEntryKind), and which party member it starts on.
 typedef enum BATTLE_TARGET_HINT
 {
-	TARGET_HINT_NONE        = 0,
-	TARGET_HINT_HP          = 1, // heals HP: the party member's HP
-	TARGET_HINT_PP          = 2, // restores PP: the party member's PP
-	// Cures poison (ABILITY_EFFECT_CURE_POISON): starts on a poisoned party member.
-	TARGET_HINT_CURE_POISON = 3,
-	// Cures what Restore cures (ABILITY_EFFECT_RESTORE): starts on a party member who has one of
-	// those statuses, and lists them.
-	TARGET_HINT_RESTORE     = 4,
-	// Revives (gmBattleIsReviveEffectStub): starts on a downed party member.
-	TARGET_HINT_REVIVE      = 5,
-	// Cures Restore's statuses, poison and the evil spirit, as Tonic does
-	// (ABILITY_EFFECT_CURE_ALL).
-	TARGET_HINT_CURE_ALL    = 6,
-	TARGET_HINT_SET_DJINNI  = 7 // setting a Djinni: "Set Djinni"
+    TARGET_HINT_NONE        = 0,
+    TARGET_HINT_HP          = 1, // heals HP: the party member's HP
+    TARGET_HINT_PP          = 2, // restores PP: the party member's PP
+    // Cures poison (ABILITY_EFFECT_CURE_POISON): starts on a poisoned party member.
+    TARGET_HINT_CURE_POISON = 3,
+    // Cures what Restore cures (ABILITY_EFFECT_RESTORE): starts on a party member who has one of
+    // those statuses, and lists them.
+    TARGET_HINT_RESTORE     = 4,
+    // Revives (gmBattleIsReviveEffectStub): starts on a downed party member.
+    TARGET_HINT_REVIVE      = 5,
+    // Cures Restore's statuses, poison and the evil spirit, as Tonic does
+    // (ABILITY_EFFECT_CURE_ALL).
+    TARGET_HINT_CURE_ALL    = 6,
+    TARGET_HINT_SET_DJINNI  = 7 // setting a Djinni: "Set Djinni"
 } BATTLE_TARGET_HINT;
 
 #define BATTLE_OK 0x80          // ABILITY_DEFINITION.flags: usable in battle
@@ -225,12 +225,12 @@ typedef enum BATTLE_TARGET_HINT
 // Whether a party member can use an item in battle (mnItemCheckBattleUse).
 typedef enum BATTLE_ITEM_USE
 {
-	BATTLE_ITEM_USABLE        = 0,
-	// "Using this will have no effect.": no item, one that only teaches Psynergy while equipped,
-	// one with no action, or equipment the party member cannot equip.
-	BATTLE_ITEM_NO_EFFECT     = 1,
-	// "Cannot be used during battle.": its action lacks ABILITY_USABLE_IN_BATTLE.
-	BATTLE_ITEM_NOT_IN_BATTLE = 2
+    BATTLE_ITEM_USABLE        = 0,
+    // "Using this will have no effect.": no item, one that only teaches Psynergy while equipped,
+    // one with no action, or equipment the party member cannot equip.
+    BATTLE_ITEM_NO_EFFECT     = 1,
+    // "Cannot be used during battle.": its action lacks ABILITY_USABLE_IN_BATTLE.
+    BATTLE_ITEM_NOT_IN_BATTLE = 2
 } BATTLE_ITEM_USE;
 
 // What mnSaveScanFileSummaries adds to its count of files when every file is cleared (its sendFlag
@@ -241,36 +241,36 @@ typedef enum BATTLE_ITEM_USE
 // command it stands for. screens_menu_titles.c loads it, screens_battle_command_row.c runs the row.
 typedef struct BATTLE_COMMAND_ROW_ICON
 {
-	// The icon as a 32x32 sprite, drawn only while it is selected (pulsing); the others show as
-	// tiles of BG1.
-	MENU_SPR sprite;
-	// resource: the VRAM cache entry its sprite's tiles go into, one 1 KB entry that every icon of
-	// the row shares, reloaded with the selected icon. unused is never read.
-	Uint16   resource, unused;
-	// Screen pixels: the sprite's top left before the pulse moves it.
-	Sint32   posX, posY;
-	Sint32   kind; // its command: MsgCommandName + kind names it
+    // The icon as a 32x32 sprite, drawn only while it is selected (pulsing); the others show as
+    // tiles of BG1.
+    MENU_SPR sprite;
+    // resource: the VRAM cache entry its sprite's tiles go into, one 1 KB entry that every icon of
+    // the row shares, reloaded with the selected icon. unused is never read.
+    Uint16   resource, unused;
+    // Screen pixels: the sprite's top left before the pulse moves it.
+    Sint32   posX, posY;
+    Sint32   kind; // its command: MsgCommandName + kind names it
 } BATTLE_COMMAND_ROW_ICON;
 
 // The command row's state block: the icons' shared palette, up to six icons, the label window, the
 // pulsing icon's transform and the selection.
 typedef struct BATTLE_COMMAND_ROW_STATE
 {
-	// BG palette slots for the icons' 256-colour pixels, filled as each icon is loaded
-	// (mnBattleCommandRowLoadIconTiles).
-	ICON_PALETTE            palette;
-	BATTLE_COMMAND_ROW_ICON entries[6];
-	WINDOW                 *window; // shows the selected command's name
-	Sint32                  iconCount;
-	// The selected icon's scale, 8.8 fixed point: it pulses between 304 and 336 (1.19 and 1.31
-	// times) every 16 ticks.
-	AFFINE_TRANSFORM        affine;
-	// affineIndex: the OAM matrix built from affine this tick. selectedIndex: the icon under the
-	// cursor. drawnIndex: the icon whose name the window shows, -1 before the first is drawn.
-	Sint32                  affineIndex, selectedIndex, drawnIndex;
-	// The commands in row order, ended by -1 when fewer than six (see mnBattleCommandRowRun for the
-	// kinds).
-	Sint32                  commandKinds[6];
+    // BG palette slots for the icons' 256-colour pixels, filled as each icon is loaded
+    // (mnBattleCommandRowLoadIconTiles).
+    ICON_PALETTE            palette;
+    BATTLE_COMMAND_ROW_ICON entries[6];
+    WINDOW                 *window; // shows the selected command's name
+    Sint32                  iconCount;
+    // The selected icon's scale, 8.8 fixed point: it pulses between 304 and 336 (1.19 and 1.31
+    // times) every 16 ticks.
+    AFFINE_TRANSFORM        affine;
+    // affineIndex: the OAM matrix built from affine this tick. selectedIndex: the icon under the
+    // cursor. drawnIndex: the icon whose name the window shows, -1 before the first is drawn.
+    Sint32                  affineIndex, selectedIndex, drawnIndex;
+    // The commands in row order, ended by -1 when fewer than six (see mnBattleCommandRowRun for the
+    // kinds).
+    Sint32                  commandKinds[6];
 } BATTLE_COMMAND_ROW_STATE;
 
 // The Djinn menu's blinking arrow (djinn_blink.s), and where each element's standby count sits in

@@ -5,15 +5,15 @@
 // where it was in the items.
 static void scInventoryReplaceItem(Sint32 oldItem, Sint32 newItem)
 {
-	Sint32 member = gmPartyInventoryFindMember(oldItem);
+    Sint32 member = gmPartyInventoryFindMember(oldItem);
 
-	if (member != -1)
-	{
-		Sint32 inventorySlot = gmInventoryFind(member, oldItem);
+    if (member != -1)
+    {
+        Sint32 inventorySlot = gmInventoryFind(member, oldItem);
 
-		if (inventorySlot != -1)
-		{
-			gmUnitGet(member)->inventory[inventorySlot] = newItem;
-		}
-	}
+        if (inventorySlot != -1)
+        {
+            gmUnitGet(member)->inventory[inventorySlot] = newItem;
+        }
+    }
 }

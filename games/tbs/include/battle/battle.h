@@ -73,11 +73,11 @@ Sint32        btDjinnCountStandby(Uint32 unitId, Uint8 *counts);
 // One of the star field's three rings, moving outward on the effect canvas.
 typedef struct RING
 {
-	Sint32 x;         // 1/1024 canvas pixels
-	Sint32 y;         // 1/1024 canvas pixels
-	Sint32 velocityX; // 1/1024 canvas pixels per tick
-	Sint32 velocityY; // 1/1024 canvas pixels per tick
-	Sint32 age;       // ticks
+    Sint32 x;         // 1/1024 canvas pixels
+    Sint32 y;         // 1/1024 canvas pixels
+    Sint32 velocityX; // 1/1024 canvas pixels per tick
+    Sint32 velocityY; // 1/1024 canvas pixels per tick
+    Sint32 age;       // ticks
 } RING;
 
 // The weights an enemy picks among its eight actions by, one table for each weighted action
@@ -148,7 +148,7 @@ extern Uint16                         EncounterZones[];
 // The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which battle_staging.c,
 // battle_auto_battle.c and battle_turn.c set for each action, and the background's display mode.
 #define BattleBackgroundStateWork                                                                  \
-	(*(struct BATTLE_BACKGROUND_STATE **)&HeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
+    (*(struct BATTLE_BACKGROUND_STATE **)&HeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
 // Isaac's weapon sprite by weapon kind (btUnitGetWeaponSprite).
 extern const Uint16 BattleUnitWeaponAnimationsIsaac[];
 // The ARM decoder for a battle background's image, which btBackgroundLoad copies to RAM and runs as
@@ -161,58 +161,58 @@ void                btBitDecoderDecodeImage(void);
 // by 1 pixel a tick to at most 4.
 typedef enum BATTLE_KNOCKBACK
 {
-	KNOCKBACK_NUDGE,  // 140 percent, a hop of 3
-	KNOCKBACK_HOP,    // 140 percent, a hop of 6
-	KNOCKBACK_LEAP,   // 150 percent, a hop of 7
-	KNOCKBACK_LAUNCH, // 200 percent, a hop of 10
-	// The hardest: 200 percent at 8 pixels a tick more each tick, to at most 20, with a hop of 5.
-	KNOCKBACK_HURL,
-	// 150 percent, a hop of 2. From here on a unit already in the air takes the new hop too.
-	KNOCKBACK_SKID,
-	KNOCKBACK_BOUNCE, // the spot itself, a hop of 3
-	KNOCKBACK_JOLT    // the spot itself, a hop of 5.5
+    KNOCKBACK_NUDGE,  // 140 percent, a hop of 3
+    KNOCKBACK_HOP,    // 140 percent, a hop of 6
+    KNOCKBACK_LEAP,   // 150 percent, a hop of 7
+    KNOCKBACK_LAUNCH, // 200 percent, a hop of 10
+    // The hardest: 200 percent at 8 pixels a tick more each tick, to at most 20, with a hop of 5.
+    KNOCKBACK_HURL,
+    // 150 percent, a hop of 2. From here on a unit already in the air takes the new hop too.
+    KNOCKBACK_SKID,
+    KNOCKBACK_BOUNCE, // the spot itself, a hop of 3
+    KNOCKBACK_JOLT    // the spot itself, a hop of 5.5
 } BATTLE_KNOCKBACK;
 
 // The battle sprites' animations (fdSpriteStartAnimation numbers) that the battle code picks by
 // name.
 typedef enum BATTLE_POSE
 {
-	// The first standing picture held still, without POSE_STANDING's breathing: how an enemy
-	// asleep, stunned or held stands.
-	POSE_STILL      = 0,
-	POSE_STANDING   = 1,
-	POSE_LEAP       = 2, // running up to a target and leaping
-	POSE_CAST       = 3, // a hand raised to cast or use an item
-	                     // asleep, stunned or held; also a downed party member
-	POSE_PARTY_HELD = 4,
-	POSE_DAMAGE     = 5, // taking damage
-	POSE_ENEMY_DOWN = 5  // a downed enemy stays in its damage pose
+    // The first standing picture held still, without POSE_STANDING's breathing: how an enemy
+    // asleep, stunned or held stands.
+    POSE_STILL      = 0,
+    POSE_STANDING   = 1,
+    POSE_LEAP       = 2, // running up to a target and leaping
+    POSE_CAST       = 3, // a hand raised to cast or use an item
+                         // asleep, stunned or held; also a downed party member
+    POSE_PARTY_HELD = 4,
+    POSE_DAMAGE     = 5, // taking damage
+    POSE_ENEMY_DOWN = 5  // a downed enemy stays in its damage pose
 } BATTLE_POSE;
 
 // A battle unit's sprites' OBJ mode, as btHighlightSetSpriteMode sets it: faded units are
 // semi-transparent, and the battle's blends act on them.
 typedef enum BATTLE_SPR_MODE
 {
-	SPRITE_OPAQUE,
-	SPRITE_SEMI_TRANSPARENT
+    SPRITE_OPAQUE,
+    SPRITE_SEMI_TRANSPARENT
 } BATTLE_SPR_MODE;
 
 // btHighlightSetModes' mode, kept in BATTLE_STATE.highlightMode: whether the selected units are
 // highlighted, every other unit faded.
 typedef enum BATTLE_HIGHLIGHT
 {
-	HIGHLIGHT_OFF,
-	HIGHLIGHT_SELECTED
+    HIGHLIGHT_OFF,
+    HIGHLIGHT_SELECTED
 } BATTLE_HIGHLIGHT;
 
 // The glows btElementGlowPlay plays about a unit in its element.
 typedef enum BATTLE_ELEMENT_GLOW
 {
-	// The star field gathering on the unit while the background darkens: a cast.
-	GLOW_STAR_FIELD,
-	GLOW_STREAKS, // the element's streaks: an enemy's cast
-	GLOW_PILLAR,  // the element's pillar, at a strength: a summon's boost
-	GLOW_BURST    // the element's burst: a Djinni set
+    // The star field gathering on the unit while the background darkens: a cast.
+    GLOW_STAR_FIELD,
+    GLOW_STREAKS, // the element's streaks: an enemy's cast
+    GLOW_PILLAR,  // the element's pillar, at a strength: a summon's boost
+    GLOW_BURST    // the element's burst: a Djinni set
 } BATTLE_ELEMENT_GLOW;
 
 struct BATTLE_ACTION;
@@ -263,24 +263,24 @@ Sint32 btUnitCountDownSleep(Sint32 unitId);
 // centres the background's zoom unless a view holds it. Two such functions exist, one each in
 // battle_auto_battle.c and battle_turn.c.
 #define DEFINE_ADJUST_CAMERA(name)                                                                 \
-	void name(void)                                                                                \
-	{                                                                                              \
-		struct BATTLE_CAMERA           *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);                \
-		struct BATTLE_BACKGROUND_STATE *view   = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);     \
+    void name(void)                                                                                \
+    {                                                                                              \
+        struct BATTLE_CAMERA           *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);                \
+        struct BATTLE_BACKGROUND_STATE *view   = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);     \
                                                                                                    \
-		if ((PerData & KEY_L) != 0)                                                                \
-		{                                                                                          \
-			camera->yaw += 512;                                                                    \
-		}                                                                                          \
-		if ((PerData & KEY_R) != 0)                                                                \
-		{                                                                                          \
-			camera->yaw -= 512;                                                                    \
-		}                                                                                          \
-		if (view->keepRange == 0)                                                                  \
-		{                                                                                          \
-			btCameraSetRange(toFIXED(120), toFIXED(120), 0, 0, toFIXED(1));                        \
-		}                                                                                          \
-	}
+        if ((PerData & KEY_L) != 0)                                                                \
+        {                                                                                          \
+            camera->yaw += 512;                                                                    \
+        }                                                                                          \
+        if ((PerData & KEY_R) != 0)                                                                \
+        {                                                                                          \
+            camera->yaw -= 512;                                                                    \
+        }                                                                                          \
+        if (view->keepRange == 0)                                                                  \
+        {                                                                                          \
+            btCameraSetRange(toFIXED(120), toFIXED(120), 0, 0, toFIXED(1));                        \
+        }                                                                                          \
+    }
 
 Sint32        btEnemyList(Sint16 *unitIds);
 void          btObjectPutKeepingPoses(void);

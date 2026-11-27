@@ -11,23 +11,23 @@
 typedef struct SPR_PLACEMENT
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	union
-	{
-		struct
-		{
-			FIXED x;
-			FIXED height;
-			FIXED y;
-			FIXED groundHeight;
-		};
+    union
+    {
+        struct
+        {
+            FIXED x;
+            FIXED height;
+            FIXED y;
+            FIXED groundHeight;
+        };
 
-		FIXED values[4];
-	};
+        FIXED values[4];
+    };
 #else
-	FIXED x;
-	FIXED height;
-	FIXED y;
-	FIXED groundHeight;
+    FIXED x;
+    FIXED height;
+    FIXED y;
+    FIXED groundHeight;
 #endif
 } SPR_PLACEMENT;
 
@@ -35,25 +35,25 @@ typedef struct SPR_PLACEMENT
 static inline Sint32 *sySpritePlacementValues(SPR_PLACEMENT *placement)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return placement->values;
+    return placement->values;
 #else
-	return &placement->x;
+    return &placement->x;
 #endif
 }
 
 // Horizontal and vertical sprite scale; toFIXED(1) is the original size.
 typedef struct SPR_SCALE
 {
-	union
-	{
-		struct
-		{
-			FIXED x; // 16.16
-			FIXED y; // 16.16
-		};
+    union
+    {
+        struct
+        {
+            FIXED x; // 16.16
+            FIXED y; // 16.16
+        };
 
-		Sint32 values[2];
-	};
+        Sint32 values[2];
+    };
 } SPR_SCALE;
 
 STATIC_ASSERT(sizeof(SPR_PLACEMENT) == 16);

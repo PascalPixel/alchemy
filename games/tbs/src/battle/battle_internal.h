@@ -36,8 +36,8 @@
 // The battle's windows: window 0 shows BG0 to BG2, sprites and blending, window 1 BG0, BG2, sprites
 // and blending, and outside them only BG0 and blending.
 #define BATTLE_WININ                                                                               \
-	(WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ | WININ_WIN0_CLR            \
-	 | WININ_WIN1_BG0 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR)
+    (WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ | WININ_WIN0_CLR            \
+     | WININ_WIN1_BG0 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR)
 #define BATTLE_WINOUT     (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
 // The battle background's colours: BG palettes 6 to 13, filled from BATTLE_STATE.palette, darkened
@@ -50,7 +50,7 @@
 
 // BG1 during a battle: 256 colours, priority 3, its map in screen block BATTLE_BG1_SCREEN_BLOCK.
 #define BATTLE_BG1CNT                                                                              \
-	(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK))
+    (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK))
 
 // In a link battle each console sends LINK_PARTY_SIZE places, at most three party members
 // (btLinkBattleSendParty), and the opponent's take the first three enemy ids from FIRST_ENEMY_UNIT.
@@ -104,9 +104,9 @@
 // btStagingRunPsynergyCast's mode: what is cast, which decides the glow.
 typedef enum BATTLE_CAST_KIND
 {
-	CAST_PSYNERGY = 0, // the star field gathers on the caster
-	CAST_DJINNI   = 1, // no glow; the effect plays its prelude
-	CAST_ENEMY    = 2  // the element's streaks
+    CAST_PSYNERGY = 0, // the star field gathers on the caster
+    CAST_DJINNI   = 1, // no glow; the effect plays its prelude
+    CAST_ENEMY    = 2  // the element's streaks
 } BATTLE_CAST_KIND;
 
 // An HP change that defeats any unit: the Grim Reaper's call deals it, and the debug defeat.
@@ -139,8 +139,8 @@ typedef enum BATTLE_CAST_KIND
 // Runs a battle effect by its ability's effect word (Ability.battleEffect): with EFFECT_BY_ID_RANGE
 // from the second range of kinds (btEffectRunByIdRangeStub), otherwise from the handler table.
 #define BATTLE_EFFECT_RUN(args, battleEffect)                                                      \
-	((battleEffect) & EFFECT_BY_ID_RANGE ? btEffectRunByIdRangeStub(args)                          \
-	                                     : btEffectRunFromTableStub(args))
+    ((battleEffect) & EFFECT_BY_ID_RANGE ? btEffectRunByIdRangeStub(args)                          \
+                                         : btEffectRunFromTableStub(args))
 
 // The keys that take the player on past a message: A, B, L and R.
 #define KEY_ADVANCE        (KEY_A | KEY_B | KEYS_SHOULDERS)

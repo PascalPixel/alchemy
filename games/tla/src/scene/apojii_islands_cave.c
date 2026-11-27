@@ -21,94 +21,94 @@ extern Uint32 ApojiiIslandsCaveWeedsScript[];
 // ActorPlacements.
 typedef enum APOJII_ISLANDS_CAVE_ACTOR_ID
 {
-	ACTOR_FIRST_WEEDS = ACTOR_FIRST_PLACED,
-	ACTOR_SECOND_WEEDS,
-	ACTOR_PASSAGE_WEEDS, // over the passage north
-	ACTOR_FOURTH_WEEDS
+    ACTOR_FIRST_WEEDS = ACTOR_FIRST_PLACED,
+    ACTOR_SECOND_WEEDS,
+    ACTOR_PASSAGE_WEEDS, // over the passage north
+    ACTOR_FOURTH_WEEDS
 } APOJII_ISLANDS_CAVE_ACTOR_ID;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SceneEntrances;
+    return SceneEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
 {
-	return 0;
+    return 0;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SceneExits;
+    return SceneExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ActorPlacements;
+    return ActorPlacements;
 }
 
 // Whirlwind on a clump of weeds scatters it for good.
 void scApojiiIslandsCaveScatterWeeds(Sint32 unused, Sint32 weeds)
 {
-	syGameFlagSet(FLAG_APOJII_CAVE_FOLIAGE_BLOWN(weeds));
+    syGameFlagSet(FLAG_APOJII_CAVE_FOLIAGE_BLOWN(weeds));
 }
 
 const CUE *scGetCues(void)
 {
-	return SceneCues;
+    return SceneCues;
 }
 
 Sint32 scInit(void)
 {
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	return 0;
+    FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+    return 0;
 }
 
 Sint32 scPrepareMap(void)
 {
-	return 0;
+    return 0;
 }
 
 // clang-format off
 // The weeds' script: each clump stands still three pixels up, on ground four pixels up, drawn half as tall again.
 Uint32 ApojiiIslandsCaveWeedsScript[] = {
-	SC_SET(SW_MOTION, 0),
-	SC_SET(SW_GROUND, toFIXED(4)),
-	SC_SET(SW_Y, toFIXED(3)),
-	SC_SET(SW_SCALE_Y, toFIXED(3) / 2),
-	SC_END,
+    SC_SET(SW_MOTION, 0),
+    SC_SET(SW_GROUND, toFIXED(4)),
+    SC_SET(SW_Y, toFIXED(3)),
+    SC_SET(SW_SCALE_Y, toFIXED(3) / 2),
+    SC_END,
 };
 // clang-format on
 
 #include "shared/scene_entrances_default.c"
 
 Uint32 SceneExits[] = {
-	SCENE_EXITS(ApojiiIslandsCave),
-	SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_SOUTH_TO_NORTH,
+    SCENE_EXITS(ApojiiIslandsCave),
+    SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_SOUTH_TO_NORTH,
                       ApojiiIslandsCave,
                       APOJII_ISLANDS_CAVE_NORTH_FROM_SOUTH,
                       EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_NORTH_TO_SOUTH,
+    SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_NORTH_TO_SOUTH,
                       ApojiiIslandsCave,
                       APOJII_ISLANDS_CAVE_SOUTH_FROM_NORTH,
                       EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHWEST,
+    SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHWEST,
                       ApojiiIslandsHaze,
                       APOJII_ISLANDS_HAZE_FROM_APOJII_ISLANDS_CAVE_SOUTHWEST,
                       EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHEAST,
+    SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHEAST,
                       ApojiiIslandsHaze,
                       APOJII_ISLANDS_HAZE_FROM_APOJII_ISLANDS_CAVE_SOUTHEAST,
                       EXIT_FLAG_NONE),
-	SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_NORTH,
+    SCENE_EXIT_UNLESS(APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_NORTH,
                       ApojiiIslandsHaze,
                       APOJII_ISLANDS_HAZE_FROM_APOJII_ISLANDS_CAVE_NORTH,
                       EXIT_FLAG_NONE),
-	SCENE_EXITS_END,
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE ActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_WEEDS,
+    ACTOR_PLACEMENT(SPRITE_WEEDS,
                     FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_WEEDS),
                     (Sint32)ApojiiIslandsCaveWeedsScript,
                     120,
@@ -117,7 +117,7 @@ ACTOR_PLACE ActorPlacements[] = {
                     FACING_NORTH,
                     TALK_FACING_KEEP,
                     0),
-	ACTOR_PLACEMENT(SPRITE_WEEDS,
+    ACTOR_PLACEMENT(SPRITE_WEEDS,
                     FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_WEEDS),
                     (Sint32)ApojiiIslandsCaveWeedsScript,
                     184,
@@ -126,7 +126,7 @@ ACTOR_PLACE ActorPlacements[] = {
                     FACING_NORTH,
                     TALK_FACING_KEEP,
                     0),
-	ACTOR_PLACEMENT(SPRITE_WEEDS,
+    ACTOR_PLACEMENT(SPRITE_WEEDS,
                     FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_WEEDS),
                     (Sint32)ApojiiIslandsCaveWeedsScript,
                     216,
@@ -135,7 +135,7 @@ ACTOR_PLACE ActorPlacements[] = {
                     FACING_NORTH,
                     TALK_FACING_KEEP,
                     0),
-	ACTOR_PLACEMENT(SPRITE_WEEDS,
+    ACTOR_PLACEMENT(SPRITE_WEEDS,
                     FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_WEEDS),
                     (Sint32)ApojiiIslandsCaveWeedsScript,
                     280,
@@ -144,28 +144,28 @@ ACTOR_PLACE ActorPlacements[] = {
                     FACING_NORTH,
                     TALK_FACING_KEEP,
                     0),
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 CUE SceneCues[] = {
-	{CUE_EXIT,
+    {CUE_EXIT,
      1, IF_FLAG_SET(FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_WEEDS)),
      APOJII_ISLANDS_CAVE_SOUTH_TO_NORTH},
-	{CUE_EXIT, 2, CONDITION_ALWAYS, APOJII_ISLANDS_CAVE_NORTH_TO_SOUTH},
-	{CUE_EXIT, 3, CONDITION_ALWAYS, APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHWEST},
-	{CUE_EXIT, 4, CONDITION_ALWAYS, APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHEAST},
-	{CUE_EXIT, 5, CONDITION_ALWAYS, APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_NORTH},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
+    {CUE_EXIT, 2, CONDITION_ALWAYS, APOJII_ISLANDS_CAVE_NORTH_TO_SOUTH},
+    {CUE_EXIT, 3, CONDITION_ALWAYS, APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHWEST},
+    {CUE_EXIT, 4, CONDITION_ALWAYS, APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHEAST},
+    {CUE_EXIT, 5, CONDITION_ALWAYS, APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_NORTH},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
      ACTOR_FIRST_WEEDS, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_WEEDS),
      SCRIPT_REF(scApojiiIslandsCaveScatterWeeds)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
      ACTOR_SECOND_WEEDS, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_WEEDS),
      SCRIPT_REF(scApojiiIslandsCaveScatterWeeds)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
      ACTOR_PASSAGE_WEEDS, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_WEEDS),
      SCRIPT_REF(scApojiiIslandsCaveScatterWeeds)},
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
      ACTOR_FOURTH_WEEDS, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_WEEDS),
      SCRIPT_REF(scApojiiIslandsCaveScatterWeeds)},
-	{CUE_TABLE_END},
+    {CUE_TABLE_END},
 };

@@ -19,7 +19,7 @@ Sint32         mnWindowIsClosedStub(struct WINDOW *window);
 void           mnMessageSetDecodeFlagsStub(Sint32 flags);
 void           mnWindowSpritePrepareForRedrawStub(struct WINDOW *window);
 void           mnWindowClearInteriorTilesStub(
-			  const struct WINDOW *window, Uint32 left, Uint32 top, Uint32 right, Uint32 bottom);
+              const struct WINDOW *window, Uint32 left, Uint32 top, Uint32 right, Uint32 bottom);
 void mnWindowDrawDividerLineStub(struct WINDOW *window, Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
 void mnTextDrawMessageStub(Sint32 msg, struct WINDOW *window, Sint32 x, Sint32 y);
 void mnTextDrawMessageAsTilesStub(Sint32               msg,
@@ -34,16 +34,16 @@ void mnTextDrawStringAtOffsetStub(const Uint8         *text,
 void mnTextDrawStringInWindowStub(const Uint8 *text, struct WINDOW *window, Uint32 x, Uint32 y);
 void mnTextDrawNumberStub(Sint32 value, Sint32 width, struct WINDOW *window, Sint32 x, Sint32 y);
 void mnTextDrawNumberAtOffsetStub(
-	Sint32 value, Sint32 width, const struct WINDOW *window, Sint32 x, Sint32 y);
+    Sint32 value, Sint32 width, const struct WINDOW *window, Sint32 x, Sint32 y);
 void mnTextDrawNumberInWindowStub(
-	Sint32 value, Sint32 width, struct WINDOW *window, Sint32 x, Sint32 y);
+    Sint32 value, Sint32 width, struct WINDOW *window, Sint32 x, Sint32 y);
 void               mnTextSetColorStub(Sint32 color);
 struct WINDOW_SPR *mnWindowSpriteCreateStub(
-	Sint32 slot, Sint32 oamFlags, struct WINDOW *window, Sint32 offsetX, Sint32 offsetY);
+    Sint32 slot, Sint32 oamFlags, struct WINDOW *window, Sint32 offsetX, Sint32 offsetY);
 struct WINDOW_SPR *mnWindowSpriteCreateFromResourceStub(
-	Sint32 mode, Sint32 resource, struct WINDOW *window, Sint32 x, Sint32 y);
+    Sint32 mode, Sint32 resource, struct WINDOW *window, Sint32 x, Sint32 y);
 struct WINDOW_SPR *mnPortraitCreateStub(
-	Sint32 character, Sint32 unused, Sint32 side, struct WINDOW *window, Sint32 x, Sint32 y);
+    Sint32 character, Sint32 unused, Sint32 side, struct WINDOW *window, Sint32 x, Sint32 y);
 void           mnPortraitReloadStub(Uint32 side, Sint32 character, Sint32 unused);
 struct WINDOW *mnPortraitOpenWindowStub(Sint32 speaker, Sint32 portraitOption, Sint32 x, Sint32 y);
 void           mnPortraitCloseWindowStub(Uint32 speaker);
@@ -84,7 +84,7 @@ void   mnScanlineWindowFillSpansStub(void *spans);
 void   mnWindowSpriteRedrawSavedRectStub(struct WINDOW *window);
 void   mnWindowSpriteClearListStub(void *sprites);
 void   mnWindowSetTilemapEntryStub(
-	  struct WINDOW *window, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
+      struct WINDOW *window, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
 #if FIX_FUNCTION_SIGNATURES
 // The debug scene selector, returning nothing under UBFIX.
 void mnDebugSceneSelectRunStub(void);
@@ -98,7 +98,7 @@ Sint32 mnSelectionIconLoadIntoSlotStub(Sint32 kind, Sint32 entry, Sint32 slot, S
 void   mnWindowMarkVisibleTextTilesStub(void);
 Sint32 mnPartyStatusHighlightMembersStub(Uint16 *ids);
 struct WINDOW_SPR *mnWindowSpriteCreateLoadedStub(
-	Sint32 icon, Sint32 layers, struct WINDOW *window, Sint32 x, Sint32 y);
+    Sint32 icon, Sint32 layers, struct WINDOW *window, Sint32 x, Sint32 y);
 Sint32 mnSaveToChosenFileStub(void);
 Sint32 mnSaveChooseAndLoadFileStub(Sint32 mode);
 Sint32 mnSaveCopyFileStub(void);
@@ -121,7 +121,7 @@ Sint32 mnPointingHandLoadIntoFreeSlotStub(void);
 void   mnTextMeasureMessageStub(Sint32 msg, Sint32 *x, Sint32 *y);
 void mnWindowHighlightRectStub(Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 paletteBit);
 void mnAbilityBuildIconTilesStub(
-	Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
+    Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
 void   mnGraphicsExpandVRAMTilesByColorTableStub(Uint16 *dest);
 void   mnTextUseExtraTilesStub(Sint32 allowAlternateTiles);
 Sint32 mnAnimateSelectionToEntryStub(Sint32 start, Sint32 command);

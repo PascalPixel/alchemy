@@ -11,16 +11,16 @@
 // the message's remaining bits.
 typedef struct MESSAGE_READER
 {
-	// The last symbol: its high bits pick the context bank and its low byte the tree the next
-	// symbol is read with.
-	Uint32        prevCode;
-	// The message's next byte of bits, a byte pointer despite its type: TextDecodeSymbol, the ARM
-	// function mnMessageDecode runs, reads it a byte at a time, as does the unused C form,
-	// mnTextDecodeSymbolInC.
-	const Uint32 *words;
-	// The current byte's unread bits, lowest first, under a marker bit; empty once only the marker
-	// is left.
-	Uint32        bits;
+    // The last symbol: its high bits pick the context bank and its low byte the tree the next
+    // symbol is read with.
+    Uint32        prevCode;
+    // The message's next byte of bits, a byte pointer despite its type: TextDecodeSymbol, the ARM
+    // function mnMessageDecode runs, reads it a byte at a time, as does the unused C form,
+    // mnTextDecodeSymbolInC.
+    const Uint32 *words;
+    // The current byte's unread bits, lowest first, under a marker bit; empty once only the marker
+    // is left.
+    Uint32        bits;
 } MESSAGE_READER;
 
 STATIC_ASSERT(sizeof(MESSAGE_READER) == 12);

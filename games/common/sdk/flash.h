@@ -33,17 +33,17 @@
 
 // Writes one command to the chip, after its two unlock writes.
 #define FLASH_SEND_COMMAND(command)                                                                \
-	(FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_A),                                           \
-	 FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_B),                                            \
-	 FLASH_WRITE(FLASH_COMMAND_ADDRESS, (command)))
+    (FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_A),                                           \
+     FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_B),                                            \
+     FLASH_WRITE(FLASH_COMMAND_ADDRESS, (command)))
 
 // The phase of a write the SDK's flash library waits on (WaitForFlashWrite): it picks the row of
 // the chip's time limits and is the low byte of a timeout's error.
 enum FlashPhase
 {
-	FLASH_PHASE_PROGRAM      = 1,
-	FLASH_PHASE_ERASE_SECTOR = 2,
-	FLASH_PHASE_ERASE_CHIP   = 3
+    FLASH_PHASE_PROGRAM      = 1,
+    FLASH_PHASE_ERASE_SECTOR = 2,
+    FLASH_PHASE_ERASE_CHIP   = 3
 };
 
 // What the erase and program functions return: 0 when the work was done. A wait ran out of time:

@@ -15,12 +15,12 @@
 // ACTOR.timer, an Sint16, the store compiles differently.
 typedef struct FIELD_ACTOR
 {
-	Uint8  unused[85];                    // no code names it
-	Uint8  motionFlags;
-	Uint8  unusedAfterMotionFlags[3];     // no code names it
-	Uint8  collisionFlags;
-	Uint8  unusedAfterCollisionFlags[10]; // no code names it
-	Uint16 timer;
+    Uint8  unused[85];                    // no code names it
+    Uint8  motionFlags;
+    Uint8  unusedAfterMotionFlags[3];     // no code names it
+    Uint8  collisionFlags;
+    Uint8  unusedAfterCollisionFlags[10]; // no code names it
+    Uint16 timer;
 } FIELD_ACTOR;
 
 void   syImportScriptSetExitRequest(Sint32 exit);

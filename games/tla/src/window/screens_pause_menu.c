@@ -7,41 +7,41 @@
 // menu returns -1. Sleep shows its message and sets SleepRequested. Otherwise returns 0.
 Sint32 mnPauseMenuRun(void)
 {
-	Sint32 selection = 0;
+    Sint32 selection = 0;
 
 again:
-	selection = mnPauseMenuChoose(selection);
-	if (selection == -1)
-		return -1;
-	if (selection == PAUSE_MENU_SAVE_QUEST)
-	{
-		if (syGameFlagGet(FLAG_CANNOT_SAVE_HERE))
-		{
-			// "Cannot save here"
-			mnFieldMessageShow((Sint32)MsgCannotSaveHere, FIELD_MESSAGE_ZOOM);
-			goto again;
-		}
-		if (syGameFlagGet(FLAG_NO_PLACE_TO_SAVE))
-		{
-			// "This is no place for that!"
-			mnFieldMessageShow((Sint32)MsgNoPlaceForThat, FIELD_MESSAGE_ZOOM);
-			goto again;
-		}
-		if (mnSaveToChosenFile() == -1)
-			goto again;
-	}
-	else if (selection == PAUSE_MENU_SLEEP)
-	{
-		// "Activating Sleep Mode. Press Select and the L & R Buttons to exit."
-		mnFieldMessageShow((Sint32)MsgSleepMode, FIELD_MESSAGE_ZOOM);
-		SleepRequested = selection;
-	}
-	else if (selection == PAUSE_MENU_CHANGE_SETTINGS)
-	{
-		if (mnSettingsMenuRun() == -1)
-			goto again;
-	}
-	return 0;
+    selection = mnPauseMenuChoose(selection);
+    if (selection == -1)
+        return -1;
+    if (selection == PAUSE_MENU_SAVE_QUEST)
+    {
+        if (syGameFlagGet(FLAG_CANNOT_SAVE_HERE))
+        {
+            // "Cannot save here"
+            mnFieldMessageShow((Sint32)MsgCannotSaveHere, FIELD_MESSAGE_ZOOM);
+            goto again;
+        }
+        if (syGameFlagGet(FLAG_NO_PLACE_TO_SAVE))
+        {
+            // "This is no place for that!"
+            mnFieldMessageShow((Sint32)MsgNoPlaceForThat, FIELD_MESSAGE_ZOOM);
+            goto again;
+        }
+        if (mnSaveToChosenFile() == -1)
+            goto again;
+    }
+    else if (selection == PAUSE_MENU_SLEEP)
+    {
+        // "Activating Sleep Mode. Press Select and the L & R Buttons to exit."
+        mnFieldMessageShow((Sint32)MsgSleepMode, FIELD_MESSAGE_ZOOM);
+        SleepRequested = selection;
+    }
+    else if (selection == PAUSE_MENU_CHANGE_SETTINGS)
+    {
+        if (mnSettingsMenuRun() == -1)
+            goto again;
+    }
+    return 0;
 }
 
 // Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the `width` x `height` tile
@@ -49,59 +49,59 @@ again:
 // entry's palette number, so this switches the rectangle between two palettes, such as 15 and 14.
 // Nothing calls it.
 UNUSED void mnWindowSetTextTileBitRect(
-	const WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Uint32 set)
+    const WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Uint32 set)
 {
-	WIN_STATE *state  = (WIN_STATE *)RamHeapSlots->windowState;
+    WIN_STATE *state  = (WIN_STATE *)RamHeapSlots->windowState;
 
-	x                += window->x + 1;
-	y                += window->y + 1;
-	set              &= 1;
-	set               = BG_TILE_PALETTE(set);
-	if (x < 0)
-	{
-		width += x;
-		x      = 0;
-	}
-	if (x + width > DISPLAY_TILE_WIDTH - 1)
-	{
-		width = DISPLAY_TILE_WIDTH - x;
-	}
-	if (y < 0)
-	{
-		height += y;
-		y       = 0;
-	}
-	// BUG: tests the bottom against the screen's width, so a window reaching below the screen draws
-	// into the map's unseen rows.
+    x                += window->x + 1;
+    y                += window->y + 1;
+    set              &= 1;
+    set               = BG_TILE_PALETTE(set);
+    if (x < 0)
+    {
+        width += x;
+        x      = 0;
+    }
+    if (x + width > DISPLAY_TILE_WIDTH - 1)
+    {
+        width = DISPLAY_TILE_WIDTH - x;
+    }
+    if (y < 0)
+    {
+        height += y;
+        y       = 0;
+    }
+    // BUG: tests the bottom against the screen's width, so a window reaching below the screen draws
+    // into the map's unseen rows.
 #if FIX_RECT_BOTTOM_CLIP
-	if (y + height > DISPLAY_TILE_HEIGHT - 1)
-	{
+    if (y + height > DISPLAY_TILE_HEIGHT - 1)
+    {
 #else
-	if (y + height > DISPLAY_TILE_WIDTH - 1)
-	{
+    if (y + height > DISPLAY_TILE_WIDTH - 1)
+    {
 #endif
-		height = DISPLAY_TILE_HEIGHT - y;
-	}
-	if (width > 0 && height > 0)
-	{
-		do
-		{
-			Uint16 *cell      = &state->tilemap[y][x];
-			Sint32  remaining = width;
-			while (remaining != 0)
-			{
-				Uint32 entry  = *cell;
-				entry        &= ~BG_TILE_PALETTE(1);
-				entry        |= set;
-				remaining--;
-				*cell = entry;
-				cell++;
-			}
-			height--;
-			y++;
-		} while (height != 0);
-		state->dirty = 1;
-	}
+        height = DISPLAY_TILE_HEIGHT - y;
+    }
+    if (width > 0 && height > 0)
+    {
+        do
+        {
+            Uint16 *cell      = &state->tilemap[y][x];
+            Sint32  remaining = width;
+            while (remaining != 0)
+            {
+                Uint32 entry  = *cell;
+                entry        &= ~BG_TILE_PALETTE(1);
+                entry        |= set;
+                remaining--;
+                *cell = entry;
+                cell++;
+            }
+            height--;
+            y++;
+        } while (height != 0);
+        state->dirty = 1;
+    }
 }
 
 // The icon browser's kinds (items, Psynergy and status patterns), and its pages of
@@ -118,99 +118,99 @@ UNUSED void mnWindowSetTextTileBitRect(
 // debug rooms open it (debug/level.c, debug/psynergy_test.c, debug/shop_test.c).
 Sint32 mnDebugBrowserIcons(void)
 {
-	Bool    redraw;
-	Sint32  tile;
-	Sint32  page;
-	Sint32  kind;
-	WINDOW *window;
-	Sint32  slot;
-	Sint32  base;
-	Sint32  i;
-	Sint32  row;
-	Sint32  x;
-	Sint32  y;
+    Bool    redraw;
+    Sint32  tile;
+    Sint32  page;
+    Sint32  kind;
+    WINDOW *window;
+    Sint32  slot;
+    Sint32  base;
+    Sint32  i;
+    Sint32  row;
+    Sint32  x;
+    Sint32  y;
 
-	window                               = NULL;
-	page                                 = 0;
-	kind                                 = 0;
-	redraw                               = TRUE;
-	RamHeapSlots->actorSystem->suspended = redraw;
-	sySynch(1);
+    window                               = NULL;
+    page                                 = 0;
+    kind                                 = 0;
+    redraw                               = TRUE;
+    RamHeapSlots->actorSystem->suspended = redraw;
+    sySynch(1);
 
-	while (1)
-	{
-		if (PerWork.repeat & KEY_LEFT)
-		{
-			page--;
-			redraw = TRUE;
-		}
-		if (PerWork.repeat & KEY_RIGHT)
-		{
-			redraw = TRUE;
-			page++;
-		}
-		if (PerWork.repeat & KEY_L)
-		{
-			kind--;
-			redraw = TRUE;
-		}
-		if (PerWork.repeat & KEY_R)
-		{
-			redraw = TRUE;
-			kind++;
-		}
-		if (PerWork.repeat & KEY_A)
-			break;
-		if (PerWork.repeat & KEY_B)
-			break;
-		if (redraw != 0)
-		{
-			redraw = FALSE;
-			page   = (page + ICON_BROWSER_PAGES) % ICON_BROWSER_PAGES;
-			kind   = (kind + ICON_BROWSER_KINDS) % ICON_BROWSER_KINDS;
-			mnWindowClose(window, 2);
-			window = mnWindowCreate(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
-			if (kind == 0)
-				mnTextDrawStringInWindow(IconBrowserItemTitle, window, 0, 0);
-			else if (kind == 1)
-				mnTextDrawStringInWindow(IconBrowserEnergyTitle, window, 0, 0);
-			else
-				mnTextDrawStringInWindow(IconBrowserStatusTitle, window, 0, 0);
-			mnTextDrawStringInWindow(IconBrowserPageLabel, window, 0, 8);
-			mnTextDrawNumberInWindow(page, 0, window, 40, 8);
-			base = page * ICON_BROWSER_PAGE_ICONS;
-			mnTextDrawNumberInWindow(base, 3, window, 64, 8);
-			mnTextDrawStringInWindow(IconBrowserRangeDash, window, 88, 8);
-			mnTextDrawNumberInWindow(base + ICON_BROWSER_PAGE_ICONS - 1, 3, window, 96, 8);
-			for (i = 0; i < ICON_BROWSER_PAGE_ICONS; i++)
-			{
-				slot = -1;
-				row  = i / ICON_BROWSER_ROW_ICONS;
-				x    = (i - row * ICON_BROWSER_ROW_ICONS) * 16;
-				y    = row * 16 + 16;
-				if (kind == 0)
-				{
-					mnIconBuildItemIconTiles(base + i, 1, &slot, &tile, kind);
-					mnWindowSpriteCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
-				}
-				else if (kind == 1)
-				{
-					mnIconBuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
-					mnWindowSpriteCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
-				}
-				else
-				{
-					slot = syVRAMCacheFindFreeEntry();
-					mnIconBuildMiscellaneousIconTiles(i, 0, slot);
-					mnWindowSpriteCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
-				}
-			}
-		}
-		sySynch(1);
-	}
-	mnWindowClose(window, 2);
-	RamHeapSlots->actorSystem->suspended = 0;
-	return 0;
+    while (1)
+    {
+        if (PerWork.repeat & KEY_LEFT)
+        {
+            page--;
+            redraw = TRUE;
+        }
+        if (PerWork.repeat & KEY_RIGHT)
+        {
+            redraw = TRUE;
+            page++;
+        }
+        if (PerWork.repeat & KEY_L)
+        {
+            kind--;
+            redraw = TRUE;
+        }
+        if (PerWork.repeat & KEY_R)
+        {
+            redraw = TRUE;
+            kind++;
+        }
+        if (PerWork.repeat & KEY_A)
+            break;
+        if (PerWork.repeat & KEY_B)
+            break;
+        if (redraw != 0)
+        {
+            redraw = FALSE;
+            page   = (page + ICON_BROWSER_PAGES) % ICON_BROWSER_PAGES;
+            kind   = (kind + ICON_BROWSER_KINDS) % ICON_BROWSER_KINDS;
+            mnWindowClose(window, 2);
+            window = mnWindowCreate(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
+            if (kind == 0)
+                mnTextDrawStringInWindow(IconBrowserItemTitle, window, 0, 0);
+            else if (kind == 1)
+                mnTextDrawStringInWindow(IconBrowserEnergyTitle, window, 0, 0);
+            else
+                mnTextDrawStringInWindow(IconBrowserStatusTitle, window, 0, 0);
+            mnTextDrawStringInWindow(IconBrowserPageLabel, window, 0, 8);
+            mnTextDrawNumberInWindow(page, 0, window, 40, 8);
+            base = page * ICON_BROWSER_PAGE_ICONS;
+            mnTextDrawNumberInWindow(base, 3, window, 64, 8);
+            mnTextDrawStringInWindow(IconBrowserRangeDash, window, 88, 8);
+            mnTextDrawNumberInWindow(base + ICON_BROWSER_PAGE_ICONS - 1, 3, window, 96, 8);
+            for (i = 0; i < ICON_BROWSER_PAGE_ICONS; i++)
+            {
+                slot = -1;
+                row  = i / ICON_BROWSER_ROW_ICONS;
+                x    = (i - row * ICON_BROWSER_ROW_ICONS) * 16;
+                y    = row * 16 + 16;
+                if (kind == 0)
+                {
+                    mnIconBuildItemIconTiles(base + i, 1, &slot, &tile, kind);
+                    mnWindowSpriteCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+                }
+                else if (kind == 1)
+                {
+                    mnIconBuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
+                    mnWindowSpriteCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+                }
+                else
+                {
+                    slot = syVRAMCacheFindFreeEntry();
+                    mnIconBuildMiscellaneousIconTiles(i, 0, slot);
+                    mnWindowSpriteCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+                }
+            }
+        }
+        sySynch(1);
+    }
+    mnWindowClose(window, 2);
+    RamHeapSlots->actorSystem->suspended = 0;
+    return 0;
 }
 
 // A debug browser of the portraits: left and right step through PortraitCharacterMap and then
@@ -218,78 +218,78 @@ Sint32 mnDebugBrowserIcons(void)
 // MsgNamesMasterPoi; A or B leaves.
 Sint32 mnDebugBrowserPortraits(void)
 {
-	WIN_STATE *state;
-	WINDOW    *portrait;
-	Bool       redraw;
-	WINDOW    *window;
-	Sint32     characterCount;
-	Sint32     entryCount;
-	Sint32     index;
-	Sint32     i;
-	Sint32     glyph;
-	Sint32     tile;
-	Sint32     slot;
-	Sint32     portraitSlot = 1;
-	Sint32     palette      = PORTRAIT_PALETTE + portraitSlot;
+    WIN_STATE *state;
+    WINDOW    *portrait;
+    Bool       redraw;
+    WINDOW    *window;
+    Sint32     characterCount;
+    Sint32     entryCount;
+    Sint32     index;
+    Sint32     i;
+    Sint32     glyph;
+    Sint32     tile;
+    Sint32     slot;
+    Sint32     portraitSlot = 1;
+    Sint32     palette      = PORTRAIT_PALETTE + portraitSlot;
 
-	state                   = (WIN_STATE *)RamHeapSlots->windowState;
-	redraw                  = TRUE;
-	portrait                = mnPortraitOpenWindow(0, 0, 10, 5);
-	window                  = mnWindowCreate(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
-	index                   = 0;
-	for (i = 0; PortraitCharacterMap[i * 2] != -1; i++)
-	{
-	}
-	characterCount = i;
-	for (i = 0; PortraitSpriteMap[i * 2] != -1; i++)
-	{
-	}
-	entryCount = characterCount + i;
-	while (1)
-	{
-		if (PerWork.repeat & KEY_LEFT)
-		{
-			redraw = TRUE;
-			index--;
-		}
-		if (PerWork.repeat & KEY_RIGHT)
-		{
-			redraw = TRUE;
-			index++;
-		}
-		if (PerWork.repeat & KEY_L)
-		{
-			redraw  = TRUE;
-			index  -= DEBUG_LARGE_STEP;
-		}
-		if (PerWork.repeat & KEY_R)
-		{
-			redraw  = TRUE;
-			index  += DEBUG_LARGE_STEP;
-		}
-		if (PerWork.repeat & KEY_A)
-			break;
-		if (PerWork.repeat & KEY_B)
-			break;
-		if (redraw)
-		{
-			redraw = FALSE;
-			index  = (index + entryCount) % entryCount;
-			mnWindowSpritePrepareForRedraw(window);
-			if (index < characterCount)
-				glyph = PortraitCharacterMap[index * 2 + 1];
-			else
-				glyph = PortraitSpriteMap[(index - characterCount) * 2 + 1]
-				      + PORTRAIT_FIRST_SPRITE_PORTRAIT;
-			slot = state->portraitSprites[portraitSlot];
-			mnIconLoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
-			mnTextDrawNumberInWindow(index, 2, window, 0, 0);
-			mnTextDrawMessageAsTiles(index + (Sint32)MsgNamesMasterPoi, window, 24, 0);
-		}
-		sySynch(1);
-	}
-	mnWindowClose((WINDOW *)window, 2);
-	mnWindowClose((WINDOW *)portrait, 2);
-	sySynch(1);
-	return 0;
+    state                   = (WIN_STATE *)RamHeapSlots->windowState;
+    redraw                  = TRUE;
+    portrait                = mnPortraitOpenWindow(0, 0, 10, 5);
+    window                  = mnWindowCreate(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
+    index                   = 0;
+    for (i = 0; PortraitCharacterMap[i * 2] != -1; i++)
+    {
+    }
+    characterCount = i;
+    for (i = 0; PortraitSpriteMap[i * 2] != -1; i++)
+    {
+    }
+    entryCount = characterCount + i;
+    while (1)
+    {
+        if (PerWork.repeat & KEY_LEFT)
+        {
+            redraw = TRUE;
+            index--;
+        }
+        if (PerWork.repeat & KEY_RIGHT)
+        {
+            redraw = TRUE;
+            index++;
+        }
+        if (PerWork.repeat & KEY_L)
+        {
+            redraw  = TRUE;
+            index  -= DEBUG_LARGE_STEP;
+        }
+        if (PerWork.repeat & KEY_R)
+        {
+            redraw  = TRUE;
+            index  += DEBUG_LARGE_STEP;
+        }
+        if (PerWork.repeat & KEY_A)
+            break;
+        if (PerWork.repeat & KEY_B)
+            break;
+        if (redraw)
+        {
+            redraw = FALSE;
+            index  = (index + entryCount) % entryCount;
+            mnWindowSpritePrepareForRedraw(window);
+            if (index < characterCount)
+                glyph = PortraitCharacterMap[index * 2 + 1];
+            else
+                glyph = PortraitSpriteMap[(index - characterCount) * 2 + 1]
+                      + PORTRAIT_FIRST_SPRITE_PORTRAIT;
+            slot = state->portraitSprites[portraitSlot];
+            mnIconLoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
+            mnTextDrawNumberInWindow(index, 2, window, 0, 0);
+            mnTextDrawMessageAsTiles(index + (Sint32)MsgNamesMasterPoi, window, 24, 0);
+        }
+        sySynch(1);
+    }
+    mnWindowClose((WINDOW *)window, 2);
+    mnWindowClose((WINDOW *)portrait, 2);
+    sySynch(1);
+    return 0;
 }

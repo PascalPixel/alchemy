@@ -24,15 +24,15 @@
 // status, with LINK_STATUS_ERROR set when the link's last transfer failed.
 static inline Sint32 sySerialAddErrorFlag(Sint32 status)
 {
-	if (SerialStateWork.transferError != 0)
-		status |= LINK_STATUS_ERROR;
-	return status;
+    if (SerialStateWork.transferError != 0)
+        status |= LINK_STATUS_ERROR;
+    return status;
 }
 
 // Resets the current matrix to the unit matrix.
 static __inline__ void syUnitMatrixCurrentInline(void)
 {
-	ASM_MATRIX_UNIT_CURRENT(CurrentMatrix);
+    ASM_MATRIX_UNIT_CURRENT(CurrentMatrix);
 }
 
 #endif

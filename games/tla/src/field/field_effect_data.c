@@ -20,20 +20,20 @@ const Sint32 TightropeDebugSwinging      = 0;
 // by a FLAG_PSYNERGY_TINT flag, or at a summon tablet by the tick counter.
 // clang-format off
 const Uint32 FieldPsynergyCastColors[8] = {
-	RGB(4, 4, 16),  RGB(4, 16, 4),  RGB(16, 4, 4), RGB(2, 10, 10),
-	RGB(12, 2, 12), RGB(12, 12, 2), RGB(8, 8, 8),  RGB(16, 16, 16),
+    RGB(4, 4, 16),  RGB(4, 16, 4),  RGB(16, 4, 4), RGB(2, 10, 10),
+    RGB(12, 2, 12), RGB(12, 12, 2), RGB(8, 8, 8),  RGB(16, 16, 16),
 };
 // clang-format on
 
 // A script that releases its actor at once: a Mind Read crescent's end, once it reaches the caster
 // (fdMindReadUpdateCrescent).
 const Sint32 MindReadCrescentEndScript[] = {
-	SC_RELEASE,
+    SC_RELEASE,
 };
 
 // The field effects' three scripts by how long an effect lasts: short, medium and long.
 const Sint32 *const FieldEffectDurationScripts[3] = {
-	FieldEffectShortEffectScript,
-	FieldEffectMediumEffectScript,
-	FieldEffectLongEffectScript,
+    FieldEffectShortEffectScript,
+    FieldEffectMediumEffectScript,
+    FieldEffectLongEffectScript,
 };

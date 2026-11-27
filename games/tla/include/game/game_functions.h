@@ -126,7 +126,7 @@ Sint32                       gmUnitGetAttackElement(Sint32 unitId);
 // target with LUCK_IMMUNITY Luck or more shrugs off poison, haunting, instant death, the curse,
 // Leave One HP, Gasp and Gale, and a character Gale too.
 Sint32                       gmBattleRollEffectSuccess(
-						  Sint32 caster, Sint32 target, Sint32 element, Sint32 effectId, Sint32 successScale);
+                          Sint32 caster, Sint32 target, Sint32 element, Sint32 effectId, Sint32 successScale);
 // Scales max(attack - defense, 0) plus twice the added power by half the element multiplier, then
 // halves it.
 Sint32 gmBattleCalculateAttackDamage(Sint32 attack,

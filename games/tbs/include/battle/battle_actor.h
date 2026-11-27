@@ -16,49 +16,49 @@ struct ACTOR;
 // The plain form reads the actor through ACTOR.
 typedef struct BATTLE_ACTOR
 {
-	const Sint32        *script;
-	Uint16               scriptCursor;
-	Uint16               facing;
-	Sint32               x;
-	Sint32               y;
-	Sint32               z;
-	Sint32               groundHeight;
-	Sint32               scaleX;
-	Sint32               scaleY;
-	Uint16               radius; // half the first part's box height
-	Uint8                layer;
-	Uint8                priorityFlags;
-	Sint32               velocityX;
-	Sint32               velocityY;
-	Sint32               velocityZ;
-	Sint32               speedLimit;
-	Sint32               acceleration;
-	Sint32               targetX;
-	Sint32               targetY;
-	Sint32               targetZ;
-	Sint32               bounce;
-	Sint32               gravity;
-	Sint32               sceneWord;
-	void                *sprite; // one sprite, or a list of a two-part enemy's two
-	Uint8                spriteStorageKind;
-	Uint8                motionFlags;
-	Uint8                arrivalAxis;
-	Uint8                conditionResult;
-	Uint8                snapToTarget;
-	Uint8                collisionFlags;
-	Uint8                steeringFlags;
-	Uint8                paused;
-	Uint8                retainSpriteCache;
-	Uint8                repeatCount;
-	Uint16               wait;
-	Uint8                refused;
-	Uint8                frozen;
-	Uint8                sceneCount;
-	Uint8                sceneByte;
-	Sint16               timer;
-	Uint16               userValue;
-	struct BATTLE_ACTOR *watchedActor;
-	void                 (*update)(struct ACTOR *actor);
+    const Sint32        *script;
+    Uint16               scriptCursor;
+    Uint16               facing;
+    Sint32               x;
+    Sint32               y;
+    Sint32               z;
+    Sint32               groundHeight;
+    Sint32               scaleX;
+    Sint32               scaleY;
+    Uint16               radius; // half the first part's box height
+    Uint8                layer;
+    Uint8                priorityFlags;
+    Sint32               velocityX;
+    Sint32               velocityY;
+    Sint32               velocityZ;
+    Sint32               speedLimit;
+    Sint32               acceleration;
+    Sint32               targetX;
+    Sint32               targetY;
+    Sint32               targetZ;
+    Sint32               bounce;
+    Sint32               gravity;
+    Sint32               sceneWord;
+    void                *sprite; // one sprite, or a list of a two-part enemy's two
+    Uint8                spriteStorageKind;
+    Uint8                motionFlags;
+    Uint8                arrivalAxis;
+    Uint8                conditionResult;
+    Uint8                snapToTarget;
+    Uint8                collisionFlags;
+    Uint8                steeringFlags;
+    Uint8                paused;
+    Uint8                retainSpriteCache;
+    Uint8                repeatCount;
+    Uint16               wait;
+    Uint8                refused;
+    Uint8                frozen;
+    Uint8                sceneCount;
+    Uint8                sceneByte;
+    Sint16               timer;
+    Uint16               userValue;
+    struct BATTLE_ACTOR *watchedActor;
+    void                 (*update)(struct ACTOR *actor);
 } BATTLE_ACTOR;
 
 // The gravity a battle unit falls under, about 0.67 pixels a tick per tick in 16.16:

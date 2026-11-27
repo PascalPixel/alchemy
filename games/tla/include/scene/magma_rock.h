@@ -13,8 +13,8 @@ struct ACTOR;
 // from (scMagmaRockInsideRaiseLava).
 typedef enum MAGMA_ROCK_FIRE_STOP_METATILE
 {
-	METATILE_BEHAVIOR_MAGMA_ROCK_FIRE_EDGE = 212,
-	METATILE_BEHAVIOR_MAGMA_ROCK_LAVA_FALL = 222
+    METATILE_BEHAVIOR_MAGMA_ROCK_FIRE_EDGE = 212,
+    METATILE_BEHAVIOR_MAGMA_ROCK_LAVA_FALL = 222
 } MAGMA_ROCK_FIRE_STOP_METATILE;
 
 // Set while a statue's fire bursts where it lands, so that Burst there does not target the statue
@@ -24,8 +24,8 @@ typedef enum MAGMA_ROCK_FIRE_STOP_METATILE
 // A crumbling pillar of Magma Rock (scMagmaRockCrumblePillar): its actor and its flag.
 typedef struct MAGMA_ROCK_CRUMBLING_PILLAR
 {
-	Uint16 id;
-	Uint16 flags;
+    Uint16 id;
+    Uint16 flags;
 } MAGMA_ROCK_CRUMBLING_PILLAR;
 
 Sint32        fdMapMetatileGetAttributes(Uint32 layer, Sint32 x, Sint32 z);

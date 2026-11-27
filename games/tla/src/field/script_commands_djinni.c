@@ -14,37 +14,37 @@
 // The states of a Jupiter Djinni's light particle, in order.
 typedef enum DJINNI_LIGHT_STATE
 {
-	DJINNI_LIGHT_WIDENING = 0, // circles as its radius grows
-	DJINNI_LIGHT_CIRCLING = 1,
-	DJINNI_LIGHT_DRIFTING = 2, // its centre drifts toward the leader
-	DJINNI_LIGHT_CLOSING  = 3, // circles as its radius shrinks
-	DJINNI_LIGHT_DONE     = 4  // frees its slot
+    DJINNI_LIGHT_WIDENING = 0, // circles as its radius grows
+    DJINNI_LIGHT_CIRCLING = 1,
+    DJINNI_LIGHT_DRIFTING = 2, // its centre drifts toward the leader
+    DJINNI_LIGHT_CLOSING  = 3, // circles as its radius shrinks
+    DJINNI_LIGHT_DONE     = 4  // frees its slot
 } DJINNI_LIGHT_STATE;
 
 // Per-tick update: spins an actor 1/8 turn a tick.
 void fdEffectAdvanceSpinAngle(ACTOR *actor)
 {
-	actor->facing += DEGtoANG(45);
+    actor->facing += DEGtoANG(45);
 }
 
 // Per-tick update: halves the actor's distance to its watched actor along x, y and z.
 void fdActorMoveHalfwayTowardTarget(ACTOR *actor)
 {
-	ACTOR *target   = (ACTOR *)actor->watchedActor;
+    ACTOR *target   = (ACTOR *)actor->watchedActor;
 
-	actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
-	{
-		Sint32 pos      = actor->y.fixed;
+    actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
+    {
+        Sint32 pos      = actor->y.fixed;
 
-		pos            += (target->y.fixed - pos) / 2;
-		actor->y.fixed  = pos;
-	}
-	{
-		FIXED pos       = actor->z.fixed;
+        pos            += (target->y.fixed - pos) / 2;
+        actor->y.fixed  = pos;
+    }
+    {
+        FIXED pos       = actor->z.fixed;
 
-		pos            += (target->z.fixed - pos) / 2;
-		actor->z.fixed  = pos;
-	}
+        pos            += (target->z.fixed - pos) / 2;
+        actor->z.fixed  = pos;
+    }
 }
 
 // The sound of the Djinni's leap: SE_WHOOSH in the Japanese edition, SE_HIGH_JUMP from it.
@@ -56,119 +56,119 @@ void fdActorMoveHalfwayTowardTarget(ACTOR *actor)
 // come down within 20 pixels of the leader's height.
 void fdDjinnRunBattleStartHop(Sint32 djinniId)
 {
-	ACTOR        *djinni;
-	ACTOR        *leader;
-	ACTOR        *copy;
-	ACTOR        *prev;
-	void         *sharedSprite;
-	Sint32        direction;
-	Sint32        back;
-	Sint32        sprite;
-	Sint32        tint;
-	Sint32        i;
-	UNUSED ACTOR *copies[DJINNI_AFTERIMAGES];
+    ACTOR        *djinni;
+    ACTOR        *leader;
+    ACTOR        *copy;
+    ACTOR        *prev;
+    void         *sharedSprite;
+    Sint32        direction;
+    Sint32        back;
+    Sint32        sprite;
+    Sint32        tint;
+    Sint32        i;
+    UNUSED ACTOR *copies[DJINNI_AFTERIMAGES];
 
-	djinni    = fdActorGetById(djinniId);
-	leader    = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	direction = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-	fdScriptStart();
-	sySynch(10);
-	sySoundPlayStub(SE_NOTE_LOW);
-	fdActorRunRepeatedMotion(djinniId, 1);
-	sySoundPlayStub(SE_NOTE_HIGH);
-	fdActorRunRepeatedMotion(djinniId, 1);
-	sySynch(10);
-	back = direction + DEGtoANG(180);
-	fdActorFaceDirectionById(djinniId, back, 0);
-	sySynch(10);
-	djinni->facing = back;
-	fdActorShowEmoteById(djinniId, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
-	fdActorGetById(djinniId)->steeringFlags &= ~ACTOR_FACES_MOTION;
-	djinni->motionFlags                      = ACTOR_FALLS;
-	djinni->update                           = (OBJECT_UPDATE)fdEffectAdvanceSpinAngle;
+    djinni    = fdActorGetById(djinniId);
+    leader    = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    direction = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+    fdScriptStart();
+    sySynch(10);
+    sySoundPlayStub(SE_NOTE_LOW);
+    fdActorRunRepeatedMotion(djinniId, 1);
+    sySoundPlayStub(SE_NOTE_HIGH);
+    fdActorRunRepeatedMotion(djinniId, 1);
+    sySynch(10);
+    back = direction + DEGtoANG(180);
+    fdActorFaceDirectionById(djinniId, back, 0);
+    sySynch(10);
+    djinni->facing = back;
+    fdActorShowEmoteById(djinniId, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
+    fdActorGetById(djinniId)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    djinni->motionFlags                      = ACTOR_FALLS;
+    djinni->update                           = (OBJECT_UPDATE)fdEffectAdvanceSpinAngle;
 #if DJINNI_SPIN_JUMP_SOUNDS
-	sySoundPlayStub(SE_JUMP);
+    sySoundPlayStub(SE_JUMP);
 #endif
-	djinni->gravity   = toFIXED(1) / 4;
-	djinni->velocityY = toFIXED(9) / 2;
-	sySynch(33);
-	((SPR *)djinni->sprite)->image.priority = 0;
+    djinni->gravity   = toFIXED(1) / 4;
+    djinni->velocityY = toFIXED(9) / 2;
+    sySynch(33);
+    ((SPR *)djinni->sprite)->image.priority = 0;
 #if DJINNI_SPIN_JUMP_SOUNDS
-	sySoundPlayStub(SE_JUMP);
+    sySoundPlayStub(SE_JUMP);
 #endif
-	djinni->velocityY = toFIXED(4.8);
-	sySynch(35);
+    djinni->velocityY = toFIXED(4.8);
+    sySynch(35);
 #if DJINNI_SPIN_JUMP_SOUNDS
-	sySoundPlayStub(SE_JUMP);
+    sySoundPlayStub(SE_JUMP);
 #endif
-	djinni->velocityY = toFIXED(4.9);
-	sySynch(38);
+    djinni->velocityY = toFIXED(4.9);
+    sySynch(38);
 
-	djinni->update = NULL;
-	djinni->facing = back;
-	// Afterimages of the same sprite at AFTERIMAGE_SCALE, each closing half the distance to the one
-	// before it every tick, tinted by the Djinni's sprite.
-	sprite         = ((SPR *)djinni->sprite)->entries[0]->animationId;
-	tint           = SPRITE_COLOR_BLUE_TINT;
-	if (sprite == SPRITE_VENUS_DJINNI)
-		tint = SPRITE_COLOR_RBG;
-	if (sprite == SPRITE_MARS_DJINNI)
-		tint = SPRITE_COLOR_RED_TINT;
-	// DEAD: tint is already SPRITE_COLOR_BLUE_TINT for SPRITE_MERCURY_DJINNI; the ROM keeps the
-	// test and the store.
-	if (sprite == SPRITE_MERCURY_DJINNI)
-		tint = SPRITE_COLOR_BLUE_TINT;
-	sharedSprite = NULL;
-	prev         = djinni;
-	for (i = 0; i < DJINNI_AFTERIMAGES; i++)
-	{
-		copy      = fdActorCreateStub(sprite, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
-		// DEAD: nothing reads copies; the ROM keeps the store and its slot.
-		copies[i] = copy;
-		if (copy != NULL)
-		{
-			copy->scaleY                           = AFTERIMAGE_SCALE;
-			copy->scaleX                           = AFTERIMAGE_SCALE;
-			copy->motionFlags                      = 0;
-			copy->priorityFlags                    = ACTOR_PRIORITY_UNDERFOOT;
-			copy->steeringFlags                   |= ACTOR_FACES_MOTION;
-			copy->update                           = fdActorMoveHalfwayTowardTarget;
-			copy->facing                           = djinni->facing;
-			((SPR *)copy->sprite)->image.priority  = 0;
-			fdActorSetSpriteColorModeStub(copy, tint);
-			fdActorSelectAnimationStub(copy, ANIM_STILL);
-			fdActorSetSpriteFlagsStub(copy, 0);
-			sharedSprite       = fdSpriteShareVRAMCacheEntry(copy->sprite, sharedSprite);
-			copy->watchedActor = (union FIELD_OBJECT *)prev;
-			prev               = copy;
-		}
-	}
+    djinni->update = NULL;
+    djinni->facing = back;
+    // Afterimages of the same sprite at AFTERIMAGE_SCALE, each closing half the distance to the one
+    // before it every tick, tinted by the Djinni's sprite.
+    sprite         = ((SPR *)djinni->sprite)->entries[0]->animationId;
+    tint           = SPRITE_COLOR_BLUE_TINT;
+    if (sprite == SPRITE_VENUS_DJINNI)
+        tint = SPRITE_COLOR_RBG;
+    if (sprite == SPRITE_MARS_DJINNI)
+        tint = SPRITE_COLOR_RED_TINT;
+    // DEAD: tint is already SPRITE_COLOR_BLUE_TINT for SPRITE_MERCURY_DJINNI; the ROM keeps the
+    // test and the store.
+    if (sprite == SPRITE_MERCURY_DJINNI)
+        tint = SPRITE_COLOR_BLUE_TINT;
+    sharedSprite = NULL;
+    prev         = djinni;
+    for (i = 0; i < DJINNI_AFTERIMAGES; i++)
+    {
+        copy      = fdActorCreateStub(sprite, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
+        // DEAD: nothing reads copies; the ROM keeps the store and its slot.
+        copies[i] = copy;
+        if (copy != NULL)
+        {
+            copy->scaleY                           = AFTERIMAGE_SCALE;
+            copy->scaleX                           = AFTERIMAGE_SCALE;
+            copy->motionFlags                      = 0;
+            copy->priorityFlags                    = ACTOR_PRIORITY_UNDERFOOT;
+            copy->steeringFlags                   |= ACTOR_FACES_MOTION;
+            copy->update                           = fdActorMoveHalfwayTowardTarget;
+            copy->facing                           = djinni->facing;
+            ((SPR *)copy->sprite)->image.priority  = 0;
+            fdActorSetSpriteColorModeStub(copy, tint);
+            fdActorSelectAnimationStub(copy, ANIM_STILL);
+            fdActorSetSpriteFlagsStub(copy, 0);
+            sharedSprite       = fdSpriteShareVRAMCacheEntry(copy->sprite, sharedSprite);
+            copy->watchedActor = (union FIELD_OBJECT *)prev;
+            prev               = copy;
+        }
+    }
 
-	djinni->speedLimit   = toFIXED(0.3);
-	djinni->acceleration = toFIXED(0.3);
-	fdActorSetTargetPosFromMagnitudeAngle(djinni, toFIXED(16), direction + DEGtoANG(180));
-	sySoundPlayStub(LEAP_SOUND);
-	fdActorJump(djinniId, 6, 5);
-	sySynch(24);
-	for (i = 0; i < 120; i++)
-	{
-		if (ABS(djinni->y.fixed - leader->y.fixed) < toFIXED(20))
-			break;
-		sySynch(1);
-	}
-	djinni->motionFlags = 0;
-	djinni->velocityX   = 0;
-	djinni->velocityZ   = 0;
-	djinni->velocityY   = 0;
-	djinni->targetX     = ACTOR_NO_TARGET;
-	djinni->targetZ     = ACTOR_NO_TARGET;
-	djinni->targetY     = ACTOR_NO_TARGET;
-	fdActorSelectAnimationStub(djinni, ANIM_STILL);
-	((SPR *)djinni->sprite)->image.priority = 2;
+    djinni->speedLimit   = toFIXED(0.3);
+    djinni->acceleration = toFIXED(0.3);
+    fdActorSetTargetPosFromMagnitudeAngle(djinni, toFIXED(16), direction + DEGtoANG(180));
+    sySoundPlayStub(LEAP_SOUND);
+    fdActorJump(djinniId, 6, 5);
+    sySynch(24);
+    for (i = 0; i < 120; i++)
+    {
+        if (ABS(djinni->y.fixed - leader->y.fixed) < toFIXED(20))
+            break;
+        sySynch(1);
+    }
+    djinni->motionFlags = 0;
+    djinni->velocityX   = 0;
+    djinni->velocityZ   = 0;
+    djinni->velocityY   = 0;
+    djinni->targetX     = ACTOR_NO_TARGET;
+    djinni->targetZ     = ACTOR_NO_TARGET;
+    djinni->targetY     = ACTOR_NO_TARGET;
+    fdActorSelectAnimationStub(djinni, ANIM_STILL);
+    ((SPR *)djinni->sprite)->image.priority = 2;
 #if DJINNI_HOP_RESTORES_GRAVITY
-	djinni->gravity = toFIXED(1);
+    djinni->gravity = toFIXED(1);
 #endif
-	fdScriptEnd();
+    fdScriptEnd();
 }
 
 // A Djinni joins. The element's last Djinni stands for the one of The Broken Seal's chosen for it
@@ -179,46 +179,46 @@ void fdDjinnRunBattleStartHop(Sint32 djinniId)
 // set).
 void fdDjinnJoinParty(Sint32 actor, Sint32 element, Sint32 djinni)
 {
-	Sint32 owner;
+    Sint32 owner;
 
-	if (djinni == DJINN_PER_ELEMENT - 1)
-	{
-		Sint32 recorded = SceneLocalState[element + SCENE_STATE_CHOSEN_DJINN];
+    if (djinni == DJINN_PER_ELEMENT - 1)
+    {
+        Sint32 recorded = SceneLocalState[element + SCENE_STATE_CHOSEN_DJINN];
 
-		if (recorded == 0)
-			return;
-		djinni = recorded - 1;
-	}
-	if (syGameFlagGet(FLAG_DJINN_LESSON))
-	{
-		owner = MainRoutineStateWork.leaderActorId;
-		syGameFlagSet(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinni));
-	}
-	else
-	{
-		owner = gmDjinnGiveToPartyStub(element, djinni);
-	}
-	if (owner < 0)
-		return;
-	fdScriptStart();
-	if (actor != -1)
-	{
-		if (element == ELEMENT_VENUS)
-			fdDjinnRunVenusJoinEffect(actor);
-		else if (element == ELEMENT_MERCURY)
-			fdDjinnRunMercuryJoinEffect(actor);
-		else if (element == ELEMENT_MARS)
-			fdDjinnRunMarsJoinEffect(actor);
-		else if (element == ELEMENT_JUPITER)
-			fdDjinnRunJupiterJoinEffect(actor);
-	}
-	fdWorldMapFreeze();
-	mnDjinnShowJoinedMessageStub(owner, element, djinni);
-	fdWorldMapReloadPendingAreaGraphics();
+        if (recorded == 0)
+            return;
+        djinni = recorded - 1;
+    }
+    if (syGameFlagGet(FLAG_DJINN_LESSON))
+    {
+        owner = MainRoutineStateWork.leaderActorId;
+        syGameFlagSet(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinni));
+    }
+    else
+    {
+        owner = gmDjinnGiveToPartyStub(element, djinni);
+    }
+    if (owner < 0)
+        return;
+    fdScriptStart();
+    if (actor != -1)
+    {
+        if (element == ELEMENT_VENUS)
+            fdDjinnRunVenusJoinEffect(actor);
+        else if (element == ELEMENT_MERCURY)
+            fdDjinnRunMercuryJoinEffect(actor);
+        else if (element == ELEMENT_MARS)
+            fdDjinnRunMarsJoinEffect(actor);
+        else if (element == ELEMENT_JUPITER)
+            fdDjinnRunJupiterJoinEffect(actor);
+    }
+    fdWorldMapFreeze();
+    mnDjinnShowJoinedMessageStub(owner, element, djinni);
+    fdWorldMapReloadPendingAreaGraphics();
 #if DJINNI_JOIN_CLEARS_ACTOR_SLOT
-	FieldStateWork->actors[actor] = NULL;
+    FieldStateWork->actors[actor] = NULL;
 #endif
-	fdScriptEnd();
+    fdScriptEnd();
 }
 
 // Puts a Djinni's actor back where its battle started from: for a pending Djinni battle
@@ -230,54 +230,54 @@ void fdDjinnJoinParty(Sint32 actor, Sint32 element, Sint32 djinni)
 // then makes this actor join the party.
 void fdDjinnRestoreActorAfterBattle(void)
 {
-	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
-	Uint32              raw   = (Uint16)party->pendingDjinni;
-	Sint32              flags = party->pendingDjinni & DJINN_PENDING_KIND_MASK;
-	Uint32              scene = DJINN_PENDING_SCRIPT_MASK;
-	Sint32              id;
+    MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
+    Uint32              raw   = (Uint16)party->pendingDjinni;
+    Sint32              flags = party->pendingDjinni & DJINN_PENDING_KIND_MASK;
+    Uint32              scene = DJINN_PENDING_SCRIPT_MASK;
+    Sint32              id;
 
-	scene &= raw;
-	if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0)
-	{
-		flags  = scene & DJINN_NO_HOP;
-		scene &= DJINN_PENDING_BATTLE_SCRIPT_MASK;
-		if (scene - DJINNI_BATTLE_SCRIPT_FIRST <= ELEMENT_COUNT * DJINN_PER_ELEMENT
-		    && party->modeResult > 0)
-		{
-			Sint32 *leaderId;
+    scene &= raw;
+    if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0)
+    {
+        flags  = scene & DJINN_NO_HOP;
+        scene &= DJINN_PENDING_BATTLE_SCRIPT_MASK;
+        if (scene - DJINNI_BATTLE_SCRIPT_FIRST <= ELEMENT_COUNT * DJINN_PER_ELEMENT
+            && party->modeResult > 0)
+        {
+            Sint32 *leaderId;
 
-			for (id = ACTOR_FIRST_PLACED, leaderId = &party->leaderActorId;
-			     id <= FIELD_ACTOR_COUNT - 1;
-			     id++)
-			{
-				ACTOR_PLACE *placement = (ACTOR_PLACE *)fdFindActorPlacement(id);
-				ACTOR       *actor;
+            for (id = ACTOR_FIRST_PLACED, leaderId = &party->leaderActorId;
+                 id <= FIELD_ACTOR_COUNT - 1;
+                 id++)
+            {
+                ACTOR_PLACE *placement = (ACTOR_PLACE *)fdFindActorPlacement(id);
+                ACTOR       *actor;
 
-				if (placement == NULL
-				    || placement->condition - FLAG_DJINN_FIRST
-				           != scene - DJINNI_BATTLE_SCRIPT_FIRST)
-					continue;
-				actor = fdActorLookup(id);
-				if (actor == NULL)
-					continue;
-				if (flags == 0)
-				{
-					actor->groundHeight = flags;
-					actor->motionFlags  = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-					fdActorSetPosAndResetMotionStub(
-						actor, placement->x, placement->y, placement->z);
-				}
-				else
-				{
-					ACTOR *leader = fdActorLookup(*leaderId);
+                if (placement == NULL
+                    || placement->condition - FLAG_DJINN_FIRST
+                           != scene - DJINNI_BATTLE_SCRIPT_FIRST)
+                    continue;
+                actor = fdActorLookup(id);
+                if (actor == NULL)
+                    continue;
+                if (flags == 0)
+                {
+                    actor->groundHeight = flags;
+                    actor->motionFlags  = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+                    fdActorSetPosAndResetMotionStub(
+                        actor, placement->x, placement->y, placement->z);
+                }
+                else
+                {
+                    ACTOR *leader = fdActorLookup(*leaderId);
 
-					fdActorSetPosAndResetMotionStub(
-						actor, leader->x.fixed, leader->y.fixed, leader->z.fixed - toFIXED(32));
-				}
-				fdActorSelectAnimationStub(actor, ANIM_STAND);
-			}
-		}
-	}
+                    fdActorSetPosAndResetMotionStub(
+                        actor, leader->x.fixed, leader->y.fixed, leader->z.fixed - toFIXED(32));
+                }
+                fdActorSelectAnimationStub(actor, ANIM_STAND);
+            }
+        }
+    }
 }
 
 // Settles a pending Djinni battle as a scene loads, from the battle's result in modeResult (the
@@ -285,110 +285,110 @@ void fdDjinnRestoreActorAfterBattle(void)
 // Seal's; a mimic chest's script (CONDITION_FLAG_SET) falls through to the clear.
 void fdDjinnResolvePending(Sint32 shown)
 {
-	MAIN_ROUTINE_STATE *state   = &MainRoutineStateWork;
-	Sint16             *pending = &state->pendingDjinni;
-	Sint32              kind    = *pending & DJINN_PENDING_KIND_MASK;
-	Sint32              flag    = *pending & DJINN_PENDING_SCRIPT_MASK;
+    MAIN_ROUTINE_STATE *state   = &MainRoutineStateWork;
+    Sint16             *pending = &state->pendingDjinni;
+    Sint32              kind    = *pending & DJINN_PENDING_KIND_MASK;
+    Sint32              flag    = *pending & DJINN_PENDING_SCRIPT_MASK;
 
-	if (shown == 0)
-	{
-		if (kind == 0)
-		{
-			flag &= DJINN_PENDING_BATTLE_SCRIPT_MASK;
-			if (flag < DJINNI_BATTLE_SCRIPT_FIRST
-			    || flag > DJINNI_BATTLE_SCRIPT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
-				return;
-			if (state->modeResult > 0 && state->modeResult != BATTLE_OUTCOME_FLED)
-				return;
-			syGameFlagSet(flag - (DJINNI_BATTLE_SCRIPT_FIRST - FLAG_DJINN_HIDING_FIRST));
-			*pending = kind;
-			return;
-		}
-		else if (kind == CONDITION_FLAG_SET)
-		{
-			if (state->modeResult > 0 && state->modeResult != BATTLE_OUTCOME_FLED)
-				syGameFlagSet(flag);
-		}
-		else
-			return;
-	}
-	else if (kind == 0)
-	{
-		flag &= DJINN_PENDING_BATTLE_SCRIPT_MASK;
-		if (flag >= DJINNI_BATTLE_SCRIPT_FIRST
-		    && flag <= DJINNI_BATTLE_SCRIPT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
-		{
-			flag &= DJINN_PENDING_BATTLE_SCRIPT_MASK;
-			if (state->modeResult > 0)
-			{
-				Sint32 djinn   = flag - DJINNI_BATTLE_SCRIPT_FIRST;
-				Sint32 element = djinn / DJINN_PER_ELEMENT;
-				Sint32 index   = djinn % DJINN_PER_ELEMENT;
-				Sint32 actor;
+    if (shown == 0)
+    {
+        if (kind == 0)
+        {
+            flag &= DJINN_PENDING_BATTLE_SCRIPT_MASK;
+            if (flag < DJINNI_BATTLE_SCRIPT_FIRST
+                || flag > DJINNI_BATTLE_SCRIPT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
+                return;
+            if (state->modeResult > 0 && state->modeResult != BATTLE_OUTCOME_FLED)
+                return;
+            syGameFlagSet(flag - (DJINNI_BATTLE_SCRIPT_FIRST - FLAG_DJINN_HIDING_FIRST));
+            *pending = kind;
+            return;
+        }
+        else if (kind == CONDITION_FLAG_SET)
+        {
+            if (state->modeResult > 0 && state->modeResult != BATTLE_OUTCOME_FLED)
+                syGameFlagSet(flag);
+        }
+        else
+            return;
+    }
+    else if (kind == 0)
+    {
+        flag &= DJINN_PENDING_BATTLE_SCRIPT_MASK;
+        if (flag >= DJINNI_BATTLE_SCRIPT_FIRST
+            && flag <= DJINNI_BATTLE_SCRIPT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
+        {
+            flag &= DJINN_PENDING_BATTLE_SCRIPT_MASK;
+            if (state->modeResult > 0)
+            {
+                Sint32 djinn   = flag - DJINNI_BATTLE_SCRIPT_FIRST;
+                Sint32 element = djinn / DJINN_PER_ELEMENT;
+                Sint32 index   = djinn % DJINN_PER_ELEMENT;
+                Sint32 actor;
 
-				for (actor = ACTOR_FIRST_PLACED; actor <= FIELD_ACTOR_COUNT - 1; actor++)
-				{
-					ACTOR_PLACE *found = (ACTOR_PLACE *)fdFindActorPlacement(actor);
-					if (found != 0
-					    && found->condition - FLAG_DJINN_FIRST == flag - DJINNI_BATTLE_SCRIPT_FIRST)
-					{
-						sySynch(40);
-						fdDjinnJoinParty(actor, element, index);
-						break;
-					}
-				}
-			}
-		}
-	}
-	MainRoutineStateWork.pendingDjinni = 0;
+                for (actor = ACTOR_FIRST_PLACED; actor <= FIELD_ACTOR_COUNT - 1; actor++)
+                {
+                    ACTOR_PLACE *found = (ACTOR_PLACE *)fdFindActorPlacement(actor);
+                    if (found != 0
+                        && found->condition - FLAG_DJINN_FIRST == flag - DJINNI_BATTLE_SCRIPT_FIRST)
+                    {
+                        sySynch(40);
+                        fdDjinnJoinParty(actor, element, index);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    MainRoutineStateWork.pendingDjinni = 0;
 }
 
 // Event: updates the field effect sprites.
 void fdEffectUpdateAllSlots(void)
 {
-	FIELD_EFFECT_STATE *scene;
-	Sint32              i;
+    FIELD_EFFECT_STATE *scene;
+    Sint32              i;
 
-	scene = RamHeapSlots->fieldEffectState;
-	for (i = 0; i < (Sint32)ARRAY_COUNT(scene->particles); i++)
-		fdParticleUpdate(&scene->particles[i]);
+    scene = RamHeapSlots->fieldEffectState;
+    for (i = 0; i < (Sint32)ARRAY_COUNT(scene->particles); i++)
+        fdParticleUpdate(&scene->particles[i]);
 }
 
 // Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and starts their update
 // event.
 void fdEffectInitSlots(void)
 {
-	void *state;
+    void *state;
 
-	state = syHeapSlotAllocate(HEAP_SLOT_FIELD_EFFECT, sizeof(FIELD_EFFECT_STATE));
-	DMA_FILL32(0, state, sizeof(FIELD_EFFECT_STATE));
-	sySetEvent((Sint32)fdEffectUpdateAllSlots, EVENT_PASS_TICK);
+    state = syHeapSlotAllocate(HEAP_SLOT_FIELD_EFFECT, sizeof(FIELD_EFFECT_STATE));
+    DMA_FILL32(0, state, sizeof(FIELD_EFFECT_STATE));
+    sySetEvent((Sint32)fdEffectUpdateAllSlots, EVENT_PASS_TICK);
 }
 
 // Stops the field effect sprites: removes their event, frees every slot still in use and releases
 // their heap block, the field Psynergy's state with it.
 void fdEffectReleaseSlots(void)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
-	FIELD_PARTICLE     *slot;
-	Sint32              i;
+    FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
+    FIELD_PARTICLE     *slot;
+    Sint32              i;
 
-	syCloseEvent(fdEffectUpdateAllSlots);
-	for (i = 0; i < (Sint32)ARRAY_COUNT(scene->particles); i++)
-	{
-		slot = &scene->particles[i];
-		if (slot->active != 0)
-			fdEffectClearOwnedSlot(slot);
-	}
-	syHeapSlotRelease(HEAP_SLOT_FIELD_EFFECT);
-	sySynch(1);
+    syCloseEvent(fdEffectUpdateAllSlots);
+    for (i = 0; i < (Sint32)ARRAY_COUNT(scene->particles); i++)
+    {
+        slot = &scene->particles[i];
+        if (slot->active != 0)
+            fdEffectClearOwnedSlot(slot);
+    }
+    syHeapSlotRelease(HEAP_SLOT_FIELD_EFFECT);
+    sySynch(1);
 }
 
 // Per-tick update of a joining Venus or Jupiter Djinni: spins it an eighth of a turn, as
 // fdEffectAdvanceSpinAngle does.
 void fdDjinnAdvanceSpinAngle(ACTOR *djinni)
 {
-	djinni->facing += DEGtoANG(45);
+    djinni->facing += DEGtoANG(45);
 }
 
 // Field effect sprite callback of a Jupiter Djinni's light particles: each circles its centre while
@@ -397,63 +397,63 @@ void fdDjinnAdvanceSpinAngle(ACTOR *djinni)
 // slot's origin is the centre, in screen coordinates (fdCameraWorldToScreen).
 void fdEffectRunAngledApproachPhases(FIELD_PARTICLE *particle)
 {
-	ACTOR  *target;
-	VECTOR3 pos;
+    ACTOR  *target;
+    VECTOR3 pos;
 
-	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if (particle->state == DJINNI_LIGHT_WIDENING)
-	{
-		particle->orbitRadius += 1;
-		particle->orbitAngle  += 1;
-		if ((Sint16)particle->age == DJINNI_LIGHT_RADIUS_TICKS)
-		{
-			particle->age    = 0;
-			particle->state += 1;
-		}
-	}
-	else if (particle->state == DJINNI_LIGHT_CIRCLING)
-	{
-		particle->orbitAngle += 1;
-		if ((Sint16)particle->age == DJINNI_LIGHT_CIRCLING_TICKS)
-		{
-			particle->age    = 0;
-			particle->state += 1;
-		}
-	}
-	else if (particle->state == DJINNI_LIGHT_DRIFTING)
-	{
-		particle->orbitAngle += 1;
-		SET_POSITION(&pos, target->x.fixed, target->y.fixed + toFIXED(20), target->z.fixed);
-		// The centre moves 1/8 of the way to the leader's screen point a tick.
-		fdCameraWorldToScreen(&pos);
-		particle->originX += (pos.x - particle->originX) / 8;
-		particle->originZ += (pos.z - particle->originZ) / 8;
-		if ((Sint16)particle->age == DJINNI_LIGHT_DRIFTING_TICKS)
-		{
-			particle->age    = 0;
-			particle->state += 1;
-		}
-	}
-	else if (particle->state == DJINNI_LIGHT_CLOSING)
-	{
-		particle->orbitRadius -= 1;
-		particle->orbitAngle  += 1;
-		if ((Sint16)particle->age == DJINNI_LIGHT_RADIUS_TICKS)
-		{
-			particle->age    = 0;
-			particle->state += 1;
-		}
-	}
-	else if (particle->state == DJINNI_LIGHT_DONE)
-	{
-		fdEffectClearOwnedSlot(particle);
-	}
-	pos.x = particle->originX;
-	pos.z = particle->originZ;
-	syVectorAddPolarOffset(
-		toFIXED(particle->orbitRadius), particle->orbitAngle * (TRIG_TURN / 32), &pos);
-	particle->x = pos.x;
-	particle->z = pos.z;
+    target = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    if (particle->state == DJINNI_LIGHT_WIDENING)
+    {
+        particle->orbitRadius += 1;
+        particle->orbitAngle  += 1;
+        if ((Sint16)particle->age == DJINNI_LIGHT_RADIUS_TICKS)
+        {
+            particle->age    = 0;
+            particle->state += 1;
+        }
+    }
+    else if (particle->state == DJINNI_LIGHT_CIRCLING)
+    {
+        particle->orbitAngle += 1;
+        if ((Sint16)particle->age == DJINNI_LIGHT_CIRCLING_TICKS)
+        {
+            particle->age    = 0;
+            particle->state += 1;
+        }
+    }
+    else if (particle->state == DJINNI_LIGHT_DRIFTING)
+    {
+        particle->orbitAngle += 1;
+        SET_POSITION(&pos, target->x.fixed, target->y.fixed + toFIXED(20), target->z.fixed);
+        // The centre moves 1/8 of the way to the leader's screen point a tick.
+        fdCameraWorldToScreen(&pos);
+        particle->originX += (pos.x - particle->originX) / 8;
+        particle->originZ += (pos.z - particle->originZ) / 8;
+        if ((Sint16)particle->age == DJINNI_LIGHT_DRIFTING_TICKS)
+        {
+            particle->age    = 0;
+            particle->state += 1;
+        }
+    }
+    else if (particle->state == DJINNI_LIGHT_CLOSING)
+    {
+        particle->orbitRadius -= 1;
+        particle->orbitAngle  += 1;
+        if ((Sint16)particle->age == DJINNI_LIGHT_RADIUS_TICKS)
+        {
+            particle->age    = 0;
+            particle->state += 1;
+        }
+    }
+    else if (particle->state == DJINNI_LIGHT_DONE)
+    {
+        fdEffectClearOwnedSlot(particle);
+    }
+    pos.x = particle->originX;
+    pos.z = particle->originZ;
+    syVectorAddPolarOffset(
+        toFIXED(particle->orbitRadius), particle->orbitAngle * (TRIG_TURN / 32), &pos);
+    particle->x = pos.x;
+    particle->z = pos.z;
 }
 
 #undef DJINNI_AFTERIMAGES

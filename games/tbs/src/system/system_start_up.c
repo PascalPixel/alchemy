@@ -3,7 +3,7 @@
 // The German, French, Spanish and Italian editions also take the cartridge-removed interrupt, whose
 // handler is syHalt.
 #if HALT_ON_CARTRIDGE_REMOVED
-#	define SYSTEM_HALT_ON_GAMEPAK_IRQ 1
+#    define SYSTEM_HALT_ON_GAMEPAK_IRQ 1
 #endif
 
 // Powers the game up: stops any HBlank DMA left running, sets the cartridge wait states, clears
@@ -11,51 +11,51 @@
 // the sound driver, then enters gmMainRoutineRun and never returns.
 void syInit(void)
 {
-	DMA0_STOP();
-	IO_WRITE16(WAITCNT_GAME, &REG_WAITCNT);
-	// Clear IWRAM up to the heap's end (the stacks above it are in use), then install the resident
-	// IWRAM code before any service can use its state blocks
-	DMA_FILL32(0, (void *)IWRAM_START, 30 * 1024);
-	syHeapInit();
-	syInstallIWRAMAndIRQs();
-	// UB: count and its padding are cleared as one word.
+    DMA0_STOP();
+    IO_WRITE16(WAITCNT_GAME, &REG_WAITCNT);
+    // Clear IWRAM up to the heap's end (the stacks above it are in use), then install the resident
+    // IWRAM code before any service can use its state blocks
+    DMA_FILL32(0, (void *)IWRAM_START, 30 * 1024);
+    syHeapInit();
+    syInstallIWRAMAndIRQs();
+    // UB: count and its padding are cleared as one word.
 #if FIX_TYPE_PUNNING
-	IoWriteQueueWork.count = 0;
-	IoWriteQueueWork.pad   = 0;
+    IoWriteQueueWork.count = 0;
+    IoWriteQueueWork.pad   = 0;
 #else
-	*(Uint32 *)&IoWriteQueueWork.count = 0;
+    *(Uint32 *)&IoWriteQueueWork.count = 0;
 #endif
-	DebugTextEnabled      = 0;
-	DebugMode             = 0;
-	CpuLoadDisplayEnabled = 0;
-	syCopyBuildStamp();
-	syWindowLoadGraphics();
-	syPrintClear();
-	REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
-	syIntFunction(IRQ_VBLANK, 1, (void (*)(void))syVBlankHandler);
+    DebugTextEnabled      = 0;
+    DebugMode             = 0;
+    CpuLoadDisplayEnabled = 0;
+    syCopyBuildStamp();
+    syWindowLoadGraphics();
+    syPrintClear();
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
+    syIntFunction(IRQ_VBLANK, 1, (void (*)(void))syVBlankHandler);
 #if defined(SYSTEM_HALT_ON_GAMEPAK_IRQ)
-	syIntFunction(IRQ_GAMEPAK, 1, syHalt);
+    syIntFunction(IRQ_GAMEPAK, 1, syHalt);
 #endif
-	IO_WRITE16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
-	// Start audio and tick services only after the interrupt handlers are ready.
-	sySoundInitStub();
-	syVRAMCacheReset();
-	syInitEvent();
-	CartridgeResetMarker = 0;
-	OamCopyEnabled       = 1;
-	SleepDisabled        = 0;
-	sySynch(10);
-	gmMainRoutineRunStub(GAME_START_TITLE);
+    IO_WRITE16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
+    // Start audio and tick services only after the interrupt handlers are ready.
+    sySoundInitStub();
+    syVRAMCacheReset();
+    syInitEvent();
+    CartridgeResetMarker = 0;
+    OamCopyEnabled       = 1;
+    SleepDisabled        = 0;
+    sySynch(10);
+    gmMainRoutineRunStub(GAME_START_TITLE);
 }
 
 // Unused: waits out ticks forever; the tick loop still runs the events.
 UNUSED void syIdleForever(void)
 {
-	for (;;)
-	{
-		(void)PerPush;
-		sySynch(1);
-	}
+    for (;;)
+    {
+        (void)PerPush;
+        sySynch(1);
+    }
 }
 
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
@@ -64,17 +64,17 @@ UNUSED void syIdleForever(void)
 // Only the Spanish and Italian editions have it.
 Sint32 syGetLanguage(void)
 {
-	Sint32 language;
+    Sint32 language;
 
-	switch (RomLanguageCode)
-	{
-		case 'D': language = CARTRIDGE_LANGUAGE_GERMAN; break;
-		case 'F': language = CARTRIDGE_LANGUAGE_FRENCH; break;
-		case 'S': language = CARTRIDGE_LANGUAGE_SPANISH; break;
-		case 'I': language = CARTRIDGE_LANGUAGE_ITALIAN; break;
-		default : language = CARTRIDGE_LANGUAGE_ENGLISH; break;
-	}
-	return language;
+    switch (RomLanguageCode)
+    {
+        case 'D': language = CARTRIDGE_LANGUAGE_GERMAN; break;
+        case 'F': language = CARTRIDGE_LANGUAGE_FRENCH; break;
+        case 'S': language = CARTRIDGE_LANGUAGE_SPANISH; break;
+        case 'I': language = CARTRIDGE_LANGUAGE_ITALIAN; break;
+        default : language = CARTRIDGE_LANGUAGE_ENGLISH; break;
+    }
+    return language;
 }
 #endif
 
@@ -102,28 +102,28 @@ UNUSED void syDummyReservedNoOperationE(void)
 // An exported stub that ignores its arguments and reports 0.
 Sint32 syDummyReturnZero(Sint32 resourceId, const Uint8 *table)
 {
-	return 0;
+    return 0;
 }
 
 // The build stamp's twelve digit characters copied to IWRAM, and a zero word after them that ends
 // the string.
 typedef struct BUILD_STAMP_COPY
 {
-	Uint32 digits[3];
-	Uint32 terminator;
+    Uint32 digits[3];
+    Uint32 terminator;
 } BUILD_STAMP_COPY;
 
 // Copies the build stamp resource (twelve digits) into BuildStampWork in high IWRAM and writes the
 // zero word that ends it.
 void syCopyBuildStamp(void)
 {
-	const void       *stamp;
-	BUILD_STAMP_COPY *copy;
+    const void       *stamp;
+    BUILD_STAMP_COPY *copy;
 
-	stamp = syResourceGetTableEntry((Uint32)RESOURCE_BUILD_STAMP);
-	copy  = (BUILD_STAMP_COPY *)BuildStampWork;
-	syDMAXCopy(stamp, copy, DMA_COPY_WORDS(3), REG_DMA3);
-	copy->terminator = 0;
+    stamp = syResourceGetTableEntry((Uint32)RESOURCE_BUILD_STAMP);
+    copy  = (BUILD_STAMP_COPY *)BuildStampWork;
+    syDMAXCopy(stamp, copy, DMA_COPY_WORDS(3), REG_DMA3);
+    copy->terminator = 0;
 }
 
 // An exported stub that does nothing with its argument. The Title, Lucky Dice and Lucky Wheels
@@ -135,7 +135,7 @@ void syDummyNoOperationHook(Sint32 unused)
 // Returns the ROM address of resource `index` from the resource directory.
 void *syResourceGetTableEntry(Sint32 index)
 {
-	return syResourceDirectoryTable[index];
+    return syResourceDirectoryTable[index];
 }
 
 // A Thumb long branch (BL) is two halfwords: the first carries the marker THUMB_BL_HIGH and the
@@ -153,67 +153,67 @@ void *syResourceGetTableEntry(Sint32 index)
 // does the same.
 UNUSED void syCodeResolveLongBranches(Uint16 *pair, Sint32 byteLength)
 {
-	Sint32 entryCount = byteLength >> 1;
-	Sint32 i          = 1;
+    Sint32 entryCount = byteLength >> 1;
+    Sint32 i          = 1;
 
-	pair++;
-	if (i < entryCount)
-	{
-		Uint32 lowMarker  = THUMB_BL_LOW;
-		Uint32 offsetBits = THUMB_BL_OFFSET_BITS;
-		Uint32 highMarker = THUMB_BL_HIGH;
-
-#if !FIX_POINTER_OUTSIDE_OBJECT
-		// UB: the walk starts a halfword before the block.
-		pair -= 2;
-#endif
-		// Each halfword from the second on is tried as the second of a pair.
-		for (; i < entryCount; i++)
-		{
-			Uint16 first, second;
-			Uint32 secondMarker, firstMarker;
-
-#if FIX_POINTER_OUTSIDE_OBJECT
-			second = pair[0];
-#else
-			second = pair[2];
-#endif
-			secondMarker = second & lowMarker;
+    pair++;
+    if (i < entryCount)
+    {
+        Uint32 lowMarker  = THUMB_BL_LOW;
+        Uint32 offsetBits = THUMB_BL_OFFSET_BITS;
+        Uint32 highMarker = THUMB_BL_HIGH;
 
 #if !FIX_POINTER_OUTSIDE_OBJECT
-			pair++;
+        // UB: the walk starts a halfword before the block.
+        pair -= 2;
 #endif
-			if (secondMarker == lowMarker)
-			{
-#if FIX_POINTER_OUTSIDE_OBJECT
-				first = pair[-1];
-#else
-				first = pair[0];
-#endif
-				firstMarker = first & secondMarker;
-
-				if (firstMarker == highMarker)
-				{
-					Uint32 offset = (((first & offsetBits) << THUMB_BL_HIGH_SHIFT)
-					                 | ((second & offsetBits) * 2))
-					              - i * 2;
-					Uint32 newFirst  = ((offset >> THUMB_BL_HIGH_SHIFT) & offsetBits) | firstMarker;
-					Uint32 newSecond = ((offset >> 1) & offsetBits) | secondMarker;
+        // Each halfword from the second on is tried as the second of a pair.
+        for (; i < entryCount; i++)
+        {
+            Uint16 first, second;
+            Uint32 secondMarker, firstMarker;
 
 #if FIX_POINTER_OUTSIDE_OBJECT
-					pair[-1] = newFirst;
-					pair[0]  = newSecond;
+            second = pair[0];
 #else
-					pair[0] = newFirst;
-					pair[1] = newSecond;
+            second = pair[2];
 #endif
-				}
-			}
+            secondMarker = second & lowMarker;
+
+#if !FIX_POINTER_OUTSIDE_OBJECT
+            pair++;
+#endif
+            if (secondMarker == lowMarker)
+            {
 #if FIX_POINTER_OUTSIDE_OBJECT
-			pair++;
+                first = pair[-1];
+#else
+                first = pair[0];
 #endif
-		}
-	}
+                firstMarker = first & secondMarker;
+
+                if (firstMarker == highMarker)
+                {
+                    Uint32 offset = (((first & offsetBits) << THUMB_BL_HIGH_SHIFT)
+                                     | ((second & offsetBits) * 2))
+                                  - i * 2;
+                    Uint32 newFirst  = ((offset >> THUMB_BL_HIGH_SHIFT) & offsetBits) | firstMarker;
+                    Uint32 newSecond = ((offset >> 1) & offsetBits) | secondMarker;
+
+#if FIX_POINTER_OUTSIDE_OBJECT
+                    pair[-1] = newFirst;
+                    pair[0]  = newSecond;
+#else
+                    pair[0] = newFirst;
+                    pair[1] = newSecond;
+#endif
+                }
+            }
+#if FIX_POINTER_OUTSIDE_OBJECT
+            pair++;
+#endif
+        }
+    }
 }
 
 // Decodes the compressed code resource `index` to `dest` and resolves its long branches there, with
@@ -221,13 +221,13 @@ UNUSED void syCodeResolveLongBranches(Uint16 *pair, Sint32 byteLength)
 // allocated and freed again.
 void syOverlayLoad(Uint32 index, void *dest)
 {
-	void   (*patchBranches)(void *, Sint32);
-	Sint32 codeSize;
+    void   (*patchBranches)(void *, Sint32);
+    Sint32 codeSize;
 
-	codeSize = syDecompressTaggedLZ(syResourceGetTableEntry(index), dest);
-	RAM_CODE_LOAD(patchBranches, syResourcePatchThumbBranch, syResourcePatchThumbBranchCodeSize);
-	patchBranches(dest, codeSize);
-	syHeapRelease(patchBranches);
+    codeSize = syDecompressTaggedLZ(syResourceGetTableEntry(index), dest);
+    RAM_CODE_LOAD(patchBranches, syResourcePatchThumbBranch, syResourcePatchThumbBranchCodeSize);
+    patchBranches(dest, codeSize);
+    syHeapRelease(patchBranches);
 }
 
 // The handler of every interrupt nobody has claimed.
@@ -241,24 +241,24 @@ void syIRQIgnore(void)
 // the game).
 void syInstallIWRAMAndIRQs(void)
 {
-	Uint8 *iwram;
+    Uint8 *iwram;
 
-	// Keep interrupts masked while replacing both the dispatcher and its table.
-	IO_WRITE16(0, &REG_IME);
-	iwram = syIWRAMIRQMain;
-	// 5,120 bytes of resident code and data.
-	syDMAXCopy(IwramResidentRom, iwram, DMA_COPY_WORDS(5120 / 4), REG_DMA3);
-	IrqVector = iwram;
-	syDMAXCopy(DefaultIrqHandlers, IrqHandlers, DMA_COPY_WORDS(IRQ_COUNT), REG_DMA3);
-	IO_WRITE16(0, &REG_DISPSTAT);
-	// Disarmed until syInit arms the soft-reset keys
-	IO_WRITE16(KEYCNT_DISARMED, &REG_KEYCNT);
+    // Keep interrupts masked while replacing both the dispatcher and its table.
+    IO_WRITE16(0, &REG_IME);
+    iwram = syIWRAMIRQMain;
+    // 5,120 bytes of resident code and data.
+    syDMAXCopy(IwramResidentRom, iwram, DMA_COPY_WORDS(5120 / 4), REG_DMA3);
+    IrqVector = iwram;
+    syDMAXCopy(DefaultIrqHandlers, IrqHandlers, DMA_COPY_WORDS(IRQ_COUNT), REG_DMA3);
+    IO_WRITE16(0, &REG_DISPSTAT);
+    // Disarmed until syInit arms the soft-reset keys
+    IO_WRITE16(KEYCNT_DISARMED, &REG_KEYCNT);
 #if defined(SYSTEM_HALT_ON_GAMEPAK_IRQ)
-	IO_WRITE16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD | INTR_FLAG_GAMEPAK, &REG_IE);
+    IO_WRITE16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD | INTR_FLAG_GAMEPAK, &REG_IE);
 #else
-	IO_WRITE16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD, &REG_IE);
+    IO_WRITE16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD, &REG_IE);
 #endif
-	IO_WRITE16(1, &REG_IME);
+    IO_WRITE16(1, &REG_IME);
 }
 
 #undef SYSTEM_HALT_ON_GAMEPAK_IRQ

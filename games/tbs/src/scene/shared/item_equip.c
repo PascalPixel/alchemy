@@ -5,15 +5,15 @@
 // Gives the character the item, then equips every inventory slot that holds it.
 UNUSED static void scGiveAndEquipItem(Sint32 character, Sint32 item)
 {
-	UNIT  *unit = gmUnitGet(character);
-	Sint32 i;
+    UNIT  *unit = gmUnitGet(character);
+    Sint32 i;
 
-	gmInventoryAddItem(character, item);
-	for (i = 0; i < INVENTORY_SLOTS; i++)
-	{
-		if (unit->inventory[i] == item)
-		{
-			gmInventoryEquip(character, i);
-		}
-	}
+    gmInventoryAddItem(character, item);
+    for (i = 0; i < INVENTORY_SLOTS; i++)
+    {
+        if (unit->inventory[i] == item)
+        {
+            gmInventoryEquip(character, i);
+        }
+    }
 }

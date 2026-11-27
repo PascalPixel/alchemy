@@ -51,84 +51,84 @@
 // The first stretch, where cracks drop the party to the caves below.
 typedef enum DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_ACTOR_ID
 {
-	ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR = ACTOR_FIRST_PLACED,
-	ACTOR_FULL_METAL_VEST_CHEST_STAKE                  = ACTOR_FIRST_PLACED + 3,
-	// The stone pillar Moved over the edge into the gap below.
-	ACTOR_FULL_METAL_VEST_CHEST_PILLAR,
-	ACTOR_FULL_METAL_VEST_CHEST_FIRST_BLOCK,
-	ACTOR_FULL_METAL_VEST_CHEST = 64
+    ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR = ACTOR_FIRST_PLACED,
+    ACTOR_FULL_METAL_VEST_CHEST_STAKE                  = ACTOR_FIRST_PLACED + 3,
+    // The stone pillar Moved over the edge into the gap below.
+    ACTOR_FULL_METAL_VEST_CHEST_PILLAR,
+    ACTOR_FULL_METAL_VEST_CHEST_FIRST_BLOCK,
+    ACTOR_FULL_METAL_VEST_CHEST = 64
 } DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_ACTOR_ID;
 
 // The Themis Axe's stretch, where Cannon is first seen and flees over the cracks.
 typedef enum DEHKAN_PLATEAU_THEMIS_AXE_CHEST_ACTOR_ID
 {
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR = ACTOR_FIRST_PLACED + 3,
-	ACTOR_THEMIS_AXE_CHEST_STAKE                  = ACTOR_FIRST_PLACED + 14,
-	// The stone pillar Moved into the gap.
-	ACTOR_THEMIS_AXE_CHEST_PILLAR,
-	ACTOR_THEMIS_AXE_CHEST_CANNON,
-	ACTOR_THEMIS_AXE_CHEST_FIRST_BLOCK
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR = ACTOR_FIRST_PLACED + 3,
+    ACTOR_THEMIS_AXE_CHEST_STAKE                  = ACTOR_FIRST_PLACED + 14,
+    // The stone pillar Moved into the gap.
+    ACTOR_THEMIS_AXE_CHEST_PILLAR,
+    ACTOR_THEMIS_AXE_CHEST_CANNON,
+    ACTOR_THEMIS_AXE_CHEST_FIRST_BLOCK
 } DEHKAN_PLATEAU_THEMIS_AXE_CHEST_ACTOR_ID;
 
 // The rope bridge's stretch, of tightropes, a rope to Lash and the crumbling pillars Cannon leaps
 // across.
 typedef enum DEHKAN_PLATEAU_TIGHTROPES_ACTOR_ID
 {
-	// The posts at the ends of the two tightropes, and of the rope, whose low post Lash ties it
-	// from.
-	ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST = ACTOR_FIRST_PLACED,
-	ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST,
-	ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST,
-	ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST,
-	ACTOR_TIGHTROPES_ROPE_LOW_POST,
-	ACTOR_TIGHTROPES_ROPE_HIGH_POST,
-	// The four stone pillars wrapped in vines, which the leader climbs and pushes or Moves into the
-	// gaps.
-	ACTOR_TIGHTROPES_FIRST_VINE_PILLAR,
-	ACTOR_TIGHTROPES_SECOND_VINE_PILLAR,
-	ACTOR_TIGHTROPES_THIRD_VINE_PILLAR,
-	ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR,
-	// The stake Cannon Pounds down as he flees.
-	ACTOR_TIGHTROPES_STAKE,
-	// The stone pillar Moved on the raised ground.
-	ACTOR_TIGHTROPES_PILLAR,
-	// The stone pillar at the foot of the cliff, pushed off the vine behind it.
-	ACTOR_TIGHTROPES_SECOND_PILLAR,
-	ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR,
-	ACTOR_TIGHTROPES_CANNON = ACTOR_FIRST_PLACED + 17,
-	ACTOR_TIGHTROPES_FIRST_BLOCK
+    // The posts at the ends of the two tightropes, and of the rope, whose low post Lash ties it
+    // from.
+    ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST = ACTOR_FIRST_PLACED,
+    ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST,
+    ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST,
+    ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST,
+    ACTOR_TIGHTROPES_ROPE_LOW_POST,
+    ACTOR_TIGHTROPES_ROPE_HIGH_POST,
+    // The four stone pillars wrapped in vines, which the leader climbs and pushes or Moves into the
+    // gaps.
+    ACTOR_TIGHTROPES_FIRST_VINE_PILLAR,
+    ACTOR_TIGHTROPES_SECOND_VINE_PILLAR,
+    ACTOR_TIGHTROPES_THIRD_VINE_PILLAR,
+    ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR,
+    // The stake Cannon Pounds down as he flees.
+    ACTOR_TIGHTROPES_STAKE,
+    // The stone pillar Moved on the raised ground.
+    ACTOR_TIGHTROPES_PILLAR,
+    // The stone pillar at the foot of the cliff, pushed off the vine behind it.
+    ACTOR_TIGHTROPES_SECOND_PILLAR,
+    ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR,
+    ACTOR_TIGHTROPES_CANNON = ACTOR_FIRST_PLACED + 17,
+    ACTOR_TIGHTROPES_FIRST_BLOCK
 } DEHKAN_PLATEAU_TIGHTROPES_ACTOR_ID;
 
 // The caves below the cracks, with the Mint's chest.
 typedef enum DEHKAN_PLATEAU_MINT_CHEST_ACTOR_ID
 {
-	ACTOR_MINT_CHEST_FIRST_BLOCK = ACTOR_FIRST_PLACED
+    ACTOR_MINT_CHEST_FIRST_BLOCK = ACTOR_FIRST_PLACED
 } DEHKAN_PLATEAU_MINT_CHEST_ACTOR_ID;
 
 // The Pound Cube's cave, where a fall lands the leader beside Cannon and he drops the Pound Cube.
 typedef enum DEHKAN_PLATEAU_POUND_CUBE_ACTOR_ID
 {
-	ACTOR_POUND_CUBE_STAKE = ACTOR_FIRST_PLACED,
-	ACTOR_POUND_CUBE_CANNON
+    ACTOR_POUND_CUBE_STAKE = ACTOR_FIRST_PLACED,
+    ACTOR_POUND_CUBE_CANNON
 } DEHKAN_PLATEAU_POUND_CUBE_ACTOR_ID;
 
 // Cannon's cave, where Cannon is cornered behind the stake and fights.
 typedef enum DEHKAN_PLATEAU_CANNON_ACTOR_ID
 {
-	ACTOR_CANNON_ROOM_STAKE = ACTOR_FIRST_PLACED,
-	ACTOR_CANNON_ROOM_CRUMBLING_PILLAR,
-	ACTOR_CANNON_ROOM_FIRST_BLOCK,
-	ACTOR_CANNON = ACTOR_FIRST_PLACED + 8
+    ACTOR_CANNON_ROOM_STAKE = ACTOR_FIRST_PLACED,
+    ACTOR_CANNON_ROOM_CRUMBLING_PILLAR,
+    ACTOR_CANNON_ROOM_FIRST_BLOCK,
+    ACTOR_CANNON = ACTOR_FIRST_PLACED + 8
 } DEHKAN_PLATEAU_CANNON_ACTOR_ID;
 
 // The unseen blocks of each room (scActorsSetDrawn, scActorHide).
 enum
 {
-	FULL_METAL_VEST_CHEST_BLOCK_COUNT = 14,
-	THEMIS_AXE_CHEST_BLOCK_COUNT      = 13,
-	TIGHTROPES_BLOCK_COUNT            = 10,
-	MINT_CHEST_BLOCK_COUNT            = 3,
-	CANNON_ROOM_BLOCK_COUNT           = 6
+    FULL_METAL_VEST_CHEST_BLOCK_COUNT = 14,
+    THEMIS_AXE_CHEST_BLOCK_COUNT      = 13,
+    TIGHTROPES_BLOCK_COUNT            = 10,
+    MINT_CHEST_BLOCK_COUNT            = 3,
+    CANNON_ROOM_BLOCK_COUNT           = 6
 };
 
 // For this visit: the room's unseen blocks drawn (scDehkanPlateauRestoreBlocks).
@@ -187,100 +187,100 @@ enum
 // of a room has its exit's number instead, and the cracks follow from the step codes above.
 typedef enum DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_METATILE_BEHAVIOR
 {
-	// The foot of the cliff where the unseen blocks start to be drawn, metatiles (34, 45) to (34,
-	// 50), and the metatiles beside it where they stop, (35, 45) to (35, 50).
-	METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_BLOCKS_ON = 6,
-	METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_BLOCKS_OFF,
-	// The three gray pillars, which crack and crumble under Felix: metatiles (37, 46), (41, 46),
-	// (36, 49), (40, 49), (41, 50) and (45, 50).
-	METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_PILLARS = 9,
-	// The ground round the cracks: stepping off one lets it be stepped on again.
-	METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_OFF_CRACK
+    // The foot of the cliff where the unseen blocks start to be drawn, metatiles (34, 45) to (34,
+    // 50), and the metatiles beside it where they stop, (35, 45) to (35, 50).
+    METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_BLOCKS_ON = 6,
+    METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_BLOCKS_OFF,
+    // The three gray pillars, which crack and crumble under Felix: metatiles (37, 46), (41, 46),
+    // (36, 49), (40, 49), (41, 50) and (45, 50).
+    METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_PILLARS = 9,
+    // The ground round the cracks: stepping off one lets it be stepped on again.
+    METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_OFF_CRACK
 } DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_METATILE_BEHAVIOR;
 
 // The Themis' Axe chest's stretch.
 typedef enum DEHKAN_PLATEAU_THEMIS_AXE_CHEST_METATILE_BEHAVIOR
 {
-	METATILE_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_ON = 6,
-	METATILE_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_OFF,
-	// The gray pillars: metatile (15, 17), which runs only as Felix walks west, then the rest.
-	METATILE_BEHAVIOR_THEMIS_AXE_CHEST_PILLAR_FROM_EAST,
-	METATILE_BEHAVIOR_THEMIS_AXE_CHEST_PILLARS,
-	METATILE_BEHAVIOR_THEMIS_AXE_CHEST_OFF_CRACK,
-	// Where Felix first sees Cannon, in the cracked field, metatiles (39, 13) to (41, 14), and
-	// where Cannon runs off east, (56, 13) to (59, 13).
-	METATILE_BEHAVIOR_CANNON_FLEES_OVER_CRACKS = 30,
-	METATILE_BEHAVIOR_CANNON_FLEES_EAST
+    METATILE_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_ON = 6,
+    METATILE_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_OFF,
+    // The gray pillars: metatile (15, 17), which runs only as Felix walks west, then the rest.
+    METATILE_BEHAVIOR_THEMIS_AXE_CHEST_PILLAR_FROM_EAST,
+    METATILE_BEHAVIOR_THEMIS_AXE_CHEST_PILLARS,
+    METATILE_BEHAVIOR_THEMIS_AXE_CHEST_OFF_CRACK,
+    // Where Felix first sees Cannon, in the cracked field, metatiles (39, 13) to (41, 14), and
+    // where Cannon runs off east, (56, 13) to (59, 13).
+    METATILE_BEHAVIOR_CANNON_FLEES_OVER_CRACKS = 30,
+    METATILE_BEHAVIOR_CANNON_FLEES_EAST
 } DEHKAN_PLATEAU_THEMIS_AXE_CHEST_METATILE_BEHAVIOR;
 
 // The rope bridge's stretch.
 typedef enum DEHKAN_PLATEAU_TIGHTROPES_METATILE_BEHAVIOR
 {
-	METATILE_BEHAVIOR_TIGHTROPES_BLOCKS_ON = 7,
-	METATILE_BEHAVIOR_TIGHTROPES_BLOCKS_OFF,
-	// East of the second stone pillar, metatile (39, 33), walking west into it.
-	METATILE_BEHAVIOR_TIGHTROPES_SECOND_PILLAR,
-	// The gray pillars, metatiles (39, 17), (43, 17) and (48, 20), and the metatiles that run the
-	// same step only as Felix walks east, (44, 10), or south, (46, 8); CUE_TIGHTROPES_PILLARS_WEST
-	// is the one for walking west.
-	METATILE_BEHAVIOR_TIGHTROPES_PILLARS,
-	METATILE_BEHAVIOR_TIGHTROPES_PILLARS_FROM_WEST = 26,
-	METATILE_BEHAVIOR_TIGHTROPES_PILLARS_FROM_NORTH,
-	// Beside a vine pillar, walking east or west into it: west of them, metatiles (16..17, 16),
-	// (39..40, 20) and (53..54, 20); east of them, (14..15, 11), (19..20, 16), (42..43, 20) and
-	// (56..57, 20).
-	METATILE_BEHAVIOR_VINE_PILLAR_EAST = 20,
-	METATILE_BEHAVIOR_VINE_PILLAR_WEST,
-	// Where Cannon leaps away along the rope bridge, metatiles (6, 6) and (7, 6); where he Pounds
-	// the stake, (23, 6) or (25, 16) to (27, 17); and where he leaps across the gray pillars, (36,
-	// 12) to (36, 16), (35, 16) and (35, 17).
-	METATILE_BEHAVIOR_CANNON_LEAPS_AWAY = 30,
-	METATILE_BEHAVIOR_CANNON_POUNDS_STAKE,
-	METATILE_BEHAVIOR_CANNON_CRACKS_PILLARS
+    METATILE_BEHAVIOR_TIGHTROPES_BLOCKS_ON = 7,
+    METATILE_BEHAVIOR_TIGHTROPES_BLOCKS_OFF,
+    // East of the second stone pillar, metatile (39, 33), walking west into it.
+    METATILE_BEHAVIOR_TIGHTROPES_SECOND_PILLAR,
+    // The gray pillars, metatiles (39, 17), (43, 17) and (48, 20), and the metatiles that run the
+    // same step only as Felix walks east, (44, 10), or south, (46, 8); CUE_TIGHTROPES_PILLARS_WEST
+    // is the one for walking west.
+    METATILE_BEHAVIOR_TIGHTROPES_PILLARS,
+    METATILE_BEHAVIOR_TIGHTROPES_PILLARS_FROM_WEST = 26,
+    METATILE_BEHAVIOR_TIGHTROPES_PILLARS_FROM_NORTH,
+    // Beside a vine pillar, walking east or west into it: west of them, metatiles (16..17, 16),
+    // (39..40, 20) and (53..54, 20); east of them, (14..15, 11), (19..20, 16), (42..43, 20) and
+    // (56..57, 20).
+    METATILE_BEHAVIOR_VINE_PILLAR_EAST = 20,
+    METATILE_BEHAVIOR_VINE_PILLAR_WEST,
+    // Where Cannon leaps away along the rope bridge, metatiles (6, 6) and (7, 6); where he Pounds
+    // the stake, (23, 6) or (25, 16) to (27, 17); and where he leaps across the gray pillars, (36,
+    // 12) to (36, 16), (35, 16) and (35, 17).
+    METATILE_BEHAVIOR_CANNON_LEAPS_AWAY = 30,
+    METATILE_BEHAVIOR_CANNON_POUNDS_STAKE,
+    METATILE_BEHAVIOR_CANNON_CRACKS_PILLARS
 } DEHKAN_PLATEAU_TIGHTROPES_METATILE_BEHAVIOR;
 
 // The Mint chest's stretch.
 typedef enum DEHKAN_PLATEAU_MINT_CHEST_METATILE_BEHAVIOR
 {
-	METATILE_BEHAVIOR_MINT_CHEST_BLOCKS_ON = 8,
-	METATILE_BEHAVIOR_MINT_CHEST_BLOCKS_OFF
+    METATILE_BEHAVIOR_MINT_CHEST_BLOCKS_ON = 8,
+    METATILE_BEHAVIOR_MINT_CHEST_BLOCKS_OFF
 } DEHKAN_PLATEAU_MINT_CHEST_METATILE_BEHAVIOR;
 
 // The Pound Cube's cave.
 typedef enum DEHKAN_PLATEAU_POUND_CUBE_METATILE_BEHAVIOR
 {
-	// Where the Pound Cube lies once Cannon has dropped it, metatile (15, 5), copied there from the
-	// spare metatile (0, 0).
-	METATILE_BEHAVIOR_POUND_CUBE = 12
+    // Where the Pound Cube lies once Cannon has dropped it, metatile (15, 5), copied there from the
+    // spare metatile (0, 0).
+    METATILE_BEHAVIOR_POUND_CUBE = 12
 } DEHKAN_PLATEAU_POUND_CUBE_METATILE_BEHAVIOR;
 
 // Cannon's cave.
 typedef enum DEHKAN_PLATEAU_CANNON_METATILE_BEHAVIOR
 {
-	METATILE_BEHAVIOR_CANNON_ROOM_BLOCKS_ON = 5,
-	METATILE_BEHAVIOR_CANNON_ROOM_BLOCKS_OFF,
-	// The gray pillar.
-	METATILE_BEHAVIOR_CANNON_ROOM_PILLAR = 8,
-	// The lower floor below the ledge, metatiles (43, 16) to (43, 18), and the metatiles off it,
-	// (44, 16) to (44, 18) and (52, 15) to (54, 15).
-	METATILE_BEHAVIOR_LOWER_FLOOR,
-	METATILE_BEHAVIOR_OFF_LOWER_FLOOR,
-	// The ledge toward Cannon, metatiles (43, 12) and (43, 13).
-	METATILE_BEHAVIOR_LEDGE_TO_CANNON
+    METATILE_BEHAVIOR_CANNON_ROOM_BLOCKS_ON = 5,
+    METATILE_BEHAVIOR_CANNON_ROOM_BLOCKS_OFF,
+    // The gray pillar.
+    METATILE_BEHAVIOR_CANNON_ROOM_PILLAR = 8,
+    // The lower floor below the ledge, metatiles (43, 16) to (43, 18), and the metatiles off it,
+    // (44, 16) to (44, 18) and (52, 15) to (54, 15).
+    METATILE_BEHAVIOR_LOWER_FLOOR,
+    METATILE_BEHAVIOR_OFF_LOWER_FLOOR,
+    // The ledge toward Cannon, metatiles (43, 12) and (43, 13).
+    METATILE_BEHAVIOR_LEDGE_TO_CANNON
 } DEHKAN_PLATEAU_CANNON_METATILE_BEHAVIOR;
 
 // The stone stake's two looks in stake.png (fdActorSetMetatileOpen).
 enum
 {
-	ANIM_STONE_STAKE_STANDING = 3,
-	ANIM_STONE_STAKE_SUNK
+    ANIM_STONE_STAKE_STANDING = 3,
+    ANIM_STONE_STAKE_SUNK
 };
 
 // Coming in by this entrance, from the Themis Axe's stretch's east screen into its west one, the
 // leader is drawn behind the ledge there.
 enum
 {
-	ENTRANCE_THEMIS_AXE_CHEST_WEST_SCREEN = 5
+    ENTRANCE_THEMIS_AXE_CHEST_WEST_SCREEN = 5
 };
 
 // The ticks the leader takes to sink through a crack.
@@ -289,10 +289,10 @@ enum
 // The cracks of each room's list.
 enum
 {
-	FULL_METAL_VEST_CHEST_CRACKS = 14,
-	THEMIS_AXE_CHEST_CRACKS      = 8,
-	TIGHTROPES_CRACKS            = 6,
-	POUND_CUBE_CRACKS            = 16
+    FULL_METAL_VEST_CHEST_CRACKS = 14,
+    THEMIS_AXE_CHEST_CRACKS      = 8,
+    TIGHTROPES_CRACKS            = 6,
+    POUND_CUBE_CRACKS            = 16
 };
 
 // The Pound Cube's cave's two cracks that have another just south of them, the next in its list;
@@ -300,9 +300,9 @@ enum
 // place of its own.
 enum
 {
-	POUND_CUBE_WEST_UPPER_CRACK = 0,
-	POUND_CUBE_EAST_UPPER_CRACK = 11,
-	JOINED_HOLE                 = 4
+    POUND_CUBE_WEST_UPPER_CRACK = 0,
+    POUND_CUBE_EAST_UPPER_CRACK = 11,
+    JOINED_HOLE                 = 4
 };
 
 extern Sint16 DehkanPlateauFullMetalVestChestCrumblingPillars[];
@@ -354,23 +354,23 @@ extern Sint16 DehkanPlateauTightropesPillars[];
 // Talking to Cannon in his cave starts the battle with him.
 void          scDehkanPlateauFightCannon(void)
 {
-	syGameFlagSet(FLAG_CANNON_MET);
-	fdRequestDjinnBattle(ACTOR_CANNON, DJINNI_CANNON);
+    syGameFlagSet(FLAG_CANNON_MET);
+    fdRequestDjinnBattle(ACTOR_CANNON, DJINNI_CANNON);
 }
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SceneEntrances;
+    return SceneEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
 {
-	return 0;
+    return 0;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SceneExits;
+    return SceneExits;
 }
 
 extern ACTOR_PLACE DehkanPlateauPlacements[];
@@ -390,131 +390,131 @@ extern CUE         DehkanPlateauCannonCues[];
 
 const Uint8       *scGetActorPlacements(void)
 {
-	Sint16 scene = MainRoutineStateWork.next;
+    Sint16 scene = MainRoutineStateWork.next;
 
-	if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-		return DehkanPlateauFullMetalVestChestPlacements;
-	if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-		return DehkanPlateauThemisAxeChestPlacements;
-	if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-		return DehkanPlateauTightropesPlacements;
-	if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
-		return DehkanPlateauMintChestPlacements;
-	if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-		return DehkanPlateauPoundCubePlacements;
-	if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
-		return DehkanPlateauCannonPlacements;
-	return DehkanPlateauPlacements;
+    if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+        return DehkanPlateauFullMetalVestChestPlacements;
+    if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
+        return DehkanPlateauThemisAxeChestPlacements;
+    if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+        return DehkanPlateauTightropesPlacements;
+    if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
+        return DehkanPlateauMintChestPlacements;
+    if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
+        return DehkanPlateauPoundCubePlacements;
+    if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
+        return DehkanPlateauCannonPlacements;
+    return DehkanPlateauPlacements;
 }
 
 const CUE *scGetCues(void)
 {
-	Sint16 scene = MainRoutineStateWork.next;
+    Sint16 scene = MainRoutineStateWork.next;
 
-	if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-		return DehkanPlateauFullMetalVestChestCues;
-	if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-		return DehkanPlateauThemisAxeChestCues;
-	if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-		return DehkanPlateauTightropesCues;
-	if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
-		return DehkanPlateauMintChestCues;
-	if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-		return DehkanPlateauPoundCubeCues;
-	if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
-		return DehkanPlateauCannonCues;
-	return DehkanPlateauCues;
+    if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+        return DehkanPlateauFullMetalVestChestCues;
+    if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
+        return DehkanPlateauThemisAxeChestCues;
+    if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+        return DehkanPlateauTightropesCues;
+    if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
+        return DehkanPlateauMintChestCues;
+    if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
+        return DehkanPlateauPoundCubeCues;
+    if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
+        return DehkanPlateauCannonCues;
+    return DehkanPlateauCues;
 }
 
 // Felix steps onto one of the three gray pillars of the first stretch: the first step cracks it,
 // and the next crumbles it under him.
 void scDehkanPlateauStepOnFullMetalVestChestPillars(void)
 {
-	scCrumblingPillarStep(DehkanPlateauFullMetalVestChestCrumblingPillars);
+    scCrumblingPillarStep(DehkanPlateauFullMetalVestChestCrumblingPillars);
 }
 
 // Gives the metatiles of four of the Themis Axe's stretch's crumbling pillars, while each stands,
 // the attributes of metatile (0, 0).
 void scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles(void)
 {
-	if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(1)) == 0)
-		fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 9, 18);
-	if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(2)) == 0)
-		fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 11, 18);
-	if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(8)) == 0)
-		fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 14, 28);
-	if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(9)) == 0)
-		fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 16, 28);
+    if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(1)) == 0)
+        fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 9, 18);
+    if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(2)) == 0)
+        fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 11, 18);
+    if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(8)) == 0)
+        fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 14, 28);
+    if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(9)) == 0)
+        fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 16, 28);
 }
 
 // Felix steps onto one of the gray pillars of the Themis Axe's stretch, which cracks and then
 // crumbles as in the first; on the low ones he is drawn behind the ledge.
 void scDehkanPlateauStepOnThemisAxeChestPillars(void)
 {
-	FIXED y;
+    FIXED y;
 
-	scCrumblingPillarStepWithStandIn(DehkanPlateauThemisAxeChestCrumblingPillars);
-	scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles();
-	y = fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed;
-	if (y < toFIXED(8))
-	{
-		fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-			ACTOR_PRIORITY_AUTOMATIC;
-	}
+    scCrumblingPillarStepWithStandIn(DehkanPlateauThemisAxeChestCrumblingPillars);
+    scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles();
+    y = fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed;
+    if (y < toFIXED(8))
+    {
+        fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+        fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+            ACTOR_PRIORITY_AUTOMATIC;
+    }
 }
 
 // The same for two of the rope bridge's stretch's crumbling pillars, from metatile (63, 0).
 void scDehkanPlateauSetTightropesStandingPillarMetatiles(void)
 {
-	if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(1)) == 0)
-		fdMapGridCopyMetatileAttributes(63, 0, 1, 1, 50, 20);
-	if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(2)) == 0)
-		fdMapGridCopyMetatileAttributes(63, 0, 1, 1, 52, 20);
+    if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(1)) == 0)
+        fdMapGridCopyMetatileAttributes(63, 0, 1, 1, 50, 20);
+    if (syGameFlagGet(FLAG_PILLAR_CRUMBLED(2)) == 0)
+        fdMapGridCopyMetatileAttributes(63, 0, 1, 1, 52, 20);
 }
 
 // Felix steps onto one of the gray pillars of the rope bridge's stretch, which cracks and then
 // crumbles; below the ledge he is drawn behind it.
 void scDehkanPlateauStepOnTightropesPillars(void)
 {
-	scCrumblingPillarStep(DehkanPlateauTightropesCrumblingPillars);
-	scDehkanPlateauSetTightropesStandingPillarMetatiles();
-	if (fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed < -toFIXED(24))
-	{
-		fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-			ACTOR_PRIORITY_AUTOMATIC;
-	}
+    scCrumblingPillarStep(DehkanPlateauTightropesCrumblingPillars);
+    scDehkanPlateauSetTightropesStandingPillarMetatiles();
+    if (fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed < -toFIXED(24))
+    {
+        fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+        fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+            ACTOR_PRIORITY_AUTOMATIC;
+    }
 }
 
 // Felix steps onto the gray pillar in Cannon's cave, which cracks and then crumbles; once he is up
 // on it he no longer counts as on the cave's lower floor (scDehkanPlateauLeaveLowerPath).
 void scDehkanPlateauStepOnCannonPillar(void)
 {
-	FIXED y;
+    FIXED y;
 
-	scCrumblingPillarStep(DehkanPlateauCannonCrumblingPillar);
-	y = fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed;
-	if (y < toFIXED(24))
-		scDehkanPlateauLeaveLowerPath();
+    scCrumblingPillarStep(DehkanPlateauCannonCrumblingPillar);
+    y = fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed;
+    if (y < toFIXED(24))
+        scDehkanPlateauLeaveLowerPath();
 }
 
 // Draws (show 1) or stops drawing the unseen blocks of the room the party is in.
 void scDehkanPlateauSetBlocksShown(Sint32 show)
 {
-	Sint16 scene = MainRoutineStateWork.next;
+    Sint16 scene = MainRoutineStateWork.next;
 
-	if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-		scActorsSetDrawn(
-			show, ACTOR_FULL_METAL_VEST_CHEST_FIRST_BLOCK, FULL_METAL_VEST_CHEST_BLOCK_COUNT);
-	else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-		scActorsSetDrawn(show, ACTOR_THEMIS_AXE_CHEST_FIRST_BLOCK, THEMIS_AXE_CHEST_BLOCK_COUNT);
-	else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-		scActorsSetDrawn(show, ACTOR_TIGHTROPES_FIRST_BLOCK, TIGHTROPES_BLOCK_COUNT);
-	else if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
-		scActorsSetDrawn(show, ACTOR_MINT_CHEST_FIRST_BLOCK, MINT_CHEST_BLOCK_COUNT);
-	else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
-		scActorsSetDrawn(show, ACTOR_CANNON_ROOM_FIRST_BLOCK, CANNON_ROOM_BLOCK_COUNT);
+    if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+        scActorsSetDrawn(
+            show, ACTOR_FULL_METAL_VEST_CHEST_FIRST_BLOCK, FULL_METAL_VEST_CHEST_BLOCK_COUNT);
+    else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
+        scActorsSetDrawn(show, ACTOR_THEMIS_AXE_CHEST_FIRST_BLOCK, THEMIS_AXE_CHEST_BLOCK_COUNT);
+    else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+        scActorsSetDrawn(show, ACTOR_TIGHTROPES_FIRST_BLOCK, TIGHTROPES_BLOCK_COUNT);
+    else if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
+        scActorsSetDrawn(show, ACTOR_MINT_CHEST_FIRST_BLOCK, MINT_CHEST_BLOCK_COUNT);
+    else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
+        scActorsSetDrawn(show, ACTOR_CANNON_ROOM_FIRST_BLOCK, CANNON_ROOM_BLOCK_COUNT);
 }
 
 // Nothing visible happens when Felix steps onto the metatiles that run this, at the foot of a cliff
@@ -531,8 +531,8 @@ void scDehkanPlateauSetBlocksShown(Sint32 show)
 // ground hides him, not the blocks.
 void scDehkanPlateauShowBlocks(void)
 {
-	scDehkanPlateauSetBlocksShown(1);
-	syGameFlagSet(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
+    scDehkanPlateauSetBlocksShown(1);
+    syGameFlagSet(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
 }
 
 // Nothing visible happens when Felix steps onto the metatiles beside those of
@@ -541,8 +541,8 @@ void scDehkanPlateauShowBlocks(void)
 // again.
 void scDehkanPlateauHideBlocks(void)
 {
-	scDehkanPlateauSetBlocksShown(0);
-	syGameFlagClear(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
+    scDehkanPlateauSetBlocksShown(0);
+    syGameFlagClear(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
 }
 
 #include "shared/actors_set_hidden.c"
@@ -550,33 +550,33 @@ void scDehkanPlateauHideBlocks(void)
 // Pound on the stake in the first stretch sinks it into the ground.
 void scDehkanPlateauPoundFullMetalVestChestStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauFullMetalVestChestStakes, mode, frame);
+    fdPoundSinkTarget(DehkanPlateauFullMetalVestChestStakes, mode, frame);
 }
 
 // Pound on the stake in the Themis Axe's stretch sinks it into the ground.
 void scDehkanPlateauPoundThemisAxeChestStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauThemisAxeChestStakes, mode, frame);
+    fdPoundSinkTarget(DehkanPlateauThemisAxeChestStakes, mode, frame);
 }
 
 // Pound on the stake by the rope bridge, if Cannon has not already sunk it, sinks it into the
 // ground.
 void scDehkanPlateauPoundTightropesStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauTightropesStakes, mode, frame);
+    fdPoundSinkTarget(DehkanPlateauTightropesStakes, mode, frame);
 }
 
 // Pound on the stake in the cave where Cannon drops the Pound Cube sinks it into the ground.
 void scDehkanPlateauPoundPoundCubeStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauPoundCubeStakes, mode, frame);
+    fdPoundSinkTarget(DehkanPlateauPoundCubeStakes, mode, frame);
 }
 
 // Pound on the stake in Cannon's cave, from the lower floor below his ledge, sinks it into the
 // ground: with it gone Cannon has nothing to leap onto and is cornered.
 void scDehkanPlateauPoundCannonStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauCannonStakes, mode, frame);
+    fdPoundSinkTarget(DehkanPlateauCannonStakes, mode, frame);
 }
 
 #include "shared/actor_drop_and_wait.h"
@@ -585,174 +585,174 @@ void scDehkanPlateauPoundCannonStake(Sint32 mode, Sint32 frame)
 // stays there, bridging it (FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP).
 void scDehkanPlateauDropFullMetalVestChestPillarIntoGap(void)
 {
-	ACTOR *actor = fdActorGetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
-	Sint32 x;
+    ACTOR *actor = fdActorGetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
+    Sint32 x;
 
-	x = FIELD_METATILE(actor->x.fixed);
-	if (x == 56 && FIELD_METATILE(actor->z.fixed) == 32)
-	{
-		fdScriptStart();
-		fdScriptEndLastingPsynergy(0);
-		fdActorDropAndWait(actor);
-		fdMapCopyMetatileAttributeRect(54, 32, 2, 1, x, 64);
-		syGameFlagSet(FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP);
-		fdScriptEnd();
-	}
+    x = FIELD_METATILE(actor->x.fixed);
+    if (x == 56 && FIELD_METATILE(actor->z.fixed) == 32)
+    {
+        fdScriptStart();
+        fdScriptEndLastingPsynergy(0);
+        fdActorDropAndWait(actor);
+        fdMapCopyMetatileAttributeRect(54, 32, 2, 1, x, 64);
+        syGameFlagSet(FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP);
+        fdScriptEnd();
+    }
 }
 
 // Move takes hold of the Themis Axe's stretch's stone pillar.
 void scDehkanPlateauLiftThemisAxeChestPillar(void)
 {
-	fdActorLiftTargetBlock(DehkanPlateauThemisAxeChestPillars);
+    fdActorLiftTargetBlock(DehkanPlateauThemisAxeChestPillars);
 }
 
 // Moved or pushed to the gap's edge in the Themis Axe's stretch, the stone pillar drops into the
 // gap for good, bridging it (FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED).
 void scDehkanPlateauPlaceThemisAxeChestPillar(void)
 {
-	ACTOR *actor = fdActorGetById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
-	Sint32 x     = FIELD_METATILE(actor->x.fixed);
+    ACTOR *actor = fdActorGetById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
+    Sint32 x     = FIELD_METATILE(actor->x.fixed);
 
-	fdActorPlaceMovedBlock();
-	if (x == 52)
-	{
-		fdScriptStart();
-		fdScriptEndLastingPsynergy(0);
-		fdMapCopyMetatileAttributeRect(51, 7, 1, 1, x, 7);
-		sySynch(1);
-		fdActorDropAndWait(actor);
-		fdMapCopyMetatileAttributeRect(50, 7, 1, 1, x, 7);
-		syGameFlagSet(FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED);
-		fdScriptEnd();
-	}
+    fdActorPlaceMovedBlock();
+    if (x == 52)
+    {
+        fdScriptStart();
+        fdScriptEndLastingPsynergy(0);
+        fdMapCopyMetatileAttributeRect(51, 7, 1, 1, x, 7);
+        sySynch(1);
+        fdActorDropAndWait(actor);
+        fdMapCopyMetatileAttributeRect(50, 7, 1, 1, x, 7);
+        syGameFlagSet(FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED);
+        fdScriptEnd();
+    }
 }
 
 // Move takes hold of the rope bridge's stretch's stone pillar.
 void scDehkanPlateauLiftTightropesPillar(void)
 {
-	fdActorLiftTargetBlock(DehkanPlateauTightropesPillars);
+    fdActorLiftTargetBlock(DehkanPlateauTightropesPillars);
 }
 
 // Moved or pushed to the gap's edge on the raised ground of the rope bridge's stretch, the stone
 // pillar drops into the gap below.
 void scDehkanPlateauPlaceTightropesPillar(void)
 {
-	ACTOR *actor = fdActorGetById(ACTOR_TIGHTROPES_PILLAR);
-	Sint32 x     = FIELD_METATILE(actor->x.fixed);
+    ACTOR *actor = fdActorGetById(ACTOR_TIGHTROPES_PILLAR);
+    Sint32 x     = FIELD_METATILE(actor->x.fixed);
 
-	fdActorPlaceMovedBlock();
-	if (x == 47)
-	{
-		fdScriptStart();
-		fdScriptEndLastingPsynergy(0);
-		fdMapCopyMetatileAttributeRect(47, 12, 1, 1, x, 13);
-		sySynch(1);
-		fdActorDropAndWait(actor);
-		fdMapCopyMetatileAttributeRect(50, 16, 1, 1, x, 13);
-		fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 2);
-		fdScriptEnd();
-	}
-	else if (x == 46)
-	{
-		fdMapGridCopyMetatileAttributes(44, 13, 1, 1, 48, 13);
-	}
+    fdActorPlaceMovedBlock();
+    if (x == 47)
+    {
+        fdScriptStart();
+        fdScriptEndLastingPsynergy(0);
+        fdMapCopyMetatileAttributeRect(47, 12, 1, 1, x, 13);
+        sySynch(1);
+        fdActorDropAndWait(actor);
+        fdMapCopyMetatileAttributeRect(50, 16, 1, 1, x, 13);
+        fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 2);
+        fdScriptEnd();
+    }
+    else if (x == 46)
+    {
+        fdMapGridCopyMetatileAttributes(44, 13, 1, 1, 48, 13);
+    }
 }
 
 // Puts the rope bridge's stretch's second stone pillar a column west, off the vine it stood before,
 // with the metatiles that let it be walked over and the vine climbed.
 void scDehkanPlateauSetTightropesSecondPillarInPlace(void)
 {
-	fdActorSetPos(ACTOR_TIGHTROPES_SECOND_PILLAR, 600, 536);
-	fdMapGridCopyMetatileAttributes(38, 32, 1, 1, 37, 33);
-	fdMapGridCopyMetatileAttributes(30, 32, 1, 2, 38, 32);
-	fdMapGridCopyMetatileAttributes(40, 64, 4, 3, 36, 64);
-	syGameFlagSet(FLAG_TIGHTROPES_SECOND_PILLAR_PLACED);
+    fdActorSetPos(ACTOR_TIGHTROPES_SECOND_PILLAR, 600, 536);
+    fdMapGridCopyMetatileAttributes(38, 32, 1, 1, 37, 33);
+    fdMapGridCopyMetatileAttributes(30, 32, 1, 2, 38, 32);
+    fdMapGridCopyMetatileAttributes(40, 64, 4, 3, 36, 64);
+    syGameFlagSet(FLAG_TIGHTROPES_SECOND_PILLAR_PLACED);
 }
 
 // Move on the rope bridge's stretch's second stone pillar: a column west, it settles there.
 void scDehkanPlateauMoveTightropesSecondPillar(void)
 {
-	if (FIELD_METATILE(fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->x.fixed) == 37)
-		scDehkanPlateauSetTightropesSecondPillarInPlace();
+    if (FIELD_METATILE(fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->x.fixed) == 37)
+        scDehkanPlateauSetTightropesSecondPillarInPlace();
 }
 
 // Walking west into the rope bridge's stretch's second stone pillar pushes it a column west.
 void scDehkanPlateauPushTightropesSecondPillar(void)
 {
-	Uint8 *flags;
+    Uint8 *flags;
 
-	if (FIELD_METATILE(fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->x.fixed) == 38)
-	{
-		flags = &fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags;
-		fdScriptStart();
-		fdScriptEndLastingPsynergy(0);
-		*flags = 0;
-		sySynch(1);
-		fdLeaderPushObjectAhead();
-		scDehkanPlateauSetTightropesSecondPillarInPlace();
-		sySynch(1);
-		*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		fdScriptEnd();
-	}
+    if (FIELD_METATILE(fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->x.fixed) == 38)
+    {
+        flags = &fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags;
+        fdScriptStart();
+        fdScriptEndLastingPsynergy(0);
+        *flags = 0;
+        sySynch(1);
+        fdLeaderPushObjectAhead();
+        scDehkanPlateauSetTightropesSecondPillarInPlace();
+        sySynch(1);
+        *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+        fdScriptEnd();
+    }
 }
 
 // Stepping off a crack opened on this visit lets it be stepped on again.
 void scDehkanPlateauStepOffCrack(void)
 {
-	syGameFlagClear(FLAG_STANDING_ON_OPENED_CRACK);
+    syGameFlagClear(FLAG_STANDING_ON_OPENED_CRACK);
 }
 
 // Forgets which crack the party fell through.
 void scDehkanPlateauForgetFall(void)
 {
-	Sint32 flag;
+    Sint32 flag;
 
-	flag = FLAG_FELL_THROUGH_FIRST;
-	while (1)
-	{
-		syGameFlagClear(flag);
-		if (flag == FLAG_FELL_THROUGH_LAST)
-			return;
-		flag++;
-	}
+    flag = FLAG_FELL_THROUGH_FIRST;
+    while (1)
+    {
+        syGameFlagClear(flag);
+        if (flag == FLAG_FELL_THROUGH_LAST)
+            return;
+        flag++;
+    }
 }
 
 // Defines a function that restores a stretch's count cracks, listed in cracks and drawn open with
 // pictures: on a return the opened ones are drawn open; otherwise each crack listed as cracked sets
 // its flag, and the fall is forgotten.
 #define DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(name, cracks, count, pictures)                        \
-	void name(void)                                                                                \
-	{                                                                                              \
-		const Uint16 *metatile = &cracks[0][CRACK_STARTS_CRACKED];                                 \
-		Sint32        flag     = FLAG_CRACK_OPENED_FIRST;                                          \
-		Uint32        i;                                                                           \
+    void name(void)                                                                                \
+    {                                                                                              \
+        const Uint16 *metatile = &cracks[0][CRACK_STARTS_CRACKED];                                 \
+        Sint32        flag     = FLAG_CRACK_OPENED_FIRST;                                          \
+        Uint32        i;                                                                           \
                                                                                                    \
-		for (i = 0; i < count; i++)                                                                \
-		{                                                                                          \
-			if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)                                      \
-			{                                                                                      \
-				if (syGameFlagGet(flag) != 0)                                                      \
-				{                                                                                  \
-					Sint32 x;                                                                      \
-					Sint32 y;                                                                      \
+        for (i = 0; i < count; i++)                                                                \
+        {                                                                                          \
+            if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)                                      \
+            {                                                                                      \
+                if (syGameFlagGet(flag) != 0)                                                      \
+                {                                                                                  \
+                    Sint32 x;                                                                      \
+                    Sint32 y;                                                                      \
                                                                                                    \
-					metatile = &cracks[i][CRACK_X];                                                \
-					x        = *metatile++;                                                        \
-					y        = *metatile++;                                                        \
-					fdMapGridCopyMetatileTilesIndicesRect(pictures[0], pictures[1], x, y, 1, 1);   \
-				}                                                                                  \
-			}                                                                                      \
-			else                                                                                   \
-			{                                                                                      \
-				if (*metatile != 0)                                                                \
-					syGameFlagSet(flag);                                                           \
-				metatile += CRACK_FIELDS;                                                          \
-			}                                                                                      \
-			flag++;                                                                                \
-		}                                                                                          \
-		if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)                                          \
-			scDehkanPlateauForgetFall();                                                           \
-	}
+                    metatile = &cracks[i][CRACK_X];                                                \
+                    x        = *metatile++;                                                        \
+                    y        = *metatile++;                                                        \
+                    fdMapGridCopyMetatileTilesIndicesRect(pictures[0], pictures[1], x, y, 1, 1);   \
+                }                                                                                  \
+            }                                                                                      \
+            else                                                                                   \
+            {                                                                                      \
+                if (*metatile != 0)                                                                \
+                    syGameFlagSet(flag);                                                           \
+                metatile += CRACK_FIELDS;                                                          \
+            }                                                                                      \
+            flag++;                                                                                \
+        }                                                                                          \
+        if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)                                          \
+            scDehkanPlateauForgetFall();                                                           \
+    }
 
 // Restores the first stretch's fourteen cracks: on a return the opened ones are drawn open,
 // otherwise each listed crack starts its flag.
@@ -783,37 +783,37 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(scDehkanPlateauRestoreTightropesCracks,
 // cracks.
 void scDehkanPlateauRestorePoundCubeCracks(void)
 {
-	Uint16 *record = &DehkanPlateauPoundCubeCracks[0][CRACK_STARTS_CRACKED];
-	Sint32  flag   = FLAG_CRACK_OPENED_FIRST;
-	Uint32  i;
+    Uint16 *record = &DehkanPlateauPoundCubeCracks[0][CRACK_STARTS_CRACKED];
+    Sint32  flag   = FLAG_CRACK_OPENED_FIRST;
+    Uint32  i;
 
-	for (i = 0; i < POUND_CUBE_CRACKS; flag++, i++)
-	{
-		if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-		{
-			if (syGameFlagGet(flag))
-			{
-				Sint32 x;
-				Sint32 y;
+    for (i = 0; i < POUND_CUBE_CRACKS; flag++, i++)
+    {
+        if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+        {
+            if (syGameFlagGet(flag))
+            {
+                Sint32 x;
+                Sint32 y;
 
-				record = &DehkanPlateauPoundCubeCracks[i][CRACK_X];
-				x      = *record++;
-				y      = *record++;
-				fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauPoundCubeCrackPictures[0],
-				                                      DehkanPlateauPoundCubeCrackPictures[1],
-				                                      x,
-				                                      y,
-				                                      1,
-				                                      1);
-			}
-		}
-		else
-		{
-			if (*record != 0)
-				syGameFlagSet(flag);
-			record += CRACK_FIELDS;
-		}
-	}
+                record = &DehkanPlateauPoundCubeCracks[i][CRACK_X];
+                x      = *record++;
+                y      = *record++;
+                fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauPoundCubeCrackPictures[0],
+                                                      DehkanPlateauPoundCubeCrackPictures[1],
+                                                      x,
+                                                      y,
+                                                      1,
+                                                      1);
+            }
+        }
+        else
+        {
+            if (*record != 0)
+                syGameFlagSet(flag);
+            record += CRACK_FIELDS;
+        }
+    }
 }
 
 // The metatile of the crack the leader has just opened, in the rope bridge's stretch and the Pound
@@ -827,257 +827,257 @@ Sint32 DehkanPlateauCrackX BSS_DATA;
 // he drops into the cave below, by the exit of the crack's number.
 void                       scDehkanPlateauStepOnCrack(void)
 {
-	FIELD_STATE *state     = RamHeapSlots->fieldState;
-	ACTOR       *leader    = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint32       metatileX = (FIELD_METATILE(leader->x.fixed) << 1) + 1;
-	Sint32       metatileZ = (FIELD_METATILE(leader->z.fixed) << 1) + 1;
-	Sint32       n, flag;
-	Uint16      *record, *next;
+    FIELD_STATE *state     = RamHeapSlots->fieldState;
+    ACTOR       *leader    = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    Sint32       metatileX = (FIELD_METATILE(leader->x.fixed) << 1) + 1;
+    Sint32       metatileZ = (FIELD_METATILE(leader->z.fixed) << 1) + 1;
+    Sint32       n, flag;
+    Uint16      *record, *next;
 
-	if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-	{
-		n      = state->stepCue - CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK;
-		flag   = FLAG_CRACK_OPENED_FIRST + n;
-		record = &DehkanPlateauFullMetalVestChestCracks[n][CRACK_X];
-	}
-	else if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-	{
-		n      = state->stepCue - CUE_THEMIS_AXE_CHEST_FIRST_CRACK;
-		flag   = FLAG_CRACK_OPENED_FIRST + n;
-		record = &DehkanPlateauThemisAxeChestCracks[n][CRACK_X];
-	}
-	else if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-	{
-		n      = state->stepCue - CUE_TIGHTROPES_FIRST_CRACK;
-		flag   = FLAG_CRACK_OPENED_FIRST + n;
-		record = &DehkanPlateauTightropesCracks[n][CRACK_X];
-	}
-	else if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-	{
-		n      = state->stepCue - CUE_POUND_CUBE_FIRST_CRACK;
-		flag   = FLAG_CRACK_OPENED_FIRST + n;
-		record = &DehkanPlateauPoundCubeCracks[n][CRACK_X];
-		if (syGameFlagGet(
-				FLAG_FELL_THROUGH(DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH)))
-			// Once the party has fallen in beside Cannon, the fifth crack's hole is drawn with the
-			// fourth hole picture instead of the first.
-			DehkanPlateauPoundCubeCracks[4][CRACK_HOLE] = 3;
-	}
-	else
-	{
-		return;
-	}
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 4);
-	fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId, metatileX << 3, metatileZ << 3);
-	fdActorSetPosAndResetMotion(
-		leader, toFIXED(metatileX * 8), leader->y.fixed, toFIXED(metatileZ * 8));
-	fdScriptWait(4);
-	fdCameraGetActor()->y.fixed -= toFIXED(8);
-	next                         = record + 1;
-	if (syGameFlagGet(flag))
-	{
-		Sint32 x, y, index, toX, toZ;
+    if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+    {
+        n      = state->stepCue - CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK;
+        flag   = FLAG_CRACK_OPENED_FIRST + n;
+        record = &DehkanPlateauFullMetalVestChestCracks[n][CRACK_X];
+    }
+    else if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
+    {
+        n      = state->stepCue - CUE_THEMIS_AXE_CHEST_FIRST_CRACK;
+        flag   = FLAG_CRACK_OPENED_FIRST + n;
+        record = &DehkanPlateauThemisAxeChestCracks[n][CRACK_X];
+    }
+    else if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+    {
+        n      = state->stepCue - CUE_TIGHTROPES_FIRST_CRACK;
+        flag   = FLAG_CRACK_OPENED_FIRST + n;
+        record = &DehkanPlateauTightropesCracks[n][CRACK_X];
+    }
+    else if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
+    {
+        n      = state->stepCue - CUE_POUND_CUBE_FIRST_CRACK;
+        flag   = FLAG_CRACK_OPENED_FIRST + n;
+        record = &DehkanPlateauPoundCubeCracks[n][CRACK_X];
+        if (syGameFlagGet(
+                FLAG_FELL_THROUGH(DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH)))
+            // Once the party has fallen in beside Cannon, the fifth crack's hole is drawn with the
+            // fourth hole picture instead of the first.
+            DehkanPlateauPoundCubeCracks[4][CRACK_HOLE] = 3;
+    }
+    else
+    {
+        return;
+    }
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 4);
+    fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId, metatileX << 3, metatileZ << 3);
+    fdActorSetPosAndResetMotion(
+        leader, toFIXED(metatileX * 8), leader->y.fixed, toFIXED(metatileZ * 8));
+    fdScriptWait(4);
+    fdCameraGetActor()->y.fixed -= toFIXED(8);
+    next                         = record + 1;
+    if (syGameFlagGet(flag))
+    {
+        Sint32 x, y, index, toX, toZ;
 
-		sySoundPlay(SE_SPLASH);
-		x      = *record;
-		record = next;
-		{
-			Sint16 scene = MainRoutineStateWork.next;
-			y            = *record++;
-			if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-				fdMapGridCopyMetatileTilesIndicesRect(
-					DehkanPlateauFullMetalVestChestCrackPictures[2],
-					DehkanPlateauFullMetalVestChestCrackPictures[3],
-					x,
-					y,
-					1,
-					1);
-			else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-				fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauThemisAxeChestCrackPictures[2],
-				                                      DehkanPlateauThemisAxeChestCrackPictures[3],
-				                                      x,
-				                                      y,
-				                                      1,
-				                                      1);
-			else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-				fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauTightropesCrackPictures[2],
-				                                      DehkanPlateauTightropesCrackPictures[3],
-				                                      x,
-				                                      y,
-				                                      1,
-				                                      1);
-			else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-				fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauPoundCubeCrackPictures[2],
-				                                      DehkanPlateauPoundCubeCrackPictures[3],
-				                                      x,
-				                                      y,
-				                                      1,
-				                                      1);
-		}
-		// The rest of the crack's record: its hole picture and where it is drawn.
-		index     = *record++;
-		metatileX = index * 2;
-		toX       = record[0];
-		toZ       = record[1];
-		{
-			Sint16 scene = MainRoutineStateWork.next;
-			if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-			{
-				{
-					Sint32 srcX  = DehkanPlateauFullMetalVestChestHolePictures[metatileX],
-						   srcY  = DehkanPlateauFullMetalVestChestHolePictures[metatileX + 1],
-						   width = 1, height = 2;
-					fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
-				}
-			}
-			else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-			{
-				{
-					Sint32 srcX = DehkanPlateauThemisAxeChestHolePictures[metatileX],
-						   srcY = DehkanPlateauThemisAxeChestHolePictures[metatileX + 1], width = 1,
-						   height = 2;
-					fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
-				}
-			}
-			else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-			{
-				{
-					Sint32 srcX = DehkanPlateauTightropesHolePictures[metatileX],
-						   srcY = DehkanPlateauTightropesHolePictures[metatileX + 1], width = 1,
-						   height = 2;
-					fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
-				}
-			}
-			else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-			{
-				if ((n == POUND_CUBE_WEST_UPPER_CRACK
-				     && syGameFlagGet(FLAG_CRACK_OPENED(POUND_CUBE_WEST_UPPER_CRACK + 1)))
-				    || (n == POUND_CUBE_EAST_UPPER_CRACK
-				        && syGameFlagGet(FLAG_CRACK_OPENED(POUND_CUBE_EAST_UPPER_CRACK + 1))))
-				{
-					Sint32 srcX  = DehkanPlateauPoundCubeHolePictures[2 * JOINED_HOLE],
-						   srcY  = DehkanPlateauPoundCubeHolePictures[2 * JOINED_HOLE + 1],
-						   width = 1, height = 2;
-					fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
-				}
-				else
-				{
-					Sint32 srcX = DehkanPlateauPoundCubeHolePictures[metatileX],
-						   srcY = DehkanPlateauPoundCubeHolePictures[metatileX + 1], width = 1,
-						   height = 2;
-					fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
-				}
-			}
-		}
-		fdScriptWait(12);
-		leader->facing      = FACING_SOUTH;
-		leader->motionFlags = 0;
-		fdActorSetSpriteFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
-		{
-			Sint16 scene = MainRoutineStateWork.next;
-			if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-			{
-				fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
-			}
-			else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST
-			         || scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-			{
-				fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
-			}
-			else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-			{
-				if (DehkanPlateauPoundCubeWork != NULL)
-					((FIELD_SPR *)DehkanPlateauPoundCubeWork->sprite)->priority = 3;
-				fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
-			}
-		}
-		fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
-		fdScriptWait(16);
-		// metatileX, done with the leader's metatile, counts the fall's ticks.
-		for (metatileX = 0; (Uint32)metatileX < FALL_TICKS; metatileX++)
-		{
-			if (metatileX == 5)
-				sySoundPlay(SE_DUST_PUFF);
-			leader->scaleX  += -(toFIXED(1) / 64);
-			leader->scaleY  += -(toFIXED(3) / 256);
-			leader->y.fixed += -(toFIXED(3) / 5);
-			sySynch(1);
-		}
-		FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionTicks();
-		syImportScriptSetExitRequest(state->stepCue);
-	}
-	else
-	{
-		Sint32 x, y;
+        sySoundPlay(SE_SPLASH);
+        x      = *record;
+        record = next;
+        {
+            Sint16 scene = MainRoutineStateWork.next;
+            y            = *record++;
+            if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+                fdMapGridCopyMetatileTilesIndicesRect(
+                    DehkanPlateauFullMetalVestChestCrackPictures[2],
+                    DehkanPlateauFullMetalVestChestCrackPictures[3],
+                    x,
+                    y,
+                    1,
+                    1);
+            else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
+                fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauThemisAxeChestCrackPictures[2],
+                                                      DehkanPlateauThemisAxeChestCrackPictures[3],
+                                                      x,
+                                                      y,
+                                                      1,
+                                                      1);
+            else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+                fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauTightropesCrackPictures[2],
+                                                      DehkanPlateauTightropesCrackPictures[3],
+                                                      x,
+                                                      y,
+                                                      1,
+                                                      1);
+            else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
+                fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauPoundCubeCrackPictures[2],
+                                                      DehkanPlateauPoundCubeCrackPictures[3],
+                                                      x,
+                                                      y,
+                                                      1,
+                                                      1);
+        }
+        // The rest of the crack's record: its hole picture and where it is drawn.
+        index     = *record++;
+        metatileX = index * 2;
+        toX       = record[0];
+        toZ       = record[1];
+        {
+            Sint16 scene = MainRoutineStateWork.next;
+            if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+            {
+                {
+                    Sint32 srcX  = DehkanPlateauFullMetalVestChestHolePictures[metatileX],
+                           srcY  = DehkanPlateauFullMetalVestChestHolePictures[metatileX + 1],
+                           width = 1, height = 2;
+                    fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
+                }
+            }
+            else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
+            {
+                {
+                    Sint32 srcX = DehkanPlateauThemisAxeChestHolePictures[metatileX],
+                           srcY = DehkanPlateauThemisAxeChestHolePictures[metatileX + 1], width = 1,
+                           height = 2;
+                    fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
+                }
+            }
+            else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+            {
+                {
+                    Sint32 srcX = DehkanPlateauTightropesHolePictures[metatileX],
+                           srcY = DehkanPlateauTightropesHolePictures[metatileX + 1], width = 1,
+                           height = 2;
+                    fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
+                }
+            }
+            else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
+            {
+                if ((n == POUND_CUBE_WEST_UPPER_CRACK
+                     && syGameFlagGet(FLAG_CRACK_OPENED(POUND_CUBE_WEST_UPPER_CRACK + 1)))
+                    || (n == POUND_CUBE_EAST_UPPER_CRACK
+                        && syGameFlagGet(FLAG_CRACK_OPENED(POUND_CUBE_EAST_UPPER_CRACK + 1))))
+                {
+                    Sint32 srcX  = DehkanPlateauPoundCubeHolePictures[2 * JOINED_HOLE],
+                           srcY  = DehkanPlateauPoundCubeHolePictures[2 * JOINED_HOLE + 1],
+                           width = 1, height = 2;
+                    fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
+                }
+                else
+                {
+                    Sint32 srcX = DehkanPlateauPoundCubeHolePictures[metatileX],
+                           srcY = DehkanPlateauPoundCubeHolePictures[metatileX + 1], width = 1,
+                           height = 2;
+                    fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
+                }
+            }
+        }
+        fdScriptWait(12);
+        leader->facing      = FACING_SOUTH;
+        leader->motionFlags = 0;
+        fdActorSetSpriteFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+        {
+            Sint16 scene = MainRoutineStateWork.next;
+            if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+            {
+                fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+            }
+            else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST
+                     || scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+            {
+                fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+            }
+            else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
+            {
+                if (DehkanPlateauPoundCubeWork != NULL)
+                    ((FIELD_SPR *)DehkanPlateauPoundCubeWork->sprite)->priority = 3;
+                fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+            }
+        }
+        fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
+        fdScriptWait(16);
+        // metatileX, done with the leader's metatile, counts the fall's ticks.
+        for (metatileX = 0; (Uint32)metatileX < FALL_TICKS; metatileX++)
+        {
+            if (metatileX == 5)
+                sySoundPlay(SE_DUST_PUFF);
+            leader->scaleX  += -(toFIXED(1) / 64);
+            leader->scaleY  += -(toFIXED(3) / 256);
+            leader->y.fixed += -(toFIXED(3) / 5);
+            sySynch(1);
+        }
+        FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        fdScriptFinishScreenTransition();
+        fdScriptWaitTransitionTicks();
+        syImportScriptSetExitRequest(state->stepCue);
+    }
+    else
+    {
+        Sint32 x, y;
 
-		sySoundPlay(SE_RATTLE);
-		y = *next;
-		x = *record;
-		{
-			Sint16 scene = MainRoutineStateWork.next;
-			if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-				fdMapGridCopyMetatileTilesIndicesRect(
-					DehkanPlateauFullMetalVestChestCrackPictures[0],
-					DehkanPlateauFullMetalVestChestCrackPictures[1],
-					x,
-					y,
-					1,
-					1);
-			else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-				fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauThemisAxeChestCrackPictures[0],
-				                                      DehkanPlateauThemisAxeChestCrackPictures[1],
-				                                      x,
-				                                      y,
-				                                      1,
-				                                      1);
-			else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-				fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauTightropesCrackPictures[0],
-				                                      DehkanPlateauTightropesCrackPictures[1],
-				                                      x,
-				                                      y,
-				                                      1,
-				                                      1);
-			else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-				fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauPoundCubeCrackPictures[0],
-				                                      DehkanPlateauPoundCubeCrackPictures[1],
-				                                      x,
-				                                      y,
-				                                      1,
-				                                      1);
-		}
-		fdScriptWait(12);
-		syGameFlagSet(flag);
-		syGameFlagSet(FLAG_STANDING_ON_OPENED_CRACK);
-		{
-			Sint16 scene = MainRoutineStateWork.next;
-			if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE
-			    || scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-			{
-				DehkanPlateauCrackX = FIELD_METATILE(leader->x.fixed);
-				DehkanPlateauCrackZ = FIELD_METATILE(leader->z.fixed);
-			}
-		}
-		fdScriptEnd();
-	}
+        sySoundPlay(SE_RATTLE);
+        y = *next;
+        x = *record;
+        {
+            Sint16 scene = MainRoutineStateWork.next;
+            if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+                fdMapGridCopyMetatileTilesIndicesRect(
+                    DehkanPlateauFullMetalVestChestCrackPictures[0],
+                    DehkanPlateauFullMetalVestChestCrackPictures[1],
+                    x,
+                    y,
+                    1,
+                    1);
+            else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
+                fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauThemisAxeChestCrackPictures[0],
+                                                      DehkanPlateauThemisAxeChestCrackPictures[1],
+                                                      x,
+                                                      y,
+                                                      1,
+                                                      1);
+            else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+                fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauTightropesCrackPictures[0],
+                                                      DehkanPlateauTightropesCrackPictures[1],
+                                                      x,
+                                                      y,
+                                                      1,
+                                                      1);
+            else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
+                fdMapGridCopyMetatileTilesIndicesRect(DehkanPlateauPoundCubeCrackPictures[0],
+                                                      DehkanPlateauPoundCubeCrackPictures[1],
+                                                      x,
+                                                      y,
+                                                      1,
+                                                      1);
+        }
+        fdScriptWait(12);
+        syGameFlagSet(flag);
+        syGameFlagSet(FLAG_STANDING_ON_OPENED_CRACK);
+        {
+            Sint16 scene = MainRoutineStateWork.next;
+            if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE
+                || scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+            {
+                DehkanPlateauCrackX = FIELD_METATILE(leader->x.fixed);
+                DehkanPlateauCrackZ = FIELD_METATILE(leader->z.fixed);
+            }
+        }
+        fdScriptEnd();
+    }
 }
 
 // The rope bridge's stretch's and the Pound Cube's cave's event: once the leader steps off the
 // crack he opened, it can be stepped on again.
 void scDehkanPlateauForgetCrackOnLeaving(void)
 {
-	ACTOR *actor;
+    ACTOR *actor;
 
-	if (fdScriptGetFlag(FLAG_STANDING_ON_OPENED_CRACK) != 0)
-	{
-		actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
-		if (DehkanPlateauCrackX != FIELD_METATILE(actor->x.fixed)
-		    || DehkanPlateauCrackZ != FIELD_METATILE(actor->z.fixed))
-			syGameFlagClear(FLAG_STANDING_ON_OPENED_CRACK);
-	}
+    if (fdScriptGetFlag(FLAG_STANDING_ON_OPENED_CRACK) != 0)
+    {
+        actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
+        if (DehkanPlateauCrackX != FIELD_METATILE(actor->x.fixed)
+            || DehkanPlateauCrackZ != FIELD_METATILE(actor->z.fixed))
+            syGameFlagClear(FLAG_STANDING_ON_OPENED_CRACK);
+    }
 }
 
 #include "shared/actor_hide.h"
@@ -1086,65 +1086,65 @@ void scDehkanPlateauForgetCrackOnLeaving(void)
 // shown; otherwise notes them shown.
 void scDehkanPlateauRestoreBlocks(void)
 {
-	if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)
-	{
-		if (syGameFlagGet(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN) == 0)
-			scDehkanPlateauHideBlocks();
-	}
-	else
-	{
-		syGameFlagSet(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
-	}
+    if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)
+    {
+        if (syGameFlagGet(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN) == 0)
+            scDehkanPlateauHideBlocks();
+    }
+    else
+    {
+        syGameFlagSet(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
+    }
 }
 
 // Hides the first stretch's unseen blocks as it opens.
 void scDehkanPlateauHideFullMetalVestChestBlocks(void)
 {
-	Uint32 i;
+    Uint32 i;
 
-	for (i = 0; i < FULL_METAL_VEST_CHEST_BLOCK_COUNT; i++)
-		scActorHide(i + ACTOR_FULL_METAL_VEST_CHEST_FIRST_BLOCK);
-	scDehkanPlateauRestoreBlocks();
+    for (i = 0; i < FULL_METAL_VEST_CHEST_BLOCK_COUNT; i++)
+        scActorHide(i + ACTOR_FULL_METAL_VEST_CHEST_FIRST_BLOCK);
+    scDehkanPlateauRestoreBlocks();
 }
 
 // Hides the Themis Axe's stretch's unseen blocks as it opens.
 void scDehkanPlateauHideThemisAxeChestBlocks(void)
 {
-	Uint32 i;
+    Uint32 i;
 
-	for (i = 0; i < THEMIS_AXE_CHEST_BLOCK_COUNT; i++)
-		scActorHide(i + ACTOR_THEMIS_AXE_CHEST_FIRST_BLOCK);
-	scDehkanPlateauRestoreBlocks();
+    for (i = 0; i < THEMIS_AXE_CHEST_BLOCK_COUNT; i++)
+        scActorHide(i + ACTOR_THEMIS_AXE_CHEST_FIRST_BLOCK);
+    scDehkanPlateauRestoreBlocks();
 }
 
 // Hides the rope bridge's stretch's unseen blocks as it opens.
 void scDehkanPlateauHideTightropesBlocks(void)
 {
-	Uint32 i;
+    Uint32 i;
 
-	for (i = 0; i < TIGHTROPES_BLOCK_COUNT; i++)
-		scActorHide(i + ACTOR_TIGHTROPES_FIRST_BLOCK);
-	scDehkanPlateauRestoreBlocks();
+    for (i = 0; i < TIGHTROPES_BLOCK_COUNT; i++)
+        scActorHide(i + ACTOR_TIGHTROPES_FIRST_BLOCK);
+    scDehkanPlateauRestoreBlocks();
 }
 
 // Hides the unseen blocks of the caves below the cracks as they open.
 void scDehkanPlateauHideMintChestBlocks(void)
 {
-	Uint32 i;
+    Uint32 i;
 
-	for (i = 0; i < MINT_CHEST_BLOCK_COUNT; i++)
-		scActorHide(i + ACTOR_MINT_CHEST_FIRST_BLOCK);
-	scDehkanPlateauRestoreBlocks();
+    for (i = 0; i < MINT_CHEST_BLOCK_COUNT; i++)
+        scActorHide(i + ACTOR_MINT_CHEST_FIRST_BLOCK);
+    scDehkanPlateauRestoreBlocks();
 }
 
 // Hides Cannon's cave's unseen blocks as it opens.
 void scDehkanPlateauHideCannonBlocks(void)
 {
-	Uint32 i;
+    Uint32 i;
 
-	for (i = 0; i < CANNON_ROOM_BLOCK_COUNT; i++)
-		scActorHide(i + ACTOR_CANNON_ROOM_FIRST_BLOCK);
-	scDehkanPlateauRestoreBlocks();
+    for (i = 0; i < CANNON_ROOM_BLOCK_COUNT; i++)
+        scActorHide(i + ACTOR_CANNON_ROOM_FIRST_BLOCK);
+    scDehkanPlateauRestoreBlocks();
 }
 
 // Sets the metatiles under a vine pillar of the rope bridge's stretch once it is pushed or Moved:
@@ -1152,39 +1152,39 @@ void scDehkanPlateauHideCannonBlocks(void)
 // the way.
 void scDehkanPlateauPlaceVinePillar(ACTOR *actor)
 {
-	Sint32        x;
-	MAP_METATILE *metatile;
+    Sint32        x;
+    MAP_METATILE *metatile;
 
-	scHeldActorRaiseMetatile(actor);
-	x = FIELD_METATILE(actor->x.fixed);
-	if (x == 12)
-	{
-		fdScriptStart();
-		fdScriptEndLastingPsynergy(0);
-		fdMapCopyMetatileAttributeRect(0, 32, 1, 1, x, 11);
-		sySynch(1);
-		fdActorDropAndWait(actor);
-		fdMapCopyMetatileAttributeRect(1, 32, 1, 1, x, 11);
-		fdScriptEnd();
-	}
-	else if (x == 18)
-	{
-		metatile              = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
-		metatile             += fdActorGetMetatileIndex(actor);
-		metatile->attributeB &= ~MAP_METATILE_JUMP;
-	}
-	else if (x == 54)
-	{
-		metatile                 = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
-		metatile                += fdActorGetMetatileIndex(actor);
-		metatile->attributeB    &= ~MAP_METATILE_JUMP;
-		metatile->collisionCode  = CUE_TIGHTROPES_PILLARS_WEST;
-	}
-	else if (x == 55)
-	{
-		fdMapGridCopyMetatileAttributes(53, 20, 1, 1, 54, 20);
-		fdMapCopyMetatileAttributeRect(57, 20, 1, 1, 56, 20);
-	}
+    scHeldActorRaiseMetatile(actor);
+    x = FIELD_METATILE(actor->x.fixed);
+    if (x == 12)
+    {
+        fdScriptStart();
+        fdScriptEndLastingPsynergy(0);
+        fdMapCopyMetatileAttributeRect(0, 32, 1, 1, x, 11);
+        sySynch(1);
+        fdActorDropAndWait(actor);
+        fdMapCopyMetatileAttributeRect(1, 32, 1, 1, x, 11);
+        fdScriptEnd();
+    }
+    else if (x == 18)
+    {
+        metatile              = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
+        metatile             += fdActorGetMetatileIndex(actor);
+        metatile->attributeB &= ~MAP_METATILE_JUMP;
+    }
+    else if (x == 54)
+    {
+        metatile                 = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
+        metatile                += fdActorGetMetatileIndex(actor);
+        metatile->attributeB    &= ~MAP_METATILE_JUMP;
+        metatile->collisionCode  = CUE_TIGHTROPES_PILLARS_WEST;
+    }
+    else if (x == 55)
+    {
+        fdMapGridCopyMetatileAttributes(53, 20, 1, 1, 54, 20);
+        fdMapCopyMetatileAttributeRect(57, 20, 1, 1, 56, 20);
+    }
 }
 
 extern Sint16 DehkanPlateauTightropesVinePillars[];
@@ -1192,32 +1192,32 @@ extern Sint16 DehkanPlateauTightropesVinePillars[];
 // Walking into one of the rope bridge's stretch's vine pillars pushes it a metatile on.
 void          scDehkanPlateauPushVinePillar(void)
 {
-	ACTOR *actor;
+    ACTOR *actor;
 
-	if (fdLeaderCanPushObjectAhead() != 0)
-	{
-		actor = fdActorGetById(fdFindNearbyTalkTarget(MainRoutineStateWork.leaderActorId));
-		scPillarLowerHeldMetatiles(DehkanPlateauTightropesVinePillars);
-		fdLeaderPushObjectAhead();
-		scDehkanPlateauPlaceVinePillar(actor);
-	}
+    if (fdLeaderCanPushObjectAhead() != 0)
+    {
+        actor = fdActorGetById(fdFindNearbyTalkTarget(MainRoutineStateWork.leaderActorId));
+        scPillarLowerHeldMetatiles(DehkanPlateauTightropesVinePillars);
+        fdLeaderPushObjectAhead();
+        scDehkanPlateauPlaceVinePillar(actor);
+    }
 }
 
 // Move takes hold of one of the rope bridge's stretch's vine pillars.
 void scDehkanPlateauLiftTightropesVinePillar(void)
 {
-	scPillarLowerHeldMetatiles(DehkanPlateauTightropesVinePillars);
+    scPillarLowerHeldMetatiles(DehkanPlateauTightropesVinePillars);
 }
 
 // Move lets go of one of the rope bridge's stretch's vine pillars.
 void scDehkanPlateauFinishMovingVinePillar(void)
 {
-	FIELD_STATE *state = RamHeapSlots->fieldState;
-	ACTOR       *active;
+    FIELD_STATE *state = RamHeapSlots->fieldState;
+    ACTOR       *active;
 
-	active = state->movedBlock;
-	if (active != 0)
-		scDehkanPlateauPlaceVinePillar(active);
+    active = state->movedBlock;
+    if (active != 0)
+        scDehkanPlateauPlaceVinePillar(active);
 }
 
 // Nothing visible happens when Felix steps onto the lower floor of Cannon's cave, below the ledge
@@ -1228,14 +1228,14 @@ void scDehkanPlateauFinishMovingVinePillar(void)
 // puts the metatile back (scDehkanPlateauLeaveLowerPath).
 void scDehkanPlateauEnterLowerPath(void)
 {
-	Sint32 set = syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED);
+    Sint32 set = syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED);
 
-	if (set == 0)
-	{
-		fdActorGetById(ACTOR_CANNON_ROOM_STAKE)->motionFlags = set;
-		fdMapGridCopyMetatileAttributes(51, 12, 1, 1, 47, 12);
-		syGameFlagSet(FLAG_STAKE_METATILE_CHANGED);
-	}
+    if (set == 0)
+    {
+        fdActorGetById(ACTOR_CANNON_ROOM_STAKE)->motionFlags = set;
+        fdMapGridCopyMetatileAttributes(51, 12, 1, 1, 47, 12);
+        syGameFlagSet(FLAG_STAKE_METATILE_CHANGED);
+    }
 }
 
 // Nothing visible happens when Felix steps off the lower floor of Cannon's cave (metatiles (44, 16)
@@ -1243,32 +1243,32 @@ void scDehkanPlateauEnterLowerPath(void)
 // metatile back its own attributes.
 void scDehkanPlateauLeaveLowerPath(void)
 {
-	if (syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED) == 0)
-	{
-		fdMapGridCopyMetatileAttributes(48, 11, 1, 1, 47, 12);
-		syGameFlagClear(FLAG_STAKE_METATILE_CHANGED);
-	}
+    if (syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED) == 0)
+    {
+        fdMapGridCopyMetatileAttributes(48, 11, 1, 1, 47, 12);
+        syGameFlagClear(FLAG_STAKE_METATILE_CHANGED);
+    }
 }
 
 // Jolts the camera down eight pixels and back over eight ticks, as the ground gives way.
 void scDehkanPlateauJoltCamera(void)
 {
-	ACTOR *actor = fdCameraGetActor();
-	Uint32 i;
+    ACTOR *actor = fdCameraGetActor();
+    Uint32 i;
 
-	actor->y.fixed -= toFIXED(8);
-	sySynch(1);
-	for (i = 0; i <= 7; i++)
-	{
-		actor->y.fixed += toFIXED(1);
-		sySynch(1);
-	}
+    actor->y.fixed -= toFIXED(8);
+    sySynch(1);
+    for (i = 0; i <= 7; i++)
+    {
+        actor->y.fixed += toFIXED(1);
+        sySynch(1);
+    }
 }
 
 // Places an actor on the ground at a 16.16 position, facing a heading.
 static __inline__ void scActorPlaceFacing(Sint32 id, FIXED x, FIXED z, Uint16 angle)
 {
-	fdActorSetHorizontalPosAndAngleWithTerrain(id, x, z, angle);
+    fdActorSetHorizontalPosAndAngleWithTerrain(id, x, z, angle);
 }
 
 // Felix comes up into the cracked field of the Themis Axe's stretch (metatiles (39, 13) to (41,
@@ -1277,75 +1277,75 @@ static __inline__ void scActorPlaceFacing(Sint32 id, FIXED x, FIXED z, Uint16 an
 // before he hops off to the east.
 void scDehkanPlateauCannonFleesOverCracks(void)
 {
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdCameraGetActor()->motionFlags = 0;
-	fdCameraMoveTo(658, CAMERA_KEEP, 164, 1);
-	fdCameraWaitForArrival();
-	fdActorFaceActorById(ACTOR_THEMIS_AXE_CHEST_CANNON, MainRoutineStateWork.leaderActorId, 0);
-	fdActorShowEmoteById(ACTOR_THEMIS_AXE_CHEST_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorSetSpeed(ACTOR_THEMIS_AXE_CHEST_CANNON, 1.6);
-	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 664, 136);
-	fdMapGridCopyMetatileTilesIndicesRect(68, 33, 105, 6, 1, 1);
-	sySoundPlay(SE_RATTLE);
-	scDehkanPlateauJoltCamera();
-	syGameFlagSet(FLAG_CRACK_OPENED(7));
-	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 664, 104);
-	fdMapGridCopyMetatileTilesIndicesRect(69, 33, 105, 4, 1, 1);
-	sySoundPlay(SE_SPLASH);
-	scDehkanPlateauJoltCamera();
-	fdScriptWait(10);
-	fdActorJump(ACTOR_THEMIS_AXE_CHEST_CANNON, 6, 16);
-	scActorPlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168), FACING_SOUTH);
-	fdScriptWait(20);
-	syGameFlagSet(FLAG_CANNON_FLED_OVER_CRACKS);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdCameraGetActor()->motionFlags = 0;
+    fdCameraMoveTo(658, CAMERA_KEEP, 164, 1);
+    fdCameraWaitForArrival();
+    fdActorFaceActorById(ACTOR_THEMIS_AXE_CHEST_CANNON, MainRoutineStateWork.leaderActorId, 0);
+    fdActorShowEmoteById(ACTOR_THEMIS_AXE_CHEST_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    fdActorSetSpeed(ACTOR_THEMIS_AXE_CHEST_CANNON, 1.6);
+    fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 664, 136);
+    fdMapGridCopyMetatileTilesIndicesRect(68, 33, 105, 6, 1, 1);
+    sySoundPlay(SE_RATTLE);
+    scDehkanPlateauJoltCamera();
+    syGameFlagSet(FLAG_CRACK_OPENED(7));
+    fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 664, 104);
+    fdMapGridCopyMetatileTilesIndicesRect(69, 33, 105, 4, 1, 1);
+    sySoundPlay(SE_SPLASH);
+    scDehkanPlateauJoltCamera();
+    fdScriptWait(10);
+    fdActorJump(ACTOR_THEMIS_AXE_CHEST_CANNON, 6, 16);
+    scActorPlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168), FACING_SOUTH);
+    fdScriptWait(20);
+    syGameFlagSet(FLAG_CANNON_FLED_OVER_CRACKS);
+    fdScriptEnd();
 }
 
 // Felix reaches the east end of the Themis Axe's stretch (metatiles (56, 13) to (59, 13)): the view
 // pans to Cannon by the cliff's edge, who starts and runs off east out of sight.
 void scDehkanPlateauCannonFleesEast(void)
 {
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdCameraMoveTo(980, CAMERA_KEEP, 168, 1);
-	fdCameraWaitForArrival();
-	fdActorFaceActorById(ACTOR_THEMIS_AXE_CHEST_CANNON, MainRoutineStateWork.leaderActorId, 0);
-	fdActorShowEmoteById(ACTOR_THEMIS_AXE_CHEST_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorGetById(ACTOR_THEMIS_AXE_CHEST_CANNON)->motionFlags = 0;
-	fdActorSetSpritePriority(ACTOR_THEMIS_AXE_CHEST_CANNON, 1);
-	fdActorSetSpeed(ACTOR_THEMIS_AXE_CHEST_CANNON, 1.6);
-	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 940, 168);
-	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 984, 152);
-	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 1040, 152);
-	fdActorSetPos(ACTOR_THEMIS_AXE_CHEST_CANNON, 0, 0);
-	fdScriptWait(20);
-	syGameFlagSet(FLAG_CANNON_FLED_EAST);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdCameraMoveTo(980, CAMERA_KEEP, 168, 1);
+    fdCameraWaitForArrival();
+    fdActorFaceActorById(ACTOR_THEMIS_AXE_CHEST_CANNON, MainRoutineStateWork.leaderActorId, 0);
+    fdActorShowEmoteById(ACTOR_THEMIS_AXE_CHEST_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    fdActorGetById(ACTOR_THEMIS_AXE_CHEST_CANNON)->motionFlags = 0;
+    fdActorSetSpritePriority(ACTOR_THEMIS_AXE_CHEST_CANNON, 1);
+    fdActorSetSpeed(ACTOR_THEMIS_AXE_CHEST_CANNON, 1.6);
+    fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 940, 168);
+    fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 984, 152);
+    fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 1040, 152);
+    fdActorSetPos(ACTOR_THEMIS_AXE_CHEST_CANNON, 0, 0);
+    fdScriptWait(20);
+    syGameFlagSet(FLAG_CANNON_FLED_EAST);
+    fdScriptEnd();
 }
 
 // Felix comes to the west end of the rope bridge (metatiles (6, 6) and (7, 6)): Cannon, standing on
 // the bridge, starts at the sight of him, leaps along it and runs off east across.
 void scDehkanPlateauCannonLeapsAway(void)
 {
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdCameraMoveTo(144, CAMERA_KEEP, 107, 1);
-	fdCameraWaitForArrival();
-	fdActorFaceActorById(ACTOR_TIGHTROPES_CANNON, MainRoutineStateWork.leaderActorId, 0);
-	fdActorShowEmoteById(ACTOR_TIGHTROPES_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
-	fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 168, 104);
-	fdScriptWait(10);
-	sySoundPlay(SE_HIGH_JUMP);
-	fdActorGetById(ACTOR_TIGHTROPES_CANNON)->velocityY = toFIXED(8);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
-	fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 200, 104);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 294, 104);
-	scActorPlaceFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(424), toFIXED(104), FACING_SOUTH);
-	syGameFlagSet(FLAG_CANNON_LEAPT_AWAY);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdCameraMoveTo(144, CAMERA_KEEP, 107, 1);
+    fdCameraWaitForArrival();
+    fdActorFaceActorById(ACTOR_TIGHTROPES_CANNON, MainRoutineStateWork.leaderActorId, 0);
+    fdActorShowEmoteById(ACTOR_TIGHTROPES_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
+    fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 168, 104);
+    fdScriptWait(10);
+    sySoundPlay(SE_HIGH_JUMP);
+    fdActorGetById(ACTOR_TIGHTROPES_CANNON)->velocityY = toFIXED(8);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+    fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 200, 104);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 294, 104);
+    scActorPlaceFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(424), toFIXED(104), FACING_SOUTH);
+    syGameFlagSet(FLAG_CANNON_LEAPT_AWAY);
+    fdScriptEnd();
 }
 
 // Felix comes near Cannon east of the rope bridge (metatile (23, 6), or from the south at (25, 16)
@@ -1353,64 +1353,64 @@ void scDehkanPlateauCannonLeapsAway(void)
 // into the ground, and runs on south over it, cracking open a crack behind him.
 void scDehkanPlateauCannonPoundsStake(void)
 {
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_TIGHTROPES_CANNON);
-	fdCameraGetActor()->motionFlags = 0;
-	fdCameraMoveTo(424, CAMERA_KEEP, 104, 1);
-	fdCameraWaitForArrival();
-	fdActorFaceActorById(ACTOR_TIGHTROPES_CANNON, MainRoutineStateWork.leaderActorId, 0);
-	fdActorShowEmoteById(ACTOR_TIGHTROPES_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-	fdCameraMoveTo(424, CAMERA_KEEP, 152, 1);
-	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 424, 152);
-	fdActorFaceDirectionById(ACTOR_TIGHTROPES_CANNON, FACING_EAST, 20);
-	scDehkanPlateauCannonCastsPound();
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 440, 152);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 168);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 184);
-	syGameFlagSet(FLAG_CRACK_OPENED(1));
-	fdMapGridCopyMetatileTilesIndicesRect(69, 51, 92, 11, 1, 1);
-	sySoundPlay(SE_RATTLE);
-	scDehkanPlateauJoltCamera();
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 216);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 584, 216);
-	scActorPlaceFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616), toFIXED(280), FACING_SOUTH);
-	syGameFlagSet(FLAG_CANNON_POUNDED_STAKE);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_TIGHTROPES_CANNON);
+    fdCameraGetActor()->motionFlags = 0;
+    fdCameraMoveTo(424, CAMERA_KEEP, 104, 1);
+    fdCameraWaitForArrival();
+    fdActorFaceActorById(ACTOR_TIGHTROPES_CANNON, MainRoutineStateWork.leaderActorId, 0);
+    fdActorShowEmoteById(ACTOR_TIGHTROPES_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+    fdCameraMoveTo(424, CAMERA_KEEP, 152, 1);
+    fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 424, 152);
+    fdActorFaceDirectionById(ACTOR_TIGHTROPES_CANNON, FACING_EAST, 20);
+    scDehkanPlateauCannonCastsPound();
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 440, 152);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 168);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 184);
+    syGameFlagSet(FLAG_CRACK_OPENED(1));
+    fdMapGridCopyMetatileTilesIndicesRect(69, 51, 92, 11, 1, 1);
+    sySoundPlay(SE_RATTLE);
+    scDehkanPlateauJoltCamera();
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 216);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 584, 216);
+    scActorPlaceFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616), toFIXED(280), FACING_SOUTH);
+    syGameFlagSet(FLAG_CANNON_POUNDED_STAKE);
+    fdScriptEnd();
 }
 
 // The event of Cannon's Pound in the rope bridge's stretch: the stake sinks, and once the Psynergy
 // ends it is down for good.
 void scDehkanPlateauSinkPoundedStake(void)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
-	ACTOR              *actor = fdActorGetById(ACTOR_TIGHTROPES_STAKE);
+    FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
+    ACTOR              *actor = fdActorGetById(ACTOR_TIGHTROPES_STAKE);
 
-	if (state->frame != -1 && state->frame <= 7)
-		actor->scaleY += -(toFIXED(31) / 256);
-	if (state->stage != 0)
-	{
-		fdMapGridCopyMetatileAttributes(27, 8, 1, 1, 27, 9);
-		fdActorSetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_SUNK);
-		actor->priorityFlags  |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->collisionFlags &= ~ACTOR_SOLID;
-		actor->scaleY          = toFIXED(1);
-		syGameFlagSet(FLAG_TIGHTROPES_STAKE_POUNDED);
-	}
+    if (state->frame != -1 && state->frame <= 7)
+        actor->scaleY += -(toFIXED(31) / 256);
+    if (state->stage != 0)
+    {
+        fdMapGridCopyMetatileAttributes(27, 8, 1, 1, 27, 9);
+        fdActorSetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_SUNK);
+        actor->priorityFlags  |= ACTOR_PRIORITY_UNDERFOOT;
+        actor->collisionFlags &= ~ACTOR_SOLID;
+        actor->scaleY          = toFIXED(1);
+        syGameFlagSet(FLAG_TIGHTROPES_STAKE_POUNDED);
+    }
 }
 
 // Cannon casts Pound on the rope bridge's stretch's stake.
 void scDehkanPlateauCannonCastsPound(void)
 {
-	fdPsynergyLoadResources(ABILITY_POUND, 1);
-	syFieldSetTickEvent(scDehkanPlateauSinkPoundedStake, EVENT_PASS_TICK);
-	fdPsynergySetupActorPair(ACTOR_TIGHTROPES_CANNON, ACTOR_TIGHTROPES_STAKE);
-	fdPsynergyStartCast();
-	fdPsynergyRunHandler(1);
-	fdBattleEffectStopMainActor();
-	syCloseEvent(scDehkanPlateauSinkPoundedStake);
-	fdPsynergyEnd();
+    fdPsynergyLoadResources(ABILITY_POUND, 1);
+    syFieldSetTickEvent(scDehkanPlateauSinkPoundedStake, EVENT_PASS_TICK);
+    fdPsynergySetupActorPair(ACTOR_TIGHTROPES_CANNON, ACTOR_TIGHTROPES_STAKE);
+    fdPsynergyStartCast();
+    fdPsynergyRunHandler(1);
+    fdBattleEffectStopMainActor();
+    syCloseEvent(scDehkanPlateauSinkPoundedStake);
+    fdPsynergyEnd();
 }
 
 #include "../field/field_effect_advance_motion.c"
@@ -1424,53 +1424,53 @@ extern Uint32 DehkanPlateauDustScript[];
 // eight puffs of dust rise about the one standing on it.
 void          scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flag)
 {
-	ACTOR *standing;
-	Sint32 vramEntry;
-	Uint32 i;
-	FIXED  y;
+    ACTOR *standing;
+    Sint32 vramEntry;
+    Uint32 i;
+    FIXED  y;
 
-	sySoundPlay(SE_CHEST_CLOSE);
-	fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
-	sySynch(2);
-	fdActorSetAnimationById(id, 0);
-	fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
-	sySynch(4);
-	fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_NORMAL);
-	standing  = fdActorGetById(standingId);
-	vramEntry = 0;
-	for (i = 0; i <= 7; i++)
-	{
-		ACTOR        *actor;
-		FIELD_EFFECT *effect;
+    sySoundPlay(SE_CHEST_CLOSE);
+    fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
+    sySynch(2);
+    fdActorSetAnimationById(id, 0);
+    fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
+    sySynch(4);
+    fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_NORMAL);
+    standing  = fdActorGetById(standingId);
+    vramEntry = 0;
+    for (i = 0; i <= 7; i++)
+    {
+        ACTOR        *actor;
+        FIELD_EFFECT *effect;
 
-		y     = standing->y.fixed - toFIXED(syRandomBelow(14));
-		actor = ((ACTOR *)syImportActorCreate(SPRITE_DUST_CLOUD,
-		                                      toFIXED(i * 2) + standing->x.fixed - toFIXED(8),
-		                                      y - toFIXED(2),
-		                                      standing->z.fixed));
-		if (actor != NULL)
-		{
-			effect                = (FIELD_EFFECT *)actor;
-			vramEntry             = fdSpriteShareVRAMCacheEntry(effect->sprite, vramEntry);
-			actor->motionFlags    = 0;
-			actor->collisionFlags = 0;
-			fdActorSetSpriteFlags(actor, 0);
-			fdActorSelectAnimation(actor, 2);
-			fdActorStartScript(actor, DehkanPlateauDustScript);
-			actor->scaleX            = toFIXED(7) / 10;
-			actor->scaleY            = toFIXED(7) / 10;
-			effect->sprite->priority = 1;
-			effect->velocity.x       = 0;
-			effect->velocity.z       = 0;
-			effect->velocity.y       = -(syRandomBelow(16384) + toFIXED(3) / 8);
-			effect->spin             = syRandomBelow(512) - 256;
-			effect->scaleRateX       = -(toFIXED(1) / 32);
-			effect->scaleRateY       = -(toFIXED(3) / 128);
-			effect->update           = fdEffectAdvanceMotion;
-		}
-	}
-	syGameFlagSet(flag);
-	fdScriptWait(20);
+        y     = standing->y.fixed - toFIXED(syRandomBelow(14));
+        actor = ((ACTOR *)syImportActorCreate(SPRITE_DUST_CLOUD,
+                                              toFIXED(i * 2) + standing->x.fixed - toFIXED(8),
+                                              y - toFIXED(2),
+                                              standing->z.fixed));
+        if (actor != NULL)
+        {
+            effect                = (FIELD_EFFECT *)actor;
+            vramEntry             = fdSpriteShareVRAMCacheEntry(effect->sprite, vramEntry);
+            actor->motionFlags    = 0;
+            actor->collisionFlags = 0;
+            fdActorSetSpriteFlags(actor, 0);
+            fdActorSelectAnimation(actor, 2);
+            fdActorStartScript(actor, DehkanPlateauDustScript);
+            actor->scaleX            = toFIXED(7) / 10;
+            actor->scaleY            = toFIXED(7) / 10;
+            effect->sprite->priority = 1;
+            effect->velocity.x       = 0;
+            effect->velocity.z       = 0;
+            effect->velocity.y       = -(syRandomBelow(16384) + toFIXED(3) / 8);
+            effect->spin             = syRandomBelow(512) - 256;
+            effect->scaleRateX       = -(toFIXED(1) / 32);
+            effect->scaleRateY       = -(toFIXED(3) / 128);
+            effect->update           = fdEffectAdvanceMotion;
+        }
+    }
+    syGameFlagSet(flag);
+    fdScriptWait(20);
 }
 
 // Felix follows Cannon to the gray pillars east of the rope bridge (metatiles (36, 12) to (36, 16),
@@ -1478,70 +1478,70 @@ void          scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 fl
 // them, and runs off north over a crack, which opens into a hole as he goes, and he is gone.
 void scDehkanPlateauCannonCracksPillars(void)
 {
-	ACTOR *actor;
+    ACTOR *actor;
 
-	actor = fdActorGetById(ACTOR_TIGHTROPES_CANNON);
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_TIGHTROPES_CANNON);
-	fdCameraGetActor()->motionFlags = 0;
-	fdCameraMoveTo(616, CAMERA_KEEP, 280, 1);
-	fdCameraWaitForArrival();
-	fdActorFaceActorById(ACTOR_TIGHTROPES_CANNON, MainRoutineStateWork.leaderActorId, 0);
-	fdActorShowEmoteById(ACTOR_TIGHTROPES_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_CANNON, 1);
-	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 632, 280);
-	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 2);
-	sySoundPlay(SE_HIGH_JUMP);
-	actor->velocityY = toFIXED(8);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 664, 280);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
-	scDehkanPlateauCrackPillar(
-		ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR, ACTOR_TIGHTROPES_CANNON, FLAG_PILLAR_CRACKED(0));
-	sySoundPlay(SE_HIGH_JUMP);
-	actor->velocityY = toFIXED(8);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 696, 280);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
-	fdScriptWait(10);
-	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 712, 280);
-	fdCameraSetSpeed(2.4);
-	fdCameraMoveTo(712, CAMERA_KEEP, 136, 1);
-	fdMapGridCopyMetatileTilesIndicesRect(112, 6, 110, 4, 1, 1);
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_CANNON, 1);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 712, 200);
-	fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 712, 168);
-	fdActorStop(MainRoutineStateWork.leaderActorId);
-	fdActorFaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_EAST);
-	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 2);
-	sySoundPlay(SE_HIGH_JUMP);
-	actor->velocityY = toFIXED(8);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 168);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
-	scDehkanPlateauCrackPillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 3,
-	                           ACTOR_TIGHTROPES_CANNON,
-	                           FLAG_PILLAR_CRACKED(3));
-	fdActorFaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_NORTH);
-	sySoundPlay(SE_HIGH_JUMP);
-	actor->velocityY = toFIXED(8);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 136);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
-	fdScriptWait(10);
-	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 72);
-	fdMapGridCopyMetatileTilesIndicesRect(66, 51, 110, 4, 1, 1);
-	sySoundPlay(SE_SPLASH);
-	scDehkanPlateauJoltCamera();
-	fdScriptWait(10);
-	fdActorJump(ACTOR_TIGHTROPES_CANNON, 6, 16);
-	fdActorSetPos(ACTOR_TIGHTROPES_CANNON, 0, 0);
-	fdScriptWait(20);
-	syGameFlagSet(FLAG_CANNON_CRACKED_PILLARS);
-	fdScriptEnd();
+    actor = fdActorGetById(ACTOR_TIGHTROPES_CANNON);
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_TIGHTROPES_CANNON);
+    fdCameraGetActor()->motionFlags = 0;
+    fdCameraMoveTo(616, CAMERA_KEEP, 280, 1);
+    fdCameraWaitForArrival();
+    fdActorFaceActorById(ACTOR_TIGHTROPES_CANNON, MainRoutineStateWork.leaderActorId, 0);
+    fdActorShowEmoteById(ACTOR_TIGHTROPES_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_CANNON, 1);
+    fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 632, 280);
+    fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 2);
+    sySoundPlay(SE_HIGH_JUMP);
+    actor->velocityY = toFIXED(8);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 664, 280);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
+    scDehkanPlateauCrackPillar(
+        ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR, ACTOR_TIGHTROPES_CANNON, FLAG_PILLAR_CRACKED(0));
+    sySoundPlay(SE_HIGH_JUMP);
+    actor->velocityY = toFIXED(8);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 696, 280);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
+    fdScriptWait(10);
+    fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 712, 280);
+    fdCameraSetSpeed(2.4);
+    fdCameraMoveTo(712, CAMERA_KEEP, 136, 1);
+    fdMapGridCopyMetatileTilesIndicesRect(112, 6, 110, 4, 1, 1);
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_CANNON, 1);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 712, 200);
+    fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 712, 168);
+    fdActorStop(MainRoutineStateWork.leaderActorId);
+    fdActorFaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_EAST);
+    fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 2);
+    sySoundPlay(SE_HIGH_JUMP);
+    actor->velocityY = toFIXED(8);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 168);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
+    scDehkanPlateauCrackPillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 3,
+                               ACTOR_TIGHTROPES_CANNON,
+                               FLAG_PILLAR_CRACKED(3));
+    fdActorFaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_NORTH);
+    sySoundPlay(SE_HIGH_JUMP);
+    actor->velocityY = toFIXED(8);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 136);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
+    fdScriptWait(10);
+    fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 72);
+    fdMapGridCopyMetatileTilesIndicesRect(66, 51, 110, 4, 1, 1);
+    sySoundPlay(SE_SPLASH);
+    scDehkanPlateauJoltCamera();
+    fdScriptWait(10);
+    fdActorJump(ACTOR_TIGHTROPES_CANNON, 6, 16);
+    fdActorSetPos(ACTOR_TIGHTROPES_CANNON, 0, 0);
+    fdScriptWait(20);
+    syGameFlagSet(FLAG_CANNON_CRACKED_PILLARS);
+    fdScriptEnd();
 }
 
 // Felix steps onto the crack south of where the Pound Cube lies, in the cave where Cannon drops it
@@ -1549,69 +1549,69 @@ void scDehkanPlateauCannonCracksPillars(void)
 // a great fist slams down, and Felix sinks through the floor and lands in Cannon's cave below.
 void scDehkanPlateauCannonPoundsLeaderThrough(void)
 {
-	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Uint32 i;
+    ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    Uint32 i;
 
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	{
-		Sint32 facing = FACING_NORTH;
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    {
+        Sint32 facing = FACING_NORTH;
 
-		fdActorSetHorizontalPosAndAngleWithTerrain(
-			MainRoutineStateWork.leaderActorId, toFIXED(248), toFIXED(136), facing);
-	}
-	fdMapGridCopyMetatileTilesIndicesRect(65, 64, 15, 8, 1, 1);
-	syGameFlagSet(FLAG_CRACK_OPENED(5));
-	sySoundPlay(SE_RATTLE);
-	scDehkanPlateauJoltCamera();
-	fdActorFaceActorById(ACTOR_POUND_CUBE_CANNON, MainRoutineStateWork.leaderActorId, 0);
-	fdActorShowEmoteById(ACTOR_POUND_CUBE_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-	scDehkanPlateauCannonCastsPoundOnLeader();
-	fdScriptWait(20);
-	leader->facing      = FACING_SOUTH;
-	leader->motionFlags = 0;
-	fdActorSetSpritePriority(ACTOR_POUND_CUBE_CANNON, 3);
-	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
-	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
-	fdScriptWait(16);
-	for (i = 0; i < FALL_TICKS; i++)
-	{
-		if (i == 5)
-			sySoundPlay(SE_DUST_PUFF);
-		leader->scaleX  -= toFIXED(1) / 64;
-		leader->scaleY  -= toFIXED(3) / 256;
-		leader->y.fixed -= toFIXED(3) / 5;
-		sySynch(1);
-	}
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionTicks();
-	syImportScriptSetExitRequest(CUE_POUND_CUBE_CANNON_CRACK);
+        fdActorSetHorizontalPosAndAngleWithTerrain(
+            MainRoutineStateWork.leaderActorId, toFIXED(248), toFIXED(136), facing);
+    }
+    fdMapGridCopyMetatileTilesIndicesRect(65, 64, 15, 8, 1, 1);
+    syGameFlagSet(FLAG_CRACK_OPENED(5));
+    sySoundPlay(SE_RATTLE);
+    scDehkanPlateauJoltCamera();
+    fdActorFaceActorById(ACTOR_POUND_CUBE_CANNON, MainRoutineStateWork.leaderActorId, 0);
+    fdActorShowEmoteById(ACTOR_POUND_CUBE_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+    scDehkanPlateauCannonCastsPoundOnLeader();
+    fdScriptWait(20);
+    leader->facing      = FACING_SOUTH;
+    leader->motionFlags = 0;
+    fdActorSetSpritePriority(ACTOR_POUND_CUBE_CANNON, 3);
+    fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+    fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
+    fdScriptWait(16);
+    for (i = 0; i < FALL_TICKS; i++)
+    {
+        if (i == 5)
+            sySoundPlay(SE_DUST_PUFF);
+        leader->scaleX  -= toFIXED(1) / 64;
+        leader->scaleY  -= toFIXED(3) / 256;
+        leader->y.fixed -= toFIXED(3) / 5;
+        sySynch(1);
+    }
+    FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+    fdScriptFinishScreenTransition();
+    fdScriptWaitTransitionTicks();
+    syImportScriptSetExitRequest(CUE_POUND_CUBE_CANNON_CRACK);
 }
 
 // The event of Cannon's Pound on the leader: the floor under him opens.
 void scDehkanPlateauPoundLeaderThrough(void)
 {
-	if (((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->stage != 0)
-	{
-		sySoundPlay(SE_SPLASH);
-		fdMapGridCopyMetatileTilesIndicesRect(64, 64, 15, 8, 1, 1);
-		fdMapGridCopyMetatileTilesIndicesRect(64, 66, 15, 72, 1, 2);
-		fdActorSetSpriteFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
-	}
+    if (((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->stage != 0)
+    {
+        sySoundPlay(SE_SPLASH);
+        fdMapGridCopyMetatileTilesIndicesRect(64, 64, 15, 8, 1, 1);
+        fdMapGridCopyMetatileTilesIndicesRect(64, 66, 15, 72, 1, 2);
+        fdActorSetSpriteFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+    }
 }
 
 // Cannon casts Pound on the leader in the Pound Cube's cave.
 void scDehkanPlateauCannonCastsPoundOnLeader(void)
 {
-	fdPsynergyLoadResources(ABILITY_POUND, 1);
-	syFieldSetTickEvent(scDehkanPlateauPoundLeaderThrough, EVENT_PASS_TICK);
-	fdPsynergySetupActorPair(ACTOR_POUND_CUBE_CANNON, MainRoutineStateWork.leaderActorId);
-	fdPsynergyStartCast();
-	fdPsynergyRunHandler(1);
-	fdBattleEffectStopMainActor();
-	syCloseEvent(scDehkanPlateauPoundLeaderThrough);
-	fdPsynergyEnd();
+    fdPsynergyLoadResources(ABILITY_POUND, 1);
+    syFieldSetTickEvent(scDehkanPlateauPoundLeaderThrough, EVENT_PASS_TICK);
+    fdPsynergySetupActorPair(ACTOR_POUND_CUBE_CANNON, MainRoutineStateWork.leaderActorId);
+    fdPsynergyStartCast();
+    fdPsynergyRunHandler(1);
+    fdBattleEffectStopMainActor();
+    syCloseEvent(scDehkanPlateauPoundLeaderThrough);
+    fdPsynergyEnd();
 }
 
 // Felix falls through a crack in the north of the rope bridge's stretch and lands beside Cannon in
@@ -1619,59 +1619,59 @@ void scDehkanPlateauCannonCastsPoundOnLeader(void)
 // runs off north.
 void scDehkanPlateauCannonDropsPoundCube(void)
 {
-	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	ACTOR *cannon = fdActorGetById(ACTOR_POUND_CUBE_CANNON);
+    ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    ACTOR *cannon = fdActorGetById(ACTOR_POUND_CUBE_CANNON);
 
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdMapGridCenterOnFollowedPoint();
-	sySynch(1);
-	leader->y.fixed            = toFIXED(130);
-	leader->gravity            = toFIXED(1) / 2;
-	leader->bounce             = 0;
-	leader->motionFlags        = 0;
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionTicks();
-	sySoundPlay(SE_DUST_PUFF);
-	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdScriptWait(24);
-	sySoundPlay(SE_KOLIMA_BRIDGE_HOP);
-	scDehkanPlateauJoltCamera();
-	if (DehkanPlateauPoundCubeWork != NULL)
-	{
-		scFieldActorSetPosAndResetMotion(DehkanPlateauPoundCubeWork, toFIXED(248), 0, toFIXED(120));
-		sySynch(1);
-		DehkanPlateauPoundCubeWork->speedLimit   = toFIXED(8) / 5;
-		DehkanPlateauPoundCubeWork->acceleration = toFIXED(8) / 5;
-		DehkanPlateauPoundCubeWork->velocityY    = toFIXED(8);
-	}
-	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
-	fdActorSetSpeed(ACTOR_POUND_CUBE_CANNON, 1.6);
-	leader->velocityY = toFIXED(6);
-	cannon->velocityY = toFIXED(6);
-	scFieldActorSetMoveTarget(leader, 216, 0, 120);
-	scFieldActorSetMoveTarget(cannon, 280, 0, 120);
-	if (DehkanPlateauPoundCubeWork != NULL)
-		scFieldActorSetMoveTarget(DehkanPlateauPoundCubeWork, 248, 0, 88);
-	fdActorWaitForMove(leader);
-	fdScriptWait(20);
-	fdActorShowEmoteById(ACTOR_POUND_CUBE_CANNON, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-	fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
-	fdActorFaceDirectionById(ACTOR_POUND_CUBE_CANNON, FACING_WEST, 60);
-	fdActorWalkToAndWait(ACTOR_POUND_CUBE_CANNON, 296, 104);
-	fdActorWalkToAndWait(ACTOR_POUND_CUBE_CANNON, 296, 80);
-	fdActorSetPos(ACTOR_POUND_CUBE_CANNON, 0, 0);
-	fdScriptWait(20);
-	if (DehkanPlateauPoundCubeWork != NULL)
-	{
-		DehkanPlateauPoundCubeWork->motionFlags = 0;
-		fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 15, 5);
-		sySynch(1);
-	}
-	syGameFlagSet(FLAG_CANNON_DROPPED_POUND_CUBE);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+    fdMapGridCenterOnFollowedPoint();
+    sySynch(1);
+    leader->y.fixed            = toFIXED(130);
+    leader->gravity            = toFIXED(1) / 2;
+    leader->bounce             = 0;
+    leader->motionFlags        = 0;
+    FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    fdScriptStartScreenTransition();
+    fdScriptWaitTransitionTicks();
+    sySoundPlay(SE_DUST_PUFF);
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    fdScriptWait(24);
+    sySoundPlay(SE_KOLIMA_BRIDGE_HOP);
+    scDehkanPlateauJoltCamera();
+    if (DehkanPlateauPoundCubeWork != NULL)
+    {
+        scFieldActorSetPosAndResetMotion(DehkanPlateauPoundCubeWork, toFIXED(248), 0, toFIXED(120));
+        sySynch(1);
+        DehkanPlateauPoundCubeWork->speedLimit   = toFIXED(8) / 5;
+        DehkanPlateauPoundCubeWork->acceleration = toFIXED(8) / 5;
+        DehkanPlateauPoundCubeWork->velocityY    = toFIXED(8);
+    }
+    fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
+    fdActorSetSpeed(ACTOR_POUND_CUBE_CANNON, 1.6);
+    leader->velocityY = toFIXED(6);
+    cannon->velocityY = toFIXED(6);
+    scFieldActorSetMoveTarget(leader, 216, 0, 120);
+    scFieldActorSetMoveTarget(cannon, 280, 0, 120);
+    if (DehkanPlateauPoundCubeWork != NULL)
+        scFieldActorSetMoveTarget(DehkanPlateauPoundCubeWork, 248, 0, 88);
+    fdActorWaitForMove(leader);
+    fdScriptWait(20);
+    fdActorShowEmoteById(ACTOR_POUND_CUBE_CANNON, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+    fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
+    fdActorFaceDirectionById(ACTOR_POUND_CUBE_CANNON, FACING_WEST, 60);
+    fdActorWalkToAndWait(ACTOR_POUND_CUBE_CANNON, 296, 104);
+    fdActorWalkToAndWait(ACTOR_POUND_CUBE_CANNON, 296, 80);
+    fdActorSetPos(ACTOR_POUND_CUBE_CANNON, 0, 0);
+    fdScriptWait(20);
+    if (DehkanPlateauPoundCubeWork != NULL)
+    {
+        DehkanPlateauPoundCubeWork->motionFlags = 0;
+        fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 15, 5);
+        sySynch(1);
+    }
+    syGameFlagSet(FLAG_CANNON_DROPPED_POUND_CUBE);
+    fdScriptEnd();
 }
 
 // While the stake stands, Cannon sees Felix coming along the ledge, leaps onto the stake, then onto
@@ -1679,59 +1679,59 @@ void scDehkanPlateauCannonDropsPoundCube(void)
 // waits.
 void scDehkanPlateauCannonCracksLastPillar(void)
 {
-	ACTOR *actor;
+    ACTOR *actor;
 
-	actor = fdActorGetById(ACTOR_CANNON);
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_CANNON);
-	fdCameraGetActor()->motionFlags = 0;
-	fdCameraMoveTo(760, 32, 204, 1);
-	fdCameraWaitForArrival();
-	fdActorFaceActorById(ACTOR_CANNON, MainRoutineStateWork.leaderActorId, 0);
-	fdActorShowEmote(ACTOR_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorSetSpeed(ACTOR_CANNON, 2);
-	sySoundPlay(SE_HIGH_JUMP);
-	actor->velocityY = toFIXED(8);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
-	fdActorWalkToAndWaitById(ACTOR_CANNON, 760, 200);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
-	fdScriptWait(20);
-	sySoundPlay(SE_HIGH_JUMP);
-	actor->velocityY = toFIXED(8);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
-	fdActorWalkToAndWaitById(ACTOR_CANNON, 792, 200);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
-	scDehkanPlateauCrackPillar(
-		ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, ACTOR_CANNON, FLAG_PILLAR_CRACKED(0));
-	sySoundPlay(SE_HIGH_JUMP);
-	actor->velocityY = toFIXED(8);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
-	fdActorWalkToAndWaitById(ACTOR_CANNON, 824, 200);
-	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
-	fdScriptWait(20);
-	fdActorWatchAndSetScript(ACTOR_CANNON, MainRoutineStateWork.leaderActorId);
-	fdActorStop(MainRoutineStateWork.leaderActorId);
-	fdScriptWait(20);
-	fdScriptEnd();
+    actor = fdActorGetById(ACTOR_CANNON);
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_CANNON);
+    fdCameraGetActor()->motionFlags = 0;
+    fdCameraMoveTo(760, 32, 204, 1);
+    fdCameraWaitForArrival();
+    fdActorFaceActorById(ACTOR_CANNON, MainRoutineStateWork.leaderActorId, 0);
+    fdActorShowEmote(ACTOR_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    fdActorSetSpeed(ACTOR_CANNON, 2);
+    sySoundPlay(SE_HIGH_JUMP);
+    actor->velocityY = toFIXED(8);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
+    fdActorWalkToAndWaitById(ACTOR_CANNON, 760, 200);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
+    fdScriptWait(20);
+    sySoundPlay(SE_HIGH_JUMP);
+    actor->velocityY = toFIXED(8);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
+    fdActorWalkToAndWaitById(ACTOR_CANNON, 792, 200);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
+    scDehkanPlateauCrackPillar(
+        ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, ACTOR_CANNON, FLAG_PILLAR_CRACKED(0));
+    sySoundPlay(SE_HIGH_JUMP);
+    actor->velocityY = toFIXED(8);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
+    fdActorWalkToAndWaitById(ACTOR_CANNON, 824, 200);
+    fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
+    fdScriptWait(20);
+    fdActorWatchAndSetScript(ACTOR_CANNON, MainRoutineStateWork.leaderActorId);
+    fdActorStop(MainRoutineStateWork.leaderActorId);
+    fdScriptWait(20);
+    fdScriptEnd();
 }
 
 // Once the stake is down, Cannon sees Felix coming and finds he has nowhere to leap: he looks about
 // him and turns to face Felix.
 void scDehkanPlateauCannonCornered(void)
 {
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdActorFaceActorById(ACTOR_CANNON, MainRoutineStateWork.leaderActorId, 0);
-	fdActorShowEmoteById(ACTOR_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorFaceDirectionAndRefreshById(ACTOR_CANNON, FACING_EAST);
-	fdScriptWait(20);
-	fdActorRunRepeatedMotion(ACTOR_CANNON, 3);
-	fdActorFaceDirectionAndWait(ACTOR_CANNON, FACING_WEST);
-	fdActorWatchAndSetScript(ACTOR_CANNON, MainRoutineStateWork.leaderActorId);
-	fdEffectSetAttached(ACTOR_CANNON, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdScriptWait(40);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdActorFaceActorById(ACTOR_CANNON, MainRoutineStateWork.leaderActorId, 0);
+    fdActorShowEmoteById(ACTOR_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    fdActorFaceDirectionAndRefreshById(ACTOR_CANNON, FACING_EAST);
+    fdScriptWait(20);
+    fdActorRunRepeatedMotion(ACTOR_CANNON, 3);
+    fdActorFaceDirectionAndWait(ACTOR_CANNON, FACING_WEST);
+    fdActorWatchAndSetScript(ACTOR_CANNON, MainRoutineStateWork.leaderActorId);
+    fdEffectSetAttached(ACTOR_CANNON, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    fdScriptWait(40);
+    fdScriptEnd();
 }
 
 // Felix walks east along the ledge toward Cannon in his cave (metatiles (43,
@@ -1740,28 +1740,28 @@ void scDehkanPlateauCannonCornered(void)
 // Cannon is cornered and turns to face him.
 void scDehkanPlateauMeetCannon(void)
 {
-	if (syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED) != 0)
-		scDehkanPlateauCannonCornered();
-	else
-		scDehkanPlateauCannonCracksLastPillar();
-	syGameFlagSet(FLAG_CANNON_MET);
+    if (syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED) != 0)
+        scDehkanPlateauCannonCornered();
+    else
+        scDehkanPlateauCannonCracksLastPillar();
+    syGameFlagSet(FLAG_CANNON_MET);
 }
 
 // Felix examines the Pound Cube where Cannon dropped it, north of the crack Cannon Pounds him
 // through (metatile (15, 5)), and takes it.
 void scDehkanPlateauTakePoundCube(void)
 {
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	if (DehkanPlateauPoundCubeWork != 0)
-		fdItemDisplayShowPicture(DehkanPlateauPoundCubeWork,
-		                         ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
-	fdPartyInventoryGiveItem(ITEM_POUND_CUBE, 0);
-	if (DehkanPlateauPoundCubeWork != 0)
-		fdActorRelease(DehkanPlateauPoundCubeWork);
-	fdMapGridCopyMetatileAttributes(1, 0, 1, 1, 15, 5);
-	syGameFlagSet(FLAG_POUND_CUBE_TAKEN);
-	fdScriptEnd();
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    if (DehkanPlateauPoundCubeWork != 0)
+        fdItemDisplayShowPicture(DehkanPlateauPoundCubeWork,
+                                 ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
+    fdPartyInventoryGiveItem(ITEM_POUND_CUBE, 0);
+    if (DehkanPlateauPoundCubeWork != 0)
+        fdActorRelease(DehkanPlateauPoundCubeWork);
+    fdMapGridCopyMetatileAttributes(1, 0, 1, 1, 15, 5);
+    syGameFlagSet(FLAG_POUND_CUBE_TAKEN);
+    fdScriptEnd();
 }
 
 // Felix walks into a cave mouth in the cliff of the first stretch (map metatile (84, 21)) or of the
@@ -1770,115 +1770,115 @@ void scDehkanPlateauTakePoundCube(void)
 // keeps from column 64.
 void scDehkanPlateauLeaveRoom(void)
 {
-	FIELD_STATE *state = RamHeapSlots->fieldState;
+    FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-		fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
-	sySoundPlay(SE_MAP_EXIT);
-	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionTicks();
-	syImportScriptSetExitRequest(state->stepCue);
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    if (MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+        fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+    sySoundPlay(SE_MAP_EXIT);
+    fdScriptFinishScreenTransition();
+    fdScriptWaitTransitionTicks();
+    syImportScriptSetExitRequest(state->stepCue);
 }
 
 // Sets up the room of the plateau the party comes into.
 Sint32 scInit(void)
 {
-	Sint16 scene = MainRoutineStateWork.next;
+    Sint16 scene = MainRoutineStateWork.next;
 
-	if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-		scDehkanPlateauInitFullMetalVestChest();
-	else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-		scDehkanPlateauInitThemisAxeChest();
-	else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-		scDehkanPlateauInitTightropes();
-	else if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
-		scDehkanPlateauInitMintChest();
-	else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-		scDehkanPlateauInitPoundCube();
-	else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
-		scDehkanPlateauInitCannon();
-	return 0;
+    if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
+        scDehkanPlateauInitFullMetalVestChest();
+    else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
+        scDehkanPlateauInitThemisAxeChest();
+    else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
+        scDehkanPlateauInitTightropes();
+    else if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
+        scDehkanPlateauInitMintChest();
+    else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
+        scDehkanPlateauInitPoundCube();
+    else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
+        scDehkanPlateauInitCannon();
+    return 0;
 }
 
 // The first stretch's event: draws the chest on the ledge at the leader's sprite priority each
 // tick, so it stays in front of or behind him with the ground.
 void scDehkanPlateauKeepPriorityWithLeader(void)
 {
-	fdActorSetSpritePriority(
-		ACTOR_FULL_METAL_VEST_CHEST,
-		((SPR_ATTR2_HIGH *)fdActorGetById(MainRoutineStateWork.leaderActorId)->sprite)->priority);
+    fdActorSetSpritePriority(
+        ACTOR_FULL_METAL_VEST_CHEST,
+        ((SPR_ATTR2_HIGH *)fdActorGetById(MainRoutineStateWork.leaderActorId)->sprite)->priority);
 }
 
 // Sets up the first stretch: its pillars, the stone pillar already in the gap, its cracks and
 // unseen blocks, and the chest's event.
 void scDehkanPlateauInitFullMetalVestChest(void)
 {
-	syCrumblingPillarPlace(DehkanPlateauFullMetalVestChestCrumblingPillars);
-	fdActorSetSpritePriority(ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR, 3);
-	scPillarPlace(DehkanPlateauFullMetalVestChestStakes);
-	fdActorDisableById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
-	if (syGameFlagGet(FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP) != 0)
-	{
-		fdMapGridCopyMetatileAttributes(54, 32, 2, 1, 56, 64);
-		fdActorSetPosAndResetMotion(fdActorGetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR),
-		                            toFIXED(904),
-		                            toFIXED(64),
-		                            toFIXED(520));
-		sySynch(10);
-	}
-	scDehkanPlateauRestoreFullMetalVestChestCracks();
-	scDehkanPlateauHideFullMetalVestChestBlocks();
-	{
-		Sint32 priority = EVENT_PASS_TICK;
+    syCrumblingPillarPlace(DehkanPlateauFullMetalVestChestCrumblingPillars);
+    fdActorSetSpritePriority(ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR, 3);
+    scPillarPlace(DehkanPlateauFullMetalVestChestStakes);
+    fdActorDisableById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
+    if (syGameFlagGet(FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP) != 0)
+    {
+        fdMapGridCopyMetatileAttributes(54, 32, 2, 1, 56, 64);
+        fdActorSetPosAndResetMotion(fdActorGetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR),
+                                    toFIXED(904),
+                                    toFIXED(64),
+                                    toFIXED(520));
+        sySynch(10);
+    }
+    scDehkanPlateauRestoreFullMetalVestChestCracks();
+    scDehkanPlateauHideFullMetalVestChestBlocks();
+    {
+        Sint32 priority = EVENT_PASS_TICK;
 
-		sySetEvent(scDehkanPlateauKeepPriorityWithLeader, priority);
-	}
+        sySetEvent(scDehkanPlateauKeepPriorityWithLeader, priority);
+    }
 }
 
 // Sets up the Themis Axe's stretch: its crumbling pillars, stake and stone pillar, its cracks, and
 // Cannon as far as he has fled.
 void scDehkanPlateauInitThemisAxeChest(void)
 {
-	if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
-	{
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-			ACTOR_PRIORITY_IGNORES_RISES;
-		if (MainRoutineStateWork.entrance == ENTRANCE_THEMIS_AXE_CHEST_WEST_SCREEN)
-		{
-			fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-				ACTOR_PRIORITY_AUTOMATIC;
-		}
-	}
-	scCrumblingPillarPlaceWithStandIn(DehkanPlateauThemisAxeChestCrumblingPillars);
-	scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles();
-	scPillarPlace(DehkanPlateauThemisAxeChestStakes);
-	if (syGameFlagGet(FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED) != 0)
-	{
-		fdActorDisableById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
-		fdMapGridCopyMetatileAttributes(50, 7, 1, 1, 52, 7);
-		scFieldActorSetPosAndResetMotion(
-			fdActorGetById(ACTOR_THEMIS_AXE_CHEST_PILLAR), toFIXED(840), 0, toFIXED(120));
-	}
-	else
-	{
-		fdActorPlaceBlocks(DehkanPlateauThemisAxeChestPillars);
-	}
-	scDehkanPlateauRestoreThemisAxeChestCracks();
-	if (syGameFlagGet(FLAG_CANNON_FLED_OVER_CRACKS) != 0)
-	{
-		Sint32 angle = FACING_SOUTH;
+    if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+    {
+        fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+            ACTOR_PRIORITY_IGNORES_RISES;
+        if (MainRoutineStateWork.entrance == ENTRANCE_THEMIS_AXE_CHEST_WEST_SCREEN)
+        {
+            fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+            fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+                ACTOR_PRIORITY_AUTOMATIC;
+        }
+    }
+    scCrumblingPillarPlaceWithStandIn(DehkanPlateauThemisAxeChestCrumblingPillars);
+    scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles();
+    scPillarPlace(DehkanPlateauThemisAxeChestStakes);
+    if (syGameFlagGet(FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED) != 0)
+    {
+        fdActorDisableById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
+        fdMapGridCopyMetatileAttributes(50, 7, 1, 1, 52, 7);
+        scFieldActorSetPosAndResetMotion(
+            fdActorGetById(ACTOR_THEMIS_AXE_CHEST_PILLAR), toFIXED(840), 0, toFIXED(120));
+    }
+    else
+    {
+        fdActorPlaceBlocks(DehkanPlateauThemisAxeChestPillars);
+    }
+    scDehkanPlateauRestoreThemisAxeChestCracks();
+    if (syGameFlagGet(FLAG_CANNON_FLED_OVER_CRACKS) != 0)
+    {
+        Sint32 angle = FACING_SOUTH;
 
-		scActorPlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168), angle);
-		fdMapGridCopyMetatileTilesIndicesRect(68, 33, 105, 6, 1, 1);
-		fdMapGridCopyMetatileTilesIndicesRect(69, 33, 105, 4, 1, 1);
-		syGameFlagSet(FLAG_CRACK_OPENED(7));
-	}
-	if (syGameFlagGet(FLAG_CANNON_FLED_EAST) != 0)
-		fdActorSetPos(ACTOR_THEMIS_AXE_CHEST_CANNON, 0, 0);
-	scDehkanPlateauHideThemisAxeChestBlocks();
+        scActorPlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168), angle);
+        fdMapGridCopyMetatileTilesIndicesRect(68, 33, 105, 6, 1, 1);
+        fdMapGridCopyMetatileTilesIndicesRect(69, 33, 105, 4, 1, 1);
+        syGameFlagSet(FLAG_CRACK_OPENED(7));
+    }
+    if (syGameFlagGet(FLAG_CANNON_FLED_EAST) != 0)
+        fdActorSetPos(ACTOR_THEMIS_AXE_CHEST_CANNON, 0, 0);
+    scDehkanPlateauHideThemisAxeChestBlocks();
 }
 
 void scDehkanPlateauForgetCrackOnLeaving(void);
@@ -1887,104 +1887,104 @@ void scDehkanPlateauForgetCrackOnLeaving(void);
 // stakes and crumbling pillars, its cracks, and Cannon as far as he has gone.
 void scDehkanPlateauInitTightropes(void)
 {
-	ACTOR *actor;
-	FIXED  pillarX;
+    ACTOR *actor;
+    FIXED  pillarX;
 
-	if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
-	{
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-			ACTOR_PRIORITY_IGNORES_RISES;
-		fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-			ACTOR_PRIORITY_AUTOMATIC;
-	}
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST, 1);
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST, 1);
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST, 1);
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST, 1);
-	fdTightropeInit();
-	fdTightropePlace(
-		0, ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST, ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST);
-	fdTightropePlace(1,
-	                 ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST,
-	                 ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST);
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_ROPE_LOW_POST, 1);
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_ROPE_HIGH_POST, 1);
-	scDehkanPlateauInitRopes();
-	fdRopePlace(0,
-	            FLAG_TIGHTROPES_ROPE_LASHED,
-	            ACTOR_TIGHTROPES_ROPE_LOW_POST,
-	            ACTOR_TIGHTROPES_ROPE_HIGH_POST);
-	fdActorPlaceBlocks(DehkanPlateauTightropesPillars);
-	if (fdActorGetById(ACTOR_TIGHTROPES_PILLAR)->y.fixed > (Sint32)-toFIXED(8))
-		fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 1);
-	else
-		fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 2);
-	fdActorDisableById(ACTOR_TIGHTROPES_SECOND_PILLAR);
-	fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_PILLAR, 2);
-	if (syGameFlagGet(FLAG_TIGHTROPES_SECOND_PILLAR_PLACED) != 0)
-		scDehkanPlateauSetTightropesSecondPillarInPlace();
-	else
-		fdMapGridCopyMetatileAttributes(38, 32, 1, 1, 38, 33);
-	fdActorGetById(ACTOR_TIGHTROPES_FIRST_VINE_PILLAR)->priorityFlags  &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGetById(ACTOR_TIGHTROPES_SECOND_VINE_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGetById(ACTOR_TIGHTROPES_THIRD_VINE_PILLAR)->priorityFlags  &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGetById(ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-	scPillarRaise(DehkanPlateauTightropesVinePillars);
-	{
-		ACTOR *pillar = fdActorGetById(ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR);
+    if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+    {
+        fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+            ACTOR_PRIORITY_IGNORES_RISES;
+        fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+        fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+            ACTOR_PRIORITY_AUTOMATIC;
+    }
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST, 1);
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST, 1);
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST, 1);
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST, 1);
+    fdTightropeInit();
+    fdTightropePlace(
+        0, ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST, ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST);
+    fdTightropePlace(1,
+                     ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST,
+                     ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST);
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_ROPE_LOW_POST, 1);
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_ROPE_HIGH_POST, 1);
+    scDehkanPlateauInitRopes();
+    fdRopePlace(0,
+                FLAG_TIGHTROPES_ROPE_LASHED,
+                ACTOR_TIGHTROPES_ROPE_LOW_POST,
+                ACTOR_TIGHTROPES_ROPE_HIGH_POST);
+    fdActorPlaceBlocks(DehkanPlateauTightropesPillars);
+    if (fdActorGetById(ACTOR_TIGHTROPES_PILLAR)->y.fixed > (Sint32)-toFIXED(8))
+        fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 1);
+    else
+        fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 2);
+    fdActorDisableById(ACTOR_TIGHTROPES_SECOND_PILLAR);
+    fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_PILLAR, 2);
+    if (syGameFlagGet(FLAG_TIGHTROPES_SECOND_PILLAR_PLACED) != 0)
+        scDehkanPlateauSetTightropesSecondPillarInPlace();
+    else
+        fdMapGridCopyMetatileAttributes(38, 32, 1, 1, 38, 33);
+    fdActorGetById(ACTOR_TIGHTROPES_FIRST_VINE_PILLAR)->priorityFlags  &= ~ACTOR_PRIORITY_AUTOMATIC;
+    fdActorGetById(ACTOR_TIGHTROPES_SECOND_VINE_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    fdActorGetById(ACTOR_TIGHTROPES_THIRD_VINE_PILLAR)->priorityFlags  &= ~ACTOR_PRIORITY_AUTOMATIC;
+    fdActorGetById(ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    scPillarRaise(DehkanPlateauTightropesVinePillars);
+    {
+        ACTOR *pillar = fdActorGetById(ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR);
 
-		pillarX       = pillar->x.fixed;
-		if (FIELD_METATILE(pillarX) == 54)
-		{
-			MAP_METATILE *metatile   = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
+        pillarX       = pillar->x.fixed;
+        if (FIELD_METATILE(pillarX) == 54)
+        {
+            MAP_METATILE *metatile   = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
 
-			metatile                += fdActorGetMetatileIndex(pillar);
-			metatile->attributeB    &= ~MAP_METATILE_JUMP;
-			metatile->collisionCode  = CUE_TIGHTROPES_PILLARS_WEST;
-		}
-	}
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, 1);
-	fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, 1);
-	scDehkanPlateauRestoreTightropesCracks();
-	if (syGameFlagGet(FLAG_CANNON_LEAPT_AWAY) != 0)
-	{
-		fdActorSetPosAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(424), toFIXED(104), FACING_SOUTH);
-	}
-	fdActorSetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_STANDING);
-	if (syGameFlagGet(FLAG_CANNON_POUNDED_STAKE) != 0)
-	{
-		actor = fdActorGetById(ACTOR_TIGHTROPES_STAKE);
-		fdMapGridCopyMetatileAttributes(27, 8, 1, 1, 27, 9);
-		fdActorSetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_SUNK);
-		actor->priorityFlags  |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->collisionFlags &= ~ACTOR_SOLID;
-		syGameFlagSet(FLAG_TIGHTROPES_STAKE_POUNDED);
-		syGameFlagSet(FLAG_CRACK_OPENED(1));
-		fdMapGridCopyMetatileTilesIndicesRect(69, 51, 92, 11, 1, 1);
-		fdActorSetPosAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616), toFIXED(280), FACING_SOUTH);
-	}
-	if (syGameFlagGet(FLAG_CANNON_CRACKED_PILLARS) != 0)
-	{
-		syGameFlagSet(FLAG_PILLAR_CRACKED(0));
-		syGameFlagSet(FLAG_PILLAR_CRACKED(3));
-		fdActorSetPos(ACTOR_TIGHTROPES_CANNON, 0, 0);
-	}
-	syCrumblingPillarPlace(DehkanPlateauTightropesCrumblingPillars);
-	scDehkanPlateauSetTightropesStandingPillarMetatiles();
-	scDehkanPlateauHideTightropesBlocks();
-	// The second unseen block, at (408, 72), stands on a metatile 32 pixels high beside the path;
-	// it is held at the path's height instead.
-	{
-		ACTOR *block       = fdActorGetById(ACTOR_TIGHTROPES_FIRST_BLOCK + 1);
+            metatile                += fdActorGetMetatileIndex(pillar);
+            metatile->attributeB    &= ~MAP_METATILE_JUMP;
+            metatile->collisionCode  = CUE_TIGHTROPES_PILLARS_WEST;
+        }
+    }
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, 1);
+    fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, 1);
+    scDehkanPlateauRestoreTightropesCracks();
+    if (syGameFlagGet(FLAG_CANNON_LEAPT_AWAY) != 0)
+    {
+        fdActorSetPosAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(424), toFIXED(104), FACING_SOUTH);
+    }
+    fdActorSetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_STANDING);
+    if (syGameFlagGet(FLAG_CANNON_POUNDED_STAKE) != 0)
+    {
+        actor = fdActorGetById(ACTOR_TIGHTROPES_STAKE);
+        fdMapGridCopyMetatileAttributes(27, 8, 1, 1, 27, 9);
+        fdActorSetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_SUNK);
+        actor->priorityFlags  |= ACTOR_PRIORITY_UNDERFOOT;
+        actor->collisionFlags &= ~ACTOR_SOLID;
+        syGameFlagSet(FLAG_TIGHTROPES_STAKE_POUNDED);
+        syGameFlagSet(FLAG_CRACK_OPENED(1));
+        fdMapGridCopyMetatileTilesIndicesRect(69, 51, 92, 11, 1, 1);
+        fdActorSetPosAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616), toFIXED(280), FACING_SOUTH);
+    }
+    if (syGameFlagGet(FLAG_CANNON_CRACKED_PILLARS) != 0)
+    {
+        syGameFlagSet(FLAG_PILLAR_CRACKED(0));
+        syGameFlagSet(FLAG_PILLAR_CRACKED(3));
+        fdActorSetPos(ACTOR_TIGHTROPES_CANNON, 0, 0);
+    }
+    syCrumblingPillarPlace(DehkanPlateauTightropesCrumblingPillars);
+    scDehkanPlateauSetTightropesStandingPillarMetatiles();
+    scDehkanPlateauHideTightropesBlocks();
+    // The second unseen block, at (408, 72), stands on a metatile 32 pixels high beside the path;
+    // it is held at the path's height instead.
+    {
+        ACTOR *block       = fdActorGetById(ACTOR_TIGHTROPES_FIRST_BLOCK + 1);
 
-		block->motionFlags = 0;
-		block->y.fixed     = 0;
-	}
-	DehkanPlateauCrackX = 0;
-	DehkanPlateauCrackZ = 0;
-	sySetEvent(scDehkanPlateauForgetCrackOnLeaving, EVENT_PASS_TICK);
+        block->motionFlags = 0;
+        block->y.fixed     = 0;
+    }
+    DehkanPlateauCrackX = 0;
+    DehkanPlateauCrackZ = 0;
+    sySetEvent(scDehkanPlateauForgetCrackOnLeaving, EVENT_PASS_TICK);
 }
 
 extern Uint16 DehkanPlateauFallLandingMetatiles[];
@@ -1994,41 +1994,41 @@ extern Uint16 DehkanPlateauFallLandingMetatiles[];
 // a column of five metatiles from (columnSourceX, columnSourceZ), and four metatiles from (sourceX,
 // belowSourceZ), belowOffsetZ rows below that column on the lower layer.
 #define DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(                                                       \
-	name, sourceX, sourceZ, columnSourceX, columnSourceZ, belowOffsetZ, belowSourceZ)              \
-	void name(void)                                                                                \
-	{                                                                                              \
-		Sint32 flag = FLAG_FELL_THROUGH_FIRST;                                                     \
+    name, sourceX, sourceZ, columnSourceX, columnSourceZ, belowOffsetZ, belowSourceZ)              \
+    void name(void)                                                                                \
+    {                                                                                              \
+        Sint32 flag = FLAG_FELL_THROUGH_FIRST;                                                     \
                                                                                                    \
-		while (1)                                                                                  \
-		{                                                                                          \
-			if (syGameFlagGet(flag))                                                               \
-			{                                                                                      \
-				Sint32  fall  = flag - FLAG_FELL_THROUGH_FIRST;                                    \
-				Uint16 *entry = &DehkanPlateauFallLandingMetatiles[fall * 4];                      \
-				Sint32  y;                                                                         \
-				Sint32  x;                                                                         \
+        while (1)                                                                                  \
+        {                                                                                          \
+            if (syGameFlagGet(flag))                                                               \
+            {                                                                                      \
+                Sint32  fall  = flag - FLAG_FELL_THROUGH_FIRST;                                    \
+                Uint16 *entry = &DehkanPlateauFallLandingMetatiles[fall * 4];                      \
+                Sint32  y;                                                                         \
+                Sint32  x;                                                                         \
                                                                                                    \
-				x = *entry++;                                                                      \
-				y = *entry++;                                                                      \
-				fdMapGridCopyMetatilesTo(sourceX, sourceZ, x, y, 1, 1);                            \
-				x = entry[0];                                                                      \
-				y = entry[1];                                                                      \
-				fdMapGridCopyMetatilesTo(columnSourceX, columnSourceZ, x, y, 1, 5);                \
-				/* The second crack's shaft of light starts a row lower: its                       \
-				 * top metatile takes the shaft's second picture, the Mint                         \
-				 * chest cave's (67, 4). */                                                        \
-				if (fall == 1)                                                                     \
-					fdMapGridCopyMetatilesTo(67, 4, 69, 3, 1, 1);                                  \
-				x -= 64;                                                                           \
-				y += belowOffsetZ;                                                                 \
-				fdMapGridCopyMetatilesTo(sourceX, belowSourceZ, x, y, 1, 4);                       \
-				return;                                                                            \
-			}                                                                                      \
-			if (flag == FLAG_FELL_THROUGH_LAST)                                                    \
-				return;                                                                            \
-			flag++;                                                                                \
-		}                                                                                          \
-	}
+                x = *entry++;                                                                      \
+                y = *entry++;                                                                      \
+                fdMapGridCopyMetatilesTo(sourceX, sourceZ, x, y, 1, 1);                            \
+                x = entry[0];                                                                      \
+                y = entry[1];                                                                      \
+                fdMapGridCopyMetatilesTo(columnSourceX, columnSourceZ, x, y, 1, 5);                \
+                /* The second crack's shaft of light starts a row lower: its                       \
+                 * top metatile takes the shaft's second picture, the Mint                         \
+                 * chest cave's (67, 4). */                                                        \
+                if (fall == 1)                                                                     \
+                    fdMapGridCopyMetatilesTo(67, 4, 69, 3, 1, 1);                                  \
+                x -= 64;                                                                           \
+                y += belowOffsetZ;                                                                 \
+                fdMapGridCopyMetatilesTo(sourceX, belowSourceZ, x, y, 1, 4);                       \
+                return;                                                                            \
+            }                                                                                      \
+            if (flag == FLAG_FELL_THROUGH_LAST)                                                    \
+                return;                                                                            \
+            flag++;                                                                                \
+        }                                                                                          \
+    }
 
 // Draws, in the caves below the cracks, the metatiles where the party landed under the crack it
 // fell through.
@@ -2041,211 +2041,211 @@ DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(scDehkanPlateauDrawPoundCubeFallLanding, 13,
 // Sets up the caves below the cracks: the floor Cannon opened, and the landing of a fall.
 void scDehkanPlateauInitMintChest(void)
 {
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-		ACTOR_PRIORITY_IGNORES_RISES;
-	scDehkanPlateauHideMintChestBlocks();
-	if (syGameFlagGet(FLAG_CANNON_FLED_OVER_CRACKS) != 0)
-	{
-		fdMapGridCopyMetatileTilesIndicesRect(3, 8, 30, 33, 1, 1);
-		fdMapGridCopyMetatileTilesIndicesRect(67, 3, 94, 28, 1, 5);
-		fdMapGridCopyMetatileTilesIndicesRect(3, 69, 30, 93, 1, 4);
-	}
-	if (MainRoutineStateWork.entrance >= FIRST_LANDING_ENTRANCE
-	    && MainRoutineStateWork.entrance <= LAST_LANDING_ENTRANCE)
-	{
-		Sint32 entrance = MainRoutineStateWork.entrance;
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
+    scDehkanPlateauHideMintChestBlocks();
+    if (syGameFlagGet(FLAG_CANNON_FLED_OVER_CRACKS) != 0)
+    {
+        fdMapGridCopyMetatileTilesIndicesRect(3, 8, 30, 33, 1, 1);
+        fdMapGridCopyMetatileTilesIndicesRect(67, 3, 94, 28, 1, 5);
+        fdMapGridCopyMetatileTilesIndicesRect(3, 69, 30, 93, 1, 4);
+    }
+    if (MainRoutineStateWork.entrance >= FIRST_LANDING_ENTRANCE
+        && MainRoutineStateWork.entrance <= LAST_LANDING_ENTRANCE)
+    {
+        Sint32 entrance = MainRoutineStateWork.entrance;
 
-		scDehkanPlateauForgetFall();
-		syGameFlagSet(FLAG_FELL_THROUGH(entrance));
-	}
-	scDehkanPlateauDrawMintChestFallLanding();
-	if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
-	{
-		if (MainRoutineStateWork.entrance >= FIRST_LANDING_ENTRANCE)
-		{
-			if (MainRoutineStateWork.entrance <= LAST_LANDING_ENTRANCE)
-				scDehkanPlateauLandFromFall();
-		}
-	}
+        scDehkanPlateauForgetFall();
+        syGameFlagSet(FLAG_FELL_THROUGH(entrance));
+    }
+    scDehkanPlateauDrawMintChestFallLanding();
+    if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+    {
+        if (MainRoutineStateWork.entrance >= FIRST_LANDING_ENTRANCE)
+        {
+            if (MainRoutineStateWork.entrance <= LAST_LANDING_ENTRANCE)
+                scDehkanPlateauLandFromFall();
+        }
+    }
 }
 
 // Felix drops in from the crack above in a shaft of light, landing in a ring of dust.
 void scDehkanPlateauLandFromFall(void)
 {
-	ACTOR         *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	EFFECT_OPTIONS options;
-	Uint32         i;
+    ACTOR         *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    EFFECT_OPTIONS options;
+    Uint32         i;
 
-	fdScriptStart();
-	fdScriptEndLastingPsynergy(0);
-	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdMapGridCenterOnFollowedPoint();
-	sySynch(1);
-	leader->y.fixed            = toFIXED(130);
-	leader->gravity            = toFIXED(1) / 2;
-	leader->bounce             = 0;
-	leader->motionFlags        = 0;
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionTicks();
-	sySoundPlay(SE_DUST_PUFF);
-	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdScriptWait(24);
-	options.palette     = SPRITE_COLOR_WHITE;
-	options.update      = fdEffectAdvanceMotion;
-	options.startScaleX = toFIXED(16) / 25;
-	options.startScaleY = toFIXED(16) / 25;
-	for (i = 0; i <= TRIG_TURN / FACING_STEP; i++)
-	{
-		Sint32 angle;
-		FIXED  velocity[3];
+    fdScriptStart();
+    fdScriptEndLastingPsynergy(0);
+    fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+    fdMapGridCenterOnFollowedPoint();
+    sySynch(1);
+    leader->y.fixed            = toFIXED(130);
+    leader->gravity            = toFIXED(1) / 2;
+    leader->bounce             = 0;
+    leader->motionFlags        = 0;
+    FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    fdScriptStartScreenTransition();
+    fdScriptWaitTransitionTicks();
+    sySoundPlay(SE_DUST_PUFF);
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    fdScriptWait(24);
+    options.palette     = SPRITE_COLOR_WHITE;
+    options.update      = fdEffectAdvanceMotion;
+    options.startScaleX = toFIXED(16) / 25;
+    options.startScaleY = toFIXED(16) / 25;
+    for (i = 0; i <= TRIG_TURN / FACING_STEP; i++)
+    {
+        Sint32 angle;
+        FIXED  velocity[3];
 
-		angle        = i * FACING_STEP;
-		velocity[0]  = syCos(angle);
-		velocity[1]  = 0;
-		velocity[2]  = sySin(angle);
-		velocity[0] += velocity[0] >> 1;
-		velocity[0] += syRandomBelow(toFIXED(3) / 4);
-		velocity[0] += -(toFIXED(3) / 8);
-		velocity[2] += syRandomBelow(toFIXED(3) / 8) + -(toFIXED(3) / 16);
-		scFieldEffectSpawn(leader->x.fixed,
-		                   leader->y.fixed,
-		                   leader->z.fixed,
-		                   velocity[0],
-		                   velocity[1],
-		                   velocity[2],
-		                   EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
-		                   &options);
-	}
-	sySoundPlay(SE_THUMP);
-	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
-	                    ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_LEADER_SIT);
-	fdMapGridSetShake(5, 5, 1);
-	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdMapGridWaitForShakeToSettle();
-	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
-	                    ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-	leader->gravity = toFIXED(1);
-	leader->bounce  = toFIXED(1) / 4;
-	fdScriptWait(10);
-	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_STAND);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	fdScriptEnd();
+        angle        = i * FACING_STEP;
+        velocity[0]  = syCos(angle);
+        velocity[1]  = 0;
+        velocity[2]  = sySin(angle);
+        velocity[0] += velocity[0] >> 1;
+        velocity[0] += syRandomBelow(toFIXED(3) / 4);
+        velocity[0] += -(toFIXED(3) / 8);
+        velocity[2] += syRandomBelow(toFIXED(3) / 8) + -(toFIXED(3) / 16);
+        scFieldEffectSpawn(leader->x.fixed,
+                           leader->y.fixed,
+                           leader->z.fixed,
+                           velocity[0],
+                           velocity[1],
+                           velocity[2],
+                           EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
+                           &options);
+    }
+    sySoundPlay(SE_THUMP);
+    fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
+                        ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+    fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_LEADER_SIT);
+    fdMapGridSetShake(5, 5, 1);
+    fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+    fdMapGridWaitForShakeToSettle();
+    fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
+                        ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+    leader->gravity = toFIXED(1);
+    leader->bounce  = toFIXED(1) / 4;
+    fdScriptWait(10);
+    fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_STAND);
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    fdScriptEnd();
 }
 
 // Sets up the Pound Cube's cave: the Pound Cube where Cannon dropped it, its cracks, and the
 // landing of a fall, beside Cannon the first time.
 void scDehkanPlateauInitPoundCube(void)
 {
-	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint32 entrance;
+    ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    Sint32 entrance;
 
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-	if (syGameFlagGet(FLAG_POUND_CUBE_TAKEN) == 0)
-	{
-		scDehkanPlateauCreatePoundCube();
-		if (syGameFlagGet(FLAG_CANNON_DROPPED_POUND_CUBE) != 0)
-		{
-			fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 15, 5);
-			if (DehkanPlateauPoundCubeWork != NULL)
-			{
-				scFieldActorSetPosAndResetMotion(
-					DehkanPlateauPoundCubeWork, toFIXED(248), 0, toFIXED(88));
-				sySynch(1);
-			}
-		}
-	}
-	scPillarPlace(DehkanPlateauPoundCubeStakes);
-	scDehkanPlateauRestorePoundCubeCracks();
-	entrance = MainRoutineStateWork.entrance;
-	if (entrance >= FIRST_LANDING_ENTRANCE)
-	{
-		scDehkanPlateauForgetFall();
-		syGameFlagSet(FLAG_FELL_THROUGH(entrance));
-	}
-	if (fdScriptGetFlag(FLAG_CANNON_DROPPED_POUND_CUBE) != 0)
-		fdActorSetPos(ACTOR_POUND_CUBE_CANNON, 0, 0);
-	scDehkanPlateauDrawPoundCubeFallLanding();
-	if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
-	{
-		if (MainRoutineStateWork.entrance >= POUND_CUBE_LANDINGS_FROM)
-		{
-			if (MainRoutineStateWork.entrance
-			        == DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH
-			    && syGameFlagGet(FLAG_CANNON_DROPPED_POUND_CUBE) == 0)
-				scDehkanPlateauCannonDropsPoundCube();
-			else
-				scDehkanPlateauLandFromFall();
-		}
-	}
-	DehkanPlateauCrackX = 0;
-	DehkanPlateauCrackZ = 0;
-	sySetEvent(scDehkanPlateauForgetCrackOnLeaving, EVENT_PASS_TICK);
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+    if (syGameFlagGet(FLAG_POUND_CUBE_TAKEN) == 0)
+    {
+        scDehkanPlateauCreatePoundCube();
+        if (syGameFlagGet(FLAG_CANNON_DROPPED_POUND_CUBE) != 0)
+        {
+            fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 15, 5);
+            if (DehkanPlateauPoundCubeWork != NULL)
+            {
+                scFieldActorSetPosAndResetMotion(
+                    DehkanPlateauPoundCubeWork, toFIXED(248), 0, toFIXED(88));
+                sySynch(1);
+            }
+        }
+    }
+    scPillarPlace(DehkanPlateauPoundCubeStakes);
+    scDehkanPlateauRestorePoundCubeCracks();
+    entrance = MainRoutineStateWork.entrance;
+    if (entrance >= FIRST_LANDING_ENTRANCE)
+    {
+        scDehkanPlateauForgetFall();
+        syGameFlagSet(FLAG_FELL_THROUGH(entrance));
+    }
+    if (fdScriptGetFlag(FLAG_CANNON_DROPPED_POUND_CUBE) != 0)
+        fdActorSetPos(ACTOR_POUND_CUBE_CANNON, 0, 0);
+    scDehkanPlateauDrawPoundCubeFallLanding();
+    if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+    {
+        if (MainRoutineStateWork.entrance >= POUND_CUBE_LANDINGS_FROM)
+        {
+            if (MainRoutineStateWork.entrance
+                    == DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH
+                && syGameFlagGet(FLAG_CANNON_DROPPED_POUND_CUBE) == 0)
+                scDehkanPlateauCannonDropsPoundCube();
+            else
+                scDehkanPlateauLandFromFall();
+        }
+    }
+    DehkanPlateauCrackX = 0;
+    DehkanPlateauCrackZ = 0;
+    sySetEvent(scDehkanPlateauForgetCrackOnLeaving, EVENT_PASS_TICK);
 }
 
 // Creates the Pound Cube Cannon drops, drawn with the item's own icon.
 void scDehkanPlateauCreatePoundCube(void)
 {
-	ACTOR **slot  = &DehkanPlateauPoundCubeWork;
-	Uint8   clear = 0;
-	ACTOR  *actor = ((ACTOR *)syImportActorCreate(SPRITE_UNSEEN_MARKER, 0, 0, 0));
+    ACTOR **slot  = &DehkanPlateauPoundCubeWork;
+    Uint8   clear = 0;
+    ACTOR  *actor = ((ACTOR *)syImportActorCreate(SPRITE_UNSEEN_MARKER, 0, 0, 0));
 
-	*slot         = actor;
-	if (actor != 0)
-	{
-		FIELD_SPR     *sprite = actor->sprite;
-		ICON_TRANSFER *glyph;
+    *slot         = actor;
+    if (actor != 0)
+    {
+        FIELD_SPR     *sprite = actor->sprite;
+        ICON_TRANSFER *glyph;
 
-		sprite->fullColor        = 0;
-		sprite->palette          = 0;
-		actor->motionFlags       = clear;
-		actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
-		sprite->flags            = clear;
-		sprite->count            = clear;
-		glyph = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-		mnIconDrawItem(ITEM_POUND_CUBE);
-		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-	}
+        sprite->fullColor        = 0;
+        sprite->palette          = 0;
+        actor->motionFlags       = clear;
+        actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+        sprite->flags            = clear;
+        sprite->count            = clear;
+        glyph = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+        mnIconDrawItem(ITEM_POUND_CUBE);
+        syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+        syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
+    }
 }
 
 // Sets up Cannon's cave: its stake and crumbling pillar, Cannon met already if he is in the party,
 // and the landing of a fall.
 void scDehkanPlateauInitCannon(void)
 {
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
-		ACTOR_PRIORITY_IGNORES_RISES;
-	if (syGameFlagGet(FLAG_DJINNI(DJINNI_CANNON)) != 0)
-		syGameFlagSet(FLAG_CANNON_MET);
-	scPillarPlace(DehkanPlateauCannonStakes);
-	syCrumblingPillarPlace(DehkanPlateauCannonCrumblingPillar);
-	if (syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED) == 0)
-	{
-		scDehkanPlateauEnterLowerPath();
-		sySynch(10);
-	}
-	scDehkanPlateauHideCannonBlocks();
-	if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
-	{
-		if (MainRoutineStateWork.entrance >= CANNON_ROOM_LANDINGS_FROM)
-		{
-			if (MainRoutineStateWork.entrance <= LAST_LANDING_ENTRANCE)
-				scDehkanPlateauLandFromFall();
-		}
-	}
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
+    if (syGameFlagGet(FLAG_DJINNI(DJINNI_CANNON)) != 0)
+        syGameFlagSet(FLAG_CANNON_MET);
+    scPillarPlace(DehkanPlateauCannonStakes);
+    syCrumblingPillarPlace(DehkanPlateauCannonCrumblingPillar);
+    if (syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED) == 0)
+    {
+        scDehkanPlateauEnterLowerPath();
+        sySynch(10);
+    }
+    scDehkanPlateauHideCannonBlocks();
+    if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+    {
+        if (MainRoutineStateWork.entrance >= CANNON_ROOM_LANDINGS_FROM)
+        {
+            if (MainRoutineStateWork.entrance <= LAST_LANDING_ENTRANCE)
+                scDehkanPlateauLandFromFall();
+        }
+    }
 }
 
 Sint32 scPrepareMap(void)
 {
-	return 0;
+    return 0;
 }
 
 #undef DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG
@@ -2261,612 +2261,612 @@ extern Uint32 FieldEffectLongScript[];
 
 // The puffs of dust a crumbling pillar raises.
 Uint32 DehkanPlateauDustScript[] = {
-	SC_WAIT(33),
-	SC_SET(SW_HOOK, 0),
-	SC_POSITION_ORIGIN,
-	SC_WAIT(1),
-	SC_RELEASE,
+    SC_WAIT(33),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION_ORIGIN,
+    SC_WAIT(1),
+    SC_RELEASE,
 };
 
 const Sint32 *FieldEffectDurationScripts[] = {
-	FieldEffectShortScript,
-	FieldEffectMediumScript,
-	FieldEffectLongScript,
+    FieldEffectShortScript,
+    FieldEffectMediumScript,
+    FieldEffectLongScript,
 };
 
 // Each room's crumbling pillars, with the first of the two flags that remember each one cracked and crumbled.
 Sint16 DehkanPlateauFullMetalVestChestCrumblingPillars[] = {
-	ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0),
-	ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR + 1, FLAG_PILLAR_CRACKED(1),
-	ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR + 2, FLAG_PILLAR_CRACKED(2),
-	ACTOR_LIST_END,
+    ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0),
+    ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR + 1, FLAG_PILLAR_CRACKED(1),
+    ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR + 2, FLAG_PILLAR_CRACKED(2),
+    ACTOR_LIST_END,
 };
 Sint16 DehkanPlateauThemisAxeChestCrumblingPillars[] = {
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 1, FLAG_PILLAR_CRACKED(1),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 2, FLAG_PILLAR_CRACKED(2),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 3, FLAG_PILLAR_CRACKED(3),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 4, FLAG_PILLAR_CRACKED(4),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 5, FLAG_PILLAR_CRACKED(5),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 6, FLAG_PILLAR_CRACKED(6),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 7, FLAG_PILLAR_CRACKED(7),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 8, FLAG_PILLAR_CRACKED(8),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 9, FLAG_PILLAR_CRACKED(9),
-	ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 10, FLAG_PILLAR_CRACKED(10),
-	ACTOR_LIST_END,
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 1, FLAG_PILLAR_CRACKED(1),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 2, FLAG_PILLAR_CRACKED(2),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 3, FLAG_PILLAR_CRACKED(3),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 4, FLAG_PILLAR_CRACKED(4),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 5, FLAG_PILLAR_CRACKED(5),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 6, FLAG_PILLAR_CRACKED(6),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 7, FLAG_PILLAR_CRACKED(7),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 8, FLAG_PILLAR_CRACKED(8),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 9, FLAG_PILLAR_CRACKED(9),
+    ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 10, FLAG_PILLAR_CRACKED(10),
+    ACTOR_LIST_END,
 };
 Sint16 DehkanPlateauTightropesCrumblingPillars[] = {
-	ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0),
-	ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 1, FLAG_PILLAR_CRACKED(1),
-	ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 2, FLAG_PILLAR_CRACKED(2),
-	ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 3, FLAG_PILLAR_CRACKED(3),
-	ACTOR_LIST_END,
+    ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0),
+    ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 1, FLAG_PILLAR_CRACKED(1),
+    ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 2, FLAG_PILLAR_CRACKED(2),
+    ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 3, FLAG_PILLAR_CRACKED(3),
+    ACTOR_LIST_END,
 };
 Sint16 DehkanPlateauCannonCrumblingPillar[] = {
-	ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0), ACTOR_LIST_END,
+    ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0), ACTOR_LIST_END,
 };
 
 // Each room's stakes, with the flag that remembers each one Pounded.
 Sint16 DehkanPlateauFullMetalVestChestStakes[] = {
-	ACTOR_FULL_METAL_VEST_CHEST_STAKE, 1,
-	FLAG_FULL_METAL_VEST_CHEST_STAKE_POUNDED, ACTOR_LIST_END,
+    ACTOR_FULL_METAL_VEST_CHEST_STAKE, 1,
+    FLAG_FULL_METAL_VEST_CHEST_STAKE_POUNDED, ACTOR_LIST_END,
 };
 Sint16 DehkanPlateauThemisAxeChestStakes[] = {
-	ACTOR_THEMIS_AXE_CHEST_STAKE, 1, FLAG_THEMIS_AXE_CHEST_STAKE_POUNDED,
-	ACTOR_LIST_END,
+    ACTOR_THEMIS_AXE_CHEST_STAKE, 1, FLAG_THEMIS_AXE_CHEST_STAKE_POUNDED,
+    ACTOR_LIST_END,
 };
 Sint16 DehkanPlateauTightropesStakes[] = {
-	ACTOR_TIGHTROPES_STAKE, 1, FLAG_TIGHTROPES_STAKE_POUNDED,
-	ACTOR_LIST_END,
+    ACTOR_TIGHTROPES_STAKE, 1, FLAG_TIGHTROPES_STAKE_POUNDED,
+    ACTOR_LIST_END,
 };
 Sint16 DehkanPlateauPoundCubeStakes[] = {
-	ACTOR_POUND_CUBE_STAKE, 1, FLAG_POUND_CUBE_STAKE_POUNDED,
-	ACTOR_LIST_END,
+    ACTOR_POUND_CUBE_STAKE, 1, FLAG_POUND_CUBE_STAKE_POUNDED,
+    ACTOR_LIST_END,
 };
 Sint16 DehkanPlateauCannonStakes[] = {
-	ACTOR_CANNON_ROOM_STAKE, 1, FLAG_CANNON_ROOM_STAKE_POUNDED,
-	ACTOR_LIST_END,
+    ACTOR_CANNON_ROOM_STAKE, 1, FLAG_CANNON_ROOM_STAKE_POUNDED,
+    ACTOR_LIST_END,
 };
 
 // The stone pillars Move takes hold of.
 Sint16 DehkanPlateauThemisAxeChestPillars[] = {
-	ACTOR_THEMIS_AXE_CHEST_PILLAR, ACTOR_LIST_END,
+    ACTOR_THEMIS_AXE_CHEST_PILLAR, ACTOR_LIST_END,
 };
 Sint16 DehkanPlateauTightropesPillars[] = {
-	ACTOR_TIGHTROPES_PILLAR, ACTOR_LIST_END,
+    ACTOR_TIGHTROPES_PILLAR, ACTOR_LIST_END,
 };
 
 // The rope bridge's stretch's vine pillars.
 Sint16 DehkanPlateauTightropesVinePillars[] = {
-	ACTOR_TIGHTROPES_FIRST_VINE_PILLAR,  ACTOR_TIGHTROPES_SECOND_VINE_PILLAR,
-	ACTOR_TIGHTROPES_THIRD_VINE_PILLAR,  ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR,
-	ACTOR_LIST_END,
+    ACTOR_TIGHTROPES_FIRST_VINE_PILLAR,  ACTOR_TIGHTROPES_SECOND_VINE_PILLAR,
+    ACTOR_TIGHTROPES_THIRD_VINE_PILLAR,  ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR,
+    ACTOR_LIST_END,
 };
 
 // The map pictures a room's crack is drawn with: cracked open, then as a hole.
 Uint16 DehkanPlateauFullMetalVestChestCrackPictures[] = {
-	4, 33, 5, 33,
+    4, 33, 5, 33,
 };
 Uint16 DehkanPlateauThemisAxeChestCrackPictures[] = {
-	68, 33, 69, 33,
+    68, 33, 69, 33,
 };
 Uint16 DehkanPlateauTightropesCrackPictures[] = {
-	69, 51, 70, 51,
+    69, 51, 70, 51,
 };
 Uint16 DehkanPlateauPoundCubeCrackPictures[] = {
-	65, 64, 64, 64,
+    65, 64, 64, 64,
 };
 
 // The pictures of the hole under each crack, drawn as the leader falls.
 Uint16 DehkanPlateauFullMetalVestChestHolePictures[] = {
-	1, 36, 2, 36, 3, 36, 4, 36,
-	5, 36, 6, 36, 7, 36, 8, 36,
+    1, 36, 2, 36, 3, 36, 4, 36,
+    5, 36, 6, 36, 7, 36, 8, 36,
 };
 Uint16 DehkanPlateauThemisAxeChestHolePictures[] = {
-	65, 36, 66, 36, 67, 36, 68, 36,
-	69, 36, 70, 36, 71, 36, 72, 36,
+    65, 36, 66, 36, 67, 36, 68, 36,
+    69, 36, 70, 36, 71, 36, 72, 36,
 };
 Uint16 DehkanPlateauTightropesHolePictures[] = {
-	66, 54, 67, 54, 68, 54, 69, 54,
-	70, 54, 71, 54, 72, 54, 73, 54,
+    66, 54, 67, 54, 68, 54, 69, 54,
+    70, 54, 71, 54, 72, 54, 73, 54,
 };
 Uint16 DehkanPlateauPoundCubeHolePictures[] = {
-	64, 66, 65, 66, 66, 66, 67, 66,
-	68, 66,
+    64, 66, 65, 66, 66, 66, 67, 66,
+    68, 66,
 };
 
 // Each room's cracks: whether it starts cracked, its metatile, its hole picture and where the hole is drawn below.
 Uint16 DehkanPlateauFullMetalVestChestCracks[][CRACK_FIELDS] = {
-	{0, 76, 12, 0, 76, 48},
-	{0, 77, 13, 0, 77, 49},
-	{1, 79, 12, 0, 79, 48},
-	{0, 79, 14, 1, 79, 50},
-	{0, 81, 12, 0, 81, 48},
-	{0, 118, 17, 4, 118, 53},
-	{1, 119, 16, 0, 119, 52},
-	{0, 119, 18, 7, 119, 54},
-	{1, 120, 12, 7, 120, 48},
-	{0, 120, 14, 7, 120, 50},
-	{0, 120, 17, 2, 120, 53},
-	{0, 122, 12, 7, 122, 48},
-	{1, 122, 16, 0, 122, 52},
-	{0, 122, 18, 5, 122, 54},
+    {0, 76, 12, 0, 76, 48},
+    {0, 77, 13, 0, 77, 49},
+    {1, 79, 12, 0, 79, 48},
+    {0, 79, 14, 1, 79, 50},
+    {0, 81, 12, 0, 81, 48},
+    {0, 118, 17, 4, 118, 53},
+    {1, 119, 16, 0, 119, 52},
+    {0, 119, 18, 7, 119, 54},
+    {1, 120, 12, 7, 120, 48},
+    {0, 120, 14, 7, 120, 50},
+    {0, 120, 17, 2, 120, 53},
+    {0, 122, 12, 7, 122, 48},
+    {1, 122, 16, 0, 122, 52},
+    {0, 122, 18, 5, 122, 54},
 };
 Uint16 DehkanPlateauThemisAxeChestCracks[][CRACK_FIELDS] = {
-	{1, 105, 4, 0, 41, 36},
-	{0, 109, 17, 0, 45, 49},
-	{0, 110, 19, 3, 46, 51},
-	{0, 111, 17, 3, 47, 49},
-	{0, 112, 21, 0, 48, 53},
-	{0, 113, 20, 3, 49, 52},
-	{0, 114, 18, 0, 50, 50},
-	{0, 105, 6, 0, 41, 38},
+    {1, 105, 4, 0, 41, 36},
+    {0, 109, 17, 0, 45, 49},
+    {0, 110, 19, 3, 46, 51},
+    {0, 111, 17, 3, 47, 49},
+    {0, 112, 21, 0, 48, 53},
+    {0, 113, 20, 3, 49, 52},
+    {0, 114, 18, 0, 50, 50},
+    {0, 105, 6, 0, 41, 38},
 };
 Uint16 DehkanPlateauTightropesCracks[][CRACK_FIELDS] = {
-	{1, 91, 11, 0, 27, 43},
-	{0, 92, 11, 0, 28, 43},
-	{1, 93, 9, 0, 29, 41},
-	{1, 93, 12, 0, 29, 44},
-	{1, 109, 7, 0, 45, 39},
-	{1, 112, 6, 0, 48, 38},
+    {1, 91, 11, 0, 27, 43},
+    {0, 92, 11, 0, 28, 43},
+    {1, 93, 9, 0, 29, 41},
+    {1, 93, 12, 0, 29, 44},
+    {1, 109, 7, 0, 45, 39},
+    {1, 112, 6, 0, 48, 38},
 };
 Uint16 DehkanPlateauPoundCubeCracks[][CRACK_FIELDS] = {
-	{1, 13, 8, 2, 13, 72},
-	{0, 13, 9, 0, 13, 73},
-	{0, 13, 11, 1, 13, 75},
-	{0, 13, 6, 0, 13, 70},
-	{1, 15, 6, 0, 15, 70},
-	{0, 15, 8, 0, 15, 72},
-	{0, 15, 10, 1, 15, 74},
-	{1, 14, 10, 0, 14, 74},
-	{0, 14, 12, 0, 14, 76},
-	{1, 15, 12, 0, 15, 76},
-	{0, 16, 6, 0, 16, 70},
-	{1, 16, 8, 2, 16, 72},
-	{0, 16, 9, 0, 16, 73},
-	{0, 16, 11, 0, 16, 75},
-	{1, 18, 9, 0, 18, 73},
-	{0, 18, 11, 0, 18, 75},
+    {1, 13, 8, 2, 13, 72},
+    {0, 13, 9, 0, 13, 73},
+    {0, 13, 11, 1, 13, 75},
+    {0, 13, 6, 0, 13, 70},
+    {1, 15, 6, 0, 15, 70},
+    {0, 15, 8, 0, 15, 72},
+    {0, 15, 10, 1, 15, 74},
+    {1, 14, 10, 0, 14, 74},
+    {0, 14, 12, 0, 14, 76},
+    {1, 15, 12, 0, 15, 76},
+    {0, 16, 6, 0, 16, 70},
+    {1, 16, 8, 2, 16, 72},
+    {0, 16, 9, 0, 16, 73},
+    {0, 16, 11, 0, 16, 75},
+    {1, 18, 9, 0, 18, 73},
+    {0, 18, 11, 0, 18, 75},
 };
 
 // Where each fall lands in the rooms below.
 Uint16 DehkanPlateauFallLandingMetatiles[] = {
-	4, 7, 68, 2, 5, 8, 69, 3,
-	7, 7, 71, 2, 7, 9, 71, 4,
-	9, 7, 73, 2, 40, 12, 104, 7,
-	41, 11, 105, 6, 41, 13, 105, 8,
-	42, 5, 106, 0, 42, 9, 106, 4,
-	42, 12, 106, 7, 44, 7, 108, 2,
-	44, 11, 108, 6, 44, 13, 108, 8,
-	11, 23, 75, 18, 12, 25, 76, 20,
-	13, 23, 77, 18, 14, 27, 78, 22,
-	15, 26, 79, 21, 16, 24, 80, 19,
-	30, 35, 94, 30, 26, 9, 90, 4,
-	27, 9, 91, 4, 28, 7, 92, 2,
-	28, 10, 92, 5, 12, 8, 76, 3,
-	15, 7, 79, 2, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 30, 33, 94, 28,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
+    4, 7, 68, 2, 5, 8, 69, 3,
+    7, 7, 71, 2, 7, 9, 71, 4,
+    9, 7, 73, 2, 40, 12, 104, 7,
+    41, 11, 105, 6, 41, 13, 105, 8,
+    42, 5, 106, 0, 42, 9, 106, 4,
+    42, 12, 106, 7, 44, 7, 108, 2,
+    44, 11, 108, 6, 44, 13, 108, 8,
+    11, 23, 75, 18, 12, 25, 76, 20,
+    13, 23, 77, 18, 14, 27, 78, 22,
+    15, 26, 79, 21, 16, 24, 80, 19,
+    30, 35, 94, 30, 26, 9, 90, 4,
+    27, 9, 91, 4, 28, 7, 92, 2,
+    28, 10, 92, 5, 12, 8, 76, 3,
+    15, 7, 79, 2, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 30, 33, 94, 28,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
 };
 
 ACTOR *DehkanPlateauPoundCubeWork = NULL;
 
 SCENE_ENTRANCE SceneEntrances[] = {
-	{0, CONDITION_ALWAYS, 752, 0, 348, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{SCENE_TABLE_END},
+    {0, CONDITION_ALWAYS, 752, 0, 348, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 Uint32 SceneExits[] = {
-	SCENE_EXITS(DehkanPlateauFullMetalVestChest),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_SOUTHEAST),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST, DehkanPlateauThemisAxeChest, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST),
-	SCENE_EXIT(6, DehkanPlateauFullMetalVestChest, 7),
-	SCENE_EXIT(7, DehkanPlateauFullMetalVestChest, 6),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_C),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_D, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_D),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_E, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_E),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_F, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_F),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_G, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_G),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_C),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_D, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_D),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_E, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_E),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_F, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_F),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_G, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_G),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_H, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_H),
-	SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_I, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_I),
-	SCENE_EXITS(DehkanPlateauThemisAxeChest),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST, DehkanPlateauFullMetalVestChest, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_EAST),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_TIGHTROPES, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST),
-	SCENE_EXIT(5, DehkanPlateauThemisAxeChest, 6),
-	SCENE_EXIT(6, DehkanPlateauThemisAxeChest, 5),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTHWEST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_NORTHWEST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_WEST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTHWEST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_NORTHWEST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_WEST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_WEST_C),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTHWEST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_NORTHWEST_C),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_C),
-	SCENE_EXITS(DehkanPlateauTightropes),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST, DehkanPlateauThemisAxeChest, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTH, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTHEAST),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTHWEST),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_SOUTH, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTH),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_DEHKAN_PLATEAU_TIGHTROPES),
-	SCENE_EXIT(7, DehkanPlateauTightropes, 8),
-	SCENE_EXIT(8, DehkanPlateauTightropes, 7),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHWEST, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTHWEST),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTH_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTH_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTHEAST, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTHEAST),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTH_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTH_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_NORTHWEST, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTHWEST),
-	SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_NORTH, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH),
-	SCENE_EXITS(DehkanPlateauMintChest),
-	SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_A, DehkanPlateauFullMetalVestChest, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_WEST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_B, DehkanPlateauFullMetalVestChest, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_WEST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_TIGHTROPES_NORTH, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_MINT_CHEST_NORTH),
-	SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_SOUTHEAST, DehkanPlateauFullMetalVestChest, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST),
-	SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_A, DehkanPlateauThemisAxeChest, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_EAST, DehkanPlateauThemisAxeChest, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_EAST),
-	SCENE_EXIT(40, DehkanPlateauMintChest, 42),
-	SCENE_EXIT(41, DehkanPlateauMintChest, 43),
-	SCENE_EXIT(42, DehkanPlateauMintChest, 40),
-	SCENE_EXIT(43, DehkanPlateauMintChest, 41),
-	SCENE_EXITS(DehkanPlateauPoundCube),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_TIGHTROPES_NORTHEAST, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_WEST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_WEST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTHEAST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_TIGHTROPES_SOUTHWEST, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_TIGHTROPES_SOUTH, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTH),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHEAST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHEAST_A),
-	SCENE_EXIT(7, DehkanPlateauPoundCube, 10),
-	SCENE_EXIT(8, DehkanPlateauPoundCube, 9),
-	SCENE_EXIT(9, DehkanPlateauPoundCube, 8),
-	SCENE_EXIT(10, DehkanPlateauPoundCube, 7),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTHWEST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHWEST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_WEST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_WEST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHWEST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTHWEST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHWEST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTH_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTH_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTH_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTH_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHWEST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_WEST_C, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_WEST_C),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHWEST_C, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST_C),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTH_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTH_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTH_C, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTH_C),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTH_D, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTH_D),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTHEAST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTH_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTH_B),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_EAST, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_EAST),
-	SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHEAST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHEAST_B),
-	SCENE_EXITS(DehkanPlateauCannon),
-	SCENE_EXIT(DEHKAN_PLATEAU_CANNON_TO_DEHKAN_PLATEAU_POUND_CUBE_WEST_A, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_CANNON_WEST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_CANNON_TO_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST_A, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_CANNON_NORTHEAST_A),
-	SCENE_EXIT(DEHKAN_PLATEAU_CANNON_TO_DEHKAN_PLATEAU_POUND_CUBE_SOUTHEAST_A, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_CANNON_SOUTHEAST_A),
-	SCENE_EXIT(40, DehkanPlateauCannon, 41),
-	SCENE_EXIT(41, DehkanPlateauCannon, 40),
-	SCENE_EXIT(42, DehkanPlateauCannon, 43),
-	SCENE_EXIT(43, DehkanPlateauCannon, 42),
-	SCENE_EXITS_END,
+    SCENE_EXITS(DehkanPlateauFullMetalVestChest),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_SOUTHEAST),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST, DehkanPlateauThemisAxeChest, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST),
+    SCENE_EXIT(6, DehkanPlateauFullMetalVestChest, 7),
+    SCENE_EXIT(7, DehkanPlateauFullMetalVestChest, 6),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_C),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_D, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_D),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_E, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_E),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_F, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_F),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_G, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_G),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_C),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_D, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_D),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_E, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_E),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_F, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_F),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_G, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_G),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_H, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_H),
+    SCENE_EXIT(DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST_I, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_EAST_I),
+    SCENE_EXITS(DehkanPlateauThemisAxeChest),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST, DehkanPlateauFullMetalVestChest, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_EAST, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_EAST),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_TIGHTROPES, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST),
+    SCENE_EXIT(5, DehkanPlateauThemisAxeChest, 6),
+    SCENE_EXIT(6, DehkanPlateauThemisAxeChest, 5),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTHWEST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_NORTHWEST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_WEST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTHWEST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_NORTHWEST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_WEST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_WEST_C),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTHWEST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_NORTHWEST_C),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_C, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_C),
+    SCENE_EXITS(DehkanPlateauTightropes),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST, DehkanPlateauThemisAxeChest, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTH, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTHEAST),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTHWEST),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_SOUTH, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTH),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_DEHKAN_PLATEAU_TIGHTROPES),
+    SCENE_EXIT(7, DehkanPlateauTightropes, 8),
+    SCENE_EXIT(8, DehkanPlateauTightropes, 7),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHWEST, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTHWEST),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTH_A, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTH_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_NORTHEAST, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTHEAST),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTH_B, DehkanPlateauMintChest, DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES_SOUTH_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_NORTHWEST, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTHWEST),
+    SCENE_EXIT(DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_POUND_CUBE_NORTH, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH),
+    SCENE_EXITS(DehkanPlateauMintChest),
+    SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_A, DehkanPlateauFullMetalVestChest, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_WEST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_B, DehkanPlateauFullMetalVestChest, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_WEST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_TIGHTROPES_NORTH, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_MINT_CHEST_NORTH),
+    SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_SOUTHEAST, DehkanPlateauFullMetalVestChest, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST),
+    SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_A, DehkanPlateauThemisAxeChest, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_EAST, DehkanPlateauThemisAxeChest, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_MINT_CHEST_EAST),
+    SCENE_EXIT(40, DehkanPlateauMintChest, 42),
+    SCENE_EXIT(41, DehkanPlateauMintChest, 43),
+    SCENE_EXIT(42, DehkanPlateauMintChest, 40),
+    SCENE_EXIT(43, DehkanPlateauMintChest, 41),
+    SCENE_EXITS(DehkanPlateauPoundCube),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_TIGHTROPES_NORTHEAST, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_WEST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_WEST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTHEAST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_TIGHTROPES_SOUTHWEST, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_TIGHTROPES_SOUTH, DehkanPlateauTightropes, DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTH),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHEAST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHEAST_A),
+    SCENE_EXIT(7, DehkanPlateauPoundCube, 10),
+    SCENE_EXIT(8, DehkanPlateauPoundCube, 9),
+    SCENE_EXIT(9, DehkanPlateauPoundCube, 8),
+    SCENE_EXIT(10, DehkanPlateauPoundCube, 7),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTHWEST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHWEST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_WEST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_WEST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHWEST_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTHWEST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHWEST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTH_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTH_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTH_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTH_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHWEST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_WEST_C, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_WEST_C),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHWEST_C, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHWEST_C),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTH_A, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTH_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTH_C, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTH_C),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTH_D, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTH_D),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_NORTHEAST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTH_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTH_B),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_EAST, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_EAST),
+    SCENE_EXIT(DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_CANNON_SOUTHEAST_B, DehkanPlateauCannon, DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHEAST_B),
+    SCENE_EXITS(DehkanPlateauCannon),
+    SCENE_EXIT(DEHKAN_PLATEAU_CANNON_TO_DEHKAN_PLATEAU_POUND_CUBE_WEST_A, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_CANNON_WEST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_CANNON_TO_DEHKAN_PLATEAU_POUND_CUBE_NORTHEAST_A, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_CANNON_NORTHEAST_A),
+    SCENE_EXIT(DEHKAN_PLATEAU_CANNON_TO_DEHKAN_PLATEAU_POUND_CUBE_SOUTHEAST_A, DehkanPlateauPoundCube, DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_CANNON_SOUTHEAST_A),
+    SCENE_EXIT(40, DehkanPlateauCannon, 41),
+    SCENE_EXIT(41, DehkanPlateauCannon, 40),
+    SCENE_EXIT(42, DehkanPlateauCannon, 43),
+    SCENE_EXIT(43, DehkanPlateauCannon, 42),
+    SCENE_EXITS_END,
 };
 
 // The placements of a room with none of its own.
 ACTOR_PLACE DehkanPlateauPlacements[] = {
-	{SCENE_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // Each room's actors (DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_ACTOR_ID and the rest); the rows at scene points stand where the map's points put them.
 ACTOR_PLACE DehkanPlateauFullMetalVestChestPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 920, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 656, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 920, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 656, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    {SCENE_TABLE_END},
 };
 
 ACTOR_PLACE DehkanPlateauThemisAxeChestPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 12, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 13, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 12, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 13, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    {SCENE_TABLE_END},
 };
 
 ACTOR_PLACE DehkanPlateauTightropesPlacements[] = {
-	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 12, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 13, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 14, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 15, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 16, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 920, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	{SCENE_TABLE_END},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 12, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 13, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 14, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 15, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 16, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 920, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    {SCENE_TABLE_END},
 };
 
 ACTOR_PLACE DehkanPlateauMintChestPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    {SCENE_TABLE_END},
 };
 
 ACTOR_PLACE DehkanPlateauPoundCubePlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 536, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 536, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 ACTOR_PLACE DehkanPlateauCannonPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 872, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 872, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 888, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_CANNON), MOVEMENT_TYPE_STAND, 728, 0, 200, FACING_SOUTH, TALK_FACING_PARTY, 0),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_COLUMN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 872, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 872, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 888, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_CANNON), MOVEMENT_TYPE_STAND, 728, 0, 200, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
 };
 
 // The cues of a room with none of its own.
 CUE DehkanPlateauCues[] = {
-	{CUE_TABLE_END},
+    {CUE_TABLE_END},
 };
 
 // Each room's exits, cracks, pillars, unseen blocks and Cannon's flight.
 CUE DehkanPlateauFullMetalVestChestCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
-	{CUE_STEP, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_A, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLeaveRoom)},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
-	{CUE_EXIT, 5, CONDITION_ALWAYS, 5},
-	{CUE_EXIT, 30, CONDITION_ALWAYS, 6},
-	{CUE_EXIT, 31, CONDITION_ALWAYS, 7},
-	{STEP_CUE_WALKING, METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_PILLARS, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnFullMetalVestChestPillars)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FULL_METAL_VEST_CHEST_STAKE, FLAG_FULL_METAL_VEST_CHEST_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundFullMetalVestChestStake)},
-	{CUE_PUSHED, 0, FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP, SCRIPT_REF(scDehkanPlateauDropFullMetalVestChestPillarIntoGap)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FULL_METAL_VEST_CHEST_PILLAR, FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP, SCRIPT_REF(scDehkanPlateauDropFullMetalVestChestPillarIntoGap)},
-	{CUE_STEP, METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
-	{CUE_STEP, METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
-	{CUE_STEP, METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_OFF_CRACK, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOffCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 3, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 4, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 5, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 6, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 7, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 8, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 9, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 10, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 11, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 12, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 13, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+    {CUE_STEP, DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_WEST_A, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLeaveRoom)},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {CUE_EXIT, 5, CONDITION_ALWAYS, 5},
+    {CUE_EXIT, 30, CONDITION_ALWAYS, 6},
+    {CUE_EXIT, 31, CONDITION_ALWAYS, 7},
+    {STEP_CUE_WALKING, METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_PILLARS, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnFullMetalVestChestPillars)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FULL_METAL_VEST_CHEST_STAKE, FLAG_FULL_METAL_VEST_CHEST_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundFullMetalVestChestStake)},
+    {CUE_PUSHED, 0, FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP, SCRIPT_REF(scDehkanPlateauDropFullMetalVestChestPillarIntoGap)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FULL_METAL_VEST_CHEST_PILLAR, FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP, SCRIPT_REF(scDehkanPlateauDropFullMetalVestChestPillarIntoGap)},
+    {CUE_STEP, METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
+    {CUE_STEP, METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
+    {CUE_STEP, METATILE_BEHAVIOR_FULL_METAL_VEST_CHEST_OFF_CRACK, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOffCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 3, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 4, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 5, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 6, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 7, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 8, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 9, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 10, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 11, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 12, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK + 13, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_TABLE_END},
 };
 
 CUE DehkanPlateauThemisAxeChestCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-	{CUE_STEP, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_A, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLeaveRoom)},
-	{CUE_EXIT, 4, CONDITION_ALWAYS, 4},
-	{CUE_EXIT, 11, CONDITION_ALWAYS, 5},
-	{CUE_EXIT, 12, CONDITION_ALWAYS, 6},
-	{CUE_STEP, METATILE_BEHAVIOR_CANNON_FLEES_OVER_CRACKS, FLAG_CANNON_FLED_OVER_CRACKS, SCRIPT_REF(scDehkanPlateauCannonFleesOverCracks)},
-	{CUE_STEP, METATILE_BEHAVIOR_CANNON_FLEES_EAST, FLAG_CANNON_FLED_EAST, SCRIPT_REF(scDehkanPlateauCannonFleesEast)},
-	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_THEMIS_AXE_CHEST_PILLAR_FROM_EAST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnThemisAxeChestPillars)},
-	{STEP_CUE_WALKING, METATILE_BEHAVIOR_THEMIS_AXE_CHEST_PILLARS, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnThemisAxeChestPillars)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_THEMIS_AXE_CHEST_STAKE, FLAG_THEMIS_AXE_CHEST_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundThemisAxeChestStake)},
-	{CUE_PUSH, 0, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauLiftThemisAxeChestPillar)},
-	{CUE_PUSHED, 0, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauPlaceThemisAxeChestPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THEMIS_AXE_CHEST_PILLAR, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauLiftThemisAxeChestPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THEMIS_AXE_CHEST_PILLAR, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauPlaceThemisAxeChestPillar)},
-	{CUE_STEP, METATILE_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
-	{CUE_STEP, METATILE_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
-	{CUE_STEP, METATILE_BEHAVIOR_THEMIS_AXE_CHEST_OFF_CRACK, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOffCrack)},
-	{CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 3, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 4, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 5, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 6, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 7, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {CUE_STEP, DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_MINT_CHEST_SOUTHEAST_A, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLeaveRoom)},
+    {CUE_EXIT, 4, CONDITION_ALWAYS, 4},
+    {CUE_EXIT, 11, CONDITION_ALWAYS, 5},
+    {CUE_EXIT, 12, CONDITION_ALWAYS, 6},
+    {CUE_STEP, METATILE_BEHAVIOR_CANNON_FLEES_OVER_CRACKS, FLAG_CANNON_FLED_OVER_CRACKS, SCRIPT_REF(scDehkanPlateauCannonFleesOverCracks)},
+    {CUE_STEP, METATILE_BEHAVIOR_CANNON_FLEES_EAST, FLAG_CANNON_FLED_EAST, SCRIPT_REF(scDehkanPlateauCannonFleesEast)},
+    {STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_THEMIS_AXE_CHEST_PILLAR_FROM_EAST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnThemisAxeChestPillars)},
+    {STEP_CUE_WALKING, METATILE_BEHAVIOR_THEMIS_AXE_CHEST_PILLARS, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnThemisAxeChestPillars)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_THEMIS_AXE_CHEST_STAKE, FLAG_THEMIS_AXE_CHEST_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundThemisAxeChestStake)},
+    {CUE_PUSH, 0, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauLiftThemisAxeChestPillar)},
+    {CUE_PUSHED, 0, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauPlaceThemisAxeChestPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THEMIS_AXE_CHEST_PILLAR, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauLiftThemisAxeChestPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THEMIS_AXE_CHEST_PILLAR, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauPlaceThemisAxeChestPillar)},
+    {CUE_STEP, METATILE_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
+    {CUE_STEP, METATILE_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
+    {CUE_STEP, METATILE_BEHAVIOR_THEMIS_AXE_CHEST_OFF_CRACK, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOffCrack)},
+    {CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 3, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 4, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 5, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 6, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_THEMIS_AXE_CHEST_FIRST_CRACK + 7, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_TABLE_END},
 };
 
 CUE DehkanPlateauTightropesCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
-	{CUE_EXIT, 6, CONDITION_ALWAYS, 6},
-	{CUE_EXIT, 24, CONDITION_ALWAYS, 7},
-	{CUE_EXIT, 25, CONDITION_ALWAYS, 8},
-	{CUE_STEP, METATILE_BEHAVIOR_CANNON_LEAPS_AWAY, FLAG_CANNON_LEAPT_AWAY, SCRIPT_REF(scDehkanPlateauCannonLeapsAway)},
-	{CUE_STEP, METATILE_BEHAVIOR_CANNON_POUNDS_STAKE, FLAG_CANNON_POUNDED_STAKE, SCRIPT_REF(scDehkanPlateauCannonPoundsStake)},
-	{CUE_STEP, METATILE_BEHAVIOR_CANNON_CRACKS_PILLARS, FLAG_CANNON_CRACKED_PILLARS, SCRIPT_REF(scDehkanPlateauCannonCracksPillars)},
-	{PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TIGHTROPES_ROPE_LOW_POST, FLAG_TIGHTROPES_ROPE_LASHED, 0},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_TIGHTROPES_STAKE, FLAG_TIGHTROPES_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundTightropesStake)},
-	{CUE_PUSH, 0, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesPillar)},
-	{CUE_PUSHED, 0, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauPlaceTightropesPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauPlaceTightropesPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_SECOND_PILLAR, FLAG_TIGHTROPES_SECOND_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauMoveTightropesSecondPillar)},
-	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_TIGHTROPES_SECOND_PILLAR, FLAG_TIGHTROPES_SECOND_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauPushTightropesSecondPillar)},
-	{STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_VINE_PILLAR_EAST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauPushVinePillar)},
-	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_VINE_PILLAR_WEST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauPushVinePillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesVinePillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesVinePillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_THIRD_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesVinePillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesVinePillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFinishMovingVinePillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFinishMovingVinePillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_THIRD_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFinishMovingVinePillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFinishMovingVinePillar)},
-	{STEP_CUE_WALKING, METATILE_BEHAVIOR_TIGHTROPES_PILLARS, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnTightropesPillars)},
-	{STEP_CUE_WALKING_INTO(FACING_WEST), CUE_TIGHTROPES_PILLARS_WEST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnTightropesPillars)},
-	{STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_TIGHTROPES_PILLARS_FROM_WEST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnTightropesPillars)},
-	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_BEHAVIOR_TIGHTROPES_PILLARS_FROM_NORTH, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnTightropesPillars)},
-	{CUE_STEP, METATILE_BEHAVIOR_TIGHTROPES_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
-	{CUE_STEP, METATILE_BEHAVIOR_TIGHTROPES_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
-	{CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 3, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 4, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 5, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
+    {CUE_EXIT, 6, CONDITION_ALWAYS, 6},
+    {CUE_EXIT, 24, CONDITION_ALWAYS, 7},
+    {CUE_EXIT, 25, CONDITION_ALWAYS, 8},
+    {CUE_STEP, METATILE_BEHAVIOR_CANNON_LEAPS_AWAY, FLAG_CANNON_LEAPT_AWAY, SCRIPT_REF(scDehkanPlateauCannonLeapsAway)},
+    {CUE_STEP, METATILE_BEHAVIOR_CANNON_POUNDS_STAKE, FLAG_CANNON_POUNDED_STAKE, SCRIPT_REF(scDehkanPlateauCannonPoundsStake)},
+    {CUE_STEP, METATILE_BEHAVIOR_CANNON_CRACKS_PILLARS, FLAG_CANNON_CRACKED_PILLARS, SCRIPT_REF(scDehkanPlateauCannonCracksPillars)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TIGHTROPES_ROPE_LOW_POST, FLAG_TIGHTROPES_ROPE_LASHED, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_TIGHTROPES_STAKE, FLAG_TIGHTROPES_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundTightropesStake)},
+    {CUE_PUSH, 0, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesPillar)},
+    {CUE_PUSHED, 0, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauPlaceTightropesPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauPlaceTightropesPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_SECOND_PILLAR, FLAG_TIGHTROPES_SECOND_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauMoveTightropesSecondPillar)},
+    {STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_TIGHTROPES_SECOND_PILLAR, FLAG_TIGHTROPES_SECOND_PILLAR_PLACED, SCRIPT_REF(scDehkanPlateauPushTightropesSecondPillar)},
+    {STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_VINE_PILLAR_EAST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauPushVinePillar)},
+    {STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_VINE_PILLAR_WEST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauPushVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_THIRD_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauLiftTightropesVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFinishMovingVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFinishMovingVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_THIRD_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFinishMovingVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFinishMovingVinePillar)},
+    {STEP_CUE_WALKING, METATILE_BEHAVIOR_TIGHTROPES_PILLARS, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnTightropesPillars)},
+    {STEP_CUE_WALKING_INTO(FACING_WEST), CUE_TIGHTROPES_PILLARS_WEST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnTightropesPillars)},
+    {STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_TIGHTROPES_PILLARS_FROM_WEST, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnTightropesPillars)},
+    {STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_BEHAVIOR_TIGHTROPES_PILLARS_FROM_NORTH, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnTightropesPillars)},
+    {CUE_STEP, METATILE_BEHAVIOR_TIGHTROPES_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
+    {CUE_STEP, METATILE_BEHAVIOR_TIGHTROPES_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
+    {CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 3, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 4, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_TIGHTROPES_FIRST_CRACK + 5, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_TABLE_END},
 };
 
 CUE DehkanPlateauMintChestCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
-	{CUE_EXIT, 5, CONDITION_ALWAYS, 5},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, 6},
-	{CUE_EXIT, 40, CONDITION_ALWAYS, 40},
-	{CUE_EXIT, 41, CONDITION_ALWAYS, 41},
-	{CUE_EXIT, 42, CONDITION_ALWAYS, 42},
-	{CUE_EXIT, 43, CONDITION_ALWAYS, 43},
-	{CUE_STEP, METATILE_BEHAVIOR_MINT_CHEST_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
-	{CUE_STEP, METATILE_BEHAVIOR_MINT_CHEST_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
+    {CUE_EXIT, 5, CONDITION_ALWAYS, 5},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, 6},
+    {CUE_EXIT, 40, CONDITION_ALWAYS, 40},
+    {CUE_EXIT, 41, CONDITION_ALWAYS, 41},
+    {CUE_EXIT, 42, CONDITION_ALWAYS, 42},
+    {CUE_EXIT, 43, CONDITION_ALWAYS, 43},
+    {CUE_STEP, METATILE_BEHAVIOR_MINT_CHEST_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
+    {CUE_STEP, METATILE_BEHAVIOR_MINT_CHEST_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
+    {CUE_TABLE_END},
 };
 
 CUE DehkanPlateauPoundCubeCues[] = {
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
-	{CUE_EXIT, 7, CONDITION_ALWAYS, 7},
-	{CUE_EXIT, 8, CONDITION_ALWAYS, 8},
-	{CUE_EXIT, 9, CONDITION_ALWAYS, 9},
-	{CUE_EXIT, 10, CONDITION_ALWAYS, 10},
-	{CUE_STEP, CUE_POUND_CUBE_CANNON_CRACK, FLAG_CANNON_DROPPED_POUND_CUBE, SCRIPT_REF(scDehkanPlateauCannonPoundsLeaderThrough)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_POUND_CUBE_STAKE, FLAG_POUND_CUBE_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundPoundCubeStake)},
-	{CUE_EXAMINE, METATILE_BEHAVIOR_POUND_CUBE, FLAG_POUND_CUBE_TAKEN, SCRIPT_REF(scDehkanPlateauTakePoundCube)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 3, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 4, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_CANNON_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 6, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 7, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 8, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 9, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 10, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 11, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 12, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 13, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 14, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 15, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
-	{CUE_TABLE_END},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
+    {CUE_EXIT, 7, CONDITION_ALWAYS, 7},
+    {CUE_EXIT, 8, CONDITION_ALWAYS, 8},
+    {CUE_EXIT, 9, CONDITION_ALWAYS, 9},
+    {CUE_EXIT, 10, CONDITION_ALWAYS, 10},
+    {CUE_STEP, CUE_POUND_CUBE_CANNON_CRACK, FLAG_CANNON_DROPPED_POUND_CUBE, SCRIPT_REF(scDehkanPlateauCannonPoundsLeaderThrough)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_POUND_CUBE_STAKE, FLAG_POUND_CUBE_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundPoundCubeStake)},
+    {CUE_EXAMINE, METATILE_BEHAVIOR_POUND_CUBE, FLAG_POUND_CUBE_TAKEN, SCRIPT_REF(scDehkanPlateauTakePoundCube)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 3, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 4, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_CANNON_CRACK, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 6, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 7, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 8, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 9, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 10, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 11, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 12, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 13, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 14, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_STEP, CUE_POUND_CUBE_FIRST_CRACK + 15, FLAG_STANDING_ON_OPENED_CRACK, SCRIPT_REF(scDehkanPlateauStepOnCrack)},
+    {CUE_TABLE_END},
 };
 
 CUE DehkanPlateauCannonCues[] = {
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
-	{CUE_EXIT, 40, CONDITION_ALWAYS, 40},
-	{CUE_EXIT, 41, CONDITION_ALWAYS, 41},
-	{CUE_EXIT, 42, CONDITION_ALWAYS, 42},
-	{CUE_EXIT, 43, CONDITION_ALWAYS, 43},
-	{STEP_CUE_WALKING, METATILE_BEHAVIOR_CANNON_ROOM_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnCannonPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_CANNON_ROOM_STAKE, FLAG_CANNON_ROOM_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundCannonStake)},
-	{CUE_STEP, METATILE_BEHAVIOR_LOWER_FLOOR, FLAG_STAKE_METATILE_CHANGED, SCRIPT_REF(scDehkanPlateauEnterLowerPath)},
-	{CUE_STEP, METATILE_BEHAVIOR_OFF_LOWER_FLOOR, IF_FLAG_SET(FLAG_STAKE_METATILE_CHANGED), SCRIPT_REF(scDehkanPlateauLeaveLowerPath)},
-	{CUE_STEP, METATILE_BEHAVIOR_CANNON_ROOM_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
-	{CUE_STEP, METATILE_BEHAVIOR_CANNON_ROOM_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
-	{CUE_STEP, METATILE_BEHAVIOR_LEDGE_TO_CANNON, FLAG_CANNON_MET, SCRIPT_REF(scDehkanPlateauMeetCannon)},
-	{CUE_TALK, ACTOR_CANNON, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFightCannon)},
-	{CUE_TABLE_END},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
+    {CUE_EXIT, 40, CONDITION_ALWAYS, 40},
+    {CUE_EXIT, 41, CONDITION_ALWAYS, 41},
+    {CUE_EXIT, 42, CONDITION_ALWAYS, 42},
+    {CUE_EXIT, 43, CONDITION_ALWAYS, 43},
+    {STEP_CUE_WALKING, METATILE_BEHAVIOR_CANNON_ROOM_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauStepOnCannonPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_CANNON_ROOM_STAKE, FLAG_CANNON_ROOM_STAKE_POUNDED, SCRIPT_REF(scDehkanPlateauPoundCannonStake)},
+    {CUE_STEP, METATILE_BEHAVIOR_LOWER_FLOOR, FLAG_STAKE_METATILE_CHANGED, SCRIPT_REF(scDehkanPlateauEnterLowerPath)},
+    {CUE_STEP, METATILE_BEHAVIOR_OFF_LOWER_FLOOR, IF_FLAG_SET(FLAG_STAKE_METATILE_CHANGED), SCRIPT_REF(scDehkanPlateauLeaveLowerPath)},
+    {CUE_STEP, METATILE_BEHAVIOR_CANNON_ROOM_BLOCKS_ON, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, SCRIPT_REF(scDehkanPlateauShowBlocks)},
+    {CUE_STEP, METATILE_BEHAVIOR_CANNON_ROOM_BLOCKS_OFF, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), SCRIPT_REF(scDehkanPlateauHideBlocks)},
+    {CUE_STEP, METATILE_BEHAVIOR_LEDGE_TO_CANNON, FLAG_CANNON_MET, SCRIPT_REF(scDehkanPlateauMeetCannon)},
+    {CUE_TALK, ACTOR_CANNON, CONDITION_ALWAYS, SCRIPT_REF(scDehkanPlateauFightCannon)},
+    {CUE_TABLE_END},
 };

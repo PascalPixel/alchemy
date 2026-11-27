@@ -12,43 +12,43 @@
 // write each with its operands.
 typedef enum ACTOR_SCRIPT_COMMAND
 {
-	SCRIPT_COMMAND_WAIT             = 0,
-	SCRIPT_COMMAND_SYNC             = 1,
-	SCRIPT_COMMAND_POSITION         = 2,
-	SCRIPT_COMMAND_MOVE             = 3,
-	SCRIPT_COMMAND_MOVE_BY          = 4,
-	SCRIPT_COMMAND_FACE_WATCHED     = 5,
-	SCRIPT_COMMAND_MOVE_TO_WATCHED  = 6,
-	SCRIPT_COMMAND_MOVE_LOCAL       = 7,
-	SCRIPT_COMMAND_WANDER           = 8,
-	SCRIPT_COMMAND_WANDER_HOME      = 9,
-	SCRIPT_COMMAND_APPROACH_WATCHED = 10,
-	SCRIPT_COMMAND_CAMERA           = 11,
-	SCRIPT_COMMAND_LOOP             = 12,
-	SCRIPT_COMMAND_JUMP             = 13,
-	SCRIPT_COMMAND_IF               = 14,
-	SCRIPT_COMMAND_IFNOT            = 15,
-	SCRIPT_COMMAND_END              = 16,
-	SCRIPT_COMMAND_FLAG_CHECK       = 17,
-	SCRIPT_COMMAND_FLAG_ON          = 18,
-	SCRIPT_COMMAND_FLAG_OFF         = 19,
-	SCRIPT_COMMAND_FLAG_REV         = 20,
-	SCRIPT_COMMAND_SET              = 21,
-	SCRIPT_COMMAND_ADD              = 22,
-	SCRIPT_COMMAND_CMP              = 23,
-	SCRIPT_COMMAND_PLAYER           = 24,
-	SCRIPT_COMMAND_KEYS             = 25,
-	SCRIPT_COMMAND_WORLD            = 26,
-	SCRIPT_COMMAND_RELEASE          = 27,
-	SCRIPT_COMMAND_ANIMATION        = 28,
-	SCRIPT_COMMAND_NOP              = 29,
-	SCRIPT_COMMAND_SE               = 30,
-	SCRIPT_COMMAND_BASE             = 31,
-	SCRIPT_COMMAND_HIDE_SPRITES     = 32,
-	SCRIPT_COMMAND_SHOW_SPRITE      = 33,
-	SCRIPT_COMMAND_CALL             = 34,
-	SCRIPT_COMMAND_KEY_COUNT        = 35,
-	SCRIPT_COMMAND_COUNT            = 36
+    SCRIPT_COMMAND_WAIT             = 0,
+    SCRIPT_COMMAND_SYNC             = 1,
+    SCRIPT_COMMAND_POSITION         = 2,
+    SCRIPT_COMMAND_MOVE             = 3,
+    SCRIPT_COMMAND_MOVE_BY          = 4,
+    SCRIPT_COMMAND_FACE_WATCHED     = 5,
+    SCRIPT_COMMAND_MOVE_TO_WATCHED  = 6,
+    SCRIPT_COMMAND_MOVE_LOCAL       = 7,
+    SCRIPT_COMMAND_WANDER           = 8,
+    SCRIPT_COMMAND_WANDER_HOME      = 9,
+    SCRIPT_COMMAND_APPROACH_WATCHED = 10,
+    SCRIPT_COMMAND_CAMERA           = 11,
+    SCRIPT_COMMAND_LOOP             = 12,
+    SCRIPT_COMMAND_JUMP             = 13,
+    SCRIPT_COMMAND_IF               = 14,
+    SCRIPT_COMMAND_IFNOT            = 15,
+    SCRIPT_COMMAND_END              = 16,
+    SCRIPT_COMMAND_FLAG_CHECK       = 17,
+    SCRIPT_COMMAND_FLAG_ON          = 18,
+    SCRIPT_COMMAND_FLAG_OFF         = 19,
+    SCRIPT_COMMAND_FLAG_REV         = 20,
+    SCRIPT_COMMAND_SET              = 21,
+    SCRIPT_COMMAND_ADD              = 22,
+    SCRIPT_COMMAND_CMP              = 23,
+    SCRIPT_COMMAND_PLAYER           = 24,
+    SCRIPT_COMMAND_KEYS             = 25,
+    SCRIPT_COMMAND_WORLD            = 26,
+    SCRIPT_COMMAND_RELEASE          = 27,
+    SCRIPT_COMMAND_ANIMATION        = 28,
+    SCRIPT_COMMAND_NOP              = 29,
+    SCRIPT_COMMAND_SE               = 30,
+    SCRIPT_COMMAND_BASE             = 31,
+    SCRIPT_COMMAND_HIDE_SPRITES     = 32,
+    SCRIPT_COMMAND_SHOW_SPRITE      = 33,
+    SCRIPT_COMMAND_CALL             = 34,
+    SCRIPT_COMMAND_KEY_COUNT        = 35,
+    SCRIPT_COMMAND_COUNT            = 36
 } ACTOR_SCRIPT_COMMAND;
 
 // The highest script word run as a command, an index of ActorScriptCommandTable; a larger one is
@@ -78,9 +78,9 @@ typedef enum ACTOR_SCRIPT_COMMAND
 // Wander to random points base to base + range pixels away, within limit pixels of home;
 // SC_WANDER_HOME heads home when outside it.
 #define SC_WANDER(base, range, limit)                                                              \
-	SCRIPT_COMMAND_WANDER, toFIXED(base), toFIXED(range), toFIXED(limit)
+    SCRIPT_COMMAND_WANDER, toFIXED(base), toFIXED(range), toFIXED(limit)
 #define SC_WANDER_HOME(base, range, limit)                                                         \
-	SCRIPT_COMMAND_WANDER_HOME, toFIXED(base), toFIXED(range), toFIXED(limit)
+    SCRIPT_COMMAND_WANDER_HOME, toFIXED(base), toFIXED(range), toFIXED(limit)
 // Follow the watched actor to 16 pixels.
 #define SC_APPROACH_WATCHED           SCRIPT_COMMAND_APPROACH_WATCHED
 #define SC_CAMERA                     SCRIPT_COMMAND_CAMERA // Follow the leader.
@@ -125,48 +125,48 @@ typedef enum ACTOR_SCRIPT_COMMAND
 // ActorScriptOperandHandlerTable.
 typedef enum ACTOR_SCRIPT_VALUE
 {
-	SW_SCRIPT        = 0,
-	SW_CURSOR        = 1,
-	SW_FACING        = 3,
-	SW_X             = 5,
-	SW_Y             = 6,
-	SW_Z             = 7,
-	SW_RADIUS        = 8,
-	SW_SCALE_X       = 9,
-	SW_SCALE_Y       = 10,
-	SW_VELOCITY_X    = 12,
-	SW_VELOCITY_Y    = 13,
-	SW_VELOCITY_Z    = 14,
-	SW_SPEED         = 15,
-	SW_ACCELERATION  = 16,
-	SW_TARGET_X      = 17,
-	SW_TARGET_Y      = 18,
-	SW_TARGET_Z      = 19,
-	SW_BOUNCE        = 20,
-	SW_GRAVITY       = 21,
-	SW_GROUND        = 22,
-	SW_SCENE_WORD    = 23, // ACTOR.sceneWord, scene code's own word
-	SW_SPRITE        = 24, // the sprite, or its list of four
-	SW_SPRITE_KIND   = 25, // ACTOR.spriteStorageKind
-	SW_MOTION        = 26,
-	SW_ARRIVAL       = 27,
-	SW_RESULT        = 28,
-	SW_SNAP          = 29,
-	SW_COLLISION     = 30,
-	SW_STEERING      = 31,
-	SW_PAUSED        = 32,
-	SW_REPEAT        = 33,
-	SW_WAIT          = 34,
-	// ACTOR.timer, the parameter an actor script reads; a scene's own scripts set it to 1 as they
-	// end, for the code that waits on them.
-	SW_TIMER         = 35,
-	// ACTOR.userValue, scene scratch: a script sets it for the scene code that reads or waits on
-	// it.
-	SW_USER_VALUE    = 36,
-	SW_WATCHED_ACTOR = 37, // the actor it follows or faces
-	SW_HOOK          = 38,
-	SW_SCENE_COUNTER = 39, // ACTOR.sceneCount, scene code's own byte
-	SW_SCENE_BYTE    = 40  // ACTOR.sceneByte, scene code's own byte
+    SW_SCRIPT        = 0,
+    SW_CURSOR        = 1,
+    SW_FACING        = 3,
+    SW_X             = 5,
+    SW_Y             = 6,
+    SW_Z             = 7,
+    SW_RADIUS        = 8,
+    SW_SCALE_X       = 9,
+    SW_SCALE_Y       = 10,
+    SW_VELOCITY_X    = 12,
+    SW_VELOCITY_Y    = 13,
+    SW_VELOCITY_Z    = 14,
+    SW_SPEED         = 15,
+    SW_ACCELERATION  = 16,
+    SW_TARGET_X      = 17,
+    SW_TARGET_Y      = 18,
+    SW_TARGET_Z      = 19,
+    SW_BOUNCE        = 20,
+    SW_GRAVITY       = 21,
+    SW_GROUND        = 22,
+    SW_SCENE_WORD    = 23, // ACTOR.sceneWord, scene code's own word
+    SW_SPRITE        = 24, // the sprite, or its list of four
+    SW_SPRITE_KIND   = 25, // ACTOR.spriteStorageKind
+    SW_MOTION        = 26,
+    SW_ARRIVAL       = 27,
+    SW_RESULT        = 28,
+    SW_SNAP          = 29,
+    SW_COLLISION     = 30,
+    SW_STEERING      = 31,
+    SW_PAUSED        = 32,
+    SW_REPEAT        = 33,
+    SW_WAIT          = 34,
+    // ACTOR.timer, the parameter an actor script reads; a scene's own scripts set it to 1 as they
+    // end, for the code that waits on them.
+    SW_TIMER         = 35,
+    // ACTOR.userValue, scene scratch: a script sets it for the scene code that reads or waits on
+    // it.
+    SW_USER_VALUE    = 36,
+    SW_WATCHED_ACTOR = 37, // the actor it follows or faces
+    SW_HOOK          = 38,
+    SW_SCENE_COUNTER = 39, // ACTOR.sceneCount, scene code's own byte
+    SW_SCENE_BYTE    = 40  // ACTOR.sceneByte, scene code's own byte
 } ACTOR_SCRIPT_VALUE;
 
 #include "field/script_operands.h"

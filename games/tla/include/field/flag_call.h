@@ -12,12 +12,12 @@
 // Whether a game flag is clear or set, and setting or clearing it.
 static inline Sint32 syFlagIsClear(Sint32 flag)
 {
-	return !syGameFlagGet(flag);
+    return !syGameFlagGet(flag);
 }
 
 static inline Sint32 syFlagIsSet(Sint32 flag)
 {
-	return syGameFlagGet(flag);
+    return syGameFlagGet(flag);
 }
 
 // Sets a game flag. The scenes and the field call it for no result, though the function returns the
@@ -26,12 +26,12 @@ void               syGameFlagSet(Sint32 flag);
 
 static inline void syFlagSet(Sint32 flag)
 {
-	syGameFlagSet(flag);
+    syGameFlagSet(flag);
 }
 
 static inline void syFlagClear(Sint32 flag)
 {
-	syGameFlagClear(flag);
+    syGameFlagClear(flag);
 }
 
 #endif

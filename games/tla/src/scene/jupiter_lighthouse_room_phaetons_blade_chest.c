@@ -26,7 +26,7 @@
 // whirlwind takes its place and heading from.
 enum
 {
-	ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED
+    ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED
 };
 
 // The step cues before the stone faces that blow whirlwinds: two rows of the cracked hall's floor,
@@ -34,42 +34,42 @@ enum
 // statues in the Hover hall, at rows 11 and 17, the west pair blown west and the east pair east.
 enum
 {
-	CUE_FLOOR_WHIRLWIND_WEST      = 30,
-	CUE_FLOOR_WHIRLWIND_EAST      = 31,
-	CUE_UPPER_WHIRLWIND_SOUTHWEST = 50,
-	CUE_UPPER_WHIRLWIND_NORTHWEST,
-	CUE_UPPER_WHIRLWIND_SOUTHEAST,
-	CUE_UPPER_WHIRLWIND_NORTHEAST
+    CUE_FLOOR_WHIRLWIND_WEST      = 30,
+    CUE_FLOOR_WHIRLWIND_EAST      = 31,
+    CUE_UPPER_WHIRLWIND_SOUTHWEST = 50,
+    CUE_UPPER_WHIRLWIND_NORTHWEST,
+    CUE_UPPER_WHIRLWIND_SOUTHEAST,
+    CUE_UPPER_WHIRLWIND_NORTHEAST
 };
 
 // A cracked tile's metatile behavior in the cracked hall, which takes the next one up as it cracks;
 // the Hover hall's are METATILE_BEHAVIOR_CRACKED_TILE.
 enum
 {
-	METATILE_BEHAVIOR_UPPER_CRACKED_TILE = 43
+    METATILE_BEHAVIOR_UPPER_CRACKED_TILE = 43
 };
 
 // Through a cracked tile of the cracked hall to the room below, on the same map: the exit and the
 // entrance it lands at share the number, as THROUGH_CRACKED_TILE's do.
 enum
 {
-	THROUGH_UPPER_CRACKED_TILE = 14
+    THROUGH_UPPER_CRACKED_TILE = 14
 };
 
 // The entrances scInit tells apart: the cracked hall's two stairs, north and south, and the Hover
 // hall's two.
 enum
 {
-	ENTRANCE_LOWER_HALL_NORTH = 3,
-	ENTRANCE_LOWER_HALL_SOUTH = 5,
-	ENTRANCE_HOVER_HALL_SOUTH = 6,
-	ENTRANCE_HOVER_HALL_NORTH = 7
+    ENTRANCE_LOWER_HALL_NORTH = 3,
+    ENTRANCE_LOWER_HALL_SOUTH = 5,
+    ENTRANCE_HOVER_HALL_SOUTH = 6,
+    ENTRANCE_HOVER_HALL_NORTH = 7
 };
 
 // The Hover hall's stairs down, metatile (34, 17), whose metatile takes the exit by its number.
 enum
 {
-	EXIT_HOVER_HALL_STAIRS = 6
+    EXIT_HOVER_HALL_STAIRS = 6
 };
 
 struct ACTOR;
@@ -96,22 +96,22 @@ void                         scJupiterLighthouseStopHovering(void);
 
 const SCENE_ENTRANCE        *scGetEntrances(void)
 {
-	return SceneEntrances;
+    return SceneEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
 {
-	return 0;
+    return 0;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SceneExits;
+    return SceneExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ActorPlacements;
+    return ActorPlacements;
 }
 
 // The step handlers below pass on the metatile behavior their cue hands them; scCrackedTileStep
@@ -123,17 +123,17 @@ ACTOR *scWhirlwindSpawn(ACTOR *src);
 // between the statues, metatile (34, 17), are walled off, so that he cannot drift down them.
 void   scJupiterLighthouseStartHovering(void)
 {
-	if (MainRoutineStateWork.movementMode == LEADER_MOVEMENT_HOVER)
-		syFieldMapGridSetMetatileBehavior(
-			toFIXED(544), toFIXED(272), MAPGRID_LAYER_GROUND, METATILE_BEHAVIOR_WALL);
+    if (MainRoutineStateWork.movementMode == LEADER_MOVEMENT_HOVER)
+        syFieldMapGridSetMetatileBehavior(
+            toFIXED(544), toFIXED(272), MAPGRID_LAYER_GROUND, METATILE_BEHAVIOR_WALL);
 }
 
 // Nothing visible happens when Felix's Hover ends; the Hover hall's stairs down, metatile (34, 17),
 // lead down again.
 void scJupiterLighthouseStopHovering(void)
 {
-	fdMapGridSetMetatileBehavior(
-		toFIXED(544), toFIXED(272), MAPGRID_LAYER_GROUND, EXIT_HOVER_HALL_STAIRS);
+    fdMapGridSetMetatileBehavior(
+        toFIXED(544), toFIXED(272), MAPGRID_LAYER_GROUND, EXIT_HOVER_HALL_STAIRS);
 }
 
 // Felix walks across the row in front of a stone face in the cracked hall's wall, metatiles (8, 37)
@@ -142,26 +142,26 @@ void scJupiterLighthouseStopHovering(void)
 // drops him (fdWhirlwindCarryLeader). Nothing happens while a whirlwind is already carrying him.
 void scJupiterLighthouseRaiseWhirlwind(Sint32 id)
 {
-	ACTOR *actor;
+    ACTOR *actor;
 
-	if (WhirlwindRiding == 0)
-	{
-		actor = fdActorGet(ACTOR_WHIRLWIND_SOURCE);
-		if (id == CUE_FLOOR_WHIRLWIND_WEST)
-		{
-			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 296, 600);
-			actor->y.fixed = 0;
-			actor->facing  = FACING_WEST;
-		}
-		else if (id == CUE_FLOOR_WHIRLWIND_EAST)
-		{
-			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 136, 680);
-			actor->y.fixed = 0;
-			actor->facing  = FACING_EAST;
-		}
-		scWhirlwindSpawn(actor);
-		WhirlwindRiding = 1;
-	}
+    if (WhirlwindRiding == 0)
+    {
+        actor = fdActorGet(ACTOR_WHIRLWIND_SOURCE);
+        if (id == CUE_FLOOR_WHIRLWIND_WEST)
+        {
+            fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 296, 600);
+            actor->y.fixed = 0;
+            actor->facing  = FACING_WEST;
+        }
+        else if (id == CUE_FLOOR_WHIRLWIND_EAST)
+        {
+            fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 136, 680);
+            actor->y.fixed = 0;
+            actor->facing  = FACING_EAST;
+        }
+        scWhirlwindSpawn(actor);
+        WhirlwindRiding = 1;
+    }
 }
 
 // Felix, Hovering in the Hover hall, floats across the row in front of one of the four stone
@@ -171,50 +171,50 @@ void scJupiterLighthouseRaiseWhirlwind(Sint32 id)
 // him, does nothing.
 void scJupiterLighthouseRaiseUpperWhirlwind(Sint32 id)
 {
-	ACTOR *actor;
-	ACTOR *motion;
+    ACTOR *actor;
+    ACTOR *motion;
 
-	if (WhirlwindRiding == 0 && fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed > 0)
-	{
-		actor = fdActorGet(ACTOR_WHIRLWIND_SOURCE);
-		if (id == CUE_UPPER_WHIRLWIND_SOUTHWEST)
-		{
-			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 488, 280);
-			actor->y.fixed = toFIXED(32);
-			actor->facing  = FACING_WEST;
-		}
-		else if (id == CUE_UPPER_WHIRLWIND_NORTHWEST)
-		{
-			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 472, 184);
-			actor->y.fixed = toFIXED(32);
-			actor->facing  = FACING_WEST;
-		}
-		else if (id == CUE_UPPER_WHIRLWIND_SOUTHEAST)
-		{
-			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 616, 280);
-			actor->y.fixed = toFIXED(32);
-			actor->facing  = FACING_EAST;
-		}
-		else if (id == CUE_UPPER_WHIRLWIND_NORTHEAST)
-		{
-			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 632, 184);
-			actor->y.fixed = toFIXED(32);
-			actor->facing  = FACING_EAST;
-		}
-		motion = scWhirlwindSpawn(actor);
-		if (motion != NULL)
-			motion->speedLimit = toFIXED(1);
-		WhirlwindRiding = 1;
-	}
+    if (WhirlwindRiding == 0 && fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed > 0)
+    {
+        actor = fdActorGet(ACTOR_WHIRLWIND_SOURCE);
+        if (id == CUE_UPPER_WHIRLWIND_SOUTHWEST)
+        {
+            fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 488, 280);
+            actor->y.fixed = toFIXED(32);
+            actor->facing  = FACING_WEST;
+        }
+        else if (id == CUE_UPPER_WHIRLWIND_NORTHWEST)
+        {
+            fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 472, 184);
+            actor->y.fixed = toFIXED(32);
+            actor->facing  = FACING_WEST;
+        }
+        else if (id == CUE_UPPER_WHIRLWIND_SOUTHEAST)
+        {
+            fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 616, 280);
+            actor->y.fixed = toFIXED(32);
+            actor->facing  = FACING_EAST;
+        }
+        else if (id == CUE_UPPER_WHIRLWIND_NORTHEAST)
+        {
+            fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 632, 184);
+            actor->y.fixed = toFIXED(32);
+            actor->facing  = FACING_EAST;
+        }
+        motion = scWhirlwindSpawn(actor);
+        if (motion != NULL)
+            motion->speedLimit = toFIXED(1);
+        WhirlwindRiding = 1;
+    }
 }
 
 // Felix steps on a cracked tile in the Hover hall with his feet on the floor: it gives way under
 // him (a tile not yet cracked takes one step first) and the party falls to the cracked hall below.
 void scJupiterLighthouseStepOnLowerCrackedTile(Sint32 metatileBehavior)
 {
-	if (fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed == 0
-	    && scCrackedTileStep(metatileBehavior) != 0)
-		syFieldScriptSetExitRequest(THROUGH_CRACKED_TILE);
+    if (fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed == 0
+        && scCrackedTileStep(metatileBehavior) != 0)
+        syFieldScriptSetExitRequest(THROUGH_CRACKED_TILE);
 }
 
 // Felix steps on a cracked tile in the cracked hall: it cracks, and at the second step it gives way
@@ -224,22 +224,22 @@ void scJupiterLighthouseStepOnLowerCrackedTile(Sint32 metatileBehavior)
 // (`scFieldActorSetSpritePriority`) as he sinks through the hole.
 void scJupiterLighthouseStepOnUpperCrackedTile(Sint32 metatileBehavior)
 {
-	ACTOR *leader;
-	Sint32 x;
-	Sint32 z;
+    ACTOR *leader;
+    Sint32 x;
+    Sint32 z;
 
-	if (fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed == 0)
-	{
-		leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-		x      = FIELD_METATILE(leader->x.fixed);
-		z      = FIELD_METATILE(leader->z.fixed);
-		if (x == 18 && z == 34)
-			scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
-		if (x == 8 && z == 39)
-			scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
-		if (scCrackedTileStep(metatileBehavior) != 0)
-			syFieldScriptSetExitRequest(THROUGH_UPPER_CRACKED_TILE);
-	}
+    if (fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed == 0)
+    {
+        leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+        x      = FIELD_METATILE(leader->x.fixed);
+        z      = FIELD_METATILE(leader->z.fixed);
+        if (x == 18 && z == 34)
+            scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+        if (x == 8 && z == 39)
+            scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+        if (scCrackedTileStep(metatileBehavior) != 0)
+            syFieldScriptSetExitRequest(THROUGH_UPPER_CRACKED_TILE);
+    }
 }
 
 // Felix steps on one of the dark cracked tiles in the two lines running up the Hover hall, columns
@@ -248,39 +248,39 @@ void scJupiterLighthouseStepOnUpperCrackedTile(Sint32 metatileBehavior)
 // rows before the statues (scJupiterLighthouseRaiseUpperWhirlwind).
 void scJupiterLighthouseStepOnCrackedTileOrWhirlwind(Sint32 metatileBehavior)
 {
-	ACTOR *leader;
-	Sint32 x;
-	Sint32 z;
+    ACTOR *leader;
+    Sint32 x;
+    Sint32 z;
 
-	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	if (leader->y.fixed <= 0)
-	{
-		scJupiterLighthouseStepOnLowerCrackedTile(metatileBehavior);
-	}
-	else
-	{
-		x = FIELD_METATILE(leader->x.fixed);
-		z = FIELD_METATILE(leader->z.fixed);
-		if (x == 25)
-		{
-			if (z == 17)
-				scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_SOUTHWEST);
-			if (z == 11)
-				scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_NORTHWEST);
-		}
-		if (x == 43)
-		{
-			if (z == 17)
-				scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_SOUTHEAST);
-			if (z == 11)
-				scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_NORTHEAST);
-		}
-	}
+    leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+    if (leader->y.fixed <= 0)
+    {
+        scJupiterLighthouseStepOnLowerCrackedTile(metatileBehavior);
+    }
+    else
+    {
+        x = FIELD_METATILE(leader->x.fixed);
+        z = FIELD_METATILE(leader->z.fixed);
+        if (x == 25)
+        {
+            if (z == 17)
+                scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_SOUTHWEST);
+            if (z == 11)
+                scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_NORTHWEST);
+        }
+        if (x == 43)
+        {
+            if (z == 17)
+                scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_SOUTHEAST);
+            if (z == 11)
+                scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_NORTHEAST);
+        }
+    }
 }
 
 const CUE *scGetCues(void)
 {
-	return SceneCues;
+    return SceneCues;
 }
 
 // Sets up the rooms: the Phaeton's Blade's chest set back in the drawing order
@@ -288,46 +288,46 @@ const CUE *scGetCues(void)
 // a crack from the hall above.
 Sint32 scInit(void)
 {
-	FIELD_STATE *state = RamHeapSlots->fieldState;
+    FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	state->transition  = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	scFieldActorSetSpritePriority(FIELD_TREASURE_ACTOR, 3);
-	WhirlwindRiding                                 = 0;
-	fdActorGet(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
-	if (MainRoutineStateWork.entrance >= ENTRANCE_HOVER_HALL_SOUTH
-	    && MainRoutineStateWork.entrance <= ENTRANCE_HOVER_HALL_NORTH)
-	{
-		scCrackedTileFind(
-			METATILE_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 48, 1);
-		scCrackedTilePlaceLanding(
-			0, 0, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-	}
-	else if (MainRoutineStateWork.entrance == ENTRANCE_LOWER_HALL_NORTH
-	         || MainRoutineStateWork.entrance == ENTRANCE_LOWER_HALL_SOUTH
-	         || MainRoutineStateWork.entrance == THROUGH_CRACKED_TILE)
-	{
-		scCrackedTileFind(
-			METATILE_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 49, 1);
-		scCrackedTilePlaceLanding(
-			-21, 32, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-	}
-	else
-	{
-		scCrackedTileFind(
-			METATILE_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 0);
-		scCrackedTilePlaceLanding(
-			-2, -27, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-	}
-	return 0;
+    state->transition  = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    scFieldActorSetSpritePriority(FIELD_TREASURE_ACTOR, 3);
+    WhirlwindRiding                                 = 0;
+    fdActorGet(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
+    if (MainRoutineStateWork.entrance >= ENTRANCE_HOVER_HALL_SOUTH
+        && MainRoutineStateWork.entrance <= ENTRANCE_HOVER_HALL_NORTH)
+    {
+        scCrackedTileFind(
+            METATILE_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 48, 1);
+        scCrackedTilePlaceLanding(
+            0, 0, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
+    }
+    else if (MainRoutineStateWork.entrance == ENTRANCE_LOWER_HALL_NORTH
+             || MainRoutineStateWork.entrance == ENTRANCE_LOWER_HALL_SOUTH
+             || MainRoutineStateWork.entrance == THROUGH_CRACKED_TILE)
+    {
+        scCrackedTileFind(
+            METATILE_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 49, 1);
+        scCrackedTilePlaceLanding(
+            -21, 32, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
+    }
+    else
+    {
+        scCrackedTileFind(
+            METATILE_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 0);
+        scCrackedTilePlaceLanding(
+            -2, -27, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
+    }
+    return 0;
 }
 
 // Sets the scene's arrival flags and loads the lighthouse's palettes before the map is built.
 // Returns 0.
 Sint32 scPrepareMap(void)
 {
-	scSetArrivalFlags(0);
-	scJupiterLighthouseLoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
-	return 0;
+    scSetArrivalFlags(0);
+    scJupiterLighthouseLoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
+    return 0;
 }
 
 #include "shared/scene_set_arrival_flags.c"
@@ -343,7 +343,7 @@ extern Sint32      PaletteCycleTick;
 // Sets the palette cycle's tick (PaletteCycleTick).
 static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleTick = value;
+    PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -391,7 +391,7 @@ void scFieldEffectSpawn(Sint32                x,
 // Sets the priority the lit actors' sprites are drawn at.
 void scLightSpritesSetPriority(Sint32 value)
 {
-	LightSpritePriority = value;
+    LightSpritePriority = value;
 }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -404,78 +404,78 @@ extern Uint32 FieldEffectLongScript[];
 #include "shared/scene_entrances_default.c"
 
 Uint32 SceneExits[] = {
-	SCENE_EXITS(JupiterLighthouseRoomPhaetonsBladeChest),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL, JupiterLighthouseWhorl, JUPITER_LIGHTHOUSE_WHORL_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST),
-	SCENE_EXIT(2, JupiterLighthouseRoomPhaetonsBladeChest, 3),
-	SCENE_EXIT(3, JupiterLighthouseRoomPhaetonsBladeChest, 2),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE, JupiterLighthouseAerie, JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST),
-	SCENE_EXIT(5, JupiterLighthouseRoomPhaetonsBladeChest, 6),
-	SCENE_EXIT(6, JupiterLighthouseRoomPhaetonsBladeChest, 5),
-	SCENE_EXIT(7, JupiterLighthouseRoomPhaetonsBladeChest, 8),
-	SCENE_EXIT(8, JupiterLighthouseRoomPhaetonsBladeChest, 7),
-	SCENE_EXIT(THROUGH_CRACKED_TILE, JupiterLighthouseRoomPhaetonsBladeChest, THROUGH_CRACKED_TILE),
-	SCENE_EXIT(THROUGH_UPPER_CRACKED_TILE, JupiterLighthouseRoomPhaetonsBladeChest, THROUGH_UPPER_CRACKED_TILE),
-	SCENE_EXITS_END,
+    SCENE_EXITS(JupiterLighthouseRoomPhaetonsBladeChest),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL, JupiterLighthouseWhorl, JUPITER_LIGHTHOUSE_WHORL_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST),
+    SCENE_EXIT(2, JupiterLighthouseRoomPhaetonsBladeChest, 3),
+    SCENE_EXIT(3, JupiterLighthouseRoomPhaetonsBladeChest, 2),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE, JupiterLighthouseAerie, JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST),
+    SCENE_EXIT(5, JupiterLighthouseRoomPhaetonsBladeChest, 6),
+    SCENE_EXIT(6, JupiterLighthouseRoomPhaetonsBladeChest, 5),
+    SCENE_EXIT(7, JupiterLighthouseRoomPhaetonsBladeChest, 8),
+    SCENE_EXIT(8, JupiterLighthouseRoomPhaetonsBladeChest, 7),
+    SCENE_EXIT(THROUGH_CRACKED_TILE, JupiterLighthouseRoomPhaetonsBladeChest, THROUGH_CRACKED_TILE),
+    SCENE_EXIT(THROUGH_UPPER_CRACKED_TILE, JupiterLighthouseRoomPhaetonsBladeChest, THROUGH_UPPER_CRACKED_TILE),
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE ActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, -8, 0, -8, FACING_WEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 424, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 440, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 664, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 680, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 440, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 408, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 424, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 440, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 456, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 472, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 488, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 504, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 520, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 536, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 552, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 568, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 584, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 600, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 616, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 632, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 648, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 664, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 680, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 696, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, -8, 0, -8, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 424, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 440, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 664, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 680, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 440, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 408, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 424, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 440, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 456, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 472, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 488, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 504, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 520, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 536, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 552, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 568, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 584, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 600, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 616, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 632, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 648, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 664, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 680, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 696, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    {SCENE_TABLE_END},
 };
 
 CUE SceneCues[] = {
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
-	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
-	{CUE_EXIT, 9, CONDITION_ALWAYS, 9},
-	{CUE_EXIT, 10, CONDITION_ALWAYS, 10},
-	{CUE_EXIT, 11, CONDITION_ALWAYS, 11},
-	{CUE_EXIT, 12, CONDITION_ALWAYS, 12},
-	{CUE_STEP, CUE_FLOOR_WHIRLWIND_WEST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseWhirlwind)},
-	{CUE_STEP, CUE_FLOOR_WHIRLWIND_EAST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseWhirlwind)},
-	{CUE_STEP, CUE_UPPER_WHIRLWIND_SOUTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseUpperWhirlwind)},
-	{CUE_STEP, CUE_UPPER_WHIRLWIND_NORTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseUpperWhirlwind)},
-	{CUE_STEP, CUE_UPPER_WHIRLWIND_SOUTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseUpperWhirlwind)},
-	{CUE_STEP, CUE_UPPER_WHIRLWIND_NORTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseUpperWhirlwind)},
-	{CUE_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, SCRIPT_REF(fdWhirlwindCarryLeader)},
-	{CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnLowerCrackedTile)},
-	{CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE + 1, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnCrackedTileOrWhirlwind)},
-	{CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE + 2, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnLowerCrackedTile)},
-	{CUE_STEP, METATILE_BEHAVIOR_UPPER_CRACKED_TILE, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnUpperCrackedTile)},
-	{CUE_STEP, METATILE_BEHAVIOR_UPPER_CRACKED_TILE + 1, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnUpperCrackedTile)},
-	{CUE_STEP, METATILE_BEHAVIOR_UPPER_CRACKED_TILE + 2, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnUpperCrackedTile)},
-	{PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStartHovering)},
-	{PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStopHovering)},
-	{CUE_TABLE_END},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
+    {CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
+    {CUE_EXIT, 9, CONDITION_ALWAYS, 9},
+    {CUE_EXIT, 10, CONDITION_ALWAYS, 10},
+    {CUE_EXIT, 11, CONDITION_ALWAYS, 11},
+    {CUE_EXIT, 12, CONDITION_ALWAYS, 12},
+    {CUE_STEP, CUE_FLOOR_WHIRLWIND_WEST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseWhirlwind)},
+    {CUE_STEP, CUE_FLOOR_WHIRLWIND_EAST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseWhirlwind)},
+    {CUE_STEP, CUE_UPPER_WHIRLWIND_SOUTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseUpperWhirlwind)},
+    {CUE_STEP, CUE_UPPER_WHIRLWIND_NORTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseUpperWhirlwind)},
+    {CUE_STEP, CUE_UPPER_WHIRLWIND_SOUTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseUpperWhirlwind)},
+    {CUE_STEP, CUE_UPPER_WHIRLWIND_NORTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseRaiseUpperWhirlwind)},
+    {CUE_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, SCRIPT_REF(fdWhirlwindCarryLeader)},
+    {CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnLowerCrackedTile)},
+    {CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE + 1, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnCrackedTileOrWhirlwind)},
+    {CUE_STEP, METATILE_BEHAVIOR_CRACKED_TILE + 2, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnLowerCrackedTile)},
+    {CUE_STEP, METATILE_BEHAVIOR_UPPER_CRACKED_TILE, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnUpperCrackedTile)},
+    {CUE_STEP, METATILE_BEHAVIOR_UPPER_CRACKED_TILE + 1, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnUpperCrackedTile)},
+    {CUE_STEP, METATILE_BEHAVIOR_UPPER_CRACKED_TILE + 2, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStepOnUpperCrackedTile)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStartHovering)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseStopHovering)},
+    {CUE_TABLE_END},
 };
 
 Sint32 PaletteCycleTick = -1;
@@ -483,16 +483,16 @@ Sint32 PaletteCycleTick = -1;
 Sint32 PaletteCyclePausesInScripts = 1;
 
 Sint32 WhirlwindEndScript[] = {
-	SC_ANIMATION(5),
-	SC_WAIT(12),
-	SC_RELEASE,
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 // clang-format on
 
 const Sint32 *FieldEffectDurationScripts[] = {
-	FieldEffectShortScript,
-	FieldEffectMediumScript,
-	FieldEffectLongScript,
+    FieldEffectShortScript,
+    FieldEffectMediumScript,
+    FieldEffectLongScript,
 };
 
 #include "../field/field_effect_move.c"

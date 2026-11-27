@@ -23,20 +23,20 @@
 // and target colour channels, their steps, and two pages of packed colours.
 typedef struct TITLE_PALETTE_FADE
 {
-	// The source palette, RGB555: the BG colours, then the sprite colours.
-	Uint16 palette[PLTT_COLORS];
-	// The shown colours, as B, G and R channels shifted up 10 bits, three a colour.
-	Uint16 current[TITLE_PALETTE_FADE_CHANNELS];
-	// the colours current moves toward, as current
-	Uint16 target[TITLE_PALETTE_FADE_CHANNELS];
-	// added to each current channel each tick
-	Uint16 delta[TITLE_PALETTE_FADE_CHANNELS];
-	// Two pages of RGB555 colours: one is built while the other is queued.
-	Uint16 packed[2][PLTT_COLORS];
-	Uint8  page;     // the packed page queued this tick
-	Sint8  duration; // ticks; 0 when the colours are not moving
-	Uint8  step;     // ticks
-	Uint8  padding;
+    // The source palette, RGB555: the BG colours, then the sprite colours.
+    Uint16 palette[PLTT_COLORS];
+    // The shown colours, as B, G and R channels shifted up 10 bits, three a colour.
+    Uint16 current[TITLE_PALETTE_FADE_CHANNELS];
+    // the colours current moves toward, as current
+    Uint16 target[TITLE_PALETTE_FADE_CHANNELS];
+    // added to each current channel each tick
+    Uint16 delta[TITLE_PALETTE_FADE_CHANNELS];
+    // Two pages of RGB555 colours: one is built while the other is queued.
+    Uint16 packed[2][PLTT_COLORS];
+    Uint8  page;     // the packed page queued this tick
+    Sint8  duration; // ticks; 0 when the colours are not moving
+    Uint8  step;     // ticks
+    Uint8  padding;
 } TITLE_PALETTE_FADE;
 
 STATIC_ASSERT(sizeof(TITLE_PALETTE_FADE) == 12292);
@@ -51,21 +51,21 @@ STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, page) == 12288);
 // RGB555 colours queued each tick.
 typedef struct PALETTE_FADE
 {
-	// The source palette, RGB555: the BG colours, then as many sprite colours; palette[0] is the
-	// backdrop.
-	Uint16 palette[2 * PALETTE_FADE_BG_COLORS];
-	// The shown colours, as B, G and R channels shifted up 10 bits, three a colour.
-	Uint16 current[PALETTE_FADE_CHANNELS];
-	// the colours current moves toward, as current
-	Uint16 target[PALETTE_FADE_CHANNELS];
-	// added to each current channel each tick
-	Uint16 delta[PALETTE_FADE_CHANNELS];
-	// Two pages of RGB555 colours: one is built while the other is queued.
-	Uint16 packed[2][2 * PALETTE_FADE_BG_COLORS];
-	Uint8  page;            // the packed page queued this tick
-	Sint8  duration;        // ticks; 0 when the colours are not moving
-	Sint8  step;            // ticks
-	Uint8  unusedAfterStep; // never read; two scenes set it to 1 with step
+    // The source palette, RGB555: the BG colours, then as many sprite colours; palette[0] is the
+    // backdrop.
+    Uint16 palette[2 * PALETTE_FADE_BG_COLORS];
+    // The shown colours, as B, G and R channels shifted up 10 bits, three a colour.
+    Uint16 current[PALETTE_FADE_CHANNELS];
+    // the colours current moves toward, as current
+    Uint16 target[PALETTE_FADE_CHANNELS];
+    // added to each current channel each tick
+    Uint16 delta[PALETTE_FADE_CHANNELS];
+    // Two pages of RGB555 colours: one is built while the other is queued.
+    Uint16 packed[2][2 * PALETTE_FADE_BG_COLORS];
+    Uint8  page;            // the packed page queued this tick
+    Sint8  duration;        // ticks; 0 when the colours are not moving
+    Sint8  step;            // ticks
+    Uint8  unusedAfterStep; // never read; two scenes set it to 1 with step
 } PALETTE_FADE;
 
 STATIC_ASSERT(sizeof(PALETTE_FADE) == 10756);
@@ -85,40 +85,40 @@ extern Uint16 TitlePaletteFadeChannelCurveContrast[32];
 // for all.
 typedef enum PALETTE_TINT
 {
-	// The backdrop colour (palette RAM's first colour) for all.
-	PALETTE_TINT_FROM_SOURCE = 0x8000,
-	// Each colour unchanged; the tints after it are numbered on from it.
-	PALETTE_TINT_NONE        = 0x10000,
-	PALETTE_TINT_GRAYSCALE, // grey of brightness (2R + 4G + B) / 7
-	                        // Brownish grey, as when Ivan reports to Layana in Hammet Palace: the
-	                        // shade (R + G + B) / SEPIA_SHADE_DIVISOR, red at 4 times it plus 5,
-	                        // green and blue 3 times plus 5, each held to SEPIA_LEVEL_MIN to
-	                        // SEPIA_LEVEL_MAX.
-	PALETTE_TINT_SEPIA,
-	// The storm's gloom: Vale's grass and paths go a dull, dark olive while the sprites keep their
-	// colours, between the lightning's flashes and at the ending's darkened sea. Half R + 10, two
-	// thirds G + 8, B - 7; black stays black.
-	PALETTE_TINT_DIM,
-	// The backgrounds World Map fades to as Venus Lighthouse shakes after its beacon is lit: each
-	// channel held to a narrow range (MUTED_RED_MIN to MUTED_RED_MAX and so on), then G and B + 2.
-	PALETTE_TINT_MUTED,
-	// A lightning flash: the storm's backgrounds wash out almost to white. Half of each channel,
-	// plus their mean.
-	PALETTE_TINT_PALE,
-	// The red Vale's eruption lightning flashes to from PALETTE_TINT_DIM: R plus an eighth of G and
-	// of B; G and B two thirds.
-	PALETTE_TINT_RED,
-	// PALETTE_TINT_DIM darker: half R + 6, two thirds G + 4, B - 6. The title's intro builds
-	// PALETTE_TINT_DIM with this recipe.
-	PALETTE_TINT_DIMMER,
-	// From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND carrying an RGB555 colour
-	// in the low 15 bits; any other value is the address of a ready buffer to copy.
-	PALETTE_TINT_FLAGS  = 0x100000,
-	// The brightness (2R + 4G + B) times the colour carried, over CUSTOM_TINT_DIVISOR.
-	PALETTE_TINT_CUSTOM = 0x200000,
-	// The brightness R + G + B shared out in the proportions of the colour carried.
-	PALETTE_TINT_BLEND  = 0x400000,
-	PALETTE_TINT_SPLIT  = 0x800000 // each colour unchanged
+    // The backdrop colour (palette RAM's first colour) for all.
+    PALETTE_TINT_FROM_SOURCE = 0x8000,
+    // Each colour unchanged; the tints after it are numbered on from it.
+    PALETTE_TINT_NONE        = 0x10000,
+    PALETTE_TINT_GRAYSCALE, // grey of brightness (2R + 4G + B) / 7
+                            // Brownish grey, as when Ivan reports to Layana in Hammet Palace: the
+                            // shade (R + G + B) / SEPIA_SHADE_DIVISOR, red at 4 times it plus 5,
+                            // green and blue 3 times plus 5, each held to SEPIA_LEVEL_MIN to
+                            // SEPIA_LEVEL_MAX.
+    PALETTE_TINT_SEPIA,
+    // The storm's gloom: Vale's grass and paths go a dull, dark olive while the sprites keep their
+    // colours, between the lightning's flashes and at the ending's darkened sea. Half R + 10, two
+    // thirds G + 8, B - 7; black stays black.
+    PALETTE_TINT_DIM,
+    // The backgrounds World Map fades to as Venus Lighthouse shakes after its beacon is lit: each
+    // channel held to a narrow range (MUTED_RED_MIN to MUTED_RED_MAX and so on), then G and B + 2.
+    PALETTE_TINT_MUTED,
+    // A lightning flash: the storm's backgrounds wash out almost to white. Half of each channel,
+    // plus their mean.
+    PALETTE_TINT_PALE,
+    // The red Vale's eruption lightning flashes to from PALETTE_TINT_DIM: R plus an eighth of G and
+    // of B; G and B two thirds.
+    PALETTE_TINT_RED,
+    // PALETTE_TINT_DIM darker: half R + 6, two thirds G + 4, B - 6. The title's intro builds
+    // PALETTE_TINT_DIM with this recipe.
+    PALETTE_TINT_DIMMER,
+    // From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND carrying an RGB555 colour
+    // in the low 15 bits; any other value is the address of a ready buffer to copy.
+    PALETTE_TINT_FLAGS  = 0x100000,
+    // The brightness (2R + 4G + B) times the colour carried, over CUSTOM_TINT_DIVISOR.
+    PALETTE_TINT_CUSTOM = 0x200000,
+    // The brightness R + G + B shared out in the proportions of the colour carried.
+    PALETTE_TINT_BLEND  = 0x400000,
+    PALETTE_TINT_SPLIT  = 0x800000 // each colour unchanged
 } PALETTE_TINT;
 
 // The brightness 2R + 4G + B that PALETTE_TINT_GRAYSCALE and PALETTE_TINT_CUSTOM build, with each
@@ -148,9 +148,9 @@ typedef enum PALETTE_TINT
 // Which palettes mnTitlePaletteFadeBuildColors builds.
 typedef enum PALETTE_SELECTION
 {
-	PALETTES_ALL     = 0,
-	PALETTES_BG      = 1,
-	PALETTES_SPRITES = 2
+    PALETTES_ALL     = 0,
+    PALETTES_BG      = 1,
+    PALETTES_SPRITES = 2
 } PALETTE_SELECTION;
 
 #endif

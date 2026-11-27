@@ -16,9 +16,9 @@
 static inline const Sint32 *syVector3Coordinates(const VECTOR3 *vector)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return vector->coordinates;
+    return vector->coordinates;
 #else
-	return &vector->x;
+    return &vector->x;
 #endif
 }
 

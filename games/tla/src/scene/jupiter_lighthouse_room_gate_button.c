@@ -27,28 +27,28 @@
 // ActorPlacements.
 enum
 {
-	ACTOR_GATES_PILLAR = ACTOR_FIRST_PLACED + 2
+    ACTOR_GATES_PILLAR = ACTOR_FIRST_PLACED + 2
 };
 
 // The button's metatile, which the pillar is moved onto.
 enum
 {
-	GATES_BUTTON_METATILE_X = 17,
-	GATES_BUTTON_METATILE_Z = 33
+    GATES_BUTTON_METATILE_X = 17,
+    GATES_BUTTON_METATILE_Z = 33
 };
 
 // The step cues of the button: its metatile, and the eight metatiles round it that Felix steps off
 // it onto.
 enum
 {
-	CUE_GATES_BUTTON     = 20,
-	CUE_OFF_GATES_BUTTON = 21
+    CUE_GATES_BUTTON     = 20,
+    CUE_OFF_GATES_BUTTON = 21
 };
 
 // The teleporter pad's metatile behavior, at metatile (29, 47).
 enum
 {
-	METATILE_BEHAVIOR_CYCLONE_TELEPORTER = 30
+    METATILE_BEHAVIOR_CYCLONE_TELEPORTER = 30
 };
 
 struct ACTOR;
@@ -73,92 +73,92 @@ void                         scJupiterLighthouseStepOffButton(void);
 
 const SCENE_ENTRANCE        *scGetEntrances(void)
 {
-	return SceneEntrances;
+    return SceneEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
 {
-	return 0;
+    return 0;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return SceneExits;
+    return SceneExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ActorPlacements;
+    return ActorPlacements;
 }
 
 // Felix casts Cyclone on the purple teleporter pad, metatile (29, 47): the whirlwind takes the
 // party back down to the basement's teleporters.
 void scJupiterLighthouseLeaveByCyclone(void)
 {
-	syFieldScriptSetExitRequest(
-		JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS);
+    syFieldScriptSetExitRequest(
+        JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS);
 }
 
 // How scJupiterLighthouseOpenGates opens the gates.
 enum
 {
-	GATES_STAND_OPEN,
-	GATES_SLIDE_OPEN
+    GATES_STAND_OPEN,
+    GATES_SLIDE_OPEN
 };
 
 // Opens both sandstone gates: GATES_SLIDE_OPEN has them thud and slide open through their half-open
 // picture, GATES_STAND_OPEN simply shows them open.
 void scJupiterLighthouseOpenGates(Sint32 how)
 {
-	if (how == GATES_SLIDE_OPEN)
-	{
-		fdScriptPlaySound(SE_IMPACT);
-		fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 29);
-		fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 37);
-		syWait(6);
-	}
-	fdMapGridCopyMetatilesLayered(84, 20, 2, 3, 79, 29);
-	fdMapGridCopyMetatilesLayered(84, 20, 2, 3, 79, 37);
-	fdMapGridCopyMetatileAttributes(20, 22, 2, 1, 15, 31);
-	fdMapGridCopyMetatileAttributes(20, 22, 2, 1, 15, 39);
+    if (how == GATES_SLIDE_OPEN)
+    {
+        fdScriptPlaySound(SE_IMPACT);
+        fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 29);
+        fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 37);
+        syWait(6);
+    }
+    fdMapGridCopyMetatilesLayered(84, 20, 2, 3, 79, 29);
+    fdMapGridCopyMetatilesLayered(84, 20, 2, 3, 79, 37);
+    fdMapGridCopyMetatileAttributes(20, 22, 2, 1, 15, 31);
+    fdMapGridCopyMetatileAttributes(20, 22, 2, 1, 15, 39);
 }
 
 // Slides both sandstone gates shut with a heavy thud, through their half-open picture.
 void scJupiterLighthouseCloseGates(void)
 {
-	fdScriptPlaySound(SE_HEAVY_IMPACT);
-	fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 29);
-	fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 37);
-	syWait(6);
-	fdMapGridCopyMetatilesLayered(87, 20, 2, 3, 79, 29);
-	fdMapGridCopyMetatilesLayered(87, 20, 2, 3, 79, 37);
-	fdMapGridCopyMetatileAttributes(23, 22, 2, 1, 15, 31);
-	fdMapGridCopyMetatileAttributes(23, 22, 2, 1, 15, 39);
+    fdScriptPlaySound(SE_HEAVY_IMPACT);
+    fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 29);
+    fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 37);
+    syWait(6);
+    fdMapGridCopyMetatilesLayered(87, 20, 2, 3, 79, 29);
+    fdMapGridCopyMetatilesLayered(87, 20, 2, 3, 79, 37);
+    fdMapGridCopyMetatileAttributes(23, 22, 2, 1, 15, 31);
+    fdMapGridCopyMetatileAttributes(23, 22, 2, 1, 15, 39);
 }
 
 // Opens the gates for good once the stone pillar stands on the button.
 void scJupiterLighthouseCheckPillarOnButton(void)
 {
-	ACTOR *actor = fdActorGet(ACTOR_GATES_PILLAR);
+    ACTOR *actor = fdActorGet(ACTOR_GATES_PILLAR);
 
-	if (!fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)
-	    && FIELD_METATILE(actor->x.fixed) == GATES_BUTTON_METATILE_X
-	    && FIELD_METATILE(actor->z.fixed) == GATES_BUTTON_METATILE_Z)
-	{
-		fdScriptSetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED);
-		scJupiterLighthouseOpenGates(GATES_SLIDE_OPEN);
-	}
+    if (!fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)
+        && FIELD_METATILE(actor->x.fixed) == GATES_BUTTON_METATILE_X
+        && FIELD_METATILE(actor->z.fixed) == GATES_BUTTON_METATILE_Z)
+    {
+        fdScriptSetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED);
+        scJupiterLighthouseOpenGates(GATES_SLIDE_OPEN);
+    }
 }
 
 // Felix steps onto the purple button between the gates, metatile (17, 33): both gates slide open
 // with a thud, and stay open while he stands on it.
 void scJupiterLighthouseStepOnButton(void)
 {
-	if (!fdScriptGetFlag(FLAG_GATES_BUTTON_HELD))
-	{
-		fdScriptSetFlag(FLAG_GATES_BUTTON_HELD);
-		scJupiterLighthouseOpenGates(GATES_SLIDE_OPEN);
-	}
+    if (!fdScriptGetFlag(FLAG_GATES_BUTTON_HELD))
+    {
+        fdScriptSetFlag(FLAG_GATES_BUTTON_HELD);
+        scJupiterLighthouseOpenGates(GATES_SLIDE_OPEN);
+    }
 }
 
 // Felix steps off the purple button onto one of the metatiles round it: the gates he held open
@@ -166,46 +166,46 @@ void scJupiterLighthouseStepOnButton(void)
 // for good instead.
 void scJupiterLighthouseStepOffButton(void)
 {
-	if (fdScriptGetFlag(FLAG_GATES_BUTTON_HELD) == 1)
-	{
-		fdScriptClearFlag(FLAG_GATES_BUTTON_HELD);
-		scJupiterLighthouseCloseGates();
-	}
-	scJupiterLighthouseCheckPillarOnButton();
+    if (fdScriptGetFlag(FLAG_GATES_BUTTON_HELD) == 1)
+    {
+        fdScriptClearFlag(FLAG_GATES_BUTTON_HELD);
+        scJupiterLighthouseCloseGates();
+    }
+    scJupiterLighthouseCheckPillarOnButton();
 }
 
 #include "shared/jupiter_lighthouse_finish_moving_block.c"
 
 const CUE *scGetCues(void)
 {
-	return SceneCues;
+    return SceneCues;
 }
 
 // Sets up the floor: Felix arriving by the teleporter comes up in its ring of light, and the gates
 // stand open while the pillar or Felix holds the button.
 Sint32 scInit(void)
 {
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	if (!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)
-	    && MainRoutineStateWork.entrance
-	           == JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS)
-		fdActorArriveInRing(MainRoutineStateWork.leaderActorId);
-	if (fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED))
-	{
-		fdActorSetPos(ACTOR_GATES_PILLAR, 280, 536);
-		scJupiterLighthouseOpenGates(GATES_STAND_OPEN);
-	}
-	if (fdScriptGetFlag(FLAG_GATES_BUTTON_HELD))
-		scJupiterLighthouseOpenGates(GATES_STAND_OPEN);
-	return 0;
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    if (!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)
+        && MainRoutineStateWork.entrance
+               == JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS)
+        fdActorArriveInRing(MainRoutineStateWork.leaderActorId);
+    if (fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED))
+    {
+        fdActorSetPos(ACTOR_GATES_PILLAR, 280, 536);
+        scJupiterLighthouseOpenGates(GATES_STAND_OPEN);
+    }
+    if (fdScriptGetFlag(FLAG_GATES_BUTTON_HELD))
+        scJupiterLighthouseOpenGates(GATES_STAND_OPEN);
+    return 0;
 }
 
 // Sets the scene's arrival flags before the map is built. Returns 0.
 Sint32 scPrepareMap(void)
 {
-	scSetArrivalFlags(0);
-	return 0;
+    scSetArrivalFlags(0);
+    return 0;
 }
 
 #include "shared/scene_set_arrival_flags.c"
@@ -221,7 +221,7 @@ extern Sint32      PaletteCycleTick;
 // Sets the palette cycle's tick counter.
 static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleTick = value;
+    PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -268,7 +268,7 @@ void scFieldEffectSpawn(Sint32                x,
 // Sets the priority the lit actors' sprites are drawn at.
 void scLightSpritesSetPriority(Sint32 value)
 {
-	LightSpritePriority = value;
+    LightSpritePriority = value;
 }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -279,34 +279,34 @@ void scLightSpritesSetPriority(Sint32 value)
 #include "shared/scene_entrances_default.c"
 
 Uint32 SceneExits[] = {
-	SCENE_EXITS(JupiterLighthouseRoomGateButton),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM, JupiterLighthouseRoomBeam, JUPITER_LIGHTHOUSE_ROOM_BEAM_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_EAST, JupiterLighthouseEntrance, JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_WEST, JupiterLighthouseEntrance, JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST),
-	SCENE_EXIT(4, JupiterLighthouseRoomGateButton, 5),
-	SCENE_EXIT(5, JupiterLighthouseRoomGateButton, 4),
-	SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, JupiterLighthouseBasementTeleporters, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON),
-	SCENE_EXITS_END,
+    SCENE_EXITS(JupiterLighthouseRoomGateButton),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM, JupiterLighthouseRoomBeam, JUPITER_LIGHTHOUSE_ROOM_BEAM_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_EAST, JupiterLighthouseEntrance, JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_WEST, JupiterLighthouseEntrance, JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST),
+    SCENE_EXIT(4, JupiterLighthouseRoomGateButton, 5),
+    SCENE_EXIT(5, JupiterLighthouseRoomGateButton, 4),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, JupiterLighthouseBasementTeleporters, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON),
+    SCENE_EXITS_END,
 };
 
 ACTOR_PLACE ActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 744, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 744, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 536, FACING_EAST, TALK_FACING_KEEP, 0),
-	{SCENE_TABLE_END},
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 744, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 744, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 536, FACING_EAST, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 CUE SceneCues[] = {
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM},
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_EAST},
-	{CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_WEST},
-	{CUE_EXIT, 4, CONDITION_ALWAYS, 4},
-	{CUE_EXIT, 5, CONDITION_ALWAYS, 5},
-	{CUE_STEP, CUE_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, SCRIPT_REF(scJupiterLighthouseStepOnButton)},
-	{CUE_STEP, CUE_OFF_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, SCRIPT_REF(scJupiterLighthouseStepOffButton)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_CYCLONE_TELEPORTER, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseLeaveByCyclone)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATES_PILLAR, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, SCRIPT_REF(scJupiterLighthouseFinishMovingBlock)},
-	{CUE_TABLE_END},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_EAST},
+    {CUE_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_WEST},
+    {CUE_EXIT, 4, CONDITION_ALWAYS, 4},
+    {CUE_EXIT, 5, CONDITION_ALWAYS, 5},
+    {CUE_STEP, CUE_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, SCRIPT_REF(scJupiterLighthouseStepOnButton)},
+    {CUE_STEP, CUE_OFF_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, SCRIPT_REF(scJupiterLighthouseStepOffButton)},
+    {PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_CYCLONE_TELEPORTER, CONDITION_ALWAYS, SCRIPT_REF(scJupiterLighthouseLeaveByCyclone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATES_PILLAR, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, SCRIPT_REF(scJupiterLighthouseFinishMovingBlock)},
+    {CUE_TABLE_END},
 };
 
 Sint32 PaletteCycleTick = -1;
@@ -314,16 +314,16 @@ Sint32 PaletteCycleTick = -1;
 Sint32 PaletteCyclePausesInScripts = 1;
 
 Sint32 WhirlwindEndScript[] = {
-	SC_ANIMATION(5),
-	SC_WAIT(12),
-	SC_RELEASE,
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 // clang-format on
 
 const Sint32 *FieldEffectDurationScripts[] = {
-	FieldEffectShortScript,
-	FieldEffectMediumScript,
-	FieldEffectLongScript,
+    FieldEffectShortScript,
+    FieldEffectMediumScript,
+    FieldEffectLongScript,
 };
 
 #include "../field/field_effect_move.c"

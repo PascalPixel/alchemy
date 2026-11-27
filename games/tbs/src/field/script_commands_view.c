@@ -19,79 +19,79 @@
 // (fdCameraMoveWithinMapBounds).
 void fdMapGridSetCameraBounds(Sint32 minX, Sint32 minY, Sint32 maxX, Sint32 maxY)
 {
-	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
+    MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 
-	grid->minX                  = minX;
-	grid->minY                  = minY;
-	grid->maxX                  = maxX;
-	grid->maxY                  = maxY;
+    grid->minX                  = minX;
+    grid->minY                  = minY;
+    grid->maxX                  = maxX;
+    grid->maxY                  = maxY;
 }
 
 // Event: moves the zoom one step from its previous value toward its target, and removes itself on
 // the last step.
 UNREAD_RESULT fdWorldMapStepZoom(void)
 {
-	WORLD_MAP_VIEW *perspective = MapGridState[0];
-	Sint32         *from; // the zoom the transition starts from
-	Sint32          delta;
-	Sint32          zoom;
+    WORLD_MAP_VIEW *perspective = MapGridState[0];
+    Sint32         *from; // the zoom the transition starts from
+    Sint32          delta;
+    Sint32          zoom;
 
-	if (((FIELD_STATE *)syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
-	        ->camera->paused
-	    != 0)
-		return;
-	if (perspective->zoomTransitionFrame == 0)
-		return;
-	from  = &perspective->prevZoom;
-	delta = perspective->zoom - *from;
-	perspective->zoomTransitionStep++;
-	zoom = *from + delta * perspective->zoomTransitionStep / perspective->zoomTransitionFrame;
-	perspective->distance = syMulFX(perspective->farPlane, zoom);
-	ScanlinePitch         = perspective->pitch + 1;
-	if (perspective->zoomTransitionStep == perspective->zoomTransitionFrame)
-	{
-		perspective->zoomTransitionFrame = 0;
-		syCloseEvent((EVENT_FUNC)fdWorldMapStepZoom);
-	}
+    if (((FIELD_STATE *)syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
+            ->camera->paused
+        != 0)
+        return;
+    if (perspective->zoomTransitionFrame == 0)
+        return;
+    from  = &perspective->prevZoom;
+    delta = perspective->zoom - *from;
+    perspective->zoomTransitionStep++;
+    zoom = *from + delta * perspective->zoomTransitionStep / perspective->zoomTransitionFrame;
+    perspective->distance = syMulFX(perspective->farPlane, zoom);
+    ScanlinePitch         = perspective->pitch + 1;
+    if (perspective->zoomTransitionStep == perspective->zoomTransitionFrame)
+    {
+        perspective->zoomTransitionFrame = 0;
+        syCloseEvent((EVENT_FUNC)fdWorldMapStepZoom);
+    }
 }
 
 // Starts a zoom to zoom (16.16) over ticks ticks, on the World Map only.
 void fdWorldMapStartZoom(FIXED zoom, Sint32 ticks)
 {
-	WORLD_MAP_VIEW *perspective = MapGridState[0];
-	FIXED           inverse;
+    WORLD_MAP_VIEW *perspective = MapGridState[0];
+    FIXED           inverse;
 
-	if (((FIELD_STATE *)syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))->mode
-	    != ACTOR_SYSTEM_WORLD_MAP)
-		return;
-	{
-		inverse = syDivFX(zoom, toFIXED(1)); // 1 / zoom
-	}
-	perspective->prevZoom            = perspective->zoom;
-	perspective->zoom                = inverse;
-	perspective->zoomTransitionFrame = ticks;
-	perspective->zoomTransitionStep  = 0;
-	sySetEvent((EVENT_FUNC)fdWorldMapStepZoom, EVENT_PASS_TICK + 20);
+    if (((FIELD_STATE *)syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))->mode
+        != ACTOR_SYSTEM_WORLD_MAP)
+        return;
+    {
+        inverse = syDivFX(zoom, toFIXED(1)); // 1 / zoom
+    }
+    perspective->prevZoom            = perspective->zoom;
+    perspective->zoom                = inverse;
+    perspective->zoomTransitionFrame = ticks;
+    perspective->zoomTransitionStep  = 0;
+    sySetEvent((EVENT_FUNC)fdWorldMapStepZoom, EVENT_PASS_TICK + 20);
 }
 
 // Waits for a zoom transition to end (on the World Map only, at most 300 ticks).
 void fdScriptWaitForZoomTransition(void)
 {
-	Sint32          ticks;
-	WORLD_MAP_VIEW *perspective = MapGridState[0];
+    Sint32          ticks;
+    WORLD_MAP_VIEW *perspective = MapGridState[0];
 
-	if (((FIELD_STATE *)syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))->mode
-	    == ACTOR_SYSTEM_WORLD_MAP)
-	{
-		ticks = 0;
-		if (perspective->zoomTransitionFrame != 0)
-		{
-			for (; ticks < 300 && perspective->zoomTransitionFrame != 0; ticks++)
-			{
-				sySynch(1);
-			}
-		}
-	}
+    if (((FIELD_STATE *)syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))->mode
+        == ACTOR_SYSTEM_WORLD_MAP)
+    {
+        ticks = 0;
+        if (perspective->zoomTransitionFrame != 0)
+        {
+            for (; ticks < 300 && perspective->zoomTransitionFrame != 0; ticks++)
+            {
+                sySynch(1);
+            }
+        }
+    }
 }
 
 // Per-tick update of an emote bubble or attached effect: keeps it on the actor it rides (its
@@ -99,23 +99,23 @@ void fdScriptWaitForZoomTransition(void)
 // spriteTop) and 8 pixels.
 UNREAD_RESULT fdEffectCopyWatchedActorPos(ACTOR *actor)
 {
-	ACTOR *host;
+    ACTOR *host;
 
-	host = (ACTOR *)actor->watchedActor;
-	if (host != NULL)
-	{
-		actor->motionFlags = 0;
-		actor->x.fixed     = host->x.fixed;
-		actor->y.fixed     = host->y.fixed
-		               + toFIXED((Sint8)syResourceGetMetadataRecordStub(
-									 (Sint16)fdFindActorPlacement(actor->userValue)->sprite)
-		                             ->spriteTop)
-		               + toFIXED(8);
-		actor->groundHeight = host->groundHeight;
-		actor->z.fixed      = host->z.fixed;
-	}
+    host = (ACTOR *)actor->watchedActor;
+    if (host != NULL)
+    {
+        actor->motionFlags = 0;
+        actor->x.fixed     = host->x.fixed;
+        actor->y.fixed     = host->y.fixed
+                       + toFIXED((Sint8)syResourceGetMetadataRecordStub(
+                                     (Sint16)fdFindActorPlacement(actor->userValue)->sprite)
+                                     ->spriteTop)
+                       + toFIXED(8);
+        actor->groundHeight = host->groundHeight;
+        actor->z.fixed      = host->z.fixed;
+    }
 #if !FIX_FUNCTION_SIGNATURES
-	return 0;
+    return 0;
 #endif
 }
 
@@ -123,66 +123,66 @@ UNREAD_RESULT fdEffectCopyWatchedActorPos(ACTOR *actor)
 // waits the given number of ticks.
 void fdActorShowEmoteById(Sint32 actorId, Sint32 emote, Sint32 ticks)
 {
-	ACTOR *target;
+    ACTOR *target;
 
-	if ((emote & EMOTE_BUBBLE_MASK) == EMOTE_LIGHT_BULB)
-	{
-		sySoundPlayStub(SE_CHIME);
-	}
+    if ((emote & EMOTE_BUBBLE_MASK) == EMOTE_LIGHT_BULB)
+    {
+        sySoundPlayStub(SE_CHIME);
+    }
 
-	target = fdActorLookup(actorId);
-	if (target != 0)
-	{
-		ACTOR *bubble =
-			fdActorCreateStub(SPRITE_EMOTE, target->x.fixed, target->y.fixed, target->z.fixed);
+    target = fdActorLookup(actorId);
+    if (target != 0)
+    {
+        ACTOR *bubble =
+            fdActorCreateStub(SPRITE_EMOTE, target->x.fixed, target->y.fixed, target->z.fixed);
 
-		if (bubble != 0)
-		{
-			SPR *sprite;
+        if (bubble != 0)
+        {
+            SPR *sprite;
 
-			fdActorStartScriptStub(bubble, EmoteBubbleScript);
-			fdActorSelectAnimationStub(bubble, emote & EMOTE_ANIMATION_MASK);
-			bubble->motionFlags = 0;
-			bubble->timer       = 0;
-			bubble->userValue   = actorId;
-			sprite              = bubble->sprite;
+            fdActorStartScriptStub(bubble, EmoteBubbleScript);
+            fdActorSelectAnimationStub(bubble, emote & EMOTE_ANIMATION_MASK);
+            bubble->motionFlags = 0;
+            bubble->timer       = 0;
+            bubble->userValue   = actorId;
+            sprite              = bubble->sprite;
 #if FIX_FUNCTION_SIGNATURES
-			bubble->update = fdEffectCopyWatchedActorPos;
+            bubble->update = fdEffectCopyWatchedActorPos;
 #else
-			bubble->update = (void (*)(ACTOR *))fdEffectCopyWatchedActorPos;
+            bubble->update = (void (*)(ACTOR *))fdEffectCopyWatchedActorPos;
 #endif
-			sprite->flags        = 0;
-			bubble->watchedActor = (union ACTOR_OR_EFFECT *)target;
+            sprite->flags        = 0;
+            bubble->watchedActor = (union ACTOR_OR_EFFECT *)target;
 
-			// The bubble takes sprite priority 1, or the actor's: -(m + 1) is ~m, the bits besides
-			// the priority.
-			if ((emote & EMOTE_IN_FRONT) != 0)
-			{
-				Sint32 mask                = ATTR2_HIGH_PRIORITY_MASK + 1;
-				Uint8  attribute           = SPRITE_ATTR2_HIGH(sprite);
+            // The bubble takes sprite priority 1, or the actor's: -(m + 1) is ~m, the bits besides
+            // the priority.
+            if ((emote & EMOTE_IN_FRONT) != 0)
+            {
+                Sint32 mask                = ATTR2_HIGH_PRIORITY_MASK + 1;
+                Uint8  attribute           = SPRITE_ATTR2_HIGH(sprite);
 
-				mask                       = -mask;
-				mask                      &= attribute;
-				mask                      |= OBJ_PRIORITY(1) >> 8;
-				SPRITE_ATTR2_HIGH(sprite)  = mask;
-			}
-			else
-			{
-				Sint32 priority = ATTR2_HIGH_PRIORITY_MASK;
-				Uint8  src      = SPRITE_ATTR2_HIGH(target->sprite);
-				Uint8  dest;
-				Sint32 mask                = ATTR2_HIGH_PRIORITY_MASK + 1;
+                mask                       = -mask;
+                mask                      &= attribute;
+                mask                      |= OBJ_PRIORITY(1) >> 8;
+                SPRITE_ATTR2_HIGH(sprite)  = mask;
+            }
+            else
+            {
+                Sint32 priority = ATTR2_HIGH_PRIORITY_MASK;
+                Uint8  src      = SPRITE_ATTR2_HIGH(target->sprite);
+                Uint8  dest;
+                Sint32 mask                = ATTR2_HIGH_PRIORITY_MASK + 1;
 
-				priority                  &= src;
-				dest                       = SPRITE_ATTR2_HIGH(sprite);
-				mask                       = -mask;
-				mask                      &= dest;
-				mask                      |= priority;
-				SPRITE_ATTR2_HIGH(sprite)  = mask;
-			}
-		}
-		fdScriptWait(ticks);
-	}
+                priority                  &= src;
+                dest                       = SPRITE_ATTR2_HIGH(sprite);
+                mask                       = -mask;
+                mask                      &= dest;
+                mask                      |= priority;
+                SPRITE_ATTR2_HIGH(sprite)  = mask;
+            }
+        }
+        fdScriptWait(ticks);
+    }
 }
 
 // The script command "actor set attached effect", by ATTACHED_EFFECT_FLAG: removes the actor
@@ -190,85 +190,85 @@ void fdActorShowEmoteById(Sint32 actorId, Sint32 emote, Sint32 ticks)
 // (animation 2) that ends by itself (ActorWaitScript, 40 ticks).
 void fdEffectSetAttached(Sint32 actorId, Sint32 flags)
 {
-	ACTOR *actor = fdActorLookup(actorId);
-	ACTOR *effect;
-	SPR   *visual;
-	Sint32 mode;
+    ACTOR *actor = fdActorLookup(actorId);
+    ACTOR *effect;
+    SPR   *visual;
+    Sint32 mode;
 
-	effect = 0;
-	visual = 0;
+    effect = 0;
+    visual = 0;
 
-	if (actor == 0)
-		return;
+    if (actor == 0)
+        return;
 
-	if ((flags & ATTACHED_EFFECT_KIND_MASK) != 0)
-	{
-		if ((flags & ATTACHED_EFFECT_KIND_MASK) == ATTACHED_EFFECT_ONCE || actor->watchedActor == 0)
-		{
-			effect = fdActorCreateStub(
-				SPRITE_ATTACHED_EFFECT, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-		}
-	}
-	else
-	{
-		effect = (ACTOR *)actor->watchedActor;
-		if (effect == 0)
-			return;
-		fdActorReleaseStub(effect);
-		actor->watchedActor = 0;
-		return;
-	}
+    if ((flags & ATTACHED_EFFECT_KIND_MASK) != 0)
+    {
+        if ((flags & ATTACHED_EFFECT_KIND_MASK) == ATTACHED_EFFECT_ONCE || actor->watchedActor == 0)
+        {
+            effect = fdActorCreateStub(
+                SPRITE_ATTACHED_EFFECT, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+        }
+    }
+    else
+    {
+        effect = (ACTOR *)actor->watchedActor;
+        if (effect == 0)
+            return;
+        fdActorReleaseStub(effect);
+        actor->watchedActor = 0;
+        return;
+    }
 
-	if (effect == 0)
-		return;
+    if (effect == 0)
+        return;
 
-	mode = flags & ATTACHED_EFFECT_KIND_MASK;
-	switch (mode)
-	{
-		case ATTACHED_EFFECT_ATTACH:
-			fdActorSelectAnimationStub(effect, 1);
-			actor->watchedActor = (union ACTOR_OR_EFFECT *)effect;
-			effect->timer       = 1;
-			break;
-		case ATTACHED_EFFECT_ONCE:
-			fdActorSelectAnimationStub(effect, 2);
-			fdActorStartScriptStub(effect, (const Sint32 *)ActorWaitScript);
-			effect->timer = 1;
-			break;
-	}
+    mode = flags & ATTACHED_EFFECT_KIND_MASK;
+    switch (mode)
+    {
+        case ATTACHED_EFFECT_ATTACH:
+            fdActorSelectAnimationStub(effect, 1);
+            actor->watchedActor = (union ACTOR_OR_EFFECT *)effect;
+            effect->timer       = 1;
+            break;
+        case ATTACHED_EFFECT_ONCE:
+            fdActorSelectAnimationStub(effect, 2);
+            fdActorStartScriptStub(effect, (const Sint32 *)ActorWaitScript);
+            effect->timer = 1;
+            break;
+    }
 
-	effect->userValue    = actorId;
-	effect->motionFlags  = 0;
-	effect->update       = (void (*)(ACTOR *))fdEffectCopyWatchedActorPos;
-	visual               = effect->sprite;
-	visual->flags        = 0;
-	effect->watchedActor = (union ACTOR_OR_EFFECT *)actor;
+    effect->userValue    = actorId;
+    effect->motionFlags  = 0;
+    effect->update       = (void (*)(ACTOR *))fdEffectCopyWatchedActorPos;
+    visual               = effect->sprite;
+    visual->flags        = 0;
+    effect->watchedActor = (union ACTOR_OR_EFFECT *)actor;
 
-	// The effect takes sprite priority 1, or the actor's, as an emote bubble does.
-	if (flags & ATTACHED_EFFECT_IN_FRONT)
-	{
-		Sint32 mask                = ATTR2_HIGH_PRIORITY_MASK + 1;
-		Uint8  attribute           = SPRITE_ATTR2_HIGH(visual);
+    // The effect takes sprite priority 1, or the actor's, as an emote bubble does.
+    if (flags & ATTACHED_EFFECT_IN_FRONT)
+    {
+        Sint32 mask                = ATTR2_HIGH_PRIORITY_MASK + 1;
+        Uint8  attribute           = SPRITE_ATTR2_HIGH(visual);
 
-		mask                       = -mask;
-		mask                      &= attribute;
-		mask                      |= OBJ_PRIORITY(1) >> 8;
-		SPRITE_ATTR2_HIGH(visual)  = mask;
-	}
-	else
-	{
-		Sint32 priority = ATTR2_HIGH_PRIORITY_MASK;
-		Uint8  src      = SPRITE_ATTR2_HIGH(actor->sprite);
-		Uint8  dest;
-		Sint32 mask                = ATTR2_HIGH_PRIORITY_MASK + 1;
+        mask                       = -mask;
+        mask                      &= attribute;
+        mask                      |= OBJ_PRIORITY(1) >> 8;
+        SPRITE_ATTR2_HIGH(visual)  = mask;
+    }
+    else
+    {
+        Sint32 priority = ATTR2_HIGH_PRIORITY_MASK;
+        Uint8  src      = SPRITE_ATTR2_HIGH(actor->sprite);
+        Uint8  dest;
+        Sint32 mask                = ATTR2_HIGH_PRIORITY_MASK + 1;
 
-		priority                  &= src;
-		dest                       = SPRITE_ATTR2_HIGH(visual);
-		mask                       = -mask;
-		mask                      &= dest;
-		mask                      |= priority;
-		SPRITE_ATTR2_HIGH(visual)  = mask;
-	}
+        priority                  &= src;
+        dest                       = SPRITE_ATTR2_HIGH(visual);
+        mask                       = -mask;
+        mask                      &= dest;
+        mask                      |= priority;
+        SPRITE_ATTR2_HIGH(visual)  = mask;
+    }
 }
 
 #undef SPRITE_ATTR2_HIGH

@@ -2,9 +2,9 @@
 
 // A spark is drawn at seven fifths of its size for half a second, then gone.
 Sint32 BeaconSparkScript[] = {
-	SC_SET(SW_SCALE_Y, toFIXED(7) / 5),
-	SC_SET(SW_SCALE_X, toFIXED(7) / 5),
-	SC_ANIMATION(4), // the spark sheet's own animation 4
-	SC_WAIT(30),
-	SC_RELEASE,
+    SC_SET(SW_SCALE_Y, toFIXED(7) / 5),
+    SC_SET(SW_SCALE_X, toFIXED(7) / 5),
+    SC_ANIMATION(4), // the spark sheet's own animation 4
+    SC_WAIT(30),
+    SC_RELEASE,
 };

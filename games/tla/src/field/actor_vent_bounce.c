@@ -6,15 +6,15 @@
 // than 16 pixels.
 Bool VENT_TOUCHING(ACTOR *a, ACTOR *b)
 {
-	if (DIFF(a->x.fixed, b->x.fixed) < toFIXED(12))
-	{
-		if ((Uint32)(a->y.fixed - b->y.fixed - 1) <= toFIXED(16) - 2)
-		{
-			if (DIFF(a->z.fixed, b->z.fixed) < toFIXED(8))
-				return TRUE;
-		}
-	}
-	return FALSE;
+    if (DIFF(a->x.fixed, b->x.fixed) < toFIXED(12))
+    {
+        if ((Uint32)(a->y.fixed - b->y.fixed - 1) <= toFIXED(16) - 2)
+        {
+            if (DIFF(a->z.fixed, b->z.fixed) < toFIXED(8))
+                return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // Moves the thing by its velocities, slows it in x and z, grows and spins its sprite, and stops its
@@ -24,46 +24,46 @@ Bool VENT_TOUCHING(ACTOR *a, ACTOR *b)
 // what its x and y scale grow by each tick, and timer its spin.
 void VENT_BOUNCE(ACTOR *actor)
 {
-	VENT_WORK *state     = VENT_STATE;
-	ACTOR     *other     = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIXED      velocityX = actor->bounce;
-	FIXED      velocityZ;
-	SPR       *sprite;
-	Sint32     i;
+    VENT_WORK *state     = VENT_STATE;
+    ACTOR     *other     = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    FIXED      velocityX = actor->bounce;
+    FIXED      velocityZ;
+    SPR       *sprite;
+    Sint32     i;
 
-	actor->x.fixed   += velocityX;
-	actor->y.fixed   += actor->gravity;
-	velocityZ         = actor->sceneWord;
-	actor->z.fixed   += velocityZ;
-	actor->bounce     = velocityX - velocityX / 18;
-	actor->sceneWord  = velocityZ - velocityZ / 16;
-	actor->scaleX    += actor->speedLimit;
-	sprite            = actor->sprite;
-	{
-		Sint32 scaleStepY  = actor->acceleration;
+    actor->x.fixed   += velocityX;
+    actor->y.fixed   += actor->gravity;
+    velocityZ         = actor->sceneWord;
+    actor->z.fixed   += velocityZ;
+    actor->bounce     = velocityX - velocityX / 18;
+    actor->sceneWord  = velocityZ - velocityZ / 16;
+    actor->scaleX    += actor->speedLimit;
+    sprite            = actor->sprite;
+    {
+        Sint32 scaleStepY  = actor->acceleration;
 
-		actor->scaleY     += scaleStepY;
-	}
-	sprite->rotation += actor->timer;
-	// Meeting an actor turns a quarter of the z velocity into y velocity.
-	if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other))
-	{
-		actor->z.fixed   -= actor->sceneWord;
-		actor->gravity   += actor->sceneWord >> 2;
-		actor->sceneWord  = 0;
-	}
-	for (i = 0; i < 4; i++)
-	{
-		Sint32 id = state->ids[i];
+        actor->scaleY     += scaleStepY;
+    }
+    sprite->rotation += actor->timer;
+    // Meeting an actor turns a quarter of the z velocity into y velocity.
+    if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other))
+    {
+        actor->z.fixed   -= actor->sceneWord;
+        actor->gravity   += actor->sceneWord >> 2;
+        actor->sceneWord  = 0;
+    }
+    for (i = 0; i < 4; i++)
+    {
+        Sint32 id = state->ids[i];
 
-		if (id == 0)
-			break;
-		other = fdActorGetById(id);
-		if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other))
-		{
-			actor->z.fixed   -= actor->sceneWord;
-			actor->gravity   += actor->sceneWord >> 2;
-			actor->sceneWord  = 0;
-		}
-	}
+        if (id == 0)
+            break;
+        other = fdActorGetById(id);
+        if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other))
+        {
+            actor->z.fixed   -= actor->sceneWord;
+            actor->gravity   += actor->sceneWord >> 2;
+            actor->sceneWord  = 0;
+        }
+    }
 }

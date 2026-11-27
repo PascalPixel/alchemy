@@ -18,43 +18,43 @@ struct ACTOR;
 // A step of the current field Psynergy (fdPsynergyRunHandler).
 typedef enum FIELD_PSYNERGY_HANDLER
 {
-	// Casts it with no target (fdPsynergyRun).
-	FIELD_PSYNERGY_HANDLER_UNTARGETED = 0,
-	// Casts it on its target, secondActorId (fdPsynergyDispatch).
-	FIELD_PSYNERGY_HANDLER_ON_TARGET  = 1,
-	FIELD_PSYNERGY_HANDLER_FINISH     = 2,
-	FIELD_PSYNERGY_HANDLER_EXTRA      = 3 // Runs its kind's extra handler.
+    // Casts it with no target (fdPsynergyRun).
+    FIELD_PSYNERGY_HANDLER_UNTARGETED = 0,
+    // Casts it on its target, secondActorId (fdPsynergyDispatch).
+    FIELD_PSYNERGY_HANDLER_ON_TARGET  = 1,
+    FIELD_PSYNERGY_HANDLER_FINISH     = 2,
+    FIELD_PSYNERGY_HANDLER_EXTRA      = 3 // Runs its kind's extra handler.
 } FIELD_PSYNERGY_HANDLER;
 
 // A field Psynergy, as the field kind: the type column of games/tbs/src/game/ability_table.c, named
 // for the abilities that have it.
 typedef enum FIELD_PSY
 {
-	FIELD_PSYNERGY_MOVE      = 1,
-	FIELD_PSYNERGY_MIND_READ = 2,
-	// Ply, Ply Well and Pure Ply.
-	FIELD_PSYNERGY_PLY       = 3,
-	FIELD_PSYNERGY_FORCE     = 4,
-	FIELD_PSYNERGY_DOUSE     = 5,
-	FIELD_PSYNERGY_FROST     = 6,
-	FIELD_PSYNERGY_LIFT      = 7,
-	FIELD_PSYNERGY_REVEAL    = 8,
-	FIELD_PSYNERGY_HALT      = 9,
-	FIELD_PSYNERGY_CLOAK     = 10,
-	FIELD_PSYNERGY_CARRY     = 11,
-	FIELD_PSYNERGY_GROWTH    = 12,
-	FIELD_PSYNERGY_CATCH     = 13,
-	// Whirlwind and Gale.
-	FIELD_PSYNERGY_WHIRLWIND = 14,
-	FIELD_PSYNERGY_RETREAT   = 15,
-	FIELD_PSYNERGY_AVOID     = 16
+    FIELD_PSYNERGY_MOVE      = 1,
+    FIELD_PSYNERGY_MIND_READ = 2,
+    // Ply, Ply Well and Pure Ply.
+    FIELD_PSYNERGY_PLY       = 3,
+    FIELD_PSYNERGY_FORCE     = 4,
+    FIELD_PSYNERGY_DOUSE     = 5,
+    FIELD_PSYNERGY_FROST     = 6,
+    FIELD_PSYNERGY_LIFT      = 7,
+    FIELD_PSYNERGY_REVEAL    = 8,
+    FIELD_PSYNERGY_HALT      = 9,
+    FIELD_PSYNERGY_CLOAK     = 10,
+    FIELD_PSYNERGY_CARRY     = 11,
+    FIELD_PSYNERGY_GROWTH    = 12,
+    FIELD_PSYNERGY_CATCH     = 13,
+    // Whirlwind and Gale.
+    FIELD_PSYNERGY_WHIRLWIND = 14,
+    FIELD_PSYNERGY_RETREAT   = 15,
+    FIELD_PSYNERGY_AVOID     = 16
 } FIELD_PSY;
 
 // One picture of a sparkle: its height offset and tile (field_mode_tables.c).
 typedef struct SPARKLE_PICTURE
 {
-	Sint16 dy;
-	Uint16 tile;
+    Sint16 dy;
+    Uint16 tile;
 } SPARKLE_PICTURE;
 
 extern const SPARKLE_PICTURE FieldEffectSparklePictures[32];
@@ -93,28 +93,28 @@ UNREAD_RESULT fdEffectCopyWatchedActorPos(struct ACTOR *actor);
 // sheet (EMOTE).
 typedef enum EMOTE
 {
-	EMOTE_EXCLAMATION = 0, // "!"
-	EMOTE_QUESTION    = 1, // "?"
-	// A wincing face in English; a sweat drop in Japanese and a frown in Italian.
-	EMOTE_WINCE       = 2,
-	EMOTE_ANGER_VEIN  = 3, // the cross-shaped vein of anger
-	EMOTE_HEART       = 4, // a red heart
-	EMOTE_ELLIPSIS    = 5, // "..."
-	EMOTE_LIGHT_BULB  = 6, // a lit bulb, with SE_CHIME
-	EMOTE_SCOWL       = 7, // a scowling face
-	EMOTE_SMILE       = 8, // a smiling face
-	// A sweat drop; no scene shows it, and the Japanese sprite sheet has no tenth bubble.
-	EMOTE_SWEAT_DROP  = 9
+    EMOTE_EXCLAMATION = 0, // "!"
+    EMOTE_QUESTION    = 1, // "?"
+    // A wincing face in English; a sweat drop in Japanese and a frown in Italian.
+    EMOTE_WINCE       = 2,
+    EMOTE_ANGER_VEIN  = 3, // the cross-shaped vein of anger
+    EMOTE_HEART       = 4, // a red heart
+    EMOTE_ELLIPSIS    = 5, // "..."
+    EMOTE_LIGHT_BULB  = 6, // a lit bulb, with SE_CHIME
+    EMOTE_SCOWL       = 7, // a scowling face
+    EMOTE_SMILE       = 8, // a smiling face
+    // A sweat drop; no scene shows it, and the Japanese sprite sheet has no tenth bubble.
+    EMOTE_SWEAT_DROP  = 9
 } EMOTE;
 
 // fdEffectSetAttached's flags: a mode in the low two bits, and ATTACHED_EFFECT_IN_FRONT.
 typedef enum ATTACHED_EFFECT_FLAG
 {
-	ATTACHED_EFFECT_REMOVE   = 0, // removes the attached actor
-	ATTACHED_EFFECT_ATTACH   = 1, // attaches one that stays until removed
-	ATTACHED_EFFECT_ONCE     = 2, // shows a one-off one that ends by itself
-	// The attached actor takes sprite priority 1, not the actor's.
-	ATTACHED_EFFECT_IN_FRONT = 0x100
+    ATTACHED_EFFECT_REMOVE   = 0, // removes the attached actor
+    ATTACHED_EFFECT_ATTACH   = 1, // attaches one that stays until removed
+    ATTACHED_EFFECT_ONCE     = 2, // shows a one-off one that ends by itself
+    // The attached actor takes sprite priority 1, not the actor's.
+    ATTACHED_EFFECT_IN_FRONT = 0x100
 } ATTACHED_EFFECT_FLAG;
 
 Sint32        fdActorClearSpriteAndCollisionFlags(struct ACTOR *actor);
@@ -255,10 +255,10 @@ void          fdParticleUpdateMotion(FIELD_PARTICLE *effect);
 // Sanctum), and the larger dot that blinks over the marker nearest the cursor.
 typedef enum MAP_SCREEN_MARKER_TILE
 {
-	MAP_SCREEN_MARKER_PARTY,
-	MAP_SCREEN_MARKER_AREA,
-	MAP_SCREEN_MARKER_LIGHTHOUSE,
-	MAP_SCREEN_MARKER_NEAREST
+    MAP_SCREEN_MARKER_PARTY,
+    MAP_SCREEN_MARKER_AREA,
+    MAP_SCREEN_MARKER_LIGHTHOUSE,
+    MAP_SCREEN_MARKER_NEAREST
 } MAP_SCREEN_MARKER_TILE;
 
 // The World Map's area markers, {tile << 16 | flag, area} for each area's actor id from 11, ended

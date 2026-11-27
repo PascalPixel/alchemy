@@ -17,49 +17,49 @@
 // WeatherRainSplashFrames on a random spot near the leader, held while FLAG_WEATHER_HELD is set.
 void fdGroundParticlesUpdate(void)
 {
-	MAP_STATE        *map      = RamHeapSlots->mapGrid;
-	WEATHER_STATE    *state    = RamHeapSlots->weather;
-	Sint32            originX  = syMapStateView(map)[0];
-	Sint32            originZ  = syMapStateView(map)[1];
-	WEATHER_PARTICLE *particle = state->particles;
-	Uint32            i;
+    MAP_STATE        *map      = RamHeapSlots->mapGrid;
+    WEATHER_STATE    *state    = RamHeapSlots->weather;
+    Sint32            originX  = syMapStateView(map)[0];
+    Sint32            originZ  = syMapStateView(map)[1];
+    WEATHER_PARTICLE *particle = state->particles;
+    Uint32            i;
 
-	for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++)
-	{
-		const Sint16 *frame;
-		Sint32        x;
-		Sint32        y;
+    for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++)
+    {
+        const Sint16 *frame;
+        Sint32        x;
+        Sint32        y;
 
-		if (--particle->timer == GROUND_PARTICLE_FREED)
-			continue;
-		if (syGameFlagGet(FLAG_WEATHER_HELD))
-			particle->timer++;
-		frame = &WeatherRainSplashFrames[particle->timer * 5];
-		x     = (particle->posX - originX) / toFIXED(1) + *frame++;
-		y     = (particle->posZ - particle->posY - originZ) / toFIXED(1) + *frame++;
-		if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT)
-		{
-			particle->priority = 1;
-			particle->x        = x;
-			particle->y        = y;
-			particle->tile     = state->tileBase + *(Uint16 *)frame;
-			frame++;
-			particle->shape = *(Uint8 *)frame;
-			particle->size  = *(Uint8 *)(frame + 1);
-			syOAMAddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
-		}
-		if (particle->timer == 0)
-		{
-			Sint32 *focus   = map->origin;
+        if (--particle->timer == GROUND_PARTICLE_FREED)
+            continue;
+        if (syGameFlagGet(FLAG_WEATHER_HELD))
+            particle->timer++;
+        frame = &WeatherRainSplashFrames[particle->timer * 5];
+        x     = (particle->posX - originX) / toFIXED(1) + *frame++;
+        y     = (particle->posZ - particle->posY - originZ) / toFIXED(1) + *frame++;
+        if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT)
+        {
+            particle->priority = 1;
+            particle->x        = x;
+            particle->y        = y;
+            particle->tile     = state->tileBase + *(Uint16 *)frame;
+            frame++;
+            particle->shape = *(Uint8 *)frame;
+            particle->size  = *(Uint8 *)(frame + 1);
+            syOAMAddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
+        }
+        if (particle->timer == 0)
+        {
+            Sint32 *focus   = map->origin;
 
-			x               = focus[0] + (syRandom() << 8) - toFIXED(128);
-			y               = focus[2] + (syRandom() << 8) - toFIXED(128);
-			particle->posX  = x;
-			particle->posZ  = y;
-			particle->posY  = fdMapGridGetTerrainHeightStub(0, x, y);
-			particle->timer = RAIN_SPLASH_FRAMES;
-		}
-	}
+            x               = focus[0] + (syRandom() << 8) - toFIXED(128);
+            y               = focus[2] + (syRandom() << 8) - toFIXED(128);
+            particle->posX  = x;
+            particle->posZ  = y;
+            particle->posY  = fdMapGridGetTerrainHeightStub(0, x, y);
+            particle->timer = RAIN_SPLASH_FRAMES;
+        }
+    }
 }
 
 // This game's rain each tick (fdWeatherStartRain), outside Mars Lighthouse and on its ledges: each
@@ -69,55 +69,55 @@ void fdGroundParticlesUpdate(void)
 // they are.
 void fdWeatherUpdateRain(void)
 {
-	MAP_STATE        *map      = RamHeapSlots->mapGrid;
-	WEATHER_STATE    *state    = RamHeapSlots->weather;
-	Sint32            originX  = syMapStateView(map)[0];
-	WEATHER_PARTICLE *particle = state->particles;
-	Sint32            originZ  = syMapStateView(map)[1];
-	Uint32            i;
+    MAP_STATE        *map      = RamHeapSlots->mapGrid;
+    WEATHER_STATE    *state    = RamHeapSlots->weather;
+    Sint32            originX  = syMapStateView(map)[0];
+    WEATHER_PARTICLE *particle = state->particles;
+    Sint32            originZ  = syMapStateView(map)[1];
+    Uint32            i;
 
-	for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++)
-	{
-		const Sint16 *frame;
-		Sint32        x;
-		Sint32        y;
+    for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++)
+    {
+        const Sint16 *frame;
+        Sint32        x;
+        Sint32        y;
 
-		if (--particle->timer == GROUND_PARTICLE_FREED)
-			continue;
-		if (syGameFlagGet(FLAG_WEATHER_HELD))
-			particle->timer++;
-		// UB: a streak started at 12 ticks reads its first offsets one pair past the table's end,
-		// FieldEffectSparklePictures's first row: for that tick it is drawn 2 pixels left of its
-		// spot and 12 below it. UBFIX starts it at 11.
-		frame = &GroundParticlesOffsets[2 * particle->timer];
-		x     = (particle->posX - originX) / toFIXED(1) + *frame++;
-		y     = (particle->posZ - particle->posY - originZ) / toFIXED(1) + *frame++;
-		if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT)
-		{
-			particle->priority = 1;
-			particle->x        = x;
-			particle->y        = y;
-			particle->tile     = state->tileBase;
-			particle->shape    = OBJ_SHAPE_HORIZONTAL;
-			particle->size     = OAM_SIZE_32X16;
-			syOAMAddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
-		}
-		if (particle->timer == 0)
-		{
-			Sint32 *focus  = map->origin;
+        if (--particle->timer == GROUND_PARTICLE_FREED)
+            continue;
+        if (syGameFlagGet(FLAG_WEATHER_HELD))
+            particle->timer++;
+        // UB: a streak started at 12 ticks reads its first offsets one pair past the table's end,
+        // FieldEffectSparklePictures's first row: for that tick it is drawn 2 pixels left of its
+        // spot and 12 below it. UBFIX starts it at 11.
+        frame = &GroundParticlesOffsets[2 * particle->timer];
+        x     = (particle->posX - originX) / toFIXED(1) + *frame++;
+        y     = (particle->posZ - particle->posY - originZ) / toFIXED(1) + *frame++;
+        if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT)
+        {
+            particle->priority = 1;
+            particle->x        = x;
+            particle->y        = y;
+            particle->tile     = state->tileBase;
+            particle->shape    = OBJ_SHAPE_HORIZONTAL;
+            particle->size     = OAM_SIZE_32X16;
+            syOAMAddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
+        }
+        if (particle->timer == 0)
+        {
+            Sint32 *focus  = map->origin;
 
-			x              = focus[0] + (syRandom() << 8) - toFIXED(64);
-			y              = focus[2] + (syRandom() << 8) - toFIXED(128);
-			particle->posX = x;
-			particle->posZ = y;
-			particle->posY = fdMapGridGetTerrainHeightStub(0, x, y);
+            x              = focus[0] + (syRandom() << 8) - toFIXED(64);
+            y              = focus[2] + (syRandom() << 8) - toFIXED(128);
+            particle->posX = x;
+            particle->posZ = y;
+            particle->posY = fdMapGridGetTerrainHeightStub(0, x, y);
 #if FIX_RAIN_STREAK_FIRST_TICK
-			particle->timer = 11;
+            particle->timer = 11;
 #else
-			particle->timer = 12;
+            particle->timer = 12;
 #endif
-		}
-	}
+        }
+    }
 }
 
 // The storm each tick: lightning flashes the BG colours three times, 5 ticks apart, with thunder;
@@ -125,41 +125,41 @@ void fdWeatherUpdateRain(void)
 // no burst comes.
 void fdWeatherUpdateLightning(void)
 {
-	FIELD_BLEND_STATE *state  = RamHeapSlots->fieldBlend;
-	PALETTE_FADE      *target = RamHeapSlots->paletteFade;
-	if (state->timer < 0)
-		return;
-	if (syGameFlagGet(FLAG_WEATHER_HELD))
-		state->timer = 128;
-	switch (state->timer--)
-	{
-		case 0:
-			// The burst ends: arm the next, 150 ticks plus up to 399 less up to 99.
-			if (state->enabled != 0)
-			{
-				state->timer = syRandomBelow(400) - syRandomBelow(100) + 150;
-				if (state->loud != 0)
-					sySoundPlayStub(SE_THUNDER_LOUD);
-				else
-					sySoundPlayStub(SE_THUNDER);
-			}
-			// fall through
-		case 5:
-		case 10:
-			// A tick after each flash: fade back to the dark colours over 12 ticks.
-			fdPaletteFadeSetTarget((Sint32)state, 1);
-			syDMAXCopy(
-				state->delta, target->delta, DMA_COPY_WORDS(sizeof target->delta / 4), REG_DMA3);
-			target->duration = 12;
-			target->step     = 0;
-			break;
-		case 1:
-		case 6:
-		case 11:
-			// The flash: the lit colours, in one tick.
-			fdPaletteFadeSetTarget((Sint32)state->to, 1);
-			target->duration = 1;
-			target->step     = 0;
-			break;
-	}
+    FIELD_BLEND_STATE *state  = RamHeapSlots->fieldBlend;
+    PALETTE_FADE      *target = RamHeapSlots->paletteFade;
+    if (state->timer < 0)
+        return;
+    if (syGameFlagGet(FLAG_WEATHER_HELD))
+        state->timer = 128;
+    switch (state->timer--)
+    {
+        case 0:
+            // The burst ends: arm the next, 150 ticks plus up to 399 less up to 99.
+            if (state->enabled != 0)
+            {
+                state->timer = syRandomBelow(400) - syRandomBelow(100) + 150;
+                if (state->loud != 0)
+                    sySoundPlayStub(SE_THUNDER_LOUD);
+                else
+                    sySoundPlayStub(SE_THUNDER);
+            }
+            // fall through
+        case 5:
+        case 10:
+            // A tick after each flash: fade back to the dark colours over 12 ticks.
+            fdPaletteFadeSetTarget((Sint32)state, 1);
+            syDMAXCopy(
+                state->delta, target->delta, DMA_COPY_WORDS(sizeof target->delta / 4), REG_DMA3);
+            target->duration = 12;
+            target->step     = 0;
+            break;
+        case 1:
+        case 6:
+        case 11:
+            // The flash: the lit colours, in one tick.
+            fdPaletteFadeSetTarget((Sint32)state->to, 1);
+            target->duration = 1;
+            target->step     = 0;
+            break;
+    }
 }

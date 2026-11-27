@@ -14,32 +14,32 @@ typedef u16 (*FlashWaitProc)(u8 timingIndex, volatile u8 *address, u8 expected);
 // How a chip's flash is cut into sectors.
 struct FlashSector
 {
-	s32 size;  // bytes: 4 KB, or 128 in the Atmel layout
-	u8  shift; // log2 of size: sector n starts n << shift into flash
-	u16 count; // sectors: 16, or 512 in the Atmel layout
-	u16 top;   // 0 in every entry; no code reads it
+    s32 size;  // bytes: 4 KB, or 128 in the Atmel layout
+    u8  shift; // log2 of size: sector n starts n << shift into flash
+    u16 count; // sectors: 16, or 512 in the Atmel layout
+    u16 top;   // 0 in every entry; no code reads it
 };
 
 // A chip's size, sectors, wait states and id (the 24-byte entry FlashWork points to).
 struct FlashType
 {
-	u32                romSize; // bytes of flash: 64 KB in every entry
-	struct FlashSector sector;
-	// REG_WAITCNT's SRAM wait bits (0 to 3: 4, 3, 2 or 8 cycles) the chip is programmed and erased
-	// with; the second is read by nothing.
-	u16                wait[2];
+    u32                romSize; // bytes of flash: 64 KB in every entry
+    struct FlashSector sector;
+    // REG_WAITCNT's SRAM wait bits (0 to 3: 4, 3, 2 or 8 cycles) the chip is programmed and erased
+    // with; the second is read by nothing.
+    u16                wait[2];
 
-	// The id ReadFlashId returns, the device's above the maker's; 0 in Flash_ChipDefault.
-	union
-	{
-		struct
-		{
-			u8 maker;
-			u8 device;
-		} separate;
+    // The id ReadFlashId returns, the device's above the maker's; 0 in Flash_ChipDefault.
+    union
+    {
+        struct
+        {
+            u8 maker;
+            u8 device;
+        } separate;
 
-		u16 joined;
-	} id;
+        u16 joined;
+    } id;
 };
 
 // The id a Macronix chip answers with (Flash_ChipMacronix's): its device id 0x1c above the maker id
@@ -50,14 +50,14 @@ struct FlashType
 // chips'.
 struct FlashSetupInfo
 {
-	u16              (*program)(u16 sector, u8 *source); // programs one sector
-	u16              (*eraseChip)(void);                 // erases the whole chip
-	u16              (*eraseSector)(u16 sector);         // erases one sector
-	FlashWaitProc    wait;                               // waits for a write to finish
-	// The time limits: a row for each enum FlashPhase, of the flash timer's interrupts (about a
-	// millisecond each), its reload value and its control. No phase reads row 0.
-	u16             *maxTime;
-	struct FlashType type;
+    u16              (*program)(u16 sector, u8 *source); // programs one sector
+    u16              (*eraseChip)(void);                 // erases the whole chip
+    u16              (*eraseSector)(u16 sector);         // erases one sector
+    FlashWaitProc    wait;                               // waits for a write to finish
+    // The time limits: a row for each enum FlashPhase, of the flash timer's interrupts (about a
+    // millisecond each), its reload value and its control. No phase reads row 0.
+    u16             *maxTime;
+    struct FlashType type;
 };
 
 // A time limit's timer: 67 counts at 65536 a second before it overflows, about a millisecond, then

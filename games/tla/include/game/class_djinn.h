@@ -13,9 +13,9 @@
 // in one byte.
 typedef struct CLASS_ABILITY
 {
-	Uint16 ability; // the action taught, 0 for none
-	Uint8  level;   // the level it is taught at
-	Uint8  padding; // padding
+    Uint16 ability; // the action taught, 0 for none
+    Uint8  level;   // the level it is taught at
+    Uint8  padding; // padding
 } CLASS_ABILITY;
 
 // CLASS_DEFINITION.series, each named by its first class. The ten The Broken Seal has are the
@@ -24,23 +24,23 @@ typedef struct CLASS_ABILITY
 // gives for a character or an item.
 typedef enum CLASS_SERIES
 {
-	CLASS_SERIES_SQUIRE = 1,
-	CLASS_SERIES_GUARD,
-	CLASS_SERIES_SWORDSMAN,
-	CLASS_SERIES_BRUTE,
-	CLASS_SERIES_APPRENTICE,
-	CLASS_SERIES_WATER_SEER,
-	CLASS_SERIES_WIND_SEER,
-	CLASS_SERIES_SEER,
-	CLASS_SERIES_PILGRIM,
-	CLASS_SERIES_HERMIT,
-	// Class 0, "NPC", an enemy's (CLASS_NONE).
-	CLASS_SERIES_NPC = 12,
-	CLASS_SERIES_FLAME_USER, // Jenna's, where the others are Guards
-	CLASS_SERIES_MARINER,    // Piers's, where the others are Water Seers
-	CLASS_SERIES_PIERROT,    // with the Mysterious Card equipped
-	CLASS_SERIES_TAMER,      // with the Trainer's Whip equipped
-	CLASS_SERIES_DARK_MAGE   // with the Tomegathericon equipped
+    CLASS_SERIES_SQUIRE = 1,
+    CLASS_SERIES_GUARD,
+    CLASS_SERIES_SWORDSMAN,
+    CLASS_SERIES_BRUTE,
+    CLASS_SERIES_APPRENTICE,
+    CLASS_SERIES_WATER_SEER,
+    CLASS_SERIES_WIND_SEER,
+    CLASS_SERIES_SEER,
+    CLASS_SERIES_PILGRIM,
+    CLASS_SERIES_HERMIT,
+    // Class 0, "NPC", an enemy's (CLASS_NONE).
+    CLASS_SERIES_NPC = 12,
+    CLASS_SERIES_FLAME_USER, // Jenna's, where the others are Guards
+    CLASS_SERIES_MARINER,    // Piers's, where the others are Water Seers
+    CLASS_SERIES_PIERROT,    // with the Mysterious Card equipped
+    CLASS_SERIES_TAMER,      // with the Trainer's Whip equipped
+    CLASS_SERIES_DARK_MAGE   // with the Tomegathericon equipped
 } CLASS_SERIES;
 
 // The caps on a unit's level and stats (gmUnitCalculate).
@@ -64,18 +64,18 @@ typedef enum CLASS_SERIES
 // teaches.
 typedef struct CLASS_DEFINITION
 {
-	long          series;      // the series gmClassDetermine picks from
-	Uint8         required[4]; // the whole level needed in each element
-	Uint8         hp;          // tenths of the base stat
-	Uint8         pp;          // tenths of the base stat
-	Uint8         attack;      // tenths of the base stat
-	Uint8         defense;     // tenths of the base stat
-	Uint8         agility;     // tenths of the base stat
-	Uint8         luck;        // tenths of the base stat
-	Uint8         padding[2];  // padding
-	// The Psynergy the class teaches.
-	CLASS_ABILITY abilities[CLASS_ABILITY_SLOTS];
-	Uint8         weakEffects[4]; // the ability effects the class is weak to
+    long          series;      // the series gmClassDetermine picks from
+    Uint8         required[4]; // the whole level needed in each element
+    Uint8         hp;          // tenths of the base stat
+    Uint8         pp;          // tenths of the base stat
+    Uint8         attack;      // tenths of the base stat
+    Uint8         defense;     // tenths of the base stat
+    Uint8         agility;     // tenths of the base stat
+    Uint8         luck;        // tenths of the base stat
+    Uint8         padding[2];  // padding
+    // The Psynergy the class teaches.
+    CLASS_ABILITY abilities[CLASS_ABILITY_SLOTS];
+    Uint8         weakEffects[4]; // the ability effects the class is weak to
 } CLASS_DEFINITION;
 
 extern const CLASS_DEFINITION ClassDefinitionTable[];

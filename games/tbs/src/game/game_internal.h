@@ -25,16 +25,16 @@
 // (game_inventory.c) and gmInventorySnapshotSave (game_snapshot.c). A slot is empty when it is 0.
 static inline void gmInventoryCompactSlots(Sint16 *inventory)
 {
-	Sint32 usedSlots = 0;
-	Sint32 slot;
+    Sint32 usedSlots = 0;
+    Sint32 slot;
 
-	for (slot = 0; slot < INVENTORY_SLOTS; slot++)
-	{
-		if (inventory[slot] != 0)
-			inventory[usedSlots++] = inventory[slot];
-	}
-	for (; usedSlots < INVENTORY_SLOTS; usedSlots++)
-		inventory[usedSlots] = 0;
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++)
+    {
+        if (inventory[slot] != 0)
+            inventory[usedSlots++] = inventory[slot];
+    }
+    for (; usedSlots < INVENTORY_SLOTS; usedSlots++)
+        inventory[usedSlots] = 0;
 }
 
 #endif

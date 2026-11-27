@@ -9,10 +9,10 @@
 // Isaac, Garet, Mia and Ivan nod together; the script waits on Ivan's nod.
 static inline void scNodTogether(void)
 {
-	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+    fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 }
 
 #endif

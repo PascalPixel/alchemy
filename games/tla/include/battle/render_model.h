@@ -9,28 +9,28 @@
 // whole pixels, padded to a word.
 typedef struct MODEL_VERTEX
 {
-	Sint8 x;
-	Sint8 y;
-	Sint8 z;
-	Sint8 unused; // no code names it
+    Sint8 x;
+    Sint8 y;
+    Sint8 z;
+    Sint8 unused; // no code names it
 } MODEL_VERTEX;
 
 // One projected vertex, as syConvert3Dto2D leaves it.
 typedef struct PROJECTED_VERTEX
 {
-	Sint16 x;      // screen pixels
-	Sint16 y;      // screen pixels
-	Sint16 depth;  // projected depth
-	Sint16 unused; // no code names it
+    Sint16 x;      // screen pixels
+    Sint16 y;      // screen pixels
+    Sint16 depth;  // projected depth
+    Sint16 unused; // no code names it
 } PROJECTED_VERTEX;
 
 // A texture for the ARM model renderer: its size as powers of two and the address of its pixels.
 typedef struct MODEL_TEXTURE
 {
-	Uint32       logWidth  : 8;  // the width is 1 << logWidth pixels
-	Uint32       logHeight : 8;  // the height is 1 << logHeight pixels
-	Uint32       unused    : 16; // no code names it
-	const Uint8 *pixels;
+    Uint32       logWidth  : 8;  // the width is 1 << logWidth pixels
+    Uint32       logHeight : 8;  // the height is 1 << logHeight pixels
+    Uint32       unused    : 16; // no code names it
+    const Uint8 *pixels;
 } MODEL_TEXTURE;
 
 // One entry of the list btRenderDrawModelList draws: which rasterizer draws it, its faces and their
@@ -38,15 +38,15 @@ typedef struct MODEL_TEXTURE
 // cleared entry.
 typedef struct RENDER_MODEL
 {
-	long           kind;     // the rasterizer kernel that draws it; 0 ends the list
-	Sint32         flags;    // MODEL_TEXTURE_IN_PLACE keeps the texture where it is
-	const Uint16  *mesh;     // the faces, as the effect tables write them
-	Sint16        *vertices; // the corners btRenderTransformVertices wrote
-	MODEL_TEXTURE *texture;
-	// a textured model's brightness; a solid model's face colours, by address
-	long           shade;
-	Uint8          scrollU; // how far the texture is scrolled across
-	Uint8          scrollV; // how far the texture is scrolled down
+    long           kind;     // the rasterizer kernel that draws it; 0 ends the list
+    Sint32         flags;    // MODEL_TEXTURE_IN_PLACE keeps the texture where it is
+    const Uint16  *mesh;     // the faces, as the effect tables write them
+    Sint16        *vertices; // the corners btRenderTransformVertices wrote
+    MODEL_TEXTURE *texture;
+    // a textured model's brightness; a solid model's face colours, by address
+    long           shade;
+    Uint8          scrollU; // how far the texture is scrolled across
+    Uint8          scrollV; // how far the texture is scrolled down
 } RENDER_MODEL;
 
 // A texture's scroll wraps within 128 texels.

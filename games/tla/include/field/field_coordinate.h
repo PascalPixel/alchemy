@@ -12,13 +12,13 @@
 // code reads coordinates as plain words.
 typedef struct FIELD_COORDINATE
 {
-	struct
-	{
-		Uint16 decimal; // 1/65536 pixels
-		Sint16 integer;
-	} part[0];
+    struct
+    {
+        Uint16 decimal; // 1/65536 pixels
+        Sint16 integer;
+    } part[0];
 
-	FIXED fixed; // 16.16 fixed-point pixels
+    FIXED fixed; // 16.16 fixed-point pixels
 } FIELD_COORDINATE;
 
 STATIC_ASSERT(sizeof(FIELD_COORDINATE) == 4);
@@ -46,6 +46,6 @@ STATIC_ASSERT(offsetof(FIELD_COORDINATE, part[0].integer) == 2);
 #define FIELD_METATILE_ORIGIN(metatile)          ((metatile) << FIELD_METATILE_SHIFT)
 // The 16.16 coordinate of the middle of a map grid metatile.
 #define FIELD_METATILE_CENTER(metatile)                                                            \
-	(FIELD_METATILE_ORIGIN(metatile) + toFIXED(MAPGRID_METATILE_PIXELS / 2))
+    (FIELD_METATILE_ORIGIN(metatile) + toFIXED(MAPGRID_METATILE_PIXELS / 2))
 
 #endif

@@ -9,33 +9,33 @@
 // default, when there is none.
 SPEAKER_DEFINITION *fdSpeakerFindDefinition(Uint32 id)
 {
-	SPEAKER_DEFINITION *entry           = SpeakerDefinitions;
-	Uint32              definitionIndex = 0;
+    SPEAKER_DEFINITION *entry           = SpeakerDefinitions;
+    Uint32              definitionIndex = 0;
 
-	if (entry->id != id)
-	{
-		do
-		{
-			definitionIndex += 1;
-			entry++;
-			if (definitionIndex >= SPEAKER_DEFINITION_COUNT)
-				break;
-		} while (entry->id != id);
-	}
-	return entry;
+    if (entry->id != id)
+    {
+        do
+        {
+            definitionIndex += 1;
+            entry++;
+            if (definitionIndex >= SPEAKER_DEFINITION_COUNT)
+                break;
+        } while (entry->id != id);
+    }
+    return entry;
 }
 
 // Returns the sprite actor actorId shows, or 0 when it shows no animated sprite.
 Sint32 fdSpeakerGetActorSprite(Uint32 actorId)
 {
-	ACTOR *actor = fdActorLookup(actorId);
+    ACTOR *actor = fdActorLookup(actorId);
 
-	if (actor->spriteStorageKind != ACTOR_SPRITE_ONE || actor->sprite == NULL
-	    || ((SPR *)actor->sprite)->entries[0] == NULL)
-	{
-		return 0;
-	}
-	return ((SPR *)actor->sprite)->entries[0]->animationId;
+    if (actor->spriteStorageKind != ACTOR_SPRITE_ONE || actor->sprite == NULL
+        || ((SPR *)actor->sprite)->entries[0] == NULL)
+    {
+        return 0;
+    }
+    return ((SPR *)actor->sprite)->entries[0]->animationId;
 }
 
 // Returns the voice of sprite id's messages: the first of its four blip sounds, SE_VOICE_FIRST plus
@@ -44,12 +44,12 @@ Sint32 fdSpeakerGetActorSprite(Uint32 actorId)
 // argument.
 Sint32 fdSpeakerGetVoice(Sint32 id)
 {
-	Uint8 voice;
+    Uint8 voice;
 
-	if (MainRoutineStateWork.speech == 0
-	    || (voice = fdSpeakerFindDefinition(id)->value) == SPEAKER_VOICE_NONE)
-		return 0;
-	return voice + SE_VOICE_FIRST;
+    if (MainRoutineStateWork.speech == 0
+        || (voice = fdSpeakerFindDefinition(id)->value) == SPEAKER_VOICE_NONE)
+        return 0;
+    return voice + SE_VOICE_FIRST;
 }
 
 // Returns SPEAKER_DEFINITION.haltedLines of actor id's sprite: the pair of lines fdTalkToActor
@@ -57,7 +57,7 @@ Sint32 fdSpeakerGetVoice(Sint32 id)
 // (fdPsynergyFilterHaltTarget).
 Sint32 fdSpeakerGetHaltedLines(Sint32 id)
 {
-	return fdSpeakerFindDefinition(fdSpeakerGetActorSprite(id))->haltedLines;
+    return fdSpeakerFindDefinition(fdSpeakerGetActorSprite(id))->haltedLines;
 }
 
 extern const Sint32 PairTable[];
@@ -66,30 +66,30 @@ extern const Sint32 PairTable[];
 // returns its value, or -1; the table holds only its end, so every key gets -1.
 Sint32              fdPairTableFind(Sint32 key)
 {
-	const Sint32 *entry = PairTable;
-	Sint32        value;
+    const Sint32 *entry = PairTable;
+    Sint32        value;
 
-	while (1)
-	{
-		value = entry[0];
-		if (value == -1)
-			return value;
-		if (value == key)
-			return entry[1];
-		entry += 2;
-	}
+    while (1)
+    {
+        value = entry[0];
+        if (value == -1)
+            return value;
+        if (value == key)
+            return entry[1];
+        entry += 2;
+    }
 }
 
 // Unused: nothing calls fdPairTableFindAndIgnoreStub. Looks key up as fdPairTableFind does and
 // returns 0.
 Sint32 fdPairTableFindAndIgnore(Sint32 key)
 {
-	fdPairTableFind(key);
-	return 0;
+    fdPairTableFind(key);
+    return 0;
 }
 
 // Unused: nothing calls fdPairTableFindCopyStub. fdPairTableFind again.
 Sint32 fdPairTableFindCopy(Sint32 key)
 {
-	return fdPairTableFind(key);
+    return fdPairTableFind(key);
 }

@@ -29,11 +29,11 @@ extern const Uint8 TitlePromptTiles[];
 // One step of the clouds' scroll (mnTitleRunScrollStep, TITLE_STEP).
 typedef struct TITLE_SCROLL_STEP
 {
-	Sint32 ticks; // how long the step lasts
-	// Pixels a tick: BG1's y and x, then BG2's y and x.
-	Sint32 speed[4];
-	// For each speed, the tick count bits that must be clear for it to move; 0 moves it every tick.
-	Uint32 mask[4];
+    Sint32 ticks; // how long the step lasts
+    // Pixels a tick: BG1's y and x, then BG2's y and x.
+    Sint32 speed[4];
+    // For each speed, the tick count bits that must be clear for it to move; 0 moves it every tick.
+    Uint32 mask[4];
 } TITLE_SCROLL_STEP;
 
 // The scroll down the lighthouse picture, or back up it: where it is and where it stops, the pixels
@@ -41,36 +41,36 @@ typedef struct TITLE_SCROLL_STEP
 // come into view.
 typedef struct TITLE_SCROLL
 {
-	Sint16  pos;    // pixels down the picture
-	Sint16  limit;  // the position this scroll stops at
-	Sint16  step;   // pixels a step, negative going back up
-	Uint8  *src;    // the next row of the picture to copy
-	Uint8  *dest;   // where in VRAM that row goes
-	Uint16 *cursor; // the map entry of the row's first tile
-	Uint16  tile;   // that tile's number
-	Sint16  scroll; // pixels scrolled since the last row was copied
-	// Going down, the VRAM row the next copy fills; going back up, the rows left to pass before the
-	// next copy.
-	Uint16  rows;
-	Uint32  ticks; // ticks each step waits
+    Sint16  pos;    // pixels down the picture
+    Sint16  limit;  // the position this scroll stops at
+    Sint16  step;   // pixels a step, negative going back up
+    Uint8  *src;    // the next row of the picture to copy
+    Uint8  *dest;   // where in VRAM that row goes
+    Uint16 *cursor; // the map entry of the row's first tile
+    Uint16  tile;   // that tile's number
+    Sint16  scroll; // pixels scrolled since the last row was copied
+    // Going down, the VRAM row the next copy fills; going back up, the rows left to pass before the
+    // next copy.
+    Uint16  rows;
+    Uint32  ticks; // ticks each step waits
 } TITLE_SCROLL;
 
 // An OAM entry's attributes 0 to 2, as the title's logo pieces are written.
 typedef struct OAM_ENTRY
 {
-	Uint32 y         : 8;
-	Uint32 affine    : 2; // 1 drawn through its matrix, 3 also at double size
-	Uint32 mode      : 2; // an SPR_MODE
-	Uint32 mosaic    : 1;
-	Uint32 fullColor : 1;
-	Uint32 shape     : 2;
-	Uint32 x         : 9;
-	Uint32 matrix    : 5;
-	Uint32 size      : 2;
-	Uint16 tile      : 10;
-	Uint16 priority  : 2;
-	Uint16 palette   : 4;
-	Uint16 unused;
+    Uint32 y         : 8;
+    Uint32 affine    : 2; // 1 drawn through its matrix, 3 also at double size
+    Uint32 mode      : 2; // an SPR_MODE
+    Uint32 mosaic    : 1;
+    Uint32 fullColor : 1;
+    Uint32 shape     : 2;
+    Uint32 x         : 9;
+    Uint32 matrix    : 5;
+    Uint32 size      : 2;
+    Uint16 tile      : 10;
+    Uint16 priority  : 2;
+    Uint16 palette   : 4;
+    Uint16 unused;
 } OAM_ENTRY;
 
 // OAM_ENTRY.size for a 64 by 64 OBJ_SHAPE_SQUARE sprite.
@@ -79,45 +79,45 @@ typedef struct OAM_ENTRY
 // TITLE_LOGO_STATE.phase: what mnTitleIntroUpdateLogo draws.
 typedef enum TITLE_LOGO_PHASE
 {
-	// A gull flies off towards the lighthouse along TitleIntroGullPath.
-	TITLE_LOGO_GULL = 0,
-	// `The Lost Age` closes in, its three pieces scaling down and fading up.
-	TITLE_LOGO_ZOOM = 1
+    // A gull flies off towards the lighthouse along TitleIntroGullPath.
+    TITLE_LOGO_GULL = 0,
+    // `The Lost Age` closes in, its three pieces scaling down and fading up.
+    TITLE_LOGO_ZOOM = 1
 } TITLE_LOGO_PHASE;
 
 // The title intro's state while the lighthouse shows (HEAP_SLOT_TITLE_INTRO): the gull or the logo,
 // and the countdowns to the fade to white and back that the scroll down starts.
 typedef struct TITLE_LOGO_STATE
 {
-	Sint16 phase; // TITLE_LOGO_PHASE
-	// Where the gull's tick starts in TitleIntroGullPictures; in the zoom, the logo's blend weight.
-	Sint16 frame;
-	// Ticks left of the gull's tick; in the zoom, ticks since it began.
-	Sint16 timer;
-	// Where the gull's step starts in TitleIntroGullPath; in the zoom, the logo's scale.
-	Sint16 step;
-	Sint16 delay;     // ticks left of the gull's step
-	Sint16 toWhite;   // scroll steps until the fade to white; 0 when none
-	Sint16 fromWhite; // scroll steps until the fade back; 0 when none
+    Sint16 phase; // TITLE_LOGO_PHASE
+    // Where the gull's tick starts in TitleIntroGullPictures; in the zoom, the logo's blend weight.
+    Sint16 frame;
+    // Ticks left of the gull's tick; in the zoom, ticks since it began.
+    Sint16 timer;
+    // Where the gull's step starts in TitleIntroGullPath; in the zoom, the logo's scale.
+    Sint16 step;
+    Sint16 delay;     // ticks left of the gull's step
+    Sint16 toWhite;   // scroll steps until the fade to white; 0 when none
+    Sint16 fromWhite; // scroll steps until the fade back; 0 when none
 } TITLE_LOGO_STATE;
 
 // A sprite of the "Press Start" prompt, linked into a render slot each tick: OAM attributes 0 to 2
 // with the position split out.
 typedef struct INTRO_SPR
 {
-	Uint32 next;          // the render slot link
-	Uint8  y;
-	Uint8  attr0High;     // shape and mode bits of attribute 0
-	Uint16 x         : 9;
-	Uint16 attr1High : 7; // flip and size bits of attribute 1
-	Sint32 tile;
+    Uint32 next;          // the render slot link
+    Uint8  y;
+    Uint8  attr0High;     // shape and mode bits of attribute 0
+    Uint16 x         : 9;
+    Uint16 attr1High : 7; // flip and size bits of attribute 1
+    Sint32 tile;
 } INTRO_SPR;
 
 // The title screen's state (HEAP_SLOT_TITLE_INTRO): the prompt's sprites.
 typedef struct TITLE_SCREEN_STATE
 {
-	Uint8     unused[16]; // no code names it
-	INTRO_SPR sprites[8];
+    Uint8     unused[16]; // no code names it
+    INTRO_SPR sprites[8];
 } TITLE_SCREEN_STATE;
 
 void               mnTitlePaletteFadeSetCurrent(Sint32 tint, Sint32 selectedPalettes);
@@ -134,9 +134,9 @@ Sint32             mnTitlePaletteFadeClampShiftedChannel(Sint32 value);
 // the others, then `Golden Sun` on three and `Book Two` on two.
 #define CLOUD_ROWS 16
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-#	define PRESENTS_ROWS 3
+#    define PRESENTS_ROWS 3
 #else
-#	define PRESENTS_ROWS 2
+#    define PRESENTS_ROWS 2
 #endif
 #define GOLDEN_SUN_ROWS  3
 #define BOOK_TWO_ROWS    2
@@ -149,70 +149,70 @@ Sint32             mnTitlePaletteFadeClampShiftedChannel(Sint32 value);
 // colour 0 black, and their tiles, unpacked through the map cell buffer, from BG character block 0.
 void mnTitleIntroLoadPictureTiles(void)
 {
-	Uint8 *src;
-	Uint8 *cells;
+    Uint8 *src;
+    Uint8 *cells;
 
-	REG_DISPCNT = 0;
-	src         = syResourceGetTableEntry(RESOURCE_INTRO_CLOUDS);
-	syDMAXCopy(src, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
-	BG_PLTT[0] = 0;
-	cells      = RamMapMetatileBuffer;
-	syDecompressByteLZ(src + BG_PLTT_SIZE, cells);
-	syDMAXCopy(cells, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(INTRO_TILE_BYTES / 4), REG_DMA3);
+    REG_DISPCNT = 0;
+    src         = syResourceGetTableEntry(RESOURCE_INTRO_CLOUDS);
+    syDMAXCopy(src, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+    BG_PLTT[0] = 0;
+    cells      = RamMapMetatileBuffer;
+    syDecompressByteLZ(src + BG_PLTT_SIZE, cells);
+    syDMAXCopy(cells, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(INTRO_TILE_BYTES / 4), REG_DMA3);
 }
 
 // Waits ticks ticks, stirring the random seed each tick; returns 1 at once when a key is pressed, 0
 // when the wait ends.
 Bool mnTitleWaitOrPress(Uint32 ticks)
 {
-	Uint32 i;
+    Uint32 i;
 
-	for (i = 0; i < ticks; i++)
-	{
-		sySynch(1);
-		syRandom();
-		if (PerWork.push != 0)
-			return TRUE;
-	}
-	return FALSE;
+    for (i = 0; i < ticks; i++)
+    {
+        sySynch(1);
+        syRandom();
+        if (PerWork.push != 0)
+            return TRUE;
+    }
+    return FALSE;
 }
 
 // Runs one step of the clouds' scroll, moving BG1 and BG2 each tick by the step's speeds on the
 // ticks its masks allow; returns 0 when a key cuts it short, 1 when it ends.
 Bool mnTitleRunScrollStep(TITLE_SCROLL_STEP *step)
 {
-	Sint32 i;
+    Sint32 i;
 
-	for (i = 0; i < step->ticks; i++)
-	{
-		if (step->mask[0] == 0 || (TickCount & step->mask[0]) == 0)
-			BgScrollWork[1].y += step->speed[0];
-		if (step->mask[1] == 0 || (TickCount & step->mask[1]) == 0)
-			BgScrollWork[1].x += step->speed[1];
-		if (step->mask[2] == 0 || (TickCount & step->mask[2]) == 0)
-			BgScrollWork[2].y += step->speed[2];
-		if (step->mask[3] == 0 || (TickCount & step->mask[3]) == 0)
-			BgScrollWork[2].x += step->speed[3];
-		if (mnTitleWaitOrPress(1))
-			return FALSE;
-	}
-	return TRUE;
+    for (i = 0; i < step->ticks; i++)
+    {
+        if (step->mask[0] == 0 || (TickCount & step->mask[0]) == 0)
+            BgScrollWork[1].y += step->speed[0];
+        if (step->mask[1] == 0 || (TickCount & step->mask[1]) == 0)
+            BgScrollWork[1].x += step->speed[1];
+        if (step->mask[2] == 0 || (TickCount & step->mask[2]) == 0)
+            BgScrollWork[2].y += step->speed[2];
+        if (step->mask[3] == 0 || (TickCount & step->mask[3]) == 0)
+            BgScrollWork[2].x += step->speed[3];
+        if (mnTitleWaitOrPress(1))
+            return FALSE;
+    }
+    return TRUE;
 }
 
 // One step of the clouds' scroll: for `duration` ticks, BG1 and BG2 move by their dy and dx each
 // tick whose count has none of its mask's bits.
 #define TITLE_STEP(                                                                                \
-	duration, bg1Dy, bg1Dx, bg2Dy, bg2Dx, bg1DyMask, bg1DxMask, bg2DyMask, bg2DxMask)              \
-	(step.ticks    = (duration),                                                                   \
-	 step.speed[0] = (bg1Dy),                                                                      \
-	 step.speed[1] = (bg1Dx),                                                                      \
-	 step.speed[2] = (bg2Dy),                                                                      \
-	 step.speed[3] = (bg2Dx),                                                                      \
-	 step.mask[0]  = (bg1DyMask),                                                                  \
-	 step.mask[1]  = (bg1DxMask),                                                                  \
-	 step.mask[2]  = (bg2DyMask),                                                                  \
-	 step.mask[3]  = (bg2DxMask),                                                                  \
-	 mnTitleRunScrollStep(&step))
+    duration, bg1Dy, bg1Dx, bg2Dy, bg2Dx, bg1DyMask, bg1DxMask, bg2DyMask, bg2DxMask)              \
+    (step.ticks    = (duration),                                                                   \
+     step.speed[0] = (bg1Dy),                                                                      \
+     step.speed[1] = (bg1Dx),                                                                      \
+     step.speed[2] = (bg2Dy),                                                                      \
+     step.speed[3] = (bg2Dx),                                                                      \
+     step.mask[0]  = (bg1DyMask),                                                                  \
+     step.mask[1]  = (bg1DxMask),                                                                  \
+     step.mask[2]  = (bg2DyMask),                                                                  \
+     step.mask[3]  = (bg2DxMask),                                                                  \
+     mnTitleRunScrollStep(&step))
 
 // The near clouds' and the far clouds' blend weights over each other; the plunge raises both from
 // the near clouds' to full.
@@ -222,169 +222,169 @@ Bool mnTitleRunScrollStep(TITLE_SCROLL_STEP *step)
 // The intro's three passes over the clouds.
 typedef enum CLOUDS_PASS
 {
-	CLOUD_BEFORE_CARDS  = 0,
-	CLOUD_BETWEEN_CARDS = 1,
-	// After the last card, ending in a plunge through them into white.
-	CLOUD_AFTER_CARDS   = 2
+    CLOUD_BEFORE_CARDS  = 0,
+    CLOUD_BETWEEN_CARDS = 1,
+    // After the last card, ending in a plunge through them into white.
+    CLOUD_AFTER_CARDS   = 2
 } CLOUDS_PASS;
 
 // Shows the two layers of clouds and runs one pass's scroll steps over them (an CLOUDS_PASS),
 // fading in from dark red, at once on the first pass; returns 0 when a key cuts it short.
 Bool mnTitleIntroScrollClouds(Sint32 pass)
 {
-	TITLE_SCROLL_STEP step;
-	Uint16           *map;
-	Uint16            tile;
-	Sint32            i;
-	Sint32            j;
+    TITLE_SCROLL_STEP step;
+    Uint16           *map;
+    Uint16            tile;
+    Sint32            i;
+    Sint32            j;
 
-	REG_DISPCNT = 0;
-	map         = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
-	tile        = 0;
-	for (j = 0; j < CLOUD_ROWS; j++)
-	{
-		for (i = 0; i < BG_SCREEN_WIDTH; i++)
-		{
-			*map++ = tile++;
-		}
-	}
-	tile = 0;
-	for (; j < BG_SCREEN_WIDTH; j++)
-	{
-		for (i = 0; i < BG_SCREEN_WIDTH; i++)
-		{
-			*map++ = tile++;
-		}
-	}
-	map  = (Uint16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN);
-	tile = 0;
-	for (j = 0; j < CLOUD_ROWS; j++)
-	{
-		for (i = 0; i < BG_SCREEN_WIDTH; i++)
-		{
-			*map++ = tile++ | BG_TILE_PALETTE(1);
-		}
-	}
-	tile = 0;
-	for (; j < BG_SCREEN_WIDTH; j++)
-	{
-		for (i = 0; i < BG_SCREEN_WIDTH; i++)
-		{
-			*map++ = tile++ | BG_TILE_PALETTE(1);
-		}
-	}
-	REG_BG1CNT   = BGCNT_PRIORITY(2) | BGCNT_SCREEN_BASE(INTRO_BACK_SCREEN);
-	REG_BG2CNT   = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(INTRO_FRONT_SCREEN);
-	REG_BLDCNT   = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1;
-	REG_BLDALPHA = BLEND_ALPHA(CLOUD_FRONT_WEIGHT, CLOUD_BACK_WEIGHT);
-	for (i = 0; i < 4; i++)
-	{
-		BgScrollWork[i].y = 0;
-		BgScrollWork[i].x = 0;
-	}
-	if (pass == CLOUD_BEFORE_CARDS)
-	{
-		mnTitlePaletteFadeInit();
-	}
-	mnTitlePaletteFadeSetCurrent(RGB(2, 0, 0), PALETTES_ALL);
-	mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-	REG_DISPCNT = DISPCNT_BG1_ON | DISPCNT_BG2_ON;
-	if (pass == CLOUD_BEFORE_CARDS)
-	{
-		mnTitlePaletteFadeStart(1);
-	}
-	else
-	{
-		mnTitlePaletteFadeStart(10);
-	}
+    REG_DISPCNT = 0;
+    map         = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
+    tile        = 0;
+    for (j = 0; j < CLOUD_ROWS; j++)
+    {
+        for (i = 0; i < BG_SCREEN_WIDTH; i++)
+        {
+            *map++ = tile++;
+        }
+    }
+    tile = 0;
+    for (; j < BG_SCREEN_WIDTH; j++)
+    {
+        for (i = 0; i < BG_SCREEN_WIDTH; i++)
+        {
+            *map++ = tile++;
+        }
+    }
+    map  = (Uint16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN);
+    tile = 0;
+    for (j = 0; j < CLOUD_ROWS; j++)
+    {
+        for (i = 0; i < BG_SCREEN_WIDTH; i++)
+        {
+            *map++ = tile++ | BG_TILE_PALETTE(1);
+        }
+    }
+    tile = 0;
+    for (; j < BG_SCREEN_WIDTH; j++)
+    {
+        for (i = 0; i < BG_SCREEN_WIDTH; i++)
+        {
+            *map++ = tile++ | BG_TILE_PALETTE(1);
+        }
+    }
+    REG_BG1CNT   = BGCNT_PRIORITY(2) | BGCNT_SCREEN_BASE(INTRO_BACK_SCREEN);
+    REG_BG2CNT   = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(INTRO_FRONT_SCREEN);
+    REG_BLDCNT   = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1;
+    REG_BLDALPHA = BLEND_ALPHA(CLOUD_FRONT_WEIGHT, CLOUD_BACK_WEIGHT);
+    for (i = 0; i < 4; i++)
+    {
+        BgScrollWork[i].y = 0;
+        BgScrollWork[i].x = 0;
+    }
+    if (pass == CLOUD_BEFORE_CARDS)
+    {
+        mnTitlePaletteFadeInit();
+    }
+    mnTitlePaletteFadeSetCurrent(RGB(2, 0, 0), PALETTES_ALL);
+    mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    REG_DISPCNT = DISPCNT_BG1_ON | DISPCNT_BG2_ON;
+    if (pass == CLOUD_BEFORE_CARDS)
+    {
+        mnTitlePaletteFadeStart(1);
+    }
+    else
+    {
+        mnTitlePaletteFadeStart(10);
+    }
 
-	// A positive dy carries a layer up the screen, a positive dx to the left.
-	if (pass == CLOUD_BEFORE_CARDS)
-	{
-		// The far clouds rise and the near ones sink past them, slowing almost to a stop over 80
-		// ticks...
-		if (!TITLE_STEP(30, 2, 0, -3, 0, 0, 0, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(10, 2, 0, -2, 0, 0, 0, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(10, 1, 0, -2, 0, 0, 0, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(10, 1, 0, -1, 0, 0, 0, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(10, 1, 0, -1, 0, 1, 0, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(10, 0, 0, -1, 0, 0, 0, 1, 0))
-			return FALSE;
-		// ...then drift slowly back the other way...
-		if (!TITLE_STEP(20, -1, 0, 0, 0, 1, 0, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(20, -1, 0, 1, 0, 3, 0, 1, 0))
-			return FALSE;
-		if (!TITLE_STEP(20, -1, 0, 1, 0, 3, 0, 1, 0))
-			return FALSE;
-		// ...and darken to red as they go, before "Camelot presents".
-		mnTitlePaletteFadeSetTarget(RGB(2, 0, 0), PALETTES_ALL);
-		mnTitlePaletteFadeStart(60);
-		if (!TITLE_STEP(60, -1, 0, 1, 0, 3, 0, 1, 0))
-			return FALSE;
-	}
-	else if (pass == CLOUD_BETWEEN_CARDS)
-	{
-		// The layers slide apart on a slant, the far clouds up and left, slowing over 80 ticks...
-		if (!TITLE_STEP(40, 1, 1, -1, -1, 1, 0, 1, 0))
-			return FALSE;
-		if (!TITLE_STEP(20, 1, 1, -1, -1, 3, 0, 1, 0))
-			return FALSE;
-		if (!TITLE_STEP(10, 1, 1, -1, -1, 7, 3, 1, 0))
-			return FALSE;
-		if (!TITLE_STEP(10, 0, 1, 0, -1, 0, 3, 0, 0))
-			return FALSE;
-		// ...then turn, the far clouds sinking and the near ones going right...
-		if (!TITLE_STEP(30, -1, 0, 0, -1, 15, 1, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(20, -1, -1, 0, -1, 15, 1, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
-			return FALSE;
-		// ...and darken to red, before "Golden Sun Book Two".
-		mnTitlePaletteFadeSetTarget(RGB(2, 0, 0), PALETTES_ALL);
-		mnTitlePaletteFadeStart(60);
-		if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
-			return FALSE;
-	}
-	else
-	{
-		// The layers drift crosswise for a second, then rush apart for 16 ticks, opening a gap of
-		// white sky.
-		if (!TITLE_STEP(60, 0, -1, -1, 1, 0, 0, 0, 0))
-			return FALSE;
-		if (!TITLE_STEP(16, 8, -8, 8, 8, 0, 0, 0, 0))
-			return FALSE;
-		// The plunge: both layers speed up and brighten, two ticks a weight.
-		j = 2;
-		for (i = CLOUD_FRONT_WEIGHT; i < BLEND_WEIGHT_MAX; i++)
-		{
-			REG_BLDALPHA       = BLEND_ALPHA(i, i);
-			BgScrollWork[1].y += j + 16;
-			BgScrollWork[2].y += j + 8;
-			j++;
-			if (mnTitleWaitOrPress(1))
-				return FALSE;
-			BgScrollWork[1].y += j + 16;
-			BgScrollWork[2].y += j + 8;
-			j++;
-			if (mnTitleWaitOrPress(1))
-				return FALSE;
-		}
-		mnTitlePaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
-		mnTitlePaletteFadeStart(1);
-		if (mnTitleWaitOrPress(2))
-		{
-			syScreenFadeWait();
-			return FALSE;
-		}
-	}
-	return TRUE;
+    // A positive dy carries a layer up the screen, a positive dx to the left.
+    if (pass == CLOUD_BEFORE_CARDS)
+    {
+        // The far clouds rise and the near ones sink past them, slowing almost to a stop over 80
+        // ticks...
+        if (!TITLE_STEP(30, 2, 0, -3, 0, 0, 0, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(10, 2, 0, -2, 0, 0, 0, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(10, 1, 0, -2, 0, 0, 0, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(10, 1, 0, -1, 0, 0, 0, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(10, 1, 0, -1, 0, 1, 0, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(10, 0, 0, -1, 0, 0, 0, 1, 0))
+            return FALSE;
+        // ...then drift slowly back the other way...
+        if (!TITLE_STEP(20, -1, 0, 0, 0, 1, 0, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(20, -1, 0, 1, 0, 3, 0, 1, 0))
+            return FALSE;
+        if (!TITLE_STEP(20, -1, 0, 1, 0, 3, 0, 1, 0))
+            return FALSE;
+        // ...and darken to red as they go, before "Camelot presents".
+        mnTitlePaletteFadeSetTarget(RGB(2, 0, 0), PALETTES_ALL);
+        mnTitlePaletteFadeStart(60);
+        if (!TITLE_STEP(60, -1, 0, 1, 0, 3, 0, 1, 0))
+            return FALSE;
+    }
+    else if (pass == CLOUD_BETWEEN_CARDS)
+    {
+        // The layers slide apart on a slant, the far clouds up and left, slowing over 80 ticks...
+        if (!TITLE_STEP(40, 1, 1, -1, -1, 1, 0, 1, 0))
+            return FALSE;
+        if (!TITLE_STEP(20, 1, 1, -1, -1, 3, 0, 1, 0))
+            return FALSE;
+        if (!TITLE_STEP(10, 1, 1, -1, -1, 7, 3, 1, 0))
+            return FALSE;
+        if (!TITLE_STEP(10, 0, 1, 0, -1, 0, 3, 0, 0))
+            return FALSE;
+        // ...then turn, the far clouds sinking and the near ones going right...
+        if (!TITLE_STEP(30, -1, 0, 0, -1, 15, 1, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(20, -1, -1, 0, -1, 15, 1, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
+            return FALSE;
+        // ...and darken to red, before "Golden Sun Book Two".
+        mnTitlePaletteFadeSetTarget(RGB(2, 0, 0), PALETTES_ALL);
+        mnTitlePaletteFadeStart(60);
+        if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
+            return FALSE;
+    }
+    else
+    {
+        // The layers drift crosswise for a second, then rush apart for 16 ticks, opening a gap of
+        // white sky.
+        if (!TITLE_STEP(60, 0, -1, -1, 1, 0, 0, 0, 0))
+            return FALSE;
+        if (!TITLE_STEP(16, 8, -8, 8, 8, 0, 0, 0, 0))
+            return FALSE;
+        // The plunge: both layers speed up and brighten, two ticks a weight.
+        j = 2;
+        for (i = CLOUD_FRONT_WEIGHT; i < BLEND_WEIGHT_MAX; i++)
+        {
+            REG_BLDALPHA       = BLEND_ALPHA(i, i);
+            BgScrollWork[1].y += j + 16;
+            BgScrollWork[2].y += j + 8;
+            j++;
+            if (mnTitleWaitOrPress(1))
+                return FALSE;
+            BgScrollWork[1].y += j + 16;
+            BgScrollWork[2].y += j + 8;
+            j++;
+            if (mnTitleWaitOrPress(1))
+                return FALSE;
+        }
+        mnTitlePaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
+        mnTitlePaletteFadeStart(1);
+        if (mnTitleWaitOrPress(2))
+        {
+            syScreenFadeWait();
+            return FALSE;
+        }
+    }
+    return TRUE;
 }
 
 // The screen rows each card's text stands on.
@@ -399,124 +399,124 @@ Bool mnTitleIntroScrollClouds(Sint32 pass)
 // returns 0 when a key cuts it short.
 Bool mnTitleIntroShowPresentsCard(void)
 {
-	Uint16 *map;
-	Uint16  tile;
-	Sint32  i;
-	Sint32  row;
+    Uint16 *map;
+    Uint16  tile;
+    Sint32  i;
+    Sint32  row;
 
-	REG_DISPCNT = 0;
-	map         = (Uint16 *)BG_SCREEN_BLOCK(INTRO_CARD_SCREEN);
-	tile        = 0;
-	for (row = 0; row < DISPLAY_TILE_HEIGHT; row++)
-	{
-		if (row >= PRESENTS_TOP_ROW && row < PRESENTS_TOP_ROW + PRESENTS_ROWS)
-		{
-			for (i = 0; i < BG_SCREEN_WIDTH; i++)
-			{
-				*map++ = tile++ | BG_TILE_PALETTE(2);
-			}
-		}
-		else
-		{
-			for (i = 0; i < BG_SCREEN_WIDTH; i++)
-				*map++ = BG_TILE_PALETTE(2);
-		}
-	}
-	REG_BG3CNT   = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(INTRO_CARD_SCREEN);
-	REG_BLDCNT   = 0;
-	REG_BLDALPHA = 0;
-	for (i = 0; i < 4; i++)
-		BgScrollWork[i].x = BgScrollWork[i].y = 0;
+    REG_DISPCNT = 0;
+    map         = (Uint16 *)BG_SCREEN_BLOCK(INTRO_CARD_SCREEN);
+    tile        = 0;
+    for (row = 0; row < DISPLAY_TILE_HEIGHT; row++)
+    {
+        if (row >= PRESENTS_TOP_ROW && row < PRESENTS_TOP_ROW + PRESENTS_ROWS)
+        {
+            for (i = 0; i < BG_SCREEN_WIDTH; i++)
+            {
+                *map++ = tile++ | BG_TILE_PALETTE(2);
+            }
+        }
+        else
+        {
+            for (i = 0; i < BG_SCREEN_WIDTH; i++)
+                *map++ = BG_TILE_PALETTE(2);
+        }
+    }
+    REG_BG3CNT   = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(INTRO_CARD_SCREEN);
+    REG_BLDCNT   = 0;
+    REG_BLDALPHA = 0;
+    for (i = 0; i < 4; i++)
+        BgScrollWork[i].x = BgScrollWork[i].y = 0;
 
-	mnTitlePaletteFadeSetCurrent(RGB(0, 0, 0), PALETTES_ALL);
-	mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-	REG_DISPCNT = DISPCNT_BG3_ON;
-	mnTitlePaletteFadeStart(40);
-	if (mnTitleWaitOrPress(150))
-		return FALSE;
-	mnTitlePaletteFadeSetTarget(RGB(2, 0, 0), PALETTES_ALL);
-	mnTitlePaletteFadeStart(40);
-	if (mnTitleWaitOrPress(60))
-		return FALSE;
-	return TRUE;
+    mnTitlePaletteFadeSetCurrent(RGB(0, 0, 0), PALETTES_ALL);
+    mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    REG_DISPCNT = DISPCNT_BG3_ON;
+    mnTitlePaletteFadeStart(40);
+    if (mnTitleWaitOrPress(150))
+        return FALSE;
+    mnTitlePaletteFadeSetTarget(RGB(2, 0, 0), PALETTES_ALL);
+    mnTitlePaletteFadeStart(40);
+    if (mnTitleWaitOrPress(60))
+        return FALSE;
+    return TRUE;
 }
 
 // Fades in the card `Golden Sun` on BG3, blends `Book Two` in below it from BG0 over 16 steps of 3
 // ticks, holds the card 150 ticks and fades it out to dark red; returns 0 when a key cuts it short.
 Bool mnTitleIntroShowBookTwoCard(void)
 {
-	Uint16 *map;
-	Uint16  tile;
-	Sint32  i;
-	Sint32  row;
+    Uint16 *map;
+    Uint16  tile;
+    Sint32  i;
+    Sint32  row;
 
-	REG_DISPCNT = 0;
-	map         = (Uint16 *)BG_SCREEN_BLOCK(INTRO_CARD_SCREEN);
-	tile        = GOLDEN_SUN_TILE;
-	for (row = 0; row < DISPLAY_TILE_HEIGHT; row++)
-	{
-		if (row >= GOLDEN_SUN_TOP_ROW && row < BOOK_TWO_TOP_ROW)
-		{
-			for (i = 0; i < BG_SCREEN_WIDTH; i++)
-			{
-				*map++ = tile++ | BG_TILE_PALETTE(3);
-			}
-		}
-		else if (row >= BOOK_TWO_TOP_ROW && row < BOOK_TWO_TOP_ROW + BOOK_TWO_ROWS)
-		{
-			for (i = 0; i < BG_SCREEN_WIDTH; i++)
-				*map++ = BG_TILE_PALETTE(3) | (CARD_BLANK_TILE + BG_SCREEN_WIDTH);
-		}
-		else
-		{
-			for (i = 0; i < BG_SCREEN_WIDTH; i++)
-				*map++ = BG_TILE_PALETTE(3) | CARD_BLANK_TILE;
-		}
-	}
-	map  = (Uint16 *)BG_SCREEN_BLOCK(INTRO_CARD_BLEND_SCREEN);
-	tile = BOOK_TWO_TILE;
-	for (row = 0; row < DISPLAY_TILE_HEIGHT; row++)
-	{
-		if (row >= BOOK_TWO_TOP_ROW && row < BOOK_TWO_TOP_ROW + BOOK_TWO_ROWS)
-		{
-			for (i = 0; i < BG_SCREEN_WIDTH; i++)
-			{
-				*map++ = tile++ | BG_TILE_PALETTE(3);
-			}
-		}
-		else
-		{
-			for (i = 0; i < BG_SCREEN_WIDTH; i++)
-				*map++ = BG_TILE_PALETTE(3) | CARD_BLANK_TILE;
-		}
-	}
-	REG_BG3CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(INTRO_CARD_SCREEN);
-	REG_BG0CNT =
-		BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(INTRO_CARD_BLEND_SCREEN);
-	REG_BLDCNT   = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3;
-	REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
-	for (i = 0; i < 4; i++)
-		BgScrollWork[i].x = BgScrollWork[i].y = 0;
+    REG_DISPCNT = 0;
+    map         = (Uint16 *)BG_SCREEN_BLOCK(INTRO_CARD_SCREEN);
+    tile        = GOLDEN_SUN_TILE;
+    for (row = 0; row < DISPLAY_TILE_HEIGHT; row++)
+    {
+        if (row >= GOLDEN_SUN_TOP_ROW && row < BOOK_TWO_TOP_ROW)
+        {
+            for (i = 0; i < BG_SCREEN_WIDTH; i++)
+            {
+                *map++ = tile++ | BG_TILE_PALETTE(3);
+            }
+        }
+        else if (row >= BOOK_TWO_TOP_ROW && row < BOOK_TWO_TOP_ROW + BOOK_TWO_ROWS)
+        {
+            for (i = 0; i < BG_SCREEN_WIDTH; i++)
+                *map++ = BG_TILE_PALETTE(3) | (CARD_BLANK_TILE + BG_SCREEN_WIDTH);
+        }
+        else
+        {
+            for (i = 0; i < BG_SCREEN_WIDTH; i++)
+                *map++ = BG_TILE_PALETTE(3) | CARD_BLANK_TILE;
+        }
+    }
+    map  = (Uint16 *)BG_SCREEN_BLOCK(INTRO_CARD_BLEND_SCREEN);
+    tile = BOOK_TWO_TILE;
+    for (row = 0; row < DISPLAY_TILE_HEIGHT; row++)
+    {
+        if (row >= BOOK_TWO_TOP_ROW && row < BOOK_TWO_TOP_ROW + BOOK_TWO_ROWS)
+        {
+            for (i = 0; i < BG_SCREEN_WIDTH; i++)
+            {
+                *map++ = tile++ | BG_TILE_PALETTE(3);
+            }
+        }
+        else
+        {
+            for (i = 0; i < BG_SCREEN_WIDTH; i++)
+                *map++ = BG_TILE_PALETTE(3) | CARD_BLANK_TILE;
+        }
+    }
+    REG_BG3CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(INTRO_CARD_SCREEN);
+    REG_BG0CNT =
+        BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(INTRO_CARD_BLEND_SCREEN);
+    REG_BLDCNT   = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3;
+    REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
+    for (i = 0; i < 4; i++)
+        BgScrollWork[i].x = BgScrollWork[i].y = 0;
 
-	mnTitlePaletteFadeSetCurrent(RGB(0, 0, 0), PALETTES_ALL);
-	mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-	REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_BG3_ON;
-	mnTitlePaletteFadeStart(40);
-	if (mnTitleWaitOrPress(60))
-		return FALSE;
-	for (i = 1; i <= BLEND_WEIGHT_MAX; i++)
-	{
-		REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
-		if (mnTitleWaitOrPress(3))
-			return FALSE;
-	}
-	if (mnTitleWaitOrPress(150))
-		return FALSE;
-	mnTitlePaletteFadeSetTarget(RGB(2, 0, 0), PALETTES_ALL);
-	mnTitlePaletteFadeStart(40);
-	if (mnTitleWaitOrPress(60))
-		return FALSE;
-	return TRUE;
+    mnTitlePaletteFadeSetCurrent(RGB(0, 0, 0), PALETTES_ALL);
+    mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_BG3_ON;
+    mnTitlePaletteFadeStart(40);
+    if (mnTitleWaitOrPress(60))
+        return FALSE;
+    for (i = 1; i <= BLEND_WEIGHT_MAX; i++)
+    {
+        REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
+        if (mnTitleWaitOrPress(3))
+            return FALSE;
+    }
+    if (mnTitleWaitOrPress(150))
+        return FALSE;
+    mnTitlePaletteFadeSetTarget(RGB(2, 0, 0), PALETTES_ALL);
+    mnTitlePaletteFadeStart(40);
+    if (mnTitleWaitOrPress(60))
+        return FALSE;
+    return TRUE;
 }
 
 // The lighthouse picture, 240 by 384 pixels in 256 colours: its first screen is loaded before it
@@ -538,80 +538,80 @@ Bool mnTitleIntroShowBookTwoCard(void)
 // scroll short.
 Bool mnTitleIntroScrollLighthouse(TITLE_SCROLL *s)
 {
-	TITLE_LOGO_STATE *timers = RamHeapSlots->titleIntro;
-	Sint32            i;
-	Sint32            j;
+    TITLE_LOGO_STATE *timers = RamHeapSlots->titleIntro;
+    Sint32            i;
+    Sint32            j;
 
-	if (s->step > 0)
-	{
-		for (i = s->pos; i < s->limit; i += s->step)
-		{
-			if (mnTitleWaitOrPress(s->ticks))
-				goto fail;
-			if (s->scroll > 0)
-			{
-				syDMAXCopy(s->src, s->dest, DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4), REG_DMA3);
-				s->src  += LIGHTHOUSE_ROW_BYTES;
-				s->dest += LIGHTHOUSE_ROW_BYTES;
-				for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
-					*s->cursor++ = s->tile++;
-				*s->cursor++ = OFFSCREEN_TILE;
-				*s->cursor++ = OFFSCREEN_TILE;
-				if (++s->rows == BG_SCREEN_WIDTH)
-				{
-					s->dest   = (Uint8 *)BG_CHAR_BLOCK(0);
-					s->rows   = 0;
-					s->tile   = 0;
-					s->cursor = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
-				}
-				s->scroll -= 8;
-			}
-			s->scroll         += s->step;
-			BgScrollWork[1].y += s->step;
-			if (timers->toWhite != 0 && --timers->toWhite == 1)
-			{
-				mnTitlePaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
-				mnTitlePaletteFadeStart(10);
-			}
-			if (timers->fromWhite != 0 && --timers->fromWhite == 1)
-			{
-				mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-				mnTitlePaletteFadeStart(10);
-			}
-		}
-		goto done;
-	fail:
-		return TRUE;
-	}
-	else
-	{
-		for (i = s->pos; i > s->limit; i += s->step)
-		{
-			BgScrollWork[1].y += s->step;
-			s->scroll         -= s->step;
-			if (s->scroll > 8)
-			{
-				s->rows--;
-				if (s->rows == 0)
-				{
-					s->rows = 1;
-					syDMAXCopy(s->src, s->dest, DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4), REG_DMA3);
-					s->src  -= LIGHTHOUSE_ROW_BYTES;
-					s->dest -= LIGHTHOUSE_ROW_BYTES;
-					for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
-						*s->cursor++ = s->tile++;
-					s->cursor -= DISPLAY_TILE_WIDTH;
-					s->tile   -= DISPLAY_TILE_WIDTH;
-				}
-				s->scroll -= 8;
-			}
-			if (mnTitleWaitOrPress(s->ticks))
-				goto fail;
-		}
-	}
+    if (s->step > 0)
+    {
+        for (i = s->pos; i < s->limit; i += s->step)
+        {
+            if (mnTitleWaitOrPress(s->ticks))
+                goto fail;
+            if (s->scroll > 0)
+            {
+                syDMAXCopy(s->src, s->dest, DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4), REG_DMA3);
+                s->src  += LIGHTHOUSE_ROW_BYTES;
+                s->dest += LIGHTHOUSE_ROW_BYTES;
+                for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
+                    *s->cursor++ = s->tile++;
+                *s->cursor++ = OFFSCREEN_TILE;
+                *s->cursor++ = OFFSCREEN_TILE;
+                if (++s->rows == BG_SCREEN_WIDTH)
+                {
+                    s->dest   = (Uint8 *)BG_CHAR_BLOCK(0);
+                    s->rows   = 0;
+                    s->tile   = 0;
+                    s->cursor = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
+                }
+                s->scroll -= 8;
+            }
+            s->scroll         += s->step;
+            BgScrollWork[1].y += s->step;
+            if (timers->toWhite != 0 && --timers->toWhite == 1)
+            {
+                mnTitlePaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
+                mnTitlePaletteFadeStart(10);
+            }
+            if (timers->fromWhite != 0 && --timers->fromWhite == 1)
+            {
+                mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+                mnTitlePaletteFadeStart(10);
+            }
+        }
+        goto done;
+    fail:
+        return TRUE;
+    }
+    else
+    {
+        for (i = s->pos; i > s->limit; i += s->step)
+        {
+            BgScrollWork[1].y += s->step;
+            s->scroll         -= s->step;
+            if (s->scroll > 8)
+            {
+                s->rows--;
+                if (s->rows == 0)
+                {
+                    s->rows = 1;
+                    syDMAXCopy(s->src, s->dest, DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4), REG_DMA3);
+                    s->src  -= LIGHTHOUSE_ROW_BYTES;
+                    s->dest -= LIGHTHOUSE_ROW_BYTES;
+                    for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
+                        *s->cursor++ = s->tile++;
+                    s->cursor -= DISPLAY_TILE_WIDTH;
+                    s->tile   -= DISPLAY_TILE_WIDTH;
+                }
+                s->scroll -= 8;
+            }
+            if (mnTitleWaitOrPress(s->ticks))
+                goto fail;
+        }
+    }
 done:
-	s->pos = i;
-	return FALSE;
+    s->pos = i;
+    return FALSE;
 }
 
 // A piece of `The Lost Age`: 64 by 64 pixels in 256 colours, numbered in the sprites' tiles of 32
@@ -623,33 +623,33 @@ done:
 // double size, so that its top left is at (x, y) unscaled, semi-transparent and in 256 colours.
 void mnTitlePlaceLogoPiece(Sint32 tile, Sint32 x, Uint32 y)
 {
-	OAM_ENTRY oam;
+    OAM_ENTRY oam;
 
-	DMA_FILL32(0, &oam, sizeof(oam));
-	oam.shape     = OBJ_SHAPE_SQUARE;
-	oam.size      = OAM_SIZE_64;
-	oam.fullColor = 1;
-	oam.mode      = OBJ_MODE_SEMI_TRANSPARENT;
-	oam.affine    = OAM_AFFINE_DOUBLE_SIZE;
-	oam.tile      = tile;
-	oam.x         = x - 32;
-	oam.y         = y - 32;
-	syDMAXCopy(&oam, (void *)((Uint32)OAM + ((Uint32)tile >> 4)), DMA_COPY_WORDS(2), REG_DMA3);
+    DMA_FILL32(0, &oam, sizeof(oam));
+    oam.shape     = OBJ_SHAPE_SQUARE;
+    oam.size      = OAM_SIZE_64;
+    oam.fullColor = 1;
+    oam.mode      = OBJ_MODE_SEMI_TRANSPARENT;
+    oam.affine    = OAM_AFFINE_DOUBLE_SIZE;
+    oam.tile      = tile;
+    oam.x         = x - 32;
+    oam.y         = y - 32;
+    syDMAXCopy(&oam, (void *)((Uint32)OAM + ((Uint32)tile >> 4)), DMA_COPY_WORDS(2), REG_DMA3);
 }
 
 // Where the left, middle and right pieces of `The Lost Age` come to rest, and how far down.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-#	define LOGO_LEFT_X   24
-#	define LOGO_MIDDLE_X 88
-#	define LOGO_RIGHT_X  152
+#    define LOGO_LEFT_X   24
+#    define LOGO_MIDDLE_X 88
+#    define LOGO_RIGHT_X  152
 #elif LANGUAGE == LANGUAGE_FRENCH
-#	define LOGO_LEFT_X   19
-#	define LOGO_MIDDLE_X 83
-#	define LOGO_RIGHT_X  147
+#    define LOGO_LEFT_X   19
+#    define LOGO_MIDDLE_X 83
+#    define LOGO_RIGHT_X  147
 #else
-#	define LOGO_LEFT_X   30
-#	define LOGO_MIDDLE_X 83
-#	define LOGO_RIGHT_X  140
+#    define LOGO_LEFT_X   30
+#    define LOGO_MIDDLE_X 83
+#    define LOGO_RIGHT_X  140
 #endif
 #define LOGO_Y            50
 
@@ -661,22 +661,22 @@ void mnTitlePlaceLogoPiece(Sint32 tile, Sint32 x, Uint32 y)
 // sprites, the ticks it shows for and its offset.
 typedef enum GULL_PICTURE_FIELD
 {
-	GULL_PICTURE_TILE,
-	GULL_PICTURE_ROWS,
-	GULL_PICTURE_DURATION,
-	GULL_PICTURE_OFFSET_X,
-	GULL_PICTURE_OFFSET_Y,
-	GULL_PICTURE_FIELDS
+    GULL_PICTURE_TILE,
+    GULL_PICTURE_ROWS,
+    GULL_PICTURE_DURATION,
+    GULL_PICTURE_OFFSET_X,
+    GULL_PICTURE_OFFSET_Y,
+    GULL_PICTURE_FIELDS
 } GULL_PICTURE_FIELD;
 
 // The fields of a step of TitleIntroGullPath: where the gull is and the ticks it stays; an x of -1
 // ends the path.
 typedef enum GULL_STEP_FIELD
 {
-	GULL_STEP_X,
-	GULL_STEP_Y,
-	GULL_STEP_DURATION,
-	GULL_STEP_FIELDS
+    GULL_STEP_X,
+    GULL_STEP_Y,
+    GULL_STEP_DURATION,
+    GULL_STEP_FIELDS
 } GULL_STEP_FIELD;
 
 // The gull's ticks are 64 pixels wide, eight 8x8 sprites to a row, and the path places the middle
@@ -692,132 +692,132 @@ extern Sint16 TitleIntroGullPath[];
 
 // Unpacks a picture of `The Lost Age`, its three pieces, into sprite tiles.
 #define LOAD_LOGO_TILES(id)                                                                        \
-	{                                                                                              \
-		Uint8 *buf = TitleIntroLogoTileBuffer;                                                     \
-		syDecompressByteLZ(syResourceGetTableEntry(id), buf);                                      \
-		syDMAXCopy(buf, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3 * LOGO_PIECE_BYTES / 4), REG_DMA3);    \
-	}
+    {                                                                                              \
+        Uint8 *buf = TitleIntroLogoTileBuffer;                                                     \
+        syDecompressByteLZ(syResourceGetTableEntry(id), buf);                                      \
+        syDMAXCopy(buf, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3 * LOGO_PIECE_BYTES / 4), REG_DMA3);    \
+    }
 
 // The event that draws over the lighthouse each tick: the gull flying off towards it along its
 // path, then `The Lost Age` closing in, its pictures coming into focus as it fades up.
 void mnTitleIntroUpdateLogo(void)
 {
-	TITLE_LOGO_STATE *logo;
-	OAM_ENTRY         sprite;
-	volatile Uint32   fill;
-	Sint32            x;
-	Sint32            tile;
-	Sint32            left;
-	Sint32            rows;
-	Sint32            top;
-	Sint32            offsetX;
-	Sint32            offsetY;
-	Sint32            row;
-	Sint32            column;
-	Sint32            y;
-	Sint32            pieceX;
-	volatile Uint16  *matrix;
+    TITLE_LOGO_STATE *logo;
+    OAM_ENTRY         sprite;
+    volatile Uint32   fill;
+    Sint32            x;
+    Sint32            tile;
+    Sint32            left;
+    Sint32            rows;
+    Sint32            top;
+    Sint32            offsetX;
+    Sint32            offsetY;
+    Sint32            row;
+    Sint32            column;
+    Sint32            y;
+    Sint32            pieceX;
+    volatile Uint16  *matrix;
 
-	logo = RamHeapSlots->titleIntro;
-	DMA_FILL32_CELL(fill, 0, (void *)OAM, OAM_SIZE);
-	if (logo->phase == TITLE_LOGO_GULL)
-	{
-		if (logo->timer == 0)
-		{
-			if (TitleIntroGullPictures[logo->frame + GULL_PICTURE_FIELDS] != -1)
-				logo->frame += GULL_PICTURE_FIELDS;
-			logo->timer = TitleIntroGullPictures[logo->frame + GULL_PICTURE_DURATION];
-		}
-		else
-		{
-			logo->timer--;
-		}
-		if (logo->delay == 0)
-		{
-			logo->step  += GULL_STEP_FIELDS;
-			logo->delay  = TitleIntroGullPath[logo->step + GULL_STEP_DURATION];
-		}
-		else
-		{
-			logo->delay--;
-		}
-		x = TitleIntroGullPath[logo->step + GULL_STEP_X];
-		if (x == -1)
-		{
-			syDMAXCopy(syResourceGetTableEntry(RESOURCE_SUBTITLE_PALETTE),
-			           (void *)OBJ_PLTT,
-			           DMA_COPY_WORDS(OBJ_PLTT_SIZE / 4),
-			           REG_DMA3);
-			LOAD_LOGO_TILES(RESOURCE_SUBTITLE_A);
-			logo->phase  = TITLE_LOGO_ZOOM;
-			logo->frame  = 1;
-			logo->timer  = 0;
-			logo->step   = LOGO_MATRIX_START;
-			logo->delay  = 0;
-			REG_BLDCNT   = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1;
-			REG_BLDALPHA = BLEND_ALPHA(1, BLEND_WEIGHT_MAX);
-			return;
-		}
-		tile    = TitleIntroGullPictures[logo->frame + GULL_PICTURE_TILE];
-		rows    = TitleIntroGullPictures[logo->frame + GULL_PICTURE_ROWS];
-		offsetX = TitleIntroGullPictures[logo->frame + GULL_PICTURE_OFFSET_X];
-		offsetY = TitleIntroGullPictures[logo->frame + GULL_PICTURE_OFFSET_Y];
-		left    = x + offsetX - GULL_CENTER_X;
-		top     = TitleIntroGullPath[logo->step + GULL_STEP_Y] + offsetY;
-		for (row = 0; row < rows; row++)
-		{
-			for (column = 0; column < GULL_COLUMNS; column++)
-			{
-				DMA_FILL32_CELL(fill, 0, &sprite, sizeof(sprite));
-				sprite.tile = tile + column + row * GULL_COLUMNS;
-				sprite.x    = left + column * 8;
-				sprite.y    = top + row * 8;
-				syDMAXCopy(&sprite,
-				           (Uint8 *)OAM + (row * GULL_COLUMNS + column) * 8,
-				           DMA_COPY_WORDS(2),
-				           REG_DMA3);
-			}
-		}
-	}
-	else if (logo->phase == TITLE_LOGO_ZOOM)
-	{
-		// The side pieces close in from 24 pixels out as the scale reaches rest.
-		pieceX = (logo->step - LOGO_MATRIX_REST) / 4 + LOGO_LEFT_X;
-		y      = (logo->step - LOGO_MATRIX_REST) / 32 + LOGO_Y;
-		mnTitlePlaceLogoPiece(0, pieceX, y);
-		mnTitlePlaceLogoPiece(LOGO_PIECE_TILES, LOGO_MIDDLE_X, y);
-		pieceX = LOGO_RIGHT_X - (logo->step - LOGO_MATRIX_REST) / 4;
-		mnTitlePlaceLogoPiece(2 * LOGO_PIECE_TILES, pieceX, y);
-		// Affine matrix 0, in the fourth halfwords of the first four entries.
-		matrix     = (volatile Uint16 *)((Uint8 *)OAM + 6);
-		*matrix    = logo->step;
-		matrix    += 4;
-		*matrix    = 0;
-		matrix    += 4;
-		*matrix    = 0;
-		matrix[4]  = logo->step;
-		if (logo->step < LOGO_MATRIX_REST)
-		{
-			logo->step += 2;
-			if (logo->step > LOGO_MATRIX_REST)
-				logo->step = LOGO_MATRIX_REST;
-		}
-		if (logo->frame < BLEND_WEIGHT_MAX)
-		{
-			logo->timer++;
-			if (logo->timer % 3 == 0)
-			{
-				logo->frame++;
-				REG_BLDALPHA = BLEND_ALPHA(logo->frame, BLEND_WEIGHT_MAX);
-			}
-			if (logo->timer == 8)
-				LOAD_LOGO_TILES(RESOURCE_SUBTITLE_B)
-			else if (logo->timer == 16)
-				LOAD_LOGO_TILES(RESOURCE_SUBTITLE_C)
-			else if (logo->timer == 24)
-				LOAD_LOGO_TILES(RESOURCE_SUBTITLE_D)
-		}
-	}
+    logo = RamHeapSlots->titleIntro;
+    DMA_FILL32_CELL(fill, 0, (void *)OAM, OAM_SIZE);
+    if (logo->phase == TITLE_LOGO_GULL)
+    {
+        if (logo->timer == 0)
+        {
+            if (TitleIntroGullPictures[logo->frame + GULL_PICTURE_FIELDS] != -1)
+                logo->frame += GULL_PICTURE_FIELDS;
+            logo->timer = TitleIntroGullPictures[logo->frame + GULL_PICTURE_DURATION];
+        }
+        else
+        {
+            logo->timer--;
+        }
+        if (logo->delay == 0)
+        {
+            logo->step  += GULL_STEP_FIELDS;
+            logo->delay  = TitleIntroGullPath[logo->step + GULL_STEP_DURATION];
+        }
+        else
+        {
+            logo->delay--;
+        }
+        x = TitleIntroGullPath[logo->step + GULL_STEP_X];
+        if (x == -1)
+        {
+            syDMAXCopy(syResourceGetTableEntry(RESOURCE_SUBTITLE_PALETTE),
+                       (void *)OBJ_PLTT,
+                       DMA_COPY_WORDS(OBJ_PLTT_SIZE / 4),
+                       REG_DMA3);
+            LOAD_LOGO_TILES(RESOURCE_SUBTITLE_A);
+            logo->phase  = TITLE_LOGO_ZOOM;
+            logo->frame  = 1;
+            logo->timer  = 0;
+            logo->step   = LOGO_MATRIX_START;
+            logo->delay  = 0;
+            REG_BLDCNT   = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1;
+            REG_BLDALPHA = BLEND_ALPHA(1, BLEND_WEIGHT_MAX);
+            return;
+        }
+        tile    = TitleIntroGullPictures[logo->frame + GULL_PICTURE_TILE];
+        rows    = TitleIntroGullPictures[logo->frame + GULL_PICTURE_ROWS];
+        offsetX = TitleIntroGullPictures[logo->frame + GULL_PICTURE_OFFSET_X];
+        offsetY = TitleIntroGullPictures[logo->frame + GULL_PICTURE_OFFSET_Y];
+        left    = x + offsetX - GULL_CENTER_X;
+        top     = TitleIntroGullPath[logo->step + GULL_STEP_Y] + offsetY;
+        for (row = 0; row < rows; row++)
+        {
+            for (column = 0; column < GULL_COLUMNS; column++)
+            {
+                DMA_FILL32_CELL(fill, 0, &sprite, sizeof(sprite));
+                sprite.tile = tile + column + row * GULL_COLUMNS;
+                sprite.x    = left + column * 8;
+                sprite.y    = top + row * 8;
+                syDMAXCopy(&sprite,
+                           (Uint8 *)OAM + (row * GULL_COLUMNS + column) * 8,
+                           DMA_COPY_WORDS(2),
+                           REG_DMA3);
+            }
+        }
+    }
+    else if (logo->phase == TITLE_LOGO_ZOOM)
+    {
+        // The side pieces close in from 24 pixels out as the scale reaches rest.
+        pieceX = (logo->step - LOGO_MATRIX_REST) / 4 + LOGO_LEFT_X;
+        y      = (logo->step - LOGO_MATRIX_REST) / 32 + LOGO_Y;
+        mnTitlePlaceLogoPiece(0, pieceX, y);
+        mnTitlePlaceLogoPiece(LOGO_PIECE_TILES, LOGO_MIDDLE_X, y);
+        pieceX = LOGO_RIGHT_X - (logo->step - LOGO_MATRIX_REST) / 4;
+        mnTitlePlaceLogoPiece(2 * LOGO_PIECE_TILES, pieceX, y);
+        // Affine matrix 0, in the fourth halfwords of the first four entries.
+        matrix     = (volatile Uint16 *)((Uint8 *)OAM + 6);
+        *matrix    = logo->step;
+        matrix    += 4;
+        *matrix    = 0;
+        matrix    += 4;
+        *matrix    = 0;
+        matrix[4]  = logo->step;
+        if (logo->step < LOGO_MATRIX_REST)
+        {
+            logo->step += 2;
+            if (logo->step > LOGO_MATRIX_REST)
+                logo->step = LOGO_MATRIX_REST;
+        }
+        if (logo->frame < BLEND_WEIGHT_MAX)
+        {
+            logo->timer++;
+            if (logo->timer % 3 == 0)
+            {
+                logo->frame++;
+                REG_BLDALPHA = BLEND_ALPHA(logo->frame, BLEND_WEIGHT_MAX);
+            }
+            if (logo->timer == 8)
+                LOAD_LOGO_TILES(RESOURCE_SUBTITLE_B)
+            else if (logo->timer == 16)
+                LOAD_LOGO_TILES(RESOURCE_SUBTITLE_C)
+            else if (logo->timer == 24)
+                LOAD_LOGO_TILES(RESOURCE_SUBTITLE_D)
+        }
+    }
 }
 
 // The gull's resource begins with its 16 colours.
@@ -829,139 +829,139 @@ void mnTitleIntroUpdateLogo(void)
 // with a fade to black. Returns 1.
 Sint32 mnTitleIntroShowLighthouse(void)
 {
-	TITLE_SCROLL      scroll;
-	volatile Uint32   fill;
-	TITLE_LOGO_STATE *logo;
-	Uint8            *src;
-	Uint16           *map;
-	Uint16            tile;
-	Sint32            row;
-	Sint32            i;
-	Uint8            *buf;
+    TITLE_SCROLL      scroll;
+    volatile Uint32   fill;
+    TITLE_LOGO_STATE *logo;
+    Uint8            *src;
+    Uint16           *map;
+    Uint16            tile;
+    Sint32            row;
+    Sint32            i;
+    Uint8            *buf;
 
-	// The slot is given the title screen's size, though the logo's state needs far less.
-	logo        = syHeapSlotAllocate(HEAP_SLOT_TITLE_INTRO, sizeof(TITLE_SCREEN_STATE));
-	REG_DISPCNT = 0;
-	DMA_FILL32_CELL(fill, 0, (void *)OAM, OAM_SIZE);
-	src  = syResourceGetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
-	buf  = RamMapMetatileBuffer;
-	src += GULL_PALETTE_BYTES;
-	syDecompressByteLZ(src, buf);
-	syDMAXCopy(buf, (void *)OBJ_VRAM0, DMA_COPY_WORDS(GULL_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
-	sySynch(1);
-	src = syResourceGetTableEntry(RESOURCE_INTRO_LIGHTHOUSE_PICTURE);
-	syDMAXCopy(src, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
-	*(Uint16 *)BG_PLTT = RGB_WHITE;
-	sySynch(1);
-	src += BG_PLTT_SIZE;
-	syDecompressByteLZ(src, buf);
-	syDMAXCopy(buf, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
-	sySynch(1);
+    // The slot is given the title screen's size, though the logo's state needs far less.
+    logo        = syHeapSlotAllocate(HEAP_SLOT_TITLE_INTRO, sizeof(TITLE_SCREEN_STATE));
+    REG_DISPCNT = 0;
+    DMA_FILL32_CELL(fill, 0, (void *)OAM, OAM_SIZE);
+    src  = syResourceGetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
+    buf  = RamMapMetatileBuffer;
+    src += GULL_PALETTE_BYTES;
+    syDecompressByteLZ(src, buf);
+    syDMAXCopy(buf, (void *)OBJ_VRAM0, DMA_COPY_WORDS(GULL_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
+    sySynch(1);
+    src = syResourceGetTableEntry(RESOURCE_INTRO_LIGHTHOUSE_PICTURE);
+    syDMAXCopy(src, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+    *(Uint16 *)BG_PLTT = RGB_WHITE;
+    sySynch(1);
+    src += BG_PLTT_SIZE;
+    syDecompressByteLZ(src, buf);
+    syDMAXCopy(buf, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
+    sySynch(1);
 
-	map  = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
-	tile = 0;
-	for (row = 0; row < DISPLAY_TILE_HEIGHT; row++)
-	{
-		for (i = 0; i < DISPLAY_TILE_WIDTH; i++)
-		{
-			*map++ = tile++;
-		}
-		*map++ = OFFSCREEN_TILE;
-		*map++ = OFFSCREEN_TILE;
-	}
-	REG_BG1CNT   = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(INTRO_BACK_SCREEN);
-	REG_BLDCNT   = 0;
-	REG_BLDALPHA = 0;
-	for (i = 0; i < 4; i++)
-	{
-		BgScrollWork[i].y = 0;
-		BgScrollWork[i].x = 0;
-	}
-	syDMAXCopy(
-		(void *)BG_PLTT, RamHeapSlots->paletteFade, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
-	sySynch(1);
-	mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-	REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
-	mnTitlePaletteFadeStart(10);
+    map  = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
+    tile = 0;
+    for (row = 0; row < DISPLAY_TILE_HEIGHT; row++)
+    {
+        for (i = 0; i < DISPLAY_TILE_WIDTH; i++)
+        {
+            *map++ = tile++;
+        }
+        *map++ = OFFSCREEN_TILE;
+        *map++ = OFFSCREEN_TILE;
+    }
+    REG_BG1CNT   = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(INTRO_BACK_SCREEN);
+    REG_BLDCNT   = 0;
+    REG_BLDALPHA = 0;
+    for (i = 0; i < 4; i++)
+    {
+        BgScrollWork[i].y = 0;
+        BgScrollWork[i].x = 0;
+    }
+    syDMAXCopy(
+        (void *)BG_PLTT, RamHeapSlots->paletteFade, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+    sySynch(1);
+    mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
+    mnTitlePaletteFadeStart(10);
 
-	// Down the picture, slowing, with a flash of white near the top.
-	scroll.pos      = 0;
-	scroll.limit    = 176;
-	scroll.step     = 4;
-	scroll.src      = RamMapMetatileBuffer + SCREEN_TILE_BYTES;
-	scroll.dest     = (Uint8 *)BG_CHAR_BLOCK(0) + SCREEN_TILE_BYTES;
-	scroll.cursor   = map;
-	scroll.tile     = tile;
-	scroll.scroll   = 0;
-	scroll.rows     = row;
-	scroll.ticks    = 1;
-	logo->toWhite   = 10;
-	logo->fromWhite = 25;
-	if (mnTitleIntroScrollLighthouse(&scroll))
-		goto stopped;
-	scroll.limit = 200;
-	scroll.step  = 3;
-	if (mnTitleIntroScrollLighthouse(&scroll))
-		goto stopped;
-	scroll.limit = 216;
-	scroll.step  = 2;
-	if (mnTitleIntroScrollLighthouse(&scroll))
-		goto stopped;
-	src = syResourceGetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
-	syDMAXCopy(src, (void *)OBJ_PLTT, DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4), REG_DMA3);
-	logo->phase  = TITLE_LOGO_GULL;
-	logo->frame  = -GULL_PICTURE_FIELDS;
-	logo->timer  = 0;
-	logo->step   = -GULL_STEP_FIELDS;
-	logo->delay  = 0;
-	scroll.step  = 1;
-	scroll.limit = LIGHTHOUSE_BOTTOM;
-	if (mnTitleIntroScrollLighthouse(&scroll))
-		goto stopped;
-	sySetEvent(mnTitleIntroUpdateLogo, EVENT_PASS_TICK);
-	// Back up, a pixel every eight ticks, then fast under the fade to white, copying the picture's
-	// rows back from its row 15, the last the scroll down wrote over, once eleven rows have passed.
-	scroll.limit  = 160;
-	scroll.step   = -1;
-	scroll.scroll = 0;
+    // Down the picture, slowing, with a flash of white near the top.
+    scroll.pos      = 0;
+    scroll.limit    = 176;
+    scroll.step     = 4;
+    scroll.src      = RamMapMetatileBuffer + SCREEN_TILE_BYTES;
+    scroll.dest     = (Uint8 *)BG_CHAR_BLOCK(0) + SCREEN_TILE_BYTES;
+    scroll.cursor   = map;
+    scroll.tile     = tile;
+    scroll.scroll   = 0;
+    scroll.rows     = row;
+    scroll.ticks    = 1;
+    logo->toWhite   = 10;
+    logo->fromWhite = 25;
+    if (mnTitleIntroScrollLighthouse(&scroll))
+        goto stopped;
+    scroll.limit = 200;
+    scroll.step  = 3;
+    if (mnTitleIntroScrollLighthouse(&scroll))
+        goto stopped;
+    scroll.limit = 216;
+    scroll.step  = 2;
+    if (mnTitleIntroScrollLighthouse(&scroll))
+        goto stopped;
+    src = syResourceGetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
+    syDMAXCopy(src, (void *)OBJ_PLTT, DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4), REG_DMA3);
+    logo->phase  = TITLE_LOGO_GULL;
+    logo->frame  = -GULL_PICTURE_FIELDS;
+    logo->timer  = 0;
+    logo->step   = -GULL_STEP_FIELDS;
+    logo->delay  = 0;
+    scroll.step  = 1;
+    scroll.limit = LIGHTHOUSE_BOTTOM;
+    if (mnTitleIntroScrollLighthouse(&scroll))
+        goto stopped;
+    sySetEvent(mnTitleIntroUpdateLogo, EVENT_PASS_TICK);
+    // Back up, a pixel every eight ticks, then fast under the fade to white, copying the picture's
+    // rows back from its row 15, the last the scroll down wrote over, once eleven rows have passed.
+    scroll.limit  = 160;
+    scroll.step   = -1;
+    scroll.scroll = 0;
 #if FIX_INTRO_LIGHTHOUSE_ROWS_COPIED_ONE_LOW
-	// From row 16, still in place, so that each row lands in its own place and the last copy is row
-	// 0.
-	scroll.src    = RamMapMetatileBuffer + 16 * LIGHTHOUSE_ROW_BYTES;
-	scroll.dest   = (Uint8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
-	scroll.cursor = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 16 * BG_SCREEN_WIDTH;
-	scroll.tile   = 16 * DISPLAY_TILE_WIDTH;
+    // From row 16, still in place, so that each row lands in its own place and the last copy is row
+    // 0.
+    scroll.src    = RamMapMetatileBuffer + 16 * LIGHTHOUSE_ROW_BYTES;
+    scroll.dest   = (Uint8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
+    scroll.cursor = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 16 * BG_SCREEN_WIDTH;
+    scroll.tile   = 16 * DISPLAY_TILE_WIDTH;
 #else
-	// BUG: each row lands one row low, from VRAM row 16, the map row the cursor rewrites is row 7,
-	// one entry in, and the last copy reads the row above the picture; unseen, as the rows are sky
-	// under the fade to white.
-	scroll.src    = RamMapMetatileBuffer + 15 * LIGHTHOUSE_ROW_BYTES;
-	scroll.dest   = (Uint8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
-	scroll.cursor = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 7 * BG_SCREEN_WIDTH + 1;
-	scroll.tile   = 15 * DISPLAY_TILE_WIDTH;
+    // BUG: each row lands one row low, from VRAM row 16, the map row the cursor rewrites is row 7,
+    // one entry in, and the last copy reads the row above the picture; unseen, as the rows are sky
+    // under the fade to white.
+    scroll.src    = RamMapMetatileBuffer + 15 * LIGHTHOUSE_ROW_BYTES;
+    scroll.dest   = (Uint8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
+    scroll.cursor = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 7 * BG_SCREEN_WIDTH + 1;
+    scroll.tile   = 15 * DISPLAY_TILE_WIDTH;
 #endif
-	scroll.rows  = 11;
-	scroll.ticks = 8;
-	if (mnTitleIntroScrollLighthouse(&scroll))
-		goto stopped;
-	mnTitlePaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
-	mnTitlePaletteFadeStart(20);
-	scroll.limit = 0;
-	scroll.step  = -5;
-	scroll.ticks = 1;
-	if (!mnTitleIntroScrollLighthouse(&scroll))
-		mnTitleWaitOrPress(120);
-	goto done;
+    scroll.rows  = 11;
+    scroll.ticks = 8;
+    if (mnTitleIntroScrollLighthouse(&scroll))
+        goto stopped;
+    mnTitlePaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
+    mnTitlePaletteFadeStart(20);
+    scroll.limit = 0;
+    scroll.step  = -5;
+    scroll.ticks = 1;
+    if (!mnTitleIntroScrollLighthouse(&scroll))
+        mnTitleWaitOrPress(120);
+    goto done;
 stopped:
-	mnTitlePaletteFadeSetTarget(RGB(0, 0, 0), PALETTES_ALL);
-	mnTitlePaletteFadeStart(10);
-	sySynch(10);
+    mnTitlePaletteFadeSetTarget(RGB(0, 0, 0), PALETTES_ALL);
+    mnTitlePaletteFadeStart(10);
+    sySynch(10);
 done:
-	DMA_FILL32_CELL(fill, 0, (void *)OAM, OAM_SIZE);
-	syCloseEvent(mnTitleIntroUpdateLogo);
-	syHeapSlotRelease(HEAP_SLOT_TITLE_INTRO);
-	sySynch(1);
-	return 1;
+    DMA_FILL32_CELL(fill, 0, (void *)OAM, OAM_SIZE);
+    syCloseEvent(mnTitleIntroUpdateLogo);
+    syHeapSlotRelease(HEAP_SLOT_TITLE_INTRO);
+    sySynch(1);
+    return 1;
 }
 
 // Plays the title intro: the clouds, `Camelot presents`, the clouds again, `Golden Sun` `Book Two`,
@@ -971,58 +971,58 @@ done:
 // read.
 Sint32 mnTitleIntroRun(Sint32 unused)
 {
-	Uint8  cpuLoad;
-	Sint32 result;
+    Uint8  cpuLoad;
+    Sint32 result;
 
-	syIOWrite8(CpuLoadDisplayEnabled, &cpuLoad);
-	syPrintClear();
-	syVRAMCacheReset();
-	sySynch(1);
-	syInitEvent();
-	OamCopyEnabled        = 0;
-	CpuLoadDisplayEnabled = 0;
-	mnTitleIntroLoadPictureTiles();
-	if ((result = mnTitleIntroScrollClouds(CLOUD_BEFORE_CARDS)) == 0
-	    || (result = mnTitleIntroShowPresentsCard()) == 0
-	    || (result = mnTitleIntroScrollClouds(CLOUD_BETWEEN_CARDS)) == 0
-	    || (result = mnTitleIntroShowBookTwoCard()) == 0
-	    || (result = mnTitleIntroScrollClouds(CLOUD_AFTER_CARDS)) == 0)
-	{
-		mnTitlePaletteFadeSetTarget(RGB(0, 0, 0), PALETTES_ALL);
-		mnTitlePaletteFadeStart(10);
-		sySynch(10);
-	}
-	if (result)
-		mnTitleIntroShowLighthouse();
-	OamCopyEnabled = 1;
-	sySynch(1);
-	// result is reused as the counter.
-	for (result = 0; result < 4; result++)
-		BgScrollWork[result].x = BgScrollWork[result].y = 0;
-	REG_DISPCNT = 0;
-	syWindowLoadGraphics();
-	syPrintClear();
-	mnTitlePaletteFadeInit();
-	CpuLoadDisplayEnabled = cpuLoad;
-	return 1;
+    syIOWrite8(CpuLoadDisplayEnabled, &cpuLoad);
+    syPrintClear();
+    syVRAMCacheReset();
+    sySynch(1);
+    syInitEvent();
+    OamCopyEnabled        = 0;
+    CpuLoadDisplayEnabled = 0;
+    mnTitleIntroLoadPictureTiles();
+    if ((result = mnTitleIntroScrollClouds(CLOUD_BEFORE_CARDS)) == 0
+        || (result = mnTitleIntroShowPresentsCard()) == 0
+        || (result = mnTitleIntroScrollClouds(CLOUD_BETWEEN_CARDS)) == 0
+        || (result = mnTitleIntroShowBookTwoCard()) == 0
+        || (result = mnTitleIntroScrollClouds(CLOUD_AFTER_CARDS)) == 0)
+    {
+        mnTitlePaletteFadeSetTarget(RGB(0, 0, 0), PALETTES_ALL);
+        mnTitlePaletteFadeStart(10);
+        sySynch(10);
+    }
+    if (result)
+        mnTitleIntroShowLighthouse();
+    OamCopyEnabled = 1;
+    sySynch(1);
+    // result is reused as the counter.
+    for (result = 0; result < 4; result++)
+        BgScrollWork[result].x = BgScrollWork[result].y = 0;
+    REG_DISPCNT = 0;
+    syWindowLoadGraphics();
+    syPrintClear();
+    mnTitlePaletteFadeInit();
+    CpuLoadDisplayEnabled = cpuLoad;
+    return 1;
 }
 
 // The title screen's "Press Start" prompt: five sprites further left in the French and Japanese
 // editions; two rows of three, from eight tile blocks, in German; one row of three elsewhere.
 #if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_JAPANESE)
-#	define PROMPT_SPRITES 5
-#	define PROMPT_X       56
-#	define PROMPT_Y       126
+#    define PROMPT_SPRITES 5
+#    define PROMPT_X       56
+#    define PROMPT_Y       126
 #elif LANGUAGE == LANGUAGE_GERMAN
-#	define PROMPT_SPRITES    3
-#	define PROMPT_ROWS       2
-#	define PROMPT_ROW_HEIGHT 8
-#	define PROMPT_X          80
-#	define PROMPT_Y          116
+#    define PROMPT_SPRITES    3
+#    define PROMPT_ROWS       2
+#    define PROMPT_ROW_HEIGHT 8
+#    define PROMPT_X          80
+#    define PROMPT_Y          116
 #else
-#	define PROMPT_SPRITES 3
-#	define PROMPT_X       80
-#	define PROMPT_Y       124
+#    define PROMPT_SPRITES 3
+#    define PROMPT_X       80
+#    define PROMPT_Y       124
 #endif
 #define PROMPT_TILES            GERMAN_OR(8, 5)
 
@@ -1043,123 +1043,123 @@ Sint32 mnTitleIntroRun(Sint32 unused)
 // the prompt and the keys wait two seconds.
 Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 {
-	Sint32              blankTile = OFFSCREEN_TILE;
-	Bool                result    = FALSE;
-	TITLE_SCREEN_STATE *state =
-		syHeapSlotAllocateEWRAM(HEAP_SLOT_TITLE_INTRO, sizeof(TITLE_SCREEN_STATE));
-	Uint8  *data;
-	Uint16 *tilemap;
-	Uint16  tile;
-	Uint32  i;
-	Uint32  j;
-	Uint32  holdTicks;
+    Sint32              blankTile = OFFSCREEN_TILE;
+    Bool                result    = FALSE;
+    TITLE_SCREEN_STATE *state =
+        syHeapSlotAllocateEWRAM(HEAP_SLOT_TITLE_INTRO, sizeof(TITLE_SCREEN_STATE));
+    Uint8  *data;
+    Uint16 *tilemap;
+    Uint16  tile;
+    Uint32  i;
+    Uint32  j;
+    Uint32  holdTicks;
 
-	syInitEvent();
-	syScreenFadeToWhite(1);
-	syPrintClear();
-	syVRAMCacheReset();
-	sySynch(1);
-	REG_BG2CNT        = LOGO_BGCNT;
-	REG_DISPCNT       = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-	BgScrollWork[2].y = result;
-	data              = syResourceGetTableEntry(RESOURCE_TITLE_SCREEN_PICTURE);
-	syDMAXCopy(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
-	syDecompressTaggedLZ(data + LOGO_PALETTE_BYTES, RamMapMetatileBuffer);
-	syDMAXCopy(
-		RamMapMetatileBuffer, (void *)LOGO_TILES, DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
-	tile    = LOGO_FIRST_TILE;
-	tilemap = LOGO_MAP;
-	for (i = 0; i < DISPLAY_TILE_HEIGHT; i++)
-	{
-		for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
-			*tilemap++ = tile++;
-		*tilemap++ = blankTile;
-		*tilemap++ = blankTile;
-	}
-	for (i = 0; i < 4; i++)
-		BgScrollWork[i].x = BgScrollWork[i].y = 0;
-	syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-	syWindowLoadGraphics();
-	syPrintClear();
-	if (prompt != 0)
-	{
-		Uint8     *buf    = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-		INTRO_SPR *sprite = state->sprites;
+    syInitEvent();
+    syScreenFadeToWhite(1);
+    syPrintClear();
+    syVRAMCacheReset();
+    sySynch(1);
+    REG_BG2CNT        = LOGO_BGCNT;
+    REG_DISPCNT       = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    BgScrollWork[2].y = result;
+    data              = syResourceGetTableEntry(RESOURCE_TITLE_SCREEN_PICTURE);
+    syDMAXCopy(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
+    syDecompressTaggedLZ(data + LOGO_PALETTE_BYTES, RamMapMetatileBuffer);
+    syDMAXCopy(
+        RamMapMetatileBuffer, (void *)LOGO_TILES, DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
+    tile    = LOGO_FIRST_TILE;
+    tilemap = LOGO_MAP;
+    for (i = 0; i < DISPLAY_TILE_HEIGHT; i++)
+    {
+        for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
+            *tilemap++ = tile++;
+        *tilemap++ = blankTile;
+        *tilemap++ = blankTile;
+    }
+    for (i = 0; i < 4; i++)
+        BgScrollWork[i].x = BgScrollWork[i].y = 0;
+    syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
+    syWindowLoadGraphics();
+    syPrintClear();
+    if (prompt != 0)
+    {
+        Uint8     *buf    = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+        INTRO_SPR *sprite = state->sprites;
 
-		syDecompressByteLZ(TitlePromptTiles, buf);
-		for (i = 0; i < PROMPT_TILES; i++)
-		{
-			Sint32 vramBlock = syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), 128, buf + (i << 8) / 2);
-			Uint32 *spriteWords = (Uint32 *)sprite;
+        syDecompressByteLZ(TitlePromptTiles, buf);
+        for (i = 0; i < PROMPT_TILES; i++)
+        {
+            Sint32 vramBlock = syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), 128, buf + (i << 8) / 2);
+            Uint32 *spriteWords = (Uint32 *)sprite;
 
-			*spriteWords++      = 0;
-			sprite++;
-			*spriteWords++ = OBJ_SIZE_32X8;
-			*spriteWords   = vramBlock;
-		}
-		syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
-	}
-	syScreenFadeFromWhite(30);
-	syScreenFadeWait();
-	REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-	if (prompt != 0)
-		holdTicks = TITLE_PROMPT_HOLD_TICKS;
-	else
-		holdTicks = TITLE_HOLD_TICKS;
-	for (i = 0; i < holdTicks; i++)
-	{
-		if (!TITLE_PROMPT_AND_KEYS_AFTER_DELAY || i > PROMPT_DELAY_TICKS)
-		{
-			if (prompt != 0)
-			{
-				INTRO_SPR *sprite = state->sprites;
-				Sint32     x;
-				Uint32     level;
+            *spriteWords++      = 0;
+            sprite++;
+            *spriteWords++ = OBJ_SIZE_32X8;
+            *spriteWords   = vramBlock;
+        }
+        syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
+    }
+    syScreenFadeFromWhite(30);
+    syScreenFadeWait();
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    if (prompt != 0)
+        holdTicks = TITLE_PROMPT_HOLD_TICKS;
+    else
+        holdTicks = TITLE_HOLD_TICKS;
+    for (i = 0; i < holdTicks; i++)
+    {
+        if (!TITLE_PROMPT_AND_KEYS_AFTER_DELAY || i > PROMPT_DELAY_TICKS)
+        {
+            if (prompt != 0)
+            {
+                INTRO_SPR *sprite = state->sprites;
+                Sint32     x;
+                Uint32     level;
 #ifdef PROMPT_ROWS
-				Uint32 row;
-				Sint32 y;
+                Uint32 row;
+                Sint32 y;
 
-				for (row = 0, y = PROMPT_Y; row < PROMPT_ROWS; y += PROMPT_ROW_HEIGHT, row++)
-				{
-					for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++)
-					{
-						sprite->x = x;
-						sprite->y = y;
-						syOAMAddSpriteAtDepthClamped(sprite, 0);
-						x += 32;
-						sprite++;
-					}
-				}
+                for (row = 0, y = PROMPT_Y; row < PROMPT_ROWS; y += PROMPT_ROW_HEIGHT, row++)
+                {
+                    for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++)
+                    {
+                        sprite->x = x;
+                        sprite->y = y;
+                        syOAMAddSpriteAtDepthClamped(sprite, 0);
+                        x += 32;
+                        sprite++;
+                    }
+                }
 #else
-				for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++)
-				{
-					sprite->x = x;
-					sprite->y = PROMPT_Y;
-					syOAMAddSpriteAtDepthClamped(sprite, 0);
-					x += 32;
-					sprite++;
-				}
+                for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++)
+                {
+                    sprite->x = x;
+                    sprite->y = PROMPT_Y;
+                    syOAMAddSpriteAtDepthClamped(sprite, 0);
+                    x += 32;
+                    sprite++;
+                }
 #endif
-				// The prompt pulses once a second: its blend weight over the picture.
-				level      = TitlePromptBlendLevels[i % PROMPT_PULSE_TICKS];
-				REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0
-				           | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_BD;
-				REG_BLDALPHA = (BLEND_WEIGHT_MAX - level) * BLEND_ALPHA(0, 1) + level;
-			}
-			if (PerWork.push & (KEY_A | KEY_START))
-			{
-				result = TRUE;
-				break;
-			}
-		}
-		syRandom();
-		sySynch(1);
-	}
-	syHeapSlotRelease(HEAP_SLOT_TITLE_INTRO);
-	REG_BLDCNT   = 0;
-	REG_BLDALPHA = 0;
-	sySynch(1);
-	return result;
+                // The prompt pulses once a second: its blend weight over the picture.
+                level      = TitlePromptBlendLevels[i % PROMPT_PULSE_TICKS];
+                REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0
+                           | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_BD;
+                REG_BLDALPHA = (BLEND_WEIGHT_MAX - level) * BLEND_ALPHA(0, 1) + level;
+            }
+            if (PerWork.push & (KEY_A | KEY_START))
+            {
+                result = TRUE;
+                break;
+            }
+        }
+        syRandom();
+        sySynch(1);
+    }
+    syHeapSlotRelease(HEAP_SLOT_TITLE_INTRO);
+    REG_BLDCNT   = 0;
+    REG_BLDALPHA = 0;
+    sySynch(1);
+    return result;
 }
 
 // Unused: an empty entry the stub table keeps.
@@ -1176,99 +1176,99 @@ void mnTitleBeforeLogosNoOperation(void)
 // seconds and fades out, faster once skipped. Returns -1 when A or Start skipped it.
 Sint32 mnTitleShowPublisherLogo(Sint32 mode)
 {
-	Sint32  result;
-	Uint8  *data;
-	Uint16 *map;
-	Uint32  x;
-	Uint32  y;
-	Uint16  tile;
-	Sint32  blank = OFFSCREEN_TILE;
-	Sint32  resource;
+    Sint32  result;
+    Uint8  *data;
+    Uint16 *map;
+    Uint32  x;
+    Uint32  y;
+    Uint16  tile;
+    Sint32  blank = OFFSCREEN_TILE;
+    Sint32  resource;
 
-	sySoundPlayStub(SE_CHIME);
-	OamCopyEnabled = 1;
-	resource       = RESOURCE_PUBLISHER_LOGO;
-	syInitEvent();
-	syScreenFadeToBlack(1);
-	syPrintClear();
-	sySynch(1);
-	REG_BG2CNT        = LOGO_BGCNT;
-	REG_DISPCNT       = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-	result            = 0;
-	BgScrollWork[2].y = result;
-	data              = syResourceGetTableEntry(resource);
-	syDMAXCopy(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
-	syDecompressTaggedLZ(data + LOGO_PALETTE_BYTES, RamMapMetatileBuffer);
-	syDMAXCopy(RamMapMetatileBuffer,
-	           (void *)BG_CHAR_BLOCK(1),
-	           DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4),
-	           REG_DMA3);
-	// Pad the 30-tile picture to the hardware map's 32-tile row width.
-	tile = PUBLISHER_LOGO_TILE;
-	map  = LOGO_MAP;
-	for (y = 0; y < DISPLAY_TILE_HEIGHT; y++)
-	{
-		for (x = 0; x < DISPLAY_TILE_WIDTH; x++)
-			*map++ = tile++;
-		*map++ = blank;
-		*map++ = blank;
-	}
-	for (y = 0; y < 4; y++)
-	{
-		BgScrollWork[y].y = 0;
-		BgScrollWork[y].x = 0;
-	}
-	syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-	syWindowLoadGraphics();
-	syPrintClear();
-	REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-	if (mode == 0)
-	{
-		syScreenFadeFromBlack(1);
-		syScreenFadeWait();
-		for (y = 0; y < 2 * TICKS_PER_SECOND; y++)
-		{
-			if (PerWork.push & (KEY_A | KEY_START))
-			{
-				result = -1;
-				break;
-			}
-			sySynch(1);
-		}
-		return result;
-	}
-	for (y = 0; y < TICKS_PER_SECOND; y++)
-	{
-		if (PerWork.push & (KEY_A | KEY_START))
-		{
-			result = -1;
-			break;
-		}
-		sySynch(1);
-	}
-	if (result != 0)
-		syScreenFadeFromBlack(8);
-	else
-		syScreenFadeFromBlack(TICKS_PER_SECOND);
-	syScreenFadeWait();
-	if (result == 0)
-	{
-		for (y = 0; y < 3 * TICKS_PER_SECOND; y++)
-		{
-			if (PerWork.push & (KEY_A | KEY_START))
-			{
-				result = -1;
-				break;
-			}
-			sySynch(1);
-		}
-	}
-	if (result != 0)
-		syScreenFadeToBlack(8);
-	else
-		syScreenFadeToBlack(TICKS_PER_SECOND);
-	syScreenFadeWait();
-	return result;
+    sySoundPlayStub(SE_CHIME);
+    OamCopyEnabled = 1;
+    resource       = RESOURCE_PUBLISHER_LOGO;
+    syInitEvent();
+    syScreenFadeToBlack(1);
+    syPrintClear();
+    sySynch(1);
+    REG_BG2CNT        = LOGO_BGCNT;
+    REG_DISPCNT       = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    result            = 0;
+    BgScrollWork[2].y = result;
+    data              = syResourceGetTableEntry(resource);
+    syDMAXCopy(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
+    syDecompressTaggedLZ(data + LOGO_PALETTE_BYTES, RamMapMetatileBuffer);
+    syDMAXCopy(RamMapMetatileBuffer,
+               (void *)BG_CHAR_BLOCK(1),
+               DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4),
+               REG_DMA3);
+    // Pad the 30-tile picture to the hardware map's 32-tile row width.
+    tile = PUBLISHER_LOGO_TILE;
+    map  = LOGO_MAP;
+    for (y = 0; y < DISPLAY_TILE_HEIGHT; y++)
+    {
+        for (x = 0; x < DISPLAY_TILE_WIDTH; x++)
+            *map++ = tile++;
+        *map++ = blank;
+        *map++ = blank;
+    }
+    for (y = 0; y < 4; y++)
+    {
+        BgScrollWork[y].y = 0;
+        BgScrollWork[y].x = 0;
+    }
+    syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
+    syWindowLoadGraphics();
+    syPrintClear();
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    if (mode == 0)
+    {
+        syScreenFadeFromBlack(1);
+        syScreenFadeWait();
+        for (y = 0; y < 2 * TICKS_PER_SECOND; y++)
+        {
+            if (PerWork.push & (KEY_A | KEY_START))
+            {
+                result = -1;
+                break;
+            }
+            sySynch(1);
+        }
+        return result;
+    }
+    for (y = 0; y < TICKS_PER_SECOND; y++)
+    {
+        if (PerWork.push & (KEY_A | KEY_START))
+        {
+            result = -1;
+            break;
+        }
+        sySynch(1);
+    }
+    if (result != 0)
+        syScreenFadeFromBlack(8);
+    else
+        syScreenFadeFromBlack(TICKS_PER_SECOND);
+    syScreenFadeWait();
+    if (result == 0)
+    {
+        for (y = 0; y < 3 * TICKS_PER_SECOND; y++)
+        {
+            if (PerWork.push & (KEY_A | KEY_START))
+            {
+                result = -1;
+                break;
+            }
+            sySynch(1);
+        }
+    }
+    if (result != 0)
+        syScreenFadeToBlack(8);
+    else
+        syScreenFadeToBlack(TICKS_PER_SECOND);
+    syScreenFadeWait();
+    return result;
 }
 
 // The Camelot logo's flag: four pictures of 16 tiles after the logo's own, each shown 8 ticks,
@@ -1281,53 +1281,53 @@ Sint32 mnTitleShowPublisherLogo(Sint32 mode)
 // early.
 Sint32 mnTitleShowCamelotLogo(void)
 {
-	Sint32 result;
-	Uint32 i;
-	Uint8 *buf;
-	Sint32 resource;
+    Sint32 result;
+    Uint32 i;
+    Uint8 *buf;
+    Sint32 resource;
 
-	OamCopyEnabled = 1;
-	result         = 0;
-	resource       = RESOURCE_CAMELOT_LOGO;
-	syInitEvent();
-	syScreenFadeToBlack(1);
-	syPrintClear();
-	sySynch(1);
-	REG_BG2CNT        = LOGO_BGCNT | BGCNT_CHAR_BASE(1);
-	REG_DISPCNT       = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-	BgScrollWork[2].y = result;
-	buf               = syResourceGetTableEntry(resource);
-	syDecompressTaggedLZ(buf, RamMapMetatileBuffer);
-	// The unpacked resource: 224 colours, the map, the still tiles, then the flag's four pictures.
-	buf = RamMapMetatileBuffer;
-	syDMAXCopy(buf, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
-	buf += LOGO_PALETTE_BYTES;
-	syDMAXCopy(buf, LOGO_MAP, DMA_COPY_WORDS(BG_SCREEN_SIZE / 4), REG_DMA3);
-	buf += BG_SCREEN_SIZE;
-	syDMAXCopy(buf, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4), REG_DMA3);
-	buf += BG_CHAR_SIZE;
-	for (i = 0; i < 4; i++)
-	{
-		BgScrollWork[i].y = 0;
-		BgScrollWork[i].x = 0;
-	}
-	syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-	syWindowLoadGraphics();
-	syPrintClear();
-	syScreenFadeFromWhite(1);
-	syScreenFadeWait();
-	REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-	for (i = 0; i < 2 * TICKS_PER_SECOND; i++)
-	{
-		syDMAXCopy(((TickCount >> 3) & 3) * CAMELOT_FLAG_PICTURE_BYTES + buf,
-		           BG_CHAR_BLOCK(1) + CAMELOT_FLAG_TILE * TILE_SIZE_8BPP,
-		           DMA_COPY_WORDS(CAMELOT_FLAG_BYTES / 4),
-		           REG_DMA3);
-		if (PerWork.push & (KEY_A | KEY_START))
-			break;
-		sySynch(1);
-	}
-	return result;
+    OamCopyEnabled = 1;
+    result         = 0;
+    resource       = RESOURCE_CAMELOT_LOGO;
+    syInitEvent();
+    syScreenFadeToBlack(1);
+    syPrintClear();
+    sySynch(1);
+    REG_BG2CNT        = LOGO_BGCNT | BGCNT_CHAR_BASE(1);
+    REG_DISPCNT       = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    BgScrollWork[2].y = result;
+    buf               = syResourceGetTableEntry(resource);
+    syDecompressTaggedLZ(buf, RamMapMetatileBuffer);
+    // The unpacked resource: 224 colours, the map, the still tiles, then the flag's four pictures.
+    buf = RamMapMetatileBuffer;
+    syDMAXCopy(buf, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
+    buf += LOGO_PALETTE_BYTES;
+    syDMAXCopy(buf, LOGO_MAP, DMA_COPY_WORDS(BG_SCREEN_SIZE / 4), REG_DMA3);
+    buf += BG_SCREEN_SIZE;
+    syDMAXCopy(buf, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4), REG_DMA3);
+    buf += BG_CHAR_SIZE;
+    for (i = 0; i < 4; i++)
+    {
+        BgScrollWork[i].y = 0;
+        BgScrollWork[i].x = 0;
+    }
+    syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
+    syWindowLoadGraphics();
+    syPrintClear();
+    syScreenFadeFromWhite(1);
+    syScreenFadeWait();
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    for (i = 0; i < 2 * TICKS_PER_SECOND; i++)
+    {
+        syDMAXCopy(((TickCount >> 3) & 3) * CAMELOT_FLAG_PICTURE_BYTES + buf,
+                   BG_CHAR_BLOCK(1) + CAMELOT_FLAG_TILE * TILE_SIZE_8BPP,
+                   DMA_COPY_WORDS(CAMELOT_FLAG_BYTES / 4),
+                   REG_DMA3);
+        if (PerWork.push & (KEY_A | KEY_START))
+            break;
+        sySynch(1);
+    }
+    return result;
 }
 
 // Unused: an empty entry the stub table keeps.
@@ -1346,22 +1346,22 @@ void mnTitleAfterIntroNoOperation(void)
 // the current components to the target (nothing when `ticks` is not positive).
 void mnTitlePaletteFadeCalculateSteps(Sint16 *current, Sint16 *target, Sint16 *step, Sint32 ticks)
 {
-	Sint32 n;
-	Sint32 from;
-	Sint32 to;
+    Sint32 n;
+    Sint32 from;
+    Sint32 to;
 
-	if (ticks > 0)
-	{
-		for (n = 0; n < TITLE_PALETTE_FADE_CHANNELS; n++)
-		{
-			from  = *current;
-			to    = *target;
-			*step = syIntegerDivide(to - from, ticks);
-			current++;
-			target++;
-			step++;
-		}
-	}
+    if (ticks > 0)
+    {
+        for (n = 0; n < TITLE_PALETTE_FADE_CHANNELS; n++)
+        {
+            from  = *current;
+            to    = *target;
+            *step = syIntegerDivide(to - from, ticks);
+            current++;
+            target++;
+            step++;
+        }
+    }
 }
 
 // An event added by mnTitlePaletteFadeInit: steps the palette fade each tick, adding the step to
@@ -1369,45 +1369,45 @@ void mnTitlePaletteFadeCalculateSteps(Sint16 *current, Sint16 *target, Sint16 *s
 // the palettes and queues both palettes for VBlank.
 void mnTitlePaletteFadeUpdate(void)
 {
-	TITLE_PALETTE_FADE *state = RamHeapSlots->paletteFade;
-	Uint16             *delta = state->delta;
-	Uint16             *current;
-	Uint16             *packed;
-	Sint32              i;
-	Uint16             *bank;
-	Sint32              blueMask;
+    TITLE_PALETTE_FADE *state = RamHeapSlots->paletteFade;
+    Uint16             *delta = state->delta;
+    Uint16             *current;
+    Uint16             *packed;
+    Sint32              i;
+    Uint16             *bank;
+    Sint32              blueMask;
 
-	if (state->duration == 0)
-		return;
-	if ((Sint8)++state->step < state->duration)
-	{
-		current = state->current;
-		for (i = 0; i <= TITLE_PALETTE_FADE_CHANNELS - 1; i++)
-			*current++ += *delta++;
-	}
-	else
-	{
-		syDMAXCopy(
-			state->target, state->current, DMA_COPY_WORDS(sizeof(state->current) / 4), REG_DMA3);
-		state->duration = 0;
-	}
-	// The queued DMA keeps a pointer until VBlank.
-	packed   = state->packed[state->page ^ 1];
-	blueMask = BLUE_BITS;
-	i        = PLTT_COLORS;
-	current  = state->current;
-	for (; i != 0; i--)
-	{
-		*packed++ = (current[0] & blueMask)
-		          | (((Sint16)current[1] >> (COMPONENT_SHIFT - RGB_GREEN_SHIFT)) & GREEN_BITS)
-		          | (((Sint16)current[2] >> COMPONENT_SHIFT) & RED_BITS);
-		current += 3;
-	}
-	state->page ^= 1;
-	bank         = state->packed[state->page];
-	IO_WRITE_QUEUE_PUSH((Uint32)BG_PLTT, (Uint32)bank, DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
-	IO_WRITE_QUEUE_PUSH(
-		(Uint32)OBJ_PLTT, (Uint32)(bank + BG_PLTT_COLORS), DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
+    if (state->duration == 0)
+        return;
+    if ((Sint8)++state->step < state->duration)
+    {
+        current = state->current;
+        for (i = 0; i <= TITLE_PALETTE_FADE_CHANNELS - 1; i++)
+            *current++ += *delta++;
+    }
+    else
+    {
+        syDMAXCopy(
+            state->target, state->current, DMA_COPY_WORDS(sizeof(state->current) / 4), REG_DMA3);
+        state->duration = 0;
+    }
+    // The queued DMA keeps a pointer until VBlank.
+    packed   = state->packed[state->page ^ 1];
+    blueMask = BLUE_BITS;
+    i        = PLTT_COLORS;
+    current  = state->current;
+    for (; i != 0; i--)
+    {
+        *packed++ = (current[0] & blueMask)
+                  | (((Sint16)current[1] >> (COMPONENT_SHIFT - RGB_GREEN_SHIFT)) & GREEN_BITS)
+                  | (((Sint16)current[2] >> COMPONENT_SHIFT) & RED_BITS);
+        current += 3;
+    }
+    state->page ^= 1;
+    bank         = state->packed[state->page];
+    IO_WRITE_QUEUE_PUSH((Uint32)BG_PLTT, (Uint32)bank, DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
+    IO_WRITE_QUEUE_PUSH(
+        (Uint32)OBJ_PLTT, (Uint32)(bank + BG_PLTT_COLORS), DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
 }
 
 // Tints 512 source colours into destination components (three per colour, each in the high bits of
@@ -1418,339 +1418,339 @@ void mnTitlePaletteFadeUpdate(void)
 // is an enum PALETTE_SELECTION.
 void mnTitlePaletteFadeBuildColors(Uint32 tint, Uint16 *src, Uint16 *dest, Sint32 selectedPalettes)
 {
-	Uint32 colorIndex;
-	Uint32 colorCount = PLTT_COLORS;
-	Sint32 red;
-	Sint32 blue;
-	Uint32 color;
-	Sint32 green;
-	Sint32 tintedRed;
+    Uint32 colorIndex;
+    Uint32 colorCount = PLTT_COLORS;
+    Sint32 red;
+    Sint32 blue;
+    Uint32 color;
+    Sint32 green;
+    Sint32 tintedRed;
 
-	if (tint == PALETTE_TINT_FROM_SOURCE)
-		tint = *src;
-	if (selectedPalettes == PALETTES_BG)
-	{
-		colorCount = BG_PLTT_COLORS;
-	}
-	else if (selectedPalettes == PALETTES_OBJECTS)
-	{
-		dest       += 3 * BG_PLTT_COLORS;
-		src        += BG_PLTT_COLORS;
-		colorCount  = BG_PLTT_COLORS;
-	}
+    if (tint == PALETTE_TINT_FROM_SOURCE)
+        tint = *src;
+    if (selectedPalettes == PALETTES_BG)
+    {
+        colorCount = BG_PLTT_COLORS;
+    }
+    else if (selectedPalettes == PALETTES_OBJECTS)
+    {
+        dest       += 3 * BG_PLTT_COLORS;
+        src        += BG_PLTT_COLORS;
+        colorCount  = BG_PLTT_COLORS;
+    }
 
-	if (tint < PALETTE_TINT_FROM_SOURCE)
-	{
-		*dest++ = tint & BLUE_BITS;
-		*dest++ = (tint & GREEN_BITS) << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
-		*dest++ = (tint & RED_BITS) << COMPONENT_SHIFT;
-		syDMAXCopy(dest - 3, dest, DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
-	}
-	else if (tint < PALETTE_TINT_FLAGS)
-	{
-		switch (tint)
-		{
-			case PALETTE_TINT_GRAYSCALE:
-				for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					color = *src++;
-					red   = ((color << BRIGHTNESS_RED_SHIFT) & (RED_BITS << BRIGHTNESS_RED_SHIFT));
-					green = ((color << BRIGHTNESS_GREEN_SHIFT)
-					         & (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
-					blue  = (color & BLUE_BITS);
-					color = syIntegerDivide(red + green + blue, 2 + 4 + 1);
-					*dest++ = color;
-					*dest++ = color;
-					*dest++ = color;
-				}
-				break;
-			case PALETTE_TINT_SEPIA:
-				for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					color = *src++;
-					red   = RGB_RED(color);
-					green = RGB_GREEN(color);
-					blue  = RGB_BLUE(color);
-					color = syIntegerDivide(red + green + blue, SEPIA_SHADE_DIVISOR);
-					red   = color * 4 + 5;
-					blue  = color * 3 + 5;
-					green = color * 3 + 5;
-					if (red < SEPIA_LEVEL_MIN)
-						red = SEPIA_LEVEL_MIN;
-					if (green < SEPIA_LEVEL_MIN)
-						green = SEPIA_LEVEL_MIN;
-					if (blue < SEPIA_LEVEL_MIN)
-						blue = SEPIA_LEVEL_MIN;
-					if (red > SEPIA_LEVEL_MAX)
-						red = SEPIA_LEVEL_MAX;
-					if (green > SEPIA_LEVEL_MAX)
-						green = SEPIA_LEVEL_MAX;
-					if (blue > SEPIA_LEVEL_MAX)
-						blue = SEPIA_LEVEL_MAX;
-					*dest++ = TitlePaletteFadeChannelCurveLight[blue];
-					*dest++ = TitlePaletteFadeChannelCurveLight[green];
-					*dest++ = TitlePaletteFadeChannelCurveLight[red];
-				}
-				break;
-			// The same as PALETTE_TINT_WARM_DARK below, where the field's fade warms more.
-			case PALETTE_TINT_WARM:
-				for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					color  = *src++;
-					red    = RGB_RED(color);
-					green  = RGB_GREEN(color);
-					blue   = RGB_BLUE(color);
-					red   -= (Uint32)red >> 1;
-					green -= green / 3;
-					red   += 6;
-					green += 4;
-					blue  -= 6;
-					red    = mnTitlePaletteFadeClampChannel(red);
-					green  = mnTitlePaletteFadeClampChannel(green);
-					blue   = mnTitlePaletteFadeClampChannel(blue);
-					SET_VECTOR(dest,
-					           TitlePaletteFadeChannelCurveContrast[blue],
-					           TitlePaletteFadeChannelCurveLight[green],
-					           TitlePaletteFadeChannelCurve[red]);
-					dest += 3;
-				}
-				break;
-			case PALETTE_TINT_MUTED:
-				for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					color = *src++;
-					red   = RGB_RED(color);
-					green = RGB_GREEN(color);
-					blue  = RGB_BLUE(color);
-					if (red < MUTED_RED_MIN)
-						red = MUTED_RED_MIN;
-					if (green < MUTED_GREEN_MIN)
-						green = MUTED_GREEN_MIN;
-					if (blue < MUTED_BLUE_MIN)
-						blue = MUTED_BLUE_MIN;
-					if (red > MUTED_RED_MAX)
-						red = MUTED_RED_MAX;
-					if (green > MUTED_GREEN_MAX)
-						green = MUTED_GREEN_MAX;
-					if (blue > MUTED_BLUE_MAX)
-						blue = MUTED_BLUE_MAX;
-					green   += 2;
-					blue    += 2;
-					red      = mnTitlePaletteFadeClampChannel(red);
-					green    = mnTitlePaletteFadeClampChannel(green);
-					blue     = mnTitlePaletteFadeClampChannel(blue);
-					*dest++  = TitlePaletteFadeChannelCurve[blue];
-					*dest++  = TitlePaletteFadeChannelCurve[green];
-					*dest++  = TitlePaletteFadeChannelCurve[red];
-				}
-				break;
-			case PALETTE_TINT_PALE:
-				for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					Sint32 mean;
+    if (tint < PALETTE_TINT_FROM_SOURCE)
+    {
+        *dest++ = tint & BLUE_BITS;
+        *dest++ = (tint & GREEN_BITS) << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
+        *dest++ = (tint & RED_BITS) << COMPONENT_SHIFT;
+        syDMAXCopy(dest - 3, dest, DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
+    }
+    else if (tint < PALETTE_TINT_FLAGS)
+    {
+        switch (tint)
+        {
+            case PALETTE_TINT_GRAYSCALE:
+                for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+                {
+                    color = *src++;
+                    red   = ((color << BRIGHTNESS_RED_SHIFT) & (RED_BITS << BRIGHTNESS_RED_SHIFT));
+                    green = ((color << BRIGHTNESS_GREEN_SHIFT)
+                             & (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
+                    blue  = (color & BLUE_BITS);
+                    color = syIntegerDivide(red + green + blue, 2 + 4 + 1);
+                    *dest++ = color;
+                    *dest++ = color;
+                    *dest++ = color;
+                }
+                break;
+            case PALETTE_TINT_SEPIA:
+                for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+                {
+                    color = *src++;
+                    red   = RGB_RED(color);
+                    green = RGB_GREEN(color);
+                    blue  = RGB_BLUE(color);
+                    color = syIntegerDivide(red + green + blue, SEPIA_SHADE_DIVISOR);
+                    red   = color * 4 + 5;
+                    blue  = color * 3 + 5;
+                    green = color * 3 + 5;
+                    if (red < SEPIA_LEVEL_MIN)
+                        red = SEPIA_LEVEL_MIN;
+                    if (green < SEPIA_LEVEL_MIN)
+                        green = SEPIA_LEVEL_MIN;
+                    if (blue < SEPIA_LEVEL_MIN)
+                        blue = SEPIA_LEVEL_MIN;
+                    if (red > SEPIA_LEVEL_MAX)
+                        red = SEPIA_LEVEL_MAX;
+                    if (green > SEPIA_LEVEL_MAX)
+                        green = SEPIA_LEVEL_MAX;
+                    if (blue > SEPIA_LEVEL_MAX)
+                        blue = SEPIA_LEVEL_MAX;
+                    *dest++ = TitlePaletteFadeChannelCurveLight[blue];
+                    *dest++ = TitlePaletteFadeChannelCurveLight[green];
+                    *dest++ = TitlePaletteFadeChannelCurveLight[red];
+                }
+                break;
+            // The same as PALETTE_TINT_WARM_DARK below, where the field's fade warms more.
+            case PALETTE_TINT_WARM:
+                for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+                {
+                    color  = *src++;
+                    red    = RGB_RED(color);
+                    green  = RGB_GREEN(color);
+                    blue   = RGB_BLUE(color);
+                    red   -= (Uint32)red >> 1;
+                    green -= green / 3;
+                    red   += 6;
+                    green += 4;
+                    blue  -= 6;
+                    red    = mnTitlePaletteFadeClampChannel(red);
+                    green  = mnTitlePaletteFadeClampChannel(green);
+                    blue   = mnTitlePaletteFadeClampChannel(blue);
+                    SET_VECTOR(dest,
+                               TitlePaletteFadeChannelCurveContrast[blue],
+                               TitlePaletteFadeChannelCurveLight[green],
+                               TitlePaletteFadeChannelCurve[red]);
+                    dest += 3;
+                }
+                break;
+            case PALETTE_TINT_MUTED:
+                for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+                {
+                    color = *src++;
+                    red   = RGB_RED(color);
+                    green = RGB_GREEN(color);
+                    blue  = RGB_BLUE(color);
+                    if (red < MUTED_RED_MIN)
+                        red = MUTED_RED_MIN;
+                    if (green < MUTED_GREEN_MIN)
+                        green = MUTED_GREEN_MIN;
+                    if (blue < MUTED_BLUE_MIN)
+                        blue = MUTED_BLUE_MIN;
+                    if (red > MUTED_RED_MAX)
+                        red = MUTED_RED_MAX;
+                    if (green > MUTED_GREEN_MAX)
+                        green = MUTED_GREEN_MAX;
+                    if (blue > MUTED_BLUE_MAX)
+                        blue = MUTED_BLUE_MAX;
+                    green   += 2;
+                    blue    += 2;
+                    red      = mnTitlePaletteFadeClampChannel(red);
+                    green    = mnTitlePaletteFadeClampChannel(green);
+                    blue     = mnTitlePaletteFadeClampChannel(blue);
+                    *dest++  = TitlePaletteFadeChannelCurve[blue];
+                    *dest++  = TitlePaletteFadeChannelCurve[green];
+                    *dest++  = TitlePaletteFadeChannelCurve[red];
+                }
+                break;
+            case PALETTE_TINT_PALE:
+                for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+                {
+                    Sint32 mean;
 
-					color = *src++;
-					red   = RGB_RED(color);
-					green = RGB_GREEN(color);
-					blue  = RGB_BLUE(color);
-					mean  = mnTitlePaletteFadeClampChannel((red + green + blue) / 3);
-					red   = (red >> 1) + mean;
-					green = (green >> 1) + mean;
-					blue  = (blue >> 1) + mean;
-					red   = mnTitlePaletteFadeClampChannel(red);
-					green = mnTitlePaletteFadeClampChannel(green);
-					blue  = mnTitlePaletteFadeClampChannel(blue);
-					SET_VECTOR(dest,
-					           TitlePaletteFadeChannelCurveContrast[blue],
-					           TitlePaletteFadeChannelCurveContrast[green],
-					           TitlePaletteFadeChannelCurveContrast[red]);
-					dest += 3;
-				}
-				break;
-			case PALETTE_TINT_RED:
-				for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					color  = *src++;
-					green  = RGB_GREEN(color);
-					red    = RGB_RED(color);
-					blue   = RGB_BLUE(color);
-					red   += ((green >> 3) + (blue >> 3));
-					red    = mnTitlePaletteFadeClampChannel(red);
-					green -= green / 3;
-					blue  -= blue / 3;
-					SET_VECTOR(dest,
-					           TitlePaletteFadeChannelCurve[blue],
-					           TitlePaletteFadeChannelCurve[green],
-					           TitlePaletteFadeChannelCurveLight[red]);
-					dest += 3;
-				}
-				break;
-			case PALETTE_TINT_WARM_DARK:
-				for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					color  = *src++;
-					red    = RGB_RED(color);
-					green  = RGB_GREEN(color);
-					blue   = RGB_BLUE(color);
-					red   -= (Uint32)red >> 1;
-					green -= green / 3;
-					red   += 6;
-					green += 4;
-					blue  -= 6;
-					red    = mnTitlePaletteFadeClampChannel(red);
-					green  = mnTitlePaletteFadeClampChannel(green);
-					blue   = mnTitlePaletteFadeClampChannel(blue);
-					SET_VECTOR(dest,
-					           TitlePaletteFadeChannelCurveContrast[blue],
-					           TitlePaletteFadeChannelCurveLight[green],
-					           TitlePaletteFadeChannelCurve[red]);
-					dest += 3;
-				}
-				break;
-			default:
-				for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					color                    = *src++;
-					dest[colorIndex * 3 + 0] = color & BLUE_BITS;
-					dest[colorIndex * 3 + 1] = (color & GREEN_BITS)
-					                        << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
-					dest[colorIndex * 3 + 2] = (color & RED_BITS) << COMPONENT_SHIFT;
-				}
-				break;
-		}
-	}
-	else if (tint & PALETTE_TINT_CUSTOM)
-	{
-		Uint32 tintRed;
-		Uint32 tintGreen;
-		Uint32 tintBlue;
+                    color = *src++;
+                    red   = RGB_RED(color);
+                    green = RGB_GREEN(color);
+                    blue  = RGB_BLUE(color);
+                    mean  = mnTitlePaletteFadeClampChannel((red + green + blue) / 3);
+                    red   = (red >> 1) + mean;
+                    green = (green >> 1) + mean;
+                    blue  = (blue >> 1) + mean;
+                    red   = mnTitlePaletteFadeClampChannel(red);
+                    green = mnTitlePaletteFadeClampChannel(green);
+                    blue  = mnTitlePaletteFadeClampChannel(blue);
+                    SET_VECTOR(dest,
+                               TitlePaletteFadeChannelCurveContrast[blue],
+                               TitlePaletteFadeChannelCurveContrast[green],
+                               TitlePaletteFadeChannelCurveContrast[red]);
+                    dest += 3;
+                }
+                break;
+            case PALETTE_TINT_RED:
+                for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+                {
+                    color  = *src++;
+                    green  = RGB_GREEN(color);
+                    red    = RGB_RED(color);
+                    blue   = RGB_BLUE(color);
+                    red   += ((green >> 3) + (blue >> 3));
+                    red    = mnTitlePaletteFadeClampChannel(red);
+                    green -= green / 3;
+                    blue  -= blue / 3;
+                    SET_VECTOR(dest,
+                               TitlePaletteFadeChannelCurve[blue],
+                               TitlePaletteFadeChannelCurve[green],
+                               TitlePaletteFadeChannelCurveLight[red]);
+                    dest += 3;
+                }
+                break;
+            case PALETTE_TINT_WARM_DARK:
+                for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+                {
+                    color  = *src++;
+                    red    = RGB_RED(color);
+                    green  = RGB_GREEN(color);
+                    blue   = RGB_BLUE(color);
+                    red   -= (Uint32)red >> 1;
+                    green -= green / 3;
+                    red   += 6;
+                    green += 4;
+                    blue  -= 6;
+                    red    = mnTitlePaletteFadeClampChannel(red);
+                    green  = mnTitlePaletteFadeClampChannel(green);
+                    blue   = mnTitlePaletteFadeClampChannel(blue);
+                    SET_VECTOR(dest,
+                               TitlePaletteFadeChannelCurveContrast[blue],
+                               TitlePaletteFadeChannelCurveLight[green],
+                               TitlePaletteFadeChannelCurve[red]);
+                    dest += 3;
+                }
+                break;
+            default:
+                for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+                {
+                    color                    = *src++;
+                    dest[colorIndex * 3 + 0] = color & BLUE_BITS;
+                    dest[colorIndex * 3 + 1] = (color & GREEN_BITS)
+                                            << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
+                    dest[colorIndex * 3 + 2] = (color & RED_BITS) << COMPONENT_SHIFT;
+                }
+                break;
+        }
+    }
+    else if (tint & PALETTE_TINT_CUSTOM)
+    {
+        Uint32 tintRed;
+        Uint32 tintGreen;
+        Uint32 tintBlue;
 
-		tintRed   = RGB_RED(tint);
-		tintGreen = RGB_GREEN(tint);
-		tintBlue  = RGB_BLUE(tint);
-		for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-		{
-			color = *src++;
-			red   = ((color << BRIGHTNESS_RED_SHIFT) & (RED_BITS << BRIGHTNESS_RED_SHIFT));
-			green = ((color << BRIGHTNESS_GREEN_SHIFT) & (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
-			blue  = (color & BLUE_BITS);
-			color = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
-			tintedRed                = color * tintRed;
-			green                    = color * tintGreen;
-			blue                     = color * tintBlue;
-			tintedRed                = mnTitlePaletteFadeClampShiftedChannel(tintedRed);
-			green                    = mnTitlePaletteFadeClampShiftedChannel(green);
-			blue                     = mnTitlePaletteFadeClampShiftedChannel(blue);
-			dest[colorIndex * 3 + 0] = blue;
-			dest[colorIndex * 3 + 1] = green;
-			dest[colorIndex * 3 + 2] = tintedRed;
-		}
-	}
-	else if (tint & PALETTE_TINT_BLEND)
-	{
-		Uint32 tintRed;
-		Uint32 tintGreen;
-		Uint32 tintBlue;
-		Sint32 scaledGreen;
-		Sint32 scaledBlue;
-		Sint32 clampedRed;
-		Sint32 clampedGreen;
-		Sint32 clampedBlue;
+        tintRed   = RGB_RED(tint);
+        tintGreen = RGB_GREEN(tint);
+        tintBlue  = RGB_BLUE(tint);
+        for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+        {
+            color = *src++;
+            red   = ((color << BRIGHTNESS_RED_SHIFT) & (RED_BITS << BRIGHTNESS_RED_SHIFT));
+            green = ((color << BRIGHTNESS_GREEN_SHIFT) & (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
+            blue  = (color & BLUE_BITS);
+            color = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
+            tintedRed                = color * tintRed;
+            green                    = color * tintGreen;
+            blue                     = color * tintBlue;
+            tintedRed                = mnTitlePaletteFadeClampShiftedChannel(tintedRed);
+            green                    = mnTitlePaletteFadeClampShiftedChannel(green);
+            blue                     = mnTitlePaletteFadeClampShiftedChannel(blue);
+            dest[colorIndex * 3 + 0] = blue;
+            dest[colorIndex * 3 + 1] = green;
+            dest[colorIndex * 3 + 2] = tintedRed;
+        }
+    }
+    else if (tint & PALETTE_TINT_BLEND)
+    {
+        Uint32 tintRed;
+        Uint32 tintGreen;
+        Uint32 tintBlue;
+        Sint32 scaledGreen;
+        Sint32 scaledBlue;
+        Sint32 clampedRed;
+        Sint32 clampedGreen;
+        Sint32 clampedBlue;
 
-		tintRed   = RGB_RED(tint);
-		tintGreen = RGB_GREEN(tint);
-		tintBlue  = RGB_BLUE(tint);
-		for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-		{
-			color     = *src++;
-			red       = RGB_RED(color);
-			green     = RGB_GREEN(color);
-			blue      = RGB_BLUE(color);
-			color     = syIntegerDivide((red + green + blue) << 4, tintRed + tintGreen + tintBlue);
-			tintedRed = syMulFX(toFIXED((color * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
-			scaledGreen =
-				syMulFX(toFIXED((color * tintGreen) >> 4), (Sint32)toFIXED(tintGreen) >> 4);
-			scaledBlue  = syMulFX(toFIXED((color * tintBlue) >> 4), (Sint32)toFIXED(tintBlue) >> 4);
-			tintedRed   = FIXEDtoINT((Uint32)tintedRed);
-			clampedRed  = mnTitlePaletteFadeClampChannel(tintedRed);
-			scaledGreen = FIXEDtoINT((Uint32)scaledGreen);
-			clampedGreen             = mnTitlePaletteFadeClampChannel(scaledGreen);
-			scaledBlue               = FIXEDtoINT((Uint32)scaledBlue);
-			clampedBlue              = mnTitlePaletteFadeClampChannel(scaledBlue);
-			dest[colorIndex * 3 + 0] = TitlePaletteFadeChannelCurve[clampedBlue];
-			dest[colorIndex * 3 + 1] = TitlePaletteFadeChannelCurve[clampedGreen];
-			dest[colorIndex * 3 + 2] = TitlePaletteFadeChannelCurve[clampedRed];
-		}
-	}
-	else if (tint & PALETTE_TINT_SPLIT)
-	{
-		for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
-		{
-			color                    = *src++;
-			dest[colorIndex * 3 + 0] = color & BLUE_BITS;
-			dest[colorIndex * 3 + 1] = (color & GREEN_BITS) << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
-			dest[colorIndex * 3 + 2] = (color & RED_BITS) << COMPONENT_SHIFT;
-		}
-	}
-	else
-	{
-		// past the background colours' components
-		if (selectedPalettes == PALETTES_OBJECTS)
-			tint += 3 * BG_PLTT_SIZE;
-		syDMAXCopy((const void *)tint, dest, DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
-	}
+        tintRed   = RGB_RED(tint);
+        tintGreen = RGB_GREEN(tint);
+        tintBlue  = RGB_BLUE(tint);
+        for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+        {
+            color     = *src++;
+            red       = RGB_RED(color);
+            green     = RGB_GREEN(color);
+            blue      = RGB_BLUE(color);
+            color     = syIntegerDivide((red + green + blue) << 4, tintRed + tintGreen + tintBlue);
+            tintedRed = syMulFX(toFIXED((color * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
+            scaledGreen =
+                syMulFX(toFIXED((color * tintGreen) >> 4), (Sint32)toFIXED(tintGreen) >> 4);
+            scaledBlue  = syMulFX(toFIXED((color * tintBlue) >> 4), (Sint32)toFIXED(tintBlue) >> 4);
+            tintedRed   = FIXEDtoINT((Uint32)tintedRed);
+            clampedRed  = mnTitlePaletteFadeClampChannel(tintedRed);
+            scaledGreen = FIXEDtoINT((Uint32)scaledGreen);
+            clampedGreen             = mnTitlePaletteFadeClampChannel(scaledGreen);
+            scaledBlue               = FIXEDtoINT((Uint32)scaledBlue);
+            clampedBlue              = mnTitlePaletteFadeClampChannel(scaledBlue);
+            dest[colorIndex * 3 + 0] = TitlePaletteFadeChannelCurve[clampedBlue];
+            dest[colorIndex * 3 + 1] = TitlePaletteFadeChannelCurve[clampedGreen];
+            dest[colorIndex * 3 + 2] = TitlePaletteFadeChannelCurve[clampedRed];
+        }
+    }
+    else if (tint & PALETTE_TINT_SPLIT)
+    {
+        for (colorIndex = 0; colorIndex < colorCount; colorIndex++)
+        {
+            color                    = *src++;
+            dest[colorIndex * 3 + 0] = color & BLUE_BITS;
+            dest[colorIndex * 3 + 1] = (color & GREEN_BITS) << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
+            dest[colorIndex * 3 + 2] = (color & RED_BITS) << COMPONENT_SHIFT;
+        }
+    }
+    else
+    {
+        // past the background colours' components
+        if (selectedPalettes == PALETTES_OBJECTS)
+            tint += 3 * BG_PLTT_SIZE;
+        syDMAXCopy((const void *)tint, dest, DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
+    }
 }
 
 // Allocates the palette fade, saves both hardware palettes in it as the starting colours and adds
 // the event mnTitlePaletteFadeUpdate.
 void mnTitlePaletteFadeInit(void)
 {
-	TITLE_PALETTE_FADE *buf;
+    TITLE_PALETTE_FADE *buf;
 
-	buf = syHeapSlotAllocateEWRAM(HEAP_SLOT_PALETTE_FADE, sizeof(*buf));
-	DMA_FILL32(0, buf, sizeof(*buf));
-	syDMAXCopy((void *)BG_PLTT, buf, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
-	syDMAXCopy((void *)OBJ_PLTT,
-	           &buf->palette[BG_PLTT_COLORS],
-	           DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
-	           REG_DMA3);
-	mnTitlePaletteFadeBuildColors(PALETTE_TINT_NONE, buf->palette, buf->target, PALETTES_ALL);
-	sySetEvent(mnTitlePaletteFadeUpdate, EVENT_PASS_TICK);
+    buf = syHeapSlotAllocateEWRAM(HEAP_SLOT_PALETTE_FADE, sizeof(*buf));
+    DMA_FILL32(0, buf, sizeof(*buf));
+    syDMAXCopy((void *)BG_PLTT, buf, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+    syDMAXCopy((void *)OBJ_PLTT,
+               &buf->palette[BG_PLTT_COLORS],
+               DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
+               REG_DMA3);
+    mnTitlePaletteFadeBuildColors(PALETTE_TINT_NONE, buf->palette, buf->target, PALETTES_ALL);
+    sySetEvent(mnTitlePaletteFadeUpdate, EVENT_PASS_TICK);
 }
 
 // Unused: removes the palette fade's event and frees its buffers.
 UNUSED void mnTitlePaletteFadeRelease(void)
 {
-	syCloseEvent(&mnTitlePaletteFadeUpdate);
-	syHeapSlotRelease(HEAP_SLOT_PALETTE_FADE);
+    syCloseEvent(&mnTitlePaletteFadeUpdate);
+    syHeapSlotRelease(HEAP_SLOT_PALETTE_FADE);
 }
 
 // Sets the fade target by tinting the saved background and/or sprite palettes with the requested
 // tint.
 void mnTitlePaletteFadeSetTarget(Sint32 tint, Sint32 selectedPalettes)
 {
-	TITLE_PALETTE_FADE *fade = RamHeapSlots->paletteFade;
+    TITLE_PALETTE_FADE *fade = RamHeapSlots->paletteFade;
 
-	if (fade != NULL)
-		mnTitlePaletteFadeBuildColors(tint, fade->palette, fade->target, selectedPalettes);
+    if (fade != NULL)
+        mnTitlePaletteFadeBuildColors(tint, fade->palette, fade->target, selectedPalettes);
 }
 
 // Sets the colours shown now by tinting the saved palettes.
 void mnTitlePaletteFadeSetCurrent(Sint32 tint, Sint32 selectedPalettes)
 {
-	TITLE_PALETTE_FADE *fade = RamHeapSlots->paletteFade;
+    TITLE_PALETTE_FADE *fade = RamHeapSlots->paletteFade;
 
-	if (fade != NULL)
-		mnTitlePaletteFadeBuildColors(tint, fade->palette, fade->current, selectedPalettes);
+    if (fade != NULL)
+        mnTitlePaletteFadeBuildColors(tint, fade->palette, fade->current, selectedPalettes);
 }
 
 // Unused: replaces the first saved colour, the backdrop.
 UNUSED void mnTitlePaletteFadeSetBackdrop(Sint32 color)
 {
-	TITLE_PALETTE_FADE *fade = RamHeapSlots->paletteFade;
+    TITLE_PALETTE_FADE *fade = RamHeapSlots->paletteFade;
 
-	if (fade != NULL)
-		fade->palette[0] = color;
+    if (fade != NULL)
+        fade->palette[0] = color;
 }
 
 // Starts fading the shown colours to the target over the requested ticks: each of the components
@@ -1758,32 +1758,32 @@ UNUSED void mnTitlePaletteFadeSetBackdrop(Sint32 color)
 // kept in the ten bits below it, so every colour arrives together.
 void mnTitlePaletteFadeStart(Sint32 ticks)
 {
-	TITLE_PALETTE_FADE *fade = RamHeapSlots->paletteFade;
+    TITLE_PALETTE_FADE *fade = RamHeapSlots->paletteFade;
 
-	if (fade != NULL)
-	{
-		fade->duration = ticks;
-		fade->step     = 0;
-		mnTitlePaletteFadeCalculateSteps(
-			(Sint16 *)fade->current, (Sint16 *)fade->target, (Sint16 *)fade->delta, ticks);
-	}
+    if (fade != NULL)
+    {
+        fade->duration = ticks;
+        fade->step     = 0;
+        mnTitlePaletteFadeCalculateSteps(
+            (Sint16 *)fade->current, (Sint16 *)fade->target, (Sint16 *)fade->delta, ticks);
+    }
 }
 
 // Holds a colour channel's level to 0 to 31.
 Sint32 mnTitlePaletteFadeClampChannel(Sint32 value)
 {
-	if (value > RGB_LEVEL_MAX)
-		return RGB_LEVEL_MAX;
-	if (value < 0)
-		value = 0;
-	return value;
+    if (value > RGB_LEVEL_MAX)
+        return RGB_LEVEL_MAX;
+    if (value < 0)
+        value = 0;
+    return value;
 }
 
 // Caps a colour component at a channel's brightest level shifted into the high bits. There is no
 // lower bound.
 Sint32 mnTitlePaletteFadeClampShiftedChannel(Sint32 value)
 {
-	if (value > RGB_LEVEL_MAX << COMPONENT_SHIFT)
-		value = RGB_LEVEL_MAX << COMPONENT_SHIFT;
-	return value;
+    if (value > RGB_LEVEL_MAX << COMPONENT_SHIFT)
+        value = RGB_LEVEL_MAX << COMPONENT_SHIFT;
+    return value;
 }

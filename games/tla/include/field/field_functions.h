@@ -36,13 +36,13 @@ void fdRenderApplyProjectedPlacement(struct SPR *sprite, Sint32 *pos, Sint32 *sc
 // shadow by twice its half size, and its tick and locals differ, so the two stay separate
 // functions.
 void fdRenderApplyProjectedPlacementAtDepth(
-	struct SPR *sprite, Sint32 *pos, Sint32 *scale, Sint32 mode, Sint32 depth);
+    struct SPR *sprite, Sint32 *pos, Sint32 *scale, Sint32 mode, Sint32 depth);
 // Places a sprite at a 3D point for the fixed camera and queues it for drawing: projected to the
 // screen and scaled by its distance (unless useOwnScale keeps its own scale), with an affine matrix
 // as needed and its shadow on the ground below. depth 0 sorts it by distance; any other value is
 // its draw slot.
 void fdRenderPlaceProjectedSprite(
-	struct SPR *sprite, Sint32 *point, Sint32 *scale, Sint32 facing, Sint32 depth);
+    struct SPR *sprite, Sint32 *point, Sint32 *scale, Sint32 facing, Sint32 depth);
 // Resets each sprite animation of a sprite from its animation's metadata: its facing kind,
 // pictures, scripts and codec, with no picture shown and no script running.
 Sint32                  fdSpriteResetAnimations(struct SPR *sprite);
@@ -206,22 +206,22 @@ Sint32 fdMapGridGetTerrainKindOrBumpAt(Sint32 layer, Sint32 x, Sint32 z);
 // Copies a rectangle of width by height metatiles from (srcX, srcY) to (destX, destY), their
 // pictures and their attributes both.
 void   fdMapCopyMetatilesRect(
-	  Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
+      Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
 // Copies the attributes and shapes of a rectangle of metatiles from (srcX, srcY) to (destX, destY),
 // width by height metatiles, keeping each destination's picture.
 void fdMapCopyMetatileAttributeRect(
-	Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
+    Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
 // Copies the drawn metatile tiles numbers (MAPGRID_DRAWN_PICTURE_MASK) of a rectangle of metatiles
 // from (srcX, srcY) to (destX, destY), width by height metatiles, keeping each destination's bits
 // above them, and redraws the copied metatiles that are on screen.
 // fdMapGridCopyMetatileTilesIndicesRect's loop with the narrower mask and the size before the
 // destination: the ROM keeps both.
 void fdMapGridCopyMetatileTilesMetatilesRect(
-	Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
+    Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
 // Copies a rectangle of map metatiles as they are, with their shape grid bytes, from (srcX, srcY)
 // to (destX, destY), width by height metatiles.
 void fdMapCopyRawMetatilesRect(
-	Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
+    Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
 // Puts world map tile (x / 16, y / 16) at metatile (metatileX / 16, metatileY /
 // 16) of the tile id grid, and draws it at once when it is next to the view.
 // metatileX and metatileY count 32-pixel world map blocks, so a grid metatile is a 512-pixel tile;

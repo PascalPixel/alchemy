@@ -10,8 +10,8 @@
 // BATTLE_EFFECT_PARM.side: the side the targets are on.
 typedef enum BATTLE_EFFECT_SIDE
 {
-	EFFECT_SIDE_ENEMIES,
-	EFFECT_SIDE_PARTY
+    EFFECT_SIDE_ENEMIES,
+    EFFECT_SIDE_PARTY
 } BATTLE_EFFECT_SIDE;
 
 // What a critical hit adds to an attack's effect kind: btStagingRunAttack plays the critical
@@ -23,17 +23,17 @@ typedef enum BATTLE_EFFECT_SIDE
 // The command shared by an effect's caller, dispatcher and handlers.
 typedef struct BATTLE_EFFECT_PARM
 {
-	// handler table index; a critical hit adds EFFECT_ID_CRITICAL_OFFSET
-	Sint32 kind;
-	Sint32 side;        // BATTLE_EFFECT_SIDE
-	Sint32 user;        // the user's unit id
-	Sint32 firstTarget; // the action's first target, standing or not
-	Sint32 range;       // forwarded action range, otherwise initialized to 1
-	Sint32 targetCount; // entries in targets, at least 1
-	Sint32 variant;     // the ability's size, from 0 (Quake, then Earthquake)
-	Sint32 prelude;     // 1 plays a prelude: in some effects a Djinni appears
-	Sint32 unused;      // no code names it
-	Sint16 targets[8];  // the targets' unit ids, count of them
+    // handler table index; a critical hit adds EFFECT_ID_CRITICAL_OFFSET
+    Sint32 kind;
+    Sint32 side;        // BATTLE_EFFECT_SIDE
+    Sint32 user;        // the user's unit id
+    Sint32 firstTarget; // the action's first target, standing or not
+    Sint32 range;       // forwarded action range, otherwise initialized to 1
+    Sint32 targetCount; // entries in targets, at least 1
+    Sint32 variant;     // the ability's size, from 0 (Quake, then Earthquake)
+    Sint32 prelude;     // 1 plays a prelude: in some effects a Djinni appears
+    Sint32 unused;      // no code names it
+    Sint16 targets[8];  // the targets' unit ids, count of them
 } BATTLE_EFFECT_PARM;
 
 STATIC_ASSERT(sizeof(BATTLE_EFFECT_PARM) == 52);

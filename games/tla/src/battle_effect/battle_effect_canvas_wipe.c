@@ -20,68 +20,68 @@
 // fill: what the wipe leaves (CANVAS_FILL).
 void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 {
-	BATTLE_EFFECT_STATE *state;
-	Uint8               *canvas;
-	Uint8                delay[CANVAS_SIZE];
-	Sint32               x;
-	Sint32               y;
-	Sint32               wipePos;
+    BATTLE_EFFECT_STATE *state;
+    Uint8               *canvas;
+    Uint8                delay[CANVAS_SIZE];
+    Sint32               x;
+    Sint32               y;
+    Sint32               wipePos;
 
-	canvas = RamHeapSlots->battleCanvas;
-	state  = RamHeapSlots->battleEffect;
-	for (x = 0; x != CANVAS_SIZE; x++)
-		delay[x] = syRandom() & WIPE_LAG_MAX;
+    canvas = RamHeapSlots->battleCanvas;
+    state  = RamHeapSlots->battleEffect;
+    for (x = 0; x != CANVAS_SIZE; x++)
+        delay[x] = syRandom() & WIPE_LAG_MAX;
 
-	if (direction == CANVAS_WIPE_ACROSS)
-	{
-		Sint32 front;
-		Sint32 speed;
+    if (direction == CANVAS_WIPE_ACROSS)
+    {
+        Sint32 front;
+        Sint32 speed;
 
-		front = 0;
-		speed = 1;
-		x     = 0;
-		do
-		{
-			front += speed;
-			speed++;
-			for (; x != front; x++)
-			{
-				for (y = 0; y != CANVAS_SIZE; y++)
-				{
-					wipePos = x - delay[y];
-					if (wipePos >= 0)
-						if (wipePos < CANVAS_SIZE)
-							canvas[CANVAS_PIXEL_OFFSET(wipePos, y)] = 1 - fill;
-				}
-			}
-			EFFECT_PRESENT_CANVAS(state);
-		} while (front <= WIPE_ACROSS_END);
-	}
-	else if (direction != CANVAS_WIPE_NONE)
-	{
-		Sint32 front;
-		Sint32 speed;
+        front = 0;
+        speed = 1;
+        x     = 0;
+        do
+        {
+            front += speed;
+            speed++;
+            for (; x != front; x++)
+            {
+                for (y = 0; y != CANVAS_SIZE; y++)
+                {
+                    wipePos = x - delay[y];
+                    if (wipePos >= 0)
+                        if (wipePos < CANVAS_SIZE)
+                            canvas[CANVAS_PIXEL_OFFSET(wipePos, y)] = 1 - fill;
+                }
+            }
+            EFFECT_PRESENT_CANVAS(state);
+        } while (front <= WIPE_ACROSS_END);
+    }
+    else if (direction != CANVAS_WIPE_NONE)
+    {
+        Sint32 front;
+        Sint32 speed;
 
-		front = 0;
-		speed = 1;
-		y     = 0;
-		do
-		{
-			front += speed / 2;
-			speed += 4;
-			for (; y != front; y++)
-			{
-				for (x = 0; x != CANVAS_SIZE; x++)
-				{
-					wipePos = y - delay[x];
-					if (wipePos >= 0)
-						if (wipePos < CANVAS_SIZE)
-							canvas[CANVAS_PIXEL_OFFSET(x, wipePos)] = 1 - fill;
-				}
-			}
-			EFFECT_PRESENT_CANVAS(state);
-		} while (front <= CANVAS_SIZE + WIPE_LAG_MAX);
-	}
+        front = 0;
+        speed = 1;
+        y     = 0;
+        do
+        {
+            front += speed / 2;
+            speed += 4;
+            for (; y != front; y++)
+            {
+                for (x = 0; x != CANVAS_SIZE; x++)
+                {
+                    wipePos = y - delay[x];
+                    if (wipePos >= 0)
+                        if (wipePos < CANVAS_SIZE)
+                            canvas[CANVAS_PIXEL_OFFSET(x, wipePos)] = 1 - fill;
+                }
+            }
+            EFFECT_PRESENT_CANVAS(state);
+        } while (front <= CANVAS_SIZE + WIPE_LAG_MAX);
+    }
 }
 
 #undef WIPE_LAG_MAX

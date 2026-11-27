@@ -24,56 +24,56 @@ struct SUMMON_DEFINITION;
 // animation.
 typedef enum FIELD_PSY
 {
-	FIELD_PSYNERGY_MOVE      = 1,
-	FIELD_PSYNERGY_MIND_READ = 2,
-	FIELD_PSYNERGY_PLY       = 3,
-	FIELD_PSYNERGY_FORCE     = 4,
-	FIELD_PSYNERGY_DOUSE     = 5,
-	FIELD_PSYNERGY_FROST     = 6,
-	FIELD_PSYNERGY_LIFT      = 7,
-	FIELD_PSYNERGY_REVEAL    = 8,
-	FIELD_PSYNERGY_HALT      = 9,
-	FIELD_PSYNERGY_CLOAK     = 10,
-	FIELD_PSYNERGY_CARRY     = 11,
-	FIELD_PSYNERGY_GROWTH    = 12,
-	FIELD_PSYNERGY_CATCH     = 13,
-	// Whirlwind and Gale.
-	FIELD_PSYNERGY_WHIRLWIND = 14,
-	FIELD_PSYNERGY_RETREAT   = 15,
-	FIELD_PSYNERGY_AVOID     = 16,
-	FIELD_PSYNERGY_LASH      = 17,
-	FIELD_PSYNERGY_POUND     = 18,
-	FIELD_PSYNERGY_TREMOR    = 19,
-	FIELD_PSYNERGY_SCOOP     = 20,
-	FIELD_PSYNERGY_BURST     = 21,
-	FIELD_PSYNERGY_PARCH     = 22,
-	FIELD_PSYNERGY_SAND      = 23,
-	FIELD_PSYNERGY_HOVER     = 24,
-	FIELD_PSYNERGY_CYCLONE   = 25,
-	FIELD_PSYNERGY_BLAZE     = 26,
-	FIELD_PSYNERGY_GRIND     = 27,
-	// The two abilities whose names are question marks.
-	FIELD_PSYNERGY_RING      = 28,
-	FIELD_PSYNERGY_ARROW     = 29,
-	FIELD_PSYNERGY_TELEPORT  = 30
+    FIELD_PSYNERGY_MOVE      = 1,
+    FIELD_PSYNERGY_MIND_READ = 2,
+    FIELD_PSYNERGY_PLY       = 3,
+    FIELD_PSYNERGY_FORCE     = 4,
+    FIELD_PSYNERGY_DOUSE     = 5,
+    FIELD_PSYNERGY_FROST     = 6,
+    FIELD_PSYNERGY_LIFT      = 7,
+    FIELD_PSYNERGY_REVEAL    = 8,
+    FIELD_PSYNERGY_HALT      = 9,
+    FIELD_PSYNERGY_CLOAK     = 10,
+    FIELD_PSYNERGY_CARRY     = 11,
+    FIELD_PSYNERGY_GROWTH    = 12,
+    FIELD_PSYNERGY_CATCH     = 13,
+    // Whirlwind and Gale.
+    FIELD_PSYNERGY_WHIRLWIND = 14,
+    FIELD_PSYNERGY_RETREAT   = 15,
+    FIELD_PSYNERGY_AVOID     = 16,
+    FIELD_PSYNERGY_LASH      = 17,
+    FIELD_PSYNERGY_POUND     = 18,
+    FIELD_PSYNERGY_TREMOR    = 19,
+    FIELD_PSYNERGY_SCOOP     = 20,
+    FIELD_PSYNERGY_BURST     = 21,
+    FIELD_PSYNERGY_PARCH     = 22,
+    FIELD_PSYNERGY_SAND      = 23,
+    FIELD_PSYNERGY_HOVER     = 24,
+    FIELD_PSYNERGY_CYCLONE   = 25,
+    FIELD_PSYNERGY_BLAZE     = 26,
+    FIELD_PSYNERGY_GRIND     = 27,
+    // The two abilities whose names are question marks.
+    FIELD_PSYNERGY_RING      = 28,
+    FIELD_PSYNERGY_ARROW     = 29,
+    FIELD_PSYNERGY_TELEPORT  = 30
 } FIELD_PSY;
 
 // A step of the current field Psynergy (fdPsynergyRunHandler).
 typedef enum FIELD_PSYNERGY_HANDLER
 {
-	// Casts it with no target (fdPsynergyRun).
-	FIELD_PSYNERGY_HANDLER_UNTARGETED = 0,
-	// Casts it on its target, secondActorId (fdPsynergyDispatch).
-	FIELD_PSYNERGY_HANDLER_ON_TARGET  = 1,
-	FIELD_PSYNERGY_HANDLER_FINISH     = 2, // finishes it
-	FIELD_PSYNERGY_HANDLER_EXTRA      = 3  // runs its kind's extra handler
+    // Casts it with no target (fdPsynergyRun).
+    FIELD_PSYNERGY_HANDLER_UNTARGETED = 0,
+    // Casts it on its target, secondActorId (fdPsynergyDispatch).
+    FIELD_PSYNERGY_HANDLER_ON_TARGET  = 1,
+    FIELD_PSYNERGY_HANDLER_FINISH     = 2, // finishes it
+    FIELD_PSYNERGY_HANDLER_EXTRA      = 3  // runs its kind's extra handler
 } FIELD_PSYNERGY_HANDLER;
 
 // The elemental power and resistance of one element level, in ElementPowerResistByLevel.
 typedef struct ELEMENT_LEVEL_BONUS
 {
-	Uint16 power;      // base power, before the tenths of a level
-	Uint16 resistance; // base resistance, likewise
+    Uint16 power;      // base power, before the tenths of a level
+    Uint16 resistance; // base resistance, likewise
 } ELEMENT_LEVEL_BONUS;
 
 extern const ITEM_DEFINITION   ItemDefinitionTable[];
@@ -116,35 +116,35 @@ void   mnMessageDecodeRawUnboundedStub(Sint32 msg, Uint16 *text);
 // (summon_table.c): the elements' own four, The Broken Seal's twelve, then this game's thirteen.
 typedef enum SUMMON_ID
 {
-	SUMMON_VENUS,
-	SUMMON_MERCURY,
-	SUMMON_MARS,
-	SUMMON_JUPITER,
-	SUMMON_RAMSES,
-	SUMMON_NEREID,
-	SUMMON_KIRIN,
-	SUMMON_ATALANTA,
-	SUMMON_CYBELE,
-	SUMMON_NEPTUNE,
-	SUMMON_TIAMAT,
-	SUMMON_PROCNE,
-	SUMMON_JUDGMENT,
-	SUMMON_BOREAS,
-	SUMMON_METEOR,
-	SUMMON_THOR,
-	SUMMON_ZAGAN,
-	SUMMON_MEGAERA,
-	SUMMON_FLORA,
-	SUMMON_MOLOCH,
-	SUMMON_ULYSSES,
-	SUMMON_HAURES,
-	SUMMON_ECLIPSE,
-	SUMMON_COATLICUE,
-	SUMMON_DAEDALUS,
-	SUMMON_AZUL,
-	SUMMON_CATASTROPHE,
-	SUMMON_CHARON,
-	SUMMON_IRIS
+    SUMMON_VENUS,
+    SUMMON_MERCURY,
+    SUMMON_MARS,
+    SUMMON_JUPITER,
+    SUMMON_RAMSES,
+    SUMMON_NEREID,
+    SUMMON_KIRIN,
+    SUMMON_ATALANTA,
+    SUMMON_CYBELE,
+    SUMMON_NEPTUNE,
+    SUMMON_TIAMAT,
+    SUMMON_PROCNE,
+    SUMMON_JUDGMENT,
+    SUMMON_BOREAS,
+    SUMMON_METEOR,
+    SUMMON_THOR,
+    SUMMON_ZAGAN,
+    SUMMON_MEGAERA,
+    SUMMON_FLORA,
+    SUMMON_MOLOCH,
+    SUMMON_ULYSSES,
+    SUMMON_HAURES,
+    SUMMON_ECLIPSE,
+    SUMMON_COATLICUE,
+    SUMMON_DAEDALUS,
+    SUMMON_AZUL,
+    SUMMON_CATASTROPHE,
+    SUMMON_CHARON,
+    SUMMON_IRIS
 } SUMMON_ID;
 
 // Ends the summon lists, and marks a summon already moved to the front.

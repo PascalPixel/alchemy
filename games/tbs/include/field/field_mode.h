@@ -26,84 +26,84 @@ struct WINDOW;
 // (fdModeRun).
 typedef enum LEADER_MOVEMENT_MODE
 {
-	// Walking: the pad moves the leader, on the World Map or a layered map.
-	LEADER_MOVEMENT_WALK     = 0,
-	LEADER_MOVEMENT_CLIMB    = 1, // on a climbable wall, moved 8 pixels a step
-	                           // Carried through the air (Suhalla Desert's storms, the World Map's
-	                           // airborne travel): only the configured keys are checked.
-	LEADER_MOVEMENT_AIRBORNE = 2
+    // Walking: the pad moves the leader, on the World Map or a layered map.
+    LEADER_MOVEMENT_WALK     = 0,
+    LEADER_MOVEMENT_CLIMB    = 1, // on a climbable wall, moved 8 pixels a step
+                               // Carried through the air (Suhalla Desert's storms, the World Map's
+                               // airborne travel): only the configured keys are checked.
+    LEADER_MOVEMENT_AIRBORNE = 2
 } LEADER_MOVEMENT_MODE;
 
 // A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s low byte, which
 // fdScreenTransitionUpdateScanlineTable draws.
 typedef enum WINDOW_TRANSITION_MODE
 {
-	WINDOW_TRANSITION_BARS            = 0, // a bar on each line, at random
-	WINDOW_TRANSITION_SHAPE           = 1, // a shape from ScreenTransitionShapes
-	WINDOW_TRANSITION_NOISE           = 2, // ragged lines from the left edge
-	WINDOW_TRANSITION_CIRCLE          = 3, // a circle at the screen's centre
-	// Alternate lines wiping in from the left and the right.
-	WINDOW_TRANSITION_INTERLACED_WIPE = 4,
-	// As WINDOW_TRANSITION_LEADER with inside and outside swapped and the progress run the other
-	// way; it flickers.
-	WINDOW_TRANSITION_LEADER_INVERSE  = 7,
-	// An ellipse around a point (the state's centre) whose outline ripples: Reveal's.
-	WINDOW_TRANSITION_RIPPLE          = 8,
-	// An ellipse wider than tall around the party leader, 16 pixels above its feet.
-	WINDOW_TRANSITION_LEADER          = 9,
-	// An ellipse a little taller than wide, 8 pixels above the leader's feet.
-	WINDOW_TRANSITION_LEADER_LOW      = 77
+    WINDOW_TRANSITION_BARS            = 0, // a bar on each line, at random
+    WINDOW_TRANSITION_SHAPE           = 1, // a shape from ScreenTransitionShapes
+    WINDOW_TRANSITION_NOISE           = 2, // ragged lines from the left edge
+    WINDOW_TRANSITION_CIRCLE          = 3, // a circle at the screen's centre
+    // Alternate lines wiping in from the left and the right.
+    WINDOW_TRANSITION_INTERLACED_WIPE = 4,
+    // As WINDOW_TRANSITION_LEADER with inside and outside swapped and the progress run the other
+    // way; it flickers.
+    WINDOW_TRANSITION_LEADER_INVERSE  = 7,
+    // An ellipse around a point (the state's centre) whose outline ripples: Reveal's.
+    WINDOW_TRANSITION_RIPPLE          = 8,
+    // An ellipse wider than tall around the party leader, 16 pixels above its feet.
+    WINDOW_TRANSITION_LEADER          = 9,
+    // An ellipse a little taller than wide, 8 pixels above the leader's feet.
+    WINDOW_TRANSITION_LEADER_LOW      = 77
 } WINDOW_TRANSITION_MODE;
 
 // The encounter table's zones (encounter_zones.c's entries) that code names: the World Map's, two
 // to a region (its open ground, then its forest), and the rows no step on a map rolls.
 typedef enum ENCOUNTER_ZONE_ID
 {
-	ENCOUNTER_ZONE_NONE                            = 0, // no battles
-	ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT            = 7,
-	ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT_FOREST     = 8,
-	// The script battles of Vale's stormy night (its monsters, and the travelers who catch Isaac in
-	// Vale's plaza), Vault's thieves and the World Map's Djinn tutorial battle.
-	ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT             = 12,
-	ENCOUNTER_ZONE_WORLD_MAP_BILIBIN_KOLIMA        = 13,
-	ENCOUNTER_ZONE_WORLD_MAP_BILIBIN_KOLIMA_FOREST = 14,
-	ENCOUNTER_ZONE_WORLD_MAP_SNOWFIELD             = 29,
-	ENCOUNTER_ZONE_WORLD_MAP_SNOW_FOREST           = 30,
-	// The script battles of Tret Tree (Tret) and Mercury Lighthouse (the Lizard Man, then Saturos
-	// at the aerie).
-	ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY           = 36,
-	ENCOUNTER_ZONE_WORLD_MAP_FUCHIN                = 37,
-	ENCOUNTER_ZONE_WORLD_MAP_FUCHIN_FOREST         = 38,
-	ENCOUNTER_ZONE_WORLD_MAP_XIAN_ALTIN            = 45,
-	ENCOUNTER_ZONE_WORLD_MAP_XIAN_ALTIN_FOREST     = 46,
-	// The script battles of Mogall Forest, Altin Peak and Lamakan Desert, whose last two slots hold
-	// the battles with the Ant Lions and the Manticore.
-	ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN   = 53,
-	ENCOUNTER_ZONE_WORLD_MAP_KALAY                 = 54,
-	ENCOUNTER_ZONE_WORLD_MAP_KALAY_FOREST          = 55,
-	// The monster attacks on the Tolbi-bound ship, the Kraken's last.
-	ENCOUNTER_ZONE_TOLBI_SHIP                      = 62,
-	// The monsters behind the east doors of Crossbone Isle Cave's first four floors, one slot a
-	// floor.
-	ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS     = 63,
-	ENCOUNTER_ZONE_WORLD_MAP_TOLBI                 = 64,
-	ENCOUNTER_ZONE_WORLD_MAP_TOLBI_FOREST          = 65,
-	// The battles that end the Colosso finals' matches, the slot chosen by how the match went.
-	ENCOUNTER_ZONE_COLOSSO                         = 72,
-	ENCOUNTER_ZONE_WORLD_MAP_SUHALLA               = 80,
-	ENCOUNTER_ZONE_WORLD_MAP_SUHALLA_FOREST        = 81,
-	// The monsters behind the east doors of Crossbone Isle Cave's next five floors, one slot a
-	// floor, then Deadbeard on the Pirate Ship.
-	ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS      = 84,
-	// The script battles: Lunpa Fortress, Suhalla Desert, Venus Lighthouse Aerie and the World Map;
-	// its first slot is the Aerie's second battle.
-	ENCOUNTER_ZONE_SCRIPTED                        = 98,
-	ENCOUNTER_ZONE_MIMIC                           = 99, // mimic chests, by the chest's slot
-	// The Djinn battles, one zone for each element in element order.
-	ENCOUNTER_ZONE_VENUS_DJINN                     = 100,
-	ENCOUNTER_ZONE_MERCURY_DJINN                   = 101,
-	ENCOUNTER_ZONE_MARS_DJINN                      = 102,
-	ENCOUNTER_ZONE_JUPITER_DJINN                   = 103
+    ENCOUNTER_ZONE_NONE                            = 0, // no battles
+    ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT            = 7,
+    ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT_FOREST     = 8,
+    // The script battles of Vale's stormy night (its monsters, and the travelers who catch Isaac in
+    // Vale's plaza), Vault's thieves and the World Map's Djinn tutorial battle.
+    ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT             = 12,
+    ENCOUNTER_ZONE_WORLD_MAP_BILIBIN_KOLIMA        = 13,
+    ENCOUNTER_ZONE_WORLD_MAP_BILIBIN_KOLIMA_FOREST = 14,
+    ENCOUNTER_ZONE_WORLD_MAP_SNOWFIELD             = 29,
+    ENCOUNTER_ZONE_WORLD_MAP_SNOW_FOREST           = 30,
+    // The script battles of Tret Tree (Tret) and Mercury Lighthouse (the Lizard Man, then Saturos
+    // at the aerie).
+    ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY           = 36,
+    ENCOUNTER_ZONE_WORLD_MAP_FUCHIN                = 37,
+    ENCOUNTER_ZONE_WORLD_MAP_FUCHIN_FOREST         = 38,
+    ENCOUNTER_ZONE_WORLD_MAP_XIAN_ALTIN            = 45,
+    ENCOUNTER_ZONE_WORLD_MAP_XIAN_ALTIN_FOREST     = 46,
+    // The script battles of Mogall Forest, Altin Peak and Lamakan Desert, whose last two slots hold
+    // the battles with the Ant Lions and the Manticore.
+    ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN   = 53,
+    ENCOUNTER_ZONE_WORLD_MAP_KALAY                 = 54,
+    ENCOUNTER_ZONE_WORLD_MAP_KALAY_FOREST          = 55,
+    // The monster attacks on the Tolbi-bound ship, the Kraken's last.
+    ENCOUNTER_ZONE_TOLBI_SHIP                      = 62,
+    // The monsters behind the east doors of Crossbone Isle Cave's first four floors, one slot a
+    // floor.
+    ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS     = 63,
+    ENCOUNTER_ZONE_WORLD_MAP_TOLBI                 = 64,
+    ENCOUNTER_ZONE_WORLD_MAP_TOLBI_FOREST          = 65,
+    // The battles that end the Colosso finals' matches, the slot chosen by how the match went.
+    ENCOUNTER_ZONE_COLOSSO                         = 72,
+    ENCOUNTER_ZONE_WORLD_MAP_SUHALLA               = 80,
+    ENCOUNTER_ZONE_WORLD_MAP_SUHALLA_FOREST        = 81,
+    // The monsters behind the east doors of Crossbone Isle Cave's next five floors, one slot a
+    // floor, then Deadbeard on the Pirate Ship.
+    ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS      = 84,
+    // The script battles: Lunpa Fortress, Suhalla Desert, Venus Lighthouse Aerie and the World Map;
+    // its first slot is the Aerie's second battle.
+    ENCOUNTER_ZONE_SCRIPTED                        = 98,
+    ENCOUNTER_ZONE_MIMIC                           = 99, // mimic chests, by the chest's slot
+    // The Djinn battles, one zone for each element in element order.
+    ENCOUNTER_ZONE_VENUS_DJINN                     = 100,
+    ENCOUNTER_ZONE_MERCURY_DJINN                   = 101,
+    ENCOUNTER_ZONE_MARS_DJINN                      = 102,
+    ENCOUNTER_ZONE_JUPITER_DJINN                   = 103
 } ENCOUNTER_ZONE_ID;
 
 // The field-mode module's functions in the order of its stub table (src/field/mode_stubs.s).
@@ -458,8 +458,8 @@ void                fdItemDisplayRaiseAboveLeader(struct ACTOR *actor);
 // fdItemDisplayShowPicture's and fdItemDisplayShowItem's flags.
 typedef enum ITEM_DISPLAY_FLAG
 {
-	ITEM_DISPLAY_SPARKLES = 1, // sparkles appear round the picture
-	ITEM_DISPLAY_RAISED   = 2  // the leader holds it up over his head
+    ITEM_DISPLAY_SPARKLES = 1, // sparkles appear round the picture
+    ITEM_DISPLAY_RAISED   = 2  // the leader holds it up over his head
 } ITEM_DISPLAY_FLAG;
 
 void                            fdRevealEmitSparkles(struct ACTOR *actor);

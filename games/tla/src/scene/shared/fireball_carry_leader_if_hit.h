@@ -2,10 +2,10 @@
 // along (scFireballCarryLeader); 1 when it did.
 Bool scFireballCarryLeaderIfHit(void)
 {
-	if ((FLAME_THROWERS_STATE)->active)
-	{
-		scFireballCarryLeader();
-		return TRUE;
-	}
-	return FALSE;
+    if ((FLAME_THROWERS_STATE)->active)
+    {
+        scFireballCarryLeader();
+        return TRUE;
+    }
+    return FALSE;
 }

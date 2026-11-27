@@ -23,7 +23,7 @@ extern Sint32 RangeFalloffEffectDamage[];
 // Rolls whether an ability's effect lands on the target, less likely the farther it is from the
 // aimed unit (gmBattleRollEffectSuccess); returns 1 when it does.
 Sint32        gmBattleRollEffectSuccessStub(
-		   Sint32 actor, Sint32 target, Sint32 range, Sint32 effect, Sint32 table);
+           Sint32 actor, Sint32 target, Sint32 range, Sint32 effect, Sint32 table);
 // Scales max(attack - defense, 0) plus twice the added power by half the element multiplier, then
 // halves it (gmBattleCalculateAttackDamage).
 Sint32 gmBattleCalculateAttackDamageStub(Sint32 amount,

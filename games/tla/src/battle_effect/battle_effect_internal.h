@@ -51,60 +51,60 @@ void *btEffectSpriteCreateWithTiles(Sint32 width, Sint32 height, Sint32 attribut
 // A point of a streak: x, y and z.
 typedef struct STREAK_POINT
 {
-	Sint32 x;
-	Sint32 y;
-	Sint32 z;
+    Sint32 x;
+    Sint32 y;
+    Sint32 z;
 } STREAK_POINT;
 
 // One of Cruel Ruin's 256 streaks: its head and tail and how it is turned.
 typedef struct PLUNGE_STREAK
 {
-	Sint32 head;
-	Sint32 tail;
-	Sint32 unusedA;
-	Sint32 pitch;
-	Sint32 yaw;
-	Sint32 roll;
-	Sint32 unusedB;
+    Sint32 head;
+    Sint32 tail;
+    Sint32 unusedA;
+    Sint32 pitch;
+    Sint32 yaw;
+    Sint32 roll;
+    Sint32 unusedB;
 } PLUNGE_STREAK;
 
 // The element streaks' state, which btEffectStartElementStreaks allocates in the
 // HEAP_SLOT_BATTLE_EFFECT heap slot in place of the battle effect state.
 typedef struct ELEMENT_STREAKS_STATE
 {
-	Sint32 frame;        // the streaks' tick count (btEffectDrawStreaks)
-	Sint32 halvePending; // the streaks are drawn: halve the canvas into VRAM
-	// Ticks of the background's fade left (btEffectDimBackgroundStep).
-	Sint32 fadeFrame;
-	Sint32 fadeStep; // the fade's steps so far, BACKGROUND_LEVEL_STEP each
+    Sint32 frame;        // the streaks' tick count (btEffectDrawStreaks)
+    Sint32 halvePending; // the streaks are drawn: halve the canvas into VRAM
+    // Ticks of the background's fade left (btEffectDimBackgroundStep).
+    Sint32 fadeFrame;
+    Sint32 fadeStep; // the fade's steps so far, BACKGROUND_LEVEL_STEP each
 } ELEMENT_STREAKS_STATE;
 
 // An EFFECT_SPR as Cruel Ruin reads its OAM attribute 2: its tile, priority and palette, as fields
 // or as one halfword.
 typedef struct RUIN_OBJECT
 {
-	// the sprite's next and OAM attributes 0 and 1
-	Uint8 unusedBeforeAttribute[8];
+    // the sprite's next and OAM attributes 0 and 1
+    Uint8 unusedBeforeAttribute[8];
 
-	union
-	{
-		struct
-		{
-			Uint16 tile     : 10;
-			Uint16 priority : 2;
-			Uint16 palette  : 4;
-		} bits;
+    union
+    {
+        struct
+        {
+            Uint16 tile     : 10;
+            Uint16 priority : 2;
+            Uint16 palette  : 4;
+        } bits;
 
-		Uint16 all;
-		Uint8  bytes[2];
-	} attribute;
+        Uint16 all;
+        Uint8  bytes[2];
+    } attribute;
 } RUIN_OBJECT;
 
 // The map cell buffer holds WIN0's line table and then the droplets Douse's drops throw up.
 typedef struct DROPLET_BUFFER
 {
-	Uint16   lines[160];
-	PARTICLE droplets[512];
+    Uint16   lines[160];
+    PARTICLE droplets[512];
 } DROPLET_BUFFER;
 
 // Eclipse's scale for the dragon's sprites, and Cruel Ruin's for its summon, one to one.
@@ -122,15 +122,15 @@ extern const SCALE ProcneUnitScale; // the comets' unit scale
 // The battle screen's display mode while an effect plays: background mode 1 with BG0 to BG2,
 // sprites and both windows on.
 #define EFFECT_DISPCNT                                                                             \
-	(DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON        \
-	 | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
+    (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON        \
+     | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
 
 // The whole pixels of a stored 16.16 value, read as its upper halfword. UB: the Sint32 is read
 // through an Sint16.
 #if FIX_TYPE_PUNNING
-#	define FIXED_INTEGER_PART(v) FIXEDtoINT((Sint32)(v))
+#    define FIXED_INTEGER_PART(v) FIXEDtoINT((Sint32)(v))
 #else
-#	define FIXED_INTEGER_PART(v) (((Sint16 *)&(v))[1])
+#    define FIXED_INTEGER_PART(v) (((Sint16 *)&(v))[1])
 #endif
 
 // The canvas added to the battle under it: both blend weights whole.
@@ -183,7 +183,7 @@ extern const SCALE ProcneUnitScale; // the comets' unit scale
 // The byte of canvas pixel (x, y): the canvas is laid out in 8x8 tiles, row by row, each tile 64
 // bytes row by row.
 #define CANVAS_PIXEL_OFFSET(x, y)                                                                  \
-	((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
+    ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
 // The bytes of one 8x8 tile of the canvas; a row of pixels steps from one tile to the next by
 // CANVAS_TILE_BYTES - 8.
 #define CANVAS_TILE_BYTES      (8 * 8)
@@ -213,15 +213,15 @@ extern const SCALE ProcneUnitScale; // the comets' unit scale
 
 // Writes one row of BG2's map for the canvas, two tiles at a time.
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                                           \
-	for ((column) = 0; (column) != 8; (column)++, (offset) += 2)                                   \
-	{                                                                                              \
-		Sint32 tileIndex;                                                                          \
-		Sint16 pair;                                                                               \
+    for ((column) = 0; (column) != 8; (column)++, (offset) += 2)                                   \
+    {                                                                                              \
+        Sint32 tileIndex;                                                                          \
+        Sint16 pair;                                                                               \
                                                                                                    \
-		tileIndex = (row) * 16 + (column) * 2;                                                     \
-		pair      = ((tileIndex + 1) << 8) | tileIndex;                                            \
-		*(volatile Sint16 *)((Uint8 *)BG_CANVAS_MAP + (offset)) = pair;                            \
-	}
+        tileIndex = (row) * 16 + (column) * 2;                                                     \
+        pair      = ((tileIndex + 1) << 8) | tileIndex;                                            \
+        *(volatile Sint16 *)((Uint8 *)BG_CANVAS_MAP + (offset)) = pair;                            \
+    }
 
 // Three summons open alike (Eclipse, Daedalus and Flora): the battle flashes away over
 // SUMMON_OPENING_TICKS, and at SUMMON_OPENING_LOAD_TICK their sky and their sprites load.
@@ -230,10 +230,10 @@ extern const SCALE ProcneUnitScale; // the comets' unit scale
 
 // Windows 0 and 1 both cover the battle view: the full width, lines 16 to 135.
 #define EFFECT_SET_BATTLE_WINDOWS()                                                                \
-	(REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH),                                                      \
-	 REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM),                                   \
-	 REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH),                                                      \
-	 REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM))
+    (REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH),                                                      \
+     REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM),                                   \
+     REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH),                                                      \
+     REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM))
 // The canvas's first BATTLE_VIEW_HEIGHT lines, which the battle view shows: what most of this
 // game's effects clear and fill, leaving the last 8.
 #define CANVAS_VIEW_BYTES          (CANVAS_SIZE * BATTLE_VIEW_HEIGHT)
@@ -258,11 +258,11 @@ extern const SCALE ProcneUnitScale; // the comets' unit scale
 
 // Loads a sprite sheet's colours into the background palette.
 #define LOAD_BG_PALETTE(resource)                                                                  \
-	{                                                                                              \
-		void *palette = syResourceGetTableEntry(resource);                                         \
+    {                                                                                              \
+        void *palette = syResourceGetTableEntry(resource);                                         \
                                                                                                    \
-		syWordsCopy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                                \
-	}
+        syWordsCopy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                                \
+    }
 
 // The damping that keeps a particle's whole speed.
 #define PARTICLE_DAMPING_NONE DAMPING_SCALE
@@ -272,7 +272,7 @@ extern const SCALE ProcneUnitScale; // the comets' unit scale
 
 // Draws picture `name` of `sheet` at its own size, its top left at (x, y).
 #define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                                       \
-	(draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
+    (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
 
 // A bite's half pictures (BlueDropletSheet's closing fangs, each drawn beside its mirror): the
 // canvas row they start at, and their size.
@@ -308,18 +308,18 @@ extern const SCALE ProcneUnitScale; // the comets' unit scale
 // it leaves at 0 or below. The narrow kernels draw into a target half the canvas's width.
 typedef enum MODEL_KIND
 {
-	MODEL_END,               // ends the list
-	MODEL_SOLID,             // btRenderSolidKernel: the colour replaces the canvas
-	MODEL_SOLID_MAX,         // the colour where it is brighter
-	MODEL_SOLID_ADDITIVE,    // the colour added, up to the brightest level
-	MODEL_TEXTURED_MAX,      // the texel where it is brighter
-	MODEL_TEXTURED_ADDITIVE, // the texel added, up to the brightest level
-	MODEL_SHADED_MAX,        // the shaded texel where it is brighter
-	MODEL_SHADED_ADDITIVE,   // the shaded texel added, up to the brightest
-	MODEL_TEXTURED,          // the texel replaces the canvas
-	MODEL_SHADED,            // the shaded texel replaces the canvas
-	MODEL_TEXTURED_NARROW,   // MODEL_TEXTURED into a narrow target
-	MODEL_SOLID_NARROW       // MODEL_SOLID into a narrow target
+    MODEL_END,               // ends the list
+    MODEL_SOLID,             // btRenderSolidKernel: the colour replaces the canvas
+    MODEL_SOLID_MAX,         // the colour where it is brighter
+    MODEL_SOLID_ADDITIVE,    // the colour added, up to the brightest level
+    MODEL_TEXTURED_MAX,      // the texel where it is brighter
+    MODEL_TEXTURED_ADDITIVE, // the texel added, up to the brightest level
+    MODEL_SHADED_MAX,        // the shaded texel where it is brighter
+    MODEL_SHADED_ADDITIVE,   // the shaded texel added, up to the brightest
+    MODEL_TEXTURED,          // the texel replaces the canvas
+    MODEL_SHADED,            // the shaded texel replaces the canvas
+    MODEL_TEXTURED_NARROW,   // MODEL_TEXTURED into a narrow target
+    MODEL_SOLID_NARROW       // MODEL_SOLID into a narrow target
 } MODEL_KIND;
 
 // RENDER_MODEL.flags that the rasterizer kernels read: a one-sided model draws only the faces wound
@@ -330,7 +330,7 @@ typedef enum MODEL_KIND
 
 // Starts a tick's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                                            \
-	(syInitMatrix(), syLookAtLoad((camera)->eye, (camera)->focus))
+    (syInitMatrix(), syLookAtLoad((camera)->eye, (camera)->focus))
 
 // The sprite sheets' pictures, as The Broken Seal names them: this game draws the same sprite
 // sheets at the same sizes.
@@ -340,12 +340,12 @@ typedef enum MODEL_KIND
 
 // Draws flare picture `size`, a square, centred on (x, y).
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                                         \
-	(draw)(canvas,                                                                                 \
-	       (sheet) + BattleEffectFlarePictures[(size) - 1],                                        \
-	       (x) - (size),                                                                           \
-	       (y) - (size),                                                                           \
-	       (size) * 2,                                                                             \
-	       (size) * 2)
+    (draw)(canvas,                                                                                 \
+           (sheet) + BattleEffectFlarePictures[(size) - 1],                                        \
+           (x) - (size),                                                                           \
+           (y) - (size),                                                                           \
+           (size) * 2,                                                                             \
+           (size) * 2)
 
 // The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode: the reaper with its
 // scythe raised, then swung, then the red crescent the swing leaves.
@@ -359,9 +359,9 @@ typedef enum MODEL_KIND
 // Where each picture starts in ReaperSheet, in bytes.
 typedef enum REAPER_SHEET_PICTURE
 {
-	REAPER_SHEET_RAISED   = 0,
-	REAPER_SHEET_SWUNG    = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
-	REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + PICTURE_BYTES(REAPER_SHEET_SWUNG)
+    REAPER_SHEET_RAISED   = 0,
+    REAPER_SHEET_SWUNG    = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
+    REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + PICTURE_BYTES(REAPER_SHEET_SWUNG)
 } REAPER_SHEET_PICTURE;
 
 // RedCrescentSheetA: the swing's crescent fading in four pictures.
@@ -377,10 +377,10 @@ typedef enum REAPER_SHEET_PICTURE
 // Where each picture starts in RedCrescentSheetA, in bytes.
 typedef enum RED_CRESCENT_PICTURE
 {
-	RED_CRESCENT_FADE_A = 0,
-	RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A + PICTURE_BYTES(RED_CRESCENT_FADE_A),
-	RED_CRESCENT_FADE_C = RED_CRESCENT_FADE_B + PICTURE_BYTES(RED_CRESCENT_FADE_B),
-	RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
+    RED_CRESCENT_FADE_A = 0,
+    RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A + PICTURE_BYTES(RED_CRESCENT_FADE_A),
+    RED_CRESCENT_FADE_C = RED_CRESCENT_FADE_B + PICTURE_BYTES(RED_CRESCENT_FADE_B),
+    RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
 } RED_CRESCENT_PICTURE;
 
 // The slash pictures as wide and tall as the canvas's view: StarBurstSheet's, CrescentSheet's and
@@ -537,12 +537,12 @@ typedef enum RED_CRESCENT_PICTURE
 #define DIMMED_COPY_CAP(copy)         (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
 // Caps a colour level at cap, and at 0 from below.
 #define EFFECT_CAP_LEVEL(level, cap)                                                               \
-	{                                                                                              \
-		if ((level) > (cap))                                                                       \
-			(level) = (cap);                                                                       \
-		if ((level) < 0)                                                                           \
-			(level) = 0;                                                                           \
-	}
+    {                                                                                              \
+        if ((level) > (cap))                                                                       \
+            (level) = (cap);                                                                       \
+        if ((level) < 0)                                                                           \
+            (level) = 0;                                                                           \
+    }
 // The bytes of BlueGlowSheet's ten flare pictures, 2 to 20 pixels square: 4 * (1 + 4 + ... + 100).
 #define FLARE_SET_BYTES    1540
 // The battle sheet (HEAP_SLOT_BATTLE_SHEET) the casting impacts, the plain attacks and Cruel Ruin
@@ -554,13 +554,13 @@ typedef enum RED_CRESCENT_PICTURE
 // The columns of TargetStrikeStyles, one row a style.
 typedef enum TARGET_STRIKE_COLUMN
 {
-	TARGET_STRIKE_KIND,          // STRIKE_KIND_SLASH or STRIKE_KIND_BITE
-	TARGET_STRIKE_HITS,          // slashes or bites
-	TARGET_STRIKE_FLAGS,         // the extras (STRIKE_SMOKE and on)
-	TARGET_STRIKE_COLOR,         // the background's palette (STRIKE_COLOR_)
-	TARGET_STRIKE_PICTURE_TICKS, // ticks each picture shows
-	TARGET_STRIKE_COMPOSITE,     // the bites' blitter mode
-	TARGET_STRIKE_TICKS          // the effect's length
+    TARGET_STRIKE_KIND,          // STRIKE_KIND_SLASH or STRIKE_KIND_BITE
+    TARGET_STRIKE_HITS,          // slashes or bites
+    TARGET_STRIKE_FLAGS,         // the extras (STRIKE_SMOKE and on)
+    TARGET_STRIKE_COLOR,         // the background's palette (STRIKE_COLOR_)
+    TARGET_STRIKE_PICTURE_TICKS, // ticks each picture shows
+    TARGET_STRIKE_COMPOSITE,     // the bites' blitter mode
+    TARGET_STRIKE_TICKS          // the effect's length
 } TARGET_STRIKE_COLUMN;
 
 // The two kinds of target strike (TargetStrikeStyles).
@@ -592,45 +592,45 @@ typedef enum TARGET_STRIKE_COLUMN
 // own.
 typedef enum TARGET_STRIKE_STYLE
 {
-	TARGET_STRIKE_STYLE_BLUE_SPARK_BITES,
-	TARGET_STRIKE_STYLE_LIME_SMOKE_BITE,
-	TARGET_STRIKE_STYLE_PINK_SMOKE_BITES,
-	TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES,
-	TARGET_STRIKE_STYLE_MARS_DRAIN_BITES,
-	TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES,
-	TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH,
-	TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES,
-	TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH,
-	TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH,
-	TARGET_STRIKE_STYLE_MARS_SMOKE_BITE,
-	TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES,
-	TARGET_STRIKE_STYLE_LIGHTNING_FOUR_SPARK_SLASHES,
-	TARGET_STRIKE_STYLE_LIGHTNING_EIGHT_SPARK_SLASHES,
-	TARGET_STRIKE_STYLE_ORANGE_FLASH_GLINT_SLASH,
-	// the same row as MARS_ADDITIVE_DRAIN_BITES
-	TARGET_STRIKE_STYLE_MANEATER,
-	TARGET_STRIKE_STYLE_ORANGE_FLASH_SPARK_SLASH,
-	TARGET_STRIKE_STYLE_MARS_HEAVY_BITE,
-	TARGET_STRIKE_STYLE_ORANGE_FLASH_BITE,
-	TARGET_STRIKE_STYLE_MARS_STAR_SLASH,
-	TARGET_STRIKE_STYLE_BLUE_SPARK_BITE,
+    TARGET_STRIKE_STYLE_BLUE_SPARK_BITES,
+    TARGET_STRIKE_STYLE_LIME_SMOKE_BITE,
+    TARGET_STRIKE_STYLE_PINK_SMOKE_BITES,
+    TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES,
+    TARGET_STRIKE_STYLE_MARS_DRAIN_BITES,
+    TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES,
+    TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH,
+    TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES,
+    TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH,
+    TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH,
+    TARGET_STRIKE_STYLE_MARS_SMOKE_BITE,
+    TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES,
+    TARGET_STRIKE_STYLE_LIGHTNING_FOUR_SPARK_SLASHES,
+    TARGET_STRIKE_STYLE_LIGHTNING_EIGHT_SPARK_SLASHES,
+    TARGET_STRIKE_STYLE_ORANGE_FLASH_GLINT_SLASH,
+    // the same row as MARS_ADDITIVE_DRAIN_BITES
+    TARGET_STRIKE_STYLE_MANEATER,
+    TARGET_STRIKE_STYLE_ORANGE_FLASH_SPARK_SLASH,
+    TARGET_STRIKE_STYLE_MARS_HEAVY_BITE,
+    TARGET_STRIKE_STYLE_ORANGE_FLASH_BITE,
+    TARGET_STRIKE_STYLE_MARS_STAR_SLASH,
+    TARGET_STRIKE_STYLE_BLUE_SPARK_BITE,
 } TARGET_STRIKE_STYLE;
 
 // Window 0 shows the battle view: BG0 to BG2, the sprites and blending.
 #define EFFECT_WIN0_LAYERS                                                                         \
-	(WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ | WININ_WIN0_CLR)
+    (WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ | WININ_WIN0_CLR)
 
 // Outside the battle view: BG0 and blending only.
 #define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
 // Opens the canvas layer at its own width: BG2 shows it one pixel a pixel.
 #define EFFECT_START_NARROW_CANVAS(bgControl)                                                      \
-	(btEffectStartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
+    (btEffectStartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
 
 // Strikes target `i`: it flashes white in its damage pose and is knocked back by `motion`.
 #define EFFECT_STRIKE_TARGET(effect, i, ticks, motion)                                             \
-	(btEffectTintBattler((effect)->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks),         \
-	 btMotionApplyKnockbackStub((effect)->targets[i], motion))
+    (btEffectTintBattler((effect)->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks),         \
+     btMotionApplyKnockbackStub((effect)->targets[i], motion))
 
 // A blitter that clips its rectangles to the canvas.
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -644,17 +644,17 @@ typedef enum TARGET_STRIKE_STYLE
 // name is ours: every glint draw and mirrored pair that picks its flags or its mode at run time is
 // written so.
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                                     \
-	(__builtin_constant_p((flags) | (mode) << 4)                                                   \
-	     ? btEffectLoadBlitter(slot, (flags) | (mode) << 4)                                        \
-	     : btEffectBuildBlitter(slot, 7, 7, flags, mode))
+    (__builtin_constant_p((flags) | (mode) << 4)                                                   \
+         ? btEffectLoadBlitter(slot, (flags) | (mode) << 4)                                        \
+         : btEffectBuildBlitter(slot, 7, 7, flags, mode))
 
 // Sets what the canvas transfer leaves in the canvas after each copy.
 #define EFFECT_SET_TRANSFER(state, mode, value)                                                    \
-	((state)->transferMode = (mode), (state)->transferValue = (value))
+    ((state)->transferMode = (mode), (state)->transferValue = (value))
 
 // Sets the transfer, then starts copying the canvas to VRAM once a tick.
 #define EFFECT_START_TRANSFER(state, mode, value)                                                  \
-	(EFFECT_SET_TRANSFER(state, mode, value), sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK))
+    (EFFECT_SET_TRANSFER(state, mode, value), sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK))
 
 // Presents the canvas and waits for the next tick.
 #define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, sySynch(1))
@@ -669,43 +669,43 @@ typedef enum TARGET_STRIKE_STYLE
 
 // Frees the two blitters, the second first.
 #define EFFECT_RELEASE_BLITTERS()                                                                  \
-	(syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED), syHeapSlotRelease(HEAP_SLOT_RAM_CODE))
+    (syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED), syHeapSlotRelease(HEAP_SLOT_RAM_CODE))
 
 // The usual end of a canvas effect: the transfer, the blitters, then the canvas layer.
 #define EFFECT_FINISH_CANVAS()                                                                     \
-	(syCloseEvent(btEffectTransferCanvas), EFFECT_RELEASE_BLITTERS(), btEffectEndCanvasLayer())
+    (syCloseEvent(btEffectTransferCanvas), EFFECT_RELEASE_BLITTERS(), btEffectEndCanvasLayer())
 
 // The same for an effect that drew through one blitter.
 #define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                                         \
-	(syCloseEvent(btEffectTransferCanvas),                                                         \
-	 syHeapSlotRelease(HEAP_SLOT_RAM_CODE),                                                        \
-	 btEffectEndCanvasLayer())
+    (syCloseEvent(btEffectTransferCanvas),                                                         \
+     syHeapSlotRelease(HEAP_SLOT_RAM_CODE),                                                        \
+     btEffectEndCanvasLayer())
 
 // The largest of the ten mote pictures.
 #define MOTE_SIZE_MAX 10
 // Draws mote picture `size` (1 to MOTE_SIZE_MAX: size pixels wide, twice that tall), centred across
 // x and standing on y.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                                          \
-	(draw)(canvas,                                                                                 \
-	       (sheet) + BattleEffectMotePictures[(size) - 1],                                         \
-	       (x) - (size) / 2,                                                                       \
-	       (y) - (size),                                                                           \
-	       size,                                                                                   \
-	       (size) * 2)
+    (draw)(canvas,                                                                                 \
+           (sheet) + BattleEffectMotePictures[(size) - 1],                                         \
+           (x) - (size) / 2,                                                                       \
+           (y) - (size),                                                                           \
+           size,                                                                                   \
+           (size) * 2)
 
 // Marks particles[0] to particles[count - 1] free: a particle whose variant is -1 is not drawn or
 // moved until an effect gives it a life.
 #define EFFECT_FREE_PARTICLES(i, particles, count)                                                 \
-	for ((i) = 0; (i) != (count); (i)++)                                                           \
-	(particles)[i].variant = -1
+    for ((i) = 0; (i) != (count); (i)++)                                                           \
+    (particles)[i].variant = -1
 
 // Shows the canvas stretched to twice its width, `top` sixteenths of its colour added over what
 // lies under it.
 #define EFFECT_SHOW_WIDE_CANVAS(top)                                                               \
-	(REG_DISPCNT  = EFFECT_DISPCNT,                                                                \
-	 REG_BG2PA    = Q_8_8(0.5),                                                                    \
-	 REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                                      \
-	 REG_BLDCNT   = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
+    (REG_DISPCNT  = EFFECT_DISPCNT,                                                                \
+     REG_BG2PA    = Q_8_8(0.5),                                                                    \
+     REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                                      \
+     REG_BLDCNT   = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 // A line's 16.16 sideways sway as its BG2X value in state->bg2xLines, which the wave HBlank DMA
 // writes line by line. BG2X counts 256ths of a canvas pixel, so a sway of toFIXED(n) moves the line
@@ -715,15 +715,15 @@ typedef enum TARGET_STRIKE_STYLE
 // Which way btEffectWipeCanvas sweeps.
 typedef enum CANVAS_WIPE_DIRECTION
 {
-	CANVAS_WIPE_DOWN,  // top to bottom
-	CANVAS_WIPE_ACROSS // left to right
+    CANVAS_WIPE_DOWN,  // top to bottom
+    CANVAS_WIPE_ACROSS // left to right
 } CANVAS_WIPE_DIRECTION;
 
 // What btEffectWipeCanvas leaves behind it.
 typedef enum CANVAS_FILL
 {
-	CANVAS_WIPE_FILL, // colour 1, which its callers make black first
-	CANVAS_WIPE_CLEAR // colour 0: the canvas cleared
+    CANVAS_WIPE_FILL, // colour 1, which its callers make black first
+    CANVAS_WIPE_CLEAR // colour 0: the canvas cleared
 } CANVAS_FILL;
 
 // Lets the battle show the damage, playing hitSound as the targets react: 0 keeps the one queued,
@@ -737,129 +737,129 @@ typedef enum CANVAS_FILL
 // The tumbling quads' modes (btEffectRunTumblingQuads), each named for the effect that plays it.
 typedef enum TUMBLING_QUADS_MODE
 {
-	TUMBLING_QUADS_BALM,   // over a prepared canvas, with the Mercury Djinn
-	TUMBLING_QUADS_TINDER, // over a prepared canvas, with the Mars Djinn
-	TUMBLING_QUADS_PHOENIX // rising from the first target
+    TUMBLING_QUADS_BALM,   // over a prepared canvas, with the Mercury Djinn
+    TUMBLING_QUADS_TINDER, // over a prepared canvas, with the Mars Djinn
+    TUMBLING_QUADS_PHOENIX // rising from the first target
 } TUMBLING_QUADS_MODE;
 
 // The gasp family's modes (btEffectRunGaspFamily), each named for the effect that plays it.
 typedef enum GASP_MODE
 {
-	GASP_MODE_GASP,
-	// Unused: no wrapper passes it; a Mercury Djinni and a burst of light.
-	GASP_MODE_UNUSED,
-	GASP_MODE_REFLUX,
-	GASP_MODE_DJINN_COUNTER,
-	GASP_MODE_MOLD,
-	GASP_MODE_SHINE,
-	GASP_MODE_LULL,
-	GASP_MODE_COUNTER_RUSH,
-	GASP_MODE_DEMON_EYE,
-	GASP_MODE_EMU,
-	GASP_MODE_CALL_DULLAHAN,
-	GASP_MODE_BEAT_DANCE,
-	GASP_MODE_ELEMENT_SWAP,
-	GASP_MODE_CAGE,
-	GASP_MODE_CLARION_CRY,
-	GASP_MODE_PSY_BOOST
+    GASP_MODE_GASP,
+    // Unused: no wrapper passes it; a Mercury Djinni and a burst of light.
+    GASP_MODE_UNUSED,
+    GASP_MODE_REFLUX,
+    GASP_MODE_DJINN_COUNTER,
+    GASP_MODE_MOLD,
+    GASP_MODE_SHINE,
+    GASP_MODE_LULL,
+    GASP_MODE_COUNTER_RUSH,
+    GASP_MODE_DEMON_EYE,
+    GASP_MODE_EMU,
+    GASP_MODE_CALL_DULLAHAN,
+    GASP_MODE_BEAT_DANCE,
+    GASP_MODE_ELEMENT_SWAP,
+    GASP_MODE_CAGE,
+    GASP_MODE_CLARION_CRY,
+    GASP_MODE_PSY_BOOST
 } GASP_MODE;
 
 // The twisting column's modes (btEffectRunTwistingColumn), each named for the effect that plays it.
 typedef enum TWISTING_COLUMN_MODE
 {
-	TWISTING_COLUMN_WHORL,
-	TWISTING_COLUMN_GALE,
-	TWISTING_COLUMN_LETHE_ALBION,
-	TWISTING_COLUMN_POISON_FLOW,
-	TWISTING_COLUMN_RAGING_FLOOD
+    TWISTING_COLUMN_WHORL,
+    TWISTING_COLUMN_GALE,
+    TWISTING_COLUMN_LETHE_ALBION,
+    TWISTING_COLUMN_POISON_FLOW,
+    TWISTING_COLUMN_RAGING_FLOOD
 } TWISTING_COLUMN_MODE;
 
 // The ball lightning's modes (btEffectRunBallLightning).
 typedef enum BALL_LIGHTNING_MODE
 {
-	BALL_LIGHTNING_THUNDER_MINE,
-	BALL_LIGHTNING_EARTH_FORCE
+    BALL_LIGHTNING_THUNDER_MINE,
+    BALL_LIGHTNING_EARTH_FORCE
 } BALL_LIGHTNING_MODE;
 
 // The Djinni charge's modes (btEffectRunDjinniCharge).
 typedef enum DJINNI_CHARGE_MODE
 {
-	DJINNI_CHARGE_CORE,
-	DJINNI_CHARGE_CANNON
+    DJINNI_CHARGE_CORE,
+    DJINNI_CHARGE_CANNON
 } DJINNI_CHARGE_MODE;
 
 // The heavy blow's modes (btEffectRunHeavyBlow).
 typedef enum HEAVY_BLOW_MODE
 {
-	HEAVY_BLOW_HEAVY_DIVIDE,
-	HEAVY_BLOW_STRONG_HIT
+    HEAVY_BLOW_HEAVY_DIVIDE,
+    HEAVY_BLOW_STRONG_HIT
 } HEAVY_BLOW_MODE;
 
 // The Djinni sign's modes (btEffectRunDjinniSign).
 typedef enum DJINNI_SIGN_MODE
 {
-	DJINNI_SIGN_RIME,
-	DJINNI_SIGN_HAZE
+    DJINNI_SIGN_RIME,
+    DJINNI_SIGN_HAZE
 } DJINNI_SIGN_MODE;
 
 // The cards (btEffectRunCards).
 typedef enum CARD_KIND
 {
-	CARD_SLEEP,  // Sleep Card: sheep jump from the card.
-	CARD_BAFFLE, // Baffle Card: butterflies, and the screen waves.
-	CARD_DEATH,  // Death Card: a skeleton reaps the target.
-	CARD_SWORD,  // Sword Card: a dagger strikes, and shards fly.
+    CARD_SLEEP,  // Sleep Card: sheep jump from the card.
+    CARD_BAFFLE, // Baffle Card: butterflies, and the screen waves.
+    CARD_DEATH,  // Death Card: a skeleton reaps the target.
+    CARD_SWORD,  // Sword Card: a dagger strikes, and shards fly.
 } CARD_KIND;
 
 // The element cards (btEffectRunElementCards).
 typedef enum ELEMENT_CARD_KIND
 {
-	CARD_BRAMBLE, // Bramble Card: vines grow from the card.
-	CARD_FROST,   // Frost Card: the card throws crystal shards.
-	CARD_FLAME,   // Flame Card: the card throws smoke and flashes.
-	CARD_THUNDER, // Thunder Card: bolts strike from the card.
+    CARD_BRAMBLE, // Bramble Card: vines grow from the card.
+    CARD_FROST,   // Frost Card: the card throws crystal shards.
+    CARD_FLAME,   // Flame Card: the card throws smoke and flashes.
+    CARD_THUNDER, // Thunder Card: bolts strike from the card.
 } ELEMENT_CARD_KIND;
 
 // The breaths (btEffectRunBreaths).
 typedef enum BREATH_KIND
 {
-	BREATH_BEAM,          // Beam: a beam of fading rings.
-	BREATH_ROLLING_FLAME, // Rolling Flame: a ball rolls to the target.
-	BREATH_PIKE,          // Ghost Soldier and Pike Assault.
-	BREATH_BLAST,         // Blast Breath: a blast and a jet.
+    BREATH_BEAM,          // Beam: a beam of fading rings.
+    BREATH_ROLLING_FLAME, // Rolling Flame: a ball rolls to the target.
+    BREATH_PIKE,          // Ghost Soldier and Pike Assault.
+    BREATH_BLAST,         // Blast Breath: a blast and a jet.
 } BREATH_KIND;
 
 // The rushing strike's sparks' palettes (btEffectRunRushingStrike), each named for the effect that
 // first plays it; Bone Charge plays Stun Muscle's.
 typedef enum RUSHING_STRIKE_MODE
 {
-	// Unused: no wrapper passes it; the fire pillar's colours.
-	RUSHING_STRIKE_UNUSED,
-	RUSHING_STRIKE_BRUTE_FORCE,
-	RUSHING_STRIKE_ONSLAUGHT,
-	RUSHING_STRIKE_HEADBUTT,
-	RUSHING_STRIKE_STUN_MUSCLE,
-	RUSHING_STRIKE_LIVING_ARMOR
+    // Unused: no wrapper passes it; the fire pillar's colours.
+    RUSHING_STRIKE_UNUSED,
+    RUSHING_STRIKE_BRUTE_FORCE,
+    RUSHING_STRIKE_ONSLAUGHT,
+    RUSHING_STRIKE_HEADBUTT,
+    RUSHING_STRIKE_STUN_MUSCLE,
+    RUSHING_STRIKE_LIVING_ARMOR
 } RUSHING_STRIKE_MODE;
 
 // The mirrored wall's modes (btEffectRunMirroredWall), each named for the effect that plays it.
 typedef enum MIRRORED_WALL_MODE
 {
-	MIRRORED_WALL_SPASM, // actual size, a gentle shake for 32 ticks
-	// A ninth wider than Spasm's, a hard shake for 8 ticks.
-	MIRRORED_WALL_BERSERK,
-	// A ninth wider than Spasm's, no shake, in the Fireball colours.
-	MIRRORED_WALL_RECOVERY,
-	MIRRORED_WALL_SACK
+    MIRRORED_WALL_SPASM, // actual size, a gentle shake for 32 ticks
+    // A ninth wider than Spasm's, a hard shake for 8 ticks.
+    MIRRORED_WALL_BERSERK,
+    // A ninth wider than Spasm's, no shake, in the Fireball colours.
+    MIRRORED_WALL_RECOVERY,
+    MIRRORED_WALL_SACK
 } MIRRORED_WALL_MODE;
 
 // Where btEffectRunSparkGroups' bursts go off.
 typedef enum SPARK_GROUPS_MODE
 {
-	SPARK_GROUPS_NOVA,     // Nova's
-	SPARK_GROUPS_DYNAMITE, // Dynamite's, orange
-	// below the user, in the LightningBolt colours, the sparks rising
-	SPARK_GROUPS_RISING
+    SPARK_GROUPS_NOVA,     // Nova's
+    SPARK_GROUPS_DYNAMITE, // Dynamite's, orange
+    // below the user, in the LightningBolt colours, the sparks rising
+    SPARK_GROUPS_RISING
 } SPARK_GROUPS_MODE;
 
 // The declarations the parts share.
@@ -873,10 +873,10 @@ struct PARTICLE;
 // quad is two of them; a triangle whose three vertices are 0 ends a list.
 typedef struct MESH_TRIANGLE
 {
-	Uint8 vertex[3];
-	Uint8 unusedA;    // nothing reads or writes it
-	Uint8 uv[3][2];
-	Uint8 unusedB[2]; // nothing reads or writes them
+    Uint8 vertex[3];
+    Uint8 unusedA;    // nothing reads or writes it
+    Uint8 uv[3][2];
+    Uint8 unusedB[2]; // nothing reads or writes them
 } MESH_TRIANGLE;
 
 struct SPR_SCALE;
@@ -911,9 +911,9 @@ void btEffectBuildCanvasTilemap(void);
 // before the state's end, past what struct BATTLE_EFFECT_STATE names, and the picture drawn for
 // them, the 4 KB before transferMode.
 #define STAMP_TILES(state)                                                                         \
-	(*(Uint32 *)((Uint8 *)(state) + BATTLE_EFFECT_STATE_SIZE - 2 * sizeof(Uint32)))
+    (*(Uint32 *)((Uint8 *)(state) + BATTLE_EFFECT_STATE_SIZE - 2 * sizeof(Uint32)))
 #define STAMP_CANVAS(state)                                                                        \
-	((Uint8 *)(state) + offsetof(BATTLE_EFFECT_STATE, transferMode) - OBJ_64X64_8BPP_BYTES)
+    ((Uint8 *)(state) + offsetof(BATTLE_EFFECT_STATE, transferMode) - OBJ_64X64_8BPP_BYTES)
 void btEffectProcessPendingStampTransfer(void);
 
 // djinn_beams.c Fetches the max and additive blitters, flipped or not.
@@ -926,10 +926,10 @@ void btEffectUpdatePhasePalette(Sint32 frame, Sint32 redPhase, Sint32 greenPhase
 // camera through it (Fire, Froth) pass between them.
 typedef enum CAMERA_PHASE
 {
-	CAMERA_PHASE_IDLE, // nothing marked since the last turn
-	// the effect has finished a tick: turn the whole delta
-	CAMERA_PHASE_TICK_DONE,
-	CAMERA_PHASE_HALF_TURNED // half a delta turned on an unmarked tick
+    CAMERA_PHASE_IDLE, // nothing marked since the last turn
+    // the effect has finished a tick: turn the whole delta
+    CAMERA_PHASE_TICK_DONE,
+    CAMERA_PHASE_HALF_TURNED // half a delta turned on an unmarked tick
 } CAMERA_PHASE;
 
 void btCameraApplyPhasedDelta(void);
@@ -942,7 +942,7 @@ void btEffectBuildWindowEdgeTable(void);
 // battler_tint.c Shows a battler in a palette and a pose, for `ticks` ticks counted in timer slot
 // `timerSlot`; TINT_KEEP leaves any of them as it is.
 void btEffectTintBattler(
-	Sint32 unitId, Sint32 palette, Sint32 pose, Sint32 timerSlot, Sint32 ticks);
+    Sint32 unitId, Sint32 palette, Sint32 pose, Sint32 timerSlot, Sint32 ticks);
 void btEffectSetupBlendedDisplay(void);
 
 // stat_change.c
@@ -989,7 +989,7 @@ void btEffectPosProjectBattler(Sint32 id, SCREEN_POINT *pos);
 // The middle between the first and the last target.
 void btEffectGetTargetsMidpoint(SCREEN_POINT *pos);
 void btMeshBuildGrid(
-	MESH_TRIANGLE *triangles, Sint32 columns, Sint32 rows, Sint32 cellWidth, Sint32 cellHeight);
+    MESH_TRIANGLE *triangles, Sint32 columns, Sint32 rows, Sint32 cellWidth, Sint32 cellHeight);
 void   btColorBufferScaleStub(void *src, void *dest, Sint32 scale, Sint32 count);
 void   btEffectPosProjectSprite(Sint32 id, SCREEN_POINT *pos);
 
@@ -1076,7 +1076,7 @@ void   btEffectRunBallAttack(BATTLE_EFFECT_PARM *effect);
 // odyssey.c The five-argument blitter builder's stub call, which only a call in odyssey.c that is
 // never taken names.
 Sint32 btEffectBuildBlitterStub(
-	Sint32 slot, Sint32 widthShift, Sint32 heightShift, Sint32 flags, Uint32 mode);
+    Sint32 slot, Sint32 widthShift, Sint32 heightShift, Sint32 flags, Uint32 mode);
 void btIrisWipeScreen(Uint8 side, Uint8 speed, void (*midpoint)(void));
 void btIrisRestoreBattle(void);
 void btEffectBuildSteepShadeRampWave(Uint8 *table, Uint32 count, Uint32 repeats, Sint32 scale);
@@ -1835,44 +1835,44 @@ void                      btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mod
 // Flying Attack take one, two or three strikes as a double or triple blow raises their variant.
 typedef enum FLURRY_MODE
 {
-	FLURRY_BEAR_CLAW,            // five strikes; also Ransack
-	FLURRY_BACTERIA_RUSH,        // seven strikes, in lime
-	FLURRY_FREEBITE_RUSH,        // nine strikes, in blue
-	FLURRY_FLYING_ATTACK,        // one strike, in embers
-	FLURRY_FLYING_ATTACK_DOUBLE, // two
-	FLURRY_FLYING_ATTACK_TRIPLE, // three
-	FLURRY_GUST,                 // one strike, each filling the canvas
-	FLURRY_GUST_DOUBLE,          // two
-	FLURRY_GUST_TRIPLE,          // three
-	FLURRY_UR_FLASH,             // three strikes, in the Mars Djinni's colours
-	FLURRY_CRUSHER_GRIP,         // one strike, with glints
-	FLURRY_VANISH_CLAW,          // one strike, with a ripple and smoke
-	FLURRY_CLAW_ATTACK           // one strike after a longer lunge, in embers
+    FLURRY_BEAR_CLAW,            // five strikes; also Ransack
+    FLURRY_BACTERIA_RUSH,        // seven strikes, in lime
+    FLURRY_FREEBITE_RUSH,        // nine strikes, in blue
+    FLURRY_FLYING_ATTACK,        // one strike, in embers
+    FLURRY_FLYING_ATTACK_DOUBLE, // two
+    FLURRY_FLYING_ATTACK_TRIPLE, // three
+    FLURRY_GUST,                 // one strike, each filling the canvas
+    FLURRY_GUST_DOUBLE,          // two
+    FLURRY_GUST_TRIPLE,          // three
+    FLURRY_UR_FLASH,             // three strikes, in the Mars Djinni's colours
+    FLURRY_CRUSHER_GRIP,         // one strike, with glints
+    FLURRY_VANISH_CLAW,          // one strike, with a ripple and smoke
+    FLURRY_CLAW_ATTACK           // one strike after a longer lunge, in embers
 } FLURRY_MODE;
 
 // A flurry's arcs, its FLURRY_ARC_SHEET.
 typedef enum FLURRY_ARC
 {
-	// blue arc A, with a wave for the third and fourth of every four strikes
-	FLURRY_ARCS_AND_WAVES,
-	FLURRY_ARCS // blue arc B for every strike
+    // blue arc A, with a wave for the third and fourth of every four strikes
+    FLURRY_ARCS_AND_WAVES,
+    FLURRY_ARCS // blue arc B for every strike
 } FLURRY_ARC;
 
 // Whose palette a flurry takes, its FLURRY_PALETTE.
 typedef enum FLURRY_PAL
 {
-	FLURRY_PALETTE_MARS_DJINNI, // the Mars Djinni sprite sheet's
-	FLURRY_PALETTE_LIME,
-	FLURRY_PALETTE_BLUE_ARC,
-	FLURRY_PALETTE_EMBER        // the ember streak sprite sheet's
+    FLURRY_PALETTE_MARS_DJINNI, // the Mars Djinni sprite sheet's
+    FLURRY_PALETTE_LIME,
+    FLURRY_PALETTE_BLUE_ARC,
+    FLURRY_PALETTE_EMBER        // the ember streak sprite sheet's
 } FLURRY_PAL;
 
 // What else a flurry plays around its target, its FLURRY_EXTRA.
 typedef enum FLURRY_EXTRA_KIND
 {
-	FLURRY_EXTRA_NONE,
-	FLURRY_EXTRA_GLINTS, // three glints a tick until tick 31
-	FLURRY_EXTRA_RIPPLE  // BG2 swings on a sine wave and smoke rises
+    FLURRY_EXTRA_NONE,
+    FLURRY_EXTRA_GLINTS, // three glints a tick until tick 31
+    FLURRY_EXTRA_RIPPLE  // BG2 swings on a sine wave and smoke rises
 } FLURRY_EXTRA_KIND;
 
 // The scale each of Gaia's rocks starts from before it grows.

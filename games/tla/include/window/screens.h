@@ -16,38 +16,38 @@ struct WINDOW_SPR;
 // run of the row it highlights.
 typedef struct BATTLE_SUMMARY_STAT_CURSOR
 {
-	Uint8 entry;
-	Uint8 column;
-	Uint8 row;
-	Uint8 highlightColumn;
-	Uint8 highlightRow;
-	Uint8 highlightWidth;
-	Uint8 reserved[2]; // 0 in every row
+    Uint8 entry;
+    Uint8 column;
+    Uint8 row;
+    Uint8 highlightColumn;
+    Uint8 highlightRow;
+    Uint8 highlightWidth;
+    Uint8 reserved[2]; // 0 in every row
 } BATTLE_SUMMARY_STAT_CURSOR;
 
 // A cursor stop on the Status screen's equipment or statuses: its help entry and where the cursor
 // points.
 typedef struct BATTLE_SUMMARY_CURSOR
 {
-	Uint8 entry;
-	Uint8 column;
-	Uint8 row;
-	Uint8 reserved; // 0 in every row
+    Uint8 entry;
+    Uint8 column;
+    Uint8 row;
+    Uint8 reserved; // 0 in every row
 } BATTLE_SUMMARY_CURSOR;
 
 // A row of MenuBarPatternRows: the two words a menu bar's tile pair is XORed with
 // (mnRangeIconBuildTiles).
 typedef struct BAR_PATTERN_ROW
 {
-	Uint32 firstTile;
-	Uint32 secondTile;
+    Uint32 firstTile;
+    Uint32 secondTile;
 } BAR_PATTERN_ROW;
 
 // One word of a tile XORed with a row's mask: the marks mnBuildPatternTiles and
 // mnRangeIconBuildTiles make on a range icon's two tiles.
 static __inline__ Uint32 mnXorWord(Uint32 word, Uint32 mask)
 {
-	return word ^ mask;
+    return word ^ mask;
 }
 
 // The twelve Psynergy range icons, built in two sets of six (mnBuildPatternTiles for the Status
@@ -93,15 +93,15 @@ void   mnTitleBob(struct WINDOW_SPR *object);
 // menu's, in FILE_MENU_MODE's order, then the Pause and Settings headings.
 typedef enum MENU_TITLE_PICTURE
 {
-	MENU_TITLE_SAVE,
-	MENU_TITLE_CONTINUE,
-	MENU_TITLE_COPY,
-	MENU_TITLE_ERASE,
-	MENU_TITLE_BATTLE,
-	MENU_TITLE_TRANSFER,
-	MENU_TITLE_UPDATE,
-	MENU_TITLE_PAUSE,
-	MENU_TITLE_SETTINGS
+    MENU_TITLE_SAVE,
+    MENU_TITLE_CONTINUE,
+    MENU_TITLE_COPY,
+    MENU_TITLE_ERASE,
+    MENU_TITLE_BATTLE,
+    MENU_TITLE_TRANSFER,
+    MENU_TITLE_UPDATE,
+    MENU_TITLE_PAUSE,
+    MENU_TITLE_SETTINGS
 } MENU_TITLE_PICTURE;
 
 struct WINDOW_SPR *mnTitleCreate(Sint32 picture, struct WINDOW *window, Sint32 x, Sint32 y);
@@ -110,12 +110,12 @@ void               mnWindowSpritePulse(struct WINDOW_SPR *object);
 // The file menu's choices, as mnFileListSelectAction returns them (MenuSaveSlotActionByPosition).
 typedef enum FILE_ACTION
 {
-	SAVE_ACTION_NEW_GAME = 0,
-	SAVE_ACTION_CONTINUE = 1,
-	SAVE_ACTION_COPY     = 2,
-	SAVE_ACTION_ERASE    = 3,
-	SAVE_ACTION_BATTLE   = 4,
-	SAVE_ACTION_UPDATE   = 5
+    SAVE_ACTION_NEW_GAME = 0,
+    SAVE_ACTION_CONTINUE = 1,
+    SAVE_ACTION_COPY     = 2,
+    SAVE_ACTION_ERASE    = 3,
+    SAVE_ACTION_BATTLE   = 4,
+    SAVE_ACTION_UPDATE   = 5
 } FILE_ACTION;
 
 // The bytes of the menu state, heap block HEAP_SLOT_MENU: SHOP_STATE's size, the largest of the
@@ -127,114 +127,114 @@ typedef enum FILE_ACTION
 // (mnDjinnMenuDrawStatArrow): from the output's byte 16 on.
 typedef struct PREVIEW_SPR
 {
-	Uint32 link; // the output's depth-queue link (WINDOW_SPR.link)
+    Uint32 link; // the output's depth-queue link (WINDOW_SPR.link)
 
-	// OAM attributes 0 and 1, written whole as 0x40000400 first.
-	union
-	{
-		Uint32 word;
+                 // OAM attributes 0 and 1, written whole as 0x40000400 first.
+    union
+    {
+        Uint32 word;
 
-		struct
-		{
-			unsigned y     : 8; // screen pixels
-			// attribute 0's high byte: 0x04, semi-transparent
-			unsigned flags : 8;
-			unsigned x     : 9; // screen pixels
-			unsigned high  : 7; // attribute 1's flip and size bits: 16 by 16
-		} bits;
-	} attributes;
+        struct
+        {
+            unsigned y     : 8; // screen pixels
+            // attribute 0's high byte: 0x04, semi-transparent
+            unsigned flags : 8;
+            unsigned x     : 9; // screen pixels
+            unsigned high  : 7; // attribute 1's flip and size bits: 16 by 16
+        } bits;
+    } attributes;
 
-	// OAM attribute 2: the arrow's VRAM tile.
-	union
-	{
-		Uint32 value;
+    // OAM attribute 2: the arrow's VRAM tile.
+    union
+    {
+        Uint32 value;
 
-		struct
-		{
-			unsigned index : 10; // the tile in object VRAM
-			unsigned high  : 6;  // priority and palette, 0 here
-		} bits;
-	} tile;
+        struct
+        {
+            unsigned index : 10; // the tile in object VRAM
+            unsigned high  : 6;  // priority and palette, 0 here
+        } bits;
+    } tile;
 } PREVIEW_SPR;
 
 // The field menu's commands, as mnFieldMenuSelectCommand takes and returns them
 // (MenuTopEntryCommandByPosition).
 typedef enum FIELD_MENU_COMMAND
 {
-	FIELD_MENU_PSYNERGY = 1,
-	FIELD_MENU_DJINN    = 2,
-	FIELD_MENU_ITEM     = 3,
-	FIELD_MENU_STATUS   = 4
+    FIELD_MENU_PSYNERGY = 1,
+    FIELD_MENU_DJINN    = 2,
+    FIELD_MENU_ITEM     = 3,
+    FIELD_MENU_STATUS   = 4
 } FIELD_MENU_COMMAND;
 
 // What the file list is choosing a file for (mnFileListSelectFile, and mnSaveChooseAndLoadFile for
 // the File Screen), which decides the files the cursor may stop on.
 typedef enum FILE_MENU_MODE
 {
-	FILE_LIST_SAVE,     // saving: any file, empty ones too
-	FILE_LIST_CONTINUE, // continuing: files not yet cleared
-	FILE_LIST_COPY,     // copying: any file with data
-	FILE_LIST_ERASE,    // erasing: any file with data
-	// The title's Battle: files that have found a Djinni.
-	FILE_LIST_BATTLE,
-	FILE_LIST_CLEARED, // the title's Send: cleared files only
-	// The title's Update: files saved before FLAG_REUNION was set.
-	FILE_LIST_UPDATE
+    FILE_LIST_SAVE,     // saving: any file, empty ones too
+    FILE_LIST_CONTINUE, // continuing: files not yet cleared
+    FILE_LIST_COPY,     // copying: any file with data
+    FILE_LIST_ERASE,    // erasing: any file with data
+    // The title's Battle: files that have found a Djinni.
+    FILE_LIST_BATTLE,
+    FILE_LIST_CLEARED, // the title's Send: cleared files only
+    // The title's Update: files saved before FLAG_REUNION was set.
+    FILE_LIST_UPDATE
 } FILE_MENU_MODE;
 
 // The places of the transfer method menu.
 typedef enum TRANSFER_METHOD
 {
-	TRANSFER_METHOD_PASSWORD = 0,
-	TRANSFER_METHOD_CABLE    = 1
+    TRANSFER_METHOD_PASSWORD = 0,
+    TRANSFER_METHOD_CABLE    = 1
 } TRANSFER_METHOD;
 
 // The places of the password level menu: how much of the game a password carries.
 typedef enum PASSWORD_LEVEL
 {
-	PASSWORD_LEVEL_GOLD   = 0, // levels, Djinn, stats, items and coins
-	PASSWORD_LEVEL_SILVER = 1, // levels, Djinn and stats
-	PASSWORD_LEVEL_BRONZE = 2  // levels and Djinn
+    PASSWORD_LEVEL_GOLD   = 0, // levels, Djinn, stats, items and coins
+    PASSWORD_LEVEL_SILVER = 1, // levels, Djinn and stats
+    PASSWORD_LEVEL_BRONZE = 2  // levels and Djinn
 } PASSWORD_LEVEL;
 
 // What mnIconMenuChooseSendOption offers.
 typedef enum SEND_OPTION_MENU
 {
-	SEND_OPTION_TRANSFER_METHOD = 0, // Password or Cable
-	SEND_OPTION_PASSWORD_LEVEL  = 1  // Gold, Silver or Bronze
+    SEND_OPTION_TRANSFER_METHOD = 0, // Password or Cable
+    SEND_OPTION_PASSWORD_LEVEL  = 1  // Gold, Silver or Bronze
 } SEND_OPTION_MENU;
 
 // What mnYesNoMenuRun and mnYesNoMenuRunAt return.
 typedef enum YES_NO
 {
-	YES = 0,
-	NO  = 1
+    YES = 0,
+    NO  = 1
 } YES_NO;
 
 // A status the Status screen shows as an icon, which picks both the icon and its help
 // (MsgNormalStatus + condition).
 typedef enum BATTLE_SUMMARY_STAT
 {
-	OWNER_CONDITION_EMPTY           = -1, // a place with no icon
-	OWNER_CONDITION_NORMAL          = 0,  // no status: "Normal status."
-	OWNER_CONDITION_POISON          = 1,
-	OWNER_CONDITION_DEADLY_POISON   = 2,
-	OWNER_CONDITION_STUN            = 3,
-	OWNER_CONDITION_PSYNERGY_SEALED = 4,
-	OWNER_CONDITION_SLEEP           = 5,
-	OWNER_CONDITION_DELUSION        = 6,
-	OWNER_CONDITION_HAUNT           = 7,
-	OWNER_CONDITION_GRIM_REAPER     = 8, // downed when its turns run out
-	OWNER_CONDITION_ATTACK_UP       = 9,
-	OWNER_CONDITION_ATTACK_DOWN     = 10,
-	OWNER_CONDITION_DEFENSE_UP      = 11,
-	OWNER_CONDITION_DEFENSE_DOWN    = 12,
-	OWNER_CONDITION_RESISTANCE_UP   = 13,
-	OWNER_CONDITION_RESISTANCE_DOWN = 14,
-	OWNER_CONDITION_CURSED_ITEM     = 15,
-	OWNER_CONDITION_DOWNED          = 16,
-	OWNER_CONDITION_AGILITY_UP      = 17,
-	OWNER_CONDITION_AGILITY_DOWN    = 18
+    OWNER_CONDITION_EMPTY           = -1, // a place with no icon
+    OWNER_CONDITION_NORMAL          = 0,  // no status: "Normal status."
+    OWNER_CONDITION_POISON          = 1,
+    OWNER_CONDITION_DEADLY_POISON   = 2,
+    OWNER_CONDITION_STUN            = 3,
+    OWNER_CONDITION_PSYNERGY_SEALED = 4,
+    OWNER_CONDITION_SLEEP           = 5,
+    OWNER_CONDITION_DELUSION        = 6,
+    OWNER_CONDITION_HAUNT           = 7,
+    OWNER_CONDITION_GRIM_REAPER     = 8, // downed when its turns run out
+    OWNER_CONDITION_ATTACK_UP       = 9,
+    OWNER_CONDITION_ATTACK_DOWN     = 10,
+    OWNER_CONDITION_DEFENSE_UP      = 11,
+    OWNER_CONDITION_DEFENSE_DOWN    = 12,
+    OWNER_CONDITION_RESISTANCE_UP   = 13,
+    OWNER_CONDITION_RESISTANCE_DOWN = 14,
+    OWNER_CONDITION_CURSED_ITEM     = 15,
+    OWNER_CONDITION_DOWNED          = 16,
+    OWNER_CONDITION_AGILITY_UP      = 17,
+    OWNER_CONDITION_AGILITY_DOWN    = 18
 } BATTLE_SUMMARY_STAT;
 
 // The two tiles of the link screen's page arrows, which mnPageArrowsDraw shifts and merges into the

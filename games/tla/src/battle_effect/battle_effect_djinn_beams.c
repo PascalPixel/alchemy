@@ -5,37 +5,37 @@
 // its row of LobbedShellsStyles.
 typedef enum LOBBED_SHELLS_MODE
 {
-	LOBBED_SHELLS_BONE_CHILLER,  // blue, bursting into smoke
-	LOBBED_SHELLS_STICKY_GOO,    // the spider web's colours, smoke
-	LOBBED_SHELLS_STICKY_POISON, // lime, smoke
-	LOBBED_SHELLS_ROTTEN_BLOOD,  // green, shards
-	LOBBED_SHELLS_MAD_SPATTER,   // gold, shards
-	LOBBED_SHELLS_DECOMPOSE,     // green, smoke
-	LOBBED_SHELLS_POISON_INK,    // Mars Djinn colours, smoke
-	LOBBED_SHELLS_MUD,           // gold, four to a target, shards
-	LOBBED_SHELLS_RISING_VENOM,  // lime and glowing, smoke
-	LOBBED_SHELLS_FORMIC_ACID    // pink, smoke
+    LOBBED_SHELLS_BONE_CHILLER,  // blue, bursting into smoke
+    LOBBED_SHELLS_STICKY_GOO,    // the spider web's colours, smoke
+    LOBBED_SHELLS_STICKY_POISON, // lime, smoke
+    LOBBED_SHELLS_ROTTEN_BLOOD,  // green, shards
+    LOBBED_SHELLS_MAD_SPATTER,   // gold, shards
+    LOBBED_SHELLS_DECOMPOSE,     // green, smoke
+    LOBBED_SHELLS_POISON_INK,    // Mars Djinn colours, smoke
+    LOBBED_SHELLS_MUD,           // gold, four to a target, shards
+    LOBBED_SHELLS_RISING_VENOM,  // lime and glowing, smoke
+    LOBBED_SHELLS_FORMIC_ACID    // pink, smoke
 } LOBBED_SHELLS_MODE;
 
 // Builds the two usual canvas blitters, clipped and mirrored when flip is nonzero: out[0] keeps the
 // brighter level, out[1] adds the levels.
 void btEffectBuildCanvasBlitters(Sint32 flip, DRAW_RECTANGLE *out)
 {
-	if (flip == 0)
-	{
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		out[0] = RamHeapSlots->ramCode;
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-		out[1] = RamHeapSlots->ramCodePaired;
-	}
-	else
-	{
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-		out[0] = RamHeapSlots->ramCode;
-		EFFECT_LOAD_BLITTER(
-			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-		out[1] = RamHeapSlots->ramCodePaired;
-	}
+    if (flip == 0)
+    {
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+        out[0] = RamHeapSlots->ramCode;
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
+        out[1] = RamHeapSlots->ramCodePaired;
+    }
+    else
+    {
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+        out[0] = RamHeapSlots->ramCode;
+        EFFECT_LOAD_BLITTER(
+            HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
+        out[1] = RamHeapSlots->ramCodePaired;
+    }
 }
 
 // Motes drift down over each target and a column of light falls on it, in the Venus Djinni's
@@ -44,7 +44,7 @@ void btEffectBuildCanvasBlitters(Sint32 flip, DRAW_RECTANGLE *out)
 // Abilities: Revive, Water of Life, Lich; Quartz.
 void btEffectRunRevive(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunDjinnBeams(args, ELEMENT_VENUS);
+    btEffectRunDjinnBeams(args, ELEMENT_VENUS);
 }
 
 // Dew plays Revive's beams of light in the Mercury Djinni's colours, and with a prelude a Mercury
@@ -53,7 +53,7 @@ void btEffectRunRevive(BATTLE_EFFECT_PARM *args)
 // Abilities: Dew.
 void btEffectRunDew(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunDjinnBeams(args, ELEMENT_MERCURY);
+    btEffectRunDjinnBeams(args, ELEMENT_MERCURY);
 }
 
 // Spark plays Revive's beams of light in the Mars Djinni's colours, and with a prelude a Mars
@@ -62,7 +62,7 @@ void btEffectRunDew(BATTLE_EFFECT_PARM *args)
 // Abilities: Spark.
 void btEffectRunSpark(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunDjinnBeams(args, ELEMENT_MARS);
+    btEffectRunDjinnBeams(args, ELEMENT_MARS);
 }
 
 #define DJINN_BEAMS_MOTES              512 // motes in PARTICLES
@@ -92,224 +92,224 @@ void btEffectRunSpark(BATTLE_EFFECT_PARM *args)
 // falls on it, flashing it, and narrows from tick 88.
 void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 {
-	Sint32               djinn[3];
-	Sint32               djinnSize[3];
-	SCREEN_POINT         one;
-	SCREEN_POINT         screenPos;
-	Sint32               ground[3];
-	Sint32               point[3];
-	DRAW_RECTANGLE       draw[2];
-	BATTLE_EFFECT_STATE *state;
-	void                *canvas;
-	Sint32               frame;
-	Sint32               offsetX;
-	Sint32               i;
-	Sint32               k;
-	HEAP_SLOTS          *heap = RamHeapSlots;
+    Sint32               djinn[3];
+    Sint32               djinnSize[3];
+    SCREEN_POINT         one;
+    SCREEN_POINT         screenPos;
+    Sint32               ground[3];
+    Sint32               point[3];
+    DRAW_RECTANGLE       draw[2];
+    BATTLE_EFFECT_STATE *state;
+    void                *canvas;
+    Sint32               frame;
+    Sint32               offsetX;
+    Sint32               i;
+    Sint32               k;
+    HEAP_SLOTS          *heap = RamHeapSlots;
 
-	state                     = RamHeapSlots->battleEffect;
-	canvas                    = RamHeapSlots->battleCanvas;
+    state                     = RamHeapSlots->battleEffect;
+    canvas                    = RamHeapSlots->battleCanvas;
 
-	btEffectStartCanvasLayer(0);
-	if (args->prelude == 1)
-		btEffectRunDjinniEntrance(
-			args,
-			DJINNI_ENTRANCE(element, args->side ^ args->prelude, DJINNI_ANCHOR_OVER_TARGET),
-			djinn,
-			djinnSize);
-	btResourceLoadAndDecompress(RESOURCE_EARTH_WALL_SHEET, state->sheet, 1, 1);
-	btResourceLoadAndDecompress(
-		RESOURCE_CRESCENT_MOON_SHEET, state->sheet + DJINN_BEAMS_MOTE_PICTURES, 1, 1);
-	if (element == ELEMENT_VENUS)
-		btResourceLoadAndDecompress(
-			RESOURCE_VENUS_DJINN_SHEET, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
-	else if (element == ELEMENT_MERCURY)
-		btResourceLoadAndDecompress(
-			RESOURCE_MERCURY_DJINN_SHEET, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
-	else
-		btResourceLoadAndDecompress(
-			RESOURCE_MARS_DJINN_SHEET, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
+    btEffectStartCanvasLayer(0);
+    if (args->prelude == 1)
+        btEffectRunDjinniEntrance(
+            args,
+            DJINNI_ENTRANCE(element, args->side ^ args->prelude, DJINNI_ANCHOR_OVER_TARGET),
+            djinn,
+            djinnSize);
+    btResourceLoadAndDecompress(RESOURCE_EARTH_WALL_SHEET, state->sheet, 1, 1);
+    btResourceLoadAndDecompress(
+        RESOURCE_CRESCENT_MOON_SHEET, state->sheet + DJINN_BEAMS_MOTE_PICTURES, 1, 1);
+    if (element == ELEMENT_VENUS)
+        btResourceLoadAndDecompress(
+            RESOURCE_VENUS_DJINN_SHEET, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
+    else if (element == ELEMENT_MERCURY)
+        btResourceLoadAndDecompress(
+            RESOURCE_MERCURY_DJINN_SHEET, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
+    else
+        btResourceLoadAndDecompress(
+            RESOURCE_MARS_DJINN_SHEET, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
 
-	// The motes start 80 pixels up, each at its own phase of the sway.
-	for (i = 0; i != DJINN_BEAMS_MOTES; i++)
-	{
-		SET_POSITION(&PARTICLES[i], 0, toFIXED(80), (syRandom() | -32) << 14);
-		PARTICLES[i].variant = syRandom() & 255;
-	}
+    // The motes start 80 pixels up, each at its own phase of the sway.
+    for (i = 0; i != DJINN_BEAMS_MOTES; i++)
+    {
+        SET_POSITION(&PARTICLES[i], 0, toFIXED(80), (syRandom() | -32) << 14);
+        PARTICLES[i].variant = syRandom() & 255;
+    }
 
-	// With one target, BG2 is shifted so that it stands in the canvas's middle.
-	REG_BG2PA = Q_8_8(1);
-	if (args->targetCount == 1)
-	{
-		btEffectPosProjectScaledBattler(args->targets[0], &one);
-		offsetX = CANVAS_SIZE / 2 - one.x;
-	}
-	else
-	{
-		if (args->side == EFFECT_SIDE_PARTY)
-			offsetX = -NARROW_CANVAS_PARTY_X;
-		else
-			offsetX = 0;
-	}
-	REG_BG2X = offsetX << 8;
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    // With one target, BG2 is shifted so that it stands in the canvas's middle.
+    REG_BG2PA = Q_8_8(1);
+    if (args->targetCount == 1)
+    {
+        btEffectPosProjectScaledBattler(args->targets[0], &one);
+        offsetX = CANVAS_SIZE / 2 - one.x;
+    }
+    else
+    {
+        if (args->side == EFFECT_SIDE_PARTY)
+            offsetX = -NARROW_CANVAS_PARTY_X;
+        else
+            offsetX = 0;
+    }
+    REG_BG2X = offsetX << 8;
+    EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for (frame = 0; frame != args->targetCount * DJINN_BEAMS_TARGET_TICKS + 116; frame++)
-	{
-		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
+    for (frame = 0; frame != args->targetCount * DJINN_BEAMS_TARGET_TICKS + 116; frame++)
+    {
+        BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
-		if (frame == 64)
-			sySoundPlayStub(SE_POWER_UP);
-		if (frame == 80)
-			EFFECT_SHOW_DAMAGE(0);
+        if (frame == 64)
+            sySoundPlayStub(SE_POWER_UP);
+        if (frame == 80)
+            EFFECT_SHOW_DAMAGE(0);
 
-		// The Djinni sways, then rises away from tick 32.
-		if (args->prelude == 1)
-		{
-			Sint32 angle = frame * (TRIG_TURN / 32);
-			Sint32 x = FIXEDtoINT(-sySin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) + djinn[0] + offsetX
-			         - DJINNI_WIDTH / 2;
-			Sint32 y = FIXEDtoINT(syCos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) + djinn[1] - 24;
+        // The Djinni sways, then rises away from tick 32.
+        if (args->prelude == 1)
+        {
+            Sint32 angle = frame * (TRIG_TURN / 32);
+            Sint32 x = FIXEDtoINT(-sySin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) + djinn[0] + offsetX
+                     - DJINNI_WIDTH / 2;
+            Sint32 y = FIXEDtoINT(syCos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) + djinn[1] - 24;
 
-			btEffectBuildCanvasBlitters(args->side ^ 1, draw);
-			if (frame > 32)
-				y = y - frame * 2 + 64;
-			draw[1](canvas,
-			        state->sheet + DJINN_BEAMS_DJINNI_PICTURE,
-			        x,
-			        y,
-			        DJINNI_WIDTH,
-			        DJINNI_HEIGHT);
-			// Added twice in the first ticks, it flashes as it appears.
-			if (frame <= 3)
-				draw[1](canvas,
-				        state->sheet + DJINN_BEAMS_DJINNI_PICTURE,
-				        x,
-				        y,
-				        DJINNI_WIDTH,
-				        DJINNI_HEIGHT);
-			EFFECT_RELEASE_BLITTERS();
-		}
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		draw[0] = RamHeapSlots->ramCode;
-		EFFECT_LOAD_BLITTER(
-			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-		draw[1] = heap->ramCodePaired;
+            btEffectBuildCanvasBlitters(args->side ^ 1, draw);
+            if (frame > 32)
+                y = y - frame * 2 + 64;
+            draw[1](canvas,
+                    state->sheet + DJINN_BEAMS_DJINNI_PICTURE,
+                    x,
+                    y,
+                    DJINNI_WIDTH,
+                    DJINNI_HEIGHT);
+            // Added twice in the first ticks, it flashes as it appears.
+            if (frame <= 3)
+                draw[1](canvas,
+                        state->sheet + DJINN_BEAMS_DJINNI_PICTURE,
+                        x,
+                        y,
+                        DJINNI_WIDTH,
+                        DJINNI_HEIGHT);
+            EFFECT_RELEASE_BLITTERS();
+        }
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+        draw[0] = RamHeapSlots->ramCode;
+        EFFECT_LOAD_BLITTER(
+            HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+        draw[1] = heap->ramCodePaired;
 
-		// A mote every eight ticks drifts down a pixel a tick, swaying, until it is 8 pixels from
-		// the ground.
-		EFFECT_FOR_EACH_TARGET(k, args)
-		{
-			MOTION_OBJECT *target = btObjectGetStub(args->targets[k])->object;
-			Sint32         start  = k * DJINN_BEAMS_TARGET_TICKS;
+        // A mote every eight ticks drifts down a pixel a tick, swaying, until it is 8 pixels from
+        // the ground.
+        EFFECT_FOR_EACH_TARGET(k, args)
+        {
+            MOTION_OBJECT *target = btObjectGetStub(args->targets[k])->object;
+            Sint32         start  = k * DJINN_BEAMS_TARGET_TICKS;
 
-			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(point, target->x, 0, target->z);
-			syMatrixTranslateVector(point);
-			if (frame > start)
-			{
-				for (i = 0; i != DJINN_BEAMS_MOTES_DRAWN; i++)
-				{
-					PARTICLE *mote = &PARTICLES[k * DJINN_BEAMS_TARGET_MOTES + i];
+            EFFECT_VIEW_FROM_CAMERA(camera);
+            SET_VECTOR(point, target->x, 0, target->z);
+            syMatrixTranslateVector(point);
+            if (frame > start)
+            {
+                for (i = 0; i != DJINN_BEAMS_MOTES_DRAWN; i++)
+                {
+                    PARTICLE *mote = &PARTICLES[k * DJINN_BEAMS_TARGET_MOTES + i];
 
-					if (frame > i * 8 + start && mote->y > toFIXED(8))
-					{
-						Sint32 sway;
+                    if (frame > i * 8 + start && mote->y > toFIXED(8))
+                    {
+                        Sint32 sway;
 
-						btEffectPosProjectPoint(mote, &screenPos);
-						screenPos.x += offsetX;
-						sway         = FIXEDtoINT(sySin(mote->variant * (TRIG_TURN / 64))
+                        btEffectPosProjectPoint(mote, &screenPos);
+                        screenPos.x += offsetX;
+                        sway         = FIXEDtoINT(sySin(mote->variant * (TRIG_TURN / 64))
                                           * DJINN_BEAMS_MOTE_SWAY);
-						if (i & 1)
-							screenPos.x -= sway;
-						else
-							screenPos.x += sway;
-						draw[i & 1](canvas,
-						            state->sheet
-						                + DjinnBeamsMotePictures[mote->variant / 8 & 7]
-						                      * PICTURE_BYTES(DJINN_BEAMS_MOTE)
-						                + DJINN_BEAMS_MOTE_PICTURES,
-						            screenPos.x - DJINN_BEAMS_MOTE_WIDTH / 2,
-						            screenPos.y - DJINN_BEAMS_MOTE_HEIGHT / 2,
-						            DJINN_BEAMS_MOTE_WIDTH,
-						            DJINN_BEAMS_MOTE_HEIGHT);
-						mote->y -= toFIXED(1);
-						mote->variant++;
-					}
-				}
-			}
-		}
+                        if (i & 1)
+                            screenPos.x -= sway;
+                        else
+                            screenPos.x += sway;
+                        draw[i & 1](canvas,
+                                    state->sheet
+                                        + DjinnBeamsMotePictures[mote->variant / 8 & 7]
+                                              * PICTURE_BYTES(DJINN_BEAMS_MOTE)
+                                        + DJINN_BEAMS_MOTE_PICTURES,
+                                    screenPos.x - DJINN_BEAMS_MOTE_WIDTH / 2,
+                                    screenPos.y - DJINN_BEAMS_MOTE_HEIGHT / 2,
+                                    DJINN_BEAMS_MOTE_WIDTH,
+                                    DJINN_BEAMS_MOTE_HEIGHT);
+                        mote->y -= toFIXED(1);
+                        mote->variant++;
+                    }
+                }
+            }
+        }
 
-		// The column of light: from the top of the screen to the target's feet, drawn in two
-		// mirrored halves, six pixels wide until tick 88, then narrowing a pixel every three ticks;
-		// its glow flickers at the feet.
-		EFFECT_FOR_EACH_TARGET(i, args)
-		{
-			Sint32 start = i * DJINN_BEAMS_TARGET_TICKS;
+        // The column of light: from the top of the screen to the target's feet, drawn in two
+        // mirrored halves, six pixels wide until tick 88, then narrowing a pixel every three ticks;
+        // its glow flickers at the feet.
+        EFFECT_FOR_EACH_TARGET(i, args)
+        {
+            Sint32 start = i * DJINN_BEAMS_TARGET_TICKS;
 
-			if (frame >= start + 72)
-			{
-				MOTION_OBJECT *target = btObjectGetStub(args->targets[i])->object;
+            if (frame >= start + 72)
+            {
+                MOTION_OBJECT *target = btObjectGetStub(args->targets[i])->object;
 
-				EFFECT_VIEW_FROM_CAMERA(camera);
-				if (frame == start + 72)
-					btEffectTintBattler(
-						args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP, TINT_KEEP, 0);
-				if (frame == start + 88)
-					btEffectTintBattler(
-						args->targets[i], SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
-				SET_VECTOR(ground, target->x, 0, target->z);
-				btEffectPosProjectPoint(ground, &screenPos);
-				screenPos.x += offsetX;
-				if (frame < start + 104)
-				{
-					Sint32 picture = frame / 4;
-					Sint32 width   = DJINN_BEAMS_COLUMN_STRIP_WIDTH;
+                EFFECT_VIEW_FROM_CAMERA(camera);
+                if (frame == start + 72)
+                    btEffectTintBattler(
+                        args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP, TINT_KEEP, 0);
+                if (frame == start + 88)
+                    btEffectTintBattler(
+                        args->targets[i], SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
+                SET_VECTOR(ground, target->x, 0, target->z);
+                btEffectPosProjectPoint(ground, &screenPos);
+                screenPos.x += offsetX;
+                if (frame < start + 104)
+                {
+                    Sint32 picture = frame / 4;
+                    Sint32 width   = DJINN_BEAMS_COLUMN_STRIP_WIDTH;
 
-					if (frame > start + 88)
-						width = DJINN_BEAMS_COLUMN_STRIP_WIDTH - (frame - start - 88) / 3;
-					if (picture > 2)
-						picture = (picture & 1) + 1;
-					if (frame < start + 100)
-					{
-						draw[0](canvas,
-						        state->sheet + DjinnBeamsHeadPictures[picture],
-						        screenPos.x - DjinnBeamsHeadWidths[picture],
-						        screenPos.y - DjinnBeamsHeadHeights[picture] + 8,
-						        DjinnBeamsHeadWidths[picture],
-						        DjinnBeamsHeadHeights[picture]);
-						draw[1](canvas,
-						        state->sheet + DjinnBeamsHeadPictures[picture],
-						        screenPos.x,
-						        screenPos.y - DjinnBeamsHeadHeights[picture] + 8,
-						        DjinnBeamsHeadWidths[picture],
-						        DjinnBeamsHeadHeights[picture]);
-					}
-					// Every row of the column, from the top down to the feet, is the same strip.
-					for (k = 0; k != screenPos.y; k++)
-					{
-						draw[0](canvas,
-						        state->sheet + DJINN_BEAMS_COLUMN_STRIP,
-						        screenPos.x - width,
-						        k,
-						        width,
-						        1);
-						draw[1](canvas,
-						        state->sheet + DJINN_BEAMS_COLUMN_STRIP,
-						        screenPos.x,
-						        k,
-						        width,
-						        1);
-					}
-				}
-			}
-		}
-		EFFECT_RELEASE_BLITTERS();
-		EFFECT_PRESENT_CANVAS(state);
-	}
+                    if (frame > start + 88)
+                        width = DJINN_BEAMS_COLUMN_STRIP_WIDTH - (frame - start - 88) / 3;
+                    if (picture > 2)
+                        picture = (picture & 1) + 1;
+                    if (frame < start + 100)
+                    {
+                        draw[0](canvas,
+                                state->sheet + DjinnBeamsHeadPictures[picture],
+                                screenPos.x - DjinnBeamsHeadWidths[picture],
+                                screenPos.y - DjinnBeamsHeadHeights[picture] + 8,
+                                DjinnBeamsHeadWidths[picture],
+                                DjinnBeamsHeadHeights[picture]);
+                        draw[1](canvas,
+                                state->sheet + DjinnBeamsHeadPictures[picture],
+                                screenPos.x,
+                                screenPos.y - DjinnBeamsHeadHeights[picture] + 8,
+                                DjinnBeamsHeadWidths[picture],
+                                DjinnBeamsHeadHeights[picture]);
+                    }
+                    // Every row of the column, from the top down to the feet, is the same strip.
+                    for (k = 0; k != screenPos.y; k++)
+                    {
+                        draw[0](canvas,
+                                state->sheet + DJINN_BEAMS_COLUMN_STRIP,
+                                screenPos.x - width,
+                                k,
+                                width,
+                                1);
+                        draw[1](canvas,
+                                state->sheet + DJINN_BEAMS_COLUMN_STRIP,
+                                screenPos.x,
+                                k,
+                                width,
+                                1);
+                    }
+                }
+            }
+        }
+        EFFECT_RELEASE_BLITTERS();
+        EFFECT_PRESENT_CANVAS(state);
+    }
 
-	syCloseEvent(btEffectTransferCanvas);
-	btEffectEndCanvasLayer();
+    syCloseEvent(btEffectTransferCanvas);
+    btEffectEndCanvasLayer();
 }
 
 // Gold shells arc from the user onto each target in turn and burst into shards.
@@ -317,7 +317,7 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 // Abilities: Mad Spatter.
 void btEffectRunMadSpatter(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_MAD_SPATTER);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_MAD_SPATTER);
 }
 
 // A Venus Djinni appears, then four gold shells arc onto each target and burst into shards.
@@ -325,7 +325,7 @@ void btEffectRunMadSpatter(BATTLE_EFFECT_PARM *args)
 // Abilities: Mud.
 void btEffectRunMud(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_MUD);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_MUD);
 }
 
 // Green shells arc from the user onto each target in turn and burst into smoke, then Dull's effect
@@ -334,7 +334,7 @@ void btEffectRunMud(BATTLE_EFFECT_PARM *args)
 // Abilities: Decompose.
 void btEffectRunDecompose(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_DECOMPOSE);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_DECOMPOSE);
 }
 
 // Blue shells arc from the user onto each target in turn and burst into smoke.
@@ -342,7 +342,7 @@ void btEffectRunDecompose(BATTLE_EFFECT_PARM *args)
 // Abilities: Bone Chiller.
 void btEffectRunBoneChiller(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_BONE_CHILLER);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_BONE_CHILLER);
 }
 
 // Shells in the spider web's colours arc from the user onto each target in turn and burst into
@@ -351,7 +351,7 @@ void btEffectRunBoneChiller(BATTLE_EFFECT_PARM *args)
 // Abilities: Sticky Goo.
 void btEffectRunStickyGoo(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_STICKY_GOO);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_STICKY_GOO);
 }
 
 // Shells in Mars Djinn colours arc from the user onto each target in turn and burst into smoke.
@@ -359,7 +359,7 @@ void btEffectRunStickyGoo(BATTLE_EFFECT_PARM *args)
 // Abilities: Poison Ink.
 void btEffectRunPoisonInk(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_POISON_INK);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_POISON_INK);
 }
 
 // Lime shells arc from the user onto each target in turn and burst into smoke.
@@ -367,7 +367,7 @@ void btEffectRunPoisonInk(BATTLE_EFFECT_PARM *args)
 // Abilities: Sticky Poison.
 void btEffectRunStickyPoison(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_STICKY_POISON);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_STICKY_POISON);
 }
 
 // Green shells arc from the user onto each target in turn and burst into shards, then Impair's
@@ -376,7 +376,7 @@ void btEffectRunStickyPoison(BATTLE_EFFECT_PARM *args)
 // Abilities: Rotten Blood.
 void btEffectRunRottenBlood(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
 }
 
 // Glowing lime shells arc from the user onto each target in turn and burst into smoke.
@@ -384,7 +384,7 @@ void btEffectRunRottenBlood(BATTLE_EFFECT_PARM *args)
 // Abilities: Rising Venom.
 void btEffectRunRisingVenom(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_RISING_VENOM);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_RISING_VENOM);
 }
 
 // Pink shells arc from the user onto each target in turn and burst into smoke.
@@ -392,7 +392,7 @@ void btEffectRunRisingVenom(BATTLE_EFFECT_PARM *args)
 // Abilities: Formic Acid.
 void btEffectRunFormicAcid(BATTLE_EFFECT_PARM *args)
 {
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_FORMIC_ACID);
+    btEffectRunLobbedShells(args, LOBBED_SHELLS_FORMIC_ACID);
 }
 
 // The bursts, after the shells in PARTICLES: LOBBED_SHELLS_PIECE_SLOTS for each shell,
@@ -402,9 +402,9 @@ void btEffectRunFormicAcid(BATTLE_EFFECT_PARM *args)
 #define LOBBED_SHELLS_TARGET_SHELLS 4 // Mud's shells for each target
 // Piece `n` of the burst of target `target`'s shell `shell`.
 #define LOBBED_SHELLS_PIECE(target, shell, n)                                                      \
-	LOBBED_SHELLS_BURSTS[((target) * LOBBED_SHELLS_TARGET_SHELLS + (shell))                        \
-	                         * LOBBED_SHELLS_PIECE_SLOTS                                           \
-	                     + (n)]
+    LOBBED_SHELLS_BURSTS[((target) * LOBBED_SHELLS_TARGET_SHELLS + (shell))                        \
+                             * LOBBED_SHELLS_PIECE_SLOTS                                           \
+                         + (n)]
 #define LOBBED_SHELLS_SLOTS               16    // particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS         256   // burst particles after the shells
 #define LOBBED_SHELLS_SMOKE_PICTURES      16000 // the smoke pictures in the sprite sheet
@@ -437,263 +437,263 @@ void btEffectRunFormicAcid(BATTLE_EFFECT_PARM *args)
 // Decompose go on into Impair's and Dull's effects.
 void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	SCREEN_POINT         pos;
-	Sint32               preludeSize[3];
-	Sint32               preludeOrigin[3];
-	DRAW_RECTANGLE       draw[2];
-	BATTLE_EFFECT_STATE *state;
-	void                *canvas;
-	Sint32               frame;
-	Sint32               i;
-	Sint32               k;
-	Sint32               total;
-	MOTION_OBJECT       *src;
-	BATTLE_CAMERA       *camera;
-	Uint8               *palette;
-	FIXED                height;
+    SCREEN_POINT         pos;
+    Sint32               preludeSize[3];
+    Sint32               preludeOrigin[3];
+    DRAW_RECTANGLE       draw[2];
+    BATTLE_EFFECT_STATE *state;
+    void                *canvas;
+    Sint32               frame;
+    Sint32               i;
+    Sint32               k;
+    Sint32               total;
+    MOTION_OBJECT       *src;
+    BATTLE_CAMERA       *camera;
+    Uint8               *palette;
+    FIXED                height;
 
-	state  = RamHeapSlots->battleEffect;
-	canvas = RamHeapSlots->battleCanvas;
-	camera = RamHeapSlots->cameraState;
+    state  = RamHeapSlots->battleEffect;
+    canvas = RamHeapSlots->battleCanvas;
+    camera = RamHeapSlots->cameraState;
 
-	if (mode == LOBBED_SHELLS_MUD)
-	{
-		btEffectStartCanvasLayer(0);
-		btEffectRunDjinniEntrance(args,
-		                          DJINNI_ENTRANCE(ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
-		                                          args->side,
-		                                          DJINNI_ANCHOR_OVER_USER),
-		                          preludeOrigin,
-		                          preludeSize);
-		REG_BG2CNT =
-			BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-	}
-	else
-	{
-		btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
-		REG_BLDALPHA = EFFECT_BLEND_ADD;
-	}
-	btResourceLoadAndDecompress(RESOURCE_GOLD_SHELL_SHEET, state->sheet, 1, 1);
-	btResourceLoadAndDecompress(
-		RESOURCE_SMOKE_SHEET, state->sheet + LOBBED_SHELLS_SMOKE_PICTURES, 1, 1);
-	if (mode == LOBBED_SHELLS_BONE_CHILLER)
-		palette = syResourceGetTableEntry(RESOURCE_BLUE_PALETTE);
-	else if (mode == LOBBED_SHELLS_STICKY_GOO)
-		palette = syResourceGetTableEntry(RESOURCE_SPIDER_WEB_SHEET);
-	else if (mode == LOBBED_SHELLS_STICKY_POISON)
-		palette = syResourceGetTableEntry(RESOURCE_LIME_PALETTE);
-	else if (mode == LOBBED_SHELLS_RISING_VENOM)
-		palette = syResourceGetTableEntry(RESOURCE_LIME_PALETTE);
-	else if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
-		palette = syResourceGetTableEntry(RESOURCE_GREEN_PALETTE);
-	else if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD)
-		palette = syResourceGetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
-	else if (mode == LOBBED_SHELLS_POISON_INK)
-		palette = syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET);
-	else if (mode == LOBBED_SHELLS_FORMIC_ACID)
-		palette = syResourceGetTableEntry(RESOURCE_PINK_BURST_SHEET);
-	else
-		palette = syResourceGetTableEntry(RESOURCE_GREEN_PALETTE);
-	syWordsCopyEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    if (mode == LOBBED_SHELLS_MUD)
+    {
+        btEffectStartCanvasLayer(0);
+        btEffectRunDjinniEntrance(args,
+                                  DJINNI_ENTRANCE(ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
+                                                  args->side,
+                                                  DJINNI_ANCHOR_OVER_USER),
+                                  preludeOrigin,
+                                  preludeSize);
+        REG_BG2CNT =
+            BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
+    }
+    else
+    {
+        btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
+        REG_BLDALPHA = EFFECT_BLEND_ADD;
+    }
+    btResourceLoadAndDecompress(RESOURCE_GOLD_SHELL_SHEET, state->sheet, 1, 1);
+    btResourceLoadAndDecompress(
+        RESOURCE_SMOKE_SHEET, state->sheet + LOBBED_SHELLS_SMOKE_PICTURES, 1, 1);
+    if (mode == LOBBED_SHELLS_BONE_CHILLER)
+        palette = syResourceGetTableEntry(RESOURCE_BLUE_PALETTE);
+    else if (mode == LOBBED_SHELLS_STICKY_GOO)
+        palette = syResourceGetTableEntry(RESOURCE_SPIDER_WEB_SHEET);
+    else if (mode == LOBBED_SHELLS_STICKY_POISON)
+        palette = syResourceGetTableEntry(RESOURCE_LIME_PALETTE);
+    else if (mode == LOBBED_SHELLS_RISING_VENOM)
+        palette = syResourceGetTableEntry(RESOURCE_LIME_PALETTE);
+    else if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
+        palette = syResourceGetTableEntry(RESOURCE_GREEN_PALETTE);
+    else if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD)
+        palette = syResourceGetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
+    else if (mode == LOBBED_SHELLS_POISON_INK)
+        palette = syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET);
+    else if (mode == LOBBED_SHELLS_FORMIC_ACID)
+        palette = syResourceGetTableEntry(RESOURCE_PINK_BURST_SHEET);
+    else
+        palette = syResourceGetTableEntry(RESOURCE_GREEN_PALETTE);
+    syWordsCopyEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
-	// The shells leave the user at the style's height, each aimed at its target with a little
-	// spread in depth.
-	EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
-	src = btObjectGetStub(args->user)->object;
-	if (mode == LOBBED_SHELLS_MUD)
-		height = toFIXED(40);
-	else if (mode == LOBBED_SHELLS_RISING_VENOM)
-		height = toFIXED(20);
-	else
-		height = toFIXED(4);
-	EFFECT_FOR_EACH_TARGET(k, args)
-	{
-		MOTION_OBJECT *target = btObjectGetStub(args->targets[k % args->targetCount])->object;
+    // The shells leave the user at the style's height, each aimed at its target with a little
+    // spread in depth.
+    EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
+    src = btObjectGetStub(args->user)->object;
+    if (mode == LOBBED_SHELLS_MUD)
+        height = toFIXED(40);
+    else if (mode == LOBBED_SHELLS_RISING_VENOM)
+        height = toFIXED(20);
+    else
+        height = toFIXED(4);
+    EFFECT_FOR_EACH_TARGET(k, args)
+    {
+        MOTION_OBJECT *target = btObjectGetStub(args->targets[k % args->targetCount])->object;
 
-		for (i = 0; i != LOBBED_SHELLS_SLOTS; i++)
-		{
-			PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
-			FIXED     aimZ;
+        for (i = 0; i != LOBBED_SHELLS_SLOTS; i++)
+        {
+            PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
+            FIXED     aimZ;
 
-			SET_POSITION(shot, src->x, height, src->z);
-			aimZ = target->z + toFIXED(((syRandom() & 31) - 16) * 2);
-			SET_VELOCITY(shot, (target->x - src->x) >> 4, toFIXED(4), (aimZ - src->z) >> 4);
-			shot->variant = 0;
-		}
-	}
-	EFFECT_FREE_PARTICLES(i, LOBBED_SHELLS_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
+            SET_POSITION(shot, src->x, height, src->z);
+            aimZ = target->z + toFIXED(((syRandom() & 31) - 16) * 2);
+            SET_VELOCITY(shot, (target->x - src->x) >> 4, toFIXED(4), (aimZ - src->z) >> 4);
+            shot->variant = 0;
+        }
+    }
+    EFFECT_FREE_PARTICLES(i, LOBBED_SHELLS_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
 
-	btEffectBuildCanvasBlitters(args->side, draw);
-	if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD)
-	{
-		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-		REG_BLDCNT = 0;
-	}
-	else
-	{
-		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	}
-	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	total = LOBBED_SHELLS_TICKS(mode) + args->targetCount * 8;
-	sySoundPlayStub(SE_CURSE);
+    btEffectBuildCanvasBlitters(args->side, draw);
+    if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD)
+    {
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+        REG_BLDCNT = 0;
+    }
+    else
+    {
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    }
+    sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
+    total = LOBBED_SHELLS_TICKS(mode) + args->targetCount * 8;
+    sySoundPlayStub(SE_CURSE);
 
-	for (frame = 0; frame != total; frame++)
-	{
-		PARTICLE *burst;
-		PARTICLE *piece;
+    for (frame = 0; frame != total; frame++)
+    {
+        PARTICLE *burst;
+        PARTICLE *piece;
 
-		EFFECT_VIEW_FROM_CAMERA(camera);
+        EFFECT_VIEW_FROM_CAMERA(camera);
 
-		// The shells: each starts four ticks after the last, flies under gravity and tumbles
-		// through its pictures; on the ground it bursts.
-		EFFECT_FOR_EACH_TARGET(k, args)
-		{
-			for (i = 0; i != LOBBED_SHELLS_SHELLS(mode); i++)
-			{
-				Sint32 start = k * 8 + i * 4;
+        // The shells: each starts four ticks after the last, flies under gravity and tumbles
+        // through its pictures; on the ground it bursts.
+        EFFECT_FOR_EACH_TARGET(k, args)
+        {
+            for (i = 0; i != LOBBED_SHELLS_SHELLS(mode); i++)
+            {
+                Sint32 start = k * 8 + i * 4;
 
-				if (frame >= start)
-				{
-					PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
+                if (frame >= start)
+                {
+                    PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 
-					if (frame == start + 17)
-					{
-						btEffectTintBattler(args->targets[k % args->targetCount],
-						                    SPRITE_COLOR_WHITE,
-						                    POSE_DAMAGE,
-						                    k,
-						                    16);
-						EFFECT_SHOW_DAMAGE(SE_IMPACT);
-					}
-					if (shot->variant >= 0)
-					{
-						Sint32 step = (frame - start) / 3;
+                    if (frame == start + 17)
+                    {
+                        btEffectTintBattler(args->targets[k % args->targetCount],
+                                            SPRITE_COLOR_WHITE,
+                                            POSE_DAMAGE,
+                                            k,
+                                            16);
+                        EFFECT_SHOW_DAMAGE(SE_IMPACT);
+                    }
+                    if (shot->variant >= 0)
+                    {
+                        Sint32 step = (frame - start) / 3;
 
-						if (step > LOBBED_SHELL_PICTURES - 1)
-							step = LOBBED_SHELL_PICTURES - 1;
-						btEffectPosProjectPoint(shot, &pos);
-						pos.x >>= 1;
-						pos.y  -= 8;
-						if (step > 4)
-							draw[LOBBED_SHELLS_SHELL_BLITTER(mode)](
-								canvas,
-								state->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
-								pos.x - LOBBED_SHELL_HEIGHT / 2,
-								pos.y - LOBBED_SHELL_WIDTH / 2,
-								LOBBED_SHELL_HEIGHT,
-								LOBBED_SHELL_WIDTH);
-						else
-							draw[LOBBED_SHELLS_SHELL_BLITTER(mode)](
-								canvas,
-								state->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
-								pos.x - LOBBED_SHELL_WIDTH / 2,
-								pos.y - LOBBED_SHELL_HEIGHT / 2,
-								LOBBED_SHELL_WIDTH,
-								LOBBED_SHELL_HEIGHT);
-						if (shot->variant == 0)
-							btParticleAdvanceWithGravity3D(shot, 63, -toFIXED(1) / 2);
-						if (shot->y < 0)
-						{
-							Sint32 count;
-							Sint32 n;
+                        if (step > LOBBED_SHELL_PICTURES - 1)
+                            step = LOBBED_SHELL_PICTURES - 1;
+                        btEffectPosProjectPoint(shot, &pos);
+                        pos.x >>= 1;
+                        pos.y  -= 8;
+                        if (step > 4)
+                            draw[LOBBED_SHELLS_SHELL_BLITTER(mode)](
+                                canvas,
+                                state->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+                                pos.x - LOBBED_SHELL_HEIGHT / 2,
+                                pos.y - LOBBED_SHELL_WIDTH / 2,
+                                LOBBED_SHELL_HEIGHT,
+                                LOBBED_SHELL_WIDTH);
+                        else
+                            draw[LOBBED_SHELLS_SHELL_BLITTER(mode)](
+                                canvas,
+                                state->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+                                pos.x - LOBBED_SHELL_WIDTH / 2,
+                                pos.y - LOBBED_SHELL_HEIGHT / 2,
+                                LOBBED_SHELL_WIDTH,
+                                LOBBED_SHELL_HEIGHT);
+                        if (shot->variant == 0)
+                            btParticleAdvanceWithGravity3D(shot, 63, -toFIXED(1) / 2);
+                        if (shot->y < 0)
+                        {
+                            Sint32 count;
+                            Sint32 n;
 
-							shot->y       = 0;
-							shot->variant = 1;
-							if (LOBBED_SHELLS_SHATTER(mode) == 0)
-								count = LOBBED_SHELLS_SMOKE_PUFFS;
-							else
-								count = LOBBED_SHELLS_SHARDS;
-							// Mud's LOBBED_SHELLS_SHARDS share half their slots with the next
-							// shell's burst, and the later burst takes them.
-							for (n = 0; n != count; n++)
-							{
-								piece = &LOBBED_SHELLS_PIECE(k, i, n);
-								SET_POSITION(piece, shot->x, shot->y, shot->z);
-								if (LOBBED_SHELLS_SHATTER(mode) == 0)
-								{
-									SET_VELOCITY(piece,
-									             ((syRandom() & 63) - 32) << 11,
-									             0,
-									             ((syRandom() & 63) - 32) << 11);
-								}
-								else
-								{
-									SET_VELOCITY(piece,
-									             ((syRandom() & 63) - 32) << 13,
-									             ((syRandom() & 31) + 32) << 12,
-									             ((syRandom() & 63) - 32) << 13);
-								}
-								piece->variant = 0;
-							}
-						}
-					}
-				}
-			}
-		}
+                            shot->y       = 0;
+                            shot->variant = 1;
+                            if (LOBBED_SHELLS_SHATTER(mode) == 0)
+                                count = LOBBED_SHELLS_SMOKE_PUFFS;
+                            else
+                                count = LOBBED_SHELLS_SHARDS;
+                            // Mud's LOBBED_SHELLS_SHARDS share half their slots with the next
+                            // shell's burst, and the later burst takes them.
+                            for (n = 0; n != count; n++)
+                            {
+                                piece = &LOBBED_SHELLS_PIECE(k, i, n);
+                                SET_POSITION(piece, shot->x, shot->y, shot->z);
+                                if (LOBBED_SHELLS_SHATTER(mode) == 0)
+                                {
+                                    SET_VELOCITY(piece,
+                                                 ((syRandom() & 63) - 32) << 11,
+                                                 0,
+                                                 ((syRandom() & 63) - 32) << 11);
+                                }
+                                else
+                                {
+                                    SET_VELOCITY(piece,
+                                                 ((syRandom() & 63) - 32) << 13,
+                                                 ((syRandom() & 31) + 32) << 12,
+                                                 ((syRandom() & 63) - 32) << 13);
+                                }
+                                piece->variant = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		// The bursts: smoke rises slowly and spreads; shards fly up, fall and tumble, facing the
-		// way they move.
-		for (i = 0, burst = LOBBED_SHELLS_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS; burst++, i++)
-		{
-			if (burst->variant >= 0 && burst->variant < LOBBED_SHELLS_BURST_TICKS && burst->y >= 0)
-			{
-				btEffectPosProjectPoint(burst, &pos);
-				pos.x >>= 1;
-				if (LOBBED_SHELLS_SHATTER(mode) == 0)
-				{
-					draw[1](canvas,
-					        state->sheet + burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF)
-					            + LOBBED_SHELLS_SMOKE_PICTURES,
-					        pos.x - SMOKE_PUFF_WIDTH / 2,
-					        pos.y - SMOKE_PUFF_HEIGHT / 2,
-					        SMOKE_PUFF_WIDTH,
-					        SMOKE_PUFF_HEIGHT);
-				}
-				else
-				{
-					Sint32 picture = burst->variant / 5;
-					Sint32 flip;
+        // The bursts: smoke rises slowly and spreads; shards fly up, fall and tumble, facing the
+        // way they move.
+        for (i = 0, burst = LOBBED_SHELLS_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS; burst++, i++)
+        {
+            if (burst->variant >= 0 && burst->variant < LOBBED_SHELLS_BURST_TICKS && burst->y >= 0)
+            {
+                btEffectPosProjectPoint(burst, &pos);
+                pos.x >>= 1;
+                if (LOBBED_SHELLS_SHATTER(mode) == 0)
+                {
+                    draw[1](canvas,
+                            state->sheet + burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF)
+                                + LOBBED_SHELLS_SMOKE_PICTURES,
+                            pos.x - SMOKE_PUFF_WIDTH / 2,
+                            pos.y - SMOKE_PUFF_HEIGHT / 2,
+                            SMOKE_PUFF_WIDTH,
+                            SMOKE_PUFF_HEIGHT);
+                }
+                else
+                {
+                    Sint32 picture = burst->variant / 5;
+                    Sint32 flip;
 
-					if (i & 1)
-						picture += LOBBED_SHELLS_SMALL_SHARD;
-					flip = args->side;
-					draw[burst->velocityX > 0 ? flip ^ 1 : flip](
-						canvas,
-						state->sheet + LobbedShellsShardPictures[picture]
-							+ LOBBED_SHELLS_SHARD_PICTURES,
-						pos.x - LobbedShellsShardWidths[picture] / 2,
-						pos.y - LobbedShellsShardHeights[picture] / 2,
-						LobbedShellsShardWidths[picture],
-						LobbedShellsShardHeights[picture]);
-				}
-				if (LOBBED_SHELLS_SHATTER(mode) == 0)
-					btParticleAdvanceWithGravity3D(burst, 62, toFIXED(1) / 32);
-				else
-					btParticleAdvanceWithGravity3D(burst, 62, -toFIXED(1) / 2);
-				burst->variant++;
-			}
-		}
-		btCameraShake(4, 4);
-		EFFECT_END_TICK(state);
-	}
+                    if (i & 1)
+                        picture += LOBBED_SHELLS_SMALL_SHARD;
+                    flip = args->side;
+                    draw[burst->velocityX > 0 ? flip ^ 1 : flip](
+                        canvas,
+                        state->sheet + LobbedShellsShardPictures[picture]
+                            + LOBBED_SHELLS_SHARD_PICTURES,
+                        pos.x - LobbedShellsShardWidths[picture] / 2,
+                        pos.y - LobbedShellsShardHeights[picture] / 2,
+                        LobbedShellsShardWidths[picture],
+                        LobbedShellsShardHeights[picture]);
+                }
+                if (LOBBED_SHELLS_SHATTER(mode) == 0)
+                    btParticleAdvanceWithGravity3D(burst, 62, toFIXED(1) / 32);
+                else
+                    btParticleAdvanceWithGravity3D(burst, 62, -toFIXED(1) / 2);
+                burst->variant++;
+            }
+        }
+        btCameraShake(4, 4);
+        EFFECT_END_TICK(state);
+    }
 
-	syCloseEvent(btEffectTransferCanvas);
-	EFFECT_RELEASE_BLITTERS();
+    syCloseEvent(btEffectTransferCanvas);
+    EFFECT_RELEASE_BLITTERS();
 
-	if (mode == LOBBED_SHELLS_ROTTEN_BLOOD || mode == LOBBED_SHELLS_DECOMPOSE)
-	{
-		syWordsClear((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
-		syWordsClear(canvas, CANVAS_VIEW_BYTES);
-		syCloseEvent(btEffectDarkenBackgroundStep);
-		if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
-			btEffectRunImpair(args);
-		else
-			btEffectRunDull(args);
-	}
-	else
-	{
-		btEffectEndCanvasLayer();
-	}
+    if (mode == LOBBED_SHELLS_ROTTEN_BLOOD || mode == LOBBED_SHELLS_DECOMPOSE)
+    {
+        syWordsClear((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
+        syWordsClear(canvas, CANVAS_VIEW_BYTES);
+        syCloseEvent(btEffectDarkenBackgroundStep);
+        if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
+            btEffectRunImpair(args);
+        else
+            btEffectRunDull(args);
+    }
+    else
+    {
+        btEffectEndCanvasLayer();
+    }
 }
 
 #undef DJINN_BEAMS_MOTES

@@ -6,15 +6,15 @@
 // Waits until the actor stops rising or falling, sixty ticks at most.
 void fdActorWaitUntilLanded(ACTOR *actor)
 {
-	Sint32 remainingTicks = 60;
-	Sint32 busy;
+    Sint32 remainingTicks = 60;
+    Sint32 busy;
 
-	while (remainingTicks != 0)
-	{
-		sySynch(1);
-		busy = actor->velocityY;
-		remainingTicks--;
-		if (busy == 0)
-			break;
-	}
+    while (remainingTicks != 0)
+    {
+        sySynch(1);
+        busy = actor->velocityY;
+        remainingTicks--;
+        if (busy == 0)
+            break;
+    }
 }

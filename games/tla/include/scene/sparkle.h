@@ -13,11 +13,11 @@ struct ACTOR;
 // RING_CLIMB - 1; RING_NOT_STARTED before it starts) and the pair to start next.
 typedef struct SPARKLE_STATE
 {
-	EFFECT_SPR    sprites[4];
-	Sint16        heights[2];
-	Sint16        vramEntry;
-	Sint16        nextPair;
-	struct ACTOR *actor;
+    EFFECT_SPR    sprites[4];
+    Sint16        heights[2];
+    Sint16        vramEntry;
+    Sint16        nextPair;
+    struct ACTOR *actor;
 } SPARKLE_STATE;
 
 // How far a ring climbs, in pixels, how many ticks apart the rings start, and the height of one not
@@ -29,8 +29,8 @@ typedef struct SPARKLE_STATE
 // The sparkle's tick counter in ACTOR.sceneByte: bit 0 alternates, the rest picks the colour.
 typedef struct COUNTER_BITS
 {
-	Uint8 low  : 1;
-	Uint8 rest : 7;
+    Uint8 low  : 1;
+    Uint8 rest : 7;
 } COUNTER_BITS;
 
 #endif

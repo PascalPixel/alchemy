@@ -12,8 +12,8 @@
 // its way back out to the Colosseum.
 typedef enum COLOSSO_SOLO_EXIT
 {
-	COLOSSO_SOLO_TO_RACE      = 10,
-	COLOSSO_SOLO_TO_COLOSSEUM = 11
+    COLOSSO_SOLO_TO_RACE      = 10,
+    COLOSSO_SOLO_TO_COLOSSEUM = 11
 } COLOSSO_SOLO_EXIT;
 
 // Closes the step cue at each match scene's arena. Nothing in the game sets it.
@@ -41,15 +41,15 @@ void scColossoClearCheeringSpots(void);
 // offers a friend's cheering there.
 typedef enum COLOSSO_GUIDE_REPLY
 {
-	// Describe the stage: yes to "Would you like to hear a description of this stage?", asked the
-	// first time, or "Descriptions" afterwards.
-	COLOSSO_GUIDE_DESCRIBE       = 0,
-	// No description, then offer a friend's cheering.
-	COLOSSO_GUIDE_OFFER_CHEERING = 1,
-	// "Cheer" chosen, or a friend already cheers here: the offer is taken as yes.
-	COLOSSO_GUIDE_CHEER          = 2,
-	// "Nothing", or the choice cancelled: no offer.
-	COLOSSO_GUIDE_NOTHING        = 3
+    // Describe the stage: yes to "Would you like to hear a description of this stage?", asked the
+    // first time, or "Descriptions" afterwards.
+    COLOSSO_GUIDE_DESCRIBE       = 0,
+    // No description, then offer a friend's cheering.
+    COLOSSO_GUIDE_OFFER_CHEERING = 1,
+    // "Cheer" chosen, or a friend already cheers here: the offer is taken as yes.
+    COLOSSO_GUIDE_CHEER          = 2,
+    // "Nothing", or the choice cancelled: no offer.
+    COLOSSO_GUIDE_NOTHING        = 3
 } COLOSSO_GUIDE_REPLY;
 
 // A stage's guide names the stage; returns a COLOSSO_GUIDE_REPLY.

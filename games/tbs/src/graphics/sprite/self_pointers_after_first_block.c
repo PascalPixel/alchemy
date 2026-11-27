@@ -6,8 +6,8 @@
 
 // Unused: four words, each this array's own address; no sprite record or code names it.
 const void *const SpriteUnusedSelfPointersAfterFirstBlock[] = {
-	SpriteUnusedSelfPointersAfterFirstBlock,
-	SpriteUnusedSelfPointersAfterFirstBlock,
-	SpriteUnusedSelfPointersAfterFirstBlock,
-	SpriteUnusedSelfPointersAfterFirstBlock,
+    SpriteUnusedSelfPointersAfterFirstBlock,
+    SpriteUnusedSelfPointersAfterFirstBlock,
+    SpriteUnusedSelfPointersAfterFirstBlock,
+    SpriteUnusedSelfPointersAfterFirstBlock,
 };

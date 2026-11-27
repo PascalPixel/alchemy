@@ -22,34 +22,34 @@
 // - 1 and modulus becomes 0.
 Sint32 mnWrapIndex(Sint32 value, Sint32 modulus)
 {
-	return (value + modulus) % modulus;
+    return (value + modulus) % modulus;
 }
 
 // Places the four party figures over their Djinn columns, 56 pixels apart from x 32, at screen y 61
 // plus yOffset. Returns that y.
 Sint32 mnDjinnMenuPlacePartyFigures(Sint32 yOffset)
 {
-	DJINN_MENU_STATE *menu;
-	Sint32            memberX;
-	Sint32            memberIndex;
-	menu     = RamHeapSlots->menuState;
-	yOffset += 61;
-	memberX  = 32;
-	for (memberIndex = 0; memberIndex < 4; memberIndex++)
-	{
-		menu->memberX[memberIndex]  = memberX;
-		menu->memberY[memberIndex]  = yOffset;
-		memberX                    += DJINN_COLUMN_WIDTH;
-	}
-	return yOffset;
+    DJINN_MENU_STATE *menu;
+    Sint32            memberX;
+    Sint32            memberIndex;
+    menu     = RamHeapSlots->menuState;
+    yOffset += 61;
+    memberX  = 32;
+    for (memberIndex = 0; memberIndex < 4; memberIndex++)
+    {
+        menu->memberX[memberIndex]  = memberX;
+        menu->memberY[memberIndex]  = yOffset;
+        memberX                    += DJINN_COLUMN_WIDTH;
+    }
+    return yOffset;
 }
 
 // Returns the Djinn tutorial's first line: the second copy's once FLAG_ALREADY_KNOWS_DJINN is set.
 Sint32 mnGetDjinnGiveMessage(void)
 {
-	if (syGameFlagGet(FLAG_ALREADY_KNOWS_DJINN))
-		return (Sint32)MsgDjinnGiveTutorialB;
-	return (Sint32)MsgDjinnGiveTutorialA;
+    if (syGameFlagGet(FLAG_ALREADY_KNOWS_DJINN))
+        return (Sint32)MsgDjinnGiveTutorialB;
+    return (Sint32)MsgDjinnGiveTutorialA;
 }
 
 void   mnLoadDjinnArrows(void);
@@ -65,75 +65,75 @@ Sint32 mnDjinnMenuRunScreen(void);
 // again.
 Sint32 mnDjinnMenuRun(void)
 {
-	DJINN_MENU_STATE    *menu;
-	Uint32               savedMsgSpeed;
-	Sint32               enabled;
-	DJINN_MENU_BACKDROP *backdrop;
+    DJINN_MENU_STATE    *menu;
+    Uint32               savedMsgSpeed;
+    Sint32               enabled;
+    DJINN_MENU_BACKDROP *backdrop;
 
-	menu                          = syHeapSlotAllocate(HEAP_SLOT_MENU, MENU_STATE_SIZE);
-	savedMsgSpeed                 = MainRoutineStateWork.msgSpeed;
-	MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_FAST;
-	enabled = RamHeapSlots->actorSystem->suspended = 1;
-	mnWindowDrawBorderStub(0, 0, 30, 20);
-	sySynch(1);
-	mnInitState(0);
-	backdrop                = syHeapAllocateEWRAM(sizeof(*backdrop));
-	menu->backdrop          = backdrop;
-	backdrop->tutorialTimer = 0;
-	backdrop->tutorialStep  = DJINN_TUTORIAL_OFF;
-	// The tutorial's lesson, from the flags the world map sets for each.
-	if (syGameFlagGet(FLAG_DJINN_LESSON))
-	{
-		if (!syGameFlagGet(FLAG_DJINN_LESSON_PART_A))
-		{
-			// DJINN_TUTORIAL_GIVE
-			if (!syGameFlagGet(FLAG_DJINN_LESSON_PART_B))
-				backdrop->tutorialStep = enabled;
-			else
-				backdrop->tutorialStep = DJINN_TUTORIAL_POWERS;
-		}
-		else
-		{
-			if (!syGameFlagGet(FLAG_DJINN_LESSON_PART_B))
-				backdrop->tutorialStep = DJINN_TUTORIAL_RECOVERY;
-			else
-				backdrop->tutorialStep = DJINN_TUTORIAL_CLOSE;
-		}
-	}
-	mnSuspendFieldEvents();
-	mnTextUseExtraTilesStub(1);
-	mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
-	menu->memberCount = gmPartyListMembersStub(menu->members);
-	mnLoadDjinnArrows();
-	mnItemMenuInit(0, 3, 0, 7);
-	mnDjinnMenuPlacePartyFigures(0);
-	mnPaletteLightenHighlight(HIGHLIGHT_PALETTE);
-	menu->helpWindow        = mnWindowCreateStub(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-	menu->pairEntries[0]    = DJINN_ENTRY_NONE;
-	menu->selectedColumn[0] = 0;
-	menu->selectedColumn[1] = 0;
-	menu->selection[0]      = 0;
-	menu->selection[1]      = 0;
-	mnDjinnFiguresInitTopRow();
-	mnDjinnMenuRunScreen();
-	mnDjinnFiguresReleaseTopRow();
-	mnFreeArrows();
-	sySynch(1);
-	mnItemMenuClose();
-	mnWindowDrawBorderStub(0, 0, 30, 20);
-	RamHeapSlots->actorSystem->suspended = 0;
-	mnWindowMarkVisibleTextTilesStub();
-	mnTextUseExtraTilesStub(0);
-	syWordsCopy((void *)BG_CHAR_BLOCK(1), backdrop->tiles, sizeof(backdrop->tiles));
-	syWordsCopy((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, sizeof(backdrop->palette));
-	sySynch(1);
-	mnResumeFieldEvents();
-	mnWindowEraseBorderRectStub(0, 0, 30, 20);
-	syHeapRelease(menu->backdrop);
-	syHeapSlotRelease(HEAP_SLOT_MENU);
-	fdPartyClearUnusableShortcutsStub();
-	MainRoutineStateWork.msgSpeed = savedMsgSpeed;
-	return 1;
+    menu                          = syHeapSlotAllocate(HEAP_SLOT_MENU, MENU_STATE_SIZE);
+    savedMsgSpeed                 = MainRoutineStateWork.msgSpeed;
+    MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_FAST;
+    enabled = RamHeapSlots->actorSystem->suspended = 1;
+    mnWindowDrawBorderStub(0, 0, 30, 20);
+    sySynch(1);
+    mnInitState(0);
+    backdrop                = syHeapAllocateEWRAM(sizeof(*backdrop));
+    menu->backdrop          = backdrop;
+    backdrop->tutorialTimer = 0;
+    backdrop->tutorialStep  = DJINN_TUTORIAL_OFF;
+    // The tutorial's lesson, from the flags the world map sets for each.
+    if (syGameFlagGet(FLAG_DJINN_LESSON))
+    {
+        if (!syGameFlagGet(FLAG_DJINN_LESSON_PART_A))
+        {
+            // DJINN_TUTORIAL_GIVE
+            if (!syGameFlagGet(FLAG_DJINN_LESSON_PART_B))
+                backdrop->tutorialStep = enabled;
+            else
+                backdrop->tutorialStep = DJINN_TUTORIAL_POWERS;
+        }
+        else
+        {
+            if (!syGameFlagGet(FLAG_DJINN_LESSON_PART_B))
+                backdrop->tutorialStep = DJINN_TUTORIAL_RECOVERY;
+            else
+                backdrop->tutorialStep = DJINN_TUTORIAL_CLOSE;
+        }
+    }
+    mnSuspendFieldEvents();
+    mnTextUseExtraTilesStub(1);
+    mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
+    menu->memberCount = gmPartyListMembersStub(menu->members);
+    mnLoadDjinnArrows();
+    mnItemMenuInit(0, 3, 0, 7);
+    mnDjinnMenuPlacePartyFigures(0);
+    mnPaletteLightenHighlight(HIGHLIGHT_PALETTE);
+    menu->helpWindow        = mnWindowCreateStub(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
+    menu->pairEntries[0]    = DJINN_ENTRY_NONE;
+    menu->selectedColumn[0] = 0;
+    menu->selectedColumn[1] = 0;
+    menu->selection[0]      = 0;
+    menu->selection[1]      = 0;
+    mnDjinnFiguresInitTopRow();
+    mnDjinnMenuRunScreen();
+    mnDjinnFiguresReleaseTopRow();
+    mnFreeArrows();
+    sySynch(1);
+    mnItemMenuClose();
+    mnWindowDrawBorderStub(0, 0, 30, 20);
+    RamHeapSlots->actorSystem->suspended = 0;
+    mnWindowMarkVisibleTextTilesStub();
+    mnTextUseExtraTilesStub(0);
+    syWordsCopy((void *)BG_CHAR_BLOCK(1), backdrop->tiles, sizeof(backdrop->tiles));
+    syWordsCopy((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, sizeof(backdrop->palette));
+    sySynch(1);
+    mnResumeFieldEvents();
+    mnWindowEraseBorderRectStub(0, 0, 30, 20);
+    syHeapRelease(menu->backdrop);
+    syHeapSlotRelease(HEAP_SLOT_MENU);
+    fdPartyClearUnusableShortcutsStub();
+    MainRoutineStateWork.msgSpeed = savedMsgSpeed;
+    return 1;
 }
 
 void   mnOpenBackdropScreen(void);
@@ -152,46 +152,46 @@ void   mnDjinnMenuBuildLists(DJINN_MENU_BACKDROP *backdrop);
 
 // Find the moved Djinni in the list and select its new position.
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                                         \
-	do                                                                                             \
-	{                                                                                              \
-		Sint32 column;                                                                             \
-		Sint32 found;                                                                              \
-		Uint8  entry;                                                                              \
+    do                                                                                             \
+    {                                                                                              \
+        Sint32 column;                                                                             \
+        Sint32 found;                                                                              \
+        Uint8  entry;                                                                              \
                                                                                                    \
-		column = (Uint16)((Uint32)(menu)->selection[1] % DJINN_CURSOR_ROW_STRIDE);                 \
-		found  = 0;                                                                                \
-		entry  = (menu)->pairEntries[0];                                                           \
-		for ((i) = 0; (i) < (menu)->backdrop->counts[column]; (i)++)                               \
-		{                                                                                          \
-			if (entry == (Uint8)(menu)->backdrop->ids[column][(i)])                                \
-			{                                                                                      \
-				found = (i);                                                                       \
-				break;                                                                             \
-			}                                                                                      \
-		}                                                                                          \
-		(menu)->selection[0] = column + found * DJINN_CURSOR_ROW_STRIDE;                           \
-	} while (0)
+        column = (Uint16)((Uint32)(menu)->selection[1] % DJINN_CURSOR_ROW_STRIDE);                 \
+        found  = 0;                                                                                \
+        entry  = (menu)->pairEntries[0];                                                           \
+        for ((i) = 0; (i) < (menu)->backdrop->counts[column]; (i)++)                               \
+        {                                                                                          \
+            if (entry == (Uint8)(menu)->backdrop->ids[column][(i)])                                \
+            {                                                                                      \
+                found = (i);                                                                       \
+                break;                                                                             \
+            }                                                                                      \
+        }                                                                                          \
+        (menu)->selection[0] = column + found * DJINN_CURSOR_ROW_STRIDE;                           \
+    } while (0)
 
 // The screen chooses an operation, optionally previews it, then commits it. The Broken Seal's steps
 // 1, 4 and 8, its trade's second choice, are gone.
 typedef enum DJINN_MENU_STEP
 {
-	// After a chooser: a negative result closes the screen, any other goes back to choosing a
-	// Djinni.
-	DJINN_STEP_HANDLE_RESULT   = 0,
-	DJINN_STEP_SELECT_DJINN    = 2,
-	DJINN_STEP_SELECT_ACTION   = 3, // what to do with the chosen Djinni
-	DJINN_STEP_CONFIRM_SET     = 5,
-	DJINN_STEP_CONFIRM_STANDBY = 6,
-	DJINN_STEP_CONFIRM_GIVE    = 7,
-	DJINN_STEP_CONFIRM_TRADE   = 9,
-	// The status of the chosen column's party member.
-	DJINN_STEP_SHOW_STATUS     = 10,
-	DJINN_STEP_APPLY_SET       = 11,
-	DJINN_STEP_APPLY_STANDBY   = 12,
-	DJINN_STEP_APPLY_GIVE      = 13,
-	DJINN_STEP_APPLY_TRADE     = 14,
-	DJINN_STEP_SHOW_HELP       = 15
+    // After a chooser: a negative result closes the screen, any other goes back to choosing a
+    // Djinni.
+    DJINN_STEP_HANDLE_RESULT   = 0,
+    DJINN_STEP_SELECT_DJINN    = 2,
+    DJINN_STEP_SELECT_ACTION   = 3, // what to do with the chosen Djinni
+    DJINN_STEP_CONFIRM_SET     = 5,
+    DJINN_STEP_CONFIRM_STANDBY = 6,
+    DJINN_STEP_CONFIRM_GIVE    = 7,
+    DJINN_STEP_CONFIRM_TRADE   = 9,
+    // The status of the chosen column's party member.
+    DJINN_STEP_SHOW_STATUS     = 10,
+    DJINN_STEP_APPLY_SET       = 11,
+    DJINN_STEP_APPLY_STANDBY   = 12,
+    DJINN_STEP_APPLY_GIVE      = 13,
+    DJINN_STEP_APPLY_TRADE     = 14,
+    DJINN_STEP_SHOW_HELP       = 15
 } DJINN_MENU_STEP;
 
 // The Djinn menu's screen loop, one step at a time: choose a Djinni, then what to do with it (set
@@ -199,232 +199,232 @@ typedef enum DJINN_MENU_STEP
 // member's status and Select the help. Returns -1 once the player leaves the menu.
 Sint32 mnDjinnMenuRunScreen(void)
 {
-	// icon holds the cursor, then each arrow in turn.
-	DJINN_MENU_STATE *menu;
-	WINDOW_SPR       *icon;
-	Sint32            result;
-	Sint32            step;
-	Sint32            menuResult;
-	Bool              done;
-	Sint32            listIndex;
+    // icon holds the cursor, then each arrow in turn.
+    DJINN_MENU_STATE *menu;
+    WINDOW_SPR       *icon;
+    Sint32            result;
+    Sint32            step;
+    Sint32            menuResult;
+    Bool              done;
+    Sint32            listIndex;
 
-	done                = FALSE;
-	result              = 0;
-	menuResult          = 0;
-	menu                = RamHeapSlots->menuState;
-	icon                = menu->cursor;
-	icon->motion        = ICON_HIDDEN;
-	icon->animationStep = 0;
-	mnOpenBackdropScreen();
-	sySynch(1);
-	step = DJINN_STEP_SELECT_DJINN;
-	do
-	{
-		switch (step)
-		{
-			case DJINN_STEP_HANDLE_RESULT:
-				if (result < 0)
-				{
-					menuResult = -1;
-					done       = TRUE;
-				}
-				step = DJINN_STEP_SELECT_DJINN;
-				break;
-			case DJINN_STEP_SELECT_DJINN:
-				mnDjinnMenuPlacePartyFigures(0);
-				mnDjinnFiguresSetSlotPos(1, 0, MENU_FIGURE_HIDDEN_Y);
-				result = mnDjinnMenuSelectDjinn(DJINN_SELECT_DJINNI);
-				step   = DJINN_STEP_SHOW_HELP;
-				if (result == DJINN_RESULT_HELP)
-					break;
-				step = DJINN_STEP_HANDLE_RESULT;
-				if (result < 0)
-					break;
-				menu->selection[1] = menu->selectedColumn[0];
-				step               = DJINN_STEP_SHOW_STATUS;
-				if (result == DJINN_RESULT_STATUS)
-					break;
-				step = DJINN_STEP_SELECT_ACTION;
-				break;
-			case DJINN_STEP_SHOW_STATUS:
-				menu->member         = menu->members[menu->selectedColumn[0]];
-				menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
-				icon                 = menu->pageArrows[0];
-				icon->motion         = ICON_HIDDEN;
-				icon                 = menu->pageArrows[1];
-				icon->motion         = ICON_HIDDEN;
-				result               = mnDjinnMenuShowMemberStatus();
-				if (result == DJINN_RESULT_START)
-					done = TRUE;
-				step = DJINN_STEP_SELECT_DJINN;
-				break;
-			case DJINN_STEP_SHOW_HELP:
-				icon         = menu->pageArrows[0];
-				icon->motion = ICON_HIDDEN;
-				icon         = menu->pageArrows[1];
-				icon->motion = ICON_HIDDEN;
-				result       = mnDjinnMenuShowHelp();
-				if (result == DJINN_RESULT_START)
-					done = TRUE;
-				step = DJINN_STEP_SELECT_DJINN;
-				break;
-			case DJINN_STEP_SELECT_ACTION:
-				mnDjinnMenuPlacePartyFigures(-8);
-				menu->member         = menu->members[menu->selectedColumn[0]];
-				menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
-				mnDjinnFiguresSetSlotPos(
-					0, DJINN_FIGURE_X(menu->selectedColumn[0]), DJINN_FIGURE_Y);
-				result = mnDjinnMenuSelectDjinn(DJINN_SELECT_ACTION);
-				for (listIndex = 0; listIndex < menu->memberCount; listIndex++)
-					menu->memberY[listIndex] += 8;
-				if (result == DJINN_RESULT_START)
-					done = TRUE;
-				if (result < 0)
-				{
-					step = DJINN_STEP_SELECT_DJINN;
-					break;
-				}
-				if (result == DJINN_RESULT_GIVE || result == DJINN_RESULT_TRADE
-				    || result == DJINN_RESULT_GIVE_NOW || result == DJINN_RESULT_TRADE_NOW)
-					menu->shownMember[1] = menu->members[menu->selectedColumn[1]];
-				if (result < 0)
-					step = DJINN_STEP_SELECT_DJINN;
-				else if (result == DJINN_RESULT_SET)
-					step = DJINN_STEP_CONFIRM_SET;
-				else if (result == DJINN_RESULT_STANDBY)
-					step = DJINN_STEP_CONFIRM_STANDBY;
-				else if (result == DJINN_RESULT_GIVE)
-				{
-					menu->pending = DJINN_PENDING_CONFIRM;
-					step          = DJINN_STEP_CONFIRM_GIVE;
-				}
-				else if (result == DJINN_RESULT_TRADE)
-				{
-					menu->pending = DJINN_PENDING_CONFIRM;
-					step          = DJINN_STEP_CONFIRM_TRADE;
-				}
-				else if (result == DJINN_RESULT_SET_NOW)
-					step = DJINN_STEP_APPLY_SET;
-				else if (result == DJINN_RESULT_STANDBY_NOW)
-					step = DJINN_STEP_APPLY_STANDBY;
-				else if (result == DJINN_RESULT_GIVE_NOW)
-				{
-					menu->pending = DJINN_PENDING_CONFIRM;
-					step          = DJINN_STEP_APPLY_GIVE;
-				}
-				else if (result == DJINN_RESULT_TRADE_NOW)
-				{
-					menu->pending = DJINN_PENDING_CONFIRM;
-					step          = DJINN_STEP_APPLY_TRADE;
-				}
-				break;
-			case DJINN_STEP_CONFIRM_GIVE:
-				icon         = menu->pageArrows[0];
-				icon->motion = ICON_HIDDEN;
-				icon         = menu->pageArrows[1];
-				icon->motion = ICON_HIDDEN;
-				result       = mnDjinnMenuRunPreview(DJINN_COMPARE_GIVE);
-				if (result == DJINN_RESULT_START)
-					done = TRUE;
-				step = DJINN_STEP_SELECT_ACTION;
-				if (result < 0)
-					break;
-				// Confirmed: apply it at once. Fall through.
-			case DJINN_STEP_APPLY_GIVE:
-				sySoundPlayStub(SE_RECOVERY);
-				result = gmDjinnTransferStub(menu->shownMember[0],
-				                             menu->pairElement[0],
-				                             menu->pairIndex[0],
-				                             menu->shownMember[1]);
-				gmUnitCalculateStub(menu->shownMember[0]);
-				gmUnitCalculateStub(menu->shownMember[1]);
-				menu->cursor->motion = ICON_HIDDEN;
-				mnWindowSpriteClearListStub(menu->listWindow);
-				mnDjinnMenuBuildLists(menu->backdrop);
-				DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
-				menu->cursor->motion = ICON_SHOWN;
-				step                 = DJINN_STEP_HANDLE_RESULT;
-				break;
-			case DJINN_STEP_CONFIRM_STANDBY:
-				icon         = menu->pageArrows[0];
-				icon->motion = ICON_HIDDEN;
-				icon         = menu->pageArrows[1];
-				icon->motion = ICON_HIDDEN;
-				result       = mnDjinnMenuRunPreview(DJINN_COMPARE_STANDBY);
-				if (result == DJINN_RESULT_START)
-					done = TRUE;
-				step = DJINN_STEP_SELECT_ACTION;
-				if (result < 0)
-					break;
-				// Confirmed: apply it at once. Fall through.
-			case DJINN_STEP_APPLY_STANDBY:
-				sySoundPlayStub(SE_NOTE_HIGH);
-				gmDjinnPutOnStandbyStub(
-					menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
-				result = gmDjinnRecoveryAddStandbyStub(
-					menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
-				gmUnitCalculateStub(menu->shownMember[0]);
-				menu->cursor->motion = ICON_HIDDEN;
-				mnWindowSpriteClearListStub(menu->listWindow);
-				menu->cursor->motion = ICON_SHOWN;
-				step                 = DJINN_STEP_SELECT_DJINN;
-				break;
-			case DJINN_STEP_CONFIRM_TRADE:
-				icon         = menu->pageArrows[0];
-				icon->motion = ICON_HIDDEN;
-				icon         = menu->pageArrows[1];
-				icon->motion = ICON_HIDDEN;
-				result       = mnDjinnMenuRunPreview(DJINN_COMPARE_TRADE);
-				if (result == DJINN_RESULT_START)
-					done = TRUE;
-				step = DJINN_STEP_SELECT_ACTION;
-				if (result < 0)
-					break;
-				// Confirmed: apply it at once. Fall through.
-			case DJINN_STEP_APPLY_TRADE:
-				sySoundPlayStub(SE_RECOVERY);
-				gmDjinnTransferStub(menu->shownMember[0],
-				                    menu->pairElement[0],
-				                    menu->pairIndex[0],
-				                    menu->shownMember[1]);
-				result = gmDjinnTransferStub(menu->shownMember[1],
-				                             menu->pairElement[1],
-				                             menu->pairIndex[1],
-				                             menu->shownMember[0]);
-				gmUnitCalculateStub(menu->shownMember[0]);
-				gmUnitCalculateStub(menu->shownMember[1]);
-				mnDjinnMenuBuildLists(menu->backdrop);
-				DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
-				menu->cursor->motion = ICON_SHOWN;
-				step                 = DJINN_STEP_SELECT_DJINN;
-				break;
-			case DJINN_STEP_CONFIRM_SET:
-				icon         = menu->pageArrows[0];
-				icon->motion = ICON_HIDDEN;
-				icon         = menu->pageArrows[1];
-				icon->motion = ICON_HIDDEN;
-				result       = mnDjinnMenuRunPreview(DJINN_COMPARE_SET);
-				if (result == DJINN_RESULT_START)
-					done = TRUE;
-				step = DJINN_STEP_SELECT_ACTION;
-				if (result < 0)
-					break;
-				// Confirmed: apply it at once. Fall through.
-			case DJINN_STEP_APPLY_SET:
-				sySoundPlayStub(SE_DJINNI_SET);
-				gmDjinnSetStub(menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
-				result = gmDjinnRecoveryRemoveStub(
-					menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
-				gmUnitCalculateStub(menu->shownMember[0]);
-				menu->cursor->motion = ICON_HIDDEN;
-				mnWindowSpriteClearListStub(menu->listWindow);
-				menu->cursor->motion = ICON_SHOWN;
-				step                 = DJINN_STEP_SELECT_DJINN;
-				break;
-			default: done = TRUE; break;
-		}
-	} while (done == 0);
-	return menuResult;
+    done                = FALSE;
+    result              = 0;
+    menuResult          = 0;
+    menu                = RamHeapSlots->menuState;
+    icon                = menu->cursor;
+    icon->motion        = ICON_HIDDEN;
+    icon->animationStep = 0;
+    mnOpenBackdropScreen();
+    sySynch(1);
+    step = DJINN_STEP_SELECT_DJINN;
+    do
+    {
+        switch (step)
+        {
+            case DJINN_STEP_HANDLE_RESULT:
+                if (result < 0)
+                {
+                    menuResult = -1;
+                    done       = TRUE;
+                }
+                step = DJINN_STEP_SELECT_DJINN;
+                break;
+            case DJINN_STEP_SELECT_DJINN:
+                mnDjinnMenuPlacePartyFigures(0);
+                mnDjinnFiguresSetSlotPos(1, 0, MENU_FIGURE_HIDDEN_Y);
+                result = mnDjinnMenuSelectDjinn(DJINN_SELECT_DJINNI);
+                step   = DJINN_STEP_SHOW_HELP;
+                if (result == DJINN_RESULT_HELP)
+                    break;
+                step = DJINN_STEP_HANDLE_RESULT;
+                if (result < 0)
+                    break;
+                menu->selection[1] = menu->selectedColumn[0];
+                step               = DJINN_STEP_SHOW_STATUS;
+                if (result == DJINN_RESULT_STATUS)
+                    break;
+                step = DJINN_STEP_SELECT_ACTION;
+                break;
+            case DJINN_STEP_SHOW_STATUS:
+                menu->member         = menu->members[menu->selectedColumn[0]];
+                menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
+                icon                 = menu->pageArrows[0];
+                icon->motion         = ICON_HIDDEN;
+                icon                 = menu->pageArrows[1];
+                icon->motion         = ICON_HIDDEN;
+                result               = mnDjinnMenuShowMemberStatus();
+                if (result == DJINN_RESULT_START)
+                    done = TRUE;
+                step = DJINN_STEP_SELECT_DJINN;
+                break;
+            case DJINN_STEP_SHOW_HELP:
+                icon         = menu->pageArrows[0];
+                icon->motion = ICON_HIDDEN;
+                icon         = menu->pageArrows[1];
+                icon->motion = ICON_HIDDEN;
+                result       = mnDjinnMenuShowHelp();
+                if (result == DJINN_RESULT_START)
+                    done = TRUE;
+                step = DJINN_STEP_SELECT_DJINN;
+                break;
+            case DJINN_STEP_SELECT_ACTION:
+                mnDjinnMenuPlacePartyFigures(-8);
+                menu->member         = menu->members[menu->selectedColumn[0]];
+                menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
+                mnDjinnFiguresSetSlotPos(
+                    0, DJINN_FIGURE_X(menu->selectedColumn[0]), DJINN_FIGURE_Y);
+                result = mnDjinnMenuSelectDjinn(DJINN_SELECT_ACTION);
+                for (listIndex = 0; listIndex < menu->memberCount; listIndex++)
+                    menu->memberY[listIndex] += 8;
+                if (result == DJINN_RESULT_START)
+                    done = TRUE;
+                if (result < 0)
+                {
+                    step = DJINN_STEP_SELECT_DJINN;
+                    break;
+                }
+                if (result == DJINN_RESULT_GIVE || result == DJINN_RESULT_TRADE
+                    || result == DJINN_RESULT_GIVE_NOW || result == DJINN_RESULT_TRADE_NOW)
+                    menu->shownMember[1] = menu->members[menu->selectedColumn[1]];
+                if (result < 0)
+                    step = DJINN_STEP_SELECT_DJINN;
+                else if (result == DJINN_RESULT_SET)
+                    step = DJINN_STEP_CONFIRM_SET;
+                else if (result == DJINN_RESULT_STANDBY)
+                    step = DJINN_STEP_CONFIRM_STANDBY;
+                else if (result == DJINN_RESULT_GIVE)
+                {
+                    menu->pending = DJINN_PENDING_CONFIRM;
+                    step          = DJINN_STEP_CONFIRM_GIVE;
+                }
+                else if (result == DJINN_RESULT_TRADE)
+                {
+                    menu->pending = DJINN_PENDING_CONFIRM;
+                    step          = DJINN_STEP_CONFIRM_TRADE;
+                }
+                else if (result == DJINN_RESULT_SET_NOW)
+                    step = DJINN_STEP_APPLY_SET;
+                else if (result == DJINN_RESULT_STANDBY_NOW)
+                    step = DJINN_STEP_APPLY_STANDBY;
+                else if (result == DJINN_RESULT_GIVE_NOW)
+                {
+                    menu->pending = DJINN_PENDING_CONFIRM;
+                    step          = DJINN_STEP_APPLY_GIVE;
+                }
+                else if (result == DJINN_RESULT_TRADE_NOW)
+                {
+                    menu->pending = DJINN_PENDING_CONFIRM;
+                    step          = DJINN_STEP_APPLY_TRADE;
+                }
+                break;
+            case DJINN_STEP_CONFIRM_GIVE:
+                icon         = menu->pageArrows[0];
+                icon->motion = ICON_HIDDEN;
+                icon         = menu->pageArrows[1];
+                icon->motion = ICON_HIDDEN;
+                result       = mnDjinnMenuRunPreview(DJINN_COMPARE_GIVE);
+                if (result == DJINN_RESULT_START)
+                    done = TRUE;
+                step = DJINN_STEP_SELECT_ACTION;
+                if (result < 0)
+                    break;
+                // Confirmed: apply it at once. Fall through.
+            case DJINN_STEP_APPLY_GIVE:
+                sySoundPlayStub(SE_RECOVERY);
+                result = gmDjinnTransferStub(menu->shownMember[0],
+                                             menu->pairElement[0],
+                                             menu->pairIndex[0],
+                                             menu->shownMember[1]);
+                gmUnitCalculateStub(menu->shownMember[0]);
+                gmUnitCalculateStub(menu->shownMember[1]);
+                menu->cursor->motion = ICON_HIDDEN;
+                mnWindowSpriteClearListStub(menu->listWindow);
+                mnDjinnMenuBuildLists(menu->backdrop);
+                DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
+                menu->cursor->motion = ICON_SHOWN;
+                step                 = DJINN_STEP_HANDLE_RESULT;
+                break;
+            case DJINN_STEP_CONFIRM_STANDBY:
+                icon         = menu->pageArrows[0];
+                icon->motion = ICON_HIDDEN;
+                icon         = menu->pageArrows[1];
+                icon->motion = ICON_HIDDEN;
+                result       = mnDjinnMenuRunPreview(DJINN_COMPARE_STANDBY);
+                if (result == DJINN_RESULT_START)
+                    done = TRUE;
+                step = DJINN_STEP_SELECT_ACTION;
+                if (result < 0)
+                    break;
+                // Confirmed: apply it at once. Fall through.
+            case DJINN_STEP_APPLY_STANDBY:
+                sySoundPlayStub(SE_NOTE_HIGH);
+                gmDjinnPutOnStandbyStub(
+                    menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
+                result = gmDjinnRecoveryAddStandbyStub(
+                    menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
+                gmUnitCalculateStub(menu->shownMember[0]);
+                menu->cursor->motion = ICON_HIDDEN;
+                mnWindowSpriteClearListStub(menu->listWindow);
+                menu->cursor->motion = ICON_SHOWN;
+                step                 = DJINN_STEP_SELECT_DJINN;
+                break;
+            case DJINN_STEP_CONFIRM_TRADE:
+                icon         = menu->pageArrows[0];
+                icon->motion = ICON_HIDDEN;
+                icon         = menu->pageArrows[1];
+                icon->motion = ICON_HIDDEN;
+                result       = mnDjinnMenuRunPreview(DJINN_COMPARE_TRADE);
+                if (result == DJINN_RESULT_START)
+                    done = TRUE;
+                step = DJINN_STEP_SELECT_ACTION;
+                if (result < 0)
+                    break;
+                // Confirmed: apply it at once. Fall through.
+            case DJINN_STEP_APPLY_TRADE:
+                sySoundPlayStub(SE_RECOVERY);
+                gmDjinnTransferStub(menu->shownMember[0],
+                                    menu->pairElement[0],
+                                    menu->pairIndex[0],
+                                    menu->shownMember[1]);
+                result = gmDjinnTransferStub(menu->shownMember[1],
+                                             menu->pairElement[1],
+                                             menu->pairIndex[1],
+                                             menu->shownMember[0]);
+                gmUnitCalculateStub(menu->shownMember[0]);
+                gmUnitCalculateStub(menu->shownMember[1]);
+                mnDjinnMenuBuildLists(menu->backdrop);
+                DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
+                menu->cursor->motion = ICON_SHOWN;
+                step                 = DJINN_STEP_SELECT_DJINN;
+                break;
+            case DJINN_STEP_CONFIRM_SET:
+                icon         = menu->pageArrows[0];
+                icon->motion = ICON_HIDDEN;
+                icon         = menu->pageArrows[1];
+                icon->motion = ICON_HIDDEN;
+                result       = mnDjinnMenuRunPreview(DJINN_COMPARE_SET);
+                if (result == DJINN_RESULT_START)
+                    done = TRUE;
+                step = DJINN_STEP_SELECT_ACTION;
+                if (result < 0)
+                    break;
+                // Confirmed: apply it at once. Fall through.
+            case DJINN_STEP_APPLY_SET:
+                sySoundPlayStub(SE_DJINNI_SET);
+                gmDjinnSetStub(menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
+                result = gmDjinnRecoveryRemoveStub(
+                    menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
+                gmUnitCalculateStub(menu->shownMember[0]);
+                menu->cursor->motion = ICON_HIDDEN;
+                mnWindowSpriteClearListStub(menu->listWindow);
+                menu->cursor->motion = ICON_SHOWN;
+                step                 = DJINN_STEP_SELECT_DJINN;
+                break;
+            default: done = TRUE; break;
+        }
+    } while (done == 0);
+    return menuResult;
 }
 
 #undef DJINN_RESELECT_PAIR_ENTRY
@@ -439,55 +439,55 @@ Sint32 mnDjinnMenuRunScreen(void)
 // (clamped to 0-31), into palettes 14, 4 and 6; palette 7's copy is 12 darker instead.
 void mnDjinnMenuAdjustPalettes(Sint32 brightnessDelta)
 {
-	Sint32 copyIndex;
-	Sint32 paletteNumber;
-	Sint32 colorIndex;
-	Sint32 paletteIndex;
+    Sint32 copyIndex;
+    Sint32 paletteNumber;
+    Sint32 colorIndex;
+    Sint32 paletteIndex;
 
-	paletteNumber = WINDOW_PALETTE;
-	for (copyIndex = 0; copyIndex <= 2; copyIndex++)
-	{
-		for (colorIndex = 0; colorIndex < PALETTE_COLORS; colorIndex++)
-		{
-			Uint32 color;
-			Sint32 blue;
-			Sint32 green;
-			Sint32 red;
-			Sint32 adjustedColor;
+    paletteNumber = WINDOW_PALETTE;
+    for (copyIndex = 0; copyIndex <= 2; copyIndex++)
+    {
+        for (colorIndex = 0; colorIndex < PALETTE_COLORS; colorIndex++)
+        {
+            Uint32 color;
+            Sint32 blue;
+            Sint32 green;
+            Sint32 red;
+            Sint32 adjustedColor;
 
-			paletteIndex  = paletteNumber * PALETTE_COLORS + colorIndex;
-			color         = ((Uint16 *)BG_PLTT)[paletteIndex];
-			blue          = RGB_BLUE(color);
-			green         = RGB_GREEN(color);
-			red           = RGB_RED(color);
-			blue         += brightnessDelta;
-			green        += brightnessDelta;
-			red          += brightnessDelta;
-			if (blue > RGB_LEVEL_MAX)
-				blue = RGB_LEVEL_MAX;
-			if (green > RGB_LEVEL_MAX)
-				green = RGB_LEVEL_MAX;
-			if (red > RGB_LEVEL_MAX)
-				red = RGB_LEVEL_MAX;
-			if (blue < 0)
-				blue = 0;
-			if (green < 0)
-				green = 0;
-			if (red < 0)
-				red = 0;
-			adjustedColor                                      = RGB(red, green, blue);
-			((Sint16 *)BG_PLTT - PALETTE_COLORS)[paletteIndex] = adjustedColor;
-		}
-		if (copyIndex == 0)
-		{
-			paletteNumber = 5;
-		}
-		else
-		{
-			paletteNumber   = 7;
-			brightnessDelta = -12;
-		}
-	}
+            paletteIndex  = paletteNumber * PALETTE_COLORS + colorIndex;
+            color         = ((Uint16 *)BG_PLTT)[paletteIndex];
+            blue          = RGB_BLUE(color);
+            green         = RGB_GREEN(color);
+            red           = RGB_RED(color);
+            blue         += brightnessDelta;
+            green        += brightnessDelta;
+            red          += brightnessDelta;
+            if (blue > RGB_LEVEL_MAX)
+                blue = RGB_LEVEL_MAX;
+            if (green > RGB_LEVEL_MAX)
+                green = RGB_LEVEL_MAX;
+            if (red > RGB_LEVEL_MAX)
+                red = RGB_LEVEL_MAX;
+            if (blue < 0)
+                blue = 0;
+            if (green < 0)
+                green = 0;
+            if (red < 0)
+                red = 0;
+            adjustedColor                                      = RGB(red, green, blue);
+            ((Sint16 *)BG_PLTT - PALETTE_COLORS)[paletteIndex] = adjustedColor;
+        }
+        if (copyIndex == 0)
+        {
+            paletteNumber = 5;
+        }
+        else
+        {
+            paletteNumber   = 7;
+            brightnessDelta = -12;
+        }
+    }
 }
 
 // Copies the window font's ten digit tiles twice into tiles, the first copy with colour 1 drawn as
@@ -499,68 +499,68 @@ void mnGraphicsExpandVRAMTilesByColorTableStub(void *tiles);
 // two page arrows and places the arrows at the list window's corners.
 void mnOpenBackdropScreen(void)
 {
-	DJINN_MENU_STATE    *menu     = RamHeapSlots->menuState;
-	DJINN_MENU_BACKDROP *backdrop = menu->backdrop;
-	WINDOW              *window;
-	WINDOW_SPR          *icon;
-	Sint32               entry;
-	Sint32               x;
-	Sint32               y;
+    DJINN_MENU_STATE    *menu     = RamHeapSlots->menuState;
+    DJINN_MENU_BACKDROP *backdrop = menu->backdrop;
+    WINDOW              *window;
+    WINDOW_SPR          *icon;
+    Sint32               entry;
+    Sint32               x;
+    Sint32               y;
 
-	mnWindowUpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, WINDOW_FLAG_INSTANT);
-	sySynch(1);
-	syWordsCopy(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
-	syWordsCopy(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette));
-	syWordsFill(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
-	syWordsFill((void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette), PIXELS_4BPP(5));
-	mnGraphicsExpandVRAMTilesByColorTableStub(BG_CHAR_BLOCK(1)
-	                                          + DJINN_BACKDROP_DIGIT_TILE * TILE_SIZE_4BPP);
-	syWordsCopy(DJINN_BACKDROP_BORDER_VRAM, MenuBackdropBorderTile, TILE_SIZE_4BPP);
-	syDMAXCopy(syPaletteGetBasicSpriteColors(),
-	           (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
-	           DMA_COPY_HALFWORDS(16),
-	           REG_DMA3);
-	BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
-		BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-	syDMAXCopy((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
-	           (void *)&BG_PLTT_COLOR(7, 0),
-	           DMA_COPY_HALFWORDS(16),
-	           REG_DMA3);
-	mnDjinnMenuAdjustPalettes(8);
-	BG_PLTT_COLOR(7, WINDOW_BACKGROUND_COLOR) =
-		BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-	BG_PLTT_COLOR(6, WINDOW_BACKGROUND_COLOR) =
-		BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-	mnDjinnMenuBuildLists(backdrop);
+    mnWindowUpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, WINDOW_FLAG_INSTANT);
+    sySynch(1);
+    syWordsCopy(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
+    syWordsCopy(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette));
+    syWordsFill(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
+    syWordsFill((void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette), PIXELS_4BPP(5));
+    mnGraphicsExpandVRAMTilesByColorTableStub(BG_CHAR_BLOCK(1)
+                                              + DJINN_BACKDROP_DIGIT_TILE * TILE_SIZE_4BPP);
+    syWordsCopy(DJINN_BACKDROP_BORDER_VRAM, MenuBackdropBorderTile, TILE_SIZE_4BPP);
+    syDMAXCopy(syPaletteGetBasicSpriteColors(),
+               (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
+               DMA_COPY_HALFWORDS(16),
+               REG_DMA3);
+    BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+    syDMAXCopy((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
+               (void *)&BG_PLTT_COLOR(7, 0),
+               DMA_COPY_HALFWORDS(16),
+               REG_DMA3);
+    mnDjinnMenuAdjustPalettes(8);
+    BG_PLTT_COLOR(7, WINDOW_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+    BG_PLTT_COLOR(6, WINDOW_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+    mnDjinnMenuBuildLists(backdrop);
 
-	window = menu->statusWindow;
-	mnWindowSpriteClearListStub(window);
-	icon         = mnIconCreateHandCursor(window, -8, 11);
-	icon->motion = ICON_HIDDEN;
-	menu->cursor = icon;
-	entry        = syVRAMCacheFindFreeEntry();
-	if (entry < VRAM_CACHE_ENTRY_COUNT)
-	{
-		mnVRAMBlockLoadResourceStub(entry, ICON_TILE_BYTES, RESOURCE_SHOP_GEM_TILES);
-		icon         = mnWindowSpriteCreateStub(entry, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-		icon->motion = ICON_HIDDEN;
-		menu->pageArrows[0]      = icon;
-		icon->sprite.oam.matrix |= 8;
-		icon         = mnWindowSpriteCreateStub(entry, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-		icon->motion = ICON_HIDDEN;
-		menu->pageArrows[1] = icon;
-	}
+    window = menu->statusWindow;
+    mnWindowSpriteClearListStub(window);
+    icon         = mnIconCreateHandCursor(window, -8, 11);
+    icon->motion = ICON_HIDDEN;
+    menu->cursor = icon;
+    entry        = syVRAMCacheFindFreeEntry();
+    if (entry < VRAM_CACHE_ENTRY_COUNT)
+    {
+        mnVRAMBlockLoadResourceStub(entry, ICON_TILE_BYTES, RESOURCE_SHOP_GEM_TILES);
+        icon         = mnWindowSpriteCreateStub(entry, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+        icon->motion = ICON_HIDDEN;
+        menu->pageArrows[0]      = icon;
+        icon->sprite.oam.matrix |= 8;
+        icon         = mnWindowSpriteCreateStub(entry, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+        icon->motion = ICON_HIDDEN;
+        menu->pageArrows[1] = icon;
+    }
 
-	window             = menu->listWindow;
-	icon               = menu->pageArrows[0];
-	x                  = (Uint16)window->x * 8;
-	icon->sprite.oam.x = icon->x = x;
-	y                            = (Uint16)window->y * 8 + 4;
-	icon->sprite.oam.y = icon->y  = y;
-	icon                          = menu->pageArrows[1];
-	x                            += 224;
-	icon->sprite.oam.x = icon->x = x;
-	icon->sprite.oam.y = icon->y = y;
+    window             = menu->listWindow;
+    icon               = menu->pageArrows[0];
+    x                  = (Uint16)window->x * 8;
+    icon->sprite.oam.x = icon->x = x;
+    y                            = (Uint16)window->y * 8 + 4;
+    icon->sprite.oam.y = icon->y  = y;
+    icon                          = menu->pageArrows[1];
+    x                            += 224;
+    icon->sprite.oam.x = icon->x = x;
+    icon->sprite.oam.y = icon->y = y;
 }
 
 // mnPsynergyListDifference's marks on an action id: Psynergy the change gives, drawn in
@@ -577,54 +577,54 @@ Sint32 mnPsynergyListDifference(PSYNERGY_ENTRY *before,
                                 Sint32         *gainedCountOut,
                                 Sint32         *lostCountOut)
 {
-	Sint32 actionIndex;
-	Sint32 otherIndex;
-	Sint32 actionCount;
-	Sint32 gainedCount;
-	Sint32 lostCount;
+    Sint32 actionIndex;
+    Sint32 otherIndex;
+    Sint32 actionCount;
+    Sint32 gainedCount;
+    Sint32 lostCount;
 
-	actionCount = 0;
-	gainedCount = 0;
-	lostCount   = 0;
-	for (actionIndex = 0; actionIndex < PSYNERGY_SLOTS && after[actionIndex].encodedAction != 0;
-	     actionIndex++)
-	{
-		actionsOut[actionCount] = after[actionIndex].encodedAction & PSYNERGY_ABILITY_MASK;
-		actionCount++;
-		for (otherIndex = 0; otherIndex < PSYNERGY_SLOTS; otherIndex++)
-		{
-			if (((after[actionIndex].encodedAction ^ before[otherIndex].encodedAction)
-			     & PSYNERGY_ABILITY_MASK)
-			    == 0)
-				break;
-		}
-		if (otherIndex == PSYNERGY_SLOTS)
-		{
-			gainedCount++;
-			actionsOut[actionCount - 1] |= DJINN_PREVIEW_GAINED;
-		}
-	}
-	for (actionIndex = 0; actionIndex < PSYNERGY_SLOTS && before[actionIndex].encodedAction != 0;
-	     actionIndex++)
-	{
-		for (otherIndex = 0; otherIndex < PSYNERGY_SLOTS; otherIndex++)
-		{
-			if (((before[actionIndex].encodedAction ^ after[otherIndex].encodedAction)
-			     & PSYNERGY_ABILITY_MASK)
-			    == 0)
-				break;
-		}
-		if (otherIndex == PSYNERGY_SLOTS)
-		{
-			lostCount++;
-			actionsOut[actionCount] =
-				(before[actionIndex].encodedAction & PSYNERGY_ABILITY_MASK) | DJINN_PREVIEW_LOST;
-			actionCount++;
-		}
-	}
-	*gainedCountOut = gainedCount;
-	*lostCountOut   = lostCount;
-	return actionCount;
+    actionCount = 0;
+    gainedCount = 0;
+    lostCount   = 0;
+    for (actionIndex = 0; actionIndex < PSYNERGY_SLOTS && after[actionIndex].encodedAction != 0;
+         actionIndex++)
+    {
+        actionsOut[actionCount] = after[actionIndex].encodedAction & PSYNERGY_ABILITY_MASK;
+        actionCount++;
+        for (otherIndex = 0; otherIndex < PSYNERGY_SLOTS; otherIndex++)
+        {
+            if (((after[actionIndex].encodedAction ^ before[otherIndex].encodedAction)
+                 & PSYNERGY_ABILITY_MASK)
+                == 0)
+                break;
+        }
+        if (otherIndex == PSYNERGY_SLOTS)
+        {
+            gainedCount++;
+            actionsOut[actionCount - 1] |= DJINN_PREVIEW_GAINED;
+        }
+    }
+    for (actionIndex = 0; actionIndex < PSYNERGY_SLOTS && before[actionIndex].encodedAction != 0;
+         actionIndex++)
+    {
+        for (otherIndex = 0; otherIndex < PSYNERGY_SLOTS; otherIndex++)
+        {
+            if (((before[actionIndex].encodedAction ^ after[otherIndex].encodedAction)
+                 & PSYNERGY_ABILITY_MASK)
+                == 0)
+                break;
+        }
+        if (otherIndex == PSYNERGY_SLOTS)
+        {
+            lostCount++;
+            actionsOut[actionCount] =
+                (before[actionIndex].encodedAction & PSYNERGY_ABILITY_MASK) | DJINN_PREVIEW_LOST;
+            actionCount++;
+        }
+    }
+    *gainedCountOut = gainedCount;
+    *lostCountOut   = lostCount;
+    return actionCount;
 }
 
 Sint32 mnDjinnListUnitEntries(Uint16 *entriesOut, Sint32 memberId, Sint32 element);
@@ -633,15 +633,15 @@ Sint32 mnDjinnListUnitEntries(Uint16 *entriesOut, Sint32 memberId, Sint32 elemen
 // lists, with their counts.
 void   mnDjinnMenuBuildLists(DJINN_MENU_BACKDROP *backdrop)
 {
-	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
-	Sint32           i;
+    ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
+    Sint32           i;
 
-	for (i = 0; i < menu->partyCount; i++)
-	{
-		Sint32 owner        = (Uint16)menu->memberIds[i];
+    for (i = 0; i < menu->partyCount; i++)
+    {
+        Sint32 owner        = (Uint16)menu->memberIds[i];
 
-		backdrop->counts[i] = mnDjinnListUnitEntries(backdrop->ids[i], owner, -1);
-	}
+        backdrop->counts[i] = mnDjinnListUnitEntries(backdrop->ids[i], owner, -1);
+    }
 }
 
 Sint32 gmDjinnCanSetStub(Sint32 owner, Sint32 element, Sint32 index);
@@ -652,35 +652,35 @@ Sint32 gmDjinnIsSetStub(Sint32 owner, Sint32 element, Sint32 index);
 // it.
 Sint32 mnDjinnMenuGetEntryState(Uint32 entry)
 {
-	Sint32 owner   = DJINN_MEMBER(entry);
-	Sint32 element = DJINN_ENTRY_ELEMENT_OF(entry);
-	Sint32 index   = DJINN_NUMBER(entry);
-	Sint32 state;
+    Sint32 owner   = DJINN_MEMBER(entry);
+    Sint32 element = DJINN_ENTRY_ELEMENT_OF(entry);
+    Sint32 index   = DJINN_NUMBER(entry);
+    Sint32 state;
 
-	if (gmDjinnCanSetStub(owner, element, index) || gmDjinnIsSetStub(owner, element, index))
-	{
-		if (entry & DJINN_ENTRY_IS_SET)
-			state = DJINNI_STATE_SET;
-		else
-			state = DJINNI_STATE_STANDBY;
-	}
-	else
-	{
-		state = DJINNI_STATE_RECOVERING;
-	}
-	return state;
+    if (gmDjinnCanSetStub(owner, element, index) || gmDjinnIsSetStub(owner, element, index))
+    {
+        if (entry & DJINN_ENTRY_IS_SET)
+            state = DJINNI_STATE_SET;
+        else
+            state = DJINNI_STATE_STANDBY;
+    }
+    else
+    {
+        state = DJINNI_STATE_RECOVERING;
+    }
+    return state;
 }
 
 // Draws a packed djinni entry in a window: its name 8 pixels right of (x, y) and its element's icon
 // tile at the tile under (x, y), then resets the text colour. The names run 20 to an element.
 void mnDjinnMenuDrawEntry(Sint32 window, Sint32 x, Sint32 y, Sint32 entry)
 {
-	Sint32 element = (entry & DJINN_ENTRY_ELEMENT) / (DJINN_ENTRY_INDEX + 1);
+    Sint32 element = (entry & DJINN_ENTRY_ELEMENT) / (DJINN_ENTRY_INDEX + 1);
 
-	mnTextDrawMessageAsTilesStub(
-		(Sint32)MsgDjinnName + element * DJINN_PER_ELEMENT + DJINN_NUMBER(entry), window, x + 8, y);
-	mnWindowSetTilemapEntryStub(window, element + ELEMENT_ICON_TILE, x / 8, y / 8, 0);
-	mnTextSetColorStub(TEXT_COLOR_NORMAL);
+    mnTextDrawMessageAsTilesStub(
+        (Sint32)MsgDjinnName + element * DJINN_PER_ELEMENT + DJINN_NUMBER(entry), window, x + 8, y);
+    mnWindowSetTilemapEntryStub(window, element + ELEMENT_ICON_TILE, x / 8, y / 8, 0);
+    mnTextSetColorStub(TEXT_COLOR_NORMAL);
 }
 
 // Draws four party members' Djinn into the list window, one column of 56 pixels each from party
@@ -689,66 +689,66 @@ void mnDjinnMenuDrawEntry(Sint32 window, Sint32 x, Sint32 y, Sint32 entry)
 // them.
 void mnDjinnMenuDrawPage(DJINN_MENU_BACKDROP *backdrop, Sint32 page)
 {
-	DJINN_MENU_STATE *menu   = RamHeapSlots->menuState;
-	WIN_STATE        *state  = RamHeapSlots->windowState;
-	Sint32            window = menu->listWindow;
-	Sint32            owners;
-	Sint32            column;
-	Sint32            element;
-	Sint32            i;
-	Sint32            x;
-	Sint32            y;
-	Sint32            djinn;
+    DJINN_MENU_STATE *menu   = RamHeapSlots->menuState;
+    WIN_STATE        *state  = RamHeapSlots->windowState;
+    Sint32            window = menu->listWindow;
+    Sint32            owners;
+    Sint32            column;
+    Sint32            element;
+    Sint32            i;
+    Sint32            x;
+    Sint32            y;
+    Sint32            djinn;
 
-	state->holdTilemapUpload = 1;
-	mnWindowSpriteRedrawSavedRectStub(window);
-	owners = gmPartyCountMembersStub();
-	djinn  = gmPartySumDjinnCountsStub(-1);
-	if (owners != 0 && (djinn - 1) / owners <= 6)
-	{
-		mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnUnleashEffectLabel, window, 0, 80);
-		mnWindowDrawDividerLineStub(window, 0, 10, 28, 10);
-	}
-	mnDjinnMenuBuildLists(backdrop);
-	for (column = 0, x = 8; column <= 3; column++, x += DJINN_COLUMN_WIDTH)
-	{
-		Uint16 *entries = backdrop->ids[page + column];
+    state->holdTilemapUpload = 1;
+    mnWindowSpriteRedrawSavedRectStub(window);
+    owners = gmPartyCountMembersStub();
+    djinn  = gmPartySumDjinnCountsStub(-1);
+    if (owners != 0 && (djinn - 1) / owners <= 6)
+    {
+        mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnUnleashEffectLabel, window, 0, 80);
+        mnWindowDrawDividerLineStub(window, 0, 10, 28, 10);
+    }
+    mnDjinnMenuBuildLists(backdrop);
+    for (column = 0, x = 8; column <= 3; column++, x += DJINN_COLUMN_WIDTH)
+    {
+        Uint16 *entries = backdrop->ids[page + column];
 
-		y               = 16;
-		if (menu->memberSprites[column] != NULL)
-		{
-			for (element = 0; element < ELEMENT_COUNT; element++)
-			{
-				for (i = 0; i < backdrop->counts[page + column]; i++)
-				{
-					if (element == DJINN_ENTRY_ELEMENT_OF(entries[i]))
-					{
-						switch (mnDjinnMenuGetEntryState(entries[i]))
-						{
-							case DJINNI_STATE_STANDBY: mnTextSetColorStub(TEXT_COLOR_RED); break;
-							case DJINNI_STATE_SET    : mnTextSetColorStub(TEXT_COLOR_NORMAL); break;
-							default                  : mnTextSetColorStub(TEXT_COLOR_YELLOW); break;
-						}
-						mnDjinnMenuDrawEntry(window, x, y, entries[i]);
-						y += 8;
-					}
-				}
-			}
-			// In the Spanish and Italian editions each column waits a tick after it is drawn.
+        y               = 16;
+        if (menu->memberSprites[column] != NULL)
+        {
+            for (element = 0; element < ELEMENT_COUNT; element++)
+            {
+                for (i = 0; i < backdrop->counts[page + column]; i++)
+                {
+                    if (element == DJINN_ENTRY_ELEMENT_OF(entries[i]))
+                    {
+                        switch (mnDjinnMenuGetEntryState(entries[i]))
+                        {
+                            case DJINNI_STATE_STANDBY: mnTextSetColorStub(TEXT_COLOR_RED); break;
+                            case DJINNI_STATE_SET    : mnTextSetColorStub(TEXT_COLOR_NORMAL); break;
+                            default                  : mnTextSetColorStub(TEXT_COLOR_YELLOW); break;
+                        }
+                        mnDjinnMenuDrawEntry(window, x, y, entries[i]);
+                        y += 8;
+                    }
+                }
+            }
+            // In the Spanish and Italian editions each column waits a tick after it is drawn.
 #if DJINN_COLUMN_WAIT_AFTER_DRAW
-			sySynch(1);
+            sySynch(1);
 #endif
-		}
-	}
-	// The Japanese release reads the window tiles again for the first store and does not wait; in
-	// every edition but the Japanese the page waits three ticks.
+        }
+    }
+    // The Japanese release reads the window tiles again for the first store and does not wait; in
+    // every edition but the Japanese the page waits three ticks.
 #if DJINN_PAGE_WAIT_AFTER_DRAW
-	state->dirty             = 1;
-	state->holdTilemapUpload = 0;
-	sySynch(3);
+    state->dirty             = 1;
+    state->holdTilemapUpload = 0;
+    sySynch(3);
 #else
-	((WIN_STATE *)RamHeapSlots->windowState)->dirty = 1;
-	state->holdTilemapUpload                        = 0;
+    ((WIN_STATE *)RamHeapSlots->windowState)->dirty = 1;
+    state->holdTilemapUpload                        = 0;
 #endif
 }
 
@@ -758,29 +758,29 @@ void mnDjinnMenuDrawPage(DJINN_MENU_BACKDROP *backdrop, Sint32 page)
 // Draws the Djinn list's first page, the first four party members.
 void mnDjinnMenuDrawFirstPage(DJINN_MENU_BACKDROP *backdrop)
 {
-	mnDjinnMenuDrawPage(backdrop, 0);
+    mnDjinnMenuDrawPage(backdrop, 0);
 }
 
 // Sets the palette of a rectangle of panel's interior, (x, y) and its size in tiles from the
 // interior's corner, through mnWindowHighlightRectStub.
 void mnWindowSetInteriorPaletteBitRect(
-	WINDOW *panel, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette)
+    WINDOW *panel, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette)
 {
-	mnWindowHighlightRectStub(panel->x + x + 1, panel->y + y + 1, width, height, palette);
+    mnWindowHighlightRectStub(panel->x + x + 1, panel->y + y + 1, width, height, palette);
 }
 
 // Highlights the cell of a four-column grid at index's column and row's line, in HIGHLIGHT_PALETTE
 // when selected and WINDOW_PALETTE otherwise.
 void mnUiPanelHighlightGridCell(WINDOW *panel, Sint32 index, Sint32 row, Sint32 selected)
 {
-	Sint32 palette;
+    Sint32 palette;
 
-	if (!selected)
-		palette = WINDOW_PALETTE;
-	else
-		palette = HIGHLIGHT_PALETTE;
-	mnWindowSetInteriorPaletteBitRect(
-		panel, index % 4 * DJINN_COLUMN_TILES + 1, row + 2, GRID_CELL_WIDTH, 1, palette);
+    if (!selected)
+        palette = WINDOW_PALETTE;
+    else
+        palette = HIGHLIGHT_PALETTE;
+    mnWindowSetInteriorPaletteBitRect(
+        panel, index % 4 * DJINN_COLUMN_TILES + 1, row + 2, GRID_CELL_WIDTH, 1, palette);
 }
 
 #undef GRID_CELL_WIDTH
@@ -789,73 +789,73 @@ void mnUiPanelHighlightGridCell(WINDOW *panel, Sint32 index, Sint32 row, Sint32 
 // to the screen, and marks its rows for upload.
 void mnWindowSetRectPalette(Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette)
 {
-	WIN_STATE *tiles = (WIN_STATE *)RamHeapSlots->windowState;
+    WIN_STATE *tiles = (WIN_STATE *)RamHeapSlots->windowState;
 
-	palette          = BG_TILE_PALETTE(palette);
+    palette          = BG_TILE_PALETTE(palette);
 
-	if (x < 0)
-	{
-		width += x;
-		x      = 0;
-	}
-	if (x + width > DISPLAY_TILE_WIDTH - 1)
-	{
-		width = DISPLAY_TILE_WIDTH - x;
-	}
-	if (y < 0)
-	{
-		height += y;
-		y       = 0;
-	}
-	// BUG: tests the bottom against the screen's width but clips to its rows, so a rectangle ending
-	// in rows 20 to 28 is kept whole and recolours past the 32 by 20 tilemap.
+    if (x < 0)
+    {
+        width += x;
+        x      = 0;
+    }
+    if (x + width > DISPLAY_TILE_WIDTH - 1)
+    {
+        width = DISPLAY_TILE_WIDTH - x;
+    }
+    if (y < 0)
+    {
+        height += y;
+        y       = 0;
+    }
+    // BUG: tests the bottom against the screen's width but clips to its rows, so a rectangle ending
+    // in rows 20 to 28 is kept whole and recolours past the 32 by 20 tilemap.
 #if FIX_RECT_BOTTOM_CLIP
-	if (y + height > DISPLAY_TILE_HEIGHT - 1)
-	{
+    if (y + height > DISPLAY_TILE_HEIGHT - 1)
+    {
 #else
-	if (y + height > DISPLAY_TILE_WIDTH - 1)
-	{
+    if (y + height > DISPLAY_TILE_WIDTH - 1)
+    {
 #endif
-		height = DISPLAY_TILE_HEIGHT - y;
-	}
+        height = DISPLAY_TILE_HEIGHT - y;
+    }
 
-	if (width > 0 && height > 0)
-	{
-		do
-		{
-			Uint16 *entry  = &tiles->tilemap[y][x];
-			Sint32  column = width;
+    if (width > 0 && height > 0)
+    {
+        do
+        {
+            Uint16 *entry  = &tiles->tilemap[y][x];
+            Sint32  column = width;
 
-			if (column != 0)
-			{
-				do
-				{
-					Uint32 tile = *entry;
+            if (column != 0)
+            {
+                do
+                {
+                    Uint32 tile = *entry;
 
-					if (BG_TILE_PALETTE_OF(tile) == WINDOW_PALETTE)
-					{
-						tile   &= ~BG_TILE_PALETTE(0xf);
-						tile   |= palette;
-						*entry  = tile;
-					}
-					column--;
-					entry++;
-				} while (column != 0);
-			}
-			WINDOW_MARK_TILEMAP_ROW(tiles, y);
+                    if (BG_TILE_PALETTE_OF(tile) == WINDOW_PALETTE)
+                    {
+                        tile   &= ~BG_TILE_PALETTE(0xf);
+                        tile   |= palette;
+                        *entry  = tile;
+                    }
+                    column--;
+                    entry++;
+                } while (column != 0);
+            }
+            WINDOW_MARK_TILEMAP_ROW(tiles, y);
 
-			height--;
-			y++;
-		} while (height != 0);
-	}
+            height--;
+            y++;
+        } while (height != 0);
+    }
 }
 
 // mnWindowSetRectPalette on a rectangle of window's interior, (x, y) and its size in tiles from the
 // interior's corner.
 void mnWindowSetInteriorRectPalette(
-	WINDOW *panel, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette)
+    WINDOW *panel, Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette)
 {
-	mnWindowSetRectPalette(panel->x + x + 1, panel->y + y + 1, width, height, palette);
+    mnWindowSetRectPalette(panel->x + x + 1, panel->y + y + 1, width, height, palette);
 }
 
 // Builds a message's render entries and queues them in window; returns 0 when the message is empty
@@ -868,128 +868,128 @@ MESSAGE *mnMessageOpenDecodedStub(void *window, Sint32 msg);
 // for B or Select, back to the list, or DJINN_RESULT_START for Start, which closes the Djinn menu.
 Sint32   mnDjinnMenuShowHelp(void)
 {
-	WINDOW           *helpWindow;
-	WINDOW           *statusWindow;
-	DJINN_MENU_STATE *menu;
-	WIN_STATE        *render;
-	Sint32            result;
-	Sint32            prev;
-	Sint32            selection;
-	WINDOW           *list;
-	MESSAGE          *channel;
-	Sint32            msg;
-	Sint32            helpIndex;
-	Sint32            listMsg;
+    WINDOW           *helpWindow;
+    WINDOW           *statusWindow;
+    DJINN_MENU_STATE *menu;
+    WIN_STATE        *render;
+    Sint32            result;
+    Sint32            prev;
+    Sint32            selection;
+    WINDOW           *list;
+    MESSAGE          *channel;
+    Sint32            msg;
+    Sint32            helpIndex;
+    Sint32            listMsg;
 
-	menu      = RamHeapSlots->menuState;
-	selection = 0;
-	render    = (WIN_STATE *)RamHeapSlots->windowState;
-	result    = 0;
-	prev      = 0;
-	mnWindowSpriteClearListStub(menu->listWindow);
-	sySynch(1);
-	mnWindowSpritePrepareForRedrawStub(menu->helpWindow);
-	msg = (Sint32)MsgDjinnInfoPrompt;
-	mnTextDrawMessageAsTilesStub(msg, menu->helpWindow, 0, 0);
-	msg++;
-	mnTextDrawMessageAsTilesStub(msg, menu->helpWindow, 0, 16);
-	// "Select the items" and "Select:Djinni selection"
-	mnWindowSetRectPalette(1, 1, 11, 3, DJINN_DIM_PALETTE);
-	mnWindowSetInteriorRectPalette(menu->listWindow, 0, 0, 28, 10, DJINN_DIM_PALETTE);
-	list         = mnWindowCreateStub(0, 9, 8, 10, 6);
-	helpWindow   = mnWindowCreateStub(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
-	statusWindow = mnWindowCreateStub(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
-	mnWindowMarkVisibleTextTilesStub();
-	listMsg = (Sint32)MsgDjinnInfoTopic;
-	for (helpIndex = 0; helpIndex < DJINN_HELP_TOPICS; helpIndex++)
-	{
-		Sint32 y = helpIndex * 8;
+    menu      = RamHeapSlots->menuState;
+    selection = 0;
+    render    = (WIN_STATE *)RamHeapSlots->windowState;
+    result    = 0;
+    prev      = 0;
+    mnWindowSpriteClearListStub(menu->listWindow);
+    sySynch(1);
+    mnWindowSpritePrepareForRedrawStub(menu->helpWindow);
+    msg = (Sint32)MsgDjinnInfoPrompt;
+    mnTextDrawMessageAsTilesStub(msg, menu->helpWindow, 0, 0);
+    msg++;
+    mnTextDrawMessageAsTilesStub(msg, menu->helpWindow, 0, 16);
+    // "Select the items" and "Select:Djinni selection"
+    mnWindowSetRectPalette(1, 1, 11, 3, DJINN_DIM_PALETTE);
+    mnWindowSetInteriorRectPalette(menu->listWindow, 0, 0, 28, 10, DJINN_DIM_PALETTE);
+    list         = mnWindowCreateStub(0, 9, 8, 10, 6);
+    helpWindow   = mnWindowCreateStub(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
+    statusWindow = mnWindowCreateStub(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
+    mnWindowMarkVisibleTextTilesStub();
+    listMsg = (Sint32)MsgDjinnInfoTopic;
+    for (helpIndex = 0; helpIndex < DJINN_HELP_TOPICS; helpIndex++)
+    {
+        Sint32 y = helpIndex * 8;
 
-		mnTextDrawMessageAsTilesStub(helpIndex + listMsg, list, 0, y);
-	}
-	do
-	{
-		mnWindowSpritePrepareForRedrawStub(statusWindow);
-		mnTextDrawMessageStub(selection + (Sint32)MsgDjinnInfoTopic, statusWindow, 0, 0);
-		channel = mnMessageOpenDecodedStub(helpWindow, selection + (Sint32)MsgDjinnInfoText);
-		mnWindowSetInteriorPaletteBitRect(list, 0, prev, 6, 1, WINDOW_PALETTE);
-		mnWindowSetInteriorPaletteBitRect(list, 0, selection, 6, 1, HIGHLIGHT_PALETTE);
-		prev = selection;
-		for (;;)
-		{
-			mnCursorPos(-12, (list->y + selection) * 8 + 8);
-			sySynch(1);
-			if (PerWork.repeat & (KEY_RIGHT | KEY_DOWN))
-			{
-				selection++;
-				selection = mnWrapIndex(selection, DJINN_HELP_TOPICS);
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				break;
-			}
-			if (PerWork.repeat & (KEY_LEFT | KEY_UP))
-			{
-				selection--;
-				selection = mnWrapIndex(selection, DJINN_HELP_TOPICS);
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-				break;
-			}
-			else if (PerWork.push & KEY_START)
-			{
-				sySoundPlayStub(SE_MENU_CANCEL);
-				result = DJINN_RESULT_START;
-				break;
-			}
-			else if (PerWork.push & (KEY_B | KEY_SELECT))
-			{
-				sySoundPlayStub(SE_MENU_CANCEL);
-				result = DJINN_RESULT_BACK;
-				break;
-			}
-			else if (PerWork.push & KEY_A)
-			{
-				if (mnMessageAllTypedStub())
-				{
-					selection++;
-					selection = mnWrapIndex(selection, DJINN_HELP_TOPICS);
-					sySoundPlayStub(SE_MENU_CONFIRM);
-					break;
-				}
-				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			}
-		}
-		if (render->glyphResource != NO_GLYPH_RESOURCE)
-		{
-			syVRAMCacheFreeEntry(render->glyphResource);
-			render->glyphResource = NO_GLYPH_RESOURCE;
-		}
-		((WIN_STATE *)RamHeapSlots->windowState)->pageArrowShown = 0;
-		mnWindowSpritePrepareForRedrawStub(helpWindow);
-		{
-			WINDOW *window    = channel->window;
+        mnTextDrawMessageAsTilesStub(helpIndex + listMsg, list, 0, y);
+    }
+    do
+    {
+        mnWindowSpritePrepareForRedrawStub(statusWindow);
+        mnTextDrawMessageStub(selection + (Sint32)MsgDjinnInfoTopic, statusWindow, 0, 0);
+        channel = mnMessageOpenDecodedStub(helpWindow, selection + (Sint32)MsgDjinnInfoText);
+        mnWindowSetInteriorPaletteBitRect(list, 0, prev, 6, 1, WINDOW_PALETTE);
+        mnWindowSetInteriorPaletteBitRect(list, 0, selection, 6, 1, HIGHLIGHT_PALETTE);
+        prev = selection;
+        for (;;)
+        {
+            mnCursorPos(-12, (list->y + selection) * 8 + 8);
+            sySynch(1);
+            if (PerWork.repeat & (KEY_RIGHT | KEY_DOWN))
+            {
+                selection++;
+                selection = mnWrapIndex(selection, DJINN_HELP_TOPICS);
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                break;
+            }
+            if (PerWork.repeat & (KEY_LEFT | KEY_UP))
+            {
+                selection--;
+                selection = mnWrapIndex(selection, DJINN_HELP_TOPICS);
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+                break;
+            }
+            else if (PerWork.push & KEY_START)
+            {
+                sySoundPlayStub(SE_MENU_CANCEL);
+                result = DJINN_RESULT_START;
+                break;
+            }
+            else if (PerWork.push & (KEY_B | KEY_SELECT))
+            {
+                sySoundPlayStub(SE_MENU_CANCEL);
+                result = DJINN_RESULT_BACK;
+                break;
+            }
+            else if (PerWork.push & KEY_A)
+            {
+                if (mnMessageAllTypedStub())
+                {
+                    selection++;
+                    selection = mnWrapIndex(selection, DJINN_HELP_TOPICS);
+                    sySoundPlayStub(SE_MENU_CONFIRM);
+                    break;
+                }
+                sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            }
+        }
+        if (render->glyphResource != NO_GLYPH_RESOURCE)
+        {
+            syVRAMCacheFreeEntry(render->glyphResource);
+            render->glyphResource = NO_GLYPH_RESOURCE;
+        }
+        ((WIN_STATE *)RamHeapSlots->windowState)->pageArrowShown = 0;
+        mnWindowSpritePrepareForRedrawStub(helpWindow);
+        {
+            WINDOW *window    = channel->window;
 
-			window->zoomStage = 0;
-			window->duration  = 0;
-			window->state     = 0;
-		}
-		channel->window = 0;
-	} while (result == 0);
-	((WIN_STATE *)RamHeapSlots->windowState)->holdTilemapUpload = 1;
-	mnWindowSpriteClearListStub(statusWindow);
-	mnWindowSpriteClearListStub(helpWindow);
-	sySynch(1);
-	mnWindowCloseStub(statusWindow, 1);
-	mnWindowCloseStub(list, 1);
-	mnWindowCloseStub(helpWindow, 1);
-	mnWindowMarkVisibleTextTilesStub();
-	if (result == DJINN_RESULT_START)
-	{
-		mnWindowSpritePrepareForRedrawStub(menu->helpWindow);
-		mnWindowSpritePrepareForRedrawStub(menu->listWindow);
-		mnWindowSpritePrepareForRedrawStub(menu->statusWindow);
-		((WIN_STATE *)RamHeapSlots->windowState)->holdTilemapUpload = 0;
-	}
-	sySetEvent(mnUpdatePartyFigures, EVENT_PASS_TICK);
-	return result;
+            window->zoomStage = 0;
+            window->duration  = 0;
+            window->state     = 0;
+        }
+        channel->window = 0;
+    } while (result == 0);
+    ((WIN_STATE *)RamHeapSlots->windowState)->holdTilemapUpload = 1;
+    mnWindowSpriteClearListStub(statusWindow);
+    mnWindowSpriteClearListStub(helpWindow);
+    sySynch(1);
+    mnWindowCloseStub(statusWindow, 1);
+    mnWindowCloseStub(list, 1);
+    mnWindowCloseStub(helpWindow, 1);
+    mnWindowMarkVisibleTextTilesStub();
+    if (result == DJINN_RESULT_START)
+    {
+        mnWindowSpritePrepareForRedrawStub(menu->helpWindow);
+        mnWindowSpritePrepareForRedrawStub(menu->listWindow);
+        mnWindowSpritePrepareForRedrawStub(menu->statusWindow);
+        ((WIN_STATE *)RamHeapSlots->windowState)->holdTilemapUpload = 0;
+    }
+    sySetEvent(mnUpdatePartyFigures, EVENT_PASS_TICK);
+    return result;
 }
 
 // A grid cell's highlight is a tile narrower in Japanese.
@@ -998,9 +998,9 @@ Sint32   mnDjinnMenuShowHelp(void)
 // Spanish, French and Italian name the Djinni before its owner in one message on the trade's help
 // line, so the Djinni's icon leads the line.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#	define TRADE_HELP_DJINNI_FIRST 1
+#    define TRADE_HELP_DJINNI_FIRST 1
 #else
-#	define TRADE_HELP_DJINNI_FIRST 0
+#    define TRADE_HELP_DJINNI_FIRST 0
 #endif
 
 // The level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
@@ -1015,28 +1015,28 @@ Sint32       mnWrapIndex(Sint32 value, Sint32 modulus) __attribute__((const));
 
 // Shows one tutorial message and waits for its text to finish.
 #define DJINN_TUTORIAL_MESSAGE(window, offset)                                                     \
-	do                                                                                             \
-	{                                                                                              \
-		(window) = mnMessageOpenWindowStub(mnGetDjinnGiveMessage() + (offset), 9, 9, 1);           \
-		MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_NORMAL;                                      \
-		while (mnMessageAllTypedStub() == 0)                                                       \
-			sySynch(1);                                                                            \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        (window) = mnMessageOpenWindowStub(mnGetDjinnGiveMessage() + (offset), 9, 9, 1);           \
+        MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_NORMAL;                                      \
+        while (mnMessageAllTypedStub() == 0)                                                       \
+            sySynch(1);                                                                            \
+    } while (0)
 
 // The flags mnDjinnMenuSelectDjinn keeps for each party member's column.
 enum DJINN_COLUMN_FLAG
 {
-	DJINN_COLUMN_ON_HEADER        = 1, // the cursor is on the column's header
-	DJINN_COLUMN_HEADER_CHOOSABLE = 2, // its header can be chosen
-	DJINN_COLUMN_EMPTY            = 4  // no Djinni to choose
+    DJINN_COLUMN_ON_HEADER        = 1, // the cursor is on the column's header
+    DJINN_COLUMN_HEADER_CHOOSABLE = 2, // its header can be chosen
+    DJINN_COLUMN_EMPTY            = 4  // no Djinni to choose
 };
 
 // What mnDjinnMenuSelectDjinn redraws on its next pass.
 enum DJINN_REDRAW
 {
-	DJINN_REDRAW_CURSOR = 1, // the cursor, the figure and the help lines
-	DJINN_REDRAW_DJINNI = 2, // as for the cursor, the figure from its start
-	DJINN_REDRAW_PAGE   = 4  // the four columns of the page as well
+    DJINN_REDRAW_CURSOR = 1, // the cursor, the figure and the help lines
+    DJINN_REDRAW_DJINNI = 2, // as for the cursor, the figure from its start
+    DJINN_REDRAW_PAGE   = 4  // the four columns of the page as well
 };
 
 // The Djinn list's two choosers (DJINN_SELECT_MODE). Choosing a Djinni, the d-pad moves over every
@@ -1047,728 +1047,728 @@ enum DJINN_REDRAW
 // Returns an DJINN_MENU_RESULT.
 Sint32 mnDjinnMenuSelectDjinn(Sint32 mode)
 {
-	Sint8                columnFlags[8];
-	Uint8                requiresTrade[16];
-	DJINN_MENU_STATE    *menu       = RamHeapSlots->menuState;
-	DJINN_MENU_BACKDROP *backdrop   = menu->backdrop;
-	Sint32               helpWindow = menu->helpWindow;
-	Sint32               listWindow = menu->listWindow;
-	UNIT                *unit;
-	Sint32               window;
-	Uint32               redraw = DJINN_REDRAW_PAGE;
-	Sint32               i;
-	Sint32               j;
-	Sint32               selectedRow;
-	Sint32               memberColumn = (Uint16)(menu->selection[mode] % DJINN_CURSOR_ROW_STRIDE);
-	Sint32               djinnRow     = (Uint16)(menu->selection[mode] / DJINN_CURSOR_ROW_STRIDE);
-	Sint32               savedRow     = 0;
-	Uint32               djinn        = 0;
-	Bool                 groupMode    = FALSE;
-	Sint32               setAll       = 0;
-	Sint32               owner        = 0;
-	Sint32               element      = 0;
-	Sint32               number       = 0;
-	Sint32               state        = 0;
-	Sint32               result;
-	Sint32               msg;
-	Uint32               pressed;
-	Uint32               repeat;
-	Sint32               msgWindow;
-	Sint8               *status;
+    Sint8                columnFlags[8];
+    Uint8                requiresTrade[16];
+    DJINN_MENU_STATE    *menu       = RamHeapSlots->menuState;
+    DJINN_MENU_BACKDROP *backdrop   = menu->backdrop;
+    Sint32               helpWindow = menu->helpWindow;
+    Sint32               listWindow = menu->listWindow;
+    UNIT                *unit;
+    Sint32               window;
+    Uint32               redraw = DJINN_REDRAW_PAGE;
+    Sint32               i;
+    Sint32               j;
+    Sint32               selectedRow;
+    Sint32               memberColumn = (Uint16)(menu->selection[mode] % DJINN_CURSOR_ROW_STRIDE);
+    Sint32               djinnRow     = (Uint16)(menu->selection[mode] / DJINN_CURSOR_ROW_STRIDE);
+    Sint32               savedRow     = 0;
+    Uint32               djinn        = 0;
+    Bool                 groupMode    = FALSE;
+    Sint32               setAll       = 0;
+    Sint32               owner        = 0;
+    Sint32               element      = 0;
+    Sint32               number       = 0;
+    Sint32               state        = 0;
+    Sint32               result;
+    Sint32               msg;
+    Uint32               pressed;
+    Uint32               repeat;
+    Sint32               msgWindow;
+    Sint8               *status;
 
-	selectedRow = -1;
-	status      = columnFlags;
-	for (i = 0; i < 8; i++)
-		status[i] = 0;
-	if (mode == DJINN_SELECT_DJINNI)
-	{
-		savedRow = djinnRow;
-		for (i = 0; i < menu->memberCount; i++)
-		{
-			if (backdrop->counts[i] == 0)
-				status[i] = DJINN_COLUMN_EMPTY;
-		}
-		for (i = 0; i < menu->memberCount; i++)
-		{
-			if (status[memberColumn] == DJINN_COLUMN_EMPTY)
-			{
-				memberColumn++;
-				memberColumn = mnWrapIndex(memberColumn, menu->memberCount);
-			}
-		}
-	}
-	else
-	{
-		mnDjinnMarkTradeOnlyRecipients((Sint8 *)requiresTrade, menu->selectedColumn[0]);
-		for (i = 0; i < menu->memberCount; i++)
-		{
-			if (i == menu->selectedColumn[0])
-			{
-				columnFlags[i] =
-					DJINN_COLUMN_EMPTY | DJINN_COLUMN_HEADER_CHOOSABLE | DJINN_COLUMN_ON_HEADER;
-			}
-			else if (requiresTrade[i] != 0)
-			{
-				columnFlags[i] = 0;
-			}
-			else
-			{
-				columnFlags[i] = DJINN_COLUMN_HEADER_CHOOSABLE | DJINN_COLUMN_ON_HEADER;
-				if (backdrop->counts[i] == 0)
-					status[i] = columnFlags[i] | DJINN_COLUMN_EMPTY;
-			}
-		}
-	}
-	menu->cursor->motion = ICON_SHOWN;
-	for (;;)
-	{
-		if (redraw != 0)
-		{
-			selectedRow = -1;
-			if (!(columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER))
-				selectedRow = djinnRow;
-			if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
-				mnCursorPos(memberColumn % 4 * DJINN_COLUMN_WIDTH - 8, 52);
-			else
-				mnCursorPos(memberColumn % 4 * DJINN_COLUMN_WIDTH - 8, djinnRow * 8 + 60);
-			if (redraw >> 2)
-			{ // DJINN_REDRAW_PAGE
-				Sint32 page = memberColumn / 4 * 4;
+    selectedRow = -1;
+    status      = columnFlags;
+    for (i = 0; i < 8; i++)
+        status[i] = 0;
+    if (mode == DJINN_SELECT_DJINNI)
+    {
+        savedRow = djinnRow;
+        for (i = 0; i < menu->memberCount; i++)
+        {
+            if (backdrop->counts[i] == 0)
+                status[i] = DJINN_COLUMN_EMPTY;
+        }
+        for (i = 0; i < menu->memberCount; i++)
+        {
+            if (status[memberColumn] == DJINN_COLUMN_EMPTY)
+            {
+                memberColumn++;
+                memberColumn = mnWrapIndex(memberColumn, menu->memberCount);
+            }
+        }
+    }
+    else
+    {
+        mnDjinnMarkTradeOnlyRecipients((Sint8 *)requiresTrade, menu->selectedColumn[0]);
+        for (i = 0; i < menu->memberCount; i++)
+        {
+            if (i == menu->selectedColumn[0])
+            {
+                columnFlags[i] =
+                    DJINN_COLUMN_EMPTY | DJINN_COLUMN_HEADER_CHOOSABLE | DJINN_COLUMN_ON_HEADER;
+            }
+            else if (requiresTrade[i] != 0)
+            {
+                columnFlags[i] = 0;
+            }
+            else
+            {
+                columnFlags[i] = DJINN_COLUMN_HEADER_CHOOSABLE | DJINN_COLUMN_ON_HEADER;
+                if (backdrop->counts[i] == 0)
+                    status[i] = columnFlags[i] | DJINN_COLUMN_EMPTY;
+            }
+        }
+    }
+    menu->cursor->motion = ICON_SHOWN;
+    for (;;)
+    {
+        if (redraw != 0)
+        {
+            selectedRow = -1;
+            if (!(columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER))
+                selectedRow = djinnRow;
+            if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
+                mnCursorPos(memberColumn % 4 * DJINN_COLUMN_WIDTH - 8, 52);
+            else
+                mnCursorPos(memberColumn % 4 * DJINN_COLUMN_WIDTH - 8, djinnRow * 8 + 60);
+            if (redraw >> 2)
+            { // DJINN_REDRAW_PAGE
+                Sint32 page = memberColumn / 4 * 4;
 
-				mnCreatePartyFigures(page);
-				mnDjinnMenuDrawPage(backdrop, page);
-				if (mode == DJINN_SELECT_ACTION)
-				{
-					Sint32 fromX;
-					Sint32 fromY;
-					Uint16 srcCursor;
-					Sint32 x;
-					Sint32 height;
+                mnCreatePartyFigures(page);
+                mnDjinnMenuDrawPage(backdrop, page);
+                if (mode == DJINN_SELECT_ACTION)
+                {
+                    Sint32 fromX;
+                    Sint32 fromY;
+                    Uint16 srcCursor;
+                    Sint32 x;
+                    Sint32 height;
 
-					srcCursor = menu->selection[0];
-					fromX     = (Uint16)((Uint32)srcCursor % (Uint32)DJINN_CURSOR_ROW_STRIDE);
-					fromY     = (Uint16)((Uint32)srcCursor / (Uint32)DJINN_CURSOR_ROW_STRIDE);
-					if (fromX / 4 * 4 == page)
-					{
-						height = backdrop->counts[fromX];
-						mnUiPanelHighlightGridCell(listWindow, fromX, fromY, 1);
-						mnWindowSetInteriorRectPalette(listWindow,
-						                               (fromX - page) * DJINN_COLUMN_TILES + 1,
-						                               2,
-						                               GRID_CELL_WIDTH,
-						                               height,
-						                               DJINN_DIM_PALETTE);
-						menu->slotY[0] = DJINN_FIGURE_Y;
-					}
-					else
-					{
-						menu->slotY[0] = MENU_FIGURE_HIDDEN_Y;
-					}
-					for (i = 0, x = 8; i <= 3; i++, x += DJINN_COLUMN_WIDTH)
-					{
-						if (menu->memberSprites[i] != NULL)
-						{
-							if (page + i == menu->selectedColumn[0])
-							{
-								if (menu->pairEntries[0] & DJINN_ENTRY_IS_SET)
-									msg = (Sint32)MsgDjinnStandbyAction;
-								else
-									msg = (Sint32)MsgDjinnSetAction;
-							}
-							else if (columnFlags[page + i] & DJINN_COLUMN_HEADER_CHOOSABLE)
-							{
-								msg = (Sint32)MsgDjinnGiveAction;
-							}
-							else
-							{
-								msg = (Sint32)MsgDjinnTradeAction;
-							}
-							mnTextDrawMessageAsTilesStub(msg, listWindow, x, 8);
-						}
-					}
-				}
-				mnSetPageArrowsLeftRight(memberColumn, menu->memberCount);
+                    srcCursor = menu->selection[0];
+                    fromX     = (Uint16)((Uint32)srcCursor % (Uint32)DJINN_CURSOR_ROW_STRIDE);
+                    fromY     = (Uint16)((Uint32)srcCursor / (Uint32)DJINN_CURSOR_ROW_STRIDE);
+                    if (fromX / 4 * 4 == page)
+                    {
+                        height = backdrop->counts[fromX];
+                        mnUiPanelHighlightGridCell(listWindow, fromX, fromY, 1);
+                        mnWindowSetInteriorRectPalette(listWindow,
+                                                       (fromX - page) * DJINN_COLUMN_TILES + 1,
+                                                       2,
+                                                       GRID_CELL_WIDTH,
+                                                       height,
+                                                       DJINN_DIM_PALETTE);
+                        menu->slotY[0] = DJINN_FIGURE_Y;
+                    }
+                    else
+                    {
+                        menu->slotY[0] = MENU_FIGURE_HIDDEN_Y;
+                    }
+                    for (i = 0, x = 8; i <= 3; i++, x += DJINN_COLUMN_WIDTH)
+                    {
+                        if (menu->memberSprites[i] != NULL)
+                        {
+                            if (page + i == menu->selectedColumn[0])
+                            {
+                                if (menu->pairEntries[0] & DJINN_ENTRY_IS_SET)
+                                    msg = (Sint32)MsgDjinnStandbyAction;
+                                else
+                                    msg = (Sint32)MsgDjinnSetAction;
+                            }
+                            else if (columnFlags[page + i] & DJINN_COLUMN_HEADER_CHOOSABLE)
+                            {
+                                msg = (Sint32)MsgDjinnGiveAction;
+                            }
+                            else
+                            {
+                                msg = (Sint32)MsgDjinnTradeAction;
+                            }
+                            mnTextDrawMessageAsTilesStub(msg, listWindow, x, 8);
+                        }
+                    }
+                }
+                mnSetPageArrowsLeftRight(memberColumn, menu->memberCount);
 #if !DJINN_MENU_WAITS_ON_EVERY_REDRAW
-				sySynch(1);
+                sySynch(1);
 #endif
-			}
-			if (!(columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER))
-				mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 1);
-			if (selectedRow != -1)
-				djinn = backdrop->ids[memberColumn][selectedRow];
-			owner   = DJINN_MEMBER(djinn);
-			element = DJINN_ENTRY_ELEMENT_OF(djinn);
-			number  = DJINN_NUMBER(djinn);
-			state   = mnDjinnMenuGetEntryState(djinn);
-			if (selectedRow == -1)
-			{
-				mnDjinnFiguresSetSlotPos(mode, 0, MENU_FIGURE_HIDDEN_Y);
-			}
-			else
-			{
-				Sint32 facing;
-				Sint32 animation;
+            }
+            if (!(columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER))
+                mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 1);
+            if (selectedRow != -1)
+                djinn = backdrop->ids[memberColumn][selectedRow];
+            owner   = DJINN_MEMBER(djinn);
+            element = DJINN_ENTRY_ELEMENT_OF(djinn);
+            number  = DJINN_NUMBER(djinn);
+            state   = mnDjinnMenuGetEntryState(djinn);
+            if (selectedRow == -1)
+            {
+                mnDjinnFiguresSetSlotPos(mode, 0, MENU_FIGURE_HIDDEN_Y);
+            }
+            else
+            {
+                Sint32 facing;
+                Sint32 animation;
 
-				switch (state)
-				{
-					case DJINNI_STATE_STANDBY:
-						animation = 1;
-						facing    = FACING_SOUTH;
-						break;
-					case DJINNI_STATE_SET:
-						animation = 2;
-						facing    = FACING_SOUTH;
-						break;
-					default:
-						animation = 1;
-						facing    = FACING_WEST;
-						break;
-				}
-				mnDjinnFiguresSetSlotPos(mode,
-				                         DJINN_FIGURE_X(memberColumn % 4),
-				                         mode == DJINN_SELECT_DJINNI ? DJINN_FIGURE_CHOOSING_Y
-				                                                     : DJINN_FIGURE_Y);
-				mnDjinnFiguresSetSlotFacing(mode, facing);
-				if (redraw & DJINN_REDRAW_DJINNI)
-					mnDjinnFiguresSetSlotPhase(mode, 0);
-				mnDjinnFiguresReplaceSlot(mode, element, animation);
-			}
-			window = menu->statusWindow;
-			unit   = syUnitGet(menu->members[memberColumn]);
-			mnWindowSpriteRedrawSavedRectStub(window);
-			mnTextDrawStringAtOffsetStub(unit->name, window, 0, 0);
-			mnTextDrawMessageAsTilesStub(unit->classId + (Sint32)MsgClassName, window, 0, 8);
-			mnTextDrawStringAtOffsetStub(DjinnMenuTextLevel, window, 48, 0);
-			mnTextDrawNumberInWindowStub(unit->level, 2, window, 72, 0);
-			if (mode == DJINN_SELECT_DJINNI)
-				mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnCharacterStatus, window, 0, 16);
-			mnWindowSpriteRedrawSavedRectStub(helpWindow);
-			if (mode == DJINN_SELECT_DJINNI && selectedRow != -1)
-			{
-				if (groupMode)
-				{
-					if (setAll == 0)
-						mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnSetAll, helpWindow, 0, 0);
-					else
-						mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnAllStandby, helpWindow, 0, 0);
-					if (state == DJINNI_STATE_RECOVERING)
-						mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnRecovering, helpWindow, 0, 16);
-				}
-				else
-				{
-					mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnChoose, helpWindow, 0, 0);
-					switch (state)
-					{
-						// "R:Set Select:Help"
-						case DJINNI_STATE_STANDBY: msg = (Sint32)MsgDjinnChoose + 3; break;
-						// "R:Standby Select:Help"
-						case DJINNI_STATE_SET    : msg = (Sint32)MsgDjinnChoose + 2; break;
-						default                  : msg = (Sint32)MsgDjinnRecovering; break;
-					}
-					mnTextDrawMessageAsTilesStub(msg, helpWindow, 0, 16);
-				}
-			}
+                switch (state)
+                {
+                    case DJINNI_STATE_STANDBY:
+                        animation = 1;
+                        facing    = FACING_SOUTH;
+                        break;
+                    case DJINNI_STATE_SET:
+                        animation = 2;
+                        facing    = FACING_SOUTH;
+                        break;
+                    default:
+                        animation = 1;
+                        facing    = FACING_WEST;
+                        break;
+                }
+                mnDjinnFiguresSetSlotPos(mode,
+                                         DJINN_FIGURE_X(memberColumn % 4),
+                                         mode == DJINN_SELECT_DJINNI ? DJINN_FIGURE_CHOOSING_Y
+                                                                     : DJINN_FIGURE_Y);
+                mnDjinnFiguresSetSlotFacing(mode, facing);
+                if (redraw & DJINN_REDRAW_DJINNI)
+                    mnDjinnFiguresSetSlotPhase(mode, 0);
+                mnDjinnFiguresReplaceSlot(mode, element, animation);
+            }
+            window = menu->statusWindow;
+            unit   = syUnitGet(menu->members[memberColumn]);
+            mnWindowSpriteRedrawSavedRectStub(window);
+            mnTextDrawStringAtOffsetStub(unit->name, window, 0, 0);
+            mnTextDrawMessageAsTilesStub(unit->classId + (Sint32)MsgClassName, window, 0, 8);
+            mnTextDrawStringAtOffsetStub(DjinnMenuTextLevel, window, 48, 0);
+            mnTextDrawNumberInWindowStub(unit->level, 2, window, 72, 0);
+            if (mode == DJINN_SELECT_DJINNI)
+                mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnCharacterStatus, window, 0, 16);
+            mnWindowSpriteRedrawSavedRectStub(helpWindow);
+            if (mode == DJINN_SELECT_DJINNI && selectedRow != -1)
+            {
+                if (groupMode)
+                {
+                    if (setAll == 0)
+                        mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnSetAll, helpWindow, 0, 0);
+                    else
+                        mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnAllStandby, helpWindow, 0, 0);
+                    if (state == DJINNI_STATE_RECOVERING)
+                        mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnRecovering, helpWindow, 0, 16);
+                }
+                else
+                {
+                    mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnChoose, helpWindow, 0, 0);
+                    switch (state)
+                    {
+                        // "R:Set Select:Help"
+                        case DJINNI_STATE_STANDBY: msg = (Sint32)MsgDjinnChoose + 3; break;
+                        // "R:Standby Select:Help"
+                        case DJINNI_STATE_SET    : msg = (Sint32)MsgDjinnChoose + 2; break;
+                        default                  : msg = (Sint32)MsgDjinnRecovering; break;
+                    }
+                    mnTextDrawMessageAsTilesStub(msg, helpWindow, 0, 16);
+                }
+            }
 #if DJINN_MENU_WAITS_ON_EVERY_REDRAW
-			sySynch(1);
+            sySynch(1);
 #endif
-			if (mode == DJINN_SELECT_ACTION)
-			{
+            if (mode == DJINN_SELECT_ACTION)
+            {
 #if TRADE_HELP_DJINNI_FIRST
-				mnWindowSetTilemapEntryStub(helpWindow,
-				                            DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0])
-				                                + ELEMENT_ICON_TILE,
-				                            0,
-				                            0,
-				                            0);
-				mnMessageArgumentPushStub(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
-				mnMessageArgumentPushStub(
-					DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0]) * DJINN_PER_ELEMENT
-						+ DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
-					MESSAGE_ARGUMENT_ABILITY);
-				mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnOwnerLabel, helpWindow, 8, 0);
+                mnWindowSetTilemapEntryStub(helpWindow,
+                                            DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0])
+                                                + ELEMENT_ICON_TILE,
+                                            0,
+                                            0,
+                                            0);
+                mnMessageArgumentPushStub(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
+                mnMessageArgumentPushStub(
+                    DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0]) * DJINN_PER_ELEMENT
+                        + DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
+                    MESSAGE_ARGUMENT_ABILITY);
+                mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnOwnerLabel, helpWindow, 8, 0);
 #else
-				mnMessageArgumentPushStub(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
-				mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnOwnerLabel, helpWindow, 0, 0);
-				mnMessageArgumentPushStub(
-					DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0]) * DJINN_PER_ELEMENT
-						+ DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
-					MESSAGE_ARGUMENT_ABILITY);
-				mnWindowSetTilemapEntryStub(helpWindow,
-				                            DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0])
-				                                + ELEMENT_ICON_TILE,
-				                            6,
-				                            0,
-				                            0);
-				mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnOwnerLabel + 1, helpWindow, 56, 0);
+                mnMessageArgumentPushStub(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
+                mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnOwnerLabel, helpWindow, 0, 0);
+                mnMessageArgumentPushStub(
+                    DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0]) * DJINN_PER_ELEMENT
+                        + DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
+                    MESSAGE_ARGUMENT_ABILITY);
+                mnWindowSetTilemapEntryStub(helpWindow,
+                                            DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0])
+                                                + ELEMENT_ICON_TILE,
+                                            6,
+                                            0,
+                                            0);
+                mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnOwnerLabel + 1, helpWindow, 56, 0);
 #endif
-				// "What will you do?"
-				mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnOwnerLabel + 2, helpWindow, 0, 8);
-			}
+                // "What will you do?"
+                mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnOwnerLabel + 2, helpWindow, 0, 8);
+            }
 #if DJINN_MENU_WAITS_ON_EVERY_REDRAW
-			sySynch(1);
+            sySynch(1);
 #endif
-			mnWindowSpriteClearListStub(listWindow);
-			if (selectedRow != -1)
-			{
+            mnWindowSpriteClearListStub(listWindow);
+            if (selectedRow != -1)
+            {
 #if LANGUAGE != LANGUAGE_JAPANESE
-				mnWindowClearInteriorTilesStub(listWindow, 0, 96, 224, 104);
+                mnWindowClearInteriorTilesStub(listWindow, 0, 96, 224, 104);
 #endif
-				// Japanese draws the effect as a resource string.
+                // Japanese draws the effect as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
-				mnTextDrawMessageStub(element * DJINN_PER_ELEMENT + number + (Sint32)MsgDjinnEffect,
-				                      listWindow,
-				                      0,
-				                      96);
+                mnTextDrawMessageStub(element * DJINN_PER_ELEMENT + number + (Sint32)MsgDjinnEffect,
+                                      listWindow,
+                                      0,
+                                      96);
 #else
-				mnTextDrawMessageAsTilesStub(element * DJINN_PER_ELEMENT + number
-				                                 + (Sint32)MsgDjinnEffect,
-				                             listWindow,
-				                             0,
-				                             96);
+                mnTextDrawMessageAsTilesStub(element * DJINN_PER_ELEMENT + number
+                                                 + (Sint32)MsgDjinnEffect,
+                                             listWindow,
+                                             0,
+                                             96);
 #endif
 #if DJINN_EFFECT_CLEARED_WITHOUT_DJINNI
-			}
-			else
-			{
-				mnWindowClearInteriorTilesStub(listWindow, 0, 96, 224, 104);
+            }
+            else
+            {
+                mnWindowClearInteriorTilesStub(listWindow, 0, 96, 224, 104);
 #endif
-			}
-			((WIN_STATE *)RamHeapSlots->windowState)->dirty = 1;
-			redraw                                          = 0;
-		}
-		sySynch(1);
-		if (!(PerWork.data & KEY_R) || (PerWork.pendingPush & KEY_R))
-		{
-			if (groupMode)
-				redraw = DJINN_REDRAW_CURSOR;
-			groupMode = FALSE;
-			setAll    = 0;
-		}
-		repeat  = PerWork.repeat;
-		pressed = PerWork.push;
-		if (backdrop->tutorialStep != DJINN_TUTORIAL_OFF)
-		{
-			pressed = 0;
-			repeat  = 0;
-			backdrop->tutorialTimer++;
-			switch (backdrop->tutorialStep)
-			{
-				case DJINN_TUTORIAL_CLOSE:
-					while (!(PerWork.push & KEY_A))
-					{
-						mnCursorPos(150, 26);
-						sySynch(1);
-					}
-					pressed = KEY_B;
-					repeat  = KEY_B;
-					break;
-				case DJINN_TUTORIAL_RECOVERY:
-					if (backdrop->tutorialTimer == 60)
-					{
-						DJINN_TUTORIAL_MESSAGE(msgWindow, DJINN_TUTORIAL_LINE_RECOVERY);
-						mnWindowCloseStub(msgWindow, 1);
-						mnDjinnMenuDrawFirstPage(backdrop);
-						sySynch(1);
-						DJINN_TUTORIAL_MESSAGE(msgWindow, DJINN_TUTORIAL_LINE_SET_AGAIN);
-						mnWindowCloseStub(msgWindow, 1);
-						mnDjinnMenuDrawFirstPage(backdrop);
-						backdrop->tutorialTimer = 0;
-						btDjinnRecoveryCountDownStub();
-						btDjinnRecoveryCountDownStub();
-						btDjinnRecoveryCountDownStub();
-						gmDjinnPutOnStandbyStub(FELIX, ELEMENT_VENUS, DJINNI_ECHO);
-						gmDjinnRecoveryAddStandbyStub(FELIX, ELEMENT_VENUS, DJINNI_ECHO);
-						gmUnitCalculateStub(FELIX);
-						repeat  = KEY_B;
-						pressed = KEY_B;
-					}
-					break;
-				case DJINN_TUTORIAL_GIVE:
-					if (backdrop->tutorialTimer == 60)
-					{
-						DJINN_TUTORIAL_MESSAGE(msgWindow, DJINN_TUTORIAL_LINE_GIVE);
-						mnWindowCloseStub(msgWindow, 1);
-						mnDjinnMenuDrawFirstPage(backdrop);
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep  = DJINN_TUTORIAL_GIVE_PICK;
-					}
-					break;
-				case DJINN_TUTORIAL_GIVE_PICK:
-				case DJINN_TUTORIAL_GIVE_DROP:
-				case DJINN_TUTORIAL_SET_PICK:
-				case DJINN_TUTORIAL_SET_CHOOSE:
-				case DJINN_TUTORIAL_POWERS_CHOOSE:
-					if (backdrop->tutorialTimer == 90)
-					{
-						repeat                  = KEY_A;
-						pressed                 = KEY_A;
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep++;
-					}
-					break;
-				case DJINN_TUTORIAL_GIVE_MOVE:
-					if (backdrop->tutorialTimer == 90)
-					{
-						repeat                  = KEY_RIGHT;
-						pressed                 = KEY_RIGHT;
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep  = DJINN_TUTORIAL_GIVE_DROP;
-					}
-					break;
-				case DJINN_TUTORIAL_SET:
-				case DJINN_TUTORIAL_SET_SPARE:
-					if (backdrop->tutorialTimer == 60)
-					{
-						DJINN_TUTORIAL_MESSAGE(msgWindow, DJINN_TUTORIAL_LINE_SET_AFTER_GIVE);
-						mnWindowCloseStub(msgWindow, 1);
-						mnDjinnMenuDrawFirstPage(backdrop);
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep  = DJINN_TUTORIAL_SET_PICK;
-					}
-					break;
-				case DJINN_TUTORIAL_SET_DONE:
-					if (backdrop->tutorialTimer == 40)
-					{
-						repeat                  = KEY_B;
-						pressed                 = KEY_B;
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep++;
-					}
-					break;
-				case DJINN_TUTORIAL_POWERS:
-				case DJINN_TUTORIAL_POWERS_WAIT:
-				case DJINN_TUTORIAL_POWERS_WAIT_MORE:
-					if (backdrop->tutorialTimer == 40)
-					{
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep++;
-					}
-					break;
-				case DJINN_TUTORIAL_POWERS_TALK:
-					if (backdrop->tutorialTimer == 60)
-					{
-						MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_NORMAL;
-						msgWindow                     = mnMessageOpenWindowStub(
+            }
+            ((WIN_STATE *)RamHeapSlots->windowState)->dirty = 1;
+            redraw                                          = 0;
+        }
+        sySynch(1);
+        if (!(PerWork.data & KEY_R) || (PerWork.pendingPush & KEY_R))
+        {
+            if (groupMode)
+                redraw = DJINN_REDRAW_CURSOR;
+            groupMode = FALSE;
+            setAll    = 0;
+        }
+        repeat  = PerWork.repeat;
+        pressed = PerWork.push;
+        if (backdrop->tutorialStep != DJINN_TUTORIAL_OFF)
+        {
+            pressed = 0;
+            repeat  = 0;
+            backdrop->tutorialTimer++;
+            switch (backdrop->tutorialStep)
+            {
+                case DJINN_TUTORIAL_CLOSE:
+                    while (!(PerWork.push & KEY_A))
+                    {
+                        mnCursorPos(150, 26);
+                        sySynch(1);
+                    }
+                    pressed = KEY_B;
+                    repeat  = KEY_B;
+                    break;
+                case DJINN_TUTORIAL_RECOVERY:
+                    if (backdrop->tutorialTimer == 60)
+                    {
+                        DJINN_TUTORIAL_MESSAGE(msgWindow, DJINN_TUTORIAL_LINE_RECOVERY);
+                        mnWindowCloseStub(msgWindow, 1);
+                        mnDjinnMenuDrawFirstPage(backdrop);
+                        sySynch(1);
+                        DJINN_TUTORIAL_MESSAGE(msgWindow, DJINN_TUTORIAL_LINE_SET_AGAIN);
+                        mnWindowCloseStub(msgWindow, 1);
+                        mnDjinnMenuDrawFirstPage(backdrop);
+                        backdrop->tutorialTimer = 0;
+                        btDjinnRecoveryCountDownStub();
+                        btDjinnRecoveryCountDownStub();
+                        btDjinnRecoveryCountDownStub();
+                        gmDjinnPutOnStandbyStub(FELIX, ELEMENT_VENUS, DJINNI_ECHO);
+                        gmDjinnRecoveryAddStandbyStub(FELIX, ELEMENT_VENUS, DJINNI_ECHO);
+                        gmUnitCalculateStub(FELIX);
+                        repeat  = KEY_B;
+                        pressed = KEY_B;
+                    }
+                    break;
+                case DJINN_TUTORIAL_GIVE:
+                    if (backdrop->tutorialTimer == 60)
+                    {
+                        DJINN_TUTORIAL_MESSAGE(msgWindow, DJINN_TUTORIAL_LINE_GIVE);
+                        mnWindowCloseStub(msgWindow, 1);
+                        mnDjinnMenuDrawFirstPage(backdrop);
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep  = DJINN_TUTORIAL_GIVE_PICK;
+                    }
+                    break;
+                case DJINN_TUTORIAL_GIVE_PICK:
+                case DJINN_TUTORIAL_GIVE_DROP:
+                case DJINN_TUTORIAL_SET_PICK:
+                case DJINN_TUTORIAL_SET_CHOOSE:
+                case DJINN_TUTORIAL_POWERS_CHOOSE:
+                    if (backdrop->tutorialTimer == 90)
+                    {
+                        repeat                  = KEY_A;
+                        pressed                 = KEY_A;
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep++;
+                    }
+                    break;
+                case DJINN_TUTORIAL_GIVE_MOVE:
+                    if (backdrop->tutorialTimer == 90)
+                    {
+                        repeat                  = KEY_RIGHT;
+                        pressed                 = KEY_RIGHT;
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep  = DJINN_TUTORIAL_GIVE_DROP;
+                    }
+                    break;
+                case DJINN_TUTORIAL_SET:
+                case DJINN_TUTORIAL_SET_SPARE:
+                    if (backdrop->tutorialTimer == 60)
+                    {
+                        DJINN_TUTORIAL_MESSAGE(msgWindow, DJINN_TUTORIAL_LINE_SET_AFTER_GIVE);
+                        mnWindowCloseStub(msgWindow, 1);
+                        mnDjinnMenuDrawFirstPage(backdrop);
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep  = DJINN_TUTORIAL_SET_PICK;
+                    }
+                    break;
+                case DJINN_TUTORIAL_SET_DONE:
+                    if (backdrop->tutorialTimer == 40)
+                    {
+                        repeat                  = KEY_B;
+                        pressed                 = KEY_B;
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep++;
+                    }
+                    break;
+                case DJINN_TUTORIAL_POWERS:
+                case DJINN_TUTORIAL_POWERS_WAIT:
+                case DJINN_TUTORIAL_POWERS_WAIT_MORE:
+                    if (backdrop->tutorialTimer == 40)
+                    {
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep++;
+                    }
+                    break;
+                case DJINN_TUTORIAL_POWERS_TALK:
+                    if (backdrop->tutorialTimer == 60)
+                    {
+                        MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_NORMAL;
+                        msgWindow                     = mnMessageOpenWindowStub(
                             mnGetDjinnGiveMessage() + DJINN_TUTORIAL_LINE_POWERS, 9, 9, 1);
-						mnCursorSlide(2, 146);
-						while (mnMessageAllTypedStub() == 0)
-							sySynch(1);
-						while (!(PerWork.push & KEY_A))
-						{
-							mnCursorPos(2, 146);
-							sySynch(1);
-						}
-						mnWindowCloseStub(msgWindow, 1);
-						mnDjinnMenuDrawFirstPage(backdrop);
-						sySynch(1);
-						msgWindow = mnMessageOpenWindowStub(
-							mnGetDjinnGiveMessage() + DJINN_TUTORIAL_LINE_UNLEASH, 9, 9, 1);
-						while (mnMessageAllTypedStub() == 0)
-							sySynch(1);
-						while (!(PerWork.push & KEY_A))
-						{
-							mnCursorPos(2, 146);
-							sySynch(1);
-						}
-						mnWindowCloseStub(msgWindow, 1);
-						mnDjinnMenuDrawFirstPage(backdrop);
-						sySynch(1);
-						msgWindow = mnMessageOpenWindowStub(
-							mnGetDjinnGiveMessage() + DJINN_TUTORIAL_LINE_DEMONSTRATE, 9, 9, 1);
-						while (mnMessageAllTypedStub() == 0)
-							sySynch(1);
-						while (!(PerWork.push & KEY_A))
-						{
-							mnCursorPos(2, 146);
-							sySynch(1);
-						}
-						mnWindowCloseStub(msgWindow, 1);
-						mnDjinnMenuDrawFirstPage(backdrop);
-						sySynch(1);
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep  = DJINN_TUTORIAL_POWERS_WAIT;
-					}
-					break;
-				case DJINN_TUTORIAL_POWERS_PICK:
-				case DJINN_TUTORIAL_POWERS_PICK_SPARE:
-					if (backdrop->tutorialTimer == 90)
-					{
-						repeat                  = KEY_A;
-						pressed                 = KEY_A;
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep  = DJINN_TUTORIAL_POWERS_MOVE;
-					}
-					break;
-				case DJINN_TUTORIAL_POWERS_MOVE:
-					if (backdrop->tutorialTimer == 90)
-					{
-						repeat                  = KEY_LEFT;
-						pressed                 = KEY_LEFT;
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep  = DJINN_TUTORIAL_POWERS_CHOOSE;
-					}
-					break;
-				case DJINN_TUTORIAL_POWERS_DONE:
-					if (backdrop->tutorialTimer == 60)
-					{
-						backdrop->tutorialTimer = 0;
-						backdrop->tutorialStep  = DJINN_TUTORIAL_POWERS_END;
-						repeat                  = KEY_B;
-						pressed                 = KEY_B;
-					}
-					break;
-			}
-		}
-		// R on a Djinni: put it on standby or set it at once.
-		if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_R))
-		{
-			if (selectedRow == -1)
-			{
-				sySoundPlayStub(SE_MENU_ERROR);
-				continue;
-			}
-			groupMode           = TRUE;
-			PerWork.pendingPush = 0;
-			switch (state)
-			{
-				case DJINNI_STATE_STANDBY:
-					sySoundPlayStub(SE_DJINNI_SET);
-					gmDjinnSetStub(owner, element, number);
-					gmDjinnRecoveryRemoveStub(owner, element, number);
-					break;
-				case DJINNI_STATE_SET:
-					sySoundPlayStub(SE_NOTE_HIGH);
-					gmDjinnPutOnStandbyStub(owner, element, number);
-					gmDjinnRecoveryAddStandbyStub(owner, element, number);
-					break;
-				default:
-					sySoundPlayStub(SE_MENU_ERROR);
-					redraw = DJINN_REDRAW_CURSOR;
-					continue;
-			}
-			gmUnitCalculateStub(owner);
-			mnDjinnMenuDrawPage(backdrop, memberColumn / 4 * 4);
-			redraw = DJINN_REDRAW_CURSOR;
-		}
-		if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_L))
-		{
-			result = DJINN_RESULT_STATUS;
-			sySoundPlayStub(SE_MENU_CONFIRM);
-			break;
-		}
-		if ((pressed & KEY_A) || (mode == DJINN_SELECT_ACTION && (pressed & KEY_R)))
-		{
-			if (selectedRow != -1 && state == DJINNI_STATE_RECOVERING)
-			{
-				sySoundPlayStub(SE_MENU_ERROR);
-				mnWindowSpriteClearListStub(listWindow);
+                        mnCursorSlide(2, 146);
+                        while (mnMessageAllTypedStub() == 0)
+                            sySynch(1);
+                        while (!(PerWork.push & KEY_A))
+                        {
+                            mnCursorPos(2, 146);
+                            sySynch(1);
+                        }
+                        mnWindowCloseStub(msgWindow, 1);
+                        mnDjinnMenuDrawFirstPage(backdrop);
+                        sySynch(1);
+                        msgWindow = mnMessageOpenWindowStub(
+                            mnGetDjinnGiveMessage() + DJINN_TUTORIAL_LINE_UNLEASH, 9, 9, 1);
+                        while (mnMessageAllTypedStub() == 0)
+                            sySynch(1);
+                        while (!(PerWork.push & KEY_A))
+                        {
+                            mnCursorPos(2, 146);
+                            sySynch(1);
+                        }
+                        mnWindowCloseStub(msgWindow, 1);
+                        mnDjinnMenuDrawFirstPage(backdrop);
+                        sySynch(1);
+                        msgWindow = mnMessageOpenWindowStub(
+                            mnGetDjinnGiveMessage() + DJINN_TUTORIAL_LINE_DEMONSTRATE, 9, 9, 1);
+                        while (mnMessageAllTypedStub() == 0)
+                            sySynch(1);
+                        while (!(PerWork.push & KEY_A))
+                        {
+                            mnCursorPos(2, 146);
+                            sySynch(1);
+                        }
+                        mnWindowCloseStub(msgWindow, 1);
+                        mnDjinnMenuDrawFirstPage(backdrop);
+                        sySynch(1);
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep  = DJINN_TUTORIAL_POWERS_WAIT;
+                    }
+                    break;
+                case DJINN_TUTORIAL_POWERS_PICK:
+                case DJINN_TUTORIAL_POWERS_PICK_SPARE:
+                    if (backdrop->tutorialTimer == 90)
+                    {
+                        repeat                  = KEY_A;
+                        pressed                 = KEY_A;
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep  = DJINN_TUTORIAL_POWERS_MOVE;
+                    }
+                    break;
+                case DJINN_TUTORIAL_POWERS_MOVE:
+                    if (backdrop->tutorialTimer == 90)
+                    {
+                        repeat                  = KEY_LEFT;
+                        pressed                 = KEY_LEFT;
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep  = DJINN_TUTORIAL_POWERS_CHOOSE;
+                    }
+                    break;
+                case DJINN_TUTORIAL_POWERS_DONE:
+                    if (backdrop->tutorialTimer == 60)
+                    {
+                        backdrop->tutorialTimer = 0;
+                        backdrop->tutorialStep  = DJINN_TUTORIAL_POWERS_END;
+                        repeat                  = KEY_B;
+                        pressed                 = KEY_B;
+                    }
+                    break;
+            }
+        }
+        // R on a Djinni: put it on standby or set it at once.
+        if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_R))
+        {
+            if (selectedRow == -1)
+            {
+                sySoundPlayStub(SE_MENU_ERROR);
+                continue;
+            }
+            groupMode           = TRUE;
+            PerWork.pendingPush = 0;
+            switch (state)
+            {
+                case DJINNI_STATE_STANDBY:
+                    sySoundPlayStub(SE_DJINNI_SET);
+                    gmDjinnSetStub(owner, element, number);
+                    gmDjinnRecoveryRemoveStub(owner, element, number);
+                    break;
+                case DJINNI_STATE_SET:
+                    sySoundPlayStub(SE_NOTE_HIGH);
+                    gmDjinnPutOnStandbyStub(owner, element, number);
+                    gmDjinnRecoveryAddStandbyStub(owner, element, number);
+                    break;
+                default:
+                    sySoundPlayStub(SE_MENU_ERROR);
+                    redraw = DJINN_REDRAW_CURSOR;
+                    continue;
+            }
+            gmUnitCalculateStub(owner);
+            mnDjinnMenuDrawPage(backdrop, memberColumn / 4 * 4);
+            redraw = DJINN_REDRAW_CURSOR;
+        }
+        if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_L))
+        {
+            result = DJINN_RESULT_STATUS;
+            sySoundPlayStub(SE_MENU_CONFIRM);
+            break;
+        }
+        if ((pressed & KEY_A) || (mode == DJINN_SELECT_ACTION && (pressed & KEY_R)))
+        {
+            if (selectedRow != -1 && state == DJINNI_STATE_RECOVERING)
+            {
+                sySoundPlayStub(SE_MENU_ERROR);
+                mnWindowSpriteClearListStub(listWindow);
 #if LANGUAGE != LANGUAGE_JAPANESE
-				mnWindowClearInteriorTilesStub(listWindow, 0, 96, 224, 104);
+                mnWindowClearInteriorTilesStub(listWindow, 0, 96, 224, 104);
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE
-				mnTextDrawMessageStub((Sint32)MsgDjinnNowRecovering, listWindow, 0, 96);
+                mnTextDrawMessageStub((Sint32)MsgDjinnNowRecovering, listWindow, 0, 96);
 #else
-				mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnNowRecovering, listWindow, 0, 96);
+                mnTextDrawMessageAsTilesStub((Sint32)MsgDjinnNowRecovering, listWindow, 0, 96);
 #endif
-				continue;
-			}
-			if (mode == DJINN_SELECT_ACTION)
-			{
-				if (memberColumn == menu->selectedColumn[0])
-				{
-					if (menu->pairEntries[0] & DJINN_ENTRY_IS_SET)
-						result = DJINN_RESULT_STANDBY;
-					else
-						result = DJINN_RESULT_SET;
-				}
-				else if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
-				{
-					result = DJINN_RESULT_GIVE;
-				}
-				else
-				{
-					result = DJINN_RESULT_TRADE;
-				}
-			}
-			else
-			{
-				result = DJINN_RESULT_CHOSEN;
-			}
-			sySoundPlayStub(SE_MENU_CONFIRM);
-			break;
-		}
-		if (pressed & KEY_START)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			result = DJINN_RESULT_START;
-			break;
-		}
-		if (pressed & KEY_B)
-		{
-			sySoundPlayStub(SE_MENU_CANCEL);
-			result = DJINN_RESULT_BACK;
-			break;
-		}
-		// Select: with R held, set every Djinni not recovering or, the next time, put every one on
-		// standby; otherwise open the help.
-		if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_SELECT))
-		{
-			if (groupMode)
-			{
-				setAll ^= 1;
-				if (setAll)
-					sySoundPlayStub(SE_DJINNI_SET);
-				else
-					sySoundPlayStub(SE_NOTE_HIGH);
-				for (i = 0; i < menu->memberCount; i++)
-				{
-					for (j = 0; j < backdrop->counts[i]; j++)
-					{
-						Uint32 entry        = backdrop->ids[i][j];
-						Sint32 entryOwner   = DJINN_MEMBER(entry);
-						Sint32 entryElement = DJINN_ENTRY_ELEMENT_OF(entry);
-						Sint32 entryNumber  = DJINN_NUMBER(entry);
+                continue;
+            }
+            if (mode == DJINN_SELECT_ACTION)
+            {
+                if (memberColumn == menu->selectedColumn[0])
+                {
+                    if (menu->pairEntries[0] & DJINN_ENTRY_IS_SET)
+                        result = DJINN_RESULT_STANDBY;
+                    else
+                        result = DJINN_RESULT_SET;
+                }
+                else if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
+                {
+                    result = DJINN_RESULT_GIVE;
+                }
+                else
+                {
+                    result = DJINN_RESULT_TRADE;
+                }
+            }
+            else
+            {
+                result = DJINN_RESULT_CHOSEN;
+            }
+            sySoundPlayStub(SE_MENU_CONFIRM);
+            break;
+        }
+        if (pressed & KEY_START)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            result = DJINN_RESULT_START;
+            break;
+        }
+        if (pressed & KEY_B)
+        {
+            sySoundPlayStub(SE_MENU_CANCEL);
+            result = DJINN_RESULT_BACK;
+            break;
+        }
+        // Select: with R held, set every Djinni not recovering or, the next time, put every one on
+        // standby; otherwise open the help.
+        if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_SELECT))
+        {
+            if (groupMode)
+            {
+                setAll ^= 1;
+                if (setAll)
+                    sySoundPlayStub(SE_DJINNI_SET);
+                else
+                    sySoundPlayStub(SE_NOTE_HIGH);
+                for (i = 0; i < menu->memberCount; i++)
+                {
+                    for (j = 0; j < backdrop->counts[i]; j++)
+                    {
+                        Uint32 entry        = backdrop->ids[i][j];
+                        Sint32 entryOwner   = DJINN_MEMBER(entry);
+                        Sint32 entryElement = DJINN_ENTRY_ELEMENT_OF(entry);
+                        Sint32 entryNumber  = DJINN_NUMBER(entry);
 
-						switch (mnDjinnMenuGetEntryState(entry))
-						{
-							case DJINNI_STATE_STANDBY:
-								if (setAll)
-								{
-									gmDjinnSetStub(entryOwner, entryElement, entryNumber);
-									gmDjinnRecoveryRemoveStub(
-										entryOwner, entryElement, entryNumber);
-									gmUnitCalculateStub(entryOwner);
-								}
-								break;
-							case DJINNI_STATE_SET:
-								if (!setAll)
-								{
-									gmDjinnPutOnStandbyStub(entryOwner, entryElement, entryNumber);
-									gmDjinnRecoveryAddStandbyStub(
-										entryOwner, entryElement, entryNumber);
-									gmUnitCalculateStub(entryOwner);
-								}
-								break;
-						}
-					}
-				}
-				mnDjinnMenuDrawPage(backdrop, memberColumn / 4 * 4);
-				redraw = DJINN_REDRAW_CURSOR;
-			}
-			else
-			{
-				mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-				result = DJINN_RESULT_HELP;
-				sySoundPlayStub(SE_MENU_CONFIRM);
-				break;
-			}
-		}
-		if (repeat & KEY_UP)
-		{
-			if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
-				continue;
-			if (backdrop->counts[memberColumn] == 0)
-				continue;
-			mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
-			{
-				columnFlags[memberColumn] &= ~DJINN_COLUMN_ON_HEADER;
-				djinnRow                   = 0;
-			}
-			else if (djinnRow == 0 && (columnFlags[memberColumn] & DJINN_COLUMN_HEADER_CHOOSABLE))
-			{
-				columnFlags[memberColumn] |= DJINN_COLUMN_ON_HEADER;
-				redraw                     = DJINN_REDRAW_DJINNI;
-				continue;
-			}
-			djinnRow--;
-			djinnRow = mnWrapIndex(djinnRow, backdrop->counts[memberColumn]);
-			savedRow = djinnRow;
-			redraw   = DJINN_REDRAW_DJINNI;
-			continue;
-		}
-		if (repeat & KEY_DOWN)
-		{
-			if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
-				continue;
-			if (backdrop->counts[memberColumn] == 0)
-				continue;
-			mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			djinnRow++;
-			djinnRow = mnWrapIndex(djinnRow, backdrop->counts[memberColumn]);
-			if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
-			{
-				columnFlags[memberColumn] &= ~DJINN_COLUMN_ON_HEADER;
-				djinnRow                   = 0;
-			}
-			else if (djinnRow == 0 && (columnFlags[memberColumn] & DJINN_COLUMN_HEADER_CHOOSABLE))
-			{
-				columnFlags[memberColumn] |= DJINN_COLUMN_ON_HEADER;
-			}
-			savedRow = djinnRow;
-			redraw   = DJINN_REDRAW_DJINNI;
-			continue;
-		}
-		if (repeat & KEYS_HORIZONTAL)
-		{
-			Sint32 oldColumn;
+                        switch (mnDjinnMenuGetEntryState(entry))
+                        {
+                            case DJINNI_STATE_STANDBY:
+                                if (setAll)
+                                {
+                                    gmDjinnSetStub(entryOwner, entryElement, entryNumber);
+                                    gmDjinnRecoveryRemoveStub(
+                                        entryOwner, entryElement, entryNumber);
+                                    gmUnitCalculateStub(entryOwner);
+                                }
+                                break;
+                            case DJINNI_STATE_SET:
+                                if (!setAll)
+                                {
+                                    gmDjinnPutOnStandbyStub(entryOwner, entryElement, entryNumber);
+                                    gmDjinnRecoveryAddStandbyStub(
+                                        entryOwner, entryElement, entryNumber);
+                                    gmUnitCalculateStub(entryOwner);
+                                }
+                                break;
+                        }
+                    }
+                }
+                mnDjinnMenuDrawPage(backdrop, memberColumn / 4 * 4);
+                redraw = DJINN_REDRAW_CURSOR;
+            }
+            else
+            {
+                mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 0);
+                result = DJINN_RESULT_HELP;
+                sySoundPlayStub(SE_MENU_CONFIRM);
+                break;
+            }
+        }
+        if (repeat & KEY_UP)
+        {
+            if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
+                continue;
+            if (backdrop->counts[memberColumn] == 0)
+                continue;
+            mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 0);
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
+            {
+                columnFlags[memberColumn] &= ~DJINN_COLUMN_ON_HEADER;
+                djinnRow                   = 0;
+            }
+            else if (djinnRow == 0 && (columnFlags[memberColumn] & DJINN_COLUMN_HEADER_CHOOSABLE))
+            {
+                columnFlags[memberColumn] |= DJINN_COLUMN_ON_HEADER;
+                redraw                     = DJINN_REDRAW_DJINNI;
+                continue;
+            }
+            djinnRow--;
+            djinnRow = mnWrapIndex(djinnRow, backdrop->counts[memberColumn]);
+            savedRow = djinnRow;
+            redraw   = DJINN_REDRAW_DJINNI;
+            continue;
+        }
+        if (repeat & KEY_DOWN)
+        {
+            if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
+                continue;
+            if (backdrop->counts[memberColumn] == 0)
+                continue;
+            mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 0);
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            djinnRow++;
+            djinnRow = mnWrapIndex(djinnRow, backdrop->counts[memberColumn]);
+            if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
+            {
+                columnFlags[memberColumn] &= ~DJINN_COLUMN_ON_HEADER;
+                djinnRow                   = 0;
+            }
+            else if (djinnRow == 0 && (columnFlags[memberColumn] & DJINN_COLUMN_HEADER_CHOOSABLE))
+            {
+                columnFlags[memberColumn] |= DJINN_COLUMN_ON_HEADER;
+            }
+            savedRow = djinnRow;
+            redraw   = DJINN_REDRAW_DJINNI;
+            continue;
+        }
+        if (repeat & KEYS_HORIZONTAL)
+        {
+            Sint32 oldColumn;
 
-			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
-			oldColumn = memberColumn;
-			if (!(columnFlags[memberColumn] & DJINN_COLUMN_EMPTY))
-				mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-			if (repeat & KEY_LEFT)
-				memberColumn--;
-			else
-				memberColumn++;
-			if (memberColumn < 0)
-				memberColumn = 0;
-			if (memberColumn > menu->memberCount - 1)
-				memberColumn = menu->memberCount - 1;
-			if (mode == DJINN_SELECT_DJINNI)
-			{
-				for (i = 0; i < menu->memberCount; i++)
-				{
-					if (columnFlags[memberColumn] != DJINN_COLUMN_EMPTY)
-						break;
-					if (repeat & KEY_LEFT)
-						memberColumn--;
-					else
-						memberColumn++;
-					if (memberColumn < 0 || memberColumn >= menu->memberCount)
-					{
-						memberColumn = oldColumn;
-						break;
-					}
-				}
-			}
-			djinnRow = savedRow;
-			result   = backdrop->counts[memberColumn];
-			if (result == 0)
-				result = 1;
-			djinnRow = mnWrapIndex(djinnRow, result);
-			redraw   = DJINN_REDRAW_DJINNI;
-			if (oldColumn / 4 * 4 != memberColumn / 4 * 4)
-				redraw = DJINN_REDRAW_PAGE | DJINN_REDRAW_DJINNI;
-		}
-	}
-	menu->selectedColumn[mode] = memberColumn;
-	if (selectedRow != -1)
-	{
-		Uint32 id;
-		Uint32 entry;
+            sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+            oldColumn = memberColumn;
+            if (!(columnFlags[memberColumn] & DJINN_COLUMN_EMPTY))
+                mnUiPanelHighlightGridCell(listWindow, memberColumn, djinnRow, 0);
+            if (repeat & KEY_LEFT)
+                memberColumn--;
+            else
+                memberColumn++;
+            if (memberColumn < 0)
+                memberColumn = 0;
+            if (memberColumn > menu->memberCount - 1)
+                memberColumn = menu->memberCount - 1;
+            if (mode == DJINN_SELECT_DJINNI)
+            {
+                for (i = 0; i < menu->memberCount; i++)
+                {
+                    if (columnFlags[memberColumn] != DJINN_COLUMN_EMPTY)
+                        break;
+                    if (repeat & KEY_LEFT)
+                        memberColumn--;
+                    else
+                        memberColumn++;
+                    if (memberColumn < 0 || memberColumn >= menu->memberCount)
+                    {
+                        memberColumn = oldColumn;
+                        break;
+                    }
+                }
+            }
+            djinnRow = savedRow;
+            result   = backdrop->counts[memberColumn];
+            if (result == 0)
+                result = 1;
+            djinnRow = mnWrapIndex(djinnRow, result);
+            redraw   = DJINN_REDRAW_DJINNI;
+            if (oldColumn / 4 * 4 != memberColumn / 4 * 4)
+                redraw = DJINN_REDRAW_PAGE | DJINN_REDRAW_DJINNI;
+        }
+    }
+    menu->selectedColumn[mode] = memberColumn;
+    if (selectedRow != -1)
+    {
+        Uint32 id;
+        Uint32 entry;
 
-		menu->pairEntries[mode] = id = backdrop->ids[memberColumn][selectedRow];
-		entry                        = (Uint16)id;
-		menu->pairIndex[mode]        = entry % (DJINN_ENTRY_INDEX + 1);
-		menu->pairElement[mode]      = DJINN_ENTRY_ELEMENT_OF(entry);
-		menu->pairMember[mode]       = DJINN_MEMBER(entry);
-	}
-	menu->selection[mode] = memberColumn + djinnRow * DJINN_CURSOR_ROW_STRIDE;
-	mnDjinnFiguresSetSlotFacing(mode, FACING_SOUTH);
-	return result;
+        menu->pairEntries[mode] = id = backdrop->ids[memberColumn][selectedRow];
+        entry                        = (Uint16)id;
+        menu->pairIndex[mode]        = entry % (DJINN_ENTRY_INDEX + 1);
+        menu->pairElement[mode]      = DJINN_ENTRY_ELEMENT_OF(entry);
+        menu->pairMember[mode]       = DJINN_MEMBER(entry);
+    }
+    menu->selection[mode] = memberColumn + djinnRow * DJINN_CURSOR_ROW_STRIDE;
+    mnDjinnFiguresSetSlotFacing(mode, FACING_SOUTH);
+    return result;
 }
 
 #undef DJINN_TUTORIAL_MESSAGE
@@ -1780,45 +1780,45 @@ Sint32 mnDjinnMenuSelectDjinn(Sint32 mode)
 // every element's, each entry with its party member.
 Sint32 mnDjinnListUnitEntries(Uint16 *entriesOut, Sint32 memberId, Sint32 element)
 {
-	UNIT  *unit  = syUnitGet(memberId);
-	Sint32 count = 0;
-	Sint32 elementIndex;
-	Sint32 djinnIndex;
-	Sint32 encodedDjinn;
+    UNIT  *unit  = syUnitGet(memberId);
+    Sint32 count = 0;
+    Sint32 elementIndex;
+    Sint32 djinnIndex;
+    Sint32 encodedDjinn;
 
-	if (element == -1)
-	{
-		for (elementIndex = 0; elementIndex < DJINN_ELEMENTS; elementIndex++)
-		{
-			for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++)
-			{
-				if (unit->djinnSet[elementIndex] & (1 << djinnIndex))
-				{
-					encodedDjinn =
-						(elementIndex << DJINN_ENTRY_ELEMENT_SHIFT) | djinnIndex | DJINN_ENTRY_SET;
-					encodedDjinn        |= memberId << DJINN_ENTRY_MEMBER_SHIFT;
-					entriesOut[count++]  = encodedDjinn;
-				}
-				else if (unit->djinnHeld[elementIndex] & (1 << djinnIndex))
-				{
-					entriesOut[count++] = (elementIndex << DJINN_ENTRY_ELEMENT_SHIFT) | djinnIndex
-					                    | (memberId << DJINN_ENTRY_MEMBER_SHIFT);
-				}
-			}
-		}
-	}
-	else
-	{
-		for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++)
-		{
-			if (unit->djinnSet[element] & (1 << djinnIndex))
-				entriesOut[count++] =
-					(element << DJINN_ENTRY_ELEMENT_SHIFT) | djinnIndex | DJINN_ENTRY_SET;
-			else if (unit->djinnHeld[element] & (1 << djinnIndex))
-				entriesOut[count++] = (element << DJINN_ENTRY_ELEMENT_SHIFT) | djinnIndex;
-		}
-	}
-	return count;
+    if (element == -1)
+    {
+        for (elementIndex = 0; elementIndex < DJINN_ELEMENTS; elementIndex++)
+        {
+            for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++)
+            {
+                if (unit->djinnSet[elementIndex] & (1 << djinnIndex))
+                {
+                    encodedDjinn =
+                        (elementIndex << DJINN_ENTRY_ELEMENT_SHIFT) | djinnIndex | DJINN_ENTRY_SET;
+                    encodedDjinn        |= memberId << DJINN_ENTRY_MEMBER_SHIFT;
+                    entriesOut[count++]  = encodedDjinn;
+                }
+                else if (unit->djinnHeld[elementIndex] & (1 << djinnIndex))
+                {
+                    entriesOut[count++] = (elementIndex << DJINN_ENTRY_ELEMENT_SHIFT) | djinnIndex
+                                        | (memberId << DJINN_ENTRY_MEMBER_SHIFT);
+                }
+            }
+        }
+    }
+    else
+    {
+        for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++)
+        {
+            if (unit->djinnSet[element] & (1 << djinnIndex))
+                entriesOut[count++] =
+                    (element << DJINN_ENTRY_ELEMENT_SHIFT) | djinnIndex | DJINN_ENTRY_SET;
+            else if (unit->djinnHeld[element] & (1 << djinnIndex))
+                entriesOut[count++] = (element << DJINN_ENTRY_ELEMENT_SHIFT) | djinnIndex;
+        }
+    }
+    return count;
 }
 
 #undef DJINN_ENTRY_SET
@@ -1839,30 +1839,30 @@ Sint32 mnDjinnMenuDrawStatPreview(Sint32 window,
 // Returns 1.
 Sint32 mnDjinnMenuDrawPairPreview(Sint32 mode, Sint32 pageIndex)
 {
-	Sint32            savedMode;
-	Uint8             first;
-	Uint8             owner;
-	DJINN_MENU_STATE *menu;
+    Sint32            savedMode;
+    Uint8             first;
+    Uint8             owner;
+    DJINN_MENU_STATE *menu;
 
-	menu = RamHeapSlots->menuState;
-	if (mode == DJINN_COMPARE_TRADE)
-	{
-		savedMode = mode;
-		first     = menu->pairMember[1];
-		mnDjinnMenuDrawStatPreview(
-			(Sint32)menu->secondWindow, 0, 0, first, 1, mode, DJINN_PREVIEW_TRADE, pageIndex, 1);
-		mnDjinnMenuDrawStatPreview(
-			menu->window, 0, 0, menu->pairMember[0], mode, 1, DJINN_PREVIEW_TRADE, pageIndex, mode);
-	}
-	else
-	{
-		owner = menu->shownMember[1];
-		mnDjinnMenuDrawStatPreview(
-			(Sint32)menu->secondWindow, 0, 0, owner, 1, 0, DJINN_PREVIEW_ADD, pageIndex, 1);
-		mnDjinnMenuDrawStatPreview(
-			menu->window, 0, 0, menu->shownMember[0], 0, 0, DJINN_PREVIEW_UNSET, pageIndex, 0);
-	}
-	return 1;
+    menu = RamHeapSlots->menuState;
+    if (mode == DJINN_COMPARE_TRADE)
+    {
+        savedMode = mode;
+        first     = menu->pairMember[1];
+        mnDjinnMenuDrawStatPreview(
+            (Sint32)menu->secondWindow, 0, 0, first, 1, mode, DJINN_PREVIEW_TRADE, pageIndex, 1);
+        mnDjinnMenuDrawStatPreview(
+            menu->window, 0, 0, menu->pairMember[0], mode, 1, DJINN_PREVIEW_TRADE, pageIndex, mode);
+    }
+    else
+    {
+        owner = menu->shownMember[1];
+        mnDjinnMenuDrawStatPreview(
+            (Sint32)menu->secondWindow, 0, 0, owner, 1, 0, DJINN_PREVIEW_ADD, pageIndex, 1);
+        mnDjinnMenuDrawStatPreview(
+            menu->window, 0, 0, menu->shownMember[0], 0, 0, DJINN_PREVIEW_UNSET, pageIndex, 0);
+    }
+    return 1;
 }
 
 // The stat preview's columns, in pixels from x * 8: the Japanese edition draws Attack, Defense and
@@ -1873,27 +1873,27 @@ Sint32 mnDjinnMenuDrawPairPreview(Sint32 mode, Sint32 pageIndex)
 // named one: "HP", the first of the six stat labels, 13 after "Luck rises"; "* Psynergy Gained" and
 // "* Psynergy Lost", the two after the status help; "* No change", the one after "Trade".
 #if LANGUAGE != LANGUAGE_JAPANESE
-#	define DJINN_PREVIEW_DIGITS       3
-#	define DJINN_PREVIEW_CURRENT_X    48
-#	define DJINN_PREVIEW_LUCK_X       56
-#	define DJINN_PREVIEW_POOL_ARROW_X 62 // beside HP and PP
-#	define DJINN_PREVIEW_STAT_ARROW_X 70 // beside the other stats
-#	define DJINN_PREVIEW_PP_X         88
-#	define STAT_LABELS_MESSAGE        ((Sint32)MsgPreviewStatLabel)
-#	define PSYNERGY_GAINED_MESSAGE    ((Sint32)MsgPsynergyGained)
-#	define PSYNERGY_LOST_MESSAGE      ((Sint32)MsgPsynergyLost)
-#	define NO_CHANGE_MESSAGE          ((Sint32)MsgPsynergyUnchanged)
+#    define DJINN_PREVIEW_DIGITS       3
+#    define DJINN_PREVIEW_CURRENT_X    48
+#    define DJINN_PREVIEW_LUCK_X       56
+#    define DJINN_PREVIEW_POOL_ARROW_X 62 // beside HP and PP
+#    define DJINN_PREVIEW_STAT_ARROW_X 70 // beside the other stats
+#    define DJINN_PREVIEW_PP_X         88
+#    define STAT_LABELS_MESSAGE        ((Sint32)MsgPreviewStatLabel)
+#    define PSYNERGY_GAINED_MESSAGE    ((Sint32)MsgPsynergyGained)
+#    define PSYNERGY_LOST_MESSAGE      ((Sint32)MsgPsynergyLost)
+#    define NO_CHANGE_MESSAGE          ((Sint32)MsgPsynergyUnchanged)
 #else
-#	define DJINN_PREVIEW_DIGITS       4
-#	define DJINN_PREVIEW_CURRENT_X    32
-#	define DJINN_PREVIEW_LUCK_X       48
-#	define DJINN_PREVIEW_POOL_ARROW_X 64
-#	define DJINN_PREVIEW_STAT_ARROW_X 64
-#	define DJINN_PREVIEW_PP_X         56
-#	define STAT_LABELS_MESSAGE        ((Sint32)MsgLuckRises + 13)
-#	define PSYNERGY_GAINED_MESSAGE    ((Sint32)MsgDjinnStatusHelp + 1)
-#	define PSYNERGY_LOST_MESSAGE      ((Sint32)MsgDjinnStatusHelp + 2)
-#	define NO_CHANGE_MESSAGE          ((Sint32)MsgDjinnCompareTrade + 1)
+#    define DJINN_PREVIEW_DIGITS       4
+#    define DJINN_PREVIEW_CURRENT_X    32
+#    define DJINN_PREVIEW_LUCK_X       48
+#    define DJINN_PREVIEW_POOL_ARROW_X 64
+#    define DJINN_PREVIEW_STAT_ARROW_X 64
+#    define DJINN_PREVIEW_PP_X         56
+#    define STAT_LABELS_MESSAGE        ((Sint32)MsgLuckRises + 13)
+#    define PSYNERGY_GAINED_MESSAGE    ((Sint32)MsgDjinnStatusHelp + 1)
+#    define PSYNERGY_LOST_MESSAGE      ((Sint32)MsgDjinnStatusHelp + 2)
+#    define NO_CHANGE_MESSAGE          ((Sint32)MsgDjinnCompareTrade + 1)
 #endif
 
 // HP and PP, four digits wide in every edition, and their maximum and the slash before it when
@@ -1926,331 +1926,331 @@ Sint32            mnDjinnMenuDrawStatPreview(Sint32 window,
                                              Sint32 page,
                                              Sint32 side)
 {
-	// One constant for its whole life: the djinn tile loop starts from it.
-	Sint32            firstElement = 0;
-	// One constant for its whole life: the closing copy's size.
-	Sint32            size;
-	UNIT             *unit;
-	UNIT             *originalUnit;
-	Sint32            giveElement;
-	Sint32            giveIndex;
-	Sint32            giveSet;
-	Sint32            takeElement;
-	Sint32            takeIndex;
-	Sint32            takeSet;
-	Sint32            lost;
-	Sint32            gained;
-	Uint16            actions[48];
-	DJINN_MENU_STATE *menu;
+    // One constant for its whole life: the djinn tile loop starts from it.
+    Sint32            firstElement = 0;
+    // One constant for its whole life: the closing copy's size.
+    Sint32            size;
+    UNIT             *unit;
+    UNIT             *originalUnit;
+    Sint32            giveElement;
+    Sint32            giveIndex;
+    Sint32            giveSet;
+    Sint32            takeElement;
+    Sint32            takeIndex;
+    Sint32            takeSet;
+    Sint32            lost;
+    Sint32            gained;
+    Uint16            actions[48];
+    DJINN_MENU_STATE *menu;
 
-	unit         = syUnitGet(ownerId);
-	menu         = RamHeapSlots->menuState;
-	giveElement  = menu->pairElement[removePairSlot];
-	giveIndex    = menu->pairIndex[removePairSlot];
-	giveSet      = menu->pairEntries[removePairSlot] & DJINN_ENTRY_IS_SET;
-	takeElement  = menu->pairElement[addPairSlot];
-	takeIndex    = menu->pairIndex[addPairSlot];
-	takeSet      = menu->pairEntries[addPairSlot] & DJINN_ENTRY_IS_SET;
-	originalUnit = syHeapAllocate(sizeof(UNIT));
-	syWordsCopyEntry(originalUnit, unit, sizeof(UNIT));
+    unit         = syUnitGet(ownerId);
+    menu         = RamHeapSlots->menuState;
+    giveElement  = menu->pairElement[removePairSlot];
+    giveIndex    = menu->pairIndex[removePairSlot];
+    giveSet      = menu->pairEntries[removePairSlot] & DJINN_ENTRY_IS_SET;
+    takeElement  = menu->pairElement[addPairSlot];
+    takeIndex    = menu->pairIndex[addPairSlot];
+    takeSet      = menu->pairEntries[addPairSlot] & DJINN_ENTRY_IS_SET;
+    originalUnit = syHeapAllocate(sizeof(UNIT));
+    syWordsCopyEntry(originalUnit, unit, sizeof(UNIT));
 
-	if (page == 0)
-	{
-		if (previewMode == DJINN_PREVIEW_NO_CHANGE)
-		{
-			mnTextDrawNumberInWindowStub(
-				unit->hpMax, 4, window, x * 8 + DJINN_PREVIEW_MAX_X, DJINN_PREVIEW_STAT_Y(y, 0));
-			mnTextDrawNumberInWindowStub(
-				unit->ppMax, 4, window, x * 8 + DJINN_PREVIEW_MAX_X, DJINN_PREVIEW_STAT_Y(y, 1));
-			mnTextDrawNumberInWindowStub(
-				unit->hp, 4, window, x * 8 + DJINN_PREVIEW_POOL_X, DJINN_PREVIEW_STAT_Y(y, 0));
-			mnTextDrawNumberInWindowStub(
-				unit->pp, 4, window, x * 8 + DJINN_PREVIEW_POOL_X, DJINN_PREVIEW_STAT_Y(y, 1));
-			mnTextDrawStringAtOffsetStub((Sint32)DjinnMenuTextSlash,
-			                             window,
-			                             x * 8 + DJINN_PREVIEW_SLASH_X,
-			                             DJINN_PREVIEW_STAT_Y(y, 0));
-			mnTextDrawStringAtOffsetStub((Sint32)DjinnMenuTextSlash,
-			                             window,
-			                             x * 8 + DJINN_PREVIEW_SLASH_X,
-			                             DJINN_PREVIEW_STAT_Y(y, 1));
-		}
-		else
-		{
-			mnTextDrawNumberInWindowStub(
-				unit->hp, 4, window, x * 8 + DJINN_PREVIEW_POOL_X, DJINN_PREVIEW_STAT_Y(y, 0));
-			mnTextDrawNumberInWindowStub(
-				unit->pp, 4, window, x * 8 + DJINN_PREVIEW_POOL_X, DJINN_PREVIEW_STAT_Y(y, 1));
-		}
-		mnTextDrawNumberInWindowStub(unit->attack,
-		                             DJINN_PREVIEW_DIGITS,
-		                             window,
-		                             x * 8 + DJINN_PREVIEW_CURRENT_X,
-		                             DJINN_PREVIEW_STAT_Y(y, 2));
-		mnTextDrawNumberInWindowStub(unit->defense,
-		                             DJINN_PREVIEW_DIGITS,
-		                             window,
-		                             x * 8 + DJINN_PREVIEW_CURRENT_X,
-		                             DJINN_PREVIEW_STAT_Y(y, 3));
-		mnTextDrawNumberInWindowStub(unit->agility,
-		                             DJINN_PREVIEW_DIGITS,
-		                             window,
-		                             x * 8 + DJINN_PREVIEW_CURRENT_X,
-		                             DJINN_PREVIEW_STAT_Y(y, 4));
-		mnTextDrawNumberInWindowStub(
-			unit->luck, 2, window, x * 8 + DJINN_PREVIEW_LUCK_X, DJINN_PREVIEW_STAT_Y(y, 5));
-	}
+    if (page == 0)
+    {
+        if (previewMode == DJINN_PREVIEW_NO_CHANGE)
+        {
+            mnTextDrawNumberInWindowStub(
+                unit->hpMax, 4, window, x * 8 + DJINN_PREVIEW_MAX_X, DJINN_PREVIEW_STAT_Y(y, 0));
+            mnTextDrawNumberInWindowStub(
+                unit->ppMax, 4, window, x * 8 + DJINN_PREVIEW_MAX_X, DJINN_PREVIEW_STAT_Y(y, 1));
+            mnTextDrawNumberInWindowStub(
+                unit->hp, 4, window, x * 8 + DJINN_PREVIEW_POOL_X, DJINN_PREVIEW_STAT_Y(y, 0));
+            mnTextDrawNumberInWindowStub(
+                unit->pp, 4, window, x * 8 + DJINN_PREVIEW_POOL_X, DJINN_PREVIEW_STAT_Y(y, 1));
+            mnTextDrawStringAtOffsetStub((Sint32)DjinnMenuTextSlash,
+                                         window,
+                                         x * 8 + DJINN_PREVIEW_SLASH_X,
+                                         DJINN_PREVIEW_STAT_Y(y, 0));
+            mnTextDrawStringAtOffsetStub((Sint32)DjinnMenuTextSlash,
+                                         window,
+                                         x * 8 + DJINN_PREVIEW_SLASH_X,
+                                         DJINN_PREVIEW_STAT_Y(y, 1));
+        }
+        else
+        {
+            mnTextDrawNumberInWindowStub(
+                unit->hp, 4, window, x * 8 + DJINN_PREVIEW_POOL_X, DJINN_PREVIEW_STAT_Y(y, 0));
+            mnTextDrawNumberInWindowStub(
+                unit->pp, 4, window, x * 8 + DJINN_PREVIEW_POOL_X, DJINN_PREVIEW_STAT_Y(y, 1));
+        }
+        mnTextDrawNumberInWindowStub(unit->attack,
+                                     DJINN_PREVIEW_DIGITS,
+                                     window,
+                                     x * 8 + DJINN_PREVIEW_CURRENT_X,
+                                     DJINN_PREVIEW_STAT_Y(y, 2));
+        mnTextDrawNumberInWindowStub(unit->defense,
+                                     DJINN_PREVIEW_DIGITS,
+                                     window,
+                                     x * 8 + DJINN_PREVIEW_CURRENT_X,
+                                     DJINN_PREVIEW_STAT_Y(y, 3));
+        mnTextDrawNumberInWindowStub(unit->agility,
+                                     DJINN_PREVIEW_DIGITS,
+                                     window,
+                                     x * 8 + DJINN_PREVIEW_CURRENT_X,
+                                     DJINN_PREVIEW_STAT_Y(y, 4));
+        mnTextDrawNumberInWindowStub(
+            unit->luck, 2, window, x * 8 + DJINN_PREVIEW_LUCK_X, DJINN_PREVIEW_STAT_Y(y, 5));
+    }
 
-	switch (previewMode)
-	{
-		case DJINN_PREVIEW_ADD_AND_SET:
-			gmDjinnGiveStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
-			gmDjinnSetStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
-			break;
-		case DJINN_PREVIEW_UNSET:
-			giveIndex &= DJINN_ENTRY_INDEX;
-			gmDjinnPutOnStandbyStub(ownerId, giveElement, giveIndex);
-			break;
-		case DJINN_PREVIEW_TRADE:
-			if (giveSet)
-			{
-				giveIndex &= DJINN_ENTRY_INDEX;
-				gmDjinnPutOnStandbyStub(ownerId, giveElement, giveIndex);
-			}
-			gmDjinnGiveStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
-			if (takeSet)
-				gmDjinnSetStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
-			break;
-		case DJINN_PREVIEW_ADD:
-			gmDjinnGiveStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
-			if (takeSet)
-				gmDjinnSetStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
-			break;
-	}
+    switch (previewMode)
+    {
+        case DJINN_PREVIEW_ADD_AND_SET:
+            gmDjinnGiveStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
+            gmDjinnSetStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
+            break;
+        case DJINN_PREVIEW_UNSET:
+            giveIndex &= DJINN_ENTRY_INDEX;
+            gmDjinnPutOnStandbyStub(ownerId, giveElement, giveIndex);
+            break;
+        case DJINN_PREVIEW_TRADE:
+            if (giveSet)
+            {
+                giveIndex &= DJINN_ENTRY_INDEX;
+                gmDjinnPutOnStandbyStub(ownerId, giveElement, giveIndex);
+            }
+            gmDjinnGiveStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
+            if (takeSet)
+                gmDjinnSetStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
+            break;
+        case DJINN_PREVIEW_ADD:
+            gmDjinnGiveStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
+            if (takeSet)
+                gmDjinnSetStub(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
+            break;
+    }
 
-	gmUnitCalculateStub(ownerId);
-	unit = syUnitGet(ownerId);
+    gmUnitCalculateStub(ownerId);
+    unit = syUnitGet(ownerId);
 
-	if (page == 0)
-	{
-		Sint32 label;
+    if (page == 0)
+    {
+        Sint32 label;
 
-		mnTextDrawStringAtOffsetStub((Sint32)unit->name, window, x * 8 + 40, y * 8);
-		mnTextDrawStringAtOffsetStub((Sint32)DjinnMenuTextLevel, window, x * 8 + 40, y * 8 + 16);
-		mnTextDrawNumberInWindowStub(unit->level, 2, window, x * 8 + 88, y * 8 + 16);
-		label = STAT_LABELS_MESSAGE;
-		mnTextDrawMessageAsTilesStub(label, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 0));
-		mnTextDrawMessageAsTilesStub(label + 1, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 1));
-		mnTextDrawMessageAsTilesStub(label + 2, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 2));
-		mnTextDrawMessageAsTilesStub(label + 3, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 3));
-		mnTextDrawMessageAsTilesStub(label + 4, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 4));
-		mnTextDrawMessageAsTilesStub(label + 5, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 5));
-		mnTextDrawMessageAsTilesStub(
-			(Sint32)MsgClassName + originalUnit->classId, window, x * 8, y * 8 + 32);
-	}
+        mnTextDrawStringAtOffsetStub((Sint32)unit->name, window, x * 8 + 40, y * 8);
+        mnTextDrawStringAtOffsetStub((Sint32)DjinnMenuTextLevel, window, x * 8 + 40, y * 8 + 16);
+        mnTextDrawNumberInWindowStub(unit->level, 2, window, x * 8 + 88, y * 8 + 16);
+        label = STAT_LABELS_MESSAGE;
+        mnTextDrawMessageAsTilesStub(label, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 0));
+        mnTextDrawMessageAsTilesStub(label + 1, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 1));
+        mnTextDrawMessageAsTilesStub(label + 2, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 2));
+        mnTextDrawMessageAsTilesStub(label + 3, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 3));
+        mnTextDrawMessageAsTilesStub(label + 4, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 4));
+        mnTextDrawMessageAsTilesStub(label + 5, window, x * 8, DJINN_PREVIEW_STAT_Y(y, 5));
+        mnTextDrawMessageAsTilesStub(
+            (Sint32)MsgClassName + originalUnit->classId, window, x * 8, y * 8 + 32);
+    }
 
-	{
-		Sint8 i = 0;
+    {
+        Sint8 i = 0;
 
-		if (page == 0)
-		{
-			Sint32 column;
+        if (page == 0)
+        {
+            Sint32 column;
 
-			if (originalUnit->classId != unit->classId)
-			{
-				mnTextDrawMessageAsTilesStub(
-					(Sint32)MsgClassName + unit->classId, window, x * 8, y * 8 + 48);
-				// The down arrow from the class to the next, a tile of BG character block 1, the
-				// block after the windows' own.
-				mnWindowSetTilemapEntryStub(
-					window,
-					WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP + DJINN_BACKDROP_BORDER_TILE),
-					x + 2,
-					5,
-					0);
-			}
-			column = x;
-			if (originalUnit->classId != unit->classId)
-				column += 5;
-			for (i = firstElement; i < ELEMENT_COUNT; i++)
-			{
-				Sint32 tileColumn;
-				Sint32 tile = ELEMENT_ICON_TILE + i;
+            if (originalUnit->classId != unit->classId)
+            {
+                mnTextDrawMessageAsTilesStub(
+                    (Sint32)MsgClassName + unit->classId, window, x * 8, y * 8 + 48);
+                // The down arrow from the class to the next, a tile of BG character block 1, the
+                // block after the windows' own.
+                mnWindowSetTilemapEntryStub(
+                    window,
+                    WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP + DJINN_BACKDROP_BORDER_TILE),
+                    x + 2,
+                    5,
+                    0);
+            }
+            column = x;
+            if (originalUnit->classId != unit->classId)
+                column += 5;
+            for (i = firstElement; i < ELEMENT_COUNT; i++)
+            {
+                Sint32 tileColumn;
+                Sint32 tile = ELEMENT_ICON_TILE + i;
 
-				tileColumn  = column + i * 2;
-				mnWindowSetTilemapEntryStub(window, tile, tileColumn, y + 5, 0);
-				tileColumn++;
-				mnWindowSetTilemapEntryStub(
-					window, unit->djinnSetCounts[i] + WINDOW_TILE('0'), tileColumn, y + 5, 0);
-			}
-			// FAKEMATCH(dead): an empty once-only block after the tile loop; as
-			// * no block.
-			do
-			{
-			} while (0);
-			if (unit->hp != originalUnit->hp)
-			{
-				mnTextDrawNumberInWindowStub(
-					unit->hp, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 0));
-				if (unit->hp > originalUnit->hp)
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 0),
-					                       STAT_ARROW_UP);
-				else
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 0),
-					                       STAT_ARROW_DOWN);
-			}
-			if (unit->pp != originalUnit->pp)
-			{
-				mnTextDrawNumberInWindowStub(
-					unit->pp, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 1));
-				if (unit->pp > originalUnit->pp)
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 1),
-					                       STAT_ARROW_UP);
-				else
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 1),
-					                       STAT_ARROW_DOWN);
-			}
-			if (unit->attack != originalUnit->attack)
-			{
-				mnTextDrawNumberInWindowStub(
-					unit->attack, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 2));
-				if (unit->attack > originalUnit->attack)
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 2),
-					                       STAT_ARROW_UP);
-				else
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 2),
-					                       STAT_ARROW_DOWN);
-			}
-			if (unit->defense != originalUnit->defense)
-			{
-				mnTextDrawNumberInWindowStub(
-					unit->defense, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 3));
-				if (unit->defense > originalUnit->defense)
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 3),
-					                       STAT_ARROW_UP);
-				else
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 3),
-					                       STAT_ARROW_DOWN);
-			}
-			if (unit->agility != originalUnit->agility)
-			{
-				mnTextDrawNumberInWindowStub(
-					unit->agility, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 4));
-				if (unit->agility > originalUnit->agility)
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 4),
-					                       STAT_ARROW_UP);
-				else
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 4),
-					                       STAT_ARROW_DOWN);
-			}
-			if (unit->luck != originalUnit->luck)
-			{
-				mnTextDrawNumberInWindowStub(
-					unit->luck, 2, window, x * 8 + 88, DJINN_PREVIEW_STAT_Y(y, 5));
-				if (unit->luck > originalUnit->luck)
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 5),
-					                       STAT_ARROW_UP);
-				else
-					mnIconCreateDjinnArrow(window,
-					                       x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-					                       DJINN_PREVIEW_STAT_Y(y, 5),
-					                       STAT_ARROW_DOWN);
-			}
-		}
-	}
+                tileColumn  = column + i * 2;
+                mnWindowSetTilemapEntryStub(window, tile, tileColumn, y + 5, 0);
+                tileColumn++;
+                mnWindowSetTilemapEntryStub(
+                    window, unit->djinnSetCounts[i] + WINDOW_TILE('0'), tileColumn, y + 5, 0);
+            }
+            // FAKEMATCH(dead): an empty once-only block after the tile loop; as
+            // * no block.
+            do
+            {
+            } while (0);
+            if (unit->hp != originalUnit->hp)
+            {
+                mnTextDrawNumberInWindowStub(
+                    unit->hp, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 0));
+                if (unit->hp > originalUnit->hp)
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 0),
+                                           STAT_ARROW_UP);
+                else
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 0),
+                                           STAT_ARROW_DOWN);
+            }
+            if (unit->pp != originalUnit->pp)
+            {
+                mnTextDrawNumberInWindowStub(
+                    unit->pp, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 1));
+                if (unit->pp > originalUnit->pp)
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 1),
+                                           STAT_ARROW_UP);
+                else
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 1),
+                                           STAT_ARROW_DOWN);
+            }
+            if (unit->attack != originalUnit->attack)
+            {
+                mnTextDrawNumberInWindowStub(
+                    unit->attack, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 2));
+                if (unit->attack > originalUnit->attack)
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 2),
+                                           STAT_ARROW_UP);
+                else
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 2),
+                                           STAT_ARROW_DOWN);
+            }
+            if (unit->defense != originalUnit->defense)
+            {
+                mnTextDrawNumberInWindowStub(
+                    unit->defense, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 3));
+                if (unit->defense > originalUnit->defense)
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 3),
+                                           STAT_ARROW_UP);
+                else
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 3),
+                                           STAT_ARROW_DOWN);
+            }
+            if (unit->agility != originalUnit->agility)
+            {
+                mnTextDrawNumberInWindowStub(
+                    unit->agility, 4, window, DJINN_PREVIEW_VALUE_X(x), DJINN_PREVIEW_STAT_Y(y, 4));
+                if (unit->agility > originalUnit->agility)
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 4),
+                                           STAT_ARROW_UP);
+                else
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 4),
+                                           STAT_ARROW_DOWN);
+            }
+            if (unit->luck != originalUnit->luck)
+            {
+                mnTextDrawNumberInWindowStub(
+                    unit->luck, 2, window, x * 8 + 88, DJINN_PREVIEW_STAT_Y(y, 5));
+                if (unit->luck > originalUnit->luck)
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 5),
+                                           STAT_ARROW_UP);
+                else
+                    mnIconCreateDjinnArrow(window,
+                                           x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                           DJINN_PREVIEW_STAT_Y(y, 5),
+                                           STAT_ARROW_DOWN);
+            }
+        }
+    }
 
-	if (page > 0)
-	{
-		Sint32 rows;
-		Sint32 first;
-		Sint8  count;
-		Sint8  row;
-		Sint8  line;
+    if (page > 0)
+    {
+        Sint32 rows;
+        Sint32 first;
+        Sint8  count;
+        Sint8  row;
+        Sint8  line;
 
-		rows  = 6 - (previewMode != DJINN_PREVIEW_NO_CHANGE);
-		first = rows * (page - 1);
-		count = mnPsynergyListDifference(
-			originalUnit->psynergy, unit->psynergy, actions, &gained, &lost);
-		line = 0;
-		for (row = 0; first < count && row < rows; row++, first++)
-		{
-			mnIconCreatePsynergyIcon(
-				window, x * 8, (y + line * 2) * 8 + 4, actions[first] & PSYNERGY_ABILITY_MASK);
-			if (actions[first] & DJINN_PREVIEW_GAINED)
-				mnTextSetColorStub(TEXT_COLOR_YELLOW);
-			else if (actions[first] & DJINN_PREVIEW_LOST)
-				mnTextSetColorStub(TEXT_COLOR_RED);
-			else
-				mnTextSetColorStub(TEXT_COLOR_NORMAL);
-			mnTextDrawMessageAsTilesStub((Sint32)MsgAbilityName
-			                                 + (actions[first] & PSYNERGY_ABILITY_MASK),
-			                             window,
-			                             x * 8 + 16,
-			                             (y + line * 2) * 8 + 8);
-			mnTextDrawNumberAtOffsetStub(gmAbilityGetDirectStub(actions[first])->ppCost,
-			                             2,
-			                             window,
-			                             x * 8 + 88,
-			                             (y + line * 2) * 8 + 8);
-			line++;
-		}
-		mnTextSetColorStub(TEXT_COLOR_NORMAL);
-		mnTextDrawMessageAsTilesStub(
-			(Sint32)MsgPsynergyPp, window, x * 8 + DJINN_PREVIEW_PP_X, y * 8);
-		if (previewMode != DJINN_PREVIEW_NO_CHANGE)
-		{
-			Sint32 lines;
+        rows  = 6 - (previewMode != DJINN_PREVIEW_NO_CHANGE);
+        first = rows * (page - 1);
+        count = mnPsynergyListDifference(
+            originalUnit->psynergy, unit->psynergy, actions, &gained, &lost);
+        line = 0;
+        for (row = 0; first < count && row < rows; row++, first++)
+        {
+            mnIconCreatePsynergyIcon(
+                window, x * 8, (y + line * 2) * 8 + 4, actions[first] & PSYNERGY_ABILITY_MASK);
+            if (actions[first] & DJINN_PREVIEW_GAINED)
+                mnTextSetColorStub(TEXT_COLOR_YELLOW);
+            else if (actions[first] & DJINN_PREVIEW_LOST)
+                mnTextSetColorStub(TEXT_COLOR_RED);
+            else
+                mnTextSetColorStub(TEXT_COLOR_NORMAL);
+            mnTextDrawMessageAsTilesStub((Sint32)MsgAbilityName
+                                             + (actions[first] & PSYNERGY_ABILITY_MASK),
+                                         window,
+                                         x * 8 + 16,
+                                         (y + line * 2) * 8 + 8);
+            mnTextDrawNumberAtOffsetStub(gmAbilityGetDirectStub(actions[first])->ppCost,
+                                         2,
+                                         window,
+                                         x * 8 + 88,
+                                         (y + line * 2) * 8 + 8);
+            line++;
+        }
+        mnTextSetColorStub(TEXT_COLOR_NORMAL);
+        mnTextDrawMessageAsTilesStub(
+            (Sint32)MsgPsynergyPp, window, x * 8 + DJINN_PREVIEW_PP_X, y * 8);
+        if (previewMode != DJINN_PREVIEW_NO_CHANGE)
+        {
+            Sint32 lines;
 
-			lines = 0;
-			if (gained)
-			{
-				mnTextSetColorStub(TEXT_COLOR_YELLOW);
-				mnTextDrawMessageAsTilesStub(PSYNERGY_GAINED_MESSAGE, window, x * 8, y * 8 + 88);
-				lines = 1;
-			}
-			if (lost)
-			{
-				mnTextSetColorStub(TEXT_COLOR_RED);
-				mnTextDrawMessageAsTilesStub(
-					PSYNERGY_LOST_MESSAGE, window, x * 8, (y + lines) * 8 + 88);
-				lines++;
-			}
-			if (lines == 0)
-				mnTextDrawMessageAsTilesStub(NO_CHANGE_MESSAGE, window, x * 8, y * 8 + 88);
-			mnTextSetColorStub(TEXT_COLOR_NORMAL);
-			mnWindowDrawDividerLineStub(window, 0, 11, 13, 11);
-		}
-		((WIN_STATE *)RamHeapSlots->windowState)->dirty = 1;
-	}
+            lines = 0;
+            if (gained)
+            {
+                mnTextSetColorStub(TEXT_COLOR_YELLOW);
+                mnTextDrawMessageAsTilesStub(PSYNERGY_GAINED_MESSAGE, window, x * 8, y * 8 + 88);
+                lines = 1;
+            }
+            if (lost)
+            {
+                mnTextSetColorStub(TEXT_COLOR_RED);
+                mnTextDrawMessageAsTilesStub(
+                    PSYNERGY_LOST_MESSAGE, window, x * 8, (y + lines) * 8 + 88);
+                lines++;
+            }
+            if (lines == 0)
+                mnTextDrawMessageAsTilesStub(NO_CHANGE_MESSAGE, window, x * 8, y * 8 + 88);
+            mnTextSetColorStub(TEXT_COLOR_NORMAL);
+            mnWindowDrawDividerLineStub(window, 0, 11, 13, 11);
+        }
+        ((WIN_STATE *)RamHeapSlots->windowState)->dirty = 1;
+    }
 
-	size = sizeof(UNIT);
-	if (page == 0)
-		mnPortraitCreateStub(ownerId, 0, side, window, 0, 0);
-	syWordsCopyEntry(unit, originalUnit, size);
-	syHeapRelease(originalUnit);
-	return 1;
+    size = sizeof(UNIT);
+    if (page == 0)
+        mnPortraitCreateStub(ownerId, 0, side, window, 0, 0);
+    syWordsCopyEntry(unit, originalUnit, size);
+    syHeapRelease(originalUnit);
+    return 1;
 }
 
 #undef NO_CHANGE_MESSAGE

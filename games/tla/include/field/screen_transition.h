@@ -12,12 +12,12 @@
 // WIN_RANGE, or when that is 0 the window edges it moves between.
 typedef struct TRANSITION_SPAN
 {
-	Uint16 count;
-	Uint16 value;
-	Uint8  x0;
-	Uint8  x1;
-	Uint8  y0;
-	Uint8  y1;
+    Uint16 count;
+    Uint16 value;
+    Uint8  x0;
+    Uint8  x1;
+    Uint8  y0;
+    Uint8  y1;
 } TRANSITION_SPAN;
 
 // WININ or WINOUT showing every layer in both windows (bits 6 and 14 set too).
@@ -31,9 +31,9 @@ typedef struct TRANSITION_SPAN
 // of them or, when 0, the window edges from (x0, y0) on the first line toward (x1, y1) on the last.
 typedef struct TRANSITION_SHAPE
 {
-	Uint16          first;
-	Uint16          second;
-	TRANSITION_SPAN spans[3];
+    Uint16          first;
+    Uint16          second;
+    TRANSITION_SPAN spans[3];
 } TRANSITION_SHAPE;
 
 // The found item's picture over the leader: growing in from half size, then pulsing to 1.5 times

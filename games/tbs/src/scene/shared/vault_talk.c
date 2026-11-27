@@ -4,13 +4,13 @@
 // thought is shown.
 static void scVaultShowThought(Sint32 actorId)
 {
-	ACTOR *actor  = fdActorGetById(actorId);
+    ACTOR *actor  = fdActorGetById(actorId);
 
-	actor->paused = 1;
-	fdScriptStart();
-	fdActorSetAnimation(actorId, ANIM_STAND);
-	fdScriptWait(2);
-	fdScriptShowMessageAndWait(actorId, 0);
-	fdScriptEnd();
-	actor->paused = 0;
+    actor->paused = 1;
+    fdScriptStart();
+    fdActorSetAnimation(actorId, ANIM_STAND);
+    fdScriptWait(2);
+    fdScriptShowMessageAndWait(actorId, 0);
+    fdScriptEnd();
+    actor->paused = 0;
 }

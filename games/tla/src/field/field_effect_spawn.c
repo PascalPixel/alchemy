@@ -22,90 +22,90 @@ void                 EFFECT_SPAWN(Sint32                x,
                                   Uint32                flags,
                                   const EFFECT_OPTIONS *options)
 {
-	ACTOR        *party = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_EFFECT *effect;
-	FIELD_SPR    *sprite;
-	const Sint32 *script;
-	Uint32        start;
+    ACTOR        *party = fdActorGetById(MainRoutineStateWork.leaderActorId);
+    FIELD_EFFECT *effect;
+    FIELD_SPR    *sprite;
+    const Sint32 *script;
+    Uint32        start;
 
 #ifdef EFFECT_SPRITE_PRIORITY
-	if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-		effect = (FIELD_EFFECT *)scFieldActorCreate(options->type, x, y, z);
-	else
-		effect = (FIELD_EFFECT *)scFieldActorCreate(EFFECT_DEFAULT_TYPE, x, y, z);
+    if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+        effect = (FIELD_EFFECT *)scFieldActorCreate(options->type, x, y, z);
+    else
+        effect = (FIELD_EFFECT *)scFieldActorCreate(EFFECT_DEFAULT_TYPE, x, y, z);
 #else
-	if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-		effect = (FIELD_EFFECT *)EFFECT_CREATE(options->type, x, y, z);
-	else
-		effect = (FIELD_EFFECT *)EFFECT_CREATE(EFFECT_DEFAULT_TYPE, x, y, z);
+    if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+        effect = (FIELD_EFFECT *)EFFECT_CREATE(options->type, x, y, z);
+    else
+        effect = (FIELD_EFFECT *)EFFECT_CREATE(EFFECT_DEFAULT_TYPE, x, y, z);
 #endif
-	if (effect == 0)
-		return;
+    if (effect == 0)
+        return;
 
-	sprite = effect->sprite;
-	EFFECT_SET_MODE((void *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-	EFFECT_SET_SCRIPT((void *)effect, EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK]);
-	effect->motionFlags = 0;
-	fdActorSetSpriteFlags(effect, 0);
-	effect->update     = fdEffectUpdateMotionScaleAndSpin;
-	effect->velocity.x = velocityX;
-	effect->velocity.y = velocityY;
-	effect->velocity.z = velocityZ;
-	fdSetActorSpritePriority(effect, ((FIELD_SPR *)party->sprite)->priority);
-	effect->scaleRateX = 0;
-	effect->scaleRateY = 0;
-	effect->spin       = 0;
+    sprite = effect->sprite;
+    EFFECT_SET_MODE((void *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+    EFFECT_SET_SCRIPT((void *)effect, EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK]);
+    effect->motionFlags = 0;
+    fdActorSetSpriteFlags(effect, 0);
+    effect->update     = fdEffectUpdateMotionScaleAndSpin;
+    effect->velocity.x = velocityX;
+    effect->velocity.y = velocityY;
+    effect->velocity.z = velocityZ;
+    fdSetActorSpritePriority(effect, ((FIELD_SPR *)party->sprite)->priority);
+    effect->scaleRateX = 0;
+    effect->scaleRateY = 0;
+    effect->spin       = 0;
 
-	if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
-		return;
-	if ((flags & EFFECT_USE_PALETTE) != 0)
-		fdActorSetSpriteColor(effect, options->palette);
-	if ((flags & EFFECT_USE_PRIORITY) != 0)
-	{
+    if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
+        return;
+    if ((flags & EFFECT_USE_PALETTE) != 0)
+        fdActorSetSpriteColor(effect, options->palette);
+    if ((flags & EFFECT_USE_PRIORITY) != 0)
+    {
 #ifdef EFFECT_SPRITE_PRIORITY
-		effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-		sprite->priority       = options->priority;
+        effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        sprite->priority       = options->priority;
 #else
-		effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 #endif
-		fdSetActorSpritePriority(effect, options->priority);
-	}
-	start = flags & EFFECT_USE_START_SCALE;
-	if (start != 0)
-	{
-		effect->scaleX = options->startScaleX;
-		effect->scaleY = options->startScaleY;
-	}
-	if ((flags & EFFECT_SCALE_TO_TARGET) != 0)
-	{
-		FIXED  targetX;
-		Sint32 count;
+        fdSetActorSpritePriority(effect, options->priority);
+    }
+    start = flags & EFFECT_USE_START_SCALE;
+    if (start != 0)
+    {
+        effect->scaleX = options->startScaleX;
+        effect->scaleY = options->startScaleY;
+    }
+    if ((flags & EFFECT_SCALE_TO_TARGET) != 0)
+    {
+        FIXED  targetX;
+        Sint32 count;
 
-		script  = EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK];
-		targetX = options->targetScaleX;
-		count   = script[EFFECT_SCRIPT_REPEAT_COUNT];
-		if (start != 0)
-		{
-			effect->scaleRateX = (targetX - effect->scaleX) / count;
-			effect->scaleRateY =
-				(options->targetScaleY - effect->scaleY) / script[EFFECT_SCRIPT_REPEAT_COUNT];
-		}
-		else
-		{
-			effect->scaleRateX = (targetX - toFIXED(1)) / count;
-			effect->scaleRateY =
-				(options->targetScaleY - toFIXED(1)) / script[EFFECT_SCRIPT_REPEAT_COUNT];
-		}
-	}
-	if ((flags & EFFECT_USE_SCRIPT) != 0)
-	{
-		EFFECT_SET_MODE((void *)effect, 1);
-		EFFECT_SET_SCRIPT((void *)effect, options->script);
-	}
-	if ((flags & EFFECT_USE_ROTATION) != 0)
-		sprite->rotation = options->rotation;
-	if ((flags & EFFECT_USE_SPIN) != 0)
-		effect->spin = options->spin;
-	if ((flags & EFFECT_USE_UPDATE) != 0)
-		effect->update = options->update;
+        script  = EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK];
+        targetX = options->targetScaleX;
+        count   = script[EFFECT_SCRIPT_REPEAT_COUNT];
+        if (start != 0)
+        {
+            effect->scaleRateX = (targetX - effect->scaleX) / count;
+            effect->scaleRateY =
+                (options->targetScaleY - effect->scaleY) / script[EFFECT_SCRIPT_REPEAT_COUNT];
+        }
+        else
+        {
+            effect->scaleRateX = (targetX - toFIXED(1)) / count;
+            effect->scaleRateY =
+                (options->targetScaleY - toFIXED(1)) / script[EFFECT_SCRIPT_REPEAT_COUNT];
+        }
+    }
+    if ((flags & EFFECT_USE_SCRIPT) != 0)
+    {
+        EFFECT_SET_MODE((void *)effect, 1);
+        EFFECT_SET_SCRIPT((void *)effect, options->script);
+    }
+    if ((flags & EFFECT_USE_ROTATION) != 0)
+        sprite->rotation = options->rotation;
+    if ((flags & EFFECT_USE_SPIN) != 0)
+        effect->spin = options->spin;
+    if ((flags & EFFECT_USE_UPDATE) != 0)
+        effect->update = options->update;
 }

@@ -5,13 +5,13 @@
 // ticks of each.
 static Sint32 scKolimaFlickerCurseDust(ACTOR *speck)
 {
-	if ((TickCount >> 1) & 1)
-	{
-		fdActorSetSpriteColor(speck, SPRITE_COLOR_RED_TINT);
-	}
-	else
-	{
-		fdActorSetSpriteColor(speck, SPRITE_COLOR_WHITE);
-	}
-	return 0;
+    if ((TickCount >> 1) & 1)
+    {
+        fdActorSetSpriteColor(speck, SPRITE_COLOR_RED_TINT);
+    }
+    else
+    {
+        fdActorSetSpriteColor(speck, SPRITE_COLOR_WHITE);
+    }
+    return 0;
 }

@@ -2,7 +2,7 @@
 // on the middle layer.
 Sint32 scShipDropShadow(ACTOR *actor)
 {
-	((FIELD_SPR *)actor->sprite)->flags = 0;
-	actor->layer                        = MAPGRID_LAYER_MIDDLE;
-	return 1;
+    ((FIELD_SPR *)actor->sprite)->flags = 0;
+    actor->layer                        = MAPGRID_LAYER_MIDDLE;
+    return 1;
 }

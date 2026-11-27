@@ -14,18 +14,18 @@
 // sits on the position.
 typedef struct EFFECT_SPR
 {
-	struct EFFECT_SPR *next;
-	OAM_DATA           oam;
-	FIXED              x;
-	FIXED              y;
-	FIXED              scaleX;
-	FIXED              scaleY;
-	Uint16             angle;
-	Sint16             depth;
-	Uint16             width;
-	Uint16             height;
-	Sint16             pivotX;
-	Sint16             pivotY;
+    struct EFFECT_SPR *next;
+    OAM_DATA           oam;
+    FIXED              x;
+    FIXED              y;
+    FIXED              scaleX;
+    FIXED              scaleY;
+    Uint16             angle;
+    Sint16             depth;
+    Uint16             width;
+    Uint16             height;
+    Sint16             pivotX;
+    Sint16             pivotY;
 } EFFECT_SPR;
 
 STATIC_ASSERT(sizeof(EFFECT_SPR) == 40);

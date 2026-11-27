@@ -11,10 +11,10 @@ struct ACTOR;
 // in 16.16 pixels, its scale and its turn.
 typedef struct SHRINE_OF_THE_SEA_GOD_SPOT
 {
-	Sint32 x;
-	Sint32 z;
-	Sint32 scaleX;
-	Sint32 rotation;
+    Sint32 x;
+    Sint32 z;
+    Sint32 scaleX;
+    Sint32 rotation;
 } SHRINE_OF_THE_SEA_GOD_SPOT;
 
 void          scShrineOfTheSeaGodDjinniRunsWest(void);

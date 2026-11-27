@@ -5,9 +5,9 @@
 
 // Felix, Piers and Jenna, and the first two enemies.
 Uint8 ScriptedBattleUnits[] = {
-	FELIX,
-	PIERS,
-	JENNA,
-	FIRST_ENEMY_UNIT,
-	FIRST_ENEMY_UNIT + 1,
+    FELIX,
+    PIERS,
+    JENNA,
+    FIRST_ENEMY_UNIT,
+    FIRST_ENEMY_UNIT + 1,
 };

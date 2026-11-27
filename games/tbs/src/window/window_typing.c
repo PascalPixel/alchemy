@@ -14,458 +14,458 @@
 // the rows this uncovers.
 void mnTextScrollCanvasUp(Sint32 step)
 {
-	Sint32  shift = step * 6;
-	Uint32 *base  = TEXT_CANVAS_VRAM;
-	Sint32  n;
+    Sint32  shift = step * 6;
+    Uint32 *base  = TEXT_CANVAS_VRAM;
+    Sint32  n;
 
-	for (n = 0; n < CANVAS_COLUMNS; n++)
-	{
-		Uint32 *column = base + n * CANVAS_COLUMN_WORDS;
+    for (n = 0; n < CANVAS_COLUMNS; n++)
+    {
+        Uint32 *column = base + n * CANVAS_COLUMN_WORDS;
 
-		syDMAXCopy(column + CANVAS_KEPT_ROWS + shift,
-		           column + CANVAS_KEPT_ROWS,
-		           DMA_COPY_WORDS(CANVAS_COLUMN_WORDS - CANVAS_KEPT_ROWS - shift),
-		           REG_DMA3);
-		syWordsFill(column + (CANVAS_COLUMN_WORDS - shift), shift * 4, 0);
-	}
+        syDMAXCopy(column + CANVAS_KEPT_ROWS + shift,
+                   column + CANVAS_KEPT_ROWS,
+                   DMA_COPY_WORDS(CANVAS_COLUMN_WORDS - CANVAS_KEPT_ROWS - shift),
+                   REG_DMA3);
+        syWordsFill(column + (CANVAS_COLUMN_WORDS - shift), shift * 4, 0);
+    }
 }
 
 // What mnMessageType reports.
 enum
 {
-	TYPING_GOES_ON       = 0, // the text goes on next tick
-	TYPING_ENDED         = 8, // the text has ended; the window stays open
-	TYPING_CLOSES_WINDOW = 9, // the text is dismissed: close the window
+    TYPING_GOES_ON       = 0, // the text goes on next tick
+    TYPING_ENDED         = 8, // the text has ended; the window stays open
+    TYPING_CLOSES_WINDOW = 9, // the text is dismissed: close the window
 };
 
 // The per-tick message update: each message whose window is fully open runs its window animation or
 // types more text, and on the text's end marks the window typed (WINDOW_TYPED) or closes it.
 void mnMessageUpdateAll(void)
 {
-	MESSAGE *msg      = WINDOW_STATE->msgs;
-	Sint32   msgIndex = 0;
+    MESSAGE *msg      = WINDOW_STATE->msgs;
+    Sint32   msgIndex = 0;
 
-	do
-	{
-		WINDOW *current = msg->window;
+    do
+    {
+        WINDOW *current = msg->window;
 
-		// A zooming window is left alone until its zoom ends.
-		if (current != NULL && current->zoomStage == 0 && current->duration == 0)
-		{
-			Uint16 flags = current->flags;
+        // A zooming window is left alone until its zoom ends.
+        if (current != NULL && current->zoomStage == 0 && current->duration == 0)
+        {
+            Uint16 flags = current->flags;
 
-			// Flags 0 with no zoom left: the window has closed.
-			if (flags == 0)
-			{
-				msg->window = NULL;
-			}
-			else
-			{
-				Sint32 pending = current->animation;
-				Sint32 step;
+            // Flags 0 with no zoom left: the window has closed.
+            if (flags == 0)
+            {
+                msg->window = NULL;
+            }
+            else
+            {
+                Sint32 pending = current->animation;
+                Sint32 step;
 
-				if (pending != 0)
-				{
-					mnWindowStepSwellEffect(msg);
-				}
-				else
-				{
-					step = mnMessageType(msg);
-					switch (step)
-					{
-						case TYPING_ENDED: msg->window->state = WINDOW_TYPED; break;
-						case TYPING_CLOSES_WINDOW:
-						{
-							WINDOW *window = msg->window;
+                if (pending != 0)
+                {
+                    mnWindowStepSwellEffect(msg);
+                }
+                else
+                {
+                    step = mnMessageType(msg);
+                    switch (step)
+                    {
+                        case TYPING_ENDED: msg->window->state = WINDOW_TYPED; break;
+                        case TYPING_CLOSES_WINDOW:
+                        {
+                            WINDOW *window = msg->window;
 
-							mnWindowClose(window, window->flags & WINDOW_FLAG_INSTANT);
-							// pending is 0 here: it clears the message.
-							msg->x             = pending;
-							msg->y             = pending;
-							msg->textIndex     = pending;
-							msg->countdown     = pending;
-							msg->colour        = pending;
-							msg->outline       = pending;
-							msg->lineSpacing   = pending;
-							msg->window->state = WINDOW_TYPED;
-							break;
-						}
-					}
-				}
-			}
-		}
-		msgIndex++;
-		msg++;
-	} while (msgIndex != MESSAGE_COUNT);
+                            mnWindowClose(window, window->flags & WINDOW_FLAG_INSTANT);
+                            // pending is 0 here: it clears the message.
+                            msg->x             = pending;
+                            msg->y             = pending;
+                            msg->textIndex     = pending;
+                            msg->countdown     = pending;
+                            msg->colour        = pending;
+                            msg->outline       = pending;
+                            msg->lineSpacing   = pending;
+                            msg->window->state = WINDOW_TYPED;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        msgIndex++;
+        msg++;
+    } while (msgIndex != MESSAGE_COUNT);
 }
 
 // Types one tick's share of a message's text: runs control codes (new line, new page, pauses,
 // colours) and draws characters, playing the speaker's voice blips.
 Sint32 mnMessageType(MESSAGE *msg)
 {
-	WIN_STATE *state      = WINDOW_STATE;
-	// DEAD: PerData read and not used; the ROM keeps the load.
-	Uint32     keys       = PerData;
-	Sint32     glyphsLeft = MessageSpeedSteps[MainRoutineStateWork.msgSpeed];
-	Sint32     frameFrames;
-	Uint32     code;
-	Uint32     nextCode;
-	WINDOW    *window;
-	Sint32     x;
-	Sint32     y;
-	Uint32     newWidth;
-	Uint32     newHeight;
-	Sint32     oldWidth;
-	Sint32     oldHeight;
-	Sint32     entryIndex;
-	Sint32     nextEntryIndex;
-	Sint32     pixelX;
-	Sint32     pixelY;
-	Sint32     voiceGap;
-	Sint32     glyphWidth;
-	Sint32     glyphAdvance;
+    WIN_STATE *state      = WINDOW_STATE;
+    // DEAD: PerData read and not used; the ROM keeps the load.
+    Uint32     keys       = PerData;
+    Sint32     glyphsLeft = MessageSpeedSteps[MainRoutineStateWork.msgSpeed];
+    Sint32     frameFrames;
+    Uint32     code;
+    Uint32     nextCode;
+    WINDOW    *window;
+    Sint32     x;
+    Sint32     y;
+    Uint32     newWidth;
+    Uint32     newHeight;
+    Sint32     oldWidth;
+    Sint32     oldHeight;
+    Sint32     entryIndex;
+    Sint32     nextEntryIndex;
+    Sint32     pixelX;
+    Sint32     pixelY;
+    Sint32     voiceGap;
+    Sint32     glyphWidth;
+    Sint32     glyphAdvance;
 
-	(void)keys;
+    (void)keys;
 
-	// In battle, text runs at 3 glyphs a tick and 5 more for each VBlank the last tick took
-	// (LastTickFrames, 1 for a tick on time), counting at most two.
-	if (state->battleMode != WINDOW_FIELD)
-	{
-		frameFrames = LastTickFrames;
-		CLAMP(frameFrames, 0, 2);
-		glyphsLeft = frameFrames * 5 + 3;
-	}
+    // In battle, text runs at 3 glyphs a tick and 5 more for each VBlank the last tick took
+    // (LastTickFrames, 1 for a tick on time), counting at most two.
+    if (state->battleMode != WINDOW_FIELD)
+    {
+        frameFrames = LastTickFrames;
+        CLAMP(frameFrames, 0, 2);
+        glyphsLeft = frameFrames * 5 + 3;
+    }
 
-	// Finish scrolling the canvas up a line before any more text.
-	if (msg->transition != 0)
-	{
-		mnTextScrollCanvasUp(1);
-		msg->transition = (Sint16)msg->transition - 1;
-		return TYPING_GOES_ON;
-	}
-	// With no button held, wait out the delay after the last glyph.
-	if (PerData == 0 && msg->glyphDelay != 0)
-	{
-		msg->glyphDelay--;
-		return TYPING_GOES_ON;
-	}
+    // Finish scrolling the canvas up a line before any more text.
+    if (msg->transition != 0)
+    {
+        mnTextScrollCanvasUp(1);
+        msg->transition = (Sint16)msg->transition - 1;
+        return TYPING_GOES_ON;
+    }
+    // With no button held, wait out the delay after the last glyph.
+    if (PerData == 0 && msg->glyphDelay != 0)
+    {
+        msg->glyphDelay--;
+        return TYPING_GOES_ON;
+    }
 
-	// Run control codes and draw characters until this tick's share is done.
-	do
-	{
-		code = TEXT_END;
-		if (msg->ended == 0)
-			code = state->textBuf[msg->textIndex];
+    // Run control codes and draw characters until this tick's share is done.
+    do
+    {
+        code = TEXT_END;
+        if (msg->ended == 0)
+            code = state->textBuf[msg->textIndex];
 
-		if (code < TEXT_COMMANDS)
-		{
-			switch (code)
-			{
-				case TEXT_NEWLINE:
-					// On a canvas the text scrolls up from the second line on.
-					msg->x = msg->startX;
-					if (msg->window->flags & WINDOW_FLAG_TEXT_CANVAS)
-					{
-						if (msg->y >= BATTLE_MESSAGE_LINE_HEIGHT << 8)
-						{
-							mnTextStartCanvasScroll(msg);
-							glyphsLeft = 1;
-						}
-						else
-						{
-							msg->y += BATTLE_MESSAGE_LINE_HEIGHT << 8;
-						}
-					}
-					else
-					{
-						msg->y += TEXT_LINE_HEIGHT << 8;
-						if (msg->line < MESSAGE_LINE_COUNT - 1)
-							msg->line++;
-					}
-					break;
+        if (code < TEXT_COMMANDS)
+        {
+            switch (code)
+            {
+                case TEXT_NEWLINE:
+                    // On a canvas the text scrolls up from the second line on.
+                    msg->x = msg->startX;
+                    if (msg->window->flags & WINDOW_FLAG_TEXT_CANVAS)
+                    {
+                        if (msg->y >= BATTLE_MESSAGE_LINE_HEIGHT << 8)
+                        {
+                            mnTextStartCanvasScroll(msg);
+                            glyphsLeft = 1;
+                        }
+                        else
+                        {
+                            msg->y += BATTLE_MESSAGE_LINE_HEIGHT << 8;
+                        }
+                    }
+                    else
+                    {
+                        msg->y += TEXT_LINE_HEIGHT << 8;
+                        if (msg->line < MESSAGE_LINE_COUNT - 1)
+                            msg->line++;
+                    }
+                    break;
 
-				case TEXT_PAGE:
-					// Under Mind Read a press from before the wait does not count.
-					if (state->mindRead != 0 && msg->countdown < MESSAGE_KEY_WAIT_STARTED)
-						PerPushLatch = 0;
-					msg->countdown = MESSAGE_KEY_WAIT;
-					if (mnTextCheckTextDismissed(msg) == 0)
-					{
-						// Until the button: show the next-page arrow in the bottom-right corner.
-						WINDOW *arrowWindow = msg->window;
+                case TEXT_PAGE:
+                    // Under Mind Read a press from before the wait does not count.
+                    if (state->mindRead != 0 && msg->countdown < MESSAGE_KEY_WAIT_STARTED)
+                        PerPushLatch = 0;
+                    msg->countdown = MESSAGE_KEY_WAIT;
+                    if (mnTextCheckTextDismissed(msg) == 0)
+                    {
+                        // Until the button: show the next-page arrow in the bottom-right corner.
+                        WINDOW *arrowWindow = msg->window;
 
 #if PAGE_ARROW_SKIPS_EMPTY_WINDOW
-						if (arrowWindow->width == 0 || arrowWindow->height == 0
-						    || state->pageArrowShown != 0)
-							break;
+                        if (arrowWindow->width == 0 || arrowWindow->height == 0
+                            || state->pageArrowShown != 0)
+                            break;
 #else
-						if (state->pageArrowShown != 0)
-							break;
+                        if (state->pageArrowShown != 0)
+                            break;
 #endif
-						mnGlyphDraw(arrowWindow,
-						            1,
-						            arrowWindow->width * 4 - 8,
-						            arrowWindow->height * 8 - 16,
-						            GLYPH_DRAW_PAGE_ARROW);
-						state->pageArrowShown = 1;
-						break;
-					}
-					// Clear the window, and refit it to the next page's text.
-					window                = msg->window;
-					x                     = window->x;
-					y                     = window->y;
-					oldWidth              = window->width;
-					oldHeight             = window->height;
-					entryIndex            = msg->textIndex;
-					state->pageArrowShown = 0;
-					mnWindowSpritePrepareForRedraw(window);
-					if (msg->flags == 0 && (window->width | window->height) != 0)
-						mnWindowEraseBorderRect(
-							window->x, window->y, window->width, window->height);
-					entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
-					if (state->textBuf[entryIndex] != 0 && (window->width | window->height) != 0)
-					{
-						if (msg->flags != 0)
-						{
-							mnWindowEraseBorderRect(
-								window->x, window->y, window->width, window->height);
-						}
-						else
-						{
-							mnWindowFitOnScreen(
-								entryIndex, &x, &y, &newWidth, &newHeight, msg->spacing, 0);
-							if (window->flags & WINDOW_FLAG_ANCHOR_BOTTOM)
-							{
-								if (oldHeight != newHeight)
-									y -= newHeight - oldHeight;
-								if (y < 0)
-									y = 0;
-							}
-							if (!(window->flags & WINDOW_FLAG_FIXED_X))
-							{
-								// Shift the window by a quarter of the change in width (tiles),
-								// part way to keeping its centre, which a half would keep; then fit
-								// it on the screen again at its new size.
-								x += (Sint32)(oldWidth - newWidth) / 4;
-								mnWindowFitOnScreen(entryIndex,
-								                    &x,
-								                    &y,
-								                    &newWidth,
-								                    &newHeight,
-								                    msg->spacing,
-								                    WINDOW_FIT_GIVEN_SIZE);
-							}
-							window->x      = x;
-							window->y      = y;
-							window->width  = newWidth;
-							window->height = newHeight;
-						}
-						mnWindowDrawBorder(window->x, window->y, window->width, window->height);
-					}
-					msg->x    = msg->startX;
-					msg->y    = 0;
-					msg->line = 0;
-					// The French, Spanish and Italian releases also start each page in the default
-					// style.
+                        mnGlyphDraw(arrowWindow,
+                                    1,
+                                    arrowWindow->width * 4 - 8,
+                                    arrowWindow->height * 8 - 16,
+                                    GLYPH_DRAW_PAGE_ARROW);
+                        state->pageArrowShown = 1;
+                        break;
+                    }
+                    // Clear the window, and refit it to the next page's text.
+                    window                = msg->window;
+                    x                     = window->x;
+                    y                     = window->y;
+                    oldWidth              = window->width;
+                    oldHeight             = window->height;
+                    entryIndex            = msg->textIndex;
+                    state->pageArrowShown = 0;
+                    mnWindowSpritePrepareForRedraw(window);
+                    if (msg->flags == 0 && (window->width | window->height) != 0)
+                        mnWindowEraseBorderRect(
+                            window->x, window->y, window->width, window->height);
+                    entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
+                    if (state->textBuf[entryIndex] != 0 && (window->width | window->height) != 0)
+                    {
+                        if (msg->flags != 0)
+                        {
+                            mnWindowEraseBorderRect(
+                                window->x, window->y, window->width, window->height);
+                        }
+                        else
+                        {
+                            mnWindowFitOnScreen(
+                                entryIndex, &x, &y, &newWidth, &newHeight, msg->spacing, 0);
+                            if (window->flags & WINDOW_FLAG_ANCHOR_BOTTOM)
+                            {
+                                if (oldHeight != newHeight)
+                                    y -= newHeight - oldHeight;
+                                if (y < 0)
+                                    y = 0;
+                            }
+                            if (!(window->flags & WINDOW_FLAG_FIXED_X))
+                            {
+                                // Shift the window by a quarter of the change in width (tiles),
+                                // part way to keeping its centre, which a half would keep; then fit
+                                // it on the screen again at its new size.
+                                x += (Sint32)(oldWidth - newWidth) / 4;
+                                mnWindowFitOnScreen(entryIndex,
+                                                    &x,
+                                                    &y,
+                                                    &newWidth,
+                                                    &newHeight,
+                                                    msg->spacing,
+                                                    WINDOW_FIT_GIVEN_SIZE);
+                            }
+                            window->x      = x;
+                            window->y      = y;
+                            window->width  = newWidth;
+                            window->height = newHeight;
+                        }
+                        mnWindowDrawBorder(window->x, window->y, window->width, window->height);
+                    }
+                    msg->x    = msg->startX;
+                    msg->y    = 0;
+                    msg->line = 0;
+                    // The French, Spanish and Italian releases also start each page in the default
+                    // style.
 #if PAGE_BREAK_RESETS_STYLE
-					msg->colour      = TEXT_DEFAULT_COLOR;
-					msg->outline     = TEXT_STYLE_PLAIN;
-					msg->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-					mnMessageApplyStyle(msg);
+                    msg->colour      = TEXT_DEFAULT_COLOR;
+                    msg->outline     = TEXT_STYLE_PLAIN;
+                    msg->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+                    mnMessageApplyStyle(msg);
 #endif
-					syVRAMCacheFreeEntry(state->glyphResource);
-					state->glyphResource = NO_GLYPH_RESOURCE;
-					break;
+                    syVRAMCacheFreeEntry(state->glyphResource);
+                    state->glyphResource = NO_GLYPH_RESOURCE;
+                    break;
 
-				case TEXT_WAIT_KEY:
-					// The same hold as a page break's.
-					if (state->mindRead != 0 && msg->countdown < MESSAGE_KEY_WAIT_STARTED)
-						PerPushLatch = 0;
-					if (mnTextCheckTextDismissed(msg) != 0)
-						return TYPING_CLOSES_WINDOW;
-					msg->countdown = MESSAGE_KEY_WAIT;
-					break;
+                case TEXT_WAIT_KEY:
+                    // The same hold as a page break's.
+                    if (state->mindRead != 0 && msg->countdown < MESSAGE_KEY_WAIT_STARTED)
+                        PerPushLatch = 0;
+                    if (mnTextCheckTextDismissed(msg) != 0)
+                        return TYPING_CLOSES_WINDOW;
+                    msg->countdown = MESSAGE_KEY_WAIT;
+                    break;
 
-				case TEXT_PAUSE_SHORT:
-					if (msg->countdown == 0)
-						msg->countdown = 20;
-					state->voiceCountdown = 0;
-					mnTextCheckPauseSkipped(msg);
-					break;
+                case TEXT_PAUSE_SHORT:
+                    if (msg->countdown == 0)
+                        msg->countdown = 20;
+                    state->voiceCountdown = 0;
+                    mnTextCheckPauseSkipped(msg);
+                    break;
 
-				case TEXT_PAUSE_LONGEST:
-					if (msg->countdown == 0)
-						msg->countdown = 120;
-					state->voiceCountdown = 0;
-					mnTextCheckPauseSkipped(msg);
-					break;
+                case TEXT_PAUSE_LONGEST:
+                    if (msg->countdown == 0)
+                        msg->countdown = 120;
+                    state->voiceCountdown = 0;
+                    mnTextCheckPauseSkipped(msg);
+                    break;
 
-				case TEXT_PAUSE_LONG:
-					if (msg->countdown == 0)
-						msg->countdown = 60;
-					state->voiceCountdown = 0;
-					break;
+                case TEXT_PAUSE_LONG:
+                    if (msg->countdown == 0)
+                        msg->countdown = 60;
+                    state->voiceCountdown = 0;
+                    break;
 
-				case TEXT_COLOR:
-					msg->textIndex = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-					msg->colour    = state->textBuf[msg->textIndex];
-					mnMessageApplyStyle(msg);
-					break;
+                case TEXT_COLOR:
+                    msg->textIndex = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+                    msg->colour    = state->textBuf[msg->textIndex];
+                    mnMessageApplyStyle(msg);
+                    break;
 
-				case TEXT_STYLE:
-					msg->textIndex = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-					msg->outline   = state->textBuf[msg->textIndex];
-					mnMessageApplyStyle(msg);
-					break;
+                case TEXT_STYLE:
+                    msg->textIndex = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+                    msg->outline   = state->textBuf[msg->textIndex];
+                    mnMessageApplyStyle(msg);
+                    break;
 
-				case TEXT_LINE_SPACING:
-					msg->textIndex   = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-					msg->lineSpacing = state->textBuf[msg->textIndex];
-					mnMessageApplyStyle(msg);
-					break;
+                case TEXT_LINE_SPACING:
+                    msg->textIndex   = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+                    msg->lineSpacing = state->textBuf[msg->textIndex];
+                    mnMessageApplyStyle(msg);
+                    break;
 
-				case TEXT_RESET_STYLE:
-					msg->colour      = TEXT_DEFAULT_COLOR;
-					msg->outline     = TEXT_STYLE_PLAIN;
-					msg->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-					mnMessageApplyStyle(msg);
-					break;
+                case TEXT_RESET_STYLE:
+                    msg->colour      = TEXT_DEFAULT_COLOR;
+                    msg->outline     = TEXT_STYLE_PLAIN;
+                    msg->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+                    mnMessageApplyStyle(msg);
+                    break;
 
-				case TEXT_WINDOW_ANIMATION:
-					// The animation lasts while the countdown of 10 runs out
-					// (mnWindowStepSwellEffect counts it down); typing then resumes after the
-					// operand.
-					msg->textIndex         = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-					msg->window->animation = state->textBuf[msg->textIndex];
-					msg->countdown         = 10;
-					msg->textIndex         = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-					break;
+                case TEXT_WINDOW_ANIMATION:
+                    // The animation lasts while the countdown of 10 runs out
+                    // (mnWindowStepSwellEffect counts it down); typing then resumes after the
+                    // operand.
+                    msg->textIndex         = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+                    msg->window->animation = state->textBuf[msg->textIndex];
+                    msg->countdown         = 10;
+                    msg->textIndex         = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+                    break;
 
-				case TEXT_END:
-				case TEXT_END_ALT: msg->ended = 1; return TYPING_ENDED;
-			}
+                case TEXT_END:
+                case TEXT_END_ALT: msg->ended = 1; return TYPING_ENDED;
+            }
 
-			// Outside battle a control code ends this tick's typing.
-			if (state->battleMode == WINDOW_FIELD)
-				glyphsLeft = 1;
-		}
-		else
-		{
-			// A character: draw it at the pen position, rounded to whole pixels.
-			pixelX         = (msg->x + 128) / 256;
-			pixelY         = (msg->y + 128) / 256;
-			voiceGap       = MessageSpeedVoiceGaps[MainRoutineStateWork.msgSpeed];
-			nextEntryIndex = msg->textIndex;
-			// Under Mind Read the text starts 8 pixels further in (Japanese and English), in the
-			// window mnWindowFitOnScreen made 2 tiles wider.
+            // Outside battle a control code ends this tick's typing.
+            if (state->battleMode == WINDOW_FIELD)
+                glyphsLeft = 1;
+        }
+        else
+        {
+            // A character: draw it at the pen position, rounded to whole pixels.
+            pixelX         = (msg->x + 128) / 256;
+            pixelY         = (msg->y + 128) / 256;
+            voiceGap       = MessageSpeedVoiceGaps[MainRoutineStateWork.msgSpeed];
+            nextEntryIndex = msg->textIndex;
+            // Under Mind Read the text starts 8 pixels further in (Japanese and English), in the
+            // window mnWindowFitOnScreen made 2 tiles wider.
 #if !MIND_READ_TEXT_NOT_INDENTED
-			if (state->mindRead != 0)
-				pixelX += 8;
+            if (state->mindRead != 0)
+                pixelX += 8;
 #endif
-			nextEntryIndex = (nextEntryIndex + 1) & TEXT_BUFFER_MASK;
-			nextCode       = state->textBuf[nextEntryIndex];
+            nextEntryIndex = (nextEntryIndex + 1) & TEXT_BUFFER_MASK;
+            nextCode       = state->textBuf[nextEntryIndex];
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
-			// A kana mark after the character is drawn with it.
-			if (nextCode == TEXT_MARK_VOICED)
-			{
-				code           |= TEXT_CODE_VOICED;
-				msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-			}
-			else if (nextCode == TEXT_MARK_SEMIVOICED)
-			{
-				code           |= TEXT_CODE_SEMIVOICED;
-				msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-			}
+            // A kana mark after the character is drawn with it.
+            if (nextCode == TEXT_MARK_VOICED)
+            {
+                code           |= TEXT_CODE_VOICED;
+                msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+            }
+            else if (nextCode == TEXT_MARK_SEMIVOICED)
+            {
+                code           |= TEXT_CODE_SEMIVOICED;
+                msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+            }
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
-			// Two narrow characters that fit in one cell together are drawn as one pair, the second
-			// in the code's high byte.
-#	if OUTLINED_GLYPH_PAIRS_FIT_CELL
-			if (!(msg->window->flags & WINDOW_FLAG_TEXT_CANVAS) && code > TEXT_SPACE
-			    && nextCode > TEXT_SPACE)
-			{
-				Sint16 pair =
-					FontGlyphs[code - TEXT_SPACE].width + FontGlyphs[nextCode - TEXT_SPACE].width;
+            // Two narrow characters that fit in one cell together are drawn as one pair, the second
+            // in the code's high byte.
+#    if OUTLINED_GLYPH_PAIRS_FIT_CELL
+            if (!(msg->window->flags & WINDOW_FLAG_TEXT_CANVAS) && code > TEXT_SPACE
+                && nextCode > TEXT_SPACE)
+            {
+                Sint16 pair =
+                    FontGlyphs[code - TEXT_SPACE].width + FontGlyphs[nextCode - TEXT_SPACE].width;
 
-				if (state->outline == TEXT_STYLE_OUTLINED)
-				{
-					if ((Uint16)pair <= GLYPH_PAIR_OUTLINED_WIDTH_MAX)
-					{
-						code           |= nextCode << 8;
-						msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-					}
-				}
-				else if ((Uint16)pair <= GLYPH_PAIR_WIDTH_MAX)
-				{
-					code           |= nextCode << 8;
-					msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-				}
-			}
-#	else
-			if (!(msg->window->flags & WINDOW_FLAG_TEXT_CANVAS) && code > TEXT_SPACE
-			    && nextCode > TEXT_SPACE
-			    && (Uint16)(FontGlyphs[code - TEXT_SPACE].width
-			                + FontGlyphs[nextCode - TEXT_SPACE].width)
-			           <= GLYPH_PAIR_WIDTH_MAX)
-			{
-				code           |= nextCode << 8;
-				msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-			}
-#	endif
+                if (state->outline == TEXT_STYLE_OUTLINED)
+                {
+                    if ((Uint16)pair <= GLYPH_PAIR_OUTLINED_WIDTH_MAX)
+                    {
+                        code           |= nextCode << 8;
+                        msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+                    }
+                }
+                else if ((Uint16)pair <= GLYPH_PAIR_WIDTH_MAX)
+                {
+                    code           |= nextCode << 8;
+                    msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+                }
+            }
+#    else
+            if (!(msg->window->flags & WINDOW_FLAG_TEXT_CANVAS) && code > TEXT_SPACE
+                && nextCode > TEXT_SPACE
+                && (Uint16)(FontGlyphs[code - TEXT_SPACE].width
+                            + FontGlyphs[nextCode - TEXT_SPACE].width)
+                       <= GLYPH_PAIR_WIDTH_MAX)
+            {
+                code           |= nextCode << 8;
+                msg->textIndex  = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+            }
+#    endif
 #endif
-			glyphWidth      = mnGlyphDraw(msg->window, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
-			msg->glyphDelay = MessageSpeedDelays[MainRoutineStateWork.msgSpeed];
-			if (glyphWidth != 0)
-			{
-				// The speaker's voice blip (voiceSound, the first of four sounds, one picked by the
-				// code's low two bits) every few characters (MessageSpeedVoiceGaps), and the pen
-				// moves on by the glyph's width.
-				if (state->voiceSound != 0)
-				{
-					if (state->voiceCountdown == 0)
-					{
-						if (code != TEXT_SPACE)
-						{
-							sySoundPlayStub(state->voiceSound + (code & 3));
-							state->voiceCountdown = voiceGap;
-						}
-					}
-					else
-					{
-						state->voiceCountdown--;
-					}
-				}
-				glyphAdvance = glyphWidth << 8;
+            glyphWidth      = mnGlyphDraw(msg->window, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
+            msg->glyphDelay = MessageSpeedDelays[MainRoutineStateWork.msgSpeed];
+            if (glyphWidth != 0)
+            {
+                // The speaker's voice blip (voiceSound, the first of four sounds, one picked by the
+                // code's low two bits) every few characters (MessageSpeedVoiceGaps), and the pen
+                // moves on by the glyph's width.
+                if (state->voiceSound != 0)
+                {
+                    if (state->voiceCountdown == 0)
+                    {
+                        if (code != TEXT_SPACE)
+                        {
+                            sySoundPlayStub(state->voiceSound + (code & 3));
+                            state->voiceCountdown = voiceGap;
+                        }
+                    }
+                    else
+                    {
+                        state->voiceCountdown--;
+                    }
+                }
+                glyphAdvance = glyphWidth << 8;
 #if LANGUAGE != LANGUAGE_JAPANESE
-				if (code == TEXT_SPACE)
-					glyphAdvance += msg->spacing[msg->line];
+                if (code == TEXT_SPACE)
+                    glyphAdvance += msg->spacing[msg->line];
 #else
-				glyphAdvance += msg->spacing[msg->line];
+                glyphAdvance += msg->spacing[msg->line];
 #endif
-				msg->x += glyphAdvance;
-			}
-			// In Japanese a character that advances nothing (mnGlyphDraw returns 0, as it does when
-			// no window sprite is free) closes the window.
+                msg->x += glyphAdvance;
+            }
+            // In Japanese a character that advances nothing (mnGlyphDraw returns 0, as it does when
+            // no window sprite is free) closes the window.
 #if LANGUAGE == LANGUAGE_JAPANESE
-			else
-				return TYPING_CLOSES_WINDOW;
+            else
+                return TYPING_CLOSES_WINDOW;
 #endif
-			// Outside battle a space ends this tick's typing.
-			if (code == TEXT_SPACE && state->battleMode == WINDOW_FIELD)
-				glyphsLeft = 1;
-		}
+            // Outside battle a space ends this tick's typing.
+            if (code == TEXT_SPACE && state->battleMode == WINDOW_FIELD)
+                glyphsLeft = 1;
+        }
 
-		// A pause holds the message on this entry until its countdown ends.
-		if (msg->countdown != 0)
-		{
-			msg->countdown--;
-			if (msg->countdown != 0)
-				continue;
-		}
-		msg->textIndex = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
-	} while (--glyphsLeft != 0);
+        // A pause holds the message on this entry until its countdown ends.
+        if (msg->countdown != 0)
+        {
+            msg->countdown--;
+            if (msg->countdown != 0)
+                continue;
+        }
+        msg->textIndex = (msg->textIndex + 1) & TEXT_BUFFER_MASK;
+    } while (--glyphsLeft != 0);
 
-	return TYPING_GOES_ON;
+    return TYPING_GOES_ON;
 }
 
 #undef CANVAS_COLUMNS

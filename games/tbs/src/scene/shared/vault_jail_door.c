@@ -7,13 +7,13 @@
 // He vanishes into the doorway as he goes, as at the shops.
 static void scVaultEnterJail(void)
 {
-	ACTOR *actor  = fdActorGet(ACTOR_PARTY_LEADER);
-	SPR   *sprite = actor->sprite;
+    ACTOR *actor  = fdActorGet(ACTOR_PARTY_LEADER);
+    SPR   *sprite = actor->sprite;
 
-	sySoundPlay(SE_DOOR_OPEN);
-	fdMapGridPlayMapEdit(VaultJailDoorMetatiles, 35, 9);
-	fdMapGridCopyMetatileAttributes(33, 20, 1, 3, 4, 10);
-	actor->priorityFlags   &= ~ACTOR_PRIORITY_AUTOMATIC;
-	sprite->image.priority  = 3;
-	scVaultWalkThroughExit(72, 160, VAULT_JAIL_EXIT);
+    sySoundPlay(SE_DOOR_OPEN);
+    fdMapGridPlayMapEdit(VaultJailDoorMetatiles, 35, 9);
+    fdMapGridCopyMetatileAttributes(33, 20, 1, 3, 4, 10);
+    actor->priorityFlags   &= ~ACTOR_PRIORITY_AUTOMATIC;
+    sprite->image.priority  = 3;
+    scVaultWalkThroughExit(72, 160, VAULT_JAIL_EXIT);
 }

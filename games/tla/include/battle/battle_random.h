@@ -10,9 +10,9 @@
 // Sets BattleRandomSeed, as the battle's writes to it do: a new battle's 0 and the seed a link turn
 // exchanges.
 #define SET_RANDOM_SEED(seed)                                                                      \
-	do                                                                                             \
-	{                                                                                              \
-		BattleRandomSeed = (seed);                                                                 \
-	} while (0)
+    do                                                                                             \
+    {                                                                                              \
+        BattleRandomSeed = (seed);                                                                 \
+    } while (0)
 
 #endif

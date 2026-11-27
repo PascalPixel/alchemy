@@ -56,13 +56,13 @@
 // The battle screen's display mode while an effect plays: background mode 1 with BG0 to BG2,
 // sprites and both windows on.
 #define EFFECT_DISPCNT                                                                             \
-	(DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON        \
-	 | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
+    (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON        \
+     | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
 
 // Window 0, the battle view, shows BG0 to BG2, sprites and blending. Effects pick window 1's layers
 // themselves.
 #define EFFECT_WIN0_LAYERS                                                                         \
-	(WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ | WININ_WIN0_CLR)
+    (WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ | WININ_WIN0_CLR)
 
 // Outside the battle view: BG0 and blending only.
 #define EFFECT_WINOUT    (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
@@ -74,25 +74,25 @@
 // set up again.
 static inline void btDMAStop(volatile Uint16 *channel)
 {
-	channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
-	channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_ENABLE;
-	(void)channel[DMA_CONTROL_HALF];
+    channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
+    channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_ENABLE;
+    (void)channel[DMA_CONTROL_HALF];
 }
 
 // Marks particles[0] to particles[count - 1] free: a particle whose variant is -1 is not drawn or
 // moved until an effect gives it a life.
 #define EFFECT_FREE_PARTICLES(i, particles, count)                                                 \
-	for ((i) = 0; (i) != (count); (i)++)                                                           \
-	(particles)[i].variant = -1
+    for ((i) = 0; (i) != (count); (i)++)                                                           \
+    (particles)[i].variant = -1
 
 // Starts a tick's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                                            \
-	(syInitMatrix(), syLookAtLoad((camera)->eye, (camera)->focus))
+    (syInitMatrix(), syLookAtLoad((camera)->eye, (camera)->focus))
 
 // Strikes target `i`: it flashes white in its damage pose and is knocked back by `motion`.
 #define EFFECT_STRIKE_TARGET(effect, i, ticks, motion)                                             \
-	(btEffectTintBattler((effect)->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks),         \
-	 btMotionApplyKnockbackStub((effect)->targets[i], motion))
+    (btEffectTintBattler((effect)->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks),         \
+     btMotionApplyKnockbackStub((effect)->targets[i], motion))
 
 // The canvas life cycle, shared by every canvas effect.
 
@@ -108,11 +108,11 @@ static inline void btDMAStop(volatile Uint16 *channel)
 // The byte of canvas pixel (x, y): the canvas is laid out in 8x8 tiles, row by row, each tile 64
 // bytes row by row.
 #define CANVAS_PIXEL_OFFSET(x, y)                                                                  \
-	((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
+    ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
 // The byte of pixel (x, y) of the battle background: 8x8 tiles of 256 colours, 64 bytes each, 32 to
 // a row, from BG_CHAR_BLOCK(2).
 #define BACKGROUND_PIXEL_OFFSET(x, y)                                                              \
-	(((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
+    (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
 // The battle view, under the top window and over the menus: screen lines 16 to 135.
 #define BATTLE_VIEW_TOP            16
@@ -141,7 +141,7 @@ static inline void btDMAStop(volatile Uint16 *channel)
 
 // Opens the canvas layer at the canvas's own width.
 #define EFFECT_START_NARROW_CANVAS(bgControl)                                                      \
-	(btEffectStartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
+    (btEffectStartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
 
 // Builds a blitter for the 128x128 canvas (its width and height given to btEffectBuildBlitter as
 // powers of two) in heap slot `slot`, for one clip, mirror and blend mode.
@@ -152,11 +152,11 @@ static inline void btDMAStop(volatile Uint16 *channel)
 
 // Sets what the canvas transfer leaves in the canvas after each copy.
 #define EFFECT_SET_TRANSFER(state, mode, value)                                                    \
-	((state)->transferMode = (mode), (state)->transferValue = (value))
+    ((state)->transferMode = (mode), (state)->transferValue = (value))
 
 // Sets the transfer, then starts copying the canvas to VRAM once a tick.
 #define EFFECT_START_TRANSFER(state, mode, value)                                                  \
-	(EFFECT_SET_TRANSFER(state, mode, value), sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK))
+    (EFFECT_SET_TRANSFER(state, mode, value), sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK))
 
 // Presents the canvas and waits for the next tick.
 #define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, sySynch(1))
@@ -167,24 +167,24 @@ static inline void btDMAStop(volatile Uint16 *channel)
 
 // Frees the two blitters, the alternate first.
 #define EFFECT_RELEASE_BLITTERS()                                                                  \
-	(syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED), syHeapSlotRelease(HEAP_SLOT_RAM_CODE))
+    (syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED), syHeapSlotRelease(HEAP_SLOT_RAM_CODE))
 
 // The usual end of a canvas effect: the transfer, the blitters, then the canvas layer.
 #define EFFECT_FINISH_CANVAS()                                                                     \
-	(syCloseEvent(btEffectTransferCanvas), EFFECT_RELEASE_BLITTERS(), btEffectEndCanvasLayer())
+    (syCloseEvent(btEffectTransferCanvas), EFFECT_RELEASE_BLITTERS(), btEffectEndCanvasLayer())
 
 // The same for an effect that drew through one blitter.
 #define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                                         \
-	(syCloseEvent(btEffectTransferCanvas),                                                         \
-	 syHeapSlotRelease(HEAP_SLOT_RAM_CODE),                                                        \
-	 btEffectEndCanvasLayer())
+    (syCloseEvent(btEffectTransferCanvas),                                                         \
+     syHeapSlotRelease(HEAP_SLOT_RAM_CODE),                                                        \
+     btEffectEndCanvasLayer())
 
 // The bytes of a sprite sheet picture, one byte a pixel, from its name's _WIDTH and _HEIGHT.
 #define PICTURE_BYTES(name) (name##_WIDTH * name##_HEIGHT)
 
 // Draws picture `name` of `sheet` at its own size, its top left at (x, y).
 #define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                                       \
-	(draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
+    (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
 
 // The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES        770
@@ -201,12 +201,12 @@ static inline void btDMAStop(volatile Uint16 *channel)
 // Draws mote picture `size` (1 to MOTE_SIZE_MAX: size pixels wide, twice that tall), centred across
 // x and standing on y.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                                          \
-	(draw)(canvas,                                                                                 \
-	       (sheet) + BattleEffectMotePictures[(size) - 1],                                         \
-	       (x) - (size) / 2,                                                                       \
-	       (y) - (size),                                                                           \
-	       size,                                                                                   \
-	       (size) * 2)
+    (draw)(canvas,                                                                                 \
+           (sheet) + BattleEffectMotePictures[(size) - 1],                                         \
+           (x) - (size) / 2,                                                                       \
+           (y) - (size),                                                                           \
+           size,                                                                                   \
+           (size) * 2)
 // The largest of the ten mote pictures.
 #define MOTE_SIZE_MAX   10
 // A mote sized by its depth is drawn one size smaller for every MOTE_DEPTH_STEP past
@@ -217,32 +217,32 @@ static inline void btDMAStop(volatile Uint16 *channel)
 
 // Draws flare picture `size`, a square, centred on (x, y).
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                                         \
-	(draw)(canvas,                                                                                 \
-	       (sheet) + BattleEffectFlarePictures[(size) - 1],                                        \
-	       (x) - (size),                                                                           \
-	       (y) - (size),                                                                           \
-	       (size) * 2,                                                                             \
-	       (size) * 2)
+    (draw)(canvas,                                                                                 \
+           (sheet) + BattleEffectFlarePictures[(size) - 1],                                        \
+           (x) - (size),                                                                           \
+           (y) - (size),                                                                           \
+           (size) * 2,                                                                             \
+           (size) * 2)
 
 // Swells a falling mote as the drops clear (Nereid's drops, Titan Blade's dust).
 #define EFFECT_SWELL_MOTE(size, tick)                                                              \
-	((tick) > 68 && (size) <= 5 && ((size) = 6),                                                   \
-	 (tick) > 70 && (size) <= 6 && ((size) = 7),                                                   \
-	 (tick) > 72 && (size) <= 7 && ((size) = 8),                                                   \
-	 (tick) > 74 && (size) <= 8 && ((size) = 9),                                                   \
-	 (tick) > 76 && ((size) = 10))
+    ((tick) > 68 && (size) <= 5 && ((size) = 6),                                                   \
+     (tick) > 70 && (size) <= 6 && ((size) = 7),                                                   \
+     (tick) > 72 && (size) <= 7 && ((size) = 8),                                                   \
+     (tick) > 74 && (size) <= 8 && ((size) = 9),                                                   \
+     (tick) > 76 && ((size) = 10))
 
 // A falling mote's vertical speed: it falls under `gravity`, then from tick 80 rises.
 #define EFFECT_FALL_MOTE(velocityY, gravity, tick)                                                 \
-	((tick) > 80 ? ((velocityY) -= toFIXED(1) / 2) : ((velocityY) += (gravity)))
+    ((tick) > 80 ? ((velocityY) -= toFIXED(1) / 2) : ((velocityY) += (gravity)))
 
 // Shows the canvas stretched to twice its width, `top` sixteenths of its colour added over what
 // lies under it.
 #define EFFECT_SHOW_WIDE_CANVAS(top)                                                               \
-	(REG_DISPCNT  = EFFECT_DISPCNT,                                                                \
-	 REG_BG2PA    = Q_8_8(0.5),                                                                    \
-	 REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                                      \
-	 REG_BLDCNT   = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
+    (REG_DISPCNT  = EFFECT_DISPCNT,                                                                \
+     REG_BG2PA    = Q_8_8(0.5),                                                                    \
+     REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                                      \
+     REG_BLDCNT   = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 // A WIN0H value whose left edge is past its right edge, written only on lines outside window 0.
 #define WINDOW_SPAN_INVERTED     WIN_RANGE(1, 0)
@@ -265,12 +265,12 @@ static inline void btDMAStop(volatile Uint16 *channel)
 
 // Caps a colour level at cap, and at 0 from below.
 #define EFFECT_CAP_LEVEL(level, cap)                                                               \
-	{                                                                                              \
-		if ((level) > (cap))                                                                       \
-			(level) = (cap);                                                                       \
-		if ((level) < 0)                                                                           \
-			(level) = 0;                                                                           \
-	}
+    {                                                                                              \
+        if ((level) > (cap))                                                                       \
+            (level) = (cap);                                                                       \
+        if ((level) < 0)                                                                           \
+            (level) = 0;                                                                           \
+    }
 
 // The reaper in ReaperSheet, which Condemn and Mortal Danger decode: the reaper with its scythe
 // raised, then swung, then the red crescent the swing leaves.
@@ -284,9 +284,9 @@ static inline void btDMAStop(volatile Uint16 *channel)
 // Where each of the reaper's pictures begins in its sprite sheet, in bytes.
 typedef enum REAPER_SHEET_PICTURE
 {
-	REAPER_SHEET_RAISED   = 0,
-	REAPER_SHEET_SWUNG    = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
-	REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + PICTURE_BYTES(REAPER_SHEET_SWUNG)
+    REAPER_SHEET_RAISED   = 0,
+    REAPER_SHEET_SWUNG    = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
+    REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + PICTURE_BYTES(REAPER_SHEET_SWUNG)
 } REAPER_SHEET_PICTURE;
 
 // RedCrescentSheetA: the swing's crescent fading in four pictures.
@@ -302,10 +302,10 @@ typedef enum REAPER_SHEET_PICTURE
 // Where each picture of the fading red crescent begins in its sprite sheet, in bytes.
 typedef enum RED_CRESCENT_PICTURE
 {
-	RED_CRESCENT_FADE_A = 0,
-	RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A + PICTURE_BYTES(RED_CRESCENT_FADE_A),
-	RED_CRESCENT_FADE_C = RED_CRESCENT_FADE_B + PICTURE_BYTES(RED_CRESCENT_FADE_B),
-	RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
+    RED_CRESCENT_FADE_A = 0,
+    RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A + PICTURE_BYTES(RED_CRESCENT_FADE_A),
+    RED_CRESCENT_FADE_C = RED_CRESCENT_FADE_B + PICTURE_BYTES(RED_CRESCENT_FADE_B),
+    RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
 } RED_CRESCENT_PICTURE;
 
 // Closing bolts and lightning columns use the same 24x120 pictures.
@@ -410,20 +410,20 @@ typedef enum RED_CRESCENT_PICTURE
 
 // Windows 0 and 1 both cover the battle view: the full width, lines 16 to 135.
 #define EFFECT_SET_BATTLE_WINDOWS()                                                                \
-	(REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH),                                                      \
-	 REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM),                                   \
-	 REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH),                                                      \
-	 REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM))
+    (REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH),                                                      \
+     REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM),                                   \
+     REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH),                                                      \
+     REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM))
 
 // BG2 shows the canvas from screen line 16 down (BG2Y is -16.0), stretched to twice its width: the
 // 128x128 canvas across the battle view.
 #define EFFECT_SET_CANVAS_AFFINE()                                                                 \
-	(REG_BG2X  = 0,                                                                                \
-	 REG_BG2Y  = -(BATTLE_VIEW_TOP << 8),                                                          \
-	 REG_BG2PA = Q_8_8(0.5),                                                                       \
-	 REG_BG2PB = 0,                                                                                \
-	 REG_BG2PC = 0,                                                                                \
-	 REG_BG2PD = Q_8_8(1))
+    (REG_BG2X  = 0,                                                                                \
+     REG_BG2Y  = -(BATTLE_VIEW_TOP << 8),                                                          \
+     REG_BG2PA = Q_8_8(0.5),                                                                       \
+     REG_BG2PB = 0,                                                                                \
+     REG_BG2PC = 0,                                                                                \
+     REG_BG2PD = Q_8_8(1))
 
 // A line's sideways sway as its BG2X value in state->bg2xLines, which the wave HBlank DMA writes
 // line by line. BG2X counts 256ths of a canvas pixel, so a sway of toFIXED(n) moves the line n / 4
@@ -432,95 +432,95 @@ typedef enum RED_CRESCENT_PICTURE
 
 // Writes one row of BG2's map for the canvas, two tiles at a time.
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                                           \
-	for ((column) = 0; (column) != 8; (column)++, (offset) += 2)                                   \
-	{                                                                                              \
-		Sint32 tileIndex;                                                                          \
-		Sint16 pair;                                                                               \
+    for ((column) = 0; (column) != 8; (column)++, (offset) += 2)                                   \
+    {                                                                                              \
+        Sint32 tileIndex;                                                                          \
+        Sint16 pair;                                                                               \
                                                                                                    \
-		tileIndex = (row) * 16 + (column) * 2;                                                     \
-		pair      = ((tileIndex + 1) << 8) | tileIndex;                                            \
-		*(volatile Sint16 *)((Uint8 *)BG_CANVAS_MAP + (offset)) = pair;                            \
-	}
+        tileIndex = (row) * 16 + (column) * 2;                                                     \
+        pair      = ((tileIndex + 1) << 8) | tileIndex;                                            \
+        *(volatile Sint16 *)((Uint8 *)BG_CANVAS_MAP + (offset)) = pair;                            \
+    }
 
 // What btEffectRunDjinniEntrance takes added to its element; the element alone plays the 64-tick
 // entrance.
 typedef enum DJINNI_ENTRANCE_LENGTH
 {
-	// The long entrance: 84 ticks instead of 64, ending in a burst of motes.
-	DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
+    // The long entrance: 84 ticks instead of 64, ending in a burst of motes.
+    DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
 } DJINNI_ENTRANCE_LENGTH;
 
 // Where btEffectRunDjinniEntrance's Djinni appears.
 typedef enum DJINNI_ENTRANCE_ANCHOR
 {
-	DJINNI_ANCHOR_OVER_TARGET, // over the first target
-	DJINNI_ANCHOR_TARGET_X,    // at the first target's x, at depth 0
-	DJINNI_ANCHOR_OVER_USER,
-	DJINNI_ANCHOR_USER_X,      // at the user's x, at depth 0; no caller
-	DJINNI_ANCHOR_CENTRE       // in the centre of the field
+    DJINNI_ANCHOR_OVER_TARGET, // over the first target
+    DJINNI_ANCHOR_TARGET_X,    // at the first target's x, at depth 0
+    DJINNI_ANCHOR_OVER_USER,
+    DJINNI_ANCHOR_USER_X,      // at the user's x, at depth 0; no caller
+    DJINNI_ANCHOR_CENTRE       // in the centre of the field
 } DJINNI_ENTRANCE_ANCHOR;
 
 // Where btEffectRunSparkGroups' bursts go off.
 typedef enum SPARK_GROUPS_MODE
 {
-	SPARK_GROUPS_NOVA, // at (60, 48); the damage shows on tick 24
-	// at (60, 64), orange; the damage shows on tick 2
-	SPARK_GROUPS_DYNAMITE,
-	// below the user, in the LightningBolt colours, the sparks rising; the damage shows on tick 2
-	SPARK_GROUPS_RISING
+    SPARK_GROUPS_NOVA, // at (60, 48); the damage shows on tick 24
+    // at (60, 64), orange; the damage shows on tick 2
+    SPARK_GROUPS_DYNAMITE,
+    // below the user, in the LightningBolt colours, the sparks rising; the damage shows on tick 2
+    SPARK_GROUPS_RISING
 } SPARK_GROUPS_MODE;
 
 // Which way btEffectWipeCanvas sweeps.
 typedef enum CANVAS_WIPE_DIRECTION
 {
-	CANVAS_WIPE_DOWN,  // top to bottom
-	CANVAS_WIPE_ACROSS // left to right
+    CANVAS_WIPE_DOWN,  // top to bottom
+    CANVAS_WIPE_ACROSS // left to right
 } CANVAS_WIPE_DIRECTION;
 
 // What btEffectWipeCanvas leaves behind it.
 typedef enum CANVAS_FILL
 {
-	CANVAS_WIPE_FILL, // colour 1, which its callers make black first
-	CANVAS_WIPE_CLEAR // colour 0: the canvas cleared
+    CANVAS_WIPE_FILL, // colour 1, which its callers make black first
+    CANVAS_WIPE_CLEAR // colour 0: the canvas cleared
 } CANVAS_FILL;
 
 // The summons' sprite formations (btEffectPlaceFormationSprites and btEffectRunImpactBurst), each
 // named for the summon that keeps it.
 typedef enum SUMMON_FORMATION
 {
-	SUMMON_FORMATION_THOR, // nine in a 3x3 grid at 32-pixel spacing
-	// twelve in rows of 1, 3, 4 and 4, from 16 left and 32 up
-	SUMMON_FORMATION_NEREID,
-	SUMMON_FORMATION_CYBELE, // eight in rows of 3, 2 and 3, from 16 right
-	SUMMON_FORMATION_TIAMAT  // eight drawn at 1.25 times their size
+    SUMMON_FORMATION_THOR, // nine in a 3x3 grid at 32-pixel spacing
+    // twelve in rows of 1, 3, 4 and 4, from 16 left and 32 up
+    SUMMON_FORMATION_NEREID,
+    SUMMON_FORMATION_CYBELE, // eight in rows of 3, 2 and 3, from 16 right
+    SUMMON_FORMATION_TIAMAT  // eight drawn at 1.25 times their size
 } SUMMON_FORMATION;
 
 // The axis a swirling spark, mote or star turns about, which its index & 3 picks.
 typedef enum SPIN_AXIS
 {
-	SPIN_YAW,
-	SPIN_PITCH,
-	SPIN_ROLL,
-	SPIN_PITCH_AND_ROLL
+    SPIN_YAW,
+    SPIN_PITCH,
+    SPIN_ROLL,
+    SPIN_PITCH_AND_ROLL
 } SPIN_AXIS;
 
 // state->cameraPhase, which btCameraApplyPhasedDelta and the effects that turn the camera through
 // it (Fire, Froth) pass between them.
 typedef enum CAMERA_PHASE
 {
-	CAMERA_PHASE_IDLE, // nothing marked since the last turn
-	// the effect has finished a tick: turn the whole delta
-	CAMERA_PHASE_TICK_DONE,
-	CAMERA_PHASE_HALF_TURNED // half a delta turned on an unmarked tick
+    CAMERA_PHASE_IDLE, // nothing marked since the last turn
+    // the effect has finished a tick: turn the whole delta
+    CAMERA_PHASE_TICK_DONE,
+    CAMERA_PHASE_HALF_TURNED // half a delta turned on an unmarked tick
 } CAMERA_PHASE;
 
 // Where each range of btEffectRunByIdRange's effect kinds starts: the casting impacts, the beams,
 // and the ring and spark effect of critical hits.
 typedef enum BATTLE_EFFECT_ID_RANGE
 {
-	EFFECT_RANGE_CASTING_IMPACT = 100,
-	EFFECT_RANGE_BEAM           = 136,
-	EFFECT_RANGE_RING_AND_SPARK = EFFECT_ID_CRITICAL_OFFSET
+    EFFECT_RANGE_CASTING_IMPACT = 100,
+    EFFECT_RANGE_BEAM           = 136,
+    EFFECT_RANGE_RING_AND_SPARK = EFFECT_ID_CRITICAL_OFFSET
 } BATTLE_EFFECT_ID_RANGE;
 
 #endif // ALCHEMY_BATTLE_EFFECT_INTERNAL_H

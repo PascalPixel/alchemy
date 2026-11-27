@@ -20,9 +20,9 @@ extern const Uint16 FontMarkGlyphCodes[];
 // The marks a kana is drawn with: their character codes.
 typedef enum TEXT_MARK_GLYPH
 {
-	TEXT_MARK_NONE       = 0,
-	TEXT_MARK_VOICED     = 222, // the voiced mark (dakuten)
-	TEXT_MARK_SEMIVOICED = 223  // the semi-voiced mark (handakuten)
+    TEXT_MARK_NONE       = 0,
+    TEXT_MARK_VOICED     = 222, // the voiced mark (dakuten)
+    TEXT_MARK_SEMIVOICED = 223  // the semi-voiced mark (handakuten)
 } TEXT_MARK_GLYPH;
 
 // Japanese text carries a kana's mark in the top bits of its code, as its index in

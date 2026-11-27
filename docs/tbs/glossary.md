@@ -161,7 +161,7 @@ Sega's library for the Saturn, which the [system library](#system-library)
 is modelled on. A function's name is two small letters for the part that
 owns it and then its words, as `sySynch` or `fdActorGetById`. A type is in
 capitals, as `ACTOR`, and a global variable is its name alone, as
-`HeapSlots`. Each level is one tab, and comments are written with `//`
+`HeapSlots`. Each level is four spaces, and comments are written with `//`
 ([Contributing](../../CONTRIBUTING.md#names)).
 
 This is the usual manner of Japanese studio code around 2000. Names are

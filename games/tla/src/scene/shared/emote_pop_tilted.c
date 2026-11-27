@@ -14,18 +14,18 @@
 void   syEmotePopTilted(x, y, z, rotation) Sint32 x, y, z;
 Sint16 rotation;
 {
-	ACTOR     *object;
-	FIELD_SPR *sprite;
+    ACTOR     *object;
+    FIELD_SPR *sprite;
 
-	object = syImportActorCreate(SPRITE_EMOTE, x, y, z);
-	if (object != 0)
-	{
-		sprite = object->sprite;
-		sySoundPlay(SE_LIGHT_APPEAR);
-		syImportActorSelectAnimation(object, 1);
-		syImportActorStartScript(object, EmotePopTiltedScript);
-		object->motionFlags = 0;
-		sprite->flags       = 0;
-		sprite->rotation    = rotation;
-	}
+    object = syImportActorCreate(SPRITE_EMOTE, x, y, z);
+    if (object != 0)
+    {
+        sprite = object->sprite;
+        sySoundPlay(SE_LIGHT_APPEAR);
+        syImportActorSelectAnimation(object, 1);
+        syImportActorStartScript(object, EmotePopTiltedScript);
+        object->motionFlags = 0;
+        sprite->flags       = 0;
+        sprite->rotation    = rotation;
+    }
 }

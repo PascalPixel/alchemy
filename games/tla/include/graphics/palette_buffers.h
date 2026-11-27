@@ -25,20 +25,20 @@
 // channels, their steps, and two pages of packed colours.
 typedef struct TITLE_PALETTE_FADE
 {
-	// The source palette, RGB555: 256 BG colours, then 256 OBJ colours.
-	Uint16 palette[512];
-	// The shown colours, as B, G and R channels shifted up 10 bits, three a colour.
-	Uint16 current[TITLE_PALETTE_FADE_CHANNELS];
-	// the colours current moves toward, as current
-	Uint16 target[TITLE_PALETTE_FADE_CHANNELS];
-	// added to each current channel each tick
-	Uint16 delta[TITLE_PALETTE_FADE_CHANNELS];
-	// Two pages of RGB555 colours: one is built while the other is queued.
-	Uint16 packed[2][512];
-	Uint8  page;     // the packed page queued this tick
-	Sint8  duration; // ticks; 0 when the colours are not moving
-	Uint8  step;     // ticks
-	Uint8  padding;
+    // The source palette, RGB555: 256 BG colours, then 256 OBJ colours.
+    Uint16 palette[512];
+    // The shown colours, as B, G and R channels shifted up 10 bits, three a colour.
+    Uint16 current[TITLE_PALETTE_FADE_CHANNELS];
+    // the colours current moves toward, as current
+    Uint16 target[TITLE_PALETTE_FADE_CHANNELS];
+    // added to each current channel each tick
+    Uint16 delta[TITLE_PALETTE_FADE_CHANNELS];
+    // Two pages of RGB555 colours: one is built while the other is queued.
+    Uint16 packed[2][512];
+    Uint8  page;     // the packed page queued this tick
+    Sint8  duration; // ticks; 0 when the colours are not moving
+    Uint8  step;     // ticks
+    Uint8  padding;
 } TITLE_PALETTE_FADE;
 
 STATIC_ASSERT(sizeof(TITLE_PALETTE_FADE) == 12292);
@@ -53,20 +53,20 @@ STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, page) == 12288);
 // colours queued each tick.
 typedef struct PALETTE_FADE
 {
-	// The source palette, RGB555: 224 BG colours, then 224 OBJ colours; palette[0] is the backdrop.
-	Uint16 palette[448];
-	// The shown colours, as B, G and R channels shifted up 10 bits, three a colour.
-	Uint16 current[PALETTE_FADE_CHANNELS];
-	// the colours current moves toward, as current
-	Uint16 target[PALETTE_FADE_CHANNELS];
-	// added to each current channel each tick
-	Uint16 delta[PALETTE_FADE_CHANNELS];
-	// Two pages of RGB555 colours: one is built while the other is queued.
-	Uint16 packed[2][448];
-	Uint8  page;     // the packed page queued this tick
-	Sint8  duration; // ticks; 0 when the colours are not moving
-	Sint8  step;     // ticks
-	Uint8  padding;
+    // The source palette, RGB555: 224 BG colours, then 224 OBJ colours; palette[0] is the backdrop.
+    Uint16 palette[448];
+    // The shown colours, as B, G and R channels shifted up 10 bits, three a colour.
+    Uint16 current[PALETTE_FADE_CHANNELS];
+    // the colours current moves toward, as current
+    Uint16 target[PALETTE_FADE_CHANNELS];
+    // added to each current channel each tick
+    Uint16 delta[PALETTE_FADE_CHANNELS];
+    // Two pages of RGB555 colours: one is built while the other is queued.
+    Uint16 packed[2][448];
+    Uint8  page;     // the packed page queued this tick
+    Sint8  duration; // ticks; 0 when the colours are not moving
+    Sint8  step;     // ticks
+    Uint8  padding;
 } PALETTE_FADE;
 
 STATIC_ASSERT(sizeof(PALETTE_FADE) == 10756);
@@ -89,36 +89,36 @@ void mnTitlePaletteFadeRelease(void);
 // A palette tint, a palette fade's build mode: up to RGB_WHITE, one RGB555 colour for all.
 typedef enum PALETTE_TINT
 {
-	// The backdrop colour (palette RAM's first colour) for all.
-	PALETTE_TINT_FROM_SOURCE = RGB_WHITE + 1,
-	PALETTE_TINT_NONE        = 0x10000, // each colour unchanged
-	PALETTE_TINT_GRAYSCALE,             // grey of brightness (2R + 4G + B) / 7
-	                        // Brownish grey: the brightness (R + G + B) / 10, red at 4 times it
-	                        // plus 5, green and blue 3 times plus 5, each held to 8 to 28.
-	PALETTE_TINT_SEPIA,
-	// Half R + 10, two thirds G + 8, B - 7; black stays black. The title's (TITLE_PALETTE_FADE) is
-	// PALETTE_TINT_WARM_DARK's, black included.
-	PALETTE_TINT_WARM,
-	// Each channel held to a narrow range, then G and B + 2: the field's fade holds R 8 to 29, G 14
-	// to 25, B 14 to 27 and leaves the first colour; the title's (TITLE_PALETTE_FADE) R 10 to 28, G
-	// 16 to 24, B 16 to 26.
-	PALETTE_TINT_MUTED,
-	PALETTE_TINT_PALE,      // half of each channel, plus their mean
-	                        // R plus an eighth of G and of B; G and B two thirds.
-	PALETTE_TINT_RED,
-	PALETTE_TINT_WARM_DARK, // half R + 6, two thirds G + 4, B - 6
-	                        // A fifth off each channel of a bright colour.
-	PALETTE_TINT_DIM_BRIGHT,
-	// A third of R + G + B, B three steps darker.
-	PALETTE_TINT_DIM_GRAY,
-	// From here the CUSTOM, BLEND and SPLIT bits are tested, CUSTOM and BLEND carrying an RGB555
-	// colour in the low 15 bits; any other value is the address of a ready buffer to copy.
-	PALETTE_TINT_FLAGS  = 0x100000,
-	// The brightness (2R + 4G + B) times the colour carried.
-	PALETTE_TINT_CUSTOM = 0x200000,
-	// The brightness R + G + B shared out in the proportions of the colour carried.
-	PALETTE_TINT_BLEND  = 0x400000,
-	PALETTE_TINT_SPLIT  = 0x800000 // each colour unchanged
+    // The backdrop colour (palette RAM's first colour) for all.
+    PALETTE_TINT_FROM_SOURCE = RGB_WHITE + 1,
+    PALETTE_TINT_NONE        = 0x10000, // each colour unchanged
+    PALETTE_TINT_GRAYSCALE,             // grey of brightness (2R + 4G + B) / 7
+                            // Brownish grey: the brightness (R + G + B) / 10, red at 4 times it
+                            // plus 5, green and blue 3 times plus 5, each held to 8 to 28.
+    PALETTE_TINT_SEPIA,
+    // Half R + 10, two thirds G + 8, B - 7; black stays black. The title's (TITLE_PALETTE_FADE) is
+    // PALETTE_TINT_WARM_DARK's, black included.
+    PALETTE_TINT_WARM,
+    // Each channel held to a narrow range, then G and B + 2: the field's fade holds R 8 to 29, G 14
+    // to 25, B 14 to 27 and leaves the first colour; the title's (TITLE_PALETTE_FADE) R 10 to 28, G
+    // 16 to 24, B 16 to 26.
+    PALETTE_TINT_MUTED,
+    PALETTE_TINT_PALE,      // half of each channel, plus their mean
+                            // R plus an eighth of G and of B; G and B two thirds.
+    PALETTE_TINT_RED,
+    PALETTE_TINT_WARM_DARK, // half R + 6, two thirds G + 4, B - 6
+                            // A fifth off each channel of a bright colour.
+    PALETTE_TINT_DIM_BRIGHT,
+    // A third of R + G + B, B three steps darker.
+    PALETTE_TINT_DIM_GRAY,
+    // From here the CUSTOM, BLEND and SPLIT bits are tested, CUSTOM and BLEND carrying an RGB555
+    // colour in the low 15 bits; any other value is the address of a ready buffer to copy.
+    PALETTE_TINT_FLAGS  = 0x100000,
+    // The brightness (2R + 4G + B) times the colour carried.
+    PALETTE_TINT_CUSTOM = 0x200000,
+    // The brightness R + G + B shared out in the proportions of the colour carried.
+    PALETTE_TINT_BLEND  = 0x400000,
+    PALETTE_TINT_SPLIT  = 0x800000 // each colour unchanged
 } PALETTE_TINT;
 
 // The brightness 2R + 4G + B that PALETTE_TINT_GRAYSCALE and PALETTE_TINT_CUSTOM build, with each
@@ -148,9 +148,9 @@ typedef enum PALETTE_TINT
 // Which palettes mnTitlePaletteFadeBuildColors builds.
 typedef enum PALETTE_SELECTION
 {
-	PALETTES_ALL     = 0,
-	PALETTES_BG      = 1,
-	PALETTES_OBJECTS = 2
+    PALETTES_ALL     = 0,
+    PALETTES_BG      = 1,
+    PALETTES_OBJECTS = 2
 } PALETTE_SELECTION;
 
 #endif

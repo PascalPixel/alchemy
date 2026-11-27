@@ -17,48 +17,48 @@ typedef Sint32 (*SCRIPT_COMMAND)(struct ACTOR *);
 // number (ACTOR_SCRIPT_VALUE numbers them).
 typedef struct SCRIPT_OPERANDS
 {
-	Uint32 script;
-	Uint16 cursor;
-	Uint16 facing;
-	Uint32 x;
-	Uint32 y;
-	Uint32 z;
-	Uint32 groundHeight;
-	Uint32 scaleX;
-	Uint32 scaleY;
-	Uint16 radius;
-	Uint8  unusedAfterRadius[2]; // no code names them
-	Uint32 velocityX;
-	Uint32 velocityY;
-	Uint32 velocityZ;
-	Uint32 speedLimit;
-	Uint32 acceleration;
-	Uint32 targetX;
-	Uint32 targetY;
-	Uint32 targetZ;
-	Uint32 bounce;
-	Uint32 gravity;
-	Uint32 sceneWord;
-	Uint32 sprite;
-	Uint8  spriteStorageKind; // ACTOR.spriteStorageKind
-	Uint8  motionFlags;
-	Uint8  arrivalAxis;
-	Uint8  conditionResult;   // the last test; every compare sets it
-	Uint8  snapToTarget;
-	Uint8  collisionFlags;
-	Uint8  steeringFlags;
-	Uint8  paused;
-	Uint8  retainSpriteCache;
-	Uint8  repeatCount; // the SC_LOOP count
-	Sint16 wait;        // SC_WAIT's ticks left
-	Uint8  refused;     // ACTOR.refused, the blocked ticks
-	Uint8  frozen;
-	Uint8  sceneCount;
-	Uint8  sceneByte;
-	Sint16 timer;
-	Sint16 userValue;
-	Uint32 watchedActor;
-	Uint32 update;
+    Uint32 script;
+    Uint16 cursor;
+    Uint16 facing;
+    Uint32 x;
+    Uint32 y;
+    Uint32 z;
+    Uint32 groundHeight;
+    Uint32 scaleX;
+    Uint32 scaleY;
+    Uint16 radius;
+    Uint8  unusedAfterRadius[2]; // no code names them
+    Uint32 velocityX;
+    Uint32 velocityY;
+    Uint32 velocityZ;
+    Uint32 speedLimit;
+    Uint32 acceleration;
+    Uint32 targetX;
+    Uint32 targetY;
+    Uint32 targetZ;
+    Uint32 bounce;
+    Uint32 gravity;
+    Uint32 sceneWord;
+    Uint32 sprite;
+    Uint8  spriteStorageKind; // ACTOR.spriteStorageKind
+    Uint8  motionFlags;
+    Uint8  arrivalAxis;
+    Uint8  conditionResult;   // the last test; every compare sets it
+    Uint8  snapToTarget;
+    Uint8  collisionFlags;
+    Uint8  steeringFlags;
+    Uint8  paused;
+    Uint8  retainSpriteCache;
+    Uint8  repeatCount; // the SC_LOOP count
+    Sint16 wait;        // SC_WAIT's ticks left
+    Uint8  refused;     // ACTOR.refused, the blocked ticks
+    Uint8  frozen;
+    Uint8  sceneCount;
+    Uint8  sceneByte;
+    Sint16 timer;
+    Sint16 userValue;
+    Uint32 watchedActor;
+    Uint32 update;
 } SCRIPT_OPERANDS;
 
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, script) == 0);

@@ -14,12 +14,12 @@ extern const Uint8 DebugPaletteSwatchTiles[];
 // One row of the debug warp menu: its name and what choosing it does.
 typedef struct DEBUG_WARP_PRESET
 {
-	const Uint8 *name;
-	// UB: the handlers return nothing; mnDebugWarpRun calls them as returning Sint32.
+    const Uint8 *name;
+    // UB: the handlers return nothing; mnDebugWarpRun calls them as returning Sint32.
 #if FIX_FUNCTION_SIGNATURES
-	void (*warp)(void);
+    void (*warp)(void);
 #else
-	Sint32 (*warp)(void);
+    Sint32 (*warp)(void);
 #endif
 } DEBUG_WARP_PRESET;
 

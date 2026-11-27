@@ -6,19 +6,19 @@
 
 // Unused: five words, each this array's own address; no sprite record or code names it.
 const void *const SpriteUnusedSelfPointersAfterSecondBlock[] = {
-	SpriteUnusedSelfPointersAfterSecondBlock,
-	SpriteUnusedSelfPointersAfterSecondBlock,
-	SpriteUnusedSelfPointersAfterSecondBlock,
-	SpriteUnusedSelfPointersAfterSecondBlock,
-	SpriteUnusedSelfPointersAfterSecondBlock,
+    SpriteUnusedSelfPointersAfterSecondBlock,
+    SpriteUnusedSelfPointersAfterSecondBlock,
+    SpriteUnusedSelfPointersAfterSecondBlock,
+    SpriteUnusedSelfPointersAfterSecondBlock,
+    SpriteUnusedSelfPointersAfterSecondBlock,
 };
 
 // Unused: as SpriteUnusedSelfPointersAfterSecondBlock, right before the woman in the pink apron's
 // animations.
 const void *const SpriteUnusedSelfPointersBeforeThirdBlock[] = {
-	SpriteUnusedSelfPointersBeforeThirdBlock,
-	SpriteUnusedSelfPointersBeforeThirdBlock,
-	SpriteUnusedSelfPointersBeforeThirdBlock,
-	SpriteUnusedSelfPointersBeforeThirdBlock,
-	SpriteUnusedSelfPointersBeforeThirdBlock,
+    SpriteUnusedSelfPointersBeforeThirdBlock,
+    SpriteUnusedSelfPointersBeforeThirdBlock,
+    SpriteUnusedSelfPointersBeforeThirdBlock,
+    SpriteUnusedSelfPointersBeforeThirdBlock,
+    SpriteUnusedSelfPointersBeforeThirdBlock,
 };

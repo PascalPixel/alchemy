@@ -98,10 +98,10 @@ Sint32 mnWindowIsClosedStub(Sint32);
 // -1: fdMeasurePsynergyHeight and fdMeasurePsynergyReach read it.
 typedef struct FIELD_PSYNERGY_REACH
 {
-	Sint16 fieldPsynergy; // FIELD_PSY; -1 ends the table
-	Sint16 range;         // pixels over the ground
-	Sint16 height;        // pixels above or below the caster
-	Sint16 width;         // either side of the caster's facing, 1/65536 turns
+    Sint16 fieldPsynergy; // FIELD_PSY; -1 ends the table
+    Sint16 range;         // pixels over the ground
+    Sint16 height;        // pixels above or below the caster
+    Sint16 width;         // either side of the caster's facing, 1/65536 turns
 } FIELD_PSYNERGY_REACH;
 
 extern const FIELD_PSYNERGY_REACH FieldPsynergyReach[];
@@ -112,9 +112,9 @@ extern const FIELD_PSYNERGY_REACH FieldPsynergyReach[];
 // ACTOR.spriteStorageKind, its low four bits: what the actor's sprite pointer holds.
 typedef enum ACTOR_SPR_KIND
 {
-	ACTOR_SPRITE_NONE  = 0, // nothing drawn
-	ACTOR_SPRITE_ONE   = 1,
-	ACTOR_SPRITE_GROUP = 2  // a list of up to four sprites, empty ones null
+    ACTOR_SPRITE_NONE  = 0, // nothing drawn
+    ACTOR_SPRITE_ONE   = 1,
+    ACTOR_SPRITE_GROUP = 2  // a list of up to four sprites, empty ones null
 } ACTOR_SPR_KIND;
 
 // ACTOR.spriteStorageKind's low four bits, its ACTOR_SPR_KIND.
@@ -123,11 +123,11 @@ typedef enum ACTOR_SPR_KIND
 // fdActorCreate's id / 4096: what sprites the actor is made with.
 typedef enum ACTOR_CREATE
 {
-	ACTOR_CREATE_ONE_SPRITE = 0, // the id's sprite (ACTOR_SPRITE_ONE)
-	// The sprites of the id and id + 1 (ACTOR_SPRITE_GROUP).
-	ACTOR_CREATE_GROUP      = 2,
-	// No sprite: any kind but the two above, and the one the camera actor takes.
-	ACTOR_CREATE_NO_SPRITE  = 8
+    ACTOR_CREATE_ONE_SPRITE = 0, // the id's sprite (ACTOR_SPRITE_ONE)
+    // The sprites of the id and id + 1 (ACTOR_SPRITE_GROUP).
+    ACTOR_CREATE_GROUP      = 2,
+    // No sprite: any kind but the two above, and the one the camera actor takes.
+    ACTOR_CREATE_NO_SPRITE  = 8
 } ACTOR_CREATE;
 
 // The sprite id in fdActorCreate's id, below its ACTOR_CREATE (id / 4096).
@@ -163,14 +163,14 @@ typedef void   (*TARGET_HOOK)(ACTOR *, Sint32 *, Sint32 *);
 // A party member's unit as the field reads it: its gauges and its HP and PP.
 typedef struct FIELD_UNIT
 {
-	Uint8  unused[20];             // no code names it
-	Sint16 hpGauge;
-	Sint16 ppGauge;
-	Uint8  unusedAfterPpGauge[28]; // no code names it
-	Sint16 hpMax;
-	Sint16 ppMax;
-	Sint16 hp;
-	Sint16 pp;
+    Uint8  unused[20];             // no code names it
+    Sint16 hpGauge;
+    Sint16 ppGauge;
+    Uint8  unusedAfterPpGauge[28]; // no code names it
+    Sint16 hpMax;
+    Sint16 ppMax;
+    Sint16 hp;
+    Sint16 pp;
 } FIELD_UNIT;
 
 // The World Map's metatiles in view (syRamMapBlocks, and the blocks in MetatileTiles): 32 by 32
@@ -182,82 +182,82 @@ typedef struct FIELD_UNIT
 // WORLD_MAP_VIEW_METATILES by WORLD_MAP_VIEW_METATILES of them.
 typedef struct WORLD_MAP_METATILE
 {
-	Uint32 tile   : 24; // low halfword: the metatile tiles
-	// Passed to fdWorldMapUpdateRegionTint; region / 10 picks the graphics set.
-	Uint32 region : 6;
-	Uint32 unused : 1; // no code names it
-	// A beach: fdWorldMapGetBattleEnvironment fights on it from WorldMapTerrainBehaviorTable's
-	// beach bank.
-	Uint32 beach  : 1;
+    Uint32 tile   : 24; // low halfword: the metatile tiles
+    // Passed to fdWorldMapUpdateRegionTint; region / 10 picks the graphics set.
+    Uint32 region : 6;
+    Uint32 unused : 1; // no code names it
+    // A beach: fdWorldMapGetBattleEnvironment fights on it from WorldMapTerrainBehaviorTable's
+    // beach bank.
+    Uint32 beach  : 1;
 } WORLD_MAP_METATILE;
 
 // A map metatile's terrain kind: the low four bits of its shape's first byte, which pick its height
 // function.
 typedef enum TERRAIN_KIND
 {
-	TERRAIN_FLAT                             = 0,
-	TERRAIN_SLOPE_X                          = 1,
-	TERRAIN_SLOPE_Y                          = 2,
-	TERRAIN_STEP_SUM_DIAGONAL                = 3,
-	TERRAIN_STEP_DIFFERENCE_DIAGONAL         = 4,
-	TERRAIN_BEND_SUM_DIAGONAL                = 5,
-	TERRAIN_BEND_DIFFERENCE_DIAGONAL         = 6,
-	TERRAIN_ROUNDED_SQUARE                   = 7,
-	TERRAIN_STEP_X                           = 8,
-	TERRAIN_STEP_Y                           = 9,
-	// As TERRAIN_SAMPLE_TABLE with x and y swapped.
-	TERRAIN_SAMPLE_TABLE_TRANSPOSED          = 10,
-	// As TERRAIN_SAMPLE_TABLE_MIRRORED with x and y swapped.
-	TERRAIN_SAMPLE_TABLE_TRANSPOSED_MIRRORED = 11,
-	// The sample TerrainSampleIndexTable picks for each pixel.
-	TERRAIN_SAMPLE_TABLE                     = 12,
-	// As TERRAIN_SAMPLE_TABLE, mirrored left to right.
-	TERRAIN_SAMPLE_TABLE_MIRRORED            = 13,
-	// Above y 8, the first sample left of x 8 and the second right of it; below, the third.
-	TERRAIN_SPLIT_TOP_STEP                   = 14,
-	// Above y 8, the first sample; below, the second left of x 8 and the third right of it.
-	TERRAIN_SPLIT_BOTTOM_STEP                = 15,
-	TERRAIN_KIND_COUNT                       = 16,
-	// Not a shape's kind: what fdMapGridGetTerrainKindOrBumpAt gives for a TERRAIN_ROUNDED_SQUARE
-	// whose two samples differ, a bump or a hollow.
-	TERRAIN_BUMP                             = 99
+    TERRAIN_FLAT                             = 0,
+    TERRAIN_SLOPE_X                          = 1,
+    TERRAIN_SLOPE_Y                          = 2,
+    TERRAIN_STEP_SUM_DIAGONAL                = 3,
+    TERRAIN_STEP_DIFFERENCE_DIAGONAL         = 4,
+    TERRAIN_BEND_SUM_DIAGONAL                = 5,
+    TERRAIN_BEND_DIFFERENCE_DIAGONAL         = 6,
+    TERRAIN_ROUNDED_SQUARE                   = 7,
+    TERRAIN_STEP_X                           = 8,
+    TERRAIN_STEP_Y                           = 9,
+    // As TERRAIN_SAMPLE_TABLE with x and y swapped.
+    TERRAIN_SAMPLE_TABLE_TRANSPOSED          = 10,
+    // As TERRAIN_SAMPLE_TABLE_MIRRORED with x and y swapped.
+    TERRAIN_SAMPLE_TABLE_TRANSPOSED_MIRRORED = 11,
+    // The sample TerrainSampleIndexTable picks for each pixel.
+    TERRAIN_SAMPLE_TABLE                     = 12,
+    // As TERRAIN_SAMPLE_TABLE, mirrored left to right.
+    TERRAIN_SAMPLE_TABLE_MIRRORED            = 13,
+    // Above y 8, the first sample left of x 8 and the second right of it; below, the third.
+    TERRAIN_SPLIT_TOP_STEP                   = 14,
+    // Above y 8, the first sample; below, the second left of x 8 and the third right of it.
+    TERRAIN_SPLIT_BOTTOM_STEP                = 15,
+    TERRAIN_KIND_COUNT                       = 16,
+    // Not a shape's kind: what fdMapGridGetTerrainKindOrBumpAt gives for a TERRAIN_ROUNDED_SQUARE
+    // whose two samples differ, a bump or a hollow.
+    TERRAIN_BUMP                             = 99
 } TERRAIN_KIND;
 
 // What fdMapGridCheckCollision says of a step to a position.
 typedef enum COLLISION
 {
-	COLLISION_TOO_LOW    = -1, // the ground there is more than 12 pixels lower
-	COLLISION_NONE       = 0,  // the actor can step there
-	COLLISION_TOO_HIGH   = 1,  // the ground there is more than 8 pixels higher
-	// the metatile there is a wall (METATILE_BEHAVIOR_WALL)
-	COLLISION_IMPASSABLE = 2
+    COLLISION_TOO_LOW    = -1, // the ground there is more than 12 pixels lower
+    COLLISION_NONE       = 0,  // the actor can step there
+    COLLISION_TOO_HIGH   = 1,  // the ground there is more than 8 pixels higher
+    // the metatile there is a wall (METATILE_BEHAVIOR_WALL)
+    COLLISION_IMPASSABLE = 2
 } COLLISION;
 
 // One node of a tightrope (fdTightropeInit's state): a point on the rope, and the sprite
 // fdTightropeDraw puts between it and the next node.
 typedef struct TIGHTROPE_NODE
 {
-	struct TIGHTROPE_NODE *next;
-	Sint32                 x;
-	Sint32                 y;
-	Sint32                 z;
-	Sint8                  kind; // 0 while free; 1 a node the leader can step onto; 2 coiled
-	Sint8                  slot; // the tightrope's index plus one while it is thrown, else 0
-	Uint8                  unusedAfterSlot[2]; // no code names it
-	ANIMATION_SPR_PART     sprite;
+    struct TIGHTROPE_NODE *next;
+    Sint32                 x;
+    Sint32                 y;
+    Sint32                 z;
+    Sint8                  kind; // 0 while free; 1 a node the leader can step onto; 2 coiled
+    Sint8                  slot; // the tightrope's index plus one while it is thrown, else 0
+    Uint8                  unusedAfterSlot[2]; // no code names it
+    ANIMATION_SPR_PART     sprite;
 } TIGHTROPE_NODE;
 
 // One of the eight tightropes: the two posts it runs between and its wobble.
 typedef struct TIGHTROPE_SLOT
 {
-	Sint16          first;
-	Sint16          second;
-	Uint32          direction;               // the sprites' turn, along the tightrope
-	Sint32          amplitude;               // the wobble's size, decaying each tick
-	Uint8           unusedAfterAmplitude[4]; // no code names it
-	Sint32          phase;
-	Sint32          wobbling;
-	TIGHTROPE_NODE *head;
+    Sint16          first;
+    Sint16          second;
+    Uint32          direction;               // the sprites' turn, along the tightrope
+    Sint32          amplitude;               // the wobble's size, decaying each tick
+    Uint8           unusedAfterAmplitude[4]; // no code names it
+    Sint32          phase;
+    Sint32          wobbling;
+    TIGHTROPE_NODE *head;
 } TIGHTROPE_SLOT;
 
 // The ropes', tightropes' and hanging vines' states each keep eight slots, each a chain of nodes
@@ -270,12 +270,12 @@ typedef struct TIGHTROPE_SLOT
 // The tightropes' state (HEAP_SLOT_TIGHTROPE).
 typedef struct TIGHTROPE_WORK
 {
-	ACTOR
-	*recoilFrom;              // the posts fdTightropeUntie gives fdTightropeRecoil
-	ACTOR         *recoilTo;
-	Sint32         vramEntry; // the nodes' picture
-	TIGHTROPE_SLOT slots[ROPE_SLOT_COUNT];
-	TIGHTROPE_NODE nodes[ROPE_NODE_COUNT];
+    ACTOR
+    *recoilFrom;              // the posts fdTightropeUntie gives fdTightropeRecoil
+    ACTOR         *recoilTo;
+    Sint32         vramEntry; // the nodes' picture
+    TIGHTROPE_SLOT slots[ROPE_SLOT_COUNT];
+    TIGHTROPE_NODE nodes[ROPE_NODE_COUNT];
 } TIGHTROPE_WORK;
 
 #define TIGHTROPE_STATE ((TIGHTROPE_WORK *)RamHeapSlots->tightrope)
@@ -283,125 +283,125 @@ typedef struct TIGHTROPE_WORK
 // One rising particle: its sprite, world position, drift and ticks left.
 typedef struct RISING_PARTICLE
 {
-	// The sprite: set as three words by the start, drawn field by field.
-	union
-	{
-		Uint32 words[3];
+    // The sprite: set as three words by the start, drawn field by field.
+    union
+    {
+        Uint32 words[3];
 
-		struct
-		{
-			Uint8  unusedAfterWords[4]; // no code names it
-			// OAM attributes 0 to 2.
-			Uint16 y          : 8; // screen pixels
-			Uint16 attr0      : 2;
-			Uint16 objectMode : 2;
-			Uint16 attr0b     : 2;
-			Uint16 shape      : 2;
-			Uint16 x          : 9; // screen pixels
-			Uint16 attr1      : 5;
-			Uint16 size       : 2;
-			Uint16 tile       : 10;
-			Uint16 priority   : 2;
-			Uint16 palette    : 4;
-			Uint8  unusedAfterPalette[2]; // no code names it
-		} attributes;
-	} sprite;
+        struct
+        {
+            Uint8  unusedAfterWords[4]; // no code names it
+            // OAM attributes 0 to 2.
+            Uint16 y          : 8; // screen pixels
+            Uint16 attr0      : 2;
+            Uint16 objectMode : 2;
+            Uint16 attr0b     : 2;
+            Uint16 shape      : 2;
+            Uint16 x          : 9; // screen pixels
+            Uint16 attr1      : 5;
+            Uint16 size       : 2;
+            Uint16 tile       : 10;
+            Uint16 priority   : 2;
+            Uint16 palette    : 4;
+            Uint8  unusedAfterPalette[2]; // no code names it
+        } attributes;
+    } sprite;
 
-	Sint32 posX;
-	Sint32 posY;
-	Sint32 posZ;
-	Sint32 drift;
-	Uint16 timer;
-	Uint8  unusedAfterTimer[2]; // no code names it
+    Sint32 posX;
+    Sint32 posY;
+    Sint32 posZ;
+    Sint32 drift;
+    Uint16 timer;
+    Uint8  unusedAfterTimer[2]; // no code names it
 } RISING_PARTICLE;
 
 // HEAP_SLOT_WEATHER while the rising particles run: their tiles' VRAM cache entry and first tile,
 // and the particles.
 typedef struct RISING_PARTICLE_STATE
 {
-	Sint32          vramEntry;
-	Sint32          tile;
-	RISING_PARTICLE particles[64];
+    Sint32          vramEntry;
+    Sint32          tile;
+    RISING_PARTICLE particles[64];
 } RISING_PARTICLE_STATE;
 
 // An actor (ACTOR) as the Mars Djinni's sparks read the leader: its position and its sprite, typed.
 typedef struct EFFECT_OWNER
 {
-	Uint8   unused[8];          // no code names it
-	VECTOR3 pos;
-	Uint8   unusedAfterPos[60]; // no code names it
-	SPR    *sprite;
+    Uint8   unused[8];          // no code names it
+    VECTOR3 pos;
+    Uint8   unusedAfterPos[60]; // no code names it
+    SPR    *sprite;
 } EFFECT_OWNER;
 
 // The line scroll's state: two pages of BG1 to BG3 scroll offsets for each of the 160 scanlines,
 // and the sine wave that bends them on each axis.
 typedef struct LINE_SCROLL_STATE
 {
-	BG_SCROLL rows[2][160][3]; // per page and scanline: BG3, BG2, BG1
-	Uint8     page;            // the page the HBlank DMA shows; the other is built
-	Uint8     mode;            // set at the start; not read by name
-	Uint16    frame;           // ticks built so far, added to BG3's y for the wave's phase
-	Uint8     unused[4];       // zeroed with the block; nothing reads or writes it
-	FIXED     frequencyX;      // phase per tick and per BG3 row, 16.16 wave table
-	                           // entries
-	FIXED     frequencyY;      // phase per tick and per BG3 row, 16.16 wave table
-	                           // entries
-	FIXED     stepX;           // 16.16 wave table entries a scanline, 256 a cycle
-	FIXED     stepY;           // 16.16 wave table entries a scanline, 256 a cycle
-	FIXED
-	ampX;                      // 16.16 scale on the sine entry, which is then divided by 256
-	FIXED
-	ampY;                      // 16.16 scale on the sine entry, which is then divided by 256
+    BG_SCROLL rows[2][160][3]; // per page and scanline: BG3, BG2, BG1
+    Uint8     page;            // the page the HBlank DMA shows; the other is built
+    Uint8     mode;            // set at the start; not read by name
+    Uint16    frame;           // ticks built so far, added to BG3's y for the wave's phase
+    Uint8     unused[4];       // zeroed with the block; nothing reads or writes it
+    FIXED     frequencyX;      // phase per tick and per BG3 row, 16.16 wave table
+                               // entries
+    FIXED     frequencyY;      // phase per tick and per BG3 row, 16.16 wave table
+                               // entries
+    FIXED     stepX;           // 16.16 wave table entries a scanline, 256 a cycle
+    FIXED     stepY;           // 16.16 wave table entries a scanline, 256 a cycle
+    FIXED
+    ampX;                      // 16.16 scale on the sine entry, which is then divided by 256
+    FIXED
+    ampY;                      // 16.16 scale on the sine entry, which is then divided by 256
 } LINE_SCROLL_STATE;
 
 // ROPE_NODE.kind and TIGHTROPE_NODE.kind.
 typedef enum ROPE_NODE_KIND
 {
-	ROPE_NODE_FREE,      // in the pool, on no rope
-	ROPE_NODE_CROSSABLE, // laid along a rope, for the leader to step onto
-	// Laid but not to be crossed: a coil, a tied rope's end wound round its far post, every node of
-	// a settled tightrope.
-	ROPE_NODE_UNCROSSABLE
+    ROPE_NODE_FREE,      // in the pool, on no rope
+    ROPE_NODE_CROSSABLE, // laid along a rope, for the leader to step onto
+    // Laid but not to be crossed: a coil, a tied rope's end wound round its far post, every node of
+    // a settled tightrope.
+    ROPE_NODE_UNCROSSABLE
 } ROPE_NODE_KIND;
 
 // One node of a rope Lash throws and ties (fdRopeInit's state): a point on the rope, and the sprite
 // fdRopeDraw puts between it and the next node.
 typedef struct ROPE_NODE
 {
-	struct ROPE_NODE  *next;
-	Sint32             x;
-	Sint32             y;
-	Sint32             z;
-	Uint16             angle; // the sprite's turn, along the rope
-	Sint8              kind;  // ROPE_NODE_KIND
-	Sint8              slot;  // the rope's index plus one while it is thrown, else 0
-	ANIMATION_SPR_PART sprite;
+    struct ROPE_NODE  *next;
+    Sint32             x;
+    Sint32             y;
+    Sint32             z;
+    Uint16             angle; // the sprite's turn, along the rope
+    Sint8              kind;  // ROPE_NODE_KIND
+    Sint8              slot;  // the rope's index plus one while it is thrown, else 0
+    ANIMATION_SPR_PART sprite;
 } ROPE_NODE;
 
 // One of the eight ropes: the two posts it runs between and its swing.
 typedef struct ROPE_SLOT
 {
-	Sint16     first;                   // the post it coils at
-	Sint16     second;                  // the post it is tied to
-	Sint16     segments;                // its nodes, less one
-	Sint16     priority;                // the sprites', the first post's
-	Sint16     flags;                   // set while the rope is tied
-	Sint16     state;                   // 1 once thrown or tied
-	Sint32     amplitude;
-	Uint8      unusedAfterAmplitude[4]; // no code names it
-	Sint32     phase;
-	Sint32     swinging;
-	ROPE_NODE *head;
+    Sint16     first;                   // the post it coils at
+    Sint16     second;                  // the post it is tied to
+    Sint16     segments;                // its nodes, less one
+    Sint16     priority;                // the sprites', the first post's
+    Sint16     flags;                   // set while the rope is tied
+    Sint16     state;                   // 1 once thrown or tied
+    Sint32     amplitude;
+    Uint8      unusedAfterAmplitude[4]; // no code names it
+    Sint32     phase;
+    Sint32     swinging;
+    ROPE_NODE *head;
 } ROPE_SLOT;
 
 // The ropes' state (HEAP_SLOT_ROPE).
 typedef struct ROPE_WORK
 {
-	ACTOR    *recoilFrom; // the posts fdRopeUntie gives fdRopeRecoil
-	ACTOR    *recoilTo;
-	Sint32    vramEntry;  // the nodes' picture
-	ROPE_SLOT slots[ROPE_SLOT_COUNT];
-	ROPE_NODE nodes[ROPE_NODE_COUNT];
+    ACTOR    *recoilFrom; // the posts fdRopeUntie gives fdRopeRecoil
+    ACTOR    *recoilTo;
+    Sint32    vramEntry;  // the nodes' picture
+    ROPE_SLOT slots[ROPE_SLOT_COUNT];
+    ROPE_NODE nodes[ROPE_NODE_COUNT];
 } ROPE_WORK;
 
 #define ROPE_STATE ((ROPE_WORK *)RamHeapSlots->rope)
@@ -411,9 +411,9 @@ Sint32 fdSuperLuckyDiceScaleRGB555Buffer(Uint16 *src, Uint16 *dest, Sint32 scale
 void   fdSuperLuckyDiceBrightenColors(Uint16 *src, Uint16 *dest, Uint32 count, Sint32 angle);
 Sint32 fdSuperLuckyDiceScoreDice(Sint32 *dice);
 Sint32 fdSuperLuckyDiceDrawNumber(
-	Sint32 sprite, Sint32 x, Sint32 y, Sint32 value, Sint32 palette, Sint32 digits);
+    Sint32 sprite, Sint32 x, Sint32 y, Sint32 value, Sint32 palette, Sint32 digits);
 Sint32 fdSuperLuckyDiceDrawLargeNumber(
-	Sint32 sprite, Sint32 x, Sint32 y, Sint32 value, Sint32 palette, Sint32 digits);
+    Sint32 sprite, Sint32 x, Sint32 y, Sint32 value, Sint32 palette, Sint32 digits);
 
 void                mnPortraitCloseWindowStub(Sint32 sprite);
 
@@ -498,10 +498,10 @@ Sint32  fdLuckyDiceScaleRGB555Buffer(Uint16 *src, Uint16 *dest, FIXED scale, Sin
 extern const Uint16 LuckyWheelsSparkMetatileOffsets[];
 
 Sint32              btEffectBuildBlitterStub(
-				 Sint32 slot, Sint32 widthShift, Sint32 heightShift, Sint32 flags, Uint32 mode);
+                 Sint32 slot, Sint32 widthShift, Sint32 heightShift, Sint32 flags, Uint32 mode);
 
 Sint32
-	 fdWorldMapWriteLayerMetatileTile(Sint32 layer, Sint32 x, Sint32 y, Sint32 tile, Sint32 update);
+     fdWorldMapWriteLayerMetatileTile(Sint32 layer, Sint32 x, Sint32 y, Sint32 tile, Sint32 update);
 
 void fdPaletteFadeLoadPaletteStub(void *palette);
 

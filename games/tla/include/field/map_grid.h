@@ -14,20 +14,20 @@
 // tick from fdBlendScriptStart).
 typedef struct BLEND_SCRIPT_STATE
 {
-	Uint16 *script;
-	Uint16 *cursor;
-	Uint16  delay;
-	Uint16  paused;
+    Uint16 *script;
+    Uint16 *cursor;
+    Uint16  delay;
+    Uint16  paused;
 } BLEND_SCRIPT_STATE;
 
 // One of a map's 16 tile animations (fdTilesetAnimationStartAll): the start of its script, where it
 // is, the ticks left before its next step, and whether it is paused.
 typedef struct MAP_ANIMATION
 {
-	const Uint16 *start;
-	const Uint16 *cursor;
-	Uint16        timer;
-	Uint16        paused;
+    const Uint16 *start;
+    const Uint16 *cursor;
+    Uint16        timer;
+    Uint16        paused;
 } MAP_ANIMATION;
 
 // The map grid: 128 by 128 metatiles, each MAPGRID_METATILE_PIXELS square, wrapping at its edges.
@@ -61,82 +61,82 @@ typedef struct MAP_ANIMATION
 // A layout's three layers, by what they hold. Most layouts give them priorities 3, 2 and 1.
 typedef enum MAP_GRID_LAYER_INDEX
 {
-	MAPGRID_LAYER_GROUND   = 0, // `BG3`: the ground, at the back
-	MAPGRID_LAYER_MIDDLE   = 1, // `BG2`: walls and edges, under the actors
-	// `BG1`: roofs and tree tops, over the actors
-	MAPGRID_LAYER_OVERHEAD = 2,
+    MAPGRID_LAYER_GROUND   = 0, // `BG3`: the ground, at the back
+    MAPGRID_LAYER_MIDDLE   = 1, // `BG2`: walls and edges, under the actors
+    // `BG1`: roofs and tree tops, over the actors
+    MAPGRID_LAYER_OVERHEAD = 2,
 } MAP_GRID_LAYER_INDEX;
 
 // A metatile's collision code: the codes the field code reads by name. Cloak, Sand, the Cyclone and
 // Hover read theirs on the overhead layer (script_commands_field_psynergy.c).
 typedef enum METATILE_BEHAVIOR
 {
-	METATILE_BEHAVIOR_NORMAL        = 0, // open ground, where nothing happens
-	// 1 to 230: the scene's own, each the step cue it raises as the leader walks onto it
-	// (fdUpdateWalking), or as he climbs a wall drawn over it on the overhead layer
-	// (scGaiaRockCueWallMetatile); those above are the field's own.
-	METATILE_BEHAVIOR_CUE_FIRST     = 1,
-	METATILE_BEHAVIOR_CUE_LAST      = 230,
-	METATILE_BEHAVIOR_CLOAK         = 231, // Cloak hides the leader there
-	METATILE_BEHAVIOR_SAND          = 232, // Sand lets the leader move there as sand
-	// A metatile the Cyclone acts on (fdMapGridGetCycloneMetatileKind's kind 1).
-	METATILE_BEHAVIOR_CYCLONE       = 233,
-	// A metatile the Cyclone carries the leader to, its centre kept in FIELD_STATE.cycloneCarryX
-	// and Z (kind 2).
-	METATILE_BEHAVIOR_CYCLONE_CARRY = 234,
-	// A metatile the Cyclone lifts the leader onto, its centre kept in FIELD_STATE.cycloneLiftX and
-	// Z (kind 3).
-	METATILE_BEHAVIOR_CYCLONE_LIFT  = 235,
-	METATILE_BEHAVIOR_HOVER         = 236, // Hover holds the leader up over it
-	// 242 to 247: examine cues with lines of their own, the same on every map (fdExamineMetatile,
-	// FieldExamineCueMessageOffsets).
-	METATILE_BEHAVIOR_JAR           = 242,
-	METATILE_BEHAVIOR_BARREL        = 243,
-	METATILE_BEHAVIOR_WOODEN_BOX    = 244,
-	METATILE_BEHAVIOR_GRAVE         = 245,
-	METATILE_BEHAVIOR_BOOKS         = 246,
-	METATILE_BEHAVIOR_WELL          = 247,
-	METATILE_BEHAVIOR_JUMP_FORWARD  = 254, // jumped across
-	METATILE_BEHAVIOR_WALL          = 255  // blocks whatever the heights
+    METATILE_BEHAVIOR_NORMAL        = 0, // open ground, where nothing happens
+    // 1 to 230: the scene's own, each the step cue it raises as the leader walks onto it
+    // (fdUpdateWalking), or as he climbs a wall drawn over it on the overhead layer
+    // (scGaiaRockCueWallMetatile); those above are the field's own.
+    METATILE_BEHAVIOR_CUE_FIRST     = 1,
+    METATILE_BEHAVIOR_CUE_LAST      = 230,
+    METATILE_BEHAVIOR_CLOAK         = 231, // Cloak hides the leader there
+    METATILE_BEHAVIOR_SAND          = 232, // Sand lets the leader move there as sand
+    // A metatile the Cyclone acts on (fdMapGridGetCycloneMetatileKind's kind 1).
+    METATILE_BEHAVIOR_CYCLONE       = 233,
+    // A metatile the Cyclone carries the leader to, its centre kept in FIELD_STATE.cycloneCarryX
+    // and Z (kind 2).
+    METATILE_BEHAVIOR_CYCLONE_CARRY = 234,
+    // A metatile the Cyclone lifts the leader onto, its centre kept in FIELD_STATE.cycloneLiftX and
+    // Z (kind 3).
+    METATILE_BEHAVIOR_CYCLONE_LIFT  = 235,
+    METATILE_BEHAVIOR_HOVER         = 236, // Hover holds the leader up over it
+    // 242 to 247: examine cues with lines of their own, the same on every map (fdExamineMetatile,
+    // FieldExamineCueMessageOffsets).
+    METATILE_BEHAVIOR_JAR           = 242,
+    METATILE_BEHAVIOR_BARREL        = 243,
+    METATILE_BEHAVIOR_WOODEN_BOX    = 244,
+    METATILE_BEHAVIOR_GRAVE         = 245,
+    METATILE_BEHAVIOR_BOOKS         = 246,
+    METATILE_BEHAVIOR_WELL          = 247,
+    METATILE_BEHAVIOR_JUMP_FORWARD  = 254, // jumped across
+    METATILE_BEHAVIOR_WALL          = 255  // blocks whatever the heights
 } METATILE_BEHAVIOR;
 
 // MAP_METATILE.attributeB's bits.
 typedef enum MAP_METATILE_ATTR
 {
-	// Scoop digs here, or everywhere else where the scene's attributes turn it round
-	// (FIELD_STATE.sceneAttributeLow, fdMapGridCanScoop).
-	MAP_METATILE_SCOOP       = 0x01,
-	// Pushing against the metatile pushes the actor ahead (fdRunPushMetatile).
-	MAP_METATILE_PUSH        = 0x02,
-	// Random battles here roll on the scene's second encounter zone (fdUpdateWalking).
-	MAP_METATILE_SECOND_ZONE = 0x04,
-	// Hazardous ground; with HAZARD_COUNT_ON_METATILES the hazard count rises by the pixels walked
-	// on it.
-	MAP_METATILE_HAZARD      = 0x08,
-	MAP_METATILE_WATER       = 0x10, // water (fdMapGridIsWaterMetatile)
-	MAP_METATILE_LEDGE       = 0x20, // a ledge, jumped down by pushing KEY_DOWN
-	                                 // A wall the leader can climb (fdMapGridIsClimbableMetatile,
-	                                 // fdActorMoveByKeys).
-	MAP_METATILE_CLIMBABLE   = 0x40,
-	// a gap the leader jumps across, pushing forward
-	MAP_METATILE_JUMP        = 0x80
+    // Scoop digs here, or everywhere else where the scene's attributes turn it round
+    // (FIELD_STATE.sceneAttributeLow, fdMapGridCanScoop).
+    MAP_METATILE_SCOOP       = 0x01,
+    // Pushing against the metatile pushes the actor ahead (fdRunPushMetatile).
+    MAP_METATILE_PUSH        = 0x02,
+    // Random battles here roll on the scene's second encounter zone (fdUpdateWalking).
+    MAP_METATILE_SECOND_ZONE = 0x04,
+    // Hazardous ground; with HAZARD_COUNT_ON_METATILES the hazard count rises by the pixels walked
+    // on it.
+    MAP_METATILE_HAZARD      = 0x08,
+    MAP_METATILE_WATER       = 0x10, // water (fdMapGridIsWaterMetatile)
+    MAP_METATILE_LEDGE       = 0x20, // a ledge, jumped down by pushing KEY_DOWN
+                                     // A wall the leader can climb (fdMapGridIsClimbableMetatile,
+                                     // fdActorMoveByKeys).
+    MAP_METATILE_CLIMBABLE   = 0x40,
+    // a gap the leader jumps across, pushing forward
+    MAP_METATILE_JUMP        = 0x80
 } MAP_METATILE_ATTR;
 
 // One metatile of a map layer: its metatile tiles and flags, its collision code and a second
 // attribute byte.
 typedef struct MAP_METATILE
 {
-	Uint16 picture       : 12; // its metatile tiles
-	Uint16 actorLayer    : 2;  // the map layer an actor here takes, plus one
-	Uint16 actorPriority : 2;  // the sprite priority an actor here is drawn at
-	Uint8  collisionCode;
-	Uint8  attributeB;
+    Uint16 picture       : 12; // its metatile tiles
+    Uint16 actorLayer    : 2;  // the map layer an actor here takes, plus one
+    Uint16 actorPriority : 2;  // the sprite priority an actor here is drawn at
+    Uint8  collisionCode;
+    Uint8  attributeB;
 } MAP_METATILE;
 
 // A MAP_METATILE read as one word, as code that ORs bits into a metatile writes it: its collision
 // code (the metatile behavior), the attribute bits above it and the flags of its metatile tiles.
 #define MAP_METATILE_WORD(behavior, attributes, pictureFlags)                                      \
-	((Uint32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
+    ((Uint32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
 // The flags of a metatile's tiles for an actor standing on the metatile: the sprite priority it is
 // drawn at and the map layer it takes, which the actors' placement reads (MAP_METATILE's
 // actorPriority and actorLayer).
@@ -145,10 +145,10 @@ typedef struct MAP_METATILE
 // A row of MapsWork: a layout's resources, each counted from ResourceIdEmptyMap.
 typedef struct MAP_RESOURCES
 {
-	Uint16 header;
-	Uint16 palette;
-	Uint16 tiles[3];       // for char blocks 1, 2 and 3
-	Uint16 animationTiles; // into MapGridAnimationTiles
+    Uint16 header;
+    Uint16 palette;
+    Uint16 tiles[3];       // for char blocks 1, 2 and 3
+    Uint16 animationTiles; // into MapGridAnimationTiles
 } MAP_RESOURCES;
 
 // Every layout's resources, by map number (field/map_resources.s).
@@ -158,82 +158,82 @@ extern const MAP_RESOURCES MapsWork[];
 // drift and wrap, and its window of metatiles.
 typedef struct MAP_LAYER
 {
-	FIXED         x, y;             // 16.16 fixed-point pixels
-	FIXED         offsetX, offsetY; // 16.16 fixed-point pixels
-	// 16.16 fixed point, toFIXED(1) moves with the view
-	FIXED         scaleX, scaleY;
-	FIXED         speedX, speedY; // 16.16 fixed-point pixels per tick
-	FIXED         phaseX, phaseY; // 16.16 fixed-point pixels
-	// The window's wrap masks over its metatile columns and rows, maskY's a row times MAPGRID_SIZE:
-	// MAPGRID_SIZE - 1 and MAPGRID_ROW_MASK for the whole grid.
-	Uint16        maskX, maskY;
-	// the metatile column and row of the layer's window
-	Uint16        originX, originY;
-	// the layer's first metatile in the map metatile buffer
-	MAP_METATILE *metatiles;
-	Uint8        *terrainIds;
+    FIXED         x, y;             // 16.16 fixed-point pixels
+    FIXED         offsetX, offsetY; // 16.16 fixed-point pixels
+    // 16.16 fixed point, toFIXED(1) moves with the view
+    FIXED         scaleX, scaleY;
+    FIXED         speedX, speedY; // 16.16 fixed-point pixels per tick
+    FIXED         phaseX, phaseY; // 16.16 fixed-point pixels
+    // The window's wrap masks over its metatile columns and rows, maskY's a row times MAPGRID_SIZE:
+    // MAPGRID_SIZE - 1 and MAPGRID_ROW_MASK for the whole grid.
+    Uint16        maskX, maskY;
+    // the metatile column and row of the layer's window
+    Uint16        originX, originY;
+    // the layer's first metatile in the map metatile buffer
+    MAP_METATILE *metatiles;
+    Uint8        *terrainIds;
 } MAP_LAYER;
 
 // The map grid's state (heap slot HEAP_SLOT_MAP_GRID): the point the view follows, the screen
 // shake, the tile animations and blend script, and the view.
 typedef struct MAP_STATE
 {
-	// The followed point, read as x, height and z in 16.16 fixed-point pixels.
-	FIXED             *origin;
-	// Screen shake amplitudes and the factor that scales them each tick; fdMapGridSetScreenShake
-	// keeps a component given as negative.
-	Sint32             shakeX, shakeY, shakeDecay;
-	Uint8             *script;
-	// Display control bits ORed into DISPCNT; fdScreenTransitionHideBackgrounds clears those of
-	// backgrounds 1 to 3.
-	Uint16             dispcnt;
-	Uint8              wideTiles;
-	// The ground's marks: bits 1..0 footprints, 3..2 the kind of wading (rooms with a second level
-	// set 1).
-	Uint8              groundEffects;
-	MAP_ANIMATION      animation[16];
-	BLEND_SCRIPT_STATE blend;
-	FIXED              view[2]; // the view's top left, x then z, 16.16 fixed-point pixels
-	Sint32             minX;
-	Sint32             minZ;
-	Sint32             maxX;
-	Sint32             maxZ;
-	// The camera boxes: a -1-ended list of Sint16 rectangles (x0, z0, x1, z1 in pixels) that
-	// fdCameraFollowLeaderInBounds keeps the view out of; NULL for none.
-	const Sint16      *cameraBoxes;
-	// Set while a BG1 animation runs; the tileset animations are then neither suspended nor
-	// resumed.
-	Sint8              animationActive;
-	// The sprites' base priority; the scrolling camera draws one above it.
-	Sint8              basePriority;
-	Uint8              unusedAfterBasePriority[2];
-	// Each layer's BG priority, written into its BGCNT; zero hides the layer.
-	Uint8              enabled[3];
-	// The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its values go to BLDALPHA,
-	// else to BLDY.
-	Uint8              blendControl;
-	MAP_LAYER          layers[4];
-	Uint8              unusedAfterLayers[1908]; // no code names it
-	Sint32             farPlane;
-	Sint32             zoom;
-	Sint32             zoomFrom;
-	Sint32             zoomTo;
-	Sint16             zoomFrame;
-	Sint16             zoomStep;
+    // The followed point, read as x, height and z in 16.16 fixed-point pixels.
+    FIXED             *origin;
+    // Screen shake amplitudes and the factor that scales them each tick; fdMapGridSetScreenShake
+    // keeps a component given as negative.
+    Sint32             shakeX, shakeY, shakeDecay;
+    Uint8             *script;
+    // Display control bits ORed into DISPCNT; fdScreenTransitionHideBackgrounds clears those of
+    // backgrounds 1 to 3.
+    Uint16             dispcnt;
+    Uint8              wideTiles;
+    // The ground's marks: bits 1..0 footprints, 3..2 the kind of wading (rooms with a second level
+    // set 1).
+    Uint8              groundEffects;
+    MAP_ANIMATION      animation[16];
+    BLEND_SCRIPT_STATE blend;
+    FIXED              view[2]; // the view's top left, x then z, 16.16 fixed-point pixels
+    Sint32             minX;
+    Sint32             minZ;
+    Sint32             maxX;
+    Sint32             maxZ;
+    // The camera boxes: a -1-ended list of Sint16 rectangles (x0, z0, x1, z1 in pixels) that
+    // fdCameraFollowLeaderInBounds keeps the view out of; NULL for none.
+    const Sint16      *cameraBoxes;
+    // Set while a BG1 animation runs; the tileset animations are then neither suspended nor
+    // resumed.
+    Sint8              animationActive;
+    // The sprites' base priority; the scrolling camera draws one above it.
+    Sint8              basePriority;
+    Uint8              unusedAfterBasePriority[2];
+    // Each layer's BG priority, written into its BGCNT; zero hides the layer.
+    Uint8              enabled[3];
+    // The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its values go to BLDALPHA,
+    // else to BLDY.
+    Uint8              blendControl;
+    MAP_LAYER          layers[4];
+    Uint8              unusedAfterLayers[1908]; // no code names it
+    Sint32             farPlane;
+    Sint32             zoom;
+    Sint32             zoomFrom;
+    Sint32             zoomTo;
+    Sint16             zoomFrame;
+    Sint16             zoomStep;
 } MAP_STATE;
 
 // The map's view position (MAP_STATE.view): its left and its top, x then z, in 16.16 fixed-point
 // pixels.
 static inline FIXED *syMapStateView(MAP_STATE *map)
 {
-	return map->view;
+    return map->view;
 }
 
 // The map grid's background layer `layer` (MAP_STATE.layers), in the map state of heap slot
 // HEAP_SLOT_MAP_GRID.
 static inline MAP_LAYER *fdMapGridGetLayer(Sint32 layer)
 {
-	return &((MAP_STATE *)RamHeapSlots->mapGrid)->layers[layer];
+    return &((MAP_STATE *)RamHeapSlots->mapGrid)->layers[layer];
 }
 
 // The bytes of MAP_STATE a field map uses: up to its third layer, the last the field scrolls.
@@ -247,54 +247,54 @@ static inline MAP_LAYER *fdMapGridGetLayer(Sint32 layer)
 // edges and interrupt lines of a transition, and the map's resources.
 typedef struct MAP_VIEW_STATE
 {
-	Uint32  unused[5];                     // map state fields no window view names
-	Uint16  dispcnt;                       // display control bits ORed into DISPCNT
-	Uint8   unusedAfterDispcnt[234];       // no code names it
-	Sint8   animationActive;
-	Uint8   unusedAfterAnimationActive[3]; // no code names it
-	Uint16  windowTop;
-	Uint16  windowBottom;
-	Uint16  irqFirstLine;
-	Uint16  irqSecondLine;
-	Uint16  irqPhase;
-	Uint8   unusedAfterIrqPhase[18];    // no code names it
-	Uint32 *resources;
-	Uint8   unusedAfterResources[2124]; // no code names it
-	Sint8   extraTiles;
-	Uint8   pictureShown;
-	Uint8   picturePending;
-	Sint8   area;
+    Uint32  unused[5];                     // map state fields no window view names
+    Uint16  dispcnt;                       // display control bits ORed into DISPCNT
+    Uint8   unusedAfterDispcnt[234];       // no code names it
+    Sint8   animationActive;
+    Uint8   unusedAfterAnimationActive[3]; // no code names it
+    Uint16  windowTop;
+    Uint16  windowBottom;
+    Uint16  irqFirstLine;
+    Uint16  irqSecondLine;
+    Uint16  irqPhase;
+    Uint8   unusedAfterIrqPhase[18];    // no code names it
+    Uint32 *resources;
+    Uint8   unusedAfterResources[2124]; // no code names it
+    Sint8   extraTiles;
+    Uint8   pictureShown;
+    Uint8   picturePending;
+    Sint8   area;
 } MAP_VIEW_STATE;
 
 // A position on the world map, as its walkability check reads it.
 typedef struct WORLD_POS
 {
-	FIXED x;               // 16.16 fixed-point pixels
-	Uint8 unusedAfterX[4]; // no code names it
-	FIXED y;
+    FIXED x;               // 16.16 fixed-point pixels
+    Uint8 unusedAfterX[4]; // no code names it
+    FIXED y;
 } WORLD_POS;
 
 // The world map's collision values (fdWorldMapGetCollision), 1 to 15, the sea the ship sails among
 // them.
 typedef enum WORLD_MAP_COLLISION
 {
-	// The ship sails on WORLD_MAP_COLLISION_SEA_FIRST to WORLD_MAP_COLLISION_SEA_LAST and on
-	// shallow water (fdWorldMapIsSailable).
-	WORLD_MAP_COLLISION_SEA_FIRST      = 1,
-	// The first collision that is water to Scoop and Parch: the sea from here to
-	// WORLD_MAP_COLLISION_SEA_LAST, all but WORLD_MAP_COLLISION_SEA_FIRST.
-	WORLD_MAP_COLLISION_WATER_FIRST    = 2,
-	WORLD_MAP_COLLISION_SEA_LAST       = 4,
-	// The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
-	// WORLD_MAP_COLLISION_WALKABLE_LAST (fdWorldMapIsWalkable).
-	WORLD_MAP_COLLISION_WALKABLE_FIRST = 5,
-	// Shallow water: a ripple follows the leader as it walks, and the ship sails there too.
-	WORLD_MAP_COLLISION_SHALLOW_WATER  = 6,
-	// Where neither collision layer has a value.
-	WORLD_MAP_COLLISION_DEFAULT        = 7,
-	// Forest: the leader's sprite shows its second layer and no shadow.
-	WORLD_MAP_COLLISION_FOREST         = 9,
-	WORLD_MAP_COLLISION_WALKABLE_LAST  = 12
+    // The ship sails on WORLD_MAP_COLLISION_SEA_FIRST to WORLD_MAP_COLLISION_SEA_LAST and on
+    // shallow water (fdWorldMapIsSailable).
+    WORLD_MAP_COLLISION_SEA_FIRST      = 1,
+    // The first collision that is water to Scoop and Parch: the sea from here to
+    // WORLD_MAP_COLLISION_SEA_LAST, all but WORLD_MAP_COLLISION_SEA_FIRST.
+    WORLD_MAP_COLLISION_WATER_FIRST    = 2,
+    WORLD_MAP_COLLISION_SEA_LAST       = 4,
+    // The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
+    // WORLD_MAP_COLLISION_WALKABLE_LAST (fdWorldMapIsWalkable).
+    WORLD_MAP_COLLISION_WALKABLE_FIRST = 5,
+    // Shallow water: a ripple follows the leader as it walks, and the ship sails there too.
+    WORLD_MAP_COLLISION_SHALLOW_WATER  = 6,
+    // Where neither collision layer has a value.
+    WORLD_MAP_COLLISION_DEFAULT        = 7,
+    // Forest: the leader's sprite shows its second layer and no shadow.
+    WORLD_MAP_COLLISION_FOREST         = 9,
+    WORLD_MAP_COLLISION_WALKABLE_LAST  = 12
 } WORLD_MAP_COLLISION;
 
 // A world map battle environment (WorldMapTerrainBehaviorTable, fdWorldMapGetBattleEnvironment):
@@ -302,34 +302,34 @@ typedef enum WORLD_MAP_COLLISION
 // fdBattleBackgroundSelectForEnvironment gives it.
 typedef enum BATTLE_ENVIRONMENT
 {
-	BATTLE_ENVIRONMENT_NONE            = 0,
-	BATTLE_ENVIRONMENT_GRASSLAND       = 1, // ResourceIdGrasslandBBackdrop
-	// ResourceIdDenseForestBackdrop; encounters take a region's forest zone.
-	BATTLE_ENVIRONMENT_FOREST          = 2,
-	BATTLE_ENVIRONMENT_DESERT          = 3, // ResourceIdDesertBackdrop
-	BATTLE_ENVIRONMENT_BEACH           = 4, // ResourceIdRockyBeachBackdrop
-	BATTLE_ENVIRONMENT_SNOWFIELD       = 5, // ResourceIdSnowfieldBBackdrop
-	// ResourceIdSnowfieldBBackdrop, for the snowfield's forest.
-	BATTLE_ENVIRONMENT_SNOW_FOREST     = 6,
-	// ResourceIdRockyBeachBackdrop, for shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER).
-	BATTLE_ENVIRONMENT_SHALLOWS        = 7,
-	// The sea the ship sails, collisions 1 to 3 outside the snowfields, where its encounters are
-	// (WorldMapShipEncounterRules); ResourceIdShipDeckBackdrop.
-	BATTLE_ENVIRONMENT_SEA             = 8,
-	// All the sea of the snowfield regions, where no rule gives encounters.
-	BATTLE_ENVIRONMENT_SNOWFIELD_SEA   = 9,
-	// WORLD_MAP_COLLISION_SEA_LAST outside the snowfields, where no rule gives encounters; a battle
-	// there would take the ship deck's backdrop. XXX: which waters BATTLE_ENVIRONMENT_SEA_LAST
-	// covers; the World Map metatiles whose collision is WORLD_MAP_COLLISION_SEA_LAST outside the
-	// snowfield regions, read from its collision tiles (fdWorldMapGetCollision), would settle it.
-	BATTLE_ENVIRONMENT_SEA_LAST        = 10,
-	BATTLE_ENVIRONMENT_BLIZZARD        = 11, // ResourceIdBlizzardBackdrop
-	// ResourceIdBlizzardBackdrop, for the blizzard's forest.
-	BATTLE_ENVIRONMENT_BLIZZARD_FOREST = 12
+    BATTLE_ENVIRONMENT_NONE            = 0,
+    BATTLE_ENVIRONMENT_GRASSLAND       = 1, // ResourceIdGrasslandBBackdrop
+    // ResourceIdDenseForestBackdrop; encounters take a region's forest zone.
+    BATTLE_ENVIRONMENT_FOREST          = 2,
+    BATTLE_ENVIRONMENT_DESERT          = 3, // ResourceIdDesertBackdrop
+    BATTLE_ENVIRONMENT_BEACH           = 4, // ResourceIdRockyBeachBackdrop
+    BATTLE_ENVIRONMENT_SNOWFIELD       = 5, // ResourceIdSnowfieldBBackdrop
+    // ResourceIdSnowfieldBBackdrop, for the snowfield's forest.
+    BATTLE_ENVIRONMENT_SNOW_FOREST     = 6,
+    // ResourceIdRockyBeachBackdrop, for shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER).
+    BATTLE_ENVIRONMENT_SHALLOWS        = 7,
+    // The sea the ship sails, collisions 1 to 3 outside the snowfields, where its encounters are
+    // (WorldMapShipEncounterRules); ResourceIdShipDeckBackdrop.
+    BATTLE_ENVIRONMENT_SEA             = 8,
+    // All the sea of the snowfield regions, where no rule gives encounters.
+    BATTLE_ENVIRONMENT_SNOWFIELD_SEA   = 9,
+    // WORLD_MAP_COLLISION_SEA_LAST outside the snowfields, where no rule gives encounters; a battle
+    // there would take the ship deck's backdrop. XXX: which waters BATTLE_ENVIRONMENT_SEA_LAST
+    // covers; the World Map metatiles whose collision is WORLD_MAP_COLLISION_SEA_LAST outside the
+    // snowfield regions, read from its collision tiles (fdWorldMapGetCollision), would settle it.
+    BATTLE_ENVIRONMENT_SEA_LAST        = 10,
+    BATTLE_ENVIRONMENT_BLIZZARD        = 11, // ResourceIdBlizzardBackdrop
+    // ResourceIdBlizzardBackdrop, for the blizzard's forest.
+    BATTLE_ENVIRONMENT_BLIZZARD_FOREST = 12
 } BATTLE_ENVIRONMENT;
 
 void fdMapGridFillCollisionRectangle(
-	Sint32 layer, Sint32 x, Sint32 y, Uint32 width, Uint32 height, Sint32 value);
+    Sint32 layer, Sint32 x, Sint32 y, Uint32 width, Uint32 height, Sint32 value);
 
 STATIC_ASSERT(sizeof(MAP_LAYER) == 56);
 STATIC_ASSERT(offsetof(MAP_STATE, layers) == 264);
@@ -351,7 +351,7 @@ STATIC_ASSERT(offsetof(MAP_VIEW_STATE, irqPhase) == 268);
 // A metatile of the map's shape grid: one byte, the tag of the metatile's collision shape.
 typedef struct SHAPE_METATILE
 {
-	Uint8 shape;
+    Uint8 shape;
 } __attribute__((packed)) SHAPE_METATILE;
 
 // The ground height of a layer at (x, z), 16.16 pixels (fdMapGridGetTerrainHeight, through the

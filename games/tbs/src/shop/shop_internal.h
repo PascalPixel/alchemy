@@ -20,10 +20,10 @@
 // Repair, held in shop->action while it runs.
 typedef enum SHOP_ACTION
 {
-	SHOP_ACTION_BUY,
-	SHOP_ACTION_SELL,
-	SHOP_ACTION_ARTIFACTS,
-	SHOP_ACTION_REPAIR
+    SHOP_ACTION_BUY,
+    SHOP_ACTION_SELL,
+    SHOP_ACTION_ARTIFACTS,
+    SHOP_ACTION_REPAIR
 } SHOP_ACTION;
 
 // A shop's type, the last column of its stock row: the equipment group it sells, as
@@ -31,9 +31,9 @@ typedef enum SHOP_ACTION
 // keepers' lines it says.
 typedef enum SHOP_TYPE
 {
-	SHOP_TYPE_ITEMS   = EQUIPMENT_GROUP_NONE,
-	SHOP_TYPE_WEAPONS = EQUIPMENT_GROUP_WEAPON,
-	SHOP_TYPE_ARMOR   = EQUIPMENT_GROUP_ARMOR
+    SHOP_TYPE_ITEMS   = EQUIPMENT_GROUP_NONE,
+    SHOP_TYPE_WEAPONS = EQUIPMENT_GROUP_WEAPON,
+    SHOP_TYPE_ARMOR   = EQUIPMENT_GROUP_ARMOR
 } SHOP_TYPE;
 
 // The inn the inn's own code names (mnInnCheckIn's innId, a row of InnPricesPerGuest); each town's
@@ -44,51 +44,51 @@ typedef enum SHOP_TYPE
 // opens them.
 typedef enum SHOP_STOCK_ROW
 {
-	SHOP_STOCK_ROW_EMPTY        = 0, // sells nothing; stands in for a bad row
-	SHOP_STOCK_ROW_VALE_WEAPONS = 1,
-	SHOP_STOCK_ROW_VALE_ARMOR   = 2,
-	// Xian's weapon, armor and item shops, the warriors' shops, which greet the party with lines of
-	// their own (SHOP_STATE.warriorShop).
-	SHOP_STOCK_ROW_XIAN_WEAPONS = 16,
-	SHOP_STOCK_ROW_XIAN_ARMOR   = 17,
-	SHOP_STOCK_ROW_XIAN_ITEMS   = 18
+    SHOP_STOCK_ROW_EMPTY        = 0, // sells nothing; stands in for a bad row
+    SHOP_STOCK_ROW_VALE_WEAPONS = 1,
+    SHOP_STOCK_ROW_VALE_ARMOR   = 2,
+    // Xian's weapon, armor and item shops, the warriors' shops, which greet the party with lines of
+    // their own (SHOP_STATE.warriorShop).
+    SHOP_STOCK_ROW_XIAN_WEAPONS = 16,
+    SHOP_STOCK_ROW_XIAN_ARMOR   = 17,
+    SHOP_STOCK_ROW_XIAN_ITEMS   = 18
 } SHOP_STOCK_ROW;
 
 // What a sparkle of the sanctum's burst is doing (FIELD_PARTICLE.state,
 // mnSanctumUpdateBurstSparkle).
 typedef enum SANCTUM_SPARKLE_STATE
 {
-	// Placed on a ring around the burst's centre and aimed inside it.
-	SANCTUM_SPARKLE_START       = 0,
-	SANCTUM_SPARKLE_FLYING      = 1, // flying in; starts again on arrival
-	                                 // Set as the burst ends: freed on arrival.
-	SANCTUM_SPARKLE_LAST_FLIGHT = 2
+    // Placed on a ring around the burst's centre and aimed inside it.
+    SANCTUM_SPARKLE_START       = 0,
+    SANCTUM_SPARKLE_FLYING      = 1, // flying in; starts again on arrival
+                                     // Set as the burst ends: freed on arrival.
+    SANCTUM_SPARKLE_LAST_FLIGHT = 2
 } SANCTUM_SPARKLE_STATE;
 
 // What the sanctum does for one party member; each kind picks the party member's status it needs,
 // its fee and its cure (shop_sanctum.c).
 typedef enum SANCTUM_SERVICE
 {
-	SANCTUM_SERVICE_REVIVE,      // for a downed party member (HP 0)
-	SANCTUM_SERVICE_CURE_POISON, // for poison or deadly poison
-	SANCTUM_SERVICE_REPEL_EVIL,  // for a haunted party member
-	SANCTUM_SERVICE_REMOVE_CURSE // for any curse bit set
+    SANCTUM_SERVICE_REVIVE,      // for a downed party member (HP 0)
+    SANCTUM_SERVICE_CURE_POISON, // for poison or deadly poison
+    SANCTUM_SERVICE_REPEL_EVIL,  // for a haunted party member
+    SANCTUM_SERVICE_REMOVE_CURSE // for any curse bit set
 } SANCTUM_SERVICE;
 
 enum
 {
-	// Icons a row in a party member's 15-slot inventory grid, 16 pixels apart.
-	SHOP_INVENTORY_COLUMNS = 5,
-	// Stock items a page of the buy screen, 32 pixels apart.
-	SHOP_STOCK_PAGE_ITEMS  = 7
+    // Icons a row in a party member's 15-slot inventory grid, 16 pixels apart.
+    SHOP_INVENTORY_COLUMNS = 5,
+    // Stock items a page of the buy screen, 32 pixels apart.
+    SHOP_STOCK_PAGE_ITEMS  = 7
 };
 
 // BUG: the original item picker tests its selection result rather than the discard error, so it
 // never shows the cannot-remove message for error -3.
 #if FIX_DROP_PICKER_CANNOT_REMOVE_MESSAGE
-#	define SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult) (discardStatus)
+#    define SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult) (discardStatus)
 #else
-#	define SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult) (selectionResult)
+#    define SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult) (selectionResult)
 #endif
 
 // Edition-specific text and window layout values. Window positions and sizes are in tiles, text

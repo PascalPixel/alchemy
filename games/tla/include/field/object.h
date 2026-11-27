@@ -20,10 +20,10 @@ Sint32 fdMapGridGetCycloneMetatileKind(Sint32 x, Sint32 z, Sint32 layer);
 // What Cyclone does at a metatile (fdMapGridGetCycloneMetatileKind).
 typedef enum CYCLONE_METATILE_KIND
 {
-	CYCLONE_METATILE_NONE  = 0,
-	CYCLONE_METATILE_BURST = 1, // blown away, with the particle burst
-	CYCLONE_METATILE_CARRY = 2, // the whirlwind carries the leader to it
-	CYCLONE_METATILE_LIFT  = 3  // the whirlwind lifts the leader to it
+    CYCLONE_METATILE_NONE  = 0,
+    CYCLONE_METATILE_BURST = 1, // blown away, with the particle burst
+    CYCLONE_METATILE_CARRY = 2, // the whirlwind carries the leader to it
+    CYCLONE_METATILE_LIFT  = 3  // the whirlwind lifts the leader to it
 } CYCLONE_METATILE_KIND;
 
 // The actors' sprites: their depth and priority, a silhouette, a sprite id and graphics copied from
@@ -60,10 +60,10 @@ extern const ACTOR_PLACE FieldDefaultPlacements[];
 // The arrival fdEntrancePlayArrival played, for the way the last scene was left.
 typedef enum ENTRANCE_ARRIVAL
 {
-	ARRIVAL_NONE        = 0, // none: the scene plays its own
-	ARRIVAL_STAIRS_UP   = 1, // up stairs, ANIM_LEADER_ARRIVE
-	ARRIVAL_STAIRS_DOWN = 2, // down stairs, ANIM_LEADER_ARRIVE_ALTERNATE
-	ARRIVAL_FALLING     = 3  // falling in from above
+    ARRIVAL_NONE        = 0, // none: the scene plays its own
+    ARRIVAL_STAIRS_UP   = 1, // up stairs, ANIM_LEADER_ARRIVE
+    ARRIVAL_STAIRS_DOWN = 2, // down stairs, ANIM_LEADER_ARRIVE_ALTERNATE
+    ARRIVAL_FALLING     = 3  // falling in from above
 } ENTRANCE_ARRIVAL;
 
 // Arriving in a scene, leaving by stairs, and the leader's jumps and climbs.
@@ -73,8 +73,8 @@ void   fdExitAddHiddenLeaderLayer(void);
 // A rope's state (ROPE_SLOT.state), which fdRopeGetState returns.
 typedef enum ROPE_SLOT_STATE
 {
-	ROPE_COILED, // at its first post, or pulled back there
-	ROPE_THROWN  // thrown or laid tied from post to post
+    ROPE_COILED, // at its first post, or pulled back there
+    ROPE_THROWN  // thrown or laid tied from post to post
 } ROPE_SLOT_STATE;
 
 Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *index);
@@ -85,7 +85,7 @@ fdRopeLayTied(Sint32 index, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2, Sint32 y
 Sint32
 fdRopeLayCoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX, Sint32 toY, Sint32 toZ);
 Sint32 fdRopeLayBowed(
-	Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX, Sint32 toY, Sint32 toZ, FIXED height);
+    Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX, Sint32 toY, Sint32 toZ, FIXED height);
 void fdRopeDraw(void);
 void fdRopeUpdate(void);
 
@@ -94,11 +94,11 @@ void fdTightropeWobbleBetween(Sint32 index, Sint32 fromId, Sint32 toId, FIXED he
 Sint32
 fdTightropeLay(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX, Sint32 toY, Sint32 toZ);
 Sint32 fdTightropeLayBowed(
-	Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX, Sint32 toY, Sint32 toZ, FIXED height);
+    Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX, Sint32 toY, Sint32 toZ, FIXED height);
 Sint32
 fdTightropeLayCoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX, Sint32 toY, Sint32 toZ);
 Sint32 fdTightropeRecoil(
-	Sint32 slot, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2, Sint32 y2, Sint32 z2, Sint32 wave);
+    Sint32 slot, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2, Sint32 y2, Sint32 z2, Sint32 wave);
 void                      fdTightropeDraw(void);
 void                      fdTightropeUpdate(void);
 

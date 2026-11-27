@@ -6,14 +6,14 @@
 // LATE_DATA first.
 
 #ifndef DUST_SCRIPT_SECTION
-#	define DUST_SCRIPT_SECTION
+#    define DUST_SCRIPT_SECTION
 #endif
 
 // It lasts 33 ticks, then stops and is gone.
 DUST_SCRIPT_SECTION Uint32 DustScatterScript[] = {
-	SC_WAIT(33),
-	SC_SET(SW_HOOK, 0),
-	SC_POSITION(0, 0, 0),
-	SC_WAIT(1),
-	SC_RELEASE,
+    SC_WAIT(33),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_RELEASE,
 };

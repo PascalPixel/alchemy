@@ -13,48 +13,48 @@
 // against or searching the metatile does.
 typedef enum METATILE_BEHAVIOR
 {
-	METATILE_BEHAVIOR_NORMAL                 = 0, // open ground: nothing happens there
-	// 1 to 239: the scene's own scripts, step cue or exit when stepped on (fdRunStepCueOrExit),
-	// examine cue when the player presses A facing the metatile.
-	METATILE_BEHAVIOR_CUE_FIRST              = 1,
-	METATILE_BEHAVIOR_CUE_LAST               = 239,
-	// Ground with encounters of its own: grounds 1 and 2 of the map's zones.
-	METATILE_BEHAVIOR_ENCOUNTER_GROUND_A     = 240,
-	METATILE_BEHAVIOR_ENCOUNTER_GROUND_B     = 241,
-	// 242 to 247: examine cues with lines of their own, the same on every map (fdExamineMetatile,
-	// FieldExamineCueMessageOffsets).
-	METATILE_BEHAVIOR_JAR                    = 242,
-	METATILE_BEHAVIOR_BARREL                 = 243,
-	METATILE_BEHAVIOR_WOODEN_BOX             = 244,
-	METATILE_BEHAVIOR_GRAVE                  = 245,
-	METATILE_BEHAVIOR_BOOKS                  = 246,
-	METATILE_BEHAVIOR_WELL                   = 247,
-	// Jumps forward like METATILE_BEHAVIOR_JUMP_FORWARD, but fdUpdateWalking never passes it to
-	// fdRunPushMetatile.
-	METATILE_BEHAVIOR_JUMP_FORWARD_UNREACHED = 249,
-	// Ground that hurts the party over time: the Lamakan Desert's sand.
-	METATILE_BEHAVIOR_DESERT_SAND            = 250,
-	// Ground Cloak keeps the leader hidden on; stepping off it ends Cloak.
-	METATILE_BEHAVIOR_CLOAK                  = 251,
-	// 252 to 254: metatiles the leader pushes against (fdRunPushMetatile).
-	METATILE_BEHAVIOR_LEDGE                  = 252, // jumped down with Down held
-	METATILE_BEHAVIOR_CLIMB                  = 253, // climbed up or down with Up or Down held
-	METATILE_BEHAVIOR_JUMP_FORWARD           = 254, // jumped across
-	METATILE_BEHAVIOR_WALL                   = 255  // blocks whatever the heights
+    METATILE_BEHAVIOR_NORMAL                 = 0, // open ground: nothing happens there
+    // 1 to 239: the scene's own scripts, step cue or exit when stepped on (fdRunStepCueOrExit),
+    // examine cue when the player presses A facing the metatile.
+    METATILE_BEHAVIOR_CUE_FIRST              = 1,
+    METATILE_BEHAVIOR_CUE_LAST               = 239,
+    // Ground with encounters of its own: grounds 1 and 2 of the map's zones.
+    METATILE_BEHAVIOR_ENCOUNTER_GROUND_A     = 240,
+    METATILE_BEHAVIOR_ENCOUNTER_GROUND_B     = 241,
+    // 242 to 247: examine cues with lines of their own, the same on every map (fdExamineMetatile,
+    // FieldExamineCueMessageOffsets).
+    METATILE_BEHAVIOR_JAR                    = 242,
+    METATILE_BEHAVIOR_BARREL                 = 243,
+    METATILE_BEHAVIOR_WOODEN_BOX             = 244,
+    METATILE_BEHAVIOR_GRAVE                  = 245,
+    METATILE_BEHAVIOR_BOOKS                  = 246,
+    METATILE_BEHAVIOR_WELL                   = 247,
+    // Jumps forward like METATILE_BEHAVIOR_JUMP_FORWARD, but fdUpdateWalking never passes it to
+    // fdRunPushMetatile.
+    METATILE_BEHAVIOR_JUMP_FORWARD_UNREACHED = 249,
+    // Ground that hurts the party over time: the Lamakan Desert's sand.
+    METATILE_BEHAVIOR_DESERT_SAND            = 250,
+    // Ground Cloak keeps the leader hidden on; stepping off it ends Cloak.
+    METATILE_BEHAVIOR_CLOAK                  = 251,
+    // 252 to 254: metatiles the leader pushes against (fdRunPushMetatile).
+    METATILE_BEHAVIOR_LEDGE                  = 252, // jumped down with Down held
+    METATILE_BEHAVIOR_CLIMB                  = 253, // climbed up or down with Up or Down held
+    METATILE_BEHAVIOR_JUMP_FORWARD           = 254, // jumped across
+    METATILE_BEHAVIOR_WALL                   = 255  // blocks whatever the heights
 } METATILE_BEHAVIOR;
 
 // One metatile of a map layer: its metatile tiles and flags, its metatile behavior and its shape,
 // an index into the shape table.
 typedef struct MAP_GRID_METATILE
 {
-	// bits: 15..14 the priority an actor standing on it takes, if not 0 (also read by
-	// fdMapGridGetMetatileHighFlags) | 13..12 the layer such an actor takes, + 1, if not 0 | 11..0
-	// metatile tiles (ACTOR_CAMERA_TILE)
-	Uint16 metatileTilesAndFlags;
-	Uint8  behavior; // an METATILE_BEHAVIOR
-	// Indexes the 4-byte shape table (MapGridShapes): the shape's kind in the first byte's low four
-	// bits, then its height samples.
-	Uint8  shape;
+    // bits: 15..14 the priority an actor standing on it takes, if not 0 (also read by
+    // fdMapGridGetMetatileHighFlags) | 13..12 the layer such an actor takes, + 1, if not 0 | 11..0
+    // metatile tiles (ACTOR_CAMERA_TILE)
+    Uint16 metatileTilesAndFlags;
+    Uint8  behavior; // an METATILE_BEHAVIOR
+    // Indexes the 4-byte shape table (MapGridShapes): the shape's kind in the first byte's low four
+    // bits, then its height samples.
+    Uint8  shape;
 } MAP_GRID_METATILE;
 
 // The number of the metatile tiles a map metatile draws, in its low 12 bits.
@@ -64,10 +64,10 @@ typedef struct MAP_GRID_METATILE
 // tick from fdBlendScriptStart).
 typedef struct BLEND_SCRIPT_STATE
 {
-	Uint16 *script; // where 0xffff loops back to; null for none
-	Uint16 *cursor; // the next command
-	Uint16  delay;  // ticks left before the next command
-	Uint16  paused; // nonzero holds the script where it is
+    Uint16 *script; // where 0xffff loops back to; null for none
+    Uint16 *cursor; // the next command
+    Uint16  delay;  // ticks left before the next command
+    Uint16  paused; // nonzero holds the script where it is
 } BLEND_SCRIPT_STATE;
 
 // One of the 16 tileset animations, which copy tiles into VRAM by script
@@ -75,20 +75,20 @@ typedef struct BLEND_SCRIPT_STATE
 // tile and the ticks to wait.
 typedef struct TILESET_ANIM
 {
-	const Uint16 *start;  // where 0xffff loops back to; null for none
-	const Uint16 *cursor; // the next group
-	Uint16        timer;  // ticks left of the current wait
-	Uint16        paused; // nonzero, set by a scene, holds the animation
+    const Uint16 *start;  // where 0xffff loops back to; null for none
+    const Uint16 *cursor; // the next group
+    Uint16        timer;  // ticks left of the current wait
+    Uint16        paused; // nonzero, set by a scene, holds the animation
 } TILESET_ANIM;
 
 // A layout's three layers, by what they hold. Most layouts give them priorities 3, 2 and 1.
 typedef enum MAP_GRID_LAYER_INDEX
 {
-	MAPGRID_LAYER_GROUND   = 0, // `BG3`: the ground, at the back
-	MAPGRID_LAYER_MIDDLE   = 1, // `BG2`: walls and edges, under the actors
-	// `BG1`: roofs and tree tops, over the actors
-	MAPGRID_LAYER_OVERHEAD = 2,
-	MAPGRID_LAYER_COUNT    = 3
+    MAPGRID_LAYER_GROUND   = 0, // `BG3`: the ground, at the back
+    MAPGRID_LAYER_MIDDLE   = 1, // `BG2`: walls and edges, under the actors
+    // `BG1`: roofs and tree tops, over the actors
+    MAPGRID_LAYER_OVERHEAD = 2,
+    MAPGRID_LAYER_COUNT    = 3
 } MAP_GRID_LAYER_INDEX;
 
 STATIC_ASSERT(sizeof(TILESET_ANIM) == 12);
@@ -96,9 +96,9 @@ STATIC_ASSERT(sizeof(TILESET_ANIM) == 12);
 // A position on the world map, as its walkability check reads it.
 typedef struct WORLD_POS
 {
-	FIXED x;      // 16.16 fixed-point pixels
-	FIXED height; // 16.16 fixed-point pixels
-	FIXED y;      // 16.16 fixed-point pixels
+    FIXED x;      // 16.16 fixed-point pixels
+    FIXED height; // 16.16 fixed-point pixels
+    FIXED y;      // 16.16 fixed-point pixels
 } WORLD_POS;
 
 // The layout's metatile tiles, 32 KB of EWRAM at 0x02020000: each metatile's tiles 8 bytes, its
@@ -142,10 +142,10 @@ extern Uint8 BgTileBuffer[];
 // A row of MapsWork: a layout's resources, each counted from ResourceIdEmptyMap.
 typedef struct MAP_RESOURCES
 {
-	Uint16 header;
-	Uint16 palette;
-	Uint16 tiles[3];       // For char blocks 1, 2 and 3.
-	Uint16 animationTiles; // Into MapGridAnimationTiles.
+    Uint16 header;
+    Uint16 palette;
+    Uint16 tiles[3];       // For char blocks 1, 2 and 3.
+    Uint16 animationTiles; // Into MapGridAnimationTiles.
 } MAP_RESOURCES;
 
 // Every layout's resources, by map number (src/map/resources.s).

@@ -47,7 +47,7 @@ void          fdActorWaitForMoveStub(void *actor);
 void          fdWorldMapLoadDefaultMetatilesAndUpdateBlockStub(void);
 void          fdMapGridPlayMapEditStub(Uint16 *steps, Sint32 destX, Uint32 destY);
 void          fdMapGridCopyMetatileTilesIndicesRectStub(
-			 Sint32 srcX, Sint32 srcY, Uint32 destX, Uint32 destY, Uint32 width, Uint32 height);
+             Sint32 srcX, Sint32 srcY, Uint32 destX, Uint32 destY, Uint32 width, Uint32 height);
 void   fdTilesetAnimationResumeStub(Uint32 channelIndex);
 void   fdTilesetAnimationPauseStub(Uint32 channelIndex);
 void   fdBlendScriptResumeStub(void);
@@ -55,11 +55,11 @@ void   fdBlendScriptSuspendStub(void);
 Sint32 fdMapGridGetTerrainHeightStub(Sint32 layer, Sint32 x, Sint32 y);
 Sint32 fdMapGridGetMetatileBehaviorAtStub(Sint32 layer, Sint32 x, Sint32 y);
 void   fdMapGridCopyMetatileTilesMetatilesRectStub(
-	  Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
+      Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
 void fdMapGridCopyMetatileAttributeRectStub(
-	Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
+    Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
 void fdMapGridCopyMetatileIndexRectStub(
-	Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
+    Sint32 srcX, Sint32 srcY, Sint32 width, Sint32 height, Sint32 destX, Sint32 destY);
 void   fdWorldMapSetGridTileStub(Sint32 x, Sint32 y, Sint32 metatileX, Sint32 metatileY);
 Sint32 fdMapGridCheckCollisionStub(struct ACTOR *actor, struct FIELD_POS *pos);
 void   fdActorSetSpriteFlagsStub(struct ACTOR *actor, Uint32 flags);

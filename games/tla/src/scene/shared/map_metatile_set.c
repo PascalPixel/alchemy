@@ -13,19 +13,19 @@ extern MAP_METATILE MapGridMetatileBuffer[];
 // layer past the overhead one, and returns the old value.
 Sint32              scMapMetatileSetAttributes(Uint32 layer, Sint32 x, Sint32 z, Sint32 value)
 {
-	MAP_STATE    *map = RamHeapSlots->mapGrid;
-	MAP_METATILE *metatile;
-	Sint32        old;
+    MAP_STATE    *map = RamHeapSlots->mapGrid;
+    MAP_METATILE *metatile;
+    Sint32        old;
 
-	if (map == NULL)
-		return 0;
-	if (layer <= MAPGRID_LAYER_OVERHEAD)
-		metatile = map->layers[layer].metatiles;
-	else
-		metatile = MapGridMetatileBuffer;
-	metatile                += x + z * MAPGRID_SIZE;
-	old                      = (metatile->collisionCode << 8) | metatile->attributeB;
-	metatile->collisionCode  = value >> 8;
-	metatile->attributeB     = value;
-	return old;
+    if (map == NULL)
+        return 0;
+    if (layer <= MAPGRID_LAYER_OVERHEAD)
+        metatile = map->layers[layer].metatiles;
+    else
+        metatile = MapGridMetatileBuffer;
+    metatile                += x + z * MAPGRID_SIZE;
+    old                      = (metatile->collisionCode << 8) | metatile->attributeB;
+    metatile->collisionCode  = value >> 8;
+    metatile->attributeB     = value;
+    return old;
 }

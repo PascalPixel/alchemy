@@ -7,18 +7,18 @@
 // its rates and turns its sprite by its spin.
 void fdEffectUpdateMotionScaleAndSpin(FIELD_OBJECT *object)
 {
-	Sint32 x;
-	Sint32 velocityX;
-	SPR   *sprite;
+    Sint32 x;
+    Sint32 velocityX;
+    SPR   *sprite;
 
-	x                      = object->effect.x;
-	velocityX              = object->effect.velocity.x;
-	sprite                 = object->effect.sprite;
+    x                      = object->effect.x;
+    velocityX              = object->effect.velocity.x;
+    sprite                 = object->effect.sprite;
 
-	object->effect.x       = x + velocityX;
-	object->effect.y      += object->effect.velocity.y;
-	object->effect.z      += object->effect.velocity.z;
-	object->effect.scaleX += object->effect.scaleRateX;
-	object->effect.scaleY += object->effect.scaleRateY;
-	sprite->rotation      += object->effect.spin;
+    object->effect.x       = x + velocityX;
+    object->effect.y      += object->effect.velocity.y;
+    object->effect.z      += object->effect.velocity.z;
+    object->effect.scaleX += object->effect.scaleRateX;
+    object->effect.scaleY += object->effect.scaleRateY;
+    sprite->rotation      += object->effect.spin;
 }

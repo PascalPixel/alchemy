@@ -32,10 +32,10 @@ extern CUE            KolimaForestGladeCues[];
 // Kolima Forest's actors, numbering the rows of KolimaForestGladeActorPlacements.
 typedef enum KOLIMA_FOREST_GLADE_ACTOR_ID
 {
-	// The three logs.
-	ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-	// The Nut that floats until Catch pulls it in.
-	ACTOR_NUT       = ACTOR_FIRST_LOG + 3
+    // The three logs.
+    ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
+    // The Nut that floats until Catch pulls it in.
+    ACTOR_NUT       = ACTOR_FIRST_LOG + 3
 } KOLIMA_FOREST_GLADE_ACTOR_ID;
 
 // How far the curse tints the glade until it is lifted: green and blue lose 1 / GLADE_CURSE_DIVISOR
@@ -47,67 +47,67 @@ typedef enum KOLIMA_FOREST_GLADE_ACTOR_ID
 // Where the party enters, from SceneIdKolimaForestEntrance and SceneIdKolimaForestCliff.
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return KolimaForestGladeEntrances;
+    return KolimaForestGladeEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
-	return 0;
+    return 0;
 }
 
 // The ways on into the forest (SceneIdKolimaForestCliff) and back (SceneIdKolimaForestEntrance).
 const Uint32 *scGetExits(void)
 {
-	return KolimaForestGladeExits;
+    return KolimaForestGladeExits;
 }
 
 // The three logs and the Nut.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return KolimaForestGladeActorPlacements;
+    return KolimaForestGladeActorPlacements;
 }
 
 // In Kolima Forest (SceneIdKolimaForestGlade), walking into a log rolls it ahead until something
 // stops it.
 static void scKolimaForestGladePushLog(void)
 {
-	PUSHED_ACTOR_PROBE result;
-	fdScriptStart();
-	if (scPushedActorFindClearPos(&result))
-		scPushedActorRoll(result);
-	fdScriptEnd();
+    PUSHED_ACTOR_PROBE result;
+    fdScriptStart();
+    if (scPushedActorFindClearPos(&result))
+        scPushedActorRoll(result);
+    fdScriptEnd();
 }
 
 // In Kolima Forest (SceneIdKolimaForestGlade), Catch on the floating Nut makes it vanish, and the
 // party finds a Nut.
 static void scKolimaForestGladeCatchNut(void)
 {
-	scCatchNut(ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT);
+    scCatchNut(ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT);
 }
 
 // The logs, the Nut and the two ways out.
 const CUE *scGetCues(void)
 {
-	return KolimaForestGladeCues;
+    return KolimaForestGladeCues;
 }
 
 // Sets up the floating Nut and the logs on entry.
 Sint32 scInit(void)
 {
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	if (gmFlagGet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0)
-	{
-		scFloatNut(ACTOR_NUT);
-	}
-	scPushedActorBlockFootprint(ACTOR_FIRST_LOG);
-	scPushedActorBlockFootprint(ACTOR_FIRST_LOG + 1);
-	scPushedActorBlockFootprint(ACTOR_FIRST_LOG + 2);
-	if (gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
-	{
-		scKolimaPaletteCurse(GLADE_CURSE_DIVISOR);
-	}
-	return 0;
+    FieldStateWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    if (gmFlagGet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0)
+    {
+        scFloatNut(ACTOR_NUT);
+    }
+    scPushedActorBlockFootprint(ACTOR_FIRST_LOG);
+    scPushedActorBlockFootprint(ACTOR_FIRST_LOG + 1);
+    scPushedActorBlockFootprint(ACTOR_FIRST_LOG + 2);
+    if (gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
+    {
+        scKolimaPaletteCurse(GLADE_CURSE_DIVISOR);
+    }
+    return 0;
 }
 
 #include "shared/kolima_palette.c"
@@ -117,49 +117,49 @@ Sint32 scInit(void)
 // clang-format off
 
 SCENE_ENTRANCE KolimaForestGladeEntrances[] = {
-	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE, CONDITION_ALWAYS, 480, 0, 376, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-	{ KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF, CONDITION_ALWAYS, 312, 0, 40, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ SCENE_TABLE_END },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE, CONDITION_ALWAYS, 480, 0, 376, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF, CONDITION_ALWAYS, 312, 0, 40, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { SCENE_TABLE_END },
 };
 
 // KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back.
 Uint32 KolimaForestGladeExits[] = {
-	SCENE_EXITS(KolimaForestGlade),
-	SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
-	SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE),
-	SCENE_EXITS_END,
+    SCENE_EXITS(KolimaForestGlade),
+    SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
+    SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE),
+    SCENE_EXITS_END,
 };
 
 // Until the third patch the Nut's actor placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag catching it sets.
 ACTOR_PLACE KolimaForestGladeActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-		360, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-		160, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-		136, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        360, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        160, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        136, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
 #if !KOLIMA_NUT_CHECKS_OWN_FLAG
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
-		280, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
+        280, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
 #else
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_KOLIMA_FOREST_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
-		280, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_KOLIMA_FOREST_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
+        280, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
 #endif
-	{ SCENE_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 
 CUE KolimaForestGladeCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS, KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF},
-	{CUE_EXIT, 2, CONDITION_ALWAYS, KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+    {CUE_EXIT, 1, CONDITION_ALWAYS, KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF},
+    {CUE_EXIT, 2, CONDITION_ALWAYS, KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
+    {CUE_STEP | STEP_CUE_FLAG_WALKING,
      10, CONDITION_ALWAYS,
      SCRIPT_REF(scKolimaForestGladePushLog)},
-	{PSYNERGY_ON_ACTOR(ABILITY_CATCH),
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH),
      ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
      SCRIPT_REF(scKolimaForestGladeCatchNut)},
-	{CUE_TABLE_END},
+    {CUE_TABLE_END},
 };
 
 // The healthy colours, kept by scKolimaPaletteSaveHealthy: the palette fade's 448 background and

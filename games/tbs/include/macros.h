@@ -11,17 +11,17 @@
 // y and z in one statement (SET_ACTOR_POSITION sets an actor's).
 #define SET_POSITION(p, newX, newY, newZ) ((p)->x = (newX), (p)->y = (newY), (p)->z = (newZ))
 #define SET_VELOCITY(p, vx, vy, vz)                                                                \
-	((p)->velocityX = (vx), (p)->velocityY = (vy), (p)->velocityZ = (vz))
+    ((p)->velocityX = (vx), (p)->velocityY = (vy), (p)->velocityZ = (vz))
 
 // Keeps `v` within low to high, the low bound tested first. A plain block, so it cannot stand
 // before an `else`.
 #define CLAMP(v, low, high)                                                                        \
-	{                                                                                              \
-		if ((v) < (low))                                                                           \
-			(v) = (low);                                                                           \
-		if ((v) > (high))                                                                          \
-			(v) = (high);                                                                          \
-	}
+    {                                                                                              \
+        if ((v) < (low))                                                                           \
+            (v) = (low);                                                                           \
+        if ((v) > (high))                                                                          \
+            (v) = (high);                                                                          \
+    }
 
 // The magnitude of v. v is read twice.
 #define ABS(v)             ((v) < 0 ? -(v) : (v))

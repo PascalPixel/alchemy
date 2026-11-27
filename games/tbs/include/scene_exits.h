@@ -11,192 +11,192 @@
 // own names it below.
 typedef enum DEFAULT_ENTRANCE
 {
-	ENTRANCE_DEFAULT = 0
+    ENTRANCE_DEFAULT = 0
 } DEFAULT_ENTRANCE;
 
 // SceneIdTitle's entrances and exits.
 enum
 {
-	TITLE_FROM_VALE_PLAZA    = 1,
-	TITLE_AFTER_RUN          = 2,
-	TITLE_FROM_LEMURIAN_SHIP = 9,
-	TITLE_FROM_WORLD_MAP     = 10,
+    TITLE_FROM_VALE_PLAZA    = 1,
+    TITLE_AFTER_RUN          = 2,
+    TITLE_FROM_LEMURIAN_SHIP = 9,
+    TITLE_FROM_WORLD_MAP     = 10,
 };
 
 // SceneIdFileScreen's entrances and exits.
 enum
 {
-	FILE_SCREEN_FROM_SANCTUM = 1,
-	FILE_SCREEN_FROM_TITLE   = 2,
+    FILE_SCREEN_FROM_SANCTUM = 1,
+    FILE_SCREEN_FROM_TITLE   = 2,
 };
 
 // SceneIdWorldMap's entrances.
 enum
 {
-	WORLD_MAP_FROM_VALE_PLAZA                       = 1,
-	WORLD_MAP_FROM_TITLE                            = 2,
-	WORLD_MAP_FROM_VAULT_SOUTH                      = 3,
-	WORLD_MAP_FROM_GOMA_CAVE_ENTRANCE               = 4,
-	WORLD_MAP_FROM_BILIBIN                          = 5,
-	WORLD_MAP_FROM_BILIBIN_BARRICADE_EAST           = 6,
-	WORLD_MAP_FROM_KOLIMA_WEST                      = 7,
-	WORLD_MAP_FROM_KOLIMA_FOREST_ENTRANCE           = 8,
-	WORLD_MAP_FROM_IMIL_SOUTH                       = 9,
-	WORLD_MAP_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
-	WORLD_MAP_FROM_KOLIMA_BRIDGE_SOUTH              = 11,
-	WORLD_MAP_FROM_FUCHIN_TEMPLE_GROUNDS            = 12,
-	WORLD_MAP_FROM_MOGALL_FOREST_SIGN               = 13,
-	WORLD_MAP_FROM_XIAN                             = 14,
-	WORLD_MAP_FROM_ALPINE_CROSSING_EAST             = 15,
-	WORLD_MAP_FROM_ALTIN                            = 16,
-	WORLD_MAP_FROM_LAMA_TEMPLE                      = 17,
-	WORLD_MAP_FROM_LAMAKAN_DESERT_EAST              = 18,
-	WORLD_MAP_FROM_KALAY_WEST                       = 19,
-	WORLD_MAP_FROM_KALAY_EAST                       = 20,
-	WORLD_MAP_FROM_KALAY_DOCKS_SOUTH                = 21,
-	WORLD_MAP_FROM_TOLBI_DOCKS                      = 22,
-	WORLD_MAP_FROM_TOLBI                            = 23,
-	WORLD_MAP_FROM_ALTMILLER_CAVE_ENTRANCE          = 24,
-	WORLD_MAP_FROM_GONDOWAN_PASSAGE_NORTH           = 25,
-	WORLD_MAP_FROM_GONDOWAN_CAVE_NORTH              = 26,
-	WORLD_MAP_FROM_SUHALLA                          = 27,
-	WORLD_MAP_FROM_SUHALLA_DESERT_NORTH             = 28,
-	WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_SOUTH    = 29,
-	WORLD_MAP_FROM_LALIVERO_EAST                    = 30,
-	WORLD_MAP_FROM_ROAD_TO_BABI_LIGHTHOUSE          = 31,
-	WORLD_MAP_FROM_VENUS_LIGHTHOUSE_ENTRY_EAST      = 32,
-	WORLD_MAP_FROM_GATEWAY_CAVE                     = 33,
-	WORLD_MAP_FROM_LUNPA                            = 34,
-	WORLD_MAP_FROM_BILIBIN_CAVE_ENTRANCE            = 35,
-	WORLD_MAP_FROM_KOLIMA_EAST                      = 38,
-	WORLD_MAP_FROM_IMIL_NORTH                       = 39,
-	WORLD_MAP_FROM_GOMA_CAVE_BRIDGE                 = 40,
-	WORLD_MAP_FROM_GONDOWAN_CAVE_SOUTH              = 41,
-	WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_EAST     = 42,
-	WORLD_MAP_FROM_MOGALL_FOREST_KILLER_APE         = 43,
-	WORLD_MAP_FROM_VAULT_NORTH                      = 44,
-	WORLD_MAP_FROM_KOLIMA_BRIDGE_NORTH              = 46,
-	WORLD_MAP_FROM_BILIBIN_BARRICADE_WEST           = 47,
-	WORLD_MAP_FROM_BILIBIN_CAVE_ICE                 = 48,
-	WORLD_MAP_FROM_WEST_LUNPA_CAVE                  = 49,
-	WORLD_MAP_FROM_ALPINE_CROSSING_NORTH            = 50,
-	WORLD_MAP_FROM_ALPINE_CROSSING_WEST             = 51,
-	WORLD_MAP_FROM_ALTIN_PEAK_WEST_EXIT             = 52,
-	WORLD_MAP_FROM_LAMAKAN_DESERT_CAVE              = 53,
-	WORLD_MAP_FROM_GONDOWAN_PASSAGE_SOUTH           = 54,
-	WORLD_MAP_FROM_SUHALLA_DESERT_SOUTH             = 55,
-	WORLD_MAP_FROM_SUHALLA_NORTH                    = 56,
-	WORLD_MAP_FROM_SUHALLA_EAST                     = 57,
-	WORLD_MAP_FROM_KALAY_DOCKS_NORTH                = 58,
-	WORLD_MAP_FROM_LALIVERO_WEST                    = 59,
-	WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_NORTH      = 60,
-	WORLD_MAP_FROM_VENUS_LIGHTHOUSE_ENTRY_WEST      = 61,
-	WORLD_MAP_HAMMETS_CARAVAN_LEAVES                = 64,
-	WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK  = 65,
-	WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK = 66,
-	WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK  = 67,
-	WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN        = 68,
-	WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND          = 69,
-	WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI      = 70,
-	WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH      = 71,
-	WORLD_MAP_FROM_FILE_SCREEN                      = 72,
-	// After the look back at Venus Lighthouse, the lighthouse shakes in clouds of dust and
-	// WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE sends the party on to Sheba's fall
-	// (scWorldMapShakeVenusLighthouse).
-	WORLD_MAP_BEFORE_SHEBAS_FALL                    = 73,
-	WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE   = 74,
-	WORLD_MAP_FROM_SHIP_ROOMS                       = 75,
-	WORLD_MAP_FROM_CROSSBONE_ISLE                   = 76,
-	// Where one of the Suhalla Desert's storms sets the party down, still in the air, beside the
-	// world map's own storm.
-	WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM         = 77,
-	// Where a defeat returns after Iodem hands over the Black Orb: the orb is discarded and
-	// WORLD_MAP_TO_ROCK_ROOMS leads on.
-	WORLD_MAP_AFTER_BLACK_ORB_DEFEAT                = 78,
-	WORLD_MAP_JENNA_AND_KRADEN_ADRIFT               = 80,
-	// The ball of light that swells over Mercury Lighthouse once its beacon is lit
-	// (scWorldMapPlayLighthouseTransition); then on to the aerie.
-	WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT          = 90,
-	// As WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, over Venus Lighthouse; then back to the aerie.
-	WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT            = 91,
-	// The world map's debug entrance, which sets FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_AREA and
-	// FLAG_DEBUG_STEPS_OFF.
-	WORLD_MAP_FROM_DEBUG                            = 99,
+    WORLD_MAP_FROM_VALE_PLAZA                       = 1,
+    WORLD_MAP_FROM_TITLE                            = 2,
+    WORLD_MAP_FROM_VAULT_SOUTH                      = 3,
+    WORLD_MAP_FROM_GOMA_CAVE_ENTRANCE               = 4,
+    WORLD_MAP_FROM_BILIBIN                          = 5,
+    WORLD_MAP_FROM_BILIBIN_BARRICADE_EAST           = 6,
+    WORLD_MAP_FROM_KOLIMA_WEST                      = 7,
+    WORLD_MAP_FROM_KOLIMA_FOREST_ENTRANCE           = 8,
+    WORLD_MAP_FROM_IMIL_SOUTH                       = 9,
+    WORLD_MAP_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
+    WORLD_MAP_FROM_KOLIMA_BRIDGE_SOUTH              = 11,
+    WORLD_MAP_FROM_FUCHIN_TEMPLE_GROUNDS            = 12,
+    WORLD_MAP_FROM_MOGALL_FOREST_SIGN               = 13,
+    WORLD_MAP_FROM_XIAN                             = 14,
+    WORLD_MAP_FROM_ALPINE_CROSSING_EAST             = 15,
+    WORLD_MAP_FROM_ALTIN                            = 16,
+    WORLD_MAP_FROM_LAMA_TEMPLE                      = 17,
+    WORLD_MAP_FROM_LAMAKAN_DESERT_EAST              = 18,
+    WORLD_MAP_FROM_KALAY_WEST                       = 19,
+    WORLD_MAP_FROM_KALAY_EAST                       = 20,
+    WORLD_MAP_FROM_KALAY_DOCKS_SOUTH                = 21,
+    WORLD_MAP_FROM_TOLBI_DOCKS                      = 22,
+    WORLD_MAP_FROM_TOLBI                            = 23,
+    WORLD_MAP_FROM_ALTMILLER_CAVE_ENTRANCE          = 24,
+    WORLD_MAP_FROM_GONDOWAN_PASSAGE_NORTH           = 25,
+    WORLD_MAP_FROM_GONDOWAN_CAVE_NORTH              = 26,
+    WORLD_MAP_FROM_SUHALLA                          = 27,
+    WORLD_MAP_FROM_SUHALLA_DESERT_NORTH             = 28,
+    WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_SOUTH    = 29,
+    WORLD_MAP_FROM_LALIVERO_EAST                    = 30,
+    WORLD_MAP_FROM_ROAD_TO_BABI_LIGHTHOUSE          = 31,
+    WORLD_MAP_FROM_VENUS_LIGHTHOUSE_ENTRY_EAST      = 32,
+    WORLD_MAP_FROM_GATEWAY_CAVE                     = 33,
+    WORLD_MAP_FROM_LUNPA                            = 34,
+    WORLD_MAP_FROM_BILIBIN_CAVE_ENTRANCE            = 35,
+    WORLD_MAP_FROM_KOLIMA_EAST                      = 38,
+    WORLD_MAP_FROM_IMIL_NORTH                       = 39,
+    WORLD_MAP_FROM_GOMA_CAVE_BRIDGE                 = 40,
+    WORLD_MAP_FROM_GONDOWAN_CAVE_SOUTH              = 41,
+    WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_EAST     = 42,
+    WORLD_MAP_FROM_MOGALL_FOREST_KILLER_APE         = 43,
+    WORLD_MAP_FROM_VAULT_NORTH                      = 44,
+    WORLD_MAP_FROM_KOLIMA_BRIDGE_NORTH              = 46,
+    WORLD_MAP_FROM_BILIBIN_BARRICADE_WEST           = 47,
+    WORLD_MAP_FROM_BILIBIN_CAVE_ICE                 = 48,
+    WORLD_MAP_FROM_WEST_LUNPA_CAVE                  = 49,
+    WORLD_MAP_FROM_ALPINE_CROSSING_NORTH            = 50,
+    WORLD_MAP_FROM_ALPINE_CROSSING_WEST             = 51,
+    WORLD_MAP_FROM_ALTIN_PEAK_WEST_EXIT             = 52,
+    WORLD_MAP_FROM_LAMAKAN_DESERT_CAVE              = 53,
+    WORLD_MAP_FROM_GONDOWAN_PASSAGE_SOUTH           = 54,
+    WORLD_MAP_FROM_SUHALLA_DESERT_SOUTH             = 55,
+    WORLD_MAP_FROM_SUHALLA_NORTH                    = 56,
+    WORLD_MAP_FROM_SUHALLA_EAST                     = 57,
+    WORLD_MAP_FROM_KALAY_DOCKS_NORTH                = 58,
+    WORLD_MAP_FROM_LALIVERO_WEST                    = 59,
+    WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_NORTH      = 60,
+    WORLD_MAP_FROM_VENUS_LIGHTHOUSE_ENTRY_WEST      = 61,
+    WORLD_MAP_HAMMETS_CARAVAN_LEAVES                = 64,
+    WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK  = 65,
+    WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK = 66,
+    WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK  = 67,
+    WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN        = 68,
+    WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND          = 69,
+    WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI      = 70,
+    WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH      = 71,
+    WORLD_MAP_FROM_FILE_SCREEN                      = 72,
+    // After the look back at Venus Lighthouse, the lighthouse shakes in clouds of dust and
+    // WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE sends the party on to Sheba's fall
+    // (scWorldMapShakeVenusLighthouse).
+    WORLD_MAP_BEFORE_SHEBAS_FALL                    = 73,
+    WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE   = 74,
+    WORLD_MAP_FROM_SHIP_ROOMS                       = 75,
+    WORLD_MAP_FROM_CROSSBONE_ISLE                   = 76,
+    // Where one of the Suhalla Desert's storms sets the party down, still in the air, beside the
+    // world map's own storm.
+    WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM         = 77,
+    // Where a defeat returns after Iodem hands over the Black Orb: the orb is discarded and
+    // WORLD_MAP_TO_ROCK_ROOMS leads on.
+    WORLD_MAP_AFTER_BLACK_ORB_DEFEAT                = 78,
+    WORLD_MAP_JENNA_AND_KRADEN_ADRIFT               = 80,
+    // The ball of light that swells over Mercury Lighthouse once its beacon is lit
+    // (scWorldMapPlayLighthouseTransition); then on to the aerie.
+    WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT          = 90,
+    // As WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, over Venus Lighthouse; then back to the aerie.
+    WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT            = 91,
+    // The world map's debug entrance, which sets FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_AREA and
+    // FLAG_DEBUG_STEPS_OFF.
+    WORLD_MAP_FROM_DEBUG                            = 99,
 };
 
 // SceneIdWorldMap's exits.
 enum
 {
-	WORLD_MAP_TO_VALE_PLAZA                       = 1,
-	WORLD_MAP_TO_WORLD_MAP_FROM_TITLE             = 2,
-	WORLD_MAP_TO_VAULT_SOUTH                      = 3,
-	WORLD_MAP_TO_GOMA_CAVE_ENTRANCE               = 4,
-	WORLD_MAP_TO_BILIBIN                          = 5,
-	WORLD_MAP_TO_BILIBIN_BARRICADE_WEST           = 6,
-	WORLD_MAP_TO_KOLIMA_WEST                      = 7,
-	WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE           = 8,
-	WORLD_MAP_TO_IMIL_SOUTH                       = 9,
-	WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
-	WORLD_MAP_TO_KOLIMA_BRIDGE_SOUTH              = 11,
-	WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS            = 12,
-	WORLD_MAP_TO_MOGALL_FOREST_SIGN               = 13,
-	WORLD_MAP_TO_XIAN                             = 14,
-	WORLD_MAP_TO_ALPINE_CROSSING_EAST             = 15,
-	WORLD_MAP_TO_ALTIN                            = 16,
-	WORLD_MAP_TO_LAMA_TEMPLE                      = 17,
-	WORLD_MAP_TO_LAMAKAN_DESERT_EAST              = 18,
-	WORLD_MAP_TO_WORLD_MAP_FROM_KALAY_WEST        = 19,
-	WORLD_MAP_TO_KALAY_EAST                       = 20,
-	WORLD_MAP_TO_KALAY_DOCKS_SOUTH                = 21,
-	WORLD_MAP_TO_TOLBI_DOCKS                      = 22,
-	WORLD_MAP_TO_TOLBI                            = 23,
-	WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE          = 24,
-	WORLD_MAP_TO_GONDOWAN_PASSAGE_NORTH           = 25,
-	WORLD_MAP_TO_GONDOWAN_CAVE_NORTH              = 26,
-	WORLD_MAP_TO_SUHALLA                          = 27,
-	WORLD_MAP_TO_SUHALLA_DESERT_NORTH             = 28,
-	WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH    = 29,
-	WORLD_MAP_TO_LALIVERO_EAST                    = 30,
-	WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE          = 31,
-	WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST      = 32,
-	WORLD_MAP_TO_GATEWAY_CAVE                     = 33,
-	WORLD_MAP_TO_LUNPA                            = 34,
-	WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE            = 35,
-	WORLD_MAP_TO_GOMA_CAVE_BRIDGE                 = 40,
-	WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH              = 41,
-	WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST     = 42,
-	WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE         = 43,
-	WORLD_MAP_TO_VAULT_NORTH                      = 44,
-	WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE_NORTHEAST  = 45,
-	WORLD_MAP_TO_KOLIMA_BRIDGE_NORTH              = 46,
-	WORLD_MAP_TO_BILIBIN_BARRICADE_EAST           = 47,
-	WORLD_MAP_TO_BILIBIN_CAVE_ICE                 = 48,
-	WORLD_MAP_TO_WEST_LUNPA_CAVE                  = 49,
-	WORLD_MAP_TO_ALPINE_CROSSING_NORTH            = 50,
-	WORLD_MAP_TO_ALPINE_CROSSING_WEST             = 51,
-	WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT             = 52,
-	WORLD_MAP_TO_LAMAKAN_DESERT_CAVE              = 53,
-	WORLD_MAP_TO_GONDOWAN_PASSAGE_SOUTH           = 54,
-	WORLD_MAP_TO_SUHALLA_DESERT_SOUTH             = 55,
-	WORLD_MAP_TO_KALAY_DOCKS_NORTH                = 56,
-	WORLD_MAP_TO_LALIVERO_WEST                    = 59,
-	WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE            = 60,
-	WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST      = 61,
-	WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE   = 74,
-	WORLD_MAP_TO_CROSSBONE_ISLE                   = 75,
-	WORLD_MAP_TO_WORLD_MAP_FROM_VALE_PLAZA        = 100,
-	WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES           = 101,
-	WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK     = 102,
-	WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK    = 103,
-	WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK     = 104,
-	WORLD_MAP_TO_SHIP_ROOMS                       = 105,
-	WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO          = 106,
-	WORLD_MAP_TO_TOLBI_SHIP_DECK                  = 107,
-	WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH      = 108,
-	WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE           = 109,
-	WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND    = 110,
-	WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT          = 111,
-	WORLD_MAP_TO_ROCK_ROOMS                       = 112,
+    WORLD_MAP_TO_VALE_PLAZA                       = 1,
+    WORLD_MAP_TO_WORLD_MAP_FROM_TITLE             = 2,
+    WORLD_MAP_TO_VAULT_SOUTH                      = 3,
+    WORLD_MAP_TO_GOMA_CAVE_ENTRANCE               = 4,
+    WORLD_MAP_TO_BILIBIN                          = 5,
+    WORLD_MAP_TO_BILIBIN_BARRICADE_WEST           = 6,
+    WORLD_MAP_TO_KOLIMA_WEST                      = 7,
+    WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE           = 8,
+    WORLD_MAP_TO_IMIL_SOUTH                       = 9,
+    WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
+    WORLD_MAP_TO_KOLIMA_BRIDGE_SOUTH              = 11,
+    WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS            = 12,
+    WORLD_MAP_TO_MOGALL_FOREST_SIGN               = 13,
+    WORLD_MAP_TO_XIAN                             = 14,
+    WORLD_MAP_TO_ALPINE_CROSSING_EAST             = 15,
+    WORLD_MAP_TO_ALTIN                            = 16,
+    WORLD_MAP_TO_LAMA_TEMPLE                      = 17,
+    WORLD_MAP_TO_LAMAKAN_DESERT_EAST              = 18,
+    WORLD_MAP_TO_WORLD_MAP_FROM_KALAY_WEST        = 19,
+    WORLD_MAP_TO_KALAY_EAST                       = 20,
+    WORLD_MAP_TO_KALAY_DOCKS_SOUTH                = 21,
+    WORLD_MAP_TO_TOLBI_DOCKS                      = 22,
+    WORLD_MAP_TO_TOLBI                            = 23,
+    WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE          = 24,
+    WORLD_MAP_TO_GONDOWAN_PASSAGE_NORTH           = 25,
+    WORLD_MAP_TO_GONDOWAN_CAVE_NORTH              = 26,
+    WORLD_MAP_TO_SUHALLA                          = 27,
+    WORLD_MAP_TO_SUHALLA_DESERT_NORTH             = 28,
+    WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH    = 29,
+    WORLD_MAP_TO_LALIVERO_EAST                    = 30,
+    WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE          = 31,
+    WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST      = 32,
+    WORLD_MAP_TO_GATEWAY_CAVE                     = 33,
+    WORLD_MAP_TO_LUNPA                            = 34,
+    WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE            = 35,
+    WORLD_MAP_TO_GOMA_CAVE_BRIDGE                 = 40,
+    WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH              = 41,
+    WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST     = 42,
+    WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE         = 43,
+    WORLD_MAP_TO_VAULT_NORTH                      = 44,
+    WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE_NORTHEAST  = 45,
+    WORLD_MAP_TO_KOLIMA_BRIDGE_NORTH              = 46,
+    WORLD_MAP_TO_BILIBIN_BARRICADE_EAST           = 47,
+    WORLD_MAP_TO_BILIBIN_CAVE_ICE                 = 48,
+    WORLD_MAP_TO_WEST_LUNPA_CAVE                  = 49,
+    WORLD_MAP_TO_ALPINE_CROSSING_NORTH            = 50,
+    WORLD_MAP_TO_ALPINE_CROSSING_WEST             = 51,
+    WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT             = 52,
+    WORLD_MAP_TO_LAMAKAN_DESERT_CAVE              = 53,
+    WORLD_MAP_TO_GONDOWAN_PASSAGE_SOUTH           = 54,
+    WORLD_MAP_TO_SUHALLA_DESERT_SOUTH             = 55,
+    WORLD_MAP_TO_KALAY_DOCKS_NORTH                = 56,
+    WORLD_MAP_TO_LALIVERO_WEST                    = 59,
+    WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE            = 60,
+    WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST      = 61,
+    WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE   = 74,
+    WORLD_MAP_TO_CROSSBONE_ISLE                   = 75,
+    WORLD_MAP_TO_WORLD_MAP_FROM_VALE_PLAZA        = 100,
+    WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES           = 101,
+    WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK     = 102,
+    WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK    = 103,
+    WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK     = 104,
+    WORLD_MAP_TO_SHIP_ROOMS                       = 105,
+    WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO          = 106,
+    WORLD_MAP_TO_TOLBI_SHIP_DECK                  = 107,
+    WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH      = 108,
+    WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE           = 109,
+    WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND    = 110,
+    WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT          = 111,
+    WORLD_MAP_TO_ROCK_ROOMS                       = 112,
 };
 
 // SceneIdValePrologue's entrances. VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING,
@@ -205,4596 +205,4596 @@ enum
 // 99).
 enum
 {
-	// Before the stone building on the village's north side.
-	VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING           = 1,
-	// At the foot of the stone steps up the hillside to the north-west.
-	VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS           = 2,
-	VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_NORTH   = 3,
-	VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_SOUTH   = 4,
-	VALE_PROLOGUE_FROM_VALE_PLAZA                   = 5,
-	VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_EAST         = 6,
-	VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_SOUTH        = 7,
-	VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE = 8,
-	VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_NORTH        = 9,
-	VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_WEST         = 10,
-	// By the door of the thatched cottage on the west side, where
-	// VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST also arrives.
-	VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE             = 11,
-	VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST         = 12,
-	VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST         = 13,
-	VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA    = 15,
-	VALE_PROLOGUE_FROM_BOULDER_PASSED               = 16,
+    // Before the stone building on the village's north side.
+    VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING           = 1,
+    // At the foot of the stone steps up the hillside to the north-west.
+    VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS           = 2,
+    VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_NORTH   = 3,
+    VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_SOUTH   = 4,
+    VALE_PROLOGUE_FROM_VALE_PLAZA                   = 5,
+    VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_EAST         = 6,
+    VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_SOUTH        = 7,
+    VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE = 8,
+    VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_NORTH        = 9,
+    VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_WEST         = 10,
+    // By the door of the thatched cottage on the west side, where
+    // VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST also arrives.
+    VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE             = 11,
+    VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST         = 12,
+    VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST         = 13,
+    VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA    = 15,
+    VALE_PROLOGUE_FROM_BOULDER_PASSED               = 16,
 };
 
 // SceneIdValePrologue's exits.
 enum
 {
-	VALE_PROLOGUE_TO_VALE_PLAZA                             = 2,
-	VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH             = 3,
-	VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH             = 4,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_EAST                   = 5,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH                  = 6,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE           = 7,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_NORTH                  = 8,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST                   = 9,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR = 10,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR      = 11,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_WEST                   = 12,
-	VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_EAST                   = 13,
-	VALE_PROLOGUE_TO_BOULDER_PASSED                         = 20,
+    VALE_PROLOGUE_TO_VALE_PLAZA                             = 2,
+    VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH             = 3,
+    VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH             = 4,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_EAST                   = 5,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH                  = 6,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE           = 7,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_NORTH                  = 8,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST                   = 9,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR = 10,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR      = 11,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_WEST                   = 12,
+    VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_EAST                   = 13,
+    VALE_PROLOGUE_TO_BOULDER_PASSED                         = 20,
 };
 
 // SceneIdVale's entrances.
 enum
 {
-	VALE_FROM_SANCTUM                              = 1,
-	VALE_FROM_SOL_ENTRANCE                         = 2,
-	VALE_FROM_VALE_KRADENS_COTTAGE_NORTH           = 3,
-	VALE_FROM_VALE_KRADENS_COTTAGE_SOUTH           = 4,
-	VALE_FROM_VALE_PLAZA                           = 5,
-	VALE_FROM_COTTAGE_ROOMS_A_EAST                 = 6,
-	VALE_FROM_COTTAGE_ROOMS_A_SOUTH                = 7,
-	VALE_FROM_COTTAGE_ROOMS_B                      = 8,
-	VALE_FROM_COTTAGE_ROOMS_A_NORTH                = 9,
-	VALE_FROM_COTTAGE_ROOMS_A_WEST                 = 10,
-	// Beside the door of the house west of the river, which
-	// VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR leaves by; no exit leads here.
-	VALE_FROM_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR = 11,
-	VALE_FROM_TITLE                                = 16,
-	VALE_FROM_ROOF_MENDED                          = 17,
+    VALE_FROM_SANCTUM                              = 1,
+    VALE_FROM_SOL_ENTRANCE                         = 2,
+    VALE_FROM_VALE_KRADENS_COTTAGE_NORTH           = 3,
+    VALE_FROM_VALE_KRADENS_COTTAGE_SOUTH           = 4,
+    VALE_FROM_VALE_PLAZA                           = 5,
+    VALE_FROM_COTTAGE_ROOMS_A_EAST                 = 6,
+    VALE_FROM_COTTAGE_ROOMS_A_SOUTH                = 7,
+    VALE_FROM_COTTAGE_ROOMS_B                      = 8,
+    VALE_FROM_COTTAGE_ROOMS_A_NORTH                = 9,
+    VALE_FROM_COTTAGE_ROOMS_A_WEST                 = 10,
+    // Beside the door of the house west of the river, which
+    // VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR leaves by; no exit leads here.
+    VALE_FROM_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR = 11,
+    VALE_FROM_TITLE                                = 16,
+    VALE_FROM_ROOF_MENDED                          = 17,
 };
 
 // SceneIdVale's exits.
 enum
 {
-	VALE_TO_SOL_ENTRANCE                         = 1,
-	VALE_TO_VALE_PLAZA                           = 2,
-	VALE_TO_VALE_KRADENS_COTTAGE_NORTH           = 3,
-	VALE_TO_VALE_KRADENS_COTTAGE_SOUTH           = 4,
-	VALE_TO_COTTAGE_ROOMS_A_EAST                 = 5,
-	VALE_TO_COTTAGE_ROOMS_A_SOUTH                = 6,
-	VALE_TO_COTTAGE_ROOMS_B                      = 7,
-	VALE_TO_COTTAGE_ROOMS_A_NORTH                = 8,
-	VALE_TO_COTTAGE_ROOMS_A_WEST                 = 9,
-	VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR = 10,
-	VALE_TO_SANCTUM                              = 11,
-	VALE_TO_ROOF_MENDED                          = 12,
+    VALE_TO_SOL_ENTRANCE                         = 1,
+    VALE_TO_VALE_PLAZA                           = 2,
+    VALE_TO_VALE_KRADENS_COTTAGE_NORTH           = 3,
+    VALE_TO_VALE_KRADENS_COTTAGE_SOUTH           = 4,
+    VALE_TO_COTTAGE_ROOMS_A_EAST                 = 5,
+    VALE_TO_COTTAGE_ROOMS_A_SOUTH                = 6,
+    VALE_TO_COTTAGE_ROOMS_B                      = 7,
+    VALE_TO_COTTAGE_ROOMS_A_NORTH                = 8,
+    VALE_TO_COTTAGE_ROOMS_A_WEST                 = 9,
+    VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR = 10,
+    VALE_TO_SANCTUM                              = 11,
+    VALE_TO_ROOF_MENDED                          = 12,
 };
 
 // SceneIdValePlaza's entrances.
 enum
 {
-	VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH   = 1,
-	VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH   = 2,
-	VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST    = 3,
-	VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST    = 4,
-	VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH   = 5,
-	VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST    = 6,
-	VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH   = 7,
-	VALE_PLAZA_FROM_VALE                    = 8,
-	VALE_PLAZA_FROM_WORLD_MAP               = 10,
-	VALE_PLAZA_FROM_CHEST_CAVE              = 11,
-	VALE_PLAZA_FROM_SANCTUM                 = 12,
-	// Beside VALE_PLAZA_FROM_CHEST_CAVE, facing north; no exit leads here.
-	VALE_PLAZA_CHEST_CAVE_UNUSED            = 15,
-	// Where the battle with the travelers on the stormy night returns, won or lost
-	// (scValePlazaFightTravelers).
-	VALE_PLAZA_AFTER_TRAVELERS_BATTLE       = 19,
-	// Entrances only the debug scene selector reaches: no table places them and no exit leads to
-	// them. The first replays the travelers leaving, the second sets FLAG_CHILDHOOD, the third a
-	// preset of story flags (scValePlazaSetProgressFlagsAndExit).
-	VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE = 97,
-	VALE_PLAZA_DEBUG_CHILDHOOD              = 98,
-	VALE_PLAZA_DEBUG_STORY_FLAGS            = 99,
+    VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH   = 1,
+    VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH   = 2,
+    VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST    = 3,
+    VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST    = 4,
+    VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH   = 5,
+    VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST    = 6,
+    VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH   = 7,
+    VALE_PLAZA_FROM_VALE                    = 8,
+    VALE_PLAZA_FROM_WORLD_MAP               = 10,
+    VALE_PLAZA_FROM_CHEST_CAVE              = 11,
+    VALE_PLAZA_FROM_SANCTUM                 = 12,
+    // Beside VALE_PLAZA_FROM_CHEST_CAVE, facing north; no exit leads here.
+    VALE_PLAZA_CHEST_CAVE_UNUSED            = 15,
+    // Where the battle with the travelers on the stormy night returns, won or lost
+    // (scValePlazaFightTravelers).
+    VALE_PLAZA_AFTER_TRAVELERS_BATTLE       = 19,
+    // Entrances only the debug scene selector reaches: no table places them and no exit leads to
+    // them. The first replays the travelers leaving, the second sets FLAG_CHILDHOOD, the third a
+    // preset of story flags (scValePlazaSetProgressFlagsAndExit).
+    VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE = 97,
+    VALE_PLAZA_DEBUG_CHILDHOOD              = 98,
+    VALE_PLAZA_DEBUG_STORY_FLAGS            = 99,
 };
 
 // SceneIdValePlaza's exits.
 enum
 {
-	VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH     = 1,
-	VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH     = 2,
-	VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST      = 3,
-	VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST      = 4,
-	VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH     = 5,
-	VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST = 6,
-	VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH     = 7,
-	VALE_PLAZA_TO_VALE                      = 8,
-	VALE_PLAZA_TO_TITLE                     = 9,
-	VALE_PLAZA_TO_WORLD_MAP                 = 10,
-	VALE_PLAZA_TO_CHEST_CAVE                = 11,
-	VALE_PLAZA_TO_BILIBIN                   = 40,
-	VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST = 50,
+    VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH     = 1,
+    VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH     = 2,
+    VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST      = 3,
+    VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST      = 4,
+    VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH     = 5,
+    VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST = 6,
+    VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH     = 7,
+    VALE_PLAZA_TO_VALE                      = 8,
+    VALE_PLAZA_TO_TITLE                     = 9,
+    VALE_PLAZA_TO_WORLD_MAP                 = 10,
+    VALE_PLAZA_TO_CHEST_CAVE                = 11,
+    VALE_PLAZA_TO_BILIBIN                   = 40,
+    VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST = 50,
 };
 
 // SceneIdValeKradensCottage's entrances.
 enum
 {
-	VALE_KRADENS_COTTAGE_FROM_VALE_NORTH             = 1,
-	VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH             = 2,
-	VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH  = 3,
-	VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST   = 4,
-	// Cleared of the area name with VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST, but no exit
-	// leads here and the entrance table has no row for it.
-	VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED = 5,
-	VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST   = 6,
-	VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH  = 10,
+    VALE_KRADENS_COTTAGE_FROM_VALE_NORTH             = 1,
+    VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH             = 2,
+    VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH  = 3,
+    VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST   = 4,
+    // Cleared of the area name with VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST, but no exit
+    // leads here and the entrance table has no row for it.
+    VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED = 5,
+    VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST   = 6,
+    VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH  = 10,
 };
 
 // SceneIdValeKradensCottage's exits.
 enum
 {
-	VALE_KRADENS_COTTAGE_TO_VALE_NORTH                  = 1,
-	VALE_KRADENS_COTTAGE_TO_VALE_SOUTH                  = 2,
-	VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH       = 3,
-	VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST        = 4,
-	VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST        = 6,
-	VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_NORTH         = 11,
-	VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_SOUTH         = 12,
-	VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG = 13,
+    VALE_KRADENS_COTTAGE_TO_VALE_NORTH                  = 1,
+    VALE_KRADENS_COTTAGE_TO_VALE_SOUTH                  = 2,
+    VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH       = 3,
+    VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST        = 4,
+    VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST        = 6,
+    VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_NORTH         = 11,
+    VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_SOUTH         = 12,
+    VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG = 13,
 };
 
 // SceneIdCottageRoomsA's entrances.
 enum
 {
-	COTTAGE_ROOMS_A_FROM_VALE_WEST        = 1,
-	COTTAGE_ROOMS_A_FROM_VALE_NORTH       = 2,
-	COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST  = 3,
-	COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH = 4,
-	COTTAGE_ROOMS_A_FROM_VALE_SOUTH       = 5,
-	COTTAGE_ROOMS_A_FROM_VALE_EAST        = 6,
-	COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST  = 7,
-	COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH = 8,
+    COTTAGE_ROOMS_A_FROM_VALE_WEST        = 1,
+    COTTAGE_ROOMS_A_FROM_VALE_NORTH       = 2,
+    COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST  = 3,
+    COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH = 4,
+    COTTAGE_ROOMS_A_FROM_VALE_SOUTH       = 5,
+    COTTAGE_ROOMS_A_FROM_VALE_EAST        = 6,
+    COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST  = 7,
+    COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH = 8,
 };
 
 // SceneIdCottageRoomsA's exits.
 enum
 {
-	COTTAGE_ROOMS_A_TO_VALE_WEST        = 1,
-	COTTAGE_ROOMS_A_TO_VALE_NORTH       = 2,
-	COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST  = 3,
-	COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH = 4,
-	COTTAGE_ROOMS_A_TO_VALE_SOUTH       = 5,
-	COTTAGE_ROOMS_A_TO_VALE_EAST        = 6,
-	COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST  = 7,
-	COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH = 8,
+    COTTAGE_ROOMS_A_TO_VALE_WEST        = 1,
+    COTTAGE_ROOMS_A_TO_VALE_NORTH       = 2,
+    COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST  = 3,
+    COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH = 4,
+    COTTAGE_ROOMS_A_TO_VALE_SOUTH       = 5,
+    COTTAGE_ROOMS_A_TO_VALE_EAST        = 6,
+    COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST  = 7,
+    COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH = 8,
 };
 
 // SceneIdCottageRoomsB's entrances.
 enum
 {
-	COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST             = 1,
-	COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH       = 2,
-	COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST             = 3,
-	COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST                  = 4,
-	COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS                = 5,
-	COTTAGE_ROOMS_B_FROM_VALE                             = 6,
-	COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS            = 7,
-	COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR            = 8,
-	COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR        = 9,
-	COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST               = 11,
-	COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST               = 12,
-	COTTAGE_ROOMS_B_FROM_BABI_PALACE                      = 19,
-	COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST             = 20,
-	COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA  = 21,
-	COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG = 22,
+    COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST             = 1,
+    COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH       = 2,
+    COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST             = 3,
+    COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST                  = 4,
+    COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS                = 5,
+    COTTAGE_ROOMS_B_FROM_VALE                             = 6,
+    COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS            = 7,
+    COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR            = 8,
+    COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR        = 9,
+    COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST               = 11,
+    COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST               = 12,
+    COTTAGE_ROOMS_B_FROM_BABI_PALACE                      = 19,
+    COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST             = 20,
+    COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA  = 21,
+    COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG = 22,
 };
 
 // SceneIdCottageRoomsB's exits.
 enum
 {
-	COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST                = 1,
-	COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH          = 2,
-	COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST                = 3,
-	COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST                     = 4,
-	COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS                   = 5,
-	COTTAGE_ROOMS_B_TO_VALE                                = 6,
-	COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS               = 7,
-	COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR               = 8,
-	COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR           = 9,
-	COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST                  = 10,
-	COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST                  = 11,
-	COTTAGE_ROOMS_B_TO_BABI_PALACE                         = 19,
-	COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA = 20,
-	COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA             = 21,
-	COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH          = 22,
+    COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST                = 1,
+    COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH          = 2,
+    COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST                = 3,
+    COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST                     = 4,
+    COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS                   = 5,
+    COTTAGE_ROOMS_B_TO_VALE                                = 6,
+    COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS               = 7,
+    COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR               = 8,
+    COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR           = 9,
+    COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST                  = 10,
+    COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST                  = 11,
+    COTTAGE_ROOMS_B_TO_BABI_PALACE                         = 19,
+    COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA = 20,
+    COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA             = 21,
+    COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH          = 22,
 };
 
 // SceneIdSanctum's entrances.
 enum
 {
-	// no exit leads here and it places nobody; the area names call it Sanctum
-	SANCTUM_UNUSED             = 0,
-	SANCTUM_FROM_VALE          = 1,
-	// Vale Sanctum, inside by the healers and facing south, where a party defeated in Vale wakes
-	// (its return point in field/scene_rules.s); no exit leads here.
-	SANCTUM_VALE_AFTER_DEFEAT  = 2,
-	SANCTUM_FROM_VAULT         = 10,
-	SANCTUM_FROM_VAULT_REVISIT = 11,
-	SANCTUM_FROM_LOG_ROOMS_A   = 12,
-	SANCTUM_FROM_VALE_ERUPTION = 20,
-	SANCTUM_FROM_QUEST_RESTART = 21,
-	SANCTUM_FROM_ALTIN         = 29,
-	SANCTUM_FROM_XIAN          = 32,
-	SANCTUM_FROM_BILIBIN       = 35,
-	// Plays the quest's gathering like SANCTUM_FROM_VALE_ERUPTION; no exit leads here and the
-	// entrance table has no row for it.
-	SANCTUM_QUEST_UNUSED       = 50,
+    // no exit leads here and it places nobody; the area names call it Sanctum
+    SANCTUM_UNUSED             = 0,
+    SANCTUM_FROM_VALE          = 1,
+    // Vale Sanctum, inside by the healers and facing south, where a party defeated in Vale wakes
+    // (its return point in field/scene_rules.s); no exit leads here.
+    SANCTUM_VALE_AFTER_DEFEAT  = 2,
+    SANCTUM_FROM_VAULT         = 10,
+    SANCTUM_FROM_VAULT_REVISIT = 11,
+    SANCTUM_FROM_LOG_ROOMS_A   = 12,
+    SANCTUM_FROM_VALE_ERUPTION = 20,
+    SANCTUM_FROM_QUEST_RESTART = 21,
+    SANCTUM_FROM_ALTIN         = 29,
+    SANCTUM_FROM_XIAN          = 32,
+    SANCTUM_FROM_BILIBIN       = 35,
+    // Plays the quest's gathering like SANCTUM_FROM_VALE_ERUPTION; no exit leads here and the
+    // entrance table has no row for it.
+    SANCTUM_QUEST_UNUSED       = 50,
 };
 
 // SceneIdSanctum's exits.
 enum
 {
-	SANCTUM_TO_VALE          = 1,
-	SANCTUM_TO_VAULT         = 10,
-	SANCTUM_TO_VAULT_REVISIT = 11,
-	SANCTUM_TO_QUEST_RESTART = 20,
-	SANCTUM_TO_VALE_PLAZA    = 30,
-	SANCTUM_TO_ALTIN         = 40,
-	SANCTUM_TO_BILIBIN       = 41,
-	SANCTUM_TO_XIAN          = 42,
-	SANCTUM_TO_FILE_SCREEN   = 50,
+    SANCTUM_TO_VALE          = 1,
+    SANCTUM_TO_VAULT         = 10,
+    SANCTUM_TO_VAULT_REVISIT = 11,
+    SANCTUM_TO_QUEST_RESTART = 20,
+    SANCTUM_TO_VALE_PLAZA    = 30,
+    SANCTUM_TO_ALTIN         = 40,
+    SANCTUM_TO_BILIBIN       = 41,
+    SANCTUM_TO_XIAN          = 42,
+    SANCTUM_TO_FILE_SCREEN   = 50,
 };
 
 // SceneIdValeEruption's entrances.
 enum
 {
-	VALE_ERUPTION_FROM_SOL_ENTRANCE = 15,
+    VALE_ERUPTION_FROM_SOL_ENTRANCE = 15,
 };
 
 // SceneIdValeEruption's exits.
 enum
 {
-	VALE_ERUPTION_TO_SANCTUM = 1,
+    VALE_ERUPTION_TO_SANCTUM = 1,
 };
 
 // SceneIdSolSanctumLunaSolRooms's entrances.
 enum
 {
-	SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS               = 1,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE                = 2,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED                                 = 3, // no exit leads here
-	SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED  = 4,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED = 5,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN   = 6,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_UNUSED         = 7,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION              = 8,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS               = 1,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE                = 2,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED                                 = 3, // no exit leads here
+    SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED  = 4,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED = 5,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN   = 6,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_UNUSED         = 7,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION              = 8,
 };
 
 // SceneIdSolSanctumLunaSolRooms's exits.
 enum
 {
-	SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS               = 1,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE                = 2,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED  = 3,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_TRIGGERED = 4,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN   = 5,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_UNUSED         = 6,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM   = 7,
-	SOL_SANCTUM_LUNA_SOL_ROOMS_TO_BATTLE                            = 10,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS               = 1,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE                = 2,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED  = 3,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_TRIGGERED = 4,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN   = 5,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_UNUSED         = 6,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM   = 7,
+    SOL_SANCTUM_LUNA_SOL_ROOMS_TO_BATTLE                            = 10,
 };
 
 // SceneIdSolSanctumStatue's entrances.
 enum
 {
-	SOL_SANCTUM_STATUE_FROM_VALE_PLAZA                                = 0,
-	SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS                = 1,
-	SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE                = 2,
-	SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED  = 3,
-	SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED = 4,
-	SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN   = 5,
-	SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED         = 6,
-	// Where the Luna and Sol rooms' script exits arrive, at (576, 136) facing south, once more. No
-	// exit leads to it: only the debug scene selector, which exits to any entrance from 0 to 99,
-	// reaches it.
-	SOL_SANCTUM_STATUE_DEBUG_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS          = 99,
+    SOL_SANCTUM_STATUE_FROM_VALE_PLAZA                                = 0,
+    SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS                = 1,
+    SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE                = 2,
+    SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED  = 3,
+    SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED = 4,
+    SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN   = 5,
+    SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED         = 6,
+    // Where the Luna and Sol rooms' script exits arrive, at (576, 136) facing south, once more. No
+    // exit leads to it: only the debug scene selector, which exits to any entrance from 0 to 99,
+    // reaches it.
+    SOL_SANCTUM_STATUE_DEBUG_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS          = 99,
 };
 
 // SceneIdSolSanctumStatue's exits.
 enum
 {
-	SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS                = 1,
-	SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE                = 2,
-	SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED  = 3,
-	SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED = 4,
-	SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN   = 5,
-	SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED         = 6,
-	SOL_SANCTUM_STATUE_TO_BATTLE                                    = 10,
+    SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS                = 1,
+    SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE                = 2,
+    SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED  = 3,
+    SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED = 4,
+    SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN   = 5,
+    SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED         = 6,
+    SOL_SANCTUM_STATUE_TO_BATTLE                                    = 10,
 };
 
 // SceneIdSolSanctumPsynergyStone's entrances.
 enum
 {
-	SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE = 1,
+    SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE = 1,
 };
 
 // SceneIdSolSanctumPsynergyStone's exits.
 enum
 {
-	SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE = 1,
+    SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE = 1,
 };
 
 // SceneIdSolSanctumMaze's entrances.
 enum
 {
-	SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH = 1,
-	SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH = 2,
+    SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH = 1,
+    SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH = 2,
 };
 
 // SceneIdSolSanctumMaze's exits.
 enum
 {
-	SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH = 1,
-	SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH = 2,
+    SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH = 1,
+    SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH = 2,
 };
 
 // SceneIdSolSanctumCorridor's entrances.
 enum
 {
-	SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST = 1,
-	SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST = 2,
+    SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST = 1,
+    SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST = 2,
 };
 
 // SceneIdSolSanctumCorridor's exits.
 enum
 {
-	SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST = 1,
-	SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST = 2,
+    SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST = 1,
+    SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST = 2,
 };
 
 // SceneIdSolSanctumReliefs's entrances.
 enum
 {
-	SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST         = 1,
-	SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_STATUE_HALL            = 2,
-	SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_STATUE_HALL           = 3,
-	SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_FROM_ENTRANCE_ROOM = 4,
-	SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST         = 5,
-	SOL_SANCTUM_RELIEFS_STEPS_ROOM_FROM_STATUE_HALL            = 6,
-	SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_WEST             = 7,
-	SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE                      = 8,
-	SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_FROM_STEPPING_STONE_ROOM = 9,
-	SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_FROM_SECOND_RELIEF_ROOM  = 10,
-	SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_CHEST_ROOM            = 11,
-	SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STATUE_NOOK           = 12,
-	SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STEPS_ROOM            = 13,
-	SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST             = 14,
-	SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE  = 15,
-	SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS        = 16,
+    SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST         = 1,
+    SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_STATUE_HALL            = 2,
+    SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_STATUE_HALL           = 3,
+    SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_FROM_ENTRANCE_ROOM = 4,
+    SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST         = 5,
+    SOL_SANCTUM_RELIEFS_STEPS_ROOM_FROM_STATUE_HALL            = 6,
+    SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_WEST             = 7,
+    SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE                      = 8,
+    SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_FROM_STEPPING_STONE_ROOM = 9,
+    SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_FROM_SECOND_RELIEF_ROOM  = 10,
+    SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_CHEST_ROOM            = 11,
+    SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STATUE_NOOK           = 12,
+    SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STEPS_ROOM            = 13,
+    SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST             = 14,
+    SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE  = 15,
+    SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS        = 16,
 };
 
 // SceneIdSolSanctumReliefs's exits.
 enum
 {
-	SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST         = 1,
-	SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_STATUE_HALL            = 2,
-	SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_STATUE_HALL           = 3,
-	SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM = 4,
-	SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST         = 5,
-	SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_STATUE_HALL            = 6,
-	SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST             = 7,
-	SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE                      = 8,
-	SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM = 9,
-	SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM  = 10,
-	SOL_SANCTUM_RELIEFS_STATUE_HALL_TO_CHEST_ROOM            = 11,
-	SOL_SANCTUM_RELIEFS_STATUE_HALL_TO_STATUE_NOOK           = 12,
-	SOL_SANCTUM_RELIEFS_STATUE_HALL_TO_STEPS_ROOM            = 13,
-	SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST             = 14,
-	SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE  = 15,
-	SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS        = 16,
+    SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST         = 1,
+    SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_STATUE_HALL            = 2,
+    SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_STATUE_HALL           = 3,
+    SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM = 4,
+    SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST         = 5,
+    SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_STATUE_HALL            = 6,
+    SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST             = 7,
+    SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE                      = 8,
+    SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM = 9,
+    SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM  = 10,
+    SOL_SANCTUM_RELIEFS_STATUE_HALL_TO_CHEST_ROOM            = 11,
+    SOL_SANCTUM_RELIEFS_STATUE_HALL_TO_STATUE_NOOK           = 12,
+    SOL_SANCTUM_RELIEFS_STATUE_HALL_TO_STEPS_ROOM            = 13,
+    SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST             = 14,
+    SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE  = 15,
+    SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS        = 16,
 };
 
 // SceneIdSolSanctumElementalStarRoom's entrances.
 enum
 {
-	SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 10,
+    SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 10,
 };
 
 // SceneIdSolSanctumElementalStarRoom's exits.
 enum
 {
-	SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION = 2,
+    SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION = 2,
 };
 
 // SceneIdSolSanctumEruption's entrances.
 enum
 {
-	SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM = 10,
+    SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM = 10,
 };
 
 // SceneIdSolSanctumEruption's exits.
 enum
 {
-	SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 5,
+    SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 5,
 };
 
 // SceneIdSolEntrance's entrances.
 enum
 {
-	SOL_ENTRANCE_FROM_VALE                = 1,
-	SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS = 2,
+    SOL_ENTRANCE_FROM_VALE                = 1,
+    SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS = 2,
 };
 
 // SceneIdSolEntrance's exits.
 enum
 {
-	SOL_ENTRANCE_TO_VALE                = 1,
-	SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS = 2,
+    SOL_ENTRANCE_TO_VALE                = 1,
+    SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS = 2,
 };
 
 // SceneIdVault's entrances.
 enum
 {
-	VAULT_FROM_WORLD_MAP_SOUTH             = 1,
-	VAULT_NORTH_UNUSED                     = 2, // inside the north gate; no exit leads here
-	VAULT_FROM_WORLD_MAP_NORTH             = 3,
-	VAULT_FROM_LOG_ROOMS_A_EAST_SOUTHEAST  = 5,
-	VAULT_FROM_LOG_ROOMS_A_SOUTHEAST       = 6,
-	VAULT_FROM_LOG_ROOMS_A_SOUTHWEST       = 7,
-	VAULT_FROM_LOG_ROOMS_A_EAST            = 8,
-	VAULT_FROM_LOG_ROOMS_A_NORTH_NORTHEAST = 9,
-	VAULT_FROM_LOG_ROOMS_A_NORTHWEST       = 10,
-	VAULT_FROM_SANCTUM                     = 11,
-	VAULT_FROM_STONE_ROOMS                 = 12,
-	VAULT_FROM_LOG_ROOMS_A_WEST            = 13,
+    VAULT_FROM_WORLD_MAP_SOUTH             = 1,
+    VAULT_NORTH_UNUSED                     = 2, // inside the north gate; no exit leads here
+    VAULT_FROM_WORLD_MAP_NORTH             = 3,
+    VAULT_FROM_LOG_ROOMS_A_EAST_SOUTHEAST  = 5,
+    VAULT_FROM_LOG_ROOMS_A_SOUTHEAST       = 6,
+    VAULT_FROM_LOG_ROOMS_A_SOUTHWEST       = 7,
+    VAULT_FROM_LOG_ROOMS_A_EAST            = 8,
+    VAULT_FROM_LOG_ROOMS_A_NORTH_NORTHEAST = 9,
+    VAULT_FROM_LOG_ROOMS_A_NORTHWEST       = 10,
+    VAULT_FROM_SANCTUM                     = 11,
+    VAULT_FROM_STONE_ROOMS                 = 12,
+    VAULT_FROM_LOG_ROOMS_A_WEST            = 13,
 };
 
 // SceneIdVault's exits.
 enum
 {
-	VAULT_TO_WORLD_MAP_SOUTH             = 1,
-	VAULT_TO_WORLD_MAP_NORTH             = 2,
-	VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST  = 5,
-	VAULT_TO_LOG_ROOMS_A_SOUTHEAST       = 6,
-	VAULT_TO_LOG_ROOMS_A_SOUTHWEST       = 7,
-	VAULT_TO_LOG_ROOMS_A_EAST            = 8,
-	VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST = 9,
-	VAULT_TO_LOG_ROOMS_A_NORTHWEST       = 10,
-	VAULT_TO_SANCTUM                     = 11,
-	VAULT_TO_STONE_ROOMS                 = 12,
-	VAULT_TO_LOG_ROOMS_A_WEST            = 13,
-	VAULT_TO_VAULT_REVISIT               = 14,
+    VAULT_TO_WORLD_MAP_SOUTH             = 1,
+    VAULT_TO_WORLD_MAP_NORTH             = 2,
+    VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST  = 5,
+    VAULT_TO_LOG_ROOMS_A_SOUTHEAST       = 6,
+    VAULT_TO_LOG_ROOMS_A_SOUTHWEST       = 7,
+    VAULT_TO_LOG_ROOMS_A_EAST            = 8,
+    VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST = 9,
+    VAULT_TO_LOG_ROOMS_A_NORTHWEST       = 10,
+    VAULT_TO_SANCTUM                     = 11,
+    VAULT_TO_STONE_ROOMS                 = 12,
+    VAULT_TO_LOG_ROOMS_A_WEST            = 13,
+    VAULT_TO_VAULT_REVISIT               = 14,
 };
 
 // SceneIdLogRoomsA's entrances.
 enum
 {
-	LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST    = 5,
-	LOG_ROOMS_A_FROM_VAULT_SOUTHEAST         = 6,
-	LOG_ROOMS_A_FROM_VAULT_SOUTHWEST         = 7,
-	LOG_ROOMS_A_FROM_VAULT_EAST              = 8,
-	LOG_ROOMS_A_FROM_VAULT_NORTH_NORTHEAST   = 9,
-	LOG_ROOMS_A_FROM_VAULT_NORTHWEST         = 10,
-	LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS        = 11,
-	LOG_ROOMS_A_INN_UPSTAIRS_FROM_INN        = 12,
-	LOG_ROOMS_A_FROM_VAULT_WEST              = 13,
-	LOG_ROOMS_A_CRATE_ROOM_FROM_LOFT         = 14,
-	LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM         = 15,
-	// The inn's loft after the party loses the battle with the three thieves
-	// (scLogRoomsALoseToThieves).
-	LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES = 16,
-	// The inn's loft after the party beats the three thieves (scLogRoomsADefeatThieves).
-	LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED  = 17,
+    LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST    = 5,
+    LOG_ROOMS_A_FROM_VAULT_SOUTHEAST         = 6,
+    LOG_ROOMS_A_FROM_VAULT_SOUTHWEST         = 7,
+    LOG_ROOMS_A_FROM_VAULT_EAST              = 8,
+    LOG_ROOMS_A_FROM_VAULT_NORTH_NORTHEAST   = 9,
+    LOG_ROOMS_A_FROM_VAULT_NORTHWEST         = 10,
+    LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS        = 11,
+    LOG_ROOMS_A_INN_UPSTAIRS_FROM_INN        = 12,
+    LOG_ROOMS_A_FROM_VAULT_WEST              = 13,
+    LOG_ROOMS_A_CRATE_ROOM_FROM_LOFT         = 14,
+    LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM         = 15,
+    // The inn's loft after the party loses the battle with the three thieves
+    // (scLogRoomsALoseToThieves).
+    LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES = 16,
+    // The inn's loft after the party beats the three thieves (scLogRoomsADefeatThieves).
+    LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED  = 17,
 };
 
 // SceneIdLogRoomsA's exits.
 enum
 {
-	LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST  = 5,
-	LOG_ROOMS_A_TO_VAULT_SOUTHEAST       = 6,
-	LOG_ROOMS_A_TO_VAULT_SOUTHWEST       = 7,
-	LOG_ROOMS_A_TO_VAULT_EAST            = 8,
-	LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST = 9,
-	LOG_ROOMS_A_TO_VAULT_NORTHWEST       = 10,
-	LOG_ROOMS_A_INN_UPSTAIRS_TO_INN      = 11,
-	LOG_ROOMS_A_INN_TO_INN_UPSTAIRS      = 12,
-	LOG_ROOMS_A_TO_VAULT_WEST            = 13,
-	LOG_ROOMS_A_LOFT_TO_CRATE_ROOM       = 14,
-	LOG_ROOMS_A_CRATE_ROOM_TO_LOFT       = 15,
-	LOG_ROOMS_A_TO_SANCTUM               = 16,
+    LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST  = 5,
+    LOG_ROOMS_A_TO_VAULT_SOUTHEAST       = 6,
+    LOG_ROOMS_A_TO_VAULT_SOUTHWEST       = 7,
+    LOG_ROOMS_A_TO_VAULT_EAST            = 8,
+    LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST = 9,
+    LOG_ROOMS_A_TO_VAULT_NORTHWEST       = 10,
+    LOG_ROOMS_A_INN_UPSTAIRS_TO_INN      = 11,
+    LOG_ROOMS_A_INN_TO_INN_UPSTAIRS      = 12,
+    LOG_ROOMS_A_TO_VAULT_WEST            = 13,
+    LOG_ROOMS_A_LOFT_TO_CRATE_ROOM       = 14,
+    LOG_ROOMS_A_CRATE_ROOM_TO_LOFT       = 15,
+    LOG_ROOMS_A_TO_SANCTUM               = 16,
 };
 
 // SceneIdStoneRooms's entrances.
 enum
 {
-	STONE_ROOMS_FROM_VAULT         = 1,
-	STONE_ROOMS_FROM_LUNPA         = 2,
-	STONE_ROOMS_FROM_VAULT_REVISIT = 10,
+    STONE_ROOMS_FROM_VAULT         = 1,
+    STONE_ROOMS_FROM_LUNPA         = 2,
+    STONE_ROOMS_FROM_VAULT_REVISIT = 10,
 };
 
 // SceneIdStoneRooms's exits.
 enum
 {
-	STONE_ROOMS_TO_VAULT         = 1,
-	STONE_ROOMS_TO_VAULT_REVISIT = 2,
-	STONE_ROOMS_TO_LUNPA         = 3,
+    STONE_ROOMS_TO_VAULT         = 1,
+    STONE_ROOMS_TO_VAULT_REVISIT = 2,
+    STONE_ROOMS_TO_LUNPA         = 3,
 };
 
 // SceneIdVaultRevisit's entrances.
 enum
 {
-	VAULT_REVISIT_FROM_VAULT                 = 1,
-	// inside the north gate; no exit leads here
-	VAULT_REVISIT_NORTH_UNUSED               = 2,
-	VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHEAST = 5,
-	VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTH     = 6,
-	VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHWEST = 7,
-	VAULT_REVISIT_FROM_LOG_ROOMS_B_EAST      = 8,
-	VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTH     = 9,
-	VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTHWEST = 10,
-	VAULT_REVISIT_FROM_SANCTUM               = 11,
-	VAULT_REVISIT_FROM_STONE_ROOMS           = 12,
-	VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE    = 13,
-	VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH      = 14,
+    VAULT_REVISIT_FROM_VAULT                 = 1,
+    // inside the north gate; no exit leads here
+    VAULT_REVISIT_NORTH_UNUSED               = 2,
+    VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHEAST = 5,
+    VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTH     = 6,
+    VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHWEST = 7,
+    VAULT_REVISIT_FROM_LOG_ROOMS_B_EAST      = 8,
+    VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTH     = 9,
+    VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTHWEST = 10,
+    VAULT_REVISIT_FROM_SANCTUM               = 11,
+    VAULT_REVISIT_FROM_STONE_ROOMS           = 12,
+    VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE    = 13,
+    VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH      = 14,
 };
 
 // SceneIdVaultRevisit's exits.
 enum
 {
-	VAULT_REVISIT_TO_WORLD_MAP_SOUTH       = 1,
-	VAULT_REVISIT_TO_WORLD_MAP_NORTH       = 2,
-	VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST = 5,
-	VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH     = 6,
-	VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST = 7,
-	VAULT_REVISIT_TO_LOG_ROOMS_B_EAST      = 8,
-	VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH     = 9,
-	VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST = 10,
-	VAULT_REVISIT_TO_SANCTUM               = 11,
-	VAULT_REVISIT_TO_STONE_ROOMS           = 12,
-	VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE    = 13,
-	VAULT_REVISIT_TO_VAULT_CAVE_MOUTH      = 14,
+    VAULT_REVISIT_TO_WORLD_MAP_SOUTH       = 1,
+    VAULT_REVISIT_TO_WORLD_MAP_NORTH       = 2,
+    VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST = 5,
+    VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH     = 6,
+    VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST = 7,
+    VAULT_REVISIT_TO_LOG_ROOMS_B_EAST      = 8,
+    VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH     = 9,
+    VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST = 10,
+    VAULT_REVISIT_TO_SANCTUM               = 11,
+    VAULT_REVISIT_TO_STONE_ROOMS           = 12,
+    VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE    = 13,
+    VAULT_REVISIT_TO_VAULT_CAVE_MOUTH      = 14,
 };
 
 // SceneIdLogRoomsB's entrances.
 enum
 {
-	LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST = 5,
-	LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH     = 6,
-	LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST = 7,
-	LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST      = 8,
-	LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH     = 9,
-	LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST = 10,
-	LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS        = 11,
-	LOG_ROOMS_B_INN_UPSTAIRS_FROM_INN        = 12,
+    LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST = 5,
+    LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH     = 6,
+    LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST = 7,
+    LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST      = 8,
+    LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH     = 9,
+    LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST = 10,
+    LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS        = 11,
+    LOG_ROOMS_B_INN_UPSTAIRS_FROM_INN        = 12,
 };
 
 // SceneIdLogRoomsB's exits.
 enum
 {
-	LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST = 5,
-	LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH     = 6,
-	LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHWEST = 7,
-	LOG_ROOMS_B_TO_VAULT_REVISIT_EAST      = 8,
-	LOG_ROOMS_B_TO_VAULT_REVISIT_NORTH     = 9,
-	LOG_ROOMS_B_TO_VAULT_REVISIT_NORTHWEST = 10,
-	LOG_ROOMS_B_INN_UPSTAIRS_TO_INN        = 11,
-	LOG_ROOMS_B_INN_TO_INN_UPSTAIRS        = 12,
+    LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST = 5,
+    LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH     = 6,
+    LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHWEST = 7,
+    LOG_ROOMS_B_TO_VAULT_REVISIT_EAST      = 8,
+    LOG_ROOMS_B_TO_VAULT_REVISIT_NORTH     = 9,
+    LOG_ROOMS_B_TO_VAULT_REVISIT_NORTHWEST = 10,
+    LOG_ROOMS_B_INN_UPSTAIRS_TO_INN        = 11,
+    LOG_ROOMS_B_INN_TO_INN_UPSTAIRS        = 12,
 };
 
 // SceneIdGomaCaveEntrance's entrances.
 enum
 {
-	GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP        = 1,
-	GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM = 2,
+    GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP        = 1,
+    GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM = 2,
 };
 
 // SceneIdGomaCaveEntrance's exits.
 enum
 {
-	GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM = 1,
-	GOMA_CAVE_ENTRANCE_TO_WORLD_MAP        = 2,
+    GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM = 1,
+    GOMA_CAVE_ENTRANCE_TO_WORLD_MAP        = 2,
 };
 
 // SceneIdGomaCavePond's entrances.
 enum
 {
-	GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST  = 1,
-	GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_SOUTH = 2,
-	GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_EAST  = 3,
+    GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST  = 1,
+    GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_SOUTH = 2,
+    GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_EAST  = 3,
 };
 
 // SceneIdGomaCavePond's exits.
 enum
 {
-	GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST  = 1,
-	GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH = 2,
-	GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST  = 3,
+    GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST  = 1,
+    GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH = 2,
+    GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST  = 3,
 };
 
 // SceneIdGomaCavePillar's entrances.
 enum
 {
-	GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_WEST = 1,
-	GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST = 2,
-	GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST   = 3,
-	GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST   = 4,
-	GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH  = 5,
+    GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_WEST = 1,
+    GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST = 2,
+    GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST   = 3,
+    GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST   = 4,
+    GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH  = 5,
 };
 
 // SceneIdGomaCavePillar's exits.
 enum
 {
-	GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST = 1,
-	GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST   = 2,
-	GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH  = 3,
-	GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST   = 4,
-	GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST = 5,
+    GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST = 1,
+    GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST   = 2,
+    GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH  = 3,
+    GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST   = 4,
+    GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST = 5,
 };
 
 // SceneIdGomaCaveStream's entrances.
 enum
 {
-	GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE    = 1,
-	GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST = 2,
-	GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_EAST = 3,
-	GOMA_CAVE_STREAM_FROM_GOMA_CAVE_BRIDGE      = 4,
-	GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA = 5,
+    GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE    = 1,
+    GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST = 2,
+    GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_EAST = 3,
+    GOMA_CAVE_STREAM_FROM_GOMA_CAVE_BRIDGE      = 4,
+    GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA = 5,
 };
 
 // SceneIdGomaCaveStream's exits.
 enum
 {
-	GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE    = 1,
-	GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST = 2,
-	GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST = 3,
-	GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE      = 4,
-	GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA = 5,
+    GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE    = 1,
+    GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST = 2,
+    GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST = 3,
+    GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE      = 4,
+    GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA = 5,
 };
 
 // SceneIdGomaCaveBridge's entrances.
 enum
 {
-	GOMA_CAVE_BRIDGE_FROM_GOMA_CAVE_STREAM = 1,
-	GOMA_CAVE_BRIDGE_FROM_WORLD_MAP        = 2,
+    GOMA_CAVE_BRIDGE_FROM_GOMA_CAVE_STREAM = 1,
+    GOMA_CAVE_BRIDGE_FROM_WORLD_MAP        = 2,
 };
 
 // SceneIdGomaCaveBridge's exits.
 enum
 {
-	GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM = 1,
-	GOMA_CAVE_BRIDGE_TO_WORLD_MAP        = 2,
+    GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM = 1,
+    GOMA_CAVE_BRIDGE_TO_WORLD_MAP        = 2,
 };
 
 // SceneIdBilibin's entrances.
 enum
 {
-	BILIBIN_FROM_WORLD_MAP             = 1,
-	BILIBIN_FROM_MCCOY_PALACE_GROUNDS  = 2,
-	BILIBIN_FROM_INN                   = 3,
-	BILIBIN_FROM_HOUSE_EAST            = 4,
-	BILIBIN_FROM_HOUSE_WEST            = 5,
-	BILIBIN_FROM_HOUSE_NORTH           = 6,
-	BILIBIN_FROM_ITEM_SHOP             = 7,
-	BILIBIN_FROM_WEAPON_AND_ARMOR_SHOP = 8,
-	BILIBIN_FROM_SANCTUM               = 9,
-	BILIBIN_FROM_BILIBIN_TREASURY_WEST = 10,
-	BILIBIN_FROM_BILIBIN_TREASURY_EAST = 11,
+    BILIBIN_FROM_WORLD_MAP             = 1,
+    BILIBIN_FROM_MCCOY_PALACE_GROUNDS  = 2,
+    BILIBIN_FROM_INN                   = 3,
+    BILIBIN_FROM_HOUSE_EAST            = 4,
+    BILIBIN_FROM_HOUSE_WEST            = 5,
+    BILIBIN_FROM_HOUSE_NORTH           = 6,
+    BILIBIN_FROM_ITEM_SHOP             = 7,
+    BILIBIN_FROM_WEAPON_AND_ARMOR_SHOP = 8,
+    BILIBIN_FROM_SANCTUM               = 9,
+    BILIBIN_FROM_BILIBIN_TREASURY_WEST = 10,
+    BILIBIN_FROM_BILIBIN_TREASURY_EAST = 11,
 };
 
 // SceneIdBilibin's exits.
 enum
 {
-	BILIBIN_TO_WORLD_MAP             = 1,
-	BILIBIN_TO_MCCOY_PALACE_GROUNDS  = 2,
-	BILIBIN_TO_INN                   = 3,
-	BILIBIN_TO_HOUSE_EAST            = 4,
-	BILIBIN_TO_HOUSE_WEST            = 5,
-	BILIBIN_TO_HOUSE_NORTH           = 6,
-	BILIBIN_TO_ITEM_SHOP             = 7,
-	BILIBIN_TO_WEAPON_AND_ARMOR_SHOP = 8,
-	BILIBIN_TO_SANCTUM               = 9,
-	BILIBIN_TO_BILIBIN_TREASURY_WEST = 10,
-	BILIBIN_TO_BILIBIN_TREASURY_EAST = 11,
+    BILIBIN_TO_WORLD_MAP             = 1,
+    BILIBIN_TO_MCCOY_PALACE_GROUNDS  = 2,
+    BILIBIN_TO_INN                   = 3,
+    BILIBIN_TO_HOUSE_EAST            = 4,
+    BILIBIN_TO_HOUSE_WEST            = 5,
+    BILIBIN_TO_HOUSE_NORTH           = 6,
+    BILIBIN_TO_ITEM_SHOP             = 7,
+    BILIBIN_TO_WEAPON_AND_ARMOR_SHOP = 8,
+    BILIBIN_TO_SANCTUM               = 9,
+    BILIBIN_TO_BILIBIN_TREASURY_WEST = 10,
+    BILIBIN_TO_BILIBIN_TREASURY_EAST = 11,
 };
 
 // SceneIdCottageRoomsC's entrances.
 enum
 {
-	// The rooms behind Bilibin's doors, each reached through the exit of its name
-	// (COTTAGE_ROOMS_C_HOUSE_EAST through BILIBIN_TO_HOUSE_EAST).
-	COTTAGE_ROOMS_C_HOUSE_EAST            = 1,
-	COTTAGE_ROOMS_C_HOUSE_WEST            = 2,
-	COTTAGE_ROOMS_C_HOUSE_NORTH           = 3,
-	COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP = 4,
-	COTTAGE_ROOMS_C_ITEM_SHOP             = 5,
-	COTTAGE_ROOMS_C_INN                   = 6,
-	COTTAGE_ROOMS_C_INN_UPSTAIRS_FROM_INN = 7,
-	COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS = 8,
+    // The rooms behind Bilibin's doors, each reached through the exit of its name
+    // (COTTAGE_ROOMS_C_HOUSE_EAST through BILIBIN_TO_HOUSE_EAST).
+    COTTAGE_ROOMS_C_HOUSE_EAST            = 1,
+    COTTAGE_ROOMS_C_HOUSE_WEST            = 2,
+    COTTAGE_ROOMS_C_HOUSE_NORTH           = 3,
+    COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP = 4,
+    COTTAGE_ROOMS_C_ITEM_SHOP             = 5,
+    COTTAGE_ROOMS_C_INN                   = 6,
+    COTTAGE_ROOMS_C_INN_UPSTAIRS_FROM_INN = 7,
+    COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS = 8,
 };
 
 // SceneIdCottageRoomsC's exits.
 enum
 {
-	COTTAGE_ROOMS_C_HOUSE_EAST_TO_BILIBIN            = 1,
-	COTTAGE_ROOMS_C_HOUSE_WEST_TO_BILIBIN            = 2,
-	COTTAGE_ROOMS_C_HOUSE_NORTH_TO_BILIBIN           = 3,
-	COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_BILIBIN = 4,
-	COTTAGE_ROOMS_C_ITEM_SHOP_TO_BILIBIN             = 5,
-	COTTAGE_ROOMS_C_INN_TO_BILIBIN                   = 6,
-	COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN              = 7,
-	COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS              = 8,
+    COTTAGE_ROOMS_C_HOUSE_EAST_TO_BILIBIN            = 1,
+    COTTAGE_ROOMS_C_HOUSE_WEST_TO_BILIBIN            = 2,
+    COTTAGE_ROOMS_C_HOUSE_NORTH_TO_BILIBIN           = 3,
+    COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_BILIBIN = 4,
+    COTTAGE_ROOMS_C_ITEM_SHOP_TO_BILIBIN             = 5,
+    COTTAGE_ROOMS_C_INN_TO_BILIBIN                   = 6,
+    COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN              = 7,
+    COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS              = 8,
 };
 
 // SceneIdBilibinTreasury's entrances.
 enum
 {
-	BILIBIN_TREASURY_FROM_BILIBIN_SOUTH = 1,
-	BILIBIN_TREASURY_LOWER_FROM_UPPER   = 2,
-	BILIBIN_TREASURY_UPPER_FROM_LOWER   = 3,
-	BILIBIN_TREASURY_FROM_BILIBIN_NORTH = 4,
+    BILIBIN_TREASURY_FROM_BILIBIN_SOUTH = 1,
+    BILIBIN_TREASURY_LOWER_FROM_UPPER   = 2,
+    BILIBIN_TREASURY_UPPER_FROM_LOWER   = 3,
+    BILIBIN_TREASURY_FROM_BILIBIN_NORTH = 4,
 };
 
 // SceneIdBilibinTreasury's exits.
 enum
 {
-	BILIBIN_TREASURY_TO_BILIBIN_SOUTH = 1,
-	BILIBIN_TREASURY_LOWER_TO_UPPER   = 2,
-	BILIBIN_TREASURY_UPPER_TO_LOWER   = 3,
-	BILIBIN_TREASURY_TO_BILIBIN_NORTH = 4,
+    BILIBIN_TREASURY_TO_BILIBIN_SOUTH = 1,
+    BILIBIN_TREASURY_LOWER_TO_UPPER   = 2,
+    BILIBIN_TREASURY_UPPER_TO_LOWER   = 3,
+    BILIBIN_TREASURY_TO_BILIBIN_NORTH = 4,
 };
 
 // SceneIdMcCoyPalace's entrances.
 enum
 {
-	MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST           = 1,
-	MCCOY_PALACE_ENTRANCE_ROOM_FROM_SOUTHWEST_LANDING     = 2,
-	MCCOY_PALACE_ENTRANCE_ROOM_FROM_SOUTHEAST_LANDING     = 3,
-	MCCOY_PALACE_ENTRANCE_ROOM_FROM_LADY_MCCOYS_ROOM_WEST = 4,
-	MCCOY_PALACE_ENTRANCE_ROOM_FROM_LADY_MCCOYS_ROOM_EAST = 5,
-	MCCOY_PALACE_ENTRANCE_ROOM_FROM_TREASURE_ROOM         = 6,
-	MCCOY_PALACE_ENTRANCE_ROOM_FROM_NORTHWEST_LANDING     = 7,
-	MCCOY_PALACE_ENTRANCE_ROOM_FROM_NORTHEAST_LANDING     = 8,
-	MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM           = 9,
-	MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_ENTRANCE_ROOM_WEST = 10,
-	MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_ENTRANCE_ROOM_EAST = 11,
-	MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_WEST_BEDROOM       = 12,
-	MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_EAST_BEDROOM       = 13,
-	MCCOY_PALACE_SOUTHWEST_LANDING_FROM_ENTRANCE_ROOM     = 14,
-	MCCOY_PALACE_SOUTHWEST_LANDING_FROM_SOUTHWEST_TOWER   = 15,
-	MCCOY_PALACE_SOUTHEAST_LANDING_FROM_SOUTHEAST_TOWER   = 16,
-	MCCOY_PALACE_SOUTHEAST_LANDING_FROM_ENTRANCE_ROOM     = 17,
-	MCCOY_PALACE_WEST_BEDROOM_FROM_LADY_MCCOYS_ROOM       = 18,
-	MCCOY_PALACE_EAST_BEDROOM_FROM_LADY_MCCOYS_ROOM       = 19,
-	MCCOY_PALACE_NORTHEAST_LANDING_FROM_ENTRANCE_ROOM     = 20,
-	MCCOY_PALACE_NORTHEAST_LANDING_FROM_NORTHEAST_TOWER   = 21,
-	MCCOY_PALACE_NORTHWEST_LANDING_FROM_ENTRANCE_ROOM     = 22,
-	MCCOY_PALACE_NORTHWEST_LANDING_FROM_NORTHWEST_TOWER   = 23,
-	MCCOY_PALACE_NORTHWEST_TOWER_FROM_NORTHWEST_LANDING   = 24,
-	MCCOY_PALACE_NORTHEAST_TOWER_FROM_NORTHEAST_LANDING   = 25,
-	MCCOY_PALACE_SOUTHWEST_TOWER_FROM_SOUTHWEST_LANDING   = 26,
-	MCCOY_PALACE_SOUTHEAST_TOWER_FROM_SOUTHEAST_LANDING   = 27,
-	MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM         = 28,
-	MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST           = 29,
+    MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST           = 1,
+    MCCOY_PALACE_ENTRANCE_ROOM_FROM_SOUTHWEST_LANDING     = 2,
+    MCCOY_PALACE_ENTRANCE_ROOM_FROM_SOUTHEAST_LANDING     = 3,
+    MCCOY_PALACE_ENTRANCE_ROOM_FROM_LADY_MCCOYS_ROOM_WEST = 4,
+    MCCOY_PALACE_ENTRANCE_ROOM_FROM_LADY_MCCOYS_ROOM_EAST = 5,
+    MCCOY_PALACE_ENTRANCE_ROOM_FROM_TREASURE_ROOM         = 6,
+    MCCOY_PALACE_ENTRANCE_ROOM_FROM_NORTHWEST_LANDING     = 7,
+    MCCOY_PALACE_ENTRANCE_ROOM_FROM_NORTHEAST_LANDING     = 8,
+    MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM           = 9,
+    MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_ENTRANCE_ROOM_WEST = 10,
+    MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_ENTRANCE_ROOM_EAST = 11,
+    MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_WEST_BEDROOM       = 12,
+    MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_EAST_BEDROOM       = 13,
+    MCCOY_PALACE_SOUTHWEST_LANDING_FROM_ENTRANCE_ROOM     = 14,
+    MCCOY_PALACE_SOUTHWEST_LANDING_FROM_SOUTHWEST_TOWER   = 15,
+    MCCOY_PALACE_SOUTHEAST_LANDING_FROM_SOUTHEAST_TOWER   = 16,
+    MCCOY_PALACE_SOUTHEAST_LANDING_FROM_ENTRANCE_ROOM     = 17,
+    MCCOY_PALACE_WEST_BEDROOM_FROM_LADY_MCCOYS_ROOM       = 18,
+    MCCOY_PALACE_EAST_BEDROOM_FROM_LADY_MCCOYS_ROOM       = 19,
+    MCCOY_PALACE_NORTHEAST_LANDING_FROM_ENTRANCE_ROOM     = 20,
+    MCCOY_PALACE_NORTHEAST_LANDING_FROM_NORTHEAST_TOWER   = 21,
+    MCCOY_PALACE_NORTHWEST_LANDING_FROM_ENTRANCE_ROOM     = 22,
+    MCCOY_PALACE_NORTHWEST_LANDING_FROM_NORTHWEST_TOWER   = 23,
+    MCCOY_PALACE_NORTHWEST_TOWER_FROM_NORTHWEST_LANDING   = 24,
+    MCCOY_PALACE_NORTHEAST_TOWER_FROM_NORTHEAST_LANDING   = 25,
+    MCCOY_PALACE_SOUTHWEST_TOWER_FROM_SOUTHWEST_LANDING   = 26,
+    MCCOY_PALACE_SOUTHEAST_TOWER_FROM_SOUTHEAST_LANDING   = 27,
+    MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM         = 28,
+    MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST           = 29,
 };
 
 // SceneIdMcCoyPalace's exits.
 enum
 {
-	MCCOY_PALACE_TO_MCCOY_PALACE_GROUNDS_WEST           = 1,
-	MCCOY_PALACE_ENTRANCE_ROOM_TO_SOUTHWEST_LANDING     = 2,
-	MCCOY_PALACE_ENTRANCE_ROOM_TO_SOUTHEAST_LANDING     = 3,
-	MCCOY_PALACE_ENTRANCE_ROOM_TO_LADY_MCCOYS_ROOM_WEST = 4,
-	MCCOY_PALACE_ENTRANCE_ROOM_TO_LADY_MCCOYS_ROOM_EAST = 5,
-	MCCOY_PALACE_ENTRANCE_ROOM_TO_TREASURE_ROOM         = 6,
-	MCCOY_PALACE_ENTRANCE_ROOM_TO_NORTHWEST_LANDING     = 7,
-	MCCOY_PALACE_ENTRANCE_ROOM_TO_NORTHEAST_LANDING     = 8,
-	MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM           = 9,
-	MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_ENTRANCE_ROOM_WEST = 10,
-	MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_ENTRANCE_ROOM_EAST = 11,
-	MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_WEST_BEDROOM       = 12,
-	MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_EAST_BEDROOM       = 13,
-	MCCOY_PALACE_SOUTHWEST_LANDING_TO_ENTRANCE_ROOM     = 14,
-	MCCOY_PALACE_SOUTHWEST_LANDING_TO_SOUTHWEST_TOWER   = 15,
-	MCCOY_PALACE_SOUTHEAST_LANDING_TO_SOUTHEAST_TOWER   = 16,
-	MCCOY_PALACE_SOUTHEAST_LANDING_TO_ENTRANCE_ROOM     = 17,
-	MCCOY_PALACE_WEST_BEDROOM_TO_LADY_MCCOYS_ROOM       = 18,
-	MCCOY_PALACE_EAST_BEDROOM_TO_LADY_MCCOYS_ROOM       = 19,
-	MCCOY_PALACE_NORTHEAST_LANDING_TO_ENTRANCE_ROOM     = 20,
-	MCCOY_PALACE_NORTHEAST_LANDING_TO_NORTHEAST_TOWER   = 21,
-	MCCOY_PALACE_NORTHWEST_LANDING_TO_ENTRANCE_ROOM     = 22,
-	MCCOY_PALACE_NORTHWEST_LANDING_TO_NORTHWEST_TOWER   = 23,
-	MCCOY_PALACE_NORTHWEST_TOWER_TO_NORTHWEST_LANDING   = 24,
-	MCCOY_PALACE_NORTHEAST_TOWER_TO_NORTHEAST_LANDING   = 25,
-	MCCOY_PALACE_SOUTHWEST_TOWER_TO_SOUTHWEST_LANDING   = 26,
-	MCCOY_PALACE_SOUTHEAST_TOWER_TO_SOUTHEAST_LANDING   = 27,
-	MCCOY_PALACE_TREASURE_ROOM_TO_ENTRANCE_ROOM         = 28,
-	MCCOY_PALACE_MCCOYS_ROOM_TO_ENTRANCE_ROOM           = 29,
+    MCCOY_PALACE_TO_MCCOY_PALACE_GROUNDS_WEST           = 1,
+    MCCOY_PALACE_ENTRANCE_ROOM_TO_SOUTHWEST_LANDING     = 2,
+    MCCOY_PALACE_ENTRANCE_ROOM_TO_SOUTHEAST_LANDING     = 3,
+    MCCOY_PALACE_ENTRANCE_ROOM_TO_LADY_MCCOYS_ROOM_WEST = 4,
+    MCCOY_PALACE_ENTRANCE_ROOM_TO_LADY_MCCOYS_ROOM_EAST = 5,
+    MCCOY_PALACE_ENTRANCE_ROOM_TO_TREASURE_ROOM         = 6,
+    MCCOY_PALACE_ENTRANCE_ROOM_TO_NORTHWEST_LANDING     = 7,
+    MCCOY_PALACE_ENTRANCE_ROOM_TO_NORTHEAST_LANDING     = 8,
+    MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM           = 9,
+    MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_ENTRANCE_ROOM_WEST = 10,
+    MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_ENTRANCE_ROOM_EAST = 11,
+    MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_WEST_BEDROOM       = 12,
+    MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_EAST_BEDROOM       = 13,
+    MCCOY_PALACE_SOUTHWEST_LANDING_TO_ENTRANCE_ROOM     = 14,
+    MCCOY_PALACE_SOUTHWEST_LANDING_TO_SOUTHWEST_TOWER   = 15,
+    MCCOY_PALACE_SOUTHEAST_LANDING_TO_SOUTHEAST_TOWER   = 16,
+    MCCOY_PALACE_SOUTHEAST_LANDING_TO_ENTRANCE_ROOM     = 17,
+    MCCOY_PALACE_WEST_BEDROOM_TO_LADY_MCCOYS_ROOM       = 18,
+    MCCOY_PALACE_EAST_BEDROOM_TO_LADY_MCCOYS_ROOM       = 19,
+    MCCOY_PALACE_NORTHEAST_LANDING_TO_ENTRANCE_ROOM     = 20,
+    MCCOY_PALACE_NORTHEAST_LANDING_TO_NORTHEAST_TOWER   = 21,
+    MCCOY_PALACE_NORTHWEST_LANDING_TO_ENTRANCE_ROOM     = 22,
+    MCCOY_PALACE_NORTHWEST_LANDING_TO_NORTHWEST_TOWER   = 23,
+    MCCOY_PALACE_NORTHWEST_TOWER_TO_NORTHWEST_LANDING   = 24,
+    MCCOY_PALACE_NORTHEAST_TOWER_TO_NORTHEAST_LANDING   = 25,
+    MCCOY_PALACE_SOUTHWEST_TOWER_TO_SOUTHWEST_LANDING   = 26,
+    MCCOY_PALACE_SOUTHEAST_TOWER_TO_SOUTHEAST_LANDING   = 27,
+    MCCOY_PALACE_TREASURE_ROOM_TO_ENTRANCE_ROOM         = 28,
+    MCCOY_PALACE_MCCOYS_ROOM_TO_ENTRANCE_ROOM           = 29,
 };
 
 // SceneIdMcCoyPalaceGrounds's entrances.
 enum
 {
-	MCCOY_PALACE_GROUNDS_FROM_BILIBIN      = 1,
-	MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE = 2,
+    MCCOY_PALACE_GROUNDS_FROM_BILIBIN      = 1,
+    MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE = 2,
 };
 
 // SceneIdMcCoyPalaceGrounds's exits.
 enum
 {
-	MCCOY_PALACE_GROUNDS_TO_BILIBIN           = 1,
-	MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE      = 2,
-	MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST = 10,
+    MCCOY_PALACE_GROUNDS_TO_BILIBIN           = 1,
+    MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE      = 2,
+    MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST = 10,
 };
 
 // SceneIdBilibinBarricade's entrances.
 enum
 {
-	BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST = 1,
-	BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST = 2,
+    BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST = 1,
+    BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST = 2,
 };
 
 // SceneIdBilibinBarricade's exits.
 enum
 {
-	BILIBIN_BARRICADE_TO_WORLD_MAP_EAST = 1,
-	BILIBIN_BARRICADE_TO_WORLD_MAP_WEST = 2,
+    BILIBIN_BARRICADE_TO_WORLD_MAP_EAST = 1,
+    BILIBIN_BARRICADE_TO_WORLD_MAP_WEST = 2,
 };
 
 // SceneIdKolima's entrances.
 enum
 {
-	KOLIMA_FROM_WORLD_MAP             = 1,
-	KOLIMA_FROM_INN                   = 3,
-	KOLIMA_FROM_ITEM_SHOP             = 4,
-	KOLIMA_FROM_HOUSE_SOUTH           = 5,
-	KOLIMA_FROM_WEAPON_AND_ARMOR_SHOP = 6,
-	KOLIMA_FROM_HOUSE_NORTH           = 7,
-	KOLIMA_FROM_KOLIMA_TUNNEL         = 8,
+    KOLIMA_FROM_WORLD_MAP             = 1,
+    KOLIMA_FROM_INN                   = 3,
+    KOLIMA_FROM_ITEM_SHOP             = 4,
+    KOLIMA_FROM_HOUSE_SOUTH           = 5,
+    KOLIMA_FROM_WEAPON_AND_ARMOR_SHOP = 6,
+    KOLIMA_FROM_HOUSE_NORTH           = 7,
+    KOLIMA_FROM_KOLIMA_TUNNEL         = 8,
 };
 
 // SceneIdKolima's exits.
 enum
 {
-	KOLIMA_TO_WORLD_MAP             = 1,
-	KOLIMA_TO_WORLD_MAP_EAST        = 2,
-	KOLIMA_TO_INN                   = 5,
-	KOLIMA_TO_ITEM_SHOP             = 6,
-	KOLIMA_TO_HOUSE_SOUTH           = 7,
-	KOLIMA_TO_WEAPON_AND_ARMOR_SHOP = 8,
-	KOLIMA_TO_HOUSE_NORTH           = 9,
-	KOLIMA_TO_KOLIMA_TUNNEL         = 10,
+    KOLIMA_TO_WORLD_MAP             = 1,
+    KOLIMA_TO_WORLD_MAP_EAST        = 2,
+    KOLIMA_TO_INN                   = 5,
+    KOLIMA_TO_ITEM_SHOP             = 6,
+    KOLIMA_TO_HOUSE_SOUTH           = 7,
+    KOLIMA_TO_WEAPON_AND_ARMOR_SHOP = 8,
+    KOLIMA_TO_HOUSE_NORTH           = 9,
+    KOLIMA_TO_KOLIMA_TUNNEL         = 10,
 };
 
 // SceneIdLogRoomsC's entrances.
 enum
 {
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP             = 1,
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR = 2,
-	LOG_ROOMS_C_ITEM_SHOP_FROM_KOLIMA                                                     = 3,
-	LOG_ROOMS_C_INN_FROM_KOLIMA                                                           = 4,
-	LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR                                                 = 5,
-	LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR                                     = 6,
-	LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH                                                   = 7,
-	LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH                                                   = 8,
-	LOG_ROOMS_C_FROM_KOLIMA_TUNNEL                                                        = 9,
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA                                         = 10,
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR             = 11,
-	LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN                                                 = 12,
-	LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR                                     = 13,
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR = 14,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP             = 1,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR = 2,
+    LOG_ROOMS_C_ITEM_SHOP_FROM_KOLIMA                                                     = 3,
+    LOG_ROOMS_C_INN_FROM_KOLIMA                                                           = 4,
+    LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR                                                 = 5,
+    LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR                                     = 6,
+    LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH                                                   = 7,
+    LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH                                                   = 8,
+    LOG_ROOMS_C_FROM_KOLIMA_TUNNEL                                                        = 9,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA                                         = 10,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR             = 11,
+    LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN                                                 = 12,
+    LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR                                     = 13,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR = 14,
 };
 
 // SceneIdLogRoomsC's exits.
 enum
 {
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP             = 1,
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR = 2,
-	LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA                                                     = 3,
-	LOG_ROOMS_C_INN_TO_KOLIMA                                                           = 4,
-	LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR                                                 = 5,
-	LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR                                     = 6,
-	LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH                                                   = 7,
-	LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH                                                   = 8,
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA                                         = 9,
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR             = 10,
-	LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN                                                 = 11,
-	LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR                                     = 12,
-	LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR = 13,
-	LOG_ROOMS_C_TO_KOLIMA_TUNNEL                                                        = 14,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP             = 1,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR = 2,
+    LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA                                                     = 3,
+    LOG_ROOMS_C_INN_TO_KOLIMA                                                           = 4,
+    LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR                                                 = 5,
+    LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR                                     = 6,
+    LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH                                                   = 7,
+    LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH                                                   = 8,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA                                         = 9,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR             = 10,
+    LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN                                                 = 11,
+    LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR                                     = 12,
+    LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR = 13,
+    LOG_ROOMS_C_TO_KOLIMA_TUNNEL                                                        = 14,
 };
 
 // SceneIdKolimaTunnel's entrances.
 enum
 {
-	KOLIMA_TUNNEL_FROM_LOG_ROOMS_C = 1,
-	KOLIMA_TUNNEL_FROM_KOLIMA      = 2,
+    KOLIMA_TUNNEL_FROM_LOG_ROOMS_C = 1,
+    KOLIMA_TUNNEL_FROM_KOLIMA      = 2,
 };
 
 // SceneIdKolimaTunnel's exits.
 enum
 {
-	KOLIMA_TUNNEL_TO_LOG_ROOMS_C = 1,
-	KOLIMA_TUNNEL_TO_KOLIMA      = 2,
+    KOLIMA_TUNNEL_TO_LOG_ROOMS_C = 1,
+    KOLIMA_TUNNEL_TO_KOLIMA      = 2,
 };
 
 // SceneIdKolimaBridge's entrances.
 enum
 {
-	KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH = 1,
-	KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH = 2,
+    KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH = 1,
+    KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH = 2,
 };
 
 // SceneIdKolimaBridge's exits.
 enum
 {
-	KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH = 1,
-	KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH = 2,
+    KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH = 1,
+    KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH = 2,
 };
 
 // SceneIdKolimaForestEntrance's entrances.
 enum
 {
-	// Only the two unused exits lead here, and the entrance table has no row for it.
-	KOLIMA_FOREST_ENTRANCE_UNUSED                   = 1,
-	KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE = 2,
-	KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP           = 4,
+    // Only the two unused exits lead here, and the entrance table has no row for it.
+    KOLIMA_FOREST_ENTRANCE_UNUSED                   = 1,
+    KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE = 2,
+    KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP           = 4,
 };
 
 // SceneIdKolimaForestEntrance's exits.
 enum
 {
-	KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE = 1,
-	// Two exits no script takes, back into this scene (KOLIMA_FOREST_ENTRANCE_UNUSED).
-	KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_A          = 2,
-	KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_B          = 3,
-	KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP           = 4,
+    KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE = 1,
+    // Two exits no script takes, back into this scene (KOLIMA_FOREST_ENTRANCE_UNUSED).
+    KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_A          = 2,
+    KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_B          = 3,
+    KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP           = 4,
 };
 
 // SceneIdKolimaForestGlade's entrances.
 enum
 {
-	KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE = 1,
-	KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF    = 2,
+    KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE = 1,
+    KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF    = 2,
 };
 
 // SceneIdKolimaForestGlade's exits.
 enum
 {
-	KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF    = 1,
-	KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE = 2,
+    KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF    = 1,
+    KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE = 2,
 };
 
 // SceneIdKolimaForestCliff's entrances.
 enum
 {
-	KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE     = 1,
-	KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_FLOODGATE = 2,
+    KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE     = 1,
+    KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_FLOODGATE = 2,
 };
 
 // SceneIdKolimaForestCliff's exits.
 enum
 {
-	KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE = 1,
-	KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE     = 2,
+    KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE = 1,
+    KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE     = 2,
 };
 
 // SceneIdKolimaForestFloodgate's entrances.
 enum
 {
-	KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF = 1,
-	KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE  = 2,
+    KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF = 1,
+    KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE  = 2,
 };
 
 // SceneIdKolimaForestFloodgate's exits.
 enum
 {
-	KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_CLIFF = 1,
-	KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE  = 2,
+    KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_CLIFF = 1,
+    KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE  = 2,
 };
 
 // SceneIdKolimaForestTree's entrances.
 enum
 {
-	KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE = 1,
-	KOLIMA_FOREST_TREE_FROM_TREE_ROOMS              = 2,
+    KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE = 1,
+    KOLIMA_FOREST_TREE_FROM_TREE_ROOMS              = 2,
 };
 
 // SceneIdKolimaForestTree's exits.
 enum
 {
-	KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE = 1,
-	KOLIMA_FOREST_TREE_TO_TREE_ROOMS              = 2,
+    KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE = 1,
+    KOLIMA_FOREST_TREE_TO_TREE_ROOMS              = 2,
 };
 
 // SceneIdTreeRooms's entrances.
 enum
 {
-	TREE_ROOMS_FROM_KOLIMA_FOREST_TREE               = 1,
-	TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
-	TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST = 3,
-	TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH           = 4,
-	TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST       = 5,
-	TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST       = 6,
-	TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH           = 7,
-	TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
-	TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
-	TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR            = 11,
-	TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE            = 12,
-	TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR         = 13,
-	TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR         = 14,
-	TREE_ROOMS_TRET_FROM_ENTRANCE                    = 15,
-	TREE_ROOMS_ENTRANCE_FROM_TRET                    = 16,
-	// The fall from the fifth floor's centre leaf to Tret: from
-	// TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF on the fourth floor the leader falls on through the
-	// third floor, the second floor and the entrance room, each entrance ten lower than the last,
-	// and lands in Tret's room at TREE_ROOMS_FALL_LANDING.
-	TREE_ROOMS_FALL_LANDING                          = 10,
-	TREE_ROOMS_FALL_THROUGH_C                        = 20,
-	TREE_ROOMS_FALL_THROUGH_B                        = 30,
-	TREE_ROOMS_FALL_THROUGH_A                        = 40,
-	TREE_ROOMS_AFTER_FIGHT_TRET                      = 19,
-	// The landings below the leaves, each numbered as its leaf's cell behavior
-	// (scTreeRoomsStepOnLeaf) and lying straight below it, one room down. The second floor's nine
-	// leaves drop into the entrance room. They are lettered A to I row by row from the north, west
-	// to east within a row.
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A              = 21,
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B              = 22,
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C              = 23,
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D              = 24,
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E              = 25,
-	// Lands one cell east of its leaf.
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F              = 26,
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G              = 27,
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H              = 28,
-	TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I              = 29,
-	// The third floor's two leaves drop onto the second floor. The leaf drawn on the southwest web
-	// has no step cue.
-	TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF            = 31,
-	TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF            = 32,
-	// The way down to Tret: the leader falls on from here.
-	TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF          = 50,
-	// The fifth floor's other leaves drop onto the fourth floor.
-	TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF       = 51,
-	TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF           = 52,
-	TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF       = 53,
-	TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF            = 54,
-	TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF            = 55,
-	// Lands where TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF does, two cells north of its leaf, though
-	// the cell below it is open ground.
-	TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF       = 56,
-	TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF           = 57,
-	TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF       = 58,
-	TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF   = 59,
+    TREE_ROOMS_FROM_KOLIMA_FOREST_TREE               = 1,
+    TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
+    TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST = 3,
+    TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH           = 4,
+    TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST       = 5,
+    TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST       = 6,
+    TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH           = 7,
+    TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
+    TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
+    TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR            = 11,
+    TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE            = 12,
+    TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR         = 13,
+    TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR         = 14,
+    TREE_ROOMS_TRET_FROM_ENTRANCE                    = 15,
+    TREE_ROOMS_ENTRANCE_FROM_TRET                    = 16,
+    // The fall from the fifth floor's centre leaf to Tret: from
+    // TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF on the fourth floor the leader falls on through the
+    // third floor, the second floor and the entrance room, each entrance ten lower than the last,
+    // and lands in Tret's room at TREE_ROOMS_FALL_LANDING.
+    TREE_ROOMS_FALL_LANDING                          = 10,
+    TREE_ROOMS_FALL_THROUGH_C                        = 20,
+    TREE_ROOMS_FALL_THROUGH_B                        = 30,
+    TREE_ROOMS_FALL_THROUGH_A                        = 40,
+    TREE_ROOMS_AFTER_FIGHT_TRET                      = 19,
+    // The landings below the leaves, each numbered as its leaf's cell behavior
+    // (scTreeRoomsStepOnLeaf) and lying straight below it, one room down. The second floor's nine
+    // leaves drop into the entrance room. They are lettered A to I row by row from the north, west
+    // to east within a row.
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A              = 21,
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B              = 22,
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C              = 23,
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D              = 24,
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E              = 25,
+    // Lands one cell east of its leaf.
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F              = 26,
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G              = 27,
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H              = 28,
+    TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I              = 29,
+    // The third floor's two leaves drop onto the second floor. The leaf drawn on the southwest web
+    // has no step cue.
+    TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF            = 31,
+    TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF            = 32,
+    // The way down to Tret: the leader falls on from here.
+    TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF          = 50,
+    // The fifth floor's other leaves drop onto the fourth floor.
+    TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF       = 51,
+    TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF           = 52,
+    TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF       = 53,
+    TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF            = 54,
+    TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF            = 55,
+    // Lands where TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF does, two cells north of its leaf, though
+    // the cell below it is open ground.
+    TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF       = 56,
+    TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF           = 57,
+    TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF       = 58,
+    TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF   = 59,
 };
 
 // SceneIdTreeRooms's exits.
 enum
 {
-	TREE_ROOMS_TO_KOLIMA_FOREST_TREE               = 1,
-	TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
-	TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST = 3,
-	TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH           = 4,
-	TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST       = 5,
-	TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST       = 6,
-	TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH           = 7,
-	TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
-	TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
-	TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR            = 10,
-	TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE            = 11,
-	TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR         = 12,
-	TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR         = 13,
-	TREE_ROOMS_TRET_TO_ENTRANCE                    = 14,
-	TREE_ROOMS_ENTRANCE_TO_TRET                    = 15,
+    TREE_ROOMS_TO_KOLIMA_FOREST_TREE               = 1,
+    TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
+    TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST = 3,
+    TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH           = 4,
+    TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST       = 5,
+    TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST       = 6,
+    TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH           = 7,
+    TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
+    TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
+    TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR            = 10,
+    TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE            = 11,
+    TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR         = 12,
+    TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR         = 13,
+    TREE_ROOMS_TRET_TO_ENTRANCE                    = 14,
+    TREE_ROOMS_ENTRANCE_TO_TRET                    = 15,
 };
 
 // SceneIdTretTreeBranch's entrances.
 enum
 {
-	TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST = 1,
-	TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST = 2,
-	TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH           = 3,
-	TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST       = 4,
-	TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH           = 5,
-	TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST       = 6,
-	TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST = 7,
-	TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST = 8,
+    TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST = 1,
+    TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST = 2,
+    TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH           = 3,
+    TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST       = 4,
+    TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH           = 5,
+    TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST       = 6,
+    TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST = 7,
+    TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST = 8,
 };
 
 // SceneIdTretTreeBranch's exits.
 enum
 {
-	TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST = 1,
-	TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST = 2,
-	TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH           = 3,
-	TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST       = 4,
-	TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH           = 5,
-	TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST       = 6,
-	TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST = 7,
-	TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST = 8,
+    TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST = 1,
+    TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST = 2,
+    TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH           = 3,
+    TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST       = 4,
+    TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH           = 5,
+    TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST       = 6,
+    TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST = 7,
+    TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST = 8,
 };
 
 // SceneIdBilibinCaveIce's entrances.
 enum
 {
-	BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST = 1,
-	BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST = 2,
-	BILIBIN_CAVE_ICE_FROM_WORLD_MAP                = 3,
-	BILIBIN_CAVE_ICE_FROM_CHESTS                   = 4,
-	BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE  = 5,
+    BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST = 1,
+    BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST = 2,
+    BILIBIN_CAVE_ICE_FROM_WORLD_MAP                = 3,
+    BILIBIN_CAVE_ICE_FROM_CHESTS                   = 4,
+    BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE  = 5,
 };
 
 // SceneIdBilibinCaveIce's exits.
 enum
 {
-	BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST = 1,
-	BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST = 2,
-	BILIBIN_CAVE_ICE_TO_WORLD_MAP                = 3,
-	BILIBIN_CAVE_ICE_TO_CHESTS                   = 4,
-	BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE  = 5,
+    BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST = 1,
+    BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST = 2,
+    BILIBIN_CAVE_ICE_TO_WORLD_MAP                = 3,
+    BILIBIN_CAVE_ICE_TO_CHESTS                   = 4,
+    BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE  = 5,
 };
 
 // SceneIdBilibinCaveRapier's entrances.
 enum
 {
-	BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST  = 1,
-	BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST  = 2,
-	BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST       = 3,
-	BILIBIN_CAVE_RAPIER_FROM_TORCHES                     = 4,
-	BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST       = 5,
-	BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER = 6,
+    BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST  = 1,
+    BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST  = 2,
+    BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST       = 3,
+    BILIBIN_CAVE_RAPIER_FROM_TORCHES                     = 4,
+    BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST       = 5,
+    BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER = 6,
 };
 
 // SceneIdBilibinCaveRapier's exits.
 enum
 {
-	BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST  = 1,
-	BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST  = 2,
-	BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST       = 3,
-	BILIBIN_CAVE_RAPIER_TO_TORCHES                     = 4,
-	BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST       = 5,
-	BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER = 6,
+    BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST  = 1,
+    BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST  = 2,
+    BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST       = 3,
+    BILIBIN_CAVE_RAPIER_TO_TORCHES                     = 4,
+    BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST       = 5,
+    BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER = 6,
 };
 
 // SceneIdBilibinCaveEntrance's entrances.
 enum
 {
-	BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP                 = 1,
-	BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH = 2,
-	BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH = 3,
+    BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP                 = 1,
+    BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH = 2,
+    BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH = 3,
 };
 
 // SceneIdBilibinCaveEntrance's exits.
 enum
 {
-	BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP                 = 1,
-	BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH = 2,
-	BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH = 3,
+    BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP                 = 1,
+    BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH = 2,
+    BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH = 3,
 };
 
 // SceneIdImil's entrances.
 enum
 {
-	IMIL_FROM_HOUSE_SOUTHWEST     = 1,
-	// at the village's east edge, facing west; no exit leads here
-	IMIL_EAST_UNUSED              = 2,
-	IMIL_FROM_HOUSE_WEST          = 3,
-	IMIL_FROM_HOUSE_NORTHEAST     = 4,
-	IMIL_FROM_ICE_ROOMS_EAST      = 5,
-	IMIL_FROM_ICE_ROOMS_NORTHEAST = 6,
-	IMIL_FROM_ICE_ROOMS_WEST      = 7,
-	IMIL_FROM_ICE_ROOMS_SOUTHWEST = 8,
-	IMIL_FROM_IMIL_FALLS_CAVE     = 9,
+    IMIL_FROM_HOUSE_SOUTHWEST     = 1,
+    // at the village's east edge, facing west; no exit leads here
+    IMIL_EAST_UNUSED              = 2,
+    IMIL_FROM_HOUSE_WEST          = 3,
+    IMIL_FROM_HOUSE_NORTHEAST     = 4,
+    IMIL_FROM_ICE_ROOMS_EAST      = 5,
+    IMIL_FROM_ICE_ROOMS_NORTHEAST = 6,
+    IMIL_FROM_ICE_ROOMS_WEST      = 7,
+    IMIL_FROM_ICE_ROOMS_SOUTHWEST = 8,
+    IMIL_FROM_IMIL_FALLS_CAVE     = 9,
 };
 
 // SceneIdImil's exits.
 enum
 {
-	IMIL_TO_HOUSE_SOUTHWEST     = 1,
-	IMIL_TO_INN                 = 2,
-	IMIL_TO_HOUSE_WEST          = 3,
-	IMIL_TO_HOUSE_NORTHEAST     = 4,
-	IMIL_TO_ICE_ROOMS_EAST      = 5,
-	IMIL_TO_ICE_ROOMS_NORTHEAST = 6,
-	IMIL_TO_IMIL_FALLS_CAVE     = 8,
-	IMIL_TO_WORLD_MAP_SOUTH     = 11,
-	IMIL_TO_WORLD_MAP_NORTH     = 12,
+    IMIL_TO_HOUSE_SOUTHWEST     = 1,
+    IMIL_TO_INN                 = 2,
+    IMIL_TO_HOUSE_WEST          = 3,
+    IMIL_TO_HOUSE_NORTHEAST     = 4,
+    IMIL_TO_ICE_ROOMS_EAST      = 5,
+    IMIL_TO_ICE_ROOMS_NORTHEAST = 6,
+    IMIL_TO_IMIL_FALLS_CAVE     = 8,
+    IMIL_TO_WORLD_MAP_SOUTH     = 11,
+    IMIL_TO_WORLD_MAP_NORTH     = 12,
 };
 
 // SceneIdIceRooms's entrances.
 enum
 {
-	// the room behind Imil's house southwest door; through IMIL_TO_HOUSE_SOUTHWEST
-	ICE_ROOMS_HOUSE_SOUTHWEST          = 1,
-	ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST = 2,
-	// the room behind Imil's house west door; through IMIL_TO_HOUSE_WEST
-	ICE_ROOMS_HOUSE_WEST               = 3,
-	// the room behind Imil's house northeast door; through IMIL_TO_HOUSE_NORTHEAST
-	ICE_ROOMS_HOUSE_NORTHEAST          = 4,
-	ICE_ROOMS_INN                      = 5,
-	ICE_ROOMS_INN_UPSTAIRS_FROM_INN    = 6,
-	ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST = 7,
-	ICE_ROOMS_INN_FROM_INN_UPSTAIRS    = 8,
+    // the room behind Imil's house southwest door; through IMIL_TO_HOUSE_SOUTHWEST
+    ICE_ROOMS_HOUSE_SOUTHWEST          = 1,
+    ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST = 2,
+    // the room behind Imil's house west door; through IMIL_TO_HOUSE_WEST
+    ICE_ROOMS_HOUSE_WEST               = 3,
+    // the room behind Imil's house northeast door; through IMIL_TO_HOUSE_NORTHEAST
+    ICE_ROOMS_HOUSE_NORTHEAST          = 4,
+    ICE_ROOMS_INN                      = 5,
+    ICE_ROOMS_INN_UPSTAIRS_FROM_INN    = 6,
+    ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST = 7,
+    ICE_ROOMS_INN_FROM_INN_UPSTAIRS    = 8,
 };
 
 // SceneIdIceRooms's exits.
 enum
 {
-	ICE_ROOMS_HOUSE_WEST_TO_IMIL      = 1,
-	ICE_ROOMS_TO_IMIL_WEST_SOUTHWEST  = 2,
-	ICE_ROOMS_TO_IMIL_EAST            = 3,
-	ICE_ROOMS_TO_IMIL                 = 4,
-	ICE_ROOMS_TO_IMIL_SOUTH_SOUTHWEST = 5,
-	ICE_ROOMS_INN_UPSTAIRS_TO_INN     = 6,
-	ICE_ROOMS_TO_IMIL_EAST_NORTHEAST  = 7,
-	ICE_ROOMS_INN_TO_INN_UPSTAIRS     = 8,
+    ICE_ROOMS_HOUSE_WEST_TO_IMIL      = 1,
+    ICE_ROOMS_TO_IMIL_WEST_SOUTHWEST  = 2,
+    ICE_ROOMS_TO_IMIL_EAST            = 3,
+    ICE_ROOMS_TO_IMIL                 = 4,
+    ICE_ROOMS_TO_IMIL_SOUTH_SOUTHWEST = 5,
+    ICE_ROOMS_INN_UPSTAIRS_TO_INN     = 6,
+    ICE_ROOMS_TO_IMIL_EAST_NORTHEAST  = 7,
+    ICE_ROOMS_INN_TO_INN_UPSTAIRS     = 8,
 };
 
 // SceneIdImilFallsCave's entrances.
 enum
 {
-	IMIL_FALLS_CAVE_FROM_IMIL = 1,
+    IMIL_FALLS_CAVE_FROM_IMIL = 1,
 };
 
 // SceneIdImilFallsCave's exits.
 enum
 {
-	IMIL_FALLS_CAVE_TO_IMIL = 1,
+    IMIL_FALLS_CAVE_TO_IMIL = 1,
 };
 
 // SceneIdMercuryLighthouseEntrance's entrances.
 enum
 {
-	MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR             = 1,
-	MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_FROM_GODDESS                     = 2,
-	MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_SIX_STATUES                     = 3,
-	MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_WEST             = 4,
-	MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_EAST             = 5,
-	MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE           = 6,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_WEST_WATERFALLS          = 7,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_GODDESS_EAST             = 8,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_GODDESS_WEST             = 9,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_EAST_WATERFALLS          = 10,
-	MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST           = 11,
-	MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST = 12,
-	MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_FROM_WEST_WATERFALLS            = 13,
-	MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST      = 14,
-	MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST = 15,
-	MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_FROM_EAST_WATERFALLS          = 16,
-	MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_FOUNTAINS          = 17,
-	MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_EAST_WATERFALLS         = 18,
-	MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_TWIN_FOUNTAINS          = 19,
-	MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_WEST_WATERFALLS         = 20,
-	MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE           = 25,
-	// Where Mia tries the doorway again and again while the Lizard Man blocks it.
-	MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN                = 30,
-	// Where the party comes back from the battle with the Lizard Man.
-	MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN                 = 31,
-	// no exit leads here
-	MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH                     = 60,
-	// No exit leads here.
-	MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_MIDDLE                    = 99,
+    MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR             = 1,
+    MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_FROM_GODDESS                     = 2,
+    MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_SIX_STATUES                     = 3,
+    MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_WEST             = 4,
+    MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_EAST             = 5,
+    MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE           = 6,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_WEST_WATERFALLS          = 7,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_GODDESS_EAST             = 8,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_GODDESS_WEST             = 9,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_EAST_WATERFALLS          = 10,
+    MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST           = 11,
+    MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST = 12,
+    MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_FROM_WEST_WATERFALLS            = 13,
+    MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST      = 14,
+    MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST = 15,
+    MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_FROM_EAST_WATERFALLS          = 16,
+    MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_FOUNTAINS          = 17,
+    MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_EAST_WATERFALLS         = 18,
+    MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_TWIN_FOUNTAINS          = 19,
+    MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_WEST_WATERFALLS         = 20,
+    MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE           = 25,
+    // Where Mia tries the doorway again and again while the Lizard Man blocks it.
+    MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN                = 30,
+    // Where the party comes back from the battle with the Lizard Man.
+    MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN                 = 31,
+    // no exit leads here
+    MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH                     = 60,
+    // No exit leads here.
+    MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_MIDDLE                    = 99,
 };
 
 // SceneIdMercuryLighthouseEntrance's exits.
 enum
 {
-	MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR             = 1,
-	MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_TO_GODDESS                     = 2,
-	MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_SIX_STATUES                     = 3,
-	MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_FOUNTAINS_WEST             = 4,
-	MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_FOUNTAINS_EAST             = 5,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_WEST_WATERFALLS          = 6,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_GODDESS_WEST             = 7,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_GODDESS_EAST             = 8,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_EAST_WATERFALLS          = 9,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST           = 10,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST = 11,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTHWEST      = 12,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST = 13,
-	MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_WEST_WATERFALLS         = 14,
-	MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_EAST_WATERFALLS         = 15,
-	MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_TWIN_FOUNTAINS          = 16,
-	MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_DRY_FOUNTAIN            = 17,
-	MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_FOUNTAINS          = 18,
-	MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_CHEST_FOUNTAIN          = 19,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN           = 20,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE           = 50,
-	MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN            = 63,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR             = 1,
+    MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_TO_GODDESS                     = 2,
+    MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_SIX_STATUES                     = 3,
+    MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_FOUNTAINS_WEST             = 4,
+    MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_FOUNTAINS_EAST             = 5,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_WEST_WATERFALLS          = 6,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_GODDESS_WEST             = 7,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_GODDESS_EAST             = 8,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_EAST_WATERFALLS          = 9,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST           = 10,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST = 11,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTHWEST      = 12,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST = 13,
+    MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_WEST_WATERFALLS         = 14,
+    MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_EAST_WATERFALLS         = 15,
+    MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_TWIN_FOUNTAINS          = 16,
+    MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_DRY_FOUNTAIN            = 17,
+    MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_FOUNTAINS          = 18,
+    MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_CHEST_FOUNTAIN          = 19,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN           = 20,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE           = 50,
+    MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN            = 63,
 };
 
 // SceneIdMercuryLighthouseLower's entrances.
 enum
 {
-	MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST           = 1,
-	MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
-	MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE                                = 3,
-	MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
-	MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE                          = 5,
-	MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH            = 6,
-	MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST      = 7,
-	MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_UPPER                   = 8,
-	MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL                                = 9,
-	MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS                          = 10,
-	MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH            = 11,
-	MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE           = 15,
+    MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST           = 1,
+    MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
+    MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE                                = 3,
+    MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
+    MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE                          = 5,
+    MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH            = 6,
+    MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST      = 7,
+    MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_UPPER                   = 8,
+    MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL                                = 9,
+    MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS                          = 10,
+    MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH            = 11,
+    MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE           = 15,
 };
 
 // SceneIdMercuryLighthouseLower's exits.
 enum
 {
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST           = 1,
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
-	MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE                                = 3,
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST      = 5,
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER                   = 6,
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH            = 7,
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE           = 8,
-	MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL                                = 9,
-	MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS                          = 10,
-	MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE                          = 11,
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH            = 12,
-	MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE           = 13,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST           = 1,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
+    MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE                                = 3,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST      = 5,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER                   = 6,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH            = 7,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE           = 8,
+    MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL                                = 9,
+    MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS                          = 10,
+    MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE                          = 11,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH            = 12,
+    MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE           = 13,
 };
 
 // SceneIdMercuryLighthouseMiddle's entrances.
 enum
 {
-	MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH           = 1,
-	MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE                               = 2,
-	MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTH           = 3,
-	MERCURY_LIGHTHOUSE_MIDDLE_GATE_FROM_PIPES                               = 4,
-	MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST  = 5,
-	MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR              = 6,
-	MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST       = 7,
-	MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST  = 8,
-	MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST = 9,
-	MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST       = 10,
+    MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH           = 1,
+    MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE                               = 2,
+    MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTH           = 3,
+    MERCURY_LIGHTHOUSE_MIDDLE_GATE_FROM_PIPES                               = 4,
+    MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST  = 5,
+    MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR              = 6,
+    MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST       = 7,
+    MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST  = 8,
+    MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST = 9,
+    MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST       = 10,
 };
 
 // SceneIdMercuryLighthouseMiddle's exits.
 enum
 {
-	MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_NORTH           = 1,
-	MERCURY_LIGHTHOUSE_MIDDLE_GATE_TO_PIPES                               = 2,
-	MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST  = 3,
-	MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR              = 4,
-	MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST       = 5,
-	MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTH           = 6,
-	MERCURY_LIGHTHOUSE_MIDDLE_PIPES_TO_GATE                               = 7,
-	MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST       = 8,
-	MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST  = 9,
-	MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST = 10,
+    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_NORTH           = 1,
+    MERCURY_LIGHTHOUSE_MIDDLE_GATE_TO_PIPES                               = 2,
+    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST  = 3,
+    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR              = 4,
+    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST       = 5,
+    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTH           = 6,
+    MERCURY_LIGHTHOUSE_MIDDLE_PIPES_TO_GATE                               = 7,
+    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST       = 8,
+    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST  = 9,
+    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST = 10,
 };
 
 // SceneIdMercuryLighthouseUpper's entrances.
 enum
 {
-	MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST  = 1,
-	MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
-	MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST       = 3,
-	MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_FROM_GATE                          = 4,
-	MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST       = 5,
-	MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST  = 6,
-	MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER                  = 7,
-	MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_ROW_STATUES                          = 8,
-	MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_JETS                                 = 9,
-	MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST          = 10,
-	MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS                            = 11,
-	MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_WEST          = 12,
-	MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_FROM_GAP                            = 13,
-	MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE                                 = 14,
-	MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_JETS_STATUE_FALLS                    = 15,
-	MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE_STATUE_FALLS                    = 16,
+    MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST  = 1,
+    MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
+    MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST       = 3,
+    MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_FROM_GATE                          = 4,
+    MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST       = 5,
+    MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST  = 6,
+    MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER                  = 7,
+    MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_ROW_STATUES                          = 8,
+    MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_JETS                                 = 9,
+    MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST          = 10,
+    MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS                            = 11,
+    MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_WEST          = 12,
+    MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_FROM_GAP                            = 13,
+    MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE                                 = 14,
+    MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_JETS_STATUE_FALLS                    = 15,
+    MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE_STATUE_FALLS                    = 16,
 };
 
 // SceneIdMercuryLighthouseUpper's exits.
 enum
 {
-	MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST  = 1,
-	MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
-	MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST       = 3,
-	MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_TO_GATE                          = 4,
-	MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST       = 5,
-	MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST  = 6,
-	MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER                  = 7,
-	MERCURY_LIGHTHOUSE_UPPER_GATE_TO_JETS                                 = 8,
-	MERCURY_LIGHTHOUSE_UPPER_GATE_TO_ROW_STATUES                          = 9,
-	MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST          = 10,
-	MERCURY_LIGHTHOUSE_UPPER_GAP_TO_WATERFALLS                            = 11,
-	MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST          = 12,
-	MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP                            = 13,
-	MERCURY_LIGHTHOUSE_UPPER_JETS_TO_GATE                                 = 14,
-	MERCURY_LIGHTHOUSE_UPPER_JETS_TO_GATE_STATUE_FALLS                    = 15,
-	MERCURY_LIGHTHOUSE_UPPER_GATE_TO_JETS_STATUE_FALLS                    = 16,
+    MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST  = 1,
+    MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
+    MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST       = 3,
+    MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_TO_GATE                          = 4,
+    MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST       = 5,
+    MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST  = 6,
+    MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER                  = 7,
+    MERCURY_LIGHTHOUSE_UPPER_GATE_TO_JETS                                 = 8,
+    MERCURY_LIGHTHOUSE_UPPER_GATE_TO_ROW_STATUES                          = 9,
+    MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST          = 10,
+    MERCURY_LIGHTHOUSE_UPPER_GAP_TO_WATERFALLS                            = 11,
+    MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST          = 12,
+    MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP                            = 13,
+    MERCURY_LIGHTHOUSE_UPPER_JETS_TO_GATE                                 = 14,
+    MERCURY_LIGHTHOUSE_UPPER_JETS_TO_GATE_STATUE_FALLS                    = 15,
+    MERCURY_LIGHTHOUSE_UPPER_GATE_TO_JETS_STATUE_FALLS                    = 16,
 };
 
 // SceneIdMercuryLighthouseExterior's entrances.
 enum
 {
-	MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_MIDDLE     = 1,
-	MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
-	MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST = 3,
-	MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_FROM_WATERFALL          = 4,
-	MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH          = 10,
-	MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP                     = 11,
-	MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_ENTRANCE   = 12,
-	MERCURY_LIGHTHOUSE_EXTERIOR_UNUSED                             = 13, // no exit leads here
-	MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE      = 15,
+    MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_MIDDLE     = 1,
+    MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
+    MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST = 3,
+    MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_FROM_WATERFALL          = 4,
+    MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH          = 10,
+    MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP                     = 11,
+    MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_ENTRANCE   = 12,
+    MERCURY_LIGHTHOUSE_EXTERIOR_UNUSED                             = 13, // no exit leads here
+    MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE      = 15,
 };
 
 // SceneIdMercuryLighthouseExterior's exits.
 enum
 {
-	MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE     = 1,
-	MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
-	MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST = 3,
-	MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_TO_WATERFALL          = 4,
-	MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH          = 5,
-	MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST                = 6,
-	MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE   = 7,
-	MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT      = 8,
-	MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE      = 9,
+    MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE     = 1,
+    MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
+    MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST = 3,
+    MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_TO_WATERFALL          = 4,
+    MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH          = 5,
+    MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST                = 6,
+    MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE   = 7,
+    MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT      = 8,
+    MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE      = 9,
 };
 
 // SceneIdMercuryLighthouseAerie's entrances.
 enum
 {
-	// the world map sends the party here after its lighthouse cut
-	MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT                 = 1,
-	// scMercuryLighthouseAerieConfrontSaturos
-	MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE             = 2,
-	MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 5,
+    // the world map sends the party here after its lighthouse cut
+    MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT                 = 1,
+    // scMercuryLighthouseAerieConfrontSaturos
+    MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE             = 2,
+    MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 5,
 };
 
 // SceneIdMercuryLighthouseAerie's exits.
 enum
 {
-	MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
+    MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
 };
 
 // SceneIdFuchinTempleGrounds's entrances.
 enum
 {
-	FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP                  = 1,
-	FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS_A            = 2,
-	FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
-	// In front of the traveling healer, where a party defeated anywhere at Fuchin Temple wakes (its
-	// return point in field/restart_rules.s).
-	FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT                    = 5,
+    FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP                  = 1,
+    FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS_A            = 2,
+    FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
+    // In front of the traveling healer, where a party defeated anywhere at Fuchin Temple wakes (its
+    // return point in field/restart_rules.s).
+    FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT                    = 5,
 };
 
 // SceneIdFuchinTempleGrounds's exits.
 enum
 {
-	FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP                  = 1,
-	FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A            = 2,
-	FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
+    FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP                  = 1,
+    FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A            = 2,
+    FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
 };
 
 // SceneIdLacquerRoomsA's entrances.
 enum
 {
-	LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS  = 1,
-	LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN       = 2,
-	LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE = 3,
-	LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE      = 4,
+    LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS  = 1,
+    LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN       = 2,
+    LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE = 3,
+    LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE      = 4,
 };
 
 // SceneIdLacquerRoomsA's exits.
 enum
 {
-	LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS  = 1,
-	LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN       = 2,
-	LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE = 3,
-	LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE      = 4,
+    LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS  = 1,
+    LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN       = 2,
+    LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE = 3,
+    LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE      = 4,
 };
 
 // SceneIdFuchinFallsCaveEntrance's entrances.
 enum
 {
-	FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS                = 1,
-	FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR             = 2,
-	FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ARCTIC_BLADE       = 3,
-	FUCHIN_FALLS_CAVE_ENTRANCE_SOUTH_HALF_FROM_NORTH_HALF                = 4,
-	FUCHIN_FALLS_CAVE_ENTRANCE_NORTH_HALF_FROM_SOUTH_HALF                = 5,
-	FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE        = 6,
-	FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 7,
-	FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 8,
+    FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS                = 1,
+    FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR             = 2,
+    FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ARCTIC_BLADE       = 3,
+    FUCHIN_FALLS_CAVE_ENTRANCE_SOUTH_HALF_FROM_NORTH_HALF                = 4,
+    FUCHIN_FALLS_CAVE_ENTRANCE_NORTH_HALF_FROM_SOUTH_HALF                = 5,
+    FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE        = 6,
+    FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 7,
+    FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 8,
 };
 
 // SceneIdFuchinFallsCaveEntrance's exits.
 enum
 {
-	FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_TEMPLE_GROUNDS                = 1,
-	FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_ZEPHYR             = 2,
-	FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_ARCTIC_BLADE       = 3,
-	FUCHIN_FALLS_CAVE_ENTRANCE_SOUTH_HALF_TO_NORTH_HALF                = 4,
-	FUCHIN_FALLS_CAVE_ENTRANCE_NORTH_HALF_TO_SOUTH_HALF                = 5,
-	FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE        = 6,
-	FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 7,
-	FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 8,
+    FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_TEMPLE_GROUNDS                = 1,
+    FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_ZEPHYR             = 2,
+    FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_ARCTIC_BLADE       = 3,
+    FUCHIN_FALLS_CAVE_ENTRANCE_SOUTH_HALF_TO_NORTH_HALF                = 4,
+    FUCHIN_FALLS_CAVE_ENTRANCE_NORTH_HALF_TO_SOUTH_HALF                = 5,
+    FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE        = 6,
+    FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 7,
+    FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 8,
 };
 
 // SceneIdFuchinFallsCaveZephyr's entrances.
 enum
 {
-	FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 1,
-	FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_ENTRANCE    = 2,
+    FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 1,
+    FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_ENTRANCE    = 2,
 };
 
 // SceneIdFuchinFallsCaveZephyr's exits.
 enum
 {
-	FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 1,
-	FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_ENTRANCE    = 2,
+    FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 1,
+    FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_ENTRANCE    = 2,
 };
 
 // SceneIdFuchinFallsCaveDragonsEye's entrances.
 enum
 {
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS                    = 1,
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 2,
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_FROM_CHAMBER                    = 3,
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE      = 4,
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR        = 5,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS                    = 1,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 2,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_FROM_CHAMBER                    = 3,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE      = 4,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR        = 5,
 };
 
 // SceneIdFuchinFallsCaveDragonsEye's exits.
 enum
 {
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_TO_LOGS                    = 1,
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 2,
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_CHAMBER                    = 3,
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ENTRANCE      = 4,
-	FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ZEPHYR        = 5,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_TO_LOGS                    = 1,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 2,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_CHAMBER                    = 3,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ENTRANCE      = 4,
+    FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ZEPHYR        = 5,
 };
 
 // SceneIdFuchinFallsCaveArcticBlade's entrances.
 enum
 {
-	FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 1,
-	FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF           = 2,
-	FUCHIN_FALLS_CAVE_ARCTIC_BLADE_SOUTH_HALF_FROM_NORTH_HALF           = 3,
-	FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE      = 4,
+    FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 1,
+    FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF           = 2,
+    FUCHIN_FALLS_CAVE_ARCTIC_BLADE_SOUTH_HALF_FROM_NORTH_HALF           = 3,
+    FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE      = 4,
 };
 
 // SceneIdFuchinFallsCaveArcticBlade's exits.
 enum
 {
-	FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 1,
-	FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_TO_SOUTH_HALF           = 2,
-	FUCHIN_FALLS_CAVE_ARCTIC_BLADE_SOUTH_HALF_TO_NORTH_HALF           = 3,
-	FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_ENTRANCE      = 4,
+    FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 1,
+    FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_TO_SOUTH_HALF           = 2,
+    FUCHIN_FALLS_CAVE_ARCTIC_BLADE_SOUTH_HALF_TO_NORTH_HALF           = 3,
+    FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_ENTRANCE      = 4,
 };
 
 // SceneIdFuchinFallsCaveOrbOfForce's entrances.
 enum
 {
-	FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_FROM_SOUTH_HALF                = 1,
-	FUCHIN_FALLS_CAVE_ORB_OF_FORCE_SOUTH_HALF_FROM_NORTH_HALF                = 2,
-	FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 3,
-	FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 4,
+    FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_FROM_SOUTH_HALF                = 1,
+    FUCHIN_FALLS_CAVE_ORB_OF_FORCE_SOUTH_HALF_FROM_NORTH_HALF                = 2,
+    FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 3,
+    FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 4,
 };
 
 // SceneIdFuchinFallsCaveOrbOfForce's exits.
 enum
 {
-	FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_TO_SOUTH_HALF                = 1,
-	FUCHIN_FALLS_CAVE_ORB_OF_FORCE_SOUTH_HALF_TO_NORTH_HALF                = 2,
-	FUCHIN_FALLS_CAVE_ORB_OF_FORCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 3,
-	FUCHIN_FALLS_CAVE_ORB_OF_FORCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 4,
+    FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_TO_SOUTH_HALF                = 1,
+    FUCHIN_FALLS_CAVE_ORB_OF_FORCE_SOUTH_HALF_TO_NORTH_HALF                = 2,
+    FUCHIN_FALLS_CAVE_ORB_OF_FORCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 3,
+    FUCHIN_FALLS_CAVE_ORB_OF_FORCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 4,
 };
 
 // SceneIdFuchinFallsCaveDragonStatue's entrances.
 enum
 {
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST = 1,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST = 2,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ARCTIC_BLADE      = 3,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_WEST          = 4,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE        = 5,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST          = 6,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_WEST          = 7,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_MIDDLE        = 8,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_EAST          = 9,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE       = 10,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE_EAST     = 11,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE_WEST     = 12,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST = 1,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST = 2,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ARCTIC_BLADE      = 3,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_WEST          = 4,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE        = 5,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST          = 6,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_WEST          = 7,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_MIDDLE        = 8,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_EAST          = 9,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE       = 10,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE_EAST     = 11,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE_WEST     = 12,
 };
 
 // SceneIdFuchinFallsCaveDragonStatue's exits.
 enum
 {
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST = 1,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST = 2,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ARCTIC_BLADE      = 3,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_WEST          = 4,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_MIDDLE        = 5,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_EAST          = 6,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_WEST          = 7,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_MIDDLE        = 8,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_EAST          = 9,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE       = 10,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ENTRANCE_EAST     = 11,
-	FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ENTRANCE_WEST     = 12,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST = 1,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST = 2,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ARCTIC_BLADE      = 3,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_WEST          = 4,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_MIDDLE        = 5,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_EAST          = 6,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_WEST          = 7,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_MIDDLE        = 8,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_EAST          = 9,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE       = 10,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ENTRANCE_EAST     = 11,
+    FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ENTRANCE_WEST     = 12,
 };
 
 // SceneIdMogallForestSign's entrances.
 enum
 {
-	MOGALL_FOREST_SIGN_FROM_WORLD_MAP                      = 1,
-	MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST  = 2,
-	MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
-	MOGALL_FOREST_SIGN_ENTRANCE_FROM_SOUTHWEST_CLEARING    = 4,
-	MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_FROM_ENTRANCE    = 5,
-	MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_FROM_RIVER       = 6,
-	MOGALL_FOREST_SIGN_RIVER_FROM_SOUTHWEST_CLEARING       = 7,
-	MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST  = 8,
-	MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ           = 9,
+    MOGALL_FOREST_SIGN_FROM_WORLD_MAP                      = 1,
+    MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST  = 2,
+    MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
+    MOGALL_FOREST_SIGN_ENTRANCE_FROM_SOUTHWEST_CLEARING    = 4,
+    MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_FROM_ENTRANCE    = 5,
+    MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_FROM_RIVER       = 6,
+    MOGALL_FOREST_SIGN_RIVER_FROM_SOUTHWEST_CLEARING       = 7,
+    MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST  = 8,
+    MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ           = 9,
 };
 
 // SceneIdMogallForestSign's exits.
 enum
 {
-	MOGALL_FOREST_SIGN_TO_WORLD_MAP                      = 1,
-	MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_WEST  = 2,
-	MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
-	MOGALL_FOREST_SIGN_ENTRANCE_TO_SOUTHWEST_CLEARING    = 4,
-	MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_TO_ENTRANCE    = 5,
-	MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_TO_RIVER       = 6,
-	MOGALL_FOREST_SIGN_RIVER_TO_SOUTHWEST_CLEARING       = 7,
-	MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_EAST  = 8,
-	MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_QUARTZ           = 9,
+    MOGALL_FOREST_SIGN_TO_WORLD_MAP                      = 1,
+    MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_WEST  = 2,
+    MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
+    MOGALL_FOREST_SIGN_ENTRANCE_TO_SOUTHWEST_CLEARING    = 4,
+    MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_TO_ENTRANCE    = 5,
+    MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_TO_RIVER       = 6,
+    MOGALL_FOREST_SIGN_RIVER_TO_SOUTHWEST_CLEARING       = 7,
+    MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_EAST  = 8,
+    MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_QUARTZ           = 9,
 };
 
 // SceneIdMogallForestQuartz's entrances.
 enum
 {
-	MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIGN             = 1,
-	MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_FROM_STUMPS      = 2,
-	MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
-	MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING      = 4,
-	MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND                    = 5,
-	MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING      = 6,
-	MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_FROM_STUMPS      = 7,
-	MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_FROM_RIVER       = 8,
-	MOGALL_FOREST_QUARTZ_POND_FROM_STUMPS                    = 9,
-	MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING       = 10,
-	MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE       = 11,
-	MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH = 12,
+    MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIGN             = 1,
+    MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_FROM_STUMPS      = 2,
+    MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
+    MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING      = 4,
+    MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND                    = 5,
+    MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING      = 6,
+    MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_FROM_STUMPS      = 7,
+    MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_FROM_RIVER       = 8,
+    MOGALL_FOREST_QUARTZ_POND_FROM_STUMPS                    = 9,
+    MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING       = 10,
+    MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE       = 11,
+    MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH = 12,
 };
 
 // SceneIdMogallForestQuartz's exits.
 enum
 {
-	MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIGN             = 1,
-	MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_TO_STUMPS      = 2,
-	MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
-	MOGALL_FOREST_QUARTZ_STUMPS_TO_NORTHWEST_CLEARING      = 4,
-	MOGALL_FOREST_QUARTZ_STUMPS_TO_POND                    = 5,
-	MOGALL_FOREST_QUARTZ_STUMPS_TO_NORTHEAST_CLEARING      = 6,
-	MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_TO_STUMPS      = 7,
-	MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_TO_RIVER       = 8,
-	MOGALL_FOREST_QUARTZ_POND_TO_STUMPS                    = 9,
-	MOGALL_FOREST_QUARTZ_RIVER_TO_NORTHEAST_CLEARING       = 10,
-	MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_KILLER_APE       = 11,
-	MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH = 12,
+    MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIGN             = 1,
+    MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_TO_STUMPS      = 2,
+    MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
+    MOGALL_FOREST_QUARTZ_STUMPS_TO_NORTHWEST_CLEARING      = 4,
+    MOGALL_FOREST_QUARTZ_STUMPS_TO_POND                    = 5,
+    MOGALL_FOREST_QUARTZ_STUMPS_TO_NORTHEAST_CLEARING      = 6,
+    MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_TO_STUMPS      = 7,
+    MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_TO_RIVER       = 8,
+    MOGALL_FOREST_QUARTZ_POND_TO_STUMPS                    = 9,
+    MOGALL_FOREST_QUARTZ_RIVER_TO_NORTHEAST_CLEARING       = 10,
+    MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_KILLER_APE       = 11,
+    MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH = 12,
 };
 
 // SceneIdMogallForestKillerApe's entrances.
 enum
 {
-	MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_FROM_STUMPS      = 1,
-	MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_QUARTZ           = 2,
-	MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST  = 3,
-	MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST                   = 4,
-	MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING      = 5,
-	MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER                   = 6,
-	MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS                   = 7,
-	MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS                   = 8,
-	MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_EAST  = 9,
-	MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH = 10,
-	MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES                  = 11,
-	MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER                  = 12,
-	MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP                      = 13,
-	// scMogallForestKillerApeAttacks
-	MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS            = 15,
+    MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_FROM_STUMPS      = 1,
+    MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_QUARTZ           = 2,
+    MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST  = 3,
+    MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST                   = 4,
+    MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING      = 5,
+    MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER                   = 6,
+    MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS                   = 7,
+    MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS                   = 8,
+    MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_EAST  = 9,
+    MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH = 10,
+    MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES                  = 11,
+    MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER                  = 12,
+    MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP                      = 13,
+    // scMogallForestKillerApeAttacks
+    MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS            = 15,
 };
 
 // SceneIdMogallForestKillerApe's exits.
 enum
 {
-	MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_TO_STUMPS      = 1,
-	MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_QUARTZ           = 2,
-	MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_WEST  = 3,
-	MOGALL_FOREST_KILLER_APE_STUMPS_TO_CHEST                   = 4,
-	MOGALL_FOREST_KILLER_APE_STUMPS_TO_NORTHWEST_CLEARING      = 5,
-	MOGALL_FOREST_KILLER_APE_STUMPS_TO_RIVER                   = 6,
-	MOGALL_FOREST_KILLER_APE_CHEST_TO_STUMPS                   = 7,
-	MOGALL_FOREST_KILLER_APE_RIVER_TO_STUMPS                   = 8,
-	MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_EAST  = 9,
-	MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH = 10,
-	MOGALL_FOREST_KILLER_APE_RIVER_TO_BRIDGES                  = 11,
-	MOGALL_FOREST_KILLER_APE_BRIDGES_TO_RIVER                  = 12,
-	MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP                      = 13,
+    MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_TO_STUMPS      = 1,
+    MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_QUARTZ           = 2,
+    MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_WEST  = 3,
+    MOGALL_FOREST_KILLER_APE_STUMPS_TO_CHEST                   = 4,
+    MOGALL_FOREST_KILLER_APE_STUMPS_TO_NORTHWEST_CLEARING      = 5,
+    MOGALL_FOREST_KILLER_APE_STUMPS_TO_RIVER                   = 6,
+    MOGALL_FOREST_KILLER_APE_CHEST_TO_STUMPS                   = 7,
+    MOGALL_FOREST_KILLER_APE_RIVER_TO_STUMPS                   = 8,
+    MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_EAST  = 9,
+    MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH = 10,
+    MOGALL_FOREST_KILLER_APE_RIVER_TO_BRIDGES                  = 11,
+    MOGALL_FOREST_KILLER_APE_BRIDGES_TO_RIVER                  = 12,
+    MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP                      = 13,
 };
 
 // SceneIdMogallForestSidePaths's entrances.
 enum
 {
-	MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_NORTH       = 1,
-	MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_WEST        = 2,
-	MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_QUARTZ_NORTH     = 3,
-	MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_QUARTZ_SOUTH     = 4,
-	MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_WEST  = 5,
-	MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_EAST  = 6,
-	MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_SOUTH = 7,
-	MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_EAST        = 8,
-	MOGALL_FOREST_SIDE_PATHS_NORTH_CLEARING_EAST                 = 9,
-	MOGALL_FOREST_SIDE_PATHS_WEST_CLEARING_WEST                  = 10,
+    MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_NORTH       = 1,
+    MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_WEST        = 2,
+    MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_QUARTZ_NORTH     = 3,
+    MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_QUARTZ_SOUTH     = 4,
+    MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_WEST  = 5,
+    MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_EAST  = 6,
+    MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_SOUTH = 7,
+    MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_EAST        = 8,
+    MOGALL_FOREST_SIDE_PATHS_NORTH_CLEARING_EAST                 = 9,
+    MOGALL_FOREST_SIDE_PATHS_WEST_CLEARING_WEST                  = 10,
 };
 
 // SceneIdMogallForestSidePaths's exits.
 enum
 {
-	MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_NORTH       = 1,
-	MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_WEST        = 2,
-	MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_QUARTZ_NORTH     = 3,
-	MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_QUARTZ_SOUTH     = 4,
-	MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_WEST  = 5,
-	MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_EAST  = 6,
-	MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_SOUTH = 7,
-	MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_EAST        = 8,
-	MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_WEST            = 11,
-	MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_EAST             = 12,
-	MOGALL_FOREST_SIDE_PATHS_TO_CENTER_CLEARING                = 13,
-	MOGALL_FOREST_SIDE_PATHS_TO_EAST_CLEARING                  = 14,
-	MOGALL_FOREST_SIDE_PATHS_TO_SOUTHWEST_CLEARING             = 15,
-	MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_NORTHWEST       = 16,
-	MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_SOUTHWEST       = 17,
-	MOGALL_FOREST_SIDE_PATHS_TO_SOUTHEAST_CLEARING             = 18,
-	MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_EAST            = 19,
-	MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_WEST             = 20,
+    MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_NORTH       = 1,
+    MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_WEST        = 2,
+    MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_QUARTZ_NORTH     = 3,
+    MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_QUARTZ_SOUTH     = 4,
+    MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_WEST  = 5,
+    MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_EAST  = 6,
+    MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_SOUTH = 7,
+    MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_EAST        = 8,
+    MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_WEST            = 11,
+    MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_EAST             = 12,
+    MOGALL_FOREST_SIDE_PATHS_TO_CENTER_CLEARING                = 13,
+    MOGALL_FOREST_SIDE_PATHS_TO_EAST_CLEARING                  = 14,
+    MOGALL_FOREST_SIDE_PATHS_TO_SOUTHWEST_CLEARING             = 15,
+    MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_NORTHWEST       = 16,
+    MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_SOUTHWEST       = 17,
+    MOGALL_FOREST_SIDE_PATHS_TO_SOUTHEAST_CLEARING             = 18,
+    MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_EAST            = 19,
+    MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_WEST             = 20,
 };
 
 // SceneIdXian's entrances.
 enum
 {
-	XIAN_FROM_HOUSE                       = 1,
-	XIAN_FROM_WEAPON_AND_ARMOR_SHOP       = 5,
-	XIAN_FROM_HOUSE_NORTH                 = 6,
-	XIAN_FROM_LACQUER_ROOMS_B_EAST        = 7,
-	XIAN_FROM_LACQUER_ROOMS_B_SOUTH       = 8,
-	XIAN_FROM_LACQUER_ROOMS_B_WEST        = 9,
-	XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL = 10,
-	XIAN_FROM_SANCTUM_WEST                = 11,
+    XIAN_FROM_HOUSE                       = 1,
+    XIAN_FROM_WEAPON_AND_ARMOR_SHOP       = 5,
+    XIAN_FROM_HOUSE_NORTH                 = 6,
+    XIAN_FROM_LACQUER_ROOMS_B_EAST        = 7,
+    XIAN_FROM_LACQUER_ROOMS_B_SOUTH       = 8,
+    XIAN_FROM_LACQUER_ROOMS_B_WEST        = 9,
+    XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL = 10,
+    XIAN_FROM_SANCTUM_WEST                = 11,
 };
 
 // SceneIdXian's exits.
 enum
 {
-	XIAN_TO_HOUSE                       = 1,
-	XIAN_TO_HOUSE_NORTH                 = 2,
-	XIAN_TO_LACQUER_ROOMS_B_EAST        = 3,
-	XIAN_TO_INN                         = 4,
-	XIAN_TO_WEAPON_AND_ARMOR_SHOP       = 5,
-	XIAN_TO_SANCTUM                     = 6,
-	XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL = 7,
-	XIAN_TO_WORLD_MAP                   = 8,
+    XIAN_TO_HOUSE                       = 1,
+    XIAN_TO_HOUSE_NORTH                 = 2,
+    XIAN_TO_LACQUER_ROOMS_B_EAST        = 3,
+    XIAN_TO_INN                         = 4,
+    XIAN_TO_WEAPON_AND_ARMOR_SHOP       = 5,
+    XIAN_TO_SANCTUM                     = 6,
+    XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL = 7,
+    XIAN_TO_WORLD_MAP                   = 8,
 };
 
 // SceneIdLacquerRoomsB's entrances.
 enum
 {
-	// the room behind Xian's house door; through XIAN_TO_HOUSE
-	LACQUER_ROOMS_B_HOUSE                            = 1,
-	// the room holds the hsus house; through XIAN_TO_HOUSE_NORTH
-	LACQUER_ROOMS_B_HOUSE_NORTH                      = 2,
-	LACQUER_ROOMS_B_FROM_XIAN_EAST                   = 3,
-	// the room holds the inn; through XIAN_TO_INN
-	LACQUER_ROOMS_B_INN_SOUTH                        = 4,
-	LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN         = 5,
-	// through XIAN_TO_WEAPON_AND_ARMOR_SHOP
-	LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP            = 6,
-	LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS         = 7, // the room holds the inn;
-	                                              // the room behind LacquerRoomsA's house door;
-	                                              // through LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE
-	LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL = 8,
+    // the room behind Xian's house door; through XIAN_TO_HOUSE
+    LACQUER_ROOMS_B_HOUSE                            = 1,
+    // the room holds the hsus house; through XIAN_TO_HOUSE_NORTH
+    LACQUER_ROOMS_B_HOUSE_NORTH                      = 2,
+    LACQUER_ROOMS_B_FROM_XIAN_EAST                   = 3,
+    // the room holds the inn; through XIAN_TO_INN
+    LACQUER_ROOMS_B_INN_SOUTH                        = 4,
+    LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN         = 5,
+    // through XIAN_TO_WEAPON_AND_ARMOR_SHOP
+    LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP            = 6,
+    LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS         = 7, // the room holds the inn;
+                                                  // the room behind LacquerRoomsA's house door;
+                                                  // through LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE
+    LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL = 8,
 };
 
 // SceneIdLacquerRoomsB's exits.
 enum
 {
-	LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN  = 1,
-	LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN            = 2,
-	LACQUER_ROOMS_B_TO_XIAN_EAST                   = 3,
-	LACQUER_ROOMS_B_TO_XIAN_SOUTH                  = 4,
-	LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN         = 5,
-	LACQUER_ROOMS_B_TO_XIAN_WEST                   = 6,
-	LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS         = 7,
-	LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL = 8,
+    LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN  = 1,
+    LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN            = 2,
+    LACQUER_ROOMS_B_TO_XIAN_EAST                   = 3,
+    LACQUER_ROOMS_B_TO_XIAN_SOUTH                  = 4,
+    LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN         = 5,
+    LACQUER_ROOMS_B_TO_XIAN_WEST                   = 6,
+    LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS         = 7,
+    LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL = 8,
 };
 
 // SceneIdAlpineCrossing's entrances.
 enum
 {
-	ALPINE_CROSSING_FROM_WORLD_MAP_EAST                 = 1,
-	ALPINE_CROSSING_FROM_WORLD_MAP_NORTH                = 2,
-	ALPINE_CROSSING_FROM_WORLD_MAP_WEST                 = 3,
-	ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST = 4,
-	ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST = 5,
+    ALPINE_CROSSING_FROM_WORLD_MAP_EAST                 = 1,
+    ALPINE_CROSSING_FROM_WORLD_MAP_NORTH                = 2,
+    ALPINE_CROSSING_FROM_WORLD_MAP_WEST                 = 3,
+    ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST = 4,
+    ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST = 5,
 };
 
 // SceneIdAlpineCrossing's exits.
 enum
 {
-	ALPINE_CROSSING_TO_WORLD_MAP_EAST                 = 1,
-	ALPINE_CROSSING_TO_WORLD_MAP_NORTH                = 2,
-	ALPINE_CROSSING_TO_WORLD_MAP_WEST                 = 3,
-	ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST = 4,
-	ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST = 5,
-	ALPINE_CROSSING_TO_LAMA_TEMPLE                    = 6,
+    ALPINE_CROSSING_TO_WORLD_MAP_EAST                 = 1,
+    ALPINE_CROSSING_TO_WORLD_MAP_NORTH                = 2,
+    ALPINE_CROSSING_TO_WORLD_MAP_WEST                 = 3,
+    ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST = 4,
+    ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST = 5,
+    ALPINE_CROSSING_TO_LAMA_TEMPLE                    = 6,
 };
 
 // SceneIdAltin's entrances.
 enum
 {
-	ALTIN_FROM_WORLD_MAP                    = 1,
-	ALTIN_FROM_COTTAGE_ROOMS_D_INN          = 2,
-	ALTIN_FROM_SANCTUM                      = 3,
-	ALTIN_FROM_COTTAGE_ROOMS_D_EAST_HOUSE   = 4,
-	ALTIN_FROM_COTTAGE_ROOMS_D_CLIFF_HOUSE  = 5,
-	ALTIN_FROM_COTTAGE_ROOMS_D_SOUTH_HOUSE  = 6,
-	ALTIN_FROM_COTTAGE_ROOMS_D_ITEM_SHOP    = 7,
-	ALTIN_FROM_COTTAGE_ROOMS_D_ARMOR_SHOP   = 8,
-	ALTIN_FROM_COTTAGE_ROOMS_D_WEAPON_SHOP  = 9,
-	ALTIN_FROM_ALTIN_PEAK_FIRST_WATER_BEAST = 10,
-	ALTIN_FROM_ALTIN_PEAK_SOUTH_ENTRANCE    = 11,
-	ALTIN_FROM_ALTIN_PEAK_JUNCTION          = 12,
-	ALTIN_FROM_ALTIN_PEAK_SPRITZ            = 13,
+    ALTIN_FROM_WORLD_MAP                    = 1,
+    ALTIN_FROM_COTTAGE_ROOMS_D_INN          = 2,
+    ALTIN_FROM_SANCTUM                      = 3,
+    ALTIN_FROM_COTTAGE_ROOMS_D_EAST_HOUSE   = 4,
+    ALTIN_FROM_COTTAGE_ROOMS_D_CLIFF_HOUSE  = 5,
+    ALTIN_FROM_COTTAGE_ROOMS_D_SOUTH_HOUSE  = 6,
+    ALTIN_FROM_COTTAGE_ROOMS_D_ITEM_SHOP    = 7,
+    ALTIN_FROM_COTTAGE_ROOMS_D_ARMOR_SHOP   = 8,
+    ALTIN_FROM_COTTAGE_ROOMS_D_WEAPON_SHOP  = 9,
+    ALTIN_FROM_ALTIN_PEAK_FIRST_WATER_BEAST = 10,
+    ALTIN_FROM_ALTIN_PEAK_SOUTH_ENTRANCE    = 11,
+    ALTIN_FROM_ALTIN_PEAK_JUNCTION          = 12,
+    ALTIN_FROM_ALTIN_PEAK_SPRITZ            = 13,
 };
 
 // SceneIdAltin's exits.
 enum
 {
-	ALTIN_TO_WORLD_MAP                    = 1,
-	ALTIN_TO_COTTAGE_ROOMS_D_INN          = 2,
-	ALTIN_TO_SANCTUM                      = 3,
-	ALTIN_TO_COTTAGE_ROOMS_D_EAST_HOUSE   = 4,
-	ALTIN_TO_COTTAGE_ROOMS_D_CLIFF_HOUSE  = 5,
-	ALTIN_TO_COTTAGE_ROOMS_D_SOUTH_HOUSE  = 6,
-	ALTIN_TO_COTTAGE_ROOMS_D_ITEM_SHOP    = 7,
-	ALTIN_TO_COTTAGE_ROOMS_D_ARMOR_SHOP   = 8,
-	ALTIN_TO_COTTAGE_ROOMS_D_WEAPON_SHOP  = 9,
-	ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST = 10,
-	ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE    = 11,
-	ALTIN_TO_ALTIN_PEAK_JUNCTION          = 12,
-	ALTIN_TO_ALTIN_PEAK_SPRITZ            = 13,
+    ALTIN_TO_WORLD_MAP                    = 1,
+    ALTIN_TO_COTTAGE_ROOMS_D_INN          = 2,
+    ALTIN_TO_SANCTUM                      = 3,
+    ALTIN_TO_COTTAGE_ROOMS_D_EAST_HOUSE   = 4,
+    ALTIN_TO_COTTAGE_ROOMS_D_CLIFF_HOUSE  = 5,
+    ALTIN_TO_COTTAGE_ROOMS_D_SOUTH_HOUSE  = 6,
+    ALTIN_TO_COTTAGE_ROOMS_D_ITEM_SHOP    = 7,
+    ALTIN_TO_COTTAGE_ROOMS_D_ARMOR_SHOP   = 8,
+    ALTIN_TO_COTTAGE_ROOMS_D_WEAPON_SHOP  = 9,
+    ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST = 10,
+    ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE    = 11,
+    ALTIN_TO_ALTIN_PEAK_JUNCTION          = 12,
+    ALTIN_TO_ALTIN_PEAK_SPRITZ            = 13,
 };
 
 // SceneIdCottageRoomsD's entrances.
 enum
 {
-	COTTAGE_ROOMS_D_EAST_HOUSE_FROM_ALTIN  = 1,
-	COTTAGE_ROOMS_D_CLIFF_HOUSE_FROM_ALTIN = 2,
-	COTTAGE_ROOMS_D_SOUTH_HOUSE_FROM_ALTIN = 3,
-	COTTAGE_ROOMS_D_WEAPON_SHOP_FROM_ALTIN = 4,
-	COTTAGE_ROOMS_D_ITEM_SHOP_FROM_ALTIN   = 5,
-	COTTAGE_ROOMS_D_ARMOR_SHOP_FROM_ALTIN  = 6,
-	COTTAGE_ROOMS_D_INN_FROM_ALTIN         = 7,
-	COTTAGE_ROOMS_D_INN_FROM_INN_UPSTAIRS  = 8,
-	COTTAGE_ROOMS_D_INN_UPSTAIRS_FROM_INN  = 9,
+    COTTAGE_ROOMS_D_EAST_HOUSE_FROM_ALTIN  = 1,
+    COTTAGE_ROOMS_D_CLIFF_HOUSE_FROM_ALTIN = 2,
+    COTTAGE_ROOMS_D_SOUTH_HOUSE_FROM_ALTIN = 3,
+    COTTAGE_ROOMS_D_WEAPON_SHOP_FROM_ALTIN = 4,
+    COTTAGE_ROOMS_D_ITEM_SHOP_FROM_ALTIN   = 5,
+    COTTAGE_ROOMS_D_ARMOR_SHOP_FROM_ALTIN  = 6,
+    COTTAGE_ROOMS_D_INN_FROM_ALTIN         = 7,
+    COTTAGE_ROOMS_D_INN_FROM_INN_UPSTAIRS  = 8,
+    COTTAGE_ROOMS_D_INN_UPSTAIRS_FROM_INN  = 9,
 };
 
 // SceneIdCottageRoomsD's exits.
 enum
 {
-	COTTAGE_ROOMS_D_EAST_HOUSE_TO_ALTIN  = 1,
-	COTTAGE_ROOMS_D_CLIFF_HOUSE_TO_ALTIN = 2,
-	COTTAGE_ROOMS_D_SOUTH_HOUSE_TO_ALTIN = 3,
-	COTTAGE_ROOMS_D_WEAPON_SHOP_TO_ALTIN = 4,
-	COTTAGE_ROOMS_D_ITEM_SHOP_TO_ALTIN   = 5,
-	COTTAGE_ROOMS_D_ARMOR_SHOP_TO_ALTIN  = 6,
-	COTTAGE_ROOMS_D_INN_TO_ALTIN         = 7,
-	COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS  = 8,
-	COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN  = 9,
+    COTTAGE_ROOMS_D_EAST_HOUSE_TO_ALTIN  = 1,
+    COTTAGE_ROOMS_D_CLIFF_HOUSE_TO_ALTIN = 2,
+    COTTAGE_ROOMS_D_SOUTH_HOUSE_TO_ALTIN = 3,
+    COTTAGE_ROOMS_D_WEAPON_SHOP_TO_ALTIN = 4,
+    COTTAGE_ROOMS_D_ITEM_SHOP_TO_ALTIN   = 5,
+    COTTAGE_ROOMS_D_ARMOR_SHOP_TO_ALTIN  = 6,
+    COTTAGE_ROOMS_D_INN_TO_ALTIN         = 7,
+    COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS  = 8,
+    COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN  = 9,
 };
 
 // SceneIdAltinPeakFirstWaterBeast's entrances.
 enum
 {
-	ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN = 1,
+    ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN = 1,
 };
 
 // SceneIdAltinPeakFirstWaterBeast's exits.
 enum
 {
-	ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN = 1,
+    ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN = 1,
 };
 
 // SceneIdAltinPeakRailTunnel's entrances.
 enum
 {
-	ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE     = 1,
-	ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST = 2,
+    ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE     = 1,
+    ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST = 2,
 };
 
 // SceneIdAltinPeakRailTunnel's exits.
 enum
 {
-	ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE     = 1,
-	ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST = 2,
+    ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE     = 1,
+    ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST = 2,
 };
 
 // SceneIdAltinPeakSecondWaterBeast's entrances.
 enum
 {
-	ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL = 1,
-	ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM        = 2,
-	ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE        = 3,
+    ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL = 1,
+    ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM        = 2,
+    ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE        = 3,
 };
 
 // SceneIdAltinPeakSecondWaterBeast's exits.
 enum
 {
-	ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL = 1,
-	ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM        = 2,
-	ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE        = 3,
+    ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL = 1,
+    ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM        = 2,
+    ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE        = 3,
 };
 
 // SceneIdAltinPeakSouthEntrance's entrances.
 enum
 {
-	ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN                  = 1,
-	ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER = 2,
-	ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_RAIL_TUNNEL = 3,
-	ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_FROM_TUNNEL = 4,
-	ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL        = 5,
-	ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST   = 6,
-	ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST   = 7,
+    ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN                  = 1,
+    ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER = 2,
+    ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_RAIL_TUNNEL = 3,
+    ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_FROM_TUNNEL = 4,
+    ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL        = 5,
+    ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST   = 6,
+    ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST   = 7,
 };
 
 // SceneIdAltinPeakSouthEntrance's exits.
 enum
 {
-	ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN                  = 1,
-	ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER = 2,
-	ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL = 3,
-	ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL = 4,
-	ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL        = 5,
-	ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST   = 6,
-	ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST   = 7,
+    ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN                  = 1,
+    ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER = 2,
+    ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL = 3,
+    ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL = 4,
+    ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL        = 5,
+    ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST   = 6,
+    ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST   = 7,
 };
 
 // SceneIdAltinPeakThirdWaterBeast's entrances.
 enum
 {
-	ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL = 1,
+    ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL = 1,
 };
 
 // SceneIdAltinPeakThirdWaterBeast's exits.
 enum
 {
-	ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL = 1,
+    ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL = 1,
 };
 
 // SceneIdAltinPeakPool's entrances.
 enum
 {
-	ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE    = 1,
-	ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST              = 2,
-	ALTIN_PEAK_POOL_SOUTHWEST_FROM_NORTH              = 3,
-	ALTIN_PEAK_POOL_SOUTHWEST_FROM_SOUTHEAST          = 4,
-	ALTIN_PEAK_POOL_SOUTHEAST_FROM_SOUTHWEST          = 5,
-	ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_THIRD_WATER_BEAST = 6,
+    ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE    = 1,
+    ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST              = 2,
+    ALTIN_PEAK_POOL_SOUTHWEST_FROM_NORTH              = 3,
+    ALTIN_PEAK_POOL_SOUTHWEST_FROM_SOUTHEAST          = 4,
+    ALTIN_PEAK_POOL_SOUTHEAST_FROM_SOUTHWEST          = 5,
+    ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_THIRD_WATER_BEAST = 6,
 };
 
 // SceneIdAltinPeakPool's exits.
 enum
 {
-	ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE    = 1,
-	ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST              = 2,
-	ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH              = 3,
-	ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST          = 4,
-	ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST          = 5,
-	ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST = 6,
+    ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE    = 1,
+    ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST              = 2,
+    ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH              = 3,
+    ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST          = 4,
+    ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST          = 5,
+    ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST = 6,
 };
 
 // SceneIdAltinPeakSpritz's entrances.
 enum
 {
-	ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION      = 1,
-	ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS = 2,
-	ALTIN_PEAK_SPRITZ_FROM_ALTIN                    = 3,
+    ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION      = 1,
+    ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS = 2,
+    ALTIN_PEAK_SPRITZ_FROM_ALTIN                    = 3,
 };
 
 // SceneIdAltinPeakSpritz's exits.
 enum
 {
-	ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION      = 1,
-	ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS = 2,
-	ALTIN_PEAK_SPRITZ_TO_ALTIN                    = 3,
+    ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION      = 1,
+    ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS = 2,
+    ALTIN_PEAK_SPRITZ_TO_ALTIN                    = 3,
 };
 
 // SceneIdAltinPeakJunction's entrances.
 enum
 {
-	ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ              = 1,
-	ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH = 2,
-	ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_WEST_EXIT           = 3,
-	ALTIN_PEAK_JUNCTION_FROM_ALTIN                          = 4,
-	ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_SOUTH = 5,
+    ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ              = 1,
+    ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH = 2,
+    ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_WEST_EXIT           = 3,
+    ALTIN_PEAK_JUNCTION_FROM_ALTIN                          = 4,
+    ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_SOUTH = 5,
 };
 
 // SceneIdAltinPeakJunction's exits.
 enum
 {
-	ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ              = 1,
-	ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH = 2,
-	ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT           = 3,
-	ALTIN_PEAK_JUNCTION_TO_ALTIN                          = 4,
-	ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH = 5,
+    ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ              = 1,
+    ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH = 2,
+    ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT           = 3,
+    ALTIN_PEAK_JUNCTION_TO_ALTIN                          = 4,
+    ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH = 5,
 };
 
 // SceneIdAltinPeakFallingRocks's entrances.
 enum
 {
-	ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ         = 1,
-	ALTIN_PEAK_FALLING_ROCKS_WEST_FROM_EAST                 = 2,
-	ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_SOUTH = 3,
-	ALTIN_PEAK_FALLING_ROCKS_EAST_FROM_WEST                 = 4,
-	ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_NORTH = 5,
-	ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE  = 6,
+    ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ         = 1,
+    ALTIN_PEAK_FALLING_ROCKS_WEST_FROM_EAST                 = 2,
+    ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_SOUTH = 3,
+    ALTIN_PEAK_FALLING_ROCKS_EAST_FROM_WEST                 = 4,
+    ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_NORTH = 5,
+    ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE  = 6,
 };
 
 // SceneIdAltinPeakFallingRocks's exits.
 enum
 {
-	ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ         = 1,
-	ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST                 = 2,
-	ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH = 3,
-	ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST                 = 4,
-	ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH = 5,
-	ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_HYDROS_STATUE  = 6,
+    ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ         = 1,
+    ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST                 = 2,
+    ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH = 3,
+    ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST                 = 4,
+    ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH = 5,
+    ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_HYDROS_STATUE  = 6,
 };
 
 // SceneIdAltinPeakHydrosStatue's entrances.
 enum
 {
-	ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS = 1,
+    ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS = 1,
 };
 
 // SceneIdAltinPeakHydrosStatue's exits.
 enum
 {
-	ALTIN_PEAK_HYDROS_STATUE_TO_ALTIN_PEAK_FALLING_ROCKS = 1,
+    ALTIN_PEAK_HYDROS_STATUE_TO_ALTIN_PEAK_FALLING_ROCKS = 1,
 };
 
 // SceneIdAltinPeakWestExit's entrances.
 enum
 {
-	ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION = 1,
-	ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM   = 2,
-	ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_FROM_TUNNEL   = 3,
-	ALTIN_PEAK_WEST_EXIT_FROM_WORLD_MAP           = 4,
+    ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION = 1,
+    ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM   = 2,
+    ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_FROM_TUNNEL   = 3,
+    ALTIN_PEAK_WEST_EXIT_FROM_WORLD_MAP           = 4,
 };
 
 // SceneIdAltinPeakWestExit's exits.
 enum
 {
-	ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION = 1,
-	ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM   = 2,
-	ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_TO_TUNNEL   = 3,
-	ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP           = 4,
+    ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION = 1,
+    ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM   = 2,
+    ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_TO_TUNNEL   = 3,
+    ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP           = 4,
 };
 
 // SceneIdLamaTemple's entrances.
 enum
 {
-	LAMA_TEMPLE_FROM_WORLD_MAP                  = 1,
-	LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
-	LAMA_TEMPLE_FROM_ALPINE_CROSSING            = 3,
-	// In front of the traveling healer, where a party defeated anywhere in Lama Temple wakes (its
-	// return point in field/restart_rules.s).
-	LAMA_TEMPLE_AFTER_DEFEAT                    = 5,
+    LAMA_TEMPLE_FROM_WORLD_MAP                  = 1,
+    LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
+    LAMA_TEMPLE_FROM_ALPINE_CROSSING            = 3,
+    // In front of the traveling healer, where a party defeated anywhere in Lama Temple wakes (its
+    // return point in field/restart_rules.s).
+    LAMA_TEMPLE_AFTER_DEFEAT                    = 5,
 };
 
 // SceneIdLamaTemple's exits.
 enum
 {
-	LAMA_TEMPLE_TO_WORLD_MAP                  = 1,
-	LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
+    LAMA_TEMPLE_TO_WORLD_MAP                  = 1,
+    LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
 };
 
 // SceneIdLamakanDesertEast's entrances.
 enum
 {
-	LAMAKAN_DESERT_EAST_FROM_WORLD_MAP           = 1,
-	LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG = 2,
+    LAMAKAN_DESERT_EAST_FROM_WORLD_MAP           = 1,
+    LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG = 2,
 };
 
 // SceneIdLamakanDesertEast's exits.
 enum
 {
-	LAMAKAN_DESERT_EAST_TO_WORLD_MAP           = 1,
-	LAMAKAN_DESERT_EAST_TO_LAMAKAN_DESERT_SMOG = 2,
+    LAMAKAN_DESERT_EAST_TO_WORLD_MAP           = 1,
+    LAMAKAN_DESERT_EAST_TO_LAMAKAN_DESERT_SMOG = 2,
 };
 
 // SceneIdLamakanDesertSmog's entrances.
 enum
 {
-	LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST      = 1,
-	LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE = 2,
+    LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST      = 1,
+    LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE = 2,
 };
 
 // SceneIdLamakanDesertSmog's exits.
 enum
 {
-	LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST      = 1,
-	LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_MANTICORE = 2,
+    LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST      = 1,
+    LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_MANTICORE = 2,
 };
 
 // SceneIdLamakanDesertManticore's entrances.
 enum
 {
-	LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG       = 1,
-	LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST  = 2,
-	LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH = 3,
-	LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_WEST  = 4,
-	LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE          = 5,
+    LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG       = 1,
+    LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST  = 2,
+    LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH = 3,
+    LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_WEST  = 4,
+    LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE          = 5,
 };
 
 // SceneIdLamakanDesertManticore's exits.
 enum
 {
-	LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_SMOG       = 1,
-	LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_EAST  = 2,
-	LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_SOUTH = 3,
-	LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_WEST  = 4,
+    LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_SMOG       = 1,
+    LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_EAST  = 2,
+    LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_SOUTH = 3,
+    LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_WEST  = 4,
 };
 
 // SceneIdLamakanDesertCave's entrances.
 enum
 {
-	LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH = 1,
-	LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST  = 2,
-	LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST  = 3,
-	LAMAKAN_DESERT_CAVE_FROM_WORLD_MAP                      = 4,
+    LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH = 1,
+    LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST  = 2,
+    LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST  = 3,
+    LAMAKAN_DESERT_CAVE_FROM_WORLD_MAP                      = 4,
 };
 
 // SceneIdLamakanDesertCave's exits.
 enum
 {
-	LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_EAST  = 1,
-	LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_SOUTH = 2,
-	LAMAKAN_DESERT_CAVE_TO_WORLD_MAP                      = 3,
-	LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_WEST  = 4,
+    LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_EAST  = 1,
+    LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_SOUTH = 2,
+    LAMAKAN_DESERT_CAVE_TO_WORLD_MAP                      = 3,
+    LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_WEST  = 4,
 };
 
 // SceneIdValeCaveMouth's entrances.
 enum
 {
-	VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST = 1,
-	VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE            = 2,
-	VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST = 3,
+    VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST = 1,
+    VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE            = 2,
+    VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST = 3,
 };
 
 // SceneIdValeCaveMouth's exits.
 enum
 {
-	VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST = 1,
-	VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE            = 2,
-	VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST = 3,
+    VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST = 1,
+    VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE            = 2,
+    VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST = 3,
 };
 
 // SceneIdValeCaveKite's entrances.
 enum
 {
-	VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH      = 1,
-	VALE_CAVE_KITE_WEST_FROM_EAST            = 2,
-	VALE_CAVE_KITE_WEST_FROM_SOUTH           = 3,
-	VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST  = 4,
-	VALE_CAVE_KITE_EAST_FROM_WEST            = 5,
-	VALE_CAVE_KITE_EAST_FROM_SOUTH           = 6,
-	VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST  = 7,
-	VALE_CAVE_KITE_SOUTH_FROM_WEST           = 8,
-	VALE_CAVE_KITE_SOUTH_FROM_EAST           = 9,
-	VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH = 10,
+    VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH      = 1,
+    VALE_CAVE_KITE_WEST_FROM_EAST            = 2,
+    VALE_CAVE_KITE_WEST_FROM_SOUTH           = 3,
+    VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST  = 4,
+    VALE_CAVE_KITE_EAST_FROM_WEST            = 5,
+    VALE_CAVE_KITE_EAST_FROM_SOUTH           = 6,
+    VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST  = 7,
+    VALE_CAVE_KITE_SOUTH_FROM_WEST           = 8,
+    VALE_CAVE_KITE_SOUTH_FROM_EAST           = 9,
+    VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH = 10,
 };
 
 // SceneIdValeCaveKite's exits.
 enum
 {
-	VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH      = 1,
-	VALE_CAVE_KITE_WEST_TO_EAST            = 2,
-	VALE_CAVE_KITE_WEST_TO_SOUTH           = 3,
-	VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST  = 4,
-	VALE_CAVE_KITE_EAST_TO_WEST            = 5,
-	VALE_CAVE_KITE_EAST_TO_SOUTH           = 6,
-	VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST  = 7,
-	VALE_CAVE_KITE_SOUTH_TO_WEST           = 8,
-	VALE_CAVE_KITE_SOUTH_TO_EAST           = 9,
-	VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH = 10,
+    VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH      = 1,
+    VALE_CAVE_KITE_WEST_TO_EAST            = 2,
+    VALE_CAVE_KITE_WEST_TO_SOUTH           = 3,
+    VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST  = 4,
+    VALE_CAVE_KITE_EAST_TO_WEST            = 5,
+    VALE_CAVE_KITE_EAST_TO_SOUTH           = 6,
+    VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST  = 7,
+    VALE_CAVE_KITE_SOUTH_TO_WEST           = 8,
+    VALE_CAVE_KITE_SOUTH_TO_EAST           = 9,
+    VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH = 10,
 };
 
 // SceneIdValeCaveLogs's entrances.
 enum
 {
-	VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST  = 1,
-	VALE_CAVE_LOGS_NORTH_FROM_SOUTH          = 2,
-	VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST  = 3,
-	VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH = 4,
-	VALE_CAVE_LOGS_SOUTH_FROM_NORTH          = 5,
+    VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST  = 1,
+    VALE_CAVE_LOGS_NORTH_FROM_SOUTH          = 2,
+    VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST  = 3,
+    VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH = 4,
+    VALE_CAVE_LOGS_SOUTH_FROM_NORTH          = 5,
 };
 
 // SceneIdValeCaveLogs's exits.
 enum
 {
-	VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST  = 1,
-	VALE_CAVE_LOGS_NORTH_TO_SOUTH          = 2,
-	VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST  = 3,
-	VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH = 4,
-	VALE_CAVE_LOGS_SOUTH_TO_NORTH          = 5,
+    VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST  = 1,
+    VALE_CAVE_LOGS_NORTH_TO_SOUTH          = 2,
+    VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST  = 3,
+    VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH = 4,
+    VALE_CAVE_LOGS_SOUTH_TO_NORTH          = 5,
 };
 
 // SceneIdVaultCavePassage's entrances.
 enum
 {
-	VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH              = 1,
-	VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
-	VAULT_CAVE_PASSAGE_NORTH_FROM_WATER_ROOM_WEST         = 3,
-	VAULT_CAVE_PASSAGE_NORTH_FROM_WATER_ROOM_EAST         = 4,
-	VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST         = 5,
-	VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST      = 6,
-	VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST = 7,
-	VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST              = 8,
-	VAULT_CAVE_PASSAGE_CHEST_FROM_WATER_ROOM              = 9,
-	VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT                 = 10,
-	VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST                  = 11,
-	VAULT_CAVE_PASSAGE_CHEST_FROM_LADDER                  = 12,
-	VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST         = 13,
+    VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH              = 1,
+    VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
+    VAULT_CAVE_PASSAGE_NORTH_FROM_WATER_ROOM_WEST         = 3,
+    VAULT_CAVE_PASSAGE_NORTH_FROM_WATER_ROOM_EAST         = 4,
+    VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST         = 5,
+    VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST      = 6,
+    VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST = 7,
+    VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST              = 8,
+    VAULT_CAVE_PASSAGE_CHEST_FROM_WATER_ROOM              = 9,
+    VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT                 = 10,
+    VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST                  = 11,
+    VAULT_CAVE_PASSAGE_CHEST_FROM_LADDER                  = 12,
+    VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST         = 13,
 };
 
 // SceneIdVaultCavePassage's exits.
 enum
 {
-	VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH              = 1,
-	VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
-	VAULT_CAVE_PASSAGE_NORTH_TO_WATER_ROOM_WEST         = 3,
-	VAULT_CAVE_PASSAGE_NORTH_TO_WATER_ROOM_EAST         = 4,
-	VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_WEST         = 5,
-	VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_EAST      = 6,
-	VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_SOUTHEAST = 7,
-	VAULT_CAVE_PASSAGE_WATER_ROOM_TO_CHEST              = 8,
-	VAULT_CAVE_PASSAGE_CHEST_TO_WATER_ROOM              = 9,
-	VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT                 = 10,
-	VAULT_CAVE_PASSAGE_LADDER_TO_CHEST                  = 11,
-	VAULT_CAVE_PASSAGE_CHEST_TO_LADDER                  = 12,
-	VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_EAST         = 13,
+    VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH              = 1,
+    VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
+    VAULT_CAVE_PASSAGE_NORTH_TO_WATER_ROOM_WEST         = 3,
+    VAULT_CAVE_PASSAGE_NORTH_TO_WATER_ROOM_EAST         = 4,
+    VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_WEST         = 5,
+    VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_EAST      = 6,
+    VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_SOUTHEAST = 7,
+    VAULT_CAVE_PASSAGE_WATER_ROOM_TO_CHEST              = 8,
+    VAULT_CAVE_PASSAGE_CHEST_TO_WATER_ROOM              = 9,
+    VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT                 = 10,
+    VAULT_CAVE_PASSAGE_LADDER_TO_CHEST                  = 11,
+    VAULT_CAVE_PASSAGE_CHEST_TO_LADDER                  = 12,
+    VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_EAST         = 13,
 };
 
 // SceneIdVaultCaveVambrace's entrances.
 enum
 {
-	VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH     = 1,
-	VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH       = 2,
-	VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM             = 3,
-	VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST                   = 4,
-	VAULT_CAVE_VAMBRACE_WEST_FROM_NORTH                   = 5,
-	VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTHWEST = 6,
-	VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_SOUTH       = 7,
-	VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_NORTH             = 8,
-	VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_SOUTH             = 9,
-	VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH     = 10,
-	VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM             = 11,
-	VAULT_CAVE_VAMBRACE_CHEST_FROM_FROST_ROOM             = 13,
-	VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST             = 14,
+    VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH     = 1,
+    VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH       = 2,
+    VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM             = 3,
+    VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST                   = 4,
+    VAULT_CAVE_VAMBRACE_WEST_FROM_NORTH                   = 5,
+    VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTHWEST = 6,
+    VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_SOUTH       = 7,
+    VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_NORTH             = 8,
+    VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_SOUTH             = 9,
+    VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH     = 10,
+    VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM             = 11,
+    VAULT_CAVE_VAMBRACE_CHEST_FROM_FROST_ROOM             = 13,
+    VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST             = 14,
 };
 
 // SceneIdVaultCaveVambrace's exits.
 enum
 {
-	VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH     = 1,
-	VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH       = 2,
-	VAULT_CAVE_VAMBRACE_NORTH_TO_FROST_ROOM             = 3,
-	VAULT_CAVE_VAMBRACE_NORTH_TO_WEST                   = 4,
-	VAULT_CAVE_VAMBRACE_WEST_TO_NORTH                   = 5,
-	VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTHWEST = 6,
-	VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_SOUTH       = 7,
-	VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_NORTH             = 8,
-	VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_SOUTH             = 9,
-	VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTH     = 10,
-	VAULT_CAVE_VAMBRACE_SOUTH_TO_FROST_ROOM             = 11,
-	VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_CHEST             = 13,
-	VAULT_CAVE_VAMBRACE_CHEST_TO_FROST_ROOM             = 14,
+    VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH     = 1,
+    VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH       = 2,
+    VAULT_CAVE_VAMBRACE_NORTH_TO_FROST_ROOM             = 3,
+    VAULT_CAVE_VAMBRACE_NORTH_TO_WEST                   = 4,
+    VAULT_CAVE_VAMBRACE_WEST_TO_NORTH                   = 5,
+    VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTHWEST = 6,
+    VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_SOUTH       = 7,
+    VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_NORTH             = 8,
+    VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_SOUTH             = 9,
+    VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTH     = 10,
+    VAULT_CAVE_VAMBRACE_SOUTH_TO_FROST_ROOM             = 11,
+    VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_CHEST             = 13,
+    VAULT_CAVE_VAMBRACE_CHEST_TO_FROST_ROOM             = 14,
 };
 
 // SceneIdVaultCaveMouth's entrances.
 enum
 {
-	VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT             = 1,
-	VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_PASSAGE        = 2,
-	VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_SOUTH = 3,
-	VAULT_CAVE_MOUTH_SOUTH_FROM_NORTH               = 4,
-	VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH               = 5,
-	VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH = 6,
+    VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT             = 1,
+    VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_PASSAGE        = 2,
+    VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_SOUTH = 3,
+    VAULT_CAVE_MOUTH_SOUTH_FROM_NORTH               = 4,
+    VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH               = 5,
+    VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH = 6,
 };
 
 // SceneIdVaultCaveMouth's exits.
 enum
 {
-	VAULT_CAVE_MOUTH_TO_VAULT_REVISIT             = 1,
-	VAULT_CAVE_MOUTH_TO_VAULT_CAVE_PASSAGE        = 2,
-	VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_SOUTH = 3,
-	VAULT_CAVE_MOUTH_SOUTH_TO_NORTH               = 4,
-	VAULT_CAVE_MOUTH_NORTH_TO_SOUTH               = 5,
-	VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH = 6,
+    VAULT_CAVE_MOUTH_TO_VAULT_REVISIT             = 1,
+    VAULT_CAVE_MOUTH_TO_VAULT_CAVE_PASSAGE        = 2,
+    VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_SOUTH = 3,
+    VAULT_CAVE_MOUTH_SOUTH_TO_NORTH               = 4,
+    VAULT_CAVE_MOUTH_NORTH_TO_SOUTH               = 5,
+    VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH = 6,
 };
 
 // SceneIdKalay's entrances.
 enum
 {
-	KALAY_FROM_HOUSE_NORTHWEST            = 1,
-	KALAY_FROM_HOUSE_NORTHEAST_UPPER      = 2,
-	KALAY_FROM_HOUSE_NORTHEAST_LOWER      = 3,
-	KALAY_FROM_HOUSE_SOUTHEAST            = 4,
-	KALAY_FROM_WEAPON_SHOP                = 5,
-	KALAY_FROM_ARMOR_SHOP                 = 6,
-	KALAY_FROM_INN                        = 7,
-	KALAY_FROM_KALAY_SANCTUM              = 8,
-	KALAY_FROM_WORLD_MAP                  = 9,
-	KALAY_FROM_WORLD_MAP_WEST_UNUSED      = 10, // no exit leads here
-	KALAY_FROM_HAMMET_PALACE_GROUNDS      = 11,
-	KALAY_FROM_WEAPON_SHOP_COUNTER        = 12,
-	KALAY_FROM_ARMOR_SHOP_COUNTER         = 13,
-	KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM = 14,
+    KALAY_FROM_HOUSE_NORTHWEST            = 1,
+    KALAY_FROM_HOUSE_NORTHEAST_UPPER      = 2,
+    KALAY_FROM_HOUSE_NORTHEAST_LOWER      = 3,
+    KALAY_FROM_HOUSE_SOUTHEAST            = 4,
+    KALAY_FROM_WEAPON_SHOP                = 5,
+    KALAY_FROM_ARMOR_SHOP                 = 6,
+    KALAY_FROM_INN                        = 7,
+    KALAY_FROM_KALAY_SANCTUM              = 8,
+    KALAY_FROM_WORLD_MAP                  = 9,
+    KALAY_FROM_WORLD_MAP_WEST_UNUSED      = 10, // no exit leads here
+    KALAY_FROM_HAMMET_PALACE_GROUNDS      = 11,
+    KALAY_FROM_WEAPON_SHOP_COUNTER        = 12,
+    KALAY_FROM_ARMOR_SHOP_COUNTER         = 13,
+    KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM = 14,
 };
 
 // SceneIdKalay's exits.
 enum
 {
-	KALAY_TO_HOUSE_NORTHWEST            = 1,
-	KALAY_TO_HOUSE_NORTHEAST_UPPER      = 2,
-	KALAY_TO_HOUSE_NORTHEAST_LOWER      = 3,
-	KALAY_TO_HOUSE_SOUTHEAST            = 4,
-	KALAY_TO_WEAPON_SHOP                = 5,
-	KALAY_TO_ARMOR_SHOP                 = 6,
-	KALAY_TO_INN                        = 7,
-	KALAY_TO_KALAY_SANCTUM              = 8,
-	KALAY_TO_WORLD_MAP                  = 9,
-	KALAY_TO_WORLD_MAP_WEST             = 10,
-	KALAY_TO_HAMMET_PALACE_GROUNDS      = 11,
-	KALAY_TO_WEAPON_SHOP_COUNTER        = 12,
-	KALAY_TO_ARMOR_SHOP_COUNTER         = 13,
-	KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM = 14,
+    KALAY_TO_HOUSE_NORTHWEST            = 1,
+    KALAY_TO_HOUSE_NORTHEAST_UPPER      = 2,
+    KALAY_TO_HOUSE_NORTHEAST_LOWER      = 3,
+    KALAY_TO_HOUSE_SOUTHEAST            = 4,
+    KALAY_TO_WEAPON_SHOP                = 5,
+    KALAY_TO_ARMOR_SHOP                 = 6,
+    KALAY_TO_INN                        = 7,
+    KALAY_TO_KALAY_SANCTUM              = 8,
+    KALAY_TO_WORLD_MAP                  = 9,
+    KALAY_TO_WORLD_MAP_WEST             = 10,
+    KALAY_TO_HAMMET_PALACE_GROUNDS      = 11,
+    KALAY_TO_WEAPON_SHOP_COUNTER        = 12,
+    KALAY_TO_ARMOR_SHOP_COUNTER         = 13,
+    KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM = 14,
 };
 
 // SceneIdStuccoRoomsA's entrances.
 enum
 {
-	STUCCO_ROOMS_A_HOUSE_NORTHWEST                       = 1,
-	STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER                 = 2,
-	STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER                 = 3,
-	STUCCO_ROOMS_A_HOUSE_SOUTHEAST                       = 4,
-	STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER                   = 5,
-	STUCCO_ROOMS_A_WEAPON_SHOP                           = 6,
-	STUCCO_ROOMS_A_ARMOR_SHOP                            = 7,
-	STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER                    = 8,
-	STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE                  = 9,
-	STUCCO_ROOMS_A_INN                                   = 10,
-	STUCCO_ROOMS_A_INN_PASSAGE_FROM_INN                  = 11,
-	STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST = 12,
-	STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST = 13,
-	STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST = 14,
-	STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST = 15,
-	STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE = 16,
-	STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE = 17,
-	STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE = 18,
-	STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE = 19,
+    STUCCO_ROOMS_A_HOUSE_NORTHWEST                       = 1,
+    STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER                 = 2,
+    STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER                 = 3,
+    STUCCO_ROOMS_A_HOUSE_SOUTHEAST                       = 4,
+    STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER                   = 5,
+    STUCCO_ROOMS_A_WEAPON_SHOP                           = 6,
+    STUCCO_ROOMS_A_ARMOR_SHOP                            = 7,
+    STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER                    = 8,
+    STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE                  = 9,
+    STUCCO_ROOMS_A_INN                                   = 10,
+    STUCCO_ROOMS_A_INN_PASSAGE_FROM_INN                  = 11,
+    STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST = 12,
+    STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST = 13,
+    STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST = 14,
+    STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST = 15,
+    STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE = 16,
+    STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE = 17,
+    STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE = 18,
+    STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE = 19,
 };
 
 // SceneIdStuccoRoomsA's exits.
 enum
 {
-	STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY            = 1,
-	STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY      = 2,
-	STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY      = 3,
-	STUCCO_ROOMS_A_HOUSE_SOUTHEAST_TO_KALAY            = 4,
-	STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER_TO_KALAY        = 5,
-	STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY                = 6,
-	STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY                 = 7,
-	STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY         = 8,
-	STUCCO_ROOMS_A_INN_TO_INN_PASSAGE                  = 9,
-	STUCCO_ROOMS_A_INN_TO_KALAY                        = 10,
-	STUCCO_ROOMS_A_INN_PASSAGE_TO_INN                  = 11,
-	STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST = 12,
-	STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST = 13,
-	STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST = 14,
-	STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST = 15,
-	STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE = 16,
-	STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE = 17,
-	STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE = 18,
-	STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE = 19,
+    STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY            = 1,
+    STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY      = 2,
+    STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY      = 3,
+    STUCCO_ROOMS_A_HOUSE_SOUTHEAST_TO_KALAY            = 4,
+    STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER_TO_KALAY        = 5,
+    STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY                = 6,
+    STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY                 = 7,
+    STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY         = 8,
+    STUCCO_ROOMS_A_INN_TO_INN_PASSAGE                  = 9,
+    STUCCO_ROOMS_A_INN_TO_KALAY                        = 10,
+    STUCCO_ROOMS_A_INN_PASSAGE_TO_INN                  = 11,
+    STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST = 12,
+    STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST = 13,
+    STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST = 14,
+    STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST = 15,
+    STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE = 16,
+    STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE = 17,
+    STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE = 18,
+    STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE = 19,
 };
 
 // SceneIdKalaySanctum's entrances.
 enum
 {
-	KALAY_SANCTUM_FROM_KALAY   = 1,
-	// Behind the counter, where a party defeated in Kalay wakes (its return point in
-	// field/scene_rules.s).
-	KALAY_SANCTUM_AFTER_DEFEAT = 2,
+    KALAY_SANCTUM_FROM_KALAY   = 1,
+    // Behind the counter, where a party defeated in Kalay wakes (its return point in
+    // field/scene_rules.s).
+    KALAY_SANCTUM_AFTER_DEFEAT = 2,
 };
 
 // SceneIdKalaySanctum's exits.
 enum
 {
-	KALAY_SANCTUM_TO_KALAY = 1,
+    KALAY_SANCTUM_TO_KALAY = 1,
 };
 
 // SceneIdHammetPalaceGrounds's entrances.
 enum
 {
-	HAMMET_PALACE_GROUNDS_FROM_KALAY         = 1,
-	HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE = 2,
+    HAMMET_PALACE_GROUNDS_FROM_KALAY         = 1,
+    HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE = 2,
 };
 
 // SceneIdHammetPalaceGrounds's exits.
 enum
 {
-	HAMMET_PALACE_GROUNDS_TO_KALAY                      = 1,
-	HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE              = 2,
-	HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM = 5,
+    HAMMET_PALACE_GROUNDS_TO_KALAY                      = 1,
+    HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE              = 2,
+    HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM = 5,
 };
 
 // SceneIdHammetPalace's entrances.
 enum
 {
-	HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS              = 1,
-	HAMMET_PALACE_ENTRANCE_ROOM_FROM_WEST_WING            = 2,
-	HAMMET_PALACE_ENTRANCE_ROOM_FROM_EAST_WING            = 3,
-	HAMMET_PALACE_ENTRANCE_ROOM_FROM_LAYANAS_ROOM         = 4,
-	HAMMET_PALACE_ENTRANCE_ROOM_FROM_LANDING              = 5,
-	HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_ROOM            = 6,
-	HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_ROOM            = 7,
-	HAMMET_PALACE_EAST_WING_FROM_PASSAGE_DOOR             = 8,
-	HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM         = 9,
-	HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING             = 10,
-	HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM         = 11,
-	HAMMET_PALACE_BEDROOM_FROM_LANDING                    = 12,
-	HAMMET_PALACE_LANDING_FROM_ENTRANCE_ROOM              = 13,
-	HAMMET_PALACE_LANDING_FROM_BEDROOM                    = 14,
-	HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS = 20,
+    HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS              = 1,
+    HAMMET_PALACE_ENTRANCE_ROOM_FROM_WEST_WING            = 2,
+    HAMMET_PALACE_ENTRANCE_ROOM_FROM_EAST_WING            = 3,
+    HAMMET_PALACE_ENTRANCE_ROOM_FROM_LAYANAS_ROOM         = 4,
+    HAMMET_PALACE_ENTRANCE_ROOM_FROM_LANDING              = 5,
+    HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_ROOM            = 6,
+    HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_ROOM            = 7,
+    HAMMET_PALACE_EAST_WING_FROM_PASSAGE_DOOR             = 8,
+    HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM         = 9,
+    HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING             = 10,
+    HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM         = 11,
+    HAMMET_PALACE_BEDROOM_FROM_LANDING                    = 12,
+    HAMMET_PALACE_LANDING_FROM_ENTRANCE_ROOM              = 13,
+    HAMMET_PALACE_LANDING_FROM_BEDROOM                    = 14,
+    HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS = 20,
 };
 
 // SceneIdHammetPalace's exits.
 enum
 {
-	HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS      = 1,
-	HAMMET_PALACE_ENTRANCE_ROOM_TO_WEST_WING    = 2,
-	HAMMET_PALACE_ENTRANCE_ROOM_TO_EAST_WING    = 3,
-	HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM = 4,
-	HAMMET_PALACE_ENTRANCE_ROOM_TO_LANDING      = 5,
-	HAMMET_PALACE_WEST_WING_TO_ENTRANCE_ROOM    = 6,
-	HAMMET_PALACE_EAST_WING_TO_ENTRANCE_ROOM    = 7,
-	HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR     = 8,
-	HAMMET_PALACE_LAYANAS_ROOM_TO_ENTRANCE_ROOM = 9,
-	HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING     = 10,
-	HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM = 11,
-	HAMMET_PALACE_BEDROOM_TO_LANDING            = 12,
-	HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM      = 13,
-	HAMMET_PALACE_LANDING_TO_BEDROOM            = 14,
+    HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS      = 1,
+    HAMMET_PALACE_ENTRANCE_ROOM_TO_WEST_WING    = 2,
+    HAMMET_PALACE_ENTRANCE_ROOM_TO_EAST_WING    = 3,
+    HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM = 4,
+    HAMMET_PALACE_ENTRANCE_ROOM_TO_LANDING      = 5,
+    HAMMET_PALACE_WEST_WING_TO_ENTRANCE_ROOM    = 6,
+    HAMMET_PALACE_EAST_WING_TO_ENTRANCE_ROOM    = 7,
+    HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR     = 8,
+    HAMMET_PALACE_LAYANAS_ROOM_TO_ENTRANCE_ROOM = 9,
+    HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING     = 10,
+    HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM = 11,
+    HAMMET_PALACE_BEDROOM_TO_LANDING            = 12,
+    HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM      = 13,
+    HAMMET_PALACE_LANDING_TO_BEDROOM            = 14,
 };
 
 // SceneIdLunpa's entrances.
 enum
 {
-	LUNPA_FROM_WORLD_MAP             = 1,
-	LUNPA_FROM_LUNPA_FORTRESS_GATES  = 2,
-	LUNPA_FROM_WEST_LUNPA_CAVE       = 3,
-	LUNPA_FROM_FIRST_HOME            = 4,
-	LUNPA_FROM_SECOND_HOME           = 5,
-	LUNPA_FROM_THIRD_HOME            = 6,
-	LUNPA_FROM_WEAPON_AND_ARMOR_SHOP = 7,
-	LUNPA_FROM_ITEM_SHOP             = 8,
-	LUNPA_FROM_INN                   = 9,
-	LUNPA_FROM_TEMPLE                = 10,
-	LUNPA_FROM_CRATE_ROOM            = 11,
-	LUNPA_FROM_STONE_ROOMS           = 12,
+    LUNPA_FROM_WORLD_MAP             = 1,
+    LUNPA_FROM_LUNPA_FORTRESS_GATES  = 2,
+    LUNPA_FROM_WEST_LUNPA_CAVE       = 3,
+    LUNPA_FROM_FIRST_HOME            = 4,
+    LUNPA_FROM_SECOND_HOME           = 5,
+    LUNPA_FROM_THIRD_HOME            = 6,
+    LUNPA_FROM_WEAPON_AND_ARMOR_SHOP = 7,
+    LUNPA_FROM_ITEM_SHOP             = 8,
+    LUNPA_FROM_INN                   = 9,
+    LUNPA_FROM_TEMPLE                = 10,
+    LUNPA_FROM_CRATE_ROOM            = 11,
+    LUNPA_FROM_STONE_ROOMS           = 12,
 };
 
 // SceneIdLunpa's exits.
 enum
 {
-	LUNPA_TO_WORLD_MAP             = 1,
-	LUNPA_TO_LUNPA_FORTRESS_GATES  = 2,
-	LUNPA_TO_WEST_LUNPA_CAVE       = 3,
-	LUNPA_TO_FIRST_HOME            = 4,
-	LUNPA_TO_SECOND_HOME           = 5,
-	LUNPA_TO_THIRD_HOME            = 6,
-	LUNPA_TO_WEAPON_AND_ARMOR_SHOP = 7,
-	LUNPA_TO_ITEM_SHOP             = 8,
-	LUNPA_TO_INN                   = 9,
-	LUNPA_TO_TEMPLE                = 10,
-	LUNPA_TO_CRATE_ROOM            = 11,
-	LUNPA_TO_STONE_ROOMS           = 12,
+    LUNPA_TO_WORLD_MAP             = 1,
+    LUNPA_TO_LUNPA_FORTRESS_GATES  = 2,
+    LUNPA_TO_WEST_LUNPA_CAVE       = 3,
+    LUNPA_TO_FIRST_HOME            = 4,
+    LUNPA_TO_SECOND_HOME           = 5,
+    LUNPA_TO_THIRD_HOME            = 6,
+    LUNPA_TO_WEAPON_AND_ARMOR_SHOP = 7,
+    LUNPA_TO_ITEM_SHOP             = 8,
+    LUNPA_TO_INN                   = 9,
+    LUNPA_TO_TEMPLE                = 10,
+    LUNPA_TO_CRATE_ROOM            = 11,
+    LUNPA_TO_STONE_ROOMS           = 12,
 };
 
 // SceneIdRockRooms's entrances and exits.
 enum
 {
-	// The house at the gate to Suhalla, the one room of the rooms map that is not Lunpa's.
-	ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT = 10,
+    // The house at the gate to Suhalla, the one room of the rooms map that is not Lunpa's.
+    ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT = 10,
 };
 
 // SceneIdWestLunpaCave's entrances.
 enum
 {
-	WEST_LUNPA_CAVE_FROM_WORLD_MAP    = 1,
-	WEST_LUNPA_CAVE_FROM_LUNPA        = 2,
-	// WEST_LUNPA_CAVE_FROM_LUNPA again with a shorter camera; no exit leads here.
-	WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED = 3,
+    WEST_LUNPA_CAVE_FROM_WORLD_MAP    = 1,
+    WEST_LUNPA_CAVE_FROM_LUNPA        = 2,
+    // WEST_LUNPA_CAVE_FROM_LUNPA again with a shorter camera; no exit leads here.
+    WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED = 3,
 };
 
 // SceneIdWestLunpaCave's exits.
 enum
 {
-	WEST_LUNPA_CAVE_TO_WORLD_MAP = 1,
-	WEST_LUNPA_CAVE_TO_LUNPA     = 2,
-	WEST_LUNPA_CAVE_BY_WAGON     = 3,
+    WEST_LUNPA_CAVE_TO_WORLD_MAP = 1,
+    WEST_LUNPA_CAVE_TO_LUNPA     = 2,
+    WEST_LUNPA_CAVE_BY_WAGON     = 3,
 };
 
 // SceneIdKalayDocks's entrances.
 enum
 {
-	KALAY_DOCKS_FROM_WORLD_MAP_SOUTH = 1,
-	KALAY_DOCKS_FROM_TOLBI_SHIP_DECK = 2,
-	KALAY_DOCKS_FROM_COTTAGE_ROOMS_E = 3,
-	KALAY_DOCKS_FROM_WORLD_MAP_NORTH = 4,
+    KALAY_DOCKS_FROM_WORLD_MAP_SOUTH = 1,
+    KALAY_DOCKS_FROM_TOLBI_SHIP_DECK = 2,
+    KALAY_DOCKS_FROM_COTTAGE_ROOMS_E = 3,
+    KALAY_DOCKS_FROM_WORLD_MAP_NORTH = 4,
 };
 
 // SceneIdKalayDocks's exits.
 enum
 {
-	KALAY_DOCKS_TO_WORLD_MAP_SOUTH = 1,
-	KALAY_DOCKS_TO_TOLBI_SHIP_DECK = 2,
-	KALAY_DOCKS_TO_COTTAGE_ROOMS_E = 3,
-	KALAY_DOCKS_TO_WORLD_MAP_NORTH = 4,
+    KALAY_DOCKS_TO_WORLD_MAP_SOUTH = 1,
+    KALAY_DOCKS_TO_TOLBI_SHIP_DECK = 2,
+    KALAY_DOCKS_TO_COTTAGE_ROOMS_E = 3,
+    KALAY_DOCKS_TO_WORLD_MAP_NORTH = 4,
 };
 
 // SceneIdCottageRoomsE's entrances.
 enum
 {
-	COTTAGE_ROOMS_E_FROM_KALAY_DOCKS = 1,
-	COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS = 2,
+    COTTAGE_ROOMS_E_FROM_KALAY_DOCKS = 1,
+    COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS = 2,
 };
 
 // SceneIdCottageRoomsE's exits.
 enum
 {
-	COTTAGE_ROOMS_E_TO_KALAY_DOCKS = 1,
-	COTTAGE_ROOMS_E_TO_TOLBI_DOCKS = 2,
+    COTTAGE_ROOMS_E_TO_KALAY_DOCKS = 1,
+    COTTAGE_ROOMS_E_TO_TOLBI_DOCKS = 2,
 };
 
 // SceneIdTolbiShipDeck's entrances.
 enum
 {
-	TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_PASSENGER_HOLD     = 1,
-	TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CRATE_HOLD         = 2,
-	TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CAPTAINS_ROOM      = 3,
-	TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST               = 4,
-	TOLBI_SHIP_DECK_FROM_KALAY_DOCKS                   = 5,
-	TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS                   = 6,
-	TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY              = 10,
-	TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS       = 11,
-	TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD     = 12,
-	TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK = 13,
-	TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK  = 14,
-	TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN             = 15,
-	// scTolbiShipDeckJumpIntoKrakenBattle
-	TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE      = 16,
-	TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED  = 17,
-	TOLBI_SHIP_DECK_FROM_WORLD_MAP                     = 18,
-	TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE    = 19,
+    TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_PASSENGER_HOLD     = 1,
+    TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CRATE_HOLD         = 2,
+    TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CAPTAINS_ROOM      = 3,
+    TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST               = 4,
+    TOLBI_SHIP_DECK_FROM_KALAY_DOCKS                   = 5,
+    TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS                   = 6,
+    TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY              = 10,
+    TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS       = 11,
+    TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD     = 12,
+    TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK = 13,
+    TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK  = 14,
+    TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN             = 15,
+    // scTolbiShipDeckJumpIntoKrakenBattle
+    TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE      = 16,
+    TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED  = 17,
+    TOLBI_SHIP_DECK_FROM_WORLD_MAP                     = 18,
+    TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE    = 19,
 };
 
 // SceneIdTolbiShipDeck's exits.
 enum
 {
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD    = 1,
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD        = 2,
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM     = 3,
-	TOLBI_SHIP_DECK_TO_KALAY_DOCKS                  = 4,
-	TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST              = 5,
-	TOLBI_SHIP_DECK_TO_TOLBI_DOCKS                  = 6,
-	TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE     = 7,
-	TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR = 10,
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_TURN              = 11,
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_FIRST_ATTACK      = 12,
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SECOND_ATTACK     = 13,
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_THIRD_ATTACK      = 14,
-	TOLBI_SHIP_DECK_TO_WORLD_MAP_REACH_TOLBI        = 15,
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_ISLAND            = 16,
-	TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SWITCH_TEAMS      = 17,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD    = 1,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD        = 2,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM     = 3,
+    TOLBI_SHIP_DECK_TO_KALAY_DOCKS                  = 4,
+    TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST              = 5,
+    TOLBI_SHIP_DECK_TO_TOLBI_DOCKS                  = 6,
+    TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE     = 7,
+    TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR = 10,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_TURN              = 11,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_FIRST_ATTACK      = 12,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SECOND_ATTACK     = 13,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_THIRD_ATTACK      = 14,
+    TOLBI_SHIP_DECK_TO_WORLD_MAP_REACH_TOLBI        = 15,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_ISLAND            = 16,
+    TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SWITCH_TEAMS      = 17,
 };
 
 // SceneIdTolbiShipMast's entrances.
 enum
 {
-	TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK              = 1,
-	TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR = 10,
-	TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK       = 11,
-	TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK      = 12,
-	TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK       = 13,
-	TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO            = 14,
+    TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK              = 1,
+    TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR = 10,
+    TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK       = 11,
+    TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK      = 12,
+    TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK       = 13,
+    TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO            = 14,
 };
 
 // SceneIdTolbiShipMast's exits.
 enum
 {
-	TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK               = 1,
-	TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF           = 10,
-	TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS           = 11,
-	TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK = 12,
-	TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK  = 13,
-	TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED  = 14,
-	TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE    = 15,
+    TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK               = 1,
+    TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF           = 10,
+    TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS           = 11,
+    TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK = 12,
+    TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK  = 13,
+    TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED  = 14,
+    TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE    = 15,
 };
 
 // SceneIdShipRooms's entrances.
 enum
 {
-	SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK            = 1,
-	SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK                = 2,
-	SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK                = 3,
-	SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD                = 4,
-	SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK             = 5,
-	SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF    = 10,
-	SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS = 11,
-	SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING         = 12,
-	SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS    = 13,
-	SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN        = 14,
-	SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK  = 15,
-	// scShipRoomsFightRowingDeckMonsters
-	SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE          = 16,
-	SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK = 17,
-	// scShipRoomsFightRowingDeckMonsters
-	SHIP_ROOMS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE         = 18,
-	SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK  = 19,
-	// scShipRoomsFightRowingDeckMonsters
-	SHIP_ROOMS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE          = 20,
-	SHIP_ROOMS_FROM_WORLD_MAP                                 = 21,
-	SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND      = 22,
-	SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND              = 23,
-	SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS  = 24,
-	// Where a defeat in the monster attacks or the Kraken battle returns the party
-	// (MainRoutineStateWork.restartEntrance): the voyage's flags are cleared and the party goes up
-	// on deck.
-	SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT                    = 30,
+    SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK            = 1,
+    SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK                = 2,
+    SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK                = 3,
+    SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD                = 4,
+    SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK             = 5,
+    SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF    = 10,
+    SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS = 11,
+    SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING         = 12,
+    SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS    = 13,
+    SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN        = 14,
+    SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK  = 15,
+    // scShipRoomsFightRowingDeckMonsters
+    SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE          = 16,
+    SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK = 17,
+    // scShipRoomsFightRowingDeckMonsters
+    SHIP_ROOMS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE         = 18,
+    SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK  = 19,
+    // scShipRoomsFightRowingDeckMonsters
+    SHIP_ROOMS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE          = 20,
+    SHIP_ROOMS_FROM_WORLD_MAP                                 = 21,
+    SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND      = 22,
+    SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND              = 23,
+    SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS  = 24,
+    // Where a defeat in the monster attacks or the Kraken battle returns the party
+    // (MainRoutineStateWork.restartEntrance): the voyage's flags are cleared and the party goes up
+    // on deck.
+    SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT                    = 30,
 };
 
 // SceneIdShipRooms's exits.
 enum
 {
-	SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK               = 1,
-	SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK                   = 2,
-	SHIP_ROOMS_CRATE_HOLD_TO_TOLBI_SHIP_DECK                   = 3,
-	SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD                   = 4,
-	SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK                = 5,
-	SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY            = 10,
-	SHIP_ROOMS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS    = 11,
-	SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING            = 12,
-	SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_FIRST_ATTACK   = 13,
-	SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_SEA_MONSTERS   = 14,
-	SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD = 15,
-	SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_SECOND_ATTACK  = 16,
-	SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_THIRD_ATTACK   = 17,
-	SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_KRAKEN         = 18,
-	SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_KRAKEN           = 19,
-	SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_LAND           = 20,
-	SHIP_ROOMS_TO_WORLD_MAP                                    = 21,
+    SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK               = 1,
+    SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK                   = 2,
+    SHIP_ROOMS_CRATE_HOLD_TO_TOLBI_SHIP_DECK                   = 3,
+    SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD                   = 4,
+    SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK                = 5,
+    SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY            = 10,
+    SHIP_ROOMS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS    = 11,
+    SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING            = 12,
+    SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_FIRST_ATTACK   = 13,
+    SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_SEA_MONSTERS   = 14,
+    SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD = 15,
+    SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_SECOND_ATTACK  = 16,
+    SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_THIRD_ATTACK   = 17,
+    SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_KRAKEN         = 18,
+    SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_KRAKEN           = 19,
+    SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_LAND           = 20,
+    SHIP_ROOMS_TO_WORLD_MAP                                    = 21,
 };
 
 // SceneIdTolbiDocks's entrances.
 enum
 {
-	TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK = 1,
-	TOLBI_DOCKS_FROM_WORLD_MAP       = 2,
-	TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E = 3,
+    TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK = 1,
+    TOLBI_DOCKS_FROM_WORLD_MAP       = 2,
+    TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E = 3,
 };
 
 // SceneIdTolbiDocks's exits.
 enum
 {
-	TOLBI_DOCKS_TO_WORLD_MAP       = 1,
-	TOLBI_DOCKS_TO_TOLBI_SHIP_DECK = 2,
-	TOLBI_DOCKS_TO_COTTAGE_ROOMS_E = 3,
+    TOLBI_DOCKS_TO_WORLD_MAP       = 1,
+    TOLBI_DOCKS_TO_TOLBI_SHIP_DECK = 2,
+    TOLBI_DOCKS_TO_COTTAGE_ROOMS_E = 3,
 };
 
 // SceneIdCrossboneIsle's entrances.
 enum
 {
-	CROSSBONE_ISLE_FROM_WORLD_MAP                    = 1,
-	CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE = 2,
+    CROSSBONE_ISLE_FROM_WORLD_MAP                    = 1,
+    CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE = 2,
 };
 
 // SceneIdCrossboneIsle's exits.
 enum
 {
-	CROSSBONE_ISLE_TO_WORLD_MAP                    = 1,
-	CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE = 2,
+    CROSSBONE_ISLE_TO_WORLD_MAP                    = 1,
+    CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE = 2,
 };
 
 // SceneIdCrossboneIsleCaveEntrance's entrances.
 enum
 {
-	CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE             = 1,
-	CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE_FIRST_FLOOR = 2,
+    CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE             = 1,
+    CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE_FIRST_FLOOR = 2,
 };
 
 // SceneIdCrossboneIsleCaveEntrance's exits.
 enum
 {
-	CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE             = 1,
-	CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR = 2,
+    CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE             = 1,
+    CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR = 2,
 };
 
 // SceneIdCrossboneIsleSteppingStones's entrances.
 enum
 {
-	CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleSteppingStones's exits.
 enum
 {
-	CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleIcePillars's entrances.
 enum
 {
-	CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleIcePillars's exits.
 enum
 {
-	CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleKeys's entrances.
 enum
 {
-	CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleKeys's exits.
 enum
 {
-	CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleStatues's entrances.
 enum
 {
-	CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleStatues's exits.
 enum
 {
-	CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleFloodgate's entrances.
 enum
 {
-	CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleFloodgate's exits.
 enum
 {
-	CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleBane's entrances.
 enum
 {
-	CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleBane's exits.
 enum
 {
-	CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleStackedPillars's entrances.
 enum
 {
-	CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleStackedPillars's exits.
 enum
 {
-	CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleDragonStatue's entrances.
 enum
 {
-	CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleDragonStatue's exits.
 enum
 {
-	CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIsleFloatingLogs's entrances.
 enum
 {
-	CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
-	// The middle of the room, facing south. No exit leads to it: only the debug scene selector,
-	// which exits to any entrance from 0 to 99, reaches it.
-	CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE                               = 99,
+    CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
+    // The middle of the room, facing south. No exit leads to it: only the debug scene selector,
+    // which exits to any entrance from 0 to 99, reaches it.
+    CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE                               = 99,
 };
 
 // SceneIdCrossboneIsleFloatingLogs's exits.
 enum
 {
-	CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
-	CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
+    CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
+    CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
 };
 
 // SceneIdCrossboneIslePier's entrances.
 enum
 {
-	CROSSBONE_ISLE_PIER_FROM_CROSSBONE_ISLE_NINTH_FLOOR = 1,
-	CROSSBONE_ISLE_PIER_FROM_PIRATE_SHIP                = 2,
+    CROSSBONE_ISLE_PIER_FROM_CROSSBONE_ISLE_NINTH_FLOOR = 1,
+    CROSSBONE_ISLE_PIER_FROM_PIRATE_SHIP                = 2,
 };
 
 // SceneIdCrossboneIslePier's exits.
 enum
 {
-	CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR = 1,
-	CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP                = 2,
+    CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR = 1,
+    CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP                = 2,
 };
 
 // SceneIdPirateShip's entrances.
 enum
 {
-	PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER = 1,
+    PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER = 1,
 };
 
 // SceneIdPirateShip's exits.
 enum
 {
-	PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER = 1,
+    PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER = 1,
 };
 
 // SceneIdCrossboneIsleFirstFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE        = 1,
-	CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_SECOND_FLOOR         = 2,
-	CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_EAST = 3,
-	CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_WEST = 4,
+    CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE        = 1,
+    CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_SECOND_FLOOR         = 2,
+    CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_EAST = 3,
+    CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_WEST = 4,
 };
 
 // SceneIdCrossboneIsleFirstFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_CAVE_ENTRANCE        = 1,
-	CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR         = 2,
-	CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_STEPPING_STONES_EAST = 3,
-	CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_STEPPING_STONES_WEST = 4,
+    CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_CAVE_ENTRANCE        = 1,
+    CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR         = 2,
+    CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_STEPPING_STONES_EAST = 3,
+    CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_STEPPING_STONES_WEST = 4,
 };
 
 // SceneIdCrossboneIsleSecondFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_FIRST_FLOOR      = 1,
-	CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_THIRD_FLOOR      = 2,
-	CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_EAST = 3,
-	CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_WEST = 4,
+    CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_FIRST_FLOOR      = 1,
+    CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_THIRD_FLOOR      = 2,
+    CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_EAST = 3,
+    CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_WEST = 4,
 };
 
 // SceneIdCrossboneIsleSecondFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_FIRST_FLOOR      = 1,
-	CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_THIRD_FLOOR      = 2,
-	CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_ICE_PILLARS_EAST = 3,
-	CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_ICE_PILLARS_WEST = 4,
+    CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_FIRST_FLOOR      = 1,
+    CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_THIRD_FLOOR      = 2,
+    CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_ICE_PILLARS_EAST = 3,
+    CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_ICE_PILLARS_WEST = 4,
 };
 
 // SceneIdCrossboneIsleThirdFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_SECOND_FLOOR = 1,
-	CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_FOURTH_FLOOR = 2,
-	CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_EAST    = 3,
-	CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_WEST    = 4,
+    CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_SECOND_FLOOR = 1,
+    CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_FOURTH_FLOOR = 2,
+    CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_EAST    = 3,
+    CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_WEST    = 4,
 };
 
 // SceneIdCrossboneIsleThirdFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR = 1,
-	CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_FOURTH_FLOOR = 2,
-	CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_KEYS_EAST    = 3,
-	CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_KEYS_WEST    = 4,
+    CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR = 1,
+    CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_FOURTH_FLOOR = 2,
+    CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_KEYS_EAST    = 3,
+    CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_KEYS_WEST    = 4,
 };
 
 // SceneIdCrossboneIsleFourthFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_THIRD_FLOOR  = 1,
-	CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_FIFTH_FLOOR  = 2,
-	CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_EAST = 3,
-	CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_WEST = 4,
+    CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_THIRD_FLOOR  = 1,
+    CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_FIFTH_FLOOR  = 2,
+    CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_EAST = 3,
+    CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_WEST = 4,
 };
 
 // SceneIdCrossboneIsleFourthFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_THIRD_FLOOR  = 1,
-	CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_FIFTH_FLOOR  = 2,
-	CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_STATUES_EAST = 3,
-	CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_STATUES_WEST = 4,
+    CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_THIRD_FLOOR  = 1,
+    CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_FIFTH_FLOOR  = 2,
+    CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_STATUES_EAST = 3,
+    CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_STATUES_WEST = 4,
 };
 
 // SceneIdCrossboneIsleFifthFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FOURTH_FLOOR   = 1,
-	CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_SIXTH_FLOOR    = 2,
-	CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_EAST = 3,
-	CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_WEST = 4,
+    CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FOURTH_FLOOR   = 1,
+    CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_SIXTH_FLOOR    = 2,
+    CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_EAST = 3,
+    CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_WEST = 4,
 };
 
 // SceneIdCrossboneIsleFifthFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FOURTH_FLOOR   = 1,
-	CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_SIXTH_FLOOR    = 2,
-	CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FLOODGATE_EAST = 3,
-	CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FLOODGATE_WEST = 4,
+    CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FOURTH_FLOOR   = 1,
+    CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_SIXTH_FLOOR    = 2,
+    CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FLOODGATE_EAST = 3,
+    CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FLOODGATE_WEST = 4,
 };
 
 // SceneIdCrossboneIsleSixthFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_FIFTH_FLOOR   = 1,
-	CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR = 2,
-	CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_EAST     = 3,
-	CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_WEST     = 4,
+    CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_FIFTH_FLOOR   = 1,
+    CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR = 2,
+    CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_EAST     = 3,
+    CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_WEST     = 4,
 };
 
 // SceneIdCrossboneIsleSixthFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_FIFTH_FLOOR   = 1,
-	CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_SEVENTH_FLOOR = 2,
-	CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_BANE_EAST     = 3,
-	CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_BANE_WEST     = 4,
+    CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_FIFTH_FLOOR   = 1,
+    CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_SEVENTH_FLOOR = 2,
+    CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_BANE_EAST     = 3,
+    CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_BANE_WEST     = 4,
 };
 
 // SceneIdCrossboneIsleSeventhFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_SIXTH_FLOOR          = 1,
-	CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR         = 2,
-	CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_EAST = 3,
-	CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_WEST = 4,
+    CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_SIXTH_FLOOR          = 1,
+    CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR         = 2,
+    CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_EAST = 3,
+    CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_WEST = 4,
 };
 
 // SceneIdCrossboneIsleSeventhFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_SIXTH_FLOOR          = 1,
-	CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_EIGHTH_FLOOR         = 2,
-	CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_STACKED_PILLARS_EAST = 3,
-	CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_STACKED_PILLARS_WEST = 4,
+    CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_SIXTH_FLOOR          = 1,
+    CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_EIGHTH_FLOOR         = 2,
+    CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_STACKED_PILLARS_EAST = 3,
+    CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_STACKED_PILLARS_WEST = 4,
 };
 
 // SceneIdCrossboneIsleEighthFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR      = 1,
-	CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_NINTH_FLOOR        = 2,
-	CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_EAST = 3,
-	CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_WEST = 4,
+    CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR      = 1,
+    CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_NINTH_FLOOR        = 2,
+    CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_EAST = 3,
+    CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_WEST = 4,
 };
 
 // SceneIdCrossboneIsleEighthFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_SEVENTH_FLOOR      = 1,
-	CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_NINTH_FLOOR        = 2,
-	CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_DRAGON_STATUE_EAST = 3,
-	CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_DRAGON_STATUE_WEST = 4,
+    CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_SEVENTH_FLOOR      = 1,
+    CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_NINTH_FLOOR        = 2,
+    CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_DRAGON_STATUE_EAST = 3,
+    CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_DRAGON_STATUE_WEST = 4,
 };
 
 // SceneIdCrossboneIsleNinthFloor's entrances.
 enum
 {
-	CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR       = 1,
-	CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_PIER               = 2,
-	CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_FLOATING_LOGS_EAST = 3,
-	CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_FLOATING_LOGS_WEST = 4,
+    CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR       = 1,
+    CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_PIER               = 2,
+    CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_FLOATING_LOGS_EAST = 3,
+    CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_FLOATING_LOGS_WEST = 4,
 };
 
 // SceneIdCrossboneIsleNinthFloor's exits.
 enum
 {
-	CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_EIGHTH_FLOOR       = 1,
-	CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_PIER               = 2,
-	CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_FLOATING_LOGS_EAST = 3,
-	CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_FLOATING_LOGS_WEST = 4,
+    CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_EIGHTH_FLOOR       = 1,
+    CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_PIER               = 2,
+    CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_FLOATING_LOGS_EAST = 3,
+    CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_FLOATING_LOGS_WEST = 4,
 };
 
 // SceneIdTolbi's entrances.
 enum
 {
-	TOLBI_FROM_WORLD_MAP             = 1,
-	TOLBI_FROM_HOUSE_NORTHWEST       = 2,
-	TOLBI_FROM_HOUSE_NORTH           = 3,
-	TOLBI_FROM_INN                   = 4,
-	TOLBI_FROM_LUCKY_WHEELS          = 5,
-	TOLBI_FROM_HOUSE_EAST            = 6,
-	TOLBI_FROM_HOUSE_SOUTHEAST       = 7,
-	TOLBI_FROM_WEAPON_AND_ARMOR_SHOP = 8,
-	TOLBI_FROM_HOUSE_SOUTHWEST       = 9,
-	TOLBI_FROM_SANCTUM               = 10,
-	TOLBI_FROM_BABI_PALACE_ENTRANCE  = 11,
-	TOLBI_FROM_COLOSSEUM_ENTRANCE    = 12,
-	TOLBI_FROM_LUCKY_DICE            = 13,
-	TOLBI_FROM_TOLBI_SPRING          = 20,
-	// Beside the sprout on the town's east side, facing north. No exit leads to it: only the debug
-	// scene selector, which exits to any entrance from 0 to 99, reaches it.
-	TOLBI_DEBUG_BY_SPROUT            = 30,
+    TOLBI_FROM_WORLD_MAP             = 1,
+    TOLBI_FROM_HOUSE_NORTHWEST       = 2,
+    TOLBI_FROM_HOUSE_NORTH           = 3,
+    TOLBI_FROM_INN                   = 4,
+    TOLBI_FROM_LUCKY_WHEELS          = 5,
+    TOLBI_FROM_HOUSE_EAST            = 6,
+    TOLBI_FROM_HOUSE_SOUTHEAST       = 7,
+    TOLBI_FROM_WEAPON_AND_ARMOR_SHOP = 8,
+    TOLBI_FROM_HOUSE_SOUTHWEST       = 9,
+    TOLBI_FROM_SANCTUM               = 10,
+    TOLBI_FROM_BABI_PALACE_ENTRANCE  = 11,
+    TOLBI_FROM_COLOSSEUM_ENTRANCE    = 12,
+    TOLBI_FROM_LUCKY_DICE            = 13,
+    TOLBI_FROM_TOLBI_SPRING          = 20,
+    // Beside the sprout on the town's east side, facing north. No exit leads to it: only the debug
+    // scene selector, which exits to any entrance from 0 to 99, reaches it.
+    TOLBI_DEBUG_BY_SPROUT            = 30,
 };
 
 // SceneIdTolbi's exits.
 enum
 {
-	TOLBI_TO_HOUSE_NORTHWEST       = 1,
-	TOLBI_TO_HOUSE_NORTH           = 2,
-	TOLBI_TO_INN                   = 3,
-	TOLBI_TO_LUCKY_WHEELS          = 4,
-	TOLBI_TO_HOUSE_EAST            = 5,
-	TOLBI_TO_HOUSE_SOUTHEAST       = 6,
-	TOLBI_TO_WEAPON_AND_ARMOR_SHOP = 7,
-	TOLBI_TO_HOUSE_SOUTHWEST       = 8,
-	TOLBI_TO_SANCTUM               = 9,
-	TOLBI_TO_BABI_PALACE_ENTRANCE  = 10,
-	TOLBI_TO_COLOSSEUM_ENTRANCE    = 11,
-	TOLBI_TO_WORLD_MAP             = 12,
-	TOLBI_TO_LUCKY_DICE            = 13,
-	TOLBI_TO_TOLBI_SPRING          = 30,
+    TOLBI_TO_HOUSE_NORTHWEST       = 1,
+    TOLBI_TO_HOUSE_NORTH           = 2,
+    TOLBI_TO_INN                   = 3,
+    TOLBI_TO_LUCKY_WHEELS          = 4,
+    TOLBI_TO_HOUSE_EAST            = 5,
+    TOLBI_TO_HOUSE_SOUTHEAST       = 6,
+    TOLBI_TO_WEAPON_AND_ARMOR_SHOP = 7,
+    TOLBI_TO_HOUSE_SOUTHWEST       = 8,
+    TOLBI_TO_SANCTUM               = 9,
+    TOLBI_TO_BABI_PALACE_ENTRANCE  = 10,
+    TOLBI_TO_COLOSSEUM_ENTRANCE    = 11,
+    TOLBI_TO_WORLD_MAP             = 12,
+    TOLBI_TO_LUCKY_DICE            = 13,
+    TOLBI_TO_TOLBI_SPRING          = 30,
 };
 
 // SceneIdStuccoRoomsB's entrances.
 enum
 {
-	// the room behind Tolbi's house east door;
-	STUCCO_ROOMS_B_HOUSE_EAST            = 1,
-	// through TOLBI_TO_HOUSE_EAST the room behind Tolbi's house north door; through
-	// TOLBI_TO_HOUSE_NORTH
-	STUCCO_ROOMS_B_HOUSE_NORTH           = 2,
-	// the room behind Tolbi's house southeast door; through
-	STUCCO_ROOMS_B_HOUSE_SOUTHEAST       = 3,
-	// TOLBI_TO_HOUSE_SOUTHEAST the room behind Tolbi's house northwest door; through
-	STUCCO_ROOMS_B_HOUSE_NORTHWEST       = 4,
-	// TOLBI_TO_HOUSE_NORTHWEST the room behind Tolbi's house southwest door; through
-	STUCCO_ROOMS_B_HOUSE_SOUTHWEST       = 5,
-	// TOLBI_TO_HOUSE_SOUTHWEST through TOLBI_TO_WEAPON_AND_ARMOR_SHOP
-	STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP = 6,
-	STUCCO_ROOMS_B_SANCTUM               = 8, // the room behind Tolbi's sanctum door; the
-	                            // room holds the sanctum; through TOLBI_TO_SANCTUM the room behind
-	                            // Tolbi's inn door; through TOLBI_TO_INN
-	STUCCO_ROOMS_B_INN                   = 9,
-	STUCCO_ROOMS_B_INN_FROM_INN_PASSAGE  = 10,
-	STUCCO_ROOMS_B_INN_PASSAGE_FROM_INN  = 11,
-	STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST = 12,
-	STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST = 13,
-	STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST = 14,
-	STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST = 15,
-	STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE = 16,
-	STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE = 17,
-	STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE = 18,
-	STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE = 19,
-	STUCCO_ROOMS_B_SANCTUM_NORTH                         = 30, // the room holds the sanctum;
+    // the room behind Tolbi's house east door;
+    STUCCO_ROOMS_B_HOUSE_EAST            = 1,
+    // through TOLBI_TO_HOUSE_EAST the room behind Tolbi's house north door; through
+    // TOLBI_TO_HOUSE_NORTH
+    STUCCO_ROOMS_B_HOUSE_NORTH           = 2,
+    // the room behind Tolbi's house southeast door; through
+    STUCCO_ROOMS_B_HOUSE_SOUTHEAST       = 3,
+    // TOLBI_TO_HOUSE_SOUTHEAST the room behind Tolbi's house northwest door; through
+    STUCCO_ROOMS_B_HOUSE_NORTHWEST       = 4,
+    // TOLBI_TO_HOUSE_NORTHWEST the room behind Tolbi's house southwest door; through
+    STUCCO_ROOMS_B_HOUSE_SOUTHWEST       = 5,
+    // TOLBI_TO_HOUSE_SOUTHWEST through TOLBI_TO_WEAPON_AND_ARMOR_SHOP
+    STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP = 6,
+    STUCCO_ROOMS_B_SANCTUM               = 8, // the room behind Tolbi's sanctum door; the
+                                // room holds the sanctum; through TOLBI_TO_SANCTUM the room behind
+                                // Tolbi's inn door; through TOLBI_TO_INN
+    STUCCO_ROOMS_B_INN                   = 9,
+    STUCCO_ROOMS_B_INN_FROM_INN_PASSAGE  = 10,
+    STUCCO_ROOMS_B_INN_PASSAGE_FROM_INN  = 11,
+    STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST = 12,
+    STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST = 13,
+    STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST = 14,
+    STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST = 15,
+    STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE = 16,
+    STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE = 17,
+    STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE = 18,
+    STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE = 19,
+    STUCCO_ROOMS_B_SANCTUM_NORTH                         = 30, // the room holds the sanctum;
 };
 
 // SceneIdStuccoRoomsB's exits.
 enum
 {
-	STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI            = 1,
-	STUCCO_ROOMS_B_HOUSE_NORTH_TO_TOLBI                = 2,
-	STUCCO_ROOMS_B_INN_TO_TOLBI                        = 3,
-	// No cell leads to it; it puts the party outside the Lucky Wheels door.
-	STUCCO_ROOMS_B_UNUSED_TO_TOLBI                     = 4,
-	STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI                 = 5,
-	STUCCO_ROOMS_B_HOUSE_SOUTHEAST_TO_TOLBI            = 6,
-	STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI      = 7,
-	STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI            = 8,
-	STUCCO_ROOMS_B_SANCTUM_TO_TOLBI                    = 9,
-	STUCCO_ROOMS_B_INN_TO_INN_PASSAGE                  = 10,
-	STUCCO_ROOMS_B_INN_PASSAGE_TO_INN                  = 11,
-	STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST = 12,
-	STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST = 13,
-	STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST = 14,
-	STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST = 15,
-	STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE = 16,
-	STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE = 17,
-	STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE = 18,
-	STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE = 19,
+    STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI            = 1,
+    STUCCO_ROOMS_B_HOUSE_NORTH_TO_TOLBI                = 2,
+    STUCCO_ROOMS_B_INN_TO_TOLBI                        = 3,
+    // No cell leads to it; it puts the party outside the Lucky Wheels door.
+    STUCCO_ROOMS_B_UNUSED_TO_TOLBI                     = 4,
+    STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI                 = 5,
+    STUCCO_ROOMS_B_HOUSE_SOUTHEAST_TO_TOLBI            = 6,
+    STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI      = 7,
+    STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI            = 8,
+    STUCCO_ROOMS_B_SANCTUM_TO_TOLBI                    = 9,
+    STUCCO_ROOMS_B_INN_TO_INN_PASSAGE                  = 10,
+    STUCCO_ROOMS_B_INN_PASSAGE_TO_INN                  = 11,
+    STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST = 12,
+    STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST = 13,
+    STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST = 14,
+    STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST = 15,
+    STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE = 16,
+    STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE = 17,
+    STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE = 18,
+    STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE = 19,
 };
 
 // SceneIdStuccoRoomsC's entrances.
 enum
 {
-	STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI    = 10,
-	STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI  = 11,
-	// scStuccoRoomsCOfferLuckyWheels
-	STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS = 12,
-	// scStuccoRoomsCOfferLuckyDice
-	STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE   = 13,
+    STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI    = 10,
+    STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI  = 11,
+    // scStuccoRoomsCOfferLuckyWheels
+    STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS = 12,
+    // scStuccoRoomsCOfferLuckyDice
+    STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE   = 13,
 };
 
 // SceneIdStuccoRoomsC's exits.
 enum
 {
-	STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI   = 1,
-	STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI = 2,
+    STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI   = 1,
+    STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI = 2,
 };
 
 // SceneIdBabiPalace's entrances.
 enum
 {
-	BABI_PALACE_FROM_BABI_PALACE_ENTRANCE          = 1,
-	BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_WEST  = 2,
-	BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_EAST  = 3,
-	BABI_PALACE_STATUE_ROOM_FROM_WEST_STEPS        = 4,
-	BABI_PALACE_STATUE_ROOM_FROM_EAST_STEPS        = 5,
-	BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_WEST  = 6,
-	BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_EAST  = 7,
-	BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST  = 8,
-	BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_EAST  = 9,
-	BABI_PALACE_SCHOLARS_LANDING_FROM_CARPET_ROOM  = 10,
-	BABI_PALACE_FROM_COTTAGE_ROOMS_B               = 11,
-	BABI_PALACE_TUNNEL_LANDING_FROM_CARPET_ROOM    = 12,
-	BABI_PALACE_FROM_COLOSSEUM_TUNNEL              = 13,
-	BABI_PALACE_BEDROOM_LANDING_FROM_MEETING_ROOM  = 16,
-	BABI_PALACE_BEDROOM_LANDING_FROM_BABIS_BEDROOM = 17,
-	BABI_PALACE_BABIS_BEDROOM_FROM_BEDROOM_LANDING = 18,
-	BABI_PALACE_WEST_STEPS_FROM_STATUE_ROOM        = 20,
-	BABI_PALACE_WEST_STEPS_FROM_WEST_ROUND_ROOM    = 21,
-	BABI_PALACE_EAST_STEPS_FROM_STATUE_ROOM        = 22,
-	BABI_PALACE_EAST_STEPS_FROM_EAST_ROUND_ROOM    = 23,
-	BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_WEST  = 24,
-	BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_EAST  = 25,
-	BABI_PALACE_CARPET_ROOM_FROM_SCHOLARS_LANDING  = 26,
-	BABI_PALACE_CARPET_ROOM_FROM_TUNNEL_LANDING    = 27,
-	BABI_PALACE_CARPET_ROOM_FROM_NORTH_ROUND_ROOM  = 28,
-	BABI_PALACE_CARPET_ROOM_FROM_SHEBAS_LANDING    = 29,
-	BABI_PALACE_CARPET_ROOM_FROM_OVEN_ROOM         = 30,
-	BABI_PALACE_CARPET_ROOM_FROM_SOLDIERS_ROOM     = 31,
-	BABI_PALACE_CARPET_ROOM_FROM_MEETING_ROOM      = 32,
-	BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM      = 33,
-	BABI_PALACE_MEETING_ROOM_FROM_BEDROOM_LANDING  = 34,
-	BABI_PALACE_OVEN_ROOM_FROM_CARPET_ROOM         = 35,
-	BABI_PALACE_SOLDIERS_ROOM_FROM_CARPET_ROOM     = 36,
-	BABI_PALACE_WEST_ROUND_ROOM_FROM_WEST_STEPS    = 40,
-	BABI_PALACE_EAST_ROUND_ROOM_FROM_EAST_STEPS    = 41,
-	BABI_PALACE_NORTH_ROUND_ROOM_FROM_CARPET_ROOM  = 42,
-	BABI_PALACE_SHEBAS_LANDING_FROM_CARPET_ROOM    = 43,
-	BABI_PALACE_SHEBAS_LANDING_FROM_SHEBAS_ROOM    = 44,
-	BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING    = 45,
-	// In no table row and led to by no exit or script: only the debug scene selector, which exits
-	// to any entrance by number, reaches it. Arriving by it sets FLAG_BABI_SAVED.
-	BABI_PALACE_AFTER_BABI_SAVED                   = 90,
-	// As BABI_PALACE_AFTER_BABI_SAVED, and it sets FLAG_COLOSSO_OVER as well.
-	BABI_PALACE_AFTER_COLOSSO                      = 91,
-	BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH         = 98,
-	BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH       = 99,
+    BABI_PALACE_FROM_BABI_PALACE_ENTRANCE          = 1,
+    BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_WEST  = 2,
+    BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_EAST  = 3,
+    BABI_PALACE_STATUE_ROOM_FROM_WEST_STEPS        = 4,
+    BABI_PALACE_STATUE_ROOM_FROM_EAST_STEPS        = 5,
+    BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_WEST  = 6,
+    BABI_PALACE_STATUE_ROOM_FROM_BIG_BEDROOM_EAST  = 7,
+    BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST  = 8,
+    BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_EAST  = 9,
+    BABI_PALACE_SCHOLARS_LANDING_FROM_CARPET_ROOM  = 10,
+    BABI_PALACE_FROM_COTTAGE_ROOMS_B               = 11,
+    BABI_PALACE_TUNNEL_LANDING_FROM_CARPET_ROOM    = 12,
+    BABI_PALACE_FROM_COLOSSEUM_TUNNEL              = 13,
+    BABI_PALACE_BEDROOM_LANDING_FROM_MEETING_ROOM  = 16,
+    BABI_PALACE_BEDROOM_LANDING_FROM_BABIS_BEDROOM = 17,
+    BABI_PALACE_BABIS_BEDROOM_FROM_BEDROOM_LANDING = 18,
+    BABI_PALACE_WEST_STEPS_FROM_STATUE_ROOM        = 20,
+    BABI_PALACE_WEST_STEPS_FROM_WEST_ROUND_ROOM    = 21,
+    BABI_PALACE_EAST_STEPS_FROM_STATUE_ROOM        = 22,
+    BABI_PALACE_EAST_STEPS_FROM_EAST_ROUND_ROOM    = 23,
+    BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_WEST  = 24,
+    BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_EAST  = 25,
+    BABI_PALACE_CARPET_ROOM_FROM_SCHOLARS_LANDING  = 26,
+    BABI_PALACE_CARPET_ROOM_FROM_TUNNEL_LANDING    = 27,
+    BABI_PALACE_CARPET_ROOM_FROM_NORTH_ROUND_ROOM  = 28,
+    BABI_PALACE_CARPET_ROOM_FROM_SHEBAS_LANDING    = 29,
+    BABI_PALACE_CARPET_ROOM_FROM_OVEN_ROOM         = 30,
+    BABI_PALACE_CARPET_ROOM_FROM_SOLDIERS_ROOM     = 31,
+    BABI_PALACE_CARPET_ROOM_FROM_MEETING_ROOM      = 32,
+    BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM      = 33,
+    BABI_PALACE_MEETING_ROOM_FROM_BEDROOM_LANDING  = 34,
+    BABI_PALACE_OVEN_ROOM_FROM_CARPET_ROOM         = 35,
+    BABI_PALACE_SOLDIERS_ROOM_FROM_CARPET_ROOM     = 36,
+    BABI_PALACE_WEST_ROUND_ROOM_FROM_WEST_STEPS    = 40,
+    BABI_PALACE_EAST_ROUND_ROOM_FROM_EAST_STEPS    = 41,
+    BABI_PALACE_NORTH_ROUND_ROOM_FROM_CARPET_ROOM  = 42,
+    BABI_PALACE_SHEBAS_LANDING_FROM_CARPET_ROOM    = 43,
+    BABI_PALACE_SHEBAS_LANDING_FROM_SHEBAS_ROOM    = 44,
+    BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING    = 45,
+    // In no table row and led to by no exit or script: only the debug scene selector, which exits
+    // to any entrance by number, reaches it. Arriving by it sets FLAG_BABI_SAVED.
+    BABI_PALACE_AFTER_BABI_SAVED                   = 90,
+    // As BABI_PALACE_AFTER_BABI_SAVED, and it sets FLAG_COLOSSO_OVER as well.
+    BABI_PALACE_AFTER_COLOSSO                      = 91,
+    BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH         = 98,
+    BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH       = 99,
 };
 
 // SceneIdBabiPalace's exits.
 enum
 {
-	BABI_PALACE_TO_BABI_PALACE_ENTRANCE          = 1,
-	BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST  = 2,
-	BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST  = 3,
-	BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS        = 4,
-	BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS        = 5,
-	BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST  = 6,
-	BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST  = 7,
-	BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST  = 8,
-	BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST  = 9,
-	BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM  = 10,
-	BABI_PALACE_TO_COTTAGE_ROOMS_B               = 11,
-	BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM    = 12,
-	BABI_PALACE_TO_COLOSSEUM_TUNNEL              = 13,
-	BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM  = 16,
-	BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM = 17,
-	BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING = 18,
-	BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM        = 20,
-	BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM    = 21,
-	BABI_PALACE_EAST_STEPS_TO_STATUE_ROOM        = 22,
-	BABI_PALACE_EAST_STEPS_TO_EAST_ROUND_ROOM    = 23,
-	BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_WEST  = 24,
-	BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_EAST  = 25,
-	BABI_PALACE_CARPET_ROOM_TO_SCHOLARS_LANDING  = 26,
-	BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING    = 27,
-	BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM  = 28,
-	BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING    = 29,
-	BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM         = 30,
-	BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM     = 31,
-	BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM      = 32,
-	BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM      = 33,
-	BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING  = 34,
-	BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM         = 35,
-	BABI_PALACE_SOLDIERS_ROOM_TO_CARPET_ROOM     = 36,
-	BABI_PALACE_WEST_ROUND_ROOM_TO_WEST_STEPS    = 40,
-	BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS    = 41,
-	BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM  = 42,
-	BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM    = 43,
-	BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM    = 44,
-	BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING    = 45,
+    BABI_PALACE_TO_BABI_PALACE_ENTRANCE          = 1,
+    BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST  = 2,
+    BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST  = 3,
+    BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS        = 4,
+    BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS        = 5,
+    BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST  = 6,
+    BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST  = 7,
+    BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST  = 8,
+    BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST  = 9,
+    BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM  = 10,
+    BABI_PALACE_TO_COTTAGE_ROOMS_B               = 11,
+    BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM    = 12,
+    BABI_PALACE_TO_COLOSSEUM_TUNNEL              = 13,
+    BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM  = 16,
+    BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM = 17,
+    BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING = 18,
+    BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM        = 20,
+    BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM    = 21,
+    BABI_PALACE_EAST_STEPS_TO_STATUE_ROOM        = 22,
+    BABI_PALACE_EAST_STEPS_TO_EAST_ROUND_ROOM    = 23,
+    BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_WEST  = 24,
+    BABI_PALACE_CARPET_ROOM_TO_STATUE_ROOM_EAST  = 25,
+    BABI_PALACE_CARPET_ROOM_TO_SCHOLARS_LANDING  = 26,
+    BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING    = 27,
+    BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM  = 28,
+    BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING    = 29,
+    BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM         = 30,
+    BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM     = 31,
+    BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM      = 32,
+    BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM      = 33,
+    BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING  = 34,
+    BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM         = 35,
+    BABI_PALACE_SOLDIERS_ROOM_TO_CARPET_ROOM     = 36,
+    BABI_PALACE_WEST_ROUND_ROOM_TO_WEST_STEPS    = 40,
+    BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS    = 41,
+    BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM  = 42,
+    BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM    = 43,
+    BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM    = 44,
+    BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING    = 45,
 };
 
 // SceneIdBabiPalaceEntrance's entrances.
 enum
 {
-	BABI_PALACE_ENTRANCE_FROM_TOLBI       = 1,
-	BABI_PALACE_ENTRANCE_FROM_BABI_PALACE = 2,
+    BABI_PALACE_ENTRANCE_FROM_TOLBI       = 1,
+    BABI_PALACE_ENTRANCE_FROM_BABI_PALACE = 2,
 };
 
 // SceneIdBabiPalaceEntrance's exits.
 enum
 {
-	BABI_PALACE_ENTRANCE_TO_TOLBI       = 1,
-	BABI_PALACE_ENTRANCE_TO_BABI_PALACE = 2,
+    BABI_PALACE_ENTRANCE_TO_TOLBI       = 1,
+    BABI_PALACE_ENTRANCE_TO_BABI_PALACE = 2,
 };
 
 // SceneIdColosseum's entrances.
 enum
 {
-	COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH     = 1,
-	COLOSSEUM_STONE_PASSAGE_FROM_STANDS_WEST      = 2,
-	COLOSSEUM_FROM_COLOSSEUM_TUNNEL               = 4,
-	COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST      = 5,
-	COLOSSEUM_STANDS_FROM_STONE_PASSAGE_NORTH     = 6,
-	COLOSSEUM_FAILED_TRIAL_FROM_STANDS            = 7,
-	COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST     = 12,
-	COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST     = 21,
-	COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH  = 31,
-	COLOSSEUM_FROM_COLOSSEUM_ENTRANCE             = 64,
-	COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST = 65,
-	COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH        = 66,
-	COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST = 67,
-	COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH  = 68,
-	COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS           = 69,
-	COLOSSEUM_CLEARED_TRIAL_FROM_STANDS           = 70,
+    COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH     = 1,
+    COLOSSEUM_STONE_PASSAGE_FROM_STANDS_WEST      = 2,
+    COLOSSEUM_FROM_COLOSSEUM_TUNNEL               = 4,
+    COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST      = 5,
+    COLOSSEUM_STANDS_FROM_STONE_PASSAGE_NORTH     = 6,
+    COLOSSEUM_FAILED_TRIAL_FROM_STANDS            = 7,
+    COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST     = 12,
+    COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST     = 21,
+    COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH  = 31,
+    COLOSSEUM_FROM_COLOSSEUM_ENTRANCE             = 64,
+    COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST = 65,
+    COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH        = 66,
+    COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST = 67,
+    COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH  = 68,
+    COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS           = 69,
+    COLOSSEUM_CLEARED_TRIAL_FROM_STANDS           = 70,
 };
 
 // SceneIdColosseum's exits.
 enum
 {
-	COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH              = 1,
-	COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST               = 2,
-	COLOSSEUM_STONE_PASSAGE_LOCKED_DOOR_TO_STONE_PASSAGE = 3,
-	COLOSSEUM_TO_COLOSSEUM_TUNNEL                        = 4,
-	COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST               = 5,
-	COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH              = 6,
-	COLOSSEUM_STANDS_TO_FAILED_TRIAL                     = 7,
-	COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST              = 12,
-	COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST            = 21,
-	COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST            = 22,
-	COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH           = 31,
-	COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH           = 32,
-	COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST          = 64,
-	COLOSSEUM_TO_COLOSSEUM_AZART_MATCH                   = 65,
-	COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST      = 66,
-	COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST          = 67,
-	COLOSSEUM_TRIAL_GROUNDS_TO_STANDS                    = 69,
-	COLOSSEUM_STANDS_TO_CLEARED_TRIAL                    = 70,
+    COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH              = 1,
+    COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST               = 2,
+    COLOSSEUM_STONE_PASSAGE_LOCKED_DOOR_TO_STONE_PASSAGE = 3,
+    COLOSSEUM_TO_COLOSSEUM_TUNNEL                        = 4,
+    COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST               = 5,
+    COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH              = 6,
+    COLOSSEUM_STANDS_TO_FAILED_TRIAL                     = 7,
+    COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST              = 12,
+    COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST            = 21,
+    COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST            = 22,
+    COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH           = 31,
+    COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH           = 32,
+    COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST          = 64,
+    COLOSSEUM_TO_COLOSSEUM_AZART_MATCH                   = 65,
+    COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST      = 66,
+    COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST          = 67,
+    COLOSSEUM_TRIAL_GROUNDS_TO_STANDS                    = 69,
+    COLOSSEUM_STANDS_TO_CLEARED_TRIAL                    = 70,
 };
 
 // SceneIdColosseumTunnel's entrances.
 enum
 {
-	COLOSSEUM_TUNNEL_FROM_BABI_PALACE = 1,
-	COLOSSEUM_TUNNEL_FROM_COLOSSEUM   = 2,
+    COLOSSEUM_TUNNEL_FROM_BABI_PALACE = 1,
+    COLOSSEUM_TUNNEL_FROM_COLOSSEUM   = 2,
 };
 
 // SceneIdColosseumTunnel's exits.
 enum
 {
-	COLOSSEUM_TUNNEL_TO_BABI_PALACE = 1,
-	COLOSSEUM_TUNNEL_TO_COLOSSEUM   = 2,
+    COLOSSEUM_TUNNEL_TO_BABI_PALACE = 1,
+    COLOSSEUM_TUNNEL_TO_COLOSSEUM   = 2,
 };
 
 // SceneIdColosseumEntrance's entrances.
 enum
 {
-	COLOSSEUM_ENTRANCE_FROM_TOLBI = 1,
+    COLOSSEUM_ENTRANCE_FROM_TOLBI = 1,
 };
 
 // SceneIdColosseumEntrance's exits.
 enum
 {
-	COLOSSEUM_ENTRANCE_TO_TOLBI     = 1,
-	COLOSSEUM_ENTRANCE_TO_COLOSSEUM = 2,
+    COLOSSEUM_ENTRANCE_TO_TOLBI     = 1,
+    COLOSSEUM_ENTRANCE_TO_COLOSSEUM = 2,
 };
 
 // SceneIdColosseumAzartMatch's entrances.
 enum
 {
-	COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND = 1,
-	COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST   = 2,
-	COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM        = 3,
-	// The return from the battle with Azart when Isaac wins.
-	COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON       = 4,
-	// The return from the battle with Azart when Isaac loses.
-	COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST      = 5,
+    COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND = 1,
+    COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST   = 2,
+    COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM        = 3,
+    // The return from the battle with Azart when Isaac wins.
+    COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON       = 4,
+    // The return from the battle with Azart when Isaac loses.
+    COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST      = 5,
 };
 
 // SceneIdColosseumAzartMatch's exits.
 enum
 {
-	COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST   = 4,
-	COLOSSEUM_AZART_MATCH_TO_BABI_PALACE      = 5,
-	COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE = 10,
-	COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST   = 11,
+    COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST   = 4,
+    COLOSSEUM_AZART_MATCH_TO_BABI_PALACE      = 5,
+    COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE = 10,
+    COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST   = 11,
 };
 
 // SceneIdColosseumSatrageMatch's entrances.
 enum
 {
-	COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND = 1,
-	COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST   = 2,
-	COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST   = 3,
-	// The return from the battle with Satrage when Isaac wins.
-	COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON       = 4,
-	// The return from the battle with Satrage when Isaac loses.
-	COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST      = 5,
+    COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND = 1,
+    COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST   = 2,
+    COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST   = 3,
+    // The return from the battle with Satrage when Isaac wins.
+    COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON       = 4,
+    // The return from the battle with Satrage when Isaac loses.
+    COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST      = 5,
 };
 
 // SceneIdColosseumSatrageMatch's exits.
 enum
 {
-	COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH  = 4,
-	COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE      = 5,
-	COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE = 10,
-	COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH  = 11,
+    COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH  = 4,
+    COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE      = 5,
+    COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE = 10,
+    COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH  = 11,
 };
 
 // SceneIdColosseumNavampaMatch's entrances.
 enum
 {
-	COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND = 1,
-	COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH  = 2,
-	COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH  = 3,
-	// The return from the battle with Navampa when Isaac wins.
-	COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON       = 4,
-	// The return from the battle with Navampa when Isaac loses.
-	COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST      = 5,
+    COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND = 1,
+    COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH  = 2,
+    COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH  = 3,
+    // The return from the battle with Navampa when Isaac wins.
+    COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON       = 4,
+    // The return from the battle with Navampa when Isaac loses.
+    COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST      = 5,
 };
 
 // SceneIdColosseumNavampaMatch's exits.
 enum
 {
-	COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE      = 4,
-	COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST = 5,
-	COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE = 10,
-	COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM        = 11,
+    COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE      = 4,
+    COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST = 5,
+    COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE = 10,
+    COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM        = 11,
 };
 
 // SceneIdAltmillerCaveEntrance's entrances.
 enum
 {
-	ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP             = 1,
-	ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER         = 2,
-	ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_FROM_PASSAGE = 3,
-	ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI   = 4,
+    ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP             = 1,
+    ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER         = 2,
+    ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_FROM_PASSAGE = 3,
+    ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI   = 4,
 };
 
 // SceneIdAltmillerCaveEntrance's exits.
 enum
 {
-	ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP             = 1,
-	ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER         = 2,
-	ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE = 3,
-	ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI   = 4,
+    ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP             = 1,
+    ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER         = 2,
+    ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE = 3,
+    ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI   = 4,
 };
 
 // SceneIdAltmillerCaveBabi's entrances.
 enum
 {
-	ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE   = 10,
-	ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_VIAL_CHEST = 11,
+    ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE   = 10,
+    ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_VIAL_CHEST = 11,
 };
 
 // SceneIdAltmillerCaveBabi's exits.
 enum
 {
-	ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE   = 10,
-	ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST = 11,
+    ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE   = 10,
+    ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST = 11,
 };
 
 // SceneIdAltmillerCaveVialChest's entrances.
 enum
 {
-	ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI   = 20,
-	ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_SQUALL = 21,
+    ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI   = 20,
+    ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_SQUALL = 21,
 };
 
 // SceneIdAltmillerCaveVialChest's exits.
 enum
 {
-	ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI   = 20,
-	ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL = 21,
+    ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI   = 20,
+    ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL = 21,
 };
 
 // SceneIdAltmillerCaveSquall's entrances.
 enum
 {
-	ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST   = 30,
-	ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 31,
+    ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST   = 30,
+    ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 31,
 };
 
 // SceneIdAltmillerCaveSquall's exits.
 enum
 {
-	ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST   = 30,
-	ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST = 31,
+    ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST   = 30,
+    ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST = 31,
 };
 
 // SceneIdAltmillerCaveCookieChest's entrances.
 enum
 {
-	ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL  = 40,
-	ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_DRAUGHT = 41,
+    ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL  = 40,
+    ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_DRAUGHT = 41,
 };
 
 // SceneIdAltmillerCaveCookieChest's exits.
 enum
 {
-	ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL  = 40,
-	ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT = 41,
+    ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL  = 40,
+    ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT = 41,
 };
 
 // SceneIdAltmillerCaveDraught's entrances.
 enum
 {
-	ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 50,
-	ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS                       = 51,
-	ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE           = 52,
-	ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CHEST                 = 53,
-	ALTMILLER_CAVE_DRAUGHT_CHEST_FROM_ROCKS                 = 54,
+    ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 50,
+    ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS                       = 51,
+    ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE           = 52,
+    ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CHEST                 = 53,
+    ALTMILLER_CAVE_DRAUGHT_CHEST_FROM_ROCKS                 = 54,
 };
 
 // SceneIdAltmillerCaveDraught's exits.
 enum
 {
-	ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST = 50,
-	ALTMILLER_CAVE_DRAUGHT_TO_ROCKS                       = 51,
-	ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE           = 52,
-	ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST                 = 53,
-	ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS                 = 54,
+    ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST = 50,
+    ALTMILLER_CAVE_DRAUGHT_TO_ROCKS                       = 51,
+    ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE           = 52,
+    ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST                 = 53,
+    ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS                 = 54,
 };
 
 // SceneIdGondowanPassage's entrances.
 enum
 {
-	GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH = 1,
-	GONDOWAN_PASSAGE_FROM_WORLD_MAP_SOUTH = 2,
+    GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH = 1,
+    GONDOWAN_PASSAGE_FROM_WORLD_MAP_SOUTH = 2,
 };
 
 // SceneIdGondowanPassage's exits.
 enum
 {
-	GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH = 1,
-	GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH = 2,
+    GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH = 1,
+    GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH = 2,
 };
 
 // SceneIdKalayTunnelEntrance's entrances.
 enum
 {
-	KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_CAVE = 1,
-	KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH   = 2,
-	KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH   = 10,
+    KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_CAVE = 1,
+    KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH   = 2,
+    KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH   = 10,
 };
 
 // SceneIdKalayTunnelEntrance's exits.
 enum
 {
-	KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE = 1,
-	KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH   = 2,
-	KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH   = 10,
+    KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE = 1,
+    KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH   = 2,
+    KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH   = 10,
 };
 
 // SceneIdKalayTunnelCave's entrances.
 enum
 {
-	KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE  = 1,
-	KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE = 2,
+    KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE  = 1,
+    KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE = 2,
 };
 
 // SceneIdKalayTunnelCave's exits.
 enum
 {
-	KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE  = 1,
-	KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE = 2,
+    KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE  = 1,
+    KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE = 2,
 };
 
 // SceneIdKalayTunnelPassage's entrances.
 enum
 {
-	KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
-	KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
-	KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM        = 3,
-	KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_LONG_PATH        = 4,
-	KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_CAVE               = 5,
+    KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
+    KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
+    KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM        = 3,
+    KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_LONG_PATH        = 4,
+    KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_CAVE               = 5,
 };
 
 // SceneIdKalayTunnelPassage's exits.
 enum
 {
-	KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
-	KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
-	KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM        = 3,
-	KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH        = 4,
-	KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE               = 5,
+    KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
+    KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
+    KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM        = 3,
+    KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH        = 4,
+    KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE               = 5,
 };
 
 // SceneIdKalayTunnelTreasureRoom's entrances.
 enum
 {
-	KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE             = 1,
-	KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST = 2,
-	KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST = 3,
-	KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY                     = 4,
+    KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE             = 1,
+    KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST = 2,
+    KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST = 3,
+    KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY                     = 4,
 };
 
 // SceneIdKalayTunnelTreasureRoom's exits.
 enum
 {
-	KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE             = 1,
-	KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST = 2,
-	KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST = 3,
-	KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY                     = 4,
+    KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE             = 1,
+    KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST = 2,
+    KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST = 3,
+    KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY                     = 4,
 };
 
 // SceneIdGondowanCaveRiver's entrances.
 enum
 {
-	GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH   = 1,
-	GONDOWAN_CAVE_RIVER_FROM_BOULDER_PASSAGE       = 2,
-	GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_FROM_RIVER = 3,
-	GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_SOUTH   = 4,
+    GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH   = 1,
+    GONDOWAN_CAVE_RIVER_FROM_BOULDER_PASSAGE       = 2,
+    GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_FROM_RIVER = 3,
+    GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_SOUTH   = 4,
 };
 
 // SceneIdGondowanCaveRiver's exits.
 enum
 {
-	GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH   = 1,
-	GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE       = 2,
-	GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER = 3,
-	GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH   = 4,
+    GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH   = 1,
+    GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE       = 2,
+    GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER = 3,
+    GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH   = 4,
 };
 
 // SceneIdGondowanCave's entrances.
 enum
 {
-	GONDOWAN_CAVE_FROM_WORLD_MAP_EAST            = 1,
-	GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH = 2,
-	GONDOWAN_CAVE_FROM_WEST_PASSAGE              = 3,
-	GONDOWAN_CAVE_WEST_PASSAGE_FROM_EAST_CAVE    = 4,
-	GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH = 5,
-	GONDOWAN_CAVE_FROM_WORLD_MAP_WEST            = 6,
+    GONDOWAN_CAVE_FROM_WORLD_MAP_EAST            = 1,
+    GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH = 2,
+    GONDOWAN_CAVE_FROM_WEST_PASSAGE              = 3,
+    GONDOWAN_CAVE_WEST_PASSAGE_FROM_EAST_CAVE    = 4,
+    GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH = 5,
+    GONDOWAN_CAVE_FROM_WORLD_MAP_WEST            = 6,
 };
 
 // SceneIdGondowanCave's exits.
 enum
 {
-	GONDOWAN_CAVE_TO_WORLD_MAP_EAST            = 1,
-	GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH = 2,
-	GONDOWAN_CAVE_TO_WEST_PASSAGE              = 3,
-	GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE    = 4,
-	GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH = 5,
-	GONDOWAN_CAVE_TO_WORLD_MAP_WEST            = 6,
+    GONDOWAN_CAVE_TO_WORLD_MAP_EAST            = 1,
+    GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH = 2,
+    GONDOWAN_CAVE_TO_WEST_PASSAGE              = 3,
+    GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE    = 4,
+    GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH = 5,
+    GONDOWAN_CAVE_TO_WORLD_MAP_WEST            = 6,
 };
 
 // SceneIdLunpaFortressGates's entrances.
 enum
 {
-	LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_GROUND_FLOOR = 1,
-	LUNPA_FORTRESS_GATES_FROM_LUNPA                       = 2,
-	LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA     = 3,
-	// where a guard who catches the party in the fortress sends it:
-	LUNPA_FORTRESS_GATES_AFTER_CAUGHT                     = 4,
-	// "You're on your way out now!" (scLunpaFortressGuardThrowsPartyOut)
+    LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_GROUND_FLOOR = 1,
+    LUNPA_FORTRESS_GATES_FROM_LUNPA                       = 2,
+    LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA     = 3,
+    // where a guard who catches the party in the fortress sends it:
+    LUNPA_FORTRESS_GATES_AFTER_CAUGHT                     = 4,
+    // "You're on your way out now!" (scLunpaFortressGuardThrowsPartyOut)
 };
 
 // SceneIdLunpaFortressGates's exits.
 enum
 {
-	LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR = 1,
-	LUNPA_FORTRESS_GATES_TO_LUNPA                       = 2,
+    LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR = 1,
+    LUNPA_FORTRESS_GATES_TO_LUNPA                       = 2,
 };
 
 // SceneIdLunpaFortressGroundFloor's entrances.
 enum
 {
-	LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_GATES             = 1,
-	LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_PASSAGE            = 2,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_ENTRANCE            = 3,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTH_PASSAGE       = 4,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_FEAST_ROOM          = 5,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTHEAST_PASSAGE   = 6,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_EAST_PASSAGE        = 7,
-	LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH = 8,
-	LUNPA_FORTRESS_GROUND_FLOOR_NORTH_PASSAGE_FROM_MAIN_PASSAGE       = 9,
-	LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_NORTH = 10,
-	LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_CAVE              = 11,
-	LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE          = 12,
-	LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_MAIN_PASSAGE   = 13,
-	LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_EAST_PASSAGE   = 14,
-	LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_BARREL_ROOM    = 15,
-	LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_MAIN_PASSAGE        = 16,
-	LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_NORTHEAST_PASSAGE   = 17,
-	LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_TREASURE_ROOM       = 18,
-	LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_FROM_NORTHEAST_PASSAGE    = 19,
-	LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_FROM_EAST_PASSAGE       = 20,
+    LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_GATES             = 1,
+    LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_PASSAGE            = 2,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_ENTRANCE            = 3,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTH_PASSAGE       = 4,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_FEAST_ROOM          = 5,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTHEAST_PASSAGE   = 6,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_EAST_PASSAGE        = 7,
+    LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH = 8,
+    LUNPA_FORTRESS_GROUND_FLOOR_NORTH_PASSAGE_FROM_MAIN_PASSAGE       = 9,
+    LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_NORTH = 10,
+    LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_CAVE              = 11,
+    LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE          = 12,
+    LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_MAIN_PASSAGE   = 13,
+    LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_EAST_PASSAGE   = 14,
+    LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_BARREL_ROOM    = 15,
+    LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_MAIN_PASSAGE        = 16,
+    LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_NORTHEAST_PASSAGE   = 17,
+    LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_TREASURE_ROOM       = 18,
+    LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_FROM_NORTHEAST_PASSAGE    = 19,
+    LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_FROM_EAST_PASSAGE       = 20,
 };
 
 // SceneIdLunpaFortressGroundFloor's exits.
 enum
 {
-	LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES             = 1,
-	LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_TO_MAIN_PASSAGE            = 2,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_ENTRANCE            = 3,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_NORTH_PASSAGE       = 4,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_FEAST_ROOM          = 5,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_NORTHEAST_PASSAGE   = 6,
-	LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_EAST_PASSAGE        = 7,
-	LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH = 8,
-	LUNPA_FORTRESS_GROUND_FLOOR_NORTH_PASSAGE_TO_MAIN_PASSAGE       = 9,
-	LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_NORTH = 10,
-	LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE              = 11,
-	LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_TO_MAIN_PASSAGE          = 12,
-	LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_MAIN_PASSAGE   = 13,
-	LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_EAST_PASSAGE   = 14,
-	LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_BARREL_ROOM    = 15,
-	LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_MAIN_PASSAGE        = 16,
-	LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_NORTHEAST_PASSAGE   = 17,
-	LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_TREASURE_ROOM       = 18,
-	LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_TO_NORTHEAST_PASSAGE    = 19,
-	LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_PASSAGE       = 20,
+    LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES             = 1,
+    LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_TO_MAIN_PASSAGE            = 2,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_ENTRANCE            = 3,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_NORTH_PASSAGE       = 4,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_FEAST_ROOM          = 5,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_NORTHEAST_PASSAGE   = 6,
+    LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_EAST_PASSAGE        = 7,
+    LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH = 8,
+    LUNPA_FORTRESS_GROUND_FLOOR_NORTH_PASSAGE_TO_MAIN_PASSAGE       = 9,
+    LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_NORTH = 10,
+    LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE              = 11,
+    LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_TO_MAIN_PASSAGE          = 12,
+    LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_MAIN_PASSAGE   = 13,
+    LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_EAST_PASSAGE   = 14,
+    LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_BARREL_ROOM    = 15,
+    LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_MAIN_PASSAGE        = 16,
+    LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_NORTHEAST_PASSAGE   = 17,
+    LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_TREASURE_ROOM       = 18,
+    LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_TO_NORTHEAST_PASSAGE    = 19,
+    LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_PASSAGE       = 20,
 };
 
 // SceneIdLunpaFortressUpperFloor's entrances.
 enum
 {
-	LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
-	LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_NORTH_PASSAGE        = 2,
-	LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_MIDDLE_PASSAGE       = 3,
-	LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_WEST_PASSAGE        = 4,
-	LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_GUARD_ROOM          = 5,
-	LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_WOMENS_ROOM         = 6,
-	LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_WEST_PASSAGE       = 7,
-	LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_FAMILY_ROOM        = 8,
-	LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_METATILE_KEY_ROOM  = 9,
-	LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_FROM_MIDDLE_PASSAGE        = 10,
-	LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_PASSAGE          = 11,
-	LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_PASSAGE          = 12,
-	LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_FROM_NORTH_PASSAGE         = 13,
-	LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_FROM_MIDDLE_PASSAGE  = 14,
-	LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_FROM_EAST_PASSAGE    = 15,
-	LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_NORTH = 16,
-	LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_GUARD_ROOM          = 17,
-	LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_DONPAS_ROOM         = 18,
-	LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_EAST_PASSAGE        = 19,
-	LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_SOUTH_PASSAGE         = 20,
-	LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_METATILE_KEY_ROOM    = 21,
-	LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_SOUTH_PASSAGE        = 22,
-	LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_FROM_DONPAS_ROOM            = 23,
-	LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM            = 24,
-	// no exit or script leads here
-	LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_UNUSED                  = 30,
-	// Where the party comes back after the battle with the three guards in the guard room.
-	LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE                = 31,
+    LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
+    LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_NORTH_PASSAGE        = 2,
+    LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_MIDDLE_PASSAGE       = 3,
+    LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_WEST_PASSAGE        = 4,
+    LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_GUARD_ROOM          = 5,
+    LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_FROM_WOMENS_ROOM         = 6,
+    LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_WEST_PASSAGE       = 7,
+    LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_FAMILY_ROOM        = 8,
+    LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_FROM_METATILE_KEY_ROOM  = 9,
+    LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_FROM_MIDDLE_PASSAGE        = 10,
+    LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_PASSAGE          = 11,
+    LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_PASSAGE          = 12,
+    LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_FROM_NORTH_PASSAGE         = 13,
+    LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_FROM_MIDDLE_PASSAGE  = 14,
+    LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_FROM_EAST_PASSAGE    = 15,
+    LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_NORTH = 16,
+    LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_GUARD_ROOM          = 17,
+    LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_DONPAS_ROOM         = 18,
+    LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_FROM_EAST_PASSAGE        = 19,
+    LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_SOUTH_PASSAGE         = 20,
+    LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_METATILE_KEY_ROOM    = 21,
+    LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_SOUTH_PASSAGE        = 22,
+    LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_FROM_DONPAS_ROOM            = 23,
+    LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM            = 24,
+    // no exit or script leads here
+    LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_UNUSED                  = 30,
+    // Where the party comes back after the battle with the three guards in the guard room.
+    LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE                = 31,
 };
 
 // SceneIdLunpaFortressUpperFloor's exits.
 enum
 {
-	LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
-	LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_NORTH_PASSAGE        = 2,
-	LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_MIDDLE_PASSAGE       = 3,
-	LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_WEST_PASSAGE        = 4,
-	LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_GUARD_ROOM          = 5,
-	LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_WOMENS_ROOM         = 6,
-	LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_WEST_PASSAGE       = 7,
-	LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_FAMILY_ROOM        = 8,
-	LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_METATILE_KEY_ROOM  = 9,
-	LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_TO_MIDDLE_PASSAGE        = 10,
-	LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_NORTH_PASSAGE          = 11,
-	LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_SOUTH_PASSAGE          = 12,
-	LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_TO_NORTH_PASSAGE         = 13,
-	LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_TO_MIDDLE_PASSAGE  = 14,
-	LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_TO_EAST_PASSAGE    = 15,
-	LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_NORTH = 16,
-	LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_GUARD_ROOM          = 17,
-	LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_DONPAS_ROOM         = 18,
-	LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_EAST_PASSAGE        = 19,
-	LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_SOUTH_PASSAGE         = 20,
-	LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_TO_METATILE_KEY_ROOM    = 21,
-	LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_TO_SOUTH_PASSAGE        = 22,
-	LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_TO_DONPAS_ROOM            = 23,
-	LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_TONIC_ROOM            = 24,
+    LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
+    LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_NORTH_PASSAGE        = 2,
+    LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_MIDDLE_PASSAGE       = 3,
+    LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_WEST_PASSAGE        = 4,
+    LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_GUARD_ROOM          = 5,
+    LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_WOMENS_ROOM         = 6,
+    LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_WEST_PASSAGE       = 7,
+    LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_FAMILY_ROOM        = 8,
+    LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_TO_METATILE_KEY_ROOM  = 9,
+    LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_TO_MIDDLE_PASSAGE        = 10,
+    LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_NORTH_PASSAGE          = 11,
+    LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_SOUTH_PASSAGE          = 12,
+    LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_TO_NORTH_PASSAGE         = 13,
+    LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_TO_MIDDLE_PASSAGE  = 14,
+    LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_TO_EAST_PASSAGE    = 15,
+    LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_NORTH = 16,
+    LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_GUARD_ROOM          = 17,
+    LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_DONPAS_ROOM         = 18,
+    LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_EAST_PASSAGE        = 19,
+    LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_SOUTH_PASSAGE         = 20,
+    LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_TO_METATILE_KEY_ROOM    = 21,
+    LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_TO_SOUTH_PASSAGE        = 22,
+    LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_TO_DONPAS_ROOM            = 23,
+    LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_TONIC_ROOM            = 24,
 };
 
 // SceneIdLunpaFortressCave's entrances.
 enum
 {
-	LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_GROUND_FLOOR       = 1,
-	LUNPA_FORTRESS_CAVE_ENTRANCE_FROM_LAKE                     = 2,
-	LUNPA_FORTRESS_CAVE_LAKE_FROM_ENTRANCE                     = 3,
-	LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHEAST = 4,
-	LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTH     = 5,
-	LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHWEST = 6,
+    LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_GROUND_FLOOR       = 1,
+    LUNPA_FORTRESS_CAVE_ENTRANCE_FROM_LAKE                     = 2,
+    LUNPA_FORTRESS_CAVE_LAKE_FROM_ENTRANCE                     = 3,
+    LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHEAST = 4,
+    LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTH     = 5,
+    LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHWEST = 6,
 };
 
 // SceneIdLunpaFortressCave's exits.
 enum
 {
-	LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR       = 1,
-	LUNPA_FORTRESS_CAVE_ENTRANCE_TO_LAKE                     = 2,
-	LUNPA_FORTRESS_CAVE_LAKE_TO_ENTRANCE                     = 3,
-	LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST = 4,
-	LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTH     = 5,
-	LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST = 6,
+    LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR       = 1,
+    LUNPA_FORTRESS_CAVE_ENTRANCE_TO_LAKE                     = 2,
+    LUNPA_FORTRESS_CAVE_LAKE_TO_ENTRANCE                     = 3,
+    LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST = 4,
+    LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTH     = 5,
+    LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST = 6,
 };
 
 // SceneIdLunpaFortressToadonpa's entrances.
 enum
 {
-	LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTH     = 1,
-	LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
-	LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST = 3,
-	// Where the party comes back after the battle with Toadonpa.
-	LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE                       = 4,
+    LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTH     = 1,
+    LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
+    LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST = 3,
+    // Where the party comes back after the battle with Toadonpa.
+    LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE                       = 4,
 };
 
 // SceneIdLunpaFortressToadonpa's exits.
 enum
 {
-	LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH     = 1,
-	LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
-	LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES          = 4,
-	LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST = 5,
+    LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH     = 1,
+    LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
+    LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES          = 4,
+    LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST = 5,
 };
 
 // SceneIdSuhallaDesertNorth's entrances.
 enum
 {
-	SUHALLA_DESERT_NORTH_FROM_WORLD_MAP            = 1,
-	SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH = 2,
+    SUHALLA_DESERT_NORTH_FROM_WORLD_MAP            = 1,
+    SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH = 2,
 };
 
 // SceneIdSuhallaDesertNorth's exits.
 enum
 {
-	SUHALLA_DESERT_NORTH_TO_WORLD_MAP            = 1,
-	SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH = 2,
+    SUHALLA_DESERT_NORTH_TO_WORLD_MAP            = 1,
+    SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH = 2,
 };
 
 // SceneIdSuhallaDesertSouth's entrances.
 enum
 {
-	SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH      = 1,
-	SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP                 = 2,
-	SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_EAST = 3,
-	SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST = 4,
+    SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH      = 1,
+    SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP                 = 2,
+    SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_EAST = 3,
+    SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST = 4,
 };
 
 // SceneIdSuhallaDesertSouth's exits.
 enum
 {
-	SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH      = 1,
-	SUHALLA_DESERT_SOUTH_TO_WORLD_MAP                 = 2,
-	SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST = 3,
-	SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST = 4,
+    SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH      = 1,
+    SUHALLA_DESERT_SOUTH_TO_WORLD_MAP                 = 2,
+    SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST = 3,
+    SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST = 4,
 };
 
 // SceneIdSuhallaDesertCaves's entrances.
 enum
 {
-	SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST = 1,
-	SUHALLA_DESERT_CAVES_WEST_FROM_EAST                 = 2,
-	SUHALLA_DESERT_CAVES_EAST_FROM_WEST                 = 3,
-	SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST = 4,
+    SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST = 1,
+    SUHALLA_DESERT_CAVES_WEST_FROM_EAST                 = 2,
+    SUHALLA_DESERT_CAVES_EAST_FROM_WEST                 = 3,
+    SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST = 4,
 };
 
 // SceneIdSuhallaDesertCaves's exits.
 enum
 {
-	SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST = 1,
-	SUHALLA_DESERT_CAVES_WEST_TO_EAST                 = 2,
-	SUHALLA_DESERT_CAVES_EAST_TO_WEST                 = 3,
-	SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST = 4,
+    SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST = 1,
+    SUHALLA_DESERT_CAVES_WEST_TO_EAST                 = 2,
+    SUHALLA_DESERT_CAVES_EAST_TO_WEST                 = 3,
+    SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST = 4,
 };
 
 // SceneIdSuhalla's entrances.
 enum
 {
-	SUHALLA_FROM_INN         = 1,
-	SUHALLA_FROM_SANCTUM     = 2,
-	SUHALLA_FROM_SHOP        = 3,
-	SUHALLA_FROM_HOUSE_SOUTH = 4,
-	SUHALLA_FROM_HOUSE_EAST  = 5,
-	// In the table at (120, 272), facing east, but led to by no exit.
-	SUHALLA_SIXTH_UNUSED     = 6,
-	SUHALLA_FROM_WORLD_MAP   = 10,
-	// In no table row and led to by no exit or script: only the debug scene selector reaches it.
-	// Arriving by it sets FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held, as Babi's
-	// Palace's BABI_PALACE_AFTER_COLOSSO sets the story's flags up to Colosso.
-	SUHALLA_AFTER_BABI_SPOKE = 90,
+    SUHALLA_FROM_INN         = 1,
+    SUHALLA_FROM_SANCTUM     = 2,
+    SUHALLA_FROM_SHOP        = 3,
+    SUHALLA_FROM_HOUSE_SOUTH = 4,
+    SUHALLA_FROM_HOUSE_EAST  = 5,
+    // In the table at (120, 272), facing east, but led to by no exit.
+    SUHALLA_SIXTH_UNUSED     = 6,
+    SUHALLA_FROM_WORLD_MAP   = 10,
+    // In no table row and led to by no exit or script: only the debug scene selector reaches it.
+    // Arriving by it sets FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held, as Babi's
+    // Palace's BABI_PALACE_AFTER_COLOSSO sets the story's flags up to Colosso.
+    SUHALLA_AFTER_BABI_SPOKE = 90,
 };
 
 // SceneIdSuhalla's exits.
 enum
 {
-	SUHALLA_TO_INN             = 1,
-	SUHALLA_TO_SANCTUM         = 2,
-	SUHALLA_TO_SHOP            = 3,
-	SUHALLA_TO_HOUSE_SOUTH     = 4,
-	SUHALLA_TO_HOUSE_EAST      = 5,
-	SUHALLA_TO_WORLD_MAP       = 10,
-	SUHALLA_TO_WORLD_MAP_NORTH = 11,
-	SUHALLA_TO_WORLD_MAP_EAST  = 12,
+    SUHALLA_TO_INN             = 1,
+    SUHALLA_TO_SANCTUM         = 2,
+    SUHALLA_TO_SHOP            = 3,
+    SUHALLA_TO_HOUSE_SOUTH     = 4,
+    SUHALLA_TO_HOUSE_EAST      = 5,
+    SUHALLA_TO_WORLD_MAP       = 10,
+    SUHALLA_TO_WORLD_MAP_NORTH = 11,
+    SUHALLA_TO_WORLD_MAP_EAST  = 12,
 };
 
 // SceneIdTimberRoomsA's entrances.
 enum
 {
-	TIMBER_ROOMS_A_INN                      = 1,
-	TIMBER_ROOMS_A_SANCTUM                  = 2, // the room behind Suhalla's sanctum door;
-	// the room holds the sanctum; through SUHALLA_TO_SANCTUM the shop behind Suhalla's south-west
-	// door; through SUHALLA_TO_SHOP
-	TIMBER_ROOMS_A_SHOP                     = 3,
-	// the room behind Suhalla's house south door; through SUHALLA_TO_HOUSE_SOUTH
-	TIMBER_ROOMS_A_HOUSE_SOUTH              = 4,
-	// the room behind Suhalla's house east door; through SUHALLA_TO_HOUSE_EAST
-	TIMBER_ROOMS_A_HOUSE_EAST               = 5,
-	// before the priest in Suhalla Sanctum,
-	TIMBER_ROOMS_A_SANCTUM_NORTH            = 6,
-	// where a party defeated in Suhalla wakes
-	TIMBER_ROOMS_A_SHOP_UNUSED              = 7, // no exit leads here
-	TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_WEST = 10,
-	TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_EAST = 11,
-	TIMBER_ROOMS_A_GUEST_ROOM_WEST_FROM_INN = 12,
-	TIMBER_ROOMS_A_GUEST_ROOM_EAST_FROM_INN = 13,
-	TIMBER_ROOMS_A_INN_FROM_LOFT            = 14,
-	TIMBER_ROOMS_A_LOFT_FROM_INN            = 15,
-	// In no table row and led to by no exit or script: only the debug scene selector reaches it.
-	// Arriving by it marks Babi's audience as held, as SUHALLA_AFTER_BABI_SPOKE does.
-	TIMBER_ROOMS_A_AFTER_BABI_SPOKE         = 90,
+    TIMBER_ROOMS_A_INN                      = 1,
+    TIMBER_ROOMS_A_SANCTUM                  = 2, // the room behind Suhalla's sanctum door;
+    // the room holds the sanctum; through SUHALLA_TO_SANCTUM the shop behind Suhalla's south-west
+    // door; through SUHALLA_TO_SHOP
+    TIMBER_ROOMS_A_SHOP                     = 3,
+    // the room behind Suhalla's house south door; through SUHALLA_TO_HOUSE_SOUTH
+    TIMBER_ROOMS_A_HOUSE_SOUTH              = 4,
+    // the room behind Suhalla's house east door; through SUHALLA_TO_HOUSE_EAST
+    TIMBER_ROOMS_A_HOUSE_EAST               = 5,
+    // before the priest in Suhalla Sanctum,
+    TIMBER_ROOMS_A_SANCTUM_NORTH            = 6,
+    // where a party defeated in Suhalla wakes
+    TIMBER_ROOMS_A_SHOP_UNUSED              = 7, // no exit leads here
+    TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_WEST = 10,
+    TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_EAST = 11,
+    TIMBER_ROOMS_A_GUEST_ROOM_WEST_FROM_INN = 12,
+    TIMBER_ROOMS_A_GUEST_ROOM_EAST_FROM_INN = 13,
+    TIMBER_ROOMS_A_INN_FROM_LOFT            = 14,
+    TIMBER_ROOMS_A_LOFT_FROM_INN            = 15,
+    // In no table row and led to by no exit or script: only the debug scene selector reaches it.
+    // Arriving by it marks Babi's audience as held, as SUHALLA_AFTER_BABI_SPOKE does.
+    TIMBER_ROOMS_A_AFTER_BABI_SPOKE         = 90,
 };
 
 // SceneIdTimberRoomsA's exits.
 enum
 {
-	TIMBER_ROOMS_A_INN_TO_SUHALLA         = 1,
-	TIMBER_ROOMS_A_SANCTUM_TO_SUHALLA     = 2,
-	TIMBER_ROOMS_A_SHOP_TO_SUHALLA        = 3,
-	TIMBER_ROOMS_A_HOUSE_SOUTH_TO_SUHALLA = 4,
-	TIMBER_ROOMS_A_HOUSE_EAST_TO_SUHALLA  = 5,
-	TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_WEST = 10,
-	TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_EAST = 11,
-	TIMBER_ROOMS_A_GUEST_ROOM_WEST_TO_INN = 12,
-	TIMBER_ROOMS_A_GUEST_ROOM_EAST_TO_INN = 13,
-	TIMBER_ROOMS_A_INN_TO_LOFT            = 14,
-	TIMBER_ROOMS_A_LOFT_TO_INN            = 15,
+    TIMBER_ROOMS_A_INN_TO_SUHALLA         = 1,
+    TIMBER_ROOMS_A_SANCTUM_TO_SUHALLA     = 2,
+    TIMBER_ROOMS_A_SHOP_TO_SUHALLA        = 3,
+    TIMBER_ROOMS_A_HOUSE_SOUTH_TO_SUHALLA = 4,
+    TIMBER_ROOMS_A_HOUSE_EAST_TO_SUHALLA  = 5,
+    TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_WEST = 10,
+    TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_EAST = 11,
+    TIMBER_ROOMS_A_GUEST_ROOM_WEST_TO_INN = 12,
+    TIMBER_ROOMS_A_GUEST_ROOM_EAST_TO_INN = 13,
+    TIMBER_ROOMS_A_INN_TO_LOFT            = 14,
+    TIMBER_ROOMS_A_LOFT_TO_INN            = 15,
 };
 
 // SceneIdSuhallaGateCheckpoint's entrances.
 enum
 {
-	SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH       = 1,
-	SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST = 2,
-	SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS            = 3,
-	SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST = 4,
-	SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST        = 5,
+    SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH       = 1,
+    SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST = 2,
+    SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS            = 3,
+    SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST = 4,
+    SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST        = 5,
 };
 
 // SceneIdSuhallaGateCheckpoint's exits.
 enum
 {
-	SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH       = 1,
-	SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST = 2,
-	SUHALLA_GATE_CHECKPOINT_TO_ROCK_ROOMS            = 3,
-	SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST = 4,
-	SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST        = 5,
+    SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH       = 1,
+    SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST = 2,
+    SUHALLA_GATE_CHECKPOINT_TO_ROCK_ROOMS            = 3,
+    SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST = 4,
+    SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST        = 5,
 };
 
 // SceneIdSuhallaGateDew's entrances.
 enum
 {
-	SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST = 1,
-	SUHALLA_GATE_DEW_WEST_FROM_EAST                    = 2,
-	SUHALLA_GATE_DEW_EAST_FROM_WEST                    = 3,
-	SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST = 4,
-	SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE                 = 5,
+    SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST = 1,
+    SUHALLA_GATE_DEW_WEST_FROM_EAST                    = 2,
+    SUHALLA_GATE_DEW_EAST_FROM_WEST                    = 3,
+    SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST = 4,
+    SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE                 = 5,
 };
 
 // SceneIdSuhallaGateDew's exits.
 enum
 {
-	SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST = 1,
-	SUHALLA_GATE_DEW_WEST_TO_EAST                    = 2,
-	SUHALLA_GATE_DEW_EAST_TO_WEST                    = 3,
-	SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST = 4,
-	SUHALLA_GATE_DEW_TO_GATEWAY_CAVE                 = 5,
+    SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST = 1,
+    SUHALLA_GATE_DEW_WEST_TO_EAST                    = 2,
+    SUHALLA_GATE_DEW_EAST_TO_WEST                    = 3,
+    SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST = 4,
+    SUHALLA_GATE_DEW_TO_GATEWAY_CAVE                 = 5,
 };
 
 // SceneIdGatewayCave's entrances.
 enum
 {
-	GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW = 1,
-	GATEWAY_CAVE_NORTH_FROM_SOUTH      = 2,
-	GATEWAY_CAVE_SOUTH_FROM_NORTH      = 3,
-	GATEWAY_CAVE_FROM_WORLD_MAP        = 4,
+    GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW = 1,
+    GATEWAY_CAVE_NORTH_FROM_SOUTH      = 2,
+    GATEWAY_CAVE_SOUTH_FROM_NORTH      = 3,
+    GATEWAY_CAVE_FROM_WORLD_MAP        = 4,
 };
 
 // SceneIdGatewayCave's exits.
 enum
 {
-	GATEWAY_CAVE_TO_SUHALLA_GATE_DEW = 1,
-	GATEWAY_CAVE_NORTH_TO_SOUTH      = 2,
-	GATEWAY_CAVE_SOUTH_TO_NORTH      = 3,
-	GATEWAY_CAVE_TO_WORLD_MAP        = 4,
+    GATEWAY_CAVE_TO_SUHALLA_GATE_DEW = 1,
+    GATEWAY_CAVE_NORTH_TO_SOUTH      = 2,
+    GATEWAY_CAVE_SOUTH_TO_NORTH      = 3,
+    GATEWAY_CAVE_TO_WORLD_MAP        = 4,
 };
 
 // SceneIdTunnelRuinsGreatStatue's entrances.
 enum
 {
-	TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR          = 1,
-	TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS                = 2,
-	TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE                = 3,
-	TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH         = 4,
-	TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS         = 5,
-	TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS        = 6,
-	TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SINKING_PILLARS       = 7,
-	TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH        = 8,
-	TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_WHIRLWIND_ROOM       = 9,
-	TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH       = 10,
-	TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH       = 11,
-	TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS       = 12,
-	TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_LONG_PASSAGE         = 13,
-	TUNNEL_RUINS_GREAT_STATUE_LONG_PASSAGE_FROM_WHIRLWIND_ROOM         = 14,
-	TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH     = 15,
-	TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_FROM_SINKING_PILLARS       = 16,
-	TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST = 17,
-	TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
+    TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR          = 1,
+    TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS                = 2,
+    TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE                = 3,
+    TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH         = 4,
+    TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS         = 5,
+    TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS        = 6,
+    TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SINKING_PILLARS       = 7,
+    TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH        = 8,
+    TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_WHIRLWIND_ROOM       = 9,
+    TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH       = 10,
+    TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH       = 11,
+    TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS       = 12,
+    TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_LONG_PASSAGE         = 13,
+    TUNNEL_RUINS_GREAT_STATUE_LONG_PASSAGE_FROM_WHIRLWIND_ROOM         = 14,
+    TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH     = 15,
+    TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_FROM_SINKING_PILLARS       = 16,
+    TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST = 17,
+    TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
 };
 
 // SceneIdTunnelRuinsGreatStatue's exits.
 enum
 {
-	TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR          = 1,
-	TUNNEL_RUINS_GREAT_STATUE_STATUE_TO_FIRST_PILLARS                = 2,
-	TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_STATUE                = 3,
-	TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_COLUMNS_NORTH         = 4,
-	TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_FIRST_PILLARS         = 5,
-	TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_SECOND_PILLARS        = 6,
-	TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_SINKING_PILLARS       = 7,
-	TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_COLUMNS_NORTH        = 8,
-	TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_WHIRLWIND_ROOM       = 9,
-	TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_NORTH       = 10,
-	TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_SOUTH       = 11,
-	TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_TO_SECOND_PILLARS       = 12,
-	TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_TO_LONG_PASSAGE         = 13,
-	TUNNEL_RUINS_GREAT_STATUE_LONG_PASSAGE_TO_WHIRLWIND_ROOM         = 14,
-	TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH     = 15,
-	TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_TO_SINKING_PILLARS       = 16,
-	TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST = 17,
-	TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
+    TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR          = 1,
+    TUNNEL_RUINS_GREAT_STATUE_STATUE_TO_FIRST_PILLARS                = 2,
+    TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_STATUE                = 3,
+    TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_COLUMNS_NORTH         = 4,
+    TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_FIRST_PILLARS         = 5,
+    TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_SECOND_PILLARS        = 6,
+    TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_SINKING_PILLARS       = 7,
+    TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_COLUMNS_NORTH        = 8,
+    TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_WHIRLWIND_ROOM       = 9,
+    TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_NORTH       = 10,
+    TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_SOUTH       = 11,
+    TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_TO_SECOND_PILLARS       = 12,
+    TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_TO_LONG_PASSAGE         = 13,
+    TUNNEL_RUINS_GREAT_STATUE_LONG_PASSAGE_TO_WHIRLWIND_ROOM         = 14,
+    TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH     = 15,
+    TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_TO_SINKING_PILLARS       = 16,
+    TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST = 17,
+    TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
 };
 
 // SceneIdTunnelRuinsLadyStatues's entrances.
 enum
 {
-	TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST          = 1,
-	TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH         = 2,
-	TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH         = 3,
-	TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH     = 4,
-	TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH                            = 5,
-	TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST = 6,
-	TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH                       = 7,
-	TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHWEST                          = 8,
-	TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHWEST                          = 9,
-	TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHEAST                          = 10,
-	TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHEAST                          = 11,
-	TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST                       = 12,
-	TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH                       = 13,
-	TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST                        = 14,
-	TUNNEL_RUINS_LADY_STATUES_TREE_DOOR_SOUTH                          = 15,
-	TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR        = 16,
-	TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST = 17,
+    TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST          = 1,
+    TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH         = 2,
+    TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH         = 3,
+    TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH     = 4,
+    TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH                            = 5,
+    TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST = 6,
+    TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH                       = 7,
+    TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHWEST                          = 8,
+    TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHWEST                          = 9,
+    TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHEAST                          = 10,
+    TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHEAST                          = 11,
+    TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST                       = 12,
+    TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH                       = 13,
+    TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST                        = 14,
+    TUNNEL_RUINS_LADY_STATUES_TREE_DOOR_SOUTH                          = 15,
+    TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR        = 16,
+    TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST = 17,
 };
 
 // SceneIdTunnelRuinsLadyStatues's exits.
 enum
 {
-	TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH     = 1,
-	TUNNEL_RUINS_LADY_STATUES_TO_PATHS_NORTHWEST                     = 2,
-	TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST = 3,
-	TUNNEL_RUINS_LADY_STATUES_TO_PATHS_NORTHEAST                     = 4,
-	TUNNEL_RUINS_LADY_STATUES_TO_BALANCE_SOUTH                       = 5,
-	TUNNEL_RUINS_LADY_STATUES_TO_DOUSE_PILLAR_SOUTH                  = 6,
-	TUNNEL_RUINS_LADY_STATUES_TO_REVEAL_STATUE_WEST                  = 7,
-	TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_NORTH                  = 8,
-	TUNNEL_RUINS_LADY_STATUES_TO_PATHS_SOUTHWEST                     = 9,
-	TUNNEL_RUINS_LADY_STATUES_TO_PATHS_SOUTHEAST                     = 10,
-	TUNNEL_RUINS_LADY_STATUES_TO_TREE_DOOR_SOUTH                     = 11,
-	TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST = 12,
-	TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST                   = 13,
-	TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR        = 14,
-	TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST          = 15,
-	TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH         = 16,
-	TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_NORTH         = 17,
+    TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH     = 1,
+    TUNNEL_RUINS_LADY_STATUES_TO_PATHS_NORTHWEST                     = 2,
+    TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST = 3,
+    TUNNEL_RUINS_LADY_STATUES_TO_PATHS_NORTHEAST                     = 4,
+    TUNNEL_RUINS_LADY_STATUES_TO_BALANCE_SOUTH                       = 5,
+    TUNNEL_RUINS_LADY_STATUES_TO_DOUSE_PILLAR_SOUTH                  = 6,
+    TUNNEL_RUINS_LADY_STATUES_TO_REVEAL_STATUE_WEST                  = 7,
+    TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_NORTH                  = 8,
+    TUNNEL_RUINS_LADY_STATUES_TO_PATHS_SOUTHWEST                     = 9,
+    TUNNEL_RUINS_LADY_STATUES_TO_PATHS_SOUTHEAST                     = 10,
+    TUNNEL_RUINS_LADY_STATUES_TO_TREE_DOOR_SOUTH                     = 11,
+    TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST = 12,
+    TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST                   = 13,
+    TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR        = 14,
+    TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST          = 15,
+    TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH         = 16,
+    TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_NORTH         = 17,
 };
 
 // SceneIdBabiLighthouseStoneDoor's entrances.
 enum
 {
-	BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE = 1,
-	BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_WEST = 2,
-	BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST = 3,
+    BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE = 1,
+    BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_WEST = 2,
+    BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST = 3,
 };
 
 // SceneIdBabiLighthouseStoneDoor's exits.
 enum
 {
-	BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE = 1,
-	BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST = 2,
+    BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE = 1,
+    BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST = 2,
 };
 
 // SceneIdBabiLighthouseLuff's entrances.
 enum
 {
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_WEST_STEPS   = 1,
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_EAST_STEPS   = 2,
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_LOCKED_DOOR_ROOM       = 3,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_STEPS         = 4,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_WEST_STEPS   = 5,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_EAST_STEPS   = 6,
-	BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_EAST        = 7,
-	BABI_LIGHTHOUSE_LUFF_WEST_ROOM_FROM_EAST_ROOM_STEPS         = 8,
-	BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_WEST        = 9,
-	BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST   = 10,
-	BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM       = 11,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_EAST      = 12,
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_PIT          = 13,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST = 14,
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_SOUTH   = 15,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST = 16,
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH   = 17,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_WEST_STEPS   = 1,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_EAST_STEPS   = 2,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_LOCKED_DOOR_ROOM       = 3,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_STEPS         = 4,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_WEST_STEPS   = 5,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_EAST_STEPS   = 6,
+    BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_EAST        = 7,
+    BABI_LIGHTHOUSE_LUFF_WEST_ROOM_FROM_EAST_ROOM_STEPS         = 8,
+    BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_WEST        = 9,
+    BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST   = 10,
+    BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM       = 11,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_EAST      = 12,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_PIT          = 13,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST = 14,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_SOUTH   = 15,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST = 16,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH   = 17,
 };
 
 // SceneIdBabiLighthouseLuff's exits.
 enum
 {
-	BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS         = 1,
-	BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST        = 2,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS         = 3,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STEPS   = 4,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STEPS   = 5,
-	BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_WEST        = 6,
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STEPS   = 7,
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STEPS   = 8,
-	BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM       = 9,
-	BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM       = 10,
-	BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST      = 11,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT          = 12,
-	BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST = 13,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH   = 14,
-	BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST = 15,
-	BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH   = 16,
-	BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST   = 17,
-	BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST   = 18,
+    BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS         = 1,
+    BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST        = 2,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS         = 3,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STEPS   = 4,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STEPS   = 5,
+    BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_WEST        = 6,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STEPS   = 7,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STEPS   = 8,
+    BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM       = 9,
+    BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM       = 10,
+    BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST      = 11,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT          = 12,
+    BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST = 13,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH   = 14,
+    BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST = 15,
+    BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH   = 16,
+    BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST   = 17,
+    BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST   = 18,
 };
 
 // SceneIdBabiLighthouseEntry's entrances.
 enum
 {
-	BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE         = 1,
-	BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_WEST       = 2,
-	BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_EAST       = 3,
-	BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_WEST  = 4,
-	BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
-	BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
+    BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE         = 1,
+    BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_WEST       = 2,
+    BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_EAST       = 3,
+    BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_WEST  = 4,
+    BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
+    BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
 };
 
 // SceneIdBabiLighthouseEntry's exits.
 enum
 {
-	BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE         = 1,
-	BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST       = 2,
-	BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST       = 3,
-	BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST  = 4,
-	BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
-	BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
+    BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE         = 1,
+    BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST       = 2,
+    BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST       = 3,
+    BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST  = 4,
+    BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
+    BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
 };
 
 // SceneIdRoadToBabiLighthouse's entrances.
 enum
 {
-	ROAD_TO_BABI_LIGHTHOUSE_FROM_WORLD_MAP             = 1,
-	ROAD_TO_BABI_LIGHTHOUSE_FROM_BABI_LIGHTHOUSE_ENTRY = 2,
+    ROAD_TO_BABI_LIGHTHOUSE_FROM_WORLD_MAP             = 1,
+    ROAD_TO_BABI_LIGHTHOUSE_FROM_BABI_LIGHTHOUSE_ENTRY = 2,
 };
 
 // SceneIdRoadToBabiLighthouse's exits.
 enum
 {
-	ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP             = 1,
-	ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY = 2,
+    ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP             = 1,
+    ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY = 2,
 };
 
 // SceneIdLalivero's entrances.
 enum
 {
-	LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST      = 1,
-	LALIVERO_FROM_TIMBER_ROOMS_B_WEST           = 2,
-	LALIVERO_FROM_TIMBER_ROOMS_C_NORTHEAST      = 3,
-	LALIVERO_FROM_TIMBER_ROOMS_B_NORTHWEST      = 4,
-	LALIVERO_FROM_TIMBER_ROOMS_B_NORTH          = 5,
-	LALIVERO_FROM_TIMBER_ROOMS_B_NORTHEAST      = 6,
-	LALIVERO_FROM_TIMBER_ROOMS_C_SOUTHWEST      = 7,
-	LALIVERO_FROM_TIMBER_ROOMS_C_SOUTH          = 8,
-	LALIVERO_FROM_TIMBER_ROOMS_B_SOUTH          = 9,
-	LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST      = 10,
-	LALIVERO_FROM_TIMBER_ROOMS_B_EAST_SOUTHEAST = 11,
-	LALIVERO_FROM_WORLD_MAP_EAST                = 20,
-	LALIVERO_FROM_WORLD_MAP_WEST                = 21,
+    LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST      = 1,
+    LALIVERO_FROM_TIMBER_ROOMS_B_WEST           = 2,
+    LALIVERO_FROM_TIMBER_ROOMS_C_NORTHEAST      = 3,
+    LALIVERO_FROM_TIMBER_ROOMS_B_NORTHWEST      = 4,
+    LALIVERO_FROM_TIMBER_ROOMS_B_NORTH          = 5,
+    LALIVERO_FROM_TIMBER_ROOMS_B_NORTHEAST      = 6,
+    LALIVERO_FROM_TIMBER_ROOMS_C_SOUTHWEST      = 7,
+    LALIVERO_FROM_TIMBER_ROOMS_C_SOUTH          = 8,
+    LALIVERO_FROM_TIMBER_ROOMS_B_SOUTH          = 9,
+    LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST      = 10,
+    LALIVERO_FROM_TIMBER_ROOMS_B_EAST_SOUTHEAST = 11,
+    LALIVERO_FROM_WORLD_MAP_EAST                = 20,
+    LALIVERO_FROM_WORLD_MAP_WEST                = 21,
 };
 
 // SceneIdLalivero's exits.
 enum
 {
-	LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST      = 1,
-	LALIVERO_TO_TIMBER_ROOMS_B_WEST           = 2,
-	LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST      = 3,
-	LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST      = 4,
-	LALIVERO_TO_TIMBER_ROOMS_B_NORTH          = 5,
-	LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST      = 6,
-	LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST      = 7,
-	LALIVERO_TO_TIMBER_ROOMS_C_SOUTH          = 8,
-	LALIVERO_TO_TIMBER_ROOMS_B_SOUTH          = 9,
-	LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST      = 10,
-	LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST = 11,
-	LALIVERO_TO_WORLD_MAP_EAST                = 20,
-	LALIVERO_TO_WORLD_MAP_WEST                = 21,
+    LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST      = 1,
+    LALIVERO_TO_TIMBER_ROOMS_B_WEST           = 2,
+    LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST      = 3,
+    LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST      = 4,
+    LALIVERO_TO_TIMBER_ROOMS_B_NORTH          = 5,
+    LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST      = 6,
+    LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST      = 7,
+    LALIVERO_TO_TIMBER_ROOMS_C_SOUTH          = 8,
+    LALIVERO_TO_TIMBER_ROOMS_B_SOUTH          = 9,
+    LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST      = 10,
+    LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST = 11,
+    LALIVERO_TO_WORLD_MAP_EAST                = 20,
+    LALIVERO_TO_WORLD_MAP_WEST                = 21,
 };
 
 // SceneIdTimberRoomsB's entrances.
 enum
 {
-	TIMBER_ROOMS_B_FROM_LALIVERO_WEST                            = 1,
-	TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST                       = 2,
-	TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP             = 3,
-	TIMBER_ROOMS_B_FROM_LALIVERO_NORTH                           = 4,
-	TIMBER_ROOMS_B_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS             = 5,
-	TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST                       = 6,
-	TIMBER_ROOMS_B_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS = 7,
-	TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE = 8,
-	TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH                           = 9,
-	TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST                  = 10,
-	TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST                       = 11,
-	// stepping in makes the sanctum where a defeated party wakes
-	TIMBER_ROOMS_B_SANCTUM                                       = 12,
+    TIMBER_ROOMS_B_FROM_LALIVERO_WEST                            = 1,
+    TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST                       = 2,
+    TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP             = 3,
+    TIMBER_ROOMS_B_FROM_LALIVERO_NORTH                           = 4,
+    TIMBER_ROOMS_B_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS             = 5,
+    TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST                       = 6,
+    TIMBER_ROOMS_B_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS = 7,
+    TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE = 8,
+    TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH                           = 9,
+    TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST                  = 10,
+    TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST                       = 11,
+    // stepping in makes the sanctum where a defeated party wakes
+    TIMBER_ROOMS_B_SANCTUM                                       = 12,
 };
 
 // SceneIdTimberRoomsB's exits.
 enum
 {
-	TIMBER_ROOMS_B_TO_LALIVERO_WEST                            = 1,
-	TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST                       = 2,
-	TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP             = 3,
-	TIMBER_ROOMS_B_TO_LALIVERO_NORTH                           = 4,
-	TIMBER_ROOMS_B_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS             = 5,
-	TIMBER_ROOMS_B_TO_LALIVERO_NORTHWEST                       = 6,
-	TIMBER_ROOMS_B_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS = 7,
-	TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE = 8,
-	TIMBER_ROOMS_B_TO_LALIVERO_SOUTH                           = 9,
-	TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST                  = 10,
-	TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST                       = 11,
+    TIMBER_ROOMS_B_TO_LALIVERO_WEST                            = 1,
+    TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST                       = 2,
+    TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP             = 3,
+    TIMBER_ROOMS_B_TO_LALIVERO_NORTH                           = 4,
+    TIMBER_ROOMS_B_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS             = 5,
+    TIMBER_ROOMS_B_TO_LALIVERO_NORTHWEST                       = 6,
+    TIMBER_ROOMS_B_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS = 7,
+    TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE = 8,
+    TIMBER_ROOMS_B_TO_LALIVERO_SOUTH                           = 9,
+    TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST                  = 10,
+    TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST                       = 11,
 };
 
 // SceneIdTimberRoomsC's entrances.
 enum
 {
-	TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST           = 21,
-	TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH               = 22,
-	TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST           = 23,
-	TIMBER_ROOMS_C_INN_FROM_INN_UPSTAIRS             = 24,
-	TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_INN             = 25,
-	TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST = 26,
-	TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST = 27,
-	TIMBER_ROOMS_C_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS = 28,
-	TIMBER_ROOMS_C_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS = 29,
-	TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST           = 30,
-	TIMBER_ROOMS_C_FROM_LEMURIAN_SHIP                = 31,
-	// back from Venus Lighthouse, the party is led straight to Faran
-	TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE       = 99,
+    TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST           = 21,
+    TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH               = 22,
+    TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST           = 23,
+    TIMBER_ROOMS_C_INN_FROM_INN_UPSTAIRS             = 24,
+    TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_INN             = 25,
+    TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST = 26,
+    TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST = 27,
+    TIMBER_ROOMS_C_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS = 28,
+    TIMBER_ROOMS_C_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS = 29,
+    TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST           = 30,
+    TIMBER_ROOMS_C_FROM_LEMURIAN_SHIP                = 31,
+    // back from Venus Lighthouse, the party is led straight to Faran
+    TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE       = 99,
 };
 
 // SceneIdTimberRoomsC's exits.
 enum
 {
-	TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST           = 21,
-	TIMBER_ROOMS_C_TO_LALIVERO_SOUTH               = 22,
-	TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST           = 23,
-	TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS             = 24,
-	TIMBER_ROOMS_C_INN_UPSTAIRS_TO_INN             = 25,
-	TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_WEST = 26,
-	TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_EAST = 27,
-	TIMBER_ROOMS_C_GUEST_ROOM_WEST_TO_INN_UPSTAIRS = 28,
-	TIMBER_ROOMS_C_GUEST_ROOM_EAST_TO_INN_UPSTAIRS = 29,
-	TIMBER_ROOMS_C_TO_LALIVERO_NORTHWEST           = 30,
-	TIMBER_ROOMS_C_TO_LEMURIAN_SHIP                = 31,
+    TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST           = 21,
+    TIMBER_ROOMS_C_TO_LALIVERO_SOUTH               = 22,
+    TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST           = 23,
+    TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS             = 24,
+    TIMBER_ROOMS_C_INN_UPSTAIRS_TO_INN             = 25,
+    TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_WEST = 26,
+    TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_EAST = 27,
+    TIMBER_ROOMS_C_GUEST_ROOM_WEST_TO_INN_UPSTAIRS = 28,
+    TIMBER_ROOMS_C_GUEST_ROOM_EAST_TO_INN_UPSTAIRS = 29,
+    TIMBER_ROOMS_C_TO_LALIVERO_NORTHWEST           = 30,
+    TIMBER_ROOMS_C_TO_LEMURIAN_SHIP                = 31,
 };
 
 // SceneIdVenusLighthouseEntry's entrances.
 enum
 {
-	VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_WEST                = 1,
-	VENUS_LIGHTHOUSE_ENTRY_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR = 2,
-	VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_EAST                = 3,
+    VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_WEST                = 1,
+    VENUS_LIGHTHOUSE_ENTRY_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR = 2,
+    VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_EAST                = 3,
 };
 
 // SceneIdVenusLighthouseEntry's exits.
 enum
 {
-	VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST                = 1,
-	VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR = 2,
-	VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST                = 3,
+    VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST                = 1,
+    VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR = 2,
+    VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST                = 3,
 };
 
 // SceneIdVenusLighthouseGroundFloor's entrances.
 enum
 {
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY       = 1,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS           = 2,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_FRONT_ROOM           = 3,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_EAST     = 4,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_WEST     = 5,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_PILLARS              = 6,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_RELIEFS              = 7,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_CARRY_STONE          = 8,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_FLOOR_SWITCH         = 9,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_NORTH     = 10,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_WEST      = 11,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_PILLARS_NORTH     = 12,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_PILLARS_WEST      = 13,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_SMALL_ROOM        = 14,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_FLOOR_SWITCH    = 20,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_SMALL_ROOM      = 21,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS         = 22,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR = 23,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_FROM_STATUE_ROW        = 24,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_FROM_GREAT_STATUE      = 25,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE    = 26,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_RELIEFS_WEST     = 30,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_RELIEFS_EAST     = 31,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_PILLARS          = 32,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY       = 1,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS           = 2,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_FRONT_ROOM           = 3,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_EAST     = 4,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_WEST     = 5,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_PILLARS              = 6,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_RELIEFS              = 7,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_CARRY_STONE          = 8,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_FLOOR_SWITCH         = 9,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_NORTH     = 10,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_WEST      = 11,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_PILLARS_NORTH     = 12,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_PILLARS_WEST      = 13,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_SMALL_ROOM        = 14,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_FLOOR_SWITCH    = 20,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_SMALL_ROOM      = 21,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS         = 22,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR = 23,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_FROM_STATUE_ROW        = 24,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_FROM_GREAT_STATUE      = 25,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE    = 26,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_RELIEFS_WEST     = 30,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_RELIEFS_EAST     = 31,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_PILLARS          = 32,
 };
 
 // SceneIdVenusLighthouseGroundFloor's exits.
 enum
 {
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY       = 1,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS           = 2,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_ROOM           = 3,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST     = 4,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST     = 5,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_PILLARS              = 6,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_RELIEFS              = 7,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE          = 8,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH         = 9,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_NORTH     = 10,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_WEST      = 11,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_NORTH     = 12,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST      = 13,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM        = 14,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH    = 20,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM      = 21,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS         = 22,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR = 23,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW        = 24,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE      = 25,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE    = 26,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST     = 30,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST     = 31,
-	VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS          = 32,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY       = 1,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS           = 2,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_ROOM           = 3,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST     = 4,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST     = 5,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_PILLARS              = 6,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_RELIEFS              = 7,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE          = 8,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH         = 9,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_NORTH     = 10,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_WEST      = 11,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_NORTH     = 12,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST      = 13,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM        = 14,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH    = 20,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM      = 21,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS         = 22,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR = 23,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW        = 24,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE      = 25,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE    = 26,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST     = 30,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST     = 31,
+    VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS          = 32,
 };
 
 // SceneIdVenusLighthouseFirstFloor's entrances.
 enum
 {
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_LOWER_ROOM           = 1,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_GAP                  = 2,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH = 3,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_THUNDER_CROWN        = 4,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_FROM_DRIFTING_FLOOR        = 5,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_FROM_LADDERS               = 6,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_FROM_LADDERS                     = 7,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST  = 8,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_DRIFTING_FLOOR                  = 9,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_LADDERS                         = 10,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_GAP                         = 11,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH = 12,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_THUNDER_CROWN               = 13,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS                     = 14,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE              = 15,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR       = 16,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_FROM_LADDERS              = 17,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES           = 18,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR           = 19,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE      = 20,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST  = 21,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_LOWER_ROOM           = 1,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_GAP                  = 2,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH = 3,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_THUNDER_CROWN        = 4,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_FROM_DRIFTING_FLOOR        = 5,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_FROM_LADDERS               = 6,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_FROM_LADDERS                     = 7,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST  = 8,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_DRIFTING_FLOOR                  = 9,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_LADDERS                         = 10,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_GAP                         = 11,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH = 12,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_THUNDER_CROWN               = 13,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS                     = 14,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE              = 15,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR       = 16,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_FROM_LADDERS              = 17,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES           = 18,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR           = 19,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE      = 20,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST  = 21,
 };
 
 // SceneIdVenusLighthouseFirstFloor's exits.
 enum
 {
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM           = 1,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_GAP                  = 2,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH = 3,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_THUNDER_CROWN        = 4,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_DRIFTING_FLOOR        = 5,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_LADDERS               = 6,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_TO_LADDERS                     = 7,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST  = 8,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_DRIFTING_FLOOR                  = 9,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_LADDERS                         = 10,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_GAP                         = 11,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST  = 12,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_THUNDER_CROWN               = 13,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PILLARS                     = 14,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PSYNERGY_STONE              = 15,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR       = 16,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS              = 17,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES           = 18,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR           = 19,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE      = 20,
-	VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH = 21,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM           = 1,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_GAP                  = 2,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH = 3,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_THUNDER_CROWN        = 4,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_DRIFTING_FLOOR        = 5,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_LADDERS               = 6,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_TO_LADDERS                     = 7,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST  = 8,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_DRIFTING_FLOOR                  = 9,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_LADDERS                         = 10,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_GAP                         = 11,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST  = 12,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_THUNDER_CROWN               = 13,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PILLARS                     = 14,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PSYNERGY_STONE              = 15,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR       = 16,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS              = 17,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES           = 18,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR           = 19,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE      = 20,
+    VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH = 21,
 };
 
 // SceneIdVenusLighthouseSecondFloor's entrances.
 enum
 {
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH = 1,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT       = 2,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_FROM_SPARKLING_PASSAGE       = 3,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST  = 4,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_FROM_GATE                    = 5,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR       = 6,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST  = 7,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE                   = 8,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH                   = 9,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT                    = 10,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH = 11,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH = 1,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT       = 2,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_FROM_SPARKLING_PASSAGE       = 3,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST  = 4,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_FROM_GATE                    = 5,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR       = 6,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST  = 7,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE                   = 8,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH                   = 9,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT                    = 10,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH = 11,
 };
 
 // SceneIdVenusLighthouseSecondFloor's exits.
 enum
 {
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH = 1,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_TO_PILLAR_PIT       = 2,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_SPARKLING_PASSAGE       = 3,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST  = 4,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_GATE                    = 5,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR       = 6,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH = 7,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE                   = 8,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH                   = 9,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT                    = 10,
-	VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST  = 11,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH = 1,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_TO_PILLAR_PIT       = 2,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_SPARKLING_PASSAGE       = 3,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST  = 4,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_GATE                    = 5,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR       = 6,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH = 7,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE                   = 8,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH                   = 9,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT                    = 10,
+    VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST  = 11,
 };
 
 // SceneIdVenusLighthouseThirdFloor's entrances.
 enum
 {
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST  = 1,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_FROM_SPARKLING_PASSAGES             = 2,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_FROM_SPARKLING_PASSAGES              = 3,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_NORTHWEST_ROOM             = 4,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRAGON_SCALES              = 5,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRIFTING_FLOOR             = 6,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST = 7,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_FROM_DRIFTING_FLOOR                 = 8,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SPARKLING_PASSAGES             = 9,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST = 10,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SOUTHWEST_ROOM                 = 11,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST       = 12,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST       = 13,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS                 = 14,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR                 = 15,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM                      = 16,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR                 = 17,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_FROM_PILLAR_SOCKETS                      = 18,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST       = 19,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST  = 20,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST  = 1,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_FROM_SPARKLING_PASSAGES             = 2,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_FROM_SPARKLING_PASSAGES              = 3,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_NORTHWEST_ROOM             = 4,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRAGON_SCALES              = 5,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRIFTING_FLOOR             = 6,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST = 7,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_FROM_DRIFTING_FLOOR                 = 8,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SPARKLING_PASSAGES             = 9,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST = 10,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SOUTHWEST_ROOM                 = 11,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST       = 12,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST       = 13,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS                 = 14,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR                 = 15,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM                      = 16,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR                 = 17,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_FROM_PILLAR_SOCKETS                      = 18,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST       = 19,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST  = 20,
 };
 
 // SceneIdVenusLighthouseThirdFloor's exits.
 enum
 {
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST  = 1,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_TO_SPARKLING_PASSAGES             = 2,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_TO_SPARKLING_PASSAGES              = 3,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_NORTHWEST_ROOM             = 4,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRAGON_SCALES              = 5,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRIFTING_FLOOR             = 6,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST = 7,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_TO_DRIFTING_FLOOR                 = 8,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SPARKLING_PASSAGES             = 9,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST = 10,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SOUTHWEST_ROOM                 = 11,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST       = 12,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST       = 13,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_PILLAR_SOCKETS                 = 14,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_DRIFTING_FLOOR                 = 15,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM                      = 16,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR                 = 17,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS                      = 18,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST       = 19,
-	VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST  = 20,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST  = 1,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_TO_SPARKLING_PASSAGES             = 2,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_TO_SPARKLING_PASSAGES              = 3,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_NORTHWEST_ROOM             = 4,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRAGON_SCALES              = 5,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRIFTING_FLOOR             = 6,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST = 7,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_TO_DRIFTING_FLOOR                 = 8,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SPARKLING_PASSAGES             = 9,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST = 10,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SOUTHWEST_ROOM                 = 11,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST       = 12,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST       = 13,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_PILLAR_SOCKETS                 = 14,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_DRIFTING_FLOOR                 = 15,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM                      = 16,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR                 = 17,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS                      = 18,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST       = 19,
+    VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST  = 20,
 };
 
 // SceneIdVenusLighthouseFourthFloor's entrances.
 enum
 {
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST  = 1,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES                        = 2,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLARS                        = 3,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST = 4,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST = 5,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE                 = 6,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST       = 7,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLAR_SOCKETS_EAST            = 8,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST       = 9,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_GAIA_BLADE_WEST                = 10,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_GAIA_BLADE_EAST                = 11,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLAR_SOCKETS_SOUTH           = 12,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST                = 13,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_EAST                = 14,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_SOUTH           = 15,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_EAST            = 16,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_FROM_WALL_SWITCHES                 = 17,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST       = 18,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST  = 19,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING          = 20,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST  = 1,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES                        = 2,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLARS                        = 3,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST = 4,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST = 5,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE                 = 6,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST       = 7,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLAR_SOCKETS_EAST            = 8,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST       = 9,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_GAIA_BLADE_WEST                = 10,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_GAIA_BLADE_EAST                = 11,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLAR_SOCKETS_SOUTH           = 12,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST                = 13,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_EAST                = 14,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_SOUTH           = 15,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_EAST            = 16,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_FROM_WALL_SWITCHES                 = 17,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST       = 18,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST  = 19,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING          = 20,
 };
 
 // SceneIdVenusLighthouseFourthFloor's exits.
 enum
 {
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST  = 1,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_TO_WALL_SWITCHES                        = 2,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLARS                        = 3,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST = 4,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST = 5,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE                 = 6,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST       = 7,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_EAST            = 8,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST       = 9,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_WEST                = 10,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_EAST                = 11,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_SOUTH           = 12,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_WEST                = 13,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_EAST                = 14,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH           = 15,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST            = 16,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES                 = 17,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST       = 18,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST  = 19,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING          = 20,
-	VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE                       = 21,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST  = 1,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_TO_WALL_SWITCHES                        = 2,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLARS                        = 3,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST = 4,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST = 5,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE                 = 6,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST       = 7,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_EAST            = 8,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST       = 9,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_WEST                = 10,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_EAST                = 11,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_SOUTH           = 12,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_WEST                = 13,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_EAST                = 14,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH           = 15,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST            = 16,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES                 = 17,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST       = 18,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST  = 19,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING          = 20,
+    VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE                       = 21,
 };
 
 // SceneIdVenusLighthouseAerie's entrances and exits.
 enum
 {
-	VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR = 1,
-	// after Saturos and Menardi
-	VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE                 = 2,
-	VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE                = 3, // after their fused form
-	VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP                     = 4,
-	VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT                       = 9, // after either battle is lost
-	VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT =
-		// the world map sends the party back here after its lighthouse cut
-	93,
-	VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP      = 1,
-	VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C = 2,
-	VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B = 9,
+    VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR = 1,
+    // after Saturos and Menardi
+    VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE                 = 2,
+    VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE                = 3, // after their fused form
+    VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP                     = 4,
+    VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT                       = 9, // after either battle is lost
+    VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT =
+        // the world map sends the party back here after its lighthouse cut
+    93,
+    VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP      = 1,
+    VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C = 2,
+    VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B = 9,
 };
 
 // SceneIdLemurianShip's entrances.
 enum
 {
-	LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C = 1,
-	// In no table row and led to by no exit: only the debug scene selector, which exits to any
-	// entrance from 0 to 99, reaches it. Arriving by it hands the leader the Black Orb.
-	LEMURIAN_SHIP_WITH_BLACK_ORB      = 99,
+    LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C = 1,
+    // In no table row and led to by no exit: only the debug scene selector, which exits to any
+    // entrance from 0 to 99, reaches it. Arriving by it hands the leader the Black Orb.
+    LEMURIAN_SHIP_WITH_BLACK_ORB      = 99,
 };
 
 // SceneIdLemurianShip's exits.
 enum
 {
-	LEMURIAN_SHIP_TO_TIMBER_ROOMS_C = 1,
+    LEMURIAN_SHIP_TO_TIMBER_ROOMS_C = 1,
 };
 
 // SceneIdTolbiSpring's entrances.
 enum
 {
-	TOLBI_SPRING_FROM_TOLBI = 1,
+    TOLBI_SPRING_FROM_TOLBI = 1,
 };
 
 // SceneIdTolbiSpring's exits.
 enum
 {
-	TOLBI_SPRING_TO_TOLBI = 1,
+    TOLBI_SPRING_TO_TOLBI = 1,
 };
 
 // SceneIdBattleArena's entrances and exits.
 enum
 {
-	BATTLE_ARENA_FROM_FILE_SCREEN   = 1,
-	BATTLE_ARENA_AFTER_MONSTER_WIN  = 8,
-	BATTLE_ARENA_AFTER_MONSTER_LOSS = 9,
-	BATTLE_ARENA_AFTER_LINK_WIN     = 10, // or after a linked battle broken off
-	BATTLE_ARENA_AFTER_LINK_LOSS    = 11,
+    BATTLE_ARENA_FROM_FILE_SCREEN   = 1,
+    BATTLE_ARENA_AFTER_MONSTER_WIN  = 8,
+    BATTLE_ARENA_AFTER_MONSTER_LOSS = 9,
+    BATTLE_ARENA_AFTER_LINK_WIN     = 10, // or after a linked battle broken off
+    BATTLE_ARENA_AFTER_LINK_LOSS    = 11,
 };
 
 #endif

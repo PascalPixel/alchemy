@@ -9,9 +9,9 @@
 // + speed): it indexes the speed tables below.
 typedef enum MESSAGE_SPEED
 {
-	MESSAGE_SPEED_SLOW   = 0,
-	MESSAGE_SPEED_NORMAL = 1, // a new game's
-	MESSAGE_SPEED_FAST   = 2
+    MESSAGE_SPEED_SLOW   = 0,
+    MESSAGE_SPEED_NORMAL = 1, // a new game's
+    MESSAGE_SPEED_FAST   = 2
 } MESSAGE_SPEED;
 
 extern const Uint8 MessageSpeedDelays[3];

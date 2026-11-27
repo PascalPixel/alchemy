@@ -60,7 +60,7 @@ void   mnMessageSetDecodeFlagsStub(Sint32 flags);
 void   mnScanlineWindowFillSpansStub(Uint16 *spans);
 // As mnTextGetMessageSizeStub, but measuring every page of the message.
 void   mnTextGetMessageSizeAllPagesStub(
-	  Sint32 msg, Sint32 *left, Sint32 *top, Uint32 *width, Uint32 *height);
+      Sint32 msg, Sint32 *left, Sint32 *top, Uint32 *width, Uint32 *height);
 // Decodes a message and fits a window for its first page on the screen near tile (*left, *top),
 // returning its place and size in tiles.
 void mnTextGetMessageSizeStub(Sint32 msg, Sint32 *left, Sint32 *top, Uint32 *width, Uint32 *height);
@@ -71,7 +71,7 @@ Sint32             mnPortraitGetForSpeakerStub(Sint32 speaker);
 void               mnMessageDecodeRawStub(Sint32 msg, Uint16 *text, Sint32 capacity);
 // Copies icon `icon` into a free VRAM slot and shows it as a 16x16 sprite at (x, y) in `window`.
 struct WINDOW_SPR *mnWindowSpriteCreateLoadedStub(
-	Sint32 icon, Sint32 layers, struct WINDOW *window, Sint32 x, Sint32 y);
+    Sint32 icon, Sint32 layers, struct WINDOW *window, Sint32 x, Sint32 y);
 // Selects a shop command (Buy, Sell, Artifacts, Repair) on the bottom row, starting on `selection`,
 // and returns the one chosen.
 Sint32         mnSelectShopCommandStub(Sint32 selection);
@@ -121,7 +121,7 @@ void mnTextDrawNumberInWindowStub(Sint32 value, Sint32 width, Sint32 window, Sin
 Sint32 mnTextSetColorStub(Sint32 color);
 // mnAbilityBuildIconTiles, for an overlay.
 void   mnAbilityBuildIconTilesStub(
-	  Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
+      Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
 // Draws a divider from (x1, y1) to (x2, y2), one of which must agree, joining it to the tick and
 // divider tiles already on the tilemap.
 void mnWindowDrawDividerLineStub(Sint32 window, Sint32 x1, Sint32 y1, Sint32 x2, Sint32 y2);

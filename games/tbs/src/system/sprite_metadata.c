@@ -8,5 +8,5 @@
 // SpriteAnimationMetadata (graphics/sprite/sprites.s), with no bounds check.
 ANIMATION_METADATA *syResourceGetMetadataRecord(Uint32 descriptorId)
 {
-	return &SpriteAnimationMetadata[descriptorId & SPRITE_ID_MASK];
+    return &SpriteAnimationMetadata[descriptorId & SPRITE_ID_MASK];
 }

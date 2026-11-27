@@ -3,13 +3,13 @@
 // until ScriptedPartScript releases it, half a second on.
 void scActorSetupScripted(ACTOR *actor)
 {
-	actor->motionFlags    = 0;
-	actor->collisionFlags = 0;
-	fdActorSetSpriteFlags(actor, 0);
-	fdActorSelectAnimation(actor, 2);
-	fdActorStartScript(actor, ScriptedPartScript);
-	scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
-	actor->timer        = 0;
-	actor->speedLimit   = 0;
-	actor->acceleration = 0;
+    actor->motionFlags    = 0;
+    actor->collisionFlags = 0;
+    fdActorSetSpriteFlags(actor, 0);
+    fdActorSelectAnimation(actor, 2);
+    fdActorStartScript(actor, ScriptedPartScript);
+    scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
+    actor->timer        = 0;
+    actor->speedLimit   = 0;
+    actor->acceleration = 0;
 }

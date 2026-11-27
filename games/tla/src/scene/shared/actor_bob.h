@@ -8,19 +8,19 @@
 // ticks.
 Sint32 scActorBob(ACTOR *actor)
 {
-	Sint32     frame   = actor->sceneCount & (BOB_CYCLE_TICKS - 1);
-	FIELD_SPR *sprite  = actor->sprite;
+    Sint32     frame   = actor->sceneCount & (BOB_CYCLE_TICKS - 1);
+    FIELD_SPR *sprite  = actor->sprite;
 
-	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	if (frame == 0)
-		actor->velocityY = toFIXED(3);
-	if (frame == 16)
-		actor->velocityY = toFIXED(2);
-	if (frame == 24)
-		actor->velocityY = toFIXED(3);
-	sprite->rotation = syCos(frame * (TRIG_TURN / 16)) / BOB_ROCK_DIVISOR;
-	actor->sceneCount++;
-	return -1;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    if (frame == 0)
+        actor->velocityY = toFIXED(3);
+    if (frame == 16)
+        actor->velocityY = toFIXED(2);
+    if (frame == 24)
+        actor->velocityY = toFIXED(3);
+    sprite->rotation = syCos(frame * (TRIG_TURN / 16)) / BOB_ROCK_DIVISOR;
+    actor->sceneCount++;
+    return -1;
 }
 
 #undef BOB_CYCLE_TICKS

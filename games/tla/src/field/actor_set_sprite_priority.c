@@ -6,12 +6,12 @@
 // metatile under it (clears ACTOR_PRIORITY_AUTOMATIC).
 void fdSetActorSpritePriority(ACTOR *actor, Sint32 priority)
 {
-	SPR *sprite;
+    SPR *sprite;
 
-	if (actor == NULL || (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_NONE)
-		return;
-	sprite                   = actor->sprite;
-	sprite->image.priority   = priority;
-	sprite->shadow.priority  = priority;
-	actor->priorityFlags    &= ~ACTOR_PRIORITY_AUTOMATIC;
+    if (actor == NULL || (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_NONE)
+        return;
+    sprite                   = actor->sprite;
+    sprite->image.priority   = priority;
+    sprite->shadow.priority  = priority;
+    actor->priorityFlags    &= ~ACTOR_PRIORITY_AUTOMATIC;
 }

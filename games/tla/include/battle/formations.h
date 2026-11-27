@@ -28,13 +28,13 @@
 // Djinni's.
 typedef struct FORMATION
 {
-	Uint16 memberIds[FORMATION_MEMBERS]; // enemy ids less 8
-	Uint8  minCounts[FORMATION_MEMBERS]; // each always appears this often
-	// Each may appear up to this often while the six sprite slots hold them; 0 for a member that
-	// does not appear.
-	Uint8  maxCounts[FORMATION_MEMBERS];
-	Uint8  layout;      // a FORMATION_LAYOUT_
-	Uint8  reserved[3]; // 0 in every row
+    Uint16 memberIds[FORMATION_MEMBERS]; // enemy ids less 8
+    Uint8  minCounts[FORMATION_MEMBERS]; // each always appears this often
+    // Each may appear up to this often while the six sprite slots hold them; 0 for a member that
+    // does not appear.
+    Uint8  maxCounts[FORMATION_MEMBERS];
+    Uint8  layout;      // a FORMATION_LAYOUT_
+    Uint8  reserved[3]; // 0 in every row
 } FORMATION;
 
 // The rows of Formations.

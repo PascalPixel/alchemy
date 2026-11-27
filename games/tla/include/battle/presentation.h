@@ -63,31 +63,31 @@ typedef const Uint8 *(*MODEL_DECODER)(const Uint8 *source, void *destination);
 // btMotionDismissBeast to put back.
 typedef struct SAVED_BATTLE_OBJECT
 {
-	BATTLE_OBJECT object; // the borrowed object, copied whole
-	// The beast's pictures: a heap block of its own, or ActorSpriteSlots when the object borrowed
-	// is another side's.
-	Uint32       *buf;
-	Uint8         unitId; // the unit whose battle object the beast borrows
-	// 1 when the caster and its first target are on opposite sides: the beast takes the caster's
-	// own object.
-	Uint8         single;
-	Uint8         reactivate; // 1 when the borrowed object had to be made first
-	Uint16        classId;    // the beast's enemy id (ENEMY_WILD_WOLF and so on)
+    BATTLE_OBJECT object; // the borrowed object, copied whole
+    // The beast's pictures: a heap block of its own, or ActorSpriteSlots when the object borrowed
+    // is another side's.
+    Uint32       *buf;
+    Uint8         unitId; // the unit whose battle object the beast borrows
+    // 1 when the caster and its first target are on opposite sides: the beast takes the caster's
+    // own object.
+    Uint8         single;
+    Uint8         reactivate; // 1 when the borrowed object had to be made first
+    Uint16        classId;    // the beast's enemy id (ENEMY_WILD_WOLF and so on)
 } SAVED_BATTLE_OBJECT;
 
 // One kept formation: its record and its average level, -1 while empty.
 typedef struct FORMATION_CANDIDATE
 {
-	Sint16 recordId;
-	Sint32 score : 16;
+    Sint16 recordId;
+    Sint32 score : 16;
 } FORMATION_CANDIDATE;
 
 // An ENEMY_DEFINITION as btAIChooseAction reads its abilities: through a pointer two bytes past its
 // start.
 typedef struct AI_ENEMY_REST
 {
-	Uint8  unused[44];   // the rest of the definition before its abilities
-	Uint16 abilities[8]; // ENEMY_DEFINITION.abilities
+    Uint8  unused[44];   // the rest of the definition before its abilities
+    Uint16 abilities[8]; // ENEMY_DEFINITION.abilities
 } AI_ENEMY_REST;
 
 // The bit decoder btBackgroundLoad copies to RAM to decode a battle background's tiles

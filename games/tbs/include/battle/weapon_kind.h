@@ -11,14 +11,14 @@
 // each.
 typedef enum BATTLE_WEAPON_KIND
 {
-	WEAPON_KIND_LONG_SWORD,  // Long Sword to Muramasa
-	WEAPON_KIND_LIGHT_BLADE, // Machete to Bandit's Sword
-	WEAPON_KIND_AXE,         // Battle Axe to Demon Axe
-	WEAPON_KIND_MACE,        // Mace to Wicked Mace
-	// Wooden Stick to Shaman's Rod, but the two ankhs among them.
-	WEAPON_KIND_STAFF,
-	WEAPON_KIND_ANKH, // the Blessed Ankh and Angelic Ankh
-	WEAPON_KIND_NONE  // an item the list lacks
+    WEAPON_KIND_LONG_SWORD,  // Long Sword to Muramasa
+    WEAPON_KIND_LIGHT_BLADE, // Machete to Bandit's Sword
+    WEAPON_KIND_AXE,         // Battle Axe to Demon Axe
+    WEAPON_KIND_MACE,        // Mace to Wicked Mace
+    // Wooden Stick to Shaman's Rod, but the two ankhs among them.
+    WEAPON_KIND_STAFF,
+    WEAPON_KIND_ANKH, // the Blessed Ankh and Angelic Ankh
+    WEAPON_KIND_NONE  // an item the list lacks
 } BATTLE_WEAPON_KIND;
 
 // A row of BattleUnitWeaponKinds: the item and its kind.

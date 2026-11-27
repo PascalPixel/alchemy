@@ -23,21 +23,21 @@ extern const Uint8  AbilityStaging[];
 // from the ability (AbilityStaging where it gives one).
 typedef enum BATTLE_STAGING
 {
-	STAGING_MESSAGES    = 1, // no effect: each target's messages only
-	STAGING_ATTACK      = 2, // the acting unit runs up and strikes
-	STAGING_CAST        = 3, // Psynergy, and Venus, Mercury, Mars, Jupiter
-	STAGING_ITEM        = 4,
-	STAGING_SUMMON      = 5, // the larger summons, the acting unit hidden
-	STAGING_DJINNI      = 6, // a Djinni with no attack (Granite, Quartz...)
-	STAGING_FLEE        = 7, // a unit runs
-	// The action plays as a cast, the caster showing its element's streaks in place of the
-	// gathering star field. Where AbilityStaging gives no staging, it's how an enemy's ability
-	// plays when the ability isn't Psynergy (btAbilityIsPsynergy) and its entry of
-	// AbilityBattleEffects isn't 0; an enemy's Psynergy plays as STAGING_CAST. AbilityStaging gives
-	// it to Slice and to seven weapon unleashes: Blizzard, Drown, Demon Fire, Vorpal Slash, Rapid
-	// Smash, Sonic Smash and Titan Blade.
-	STAGING_ENEMY_CAST  = 8,
-	STAGING_FULL_SCREEN = 9 // Gaia, Rockfall, Procne and their kin
+    STAGING_MESSAGES    = 1, // no effect: each target's messages only
+    STAGING_ATTACK      = 2, // the acting unit runs up and strikes
+    STAGING_CAST        = 3, // Psynergy, and Venus, Mercury, Mars, Jupiter
+    STAGING_ITEM        = 4,
+    STAGING_SUMMON      = 5, // the larger summons, the acting unit hidden
+    STAGING_DJINNI      = 6, // a Djinni with no attack (Granite, Quartz...)
+    STAGING_FLEE        = 7, // a unit runs
+    // The action plays as a cast, the caster showing its element's streaks in place of the
+    // gathering star field. Where AbilityStaging gives no staging, it's how an enemy's ability
+    // plays when the ability isn't Psynergy (btAbilityIsPsynergy) and its entry of
+    // AbilityBattleEffects isn't 0; an enemy's Psynergy plays as STAGING_CAST. AbilityStaging gives
+    // it to Slice and to seven weapon unleashes: Blizzard, Drown, Demon Fire, Vorpal Slash, Rapid
+    // Smash, Sonic Smash and Titan Blade.
+    STAGING_ENEMY_CAST  = 8,
+    STAGING_FULL_SCREEN = 9 // Gaia, Rockfall, Procne and their kin
 } BATTLE_STAGING;
 
 // BATTLE_ACTION_RUN.battleEffect: the effect kind in the low twelve bits and its strength (a double

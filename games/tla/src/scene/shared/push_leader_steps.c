@@ -6,25 +6,25 @@
 // as LATE_DATA first.
 
 #ifndef PUSH_LEADER_STEPS_SECTION
-#	define PUSH_LEADER_STEPS_SECTION
+#    define PUSH_LEADER_STEPS_SECTION
 #endif
 
 // One metatile along each facing's nearest direction (PUSH_STEP).
 PUSH_LEADER_STEPS_SECTION Sint32 PushLeaderSteps[] = {
-	PUSH_STEP(16, 0),
-	PUSH_STEP(16, 0),
-	PUSH_STEP(16, 0),
-	PUSH_STEP(0, 16),
-	PUSH_STEP(0, 16),
-	PUSH_STEP(0, 16),
-	PUSH_STEP(0, 16),
-	PUSH_STEP(-16, 0),
-	PUSH_STEP(-16, 0),
-	PUSH_STEP(-16, 0),
-	PUSH_STEP(-16, 0),
-	PUSH_STEP(0, -16),
-	PUSH_STEP(0, -16),
-	PUSH_STEP(0, -16),
-	PUSH_STEP(0, -16),
-	PUSH_STEP(16, 0),
+    PUSH_STEP(16, 0),
+    PUSH_STEP(16, 0),
+    PUSH_STEP(16, 0),
+    PUSH_STEP(0, 16),
+    PUSH_STEP(0, 16),
+    PUSH_STEP(0, 16),
+    PUSH_STEP(0, 16),
+    PUSH_STEP(-16, 0),
+    PUSH_STEP(-16, 0),
+    PUSH_STEP(-16, 0),
+    PUSH_STEP(-16, 0),
+    PUSH_STEP(0, -16),
+    PUSH_STEP(0, -16),
+    PUSH_STEP(0, -16),
+    PUSH_STEP(0, -16),
+    PUSH_STEP(16, 0),
 };

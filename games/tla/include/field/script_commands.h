@@ -26,17 +26,17 @@ struct VECTOR3;
 // hue it tints the screen with, its caster and target, and its delay and particle cycle.
 typedef struct MIND_READ_STATE
 {
-	Uint16 lines[2][162];
-	Uint16 phase;
-	Uint8  page;
-	Sint8  red;
-	Sint8  green;
-	Sint8  blue;
-	Uint16 hue;
-	Uint16 srcId;
-	Uint16 targetId;
-	Uint8  delay;
-	Uint8  count;
+    Uint16 lines[2][162];
+    Uint16 phase;
+    Uint8  page;
+    Sint8  red;
+    Sint8  green;
+    Sint8  blue;
+    Uint16 hue;
+    Uint16 srcId;
+    Uint16 targetId;
+    Uint8  delay;
+    Uint8  count;
 } MIND_READ_STATE;
 
 // MIND_READ_STATE.count held still: the wave sends no particles and plays no sound, as while
@@ -47,21 +47,21 @@ typedef struct MIND_READ_STATE
 // ends the list).
 typedef struct TOUCH_METATILE
 {
-	Sint16 x;
-	Sint16 z;
+    Sint16 x;
+    Sint16 z;
 } TOUCH_METATILE;
 
 // A metatile's tiles that Cyclone copied (fdTileCopiesCopyTouchedMetatiles): where it went, where
 // it came from and the touched metatile it opened, each in metatiles.
 typedef struct TOUCH_COPY
 {
-	Uint8 toX;
-	Uint8 toZ;
-	Uint8 fromX;
-	Uint8 fromZ;
-	Uint8 metatileX;
-	Uint8 metatileZ;
-	Uint8 unusedAfterMetatileZ[2]; // no code names it
+    Uint8 toX;
+    Uint8 toZ;
+    Uint8 fromX;
+    Uint8 fromZ;
+    Uint8 metatileX;
+    Uint8 metatileZ;
+    Uint8 unusedAfterMetatileZ[2]; // no code names it
 } TOUCH_COPY;
 
 // The scene's own state (SceneLocalState) as far as the copies of metatiles Cyclone blew away, kept
@@ -70,13 +70,13 @@ typedef struct TOUCH_COPY
 // The Broken Seal's ActorSnapshot); the copies lie in InventorySnapshot's spare space.
 typedef struct TOUCH_COPIES
 {
-	Uint32     savedPlayTime;
-	Uint8      snapshotSlots[ACTOR_SNAPSHOT_CAPACITY];
-	ACTOR      snapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
-	// the snapshot's sprite state, RareItemStock, SceneStateWork and the start of InventorySnapshot
-	Uint8      untilCopies[1832];
-	TOUCH_COPY copies[64];
-	Sint8      count;
+    Uint32     savedPlayTime;
+    Uint8      snapshotSlots[ACTOR_SNAPSHOT_CAPACITY];
+    ACTOR      snapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
+    // the snapshot's sprite state, RareItemStock, SceneStateWork and the start of InventorySnapshot
+    Uint8      untilCopies[1832];
+    TOUCH_COPY copies[64];
+    Sint8      count;
 } TOUCH_COPIES;
 
 STATIC_ASSERT(offsetof(TOUCH_COPIES, snapshotObjects) == 36);
@@ -89,13 +89,13 @@ STATIC_ASSERT(offsetof(TOUCH_COPIES, copies) == 5964);
 // ticks before it starts.
 typedef struct BURST_PARTICLE
 {
-	Sint32 x;
-	Sint32 y;
-	Sint32 z;
-	Sint32 heading;
-	Sint32 speed;
-	Sint32 spin;
-	Sint32 delay;
+    Sint32 x;
+    Sint32 y;
+    Sint32 z;
+    Sint32 heading;
+    Sint32 speed;
+    Sint32 spin;
+    Sint32 delay;
 } BURST_PARTICLE;
 
 // The particles of the particle burst.
@@ -105,29 +105,29 @@ typedef struct BURST_PARTICLE
 // cache entry, a flash on tick 30 and its tick count.
 typedef struct PARTICLE_BURST_STATE
 {
-	Uint8          tiles[384];
-	EFFECT_SPR     sprites[PARTICLE_BURST_COUNT];
-	BURST_PARTICLE particles[PARTICLE_BURST_COUNT];
-	Sint16         cacheEntry; // the VRAM cache entry holding the leaves' tiles
-	Sint16         tile;       // their first tile in OBJ VRAM
-	Sint16         flash;      // set on tick 30 only
-	Sint16         frame;
-	Sint16         active;
+    Uint8          tiles[384];
+    EFFECT_SPR     sprites[PARTICLE_BURST_COUNT];
+    BURST_PARTICLE particles[PARTICLE_BURST_COUNT];
+    Sint16         cacheEntry; // the VRAM cache entry holding the leaves' tiles
+    Sint16         tile;       // their first tile in OBJ VRAM
+    Sint16         flash;      // set on tick 30 only
+    Sint16         frame;
+    Sint16         active;
 } PARTICLE_BURST_STATE;
 
 // A metatile the particle burst covers, in metatiles.
 typedef struct BURST_METATILE
 {
-	Sint16 x;
-	Sint16 z;
+    Sint16 x;
+    Sint16 z;
 } BURST_METATILE;
 
 // One step of a sparkle's rise (FieldEffectSparklePictures): its height above its spot in screen
 // pixels, and its tile.
 typedef struct SPARKLE_PICTURE
 {
-	Sint16 dy;
-	Uint16 tile;
+    Sint16 dy;
+    Uint16 tile;
 } SPARKLE_PICTURE;
 
 // gmPartyInventoryFindRoom through its stub call: the first party member with room for item, or -1.
@@ -143,7 +143,7 @@ Sint32 fdActorGetSpriteIdStub(ACTOR *actor);
 // fdMapGridCopyMetatileTilesMetatilesRect through its stub call: copies width by height metatiles
 // as they are from (fromX, fromZ) to (toX, toZ).
 void   fdMapGridCopyMetatileTilesMetatilesRectStub(
-	  Sint32 toX, Sint32 toZ, Sint32 width, Sint32 height, Sint32 fromX, Sint32 fromZ);
+      Sint32 toX, Sint32 toZ, Sint32 width, Sint32 height, Sint32 fromX, Sint32 fromZ);
 // fdActorScriptFindOverlappingActor through its stub call: the first solid actor the actor at
 // position would overlap, or NULL.
 ACTOR *fdActorScriptFindOverlappingActorStub(ACTOR *actor, VECTOR3 *pos);
@@ -188,10 +188,10 @@ void   fdPsynergyWatchLeaderDistance(void);
 // The stage Burst passes its target's script each tick (BURST_STATE.shake).
 typedef enum BURST_STAGE
 {
-	BURST_STAGE_QUIET,       // no explosion this tick
-	BURST_STAGE_DYING_DOWN,  // the great blast dying down
-	BURST_STAGE_SMALL_BLAST, // a small explosion shakes the ground
-	BURST_STAGE_GREAT_BLAST  // the last and largest blast
+    BURST_STAGE_QUIET,       // no explosion this tick
+    BURST_STAGE_DYING_DOWN,  // the great blast dying down
+    BURST_STAGE_SMALL_BLAST, // a small explosion shakes the ground
+    BURST_STAGE_GREAT_BLAST  // the last and largest blast
 } BURST_STAGE;
 
 // Mind Read's wave, its tint and the palette it greys.
@@ -215,15 +215,15 @@ void   fdTileCopiesRestore(void);
 // The caster's look while it casts, fdBattleEffectSetObjectUpdateMode's mode.
 typedef enum CASTER_LOOK
 {
-	CASTER_LOOK_NORMAL         = 0, // its own colours
-	// Flashing white, with swelling arcs (fdEffectFlickerActorAndSpawnArcs).
-	CASTER_LOOK_FLASHING_WHITE = 1,
-	// Cycling colours, with swelling arcs (fdEffectCycleActorAndSpawnArcs).
-	CASTER_LOOK_CYCLING_COLORS = 2
+    CASTER_LOOK_NORMAL         = 0, // its own colours
+    // Flashing white, with swelling arcs (fdEffectFlickerActorAndSpawnArcs).
+    CASTER_LOOK_FLASHING_WHITE = 1,
+    // Cycling colours, with swelling arcs (fdEffectCycleActorAndSpawnArcs).
+    CASTER_LOOK_CYCLING_COLORS = 2
 } CASTER_LOOK;
 
 void fdBattleEffectDrawCanvasBlock(
-	const Uint8 *src, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
+    const Uint8 *src, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
 extern const Sint32 DustPuffLongScript[];
 extern const Sint32 DustPuffShortScript[];
 extern const Sint32 FieldEffectSourceHoldScript[];
@@ -235,56 +235,56 @@ extern const Uint8  MoveHandPushPoses[];
 // reads them.
 typedef struct BURST_PARTICLE_VECTOR
 {
-	Sint32 values[3];
+    Sint32 values[3];
 } BURST_PARTICLE_VECTOR;
 
 // One part of a sprite (ANIMATION_SPR_PART) as Mind Read's burst copies its image's attributes to
 // its shadow: a byte at a time, under the OAM attributes' names.
 typedef struct BURST_PARTICLE_VISUAL
 {
-	Uint8 unused[5];            // the part's link and attribute 0's y
-	Uint8 affineModeMosaic : 5; // attribute 0's affine, objectMode and mosaic
-	Uint8 fullColor        : 1; // 256 colours
-	Uint8 shape            : 2; // 0 square, 1 wide, 2 tall
-	Uint8 unusedAfterShape;     // attribute 1's x, low byte
-	Uint8 xHighAffineIndex : 6; // x bit 8 and the affine matrix
-	Uint8 size             : 2; // with shape, the sprite's size
+    Uint8 unused[5];            // the part's link and attribute 0's y
+    Uint8 affineModeMosaic : 5; // attribute 0's affine, objectMode and mosaic
+    Uint8 fullColor        : 1; // 256 colours
+    Uint8 shape            : 2; // 0 square, 1 wide, 2 tall
+    Uint8 unusedAfterShape;     // attribute 1's x, low byte
+    Uint8 xHighAffineIndex : 6; // x bit 8 and the affine matrix
+    Uint8 size             : 2; // with shape, the sprite's size
 
-	union
-	{
-		struct
-		{
-			Uint16 tile            : 10; // first sprite tile in VRAM
-			Uint16 priorityPalette : 6;
-		} bits;
+    union
+    {
+        struct
+        {
+            Uint16 tile            : 10; // first sprite tile in VRAM
+            Uint16 priorityPalette : 6;
+        } bits;
 
-		struct
-		{
-			Uint8 tileLow;
-			Uint8 tileHighPriority : 4;
-			Uint8 palette          : 4;
-		} bytes;
-	} attributes; // attribute 2
+        struct
+        {
+            Uint8 tileLow;
+            Uint8 tileHighPriority : 4;
+            Uint8 palette          : 4;
+        } bytes;
+    } attributes; // attribute 2
 } BURST_PARTICLE_VISUAL;
 
 // A sprite (SPR) as Mind Read's burst reads it: its image, and its shadow 28 bytes in.
 typedef struct BURST_PARTICLE_VISUAL_GROUP
 {
-	BURST_PARTICLE_VISUAL primary;
-	Uint8                 unusedAfterPrimary[16]; // no code names them
-	BURST_PARTICLE_VISUAL child;
+    BURST_PARTICLE_VISUAL primary;
+    Uint8                 unusedAfterPrimary[16]; // no code names them
+    BURST_PARTICLE_VISUAL child;
 } BURST_PARTICLE_VISUAL_GROUP;
 
 // The lifted actor as Lift on a target reads it: ACTOR's y, motionFlags (flag) and update
 // (callback); read through ACTOR, the flag store moves after the anchor's load.
 typedef struct EFFECT_CHILD
 {
-	Uint8  unused[12];           // no code names them
-	Sint32 y;
-	Uint8  unusedAfterY[69];     // no code names them
-	Uint8  flags;
-	Uint8  unusedAfterFlags[22]; // no code names them
-	void   (*callback)(void);
+    Uint8  unused[12];           // no code names them
+    Sint32 y;
+    Uint8  unusedAfterY[69];     // no code names them
+    Uint8  flags;
+    Uint8  unusedAfterFlags[22]; // no code names them
+    void   (*callback)(void);
 } EFFECT_CHILD;
 
 // The Djinn: what each element's join effect shows, and settling a Djinni after its battle.
@@ -319,14 +319,14 @@ void                fdStartEncounterTransition(Sint32 unused);
 // three and its two spares.
 typedef enum DJINN_ENCOUNTER_ZONE
 {
-	ENCOUNTER_ZONE_VENUS_DJINN = 1,
-	ENCOUNTER_ZONE_VENUS_DJINN_LAST,
-	ENCOUNTER_ZONE_MERCURY_DJINN,
-	ENCOUNTER_ZONE_MERCURY_DJINN_LAST,
-	ENCOUNTER_ZONE_MARS_DJINN,
-	ENCOUNTER_ZONE_MARS_DJINN_LAST,
-	ENCOUNTER_ZONE_JUPITER_DJINN,
-	ENCOUNTER_ZONE_JUPITER_DJINN_LAST
+    ENCOUNTER_ZONE_VENUS_DJINN = 1,
+    ENCOUNTER_ZONE_VENUS_DJINN_LAST,
+    ENCOUNTER_ZONE_MERCURY_DJINN,
+    ENCOUNTER_ZONE_MERCURY_DJINN_LAST,
+    ENCOUNTER_ZONE_MARS_DJINN,
+    ENCOUNTER_ZONE_MARS_DJINN_LAST,
+    ENCOUNTER_ZONE_JUPITER_DJINN,
+    ENCOUNTER_ZONE_JUPITER_DJINN_LAST
 } DJINN_ENCOUNTER_ZONE;
 
 // The encounter zone of the early story battles: the Ruffian waiting for backup on Venus
@@ -364,12 +364,12 @@ typedef enum DJINN_ENCOUNTER_ZONE
 // The slots of ENCOUNTER_ZONE_HIDDEN_BOSSES.
 typedef enum HIDDEN_BOSS
 {
-	// the Star Magician, at the end of Treasure Isle
-	HIDDEN_BOSS_TREASURE_ISLE,
-	HIDDEN_BOSS_VALUKAR,  // Valukar, in the Yampi Desert Cave
-	HIDDEN_BOSS_SENTINEL, // the Sentinel, at the end of the Islet Cave
-	                      // The shadow at the entrance of the Anemos Inner Sanctum.
-	HIDDEN_BOSS_ANEMOS
+    // the Star Magician, at the end of Treasure Isle
+    HIDDEN_BOSS_TREASURE_ISLE,
+    HIDDEN_BOSS_VALUKAR,  // Valukar, in the Yampi Desert Cave
+    HIDDEN_BOSS_SENTINEL, // the Sentinel, at the end of the Islet Cave
+                          // The shadow at the entrance of the Anemos Inner Sanctum.
+    HIDDEN_BOSS_ANEMOS
 } HIDDEN_BOSS;
 
 // fdActorSetLayersColorMode's value that cycles the actor's colours (MindReadCasterColorCycle); any

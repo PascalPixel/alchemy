@@ -1,50 +1,47 @@
-/* @file */
-/* The Ramses summon. */
-/* Part of battle_effect.c. */
+/* The Ramses summon. Part of battle_effect.c. */
 
-#define RAMSES_FRAMES		320
-#define RAMSES_STRIKE_FRAME 260 /* the fist strikes the targets */
-#define RAMSES_ROCKS		6	/* rocks that fall and bounce */
-#define RAMSES_FIRST_PUFF	6	/* the first puff in state->particles */
-#define RAMSES_FIRST_ROCK_PUFF                                                 \
-	30					  /* the first rock puff in state->particles           \
-						   */
-#define RAMSES_SPARKS 512 /* sparks of the strike */
-/* The statue's own sprites, its fist's two after them, and the rocks' after */
-/* those. */
+#define RAMSES_FRAMES			 320
+#define RAMSES_STRIKE_FRAME		 260 /* the fist strikes the targets */
+#define RAMSES_ROCKS			 6	 /* rocks that fall and bounce */
+#define RAMSES_FIRST_PUFF		 6	 /* the first puff in state->particles */
+/* the first rock puff in state->particles */
+#define RAMSES_FIRST_ROCK_PUFF	 30
+#define RAMSES_SPARKS			 512 /* sparks of the strike */
+/* The statue's own sprites, its fist's two after them, and the rocks' after
+   those. */
 #define RAMSES_STATUE_SPRITES	 7
 #define RAMSES_FIST_SPRITE		 RAMSES_STATUE_SPRITES
 #define RAMSES_FIRST_ROCK_SPRITE (RAMSES_FIST_SPRITE + 2)
-/* A puff's life: four pictures, six frames each; a spent one keeps its */
-/* variant past it. */
-#define RAMSES_PUFF_FRAMES 24
-#define RAMSES_PUFFS	   56 /* puffs drifted and drawn */
-/* The fist's three slams, the first on the frame its circling ends, each */
-/* RAMSES_SLAM_INTERVAL frames after the last. */
-#define RAMSES_SLAMS		 3
-#define RAMSES_FIRST_SLAM	 91
-#define RAMSES_SLAM_INTERVAL 40
+/* A puff's life: four pictures, six frames each; a spent one keeps its variant
+   past it. */
+#define RAMSES_PUFF_FRAMES		 24
+#define RAMSES_PUFFS			 56 /* puffs drifted and drawn */
+/* The fist's three slams, the first on the frame its circling ends, each
+   RAMSES_SLAM_INTERVAL frames after the last. */
+#define RAMSES_SLAMS			 3
+#define RAMSES_FIRST_SLAM		 91
+#define RAMSES_SLAM_INTERVAL	 40
 
 extern const SPR_SCALE Ramses_UnitScale; /* one to one */
 
 /* In a desert the giant statue of Ramses pounds the ground with its fist while
- */
-/* rocks rain down, then launches the fist at the targets, which strikes them */
-/* in a burst of sparks. */
-/* */
-/* Abilities: Ramses. */
-void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
-	SPR_PLACEMENT position;
-	DRAW_RECTANGLE draw[2];
-	SPR_SCALE scale;
-	void *canvas;
+   rocks rain down, then launches the fist at the targets, which strikes them in
+   a burst of sparks.
+
+   Abilities: Ramses. */
+void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
+{
+	SPR_PLACEMENT		 position;
+	DRAW_RECTANGLE		 draw[2];
+	SPR_SCALE			 scale;
+	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	s32 frame;
-	u8 *sheet;
-	POINT2_D base;
-	POINT2_D fist;
-	s32 i;
-	s32 k;
+	Sint32				 frame;
+	Uint8				*sheet;
+	POINT2_D			 base;
+	POINT2_D			 fist;
+	Sint32				 i;
+	Sint32				 k;
 
 	canvas = Ram_HeapSlots->battleCanvas;
 	state = Ram_HeapSlots->battleEff;
@@ -54,7 +51,7 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 	PLTT_BACKDROP = 0;
 	BG_PLTT_COLOR(0, 1) = 0;
 	state->transferMode = CANVAS_COPY;
-	sySetEvent(btEffectTransferCanvas, TASK_PASS_VBLANK);
+	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	btEffectWipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
 	btEffectShowLivingTargets(state->args);
 	/* The statue, its fist and wrist, then six rocks. */
@@ -71,11 +68,11 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 	}
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	draw[0] = Ram_HeapSlots->ramCode;
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
-						BLITTER_ADDITIVE);
+	EFFECT_LOAD_BLITTER(
+		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	draw[1] = Ram_HeapSlots->ramCodePaired;
 	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
-				WININ_WIN1_BG2 | WININ_WIN1_CLR;
+		WININ_WIN1_BG2 | WININ_WIN1_CLR;
 	REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 	REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
 	sySynch(1);
@@ -92,7 +89,7 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 	for(i = 0; i != RAMSES_ROCKS; i++) {
 		PARTICLE *rock = &state->particles[i];
 
-		rock->x = INTtoFIXED(syRandom() & 127);
+		rock->x = toFIXED(syRandom() & 127);
 		rock->y = i * -toFIXED(16);
 		rock->velX = 0;
 		rock->velY = 0;
@@ -105,7 +102,7 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 	state->fadeStep = 0;
 
 	for(frame = 0;
-		frame != RAMSES_FRAMES && !(InputWork.repeat & (KEY_A | KEY_B));
+		frame != RAMSES_FRAMES && !(PerWork.repeat & (KEY_A | KEY_B));
 		frame++) {
 		if(frame == 94)
 			sySndPlayStub(SE_SWITCH_MECHANISM);
@@ -124,11 +121,10 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 		position.height = 0;
 		for(i = 0; i != RAMSES_STATUE_SPRITES; i++) {
 			position.x =
-				INTtoFIXED(Ramses_StatueColumns[i]) + base.x - toFIXED(32);
-			position.y =
-				INTtoFIXED(Ramses_StatueRows[i]) + base.y - toFIXED(32);
-			btRenderApplyProjectedPlacementStub(state->sprs[i], &position,
-												&scale.x, 0);
+				toFIXED(Ramses_StatueColumns[i]) + base.x - toFIXED(32);
+			position.y = toFIXED(Ramses_StatueRows[i]) + base.y - toFIXED(32);
+			fdRenderApplyProjectedPlacementStub(
+				state->sprs[i], &position, &scale.x, 0);
 		}
 		/* The fist circles. */
 		if(frame < RAMSES_FIRST_SLAM) {
@@ -137,7 +133,7 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 		}
 		/* Then it slams down three times, throwing up dust. */
 		if(frame <= 196) {
-			s32 start;
+			Sint32 start;
 
 			for(i = 0, start = RAMSES_FIRST_SLAM; i != RAMSES_SLAMS;
 				start += RAMSES_SLAM_INTERVAL, i++) {
@@ -165,16 +161,15 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 		if(frame >= 252 && frame <= 275)
 			fist.x -= INTtoFIXED(frame - 250);
 		/* The fist's two sprites stand deep below the ground and as far up,
-		 * which */
-		/* cancel on the screen but put them in front. */
+		   which cancel on the screen but put them in front. */
 		if(frame <= 259) {
 			position.x = fist.x;
 			position.height = -toFIXED(256);
 			position.y = fist.y - toFIXED(256);
-			btRenderApplyProjectedPlacementStub(state->sprs[RAMSES_FIST_SPRITE],
-												&position, &scale.x, 0);
+			fdRenderApplyProjectedPlacementStub(
+				state->sprs[RAMSES_FIST_SPRITE], &position, &scale.x, 0);
 			position.x = fist.x + toFIXED(32);
-			btRenderApplyProjectedPlacementStub(
+			fdRenderApplyProjectedPlacementStub(
 				state->sprs[RAMSES_FIST_SPRITE + 1], &position, &scale.x, 0);
 		}
 		position.height = 0;
@@ -185,7 +180,7 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 			if(rock->variant != 2) {
 				position.x = rock->x;
 				position.y = rock->y;
-				btRenderApplyProjectedPlacementStub(
+				fdRenderApplyProjectedPlacementStub(
 					state->sprs[RAMSES_FIRST_ROCK_SPRITE + i], &position,
 					&scale.x, 0);
 				rock->x += rock->velX;
@@ -199,7 +194,7 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 						for(k = 0; k != 2; k++) {
 							PARTICLE *puff =
 								&state->particles[RAMSES_FIRST_ROCK_PUFF +
-												  i * 2 + k];
+									i * 2 + k];
 
 							puff->x = rock->x / 2;
 							puff->y = rock->y - toFIXED(32);
@@ -207,8 +202,7 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 							puff->velY = ((syRandom() & 255) - 127) << 10;
 							puff->variant = syRandom() & 15;
 						}
-					}
-					else if(frame <= 199) {
+					} else if(frame <= 199) {
 						rock->y = 0;
 						rock->velY = 0;
 						rock->variant = 0;
@@ -222,15 +216,14 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 
 			if(puff->variant >= 0) {
 				if(puff->variant >= 0 && puff->variant < RAMSES_PUFF_FRAMES) {
-					s32 picture = puff->variant / 6 + 3;
+					Sint32 picture = puff->variant / 6 + 3;
 
 					draw[0](canvas, state->sheet + Ramses_PuffPictures[picture],
-							FIXED_INTEGER_PART(puff->x) -
-								Ramses_PuffSizes[picture] / 2,
-							FIXED_INTEGER_PART(puff->y) -
-								Ramses_PuffSizes[picture] / 2,
-							Ramses_PuffSizes[picture],
-							Ramses_PuffSizes[picture]);
+						FIXED_INTEGER_PART(puff->x) -
+							Ramses_PuffSizes[picture] / 2,
+						FIXED_INTEGER_PART(puff->y) -
+							Ramses_PuffSizes[picture] / 2,
+						Ramses_PuffSizes[picture], Ramses_PuffSizes[picture]);
 				}
 				btParticleAdvanceWithGravity2D(puff, 60, -toFIXED(1) / 4);
 				puff->variant++;
@@ -240,20 +233,19 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 			/* The strike: every target recoils and flashes white. */
 			EFFECT_FOR_EACH_TARGET(i, args) {
 				btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_HURL);
-				btEffectTintBattler(args->tgts[i], SPRITE_COLOR_WHITE,
-									TINT_KEEP, i, 8);
+				btEffectTintBattler(
+					args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 			}
 			state->shakeFrm = 8;
 		}
 		/* DEAD: the strike frame tested a second time; the ROM keeps the second
-		 */
-		/* compare. */
+		   compare. */
 		if(frame == RAMSES_STRIKE_FRAME) {
 			/* Sparks fly from the strike. */
 			for(i = 0; i != RAMSES_SPARKS; i++) {
 				PARTICLE *spark = &PARTICLES[i];
-				s32 speed;
-				s32 angle;
+				Sint32	  speed;
+				Sint32	  angle;
 
 				speed = (syRandom() & 0x3ff) + 32;
 				angle = syRandom() & TRIG_ANGLE_MASK;
@@ -269,12 +261,11 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args) {
 			PARTICLE *spark = &PARTICLES[i];
 
 			if(spark->variant >= 0) {
-				s32 size = (spark->variant >> 3) + 1;
+				Sint32 size = (spark->variant >> 3) + 1;
 
 				draw[i & 1](canvas, sheet + BattleEffect_MotePictures[size - 1],
-							FIXED_INTEGER_PART(spark->x) - size / 2,
-							FIXED_INTEGER_PART(spark->y) - size, size,
-							size * 2);
+					FIXED_INTEGER_PART(spark->x) - size / 2,
+					FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
 				btParticleAdvanceWithGravity2D(spark, 62, toFIXED(1) / 16);
 				spark->variant--;
 			}

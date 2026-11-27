@@ -8,7 +8,7 @@ are code a conversation calls and waits for, like a menu.
 ![Isaac talks to Bilibin's item shopkeeper across the counter. Watch the coins window: he buys one Herb for 10 coins, gives it to himself, and `Your Coins` drops from 500 to 490 before the shopkeeper thanks him.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
 A visit starts as a talk. The shopkeeper's
-[event](../../../../docs/tbs/glossary.md#event) checks that Isaac is facing him across the
+[script](../../../../docs/tbs/glossary.md#script) checks that Isaac is facing him across the
 counter, calls the shop, and waits until it returns. Talk to him from the
 side and you get gossip.
 

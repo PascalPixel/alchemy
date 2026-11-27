@@ -1,6 +1,7 @@
 /* Draws (`show` 1) or stops drawing `count` actors, from `first` on. */
-void scActorsSetDrawn(s32 show, s32 first, u32 count) {
-	u32 i;
+void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 count)
+{
+	Uint32 i;
 
 	for(i = 0; i < count; i++) {
 		ACTOR *actor = fdActorGetById(first + i);

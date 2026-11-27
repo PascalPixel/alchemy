@@ -54,14 +54,14 @@ Stubs_Window:
 	unnamed_stub mnSetupSelectionBothSides
 	unnamed_stub mnSelectionMenuRun
 	unnamed_stub mnSelectionMenuRunWithSounds
-	unnamed_stub mnArrowNoOpCallbackBank
-	unnamed_stub mnArrowNoOpCallbackA
+	unnamed_stub mnArrowNoOperationCallbackBank
+	unnamed_stub mnArrowNoOperationCallbackA
 	unnamed_stub mnSelectionMenuBuildEntries
-	unnamed_stub mnSelectionMenuReservedNoOp
-	stub btCollectPartyCommandsStub, mnBattleCollectPartyCommands
+	unnamed_stub mnSelectionMenuReservedNoOperation
+	stub mnBattleCollectPartyCommandsStub, mnBattleCollectPartyCommands
 	stub mnBattleMessageShowAndWaitStub, mnBattleMessageShowAndWait
 	stub mnBattleMessageOpenStub, mnBattleMessageOpen
-	unnamed_stub mnArrowNoOpCallbackD
+	unnamed_stub mnArrowNoOperationCallbackD
 	stub mnPortraitGetForSpeakerStub, mnPortraitGetForSpeaker
 	stub mnFieldMenuRunStub, mnFieldMenuRun
 	stub mnFileListSelectActionStub, mnFileListSelectAction
@@ -78,7 +78,7 @@ Stubs_Window:
 	unnamed_stub mnItemRemoveFromInventory
 	stub mnIconDrawItemStub, mnIconDrawItem
 	stub mnTextDrawWideStringAtOffsetStub, mnTextDrawWideStringAtOffset
-	unnamed_stub mnSettingsMenuSelectionNoOp
+	unnamed_stub mnSettingsMenuSelectionNoOperation
 	stub mnScanlineWindowFillSpansStub, mnScanlineWindowFillSpans
 	stub mnWindowSprRedrawSavedRectStub, mnWindowSprRedrawSavedRect
 	stub mnWindowSprClearListStub, mnWindowSprClearList
@@ -95,13 +95,13 @@ Stubs_Window:
 	stub mnWindowSprCreateLoadedStub, mnWindowSprCreateLoaded
 	unnamed_stub mnWindowSprCreateFromTable
 	unnamed_stub mnSaveWriteCurrentFile
-	stub sySaveToChosenFileStub, mnSaveToChosenFile
-	stub sySaveChooseAndLoadFileStub, mnSaveChooseAndLoadFile
-	stub sySaveCopyFileStub, mnSaveCopyFile
-	stub sySaveEraseSelectedFileStub, mnSaveEraseSelectedFile
-	stub sySaveWriteLinkTalliesStub, mnSaveWriteLinkTallies
+	stub mnSaveToChosenFileStub, mnSaveToChosenFile
+	stub mnSaveChooseAndLoadFileStub, mnSaveChooseAndLoadFile
+	stub mnSaveCopyFileStub, mnSaveCopyFile
+	stub mnSaveEraseSelectedFileStub, mnSaveEraseSelectedFile
+	stub mnSaveWriteLinkTalliesStub, mnSaveWriteLinkTallies
 	unnamed_stub mnSaveWriteFile
-	stub sySaveScanFileSummariesStub, mnSaveScanFileSummaries
+	stub mnSaveScanFileSummariesStub, mnSaveScanFileSummaries
 	stub mnNameEntryEditMemberNameStub, mnNameEntryEditMemberName
 	unnamed_stub mnNameEntryLoadPointingHandTiles
 	unnamed_stub mnNameEntryLoadCaretTiles
@@ -109,7 +109,7 @@ Stubs_Window:
 	stub mnDebugBrowserIconsStub, mnDebugBrowserIcons
 	stub mnDebugBrowserPortraitsStub, mnDebugBrowserPortraits
 	unnamed_stub mnItemReturnTrue
-	stub gmDjinnShowJoinedMessageStub, mnDjinnShowJoinedMessage
+	stub mnDjinnShowJoinedMessageStub, mnDjinnShowJoinedMessage
 	stub mnWindowColApplyStub, mnWindowColApply
 	unnamed_stub mnSettingsMenuRun
 	stub mnPauseMenuRunStub, mnPauseMenuRun
@@ -125,14 +125,14 @@ Stubs_Window:
 	stub mnTextMeasureMessageStub, mnTextMeasureMessage
 	stub mnWindowHighlightRectStub, mnWindowHighlightRect
 	stub mnAbilityBuildIconTilesStub, mnAbilityBuildIconTiles
-	stub mnGraphicsExpandVramTilesByColTableStub, mnGraphicsExpandVramTilesByColTable
+	stub mnGraphicsExpandVRAMTilesByColTableStub, mnGraphicsExpandVRAMTilesByColTable
 	stub mnTextUseExtraTilesStub, mnTextUseExtraTiles
 	stub mnAnimateSelectionToEntryStub, mnAnimateSelectionToEntry
 	stub mnWindowSprGetPointerTilesStub, mnWindowSprGetPointerTiles
 	stub mnMessageOpenDecodedStub, mnMessageOpenDecoded
-	stub sySaveCountFilesExcludingSentStub, mnSaveCountFilesExcludingSent
+	stub mnSaveCountFilesExcludingSentStub, mnSaveCountFilesExcludingSent
 	stub mnWindowDrawBorderStub, mnWindowDrawBorder
 	stub mnWindowEraseBorderRectStub, mnWindowEraseBorderRect
 	stub mnPageArrowsDrawStub, mnPageArrowsDraw
-	stub gmPartyShowJoinedMessageStub, mnPartyShowJoinedMessage
-	stub gmPartyShowPairJoinedMessageStub, mnPartyShowPairJoinedMessage
+	stub mnPartyShowJoinedMessageStub, mnPartyShowJoinedMessage
+	stub mnPartyShowPairJoinedMessageStub, mnPartyShowPairJoinedMessage

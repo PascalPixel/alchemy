@@ -1,34 +1,33 @@
 #ifndef ALCHEMY_BATTLE_EVENT_H
 #define ALCHEMY_BATTLE_EVENT_H
 
-/* @file */
-/* The battle event queue: the names, numbers, messages, hits and defeats an */
-/* action queues for its playback to show in order. */
+/* The battle event queue: the names, numbers, messages, hits and defeats an
+   action queues for its playback to show in order. */
 
 #include "edition.h"
 #include "static_assert.h"
 
-/* The most events a playback queues (BATTLE_PLAYBACK_STATE's opcodes and */
-/* operands). */
+/* The most events a playback queues (BATTLE_PLAYBACK_STATE's opcodes and
+   operands). */
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
-/* BATTLE_PLAYBACK_STATE.phase: how far btPlaybackRun has got through the */
-/* plan's targets. */
+/* BATTLE_PLAYBACK_STATE.phase: how far btPlaybackRun has got through the plan's
+   targets. */
 typedef enum BATTLE_PLAYBACK_PHASE {
 	BATTLE_PLAYBACK_PHASE_IDLE = 0, /* paused until the effect resumes it */
-	BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET =
-		1,								/* resolves the next target's events */
+	/* resolves the next target's events */
+	BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET = 1,
 	BATTLE_PLAYBACK_PHASE_DISPATCH = 2, /* plays the queued events in order */
 	BATTLE_PLAYBACK_PHASE_READY = 4		/* every target has been played */
 } BATTLE_PLAYBACK_PHASE;
 
-/* The battle event queue: up to 64 events, each an opcode (enum */
-/* BATTLE_PLAYBACK_COMMAND) and one operand, in the order they play. */
+/* The battle event queue: up to 64 events, each an opcode (enum
+   BATTLE_PLAYBACK_COMMAND) and one operand, in the order they play. */
 typedef struct BATTLE_PLAYBACK_QUEUE {
-	u8 opcodes[BATTLE_PLAYBACK_CAPACITY];
-	u32 operands[BATTLE_PLAYBACK_CAPACITY];
-	s32 tgtIdx; /* the plan's next target to resolve */
-	s32 cnt;	/* events queued */
+	Uint8  opcodes[BATTLE_PLAYBACK_CAPACITY];
+	Uint32 operands[BATTLE_PLAYBACK_CAPACITY];
+	Sint32 tgtIdx; /* the plan's next target to resolve */
+	Sint32 cnt;	   /* events queued */
 } BATTLE_PLAYBACK_QUEUE;
 
 STATIC_ASSERT(sizeof(BATTLE_PLAYBACK_QUEUE) == 328);
@@ -36,10 +35,10 @@ STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, operands) == 64);
 STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, tgtIdx) == 320);
 STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, cnt) == 324);
 
-/* The battle events btPlaybackPush queues, each with one operand, for */
-/* btPlaybackRun (or btPlaybackRunAll) to play in order. The */
-/* names, numbers and messages build what the player reads: the arguments */
-/* first, then the message that shows them. */
+/* The battle events btPlaybackPush queues, each with one operand, for
+   btPlaybackRun (or btPlaybackRunAll) to play in order. The names, numbers and
+   messages build what the player reads: the arguments first, then the message
+   that shows them. */
 typedef enum BATTLE_PLAYBACK_COMMAND {
 	PLAYBACK_UNIT_NAME = 0,		  /* a unit's name for the next message */
 	PLAYBACK_NUMBER = 1,		  /* a number for the next message */
@@ -59,12 +58,13 @@ typedef enum BATTLE_PLAYBACK_COMMAND {
 	PLAYBACK_BLOW_AWAY = 15 /* the unit leaves the lists, as one that flees */
 } BATTLE_PLAYBACK_COMMAND;
 
-s32 btUnitRemoveEnemy(s32 unitId);
+Sint32 btUnitRemoveEnemy(Sint32 unitId);
 
-void btPlaybackPush(u32 opcode, u32 operand);
+void btPlaybackPush(Uint32 opcode, Uint32 operand);
 
 /* Queues a message that waits for the player. */
-#define PUSH_MESSAGE(message) btPlaybackPush(PLAYBACK_MESSAGE, (u32)(message))
-u32 btPlaybackRunAll(void);
+#define PUSH_MESSAGE(message) \
+	btPlaybackPush(PLAYBACK_MESSAGE, (Uint32)(message))
+Uint32 btPlaybackRunAll(void);
 
 #endif

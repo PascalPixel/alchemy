@@ -1,5 +1,5 @@
 block	file	pad	edition
-cell_tiles	empty_map/cell_tiles.delta0.lz	4
+metatile_tiles	empty_map/metatile_tiles.delta0.lz	4
 shapes	anemos_inner_sanctum_guardian/shapes.table.lz	4
 grid	map.grid.lz	4
 shape_grid	anemos_inner_sanctum_guardian/shape_grid.plane.lz	4

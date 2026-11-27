@@ -1,5 +1,6 @@
 /* Whether vent index is blowing now. */
-s32 scVentIsBlowing(s32 index) {
+Sint32 scVentIsBlowing(Sint32 index)
+{
 	VENT_WORK *state;
 
 	state = VENT_STATE;

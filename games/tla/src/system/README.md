@@ -1,7 +1,7 @@
 # System library code
 
 This folder is the base the rest of the game runs on: start-up, the main
-routine, the frame, tasks, the heap and the save.
+routine, the frame, events, the heap and the save.
 [The system library](../../../../docs/tla/system.md) gives the four big ideas. This page goes one step
 closer, so you know what each part is for before you open it.
 
@@ -15,8 +15,8 @@ the main routine, which never returns. It is `syInit`.
 ## The main routine
 
 `gmMainRoutineRun` goes round three steps for as long as the console is on:
-clear away the last sequence, call the next one as a function, and when it
-returns work out what follows. One trip is a whole sequence, not a frame.
+clear away the last mode, call the next one as a function, and when it
+returns work out what follows. One trip is a whole mode, not a frame.
 The loop that goes round once a frame is
 [inside `sySynch()`](#the-frame-loop).
 
@@ -25,28 +25,28 @@ Venus Lighthouse entrance, the scene after the Title, Mt. Aleph's summit,
 and the Title by another way in. Nothing in the finished game asks for any
 of them.
 
-### Clearing away the last sequence
+### Clearing away the last mode
 
-Before every sequence the task list is emptied, the whole heap is taken
+Before every mode the event list is emptied, the whole heap is taken
 back, looping sounds are cut off and any line-by-line screen effect is
-switched off. This is what makes each sequence start cold. Only what lies
+switched off. This is what makes each mode start cold. Only what lies
 outside the heap crosses from one to the next: the main routine's state, the
 game flags, the characters' units and the actor snapshot, each a fixed
 block of memory (`MainRoutineStateWork`, `CharacterUnits` and
 `SnapshotObjects` are declared in `ewram.s`).
 
-A scene's overlay is loaded here too, just before the field sequence is
+A scene's overlay is loaded here too, just before the field mode is
 called. A battle and the three games of chance load none.
 
-### Running another sequence
+### Running another mode
 
 A scene ends with an exit, which the main routine turns into a destination
 through the scene's exit table. Anything else ends with a result, and
-`scReturnFromSequence` picks the destination from it: back where the
-party stood, to the restart point after a defeat, or wherever an event
+`gmReturnFromMode` picks the destination from it: back where the
+party stood, to the restart point after a defeat, or wherever a script
 named beforehand.
 
-Besides the field there are four sequences: the battle, and the three games
+Besides the field there are four modes: the battle, and the three games
 of chance, Lucky Dice, Lucky Wheels and Super Lucky Dice. The three games
 put background palettes 14 and 15 aside while they run and back after.
 
@@ -81,7 +81,7 @@ flowchart LR
 
 One trip, in order:
 
-1. Every task of the frame pass runs, highest rank first.
+1. Every event of the frame pass runs, highest rank first.
 2. The sprites that were asked for are written into one list
    ([The frame's sprites](#the-frames-sprites)).
 3. The frame is marked finished.
@@ -91,13 +91,13 @@ One trip, in order:
 
 The caller's own work is part of the frame as well. What it did between its
 last `sySynch()` and this one came before step 1, and is shown with what the
-tasks do. So a frame's time is the caller's work and the tasks' together.
+events do. So a frame's time is the caller's work and the events' together.
 
 ### What VBlank does
 
 The VBlank handler, `syVBlankHandler`, does two kinds of work. If the
 frame was marked finished, it copies the frame to the screen. Whether or
-not it was, it runs the tasks of its own pass, reads the buttons and
+not it was, it runs the events of its own pass, reads the buttons and
 prepares the next stretch of sound.
 
 That split is the game's [slowdown](../../../../docs/tla/glossary.md#slowdown). A frame
@@ -115,54 +115,54 @@ three minutes without a button. L, R and Select wake it again.
 ### Waiting from anywhere
 
 Any function may call `sySynch()`, however deep in its own calls it is, but
-for a [task](../../../../docs/tla/glossary.md#task) and the VBlank handler: a task is
+for an [event](../../../../docs/tla/glossary.md#event) and the VBlank handler: an event is
 called from inside `sySynch()` and must return for the frame to end. Code that
-a task might reach checks first (`TasksRunning`).
+an event might reach checks first (`EventsRunning`).
 
 There is one line of execution throughout: `sySynch()` starts no second one.
-The Broken Seal's `sySynch()` moves the stack before it runs the tasks. The
-Lost Age's does not: its tasks run on the caller's stack.
+The Broken Seal's `sySynch()` moves the stack before it runs the events. The
+Lost Age's does not: its events run on the caller's stack.
 
-## The task runner
+## The event runner
 
-A [task](../../../../docs/tla/glossary.md#task) is a function put on a list once and
+An [event](../../../../docs/tla/glossary.md#event) is a function put on a list once and
 called every frame until it is taken off. The list holds 24, four more
-than The Broken Seal's. Each task has a rank, which the code calls its
-`pri`, and higher ranks run first. That is how one task gets to see
+than The Broken Seal's. Each event has a rank, which the code calls its
+`pri`, and higher ranks run first. That is how one event gets to see
 another's finished work in the same frame.
 
-There are two passes. Most tasks run once a frame from the frame loop. A
+There are two passes. Most events run once a frame from the frame loop. A
 few run once a VBlank from the handler: the ones that copy something to the
 screen. When a frame runs long, those few run more than once in it.
-[The field's tasks](../field/README.md#the-fields-tasks) lists the ones a
+[The field's events](../field/README.md#the-fields-events) lists the ones a
 town keeps on the list.
 
-### A task's life
+### An event's life
 
 `sySetEvent` puts a function on the list with a rank, and sorts the list. If
 the function is already there it only gets the new rank, so nothing is on
 the list twice. `syCloseEvent` takes it off.
 
-A task can also be suspended and resumed: it stays on the list and is
-passed over. Opening the field menu suspends every task whose function is
+An event can also be suspended and resumed: it stays on the list and is
+passed over. Opening the field menu suspends every event whose function is
 in the overlay, so the scene holds still behind the menu, and a scene can
-flag one of its tasks to keep running through that.
+flag one of its events to keep running through that.
 
-The main routine empties the list before every sequence, and the field
-sequence empties it again as it sets a scene up. So each sequence adds what
+The main routine empties the list before every mode, and the field
+mode empties it again as it sets a scene up. So each mode adds what
 it needs when it starts, and a scene adds its own on top.
 
-An entry of the list is the function, the rank and that one flag. A task
+An entry of the list is the function, the rank and that one flag. An event
 gets no arguments and no memory of its own, so what it has to remember is
-in its owner's [state](../../../../docs/tla/glossary.md#state). No task adds a task, and no
-task calls `sySynch()` ([Who may wait](../../../../docs/tla/system.md#who-may-wait)).
+in its owner's [state](../../../../docs/tla/glossary.md#state). No event adds an event, and no
+event calls `sySynch()` ([Who may wait](../../../../docs/tla/system.md#who-may-wait)).
 
 ## The frame's sprites
 
 The console draws sprites in the order of one list, and has no idea of
 "in front". So the game rebuilds that list from scratch every frame.
 Whatever wants a sprite shown drops it into one of 256 depth slots
-(`syOamAddSprAtDepth`), and the list is written from the highest slot
+(`syOAMAddSprAtDepth`), and the list is written from the highest slot
 down.
 
 Because the slots are emptied every frame, a sprite shows only while
@@ -170,14 +170,14 @@ something keeps asking for it, so nothing ever has to take one down.
 
 Screen settings follow the same rule as sprites. A change to a hardware
 register is queued, and the VBlank handler carries the queue out with the
-frame it belongs to (`syIoWriteQueueFlushPending`).
+frame it belongs to (`syIOWriteQueueFlushPending`).
 
 ## The heap
 
 The heap hands out memory like a stack of plates: each block goes on top of
 the last, and giving one back gives back everything above it. That makes
 it nearly free, and it means blocks go back in reverse order. The main
-routine empties the lot between sequences.
+routine empties the lot between modes.
 
 A block that other code has to find again is kept in a numbered
 [heap slot](../../../../docs/tla/glossary.md#heap-slot). The game calls such a block a
@@ -205,7 +205,7 @@ carries a label and a checksum, so a half-written one is recognised and
 ignored.
 
 A part holds the game flags, the main routine's state, every character's
-stats and where the scene's actors stand. It is `sySaveWritePart` and its
+stats and where the scene's actors stand. It is `syBupWritePart` and its
 neighbours, and the Save command that uses them is in
 [Windows](../window/README.md#saving).
 
@@ -294,10 +294,10 @@ keeps the same functions in the game logic's module.
 | `syGameFlagDecrementByte` | takes 1 from it, stopping at 0; nothing calls it | none |
 | `syGameFlagGetNibble` | the four bits a flag is in; nothing calls it | none |
 | `syGameFlagSetNibble` | sets those four bits; nothing calls it | none |
-| `syTaskFind` | where in the table the task running a function is; nothing calls it | none |
-| `syVramCacheCountFreeBlocks` | how many blocks of the sprite VRAM cache are free | none |
-| `syOamAddSprAtDepthClamped` | puts a sprite in a depth slot, kept behind the windows' sprites | none; it takes the place of `syOamAddSprAtDepth` in the table |
-| `syResourceReservedNoOp` | does nothing with the resource number it is given | none; it takes the place of `syDummyNoOpHook` in the table |
+| `syFindEvent` | where in the table the event running a function is; nothing calls it | none |
+| `syVRAMCacheCountFreeBlocks` | how many blocks of the sprite VRAM cache are free | none |
+| `syOAMAddSprAtDepthClamped` | puts a sprite in a depth slot, kept behind the windows' sprites | none; it takes the place of `syOAMAddSprAtDepth` in the table |
+| `syResourceReservedNoOperation` | does nothing with the resource number it is given | none; it takes the place of `syDummyNoOperationHook` in the table |
 | `syMatrixSetRotateY` | makes the current matrix a turn about Y, its translation gone | none; `slRotY` multiplies the turn into the current matrix |
 | `syMatrixSetTranslation` | sets the current matrix's translation and keeps its turn | none; only the battle engine's set-up calls it |
 | `syTranslate` | moves the current matrix by three numbers | `slTranslate` |
@@ -306,7 +306,7 @@ keeps the same functions in the game logic's module.
 
 A flag's number wraps at 4,096, so a number past the last flag reaches a flag
 below it rather than other memory. The Broken Seal's `syRandom16Below`,
-`syDMAWait` and `syDma0Stop` have no counterpart here.
+`syDMAWait` and `DMA0_STOP` have no counterpart here.
 
 ## Where the rest is
 
@@ -386,7 +386,7 @@ The code that is always loaded, the
 [modules](../../../../docs/tla/glossary.md#module), one for each large part of the game: the
 battle, the sound, the windows, the menus, the shops, even Lucky Dice,
 Lucky Wheels and Super Lucky Dice, one module each. Each module starts at a
-fixed address. For four of them, the game, field sequence, menu and shop
+fixed address. For four of them, the game, field mode, menu and shop
 modules, that address depends on the edition.
 
 Code inside a module moves whenever that module is rebuilt. So one module
@@ -413,7 +413,7 @@ modules call its functions directly. Only the overlays go through its table.
 
 - `rom_header.s` is the header, and `resource_directory.s` the 2,048
   rows.
-- [`sdk/flash`](../sdk/flash) is the SDK's flash library, the flash chip's
-  functions.
+- [`games/common/sdk/flash`](../../../common/sdk/flash) is the SDK's flash
+  library, the flash chip's functions, one copy both games build.
 - Each module's table is the `stubs.s` of its own folder, and the system
   library's own is `stubs.s` here.

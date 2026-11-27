@@ -1,91 +1,88 @@
-/* @file */
-/* The World Map's placed actors, which both the World Map's and the staff */
-/* credits' overlays keep a copy of, included as text: the exit chosen by the */
-/* side the leader approaches a place from, the task that shows the places' */
-/* actors coming into view and releases those leaving it, and the sparks and */
-/* particles about the ship. */
+/* The World Map's placed actors, which both the World Map's and the staff
+   credits' overlays keep a copy of, included as text: the exit chosen by the
+   side the leader approaches a place from, the event that shows the places'
+   actors coming into view and releases those leaving it, and the sparks and
+   particles about the ship. */
 
 #include "types.h"
 #include "system.h"
 #include "game/main_routine_state.h"
 #include "field/sprite.h"
-#include "field/event_inline.h"
+#include "field/script_inline.h"
 #include "field/actor.h"
 #include "field/world_map.h"
 #include "field/field_sprite.h"
 #include "macros.h"
 #include "field/actor_view.h"
-#include "field/field_sequence_event.h"
+#include "field/field_mode_script.h"
 #include "field/map_grid.h"
 #include "field/flag_call.h"
-#include "field/field_sequence.h"
+#include "field/field_mode.h"
 
 extern ACTOR *WorldMap_PlacedActors[];
 
-/* Unused: chooses a passage exit from the leader's east-west approach: */
-/* exitBefore while the leader is west of the place's actor, else exitAfter. */
-UNUSED void scWorldMapSelectExitByX(s32 trigger, s32 exitBefore,
-									s32 exitAfter) {
+/* Unused: chooses a passage exit from the leader's east-west approach:
+   exitBefore while the leader is west of the place's actor, else exitAfter. */
+UNUSED void scWorldMapSelectExitByX(
+	Sint32 cue, Sint32 exitBefore, Sint32 exitAfter)
+{
 	FIELD_STATE *state;
-	ACTOR *area;
-	ACTOR *leader;
+	ACTOR		*area;
+	ACTOR		*leader;
 
-	area = WorldMap_PlacedActors[trigger - STEP_TRIGGER_AREA_BASE];
+	area = WorldMap_PlacedActors[cue - STEP_CUE_AREA_BASE];
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	state = Ram_HeapSlots->fieldState;
 	if(leader->x.fixed < area->x.fixed) {
 		state->exit = exitBefore;
-	}
-	else {
+	} else {
 		state->exit = exitAfter;
 	}
-	fdEventPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySnd(SE_MAP_EXIT);
 }
 
 /* Chooses a passage exit from the leader's north-south approach. */
-void scWorldMapSelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
+void scWorldMapSelectExitByZ(Sint32 cue, Sint32 exitBefore, Sint32 exitAfter)
+{
 	FIELD_STATE *state;
-	ACTOR *area;
-	ACTOR *leader;
+	ACTOR		*area;
+	ACTOR		*leader;
 
-	area = WorldMap_PlacedActors[trigger - STEP_TRIGGER_AREA_BASE];
+	area = WorldMap_PlacedActors[cue - STEP_CUE_AREA_BASE];
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	state = Ram_HeapSlots->fieldState;
 	if(leader->z.fixed < area->z.fixed) {
 		state->exit = exitBefore;
-	}
-	else {
+	} else {
 		state->exit = exitAfter;
 	}
-	fdEventPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySnd(SE_MAP_EXIT);
 }
 
-extern s32 WorldMap_PlacedActorScript[];
+extern Sint32 WorldMap_PlacedActorScript[];
 
 /* Each frame: creates the actor of each place (fdWorldMapPlacesGetTable) whose
- */
-/* flag shows it as it comes within reach of the camera, releases those that */
-/* leave it, and raises a place's step trigger when the leader touches its */
-/* actor; in Sand's form on the World Map it asks for Sand again, at no PP, */
-/* instead. */
-void scWorldMapUpdatePlacedActors(void) {
+   flag shows it as it comes within reach of the camera, releases those that
+   leave it, and raises a place's step cue when the leader touches its actor; in
+   Sand's form on the World Map it asks for Sand again, at no PP, instead. */
+void scWorldMapUpdatePlacedActors(void)
+{
 	const WORLD_MAP_PLACE *placement = fdWorldMapPlacesGetTable();
-	ACTOR *leader = fdActorGetById(fdPartyGetLeaderActor());
-	s32 leaderReach = leader->spr->scale * leader->radius;
-	u32 i;
-	FIXED left, right, top, bottom;
-	ACTOR **slot;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
-	ACTOR *actor = state->camera;
+	ACTOR				  *leader = fdActorGetById(fdPartyGetLeaderActor());
+	Sint32				   leaderReach = leader->spr->scale * leader->radius;
+	Uint32				   i;
+	FIXED				   left, right, top, bottom;
+	ACTOR				 **slot;
+	FIELD_STATE			  *state = Ram_HeapSlots->fieldState;
+	MAP_STATE			  *map = Ram_HeapSlots->mapGrid;
+	ACTOR				  *actor = state->camera;
 
-	if(map->zoom <= FIXED_ONE) {
+	if(map->zoom <= toFIXED(1)) {
 		left = actor->x.fixed - toFIXED(160);
 		right = actor->x.fixed + toFIXED(160);
 		top = actor->z.fixed - toFIXED(300);
 		bottom = actor->z.fixed + toFIXED(200);
-	}
-	else {
+	} else {
 		left = actor->x.fixed - toFIXED(240);
 		right = actor->x.fixed + toFIXED(240);
 		top = actor->z.fixed - toFIXED(450);
@@ -102,8 +99,8 @@ void scWorldMapUpdatePlacedActors(void) {
 		px = toFIXED(placement->x);
 		pz = toFIXED(placement->z);
 		if(px > left && px < right && pz > top && pz < bottom) {
-			s32 flag = placement->shownFlg;
-			s32 shown;
+			Sint32 flag = placement->shownFlg;
+			Sint32 shown;
 
 			if(flag == -1)
 				shown = 1;
@@ -124,21 +121,21 @@ void scWorldMapUpdatePlacedActors(void) {
 					actor->facing = placement->facing;
 					fdActorSelectAnimation(actor, 1);
 					sprite = actor->spr;
-					sprite->scale = syMulFX(sprite->scale, FIXED_ONE * 3 / 4);
+					sprite->scale = syMulFX(sprite->scale, toFIXED(3) / 4);
 					*slot = actor;
 				}
 				if(MainRoutineStateWork.ownerOverride == 0) {
-					s32 scale = actor->spr->scale;
-					FIXED dx = ABS(actor->x.fixed - leader->x.fixed);
+					Sint32 scale = actor->spr->scale;
+					FIXED  dx = ABS(actor->x.fixed - leader->x.fixed);
 
 					if(dx + ABS(actor->z.fixed - leader->z.fixed) <
-					   leaderReach + actor->radius * scale) {
+						leaderReach + actor->radius * scale) {
 						if(syGameFlagGet(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
 							if(MainRoutineStateWork.movementMode ==
-							   LEADER_MOVEMENT_WORLD_SAND)
+								LEADER_MOVEMENT_WORLD_SAND)
 								state->psynergy = ACT_PACKED | ABILITY_SAND;
 							else
-								state->stepTrigger = i + STEP_TRIGGER_AREA_BASE;
+								state->stepCue = i + STEP_CUE_AREA_BASE;
 						}
 					}
 				}
@@ -152,69 +149,72 @@ void scWorldMapUpdatePlacedActors(void) {
 	}
 }
 
-/* Unused: unless a menu has suspended the actors, queues the World Map's */
-/* backgrounds lightened toward white. */
-UNUSED void scWorldMapQueueBlend(void) {
+/* Unused: unless a menu has suspended the actors, queues the World Map's
+   backgrounds lightened toward white. */
+UNUSED void scWorldMapQueueBlend(void)
+{
 	if(Ram_HeapSlots->actorSystem->suspended == 0) {
-		IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
-							BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 |
-								BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_LIGHTEN |
-								BLDCNT_TGT2_ALL,
-							IO_WRITE_HALFWORD);
-		IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 12, IO_WRITE_HALFWORD);
+		IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDCNT,
+			BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+				BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+			IO_WRITE_HALFWORD);
+		IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDY, 12, IO_WRITE_HALFWORD);
 	}
 }
 
 /* Clears the places' actors and starts scWorldMapUpdatePlacedActors. */
-void scWorldMapStartPlacedActors(void) {
-	syWordsClear(WorldMap_PlacedActors,
-				 MAP_SCREEN_PLACE_COUNT * sizeof(ACTOR *));
-	syTaskAddFrame(scWorldMapUpdatePlacedActors, TASK_PASS_FRAME);
+void scWorldMapStartPlacedActors(void)
+{
+	syWordsClear(
+		WorldMap_PlacedActors, MAP_SCREEN_PLACE_COUNT * sizeof(ACTOR *));
+	sySetFrameEvent(scWorldMapUpdatePlacedActors, EVENT_PASS_FRAME);
 }
 
-/* Unused: the cell index of a point in 16.16 pixels. */
-UNUSED s32 scWorldMapGetCellIndex(FIXED x, FIXED z) {
-	return x / toFIXED(MAPGRID_CELL_PIXELS) +
-		   (z / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
+/* Unused: the metatile index of a point in 16.16 pixels. */
+UNUSED Sint32 scWorldMapGetMetatileIndex(FIXED x, FIXED z)
+{
+	return x / toFIXED(MAPGRID_METATILE_PIXELS) +
+		(z / toFIXED(MAPGRID_METATILE_PIXELS)) * MAPGRID_SIZE;
 }
 
 /* The frames a ship's spark rises for. */
 #define SPARK_RISE_FRAMES 32
 
 /* A spark's rise (WorldMap_SparkScript): rises a pixel a frame over the actor
- */
-/* it watches, growing and shrinking again over SPARK_RISE_FRAMES; returns 0 */
-/* when done. */
-s32 scWorldMapRiseFromAnchor(ACTOR *actor) {
+   it watches, growing and shrinking again over SPARK_RISE_FRAMES; returns 0
+   when done. */
+Bool scWorldMapRiseFromAnchor(ACTOR *actor)
+{
 	ACTOR *parent = (ACTOR *)actor->watchedActor;
-	s32 step = ++actor->tmr;
-	FIXED scale;
+	Sint32 step = ++actor->tmr;
+	FIXED  scale;
 
 	if(step >= SPARK_RISE_FRAMES)
-		return 0;
-	scale = syMulFX(syMathSin(step * (DEGtoANG(180) / SPARK_RISE_FRAMES)),
-					FIXED_ONE * 5 / 4);
+		return FALSE;
+	scale = syMulFX(
+		syMathSin(step * (DEGtoANG(180) / SPARK_RISE_FRAMES)), toFIXED(5) / 4);
 	actor->scaleX = scale;
 	actor->scaleY = scale;
 	actor->x.fixed = parent->x.fixed;
 	actor->y.fixed += toFIXED(1);
 	actor->z.fixed = parent->z.fixed;
-	return 1;
+	return TRUE;
 }
 
-extern s32 WorldMap_SparkScript[];
-extern u32 WorldMap_ParticleScript[];
+extern Sint32 WorldMap_SparkScript[];
+extern Uint32 WorldMap_ParticleScript[];
 
-/* Spawns a pair of rising sparks at the actor, as The Broken Seal's */
-/* MercuryLighthouse_SpawnSparkPair does at a spawn point. */
-void scWorldMapSpawnSparkPair(ACTOR *actor) {
-	ACTOR *spark;
+/* Spawns a pair of rising sparks at the actor, as The Broken Seal's
+   MercuryLighthouse_SpawnSparkPair does at a spawn point. */
+void scWorldMapSpawnSparkPair(ACTOR *actor)
+{
+	ACTOR	  *spark;
 	FIELD_SPR *sprite;
 
 	/* DEAD: a scale multiplied and dropped; the ROM keeps the call. */
-	syMathMulFX(actor->scaleX, FIXED_ONE * 3 / 2);
-	spark = scFieldActorCreate(SPRITE_GOLDEN_RINGS, actor->x.fixed,
-							   actor->y.fixed, actor->z.fixed);
+	syMathMulFX(actor->scaleX, toFIXED(3) / 2);
+	spark = scFieldActorCreate(
+		SPRITE_GOLDEN_RINGS, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	if(spark != NULL) {
 		spark->groundHeight = actor->groundHeight;
 		sprite = spark->spr;
@@ -228,8 +228,8 @@ void scWorldMapSpawnSparkPair(ACTOR *actor) {
 			sprite->pri = 1;
 		}
 	}
-	spark = scFieldActorCreate(SPRITE_GOLDEN_RINGS, actor->x.fixed,
-							   actor->y.fixed, actor->z.fixed);
+	spark = scFieldActorCreate(
+		SPRITE_GOLDEN_RINGS, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	if(spark != NULL) {
 		spark->groundHeight = actor->groundHeight;
 		sprite = spark->spr;
@@ -246,28 +246,29 @@ void scWorldMapSpawnSparkPair(ACTOR *actor) {
 }
 
 /* Spawns a particle at a random spot near the actor. */
-void scWorldMapSpawnParticle(ACTOR *actor) {
-	s32 position[3];
-	FIXED spread;
-	ACTOR *particle;
+void scWorldMapSpawnParticle(ACTOR *actor)
+{
+	Sint32	   position[3];
+	FIXED	   spread;
+	ACTOR	  *particle;
 	FIELD_SPR *sprite;
 
 	/* DEAD: a scale multiplied and dropped; the ROM keeps the call. */
-	syMulFX(actor->scaleX, FIXED_ONE * 3 / 2);
-	SET_VECTOR(position, actor->x.fixed, actor->y.fixed + toFIXED(2),
-			   actor->z.fixed);
+	syMulFX(actor->scaleX, toFIXED(3) / 2);
+	SET_VECTOR(
+		position, actor->x.fixed, actor->y.fixed + toFIXED(2), actor->z.fixed);
 	spread = syRandom();
 	syFieldVectorAddPolarOffsetFX(spread * 20, syRandom(), position);
-	particle = (scFieldActorCreate(SPRITE_GLINT, position[0], position[1],
-								   position[2]));
+	particle = (scFieldActorCreate(
+		SPRITE_GLINT, position[0], position[1], position[2]));
 	if(particle != NULL) {
 		particle->groundHeight = actor->groundHeight;
 		sprite = particle->spr;
 		fdActorStartScript(particle, WorldMap_ParticleScript);
 		fdSprStartAnimation(sprite, 2);
 		particle->gravity = toFIXED(1) / 128;
-		particle->scaleX = FIXED_ONE * 4 / 5;
-		particle->scaleY = FIXED_ONE * 4 / 5;
+		particle->scaleX = toFIXED(4) / 5;
+		particle->scaleY = toFIXED(4) / 5;
 		if(sprite != NULL)
 			sprite->flg = 0;
 	}

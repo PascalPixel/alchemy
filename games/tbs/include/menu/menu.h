@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_MENU_H
 #define ALCHEMY_MENU_H
 
-/* @file */
 /* The menus' list orders, sign strings and functions. */
 
 #include "fixed_math.h"
@@ -10,28 +9,28 @@
 #include "stubs.h"
 #include "system/globals.h"
 
-/* The Status screen highlight's width in tiles on each status row: Down, */
-/* Poison, Venom, Curse and Haunt. */
-extern u8 StatusScreen_CursorWidths[];
-extern u8 Menu_ListOrderItemsFirst[];
-extern u8 Menu_ListOrderEquippedThenItems[];
-extern u8 Menu_ListOrderEquippedThenEquipment[];
-extern u8 Menu_ListOrderEquipmentFirst[];
+/* The Status screen highlight's width in tiles on each status row: Down,
+   Poison, Venom, Curse and Haunt. */
+extern Uint8 StatusScreen_CursorWidths[];
+extern Uint8 Menu_ListOrderItemsFirst[];
+extern Uint8 Menu_ListOrderEquippedThenItems[];
+extern Uint8 Menu_ListOrderEquippedThenEquipment[];
+extern Uint8 Menu_ListOrderEquipmentFirst[];
 /* `-`, before a stat change that is not a gain (mnItemMenuDrawStat). */
-extern u8 Menu_MinusSignString;
+extern Uint8 Menu_MinusSignString;
 /* `+`, before a stat gain. */
-extern u8 Menu_PlusSignString;
-/* The field menu's command by icon position plus one, a row of 6 with the */
-/* Djinn icon and one without: 1 Psynergy, 2 Djinn, 3 Item, 4 Status */
-/* (mnFieldMenuSelectCommand). */
-extern s8 FieldMenu_CommandByPosition[];
+extern Uint8 Menu_PlusSignString;
+/* The field menu's command by icon position plus one, a row of 6 with the Djinn
+   icon and one without: 1 Psynergy, 2 Djinn, 3 Item, 4 Status
+   (mnFieldMenuSelectCommand). */
+extern Sint8 FieldMenu_CommandByPosition[];
 /* The inverse: each command's icon position plus one, in the same two rows. */
-extern s8 FieldMenu_PositionByCommand[];
-/* The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price */
-/* sprite's tiles (mnShopDrawPriceDigit). */
-extern u8 Shop_GlyphBytes[];
+extern Sint8 FieldMenu_PositionByCommand[];
+/* The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
+   sprite's tiles (mnShopDrawPriceDigit). */
+extern Uint8 Shop_GlyphBytes[];
 /* The level label of a save summary: `L`; `Nv.` in Spanish, `Niv` in French. */
-extern u8 StatusScreen_LevelLetterString[];
+extern Uint8 StatusScreen_LevelLetterString[];
 
 struct SPR;
 struct ACTOR_SYSTEM_STATE;
@@ -40,112 +39,111 @@ struct MENU_CURSOR;
 
 /* A background's horizontal and vertical scroll offsets. */
 typedef struct SCROLL_PAIR {
-	u16 x; /* pixels */
-	u16 y; /* pixels */
+	Uint16 x; /* pixels */
+	Uint16 y; /* pixels */
 } SCROLL_PAIR;
+
 /* The small down arrow, 16 by 16 (sdown): the item menu's stat drop. */
-extern u8 Menu_SmallDownArrowTiles[];
-/* The small up arrow, then the up and down arrows, 16 by 16 each; the item */
-/* menu's stat rise loads the first (mnLoadStatArrows). */
-extern u8 Menu_ArrowTiles[];
+extern Uint8 Menu_SmallDownArrowTiles[];
+/* The small up arrow, then the up and down arrows, 16 by 16 each; the item
+   menu's stat rise loads the first (mnLoadStatArrows). */
+extern Uint8 Menu_ArrowTiles[];
 /* The Djinn menu's up arrow, 16 by 16 (graphics/ui/djinn_arrow_up). */
-extern u8 Menu_DjinnArrowUpTiles[];
+extern Uint8 Menu_DjinnArrowUpTiles[];
 /* The Djinn menu's down arrow, 16 by 16 (graphics/ui/djinn_arrow_down). */
-extern u8 Menu_DjinnArrowDownTiles[];
+extern Uint8 Menu_DjinnArrowDownTiles[];
 /* The item menu's quantity picture (quantity.4bpp). */
-extern const u8 Menu_QuantityTiles[];
+extern const Uint8 Menu_QuantityTiles[];
 /* The Djinn menu's level label: `Lv`; `Nv.` in Spanish, `Niv` in French. */
 extern const char DjinnMenu_TextLevel[];
 /* `/`, between the Djinn menu's numbers. */
 extern const char DjinnMenu_TextSlash[];
 /* Heap slot 6: the actor system's state (ACTOR_SYSTEM_STATE). */
-#define ActorSystemStateWork                                                   \
+#define ActorSystemStateWork \
 	(*(struct ACTOR_SYSTEM_STATE **)&HeapSlots[HEAP_SLOT_ACTOR_SYSTEM])
 /* Heap slot 18: the selection screen while it runs. */
-#define SelectionMenuStateWork                                                 \
+#define SelectionMenuStateWork \
 	(*(struct SELECTION_MENU_STATE **)&HeapSlots[HEAP_SLOT_SELECTION_MENU])
-/* Nonzero offers Battle on the File Screen, when a file */
-/* has any of game flags 48 to 127 set. */
-extern s16 TitleBattleOptionEnabled;
+/* Nonzero offers Battle on the File Screen, when a file has any of game flags
+   48 to 127 set. */
+extern Sint16 TitleBattleOptionEnabled;
 /* The Japanese item menu's help: `L+A:`, before the arrange help. */
-extern u8 ItemMenu_ArrangeKeysString[];
-extern s32 ItemMenu_CommandColumnXTable[];
+extern Uint8  ItemMenu_ArrangeKeysString[];
+extern Sint32 ItemMenu_CommandColumnXTable[];
 /* The Japanese item menu's help: `R:`. */
-extern u8 ItemMenu_EquipmentKeyString[];
-/* One 4-bit tile (backdrop.4bpp), a down arrow: the Djinn screens draw it */
-/* between a thing and what a change makes of it (a Djinni set and on */
-/* standby, a class and the next), and the Djinn preview blinks it, drawing it
- */
-/* and a fill of the window background (TEXT_CANVAS_BACKGROUND_WORD) in turn */
-/* every four frames. */
-extern const u8 Menu_ChangeArrowTile[];
-/* The colon the debug menus' scene and flag rows draw */
-/* (window/screens_debug.c): `:`. */
-extern const u8 Menu_ColonString[];
-/* The selection screen's left arrow, 8 by 16 at 256 colours */
-/* (graphics/ui/sprite_cursors/left). */
-extern u8 Menu_CursorLeftActorTiles[];
+extern Uint8 ItemMenu_EquipmentKeyString[];
+/* One 4-bit tile (backdrop.4bpp), a down arrow: the Djinn screens draw it
+   between a thing and what a change makes of it (a Djinni set and on standby, a
+   class and the next), and the Djinn preview blinks it, drawing it and a fill
+   of the window background (TEXT_CANVAS_BACKGROUND_WORD) in turn every four
+   frames. */
+extern const Uint8 Menu_ChangeArrowTile[];
+/* The colon the debug menus' scene and flag rows draw (window/screens_debug.c):
+   `:`. */
+extern const Uint8 Menu_ColonString[];
+/* The selection screen's left arrow, 8 by 16 at 256 colours
+   (graphics/ui/sprite_cursors/left). */
+extern Uint8 Menu_CursorLeftActorTiles[];
 /* `0123456789ABCDEF`, drawn by a debug window. */
-extern const u8 Menu_HexDigitsString[];
-/* The HP label: `HP`; `KP` in German, `PV` in Spanish and French, `PS` in */
-/* Italian. */
-extern const u8 Menu_HpString[];
+extern const Uint8 Menu_HexDigitsString[];
+/* The HP label: `HP`; `KP` in German, `PV` in Spanish and French, `PS` in
+   Italian. */
+extern const Uint8 Menu_HpString[];
 /* The Status screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French. */
-extern const u8 Menu_LvString[];
-/* The four Djinn sprites, one per element from SPRITE_VENUS_DJINNI to */
-/* SPRITE_JUPITER_DJINNI, that mnFileListShowDjinnSprs shows in a row. */
-extern const s32 FileList_DjinnSpriteIds[4];
+extern const Uint8 Menu_LvString[];
+/* The four Djinn sprites, one per element from SPRITE_VENUS_DJINNI to
+   SPRITE_JUPITER_DJINNI, that mnFileListShowDjinnSprs shows in a row. */
+extern const Sint32 FileList_DjinnSpriteIds[4];
 /* `.`, the decimal point of an item's stat multiplier (`x1.2`). */
-extern u8 Menu_PointString[];
+extern Uint8 Menu_PointString[];
 /* The PP label: `PP`; `EP` in Japanese. */
-extern const u8 Menu_PpString[];
-/* The File Screen's action by icon position, a row of 6 for each layout: */
-/* 0 New Game, 1 Continue, 2 Copy, 3 Erase, 4 Battle, 5 Send. */
-extern s8 FileList_ActionByPosition[];
+extern const Uint8 Menu_PpString[];
+/* The File Screen's action by icon position, a row of 6 for each layout:
+   0 New Game, 1 Continue, 2 Copy, 3 Erase, 4 Battle, 5 Send. */
+extern Sint8 FileList_ActionByPosition[];
 /* Frames mnIconMenuAnimateTo waits at each icon on its way, by icons still to
- */
-/* go. */
-extern u8 Menu_SelectionStepDelays[];
+   go. */
+extern Uint8 Menu_SelectionStepDelays[];
 /* `L:`, the Japanese Psynergy menu's first shortcut label. */
-extern const u8 Menu_ShortcutLColonString[];
-/* `L`, the first shortcut's label beside an ability name wider than 11 */
-/* (Japanese only). */
-extern const u8 Menu_ShortcutLString[];
+extern const Uint8 Menu_ShortcutLColonString[];
+/* `L`, the first shortcut's label beside an ability name wider than 11
+   (Japanese only). */
+extern const Uint8 Menu_ShortcutLString[];
 /* `R:`, the second shortcut's label (Japanese only). */
-extern const u8 Menu_ShortcutRColonString[];
-/* `R`, the second shortcut's label beside an ability name wider than 11 */
-/* (Japanese only). */
-extern const u8 Menu_ShortcutRString[];
+extern const Uint8 Menu_ShortcutRColonString[];
+/* `R`, the second shortcut's label beside an ability name wider than 11
+   (Japanese only). */
+extern const Uint8 Menu_ShortcutRString[];
 /* `/`, between a current and a maximum. */
-extern const u8 Menu_SlashString[];
+extern const Uint8 Menu_SlashString[];
 /* `x`, before an item's stat multiplier (not in Japanese). */
-extern u8 Menu_TimesString[];
-extern s8 SettingsMenu_SleepIcons[];
-extern s8 SettingsMenu_SpeechIcons[];
-extern s8 SettingsMenu_SpeedIcons[];
+extern Uint8 Menu_TimesString[];
+extern Sint8 SettingsMenu_SleepIcons[];
+extern Sint8 SettingsMenu_SpeechIcons[];
+extern Sint8 SettingsMenu_SpeedIcons[];
 /* The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French. */
-extern u8 StatusPanel_LevelString[];
-extern u8 MenuCursor_BobX[];
-extern u8 MenuCursor_BobY[];
+extern Uint8 StatusPanel_LevelString[];
+extern Uint8 MenuCursor_BobX[];
+extern Uint8 MenuCursor_BobY[];
 /* A debug window's title: `ENERGY`. */
-extern u8 DebugMenu_EnergyTitle[];
+extern Uint8 DebugMenu_EnergyTitle[];
 /* A debug window's title: `ITEM`. */
-extern u8 DebugMenu_ItemTitle[];
+extern Uint8 DebugMenu_ItemTitle[];
 /* A debug window's label: `PAGE:`. */
-extern u8 DebugMenu_PageLabel[];
-/* `-`, between the first and last entry numbers of a debug window's page */
-/* (32 a page). */
-extern u8 DebugMenu_RangeDash[];
+extern Uint8 DebugMenu_PageLabel[];
+/* `-`, between the first and last entry numbers of a debug window's page (32 a
+   page). */
+extern Uint8 DebugMenu_RangeDash[];
 /* A debug window's title: `STATUS`. */
-extern u8 DebugMenu_StatusTitle[];
+extern Uint8 DebugMenu_StatusTitle[];
 /* The settings menu's slider colours (graphics/ui/slider_palette). */
-extern const u16 SettingsMenu_SliderPalette[];
+extern const Uint16 SettingsMenu_SliderPalette[];
 /* The settings menu's slider, 32 by 8 (slider.4bpp32x8). */
-extern const u8 SettingsMenu_SliderTiles[];
-/* The title's imports of mnTitleShowCamelotLogoStub and mnCreditsRunStub, */
-/* called with an argument the functions do not take. */
-void syImportTitleShowCamelotLogo(s32 mode);
-void syImportCreditsRun(s32 mode);
+extern const Uint8 SettingsMenu_SliderTiles[];
+/* The title's imports of mnTitleShowCamelotLogoStub and mnCreditsRunStub,
+   called with an argument the functions do not take. */
+void syImportTitleShowCamelotLogo(Sint32 mode);
+void syImportCreditsRun(Sint32 mode);
 
 struct UNIT;
 struct DJINN_LIST_TABLE;
@@ -155,35 +153,35 @@ struct PSYNERGY_ENTRY;
 struct WINDOW;
 struct WINDOW_SPR;
 
-/* The menu module's functions in the order of its stub table */
-/* (src/menu/stubs.s). */
-s32 mnItemMenuRun(void);
-s32 mnPsynergyMenuRun(void);
-s32 mnStatScrRun(void);
-s32 mnPartyMemberChooserOpen(void);
-s32 mnIconCreateHandCursor(struct WINDOW *window, s32 x, s32 y);
-void mnCreatePartyFigures(void *source, s32 originX, s32 originY, s32 spacing,
-						  s32 unused);
-void mnReleasePartyFigures(void);
-void mnIconShow(struct WINDOW_SPR *object);
-s32 mnDjinnMenuRun(void);
-void mnItemMenuDrawItemDetails(struct WINDOW *window, s32 inventoryEntry);
+/* The menu module's functions in the order of its stub table
+   (src/menu/stubs.s). */
+Sint32 mnItemMenuRun(void);
+Sint32 mnPsynergyMenuRun(void);
+Sint32 mnStatScreenRun(void);
+Sint32 mnPartyMemberChooserOpen(void);
+Sint32 mnIconCreateHandCursor(struct WINDOW *window, Sint32 x, Sint32 y);
+void   mnCreatePartyFigures(void *source, Sint32 originX, Sint32 originY,
+	  Sint32 spacing, Sint32 unused);
+void   mnReleasePartyFigures(void);
+void   mnIconShow(struct WINDOW_SPR *object);
+Sint32 mnDjinnMenuRun(void);
+void   mnItemMenuDrawItemDetails(struct WINDOW *window, Sint32 inventoryEntry);
 
-/* The item menu's sort orders (Menu_ListOrder*): one byte per group, an */
-/* item type, with LIST_ORDER_EQUIPPED for only the equipped items of that */
-/* type, ending with LIST_ORDER_END. */
+/* The item menu's sort orders (Menu_ListOrder*): one byte per group, an item
+   type, with LIST_ORDER_EQUIPPED for only the equipped items of that type,
+   ending with LIST_ORDER_END. */
 #define LIST_ORDER_TYPE_MASK 0x7f
 #define LIST_ORDER_EQUIPPED	 0x80
 #define LIST_ORDER_END		 255
 
-/* The item menu's four sort orders (mnItemMenuSort), which */
-/* L + A cycles through in this order. */
+/* The item menu's four sort orders (mnItemMenuSort), which L + A cycles through
+   in this order. */
 typedef enum LIST_SORT {
-	/* The equipped items, the items that are not equipment, then the other */
-	/* equipment (Menu_ListOrderEquippedThenItems). */
+	/* The equipped items, the items that are not equipment, then the other
+	   equipment (Menu_ListOrderEquippedThenItems). */
 	LIST_SORT_EQUIPPED_THEN_ITEMS = 0,
-	/* The equipped items, the other equipment, then the rest */
-	/* (Menu_ListOrderEquippedThenEquipment). */
+	/* The equipped items, the other equipment, then the rest
+	   (Menu_ListOrderEquippedThenEquipment). */
 	LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
 	LIST_SORT_EQUIPMENT_FIRST = 2, /* Menu_ListOrderEquipmentFirst */
 	/* The items that are not equipment first (Menu_ListOrderItemsFirst). */
@@ -191,306 +189,323 @@ typedef enum LIST_SORT {
 	LIST_SORT_COUNT = 4
 } LIST_SORT;
 
-/* What the menus share (menu_shared.c): their state, windows, status panel, */
-/* hand cursor, party figures and entry icons, the paged lists and their */
-/* highlights, and the watch for Start. */
-s32 mnResumeFieldTasks(void);
-s32 mnSuspendFieldTasks(void);
-void mnInitState(s32 unused);
-s32 mnWindowUpdateOrCreate(struct WINDOW **handle, s32 x, s32 y, s32 w, s32 h,
-						   s32 flags);
-void mnWindowCloseIfOpen(struct WINDOW **handle, s32 instant);
-void mnStatPanelDraw(struct WINDOW *unused, s32 member, s32 slot, s32 mode);
-void mnTextDrawNumRightAligned(s32 number, struct WINDOW *window, s32 x, s32 y);
+/* What the menus share (menu_shared.c): their state, windows, status panel,
+   hand cursor, party figures and entry icons, the paged lists and their
+   highlights, and the watch for Start. */
+Sint32 mnResumeFieldEvents(void);
+Sint32 mnSuspendFieldEvents(void);
+void   mnInitState(Sint32 unused);
+Sint32 mnWindowUpdateOrCreate(struct WINDOW **handle, Sint32 x, Sint32 y,
+	Sint32 w, Sint32 h, Sint32 flags);
+void   mnWindowCloseIfOpen(struct WINDOW **handle, Sint32 instant);
+void   mnStatPanelDraw(
+	  struct WINDOW *unused, Sint32 member, Sint32 slot, Sint32 mode);
+void mnTextDrawNumRightAligned(
+	Sint32 number, struct WINDOW *window, Sint32 x, Sint32 y);
 void mnStatPanelDrawHpPp(struct UNIT *unit, struct WINDOW *window);
-void mnTextDrawStatComparison(const struct UNIT *after,
-							  const struct UNIT *before, struct WINDOW *window);
+void mnTextDrawStatComparison(
+	const struct UNIT *after, const struct UNIT *before, struct WINDOW *window);
 
-s32 mnIconCreateHandCursorUnusedArgument(struct WINDOW *window, s32 unused,
-										 s32 x, s32 y);
-void mnReloadMemberPortrait(const void *unused, s32 unit);
+Sint32 mnIconCreateHandCursorUnusedArgument(
+	struct WINDOW *window, Sint32 unused, Sint32 x, Sint32 y);
+void mnReloadMemberPortrait(const void *unused, Sint32 unit);
 
 struct WINDOW *mnCursorCreate(void *source);
-void mnPlacePartyFigures(void);
-void mnCursorPos(s32 xOffset, s32 yOffset);
-void mnCursorSlide(s32 x, s32 y);
-void mnCursorNoOp(void);
+void		   mnPlacePartyFigures(void);
+void		   mnCursorPos(Sint32 xOffset, Sint32 yOffset);
+void		   mnCursorSlide(Sint32 x, Sint32 y);
+void		   mnCursorNoOperation(void);
 
 void mnPsynergyMenuPlaceEntryIconsDefault(void);
-void mnPsynergyMenuPlaceEntryIcons(s32 originX, s32 originY, s32 columns);
-void mnPsynergyMenuPlaceEntryIcon(struct WINDOW_SPR **slot, s32 index,
-								  s32 originX, s32 originY, s32 columns);
-void mnItemMenuPlaceIcon(struct WINDOW_SPR **slot, s32 slotIndex, s32 originX,
-						 s32 originY, s32 columns);
-void mnItemMenuPlaceIcons(s32 layout);
-void mnItemMenuShowMessage(s32 message, s32 x, s32 y);
-s32 mnItemMenuSort(u16 *inventory, s32 mode);
-void mnCopyListOrder(s32 mode, u8 *order);
+void mnPsynergyMenuPlaceEntryIcons(
+	Sint32 originX, Sint32 originY, Sint32 columns);
+void   mnPsynergyMenuPlaceEntryIcon(struct WINDOW_SPR **slot, Sint32 index,
+	  Sint32 originX, Sint32 originY, Sint32 columns);
+void   mnItemMenuPlaceIcon(struct WINDOW_SPR **slot, Sint32 slotIndex,
+	  Sint32 originX, Sint32 originY, Sint32 columns);
+void   mnItemMenuPlaceIcons(Sint32 layout);
+void   mnItemMenuShowMessage(Sint32 message, Sint32 x, Sint32 y);
+Sint32 mnItemMenuSort(Uint16 *inventory, Sint32 mode);
+void   mnCopyListOrder(Sint32 mode, Uint8 *order);
 
-s32 mnPagedListHandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
-						   s32 *page);
-void mnPaletteLightenHighlight(s32 paletteNumber);
-void mnPagedListDrawPageNumbers(struct WINDOW *window, s32 itemCount,
-								s32 pageSize, s32 selectedPage, s32 rightEdge);
-void mnWindowSetHighlightRect(const struct WINDOW *window, s32 x, s32 y,
-							  s32 width, s32 height, u32 palette);
-void mnPaletteLoadIconsIntoHighlight(void);
-void mnSetPageIcons(s32 pageSize, s32 first, struct WINDOW *window, s32 x,
-					s32 y);
+Sint32 mnPagedListHandleInput(Sint32 horizontal, Sint32 count, Sint32 pageSize,
+	Sint32 *cursor, Sint32 *page);
+void   mnPaletteLightenHighlight(Sint32 paletteNumber);
+void   mnPagedListDrawPageNumbers(struct WINDOW *window, Sint32 itemCount,
+	  Sint32 pageSize, Sint32 selectedPage, Sint32 rightEdge);
+void   mnWindowSetHighlightRect(const struct WINDOW *window, Sint32 x, Sint32 y,
+	  Sint32 width, Sint32 height, Uint32 palette);
+void   mnPaletteLoadIconsIntoHighlight(void);
+void   mnSetPageIcons(
+	  Sint32 pageSize, Sint32 first, struct WINDOW *window, Sint32 x, Sint32 y);
 void mnDrawCoins(struct WINDOW *window);
 
-void mnWindowSetBounds(struct WINDOW *window, s32 x, s32 y, s32 width,
-					   s32 height);
-void mnWindowHoldTilemapUpload(void);
-void mnWindowReleaseTilemapUpload(void);
-s32 mnSndPlayReturnOne(s32 sound);
-void mnWatchStart(void);
-void mnStartWatchingStart(void);
-void mnStopWatchingStart(void);
-void mnWindowPaletteSetNormalTextCol(void);
-void mnWindowPaletteSetNoHpTextCol(void);
-void mnWindowPaletteSetLowHpTextCol(void);
+void mnWindowSetBounds(
+	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
+void   mnWindowHoldTilemapUpload(void);
+void   mnWindowReleaseTilemapUpload(void);
+Sint32 mnSndPlayReturnOne(Sint32 sound);
+void   mnWatchStart(void);
+void   mnStartWatchingStart(void);
+void   mnStopWatchingStart(void);
+void   mnWindowPaletteSetNormalTextCol(void);
+void   mnWindowPaletteSetNoHpTextCol(void);
+void   mnWindowPaletteSetLowHpTextCol(void);
 
 /* The rows a page of the Psynergy and item lists holds. */
 #define LIST_PAGE_SIZE 5
 
-/* The y of the menus' row of party portraits, and of the chosen member's, */
-/* raised above the rest. */
-#define MENU_MEMBER_Y		 30
-#define MENU_MEMBER_RAISED_Y 26
+/* The y of the menus' row of party portraits, and of the chosen member's,
+   raised above the rest. */
+#define MENU_MEMBER_Y				 30
+#define MENU_MEMBER_RAISED_Y		 26
 /* The cursor's x beside the party row's portrait `member`: the portraits stand
- */
-/* 24 pixels apart. */
+   24 pixels apart. */
 #define MENU_MEMBER_CURSOR_X(member) ((member) * 24 - 10)
 
-/* The Item menu (menu_item.c): its member and command choices, the item list */
-/* and its pages, the details, giving, dropping and equipping. */
-s32 mnItemMenuRunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
-s32 mnItemMenuUse(void);
-void mnItemMenuInit(s32 x, s32 y, s32 mode, s32 columns);
-void mnSpawnIconEntries(struct ITEM_MENU_STATE *menu, struct WINDOW *window);
-void mnItemMenuHideAllIcons(void);
-void mnItemMenuHidePageIcons(void);
-void mnItemMenuClose(void);
-s32 mnItemMenuSelectMember(s32 side);
-s32 mnItemMenuRunMemberSelection(u16 *memberIds, u16 *items);
-void mnItemMenuShowEquipment(s32 memberId);
-s32 mnItemMenuSelectTarget(s32 mode);
-void mnEquipmentMenuUpdateCompatibilityIndicators(void);
-void mnEquipmentMenuStopCompatibilityIndicators(void);
-s32 mnItemMenuIsStatRaisingItem(s32 itemId);
-void mnItemMenuDrawMessage(s32 unused, s32 message);
-void mnHideEmptyEntryIcons(const u16 *items);
-s32 mnItemMenuCountItems(s32 memberId);
-s32 mnItemMenuGetItemQuantity(s32 memberId, s32 itemId);
-s32 mnItemMenuCollectItems(struct UNIT *unit, u16 *items, s32 mode);
-void mnItemMenuDrawIcons(u16 *inventoryEntries, s32 iconStyle);
-void mnItemMenuRefreshMember(s32 memberId, s32 mode);
-void mnItemMenuNoOp(void);
-void mnItemMenuDrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target);
-s32 mnInventoryRemoveFirstUnflagged(s32 memberId);
-s32 mnItemMenuCommandCursorX(s32 column, s32 row);
-s32 mnItemMenuCommandCursorY(s32 column, s32 row);
-s32 mnItemMenuChooseCommand(void);
-void mnItemMenuBuildCommands(s8 *commandStates);
-void mnItemMenuDrawCommands(const s8 *commandStates, struct WINDOW *window);
-s32 mnItemClassifyUseMode(s32 memberId, s32 inventoryEntry);
-void mnItemMenuTryBreak(void);
-s32 mnItemMenuOpenDetail(s32 itemIndex);
-s32 mnItemMenuShowDetails(s32 value);
-void mnItemMenuDrawStat(s32 statChange, s32 unused, struct WINDOW *window,
-						s32 x, s32 y);
+/* The Item menu (menu_item.c): its member and command choices, the item list
+   and its pages, the details, giving, dropping and equipping. */
+Sint32 mnItemMenuRunCommands(
+	Sint32 *memberOut, Sint32 *targetOut, Sint32 *itemOut);
+Sint32 mnItemMenuUse(void);
+void   mnItemMenuInit(Sint32 x, Sint32 y, Sint32 mode, Sint32 columns);
+void   mnSpawnIconEntries(struct ITEM_MENU_STATE *menu, struct WINDOW *window);
+void   mnItemMenuHideAllIcons(void);
+void   mnItemMenuHidePageIcons(void);
+void   mnItemMenuClose(void);
+Sint32 mnItemMenuSelectMember(Sint32 side);
+Sint32 mnItemMenuRunMemberSelection(Uint16 *memberIds, Uint16 *items);
+void   mnItemMenuShowEquipment(Sint32 memberId);
+Sint32 mnItemMenuSelectTarget(Sint32 mode);
+void   mnEquipmentMenuUpdateCompatibilityIndicators(void);
+void   mnEquipmentMenuStopCompatibilityIndicators(void);
+Bool   mnItemMenuIsStatRaisingItem(Sint32 itemId);
+void   mnItemMenuDrawMessage(Sint32 unused, Sint32 message);
+void   mnHideEmptyEntryIcons(const Uint16 *items);
+Sint32 mnItemMenuCountItems(Sint32 memberId);
+Sint32 mnItemMenuGetItemQuantity(Sint32 memberId, Sint32 itemId);
+Sint32 mnItemMenuCollectItems(struct UNIT *unit, Uint16 *items, Sint32 mode);
+void   mnItemMenuDrawIcons(Uint16 *inventoryEntries, Sint32 iconStyle);
+void   mnItemMenuRefreshMember(Sint32 memberId, Sint32 mode);
+void   mnItemMenuNoOperation(void);
+void   mnItemMenuDrawEquipPreview(
+	  Sint32 member, Sint32 slot, Sint32 mode, Sint32 target);
+Sint32 mnInventoryRemoveFirstUnflagged(Sint32 memberId);
+Sint32 mnItemMenuCommandCursorX(Sint32 column, Sint32 row);
+Sint32 mnItemMenuCommandCursorY(Sint32 column, Sint32 row);
+Sint32 mnItemMenuChooseCommand(void);
+void   mnItemMenuBuildCommands(Sint8 *commandStates);
+void mnItemMenuDrawCommands(const Sint8 *commandStates, struct WINDOW *window);
+Sint32 mnItemClassifyUseMode(Sint32 memberId, Sint32 inventoryEntry);
+void   mnItemMenuTryBreak(void);
+Sint32 mnItemMenuOpenDetail(Sint32 itemIndex);
+Sint32 mnItemMenuShowDetails(Sint32 value);
+void mnItemMenuDrawStat(Sint32 statChange, Sint32 unused, struct WINDOW *window,
+	Sint32 x, Sint32 y);
 void mnItemMenuPlaceItemWindowBelowItemQuestion(void);
 void mnItemMenuPlaceItemWindowBelowQuestion(void);
 void mnItemMenuFitMessageWindowToItemQuestion(void);
 void mnItemMenuFitMessageWindowToLongItemQuestion(void);
 void mnItemMenuFitMessageWindowToItemChoices(void);
 void mnItemMenuFitMessageWindowToQuestion(void);
-s32 mnItemMenuSelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
-								 s32 dropMode);
-void mnItemMenuDrawItemHead(void);
-s32 mnItemMenuConfirmDrop(s32 item);
-s32 mnItemMenuConfirmEquip(s32 unused);
-void mnLoadStatArrows(void);
-s32 mnItemMenuBuildPagedList(struct PAGED_LIST *result, s32 index);
-s32 mnItemMenuShowSelectedRow(struct WINDOW *window, void *memberState,
-							  struct PAGED_LIST *pageState);
-s32 mnItemMenuDrawListPage(struct WINDOW *window, s32 unused,
-						   const struct PAGED_LIST *pageState);
-s32 mnItemMenuItemNamePageReturnTrue(void);
-void mnItemMenuItemNamePageNoOp(void);
-s32 mnItemMenuRunList(s32 sideIndex);
+Sint32 mnItemMenuSelectGiveQuantity(
+	Sint32 baseQuantity, Sint32 quantityRange, Sint32 dropMode);
+void   mnItemMenuDrawItemHead(void);
+Sint32 mnItemMenuConfirmDrop(Sint32 item);
+Sint32 mnItemMenuConfirmEquip(Sint32 unused);
+void   mnLoadStatArrows(void);
+Sint32 mnItemMenuBuildPagedList(struct PAGED_LIST *result, Sint32 index);
+Sint32 mnItemMenuShowSelectedRow(
+	struct WINDOW *window, void *memberState, struct PAGED_LIST *pageState);
+Sint32 mnItemMenuDrawListPage(
+	struct WINDOW *window, Sint32 unused, const struct PAGED_LIST *pageState);
+Sint32 mnItemMenuItemNamePageReturnTrue(void);
+void   mnItemMenuItemNamePageNoOperation(void);
+Sint32 mnItemMenuRunList(Sint32 sideIndex);
 
-/* The Psynergy menu (menu_psynergy.c): its member and target choices, the */
-/* shortcuts, and the Psynergy list and its pages. */
-s32 mnPsynergyMenuRunSteps(s32 *outMember, s32 *unused, s32 *outAction);
-s32 mnPsynergyMenuClassifySelectedPsynergy(void);
-s32 mnPsynergyMenuSelectPartySlot(s32 partySlot);
-s32 mnPsynergyMenuSelectMember(u16 *memberIds, u16 *unused);
-void mnPsynergyMenuRefreshMemberPsynergy(s32 memberId);
-s32 mnPsynergyMenuReturnTrue(void);
-void mnPsynergyMenuNoOp(void);
-s32 mnPsynergyMenuSelectTarget(s32 targetMode);
-s32 mnPsynergyMenuSetShortcut(s32 memberId, s32 abilityId, s32 shortcutIndex);
-s32 mnPsynergyMenuDrawShortcuts(struct WINDOW *window, s32 member);
-void mnPsynergyMenuCreateEntryGrid(void);
-void mnPsynergyMenuCloseWindows(void);
-void mnPsynergyMenuDrawPsynergyIcons(u16 *psynergies);
-s32 mnPsynergyMenuCollectActions(struct UNIT *unit, u16 *actions, s32 mode);
-s32 mnPsynergyMenuBuildPagedList(struct PAGED_LIST *result, s32 index);
-s32 mnPsynergyMenuShowSelectedRow(struct WINDOW *window, s32 *memberState,
-								  struct PAGED_LIST *state);
-s32 mnPsynergyMenuDrawPage(struct WINDOW *window, s32 unused,
-						   const struct PAGED_LIST *pageState);
-s32 mnPsynergyMenuRunList(s32 sideIndex);
-s32 mnPsynergyMenuIsActionRestricted(s32 actionEntry);
+/* The Psynergy menu (menu_psynergy.c): its member and target choices, the
+   shortcuts, and the Psynergy list and its pages. */
+Sint32 mnPsynergyMenuRunSteps(
+	Sint32 *outMember, Sint32 *unused, Sint32 *outAction);
+Sint32 mnPsynergyMenuClassifySelectedPsynergy(void);
+Sint32 mnPsynergyMenuSelectPartySlot(Sint32 partySlot);
+Sint32 mnPsynergyMenuSelectMember(Uint16 *memberIds, Uint16 *unused);
+void   mnPsynergyMenuRefreshMemberPsynergy(Sint32 memberId);
+Sint32 mnPsynergyMenuReturnTrue(void);
+void   mnPsynergyMenuNoOperation(void);
+Sint32 mnPsynergyMenuSelectTarget(Sint32 targetMode);
+Sint32 mnPsynergyMenuSetShortcut(
+	Sint32 memberId, Sint32 abilityId, Sint32 shortcutIndex);
+Sint32 mnPsynergyMenuDrawShortcuts(struct WINDOW *window, Sint32 member);
+void   mnPsynergyMenuCreateEntryGrid(void);
+void   mnPsynergyMenuCloseWindows(void);
+void   mnPsynergyMenuDrawPsynergyIcons(Uint16 *psynergies);
+Sint32 mnPsynergyMenuCollectActions(
+	struct UNIT *unit, Uint16 *actions, Sint32 mode);
+Sint32 mnPsynergyMenuBuildPagedList(struct PAGED_LIST *result, Sint32 index);
+Sint32 mnPsynergyMenuShowSelectedRow(
+	struct WINDOW *window, Sint32 *memberState, struct PAGED_LIST *state);
+Sint32 mnPsynergyMenuDrawPage(
+	struct WINDOW *window, Sint32 unused, const struct PAGED_LIST *pageState);
+Sint32 mnPsynergyMenuRunList(Sint32 sideIndex);
+Bool   mnPsynergyMenuIsActionRestricted(Sint32 actionEntry);
 
-/* The party member chooser and the Status menu (menu_status.c): the party */
-/* row, the status page, the Psynergy page and the equipment page. */
-s32 mnPartyMemberChooserRun(void);
-s32 mnStatScrRunPages(void);
-s32 mnStatScrSelectMember(s32 slot);
-s32 mnStatScrShowDjinnList(void);
-s32 mnStatScrRunPartyRow(void);
-s32 mnPartyMemberChooserChooseMember(void);
-s32 mnStatScrMovePartyMember(s32 selectedIndex, s32 direction);
-void mnStatScrInit(s32 x, s32 y, s32 mode, s32 columns);
-void mnStatScrShowMemberStat(s32 member, s32 frame);
-s32 mnStatScrRunStatPage(void);
-void mnStatScrDrawSelectionCursor(s32 side, s32 selected, u8 *entries,
-								  s32 invert);
-void mnStatScrDrawSelectionLabels(struct WINDOW *target, s32 selected,
-								  const u8 *entries);
-void mnStatScrShowMemberProgressMessage(struct WINDOW *destination, s32 row,
-										s32 hasDjinn);
-void mnStatScrDrawStatPage(struct WINDOW *window, s32 memberId, s32 mode);
+/* The party member chooser and the Status menu (menu_status.c): the party row,
+   the status page, the Psynergy page and the equipment page. */
+Sint32 mnPartyMemberChooserRun(void);
+Sint32 mnStatScreenRunPages(void);
+Sint32 mnStatScreenSelectMember(Sint32 slot);
+Sint32 mnStatScreenShowDjinnList(void);
+Sint32 mnStatScreenRunPartyRow(void);
+Sint32 mnPartyMemberChooserChooseMember(void);
+Bool   mnStatScreenMovePartyMember(Sint32 selectedIndex, Sint32 direction);
+void   mnStatScreenInit(Sint32 x, Sint32 y, Sint32 mode, Sint32 columns);
+void   mnStatScreenShowMemberStat(Sint32 member, Sint32 frame);
+Sint32 mnStatScreenRunStatPage(void);
+void   mnStatScreenDrawSelectionCursor(
+	  Sint32 side, Sint32 selected, Uint8 *entries, Sint32 invert);
+void mnStatScreenDrawSelectionLabels(
+	struct WINDOW *target, Sint32 selected, const Uint8 *entries);
+void mnStatScreenShowMemberProgressMessage(
+	struct WINDOW *destination, Sint32 row, Sint32 hasDjinn);
+void mnStatScreenDrawStatPage(
+	struct WINDOW *window, Sint32 memberId, Sint32 mode);
 void mnBusyWait(void);
-void mnStatScrDrawTopRows(struct WINDOW *window, s32 memberId, s32 flags);
-s32 mnStatScrListStatuses(u8 *ailments, s32 requested, s32 memberId);
-s32 mnPagedListBuild(struct PAGED_LIST *result, s32 index);
+void mnStatScreenDrawTopRows(
+	struct WINDOW *window, Sint32 memberId, Sint32 flags);
+Sint32 mnStatScreenListStatuses(
+	Uint8 *ailments, Sint32 requested, Sint32 memberId);
+Sint32 mnPagedListBuild(struct PAGED_LIST *result, Sint32 index);
 
 void mnBuildPatternTiles(void);
-void mnPsynergyMenuDrawRange(struct WINDOW *window, s32 x, s32 y, s32 range,
-							 s32 unused);
-s32 mnStatScrShowPsynergyRow(struct WINDOW *window, s32 unused,
-							 struct PAGED_LIST *state);
-s32 mnStatScrDrawPsynergyPage(struct WINDOW *window, s32 unused,
-							  const struct PAGED_LIST *res);
-s32 mnStatScrRunPsynergyPage(void);
-s32 mnStatScrPsynergyPageReturnTrue(void);
-void mnPsynergyMenuDrawPreparedPsynergyIcons(const void *unused, s32 memberId);
-void mnPsynergyMenuPreparedIconsNoOp(void);
-void mnPsynergyMenuPreparedIconsSecondNoOp(void);
-s32 mnStatScrShowEquipmentRow(struct WINDOW *window, s32 unused,
-							  struct PAGED_LIST *state);
-s32 mnStatScrDrawEquipmentPage(struct WINDOW *window, s32 unused,
-							   struct PAGED_LIST *state);
-s32 mnStatScrRunEquipmentPage(void);
-s32 mnMoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction);
-s32 mnGridCursorReturnTrue(void);
+void mnPsynergyMenuDrawRange(
+	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 range, Sint32 unused);
+Sint32 mnStatScreenShowPsynergyRow(
+	struct WINDOW *window, Sint32 unused, struct PAGED_LIST *state);
+Sint32 mnStatScreenDrawPsynergyPage(
+	struct WINDOW *window, Sint32 unused, const struct PAGED_LIST *res);
+Sint32 mnStatScreenRunPsynergyPage(void);
+Sint32 mnStatScreenPsynergyPageReturnTrue(void);
+void   mnPsynergyMenuDrawPreparedPsynergyIcons(
+	  const void *unused, Sint32 memberId);
+void   mnPsynergyMenuPreparedIconsNoOperation(void);
+void   mnPsynergyMenuPreparedIconsSecondNoOperation(void);
+Sint32 mnStatScreenShowEquipmentRow(
+	struct WINDOW *window, Sint32 unused, struct PAGED_LIST *state);
+Sint32 mnStatScreenDrawEquipmentPage(
+	struct WINDOW *window, Sint32 unused, struct PAGED_LIST *state);
+Sint32 mnStatScreenRunEquipmentPage(void);
+Sint32 mnMoveGridCursor(Sint32 *columnOut, Sint32 *rowOut, Sint32 direction);
+Sint32 mnGridCursorReturnTrue(void);
 
-void mnItemMenuDrawEquipment(struct WINDOW *window, s32 memberId, s32 mode);
-void mnItemMenuDrawEquippedItemNames(struct WINDOW *window, u16 *items);
-void mnPlaceEntryIconsInGrid(s32 originX, s32 originY, s32 columns);
-void mnPlaceEntryIconInGrid(struct WINDOW_SPR *icon, s32 index, s32 originX,
-							s32 originY, s32 columns);
-void mnItemMenuPlaceEquippedIcons(u16 *items);
-void mnHideEntryIcons(void);
-s32 mnStatScrCreateStatIcons(struct WINDOW *window);
-void mnStatScrShowStatIcons(const u8 *flags);
-void mnStatScrHideStatIcons(void);
-s32 mnStatScrLoadStatIcons(const u8 *enabled);
+void mnItemMenuDrawEquipment(
+	struct WINDOW *window, Sint32 memberId, Sint32 mode);
+void   mnItemMenuDrawEquippedItemNames(struct WINDOW *window, Uint16 *items);
+void   mnPlaceEntryIconsInGrid(Sint32 originX, Sint32 originY, Sint32 columns);
+void   mnPlaceEntryIconInGrid(struct WINDOW_SPR *icon, Sint32 index,
+	  Sint32 originX, Sint32 originY, Sint32 columns);
+void   mnItemMenuPlaceEquippedIcons(Uint16 *items);
+void   mnHideEntryIcons(void);
+Sint32 mnStatScreenCreateStatIcons(struct WINDOW *window);
+void   mnStatScreenShowStatIcons(const Uint8 *flags);
+void   mnStatScreenHideStatIcons(void);
+Sint32 mnStatScreenLoadStatIcons(const Uint8 *enabled);
 
 /* Using an item or Psynergy from the menus (menu_use.c). */
-void mnItemPrepareUsePalette(void);
-void mnItemUseNoOp(void);
-s32 mnItemUse(s32 slot, s32 memberId, s32 targetId);
-s32 mnItemUseReturnTrue(void);
-s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
-							s32 fixedScale);
-void mnItemPlayUseSnd(u32 item);
-void mnAbilityPlayUseSnd(s32 action);
-s32 mnAbilityReturnFalse(void);
+void   mnItemPrepareUsePalette(void);
+void   mnItemUseNoOperation(void);
+Sint32 mnItemUse(Sint32 slot, Sint32 memberId, Sint32 targetId);
+Sint32 mnItemUseReturnTrue(void);
+Sint32 mnAbilityApplyToTargets(
+	Sint32 effectId, Sint32 sourceId, Sint32 targetId, Sint32 fixedScale);
+void   mnItemPlayUseSnd(Uint32 item);
+void   mnAbilityPlayUseSnd(Sint32 action);
+Sint32 mnAbilityReturnFalse(void);
 
 /* The Djinn menu (menu_djinn.c): its screen, the Djinn lists and their help. */
-s32 mnWrapIndex(s32 value, s32 modulus);
-s32 mnDjinnMenuPlacePartyFigures(s32 yOffset);
-s32 mnDjinnMenuRunScr(void);
-void mnDjinnMenuAdjustPalettes(s32 brightnessDelta);
-#ifdef UBFIX
+Sint32 mnWrapIndex(Sint32 value, Sint32 modulus);
+Sint32 mnDjinnMenuPlacePartyFigures(Sint32 yOffset);
+Sint32 mnDjinnMenuRunScreen(void);
+void   mnDjinnMenuAdjustPalettes(Sint32 brightnessDelta);
+#if FIX_FUNCTION_SIGNATURES
 typedef void MENU_BACKDROP_RESULT;
 #else
-typedef s32 MENU_BACKDROP_RESULT;
+typedef Sint32 MENU_BACKDROP_RESULT;
 #endif
-/* UB: mnOpenBackdropScr returns the result of mnDjinnMenuDrawElementList, */
-/* called with no prototype though it returns nothing; nothing reads it. */
-MENU_BACKDROP_RESULT mnOpenBackdropScr(void);
-s32 mnPsynergyListDiff(struct PSYNERGY_ENTRY *before,
-					   struct PSYNERGY_ENTRY *after, u16 *actionsOut,
-					   s32 *gainedCountOut, s32 *lostCountOut);
-s32 mnDjinnMenuBuildLists(void *table);
-#ifdef UBFIX
+/* UB: mnOpenBackdropScreen returns the result of mnDjinnMenuDrawElementList,
+   called with no prototype though it returns nothing; nothing reads it. */
+MENU_BACKDROP_RESULT mnOpenBackdropScreen(void);
+Sint32				 mnPsynergyListDiff(struct PSYNERGY_ENTRY *before,
+				  struct PSYNERGY_ENTRY *after, Uint16 *actionsOut, Sint32 *gainedCountOut,
+				  Sint32 *lostCountOut);
+Sint32				 mnDjinnMenuBuildLists(void *table);
+#if FIX_FUNCTION_SIGNATURES
 void mnDjinnMenuDrawElementList(struct DJINN_LIST_TABLE *table);
 #endif
-s32 mnWindowSetInteriorPaletteBitRect(const struct WINDOW *window, s32 x, s32 y,
-									  s32 width, s32 height, s32 palette);
-void mnWindowSetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void mnWindowSetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
-									s32 height, s32 palette);
-s32 mnDjinnMenuShowHelp(void);
-s32 mnDjinnMenuSelectDjinn(s32 mode);
-s32 mnDjinnListUnitEntries(u16 *entriesOut, s32 memberId, s32 element);
-s32 mnDjinnMenuDrawPairPreview(s32 mode, s32 pageIndex);
-s32 mnDjinnMenuDrawStatPreview(struct WINDOW *window, s32 x, s32 y,
-							   s32 memberId, s32 removePairSlot,
-							   s32 addPairSlot, s32 previewMode, s32 page,
-							   s32 side);
+Sint32 mnWindowSetInteriorPaletteBitRect(const struct WINDOW *window, Sint32 x,
+	Sint32 y, Sint32 width, Sint32 height, Sint32 palette);
+void   mnWindowSetRectPalette(
+	  Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette);
+void   mnWindowSetInteriorRectPalette(void *window, Sint32 x, Sint32 y,
+	  Sint32 width, Sint32 height, Sint32 palette);
+Sint32 mnDjinnMenuShowHelp(void);
+Sint32 mnDjinnMenuSelectDjinn(Sint32 mode);
+Sint32 mnDjinnListUnitEntries(
+	Uint16 *entriesOut, Sint32 memberId, Sint32 element);
+Sint32 mnDjinnMenuDrawPairPreview(Sint32 mode, Sint32 pageIndex);
+Sint32 mnDjinnMenuDrawStatPreview(struct WINDOW *window, Sint32 x, Sint32 y,
+	Sint32 memberId, Sint32 removePairSlot, Sint32 addPairSlot,
+	Sint32 previewMode, Sint32 page, Sint32 side);
 
-/* The rows of Djinn figures over the Djinn and Status menus */
-/* (menu_djinn_figures.c). */
-void mnDjinnFiguresInitTopRow(void *window, s32 unused);
-void mnDjinnFiguresUpdateAllPoss(void);
-void mnDjinnFiguresUpdateBottomRow(void);
-void mnDjinnFiguresInitBottomRow(s32 window, s32 unused);
-s32 mnDjinnFiguresSetSlotPos(s32 index, s32 x, s32 y, s32 negative);
-s32 mnDjinnFiguresSetSlotPhase(s32 index, FIXED phase);
-s32 mnDjinnFiguresReplaceSlot(s32 index, s32 element, s32 animation);
+/* The rows of Djinn figures over the Djinn and Status menus
+   (menu_djinn_figures.c). */
+void   mnDjinnFiguresInitTopRow(void *window, Sint32 unused);
+void   mnDjinnFiguresUpdateAllPoss(void);
+void   mnDjinnFiguresUpdateBottomRow(void);
+void   mnDjinnFiguresInitBottomRow(Sint32 window, Sint32 unused);
+Sint32 mnDjinnFiguresSetSlotPos(
+	Sint32 index, Sint32 x, Sint32 y, Sint32 negative);
+Sint32 mnDjinnFiguresSetSlotPhase(Sint32 index, FIXED phase);
+Sint32 mnDjinnFiguresReplaceSlot(
+	Sint32 index, Sint32 element, Sint32 animation);
 void mnStartPartyFiguresStanding(void);
 void mnDjinnFiguresReleaseTopRow(void);
 void mnDjinnFiguresReleaseBottomRow(void);
 
 /* The Djinn menu's preview of a change before it is made, and the checks that
- */
-/* keep the party members' Djinn counts even (menu_djinn_preview.c). */
-s32 mnDjinnMenuRunPreview(u32 mode);
-s32 mnDjinnMenuShowMemberStat(void);
-s32 mnDjinnMarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn);
-s32 mnDjinnCheckGiveBalance(s32 sourceMemberColumn, s32 targetMemberColumn);
-void mnDjinnCountOwned(u8 *ownedCounts);
+   keep the party members' Djinn counts even (menu_djinn_preview.c). */
+Sint32 mnDjinnMenuRunPreview(Uint32 mode);
+Sint32 mnDjinnMenuShowMemberStat(void);
+Sint32 mnDjinnMarkTradeOnlyRecipients(
+	Sint8 *requiresTrade, Sint32 sourceMemberColumn);
+Sint32 mnDjinnCheckGiveBalance(
+	Sint32 sourceMemberColumn, Sint32 targetMemberColumn);
+void mnDjinnCountOwned(Uint8 *ownedCounts);
 
 /* The menus' small icons: the arrows and the Psynergy icons (menu_icons.c). */
-void mnLoadDjinnArrows(void);
-void mnIconMenuReleaseArrows(void);
-s32 mnIconLoadResourceIntoSlot(s32 abilityId, s32 slot);
-s32 mnIconCreatePsynergyIcon(struct WINDOW *window, s32 x, s32 y,
-							 s32 abilityId);
-s32 mnIconCreateStatChangeArrow(struct WINDOW *window, s32 x, s32 y,
-								s32 variant);
-s32 mnIconCreateDjinnArrow(struct WINDOW *window, s32 x, s32 y, s32 variant);
+void   mnLoadDjinnArrows(void);
+void   mnIconMenuReleaseArrows(void);
+Sint32 mnIconLoadResourceIntoSlot(Sint32 abilityId, Sint32 slot);
+Sint32 mnIconCreatePsynergyIcon(
+	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 abilityId);
+Sint32 mnIconCreateStatChangeArrow(
+	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 variant);
+Sint32 mnIconCreateDjinnArrow(
+	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 variant);
 
-/* The Japanese status panel's PP row, "EP    /": label and slash in one */
-/* string, drawn by the unit summary in menu/menu_shared.c. */
-extern const u8 StatusPanel_PpRowString[];
-/* The Japanese status panel's HP row, "HP    /", the slash already in its */
-/* cell at 48. */
-extern const u8 StatusPanel_HpRowString[];
-/* The HP label outside Japan, in each language's form ("KP" in German, "PV" */
-/* in Spanish and French, "PS" in Italian). */
-extern const u8 StatusPanel_HpString[];
+/* The Japanese status panel's PP row, "EP    /": label and slash in one
+   string, drawn by the unit summary in menu/menu_shared.c. */
+extern const Uint8 StatusPanel_PpRowString[];
+/* The Japanese status panel's HP row, "HP    /", the slash already in its
+   cell at 48. */
+extern const Uint8 StatusPanel_HpRowString[];
+/* The HP label outside Japan, in each language's form ("KP" in German, "PV" in
+   Spanish and French, "PS" in Italian). */
+extern const Uint8 StatusPanel_HpString[];
 /* The PP label outside Japan, which every language writes "PP". */
-extern const u8 StatusPanel_PpString[];
-/* The slash between a current and maximum figure on the status panel, */
-/* outside Japan. */
-extern const u8 StatusPanel_SlashString[];
+extern const Uint8 StatusPanel_PpString[];
+/* The slash between a current and maximum figure on the status panel, outside
+   Japan. */
+extern const Uint8 StatusPanel_SlashString[];
 
 #endif

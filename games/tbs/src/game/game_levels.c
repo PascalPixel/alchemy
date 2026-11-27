@@ -1,25 +1,24 @@
-/* @file */
-/* Actions and Psynergy lists, characters, experience and levelling up. */
-/* Part of game.c. */
+/* Actions and Psynergy lists, characters, experience and levelling up. Part of
+   game.c. */
 
-/* Slots are four-byte entries, read as halfwords; UBFIX reads each entry */
-/* through its own type. */
-#ifdef UBFIX
+/* Slots are four-byte entries, read as halfwords; UBFIX reads each entry
+   through its own type. */
+#if FIX_TYPE_PUNNING
 #define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
 #else
-#define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
+#define PSYNERGY_ACTION_AT(slots, index) (((Uint16 *)(slots))[(index) * 2])
 #endif
 
 /* Returns the definition of ability `abilityId` (its low 14 bits); an id past
- */
-/* the table gives the first. */
-ABILITY_DEFINITION *gmAbilityGetDirect(s32 abilityId) {
-	u32 entryIndex;
+   the table gives the first. */
+ABILITY_DEFINITION *gmAbilityGetDirect(Sint32 abilityId)
+{
+	Uint32 entryIndex;
 
 	entryIndex = abilityId & PSYNERGY_ABILITY_MASK;
-	/* BUG: the bound is one past the table's rows, so id ABILITY_COUNT reads */
-	/* the enemy table's first bytes as an action. */
-#ifdef BUGFIX
+	/* BUG: the bound is one past the table's rows, so id ABILITY_COUNT reads
+	   the enemy table's first bytes as an action. */
+#if FIX_ABILITY_ID_BOUND
 	if(entryIndex >= ABILITY_COUNT) {
 #else
 	if(entryIndex >= ABILITY_COUNT + 1) {
@@ -30,42 +29,43 @@ ABILITY_DEFINITION *gmAbilityGetDirect(s32 abilityId) {
 }
 
 /* Returns 1 when `abilityId` is in the unit's Psynergy list. */
-s32 gmUnitKnowsPsynergy(s32 unitId, s32 abilityId) {
-	UNIT *unit = gmUnitGet(unitId);
+Bool gmUnitKnowsPsynergy(Sint32 unitId, Sint32 abilityId)
+{
+	UNIT		   *unit = gmUnitGet(unitId);
 	PSYNERGY_ENTRY *entry;
-	s32 actionMask = PSYNERGY_ABILITY_MASK;
-	s32 index = 0;
+	Sint32			actionMask = PSYNERGY_ABILITY_MASK;
+	Sint32			index = 0;
 
 	entry = unit->psynergy;
 	for(; index < PSYNERGY_SLOTS; index++) {
-		s32 currentAction = entry->encodedAction;
+		Sint32 currentAction = entry->encodedAction;
 
 		currentAction &= actionMask;
 		entry++;
 		if(currentAction == abilityId) {
-			return 1;
+			return TRUE;
 		}
 	}
-	return 0;
+	return FALSE;
 }
 
-/* Marks on an action list entry: learned from the class, or granted by an */
-/* equipped item. Plain entries were taught for good. */
+/* Marks on an action list entry: learned from the class, or granted by an
+   equipped item. Plain entries were taught for good. */
 enum { PSYNERGY_FROM_CLASS = 0x8000, PSYNERGY_FROM_ITEM = 0x4000 };
 
 /* Rebuilds a character's Psynergy list: drops the actions its class and items
- */
-/* gave, closes up the list, adds every class action learned by its level and */
-/* the action of each equipped item that grants one, and closes it up again. */
-s32 gmUnitRefreshPsynergy(s32 unitId) {
-	UNIT *unit;
-	PSYNERGY_ENTRY *abilities;
-	CLASS_DEFINITION *classDefinition;
+   gave, closes up the list, adds every class action learned by its level and
+   the action of each equipped item that grants one, and closes it up again. */
+Sint32 gmUnitRefreshPsynergy(Sint32 unitId)
+{
+	UNIT				  *unit;
+	PSYNERGY_ENTRY		  *abilities;
+	CLASS_DEFINITION	  *classDefinition;
 	const ITEM_DEFINITION *item;
-	s32 slot;
-	s32 sourceIndex;
-	u16 originFlag;
-	CLASS_ABILITY *classAbility;
+	Sint32				   slot;
+	Sint32				   sourceIndex;
+	Uint16				   originFlag;
+	CLASS_ABILITY		  *classAbility;
 
 	unit = gmUnitGet(unitId);
 	abilities = unit->psynergy;
@@ -88,8 +88,7 @@ s32 gmUnitRefreshPsynergy(s32 unitId) {
 		slot >= 0;) {
 		if(abilities[slot].encodedAction == 0) {
 			slot--;
-		}
-		else {
+		} else {
 			abilities[sourceIndex].encodedAction =
 				abilities[slot].encodedAction;
 			slot--;
@@ -99,8 +98,8 @@ s32 gmUnitRefreshPsynergy(s32 unitId) {
 	for(; sourceIndex >= 0; sourceIndex--)
 		PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
 
-	/* Add level-eligible class abilities, followed by equipped-item abilities.
-	 */
+	/* Add level-eligible class abilities, followed by equipped-item
+	   abilities. */
 	originFlag = PSYNERGY_FROM_CLASS;
 	for(sourceIndex = 0; sourceIndex < CLASS_ABILITY_SLOTS; sourceIndex++) {
 		classAbility = &classDefinition->abilities[sourceIndex];
@@ -110,8 +109,8 @@ s32 gmUnitRefreshPsynergy(s32 unitId) {
 			continue;
 		slot = 0;
 		while(slot < PSYNERGY_SLOTS &&
-			  PSYNERGY_ACTION_AT(abilities, slot) !=
-				  classDefinition->abilities[sourceIndex].ability)
+			PSYNERGY_ACTION_AT(abilities, slot) !=
+				classDefinition->abilities[sourceIndex].ability)
 			slot++;
 		if(slot != PSYNERGY_SLOTS)
 			continue;
@@ -136,7 +135,7 @@ s32 gmUnitRefreshPsynergy(s32 unitId) {
 			continue;
 		for(slot = 0; slot < PSYNERGY_SLOTS; slot++) {
 			if((PSYNERGY_ACTION_AT(abilities, slot) & PSYNERGY_ABILITY_MASK) ==
-			   item->abilityId)
+				item->abilityId)
 				break;
 		}
 		if(slot != PSYNERGY_SLOTS)
@@ -156,8 +155,7 @@ s32 gmUnitRefreshPsynergy(s32 unitId) {
 	for(slot = 0, sourceIndex = 0; slot < PSYNERGY_SLOTS;) {
 		if(abilities[slot].encodedAction == 0) {
 			slot++;
-		}
-		else {
+		} else {
 			abilities[sourceIndex].encodedAction =
 				abilities[slot].encodedAction;
 			slot++;
@@ -169,28 +167,28 @@ s32 gmUnitRefreshPsynergy(s32 unitId) {
 	return 0;
 }
 
-/* Scratch for gmUnitLevelUp, which takes it from EWRAM first */
-/* (syHeapAllocEwram) and frees it before returning. */
+/* Scratch for gmUnitLevelUp, which takes it from EWRAM first (syHeapAllocEWRAM)
+   and frees it before returning. */
 typedef struct LEVEL_UP_STATE {
-	s32 classIdx; /* the unit's class, written and not read again */
-	s32 level;	  /* the level before this one */
-	const CHARACTER_DEFINITION *growth; /* the character's growth curves */
-	u8 unused[32];						/* never written */
+	Sint32 classIdx; /* the unit's class, written and not read again */
+	Sint32 level;	 /* the level before this one */
+	const CHARACTER_DEFINITION *growth;		/* the character's growth curves */
+	Uint8						unused[32]; /* never written */
 } LEVEL_UP_STATE;
 
 /* Teaches a character `abilityId` for good (or makes a class action permanent
- */
-/* by clearing its marks), then rebuilds its list. Returns the action's place */
-/* in the list, or -1 when the list is full. */
-s32 gmUnitLearnPsynergy(s32 unitId, s32 abilityId) {
-	UNIT *unit = gmUnitGet(unitId);
-	s32 ability = abilityId & PSYNERGY_ABILITY_MASK;
-	s32 found = -1;
-	s32 index;
+   by clearing its marks), then rebuilds its list. Returns the action's place in
+   the list, or -1 when the list is full. */
+Sint32 gmUnitLearnPsynergy(Sint32 unitId, Sint32 abilityId)
+{
+	UNIT  *unit = gmUnitGet(unitId);
+	Sint32 ability = abilityId & PSYNERGY_ABILITY_MASK;
+	Sint32 found = -1;
+	Sint32 index;
 
 	/* Learning never takes the list's last slot. */
 	for(index = 0; index < PSYNERGY_SLOTS - 1; index++) {
-		s32 masked =
+		Sint32 masked =
 			unit->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
 
 		/* FAKEMATCH(dead): the test written as an XOR; as masked == ability,
@@ -204,7 +202,7 @@ s32 gmUnitLearnPsynergy(s32 unitId, s32 abilityId) {
 
 	if(found < 0) {
 		for(index = 0; index < PSYNERGY_SLOTS - 1; index++) {
-			s32 action = unit->psynergy[index].encodedAction;
+			Sint32 action = unit->psynergy[index].encodedAction;
 
 			if(action == 0) {
 				unit->psynergy[index].encodedAction = ability;
@@ -227,34 +225,35 @@ s32 gmUnitLearnPsynergy(s32 unitId, s32 abilityId) {
 }
 
 /* Levels the character up once if it has the experience, and returns gains, or
- */
-/* NULL. */
-LEVEL_UP_RESULT *gmUnitCheckLevelUp(s32 unitId, LEVEL_UP_RESULT *gains) {
+   NULL. */
+LEVEL_UP_RESULT *gmUnitCheckLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains)
+{
 	return gmUnitTryLevelUp(unitId, gains);
 }
 
 /* Returns character `characterId`'s definition: growth curves, starting level
- */
-/* and equipment. */
-const CHARACTER_DEFINITION *gmCharacterGetDefinition(s32 characterId) {
+   and equipment. */
+const CHARACTER_DEFINITION *gmCharacterGetDefinition(Sint32 characterId)
+{
 	const CHARACTER_DEFINITION *definitions;
 
 	definitions = Character_DefinitionTable;
 	return &definitions[characterId];
 }
 
-/* Sets up all eight characters for a new game: names from the message table, */
-/* starting equipment equipped, class and elements worked out, and levels */
-/* raised to their starting level. */
-void gmPartyInitCharacters(void) {
-	UNIT *unit;
+/* Sets up all eight characters for a new game: names from the message table,
+   starting equipment equipped, class and elements worked out, and levels raised
+   to their starting level. */
+void gmPartyInitCharacters(void)
+{
+	UNIT					   *unit;
 	const CHARACTER_DEFINITION *character;
-	u16 nameBuf[16];
-	s32 unitId;
-	const s32 *startingUnitId = Character_NewGameIds;
-	s32 i;
-	s32 slot;
-	u8 *name;
+	Uint16						nameBuf[16];
+	Sint32						unitId;
+	const Sint32			   *startingUnitId = Character_NewGameIds;
+	Sint32						i;
+	Sint32						slot;
+	Uint8					   *name;
 
 	for(unitId = 0; unitId <= ALLY_MAX; unitId++) {
 		unit = gmUnitGet(unitId);
@@ -273,8 +272,8 @@ void gmPartyInitCharacters(void) {
 		unit->name[UNIT_NAME_SIZE - 1] = 0;
 	}
 
-	/* Character_NewGameIds lists the characters given starting */
-	/* equipment, ended by -1 (starting_equipment.c). */
+	/* Character_NewGameIds lists the characters given starting equipment, ended
+	   by -1 (starting_equipment.c). */
 	for(; *startingUnitId != -1; startingUnitId++) {
 		unit = gmUnitGet(*startingUnitId);
 		if(unit != 0) {
@@ -288,8 +287,7 @@ void gmPartyInitCharacters(void) {
 				i < sizeof(character->items) / sizeof(character->items[0]);
 				i++) {
 				slot = gmInventoryAddItem(*startingUnitId,
-										  character->items[i] &
-											  INVENTORY_ITEM_ID_MASK);
+					character->items[i] & INVENTORY_ITEM_ID_MASK);
 				gmInventoryEquip(*startingUnitId, slot);
 			}
 
@@ -303,11 +301,14 @@ void gmPartyInitCharacters(void) {
 }
 
 /* Unused: reserved entry; keeps its place in the stub table. */
-UNUSED void gmUnitLevelNoOp(void) {}
+UNUSED void gmUnitLevelNoOperation(void)
+{
+}
 
-/* Returns the experience a character needs for `level` (0 for level 0 and */
-/* below); -1 for an enemy or a level above 99. */
-u32 gmUnitGetExperienceForLevel(s32 unitId, s32 level) {
+/* Returns the experience a character needs for `level` (0 for level 0 and
+   below); -1 for an enemy or a level above 99. */
+Uint32 gmUnitGetExperienceForLevel(Sint32 unitId, Sint32 level)
+{
 	UNIT *unit = gmUnitGet(unitId);
 
 	if(unit->classId != CLASS_NONE) {
@@ -316,24 +317,25 @@ u32 gmUnitGetExperienceForLevel(s32 unitId, s32 level) {
 		}
 		if(level <= UNIT_LEVEL_MAX && unit->id <= PIERS) {
 			return Character_LevelExpTable[unit->id * UNIT_LEVEL_MAX + level -
-										   1];
+				1];
 		}
 	}
 	return -1;
 }
 
-/* Raises a character one level, up to 99, each base stat growing along its */
-/* curve with a random part. Returns gains. */
-LEVEL_UP_RESULT *gmUnitLevelUp(s32 unitId, LEVEL_UP_RESULT *gains) {
-	UNIT *unit;
+/* Raises a character one level, up to 99, each base stat growing along its
+   curve with a random part. Returns gains. */
+LEVEL_UP_RESULT *gmUnitLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains)
+{
+	UNIT		   *unit;
 	LEVEL_UP_STATE *state;
-	u32 requiredExperience;
-	s16 growthBand;
-	s32 growthDifference;
-	s32 level;
+	Uint32			requiredExperience;
+	Sint16			growthBand;
+	Sint32			growthDifference;
+	Sint32			level;
 
 	unit = gmUnitGet(unitId);
-	state = syHeapAllocEwram(sizeof(LEVEL_UP_STATE));
+	state = syHeapAllocEWRAM(sizeof(LEVEL_UP_STATE));
 	state->classIdx = unit->classId;
 	level = unit->level;
 	state->level = level;
@@ -362,35 +364,34 @@ LEVEL_UP_RESULT *gmUnitLevelUp(s32 unitId, LEVEL_UP_RESULT *gains) {
 			gains->luck += state->growth->luck[0];
 		}
 		/* Each twenty-level band grows by the step between its growth points, a
-		 */
-		/* twentieth a level with a random part; one roll per stat, in order. */
+		   twentieth a level with a random part; one roll per stat, in order. */
 		growthBand = gains->level / GROWTH_BAND_LEVELS;
 		CLAMP(growthBand, 0, GROWTH_POINTS - 2);
 		growthDifference =
 			state->growth->hp[growthBand + 1] - state->growth->hp[growthBand];
 		gains->hp += (syRandom16Below(GROWTH_BAND_LEVELS) + growthDifference) /
-					 GROWTH_BAND_LEVELS;
+			GROWTH_BAND_LEVELS;
 		growthDifference =
 			state->growth->pp[growthBand + 1] - state->growth->pp[growthBand];
 		gains->pp += (syRandom16Below(GROWTH_BAND_LEVELS) + growthDifference) /
-					 GROWTH_BAND_LEVELS;
+			GROWTH_BAND_LEVELS;
 		growthDifference = state->growth->attack[growthBand + 1] -
-						   state->growth->attack[growthBand];
+			state->growth->attack[growthBand];
 		gains->attack +=
 			(syRandom16Below(GROWTH_BAND_LEVELS) + growthDifference) /
 			GROWTH_BAND_LEVELS;
 		growthDifference = state->growth->defense[growthBand + 1] -
-						   state->growth->defense[growthBand];
+			state->growth->defense[growthBand];
 		gains->defense +=
 			(syRandom16Below(GROWTH_BAND_LEVELS) + growthDifference) /
 			GROWTH_BAND_LEVELS;
 		growthDifference = state->growth->agility[growthBand + 1] -
-						   state->growth->agility[growthBand];
+			state->growth->agility[growthBand];
 		gains->agility +=
 			(syRandom16Below(GROWTH_BAND_LEVELS) + growthDifference) /
 			GROWTH_BAND_LEVELS;
 		growthDifference = state->growth->luck[growthBand + 1] -
-						   state->growth->luck[growthBand];
+			state->growth->luck[growthBand];
 		gains->luck +=
 			(syRandom16Below(GROWTH_BAND_LEVELS) + growthDifference) /
 			GROWTH_BAND_LEVELS;
@@ -412,26 +413,28 @@ LEVEL_UP_RESULT *gmUnitLevelUp(s32 unitId, LEVEL_UP_RESULT *gains) {
 	return gains;
 }
 
-/* Levels the character up once if its experience reaches the next level, and */
-/* returns gains, or NULL. */
-LEVEL_UP_RESULT *gmUnitTryLevelUp(s32 unitId, LEVEL_UP_RESULT *gains) {
+/* Levels the character up once if its experience reaches the next level, and
+   returns gains, or NULL. */
+LEVEL_UP_RESULT *gmUnitTryLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains)
+{
 	UNIT *unit;
 
 	unit = gmUnitGet(unitId);
 	if((unit->experience >=
-		gmUnitGetExperienceForLevel(unitId, unit->level + 1)) &&
-	   (gmUnitLevelUp(unitId, gains) != NULL)) {
+		   gmUnitGetExperienceForLevel(unitId, unit->level + 1)) &&
+		(gmUnitLevelUp(unitId, gains) != NULL)) {
 		return gains;
 	}
 	return 0;
 }
 
-/* Levels character `unitId` up one level at a time until `targetLevel`, then */
-/* recomputes its stats. */
-void gmUnitLevelUpTo(s32 unitId, s32 targetLevel) {
+/* Levels character `unitId` up one level at a time until `targetLevel`, then
+   recomputes its stats. */
+void gmUnitLevelUpTo(Sint32 unitId, Sint32 targetLevel)
+{
 	/* Each level's gains are discarded. */
 	LEVEL_UP_RESULT gains;
-	s32 currentLevel;
+	Sint32			currentLevel;
 
 	for(currentLevel = gmUnitGet(unitId)->level; currentLevel < targetLevel;
 		currentLevel++) {

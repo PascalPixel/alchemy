@@ -1,15 +1,15 @@
-/* @file */
 /* A field effect's motion, growth and spin each frame, with no drag. */
 
 #include "system/field_effect.h"
 #include "field/sprite.h"
 
-/* An effect's update function: moves the effect by its velocity, which keeps */
-/* its speed, grows it at its rates and turns its sprite by its spin. */
-void fdEffectUpdateMotionScaleAndSpin(FIELD_OBJECT *object) {
-	s32 x;
-	s32 velocityX;
-	SPR *sprite;
+/* An effect's update function: moves the effect by its velocity, which keeps
+   its speed, grows it at its rates and turns its sprite by its spin. */
+void fdEffectUpdateMotionScaleAndSpin(FIELD_OBJECT *object)
+{
+	Sint32 x;
+	Sint32 velocityX;
+	SPR	  *sprite;
 
 	x = object->eff.x;
 	velocityX = object->eff.vel.x;

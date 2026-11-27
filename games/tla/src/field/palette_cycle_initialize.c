@@ -1,20 +1,18 @@
-/* @file */
-/* Allocating the palette cycles' queue. The main image */
-/* (field_tile_animation.c) and the Islets' overlay (islets.c) each include a */
-/* copy. */
+/* Allocating the palette cycles' queue. The main image (field_tile_animation.c)
+   and the Islets' overlay (islets.c) each include a copy. */
 
 /* Allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with its four
- */
-/* entries cleared. Nothing in the main image calls it; the Islets call their */
-/* own copy. */
-void fdPaletteCycleInit(void) {
+   entries cleared. Nothing in the main image calls it; the Islets call their
+   own copy. */
+void fdPaletteCycleInit(void)
+{
 	PALETTE_CYCLE_STATE *paletteCycles;
-	PALETTE_CYCLE *cycle;
-	u16 cycleIndex;
-	u16 colorIndex;
+	PALETTE_CYCLE		*cycle;
+	Uint16				 cycleIndex;
+	Uint16				 colorIndex;
 
-	paletteCycles = syHeapSlotAllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-										 sizeof(PALETTE_CYCLE_STATE));
+	paletteCycles = syHeapSlotAllocEWRAM(
+		HEAP_SLOT_PALETTE_CYCLES, sizeof(PALETTE_CYCLE_STATE));
 	cycle = paletteCycles->entries;
 	for(cycleIndex = 0; cycleIndex != ARRAY_COUNT(paletteCycles->entries);
 		cycleIndex++) {

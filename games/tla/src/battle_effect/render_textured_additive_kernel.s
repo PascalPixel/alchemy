@@ -10,11 +10,11 @@
 @ is subs r2, r1, #0.
 .syntax unified
 	.thumb
-	.global Render_TexturedAdditiveKernel
-Render_TexturedAdditiveKernel:
-	.global Render_TexturedAdditiveKernelEntry
+	.global btRenderTexturedAdditiveKernel
+btRenderTexturedAdditiveKernel:
+	.global btRenderTexturedAdditiveKernelEntry
 	.thumb_func
-Render_TexturedAdditiveKernelEntry:
+btRenderTexturedAdditiveKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_08139f72:
@@ -347,5 +347,5 @@ AlchemyUncreditedEnd_0813a42c:
 .L_0813a43c:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.global Render_TexturedAdditiveKernelCodeSize
-	.set Render_TexturedAdditiveKernelCodeSize, . - Render_TexturedAdditiveKernel
+	.global btRenderTexturedAdditiveKernelCodeSize
+	.set btRenderTexturedAdditiveKernelCodeSize, . - btRenderTexturedAdditiveKernel

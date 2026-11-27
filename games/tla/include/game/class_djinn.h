@@ -1,28 +1,27 @@
 #ifndef ALCHEMY_CLASS_DJINN_H
 #define ALCHEMY_CLASS_DJINN_H
 
-/* @file */
-/* Classes and Djinn as a unit holds them: the class definitions, the caps on */
-/* a unit's stats, and the functions that set, give and recover Djinn. */
+/* Classes and Djinn as a unit holds them: the class definitions, the caps on a
+   unit's stats, and the functions that set, give and recover Djinn. */
 
 #include "types.h"
 #include "battle/battle_unit.h"
 #include "battle/battle_side.h"
 #include "static_assert.h"
 
-/* An ability a class teaches, and the level it is learned at; The Broken */
-/* Seal's holds the ability in one byte. */
+/* An ability a class teaches, and the level it is learned at; The Broken Seal's
+   holds the ability in one byte. */
 typedef struct CLASS_ABILITY {
-	u16 ability; /* the action taught, 0 for none */
-	u8 level;	 /* the level it is taught at */
-	u8 padding;	 /* padding */
+	Uint16 ability; /* the action taught, 0 for none */
+	Uint8  level;	/* the level it is taught at */
+	Uint8  padding; /* padding */
 } CLASS_ABILITY;
 
-/* CLASS_DEFINITION.series, each named by its first class. The ten The Broken */
-/* Seal has are the series a character's elements choose */
-/* (Class_SeriesByElements); 11 is in no row, 12 holds class 0, "NPC", an */
-/* enemy's (CLASS_NONE), and the five after are The Lost Age's own, which */
-/* gmClassDetermine gives for a character or an item. */
+/* CLASS_DEFINITION.series, each named by its first class. The ten The Broken
+   Seal has are the series a character's elements choose
+   (Class_SeriesByElements); 11 is in no row, 12 holds class 0, "NPC", an
+   enemy's (CLASS_NONE), and the five after are The Lost Age's own, which
+   gmClassDetermine gives for a character or an item. */
 typedef enum CLASS_SERIES {
 	CLASS_SERIES_SQUIRE = 1,
 	CLASS_SERIES_GUARD,
@@ -60,21 +59,21 @@ typedef enum CLASS_SERIES {
 /* How many classes Class_DefinitionTable holds. */
 #define CLASS_COUNT 244
 
-/* A class: its series, the element levels it needs, its stat multipliers and */
-/* the abilities it teaches. */
+/* A class: its series, the element levels it needs, its stat multipliers and
+   the abilities it teaches. */
 typedef struct CLASS_DEFINITION {
-	long series;	/* the series gmClassDetermine picks from */
-	u8 required[4]; /* the whole level needed in each element */
-	u8 hp;			/* tenths of the base stat */
-	u8 pp;			/* tenths of the base stat */
-	u8 attack;		/* tenths of the base stat */
-	u8 defense;		/* tenths of the base stat */
-	u8 agility;		/* tenths of the base stat */
-	u8 luck;		/* tenths of the base stat */
-	u8 padding[2];	/* padding */
+	long  series;	   /* the series gmClassDetermine picks from */
+	Uint8 required[4]; /* the whole level needed in each element */
+	Uint8 hp;		   /* tenths of the base stat */
+	Uint8 pp;		   /* tenths of the base stat */
+	Uint8 attack;	   /* tenths of the base stat */
+	Uint8 defense;	   /* tenths of the base stat */
+	Uint8 agility;	   /* tenths of the base stat */
+	Uint8 luck;		   /* tenths of the base stat */
+	Uint8 padding[2];  /* padding */
 	/* The Psynergy the class teaches. */
 	CLASS_ABILITY abilities[CLASS_ABILITY_SLOTS];
-	u8 weakEffs[4]; /* the ability effects the class is weak to */
+	Uint8		  weakEffs[4]; /* the ability effects the class is weak to */
 } CLASS_DEFINITION;
 
 extern const CLASS_DEFINITION Class_DefinitionTable[];
@@ -83,8 +82,9 @@ STATIC_ASSERT(sizeof(CLASS_DEFINITION) == 84);
 STATIC_ASSERT(offsetof(DJINN_RECOVERY_TABLE, list) == 8);
 STATIC_ASSERT(offsetof(DJINN_RECOVERY_TABLE, list.cnt) == 296);
 
-CLASS_DEFINITION *gmClassGetDefinition(s32 classId);
+CLASS_DEFINITION *gmClassGetDefinition(Sint32 classId);
 
-const struct DJINN_DEFINITION *gmDjinnGetDefinition(u32 element, u32 djinn);
+const struct DJINN_DEFINITION *gmDjinnGetDefinition(
+	Uint32 element, Uint32 djinn);
 
 #endif

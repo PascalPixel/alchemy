@@ -1,14 +1,13 @@
-/* @file */
 /* The stump Move pushes off a ledge into the water, in Goma Cave Entrance and
- */
-/* Goma Cave. */
-/* */
-/* The including scene defines where it lands (STUMP_LANDING_X and _Z), where */
-/* it bounces on to and sinks (STUMP_RESTING_X and _Z), and the height of the */
-/* ground it comes down to (STUMP_FLOOR_HEIGHT, 16.16). */
+   Goma Cave.
+
+   The including scene defines where it lands (STUMP_LANDING_X and _Z), where it
+   bounces on to and sinks (STUMP_RESTING_X and _Z), and the height of the
+   ground it comes down to (STUMP_FLOOR_HEIGHT, 16.16). */
 
 /* Spins the leaping stump a thirty-second of a turn each frame. */
-static void scSpinStump(ACTOR *actor) {
+static void scSpinStump(ACTOR *actor)
+{
 	SPR *sprite = actor->spr;
 
 	sprite->rotation -= TRIG_TURN / 32;
@@ -16,12 +15,13 @@ static void scSpinStump(ACTOR *actor) {
 
 #include "actor_wait_below_height.c"
 
-/* The stump tips over the ledge, leaps spinning into the water, lands with a */
-/* shake and a ring of dust, bounces once and sinks with a splash. */
-static void scLeapStump(s32 stumpId) {
-	ACTOR *stump;
-	u32 i;
-	VECTOR3 dir;
+/* The stump tips over the ledge, leaps spinning into the water, lands with a
+   shake and a ring of dust, bounces once and sinks with a splash. */
+static void scLeapStump(Sint32 stumpId)
+{
+	ACTOR		  *stump;
+	Uint32		   i;
+	VECTOR3		   dir;
 	EFFECT_OPTIONS options;
 
 	stump = fdActorGet(stumpId);
@@ -52,7 +52,7 @@ static void scLeapStump(s32 stumpId) {
 		dir.x -= dir.x / 4;
 		dir.z -= dir.z / 2;
 		fdEffectSpawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
-					  dir.y, dir.z, 0, NULL);
+			dir.y, dir.z, 0, NULL);
 	}
 	stump->velY = toFIXED(5);
 	fdActorSetDestination(stumpId, STUMP_RESTING_X, STUMP_RESTING_Z);
@@ -61,14 +61,13 @@ static void scLeapStump(s32 stumpId) {
 	stump->update = NULL;
 	stump->spr->rotation = TRIG_TURN / 16;
 	options.type = SPRITE_SPLASH;
-	options.startScaleX = FIXED_ONE / 2;
-	options.startScaleY = 4 * FIXED_ONE / 5;
-	options.tgtScaleX = 3 * FIXED_ONE / 2;
-	options.tgtScaleY = 6 * FIXED_ONE / 5;
+	options.startScaleX = toFIXED(1) / 2;
+	options.startScaleY = toFIXED(4) / 5;
+	options.tgtScaleX = toFIXED(3) / 2;
+	options.tgtScaleY = toFIXED(6) / 5;
 	fdEffectSpawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
-				  EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-					  EFFECT_SCALE_TO_TARGET,
-				  &options);
+		EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
+		&options);
 	sySndPlay(SE_CAST);
 	fdActorSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
 	fdMapGridWaitForShakeToSettle();

@@ -1,67 +1,34 @@
 #ifndef ALCHEMY_TLA_EDITION_H
 #define ALCHEMY_TLA_EDITION_H
 
-/* @file */
 /* Values that differ by language, chosen once for their code. */
 
 #include "edition.h"
 
 /* The window text ring: 256 codes in Japanese, 512 in the others. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define TEXT_BUFFER_MASK 0xFF
-#else
-#define TEXT_BUFFER_MASK 0x1FF
-#endif
+#define TEXT_BUFFER_MASK JAPANESE_OR(0xFF, 0x1FF)
 
 /* Two icon menus' widths, wider outside Japanese: the field menu's (Psynergy,
- */
-/* Djinn, Item, Status) and the File Screen's (New Game, Continue, Copy, Erase,
- */
-/* and Battle and Update when they are offered). */
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define FIELD_MENU_ICON_ROW_WIDTH  7
-#define FILE_SCREEN_ICON_ROW_WIDTH 7
-#else
-#define FIELD_MENU_ICON_ROW_WIDTH  5
-#define FILE_SCREEN_ICON_ROW_WIDTH 4
-#endif
+   Djinn, Item, Status) and the File Screen's (New Game, Continue, Copy, Erase,
+   and Battle and Update when they are offered). */
+#define FIELD_MENU_ICON_ROW_WIDTH  JAPANESE_OR(5, 7)
+#define FILE_SCREEN_ICON_ROW_WIDTH JAPANESE_OR(4, 7)
 
 /* The debug scene selector's colons, where its arrow points, and the y of its
- */
-/* first row; further right in Japanese. */
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define DEBUG_SCENE_SELECTOR_COLON_X 74
-#else
-#define DEBUG_SCENE_SELECTOR_COLON_X 100
-#endif
+   first row; further right in Japanese. */
+#define DEBUG_SCENE_SELECTOR_COLON_X	 JAPANESE_OR(100, 74)
 #define DEBUG_SCENE_SELECTOR_FIRST_ROW_Y 60
 
 /* A link battle's opponent names take up to 8 letters of prefix, then a space,
- */
-/* in the European editions, instead of 5. */
-#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
-	LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define BATTLE_ARENA_PREFIX_LAST 7
-#else
-#define BATTLE_ARENA_PREFIX_LAST 4
-#endif
+   in the European editions, instead of 5. */
+#define BATTLE_ARENA_PREFIX_LAST WHEN(SPACED_ENEMY_NAME_PREFIX, 7, 4)
 
 /* The first of the letters that tell enemies of one kind apart in battle, put
- */
-/* right after the name: the alphabet from 'A' in Japanese, the digits from '1'
- */
-/* in the others ("Chestbeater1" to "Chestbeater3"). */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define ENEMY_NAME_LETTER_FIRST 'A'
-#else
-#define ENEMY_NAME_LETTER_FIRST '1'
-#endif
+   right after the name: the alphabet from 'A' in Japanese, the digits from '1'
+   in the others ("Chestbeater1" to "Chestbeater3"). */
+#define ENEMY_NAME_LETTER_FIRST JAPANESE_OR('A', '1')
 
 /* The letters of Lucky Wheels' title. */
-#if LANGUAGE == LANGUAGE_SPANISH
-#define LUCKY_WHEELS_TITLE_LETTERS 9
-#else
-#define LUCKY_WHEELS_TITLE_LETTERS 8
-#endif
+#define LUCKY_WHEELS_TITLE_LETTERS SPANISH_OR(9, 8)
 
 #endif

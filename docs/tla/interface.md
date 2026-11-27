@@ -5,7 +5,7 @@ villager's line, the field menu, the Pause menu, a shop's counter, a
 battle's commands. The menu engine is the code that draws those boxes and
 runs the screens built from them.
 
-It rests on two ideas: one task draws every box, and every screen is plain
+It rests on two ideas: one event draws every box, and every screen is plain
 code that waits.
 
 ## Windows
@@ -14,7 +14,7 @@ code that waits.
 
 A box is a [window](glossary.md#window). The code that wants one only
 asks for it, because the drawing is done by the windows' own
-[task](glossary.md#task), which runs once in every frame from inside whatever code is waiting. Each frame
+[event](glossary.md#event), which runs once in every frame from inside whatever code is waiting. Each frame
 it grows every opening window a little, shrinks every closing one, and
 types the next letters into any that have text coming. That is why a line
 and the portrait beside it can both be on the move while the conversation
@@ -37,7 +37,7 @@ player gave Felix.
 
 Showing one is two steps. First the whole message is decoded: unpacked,
 with its blanks filled from the game's state at that moment. Then the
-windows' task types it a few letters a frame, stops at the end of each
+windows' event types it a few letters a frame, stops at the end of each
 page, and each frame after that looks for a button.
 
 [Decoding a message](../../games/tla/src/window/README.md#decoding-a-message) shows the
@@ -54,9 +54,9 @@ flowchart LR
   talk -- "a shop, a sanctum, an inn or the forge" --> counter(["A counter"])
   field -- "A facing nothing, or Select" --> menu(["The field menu"])
   field -- "Start" --> pause(["The Pause menu"])
-  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef mode fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  class field sequence
+  class field mode
   class talk,counter,menu,pause request
 ```
 
@@ -87,7 +87,7 @@ who fights in front.
 ![Felix talks to the keeper of Daila's stall across the counter, buys one Herb (How many? 1) for himself, and `Your Coins` drops from 500 to 490](https://alchemy.pascalpixel.com/tla/guides/shop/shop.gif)
 
 A visit to a counter starts as an ordinary conversation. The shopkeeper's
-[event](glossary.md#event) calls the shop's code as a function and goes on
+[script](glossary.md#script) calls the shop's code as a function and goes on
 when it returns, exactly as the field calls a menu. So a whole shop visit
 can sit in the middle of a conversation.
 

@@ -1,23 +1,21 @@
-/* Task: the drops of rain falling about the stone Douse has struck */
-/* (fdGroundParticlesSetAnchor), the overlay's copy of fdGroundParticlesUpdate.
- */
-/* Each plays its frames of */
-/* GroundParticleFrames, falling and then splashing on the ground (held while */
-/* FLAG_WEATHER_HELD is set), and falls again at a random spot within a screen
- */
-/* of that actor, or at the origin when there is none. */
-void fdGroundParticlesDraw(void) {
-	MAP_STATE *view = Ram_HeapSlots->mapGrid;
+/* Event: the drops of rain falling about the stone Douse has struck
+   (scGroundParticlesSetAnchor), the overlay's copy of fdGroundParticlesUpdate.
+   Each plays its frames of GroundParticleFrames, falling and then splashing on
+   the ground (held while FLAG_WEATHER_HELD is set), and falls again at a random
+   spot within a screen of that actor, or at the origin when there is none. */
+void fdGroundParticlesDraw(void)
+{
+	MAP_STATE			  *view = Ram_HeapSlots->mapGrid;
 	GROUND_PARTICLE_STATE *state = Ram_HeapSlots->weather;
-	WEATHER_PARTICLE *particle = state->particles;
-	s32 cameraX = syMapStateView(view)[0];
-	s32 cameraZ = syMapStateView(view)[1];
-	u32 i;
+	WEATHER_PARTICLE	  *particle = state->particles;
+	Sint32				   cameraX = syMapStateView(view)[0];
+	Sint32				   cameraZ = syMapStateView(view)[1];
+	Uint32				   i;
 
 	for(i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
-		s16 *frame;
-		s32 x;
-		s32 y;
+		Sint16 *frame;
+		Sint32	x;
+		Sint32	y;
 
 		if(--particle->tmr == GROUND_PARTICLE_FREED)
 			continue;
@@ -30,14 +28,14 @@ void fdGroundParticlesDraw(void) {
 			particle->pri = 1;
 			particle->x = x;
 			particle->y = y;
-			particle->tile = state->tileBase + *(u16 *)frame;
+			particle->tile = state->tileBase + *(Uint16 *)frame;
 			frame++;
-			particle->shape = *(u8 *)frame;
-			particle->size = *(u8 *)(frame + 1);
-			syOamAddSprAtDepth(particle, OAM_DEPTH_WINDOW);
+			particle->shape = *(Uint8 *)frame;
+			particle->size = *(Uint8 *)(frame + 1);
+			syOAMAddSprAtDepth(particle, OAM_DEPTH_WINDOW);
 		}
 		if(particle->tmr == 0) {
-			s32 *leader = state->leader;
+			Sint32 *leader = state->leader;
 
 			if(leader != NULL) {
 				x = leader[0] + syRandom() * DISPLAY_WIDTH -
@@ -48,8 +46,7 @@ void fdGroundParticlesDraw(void) {
 				particle->posZ = y;
 				particle->posY = fdMapGetTerrainHeight(0, x, y);
 				particle->tmr = 16;
-			}
-			else {
+			} else {
 				particle->posX = 0;
 				particle->posZ = 0;
 				particle->posY = 0;

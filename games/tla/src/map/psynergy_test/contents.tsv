@@ -1,5 +1,5 @@
 block	file	pad	edition
-cell_tiles	cell_tiles.delta1.lz	4
+metatile_tiles	metatile_tiles.delta1.lz	4
 shapes	anemos_inner_sanctum_orihalcon_chest/shapes.table.lz	4
 grid	map.grid.lz	4
 shape_grid	shape_grid.plane.lz	4

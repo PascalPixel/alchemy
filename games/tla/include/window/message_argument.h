@@ -1,10 +1,9 @@
 #ifndef ALCHEMY_MESSAGE_ARGUMENT_H
 #define ALCHEMY_MESSAGE_ARGUMENT_H
 
-/* @file */
-/* The kinds of message argument (mnMessageArgumentPush), which the message */
-/* codes such as {argument_item_name} read; the window state keeps each kind */
-/* beside its value (WIN_STATE.argumentKinds). */
+/* The kinds of message argument (mnMessageArgumentPush), which the message
+   codes such as {argument_item_name} read; the window state keeps each kind
+   beside its value (WIN_STATE.argumentKinds). */
 
 enum {
 	MESSAGE_ARGUMENT_NONE = 0, /* an empty place in the argument table */

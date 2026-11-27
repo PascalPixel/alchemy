@@ -6,14 +6,14 @@
 Stubs_Menu:
 	stub mnItemMenuRunStub, mnItemMenuRun
 	stub mnPsynergyMenuRunStub, mnPsynergyMenuRun
-	stub mnStatScrRunStub, mnStatScrRun
+	stub mnStatScreenRunStub, mnStatScreenRun
 	stub mnPartyMemberChooserOpenStub, mnPartyMemberChooserOpen
 	stub mnIconCreateHandCursorStub, mnIconCreateHandCursor
 	stub mnIconShowStub, mnIconShow
 	stub mnDjinnMenuRunStub, mnDjinnMenuRun
 	stub mnItemMenuDrawItemDetailsStub, mnItemMenuDrawItemDetails
 	stub mnItemMenuDrawItemDetailsWithCountStub, mnItemMenuDrawItemDetailsWithCount
-	stub btPaletteLoadIconsIntoHighlightStub, mnPaletteLoadIconsIntoHighlight
+	stub mnPaletteLoadIconsIntoHighlightStub, mnPaletteLoadIconsIntoHighlight
 	stub mnUpdatePartyFiguresStub, mnUpdatePartyFigures
 	stub mnCreatePartyFiguresStub, mnCreatePartyFigures
 	stub mnShowPartyFiguresStub, mnShowPartyFigures

@@ -6,7 +6,7 @@ is one file in this folder, named for the place, such as
 [vale.c](vale.c).
 
 Open any of them and you will find the same two things: tables, and
-events.
+scripts.
 
 ## The entry table
 
@@ -25,7 +25,7 @@ very start of every overlay in the same order. That is the
 - Where does each way out lead?
 
 Each answer is a function, not a fixed table, so a scene can answer
-differently as the story moves. Vale hands over one of three trigger tables
+differently as the story moves. Vale hands over one of three cue tables
 depending on how far the story has gone.
 
 The set-up is where a scene does whatever a table cannot say: stand a
@@ -68,38 +68,38 @@ faces. The scene's code refers to actors by number, 8 and up in row order
 after the eight party characters. A row keeps its number even when its
 condition fails and nobody appears, so the numbers never shift.
 
-### Which triggers a cell starts
+### Which cues a metatile starts
 
-A cell on the map carries a number, its
-[cell behavior](../../../../docs/tbs/glossary.md#cell-behavior). By itself the number
-means nothing. The scene's trigger table gives it a meaning: walk north
-into a cell numbered 100 and Vale plays the event that climbs the ladder.
+A metatile on the map carries a number, its
+[metatile behavior](../../../../docs/tbs/glossary.md#metatile-behavior). By itself the number
+means nothing. The scene's cue table gives it a meaning: walk north
+into a metatile numbered 100 and Vale plays the script that climbs the ladder.
 
-### What a trigger row says
+### What a cue row says
 
-A [trigger](../../../../docs/tbs/glossary.md#trigger) row is one thing the player can do
-here: what kind of action, on which actor or cell, under what condition,
+A [cue](../../../../docs/tbs/glossary.md#cue) row is one thing the player can do
+here: what kind of action, on which actor or metatile, under what condition,
 and what runs.
 
 ```c
-{ TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(scValeDoraTalksAboutTheHole) },
-{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT(scValeCatchNut) },
+{ CUE_TALK, ACTOR_DORA, CONDITION_ALWAYS, SCRIPT_REF(scValeDoraTalksAboutTheHole) },
+{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, SCRIPT_REF(scValeCatchNut) },
 ```
 
-What runs can be an event, a bare message for a villager with one line, or
+What runs can be a script, a bare message for a villager with one line, or
 a bare exit for a path that just leads away.
 
-## How a trigger is chosen
+## How a cue is chosen
 
 ![In Vault's mayor's house after Kalay, Isaac talks to the mayor twice: the first talk welcomes him back, `Oh, Isaac! You've come back to Vault!`, and the second warns him, `Those guys really wanted revenge on you, so take good care of yourselves.`](https://alchemy.pascalpixel.com/guides/map/talk-twice.gif)
 
-The field reads the trigger table from the top and takes the first row
+The field reads the cue table from the top and takes the first row
 that fits. Order is therefore meaning. Vault's mayor has a welcome that
 counts until he has given it, then a warning that always counts:
 
 ```c
-{ TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT(scLogRoomsBWelcomeIsaacBack) },
-{ TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(scLogRoomsBWarnOfThievesRevenge) },
+{ CUE_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, SCRIPT_REF(scLogRoomsBWelcomeIsaacBack) },
+{ CUE_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, SCRIPT_REF(scLogRoomsBWarnOfThievesRevenge) },
 ```
 
 One exception is worth knowing. A search row is found whatever its
@@ -124,27 +124,27 @@ scene uses those for anything that should reset:
 A battle wipes neither. Every scene reuses the same two groups, so each
 gives the ones it uses a name of its own at the top of its file.
 
-## Events
+## Scripts
 
-An [event](../../../../docs/tbs/glossary.md#event) is a function that plays from top to
+A [script](../../../../docs/tbs/glossary.md#script) is a function that plays from top to
 bottom. This one opens a door and walks the leader through it:
 
 ```c
 static void scValeEnterJennasGrandparentsHouse(void) {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateCells(Vale_GrandparentsDoorOpens, 49, 69);
+	fdMapGridAnimateMetatiles(Vale_GrandparentsDoorOpens, 49, 69);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
-	syImportEventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
+	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 ```
 
-Commands come in two sorts. Some take time and hold the event until they
+Commands come in two sorts. Some take time and hold the script until they
 are done: an animation, a line of dialogue. Others only start something
 and return at once, so the leader is still walking as the screen begins to
 fade. The last line does not leave the scene. It sets a request, which the
-field acts on once the event has returned.
+field acts on once the script has returned.
 
-An event is ordinary C, so a choice is an `if`: on which way the leader
+A script is ordinary C, so a choice is an `if`: on which way the leader
 faces, on a flag, on a Yes or No.
 
 ## The Title, the File Screen and the Battle Arena

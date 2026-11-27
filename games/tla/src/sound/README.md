@@ -51,11 +51,11 @@ four are busy.
 
 Music is not started by a scene's code. When the party arrives somewhere,
 the main routine picks the music from a table of rules before the scene is
-even loaded (`scChooseMusic`). A rule names a scene or a whole area,
+even loaded (`fdChooseMusic`). A rule names a scene or a whole area,
 optionally an entrance and a [game flag](../../../../docs/tla/glossary.md#game-flag), and
 a sound. The first rule that fits wins.
 
-It is the same pattern the field engine uses for triggers and exits. Daila
+It is the same pattern the field engine uses for cues and exits. Daila
 has two rules: one way into its houses gets a tune of its own, and the
 area's rule gives every other part of Daila the town's. The World Map has
 six, and two of them change its tune as game flags are set.
@@ -98,14 +98,18 @@ names keep their row in `SongTable`. A music sample is named for the
 instrument General MIDI gives its voice slot (slot 47, `timpani.pcm8.wav`),
 an effect's sample for the sounds that play it (`rumble.pcm8.wav`), and a
 drum for the key General MIDI gives its row of the drum kit (`side_stick.pcm8.wav`).
+A song or sample that The Broken Seal has byte for byte, and the wave
+channel's patterns, are one copy in
+[`games/common/sound`](../../../common/README.md) that both games build.
 
 ## Where the code is
 
 - `sound_play.c` and `sound_test.c` here are the game's own layer:
-  `sySndPlay`, `sySndUpdateBgmRamps` and their neighbours, the volume ramps
+  `sySndPlay`, `sySndUpdateBGMRamps` and their neighbours, the volume ramps
   and the music's return.
-- [`sdk/sound`](../sdk/sound) is the driver: its C, its handwritten functions
-  and the mixer the game copies into IWRAM.
+- [`games/common/sdk/sound`](../../../common/sdk/sound) is the driver both
+  games build: its C, its handwritten functions and the mixer the game
+  copies into IWRAM.
 - [`system/mixer_render.s`](../system/mixer_render.s) is the one part of that
   mixer that uses r4 as the system library's functions do, and so is
   counted the system library's own.

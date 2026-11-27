@@ -1,27 +1,25 @@
-/* @file */
-/* Colosseum Final 1 and 3: setting up a race against the opponent, with */
-/* the race gauge at the top of the screen and the opponent running a recorded
- */
-/* path (colosso_path_opponent.c). */
+/* Colosseum Final 1 and 3: setting up a race against the opponent, with the
+   race gauge at the top of the screen and the opponent running a recorded path
+   (colosso_path_opponent.c). */
 
-/* Starts the race gauge (COLOSSO_RACE_STATE, in HEAP_SLOT_COLOSSO_RACE):
- */
-/* Isaac and the opponent as playerActorId and opponentActorId, a bar */
-/* of segments pieces either side, and the finish at pixel (finishX, finishZ) */
-/* in 16.16, where the two item actors stand. Unless the party returns */
-/* to where it was, the opponent is put opposite Isaac across x = finishX. */
-void scColossoStartRaceGauge(s32 playerActorId, s32 opponentActorId,
-							 s32 segments, FIXED finishX, FIXED finishZ,
-							 s32 finishItemActorIdA, s32 finishItemActorIdB) {
+/* Starts the race gauge (COLOSSO_RACE_STATE, in HEAP_SLOT_COLOSSO_RACE): Isaac
+   and the opponent as playerActorId and opponentActorId, a bar of segments
+   pieces either side, and the finish at pixel (finishX, finishZ) in 16.16,
+   where the two item actors stand. Unless the party returns to where it was,
+   the opponent is put opposite Isaac across x = finishX. */
+void scColossoStartRaceGauge(Sint32 playerActorId, Sint32 opponentActorId,
+	Sint32 segments, FIXED finishX, FIXED finishZ, Sint32 finishItemActorIdA,
+	Sint32 finishItemActorIdB)
+{
 	COLOSSO_RACE_STATE *state;
-	ACTOR *player;
-	ACTOR *opponent;
-	void *graphics;
-	s32 vramSlot;
+	ACTOR			   *player;
+	ACTOR			   *opponent;
+	void			   *graphics;
+	Sint32				vramSlot;
 
-	state = syHeapSlotAllocEwram(HEAP_SLOT_COLOSSO_RACE,
-								 sizeof(COLOSSO_RACE_STATE));
-	graphics = syHeapAllocEwram(GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
+	state = syHeapSlotAllocEWRAM(
+		HEAP_SLOT_COLOSSO_RACE, sizeof(COLOSSO_RACE_STATE));
+	graphics = syHeapAllocEWRAM(GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
 
 	state->gauge.playerActorId = playerActorId;
 	state->gauge.opponentActorId = opponentActorId;
@@ -42,25 +40,26 @@ void scColossoStartRaceGauge(s32 playerActorId, s32 opponentActorId,
 	state->gauge.level = 0;
 	state->gauge.hold = 0;
 
-	syFieldDecompressTaggedLz(Colosso_GaugeGraphics, graphics);
-	vramSlot = syVramCacheFindFreeEntry();
+	syFieldDecompressTaggedLZ(Colosso_GaugeGraphics, graphics);
+	vramSlot = syVRAMCacheFindFreeEntry();
 	state->gauge.vramBlock = vramSlot;
-	syVramCacheLoad((s16)vramSlot, GAUGE_TILE_COUNT * TILE_SIZE_4BPP, graphics);
+	syVRAMCacheLoad(
+		(Sint16)vramSlot, GAUGE_TILE_COUNT * TILE_SIZE_4BPP, graphics);
 
-	syTaskAddFrame(scColossoDrawGauge, TASK_PASS_FRAME - 10);
+	sySetFrameEvent(scColossoDrawGauge, EVENT_PASS_FRAME - 10);
 
 	syHeapRelease(graphics);
 }
 
 /* Decodes the opponent's recorded path (resource) after the gauge's state and,
- */
-/* unless the party returns to where it was, has the opponent run it from the */
-/* start, mirrored across the finish; then starts the opponent's task. */
-void scColossoStartOpponent(s32 resource) {
+   unless the party returns to where it was, has the opponent run it from the
+   start, mirrored across the finish; then starts the opponent's event. */
+void scColossoStartOpponent(Sint32 resource)
+{
 	COLOSSO_RACE_STATE *state = (COLOSSO_RACE_STATE *)ColossoState;
-	PATH_RECORDER *recorder = (PATH_RECORDER *)SceneLocalState;
+	PATH_RECORDER	   *recorder = (PATH_RECORDER *)SceneLocalState;
 
-	syFieldDecompressTaggedLz(syResourceGetTableEntry(resource), state->path);
+	syFieldDecompressTaggedLZ(syResourceGetTableEntry(resource), state->path);
 	if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
 		recorder->mode = PATH_RECORDER_PLAY;
 		recorder->mirror = 1;
@@ -68,5 +67,5 @@ void scColossoStartOpponent(s32 resource) {
 		recorder->still = 0;
 		recorder->pathIdx = 0;
 	}
-	syTaskAddFrame(scColossoUpdatePathOpponent, TASK_PASS_FRAME + 5);
+	sySetFrameEvent(scColossoUpdatePathOpponent, EVENT_PASS_FRAME + 5);
 }

@@ -12,7 +12,7 @@
 	.4byte \target
 	.endm
 
-	IwramEntry __divsi3, IwramSignedDivide
-	IwramEntry __udivsi3, IwramUnsignedDivide
-	IwramEntry __modsi3, IwramSignedRemainder
-	IwramEntry __umodsi3, IwramUnsignedRemainder
+	IwramEntry __divsi3, syIWRAMSignedDivide
+	IwramEntry __udivsi3, syIWRAMUnsignedDivide
+	IwramEntry __modsi3, syIWRAMSignedRemainder
+	IwramEntry __umodsi3, syIWRAMUnsignedRemainder

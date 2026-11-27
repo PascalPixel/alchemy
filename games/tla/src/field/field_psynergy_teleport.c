@@ -1,21 +1,19 @@
-/* @file */
-/* Teleport: the leader leaving in a burst of sparks and arriving in a whirl */
-/* of them, and the cast that opens the picture of the world. */
-/* Part of field_psynergy.c. */
+/* Teleport: the leader leaving in a burst of sparks and arriving in a whirl of
+   them, and the cast that opens the picture of the world. Part of
+   field_psynergy.c. */
 
-#define WHIRL_COUNT 100 /* sparks that whirl round the leader */
+#define WHIRL_COUNT				   100 /* sparks that whirl round the leader */
 /* The frames a spark flies before it vanishes. */
-#define TELEPORT_SPARK_FRAMES 20
+#define TELEPORT_SPARK_FRAMES	   20
 /* Before the sparks, the leader spins for TELEPORT_SPIN_FRAMES, its turn each
- */
-/* frame TELEPORT_SPIN_ACCELERATION (1/65536 turns) faster than the last. */
+   frame TELEPORT_SPIN_ACCELERATION (1/65536 turns) faster than the last. */
 #define TELEPORT_SPIN_FRAMES	   50
 #define TELEPORT_SPIN_ACCELERATION 60
 
 /* The stages of fdTeleportPlayWhirl. */
 typedef enum WHIRL_STAGE {
-	WHIRL_FALLS_IN =
-		0, /* more and more sparks fall in round the hidden leader */
+	/* more and more sparks fall in round the hidden leader */
+	WHIRL_FALLS_IN = 0,
 	WHIRL_LEADER_GROWS = 1,
 	WHIRL_DIES_AWAY = 2
 } WHIRL_STAGE;
@@ -27,48 +25,47 @@ typedef enum SPARK_STAGE {
 	SPARKS_DIE_AWAY = 2
 } SPARK_STAGE;
 
-/* Teleport's whirl (heap slot battleEffect): the decoded spark picture, */
-/* then the 100 sparks and their sprites. */
+/* Teleport's whirl (heap slot battleEffect): the decoded spark picture, then
+   the 100 sparks and their sprites. */
 typedef struct TELEPORT_WHIRL_STATE {
-	u8 picture[1024];
+	Uint8		picture[1024];
 	WHIRL_SPARK sparks[WHIRL_COUNT];
-	EFFECT_SPR sprs[WHIRL_COUNT];
+	EFFECT_SPR	sprs[WHIRL_COUNT];
 } TELEPORT_WHIRL_STATE;
 
-/* The arriving half of a teleport: a whirl of sparks, the coloured orbs of */
-/* RESOURCE_COLOURED_ORBS, falls in round the hidden leader with */
-/* SE_SPARKLE_FALL, the leader spins and grows back to full size inside it, and
- */
-/* the whirl dies away. The scenes with Teleport circles call it (Mars */
-/* Lighthouse, the Anemos Inner Sanctum, the Yampi Desert and Islet caves, */
-/* Contigo). */
-void fdTeleportPlayWhirl(void) {
-	s32 position[3];
+/* The arriving half of a teleport: a whirl of sparks, the coloured orbs of
+   RESOURCE_COLOURED_ORBS, falls in round the hidden leader with
+   SE_SPARKLE_FALL, the leader spins and grows back to full size inside it, and
+   the whirl dies away. The scenes with Teleport circles call it (Mars
+   Lighthouse, the Anemos Inner Sanctum, the Yampi Desert and Islet caves,
+   Contigo). */
+void fdTeleportPlayWhirl(void)
+{
+	Sint32				  position[3];
 	TELEPORT_WHIRL_STATE *teleportWhirlState =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*teleportWhirlState));
-	ACTOR *actor = fdActorLookup(fdPartyGetLeaderActor());
+	ACTOR		*actor = fdActorLookup(fdPartyGetLeaderActor());
 	WHIRL_SPARK *spark;
-	EFFECT_SPR *sprite;
-	s32 next;
-	s32 state;
-	s32 entry;
-	s32 count;
-	s32 tiles;
-	s32 i;
-	s32 angle;
-	s32 frame;
-	FIXED radius;
+	EFFECT_SPR	*sprite;
+	Sint32		 next;
+	Sint32		 state;
+	Sint32		 entry;
+	Sint32		 count;
+	Sint32		 tiles;
+	Sint32		 i;
+	Sint32		 angle;
+	Sint32		 frame;
+	FIXED		 radius;
 
-	syDecompressTaggedLz(syResourceGetTableEntry(RESOURCE_COLOURED_ORBS),
-						 teleportWhirlState);
-	entry = syVramCacheFindFreeEntry();
-	tiles = syVramCacheLoad(entry, 1024, teleportWhirlState);
+	syDecompressTaggedLZ(
+		syResourceGetTableEntry(RESOURCE_COLOURED_ORBS), teleportWhirlState);
+	entry = syVRAMCacheFindFreeEntry();
+	tiles = syVRAMCacheLoad(entry, 1024, teleportWhirlState);
 	for(i = 0, spark = teleportWhirlState->sparks; i < WHIRL_COUNT;
 		i++, spark++) {
 		sprite = &teleportWhirlState->sprs[i];
 		fdEffectSprInit(sprite, 4, 4, 0,
-						tiles +
-							(i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
+			tiles + (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
 		sprite->oam.fullCol = 1;
 		sprite->oam.pal = 0;
 		sprite->oam.pri = 0;
@@ -94,7 +91,7 @@ void fdTeleportPlayWhirl(void) {
 				spark = &teleportWhirlState->sparks[next];
 				spark->age = 0;
 				SET_POSITION(spark, actor->x.fixed,
-							 actor->y.fixed + syRandom() * 20, actor->z.fixed);
+					actor->y.fixed + syRandom() * 20, actor->z.fixed);
 				syVectorAddPolarOffset(syRandom() << 3, angle, &spark->x);
 				next++;
 				spark->ang = angle;
@@ -108,14 +105,14 @@ void fdTeleportPlayWhirl(void) {
 		sprite = teleportWhirlState->sprs;
 		for(i = 0; i < WHIRL_COUNT; i++, sprite++, spark++) {
 			if(spark->age >= 0) {
-				if((u32)spark->age < TELEPORT_SPARK_FRAMES) {
-					s32 sparkAngle = spark->ang;
-					s32 sparkRadius = spark->radius;
+				if((Uint32)spark->age < TELEPORT_SPARK_FRAMES) {
+					Sint32 sparkAngle = spark->ang;
+					Sint32 sparkRadius = spark->radius;
 					position[0] = spark->x;
 					position[1] = spark->y;
 					position[2] = spark->z;
 					syVectorAddPolarOffset(sparkRadius, sparkAngle, position);
-					fdCameraWorldToScr(position);
+					fdCameraWorldToScreen(position);
 					sprite->x = position[0];
 					sprite->y = position[2];
 					fdEffectSprDraw(sprite);
@@ -139,9 +136,9 @@ void fdTeleportPlayWhirl(void) {
 			break;
 		case WHIRL_LEADER_GROWS:
 			actor->facing += DEGtoANG(45);
-			actor->scaleX = FIXED_ONE * frame / 30;
-			if(actor->scaleX > FIXED_ONE)
-				actor->scaleX = FIXED_ONE;
+			actor->scaleX = toFIXED(1) * frame / 30;
+			if(actor->scaleX > toFIXED(1))
+				actor->scaleX = toFIXED(1);
 			actor->scaleY = actor->scaleX;
 			if(frame == 40) {
 				state = WHIRL_DIES_AWAY;
@@ -165,7 +162,7 @@ void fdTeleportPlayWhirl(void) {
 		sySynch(1);
 		frame++;
 	} while(state != FIELD_PSYNERGY_FINISHED);
-	syVramCacheFreeEntry(entry);
+	syVRAMCacheFreeEntry(entry);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 	fdPsynergyMarkWorldMapTilesUsed();
 }
@@ -173,48 +170,47 @@ void fdTeleportPlayWhirl(void) {
 /* The sparks of Teleport's leaving burst. */
 #define TELEPORT_SPARK_COUNT 100
 
-/* Teleport's burst of sparks (heap slot battleEffect): the decoded picture, */
-/* then the sparks and their sprites. */
+/* Teleport's burst of sparks (heap slot battleEffect): the decoded picture,
+   then the sparks and their sprites. */
 typedef struct TELEPORT_SPARKS_STATE {
-	u8 picture[1024];
+	Uint8					picture[1024];
 	FIELD_PSYNERGY_PARTICLE particles[TELEPORT_SPARK_COUNT];
-	EFFECT_SPR sprs[TELEPORT_SPARK_COUNT];
+	EFFECT_SPR				sprs[TELEPORT_SPARK_COUNT];
 } TELEPORT_SPARKS_STATE;
 
 /* The leaving half of a teleport, fdTeleportPlayWhirl's companion in the same
- */
-/* scenes: the leader raises both arms in changing colours, spins faster and */
-/* faster as sparks burst from it, shrinks away and is hidden. */
-void fdTeleportPlaySparks(void) {
+   scenes: the leader raises both arms in changing colours, spins faster and
+   faster as sparks burst from it, shrinks away and is hidden. */
+void fdTeleportPlaySparks(void)
+{
 	TELEPORT_SPARKS_STATE *teleportSparksState =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*teleportSparksState));
-	s32 owner = fdPartyGetLeaderActor();
-	ACTOR *actor = fdActorLookup(fdPartyGetLeaderActor());
+	Sint32					 owner = fdPartyGetLeaderActor();
+	ACTOR					*actor = fdActorLookup(fdPartyGetLeaderActor());
 	FIELD_PSYNERGY_PARTICLE *particle;
-	EFFECT_SPR *sprite;
-	s32 state;
-	s32 entry;
-	s32 count;
-	s32 tiles;
-	s32 i;
-	s32 spin;
-	s32 angle;
-	s32 next;
-	s32 frame;
-	s32 age;
+	EFFECT_SPR				*sprite;
+	Sint32					 state;
+	Sint32					 entry;
+	Sint32					 count;
+	Sint32					 tiles;
+	Sint32					 i;
+	Sint32					 spin;
+	Sint32					 angle;
+	Sint32					 next;
+	Sint32					 frame;
+	Sint32					 age;
 
 	sySynch(20);
 	fdPsynergyFadeToCastCol();
-	syDecompressTaggedLz(syResourceGetTableEntry(RESOURCE_COLOURED_ORBS),
-						 teleportSparksState);
-	entry = syVramCacheFindFreeEntry();
-	tiles = syVramCacheLoad(entry, 1024, teleportSparksState);
+	syDecompressTaggedLZ(
+		syResourceGetTableEntry(RESOURCE_COLOURED_ORBS), teleportSparksState);
+	entry = syVRAMCacheFindFreeEntry();
+	tiles = syVRAMCacheLoad(entry, 1024, teleportSparksState);
 	for(i = 0, particle = teleportSparksState->particles;
 		i < TELEPORT_SPARK_COUNT; i++, particle++) {
 		sprite = &teleportSparksState->sprs[i];
 		fdEffectSprInit(sprite, 4, 4, 0,
-						tiles +
-							(i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
+			tiles + (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
 		sprite->oam.fullCol = 1;
 		sprite->oam.pal = 0;
 		sprite->oam.pri = 0;
@@ -246,22 +242,19 @@ void fdTeleportPlaySparks(void) {
 			particle = &teleportSparksState->particles[next];
 			particle->tmr = 0;
 			SET_POSITION(particle, actor->x.fixed,
-						 actor->y.fixed + syRandom() * 20, actor->z.fixed);
+				actor->y.fixed + syRandom() * 20, actor->z.fixed);
 			syVectorAddPolarOffset(syRandom() << 3, angle, &particle->x);
 			if(next & 1) {
 				particle->velX = 0;
 				particle->velY = -toFIXED(4);
 				particle->velZ = 0;
-				syVectorAddPolarOffset(
-					(syRandom() << 2) + toFIXED(4), angle,
+				syVectorAddPolarOffset((syRandom() << 2) + toFIXED(4), angle,
 					&teleportSparksState->particles[next].velX);
-			}
-			else {
+			} else {
 				particle->velX = 0;
 				particle->velY = toFIXED(5);
 				particle->velZ = 0;
-				syVectorAddPolarOffset(
-					(syRandom() << 2) + toFIXED(4), angle,
+				syVectorAddPolarOffset((syRandom() << 2) + toFIXED(4), angle,
 					&teleportSparksState->particles[next].velX);
 			}
 			next++;
@@ -273,14 +266,14 @@ void fdTeleportPlaySparks(void) {
 			i < TELEPORT_SPARK_COUNT; i++, sprite++, particle++) {
 			age = particle->tmr;
 			if(age >= 0) {
-				if((u32)age < TELEPORT_SPARK_FRAMES) {
+				if((Uint32)age < TELEPORT_SPARK_FRAMES) {
 					fdEffectSprDrawAtWorldPos(sprite, particle);
 					if(i & 1)
-						fdAdvanceWithGravity3D(&particle->x, 63,
-											   toFIXED(1) / 2);
+						fdAdvanceWithGravity3D(
+							&particle->x, 63, toFIXED(1) / 2);
 					else
-						fdAdvanceWithGravity3D(&particle->x, 63,
-											   -(toFIXED(5) / 8));
+						fdAdvanceWithGravity3D(
+							&particle->x, 63, -(toFIXED(5) / 8));
 				}
 				if(++particle->tmr == TELEPORT_SPARK_FRAMES)
 					particle->tmr = -1;
@@ -304,7 +297,7 @@ void fdTeleportPlaySparks(void) {
 			break;
 		case SPARKS_LEADER_SHRINKS:
 			actor->facing += DEGtoANG(45);
-			actor->scaleX = FIXED_ONE - FIXED_ONE * frame / 30;
+			actor->scaleX = toFIXED(1) - toFIXED(1) * frame / 30;
 			if(actor->scaleX < 0)
 				actor->scaleX = 0;
 			actor->scaleY = actor->scaleX;
@@ -323,28 +316,33 @@ void fdTeleportPlaySparks(void) {
 		sySynch(1);
 		frame++;
 	} while(state != FIELD_PSYNERGY_FINISHED);
-	syVramCacheFreeEntry(entry);
+	syVRAMCacheFreeEntry(entry);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/* Runs fdTeleportPlaySparks, fades the palettes back to the saved ones and */
-/* waits 10 frames. */
-void fdTeleportPlaySparksAndFade(void) {
+/* Runs fdTeleportPlaySparks, fades the palettes back to the saved ones and
+   waits 10 frames. */
+void fdTeleportPlaySparksAndFade(void)
+{
 	fdTeleportPlaySparks();
 	fdPsynergyFadeFromCastCol();
 	sySynch(10);
 }
 
 /* Teleport cast on a target: does nothing. */
-void fdPsynergyTeleportOnTarget(void) {}
+void fdPsynergyTeleportOnTarget(void)
+{
+}
 
-/* Teleport: raises FIELD_RAISED_TRIGGER_TELEPORT, which shows the picture of */
-/* the whole world for the player to choose where to go. */
-void fdPsynergyTeleport(void) {
+/* Teleport: raises FIELD_RAISED_CUE_TELEPORT, which shows the picture of the
+   whole world for the player to choose where to go. */
+void fdPsynergyTeleport(void)
+{
 	/* DEAD: the leader looked up and never used; the ROM keeps the calls. */
 	fdActorLookup(fdPartyGetLeaderActor());
-	FieldStateWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
+	FieldStateWork->raisedCue = FIELD_RAISED_CUE_TELEPORT;
 }
+
 #undef WHIRL_COUNT
 #undef TELEPORT_SPARK_FRAMES
 #undef TELEPORT_SPIN_FRAMES

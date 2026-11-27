@@ -2,29 +2,29 @@
 
 A map is the ground a place is drawn on and walked over. Each is a folder
 here, such as `vale/` for Vale, and the heart of it is three grids you
-can open, one number a cell.
+can open, one number a metatile.
 
-## Cells
+## Metatiles
 
 ![Isaac walks behind a house in Vale: the roof hides him, and he comes out on its other side](https://alchemy.pascalpixel.com/guides/world/behind-roof.gif)
 
-A map is a grid of [cells](../../../../docs/tbs/glossary.md#cell), 16 pixels square. A
-cell is three numbers, each in a grid of its own:
+A map is a grid of [metatiles](../../../../docs/tbs/glossary.md#metatile), 16 pixels square. A
+metatile is three numbers, each in a grid of its own:
 
 - **What is drawn.** `grid_picture.tsv` names a
-  [cell tiles](../../../../docs/tbs/glossary.md#cell-tiles), four tiles two by two,
-  from the map's own list in `cell_tiles.tsv`.
+  [metatile tiles](../../../../docs/tbs/glossary.md#metatile-tiles), four tiles two by two,
+  from the map's own list in `metatile_tiles.tsv`.
 - **What standing there does.** `grid_behavior.tsv` holds the
-  [cell behavior](../../../../docs/tbs/glossary.md#cell-behavior). Zero is plain ground.
+  [metatile behavior](../../../../docs/tbs/glossary.md#metatile-behavior). Zero is plain ground.
   The numbers from 240 up mean the same everywhere: a wall, a ledge, a
-  ladder, a jar to search. The rest mean whatever the scene's trigger
-  table says ([Scenes](../scene/README.md#which-triggers-a-cell-starts)).
+  ladder, a jar to search. The rest mean whatever the scene's cue
+  table says ([Scenes](../scene/README.md#which-cues-a-metatile-starts)).
 - **How the ground is shaped.** `grid_shape.tsv` picks a shape from
-  `shapes.tsv`: how high the ground is at each pixel of the cell. Flat
+  `shapes.tsv`: how high the ground is at each pixel of the metatile. Flat
   ground, slopes, steps and bumps are all shapes, and walking is decided by
   comparing heights.
 
-A cell can also say who is in front. `grid_actors.tsv` lists the cells
+A metatile can also say who is in front. `grid_actors.tsv` lists the metatiles
 that change the layer or the drawing priority of whoever stands there,
 which is how Isaac goes behind a roof by walking, with no code involved.
 
@@ -43,17 +43,17 @@ a haze of sand hangs in the air in front of a desert.
 ## Chests and Psynergy Stones
 
 A chest is not painted into the map, or every scene sharing the map would
-have it. The map only lists the cells where treasure could stand, in
+have it. The map only lists the metatiles where treasure could stand, in
 `spots.tsv`. When a
-scene starts, the field engine looks in the scene's triggers for each spot's
+scene starts, the field engine looks in the scene's cues for each spot's
 behavior number and puts a chest there only if it finds a row.
 
 ## Tileset animation and blend scripts
 
 ![A spot in Vale, with the tiles its ground is built from laid out in grey beside it: watch for the red outline, which marks each group of tiles at the moment the game repaints it](https://alchemy.pascalpixel.com/guides/map/tile-animation.gif)
 
-Stand still in Vale and water keeps moving, though no cell changes. The
-game repaints a tile on a timer, and every cell that uses the tile changes
+Stand still in Vale and water keeps moving, though no metatile changes. The
+game repaints a tile on a timer, and every metatile that uses the tile changes
 with it. A map's list of these is in `tileset_anims.tsv`.
 
 A blend script does the same for transparency: a list of how strongly one
@@ -82,19 +82,19 @@ the title, the File Screen and the World Map, the first row `MapsWork` counts
 from, is `empty_map/`; the two that no place or scene names keep their
 resource number.
 
-When the party arrives, the grid, the cell tiles, the shapes and the
+When the party arrives, the grid, the metatile tiles, the shapes and the
 tiles are unpacked into memory, where the field engine reads them
 directly.
 
-The grid comes packed as three planes: the cell tiles, the behaviors
+The grid comes packed as three planes: the metatile tiles, the behaviors
 and the shapes. As it is unpacked, a small function copied into fast RAM
-weaves them into one word a cell, the cell tiles in the low half and the
+weaves them into one word a metatile, the metatile tiles in the low half and the
 behavior and shape in the high.
 
 ## Where the files are
 
 Each folder holds the three grids, `grid_actors.tsv` and
-`cell_tiles.tsv`, with `shapes.tsv`, `spots.tsv`, `tileset_anims.tsv` and
+`metatile_tiles.tsv`, with `shapes.tsv`, `spots.tsv`, `tileset_anims.tsv` and
 `blend.tsv` where it has them. Where a language changes a map, its own
 tables sit beside them, such as `grid_picture_es.tsv`. `header.tsv`,
 `layers.tsv`, `contents.tsv` and `tilesets.tsv` put the map together and

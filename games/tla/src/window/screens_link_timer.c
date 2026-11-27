@@ -1,48 +1,42 @@
-/* @file */
-/* The link battle timer and the no-flee check. */
-/* Part of screens.c. */
+/* The link battle timer and the no-flee check. Part of screens.c. */
 
 #define COUNTDOWN_START_FRAMES (15 * FRAMES_PER_SECOND)
 
-/* The partner console's link signature (LinkPeerSignatures) as the timer */
-/* reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its */
-/* commands (mnBattleCollectPartyCommands), which starts this side's */
-/* countdown. */
+/* The partner console's link signature (LinkPeerSignatures) as the timer reads
+   it: halfwords 4 to 7 read "EDVS" once the partner has chosen its commands
+   (mnBattleCollectPartyCommands), which starts this side's countdown. */
 typedef struct LINK_SIGNATURE {
-	u8 exec[8]; /* halfwords 0 to 3, "EXEC" while the link holds */
-	u16 e;
-	u16 d;
-	u16 v;
-	u16 s;
-	u8 paddingAfterSignature[8];
+	Uint8  exec[8]; /* halfwords 0 to 3, "EXEC" while the link holds */
+	Uint16 e;
+	Uint16 d;
+	Uint16 v;
+	Uint16 s;
+	Uint8  paddingAfterSignature[8];
 } LINK_SIGNATURE;
 
-/* A task while the party's commands are chosen (mnBattleCollectPartyCommands):
- */
-/* eases the battle view a third of the way to
- * BATTLE_MENU_STATE.tgtViewOfs
- */
-/* each frame (a pixel at least), draws the sprites of BATTLE_MENU_STATE.icons
- */
-/* that are shown (the chosen command's and ability's icons, the party member's
- */
-/* portrait) and slides the page arrows. In a link battle it also runs the */
-/* timer: once the partner has chosen its commands, this side has 15 seconds, */
-/* counted down in the "TIME" window, with a tone at each second. */
-void mnBattleMenuUpdateEachFrame(void) {
+/* An event while the party's commands are chosen
+   (mnBattleCollectPartyCommands):
+   eases the battle view a third of the way to BATTLE_MENU_STATE.tgtViewOfs each
+   frame (a pixel at least), draws the sprites of BATTLE_MENU_STATE.icons that
+   are shown (the chosen command's and ability's icons, the party member's
+   portrait) and slides the page arrows. In a link battle it also runs the
+   timer: once the partner has chosen its commands, this side has 15 seconds,
+   counted down in the "TIME" window, with a tone at each second. */
+void mnBattleMenuUpdateEachFrame(void)
+{
 	BATTLE_MENU_STATE *state =
 		(BATTLE_MENU_STATE *)Ram_HeapSlots->battleMenuState;
-	BATTLE_STATE *runtime;
+	BATTLE_STATE   *runtime;
 	LINK_SIGNATURE *signature;
-	s32 target;
-	s32 current;
-	s32 difference;
-	s32 step;
-	s32 newOffset;
-	s32 timer;
-	s32 nextTimer;
-	s32 seconds;
-	s32 i;
+	Sint32			target;
+	Sint32			current;
+	Sint32			difference;
+	Sint32			step;
+	Sint32			newOffset;
+	Sint32			timer;
+	Sint32			nextTimer;
+	Sint32			seconds;
+	Sint32			i;
 
 	if(state != 0) {
 		target = state->tgtViewOfs;
@@ -62,7 +56,7 @@ void mnBattleMenuUpdateEachFrame(void) {
 
 		for(i = 0; i < 3; i++) {
 			if(state->iconShown[i] != 0)
-				syOamAddSprAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
+				syOAMAddSprAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
 		}
 		mnPageArrowsDraw(LIST_PAGE_ARROW_VRAM);
 
@@ -116,55 +110,55 @@ void mnBattleMenuUpdateEachFrame(void) {
 			return;
 
 		/* Round remaining frames upward so zero appears only after time
-		 * expires. */
+		   expires. */
 		seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
 		if(seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
 			sySndPlayStub(SE_TRIPLE_TONE_LOW);
 
 		if(state->tmrWin != 0)
-			mnTextDrawNumInWindow(seconds, 2, (s32)state->tmrWin, 16, 8);
+			mnTextDrawNumInWindow(seconds, 2, (Sint32)state->tmrWin, 16, 8);
 	}
 }
 
 /* Tests whether the party may not run from this battle: a link battle, battle
- */
-/* type 3, which no battle sets, or a party once challenged */
-/* (BATTLE_STATE.challengeFlg). When it may not, shows "This is no time to be
- */
-/* running away!" until A or B is pressed or the link battle's time runs out, */
-/* and returns 1; else returns 0. The Flee command asks it */
-/* (mnBattleCollectPartyCommands); in a BATTLE_TYPE_NO_ESCAPE battle the */
-/* command row offers no Flee. */
-s32 mnBattleRefuseFlee(void) {
-	s16 buffer[64];
-	s32 window;
-	s32 result;
+   type 3, which no battle sets, or a party once challenged
+   (BATTLE_STATE.challengeFlg). When it may not, shows "This is no time to be
+   running away!" until A or B is pressed or the link battle's time runs out,
+   and returns 1; else returns 0. The Flee command asks it
+   (mnBattleCollectPartyCommands); in a BATTLE_TYPE_NO_ESCAPE battle the command
+   row offers no Flee. */
+Sint32 mnBattleRefuseFlee(void)
+{
+	Sint16		  buffer[64];
+	Sint32		  window;
+	Bool		  result;
 	BATTLE_STATE *battle;
-	s32 mode;
+	Sint32		  mode;
 
 	battle = Ram_HeapSlots->battleState;
 	mode = MainRoutineStateWork.battleType;
 	if(MainRoutineStateWork.battleType == BATTLE_TYPE_NO_ESCAPE ||
-	   mode <= BATTLE_TYPE_NO_ESCAPE || (result = 1, mode > BATTLE_TYPE_LINK)) {
-		result = 0;
+		mode <= BATTLE_TYPE_NO_ESCAPE ||
+		(result = TRUE, mode > BATTLE_TYPE_LINK)) {
+		result = FALSE;
 	}
 	if(result == 0) {
-		if((s8)battle->challengeFlg != 0) {
-			result = 1;
+		if((Sint8)battle->challengeFlg != 0) {
+			result = TRUE;
 		}
 	}
 	if(result != 0) {
 		window = mnWindowCreate(0, 7, 30, 4,
-								WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-									WINDOW_FLAG_BORDERED_CANVAS);
+			WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+				WINDOW_FLAG_BORDERED_CANVAS);
 		mnTextFillCanvasBackground();
-		BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun, buffer,
-								 BATTLE_MENU_MESSAGE_CAPACITY);
+		BATTLE_MENU_MESSAGE_COPY(
+			(Sint32)&MsgNoTimeToRun, buffer, BATTLE_MENU_MESSAGE_CAPACITY);
 		mnTextDrawWideStringAtOffset(buffer, window, 0, 4);
 		do {
 			sySynch(1);
-		} while((InputWork.pressed & (KEY_A | KEY_B)) == 0 &&
-				BattleMenuStateWork->tmr != 0);
+		} while((PerWork.push & (KEY_A | KEY_B)) == 0 &&
+			BattleMenuStateWork->tmr != 0);
 		mnWindowClose(window, 1);
 	}
 	return result;

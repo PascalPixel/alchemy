@@ -1,21 +1,20 @@
-/* @file */
-/* Mercury Lighthouse, its entrance and Venus Lighthouse: the glints that */
-/* twinkle in rising water and spray. */
+/* Mercury Lighthouse, its entrance and Venus Lighthouse: the glints that
+   twinkle in rising water and spray. */
 
-/* A SPRITE_GLINT's life: it shrinks from full size to a quarter and back, */
-/* four times over 24 frames each, then is released. */
-s32 Glint_TwinkleScript[] = {
-	SC_SET(SW_SCALE_Y, FIXED_ONE),
-	SC_SET(SW_SCALE_X, FIXED_ONE),
+/* A SPRITE_GLINT's life: it shrinks from full size to a quarter and back, four
+   times over 24 frames each, then is released. */
+Sint32 Glint_TwinkleScript[] = {
+	SC_SET(SW_SCALE_Y, toFIXED(1)),
+	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_WAIT(6),
-	SC_SET(SW_SCALE_Y, 5 * FIXED_ONE / 8),
-	SC_SET(SW_SCALE_X, 5 * FIXED_ONE / 8),
+	SC_SET(SW_SCALE_Y, toFIXED(5) / 8),
+	SC_SET(SW_SCALE_X, toFIXED(5) / 8),
 	SC_WAIT(6),
-	SC_SET(SW_SCALE_Y, FIXED_ONE / 4),
-	SC_SET(SW_SCALE_X, FIXED_ONE / 4),
+	SC_SET(SW_SCALE_Y, toFIXED(1) / 4),
+	SC_SET(SW_SCALE_X, toFIXED(1) / 4),
 	SC_WAIT(6),
-	SC_SET(SW_SCALE_Y, 5 * FIXED_ONE / 8),
-	SC_SET(SW_SCALE_X, 5 * FIXED_ONE / 8),
+	SC_SET(SW_SCALE_Y, toFIXED(5) / 8),
+	SC_SET(SW_SCALE_X, toFIXED(5) / 8),
 	SC_WAIT(6),
 	SC_LOOP(4, SC_TOP),
 	SC_WAIT(1),

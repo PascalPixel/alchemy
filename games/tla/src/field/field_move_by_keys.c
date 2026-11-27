@@ -1,71 +1,69 @@
-/* @file */
-/* Moving actors by the direction pad: the party's keys, crossing a rope or a */
-/* tightrope, and moving as Sand, on a map and on the world map. */
-/* Part of field.c. */
+/* Moving actors by the direction pad: the party's keys, crossing a rope or a
+   tightrope, and moving as Sand, on a map and on the world map. Part of
+   field.c. */
 
-#include "field/sequence_stubs.h"
+#include "field/mode_stubs.h"
 #include "field/map.h"
 
-/* SPRITE_SAND_RIPPLE's animations, the leader as Sand: the mound of sand */
-/* shifting as it moves, and standing upright as it climbs a face. */
-#define SAND_ANIMATION_MOVE	 1
-#define SAND_ANIMATION_CLIMB 3
-/* The puff of sand the leader leaves behind, thinning away over 64 frames */
-/* (SPRITE_SAND_PUFF), and a grain dropping off as he climbs, a cloud that */
-/* scatters into specks over 48 frames (SPRITE_DUST_CLOUD). */
+/* SPRITE_SAND_RIPPLE's animations, the leader as Sand: the mound of sand
+   shifting as it moves, and standing upright as it climbs a face. */
+#define SAND_ANIMATION_MOVE			 1
+#define SAND_ANIMATION_CLIMB		 3
+/* The puff of sand the leader leaves behind, thinning away over 64 frames
+   (SPRITE_SAND_PUFF), and a grain dropping off as he climbs, a cloud that
+   scatters into specks over 48 frames (SPRITE_DUST_CLOUD). */
 #define SAND_PUFF_ANIMATION_THIN	 1
 #define DUST_CLOUD_ANIMATION_SCATTER 2
 
-/* Whether the actor can step 8 pixels toward angle: probe is set to the */
-/* step's place and tested against the map. */
-#define STEP_IS_CLEAR(actor, probe, angle)                                     \
-	(SET_POSITION(probe, (actor)->x.fixed, (actor)->y.fixed,                   \
-				  (actor)->z.fixed),                                           \
-	 syVectorAddPolarOffset(toFIXED(8), angle, probe),                         \
-	 !fdMapGridCheckCollision(actor, probe))
-/* Sets probe to the place 8 pixels toward angle from an actor climbing a */
-/* wall, the step's depth turned into height. */
-#define SET_CLIMB_STEP(probe, actor, angle)                                    \
-	(SET_POSITION(probe, (actor)->x.fixed, 0, 0),                              \
-	 syVectorAddPolarOffset(toFIXED(8), angle, probe),                         \
-	 (probe)->y = (actor)->y.fixed - (probe)->z,                               \
-	 (probe)->z = (actor)->z.fixed)
+/* Whether the actor can step 8 pixels toward angle: probe is set to the step's
+   place and tested against the map. */
+#define STEP_IS_CLEAR(actor, probe, angle) \
+	(SET_POSITION( \
+		 probe, (actor)->x.fixed, (actor)->y.fixed, (actor)->z.fixed), \
+		syVectorAddPolarOffset(toFIXED(8), angle, probe), \
+		!fdMapGridCheckCollision(actor, probe))
+/* Sets probe to the place 8 pixels toward angle from an actor climbing a wall,
+   the step's depth turned into height. */
+#define SET_CLIMB_STEP(probe, actor, angle) \
+	(SET_POSITION(probe, (actor)->x.fixed, 0, 0), \
+		syVectorAddPolarOffset(toFIXED(8), angle, probe), \
+		(probe)->y = (actor)->y.fixed - (probe)->z, \
+		(probe)->z = (actor)->z.fixed)
 /* Whether an actor climbing a wall can step 8 pixels toward angle. */
-#define CLIMB_STEP_IS_CLEAR(actor, probe, angle)                               \
-	(SET_CLIMB_STEP(probe, actor, angle),                                      \
-	 !fdMapGridCheckCollision(actor, probe))
+#define CLIMB_STEP_IS_CLEAR(actor, probe, angle) \
+	(SET_CLIMB_STEP(probe, actor, angle), \
+		!fdMapGridCheckCollision(actor, probe))
 
-/* SC_KEYS (LEADER_MOVEMENT_KEYS), the leader's control on a climbable wall: */
-/* moves it 8 pixels at a time by the direction pad, up and down changing its */
-/* height rather than its depth, reaching east or west as it goes and clinging
- */
-/* while the pad is not held. Refuses a step into a wall, from or onto a cell */
-/* that is not MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low */
-/* (down), and records the held keys in the field state. Returns 1. */
-s32 fdActorMoveByKeys(ACTOR *actor) {
-	POS position;
-	MAP_CELL *sourceCell;
-	MAP_CELL *destinationCell;
-	FIELD_STATE *state;
-	u16 angle;
-	s32 animation;
-	s32 collisionFlags;
-	s32 deltaZ;
-	FIXED terrainHeight;
-	MAP_STATE *map;
+/* SC_KEYS (LEADER_MOVEMENT_KEYS), the leader's control on a climbable wall:
+   moves it 8 pixels at a time by the direction pad, up and down changing its
+   height rather than its depth, reaching east or west as it goes and clinging
+   while the pad is not held. Refuses a step into a wall, from or onto a
+   metatile that is not MAP_METATILE_CLIMBABLE, or onto ground too high (up) or
+   too low (down), and records the held keys in the field state. Returns 1. */
+Sint32 fdActorMoveByKeys(ACTOR *actor)
+{
+	POS			  position;
+	MAP_METATILE *sourceMetatile;
+	MAP_METATILE *destinationMetatile;
+	FIELD_STATE	 *state;
+	Uint16		  angle;
+	Sint32		  animation;
+	Sint32		  collisionFlags;
+	Sint32		  deltaZ;
+	FIXED		  terrainHeight;
+	MAP_STATE	 *map;
 
 	actor->acceleration = toFIXED(1) / 4;
 	animation = ANIM_LEADER_CLING;
 	actor->speedLimit = toFIXED(1) / 2;
-	/* DEAD: a debug read of the held keys nothing uses; the ROM keeps the load.
-	 */
+	/* DEAD: a debug read of the held keys nothing uses; the ROM keeps the
+	   load. */
 	if(DebugMode != 0)
-		(void)InputWork.held;
-	angle = WorldMap_KeyHeadings[DPAD_INDEX(InputWork.held)];
+		(void)PerWork.data;
+	angle = WorldMap_KeyHeadings[DPAD_INDEX(PerWork.data)];
 	if(angle == WORLD_MAP_KEY_HEADING_NONE) {
 		collisionFlags = PLAYER_STEP_STOPPED;
-	}
-	else {
+	} else {
 		animation = ANIM_LEADER_CLIMB_EAST;
 		if(FACING_SIXTEENTH(angle) != FACING_EAST) {
 			animation = ANIM_LEADER_CLIMB_WEST;
@@ -84,25 +82,22 @@ s32 fdActorMoveByKeys(ACTOR *actor) {
 		position.y = actor->y.fixed - position.z;
 		position.z = actor->z.fixed;
 		map = Ram_HeapSlots->mapGrid;
-		sourceCell =
-			&map->layers[actor->layer].cells[fdActorGetCellIndexStub(actor)];
-		destinationCell =
-			&map->layers[actor->layer]
-				 .cells[position.x / toFIXED(16) +
-						(position.z / toFIXED(16)) * MAPGRID_SIZE];
-		if(fdMapGridIsWallAt((s32 *)&position) != 0 ||
-		   !(sourceCell->attributeB & MAP_CELL_CLIMBABLE) ||
-		   !(destinationCell->attributeB & MAP_CELL_CLIMBABLE)) {
+		sourceMetatile = &map->layers[actor->layer]
+							  .metatiles[fdActorGetMetatileIndexStub(actor)];
+		destinationMetatile =
+			&map->layers[actor->layer].metatiles[position.x / toFIXED(16) +
+				(position.z / toFIXED(16)) * MAPGRID_SIZE];
+		if(fdMapGridIsWallAt((Sint32 *)&position) != 0 ||
+			!(sourceMetatile->attributeB & MAP_METATILE_CLIMBABLE) ||
+			!(destinationMetatile->attributeB & MAP_METATILE_CLIMBABLE)) {
 			collisionFlags = PLAYER_STEP_STOPPED;
 			animation = ANIM_LEADER_CLING;
-		}
-		else if(InputWork.held & KEY_UP) {
-			terrainHeight = fdMapGridGetTerrainHeight(actor->layer, position.x,
-													  position.z - toFIXED(16));
+		} else if(PerWork.data & KEY_UP) {
+			terrainHeight = fdMapGridGetTerrainHeight(
+				actor->layer, position.x, position.z - toFIXED(16));
 			if(terrainHeight - actor->y.fixed < toFIXED(16))
 				goto refused;
-		}
-		else if(InputWork.held & KEY_DOWN) {
+		} else if(PerWork.data & KEY_DOWN) {
 			terrainHeight =
 				fdMapGridGetTerrainHeight(actor->layer, position.x, position.z);
 			if(terrainHeight - actor->y.fixed > -toFIXED(8)) {
@@ -118,7 +113,7 @@ s32 fdActorMoveByKeys(ACTOR *actor) {
 			state->blockedSteps++;
 		else
 			state->blockedSteps = 0;
-		state->heldKeys = InputWork.held;
+		state->heldKeys = PerWork.data;
 	}
 	fdActorSelectAnimation(actor, animation);
 	if(collisionFlags != 0) {
@@ -128,50 +123,48 @@ s32 fdActorMoveByKeys(ACTOR *actor) {
 		actor->velX = 0;
 		actor->velY = 0;
 		actor->velZ = 0;
-	}
-	else {
+	} else {
 		fdActorSetMoveTarget(actor, position.x, position.y, position.z);
 	}
 	actor->scriptCursor++;
 	return 1;
 }
 
-/* SC_ROPE (LEADER_MOVEMENT_ROPE), the leader crossing a tied rope hand over */
-/* hand: the pad moves him from node to node along it, a half cell a step, and
- */
-/* sets the rope swinging. */
-s32 fdActorCrossRope(ACTOR *actor) {
-	POS position;
-	s32 collisionFlags;
-	SPR *sprite;
-	ROPE_WORK *rope;
-	s32 bestDistance;
-	s32 animationSpeed;
-	s32 speed;
-	ROPE_NODE *best;
-	ROPE_NODE *node;
-	ROPE_SLOT *slot;
-	s32 count;
-	u16 angle;
-	s32 turn;
-	ACTOR *first;
-	ACTOR *second;
+/* SC_ROPE (LEADER_MOVEMENT_ROPE), the leader crossing a tied rope hand over
+   hand: the pad moves him from node to node along it, a half metatile a step,
+   and sets the rope swinging. */
+Sint32 fdActorCrossRope(ACTOR *actor)
+{
+	POS			 position;
+	Sint32		 collisionFlags;
+	SPR			*sprite;
+	ROPE_WORK	*rope;
+	Sint32		 bestDistance;
+	Sint32		 animationSpeed;
+	Sint32		 speed;
+	ROPE_NODE	*best;
+	ROPE_NODE	*node;
+	ROPE_SLOT	*slot;
+	Sint32		 count;
+	Uint16		 angle;
+	Sint32		 turn;
+	ACTOR		*first;
+	ACTOR		*second;
 	FIELD_STATE *state;
 
 	sprite = actor->spr;
 	/* The rope slot, read by its number. */
 	rope = HEAP_SLOT_AT(Ram_HeapSlots, HEAP_SLOT_ROPE);
-	speed = FIXED_ONE;
+	speed = toFIXED(1);
 	collisionFlags = 0;
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 2;
 	actor->motionFlg = 0;
-	angle = WorldMap_KeyHeadings[DPAD_INDEX(InputWork.held)];
+	angle = WorldMap_KeyHeadings[DPAD_INDEX(PerWork.data)];
 	if(angle == WORLD_MAP_KEY_HEADING_NONE) {
 		best = (ROPE_NODE *)actor->watchedActor;
 		animationSpeed = 0;
-	}
-	else {
+	} else {
 		animationSpeed = ANIM_STEP_NORMAL;
 		SET_POSITION(&position, 0, 0, 0);
 		syVectorAddPolarOffset(toFIXED(8), angle, &position);
@@ -189,10 +182,10 @@ s32 fdActorCrossRope(ACTOR *actor) {
 		}
 		for(count = 0; count < ROPE_NODE_COUNT; count++, node++) {
 			if(node->kind == ROPE_NODE_CROSSABLE) {
-				s32 dx = (position.x - node->x) >> 8;
-				s32 dy = (position.y - node->y) >> 8;
-				s32 dz = (position.z - node->z) >> 8;
-				s32 distance =
+				Sint32 dx = (position.x - node->x) >> 8;
+				Sint32 dy = (position.y - node->y) >> 8;
+				Sint32 dz = (position.z - node->z) >> 8;
+				Sint32 distance =
 					syMulFX(dx, dx) + syMulFX(dy, dy) + syMulFX(dz, dz);
 
 				if(distance <= 32 * 32 && bestDistance > distance) {
@@ -204,8 +197,7 @@ s32 fdActorCrossRope(ACTOR *actor) {
 	}
 	if(best == NULL) {
 		collisionFlags |= PLAYER_STEP_BLOCKED_BY_MAP;
-	}
-	else {
+	} else {
 		slot = &rope->slots[best->slot - 1];
 		first = fdActorGetByIdStub(slot->first);
 		second = fdActorGetByIdStub(slot->second);
@@ -216,16 +208,14 @@ s32 fdActorCrossRope(ACTOR *actor) {
 		if(first->y.fixed > second->y.fixed) {
 			speed = -speed;
 			turn = TRIG_TURN * 3 / 4;
-		}
-		else {
+		} else {
 			turn = DEGtoANG(90);
 		}
 		actor->scaleX = speed;
 		if(best->x == actor->x.fixed && best->y == actor->y.fixed &&
-		   best->z == actor->z.fixed) {
+			best->z == actor->z.fixed) {
 			collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
-		}
-		else {
+		} else {
 			slot->swinging = 1;
 			slot->amplitude += toFIXED(1) / 2;
 			if(slot->amplitude > toFIXED(2))
@@ -242,7 +232,7 @@ report:
 			state->blockedSteps++;
 		else
 			state->blockedSteps = 0;
-		state->heldKeys = InputWork.held;
+		state->heldKeys = PerWork.data;
 	}
 	fdActorSelectAnimation(actor, ANIM_LEADER_CROSS_ROPE);
 	fdActorSetAnimationSpeed(actor, animationSpeed);
@@ -253,8 +243,7 @@ report:
 		actor->velX = 0;
 		actor->velY = 0;
 		actor->velZ = 0;
-	}
-	else {
+	} else {
 		fdActorSetMoveTarget(actor, position.x, position.y, position.z);
 	}
 	actor->scriptCursor++;
@@ -262,8 +251,9 @@ report:
 }
 
 /* Turns the actor toward angle, at most a sixteenth of a turn. */
-static inline void TurnToward(ACTOR *actor, u16 angle) {
-	s16 delta = angle - actor->facing;
+static inline void TurnToward(ACTOR *actor, Uint16 angle)
+{
+	Sint16 delta = angle - actor->facing;
 
 	if(delta > TRIG_TURN / 16)
 		delta = TRIG_TURN / 16;
@@ -272,21 +262,22 @@ static inline void TurnToward(ACTOR *actor, u16 angle) {
 	actor->facing += delta;
 }
 
-/* SC_TIGHTROPE (LEADER_MOVEMENT_TIGHTROPE): fdActorCrossRope on a tightrope, */
-/* which the leader walks, the rope wobbling under him. */
-s32 fdActorCrossTightrope(ACTOR *actor) {
-	POS position;
-	s32 collisionFlags;
-	SPR *sprite;
-	s32 animation;
+/* SC_TIGHTROPE (LEADER_MOVEMENT_TIGHTROPE): fdActorCrossRope on a tightrope,
+   which the leader walks, the rope wobbling under him. */
+Sint32 fdActorCrossTightrope(ACTOR *actor)
+{
+	POS				position;
+	Sint32			collisionFlags;
+	SPR			   *sprite;
+	Sint32			animation;
 	TIGHTROPE_WORK *tightrope;
 	TIGHTROPE_NODE *best;
 	TIGHTROPE_NODE *point;
 	TIGHTROPE_SLOT *slot;
-	s32 bestDistance;
-	u16 angle;
-	s32 count;
-	FIELD_STATE *state;
+	Sint32			bestDistance;
+	Uint16			angle;
+	Sint32			count;
+	FIELD_STATE	   *state;
 
 	sprite = actor->spr;
 	animation = ANIM_STAND;
@@ -294,14 +285,13 @@ s32 fdActorCrossTightrope(ACTOR *actor) {
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 2;
 	actor->motionFlg = 0;
-	angle = WorldMap_KeyHeadings[DPAD_INDEX(InputWork.held)];
+	angle = WorldMap_KeyHeadings[DPAD_INDEX(PerWork.data)];
 	if(angle == WORLD_MAP_KEY_HEADING_NONE) {
 		collisionFlags = PLAYER_STEP_STOPPED;
 		best = (TIGHTROPE_NODE *)actor->watchedActor;
 		SET_POSITION(&position, actor->x.fixed, best->y, actor->z.fixed);
 		state = Ram_HeapSlots->fieldState;
-	}
-	else {
+	} else {
 		SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		syVectorAddPolarOffset(toFIXED(8), angle, &position);
 		/* The tightrope slot, read by its number. */
@@ -312,14 +302,13 @@ s32 fdActorCrossTightrope(ACTOR *actor) {
 		if(tightrope == NULL) {
 			collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
 			state = Ram_HeapSlots->fieldState;
-		}
-		else {
+		} else {
 			for(count = 0; count < ROPE_NODE_COUNT; count++, point++) {
 				if(point->kind == ROPE_NODE_CROSSABLE) {
-					s32 dx = (position.x - point->x) >> 8;
-					s32 dy = (position.y - point->y) >> 8;
-					s32 dz = (position.z - point->z) >> 8;
-					s32 distance =
+					Sint32 dx = (position.x - point->x) >> 8;
+					Sint32 dy = (position.y - point->y) >> 8;
+					Sint32 dz = (position.z - point->z) >> 8;
+					Sint32 distance =
 						syMulFX(dx, dx) + syMulFX(dy, dy) + syMulFX(dz, dz);
 
 					if(distance <= 32 * 32 && bestDistance > distance) {
@@ -330,12 +319,10 @@ s32 fdActorCrossTightrope(ACTOR *actor) {
 			}
 			if(best == NULL) {
 				collisionFlags |= PLAYER_STEP_BLOCKED_BY_MAP;
-			}
-			else if(best->x == actor->x.fixed && best->y == actor->y.fixed &&
-					best->z == actor->z.fixed) {
+			} else if(best->x == actor->x.fixed && best->y == actor->y.fixed &&
+				best->z == actor->z.fixed) {
 				collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
-			}
-			else {
+			} else {
 				if(best->slot != 0) {
 					slot = &tightrope->slots[best->slot - 1];
 					slot->wobbling = 1;
@@ -357,7 +344,7 @@ s32 fdActorCrossTightrope(ACTOR *actor) {
 			state->blockedSteps++;
 		else
 			state->blockedSteps = 0;
-		state->heldKeys = InputWork.held;
+		state->heldKeys = PerWork.data;
 	}
 	if(collisionFlags == 0)
 		animation = ANIM_WALK;
@@ -374,8 +361,7 @@ s32 fdActorCrossTightrope(ACTOR *actor) {
 		if(collisionFlags & PLAYER_STEP_BLOCKED)
 			TurnToward(actor, angle);
 		actor->y.fixed = position.y;
-	}
-	else {
+	} else {
 		actor->y.fixed = position.y;
 		fdActorSetMoveTarget(actor, position.x, position.y, position.z);
 		if(actor->x.fixed == position.x && actor->z.fixed == position.z)
@@ -385,12 +371,13 @@ s32 fdActorCrossTightrope(ACTOR *actor) {
 	return 1;
 }
 
-/* Update of a grain the Sand leaves as the leader moves: it turns and */
-/* jitters sideways at random. */
-void fdSandJitterGrain(ACTOR *actor) {
-	u32 first;
-	u32 second;
-	FIXED x;
+/* Update of a grain the Sand leaves as the leader moves: it turns and jitters
+   sideways at random. */
+void fdSandJitterGrain(ACTOR *actor)
+{
+	Uint32 first;
+	Uint32 second;
+	FIXED  x;
 
 	((SPR *)actor->spr)->rotation += TRIG_TURN / 64;
 	first = syRandom();
@@ -403,68 +390,66 @@ void fdSandJitterGrain(ACTOR *actor) {
 }
 
 /* Whether the player ends Sand: when the Select, A or Start keys are pressed,
- */
-/* plays SE_MENU_CANCEL where the leader is blocked (fdActorCheckBlockedStub),
- */
-/* and otherwise, while FLAG_SAND_CANNOT_END is clear, asks for Sand again */
-/* (ABILITY_SAND, packed) and returns 1. */
-s32 fdSandCheckEndKeys(ACTOR *actor) {
+   plays SE_MENU_CANCEL where the leader is blocked (fdActorCheckBlockedStub),
+   and otherwise, while FLAG_SAND_CANNOT_END is clear, asks for Sand again
+   (ABILITY_SAND, packed) and returns 1. */
+Bool fdSandCheckEndKeys(ACTOR *actor)
+{
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	s32 pressed = 0;
+	Bool		 pressed = FALSE;
 
 	if(state == NULL)
-		return 0;
-	if(InputWork.pressed & MainRoutineStateWork.selectKeys)
-		pressed = 1;
-	else if(InputWork.pressed & MainRoutineStateWork.aKeys)
-		pressed = 1;
-	else if(InputWork.pressed & MainRoutineStateWork.startKeys)
-		pressed = 1;
+		return FALSE;
+	if(PerWork.push & MainRoutineStateWork.selectKeys)
+		pressed = TRUE;
+	else if(PerWork.push & MainRoutineStateWork.aKeys)
+		pressed = TRUE;
+	else if(PerWork.push & MainRoutineStateWork.startKeys)
+		pressed = TRUE;
 	if(pressed) {
 		if(fdActorCheckBlockedStub(actor)) {
 			sySndPlayStub(SE_MENU_CANCEL);
-		}
-		else if(!syGameFlagGet(FLAG_SAND_CANNOT_END)) {
+		} else if(!syGameFlagGet(FLAG_SAND_CANNOT_END)) {
 			state->psynergy = ABILITY_SAND | ACT_PACKED;
-			return 1;
+			return TRUE;
 		}
 	}
-	return 0;
+	return FALSE;
 }
 
-/* SC_SAND (LEADER_MOVEMENT_SAND): the leader turned to sand by the Sand */
-/* Psynergy, moved by the direction pad on a field map, leaving puffs of sand;
- */
-/* up against a face, or down at a drop, he climbs it as sand. */
-s32 fdActorMoveAsSand(ACTOR *actor) {
-	POS position;
-	POS testPosition;
-	s16 angleOffsets[10];
-	POS spawn;
-	s32 collision;
-	s32 heading;
-	FIXED groundHere;
-	FIXED y;
-	FIXED groundAhead;
-	s32 angle;
-	s32 cellX;
-	s32 cellZ;
-	s32 angleIndex;
-	s32 count;
+/* SC_SAND (LEADER_MOVEMENT_SAND): the leader turned to sand by the Sand
+   Psynergy, moved by the direction pad on a field map, leaving puffs of sand;
+   up against a face, or down at a drop, he climbs it as sand. */
+Sint32 fdActorMoveAsSand(ACTOR *actor)
+{
+	POS	   position;
+	POS	   testPosition;
+	Sint16 angleOffsets[10];
+	POS	   spawn;
+	Sint32 collision;
+	Sint32 heading;
+	FIXED  groundHere;
+	FIXED  y;
+	FIXED  groundAhead;
+	Sint32 angle;
+	Sint32 metatileX;
+	Sint32 metatileZ;
+	Sint32 angleIndex;
+	Sint32 count;
 	/* FAKEMATCH(temporary): wakeTimer, a pointer to actor->wakeTmr; as the
 	 * field by name. */
-	u8 *wakeTimer;
+	Uint8 *wakeTimer;
 	ACTOR *effect;
-	SPR *sprite;
+	SPR	  *sprite;
 
 	heading = 0;
 	count = 0;
-	cellX = actor->x.fixed & FIELD_CELL_MASK;
-	cellZ = actor->z.fixed & FIELD_CELL_MASK;
+	metatileX = actor->x.fixed & FIELD_METATILE_MASK;
+	metatileZ = actor->z.fixed & FIELD_METATILE_MASK;
 	y = actor->y.fixed;
-	groundHere = fdMapGridGetTerrainHeight(actor->layer, cellX, cellZ);
-	groundAhead =
-		fdMapGridGetTerrainHeight(actor->layer, cellX, cellZ - toFIXED(16));
+	groundHere = fdMapGridGetTerrainHeight(actor->layer, metatileX, metatileZ);
+	groundAhead = fdMapGridGetTerrainHeight(
+		actor->layer, metatileX, metatileZ - toFIXED(16));
 	if(actor->tmr != 0) {
 		if(actor->tgtX != ACTOR_NO_TARGET)
 			goto done;
@@ -473,13 +458,12 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 	}
 	if(actor->userValue != 0) {
 		if(groundAhead < y) {
-			FIXED topZ = cellZ - toFIXED(8);
+			FIXED topZ = metatileZ - toFIXED(8);
 
 			if(fdMapGridCheckCollisionAt(actor->x.fixed, topZ, actor->layer,
-										 actor->groundHeight) == 2) {
+				   actor->groundHeight) == 2) {
 				actor->y.fixed -= toFIXED(1);
-			}
-			else {
+			} else {
 				fdActorSetMoveTarget(actor, actor->x.fixed, groundAhead, topZ);
 				actor->tmr = 1;
 				actor->userValue = 0;
@@ -495,29 +479,28 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 
 		collision = 0;
 		/* DEAD: a debug read of the held keys nothing uses; the ROM keeps the
-		 * load. */
+		   load. */
 		if(DebugMode != 0)
-			(void)InputWork.held;
+			(void)PerWork.data;
 		actor->speedLimit = toFIXED(1) / 2;
 		actor->acceleration = toFIXED(1) / 4;
-		angle = WorldMap_KeyHeadings[DPAD_INDEX(InputWork.held)];
-		if((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+		angle = WorldMap_KeyHeadings[DPAD_INDEX(PerWork.data)];
+		if((Uint16)angle == WORLD_MAP_KEY_HEADING_NONE) {
 			collision = PLAYER_STEP_STOPPED;
-		}
-		else {
-			SET_CLIMB_STEP(&position, actor, (u16)angle);
+		} else {
+			SET_CLIMB_STEP(&position, actor, (Uint16)angle);
 			fdActorSelectAnimation(actor, SAND_ANIMATION_CLIMB);
-			if(!(CLIMB_STEP_IS_CLEAR(actor, &testPosition, (u16)angle) &&
-				 CLIMB_STEP_IS_CLEAR(actor, &testPosition,
-									 (u16)angle + FIELD_PROBE_ANGLE) &&
-				 CLIMB_STEP_IS_CLEAR(actor, &testPosition,
-									 (u16)angle - FIELD_PROBE_ANGLE) &&
-				 CLIMB_STEP_IS_CLEAR(actor, &testPosition,
-									 (u16)angle + DEGtoANG(45)) &&
-				 CLIMB_STEP_IS_CLEAR(actor, &testPosition,
-									 (u16)angle - DEGtoANG(45)))) {
-				SET_POSITION(&position, actor->x.fixed, actor->y.fixed,
-							 actor->z.fixed);
+			if(!(CLIMB_STEP_IS_CLEAR(actor, &testPosition, (Uint16)angle) &&
+				   CLIMB_STEP_IS_CLEAR(actor, &testPosition,
+					   (Uint16)angle + FIELD_PROBE_ANGLE) &&
+				   CLIMB_STEP_IS_CLEAR(actor, &testPosition,
+					   (Uint16)angle - FIELD_PROBE_ANGLE) &&
+				   CLIMB_STEP_IS_CLEAR(
+					   actor, &testPosition, (Uint16)angle + DEGtoANG(45)) &&
+				   CLIMB_STEP_IS_CLEAR(
+					   actor, &testPosition, (Uint16)angle - DEGtoANG(45)))) {
+				SET_POSITION(
+					&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 				collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 			}
 		}
@@ -527,24 +510,23 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 			actor->tgtZ = ACTOR_NO_TARGET;
 			actor->velX = 0;
 			actor->velZ = 0;
-		}
-		else {
+		} else {
 			FIXED speed;
 
-			heading = (s16)angle;
+			heading = (Sint16)angle;
 			fdActorSetMoveTarget(actor, position.x, position.y, position.z);
 			speed = sySquartFX(syMulFX(actor->velX, actor->velX) +
-							   syMulFX(actor->velZ, actor->velZ));
+				syMulFX(actor->velZ, actor->velZ));
 			actor->velX = 0;
 			actor->velZ = 0;
-			syVectorAddPolarOffset(speed, (u16)heading, (POS *)&actor->velX);
+			syVectorAddPolarOffset(speed, (Uint16)heading, (POS *)&actor->velX);
 			actor->velY = -actor->velZ;
 			actor->velZ = 0;
 		}
 		/* Every 16th frame, a grain of sand drops beside the climber. */
 		if((FrameCount & 15) == 0) {
 			SET_POSITION(&spawn, actor->x.fixed - syRandom() * 6 + toFIXED(3),
-						 actor->y.fixed, actor->z.fixed);
+				actor->y.fixed, actor->z.fixed);
 			effect =
 				fdActorCreate(SPRITE_DUST_CLOUD, spawn.x, spawn.y, spawn.z);
 			if(effect != NULL) {
@@ -567,37 +549,33 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 			}
 		}
 		fdSandCheckEndKeys(actor);
-	}
-	else {
+	} else {
 
 		/* On foot. */
 		collision = 0;
 		actor->speedLimit = toFIXED(1);
 		actor->acceleration = toFIXED(1) / 4;
-		angle = WorldMap_KeyHeadings[DPAD_INDEX(InputWork.held)];
-		if((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+		angle = WorldMap_KeyHeadings[DPAD_INDEX(PerWork.data)];
+		if((Uint16)angle == WORLD_MAP_KEY_HEADING_NONE) {
 			collision = PLAYER_STEP_STOPPED;
-		}
-		else {
-			SET_POSITION(&position, actor->x.fixed, actor->y.fixed,
-						 actor->z.fixed);
-			syVectorAddPolarOffset(toFIXED(8), (u16)angle, &position);
-			if(DebugMode != 0 && (InputWork.held & KEY_L)) {
-				heading = (s16)angle;
-			}
-			else if(!fdMapGridCheckCollision(actor, &position) &&
-					STEP_IS_CLEAR(actor, &testPosition,
-								  (u16)angle + FIELD_PROBE_ANGLE) &&
-					STEP_IS_CLEAR(actor, &testPosition,
-								  (u16)angle - FIELD_PROBE_ANGLE) &&
-					STEP_IS_CLEAR(actor, &testPosition,
-								  (u16)angle + DEGtoANG(45)) &&
-					STEP_IS_CLEAR(actor, &testPosition,
-								  (u16)angle - DEGtoANG(45))) {
-				heading = (s16)angle;
-			}
-			else {
-				u16 direction = angle;
+		} else {
+			SET_POSITION(
+				&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			syVectorAddPolarOffset(toFIXED(8), (Uint16)angle, &position);
+			if(DebugMode != 0 && (PerWork.data & KEY_L)) {
+				heading = (Sint16)angle;
+			} else if(!fdMapGridCheckCollision(actor, &position) &&
+				STEP_IS_CLEAR(
+					actor, &testPosition, (Uint16)angle + FIELD_PROBE_ANGLE) &&
+				STEP_IS_CLEAR(
+					actor, &testPosition, (Uint16)angle - FIELD_PROBE_ANGLE) &&
+				STEP_IS_CLEAR(
+					actor, &testPosition, (Uint16)angle + DEGtoANG(45)) &&
+				STEP_IS_CLEAR(
+					actor, &testPosition, (Uint16)angle - DEGtoANG(45))) {
+				heading = (Sint16)angle;
+			} else {
+				Uint16 direction = angle;
 
 				angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
 				angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
@@ -607,27 +585,28 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 				angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
 				for(angleIndex = 0; angleIndex < count; angleIndex++) {
 					heading = angleOffsets[angleIndex];
-					if(STEP_IS_CLEAR(actor, &position, (u16)heading) &&
-					   STEP_IS_CLEAR(actor, &testPosition,
-									 (u16)heading + FIELD_PROBE_ANGLE) &&
-					   STEP_IS_CLEAR(actor, &testPosition,
-									 (u16)heading - FIELD_PROBE_ANGLE) &&
-					   STEP_IS_CLEAR(actor, &testPosition,
-									 (u16)heading + DEGtoANG(45)) &&
-					   STEP_IS_CLEAR(actor, &testPosition,
-									 (u16)heading - DEGtoANG(45)))
+					if(STEP_IS_CLEAR(actor, &position, (Uint16)heading) &&
+						STEP_IS_CLEAR(actor, &testPosition,
+							(Uint16)heading + FIELD_PROBE_ANGLE) &&
+						STEP_IS_CLEAR(actor, &testPosition,
+							(Uint16)heading - FIELD_PROBE_ANGLE) &&
+						STEP_IS_CLEAR(actor, &testPosition,
+							(Uint16)heading + DEGtoANG(45)) &&
+						STEP_IS_CLEAR(actor, &testPosition,
+							(Uint16)heading - DEGtoANG(45)))
 						goto counted;
 				}
-				SET_POSITION(&position, actor->x.fixed, actor->y.fixed,
-							 actor->z.fixed);
+				SET_POSITION(
+					&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 				collision |= PLAYER_STEP_BLOCKED_BY_MAP;
-				/* Up against a face more than 8 pixels high: start climbing it.
-				 */
-				if((InputWork.held & KEY_UP) && groundAhead > y + toFIXED(8)) {
-					cellX = (position.x & FIELD_CELL_MASK) + toFIXED(8);
-					cellZ = (position.z & FIELD_CELL_MASK) - toFIXED(8);
+				/* Up against a face more than 8 pixels high: start climbing
+				   it. */
+				if((PerWork.data & KEY_UP) && groundAhead > y + toFIXED(8)) {
+					metatileX = (position.x & FIELD_METATILE_MASK) + toFIXED(8);
+					metatileZ = (position.z & FIELD_METATILE_MASK) - toFIXED(8);
 
-					if(fdMapGridIsClimbableCellStub(cellX, cellZ, 2)) {
+					if(fdMapGridIsClimbableMetatileStub(
+						   metatileX, metatileZ, 2)) {
 						actor->motionFlg = 0;
 						actor->y.fixed += toFIXED(1);
 						actor->userValue = 1;
@@ -638,17 +617,20 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 						goto done;
 					}
 				}
-				/* Down at a drop: climb down the face south of the cell. */
-				if(InputWork.held & KEY_DOWN) {
-					cellX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-					cellZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(24);
+				/* Down at a drop: climb down the face south of the metatile. */
+				if(PerWork.data & KEY_DOWN) {
+					metatileX =
+						(actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+					metatileZ =
+						(actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(24);
 
-					if(fdMapGridGetTerrainHeight(actor->layer, cellX, cellZ) <
-						   y &&
-					   fdMapGridIsClimbableCellStub(cellX, cellZ, 2)) {
+					if(fdMapGridGetTerrainHeight(
+						   actor->layer, metatileX, metatileZ) < y &&
+						fdMapGridIsClimbableMetatileStub(
+							metatileX, metatileZ, 2)) {
 						actor->motionFlg = 0;
 						fdActorSetMoveTarget(actor, actor->x.fixed,
-											 groundHere - toFIXED(2), cellZ);
+							groundHere - toFIXED(2), metatileZ);
 						actor->tmr = 1;
 						actor->userValue = 1;
 						actor->velX = 0;
@@ -668,7 +650,7 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 				state->blockedSteps++;
 			else
 				state->blockedSteps = 0;
-			state->heldKeys = InputWork.held;
+			state->heldKeys = PerWork.data;
 		}
 	}
 		fdActorSelectAnimation(actor, SAND_ANIMATION_MOVE);
@@ -679,10 +661,10 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 			actor->velX = 0;
 			actor->velZ = 0;
 			if(collision & PLAYER_STEP_BLOCKED) {
-				s32 difference;
-				u16 turn = angle;
+				Sint32 difference;
+				Uint16 turn = angle;
 
-				difference = (s16)(turn - actor->facing);
+				difference = (Sint16)(turn - actor->facing);
 				if(difference > FIELD_BLOCKED_TURN_MAX)
 					difference = FIELD_BLOCKED_TURN_MAX;
 				if(difference < -FIELD_BLOCKED_TURN_MAX)
@@ -691,25 +673,24 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 			}
 			wakeTimer = &actor->wakeTmr;
 			*wakeTimer = 0;
-		}
-		else {
+		} else {
 			FIXED speed;
 
 			fdActorSetMoveTarget(actor, position.x, position.y, position.z);
 			speed = sySquartFX(syMulFX(actor->velX, actor->velX) +
-							   syMulFX(actor->velZ, actor->velZ));
+				syMulFX(actor->velZ, actor->velZ));
 			actor->velX = 0;
 			actor->velZ = 0;
-			syVectorAddPolarOffset(speed, (u16)heading, (POS *)&actor->velX);
+			syVectorAddPolarOffset(speed, (Uint16)heading, (POS *)&actor->velX);
 			wakeTimer = &actor->wakeTmr;
 			if(*wakeTimer != 0)
 				(*wakeTimer)--;
 		}
-		/* While the leader moves, a puff of sand is left behind every fifth */
-		/* frame. */
+		/* While the leader moves, a puff of sand is left behind every fifth
+		   frame. */
 		if(actor->wakeTmr == 0 && collision == 0) {
 			effect = fdActorCreate(SPRITE_SAND_PUFF, actor->x.fixed,
-								   actor->y.fixed, actor->z.fixed - toFIXED(2));
+				actor->y.fixed, actor->z.fixed - toFIXED(2));
 			if(effect != NULL) {
 				effect->groundHeight = actor->groundHeight;
 				sprite = effect->spr;
@@ -724,7 +705,7 @@ s32 fdActorMoveAsSand(ACTOR *actor) {
 					fdSprStartAnimation(sprite, SAND_PUFF_ANIMATION_THIN);
 					sprite->flg = 0;
 					/* DEAD: overwritten by the next line; the ROM keeps its
-					 * mask and OR. */
+					   mask and OR. */
 					sprite->image.pri = 2;
 					sprite->image.pri = state->sandTrailPri;
 				}
@@ -739,34 +720,32 @@ done:
 }
 
 /* SC_WORLD_SAND (LEADER_MOVEMENT_WORLD_SAND): the leader as sand on the world
- */
-/* map (the Sand Psynergy). Moves him on the world map by the direction pad */
-/* at a fixed pace (faster while L repeats), trying six turned headings when */
-/* the way is blocked, as fdActorMoveOnWorldMap does; records the held keys in
- */
-/* the event state and leaves a puff of sand (SPRITE_SAND_PUFF) behind it every
- */
-/* fifth frame it moves. */
-s32 fdActorMoveAsSandOnWorldMap(ACTOR *actor) {
-	POS position;
-	POS leftPosition;
-	POS rightPosition;
-	s16 angleOffsets[22];
-	s32 collision;
-	s32 angle;
-	u16 direction;
-	s32 angleIndex;
-	s32 count;
-	s32 difference;
-	s32 terrainCollision;
-	FIXED speed;
-	s32 targetCameraYaw;
+   map (the Sand Psynergy). Moves him on the world map by the direction pad at a
+   fixed pace (faster while L repeats), trying six turned headings when the way
+   is blocked, as fdActorMoveOnWorldMap does; records the held keys in the
+   script state and leaves a puff of sand (SPRITE_SAND_PUFF) behind it every
+   fifth frame it moves. */
+Sint32 fdActorMoveAsSandOnWorldMap(ACTOR *actor)
+{
+	POS				position;
+	POS				leftPosition;
+	POS				rightPosition;
+	Sint16			angleOffsets[22];
+	Sint32			collision;
+	Sint32			angle;
+	Uint16			direction;
+	Sint32			angleIndex;
+	Sint32			count;
+	Sint32			difference;
+	Sint32			terrainCollision;
+	FIXED			speed;
+	Sint32			targetCameraYaw;
 	WORLD_MAP_VIEW *camera;
-	s32 yawStep;
-	PLAYER_SPR *playerSprite;
-	ACTOR *ripple;
-	PLAYER_SPR *rippleSprite;
-	FIELD_STATE *state;
+	Sint32			yawStep;
+	PLAYER_SPR	   *playerSprite;
+	ACTOR		   *ripple;
+	PLAYER_SPR	   *rippleSprite;
+	FIELD_STATE	   *state;
 
 	collision = 0;
 	count = 0;
@@ -774,35 +753,33 @@ s32 fdActorMoveAsSandOnWorldMap(ACTOR *actor) {
 	actor->tmr = 1;
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 4;
-	if(InputWork.repeat & KEY_L)
+	if(PerWork.repeat & KEY_L)
 		actor->speedLimit = toFIXED(4);
 
-	angle = WorldMap_KeyHeadings[DPAD_INDEX(InputWork.held)];
+	angle = WorldMap_KeyHeadings[DPAD_INDEX(PerWork.data)];
 	direction = angle;
 	if(direction == WORLD_MAP_KEY_HEADING_NONE) {
 		collision |= PLAYER_STEP_STOPPED;
-	}
-	else {
+	} else {
 		SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		syVectorAddPolarOffset(toFIXED(8), direction, &position);
-		if(DebugMode != 0 && (InputWork.held & KEY_L)) {
+		if(DebugMode != 0 && (PerWork.data & KEY_L)) {
 			/* FAKEMATCH(dead): direction takes angle, which it already holds
 			 * (set just above), the debug branch's only statement; as the
 			 * branch left empty. */
 			direction = angle;
-		}
-		else {
-			SET_POSITION(&leftPosition, actor->x.fixed, actor->y.fixed,
-						 actor->z.fixed);
-			syVectorAddPolarOffset(toFIXED(8), direction + DEGtoANG(30),
-								   &leftPosition);
-			SET_POSITION(&rightPosition, actor->x.fixed, actor->y.fixed,
-						 actor->z.fixed);
-			syVectorAddPolarOffset(toFIXED(8), direction - DEGtoANG(30),
-								   &rightPosition);
+		} else {
+			SET_POSITION(
+				&leftPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			syVectorAddPolarOffset(
+				toFIXED(8), direction + DEGtoANG(30), &leftPosition);
+			SET_POSITION(
+				&rightPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			syVectorAddPolarOffset(
+				toFIXED(8), direction - DEGtoANG(30), &rightPosition);
 			if((fdWorldMapIsWalkable(actor, &position) |
-				fdWorldMapIsWalkable(actor, &leftPosition) |
-				fdWorldMapIsWalkable(actor, &rightPosition)) != 0) {
+				   fdWorldMapIsWalkable(actor, &leftPosition) |
+				   fdWorldMapIsWalkable(actor, &rightPosition)) != 0) {
 				angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
 				angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
 				angleOffsets[count++] = direction + DEGtoANG(45);
@@ -812,20 +789,20 @@ s32 fdActorMoveAsSandOnWorldMap(ACTOR *actor) {
 				for(angleIndex = 0; angleIndex < count; angleIndex++) {
 					direction = angleOffsets[angleIndex];
 					SET_POSITION(&position, actor->x.fixed, actor->y.fixed,
-								 actor->z.fixed);
+						actor->z.fixed);
 					syVectorAddPolarOffset(toFIXED(8), direction, &position);
 					SET_POSITION(&leftPosition, actor->x.fixed, actor->y.fixed,
-								 actor->z.fixed);
-					syVectorAddPolarOffset(toFIXED(8), direction + DEGtoANG(30),
-										   &leftPosition);
+						actor->z.fixed);
+					syVectorAddPolarOffset(
+						toFIXED(8), direction + DEGtoANG(30), &leftPosition);
 					SET_POSITION(&rightPosition, actor->x.fixed, actor->y.fixed,
-								 actor->z.fixed);
-					syVectorAddPolarOffset(toFIXED(8), direction - DEGtoANG(30),
-										   &rightPosition);
+						actor->z.fixed);
+					syVectorAddPolarOffset(
+						toFIXED(8), direction - DEGtoANG(30), &rightPosition);
 					if((fdWorldMapIsWalkable(actor, &position) |
-						fdWorldMapIsWalkable(actor, &leftPosition) |
-						fdWorldMapIsWalkable(actor, &rightPosition)) == 0) {
-						angle = (s16)direction;
+						   fdWorldMapIsWalkable(actor, &leftPosition) |
+						   fdWorldMapIsWalkable(actor, &rightPosition)) == 0) {
+						angle = (Sint16)direction;
 						goto update_object;
 					}
 				}
@@ -841,7 +818,7 @@ update_object:
 			state->blockedSteps++;
 		else
 			state->blockedSteps = 0;
-		state->heldKeys = InputWork.held;
+		state->heldKeys = PerWork.data;
 	}
 	fdActorSelectAnimation(actor, SAND_ANIMATION_MOVE);
 
@@ -853,7 +830,7 @@ update_object:
 		actor->velZ = 0;
 		if((collision & PLAYER_STEP_BLOCKED) != 0) {
 			direction = angle;
-			difference = (s16)(direction - actor->facing);
+			difference = (Sint16)(direction - actor->facing);
 			if(difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
 			if(difference < -FIELD_BLOCKED_TURN_MAX)
@@ -862,21 +839,20 @@ update_object:
 		}
 		actor->wakeTmr = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
-	}
-	else {
+	} else {
 		fdActorSetMoveTarget(actor, position.x, position.y, position.z);
 		speed = sySquartFX(syMulFX(actor->velX, actor->velX) +
-						   syMulFX(actor->velZ, actor->velZ));
+			syMulFX(actor->velZ, actor->velZ));
 		actor->velX = 0;
 		actor->velZ = 0;
-		syVectorAddPolarOffset(speed, (u16)angle, (POS *)&actor->velX);
+		syVectorAddPolarOffset(speed, (Uint16)angle, (POS *)&actor->velX);
 		if(actor->wakeTmr != 0)
 			actor->wakeTmr--;
 	}
 
 	camera = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
-	targetCameraYaw = WorldMap_KeyYaws[DPAD_INDEX(InputWork.held)];
-	yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
+	targetCameraYaw = WorldMap_KeyYaws[DPAD_INDEX(PerWork.data)];
+	yawStep = (Sint16)(targetCameraYaw - camera->yaw) / 8;
 	if(yawStep > WORLD_MAP_YAW_STEP_MAX)
 		yawStep = WORLD_MAP_YAW_STEP_MAX;
 	if(yawStep < -WORLD_MAP_YAW_STEP_MAX)
@@ -895,7 +871,7 @@ update_object:
 	}
 	if(actor->wakeTmr == 0 && collision == 0) {
 		ripple = fdActorCreate(SPRITE_SAND_PUFF, actor->x.fixed, actor->y.fixed,
-							   actor->z.fixed - toFIXED(2));
+			actor->z.fixed - toFIXED(2));
 		if(ripple != NULL) {
 			ripple->groundHeight = actor->groundHeight;
 			rippleSprite = ripple->spr;
@@ -907,7 +883,7 @@ update_object:
 				fdSprStartAnimation(rippleSprite, SAND_PUFF_ANIMATION_THIN);
 				rippleSprite->flg = 0;
 				/* DEAD: overwritten by the next line; the ROM keeps its mask
-				 * and OR. */
+				   and OR. */
 				rippleSprite->pri = 2;
 				rippleSprite->pri = 1;
 			}

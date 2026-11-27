@@ -1,42 +1,41 @@
 #ifndef ALCHEMY_BATTLE_UNIT_H
 #define ALCHEMY_BATTLE_UNIT_H
 
-/* @file */
-/* Unit, a party member's or enemy's battle state, with the elements, */
-/* abilities and actions it uses. */
+/* Unit, a party member's or enemy's battle state, with the elements, abilities
+   and actions it uses. */
 
 #include "edition.h"
 #include "static_assert.h"
 #include "game/item.h"
 
-/* The sizes the STATIC_ASSERTs below hold the structs to, and the */
-/* action id's bits in an action list entry. */
+/* The sizes the STATIC_ASSERTs below hold the structs to, and the action id's
+   bits in an action list entry. */
 enum {
 	ABILITY_DEFINITION_SIZE = 16, /* bytes in a ABILITY_DEFINITION */
 	/* Bytes in a UNIT, which the code clears and copies whole. */
 	BATTLE_UNIT_SIZE = 332,
-	PSYNERGY_ABILITY_MASK =
-		0x3fff /* PSYNERGY_ENTRY.encodedAction's action id */
+	/* PSYNERGY_ENTRY.encodedAction's action id */
+	PSYNERGY_ABILITY_MASK = 0x3fff
 };
 
-/* An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK) */
-/* and marks for an action its class or an equipped item gave. */
+/* An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK) and
+   marks for an action its class or an equipped item gave. */
 typedef struct PSYNERGY_ENTRY {
-	/* bits: 15 from the class | 14 from an equipped item | 13..0 action id. */
-	/* Entries with neither mark were taught for good; 0 is empty. */
-	u16 encodedAction;
-	u16 unused; /* no code names it */
+	/* bits: 15 from the class | 14 from an equipped item | 13..0 action id.
+	   Entries with neither mark were taught for good; 0 is empty. */
+	Uint16 encodedAction;
+	Uint16 unused; /* no code names it */
 } PSYNERGY_ENTRY;
 
 /* A unit's elemental power and resistance in one element. */
 typedef struct BATTLE_ELEMENT_STATS {
-	s16 power;		/* Elemental power in the element. */
-	s16 resistance; /* Elemental resistance to it. */
+	Sint16 power;	   /* Elemental power in the element. */
+	Sint16 resistance; /* Elemental resistance to it. */
 } BATTLE_ELEMENT_STATS;
 
-/* The elements, in the order of every table kept per element: a unit's */
-/* element stats, the Djinn and the summons. ELEMENT_NONE marks an ability or */
-/* a weapon that has no element. */
+/* The elements, in the order of every table kept per element: a unit's element
+   stats, the Djinn and the summons. ELEMENT_NONE marks an ability or a weapon
+   that has no element. */
 typedef enum ELEMENT {
 	ELEMENT_VENUS,
 	ELEMENT_MERCURY,
@@ -47,23 +46,21 @@ typedef enum ELEMENT {
 } ELEMENT;
 
 /* ABILITY_DEFINITION.range of an ability that reaches every unit on the side,
- */
-/* each as if aimed at. */
+   each as if aimed at. */
 #define ABILITY_RANGE_ALL 255
-/* The range icon the Psynergy lists draw for ABILITY_RANGE_ALL, the last of */
-/* the twelve; range n takes icon n - 1. */
-#define RANGE_ICON_ALL 11
+/* The range icon the Psynergy lists draw for ABILITY_RANGE_ALL, the last of the
+   twelve; range n takes icon n - 1. */
+#define RANGE_ICON_ALL	  11
 
-/* The low four bits of ABILITY_DEFINITION.flg: the ability kind (enum */
-/* ABILITY_FORMULA). */
+/* The low four bits of ABILITY_DEFINITION.flg: the ability kind (enum
+   ABILITY_FORMULA). */
 #define ABILITY_FORMULA_MASK 15
 
-/* An ability kind picks what the ability's power does to each target: the */
-/* formula btAbilityApplyToTarget puts it through. ABILITY_FORMULA_BLANK, */
-/* ABILITY_FORMULA_EFFECT_ONLY and ABILITY_FORMULA_NO_POWER apply no power. No
- */
-/* row has a kind above ABILITY_FORMULA_HEAL_PP, which would apply none either.
- */
+/* An ability kind picks what the ability's power does to each target: the
+   formula btAbilityApplyToTarget puts it through. ABILITY_FORMULA_BLANK,
+   ABILITY_FORMULA_EFFECT_ONLY and ABILITY_FORMULA_NO_POWER apply no power. No
+   row has a kind above ABILITY_FORMULA_HEAL_PP, which would apply none
+   either. */
 typedef enum ABILITY_FORMULA {
 	ABILITY_FORMULA_BLANK = 0,	 /* only the blank rows no table uses */
 	ABILITY_FORMULA_HEAL_HP = 1, /* Cure, Fizz, healing items */
@@ -71,44 +68,38 @@ typedef enum ABILITY_FORMULA {
 	ABILITY_FORMULA_ATTACK = 3,	 /* Attack vs Defense, plus the power */
 	ABILITY_FORMULA_ATTACK_MULTIPLIED = 4, /* that attack times power / 10 */
 	ABILITY_FORMULA_DAMAGE = 5, /* HP damage from the power (Psynergy) */
-	/* HP damage from enemies' moves such as Fire Blessing and Deadly Gas, */
-	/* falling off faster than Psynergy's (RangeFalloff_EnemyDamage). Unless the
-	 */
-	/* move has wording of its own, it's announced as `<unit> unleashes */
-	/* <ability>!`. A weapon's unleash is something else:
-	   ABILITY_FORMULA_ATTACK, */
-	/* or for Rapid Smash ABILITY_FORMULA_ATTACK_MULTIPLIED. */
+	/* HP damage from enemies' moves such as Fire Blessing and Deadly Gas,
+	   falling off faster than Psynergy's (RangeFalloff_EnemyDamage). Unless the
+	   move has wording of its own, it's announced as `<unit> unleashes
+	   <ability>!`. A weapon's unleash is something else:
+	   ABILITY_FORMULA_ATTACK, or for Rapid Smash
+	   ABILITY_FORMULA_ATTACK_MULTIPLIED. */
 	ABILITY_FORMULA_ENEMY_DAMAGE = 6,
 	/* Granite, Flash and Kite, whose effect is all they do. */
 	ABILITY_FORMULA_EFFECT_ONLY = 7,
-	/* Summon damage falls off faster than Psynergy's */
-	/* (RangeFalloff_SummonDamage). Called with the Summon command, a summon */
-	/* also adds 3% of the target's maximum HP to its power for each Djinni it
-	 */
-	/* spends; the Fusion Dragon's Outer Space and Dragon Driver go without that
-	 */
-	/* bonus. */
+	/* Summon damage falls off faster than Psynergy's
+	   (RangeFalloff_SummonDamage). Called with the Summon command, a summon
+	   also adds 3% of the target's maximum HP to its power for each Djinni it
+	   spends; the Fusion Dragon's Outer Space and Dragon Driver go without that
+	   bonus. */
 	ABILITY_FORMULA_SUMMON = 8,
-	/* The field Psynergy (Move, Catch...), the field-only stat items (Apple, */
-	/* Power Bread...), Defend, Flee and the enemies' commands (Threaten, Ally
-	 */
-	/* Search...). The enemies' targeting check (CHECK_EFFECT_TARGET) treats it
-	 */
-	/* as a summon: worth it on a living unit only when the power is nonzero. */
+	/* The field Psynergy (Move, Catch...), the field-only stat items (Apple,
+	   Power Bread...), Defend, Flee and the enemies' commands (Threaten, Ally
+	   Search...). The enemies' targeting check (CHECK_EFFECT_TARGET) treats it
+	   as a summon: worth it on a living unit only when the power is nonzero. */
 	ABILITY_FORMULA_NO_POWER = 9,
-	ABILITY_FORMULA_PP_DAMAGE =
-		10,						 /* Crazy Voice, and Psy Drain when it lands */
+	/* Crazy Voice, and Psy Drain when it lands */
+	ABILITY_FORMULA_PP_DAMAGE = 10,
 	ABILITY_FORMULA_HEAL_PP = 11 /* Ember, Psy Crystal, Adept Ring */
 } ABILITY_FORMULA;
 
-/* ABILITY_DEFINITION.eff: what an ability does besides its damage or */
-/* healing, applied by btAbilityApplyToTarget unless noted. Each is named */
-/* for the abilities that have it (ability_table.c, with their English names */
-/* and descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE */
-/* are read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or */
-/* ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_SHARPLY` moves
- */
-/* its stat two stages, one without moves it one. */
+/* ABILITY_DEFINITION.eff: what an ability does besides its damage or healing,
+   applied by btAbilityApplyToTarget unless noted. Each is named for the
+   abilities that have it (ability_table.c, with their English names and
+   descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are
+   read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or
+   ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_SHARPLY` moves
+   its stat two stages, one without moves it one. */
 typedef enum ABILITY_EFFECT {
 	ABILITY_EFFECT_NONE = 0,
 	ABILITY_EFFECT_RESTORE_HP = 1,	/* restores HP (the item menu's use) */
@@ -146,22 +137,21 @@ typedef enum ABILITY_EFFECT {
 	ABILITY_EFFECT_BREAK = 33,		   /* Break: raised stats undone */
 	ABILITY_EFFECT_LEAVE_ONE_HP = 34,  /* Severe Blow, Thrash */
 	ABILITY_EFFECT_HALVE_DEFENSE = 35, /* Torch */
-	/* A ladder of chances of an ability's critical hit, rolled by */
-	/* btActionRunBuild: A is 1 in 64, then each rung doubles the odds, to */
-	/* E's 1 in 4. Only an attack (ABILITY_FORMULA_ATTACK or */
-	/* ABILITY_FORMULA_ATTACK_MULTIPLIED) applies it, and no ability has one. */
+	/* A ladder of chances of an ability's critical hit, rolled by
+	   btActionRunBuild: A is 1 in 64, then each rung doubles the odds, to E's 1
+	   in 4. Only an attack (ABILITY_FORMULA_ATTACK or
+	   ABILITY_FORMULA_ATTACK_MULTIPLIED) applies it, and no ability has one. */
 	ABILITY_EFFECT_CRITICAL_A = 36,
 	ABILITY_EFFECT_CRITICAL_B = 37,
 	ABILITY_EFFECT_CRITICAL_C = 38,
 	ABILITY_EFFECT_CRITICAL_D = 39,
 	ABILITY_EFFECT_CRITICAL_E = 40,
-	/* A chance of a double or triple blow, rolled by btActionRunBuild: */
-	/* the plain one 1 in 4, the rare one, which no ability has, 1 in 8, and the
-	 */
-	/* likely one 153 in 256. */
+	/* A chance of a double or triple blow, rolled by btActionRunBuild:
+	   the plain one 1 in 4, the rare one, which no ability has, 1 in 8, and the
+	   likely one 153 in 256. */
 	ABILITY_EFFECT_DOUBLE_BLOW_RARE = 41,
-	ABILITY_EFFECT_DOUBLE_BLOW =
-		42, /* Double Fang, Twin Beaks, Flying Attack */
+	/* Double Fang, Twin Beaks, Flying Attack */
+	ABILITY_EFFECT_DOUBLE_BLOW = 42,
 	ABILITY_EFFECT_TRIPLE_BLOW_RARE = 43,
 	ABILITY_EFFECT_TRIPLE_BLOW = 44,   /* Swift Strike */
 	ABILITY_EFFECT_THREATEN = 45,	   /* Contain, Threaten, Tremble */
@@ -191,24 +181,22 @@ typedef enum ABILITY_EFFECT {
 	ABILITY_EFFECT_PSY_LEECH = 69
 } ABILITY_EFFECT;
 
-/* ABILITY_DEFINITION.tgtMode: whom an ability may target, from its user's */
-/* view. The party's cursor (mnBattleTargetRunSelection) shows the enemies for
- */
-/* every mode but ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF. No row of */
-/* ability_table.c has a mode above ABILITY_TARGET_SELF; */
-/* btActionRunSetTargets would walk such a mode's range as it does */
-/* ABILITY_TARGET_FOES'. */
+/* ABILITY_DEFINITION.tgtMode: whom an ability may target, from its user's view.
+   The party's cursor (mnBattleTargetRunSelection) shows the enemies for every
+   mode but ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF. No row of
+   ability_table.c has a mode above ABILITY_TARGET_SELF; btActionRunSetTargets
+   would walk such a mode's range as it does ABILITY_TARGET_FOES'. */
 typedef enum ABILITY_TARGET {
-	/* The ability takes one target, the aimed unit, whatever its range */
-	/* (btActionRunSetTargets), and an enemy aims it at itself. The field */
-	/* Psynergy and enemies' commands such as Threaten, Ally Search and Flee */
-	/* have it. */
+	/* The ability takes one target, the aimed unit, whatever its range
+	   (btActionRunSetTargets), and an enemy aims it at itself. The field
+	   Psynergy and enemies' commands such as Threaten, Ally Search and Flee
+	   have it. */
 	ABILITY_TARGET_ONE = 0,
 	ABILITY_TARGET_FOES = 1,
 	ABILITY_TARGET_ALLIES = 2, /* the user's side, the user included */
-	/* Unused: no ability has it. An enemy that draws it aims at itself and */
-	/* picks again (btAIChooseAction); the party's cursor and */
-	/* btActionRunSetTargets take it as ABILITY_TARGET_FOES. */
+	/* Unused: no ability has it. An enemy that draws it aims at itself and
+	   picks again (btAIChooseAction); the party's cursor and
+	   btActionRunSetTargets take it as ABILITY_TARGET_FOES. */
 	ABILITY_TARGET_UNUSED = 3,
 	ABILITY_TARGET_SELF = 4 /* the user alone, whatever the range */
 } ABILITY_TARGET;
@@ -218,51 +206,48 @@ typedef enum CURSE_FLAG {
 	CURSE_BOUND = 0x01,		 /* the unit is bound */
 	CURSE_ITEM = 0x02,		 /* a cursed item is equipped */
 	CURSE_KEEP_BOUND = 0x04, /* keeps CURSE_BOUND through gmUnitCalc */
-	/* EQUIP_EFFECT_CURSE_REMOVABLE: gmUnitCalc clears it again with */
-	/* CURSE_BOUND. */
+	/* EQUIP_EFFECT_CURSE_REMOVABLE: gmUnitCalc clears it again with
+	   CURSE_BOUND. */
 	CURSE_REMOVABLE = 0x08
 } CURSE_FLAG;
 
-/* An ability's definition, a row of AbilityDefinitions: its */
-/* targeting, ability kind, element, effect, range, PP cost and power. */
+/* An ability's definition, a row of AbilityDefinitions: its targeting, ability
+   kind, element, effect, range, PP cost and power. */
 typedef struct ABILITY_DEFINITION {
-	u8 tgtMode; /* ABILITY_TARGET */
-	/* bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every */
-	/* row | 3..0 ability kind (ABILITY_FORMULA_MASK). */
-	u8 flg;
-	u8 element;				 /* ELEMENT */
-	u8 eff;					 /* ABILITY_EFFECT */
-	u8 icon;				 /* the icon the menus draw */
-	u8 reservedAfterIcon[3]; /* 0 in every row */
-	u8 range;  /* the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
-				*/
-	u8 ppCost; /* PP the ability costs */
+	Uint8 tgtMode; /* ABILITY_TARGET */
+	/* bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
+	   row | 3..0 ability kind (ABILITY_FORMULA_MASK). */
+	Uint8 flg;
+	Uint8 element;				/* ELEMENT */
+	Uint8 eff;					/* ABILITY_EFFECT */
+	Uint8 icon;					/* the icon the menus draw */
+	Uint8 reservedAfterIcon[3]; /* 0 in every row */
+	Uint8
+		/* the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL */
+		  range;
+	Uint8 ppCost; /* PP the ability costs */
 	/* The ability's power, as its ability kind reads it: for damage, about what
-	 */
-	/* the aimed target loses when the user's Power in the element equals the */
-	/* target's Resist (a summon adds to it, see ABILITY_FORMULA_SUMMON); for */
-	/* healing, about what the aimed target regains from a healer with 100 */
-	/* Power in the element; for an attack, what it adds to the blow at an even
-	 */
-	/* match, and for a multiplied one the blow's multiple in tenths. The battle
-	 */
-	/* README's "How an ability resolves" gives the formulas. */
-	u16 power;
-	/* The field Psynergy the ability works as, 1 (Move) to 16 (Avoid); 0 for */
-	/* none. The field effects branch on it, and the Status screen counts it as
-	 */
-	/* usable in the field. */
-	u8 fieldPsynergy;
-	u8 reservedAfterType[3]; /* 0 in every row */
+	   the aimed target loses when the user's Power in the element equals the
+	   target's Resist (a summon adds to it, see ABILITY_FORMULA_SUMMON); for
+	   healing, about what the aimed target regains from a healer with 100 Power
+	   in the element; for an attack, what it adds to the blow at an even match,
+	   and for a multiplied one the blow's multiple in tenths. The battle
+	   README's "How an ability resolves" gives the formulas. */
+	Uint16 power;
+	/* The field Psynergy the ability works as, 1 (Move) to 16 (Avoid); 0 for
+	   none. The field effects branch on it, and the Status screen counts it as
+	   usable in the field. */
+	Uint8 fieldPsynergy;
+	Uint8 reservedAfterType[3]; /* 0 in every row */
 } ABILITY_DEFINITION;
 
-/* ABILITY_DEFINITION.flg: where an ability, or the ability an item calls, */
-/* can be used, as the Status screen's Psynergy list says ("Can be used in */
-/* Towns/Dungeons", "Can be used in Battle"). */
+/* ABILITY_DEFINITION.flg: where an ability, or the ability an item calls, can
+   be used, as the Status screen's Psynergy list says ("Can be used in
+   Towns/Dungeons", "Can be used in Battle"). */
 typedef enum ABILITY_USE {
 	ABILITY_USABLE_IN_FIELD = 0x40, /* can be used outside battle */
-	ABILITY_USABLE_IN_BATTLE =
-		0x80 /* can be used in battle; else greyed there */
+	/* can be used in battle; else greyed there */
+	ABILITY_USABLE_IN_BATTLE = 0x80
 } ABILITY_USE;
 
 /* UNIT.classId of an enemy, which has no class of its own. */
@@ -271,43 +256,43 @@ typedef enum ABILITY_USE {
 /* Unit ids from 128 are the enemies'. */
 #define FIRST_ENEMY_UNIT 128
 
-/* The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
- */
+/* The last party unit id: ids 0 to 7, one for each character, ISAAC to
+   PIERS. */
 #define ALLY_MAX		 7
 #define PARTY_UNIT_COUNT (ALLY_MAX + 1)
 
-/* The party fights four at a time, three in a link battle; six enemies at */
-/* most, three in a link battle. */
+/* The party fights four at a time, three in a link battle; six enemies at most,
+   three in a link battle. */
 #define PARTY_BATTLE_SIZE 4
 #define ENEMY_BATTLE_SIZE 6
 
-/* The most units in a battle, every party unit and the most enemies: the */
-/* length of a unit list such as btUnitListIds fills. */
+/* The most units in a battle, every party unit and the most enemies: the length
+   of a unit list such as btUnitListIds fills. */
 #define UNIT_MAX (PARTY_UNIT_COUNT + ENEMY_BATTLE_SIZE)
 
-/* A full HP or PP gauge (UNIT.hpGauge, UNIT.ppGauge): the gauge is the */
-/* current value over the maximum in 2.14 fixed point, as gmUnitCalc */
-/* multiplies a maximum by it and divides by this, and the cap */
-/* gmUnitClampGauge puts on hp / hpMax shifted up UNIT_GAUGE_SHIFT bits. */
+/* A full HP or PP gauge (UNIT.hpGauge, UNIT.ppGauge): the gauge is the current
+   value over the maximum in 2.14 fixed point, as gmUnitCalc multiplies a
+   maximum by it and divides by this, and the cap gmUnitClampGauge puts on hp /
+   hpMax shifted up UNIT_GAUGE_SHIFT bits. */
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL	 (1 << UNIT_GAUGE_SHIFT)
 
 /* The bits of UNIT.baseActionCnt that count the unit's actions a turn. */
 #define UNIT_ACTION_COUNT_MASK 0xf
 
-/* What a Resistance stage adds to the resistance to every element */
-/* (gmUnitCalc). */
+/* What a Resistance stage adds to the resistance to every element
+   (gmUnitCalc). */
 #define RESISTANCE_PER_STAGE 20
 
-/* UNIT.poison: the poison takes a tenth of the maximum HP at the end of */
-/* each of the unit's actions, deadly poison a fifth. */
+/* UNIT.poison: the poison takes a tenth of the maximum HP at the end of each of
+   the unit's actions, deadly poison a fifth. */
 #define POISON_NORMAL 1
 #define POISON_VENOM  2
 
-/* UNIT.defendLevel, 0 for no Defend: Defend and Granite halve the damage, */
-/* Total Defense and Flash cut it to a tenth (REDUCE_BY_GUARD, */
-/* battle_ability.c). It lasts the turn: btUnitResetGuardLevels clears it */
-/* as the next one's commands are gathered. */
+/* UNIT.defendLevel, 0 for no Defend: Defend and Granite halve the damage, Total
+   Defense and Flash cut it to a tenth (REDUCE_BY_GUARD, battle_ability.c). It
+   lasts the turn: btUnitResetGuardLevels clears it as the next one's commands
+   are gathered. */
 #define DEFEND_NORMAL 1
 #define DEFEND_TOTAL  2
 
@@ -335,153 +320,148 @@ typedef struct BATTLE_AI_STATE {
 /* A unit's name buffer: 14 characters and the 0 that ends them. */
 #define UNIT_NAME_SIZE 15
 
-/* A unit in battle: a party member's or an enemy's stats, Psynergy, items, */
-/* Djinn and statuses. */
+/* A unit in battle: a party member's or an enemy's stats, Psynergy, items,
+   Djinn and statuses. */
 typedef struct UNIT {
-	/* The name, one byte a character, ending in 0. An enemy's is its message */
-	/* name cut to 14 characters, with the suffix letter gmBattleUnitSet is
-	 * given */
-	/* (a digit in Japanese); its last byte is always 0. */
-	u8 name[UNIT_NAME_SIZE];
-	u8 level;	 /* 1 to 99 for a character */
-	s16 baseHp;	 /* before equipment, Djinn and class (gmUnitCalc) */
-	s16 basePp;	 /* before equipment, Djinn and class (gmUnitCalc) */
-	s16 hpGauge; /* hp / hpMax in 0..UNIT_GAUGE_FULL; 1 while any HP remains */
-	s16 ppGauge; /* pp / ppMax in 0..UNIT_GAUGE_FULL; 1 while any PP remains */
-	u16 baseAttack;	 /* before equipment, Djinn, class and stages */
-	u16 baseDefense; /* before equipment, Djinn, class and stages */
-	u16 baseAgility; /* before equipment, Djinn, class and stages */
-	u8 baseLuck;	 /* before equipment, Djinn and class */
+	/* The name, one byte a character, ending in 0. An enemy's is its message
+	   name cut to 14 characters, with the suffix letter gmBattleUnitSet is
+	   given (a digit in Japanese); its last byte is always 0. */
+	Uint8  name[UNIT_NAME_SIZE];
+	Uint8  level;  /* 1 to 99 for a character */
+	Sint16 baseHp; /* before equipment, Djinn and class (gmUnitCalc) */
+	Sint16 basePp; /* before equipment, Djinn and class (gmUnitCalc) */
+	/* hp / hpMax in 0..UNIT_GAUGE_FULL; 1 while any HP remains */
+	Sint16 hpGauge;
+	/* pp / ppMax in 0..UNIT_GAUGE_FULL; 1 while any PP remains */
+	Sint16 ppGauge;
+	Uint16 baseAttack;	/* before equipment, Djinn, class and stages */
+	Uint16 baseDefense; /* before equipment, Djinn, class and stages */
+	Uint16 baseAgility; /* before equipment, Djinn, class and stages */
+	Uint8  baseLuck;	/* before equipment, Djinn and class */
 	/* Actions a turn before equipment: the low four bits are read. An enemy's
-	 */
-	/* comes from its definition's actionCount; a level up sets a character's */
-	/* to 1. */
-	u8 baseActionCnt;
-	u8 baseHpRegen; /* HP regained each turn before equipment; 0 for a character
-					 */
-	u8 basePpRegen; /* PP regained each turn before equipment and lighthouses */
-	u8 baseUnused[2]; /* no code names it */
-	/* Power and resistance before equipment and stages: an enemy's from its */
-	/* element preset, a character's from its element levels */
-	/* (gmUnitCalcBaseElements). */
+	   comes from its definition's actionCount; a level up sets a character's to
+	   1. */
+	Uint8 baseActionCnt;
+	/* HP regained each turn before equipment; 0 for a * character */
+	Uint8 baseHpRegen;
+	/* PP regained each turn before equipment and lighthouses */
+	Uint8 basePpRegen;
+	Uint8 baseUnused[2]; /* no code names it */
+	/* Power and resistance before equipment and stages: an enemy's from its
+	   element preset, a character's from its element levels
+	   (gmUnitCalcBaseElements). */
 	BATTLE_ELEMENT_STATS baseElement[ELEMENT_COUNT];
-	s16 hpMax;	 /* 0 to 1999 for a character, 9999 for an enemy (gmUnitCalc) */
-	s16 ppMax;	 /* 0 to 1999 for a character, 9999 for an enemy (gmUnitCalc) */
-	s16 hp;		 /* current HP, 0 when downed */
-	s16 pp;		 /* current PP */
-	u16 attack;	 /* Attack, 0 to 999 (gmUnitCalc) */
-	u16 defense; /* Defense, 0 to 999 (gmUnitCalc) */
-	u16 agility; /* Agility, 0 to 999: the order of the turn's actions */
-	u8 luck;	 /* 0 to 99 (gmUnitCalc) */
-	/* Actions each turn, 0 to 2: baseActionCnt, one more while ready, and */
-	/* the equipment's extra actions (gmUnitCalc). Each gives the unit a */
-	/* place in the turn's queue. */
-	u8 actionsPerTurn;
-	u8 hpRegen; /* HP regained at each turn's end (gmUnitCalc) */
-	/* PP regained at each turn's end, 0 to 200 (gmUnitCalc): 4 more once the */
-	/* lighthouse of the character's element is lit. */
-	u8 ppRegen;
-	u8 unused[2]; /* no code names it, as baseUnused */
-	/* Power and resistance in each element, 0 to 200, after equipment, a */
-	/* summon's boost and Resistance stages (gmUnitCalc). */
+	/* 0 to 1999 for a character, 9999 for an enemy (gmUnitCalc) */
+	Sint16 hpMax;
+	/* 0 to 1999 for a character, 9999 for an enemy (gmUnitCalc) */
+	Sint16 ppMax;
+	Sint16 hp;		/* current HP, 0 when downed */
+	Sint16 pp;		/* current PP */
+	Uint16 attack;	/* Attack, 0 to 999 (gmUnitCalc) */
+	Uint16 defense; /* Defense, 0 to 999 (gmUnitCalc) */
+	Uint16 agility; /* Agility, 0 to 999: the order of the turn's actions */
+	Uint8  luck;	/* 0 to 99 (gmUnitCalc) */
+	/* Actions each turn, 0 to 2: baseActionCnt, one more while ready, and the
+	   equipment's extra actions (gmUnitCalc). Each gives the unit a place in
+	   the turn's queue. */
+	Uint8 actionsPerTurn;
+	Uint8 hpRegen; /* HP regained at each turn's end (gmUnitCalc) */
+	/* PP regained at each turn's end, 0 to 200 (gmUnitCalc): 4 more once the
+	   lighthouse of the character's element is lit. */
+	Uint8 ppRegen;
+	Uint8 unused[2]; /* no code names it, as baseUnused */
+	/* Power and resistance in each element, 0 to 200, after equipment, a
+	   summon's boost and Resistance stages (gmUnitCalc). */
 	BATTLE_ELEMENT_STATS element[ELEMENT_COUNT];
-	/* The action list: Psynergy taught for good, then the class's and the */
-	/* equipment's (gmUnitRefreshPsynergy). An empty entry is 0. */
+	/* The action list: Psynergy taught for good, then the class's and the
+	   equipment's (gmUnitRefreshPsynergy). An empty entry is 0. */
 	PSYNERGY_ENTRY psynergy[PSYNERGY_SLOTS];
-	/* Items held, one entry each: bits 15..11 quantity | 10 broken | */
-	/* 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0. */
-	u16 inventory[INVENTORY_SLOTS];
-	u8 paddingBeforeDjinn[2]; /* up to the word djinnHeld starts on */
-	/* The Djinn held, one bit per Djinni (by its index) in each element's word.
-	 */
-	u32 djinnHeld[ELEMENT_COUNT];
+	/* Items held, one entry each: bits 15..11 quantity | 10 broken | 9 equipped
+	   | 8..0 item id (INVENTORY_*). An empty entry is 0. */
+	Uint16 inventory[INVENTORY_SLOTS];
+	Uint8  paddingBeforeDjinn[2]; /* up to the word djinnHeld starts on */
+	/* The Djinn held, one bit per Djinni (by its index) in each element's
+	   word. */
+	Uint32 djinnHeld[ELEMENT_COUNT];
 	/* The Djinn set, one bit per Djinni; only these add their stat bonuses. */
-	u32 djinnSet[ELEMENT_COUNT];
-	u8 djinnHeldCnts[ELEMENT_COUNT]; /* the Djinn held in each element, at */
-									 /* most 10 */
-	u8 djinnSetCnts[ELEMENT_COUNT];	 /* the Djinn set in each element; the */
-	/* class's element levels are read from */
-	/* these */
-	/* Copied from the enemy's definition, where it is 0 in every row. During */
-	/* a battle the enemy's action choice keeps its place in its action list */
-	/* here (btAIChooseAction). */
+	Uint32 djinnSet[ELEMENT_COUNT];
+	/* the Djinn held in each element, at most 10 */
+	Uint8 djinnHeldCnts[ELEMENT_COUNT];
+	Uint8 djinnSetCnts[ELEMENT_COUNT]; /* the Djinn set in each element; the */
+	/* class's element levels are read from these Copied from the enemy's
+	   definition, where it is 0 in every row. During a battle the enemy's
+	   action choice keeps its place in its action list here
+	   (btAIChooseAction). */
 	BATTLE_AI_STATE aiState;
-	u32 experience; /* a character's experience points */
-	/* Who the unit is: a character's id (ISAAC to PIERS, below 8) or an */
-	/* enemy's id (gmBattleUnitSet); BattleSprites and the enemy tables are */
-	/* read by it. */
-	u8 id;
-	/* The character's class, worked out from its Djinn (gmUnitUpdateClass); */
-	/* CLASS_NONE marks an enemy, and code throughout tests it to tell */
-	/* the two apart. */
-	u8 classId;
-	/* BATTLE_SIDE. The Djinn the party fights are enemies put on */
-	/* BATTLE_SIDE_PARTY (gmBattleUnitSet). */
-	u8 side;
+	Uint32			experience; /* a character's experience points */
+	/* Who the unit is: a character's id (ISAAC to PIERS, below 8) or an enemy's
+	   id (gmBattleUnitSet); BattleSprites and the enemy tables are read by
+	   it. */
+	Uint8 id;
+	/* The character's class, worked out from its Djinn (gmUnitUpdateClass);
+	   CLASS_NONE marks an enemy, and code throughout tests it to tell the two
+	   apart. */
+	Uint8 classId;
+	/* BATTLE_SIDE. The Djinn the party fights are enemies put on
+	   BATTLE_SIDE_PARTY (gmBattleUnitSet). */
+	Uint8 side;
 	/* DEFEND_NORMAL or DEFEND_TOTAL while the unit guards, else 0. */
-	s8 defendLevel;
+	Sint8 defendLevel;
 	/* A summon's boost to its summoner's power in each element: at the end of
-	 */
-	/* the summoner's action, the element the summon spent the most Djinn of */
-	/* rises to that many (btUnitProcessActionEnd), and n adds */
-	/* (n * n + n) * 5 power (gmUnitCalc). Cleared at the battle's start, on */
-	/* going down and by Break. */
-	s8 summonBoost[ELEMENT_COUNT];
-	/* The curse: CURSE_FLAG bits. gmUnitCalc rebuilds CURSE_BOUND and */
-	/* CURSE_ITEM from the equipment. A bound unit loses one action in */
-	/* four, except Defend (btActionRunBuild); any bit set shows the curse */
-	/* in the Status screens and lets the sanctum remove it. */
-	s8 curse;
-	s8 poison; /* POISON_NORMAL or POISON_VENOM, 0 for none */
-	/* Each stat change: the turns it has left, and its stage (gmUnitCalc: an */
-	/* eighth of Attack, Defense or Agility, or 20 Resistance, a stage). */
-	/* Stages run -4 to 4 and last 7 turns; a lowered one may recover sooner at
-	 */
-	/* the end of a turn. */
-	/* @{ */
-	u8 attackTurns;
-	s8 attackStage;
-	u8 defenseTurns;
-	s8 defenseStage;
-	u8 resistanceTurns;
-	s8 resistanceStage;
-	/* @} */
+	   the summoner's action, the element the summon spent the most Djinn of
+	   rises to that many (btUnitProcessActionEnd), and n adds (n * n + n) * 5
+	   power (gmUnitCalc). Cleared at the battle's start, on going down and by
+	   Break. */
+	Sint8 summonBoost[ELEMENT_COUNT];
+	/* The curse: CURSE_FLAG bits. gmUnitCalc rebuilds CURSE_BOUND and
+	   CURSE_ITEM from the equipment. A bound unit loses one action in four,
+	   except Defend (btActionRunBuild); any bit set shows the curse in the
+	   Status screens and lets the sanctum remove it. */
+	Sint8 curse;
+	Sint8 poison; /* POISON_NORMAL or POISON_VENOM, 0 for none */
+	/* Each stat change: the turns it has left, and its stage (gmUnitCalc: an
+	   eighth of Attack, Defense or Agility, or 20 Resistance, a stage). Stages
+	   run -4 to 4 and last 7 turns; a lowered one may recover sooner at the end
+	   of a turn. */
+	Uint8 attackTurns;
+	Sint8 attackStage;
+	Uint8 defenseTurns;
+	Sint8 defenseStage;
+	Uint8 resistanceTurns;
+	Sint8 resistanceStage;
 	/* Delusion to sleep: the turns each status has left, 7 when it lands; each
-	 */
-	/* may end sooner at the end of a turn. Sleep, confusion, charm and stun */
-	/* cost the unit its actions. */
-	/* @{ */
-	u8 delusion;
-	u8 confusion;
-	u8 charm;
-	u8 stun;
-	u8 sleep;
-	/* @} */
-	/* bits: 7..3 Luff (16 when cast, minus 8 a turn) | 2..0 Bind's turns */
-	/* (7 when cast). Psynergy is sealed while any bit is set. */
-	u8 psySeal;
-	u8 regenerate; /* Regenerate's turns left, 7 when cast */
-	u8 reflect;	   /* Reflect's turns left, 7 when cast */
-	u8 haunt;	   /* set while an evil spirit grips the unit */
+	   may end sooner at the end of a turn. Sleep, confusion, charm and stun
+	   cost the unit its actions. */
+	Uint8 delusion;
+	Uint8 confusion;
+	Uint8 charm;
+	Uint8 stun;
+	Uint8 sleep;
+	/* bits: 7..3 Luff (16 when cast, minus 8 a turn) | 2..0 Bind's turns (7
+	   when cast). Psynergy is sealed while any bit is set. */
+	Uint8 psySeal;
+	Uint8 regenerate; /* Regenerate's turns left, 7 when cast */
+	Uint8 reflect;	  /* Reflect's turns left, 7 when cast */
+	Uint8 haunt;	  /* set while an evil spirit grips the unit */
 	/* The Grim Reaper's countdown: 7 when cursed, down one at the end of each
-	 */
-	/* of the unit's own actions (btUnitProcessActionEnd); at 0 it falls. */
-	u8 grimReaper;
-	/* The totals of EQUIP_EFFECT_ADD_UNLEASH_CHANCE and */
-	/* EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE that gmUnitCalc sums; nothing */
-	/* reads them back. */
-	u8 equipBonus[2];
-	/* Kite's extra action: 2 when cast, down one at each turn's end; while */
-	/* nonzero gmUnitCalc gives the unit one more action a turn. */
-	u8 ready;
-	u8 immobile;	 /* set by ABILITY_EFFECT_GROUND: the next action is lost */
-	u8 agilityTurns; /* the Agility change's turns left, 5 when cast */
+	   of the unit's own actions (btUnitProcessActionEnd); at 0 it falls. */
+	Uint8 grimReaper;
+	/* The totals of EQUIP_EFFECT_ADD_UNLEASH_CHANCE and
+	   EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE that gmUnitCalc sums; nothing reads
+	   them back. */
+	Uint8 equipBonus[2];
+	/* Kite's extra action: 2 when cast, down one at each turn's end; while
+	   nonzero gmUnitCalc gives the unit one more action a turn. */
+	Uint8 ready;
+	Uint8 immobile; /* set by ABILITY_EFFECT_GROUND: the next action is lost */
+	Uint8 agilityTurns; /* the Agility change's turns left, 5 when cast */
 	/* The Agility stage: -4 (Vine) to 8 (Zephyr, twice the Agility). */
-	s8 agilityStage;
+	Sint8 agilityStage;
 	/* Set by the challenge effect: an enemy with it never chooses to flee. */
-	s8 challenge;
-	u8 paddingBeforeEnemyId; /* up to the halfword enemyId starts on */
-	u16 enemyId; /* Not named by any TBS code; TLA reads it as the unit's id. */
+	Sint8 challenge;
+	Uint8 paddingBeforeEnemyId; /* up to the halfword enemyId starts on */
+	/* Not named by any TBS code; TLA reads it as the unit's id. */
+	Uint16 enemyId;
 } UNIT;
 
 STATIC_ASSERT(sizeof(ABILITY_DEFINITION) == ABILITY_DEFINITION_SIZE);
@@ -513,8 +493,9 @@ STATIC_ASSERT(offsetof(UNIT, haunt) == 320);
 STATIC_ASSERT(offsetof(UNIT, enemyId) == 330);
 
 /* Clamps a gauge ratio to 0..UNIT_GAUGE_FULL. */
-static __inline__ s32 gmUnitClampGauge(s32 ratio) {
-	s32 clamped;
+static __inline__ Sint32 gmUnitClampGauge(Sint32 ratio)
+{
+	Sint32 clamped;
 
 	if(ratio > UNIT_GAUGE_FULL)
 		clamped = UNIT_GAUGE_FULL;
@@ -525,18 +506,18 @@ static __inline__ s32 gmUnitClampGauge(s32 ratio) {
 	return clamped;
 }
 
-/* Recalculates HP and PP gauges, keeping at least one when any points remain.
- */
-#define gmUnitUpdateGauges(unit)                                               \
-	do {                                                                       \
-		(unit)->hpGauge = gmUnitClampGauge(((unit)->hp << UNIT_GAUGE_SHIFT) /  \
-										   (unit)->hpMax);                     \
-		if((unit)->hpGauge == 0 && (unit)->hp != 0)                            \
-			(unit)->hpGauge = 1;                                               \
-		(unit)->ppGauge = gmUnitClampGauge(((unit)->pp << UNIT_GAUGE_SHIFT) /  \
-										   (unit)->ppMax);                     \
-		if((unit)->ppGauge == 0 && (unit)->pp != 0)                            \
-			(unit)->ppGauge = 1;                                               \
+/* Recalculates HP and PP gauges, keeping at least one when any points
+   remain. */
+#define UNIT_UPDATE_GAUGES(unit) \
+	do { \
+		(unit)->hpGauge = gmUnitClampGauge( \
+			((unit)->hp << UNIT_GAUGE_SHIFT) / (unit)->hpMax); \
+		if((unit)->hpGauge == 0 && (unit)->hp != 0) \
+			(unit)->hpGauge = 1; \
+		(unit)->ppGauge = gmUnitClampGauge( \
+			((unit)->pp << UNIT_GAUGE_SHIFT) / (unit)->ppMax); \
+		if((unit)->ppGauge == 0 && (unit)->pp != 0) \
+			(unit)->ppGauge = 1; \
 	} while(0)
 
 #endif

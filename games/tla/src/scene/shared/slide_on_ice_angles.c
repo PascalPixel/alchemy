@@ -1,14 +1,11 @@
-/* @file */
-/* The headings the direction pad gives on ice, which the scenes with ice to */
-/* slide on keep a copy of, both tables indexed by the pad's four bits */
-/* ((InputWork.held >> 4) & 15: right, left, up, down); -1 where the keys held
- */
-/* give no heading. */
+/* The headings the direction pad gives on ice, which the scenes with ice to
+   slide on keep a copy of, both tables indexed by the pad's four bits
+   ((PerWork.data >> 4) & 15: right, left, up, down); -1 where the keys held
+   give no heading. */
 
 /* The heading fdActorSteerByPad turns toward, diagonals included; a second row
- */
-/* of sixteen keeps only the four straight headings. */
-s16 SlideOnIce_SteerAngles[] = {
+   of sixteen keeps only the four straight headings. */
+Sint16 SlideOnIce_SteerAngles[] = {
 	-1,
 	FACING_EAST,
 	FACING_WEST,
@@ -43,11 +40,23 @@ s16 SlideOnIce_SteerAngles[] = {
 	-1,
 };
 
-/* The heading a slide sets off in: a diagonal goes the way of its left or */
-/* right key. */
-s16 SlideOnIce_AnglesByKey[] = {
-	-1,			  FACING_EAST, FACING_WEST, -1,
-	FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
-	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH,
-	-1,			  FACING_EAST, FACING_WEST, -1,
+/* The heading a slide sets off in: a diagonal goes the way of its left or right
+   key. */
+Sint16 SlideOnIce_AnglesByKey[] = {
+	-1,
+	FACING_EAST,
+	FACING_WEST,
+	-1,
+	FACING_NORTH,
+	FACING_EAST,
+	FACING_WEST,
+	FACING_NORTH,
+	FACING_SOUTH,
+	FACING_EAST,
+	FACING_WEST,
+	FACING_SOUTH,
+	-1,
+	FACING_EAST,
+	FACING_WEST,
+	-1,
 };

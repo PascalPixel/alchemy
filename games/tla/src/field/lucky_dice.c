@@ -1,4 +1,3 @@
-/* @file */
 /* The Lucky Dice minigame: its tables, its start, its helpers and its run. */
 
 #include "field/field.h"
@@ -19,13 +18,11 @@ typedef enum LUCKY_DICE_HELP_MESSAGE {
 } LUCKY_DICE_HELP_MESSAGE;
 
 /* What a throw's four numbers make, in the rules' words: "If two numbers match
- */
-/* on either the dice or the table... it's called a pair, and you don't win or
- */
-/* lose anything. Two pair doubles your money. Triple matches triple your */
-/* money. Four of a kind is perfect, and you win five times your bet." */
-/* Every result has its lettering (hand_titles.png: "Perfect!!!", "Triple!", */
-/* "Two Pair!" and "One Pair!"), numbered from 0. */
+   on either the dice or the table... it's called a pair, and you don't win or
+   lose anything. Two pair doubles your money. Triple matches triple your money.
+   Four of a kind is perfect, and you win five times your bet." Every result has
+   its lettering (hand_titles.png: "Perfect!!!", "Triple!", "Two Pair!" and "One
+   Pair!"), numbered from 0. */
 typedef enum DICE_RESULT {
 	DICE_RESULT_NONE = -1, /* no two numbers alike: the bet is lost */
 	DICE_RESULT_PERFECT, /* all four alike: DICE_PERFECT_PAYOUT times the bet */
@@ -35,19 +32,19 @@ typedef enum DICE_RESULT {
 } DICE_RESULT;
 
 /* Unused: a table of signs. */
-const s32 LuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};
+const Sint32 LuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};
 
 /* How many sprites each result's lettering takes, 32 pixels each. */
-const u8 LuckyDice_LabelCounts[] = {
+const Uint8 LuckyDice_LabelCounts[] = {
 	[DICE_RESULT_PERFECT] = 5,
 	[DICE_RESULT_TRIPLE] = 4,
 	[DICE_RESULT_TWO_PAIR] = 3,
 	[DICE_RESULT_ONE_PAIR] = 3,
 };
 
-/* The first tile of each result's lettering, in 16-pixel steps from */
-/* DICE_NUMBER_TILES. */
-const u8 LuckyDice_LabelTiles[] = {
+/* The first tile of each result's lettering, in 16-pixel steps from
+   DICE_NUMBER_TILES. */
+const Uint8 LuckyDice_LabelTiles[] = {
 	[DICE_RESULT_PERFECT] = 28,
 	[DICE_RESULT_TRIPLE] = 48,
 	[DICE_RESULT_TWO_PAIR] = 64,
@@ -62,31 +59,31 @@ const u8 LuckyDice_LabelTiles[] = {
 };
 
 /* The die face tile at each step of its roll: one for each DICE_ROLL_PER_TILE
- */
-/* of the roll angle (variant), three to a face. */
-const u8 LuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
-								  3, 9,	 13, 4, 7,	6, 5, 17, 11};
+   of the roll angle (variant), three to a face. */
+const Uint8 LuckyDice_FaceTiles[] = {
+	0, 12, 16, 1, 14, 8, 2, 15, 10, 3, 9, 13, 4, 7, 6, 5, 17, 11};
 
 /* The board's rows by depth: a die at rest is in the first row whose value its
- */
-/* z (16.16 pixels) exceeds, -32767 taking the rest. */
-const s16 LuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
+   z (16.16 pixels) exceeds, -32767 taking the rest. */
+const Sint16 LuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
 
-/* Starts the Lucky Dice minigame: leaves only the sprites on screen, starts */
-/* the music and plays until the player quits. Returns 0. */
-s32 fdLuckyDiceStart(void) {
+/* Starts the Lucky Dice minigame: leaves only the sprites on screen, starts the
+   music and plays until the player quits. Returns 0. */
+Sint32 fdLuckyDiceStart(void)
+{
 	REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
 	sySndPlayStub(MUS_ALHAFRA);
 	fdLuckyDiceRun();
 	return 0;
 }
 
-/* Puts the 3D camera back at its starting view: at the origin, unturned, */
-/* pitched to 152/256 of a turn and 510 pixels away, following nothing. */
-void fdCameraResetViewDefaults(void) {
+/* Puts the 3D camera back at its starting view: at the origin, unturned,
+   pitched to 152/256 of a turn and 510 pixels away, following nothing. */
+void fdCameraResetViewDefaults(void)
+{
 	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
-	s32 offset[3];
-	u32 nearPlane;
+	Sint32		   offset[3];
+	Uint32		   nearPlane;
 
 	camera->pitch = TRIG_TURN * 152 / 256;
 	camera->distance = toFIXED(510);
@@ -106,17 +103,18 @@ void fdCameraResetViewDefaults(void) {
 	SET_VECTOR(offset, 0, 0, camera->distance);
 	syCalcPoint(offset, camera->eye);
 
-	nearPlane = syDivFX(toFIXED(250), FIXED_ONE * 3 / 4);
+	nearPlane = syDivFX(toFIXED(250), toFIXED(3) / 4);
 	sySetScreenDist(toFIXED(250), nearPlane, toFIXED(32767));
 }
 
 /* Unused: multiplies two 8.8 fixed-point values, rounding toward zero. */
-UNUSED s32 fdFixedPointMulQ8(s32 a, s32 b) {
-	s16 left = a;
-	s16 right = b;
-	s32 product;
-	s32 adjusted;
-	s32 multiplier;
+UNUSED Sint32 fdFixedPointMulQ8(Sint32 a, Sint32 b)
+{
+	Sint16 left = a;
+	Sint16 right = b;
+	Sint32 product;
+	Sint32 adjusted;
+	Sint32 multiplier;
 
 	/* Rounded toward zero, as a division rounds. */
 	multiplier = right;
@@ -124,35 +122,39 @@ UNUSED s32 fdFixedPointMulQ8(s32 a, s32 b) {
 	product *= multiplier;
 	if(product >= 0) {
 		adjusted = product;
-	}
-	else {
+	} else {
 		adjusted = product + (Q_8_8(1) - 1);
 	}
-	return (s16)(adjusted >> 8);
+	return (Sint16)(adjusted >> 8);
 }
 
 /* Unused: divides two 8.8 fixed-point values. */
-UNUSED s16 fdFixedPointDivQ8(s16 numerator, s16 denominator) {
+UNUSED Sint16 fdFixedPointDivQ8(Sint16 numerator, Sint16 denominator)
+{
 	return (numerator * Q_8_8(1)) / denominator;
 }
 
 /* Unused: the reciprocal of an 8.8 fixed-point value. */
-UNUSED s16 fdFixedPointReciprocal(s16 value) { return FIXED_ONE / value; }
+UNUSED Sint16 fdFixedPointReciprocal(Sint16 value)
+{
+	return toFIXED(1) / value;
+}
 
-/* Copies count RGB555 colours from source to destination with each channel */
-/* multiplied by scale (16.16: 0 is black, FIXED_ONE unchanged), for fades. */
-s32 fdLuckyDiceScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
-								 s32 count) {
-	s32 remaining;
-	u32 pixel;
-	u32 red;
-	u32 green;
-	u32 blue;
+/* Copies count RGB555 colours from source to destination with each channel
+   multiplied by scale (16.16: 0 is black, toFIXED(1) unchanged), for fades. */
+Sint32 fdLuckyDiceScaleRGB555Buffer(
+	Uint16 *source, Uint16 *destination, FIXED scale, Sint32 count)
+{
+	Sint32 remaining;
+	Uint32 pixel;
+	Uint32 red;
+	Uint32 green;
+	Uint32 blue;
 
 	if(count > 0) {
-		u32 redMask = RGB(31, 0, 0);
-		u32 greenMask = RGB(0, 31, 0);
-		u32 blueMask = RGB(0, 0, 31);
+		Uint32 redMask = RGB(31, 0, 0);
+		Uint32 greenMask = RGB(0, 31, 0);
+		Uint32 blueMask = RGB(0, 0, 31);
 
 		remaining = count;
 		do {
@@ -176,129 +178,69 @@ s32 fdLuckyDiceScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 }
 
 /* Lucky Dice's layout, fitted to each language's text: the coins window at the
- */
-/* top and its label, the help window (Throw / Quit) and the winnings window at
- */
-/* the bottom with their text, in tiles for windows and pixels within them, and
- */
-/* the centre of the result lettering in sprite x, which wraps at 512. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define DICE_COINS_WINDOW_X		18
-#define DICE_COINS_WINDOW_WIDTH 11
-#define DICE_COINS_LABEL_X		48
-#elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
-#define DICE_COINS_WINDOW_X		16
-#define DICE_COINS_WINDOW_WIDTH 14
-#define DICE_COINS_LABEL_X		53
-#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-#define DICE_COINS_WINDOW_X		17
-#define DICE_COINS_WINDOW_WIDTH 13
-#define DICE_COINS_LABEL_X		56
-#else
-#define DICE_COINS_WINDOW_X		18
-#define DICE_COINS_WINDOW_WIDTH 12
-#define DICE_COINS_LABEL_X		48
-#endif
+   top and its label, the help window (Throw / Quit) and the winnings window at
+   the bottom with their text, in tiles for windows and pixels within them, and
+   the centre of the result lettering in sprite x, which wraps at 512. */
+#define DICE_COINS_WINDOW_X		BY_LANGUAGE(18, 18, 16, 17, 16, 17)
+#define DICE_COINS_WINDOW_WIDTH BY_LANGUAGE(11, 12, 14, 13, 14, 13)
+#define DICE_COINS_LABEL_X		BY_LANGUAGE(48, 48, 53, 56, 53, 56)
 
 /* The help window (Throw / Quit): its column and width, in tiles. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define DICE_HELP_WINDOW_X	   23
-#define DICE_HELP_WINDOW_WIDTH 7
-#elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH
-#define DICE_HELP_WINDOW_X	   20
-#define DICE_HELP_WINDOW_WIDTH 10
-#elif LANGUAGE == LANGUAGE_FRENCH
-#define DICE_HELP_WINDOW_X	   21
-#define DICE_HELP_WINDOW_WIDTH 9
-#else
-#define DICE_HELP_WINDOW_X	   22
-#define DICE_HELP_WINDOW_WIDTH 8
-#endif
+#define DICE_HELP_WINDOW_X	   BY_LANGUAGE(23, 22, 20, 20, 21, 22)
+#define DICE_HELP_WINDOW_WIDTH BY_LANGUAGE(7, 8, 10, 10, 9, 8)
 
-/* The help window reopened after a payout; in Spanish it is a tile narrower */
-/* than the one Lucky Dice opens with, for the same two lines. */
-#if LANGUAGE == LANGUAGE_SPANISH
-#define DICE_REOPENED_HELP_WINDOW_X		21
-#define DICE_REOPENED_HELP_WINDOW_WIDTH 9
-#else
-#define DICE_REOPENED_HELP_WINDOW_X		DICE_HELP_WINDOW_X
-#define DICE_REOPENED_HELP_WINDOW_WIDTH DICE_HELP_WINDOW_WIDTH
-#endif
+/* The help window reopened after a payout; in Spanish it is a tile narrower
+   than the one Lucky Dice opens with, for the same two lines. */
+#define DICE_REOPENED_HELP_WINDOW_X		SPANISH_OR(21, DICE_HELP_WINDOW_X)
+#define DICE_REOPENED_HELP_WINDOW_WIDTH SPANISH_OR(9, DICE_HELP_WINDOW_WIDTH)
 
-/* The winnings window opens at this x less half its digits and is this width */
-/* plus its digits; after the winnings label the number stands at */
-/* DICE_WINNINGS_NUMBER_X, and the coins label at DICE_WINNINGS_COINS_X past */
-/* the number's digits. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define DICE_WINNINGS_WINDOW_X	   10
-#define DICE_WINNINGS_WINDOW_WIDTH 10
-#define DICE_WINNINGS_COINS_X	   40
-#define DICE_WINNINGS_NUMBER_X	   40
-#elif LANGUAGE == LANGUAGE_GERMAN
-#define DICE_WINNINGS_WINDOW_X	   7
-#define DICE_WINNINGS_WINDOW_WIDTH 14
-#define DICE_WINNINGS_COINS_X	   53
-#define DICE_WINNINGS_NUMBER_X	   53
-#elif LANGUAGE == LANGUAGE_FRENCH
-#define DICE_WINNINGS_WINDOW_X	   9
-#define DICE_WINNINGS_WINDOW_WIDTH 13
-#define DICE_WINNINGS_COINS_X	   53
-#define DICE_WINNINGS_NUMBER_X	   53
-#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-#define DICE_WINNINGS_WINDOW_X	   9
-#define DICE_WINNINGS_WINDOW_WIDTH 13
-#define DICE_WINNINGS_COINS_X	   64
-#define DICE_WINNINGS_NUMBER_X	   56
-#else
-#define DICE_WINNINGS_WINDOW_X	   8
-#define DICE_WINNINGS_WINDOW_WIDTH 13
-#define DICE_WINNINGS_COINS_X	   56
-#define DICE_WINNINGS_NUMBER_X	   56
-#endif
+/* The winnings window opens at this x less half its digits and is this width
+   plus its digits; after the winnings label the number stands at
+   DICE_WINNINGS_NUMBER_X, and the coins label at DICE_WINNINGS_COINS_X past the
+   number's digits. */
+#define DICE_WINNINGS_WINDOW_X	   BY_LANGUAGE(10, 8, 7, 9, 9, 9)
+#define DICE_WINNINGS_WINDOW_WIDTH BY_LANGUAGE(10, 13, 14, 13, 13, 13)
+#define DICE_WINNINGS_COINS_X	   BY_LANGUAGE(40, 56, 53, 64, 53, 64)
+#define DICE_WINNINGS_NUMBER_X	   BY_LANGUAGE(40, 56, 53, 56, 53, 56)
 
 /* The centre of the result lettering, in sprite x, which wraps at 512. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define DICE_RESULT_LABEL_CENTER_X 640
-#else
-#define DICE_RESULT_LABEL_CENTER_X 632
-#endif
+#define DICE_RESULT_LABEL_CENTER_X JAPANESE_OR(640, 632)
 
-/* The dice thrown, and the sprites drawn for them: the dice, then their */
-/* shadows. */
-#define DICE_COUNT		  2
-#define DICE_RESULT_COUNT 4
-/* The result: one number every 5 frames, then 20 frames in the lettering, */
-/* the winnings, and A to go on; the payout closes 15 frames after it starts. */
+/* The dice thrown, and the sprites drawn for them: the dice, then their
+   shadows. */
+#define DICE_COUNT				  2
+#define DICE_RESULT_COUNT		  4
+/* The result: one number every 5 frames, then 20 frames in the lettering, the
+   winnings, and A to go on; the payout closes 15 frames after it starts. */
 #define DICE_NUMBER_REVEAL_FRAMES 5
 #define DICE_RESULT_FRAMES		  20
 #define DICE_PAYOUT_FRAMES		  15
 
 /* Two dice whose centres come closer than this push each other apart. */
-#define DICE_TOUCH_DISTANCE 50
-/* Where each picture's sprite tiles start, in OAM's 32-byte steps (two to a */
-/* 256-colour tile): the rolling die's views from 0, its shadow at */
-/* DICE_SHADOW_TILE (field/field.h), the big numbers (the result's lettering */
-/* counted on from them), the aiming hand, the Perfect Bonus sign, its 3, 5 */
-/* and times sign, and the lucky numbers' small faces. */
-#define DICE_NUMBER_TILES		152
-#define DICE_AIM_MARKER_TILE	344
-#define DICE_BONUS_SIGN_TILE	856
-#define DICE_THREE_TILE			920
-#define DICE_FIVE_TILE			928
-#define DICE_TIMES_TILE			936
-#define DICE_LUCKY_NUMBER_TILES 944
-/* Four alike pays five times the bet; four of a lucky number pays three or */
-/* five times that, the multipliers drawn beside the two lucky numbers. */
+#define DICE_TOUCH_DISTANCE			 50
+/* Where each picture's sprite tiles start, in OAM's 32-byte steps (two to a
+   256-colour tile): the rolling die's views from 0, its shadow at
+   DICE_SHADOW_TILE (field/field.h), the big numbers (the result's lettering
+   counted on from them), the aiming hand, the Perfect Bonus sign, its 3, 5 and
+   times sign, and the lucky numbers' small faces. */
+#define DICE_NUMBER_TILES			 152
+#define DICE_AIM_MARKER_TILE		 344
+#define DICE_BONUS_SIGN_TILE		 856
+#define DICE_THREE_TILE				 920
+#define DICE_FIVE_TILE				 928
+#define DICE_TIMES_TILE				 936
+#define DICE_LUCKY_NUMBER_TILES		 944
+/* Four alike pays five times the bet; four of a lucky number pays three or five
+   times that, the multipliers drawn beside the two lucky numbers. */
 #define DICE_PERFECT_PAYOUT			 5
 #define DICE_FIRST_LUCKY_MULTIPLIER	 3
 #define DICE_SECOND_LUCKY_MULTIPLIER 5
 /* A win flashes a die (both for four alike) for this many frames. */
-#define DICE_FLASH_FRAMES		  60
-#define DICE_PERFECT_FLASH_FRAMES 120
+#define DICE_FLASH_FRAMES			 60
+#define DICE_PERFECT_FLASH_FRAMES	 120
 
 /* The board's picture begins with its 224 colours, the sprites' with all 256,
- */
-/* each before its tiles. */
+   each before its tiles. */
 #define DICE_BOARD_PALETTE_COLORS	224
 #define DICE_SPRITES_PALETTE_COLORS 256
 
@@ -310,126 +252,131 @@ typedef enum LUCKY_DICE_STATE {
 	LUCKY_DICE_PAYOUT  /* the winnings move into the coins */
 } LUCKY_DICE_STATE;
 
-/* Runs the Lucky Dice minigame until the player quits or cannot afford a */
-/* throw. Each throw costs ten coins per level of the party's average. */
-void fdLuckyDiceRun(void) {
-	u16 bgPalette[256];
-	s32 spriteDepth[DICE_RESULT_COUNT]; /* the two dice, then their shadows */
+/* Runs the Lucky Dice minigame until the player quits or cannot afford a throw.
+   Each throw costs ten coins per level of the party's average. */
+void fdLuckyDiceRun(void)
+{
+	Uint16 bgPalette[256];
+	/* the two dice, then their shadows */
+	Sint32 spriteDepth[DICE_RESULT_COUNT];
 	/* The two faces, then the two rows the dice stopped in. */
-	s32 numbers[DICE_RESULT_COUNT];
-	s32 groundPoint[3];
-	s32 screen[3];
+	Sint32 numbers[DICE_RESULT_COUNT];
+	Sint32 groundPoint[3];
+	Sint32 screen[3];
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches; The Broken Seal's fdLuckyDiceRun declares the same unused[8]. */
-	UNUSED s32 unused[8];
-	s32 spinRate[DICE_COUNT];
-	s32 flashTimer[DICE_COUNT];	  /* set on a win; nothing here reads it */
-	s32 luckyNumbers[DICE_COUNT]; /* the two numbers shown at the top, never
-									 equal */
-	s32 drawOrder[DICE_COUNT];	  /* the dice, the nearest first */
+	UNUSED Sint32 unused[8];
+	Sint32		  spinRate[DICE_COUNT];
+	Sint32 flashTimer[DICE_COUNT]; /* set on a win; nothing here reads it */
+	/* the two numbers shown at the top, never equal */
+	Sint32 luckyNumbers[DICE_COUNT];
+	Sint32 drawOrder[DICE_COUNT]; /* the dice, the nearest first */
 /* UB: three equal numbers produce three pairs, so the unused result list needs
- */
-/* a third slot. */
-#ifdef UBFIX
-	UNUSED s32 matchedNumbers[3]; /* written, never read */
+   a third slot. */
+#if FIX_DICE_MATCH_LIST_OVERFLOW
+	UNUSED Sint32 matchedNumbers[3]; /* written, never read */
 #else
-	UNUSED s32 matchedNumbers[2]; /* written, never read */
+	UNUSED Sint32 matchedNumbers[2]; /* written, never read */
 #endif
-	u16 *spritePalette;
-	DICE_STATE *diceState;
+	Uint16		   *spritePalette;
+	DICE_STATE	   *diceState;
 	LUCKY_DICE_SPR *sprites;
-	BATTLE_CAMERA *camera;
-	s32 frame;
-	s32 state;
-	s32 bet;
-	s32 resultTimer;
-	s32 resultKind;
-	s32 winnings;
-	s32 payoutTimer;
+	BATTLE_CAMERA  *camera;
+	Sint32			frame;
+	Sint32			state;
+	Sint32			bet;
+	Sint32			resultTimer;
+	Sint32			resultKind;
+	Sint32			winnings;
+	Sint32			payoutTimer;
 	/* The winnings' digit count, kept to clear the same field in the payout. */
-	s32 digits;
-	s32 spriteCount;
+	Sint32		   digits;
+	Sint32		   spriteCount;
 	DICE_PARTICLE *rollingDie;
 	DICE_PARTICLE *otherDie;
-	s32 resetDice; /* put the dice back at the throwing line */
-	WINDOW *window;
-	s32 index;
-	s32 otherIndex;
-	s32 rollAngle; /* a die's roll angle, in DICE_ROLL_PER_TILE steps */
-	s32 x;
-	s32 y;
-	s32 halfSize;
-	s32 faceTile; /* which of a face's three tiles the roll shows */
-	s32 sortedDie;
-	s32 tileX;
-	s32 tileY;
-	s32 resourceAddress;
-	s32 separationX;
-	s32 separationY;
-	s32 separationZ;
-	s32 separation;
-	s32 bounceSpeed;
-	u32 bounceAngle;
-	FIXED scale;
-	s32 pairCount;
-	s16 affineScale;
+	Sint32		   resetDice; /* put the dice back at the throwing line */
+	WINDOW		  *window;
+	Sint32		   index;
+	Sint32		   otherIndex;
+	Sint32 rollAngle; /* a die's roll angle, in DICE_ROLL_PER_TILE steps */
+	Sint32 x;
+	Sint32 y;
+	Sint32 halfSize;
+	Sint32 faceTile; /* which of a face's three tiles the roll shows */
+	Sint32 sortedDie;
+	Sint32 tileX;
+	Sint32 tileY;
+	Sint32 resourceAddress;
+	Sint32 separationX;
+	Sint32 separationY;
+	Sint32 separationZ;
+	Sint32 separation;
+	Sint32 bounceSpeed;
+	Uint32 bounceAngle;
+	FIXED  scale;
+	Sint32 pairCount;
+	Sint16 affineScale;
 
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, 1550);
-	spritePalette = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS,
-									DICE_SPRITES_PALETTE_COLORS * sizeof(u16));
-	diceState = syHeapSlotAllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
-	sprites = syHeapSlotAllocEwram(HEAP_SLOT_CANVAS_MAP, 1556);
-	camera = syHeapSlotAllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
-	syResourceReservedNoOp(RESOURCE_BATTLE_EFFECT_STUBS);
+	spritePalette = syHeapSlotAlloc(
+		HEAP_SLOT_BATTLE_CANVAS, DICE_SPRITES_PALETTE_COLORS * sizeof(Uint16));
+	diceState = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, 31612);
+	sprites = syHeapSlotAllocEWRAM(HEAP_SLOT_CANVAS_MAP, 1556);
+	camera = syHeapSlotAllocEWRAM(HEAP_SLOT_CAMERA, sizeof(*camera));
+	syResourceReservedNoOperation(RESOURCE_BATTLE_EFFECT_STUBS);
 	fdCameraResetViewDefaults();
 	syInitEvent();
 	OamCopyEnabled = 0;
 
-	/* Fill BG1's map (screen block 6) with a 30-tile-wide picture, then load */
-	/* the board and dice graphics with their palettes faded to black. */
+	/* Fill BG1's map (screen block 6) with a 30-tile-wide picture, then load
+	   the board and dice graphics with their palettes faded to black. */
 	index = 0;
 	for(tileY = 0; tileY != DISPLAY_HEIGHT / 8; tileY++) {
 		for(tileX = 0; tileX != 32; tileX++) {
-			*(volatile u16 *)(BG_SCREEN_BLOCK(6) + index) =
+			*(volatile Uint16 *)(BG_SCREEN_BLOCK(6) + index) =
 				tileX + tileY * (DISPLAY_WIDTH / 8);
 			index += 2;
 		}
 	}
 
-	resourceAddress = (s32)syResourceGetTableEntry(RESOURCE_LUCKY_DICE_BOARD);
+	resourceAddress =
+		(Sint32)syResourceGetTableEntry(RESOURCE_LUCKY_DICE_BOARD);
 	syDMAXCopy((void *)resourceAddress, (void *)BG_PLTT,
-			   DMA_COPY_WORDS(DICE_BOARD_PALETTE_COLORS / 2), REG_DMA3);
+		DMA_COPY_WORDS(DICE_BOARD_PALETTE_COLORS / 2), REG_DMA3);
 	syDMAXCopy((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(sizeof bgPalette / 4),
-			   REG_DMA3);
+		REG_DMA3);
 	resourceAddress += DICE_BOARD_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
-	syDMAXCopy(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1),
-			   DMA_COPY_WORDS(9600), REG_DMA3);
-	resourceAddress = (s32)syResourceGetTableEntry(RESOURCE_LUCKY_DICE_SPRITES);
+	syFieldDecompressTaggedLZ(
+		(const void *)resourceAddress, Ram_MapMetatileBuffer);
+	syDMAXCopy(Ram_MapMetatileBuffer, (void *)BG_CHAR_BLOCK(1),
+		DMA_COPY_WORDS(9600), REG_DMA3);
+	resourceAddress =
+		(Sint32)syResourceGetTableEntry(RESOURCE_LUCKY_DICE_SPRITES);
 	syDMAXCopy((void *)resourceAddress, spritePalette,
-			   DMA_COPY_WORDS(DICE_SPRITES_PALETTE_COLORS / 2), REG_DMA3);
+		DMA_COPY_WORDS(DICE_SPRITES_PALETTE_COLORS / 2), REG_DMA3);
 	syDMAXCopy((void *)resourceAddress, (void *)OBJ_PLTT,
-			   DMA_COPY_WORDS(DICE_SPRITES_PALETTE_COLORS / 2), REG_DMA3);
+		DMA_COPY_WORDS(DICE_SPRITES_PALETTE_COLORS / 2), REG_DMA3);
 	resourceAddress += DICE_SPRITES_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
-	syDMAXCopy(Ram_MapCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),
-			   REG_DMA3);
-	fdLuckyDiceScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0,
-								 OBJ_PLTT_COLORS);
-	fdLuckyDiceScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, BG_PLTT_COLORS);
+	syFieldDecompressTaggedLZ(
+		(const void *)resourceAddress, Ram_MapMetatileBuffer);
+	syDMAXCopy(Ram_MapMetatileBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),
+		REG_DMA3);
+	fdLuckyDiceScaleRGB555Buffer(
+		spritePalette, (Uint16 *)OBJ_PLTT, 0, OBJ_PLTT_COLORS);
+	fdLuckyDiceScaleRGB555Buffer(
+		bgPalette, (Uint16 *)BG_PLTT, 0, BG_PLTT_COLORS);
 
 	/* Show the board on BG1, sprites and windows, with the board blended. */
 	REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-				 BGCNT_SCREEN_BASE(6);
+		BGCNT_SCREEN_BASE(6);
 	REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-				WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-				WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ |
-				WININ_WIN1_CLR;
+		WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+		WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
 	REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_CLR |
-				 WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 |
-				 WINOUT_WINOBJ_CLR;
+		WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 |
+		WINOUT_WINOBJ_CLR;
 	REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
-				  DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
+		DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_BLDALPHA = BLEND_ALPHA(16, 8);
 	BgScrollWork[1].x = 0;
@@ -444,16 +391,15 @@ void fdLuckyDiceRun(void) {
 	REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT);
 
 	spriteCount = 0;
-	/* Start aiming with both dice at the throwing line and two lucky numbers.
-	 */
+	/* Start aiming with both dice at the throwing line and two lucky
+	   numbers. */
 	state = LUCKY_DICE_AIM;
 	resultTimer = 0;
 	resultKind = DICE_RESULT_NONE;
 	winnings = 0;
 	payoutTimer = 0;
 	/* A random place and speed for each die: the throwing line below takes the
-	 */
-	/* places, and a throw the speeds. */
+	   places, and a throw the speeds. */
 	for(index = 0; index != DICE_COUNT; index++) {
 		diceState->particles[index].x = ((syRandom() & 127) - 64) << 16;
 		diceState->particles[index].y = (syRandom() & 31) << 16;
@@ -479,38 +425,35 @@ void fdLuckyDiceRun(void) {
 
 	/* Open the coins window and the Throw / Quit help. */
 	mnWindowSystemInitFieldStub();
-	window = mnWindowCreateStub(DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH,
-								3, 6);
+	window = mnWindowCreateStub(
+		DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH, 3, 6);
 	sprites->coinsWin = window;
-	mnTextDrawMessageAsTilesStub((s32)&MsgLuckyDiceCoins, window,
-								 DICE_COINS_LABEL_X, 0);
+	mnTextDrawMessageAsTilesStub(
+		(Sint32)&MsgLuckyDiceCoins, window, DICE_COINS_LABEL_X, 0);
 	mnTextDrawNumInWindowStub(MainRoutineStateWork.coins, DICE_COIN_DIGITS,
-							  (s32)sprites->coinsWin, 0, 0);
-	window = mnWindowCreateStub(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH,
-								4, 6);
+		(Sint32)sprites->coinsWin, 0, 0);
+	window = mnWindowCreateStub(
+		DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
 	sprites->helpWin = window;
-	mnTextDrawMessageAsTilesStub((s32)&MsgLuckyDiceCoins + DICE_HELP_THROW,
-								 window, 0, 0);
-	mnTextDrawMessageAsTilesStub((s32)&MsgLuckyDiceCoins + DICE_HELP_QUIT,
-								 sprites->helpWin, 0, 8);
+	mnTextDrawMessageAsTilesStub(
+		(Sint32)&MsgLuckyDiceCoins + DICE_HELP_THROW, window, 0, 0);
+	mnTextDrawMessageAsTilesStub(
+		(Sint32)&MsgLuckyDiceCoins + DICE_HELP_QUIT, sprites->helpWin, 0, 8);
 
 	frame = 0;
 	for(;;) {
 		resetDice = 0;
 		if(frame <= DICE_FADE_FRAMES) {
-			fdLuckyDiceScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
-										 frame * (FIXED_ONE / DICE_FADE_FRAMES),
-										 OBJ_PLTT_COLORS);
-			fdLuckyDiceScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT,
-										 frame * (FIXED_ONE / DICE_FADE_FRAMES),
-										 BG_PLTT_COLORS);
+			fdLuckyDiceScaleRGB555Buffer(spritePalette, (Uint16 *)OBJ_PLTT,
+				frame * (toFIXED(1) / DICE_FADE_FRAMES), OBJ_PLTT_COLORS);
+			fdLuckyDiceScaleRGB555Buffer(bgPalette, (Uint16 *)BG_PLTT,
+				frame * (toFIXED(1) / DICE_FADE_FRAMES), BG_PLTT_COLORS);
 		}
 		syInitMatrix();
-		syMatrixSetLookAt(camera->eye, camera->focus);
+		syLookAtLoad(camera->eye, camera->focus);
 
 		/* The fixed sprites: the Perfect Bonus sign with its times 3 and times
-		 * 5, */
-		/* and the two lucky numbers beside them. */
+		   5, and the two lucky numbers beside them. */
 		spriteCount = 0;
 		sprites->oam[spriteCount].attr01 = OBJ_SIZE_64X32 | OBJ_256_COLORS;
 		sprites->oam[spriteCount].attr2 = DICE_BONUS_SIGN_TILE;
@@ -540,8 +483,8 @@ void fdLuckyDiceRun(void) {
 			spriteCount++;
 		}
 
-		/* After a throw, reveal the four numbers five frames apart, then the */
-		/* result's lettering. */
+		/* After a throw, reveal the four numbers five frames apart, then the
+		   result's lettering. */
 		if(state == LUCKY_DICE_RESULT || state == LUCKY_DICE_PAYOUT) {
 			for(index = 0; index != DICE_RESULT_COUNT; index++) {
 				if(resultTimer == index * DICE_NUMBER_REVEAL_FRAMES) {
@@ -549,8 +492,7 @@ void fdLuckyDiceRun(void) {
 				}
 				if(resultTimer >= index * DICE_NUMBER_REVEAL_FRAMES) {
 					sprites->oam[spriteCount].attr01 = 64 | OBJ_SIZE_32X32 |
-													   OBJ_256_COLORS |
-													   OBJ_X(56 + index * 32);
+						OBJ_256_COLORS | OBJ_X(56 + index * 32);
 					sprites->oam[spriteCount].attr2 =
 						numbers[index] * SPRITE_TILES_8BPP(32, 32) +
 						DICE_NUMBER_TILES;
@@ -560,12 +502,11 @@ void fdLuckyDiceRun(void) {
 			if(resultTimer >= DICE_RESULT_FRAMES && resultKind >= 0) {
 				for(index = 0; index != LuckyDice_LabelCounts[resultKind];
 					index++) {
-					s32 labelX;
-					s32 labelY = 96;
+					Sint32 labelX;
+					Sint32 labelY = 96;
 
 					labelX = DICE_RESULT_LABEL_CENTER_X -
-							 LuckyDice_LabelCounts[resultKind] * 16 +
-							 index * 32;
+						LuckyDice_LabelCounts[resultKind] * 16 + index * 32;
 					labelY = 96;
 					sprites->oam[spriteCount].attr01 =
 						OBJ_POSITION(labelX, labelY) | OBJ_SIZE_32X32 |
@@ -580,101 +521,85 @@ void fdLuckyDiceRun(void) {
 		}
 
 		/* Showing the result: twenty frames in, pay the winnings and open their
-		 */
-		/* window; A then moves on to the payout, or back to aiming after a
-		 * loss. */
+		   window; A then moves on to the payout, or back to aiming after a
+		   loss. */
 		if(state == LUCKY_DICE_RESULT) {
 			if(resultTimer == DICE_RESULT_FRAMES && winnings > 0) {
 				gmPartyAdjustCoinsStub(winnings);
 				if(winnings < 10) {
 					digits = 1;
-				}
-				else if(winnings < 100) {
+				} else if(winnings < 100) {
 					digits = 2;
-				}
-				else if(winnings < 1000) {
+				} else if(winnings < 1000) {
 					digits = 3;
-				}
-				else if(winnings < 10000) {
+				} else if(winnings < 10000) {
 					digits = 4;
-				}
-				else {
+				} else {
 					digits = 5;
 				}
-				window = mnWindowCreateStub(
-					DICE_WINNINGS_WINDOW_X - digits / 2, 16,
-					digits + DICE_WINNINGS_WINDOW_WIDTH, 3, 6);
+				window = mnWindowCreateStub(DICE_WINNINGS_WINDOW_X - digits / 2,
+					16, digits + DICE_WINNINGS_WINDOW_WIDTH, 3, 6);
 				sprites->winningsWin = window;
-				mnTextDrawMessageAsTilesStub((s32)&MsgLuckyDiceWinnings, window,
-											 0, 0);
-				/* "Coins" after the number (MsgLuckyDiceCoins, one before). */
 				mnTextDrawMessageAsTilesStub(
-					(s32)&MsgLuckyDiceWinnings - 1, sprites->winningsWin,
-					digits * 8 + DICE_WINNINGS_COINS_X, 0);
+					(Sint32)&MsgLuckyDiceWinnings, window, 0, 0);
+				/* "Coins" after the number (MsgLuckyDiceCoins, one before). */
+				mnTextDrawMessageAsTilesStub((Sint32)&MsgLuckyDiceWinnings - 1,
+					sprites->winningsWin, digits * 8 + DICE_WINNINGS_COINS_X,
+					0);
 				mnTextDrawNumInWindowStub(winnings, digits,
-										  (s32)sprites->winningsWin,
-										  DICE_WINNINGS_NUMBER_X, 0);
+					(Sint32)sprites->winningsWin, DICE_WINNINGS_NUMBER_X, 0);
 			}
 			if(payoutTimer > 0) {
 				payoutTimer--;
 			}
-			if(resultTimer >= DICE_RESULT_FRAMES &&
-			   (InputWork.repeat & KEY_A)) {
+			if(resultTimer >= DICE_RESULT_FRAMES && (PerWork.repeat & KEY_A)) {
 				sySndPlayStub(SE_MENU_CONFIRM);
 				if(winnings > 0) {
 					state = LUCKY_DICE_PAYOUT;
 					payoutTimer = 0;
-				}
-				else {
+				} else {
 					resetDice = 1;
 					state = LUCKY_DICE_AIM;
 				}
 			}
 			resultTimer++;
-		}
-		else if(state == LUCKY_DICE_PAYOUT) {
+		} else if(state == LUCKY_DICE_PAYOUT) {
 			/* Clear the winnings into the coins, then DICE_PAYOUT_FRAMES later
-			 * close */
-			/* their window and aim again. */
+			   close their window and aim again. */
 			if(payoutTimer == 0) {
 				winnings = 0;
-				mnTextDrawNumInWindowStub(0, digits, (s32)sprites->winningsWin,
-										  DICE_WINNINGS_NUMBER_X, 0);
+				mnTextDrawNumInWindowStub(0, digits,
+					(Sint32)sprites->winningsWin, DICE_WINNINGS_NUMBER_X, 0);
 				mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-										  DICE_COIN_DIGITS,
-										  (s32)sprites->coinsWin, 0, 0);
+					DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
 			}
 			if(payoutTimer == DICE_PAYOUT_FRAMES) {
 				state = LUCKY_DICE_AIM;
 				mnWindowCloseStub(sprites->winningsWin, 1);
-				window =
-					mnWindowCreateStub(DICE_REOPENED_HELP_WINDOW_X, 16,
-									   DICE_REOPENED_HELP_WINDOW_WIDTH, 4, 6);
+				window = mnWindowCreateStub(DICE_REOPENED_HELP_WINDOW_X, 16,
+					DICE_REOPENED_HELP_WINDOW_WIDTH, 4, 6);
 				sprites->helpWin = window;
 				mnTextDrawMessageAsTilesStub(
-					(s32)&MsgLuckyDiceCoins + DICE_HELP_THROW, window, 0, 0);
-				mnTextDrawMessageAsTilesStub((s32)&MsgLuckyDiceCoins +
-												 DICE_HELP_QUIT,
-											 sprites->helpWin, 0, 8);
+					(Sint32)&MsgLuckyDiceCoins + DICE_HELP_THROW, window, 0, 0);
+				mnTextDrawMessageAsTilesStub(
+					(Sint32)&MsgLuckyDiceCoins + DICE_HELP_QUIT,
+					sprites->helpWin, 0, 8);
 				resetDice = 1;
 			}
 			payoutTimer++;
-		}
-		else if(state == LUCKY_DICE_AIM && frame > DICE_FADE_FRAMES + 1) {
+		} else if(state == LUCKY_DICE_AIM && frame > DICE_FADE_FRAMES + 1) {
 			/* Aiming, a frame after the fade in: Up and Down raise and lower
-			 * the */
-			/* dice between 32 and 160. */
-			/* B quits, as does running out of coins for a bet; A throws. */
-			/* DEAD: InputWork.repeat is read twice and discarded before the
-			 * KEY_UP */
-			/* test; the ROM keeps both loads. */
-			(void)InputWork.repeat;
-			(void)InputWork.repeat;
-			if(InputWork.held & KEY_UP) {
+			   the dice between 32 and 160. B quits, as does running out of
+			   coins for a bet; A throws. */
+			/* DEAD: PerWork.repeat is read twice and discarded before the
+			   KEY_UP test; the ROM keeps both loads. */
+			(void)PerWork.repeat;
+			(void)PerWork.repeat;
+			if(PerWork.data & KEY_UP) {
 				diceState->particles[0].y += toFIXED(4);
 				diceState->particles[1].y += toFIXED(4);
 			}
-			if(InputWork.held & KEY_DOWN) {
+			if(PerWork.data & KEY_DOWN) {
 				diceState->particles[0].y += -toFIXED(4);
 				diceState->particles[1].y += -toFIXED(4);
 			}
@@ -691,33 +616,31 @@ void fdLuckyDiceRun(void) {
 				diceState->particles[1].y = toFIXED(160);
 			}
 			if(MainRoutineStateWork.coins <
-			   (u32)(gmPartyGetAverageLevelStub() * DICE_BET_PER_LEVEL)) {
+				(Uint32)(gmPartyGetAverageLevelStub() * DICE_BET_PER_LEVEL)) {
 				mnWindowCloseStub(sprites->helpWin, 1);
 				break;
 			}
-			if(InputWork.repeat & KEY_B) {
+			if(PerWork.repeat & KEY_B) {
 				sySndPlayStub(SE_MENU_CANCEL);
 				mnWindowCloseStub(sprites->helpWin, 1);
 				break;
 			}
-			if(InputWork.repeat & KEY_A) {
+			if(PerWork.repeat & KEY_A) {
 				sySndPlayStub(SE_LUCKY_DICE_THROW);
 				mnWindowCloseStub(sprites->helpWin, 1);
 				state = LUCKY_DICE_ROLL;
 				bet = gmPartyGetAverageLevelStub() * DICE_BET_PER_LEVEL;
-				if((u32)bet > MainRoutineStateWork.coins) {
+				if((Uint32)bet > MainRoutineStateWork.coins) {
 					bet = MainRoutineStateWork.coins;
 				}
 				gmPartyAdjustCoinsStub(-bet);
 				mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-										  DICE_COIN_DIGITS,
-										  (s32)sprites->coinsWin, 0, 0);
+					DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
 				for(index = 0; index != DICE_COUNT; index++) {
 					rollingDie = &diceState->particles[index];
 					/* DEAD: never true with DICE_COUNT 2 (a third die would
-					 * start */
-					/* further back and higher up); the ROM keeps the test and
-					 * its stores. */
+					   start further back and higher up); the ROM keeps the test
+					   and its stores. */
 					if(index > 1) {
 						rollingDie->z = -toFIXED(180);
 						rollingDie->y = toFIXED(96);
@@ -746,15 +669,14 @@ void fdLuckyDiceRun(void) {
 			} while(luckyNumbers[0] == luckyNumbers[1]);
 		}
 
-		/* Draw the dice nearest first, so that the nearer is in front (an */
-		/* insertion sort on depth), each scaled by its distance. */
+		/* Draw the dice nearest first, so that the nearer is in front (an
+		   insertion sort on depth), each scaled by its distance. */
 		for(index = 0; index != DICE_COUNT; index++) {
 			drawOrder[index] = index;
 		}
 		for(index = 1; index != DICE_COUNT; index++) {
 			sortedDie = drawOrder[index];
-			for(otherIndex = index - 1;
-				otherIndex >= 0 &&
+			for(otherIndex = index - 1; otherIndex >= 0 &&
 				diceState->particles[drawOrder[otherIndex]].z >
 					diceState->particles[sortedDie].z;
 				otherIndex--) {
@@ -764,8 +686,8 @@ void fdLuckyDiceRun(void) {
 		}
 
 		for(index = 0; index != DICE_COUNT; index++) {
-			s32 dieX;
-			s32 dieY;
+			Sint32 dieX;
+			Sint32 dieY;
 
 			rollingDie = &diceState->particles[drawOrder[index]];
 			syConvert3Dto2D((const FIXED *)rollingDie, screen);
@@ -778,23 +700,23 @@ void fdLuckyDiceRun(void) {
 			spriteDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
 			/* Half a die's 16 pixels, at its scale. */
 			halfSize = 8 * AFFINE_SCALE_ONE /
-					   (spriteDepth[drawOrder[index]] / 2 + DICE_NEAREST_SCALE);
+				(spriteDepth[drawOrder[index]] / 2 + DICE_NEAREST_SCALE);
 			dieX = screen[0] - halfSize;
 			dieY = screen[1] - halfSize;
 			/* Each die has its own affine matrix (attr1 bits 9 to 13); 632 and
-			 * 352 */
-			/* wrap in OAM's 9- and 8-bit fields to 120 across and 96 down. */
+			   352 wrap in OAM's 9- and 8-bit fields to 120 across and 96
+			   down. */
 			if(dieY + 96 > -16) {
 				sprites->oam[spriteCount].attr01 =
 					(OBJ_AFFINE_MATRIX(drawOrder[index]) |
-					 OBJ_X((dieX + 632) & OBJ_X_MASK) |
-					 ((dieY + 352) & OBJ_Y_MASK)) |
+						OBJ_X((dieX + 632) & OBJ_X_MASK) |
+						((dieY + 352) & OBJ_Y_MASK)) |
 					OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
 					OBJ_AFFINE;
 				sprites->oam[spriteCount].attr2 =
 					(LuckyDice_FaceTiles[rollingDie->variant /
-										 DICE_ROLL_PER_TILE]
-					 << 3) |
+						 DICE_ROLL_PER_TILE]
+						<< 3) |
 					OBJ_PRIORITY(1);
 				spriteCount++;
 			}
@@ -803,14 +725,16 @@ void fdLuckyDiceRun(void) {
 		/* While aiming, a marker under each die. */
 		if(state == LUCKY_DICE_AIM) {
 			for(index = 0; index != DICE_COUNT; index++) {
-				syConvert3Dto2D((const FIXED *)&diceState->particles[index],
-								screen);
-				x = screen[0] - 8 * AFFINE_SCALE_ONE /
-									(spriteDepth[drawOrder[index]] / 2 +
-									 DICE_NEAREST_SCALE);
-				y = screen[1] + 3 * AFFINE_SCALE_ONE /
-									(spriteDepth[drawOrder[index]] / 2 +
-									 DICE_NEAREST_SCALE);
+				syConvert3Dto2D(
+					(const FIXED *)&diceState->particles[index], screen);
+				x = screen[0] -
+					8 * AFFINE_SCALE_ONE /
+						(spriteDepth[drawOrder[index]] / 2 +
+							DICE_NEAREST_SCALE);
+				y = screen[1] +
+					3 * AFFINE_SCALE_ONE /
+						(spriteDepth[drawOrder[index]] / 2 +
+							DICE_NEAREST_SCALE);
 				sprites->oam[spriteCount].attr01 =
 					OBJ_POSITION(x + 632, y + 352) | OBJ_SIZE_32X32 |
 					OBJ_256_COLORS;
@@ -824,9 +748,9 @@ void fdLuckyDiceRun(void) {
 		}
 
 		for(index = 0; index != DICE_COUNT; index++) {
-			s32 shadowX;
-			s32 shadowY;
-			s32 depth;
+			Sint32 shadowX;
+			Sint32 shadowY;
+			Sint32 depth;
 
 			/* Each die's shadow on the board below it. */
 			rollingDie = &diceState->particles[index];
@@ -850,7 +774,7 @@ void fdLuckyDiceRun(void) {
 			if(shadowY + 88 > -16) {
 				sprites->oam[spriteCount].attr01 =
 					(OBJ_AFFINE_MATRIX(index + 2) |
-					 OBJ_X((shadowX + 624) & OBJ_X_MASK)) |
+						OBJ_X((shadowX + 624) & OBJ_X_MASK)) |
 					((shadowY + 344) & OBJ_Y_MASK) | OBJ_SIZE_16X16 |
 					OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
 				sprites->oam[spriteCount].attr2 =
@@ -861,12 +785,12 @@ void fdLuckyDiceRun(void) {
 
 		/* Rolling: move, collide and settle each die. */
 		if(state == LUCKY_DICE_ROLL) {
-			s32 stoppedDice;
+			Sint32 stoppedDice;
 
 			stoppedDice = 0;
 			for(index = 0; index != DICE_COUNT; index++) {
-				/* Move, and push the dice apart when they touch (closer than */
-				/* DICE_TOUCH_DISTANCE). */
+				/* Move, and push the dice apart when they touch (closer than
+				   DICE_TOUCH_DISTANCE). */
 				rollingDie = &diceState->particles[index];
 				rollingDie->x += rollingDie->velX;
 				rollingDie->y += rollingDie->velY;
@@ -878,26 +802,26 @@ void fdLuckyDiceRun(void) {
 						separationY = FIXEDtoINT(rollingDie->y - otherDie->y);
 						separationZ = FIXEDtoINT(rollingDie->z - otherDie->z);
 						if(separationX * separationX +
-							   separationY * separationY +
-							   separationZ * separationZ <=
-						   DICE_TOUCH_DISTANCE * DICE_TOUCH_DISTANCE - 1) {
-							separation = sySquart(separationX * separationX +
-												  separationY * separationY +
-												  separationZ * separationZ);
+								separationY * separationY +
+								separationZ * separationZ <=
+							DICE_TOUCH_DISTANCE * DICE_TOUCH_DISTANCE - 1) {
+							separation =
+								sySquartIWRAM(separationX * separationX +
+									separationY * separationY +
+									separationZ * separationZ);
 							/* Touching dice push each other apart, half a pixel
-							 * a frame */
-							/* along the line between them. */
+							   a frame along the line between them. */
 							/* UB: coincident dice divide by zero. */
-#ifdef UBFIX
+#if FIX_DICE_DIVIDE_BY_ZERO
 							if(separation != 0)
 #endif
 							{
 								rollingDie->velX +=
-									separationX * (FIXED_ONE / 2) / separation;
+									separationX * (toFIXED(1) / 2) / separation;
 								rollingDie->velY +=
-									separationY * (FIXED_ONE / 2) / separation;
+									separationY * (toFIXED(1) / 2) / separation;
 								rollingDie->velZ +=
-									separationZ * (FIXED_ONE / 2) / separation;
+									separationZ * (toFIXED(1) / 2) / separation;
 							}
 						}
 					}
@@ -924,29 +848,27 @@ void fdLuckyDiceRun(void) {
 					}
 				}
 				/* Gravity; on the board a die bounces, loses speed, sometimes
-				 * kicks off */
-				/* in a random direction, and spins less. */
+				   kicks off in a random direction, and spins less. */
 				rollingDie->velY += -(toFIXED(1) / 2);
 				if(rollingDie->y <= 0) {
 					rollingDie->y = 0;
 					rollingDie->velY = -rollingDie->velY * 48 / DAMPING_SCALE;
 					if((syRandom() & 3) == 0) {
-						s32 bounceVelocityX;
-						s32 bounceVelocityZ;
+						Sint32 bounceVelocityX;
+						Sint32 bounceVelocityZ;
 
 						bounceVelocityX = rollingDie->velX >> 8;
 						bounceVelocityZ = rollingDie->velZ >> 8;
 						bounceSpeed =
-							sySquart(bounceVelocityX * bounceVelocityX +
-									 bounceVelocityZ * bounceVelocityZ) *
+							sySquartIWRAM(bounceVelocityX * bounceVelocityX +
+								bounceVelocityZ * bounceVelocityZ) *
 							56 / DAMPING_SCALE;
 						bounceAngle = syRandom() & TRIG_ANGLE_MASK;
 						rollingDie->velX =
 							sySin(bounceAngle) * bounceSpeed >> 8;
 						rollingDie->velZ =
 							syCos(bounceAngle) * bounceSpeed >> 8;
-					}
-					else {
+					} else {
 						rollingDie->velX =
 							rollingDie->velX * 56 / DAMPING_SCALE;
 						rollingDie->velZ =
@@ -962,12 +884,11 @@ void fdLuckyDiceRun(void) {
 						spinRate[index] = 0;
 						rollAngle = rollingDie->variant;
 						faceTile = rollAngle / DICE_ROLL_PER_TILE %
-								   DICE_TILES_PER_FACE;
+							DICE_TILES_PER_FACE;
 						if(faceTile == 1) {
 							rollingDie->variant =
 								rollAngle + 2 * DICE_ROLL_PER_TILE;
-						}
-						else if(faceTile == 2) {
+						} else if(faceTile == 2) {
 							rollingDie->variant =
 								rollAngle + DICE_ROLL_PER_TILE;
 						}
@@ -985,13 +906,13 @@ void fdLuckyDiceRun(void) {
 					spinRate[index]--;
 				}
 				/* At rest: read the face from the roll and the row from the
-				 * depth. */
+				   depth. */
 				if(rollingDie->velX == 0 && rollingDie->velY == 0 &&
-				   rollingDie->velZ == 0 && rollingDie->y == 0) {
+					rollingDie->velZ == 0 && rollingDie->y == 0) {
 					numbers[index] = rollingDie->variant / DICE_ROLL_PER_FACE;
 					for(otherIndex = 0; otherIndex != DICE_FACE_COUNT;
 						otherIndex++) {
-						s32 rowDepth;
+						Sint32 rowDepth;
 
 						rowDepth = toFIXED(LuckyDice_FaceHeights[otherIndex]);
 						if(rollingDie->z > rowDepth) {
@@ -1011,26 +932,23 @@ void fdLuckyDiceRun(void) {
 				winnings = 0;
 				payoutTimer = 60;
 				if(numbers[0] == numbers[1] && numbers[0] == numbers[2] &&
-				   numbers[0] == numbers[3]) {
+					numbers[0] == numbers[3]) {
 					flashTimer[0] = flashTimer[1] = DICE_PERFECT_FLASH_FRAMES;
 					resultKind = DICE_RESULT_PERFECT;
 					if(numbers[0] == luckyNumbers[0]) {
-						winnings = bet * (DICE_PERFECT_PAYOUT *
-										  DICE_FIRST_LUCKY_MULTIPLIER);
-					}
-					else if(numbers[0] == luckyNumbers[1]) {
-						winnings = bet * (DICE_PERFECT_PAYOUT *
-										  DICE_SECOND_LUCKY_MULTIPLIER);
-					}
-					else {
+						winnings = bet *
+							(DICE_PERFECT_PAYOUT * DICE_FIRST_LUCKY_MULTIPLIER);
+					} else if(numbers[0] == luckyNumbers[1]) {
+						winnings = bet *
+							(DICE_PERFECT_PAYOUT *
+								DICE_SECOND_LUCKY_MULTIPLIER);
+					} else {
 						winnings = bet * DICE_PERFECT_PAYOUT;
 					}
 					mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-											  DICE_COIN_DIGITS,
-											  (s32)sprites->coinsWin, 0, 0);
+						DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
 					sySndPlayStub(MUS_SUPER_LUCKY);
-				}
-				else {
+				} else {
 					pairCount = 0;
 					for(index = 0; index != DICE_RESULT_COUNT - 1; index++) {
 						for(otherIndex = index + 1;
@@ -1044,15 +962,13 @@ void fdLuckyDiceRun(void) {
 					if(pairCount == 1) {
 						winnings = bet;
 						mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-												  DICE_COIN_DIGITS,
-												  (s32)sprites->coinsWin, 0, 0);
+							DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
 						resultKind = DICE_RESULT_ONE_PAIR;
 					}
 					if(pairCount == 2) {
 						winnings = bet * 2;
 						mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-												  DICE_COIN_DIGITS,
-												  (s32)sprites->coinsWin, 0, 0);
+							DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
 						flashTimer[syRandom() & 1] = DICE_FLASH_FRAMES;
 						resultKind = DICE_RESULT_TWO_PAIR;
 						sySndPlayStub(MUS_LUCKY);
@@ -1060,8 +976,7 @@ void fdLuckyDiceRun(void) {
 					if(pairCount == 3) {
 						winnings = bet * 3;
 						mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-												  DICE_COIN_DIGITS,
-												  (s32)sprites->coinsWin, 0, 0);
+							DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
 						flashTimer[syRandom() & 1] = DICE_FLASH_FRAMES;
 						resultKind = DICE_RESULT_TRIPLE;
 						sySndPlayStub(MUS_VERY_LUCKY);
@@ -1071,8 +986,7 @@ void fdLuckyDiceRun(void) {
 		}
 
 		/* Hide the unused sprites, write the four affine matrices (one per die
-		 * and */
-		/* shadow, scaled by depth) and copy the sprites to OAM. */
+		   and shadow, scaled by depth) and copy the sprites to OAM. */
 		for(; spriteCount != OAM_SIZE / sizeof(OAM_WORDS); spriteCount++) {
 			sprites->oam[spriteCount].attr01 =
 				OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
@@ -1081,12 +995,11 @@ void fdLuckyDiceRun(void) {
 
 		for(index = 0; index != DICE_RESULT_COUNT; index++) {
 			/* The sprite's matrix: its scale on the diagonal and none across,
-			 * each */
-			/* element stored through its address. */
-			u16 affineA;
-			u16 affineB;
-			u16 affineC;
-			u16 affineD;
+			   each element stored through its address. */
+			Uint16 affineA;
+			Uint16 affineB;
+			Uint16 affineC;
+			Uint16 affineD;
 
 			affineScale = spriteDepth[index] / 2 + DICE_NEAREST_SCALE;
 			*&affineA = affineScale;
@@ -1106,11 +1019,11 @@ void fdLuckyDiceRun(void) {
 
 	/* Fade out and free the game's state. */
 	for(index = 0; index != DICE_FADE_FRAMES + 1; index++) {
-		scale = FIXED_ONE - index * (FIXED_ONE / DICE_FADE_FRAMES);
-		fdLuckyDiceScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale,
-									 OBJ_PLTT_COLORS);
-		fdLuckyDiceScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale,
-									 BG_PLTT_COLORS);
+		scale = toFIXED(1) - index * (toFIXED(1) / DICE_FADE_FRAMES);
+		fdLuckyDiceScaleRGB555Buffer(
+			spritePalette, (Uint16 *)OBJ_PLTT, scale, OBJ_PLTT_COLORS);
+		fdLuckyDiceScaleRGB555Buffer(
+			bgPalette, (Uint16 *)BG_PLTT, scale, BG_PLTT_COLORS);
 		sySynch(1);
 	}
 	syHeapSlotRelease(HEAP_SLOT_CAMERA);

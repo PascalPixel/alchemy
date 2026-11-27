@@ -1,21 +1,21 @@
 /* An orbiting actor's growth climbs by ORBIT_GROWTH_STEP every other frame, up
- */
-/* to ORBIT_GROWTH_FULL, and its circle's radius is the growth times the sine */
-/* of its phase, in ORBIT_PHASE_UNIT steps. Once grown it slows by */
-/* ORBIT_SLOWDOWN a frame to a stop. */
+   to ORBIT_GROWTH_FULL, and its circle's radius is the growth times the sine of
+   its phase, in ORBIT_PHASE_UNIT steps. Once grown it slows by ORBIT_SLOWDOWN a
+   frame to a stop. */
 #define ORBIT_GROWTH_FULL 141
 #define ORBIT_GROWTH_STEP 10
 #define ORBIT_PHASE_UNIT  (TRIG_TURN / 64)
 #define ORBIT_SLOWDOWN	  128
 
-/* Moves an orbiting actor round its centre as its circle grows, on a circle */
-/* squashed to half its depth; returns 0 once it has stopped. */
-s32 syOrbitUpdate(ORBIT *object) {
+/* Moves an orbiting actor round its centre as its circle grows, on a circle
+   squashed to half its depth; returns 0 once it has stopped. */
+Bool syOrbitUpdate(ORBIT *object)
+{
 	FIXED z;
 
 	object->ang += object->speed;
-	object->x = IwramMulFX(syCos(object->ang), object->orbitRadius);
-	z = IwramMulFX(syMathSin(object->ang), object->orbitRadius);
+	object->x = syIWRAMMulFX(syCos(object->ang), object->orbitRadius);
+	z = syIWRAMMulFX(syMathSin(object->ang), object->orbitRadius);
 	object->x += object->centreX;
 	object->z = (z >> 1) + object->centreZ;
 	if(object->growth != ORBIT_GROWTH_FULL && (FrameCount & 1)) {
@@ -24,10 +24,10 @@ s32 syOrbitUpdate(ORBIT *object) {
 		object->growth += ORBIT_GROWTH_STEP;
 	}
 	if(object->speed == 0)
-		return 0;
+		return FALSE;
 	if(object->growth == ORBIT_GROWTH_FULL)
 		object->speed -= ORBIT_SLOWDOWN;
-	return 1;
+	return TRUE;
 }
 
 #undef ORBIT_GROWTH_FULL

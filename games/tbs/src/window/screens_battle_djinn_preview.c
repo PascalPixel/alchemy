@@ -1,24 +1,24 @@
-/* @file */
-/* The preview of what setting or removing a Djinni changes. */
-/* Part of screens.c. */
+/* The preview of what setting or removing a Djinni changes. Part of
+   screens.c. */
 
-/* How many bytes of NumberBuffer are widened: the eleven characters */
-/* syStringFormatDecimal writes, its terminator and the two bytes after. */
+/* How many bytes of NumberBuffer are widened: the eleven characters
+   syStringFormatDecimal writes, its terminator and the two bytes after. */
 #define NUMBER_TEXT_WIDE_LENGTH 14
 
-/* A changed stat's arrow, right of its value on window tile row `row` (HP */
-/* on row 1 to Luck on row 6). */
+/* A changed stat's arrow, right of its value on window tile row `row` (HP on
+   row 1 to Luck on row 6). */
 #define PREVIEW_STAT_ARROW_X	  80
 #define PREVIEW_STAT_ARROW_Y(row) ((row) * 8 + 6)
 
-/* Writes `value` into `out` as syStringFormatDecimal's eleven-character, */
-/* right-aligned decimal text, widened to halfwords for */
-/* mnTextDrawWideStringInWindow. `out` needs room for NUMBER_TEXT_WIDE_LENGTH */
-/* halfwords. */
-UNREAD_RESULT mnStringFormatNumToHalfwords(s16 *out, s32 value) {
-	s16 *destination;
-	s32 i;
-	u8 *source;
+/* Writes `value` into `out` as syStringFormatDecimal's eleven-character,
+   right-aligned decimal text, widened to halfwords for
+   mnTextDrawWideStringInWindow. `out` needs room for NUMBER_TEXT_WIDE_LENGTH
+   halfwords. */
+UNREAD_RESULT mnStringFormatNumToHalfwords(Sint16 *out, Sint32 value)
+{
+	Sint16 *destination;
+	Sint32	i;
+	Uint8  *source;
 
 	destination = out;
 	syStringFormatDecimal(value);
@@ -28,43 +28,42 @@ UNREAD_RESULT mnStringFormatNumToHalfwords(s16 *out, s32 value) {
 	}
 }
 
-/* The marks mnBattleDjinnMenuListChangedAbilities gives an ability in its */
-/* list, above its id: the preview draws a gained one in TEXT_COLOR_YELLOW and
- */
-/* a lost one in TEXT_COLOR_RED. */
-#define DJINN_PREVIEW_ABILITY_GAINED 0x8000 /* new with the change */
-#define DJINN_PREVIEW_ABILITY_LOST	 0x4000 /* gone with the change */
+/* The marks mnBattleDjinnMenuListChangedAbilities gives an ability in its list,
+   above its id: the preview draws a gained one in TEXT_COLOR_YELLOW and a lost
+   one in TEXT_COLOR_RED. */
+#define DJINN_PREVIEW_ABILITY_GAINED	 0x8000 /* new with the change */
+#define DJINN_PREVIEW_ABILITY_LOST		 0x4000 /* gone with the change */
 /* Entries of the change list: the new list's 32 and the lost ones after. */
-#define DJINN_PREVIEW_ABILITY_CAPACITY 48
+#define DJINN_PREVIEW_ABILITY_CAPACITY	 48
 /* The abilities a page of the preview lists. */
 #define DJINN_PREVIEW_ABILITIES_PER_PAGE 5
 
-/* Lists into `out` the abilities usable in battle (ABILITY_USABLE_IN_BATTLE) */
-/* of the action list `newGrid`, in its order, marking with */
-/* DJINN_PREVIEW_ABILITY_GAINED those `oldGrid` lacks; then appends those of */
-/* `oldGrid` that `newGrid` lacks, marked DJINN_PREVIEW_ABILITY_LOST. Returns */
-/* the entries written, and the gained and lost counts through `gained` and */
-/* `lost`. */
-s32 mnBattleDjinnMenuListChangedAbilities(const PSYNERGY_ENTRY *oldGrid,
-										  const PSYNERGY_ENTRY *newGrid,
-										  u16 *out, s32 *gained, s32 *lost) {
-	s32 i;
-	s32 j;
-	s32 count;
-	s32 gainedCount;
-	s32 lostCount;
+/* Lists into `out` the abilities usable in battle (ABILITY_USABLE_IN_BATTLE) of
+   the action list `newGrid`, in its order, marking with
+   DJINN_PREVIEW_ABILITY_GAINED those `oldGrid` lacks; then appends those of
+   `oldGrid` that `newGrid` lacks, marked DJINN_PREVIEW_ABILITY_LOST. Returns
+   the entries written, and the gained and lost counts through `gained` and
+   `lost`. */
+Sint32 mnBattleDjinnMenuListChangedAbilities(const PSYNERGY_ENTRY *oldGrid,
+	const PSYNERGY_ENTRY *newGrid, Uint16 *out, Sint32 *gained, Sint32 *lost)
+{
+	Sint32 i;
+	Sint32 j;
+	Sint32 count;
+	Sint32 gainedCount;
+	Sint32 lostCount;
 
 	gainedCount = 0;
 	lostCount = 0;
 	count = 0;
 	for(i = 0; i < PSYNERGY_SLOTS && newGrid[i].encodedAction != 0; i++) {
-		if(mnAbilityGet(newGrid[i].encodedAction)->flg &
-		   ABILITY_USABLE_IN_BATTLE) {
+		if(gmAbilityGetDirectStub(newGrid[i].encodedAction)->flg &
+			ABILITY_USABLE_IN_BATTLE) {
 			out[count] = newGrid[i].encodedAction & ACTION_ID_MASK;
 			count++;
 			for(j = 0; j < PSYNERGY_SLOTS; j++) {
 				if(((newGrid[i].encodedAction ^ oldGrid[j].encodedAction) &
-					ACTION_ID_MASK) == 0)
+					   ACTION_ID_MASK) == 0)
 					break;
 			}
 			if(j == PSYNERGY_SLOTS) {
@@ -74,17 +73,17 @@ s32 mnBattleDjinnMenuListChangedAbilities(const PSYNERGY_ENTRY *oldGrid,
 		}
 	}
 	for(i = 0; i < PSYNERGY_SLOTS && oldGrid[i].encodedAction != 0; i++) {
-		if(mnAbilityGet(oldGrid[i].encodedAction)->flg &
-		   ABILITY_USABLE_IN_BATTLE) {
+		if(gmAbilityGetDirectStub(oldGrid[i].encodedAction)->flg &
+			ABILITY_USABLE_IN_BATTLE) {
 			for(j = 0; j < PSYNERGY_SLOTS; j++) {
 				if(((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
-					ACTION_ID_MASK) == 0)
+					   ACTION_ID_MASK) == 0)
 					break;
 			}
 			if(j == PSYNERGY_SLOTS) {
 				lostCount++;
 				out[count] = (oldGrid[i].encodedAction & ACTION_ID_MASK) |
-							 DJINN_PREVIEW_ABILITY_LOST;
+					DJINN_PREVIEW_ABILITY_LOST;
 				count++;
 			}
 		}
@@ -94,14 +93,15 @@ s32 mnBattleDjinnMenuListChangedAbilities(const PSYNERGY_ENTRY *oldGrid,
 	return count;
 }
 
-/* Loads the icon of ability `abilityId` into the first free VRAM cache slot */
-/* and shows it as a 16x16 sprite at pixel (x, y) inside `window`, whose */
-/* sprite list then owns the slot. Does nothing when the cache is full. */
-UNREAD_RESULT mnWindowSprCreateAbilityIcon(WINDOW *window, s32 x, s32 y,
-										   s32 abilityId) {
-	s32 iconSlot;
+/* Loads the icon of ability `abilityId` into the first free VRAM cache slot and
+   shows it as a 16x16 sprite at pixel (x, y) inside `window`, whose sprite list
+   then owns the slot. Does nothing when the cache is full. */
+UNREAD_RESULT mnWindowSprCreateAbilityIcon(
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 abilityId)
+{
+	Sint32 iconSlot;
 
-	iconSlot = syVramCacheFindFreeEntry();
+	iconSlot = syVRAMCacheFindFreeEntry();
 	if(iconSlot != VRAM_CACHE_ENTRY_COUNT) {
 		mnAbilityIconLoadIntoSlot(abilityId, iconSlot);
 		/* If the sprite pool is full, the creator releases iconSlot itself. */
@@ -110,65 +110,65 @@ UNREAD_RESULT mnWindowSprCreateAbilityIcon(WINDOW *window, s32 x, s32 y,
 }
 
 /* Shows what setting or removing Djinni `encodedDjinn` (element << 8 | index)
- */
-/* would change for `member`: closes the preview window `window`, opens a new */
-/* one and returns it, or NULL when none could be opened. Page 0 compares the */
-/* class and stats, old against new, with an arrow by each stat that rises or */
-/* falls; pages 1 on list the unit's battle abilities after the change and */
-/* then those it would lose, and *pageCount is set to their number (at least */
-/* 1). The Djinni is toggled and the unit recalculated only to measure: the */
-/* unit is restored from a copy before it returns. */
-WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
-										   s32 encodedDjinn, s32 page,
-										   s32 *pageCount) {
-	UNIT *unit;
-	UNIT *savedUnit;
+   would change for `member`: closes the preview window `window`, opens a new
+   one and returns it, or NULL when none could be opened. Page 0 compares the
+   class and stats, old against new, with an arrow by each stat that rises or
+   falls; pages 1 on list the unit's battle abilities after the change and then
+   those it would lose, and *pageCount is set to their number (at least 1). The
+   Djinni is toggled and the unit recalculated only to measure: the unit is
+   restored from a copy before it returns. */
+WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, Sint32 member,
+	Sint32 encodedDjinn, Sint32 page, Sint32 *pageCount)
+{
+	UNIT			   *unit;
+	UNIT			   *savedUnit;
 	ABILITY_DEFINITION *ability;
-	s16 *numberText;
-	s32 oldHp;
-	s32 oldPp;
-	s32 oldAtk;
-	s32 oldDef;
-	s32 oldAgi;
-	u16 *changedAbilities;
-	s32 abilityCount;
-	s32 visibleRow;
-	s32 summaryRows;
-	s32 visibleRows;
-	s32 element;
-	s32 djinnIndex;
-	s32 pages;
-	s32 gained;
-	s32 lost;
-	s32 rangePattern;
-	s32 rising;
-	s32 i;
+	Sint16			   *numberText;
+	Sint32				oldHp;
+	Sint32				oldPp;
+	Sint32				oldAtk;
+	Sint32				oldDef;
+	Sint32				oldAgi;
+	Uint16			   *changedAbilities;
+	Sint32				abilityCount;
+	Sint32				visibleRow;
+	Sint32				summaryRows;
+	Sint32				visibleRows;
+	Sint32				element;
+	Sint32				djinnIndex;
+	Sint32				pages;
+	Sint32				gained;
+	Sint32				lost;
+	Sint32				rangePattern;
+	Sint32				rising;
+	Sint32				i;
 
-	/* Draws a rising or falling stat arrow at pixel (x, y) of the preview */
-	/* window: a 16x16 sprite in a VRAM cache entry of its own, which the */
-	/* window's sprite list frees with it (WINDOW_SPRITE_ICON). */
-	void mnDjinnMenuDrawStatArrow(s32 x, s32 y, s32 rising) {
-		WINDOW_SPR *sprite = mnWindowSprAcquireFree();
+	/* Draws a rising or falling stat arrow at pixel (x, y) of the preview
+	   window: a 16x16 sprite in a VRAM cache entry of its own, which the
+	   window's sprite list frees with it (WINDOW_SPRITE_ICON). */
+	void mnDjinnMenuDrawStatArrow(Sint32 x, Sint32 y, Sint32 rising)
+	{
+		WINDOW_SPR	*sprite = mnWindowSprAcquireFree();
 		PREVIEW_SPR *entry;
 		if(sprite) {
 			sprite->motion = WINDOW_SPRITE_MOTION_STILL;
 			sprite->kind = WINDOW_SPRITE_ICON;
-			sprite->idx = syVramCacheAllocEntry(2 * 2 * TILE_SIZE_4BPP);
+			sprite->idx = syVRAMCacheAllocEntry(2 * 2 * TILE_SIZE_4BPP);
 			entry = (PREVIEW_SPR *)&sprite->spr;
 			sprite->depth = OAM_DEPTH_WINDOW;
 			sprite->x = 120;
 			sprite->y = 120;
-			*(u32 *)&entry->attributes =
+			*(Uint32 *)&entry->attributes =
 				OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-			scIoWrite32(0, &entry->tile.value);
+			IO_WRITE32(0, &entry->tile.value);
 			/* FAKEMATCH(dead): advancing and restoring the captured window. */
 			window++;
 			window--;
 			entry->attributes.bits.x = window->x * 8 + x;
 			entry->attributes.bits.y = window->y * 8 + y;
-			entry->tile.bits.idx = syVramCacheReload(
-				sprite->idx, (s32)(rising ? DjinnMenu_ArrowUpTiles
-										  : DjinnMenu_ArrowDownTiles));
+			entry->tile.bits.idx = syVRAMCacheReload(sprite->idx,
+				(Sint32)(rising ? DjinnMenu_ArrowUpTiles
+								: DjinnMenu_ArrowDownTiles));
 			mnWindowSprAppendToList(&window->sprs, sprite);
 		}
 	}
@@ -186,8 +186,8 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
 
 	numberText = syHeapAlloc(64 * sizeof(*numberText));
 	savedUnit = syHeapAlloc(sizeof(*savedUnit));
-	changedAbilities = syHeapAllocEwram(DJINN_PREVIEW_ABILITY_CAPACITY *
-										sizeof(*changedAbilities));
+	changedAbilities = syHeapAllocEWRAM(
+		DJINN_PREVIEW_ABILITY_CAPACITY * sizeof(*changedAbilities));
 	syWordsCopy(savedUnit, unit, sizeof(*savedUnit));
 
 	element = DJINN_COMMAND_ELEMENT(encodedDjinn);
@@ -208,7 +208,7 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
 
 	/* The first page compares stats; the remaining pages compare Psynergy. */
 	if(page == 0) {
-		s32 label = MsgPreviewStatLabel;
+		Sint32 label = MsgPreviewStatLabel;
 
 		mnTextDrawMessageAsTiles(label, window, 0, 8);
 		mnTextDrawMessageAsTiles(label + 1, window, 0, 16);
@@ -221,38 +221,37 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
 		oldHp = savedUnit->hp;
 		mnStringFormatNumToHalfwords(numberText, oldHp);
 		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES,
-									 window, DJINN_PREVIEW_VITALS_X, 1);
+			window, DJINN_PREVIEW_VITALS_X, 1);
 		oldPp = savedUnit->pp;
 		mnStringFormatNumToHalfwords(numberText, oldPp);
 		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES,
-									 window, DJINN_PREVIEW_VITALS_X, 2);
+			window, DJINN_PREVIEW_VITALS_X, 2);
 		oldAtk = savedUnit->attack;
 		mnStringFormatNumToHalfwords(numberText, oldAtk);
-		mnTextDrawWideStringInWindow(numberText +
-										 DJINN_PREVIEW_STAT_DIGIT_OFFSET,
-									 window, DJINN_PREVIEW_STAT_X, 3);
+		mnTextDrawWideStringInWindow(
+			numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET, window,
+			DJINN_PREVIEW_STAT_X, 3);
 		oldDef = savedUnit->defense;
 		mnStringFormatNumToHalfwords(numberText, oldDef);
-		mnTextDrawWideStringInWindow(numberText +
-										 DJINN_PREVIEW_STAT_DIGIT_OFFSET,
-									 window, DJINN_PREVIEW_STAT_X, 4);
+		mnTextDrawWideStringInWindow(
+			numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET, window,
+			DJINN_PREVIEW_STAT_X, 4);
 		oldAgi = savedUnit->agility;
 		mnStringFormatNumToHalfwords(numberText, oldAgi);
-		mnTextDrawWideStringInWindow(numberText +
-										 DJINN_PREVIEW_STAT_DIGIT_OFFSET,
-									 window, DJINN_PREVIEW_STAT_X, 5);
+		mnTextDrawWideStringInWindow(
+			numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET, window,
+			DJINN_PREVIEW_STAT_X, 5);
 		mnStringFormatNumToHalfwords(numberText, savedUnit->luck);
-		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_THREE_PLACES,
-									 window, 5, 6);
+		mnTextDrawWideStringInWindow(
+			numberText + NUMBER_TEXT_THREE_PLACES, window, 5, 6);
 
 		mnWindowDrawDividerLine(window, 0, 8, 19, 8);
 		/* The prompt for the Psynergy pages, its button and ":Psynergy Gained",
-		 */
-		/* stands out in TEXT_COLOR_RED when the Psynergy changes. */
+		   stands out in TEXT_COLOR_RED when the Psynergy changes. */
 		if(gained != 0 || lost != 0)
 			mnTextSetCol(TEXT_COLOR_RED);
-		mnTextDrawMessageAsTiles(MsgBattleAdditionalPsynergyHelp, window,
-								 DJINN_PREVIEW_HELP_X, 64);
+		mnTextDrawMessageAsTiles(
+			MsgBattleAdditionalPsynergyHelp, window, DJINN_PREVIEW_HELP_X, 64);
 		mnTextSetCol(TEXT_COLOR_WHITE);
 	}
 
@@ -264,10 +263,10 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
 		i = (page - 1) * DJINN_PREVIEW_ABILITIES_PER_PAGE;
 		for(visibleRow = 0; visibleRow < visibleRows && i < abilityCount;
 			visibleRow++, i++) {
-			ability = mnAbilityGet(changedAbilities[i]);
+			ability = gmAbilityGetDirectStub(changedAbilities[i]);
 			if(ability->element != ELEMENT_NONE)
-				mnWindowSetTilemapEntry(
-					window, LIST_TILE_SUMMON_ELEMENT + ability->element, 15,
+				mnWindowSetTilemapEntry(window,
+					LIST_TILE_SUMMON_ELEMENT + ability->element, 15,
 					visibleRow * 2, 0);
 
 			/* Its element icon, range icon, icon, name and PP cost. */
@@ -279,7 +278,7 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
 			mnRangeIconDraw(window, 16, visibleRow * 2, rangePattern, 0);
 
 			mnWindowSprCreateAbilityIcon(window, 0, visibleRow * 16 - 4,
-										 changedAbilities[i] & ACTION_ID_MASK);
+				changedAbilities[i] & ACTION_ID_MASK);
 			if((changedAbilities[i] & DJINN_PREVIEW_ABILITY_GAINED) != 0)
 				mnTextSetCol(TEXT_COLOR_YELLOW);
 			else if((changedAbilities[i] & DJINN_PREVIEW_ABILITY_LOST) != 0)
@@ -287,15 +286,16 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
 			else
 				mnTextSetCol(TEXT_COLOR_WHITE);
 
-			mnTextDrawMessageAsTiles((changedAbilities[i] & ACTION_ID_MASK) +
-										 MsgAbilityName,
-									 window, 16, visibleRow * 16);
-			mnWindowSetTilemapEntry(window, PSYNERGY_COST_FIRST_TILE, 11,
-									visibleRow * 2, 0);
-			mnWindowSetTilemapEntry(window, PSYNERGY_COST_SECOND_TILE, 12,
-									visibleRow * 2, 0);
-			mnTextDrawNumInWindow(mnAbilityGet(changedAbilities[i])->ppCost, 2,
-								  window, 104, visibleRow * 16);
+			mnTextDrawMessageAsTiles(
+				(changedAbilities[i] & ACTION_ID_MASK) + MsgAbilityName, window,
+				16, visibleRow * 16);
+			mnWindowSetTilemapEntry(
+				window, PSYNERGY_COST_FIRST_TILE, 11, visibleRow * 2, 0);
+			mnWindowSetTilemapEntry(
+				window, PSYNERGY_COST_SECOND_TILE, 12, visibleRow * 2, 0);
+			mnTextDrawNumInWindow(
+				gmAbilityGetDirectStub(changedAbilities[i])->ppCost, 2, window,
+				104, visibleRow * 16);
 		}
 
 		if(gained != 0) {
@@ -305,8 +305,8 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
 		}
 		if(lost != 0) {
 			mnTextSetCol(TEXT_COLOR_RED);
-			mnTextDrawMessageAsTiles(MsgPsynergyLost, window, 32,
-									 summaryRows * 8 + 80);
+			mnTextDrawMessageAsTiles(
+				MsgPsynergyLost, window, 32, summaryRows * 8 + 80);
 			summaryRows++;
 		}
 		if(summaryRows == 0)
@@ -317,91 +317,89 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *window, s32 member,
 	}
 
 	if(page == 0) {
-		mnTextDrawMessageAsTiles(MsgClassName + savedUnit->classId, window, 0,
-								 0);
+		mnTextDrawMessageAsTiles(
+			MsgClassName + savedUnit->classId, window, 0, 0);
 		mnTextDrawMessageAsTiles(MsgClassName + unit->classId, window, 80, 0);
 		/* The arrow between the classes, flipped: DJINN_MENU_ARROW_TILE blinks
-		 */
-		/* when the class changes, the tile after it stays
-		 * (DjinnMenu_BlinkTile). */
+		   when the class changes, the tile after it stays
+		   (DjinnMenu_BlinkTile). */
 		if(savedUnit->classId != unit->classId)
-			mnWindowSetTilemapEntry(
-				window, WINDOW_TILE(DJINN_MENU_ARROW_TILE) | TILE_HFLIP, 9, 0,
-				page);
+			mnWindowSetTilemapEntry(window,
+				WINDOW_TILE(DJINN_MENU_ARROW_TILE) | TILE_HFLIP, 9, 0, page);
 		else
-			mnWindowSetTilemapEntry(
-				window, WINDOW_TILE(DJINN_MENU_ARROW_TILE + 1) | TILE_HFLIP, 9,
-				0, page);
+			mnWindowSetTilemapEntry(window,
+				WINDOW_TILE(DJINN_MENU_ARROW_TILE + 1) | TILE_HFLIP, 9, 0,
+				page);
 
 		mnStringFormatNumToHalfwords(numberText, unit->hp);
-		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES,
-									 window, 11, 1);
+		mnTextDrawWideStringInWindow(
+			numberText + NUMBER_TEXT_FOUR_PLACES, window, 11, 1);
 		if(unit->hp != oldHp) {
 			rising = 0;
 			if(unit->hp > oldHp)
 				rising = 1;
-			mnDjinnMenuDrawStatArrow(PREVIEW_STAT_ARROW_X,
-									 PREVIEW_STAT_ARROW_Y(1), rising);
+			mnDjinnMenuDrawStatArrow(
+				PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(1), rising);
 		}
 
 		mnStringFormatNumToHalfwords(numberText, unit->pp);
-		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES,
-									 window, 11, 2);
+		mnTextDrawWideStringInWindow(
+			numberText + NUMBER_TEXT_FOUR_PLACES, window, 11, 2);
 		if(unit->pp != oldPp) {
 			rising = 0;
 			if(unit->pp > oldPp)
 				rising = 1;
-			mnDjinnMenuDrawStatArrow(PREVIEW_STAT_ARROW_X,
-									 PREVIEW_STAT_ARROW_Y(2), rising);
+			mnDjinnMenuDrawStatArrow(
+				PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(2), rising);
 		}
 
 		mnStringFormatNumToHalfwords(numberText, unit->attack);
-		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES,
-									 window, 11, 3);
+		mnTextDrawWideStringInWindow(
+			numberText + NUMBER_TEXT_FOUR_PLACES, window, 11, 3);
 		if(unit->attack != oldAtk) {
 			rising = 0;
 			if(unit->attack > oldAtk)
 				rising = 1;
-			mnDjinnMenuDrawStatArrow(PREVIEW_STAT_ARROW_X,
-									 PREVIEW_STAT_ARROW_Y(3), rising);
+			mnDjinnMenuDrawStatArrow(
+				PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(3), rising);
 		}
 
 		mnStringFormatNumToHalfwords(numberText, unit->defense);
-		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES,
-									 window, 11, 4);
+		mnTextDrawWideStringInWindow(
+			numberText + NUMBER_TEXT_FOUR_PLACES, window, 11, 4);
 		if(unit->defense != oldDef) {
 			rising = 0;
 			if(unit->defense > oldDef)
 				rising = 1;
-			mnDjinnMenuDrawStatArrow(PREVIEW_STAT_ARROW_X,
-									 PREVIEW_STAT_ARROW_Y(4), rising);
+			mnDjinnMenuDrawStatArrow(
+				PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(4), rising);
 		}
 
 		mnStringFormatNumToHalfwords(numberText, unit->agility);
-		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES,
-									 window, 11, 5);
+		mnTextDrawWideStringInWindow(
+			numberText + NUMBER_TEXT_FOUR_PLACES, window, 11, 5);
 		if(unit->agility != oldAgi) {
 			rising = 0;
 			if(unit->agility > oldAgi)
 				rising = 1;
-			mnDjinnMenuDrawStatArrow(PREVIEW_STAT_ARROW_X,
-									 PREVIEW_STAT_ARROW_Y(5), rising);
+			mnDjinnMenuDrawStatArrow(
+				PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(5), rising);
 		}
 
 		mnStringFormatNumToHalfwords(numberText, unit->luck);
-		mnTextDrawWideStringInWindow(numberText + NUMBER_TEXT_THREE_PLACES,
-									 window, 12, 6);
+		mnTextDrawWideStringInWindow(
+			numberText + NUMBER_TEXT_THREE_PLACES, window, 12, 6);
 		if(unit->luck != savedUnit->luck) {
 			rising = 0;
 			if(unit->luck > savedUnit->luck)
 				rising = 1;
-			mnDjinnMenuDrawStatArrow(PREVIEW_STAT_ARROW_X,
-									 PREVIEW_STAT_ARROW_Y(6), rising);
+			mnDjinnMenuDrawStatArrow(
+				PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(6), rising);
 		}
 	}
 
 	/* Previewing must not change the party member's Djinn, class or battle
-	 * stats. */
+	   stats. */
 	syWordsCopy(unit, savedUnit, sizeof(*savedUnit));
 	syHeapRelease(changedAbilities);
 	syHeapRelease(savedUnit);

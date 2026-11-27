@@ -1,21 +1,19 @@
 #ifndef ALCHEMY_SCENE_MARS_LIGHTHOUSE_STAR_ROOM_H
 #define ALCHEMY_SCENE_MARS_LIGHTHOUSE_STAR_ROOM_H
 
-/* @file */
-/* Mars Lighthouse's star room: its torches, fireballs and the Mars Star, and */
-/* the knock-back, flame and crack functions it shares with the rooms that keep
- */
-/* copies of them. */
+/* Mars Lighthouse's star room: its torches, fireballs and the Mars Star, and
+   the knock-back, flame and crack functions it shares with the rooms that keep
+   copies of them. */
 
 #include "types.h"
-#include "field/cell_target.h"
+#include "field/metatile_target.h"
 
 struct ACTOR;
-struct CELL_TARGET;
-struct CELL_TARGET_ENTRY;
+struct METATILE_TARGET;
+struct METATILE_TARGET_ENTRY;
 
-s32 fdLeaderKnockBack(void);
-void fdActorLaunchAhead(struct ACTOR *actor);
+Sint32 fdLeaderKnockBack(void);
+void   fdActorLaunchAhead(struct ACTOR *actor);
 
 void scMarsLighthouseStarRoomShootFireballs(void);
 
@@ -28,7 +26,7 @@ void scActorRollAndCrumble(struct ACTOR *actor);
 void fdLeaderStopIfPending(void);
 void fdActorSteerByPad(struct ACTOR *actor);
 
-void scCrackedTileCrack(CELL_TARGET *table, CELL_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
 void scMarsLighthouseStarRoomStartBlazeOnEastTorch(void);
 

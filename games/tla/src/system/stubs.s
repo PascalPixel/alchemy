@@ -7,44 +7,44 @@ Stubs_System:
 	stub syInitEventStub, syInitEvent
 	stub sySetEventStub, sySetEvent
 	stub syCloseEventStub, syCloseEvent
-	stub syTaskSuspendStub, syTaskSuspend
-	stub syTaskResumeStub, syTaskResume
+	stub sySuspendEventStub, sySuspendEvent
+	stub syResumeEventStub, syResumeEvent
 	stub syExecuteEventStub, syExecuteEvent
 	stub syRandomStub, syRandom
 	stub syAtanStub, syAtan
-	stub syMathIntegerSqrtStub, syMathIntegerSqrt
-	stub FixedSqrtStub, sySquartFX
+	stub sySquartStub, sySquart
+	stub sySquartFXStub, sySquartFX
 	stub sySinStub, sySin
 	stub syCosStub, syCos
 	stub syVectorAddPolarOffsetStub, syVectorAddPolarOffset
 	stub syIntFunctionStub, syIntFunction
 	stub syHeapInitStub, syHeapInit
 	stub syHeapSlotAllocStub, syHeapSlotAlloc
-	stub syHeapSlotAllocEwramStub, syHeapSlotAllocEwram
+	stub syHeapSlotAllocEWRAMStub, syHeapSlotAllocEWRAM
 	stub syHeapSlotReleaseStub, syHeapSlotRelease
-	stub syHeapGetRemainingIwramStub, syHeapGetRemainingIwram
-	stub syHeapGetRemainingEwramStub, syHeapGetRemainingEwram
+	stub syHeapGetRemainingIWRAMStub, syHeapGetRemainingIWRAM
+	stub syHeapGetRemainingEWRAMStub, syHeapGetRemainingEWRAM
 	stub syHeapAllocStub, syHeapAlloc
-	stub syHeapAllocEwramStub, syHeapAllocEwram
+	stub syHeapAllocEWRAMStub, syHeapAllocEWRAM
 	stub syHeapReleaseStub, syHeapRelease
 	stub syPrintStub, syPrint
 	stub syPrintHexStub, syPrintHex
-	stub syDebugTextPrintDecimalStub, syDebugTextPrintDecimal
-	stub syDebugTextPrintBlanksStub, syDebugTextPrintBlanks
-	stub Resource_DecodeByteLzInRamStub, syDecompressByteLz
-	stub syDecompressTaggedLzStub, syDecompressTaggedLz
-	stub syVramCacheResetStub, syVramCacheReset
-	stub syVramCacheFreeEntryStub, syVramCacheFreeEntry
-	stub syVramCacheReleaseVramStub, syVramCacheReleaseVram
-	stub syVramCacheLoadStub, syVramCacheLoad
-	stub syVramCacheFindFreeEntryStub, syVramCacheFindFreeEntry
-	stub syDebugTextClearStub, syDebugTextClear
-	stub syOamMatrixAllocFromTransformStub, syOamMatrixAllocFromTransform
-	stub syOamAddSprAtDepthClampedStub, syOamAddSprAtDepthClamped
+	stub syPrintDecStub, syPrintDec
+	stub syPrintBlanksStub, syPrintBlanks
+	stub syDecompressByteLZStub, syDecompressByteLZ
+	stub syDecompressTaggedLZStub, syDecompressTaggedLZ
+	stub syVRAMCacheResetStub, syVRAMCacheReset
+	stub syVRAMCacheFreeEntryStub, syVRAMCacheFreeEntry
+	stub syVRAMCacheReleaseVRAMStub, syVRAMCacheReleaseVRAM
+	stub syVRAMCacheLoadStub, syVRAMCacheLoad
+	stub syVRAMCacheFindFreeEntryStub, syVRAMCacheFindFreeEntry
+	stub syPrintClearStub, syPrintClear
+	stub syOAMMatrixAllocFromTransformStub, syOAMMatrixAllocFromTransform
+	stub syOAMAddSprAtDepthClampedStub, syOAMAddSprAtDepthClamped
 	stub syWindowLoadGraphicsStub, syWindowLoadGraphics
 	stub syPaletteLoadBasicSprColsStub, syPaletteLoadBasicSprCols
 	stub syInitMatrixStub, syInitMatrix
-	stub syMatrixResetUnitStub, syMatrixResetUnit
+	stub syUnitMatrixCurrentStub, syUnitMatrixCurrent
 	stub syPushMatrixStub, syPushMatrix
 	stub syPopMatrixStub, syPopMatrix
 	stub syMatrixRotateStub, syMatrixRotate
@@ -55,41 +55,41 @@ Stubs_System:
 	stub syMatrixScaleVectorStub, syMatrixScaleVector
 	stub syMatrixRotateTranslateStub, syMatrixRotateTranslate
 	stub syMatrixRotateTranslateScaleStub, syMatrixRotateTranslateScale
-	stub syMatrixSetLookAtStub, syMatrixSetLookAt
+	stub syLookAtLoadStub, syLookAtLoad
 	stub syConvert3Dto2DStub, syConvert3Dto2D
 	stub syPerspectiveStub, syPerspective
 	stub sySetScreenDistStub, sySetScreenDist
 	stub syCopyBuildStampStub, syCopyBuildStamp
 	stub syDummyReturnZeroStub, syDummyReturnZero
 	stub syResourceGetTableEntryStub, syResourceGetTableEntry
-	stub syResourceReservedNoOpStub, syResourceReservedNoOp
+	stub syResourceReservedNoOperationStub, syResourceReservedNoOperation
 	stub syOverlayLoadStub, syOverlayLoad
-	stub syScrFadeToBlackStub, syScrFadeToBlack
-	stub syScrFadeFromBlackStub, syScrFadeFromBlack
-	stub syScrFadeToWhiteStub, syScrFadeToWhite
-	stub syScrFadeFromWhiteStub, syScrFadeFromWhite
-	stub syScrFadeStartStub, syScrFadeStart
-	stub syScrFadeWaitStub, syScrFadeWait
-	stub syDummyReservedNoOpAStub, syDummyReservedNoOpA
-	stub syDummyReservedNoOpBStub, syDummyReservedNoOpB
-	stub syDummyReservedNoOpCStub, syDummyReservedNoOpC
-	stub syDummyReservedNoOpDStub, syDummyReservedNoOpD
-	stub syDummyReservedNoOpEStub, syDummyReservedNoOpE
+	stub syScreenFadeToBlackStub, syScreenFadeToBlack
+	stub syScreenFadeFromBlackStub, syScreenFadeFromBlack
+	stub syScreenFadeToWhiteStub, syScreenFadeToWhite
+	stub syScreenFadeFromWhiteStub, syScreenFadeFromWhite
+	stub syScreenFadeStartStub, syScreenFadeStart
+	stub syScreenFadeWaitStub, syScreenFadeWait
+	stub syDummyReservedNoOperationAStub, syDummyReservedNoOperationA
+	stub syDummyReservedNoOperationBStub, syDummyReservedNoOperationB
+	stub syDummyReservedNoOperationCStub, syDummyReservedNoOperationC
+	stub syDummyReservedNoOperationDStub, syDummyReservedNoOperationD
+	stub syDummyReservedNoOperationEStub, syDummyReservedNoOperationE
 	stub sySerialInitStub, sySerialInit
 	stub sySerialPollAndTransferStub, sySerialPollAndTransfer
-	stub syIoWriteQueueStore8Stub, syIoWriteQueueStore8
-	stub syIoWriteQueueStore16Stub, syIoWriteQueueStore16
-	stub syIoWriteQueueStore32Stub, syIoWriteQueueStore32
-	stub syIoWriteQueueSetBits8Stub, syIoWriteQueueSetBits8
-	stub syIoWriteQueueSetBits16Stub, syIoWriteQueueSetBits16
-	stub syIoWriteQueueSetBits32Stub, syIoWriteQueueSetBits32
-	stub syIoWriteQueueClearBits8Stub, syIoWriteQueueClearBits8
-	stub syIoWriteQueueClearBits16Stub, syIoWriteQueueClearBits16
-	stub syIoWriteQueueClearBits32Stub, syIoWriteQueueClearBits32
+	stub syIOWriteQueueStore8Stub, syIOWriteQueueStore8
+	stub syIOWriteQueueStore16Stub, syIOWriteQueueStore16
+	stub syIOWriteQueueStore32Stub, syIOWriteQueueStore32
+	stub syIOWriteQueueSetBits8Stub, syIOWriteQueueSetBits8
+	stub syIOWriteQueueSetBits16Stub, syIOWriteQueueSetBits16
+	stub syIOWriteQueueSetBits32Stub, syIOWriteQueueSetBits32
+	stub syIOWriteQueueClearBits8Stub, syIOWriteQueueClearBits8
+	stub syIOWriteQueueClearBits16Stub, syIOWriteQueueClearBits16
+	stub syIOWriteQueueClearBits32Stub, syIOWriteQueueClearBits32
 	stub syInputResetKeyRepeatStub, syInputResetKeyRepeat
 	stub syLookAtStub, syLookAt
 	stub sySerialWaitForStatMaskStub, sySerialWaitForStatMask
-	stub sySerialRemoveIrqHandlersStub, sySerialRemoveIrqHandlers
+	stub sySerialRemoveIRQHandlersStub, sySerialRemoveIRQHandlers
 	stub sySndLoadReverbCodeStub, sySndLoadReverbCode
 	stub sySerialStartSendStub, sySerialStartSend
 	stub sySerialStartReceiveStub, sySerialStartReceive
@@ -98,8 +98,8 @@ Stubs_System:
 	stub sySerialWaitForTransfersStub, sySerialWaitForTransfers
 	stub sySerialGetActiveTransfersStub, sySerialGetActiveTransfers
 	stub sySerialStepBlockTransferStub, sySerialStepBlockTransfer
-	stub syTaskSetFlagsStub, syTaskSetFlags
-	stub gmUnitGetStub, syUnitGet
+	stub sySetEventFlagsStub, sySetEventFlags
+	stub syUnitGetStub, syUnitGet
 	stub syGameFlagGetStub, syGameFlagGet
 	stub syGameFlagSetStub, syGameFlagSet
 	stub syGameFlagClearStub, syGameFlagClear
@@ -110,5 +110,5 @@ Stubs_System:
 	stub syGameFlagDecrementByteStub, syGameFlagDecrementByte
 	stub syGameFlagGetNibbleStub, syGameFlagGetNibble
 	stub syGameFlagSetNibbleStub, syGameFlagSetNibble
-	stub syTaskFindStub, syTaskFind
-	stub syVramCacheCountFreeBlocksStub, syVramCacheCountFreeBlocks
+	stub syFindEventStub, syFindEvent
+	stub syVRAMCacheCountFreeBlocksStub, syVRAMCacheCountFreeBlocks

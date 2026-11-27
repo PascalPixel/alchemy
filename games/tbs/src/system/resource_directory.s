@@ -247,9 +247,9 @@ syResourceDirectoryTable:
 	resource AtalantaPath, BattleEffect_AtalantaPath
 	resource DragonCloudFlamePath, BattleEffect_DragonCloudFlamePath
 	resource WorldMapPerspectiveTiles, Field_WorldMapPerspectiveTiles
-	resource DefaultGridCells, Field_DefaultGridCells
+	resource DefaultGridMetatiles, Field_DefaultGridMetatiles
 	resource DefaultTileAnimation, Field_DefaultTileAnimation
-	resource DefaultCellTilesAttributes, Field_DefaultCellTilesAttributes
+	resource DefaultMetatileTilesAttributes, Field_DefaultMetatileTilesAttributes
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource WorldMapTilesA, WorldMap_TilesA
 	resource WorldMapTilesB, WorldMap_TilesB

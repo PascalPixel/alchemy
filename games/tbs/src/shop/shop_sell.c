@@ -1,19 +1,19 @@
-/* @file */
-/* Selling: choosing a party member, the item grid and the sale. */
-/* Part of shop.c. */
+/* Selling: choosing a party member, the item grid and the sale. Part of
+   shop.c. */
 
 #include "shop_internal.h"
 
 /* Lets the player choose whose items to sell or repair, until B. */
-s32 mnShopChooseMember(void) {
+Sint32 mnShopChooseMember(void)
+{
 	SHOP_STATE *shop = MenuState;
-	WINDOW *listWindow;
-	s32 memberIndex = 0;
-	s32 redraw = 1;
-	s32 unitId = 0;
+	WINDOW	   *listWindow;
+	Sint32		memberIndex = 0;
+	Bool		redraw = TRUE;
+	Sint32		unitId = 0;
 
-	shop->moneyWin = mnWindowCreateStub(0, 9, SHOP_MONEY_WINDOW_WIDTH, 4,
-										WINDOW_FLAG_INSTANT);
+	shop->moneyWin = mnWindowCreateStub(
+		0, 9, SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
 	shop->itemWin = mnWindowCreateStub(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
 	listWindow = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
@@ -23,7 +23,7 @@ s32 mnShopChooseMember(void) {
 
 	for(;;) {
 		if(redraw != 0) {
-			redraw = 0;
+			redraw = FALSE;
 			memberIndex =
 				(memberIndex + shop->partyMemberCnt) % shop->partyMemberCnt;
 			unitId = shop->partyMemberIds[memberIndex];
@@ -33,12 +33,11 @@ s32 mnShopChooseMember(void) {
 			mnShopDrawMemberItems(shop->itemWin, unitId);
 		}
 
-		if((KeysPressed & KEY_A) != 0) {
+		if((PerPush & KEY_A) != 0) {
 			sySynch(1);
 			if(gmInventoryCountStub(unitId) == 0) {
 				sySndPlayStub(SE_MENU_CANCEL);
-			}
-			else {
+			} else {
 				sySndPlayStub(SE_MENU_CONFIRM);
 				if(shop->action == SHOP_ACTION_SELL)
 					mnShopSelectSell(unitId);
@@ -46,12 +45,12 @@ s32 mnShopChooseMember(void) {
 					mnShopSelectRepair(unitId);
 				shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
 				shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
-				redraw = 1;
+				redraw = TRUE;
 			}
 			continue;
 		}
 
-		if((KeysPressed & KEY_B) != 0) {
+		if((PerPush & KEY_B) != 0) {
 			sySndPlayStub(SE_MENU_CANCEL);
 			mnReleasePartyFiguresStub();
 			mnWindowCloseStub(listWindow, 2);
@@ -61,37 +60,37 @@ s32 mnShopChooseMember(void) {
 			return 0;
 		}
 
-		if((KeysRepeat & KEY_LEFT) != 0) {
+		if((PerRepeat & KEY_LEFT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			memberIndex--;
-			redraw = 1;
+			redraw = TRUE;
 		}
-		if((KeysRepeat & KEY_RIGHT) != 0) {
+		if((PerRepeat & KEY_RIGHT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			memberIndex++;
-			redraw = 1;
+			redraw = TRUE;
 		}
 		sySynch(1);
 	}
 }
 
 /* Lets the player choose items to sell from the party member's grid, one at a
- */
-/* time, with each one's price and description, until B or the inventory is */
-/* empty. Returns -1 when cancelled, 0 when the inventory ran out. */
-s32 mnShopSelectSell(s32 unitId) {
-	WINDOW *descriptionWindow;
+   time, with each one's price and description, until B or the inventory is
+   empty. Returns -1 when cancelled, 0 when the inventory ran out. */
+Sint32 mnShopSelectSell(Sint32 unitId)
+{
+	WINDOW	   *descriptionWindow;
 	SHOP_STATE *shop;
-	WINDOW *priceWindow;
-	UNIT *unit;
-	s32 slot;
-	s32 inventoryCount;
-	s32 redraw;
-	s32 result;
-	s32 itemId;
-	s32 quantity;
-	WINDOW *window;
-	s32 x;
+	WINDOW	   *priceWindow;
+	UNIT	   *unit;
+	Sint32		slot;
+	Sint32		inventoryCount;
+	Bool		redraw;
+	Sint32		result;
+	Sint32		itemId;
+	Sint32		quantity;
+	WINDOW	   *window;
+	Sint32		x;
 
 	shop = MenuState;
 	unit = gmUnitGetStub(unitId);
@@ -105,66 +104,66 @@ s32 mnShopSelectSell(s32 unitId) {
 			mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 		shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
 		shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
-		redraw = 1;
+		redraw = TRUE;
 
 		while(1) {
 			if(redraw != 0) {
-				redraw = 0;
+				redraw = FALSE;
 				inventoryCount = gmInventoryCountStub(unitId);
 				if(slot > inventoryCount - 1)
 					slot = inventoryCount - 1;
 				itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
 				window = shop->itemWin;
 				x = slot % SHOP_INVENTORY_COLUMNS * 16;
-				mnCursorPlace(window, x,
-							  slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
+				mnCursorPlace(
+					window, x, slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
 				shop->cursorFrm = 3;
 				mnShopDrawItemPrice(priceWindow, itemId,
-									mnShopSalePrice(unit->inventory[slot]),
-									SHOP_PRICE_KIND_SELL);
+					mnShopSalePrice(unit->inventory[slot]),
+					SHOP_PRICE_KIND_SELL);
 				mnShopDrawMessage(descriptionWindow, itemId + MsgItemPlainName);
 			}
 
-			if((KeysPressed & KEY_A) != 0) {
+			if((PerPush & KEY_A) != 0) {
 				sySndPlayStub(SE_MENU_CONFIRM);
 				result = 0;
 				break;
 			}
-			if((KeysPressed & KEY_B) != 0) {
+			if((PerPush & KEY_B) != 0) {
 				sySndPlayStub(SE_MENU_CANCEL);
 				result = -1;
 				break;
 			}
-			if((KeysRepeat & KEY_LEFT) != 0) {
+			if((PerRepeat & KEY_LEFT) != 0) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				slot--;
 				slot = (slot + inventoryCount) % inventoryCount;
-				redraw = 1;
+				redraw = TRUE;
 			}
-			if((KeysRepeat & KEY_RIGHT) != 0) {
+			if((PerRepeat & KEY_RIGHT) != 0) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				slot++;
 				slot = (slot + inventoryCount) % inventoryCount;
-				redraw = 1;
+				redraw = TRUE;
 			}
 			/* Up and down wrap round the 15-slot grid onto filled slots. */
-			if((KeysRepeat & KEY_UP) != 0) {
+			if((PerRepeat & KEY_UP) != 0) {
 				slot -= SHOP_INVENTORY_COLUMNS;
 				if(slot < 0)
 					slot += INVENTORY_SLOTS;
 				while(slot >= inventoryCount)
 					slot -= SHOP_INVENTORY_COLUMNS;
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = 1;
+				redraw = TRUE;
 			}
-			if((KeysRepeat & KEY_DOWN) != 0) {
+			if((PerRepeat & KEY_DOWN) != 0) {
 				slot += SHOP_INVENTORY_COLUMNS;
 				if(slot >= inventoryCount)
 					slot -= INVENTORY_SLOTS;
 				while(slot < 0)
 					slot += SHOP_INVENTORY_COLUMNS;
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = 1;
+				redraw = TRUE;
 			}
 			sySynch(1);
 		}
@@ -188,13 +187,13 @@ s32 mnShopSelectSell(s32 unitId) {
 }
 
 /* Draws the party member's items as icons in rows of five, or a line saying it
- */
-/* has none. */
-void mnShopDrawMemberItems(WINDOW *window, s32 unitId) {
-	UNIT *unit;
-	s32 x;
-	s32 y;
-	s32 slot;
+   has none. */
+void mnShopDrawMemberItems(WINDOW *window, Sint32 unitId)
+{
+	UNIT	   *unit;
+	Sint32		x;
+	Sint32		y;
+	Sint32		slot;
 	WINDOW_SPR *icon;
 
 	unit = gmUnitGetStub(unitId);
@@ -203,14 +202,12 @@ void mnShopDrawMemberItems(WINDOW *window, s32 unitId) {
 	if(window != 0) {
 		mnWindowSprPrepareForRedrawStub(window);
 		if(gmInventoryCountStub(unitId) == 0) {
-			mnTextDrawMessageStub(MsgNoItems, window, SHOP_EMPTY_GRID_X,
-								  SHOP_EMPTY_GRID_Y);
-		}
-		else {
+			mnTextDrawMessageStub(
+				MsgNoItems, window, SHOP_EMPTY_GRID_X, SHOP_EMPTY_GRID_Y);
+		} else {
 			for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
 				if(unit->inventory[slot] != 0) {
-					icon = mnWindowSprCreateLoadedStub(
-						unit->inventory[slot],
+					icon = mnWindowSprCreateLoadedStub(unit->inventory[slot],
 						ICON_BASE | ICON_COUNT_ABOVE_ONE | ICON_BROKEN |
 							ICON_EQUIPPED,
 						window, x, y);
@@ -230,17 +227,18 @@ void mnShopDrawMemberItems(WINDOW *window, s32 unitId) {
 	}
 }
 
-/* Asks how many to sell of a stack, and returns the count, -1 when cancelled.
- */
-s32 mnShopSelectSellCount(s32 unitId, s32 slot) {
-	s32 result;
-	s16 savedX;
-	s16 savedY;
-	s32 unitSalePrice;
-	s32 stackQuantity;
+/* Asks how many to sell of a stack, and returns the count, -1 when
+   cancelled. */
+Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot)
+{
+	Sint32			 result;
+	Sint16			 savedX;
+	Sint16			 savedY;
+	Sint32			 unitSalePrice;
+	Sint32			 stackQuantity;
 	ITEM_DEFINITION *item;
-	SHOP_STATE *shop;
-	UNIT *unit;
+	SHOP_STATE		*shop;
+	UNIT			*unit;
 
 	shop = MenuState;
 	unit = gmUnitGetStub(unitId);
@@ -266,20 +264,19 @@ s32 mnShopSelectSellCount(s32 unitId, s32 slot) {
 }
 
 /* Sells `count` of the item in `slot`, after the shopkeeper's offer that fits
- */
-/* it and a Yes; whatever the shops keep a stock of goes back on sale. A count
- */
-/* of -1 sells the one old piece of equipment a purchase replaced. */
-void mnShopSellItem(s32 unitId, s32 slot, s32 count) {
-	SHOP_STATE *shop = MenuState;
-	UNIT *unit = gmUnitGetStub(unitId);
-	s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
+   it and a Yes; whatever the shops keep a stock of goes back on sale. A count
+   of -1 sells the one old piece of equipment a purchase replaced. */
+void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 count)
+{
+	SHOP_STATE		*shop = MenuState;
+	UNIT			*unit = gmUnitGetStub(unitId);
+	Sint32			 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
-	u8 rare = item->flg & ITEM_RARE;
-	s32 sellingReplacedItem = 0;
-	s32 total;
-	s32 message;
-	s32 soldCount;
+	Uint8			 rare = item->flg & ITEM_RARE;
+	Sint32			 sellingReplacedItem = 0;
+	Sint32			 total;
+	Sint32			 message;
+	Sint32			 soldCount;
 
 	if(count == -1) {
 		sellingReplacedItem = 1;
@@ -293,19 +290,16 @@ void mnShopSellItem(s32 unitId, s32 slot, s32 count) {
 		return;
 	}
 	if((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
-	   (item->flg & ITEM_CANNOT_UNEQUIP)) {
+		(item->flg & ITEM_CANNOT_UNEQUIP)) {
 		mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 		/* "You can't remove your (item). Come back once it's off." */
 		mnShopShowKeeperMessageHidingCursor(MsgCannotSellEquipped);
 		return;
 	}
 	/* "How about (total) coins for your old (item)?", "Your (item) is damaged,
-	 */
-	/* so...maybe (total) coins?", "That comes to (total) coins! Sound good?",
-	 */
-	/* "What rare stuff! How about (total) coins?" or "How about (total) coins
-	 */
-	/* for your (item)?" */
+	   so...maybe (total) coins?", "That comes to (total) coins! Sound good?",
+	   "What rare stuff! How about (total) coins?" or "How about (total) coins
+	   for your (item)?" */
 	if(sellingReplacedItem)
 		message = MsgOldItemSellOffer;
 	else if(unit->inventory[slot] & INVENTORY_BROKEN)
@@ -321,8 +315,7 @@ void mnShopSellItem(s32 unitId, s32 slot, s32 count) {
 	mnShopShowKeeperMessageHidingCursor(message);
 	if(mnShopAskYesNo(0) != 0) {
 		/* "You don't want to let go of it, do you?", or "What? Changed your
-		 * mind? */
-		/* Well, too bad for you." */
+		   mind? Well, too bad for you." */
 		if(rare || sellingReplacedItem)
 			message = MsgKeepIt;
 		else

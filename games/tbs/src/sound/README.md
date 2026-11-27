@@ -38,7 +38,7 @@ even loaded. A rule names a scene or a whole area, optionally a
 [game flag](../../../../docs/tbs/glossary.md#game-flag), and a sound. The first rule that
 fits wins.
 
-It is the same pattern the field engine uses for triggers and exits. Vale
+It is the same pattern the field engine uses for cues and exits. Vale
 has five rules, latest first, and between them they tell its whole story:
 silence on the stormy night, then one tune after another as flags are set.
 Because the rules name the area, every house in Vale gets the town's
@@ -74,14 +74,18 @@ sounding note together, with a little echo.
 
 The songs and samples are ordinary files you can open, in
 [`games/tbs/sound`](../../sound): each song is a MIDI file, such as
-`songs/mus_village_theme.mid`, and each sample a WAV.
+`songs/mus_village_theme.mid`, and each sample a WAV. A song or sample
+that The Lost Age has byte for byte, and the wave channel's patterns, are
+one copy in [`games/common/sound`](../../../common/README.md) that both
+games build.
 
 ## Where the code is
 
 - `sound.c` here is the game's own layer: `sySndPlay`, the volume ramps and
   the music's return.
-- [`sdk/sound`](../sdk/sound) is the driver: its C, its handwritten functions
-  and the mixer the game copies into IWRAM.
+- [`games/common/sdk/sound`](../../../common/sdk/sound) is the driver both
+  games build: its C, its handwritten functions and the mixer the game
+  copies into IWRAM.
 - [`system/mixer_render.s`](../system/mixer_render.s) is the one part of that
   mixer that uses r4 as the system library's functions do, and so is counted
   as the system library's own.

@@ -1,6 +1,6 @@
-@ Copies of four of sound.c's functions and the head of a fifth, which the
-@ cartridge keeps 0x1a70 bytes before them, and an ARM high multiply after
-@ them. Nothing refers to any of them.
+@ Copies of four of the functions of games/common/sdk/sound/sound.c and the
+@ head of a fifth, which the cartridge keeps 0x1a70 bytes before them, and an
+@ ARM high multiply after them. Nothing refers to any of them.
 @ Each copy's bytes are its twin's but for what a link fills in: its pool
 @ words are 0 where the twin's hold addresses (the block copy's control word
 @ is kept), and its call to Bios_CpuSet, outside the SDK's sound library, is
@@ -201,8 +201,8 @@ m4aSongNumStartWorkCopyHead:
 	lsls	r1, r1, #2
 
 @ Unused: the high word of a 32 by 32 multiply, as umul3232H32
-@ (umul_high.s) gives it in another form: a Thumb entry that switches to
-@ ARM. The head before it runs into it.
+@ (games/common/sdk/sound/umul_high.s) gives it in another form: a Thumb
+@ entry that switches to ARM. The head before it runs into it.
 	.global umul3232H32WorkCopy
 	.thumb_func
 umul3232H32WorkCopy:
@@ -300,7 +300,8 @@ SoundChannel_Unlink:
 	bx	lr
 .L_081c0758:
 	bx	lr
-@ ply_note's own copy of clear_modM (clear_buffer.s), its compare placed first.
+@ ply_note's own copy of clear_modM (games/common/sdk/sound/clear_buffer.s),
+@ its compare placed first.
 	.global clear_modM_note
 	.thumb_func
 clear_modM_note:

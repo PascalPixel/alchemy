@@ -1,9 +1,8 @@
 #ifndef ALCHEMY_MAIN_ROUTINE_H
 #define ALCHEMY_MAIN_ROUTINE_H
 
-/* @file */
-/* The main routine, which runs the game's sequences one after another, and */
-/* the scene changes between them. */
+/* The main routine, which runs the game's modes one after another, and the
+   scene changes between them. */
 
 #include "types.h"
 
@@ -15,10 +14,10 @@ typedef enum GAME_START {
 } GAME_START;
 
 /* system/main_routine.c documents each. */
-void scTakeExit(s32 exitId);
-void scReturnFromSequence(s32 result);
-s32 scGetArea(s32 sceneId);
-void scLoadOverlay(s32 unused);
-void scArrive(s32 unused, s32 keep);
+void   gmTakeExit(Sint32 exitId);
+void   gmReturnFromMode(Sint32 result);
+Sint32 gmGetArea(Sint32 sceneId);
+void   gmLoadOverlay(Sint32 unused);
+void   gmArrive(Sint32 unused, Sint32 keep);
 
 #endif

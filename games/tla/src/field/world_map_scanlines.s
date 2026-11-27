@@ -2,7 +2,7 @@
 @ code of WorldMap_BuildScanlineTableInArm that follows, a mode switch inside a function; its
 @ halfword after bx pc is never run. WorldMap_BuildScanlineTableInArm, an ARM copy of the
 @ perspective map's scanline table builder (fdWorldMapBuildScanlineTable is the Thumb one),
-@ calls IwramSqrt and IwramTransformVector by bl through two 8-byte stub call
+@ calls syIWRAMSquart and syIWRAMTransformVector by bl through two 8-byte stub call
 @ stubs placed after its literal pool, and two of its smull take free
 @ registers for their high halves (r2/r1 and r2/r0) and shift them back, which
 @ GCC's register-pair multiply cannot emit.
@@ -104,19 +104,19 @@ WorldMap_BuildScanlineTableInArm:
 	b	.L_08021448
 	.4byte ProjectionWork
 	.4byte Data_030011f0
-	.4byte IwramDivFX
+	.4byte syIWRAMDivFX
 .L_08021430:
 	ldr	pc, [pc, #-4]
-	.4byte IwramSqrt
+	.4byte syIWRAMSquart
 .L_08021438:
 	ldr	pc, [pc, #-4]
-	@ The Japanese edition's second stub reaches IwramSqrt, as its first
+	@ The Japanese edition's second stub reaches syIWRAMSquart, as its first
 	@ does, so the transform's call takes a square root there; the later
-	@ editions reach IwramTransformVector.
+	@ editions reach syIWRAMTransformVector.
 	.ifdef TLA_EDITION_JA
-	.4byte IwramSqrt
+	.4byte syIWRAMSquart
 	.else
-	.4byte IwramTransformVector
+	.4byte syIWRAMTransformVector
 	.endif
 .L_08021440:
 	str	sl, [r7]

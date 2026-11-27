@@ -1,29 +1,26 @@
-/* @file */
 /* Mercury Lighthouse and its entrance, once the pool is woken: standing at the
- */
-/* pool's heart (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader
- */
-/* three lights, shown as a column of light over them. Each hop into the pool */
-/* (the floor's region, its cell behavior) spends one, and a light comes to */
-/* hold the leader up where they land. A hop within the pool with no light left
- */
-/* sinks the leader, who is put back at the heart. */
-/* CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP takes the lights away, and */
-/* Retreat removes the column. */
+   pool's heart (METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the
+   leader three lights, shown as a column of light over them. Each hop into the
+   pool (the floor's region, its metatile behavior) spends one, and a light
+   comes to hold the leader up where they land. A hop within the pool with no
+   light left sinks the leader, who is put back at the heart.
+   METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP takes the lights away, and
+   Retreat removes the column. */
 
-/* A charging spark rises a pixel a frame for this many frames, its scale */
-/* following half a turn of sine. */
+/* A charging spark rises a pixel a frame for this many frames, its scale
+   following half a turn of sine. */
 #define SPARK_RISE_FRAMES 32
 
-/* An actor script call for a charging spark: it rises with the leader, */
-/* swelling and shrinking, and is released after SPARK_RISE_FRAMES. */
-static s32 scMercuryLighthouseRiseSpark(ACTOR *effect) {
+/* An actor script call for a charging spark: it rises with the leader, swelling
+   and shrinking, and is released after SPARK_RISE_FRAMES. */
+static Bool scMercuryLighthouseRiseSpark(ACTOR *effect)
+{
 	ACTOR *anchor = (ACTOR *)effect->watchedActor;
-	s16 step = ++effect->tmr;
-	FIXED scale;
+	Sint16 step = ++effect->tmr;
+	FIXED  scale;
 
 	if(step >= SPARK_RISE_FRAMES) {
-		return 0;
+		return FALSE;
 	}
 
 	scale = sySin(step * (TRIG_TURN / 2 / SPARK_RISE_FRAMES));
@@ -32,48 +29,51 @@ static s32 scMercuryLighthouseRiseSpark(ACTOR *effect) {
 	effect->x.fixed = anchor->x.fixed;
 	effect->y.fixed += toFIXED(1);
 	effect->z.fixed = anchor->z.fixed;
-	return 1;
+	return TRUE;
 }
 
-/* An actor script call for the light that flies ahead to a hop's landing */
-/* cell: it grows to three quarters of its size over 16 frames. */
-static s32 scMercuryLighthouseGrowLight(ACTOR *actor) {
-	s16 frame;
+/* An actor script call for the light that flies ahead to a hop's landing
+   metatile: it grows to three quarters of its size over 16 frames. */
+static Bool scMercuryLighthouseGrowLight(ACTOR *actor)
+{
+	Sint16 frame;
 
 	frame = ++actor->tmr;
 	if(frame > 16) {
-		return 0;
+		return FALSE;
 	}
-	actor->scaleX = frame * 3 * (FIXED_ONE / 64);
-	actor->scaleY = frame * 3 * (FIXED_ONE / 64);
-	return 1;
+	actor->scaleX = frame * 3 * (toFIXED(1) / 64);
+	actor->scaleY = frame * 3 * (toFIXED(1) / 64);
+	return TRUE;
 }
 
-/* An actor script call for a light that goes out: it swells to half as large */
-/* again over 16 frames before its script releases it. */
-static s32 scMercuryLighthouseSwellLightOut(ACTOR *actor) {
-	s16 frame;
+/* An actor script call for a light that goes out: it swells to half as large
+   again over 16 frames before its script releases it. */
+static Bool scMercuryLighthouseSwellLightOut(ACTOR *actor)
+{
+	Sint16 frame;
 
 	frame = ++actor->tmr;
 	if(frame > 16) {
-		return 0;
+		return FALSE;
 	}
-	actor->scaleX = frame * (FIXED_ONE / 32) + FIXED_ONE;
-	actor->scaleY = frame * (FIXED_ONE / 32) + FIXED_ONE;
-	return 1;
+	actor->scaleX = frame * (toFIXED(1) / 32) + toFIXED(1);
+	actor->scaleY = frame * (toFIXED(1) / 32) + toFIXED(1);
+	return TRUE;
 }
 
-/* An actor script call for the column of light: it glides after the leader, */
-/* an eighth of the way each frame up to 2 pixels, and flickers white every */
-/* two frames. */
-static s32 scMercuryLighthouseFollowLeader(ACTOR *actor) {
+/* An actor script call for the column of light: it glides after the leader, an
+   eighth of the way each frame up to 2 pixels, and flickers white every two
+   frames. */
+static Sint32 scMercuryLighthouseFollowLeader(ACTOR *actor)
+{
 	ACTOR *leader;
-	FIXED targetZ;
-	FIXED targetX;
-	s32 deltaX;
-	s32 deltaZ;
-	s32 distance;
-	s32 moveDistance;
+	FIXED  targetZ;
+	FIXED  targetX;
+	Sint32 deltaX;
+	Sint32 deltaZ;
+	Sint32 distance;
+	Sint32 moveDistance;
 
 	actor->speedLimit = toFIXED(2);
 	leader = (ACTOR *)actor->watchedActor;
@@ -84,11 +84,11 @@ static s32 scMercuryLighthouseFollowLeader(ACTOR *actor) {
 	actor->tgtY = ACTOR_NO_TARGET;
 	actor->tgtZ = ACTOR_NO_TARGET;
 
-	/* Measure in whole pixels first; use fixed-point precision near the leader.
-	 */
+	/* Measure in whole pixels first; use fixed-point precision near the
+	   leader. */
 	deltaX = (targetX - actor->x.fixed) / toFIXED(1);
 	deltaZ = (targetZ - actor->z.fixed) / toFIXED(1);
-	distance = (u16)sySquart(deltaX * deltaX + deltaZ * deltaZ);
+	distance = (Uint16)sySquartIWRAM(deltaX * deltaX + deltaZ * deltaZ);
 	deltaX = targetX - actor->x.fixed;
 	deltaZ = targetZ - actor->z.fixed;
 	distance <<= 16;
@@ -102,8 +102,7 @@ static s32 scMercuryLighthouseFollowLeader(ACTOR *actor) {
 	if(distance < toFIXED(1) / 4) {
 		actor->x.fixed = targetX;
 		actor->z.fixed = targetZ;
-	}
-	else {
+	} else {
 		if(distance > moveDistance) {
 			deltaX = syMulFX(syDivFX(distance, deltaX), moveDistance);
 			deltaZ = syMulFX(syDivFX(distance, deltaZ), moveDistance);
@@ -113,7 +112,7 @@ static s32 scMercuryLighthouseFollowLeader(ACTOR *actor) {
 	}
 
 	{
-		SPR *sprite = actor->spr;
+		SPR			  *sprite = actor->spr;
 		SPR_ANIMATION *entry = sprite->entries[0];
 
 		entry->colMode = ((FrameCount >> 1) & 1) * SPRITE_COLOR_WHITE;
@@ -122,16 +121,17 @@ static s32 scMercuryLighthouseFollowLeader(ACTOR *actor) {
 	return 1;
 }
 
-/* A pair of charging sparks rises around the leader, one in front and one */
-/* behind, with SE_PSYNERGY_START. */
-static void scMercuryLighthouseSpawnSparkPair(void) {
+/* A pair of charging sparks rises around the leader, one in front and one
+   behind, with SE_PSYNERGY_START. */
+static void scMercuryLighthouseSpawnSparkPair(void)
+{
 	ACTOR *leader;
 	ACTOR *spark;
-	SPR *sprite;
+	SPR	  *sprite;
 
 	leader = FieldStateWork->actors[MainRoutineStateWork.leaderActorId];
-	spark = syFieldActorCreate(SPRITE_GOLDEN_RINGS, leader->x.fixed,
-							   leader->y.fixed, leader->z.fixed);
+	spark = syFieldActorCreate(
+		SPRITE_GOLDEN_RINGS, leader->x.fixed, leader->y.fixed, leader->z.fixed);
 	if(spark != NULL) {
 		spark->groundHeight = leader->groundHeight;
 		sprite = spark->spr;
@@ -145,8 +145,8 @@ static void scMercuryLighthouseSpawnSparkPair(void) {
 			sprite->image.pri = 1;
 		}
 	}
-	spark = syFieldActorCreate(SPRITE_GOLDEN_RINGS, leader->x.fixed,
-							   leader->y.fixed, leader->z.fixed);
+	spark = syFieldActorCreate(
+		SPRITE_GOLDEN_RINGS, leader->x.fixed, leader->y.fixed, leader->z.fixed);
 	if(spark != NULL) {
 		spark->groundHeight = leader->groundHeight;
 		sprite = spark->spr;
@@ -163,31 +163,29 @@ static void scMercuryLighthouseSpawnSparkPair(void) {
 	sySndPlay(SE_PSYNERGY_START);
 }
 
-/* CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, the pool's heart: the column of
- */
-/* light appears over the leader if it is not there, and grows a stage with */
-/* each pair of sparks, half a second apart, up to three lights. The column's */
-/* cell is where a sinking leader comes back to; FLAG_NO_ENCOUNTERS_IN_AREA is
- */
-/* set while the leader has lights. */
-void scMercuryLighthouseChargeLights(void) {
+/* METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, the pool's heart: the column
+   of light appears over the leader if it is not there, and grows a stage with
+   each pair of sparks, half a second apart, up to three lights. The column's
+   metatile is where a sinking leader comes back to; FLAG_NO_ENCOUNTERS_IN_AREA
+   is set while the leader has lights. */
+void scMercuryLighthouseChargeLights(void)
+{
 	MERCURY_LIGHTHOUSE_LIGHTS *state;
-	ACTOR *leader;
-	ACTOR *pillar;
-	ACTOR *actor;
-	s32 step;
+	ACTOR					  *leader;
+	ACTOR					  *pillar;
+	ACTOR					  *actor;
+	Sint32					   step;
 
 	state = *(MERCURY_LIGHTHOUSE_LIGHTS **)HEAP_SLOT_BLOCK(
 		HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
 	leader = FieldStateWork->actors[MainRoutineStateWork.leaderActorId];
 	if(state->levels < 0 || state->levels > 2)
 		return;
-	fdEventStart();
+	fdScriptStart();
 	pillar = state->pillar;
 	if(pillar == NULL) {
-		actor =
-			syFieldActorCreate(SPRITE_GOLDEN_RINGS, leader->x.fixed,
-							   leader->y.fixed + toFIXED(24), leader->z.fixed);
+		actor = syFieldActorCreate(SPRITE_GOLDEN_RINGS, leader->x.fixed,
+			leader->y.fixed + toFIXED(24), leader->z.fixed);
 		if(actor != NULL) {
 			SPR *sprite = actor->spr;
 
@@ -203,8 +201,7 @@ void scMercuryLighthouseChargeLights(void) {
 			actor->sprStorageKind = 0;
 			state->pillar = actor;
 			pillar = actor;
-		}
-		else {
+		} else {
 			pillar = state->pillar;
 		}
 	}
@@ -215,15 +212,16 @@ void scMercuryLighthouseChargeLights(void) {
 		fdActorSelectAnimation(pillar, GOLDEN_RINGS_ANIMATION_COLUMN(step + 1));
 	}
 	state->levels = 3;
-	state->tgtX = (pillar->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-	state->tgtZ = (pillar->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+	state->tgtX = (pillar->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	state->tgtZ = (pillar->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	gmFlagSet(FLAG_NO_ENCOUNTERS_IN_AREA);
-	fdEventEnd();
+	fdScriptEnd();
 }
 
-/* CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP: the leader loses their lights, */
-/* and the column swells and fades away. */
-void scMercuryLighthouseLoseLights(void) {
+/* METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP: the leader loses their
+   lights, and the column swells and fades away. */
+void scMercuryLighthouseLoseLights(void)
+{
 	MERCURY_LIGHTHOUSE_LIGHTS *state =
 		*(MERCURY_LIGHTHOUSE_LIGHTS **)HEAP_SLOT_BLOCK(
 			HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
@@ -245,32 +243,32 @@ void scMercuryLighthouseLoseLights(void) {
 	}
 }
 
-/* Pushing against the pool's edge */
-/* (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, */
-/* CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER and */
-/* CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP): the leader hops two cells the */
-/* way the pad points, unless the hop leads into the pool without a light or is
- */
-/* blocked. A hop into the pool spends a light, which flies ahead to the */
-/* landing cell; the column shrinks a stage, or goes with the last light. */
-/* Landing in the pool with no light under them, the leader sinks until a key */
-/* is pressed after half a second, and is put back at the heart. */
-void scMercuryLighthouseHopAcrossPool(void) {
-	FIELD_STATE *fieldState;
+/* Pushing against the pool's edge
+   (METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART,
+   METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER and
+   METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP): the leader hops two
+   metatiles the way the pad points, unless the hop leads into the pool without
+   a light or is blocked. A hop into the pool spends a light, which flies ahead
+   to the landing metatile; the column shrinks a stage, or goes with the last
+   light. Landing in the pool with no light under them, the leader sinks until a
+   key is pressed after half a second, and is put back at the heart. */
+void scMercuryLighthouseHopAcrossPool(void)
+{
+	FIELD_STATE				  *fieldState;
 	MERCURY_LIGHTHOUSE_LIGHTS *state;
-	ACTOR *actor;
-	ACTOR *source;
-	ACTOR *obj;
-	SPR *sprite;
-	MAP_GRID_CELL *from;
-	MAP_GRID_CELL *to;
-	u8 saved;
-	u8 *flags;
-	s32 angle;
-	u32 keys;
-	s32 n;
-	s32 frame;
-	FIELD_COORDINATE pos[3];
+	ACTOR					  *actor;
+	ACTOR					  *source;
+	ACTOR					  *obj;
+	SPR						  *sprite;
+	MAP_GRID_METATILE		  *from;
+	MAP_GRID_METATILE		  *to;
+	Uint8					   saved;
+	Uint8					  *flags;
+	Sint32					   angle;
+	Uint32					   keys;
+	Sint32					   n;
+	Sint32					   frame;
+	FIELD_COORDINATE		   pos[3];
 
 	state = *(MERCURY_LIGHTHOUSE_LIGHTS **)HEAP_SLOT_BLOCK(
 		HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
@@ -278,23 +276,23 @@ void scMercuryLighthouseHopAcrossPool(void) {
 	actor = fieldState->actors[MainRoutineStateWork.leaderActorId];
 	flags = &actor->motionFlg;
 	saved = *flags;
-	keys = KeysHeld;
+	keys = PerData;
 	angle = MercuryLighthouse_MoveAngles[DPAD_INDEX(keys)];
-	if((s16)MercuryLighthouse_MoveAngles[DPAD_INDEX(keys)] == -1)
+	if((Sint16)MercuryLighthouse_MoveAngles[DPAD_INDEX(keys)] == -1)
 		return;
-	pos[0].fixed = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+	pos[0].fixed = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	pos[1].fixed = actor->groundHeight;
-	pos[2].fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-	from = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) * MAPGRID_SIZE) +
-						  pos[0].fixed / toFIXED(16)];
+	pos[2].fixed = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	from = &MAPGRID_METATILES[(pos[2].fixed / toFIXED(16) * MAPGRID_SIZE) +
+		pos[0].fixed / toFIXED(16)];
 	syVectorAddPolarOffset(toFIXED(32), angle, &pos[0].fixed);
-	to = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) * MAPGRID_SIZE) +
-						pos[0].fixed / toFIXED(16)];
+	to = &MAPGRID_METATILES[(pos[2].fixed / toFIXED(16) * MAPGRID_SIZE) +
+		pos[0].fixed / toFIXED(16)];
 	if(from->behavior != state->poolBehavior &&
-	   to->behavior == state->poolBehavior && state->levels == 0)
+		to->behavior == state->poolBehavior && state->levels == 0)
 		return;
 
-	fdEventStart();
+	fdScriptStart();
 	if(syFieldActorCheckMovementCollision(actor, (FIELD_POS *)pos) != 0)
 		return;
 	obj = state->stepEff;
@@ -307,7 +305,7 @@ void scMercuryLighthouseHopAcrossPool(void) {
 	if(to->behavior == state->poolBehavior && state->levels != 0) {
 		source = state->pillar;
 		obj = syFieldActorCreate(SPRITE_GOLDEN_RINGS, source->x.fixed,
-								 source->y.fixed, source->z.fixed);
+			source->y.fixed, source->z.fixed);
 		if(obj != NULL) {
 			sprite = obj->spr;
 			obj->groundHeight = source->groundHeight;
@@ -317,8 +315,8 @@ void scMercuryLighthouseHopAcrossPool(void) {
 			obj->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 			obj->speedLimit = toFIXED(4);
 			obj->acceleration = toFIXED(2);
-			syFieldActorSetMoveTargetFX(obj, pos[0].fixed, pos[1].fixed,
-										pos[2].fixed);
+			syFieldActorSetMoveTargetFX(
+				obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
 			if(sprite != NULL) {
 				fdSprStartAnimation(sprite, GOLDEN_RINGS_ANIMATION_POOL_LIGHT);
 				sprite->flg = 0;
@@ -331,10 +329,9 @@ void scMercuryLighthouseHopAcrossPool(void) {
 			fdActorRelease(state->pillar);
 			state->pillar = NULL;
 			gmFlagClear(FLAG_NO_ENCOUNTERS_IN_AREA);
-		}
-		else if(state->pillar != NULL) {
-			fdActorSelectAnimation(state->pillar,
-								   GOLDEN_RINGS_ANIMATION_COLUMN(n));
+		} else if(state->pillar != NULL) {
+			fdActorSelectAnimation(
+				state->pillar, GOLDEN_RINGS_ANIMATION_COLUMN(n));
 		}
 	}
 	fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
@@ -346,8 +343,8 @@ void scMercuryLighthouseHopAcrossPool(void) {
 	actor->velY = toFIXED(4);
 	*flags &= ACTOR_JUMP_KEEPS_MOTION;
 	fdActorSetSprFlags(actor, 0);
-	fdActorMoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part[0].integer,
-							 pos[2].part[0].integer);
+	fdActorMoveToAndWaitById(
+		ACTOR_PARTY_LEADER, pos[0].part[0].integer, pos[2].part[0].integer);
 	fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 	sySynch(2);
 	if(to->behavior != state->poolBehavior)
@@ -362,7 +359,7 @@ void scMercuryLighthouseHopAcrossPool(void) {
 		for(frame = 0;; frame++) {
 			if((frame & 15) == 0)
 				scMercuryLighthouseSpawnRipple(actor);
-			if(frame > 31 && KeysPressed != 0)
+			if(frame > 31 && PerPush != 0)
 				break;
 			sySynch(1);
 		}
@@ -373,37 +370,37 @@ void scMercuryLighthouseHopAcrossPool(void) {
 		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
 	}
 	state->rippleTmr = 0;
-	fdEventEnd();
+	fdScriptEnd();
 	fieldState->walkingDistance +=
 		syMulFX(fieldState->walkingDistanceScale, toFIXED(32));
 }
 
-/* CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER: while the leader stands there,
- */
-/* a blue ripple spreads from him every 10 to 39 frames. */
-void scMercuryLighthouseRippleAroundLeader(void) {
+/* METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER: while the leader stands
+   there, a blue ripple spreads from him every 10 to 39 frames. */
+void scMercuryLighthouseRippleAroundLeader(void)
+{
 	MERCURY_LIGHTHOUSE_LIGHTS *state;
-	ACTOR *leader;
+	ACTOR					  *leader;
 
 	state = *(MERCURY_LIGHTHOUSE_LIGHTS **)HEAP_SLOT_BLOCK(
 		HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
 	leader = FieldStateWork->actors[MainRoutineStateWork.leaderActorId];
 	if(state->rippleTmr != 0) {
 		state->rippleTmr--;
-	}
-	else {
+	} else {
 		scMercuryLighthouseSpawnRipple(leader);
 		state->rippleTmr = (syRandomBelow(30)) + 10;
 	}
 }
 
-/* Retreat (PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST)): */
-/* remove the column of light. */
-static void scMercuryLighthouseRemoveColumnOnRetreat(void) {
+/* Retreat (PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST)):
+   remove the column of light. */
+static void scMercuryLighthouseRemoveColumnOnRetreat(void)
+{
 	MERCURY_LIGHTHOUSE_LIGHTS **published =
-		syHeapSlotAllocEwram(HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, 4);
+		syHeapSlotAllocEWRAM(HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, 4);
 	MERCURY_LIGHTHOUSE_LIGHTS *state;
-	ACTOR *pillar;
+	ACTOR					  *pillar;
 
 	if(published == NULL)
 		return;

@@ -1,27 +1,27 @@
-@ Why Tile_Decompress4bpp is assembly:
+@ Why mnTileDecompress4bpp is assembly:
 @ push saves r5/r6 without lr and rrx consumes reader carry.
-@ Why Tile_Decompress4bppLoop is assembly:
+@ Why mnTileDecompress4bppLoop is assembly:
 @ Conditional rrxs consumes the shift carry in the bit reader.
-@ Why Tile_ExpandMasked is assembly:
+@ Why mnTileExpandMasked is assembly:
 @ push saves r5-r9/sl without lr.
 .syntax unified
 .text
 	.arm
-	.global Tile_Decompress4bpp
-Tile_Decompress4bpp:
+	.global mnTileDecompress4bpp
+mnTileDecompress4bpp:
 	push	{r5, r6}
 	add	r5, pc, #40
 	ldm	r5, {r2, r3}
 	mov	r5, #15
 	mov	ip, #1
 	ands	r6, r0, #3
-	beq Tile_Decompress4bppLoop
+	beq mnTileDecompress4bppLoop
 	rsbs	r6, ip, r6, lsl #3
 	bic	r0, r0, #3
 	ldr	ip, [r0], #4
 	rrx	ip, ip
 	lsr	ip, ip, r6
-	b Tile_Decompress4bppLoop
+	b mnTileDecompress4bppLoop
 .syntax unified
 	.section .rodata,"a",%progbits
 	.arm
@@ -40,8 +40,8 @@ Tile_Decompress4bpp:
 	lsrs	ip, ip, #1
 	bcs .Lcode
 	strb	r6, [r1], #1
-	.global Tile_Decompress4bppLoop
-Tile_Decompress4bppLoop:
+	.global mnTileDecompress4bppLoop
+mnTileDecompress4bppLoop:
 	lsrs	ip, ip, #1
 	bcc .Lfront
 .Lcode:
@@ -197,8 +197,8 @@ Tile_Decompress4bppLoop:
 .syntax unified
 	.section .text.decompress_4bpp_loop,"ax",%progbits
 	.arm
-	.global Tile_ExpandMasked
-Tile_ExpandMasked:
+	.global mnTileExpandMasked
+mnTileExpandMasked:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	sl, pc, #132
 	ldm	sl, {r4, r6, r7}

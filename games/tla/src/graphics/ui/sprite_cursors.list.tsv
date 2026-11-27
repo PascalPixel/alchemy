@@ -1,4 +1,0 @@
-name	file	section	align	left	pad
-Menu_CursorLeftActorTiles	sprite_cursors/left.8bpp8x16		4		
-Menu_CursorActorTiles	sprite_cursors/right.8bpp8x16				
-Menu_AnimatedCursorTiles	sprite_cursors/spin.8bpp16x16				

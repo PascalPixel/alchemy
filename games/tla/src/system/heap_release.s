@@ -1,17 +1,17 @@
 @ Why assembly: syHeapSlotRelease branches on lsrs flags without cmp/cmn
 @ (lsrs r3, r1, #22 / beq); alchemy-gcc's Thumb cbranchsi4 and
 @ negated_cbranchsi4 always emit a compare.
-@ Why Irq_HaltOnGamePakRemoved is assembly:
+@ Why syHaltOnGamePakRemoved is assembly:
 @ swi 0x30000 is a BIOS software interrupt (Halt), and b . - 8 branches back
 @ to the same swi.
-@ Why Irq_StopOnGamePakRemoved is assembly:
+@ Why syStopOnGamePakRemoved is assembly:
 @ it has a reachable exit with no return or interworking branch: when
 @ (IE & IF & 0x2000) is zero, its final bne falls straight into the Thumb
 @ syInit, the next object's first function, while the CPU is still
 @ in ARM mode. Neither a procedure return nor a tail call can have this linkage.
 @ syHeapRelease, as syHeapSlotRelease before it:
 @ hand-written, scratching r4 for the 0x03000000 base. The ARM after it is
-@ ☀️'s heap_release.s tail: a halt (SWI 3) and Irq_StopOnGamePakRemoved,
+@ ☀️'s heap_release.s tail: a halt (SWI 3) and syStopOnGamePakRemoved,
 @ which every edition here keeps (☀️ only DE and ES), falling through on
 @ no cartridge interrupt as shipped.
 	.section .text,"ax",%progbits
@@ -55,12 +55,12 @@ AlchemyUncredited_08013172:
 	.2byte	0x0000
 AlchemyUncreditedEnd_08013172:
 	.arm
-	.global Irq_HaltOnGamePakRemoved
-Irq_HaltOnGamePakRemoved:
+	.global syHaltOnGamePakRemoved
+syHaltOnGamePakRemoved:
 	swi	0x30000
 	b	. - 8
-	.global Irq_StopOnGamePakRemoved
-Irq_StopOnGamePakRemoved:
+	.global syStopOnGamePakRemoved
+syStopOnGamePakRemoved:
 	mov	ip, #0x04000000
 	add	r3, ip, #0x200
 	ldr	r2, [r3]

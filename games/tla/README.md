@@ -20,13 +20,13 @@ Two of Camelot's ideas are worth meeting first. Once they click, the rest
 of the code opens up.
 
 1. [The main routine](../../docs/tla/system.md#the-main-routine). One function runs the
-   game from switch-on to switch-off, one sequence at a time: the field, a
+   game from switch-on to switch-off, one mode at a time: the field, a
    battle, Lucky Dice, Lucky Wheels or Super Lucky Dice.
-2. [Waiting and tasks](../../docs/tla/system.md#waiting-and-tasks). No loop at the top
+2. [Waiting and events](../../docs/tla/system.md#waiting-and-events). No loop at the top
    turns once a frame. The frame loop is inside one function, `sySynch()`:
    code that needs time to pass calls it, and it runs that many frames of
    the game and returns. What it runs each frame is a short list of
-   functions, the tasks. This is the part that will surprise you.
+   functions, the events. This is the part that will surprise you.
 
 ## What runs
 
@@ -36,12 +36,12 @@ of the code opens up.
 - [The battle engine](../../docs/tla/battle.md) runs one fight, turn by turn,
   from its opening to the experience and coins.
 - [Lucky Dice, Lucky Wheels and Super Lucky Dice](src/field/README.md#lucky-dice-lucky-wheels-and-super-lucky-dice)
-  are the three games in Contigo, each a sequence of its own.
+  are the three games in Contigo, each a mode of its own.
 
 ## What they all share
 
 - [The system library](../../docs/tla/system.md) is start-up, the main routine,
-  tasks, overlays and [saving](../../docs/tla/system.md#saving).
+  events, overlays and [saving](../../docs/tla/system.md#saving).
 - [The menu engine](../../docs/tla/interface.md) is the windows, the menus and
   the shops.
 - [Sound](src/sound/README.md) is the music and how it comes back after a

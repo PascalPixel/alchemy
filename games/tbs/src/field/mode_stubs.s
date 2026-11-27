@@ -1,0 +1,200 @@
+@ Sounds, field Psynergy, actors and field effect lifecycles.
+	.include "games/tbs/include/edition.inc"
+	.include "games/tbs/src/system/stub_table.inc"
+	.global Stubs_Overworld
+Stubs_Overworld:
+	stub fdModeRunStub, fdModeRun
+	stub gmMainRoutineRunStub, gmMainRoutineRun
+	stub fdScriptWaitStub, fdScriptWait
+	stub fdScriptStartStub, fdScriptStart
+	stub fdScriptEndStub, fdScriptEnd
+	unnamed_stub fdScriptRunActorUpdateAndWait
+	stub fdScriptAppendActorPlacementsStub, fdScriptAppendActorPlacements
+	stub fdAssignViewFlagsStub, fdAssignViewFlags
+	stub fdScriptSetCuesStub, fdScriptSetCues
+	stub fdScriptAddPartyMemberStub, fdScriptAddPartyMember
+	stub fdScriptAddPartyMemberPairStub, fdScriptAddPartyMemberPair
+	stub fdPartyRemoveMemberRestoredStub, fdPartyRemoveMemberRestored
+	stub fdPartyInventoryGiveItemStub, fdPartyInventoryGiveItem
+	unnamed_stub fdInventoryTryAddAndReturnMember
+	stub fdScriptAskYesNoWithActorAnimationStub, fdScriptAskYesNoWithActorAnimation
+	stub fdPartyLearnAbilityStub, fdPartyLearnAbility
+	stub fdActorGetByIdStub, fdActorGetById
+	stub fdActorReleaseByIdStub, fdActorReleaseById
+	stub fdActorSetSpeedParmsStub, fdActorSetSpeedParms
+	stub fdActorSetMovementTypeByIdStub, fdActorSetMovementTypeById
+	stub fdActorWaitForScriptEndByIdStub, fdActorWaitForScriptEndById
+	stub fdActorStopStub, fdActorStop
+	stub fdActorSetMovementTypeAndWaitByIdStub, fdActorSetMovementTypeAndWaitById
+	stub fdActorSetDestinationByIdStub, fdActorSetDestinationById
+	stub fdActorMoveToAndWaitByIdStub, fdActorMoveToAndWaitById
+	stub fdActorWalkToByIdStub, fdActorWalkToById
+	stub fdActorWalkToAndWaitByIdStub, fdActorWalkToAndWaitById
+	stub fdActorCenterOnColumnStub, fdActorCenterOnColumn
+	stub fdActorSetDestinationOffsetByIdStub, fdActorSetDestinationOffsetById
+	stub fdActorWaitForMoveByIdStub, fdActorWaitForMoveById
+	stub fdActorSetHorizontalPosWithTerrainStub, fdActorSetHorizontalPosWithTerrain
+	unnamed_stub fdActorSetPosWithTerrain
+	stub fdActorSetAnimationByIdStub, fdActorSetAnimationById
+	stub fdActorSetAnimationSpeedByIdStub, fdActorSetAnimationSpeedById
+	stub fdActorSetAnimationAndWaitStub, fdActorSetAnimationAndWait
+	stub fdActorWaitForAnimationChangeStub, fdActorWaitForAnimationChange
+	unnamed_stub fdActorNoOperation
+	stub fdActorJumpStub, fdActorJump
+	stub fdActorStartRepeatedMotionStub, fdActorStartRepeatedMotion
+	stub fdActorRunRepeatedMotionStub, fdActorRunRepeatedMotion
+	stub fdActorJumpDownLedgeStub, fdActorJumpDownLedge
+	stub fdActorFaceActorByIdStub, fdActorFaceActorById
+	stub fdActorTurnToFaceEachOtherStub, fdActorTurnToFaceEachOther
+	stub fdActorConfigureSprColStub, fdActorConfigureSprCol
+	stub fdActorSetSprColStub, fdActorSetSprCol
+	stub fdActorWatchAndStartScriptStub, fdActorWatchAndStartScript
+	stub fdScriptSetMessageIdStub, fdScriptSetMessageId
+	stub fdMessageShowAtActorStub, fdMessageShowAtActor
+	stub fdScriptShowMessageAndWaitStub, fdScriptShowMessageAndWait
+	stub fdScriptShowMessageThenWaitStub, fdScriptShowMessageThenWait
+	stub fdScriptAskYesNoAndShowResponseStub, fdScriptAskYesNoAndShowResponse
+	unnamed_stub fdScriptNoOperationCallback
+	unnamed_stub fdScriptShowSpeakerMessage
+	unnamed_stub fdScriptForwardShowMessageAtPos
+	unnamed_stub fdScriptShowMessageAtPos
+	stub fdActorFaceDirectionByIdStub, fdActorFaceDirectionById
+	unnamed_stub fdActorClearDestinationAndStand
+	unnamed_stub fdActorClosePortrait
+	stub fdScriptShowTwoMessagesAndWaitStub, fdScriptShowTwoMessagesAndWait
+	stub fdMessageSetVoiceFromActorStub, fdMessageSetVoiceFromActor
+	stub fdActorSetSprPriorityStub, fdActorSetSprPriority
+	stub fdActorShowEmoteByIdStub, fdActorShowEmoteById
+	stub fdEffectSetAttachedStub, fdEffectSetAttached
+	stub fdActorCopyGraphicsStub, fdActorCopyGraphics
+	stub fdCameraFollowActorStub, fdCameraFollowActor
+	stub fdCameraSetSpeedParmsStub, fdCameraSetSpeedParms
+	stub fdCameraMoveWithinMapBoundsStub, fdCameraMoveWithinMapBounds
+	stub fdCameraWaitForArrivalStub, fdCameraWaitForArrival
+	stub fdCameraMoveToActorByIdStub, fdCameraMoveToActorById
+	stub fdCameraGetActorStub, fdCameraGetActor
+	stub fdMapGridSetCameraBoundsStub, fdMapGridSetCameraBounds
+	stub fdScriptSetDestinationStub, fdScriptSetDestination
+	unnamed_stub fdScriptSetRestartPoint
+	stub fdScriptSetExitRequestStub, fdScriptSetExitRequest
+	stub fdRequestBattleFromEncounterTableStub, fdRequestBattleFromEncounterTable
+	stub fdRequestDjinnBattleStub, fdRequestDjinnBattle
+	stub fdScriptSetAfterBattleDestinationStub, fdScriptSetAfterBattleDestination
+	stub fdScriptSetDefeatDestinationStub, fdScriptSetDefeatDestination
+	stub fdScriptLeaveForStub, fdScriptLeaveFor
+	stub fdActorGetScreenPosStub, fdActorGetScreenPos
+	stub fdActorGetCueMetatileAheadOfCurrentStub, fdActorGetCueMetatileAheadOfCurrent
+	stub fdPartyGetCharacterSprStub, fdPartyGetCharacterSpr
+	unnamed_stub fdPsynergySteerPushedTarget
+	unnamed_stub fdPsynergyStartCloak
+	stub fdTryJumpForwardStub, fdTryJumpForward
+	stub fdClimbDownStub, fdClimbDown
+	stub fdClimbUpStub, fdClimbUp
+	stub fdLeaderStopMovingStub, fdLeaderStopMoving
+	stub fdWeatherStartRainStub, fdWeatherStartRain
+	stub fdWeatherStartLightningStub, fdWeatherStartLightning
+	stub fdWeatherStopLightningStub, fdWeatherStopLightning
+	stub fdWeatherLastLightningStub, fdWeatherLastLightning
+	stub fdWeatherResumeLightningStub, fdWeatherResumeLightning
+	stub fdWeatherStartLightningFlashStub, fdWeatherStartLightningFlash
+	unnamed_stub fdMotesStart
+	stub fdEffectInitSparklesStub, fdEffectInitSparkles
+	stub fdScreenTransitionStartHeldWindowStub, fdScreenTransitionStartHeldWindow
+	unnamed_stub fdScreenTransitionStartDissolveHeld
+	unnamed_stub fdScreenTransitionStart
+	unnamed_stub fdScreenTransitionFinish
+	unnamed_stub fdScreenTransitionHideBackgrounds
+	unnamed_stub fdPaletteFadeInit
+	stub fdPaletteFadeSetTargetStub, fdPaletteFadeSetTarget
+	stub fdPaletteFadeSetSourceStub, fdPaletteFadeSetSource
+	unnamed_stub fdPaletteFadeCalcSteps
+	stub fdPaletteFadeStartInterpolationStub, fdPaletteFadeStartInterpolation
+	unnamed_stub fdPaletteFadeRelease
+	unnamed_stub fdPaletteFadeSetBackdrop
+	stub fdScriptStartScreenTransitionStub, fdScriptStartScreenTransition
+	stub fdScriptFinishScreenTransitionStub, fdScriptFinishScreenTransition
+	stub fdScriptWaitTransitionFramesStub, fdScriptWaitTransitionFrames
+	stub scLineScrollInitWaveStub, scLineScrollInitWave
+	stub fdLineScrollStopStub, fdLineScrollStop
+	stub fdChestOpenAndShowItemStub, fdChestOpenAndShowItem
+	stub fdItemDispShowPictureStub, fdItemDispShowPicture
+	stub fdItemDispShowItemStub, fdItemDispShowItem
+	unnamed_stub fdTreasureSpotGetActor
+	unnamed_stub fdTreasureSpotOpenChest
+	unnamed_stub fdTreasureSpotCloseChest
+	unnamed_stub fdTreasureSpotShowOpened
+	stub fdTreasureSpotSetActorPosStub, fdTreasureSpotSetActorPos
+	unnamed_stub fdTreasureSpotHide
+	stub fdTreasureSpotMoveLeaderAwayStub, fdTreasureSpotMoveLeaderAway
+	stub fdWorldMapFreezeStub, fdWorldMapFreeze
+	stub fdWorldMapUnfreezeStub, fdWorldMapUnfreeze
+	unnamed_stub fdActorResetForLeader
+	unnamed_stub fdScriptSpawnActorPlacements
+	unnamed_stub fdActorReleaseAtIndex
+	stub fdActorLookupStub, fdActorLookup
+	stub fdEffectStartGroundMaskStub, fdEffectStartGroundMask
+	unnamed_stub fdGroundMaskSuspend
+	unnamed_stub fdGroundMaskResume
+	stub fdPsynergyRunHandlerStub, fdPsynergyRunHandler
+	stub fdPsynergyLoadResourcesStub, fdPsynergyLoadResources
+	stub fdPsynergySetupActorPairStub, fdPsynergySetupActorPair
+	stub fdPsynergyStopCasterUpdateStub, fdPsynergyStopCasterUpdate
+	stub fdPsynergyEndStub, fdPsynergyEnd
+	stub fdPsynergyStartCastStub, fdPsynergyStartCast
+	unnamed_stub fdPsynergyFadeToCastCol
+	unnamed_stub fdPsynergyFadeFromCastCol
+	stub fdEndBusyAndRevealStub, fdEndBusyAndReveal
+	stub fdPsynergyStartMindReadWaveStub, fdPsynergyStartMindReadWave
+	stub fdPsynergyStopMindReadWaveStub, fdPsynergyStopMindReadWave
+	unnamed_stub fdPsynergyGreyMindReadPalette
+	stub fdPsynergyRestoreMindReadPaletteStub, fdPsynergyRestoreMindReadPalette
+	stub fdHasPsynergyCueStub, fdHasPsynergyCue
+	stub fdHasItemCueStub, fdHasItemCue
+	stub fdSprShareVRAMCacheEntryStub, fdSprShareVRAMCacheEntry
+	stub fdBattleBackgroundGetSelectedStub, fdBattleBackgroundGetSelected
+	unnamed_stub fdEffectSpawnMoveHand
+	unnamed_stub fdEffectGrowHandAndWait
+	unnamed_stub fdEffectBurstHand
+	stub fdPartyAddPpStub, fdPartyAddPp
+	unnamed_stub fdPartyAddHp
+	unnamed_stub fdVRAMCacheCountFreeBlocks
+	stub fdYesNoAskStub, fdYesNoAsk
+	unnamed_stub fdEncounterGetFormationAtSlot
+	unnamed_stub fdEncounterGetDjinnFormation
+	stub gmPlayMusicStub, gmPlayMusic
+	stub fdDjinnJoinPartyStub, fdDjinnJoinParty
+	stub fdParticleUpdateStub, fdParticleUpdate
+	stub fdParticleHasPendingTargetStub, fdParticleHasPendingTarget
+	stub fdParticleSetPosStub, fdParticleSetPos
+	stub fdParticleSetAnimationStub, fdParticleSetAnimation
+	stub fdParticleSetCallbackStub, fdParticleSetCallback
+	stub fdParticleInitStub, fdParticleInit
+	stub fdEffectClearOwnedSlotStub, fdEffectClearOwnedSlot
+	stub fdCameraWorldToScreenStub, fdCameraWorldToScreen
+	stub fdSpeakerGetVoiceStub, fdSpeakerGetVoice
+	stub fdPartyClearUnusableShortcutsStub, fdPartyClearUnusableShortcuts
+	stub fdEffectInitSlotsStub, fdEffectInitSlots
+	stub fdEffectReleaseSlotsStub, fdEffectReleaseSlots
+	unnamed_stub fdActorClearOutOfBounds
+	unnamed_stub fdActorRespawn
+	stub fdActorLaunchFromLeaderStub, fdActorLaunchFromLeader
+	stub fdActorWalkByByIdStub, fdActorWalkByById
+	stub fdActorWalkByAndWaitByIdStub, fdActorWalkByAndWaitById
+	stub fdActorWatchAndSetScriptStub, fdActorWatchAndSetScript
+	stub fdPsynergyHaltActorStub, fdPsynergyHaltActor
+	unnamed_stub fdPsynergyResumeHaltedActor
+	unnamed_stub fdActorFindBySpr
+	unnamed_stub fdActorGetSprById
+	stub fdActorSnapshotStub, fdActorSnapshot
+	stub fdActorRestoreStub, fdActorRestore
+	stub fdWorldMapStartZoomStub, fdWorldMapStartZoom
+	stub fdScriptWaitForZoomTransitionStub, fdScriptWaitForZoomTransition
+	stub fdAreaGetNameIndexStub, fdAreaGetNameIndex
+	stub fdActorSetMovementTypeStub, fdActorSetMovementType
+	stub fdQueueMusicStub, fdQueueMusic
+	stub fdPlayQueuedMusicStub, fdPlayQueuedMusic
+	stub fdPartyGetCharacterSprForChildhoodStub, fdPartyGetCharacterSprForChildhood
+	@ German, French, Spanish and Italian
+	.if FIELD_MENU_STOPS_REVEAL_SPARKLES
+	stub fdEffectReleaseRevealSparklesStub, fdEffectReleaseRevealSparkles
+	.endif

@@ -1,8 +1,9 @@
-/* Readies a vent's puff: it stops, is drawn behind the actors around it, its */
-/* sprite at OBJ `priority`, shadowless and tinted SPRITE_COLOR_RED_TINT, and */
-/* breaks up (the dust cloud's animation 2) without spinning or growing until */
-/* Dust_BurstScript releases it, 44 frames on. */
-void fdActorStartScripted(ACTOR *actor, s32 priority) {
+/* Readies a vent's puff: it stops, is drawn behind the actors around it, its
+   sprite at OBJ `priority`, shadowless and tinted SPRITE_COLOR_RED_TINT, and
+   breaks up (the dust cloud's animation 2) without spinning or growing until
+   Dust_BurstScript releases it, 44 frames on. */
+void scActorStartScripted(ACTOR *actor, Sint32 priority)
+{
 	actor->motionFlg = 0;
 	actor->collisionFlg = 0;
 	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;

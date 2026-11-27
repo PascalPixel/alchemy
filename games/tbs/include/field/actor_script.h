@@ -1,18 +1,16 @@
 #ifndef ALCHEMY_ACTOR_SCRIPT_H
 #define ALCHEMY_ACTOR_SCRIPT_H
 
-/* @file */
-/* Actor scripts: one s32 command word, then its operands, as */
-/* ActorScript_CommandTable runs them. Each macro expands to the words of */
-/* one command. The script stores positions and speeds in 16.16 fixed point; */
-/* its macros take plain pixels and decimal speeds and convert them. */
+/* Actor scripts: one Sint32 command word, then its operands, as
+   ActorScript_CommandTable runs them. Each macro expands to the words of one
+   command. The script stores positions and speeds in 16.16 fixed point; its
+   macros take plain pixels and decimal speeds and convert them. */
 
 #include "fixed_math.h"
 #include "types.h"
 
-/* The script commands, numbered by their place in */
-/* ActorScript_CommandTable; the SC_ macros below write each with its */
-/* operands. */
+/* The script commands, numbered by their place in ActorScript_CommandTable; the
+   SC_ macros below write each with its operands. */
 typedef enum ACTOR_SCRIPT_COMMAND {
 	SCRIPT_COMMAND_WAIT = 0,
 	SCRIPT_COMMAND_SYNC = 1,
@@ -53,51 +51,51 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 	SCRIPT_COMMAND_COUNT = 36
 } ACTOR_SCRIPT_COMMAND;
 
-/* The highest script word run as a command, an index of */
-/* ActorScript_CommandTable; a larger one is stepped over. */
+/* The highest script word run as a command, an index of
+   ActorScript_CommandTable; a larger one is stepped over. */
 #define SCRIPT_COMMAND_MAX 63
 
-#define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) /* Branch destination */
-/* A jump's operand: the label SC_LABEL(n), which fdActorScriptFindLabel */
-/* matches without bit 30. */
-#define SC_TO(n)   (s32)(0xc0000000 | (n) << 16)
-#define SC_TOP	   0	 /* Script start */
-#define SC_FOREVER 65535 /* An SC_LOOP count that never runs out */
+#define SC_LABEL(n) (Sint32)(0x80000000 | (n) << 16) /* Branch destination */
+/* A jump's operand: the label SC_LABEL(n), which fdActorScriptFindLabel matches
+   without bit 30. */
+#define SC_TO(n)	(Sint32)(0xc0000000 | (n) << 16)
+#define SC_TOP		0	  /* Script start */
+#define SC_FOREVER	65535 /* An SC_LOOP count that never runs out */
 
 #define SC_WAIT(n) SCRIPT_COMMAND_WAIT, (n) /* Wait n frames. */
 #define SC_SYNC	   SCRIPT_COMMAND_SYNC		/* Wait for arrival. */
 /* Set position. */
-#define SC_POSITION(x, y, z)                                                   \
+#define SC_POSITION(x, y, z) \
 	SCRIPT_COMMAND_POSITION, toFIXED(x), toFIXED(y), toFIXED(z)
 /* Move toward the target. */
 #define SC_MOVE(x, y, z) SCRIPT_COMMAND_MOVE, toFIXED(x), toFIXED(y), toFIXED(z)
 /* Move by an offset. */
-#define SC_MOVE_BY(x, y, z)                                                    \
+#define SC_MOVE_BY(x, y, z) \
 	SCRIPT_COMMAND_MOVE_BY, toFIXED(x), toFIXED(y), toFIXED(z)
-#define SC_FACE_WATCHED                                                        \
+#define SC_FACE_WATCHED \
 	SCRIPT_COMMAND_FACE_WATCHED /* Face the watched actor. */
 /* Move to the watched actor. */
-#define SC_MOVE_TO_WATCHED SCRIPT_COMMAND_MOVE_TO_WATCHED
-/* Move toward the actor's position plus an offset that is never filled in; */
-/* the operands are skipped unread. */
+#define SC_MOVE_TO_WATCHED	SCRIPT_COMMAND_MOVE_TO_WATCHED
+/* Move toward the actor's position plus an offset that is never filled in; the
+   operands are skipped unread. */
 #define SC_MOVE_LOCAL(a, b) SCRIPT_COMMAND_MOVE_LOCAL, (a), (b)
-/* Wander to random points base to base + range pixels away, within limit */
-/* pixels of home; SC_WANDER_HOME heads home when outside it. */
-#define SC_WANDER(base, range, limit)                                          \
+/* Wander to random points base to base + range pixels away, within limit pixels
+   of home; SC_WANDER_HOME heads home when outside it. */
+#define SC_WANDER(base, range, limit) \
 	SCRIPT_COMMAND_WANDER, toFIXED(base), toFIXED(range), toFIXED(limit)
-#define SC_WANDER_HOME(base, range, limit)                                     \
+#define SC_WANDER_HOME(base, range, limit) \
 	SCRIPT_COMMAND_WANDER_HOME, toFIXED(base), toFIXED(range), toFIXED(limit)
 /* Follow the watched actor to 16 pixels. */
 #define SC_APPROACH_WATCHED SCRIPT_COMMAND_APPROACH_WATCHED
 #define SC_CAMERA			SCRIPT_COMMAND_CAMERA /* Follow the leader. */
-/* Jump to label to n - 1 times, so what lies between runs n times; loops */
-/* do not nest. */
-#define SC_LOOP(n, to) SCRIPT_COMMAND_LOOP, (n), (to)
-#define SC_JUMP(to)	   SCRIPT_COMMAND_JUMP, (to) /* Jump to label to. */
-#define SC_IF(to)	   SCRIPT_COMMAND_IF, (to) /* Branch if the result is true. */
-#define SC_IFNOT(to)                                                           \
-	SCRIPT_COMMAND_IFNOT, (to)	  /* Branch if the result is false. */
-#define SC_END SCRIPT_COMMAND_END /* Return to the main script. */
+/* Jump to label to n - 1 times, so what lies between runs n times; loops do not
+   nest. */
+#define SC_LOOP(n, to)		SCRIPT_COMMAND_LOOP, (n), (to)
+#define SC_JUMP(to)			SCRIPT_COMMAND_JUMP, (to) /* Jump to label to. */
+#define SC_IF(to)			SCRIPT_COMMAND_IF, (to) /* Branch if the result is true. */
+#define SC_IFNOT(to) \
+	SCRIPT_COMMAND_IFNOT, (to)				/* Branch if the result is false. */
+#define SC_END			 SCRIPT_COMMAND_END /* Return to the main script. */
 /* Test game flag f for SC_IF; ON, OFF and REV then set, clear or flip it. */
 #define SC_FLAG_CHECK(f) SCRIPT_COMMAND_FLAG_CHECK, (f)
 #define SC_FLAG_ON(f)	 SCRIPT_COMMAND_FLAG_ON, (f)
@@ -106,18 +104,18 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 #define SC_SET(w, v)	 SCRIPT_COMMAND_SET, (w), (v) /* Write a state value. */
 #define SC_ADD(w, v)	 SCRIPT_COMMAND_ADD, (w), (v) /* Add to a state value. */
 /* Test whether state value w equals v. */
-#define SC_CMP(w, v) SCRIPT_COMMAND_CMP, (w), (v)
+#define SC_CMP(w, v)	 SCRIPT_COMMAND_CMP, (w), (v)
 /* Set the speed limit, in pixels a frame: SC_SPEED(0.8). */
-#define SC_SPEED(speed) SC_SET(SW_SPEED, toFIXED(speed))
+#define SC_SPEED(speed)	 SC_SET(SW_SPEED, toFIXED(speed))
 /* Set the acceleration, in pixels a frame per frame. */
-#define SC_ACCELERATION(acceleration)                                          \
+#define SC_ACCELERATION(acceleration) \
 	SC_SET(SW_ACCELERATION, toFIXED(acceleration))
 #define SC_PLAYER SCRIPT_COMMAND_PLAYER /* Hand the actor to the player. */
 /* Move 8 pixels at a time by the direction pad. */
-#define SC_KEYS SCRIPT_COMMAND_KEYS
-#define SC_WORLD                                                               \
+#define SC_KEYS	  SCRIPT_COMMAND_KEYS
+#define SC_WORLD \
 	SCRIPT_COMMAND_WORLD /* Hand it to the player on the World Map. */
-#define SC_RELEASE SCRIPT_COMMAND_RELEASE /* Free the actor's slot. */
+#define SC_RELEASE		SCRIPT_COMMAND_RELEASE /* Free the actor's slot. */
 /* Switch the sprites to animation v. */
 #define SC_ANIMATION(v) SCRIPT_COMMAND_ANIMATION, (v)
 #define SC_NOP(v)		SCRIPT_COMMAND_NOP, (v) /* Skip its operand. */
@@ -126,13 +124,13 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 /* Hide the sprites (ACTOR_SPRITE_NONE). */
 #define SC_HIDE_SPRITES SCRIPT_COMMAND_HIDE_SPRITES
 /* Show one sprite (ACTOR_SPRITE_ONE). */
-#define SC_SHOW_SPRITE SCRIPT_COMMAND_SHOW_SPRITE
+#define SC_SHOW_SPRITE	SCRIPT_COMMAND_SHOW_SPRITE
 /* Call fn with the actor each frame until it returns zero. */
-#define SC_CALL(fn)	 SCRIPT_COMMAND_CALL, (s32)(fn)
-#define SC_KEY_COUNT SCRIPT_COMMAND_KEY_COUNT /* Check the configured keys. */
+#define SC_CALL(fn)		SCRIPT_COMMAND_CALL, (Sint32)(fn)
+#define SC_KEY_COUNT	SCRIPT_COMMAND_KEY_COUNT /* Check the configured keys. */
 
-/* Script state values for SC_SET, SC_ADD and SC_CMP: the actor's fields, by */
-/* their place in ActorScript_OperandHandlerTable. */
+/* Script state values for SC_SET, SC_ADD and SC_CMP: the actor's fields, by
+   their place in ActorScript_OperandHandlerTable. */
 typedef enum ACTOR_SCRIPT_VALUE {
 	SW_SCRIPT = 0,
 	SW_CURSOR = 1,
@@ -166,11 +164,11 @@ typedef enum ACTOR_SCRIPT_VALUE {
 	SW_PAUSED = 32,
 	SW_REPEAT = 33,
 	SW_WAIT = 34,
-	/* ACTOR.tmr, the parameter an actor script reads; a scene's own */
-	/* scripts set it to 1 as they end, for the code that waits on them. */
+	/* ACTOR.tmr, the parameter an actor script reads; a scene's own scripts set
+	   it to 1 as they end, for the code that waits on them. */
 	SW_TIMER = 35,
-	/* ACTOR.userValue, scene scratch: an event sets it for the scene code */
-	/* that reads or waits on it. */
+	/* ACTOR.userValue, scene scratch: a script sets it for the scene code that
+	   reads or waits on it. */
 	SW_USER_VALUE = 36,
 	SW_WATCHED_ACTOR = 37, /* the actor it follows or faces */
 	SW_HOOK = 38,
@@ -180,8 +178,8 @@ typedef enum ACTOR_SCRIPT_VALUE {
 
 #include "field/script_operands.h"
 
-/* Commands receive the actor's interpreter view. A nonzero result continues */
-/* its script this frame; zero waits until the next frame. */
+/* Commands receive the actor's interpreter view. A nonzero result continues its
+   script this frame; zero waits until the next frame. */
 extern const SCRIPT_COMMAND ActorScript_CommandTable[47];
 
 #endif

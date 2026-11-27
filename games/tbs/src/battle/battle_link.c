@@ -1,22 +1,15 @@
-/* @file */
-/* Link battles: the parties and Djinn exchanged, and the turn handshake. */
-/* Part of battle.c. */
+/* Link battles: the parties and Djinn exchanged, and the turn handshake. Part
+   of battle.c. */
 
 #include "battle_internal.h"
 
-/* The longest "Enemy" label the opponent's names take before them; the */
-/* European editions also put a space after it. */
-#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
-	LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define NAME_LIMIT		  7
-#define APPEND_NAME_SPACE 1
-#else
-#define NAME_LIMIT		  4
-#define APPEND_NAME_SPACE 0
-#endif
+/* The longest "Enemy" label the opponent's names take before them; the European
+   editions also put a space after it. */
+#define NAME_LIMIT		  WHEN(SPACED_ENEMY_NAME_PREFIX, 7, 4)
+#define APPEND_NAME_SPACE WHEN(SPACED_ENEMY_NAME_PREFIX, 1, 0)
 
-/* What a link battle sends of each party member, and of the Djinn recovery */
-/* list, in bytes. */
+/* What a link battle sends of each party member, and of the Djinn recovery
+   list, in bytes. */
 typedef enum LINK_PARTY_PACKET_SIZE {
 	/* A UNIT (BATTLE_UNIT_SIZE, 332 bytes) and the 8 after it. */
 	LINK_PARTY_UNIT_BYTES = 340,
@@ -24,22 +17,22 @@ typedef enum LINK_PARTY_PACKET_SIZE {
 	LINK_PARTY_OFFER_BYTES = 320
 } LINK_PARTY_PACKET_SIZE;
 
-/* Unused: receives the opponent's party into the enemy units, "Enemy" before */
-/* each name, then its Djinn recovery list. Returns how many party members */
-/* came. */
-s32 btLinkBattleReceiveParty(void) {
-	u16 label[24];
-	void *buffer;
-	UNIT *opponent;
-	s32 memberCount;
-	s32 partySlot;
-	s32 labelLength;
-	s32 i;
+/* Unused: receives the opponent's party into the enemy units, "Enemy" before
+   each name, then its Djinn recovery list. Returns how many party members
+   came. */
+Sint32 btLinkBattleReceiveParty(void)
+{
+	Uint16 label[24];
+	void  *buffer;
+	UNIT  *opponent;
+	Sint32 memberCount;
+	Sint32 partySlot;
+	Sint32 labelLength;
+	Sint32 i;
 
 	/* XXX (no evidence): what the block is for; each party member is received
-	 */
-	/* straight into its enemy unit, and the block is only freed. */
-	buffer = syHeapAllocEwram(LINK_PARTY_UNIT_BYTES);
+	   straight into its enemy unit, and the block is only freed. */
+	buffer = syHeapAllocEWRAM(LINK_PARTY_UNIT_BYTES);
 	memberCount = 0;
 	for(partySlot = 0; partySlot < LINK_PARTY_SIZE; partySlot++) {
 		opponent = gmUnitGetStub(partySlot + FIRST_ENEMY_UNIT);
@@ -53,9 +46,8 @@ s32 btLinkBattleReceiveParty(void) {
 		sySynch(2);
 
 		/* Measure the label (at most NAME_LIMIT + 1 characters), shift the name
-		 */
-		/* right to make room for it, then write it in; the name's end is cut.
-		 */
+		   right to make room for it, then write it in; the name's end is
+		   cut. */
 		mnMessageDecodeRawUnboundedStub(MsgEnemyLabel, label);
 		for(i = 0; i <= NAME_LIMIT; i++) {
 			if(label[i] == 0)
@@ -77,7 +69,7 @@ s32 btLinkBattleReceiveParty(void) {
 	syHeapRelease(buffer);
 
 	/* The recovery packet follows all three party places. */
-	buffer = syHeapAllocEwram(LINK_PARTY_OFFER_BYTES);
+	buffer = syHeapAllocEWRAM(LINK_PARTY_OFFER_BYTES);
 	if(sySerialStartReceive(
 		   gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_OPPONENT)) != -1) {
 		sySerialWaitForReceive();
@@ -90,22 +82,23 @@ s32 btLinkBattleReceiveParty(void) {
 /* BATTLE_STATE.opponentSlots for a party unit the opponent was not sent. */
 #define OPPONENT_SLOT_NONE 255
 
-/* Unused: sends the party, then the Djinn recovery list, each unit under the */
-/* id the opponent knows it by. */
-UNREAD_RESULT btLinkBattleSendParty(void) {
-	u8 *buffer;
-	BATTLE_STATE *battle;
-	s32 j;
+/* Unused: sends the party, then the Djinn recovery list, each unit under the id
+   the opponent knows it by. */
+UNREAD_RESULT btLinkBattleSendParty(void)
+{
+	Uint8				*buffer;
+	BATTLE_STATE		*battle;
+	Sint32				 j;
 	DJINN_RECOVERY_LIST *list;
-	s32 size;
-	s32 count;
-	s32 i;
-	u16 unitIds[8];
+	Sint32				 size;
+	Sint32				 count;
+	Sint32				 i;
+	Uint16				 unitIds[8];
 
 	size = LINK_PARTY_UNIT_BYTES;
-	buffer = syHeapAllocEwram(size);
+	buffer = syHeapAllocEWRAM(size);
 	{
-		s32 noSlot = OPPONENT_SLOT_NONE;
+		Sint32 noSlot = OPPONENT_SLOT_NONE;
 
 		battle = BattleStateWork;
 		for(i = 0; i < PARTY_UNIT_COUNT; i++)
@@ -135,7 +128,7 @@ UNREAD_RESULT btLinkBattleSendParty(void) {
 		/* The Djinn recovery list, its units renumbered for the opponent. */
 		size = LINK_PARTY_OFFER_BYTES;
 		syHeapRelease(buffer);
-		buffer = syHeapAllocEwram(size);
+		buffer = syHeapAllocEWRAM(size);
 		IWRAM_COPY_WORDS(
 			buffer, gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY), size);
 		list = &((DJINN_RECOVERY_TABLE *)buffer)->list;
@@ -151,56 +144,57 @@ UNREAD_RESULT btLinkBattleSendParty(void) {
 	}
 }
 
-/* Copies a name's first four characters, an underscore for each zero, and */
-/* returns a pointer to the end. UB: the copy is on the stack; UBFIX keeps it.
- */
-UNUSED u8 *btTextCopyFourCharsUnderscored(u32 unusedA, u32 unusedB,
-										  u16 *source) {
-#ifdef UBFIX
-	static u8 sBuffer[5];
-	u8 *base = sBuffer;
+/* Copies a name's first four characters, an underscore for each zero, and
+   returns a pointer to the end. UB: the copy is on the stack; UBFIX keeps
+   it. */
+UNUSED Uint8 *btTextCopyFourCharsUnderscored(
+	Uint32 unusedA, Uint32 unusedB, Uint16 *source)
+{
+#if FIX_RETURNED_STACK_BUFFER
+	static Uint8 sBuffer[5];
+	Uint8		*base = sBuffer;
 #else
-	u8 buffer[5];
-	u8 *base = buffer;
+	Uint8  buffer[5];
+	Uint8 *base = buffer;
 #endif
-	u32 fill = '_';
-	u8 *current = base;
-	u8 *dst = current;
-	s32 i;
+	Uint32 fill = '_';
+	Uint8 *current = base;
+	Uint8 *dst = current;
+	Sint32 i;
 
 	for(i = 0; i < 4; i++) {
-		u32 value = *source;
+		Uint32 value = *source;
 
 		*dst = value;
 		source++;
 		dst++;
-		if((u8)value == 0)
+		if((Uint8)value == 0)
 			*current = fill;
 		current++;
 	}
 	base[4] = 0;
-	/* BUG: the original buffer is on the stack, gone once this returns. */
-	/* UBFIX keeps the result until the next call in private scratch storage. */
+	/* BUG: the original buffer is on the stack, gone once this returns. UBFIX
+	   keeps the result until the next call in private scratch storage. */
 	return dst;
 }
 
-/* In a link battle, shows the "EXEC" signature and waits up to 30 frames for */
-/* the other console to show it too. Returns -1 when the link fails, else 0. */
-s32 btLinkBattleWaitSync(void) {
+/* In a link battle, shows the "EXEC" signature and waits up to 30 frames for
+   the other console to show it too. Returns -1 when the link fails, else 0. */
+Sint32 btLinkBattleWaitSync(void)
+{
 	BATTLE_STATE *battle = BattleStateWork;
-	u16 *peer;
-	u16 *signature;
-	s32 missed = 0;
-	s32 i;
+	Uint16		 *peer;
+	Uint16		 *signature;
+	Sint32		  missed = 0;
+	Sint32		  i;
 
 	if(battle->isLink != 0) {
-		u32 other = battle->linkSide ^ 1;
+		Uint32 other = battle->linkSide ^ 1;
 
 		/* The signature starts a peer's payload, after its record's four bytes
-		 * of */
-		/* block state. */
-		peer = (u16 *)SerialPeerPayloads[other].payload;
-		signature = (u16 *)SerialTransfer.payload;
+		   of block state. */
+		peer = (Uint16 *)SerialPeerPayloads[other].payload;
+		signature = (Uint16 *)SerialTransfer.payload;
 		if(battle->linkPaused == 0) {
 			/* The other console is in step once its second pair reads "EC". */
 			signature[0] = 'E';
@@ -210,12 +204,11 @@ s32 btLinkBattleWaitSync(void) {
 
 			for(i = 0; i < 30; i++) {
 				if((LinkStatusWork & LINK_BOTH_CONNECTED) !=
-				   LINK_BOTH_CONNECTED) {
+					LINK_BOTH_CONNECTED) {
 					missed++;
 					if(missed > LINK_MAX_MISSED_FRAMES)
 						return -1;
-				}
-				else {
+				} else {
 					missed = 0;
 					if(signature[2] == peer[2] && signature[3] == peer[3])
 						return 0;
@@ -228,27 +221,27 @@ s32 btLinkBattleWaitSync(void) {
 	return 0;
 }
 
-/* In a link battle, after each action and each turn, steps both consoles */
-/* through the same handshake of signatures. Returns -1 when the link fails or
- */
-/* the steps disagree, else 0. */
-s32 btLinkBattleSyncTurn(void) {
+/* In a link battle, after each action and each turn, steps both consoles
+   through the same handshake of signatures. Returns -1 when the link fails or
+   the steps disagree, else 0. */
+Sint32 btLinkBattleSyncTurn(void)
+{
 	BATTLE_STATE *battle = BattleStateWork;
-	u16 *peer;
-	u16 *signature;
-	s32 missed = 0;
+	Uint16		 *peer;
+	Uint16		 *signature;
+	Sint32		  missed = 0;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	UNUSED u16 spare[10];
+	UNUSED Uint16 spare[10];
 
 	if(battle->isLink != 0) {
-		peer = (u16 *)SerialPeerPayloads[battle->linkSide ^ 1].payload;
-		signature = (u16 *)SerialTransfer.payload;
+		peer = (Uint16 *)SerialPeerPayloads[battle->linkSide ^ 1].payload;
+		signature = (Uint16 *)SerialTransfer.payload;
 		if(battle->linkPaused != 0)
 			return -1;
 
-		/* Publish "ex"/"TU" while both sides still agree on the earlier phase.
-		 */
+		/* Publish "ex"/"TU" while both sides still agree on the earlier
+		   phase. */
 		signature[0] = 'e';
 		signature[1] = 'x';
 		signature[4] = 'T';
@@ -258,13 +251,12 @@ s32 btLinkBattleSyncTurn(void) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
 				if(++missed > LINK_MAX_MISSED_FRAMES)
 					return -1;
-			}
-			else {
+			} else {
 				missed = 0;
 				if(signature[2] != peer[2] || signature[3] != peer[3])
 					return -1;
 				if(signature[0] == peer[0] && signature[1] == peer[1] &&
-				   signature[4] == peer[4] && signature[5] == peer[5])
+					signature[4] == peer[4] && signature[5] == peer[5])
 					break;
 			}
 			sySynch(1);
@@ -277,8 +269,7 @@ s32 btLinkBattleSyncTurn(void) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
 				if(++missed > LINK_MAX_MISSED_FRAMES)
 					return -1;
-			}
-			else {
+			} else {
 				missed = 0;
 				if(signature[4] != peer[4] || signature[5] != peer[5])
 					return -1;
@@ -297,13 +288,12 @@ s32 btLinkBattleSyncTurn(void) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
 				if(++missed > LINK_MAX_MISSED_FRAMES)
 					return -1;
-			}
-			else {
+			} else {
 				missed = 0;
 				if(signature[6] != peer[6] || signature[7] != peer[7])
 					return -1;
 				if(signature[0] == peer[0] && signature[1] == peer[1] &&
-				   signature[2] == peer[2] && signature[3] == peer[3])
+					signature[2] == peer[2] && signature[3] == peer[3])
 					break;
 			}
 			sySynch(1);
@@ -316,11 +306,10 @@ s32 btLinkBattleSyncTurn(void) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
 				if(++missed > LINK_MAX_MISSED_FRAMES)
 					return -1;
-			}
-			else {
+			} else {
 				missed = 0;
 				if(signature[0] != peer[0] || signature[1] != peer[1] ||
-				   signature[2] != peer[2] || signature[3] != peer[3])
+					signature[2] != peer[2] || signature[3] != peer[3])
 					return -1;
 				if(signature[4] == peer[4] && signature[5] == peer[5])
 					break;
@@ -335,8 +324,7 @@ s32 btLinkBattleSyncTurn(void) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
 				if(++missed > LINK_MAX_MISSED_FRAMES)
 					return -1;
-			}
-			else {
+			} else {
 				missed = 0;
 				if(peer[6] != 'r' || peer[7] != 'n')
 					break;
@@ -348,12 +336,13 @@ s32 btLinkBattleSyncTurn(void) {
 }
 
 /* Records the unit id the link opponent knows each party member by. */
-UNREAD_RESULT btPartyAssignOpponentSlots(void) {
-	u16 activeMembers[8];
+UNREAD_RESULT btPartyAssignOpponentSlots(void)
+{
+	Uint16		  activeMembers[8];
 	BATTLE_STATE *battle = BattleStateWork;
-	s32 partySize = btPartyPrepareMembers(activeMembers);
-	s32 memberSlot;
-	s32 unitId;
+	Sint32		  partySize = btPartyPrepareMembers(activeMembers);
+	Sint32		  memberSlot;
+	Sint32		  unitId;
 
 	for(memberSlot = 0; memberSlot < partySize; memberSlot++) {
 		unitId = activeMembers[memberSlot];
@@ -361,9 +350,10 @@ UNREAD_RESULT btPartyAssignOpponentSlots(void) {
 	}
 }
 
-/* Clears the first 16 bytes of the link transfer's payload, the eight */
-/* signature halfwords btLinkBattleWaitSync and btLinkBattleSyncTurn write. */
-s32 btClearSerialTransferPayload(void) {
+/* Clears the first 16 bytes of the link transfer's payload, the eight signature
+   halfwords btLinkBattleWaitSync and btLinkBattleSyncTurn write. */
+Sint32 btClearSerialTransferPayload(void)
+{
 	return syWordsClear(SerialTransfer.payload, 16);
 }
 

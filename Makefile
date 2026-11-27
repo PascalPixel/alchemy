@@ -186,9 +186,12 @@ DEFINE := $(UPPER_$(GAME))_EDITION_$(UPPER_$(LANG))
 ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
-# One include path, as pret has: a header names its bank folder in its
-# path (#include "field/actor.h").
-INCLUDES := -Igames/$(GAME)/include
+# Two include paths: the game's own, then games/common for what both games
+# share, the development kit's code (#include "sdk/flash.h") and the headers
+# both have unchanged (features.h, stddef.h). A header names its bank folder
+# in its path, as pret's do (#include "field/actor.h"). The linker scripts
+# are preprocessed with the same two.
+INCLUDES := -Igames/$(GAME)/include -Igames/common
 
 # Game C: alchemy-gcc's GCC of July 2000, one option set per game;
 # ⚓️'s overlays swap -O2 for -Os below, by file and place in the build.
@@ -199,15 +202,12 @@ CFLAGS := $(CFLAGS_$(GAME)) $(INCLUDES) -D$(DEFINE)=1 -I$(BUILD)
 # The sound and flash libraries: pret's old_agbcc. ARM C: GCC 2.95.2.
 CPPFLAGS_ARM := -lang-c -nostdinc '-Acpu(arm)' '-Amachine(arm)' -D__CHAR_UNSIGNED__ -D__OPTIMIZE__ \
                 -D__ARM_ARCH_4T__ -D__APCS_32__ -D__ARMEL__ -Darm_elf -D__ELF__
-CPPFLAGS_AGBCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include -D__GNUC__=2 -D__GNUC_MINOR__=9 \
+CPPFLAGS_AGBCC := $(CPPFLAGS_ARM) $(INCLUDES) -D__GNUC__=2 -D__GNUC_MINOR__=9 \
                   -D__GNUC_PATCHLEVEL__=0 -D__THUMBEL__ -Dthumb -D__thumb__ -D$(DEFINE)=1 -I$(BUILD)
 CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) $(INCLUDES) \
                   -D__GNUC__=2 -D__GNUC_MINOR__=95 -D__GNUC_PATCHLEVEL__=2 -Darm -D__arm__ -D$(DEFINE)=1 -I$(BUILD)
-SOUND_C := games/tbs/src/sdk/sound/audio.c games/tbs/src/sdk/sound/tables.c games/tbs/src/sdk/sound/driver.c \
-           games/tla/src/sdk/sound/sound.c games/tla/src/sdk/sound/tables.c games/tla/src/sdk/sound/player_work_copy.c \
-           games/tla/src/sdk/sound/driver.c
-FLASH_C := $(addprefix games/tbs/src/sdk/flash/,flash.c sst.c atmel.c program_flash_sector.c) \
-           $(addprefix games/tla/src/sdk/flash/,flash.c sst.c atmel.c program_flash_sector.c)
+SOUND_C := $(addprefix games/common/sdk/sound/,sound.c tables.c driver.c) games/tla/src/sdk/sound/player_work_copy.c
+FLASH_C := $(addprefix games/common/sdk/flash/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm.c games/tbs/src/field/world_map_lines.c \
            games/tla/src/window/window_spans.c games/tla/src/window/glyph_arm.c games/tla/src/field/grid_outline.c \
            games/tla/src/field/world_map_lines.c
@@ -223,8 +223,8 @@ OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays.list
 # An overlay has no number here: that is its row in the resource directory.
 OVERLAY_LD := games/$(GAME)/src/system/overlay/overlay.ld
 OVERLAY_NAMES := $(shell sed -n 's/^\#\(el\)*if defined(OVERLAY_\([A-Za-z0-9]*\))$$/\2/p' $(OVERLAY_LD))
-LD_CPPFLAGS := -P -lang-asm -nostdinc -Igames/$(GAME)/include -D$(DEFINE)=1 $(if $(SHIFT),-DROM_SHIFT=$(SHIFT))
-LD_HEADERS := games/$(GAME)/include/edition.h games/$(GAME)/include/version.h
+LD_CPPFLAGS := -P -lang-asm -nostdinc $(INCLUDES) -D$(DEFINE)=1 $(if $(SHIFT),-DROM_SHIFT=$(SHIFT))
+LD_HEADERS := $(addprefix games/$(GAME)/include/,edition.h fixes.h) games/common/features.h
 LD_SCRIPT := $(BUILD)/ld/main.ld
 LDFLAGS := -T $(LD_SCRIPT)
 OVERLAY_SCRIPT = -T $(BUILD)/ld/overlay_$*.ld
@@ -623,7 +623,7 @@ test-linking: $(LINKING_EDITION)
 	      rows["overlay"] " overlays hold their own images: OK" }' $(LINKING_WAS).rows
 
 # Both games' C is as clang-format 20 writes it: earlier versions read a cast
-# such as (s32)&x as a bitwise and, whatever .clang-format's TypeNames say.
+# such as (Sint32)&x as a bitwise and, whatever .clang-format's TypeNames say.
 # Without clang-format-20 installed the check says so and is skipped.
 CLANG_FORMAT ?= clang-format-20
 FORMATTED := $(shell git ls-files 'games/*.c' 'games/*.h')

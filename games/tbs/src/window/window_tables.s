@@ -22,23 +22,24 @@ Font_ColorPens:
 	.byte 2, 1
 	.global Window_PartyColumnOffsets
 Window_PartyColumnOffsets:
+	.byte 0, 6, 12, 18, 24, -1, 1, 7, 13, 19, -1
+	.ifeq UNUSED_HP_PP_LABEL_TILES_DROPPED
+	@ Unused: the HP and PP labels' tile numbers, each with its second tile
+	@ and a 0, which nothing reads. The PP label's second tile is 5 where the
+	@ label is PV.
+	.byte 29, 30, 0, 31
 	.ifdef TBS_EDITION_ES
-	.byte 0, 6, 12, 18, 24, -1, 1, 7, 13, 19, -1, 29, 30, 0
-	.byte 31, 5, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 2, 1
-	.else
-	.ifdef TBS_EDITION_FR
-	.byte 0, 6, 12, 18, 24, -1, 1, 7, 13, 19, -1, 0, 0, 0
-	.byte 1, 2, 3, 3, 2, 1
+	.byte 5
 	.else
 	.ifdef TBS_EDITION_IT
-	.byte 0, 6, 12, 18, 24, -1, 1, 7, 13, 19, -1, 29, 30, 0
-	.byte 31, 5, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 2, 1
+	.byte 5
 	.else
-	.byte 0, 6, 12, 18, 24, -1, 1, 7, 13, 19, -1, 29, 30, 0
-	.byte 31, 30, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 2, 1
+	.byte 30
 	.endif
 	.endif
+	.byte 0, 0, 0
 	.endif
+	.byte 0, 0, 0, 1, 2, 3, 3, 2, 1
 	.global StatusScreen_LevelLetterString
 StatusScreen_LevelLetterString:
 	.ifdef TBS_EDITION_DE

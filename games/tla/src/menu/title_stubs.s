@@ -4,9 +4,9 @@
 	.include "games/tla/src/system/stub.s"
 	.global Stubs_Title
 Stubs_Title:
-	stub mnTitleShowTitleScrStub, mnTitleShowTitleScr
-	stub mnTitleAfterIntroNoOpStub, mnTitleAfterIntroNoOp
-	stub mnTitleBeforeLogosNoOpStub, mnTitleBeforeLogosNoOp
+	stub mnTitleShowTitleScreenStub, mnTitleShowTitleScreen
+	stub mnTitleAfterIntroNoOperationStub, mnTitleAfterIntroNoOperation
+	stub mnTitleBeforeLogosNoOperationStub, mnTitleBeforeLogosNoOperation
 	stub mnTitleShowPublisherLogoStub, mnTitleShowPublisherLogo
 	stub mnTitleShowCamelotLogoStub, mnTitleShowCamelotLogo
 	stub mnTitleIntroRunStub, mnTitleIntroRun

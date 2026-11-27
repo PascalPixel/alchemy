@@ -17,11 +17,9 @@ IrqHandlers:
 	.4byte 0	@ Serial
 	.4byte 0	@ Dma0
 	.4byte 0	@ Dma1
-	.ifndef TBS_EDITION_EN
-	.if EDITION_INTERNATIONAL
+	.if HALT_ON_CARTRIDGE_REMOVED
 	.global syHalt
 syHalt:
-	.endif
 	.endif
 	.4byte 0	@ Dma2
 	.4byte 0	@ Dma3
@@ -33,10 +31,9 @@ syHalt:
 	.global DefaultIrqHandlers
 DefaultIrqHandlers:
 	.rept 10
-	.4byte syIrqIgnore
+	.4byte syIRQIgnore
 	.endr
-	.ifndef TBS_EDITION_EN
-	.if EDITION_INTERNATIONAL
+	.if HALT_ON_CARTRIDGE_REMOVED
 	.section .text.irq_halt,"ax",%progbits
 	.arm
 .L_irq_halt:
@@ -44,11 +41,7 @@ DefaultIrqHandlers:
 	b	.L_irq_halt
 	.else
 	.section .rodata.irq_middle,"a",%progbits
-	.4byte syIrqIgnore, syIrqIgnore
-	.endif
-	.else
-	.section .rodata.irq_middle,"a",%progbits
-	.4byte syIrqIgnore, syIrqIgnore
+	.4byte syIRQIgnore, syIRQIgnore
 	.endif
 	.section .rodata.irq_tail,"a",%progbits
-	.4byte syInputHandleKeyInterrupt, syIrqIgnore
+	.4byte syInputHandleKeyInterrupt, syIRQIgnore

@@ -1,69 +1,72 @@
-/* @file */
-/* The walls of Berserk, Spasm and Recovery. */
-/* Part of battle_effect.c. */
+/* The walls of Berserk, Spasm and Recovery. Part of battle_effect.c. */
 
 #define MIRRORED_WALL_FRAMES 48 /* frames of the wall */
 
-/* The mirrored wall's modes (btEffectRunMirroredWall), each named for the */
-/* effect that plays it. */
+/* The mirrored wall's modes (btEffectRunMirroredWall), each named for the
+   effect that plays it. */
 typedef enum MIRRORED_WALL_MODE {
 	MIRRORED_WALL_SPASM,   /* actual size, a gentle shake for 32 frames */
 	MIRRORED_WALL_BERSERK, /* 1.25 times as wide, a hard shake for 8 frames */
-	MIRRORED_WALL_RECOVERY /* 1.25 times as wide, no shake, in the Fireball */
-						   /* colours */
+	/* 1.25 times as wide, no shake, in the Fireball colours */
+	MIRRORED_WALL_RECOVERY
 } MIRRORED_WALL_MODE;
 
-/* Builds the two usual canvas blitters, the lightening one and the additive */
-/* one, both drawing mirrored when flip is nonzero. */
-void btEffectBuildCanvasBlitters(s32 flip, BLITTER_PAIR out) {
+/* Builds the two usual canvas blitters, the lightening one and the additive
+   one, both drawing mirrored when flip is nonzero. */
+void btEffectBuildCanvasBlitters(Sint32 flip, BLITTER_PAIR out)
+{
 	if(flip == 0) {
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-							COMPOSITE_LIGHTEN);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 		out[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
-							COMPOSITE_ADDITIVE);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
 		out[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-	}
-	else {
+	} else {
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-							EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-							COMPOSITE_LIGHTEN);
+			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 		out[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-							EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-							COMPOSITE_ADDITIVE);
+			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
 		out[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 	}
 }
 
-/* The wall rises wide and shakes the screen hard. */
-/* */
-/* Abilities: Berserk. */
-void btEffectRunBerserk(BATTLE_EFFECT_PARM *args) {
+/* The wall rises wide and shakes the screen hard.
+
+   Abilities: Berserk. */
+void btEffectRunBerserk(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunMirroredWall(args, MIRRORED_WALL_BERSERK);
 }
-/* The wall rises with a long gentle shake and the recovery sound. */
-/* */
-/* Abilities: Spasm. */
-void btEffectRunSpasm(BATTLE_EFFECT_PARM *args) {
+
+/* The wall rises with a long gentle shake and the recovery sound.
+
+   Abilities: Spasm. */
+void btEffectRunSpasm(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunMirroredWall(args, MIRRORED_WALL_SPASM);
 }
-/* A wide wall of fire rises without shaking the screen. */
-/* */
-/* Abilities: Recovery. */
-void btEffectRunRecovery(BATTLE_EFFECT_PARM *args) {
+
+/* A wide wall of fire rises without shaking the screen.
+
+   Abilities: Recovery. */
+void btEffectRunRecovery(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunMirroredWall(args, MIRRORED_WALL_RECOVERY);
 }
+
 /* Raises a mirrored wall at the first target's feet while the target glows. */
-void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, s32 mode) {
+void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
+{
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	u8 *resource;
-	s32 x;
-	SCR_POINT screenPosition;
-	BLITTER_PAIR draw;
-	s32 frame;
-	s32 picture;
+	void				*canvas;
+	Uint8				*resource;
+	Sint32				 x;
+	SCREEN_POINT		 screenPosition;
+	BLITTER_PAIR		 draw;
+	Sint32				 frame;
+	Sint32				 picture;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -73,7 +76,7 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, s32 mode) {
 	resource = syResourceGetTableEntry(RESOURCE_EARTH_WALL_SHEET);
 	syWordsCopy(BG_PLTT, resource, SHEET_PALETTE_BYTES);
 	resource += SHEET_PALETTE_BYTES;
-	fdDecompressTaggedLz(resource, state->sheet);
+	syDecompressTaggedLZ(resource, state->sheet);
 	resource = syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET);
 	syWordsCopy(BG_PLTT, resource, SHEET_PALETTE_BYTES);
 	if(mode == MIRRORED_WALL_RECOVERY) {
@@ -86,42 +89,38 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, s32 mode) {
 		REG_BG2PA = Q_8_8(1);
 		x = CANVAS_SIZE / 2 - screenPosition.x;
 		REG_BG2X = x << 8;
-	}
-	else {
+	} else {
 		REG_BG2PA = Q_8_8(0.8);
 		x = (-screenPosition.x * 4) / 5 + CANVAS_SIZE / 2;
 		REG_BG2X = x << 8;
 	}
 
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-						COMPOSITE_LIGHTEN);
+	EFFECT_LOAD_BLITTER(
+		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 	draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-						EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-						COMPOSITE_LIGHTEN);
+		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 	draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
 	if(mode == MIRRORED_WALL_RECOVERY) {
 		state->shakeFrm = 0;
 		sySndPlayStub(SE_POWER_UP);
-	}
-	else if(mode == MIRRORED_WALL_BERSERK) {
+	} else if(mode == MIRRORED_WALL_BERSERK) {
 		state->shakeFrm = 8;
 		sySndPlayStub(SE_POWER_UP);
-	}
-	else {
+	} else {
 		state->shakeFrm = 32;
 	}
 
 	for(frame = 0; frame != MIRRORED_WALL_FRAMES; frame++) {
 		if(frame == 0) {
 			if(mode == MIRRORED_WALL_RECOVERY)
-				btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_WHITE,
-									TINT_KEEP, 0, 32);
+				btEffectTintBattler(
+					state->args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 32);
 			else
 				btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_RED_TINT,
-									TINT_KEEP, 0, 32);
+					TINT_KEEP, 0, 32);
 		}
 		if(frame == 24)
 			EFFECT_SHOW_DAMAGE(0);
@@ -129,23 +128,20 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, s32 mode) {
 			sySndPlayStub(SE_RECOVERY);
 
 		/* The wall rises through its first three pictures, then flickers
-		 * between */
-		/* the top two; each half is drawn mirrored about the canvas's middle.
-		 */
+		   between the top two; each half is drawn mirrored about the canvas's
+		   middle. */
 		if(frame <= 31) {
 			picture = frame / 4;
 			if(picture > 2)
 				picture = (picture & 1) + 1;
 			if(frame <= 27) {
-				draw[0](
-					canvas, state->sheet + MirroredWall_Pictures[picture],
+				draw[0](canvas, state->sheet + MirroredWall_Pictures[picture],
 					CANVAS_SIZE / 2 - MirroredWall_PictureWidths[picture],
 					(screenPosition.y - MirroredWall_PictureHeights[picture]) +
 						8,
 					MirroredWall_PictureWidths[picture],
 					MirroredWall_PictureHeights[picture]);
-				draw[1](
-					canvas, state->sheet + MirroredWall_Pictures[picture],
+				draw[1](canvas, state->sheet + MirroredWall_Pictures[picture],
 					CANVAS_SIZE / 2,
 					(screenPosition.y - MirroredWall_PictureHeights[picture]) +
 						8,

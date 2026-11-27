@@ -1,12 +1,12 @@
 @ Why assembly: the cartridge header: the BIOS starts the game at its first word, a branch
-@ to System_Entry inside a block of header data, a linkage no procedure-call
+@ to syEntry inside a block of header data, a linkage no procedure-call
 @ standard produces.
 	.include "games/tbs/include/edition.inc"
 	.section .rodata
 	.arm
 	.global Rom_Start
 Rom_Start:
-	b	System_Entry			@ Entry point
+	b	syEntry			@ Entry point
 	.space	156				@ The cartridge logo, written by gbafix
 	.ifdef TBS_EDITION_JA
 	.ascii	"OugonTaiyo_A"			@ Game title

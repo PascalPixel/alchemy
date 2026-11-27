@@ -1,49 +1,47 @@
-/* @file */
-/* Haunt, the orbiting spirals, and the evil spirits of Demon Night, Rumble, */
-/* Haunting and Thorny Grave. */
-/* Part of battle_effect.c. */
+/* Haunt, the orbiting spirals, and the evil spirits of Demon Night, Rumble,
+   Haunting and Thorny Grave. Part of battle_effect.c. */
 
 /* The spirits scattered at the start, up to 64 pixels from their centre. */
 #define HAUNT_SCATTERED 512
 #define HAUNT_SPIRITS	8  /* evil spirits drawn around each target */
 #define HAUNT_SLOTS		64 /* particles reserved for each target */
 
-/* Evil spirits (SkullSheet's skulls, smeared pink by the ripple) close in on */
-/* each target in turn. */
-/* */
-/* Abilities: Haunt. */
-void btEffectRunHaunt(BATTLE_EFFECT_PARM *args) {
-	s32 k;
-	SCR_POINT screenPosition;
-	FIXED point[3];
+/* Evil spirits (SkullSheet's skulls, smeared pink by the ripple) close in on
+   each target in turn.
+
+   Abilities: Haunt. */
+void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
+{
+	Sint32				 k;
+	SCREEN_POINT		 screenPosition;
+	FIXED				 point[3];
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	s32 frame;
-	DRAW_RECTANGLE draw[2];
-	BATTLE_CAMERA *camera;
-	s32 i;
+	void				*canvas;
+	Sint32				 frame;
+	DRAW_RECTANGLE		 draw[2];
+	BATTLE_CAMERA		*camera;
+	Sint32				 i;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_SKULL_SHEET, state->sheet, 1, 1);
 	syWordsCopyEntry((void *)BG_PLTT,
-					 syResourceGetTableEntry(RESOURCE_PINK_BURST_SHEET),
-					 SHEET_PALETTE_BYTES);
+		syResourceGetTableEntry(RESOURCE_PINK_BURST_SHEET),
+		SHEET_PALETTE_BYTES);
 	btEffectBuildCanvasBlitters(0, draw);
-	sySetEvent(btEffectArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
+	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
 	/* Scatter every spirit up to 64 pixels from its centre. */
 	for(i = 0; i != HAUNT_SCATTERED; i++) {
 		SET_POSITION(&PARTICLES[i], ((syRandom() & 255) - 127) << 15,
-					 ((syRandom() & 255) - 127) << 15,
-					 ((syRandom() & 255) - 127) << 15);
+			((syRandom() & 255) - 127) << 15, ((syRandom() & 255) - 127) << 15);
 	}
 	sySndPlayStub(SE_SWIRL);
 
 	for(frame = 0; frame != args->tgtCnt * 32 + 64; frame++) {
-		s32 *row;
+		Sint32 *row;
 
 		camera = Ram_HeapSlots->cameraState;
 		if(frame == 92)
@@ -55,8 +53,7 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args) {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
 				*row++ = CANVAS_WAVE_BG2X(
 					toFIXED(6) - sySin((frame + i) * (TRIG_TURN / 32)) * 6);
-		}
-		else {
+		} else {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
 				*row++ =
 					CANVAS_WAVE_BG2X(sySin((frame + i) * (TRIG_TURN / 32)) * 6);
@@ -72,30 +69,29 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args) {
 			if(frame > k * 32) {
 				syRotX(frame << 9);
 				if(frame == k * 32 + 32)
-					btEffectTintBattler(args->tgts[k], SPRITE_COLOR_WHITE,
-										POSE_DAMAGE, k, 32);
+					btEffectTintBattler(
+						args->tgts[k], SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 32);
 
 				/* Each spirit steps a part of its distance nearer the centre,
-				 * and is */
-				/* gone once it arrives. */
+				   and is gone once it arrives. */
 				for(i = 0; i != HAUNT_SPIRITS; i++) {
 					PARTICLE *spirit = &PARTICLES[k * HAUNT_SLOTS + i];
 
 					if(frame > (k * 8 + i) * 4) {
-						s32 x = (spirit->x >> 8) * (spirit->x >> 8);
-						s32 y = (spirit->y >> 8) * (spirit->y >> 8);
-						s32 z = (spirit->z >> 8) * (spirit->z >> 8);
-						s32 dist = sySquart(x + y + z) >> 8;
+						Sint32 x = (spirit->x >> 8) * (spirit->x >> 8);
+						Sint32 y = (spirit->y >> 8) * (spirit->y >> 8);
+						Sint32 z = (spirit->z >> 8) * (spirit->z >> 8);
+						Sint32 dist = sySquartIWRAM(x + y + z) >> 8;
 
 						if(dist != 0) {
-							btEffectPosProjectPoint((s32 *)spirit,
-													&screenPosition);
+							btEffectPosProjectPoint(
+								(Sint32 *)spirit, &screenPosition);
 							screenPosition.x >>= 1;
 							draw[0](canvas,
-									state->sheet + i % 3 * PICTURE_BYTES(SKULL),
-									screenPosition.x - SKULL_WIDTH / 2,
-									screenPosition.y - SKULL_HEIGHT / 2,
-									SKULL_WIDTH, SKULL_HEIGHT);
+								state->sheet + i % 3 * PICTURE_BYTES(SKULL),
+								screenPosition.x - SKULL_WIDTH / 2,
+								screenPosition.y - SKULL_HEIGHT / 2,
+								SKULL_WIDTH, SKULL_HEIGHT);
 							spirit->x -= spirit->x / dist;
 							spirit->y -= spirit->y / dist;
 							spirit->z -= spirit->z / dist;
@@ -109,37 +105,37 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args) {
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
-	syCloseEvent(btEffectArmBg2AffineHBlankDma);
+	syCloseEvent(btEffectArmBg2AffineHBlankDMA);
 	EFFECT_RELEASE_BLITTERS();
 	btEffectEndCanvasLayer();
 }
 
-/* The spirals: ORBITING_SPIRALS a quarter turn apart, circling */
-/* ORBITING_SPIRALS_RADIUS pixels out, each target's ORBITING_SPIRALS_INTERVAL
- */
-/* frames after the one before and for ORBITING_SPIRALS_LIFE frames less one. */
-#define ORBITING_SPIRALS		  4
-#define ORBITING_SPIRALS_RADIUS	  16
-#define ORBITING_SPIRALS_INTERVAL 16
-#define ORBITING_SPIRALS_LIFE	  60
-/* The canvas's scroll on the party side until the first frame's wave rows */
-/* replace it, 8 pixels short of NARROW_CANVAS_PARTY_X. */
+/* The spirals: ORBITING_SPIRALS a quarter turn apart, circling
+   ORBITING_SPIRALS_RADIUS pixels out, each target's ORBITING_SPIRALS_INTERVAL
+   frames after the one before and for ORBITING_SPIRALS_LIFE frames less one. */
+#define ORBITING_SPIRALS			   4
+#define ORBITING_SPIRALS_RADIUS		   16
+#define ORBITING_SPIRALS_INTERVAL	   16
+#define ORBITING_SPIRALS_LIFE		   60
+/* The canvas's scroll on the party side until the first frame's wave rows
+   replace it, 8 pixels short of NARROW_CANVAS_PARTY_X. */
 #define ORBITING_SPIRALS_PARTY_START_X (NARROW_CANVAS_PARTY_X - 8)
 
-/* Unused: no row of AbilityBattleEffects in either game names its kind, and */
-/* the handler table is reached with no other kind (btEffectRunFromTable), */
-/* so the player never sees it. Its code draws the spirals about the point 40 */
-/* pixels above each target, one target after another, turning a 128th of a */
-/* turn a frame; each target takes its damage pose 32 frames into its turn. */
-void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args) {
+/* Unused: no row of AbilityBattleEffects in either game names its kind, and the
+   handler table is reached with no other kind (btEffectRunFromTable), so the
+   player never sees it. Its code draws the spirals about the point 40 pixels
+   above each target, one target after another, turning a 128th of a turn a
+   frame; each target takes its damage pose 32 frames into its turn. */
+void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
+{
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	DRAW_RECTANGLE draw[2];
-	FIXED point[3];
-	SCR_POINT screen;
-	s32 member;
-	s32 offsetX;
-	s32 frame;
+	void				*canvas;
+	DRAW_RECTANGLE		 draw[2];
+	FIXED				 point[3];
+	SCREEN_POINT		 screen;
+	Sint32				 member;
+	Sint32				 offsetX;
+	Sint32				 frame;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
@@ -148,23 +144,22 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args) {
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	draw[0] = Ram_HeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-						EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
+		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
 	draw[1] = Ram_HeapSlots->ramCodePaired;
-	sySetEvent(btEffectArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
+	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	if(args->side == EFFECT_SIDE_PARTY) {
 		REG_BG2X = -(ORBITING_SPIRALS_PARTY_START_X << 8);
 		offsetX = -NARROW_CANVAS_PARTY_X;
-	}
-	else {
+	} else {
 		offsetX = 0;
 	}
 
 	for(frame = 0; frame != (args->tgtCnt * ORBITING_SPIRALS_INTERVAL) + 48;
 		frame++) {
 		BATTLE_CAMERA *camera;
-		s32 *row;
-		s32 i;
+		Sint32		  *row;
+		Sint32		   i;
 
 		camera = Ram_HeapSlots->cameraState;
 		row = state->bg2xLines;
@@ -172,12 +167,11 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args) {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
 				*row++ = CANVAS_WAVE_BG2X(
 					toFIXED(8) - sySin((frame + i) * (TRIG_TURN / 64)) * 8);
-		}
-		else {
+		} else {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
 				*row++ = CANVAS_WAVE_BG2X(
 							 sySin((frame + i) * (TRIG_TURN / 64)) * 8) -
-						 (NARROW_CANVAS_PARTY_X << 8);
+					(NARROW_CANVAS_PARTY_X << 8);
 		}
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
@@ -186,34 +180,34 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args) {
 
 			target = btObjectGetStub(args->tgts[member])->obj;
 			if(frame > member * ORBITING_SPIRALS_INTERVAL &&
-			   frame < (member * ORBITING_SPIRALS_INTERVAL) +
-						   ORBITING_SPIRALS_LIFE) {
-				s32 spin;
+				frame < (member * ORBITING_SPIRALS_INTERVAL) +
+						ORBITING_SPIRALS_LIFE) {
+				Sint32 spin;
 
 				if(frame == (member * ORBITING_SPIRALS_INTERVAL) + 32)
 					btEffectTintBattler(args->tgts[member], SPRITE_COLOR_NORMAL,
-										POSE_DAMAGE, TINT_KEEP, 0);
+						POSE_DAMAGE, TINT_KEEP, 0);
 				SET_VECTOR(point, target->x, toFIXED(40), target->z);
 				btEffectPosProjectPoint(point, &screen);
 
 				for(i = 0; i != ORBITING_SPIRALS; i++) {
-					s32 x;
-					s32 y;
-					s32 half;
+					Sint32 x;
+					Sint32 y;
+					Sint32 half;
 
 					spin = frame * (TRIG_TURN / 128) +
-						   i * (TRIG_TURN / ORBITING_SPIRALS);
+						i * (TRIG_TURN / ORBITING_SPIRALS);
 					x = (screen.x +
-						 FIXEDtoINT(sySin(spin) * ORBITING_SPIRALS_RADIUS)) +
+							FIXEDtoINT(sySin(spin) * ORBITING_SPIRALS_RADIUS)) +
 						offsetX;
 					y = screen.y +
 						FIXEDtoINT(syCos(spin) * ORBITING_SPIRALS_RADIUS);
 					half = frame / 16;
 					draw[half & 1](canvas,
-								   state->sheet + (frame / 4 - half * 4) *
-													  PICTURE_BYTES(SPIRAL),
-								   x - SPIRAL_WIDTH / 2, y - SPIRAL_HEIGHT / 2,
-								   SPIRAL_WIDTH, SPIRAL_HEIGHT);
+						state->sheet +
+							(frame / 4 - half * 4) * PICTURE_BYTES(SPIRAL),
+						x - SPIRAL_WIDTH / 2, y - SPIRAL_HEIGHT / 2,
+						SPIRAL_WIDTH, SPIRAL_HEIGHT);
 				}
 			}
 		}
@@ -221,13 +215,13 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args) {
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
-	syCloseEvent(btEffectArmBg2AffineHBlankDma);
+	syCloseEvent(btEffectArmBg2AffineHBlankDMA);
 	EFFECT_RELEASE_BLITTERS();
 	btEffectEndCanvasLayer();
 }
 
-/* The evil spirits' modes (btEffectRunGatheringLights), each named for */
-/* the effect that plays it, and its row of GatheringLights_Counts. */
+/* The evil spirits' modes (btEffectRunGatheringLights), each named for the
+   effect that plays it, and its row of GatheringLights_Counts. */
 typedef enum GATHERING_SPIRITS_MODE {
 	GATHERING_SPIRITS_DEMON_NIGHT, /* pink */
 	GATHERING_SPIRITS_RUMBLE,	   /* Mars Djinn colours */
@@ -236,74 +230,78 @@ typedef enum GATHERING_SPIRITS_MODE {
 } GATHERING_SPIRITS_MODE;
 
 /* Sixteen pink spirits burst out of the user and are pulled into each target.
- */
-/* */
-/* Abilities: Demon Night. */
-void btEffectRunDemonNight(BATTLE_EFFECT_PARM *args) {
+
+   Abilities: Demon Night. */
+void btEffectRunDemonNight(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunGatheringLights(args, GATHERING_SPIRITS_DEMON_NIGHT);
 }
 
-/* Eight spirits in Mars Djinn colours burst out of the user and are pulled */
-/* into each target. */
-/* */
-/* Abilities: Rumble. */
-void btEffectRunRumble(BATTLE_EFFECT_PARM *args) {
+/* Eight spirits in Mars Djinn colours burst out of the user and are pulled into
+   each target.
+
+   Abilities: Rumble. */
+void btEffectRunRumble(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunGatheringLights(args, GATHERING_SPIRITS_RUMBLE);
 }
 
-/* Twelve spirits in Mercury Djinn colours burst out of the user and are */
-/* pulled into each target. */
-/* */
-/* Abilities: Haunting. */
-void btEffectRunHaunting(BATTLE_EFFECT_PARM *args) {
+/* Twelve spirits in Mercury Djinn colours burst out of the user and are pulled
+   into each target.
+
+   Abilities: Haunting. */
+void btEffectRunHaunting(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunGatheringLights(args, GATHERING_SPIRITS_HAUNTING);
 }
 
-/* Sixteen dark spirits edged in white burst out of the user, are pulled into */
-/* each target and push it back as they arrive. */
-/* */
-/* Abilities: Thorny Grave. */
-void btEffectRunThornyGrave(BATTLE_EFFECT_PARM *args) {
+/* Sixteen dark spirits edged in white burst out of the user, are pulled into
+   each target and push it back as they arrive.
+
+   Abilities: Thorny Grave. */
+void btEffectRunThornyGrave(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunGatheringLights(args, GATHERING_SPIRITS_THORNY_GRAVE);
 }
 
-#define GATHERING_SPIRITS_SLOTS 128 /* particles reserved for each target */
-/* The targets' turns, this many frames apart: each is struck by its spirits */
-/* from GATHERING_SPIRITS_HIT_FRAME. */
-#define GATHERING_SPIRITS_TARGET_FRAMES 20
-#define GATHERING_SPIRITS_HIT_FRAME		70
+#define GATHERING_SPIRITS_SLOTS			 128 /* particles reserved for each target */
+/* The targets' turns, this many frames apart: each is struck by its spirits
+   from GATHERING_SPIRITS_HIT_FRAME. */
+#define GATHERING_SPIRITS_TARGET_FRAMES	 20
+#define GATHERING_SPIRITS_HIT_FRAME		 70
 /* The background's widest sway, in pixels, at the effect's midpoint. */
-#define GATHERING_SPIRITS_SWAY 16
+#define GATHERING_SPIRITS_SWAY			 16
 /* A layer's BGnHOFS and BGnVOFS as one word, as an HBlank DMA writes them. */
 #define BG_OFFSETS(horizontal, vertical) ((horizontal) | (vertical) << 16)
 /* The spirits' pictures, three of the sprite sheet's four drawn. */
-#define SPIRIT_WIDTH  20
-#define SPIRIT_HEIGHT 32
+#define SPIRIT_WIDTH					 20
+#define SPIRIT_HEIGHT					 32
 
-/* For each target in turn, spirits burst out of the user every way and from */
-/* 30 frames on are pulled toward the middle of the target's body, vanishing */
-/* once they have crossed it, in the mode's colours. The battle background */
-/* sways sideways, swelling and dying away over the effect. In Thorny Grave */
-/* every spirit that arrives also pushes its target back. */
-void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
-	SCR_POINT screenPosition;
-	DRAW_RECTANGLE draw[2];
+/* For each target in turn, spirits burst out of the user every way and from 30
+   frames on are pulled toward the middle of the target's body, vanishing once
+   they have crossed it, in the mode's colours. The battle background sways
+   sideways, swelling and dying away over the effect. In Thorny Grave every
+   spirit that arrives also pushes its target back. */
+void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
+{
+	SCREEN_POINT		 screenPosition;
+	DRAW_RECTANGLE		 draw[2];
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	s32 frame;
-	s32 k;
-	BATTLE_CAMERA *camera;
-	s32 paletteId;
-	s32 i;
+	void				*canvas;
+	Sint32				 frame;
+	Sint32				 k;
+	BATTLE_CAMERA		*camera;
+	Sint32				 paletteId;
+	Sint32				 i;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
 	camera = Ram_HeapSlots->cameraState;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
-	btResourceLoadAndDecompress(RESOURCE_MEMBER_BURST_IMAGE, state->sheet, 0,
-								0);
+	btResourceLoadAndDecompress(
+		RESOURCE_MEMBER_BURST_IMAGE, state->sheet, 0, 0);
 	if(mode == GATHERING_SPIRITS_DEMON_NIGHT ||
-	   mode == GATHERING_SPIRITS_THORNY_GRAVE)
+		mode == GATHERING_SPIRITS_THORNY_GRAVE)
 		paletteId = RESOURCE_PINK_BURST_SHEET;
 	else if(mode == GATHERING_SPIRITS_RUMBLE)
 		paletteId = RESOURCE_MARS_DJINN_SHEET;
@@ -314,35 +312,36 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
 		btPaletteMirrorBgCols();
 	btEffectBuildCanvasBlitters(args->side, draw);
 
-	/* The spirits fly off the user's body every way, at up to two pixels a */
-	/* frame. */
+	/* The spirits fly off the user's body every way, at up to two pixels a
+	   frame. */
 	EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
 	EFFECT_FOR_EACH_TARGET(k, args) {
 		MOTION_OBJECT *source = btObjectGetStub(args->user)->obj;
-		s32 height = btUnitGetEffectHeightStub(args->user);
+		Sint32		   height = btUnitGetEffectHeightStub(args->user);
 
 		for(i = 0; i != GATHERING_SPIRITS_SLOTS; i++) {
 			PARTICLE *spirit = &PARTICLES[k * GATHERING_SPIRITS_SLOTS + i];
 
 			SET_POSITION(spirit, source->x, height, source->z);
 			SET_VELOCITY(spirit, ((syRandom() & 255) - 128) << 10,
-						 ((syRandom() & 255) - 128) << 10,
-						 ((syRandom() & 255) - 128) << 10);
+				((syRandom() & 255) - 128) << 10,
+				((syRandom() & 255) - 128) << 10);
 			spirit->variant = 0;
 		}
 	}
 
-	sySetEvent(btEffectArmBg1HBlankDma, TASK_PASS_VBLANK);
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
-						  CANVAS_FADE_THREE_QUARTERS);
+	sySetEvent(btEffectArmBg1HBlankDMA, EVENT_PASS_VBLANK);
+	EFFECT_START_TRANSFER(
+		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	sySndPlayStub(SE_ENEMY_CRY);
 
-	for(frame = 0; frame != GatheringLights_Counts[mode * 2 + 1] +
-								args->tgtCnt * GATHERING_SPIRITS_TARGET_FRAMES;
+	for(frame = 0; frame !=
+		GatheringLights_Counts[mode * 2 + 1] +
+			args->tgtCnt * GATHERING_SPIRITS_TARGET_FRAMES;
 		frame++) {
-		s32 *row;
-		s32 sway;
-		s32 scrollX;
+		Sint32 *row;
+		Sint32	sway;
+		Sint32	scrollX;
 
 		if(frame == 80) {
 			if(mode == GATHERING_SPIRITS_DEMON_NIGHT)
@@ -354,19 +353,20 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
 		}
 		EFFECT_VIEW_FROM_CAMERA(camera);
 
-		/* The battle background sways line by line, by up to */
-		/* GATHERING_SPIRITS_SWAY pixels at the effect's midpoint. A negative */
-		/* scroll wraps into the halfword one short of 65536. */
+		/* The battle background sways line by line, by up to
+		   GATHERING_SPIRITS_SWAY pixels at the effect's midpoint. A negative
+		   scroll wraps into the halfword one short of 65536. */
 		row = state->bg2xLines;
-		sway =
-			FIXEDtoINT(sySin(frame * (TRIG_TURN / 2) /
-							 (GatheringLights_Counts[mode * 2 + 1] +
-							  args->tgtCnt * GATHERING_SPIRITS_TARGET_FRAMES)) *
-					   GATHERING_SPIRITS_SWAY);
+		sway = FIXEDtoINT(
+			sySin(frame * (TRIG_TURN / 2) /
+				(GatheringLights_Counts[mode * 2 + 1] +
+					args->tgtCnt * GATHERING_SPIRITS_TARGET_FRAMES)) *
+			GATHERING_SPIRITS_SWAY);
 		scrollX = BgScrollWork[1].x;
 		for(i = 0; i != DISPLAY_HEIGHT; i++) {
-			s32 x = (FIXEDtoINT(sySin((frame + i) * (TRIG_TURN / 64)) * sway)) +
-					scrollX;
+			Sint32 x =
+				(FIXEDtoINT(sySin((frame + i) * (TRIG_TURN / 64)) * sway)) +
+				scrollX;
 
 			if(x < 0)
 				x += 65535;
@@ -375,68 +375,70 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
 
 		EFFECT_FOR_EACH_TARGET(k, args) {
 			MOTION_OBJECT *target = btObjectGetStub(args->tgts[k])->obj;
-			s32 half = btUnitGetEffectHeightStub(args->tgts[k]) / 2;
+			Sint32		   half = btUnitGetEffectHeightStub(args->tgts[k]) / 2;
 
-			if(frame == k * GATHERING_SPIRITS_TARGET_FRAMES +
-							GATHERING_SPIRITS_HIT_FRAME + 1) {
+			if(frame ==
+				k * GATHERING_SPIRITS_TARGET_FRAMES +
+					GATHERING_SPIRITS_HIT_FRAME + 1) {
 				if(mode == GATHERING_SPIRITS_DEMON_NIGHT)
 					sySndPlayStub(SE_HEAVY_IMPACT);
 				else if(mode != GATHERING_SPIRITS_THORNY_GRAVE)
 					sySndPlayStub(SE_IMPACT);
 			}
-			if(frame == k * GATHERING_SPIRITS_TARGET_FRAMES +
-							GATHERING_SPIRITS_HIT_FRAME)
-				btEffectTintBattler(args->tgts[k], SPRITE_COLOR_WHITE,
-									POSE_DAMAGE, k, 26);
+			if(frame ==
+				k * GATHERING_SPIRITS_TARGET_FRAMES +
+					GATHERING_SPIRITS_HIT_FRAME)
+				btEffectTintBattler(
+					args->tgts[k], SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 26);
 			if(frame > k * GATHERING_SPIRITS_TARGET_FRAMES) {
 				for(i = 0; i != GatheringLights_Counts[mode * 2]; i++) {
 					PARTICLE *spirit =
 						&PARTICLES[k * GATHERING_SPIRITS_SLOTS + i];
 
 					if(frame > k * GATHERING_SPIRITS_TARGET_FRAMES + i * 2 &&
-					   spirit->variant >= 0) {
-						btEffectPosProjectPoint((s32 *)spirit, &screenPosition);
+						spirit->variant >= 0) {
+						btEffectPosProjectPoint(
+							(Sint32 *)spirit, &screenPosition);
 						screenPosition.x >>= 1;
 						draw[0](canvas,
-								state->sheet + i % 3 * PICTURE_BYTES(SPIRIT),
-								screenPosition.x - SPIRIT_WIDTH / 2,
-								screenPosition.y - SPIRIT_HEIGHT / 2,
-								SPIRIT_WIDTH, SPIRIT_HEIGHT);
+							state->sheet + i % 3 * PICTURE_BYTES(SPIRIT),
+							screenPosition.x - SPIRIT_WIDTH / 2,
+							screenPosition.y - SPIRIT_HEIGHT / 2, SPIRIT_WIDTH,
+							SPIRIT_HEIGHT);
 						btParticleAdvanceWithGravity3D(spirit, 62, 0);
 
 						if(frame >
-						   k * GATHERING_SPIRITS_TARGET_FRAMES + i + 30) {
-							s32 x = spirit->x;
-							s32 dx = (target->x - x) >> 8;
-							s32 dy = (target->y + half - spirit->y) >> 9;
-							s32 dz = (target->z - spirit->z) >> 8;
-							s32 targetDistance;
-							s32 spiritDistance;
-							s32 crossed;
+							k * GATHERING_SPIRITS_TARGET_FRAMES + i + 30) {
+							Sint32 x = spirit->x;
+							Sint32 dx = (target->x - x) >> 8;
+							Sint32 dy = (target->y + half - spirit->y) >> 9;
+							Sint32 dz = (target->z - spirit->z) >> 8;
+							Sint32 targetDistance;
+							Sint32 spiritDistance;
+							Sint32 crossed;
 
 							spirit->velX += dx;
 							spirit->velY += dy;
 							spirit->velZ += dz;
 							/* It has crossed once it is as far out from the
-							 * middle of the */
-							/* field as its target is, on the target's side. */
+							   middle of the field as its target is, on the
+							   target's side. */
 							targetDistance =
 								target->x < 0 ? -target->x : target->x;
 							spiritDistance = x;
 							if(spiritDistance < 0)
 								spiritDistance = -spiritDistance;
 							/* DEAD: each arm stores its sign test in crossed,
-							 * which is never */
-							/* read; the ROM keeps the 0/1 value each store
-							 * makes. */
+							   which is never read; the ROM keeps the 0/1 value
+							   each store makes. */
 							if(targetDistance <= spiritDistance &&
-							   ((x < 0 && (crossed = target->x < 0)) ||
-								(x >= 0 && (crossed = target->x >= 0)))) {
+								((x < 0 && (crossed = target->x < 0)) ||
+									(x >= 0 && (crossed = target->x >= 0)))) {
 								spirit->variant = -1;
 								if(mode == GATHERING_SPIRITS_THORNY_GRAVE) {
-									btEffectStartActorMotion(
-										args->tgts[k], 1, toFIXED(2),
-										toFIXED(2), toFIXED(2), i * 8 + 100);
+									btEffectStartActorMotion(args->tgts[k], 1,
+										toFIXED(2), toFIXED(2), toFIXED(2),
+										i * 8 + 100);
 									/* FAKEMATCH(dead): spiritDistance set to 0,
 									 * never read again. */
 									spiritDistance = 0;
@@ -454,7 +456,7 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
 
 	syCloseEvent(btEffectTransferCanvas);
 	EFFECT_RELEASE_BLITTERS();
-	syCloseEvent(btEffectArmBg1HBlankDma);
+	syCloseEvent(btEffectArmBg1HBlankDMA);
 	btEffectEndCanvasLayer();
 }
 

@@ -1,19 +1,20 @@
-/* @file */
-/* Running summon and table effects, and shared target helpers. */
-/* Part of battle_effect.c. */
+/* Running summon and table effects, and shared target helpers. Part of
+   battle_effect.c. */
 
-/* Calls the empty btEffectDoNothing count times: a busy delay. */
-void btEffectCallDoNothing(s32 count) {
-	s32 i;
+/* Calls the empty btEffectNoOperation count times: a busy delay. */
+void btEffectCallNoOperation(Sint32 count)
+{
+	Sint32 i;
 
 	for(i = 0; i != count; i++)
-		btEffectDoNothing();
+		btEffectNoOperation();
 }
 
-/* Runs one of the large battle effects, the summons and the scenes of a few */
-/* abilities: takes the effect's sprite sheet, state and canvas, runs the */
-/* effect of args->kind (SUMMON_EFFECT_ID) and frees them again. */
-void btEffectRunSummon(BATTLE_EFFECT_PARM *args) {
+/* Runs one of the large battle effects, the summons and the scenes of a few
+   abilities: takes the effect's sprite sheet, state and canvas, runs the effect
+   of args->kind (SUMMON_EFFECT_ID) and frees them again. */
+void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
+{
 	BATTLE_EFFECT_STATE *state;
 
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
@@ -24,8 +25,7 @@ void btEffectRunSummon(BATTLE_EFFECT_PARM *args) {
 	state->vblanksSinceTransfer = 1;
 	if(args->kind == SUMMON_EFFECT_NONE) {
 		btEffectRunMeteor(args);
-	}
-	else {
+	} else {
 		switch(args->kind) {
 		case SUMMON_EFFECT_RAMSES:
 			btEffectRunRamses(args);
@@ -121,9 +121,10 @@ void btEffectRunSummon(BATTLE_EFFECT_PARM *args) {
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/* Runs an ordinary battle effect from BattleEffect_Handlers, with the sprite */
-/* sheet, state and canvas it lends. */
-void btEffectRunFromTable(BATTLE_EFFECT_PARM *args) {
+/* Runs an ordinary battle effect from BattleEffect_Handlers, with the sprite
+   sheet, state and canvas it lends. */
+void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
+{
 	BATTLE_EFFECT_STATE *state;
 
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
@@ -139,44 +140,44 @@ void btEffectRunFromTable(BATTLE_EFFECT_PARM *args) {
 }
 
 /* Builds window 0's right edge for every line and restarts the DMA that writes
- */
-/* it. */
-void btEffectBuildWindowEdgeTable(void) {
-	u16 *baseRightEdge;
-	u16 *scanlineEdges;
-	u8 *edgeOffsets;
-	s32 scanline;
-	s32 rightEdge;
+   it. */
+void btEffectBuildWindowEdgeTable(void)
+{
+	Uint16 *baseRightEdge;
+	Uint16 *scanlineEdges;
+	Uint8  *edgeOffsets;
+	Sint32	scanline;
+	Sint32	rightEdge;
 
 	baseRightEdge = WINDOW_EDGE_RIGHT;
-	scanlineEdges = (u16 *)WINDOW_EDGE_LINES;
+	scanlineEdges = (Uint16 *)WINDOW_EDGE_LINES;
 	edgeOffsets = WINDOW_EDGE_INSETS;
 	for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
 		if(scanline >= 8 && scanline < 8 + WINDOW_EDGE_INSET_LINES) {
 			rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
 			CLAMP(rightEdge, 0, DISPLAY_WIDTH);
 			scanlineEdges[scanline] = rightEdge;
-		}
-		else {
+		} else {
 			scanlineEdges[scanline] = WIN_RANGE(255, 241);
 		}
 	}
 	{
-		volatile u16 *channel = REG_DMA0;
+		volatile Uint16 *channel = REG_DMA0;
 
-		channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
-		channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
+		channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
+		channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_ENABLE;
 		(void)channel[DMA_CONTROL_HALF];
 		syDMAXCopy(WINDOW_EDGE_LINES, (void *)&REG_WIN0H,
-				   DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
+			DMA_HBLANK_HALFWORD_PER_LINE, (volatile Uint32 *)channel);
 	}
 }
 
 /* Shows the battle objects of every target with HP left. */
-void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args) {
-	s16 list[UNIT_MAX];
-	s32 count;
-	s32 i;
+void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args)
+{
+	Sint16 list[UNIT_MAX];
+	Sint32 count;
+	Sint32 i;
 
 	count = 0;
 	for(i = 0; i != args->tgtCnt; i++) {

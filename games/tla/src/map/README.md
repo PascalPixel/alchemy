@@ -2,33 +2,33 @@
 
 A map is the ground a place is drawn on and walked over. Each is a folder
 here, such as `alhafra/` for Alhafra, and the heart of it is four grids
-you can open, one number a cell.
+you can open, one number a metatile.
 
-## Cells
+## Metatiles
 
 ![Felix walks east along the grass above the house on Daila's rise: the top of its roof hides him to the shoulders, and he walks back out to the west](https://alchemy.pascalpixel.com/tla/guides/world/behind-roof.gif)
 
-A map is a grid of [cells](../../../../docs/tla/glossary.md#cell), 16 pixels square, 128
-by 128 of them. Each cell says four things, each in a grid of its own:
+A map is a grid of [metatiles](../../../../docs/tla/glossary.md#metatile), 16 pixels square, 128
+by 128 of them. Each metatile says four things, each in a grid of its own:
 
-- **What is drawn.** `grid_picture.tsv` names the cell's
-  [cell tiles](../../../../docs/tla/glossary.md#cell-tiles), four tiles two by two,
-  from the map's own list in `cell_tiles.tsv`. `grid_actors.tsv` lists the
-  cells that change the layer or the drawing priority of whoever stands
+- **What is drawn.** `grid_picture.tsv` names the metatile's
+  [metatile tiles](../../../../docs/tla/glossary.md#metatile-tiles), four tiles two by two,
+  from the map's own list in `metatile_tiles.tsv`. `grid_actors.tsv` lists the
+  metatiles that change the layer or the drawing priority of whoever stands
   there, which is how Felix goes behind a roof by walking, with no code
   involved.
 - **What standing there does.** `grid_behavior.tsv` holds the
-  [cell behavior](../../../../docs/tla/glossary.md#cell-behavior). Zero is plain ground.
+  [metatile behavior](../../../../docs/tla/glossary.md#metatile-behavior). Zero is plain ground.
   A few numbers mean the same everywhere: 255 is a wall, and 242 to 247
   are a jar, a barrel or the like to search. The numbers from 1 to 230 mean
-  whatever the scene's trigger table says
-  ([Scenes](../scene/README.md#which-triggers-a-cell-starts)).
+  whatever the scene's cue table says
+  ([Scenes](../scene/README.md#which-cues-a-metatile-starts)).
 - **What else is true of it.** `grid_shape.tsv` holds the flags, a byte: water
   to wade through, a ledge to hop down, a ladder to climb, the second of
   the scene's two battle zones.
 - **How the ground is shaped.** `shape_grid.tsv` picks a shape from
   `shapes.tsv`: a kind and up to three heights, which say how high the
-  ground is at each pixel of the cell. Flat ground, slopes, steps and bumps
+  ground is at each pixel of the metatile. Flat ground, slopes, steps and bumps
   are all shapes, and walking is decided by comparing heights.
 
 ## One grid, three layers
@@ -56,9 +56,9 @@ chest is put out either way, open once its flag is set. Other kinds hide an item
 
 ![A spot in Daila beside the tiles of its layer the tile animation repaints, laid out in grey, each outlined in red as it is repainted (the ponds' water)](https://alchemy.pascalpixel.com/tla/guides/map/tile-animation.gif)
 
-Stand still in Daila and the picture still moves in places, though no cell
+Stand still in Daila and the picture still moves in places, though no metatile
 changes. The
-game repaints a tile on a timer, and every cell that uses the tile changes
+game repaints a tile on a timer, and every metatile that uses the tile changes
 with it. A map's list of these is in `animation.tsv`, and a map that has
 none of its own may borrow another's.
 
@@ -91,14 +91,14 @@ otherwise: `empty_map/`, the empty map the scene table gives the title,
 the World Map, the credits and the debug level room, and `map_290/`,
 which no scene names and so keeps its number.
 
-When the party arrives, the grid, the cell tiles, the shapes, the tile
+When the party arrives, the grid, the metatile tiles, the shapes, the tile
 animation, the blend script and the scene's own part of the map are
 unpacked into memory, where the field reads them directly. The palette
 and the tiles come too, unless they are already there.
 
 ## Where the files are
 
-Each folder holds the four grids, `grid_actors.tsv`, `cell_tiles.tsv` and
+Each folder holds the four grids, `grid_actors.tsv`, `metatile_tiles.tsv` and
 `shapes.tsv`, with `animation.tsv` and `blend.tsv` where it has them. The
 scene's part is three tables: `points.tsv`, `entrances.tsv` for where the
 party comes in, and `bounds.tsv` for the camera's bounds. `header.tsv`,
@@ -106,6 +106,6 @@ party comes in, and `bounds.tsv` for the camera's bounds. `header.tsv`,
 [`maps.tsv`](maps.tsv) lists the folders in the Game Pak's order. Where
 the Japanese edition's map differs, its own table sits beside it, such as
 `grid_picture_ja.tsv`.
-`world/` is the World Map's ground, and `default/` holds the cells the
+`world/` is the World Map's ground, and `default/` holds the metatiles the
 World Map starts from and a few other tables. The code that reads them is in
 [Field code](../field/README.md).

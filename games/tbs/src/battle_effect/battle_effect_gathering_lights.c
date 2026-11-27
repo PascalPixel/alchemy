@@ -1,65 +1,66 @@
-/* @file */
-/* Demon Night, Rumble and Haunting. */
-/* Part of battle_effect.c. */
+/* Demon Night, Rumble and Haunting. Part of battle_effect.c. */
 
-/* Sixteen pink lights burst out of the user and are pulled into each target, */
-/* with the heavy impact sound. */
-/* */
-/* Abilities: Demon Night. */
-void btEffectRunDemonNight(BATTLE_EFFECT_PARM *args) {
+/* Sixteen pink lights burst out of the user and are pulled into each target,
+   with the heavy impact sound.
+
+   Abilities: Demon Night. */
+void btEffectRunDemonNight(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunGatheringLights(args, GATHERING_LIGHTS_DEMON_NIGHT);
 }
+
 /* Eight lights in Mars Djinn colours burst out of the user and are pulled into
- */
-/* each target. */
-/* */
-/* Abilities: Rumble. */
-void btEffectRunRumble(BATTLE_EFFECT_PARM *args) {
+   each target.
+
+   Abilities: Rumble. */
+void btEffectRunRumble(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunGatheringLights(args, GATHERING_LIGHTS_RUMBLE);
 }
+
 /* Twelve lights in Mercury Djinn colours burst out of the user and are pulled
- */
-/* into each target. */
-/* */
-/* Abilities: Haunting. */
-void btEffectRunHaunting(BATTLE_EFFECT_PARM *args) {
+   into each target.
+
+   Abilities: Haunting. */
+void btEffectRunHaunting(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunGatheringLights(args, GATHERING_LIGHTS_HAUNTING);
 }
-#define GATHERING_LIGHTS_SLOTS 128 /* particles reserved for each target */
-/* The targets' turns, this many frames apart: each is struck by its lights */
-/* from GATHERING_LIGHTS_HIT_FRAME. */
+
+#define GATHERING_LIGHTS_SLOTS		   128 /* particles reserved for each target */
+/* The targets' turns, this many frames apart: each is struck by its lights from
+   GATHERING_LIGHTS_HIT_FRAME. */
 #define GATHERING_LIGHTS_TARGET_FRAMES 20
 #define GATHERING_LIGHTS_HIT_FRAME	   70
 /* GatheringLightsImage's three lights. */
-#define GATHERING_LIGHT_WIDTH  20
-#define GATHERING_LIGHT_HEIGHT 32
-/* How far the canvas's ripple sways each line either side of its middle, in */
-/* CANVAS_WAVE_BG2X's quarter canvas pixels (4 canvas pixels, 8 on screen); the
- */
-/* wave moves a 64th of a turn a line and a frame. */
-#define GATHERING_LIGHTS_RIPPLE 16
+#define GATHERING_LIGHT_WIDTH		   20
+#define GATHERING_LIGHT_HEIGHT		   32
+/* How far the canvas's ripple sways each line either side of its middle, in
+   CANVAS_WAVE_BG2X's quarter canvas pixels (4 canvas pixels, 8 on screen); the
+   wave moves a 64th of a turn a line and a frame. */
+#define GATHERING_LIGHTS_RIPPLE		   16
 
-/* For each target in turn, lights burst out of the user and are pulled into */
-/* the middle of the target's body, which is struck as they arrive; the effect
- */
-/* layer ripples throughout. */
-void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
-	SCR_POINT screenPosition;
-	BLITTER_PAIR draw;
+/* For each target in turn, lights burst out of the user and are pulled into the
+   middle of the target's body, which is struck as they arrive; the effect layer
+   ripples throughout. */
+void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
+{
+	SCREEN_POINT		 screenPosition;
+	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	s32 frame;
-	s32 k;
-	BATTLE_CAMERA *camera;
-	s32 paletteId;
-	s32 i;
+	void				*canvas;
+	Sint32				 frame;
+	Sint32				 k;
+	BATTLE_CAMERA		*camera;
+	Sint32				 paletteId;
+	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 	state->args = args;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
-	fdDecompressTaggedLz(
+	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_GATHERING_LIGHTS_IMAGE), state);
 	if(mode == GATHERING_LIGHTS_DEMON_NIGHT)
 		paletteId = RESOURCE_PINK_BURST_SHEET;
@@ -67,37 +68,37 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
 		paletteId = RESOURCE_MARS_DJINN_SHEET;
 	else
 		paletteId = RESOURCE_MERCURY_DJINN_SHEET;
-	syWordsCopy(BG_PLTT, syResourceGetTableEntry(paletteId),
-				SHEET_PALETTE_BYTES);
+	syWordsCopy(
+		BG_PLTT, syResourceGetTableEntry(paletteId), SHEET_PALETTE_BYTES);
 	btEffectBuildCanvasBlitters(state->args->side, draw);
 
 	/* The lights fly off the user in every direction. */
 	EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
 	EFFECT_FOR_EACH_TARGET(k, state->args) {
 		ACTOR *user = btObjectGetStub(state->args->user)->actor;
-		s32 height = btUnitGetEffectHeightStub(state->args->user);
+		Sint32 height = btUnitGetEffectHeightStub(state->args->user);
 
 		for(i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
 			PARTICLE *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
 			SET_POSITION(mote, user->x.fixed, height, user->z.fixed);
 			SET_VELOCITY(mote, ((syRandom() & 255) - 128) << 10,
-						 ((syRandom() & 255) - 128) << 10,
-						 ((syRandom() & 255) - 128) << 10);
+				((syRandom() & 255) - 128) << 10,
+				((syRandom() & 255) - 128) << 10);
 			mote->variant = 0;
 		}
 	}
 
-	sySetEvent(btEffectArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
-						  CANVAS_FADE_THREE_QUARTERS);
+	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
+	EFFECT_START_TRANSFER(
+		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	sySndPlayStub(SE_ENEMY_CRY);
 
-	for(frame = 0;
-		frame != GatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
-					 state->args->tgtCnt * GATHERING_LIGHTS_TARGET_FRAMES;
+	for(frame = 0; frame !=
+		GatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
+			state->args->tgtCnt * GATHERING_LIGHTS_TARGET_FRAMES;
 		frame++) {
-		s32 *row;
+		Sint32 *row;
 
 		if(frame == 80) {
 			if(mode == GATHERING_LIGHTS_DEMON_NIGHT)
@@ -111,24 +112,25 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
 		row = state->bg2xLines;
 		for(i = 0; i != DISPLAY_HEIGHT; i++)
 			*row++ = CANVAS_WAVE_BG2X(toFIXED(GATHERING_LIGHTS_RIPPLE) -
-									  sySin((frame + i) * (TRIG_TURN / 64)) *
-										  GATHERING_LIGHTS_RIPPLE);
+				sySin((frame + i) * (TRIG_TURN / 64)) *
+					GATHERING_LIGHTS_RIPPLE);
 
 		EFFECT_FOR_EACH_TARGET(k, state->args) {
 			ACTOR *target = btObjectGetStub(state->args->tgts[k])->actor;
-			s32 half = btUnitGetEffectHeightStub(state->args->tgts[k]) / 2;
+			Sint32 half = btUnitGetEffectHeightStub(state->args->tgts[k]) / 2;
 
-			if(frame == k * GATHERING_LIGHTS_TARGET_FRAMES +
-							GATHERING_LIGHTS_HIT_FRAME + 1) {
+			if(frame ==
+				k * GATHERING_LIGHTS_TARGET_FRAMES +
+					GATHERING_LIGHTS_HIT_FRAME + 1) {
 				if(mode == GATHERING_LIGHTS_DEMON_NIGHT)
 					sySndPlayStub(SE_HEAVY_IMPACT);
 				else
 					sySndPlayStub(SE_IMPACT);
 			}
 			if(frame ==
-			   k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME)
+				k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME)
 				btEffectTintBattler(state->args->tgts[k], SPRITE_COLOR_WHITE,
-									POSE_DAMAGE, k, 26);
+					POSE_DAMAGE, k, 26);
 			if(frame > k * GATHERING_LIGHTS_TARGET_FRAMES) {
 				for(i = 0;
 					i != GatheringLights_Counts[mode][GATHERING_LIGHTS_COUNT];
@@ -136,35 +138,33 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
 					PARTICLE *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
 					/* Each light leaves two frames after the one before it. */
-					if(frame >
-						   (k * (GATHERING_LIGHTS_TARGET_FRAMES / 2) + i) * 2 &&
-					   mote->variant >= 0) {
+					if(frame > (k * (GATHERING_LIGHTS_TARGET_FRAMES / 2) + i) *
+								2 &&
+						mote->variant >= 0) {
 						btProjectionPoint(mote, &screenPosition);
 						screenPosition.x >>= 1;
 						draw[0](canvas,
-								state->sheet +
-									i % 3 * PICTURE_BYTES(GATHERING_LIGHT),
-								screenPosition.x - GATHERING_LIGHT_WIDTH / 2,
-								screenPosition.y - GATHERING_LIGHT_HEIGHT / 2,
-								GATHERING_LIGHT_WIDTH, GATHERING_LIGHT_HEIGHT);
+							state->sheet +
+								i % 3 * PICTURE_BYTES(GATHERING_LIGHT),
+							screenPosition.x - GATHERING_LIGHT_WIDTH / 2,
+							screenPosition.y - GATHERING_LIGHT_HEIGHT / 2,
+							GATHERING_LIGHT_WIDTH, GATHERING_LIGHT_HEIGHT);
 						btParticleAdvanceWithGravity3D(mote, 62, 0);
 						/* Thirty frames on, the light is pulled toward the
-						 * middle of its */
-						/* target's body, its speed gaining a 512th of the
-						 * distance a frame, */
-						/* and is gone once within 32 pixels of it across and in
-						 * depth. */
+						   middle of its target's body, its speed gaining a
+						   512th of the distance a frame, and is gone once
+						   within 32 pixels of it across and in depth. */
 						if(frame >
-						   k * GATHERING_LIGHTS_TARGET_FRAMES + i + 30) {
-							s32 dx = (target->x.fixed - mote->x) >> 9;
-							s32 dy = (target->y.fixed + half - mote->y) >> 9;
-							s32 dz = (target->z.fixed - mote->z) >> 9;
+							k * GATHERING_LIGHTS_TARGET_FRAMES + i + 30) {
+							Sint32 dx = (target->x.fixed - mote->x) >> 9;
+							Sint32 dy = (target->y.fixed + half - mote->y) >> 9;
+							Sint32 dz = (target->z.fixed - mote->z) >> 9;
 
 							mote->velX += dx;
 							mote->velY += dy;
 							mote->velZ += dz;
 							if((dx >= -4095 && dx <= 4095) &&
-							   (dz >= -4095 && dz <= 4095))
+								(dz >= -4095 && dz <= 4095))
 								mote->variant = -1;
 						}
 					}
@@ -176,7 +176,7 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, s32 mode) {
 
 	syCloseEvent(btEffectTransferCanvas);
 	EFFECT_RELEASE_BLITTERS();
-	syCloseEvent(btEffectArmBg2AffineHBlankDma);
+	syCloseEvent(btEffectArmBg2AffineHBlankDMA);
 	btEffectEndCanvasLayer();
 }
 

@@ -1,8 +1,7 @@
-/* A rising orb's script, which the Jupiter and Mars Lighthouses keep a copy */
-/* of for the particles that rise in their beams: at 0.8 of its size, it rises
- */
-/* a pixel a frame for 16 frames and is gone. */
-u32 Orb_RisingScript[] = {
+/* A rising orb's script, which the Jupiter and Mars Lighthouses keep a copy of
+   for the particles that rise in their beams: at 0.8 of its size, it rises a
+   pixel a frame for 16 frames and is gone. */
+Uint32 Orb_RisingScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(0.8)),
 	SC_SET(SW_SCALE_Y, toFIXED(0.8)),
 	SC_ANIMATION(1),

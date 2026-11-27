@@ -1,28 +1,26 @@
-/* @file */
 /* The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
- */
-/* what a stage's guide uses to describe the stage. Isaac appears on the stage
- */
-/* to show how it is crossed, a blinking pointer moves over the screen, and */
-/* Isaac is put back where he stood. */
+   what a stage's guide uses to describe the stage. Isaac appears on the stage
+   to show how it is crossed, a blinking pointer moves over the screen, and
+   Isaac is put back where he stood. */
 
-/* The sprite outline's colours: the field's own, as field_actors.c sets them */
-/* up, and those of the warrior a stage's guide shows. */
+/* The sprite outline's colours: the field's own, as field_actors.c sets them
+   up, and those of the warrior a stage's guide shows. */
 #define FIELD_OUTLINE_EDGE	 15
 #define FIELD_OUTLINE_FILL	 0
 #define WARRIOR_OUTLINE_EDGE 1
 #define WARRIOR_OUTLINE_FILL 4
 
-/* Isaac (id) appears at pixel (x, z) on the stage, facing south: he fades in */
-/* through the backgrounds while he stretches from thin and tall to his own */
-/* shape, settles and nods. While he is shown his sprite is outlined in the */
-/* warrior's colours. His position and facing are kept for */
-/* scColossoRestoreWarrior. */
-void scColossoFadeInWarrior(s32 id, s32 x, s32 z) {
+/* Isaac (id) appears at pixel (x, z) on the stage, facing south: he fades in
+   through the backgrounds while he stretches from thin and tall to his own
+   shape, settles and nods. While he is shown his sprite is outlined in the
+   warrior's colours. His position and facing are kept for
+   scColossoRestoreWarrior. */
+void scColossoFadeInWarrior(Sint32 id, Sint32 x, Sint32 z)
+{
 	ACTOR_SYSTEM_STATE *system;
-	ACTOR *actor;
-	SPR *sprite;
-	s32 i;
+	ACTOR			   *actor;
+	SPR				   *sprite;
+	Sint32				i;
 
 	system = ActorSystemStateWork;
 	actor = fdActorGetById(id);
@@ -39,58 +37,56 @@ void scColossoFadeInWarrior(s32 id, s32 x, s32 z) {
 	fdActorSelectAnimation(actor, ANIM_STILL);
 	fdActorSelectAnimation(actor, ANIM_STAND);
 	fdActorSetPosFX(id, toFIXED(x), toFIXED(z));
-	/* BUG: FACING_SOUTH is passed where an actor id belongs; no actor has */
-	/* it, so the leader does not turn. */
+	/* BUG: FACING_SOUTH is passed where an actor id belongs; no actor has it,
+	   so the leader does not turn. */
 	fdActorFaceActorById(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
-						BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
-							BLDCNT_TGT2_BG3,
-						IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDCNT,
+		BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3,
+		IO_WRITE_HALFWORD);
 	sprite->image.objMode = OBJ_MODE_SEMI_TRANSPARENT;
 	sprite->shadow.objMode = OBJ_MODE_SEMI_TRANSPARENT;
 	sySndPlay(SE_COLOSSO_WARRIOR_APPEAR);
 	for(i = 0; i < BLEND_WEIGHT_MAX; i += 2) {
-		actor->scaleX = i * (FIXED_ONE / 16) + FIXED_ONE / 16;
-		actor->scaleY = 31 * FIXED_ONE / 16 - i * (FIXED_ONE / 16);
-		/* BLEND_ALPHA(i + 1, BLEND_WEIGHT_MAX - 1 - i), its bottom weight */
-		/* written first. */
-		IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-							((BLEND_WEIGHT_MAX - 1 - i) << 8) | (i + 1),
-							IO_WRITE_HALFWORD);
+		actor->scaleX = i * (toFIXED(1) / 16) + toFIXED(1) / 16;
+		actor->scaleY = toFIXED(31) / 16 - i * (toFIXED(1) / 16);
+		/* BLEND_ALPHA(i + 1, BLEND_WEIGHT_MAX - 1 - i), its bottom weight
+		   written first. */
+		IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDALPHA,
+			((BLEND_WEIGHT_MAX - 1 - i) << 8) | (i + 1), IO_WRITE_HALFWORD);
 		sySynch(1);
 	}
-	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(BLEND_WEIGHT_MAX, 0),
-						IO_WRITE_HALFWORD);
-	actor->scaleX = 17 * FIXED_ONE / 16;
-	actor->scaleY = 15 * FIXED_ONE / 16;
-	fdEventWait(1);
-	actor->scaleX = FIXED_ONE;
-	actor->scaleY = FIXED_ONE;
-	fdEventWait(13);
+	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDALPHA, BLEND_ALPHA(BLEND_WEIGHT_MAX, 0),
+		IO_WRITE_HALFWORD);
+	actor->scaleX = toFIXED(17) / 16;
+	actor->scaleY = toFIXED(15) / 16;
+	fdScriptWait(1);
+	actor->scaleX = toFIXED(1);
+	actor->scaleY = toFIXED(1);
+	fdScriptWait(13);
 	sprite->image.objMode = OBJ_MODE_NORMAL;
 	sprite->shadow.objMode = OBJ_MODE_NORMAL;
 	fdActorSetAnimationAndWait(id, ANIM_NOD);
-	fdEventWait(20);
+	fdScriptWait(20);
 }
 
-/* Puts Isaac (id) back where scColossoFadeInWarrior found him: he stands if */
-/* he was climbing, or else turns south, nods and waits half a second; then */
-/* returns to his kept position and facing with his motion stopped, and the */
-/* outline colours are the field's again. */
-void scColossoRestoreWarrior(s32 id) {
+/* Puts Isaac (id) back where scColossoFadeInWarrior found him: he stands if he
+   was climbing, or else turns south, nods and waits half a second; then returns
+   to his kept position and facing with his motion stopped, and the outline
+   colours are the field's again. */
+void scColossoRestoreWarrior(Sint32 id)
+{
 	ACTOR_SYSTEM_STATE *system;
-	ACTOR *actor;
+	ACTOR			   *actor;
 
 	system = ActorSystemStateWork;
 	actor = fdActorGetById(id);
 	if(MainRoutineStateWork.movementMode == 1) { /* climbing */
 		MainRoutineStateWork.movementMode = 0;
 		fdActorSetAnimation(id, ANIM_STAND);
-	}
-	else {
+	} else {
 		fdActorFaceDirection(id, FACING_SOUTH, 30);
 		fdActorSetAnimation(id, ANIM_NOD);
-		fdEventWait(30);
+		fdScriptWait(30);
 	}
 	system->fill = FIELD_OUTLINE_FILL;
 	system->edge = FIELD_OUTLINE_EDGE;
@@ -112,7 +108,8 @@ void scColossoRestoreWarrior(s32 id) {
 }
 
 /* Stops the actor where it is: no velocity and no destination. */
-void scActorResetMotionFields(s32 actorId) {
+void scActorResetMotionFields(Sint32 actorId)
+{
 	ACTOR *actor = fdActorGetById(actorId);
 
 	fdActorStartIdle(actor);
@@ -122,65 +119,63 @@ void scActorResetMotionFields(s32 actorId) {
 	actor->tgtZ = ACTOR_NO_TARGET;
 }
 
-/* The guide's pointer: one 16x16 sprite centred on a point of the screen, */
-/* shown for POINTER_SHOWN_FRAMES of every POINTER_BLINK_FRAMES, that can glide
- */
-/* from point to point. */
+/* The guide's pointer: one 16x16 sprite centred on a point of the screen, shown
+   for POINTER_SHOWN_FRAMES of every POINTER_BLINK_FRAMES, that can glide from
+   point to point. */
 #define POINTER_SHOWN_FRAMES 13
 #define POINTER_BLINK_FRAMES 20
 
 /* Loads the pointer's picture into a free VRAM block, once. */
-static void scColossoLoadPointer(void) {
+static void scColossoLoadPointer(void)
+{
 	if(Colosso_PointerSlot == -1) {
 		Colosso_PointerSlot = mnPointingHandLoadIntoFreeSlot();
 	}
 }
 
 /* The pointer's glide: its steps and the step it is on, where it is now, where
- */
-/* the glide started and where it ends (screen pixels), its blink counter and */
-/* its flip. */
-extern s16 Colosso_PointerSteps;
-extern s16 Colosso_PointerStep;
-extern s16 Colosso_PointerX;
+   the glide started and where it ends (screen pixels), its blink counter and
+   its flip. */
+extern Sint16			  Colosso_PointerSteps;
+extern Sint16			  Colosso_PointerStep;
+extern Sint16			  Colosso_PointerX;
 extern POINTER_COORDINATE Colosso_PointerStartX;
-extern s16 Colosso_PointerEndX;
-extern s16 Colosso_PointerY;
+extern Sint16			  Colosso_PointerEndX;
+extern Sint16			  Colosso_PointerY;
 extern POINTER_COORDINATE Colosso_PointerStartY;
-extern s16 Colosso_PointerEndY;
-extern s16 Colosso_PointerBlink;
-extern s16 Colosso_PointerFlip;
+extern Sint16			  Colosso_PointerEndY;
+extern Sint16			  Colosso_PointerBlink;
+extern Sint16			  Colosso_PointerFlip;
 
-/* The pointer's task: glide one step, then draw it while it blinks */
-/* on (a glide keeps it on). */
-static void scColossoUpdatePointer(void) {
-	s32 tile;
-	s32 total;
-	s32 step;
-	s32 *oam;
-	s32 *dst;
-	s32 x;
-	s32 y;
+/* The pointer's event: glide one step, then draw it while it blinks on (a glide
+   keeps it on). */
+static void scColossoUpdatePointer(void)
+{
+	Sint32	tile;
+	Sint32	total;
+	Sint32	step;
+	Sint32 *oam;
+	Sint32 *dst;
+	Sint32	x;
+	Sint32	y;
 
 	oam = Colosso_PointerOam;
 	tile = VramCacheEntries[Colosso_PointerSlot].ofs >> 5;
 	total = Colosso_PointerSteps;
 	if(total != 0) {
 		step = ++Colosso_PointerStep;
-		Colosso_PointerX =
-			Colosso_PointerStartX.pixels +
+		Colosso_PointerX = Colosso_PointerStartX.pixels +
 			(Colosso_PointerEndX - Colosso_PointerStartX.signedPixels) *
-				(s16)step / total;
-		Colosso_PointerY =
-			Colosso_PointerStartY.pixels +
+				(Sint16)step / total;
+		Colosso_PointerY = Colosso_PointerStartY.pixels +
 			(Colosso_PointerEndY - Colosso_PointerStartY.signedPixels) *
-				(s16)step / total;
-		if((s16)step >= total)
+				(Sint16)step / total;
+		if((Sint16)step >= total)
 			Colosso_PointerSteps = 0;
 		Colosso_PointerBlink = 0;
 	}
 	if(++Colosso_PointerBlink <= POINTER_SHOWN_FRAMES) {
-		s32 size = OBJ_SIZE_16X16;
+		Sint32 size = OBJ_SIZE_16X16;
 
 		x = Colosso_PointerX;
 		y = Colosso_PointerY;
@@ -189,16 +184,16 @@ static void scColossoUpdatePointer(void) {
 		*dst++ =
 			(y - 8) | OBJ_X(x - 8) | size | Colosso_PointerFlip * OBJ_HFLIP;
 		*dst = tile | OBJ_PRIORITY(1);
-		syOamAddSprAtDepth(oam, OAM_DEPTH_FRONT);
-	}
-	else if(Colosso_PointerBlink >= POINTER_BLINK_FRAMES) {
+		syOAMAddSprAtDepth(oam, OAM_DEPTH_FRONT);
+	} else if(Colosso_PointerBlink >= POINTER_BLINK_FRAMES) {
 		Colosso_PointerBlink = 0;
 	}
 }
 
-/* Shows the pointer at screen pixel (x, y), mirrored by style & 3 (1 left to */
-/* right, 2 top to bottom); every caller passes 0. */
-void scColossoShowPointer(u32 x, u32 y, u32 style) {
+/* Shows the pointer at screen pixel (x, y), mirrored by style & 3 (1 left to
+   right, 2 top to bottom); every caller passes 0. */
+void scColossoShowPointer(Uint32 x, Uint32 y, Uint32 style)
+{
 	scColossoLoadPointer();
 
 	Colosso_PointerX = x;
@@ -207,36 +202,39 @@ void scColossoShowPointer(u32 x, u32 y, u32 style) {
 	Colosso_PointerBlink = 0;
 	Colosso_PointerSteps = 0;
 
-	syTaskAddFrame(scColossoUpdatePointer, TASK_PASS_FRAME);
+	sySetFrameEvent(scColossoUpdatePointer, EVENT_PASS_FRAME);
 }
 
 /* Glides the pointer to screen pixel (x, y) over duration frames. */
-void scColossoMovePointer(u32 x, u32 y, u32 duration) {
+void scColossoMovePointer(Uint32 x, Uint32 y, Uint32 duration)
+{
 	Colosso_PointerEndX = x;
 	Colosso_PointerEndY = y;
-	*(u16 *)&Colosso_PointerStartX = Colosso_PointerX;
-	*(u16 *)&Colosso_PointerStartY = Colosso_PointerY;
+	*(Uint16 *)&Colosso_PointerStartX = Colosso_PointerX;
+	*(Uint16 *)&Colosso_PointerStartY = Colosso_PointerY;
 	Colosso_PointerSteps = duration;
 	Colosso_PointerStep = 0;
 
-	syTaskAddFrame(scColossoUpdatePointer, TASK_PASS_FRAME);
+	sySetFrameEvent(scColossoUpdatePointer, EVENT_PASS_FRAME);
 }
 
 /* Hides the pointer and frees its VRAM block. */
-void scColossoHidePointer(void) {
+void scColossoHidePointer(void)
+{
 	syCloseEvent(scColossoUpdatePointer);
-	syVramCacheFreeEntry(Colosso_PointerSlot);
+	syVRAMCacheFreeEntry(Colosso_PointerSlot);
 	Colosso_PointerSlot = -1;
 }
 
-/* Runs the actor at 2 pixels a frame towards pixel (x, z) and returns */
-/* at once. */
-void scColossoWalkActorTo(s32 actorId, s32 x, s32 z) {
+/* Runs the actor at 2 pixels a frame towards pixel (x, z) and returns at
+   once. */
+void scColossoWalkActorTo(Sint32 actorId, Sint32 x, Sint32 z)
+{
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL) {
-		FIXED speed = toFIXED(2);
-		s32 unpaused = 0;
+		FIXED  speed = toFIXED(2);
+		Sint32 unpaused = 0;
 
 		actor->speedLimit = speed;
 		actor->acceleration = speed >> 1;
@@ -247,14 +245,15 @@ void scColossoWalkActorTo(s32 actorId, s32 x, s32 z) {
 	}
 }
 
-/* Runs the actor at 1.25 pixels a frame to pixel (x, z), waits until */
-/* it arrives and stands it there. */
-void scColossoWalkActorToAndStand(s32 actorId, s32 x, s32 z) {
+/* Runs the actor at 1.25 pixels a frame to pixel (x, z), waits until it arrives
+   and stands it there. */
+void scColossoWalkActorToAndStand(Sint32 actorId, Sint32 x, Sint32 z)
+{
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL) {
-		FIXED speed = toFIXED(5) / 4;
-		s32 unpaused = 0;
+		FIXED  speed = toFIXED(5) / 4;
+		Sint32 unpaused = 0;
 
 		actor->speedLimit = speed;
 		actor->acceleration = speed >> 1;

@@ -29,7 +29,7 @@ closes, and the field engine finds the request when it gets its line back.
 ![Two choices deep in the Psynergy screen, Start closes every window at once](https://alchemy.pascalpixel.com/tla/guides/menu/menu-start.gif)
 
 Start closes a screen however deep the player is, and no question knows
-how deep that is. A small task watches for Start and raises one flag.
+how deep that is. A small event watches for Start and raises one flag.
 Every question looks at that flag beside its own buttons, and treats it as
 B. So the questions end one after another, each reporting "backed out" to
 the one before it.
@@ -83,8 +83,8 @@ that going back to Jenna's items lands where you left them.
 ## Design
 
 Opening a screen holds the scene still. The actors stop being drawn and the
-scene's own tasks are paused, and both are put back when it closes. A
-scene can mark a task to keep running regardless.
+scene's own events are paused, and both are put back when it closes. A
+scene can mark an event to keep running regardless.
 
 ## The title intro and the credits
 

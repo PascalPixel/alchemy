@@ -21,11 +21,11 @@
 	.section .rodata,"a",%progbits
 	.arm
 	.4byte	0x80808080
-	.4byte	Credits_DecodeBackgroundCaseTable
+	.4byte	mnCreditsDecodeBackgroundCaseTable
 .text
 	.arm
-	.global Credits_DecodeBackgroundRead
-Credits_DecodeBackgroundRead:
+	.global mnCreditsDecodeBackgroundRead
+mnCreditsDecodeBackgroundRead:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
 AlchemyUncredited_credits_background_read:
@@ -34,22 +34,22 @@ AlchemyUncreditedEnd_credits_background_read:
 	.section .data,"aw",%progbits
 	.arm
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-	.global Credits_DecodeBackgroundCaseTable
-Credits_DecodeBackgroundCaseTable:
-	.4byte	Credits_DecodeBackgroundCase2
-	.4byte	Credits_DecodeBackgroundCase4Plus
-	.4byte	Credits_DecodeBackgroundCase8
-	.4byte	Credits_DecodeBackgroundCase6Plus
-	.4byte	Credits_DecodeBackgroundCase2
-	.4byte	Credits_DecodeBackgroundCase4Minus
-	.4byte	Credits_DecodeBackgroundCase10
-	.4byte	Credits_DecodeBackgroundCase6Minus
+	.global mnCreditsDecodeBackgroundCaseTable
+mnCreditsDecodeBackgroundCaseTable:
+	.4byte	mnCreditsDecodeBackgroundCase2
+	.4byte	mnCreditsDecodeBackgroundCase4Plus
+	.4byte	mnCreditsDecodeBackgroundCase8
+	.4byte	mnCreditsDecodeBackgroundCase6Plus
+	.4byte	mnCreditsDecodeBackgroundCase2
+	.4byte	mnCreditsDecodeBackgroundCase4Minus
+	.4byte	mnCreditsDecodeBackgroundCase10
+	.4byte	mnCreditsDecodeBackgroundCase6Minus
 	.section .text.credits_background_expand_commands,"ax",%progbits
 	.arm
-	.global Credits_DecodeBackgroundCommands
-Credits_DecodeBackgroundCommands:
-	.global Credits_DecodeBackgroundCase2
-Credits_DecodeBackgroundCase2:
+	.global mnCreditsDecodeBackgroundCommands
+mnCreditsDecodeBackgroundCommands:
+	.global mnCreditsDecodeBackgroundCase2
+mnCreditsDecodeBackgroundCase2:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -57,8 +57,8 @@ Credits_DecodeBackgroundCase2:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Credits_DecodeBackgroundCase4Plus
-Credits_DecodeBackgroundCase4Plus:
+	.global mnCreditsDecodeBackgroundCase4Plus
+mnCreditsDecodeBackgroundCase4Plus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -69,8 +69,8 @@ Credits_DecodeBackgroundCase4Plus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Credits_DecodeBackgroundCase4Minus
-Credits_DecodeBackgroundCase4Minus:
+	.global mnCreditsDecodeBackgroundCase4Minus
+mnCreditsDecodeBackgroundCase4Minus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -81,8 +81,8 @@ Credits_DecodeBackgroundCase4Minus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Credits_DecodeBackgroundCase6Plus
-Credits_DecodeBackgroundCase6Plus:
+	.global mnCreditsDecodeBackgroundCase6Plus
+mnCreditsDecodeBackgroundCase6Plus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -93,8 +93,8 @@ Credits_DecodeBackgroundCase6Plus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Credits_DecodeBackgroundCase6Minus
-Credits_DecodeBackgroundCase6Minus:
+	.global mnCreditsDecodeBackgroundCase6Minus
+mnCreditsDecodeBackgroundCase6Minus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -105,8 +105,8 @@ Credits_DecodeBackgroundCase6Minus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Credits_DecodeBackgroundCase8
-Credits_DecodeBackgroundCase8:
+	.global mnCreditsDecodeBackgroundCase8
+mnCreditsDecodeBackgroundCase8:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -119,8 +119,8 @@ Credits_DecodeBackgroundCase8:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Credits_DecodeBackgroundCase10
-Credits_DecodeBackgroundCase10:
+	.global mnCreditsDecodeBackgroundCase10
+mnCreditsDecodeBackgroundCase10:
 	ror	r5, r3, #10
 	and	r5, r5, #0xfe000000
 	lsr	r3, r3, #10

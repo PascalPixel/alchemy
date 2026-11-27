@@ -10,50 +10,50 @@ Four ideas, and you know how the whole program hangs together.
 ![Isaac walks through Goma Cave until a random battle starts. Watch what comes back afterwards: the same cave, with the party standing where the battle found it.](https://alchemy.pascalpixel.com/guides/overworld/battle-return.gif)
 
 The game is one function that starts when the console is switched on and
-never returns. All it does is call a [sequence](glossary.md#sequence) as
+never returns. All it does is call a [mode](glossary.md#mode) as
 a function and, when that returns, call the next one. There are four
 kinds.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  loop(["Main routine: read what runs next"]) --> scene(["🏡 Field sequence"]) & battle(["⚔️ Battle sequence"]) & dice(["🎲 Lucky Dice"]) & wheels(["🎰 Lucky Wheels"])
+  loop(["Main routine: read what runs next"]) --> scene(["🏡 Field mode"]) & battle(["⚔️ Battle mode"]) & dice(["🎲 Lucky Dice"]) & wheels(["🎰 Lucky Wheels"])
   scene & battle & dice & wheels --> back(["It ends, with what runs next written down"])
   back --> loop
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef mode fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   class loop mainRoutine
-  class scene,battle,dice,wheels sequence
+  class scene,battle,dice,wheels mode
   class back request
 ```
 
-The [field sequence](glossary.md#field-sequence) runs one
+The [field mode](glossary.md#field-mode) runs one
 [scene](glossary.md#scene): a town's streets, a dungeon floor, the World
 Map. It ends when the party leaves, and says where the exit leads. The
 other three end with a result, such as a battle won or lost.
 
 Everything else the player sees is inside one of the four. The Title and
-the File Screen are scenes, so the field sequence runs them. A menu or a
-shop is not a sequence. It is a function called from inside one, and it
+the File Screen are scenes, so the field mode runs them. A menu or a
+shop is not a mode. It is a function called from inside one, and it
 returns there.
 
 The main routine is a loop, but a slow one. One trip round it is a whole
 visit to a town or a whole battle. The loop that goes round once a frame is
 not here: it is inside `sySynch()`, which
-[Waiting and tasks](#waiting-and-tasks) comes to.
+[Waiting and events](#waiting-and-events) comes to.
 
-Between two sequences the main routine wipes the slate. Every task is
-taken off the list and all the memory the last sequence took is handed
+Between two modes the main routine wipes the slate. Every event is
+taken off the list and all the memory the last mode took is handed
 back. The cave you return to after a battle is not the old cave kept
 aside. It is built again from scratch.
 
-So a sequence can pass something on in only three places, the three things
+So a mode can pass something on in only three places, the three things
 the main routine leaves alone:
 
 - the [main routine's state](glossary.md#main-routines-state), one C struct
   in a global, `MainRoutineStateWork`, which holds the party, their coins, what
-  runs next and how the last sequence ended;
+  runs next and how the last mode ended;
 - the [game flags](glossary.md#game-flag), one bit for each thing the game
   remembers, such as a chest being open;
 - the actor snapshot, `ActorSnapshotWork`, where the field copies who stands
@@ -65,20 +65,20 @@ arrives in a scene and the other when it arrives in a new area, which is
 how a puzzle resets
 ([State that cleans itself up](../../games/tbs/src/scene/README.md#state-that-cleans-itself-up)).
 
-Take the three thieves in Vault's inn. The event that ends in their attack
+Take the three thieves in Vault's inn. The script that ends in their attack
 writes two destinations into the main routine's state, one for a win and one
-for a loss, asks for a battle, and lets the field sequence end. The battle
+for a loss, asks for a battle, and lets the field mode end. The battle
 knows nothing about Vault: it runs, and writes its result. The main routine
 reads the result, picks the matching destination, and starts a fresh field
-sequence in the loft.
+mode in the loft.
 
-That is why any sequence can follow any other, and why Camelot's own debug
+That is why any mode can follow any other, and why Camelot's own debug
 menu can drop the party into any scene in the game.
 [The main routine](../../games/tbs/src/system/README.md#the-main-routine) goes through one
 trip round it, and the function itself is `gmMainRoutineRun` in
 [main_routine.c](../../games/tbs/src/game/main_routine.c).
 
-## Waiting and tasks
+## Waiting and events
 
 ![A villager by Vale's river says `I don't blame Felix.` and waits for the A Button. Watch the river behind him: it keeps flowing the whole time he waits.](https://alchemy.pascalpixel.com/guides/engine/waiting-talk.gif)
 
@@ -87,7 +87,7 @@ everything else. Its frame loop is inside one function, [`sySynch()`](glossary.m
 and this is all of its shape:
 
 ```c
-void sySynch(s32 frames) {
+void sySynch(Sint32 frames) {
 	for(frame = 0; frame < frames; frame++) {
 		/* every task runs once */
 		/* this frame's sprites are put in order */
@@ -118,7 +118,7 @@ flowchart TD
 ```
 
 So a frame is two stretches of work: what the story's code did since its
-last `sySynch()`, and then the tasks. Both have to be done before VBlank, or
+last `sySynch()`, and then the events. Both have to be done before VBlank, or
 the frame is shown one VBlank late.
 
 This is what lets a cutscene or a menu be written as a plain list, top to
@@ -127,39 +127,39 @@ black, play the tune and wait for it to end, wait, fade back in. No state
 is kept between frames to remember how far the night has got: the place in
 the code is the memory.
 
-### Tasks
+### Events
 
-A [task](glossary.md#task) is a function on a short list, which holds 20.
-Each trip round the loop calls every task on it once, highest rank first
-(the code calls the rank `pri`). A task does one frame's worth of
+An [event](glossary.md#event) is a function on a short list, which holds 20.
+Each trip round the loop calls every event on it once, highest rank first
+(the code calls the rank `pri`). An event does one frame's worth of
 something and returns at once: move the actors a step, type the next
 letters into a window, swap the river's tiles.
 
-Four things about tasks are easy to get wrong:
+Four things about events are easy to get wrong:
 
-- Tasks run only from inside `sySynch()`. If no code is waiting, nothing in the
+- Events run only from inside `sySynch()`. If no code is waiting, nothing in the
   game moves. The river in the picture above flows because the villager's
   code is waiting for a button.
-- A task must never call `sySynch()`. It is being called from inside one, and
+- An event must never call `sySynch()`. It is being called from inside one, and
   must return for the frame to end.
-- A task is a whole piece of work, not a thing in the world. A villager is
-  not a task, and neither is a footprint. They are
-  [actors](glossary.md#actor), rows in a table, and one task visits all of
+- An event is a whole piece of work, not a thing in the world. A villager is
+  not an event, and neither is a footprint. They are
+  [actors](glossary.md#actor), rows in a table, and one event visits all of
   them each frame.
 - The list keeps a function, a rank and one flag, and nothing else. What a
-  task needs to remember lives with whatever put it on the list: the
+  event needs to remember lives with whatever put it on the list: the
   field's state, a window's.
 
-Anything may put a task on the list and take it off again. The field and
+Anything may put an event on the list and take it off again. The field and
 the windows keep theirs there as long as they run, a scene adds its own for
 a waterfall or a puzzle, and the [main routine](#the-main-routine) takes
-every one off between two sequences. A few tasks are called from the VBlank
+every one off between two modes. A few events are called from the VBlank
 handler instead, once a VBlank: the ones that copy something to the screen.
 
 ### Two kinds of waiting
 
 An actor has to pause too: a villager stands a while between two strolls.
-It cannot call `sySynch()`, because the task that moves it has to return. So an
+It cannot call `sySynch()`, because the event that moves it has to return. So an
 [actor script](glossary.md#actor-script) has a wait of its own, which is
 only a number kept in the actor. This is the script of a villager who
 wanders near home:
@@ -173,7 +173,7 @@ SC_WAIT(20),              /* stand for 20 frames */
 ```
 
 These are numbers in a table, not code that runs (`SC_` is for script
-command). Each frame the actors' task comes to this villager. If his count
+command). Each frame the actors' event comes to this villager. If his count
 is above zero it takes one off and goes on to the next actor; otherwise it
 reads his script on from where he stopped. Twenty villagers can all be
 part-way through a pause, each with a count of his own.
@@ -182,17 +182,17 @@ part-way through a pause, each with a count of his own.
 | --- | --- | --- |
 | What it is | a function that runs 20 frames of the game | an order that sets a count to 20 |
 | Who uses it | the one piece of code telling the story | every actor, each for itself |
-| Does it hold anything up? | that code stands still | no: the task passes that actor by for 20 frames |
+| Does it hold anything up? | that code stands still | no: the event passes that actor by for 20 frames |
 | How many at once | one | as many as there are actors |
 
 The second happens inside the first. The story's code is in `sySynch()`, the
-loop there runs the tasks, one task steps the actors, and each actor counts
+loop there runs the events, one event steps the actors, and each actor counts
 its own pause down.
 
 ### One waiter at a time
 
 The game has one line of execution, so two pieces of code never wait side
-by side. What does happen is one wait after another, at any depth: an event
+by side. What does happen is one wait after another, at any depth: a script
 shows a message, and showing a message waits for the A Button before it
 returns.
 
@@ -206,11 +206,11 @@ fdActorWalkTo(ACTOR_GARET, 136, 96);        /* so does this */
 sySynch(40);                                /* both walk while this runs */
 ```
 
-An event command whose name ends `AndWait` does the last two steps
+A script command whose name ends `AndWait` does the last two steps
 together: it starts the walk, then calls `sySynch(1)` until that actor has
 arrived.
 
-Because a task cannot wait, it cannot start something long, like a
+Because an event cannot wait, it cannot start something long, like a
 conversation. It leaves a [request](glossary.md#field-request) instead, and
 the field's function, which is the code waiting, reads the requests each time
 its `sySynch(1)` returns.
@@ -222,12 +222,12 @@ If you have used coroutines: the story's code is the one coroutine, and
 
 | Code | What calls it | May it call `sySynch()`? |
 | --- | --- | --- |
-| The story's code: a sequence, an event, a menu, a shop, a battle effect | the main routine, and each other | yes |
-| A task | `sySynch()`, once a frame | no |
-| An order of an actor script | the actors' task, once a frame for each actor | no |
-| The VBlank handler, and the few tasks it calls | the console, at every VBlank | no |
+| The story's code: a mode, a script, a menu, a shop, a battle effect | the main routine, and each other | yes |
+| An event | `sySynch()`, once a frame | no |
+| An order of an actor script | the actors' event, once a frame for each actor | no |
+| The VBlank handler, and the few events it calls | the console, at every VBlank | no |
 
-No task puts another task on the list either. Adding one sorts the list
+No event puts another event on the list either. Adding one sorts the list
 again, and that would upset the pass that is running.
 
 ### Every way of taking time
@@ -235,14 +235,14 @@ again, and that would upset the pass that is running.
 | Written as | Where | What it does |
 | --- | --- | --- |
 | `sySynch(n)` | the story's code | runs `n` frames of the game and returns |
-| `fdEventWait(n)` | an event | calls `sySynch(n)` |
-| a command that takes time, such as `fdEventShowMessage` or one ending `AndWait` | an event | starts something, then calls `sySynch(1)` until it is over: a window has closed, an actor has arrived |
-| `SC_WAIT(n)` | an actor script | sets a count in the actor, which the actors' task takes one off each frame |
+| `fdScriptWait(n)` | a script | calls `sySynch(n)` |
+| a command that takes time, such as `fdScriptShowMessage` or one ending `AndWait` | a script | starts something, then calls `sySynch(1)` until it is over: a window has closed, an actor has arrived |
+| `SC_WAIT(n)` | an actor script | sets a count in the actor, which the actors' event takes one off each frame |
 | `SC_SYNC` | an actor script | holds the script on this order until the actor has arrived |
-| a count in its owner's state | a task | the task looks at it each frame and returns: a pause in the middle of a line, the time a hit flashes in a battle |
+| a count in its owner's state | an event | the event looks at it each frame and returns: a pause in the middle of a line, the time a hit flashes in a battle |
 
 Only the first three hold any code up, and they are all `sySynch()`. The rest
-are numbers that a task looks at once a frame. `fdActorWalkToAndWait` gives
+are numbers that an event looks at once a frame. `fdActorWalkToAndWait` gives
 up after 600 frames, ten seconds, and goes on with the actor still walking.
 
 ### A talk, frame by frame
@@ -252,46 +252,46 @@ is who runs what.
 
 1. The field's function is in its walking loop, which calls `sySynch(1)` over and over, and is the only code
    waiting.
-2. Inside one `sySynch(1)` the actors' task comes to Isaac. His script is on
+2. Inside one `sySynch(1)` the actors' event comes to Isaac. His script is on
    the order that reads the D-pad and the buttons, `SC_PLAYER`. It sees the
-   A Button and sets a request in the field's state. The task goes on to the
+   A Button and sets a request in the field's state. The event goes on to the
    man, whose script is part-way through an `SC_WAIT`, and takes one off
    his count.
 3. `sySynch(1)` returns. The field's function finds a request and leaves its
    walking loop. It puts Isaac on the idle script, finds that the nearest
-   actor in reach is the man and that the scene has a talk trigger for him,
+   actor in reach is the man and that the scene has a talk cue for him,
    and turns the request into a talk. No frame has passed.
 4. It answers the talk. It marks the man paused, turns the two to face
    each other, and asks for a window with his line. Asking returns at once.
 5. The same code now calls `sySynch(1)` until the window has closed. Over
-   those frames the windows' task grows the window, types the line a few
+   those frames the windows' event grows the window, types the line a few
    letters a frame, and then looks each frame for the A Button. The actors'
-   task passes the man by, because he is paused, so his count stays where
+   event passes the man by, because he is paused, so his count stays where
    it was.
-6. The player presses A. The windows' task shrinks the window and closes
+6. The player presses A. The windows' event shrinks the window and closes
    it, and the loop of step 5 ends. The man's pause is lifted, Isaac's
    script is `SC_PLAYER` again, and the field's function is back in its
    walking loop. The man's count goes on from where it stopped.
 
 Through all six steps one piece of code was running or waiting, the field's
-function and what it called. Everything else was a task's visit.
+function and what it called. Everything else was an event's visit.
 
 ### When nothing waits
 
 Code that works for a long time without calling `sySynch()` holds the whole
-game still. No task runs, so no actor moves and no window grows. The frame
+game still. No event runs, so no actor moves and no window grows. The frame
 it is building is never marked finished, so the picture on screen is left
 as it is.
 
 The VBlank handler is not held up. The console calls it at every VBlank
 whatever the code is doing, and it goes on reading the buttons, running its
-own tasks and preparing the sound. So a frame that takes two VBlanks is
+own events and preparing the sound. So a frame that takes two VBlanks is
 [slowdown](glossary.md#slowdown), with the music at its proper speed, and
 code that never waited would be a still image with the tune playing on.
 
 [The frame loop](../../games/tbs/src/system/README.md#the-frame-loop) has a frame's order
-in full, and [The task runner](../../games/tbs/src/system/README.md#the-task-runner) says
-which task goes first and how a task comes and goes.
+in full, and [The event runner](../../games/tbs/src/system/README.md#the-event-runner) says
+which event goes first and how an event comes and goes.
 
 ## Overlays
 
@@ -318,7 +318,7 @@ shows both directions.
 
 ## Saving
 
-A save is the three things that outlive a sequence: the game flags, the
+A save is the three things that outlive a mode: the game flags, the
 main routine's state and the actor snapshot, taken again as the save begins
 so that it holds where the people in the current scene stand. Nothing else
 needs saving, because everything else is rebuilt from those.
@@ -338,7 +338,7 @@ the batteries die halfway, the old copy is still whole.
 ## The rest of the system library
 
 - [The system library's code](../../games/tbs/src/system/README.md) is the detail behind this page:
-  start-up, the frame, the task list, the heap, saving and the link cable.
+  start-up, the frame, the event list, the heap, saving and the link cable.
 - [The Game Pak](../../games/tbs/src/system/README.md) is the cartridge: how its contents
   are laid out and found, and the flash chip.
 - [Graphics](../../games/tbs/src/graphics/README.md) is how a picture gets from a PNG to

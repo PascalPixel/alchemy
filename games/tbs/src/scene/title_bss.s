@@ -2,14 +2,10 @@
 @ C file holding its sprites' words would start them on a word.
 	.include "games/tbs/include/edition.inc"
 	.section .bss,"aw",%nobits
-	.ifdef TBS_EDITION_EN
-	.space 58
-	.else
-	.ifeq EDITION_INTERNATIONAL
-	.space 58
-	.else
+	.if TITLE_GLOBALS_LEAD_SHORTER
 	.space 54
-	.endif
+	.else
+	.space 58
 	.endif
 	.global TitleRevealFrame
 TitleRevealFrame:

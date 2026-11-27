@@ -1,69 +1,69 @@
-/* @file */
-/* Grind: the screen shakes up and down while spray rises round the target, */
-/* a sea rock is ground away, and the plain sway Grind makes at nothing. */
-/* Part of field_psynergy.c. */
+/* Grind: the screen shakes up and down while spray rises round the target, a
+   sea rock is ground away, and the plain sway Grind makes at nothing. Part of
+   field_psynergy.c. */
 
 /* The splashes of spray Grind keeps. */
-#define GRIND_SPLASH_COUNT 64
+#define GRIND_SPLASH_COUNT		 64
 /* The largest picture Grind grinds down, in bytes, a byte a pixel. */
-#define GRIND_PICTURE_SIZE 2048
+#define GRIND_PICTURE_SIZE		 2048
 /* The tiles of each frame of the splash picture (RESOURCE_WATER_SPLASH), 16 by
- */
-/* 16 pixels in 256 colours. */
+   16 pixels in 256 colours. */
 #define GRIND_SPLASH_FRAME_TILES SPRITE_TILES_8BPP(16, 16)
 /* How far in front of or behind the target the spray is drawn. */
-#define GRIND_SPRAY_DEPTH 15
+#define GRIND_SPRAY_DEPTH		 15
 
-/* Grind's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and */
-/* the splash particles. */
+/* Grind's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and the
+   splash particles. */
 typedef struct GRIND_STATE {
-	u8 unused[32]; /* no code names it */
-	u8 picture[GRIND_PICTURE_SIZE];
+	Uint8					unused[32]; /* no code names it */
+	Uint8					picture[GRIND_PICTURE_SIZE];
 	FIELD_PSYNERGY_PARTICLE particles[GRIND_SPLASH_COUNT];
-	EFFECT_SPR sprs[GRIND_SPLASH_COUNT];
+	EFFECT_SPR				sprs[GRIND_SPLASH_COUNT];
 } GRIND_STATE;
 
 /* What Grind does. */
 typedef enum GRIND_MODE {
 	GRIND_ON_TARGET =
-		0,				/* the target's Grind event runs as the shaking peaks */
-	GRIND_SEA_ROCK = 1, /* a sea rock is ground down row by row */
+		/* the target's Grind script runs as the shaking peaks */
+	0,
+	GRIND_SEA_ROCK = 1,	 /* a sea rock is ground down row by row */
 	GRIND_ON_NOTHING = 2 /* spray rises before the caster */
 } GRIND_MODE;
 
-/* Grind ("Pulverize large objects."): the screen shakes harder and harder */
-/* while spray rises round the target, or round the spot 32 pixels before the */
-/* caster. A sea rock (SPRITE_SEA_ROCK) is ground down row by row; otherwise */
-/* the place's Grind event runs while the shaking is at its height. */
-void fdPsynergyGrindOnTarget(void) {
+/* Grind ("Pulverize large objects."): the screen shakes harder and harder while
+   spray rises round the target, or round the spot 32 pixels before the caster.
+   A sea rock (SPRITE_SEA_ROCK) is ground down row by row; otherwise the place's
+   Grind script runs while the shaking is at its height. */
+void fdPsynergyGrindOnTarget(void)
+{
 	GRIND_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(GRIND_STATE));
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	ACTOR *caster = scene->caster;
-	ACTOR *child = scene->tgt;
-	SPR *animation = child->spr;
-	EFFECT_SPR *sprite;
+	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
+	ACTOR					*caster = scene->caster;
+	ACTOR					*child = scene->tgt;
+	SPR						*animation = child->spr;
+	EFFECT_SPR				*sprite;
 	FIELD_PSYNERGY_PARTICLE *particle;
-	void *source;
-	u8 *dst;
-	s32 angle;
-	s32 i;
-	s32 entry;
-	s32 tile;
-	s32 phase;
-	s32 timer;
-	s32 shifts;
-	s32 animating;
-	s32 spraying;
-	s32 next;
-	s32 isSeaRock;
-	s32 mode;
-	FIXED radius;
-	s32 selector;
-	TRIGGER *pending;
-	u8 *picture;
-	s32 counter;
-	FIXED amplitude;
+	void					*source;
+	Uint8					*dst;
+	Sint32					 angle;
+	Sint32					 i;
+	Sint32					 entry;
+	Sint32					 tile;
+	Sint32					 phase;
+	Sint32					 timer;
+	Sint32					 shifts;
+	Sint32					 animating;
+	Sint32					 spraying;
+	Sint32					 next;
+	Sint32					 isSeaRock;
+	Sint32					 mode;
+	FIXED					 radius;
+	Sint32					 selector;
+	CUE						*pending;
+	Uint8					*picture;
+	Sint32					 counter;
+	FIXED					 amplitude;
 
 	shifts = 0;
 	radius = toFIXED(14);
@@ -71,18 +71,16 @@ void fdPsynergyGrindOnTarget(void) {
 	spraying = 0;
 	next = 0;
 	mode = GRIND_ON_TARGET;
-	selector = scSelectPsynergyTarget(scene->fieldPsynergy);
-	pending = scFindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
-									scene->fieldPsynergy, selector);
+	selector = fdSelectPsynergyTarget(scene->fieldPsynergy);
+	pending = fdFindPsynergyCue(
+		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy, selector);
 	if(child != NULL) {
 		if(animation != NULL) {
 			if(animation->width * animation->height <= GRIND_PICTURE_SIZE) {
-			}
-			else
+			} else
 				goto end;
 		}
-	}
-	else {
+	} else {
 		scene->x = caster->x.fixed;
 		scene->z = caster->z.fixed + toFIXED(8);
 		scene->y = caster->y.fixed;
@@ -103,9 +101,9 @@ void fdPsynergyGrindOnTarget(void) {
 	fdPsynergyFadeToCastCol();
 	source = syResourceGetTableEntry(RESOURCE_WATER_SPLASH);
 	picture = state->picture;
-	syDecompressTaggedLz(source, picture);
-	entry = syVramCacheFindFreeEntry();
-	tile = syVramCacheLoad(entry, 1024, picture);
+	syDecompressTaggedLZ(source, picture);
+	entry = syVRAMCacheFindFreeEntry();
+	tile = syVRAMCacheLoad(entry, 1024, picture);
 	particle = state->particles;
 	for(i = 0; i < GRIND_SPLASH_COUNT; i++) {
 		sprite = &state->sprs[i];
@@ -120,7 +118,7 @@ void fdPsynergyGrindOnTarget(void) {
 	if(child != NULL && animation != NULL && isSeaRock == 1) {
 		fdSprSetAnimationSpeedStub(animation, 0);
 		fdPsynergyDecodePicture((PICTURE_SOURCE *)animation->entries[0],
-								picture, animation->width * animation->height);
+			picture, animation->width * animation->height);
 	}
 	fdViewMoveStart(VIEW_MOVE_Z);
 	sySynch(1);
@@ -134,8 +132,7 @@ void fdPsynergyGrindOnTarget(void) {
 			if(mode == GRIND_SEA_ROCK) {
 				if(radius > toFIXED(5))
 					radius += -(toFIXED(1) / 25);
-			}
-			else if(radius > toFIXED(5)) {
+			} else if(radius > toFIXED(5)) {
 				radius += -(toFIXED(2) / 25);
 			}
 		}
@@ -157,18 +154,18 @@ void fdPsynergyGrindOnTarget(void) {
 			particle->tmr = 0;
 			SET_POSITION(particle, scene->x, scene->y + toFIXED(5), scene->z);
 			if(radius > toFIXED(5))
-				syVectorAddPolarOffset(radius + syRandom() * 5, angle,
-									   &particle->x);
+				syVectorAddPolarOffset(
+					radius + syRandom() * 5, angle, &particle->x);
 			else
-				syVectorAddPolarOffset(radius - (syRandom() << 2), angle,
-									   &particle->x);
+				syVectorAddPolarOffset(
+					radius - (syRandom() << 2), angle, &particle->x);
 			next++;
 			next %= GRIND_SPLASH_COUNT;
 		}
 		particle = state->particles;
 		for(i = 0; i < GRIND_SPLASH_COUNT; i++, particle++) {
 			sprite = &state->sprs[i];
-			if((u32)particle->tmr <= 23) {
+			if((Uint32)particle->tmr <= 23) {
 				if(particle->tmr == 0)
 					sprite->oam.idx = tile;
 				if(particle->tmr == 18)
@@ -182,15 +179,15 @@ void fdPsynergyGrindOnTarget(void) {
 			}
 		}
 		if(child != NULL && animation != NULL && animating) {
-			s32 size = animation->width * animation->height;
-			dst = (u8 *)OBJ_VRAM0 +
-				  syVramCacheLoad(animation->slot, size, NULL) * TILE_SIZE_4BPP;
+			Sint32 size = animation->width * animation->height;
+			dst = (Uint8 *)OBJ_VRAM0 +
+				syVRAMCacheLoad(animation->slot, size, NULL) * TILE_SIZE_4BPP;
 			if(shifts % 3 == 0)
-				fdBattleEffectShiftRowsDown(picture, animation->width,
-											animation->height);
+				fdBattleEffectShiftRowsDown(
+					picture, animation->width, animation->height);
 			shifts++;
-			((void (*)(void *, s32, s32,
-					   void *))Ram_HeapSlots->pictureUploader)(
+			((void (*)(
+				void *, Sint32, Sint32, void *))Ram_HeapSlots->pictureUploader)(
 				picture, animation->width, animation->height, dst);
 		}
 		fdViewMoveSwing(VIEW_MOVE_Z, counter++, amplitude);
@@ -211,10 +208,9 @@ void fdPsynergyGrindOnTarget(void) {
 					timer = -1;
 				}
 				if(pending != NULL)
-					((void (*)(s32, s32, s32))pending->value)(0, timer,
-															  selector);
-			}
-			else {
+					((void (*)(Sint32, Sint32, Sint32))pending->value)(
+						0, timer, selector);
+			} else {
 				if(timer == animation->height * 3) {
 					phase = SWAY_SHRINK;
 					timer = -1;
@@ -245,22 +241,23 @@ void fdPsynergyGrindOnTarget(void) {
 	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
 	fdViewMoveEnd();
 	fdPsynergyFadeFromCastCol();
-	syVramCacheFreeEntry(entry);
+	syVRAMCacheFreeEntry(entry);
 end:
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /* FIELD_PSYNERGY_GRIND as fdPsynergyRun casts it: the view sways. */
 
-/* Sways the view up and down the screen: the swing grows from SWAY_START to */
-/* SWAY_PEAK, holds for SWAY_HOLD_FRAMES, shrinks back and stops; then the */
-/* map's view bounds come back. */
-void fdPsynergyGrind(void) {
+/* Sways the view up and down the screen: the swing grows from SWAY_START to
+   SWAY_PEAK, holds for SWAY_HOLD_FRAMES, shrinks back and stops; then the map's
+   view bounds come back. */
+void fdPsynergyGrind(void)
+{
 	FIELD_EFFECT_STATE *scene;
-	s32 phase;
-	s32 amplitude;
-	s32 state;
-	s32 frames;
+	Sint32				phase;
+	Sint32				amplitude;
+	Sint32				state;
+	Sint32				frames;
 
 	/* Grind's state's size, though the sway holds only the view move. */
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(GRIND_STATE));

@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_BATTLE_SPRITES_H
 #define ALCHEMY_BATTLE_SPRITES_H
 
-/* @file */
 /* Summons and the battle sprite definitions of the enemies. */
 
 #include "edition.h"
@@ -9,39 +8,38 @@
 #include "types.h"
 #include "stubs.h"
 
-/* A unit's row of BattleSprites: an enemy's battle sprite, size, attack */
-/* effect, palette and defeat-sound kind. */
+/* A unit's row of BattleSprites: an enemy's battle sprite, size, attack effect,
+   palette and defeat-sound kind. */
 typedef struct BATTLE_SPR_DEFINITION {
-	u16 anm;		/* the enemy's battle sprite */
-	u8 isSmall : 1; /* 1 for a small enemy, which takes one sprite slot */
-	/* The beam its attack plays, an BEAM_KIND (battle_effect_beams.c); 0 */
-	/* reads as 1. */
-	u8 attackEff : 4;
-	u8 attackHop : 3; /* how high it hops as it runs up to attack, in pixels */
-	u8 heavyImpact : 1; /* 1 for an enemy whose beam blow lands heavily */
-	u8 pal : 4;			/* the sprite's palette */
-	u8 defeatSnd : 3;	/* the defeat-sound kind; above 4 reads as none */
+	Uint16 anm;			/* the enemy's battle sprite */
+	Uint8  isSmall : 1; /* 1 for a small enemy, which takes one sprite slot */
+	/* The beam its attack plays, an BEAM_KIND (battle_effect_beams.c); 0 reads
+	   as 1. */
+	Uint8 attackEff : 4;
+	/* how high it hops as it runs up to attack, in pixels */
+	Uint8 attackHop : 3;
+	Uint8 heavyImpact : 1; /* 1 for an enemy whose beam blow lands heavily */
+	Uint8 pal : 4;		   /* the sprite's palette */
+	Uint8 defeatSnd : 3;   /* the defeat-sound kind; above 4 reads as none */
 	/* The height a battle effect is drawn at over the enemy, in pixels; 0 for
-	 */
-	/* its size's default. */
-	u8 effHeight;
-	u8 reserved[3]; /* 0 in every row */
+	   its size's default. */
+	Uint8 effHeight;
+	Uint8 reserved[3]; /* 0 in every row */
 } BATTLE_SPR_DEFINITION;
 
 STATIC_ASSERT(sizeof(BATTLE_SPR_DEFINITION) == 8);
-/* The units' battle sprite rows, by unit id 0 to 171: the eight characters', */
-/* then the enemies' from ENEMY_ID_FIRST (battle_sprites.c), read by the */
-/* BattleSprite_ getters. */
+/* The units' battle sprite rows, by unit id 0 to 171: the eight characters',
+   then the enemies' from ENEMY_ID_FIRST (battle_sprites.c), read by the
+   BattleSprite_ getters. */
 extern const BATTLE_SPR_DEFINITION BattleSprites[];
 
 /* A summon: its name's message and the Djinn of each element it needs. */
 typedef struct SUMMON_DEFINITION {
 	/* The summon's ability id: its name is message MsgAbilityName plus it, and
-	 */
-	/* its low 14 bits pick the icon. */
-	u16 abilityId;
-	u8 reserved[2];		 /* 0 in every row; read by no code */
-	u8 djinnRequired[4]; /* standby Djinn needed, by element */
+	   its low 14 bits pick the icon. */
+	Uint16 abilityId;
+	Uint8  reserved[2];		 /* 0 in every row; read by no code */
+	Uint8  djinnRequired[4]; /* standby Djinn needed, by element */
 } SUMMON_DEFINITION;
 
 #endif

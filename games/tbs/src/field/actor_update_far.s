@@ -19,6 +19,6 @@ fdFixedDivStubArm:
 .L_Trig_Atan:
 	.4byte	syAtan
 .L_IwramSqrt:
-	.4byte	IwramSqrt
+	.4byte	syIWRAMSquart
 .L_IwramDivFX:
-	.4byte	IwramDivFX
+	.4byte	syIWRAMDivFX

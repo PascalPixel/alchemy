@@ -1,24 +1,23 @@
 #ifndef ALCHEMY_SCENE_SHRINE_OF_THE_SEA_GOD_H
 #define ALCHEMY_SCENE_SHRINE_OF_THE_SEA_GOD_H
 
-/* @file */
-/* The Shrine of the Sea God: its footprints and its events. */
+/* The Shrine of the Sea God: its footprints and its scripts. */
 
 #include "types.h"
 
 struct ACTOR;
 
-/* A footprint of the Shrine of the Sea God (ShrineOfTheSeaGod_Footprints): */
-/* where it lies in 16.16 pixels, its scale and its turn. */
+/* A footprint of the Shrine of the Sea God (ShrineOfTheSeaGod_Footprints):
+   where it lies in 16.16 pixels, its scale and its turn. */
 typedef struct SHRINE_OF_THE_SEA_GOD_SPOT {
-	s32 x;
-	s32 z;
-	s32 scaleX;
-	s32 rotation;
+	Sint32 x;
+	Sint32 z;
+	Sint32 scaleX;
+	Sint32 rotation;
 } SHRINE_OF_THE_SEA_GOD_SPOT;
 
 void scShrineOfTheSeaGodDjinniRunsWest(void);
-void scShrineOfTheSeaGodSetUpFloatingLog(s32 actor);
+void scShrineOfTheSeaGodSetUpFloatingLog(Sint32 actor);
 
 void scShrineOfTheSeaGodStartleRiki(void);
 
@@ -62,9 +61,9 @@ void scShrineOfTheSeaGodChaseDjinni(void);
 void scShrineOfTheSeaGodCastSand(void);
 void scShrineOfTheSeaGodEndSand(void);
 
-extern u32 FieldEffect_MediumScript[];
+extern Uint32 FieldEffect_MediumScript[];
 
-void scShrineOfTheSeaGodLandBrokenBridge(struct ACTOR *actor, s32 base);
+void scShrineOfTheSeaGodLandBrokenBridge(struct ACTOR *actor, Sint32 base);
 void scShrineOfTheSeaGodKeepFirstBridgeWithLeader(void);
 
 void scShrineOfTheSeaGodKeepSecondBridgeWithLeader(void);
@@ -75,7 +74,7 @@ void scShrineOfTheSeaGodLayerCrossroadsBridges(void);
 
 void scShrineOfTheSeaGodKeepFlameOnTorch(void);
 
-void scShrineOfTheSeaGodSetUpPuddle(s32 actorId);
+void scShrineOfTheSeaGodSetUpPuddle(Sint32 actorId);
 
 void scShrineOfTheSeaGodInitRope(void);
 void scShrineOfTheSeaGodInitPlankBridge(void);

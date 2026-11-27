@@ -1,32 +1,30 @@
 #ifndef ALCHEMY_ENEMY_ELEMENT_PRESET_H
 #define ALCHEMY_ENEMY_ELEMENT_PRESET_H
 
-/* @file */
-/* The enemies' element presets: the element an enemy attacks with, and its */
-/* level, power and resistance in each element. */
+/* The enemies' element presets: the element an enemy attacks with, and its
+   level, power and resistance in each element. */
 
 #include "types.h"
 #include "battle/battle_unit.h"
 
-/* An enemy's element preset in Enemy_ElementPresetTable: the element it */
-/* attacks with, its level in each element, and its base power and resistance */
-/* in each element. */
+/* An enemy's element preset in Enemy_ElementPresetTable: the element it attacks
+   with, its level in each element, and its base power and resistance in each
+   element. */
 typedef struct ENEMY_ELEMENT_PRESET {
-	/* The element of its attacks, ELEMENT_NONE for most */
-	/* (gmEnemyGetAttackElement). */
-	s32 attackElement;
-	/* Its level in each element; gmUnitGetElementLevels returns ten times each.
-	 */
-	u8 elementLevels[4];
-	/* Its base power and resistance in each element, as */
-	/* gmUnitCalcBaseElements gives them to the unit. */
+	/* The element of its attacks, ELEMENT_NONE for most
+	   (gmEnemyGetAttackElement). */
+	Sint32 attackElement;
+	/* Its level in each element; gmUnitGetElementLevels returns ten times
+	   each. */
+	Uint8 elementLevels[4];
+	/* Its base power and resistance in each element, as gmUnitCalcBaseElements
+	   gives them to the unit. */
 	BATTLE_ELEMENT_STATS stats[4];
 } ENEMY_ELEMENT_PRESET;
 
 /* The rows of Enemy_ElementPresetTable (ENEMY_DEFINITION.elementPreset), each
- */
-/* named by the first enemy that has it. Rows 6, 10, 18, 22, 28 and 35 are */
-/* spares no enemy has. */
+   named by the first enemy that has it. Rows 6, 10, 18, 22, 28 and 35 are
+   spares no enemy has. */
 typedef enum ENEMY_ELEMENT_PRESET_ID {
 	/* The row an out-of-range preset reads as; only the unused "???" has it. */
 	ELEMENT_PRESET_DEFAULT = 0,
@@ -69,8 +67,8 @@ typedef enum ENEMY_ELEMENT_PRESET_ID {
 	ELEMENT_PRESET_GRYPHON = 43
 } ENEMY_ELEMENT_PRESET_ID;
 
-/* How many rows Enemy_ElementPresetTable has; an enemy's preset past them */
-/* reads as row 0. */
+/* How many rows Enemy_ElementPresetTable has; an enemy's preset past them reads
+   as row 0. */
 #define ENEMY_ELEMENT_PRESET_COUNT 44
 
 #endif

@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_STRING_H
 #define ALCHEMY_STRING_H
 
-/* @file */
 /* The one C library string function the code declares. */
 
 #include "edition.h"

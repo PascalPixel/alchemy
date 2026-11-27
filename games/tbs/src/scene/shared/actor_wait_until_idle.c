@@ -1,10 +1,10 @@
-/* @file */
 /* Babi Lighthouse and Venus Lighthouse. */
 
 /* Waits until the actor stops rising or falling, a second at most. */
-static void scActorWaitUntilIdle(ACTOR *actor) {
-	s32 frames;
-	s32 busy;
+static void scActorWaitUntilIdle(ACTOR *actor)
+{
+	Sint32 frames;
+	Sint32 busy;
 
 	frames = FRAMES_PER_SECOND;
 	while(frames != 0) {

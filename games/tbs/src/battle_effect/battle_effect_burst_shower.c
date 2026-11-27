@@ -1,11 +1,9 @@
-/* @file */
-/* The blessings' burst showers. */
-/* Part of battle_effect.c. */
+/* The blessings' burst showers. Part of battle_effect.c. */
 
 /* Where the burst, lightning or face pictures start in the sprite sheet. */
-#define BURST_SHOWER_PICTURES GLINT_SET_BYTES
-/* VioletLightningSheetA's bolts (stored 72x64, drawn 62 tall) and */
-/* DemonFaceSheet's face. */
+#define BURST_SHOWER_PICTURES		   GLINT_SET_BYTES
+/* VioletLightningSheetA's bolts (stored 72x64, drawn 62 tall) and
+   DemonFaceSheet's face. */
 #define VIOLET_LIGHTNING_WIDTH		   72
 #define VIOLET_LIGHTNING_HEIGHT		   62
 #define VIOLET_LIGHTNING_PICTURE_BYTES (VIOLET_LIGHTNING_WIDTH * 64)
@@ -28,82 +26,95 @@ typedef enum BURST_SHOWER_MODE {
 } BURST_SHOWER_MODE;
 
 /* Bends BG2 line by line from the effect's table. */
-void btEffectArmBg2AffineHBlankDma(void) {
+void btEffectArmBg2AffineHBlankDMA(void)
+{
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	volatile u16 *channel = REG_DMA0;
-	btDmaStop(channel);
+	volatile Uint16		*channel = REG_DMA0;
+	btDMAStop(channel);
 	syDMAXCopy(state->bg2xLines, &REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
-			   (volatile u32 *)channel);
+		(volatile Uint32 *)channel);
 }
 
-/* The user fires a stream of flash bursts at the targets, one a frame, each */
-/* towards a random point near a target. */
-/* */
-/* Abilities: Fire Blessing. */
-void btEffectRunFireBlessing(BATTLE_EFFECT_PARM *args) {
+/* The user fires a stream of flash bursts at the targets, one a frame, each
+   towards a random point near a target.
+
+   Abilities: Fire Blessing. */
+void btEffectRunFireBlessing(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_FLASH);
 }
+
 /* The user fires a stream of bursts at the targets in the water-spray palette.
- */
-/* */
-/* Abilities: Water Blessing. */
-void btEffectRunWaterBlessing(BATTLE_EFFECT_PARM *args) {
+
+   Abilities: Water Blessing. */
+void btEffectRunWaterBlessing(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_SPRAY);
 }
-/* The user fires a stream of grey bursts at the targets, which turn solid */
-/* black and stay so. */
-/* */
-/* Abilities: Dark Blessing (the first two; the third plays Acid Blessing's). */
-void btEffectRunDarkBlessing(BATTLE_EFFECT_PARM *args) {
+
+/* The user fires a stream of grey bursts at the targets, which turn solid black
+   and stay so.
+
+   Abilities: Dark Blessing (the first two; the third plays Acid Blessing's). */
+void btEffectRunDarkBlessing(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_GREY);
 }
-/* The user fires a stream of pink bursts at the targets, from 16 pixels */
-/* higher than usual. */
-/* */
-/* Abilities: Dark Blessing, Acid Blessing. */
-void btEffectRunAcidBlessing(BATTLE_EFFECT_PARM *args) {
+
+/* The user fires a stream of pink bursts at the targets, from 16 pixels higher
+   than usual.
+
+   Abilities: Dark Blessing, Acid Blessing. */
+void btEffectRunAcidBlessing(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_PINK);
 }
-/* Violet lightning reaches from the user across to the targets instead of */
-/* bursts, on a canvas shown three times as wide, flickering through three */
-/* pictures, and the targets flash in turn without being knocked back. */
-/* */
-/* Abilities: Storm Blessing. */
-void btEffectRunStormBlessing(BATTLE_EFFECT_PARM *args) {
+
+/* Violet lightning reaches from the user across to the targets instead of
+   bursts, on a canvas shown three times as wide, flickering through three
+   pictures, and the targets flash in turn without being knocked back.
+
+   Abilities: Storm Blessing. */
+void btEffectRunStormBlessing(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_LIGHTNING);
 }
-/* The user fires a stream of demon faces at the targets, from 16 pixels in */
-/* front of it. */
-/* */
-/* Abilities: Evil Blessing. */
-void btEffectRunEvilBlessing(BATTLE_EFFECT_PARM *args) {
+
+/* The user fires a stream of demon faces at the targets, from 16 pixels in
+   front of it.
+
+   Abilities: Evil Blessing. */
+void btEffectRunEvilBlessing(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_FACES);
 }
-/* The user fires a stream of Mars-coloured bursts at the targets, from 28 */
-/* pixels in front of it. */
-/* */
-/* Abilities: Deadly Gas. */
-void btEffectRunDeadlyGas(BATTLE_EFFECT_PARM *args) {
+
+/* The user fires a stream of Mars-coloured bursts at the targets, from 28
+   pixels in front of it.
+
+   Abilities: Deadly Gas. */
+void btEffectRunDeadlyGas(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_DJINNI);
 }
 
 /* The user fires one burst a frame at a point near one of the targets, taking
- */
-/* them in turn, and each target is hit in turn. */
-void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, s32 mode) {
+   them in turn, and each target is hit in turn. */
+void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Sint32 mode)
+{
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	u8 *sprites;
-	BLITTER_PAIR draw;
-	SCR_POINT origin;
-	SCR_POINT targetSpots[8];
-	s32 aim[3];
-	u16 *color;
-	s32 frame;
-	s32 i;
-	s32 target;
-	s32 level;
-	s32 paletteId;
+	void				*canvas;
+	Uint8				*sprites;
+	BLITTER_PAIR		 draw;
+	SCREEN_POINT		 origin;
+	SCREEN_POINT		 targetSpots[8];
+	Sint32				 aim[3];
+	Uint16				*color;
+	Sint32				 frame;
+	Sint32				 i;
+	Sint32				 target;
+	Sint32				 level;
+	Sint32				 paletteId;
 
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -113,44 +124,37 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, s32 mode) {
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 
 	if(mode == BURST_SHOWER_MODE_FACES) {
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-							COMPOSITE_LIGHTEN);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 		draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-							EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-							COMPOSITE_LIGHTEN);
+			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-	}
-	else {
+	} else {
 		btEffectBuildCanvasBlitters(state->args->side, draw);
 	}
 
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
 	if(mode == BURST_SHOWER_MODE_LIGHTNING) {
 		btResourceLoadAndDecompress(RESOURCE_VIOLET_LIGHTNING_SHEET_A,
-									(state->sheet + BURST_SHOWER_PICTURES), 1,
-									1);
-	}
-	else if(mode == BURST_SHOWER_MODE_FACES) {
+			(state->sheet + BURST_SHOWER_PICTURES), 1, 1);
+	} else if(mode == BURST_SHOWER_MODE_FACES) {
 		btResourceLoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
-									(state->sheet + BURST_SHOWER_PICTURES), 1,
-									1);
-	}
-	else {
+			(state->sheet + BURST_SHOWER_PICTURES), 1, 1);
+	} else {
 		btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-									(state->sheet + BURST_SHOWER_PICTURES), 1,
-									1);
+			(state->sheet + BURST_SHOWER_PICTURES), 1, 1);
 		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 		/* The grey mode: a ramp of greys, with blending off. */
 		if(mode == BURST_SHOWER_MODE_GREY) {
-			for(i = 0, color = (u16 *)BG_PLTT; i != SHEET_PALETTE_COLORS; i++) {
+			for(i = 0, color = (Uint16 *)BG_PLTT; i != SHEET_PALETTE_COLORS;
+				i++) {
 				level = i / 4;
 				*color = RGB(level, level, level);
 				color++;
 			}
 			REG_BLDCNT = 0;
-		}
-		else {
+		} else {
 			switch(mode) {
 			case BURST_SHOWER_MODE_FLASH:
 				paletteId = RESOURCE_FLASH_BURST_SHEET;
@@ -170,18 +174,17 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, s32 mode) {
 				break;
 			}
 			syWordsCopy(BG_PLTT, syResourceGetTableEntry(paletteId),
-						SHEET_PALETTE_BYTES);
+				SHEET_PALETTE_BYTES);
 		}
 	}
 
 	if(mode == BURST_SHOWER_MODE_FACES) {
 		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+	} else {
+		EFFECT_SET_TRANSFER(
+			state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	}
-	else {
-		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
-							CANVAS_FADE_THREE_QUARTERS);
-	}
-	sySetEvent(btEffectTransferCanvas, TASK_PASS_VBLANK);
+	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
 	for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 		state->particles[i].variant = -1;
@@ -194,16 +197,14 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, s32 mode) {
 	if(mode == BURST_SHOWER_MODE_DJINNI) {
 		if(state->args->side == EFFECT_SIDE_PARTY) {
 			origin.x += 28;
-		}
-		else {
+		} else {
 			origin.x -= 28;
 		}
 	}
 	if(mode == BURST_SHOWER_MODE_FACES) {
 		if(state->args->side == EFFECT_SIDE_PARTY) {
 			origin.x += 16;
-		}
-		else {
+		} else {
 			origin.x -= 16;
 		}
 	}
@@ -225,43 +226,38 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, s32 mode) {
 			if(frame == 24) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
-		}
-		else {
+		} else {
 			if(frame == 60) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
 		}
 
 		/* The lightning mode flickers its bolt from the user towards the
-		 * targets; */
-		/* the others fire bursts at them. */
+		   targets; the others fire bursts at them. */
 		if(mode == BURST_SHOWER_MODE_LIGHTNING) {
 			if(state->args->side == EFFECT_SIDE_PARTY) {
 				draw[0](canvas,
-						(state->sheet + BURST_SHOWER_PICTURES) +
-							frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
-						origin.x - 2, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
-						VIOLET_LIGHTNING_HEIGHT);
-			}
-			else {
+					(state->sheet + BURST_SHOWER_PICTURES) +
+						frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
+					origin.x - 2, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
+					VIOLET_LIGHTNING_HEIGHT);
+			} else {
 				draw[0](canvas,
-						(state->sheet + BURST_SHOWER_PICTURES) +
-							frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
-						origin.x - (VIOLET_LIGHTNING_WIDTH - 2), origin.y - 32,
-						VIOLET_LIGHTNING_WIDTH, VIOLET_LIGHTNING_HEIGHT);
+					(state->sheet + BURST_SHOWER_PICTURES) +
+						frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
+					origin.x - (VIOLET_LIGHTNING_WIDTH - 2), origin.y - 32,
+					VIOLET_LIGHTNING_WIDTH, VIOLET_LIGHTNING_HEIGHT);
 			}
-		}
-		else {
+		} else {
 			aim[0] = (targetSpots[target].x + (syRandom() & 31)) - 16;
 			aim[1] = (targetSpots[target].y + (syRandom() & 63)) - 16;
 			if(frame < BURST_SHOWER_BURSTS) {
-				/* A burst moves a 32nd of the way to its aim a frame for */
-				/* BURST_SHOWER_BURST_LIFE frames: three quarters of the way
-				 * down, and */
-				/* across the half-width canvas half again as far, past the
-				 * targets. */
+				/* A burst moves a 32nd of the way to its aim a frame for
+				   BURST_SHOWER_BURST_LIFE frames: three quarters of the way
+				   down, and across the half-width canvas half again as far,
+				   past the targets. */
 				state->particles[frame].x = origin.x * (toFIXED(1) / 2);
-				state->particles[frame].y = INTtoFIXED(origin.y);
+				state->particles[frame].y = toFIXED(origin.y);
 				state->particles[frame].velX =
 					(aim[0] - origin.x) * (toFIXED(1) / 32);
 				state->particles[frame].velY =
@@ -276,33 +272,31 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, s32 mode) {
 			if(burst->variant >= 0) {
 				if(mode == BURST_SHOWER_MODE_FACES) {
 					if(burst->variant > 5) {
-						draw[state->args->side](
-							canvas, (state->sheet + BURST_SHOWER_PICTURES),
+						draw[state->args->side](canvas,
+							(state->sheet + BURST_SHOWER_PICTURES),
 							FIXEDtoINT(burst->x) - DEMON_FACE_WIDTH / 2,
 							FIXEDtoINT(burst->y) - DEMON_FACE_HEIGHT / 2,
 							DEMON_FACE_WIDTH, DEMON_FACE_HEIGHT);
 					}
-				}
-				else if(mode == BURST_SHOWER_MODE_DJINNI) {
+				} else if(mode == BURST_SHOWER_MODE_DJINNI) {
 					if(burst->variant > 5) {
 						draw[0](canvas,
-								(state->sheet + BURST_SHOWER_PICTURES) +
-									(burst->variant / 4) *
-										PICTURE_BYTES(FLASH_BURST),
-								FIXEDtoINT(burst->x) - FLASH_BURST_WIDTH / 2,
-								FIXEDtoINT(burst->y) - FLASH_BURST_HEIGHT / 2,
-								FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+							(state->sheet + BURST_SHOWER_PICTURES) +
+								(burst->variant / 4) *
+									PICTURE_BYTES(FLASH_BURST),
+							FIXEDtoINT(burst->x) - FLASH_BURST_WIDTH / 2,
+							FIXEDtoINT(burst->y) - FLASH_BURST_HEIGHT / 2,
+							FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 					}
-				}
-				else if(mode != BURST_SHOWER_MODE_LIGHTNING) {
+				} else if(mode != BURST_SHOWER_MODE_LIGHTNING) {
 					if(burst->variant > 1) {
 						draw[0](canvas,
-								(state->sheet + BURST_SHOWER_PICTURES) +
-									(burst->variant / 4) *
-										PICTURE_BYTES(FLASH_BURST),
-								FIXEDtoINT(burst->x) - FLASH_BURST_WIDTH / 2,
-								FIXEDtoINT(burst->y) - FLASH_BURST_HEIGHT / 2,
-								FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+							(state->sheet + BURST_SHOWER_PICTURES) +
+								(burst->variant / 4) *
+									PICTURE_BYTES(FLASH_BURST),
+							FIXEDtoINT(burst->x) - FLASH_BURST_WIDTH / 2,
+							FIXEDtoINT(burst->y) - FLASH_BURST_HEIGHT / 2,
+							FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 					}
 				}
 				burst->x += burst->velX;
@@ -321,26 +315,22 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, s32 mode) {
 				if((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
 					state->shakeFrm = 8;
 					btEffectTintBattler(state->args->tgts[i],
-										SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
+						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
 				}
 			}
-		}
-		else {
+		} else {
 			for(i = 0; i != state->args->tgtCnt; i++) {
 				if((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
 					state->shakeFrm = 8;
 					if(mode == BURST_SHOWER_MODE_GREY) {
 						btEffectTintBattler(state->args->tgts[i],
-											SPRITE_COLOR_BLACK, POSE_DAMAGE, i,
-											4);
-					}
-					else {
+							SPRITE_COLOR_BLACK, POSE_DAMAGE, i, 4);
+					} else {
 						btEffectTintBattler(state->args->tgts[i],
-											SPRITE_COLOR_WHITE, POSE_DAMAGE, i,
-											4);
+							SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
 					}
-					btMotionApplyKnockbackStub(state->args->tgts[i],
-											   KNOCKBACK_HURL);
+					btMotionApplyKnockbackStub(
+						state->args->tgts[i], KNOCKBACK_HURL);
 				}
 			}
 		}

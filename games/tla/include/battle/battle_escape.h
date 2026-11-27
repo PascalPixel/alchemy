@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_BATTLE_ESCAPE_H
 #define ALCHEMY_BATTLE_ESCAPE_H
 
-/* @file */
 /* Auto battle's escape: the party running from the battle. */
 
 #include "edition.h"
@@ -9,7 +8,7 @@
 
 #include "types.h"
 
-s32 btFleeCheckSuccess(void);
-s32 btFleePlayRun(BATTLE_ACTION_RECORD *action);
+Sint32 btFleeCheckSuccess(void);
+Bool   btFleePlayRun(BATTLE_ACTION_RECORD *action);
 
 #endif

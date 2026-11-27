@@ -1,7 +1,6 @@
-/* @file */
-/* Declarations Tundaria Tower shares with Dehkan Plateau and Magma Rock's */
-/* inside, whose pillars and rubble it copies: the field engine calls their */
-/* overlays make, some through their own import rows. */
+/* Declarations Tundaria Tower shares with Dehkan Plateau and Magma Rock's
+   inside, whose pillars and rubble it copies: the field engine calls their
+   overlays make, some through their own import rows. */
 #ifndef ALCHEMY_TUNDARIA_TOWER_H
 #define ALCHEMY_TUNDARIA_TOWER_H
 
@@ -12,24 +11,25 @@
 #include "system/field_effect.h"
 #include "field/actor.h"
 #include "scene_ids.h"
-#include "field/field_sequence_event.h"
+#include "field/field_mode_script.h"
 #include "graphics/resource.h"
 
 #include "field/scene_tables.h"
 
-s32 scMapCellSetAttributes(u32 layer, s32 x, s32 z, s32 value);
-void scFieldEffectSpawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-						s32 velocityZ, u32 flags,
-						const EFFECT_OPTIONS *options);
+Sint32 scMapMetatileSetAttributes(
+	Uint32 layer, Sint32 x, Sint32 z, Sint32 value);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 /* Stops the leader where it stands (fdLeaderStopMoving, through the overlay's
- */
-/* own import row). */
+   own import row). */
 void syImportLeaderStopMoving(void);
 
-void syRockSpawn(s32 x, s32 y, s32 z, s32 frames);
+void scRockSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 frames);
 
 /* fdPaletteFadeSetSource, under the name the tower's fades call it by. */
-static inline void scTundariaTowerFadeFrom(s32 color, s32 mode) {
+static inline void scTundariaTowerFadeFrom(Sint32 color, Sint32 mode)
+{
 	fdPaletteFadeSetSource(color, mode);
 }
 

@@ -7,11 +7,11 @@ One piece of code runs all of it, the same in every scene. Everything that
 makes Vale Vale, its people, its doors and its story, is tables and small
 functions that this code asks the scene for.
 
-## The field sequence
+## The field mode
 
 ![In Vault, Isaac talks to a villager standing in the street: the villager turns to him, says `Welcome to Vault, the town at the heart of Angara.`, and goes back to his rounds](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
 
-The [field sequence](glossary.md#field-sequence) is one function. It sets a
+The [field mode](glossary.md#field-mode) is one function. It sets a
 scene up, then goes round one small loop until the party leaves.
 
 ```mermaid
@@ -22,20 +22,20 @@ flowchart TD
   requests -- "no" --> walk
   requests -- "a talk, a step, a menu" --> answer(["Answer it"])
   answer --> requests
-  requests -- "an exit, or ⚔️ a battle" --> leave(["The sequence ends"])
+  requests -- "an exit, or ⚔️ a battle" --> leave(["The mode ends"])
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef mode fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   class setup,leave mainRoutine
-  class walk,answer sequence
+  class walk,answer mode
   class requests request
 ```
 
 The first box of the loop is a single call, `sySynch(1)`. That call runs one
-frame of the game: every [task](glossary.md#task) once, and one of the
-tasks moves every actor. This function is the code that is waiting, and when
+frame of the game: every [event](glossary.md#event) once, and one of the
+events moves every actor. This function is the code that is waiting, and when
 `sySynch(1)` returns it looks at the requests itself
-([Waiting and tasks](system.md#waiting-and-tasks)). This is not a loop that
+([Waiting and events](system.md#waiting-and-events)). This is not a loop that
 runs the game. It asks for one frame, then asks whether anything needs an
 answer.
 
@@ -49,7 +49,7 @@ answer is the code that waits, and the loop above stands still inside it.
 
 A battle is just another way out. The cave is thrown away while the battle
 runs and set up again afterwards, with everyone put back where they stood.
-[The field sequence serves requests](../../games/tbs/src/field/README.md#the-field-sequence-serves-requests)
+[The field mode serves requests](../../games/tbs/src/field/README.md#the-field-mode-serves-requests)
 goes through the set-up and each kind of request.
 
 ## Scenes and areas
@@ -66,13 +66,13 @@ pushed a pillar. A few things are forgotten sooner, each time a scene is
 entered, such as a log rolled into Kolima Forest's river
 ([State that cleans itself up](../../games/tbs/src/scene/README.md#state-that-cleans-itself-up)).
 
-## Triggers and events
+## Cues and scripts
 
 ![In Vault's mayor's house after Kalay, Isaac talks to the mayor twice: the first talk welcomes him back, and the second is a warning about the thieves](https://alchemy.pascalpixel.com/guides/map/talk-twice.gif)
 
 The field code knows nothing about a mayor. It asks the scene, and the
 scene's answer to "what can happen here?" is a table of
-[triggers](glossary.md#trigger). A row says what the player does (talks,
+[cues](glossary.md#cue). A row says what the player does (talks,
 steps, searches, casts), to whom or where, a condition on the game flags,
 and what runs.
 
@@ -82,13 +82,13 @@ counts until he has given it, and a warning that always counts. Nothing
 anywhere says "the mayor is now in state two". The flags say what has
 happened, and the tables say what that means here.
 
-What a row runs is usually an [event](glossary.md#event): a function in the
+What a row runs is usually a [script](glossary.md#script): a function in the
 scene's overlay that takes the party over and plays from top to bottom,
-calling `sySynch()` as it goes. A door opening is an event, and so is a whole
+calling `sySynch()` as it goes. A door opening is a script, and so is a whole
 cutscene. Each line of one is an
-[event command](glossary.md#event-command), a C call such as
+[script command](glossary.md#script-command), a C call such as
 `fdActorWalkTo`.
-[How a trigger is chosen](../../games/tbs/src/scene/README.md#how-a-trigger-is-chosen)
+[How a cue is chosen](../../games/tbs/src/scene/README.md#how-a-cue-is-chosen)
 shows the mayor's rows as they are written.
 
 ## Exits and entrances
@@ -115,22 +115,23 @@ list of orders that is worked through a little each frame. A footprint's
 is two orders long: `SC_WAIT` for two seconds, then disappear.
 
 An actor does not run itself. It is a row in a table, and one
-[task](glossary.md#task) visits every row each frame and carries that
+[event](glossary.md#event) visits every row each frame and carries that
 actor's script on from where it stopped. The footprint's two seconds are a
-count in its row that the task takes one off each frame: not the
+count in its row that the event takes one off each frame: not the
 [`sySynch()`](glossary.md#wait) a cutscene calls
-([Waiting and tasks](system.md#two-kinds-of-waiting)).
+([Waiting and events](system.md#two-kinds-of-waiting)).
 
 Isaac is an actor like any other. While the player steers, his script is
-one order on repeat: do what the D-pad says. When an event needs him, it
-swaps that script for another. That swap is all "the game takes control"
+one order on repeat: do what the D-pad says. When a scene's script needs
+him, it swaps his actor script for another. That swap is all "the game takes control"
 ever means.
 
-An event and an actor script are two kinds of thing. An event is C, and it
-is the code that waits. A script is a table, which the actors' task reads.
-So an event never moves anyone itself. It gives an actor a target or a
-script with a command that returns at once, and then calls `sySynch()` while
-the task does the moving. `fdActorWalkTo` only starts a walk.
+A scene's script and an actor script are two kinds of thing. A scene's script
+is C, and it is the code that waits. An actor script is a table, which the
+actors' event reads. So a scene's script never moves anyone itself. It gives
+an actor a target or an actor script with a command that returns at once, and
+then calls `sySynch()` while the event does the moving. `fdActorWalkTo` only
+starts a walk.
 `fdActorWalkToAndWait` starts it and then calls `sySynch(1)` until the actor is
 there ([One waiter at a time](system.md#one-waiter-at-a-time)).
 [Everything that moves runs an actor script](../../games/tbs/src/field/README.md#everything-that-moves-runs-an-actor-script)
@@ -139,9 +140,9 @@ lists the orders.
 ## The ground
 
 The ground is a [map](glossary.md#map): a grid of 16-pixel
-[cells](glossary.md#cell). A cell says which picture is drawn there, how
+[metatiles](glossary.md#metatile). A metatile says which picture is drawn there, how
 high the ground is, and a number for what standing there does, its
-[cell behavior](glossary.md#cell-behavior).
+[metatile behavior](glossary.md#metatile-behavior).
 
 Height does most of the work. Isaac can step up a little and down a little
 more, so a cliff is simply ground too high to step onto, and few walls are
@@ -149,7 +150,7 @@ marked as walls.
 
 The behavior numbers are split in two. The high ones mean the same
 everywhere: a ledge, a ladder, a gap to jump. The rest mean nothing until
-a scene's trigger table gives them a meaning, so the same number is a
+a scene's cue table gives them a meaning, so the same number is a
 ladder in Vale and a jar with an Apple in Kolima.
 
 A map is drawn as three layers, ground, walls and roofs, with the actors
@@ -163,7 +164,7 @@ scene supplies the particular.
 
 Cast Move and the field code draws the hand and finds what it touches. Only
 Vale knows its pillar can be pushed, and says so with one more kind of
-trigger row: Move, on the pillar.
+cue row: Move, on the pillar.
 
 Random battles measure distance. After each frame the field's function adds
 to a counter by how far the leader has walked, and
@@ -183,8 +184,8 @@ works through it.
 ## Where the code is
 
 - [Field code](../../games/tbs/src/field/README.md) is the walking itself, the same in
-  every scene: the sequence, actors, movement, field Psynergy and random
+  every scene: the mode, actors, movement, field Psynergy and random
   battles.
 - [Scenes](../../games/tbs/src/scene/README.md) is what belongs to one scene: its tables
-  and its events.
+  and its scripts.
 - [Maps](../../games/tbs/src/map/README.md) is the ground each scene is drawn on.

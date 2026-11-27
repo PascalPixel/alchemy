@@ -1,125 +1,118 @@
-/* @file */
-/* The battle Djinn menu. */
-/* Part of screens.c. */
+/* The battle Djinn menu. Part of screens.c. */
 
-/* The Japanese list window is 9 tiles wide from column 21 and a recovering */
-/* Djinni's turns stand at x 40. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define DJINN_LIST_X	 21
-#define DJINN_LIST_WIDTH 9
-#define DJINN_TURNS_X	 40
-#else
-#define DJINN_LIST_X	 20
-#define DJINN_LIST_WIDTH 10
-#define DJINN_TURNS_X	 48
-#endif
+/* The Japanese list window is 9 tiles wide from column 21 and a recovering
+   Djinni's turns stand at x 40. */
+#define DJINN_LIST_X	 JAPANESE_OR(21, 20)
+#define DJINN_LIST_WIDTH JAPANESE_OR(9, 10)
+#define DJINN_TURNS_X	 JAPANESE_OR(40, 48)
 
-#define DJINN_MENU_ARROW_VRAM                                                  \
+#define DJINN_MENU_ARROW_VRAM \
 	(BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
 
-/* The battle Djinn menu for unit `member`: its Djinn in element and number */
-/* order, five to a page, set ones plain, standby ones in TEXT_COLOR_RED and */
-/* recovering ones in TEXT_COLOR_YELLOW with their turns, the one under the */
-/* cursor described above the list with its change preview beside it */
-/* (mnBattleDjinnMenuShowChangePreview; holding R shows the Psynergy pages, */
-/* Left and Right turn them). The battle commands pass 1 as unused, which no */
-/* code reads. */
-s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
-	MENU_SPR cursorSprite;
-	u16 messageText[64];
+/* The battle Djinn menu for unit `member`: its Djinn in element and number
+   order, five to a page, set ones plain, standby ones in TEXT_COLOR_RED and
+   recovering ones in TEXT_COLOR_YELLOW with their turns, the one under the
+   cursor described above the list with its change preview beside it
+   (mnBattleDjinnMenuShowChangePreview; holding R shows the Psynergy pages, Left
+   and Right turn them). The battle commands pass 1 as unused, which no code
+   reads. */
+Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
+{
+	MENU_SPR   cursorSprite;
+	Uint16	   messageText[64];
 	WIN_STATE *state;
-	WINDOW *previewWindow;
-	s32 drawnRow;
-	s32 cursorSlot;
-	u32 *djinnEntries;
-	s32 djinnCount;
-	s32 drawnFirstEntry;
-	WINDOW *messageWindow;
-	s32 standbyElements;
-	s32 preferredRow;
-	s32 previewPage;
-	s32 redraw;
-	s32 alreadySelected;
-	s32 previewPages;
-#if TLA_PATCH_1
-	s32 redrawList;
+	WINDOW	  *previewWindow;
+	Sint32	   drawnRow;
+	Sint32	   cursorSlot;
+	Uint32	  *djinnEntries;
+	Sint32	   djinnCount;
+	Sint32	   drawnFirstEntry;
+	WINDOW	  *messageWindow;
+	Sint32	   standbyElements;
+	Sint32	   preferredRow;
+	Sint32	   previewPage;
+	Bool	   redraw;
+	Bool	   alreadySelected;
+	Sint32	   previewPages;
+#if BATTLE_DJINN_LIST_REDRAW_AFTER_PSYNERGY_PAGES
+	Bool redrawList;
 #endif
-	BATTLE_MENU_STATE *navigation;
-	UNIT *unit;
+	BATTLE_MENU_STATE	*navigation;
+	UNIT				*unit;
 	DJINN_RECOVERY_LIST *list;
-	WINDOW *listWindow;
-	WINDOW *iconWindow;
-	PARTY_STAT_WINDOW *partyStatus;
-	s32 listEntry;
-	u32 selectedDjinn;
-	u32 blinkPhase;
-	s32 firstEntry;
-	s32 selectedRow;
-	u32 encodedDjinn;
+	WINDOW				*listWindow;
+	WINDOW				*iconWindow;
+	PARTY_STAT_WINDOW	*partyStatus;
+	Sint32				 listEntry;
+	Uint32				 selectedDjinn;
+	Uint32				 blinkPhase;
+	Sint32				 firstEntry;
+	Sint32				 selectedRow;
+	Uint32				 encodedDjinn;
+
 	struct {
-		s32 x, y;
+		Sint32 x, y;
 	} cursorPos;
-	s32 pressed;
-	s32 repeated;
-	s32 held;
-	s32 element;
-	s32 djinnIndex;
-	s32 i;
-	s32 j;
+
+	Sint32 pressed;
+	Sint32 repeated;
+	Sint32 held;
+	Sint32 element;
+	Sint32 djinnIndex;
+	Sint32 i;
+	Sint32 j;
 
 	state = (WIN_STATE *)Ram_HeapSlots->winState;
 	previewWindow = NULL;
 	drawnRow = -1;
-	cursorSlot = syVramCacheAllocEntry(128);
-	djinnEntries = syHeapAllocEwram(84 * sizeof(*djinnEntries));
+	cursorSlot = syVRAMCacheAllocEntry(128);
+	djinnEntries = syHeapAllocEWRAM(84 * sizeof(*djinnEntries));
 	djinnCount = 0;
 	drawnFirstEntry = drawnRow;
 	encodedDjinn = 0;
 	standbyElements = 0;
 	previewPage = 0;
 	previewPages = 0;
-	redraw = 0;
-	alreadySelected = 0;
-#if TLA_PATCH_1
-	redrawList = 0;
+	redraw = FALSE;
+	alreadySelected = FALSE;
+#if BATTLE_DJINN_LIST_REDRAW_AFTER_PSYNERGY_PAGES
+	redrawList = FALSE;
 #endif
-	messageWindow =
-		mnWindowCreate(0, 4, 30, 4,
-					   WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-						   WINDOW_FLAG_BORDERED_CANVAS);
+	messageWindow = mnWindowCreate(0, 4, 30, 4,
+		WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+			WINDOW_FLAG_BORDERED_CANVAS);
 	mnTextUseExtraTiles(1);
 	listWindow = mnWindowCreate(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11,
-								WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
+		WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 	BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
 	unit = syUnitGet(member);
 
 	for(element = 0; element <= 3; element++) {
 		for(djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
-			if(unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
+			if(unit->djinnSet[element] & (Uint32)(1 << djinnIndex)) {
 				djinnEntries[djinnCount] =
-					(u32)DJINN_COMMAND(element, djinnIndex);
+					(Uint32)DJINN_COMMAND(element, djinnIndex);
 				djinnCount++;
-			}
-			else if(unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
-				u32 v;
-				s32 k;
+			} else if(unit->djinnHeld[element] & (Uint32)(1 << djinnIndex)) {
+				Uint32 v;
+				Sint32 k;
 
 				list = &(gmDjinnGetRecoveryTableStub(
-							 (u32)member > ALLY_MAX ? 1 : 0))
+							 (Uint32)member > ALLY_MAX ? 1 : 0))
 							->list;
 				for(k = 0; k < list->cnt; k++) {
 					if(list->entries[k].unitId == member &&
-					   list->entries[k].element == element &&
-					   list->entries[k].idx == djinnIndex) {
+						list->entries[k].element == element &&
+						list->entries[k].idx == djinnIndex) {
 						break;
 					}
 				}
-				v = (u32)(DJINN_COMMAND(element, djinnIndex) |
-						  BATTLE_DJINN_UNSET);
+				v = (Uint32)(DJINN_COMMAND(element, djinnIndex) |
+					BATTLE_DJINN_UNSET);
 				djinnEntries[djinnCount] = v;
 				if(list->entries[k].turns > 0) {
-					v |= (u32)(list->entries[k].turns
-							   << BATTLE_DJINN_TURNS_SHIFT);
+					v |= (Uint32)(list->entries[k].turns
+						<< BATTLE_DJINN_TURNS_SHIFT);
 					djinnEntries[djinnCount] = v;
 				}
 				djinnCount++;
@@ -135,47 +128,45 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 		MENU_SPR *sprite = &cursorSprite;
 
 		if(firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
-		   redraw != 0) {
+			redraw != 0) {
 			selectedDjinn = djinnEntries[firstEntry + selectedRow];
 			standbyElements = 0;
 			state->holdTilemapUpload = 1;
 			mnWindowHighlightRect(listWindow->x + 1,
-								  listWindow->y + drawnRow * 2 + 1,
-								  listWindow->width - 2, 1, WINDOW_PALETTE);
+				listWindow->y + drawnRow * 2 + 1, listWindow->width - 2, 1,
+				WINDOW_PALETTE);
 			if(previewPage != 0) {
 				mnWindowClose(messageWindow, 1);
 				messageWindow = mnWindowCreate(0, 4, 30, 4,
-											   WINDOW_FLAG_INSTANT |
-												   WINDOW_FLAG_TEXT_CANVAS |
-												   WINDOW_FLAG_BORDERED_CANVAS);
+					WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+						WINDOW_FLAG_BORDERED_CANVAS);
 				mnTextFillCanvasBackground();
 			}
-			redraw = 0;
+			redraw = FALSE;
 			if(djinnCount != 0) {
-				s32 k = 0;
+				Sint32 k = 0;
 
 				mnMessageArgumentClearAll();
-				alreadySelected = 0;
+				alreadySelected = FALSE;
 				for(k = 0; k <= 7; k++) {
 					if(BattleMenuStateWork->chosenDjinn[k] == selectedDjinn) {
-						alreadySelected = 1;
+						alreadySelected = TRUE;
 						break;
 					}
 				}
 				if(alreadySelected != 0) {
-					BATTLE_MENU_MESSAGE_COPY((s32)MsgCannotUseSameDjinniTwice,
-											 messageText,
-											 BATTLE_MENU_MESSAGE_CAPACITY);
+					BATTLE_MENU_MESSAGE_COPY(
+						(Sint32)MsgCannotUseSameDjinniTwice, messageText,
+						BATTLE_MENU_MESSAGE_CAPACITY);
 					if(previewWindow != NULL) {
 						mnWindowClose(previewWindow, 1);
 						previewWindow = NULL;
-#if TLA_PATCH_4
-						redrawList = 1;
+#if BATTLE_DJINN_LIST_REDRAW_ON_UNAVAILABLE_DJINNI
+						redrawList = TRUE;
 #endif
 						previewPage = 0;
 					}
-				}
-				else if(selectedDjinn & BATTLE_DJINN_UNSET) {
+				} else if(selectedDjinn & BATTLE_DJINN_UNSET) {
 					if(selectedDjinn & BATTLE_DJINN_TURNS) {
 						mnMessageArgumentPush(
 							(selectedDjinn & BATTLE_DJINN_TURNS) >>
@@ -185,57 +176,52 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 							BATTLE_DJINN_ELEMENT_OF(selectedDjinn) *
 									DJINN_PER_ELEMENT +
 								DJINN_COMMAND_INDEX(selectedDjinn) +
-								(s32)MsgDjinnEffect,
+								(Sint32)MsgDjinnEffect,
 							messageText, BATTLE_MENU_MESSAGE_CAPACITY);
 						if(previewWindow != NULL) {
 							mnWindowClose(previewWindow, 1);
 							previewWindow = NULL;
-#if TLA_PATCH_4
-							redrawList = 1;
+#if BATTLE_DJINN_LIST_REDRAW_ON_UNAVAILABLE_DJINNI
+							redrawList = TRUE;
 #endif
 							previewPage = 0;
 						}
-					}
-					else {
+					} else {
 						previewWindow = mnBattleDjinnMenuShowChangePreview(
 							previewWindow, member, selectedDjinn, previewPage,
 							&previewPages);
-						mnMessageCopyExpanded((s32)MsgReadyToSummon,
-											  messageText,
-											  BATTLE_MENU_MESSAGE_CAPACITY);
-						standbyElements =
-							1 << BATTLE_DJINN_ELEMENT_OF(selectedDjinn);
+						mnMessageCopyExpanded((Sint32)MsgReadyToSummon,
+							messageText, BATTLE_MENU_MESSAGE_CAPACITY);
+						standbyElements = 1
+							<< BATTLE_DJINN_ELEMENT_OF(selectedDjinn);
 					}
-				}
-				else {
-					previewWindow = mnBattleDjinnMenuShowChangePreview(
-						previewWindow, member, selectedDjinn, previewPage,
-						&previewPages);
+				} else {
+					previewWindow =
+						mnBattleDjinnMenuShowChangePreview(previewWindow,
+							member, selectedDjinn, previewPage, &previewPages);
 					BATTLE_MENU_MESSAGE_COPY(
 						BATTLE_DJINN_ELEMENT_OF(selectedDjinn) *
 								DJINN_PER_ELEMENT +
 							DJINN_COMMAND_INDEX(selectedDjinn) +
-							(s32)MsgDjinnEffect,
+							(Sint32)MsgDjinnEffect,
 						messageText, BATTLE_MENU_MESSAGE_CAPACITY);
 				}
-			}
-			else {
-				BATTLE_MENU_MESSAGE_COPY((s32)MsgNoDjinn, messageText,
-										 BATTLE_MENU_MESSAGE_CAPACITY);
+			} else {
+				BATTLE_MENU_MESSAGE_COPY((Sint32)MsgNoDjinn, messageText,
+					BATTLE_MENU_MESSAGE_CAPACITY);
 			}
 			state->holdTilemapUpload = 0;
 			if(previewPage == 0) {
 				state->holdTilemapUpload = 1;
 				mnWindowClose(messageWindow, 1);
 				messageWindow = mnWindowCreate(0, 4, 30, 4,
-											   WINDOW_FLAG_INSTANT |
-												   WINDOW_FLAG_TEXT_CANVAS |
-												   WINDOW_FLAG_BORDERED_CANVAS);
+					WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+						WINDOW_FLAG_BORDERED_CANVAS);
 				state->holdTilemapUpload = previewPage;
 			}
 			mnTextDrawWideStringAtOffset(messageText, messageWindow, 0, 4);
 			drawnRow = selectedRow;
-#if TLA_PATCH_1
+#if BATTLE_DJINN_LIST_REDRAW_AFTER_PSYNERGY_PAGES
 			if(firstEntry != drawnFirstEntry || redrawList == 1) {
 #else
 			if(firstEntry != drawnFirstEntry) {
@@ -246,8 +232,7 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 					(encodedDjinn = djinnEntries[listEntry]) !=
 					BATTLE_DJINN_END;
 					listEntry++) {
-					mnWindowSetTilemapEntry(
-						listWindow,
+					mnWindowSetTilemapEntry(listWindow,
 						BATTLE_DJINN_ELEMENT_OF(encodedDjinn) +
 							ELEMENT_ICON_TILE,
 						0, j * 2, 0);
@@ -259,7 +244,7 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 						BATTLE_DJINN_ELEMENT_OF(encodedDjinn) *
 								DJINN_PER_ELEMENT +
 							DJINN_COMMAND_INDEX(encodedDjinn) +
-							(s32)MsgDjinnName,
+							(Sint32)MsgDjinnName,
 						listWindow, 8, j * 16);
 					if(encodedDjinn & BATTLE_DJINN_TURNS)
 						mnTextDrawNumAtOffset(
@@ -272,67 +257,61 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 						break;
 				}
 				drawnFirstEntry = firstEntry;
-#if TLA_PATCH_1
-				redrawList = 0;
+#if BATTLE_DJINN_LIST_REDRAW_AFTER_PSYNERGY_PAGES
+				redrawList = FALSE;
 #endif
 			}
 			if(djinnCount > BATTLE_LIST_ROWS) {
-				s32 listPages;
+				Sint32 listPages;
 
 				for(j = 0;
 					j < (listPages = (djinnCount + 4) / BATTLE_LIST_ROWS);
 					j++) {
-					s32 tile = j + PAGE_NUMBER_TILE;
+					Sint32 tile = j + PAGE_NUMBER_TILE;
 
 					if(j == firstEntry / BATTLE_LIST_ROWS)
 						tile = j + PAGE_NUMBER_LIT_TILE;
-					mnWindowSetTilemapEntry(
-						listWindow, tile, listWindow->width - listPages + j - 2,
-						-1, 0);
+					mnWindowSetTilemapEntry(listWindow, tile,
+						listWindow->width - listPages + j - 2, -1, 0);
 				}
 			}
 			mnWindowHighlightRect(listWindow->x + 1,
-								  listWindow->y + selectedRow * 2 + 1,
-								  listWindow->width - 2, 1, HIGHLIGHT_PALETTE);
+				listWindow->y + selectedRow * 2 + 1, listWindow->width - 2, 1,
+				HIGHLIGHT_PALETTE);
 			state->dirty = 1;
 			state->holdTilemapUpload = 0;
 		}
 
 		if(djinnCount > BATTLE_LIST_ROWS) {
 			for(j = 0; j < (djinnCount + 4) / BATTLE_LIST_ROWS; j++) {
-				s32 tile = j + PAGE_NUMBER_TILE;
+				Sint32 tile = j + PAGE_NUMBER_TILE;
 
-				if((InputWork.held & KEY_R) || (FrameCount & 15) <= 11) {
+				if((PerWork.data & KEY_R) || (FrameCount & 15) <= 11) {
 					if(j == firstEntry / BATTLE_LIST_ROWS)
 						tile = j + PAGE_NUMBER_LIT_TILE;
 				}
-				mnWindowSetTilemapEntry(
-					listWindow, tile,
+				mnWindowSetTilemapEntry(listWindow, tile,
 					listWindow->width - (djinnCount + 4) / 5 + j - 2, -1, 0);
 			}
-			if((InputWork.held & KEY_R) == 0) {
-				mnWindowSetTilemapEntry(
-					listWindow, LIST_TILE_PAGES_LEFT,
+			if((PerWork.data & KEY_R) == 0) {
+				mnWindowSetTilemapEntry(listWindow, LIST_TILE_PAGES_LEFT,
 					listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3,
 					-1, 0);
 				mnWindowSetTilemapEntry(listWindow, LIST_TILE_PAGES_RIGHT,
-										listWindow->width - 2, -1, 0);
-			}
-			else {
-				mnWindowSetTilemapEntry(
-					listWindow, WINDOW_TILE_BORDER_TOP,
+					listWindow->width - 2, -1, 0);
+			} else {
+				mnWindowSetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP,
 					listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3,
 					-1, 0);
 				mnWindowSetTilemapEntry(listWindow,
-										WINDOW_TILE_BORDER_TOP_RIGHT,
-										listWindow->width - 2, -1, 0);
+					WINDOW_TILE_BORDER_TOP_RIGHT, listWindow->width - 2, -1, 0);
 			}
 			WINDOW_MARK_TILEMAP_ROW(state, listWindow->y - 1);
 		}
 
-		pressed = InputWork.pressed;
-		repeated = InputWork.repeat;
-		held = InputWork.held;
+		pressed = PerWork.push;
+		repeated = PerWork.repeat;
+		held = PerWork.data;
 		navigation = BattleMenuStateWork;
 		if(navigation->tutorialStep != 0) {
 			repeated = 0;
@@ -342,8 +321,7 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 				navigation->tutorialDelay = 60;
 				repeated = KEY_A;
 				pressed = KEY_A;
-			}
-			else {
+			} else {
 				navigation->tutorialDelay--;
 			}
 		}
@@ -355,8 +333,8 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 		}
 		if(pressed & KEY_A) {
 			if(djinnCount != 0) {
-				u32 selection = djinnEntries[firstEntry + selectedRow];
-				u32 turns = selection & BATTLE_DJINN_TURNS;
+				Uint32 selection = djinnEntries[firstEntry + selectedRow];
+				Uint32 turns = selection & BATTLE_DJINN_TURNS;
 
 				if(turns == 0) {
 					if(alreadySelected == 0) {
@@ -366,22 +344,19 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 						navigation->preferredRow = preferredRow;
 						break;
 					}
-				}
-				else if(alreadySelected == 0) {
+				} else if(alreadySelected == 0) {
 					mnTextFillCanvasBackground();
 					mnMessageArgumentClearAll();
 					mnMessageArgumentPush((turns & BATTLE_DJINN_TURNS) >>
-											  BATTLE_DJINN_TURNS_SHIFT,
-										  MESSAGE_ARGUMENT_NUMBER);
-					mnMessageCopyExpanded((s32)MsgDjinniStillRecovering,
-										  messageText,
-										  BATTLE_MENU_MESSAGE_CAPACITY);
-					mnTextDrawWideStringAtOffset(messageText, messageWindow, 0,
-												 4);
+							BATTLE_DJINN_TURNS_SHIFT,
+						MESSAGE_ARGUMENT_NUMBER);
+					mnMessageCopyExpanded((Sint32)MsgDjinniStillRecovering,
+						messageText, BATTLE_MENU_MESSAGE_CAPACITY);
+					mnTextDrawWideStringAtOffset(
+						messageText, messageWindow, 0, 4);
 				}
 				sySndPlayStub(SE_MENU_ERROR);
-			}
-			else {
+			} else {
 				encodedDjinn = -1;
 				break;
 			}
@@ -392,11 +367,10 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				selectedRow++;
 				if(selectedRow == BATTLE_LIST_ROWS ||
-				   firstEntry + selectedRow == djinnCount)
+					firstEntry + selectedRow == djinnCount)
 					selectedRow = 0;
 				preferredRow = selectedRow;
-			}
-			else if(repeated & KEY_UP) {
+			} else if(repeated & KEY_UP) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				selectedRow--;
 				if(selectedRow < 0) {
@@ -406,33 +380,28 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 						selectedRow = 4;
 				}
 				preferredRow = selectedRow;
-			}
-			else if(held & KEY_R) {
+			} else if(held & KEY_R) {
 				if(previewWindow != NULL) {
 					for(i = 0; i < previewPages; i++) {
-						s32 tile = i + PAGE_NUMBER_TILE;
+						Sint32 tile = i + PAGE_NUMBER_TILE;
 
 						if((FrameCount & 15) <= 11 && i == previewPage - 1)
 							tile = previewPage + PAGE_NUMBER_LIT_TILE - 1;
-						mnWindowSetTilemapEntry(
-							previewWindow, tile,
+						mnWindowSetTilemapEntry(previewWindow, tile,
 							previewWindow->width - previewPages + i - 2, -1, 0);
 					}
-					mnWindowSetTilemapEntry(
-						previewWindow, LIST_TILE_PAGES_LEFT,
+					mnWindowSetTilemapEntry(previewWindow, LIST_TILE_PAGES_LEFT,
 						previewWindow->width - previewPages - 3, -1, 0);
 					mnWindowSetTilemapEntry(previewWindow,
-											LIST_TILE_PAGES_RIGHT,
-											previewWindow->width - 2, -1, 0);
+						LIST_TILE_PAGES_RIGHT, previewWindow->width - 2, -1, 0);
 					WINDOW_MARK_TILEMAP_ROW(state, previewWindow->y);
 				}
 				if(previewPage == 0 && previewPages != 0) {
 					if(previewWindow != NULL)
 						mnWindowSprClearList(previewWindow);
 					previewPage = 1;
-					redraw = 1;
-				}
-				else {
+					redraw = TRUE;
+				} else {
 					if(previewPage > previewPages)
 						previewPage = previewPages;
 					if(previewPage != 0) {
@@ -441,28 +410,25 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 							previewPage++;
 							if(previewPage > previewPages)
 								previewPage = 1;
-							redraw = 1;
-						}
-						else if(repeated & KEY_LEFT) {
+							redraw = TRUE;
+						} else if(repeated & KEY_LEFT) {
 							sySndPlayStub(SE_MENU_CURSOR_MOVE);
 							previewPage--;
 							if(previewPage <= 0)
 								previewPage = previewPages;
-							redraw = 1;
+							redraw = TRUE;
 						}
 					}
 				}
-			}
-			else if(previewPage != 0) {
+			} else if(previewPage != 0) {
 				if(previewWindow != NULL)
 					mnWindowSprClearList(previewWindow);
 				previewPage = 0;
-				redraw = 1;
-#if TLA_PATCH_1
-				redrawList = 1;
+				redraw = TRUE;
+#if BATTLE_DJINN_LIST_REDRAW_AFTER_PSYNERGY_PAGES
+				redrawList = TRUE;
 #endif
-			}
-			else if(repeated & KEY_RIGHT) {
+			} else if(repeated & KEY_RIGHT) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				syInputResetKeyRepeat();
 				if(firstEntry + BATTLE_LIST_ROWS >= djinnCount) {
@@ -470,8 +436,7 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 						firstEntry = 0;
 						selectedRow = preferredRow;
 					}
-				}
-				else {
+				} else {
 					firstEntry += BATTLE_LIST_ROWS;
 					selectedRow = preferredRow;
 					if(firstEntry == (djinnCount - 1) / 5 * BATTLE_LIST_ROWS) {
@@ -480,15 +445,13 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 							selectedRow = preferredRow;
 					}
 				}
-			}
-			else if(repeated & KEY_LEFT) {
+			} else if(repeated & KEY_LEFT) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				syInputResetKeyRepeat();
 				if(firstEntry != 0) {
 					firstEntry -= BATTLE_LIST_ROWS;
 					selectedRow = preferredRow;
-				}
-				else {
+				} else {
 					firstEntry = (djinnCount - 1) / 5 * BATTLE_LIST_ROWS;
 					selectedRow = preferredRow;
 					if(firstEntry != 0) {
@@ -501,11 +464,11 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 		}
 
 		MENU_PLACE_CURSOR(cursorPos, listWindow, selectedRow, 2, sprite);
-		sprite->oam.f.tile = syVramCacheReload(cursorSlot, PointingHandTiles);
+		sprite->oam.f.tile = syVRAMCacheReload(cursorSlot, PointingHandTiles);
 		sprite->oam.f.x = cursorPos.x + ((FrameCount & 4) >> 1) - 6;
 		sprite->oam.f.y = cursorPos.y - ((FrameCount & 4) >> 2) - 8;
 		if(djinnCount != 0)
-			syOamAddSprAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
+			syOAMAddSprAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
 		partyStatus = Ram_HeapSlots->partyStat;
 		blinkPhase = FrameCount & 4;
@@ -513,7 +476,7 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 		if(partyStatus->flg & 2) {
 			for(i = 0; i <= 3; i++) {
 				/* HIGHLIGHT_PALETTE, one below, while the blink is on. */
-				s32 palette = WINDOW_PALETTE - (blinkPhase != 0);
+				Sint32 palette = WINDOW_PALETTE - (blinkPhase != 0);
 
 				if(((1 << i) & standbyElements) == 0)
 					palette = WINDOW_PALETTE;
@@ -525,15 +488,14 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 		}
 		if(FrameCount & 4) {
 			syWordsCopyEntry((void *)DJINN_MENU_ARROW_VRAM, DjinnMenu_BlinkTile,
-							 TILE_SIZE_4BPP);
+				TILE_SIZE_4BPP);
 			syWordsCopyEntry((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-							 DjinnMenu_BlinkTile, TILE_SIZE_4BPP);
-		}
-		else {
+				DjinnMenu_BlinkTile, TILE_SIZE_4BPP);
+		} else {
 			syWordsFillEntry((void *)DJINN_MENU_ARROW_VRAM, TILE_SIZE_4BPP,
-							 TEXT_CANVAS_BACKGROUND_WORD);
+				TEXT_CANVAS_BACKGROUND_WORD);
 			syWordsCopyEntry((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-							 DjinnMenu_BlinkTile, TILE_SIZE_4BPP);
+				DjinnMenu_BlinkTile, TILE_SIZE_4BPP);
 		}
 		sySynch(1);
 	}
@@ -542,10 +504,10 @@ s32 mnBattleDjinnMenuRun(s32 member, s32 unused) {
 		PARTY_STAT_WINDOW *owner = Ram_HeapSlots->partyStat;
 
 		if(owner->flg & 2)
-			mnWindowHighlightRect(owner->win->x + 1, owner->win->y + 1, 4, 4,
-								  WINDOW_PALETTE);
+			mnWindowHighlightRect(
+				owner->win->x + 1, owner->win->y + 1, 4, 4, WINDOW_PALETTE);
 	}
-	syVramCacheFreeEntry(cursorSlot);
+	syVRAMCacheFreeEntry(cursorSlot);
 	mnWindowClose(messageWindow, 1);
 	mnWindowClose(previewWindow, 1);
 	mnWindowClose(listWindow, 1);

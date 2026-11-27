@@ -1,50 +1,48 @@
 #ifndef ALCHEMY_BATTLE_STUBS_H
 #define ALCHEMY_BATTLE_STUBS_H
 
-/* @file */
 /* The battle module's stub calls: running a battle, its camera and background,
- */
-/* and how its units move. */
+   and how its units move. */
 
-struct SCR_POINT;
+struct SCREEN_POINT;
 
 void btDebugBattleRunMenuStub(void);
-void btObjectSpawnObjectsForListStub(s16 *unitIds, s32 refreshPoses);
-void btCameraSetViewStub(s32 x, s32 depth, s32 y, s32 zoom);
-void btCameraSetViewAtPairMidpointStub(s32 firstUnitId, s32 secondUnitId,
-									   s32 zoom);
-void btBackgroundSetModeStub(s32 mode, s32 unusedResource, s32 fade);
-void btBackgroundLoadStub(s32 mode, s32 resourceId, s32 level);
-void btBackgroundSetPaletteLevelStub(s32 unused, s32 level);
-s32 btSprHasHeavyImpactStub(s32 index);
-s32 btUnitGetEffectHeightStub(s32 unitId);
-void btMotionApproachTargetStub(s32 unitId, s32 targetId, s32 frames,
-								s32 initialVelocityY);
-void btMotionApplyKnockbackStub(s32 unitId, s32 variant);
-s32 btUnitListIdsStub(s32 sideMask, u16 *unitIds);
-/* Returns a unit's battle object, or null for a unit with no place */
-/* (btObjectGet); the battle effects find the sprites they move through */
-/* it. */
-struct BATTLE_OBJECT *btObjectGetStub(s32 unitId);
-s32 btRunStub(s32 enemyGroup);
-s32 btMotionProjectPosStub(s32 unitId, s32 *projected);
-s32 btMotionProjectScaledPosStub(s32 unitId, s32 *projected);
-/* Projects the point above a unit, where the target cursor points, onto the */
-/* screen. */
-s32 btMotionProjectCursorPointStub(s32 unitId, struct SCR_POINT *projected);
-s32 btPartyPrepareMembersStub(u16 *unitIds);
-void btCameraSetCommandViewStub(s32 verticalOffset);
-void *fdActorGetSprStub(struct ACTOR *actor, s32 recordIndex);
-void btHighlightSetModesStub(u16 *selectedUnits, s32 mode);
-void btPlaybackStartStub(s32 cue);
-s32 mnGraphicsScaleRgb555ClampedStub(u16 *source, u16 *destination, s32 scale,
-									 s32 count);
-s32 btDjinnRecoveryCountDownStub(void);
-s32 btObjectGetPaletteStub(s32 id);
-s32 btDjinnRecoveryCountDownTwentyStub(void);
-s32 btDebugParmSetLoadStub(s32 set);
-void btObjectPutStub(void);
-UNREAD_RESULT mnBattleMessageWaitForAdvanceAtStub(s32 x, s32 y);
-s32 btDjinnCountStandbyStub(u32 unitId, u8 *counts);
+void btObjectSpawnObjectsForListStub(Sint16 *unitIds, Sint32 refreshPoses);
+void btCameraSetViewStub(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom);
+void btCameraSetViewAtPairMidpointStub(
+	Sint32 firstUnitId, Sint32 secondUnitId, Sint32 zoom);
+void   btBackgroundSetModeStub(Sint32 mode, Sint32 unusedResource, Sint32 fade);
+void   btBackgroundLoadStub(Sint32 mode, Sint32 resourceId, Sint32 level);
+void   btBackgroundSetPaletteLevelStub(Sint32 unused, Sint32 level);
+Sint32 btSprHasHeavyImpactStub(Sint32 index);
+Sint32 btUnitGetEffectHeightStub(Sint32 unitId);
+void   btMotionApproachTargetStub(
+	  Sint32 unitId, Sint32 targetId, Sint32 frames, Sint32 initialVelocityY);
+void   btMotionApplyKnockbackStub(Sint32 unitId, Sint32 variant);
+Sint32 btUnitListIdsStub(Sint32 sideMask, Uint16 *unitIds);
+/* Returns a unit's battle object, or null for a unit with no place
+   (btObjectGet); the battle effects find the sprites they move through it. */
+struct BATTLE_OBJECT *btObjectGetStub(Sint32 unitId);
+Sint32				  btRunStub(Sint32 enemyGroup);
+Sint32				  btMotionProjectPosStub(Sint32 unitId, Sint32 *projected);
+Sint32 btMotionProjectScaledPosStub(Sint32 unitId, Sint32 *projected);
+/* Projects the point above a unit, where the target cursor points, onto the
+   screen. */
+Sint32 btMotionProjectCursorPointStub(
+	Sint32 unitId, struct SCREEN_POINT *projected);
+Sint32 btPartyPrepareMembersStub(Uint16 *unitIds);
+void   btCameraSetCommandViewStub(Sint32 verticalOffset);
+void  *btActorGetSprStub(struct ACTOR *actor, Sint32 recordIndex);
+void   btHighlightSetModesStub(Uint16 *selectedUnits, Sint32 mode);
+void   btPlaybackStartStub(Sint32 snd);
+Sint32 btGraphicsScaleRGB555ClampedStub(
+	Uint16 *source, Uint16 *destination, Sint32 scale, Sint32 count);
+Sint32		  btDjinnRecoveryCountDownStub(void);
+Sint32		  btObjectGetPaletteStub(Sint32 id);
+Sint32		  btDjinnRecoveryCountDownTwentyStub(void);
+Sint32		  btDebugParmSetLoadStub(Sint32 set);
+void		  btObjectPutStub(void);
+UNREAD_RESULT btMessageWaitForAdvanceAtStub(Sint32 x, Sint32 y);
+Sint32		  btDjinnCountStandbyStub(Uint32 unitId, Uint8 *counts);
 
 #endif

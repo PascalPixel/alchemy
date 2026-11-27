@@ -3,11 +3,11 @@
 @ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global Tile_ExpandOpaqueCode
-Tile_ExpandOpaqueCode:
-	.global Tile_ExpandOpaque
+	.global mnTileExpandOpaqueCode
+mnTileExpandOpaqueCode:
+	.global mnTileExpandOpaque
 	.thumb_func
-Tile_ExpandOpaque:
+mnTileExpandOpaque:
 	bx	pc
 AlchemyUncredited_08038e32:
 	.2byte	0x0200
@@ -48,5 +48,5 @@ AlchemyUncreditedEnd_08038e32:
 	.4byte	0x00ff00ff
 	.4byte	0x0000ffff
 	.4byte	0x11111111
-	.global Tile_ExpandOpaqueEnd
-Tile_ExpandOpaqueEnd:
+	.global mnTileExpandOpaqueEnd
+mnTileExpandOpaqueEnd:

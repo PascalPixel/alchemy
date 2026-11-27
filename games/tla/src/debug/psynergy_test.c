@@ -1,22 +1,19 @@
-/* @file */
-/* The debug room Psynergy test: the shops, an inn and a Sanctum to try, the */
-/* party's levels, items and Djinn to set, and spots for the field Psynergy */
-/* The Lost Age adds, each answered by a small event: Scoop digs up a hole, a */
-/* puddle, a Wicked Mace and a statue before a battle; Cyclone clears leaves */
-/* and sends the leader away and back in a ring of light; Pound lights a torch
- */
-/* and Parch dries a pool; Blaze startles Kraden; Sand drops Felix to the sand
- */
-/* layer. */
+/* The debug room Psynergy test: the shops, an inn and a Sanctum to try, the
+   party's levels, items and Djinn to set, and spots for the field Psynergy The
+   Lost Age adds, each answered by a small script: Scoop digs up a hole, a
+   puddle, a Wicked Mace and a statue before a battle; Cyclone clears leaves and
+   sends the leader away and back in a ring of light; Pound lights a torch and
+   Parch dries a pool; Blaze startles Kraden; Sand drops Felix to the sand
+   layer. */
 
-#include "scene/event_layer.h"
+#include "scene/script_layer.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "version.h"
+#include "edition.h"
 #include "text/msg_ids.h"
-#include "field/event_inline.h"
+#include "field/script_inline.h"
 #include "field/call.h"
-#include "field/field_sequence_event.h"
+#include "field/field_mode_script.h"
 #include "macros.h"
 #include "item_ids.h"
 #include "window/screens.h"
@@ -25,12 +22,11 @@
 #include "shop/shop.h"
 
 /* A Mad Plant leaps at the leader (fdMadPlantLeapAtLeader, through the room's
- */
-/* own import). */
-void syImportDebugMadPlantLeap(s32 sprite, s32 x, s32 z);
+   own import). */
+void syImportDebugMadPlantLeap(Sint32 sprite, Sint32 x, Sint32 z);
 
-/* The room's flags: the four Scoop spots dug, the Wicked Mace picked up, and */
-/* whether Blaze has sent Kraden to his second spot. */
+/* The room's flags: the four Scoop spots dug, the Wicked Mace picked up, and
+   whether Blaze has sent Kraden to his second spot. */
 #define FLAG_HOLE_DUG		   FLAG_AREA_TEMP_00
 #define FLAG_PUDDLE_DUG		   FLAG_AREA_TEMP_01
 #define FLAG_WICKED_MACE_DUG   FLAG_AREA_TEMP_02
@@ -38,39 +34,39 @@ void syImportDebugMadPlantLeap(s32 sprite, s32 x, s32 z);
 #define FLAG_WICKED_MACE_TAKEN FLAG_AREA_TEMP_10
 #define FLAG_KRADEN_MOVED	   FLAG_SCENE_TEMP_00
 
-/* The room's own cells, as map.txt has them. */
-typedef enum PSYNERGY_TEST_CELL_BEHAVIOR {
-	/* The tile marked "Ouch!" in Japanese, cell (11, 2). */
-	CELL_BEHAVIOR_OUCH_TILE = 10,
-	CELL_BEHAVIOR_LV_TILE,		  /* the tile marked LV, cell (11, 4) */
-	CELL_BEHAVIOR_TREASURE_TILE,  /* marked with the kanji for treasure, (11, 6)
-								   */
-	CELL_BEHAVIOR_RED_CROSS_TILE, /* the tile marked with a red cross, (11, 8)
-								   */
-	/* The floor of a dug hole, copied in from cell (36, 28): its number is the
-	 */
-	/* exit it leaves by (psynergy_test_exits.c), back to entrance 2. */
-	CELL_BEHAVIOR_HOLE_EXIT = 20,
+/* The room's own metatiles, as map.txt has them. */
+typedef enum PSYNERGY_TEST_METATILE_BEHAVIOR {
+	/* The tile marked "Ouch!" in Japanese, metatile (11, 2). */
+	METATILE_BEHAVIOR_OUCH_TILE = 10,
+	METATILE_BEHAVIOR_LV_TILE, /* the tile marked LV, metatile (11, 4) */
+	/* marked with the kanji for treasure, metatile (11, 6) */
+	METATILE_BEHAVIOR_TREASURE_TILE,
+	/* the tile marked with a red cross, metatile (11, 8) */
+	METATILE_BEHAVIOR_RED_CROSS_TILE,
+	/* The floor of a dug hole, copied in from metatile (36, 28): its number is
+	   the exit it leaves by (psynergy_test_exits.c), back to entrance 2. */
+	METATILE_BEHAVIOR_HOLE_EXIT = 20,
 	/* The four Scoop spots, corner to corner from (10, 10) to (13, 13). */
-	CELL_BEHAVIOR_HOLE_SPOT = 50,
-	CELL_BEHAVIOR_PUDDLE_SPOT,
-	CELL_BEHAVIOR_WICKED_MACE_SPOT,
-	CELL_BEHAVIOR_STATUE_SPOT,
-	CELL_BEHAVIOR_LEAVES =
-		55,					 /* the patch of leaves at (2, 10), 5 by 4 cells */
-	CELL_BEHAVIOR_RING_LEAF, /* one of its leaves, cell (5, 11) */
-	CELL_BEHAVIOR_MAD_PLANT_LEAF, /* its top left leaf, cell (2, 10) */
-	/* The pool of water, 2 by 4 cells at (16, 10). */
-	CELL_BEHAVIOR_POOL = 60,
-	CELL_BEHAVIOR_CHEST = 100 /* the chest, cell (14, 9) */
-} PSYNERGY_TEST_CELL_BEHAVIOR;
+	METATILE_BEHAVIOR_HOLE_SPOT = 50,
+	METATILE_BEHAVIOR_PUDDLE_SPOT,
+	METATILE_BEHAVIOR_WICKED_MACE_SPOT,
+	METATILE_BEHAVIOR_STATUE_SPOT,
+	METATILE_BEHAVIOR_LEAVES =
+		/* the patch of leaves at (2, 10), 5 by 4 metatiles */
+	55,
+	METATILE_BEHAVIOR_RING_LEAF,	  /* one of its leaves, metatile (5, 11) */
+	METATILE_BEHAVIOR_MAD_PLANT_LEAF, /* its top left leaf, metatile (2, 10) */
+	/* The pool of water, 2 by 4 metatiles at (16, 10). */
+	METATILE_BEHAVIOR_POOL = 60,
+	METATILE_BEHAVIOR_CHEST = 100 /* the chest, metatile (14, 9) */
+} PSYNERGY_TEST_METATILE_BEHAVIOR;
 
-/* The entrances Cyclone's spots bring the party back in by: there the leader */
-/* leaves in a ring of light, or arrives in one (scInit). */
+/* The entrances Cyclone's spots bring the party back in by: there the leader
+   leaves in a ring of light, or arrives in one (scInit). */
 enum { ENTRANCE_DEPART_IN_RING = 6, ENTRANCE_ARRIVE_IN_RING = 8 };
 
-/* The room's actors that run its tests, numbered in the order of */
-/* ActorPlacements after the party's four rows. */
+/* The room's actors that run its tests, numbered in the order of
+   ActorPlacements after the party's four rows. */
 typedef enum PSYNERGY_TEST_ACTOR_ID {
 	/* The four shops, one for each side he is talked to from. */
 	ACTOR_SHOPKEEPER = ACTOR_FIRST_PLACED,
@@ -81,9 +77,9 @@ typedef enum PSYNERGY_TEST_ACTOR_ID {
 	ACTOR_MARS_DJINNI,	   /* lies on its side; Mind Read hears it */
 	ACTOR_WEEDS,		   /* the icon browser */
 	ACTOR_SPROUT,		   /* ignores Force */
-	/* A puddle frozen as the room starts: Isaac's name entry from the north, */
-	/* the item picker from elsewhere; it ignores Force, Whirlwind, Catch, */
-	/* Tremor and Grind. */
+	/* A puddle frozen as the room starts: Isaac's name entry from the north,
+	   the item picker from elsewhere; it ignores Force, Whirlwind, Catch,
+	   Tremor and Grind. */
 	ACTOR_ICE_PILLAR,
 	ACTOR_FLAME, /* burns; Blaze at it does nothing */
 	/* In Kraden's sprite, he answers Blaze as Daila's practising man. */
@@ -94,83 +90,104 @@ typedef enum PSYNERGY_TEST_ACTOR_ID {
 	ACTOR_TORCH			 /* Pound or A?? lights it */
 } PSYNERGY_TEST_ACTOR_ID;
 
-void dbPsynergyTestDigCells(s32 stage, s32 sourceX, s32 sourceY, s32 width,
-							s32 height, s32 destinationX, s32 destinationY);
-void dbPsynergyTestGrowActor(s32 stage, s32 id, s32 x, s32 z);
-void dbPsynergyTestDropActor(s32 stage, s32 id, s32 x, s32 z);
-void dbPsynergyTestRaiseStatue(s32 stage, s32 x, s32 z, s32 row, s32 column);
+void dbPsynergyTestDigMetatiles(Sint32 stage, Sint32 sourceX, Sint32 sourceY,
+	Sint32 width, Sint32 height, Sint32 destinationX, Sint32 destinationY);
+void dbPsynergyTestGrowActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z);
+void dbPsynergyTestDropActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z);
+void dbPsynergyTestRaiseStatue(
+	Sint32 stage, Sint32 x, Sint32 z, Sint32 row, Sint32 column);
 void dbPsynergyTestStartRings(ACTOR *actor, SPARKLE_STATE *state);
 void dbPsynergyTestStopRings(ACTOR *actor);
 
-extern u32 LightRing_Tiles[];
+extern Uint32									LightRing_Tiles[];
 SPARKLE_STATE PsynergyTest_LeaderRings BSS_DATA ALIGNED(16);
 SPARKLE_STATE PsynergyTest_TargetRings BSS_DATA ALIGNED(16);
 
-const SCENE_ENTRANCE *scGetEntrances(void) { return SceneEntrances; }
+const SCENE_ENTRANCE *scGetEntrances(void)
+{
+	return SceneEntrances;
+}
 
-const SCENE_REGION *scGetExitRegions(void) { return 0; }
+const SCENE_REGION *scGetExitRegions(void)
+{
+	return 0;
+}
 
-const u32 *scGetExits(void) { return SceneExits; }
+const Uint32 *scGetExits(void)
+{
+	return SceneExits;
+}
 
-const ACTOR_PLACE *scGetActorPlacements(void) { return ActorPlacements; }
+const ACTOR_PLACE *scGetActorPlacements(void)
+{
+	return ActorPlacements;
+}
 
-/* The event for actors and Psynergy the room leaves alone. */
-void dbPsynergyTestNoOp(void) {}
+/* The script for actors and Psynergy the room leaves alone. */
+void dbPsynergyTestNoOperation(void)
+{
+}
 
 /* Opens the picker a full party drops an item with, and discards the choice. */
-void dbPsynergyTestOpenItemPicker(void) {
-	s32 selectedSlot;
-	s32 selectedUnit;
+void dbPsynergyTestOpenItemPicker(void)
+{
+	Sint32 selectedSlot;
+	Sint32 selectedUnit;
 
 	mnItemPickerRunToDrop(&selectedUnit, &selectedSlot);
 }
 
 /* The name entry screen for Isaac. */
-void dbPsynergyTestEditIsaacName(void) { mnNameEntryEditMemberName(ISAAC); }
+void dbPsynergyTestEditIsaacName(void)
+{
+	mnNameEntryEditMemberName(ISAAC);
+}
 
-/* The event for Force, Whirlwind and Catch cast at the ice pillar. */
-void dbPsynergyTestIgnorePsynergy(void) {}
+/* The script for Force, Whirlwind and Catch cast at the ice pillar. */
+void dbPsynergyTestIgnorePsynergy(void)
+{
+}
 
-/* Closes the finished message windows, opens the message in the window a */
-/* shopkeeper's lines open (mnShopShowKeeperMessage) and waits until it is */
-/* typed out, then a frame more. */
-void dbPsynergyTestShowMessageAndWait(s32 message) {
+/* Closes the finished message windows, opens the message in the window a
+   shopkeeper's lines open (mnShopShowKeeperMessage) and waits until it is typed
+   out, then a frame more. */
+void dbPsynergyTestShowMessageAndWait(Sint32 message)
+{
 	mnMessageCloseFinishedWindows();
-	mnMessageOpenWindow(message, 5, 0,
-						MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
+	mnMessageOpenWindow(
+		message, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
 	while(mnMessageAllTyped() == 0)
 		sySynch(1);
 	sySynch(1);
 }
 
 /* Browses `count` messages from `message`: A or Down for the next, Up for the
- */
-/* one before, B to close. */
-void dbPsynergyTestBrowseMessageRange(s32 message, s32 count) {
-	s32 i;
+   one before, B to close. */
+void dbPsynergyTestBrowseMessageRange(Sint32 message, Sint32 count)
+{
+	Sint32	i;
 	WINDOW *window;
 
 	window = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
 	for(i = 0; i < count; i++) {
 		/* Sample name, item and number substitutions before each message:
-		 * Garet, */
-		/* the Shamshir and 123456. */
+		   Garet, the Shamshir and 123456. */
 		mnMessageArgumentPush(GARET, MESSAGE_ARGUMENT_ACTOR);
 		mnMessageArgumentPush(ITEM_SHAMSHIR, MESSAGE_ARGUMENT_ITEM);
 		mnMessageArgumentPush(123456, MESSAGE_ARGUMENT_NUMBER);
 		dbPsynergyTestShowMessageAndWait(message);
 		for(;;) {
-			if(InputWork.held & KEY_B)
+			if(PerWork.data & KEY_B)
 				goto done;
-			if((InputWork.held & KEY_A) || (InputWork.held & KEY_DOWN)) {
+			if((PerWork.data & KEY_A) || (PerWork.data & KEY_DOWN)) {
 				message++;
 				break;
 			}
-			if(InputWork.held & KEY_UP) {
+			if(PerWork.data & KEY_UP) {
 				message--;
 				break;
 			}
-			if(InputWork.held == 0)
+			if(PerWork.data == 0)
 				sySynch(1);
 			else
 				break;
@@ -181,73 +198,90 @@ done:
 	mnWindowClose(window, 2);
 }
 
-/* The shop and sanctum message browsers: talking to ACTOR_MESSAGE_BROWSER */
-/* from each side. */
-void dbPsynergyTestBrowseWeaponShopMessages(void) {
-	dbPsynergyTestBrowseMessageRange((s32)MsgWeaponShopWelcome, SHOP_MESSAGES);
+/* The shop and sanctum message browsers: talking to ACTOR_MESSAGE_BROWSER from
+   each side. */
+void dbPsynergyTestBrowseWeaponShopMessages(void)
+{
+	dbPsynergyTestBrowseMessageRange(
+		(Sint32)MsgWeaponShopWelcome, SHOP_MESSAGES);
 }
 
 /* Browses the armor shop's messages. */
-void dbPsynergyTestBrowseArmorShopMessages(void) {
-	dbPsynergyTestBrowseMessageRange((s32)MsgArmorShopWelcome, SHOP_MESSAGES);
+void dbPsynergyTestBrowseArmorShopMessages(void)
+{
+	dbPsynergyTestBrowseMessageRange(
+		(Sint32)MsgArmorShopWelcome, SHOP_MESSAGES);
 }
 
 /* Browses the item shop's messages. */
-void dbPsynergyTestBrowseItemShopMessages(void) {
-	dbPsynergyTestBrowseMessageRange((s32)MsgItemShopWelcome, SHOP_MESSAGES);
+void dbPsynergyTestBrowseItemShopMessages(void)
+{
+	dbPsynergyTestBrowseMessageRange((Sint32)MsgItemShopWelcome, SHOP_MESSAGES);
 }
 
 /* Browses the Sanctum's messages. */
-void dbPsynergyTestBrowseSanctumMessages(void) {
-	dbPsynergyTestBrowseMessageRange((s32)MsgWelcomeWearyWanderers,
-									 SANCTUM_MESSAGES);
+void dbPsynergyTestBrowseSanctumMessages(void)
+{
+	dbPsynergyTestBrowseMessageRange(
+		(Sint32)MsgWelcomeWearyWanderers, SANCTUM_MESSAGES);
 }
 
 /* The shops: talking to ACTOR_SHOPKEEPER from each side opens Daila's weapon,
- */
-/* armor or item shop or Izumo's general store. Each passes on the keeper's */
-/* actor id. */
-void dbPsynergyTestOpenWeaponShop(s32 keeper) {
+   armor or item shop or Izumo's general store. Each passes on the keeper's
+   actor id. */
+void dbPsynergyTestOpenWeaponShop(Sint32 keeper)
+{
 	mnShopRun(SHOP_DAILA_WEAPONS, keeper);
 }
 
 /* Opens Daila's armor shop. */
-void dbPsynergyTestOpenArmorShop(s32 keeper) {
+void dbPsynergyTestOpenArmorShop(Sint32 keeper)
+{
 	mnShopRun(SHOP_DAILA_ARMOR, keeper);
 }
 
 /* Opens Daila's item shop. */
-void dbPsynergyTestOpenItemShop(s32 keeper) {
+void dbPsynergyTestOpenItemShop(Sint32 keeper)
+{
 	mnShopRun(SHOP_DAILA_ITEMS, keeper);
 }
 
 /* Opens Izumo's general store. */
-void dbPsynergyTestOpenGeneralStore(s32 keeper) {
+void dbPsynergyTestOpenGeneralStore(Sint32 keeper)
+{
 	mnShopRun(SHOP_IZUMO, keeper);
 }
 
 /* Opens Daila's inn. */
-void dbPsynergyTestOpenInn(s32 keeper) { mnInnCheckIn(DAILA_INN, keeper); }
+void dbPsynergyTestOpenInn(Sint32 keeper)
+{
+	mnInnCheckIn(DAILA_INN, keeper);
+}
 
-/* The event for talking to ACTOR_FALLEN_MAN, which does nothing. */
-void dbPsynergyTestIgnoreTalk(void) {}
+/* The script for talking to ACTOR_FALLEN_MAN, which does nothing. */
+void dbPsynergyTestIgnoreTalk(void)
+{
+}
 
-/* Raises Felix, Jenna and Sheba ten levels: examining CELL_BEHAVIOR_LV_TILE. */
-void dbPsynergyTestRaisePartyLevels(void) {
+/* Raises Felix, Jenna and Sheba ten levels: examining
+   METATILE_BEHAVIOR_LV_TILE. */
+void dbPsynergyTestRaisePartyLevels(void)
+{
 	/* "You went up a level!" */
-	mnMessageShowCentered((s32)MsgYouWentUp, FIELD_MESSAGE_ZOOM);
+	mnMessageShowCentered((Sint32)MsgYouWentUp, FIELD_MESSAGE_ZOOM);
 	gmUnitLevelUpTo(FELIX, syUnitGet(FELIX)->level + 10);
 	gmUnitLevelUpTo(JENNA, syUnitGet(JENNA)->level + 10);
 	gmUnitLevelUpTo(SHEBA, syUnitGet(SHEBA)->level + 10);
 }
 
-/* Gives 777,777 coins and ten each of Game Tickets and Lucky Medals: */
-/* examining CELL_BEHAVIOR_TREASURE_TILE. */
-void dbPsynergyTestGiveTreasureTestStock(void) {
-	s32 i;
+/* Gives 777,777 coins and ten each of Game Tickets and Lucky Medals: examining
+   METATILE_BEHAVIOR_TREASURE_TILE. */
+void dbPsynergyTestGiveTreasureTestStock(void)
+{
+	Sint32 i;
 
 	/* "You got treasure!" */
-	mnMessageShowCentered((s32)MsgYouGotTreasure, FIELD_MESSAGE_ZOOM);
+	mnMessageShowCentered((Sint32)MsgYouGotTreasure, FIELD_MESSAGE_ZOOM);
 	MainRoutineStateWork.coins = 777777;
 	for(i = 0; i < 10; i++) {
 		gmInventoryAddItem(FELIX, ITEM_GAME_TICKET);
@@ -258,15 +292,16 @@ void dbPsynergyTestGiveTreasureTestStock(void) {
 	gmUnitCalc(SHEBA);
 }
 
-/* Takes HP and PP from Felix, Jenna and Sheba, then poisons and haunts Felix */
-/* and binds Jenna and gives her deadly poison: examining */
-/* CELL_BEHAVIOR_OUCH_TILE. */
-void dbPsynergyTestDamageAndAfflictParty(void) {
+/* Takes HP and PP from Felix, Jenna and Sheba, then poisons and haunts Felix
+   and binds Jenna and gives her deadly poison: examining
+   METATILE_BEHAVIOR_OUCH_TILE. */
+void dbPsynergyTestDamageAndAfflictParty(void)
+{
 	UNIT *felix;
 	UNIT *jenna;
 
 	/* "The body is being torn apart." */
-	mnMessageShowCentered((s32)MsgTheBodyIs, FIELD_MESSAGE_ZOOM);
+	mnMessageShowCentered((Sint32)MsgTheBodyIs, FIELD_MESSAGE_ZOOM);
 	scFieldUnitAddHp(FELIX, -100);
 	scFieldUnitAddHp(JENNA, -100);
 	scFieldUnitAddHp(SHEBA, -33);
@@ -284,266 +319,296 @@ void dbPsynergyTestDamageAndAfflictParty(void) {
 	gmUnitCalc(SHEBA);
 }
 
-/* Gives `owner` the Djinni `djinn` of `element` (its DJINNI_INDEX) and sets */
-/* its flag; with `activate` 1 the Djinni is also set. */
-void dbPsynergyTestGiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
-	fdEventSetFlag(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinn));
+/* Gives `owner` the Djinni `djinn` of `element` (its DJINNI_INDEX) and sets its
+   flag; with `activate` 1 the Djinni is also set. */
+void dbPsynergyTestGiveDjinni(
+	Sint32 owner, Sint32 element, Sint32 djinn, Sint32 activate)
+{
+	fdScriptSetFlag(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinn));
 	gmDjinnGive(owner, element, djinn);
 	if(activate == 1)
 		gmDjinnSet(owner, element, djinn);
 }
 
-/* Gives and sets Djinn: Felix seven of Venus, Jenna seven of Mars and Sheba */
-/* six of Mercury: examining CELL_BEHAVIOR_RED_CROSS_TILE. */
-void dbPsynergyTestGivePartyDjinn(void) {
+/* Gives and sets Djinn: Felix seven of Venus, Jenna seven of Mars and Sheba six
+   of Mercury: examining METATILE_BEHAVIOR_RED_CROSS_TILE. */
+void dbPsynergyTestGivePartyDjinn(void)
+{
 	/* "You got a Djinni!" */
-	mnMessageShowCentered((s32)MsgYouGotA, FIELD_MESSAGE_ZOOM);
-	dbPsynergyTestGiveDjinni(FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT),
-							 1);
-	dbPsynergyTestGiveDjinni(FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE),
-							 1);
-	dbPsynergyTestGiveDjinni(FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_QUARTZ),
-							 1);
-	dbPsynergyTestGiveDjinni(FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_VINE),
-							 1);
+	mnMessageShowCentered((Sint32)MsgYouGotA, FIELD_MESSAGE_ZOOM);
+	dbPsynergyTestGiveDjinni(
+		FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT), 1);
+	dbPsynergyTestGiveDjinni(
+		FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE), 1);
+	dbPsynergyTestGiveDjinni(
+		FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_QUARTZ), 1);
+	dbPsynergyTestGiveDjinni(
+		FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_VINE), 1);
 	dbPsynergyTestGiveDjinni(FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_SAP), 1);
-	dbPsynergyTestGiveDjinni(FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND),
-							 1);
-	dbPsynergyTestGiveDjinni(FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE),
-							 1);
-	dbPsynergyTestGiveDjinni(JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FORGE),
-							 1);
-	dbPsynergyTestGiveDjinni(JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FEVER),
-							 1);
-	dbPsynergyTestGiveDjinni(JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_CORONA),
-							 1);
-	dbPsynergyTestGiveDjinni(JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_SCORCH),
-							 1);
-	dbPsynergyTestGiveDjinni(JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER),
-							 1);
-	dbPsynergyTestGiveDjinni(JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FLASH),
-							 1);
-	dbPsynergyTestGiveDjinni(JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH),
-							 1);
-	dbPsynergyTestGiveDjinni(SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ),
-							 1);
-	dbPsynergyTestGiveDjinni(SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_SLEET),
-							 1);
-	dbPsynergyTestGiveDjinni(SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_MIST),
-							 1);
-	dbPsynergyTestGiveDjinni(SHEBA, ELEMENT_MERCURY,
-							 DJINNI_INDEX(DJINNI_SPRITZ), 1);
-	dbPsynergyTestGiveDjinni(SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_HAIL),
-							 1);
-	dbPsynergyTestGiveDjinni(SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_TONIC),
-							 1);
+	dbPsynergyTestGiveDjinni(
+		FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND), 1);
+	dbPsynergyTestGiveDjinni(
+		FELIX, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE), 1);
+	dbPsynergyTestGiveDjinni(
+		JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FORGE), 1);
+	dbPsynergyTestGiveDjinni(
+		JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FEVER), 1);
+	dbPsynergyTestGiveDjinni(
+		JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_CORONA), 1);
+	dbPsynergyTestGiveDjinni(
+		JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_SCORCH), 1);
+	dbPsynergyTestGiveDjinni(
+		JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER), 1);
+	dbPsynergyTestGiveDjinni(
+		JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FLASH), 1);
+	dbPsynergyTestGiveDjinni(
+		JENNA, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH), 1);
+	dbPsynergyTestGiveDjinni(
+		SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ), 1);
+	dbPsynergyTestGiveDjinni(
+		SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_SLEET), 1);
+	dbPsynergyTestGiveDjinni(
+		SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_MIST), 1);
+	dbPsynergyTestGiveDjinni(
+		SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_SPRITZ), 1);
+	dbPsynergyTestGiveDjinni(
+		SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_HAIL), 1);
+	dbPsynergyTestGiveDjinni(
+		SHEBA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_TONIC), 1);
 	gmUnitCalc(FELIX);
 	gmUnitCalc(JENNA);
 	gmUnitCalc(SHEBA);
 }
 
-/* While Felix is Sand he reads his ground height from layer 2, and from */
-/* layer 0 again once Sand fades. */
-void dbPsynergyTestSetSandLayer(void) { fdActorGetById(FELIX)->layer = 2; }
+/* While Felix is Sand he reads his ground height from layer 2, and from layer 0
+   again once Sand fades. */
+void dbPsynergyTestSetSandLayer(void)
+{
+	fdActorGetById(FELIX)->layer = 2;
+}
 
 /* Puts Felix back on layer 0 as Sand fades. */
-void dbPsynergyTestClearSandLayer(void) { fdActorGetById(FELIX)->layer = 0; }
+void dbPsynergyTestClearSandLayer(void)
+{
+	fdActorGetById(FELIX)->layer = 0;
+}
 
-/* As Blaze reaches him, Kraden shouts and jumps to the other of his two */
-/* spots, as Daila's practising man would (scDailaRoomsPracticeShout, */
-/* which Daila never runs). */
-void dbPsynergyTestPracticeShout(s32 unused, s32 actor) {
+/* As Blaze reaches him, Kraden shouts and jumps to the other of his two spots,
+   as Daila's practising man would (scDailaRoomsPracticeShout, which Daila never
+   runs). */
+void dbPsynergyTestPracticeShout(Sint32 unused, Sint32 actor)
+{
 	scFieldActorShowEmote(actor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
 	scFieldActorJump(actor, 6, 15);
 	scFieldActorJump(actor, 6, 15);
-	syFieldEventWait(10);
-	if(fdEventGetFlag(FLAG_KRADEN_MOVED) == 0) {
-		syFieldEventSetMessageId((s32)MsgDailaRoomsGah);
+	syFieldScriptWait(10);
+	if(fdScriptGetFlag(FLAG_KRADEN_MOVED) == 0) {
+		syFieldScriptSetMessageId((Sint32)MsgDailaRoomsGah);
 		/* "GAH!" */
-		fdEventShowMessage(actor, 0);
+		fdScriptShowMessage(actor, 0);
 		fdActorWalkToAndWait(actor, 360, 72);
 		fdActorFaceDirection(actor, FACING_SOUTH, 0);
-		fdEventSetFlag(FLAG_KRADEN_MOVED);
-	}
-	else {
-		syFieldEventSetMessageId((s32)MsgDailaRoomsYarg);
+		fdScriptSetFlag(FLAG_KRADEN_MOVED);
+	} else {
+		syFieldScriptSetMessageId((Sint32)MsgDailaRoomsYarg);
 		/* "YARG!" */
-		fdEventShowMessage(actor, 0);
+		fdScriptShowMessage(actor, 0);
 		fdActorWalkToAndWait(actor, 392, 104);
 		fdActorFaceDirection(actor, FACING_WEST, 0);
-		fdEventClearFlag(FLAG_KRADEN_MOVED);
+		fdScriptClearFlag(FLAG_KRADEN_MOVED);
 	}
-	syFieldEventWait(20);
+	syFieldScriptWait(20);
 }
 
-/* Once Blaze has ended, Kraden turns to Felix, startled, as Daila's */
-/* practising man would (scDailaRoomsStartleAtTheLeader). */
-void dbPsynergyTestStartleAfterBlaze(s32 unused, s32 actor) {
+/* Once Blaze has ended, Kraden turns to Felix, startled, as Daila's practising
+   man would (scDailaRoomsStartleAtTheLeader). */
+void dbPsynergyTestStartleAfterBlaze(Sint32 unused, Sint32 actor)
+{
 	fdActorFaceActor(actor, FELIX, 0);
-	syFieldEventWait(10);
+	syFieldScriptWait(10);
 	scFieldActorShowEmote(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
 	scFieldActorJump(actor, 6, 15);
 	scFieldActorJump(actor, 6, 15);
-	syFieldEventWait(10);
-	syFieldEventSetMessageId((s32)MsgDailaRoomsWhatAreYouDoing);
+	syFieldScriptWait(10);
+	syFieldScriptSetMessageId((Sint32)MsgDailaRoomsWhatAreYouDoing);
 	/* "What are you doing???" */
-	fdEventShowMessage(actor, 0);
-	syFieldEventWait(10);
+	fdScriptShowMessage(actor, 0);
+	syFieldScriptWait(10);
 }
 
 /* The same, once A?? (ABILITY_ARROW, "A??" in the game's text) has ended. */
-void dbPsynergyTestStartleAgain(s32 unused, s32 actor) {
+void dbPsynergyTestStartleAgain(Sint32 unused, Sint32 actor)
+{
 	fdActorFaceActor(actor, FELIX, 0);
-	syFieldEventWait(10);
+	syFieldScriptWait(10);
 	scFieldActorShowEmote(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
 	scFieldActorJump(actor, 6, 15);
 	scFieldActorJump(actor, 6, 15);
-	syFieldEventWait(10);
-	syFieldEventSetMessageId((s32)MsgDailaRoomsWhatAreYouDoing);
+	syFieldScriptWait(10);
+	syFieldScriptSetMessageId((Sint32)MsgDailaRoomsWhatAreYouDoing);
 	/* "What are you doing???" */
-	fdEventShowMessage(actor, 0);
-	syFieldEventWait(10);
+	fdScriptShowMessage(actor, 0);
+	syFieldScriptWait(10);
 }
 
-/* Once A?? has ended at the torch, it lights, and the 4 by 6 block of cells */
-/* at (57, 16) is copied over the one at (25, 0). */
-void dbPsynergyTestLightTorch(void) {
-	s32 destinationX;
-	s32 destinationY;
+/* Once A?? has ended at the torch, it lights, and the 4 by 6 block of metatiles
+   at (57, 16) is copied over the one at (25, 0). */
+void dbPsynergyTestLightTorch(void)
+{
+	Sint32 destinationX;
+	Sint32 destinationY;
 
 	fdActorSetAnimation(ACTOR_TORCH, 2);
-	syFieldEventWait(10);
+	syFieldScriptWait(10);
 	destinationX = 25;
 	destinationY = 0;
-	fdMapGridCopyCells(57, 16, 4, 6, destinationX, destinationY);
+	fdMapGridCopyMetatiles(57, 16, 4, 6, destinationX, destinationY);
 }
 
 /* Pound on the torch does the same as its fist lands, without the wait. */
-void dbPsynergyTestPoundTorch(s32 stage) {
-	s32 destinationX;
-	s32 destinationY;
+void dbPsynergyTestPoundTorch(Sint32 stage)
+{
+	Sint32 destinationX;
+	Sint32 destinationY;
 
 	if(stage == POUND_STAGE_LANDED) {
 		fdActorSetAnimation(ACTOR_TORCH, 2);
 		destinationX = 25;
 		destinationY = 0;
-		fdMapGridCopyCells(57, 16, 4, 6, destinationX, destinationY);
+		fdMapGridCopyMetatiles(57, 16, 4, 6, destinationX, destinationY);
 	}
 }
 
-/* Cyclone at the patch of leaves blows them away: each cell of the patch it */
-/* touched takes its picture from the same place of the bare block at */
-/* (34, 26). */
-void dbPsynergyTestBlowAwayLeaves(void) {
-	s32 windowX;
-	s32 windowZ;
-	s32 layer;
+/* Cyclone at the patch of leaves blows them away: each metatile of the patch it
+   touched takes its picture from the same place of the bare block at (34,
+   26). */
+void dbPsynergyTestBlowAwayLeaves(void)
+{
+	Sint32 windowX;
+	Sint32 windowZ;
+	Sint32 layer;
 
 	windowX = 2;
 	windowZ = 10;
 	layer = 0;
-	fdTileCopiesCopyTouchedCells(34, 26, 5, 4, windowX, windowZ, layer);
+	fdTileCopiesCopyTouchedMetatiles(34, 26, 5, 4, windowX, windowZ, layer);
 }
 
-/* Cyclone at CELL_BEHAVIOR_RING_LEAF blows the leaves away too, then brings */
-/* the party back in by ENTRANCE_DEPART_IN_RING. */
-void dbPsynergyTestDepartInRing(void) {
-	syFieldTileCopiesCopyTouchedCells(34, 26, 5, 4, 2, 10, 0);
-	fdEventSetDestination(SCENE_PSYNERGY_TEST, ENTRANCE_DEPART_IN_RING);
+/* Cyclone at METATILE_BEHAVIOR_RING_LEAF blows the leaves away too, then brings
+   the party back in by ENTRANCE_DEPART_IN_RING. */
+void dbPsynergyTestDepartInRing(void)
+{
+	syFieldTileCopiesCopyTouchedMetatiles(34, 26, 5, 4, 2, 10, 0);
+	fdScriptSetDestination(SCENE_PSYNERGY_TEST, ENTRANCE_DEPART_IN_RING);
 }
 
-/* Cyclone at CELL_BEHAVIOR_RED_CROSS_TILE brings the party back in by */
-/* ENTRANCE_ARRIVE_IN_RING. */
-void dbPsynergyTestArriveInRing(void) {
-	fdEventSetDestination(SCENE_PSYNERGY_TEST, ENTRANCE_ARRIVE_IN_RING);
+/* Cyclone at METATILE_BEHAVIOR_RED_CROSS_TILE brings the party back in by
+   ENTRANCE_ARRIVE_IN_RING. */
+void dbPsynergyTestArriveInRing(void)
+{
+	fdScriptSetDestination(SCENE_PSYNERGY_TEST, ENTRANCE_ARRIVE_IN_RING);
 }
 
-/* Cyclone at CELL_BEHAVIOR_MAD_PLANT_LEAF: a Mad Plant leaps at the leader, */
-/* and a battle with no escape starts, */
-/* ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND's first formation, one or two */
-/* Giant Bats. */
-void dbPsynergyTestFightMadPlant(void) {
+/* Cyclone at METATILE_BEHAVIOR_MAD_PLANT_LEAF: a Mad Plant leaps at the leader,
+   and a battle with no escape starts,
+   ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND's first formation, one or two
+   Giant Bats. */
+void dbPsynergyTestFightMadPlant(void)
+{
 	syImportDebugMadPlantLeap(SPRITE_MAD_PLANT, 40, 168);
 	MainRoutineStateWork.battleType = BATTLE_TYPE_NO_ESCAPE;
 	fdRequestBattleFromEncounterTable(
 		ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND, 0);
 }
 
-/* The four Scoop spots, the grass patches set corner to corner east of the */
-/* leaves, each run while its flag is clear. This one opens a hole, whose */
-/* floor is CELL_BEHAVIOR_HOLE_EXIT. */
-void dbPsynergyTestDigUpHole(s32 stage) {
-	fdEventSetFlag(FLAG_HOLE_DUG);
-	dbPsynergyTestDigCells(stage, 36, 28, 1, 1, 10, 10);
+/* The four Scoop spots, the grass patches set corner to corner east of the
+   leaves, each run while its flag is clear. This one opens a hole, whose floor
+   is METATILE_BEHAVIOR_HOLE_EXIT. */
+void dbPsynergyTestDigUpHole(Sint32 stage)
+{
+	fdScriptSetFlag(FLAG_HOLE_DUG);
+	dbPsynergyTestDigMetatiles(stage, 36, 28, 1, 1, 10, 10);
 }
 
 /* The Scoop spot that digs up a puddle, which grows out of the ground. */
-void dbPsynergyTestDigUpPuddle(s32 stage) {
-	fdEventSetFlag(FLAG_PUDDLE_DUG);
+void dbPsynergyTestDigUpPuddle(Sint32 stage)
+{
+	fdScriptSetFlag(FLAG_PUDDLE_DUG);
 	dbPsynergyTestGrowActor(stage, ACTOR_PUDDLE, 184, 184);
 }
 
 /* The Scoop spot that digs up a Wicked Mace, which drops onto it. */
-void dbPsynergyTestDigUpWickedMace(s32 stage) {
-	fdEventSetFlag(FLAG_WICKED_MACE_DUG);
+void dbPsynergyTestDigUpWickedMace(Sint32 stage)
+{
+	fdScriptSetFlag(FLAG_WICKED_MACE_DUG);
 	dbPsynergyTestDropActor(stage, ACTOR_WICKED_MACE, 200, 200);
 }
 
 /* The Scoop spot that raises a statue, then a battle. */
-void dbPsynergyTestDigUpStatue(s32 stage) {
-	fdEventSetFlag(FLAG_STATUE_DUG);
-	dbPsynergyTestRaiseStatue(stage, 216, 216,
-							  ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND, 0);
+void dbPsynergyTestDigUpStatue(Sint32 stage)
+{
+	fdScriptSetFlag(FLAG_STATUE_DUG);
+	dbPsynergyTestRaiseStatue(
+		stage, 216, 216, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND, 0);
 }
 
 /* Talking to the Wicked Mace picks it up. */
-void dbPsynergyTestPickUpItem(void) {
-	fdEventPickUpItem(ACTOR_WICKED_MACE,
-					  fdActorGet(ACTOR_WICKED_MACE)->iconItem,
-					  FLAG_WICKED_MACE_TAKEN);
+void dbPsynergyTestPickUpItem(void)
+{
+	fdScriptPickUpItem(ACTOR_WICKED_MACE,
+		fdActorGet(ACTOR_WICKED_MACE)->iconItem, FLAG_WICKED_MACE_TAKEN);
 }
 
-/* Parch at the pool dries it, copying in the dry cells at (48, 26). */
-void dbPsynergyTestParchCells(void) {
-	s32 destinationX;
-	s32 destinationY;
+/* Parch at the pool dries it, copying in the dry metatiles at (48, 26). */
+void dbPsynergyTestParchMetatiles(void)
+{
+	Sint32 destinationX;
+	Sint32 destinationY;
 
 	destinationX = 16;
 	destinationY = 10;
-	fdMapGridCopyCells(48, 26, 2, 4, destinationX, destinationY);
+	fdMapGridCopyMetatiles(48, 26, 2, 4, destinationX, destinationY);
 }
 
-/* Tremor's event, which does nothing. */
-void dbPsynergyTestIgnoreTremor(void) {}
+/* Tremor's script, which does nothing. */
+void dbPsynergyTestIgnoreTremor(void)
+{
+}
 
-/* Grind's event, which does nothing. */
-void dbPsynergyTestIgnoreGrind(void) {}
+/* Grind's script, which does nothing. */
+void dbPsynergyTestIgnoreGrind(void)
+{
+}
 
-/* Talking to Mia: rings of light rise around her and the leader for 100 */
-/* frames. */
-void dbPsynergyTestShowRings(s32 actor) {
+/* Talking to Mia: rings of light rise around her and the leader for 100
+   frames. */
+void dbPsynergyTestShowRings(Sint32 actor)
+{
 	dbPsynergyTestStartRings(fdActorGet(actor), &PsynergyTest_TargetRings);
 	dbPsynergyTestStartRings(fdActorGet(MainRoutineStateWork.leaderActorId),
-							 &PsynergyTest_LeaderRings);
+		&PsynergyTest_LeaderRings);
 	sySynch(100);
 	dbPsynergyTestStopRings(fdActorGet(actor));
 	dbPsynergyTestStopRings(fdActorGet(MainRoutineStateWork.leaderActorId));
 }
 
-const TRIGGER *scGetTriggers(void) { return SceneEvents; }
+const CUE *scGetCues(void)
+{
+	return SceneCues;
+}
 
 /* Sets the shops' rare stock, freezes the puddle, lays the fallen actors down,
- */
-/* puts back what the Scoop spots and the Wicked Mace have already done, and */
-/* sends the leader away or brings it in by ring at the entrances for them. */
-s32 scInit(void) {
+   puts back what the Scoop spots and the Wicked Mace have already done, and
+   sends the leader away or brings it in by ring at the entrances for them. */
+Sint32 scInit(void)
+{
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	state->sceneAttributeHigh = 0;
 	state->sceneAttributeLow = 0;
-	/* How many of each rare item the shops may sell, as in The Broken Seal's */
-	/* Menu test, with a Fire Brand where it had a Masamune. */
+	/* How many of each rare item the shops may sell, as in The Broken Seal's
+	   Menu test, with a Fire Brand where it had a Masamune. */
 	gmItemAdjustRareItemStock(ITEM_SHAMSHIR, 1);
 	gmItemAdjustRareItemStock(ITEM_SHAMSHIR, 1);
 	gmItemAdjustRareItemStock(ITEM_SHAMSHIR, 1);
@@ -562,15 +627,15 @@ s32 scInit(void) {
 	fdActorSetAnimation(ACTOR_ICE_PILLAR, 2);
 	fdActorSetAnimation(ACTOR_FLAME, 2);
 	Call3((void (*)())fdActorFallOverWithAnimationById, ACTOR_FALLEN_MAN,
-		  FACING_WEST, ANIM_STILL);
+		FACING_WEST, ANIM_STILL);
 	Call2((void (*)())fdActorFallOverById, ACTOR_INNKEEPER, FACING_WEST);
 	fdActorFallOverById(ACTOR_MARS_DJINNI, FACING_EAST);
-	if(fdEventGetFlag(FLAG_HOLE_DUG))
-		fdMapGridCopyCells(36, 28, 1, 1, 10, 10);
-	if(fdEventGetFlag(FLAG_PUDDLE_DUG))
+	if(fdScriptGetFlag(FLAG_HOLE_DUG))
+		fdMapGridCopyMetatiles(36, 28, 1, 1, 10, 10);
+	if(fdScriptGetFlag(FLAG_PUDDLE_DUG))
 		fdActorSetPos(ACTOR_PUDDLE, 184, 184);
-	if(fdEventGetFlag(FLAG_WICKED_MACE_DUG) &&
-	   !fdEventGetFlag(FLAG_WICKED_MACE_TAKEN))
+	if(fdScriptGetFlag(FLAG_WICKED_MACE_DUG) &&
+		!fdScriptGetFlag(FLAG_WICKED_MACE_TAKEN))
 		fdActorSetPos(ACTOR_WICKED_MACE, 200, 200);
 	fdActorSetItemIcon(fdActorGet(ACTOR_WICKED_MACE), ITEM_WICKED_MACE);
 	if(MainRoutineStateWork.entrance == ENTRANCE_DEPART_IN_RING)
@@ -580,27 +645,38 @@ s32 scInit(void) {
 	return 0;
 }
 
-s32 scPrepareMap(void) { return 0; }
-
-/* Opens the icon browser. */
-void dbPsynergyTestOpenIconBrowser(void) { mnDebugBrowserIcons(); }
-
-/* Opens the Sanctum. */
-void dbPsynergyTestOpenSanctum(s32 keeper) { mnSanctumRun(keeper); }
-
-/* As the ground opens, copies the cells of the hole in. */
-void dbPsynergyTestDigCells(s32 stage, s32 sourceX, s32 sourceY, s32 width,
-							s32 height, s32 destinationX, s32 destinationY) {
-	if(stage == SCOOP_STAGE_DUG)
-		fdMapGridCopyCells(sourceX, sourceY, width, height, destinationX,
-						   destinationY);
+Sint32 scPrepareMap(void)
+{
+	return 0;
 }
 
-/* As the ground opens, places the actor at (x, z) in pixels with no size; */
-/* twenty frames later, grows it to full size. */
-void dbPsynergyTestGrowActor(s32 stage, s32 id, s32 x, s32 z) {
+/* Opens the icon browser. */
+void dbPsynergyTestOpenIconBrowser(void)
+{
+	mnDebugBrowserIcons();
+}
+
+/* Opens the Sanctum. */
+void dbPsynergyTestOpenSanctum(Sint32 keeper)
+{
+	mnSanctumRun(keeper);
+}
+
+/* As the ground opens, copies the metatiles of the hole in. */
+void dbPsynergyTestDigMetatiles(Sint32 stage, Sint32 sourceX, Sint32 sourceY,
+	Sint32 width, Sint32 height, Sint32 destinationX, Sint32 destinationY)
+{
+	if(stage == SCOOP_STAGE_DUG)
+		fdMapGridCopyMetatiles(
+			sourceX, sourceY, width, height, destinationX, destinationY);
+}
+
+/* As the ground opens, places the actor at (x, z) in pixels with no size;
+   twenty frames later, grows it to full size. */
+void dbPsynergyTestGrowActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z)
+{
 	ACTOR *actor;
-	s32 scale;
+	Sint32 scale;
 
 	actor = fdActorGet(id);
 	if(stage == SCOOP_STAGE_DUG) {
@@ -609,22 +685,22 @@ void dbPsynergyTestGrowActor(s32 stage, s32 id, s32 x, s32 z) {
 		actor->scaleY = 0;
 	}
 	if(stage == SCOOP_STAGE_DUG_UP) {
-		while(actor->scaleX < FIXED_ONE) {
+		while(actor->scaleX < toFIXED(1)) {
 			sySynch(1);
 			scale = actor->scaleX;
 			scale += toFIXED(0.02);
 			actor->scaleX = scale;
 			actor->scaleY = scale;
 		}
-		actor->scaleX = FIXED_ONE;
-		actor->scaleY = FIXED_ONE;
+		actor->scaleX = toFIXED(1);
+		actor->scaleY = toFIXED(1);
 	}
 }
 
 /* Twenty frames after the ground opens, drops the actor onto (x, z) in pixels
- */
-/* from 32 pixels up. */
-void dbPsynergyTestDropActor(s32 stage, s32 id, s32 x, s32 z) {
+   from 32 pixels up. */
+void dbPsynergyTestDropActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z)
+{
 	ACTOR *actor;
 
 	actor = fdActorGet(id);
@@ -637,11 +713,13 @@ void dbPsynergyTestDropActor(s32 stage, s32 id, s32 x, s32 z) {
 	}
 }
 
-/* As the ground opens, places a brown boulder at (x, z) in pixels; twenty */
-/* frames later, grows a winged statue there from two fifths to full size */
-/* while it turns, turns it opposite the leader's facing and starts a battle */
-/* with the formation at `column` of encounter zone `row`. */
-void dbPsynergyTestRaiseStatue(s32 stage, s32 x, s32 z, s32 row, s32 column) {
+/* As the ground opens, places a brown boulder at (x, z) in pixels; twenty
+   frames later, grows a winged statue there from two fifths to full size while
+   it turns, turns it opposite the leader's facing and starts a battle with the
+   formation at `column` of encounter zone `row`. */
+void dbPsynergyTestRaiseStatue(
+	Sint32 stage, Sint32 x, Sint32 z, Sint32 row, Sint32 column)
+{
 	ACTOR *actor;
 
 	if(stage == SCOOP_STAGE_DUG) {
@@ -653,24 +731,24 @@ void dbPsynergyTestRaiseStatue(s32 stage, s32 x, s32 z, s32 row, s32 column) {
 		}
 	}
 	if(stage == SCOOP_STAGE_DUG_UP) {
-		actor = (scFieldActorCreate(SPRITE_WINGED_STATUE, toFIXED(x), 0,
-									toFIXED(z)));
+		actor = (scFieldActorCreate(
+			SPRITE_WINGED_STATUE, toFIXED(x), 0, toFIXED(z)));
 		if(actor != NULL) {
-			s32 scale;
+			Sint32 scale;
 
 			fdActorSetSprFlags(actor, 0);
 			actor->velY = toFIXED(6);
-			actor->scaleX = FIXED_ONE * 2 / 5;
-			actor->scaleY = FIXED_ONE * 2 / 5;
-			while(actor->scaleX < FIXED_ONE) {
+			actor->scaleX = toFIXED(2) / 5;
+			actor->scaleY = toFIXED(2) / 5;
+			while(actor->scaleX < toFIXED(1)) {
 				sySynch(1);
 				scale = actor->scaleX + toFIXED(0.02);
 				actor->facing += FACING_STEP;
 				actor->scaleX = scale;
 				actor->scaleY = scale;
 			}
-			actor->scaleX = FIXED_ONE;
-			actor->scaleY = FIXED_ONE;
+			actor->scaleX = toFIXED(1);
+			actor->scaleY = toFIXED(1);
 			actor->facing =
 				fdActorGet(MainRoutineStateWork.leaderActorId)->facing +
 				DEGtoANG(180);
@@ -679,35 +757,35 @@ void dbPsynergyTestRaiseStatue(s32 stage, s32 x, s32 z, s32 row, s32 column) {
 	}
 }
 
-/* Each frame of an actor's rings: a ring climbs RING_CLIMB pixels up the */
-/* actor, swelling and shrinking as it goes, and the next starts with a chime */
-/* RING_INTERVAL frames later, two at a time, while the actor's colours cycle.
- */
-/* Once stopped, the rings climb out and the actor's colours come back. */
-void dbPsynergyTestUpdateRings(ACTOR *actor) {
-	VECTOR3 position;
-	s32 x, z;
-	FIXED sine;
-	s32 i, j;
+/* Each frame of an actor's rings: a ring climbs RING_CLIMB pixels up the actor,
+   swelling and shrinking as it goes, and the next starts with a chime
+   RING_INTERVAL frames later, two at a time, while the actor's colours cycle.
+   Once stopped, the rings climb out and the actor's colours come back. */
+void dbPsynergyTestUpdateRings(ACTOR *actor)
+{
+	VECTOR3		   position;
+	Sint32		   x, z;
+	FIXED		   sine;
+	Sint32		   i, j;
 	SPARKLE_STATE *state = (SPARKLE_STATE *)actor->watchedActor;
-	u8 *count = &actor->sceneByte;
-	EFFECT_SPR *sprite;
+	Uint8		  *count = &actor->sceneByte;
+	EFFECT_SPR	  *sprite;
 
 	/* Every other frame, the next of the normal colours and the five swaps. */
 	if(*count & 1)
-		fdActorSetSprColMode(actor, (u8)((u32)((COUNTER_BITS *)count)->rest %
-										 (SPRITE_COLOR_BRG + 1)));
+		fdActorSetSprColMode(actor,
+			(Uint8)((Uint32)((COUNTER_BITS *)count)->rest %
+				(SPRITE_COLOR_BRG + 1)));
 	if(actor->sceneCnt == 0) {
 		if((*count & (RING_INTERVAL - 1)) == 0) {
-			fdEventPlaySnd(SE_RISING_RINGS);
+			fdScriptPlaySnd(SE_RISING_RINGS);
 			state->heights[state->nextPair] = 0;
 			state->nextPair ^= 1;
 		}
-	}
-	else if(actor->sceneCnt == 1) {
+	} else if(actor->sceneCnt == 1) {
 		if(state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
 			fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
-			syVramCacheFreeEntry(state->vramEntry);
+			syVRAMCacheFreeEntry(state->vramEntry);
 			actor->update = NULL;
 			return;
 		}
@@ -720,9 +798,9 @@ void dbPsynergyTestUpdateRings(ACTOR *actor) {
 			if(state->heights[i] < RING_CLIMB) {
 
 				SET_POSITION(&position, actor->x.fixed,
-							 actor->y.fixed + toFIXED(state->heights[i]),
-							 actor->z.fixed);
-				fdCameraWorldToScr(&position);
+					actor->y.fixed + toFIXED(state->heights[i]),
+					actor->z.fixed);
+				fdCameraWorldToScreen(&position);
 				x = position.x;
 				j = 0;
 				z = position.z;
@@ -734,8 +812,7 @@ void dbPsynergyTestUpdateRings(ACTOR *actor) {
 					sprite->scaleY = sine;
 					if(j == 0) {
 						sprite->depth = fdActorGetSprDepth(actor) - 1;
-					}
-					else {
+					} else {
 						sprite->depth = fdActorGetSprDepth(actor) + 1;
 						sprite->y -= toFIXED(1);
 						sprite->scaleY = -sprite->scaleY;
@@ -753,16 +830,16 @@ void dbPsynergyTestUpdateRings(ACTOR *actor) {
 #include "../scene/shared/light_ring_tiles.c"
 
 SCENE_ENTRANCE SceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 64, 0, 56, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 112, 0, 56, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 64, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 112, 0, 120, FACING_NORTH, 0, 16, 16, 304, 224, 0},
-    {4, CONDITION_ALWAYS, 344, 0, 104, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 88, 0, 184, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {ENTRANCE_DEPART_IN_RING, CONDITION_ALWAYS, 184, 0, 200, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {7, CONDITION_ALWAYS, 424, 0, 136, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {ENTRANCE_ARRIVE_IN_RING, CONDITION_ALWAYS, 184, 0, 200, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
+	{0, CONDITION_ALWAYS, 64, 0, 56, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+	{1, CONDITION_ALWAYS, 112, 0, 56, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+	{2, CONDITION_ALWAYS, 64, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{3, CONDITION_ALWAYS, 112, 0, 120, FACING_NORTH, 0, 16, 16, 304, 224, 0},
+	{4, CONDITION_ALWAYS, 344, 0, 104, FACING_EAST, 0, -1, -1, -1, -1, 0},
+	{5, CONDITION_ALWAYS, 88, 0, 184, FACING_EAST, 0, -1, -1, -1, -1, 0},
+	{ENTRANCE_DEPART_IN_RING, CONDITION_ALWAYS, 184, 0, 200, FACING_EAST, 0, -1, -1, -1, -1, 0},
+	{7, CONDITION_ALWAYS, 424, 0, 136, FACING_EAST, 0, -1, -1, -1, -1, 0},
+	{ENTRANCE_ARRIVE_IN_RING, CONDITION_ALWAYS, 184, 0, 200, FACING_EAST, 0, -1, -1, -1, -1, 0},
+	{SCENE_TABLE_END},
 };
 
 #include "../scene/shared/psynergy_test_exits.c"
@@ -772,197 +849,197 @@ SCENE_ENTRANCE SceneEntrances[] = {
 /* The room's people: the party's four rows, then PSYNERGY_TEST_ACTOR_ID's. */
 ACTOR_PLACE ActorPlacements[] = {
 	ACTOR_PLACEMENT(GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 40,
-					FACING_SOUTH, TALK_FACING_PARTY, 0),
+		FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 72,
-					FACING_SOUTH, TALK_FACING_PARTY, 0),
+		FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 104,
-					FACING_SOUTH, TALK_FACING_PARTY, 0),
+		FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 136,
-					FACING_SOUTH, TALK_FACING_PARTY, 0),
+		FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS,
-					MOVEMENT_TYPE_STAND, 88, 0, 40, FACING_SOUTH,
-					TALK_FACING_PARTY, 0),
+		MOVEMENT_TYPE_STAND, 88, 0, 40, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS,
-					MOVEMENT_TYPE_STAND, 82, 0, 72, FACING_SOUTH,
-					TALK_FACING_PARTY, 0),
+		MOVEMENT_TYPE_STAND, 82, 0, 72, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS,
-					MOVEMENT_TYPE_STAND, 88, 0, 104, FACING_SOUTH,
-					TALK_FACING_PARTY, 0),
+		MOVEMENT_TYPE_STAND, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS,
-					MOVEMENT_TYPE_STAND, 88, 0, 136, FACING_SOUTH,
-					TALK_FACING_PARTY, 0),
+		MOVEMENT_TYPE_STAND, 88, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-					136, 0, 40, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		136, 0, 40, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0,
-					72, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		72, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136,
-					0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136,
-					0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_LARGE_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-					360, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		360, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392,
-					0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -64,
-					0, -64, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		0, -64, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-					-64, 0, -64, FACING_SOUTH, TALK_FACING_KEEP, 0),
+		-64, 0, -64, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-					-64, 0, -64, FACING_SOUTH, TALK_FACING_KEEP, 0),
+		-64, 0, -64, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0,
-					104, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		104, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-					392, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
+		392, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
-/* The room's events: talking to its people, Mind Read on them, the cells */
-/* examined, and the field Psynergy each spot answers. */
-TRIGGER SceneEvents[] = {
-	{TRIGGER_TALK, JENNA, CONDITION_ALWAYS, EVENT(dbPsynergyTestNoOp)},
-	{TRIGGER_TALK, IVAN, CONDITION_ALWAYS, EVENT(dbPsynergyTestNoOp)},
-	{TRIGGER_TALK, MIA, CONDITION_ALWAYS, EVENT(dbPsynergyTestShowRings)},
-	{TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestOpenWeaponShop)},
-	{TALK_TRIGGER_FACING(FACING_WEST), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestOpenArmorShop)},
-	{TALK_TRIGGER_FACING(FACING_EAST), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestOpenItemShop)},
-	{TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestOpenGeneralStore)},
-	{TRIGGER_TALK, ACTOR_FALLEN_MAN, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnoreTalk)},
-	{TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestOpenInn)},
-	{TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestOpenSanctum)},
-	{TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestBrowseWeaponShopMessages)},
-	{TALK_TRIGGER_FACING(FACING_WEST), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestBrowseArmorShopMessages)},
-	{TALK_TRIGGER_FACING(FACING_EAST), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestBrowseItemShopMessages)},
-	{TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestBrowseSanctumMessages)},
-	{TRIGGER_TALK, ACTOR_MARS_DJINNI, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestNoOp)},
-	{TRIGGER_TALK, ACTOR_WEEDS, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestOpenIconBrowser)},
-	{TRIGGER_TALK, ACTOR_SPROUT, CONDITION_ALWAYS, EVENT(dbPsynergyTestNoOp)},
-	{TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestEditIsaacName)},
-	{TRIGGER_TALK, ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestOpenItemPicker)},
-	{TRIGGER_TALK, ACTOR_WICKED_MACE, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestPickUpItem)},
-/* Mind Read hears what Eastern Alhafra's men say after Briggs's attack. The */
-/* Japanese table has one more row, for the innkeeper, which the later editions
- */
-/* dropped, whose line is "Any time you like; I've been kept waiting till I'm */
-/* worn out." */
-#if !TLA_PATCH_1
+/* The room's scripts: talking to its people, Mind Read on them, the metatiles
+   examined, and the field Psynergy each spot answers. */
+CUE SceneCues[] = {
+	{CUE_TALK, JENNA, CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestNoOperation)},
+	{CUE_TALK, IVAN, CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestNoOperation)},
+	{CUE_TALK, MIA, CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestShowRings)},
+	{TALK_CUE_FACING(FACING_NORTH), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestOpenWeaponShop)},
+	{TALK_CUE_FACING(FACING_WEST), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestOpenArmorShop)},
+	{TALK_CUE_FACING(FACING_EAST), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestOpenItemShop)},
+	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestOpenGeneralStore)},
+	{CUE_TALK, ACTOR_FALLEN_MAN, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestIgnoreTalk)},
+	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_INNKEEPER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestOpenInn)},
+	{CUE_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestOpenSanctum)},
+	{TALK_CUE_FACING(FACING_NORTH), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestBrowseWeaponShopMessages)},
+	{TALK_CUE_FACING(FACING_WEST), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestBrowseArmorShopMessages)},
+	{TALK_CUE_FACING(FACING_EAST), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestBrowseItemShopMessages)},
+	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestBrowseSanctumMessages)},
+	{CUE_TALK, ACTOR_MARS_DJINNI, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestNoOperation)},
+	{CUE_TALK, ACTOR_WEEDS, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestOpenIconBrowser)},
+	{CUE_TALK, ACTOR_SPROUT, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestNoOperation)},
+	{TALK_CUE_FACING(FACING_NORTH), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestEditIsaacName)},
+	{CUE_TALK, ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestOpenItemPicker)},
+	{CUE_TALK, ACTOR_WICKED_MACE, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestPickUpItem)},
+/* Mind Read hears what Eastern Alhafra's men say after Briggs's attack. The
+   Japanese table has one more row, for the innkeeper, which the later editions
+   dropped, whose line is "Any time you like; I've been kept waiting till I'm
+   worn out." */
+#if !PSYNERGY_TEST_DROPS_ANY_TIME_YOU_LIKE_LINE
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-	 MSGNO(MsgAnyTimeYouLike)},
+		MSGNO(MsgAnyTimeYouLike)},
 #endif
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
-	 MSGNO(MsgOooogOw)},
+		MSGNO(MsgOooogOw)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN, CONDITION_ALWAYS,
-	 MSGNO(MsgWhyDoThese)},
+		MSGNO(MsgWhyDoThese)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-	 MSGNO(MsgStupidBriggs)},
+		MSGNO(MsgStupidBriggs)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MESSAGE_BROWSER,
-	 CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
+		CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MARS_DJINNI, CONDITION_ALWAYS,
-	 MSGNO(MsgIJustCame)},
-	{TRIGGER_EXIT, CELL_BEHAVIOR_HOLE_EXIT, CONDITION_ALWAYS,
-	 CELL_BEHAVIOR_HOLE_EXIT},
-	{EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_OUCH_TILE, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestDamageAndAfflictParty)},
-	{EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LV_TILE, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestRaisePartyLevels)},
-	{EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TREASURE_TILE,
-	 CONDITION_ALWAYS, EVENT(dbPsynergyTestGiveTreasureTestStock)},
-	{EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_RED_CROSS_TILE,
-	 CONDITION_ALWAYS, EVENT(dbPsynergyTestGivePartyDjinn)},
-	{EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_CHEST, CONDITION_ALWAYS,
-	 FIND_COINS(333)},
+		MSGNO(MsgIJustCame)},
+	{CUE_EXIT, METATILE_BEHAVIOR_HOLE_EXIT, CONDITION_ALWAYS,
+		METATILE_BEHAVIOR_HOLE_EXIT},
+	{EXAMINE_CUE(EXAMINE_SILENT), METATILE_BEHAVIOR_OUCH_TILE, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestDamageAndAfflictParty)},
+	{EXAMINE_CUE(EXAMINE_SILENT), METATILE_BEHAVIOR_LV_TILE, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestRaisePartyLevels)},
+	{EXAMINE_CUE(EXAMINE_SILENT), METATILE_BEHAVIOR_TREASURE_TILE,
+		CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestGiveTreasureTestStock)},
+	{EXAMINE_CUE(EXAMINE_SILENT), METATILE_BEHAVIOR_RED_CROSS_TILE,
+		CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestGivePartyDjinn)},
+	{EXAMINE_CUE(EXAMINE_CHEST), METATILE_BEHAVIOR_CHEST, CONDITION_ALWAYS,
+		FIND_COINS(333)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SPROUT, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnorePsynergy)},
+		SCRIPT_REF(dbPsynergyTestIgnorePsynergy)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnorePsynergy)},
+		SCRIPT_REF(dbPsynergyTestIgnorePsynergy)},
 	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnorePsynergy)},
+		SCRIPT_REF(dbPsynergyTestIgnorePsynergy)},
 	{PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnorePsynergy)},
+		SCRIPT_REF(dbPsynergyTestIgnorePsynergy)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestNoOp)},
+		SCRIPT_REF(dbPsynergyTestNoOperation)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_TORCH,
-	 CONDITION_ALWAYS, EVENT(dbPsynergyTestPoundTorch)},
+		CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestPoundTorch)},
 	{PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
-	 CONDITION_ALWAYS, EVENT(dbPsynergyTestSetSandLayer)},
+		CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestSetSandLayer)},
 	{PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestClearSandLayer)},
+		SCRIPT_REF(dbPsynergyTestClearSandLayer)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
-	 ACTOR_FLAME, CONDITION_ALWAYS, EVENT(dbPsynergyTestNoOp)},
+		ACTOR_FLAME, CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestNoOperation)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), ACTOR_KRADEN,
-	 CONDITION_ALWAYS, EVENT(dbPsynergyTestPracticeShout)},
+		CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestPracticeShout)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
-	 ACTOR_KRADEN, CONDITION_ALWAYS, EVENT(dbPsynergyTestStartleAfterBlaze)},
+		ACTOR_KRADEN, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestStartleAfterBlaze)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
-	 ACTOR_KRADEN, CONDITION_ALWAYS, EVENT(dbPsynergyTestNoOp)},
+		ACTOR_KRADEN, CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestNoOperation)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_ARROW, PSYNERGY_PHASE_AFTER_END),
-	 ACTOR_KRADEN, CONDITION_ALWAYS, EVENT(dbPsynergyTestStartleAgain)},
+		ACTOR_KRADEN, CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestStartleAgain)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_ARROW, PSYNERGY_PHASE_AFTER_END),
-	 ACTOR_TORCH, CONDITION_ALWAYS, EVENT(dbPsynergyTestLightTorch)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_HOLE_SPOT, FLAG_HOLE_DUG, EVENT(dbPsynergyTestDigUpHole)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_PUDDLE_SPOT, FLAG_PUDDLE_DUG,
-	 EVENT(dbPsynergyTestDigUpPuddle)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_WICKED_MACE_SPOT, FLAG_WICKED_MACE_DUG,
-	 EVENT(dbPsynergyTestDigUpWickedMace)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_STATUE_SPOT, FLAG_STATUE_DUG,
-	 EVENT(dbPsynergyTestDigUpStatue)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_POOL, CONDITION_ALWAYS, EVENT(dbPsynergyTestParchCells)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_LEAVES, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestBlowAwayLeaves)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_RING_LEAF, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestDepartInRing)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_RED_CROSS_TILE, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestArriveInRing)},
-	{PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
-	 CELL_BEHAVIOR_MAD_PLANT_LEAF, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestFightMadPlant)},
+		ACTOR_TORCH, CONDITION_ALWAYS, SCRIPT_REF(dbPsynergyTestLightTorch)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_HOLE_SPOT, FLAG_HOLE_DUG,
+		SCRIPT_REF(dbPsynergyTestDigUpHole)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_PUDDLE_SPOT, FLAG_PUDDLE_DUG,
+		SCRIPT_REF(dbPsynergyTestDigUpPuddle)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_WICKED_MACE_SPOT, FLAG_WICKED_MACE_DUG,
+		SCRIPT_REF(dbPsynergyTestDigUpWickedMace)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_STATUE_SPOT, FLAG_STATUE_DUG,
+		SCRIPT_REF(dbPsynergyTestDigUpStatue)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_POOL, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestParchMetatiles)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_LEAVES, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestBlowAwayLeaves)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_RING_LEAF, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestDepartInRing)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_RED_CROSS_TILE, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestArriveInRing)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+		METATILE_BEHAVIOR_MAD_PLANT_LEAF, CONDITION_ALWAYS,
+		SCRIPT_REF(dbPsynergyTestFightMadPlant)},
 	{PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_WEEDS, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnoreTremor)},
+		SCRIPT_REF(dbPsynergyTestIgnoreTremor)},
 	{PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnoreTremor)},
+		SCRIPT_REF(dbPsynergyTestIgnoreTremor)},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnoreGrind)},
+		SCRIPT_REF(dbPsynergyTestIgnoreGrind)},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
-	 EVENT(dbPsynergyTestIgnoreGrind)},
-	{TRIGGER_TABLE_END},
+		SCRIPT_REF(dbPsynergyTestIgnoreGrind)},
+	{CUE_TABLE_END},
 };
 
 /* The rings' start and stop. */
 
-/* Starts an actor's rings, kept in `state`: loads their tiles and hooks */
-/* dbPsynergyTestUpdateRings to the actor. */
-void dbPsynergyTestStartRings(ACTOR *actor, SPARKLE_STATE *state) {
+/* Starts an actor's rings, kept in `state`: loads their tiles and hooks
+   dbPsynergyTestUpdateRings to the actor. */
+void dbPsynergyTestStartRings(ACTOR *actor, SPARKLE_STATE *state)
+{
 	EFFECT_SPR *sprite;
-	s32 tile;
-	s32 row;
-	s32 col;
-	s32 offset;
+	Sint32		tile;
+	Sint32		row;
+	Sint32		col;
+	Sint32		offset;
 
-	state->vramEntry = syVramCacheFindFreeEntry();
-	mnVramLoad(state->vramEntry, 8 * TILE_SIZE_4BPP, LightRing_Tiles);
+	state->vramEntry = syVRAMCacheFindFreeEntry();
+	mnVRAMLoad(state->vramEntry, 8 * TILE_SIZE_4BPP, LightRing_Tiles);
 	state->nextPair = 0;
 	state->heights[0] = RING_NOT_STARTED;
 	state->heights[1] = RING_NOT_STARTED;
@@ -975,7 +1052,7 @@ void dbPsynergyTestStartRings(ACTOR *actor, SPARKLE_STATE *state) {
 	for(row = 0; row <= 1; row++) {
 		col = 1;
 		offset = (row * 2) * sizeof(EFFECT_SPR);
-		sprite = (EFFECT_SPR *)(offset + (s32)state);
+		sprite = (EFFECT_SPR *)(offset + (Sint32)state);
 		for(; col >= 0; col--) {
 			fdEffectSprInit(sprite, 16, 16, OBJ_SIZE_32X16, tile);
 			sprite->oam.fullCol = 0;
@@ -987,4 +1064,7 @@ void dbPsynergyTestStartRings(ACTOR *actor, SPARKLE_STATE *state) {
 }
 
 /* Lets an actor's rings climb out. */
-void dbPsynergyTestStopRings(ACTOR *actor) { actor->sceneCnt = 1; }
+void dbPsynergyTestStopRings(ACTOR *actor)
+{
+	actor->sceneCnt = 1;
+}

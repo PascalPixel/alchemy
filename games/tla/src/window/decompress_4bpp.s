@@ -3,11 +3,11 @@
 @ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global Tile_Decompress4bppCode
-Tile_Decompress4bppCode:
-	.global Tile_Decompress4bpp
+	.global mnTileDecompress4bppCode
+mnTileDecompress4bppCode:
+	.global mnTileDecompress4bpp
 	.thumb_func
-Tile_Decompress4bpp:
+mnTileDecompress4bpp:
 	bx	pc
 AlchemyUncredited_08038b16:
 	.2byte	0x0200
@@ -19,13 +19,13 @@ AlchemyUncreditedEnd_08038b16:
 	mov	r5, #15
 	mov	ip, #1
 	ands	r6, r0, #3
-	beq	Tile_Decompress4bppLoop
+	beq	mnTileDecompress4bppLoop
 	rsbs	r6, ip, r6, lsl #3
 	bic	r0, r0, #3
 	ldr	ip, [r0], #4
 	rrx	ip, ip
 	lsr	ip, ip, r6
-	b	Tile_Decompress4bppLoop
+	b	mnTileDecompress4bppLoop
 @ The function's constants, which it reads beside its code (add, pc).
 	.4byte	0xfedcba98
 	.4byte	0x76543210

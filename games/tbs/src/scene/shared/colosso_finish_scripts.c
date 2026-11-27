@@ -1,12 +1,10 @@
-/* @file */
 /* The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
- */
-/* the warriors' scripts as each reaches his prize at the finish: he holds it */
-/* up (scColossoRaisePrize) and holds a pose for two and a half seconds, both */
-/* arms raised, then turns south. */
+   the warriors' scripts as each reaches his prize at the finish: he holds it up
+   (scColossoRaisePrize) and holds a pose for two and a half seconds, both arms
+   raised, then turns south. */
 
 /* The opponent's, from scColossoUpdatePathOpponent. */
-s32 Colosso_OpponentFinishScript[] = {
+Sint32 Colosso_OpponentFinishScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
@@ -21,7 +19,7 @@ s32 Colosso_OpponentFinishScript[] = {
 };
 
 /* Isaac's, from scColossoTakePrize. */
-s32 Colosso_LeaderFinishScript[] = {
+Sint32 Colosso_LeaderFinishScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),

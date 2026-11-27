@@ -1,7 +1,6 @@
-/* @file */
-/* The constants the battle effects copy into their locals, in the order of */
-/* the effects that read them: mostly the scales their sprites are placed at, */
-/* and a few corners, points and widths. */
+/* The constants the battle effects copy into their locals, in the order of the
+   effects that read them: mostly the scales their sprites are placed at, and a
+   few corners, points and widths. */
 
 #include "fixed_math.h"
 #include "types.h"
@@ -10,18 +9,17 @@
 #include "graphics/render_placement.h"
 
 /* A sprite drawn at its own size, which most effects place theirs at. */
-#define UNIT_SCALE {FIXED_ONE, FIXED_ONE}
+#define UNIT_SCALE {toFIXED(1), toFIXED(1)}
 
 /* Cruel Ruin's scale for the summon, copied each frame before it is placed. */
 const SCALE CruelRuin_UnitScale = UNIT_SCALE;
 
 /* Eclipse's scale for the dragon's sprites, copied each frame before they are
- */
-/* placed. */
+   placed. */
 const SCALE Eclipse_DragonScale = UNIT_SCALE;
 
-/* Unused: two more scales after Eclipse's, each word 0x55555556 (2^32 / 3 */
-/* rounded up); nothing reads them. */
+/* Unused: two more scales after Eclipse's, each word 0x55555556 (2^32 / 3
+   rounded up); nothing reads them. */
 const SCALE Eclipse_UnusedScales[2] = {
 	{0x55555556, 0x55555556},
 	{0x55555556, 0x55555556},
@@ -30,9 +28,9 @@ const SCALE Eclipse_UnusedScales[2] = {
 /* The comets' scale. */
 const SCALE Procne_UnitScale = UNIT_SCALE;
 
-/* Unused: three words after Procne's scale, 2^32 / 36 and twice 2^32 / 90, */
-/* each rounded up; nothing reads them. */
-const u32 Procne_UnusedWords[3] = {0x071c71c8, 0x02d82d83, 0x02d82d83};
+/* Unused: three words after Procne's scale, 2^32 / 36 and twice 2^32 / 90, each
+   rounded up; nothing reads them. */
+const Uint32 Procne_UnusedWords[3] = {0x071c71c8, 0x02d82d83, 0x02d82d83};
 
 /* Zagan's scale, copied each frame before he is placed. */
 const SCALE Zagan_UnitScale = UNIT_SCALE;
@@ -44,8 +42,13 @@ const SCALE Boreas_UnitScale = UNIT_SCALE;
 const ROCK_WALL_HEIGHTS RockWall_Heights = {{-32, -32, -32, -32}};
 
 /* The three lines' end points, a pair of points each, in pixels. */
-const s16 Thor_Points[6][2] = {
-	{8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
+const Sint16 Thor_Points[6][2] = {
+	{8, 135},
+	{184, 135},
+	{128, 135},
+	{96, 32},
+	{96, 32},
+	{64, 135},
 };
 
 /* The scale each of Gaia's rocks starts from before it grows. */
@@ -62,8 +65,8 @@ const SCALE SummonFormation_Scale = UNIT_SCALE;
 
 /* The scale of the formation's objects drawn a quarter larger. */
 const SCALE SummonFormation_LargeScale = {
-	FIXED_ONE * 5 / 4,
-	FIXED_ONE * 5 / 4,
+	toFIXED(5) / 4,
+	toFIXED(5) / 4,
 };
 
 /* The statue's scale in Ramses. */
@@ -79,14 +82,19 @@ const SPR_SCALE Kirin_SweepScale = {{UNIT_SCALE}};
 const SPR_SCALE Kirin_ChargeScale = {{UNIT_SCALE}};
 
 /* The serpent's scale. */
-const SCALE Neptune_UnitScale = {FIXED_ONE * 3 / 2, FIXED_ONE * 3 / 2};
+const SCALE Neptune_UnitScale = {toFIXED(3) / 2, toFIXED(3) / 2};
 
 /* Megaera's scale as she falls, one and a half. */
-const SCALE Megaera_UnitScale = {FIXED_ONE * 3 / 2, FIXED_ONE * 3 / 2};
+const SCALE Megaera_UnitScale = {toFIXED(3) / 2, toFIXED(3) / 2};
 
 /* The hexagon's six corners, {z, y} in pixels. */
-const s8 VoidBeam_Corners[6][2] = {
-	{40, -40}, {0, 40}, {-40, -40}, {40, 40}, {0, -40}, {-40, 40},
+const Sint8 VoidBeam_Corners[6][2] = {
+	{40, -40},
+	{0, 40},
+	{-40, -40},
+	{40, 40},
+	{0, -40},
+	{-40, 40},
 };
 
 /* Charon's swarm scale, before it is set to one and a quarter. */
@@ -112,12 +120,12 @@ const SCALE Daedalus_MachineScale = UNIT_SCALE;
 
 /* The scale of Daedalus's missiles, a tenth larger than their pictures. */
 const SCALE Daedalus_MissileScale = {
-	FIXED_ONE * 11 / 10,
-	FIXED_ONE * 11 / 10,
+	toFIXED(11) / 10,
+	toFIXED(11) / 10,
 };
 
 /* The rocket's scale in Daedalus's second strike, twice its size. */
-const SCALE DaedalusStrike_RocketScale = {FIXED_ONE * 2, FIXED_ONE * 2};
+const SCALE DaedalusStrike_RocketScale = {toFIXED(2), toFIXED(2)};
 
 /* Coatlicue's scale. */
 const SCALE Coatlicue_UnitScale = UNIT_SCALE;
@@ -138,16 +146,20 @@ const SCALE Haures_OpeningScale = UNIT_SCALE;
 const SCALE Trident_UnitScale = UNIT_SCALE;
 
 /* The summon's scale in Meteor Blow, twice its size. */
-const SCALE MeteorBlow_DoubleScale = {FIXED_ONE * 2, FIXED_ONE * 2};
+const SCALE MeteorBlow_DoubleScale = {toFIXED(2), toFIXED(2)};
 
 /* A mote's size by its number's low three bits. */
-const u8 Moloch_MoteSizes[8] = {2, 3, 5, 8, 7, 6, 4, 0};
+const Uint8 Moloch_MoteSizes[8] = {2, 3, 5, 8, 7, 6, 4, 0};
 
-/* A pillar's six corners, {x, y, z} in pixels: three rows of two, 16 either */
-/* side of its centre, at y -16, 12 and 0. */
+/* A pillar's six corners, {x, y, z} in pixels: three rows of two, 16 either
+   side of its centre, at y -16, 12 and 0. */
 const MODEL_VERTEX Iris_PillarVertices[6] = {
-	{-16, -16, 0}, {16, -16, 0}, {-16, 12, 0},
-	{16, 12, 0},   {-16, 0, 0},	 {16, 0, 0},
+	{-16, -16, 0},
+	{16, -16, 0},
+	{-16, 12, 0},
+	{16, 12, 0},
+	{-16, 0, 0},
+	{16, 0, 0},
 };
 
 /* Iris's scale while she rises. */

@@ -1,15 +1,14 @@
 #ifndef ALCHEMY_WEAPON_KIND_H
 #define ALCHEMY_WEAPON_KIND_H
-/* @file */
-/* The kinds of weapon a party member's attack shows, and how */
-/* BattleUnit_WeaponKinds packs one with its item. */
+/* The kinds of weapon a party member's attack shows, and how
+   BattleUnit_WeaponKinds packs one with its item. */
 
 /* BattleUnit_WeaponKinds: a weapon's item id with its kind above it. */
 #define WEAPON_ITEM_MASK  0x1ff
 #define WEAPON_KIND_SHIFT 9
 
-/* The kinds of weapon a party member's attack shows, by the rows of */
-/* BattleUnit_WeaponKinds lists for each. */
+/* The kinds of weapon a party member's attack shows, by the rows of
+   BattleUnit_WeaponKinds lists for each. */
 typedef enum BATTLE_WEAPON_KIND {
 	WEAPON_KIND_LONG_SWORD,	 /* Long Sword to Muramasa */
 	WEAPON_KIND_LIGHT_BLADE, /* Machete to Bandit's Sword */

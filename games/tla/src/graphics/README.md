@@ -95,7 +95,7 @@ Three things worth knowing about them:
 A town is not painted as one picture. It is built from a
 [tileset](../../../../docs/tla/glossary.md#tileset): a palette of 14 short lists of 16
 colours, and tile sheets of 512 tiles each. The [map](../../../../docs/tla/glossary.md#map)
-says which tile goes where ([Maps](../map/README.md#cells)).
+says which tile goes where ([Maps](../map/README.md#metatiles)).
 
 A map does not name a tileset as a whole. Each palette and each tile sheet is a
 resource of its own, so maps borrow freely. The cheapest borrowing is the
@@ -118,7 +118,10 @@ next.
   pictures the summons are drawn from.
 - `font/` holds the letters: one font sheet for each language, a letter to a 16
   by 16 square, with a table of widths beside it so that an `i` takes less
-  room than a `W`. The staff credits have a font of their own, in
+  room than a `W`. The six sheets The Broken Seal also has are one copy in
+  [`games/common/graphics/font`](../../../common/README.md), and the five
+  `text_tla_*` sheets of this game's own are here; `font/text.s` places the
+  edition's sheet. The staff credits have a font of their own, in
   `credits/`.
 - `ui/` is the windows' borders, icons and cursors, `title/` the Title's
   pictures and `ending/` the ending's. A picture with words in it has one

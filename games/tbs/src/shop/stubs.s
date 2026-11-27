@@ -4,7 +4,7 @@
 Stubs_Shop:
 	stub mnShopOpenDebugShopStub, mnShopOpenDebugShop
 	stub mnShopRunStub, mnShopRun
-	stub scSanctumRunStub, mnSanctumRun
+	stub mnSanctumRunStub, mnSanctumRun
 	stub mnInnCheckInStub, mnInnCheckIn
 	stub mnCursorAdvanceStub, mnCursorAdvance
 	stub mnCursorMoveTowardTargetStub, mnCursorMoveTowardTarget
@@ -14,5 +14,5 @@ Stubs_Shop:
 	stub mnShopSaveAndTintFieldPaletteStub, mnShopSaveAndTintFieldPalette
 	stub mnShopRestoreFieldPaletteStub, mnShopRestoreFieldPalette
 	stub mnItemPickerRunStub, mnItemPickerRun
-	stub sySndWaitForJingleStub, mnSndWaitForJingle
+	stub mnSndWaitForJingleStub, mnSndWaitForJingle
 	stub mnInnPlaySleepStub, mnInnPlaySleep

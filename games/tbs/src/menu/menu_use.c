@@ -1,37 +1,38 @@
-/* @file */
 /* Using an item or Psynergy from the menu: what it does to the party, and the
- */
-/* sound it plays. */
-/* Part of menu.c. */
+   sound it plays. Part of menu.c. */
 
 #include "menu_internal.h"
 
-/* Lends HIGHLIGHT_PALETTE to the item icons and makes the highlight in the */
-/* palette below it instead. Nothing calls it. */
-void mnItemPrepareUsePalette(void) {
+/* Lends HIGHLIGHT_PALETTE to the item icons and makes the highlight in the
+   palette below it instead. Nothing calls it. */
+void mnItemPrepareUsePalette(void)
+{
 	mnPaletteLoadIconsIntoHighlight();
 	mnPaletteLightenHighlight(HIGHLIGHT_PALETTE - 1);
 }
 
 /* Unused: does nothing. */
-UNUSED void mnItemUseNoOp(void) {}
+UNUSED void mnItemUseNoOperation(void)
+{
+}
 
-/* Uses the item in memberId's inventory slot on targetId, or on every party */
-/* member when its action's range is ABILITY_RANGE_ALL: applies its action at */
-/* its plain power (mnAbilityApplyToTargets with fixedScale 1). */
-s32 mnItemUse(s32 slot, s32 memberId, s32 targetId) {
+/* Uses the item in memberId's inventory slot on targetId, or on every party
+   member when its action's range is ABILITY_RANGE_ALL: applies its action at
+   its plain power (mnAbilityApplyToTargets with fixedScale 1). */
+Sint32 mnItemUse(Sint32 slot, Sint32 memberId, Sint32 targetId)
+{
 	ITEM_MENU_STATE *menu;
-	s32 useResult;
-	s32 itemId;
-	UNIT *unit;
+	Sint32			 useResult;
+	Sint32			 itemId;
+	UNIT			*unit;
 	ITEM_DEFINITION *item;
 
 	unit = gmUnitGetStub(memberId);
 	menu = MenuState;
 	itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
 	item = gmItemGetDirectStub(itemId);
-	useResult = mnAbilityApplyToTargets(PSYNERGY_ABILITY_MASK & item->abilityId,
-										memberId, targetId, 1);
+	useResult = mnAbilityApplyToTargets(
+		PSYNERGY_ABILITY_MASK & item->abilityId, memberId, targetId, 1);
 	if(useResult != -1) {
 		item = gmItemGetDirectStub(unit->inventory[slot]);
 		if(item->useType == ITEM_USE_CONSUMED) {
@@ -49,26 +50,30 @@ s32 mnItemUse(s32 slot, s32 memberId, s32 targetId) {
 }
 
 /* Unused: returns 1. */
-UNUSED s32 mnItemUseReturnTrue(void) { return 1; }
+UNUSED Sint32 mnItemUseReturnTrue(void)
+{
+	return 1;
+}
 
-/* Applies the healing, curing, revival or lasting stat rise of action */
-/* effectId, used by party member sourceId, to targetId, or to every party */
-/* member when the action's range is ABILITY_RANGE_ALL. */
-s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
-							s32 fixedScale) {
+/* Applies the healing, curing, revival or lasting stat rise of action effectId,
+   used by party member sourceId, to targetId, or to every party member when the
+   action's range is ABILITY_RANGE_ALL. */
+Sint32 mnAbilityApplyToTargets(
+	Sint32 effectId, Sint32 sourceId, Sint32 targetId, Sint32 fixedScale)
+{
 	ABILITY_DEFINITION *effect;
-	ITEM_MENU_STATE *menu;
-	UNIT *target;
-	UNIT *caster;
-	s32 partyResultShown;
-	s32 changed;
-	u8 targetIndex;
-	s16 elementPower;
-	s32 randomAdjust;
-	s32 amount;
-	s32 messageOffset;
+	ITEM_MENU_STATE	   *menu;
+	UNIT			   *target;
+	UNIT			   *caster;
+	Sint32				partyResultShown;
+	Sint32				changed;
+	Uint8				targetIndex;
+	Sint16				elementPower;
+	Sint32				randomAdjust;
+	Sint32				amount;
+	Sint32				messageOffset;
 
-	effect = mnAbilityGet(effectId);
+	effect = gmAbilityGetDirectStub(effectId);
 	menu = MenuState;
 	changed = 0;
 	messageOffset = 0;
@@ -79,21 +84,20 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 	else
 		target = gmUnitGetStub(ISAAC);
 
-	/* FAKEMATCH(dead): a test that is never true (partyResultShown is still 0).
-	 */
+	/* FAKEMATCH(dead): a test that is never true (partyResultShown is still
+	 * 0). */
 	if(effect->range == ABILITY_RANGE_ALL && partyResultShown != 0)
 		messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
 
 	/* A party-wide action keeps the first useful message while visiting
-	 * targets. */
+	   targets. */
 	for(targetIndex = 0; targetIndex < menu->partyCnt; targetIndex++) {
 		if(effect->range == ABILITY_RANGE_ALL) {
 			targetId = menu->memberIds[targetIndex];
 			target = gmUnitGetStub(targetId);
 		}
 
-		/* The ability kind first; the result messages are ITEM_USE_RESULT.
-		 */
+		/* The ability kind first; the result messages are ITEM_USE_RESULT. */
 		amount = effect->power;
 		switch(effect->flg & ABILITY_FORMULA_MASK) {
 		case ABILITY_FORMULA_HEAL_HP:
@@ -101,31 +105,27 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 				if(effect->element != ELEMENT_NONE) {
 					caster = gmUnitGetStub(sourceId);
 					elementPower = caster->element[effect->element].power;
-				}
-				else
+				} else
 					elementPower = HEALING_BASE_POWER;
-				amount = btCalcRecoveryStub(amount, elementPower,
-											BATTLE_MULTIPLIER_ONE);
+				amount = gmBattleCalcRecoveryStub(
+					amount, elementPower, BATTLE_MULTIPLIER_ONE);
 			}
 
 			if(target->hp <= 0) {
 				if(partyResultShown == 0)
 					messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
-			}
-			else {
+			} else {
 				if(target->hp == target->hpMax) {
 					if(partyResultShown == 0)
 						messageOffset = ITEM_USE_RESULT_HP_FULL;
-				}
-				else {
+				} else {
 					target->hp += amount;
 					if(target->hp > target->hpMax) {
 						amount -= target->hp - target->hpMax;
 						target->hp = target->hpMax;
 						if(partyResultShown == 0)
 							messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
-					}
-					else if(partyResultShown == 0) {
+					} else if(partyResultShown == 0) {
 						messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
 					}
 					gmUnitRecalculateGaugesStub(targetId);
@@ -171,9 +171,8 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 				changed = 1;
 				break;
 			/* No edition's "Your Attack increased!" or "Your Defense
-			 * increased!" */
-			/* shows a number, so the 3 and the 4 pushed for them are never
-			 * seen. */
+			   increased!" shows a number, so the 3 and the 4 pushed for them
+			   are never seen. */
 			case ABILITY_APPLE:
 				target->baseAttack += amount + randomAdjust;
 				mnMessageArgumentPushStub(3, MESSAGE_ARGUMENT_NUMBER);
@@ -193,16 +192,14 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 			if(target->pp == target->ppMax) {
 				if(partyResultShown == 0)
 					messageOffset = ITEM_USE_RESULT_PP_FULL;
-			}
-			else {
+			} else {
 				target->pp += amount;
 				if(target->pp > target->ppMax) {
 					amount -= target->pp - target->ppMax;
 					target->pp = target->ppMax;
 					if(partyResultShown == 0)
 						messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
-				}
-				else if(partyResultShown == 0) {
+				} else if(partyResultShown == 0) {
 					messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
 				}
 				gmUnitRecalculateGaugesStub(targetId);
@@ -231,15 +228,13 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 			if(target->hp <= 0 || target->hp == target->hpMax) {
 				if(partyResultShown == 0)
 					messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
-			}
-			else {
+			} else {
 				target->hp += amount;
 				if(target->hp > target->hpMax) {
 					target->hp = target->hpMax;
 					if(partyResultShown == 0)
 						messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
-				}
-				else if(partyResultShown == 0) {
+				} else if(partyResultShown == 0) {
 					messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
 				}
 				gmUnitRecalculateGaugesStub(targetId);
@@ -251,15 +246,13 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 			if(target->pp == target->ppMax) {
 				if(partyResultShown == 0)
 					messageOffset = ITEM_USE_RESULT_PP_FULL;
-			}
-			else {
+			} else {
 				target->pp += amount;
 				if(target->pp > target->ppMax) {
 					target->pp = target->ppMax;
 					if(partyResultShown == 0)
 						messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
-				}
-				else if(partyResultShown == 0) {
+				} else if(partyResultShown == 0) {
 					messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
 				}
 				gmUnitRecalculateGaugesStub(targetId);
@@ -274,24 +267,21 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 				changed = 1;
 				if(partyResultShown == 0)
 					messageOffset = ITEM_USE_RESULT_REVIVED;
-			}
-			else if(partyResultShown == 0) {
+			} else if(partyResultShown == 0) {
 				messageOffset = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
 
-		/* Quartz's and Dew's revivals set no change, so they would report -1 */
-		/* after reviving; no item has either action (item_table.c), and no
-		 * Djinni */
-		/* is used from the menus. Dew gives 7/10 of maximum HP here. */
+		/* Quartz's and Dew's revivals set no change, so they would report -1
+		   after reviving; no item has either action (item_table.c), and no
+		   Djinni is used from the menus. Dew gives 7/10 of maximum HP here. */
 		case ABILITY_EFFECT_REVIVE_HALF:
 			if(target->hp == 0) {
 				target->hp = target->hpMax / 2;
 				gmUnitRecalculateGaugesStub(targetId);
 				if(partyResultShown == 0)
 					messageOffset = ITEM_USE_RESULT_REVIVED;
-			}
-			else if(partyResultShown == 0) {
+			} else if(partyResultShown == 0) {
 				messageOffset = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
@@ -302,8 +292,7 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 				gmUnitRecalculateGaugesStub(targetId);
 				if(partyResultShown == 0)
 					messageOffset = ITEM_USE_RESULT_REVIVED;
-			}
-			else if(partyResultShown == 0) {
+			} else if(partyResultShown == 0) {
 				messageOffset = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
@@ -314,8 +303,7 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 				changed = 1;
 				if(partyResultShown == 0)
 					messageOffset = ITEM_USE_RESULT_POISON_PURGED;
-			}
-			else if(partyResultShown == 0) {
+			} else if(partyResultShown == 0) {
 				messageOffset = ITEM_USE_RESULT_NOT_POISONED;
 			}
 			break;
@@ -337,28 +325,28 @@ s32 mnAbilityApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 }
 
 /* Plays the use sound of item's action (mnAbilityPlayUseSnd). */
-void mnItemPlayUseSnd(u32 item) {
-	mnAbilityPlayUseSnd(gmItemGetDirectStub(item)->abilityId &
-						PSYNERGY_ABILITY_MASK);
+void mnItemPlayUseSnd(Uint32 item)
+{
+	mnAbilityPlayUseSnd(
+		gmItemGetDirectStub(item)->abilityId & PSYNERGY_ABILITY_MASK);
 }
 
-/* Plays the sound of action used from the menu, and returns at once: no */
-/* animation is drawn and nothing waits. */
-void mnAbilityPlayUseSnd(s32 action) {
-	s32 formula;
-	u32 effect;
+/* Plays the sound of action used from the menu, and returns at once: no
+   animation is drawn and nothing waits. */
+void mnAbilityPlayUseSnd(Sint32 action)
+{
+	Sint32				formula;
+	Uint32				effect;
 	ABILITY_DEFINITION *actionDefinition;
 
-	actionDefinition = mnAbilityGet(action);
+	actionDefinition = gmAbilityGetDirectStub(action);
 	formula = ABILITY_FORMULA_MASK & actionDefinition->flg;
 	switch(formula) {
 	case ABILITY_FORMULA_HEAL_HP:
 		/* With no break the recovery sound is started twice, both times on
-		 * music */
-		/* player 2 (SongTable's row for it), which sySndPlay never swaps for */
-		/* another: the second start restarts the first before the sound driver
-		 */
-		/* mixes a frame, so it is heard once. */
+		   music player 2 (SongTable's row for it), which sySndPlay never swaps
+		   for another: the second start restarts the first before the sound
+		   driver mixes a frame, so it is heard once. */
 		mnSndPlayReturnOne(SE_RECOVERY);
 		/* Fall through. */
 	case ABILITY_FORMULA_HEAL_PP:
@@ -388,4 +376,7 @@ void mnAbilityPlayUseSnd(s32 action) {
 }
 
 /* Unused: returns 0. */
-UNUSED s32 mnAbilityReturnFalse(void) { return 0; }
+UNUSED Sint32 mnAbilityReturnFalse(void)
+{
+	return 0;
+}

@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_WORLD_MAP_AFFINE_H
 #define ALCHEMY_WORLD_MAP_AFFINE_H
 
-/* @file */
 /* The world map's scanlines and affine lines. */
 
 #include "fixed_math.h"
@@ -9,25 +8,24 @@
 #include "types.h"
 #include "system/globals.h"
 
-/* One screen line's ground-plane terms on the world map: its width scale and */
-/* distance, from which its affine parameters are built */
-/* (fdWorldMapBuildScanlineTable, when the pitch changes). */
+/* One screen line's ground-plane terms on the world map: its width scale and
+   distance, from which its affine parameters are built
+   (fdWorldMapBuildScanlineTable, when the pitch changes). */
 typedef struct WORLD_MAP_SCANLINE {
 	/* The line's width scale and its signed ground distance, halved, both 16.16
-	 */
-	/* fixed point; both 0 for a line above the horizon. */
-	FIXED scale, depth;
-	s32 ofsX, ofsY; /* 0 from fdWorldMapBuildScanlineTable */
-	s16 pa, pc;
+	   fixed point; both 0 for a line above the horizon. */
+	FIXED  scale, depth;
+	Sint32 ofsX, ofsY; /* 0 from fdWorldMapBuildScanlineTable */
+	Sint16 pa, pc;
 } WORLD_MAP_SCANLINE;
 
-/* One screen line's affine parameters for a background, as the HBlank DMA */
-/* copies them into the BG2 or BG3 registers. */
+/* One screen line's affine parameters for a background, as the HBlank DMA
+   copies them into the BG2 or BG3 registers. */
 typedef struct WORLD_MAP_AFFINE_LINE {
-	s16 pa, pb, pc,
-		pd; /* the matrix, 8.8 fixed point as BG2PA to BG2PD take it */
-	s32 x,
-		y; /* the reference point, 20.8 fixed point as BG2X and BG2Y take it */
+	/* the matrix, 8.8 fixed point as BG2PA to BG2PD take it */
+	Sint16 pa, pb, pc, pd;
+	/* the reference point, 20.8 fixed point as BG2X and BG2Y take it */
+	Sint32 x, y;
 } WORLD_MAP_AFFINE_LINE;
 
 /* One screen line's affine parameters for BG2 and BG3. */
@@ -36,13 +34,12 @@ typedef struct WORLD_MAP_AFFINE_PAIR {
 } WORLD_MAP_AFFINE_PAIR;
 
 /* The world map's affine state (heap slot worldMapAffine): the scanline terms
- */
-/* and two pages of per-line affine parameters, one built while the other is */
-/* shown. */
+   and two pages of per-line affine parameters, one built while the other is
+   shown. */
 typedef struct WORLD_MAP_AFFINE_STATE {
-	WORLD_MAP_SCANLINE scanlines[160];
+	WORLD_MAP_SCANLINE	  scanlines[160];
 	WORLD_MAP_AFFINE_PAIR pages[2][160];
-	u8 unused[4]; /* allocated with the rest; no code reads it */
+	Uint8 unused[4]; /* allocated with the rest; no code reads it */
 } WORLD_MAP_AFFINE_STATE;
 
 STATIC_ASSERT(sizeof(WORLD_MAP_SCANLINE) == 20);

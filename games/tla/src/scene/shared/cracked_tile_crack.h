@@ -1,13 +1,14 @@
 /* Cracks the tile under the leader, swapping in its cracked picture. */
-void scCrackedTileCrack(CELL_TARGET *table, CELL_TARGET_ENTRY *entry) {
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry)
+{
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	s32 x;
-	s32 z;
+	Sint32 x;
+	Sint32 z;
 
-	x = (FIELD_CELL(leader->x.fixed)) | (s16)(table->x & 64);
-	z = (FIELD_CELL(leader->z.fixed)) | (s16)(table->z & 64);
-	fdLeaderCenterInCell();
-	fdEventPlaySnd(SE_RATTLE);
-	fdMapGridCopyCells(table->x, table->z + 1, 1, 1, x, z);
-	syFieldEventWait(12);
+	x = (FIELD_METATILE(leader->x.fixed)) | (Sint16)(table->x & 64);
+	z = (FIELD_METATILE(leader->z.fixed)) | (Sint16)(table->z & 64);
+	scLeaderCenterInMetatile();
+	fdScriptPlaySnd(SE_RATTLE);
+	fdMapGridCopyMetatiles(table->x, table->z + 1, 1, 1, x, z);
+	syFieldScriptWait(12);
 }

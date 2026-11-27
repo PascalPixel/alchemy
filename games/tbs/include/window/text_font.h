@@ -1,16 +1,14 @@
 #ifndef ALCHEMY_TEXT_FONT_H
 #define ALCHEMY_TEXT_FONT_H
 
-/* @file */
 /* The kanji glyphs and the text marks drawn with characters. */
 
 #include "edition.h"
 #include "types.h"
 
 /* In Japanese, the glyphs of character codes from 256: KANJI_GLYPH_SIZE bytes
- */
-/* each, drawn KANJI_WIDTH pixels wide. */
-extern const u8 Font_KanjiGlyphs[];
+   each, drawn KANJI_WIDTH pixels wide. */
+extern const Uint8 Font_KanjiGlyphs[];
 #define KANJI_GLYPH_SIZE 24 /* bytes */
 #define KANJI_WIDTH		 10 /* pixels */
 
@@ -22,8 +20,8 @@ typedef enum TEXT_MARK_GLYPH {
 } TEXT_MARK_GLYPH;
 
 #if LANGUAGE == LANGUAGE_JAPANESE
-/* The character codes of kana that start runs in the font's order */
-/* (charmap_ja.tsv), as the File Screen's password spells from them. */
+/* The character codes of kana that start runs in the font's order
+   (charmap_ja.tsv), as the File Screen's password spells from them. */
 #define KANA_WO 134 /* を */
 #define KANA_A	145 /* あ, then い to そ */
 #define KANA_KA 150 /* か, then き to そ */

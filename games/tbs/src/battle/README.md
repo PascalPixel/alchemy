@@ -1,6 +1,6 @@
 # Battles
 
-This folder is the battle sequence: one fight from its opening curtain to
+This folder is the battle mode: one fight from its opening curtain to
 its spoils. [Battle](../../../../docs/tbs/battle.md) gives the shape. This page follows a
 fight in order and says which file does each part.
 
@@ -93,7 +93,7 @@ in a single frame. What takes time is the showing: the flinch, the number,
 the line of text waiting for a button.
 
 So the two are split. Resolving changes the numbers at once and leaves
-behind a list of things to show. A task plays that list a little each
+behind a list of things to show. An event plays that list a little each
 frame, while the battle effect goes on drawing. That is how lightning and
 text share the screen, and it is `battle_playback.c` and `battle_playback_queue.c`.
 

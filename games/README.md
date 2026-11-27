@@ -37,12 +37,14 @@ Each of the four links on to guides one step closer to the code, and
 shape. Most of its code works as The Broken Seal's does, so each of its pages
 says plainly what the sequel adds: a party of eight, the ship, the forge, and a
 third game of chance. [How the two games relate](../docs/tla/sequel.md) reads the
-two side by side.
+two side by side. The files both games have byte for byte, such as the
+development kit's code, the fonts and many of the songs, are one copy in
+[common](common/README.md) that both build.
 
 There is more to wander through in The Broken Seal.
 [Places](https://alchemy.pascalpixel.com/tbs/places) has a page for every
 town and dungeon in story order, with its map and a recording of each of its
-events. [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects what
+scripts. [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects what
 the game keeps but never plays. And the [glossary](../docs/tbs/glossary.md) is there
 whenever a word is new.
 

@@ -1,49 +1,50 @@
-/* Puts the crumbling pillars of a list back where their flags left them: one */
-/* whose second flag is set has fallen and is put away; the others stand on */
-/* their cells raised 32 pixels, gaps to jump onto, in animation 0 once their */
-/* first flag is set, as the first step on one leaves it. Then a leader left */
-/* below the ground is lifted onto it. */
-void scMagmaRockInsideRestoreCrumblingPillars(const u16 *table) {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
-	ACTOR *actor;
-	s32 id;
-	s32 flag;
-	s32 nextFlag;
-	MAP_CELL *cells;
-	u8 *shapes;
-	MAP_CELL *cell;
-	s32 index;
-	ACTOR *leader;
-	s32 ground;
+/* Puts the crumbling pillars of a list back where their flags left them: one
+   whose second flag is set has fallen and is put away; the others stand on
+   their metatiles raised 32 pixels, gaps to jump onto, in animation 0 once
+   their first flag is set, as the first step on one leaves it. Then a leader
+   left below the ground is lifted onto it. */
+void scMagmaRockInsideRestoreCrumblingPillars(const Uint16 *table)
+{
+	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	ACTOR		 *actor;
+	Sint32		  id;
+	Sint32		  flag;
+	Sint32		  nextFlag;
+	MAP_METATILE *metatiles;
+	Uint8		 *shapes;
+	MAP_METATILE *metatile;
+	Sint32		  index;
+	ACTOR		 *leader;
+	Sint32		  ground;
 
 	for(; *table != ACTOR_LIST_END; table += 2) {
 		id = table[0];
 		actor = fdActorGet(id);
 		flag = table[1];
 		nextFlag = flag + 1;
-		cells = map->layers[actor->layer].cells;
-		shapes = MapShapeGrid + (cells - (MAP_CELL *)Ram_MapCellBuffer);
-		if(fdEventGetFlag(nextFlag)) {
+		metatiles = map->layers[actor->layer].metatiles;
+		shapes =
+			MapShapeGrid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+		if(fdScriptGetFlag(nextFlag)) {
 			fdActorSetPos(id, 0, 0);
-		}
-		else {
-			s32 shape;
-			u8 *slot;
-			s32 height;
+		} else {
+			Sint32 shape;
+			Uint8 *slot;
+			Sint32 height;
 
-			index = fdActorGetCellIndex(actor);
-			cell = &cells[index];
+			index = fdActorGetMetatileIndex(actor);
+			metatile = &metatiles[index];
 			slot = shapes + index;
-			shape = fdMapGridGetTerrainKind(actor->layer, actor->x.fixed,
-											actor->z.fixed);
-			height = fdMapGetTerrainHeight(actor->layer, actor->x.fixed,
-										   actor->z.fixed);
+			shape = fdMapGridGetTerrainKind(
+				actor->layer, actor->x.fixed, actor->z.fixed);
+			height = fdMapGetTerrainHeight(
+				actor->layer, actor->x.fixed, actor->z.fixed);
 			fdActorDisableById(id);
-			cell->attributeB = MAP_CELL_JUMP;
+			metatile->attributeB = MAP_METATILE_JUMP;
 			*slot = fdMapShapeFindOrAdd(actor->layer, shape,
-										CELL_HEIGHT_STEPS(height) +
-											CELL_HEIGHT_STEPS(toFIXED(32)));
-			if(fdEventGetFlag(flag))
+				METATILE_HEIGHT_STEPS(height) +
+					METATILE_HEIGHT_STEPS(toFIXED(32)));
+			if(fdScriptGetFlag(flag))
 				fdActorSelectAnimation(actor, 0);
 		}
 	}

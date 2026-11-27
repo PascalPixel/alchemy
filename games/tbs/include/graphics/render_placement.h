@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_RENDER_PLACEMENT_H
 #define ALCHEMY_RENDER_PLACEMENT_H
 
-/* @file */
 /* A sprite's screen position and scale. */
 
 #include "fixed_math.h"
@@ -10,7 +9,7 @@
 
 /* A sprite's screen position and its two vertical offsets, in 16.16 pixels. */
 typedef struct SPR_PLACEMENT {
-#ifdef UBFIX
+#if FIX_POINTER_OUTSIDE_OBJECT
 	union {
 		struct {
 			FIXED x;	  /* screen x of the sprite's centre */
@@ -18,6 +17,7 @@ typedef struct SPR_PLACEMENT {
 			FIXED y;	  /* screen y at the ground; sets the depth slot */
 			FIXED groundHeight; /* how far the shadow is raised above y */
 		};
+
 		FIXED values[4];
 	};
 #else
@@ -29,11 +29,12 @@ typedef struct SPR_PLACEMENT {
 } SPR_PLACEMENT;
 
 /* Returns the placement's values as an array: x, height, y, groundHeight. */
-/* UB: the legacy renderer walks across the scalar members as an array. UBFIX */
-/* supplies a real array; an always-on union changes producer scheduling. */
-static inline const s32 *
-sySprPlacementReadValues(const SPR_PLACEMENT *placement) {
-#ifdef UBFIX
+/* UB: the legacy renderer walks across the scalar members as an array. UBFIX
+   supplies a real array; an always-on union changes producer scheduling. */
+static inline const Sint32 *sySprPlacementReadValues(
+	const SPR_PLACEMENT *placement)
+{
+#if FIX_POINTER_OUTSIDE_OBJECT
 	return placement->values;
 #else
 	return &placement->x;
@@ -41,22 +42,24 @@ sySprPlacementReadValues(const SPR_PLACEMENT *placement) {
 }
 
 /* Returns the placement's values as a writable array. */
-static inline s32 *sySprPlacementValues(SPR_PLACEMENT *placement) {
-#ifdef UBFIX
+static inline Sint32 *sySprPlacementValues(SPR_PLACEMENT *placement)
+{
+#if FIX_POINTER_OUTSIDE_OBJECT
 	return placement->values;
 #else
 	return &placement->x;
 #endif
 }
 
-/* Horizontal and vertical sprite scale; FIXED_ONE is the original size. */
+/* Horizontal and vertical sprite scale; toFIXED(1) is the original size. */
 typedef struct SPR_SCALE {
 	union {
 		struct {
 			FIXED x;
 			FIXED y;
 		};
-		s32 values[2];
+
+		Sint32 values[2];
 	};
 } SPR_SCALE;
 

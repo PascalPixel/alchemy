@@ -1,6 +1,4 @@
-/* @file */
-/* An enemy's choice of action, btAIChooseAction. */
-/* Part of battle.c. */
+/* An enemy's choice of action, btAIChooseAction. Part of battle.c. */
 
 #include "battle_internal.h"
 
@@ -8,46 +6,46 @@
 #define AI_MAX_FAILED_CHOICES 16
 
 /* Chooses an enemy's action: one of the eight in its definition, picked by its
- */
-/* strategy, and a target worth it; if a pick fails after more than */
-/* AI_MAX_FAILED_CHOICES have failed before it, the enemy defends. acting is 0
- */
-/* as the turn is built, when only a guard is chosen, and 1 when the enemy */
-/* acts. */
-UNREAD_RESULT btAIChooseAction(BATTLE_ACTION *request, s32 acting) {
-	u32 selection;
-	BATTLE_AI_STATE *selectionMemory;
+   strategy, and a target worth it; if a pick fails after more than
+   AI_MAX_FAILED_CHOICES have failed before it, the enemy defends. acting is 0
+   as the turn is built, when only a guard is chosen, and 1 when the enemy
+   acts. */
+UNREAD_RESULT btAIChooseAction(BATTLE_ACTION *request, Sint32 acting)
+{
+	Uint32					selection;
+	BATTLE_AI_STATE		   *selectionMemory;
 	const ENEMY_DEFINITION *enemy;
-	s32 itemsAllowed;
-	s32 failedChoices;
-	s32 needsChoice;
-	const s8 *actionStrategy;
-	const u8 *itemActionMask;
-	s16 command;
-	s32 allyTarget;
-	s32 opponentTarget;
-	s32 allyIsParty;
-	s32 opponentIsParty;
-	ITEM_DEFINITION *item;
-	s32 useItem;
-	s8 strategyKind;
-	ABILITY_DEFINITION *itemAction;
-	ABILITY_DEFINITION *ability;
-	UNIT *unit;
-	s32 abilityId;
-	s32 flags;
-	u8 effect;
-	u8 targetMode;
+	Sint32					itemsAllowed;
+	Sint32					failedChoices;
+	Sint32					needsChoice;
+	const Sint8			   *actionStrategy;
+	const Uint8			   *itemActionMask;
+	Sint16					command;
+	Sint32					allyTarget;
+	Sint32					opponentTarget;
+	Sint32					allyIsParty;
+	Sint32					opponentIsParty;
+	ITEM_DEFINITION		   *item;
+	Sint32					useItem;
+	Sint8					strategyKind;
+	ABILITY_DEFINITION	   *itemAction;
+	ABILITY_DEFINITION	   *ability;
+	UNIT				   *unit;
+	Sint32					abilityId;
+	Sint32					flags;
+	Uint8					effect;
+	Uint8					targetMode;
 
-	/* Picks a place in the action list from a 0-255 roll and eight weights: */
-	/* the first place whose running total passes the roll, else place 0. */
-	s32 btEnemySelectWeightedAction(const u8 *weights) {
-		s32 roll;
-		s32 total;
-		s32 selectedAction;
-		s32 actionIndex;
+	/* Picks a place in the action list from a 0-255 roll and eight weights: the
+	   first place whose running total passes the roll, else place 0. */
+	Sint32 btEnemySelectWeightedAction(const Uint8 *weights)
+	{
+		Sint32 roll;
+		Sint32 total;
+		Sint32 selectedAction;
+		Sint32 actionIndex;
 
-		roll = btRandomStub() & 0xff;
+		roll = gmBattleRandomStub() & 0xff;
 		total = weights[0];
 		selectedAction = 0;
 		actionIndex = 0;
@@ -74,7 +72,7 @@ UNREAD_RESULT btAIChooseAction(BATTLE_ACTION *request, s32 acting) {
 	if(acting != 0 && request->command != COMMAND_ENEMY_ABILITY)
 		return;
 
-	enemy = btEnemyGetDefinitionStub(unit->id);
+	enemy = gmEnemyGetDefinitionStub(unit->id);
 	selectionMemory = &unit->aiState;
 	actionStrategy = &enemy->actionStrategy;
 	itemActionMask = &enemy->itemActions;
@@ -98,14 +96,13 @@ select_again:
 		break;
 	case ACTION_STRATEGY_RANDOM_START:
 		if(selectionMemory->initialized == 0) {
-			selectionMemory->selection = btRandomStub();
+			selectionMemory->selection = gmBattleRandomStub();
 			selectionMemory->initialized = 1;
 		}
 		/* fall through */
 	case ACTION_STRATEGY_IN_ORDER:
 		/* It moves on only when the enemy acts, wrapping from 7 to 0 in its
-		 * three */
-		/* bits. */
+		   three bits. */
 		selection = selectionMemory->selection;
 		if(acting != 0) {
 			selectionMemory->selection = selection + 1;
@@ -118,8 +115,8 @@ select_again:
 		break;
 	}
 
-	/* A place marked for an item: use the first item held, if any. Once an */
-	/* item is refused, later picks take the place's ability instead. */
+	/* A place marked for an item: use the first item held, if any. Once an item
+	   is refused, later picks take the place's ability instead. */
 	useItem = (*itemActionMask >> selection) & 1;
 	useItem &= itemsAllowed;
 	abilityId = enemy->abilities[selection];
@@ -130,9 +127,8 @@ select_again:
 			if(enemy->tgtStrategy == TARGET_STRATEGY_MOST_HP) {
 				request->command = COMMAND_ITEM;
 				/* BUG: the ability Can't Use, read by the item command as
-				 * inventory */
-				/* slot 509; the enemy defends (README.md, "The party's
-				 * commands"). */
+				   inventory slot 509; the enemy defends (README.md, "The
+				   party's commands"). */
 				request->prm = ABILITY_CANT_USE;
 				return;
 			}
@@ -141,7 +137,7 @@ select_again:
 			item = gmItemGetDirectStub(unit->inventory[0]);
 			/* Only an item that is used up and heals or has an effect. */
 			if(item->useType == ITEM_USE_CONSUMED) {
-				itemAction = mnAbilityGet(item->abilityId);
+				itemAction = gmAbilityGetDirectStub(item->abilityId);
 				abilityId = item->abilityId;
 				request->command = COMMAND_ITEM;
 				flags = itemAction->flg;
@@ -154,8 +150,7 @@ select_again:
 					useItem = 0;
 					break;
 				}
-			}
-			else {
+			} else {
 				useItem = 0;
 			}
 		}
@@ -165,8 +160,8 @@ select_again:
 
 	if(needsChoice != 0) {
 		/* A guard or a flight becomes its own command, aimed at the user
-		 * itself. */
-		ability = mnAbilityGet(abilityId);
+		   itself. */
+		ability = gmAbilityGetDirectStub(abilityId);
 		effect = ability->eff;
 		switch(effect) {
 		case ABILITY_EFFECT_DEFEND:
@@ -184,8 +179,7 @@ select_again:
 		}
 
 		/* As the turn is built, only a guard is kept; anything else waits for
-		 */
-		/* the enemy's action. */
+		   the enemy's action. */
 		if(acting == 0) {
 			switch(request->command) {
 			case COMMAND_DEFEND:
@@ -197,26 +191,26 @@ select_again:
 		}
 
 		/* Psynergy: an enemy whose strategy is not TARGET_STRATEGY_MOST_HP
-		 * avoids */
-		/* it without the PP, and with TARGET_STRATEGY_RANDOM also while sealed.
-		 */
+		   avoids it without the PP, and with TARGET_STRATEGY_RANDOM also while
+		   sealed. */
 		if(request->command != COMMAND_ITEM &&
-		   btAbilityIsPsynergy(abilityId) != 0) {
+			btAbilityIsPsynergy(abilityId) != 0) {
 			request->command = COMMAND_PSYNERGY;
 			request->prm = abilityId;
 			if((ability->ppCost > unit->pp &&
-				enemy->tgtStrategy != TARGET_STRATEGY_MOST_HP) ||
-			   (unit->psySeal != 0 &&
-				enemy->tgtStrategy == TARGET_STRATEGY_RANDOM))
+				   enemy->tgtStrategy != TARGET_STRATEGY_MOST_HP) ||
+				(unit->psySeal != 0 &&
+					enemy->tgtStrategy == TARGET_STRATEGY_RANDOM))
 				goto next_candidate;
 		}
 		/* A challenged enemy won't flee, and when it acts it no longer chooses
-		 * a */
-		/* guard (guards are settled as the turn is built): both pick again. */
+		   a guard (guards are settled as the turn is built): both pick
+		   again. */
 		command = request->command;
-		if((command == COMMAND_FLEE && (u8)unit->challenge != 0) ||
-		   (acting != 0 &&
-			(command == COMMAND_DEFEND || command == COMMAND_TOTAL_DEFENSE)))
+		if((command == COMMAND_FLEE && (Uint8)unit->challenge != 0) ||
+			(acting != 0 &&
+				(command == COMMAND_DEFEND ||
+					command == COMMAND_TOTAL_DEFENSE)))
 			goto next_candidate;
 
 		if(command == COMMAND_ENEMY_ABILITY) {
@@ -226,8 +220,7 @@ select_again:
 		}
 
 		/* The target: with no one on the side, a random place on the enemy's
-		 * own */
-		/* side; with no one worth it, the enemy picks again. */
+		   own side; with no one worth it, the enemy picks again. */
 		request->range = ability->range;
 		targetMode = ability->tgtMode;
 		switch(targetMode) {

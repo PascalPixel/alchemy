@@ -1,13 +1,13 @@
 /* The leader drops in from above through a cracked tile, lands with a burst of
- */
-/* dust and a shake. */
-void scCrackedTileDropIn(void) {
-	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	u32 i;
+   dust and a shake. */
+void scCrackedTileDropIn(void)
+{
+	ACTOR		  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+	Uint32		   i;
 	EFFECT_OPTIONS options;
 
-	fdEventStart();
-	syFieldEventEndLastingPsynergy(0);
+	fdScriptStart();
+	syFieldScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdMapGridCenterOnFollowedPoint();
 	syWait(1);
@@ -16,19 +16,19 @@ void scCrackedTileDropIn(void) {
 	leader->bounce = 0;
 	leader->motionFlg = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fdEventStartScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventPlaySnd(SE_DUST_PUFF);
+	fdScriptStartScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptPlaySnd(SE_DUST_PUFF);
 	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	syFieldEventWait(24);
+	syFieldScriptWait(24);
 	options.pal = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
-	options.startScaleX = FIXED_ONE * 16 / 25;
-	options.startScaleY = FIXED_ONE * 16 / 25;
+	options.startScaleX = toFIXED(16) / 25;
+	options.startScaleY = toFIXED(16) / 25;
 	/* A puff each sixteenth of a turn, the last over the first. */
 	for(i = 0; i <= TRIG_TURN / FACING_STEP; i++) {
-		s32 angle;
-		s32 velocity[3];
+		Sint32 angle;
+		Sint32 velocity[3];
 
 		angle = i * FACING_STEP;
 		velocity[0] = syCos(angle);
@@ -39,23 +39,23 @@ void scCrackedTileDropIn(void) {
 		velocity[2] +=
 			(syRandom() * (toFIXED(3) / 8) >> 16) - (toFIXED(3) / 16);
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-						   velocity[0], velocity[1], velocity[2],
-						   EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE |
-							   EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM,
-						   &options);
+			velocity[0], velocity[1], velocity[2],
+			EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_USE_UPDATE |
+				EFFECT_SCRIPT_MEDIUM,
+			&options);
 	}
-	fdEventPlaySnd(SE_THUMP);
+	fdScriptPlaySnd(SE_THUMP);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_LEADER_SIT);
 	fdMapGridSetShake(5, 5, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	syFieldMapGridWaitForShakeToSettle();
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
 	leader->gravity = toFIXED(1);
-	leader->bounce = FIXED_ONE / 4;
-	syFieldEventWait(10);
+	leader->bounce = toFIXED(1) / 4;
+	syFieldScriptWait(10);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
-	fdEventEnd();
+	fdScriptEnd();
 }

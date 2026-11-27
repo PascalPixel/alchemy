@@ -1,5 +1,6 @@
 /* Stops an actor and starts its script, its sprite drawn at `priority`. */
-void fdActorSetupScriptedPart(ACTOR *actor, s32 priority) {
+void scActorSetupScriptedPart(ACTOR *actor, Sint32 priority)
+{
 	actor->motionFlg = 0;
 	actor->collisionFlg = 0;
 

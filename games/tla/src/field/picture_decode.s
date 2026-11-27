@@ -5,11 +5,11 @@
 @ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global Render_DecodePictureCode
-Render_DecodePictureCode:
-	.global Render_DecodePicture
+	.global fdRenderDecodePictureCode
+fdRenderDecodePictureCode:
+	.global fdRenderDecodePicture
 	.thumb_func
-Render_DecodePicture:
+fdRenderDecodePicture:
 	bx	pc
 AlchemyUncredited_08020daa:
 	.2byte	0x0200

@@ -1,10 +1,10 @@
-@ Why fdDecompressTaggedLzArm is assembly:
+@ Why syDecompressTaggedLZArm is assembly:
 @ The bit reader branches on carry immediately after shifting its live
 @ bit reservoir; it also uses unshifted movs r2,r2 for copy-and-test.
-@ Why Decompress_MoveToFrontLzCommands is assembly:
+@ Why syDecompressMoveToFrontLZCommands is assembly:
 @ add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
 @ relative to pc, including r11/fp as ordinary decoder state.
-@ Why Decompress_MoveToFrontLzLoop to Resource_RefillMoveToFrontLzBits are assembly:
+@ Why syDecompressMoveToFrontLZLoop to Resource_RefillMoveToFrontLzBits are assembly:
 @ Computed add pc enters fixed-size decoder code slots; command execution
 @ also carries live reader register state across entry labels.
 @ Why syResourceExecuteTransfer is assembly:
@@ -14,8 +14,8 @@
 @ instructions.
 .syntax unified
 	.arm
-	.global fdDecompressTaggedLzArm
-fdDecompressTaggedLzArm:
+	.global syDecompressTaggedLZArm
+syDecompressTaggedLZArm:
 	push	{r5, r6, r7, r9, lr}
 	ldrb	r2, [r0], #1
 	cmp	r2, #0
@@ -220,12 +220,12 @@ fdDecompressTaggedLzArm:
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	b	.Ltype1_copy
-	.global fdDecompressTaggedLzCodeSize
-	.set fdDecompressTaggedLzCodeSize, . - fdDecompressTaggedLzArm
+	.global syDecompressTaggedLZCodeSize
+	.set syDecompressTaggedLZCodeSize, . - syDecompressTaggedLZArm
 .syntax unified
 	.arm
-	.global Decompress_MoveToFrontLzCommands
-Decompress_MoveToFrontLzCommands:
+	.global syDecompressMoveToFrontLZCommands
+syDecompressMoveToFrontLZCommands:
 	ldrb	r2, [r0], #1
 	cmp	r2, #2
 	movne	r0, #4
@@ -241,7 +241,7 @@ Decompress_MoveToFrontLzCommands:
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
 	blmi	Resource_RefillMoveToFrontLzBits
-	b	Decompress_MoveToFrontLzLoop
+	b	syDecompressMoveToFrontLZLoop
 .syntax unified
 	.section .rodata,"a",%progbits
 	.arm
@@ -303,8 +303,8 @@ Decompress_MoveToFrontLzCommands:
 .Ltype2_literal_store:
 	strb	r5, [r1, #1]!
 	pop	{r5, r9}
-	.global Decompress_MoveToFrontLzLoop
-Decompress_MoveToFrontLzLoop:
+	.global syDecompressMoveToFrontLZLoop
+syDecompressMoveToFrontLZLoop:
 	lsrs	r2, r2, #1
 	bcs	.Ltype2_literal
 	lsrs	r2, r2, #1
@@ -375,12 +375,12 @@ Decompress_MoveToFrontLzLoop:
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
-	beq	Decompress_MoveToFrontLzLoop
+	beq	syDecompressMoveToFrontLZLoop
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
 	bne	.Ltype2_copy_byte
-	b	Decompress_MoveToFrontLzLoop
+	b	syDecompressMoveToFrontLZLoop
 .Ltype2_distance_long:
 	sub	r6, r1, r9
 	cmp	r6, #2048

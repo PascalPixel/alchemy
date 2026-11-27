@@ -1,9 +1,7 @@
-/* @file */
-/* Blaze, and the check whether an actor stands where the map or another */
-/* actor blocks it. */
-/* Part of field_psynergy.c. */
+/* Blaze, and the check whether an actor stands where the map or another actor
+   blocks it. Part of field_psynergy.c. */
 
-extern const s32 Blaze_TintColors[];
+extern const Sint32 Blaze_TintColors[];
 
 /* The first layer of an actor's sprite. */
 #define ACTOR_FIRST_LAYER(actor) (((SPR *)(actor)->spr)->entries[0])
@@ -11,10 +9,10 @@ extern const s32 Blaze_TintColors[];
 /* The jet's longest spray, in frames; B ends it sooner. */
 #define BLAZE_SPRAY_FRAMES 80
 /* How far in front of the caster the jet's flames are drawn. */
-#define BLAZE_FLAME_DEPTH 10
+#define BLAZE_FLAME_DEPTH  10
 
-/* The flame's colour, after the torch it is cast at: an index of */
-/* Blaze_TintColors. */
+/* The flame's colour, after the torch it is cast at: an index of
+   Blaze_TintColors. */
 typedef enum BLAZE_LOOK {
 	BLAZE_RED,
 	BLAZE_VIOLET,
@@ -23,42 +21,43 @@ typedef enum BLAZE_LOOK {
 } BLAZE_LOOK;
 
 /* Blaze: a jet of flame sprays from the caster, with smoke, until B is pressed
- */
-/* or for BLAZE_SPRAY_FRAMES at most: red, or violet, yellow or blue to match */
-/* the torch (SPRITE_MARS_TORCH_LIT) it is cast at. Each actor it reaches runs
- */
-/* its Blaze event, and one that is lit by it ends the jet, its actor id kept */
-/* in the field state. Cast at nothing, the nearest fire in reach is the */
-/* target: a brazier, a lit candlestick, a lit Mars Lighthouse torch, or an */
-/* actor wearing SPRITE_EXCLAMATION_BUBBLE (the Gondowan Cliffs hideout's */
-/* unseen marker at its fire). */
-void fdPsynergyBlaze(void) {
-	BLAZE_STATE *state;
-	FIELD_STATE *event;
+   or for BLAZE_SPRAY_FRAMES at most: red, or violet, yellow or blue to match
+   the torch (SPRITE_MARS_TORCH_LIT) it is cast at. Each actor it reaches runs
+   its Blaze script, and one that is lit by it ends the jet, its actor id kept
+   in the field state. Cast at nothing, the nearest fire in reach is the target:
+   a brazier, a lit candlestick, a lit Mars Lighthouse torch, or an actor
+   wearing SPRITE_EXCLAMATION_BUBBLE (the Gondowan Cliffs hideout's unseen
+   marker at its fire). */
+void fdPsynergyBlaze(void)
+{
+	BLAZE_STATE		   *state;
+	FIELD_STATE		   *event;
 	FIELD_EFFECT_STATE *scene;
-	ACTOR *caster;
-	ACTOR *actor;
-	EFFECT_SPR *sprite;
+	ACTOR			   *caster;
+	ACTOR			   *actor;
+	EFFECT_SPR		   *sprite;
+
 	union {
-		ACTOR *actor;
+		ACTOR					*actor;
 		FIELD_PSYNERGY_PARTICLE *particle;
 	} cursor;
-	void *pending;
-	s32 pos[3];
-	s32 kind;
-	s32 look;
-	s32 best;
-	s32 distance;
-	FIXED height;
-	s32 id;
-	s32 resourceId;
-	s32 flameSlot;
-	s32 puffSlot;
-	s32 tile;
-	s32 i;
-	s32 j;
-	s32 k;
-	s32 mode;
+
+	void  *pending;
+	Sint32 pos[3];
+	Sint32 kind;
+	Sint32 look;
+	Sint32 best;
+	Sint32 distance;
+	FIXED  height;
+	Sint32 id;
+	Sint32 resourceId;
+	Sint32 flameSlot;
+	Sint32 puffSlot;
+	Sint32 tile;
+	Sint32 i;
+	Sint32 j;
+	Sint32 k;
+	Sint32 mode;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BLAZE_STATE));
 	scene = Ram_HeapSlots->fieldEffState;
@@ -86,14 +85,15 @@ void fdPsynergyBlaze(void) {
 			cursor.actor = event->actors[i];
 			id = ACTOR_FIRST_LAYER(cursor.actor)->anmId;
 			if(cursor.actor != NULL && cursor.actor->script != NULL &&
-			   (id == SPRITE_EXCLAMATION_BUBBLE || id == SPRITE_BRAZIER ||
-				id == SPRITE_LIT_CANDLESTICK || id == SPRITE_MARS_TORCH_LIT)) {
-				distance = fdMeasurePsynergyReach(scene->fieldPsynergy,
-												  scene->casterId, i);
+				(id == SPRITE_EXCLAMATION_BUBBLE || id == SPRITE_BRAZIER ||
+					id == SPRITE_LIT_CANDLESTICK ||
+					id == SPRITE_MARS_TORCH_LIT)) {
+				distance = fdMeasurePsynergyReach(
+					scene->fieldPsynergy, scene->casterId, i);
 				if(distance != -1 && best > distance) {
-					height = toFIXED((s8)syResourceGetMetadataRecordFarStub(
-										 ACTOR_FIRST_LAYER(cursor.actor)->anmId)
-										 ->sprTop);
+					height = toFIXED((Sint8)fdResourceGetMetadataRecordStubStub(
+						ACTOR_FIRST_LAYER(cursor.actor)->anmId)
+							->sprTop);
 					state->mode = BLAZE_LIGHT_TORCH;
 					state->origin[0] = cursor.actor->x.fixed;
 					state->origin[1] = cursor.actor->y.fixed + height;
@@ -104,16 +104,15 @@ void fdPsynergyBlaze(void) {
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		if(event->blazeLongSpray == 0)
 			state->mode = BLAZE_SPRAY;
 		else
 			state->mode = BLAZE_LONG_SPRAY;
 		if(scene->tgt != NULL)
-			height = toFIXED((s8)syResourceGetMetadataRecordFarStub(
-								 ACTOR_FIRST_LAYER(scene->tgt)->anmId)
-								 ->sprTop);
+			height = toFIXED((Sint8)fdResourceGetMetadataRecordStubStub(
+				ACTOR_FIRST_LAYER(scene->tgt)->anmId)
+					->sprTop);
 		else
 			height = toFIXED(20);
 		state->origin[0] = scene->x;
@@ -129,16 +128,15 @@ void fdPsynergyBlaze(void) {
 		actor = fdActorSpawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
 		if(actor != NULL) {
 			actor->motionFlg = 0;
-			actor->scaleX = FIXED_ONE * 5 / 4;
-			actor->scaleY = FIXED_ONE * 5 / 4;
+			actor->scaleX = toFIXED(5) / 4;
+			actor->scaleY = toFIXED(5) / 4;
 			fdActorSelectAnimationStub(actor, 2);
 			sySndPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
 			sySynch(50);
 			fdActorReleaseStub(actor);
 			sySynch(10);
 		}
-	}
-	else if(mode == BLAZE_FLICKER) {
+	} else if(mode == BLAZE_FLICKER) {
 		pos[0] = state->origin[0];
 		pos[1] = state->origin[1];
 		pos[2] = state->origin[2];
@@ -151,8 +149,7 @@ void fdPsynergyBlaze(void) {
 			fdActorReleaseStub(actor);
 			sySynch(10);
 		}
-	}
-	else {
+	} else {
 
 		sySndPlayStub(SE_RUSH);
 		fdBattleEffectSetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
@@ -175,9 +172,9 @@ void fdPsynergyBlaze(void) {
 			resourceId = RESOURCE_RED_FLAME_BURST;
 			break;
 		}
-		syDecompressTaggedLz(syResourceGetTableEntry(resourceId), state);
-		flameSlot = syVramCacheFindFreeEntry();
-		tile = syVramCacheLoad(flameSlot, 4096, state);
+		syDecompressTaggedLZ(syResourceGetTableEntry(resourceId), state);
+		flameSlot = syVRAMCacheFindFreeEntry();
+		tile = syVRAMCacheLoad(flameSlot, 4096, state);
 		state->flameTile = tile;
 		cursor.particle = state->flameMotion;
 		for(j = 0; j < BLAZE_FLAMES; j++) {
@@ -191,17 +188,17 @@ void fdPsynergyBlaze(void) {
 			cursor.particle->tmr = -1;
 			cursor.particle++;
 		}
-		syDecompressTaggedLz(syResourceGetTableEntry(RESOURCE_DUST_PUFF_A),
-							 state);
-		puffSlot = syVramCacheFindFreeEntry();
-		tile = syVramCacheLoad(puffSlot, 2048, state);
+		syDecompressTaggedLZ(
+			syResourceGetTableEntry(RESOURCE_DUST_PUFF_A), state);
+		puffSlot = syVRAMCacheFindFreeEntry();
+		tile = syVRAMCacheLoad(puffSlot, 2048, state);
 		state->puffTile = tile;
 		cursor.particle = state->puffMotion;
 		for(j = 0; j < BLAZE_FLAMES; j++) {
 			sprite = &state->puffs[j];
 
 			fdEffectSprInit(sprite, 8, 15, OBJ_SIZE_16X16, tile);
-			sprite->scaleY = sprite->scaleX = FIXED_ONE * 3 / 4;
+			sprite->scaleY = sprite->scaleX = toFIXED(3) / 4;
 			sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
 			sprite->oam.pri = 0;
 			sprite->oam.fullCol = 1;
@@ -211,24 +208,25 @@ void fdPsynergyBlaze(void) {
 		}
 		sySynch(1);
 		state->emitting = 1;
-		sySetEvent(fdBlazeUpdateSpray, TASK_PASS_FRAME);
+		sySetEvent(fdBlazeUpdateSpray, EVENT_PASS_FRAME);
 		for(k = 0; k < BLAZE_SPRAY_FRAMES; k++) {
 			sySynch(1);
 			if(state->hit != 0) {
-				pending = scFindPsynergyTrigger(
-					PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS), scene->fieldPsynergy,
-					(s16)(state->hitObj | PSYNERGY_TARGET_ACTOR));
+				pending = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_HITS),
+					scene->fieldPsynergy,
+					(Sint16)(state->hitObj | PSYNERGY_TARGET_ACTOR));
 				if(pending != NULL)
-					fdRunPsynergyEvent(pending, scene->casterId, state->hitObj);
-				if(scFindPsynergyTrigger(
-					   PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END),
+					fdRunPsynergyScript(
+						pending, scene->casterId, state->hitObj);
+				if(fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_AFTER_END),
 					   scene->fieldPsynergy,
-					   (s16)(state->hitObj | PSYNERGY_TARGET_ACTOR)) != NULL) {
+					   (Sint16)(state->hitObj | PSYNERGY_TARGET_ACTOR)) !=
+					NULL) {
 					event->psynergyHitObj = state->hitObj;
 					break;
 				}
 			}
-			if(InputWork.pressed & KEY_B)
+			if(PerWork.push & KEY_B)
 				break;
 		}
 		sySndPlayStub(SOUND_FADE_OUT_EXIT_SE);
@@ -243,38 +241,39 @@ void fdPsynergyBlaze(void) {
 			sySynch(1);
 		}
 		syCloseEvent(fdBlazeUpdateSpray);
-		syVramCacheFreeEntry(flameSlot);
-		syVramCacheFreeEntry(puffSlot);
+		syVRAMCacheFreeEntry(flameSlot);
+		syVRAMCacheFreeEntry(puffSlot);
 	}
 	fdPsynergyFadeFromCastCol();
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /* Nonzero when the map blocks an actor at (x, z) on a layer at a height. */
-s32 fdMapGridCheckCollisionAtStub(s32 x, s32 z, s32 layer, s32 height);
+Sint32 fdMapGridCheckCollisionAtStub(
+	Sint32 x, Sint32 z, Sint32 layer, Sint32 height);
 
-/* Says whether an actor stands where it may not: 1 when, outside the World */
-/* Map, fdMapGridCheckCollisionAtStub reports its cell, ORed with 2 when it */
-/* overlaps any other solid actor (each radius less 2 pixels). */
-s32 fdActorCheckBlocked(ACTOR *actor) {
-	s32 result;
+/* Says whether an actor stands where it may not: 1 when, outside the World Map,
+   fdMapGridCheckCollisionAtStub reports its metatile, ORed with 2 when it
+   overlaps any other solid actor (each radius less 2 pixels). */
+Sint32 fdActorCheckBlocked(ACTOR *actor)
+{
+	Sint32 result;
 	ACTOR *other;
-	s32 i;
+	Sint32 i;
 
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	result = 0;
 	if(state->mode != ACTOR_SYSTEM_WORLD_MAP) {
-		if(fdMapGridCheckCollisionAtStub(actor->x.fixed, actor->z.fixed, 0,
-										 actor->groundHeight) != 0)
+		if(fdMapGridCheckCollisionAtStub(
+			   actor->x.fixed, actor->z.fixed, 0, actor->groundHeight) != 0)
 			result = 1;
 	}
 	other = Ram_HeapSlots->actors;
 	for(i = 0; i < ACTOR_COUNT; i++, other++) {
 		if(other->script != NULL && (other->collisionFlg & ACTOR_SOLID) &&
-		   other != actor) {
+			other != actor) {
 			if(fdCheckSpheresOverlapStub(&actor->x.fixed, actor->radius - 2,
-										 &other->x.fixed,
-										 other->radius - 2) >= 0)
+				   &other->x.fixed, other->radius - 2) >= 0)
 				result |= 2;
 		}
 	}

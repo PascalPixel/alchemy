@@ -1,6 +1,7 @@
 @ Why assembly: a copy the ROM keeps of a function it also links, stopping
-@ short of its end: its 232 bytes are m4aSoundVSync's from .L_081c1a9c
-@ (clear_buffer.s) up to its final bx r3, and its bl and branches keep that
+@ short of its end: its 232 bytes are those of the MPlayMain in
+@ games/common/sdk/sound/clear_buffer.s, which this game keeps unreferenced,
+@ from .L17 up to its final bx r3, and its bl and branches keep that
 @ function's offsets. It keeps r11 as an ordinary register (mov r4, r11) and
 @ restores its callee saves by popping them into the low registers, as
 @ MPlayMain does.
@@ -9,24 +10,26 @@
 @ stops short of its return, and its two backward branches land outside it. Only
 @ the leftover ply_note refers to it.
 @ Why assembly: a copy the ROM keeps of a function it also links: its bytes
-@ are MusicTrack_HandleNoteUnreferenced's (clear_buffer.s) but
-@ for its last pool word, left 0, and its six bl keep that function's offsets,
-@ so from here they land elsewhere, the first on Func_081c08a4 inside
-@ ply_note.
+@ are those of the ply_note in clear_buffer.s, which this game keeps
+@ unreferenced, but for its last pool word, left 0, and its six bl keep that
+@ function's offsets, so from here they land elsewhere, the first on
+@ Func_081c08a4 inside ply_note.
 @ Why assembly: push saves r4/r5 without lr; its bytes are ply_endtie's
-@ (clear_buffer.s).
+@ (games/common/sdk/sound/clear_buffer.s).
 @ Why assembly: a copy the ROM keeps of a function it also links: its 28 bytes
-@ are clear_modM's (clear_buffer.s).
+@ are clear_modM's (games/common/sdk/sound/clear_buffer.s).
 @ Why assembly: MusicTrack_ReadCommandByteLeftover takes track in r1 and
 @ returns the decoded byte in r3 while updating r2/r3, rather than a standard
-@ r0 return. Its bytes are ld_r3_tp_adr_i_unchecked's (clear_buffer.s).
+@ r0 return. Its bytes are ld_r3_tp_adr_i_unchecked's
+@ (games/common/sdk/sound/clear_buffer.s).
 @ Why MusicTrack_SetLfoSpeedFromCommandLeftover to
 @ MusicTrack_SetModulationFromCommandLeftover are assembly:
 @ Both nested-call entries return through ip saved from lr rather than a
 @ procedure-standard return: mov ip, lr before the bl, bx ip after it. Their
-@ bytes are ply_lfos's and ply_mod's (clear_buffer.s).
-@ A copy of MidiKeyToFreq (sound.c) that the cartridge keeps 0x1a70 bytes
-@ before it, with the leftover functions under driver/, which alone call it.
+@ bytes are ply_lfos's and ply_mod's (games/common/sdk/sound/clear_buffer.s).
+@ A copy of MidiKeyToFreq (games/common/sdk/sound/sound.c) that the cartridge
+@ keeps 0x1a70 bytes before it, with the leftover functions under driver/,
+@ which alone call it.
 @ Its bytes are its twin's but for the two pool words, 0 where the twin's hold
 @ the pitch code and frequency step tables' addresses. Its calls keep the
 @ twin's offsets, so they land 0x1a70 bytes before the twin's umul3232H32, in
@@ -78,7 +81,7 @@
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sySndUpdateBgmRamps + 0xc4
+	bl	sySndUpdateBGMRamps + 0xc4
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L_081c0174
@@ -376,7 +379,7 @@ MusicTrack_HandleNoteLeftover:
 .L_081c02fe:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	sySndUpdateBgmRamps + 0x40
+	bl	sySndUpdateBGMRamps + 0x40
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]

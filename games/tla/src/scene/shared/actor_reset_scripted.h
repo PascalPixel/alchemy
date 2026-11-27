@@ -1,5 +1,6 @@
 /* Stops an actor and starts its script. */
-void fdActorResetScripted(struct ACTOR *actor) {
+void scActorResetScripted(struct ACTOR *actor)
+{
 	actor->motionFlg = 0;
 	actor->collisionFlg = 0;
 	fdActorSetSprFlags(actor, 0);

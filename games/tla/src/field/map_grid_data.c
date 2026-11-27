@@ -1,9 +1,7 @@
-/* @file */
-/* Map ground: the height function of each cell kind, the world map's battle */
-/* environments and the sprite viewer's small tables after them; then the */
-/* actor scripts the field starts by itself, the actor script command table */
-/* and the work value handlers. Each map's resources follow in map_resources.s.
- */
+/* Map ground: the height function of each metatile kind, the world map's battle
+   environments and the sprite viewer's small tables after them; then the actor
+   scripts the field starts by itself, the actor script command table and the
+   work value handlers. Each map's resources follow in map_resources.s. */
 
 #include "field/field.h"
 #include "field/curve.h"
@@ -11,14 +9,14 @@
 #include "field/actor_script.h"
 #include "field/map_grid.h"
 
-/* -------------------------------------------------------------------------- */
-/* Map terrain: the height function of each cell kind, the world map's */
-/* battle environments, and the small tables after them. */
-/* -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   Map terrain: the height function of each metatile kind, the world map's
+   battle environments, and the small tables after them.
+   -------------------------------------------------------------------------- */
 
-/* Each height function reads only the arguments it needs, so the type */
-/* leaves them unspecified. */
-typedef s32 (*TERRAIN_HEIGHT_FN)();
+/* Each height function reads only the arguments it needs, so the type leaves
+   them unspecified. */
+typedef Sint32 (*TERRAIN_HEIGHT_FN)();
 
 FIXED fdTerrainGetStepDifferenceDiagonalHeight();
 FIXED fdTerrainGetBendSumDiagonalHeight();
@@ -32,9 +30,9 @@ FIXED fdTerrainGetSampleTableMirroredHeight();
 FIXED fdTerrainGetSplitTopStepHeight();
 FIXED fdTerrainGetSplitBottomStepHeight();
 
-/* Ground height functions, by TERRAIN_KIND, called with (the remaining */
-/* samples, x within the cell, y within the cell). Each reads only the */
-/* arguments it needs. */
+/* Ground height functions, by TERRAIN_KIND, called with (the remaining samples,
+   x within the metatile, y within the metatile). Each reads only the arguments
+   it needs. */
 const TERRAIN_HEIGHT_FN MapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
 	[TERRAIN_FLAT] = fdTerrainGetFlatHeight,
 	[TERRAIN_SLOPE_X] = fdTerrainGetSlopeXHeight,
@@ -57,246 +55,249 @@ const TERRAIN_HEIGHT_FN MapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
 	[TERRAIN_SPLIT_BOTTOM_STEP] = fdTerrainGetSplitBottomStepHeight,
 };
 
-/* The world map's battle environments, read at a collision value plus a set */
-/* of rows (fdWorldMapGetBattleEnvironment): the plain rows; the beach rows for
- */
-/* a cell with its beach bit; the snowfield rows for the encounter regions from
- */
-/* SNOWFIELD_REGION_FIRST; the desert rows for the regions round Air's Rock and
- */
-/* north of Shaman Village; the blizzard rows for the region round Prox. */
+/* The world map's battle environments, read at a collision value plus a set of
+   rows (fdWorldMapGetBattleEnvironment): the plain rows; the beach rows for a
+   metatile with its beach bit; the snowfield rows for the encounter regions
+   from SNOWFIELD_REGION_FIRST; the desert rows for the regions round Air's Rock
+   and north of Shaman Village; the blizzard rows for the region round Prox. */
 /* clang-format off */
 /* ENV(name) is BATTLE_ENVIRONMENT_name, to keep each row's sixteen short. */
 #define ENV(name) BATTLE_ENVIRONMENT_##name
-/* The World Map's battle environments, by collision value, sixteen to each of */
-/* its sets of rows. */
-const u8 WorldMap_TerrainBehaviorTable[80] = {
-    /* plain */
-    ENV(NONE), ENV(SEA), ENV(SEA), ENV(SEA), ENV(SEA_LAST), ENV(GRASSLAND),
-    ENV(SHALLOWS), ENV(GRASSLAND), ENV(GRASSLAND), ENV(FOREST), ENV(GRASSLAND),
-    ENV(GRASSLAND), ENV(GRASSLAND), ENV(GRASSLAND), ENV(NONE), ENV(NONE),
-    /* beach */
-    ENV(NONE), ENV(SEA), ENV(SEA), ENV(SEA), ENV(SEA_LAST), ENV(BEACH),
-    ENV(SHALLOWS), ENV(GRASSLAND), ENV(GRASSLAND), ENV(FOREST), ENV(GRASSLAND),
-    ENV(GRASSLAND), ENV(GRASSLAND), ENV(GRASSLAND), ENV(NONE), ENV(NONE),
-    /* snowfield */
-    ENV(NONE), ENV(SNOWFIELD_SEA), ENV(SNOWFIELD_SEA), ENV(SNOWFIELD_SEA),
-    ENV(SNOWFIELD_SEA), ENV(SNOWFIELD), ENV(SNOWFIELD), ENV(SNOWFIELD),
-    ENV(SNOWFIELD), ENV(SNOW_FOREST), ENV(SNOWFIELD), ENV(SNOWFIELD),
-    ENV(SNOWFIELD), ENV(SNOWFIELD), ENV(NONE), ENV(NONE),
-    /* desert */
-    ENV(NONE), ENV(SEA), ENV(SEA), ENV(SEA), ENV(SEA_LAST), ENV(DESERT),
-    ENV(SHALLOWS), ENV(GRASSLAND), ENV(GRASSLAND), ENV(FOREST), ENV(GRASSLAND),
-    ENV(GRASSLAND), ENV(GRASSLAND), ENV(GRASSLAND), ENV(NONE), ENV(NONE),
-    /* blizzard */
-    ENV(NONE), ENV(SNOWFIELD_SEA), ENV(SNOWFIELD_SEA), ENV(SNOWFIELD_SEA),
-    ENV(SNOWFIELD_SEA), ENV(BLIZZARD), ENV(BLIZZARD), ENV(BLIZZARD),
-    ENV(BLIZZARD), ENV(BLIZZARD_FOREST), ENV(BLIZZARD), ENV(BLIZZARD),
-    ENV(BLIZZARD), ENV(BLIZZARD), ENV(NONE), ENV(NONE),
+/* The World Map's battle environments, by collision value, sixteen to each */
+/* of its sets of rows. */
+const Uint8 WorldMap_TerrainBehaviorTable[80] = {
+	/* plain */
+	ENV(NONE), ENV(SEA), ENV(SEA), ENV(SEA), ENV(SEA_LAST), ENV(GRASSLAND),
+	ENV(SHALLOWS), ENV(GRASSLAND), ENV(GRASSLAND), ENV(FOREST), ENV(GRASSLAND),
+	ENV(GRASSLAND), ENV(GRASSLAND), ENV(GRASSLAND), ENV(NONE), ENV(NONE),
+	/* beach */
+	ENV(NONE), ENV(SEA), ENV(SEA), ENV(SEA), ENV(SEA_LAST), ENV(BEACH),
+	ENV(SHALLOWS), ENV(GRASSLAND), ENV(GRASSLAND), ENV(FOREST), ENV(GRASSLAND),
+	ENV(GRASSLAND), ENV(GRASSLAND), ENV(GRASSLAND), ENV(NONE), ENV(NONE),
+	/* snowfield */
+	ENV(NONE), ENV(SNOWFIELD_SEA), ENV(SNOWFIELD_SEA), ENV(SNOWFIELD_SEA),
+	ENV(SNOWFIELD_SEA), ENV(SNOWFIELD), ENV(SNOWFIELD), ENV(SNOWFIELD),
+	ENV(SNOWFIELD), ENV(SNOW_FOREST), ENV(SNOWFIELD), ENV(SNOWFIELD),
+	ENV(SNOWFIELD), ENV(SNOWFIELD), ENV(NONE), ENV(NONE),
+	/* desert */
+	ENV(NONE), ENV(SEA), ENV(SEA), ENV(SEA), ENV(SEA_LAST), ENV(DESERT),
+	ENV(SHALLOWS), ENV(GRASSLAND), ENV(GRASSLAND), ENV(FOREST), ENV(GRASSLAND),
+	ENV(GRASSLAND), ENV(GRASSLAND), ENV(GRASSLAND), ENV(NONE), ENV(NONE),
+	/* blizzard */
+	ENV(NONE), ENV(SNOWFIELD_SEA), ENV(SNOWFIELD_SEA), ENV(SNOWFIELD_SEA),
+	ENV(SNOWFIELD_SEA), ENV(BLIZZARD), ENV(BLIZZARD), ENV(BLIZZARD),
+	ENV(BLIZZARD), ENV(BLIZZARD_FOREST), ENV(BLIZZARD), ENV(BLIZZARD),
+	ENV(BLIZZARD), ENV(BLIZZARD), ENV(NONE), ENV(NONE),
 };
 #undef ENV
 
 /* The sprite viewer's backdrops, which B steps through: black, blue, green, */
 /* red, dark grey, grey, white and dark red. */
-const u16 SpriteViewer_BackdropColors[8] = {
-    RGB(0, 0, 0),    RGB(0, 0, 31),   RGB(0, 31, 0),
-    RGB(31, 0, 0),   RGB(7, 7, 7),    RGB(15, 15, 15),
-    RGB(31, 31, 31), RGB(15, 0, 0),
+const Uint16 SpriteViewer_BackdropColors[8] = {
+	RGB(0, 0, 0),    RGB(0, 0, 31),   RGB(0, 31, 0),
+	RGB(31, 0, 0),   RGB(7, 7, 7),    RGB(15, 15, 15),
+	RGB(31, 31, 31), RGB(15, 0, 0),
 };
 
 /* The sprite ids the sprite viewer's fast step (Start held with L or R) */
 /* stops at, the first of each group of sprites: a skip forward goes to the */
-/* next stop above the sprite shown, back to the last stop below it. (u16)-1 */
+/* next stop above the sprite shown, back to the last stop below it. (Uint16)-1 */
 /* ends the list. */
-const u16 SpriteViewer_SkipStops[10] = {
-    SPRITE_ISAAC,              /* the party */
-    SPRITE_BRIGGS,             /* the people */
-    SPRITE_VENUS_DJINNI,       /* the Djinn */
-    SPRITE_PUNCH_ANT,          /* monsters on the field */
-    SPRITE_VINE_PILLAR,        /* things on the field */
-    SPRITE_BATTLE_ISAAC,       /* the party in battle, and their weapons */
-    SPRITE_BATTLE_BLUE_DRAGON, /* monsters in battle */
-    SPRITE_THOR,               /* the summons */
-    SPRITE_STAR_BURST,         /* effects */
-    (u16)-1,
+const Uint16 SpriteViewer_SkipStops[10] = {
+	SPRITE_ISAAC,              /* the party */
+	SPRITE_BRIGGS,             /* the people */
+	SPRITE_VENUS_DJINNI,       /* the Djinn */
+	SPRITE_PUNCH_ANT,          /* monsters on the field */
+	SPRITE_VINE_PILLAR,        /* things on the field */
+	SPRITE_BATTLE_ISAAC,       /* the party in battle, and their weapons */
+	SPRITE_BATTLE_BLUE_DRAGON, /* monsters in battle */
+	SPRITE_THOR,               /* the summons */
+	SPRITE_STAR_BURST,         /* effects */
+	(Uint16)-1,
 };
 /* clang-format on */
 
 /* Unused: nothing refers to it. Eight directions at a radius of 40 (x, y). */
-const s8 WorldMap_DirectionOffsets[8][2] = {
-	{0, -40}, {28, -28}, {40, 0},  {28, 28},
-	{0, 40},  {-28, 28}, {-40, 0}, {-28, -28},
+const Sint8 WorldMap_DirectionOffsets[8][2] = {
+	{0, -40},
+	{28, -28},
+	{40, 0},
+	{28, 28},
+	{0, 40},
+	{-28, 28},
+	{-40, 0},
+	{-28, -28},
 };
 
 /* Unused: nothing refers to it. A scale of 1 on both axes (16.16). */
-const u32 WorldMap_UnitScale[2] = {
-	FIXED_ONE,
-	FIXED_ONE,
+const Uint32 WorldMap_UnitScale[2] = {
+	toFIXED(1),
+	toFIXED(1),
 };
 
 /* The sprite viewer's scale for its ring of copies: full size. */
-const SPR_SCALE SpriteViewer_Scale = {{{FIXED_ONE, FIXED_ONE}}};
+const SPR_SCALE SpriteViewer_Scale = {{{toFIXED(1), toFIXED(1)}}};
 
-/* -------------------------------------------------------------------------- */
-/* Actor scripts: the ones the field starts by itself, the command table and */
-/* the work value handlers SC_SET, SC_ADD and SC_CMP call. */
-/* -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   Actor scripts: the ones the field starts by itself, the command table and the
+   work value handlers SC_SET, SC_ADD and SC_CMP call.
+   -------------------------------------------------------------------------- */
 
-s32 fdActorScriptWait();
-s32 fdActorScriptWaitForArrival();
-s32 fdActorScriptSetPosAndResetMotion();
-s32 fdActorScriptResetToOrigin();
-s32 fdActorScriptApplyAbsolutePos();
-s32 fdActorScriptApplyRelativePos();
-s32 fdActorScriptStoreAngToWatchedActor();
-s32 fdActorScriptApplyWatchedActorPos();
-s32 fdActorScriptApplyLocalOffsetPos();
-s32 fdActorWander();
-s32 fdActorScriptWanderNearHome();
-s32 fdActorApproachWatchedActor();
-s32 fdCameraFollowLeaderInBounds();
-s32 fdActorScriptRepeatOrJump();
-s32 fdActorScriptJumpToLabel();
-u32 fdActorScriptJumpIfTrue();
-u32 fdActorScriptJumpIfFalse();
-s32 fdActorScriptEnd();
-s32 fdActorScriptTestFlag();
-s32 fdActorScriptSetFlagAndTest();
-s32 fdActorScriptClearFlagAndTest();
-s32 fdActorScriptToggleFlagAndTest();
-s32 fdActorScriptApplyOperandSet();
-s32 fdActorScriptApplyOperandAdd();
-s32 fdActorScriptApplyOperandCompare();
-s32 fdActorUpdatePlayerCtrl();
-s32 fdActorMoveOnWorldMap();
-s32 fdActorMoveByKeys();
-s32 fdActorCrossRope();
-s32 fdActorCrossTightrope();
-s32 fdActorMoveAsSand();
-s32 fdActorSailOnMap();
-s32 fdActorSailOnWorldMap();
-s32 fdActorFlyOnWorldMap();
-s32 fdActorMoveAsSandOnWorldMap();
-s32 fdActorUpdateHoverCtrl();
-s32 fdActorUpdateWalkingCtrl();
-s32 fdCheckConfiguredKeysAndCount();
-s32 fdActorScriptRelease();
-s32 fdActorScriptSetAnimation();
-s32 fdActorScriptNop();
-s32 fdActorScriptPlaySnd();
-s32 fdActorScriptPlaySndInView();
-s32 fdActorScriptInvokeCallback();
-s32 fdCameraFollowWatchedInBounds();
-s32 fdActorScriptSetMoveTargetXZ();
+Sint32 fdActorScriptWait();
+Bool   fdActorScriptWaitForArrival();
+Sint32 fdActorScriptSetPosAndResetMotion();
+Sint32 fdActorScriptResetToOrigin();
+Sint32 fdActorScriptApplyAbsolutePos();
+Sint32 fdActorScriptApplyRelativePos();
+Sint32 fdActorScriptStoreAngToWatchedActor();
+Sint32 fdActorScriptApplyWatchedActorPos();
+Sint32 fdActorScriptApplyLocalOffsetPos();
+Bool   fdActorWander();
+Sint32 fdActorScriptWanderNearHome();
+Bool   fdActorApproachWatchedActor();
+Sint32 fdCameraFollowLeaderInBounds();
+Sint32 fdActorScriptRepeatOrJump();
+Sint32 fdActorScriptJumpToLabel();
+Uint32 fdActorScriptJumpIfTrue();
+Uint32 fdActorScriptJumpIfFalse();
+Sint32 fdActorScriptEnd();
+Sint32 fdActorScriptTestFlag();
+Sint32 fdActorScriptSetFlagAndTest();
+Sint32 fdActorScriptClearFlagAndTest();
+Sint32 fdActorScriptToggleFlagAndTest();
+Sint32 fdActorScriptApplyOperandSet();
+Sint32 fdActorScriptApplyOperandAdd();
+Sint32 fdActorScriptApplyOperandCompare();
+Sint32 fdActorUpdatePlayerCtrl();
+Sint32 fdActorMoveOnWorldMap();
+Sint32 fdActorMoveByKeys();
+Sint32 fdActorCrossRope();
+Sint32 fdActorCrossTightrope();
+Sint32 fdActorMoveAsSand();
+Sint32 fdActorSailOnMap();
+Sint32 fdActorSailOnWorldMap();
+Sint32 fdActorFlyOnWorldMap();
+Sint32 fdActorMoveAsSandOnWorldMap();
+Bool   fdActorUpdateHoverCtrl();
+Sint32 fdActorUpdateWalkingCtrl();
+Sint32 fdCheckConfiguredKeysAndCount();
+Sint32 fdActorScriptRelease();
+Sint32 fdActorScriptSetAnimation();
+Sint32 fdActorScriptNoOperation();
+Sint32 fdActorScriptPlaySnd();
+Sint32 fdActorScriptPlaySndInView();
+Bool   fdActorScriptInvokeCallback();
+Sint32 fdCameraFollowWatchedInBounds();
+Sint32 fdActorScriptSetMoveTargetXZ();
 
-/* Each runs one control command every frame: the command, SC_WAIT(1), */
-/* SC_LOOP(SC_FOREVER, SC_TOP). */
-const s32 Actor_KeyCheckScript[] = {
+/* Each runs one control command every frame: the command, SC_WAIT(1),
+   SC_LOOP(SC_FOREVER, SC_TOP). */
+const Sint32 Actor_KeyCheckScript[] = {
 	SC_KEY_COUNT,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Climbing by the keys (fdActorMoveByKeys). */
-const s32 Actor_KeysScript[] = {
+const Sint32 Actor_KeysScript[] = {
 	SC_KEYS,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Crossing a tied rope (fdActorCrossRope). */
-const s32 Actor_RopeScript[] = {
+const Sint32 Actor_RopeScript[] = {
 	SC_ROPE,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Crossing a tightrope (fdActorCrossTightrope). */
-const s32 Actor_TightropeScript[] = {
+const Sint32 Actor_TightropeScript[] = {
 	SC_TIGHTROPE,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Moving as sand (fdActorMoveAsSand). */
-const s32 Actor_SandScript[] = {
+const Sint32 Actor_SandScript[] = {
 	SC_SAND,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Hovering (fdActorUpdateHoverCtrl). */
-const s32 Actor_HoverScript[] = {
+const Sint32 Actor_HoverScript[] = {
 	SC_HOVER,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Walking (fdActorUpdateWalkingCtrl). */
-const s32 Actor_WalkingScript[] = {
+const Sint32 Actor_WalkingScript[] = {
 	SC_WALK,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The leader on foot (fdActorUpdatePlayerCtrl). */
-const s32 Actor_PlayerScript[] = {
+const Sint32 Actor_PlayerScript[] = {
 	SC_PLAYER,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The leader on the World Map (fdActorMoveOnWorldMap). */
-const s32 Actor_WorldMapScript[] = {
+const Sint32 Actor_WorldMapScript[] = {
 	SC_WORLD,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Sailing on a map (fdActorSailOnMap). */
-const s32 Actor_SailOnMapScript[] = {
+const Sint32 Actor_SailOnMapScript[] = {
 	SC_SAIL,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Sailing on the World Map (fdActorSailOnWorldMap). */
-const s32 Actor_SailScript[] = {
+const Sint32 Actor_SailScript[] = {
 	SC_WORLD_SAIL,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Flying on the World Map (fdActorFlyOnWorldMap). */
-const s32 Actor_FlyScript[] = {
+const Sint32 Actor_FlyScript[] = {
 	SC_WORLD_FLY,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Moving as sand on the World Map (fdActorMoveAsSandOnWorldMap). */
-const s32 Actor_SandOnWorldMapScript[] = {
+const Sint32 Actor_SandOnWorldMapScript[] = {
 	SC_WORLD_SAND,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The camera following the leader within the map's bounds. */
-const s32 Actor_CameraScript[] = {
+const Sint32 Actor_CameraScript[] = {
 	SC_CAMERA,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Following the watched actor (fdActorApproachWatchedActor). */
-const s32 Actor_ApproachWatchedScript[] = {
+const Sint32 Actor_ApproachWatchedScript[] = {
 	SC_APPROACH_WATCHED,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* A script that ends at once. */
-const s32 ActorScript_EndScript[] = {
+const Sint32 ActorScript_EndScript[] = {
 	SC_END,
 };
 
@@ -342,7 +343,7 @@ const SCRIPT_COMMAND_FN ActorScript_CommandTable[54] = {
 	fdCheckConfiguredKeysAndCount,				 /* 0x25 SC_KEY_COUNT */
 	fdActorScriptRelease,						 /* 0x26 SC_RELEASE */
 	fdActorScriptSetAnimation,					 /* 0x27 SC_ANIMATION */
-	fdActorScriptNop,							 /* 0x28 SC_NOP */
+	fdActorScriptNoOperation,					 /* 0x28 SC_NOP */
 	fdActorScriptPlaySnd,						 /* 0x29 SC_SE */
 	fdActorScriptPlaySndInView,					 /* 0x2a SC_SE_IN_VIEW */
 	fdActorScriptGoto,							 /* 0x2b SC_GOTO */

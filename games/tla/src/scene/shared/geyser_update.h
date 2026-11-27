@@ -1,22 +1,22 @@
 /* Each frame, raises or lowers each geyser on its timer, writes its height to
- */
-/* the collision and cell maps, and carries its platform with a bob. */
-void btGeyserUpdate(void) {
-	GEYSER_WORK *state = GEYSER_STATE;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
-	GEYSER *entry = state->entries;
-	s32 firstTerrain = state->firstTerrain;
-	u8 *terrain = map->layers[0].terrainIds;
-	MAP_CELL *cells = map->layers[0].cells;
-	s32 i = 0;
-	s32 *collision;
+   the collision and metatile maps, and carries its platform with a bob. */
+void scGeyserUpdate(void)
+{
+	GEYSER_WORK	 *state = GEYSER_STATE;
+	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	GEYSER		 *entry = state->entries;
+	Sint32		  firstTerrain = state->firstTerrain;
+	Uint8		 *terrain = map->layers[0].terrainIds;
+	MAP_METATILE *metatiles = map->layers[0].metatiles;
+	Sint32		  i = 0;
+	Sint32		 *collision;
 
-	for(collision = (s32 *)Ram_MapCollision + firstTerrain; i < GEYSER_ENTRIES;
-		collision++, entry++, i++) {
-		ACTOR *actor;
-		ACTOR *rider;
-		MAP_CELL *cell;
-		s32 index;
+	for(collision = (Sint32 *)Ram_MapCollision + firstTerrain;
+		i < GEYSER_ENTRIES; collision++, entry++, i++) {
+		ACTOR		 *actor;
+		ACTOR		 *rider;
+		MAP_METATILE *metatile;
+		Sint32		  index;
 
 		if(entry->id == 0)
 			continue;
@@ -48,26 +48,25 @@ void btGeyserUpdate(void) {
 			if(++entry->tmr >= entry->period)
 				entry->tmr = 0;
 		}
-		index = FIELD_CELL(actor->x.fixed) +
-				FIELD_CELL(actor->z.fixed) * MAPGRID_SIZE;
-		terrain[index] = (u8)state->firstTerrain + i;
+		index = FIELD_METATILE(actor->x.fixed) +
+			FIELD_METATILE(actor->z.fixed) * MAPGRID_SIZE;
+		terrain[index] = (Uint8)state->firstTerrain + i;
 		*collision = ((actor->y.part[0].integer + entry->height) / 8) << 8;
-		cell = &cells[index];
+		metatile = &metatiles[index];
 		if(entry->step != 0)
-			cell->attributeB = 0;
+			metatile->attributeB = 0;
 		else
-			cell->attributeB |= MAP_CELL_JUMP;
+			metatile->attributeB |= MAP_METATILE_JUMP;
 		if(entry->height != 0)
-			cell->attributeB |= MAP_CELL_WATER;
+			metatile->attributeB |= MAP_METATILE_WATER;
 		else
-			cell->attributeB = 0;
+			metatile->attributeB = 0;
 		rider = entry->rider;
 		if(rider == NULL)
 			continue;
 		if(entry->height == 0) {
 			rider->y.fixed = actor->y.fixed + -toFIXED(16);
-		}
-		else {
+		} else {
 			FIXED wave;
 
 			entry->phase += TRIG_TURN / 16;

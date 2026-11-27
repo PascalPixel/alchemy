@@ -1,12 +1,11 @@
-/* @file */
 /* Kalay and Venus Lighthouse's aerie: people who look about. */
 
-/* An actor script call, each frame: when the actor's countdown (userValue) */
-/* runs out, it turns by a random amount up to half a turn and waits a random 0
- */
-/* to 79 frames. */
-static s32 scLookAboutRandomly(ACTOR *actor) {
-	u32 nextTimer;
+/* An actor script call, each frame: when the actor's countdown (userValue) runs
+   out, it turns by a random amount up to half a turn and waits a random 0 to 79
+   frames. */
+static Sint32 scLookAboutRandomly(ACTOR *actor)
+{
+	Uint32 nextTimer;
 
 	if(actor->userValue == 0) {
 		actor->facing += syRandomBelow(32768);

@@ -48,7 +48,7 @@ pillar hides what is behind it.
 ![Jenna casts Fire at Felix, Piers and Sheba: fireballs rise, hang and stream into the three](https://alchemy.pascalpixel.com/tla/abilities/fire.gif)
 
 A handler never draws on the screen. It draws on its own copy of the
-canvas, marks it ready, and waits a frame. A task, the transfer, copies it
+canvas, marks it ready, and waits a frame. An event, the transfer, copies it
 to the screen at VBlank (`btEffectTransferCanvas`).
 
 Straight after the copy, the transfer does one thing to the handler's

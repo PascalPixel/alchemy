@@ -1,7 +1,7 @@
 	.include "games/tla/src/field/facing.inc"
 
 @ Where the party restarts after a defeat and where the ship waits
-@ (Scene_ReturnRules), eight halfwords a row as scSetRestartPoint and
+@ (Scene_ReturnRules), eight halfwords a row as fdSetRestartPoint and
 @ the World Map's return read them: the scene and entrance (-1 for any) it
 @ matches, the scene and entrance the party restarts at after a defeat, the
 @ ship's position in pixels (x, z) and its facing, a word whose halves are the

@@ -12,9 +12,9 @@
 	.thumb
 	.global fdRenderDrawMapCode
 fdRenderDrawMapCode:
-	.global Render_DrawMap
+	.global fdRenderDrawMap
 	.thumb_func
-Render_DrawMap:
+fdRenderDrawMap:
 	bx	pc
 AlchemyUncredited_08021072:
 	.2byte	0x0200
@@ -175,5 +175,5 @@ AlchemyUncreditedEnd_08021072:
 	bne	.L_08021084
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.global Render_DrawMapCodeSize
-	.set Render_DrawMapCodeSize, . - fdRenderDrawMapCode
+	.global fdRenderDrawMapCodeSize
+	.set fdRenderDrawMapCodeSize, . - fdRenderDrawMapCode

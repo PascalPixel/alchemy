@@ -16,7 +16,7 @@ three windows open in place of the usual menus when extra buttons are held:
 
 - The **scene selector** shows a scene and an
   [entrance](../../../../docs/tbs/glossary.md#entrance), and A goes there. It works
-  because of how the game is built: every sequence starts cold, so the
+  because of how the game is built: every mode starts cold, so the
   selector only has to write a [destination](../../../../docs/tbs/glossary.md#destination)
   the way a door does and let the current scene end.
 - The **flag editor** shows the game flags as a grid of 0s and 1s to flip.
@@ -45,7 +45,7 @@ again next time.
 That is the whole scene, and it is why
 [test_scenes.c](test_scenes.c) is a good first scene to open. In under 130
 lines it has everything every scene has: who stands where, the table that
-says which event a talk runs, and four events of two lines each.
+says which script a talk runs, and four scripts of two lines each.
 
 The other two are **Increase item and level** (`level.c`), where the party
 can be given any item and any level, and **Menu test** (`test.c`), a room
@@ -55,4 +55,4 @@ of people who each run one test: a shop, an inn, a message.
 
 - `test_scenes.c`, `level.c` and `test.c` are the three overlays.
 - The debug windows are in `window/screens_debug.c`, and the palette editor
-  in `field/field_sequence_palette_editor.c`.
+  in `field/field_mode_palette_editor.c`.

@@ -1,33 +1,32 @@
-/* @file */
 /* The main routine and scene changes: exits, returns from battle, entering. */
 
 #include "stubs.h"
 #include "flags.h"
 #include "battle/battle.h"
-#include "field/event.h"
+#include "field/script.h"
 #include "field/field_psynergy_state.h"
 #include "field/map_grid_scroll.h"
 
-/* The scene of a table's first exit word, the destination when no exit */
-/* matches: nine bits, where EXIT_SCENE_MASK takes twelve. */
+/* The scene of a table's first exit word, the destination when no exit matches:
+   nine bits, where EXIT_SCENE_MASK takes twelve. */
 #define EXIT_DEFAULT_SCENE_MASK 0x1ff
 
-/* Chooses the scene and entrance to go to when the party leaves the current */
-/* scene. exitId is the kind of exit fdSequenceRun ended on; the scene's */
-/* exit table gives the first exit of that kind (or of any kind) whose flag, if
- */
-/* it has one, is not set. */
-void scTakeExit(s32 exitId) {
-	s16 currentScene;
-	const u32 *exitTable;
-	const u32 *firstExit;
-	u32 word;
-	s32 sceneId;
-	s32 destinationScene;
-	s32 destinationEntrance;
-	s32 entrance;
-	s32 kind;
-	s32 flag;
+/* Chooses the scene and entrance to go to when the party leaves the current
+   scene. exitId is the kind of exit fdModeRun ended on; the scene's exit table
+   gives the first exit of that kind (or of any kind) whose flag, if it has one,
+   is not set. */
+void gmTakeExit(Sint32 exitId)
+{
+	Sint16		  currentScene;
+	const Uint32 *exitTable;
+	const Uint32 *firstExit;
+	Uint32		  word;
+	Sint32		  sceneId;
+	Sint32		  destinationScene;
+	Sint32		  destinationEntrance;
+	Sint32		  entrance;
+	Sint32		  kind;
+	Sint32		  flag;
 
 	currentScene = MainRoutineStateWork.next;
 	exitTable = OverlayArea.exits();
@@ -37,8 +36,8 @@ void scTakeExit(s32 exitId) {
 		return;
 
 	for(;;) {
-		/* Find the header of the current scene: exit words have high bits set.
-		 */
+		/* Find the header of the current scene: exit words have high bits
+		   set. */
 		sceneId = *exitTable++;
 		if(sceneId & ~EXIT_SCENE_MASK)
 			continue;
@@ -79,34 +78,33 @@ void scTakeExit(s32 exitId) {
 	}
 }
 
-/* Chooses where the game continues after a sequence other than the field */
-/* sequence (see gmMainRoutineRun). result is its result: -1 when the party was
- */
-/* defeated, which revives the leader with 1 HP (and, with FLAG_CHILDHOOD, */
-/* fully heals Isaac and Garet) and returns to the story battle's defeat point
- */
-/* (fdEventSetDefeatDestination) or, when none is set, to the restart point, */
-/* usually the last Sanctum (scSetRestartPoint). */
-void scReturnFromSequence(s32 result) {
-	UNIT *unit;
-	s32 i;
-	s32 sceneId;
-	s32 entrance;
+/* Chooses where the game continues after a mode other than the field mode (see
+   gmMainRoutineRun). result is its result: -1 when the party was defeated,
+   which revives the leader with 1 HP (and, with FLAG_CHILDHOOD, fully heals
+   Isaac and Garet) and returns to the story battle's defeat point
+   (fdScriptSetDefeatDestination) or, when none is set, to the restart point,
+   usually the last Sanctum (fdSetRestartPoint). */
+void gmReturnFromMode(Sint32 result)
+{
+	UNIT  *unit;
+	Sint32 i;
+	Sint32 sceneId;
+	Sint32 entrance;
 
-	MainRoutineStateWork.sequenceResult = result;
+	MainRoutineStateWork.modeResult = result;
 	if(result == -1) {
 		/* Revive the leader before choosing the restart point. */
 		unit = gmUnitGetStub(MainRoutineStateWork.leaderActorId);
 		if(unit->hp == 0) {
 			unit->hp = 1;
-			gmUnitUpdateGauges(unit);
+			UNIT_UPDATE_GAUGES(unit);
 		}
 		if(gmFlagGetStub(FLAG_CHILDHOOD)) {
 			for(i = 0; i < 2; i++) {
 				unit = gmUnitGetStub(i);
 				unit->hp = unit->hpMax;
 				unit->pp = unit->ppMax;
-				gmUnitUpdateGauges(unit);
+				UNIT_UPDATE_GAUGES(unit);
 			}
 		}
 		sceneId = MainRoutineStateWork.defeatScene;
@@ -115,8 +113,7 @@ void scReturnFromSequence(s32 result) {
 			MainRoutineStateWork.next = MainRoutineStateWork.restartScene;
 			MainRoutineStateWork.entrance =
 				MainRoutineStateWork.restartEntrance;
-		}
-		else {
+		} else {
 			if(sceneId != -1)
 				MainRoutineStateWork.next = sceneId;
 			else
@@ -127,10 +124,9 @@ void scReturnFromSequence(s32 result) {
 				MainRoutineStateWork.entrance =
 					MainRoutineStateWork.returnEntrance;
 		}
-	}
-	else {
-		/* An after-battle destination an event set overrides the return point.
-		 */
+	} else {
+		/* An after-battle destination a script set overrides the return
+		   point. */
 		sceneId = MainRoutineStateWork.afterBattleScene;
 		entrance = MainRoutineStateWork.afterBattleEntrance;
 		if(sceneId != -1 || entrance != -1) {
@@ -143,8 +139,7 @@ void scReturnFromSequence(s32 result) {
 			else
 				MainRoutineStateWork.entrance =
 					MainRoutineStateWork.returnEntrance;
-		}
-		else {
+		} else {
 			MainRoutineStateWork.next = MainRoutineStateWork.returnScene;
 			MainRoutineStateWork.entrance = MainRoutineStateWork.returnEntrance;
 			gmFlagSetStub(FLAG_KEEP_PARTY_POSITION);
@@ -152,80 +147,81 @@ void scReturnFromSequence(s32 result) {
 	}
 }
 
-/* Returns the area sceneId belongs to. The scenes of one area share their */
-/* music, area name and the flags kept while inside it. */
-s32 scGetArea(s32 sceneId) { return ScenesWork[sceneId].area; }
+/* Returns the area sceneId belongs to. The scenes of one area share their
+   music, area name and the flags kept while inside it. */
+Sint32 gmGetArea(Sint32 sceneId)
+{
+	return ScenesWork[sceneId].area;
+}
 
 /* The last two 16-colour background palettes, which the minigame runners save
- */
-/* and restore around a minigame; palette 15 holds the window colours */
-/* (mnWindowColApply). */
+   and restore around a minigame; palette 15 holds the window colours
+   (mnWindowColApply). */
 enum {
 	MINIGAME_PALETTE_FIRST = 14, /* BG palette 14 */
-	MINIGAME_PALETTE_BYTES =
-		64 /* palettes 14 and 15: 2 x 16 colours x 2 bytes */
+	/* palettes 14 and 15: 2 x 16 colours x 2 bytes */
+	MINIGAME_PALETTE_BYTES = 64
 };
 
-/* Each runs a minigame's sequence, preserving BG palettes 14 and 15 in a */
-/* 64-byte syHeapAlloc copy freed afterwards, and returns its start function's
- */
-/* result, 0, for scReturnFromSequence. */
-#define MAIN_ROUTINE_DEFINE_RUN_MINIGAME(name, start)                          \
-	static __inline__ s32 name(s32 entrance) {                                 \
-		void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);     \
-		void *saved = syHeapAlloc(MINIGAME_PALETTE_BYTES);                     \
-		s32 result;                                                            \
-                                                                               \
+/* Each runs a minigame's mode, preserving BG palettes 14 and 15 in a 64-byte
+   syHeapAlloc copy freed afterwards, and returns its start function's result,
+   0, for gmReturnFromMode. */
+#define MAIN_ROUTINE_DEFINE_RUN_MINIGAME(name, start) \
+	static __inline__ Sint32 name(Sint32 entrance) \
+	{ \
+		void  *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0); \
+		void  *saved = syHeapAlloc(MINIGAME_PALETTE_BYTES); \
+		Sint32 result; \
+\
 		syDMAXCopy(palette, saved, DMA_COPY_WORDS(MINIGAME_PALETTE_BYTES / 4), \
-				   REG_DMA3);                                                  \
-		result = start(entrance);                                              \
+			REG_DMA3); \
+		result = start(entrance); \
 		syDMAXCopy(saved, palette, DMA_COPY_WORDS(MINIGAME_PALETTE_BYTES / 4), \
-				   REG_DMA3);                                                  \
-		syHeapRelease(saved);                                                  \
-		return result;                                                         \
+			REG_DMA3); \
+		syHeapRelease(saved); \
+		return result; \
 	}
 
-/* Runs the dice sequence (Lucky Dice). */
+/* Runs the dice mode (Lucky Dice). */
 MAIN_ROUTINE_DEFINE_RUN_MINIGAME(gmMainRoutineRunDice, fdLuckyDiceStartStub)
-/* Runs the slots sequence (Lucky Wheels). */
+/* Runs the slots mode (Lucky Wheels). */
 MAIN_ROUTINE_DEFINE_RUN_MINIGAME(gmMainRoutineRunSlots, fdLuckyWheelsStartStub)
 
-/* The main routine: runs one sequence after another and never returns. mode, */
-/* an GAME_START, chooses the first scene. */
-void gmMainRoutineRun(s32 mode) {
+/* The main routine: runs one mode after another and never returns. start, a
+   GAME_START, chooses the first scene. */
+void gmMainRoutineRun(Sint32 start)
+{
 	const SCENE *table;
 	const SCENE *record;
-	s32 entrance;
-	s32 debug;
+	Sint32		 entrance;
+	Sint32		 debug;
 
 	table = ScenesWork;
-	/* Choose the first scene before initializing the per-scene runtime. */
-	/* Read once: both debug starts test the same value. */
+	/* Choose the first scene before initializing the per-scene runtime. Read
+	   once: both debug starts test the same value. */
 	debug = DebugMode;
-	if(debug && mode == GAME_START_DEBUG_VALE) {
+	if(debug && start == GAME_START_DEBUG_VALE) {
 		MainRoutineStateWork.next = SCENE_VALE_PLAZA;
-		/* Entrance 1, the value mode holds here. */
-		MainRoutineStateWork.entrance = mode;
-	}
-	else if(debug && mode == GAME_START_DEBUG_FILE_SCREEN) {
+		/* Entrance 1, the value start holds here. */
+		MainRoutineStateWork.entrance = start;
+	} else if(debug && start == GAME_START_DEBUG_FILE_SCREEN) {
 		MainRoutineStateWork.next = SCENE_FILE_SCREEN;
 		MainRoutineStateWork.entrance = FILE_SCREEN_FROM_SANCTUM;
-	}
-	else {
+	} else {
 		gmMainRoutineStateInitDefaultsStub();
 		MainRoutineStateWork.next = SCENE_TITLE;
 		MainRoutineStateWork.entrance = TITLE_AFTER_RUN;
 	}
 	/* The window colours from the options: hue, then brightness. */
-	mnWindowColApplyStub(MainRoutineStateWork.winHue,
-						 MainRoutineStateWork.winBrightness);
-	syVramCacheReset();
+	mnWindowColApplyStub(
+		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	syVRAMCacheReset();
 	syInitEvent();
-	/* DEAD: a second reset of the empty task table; the ROM keeps its call. */
+	/* DEAD: a second reset of the empty event table; the ROM keeps its call. */
 	syInitEvent();
 	for(;;) {
-		/* FLAG_SKIP_SCENE_CHANGE_SOUND skips SE_STOP_ACTION_SE for one scene */
-		/* change, then clears itself. */
+		/* FLAG_SKIP_SCENE_CHANGE_SOUND skips SE_STOP_ACTION_SE for one scene
+		   change, then clears itself. */
 		if(gmFlagGetStub(FLAG_SKIP_SCENE_CHANGE_SOUND))
 			gmFlagClearStub(FLAG_SKIP_SCENE_CHANGE_SOUND);
 		else
@@ -233,72 +229,66 @@ void gmMainRoutineRun(s32 mode) {
 		record = &table[MainRoutineStateWork.next];
 		entrance = MainRoutineStateWork.entrance;
 
-		syDma0Stop();
-		/* Drop the tasks, the HBlank and VCount handlers (IRQs 1 and 2) and
-		 * every */
-		/* heap block the last scene, battle or minigame left. */
+		DMA0_STOP();
+		/* Drop the events, the HBlank and VCount handlers (IRQs 1 and 2) and
+		   every heap block the last scene, battle or minigame left. */
 		syInitEvent();
 		syIntFunction(IRQ_HBLANK, 0, 0);
 		syIntFunction(IRQ_VCOUNT, 0, 0);
 		syHeapInit();
-		syDebugTextClear();
-		syVramCacheReset();
-		/* The battle, dice and slots sequences return a result, not an exit:
-		 * the */
-		/* return scene is chosen from the main routine's state, and no overlay
-		 * is */
-		/* loaded. */
-		if(MainRoutineStateWork.next >= SEQUENCE_NONE) {
+		syPrintClear();
+		syVRAMCacheReset();
+		/* The battle, dice and slots modes return a result, not an exit: the
+		   return scene is chosen from the main routine's state, and no overlay
+		   is loaded. */
+		if(MainRoutineStateWork.next >= MODE_NONE) {
 			switch(MainRoutineStateWork.next) {
-			case SEQUENCE_BATTLE:
+			case MODE_BATTLE:
 				entrance = btRunStub(entrance);
 				break;
-			case SEQUENCE_DICE:
+			case MODE_DICE:
 				entrance = gmMainRoutineRunDice(entrance);
 				break;
-			case SEQUENCE_SLOTS:
+			case MODE_SLOTS:
 				entrance = gmMainRoutineRunSlots(entrance);
 				break;
-			case SEQUENCE_NONE:
+			case MODE_NONE:
 				entrance = 0;
 				break;
 			}
-			scReturnFromSequence(entrance);
+			gmReturnFromMode(entrance);
 			continue;
 		}
 
 		/* A scene: set its flags and music, load its code and run it. */
-		scArrive(MainRoutineStateWork.next,
-				 gmFlagGetStub(FLAG_KEEP_PARTY_POSITION));
-		scChooseMusic();
+		gmArrive(
+			MainRoutineStateWork.next, gmFlagGetStub(FLAG_KEEP_PARTY_POSITION));
+		fdChooseMusic();
 		if(!gmFlagGetStub(FLAG_KEEP_PARTY_POSITION)) {
 			/* Either flag keeps the music that is playing: FLAG_KEEP_MUSIC_ONCE
-			 * for */
-			/* this one change, FLAG_KEEP_MUSIC_HELD for as long as it stays
-			 * set. */
+			   for this one change, FLAG_KEEP_MUSIC_HELD for as long as it stays
+			   set. */
 			if(gmFlagGetStub(FLAG_KEEP_MUSIC_ONCE) ||
-			   gmFlagGetStub(FLAG_KEEP_MUSIC_HELD))
+				gmFlagGetStub(FLAG_KEEP_MUSIC_HELD))
 				gmFlagClearStub(FLAG_KEEP_MUSIC_ONCE);
 			else
-				scPlayMusic();
-		}
-		else if(MainRoutineStateWork.returnMusic != -1) {
+				gmPlayMusic();
+		} else if(MainRoutineStateWork.returnMusic != -1) {
 			/* Back where the party was: resume the music saved when the Pause
-			 * menu */
-			/* last opened (field_sequence.c). */
+			   menu last opened (field_mode.c). */
 			sySndPlayStub(MainRoutineStateWork.returnMusic);
-		}
-		else {
-			scPlayMusic();
+		} else {
+			gmPlayMusic();
 		}
 		MainRoutineStateWork.mapId = record->mapIdx;
-		scLoadOverlay(0);
-		scTakeExit(fdSequenceRun(entrance));
+		gmLoadOverlay(0);
+		gmTakeExit(fdModeRun(entrance));
 	}
 }
 
 /* Loads the current scene's overlay code (its resource) into OverlayArea. */
-void scLoadOverlay(s32 unused) {
+void gmLoadOverlay(Sint32 unused)
+{
 	const SCENE *table;
 
 	table = ScenesWork;
@@ -312,11 +302,11 @@ void scLoadOverlay(s32 unused) {
 #define AREA_VISITED_MASK 0x7f
 
 /* Updates the flags and state that last for one scene or one area, on entering
- */
-/* the current scene. */
-void scArrive(s32 unused, s32 keep) {
-	s32 area = SCENE_ROW(MainRoutineStateWork.next)->area;
-	s32 flag;
+   the current scene. */
+void gmArrive(Sint32 unused, Sint32 keep)
+{
+	Sint32 area = SCENE_ROW(MainRoutineStateWork.next)->area;
+	Sint32 flag;
 
 	if(keep == 0) {
 		/* Local puzzle flags expire on every normal entry to a scene. */
@@ -338,17 +328,16 @@ void scArrive(s32 unused, s32 keep) {
 			MainRoutineStateWork.retreatEntrance =
 				MainRoutineStateWork.entrance;
 		}
-		/* The Djinn's hiding flags last for one scene, even within an area, */
-		/* and so do the 16 after them to FLAG_ARRIVAL_CLEARED_LAST, which
-		 * nothing */
-		/* else uses. */
+		/* The Djinn's hiding flags last for one scene, even within an area, and
+		   so do the 16 after them to FLAG_ARRIVAL_CLEARED_LAST, which nothing
+		   else uses. */
 		for(flag = FLAG_DJINN_HIDING_FIRST; flag <= FLAG_ARRIVAL_CLEARED_LAST;
 			flag++)
 			gmFlagClearStub(flag);
 		gmFlagClearStub(FLAG_LINK_BATTLE);
 		gmFlagClearStub(FLAG_RETREAT_BLOCKED);
-		/* FLAG_NO_ENCOUNTERS_IN_AREA stops random battles */
-		/* (fdEncounterCountStepsAndSelectFormation). */
+		/* FLAG_NO_ENCOUNTERS_IN_AREA stops random battles
+		   (fdEncounterCountStepsAndSelectFormation). */
 		gmFlagClearStub(FLAG_NO_ENCOUNTERS_IN_AREA);
 		gmFlagClearStub(FLAG_IN_TOWN);
 		gmFlagClearStub(FLAG_WORLD_MAP_LEFT);
@@ -363,8 +352,11 @@ void scArrive(s32 unused, s32 keep) {
 	gmFlagRefreshLureCapStub();
 }
 
-/* Starts the current scene's field music, chosen by scChooseMusic. */
-void scPlayMusic(void) { sySndPlayStub(MainRoutineStateWork.sceneMusic); }
+/* Starts the current scene's field music, chosen by fdChooseMusic. */
+void gmPlayMusic(void)
+{
+	sySndPlayStub(MainRoutineStateWork.sceneMusic);
+}
 
 #undef EXIT_DEFAULT_SCENE_MASK
 #undef AREA_VISITED_MASK

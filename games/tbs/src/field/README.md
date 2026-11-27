@@ -1,16 +1,16 @@
 # Field code
 
-This folder is the field sequence: the code that runs any scene, the same
+This folder is the field mode: the code that runs any scene, the same
 in every town, dungeon and on the World Map. [Field](../../../../docs/tbs/field.md) gives
 the idea. This page goes one step closer, mechanism by mechanism, so you
 know where each lives before you open the code.
 
-## The field sequence serves requests
+## The field mode serves requests
 
 ![In Vault, Isaac walks up to a young man standing in the town and talks to him: the two turn to face each other, and the man says `Welcome to Vault, the town at the heart of Angara.`](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
 
-The field sequence is one function, `fdSequenceRun` in
-`field_sequence_run.c`. Setting a scene up always goes in the same order,
+The field mode is one function, `fdModeRun` in
+`field_mode_run.c`. Setting a scene up always goes in the same order,
 because each step needs the one before: load the map, choose its random
 battles, clear room for 64 actors, take the scene's tables, place the party
 and the people, put out the chests, run the scene's own set-up, fade in.
@@ -18,16 +18,16 @@ and the people, put out the chests, run the scene's own set-up, fade in.
 Then it walks. The walking loop is three lines: call `sySynch(1)`, which is
 one frame; look at the ground the leader now stands on; go round again
 unless a request is set. The function is the code that waits, and everything
-that moves during that frame is a task's doing
-([Waiting and tasks](../../../../docs/tbs/system.md#waiting-and-tasks)).
+that moves during that frame is an event's doing
+([Waiting and events](../../../../docs/tbs/system.md#waiting-and-events)).
 
-### The field's tasks
+### The field's events
 
-Setting a scene up puts these [tasks](../../../../docs/tbs/glossary.md#task) on the list,
+Setting a scene up puts these [events](../../../../docs/tbs/glossary.md#event) on the list,
 and they stay there until the party leaves. A higher rank runs earlier in
 the frame.
 
-| Rank | Task | Each frame it |
+| Rank | Event | Each frame it |
 | --- | --- | --- |
 | 15 | `fdPaletteFadeUpdate` | moves the colours a step toward their target |
 | 10 | `fdActorUpdateAllOnField` | carries every actor's script on and moves the actor |
@@ -35,27 +35,27 @@ the frame.
 | 0 | `fdActorSystemPlaceSprs` | places every actor's sprite on the screen |
 | 0 | `mnWindowSystemUpdate` | grows, shrinks and types into the windows |
 
-On the World Map the tasks at ranks 5 and 0 are `fdWorldMapUpdateView` and
+On the World Map the events at ranks 5 and 0 are `fdWorldMapUpdateView` and
 `fdActorSystemProjectSprs`. A map with animated tiles adds
-`fdTilesetAnimUpdate` at rank 0, and a scene adds tasks of its own for
+`fdTilesetAnimUpdate` at rank 0, and a scene adds events of its own for
 whatever only it has. One more runs from the VBlank handler,
 `mnWindowSystemUploadTilemap`, which copies the windows to the screen.
 
 None of these is a villager or a door, because `fdActorUpdateAllOnField` is
-the one task for all 64 actors.
+the one event for all 64 actors.
 
 ### The twelve requests
 
 A request is a note that something needs an answer: a number in the
 field's state, 0 while nothing is asked. Three kinds of code set one.
 
-- The leader's script. Its order `SC_PLAYER`, which the actors' task runs,
+- The leader's script. Its order `SC_PLAYER`, which the actors' event runs,
   looks at the buttons and sets the request for A, the field menu, the
   Pause menu, or the Psynergy or item on a shortcut button.
-- The field sequence's function. After each frame it looks at where the leader
+- The field mode's function. After each frame it looks at where the leader
   stands and sets a step, a push, an exit or a battle.
-- An event or a menu, when the field engine has to carry something out
-  after it has returned: an event sets an exit, and the field menu sets a field
+- A script or a menu, when the field engine has to carry something out
+  after it has returned: a script sets an exit, and the field menu sets a field
   Psynergy.
 
 When several are set at once they are answered in a fixed order, and the
@@ -65,12 +65,12 @@ order is the design:
 2. something the scene or the field engine itself raised, such as a party
    member collapsing from poison;
 3. a battle;
-4. a step onto a cell that means something;
+4. a step onto a metatile that means something;
 5. a jump or a climb the leader is pushing towards;
 6. the A button, which becomes a talk, a search or the field menu;
 7. the field menu;
 8. a talk;
-9. a search of the cell ahead;
+9. a search of the metatile ahead;
 10. a field Psynergy;
 11. an item used on the field;
 12. the Pause menu.
@@ -108,12 +108,12 @@ each pointing at the row that actor has.
 An [actor script](../../../../docs/tbs/glossary.md#actor-script) is a list of orders
 written with `SC_` macros (script command): set an animation, set a speed,
 move to a spot, wait, loop. It is a table of numbers, not code. One
-[task](../../../../docs/tbs/glossary.md#task), `fdActorUpdateAllOnField`, visits every actor
+[event](../../../../docs/tbs/glossary.md#event), `fdActorUpdateAllOnField`, visits every actor
 each frame and reads its script on from where it stopped. In a battle the
-task is `fdActorUpdateAllMotion`. An order that takes no time runs at once,
+event is `fdActorUpdateAllMotion`. An order that takes no time runs at once,
 and one that takes time holds the script there until it is done:
-`SC_WAIT(20)` sets a count in the actor that the task takes one off each
-frame, which is not the `sySynch()` an event calls
+`SC_WAIT(20)` sets a count in the actor that the event takes one off each
+frame, which is not the `sySynch()` a script calls
 ([Two kinds of waiting](../../../../docs/tbs/system.md#two-kinds-of-waiting)). The boy
 running round Vault's well is a few lines in [vault.c](../scene/vault.c).
 
@@ -123,7 +123,7 @@ the spot.
 
 ### Who runs which script
 
-The actors' task runs every script, and what differs is where a script comes
+The actors' event runs every script, and what differs is where a script comes
 from.
 
 Most townspeople never get one written for them. The scene lists each
@@ -133,12 +133,12 @@ ready, such as `MovementType_WanderScript`.
 
 The leader's script, while the player steers, is the single order
 `SC_PLAYER`. Each frame that order reads the D-pad and the buttons. An
-event takes control by giving the leader another script, and the field
-engine gives `SC_PLAYER` back when the event has returned.
+script takes control by giving the leader another script, and the field
+engine gives `SC_PLAYER` back when the script has returned.
 
 An order to face someone or to walk up to someone does not say whom. It
 means the actor's [watched actor](../../../../docs/tbs/glossary.md#watched-actor), which
-an event sets before it hands out the script. So one script serves
+a script sets before it hands out the script. So one script serves
 whoever is watching whomever.
 
 ## Walking and running
@@ -158,10 +158,10 @@ way and are not marked as walls at all.
 
 ## What a talk, a step or a search runs
 
-The scene's trigger table says what happens. The field engine's part is
+The scene's cue table says what happens. The field engine's part is
 the question that comes first: who did the player mean? A talk picks the
 nearest actor in reach and roughly in front. A step looks up the behavior
-of the cell stepped on. A search looks at the cell ahead.
+of the metatile stepped on. A search looks at the metatile ahead.
 
 A few things need no row in any scene, so they work everywhere: jars,
 barrels and bookshelves to search, ledges to hop down, ladders to climb.
@@ -177,9 +177,9 @@ which way the figure faces. That is chosen when it is drawn
 ([Graphics](../graphics/README.md#sprites-and-their-animations)).
 
 Order matters inside a frame: every actor moves, then the map scrolls to
-the camera actor, then each sprite is placed. Those are three tasks, and
+the camera actor, then each sprite is placed. Those are three events, and
 their ranks, 10, 5 and 0, put them in that order
-([The field's tasks](#the-fields-tasks)). Any other order and Isaac would
+([The field's events](#the-fields-events)). Any other order and Isaac would
 trail a frame behind himself.
 
 ## Towns and dungeons on screen
@@ -187,7 +187,7 @@ trail a frame behind himself.
 A town is three background layers with the actors between them: ground,
 walls, roofs. The console decides who hides whom from a priority number on
 each layer and each sprite, so walking behind a house is only a matter of
-standing on cells that give Isaac the right number.
+standing on metatiles that give Isaac the right number.
 
 ## The World Map in perspective
 
@@ -209,7 +209,7 @@ down.
 ## Random battles
 
 A counter fills as the leader walks, at a rate the ground sets, and a
-battle starts when it is full. The field sequence's function does the
+battle starts when it is full. The field mode's function does the
 counting, after each frame of its walking loop, and sets the battle
 request. So
 battles come after a distance, not a time, with some luck mixed in after
@@ -222,13 +222,13 @@ seven kinds of ground. Some scenes switch the counting off for a while,
 as Mercury Lighthouse does while the leader carries the pillar's lights,
 and Cloak keeps battles away while it lasts.
 
-Walking does other things on the same measure: every ten cells outside a
+Walking does other things on the same measure: every ten metatiles outside a
 town the party regains a little PP and poison bites.
 
 ## How field Psynergy reaches its target
 
 The field engine draws the cast and finds what it touches. Whether anything
-happens is the scene's to say, with a trigger row for that Psynergy on
+happens is the scene's to say, with a cue row for that Psynergy on
 that thing. Where no row fits, the cast simply plays and ends.
 
 ### The palette fade
@@ -239,7 +239,7 @@ Scenes fade in the same way.
 
 ## Lucky Dice and Lucky Wheels
 
-The two games in Tolbi are sequences of their own, started the way a
+The two games in Tolbi are modes of their own, started the way a
 battle is: the room asks the main routine to run one next, and ends. Each
 is one file, [lucky_dice.c](lucky_dice.c) and
 [lucky_wheels.c](lucky_wheels.c).
@@ -253,12 +253,12 @@ fast memory and runs them there.
 
 ## Where the code is
 
-- The `field_sequence_*.c` files are the sequence itself: set-up, the walk,
-  requests, triggers and encounters.
+- The `field_mode_*.c` files are the mode itself: set-up, the walk,
+  requests, cues and encounters.
 - The other `field_*.c` files, with `actor_*.c`, `sprite_*.c` and the
   `map_*.c` files, are what it stands on: actors and their scripts, the
   camera, sprites and the map on screen.
-- The `event_commands_*.c` files are the
-  [commands](../../../../docs/tbs/glossary.md#event-command) an event gives, such as
+- The `script_commands_*.c` files are the
+  [commands](../../../../docs/tbs/glossary.md#script-command) a script gives, such as
   showing a message or moving an actor, and each field Psynergy. They are C
   functions, where an actor script's orders are numbers in a table.

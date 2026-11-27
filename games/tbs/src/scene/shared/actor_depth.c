@@ -1,15 +1,14 @@
-/* @file */
-/* Tunnel Ruins and Venus Lighthouse: blocks the leader can stand beside, */
-/* behind or on. */
+/* Tunnel Ruins and Venus Lighthouse: blocks the leader can stand beside, behind
+   or on. */
 
-/* An update function: draw the block under the actors */
-/* (ACTOR_PRIORITY_UNDERFOOT) unless the leader is north of it and no higher */
-/* than its height plus their distance and 4 pixels, that is, behind it rather
- */
-/* than on it. */
-static UNREAD_RESULT scActorUpdateBlockDrawOrder(ACTOR *actor) {
+/* An update function: draw the block under the actors
+   (ACTOR_PRIORITY_UNDERFOOT) unless the leader is north of it and no higher
+   than its height plus their distance and 4 pixels, that is, behind it rather
+   than on it. */
+static UNREAD_RESULT scActorUpdateBlockDrawOrder(ACTOR *actor)
+{
 	ACTOR *leader;
-	u8 flag;
+	Uint8  flag;
 	leader = fdActorGetById(ACTOR_PARTY_LEADER);
 	flag = actor->priFlg | ACTOR_PRIORITY_UNDERFOOT;
 	actor->priFlg = flag;
@@ -26,12 +25,12 @@ static UNREAD_RESULT scActorUpdateBlockDrawOrder(ACTOR *actor) {
 	RETURN_UNREAD(0);
 }
 
-/* After Move, puts a pair of pillars back in order, the first south of the */
-/* second: unless it already is, the two trade places and the game waits a */
-/* frame. Nothing visible changes, since the pillars of a pair look alike, and
- */
-/* the scenes that call it treat the two alike afterwards. */
-static void scActorSwapPossByDepth(s32 first, s32 second) {
+/* After Move, puts a pair of pillars back in order, the first south of the
+   second: unless it already is, the two trade places and the game waits a
+   frame. Nothing visible changes, since the pillars of a pair look alike, and
+   the scenes that call it treat the two alike afterwards. */
+static void scActorSwapPossByDepth(Sint32 first, Sint32 second)
+{
 	ACTOR *a = fdActorGetById(first);
 	ACTOR *b = fdActorGetById(second);
 

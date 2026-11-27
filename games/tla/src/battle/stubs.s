@@ -31,17 +31,17 @@ Stubs_Battle:
 	stub btUnitListLivingStub, btUnitListLiving
 	stub btPartyPrepareMembersStub, btPartyPrepareMembers
 	stub btCameraSetCommandViewStub, btCameraSetCommandView
-	stub fdActorGetSprStub, btActorGetSpr
+	stub btActorGetSprStub, btActorGetSpr
 	stub btHighlightSetModesStub, btHighlightSetModes
 	stub btPlaybackStartStub, btPlaybackStart
-	stub syColBufferScaleStub, btColBufferScale
+	stub btColBufferScaleStub, btColBufferScale
 	stub btDjinnRecoveryCountDownStub, btDjinnRecoveryCountDown
 	stub btMotionGetSlotPaletteStub, btMotionGetSlotPalette
 	stub btDjinnRecoveryCountDownTwentyStub, btDjinnRecoveryCountDownTwenty
 	stub btDebugParmSetLoadStub, btDebugParmSetLoad
 	stub btObjectPutStub, btObjectPut
 	stub btObjectDestroySprsStub, btObjectDestroySprs
-	stub mnBattleMessageWaitForAdvanceAtStub, btMessageWaitForAdvanceAt
+	stub btMessageWaitForAdvanceAtStub, btMessageWaitForAdvanceAt
 	stub btDjinnCountStandbyStub, btDjinnCountStandby
 	stub btPartyPrepareReserveOwnersStub, btPartyPrepareReserveOwners
 	stub btUnitListLivingIdsStub, btUnitListLivingIds

@@ -1,49 +1,46 @@
 #ifndef ALCHEMY_SCENE_EXITS_H
 #define ALCHEMY_SCENE_EXITS_H
 
-/* @file */
-/* The ways between scenes: each scene's entrances, named by where the party */
-/* arrives from, and its exits, named by where they lead, in the exit tables' */
-/* numbers (SCENE_EXIT). A door is named the same from both sides: an exit and
- */
-/* the entrance it leads to face each other, and a door's two sides usually */
-/* share its number in each scene. Where two scenes share several doors, each */
-/* is named by the compass point it lies at on the map of the place the other */
-/* opens off; doors that no compass point tells apart yet take letters */
-/* (GONDOWAN_CLIFFS_TO_WORLD_MAP_A and _B). An entrance that another scene's */
-/* event sends the party to is named for that scene or for the moment it is */
-/* reached (CLEAR_FROM_EPILOGUE, */
-/* YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE). */
+/* The ways between scenes: each scene's entrances, named by where the party
+   arrives from, and its exits, named by where they lead, in the exit tables'
+   numbers (SCENE_EXIT). A door is named the same from both sides: an exit and
+   the entrance it leads to face each other, and a door's two sides usually
+   share its number in each scene. Where two scenes share several doors, each is
+   named by the compass point it lies at on the map of the place the other opens
+   off; doors that no compass point tells apart yet take letters
+   (GONDOWAN_CLIFFS_TO_WORLD_MAP_A and _B). An entrance that another scene's
+   script sends the party to is named for that scene or for the moment it is
+   reached (CLEAR_FROM_EPILOGUE,
+   YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE). */
 
-/* The entrance a scene's table lists first: scTakeExit sends the */
-/* party there when an exit has no row of its own, and the debug scene */
-/* selector starts there. */
+/* The entrance a scene's table lists first: gmTakeExit sends the party there
+   when an exit has no row of its own, and the debug scene selector starts
+   there. */
 typedef enum DEFAULT_ENTRANCE { ENTRANCE_DEFAULT = 0 } DEFAULT_ENTRANCE;
 
 /* SceneId_Title's entrances, named by what each plays. */
 enum {
-	/* The publisher's and Camelot's logos and the intro, then the clear-data */
-	/* screen (power-on, and after saving the clear data). */
+	/* The publisher's and Camelot's logos and the intro, then the clear-data
+	   screen (power-on, and after saving the clear data). */
 	TITLE_START = 1,
 	/* The intro without its prompt, then the prologue with Jenna. */
 	TITLE_PROLOGUE = 2,
-	/* At the end of the prologue: the intro once more, then the game with */
-	/* Felix. */
+	/* At the end of the prologue: the intro once more, then the game with
+	   Felix. */
 	TITLE_FROM_IDEJIMA = 3,
-	/* A new game, once the clear-data screen has its difficulty: the story */
-	/* crawl ("Ages ago, or so the stories tell...") over mnCreditsRun's slide
-	 */
-	/* show, then TITLE_PROLOGUE. */
+	/* A new game, once the clear-data screen has its difficulty: the story
+	   crawl ("Ages ago, or so the stories tell...") over mnCreditsRun's slide
+	   show, then TITLE_PROLOGUE. */
 	TITLE_STORY_CRAWL = 8,
-	/* Unused: nothing sends the party here. The Golden Sun logo with "To Be */
-	/* Continued" under it, held up to a minute, then TITLE_PROLOGUE. */
+	/* Unused: nothing sends the party here. The Golden Sun logo with "To Be
+	   Continued" under it, held up to a minute, then TITLE_PROLOGUE. */
 	TITLE_TO_BE_CONTINUED = 10,
 };
 
 /* SceneId_Clear's entrances. */
 enum {
-	/* From the title's intro, to the file menu; the Battle Arena's way out */
-	/* comes back here too. */
+	/* From the title's intro, to the file menu; the Battle Arena's way out
+	   comes back here too. */
 	CLEAR_FROM_TITLE = 1,
 	/* From the end of the epilogue, which offers to save the cleared game. */
 	CLEAR_FROM_EPILOGUE = 2,
@@ -114,38 +111,33 @@ enum {
 	WORLD_MAP_FROM_NORTHERN_REACHES_NORTH = 61,
 	WORLD_MAP_FROM_PROX_SOUTH_GATE = 62,
 	WORLD_MAP_FROM_PROX_MOLD = 63,
-	/* From Idejima at the prologue's end: Venus Lighthouse is lit and falls, */
-	/* and the earthquake breaks Idejima away with Jenna, Kraden and Alex on it.
-	 */
+	/* From Idejima at the prologue's end: Venus Lighthouse is lit and falls,
+	   and the earthquake breaks Idejima away with Jenna, Kraden and Alex on
+	   it. */
 	WORLD_MAP_VENUS_COLLAPSE = 64,
-	/* Idejima drifts north, and a tidal wave rises behind it and carries it */
-	/* away. */
+	/* Idejima drifts north, and a tidal wave rises behind it and carries it
+	   away. */
 	WORLD_MAP_DRIFT_NORTH = 65,
 	/* The view of Air's Rock from Alhafra's manor, where the man gazing at it
-	 */
-	/* sends the party. */
+	   sends the party. */
 	WORLD_MAP_ALHAFRA_MANOR_VIEW = 67,
 	/* From the Lemurian Ship's main deck: the party takes the tiller and learns
-	 */
-	/* to sail. */
+	   to sail. */
 	WORLD_MAP_FIRST_VOYAGE = 68,
-	/* Once the Black Crystal is set in the Lemurian Ship's engine */
-	/* (scLemurianShipSetBlackCrystal): the ship sails to its berth and the
-	   party */
-	/* goes down to the deck. */
+	/* Once the Black Crystal is set in the Lemurian Ship's engine
+	   (scLemurianShipSetBlackCrystal): the ship sails to its berth and the
+	   party goes down to the deck. */
 	WORLD_MAP_SAIL_TO_DECK = 69,
 	WORLD_MAP_FROM_LEMURIAN_SHIP_TILLER_B = 71,
 	/* From Jupiter Lighthouse's beacon once it is lit: the World Map shows the
-	 */
-	/* lighthouse shining, Piers marvels at it, and the party goes back up to */
-	/* the beacon. */
+	   lighthouse shining, Piers marvels at it, and the party goes back up to
+	   the beacon. */
 	WORLD_MAP_JUPITER_BEACON = 72,
 	/* After the collapse (WORLD_MAP_VENUS_COLLAPSE): the camera follows Idejima
-	 */
-	/* as it drifts away north. */
+	   as it drifts away north. */
 	WORLD_MAP_IDEJIMA_DRIFTING = 77,
-	/* From the Apojii Islands: the party, hidden in a trail of sparkles, is */
-	/* carried across the sea to Aqua Rock. */
+	/* From the Apojii Islands: the party, hidden in a trail of sparkles, is
+	   carried across the sea to Aqua Rock. */
 	WORLD_MAP_CARRIED_TO_AQUA_ROCK = 78,
 	WORLD_MAP_FROM_NORTH_OSENIA_ISLET_B = 80,
 	WORLD_MAP_FROM_NORTH_OSENIA_ISLET_C = 81,
@@ -158,6 +150,7 @@ enum {
 	WORLD_MAP_FROM_CAVERNS_ATTEKA = 88,
 	WORLD_MAP_FROM_CAVERNS_ANGARA = 89,
 };
+
 /* SceneId_WorldMap's exits. */
 enum {
 	WORLD_MAP_TO_IDEJIMA_SOUTHWEST = 1,
@@ -239,9 +232,9 @@ enum {
 /* SceneId_StaffCredit's entrances. */
 enum {
 	STAFF_CREDIT_FROM_PROX_SOUTH_GATE = 0,
-	/* Unused: from Mt. Aleph's summit straight to the credits, which open on */
-	/* the World Map by Jupiter Lighthouse (mt_aleph_summit.c's */
-	/* ENTRANCE_SKIP_TO_CREDITS). */
+	/* Unused: from Mt. Aleph's summit straight to the credits, which open on
+	   the World Map by Jupiter Lighthouse (mt_aleph_summit.c's
+	   ENTRANCE_SKIP_TO_CREDITS). */
 	STAFF_CREDIT_FROM_MT_ALEPH_SUMMIT = 72,
 };
 
@@ -250,11 +243,11 @@ enum {
 	VENUS_LIGHTHOUSE_ENTRANCE_FROM_SUHALLA_GATE_ROAD_EAST = 2,
 	VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE = 9,
 	/* Where a battle lost in the prologue sends the party, from Suhalla Gate's
-	 */
-	/* three rooms and from the Ruffian's battle here: Jenna wakes by the door.
-	 */
+	   three rooms and from the Ruffian's battle here: Jenna wakes by the
+	   door. */
 	VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT = 98,
 };
+
 /* SceneId_VenusLighthouseEntrance's exits. */
 enum {
 	VENUS_LIGHTHOUSE_ENTRANCE_TO_SUHALLA_GATE_ROAD_EAST = 1,
@@ -267,6 +260,7 @@ enum {
 	/* Where the title's prologue sends Jenna: the game opens here. */
 	VENUS_LIGHTHOUSE_FROM_TITLE = 99,
 };
+
 /* SceneId_VenusLighthouse's exits. */
 enum {
 	VENUS_LIGHTHOUSE_TO_VENUS_LIGHTHOUSE_ENTRANCE = 1,
@@ -278,6 +272,7 @@ enum {
 	SUHALLA_GATE_ROAD_FROM_SUHALLA_GATE_AMBUSH_B = 4,
 	SUHALLA_GATE_ROAD_FROM_VENUS_LIGHTHOUSE_ENTRANCE_EAST = 5,
 };
+
 /* SceneId_SuhallaGateRoad's exits. */
 enum {
 	SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_A = 2,
@@ -291,6 +286,7 @@ enum {
 	SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_ROAD_B = 4,
 	SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_PSYNERGY_STONE = 5,
 };
+
 /* SceneId_SuhallaGateAmbush's exits. */
 enum {
 	SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_ROAD_A = 1,
@@ -302,6 +298,7 @@ enum {
 enum {
 	SUHALLA_GATE_PSYNERGY_STONE_FROM_SUHALLA_GATE_AMBUSH = 1,
 };
+
 /* SceneId_SuhallaGatePsynergyStone's exits. */
 enum {
 	SUHALLA_GATE_PSYNERGY_STONE_TO_SUHALLA_GATE_AMBUSH = 1,
@@ -313,14 +310,14 @@ enum {
 	IDEJIMA_FROM_WORLD_MAP_SOUTH = 2,
 	IDEJIMA_FROM_WORLD_MAP_SOUTHWEST = 4,
 	IDEJIMA_FROM_WORLD_MAP_NORTH_A = 11,
-	/* Where the World Map leaves Idejima after its drift */
-	/* (scWorldMapShowIdejimaDrifting). */
+	/* Where the World Map leaves Idejima after its drift
+	   (scWorldMapShowIdejimaDrifting). */
 	IDEJIMA_AFTER_DRIFT = 12,
 	/* Where the title sends Felix after the prologue: Idejima rides the tidal
-	 */
-	/* wave. */
+	   wave. */
 	IDEJIMA_RIDE_THE_TIDAL_WAVE = 13,
 };
+
 /* SceneId_Idejima's exits. */
 enum {
 	IDEJIMA_TO_WORLD_MAP_SOUTHWEST = 4,
@@ -341,6 +338,7 @@ enum {
 	DAILA_FLOODED_FROM_WORLD_MAP_SOUTH = 8,
 	DAILA_FLOODED_FROM_WORLD_MAP_NORTH = 9,
 };
+
 /* SceneId_DailaFlooded's exits. */
 enum {
 	DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_WEST = 1,
@@ -364,6 +362,7 @@ enum {
 	DAILA_ROOMS_HOUSES_FROM_DAILA_SOUTHEAST = 6,
 	DAILA_ROOMS_HOUSES_FROM_NORTH_OSENIA_ISLET = 7,
 };
+
 /* SceneId_DailaRoomsHouses's exits. */
 enum {
 	DAILA_ROOMS_HOUSES_TO_DAILA_WEST = 1,
@@ -379,6 +378,7 @@ enum {
 enum {
 	DAILA_ROOMS_SANCTUM_FROM_DAILA = 1,
 };
+
 /* SceneId_DailaRoomsSanctum's exits. */
 enum {
 	DAILA_ROOMS_SANCTUM_TO_DAILA = 1,
@@ -406,6 +406,7 @@ enum {
 	KANDOREAN_TEMPLE_LIFTS_FROM_KANDOREAN_TEMPLE_PILLAR_WEST_LIFT = 5,
 	KANDOREAN_TEMPLE_LIFTS_FROM_KANDOREAN_TEMPLE_PILLAR_EAST_LIFT = 6,
 };
+
 /* SceneId_KandoreanTempleLifts's exits. */
 enum {
 	KANDOREAN_TEMPLE_LIFTS_TO_KANDOREAN_TEMPLE_FOG_WEST = 1,
@@ -424,6 +425,7 @@ enum {
 	KANDOREAN_TEMPLE_MIMIC_FROM_KANDOREAN_TEMPLE_CHESTBEATERS = 3,
 	KANDOREAN_TEMPLE_MIMIC_FROM_KANDOREAN_TEMPLE_FOG_NORTH = 4,
 };
+
 /* SceneId_KandoreanTempleMimic's exits. */
 enum {
 	KANDOREAN_TEMPLE_MIMIC_TO_KANDOREAN_TEMPLE_POI = 1,
@@ -437,6 +439,7 @@ enum {
 	KANDOREAN_TEMPLE_CHESTBEATERS_FROM_KANDOREAN_TEMPLE_MIMIC = 1,
 	KANDOREAN_TEMPLE_CHESTBEATERS_FROM_KANDOREAN_TEMPLE_POI = 2,
 };
+
 /* SceneId_KandoreanTempleChestbeaters's exits. */
 enum {
 	KANDOREAN_TEMPLE_CHESTBEATERS_TO_KANDOREAN_TEMPLE_MIMIC = 1,
@@ -451,6 +454,7 @@ enum {
 	KANDOREAN_TEMPLE_PILLAR_FROM_KANDOREAN_TEMPLE_LIFTS_EAST_LIFT = 4,
 	KANDOREAN_TEMPLE_PILLAR_FROM_KANDOREAN_TEMPLE_LIFTS_SHAFT = 5,
 };
+
 /* SceneId_KandoreanTemplePillar's exits. */
 enum {
 	KANDOREAN_TEMPLE_PILLAR_TO_KANDOREAN_TEMPLE_CURRENT = 1,
@@ -464,6 +468,7 @@ enum {
 	KANDOREAN_TEMPLE_STREAM_FROM_KANDOREAN_TEMPLE_GATE_WEST = 1,
 	KANDOREAN_TEMPLE_STREAM_FROM_KANDOREAN_TEMPLE_GATE_EAST = 2,
 };
+
 /* SceneId_KandoreanTempleStream's exits. */
 enum {
 	KANDOREAN_TEMPLE_STREAM_TO_KANDOREAN_TEMPLE_GATE_WEST = 1,
@@ -475,6 +480,7 @@ enum {
 	KANDOREAN_TEMPLE_CURRENT_FROM_KANDOREAN_TEMPLE_LIFTS = 1,
 	KANDOREAN_TEMPLE_CURRENT_FROM_KANDOREAN_TEMPLE_PILLAR = 2,
 };
+
 /* SceneId_KandoreanTempleCurrent's exits. */
 enum {
 	KANDOREAN_TEMPLE_CURRENT_TO_KANDOREAN_TEMPLE_LIFTS = 1,
@@ -488,6 +494,7 @@ enum {
 	KANDOREAN_TEMPLE_FOG_FROM_KANDOREAN_TEMPLE_LIFTS_EAST = 3,
 	KANDOREAN_TEMPLE_FOG_FROM_KANDOREAN_TEMPLE_MIMIC_SOUTH = 4,
 };
+
 /* SceneId_KandoreanTempleFog's exits. */
 enum {
 	KANDOREAN_TEMPLE_FOG_TO_KANDOREAN_TEMPLE_LIFTS_WEST = 1,
@@ -503,6 +510,7 @@ enum {
 	KANDOREAN_TEMPLE_GATE_FROM_KANDOREAN_TEMPLE_STREAM_WEST = 3,
 	KANDOREAN_TEMPLE_GATE_FROM_KANDOREAN_TEMPLE_STREAM_EAST = 4,
 };
+
 /* SceneId_KandoreanTempleGate's exits. */
 enum {
 	KANDOREAN_TEMPLE_GATE_TO_WORLD_MAP = 1,
@@ -517,6 +525,7 @@ enum {
 	KANDOREAN_TEMPLE_POI_FROM_KANDOREAN_TEMPLE_CHESTBEATERS = 8,
 	KANDOREAN_TEMPLE_POI_FROM_KANDOREAN_TEMPLE_MIMIC = 9,
 };
+
 /* SceneId_KandoreanTemplePoi's exits. */
 enum {
 	KANDOREAN_TEMPLE_POI_TO_KANDOREAN_TEMPLE_GATE = 1,
@@ -530,6 +539,7 @@ enum {
 	SHRINE_OF_THE_SEA_GOD_ROPE_FROM_SHRINE_OF_THE_SEA_GOD_PLANK_BRIDGE = 2,
 	SHRINE_OF_THE_SEA_GOD_ROPE_FROM_WORLD_MAP = 3,
 };
+
 /* SceneId_ShrineOfTheSeaGodRope's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_ROPE_TO_SHRINE_OF_THE_SEA_GOD_CROSSROADS = 1,
@@ -541,6 +551,7 @@ enum {
 enum {
 	SHRINE_OF_THE_SEA_GOD_PLANK_BRIDGE_FROM_SHRINE_OF_THE_SEA_GOD_ROPE = 1,
 };
+
 /* SceneId_ShrineOfTheSeaGodPlankBridge's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_PLANK_BRIDGE_TO_SHRINE_OF_THE_SEA_GOD_ROPE = 1,
@@ -556,6 +567,7 @@ enum {
 	SHRINE_OF_THE_SEA_GOD_CROSSROADS_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS = 4,
 	SHRINE_OF_THE_SEA_GOD_CROSSROADS_FROM_SHRINE_OF_THE_SEA_GOD_ROPE = 5,
 };
+
 /* SceneId_ShrineOfTheSeaGodCrossroads's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_CROSSROADS_TO_SHRINE_OF_THE_SEA_GOD_PILLARS = 1,
@@ -576,6 +588,7 @@ enum {
 		3,
 	SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_FROM_SHRINE_OF_THE_SEA_GOD_BREATH_WEST = 4,
 };
+
 /* SceneId_ShrineOfTheSeaGodFootprints's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_TO_SHRINE_OF_THE_SEA_GOD_CROSSROADS = 1,
@@ -595,6 +608,7 @@ enum {
 	SHRINE_OF_THE_SEA_GOD_BREATH_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_SOUTHEAST =
 		4,
 };
+
 /* SceneId_ShrineOfTheSeaGodBreath's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_BREATH_TO_SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE = 1,
@@ -610,6 +624,7 @@ enum {
 	SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE_FROM_SHRINE_OF_THE_SEA_GOD_BREATH = 1,
 	SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE_FROM_SHRINE_OF_THE_SEA_GOD_PILLARS = 2,
 };
+
 /* SceneId_ShrineOfTheSeaGodPillarHole's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE_TO_SHRINE_OF_THE_SEA_GOD_BREATH = 1,
@@ -621,6 +636,7 @@ enum {
 	SHRINE_OF_THE_SEA_GOD_PILLARS_FROM_SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE = 1,
 	SHRINE_OF_THE_SEA_GOD_PILLARS_FROM_SHRINE_OF_THE_SEA_GOD_CROSSROADS = 2,
 };
+
 /* SceneId_ShrineOfTheSeaGodPillars's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_PILLARS_TO_SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE = 1,
@@ -635,6 +651,7 @@ enum {
 		2,
 	SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR_FROM_SHRINE_OF_THE_SEA_GOD_STATUE = 3,
 };
+
 /* SceneId_ShrineOfTheSeaGodSeaGodsTear's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR_TO_SHRINE_OF_THE_SEA_GOD_CROSSROADS_WEST =
@@ -649,6 +666,7 @@ enum {
 	SHRINE_OF_THE_SEA_GOD_STATUE_FROM_SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR = 1,
 	SHRINE_OF_THE_SEA_GOD_STATUE_FROM_SHRINE_OF_THE_SEA_GOD_LADDERS_SOUTH = 2,
 };
+
 /* SceneId_ShrineOfTheSeaGodStatue's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_STATUE_TO_SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR = 1,
@@ -661,6 +679,7 @@ enum {
 	SHRINE_OF_THE_SEA_GOD_LADDERS_FROM_SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG_EAST =
 		41,
 };
+
 /* SceneId_ShrineOfTheSeaGodLadders's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_LADDERS_TO_SHRINE_OF_THE_SEA_GOD_STATUE_SOUTH = 1,
@@ -672,6 +691,7 @@ enum {
 	SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG_FROM_SHRINE_OF_THE_SEA_GOD_LADDERS_WEST =
 		40,
 };
+
 /* SceneId_ShrineOfTheSeaGodRightProng's exits. */
 enum {
 	SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG_TO_SHRINE_OF_THE_SEA_GOD_LADDERS_EAST = 1,
@@ -689,6 +709,7 @@ enum {
 	DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST =
 		5,
 };
+
 /* SceneId_DehkanPlateauFullMetalVestChest's exits. */
 enum {
 	DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_TO_WORLD_MAP = 1,
@@ -738,6 +759,7 @@ enum {
 		3,
 	DEHKAN_PLATEAU_THEMIS_AXE_CHEST_FROM_DEHKAN_PLATEAU_TIGHTROPES = 4,
 };
+
 /* SceneId_DehkanPlateauThemisAxeChest's exits. */
 enum {
 	DEHKAN_PLATEAU_THEMIS_AXE_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST = 1,
@@ -769,6 +791,7 @@ enum {
 	DEHKAN_PLATEAU_TIGHTROPES_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTH = 5,
 	DEHKAN_PLATEAU_TIGHTROPES_FROM_WORLD_MAP = 6,
 };
+
 /* SceneId_DehkanPlateauTightropes's exits. */
 enum {
 	DEHKAN_PLATEAU_TIGHTROPES_TO_DEHKAN_PLATEAU_THEMIS_AXE_CHEST = 1,
@@ -843,6 +866,7 @@ enum {
 	DEHKAN_PLATEAU_MINT_CHEST_FROM_DEHKAN_PLATEAU_THEMIS_AXE_CHEST_SOUTHEAST_C =
 		60,
 };
+
 /* SceneId_DehkanPlateauMintChest's exits. */
 enum {
 	DEHKAN_PLATEAU_MINT_CHEST_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST_WEST_A =
@@ -868,6 +892,7 @@ enum {
 	DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTHWEST = 36,
 	DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH = 37,
 };
+
 /* SceneId_DehkanPlateauPoundCube's exits. */
 enum {
 	DEHKAN_PLATEAU_POUND_CUBE_TO_DEHKAN_PLATEAU_TIGHTROPES_NORTHEAST = 1,
@@ -916,6 +941,7 @@ enum {
 	DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_EAST = 22,
 	DEHKAN_PLATEAU_CANNON_FROM_DEHKAN_PLATEAU_POUND_CUBE_SOUTHEAST_B = 23,
 };
+
 /* SceneId_DehkanPlateauCannon's exits. */
 enum {
 	DEHKAN_PLATEAU_CANNON_TO_DEHKAN_PLATEAU_POUND_CUBE_WEST_A = 1,
@@ -933,6 +959,7 @@ enum {
 	LEMURIAN_SHIP_CABINS_FROM_STAIR_ROOM = 19,
 	LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_EAST_B = 20,
 };
+
 /* SceneId_LemurianShipCabins's exits. */
 enum {
 	LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK = 1,
@@ -959,6 +986,7 @@ enum {
 	LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_B = 18,
 	LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_B = 20,
 };
+
 /* SceneId_LemurianShipAquaHydra's exits. */
 enum {
 	LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTHWEST_A = 1,
@@ -974,6 +1002,7 @@ enum {
 	LEMURIAN_SHIP_TILLER_FROM_WORLD_MAP_C = 10,
 	LEMURIAN_SHIP_TILLER_FROM_SEA_OF_TIME_SWIRLS = 20,
 };
+
 /* SceneId_LemurianShipTiller's exits. */
 enum {
 	LEMURIAN_SHIP_TILLER_TO_WORLD_MAP_A = 1,
@@ -986,6 +1015,7 @@ enum {
 	LEMURIAN_SHIP_MAIN_DECK_FROM_LEMURIAN_SHIP_CABINS = 1,
 	LEMURIAN_SHIP_MAIN_DECK_FROM_WORLD_MAP_NORTH = 2,
 };
+
 /* SceneId_LemurianShipMainDeck's exits. */
 enum {
 	LEMURIAN_SHIP_MAIN_DECK_TO_LEMURIAN_SHIP_CABINS = 1,
@@ -1008,6 +1038,7 @@ enum {
 	MADRA_FROM_MADRA_CATACOMBS_LADDERS_WEST = 15,
 	MADRA_FROM_MADRA_CATACOMBS_LADDERS_EAST = 16,
 };
+
 /* SceneId_Madra's exits. */
 enum {
 	MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_EAST = 1,
@@ -1036,6 +1067,7 @@ enum {
 	MADRA_ROOMS_HOUSES_FROM_MADRA_NORTHEAST_B = 15,
 	MADRA_ROOMS_HOUSES_FROM_MADRA_WEST = 20,
 };
+
 /* SceneId_MadraRoomsHouses's exits. */
 enum {
 	MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST = 1,
@@ -1053,6 +1085,7 @@ enum {
 	MADRA_ROOMS_CAVERN_HOMES_FROM_MADRA_EAST = 1,
 	MADRA_ROOMS_CAVERN_HOMES_FROM_MADRA_WEST = 2,
 };
+
 /* SceneId_MadraRoomsCavernHomes's exits. */
 enum {
 	MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_EAST = 1,
@@ -1067,6 +1100,7 @@ enum {
 	MADRA_CATACOMBS_ENTRANCE_FROM_MADRA_CATACOMBS_STONE_DOOR_SOUTH = 4,
 	MADRA_CATACOMBS_ENTRANCE_FROM_MADRA_CATACOMBS_CHAMPA_TUNNEL_EAST = 5,
 };
+
 /* SceneId_MadraCatacombsEntrance's exits. */
 enum {
 	MADRA_CATACOMBS_ENTRANCE_TO_MADRA_CATACOMBS_BOOKSHELF = 1,
@@ -1083,6 +1117,7 @@ enum {
 	MADRA_CATACOMBS_LADDERS_FROM_MADRA_EAST = 3,
 	MADRA_CATACOMBS_LADDERS_FROM_MADRA_CATACOMBS_CHAMPA_TUNNEL_SOUTH = 4,
 };
+
 /* SceneId_MadraCatacombsLadders's exits. */
 enum {
 	MADRA_CATACOMBS_LADDERS_TO_MADRA_WEST = 1,
@@ -1098,6 +1133,7 @@ enum {
 	MADRA_CATACOMBS_CHAMPA_TUNNEL_FROM_MADRA_CATACOMBS_ENTRANCE_EAST = 6,
 	MADRA_CATACOMBS_CHAMPA_TUNNEL_FROM_MADRA_CATACOMBS_LADDERS_NORTH = 7,
 };
+
 /* SceneId_MadraCatacombsChampaTunnel's exits. */
 enum {
 	MADRA_CATACOMBS_CHAMPA_TUNNEL_TO_MADRA_CATACOMBS_ENTRANCE_WEST = 1,
@@ -1116,6 +1152,7 @@ enum {
 	MADRA_CATACOMBS_STONE_DOOR_FROM_MADRA_CATACOMBS_BOOKSHELF_SOUTH = 10,
 	MADRA_CATACOMBS_STONE_DOOR_FROM_MADRA_CATACOMBS_ENTRANCE_SOUTH = 13,
 };
+
 /* SceneId_MadraCatacombsStoneDoor's exits. */
 enum {
 	MADRA_CATACOMBS_STONE_DOOR_TO_MADRA_CATACOMBS_BOOKSHELF_NORTHWEST = 1,
@@ -1134,6 +1171,7 @@ enum {
 	MADRA_CATACOMBS_BOOKSHELF_FROM_MADRA_CATACOMBS_STONE_DOOR_SOUTH = 7,
 	MADRA_CATACOMBS_BOOKSHELF_FROM_MADRA_CATACOMBS_ENTRANCE = 8,
 };
+
 /* SceneId_MadraCatacombsBookshelf's exits. */
 enum {
 	MADRA_CATACOMBS_BOOKSHELF_TO_MADRA_CATACOMBS_STONE_DOOR_NORTHWEST = 1,
@@ -1147,6 +1185,7 @@ enum {
 	MADRA_CATACOMBS_TABLET_FROM_MADRA_CATACOMBS_STONE_DOOR_WEST = 1,
 	MADRA_CATACOMBS_TABLET_FROM_MADRA_CATACOMBS_STONE_DOOR_EAST = 4,
 };
+
 /* SceneId_MadraCatacombsTablet's exits. */
 enum {
 	MADRA_CATACOMBS_TABLET_TO_MADRA_CATACOMBS_STONE_DOOR_WEST = 1,
@@ -1158,6 +1197,7 @@ enum {
 	MADRA_DRAWBRIDGE_FROM_WORLD_MAP_SOUTH = 1,
 	MADRA_DRAWBRIDGE_FROM_WORLD_MAP_NORTH = 2,
 };
+
 /* SceneId_MadraDrawbridge's exits. */
 enum {
 	MADRA_DRAWBRIDGE_TO_WORLD_MAP_SOUTH = 1,
@@ -1169,6 +1209,7 @@ enum {
 	OSENIA_CLIFFS_FROM_WORLD_MAP_WEST = 1,
 	OSENIA_CLIFFS_FROM_WORLD_MAP_EAST = 2,
 };
+
 /* SceneId_OseniaCliffs's exits. */
 enum {
 	OSENIA_CLIFFS_TO_WORLD_MAP_WEST = 1,
@@ -1186,6 +1227,7 @@ enum {
 	MIKASALLA_FROM_MIKASALLA_NORTH_NORTH = 11,
 	MIKASALLA_FROM_MIKASALLA_NORTH_SOUTH = 12,
 };
+
 /* SceneId_Mikasalla's exits. */
 enum {
 	MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_NORTHEAST = 1,
@@ -1203,6 +1245,7 @@ enum {
 	MIKASALLA_NORTH_FROM_MIKASALLA_SOUTH = 1,
 	MIKASALLA_NORTH_FROM_MIKASALLA_NORTH = 4,
 };
+
 /* SceneId_MikasallaNorth's exits. */
 enum {
 	MIKASALLA_NORTH_TO_MIKASALLA_SOUTH = 1,
@@ -1217,6 +1260,7 @@ enum {
 	MIKASALLA_ROOMS_HOUSES_FROM_MIKASALLA_SOUTHWEST = 4,
 	MIKASALLA_ROOMS_HOUSES_FROM_EAST_TUNDARIA_ISLET = 5,
 };
+
 /* SceneId_MikasallaRoomsHouses's exits. */
 enum {
 	MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHEAST = 1,
@@ -1232,6 +1276,7 @@ enum {
 	MIKASALLA_ROOMS_SANCTUM_FROM_YALLAM = 4,
 	MIKASALLA_ROOMS_SANCTUM_FROM_APOJII_ISLANDS = 5,
 };
+
 /* SceneId_MikasallaRoomsSanctum's exits. */
 enum {
 	MIKASALLA_ROOMS_SANCTUM_TO_MIKASALLA = 1,
@@ -1254,6 +1299,7 @@ enum {
 	GAROH_FROM_GAROH_PATH_WEST = 11,
 	GAROH_FROM_GAROH_WEREWOLF_CAVE = 12,
 };
+
 /* SceneId_Garoh's exits. */
 enum {
 	GAROH_TO_GAROH_ROOMS_HOUSES_SOUTH = 1,
@@ -1276,6 +1322,7 @@ enum {
 	GAROH_PATH_FROM_GAROH_EAST = 2,
 	GAROH_PATH_FROM_GAROH_WEST = 3,
 };
+
 /* SceneId_GarohPath's exits. */
 enum {
 	GAROH_PATH_TO_GAROH_WAY_UP = 1,
@@ -1288,6 +1335,7 @@ enum {
 	GAROH_WAY_UP_FROM_WORLD_MAP = 1,
 	GAROH_WAY_UP_FROM_GAROH_PATH = 2,
 };
+
 /* SceneId_GarohWayUp's exits. */
 enum {
 	GAROH_WAY_UP_TO_WORLD_MAP = 1,
@@ -1304,6 +1352,7 @@ enum {
 	GAROH_TUNNELS_FROM_GAROH_ROOMS_HOUSES_WEST = 8,
 	GAROH_TUNNELS_FROM_GAROH_SOUTH = 11,
 };
+
 /* SceneId_GarohTunnels's exits. */
 enum {
 	GAROH_TUNNELS_TO_GAROH_WEST = 1,
@@ -1319,6 +1368,7 @@ enum {
 enum {
 	GAROH_WEREWOLF_CAVE_FROM_GAROH = 1,
 };
+
 /* SceneId_GarohWerewolfCave's exits. */
 enum {
 	GAROH_WEREWOLF_CAVE_TO_GAROH = 1,
@@ -1335,6 +1385,7 @@ enum {
 	GAROH_ROOMS_HOUSES_FROM_GAROH_TUNNELS_WEST = 7,
 	GAROH_ROOMS_HOUSES_FROM_GAROH_WEREWOLF_CAVE = 99,
 };
+
 /* SceneId_GarohRoomsHouses's exits. */
 enum {
 	GAROH_ROOMS_HOUSES_TO_GAROH_SOUTH = 1,
@@ -1351,6 +1402,7 @@ enum {
 	GAROH_ROOMS_SHOP_FROM_GAROH = 4,
 	GAROH_ROOMS_SHOP_FROM_GAROH_TUNNELS_EAST = 5,
 };
+
 /* SceneId_GarohRoomsShop's exits. */
 enum {
 	GAROH_ROOMS_SHOP_TO_GAROH_TUNNELS_WEST = 3,
@@ -1362,6 +1414,7 @@ enum {
 enum {
 	GAROH_ROOMS_SANCTUM_FROM_GAROH = 2,
 };
+
 /* SceneId_GarohRoomsSanctum's exits. */
 enum {
 	GAROH_ROOMS_SANCTUM_TO_GAROH = 2,
@@ -1372,6 +1425,7 @@ enum {
 	YAMPI_DESERT_GUARDIAN_RING_CHEST_FROM_WORLD_MAP = 1,
 	YAMPI_DESERT_GUARDIAN_RING_CHEST_FROM_YAMPI_DESERT_SPRING = 2,
 };
+
 /* SceneId_YampiDesertGuardianRingChest's exits. */
 enum {
 	YAMPI_DESERT_GUARDIAN_RING_CHEST_TO_WORLD_MAP = 1,
@@ -1386,6 +1440,7 @@ enum {
 	YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_BLITZ = 4,
 	YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_SPRING_CAVE_SOUTH = 5,
 };
+
 /* SceneId_YampiDesertSpring's exits. */
 enum {
 	YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_GUARDIAN_RING_CHEST = 1,
@@ -1400,6 +1455,7 @@ enum {
 	YAMPI_DESERT_BLITZ_FROM_YAMPI_DESERT_SPRING = 1,
 	YAMPI_DESERT_BLITZ_FROM_YAMPI_DESERT_PSYNERGY_STONE = 2,
 };
+
 /* SceneId_YampiDesertBlitz's exits. */
 enum {
 	YAMPI_DESERT_BLITZ_TO_YAMPI_DESERT_SPRING = 1,
@@ -1411,6 +1467,7 @@ enum {
 	YAMPI_DESERT_PSYNERGY_STONE_FROM_YAMPI_DESERT_BLITZ = 1,
 	YAMPI_DESERT_PSYNERGY_STONE_FROM_YAMPI_DESERT_KING_SCORPION = 4,
 };
+
 /* SceneId_YampiDesertPsynergyStone's exits. */
 enum {
 	YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_BLITZ = 1,
@@ -1422,6 +1479,7 @@ enum {
 	YAMPI_DESERT_KING_SCORPION_FROM_YAMPI_DESERT_PSYNERGY_STONE = 1,
 	YAMPI_DESERT_KING_SCORPION_FROM_YAMPI_DESERT_SCORPION_PIT = 4,
 };
+
 /* SceneId_YampiDesertKingScorpion's exits. */
 enum {
 	YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_PSYNERGY_STONE = 1,
@@ -1433,6 +1491,7 @@ enum {
 	YAMPI_DESERT_COINS_PUDDLE_FROM_YAMPI_DESERT_SPRING = 1,
 	YAMPI_DESERT_COINS_PUDDLE_FROM_YAMPI_DESERT_BLOW_MACE_CHEST = 2,
 };
+
 /* SceneId_YampiDesertCoinsPuddle's exits. */
 enum {
 	YAMPI_DESERT_COINS_PUDDLE_TO_YAMPI_DESERT_SPRING = 1,
@@ -1444,6 +1503,7 @@ enum {
 	YAMPI_DESERT_SAND_PASS_FROM_YAMPI_DESERT_BLOW_MACE_CHEST = 1,
 	YAMPI_DESERT_SAND_PASS_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST = 2,
 };
+
 /* SceneId_YampiDesertSandPass's exits. */
 enum {
 	YAMPI_DESERT_SAND_PASS_TO_YAMPI_DESERT_BLOW_MACE_CHEST = 1,
@@ -1459,6 +1519,7 @@ enum {
 	YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST =
 		4,
 };
+
 /* SceneId_YampiDesertTrainersWhipChest's exits. */
 enum {
 	YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_SAND_PASS = 1,
@@ -1474,6 +1535,7 @@ enum {
 		1,
 	YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_FROM_WORLD_MAP = 2,
 };
+
 /* SceneId_YampiDesertHiddenPsynergyStone's exits. */
 enum {
 	YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST = 1,
@@ -1486,6 +1548,7 @@ enum {
 	/* Where the party lands after the King Scorpion's battle. */
 	YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE = 2,
 };
+
 /* SceneId_YampiDesertScorpionPit's exits. */
 enum {
 	YAMPI_DESERT_SCORPION_PIT_TO_YAMPI_DESERT_KING_SCORPION = 1,
@@ -1496,6 +1559,7 @@ enum {
 	YAMPI_DESERT_SPRING_CAVE_FROM_YAMPI_DESERT_SPRING_NORTH = 1,
 	YAMPI_DESERT_SPRING_CAVE_FROM_YAMPI_DESERT_SPRING_SOUTH = 3,
 };
+
 /* SceneId_YampiDesertSpringCave's exits. */
 enum {
 	YAMPI_DESERT_SPRING_CAVE_TO_YAMPI_DESERT_SPRING_NORTH = 1,
@@ -1507,6 +1571,7 @@ enum {
 	YAMPI_DESERT_BLOW_MACE_CHEST_FROM_YAMPI_DESERT_COINS_PUDDLE = 1,
 	YAMPI_DESERT_BLOW_MACE_CHEST_FROM_YAMPI_DESERT_SAND_PASS = 2,
 };
+
 /* SceneId_YampiDesertBlowMaceChest's exits. */
 enum {
 	YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_COINS_PUDDLE = 1,
@@ -1523,6 +1588,7 @@ enum {
 		7,
 	YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST_FROM_YAMPI_DESERT_CAVE_GUARDIAN = 8,
 };
+
 /* SceneId_YampiDesertCaveWaterOfLifeChest's exits. */
 enum {
 	YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST =
@@ -1541,6 +1607,7 @@ enum {
 	YAMPI_DESERT_CAVE_GUARDIAN_FROM_YAMPI_DESERT_CAVE_CRYSTAL_SOUTH = 15,
 	YAMPI_DESERT_CAVE_GUARDIAN_FROM_YAMPI_DESERT_CAVE_CRYSTAL_SOUTHEAST = 16,
 };
+
 /* SceneId_YampiDesertCaveGuardian's exits. */
 enum {
 	YAMPI_DESERT_CAVE_GUARDIAN_TO_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST = 1,
@@ -1559,6 +1626,7 @@ enum {
 	YAMPI_DESERT_CAVE_CRYSTAL_FROM_YAMPI_DESERT_CAVE_GUARDIAN_SOUTH = 12,
 	YAMPI_DESERT_CAVE_CRYSTAL_FROM_YAMPI_DESERT_CAVE_GUARDIAN_NORTHWEST = 13,
 };
+
 /* SceneId_YampiDesertCaveCrystal's exits. */
 enum {
 	YAMPI_DESERT_CAVE_CRYSTAL_TO_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST_SOUTH =
@@ -1577,6 +1645,7 @@ enum {
 	AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_A = 3,
 	AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_B = 4,
 };
+
 /* SceneId_AirsRockStormBrandChest's exits. */
 enum {
 	AIRS_ROCK_STORM_BRAND_CHEST_TO_WORLD_MAP = 1,
@@ -1593,6 +1662,7 @@ enum {
 	AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_INSIDE_HALL = 4,
 	AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_FUJIN_SHIELD_CHEST_B = 12,
 };
+
 /* SceneId_AirsRockEntrance's exits. */
 enum {
 	AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_STORM_BRAND_CHEST_WEST = 1,
@@ -1607,6 +1677,7 @@ enum {
 	AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_ENTRANCE = 1,
 	AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST = 14,
 };
+
 /* SceneId_AirsRockFujinShieldChest's exits. */
 enum {
 	AIRS_ROCK_FUJIN_SHIELD_CHEST_TO_AIRS_ROCK_ENTRANCE = 1,
@@ -1629,6 +1700,7 @@ enum {
 	AIRS_ROCK_INSIDE_HALL_FROM_AIRS_ROCK_INSIDE_REVEAL_TABLET = 15,
 	AIRS_ROCK_INSIDE_HALL_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST_SOUTH_B = 16,
 };
+
 /* SceneId_AirsRockInsideHall's exits. */
 enum {
 	AIRS_ROCK_INSIDE_HALL_TO_AIRS_ROCK_INSIDE_VIAL_CHEST_NORTH = 1,
@@ -1651,6 +1723,7 @@ enum {
 	AIRS_ROCK_INSIDE_VIAL_CHEST_FROM_AIRS_ROCK_INSIDE_HALL_NORTH = 2,
 	AIRS_ROCK_INSIDE_VIAL_CHEST_FROM_AIRS_ROCK_INSIDE_HALL_SOUTH = 3,
 };
+
 /* SceneId_AirsRockInsideVialChest's exits. */
 enum {
 	AIRS_ROCK_INSIDE_VIAL_CHEST_TO_AIRS_ROCK_FUJIN_SHIELD_CHEST = 1,
@@ -1663,6 +1736,7 @@ enum {
 	AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST_FROM_AIRS_ROCK_INSIDE_HALL = 1,
 	AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST_FROM_AIRS_ROCK_INSIDE_TIGHTROPES = 2,
 };
+
 /* SceneId_AirsRockInsideClarityCircletChest's exits. */
 enum {
 	AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST_TO_AIRS_ROCK_INSIDE_HALL = 1,
@@ -1676,6 +1750,7 @@ enum {
 	AIRS_ROCK_INSIDE_TIGHTROPES_FROM_AIRS_ROCK_INSIDE_COINS_CHEST = 3,
 	AIRS_ROCK_INSIDE_TIGHTROPES_FROM_AIRS_ROCK_INSIDE_HALL = 4,
 };
+
 /* SceneId_AirsRockInsideTightropes's exits. */
 enum {
 	AIRS_ROCK_INSIDE_TIGHTROPES_TO_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST = 1,
@@ -1688,6 +1763,7 @@ enum {
 enum {
 	AIRS_ROCK_INSIDE_REVEAL_TABLET_FROM_AIRS_ROCK_INSIDE_HALL = 1,
 };
+
 /* SceneId_AirsRockInsideRevealTablet's exits. */
 enum {
 	AIRS_ROCK_INSIDE_REVEAL_TABLET_TO_AIRS_ROCK_INSIDE_HALL = 1,
@@ -1698,6 +1774,7 @@ enum {
 	AIRS_ROCK_INSIDE_ELIXIR_CHEST_FROM_AIRS_ROCK_INSIDE_TIGHTROPES = 1,
 	AIRS_ROCK_INSIDE_ELIXIR_CHEST_FROM_AIRS_ROCK_INSIDE_HALL = 2,
 };
+
 /* SceneId_AirsRockInsideElixirChest's exits. */
 enum {
 	AIRS_ROCK_INSIDE_ELIXIR_CHEST_TO_AIRS_ROCK_INSIDE_TIGHTROPES = 1,
@@ -1709,6 +1786,7 @@ enum {
 	AIRS_ROCK_INSIDE_PAIRED_STAKES_FROM_AIRS_ROCK_INSIDE_HALL = 1,
 	AIRS_ROCK_INSIDE_PAIRED_STAKES_FROM_AIRS_ROCK_INSIDE_FACE_VENTS = 2,
 };
+
 /* SceneId_AirsRockInsidePairedStakes's exits. */
 enum {
 	AIRS_ROCK_INSIDE_PAIRED_STAKES_TO_AIRS_ROCK_INSIDE_HALL = 1,
@@ -1720,6 +1798,7 @@ enum {
 	AIRS_ROCK_INSIDE_FACE_VENTS_FROM_AIRS_ROCK_INSIDE_HALL = 1,
 	AIRS_ROCK_INSIDE_FACE_VENTS_FROM_AIRS_ROCK_INSIDE_PAIRED_STAKES = 2,
 };
+
 /* SceneId_AirsRockInsideFaceVents's exits. */
 enum {
 	AIRS_ROCK_INSIDE_FACE_VENTS_TO_AIRS_ROCK_INSIDE_HALL = 1,
@@ -1731,6 +1810,7 @@ enum {
 	AIRS_ROCK_INSIDE_COINS_CHEST_FROM_AIRS_ROCK_INSIDE_TIGHTROPES = 1,
 	AIRS_ROCK_INSIDE_COINS_CHEST_FROM_AIRS_ROCK_INSIDE_HALL = 2,
 };
+
 /* SceneId_AirsRockInsideCoinsChest's exits. */
 enum {
 	AIRS_ROCK_INSIDE_COINS_CHEST_TO_AIRS_ROCK_INSIDE_TIGHTROPES = 1,
@@ -1742,6 +1822,7 @@ enum {
 	AIRS_ROCK_INSIDE_PSYNERGY_STONE_FROM_AIRS_ROCK_INSIDE_HALL_WEST = 1,
 	AIRS_ROCK_INSIDE_PSYNERGY_STONE_FROM_AIRS_ROCK_INSIDE_HALL_EAST = 2,
 };
+
 /* SceneId_AirsRockInsidePsynergyStone's exits. */
 enum {
 	AIRS_ROCK_INSIDE_PSYNERGY_STONE_TO_AIRS_ROCK_INSIDE_HALL_WEST = 1,
@@ -1761,6 +1842,7 @@ enum {
 	ALHAFRA_FROM_ALHAFRAN_CAVE = 12,
 	ALHAFRA_FROM_ALHAFRA_MANOR = 14,
 };
+
 /* SceneId_Alhafra's exits. */
 enum {
 	ALHAFRA_TO_ALHAFRA_ROOMS_NORTH = 1,
@@ -1783,6 +1865,7 @@ enum {
 	ALHAFRA_ROOMS_FROM_ALHAFRA_EAST = 6,
 	ALHAFRA_ROOMS_FROM_ALHAFRA_WEST = 7,
 };
+
 /* SceneId_AlhafraRooms's exits. */
 enum {
 	ALHAFRA_ROOMS_TO_ALHAFRA_NORTH = 1,
@@ -1795,10 +1878,11 @@ enum {
 /* SceneId_AlhafraManor's entrances. */
 enum {
 	ALHAFRA_MANOR_FROM_ALHAFRA = 1,
-	/* Back from the view of Air's Rock on the World Map, beside the man who */
-	/* showed it (world_map.c's scWorldMapShowAirsRockFromAlhafra). */
+	/* Back from the view of Air's Rock on the World Map, beside the man who
+	   showed it (world_map.c's scWorldMapShowAirsRockFromAlhafra). */
 	ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW = 80,
 };
+
 /* SceneId_AlhafraManor's exits. */
 enum {
 	ALHAFRA_MANOR_TO_ALHAFRA = 1,
@@ -1809,6 +1893,7 @@ enum {
 	EASTERN_ALHAFRA_FROM_ALHAFRA = 1,
 	EASTERN_ALHAFRA_FROM_EASTERN_ALHAFRA_SHIP = 2,
 };
+
 /* SceneId_EasternAlhafra's exits. */
 enum {
 	EASTERN_ALHAFRA_TO_ALHAFRA = 1,
@@ -1819,6 +1904,7 @@ enum {
 enum {
 	EASTERN_ALHAFRA_SHIP_FROM_EASTERN_ALHAFRA = 1,
 };
+
 /* SceneId_EasternAlhafraShip's exits. */
 enum {
 	EASTERN_ALHAFRA_SHIP_TO_EASTERN_ALHAFRA = 1,
@@ -1830,6 +1916,7 @@ enum {
 	ALHAFRAN_CAVE_FROM_ALHAFRA_JAIL_WEST = 4,
 	ALHAFRAN_CAVE_FROM_ALHAFRA_JAIL_EAST = 5,
 };
+
 /* SceneId_AlhafranCave's exits. */
 enum {
 	ALHAFRAN_CAVE_TO_ALHAFRA = 1,
@@ -1843,6 +1930,7 @@ enum {
 	ALHAFRA_JAIL_FROM_ALHAFRAN_CAVE_EAST = 7,
 	ALHAFRA_JAIL_FROM_ALHAFRA = 8,
 };
+
 /* SceneId_AlhafraJail's exits. */
 enum {
 	ALHAFRA_JAIL_TO_ALHAFRAN_CAVE_WEST = 6,
@@ -1856,6 +1944,7 @@ enum {
 	GONDOWAN_CLIFFS_FROM_WORLD_MAP_B = 2,
 	GONDOWAN_CLIFFS_FROM_GONDOWAN_CLIFFS_HIDEOUT = 3,
 };
+
 /* SceneId_GondowanCliffs's exits. */
 enum {
 	GONDOWAN_CLIFFS_TO_WORLD_MAP_A = 1,
@@ -1868,6 +1957,7 @@ enum {
 	GONDOWAN_CLIFFS_PASS_FROM_WORLD_MAP_NORTH = 1,
 	GONDOWAN_CLIFFS_PASS_FROM_WORLD_MAP_SOUTH = 2,
 };
+
 /* SceneId_GondowanCliffsPass's exits. */
 enum {
 	GONDOWAN_CLIFFS_PASS_TO_WORLD_MAP_NORTH = 1,
@@ -1878,6 +1968,7 @@ enum {
 enum {
 	GONDOWAN_CLIFFS_HIDEOUT_FROM_GONDOWAN_CLIFFS = 1,
 };
+
 /* SceneId_GondowanCliffsHideout's exits. */
 enum {
 	GONDOWAN_CLIFFS_HIDEOUT_TO_GONDOWAN_CLIFFS = 1,
@@ -1892,6 +1983,7 @@ enum {
 	NARIBWE_FROM_NARIBWE_ROOMS_NORTHEAST = 5,
 	NARIBWE_FROM_WORLD_MAP_SOUTH = 6,
 };
+
 /* SceneId_Naribwe's exits. */
 enum {
 	NARIBWE_TO_NARIBWE_ROOMS_NORTHWEST = 1,
@@ -1911,6 +2003,7 @@ enum {
 	NARIBWE_ROOMS_FROM_NARIBWE_SOUTHEAST = 4,
 	NARIBWE_ROOMS_FROM_NARIBWE_NORTHEAST = 5,
 };
+
 /* SceneId_NaribweRooms's exits. */
 enum {
 	NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST = 1,
@@ -1930,6 +2023,7 @@ enum {
 	KIBOMBO_MOUNTAINS_WAFT_FROM_KIBOMBO_MOUNTAINS_CAVERN_SOUTH_A = 6,
 	KIBOMBO_MOUNTAINS_WAFT_FROM_KIBOMBO_MOUNTAINS_CAVERN_SOUTH_B = 7,
 };
+
 /* SceneId_KibomboMountainsWaft's exits. */
 enum {
 	KIBOMBO_MOUNTAINS_WAFT_TO_WORLD_MAP = 1,
@@ -1948,6 +2042,7 @@ enum {
 	KIBOMBO_MOUNTAINS_DISK_AXE_CHEST_FROM_KIBOMBO_MOUNTAINS_WAFT_EAST_B = 3,
 	KIBOMBO_MOUNTAINS_DISK_AXE_CHEST_FROM_KIBOMBO_MOUNTAINS_WAFT_WEST = 4,
 };
+
 /* SceneId_KibomboMountainsDiskAxeChest's exits. */
 enum {
 	KIBOMBO_MOUNTAINS_DISK_AXE_CHEST_TO_WORLD_MAP = 1,
@@ -1962,6 +2057,7 @@ enum {
 	KIBOMBO_MOUNTAINS_CAVERN_FROM_KIBOMBO_MOUNTAINS_WAFT_SOUTH_A = 2,
 	KIBOMBO_MOUNTAINS_CAVERN_FROM_KIBOMBO_MOUNTAINS_WAFT_SOUTH_B = 3,
 };
+
 /* SceneId_KibomboMountainsCavern's exits. */
 enum {
 	KIBOMBO_MOUNTAINS_CAVERN_TO_KIBOMBO_MOUNTAINS_WAFT_NORTH = 1,
@@ -1982,6 +2078,7 @@ enum {
 	KIBOMBO_FROM_KIBOMBO_STATUE_GROUNDS_WEST_A = 9,
 	KIBOMBO_FROM_KIBOMBO_STATUE_GROUNDS_WEST_B = 10,
 };
+
 /* SceneId_Kibombo's exits. */
 enum {
 	KIBOMBO_TO_WORLD_MAP = 1,
@@ -2004,6 +2101,7 @@ enum {
 	KIBOMBO_STATUE_GROUNDS_FROM_GABOMBA_STATUE_CHAMBER_IDOL = 4,
 	KIBOMBO_STATUE_GROUNDS_FROM_KIBOMBO_WEST_B = 5,
 };
+
 /* SceneId_KibomboStatueGrounds's exits. */
 enum {
 	KIBOMBO_STATUE_GROUNDS_TO_KIBOMBO_EAST = 1,
@@ -2023,6 +2121,7 @@ enum {
 	KIBOMBO_HOUSES_FROM_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR = 9,
 	KIBOMBO_HOUSES_FROM_KIBOMBO_SOUTHEAST = 10,
 };
+
 /* SceneId_KibomboHouses's exits. */
 enum {
 	KIBOMBO_HOUSES_TO_KIBOMBO_NORTHWEST = 1,
@@ -2046,6 +2145,7 @@ enum {
 	KIBOMBO_CEREMONY_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_WEST_A = 9,
 	KIBOMBO_CEREMONY_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_WEST_B = 10,
 };
+
 /* SceneId_KibomboCeremony's exits. */
 enum {
 	KIBOMBO_CEREMONY_TO_WORLD_MAP = 1,
@@ -2075,6 +2175,7 @@ enum {
 	KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_ARROWS_NORTH_E = 15,
 	KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_FACE_EAST_A = 16,
 };
+
 /* SceneId_KibomboStatueGroundsCeremony's exits. */
 enum {
 	KIBOMBO_STATUE_GROUNDS_CEREMONY_TO_KIBOMBO_CEREMONY_EAST = 1,
@@ -2093,6 +2194,7 @@ enum {
 	GABOMBA_STATUE_BONE_ARMLET_CHEST_FROM_GABOMBA_STATUE_PINION = 1,
 	GABOMBA_STATUE_BONE_ARMLET_CHEST_FROM_GABOMBA_STATUE_ELIXIR_CHEST = 2,
 };
+
 /* SceneId_GabombaStatueBoneArmletChest's exits. */
 enum {
 	GABOMBA_STATUE_BONE_ARMLET_CHEST_TO_GABOMBA_STATUE_PINION = 1,
@@ -2106,6 +2208,7 @@ enum {
 	GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_WEST = 3,
 	GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_EAST = 4,
 };
+
 /* SceneId_GabombaStatueElixirChest's exits. */
 enum {
 	GABOMBA_STATUE_ELIXIR_CHEST_TO_GABOMBA_STATUE_BONE_ARMLET_CHEST = 1,
@@ -2125,6 +2228,7 @@ enum {
 	GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_A = 7,
 	GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_B = 8,
 };
+
 /* SceneId_GabombaStatueSteel's exits. */
 enum {
 	GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_ELIXIR_CHEST_NORTHEAST = 1,
@@ -2142,6 +2246,7 @@ enum {
 	GABOMBA_STATUE_MOUSE_FROM_GABOMBA_STATUE_STEEL_EAST = 3,
 	GABOMBA_STATUE_MOUSE_FROM_GABOMBA_STATUE_COGS = 4,
 };
+
 /* SceneId_GabombaStatueMouse's exits. */
 enum {
 	GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_STEEL_NORTHWEST = 1,
@@ -2157,6 +2262,7 @@ enum {
 	GABOMBA_STATUE_COGS_FROM_GABOMBA_STATUE_MOUSE = 1,
 	GABOMBA_STATUE_COGS_FROM_GABOMBA_STATUE_CHAMBER_IDOL = 2,
 };
+
 /* SceneId_GabombaStatueCogs's exits. */
 enum {
 	GABOMBA_STATUE_COGS_TO_GABOMBA_STATUE_MOUSE = 1,
@@ -2172,6 +2278,7 @@ enum {
 	GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH = 5,
 	GABOMBA_STATUE_CHAMBER_IDOL_FROM_GABOMBA_STATUE_ARROWS_WEST = 6,
 };
+
 /* SceneId_GabombaStatueChamberIdol's exits. */
 enum {
 	GABOMBA_STATUE_CHAMBER_IDOL_TO_GABOMBA_STATUE_COGS = 1,
@@ -2186,6 +2293,7 @@ enum {
 	GABOMBA_STATUE_ARROWS_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_A = 2,
 	GABOMBA_STATUE_ARROWS_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_B_A = 3,
 };
+
 /* SceneId_GabombaStatueArrows's exits. */
 enum {
 	GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_CHAMBER_IDOL_EAST = 1,
@@ -2205,6 +2313,7 @@ enum {
 	GABOMBA_STATUE_CHAMBER_LIFT_FROM_GABOMBA_STATUE_CHAMBER_IDOL = 1,
 	GABOMBA_STATUE_CHAMBER_LIFT_FROM_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR = 2,
 };
+
 /* SceneId_GabombaStatueChamberLift's exits. */
 enum {
 	GABOMBA_STATUE_CHAMBER_LIFT_TO_GABOMBA_STATUE_CHAMBER_IDOL = 1,
@@ -2216,6 +2325,7 @@ enum {
 	GABOMBA_STATUE_PINION_FROM_KIBOMBO_STATUE_GROUNDS = 1,
 	GABOMBA_STATUE_PINION_FROM_GABOMBA_STATUE_BONE_ARMLET_CHEST = 2,
 };
+
 /* SceneId_GabombaStatuePinion's exits. */
 enum {
 	GABOMBA_STATUE_PINION_TO_KIBOMBO_STATUE_GROUNDS = 1,
@@ -2227,6 +2337,7 @@ enum {
 	GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_FROM_GABOMBA_STATUE_CHAMBER_LIFT = 1,
 	GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_FROM_GABOMBA_CATACOMBS_TELEPORTERS = 2,
 };
+
 /* SceneId_GabombaStatueChamberWitchDoctor's exits. */
 enum {
 	GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_TO_GABOMBA_STATUE_CHAMBER_LIFT = 1,
@@ -2239,6 +2350,7 @@ enum {
 	GABOMBA_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A = 10,
 	GABOMBA_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B = 11,
 };
+
 /* SceneId_GabombaStatueFace's exits. */
 enum {
 	GABOMBA_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A = 10,
@@ -2250,6 +2362,7 @@ enum {
 	GABOMBA_CATACOMBS_TELEPORTERS_FROM_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR = 1,
 	GABOMBA_CATACOMBS_TELEPORTERS_FROM_GABOMBA_CATACOMBS_MUD_NORTHEAST = 2,
 };
+
 /* SceneId_GabombaCatacombsTeleporters's exits. */
 enum {
 	GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR = 1,
@@ -2267,6 +2380,7 @@ enum {
 	GABOMBA_CATACOMBS_MUD_FROM_GABOMBA_CATACOMBS_TELEPORTERS_EAST = 4,
 	GABOMBA_CATACOMBS_MUD_FROM_GABOMBA_CATACOMBS_TELEPORTERS_SOUTH = 5,
 };
+
 /* SceneId_GabombaCatacombsMud's exits. */
 enum {
 	GABOMBA_CATACOMBS_MUD_TO_GABOMBA_CATACOMBS_TELEPORTERS_NORTHEAST = 1,
@@ -2278,6 +2392,7 @@ enum {
 	GABOMBA_CATACOMBS_HIDDEN_WALL_FROM_GABOMBA_CATACOMBS_MUD = 1,
 	GABOMBA_CATACOMBS_HIDDEN_WALL_FROM_GABOMBA_CATACOMBS_STREAM = 2,
 };
+
 /* SceneId_GabombaCatacombsHiddenWall's exits. */
 enum {
 	GABOMBA_CATACOMBS_HIDDEN_WALL_TO_GABOMBA_CATACOMBS_MUD = 1,
@@ -2288,6 +2403,7 @@ enum {
 enum {
 	GABOMBA_CATACOMBS_TOMEGATHERICON_FROM_GABOMBA_CATACOMBS_STREAM = 1,
 };
+
 /* SceneId_GabombaCatacombsTomegathericon's exits. */
 enum {
 	GABOMBA_CATACOMBS_TOMEGATHERICON_TO_GABOMBA_CATACOMBS_STREAM = 1,
@@ -2298,6 +2414,7 @@ enum {
 	GABOMBA_CATACOMBS_STREAM_FROM_GABOMBA_CATACOMBS_HIDDEN_WALL = 1,
 	GABOMBA_CATACOMBS_STREAM_FROM_GABOMBA_CATACOMBS_TOMEGATHERICON = 2,
 };
+
 /* SceneId_GabombaCatacombsStream's exits. */
 enum {
 	GABOMBA_CATACOMBS_STREAM_TO_GABOMBA_CATACOMBS_HIDDEN_WALL = 1,
@@ -2309,6 +2426,7 @@ enum {
 	WEST_INDRA_ISLET_FROM_WORLD_MAP = 1,
 	WEST_INDRA_ISLET_FROM_CHAMPA_ROOMS = 2,
 };
+
 /* SceneId_WestIndraIslet's exits. */
 enum {
 	WEST_INDRA_ISLET_TO_WORLD_MAP = 1,
@@ -2320,6 +2438,7 @@ enum {
 	EAST_TUNDARIA_ISLET_FROM_WORLD_MAP = 1,
 	EAST_TUNDARIA_ISLET_FROM_MIKASALLA_ROOMS_HOUSES = 2,
 };
+
 /* SceneId_EastTundariaIslet's exits. */
 enum {
 	EAST_TUNDARIA_ISLET_TO_WORLD_MAP = 1,
@@ -2331,6 +2450,7 @@ enum {
 	NORTH_OSENIA_ISLET_FROM_WORLD_MAP_A = 1,
 	NORTH_OSENIA_ISLET_FROM_DAILA_ROOMS_HOUSES = 3,
 };
+
 /* SceneId_NorthOseniaIslet's exits. */
 enum {
 	NORTH_OSENIA_ISLET_TO_WORLD_MAP_A = 1,
@@ -2344,6 +2464,7 @@ enum {
 	SOUTHEAST_ANGARA_ISLET_FROM_WORLD_MAP = 10,
 	SOUTHEAST_ANGARA_ISLET_FROM_CHAMPA_ROOMS = 11,
 };
+
 /* SceneId_SoutheastAngaraIslet's exits. */
 enum {
 	SOUTHEAST_ANGARA_ISLET_TO_WORLD_MAP = 10,
@@ -2356,6 +2477,7 @@ enum {
 	SEA_OF_TIME_ISLET_FROM_APOJII_ISLANDS_SHOPS = 2,
 	SEA_OF_TIME_ISLET_FROM_ISLET_CAVE_HALLS = 5,
 };
+
 /* SceneId_SeaOfTimeIslet's exits. */
 enum {
 	SEA_OF_TIME_ISLET_TO_WORLD_MAP = 1,
@@ -2368,6 +2490,7 @@ enum {
 	ISLET_CAVE_HALLS_FROM_SEA_OF_TIME_ISLET = 1,
 	ISLET_CAVE_HALLS_FROM_ISLET_CAVE_CORRIDORS = 8,
 };
+
 /* SceneId_IsletCaveHalls's exits. */
 enum {
 	ISLET_CAVE_HALLS_TO_SEA_OF_TIME_ISLET = 1,
@@ -2379,6 +2502,7 @@ enum {
 	ISLET_CAVE_CORRIDORS_FROM_ISLET_CAVE_HALLS = 1,
 	ISLET_CAVE_CORRIDORS_FROM_ISLET_CAVE_SENTINEL = 10,
 };
+
 /* SceneId_IsletCaveCorridors's exits. */
 enum {
 	ISLET_CAVE_CORRIDORS_TO_ISLET_CAVE_HALLS = 1,
@@ -2389,6 +2513,7 @@ enum {
 enum {
 	ISLET_CAVE_SENTINEL_FROM_ISLET_CAVE_CORRIDORS = 1,
 };
+
 /* SceneId_IsletCaveSentinel's exits. */
 enum {
 	ISLET_CAVE_SENTINEL_TO_ISLET_CAVE_CORRIDORS = 1,
@@ -2409,6 +2534,7 @@ enum {
 	YALLAM_FROM_WORLD_MAP_NORTH = 11,
 	YALLAM_FROM_YALLAM_CAVE_WEST = 13,
 };
+
 /* SceneId_Yallam's exits. */
 enum {
 	YALLAM_TO_YALLAM_ROOMS_INN_SOUTHEAST = 1,
@@ -2430,6 +2556,7 @@ enum {
 	YALLAM_CAVE_FROM_YALLAM_EAST = 6,
 	YALLAM_CAVE_FROM_YALLAM_WEST = 7,
 };
+
 /* SceneId_YallamCave's exits. */
 enum {
 	YALLAM_CAVE_TO_YALLAM_EAST = 6,
@@ -2443,6 +2570,7 @@ enum {
 	YALLAM_ROOMS_INN_FROM_YALLAM_NORTHEAST = 3,
 	YALLAM_ROOMS_INN_FROM_YALLAM_WEST = 4,
 };
+
 /* SceneId_YallamRoomsInn's exits. */
 enum {
 	YALLAM_ROOMS_INN_TO_YALLAM_SOUTHEAST = 1,
@@ -2457,6 +2585,7 @@ enum {
 	YALLAM_ROOMS_SHOPS_FROM_YALLAM_WEST = 2,
 	YALLAM_ROOMS_SHOPS_FROM_YALLAM_NORTH = 3,
 };
+
 /* SceneId_YallamRoomsShops's exits. */
 enum {
 	YALLAM_ROOMS_SHOPS_TO_YALLAM_EAST = 1,
@@ -2470,6 +2599,7 @@ enum {
 	TAOPO_SWAMP_ENTRANCE_FROM_TAOPO_SWAMP_MUD_NORTH = 2,
 	TAOPO_SWAMP_ENTRANCE_FROM_TAOPO_SWAMP_MUD_SOUTH = 3,
 };
+
 /* SceneId_TaopoSwampEntrance's exits. */
 enum {
 	TAOPO_SWAMP_ENTRANCE_TO_WORLD_MAP = 1,
@@ -2485,6 +2615,7 @@ enum {
 	TAOPO_SWAMP_MUD_FROM_TAOPO_SWAMP_POOL = 4,
 	TAOPO_SWAMP_MUD_FROM_TAOPO_SWAMP_TEAR_STONES_EAST = 5,
 };
+
 /* SceneId_TaopoSwampMud's exits. */
 enum {
 	TAOPO_SWAMP_MUD_TO_TAOPO_SWAMP_ENTRANCE_NORTH = 1,
@@ -2501,6 +2632,7 @@ enum {
 	TAOPO_SWAMP_TEAR_STONES_FROM_TAOPO_SWAMP_VENTS_NORTH = 6,
 	TAOPO_SWAMP_TEAR_STONES_FROM_TAOPO_SWAMP_VENTS_SOUTH = 7,
 };
+
 /* SceneId_TaopoSwampTearStones's exits. */
 enum {
 	TAOPO_SWAMP_TEAR_STONES_TO_TAOPO_SWAMP_MUD_WEST = 3,
@@ -2521,6 +2653,7 @@ enum {
 	TAOPO_SWAMP_FLOWER_FROM_TAOPO_SWAMP_VENTS_EAST_D = 15,
 	TAOPO_SWAMP_FLOWER_FROM_TAOPO_SWAMP_VENTS_EAST_E = 16,
 };
+
 /* SceneId_TaopoSwampFlower's exits. */
 enum {
 	TAOPO_SWAMP_FLOWER_TO_TAOPO_SWAMP_VENTS_WEST_A = 1,
@@ -2534,6 +2667,7 @@ enum {
 	TAOPO_SWAMP_VENTS_FROM_TAOPO_SWAMP_TEAR_STONES_SOUTH = 3,
 	TAOPO_SWAMP_VENTS_FROM_TAOPO_SWAMP_FLOWER_EAST_A = 4,
 };
+
 /* SceneId_TaopoSwampVents's exits. */
 enum {
 	TAOPO_SWAMP_VENTS_TO_TAOPO_SWAMP_FLOWER_WEST_A = 1,
@@ -2554,6 +2688,7 @@ enum {
 	TAOPO_SWAMP_POOL_FROM_TAOPO_SWAMP_PILLAR_GAP = 1,
 	TAOPO_SWAMP_POOL_FROM_TAOPO_SWAMP_MUD = 4,
 };
+
 /* SceneId_TaopoSwampPool's exits. */
 enum {
 	TAOPO_SWAMP_POOL_TO_TAOPO_SWAMP_PILLAR_GAP = 1,
@@ -2566,6 +2701,7 @@ enum {
 	TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_SOUTH = 2,
 	TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST = 3,
 };
+
 /* SceneId_TaopoSwampPillarGap's exits. */
 enum {
 	TAOPO_SWAMP_PILLAR_GAP_TO_TAOPO_SWAMP_POOL = 1,
@@ -2582,6 +2718,7 @@ enum {
 	TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_NORTHWEST = 3,
 	TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_EAST = 9,
 };
+
 /* SceneId_TaopoSwampDrips's exits. */
 enum {
 	TAOPO_SWAMP_DRIPS_TO_TAOPO_SWAMP_TREMOR = 1,
@@ -2594,6 +2731,7 @@ enum {
 	TAOPO_SWAMP_LAVA_ROCKS_FROM_TAOPO_SWAMP_TREMOR_EAST = 3,
 	TAOPO_SWAMP_LAVA_ROCKS_FROM_TAOPO_SWAMP_TREMOR_WEST = 4,
 };
+
 /* SceneId_TaopoSwampLavaRocks's exits. */
 enum {
 	TAOPO_SWAMP_LAVA_ROCKS_TO_TAOPO_SWAMP_TREMOR_EAST = 3,
@@ -2607,6 +2745,7 @@ enum {
 	TAOPO_SWAMP_TREMOR_FROM_TAOPO_SWAMP_LAVA_ROCKS_EAST = 3,
 	TAOPO_SWAMP_TREMOR_FROM_TAOPO_SWAMP_LAVA_ROCKS_WEST = 4,
 };
+
 /* SceneId_TaopoSwampTremor's exits. */
 enum {
 	TAOPO_SWAMP_TREMOR_TO_TAOPO_SWAMP_DRIPS = 1,
@@ -2619,6 +2758,7 @@ enum {
 enum {
 	TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR = 2,
 };
+
 /* SceneId_TaopoSwampStarDust's exits. */
 enum {
 	TAOPO_SWAMP_STAR_DUST_TO_TAOPO_SWAMP_TREMOR = 2,
@@ -2636,6 +2776,7 @@ enum {
 	APOJII_ISLANDS_FROM_APOJII_ISLANDS_SHOPS_NORTHWEST = 8,
 	APOJII_ISLANDS_FROM_MIKASALLA_ROOMS_SANCTUM = 9,
 };
+
 /* SceneId_ApojiiIslands's exits. */
 enum {
 	APOJII_ISLANDS_TO_WORLD_MAP_A = 1,
@@ -2658,6 +2799,7 @@ enum {
 	APOJII_ISLANDS_HAZE_FROM_APOJII_ISLANDS_CAVE_SOUTHEAST = 4,
 	APOJII_ISLANDS_HAZE_FROM_APOJII_ISLANDS_CAVE_NORTH = 5,
 };
+
 /* SceneId_ApojiiIslandsHaze's exits. */
 enum {
 	APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_NORTH = 1,
@@ -2676,6 +2818,7 @@ enum {
 	APOJII_ISLANDS_SHOPS_FROM_APOJII_ISLANDS_NORTHWEST = 5,
 	APOJII_ISLANDS_SHOPS_FROM_SEA_OF_TIME_ISLET = 6,
 };
+
 /* SceneId_ApojiiIslandsShops's exits. */
 enum {
 	APOJII_ISLANDS_SHOPS_TO_APOJII_ISLANDS_SOUTHEAST = 1,
@@ -2692,6 +2835,7 @@ enum {
 	APOJII_ISLANDS_CAVE_FROM_APOJII_ISLANDS_HAZE_SOUTHEAST = 4,
 	APOJII_ISLANDS_CAVE_FROM_APOJII_ISLANDS_HAZE_NORTH = 5,
 };
+
 /* SceneId_ApojiiIslandsCave's exits. */
 enum {
 	APOJII_ISLANDS_CAVE_TO_APOJII_ISLANDS_HAZE_SOUTHWEST = 3,
@@ -2708,6 +2852,7 @@ enum {
 	AQUA_ROCK_MOAI_FROM_WORLD_MAP_NORTH = 5,
 	AQUA_ROCK_MOAI_FROM_AQUA_ROCK_MIST_SABRE_CHEST_D = 7,
 };
+
 /* SceneId_AquaRockMoai's exits. */
 enum {
 	AQUA_ROCK_MOAI_TO_WORLD_MAP_SOUTH = 1,
@@ -2725,6 +2870,7 @@ enum {
 	AQUA_ROCK_MIST_SABRE_CHEST_FROM_AQUA_ROCK_MOAI_B = 3,
 	AQUA_ROCK_MIST_SABRE_CHEST_FROM_AQUA_ROCK_MOAI_C = 6,
 };
+
 /* SceneId_AquaRockMistSabreChest's exits. */
 enum {
 	AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST = 1,
@@ -2741,6 +2887,7 @@ enum {
 	AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST_FROM_AQUA_ROCK_INSIDE_AQUARIUS_STONE =
 		11,
 };
+
 /* SceneId_AquaRockInsideWaterOfLifeChest's exits. */
 enum {
 	AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST_TO_AQUA_ROCK_INSIDE_TIGHTROPE = 1,
@@ -2758,6 +2905,7 @@ enum {
 	AQUA_ROCK_INSIDE_STEAM_FROM_AQUA_ROCK_INSIDE_AQUARIUS_STONE_NORTH_B = 6,
 	AQUA_ROCK_INSIDE_STEAM_FROM_AQUA_ROCK_INSIDE_AQUARIUS_STONE_SOUTH = 9,
 };
+
 /* SceneId_AquaRockInsideSteam's exits. */
 enum {
 	AQUA_ROCK_INSIDE_STEAM_TO_AQUA_ROCK_INSIDE_PSYNERGY_STONE = 1,
@@ -2781,6 +2929,7 @@ enum {
 	AQUA_ROCK_INSIDE_AQUARIUS_STONE_FROM_AQUA_ROCK_INSIDE_PSYNERGY_STONE = 7,
 	AQUA_ROCK_INSIDE_AQUARIUS_STONE_FROM_AQUA_ROCK_INSIDE_STEAM_NORTH_B = 8,
 };
+
 /* SceneId_AquaRockInsideAquariusStone's exits. */
 enum {
 	AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST = 1,
@@ -2809,6 +2958,7 @@ enum {
 		6,
 	AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_FROM_AQUA_ROCK_INSIDE_TIGHTROPE = 9,
 };
+
 /* SceneId_AquaRockInsideRustySwordChest's exits. */
 enum {
 	AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_TO_AQUA_ROCK_MOAI = 1,
@@ -2837,6 +2987,7 @@ enum {
 	AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_FROM_AQUA_ROCK_INSIDE_VIAL_CHEST_SOUTH =
 		7,
 };
+
 /* SceneId_AquaRockInsideCrystalPowderChest's exits. */
 enum {
 	AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST_NORTHWEST =
@@ -2863,6 +3014,7 @@ enum {
 		12,
 	AQUA_ROCK_INSIDE_VIAL_CHEST_FROM_AQUA_ROCK_MIST_SABRE_CHEST = 13,
 };
+
 /* SceneId_AquaRockInsideVialChest's exits. */
 enum {
 	AQUA_ROCK_INSIDE_VIAL_CHEST_TO_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_NORTHWEST =
@@ -2883,6 +3035,7 @@ enum {
 	AQUA_ROCK_INSIDE_PSYNERGY_STONE_FROM_AQUA_ROCK_INSIDE_TIGHTROPE_WEST = 3,
 	AQUA_ROCK_INSIDE_PSYNERGY_STONE_FROM_AQUA_ROCK_INSIDE_AQUARIUS_STONE = 4,
 };
+
 /* SceneId_AquaRockInsidePsynergyStone's exits. */
 enum {
 	AQUA_ROCK_INSIDE_PSYNERGY_STONE_TO_AQUA_ROCK_INSIDE_STEAM = 1,
@@ -2902,6 +3055,7 @@ enum {
 	AQUA_ROCK_INSIDE_TIGHTROPE_FROM_AQUA_ROCK_INSIDE_TEAR_STONE_NORTHEAST = 7,
 	AQUA_ROCK_INSIDE_TIGHTROPE_FROM_AQUA_ROCK_INSIDE_TEAR_STONE_WEST = 8,
 };
+
 /* SceneId_AquaRockInsideTightrope's exits. */
 enum {
 	AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST = 1,
@@ -2921,6 +3075,7 @@ enum {
 	AQUA_ROCK_INSIDE_TEAR_STONE_FROM_AQUA_ROCK_INSIDE_TIGHTROPE_NORTHEAST = 3,
 	AQUA_ROCK_INSIDE_TEAR_STONE_FROM_AQUA_ROCK_INSIDE_TIGHTROPE_EAST = 4,
 };
+
 /* SceneId_AquaRockInsideTearStone's exits. */
 enum {
 	AQUA_ROCK_INSIDE_TEAR_STONE_TO_AQUA_ROCK_INSIDE_TIGHTROPE_WEST = 1,
@@ -2933,6 +3088,7 @@ enum {
 enum {
 	AQUA_ROCK_INSIDE_PARCH_TABLET_FROM_AQUA_ROCK_INSIDE_AQUARIUS_STONE = 1,
 };
+
 /* SceneId_AquaRockInsideParchTablet's exits. */
 enum {
 	AQUA_ROCK_INSIDE_PARCH_TABLET_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE = 1,
@@ -2948,6 +3104,7 @@ enum {
 	IZUMO_ROOMS_FROM_IZUMO_NORTHEAST = 6,
 	IZUMO_ROOMS_FROM_IZUMO_NORTH = 7,
 };
+
 /* SceneId_IzumoRooms's exits. */
 enum {
 	IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A = 1,
@@ -2971,6 +3128,7 @@ enum {
 	IZUMO_FROM_IZUMO_ROOMS_NORTH = 8,
 	IZUMO_FROM_IZUMO_RUINS_FIRST_ROOM = 10,
 };
+
 /* SceneId_Izumo's exits. */
 enum {
 	IZUMO_TO_WORLD_MAP = 1,
@@ -2989,6 +3147,7 @@ enum {
 	IZUMO_RUINS_FIRST_ROOM_FROM_IZUMO = 1,
 	IZUMO_RUINS_FIRST_ROOM_FROM_IZUMO_RUINS_SECOND_ROOM = 4,
 };
+
 /* SceneId_IzumoRuinsFirstRoom's exits. */
 enum {
 	IZUMO_RUINS_FIRST_ROOM_TO_IZUMO = 1,
@@ -2999,6 +3158,7 @@ enum {
 enum {
 	IZUMO_RUINS_SECOND_ROOM_FROM_IZUMO_RUINS_FIRST_ROOM = 1,
 };
+
 /* SceneId_IzumoRuinsSecondRoom's exits. */
 enum {
 	IZUMO_RUINS_SECOND_ROOM_TO_IZUMO_RUINS_FIRST_ROOM = 1,
@@ -3010,6 +3170,7 @@ enum {
 	GAIA_ROCK_SUSA_FROM_GAIA_ROCK_INSIDE_FIRST_ALTAR = 4,
 	GAIA_ROCK_SUSA_FROM_WORLD_MAP = 5,
 };
+
 /* SceneId_GaiaRockSusa's exits. */
 enum {
 	GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS = 1,
@@ -3022,6 +3183,7 @@ enum {
 	GAIA_ROCK_STATUE_SPOTS_FROM_GAIA_ROCK_SUSA = 1,
 	GAIA_ROCK_STATUE_SPOTS_FROM_GAIA_ROCK_DANCING_IDOL = 4,
 };
+
 /* SceneId_GaiaRockStatueSpots's exits. */
 enum {
 	GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_SUSA = 1,
@@ -3032,6 +3194,7 @@ enum {
 enum {
 	GAIA_ROCK_DANCING_IDOL_FROM_GAIA_ROCK_STATUE_SPOTS = 1,
 };
+
 /* SceneId_GaiaRockDancingIdol's exits. */
 enum {
 	GAIA_ROCK_DANCING_IDOL_TO_GAIA_ROCK_STATUE_SPOTS = 1,
@@ -3043,6 +3206,7 @@ enum {
 	GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_FIRST_ALTAR_B = 9,
 	GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_A = 20,
 };
+
 /* SceneId_GaiaRockInsideMaze's exits. */
 enum {
 	GAIA_ROCK_INSIDE_MAZE_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR_B = 9,
@@ -3060,6 +3224,7 @@ enum {
 	GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_PLATFORMS_WEST = 7,
 	GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_PLATFORMS_EAST = 10,
 };
+
 /* SceneId_GaiaRockInsideFirstAltar's exits. */
 enum {
 	GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_GAIA_ROCK_SUSA = 1,
@@ -3075,6 +3240,7 @@ enum {
 	GAIA_ROCK_INSIDE_TWIN_ALTARS_FROM_GAIA_ROCK_INSIDE_ALTAR_SOUTHEAST_A = 3,
 	GAIA_ROCK_INSIDE_TWIN_ALTARS_FROM_GAIA_ROCK_INSIDE_ALTAR_SOUTHEAST_B = 6,
 };
+
 /* SceneId_GaiaRockInsideTwinAltars's exits. */
 enum {
 	GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_PLATFORMS = 1,
@@ -3089,6 +3255,7 @@ enum {
 	GAIA_ROCK_INSIDE_PLATFORMS_FROM_GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_B = 2,
 	GAIA_ROCK_INSIDE_PLATFORMS_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS = 3,
 };
+
 /* SceneId_GaiaRockInsidePlatforms's exits. */
 enum {
 	GAIA_ROCK_INSIDE_PLATFORMS_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_A = 1,
@@ -3102,6 +3269,7 @@ enum {
 	GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_A = 6,
 	GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_NORTHWEST = 7,
 };
+
 /* SceneId_GaiaRockInsideAltar's exits. */
 enum {
 	GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_NORTHWEST = 7,
@@ -3124,6 +3292,7 @@ enum {
 	CHAMPA_FROM_CHAMPA_CLIFF_CAVES_HOUSES = 10,
 	CHAMPA_FROM_CHAMPA_CLIFF_CAVES_OBABA = 11,
 };
+
 /* SceneId_Champa's exits. */
 enum {
 	CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A = 1,
@@ -3150,6 +3319,7 @@ enum {
 	CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET = 8,
 	CHAMPA_ROOMS_FROM_WEST_INDRA_ISLET = 9,
 };
+
 /* SceneId_ChampaRooms's exits. */
 enum {
 	CHAMPA_ROOMS_TO_CHAMPA_SOUTHWEST_A = 1,
@@ -3166,6 +3336,7 @@ enum {
 enum {
 	CHAMPA_SANCTUM_FROM_CHAMPA = 1,
 };
+
 /* SceneId_ChampaSanctum's exits. */
 enum {
 	CHAMPA_SANCTUM_TO_CHAMPA = 1,
@@ -3176,6 +3347,7 @@ enum {
 	CHAMPA_CLIFF_CAVES_BRIGGS_FROM_CHAMPA = 1,
 	CHAMPA_CLIFF_CAVES_BRIGGS_FROM_CHAMPA_CLIFF_CAVES_HOUSES = 2,
 };
+
 /* SceneId_ChampaCliffCavesBriggs's exits. */
 enum {
 	CHAMPA_CLIFF_CAVES_BRIGGS_TO_CHAMPA = 1,
@@ -3188,6 +3360,7 @@ enum {
 	CHAMPA_CLIFF_CAVES_HOUSES_FROM_CHAMPA_CLIFF_CAVES_BRIGGS = 12,
 	CHAMPA_CLIFF_CAVES_HOUSES_FROM_CHAMPA_CLIFF_CAVES_OBABA = 13,
 };
+
 /* SceneId_ChampaCliffCavesHouses's exits. */
 enum {
 	CHAMPA_CLIFF_CAVES_HOUSES_TO_CHAMPA = 7,
@@ -3201,6 +3374,7 @@ enum {
 	CHAMPA_CLIFF_CAVES_OBABA_FROM_CHAMPA = 19,
 	CHAMPA_CLIFF_CAVES_OBABA_FROM_CHAMPA_CLIFF_CAVES_AVIMANDER = 20,
 };
+
 /* SceneId_ChampaCliffCavesObaba's exits. */
 enum {
 	CHAMPA_CLIFF_CAVES_OBABA_TO_CHAMPA_CLIFF_CAVES_HOUSES = 14,
@@ -3212,6 +3386,7 @@ enum {
 enum {
 	CHAMPA_CLIFF_CAVES_AVIMANDER_FROM_CHAMPA_CLIFF_CAVES_OBABA = 21,
 };
+
 /* SceneId_ChampaCliffCavesAvimander's exits. */
 enum {
 	CHAMPA_CLIFF_CAVES_AVIMANDER_TO_CHAMPA_CLIFF_CAVES_OBABA = 21,
@@ -3227,6 +3402,7 @@ enum {
 	ANKOHL_RUINS_STONE_FACES_FROM_ANKOHL_RUINS_THANATOS_MACE_CHEST_EAST = 32,
 	ANKOHL_RUINS_STONE_FACES_FROM_ANKOHL_RUINS_THANATOS_MACE_CHEST_WEST = 33,
 };
+
 /* SceneId_AnkohlRuinsStoneFaces's exits. */
 enum {
 	ANKOHL_RUINS_STONE_FACES_TO_ANKOHL_RUINS_ENTRANCE = 1,
@@ -3250,6 +3426,7 @@ enum {
 	ANKOHL_RUINS_THANATOS_MACE_CHEST_FROM_ANKOHL_RUINS_FACE_HALVES_WEST = 18,
 	ANKOHL_RUINS_THANATOS_MACE_CHEST_FROM_ANKOHL_RUINS_FACE_HALVES_EAST = 19,
 };
+
 /* SceneId_AnkohlRuinsThanatosMaceChest's exits. */
 enum {
 	ANKOHL_RUINS_THANATOS_MACE_CHEST_TO_ANKOHL_RUINS_STONE_FACES_SOUTHWEST = 1,
@@ -3274,6 +3451,7 @@ enum {
 	ANKOHL_RUINS_GREAT_FACE_FROM_ANKOHL_RUINS_FACE_HALVES_WEST = 11,
 	ANKOHL_RUINS_GREAT_FACE_FROM_ANKOHL_RUINS_FACE_HALVES_EAST = 12,
 };
+
 /* SceneId_AnkohlRuinsGreatFace's exits. */
 enum {
 	ANKOHL_RUINS_GREAT_FACE_TO_ANKOHL_RUINS_FACE_HALVES_NORTH = 1,
@@ -3307,6 +3485,7 @@ enum {
 	ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_C =
 		20,
 };
+
 /* SceneId_AnkohlRuinsFaceHalves's exits. */
 enum {
 	ANKOHL_RUINS_FACE_HALVES_TO_ANKOHL_RUINS_GREAT_FACE_NORTH = 1,
@@ -3334,6 +3513,7 @@ enum {
 	ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_FROM_ANKOHL_RUINS_LEFT_PRONG = 12,
 	ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_FROM_ANKOHL_RUINS_STONE_FACES = 26,
 };
+
 /* SceneId_AnkohlRuinsCrystalPowderChest's exits. */
 enum {
 	ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_TO_ANKOHL_RUINS_FACE_HALVES_SOUTH_B = 3,
@@ -3357,6 +3537,7 @@ enum {
 	ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_STONE_FACES = 23,
 	ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_THANATOS_MACE_CHEST = 28,
 };
+
 /* SceneId_AnkohlRuinsSandDoors's exits. */
 enum {
 	ANKOHL_RUINS_SAND_DOORS_TO_ANKOHL_RUINS_GREAT_FACE = 1,
@@ -3372,6 +3553,7 @@ enum {
 	ANKOHL_RUINS_ENTRANCE_FROM_WORLD_MAP = 1,
 	ANKOHL_RUINS_ENTRANCE_FROM_ANKOHL_RUINS_STONE_FACES = 2,
 };
+
 /* SceneId_AnkohlRuinsEntrance's exits. */
 enum {
 	ANKOHL_RUINS_ENTRANCE_TO_WORLD_MAP = 1,
@@ -3382,6 +3564,7 @@ enum {
 enum {
 	ANKOHL_RUINS_LEFT_PRONG_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST = 1,
 };
+
 /* SceneId_AnkohlRuinsLeftProng's exits. */
 enum {
 	ANKOHL_RUINS_LEFT_PRONG_TO_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST = 1,
@@ -3392,6 +3575,7 @@ enum {
 	SEA_OF_TIME_SWIRLS_FROM_WORLD_MAP = 1,
 	SEA_OF_TIME_SWIRLS_FROM_SEA_OF_TIME_TO_LEMURIA = 2,
 };
+
 /* SceneId_SeaOfTimeSwirls's exits. */
 enum {
 	SEA_OF_TIME_SWIRLS_TO_WORLD_MAP = 1,
@@ -3405,6 +3589,7 @@ enum {
 	SEA_OF_TIME_TO_LEMURIA_FROM_WORLD_MAP_NORTH = 3,
 	SEA_OF_TIME_TO_LEMURIA_FROM_WORLD_MAP_SOUTH = 5,
 };
+
 /* SceneId_SeaOfTimeToLemuria's exits. */
 enum {
 	SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_SWIRLS = 1,
@@ -3418,6 +3603,7 @@ enum {
 	LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH = 3,
 	LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_SOUTH = 5,
 };
+
 /* SceneId_LemuriaEntrance's exits. */
 enum {
 	LEMURIA_ENTRANCE_TO_WORLD_MAP = 1,
@@ -3431,6 +3617,7 @@ enum {
 	LEMURIA_DOCK_FROM_ANCIENT_LEMURIA_EAST_A = 2,
 	LEMURIA_DOCK_FROM_LEMURIAN_SHIP_CABINS = 3,
 };
+
 /* SceneId_LemuriaDock's exits. */
 enum {
 	LEMURIA_DOCK_TO_LEMURIA_ENTRANCE_NORTH = 1,
@@ -3444,6 +3631,7 @@ enum {
 	ANCIENT_LEMURIA_FROM_LEMURIA = 3,
 	ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_B = 5,
 };
+
 /* SceneId_AncientLemuria's exits. */
 enum {
 	ANCIENT_LEMURIA_TO_LEMURIA_DOCK_EAST_A = 2,
@@ -3464,6 +3652,7 @@ enum {
 	LEMURIA_FROM_LEMURIA_ROOMS_EAST_C = 16,
 	LEMURIA_FROM_LEMURIA_PALACE_NORTH = 17,
 };
+
 /* SceneId_Lemuria's exits. */
 enum {
 	LEMURIA_TO_LEMURIA_ROOMS_WEST_A = 1,
@@ -3488,6 +3677,7 @@ enum {
 	LEMURIA_ROOMS_FROM_LEMURIA_EAST_B = 15,
 	LEMURIA_ROOMS_FROM_LEMURIA_EAST_C = 16,
 };
+
 /* SceneId_LemuriaRooms's exits. */
 enum {
 	LEMURIA_ROOMS_TO_LEMURIA_WEST_A = 1,
@@ -3504,6 +3694,7 @@ enum {
 	LEMURIA_PALACE_FROM_LEMURIA_NORTHEAST = 10,
 	LEMURIA_PALACE_FROM_LEMURIA_NORTH = 17,
 };
+
 /* SceneId_LemuriaPalace's exits. */
 enum {
 	LEMURIA_PALACE_TO_LEMURIA_SOUTH = 1,
@@ -3515,6 +3706,7 @@ enum {
 enum {
 	LEMURIA_SPRING_FROM_LEMURIA = 1,
 };
+
 /* SceneId_LemuriaSpring's exits. */
 enum {
 	LEMURIA_SPRING_TO_LEMURIA = 1,
@@ -3525,6 +3717,7 @@ enum {
 	TUNDARIA_TOWER_ENTRANCE_FROM_WORLD_MAP = 1,
 	TUNDARIA_TOWER_ENTRANCE_FROM_TUNDARIA_TOWER_CENTER_PRONG = 2,
 };
+
 /* SceneId_TundariaTowerEntrance's exits. */
 enum {
 	TUNDARIA_TOWER_ENTRANCE_TO_WORLD_MAP = 1,
@@ -3538,6 +3731,7 @@ enum {
 	TUNDARIA_TOWER_CENTER_PRONG_FROM_TUNDARIA_TOWER_ICE_SLIDE = 10,
 	TUNDARIA_TOWER_CENTER_PRONG_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH = 12,
 };
+
 /* SceneId_TundariaTowerCenterProng's exits. */
 enum {
 	TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_ENTRANCE = 1,
@@ -3551,6 +3745,7 @@ enum {
 	TUNDARIA_TOWER_ICE_SLIDE_FROM_TUNDARIA_TOWER_REFLUX = 5,
 	TUNDARIA_TOWER_ICE_SLIDE_FROM_TUNDARIA_TOWER_CENTER_PRONG = 9,
 };
+
 /* SceneId_TundariaTowerIceSlide's exits. */
 enum {
 	TUNDARIA_TOWER_ICE_SLIDE_TO_TUNDARIA_TOWER_REFLUX = 5,
@@ -3565,6 +3760,7 @@ enum {
 	TUNDARIA_TOWER_REFLUX_FROM_TUNDARIA_TOWER_ICE_COLUMNS_NORTH = 4,
 	TUNDARIA_TOWER_REFLUX_FROM_TUNDARIA_TOWER_ICE_COLUMNS_SOUTH = 7,
 };
+
 /* SceneId_TundariaTowerReflux's exits. */
 enum {
 	TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTHWEST = 1,
@@ -3582,6 +3778,7 @@ enum {
 	TUNDARIA_TOWER_ICE_COLUMNS_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTHWEST = 9,
 	TUNDARIA_TOWER_ICE_COLUMNS_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH = 10,
 };
+
 /* SceneId_TundariaTowerIceColumns's exits. */
 enum {
 	TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_NORTHWEST = 2,
@@ -3603,6 +3800,7 @@ enum {
 	TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_BURST_BROOCH_NORTH = 6,
 	TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_ICE_COLUMNS_SOUTH = 9,
 };
+
 /* SceneId_TundariaTowerPillarPuzzle's exits. */
 enum {
 	TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTH = 1,
@@ -3619,6 +3817,7 @@ enum {
 	TUNDARIA_TOWER_BURST_BROOCH_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH = 1,
 	TUNDARIA_TOWER_BURST_BROOCH_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH = 2,
 };
+
 /* SceneId_TundariaTowerBurstBrooch's exits. */
 enum {
 	TUNDARIA_TOWER_BURST_BROOCH_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH = 1,
@@ -3631,6 +3830,7 @@ enum {
 	GONDOWAN_SETTLEMENT_FROM_GONDOWAN_SETTLEMENT_HOUSES_NORTH = 2,
 	GONDOWAN_SETTLEMENT_FROM_GONDOWAN_SETTLEMENT_CAVE_A = 3,
 };
+
 /* SceneId_GondowanSettlement's exits. */
 enum {
 	GONDOWAN_SETTLEMENT_TO_WORLD_MAP = 1,
@@ -3643,6 +3843,7 @@ enum {
 enum {
 	GONDOWAN_SETTLEMENT_HOUSES_FROM_GONDOWAN_SETTLEMENT_SOUTH = 11,
 };
+
 /* SceneId_GondowanSettlementHouses's exits. */
 enum {
 	GONDOWAN_SETTLEMENT_HOUSES_TO_GONDOWAN_SETTLEMENT_NORTH = 1,
@@ -3652,6 +3853,7 @@ enum {
 enum {
 	GONDOWAN_SETTLEMENT_CAVE_FROM_GONDOWAN_SETTLEMENT = 1,
 };
+
 /* SceneId_GondowanSettlementCave's exits. */
 enum {
 	GONDOWAN_SETTLEMENT_CAVE_TO_GONDOWAN_SETTLEMENT = 1,
@@ -3665,6 +3867,7 @@ enum {
 	HESPERIA_SETTLEMENT_FROM_HESPERIA_SETTLEMENT_HOUSES_SOUTH_A = 3,
 	HESPERIA_SETTLEMENT_FROM_CAVES = 4,
 };
+
 /* SceneId_HesperiaSettlement's exits. */
 enum {
 	HESPERIA_SETTLEMENT_TO_WORLD_MAP = 1,
@@ -3680,6 +3883,7 @@ enum {
 	HESPERIA_SETTLEMENT_HOUSES_FROM_HESPERIA_SETTLEMENT_NORTH = 11,
 	HESPERIA_SETTLEMENT_HOUSES_FROM_HESPERIA_SETTLEMENT_SOUTH = 14,
 };
+
 /* SceneId_HesperiaSettlementHouses's exits. */
 enum {
 	HESPERIA_SETTLEMENT_HOUSES_TO_HESPERIA_SETTLEMENT_NORTH = 11,
@@ -3690,6 +3894,7 @@ enum {
 enum {
 	HESPERIA_SETTLEMENT_CAVE_FROM_HESPERIA_SETTLEMENT = 2,
 };
+
 /* SceneId_HesperiaSettlementCave's exits. */
 enum {
 	HESPERIA_SETTLEMENT_CAVE_TO_HESPERIA_SETTLEMENT = 2,
@@ -3700,6 +3905,7 @@ enum {
 	KALT_ISLAND_FROM_WORLD_MAP = 1,
 	KALT_ISLAND_FROM_KALT_ISLAND_HOUSES = 2,
 };
+
 /* SceneId_KaltIsland's exits. */
 enum {
 	KALT_ISLAND_TO_WORLD_MAP = 1,
@@ -3710,6 +3916,7 @@ enum {
 enum {
 	KALT_ISLAND_HOUSES_FROM_KALT_ISLAND = 1,
 };
+
 /* SceneId_KaltIslandHouses's exits. */
 enum {
 	KALT_ISLAND_HOUSES_TO_KALT_ISLAND = 1,
@@ -3720,6 +3927,7 @@ enum {
 	SOUTHWEST_ATTEKA_ISLET_FROM_WORLD_MAP = 1,
 	SOUTHWEST_ATTEKA_ISLET_FROM_SOUTHWEST_ATTEKA_ISLET_HOUSES_NORTH = 2,
 };
+
 /* SceneId_SouthwestAttekaIslet's exits. */
 enum {
 	SOUTHWEST_ATTEKA_ISLET_TO_WORLD_MAP = 1,
@@ -3730,6 +3938,7 @@ enum {
 enum {
 	SOUTHWEST_ATTEKA_ISLET_HOUSES_FROM_SOUTHWEST_ATTEKA_ISLET_SOUTH = 11,
 };
+
 /* SceneId_SouthwestAttekaIsletHouses's exits. */
 enum {
 	SOUTHWEST_ATTEKA_ISLET_HOUSES_TO_SOUTHWEST_ATTEKA_ISLET_NORTH = 1,
@@ -3742,6 +3951,7 @@ enum {
 	MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST = 3,
 	MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST = 4,
 };
+
 /* SceneId_MagmaRockSlide's exits. */
 enum {
 	MAGMA_ROCK_SLIDE_TO_WORLD_MAP = 1,
@@ -3758,6 +3968,7 @@ enum {
 	MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_SLIDE_WEST = 16,
 	MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_SLIDE_EAST = 17,
 };
+
 /* SceneId_MagmaRockSalamanderTailChest's exits. */
 enum {
 	MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_STATUE_WEST = 5,
@@ -3773,6 +3984,7 @@ enum {
 	MAGMA_ROCK_STATUE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST_B = 2,
 	MAGMA_ROCK_STATUE_FROM_MAGMA_ROCK_INSIDE_ENTRANCE = 3,
 };
+
 /* SceneId_MagmaRockStatue's exits. */
 enum {
 	MAGMA_ROCK_STATUE_TO_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST = 1,
@@ -3795,6 +4007,7 @@ enum {
 		7,
 	MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_FROM_MAGMA_ROCK_INSIDE_FURY = 8,
 };
+
 /* SceneId_MagmaRockInsideLuckyMedalChest's exits. */
 enum {
 	MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_WEST_A =
@@ -3824,6 +4037,7 @@ enum {
 		5,
 	MAGMA_ROCK_INSIDE_ENTRANCE_FROM_MAGMA_ROCK_STATUE = 8,
 };
+
 /* SceneId_MagmaRockInsideEntrance's exits. */
 enum {
 	MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_WEST_A =
@@ -3852,6 +4066,7 @@ enum {
 		10,
 	MAGMA_ROCK_INSIDE_FURY_FROM_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_SOUTH = 11,
 };
+
 /* SceneId_MagmaRockInsideFury's exits. */
 enum {
 	MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST = 1,
@@ -3890,6 +4105,7 @@ enum {
 	MAGMA_ROCK_INSIDE_CRACKED_PILLARS_FROM_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_EAST_B =
 		14,
 };
+
 /* SceneId_MagmaRockInsideCrackedPillars's exits. */
 enum {
 	MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_NORTHWEST = 1,
@@ -3931,6 +4147,7 @@ enum {
 	MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_FROM_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_B =
 		8,
 };
+
 /* SceneId_MagmaRockInsideGolemCoreChest's exits. */
 enum {
 	MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_WEST =
@@ -3968,6 +4185,7 @@ enum {
 	MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_INSIDE_EMBER_STONE =
 		15,
 };
+
 /* SceneId_MagmaRockInsideSalamanderTailChest's exits. */
 enum {
 	MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_WEST =
@@ -3997,6 +4215,7 @@ enum {
 		10,
 	MAGMA_ROCK_INSIDE_EMBER_STONE_FROM_MAGMA_ROCK_SLIDE = 11,
 };
+
 /* SceneId_MagmaRockInsideEmberStone's exits. */
 enum {
 	MAGMA_ROCK_INSIDE_EMBER_STONE_TO_MAGMA_ROCK_INSIDE_BLAZE_TABLET = 1,
@@ -4009,6 +4228,7 @@ enum {
 enum {
 	MAGMA_ROCK_INSIDE_BLAZE_TABLET_FROM_MAGMA_ROCK_INSIDE_EMBER_STONE = 1,
 };
+
 /* SceneId_MagmaRockInsideBlazeTablet's exits. */
 enum {
 	MAGMA_ROCK_INSIDE_BLAZE_TABLET_TO_MAGMA_ROCK_INSIDE_EMBER_STONE = 1,
@@ -4021,6 +4241,7 @@ enum {
 	ATTEKA_INLET_FROM_ATTEKA_INLET_GEODE_NORTH = 3,
 	ATTEKA_INLET_FROM_WORLD_MAP_WEST = 4,
 };
+
 /* SceneId_AttekaInlet's exits. */
 enum {
 	ATTEKA_INLET_TO_LEMURIAN_SHIP_CABINS = 1,
@@ -4036,6 +4257,7 @@ enum {
 	ATTEKA_INLET_GEODE_FROM_CONTIGO_SHOPS = 3,
 	ATTEKA_INLET_GEODE_FROM_ATTEKA_INLET_NORTH = 5,
 };
+
 /* SceneId_AttekaInletGeode's exits. */
 enum {
 	ATTEKA_INLET_GEODE_TO_ATTEKA_INLET_SOUTH = 1,
@@ -4061,6 +4283,7 @@ enum {
 	CONTIGO_FROM_CONTIGO_GEOGLYPH = 12,
 	CONTIGO_FROM_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST = 99,
 };
+
 /* SceneId_Contigo's exits. */
 enum {
 	CONTIGO_TO_WORLD_MAP = 1,
@@ -4088,6 +4311,7 @@ enum {
 	CONTIGO_SHOPS_FROM_CONTIGO_WEST = 7,
 	CONTIGO_SHOPS_FROM_ATTEKA_INLET_GEODE = 21,
 };
+
 /* SceneId_ContigoShops's exits. */
 enum {
 	CONTIGO_SHOPS_TO_CONTIGO_SOUTH = 1,
@@ -4106,6 +4330,7 @@ enum {
 	CONTIGO_LUCKY_DICE_FROM_CONTIGO_EAST = 9,
 	CONTIGO_LUCKY_DICE_FROM_CONTIGO_SOUTHWEST = 10,
 };
+
 /* SceneId_ContigoLuckyDice's exits. */
 enum {
 	CONTIGO_LUCKY_DICE_TO_CONTIGO_NORTHEAST = 8,
@@ -4120,6 +4345,7 @@ enum {
 	CONTIGO_GEOGLYPH_FROM_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST = 23,
 	CONTIGO_GEOGLYPH_FROM_ANEMOS_INNER_SANCTUM_ENTRANCE_SOUTH = 24,
 };
+
 /* SceneId_ContigoGeoglyph's exits. */
 enum {
 	CONTIGO_GEOGLYPH_TO_CONTIGO = 21,
@@ -4133,6 +4359,7 @@ enum {
 	SHAMAN_VILLAGE_CAVE_FROM_WORLD_MAP_WEST = 1,
 	SHAMAN_VILLAGE_CAVE_FROM_WORLD_MAP_EAST = 10,
 };
+
 /* SceneId_ShamanVillageCave's exits. */
 enum {
 	SHAMAN_VILLAGE_CAVE_TO_WORLD_MAP_WEST = 1,
@@ -4147,6 +4374,7 @@ enum {
 	SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_TRIAL_ROAD_STAGES_C = 9,
 	SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_TRIAL_ROAD_STAGES_E = 11,
 };
+
 /* SceneId_ShamanVillageTrialGrounds's exits. */
 enum {
 	SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_A = 1,
@@ -4174,6 +4402,7 @@ enum {
 	SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_NORTHWEST = 13,
 	SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_NORTH_END_NORTHEAST = 14,
 };
+
 /* SceneId_ShamanVillage's exits. */
 enum {
 	SHAMAN_VILLAGE_TO_WORLD_MAP = 1,
@@ -4201,6 +4430,7 @@ enum {
 	SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_NORTHEAST = 5,
 	SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_SOUTHEAST = 6,
 };
+
 /* SceneId_ShamanVillageNorthEnd's exits. */
 enum {
 	SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS = 1,
@@ -4222,6 +4452,7 @@ enum {
 	SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_A = 30,
 	SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_B = 31,
 };
+
 /* SceneId_ShamanVillageHouses's exits. */
 enum {
 	SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_NORTHWEST = 1,
@@ -4238,6 +4469,7 @@ enum {
 	SHAMAN_VILLAGE_TENTS_FROM_SHAMAN_VILLAGE_WEST = 16,
 	SHAMAN_VILLAGE_TENTS_FROM_SHAMAN_VILLAGE_NORTH_END = 17,
 };
+
 /* SceneId_ShamanVillageTents's exits. */
 enum {
 	SHAMAN_VILLAGE_TENTS_TO_SHAMAN_VILLAGE_EAST = 15,
@@ -4249,6 +4481,7 @@ enum {
 enum {
 	SHAMAN_VILLAGE_SANCTUM_FROM_SHAMAN_VILLAGE = 6,
 };
+
 /* SceneId_ShamanVillageSanctum's exits. */
 enum {
 	SHAMAN_VILLAGE_SANCTUM_TO_SHAMAN_VILLAGE = 6,
@@ -4262,6 +4495,7 @@ enum {
 	TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_EAST = 34,
 	TRIAL_ROAD_STAGES_FOR_TRIAL_RULES = 50,
 };
+
 /* SceneId_TrialRoadStages's exits. */
 enum {
 	TRIAL_ROAD_STAGES_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS_A = 5,
@@ -4278,6 +4512,7 @@ enum {
 	TRIAL_ROAD_SUMMIT_FROM_TRIAL_ROAD_STAGES_EAST = 2,
 	TRIAL_ROAD_SUMMIT_FROM_TRIAL_ROAD_CAVE_ROCK = 3,
 };
+
 /* SceneId_TrialRoadSummit's exits. */
 enum {
 	TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_WEST = 1,
@@ -4292,6 +4527,7 @@ enum {
 	TRIAL_ROAD_CAVE_ROCK_FROM_TRIAL_ROAD_SUMMIT = 3,
 	TRIAL_ROAD_CAVE_ROCK_FROM_TRIAL_ROAD_GASP = 4,
 };
+
 /* SceneId_TrialRoadCaveRock's exits. */
 enum {
 	TRIAL_ROAD_CAVE_ROCK_TO_TRIAL_ROAD_SUMMIT = 3,
@@ -4302,6 +4538,7 @@ enum {
 enum {
 	TRIAL_ROAD_GASP_FROM_TRIAL_ROAD_CAVE_ROCK = 1,
 };
+
 /* SceneId_TrialRoadGasp's exits. */
 enum {
 	TRIAL_ROAD_GASP_TO_TRIAL_ROAD_CAVE_ROCK = 1,
@@ -4318,6 +4555,7 @@ enum {
 		4,
 	JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_AERIE_BEACON = 5,
 };
+
 /* SceneId_JupiterLighthouseEntrance's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP = 1,
@@ -4335,6 +4573,7 @@ enum {
 	JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON =
 		6,
 };
+
 /* SceneId_JupiterLighthouseBasementTeleporters's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE =
@@ -4349,6 +4588,7 @@ enum {
 	JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS =
 		1,
 };
+
 /* SceneId_JupiterLighthouseBasementPsynergyStone's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS =
@@ -4365,6 +4605,7 @@ enum {
 	JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS =
 		6,
 };
+
 /* SceneId_JupiterLighthouseRoomGateButton's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM = 1,
@@ -4390,6 +4631,7 @@ enum {
 	JUPITER_LIGHTHOUSE_ROOM_BEAM_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTH =
 		11,
 };
+
 /* SceneId_JupiterLighthouseRoomBeam's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ROOM_BEAM_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON = 1,
@@ -4435,6 +4677,7 @@ enum {
 	JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_SOUTHEAST =
 		13,
 };
+
 /* SceneId_JupiterLighthouseRoomErinyesTunicChest's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_TO_JUPITER_LIGHTHOUSE_TERRACES_NORTH =
@@ -4475,6 +4718,7 @@ enum {
 	JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST =
 		12,
 };
+
 /* SceneId_JupiterLighthouseRoomLockedDoors's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY = 1,
@@ -4501,6 +4745,7 @@ enum {
 	JUPITER_LIGHTHOUSE_ROOM_RED_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_EAST =
 		10,
 };
+
 /* SceneId_JupiterLighthouseRoomRedKey's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS = 1,
@@ -4527,6 +4772,7 @@ enum {
 	JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST =
 		10,
 };
+
 /* SceneId_JupiterLighthouseRoomCrackedFloor's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_AERIE_SOUTHEAST =
@@ -4553,6 +4799,7 @@ enum {
 		1,
 	JUPITER_LIGHTHOUSE_WHORL_FROM_JUPITER_LIGHTHOUSE_TERRACES = 8,
 };
+
 /* SceneId_JupiterLighthouseWhorl's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_WHORL_TO_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST =
@@ -4568,6 +4815,7 @@ enum {
 	JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_NORTH =
 		14,
 };
+
 /* SceneId_JupiterLighthouseRoomBlueKey's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES = 7,
@@ -4582,6 +4830,7 @@ enum {
 	JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_FROM_JUPITER_LIGHTHOUSE_AERIE =
 		4,
 };
+
 /* SceneId_JupiterLighthouseRoomPhaetonsBladeChest's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL =
@@ -4607,6 +4856,7 @@ enum {
 	JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_EAST =
 		10,
 };
+
 /* SceneId_JupiterLighthouseTerraces's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_TERRACES_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH =
@@ -4636,6 +4886,7 @@ enum {
 	JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST =
 		4,
 };
+
 /* SceneId_JupiterLighthouseAerie's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTHEAST =
@@ -4653,6 +4904,7 @@ enum {
 	JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_B =
 		2,
 };
+
 /* SceneId_JupiterLighthouseAerieBeacon's exits. */
 enum {
 	JUPITER_LIGHTHOUSE_AERIE_BEACON_TO_JUPITER_LIGHTHOUSE_ENTRANCE = 1,
@@ -4677,6 +4929,7 @@ enum {
 	LOHO_FROM_LOHO_ROOMS_SOUTH_A = 6,
 	LOHO_FROM_WORLD_MAP = 7,
 };
+
 /* SceneId_Loho's exits. */
 enum {
 	LOHO_TO_LOHO_ROOMS_NORTHEAST = 1,
@@ -4699,6 +4952,7 @@ enum {
 	LOHO_ROOMS_FROM_LOHO_EAST = 5,
 	LOHO_ROOMS_FROM_LOHO_SOUTH = 6,
 };
+
 /* SceneId_LohoRooms's exits. */
 enum {
 	LOHO_ROOMS_TO_LOHO_NORTHEAST = 1,
@@ -4714,6 +4968,7 @@ enum {
 	NORTHERN_REACHES_FROM_WORLD_MAP_SOUTH = 1,
 	NORTHERN_REACHES_FROM_WORLD_MAP_NORTH = 4,
 };
+
 /* SceneId_NorthernReaches's exits. */
 enum {
 	NORTHERN_REACHES_TO_WORLD_MAP_SOUTH = 1,
@@ -4725,6 +4980,7 @@ enum {
 	PROX_SOUTH_GATE_FROM_WORLD_MAP = 1,
 	PROX_SOUTH_GATE_FROM_PROX = 2,
 };
+
 /* SceneId_ProxSouthGate's exits. */
 enum {
 	PROX_SOUTH_GATE_TO_WORLD_MAP = 1,
@@ -4746,6 +5002,7 @@ enum {
 	PROX_FROM_PROX_CAVE_HOMES = 10,
 	PROX_FROM_PROX_MOLD_WEST = 11,
 };
+
 /* SceneId_Prox's exits. */
 enum {
 	PROX_TO_PROX_SOUTH_GATE = 1,
@@ -4768,6 +5025,7 @@ enum {
 	PROX_MOLD_FROM_WORLD_MAP = 3,
 	PROX_MOLD_FROM_PROX_HOUSES = 4,
 };
+
 /* SceneId_ProxMold's exits. */
 enum {
 	PROX_MOLD_TO_PROX_WEST = 1,
@@ -4790,6 +5048,7 @@ enum {
 	PROX_HOUSES_FROM_PROX_EAST_A = 10,
 	PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE = 20,
 };
+
 /* SceneId_ProxHouses's exits. */
 enum {
 	PROX_HOUSES_TO_PROX_SOUTH = 1,
@@ -4811,6 +5070,7 @@ enum {
 	PROX_CAVE_HOMES_FROM_PROX_HOUSES_SOUTH = 8,
 	PROX_CAVE_HOMES_FROM_PROX = 9,
 };
+
 /* SceneId_ProxCaveHomes's exits. */
 enum {
 	PROX_CAVE_HOMES_TO_PROX_HOUSES_NORTH = 6,
@@ -4823,6 +5083,7 @@ enum {
 enum {
 	PROX_CAVES_FROM_PROX = 7,
 };
+
 /* SceneId_ProxCaves's exits. */
 enum {
 	PROX_CAVES_TO_PROX = 7,
@@ -4832,6 +5093,7 @@ enum {
 enum {
 	CAVERNS_INDRA_FROM_WORLD_MAP = 1,
 };
+
 /* SceneId_CavernsIndra's exits. */
 enum {
 	CAVERNS_INDRA_TO_WORLD_MAP = 1,
@@ -4841,6 +5103,7 @@ enum {
 enum {
 	CAVERNS_OSENIA_FROM_WORLD_MAP = 1,
 };
+
 /* SceneId_CavernsOsenia's exits. */
 enum {
 	CAVERNS_OSENIA_TO_WORLD_MAP = 1,
@@ -4850,6 +5113,7 @@ enum {
 enum {
 	CAVERNS_ATTEKA_FROM_WORLD_MAP = 5,
 };
+
 /* SceneId_CavernsAtteka's exits. */
 enum {
 	CAVERNS_ATTEKA_TO_WORLD_MAP = 5,
@@ -4859,6 +5123,7 @@ enum {
 enum {
 	CAVERNS_ANGARA_FROM_WORLD_MAP = 1,
 };
+
 /* SceneId_CavernsAngara's exits. */
 enum {
 	CAVERNS_ANGARA_TO_WORLD_MAP = 1,
@@ -4869,6 +5134,7 @@ enum {
 	MARS_LIGHTHOUSE_OUTSIDE_FROM_WORLD_MAP = 1,
 	MARS_LIGHTHOUSE_OUTSIDE_FROM_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS = 2,
 };
+
 /* SceneId_MarsLighthouseOutside's exits. */
 enum {
 	MARS_LIGHTHOUSE_OUTSIDE_TO_WORLD_MAP = 1,
@@ -4885,6 +5151,7 @@ enum {
 	MARS_LIGHTHOUSE_ENTRANCE_FUGUE_FROM_MARS_LIGHTHOUSE_ENTRANCE_BALM_WEST = 5,
 	MARS_LIGHTHOUSE_ENTRANCE_FUGUE_FROM_MARS_LIGHTHOUSE_ENTRANCE_BALM_EAST = 6,
 };
+
 /* SceneId_MarsLighthouseEntranceFugue's exits. */
 enum {
 	MARS_LIGHTHOUSE_ENTRANCE_FUGUE_TO_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_WEST =
@@ -4912,6 +5179,7 @@ enum {
 	MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_FROM_MARS_LIGHTHOUSE_ENTRANCE_FUGUE_EAST =
 		20,
 };
+
 /* SceneId_MarsLighthouseEntranceTeleportLapis's exits. */
 enum {
 	MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_TO_MARS_LIGHTHOUSE_ENTRANCE_FUGUE_WEST =
@@ -4948,6 +5216,7 @@ enum {
 	MARS_LIGHTHOUSE_ENTRANCE_BALM_FROM_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_SOUTH =
 		16,
 };
+
 /* SceneId_MarsLighthouseEntranceBalm's exits. */
 enum {
 	MARS_LIGHTHOUSE_ENTRANCE_BALM_TO_MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_SOUTH =
@@ -4979,6 +5248,7 @@ enum {
 	MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_FROM_MARS_LIGHTHOUSE_ENTRANCE_BALM_NORTH_B =
 		14,
 };
+
 /* SceneId_MarsLighthouseEntranceHiddenCircle's exits. */
 enum {
 	MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_TO_MARS_LIGHTHOUSE_ENTRANCE_BALM_SOUTH =
@@ -5002,6 +5272,7 @@ enum {
 	MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST =
 		8,
 };
+
 /* SceneId_MarsLighthouseEntranceValkyrieMailChest's exits. */
 enum {
 	MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_TO_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST =
@@ -5027,6 +5298,7 @@ enum {
 	MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST_A =
 		7,
 };
+
 /* SceneId_MarsLighthouseEntranceSolBladeChest's exits. */
 enum {
 	MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_TO_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST =
@@ -5058,6 +5330,7 @@ enum {
 	/* Where the battle with the Flame Dragons returns the party. */
 	MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE = 20,
 };
+
 /* SceneId_MarsLighthouseStarRoom's exits. */
 enum {
 	MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_SOUTHEAST =
@@ -5079,6 +5352,7 @@ enum {
 	MARS_LIGHTHOUSE_HALL_FROM_MARS_LIGHTHOUSE_MARS_LEDGE = 5,
 	MARS_LIGHTHOUSE_HALL_FROM_MARS_LIGHTHOUSE_JUPITER_LEDGE = 6,
 };
+
 /* SceneId_MarsLighthouseHall's exits. */
 enum {
 	MARS_LIGHTHOUSE_HALL_TO_MARS_LIGHTHOUSE_AERIE = 1,
@@ -5094,6 +5368,7 @@ enum {
 	MARS_LIGHTHOUSE_MERCURY_LEDGE_FROM_MARS_LIGHTHOUSE_HALL = 1,
 	MARS_LIGHTHOUSE_MERCURY_LEDGE_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER = 2,
 };
+
 /* SceneId_MarsLighthouseMercuryLedge's exits. */
 enum {
 	MARS_LIGHTHOUSE_MERCURY_LEDGE_TO_MARS_LIGHTHOUSE_HALL = 1,
@@ -5105,6 +5380,7 @@ enum {
 	MARS_LIGHTHOUSE_JUPITER_LEDGE_FROM_MARS_LIGHTHOUSE_HALL = 1,
 	MARS_LIGHTHOUSE_JUPITER_LEDGE_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER = 2,
 };
+
 /* SceneId_MarsLighthouseJupiterLedge's exits. */
 enum {
 	MARS_LIGHTHOUSE_JUPITER_LEDGE_TO_MARS_LIGHTHOUSE_HALL = 1,
@@ -5116,6 +5392,7 @@ enum {
 	MARS_LIGHTHOUSE_MARS_LEDGE_FROM_MARS_LIGHTHOUSE_HALL = 1,
 	MARS_LIGHTHOUSE_MARS_LEDGE_FROM_MARS_LIGHTHOUSE_MARS_TOWER = 2,
 };
+
 /* SceneId_MarsLighthouseMarsLedge's exits. */
 enum {
 	MARS_LIGHTHOUSE_MARS_LEDGE_TO_MARS_LIGHTHOUSE_HALL = 1,
@@ -5127,6 +5404,7 @@ enum {
 	MARS_LIGHTHOUSE_VENUS_LEDGE_FROM_MARS_LIGHTHOUSE_HALL = 1,
 	MARS_LIGHTHOUSE_VENUS_LEDGE_FROM_MARS_LIGHTHOUSE_VENUS_TOWER = 2,
 };
+
 /* SceneId_MarsLighthouseVenusLedge's exits. */
 enum {
 	MARS_LIGHTHOUSE_VENUS_LEDGE_TO_MARS_LIGHTHOUSE_HALL = 1,
@@ -5138,6 +5416,7 @@ enum {
 	MARS_LIGHTHOUSE_MARS_TOWER_FROM_MARS_LIGHTHOUSE_MARS_LEDGE = 1,
 	MARS_LIGHTHOUSE_MARS_TOWER_FROM_MARS_LIGHTHOUSE_BEACON_LEDGE = 4,
 };
+
 /* SceneId_MarsLighthouseMarsTower's exits. */
 enum {
 	MARS_LIGHTHOUSE_MARS_TOWER_TO_MARS_LIGHTHOUSE_MARS_LEDGE = 1,
@@ -5149,6 +5428,7 @@ enum {
 	MARS_LIGHTHOUSE_MERCURY_TOWER_FROM_MARS_LIGHTHOUSE_MERCURY_LEDGE = 1,
 	MARS_LIGHTHOUSE_MERCURY_TOWER_FROM_MARS_LIGHTHOUSE_BEACON_LEDGE = 8,
 };
+
 /* SceneId_MarsLighthouseMercuryTower's exits. */
 enum {
 	MARS_LIGHTHOUSE_MERCURY_TOWER_TO_MARS_LIGHTHOUSE_MERCURY_LEDGE = 1,
@@ -5160,6 +5440,7 @@ enum {
 	MARS_LIGHTHOUSE_JUPITER_TOWER_FROM_MARS_LIGHTHOUSE_JUPITER_LEDGE = 1,
 	MARS_LIGHTHOUSE_JUPITER_TOWER_FROM_MARS_LIGHTHOUSE_BEACON_LEDGE = 15,
 };
+
 /* SceneId_MarsLighthouseJupiterTower's exits. */
 enum {
 	MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_JUPITER_LEDGE = 1,
@@ -5171,6 +5452,7 @@ enum {
 	MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_VENUS_LEDGE = 1,
 	MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_BEACON_LEDGE = 5,
 };
+
 /* SceneId_MarsLighthouseVenusTower's exits. */
 enum {
 	MARS_LIGHTHOUSE_VENUS_TOWER_TO_MARS_LIGHTHOUSE_VENUS_LEDGE = 1,
@@ -5184,6 +5466,7 @@ enum {
 	MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_MARS_TOWER = 3,
 	MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER = 4,
 };
+
 /* SceneId_MarsLighthouseBeaconLedge's exits. */
 enum {
 	MARS_LIGHTHOUSE_BEACON_LEDGE_TO_MARS_LIGHTHOUSE_VENUS_TOWER = 1,
@@ -5198,6 +5481,7 @@ enum {
 	MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_AERIE = 3,
 	MARS_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EAST_B = 5,
 };
+
 /* SceneId_MarsLighthouseAerie's exits. */
 enum {
 	MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_HALL = 1,
@@ -5210,6 +5494,7 @@ enum {
 	TREASURE_ISLE_ENTRANCE_FROM_WORLD_MAP = 1,
 	TREASURE_ISLE_ENTRANCE_FROM_TREASURE_ISLE_CHESTS = 8,
 };
+
 /* SceneId_TreasureIsleEntrance's exits. */
 enum {
 	TREASURE_ISLE_ENTRANCE_TO_WORLD_MAP = 1,
@@ -5222,6 +5507,7 @@ enum {
 	TREASURE_ISLE_CHESTS_FROM_TREASURE_ISLE_JESTERS_ARMLET_CHEST_EAST = 4,
 	TREASURE_ISLE_CHESTS_FROM_TREASURE_ISLE_JESTERS_ARMLET_CHEST_WEST = 5,
 };
+
 /* SceneId_TreasureIsleChests's exits. */
 enum {
 	TREASURE_ISLE_CHESTS_TO_TREASURE_ISLE_ENTRANCE = 1,
@@ -5235,6 +5521,7 @@ enum {
 	TREASURE_ISLE_JESTERS_ARMLET_CHEST_FROM_TREASURE_ISLE_CHESTS_WEST = 2,
 	TREASURE_ISLE_JESTERS_ARMLET_CHEST_FROM_TREASURE_ISLE_GALE = 5,
 };
+
 /* SceneId_TreasureIsleJestersArmletChest's exits. */
 enum {
 	TREASURE_ISLE_JESTERS_ARMLET_CHEST_TO_TREASURE_ISLE_CHESTS_EAST = 1,
@@ -5247,6 +5534,7 @@ enum {
 	TREASURE_ISLE_GALE_FROM_TREASURE_ISLE_JESTERS_ARMLET_CHEST = 1,
 	TREASURE_ISLE_GALE_FROM_TREASURE_ISLE_GUARDIAN = 6,
 };
+
 /* SceneId_TreasureIsleGale's exits. */
 enum {
 	TREASURE_ISLE_GALE_TO_TREASURE_ISLE_JESTERS_ARMLET_CHEST = 1,
@@ -5257,6 +5545,7 @@ enum {
 enum {
 	TREASURE_ISLE_GUARDIAN_FROM_TREASURE_ISLE_GALE = 1,
 };
+
 /* SceneId_TreasureIsleGuardian's exits. */
 enum {
 	TREASURE_ISLE_GUARDIAN_TO_TREASURE_ISLE_GALE = 1,
@@ -5271,6 +5560,7 @@ enum {
 	/* Where Teleport from Contigo's circle lands (scContigoTeleportOut). */
 	ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_CONTIGO = 99,
 };
+
 /* SceneId_AnemosInnerSanctumDragonSkinChest's exits. */
 enum {
 	ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_TO_ANEMOS_INNER_SANCTUM_ENTRANCE = 1,
@@ -5286,6 +5576,7 @@ enum {
 	ANEMOS_INNER_SANCTUM_ELEVATOR_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_WEST = 8,
 	ANEMOS_INNER_SANCTUM_ELEVATOR_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST = 16,
 };
+
 /* SceneId_AnemosInnerSanctumElevator's exits. */
 enum {
 	ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_SWITCHES = 4,
@@ -5310,6 +5601,7 @@ enum {
 		12,
 	ANEMOS_INNER_SANCTUM_SWITCHES_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST = 16,
 };
+
 /* SceneId_AnemosInnerSanctumSwitches's exits. */
 enum {
 	ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_SOUTHEAST =
@@ -5340,6 +5632,7 @@ enum {
 	ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHEAST =
 		10,
 };
+
 /* SceneId_AnemosInnerSanctumOrihalconChest's exits. */
 enum {
 	ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHWEST =
@@ -5377,6 +5670,7 @@ enum {
 	ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_SOUTHWEST =
 		12,
 };
+
 /* SceneId_AnemosInnerSanctumGuardian's exits. */
 enum {
 	ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_WEST = 1,
@@ -5405,6 +5699,7 @@ enum {
 	ANEMOS_INNER_SANCTUM_ENTRANCE_FROM_CONTIGO_GEOGLYPH_SOUTH = 4,
 	ANEMOS_INNER_SANCTUM_ENTRANCE_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST = 5,
 };
+
 /* SceneId_AnemosInnerSanctumEntrance's exits. */
 enum {
 	ANEMOS_INNER_SANCTUM_ENTRANCE_TO_CONTIGO_GEOGLYPH_NORTHEAST = 1,
@@ -5418,6 +5713,7 @@ enum {
 enum {
 	MERCURY_LIGHTHOUSE_FROM_MARS_LIGHTHOUSE_AERIE_EAST_A = 2,
 };
+
 /* SceneId_MercuryLighthouse's exits. */
 enum {
 	MERCURY_LIGHTHOUSE_TO_MARS_LIGHTHOUSE_AERIE_EAST_B = 3,

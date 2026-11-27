@@ -1,13 +1,12 @@
-/* @file */
-/* Repairing broken items. */
-/* Part of shop.c. */
+/* Repairing broken items. Part of shop.c. */
 
 #include "shop_internal.h"
 
-/* Returns what a repair costs: a quarter of the price for a broken item, */
-/* nothing for one that is not broken. */
-s32 mnShopRepairPrice(s32 inventoryEntry) {
-	s32 repairCost = gmItemGetDirectStub(inventoryEntry)->price / 4;
+/* Returns what a repair costs: a quarter of the price for a broken item,
+   nothing for one that is not broken. */
+Sint32 mnShopRepairPrice(Sint32 inventoryEntry)
+{
+	Sint32 repairCost = gmItemGetDirectStub(inventoryEntry)->price / 4;
 
 	if((inventoryEntry & INVENTORY_BROKEN) == 0) {
 		repairCost = 0;
@@ -16,29 +15,30 @@ s32 mnShopRepairPrice(s32 inventoryEntry) {
 }
 
 /* Runs the repair counter's party member choice; always returns 0. */
-s32 mnShopRunRepairMemberChoice(void) {
+Sint32 mnShopRunRepairMemberChoice(void)
+{
 	mnShopChooseMember();
 	return 0;
 }
 
-/* Lets the player choose items to repair from the party member's grid, one at
- */
-/* a time, with each one's repair price, until B or the inventory is empty. */
-/* Returns -1 when cancelled, 0 when the inventory ran out. */
-s32 mnShopSelectRepair(s32 unitId) {
+/* Lets the player choose items to repair from the party member's grid, one at a
+   time, with each one's repair price, until B or the inventory is empty.
+   Returns -1 when cancelled, 0 when the inventory ran out. */
+Sint32 mnShopSelectRepair(Sint32 unitId)
+{
 	SHOP_STATE *shop;
-	s32 inventoryCount;
-	WINDOW *descriptionWindow;
-	WINDOW *priceWindow;
-	UNIT *unit;
-	s32 slot;
-	s32 redraw;
-	s32 result;
-	s32 itemId;
-	s32 repairCost;
-	WINDOW *window;
-	s32 x;
-	s32 y;
+	Sint32		inventoryCount;
+	WINDOW	   *descriptionWindow;
+	WINDOW	   *priceWindow;
+	UNIT	   *unit;
+	Sint32		slot;
+	Bool		redraw;
+	Sint32		result;
+	Sint32		itemId;
+	Sint32		repairCost;
+	WINDOW	   *window;
+	Sint32		x;
+	Sint32		y;
 
 	shop = MenuState;
 	unit = gmUnitGetStub(unitId);
@@ -52,11 +52,11 @@ s32 mnShopSelectRepair(s32 unitId) {
 			mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 		shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
 		shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
-		redraw = 1;
+		redraw = TRUE;
 
 		while(1) {
 			if(redraw != 0) {
-				redraw = 0;
+				redraw = FALSE;
 				inventoryCount = gmInventoryCountStub(unitId);
 				if(slot > inventoryCount - 1)
 					slot = inventoryCount - 1;
@@ -67,49 +67,49 @@ s32 mnShopSelectRepair(s32 unitId) {
 				mnCursorPlace(window, x, y);
 				shop->cursorFrm = 3;
 				repairCost = mnShopRepairPrice(unit->inventory[slot]);
-				mnShopDrawItemPrice(priceWindow, itemId, repairCost,
-									SHOP_PRICE_KIND_REPAIR);
+				mnShopDrawItemPrice(
+					priceWindow, itemId, repairCost, SHOP_PRICE_KIND_REPAIR);
 				mnShopDrawMessage(descriptionWindow, itemId + MsgItemPlainName);
 			}
-			if((KeysPressed & KEY_A) != 0) {
+			if((PerPush & KEY_A) != 0) {
 				sySndPlayStub(SE_MENU_CONFIRM);
 				result = 0;
 				break;
 			}
-			if((KeysPressed & KEY_B) != 0) {
+			if((PerPush & KEY_B) != 0) {
 				sySndPlayStub(SE_MENU_CANCEL);
 				result = -1;
 				break;
 			}
-			if((KeysRepeat & KEY_LEFT) != 0) {
+			if((PerRepeat & KEY_LEFT) != 0) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				slot--;
 				slot = (slot + inventoryCount) % inventoryCount;
-				redraw = 1;
+				redraw = TRUE;
 			}
-			if((KeysRepeat & KEY_RIGHT) != 0) {
+			if((PerRepeat & KEY_RIGHT) != 0) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				slot++;
 				slot = (slot + inventoryCount) % inventoryCount;
-				redraw = 1;
+				redraw = TRUE;
 			}
-			if((KeysRepeat & KEY_UP) != 0) {
+			if((PerRepeat & KEY_UP) != 0) {
 				slot -= SHOP_INVENTORY_COLUMNS;
 				if(slot < 0)
 					slot += INVENTORY_SLOTS;
 				while(slot >= inventoryCount)
 					slot -= SHOP_INVENTORY_COLUMNS;
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = 1;
+				redraw = TRUE;
 			}
-			if((KeysRepeat & KEY_DOWN) != 0) {
+			if((PerRepeat & KEY_DOWN) != 0) {
 				slot += SHOP_INVENTORY_COLUMNS;
 				if(slot >= inventoryCount)
 					slot -= INVENTORY_SLOTS;
 				while(slot < 0)
 					slot += SHOP_INVENTORY_COLUMNS;
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = 1;
+				redraw = TRUE;
 			}
 			sySynch(1);
 		}
@@ -131,21 +131,20 @@ s32 mnShopSelectRepair(s32 unitId) {
 }
 
 /* Repairs the item in `slot`: refuses one that cannot break, is not broken or
- */
-/* is equipped and cursed on, or that the coins do not cover; asks, then takes
- */
-/* the item away while three clangs sound, gives it back mended, charges the */
-/* price and offers to equip it. */
-void mnShopRepairItem(s32 unitId, s32 slot) {
-	SHOP_STATE *shop = MenuState;
-	UNIT *unit = gmUnitGetStub(unitId);
-	s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
+   is equipped and cursed on, or that the coins do not cover; asks, then takes
+   the item away while three clangs sound, gives it back mended, charges the
+   price and offers to equip it. */
+void mnShopRepairItem(Sint32 unitId, Sint32 slot)
+{
+	SHOP_STATE		*shop = MenuState;
+	UNIT			*unit = gmUnitGetStub(unitId);
+	Sint32			 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
-	s32 equipped = gmInventoryFindEquippedStub(unitId, item->type);
-	u32 repairCost = mnShopRepairPrice(unit->inventory[slot]);
-	s32 messageBase;
-	u8 useType;
-	u32 savedEntry;
+	Sint32			 equipped = gmInventoryFindEquippedStub(unitId, item->type);
+	Uint32			 repairCost = mnShopRepairPrice(unit->inventory[slot]);
+	Sint32			 messageBase;
+	Uint8			 useType;
+	Uint32			 savedEntry;
 
 	useType = item->useType;
 	if(useType != ITEM_USE_MAY_BREAK) {
@@ -190,8 +189,8 @@ void mnShopRepairItem(s32 unitId, s32 slot) {
 	/* "Yes, sir! I'll take your (item), then." */
 	mnShopShowKeeperMessageHidingCursor(messageBase + 2);
 	mnMessageCloseFinishedWindowsStub();
-	/* Six seconds of work: three clangs 110 frames apart, then the menu's */
-	/* confirm sound. */
+	/* Six seconds of work: three clangs 110 frames apart, then the menu's
+	   confirm sound. */
 	sySynch(10);
 	sySndPlayStub(SE_BELL);
 	sySynch(110);

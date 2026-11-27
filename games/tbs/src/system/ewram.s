@@ -1,6 +1,6 @@
 	.section .sym_ewram,"aw",%nobits
-	.global SaveBuffer
-SaveBuffer:
+	.global BupBuffer
+BupBuffer:
 	.space 64
 	.global GameFlagBytes
 GameFlagBytes:
@@ -36,8 +36,8 @@ ActorSnapshotWork:
 	.global SleepActive
 SleepActive:
 	.space 4
-	.global SaveSlot
-SaveSlot:
+	.global BupSlot
+BupSlot:
 	.space 4
 	.global SerialSendSize
 SerialSendSize:
@@ -180,7 +180,7 @@ MPlayTrack_SE7:
 	.space 64
 	.global WaitForFlashWriteWork
 	.global CreditsScrollPosition
-@ The credits borrow the four flash cells while flash is idle, each under a
+@ The credits borrow the four flash metatiles while flash is idle, each under a
 @ name and type of their own.
 WaitForFlashWriteWork:
 CreditsScrollPosition:
@@ -230,17 +230,17 @@ FlashSavedIme:
 	.global OverlayArea
 OverlayArea:
 	.space 32768
-@ A layout's 64 KB of cells (Tile_ConvertMapGrid) start here and run on
+@ A layout's 64 KB of metatiles (fdTileConvertMapGrid) start here and run on
 @ through ActorSpriteSlots and DecodeBuffer, so neither holds anything else
-@ while a layout is loaded. Only code that loads the cells again afterwards
+@ while a layout is loaded. Only code that loads the metatiles again afterwards
 @ writes there: a battle; the Battle Arena, which leaves the partner's party in
 @ ActorSpriteSlots for the link battle; the world map's still image, which
 @ saves BG1's tiles to DecodeBuffer; and the debug sprite viewer. The tileset
 @ animation reads only past DecodeBuffer, from MapGridAnimTiles.
-	.global MapGridCellBuffer
-	.type MapGridCellBuffer, %object
-	.size MapGridCellBuffer, 49152
-MapGridCellBuffer:
+	.global MapGridMetatileBuffer
+	.type MapGridMetatileBuffer, %object
+	.size MapGridMetatileBuffer, 49152
+MapGridMetatileBuffer:
 	.space 32768
 	.global ActorSpriteSlots
 ActorSpriteSlots:
@@ -250,10 +250,10 @@ ActorSpriteSlots:
 	.size DecodeBuffer, 16384
 DecodeBuffer:
 	.space 16384
-	.global CellTiles
-	.type CellTiles, %object
-	.size CellTiles, 32768
-CellTiles:
+	.global MetatileTiles
+	.type MetatileTiles, %object
+	.size MetatileTiles, 32768
+MetatileTiles:
 	.space 32768
 	.global MapGridAnimTiles
 	.type MapGridAnimTiles, %object

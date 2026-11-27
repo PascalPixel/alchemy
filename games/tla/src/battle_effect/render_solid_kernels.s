@@ -1,4 +1,4 @@
-@ Why Render_SolidKernelEntry to Render_SolidAdditiveKernelEntry are assembly:
+@ Why btRenderSolidKernelEntry to btRenderSolidAdditiveKernelEntry are assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ r11 (fp) as an ordinary register: it holds a byte pointer from its argument
@@ -7,11 +7,11 @@
 @ is subs r7, r8, #0.
 .syntax unified
 	.thumb
-	.global Render_SolidKernel
-Render_SolidKernel:
-	.global Render_SolidKernelEntry
+	.global btRenderSolidKernel
+btRenderSolidKernel:
+	.global btRenderSolidKernelEntry
 	.thumb_func
-Render_SolidKernelEntry:
+btRenderSolidKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_08138fca:
@@ -156,14 +156,14 @@ AlchemyUncreditedEnd_08138fca:
 .L_081391c0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
-	.global Render_SolidKernelCodeSize
-	.set Render_SolidKernelCodeSize, . - Render_SolidKernel
+	.global btRenderSolidKernelCodeSize
+	.set btRenderSolidKernelCodeSize, . - btRenderSolidKernel
 	.thumb
-	.global Render_SolidMaxKernel
-Render_SolidMaxKernel:
-	.global Render_SolidMaxKernelEntry
+	.global btRenderSolidMaxKernel
+btRenderSolidMaxKernel:
+	.global btRenderSolidMaxKernelEntry
 	.thumb_func
-Render_SolidMaxKernelEntry:
+btRenderSolidMaxKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_081391ca:
@@ -312,14 +312,14 @@ AlchemyUncreditedEnd_081391ca:
 .L_081393d0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
-	.global Render_SolidMaxKernelCodeSize
-	.set Render_SolidMaxKernelCodeSize, . - Render_SolidMaxKernel
+	.global btRenderSolidMaxKernelCodeSize
+	.set btRenderSolidMaxKernelCodeSize, . - btRenderSolidMaxKernel
 	.thumb
-	.global Render_SolidAdditiveKernel
-Render_SolidAdditiveKernel:
-	.global Render_SolidAdditiveKernelEntry
+	.global btRenderSolidAdditiveKernel
+btRenderSolidAdditiveKernel:
+	.global btRenderSolidAdditiveKernelEntry
 	.thumb_func
-Render_SolidAdditiveKernelEntry:
+btRenderSolidAdditiveKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_081393da:
@@ -472,5 +472,5 @@ AlchemyUncreditedEnd_081393da:
 .L_081395f0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
-	.global Render_SolidAdditiveKernelCodeSize
-	.set Render_SolidAdditiveKernelCodeSize, . - Render_SolidAdditiveKernel
+	.global btRenderSolidAdditiveKernelCodeSize
+	.set btRenderSolidAdditiveKernelCodeSize, . - btRenderSolidAdditiveKernel

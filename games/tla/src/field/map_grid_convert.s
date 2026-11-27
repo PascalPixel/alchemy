@@ -5,9 +5,9 @@
 	.thumb
 	.global fdRenderConvertMapCode
 fdRenderConvertMapCode:
-	.global Render_ConvertMap
+	.global fdRenderConvertMap
 	.thumb_func
-Render_ConvertMap:
+fdRenderConvertMap:
 	bx	pc
 AlchemyUncredited_08021706:
 	.2byte	0x0200
@@ -55,5 +55,5 @@ AlchemyUncreditedEnd_08021706:
 	bne	.L_0802175c
 	pop	{r5, r6, r7, r8}
 	bx	lr
-	.global Render_ConvertMapCodeSize
-	.set Render_ConvertMapCodeSize, . - fdRenderConvertMapCode
+	.global fdRenderConvertMapCodeSize
+	.set fdRenderConvertMapCodeSize, . - fdRenderConvertMapCode

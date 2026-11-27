@@ -1,16 +1,15 @@
 #ifndef ALCHEMY_ABILITY_IDS_H
 #define ALCHEMY_ABILITY_IDS_H
 
-/* @file */
 /* Ability numbers, named from the English release. */
 
 #include "djinn_ids.h"
 
-/* Ability numbers, one for each row of AbilityDefinitions (ability_table.c) */
-/* in order. Each ability's name is the message MsgAbilityName plus its */
-/* number. Each family of abilities leaves spare numbers after its last, */
-/* whose rows are blank and whose names in the text are "?"; a family's first */
-/* number is written where spares come before it. */
+/* Ability numbers, one for each row of AbilityDefinitions (ability_table.c) in
+   order. Each ability's name is the message MsgAbilityName plus its number.
+   Each family of abilities leaves spare numbers after its last, whose rows are
+   blank and whose names in the text are "?"; a family's first number is written
+   where spares come before it. */
 typedef enum ABILITY {
 	ABILITY_NONE,
 	ABILITY_ATTACK,
@@ -58,8 +57,8 @@ typedef enum ABILITY {
 	ABILITY_BLAST,
 	ABILITY_MAD_BLAST,
 	ABILITY_FIERY_BLAST,
-	/* Power 40, against ABILITY_BLAST's 25: the row before Nova and Supernova.
-	 */
+	/* Power 40, against ABILITY_BLAST's 25: the row before Nova and
+	   Supernova. */
 	ABILITY_BLAST_STRONG,
 	ABILITY_NOVA,
 	ABILITY_SUPERNOVA,
@@ -148,8 +147,7 @@ typedef enum ABILITY {
 	ABILITY_DEATH_PLUNGE,
 	ABILITY_SHURIKEN,
 	/* Its instant death is rolled as the action is planned, so that its burst
-	 */
-	/* can show whether it landed. */
+	   can show whether it landed. */
 	ABILITY_ANNIHILATION,
 	ABILITY_PUNJI,
 	ABILITY_PUNJI_TRAP,
@@ -184,9 +182,9 @@ typedef enum ABILITY {
 	ABILITY_PSY_LEECH,
 	ABILITY_BROIL,
 	ABILITY_MELTDOWN,
-	/* The first of the enemy abilities btActionRunBuild announces in */
-	/* their own words; the others run from ABILITY_SONIC_WAVE to */
-	/* ABILITY_SEARCH_FOR_HELP. */
+	/* The first of the enemy abilities btActionRunBuild announces in their own
+	   words; the others run from ABILITY_SONIC_WAVE to
+	   ABILITY_SEARCH_FOR_HELP. */
 	ABILITY_HEAT_MIRAGE,
 	ABILITY_BARRAGE,
 	ABILITY_DEMON_FIRE,
@@ -212,8 +210,7 @@ typedef enum ABILITY {
 	ABILITY_ELIXIR,
 	ABILITY_WATER_OF_LIFE,
 	/* The stat items' abilities, each raising one base stat for good (the item
-	 */
-	/* menu's use). */
+	   menu's use). */
 	ABILITY_POWER_BREAD = 260,
 	ABILITY_COOKIE,
 	ABILITY_APPLE,
@@ -224,10 +221,9 @@ typedef enum ABILITY {
 	ABILITY_SLEEP_BOMB,
 	ABILITY_ADEPT_RING,
 	ABILITY_CORN,
-	/* The first Djinni's ability: Djinni n of element e has ability */
-	/* ABILITY_DJINNI_FIRST + e * DJINN_PER_ELEMENT + n, djinn_table.c's ability
-	 */
-	/* column, whose name is the Djinni's. */
+	/* The first Djinni's ability: Djinni n of element e has ability
+	   ABILITY_DJINNI_FIRST + e * DJINN_PER_ELEMENT + n, djinn_table.c's ability
+	   column, whose name is the Djinni's. */
 	ABILITY_DJINNI_FIRST = 300,
 	ABILITY_GRANITE,
 	ABILITY_QUARTZ,
@@ -237,8 +233,8 @@ typedef enum ABILITY {
 	ABILITY_BANE,
 	ABILITY_FIZZ = ABILITY_DJINNI_FIRST + DJINN_PER_ELEMENT,
 	ABILITY_SLEET,
-	/* The Mercury Djinni Mist's (djinn_table.c): an attack that may put its */
-	/* target to sleep. */
+	/* The Mercury Djinni Mist's (djinn_table.c): an attack that may put its
+	   target to sleep. */
 	ABILITY_MIST_DJINNI,
 	ABILITY_SPRITZ,
 	ABILITY_HAIL,
@@ -259,8 +255,7 @@ typedef enum ABILITY {
 	ABILITY_SQUALL,
 	ABILITY_LUFF,
 	/* The summons: four to an element, in the order of their Djinn costs, each
-	 */
-	/* element's six ids apart. */
+	   element's six ids apart. */
 	ABILITY_VENUS = 380,
 	ABILITY_RAMSES,
 	ABILITY_CYBELE,
@@ -308,8 +303,8 @@ typedef enum ABILITY {
 	ABILITY_STORM_BLESSING_STRONG,
 	/* Power 5: ENEMY_BAT_WORLD_MAP's. */
 	ABILITY_SONIC_WAVE,
-	/* Power 45 against ENEMY_BAT_WORLD_MAP's 5: the Rabid Bat's, the Clay */
-	/* Gargoyle's, the Ant Lion's and the Roach's. */
+	/* Power 45 against ENEMY_BAT_WORLD_MAP's 5: the Rabid Bat's, the Clay
+	   Gargoyle's, the Ant Lion's and the Roach's. */
 	ABILITY_SONIC_WAVE_STRONG,
 	ABILITY_SHRIEK,
 	ABILITY_BANSHEE_HOWL,
@@ -374,9 +369,9 @@ typedef enum ABILITY {
 	ABILITY_THREATEN,
 	ABILITY_TREMBLE,
 	ABILITY_FORTIFY,
-	/* Not a surge of speed: the enemy splits itself in two ("attempts to */
-	/* divide!", then "It split off into" its copy, or "It failed to divide!").
-	 */
+	/* Not a surge of speed: the enemy splits itself in two ("attempts to
+	   divide!", then "It split off into" its copy, or "It failed to
+	   divide!"). */
 	ABILITY_SPEED_SURGE,
 	ABILITY_ALLY_SEARCH,
 	ABILITY_SIDESTEP,

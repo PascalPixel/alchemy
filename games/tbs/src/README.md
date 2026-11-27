@@ -14,7 +14,7 @@ leads to the code that shows it.
 2. Search the source for that name. It turns up in the scene that uses it:
 
    ```c
-   { TRIGGER_TALK, ACTOR_GARETS_SISTER, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreSoLuckyGaret) },
+   { CUE_TALK, ACTOR_GARETS_SISTER, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreSoLuckyGaret) },
    ```
 
 That works for anything with words in it, menus and battle lines included.
@@ -22,13 +22,13 @@ For the rest:
 
 | To find | Open |
 | --- | --- |
-| a town's people, lines and events | its file in `src/scene/`, such as [vale.c](scene/vale.c) |
+| a town's people, lines and scripts | its file in `src/scene/`, such as [vale.c](scene/vale.c) |
 | the inside of a house | follow the door: the town's exit row names the scene, such as `CottageRoomsC` |
 | what an item, ability, enemy, class or Djinni is | its row in a `src/game/*_table.c` |
 | what a shop sells | [src/shop/shop_stock.c](shop/shop_stock.c) |
 | how an ability looks | its `battle_effect_*.c` file in `src/battle_effect/`, whose opening comment lists the abilities it draws |
 | a picture | a PNG under `src/graphics/` |
-| a tune | a MIDI file under [`sound/songs`](../sound/songs) |
+| a tune | a MIDI file under [`sound/songs`](../sound/songs), or under [`games/common/sound/songs`](../../common/sound/songs) when The Lost Age has the same file |
 | a map | `src/map/<place>/`, a folder of tables named for the scene or place that uses it ([Maps](map/README.md#finding-a-scenes-map)) |
 | the name of a flag, sound, scene, item or sprite | a header in `include/`: `flags.h`, `sounds.h`, `scene_ids.h`, `item_ids.h`, `sprite_ids.h` |
 
@@ -41,7 +41,7 @@ routine in [game/main_routine.c](game/main_routine.c).
 A place, and walking around it
 ([the field engine](../../../docs/tbs/field.md)):
 
-- `scene/` is each place's people, lines and events
+- `scene/` is each place's people, lines and scripts
   ([Scenes](scene/README.md)).
 - `field/` is the code that runs any place, with Lucky Dice and Lucky
   Wheels ([Field code](field/README.md)).
@@ -66,12 +66,13 @@ What everything stands on
 ([the system library](../../../docs/tbs/system.md)):
 
 - `system/` is the system library: start-up, the main routine, the frame,
-  tasks and saving ([its code](system/README.md)).
+  events and saving ([its code](system/README.md)).
 - `sound/` is the sound code ([Sound](sound/README.md)).
 - `graphics/` is every picture ([Graphics](graphics/README.md)).
-- `sdk/` is the development kit's code, the sound driver and the SDK's
-  flash library; the cartridge's own parts belong to the system library
-  ([The Game Pak](system/README.md)).
+- The development kit's code, the sound driver and the SDK's flash
+  library, is one copy both games build, in
+  [`games/common/sdk`](../../common/sdk/README.md); the cartridge's own
+  parts belong to the system library ([The Game Pak](system/README.md)).
 - `debug/` is the developers' test scenes
   ([Debug scenes](debug/README.md)).
 

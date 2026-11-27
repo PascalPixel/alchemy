@@ -1,5 +1,5 @@
 block	file	pad	edition
-cell_tiles	cell_tiles.delta1.lz	4
+metatile_tiles	metatile_tiles.delta1.lz	4
 shapes	shapes.table.lz	4
 grid	map.grid.lz	4
 animation	vale_cave_kite/tileset_anims.script.lz	4

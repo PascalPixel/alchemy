@@ -1,11 +1,11 @@
-@ Why Trig_SinOnAxis to sySin are assembly:
-@ Trig_SinOnAxis and sySin branch on lsrs carry; syCos falls
+@ Why sySinOnAxis to sySin are assembly:
+@ sySinOnAxis and sySin branch on lsrs carry; syCos falls
 @ through directly into sySin's entry.
 .syntax unified
 	.thumb
-	.global Trig_SinOnAxis
+	.global sySinOnAxis
 	.thumb_func
-Trig_SinOnAxis:
+sySinOnAxis:
 	lsrs	r2, r0, #14
 	movs	r0, #1
 	ands	r0, r2
@@ -27,7 +27,7 @@ sySin:
 	adds	r0, #32
 	lsls	r1, r0, #18
 	lsrs	r1, r1, #24
-	beq.n	Trig_SinOnAxis
+	beq.n	sySinOnAxis
 	lsrs	r2, r0, #15
 	bcc.n	.L_index
 	movs	r3, #128

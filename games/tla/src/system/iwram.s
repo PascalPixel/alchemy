@@ -7,8 +7,8 @@ HeapSlotsWork:
 	.global VBlankCount
 VBlankCount:
 	.space 0x00000008
-	.global TasksRunning
-TasksRunning:
+	.global EventsRunning
+EventsRunning:
 	.space 0x00000004
 	.global ScreenFadeVBlanksLeft
 ScreenFadeVBlanksLeft:
@@ -31,8 +31,8 @@ CpuLoadTimer:
 	.global ScanlinePitch
 ScanlinePitch:
 	.space 0x0000000c
-	.global InputWork
-InputWork:
+	.global PerWork
+PerWork:
 	.space 0x00000024
 	.global DecodeFillByte
 DecodeFillByte:
@@ -118,8 +118,8 @@ VBlankDone:
 	.global MatrixStackTop
 MatrixStackTop:
 	.space 0x00000008
-	.global TasksInitialized
-TasksInitialized:
+	.global EventsInitialized
+EventsInitialized:
 	.space 0x00000004
 	.global FrameCount
 FrameCount:

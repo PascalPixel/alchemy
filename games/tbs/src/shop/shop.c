@@ -1,7 +1,6 @@
-/* @file */
-/* The shop object: every counter the party trades at. Shops that buy, sell */
-/* and repair, the artifact and Game Ticket counters, the sanctum's healing */
-/* services, the inn, and the item picker events use. */
+/* The shop object: every counter the party trades at. Shops that buy, sell and
+   repair, the artifact and Game Ticket counters, the sanctum's healing
+   services, the inn, and the item picker scripts use. */
 
 #include "shop_internal.h"
 

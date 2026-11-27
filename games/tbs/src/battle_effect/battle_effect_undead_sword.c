@@ -1,47 +1,46 @@
-/* @file */
-/* Undead Sword. */
-/* Part of battle_effect.c. */
+/* Undead Sword. Part of battle_effect.c. */
 
 #define UNDEAD_SWORD_FRAMES 54
 
-/* The lime column sheet's left half of a jagged, pointed blade of light, */
-/* drawn twice, the second mirrored beside it. */
-#define LIME_COLUMN_WIDTH  14
-#define LIME_COLUMN_HEIGHT 80
-/* The blade's foot: the canvas row it stands on, which the puffs billow from.
- */
-#define UNDEAD_SWORD_FOOT_Y 112
+/* The lime column sheet's left half of a jagged, pointed blade of light, drawn
+   twice, the second mirrored beside it. */
+#define LIME_COLUMN_WIDTH		   14
+#define LIME_COLUMN_HEIGHT		   80
+/* The blade's foot: the canvas row it stands on, which the puffs billow
+   from. */
+#define UNDEAD_SWORD_FOOT_Y		   112
 /* The puffs' pictures, after the half blade. */
-#define UNDEAD_SWORD_PUFF_SHEET PICTURE_BYTES(LIME_COLUMN)
-#define UNDEAD_SWORD_PUFFS		16
+#define UNDEAD_SWORD_PUFF_SHEET	   PICTURE_BYTES(LIME_COLUMN)
+#define UNDEAD_SWORD_PUFFS		   16
 /* A puff's seven pictures, three frames each, the last held until it goes. */
 #define UNDEAD_SWORD_PUFF_PICTURES 7
 #define UNDEAD_SWORD_PUFF_FRAMES   29
 
-/* A blade of lime light thrusts up out of the ground under the first target */
-/* and sinks again, amid puffs of lime smoke that billow up round it. */
-/* */
-/* Abilities: Undead Sword. */
-void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args) {
-	void **slots;
-	void **slot;
+/* A blade of lime light thrusts up out of the ground under the first target and
+   sinks again, amid puffs of lime smoke that billow up round it.
+
+   Abilities: Undead Sword. */
+void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args)
+{
+	void			   **slots;
+	void			   **slot;
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	void *sprites;
-	DRAW_RECTANGLE draw[2];
-	SCR_POINT screenPosition;
-	PARTICLE *puff;
-	PARTICLE *particle;
-	s32 frame;
-	s32 i;
-	s32 height;
-	s32 composite;
-	s32 x;
-	u8 *src;
-	s32 speed;
-	s32 angle;
-	s32 picture;
-	s32 size;
+	void				*canvas;
+	void				*sprites;
+	DRAW_RECTANGLE		 draw[2];
+	SCREEN_POINT		 screenPosition;
+	PARTICLE			*puff;
+	PARTICLE			*particle;
+	Sint32				 frame;
+	Sint32				 i;
+	Sint32				 height;
+	Sint32				 composite;
+	Sint32				 x;
+	Uint8				*src;
+	Sint32				 speed;
+	Sint32				 angle;
+	Sint32				 picture;
+	Sint32				 size;
 
 	slots = &HeapSlots[HEAP_SLOT_BATTLE_EFFECT];
 	slot = slots;
@@ -53,11 +52,11 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args) {
 	EFFECT_START_NARROW_CANVAS(0);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
-	btResourceLoadAndDecompress(RESOURCE_BLAST_SHEET,
-								state->sheet + UNDEAD_SWORD_PUFF_SHEET, 1, 0);
+	btResourceLoadAndDecompress(
+		RESOURCE_BLAST_SHEET, state->sheet + UNDEAD_SWORD_PUFF_SHEET, 1, 0);
 	btEffectBuildCanvasBlitters(state->args->side, draw);
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
-						  CANVAS_FADE_THREE_QUARTERS);
+	EFFECT_START_TRANSFER(
+		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
 	/* The canvas is scrolled to stand its middle over the target. */
 	btProjectionUnit(state->args->tgts[0], &screenPosition);
@@ -81,15 +80,13 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args) {
 			state->shakeFrm = 8;
 			EFFECT_SHOW_DAMAGE(SE_POWER_UP);
 			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_NUDGE);
-			btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_WHITE,
-								POSE_DAMAGE, 0, 8);
+			btEffectTintBattler(
+				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 		}
 
 		/* The blade thrusts up 12 pixels a frame and sinks 6 a frame. While it
-		 */
-		/* grows it is added onto its fading trail and glows; at full height it
-		 */
-		/* only lightens it. */
+		   grows it is added onto its fading trail and glows; at full height it
+		   only lightens it. */
 		if(frame > 7) {
 			if(frame <= 31)
 				height = frame * 12 - 96;
@@ -99,25 +96,22 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args) {
 				if(height > LIME_COLUMN_HEIGHT) {
 					height = LIME_COLUMN_HEIGHT;
 					composite = COMPOSITE_LIGHTEN;
-				}
-				else {
+				} else {
 					composite = COMPOSITE_ADDITIVE;
 				}
 				for(i = 0, x = 50; i != 2; i++, x += LIME_COLUMN_WIDTH) {
 					if(i == 0)
-						EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-											EFFECT_CLIP_BOUNDS, composite);
-					else
 						EFFECT_LOAD_BLITTER(
-							HEAP_SLOT_RAM_CODE,
+							HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, composite);
+					else
+						EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 							EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, composite);
 					/* DEAD: draw[0] is fetched afresh before it is read; the
-					 * ROM keeps */
-					/* the store. */
+					   ROM keeps the store. */
 					draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-					EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(
-						canvas, state->sheet, x, UNDEAD_SWORD_FOOT_Y - height,
-						LIME_COLUMN_WIDTH, height);
+					EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(canvas, state->sheet, x,
+						UNDEAD_SWORD_FOOT_Y - height, LIME_COLUMN_WIDTH,
+						height);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 				}
 			}
@@ -127,9 +121,9 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args) {
 		btEffectBuildCanvasBlitters(state->args->side, draw);
 		for(i = 0, particle = state->particles; i != UNDEAD_SWORD_PUFFS; i++) {
 			if(frame >= i / 2 + 8 &&
-			   particle->variant < UNDEAD_SWORD_PUFF_FRAMES) {
-				s32 drawX;
-				s32 drawY;
+				particle->variant < UNDEAD_SWORD_PUFF_FRAMES) {
+				Sint32 drawX;
+				Sint32 drawY;
 
 				picture = particle->variant / 3;
 				drawX = FIXEDtoINT(particle->x);
@@ -137,10 +131,10 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args) {
 				if(picture > UNDEAD_SWORD_PUFF_PICTURES - 1)
 					picture = UNDEAD_SWORD_PUFF_PICTURES - 1;
 				src = state->sheet + UndeadSword_PuffPictures[picture] +
-					  UNDEAD_SWORD_PUFF_SHEET;
+					UNDEAD_SWORD_PUFF_SHEET;
 				size = UndeadSword_PuffSizes[picture];
 				draw[0](canvas, src, drawX - size / 2, drawY - size / 2, size,
-						size);
+					size);
 				particle->variant++;
 				btParticleAdvanceWithGravity2D(particle, 62, -toFIXED(1) / 8);
 			}

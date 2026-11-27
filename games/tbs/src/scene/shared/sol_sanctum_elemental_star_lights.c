@@ -1,67 +1,67 @@
-/* @file */
-/* Sol Sanctum's Elemental Star room and its eruption: the ten lights that */
-/* float in the room, actors in a row from the first the map passes, each */
-/* pulsing and drifting on its own path from the tables SolSanctum_Light* */
-/* (sol_sanctum_elemental_star_light_tables.c), by its index. */
+/* Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
+   in the room, actors in a row from the first the map passes, each pulsing and
+   drifting on its own path from the tables SolSanctum_Light*
+   (sol_sanctum_elemental_star_light_tables.c), by its index. */
 
 #include "system.h"
 
-/* The most lights the task keeps. */
+/* The most lights the event keeps. */
 enum { SOL_SANCTUM_LIGHT_MAX = 10 };
 
 /* A light moves every this many frames. */
-#define SOL_SANCTUM_LIGHT_STEP_FRAMES 3
-/* Shrunk to a tenth, a light is hidden for this many of its steps while it */
-/* drifts on unseen, then shows again where it has drifted to. */
+#define SOL_SANCTUM_LIGHT_STEP_FRAMES  3
+/* Shrunk to a tenth, a light is hidden for this many of its steps while it
+   drifts on unseen, then shows again where it has drifted to. */
 #define SOL_SANCTUM_LIGHT_HIDDEN_STEPS 24
 
-/* One floating light: its actor, its drift and its pulsing scale, and */
-/* where it is while hidden. */
+/* One floating light: its actor, its drift and its pulsing scale, and where it
+   is while hidden. */
 typedef struct SOL_SANCTUM_LIGHT_ENTRY {
 	ACTOR *actor;
-	FIXED x; /* 16.16 fixed-point pixels */
-	FIXED y; /* 16.16 fixed-point pixels */
-	FIXED z; /* 16.16 fixed-point pixels */
-	/* Its drift on each axis, which grows at random each step; the light */
-	/* swings by the sine of it. */
-	s32 speedX;
-	s32 speedY;
-	s32 speedZ;
-	FIXED scale;	 /* 16.16 fixed point, where FIXED_ONE is full size */
-	FIXED scaleStep; /* 16.16 fixed point */
-	u8 tmr;			 /* frames to its next step */
-	u8 hold;		 /* steps it has left hidden */
+	FIXED  x; /* 16.16 fixed-point pixels */
+	FIXED  y; /* 16.16 fixed-point pixels */
+	FIXED  z; /* 16.16 fixed-point pixels */
+	/* Its drift on each axis, which grows at random each step; the light swings
+	   by the sine of it. */
+	Sint32 speedX;
+	Sint32 speedY;
+	Sint32 speedZ;
+	FIXED  scale;	  /* 16.16 fixed point, where toFIXED(1) is full size */
+	FIXED  scaleStep; /* 16.16 fixed point */
+	Uint8  tmr;		  /* frames to its next step */
+	Uint8  hold;	  /* steps it has left hidden */
 } SOL_SANCTUM_LIGHT_ENTRY;
 
-/* The floating lights' state in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per */
-/* light. */
+/* The floating lights' state in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per
+   light. */
 typedef struct SOL_SANCTUM_LIGHT_LIST {
 	SOL_SANCTUM_LIGHT_ENTRY entries[SOL_SANCTUM_LIGHT_MAX];
-	u16 cnt;
+	Uint16					cnt;
 } SOL_SANCTUM_LIGHT_LIST;
 
-/* A task: every SOL_SANCTUM_LIGHT_STEP_FRAMES each light pulses between a */
-/* tenth of its size and its largest scale and drifts, swinging about on a */
-/* sine of its drift speed on each axis it drifts on. */
-static void scSolSanctumUpdateFloatingLights(void) {
-	SOL_SANCTUM_LIGHT_LIST *list = syHeapSlotAllocEwram(
+/* An event: every SOL_SANCTUM_LIGHT_STEP_FRAMES each light pulses between a
+   tenth of its size and its largest scale and drifts, swinging about on a sine
+   of its drift speed on each axis it drifts on. */
+static void scSolSanctumUpdateFloatingLights(void)
+{
+	SOL_SANCTUM_LIGHT_LIST *list = syHeapSlotAllocEWRAM(
 		HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(SOL_SANCTUM_LIGHT_LIST));
 	SOL_SANCTUM_LIGHT_ENTRY *entry = list->entries;
-	u32 i;
+	Uint32					 i;
 
 	i = 0;
 	while(i != list->cnt) {
 		ACTOR *actor;
-		s32 speedX;
-		s32 speedY;
-		s32 speedZ;
-		FIXED scale;
-		s32 step;
-		u8 timer;
-		FIXED x;
-		FIXED y;
-		FIXED z;
-		u8 hold;
+		Sint32 speedX;
+		Sint32 speedY;
+		Sint32 speedZ;
+		FIXED  scale;
+		Sint32 step;
+		Uint8  timer;
+		FIXED  x;
+		FIXED  y;
+		FIXED  z;
+		Uint8  hold;
 
 		actor = entry->actor;
 		speedX = entry->speedX;
@@ -75,21 +75,20 @@ static void scSolSanctumUpdateFloatingLights(void) {
 		z = entry->z;
 		timer = entry->tmr;
 		if(--timer == 0) {
-			u32 rx;
-			u32 ry;
-			u32 rz;
-			FIXED dx;
-			FIXED dy;
+			Uint32 rx;
+			Uint32 ry;
+			Uint32 rz;
+			FIXED  dx;
+			FIXED  dy;
 
 			timer = SOL_SANCTUM_LIGHT_STEP_FRAMES;
 			if(hold == 0) {
 				scale += step;
 				if(scale >= SolSanctum_LightMaxScales[i]) {
 					step = -SolSanctum_LightScaleSteps[i];
-				}
-				else if(scale <= FIXED_ONE / 10) {
+				} else if(scale <= toFIXED(1) / 10) {
 					step = SolSanctum_LightScaleSteps[i];
-					scale = FIXED_ONE / 10;
+					scale = toFIXED(1) / 10;
 					hold = SOL_SANCTUM_LIGHT_HIDDEN_STEPS;
 					x = actor->x.fixed;
 					y = actor->y.fixed;
@@ -144,8 +143,7 @@ static void scSolSanctumUpdateFloatingLights(void) {
 						actor->z.fixed = z;
 						actor->tgtZ = z;
 					}
-				}
-				else {
+				} else {
 					actor->x.fixed += dx;
 					actor->tgtX = actor->x.fixed;
 					if(ry != 0) {
@@ -172,22 +170,22 @@ static void scSolSanctumUpdateFloatingLights(void) {
 	}
 }
 
-/* Starts the floating lights: count actors (at most SOL_SANCTUM_LIGHT_MAX) */
-/* from first, each drawn translucent and starting at its largest scale. */
-void scSolSanctumStartFloatingLights(s32 first, u32 count) {
-	/* Each light is set up through its effect view (ACTOR_OR_EFFECT); the
-	 */
-	/* task reads it as an actor. */
-	SOL_SANCTUM_LIGHT_LIST *list;
+/* Starts the floating lights: count actors (at most SOL_SANCTUM_LIGHT_MAX) from
+   first, each drawn translucent and starting at its largest scale. */
+void scSolSanctumStartFloatingLights(Sint32 first, Uint32 count)
+{
+	/* Each light is set up through its effect view (ACTOR_OR_EFFECT); the event
+	   reads it as an actor. */
+	SOL_SANCTUM_LIGHT_LIST	*list;
 	SOL_SANCTUM_LIGHT_ENTRY *entry;
-	FIELD_EFFECT *light;
-	u32 i;
-	s32 cleared;
+	FIELD_EFFECT			*light;
+	Uint32					 i;
+	Sint32					 cleared;
 
-	list = syHeapSlotAllocEwram(HEAP_SLOT_SOL_SANCTUM_LIGHTS,
-								sizeof(SOL_SANCTUM_LIGHT_LIST));
+	list = syHeapSlotAllocEWRAM(
+		HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(SOL_SANCTUM_LIGHT_LIST));
 	entry = list->entries;
-	btDmaFill32(0, list, sizeof(SOL_SANCTUM_LIGHT_LIST));
+	DMA_FILL32(0, list, sizeof(SOL_SANCTUM_LIGHT_LIST));
 	if(count > SOL_SANCTUM_LIGHT_MAX)
 		count = SOL_SANCTUM_LIGHT_MAX;
 	i = 0;
@@ -196,7 +194,7 @@ void scSolSanctumStartFloatingLights(s32 first, u32 count) {
 		do {
 			light = (FIELD_EFFECT *)fdActorGetById(first);
 			{
-				u8 *flags = &light->spr->flg;
+				Uint8 *flags = &light->spr->flg;
 
 				entry->actor = (ACTOR *)light;
 				*flags = cleared;
@@ -212,5 +210,5 @@ void scSolSanctumStartFloatingLights(s32 first, u32 count) {
 		} while(i != count);
 	}
 	list->cnt = count;
-	syTaskAddFrame(scSolSanctumUpdateFloatingLights, TASK_PASS_FRAME);
+	sySetFrameEvent(scSolSanctumUpdateFloatingLights, EVENT_PASS_FRAME);
 }

@@ -1,55 +1,53 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_IDS_H
 #define ALCHEMY_BATTLE_EFFECT_IDS_H
 
-/* @file */
-/* The kinds of battle effect, by BATTLE_PLAN.battleEff's low twelve bits: */
-/* the large effects btEffectRunSummon runs, and the effects the table */
-/* of handlers plays. */
+/* The kinds of battle effect, by BATTLE_PLAN.battleEff's low twelve bits: the
+   large effects btEffectRunSummon runs, and the effects the table of handlers
+   plays. */
 
-/* The large effects btEffectRunSummon runs, by kind: the summons, Ramses */
-/* to Iris, and the scenes of Daedalus's second strike, Trident, Cruel Ruin and
- */
-/* Meteor Blow. */
+/* The large effects btEffectRunSummon runs, by kind: the summons, Ramses to
+   Iris, and the scenes of Daedalus's second strike, Trident, Cruel Ruin and
+   Meteor Blow. */
 typedef enum SUMMON_EFFECT_ID {
-	SUMMON_EFFECT_NONE,			   /* runs Meteor's effect */
-	SUMMON_EFFECT_RAMSES,		   /* btEffectRunRamses (ramses.c) */
-	SUMMON_EFFECT_NEREID,		   /* btEffectRunNereid (nereid.c) */
-	SUMMON_EFFECT_KIRIN,		   /* btEffectRunKirin (kirin.c) */
-	SUMMON_EFFECT_ATALANTA,		   /* btEffectRunAtalanta (atalanta.c) */
-	SUMMON_EFFECT_CYBELE,		   /* btEffectRunCybele (cybele.c) */
-	SUMMON_EFFECT_NEPTUNE,		   /* btEffectRunNeptune (neptune.c) */
-	SUMMON_EFFECT_TIAMAT,		   /* btEffectRunTiamat (procne.c) */
-	SUMMON_EFFECT_PROCNE,		   /* btEffectRunProcne (procne.c) */
-	SUMMON_EFFECT_JUDGMENT,		   /* btEffectRunJudgment (judgment.c) */
-	SUMMON_EFFECT_BOREAS,		   /* btEffectRunBoreas (boreas.c) */
-	SUMMON_EFFECT_METEOR,		   /* btEffectRunMeteor (particle_streams.c) */
-	SUMMON_EFFECT_THOR,			   /* btEffectRunThor (thor.c) */
-	SUMMON_EFFECT_ZAGAN,		   /* btEffectRunZagan (djinn_heal.c) */
-	SUMMON_EFFECT_MEGAERA,		   /* btEffectRunMegaera (thunder_mine.c) */
-	SUMMON_EFFECT_FLORA,		   /* btEffectRunFlora (flora.c) */
-	SUMMON_EFFECT_MOLOCH,		   /* btEffectRunMoloch (moloch.c) */
-	SUMMON_EFFECT_ULYSSES,		   /* btEffectRunUlysses (spider_web.c) */
-	SUMMON_EFFECT_HAURES,		   /* btEffectRunHaures (haures.c) */
-	SUMMON_EFFECT_ECLIPSE,		   /* btEffectRunEclipse (canvas.c) */
-	SUMMON_EFFECT_COATLICUE,	   /* btEffectRunCoatlicue (vengeance.c) */
-	SUMMON_EFFECT_DAEDALUS,		   /* btEffectRunDaedalus (daedalus.c) */
-	SUMMON_EFFECT_AZUL,			   /* btEffectRunAzul (azul.c) */
-	SUMMON_EFFECT_CATASTROPHE,	   /* btEffectRunCatastrophe (catastrophe.c) */
-	SUMMON_EFFECT_CHARON,		   /* btEffectRunCharon (charon.c) */
-	SUMMON_EFFECT_IRIS,			   /* btEffectRunIris (moloch.c) */
-	SUMMON_EFFECT_DAEDALUS_STRIKE, /* btEffectRunDaedalusStrike */
-								   /* (daedalus.c) */
-	SUMMON_EFFECT_TRIDENT,		   /* btEffectRunTrident (trident.c) */
-	SUMMON_EFFECT_CRUEL_RUIN,	   /* btEffectRunCruelRuin (cruel_ruin.c) */
-	SUMMON_EFFECT_METEOR_BLOW	   /* btEffectRunMeteorBlow (meteor_blow.c) */
+	SUMMON_EFFECT_NONE,		   /* runs Meteor's effect */
+	SUMMON_EFFECT_RAMSES,	   /* btEffectRunRamses (ramses.c) */
+	SUMMON_EFFECT_NEREID,	   /* btEffectRunNereid (nereid.c) */
+	SUMMON_EFFECT_KIRIN,	   /* btEffectRunKirin (kirin.c) */
+	SUMMON_EFFECT_ATALANTA,	   /* btEffectRunAtalanta (atalanta.c) */
+	SUMMON_EFFECT_CYBELE,	   /* btEffectRunCybele (cybele.c) */
+	SUMMON_EFFECT_NEPTUNE,	   /* btEffectRunNeptune (neptune.c) */
+	SUMMON_EFFECT_TIAMAT,	   /* btEffectRunTiamat (procne.c) */
+	SUMMON_EFFECT_PROCNE,	   /* btEffectRunProcne (procne.c) */
+	SUMMON_EFFECT_JUDGMENT,	   /* btEffectRunJudgment (judgment.c) */
+	SUMMON_EFFECT_BOREAS,	   /* btEffectRunBoreas (boreas.c) */
+	SUMMON_EFFECT_METEOR,	   /* btEffectRunMeteor (particle_streams.c) */
+	SUMMON_EFFECT_THOR,		   /* btEffectRunThor (thor.c) */
+	SUMMON_EFFECT_ZAGAN,	   /* btEffectRunZagan (djinn_heal.c) */
+	SUMMON_EFFECT_MEGAERA,	   /* btEffectRunMegaera (thunder_mine.c) */
+	SUMMON_EFFECT_FLORA,	   /* btEffectRunFlora (flora.c) */
+	SUMMON_EFFECT_MOLOCH,	   /* btEffectRunMoloch (moloch.c) */
+	SUMMON_EFFECT_ULYSSES,	   /* btEffectRunUlysses (spider_web.c) */
+	SUMMON_EFFECT_HAURES,	   /* btEffectRunHaures (haures.c) */
+	SUMMON_EFFECT_ECLIPSE,	   /* btEffectRunEclipse (canvas.c) */
+	SUMMON_EFFECT_COATLICUE,   /* btEffectRunCoatlicue (vengeance.c) */
+	SUMMON_EFFECT_DAEDALUS,	   /* btEffectRunDaedalus (daedalus.c) */
+	SUMMON_EFFECT_AZUL,		   /* btEffectRunAzul (azul.c) */
+	SUMMON_EFFECT_CATASTROPHE, /* btEffectRunCatastrophe (catastrophe.c) */
+	SUMMON_EFFECT_CHARON,	   /* btEffectRunCharon (charon.c) */
+	SUMMON_EFFECT_IRIS,		   /* btEffectRunIris (moloch.c) */
+	/* btEffectRunDaedalusStrike (daedalus.c) */
+	SUMMON_EFFECT_DAEDALUS_STRIKE,
+	SUMMON_EFFECT_TRIDENT,	  /* btEffectRunTrident (trident.c) */
+	SUMMON_EFFECT_CRUEL_RUIN, /* btEffectRunCruelRuin (cruel_ruin.c) */
+	SUMMON_EFFECT_METEOR_BLOW /* btEffectRunMeteorBlow (meteor_blow.c) */
 } SUMMON_EFFECT_ID;
 
-/* Effect kinds: the kind an ability's AbilityBattleEffects row selects for */
-/* btEffectRunFromTable, by the handler of BattleEffect_Handlers that */
-/* plays it; a later kind that shares a handler is named for the ability that */
-/* uses it, or Unused when none does. Kinds without a handler have no name. A */
-/* row with EFFECT_SUMMON holds an SUMMON_EFFECT_ID instead, and one with */
-/* EFFECT_BY_ID_RANGE a number of btEffectRunByIdRange's own. */
+/* Effect kinds: the kind an ability's AbilityBattleEffects row selects for
+   btEffectRunFromTable, by the handler of BattleEffect_Handlers that plays it;
+   a later kind that shares a handler is named for the ability that uses it, or
+   Unused when none does. Kinds without a handler have no name. A row with
+   EFFECT_SUMMON holds an SUMMON_EFFECT_ID instead, and one with
+   EFFECT_BY_ID_RANGE a number of btEffectRunByIdRange's own. */
 typedef enum BATTLE_EFFECT_ID {
 	BATTLE_EFFECT_NONE = 0, /* no effect */
 	BATTLE_EFFECT_QUAKE = 1,

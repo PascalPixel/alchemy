@@ -1,10 +1,10 @@
 @ Two ARM functions in module 09, beside the credits slides that use the second.
 @
-@ Vector_InnerProduct(ax, bx, ay, by, az, bz): the 16.16 dot product
+@ mnVectorInnerProduct(ax, bx, ay, by, az, bz): the 16.16 dot product
 @ ax*bx + ay*by + az*bz, the last two arguments on the stack, summed in 64
 @ bits and returned shifted right 16. Nothing in the game calls it.
 @
-@ Credits_DecodeBackground(source, destination, offset): decodes a credits slide's
+@ mnCreditsDecodeBackground(source, destination, offset): decodes a credits slide's
 @ packed picture (r0) into 8bpp tiles (r1), 15 bands of 8 tiles of 32 rows,
 @ adding offset (r2, the same palette offset in every byte) to each pixel.
 @ mnCreditsLoadBackground (credits.c) copies it into a heap slot
@@ -12,7 +12,7 @@
 @ commands (credits_background_expand.s) for wherever the copy landed.
 @
 @ Why assembly:
-@ Why Vector_InnerProduct is assembly:
+@ Why mnVectorInnerProduct is assembly:
 @ smull ip, r0, r1, r0 and both smlal ip, r0, r2, r3 keep the 64-bit sum
 @ with its low half in ip (r12) and its high half in r0. mulsidi3 and
 @ *mulsidi3adddi write a DI register pair, RdHi = RdLo + 1, earlyclobbered
@@ -25,14 +25,14 @@
 @ ldm sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.
-@ Why Credits_DecodeBackground is assembly:
+@ Why mnCreditsDecodeBackground is assembly:
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
 .text
 	.arm
-	.global Vector_InnerProduct
-Vector_InnerProduct:
+	.global mnVectorInnerProduct
+mnVectorInnerProduct:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}
@@ -43,8 +43,8 @@ Vector_InnerProduct:
 .syntax unified
 .text
 	.arm
-	.global Credits_DecodeBackground
-Credits_DecodeBackground:
+	.global mnCreditsDecodeBackground
+mnCreditsDecodeBackground:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
 	ldr	r2, [pc, #192]
@@ -68,23 +68,23 @@ Credits_DecodeBackground:
 .Lcolumn:
 	mov	r7, #32
 .Lrow:
-	bl Credits_DecodeBackgroundRead
+	bl mnCreditsDecodeBackgroundRead
 	lsr	r6, r5, #25
-	bl Credits_DecodeBackgroundRead
+	bl mnCreditsDecodeBackgroundRead
 	orr	r6, r6, r5, lsr #17
-	bl Credits_DecodeBackgroundRead
+	bl mnCreditsDecodeBackgroundRead
 	orr	r6, r6, r5, lsr #9
-	bl Credits_DecodeBackgroundRead
+	bl mnCreditsDecodeBackgroundRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl Credits_DecodeBackgroundRead
+	bl mnCreditsDecodeBackgroundRead
 	lsr	r6, r5, #25
-	bl Credits_DecodeBackgroundRead
+	bl mnCreditsDecodeBackgroundRead
 	orr	r6, r6, r5, lsr #17
-	bl Credits_DecodeBackgroundRead
+	bl mnCreditsDecodeBackgroundRead
 	orr	r6, r6, r5, lsr #9
-	bl Credits_DecodeBackgroundRead
+	bl mnCreditsDecodeBackgroundRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

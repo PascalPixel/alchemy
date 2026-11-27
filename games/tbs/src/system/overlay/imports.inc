@@ -8,59 +8,59 @@
 @ their own names. The exceptions are the divide functions, which overlays
 @ call under the compiler's names and the Math_ names, and the few functions
 @ whose calls in the maps differ from their prototypes
-@ (games/tbs/include/field/event.h says how).
+@ (games/tbs/include/field/script.h says how).
 	.syntax unified
 	.thumb
 	.balign 4
 	.include "games/tbs/src/system/stub.inc"
 @ divide functions in IWRAM
-	stub Math_DivideSigned, IwramSignedDivide
-	stub __divsi3, IwramSignedDivide
-	stub __modsi3, IwramSignedRemainder
-	stub syMathDivideUnsigned, IwramUnsignedDivide
-	stub __udivsi3, IwramUnsignedDivide
-	stub syMathRemainderUnsigned, IwramUnsignedRemainder
-	stub __umodsi3, IwramUnsignedRemainder
+	stub Math_DivideSigned, syIWRAMSignedDivide
+	stub __divsi3, syIWRAMSignedDivide
+	stub __modsi3, syIWRAMSignedRemainder
+	stub syMathDivideUnsigned, syIWRAMUnsignedDivide
+	stub __udivsi3, syIWRAMUnsignedDivide
+	stub syMathRemainderUnsigned, syIWRAMUnsignedRemainder
+	stub __umodsi3, syIWRAMUnsignedRemainder
 @ System library module (system/stubs.s)
 	stub sySynch, sySynchStub
-	stub sySetEvent, syTaskAddStub
-	stub syCloseEvent, syTaskRemoveStub
+	stub sySetEvent, sySetEventStub
+	stub syCloseEvent, syCloseEventStub
 	stub syImportRandomNext, syRandomStub
-	stub syAtan, syTrigAtanStub
-	stub sySquartFX, syMathSqrtFXStub
+	stub syAtan, syAtanStub
+	stub sySquartFX, sySquartFXStub
 	stub sySin, sySinStub
 	stub syCos, syCosStub
 	stub syVectorAddPolarOffset, syVectorAddPolarOffsetStub
-	stub syIntFunction, syIrqSetHandlerStub
+	stub syIntFunction, syIntFunctionStub
 	stub syHeapSlotAlloc, syHeapSlotAllocStub
-	stub syHeapSlotAllocEwram, syHeapSlotAllocEwramStub
+	stub syHeapSlotAllocEWRAM, syHeapSlotAllocEWRAMStub
 	stub syHeapSlotRelease, syHeapSlotReleaseStub
 	stub syHeapAlloc, syHeapAllocStub
-	stub syHeapAllocEwram, syHeapAllocEwramStub
+	stub syHeapAllocEWRAM, syHeapAllocEWRAMStub
 	stub syHeapRelease, syHeapReleaseStub
-	stub fdDecompressByteLz, fdDecompressByteLzStub
-	stub fdDecompressTaggedLz, fdDecompressTaggedLzStub
-	stub syVramCacheFreeEntry, syVramCacheFreeEntryStub
-	stub syVramCacheReleaseVram, syVramCacheReleaseVramStub
-	stub syVramCacheLoad, syVramCacheLoadStub
-	stub syVramCacheFindFreeEntry, syVramCacheFindFreeEntryStub
-	stub syOamMatrixAllocFromTransform, syOamMatrixAllocFromTransformStub
-	stub syOamAddSprAtDepth, syOamAddSprAtDepthStub
-	stub syWindowLoadGraphics, mnWindowLoadGraphicsStub
+	stub syDecompressByteLZ, syDecompressByteLZStub
+	stub syDecompressTaggedLZ, syDecompressTaggedLZStub
+	stub syVRAMCacheFreeEntry, syVRAMCacheFreeEntryStub
+	stub syVRAMCacheReleaseVRAM, syVRAMCacheReleaseVRAMStub
+	stub syVRAMCacheLoad, syVRAMCacheLoadStub
+	stub syVRAMCacheFindFreeEntry, syVRAMCacheFindFreeEntryStub
+	stub syOAMMatrixAllocFromTransform, syOAMMatrixAllocFromTransformStub
+	stub syOAMAddSprAtDepth, syOAMAddSprAtDepthStub
+	stub syWindowLoadGraphics, syWindowLoadGraphicsStub
 	stub syResourceGetTableEntry, syResourceGetTableEntryStub
-	stub syDummyNoOpHook, syDummyNoOpHookStub
-	stub syScrFadeToBlack, syScrFadeToBlackStub
-	stub syScrFadeWait, syScrFadeWaitStub
+	stub syDummyNoOperationHook, syDummyNoOperationHookStub
+	stub syScreenFadeToBlack, syScreenFadeToBlackStub
+	stub syScreenFadeWait, syScreenFadeWaitStub
 	stub sySerialInit, sySerialInitStub
 	stub sySerialPollAndTransfer, sySerialPollAndTransferStub
-	stub syIoWriteQueueStore16, syIoWriteQueueStore16Stub
-	stub syIoWriteQueueStore32, syIoWriteQueueStore32Stub
-	stub sySerialRemoveIrqHandlers, sySerialRemoveIrqHandlersStub
+	stub syIOWriteQueueStore16, syIOWriteQueueStore16Stub
+	stub syIOWriteQueueStore32, syIOWriteQueueStore32Stub
+	stub sySerialRemoveIRQHandlers, sySerialRemoveIRQHandlersStub
 	stub sySndLoadReverbCode, sySndLoadReverbCodeStub
 	stub sySerialStartSend, sySerialStartSendStub
 	stub sySerialStartReceive, sySerialStartReceiveStub
 	stub sySerialGetActiveTransfers, sySerialGetActiveTransfersStub
-	stub syTaskSetFlags, syTaskSetFlagsStub
+	stub sySetEventFlags, sySetEventFlagsStub
 @ Field module (field/stubs.s)
 	stub fdSprStartAnimation, fdSprStartAnimationStub
 	stub fdSprAddAnimation, fdSprAddAnimationStub
@@ -76,33 +76,33 @@
 	stub fdActorWaitForScriptEnd, fdActorWaitForScriptEndStub
 	stub fdActorSetMoveTarget, fdActorSetMoveTargetStub
 	stub fdActorWaitForMove, fdActorWaitForMoveStub
-	stub fdWorldMapLoadDefaultCellsAndUpdateBlock, scWorldMapLoadDefaultCellsAndUpdateBlockStub
+	stub fdWorldMapLoadDefaultMetatilesAndUpdateBlock, fdWorldMapLoadDefaultMetatilesAndUpdateBlockStub
 	stub fdMapGridPlayMapEdit, fdMapGridPlayMapEditStub
-	stub fdMapGridCopyCellTilesIndicesRect, fdMapGridCopyCellTilesIndicesRectStub
+	stub fdMapGridCopyMetatileTilesIndicesRect, fdMapGridCopyMetatileTilesIndicesRectStub
 	stub fdTilesetAnimResume, fdTilesetAnimResumeStub
 	stub fdTilesetAnimPause, fdTilesetAnimPauseStub
 	stub fdBlendScriptResume, fdBlendScriptResumeStub
 	stub fdBlendScriptSuspend, fdBlendScriptSuspendStub
 	stub fdMapGridGetTerrainHeight, fdMapGridGetTerrainHeightStub
-	stub fdMapGridGetCellBehaviorAt, fdMapGridGetCellBehaviorAtStub
-	stub fdMapGridCopyCellTilesCellsRect, fdMapGridCopyCellTilesCellsRectStub
-	stub fdMapGridCopyCellAttributeRect, fdMapGridCopyCellAttributeRectStub
-	stub fdMapGridCopyCellIndexRect, fdMapGridCopyCellIndexRectStub
-	stub fdWorldMapSetGridTile, scWorldMapSetGridTileStub
+	stub fdMapGridGetMetatileBehaviorAt, fdMapGridGetMetatileBehaviorAtStub
+	stub fdMapGridCopyMetatileTilesMetatilesRect, fdMapGridCopyMetatileTilesMetatilesRectStub
+	stub fdMapGridCopyMetatileAttributeRect, fdMapGridCopyMetatileAttributeRectStub
+	stub fdMapGridCopyMetatileIndexRect, fdMapGridCopyMetatileIndexRectStub
+	stub fdWorldMapSetGridTile, fdWorldMapSetGridTileStub
 	stub fdMapGridCheckCollision, fdMapGridCheckCollisionStub
 	stub fdActorSetSprFlags, fdActorSetSprFlagsStub
 	stub fdActorSetBlendMode, fdActorSetBlendModeStub
-	stub fdMapGridSetScrShake, fdMapGridSetScrShakeStub
+	stub fdMapGridSetScreenShake, fdMapGridSetScreenShakeStub
 	stub fdMapGridWaitForShakeToSettle, fdMapGridWaitForShakeToSettleStub
 	stub fdActorSystemSuspendProjectionAndShowSprs, fdActorSystemSuspendProjectionAndShowSprsStub
 	stub fdActorSystemResumeProjectionAndHideLayers, fdActorSystemResumeProjectionAndHideLayersStub
 	stub fdActorRegisterSprMetadata, fdActorRegisterSprMetadataStub
-	stub fdWorldMapStartStillImage, scWorldMapStartStillImageStub
-	stub fdWorldMapLoadAreaGraphics, scWorldMapLoadAreaGraphicsStub
+	stub fdWorldMapStartStillImage, fdWorldMapStartStillImageStub
+	stub fdWorldMapLoadAreaGraphics, fdWorldMapLoadAreaGraphicsStub
 	stub fdActorSetSprColMode, fdActorSetSprColModeStub
 	stub fdSprSetAnimationColModes, fdSprSetAnimationColModesStub
 	stub fdMapGridSetShownLayers, fdMapGridSetShownLayersStub
-	stub fdMapGridSetCellBehaviorAt, fdMapGridSetCellBehaviorAtStub
+	stub fdMapGridSetMetatileBehaviorAt, fdMapGridSetMetatileBehaviorAtStub
 @ Window module (window/stubs.s)
 	stub mnWindowCreate, mnWindowCreateStub
 	stub mnWindowClose, mnWindowCloseStub
@@ -134,12 +134,12 @@
 	stub mnWindowSprRedrawSavedRect, mnWindowSprRedrawSavedRectStub
 	stub mnWindowSprClearList, mnWindowSprClearListStub
 	stub mnWindowSetTilemapEntry, mnWindowSetTilemapEntryStub
-	stub mnSaveToChosenFile, sySaveToChosenFileStub
-	stub mnSaveChooseAndLoadFile, sySaveChooseAndLoadFileStub
-	stub mnSaveCopyFile, sySaveCopyFileStub
-	stub mnSaveEraseSelectedFile, sySaveEraseSelectedFileStub
-	stub mnSaveWriteLinkTallies, sySaveWriteLinkTalliesStub
-	stub mnSaveScanFileSummaries, sySaveScanFileSummariesStub
+	stub mnSaveToChosenFile, mnSaveToChosenFileStub
+	stub mnSaveChooseAndLoadFile, mnSaveChooseAndLoadFileStub
+	stub mnSaveCopyFile, mnSaveCopyFileStub
+	stub mnSaveEraseSelectedFile, mnSaveEraseSelectedFileStub
+	stub mnSaveWriteLinkTallies, mnSaveWriteLinkTalliesStub
+	stub mnSaveScanFileSummaries, mnSaveScanFileSummariesStub
 	stub mnNameEntryEditMemberName, mnNameEntryEditMemberNameStub
 	stub mnDebugBrowserIcons, mnDebugBrowserIconsStub
 	stub mnDebugBrowserPortraits, mnDebugBrowserPortraitsStub
@@ -148,9 +148,9 @@
 	stub mnSelectCoinsOrMedals, mnSelectCoinsOrMedalsStub
 	stub mnColossoMenuChoose, mnColossoMenuChooseStub
 	stub mnPointingHandLoadIntoFreeSlot, mnPointingHandLoadIntoFreeSlotStub
-	stub mnGraphicsExpandVramTilesByColTable, mnGraphicsExpandVramTilesByColTableStub
+	stub mnGraphicsExpandVRAMTilesByColTable, mnGraphicsExpandVRAMTilesByColTableStub
 	stub mnAnimateSelectionToEntry, mnAnimateSelectionToEntryStub
-	stub mnSaveCountFilesExcludingSent, sySaveCountFilesExcludingSentStub
+	stub mnSaveCountFilesExcludingSent, mnSaveCountFilesExcludingSentStub
 	stub mnPageArrowsDraw, mnPageArrowsDrawStub
 @ Game module (game/stubs.s)
 	stub gmDjinnGetRecoveryTable, gmDjinnGetRecoveryTableStub
@@ -163,7 +163,7 @@
 	stub gmPartyInventoryFindMember, gmPartyInventoryFindMemberStub
 	stub gmPartyInventoryRemove, gmPartyInventoryRemoveStub
 	stub gmInventoryEquip, gmInventoryEquipStub
-	stub gmAbilityGetDirect, mnAbilityGet
+	stub gmAbilityGetDirect, gmAbilityGetDirectStub
 	stub gmMainRoutineStateInitDefaults, gmMainRoutineStateInitDefaultsStub
 	stub gmFlagGet, gmFlagGetStub
 	stub gmFlagSet, gmFlagSetStub
@@ -180,7 +180,7 @@
 	stub gmPartyRemoveMember, gmPartyRemoveMemberStub
 	stub gmDjinnGive, gmDjinnGiveStub
 	stub gmDjinnSet, gmDjinnSetStub
-	stub gmDjinnRecoveryAddStandby, btDjinnRecoveryAddStandbyStub
+	stub gmDjinnRecoveryAddStandby, gmDjinnRecoveryAddStandbyStub
 	stub gmDjinnTransfer, gmDjinnTransferStub
 	stub gmUnitLevelUpTo, gmUnitLevelUpToStub
 	stub gmPartyAdjustCoins, gmPartyAdjustCoinsStub
@@ -199,19 +199,19 @@
 	stub gmPartyInventoryCountFreeSlots, gmPartyInventoryCountFreeSlotsStub
 	stub gmInventorySnapshotSave, gmInventorySnapshotSaveStub
 	stub gmInventorySnapshotRestore, gmInventorySnapshotRestoreStub
-@ Field sequence module (field/sequence_stubs.s)
-	stub fdEventWait, fdEventWaitStub
-	stub fdEventStart, fdEventStartStub
-	stub fdEventEnd, fdEventEndStub
-	stub fdEventAppendActorPlacements, fdEventAppendActorPlacementsStub
-	stub scAssignViewFlags, scAssignViewFlagsStub
-	stub fdEventSetTriggers, fdEventSetTriggersStub
-	stub fdEventAddPartyMember, fdEventAddPartyMemberStub
-	stub fdEventAddPartyMemberPair, fdEventAddPartyMemberPairStub
-	stub fdPartyRemoveMemberRestored, gmPartyRemoveMemberRestoredStub
-	stub fdPartyInventoryGiveItem, gmPartyInventoryGiveItemStub
-	stub fdEventAskYesNoWithActorAnimation, fdEventAskYesNoWithActorAnimationStub
-	stub fdPartyLearnAbility, gmPartyLearnAbilityStub
+@ Field mode module (field/mode_stubs.s)
+	stub fdScriptWait, fdScriptWaitStub
+	stub fdScriptStart, fdScriptStartStub
+	stub fdScriptEnd, fdScriptEndStub
+	stub fdScriptAppendActorPlacements, fdScriptAppendActorPlacementsStub
+	stub fdAssignViewFlags, fdAssignViewFlagsStub
+	stub fdScriptSetCues, fdScriptSetCuesStub
+	stub fdScriptAddPartyMember, fdScriptAddPartyMemberStub
+	stub fdScriptAddPartyMemberPair, fdScriptAddPartyMemberPairStub
+	stub fdPartyRemoveMemberRestored, fdPartyRemoveMemberRestoredStub
+	stub fdPartyInventoryGiveItem, fdPartyInventoryGiveItemStub
+	stub fdScriptAskYesNoWithActorAnimation, fdScriptAskYesNoWithActorAnimationStub
+	stub fdPartyLearnAbility, fdPartyLearnAbilityStub
 	stub fdActorGetById, fdActorGetByIdStub
 	stub fdActorReleaseById, fdActorReleaseByIdStub
 	stub fdActorSetSpeedParms, fdActorSetSpeedParmsStub
@@ -240,14 +240,14 @@
 	stub fdActorConfigureSprCol, fdActorConfigureSprColStub
 	stub fdActorSetSprCol, fdActorSetSprColStub
 	stub fdActorWatchAndStartScript, fdActorWatchAndStartScriptStub
-	stub fdEventSetMessageId, fdEventSetMessageIdStub
-	stub fdMessageShowAtActor, mnFieldMessageShowAtActorStub
-	stub fdEventShowMessageAndWait, fdEventShowMessageAndWaitStub
-	stub fdEventShowMessageThenWait, fdEventShowMessageThenWaitStub
-	stub fdEventAskYesNoAndShowResponse, fdEventAskYesNoAndShowResponseStub
+	stub fdScriptSetMessageId, fdScriptSetMessageIdStub
+	stub fdMessageShowAtActor, fdMessageShowAtActorStub
+	stub fdScriptShowMessageAndWait, fdScriptShowMessageAndWaitStub
+	stub fdScriptShowMessageThenWait, fdScriptShowMessageThenWaitStub
+	stub fdScriptAskYesNoAndShowResponse, fdScriptAskYesNoAndShowResponseStub
 	stub fdActorFaceDirectionById, fdActorFaceDirectionByIdStub
-	stub syImportEventShowTwoMessagesAndWait, fdEventShowTwoMessagesAndWaitStub
-	stub fdMessageSetVoiceFromActor, mnMessageSetVoiceFromActorStub
+	stub syImportScriptShowTwoMessagesAndWait, fdScriptShowTwoMessagesAndWaitStub
+	stub fdMessageSetVoiceFromActor, fdMessageSetVoiceFromActorStub
 	stub fdActorSetSprPriority, fdActorSetSprPriorityStub
 	stub fdActorShowEmoteById, fdActorShowEmoteByIdStub
 	stub fdEffectSetAttached, fdEffectSetAttachedStub
@@ -259,13 +259,13 @@
 	stub fdCameraMoveToActorById, fdCameraMoveToActorByIdStub
 	stub fdCameraGetActor, fdCameraGetActorStub
 	stub fdMapGridSetCameraBounds, fdMapGridSetCameraBoundsStub
-	stub fdEventSetDestination, fdEventSetDestinationStub
-	stub syImportEventSetExitRequest, fdEventSetExitRequestStub
+	stub fdScriptSetDestination, fdScriptSetDestinationStub
+	stub syImportScriptSetExitRequest, fdScriptSetExitRequestStub
 	stub fdRequestBattleFromEncounterTable, fdRequestBattleFromEncounterTableStub
 	stub fdRequestDjinnBattle, fdRequestDjinnBattleStub
-	stub fdEventSetAfterBattleDestination, fdEventSetAfterBattleDestinationStub
-	stub fdEventSetDefeatDestination, fdEventSetDefeatDestinationStub
-	stub fdEventLeaveFor, fdEventLeaveForStub
+	stub fdScriptSetAfterBattleDestination, fdScriptSetAfterBattleDestinationStub
+	stub fdScriptSetDefeatDestination, fdScriptSetDefeatDestinationStub
+	stub fdScriptLeaveFor, fdScriptLeaveForStub
 	stub fdTryJumpForward, fdTryJumpForwardStub
 	stub fdClimbDown, fdClimbDownStub
 	stub fdClimbUp, fdClimbUpStub
@@ -277,22 +277,22 @@
 	stub fdWeatherResumeLightning, fdWeatherResumeLightningStub
 	stub fdWeatherStartLightningFlash, fdWeatherStartLightningFlashStub
 	stub fdEffectInitSparkles, fdEffectInitSparklesStub
-	stub fdScrTransitionStartHeldWindow, fdScrTransitionStartHeldWindowStub
+	stub fdScreenTransitionStartHeldWindow, fdScreenTransitionStartHeldWindowStub
 	stub fdPaletteFadeSetTarget, fdPaletteFadeSetTargetStub
 	stub fdPaletteFadeSetSource, fdPaletteFadeSetSourceStub
 	stub fdPaletteFadeStartInterpolation, fdPaletteFadeStartInterpolationStub
-	stub fdEventStartScrTransition, fdEventStartScrTransitionStub
-	stub fdEventFinishScrTransition, fdEventFinishScrTransitionStub
-	stub fdEventWaitTransitionFrames, fdEventWaitTransitionFramesStub
-	stub scLineScrollInitWave, fdLineScrollInitWaveStub
+	stub fdScriptStartScreenTransition, fdScriptStartScreenTransitionStub
+	stub fdScriptFinishScreenTransition, fdScriptFinishScreenTransitionStub
+	stub fdScriptWaitTransitionFrames, fdScriptWaitTransitionFramesStub
+	stub scLineScrollInitWave, scLineScrollInitWaveStub
 	stub fdLineScrollStop, fdLineScrollStopStub
 	stub fdChestOpenAndShowItem, fdChestOpenAndShowItemStub
 	stub fdItemDispShowPicture, fdItemDispShowPictureStub
 	stub fdItemDispShowItem, fdItemDispShowItemStub
 	stub fdTreasureSpotSetActorPos, fdTreasureSpotSetActorPosStub
 	stub fdTreasureSpotMoveLeaderAway, fdTreasureSpotMoveLeaderAwayStub
-	stub fdWorldMapFreeze, scWorldMapFreezeStub
-	stub fdWorldMapUnfreeze, scWorldMapUnfreezeStub
+	stub fdWorldMapFreeze, fdWorldMapFreezeStub
+	stub fdWorldMapUnfreeze, fdWorldMapUnfreezeStub
 	stub fdActorLookup, fdActorLookupStub
 	stub fdEffectStartGroundMask, fdEffectStartGroundMaskStub
 	stub fdPsynergyRunHandler, fdPsynergyRunHandlerStub
@@ -305,18 +305,18 @@
 	stub fdPsynergyStartMindReadWave, fdPsynergyStartMindReadWaveStub
 	stub fdPsynergyStopMindReadWave, fdPsynergyStopMindReadWaveStub
 	stub fdPsynergyRestoreMindReadPalette, fdPsynergyRestoreMindReadPaletteStub
-	stub fdSprShareVramCacheEntry, fdSprShareVramCacheEntryStub
-	stub fdPartyAddPp, gmPartyAddPpStub
+	stub fdSprShareVRAMCacheEntry, fdSprShareVRAMCacheEntryStub
+	stub fdPartyAddPp, fdPartyAddPpStub
 	stub fdYesNoAsk, fdYesNoAskStub
-	stub scPlayMusic, scPlayMusicStub
-	stub fdDjinnJoinParty, gmDjinnJoinPartyStub
+	stub gmPlayMusic, gmPlayMusicStub
+	stub fdDjinnJoinParty, fdDjinnJoinPartyStub
 	stub fdParticleHasPendingTarget, fdParticleHasPendingTargetStub
 	stub fdParticleSetAnimation, fdParticleSetAnimationStub
 	stub fdParticleSetCallback, fdParticleSetCallbackStub
 	stub fdParticleInit, fdParticleInitStub
 	stub fdEffectClearOwnedSlot, fdEffectClearOwnedSlotStub
-	stub fdCameraWorldToScr, fdCameraWorldToScrStub
-	stub fdPartyClearUnusableShortcuts, gmPartyClearUnusableShortcutsStub
+	stub fdCameraWorldToScreen, fdCameraWorldToScreenStub
+	stub fdPartyClearUnusableShortcuts, fdPartyClearUnusableShortcutsStub
 	stub fdEffectInitSlots, fdEffectInitSlotsStub
 	stub fdEffectReleaseSlots, fdEffectReleaseSlotsStub
 	stub fdActorLaunchFromLeader, fdActorLaunchFromLeaderStub
@@ -326,11 +326,11 @@
 	stub fdPsynergyHaltActor, fdPsynergyHaltActorStub
 	stub fdActorSnapshot, fdActorSnapshotStub
 	stub fdActorRestore, fdActorRestoreStub
-	stub fdWorldMapStartZoom, scWorldMapStartZoomStub
-	stub fdEventWaitForZoomTransition, fdEventWaitForZoomTransitionStub
+	stub fdWorldMapStartZoom, fdWorldMapStartZoomStub
+	stub fdScriptWaitForZoomTransition, fdScriptWaitForZoomTransitionStub
 	stub fdActorSetMovementType, fdActorSetMovementTypeStub
-	stub scQueueMusic, scQueueMusicStub
-	stub scPlayQueuedMusic, scPlayQueuedMusicStub
+	stub fdQueueMusic, fdQueueMusicStub
+	stub fdPlayQueuedMusic, fdPlayQueuedMusicStub
 @ Menu module (menu/stubs.s)
 	stub mnPartyMemberChooserOpen, mnPartyMemberChooserOpenStub
 	stub mnDjinnMenuRun, mnDjinnMenuRunStub
@@ -338,12 +338,12 @@
 @ Shop module (shop/stubs.s)
 	stub mnShopOpenDebugShop, mnShopOpenDebugShopStub
 	stub mnShopRun, mnShopRunStub
-	stub mnSanctumRun, scSanctumRunStub
+	stub mnSanctumRun, mnSanctumRunStub
 	stub mnInnCheckIn, mnInnCheckInStub
 	stub mnShopSaveAndTintFieldPalette, mnShopSaveAndTintFieldPaletteStub
 	stub mnShopRestoreFieldPalette, mnShopRestoreFieldPaletteStub
 	stub mnItemPickerRun, mnItemPickerRunStub
-	stub mnSndWaitForJingle, sySndWaitForJingleStub
+	stub mnSndWaitForJingle, mnSndWaitForJingleStub
 	stub mnInnPlaySleep, mnInnPlaySleepStub
 @ Battle module (battle/stubs.s)
 	stub btDjinnRecoveryCountDownTwenty, btDjinnRecoveryCountDownTwentyStub
@@ -351,11 +351,11 @@
 @ Credits module (credits/stubs.s)
 	stub syImportCreditsRun, mnCreditsRunStub
 @ Title module (title/stubs.s)
-	stub mnTitleShowTitleScr, mnTitleShowTitleScrStub
+	stub mnTitleShowTitleScreen, mnTitleShowTitleScreenStub
 	stub mnTitleShowPublisherLogo, mnTitleShowPublisherLogoStub
 	stub syImportTitleShowCamelotLogo, mnTitleShowCamelotLogoStub
 @ Sound module (sound/stubs.s)
 	stub sySndPlay, sySndPlayStub
-	stub sySndSetBgmTempo, sySndSetBgmTempoStub
-	stub sySndGetBgmRestoreDelay, sySndGetBgmRestoreDelayStub
-	stub sySndWaitForBgmRestore, sySndWaitForBgmRestoreStub
+	stub sySndSetBGMTempo, sySndSetBGMTempoStub
+	stub sySndGetBGMRestoreDelay, sySndGetBGMRestoreDelayStub
+	stub sySndWaitForBGMRestore, sySndWaitForBGMRestoreStub

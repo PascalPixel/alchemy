@@ -1,5 +1,5 @@
 name	file	section	align	left	pad
 Field_WorldMapPerspectiveTiles	world/blocks.blocks				
-Field_DefaultGridCells	default/cell_tiles.table.lz			01	
+Field_DefaultGridMetatiles	default/metatile_tiles.table.lz			01	
 Field_DefaultTileAnimation	default/tileset_anims.script.lz			6b4ead	
-Field_DefaultCellTilesAttributes	default/collision.collision.lz			fa60	
+Field_DefaultMetatileTilesAttributes	default/collision.collision.lz			fa60	

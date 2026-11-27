@@ -29,15 +29,15 @@ Stubs_Battle:
 	unnamed_stub btUnitListLiving
 	stub btPartyPrepareMembersStub, btPartyPrepareMembers
 	stub btCameraSetCommandViewStub, btCameraSetCommandView
-	stub fdActorGetSprStub, btActorGetSpr
+	stub btActorGetSprStub, btActorGetSpr
 	stub btHighlightSetModesStub, btHighlightSetModes
 	stub btPlaybackStartStub, btPlaybackStart
-	stub mnGraphicsScaleRgb555ClampedStub, btGraphicsScaleRgb555Clamped
+	stub btGraphicsScaleRGB555ClampedStub, btGraphicsScaleRGB555Clamped
 	stub btDjinnRecoveryCountDownStub, btDjinnRecoveryCountDown
 	stub btObjectGetPaletteStub, btObjectGetPalette
 	stub btDjinnRecoveryCountDownTwentyStub, btDjinnRecoveryCountDownTwenty
 	stub btDebugParmSetLoadStub, btDebugParmSetLoad
 	stub btObjectPutStub, btObjectPut
 	unnamed_stub btObjectDestroySprs
-	stub mnBattleMessageWaitForAdvanceAtStub, btMessageWaitForAdvanceAt
+	stub btMessageWaitForAdvanceAtStub, btMessageWaitForAdvanceAt
 	stub btDjinnCountStandbyStub, btDjinnCountStandby

@@ -1,8 +1,6 @@
-/* @file */
 /* Everything drawn over the battle while an ability plays: the effects are the
- */
-/* parts under battle_effect/, and battle_effect_internal.h holds what they */
-/* share. */
+   parts under battle_effect/, and battle_effect_internal.h holds what they
+   share. */
 
 #include "battle_effect_internal.h"
 

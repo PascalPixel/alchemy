@@ -92,25 +92,25 @@ differently in each.
 ## Time passes the same way
 
 Both games keep their frame loop inside `sySynch()` and run a short list of
-[tasks](glossary.md#task) from it
-([the system library](system.md#waiting-and-tasks)).
+[events](glossary.md#event) from it
+([the system library](system.md#waiting-and-events)).
 The differences are small, and each can be read in
 [system_frame.c](../../games/tla/src/system/system_frame.c) beside
 [The Broken Seal's](../../games/tbs/src/system/system_frame.c).
 
-- The list holds 24 tasks, where The Broken Seal's holds 20.
+- The list holds 24 events, where The Broken Seal's holds 20.
 - The Broken Seal's `sySynch()` moves the stack to a fixed spot before it runs
-  the tasks and puts it back after. The Lost Age's runs them on the
+  the events and puts it back after. The Lost Age's runs them on the
   caller's stack.
-- The two passes have changed numbers. A task's pass is the high byte of
-  its priority. The Broken Seal's `sySynch()` runs the tasks whose high byte
+- The two passes have changed numbers. An event's pass is the high byte of
+  its priority. The Broken Seal's `sySynch()` runs the events whose high byte
   is 12 and its VBlank handler those with 4. The Lost Age's `sySynch()` runs
   the 4s and its handler the 12s. The list is sorted highest first, so here
-  the handler's tasks come first, and the handler stops at the first task
+  the handler's events come first, and the handler stops at the first event
   of the other pass.
-- The field keeps one task more. Actors that ride other actors are moved by
-  `fdActorMoveWithCarriers`, at rank 10, and the actors' own task ranks 11
-  to run before it ([Field code](../../games/tla/src/field/README.md#the-fields-tasks)).
+- The field keeps one event more. Actors that ride other actors are moved by
+  `fdActorMoveWithCarriers`, at rank 10, and the actors' own event ranks 11
+  to run before it ([Field code](../../games/tla/src/field/README.md#the-fields-events)).
 - The field answers a battle request after a step and a push, where The
   Broken Seal answers it before them
   ([Field code](../../games/tla/src/field/README.md#the-twelve-requests)).

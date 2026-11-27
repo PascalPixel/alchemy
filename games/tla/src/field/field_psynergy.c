@@ -1,18 +1,16 @@
-/* @file */
-/* The field_psynergy object: the field Psynergy that spread effects around */
-/* their target, then in ROM order the tile copies, the field Psynergy The Lost
- */
-/* Age adds, from Cyclone to Hover (each part named for the Psynergy it runs, */
-/* its kind in fdPsynergyRun), the summon tablets, the actors' cells, the */
-/* step vectors and field particles, and the world and map screen and its */
-/* image. field_psynergy_internal.h holds the includes every part shares; the */
-/* parts beside it, field_psynergy_<part>.c, are included here in ROM order. */
-/* The ROM shows one object; the parts are ours. */
+/* The field_psynergy object: the field Psynergy that spread effects around
+   their target, then in ROM order the tile copies, the field Psynergy The Lost
+   Age adds, from Cyclone to Hover (each part named for the Psynergy it runs,
+   its kind in fdPsynergyRun), the summon tablets, the actors' metatiles, the
+   step vectors and field particles, and the world and map screen and its image.
+   field_psynergy_internal.h holds the includes every part shares; the parts
+   beside it, field_psynergy_<part>.c, are included here in ROM order. The ROM
+   shows one object; the parts are ours. */
 
-/* Two parts declare their own forms of fdMapGridGetCellBehavior and */
-/* fdMapGridIsClimbableCell. */
-#define OWN_MapGrid_GetCellBehavior
-#define OWN_MapGrid_IsClimbableCell
+/* Two parts declare their own forms of fdMapGridGetMetatileBehavior and
+   fdMapGridIsClimbableMetatile. */
+#define OWN_fdMapGridGetMetatileBehavior
+#define OWN_fdMapGridIsClimbableMetatile
 
 #include "field_psynergy_internal.h"
 
@@ -41,9 +39,9 @@
 #include "field_psynergy_shape_entries.c"
 
 #undef fdEffectSprDrawAtWorldPos
-#undef syResourceGetMetadataRecordFarStub
+#undef fdResourceGetMetadataRecordStubStub
 
-#include "field_psynergy_actor_cells.c"
+#include "field_psynergy_actor_metatiles.c"
 #include "field_psynergy_step_vector.c"
 
 #undef BG_VRAM

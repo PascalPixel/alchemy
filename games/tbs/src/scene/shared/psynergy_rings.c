@@ -1,25 +1,25 @@
-/* @file */
-/* Vale in the storm and Venus Lighthouse's aerie: the rings of light around */
-/* someone using Psynergy in an event. */
+/* Vale in the storm and Venus Lighthouse's aerie: the rings of light around
+   someone using Psynergy in a script. */
 
 #include "field_effect_vertical.c"
 
-/* Sets off a golden ring around the actor, its two halves */
-/* (field_effect_vertical.c) drawn from the Psynergy's cached tiles, with the */
-/* sound the includer names as PSYNERGY_RINGS_SOUND. Vale's and the World */
-/* Map's scSpawnGoldenRing (golden_ring.c) is the same ring without the */
-/* sound, its halves always at sprite priority 1 rather than the actor's. */
-static void scSpawnPsynergyRings(ACTOR *parent) {
-	ACTOR *pair[2];
-	ACTOR *child;
-	SPR *sprite;
+/* Sets off a golden ring around the actor, its two halves
+   (field_effect_vertical.c) drawn from the Psynergy's cached tiles, with the
+   sound the includer names as PSYNERGY_RINGS_SOUND. Vale's and the World Map's
+   scSpawnGoldenRing (golden_ring.c) is the same ring without the sound, its
+   halves always at sprite priority 1 rather than the actor's. */
+static void scSpawnPsynergyRings(ACTOR *parent)
+{
+	ACTOR			   *pair[2];
+	ACTOR			   *child;
+	SPR				   *sprite;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
-	s32 i;
+	Sint32				i;
 
 	sySndPlay(PSYNERGY_RINGS_SOUND);
 	for(i = 0; i < 2; ++i) {
 		child = syFieldActorCreate(SPRITE_GOLDEN_RINGS, parent->x.fixed,
-								   parent->y.fixed, parent->z.fixed);
+			parent->y.fixed, parent->z.fixed);
 		pair[i] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
@@ -30,7 +30,7 @@ static void scSpawnPsynergyRings(ACTOR *parent) {
 			if(sprite != NULL) {
 				fdSprStartAnimation(sprite, 0);
 				sprite->flg = 0;
-				syVramCacheFreeEntry(sprite->slot);
+				syVRAMCacheFreeEntry(sprite->slot);
 				sprite->slot = effectState->tileSlot;
 				sprite->retainCacheEntry = 1;
 				sprite->image.tile =

@@ -1,15 +1,13 @@
 #ifndef ALCHEMY_FIELD_PSYNERGY_INTERNAL_H
 #define ALCHEMY_FIELD_PSYNERGY_INTERNAL_H
 
-/* @file */
-/* What every part of the field_psynergy object shares: its includes. */
-/* field_psynergy.c includes it before the parts, and each part includes it */
-/* too. */
+/* What every part of the field_psynergy object shares: its includes.
+   field_psynergy.c includes it before the parts, and each part includes it
+   too. */
 
 /* world_map.h first: battle.h names WORLD_MAP_STATE, and a struct declared
- */
-/* before its definition keeps a smaller alignment, which */
-/* field_psynergy_map_screen.c's copies of it show. */
+   before its definition keeps a smaller alignment, which
+   field_psynergy_map_screen.c's copies of it show. */
 #include "field/world_map.h"
 #include "window/message_argument.h"
 #include "field/perspective.h"
@@ -30,7 +28,7 @@
 #include "field/actor.h"
 #include "field/field_psynergy_state.h"
 #include "field/sprite.h"
-#include "field/field_event.h"
+#include "field/field_script.h"
 #include "field/field_particle.h"
 #include "field/actor_view.h"
 #include "field/effect_sprite.h"
@@ -40,24 +38,24 @@
 #include "field/arc_effect.h"
 #include "field/canvas_sprite.h"
 #include "field/map_grid.h"
-#include "field/field_sequence.h"
+#include "field/field_mode.h"
 
-/* The shape of a free entry among the map's shape entries */
-/* (fdMapShapeFindOrAdd). */
+/* The shape of a free entry among the map's shape entries
+   (fdMapShapeFindOrAdd). */
 #define MAP_SHAPE_FREE 255
 
 void fdEffectAdvanceMotion(FIELD_OBJECT *object);
 
-/* A spark that circles a centre: the centre in 16.16 fixed-point pixels, the */
-/* angle and radius it is drawn at, and its age in frames (-1 while unused). */
+/* A spark that circles a centre: the centre in 16.16 fixed-point pixels, the
+   angle and radius it is drawn at, and its age in frames (-1 while unused). */
 typedef struct WHIRL_SPARK {
-	FIXED x;
-	FIXED y;
-	FIXED z;
-	s32 ang;			/* 1/65536 turns */
-	s32 unusedAfterAng; /* no code names it */
-	FIXED radius;		/* 16.16 fixed-point pixels */
-	s32 age;
+	FIXED  x;
+	FIXED  y;
+	FIXED  z;
+	Sint32 ang;			   /* 1/65536 turns */
+	Sint32 unusedAfterAng; /* no code names it */
+	FIXED  radius;		   /* 16.16 fixed-point pixels */
+	Sint32 age;
 } WHIRL_SPARK;
 
 /* The states of a Retreat particle (fdRetreatUpdateSpark). */
@@ -68,53 +66,53 @@ typedef enum RETREAT_PARTICLE_STATE {
 	RETREAT_PARTICLE_LAST_FLIGHT = 2
 } RETREAT_PARTICLE_STATE;
 
-/* The view's sway (fdViewMoveSwing) as fdPsynergyRun casts Tremor and */
-/* Grind at no object, in 16.16 pixels: it grows from SWAY_START to SWAY_PEAK */
-/* by SWAY_RAMP a frame, holds for SWAY_HOLD_FRAMES, and shrinks back to */
-/* SWAY_START. Tremor's stronger sway at an object starts and ends there too. */
+/* The view's sway (fdViewMoveSwing) as fdPsynergyRun casts Tremor and Grind at
+   no object, in 16.16 pixels: it grows from SWAY_START to SWAY_PEAK by
+   SWAY_RAMP a frame, holds for SWAY_HOLD_FRAMES, and shrinks back to
+   SWAY_START. Tremor's stronger sway at an object starts and ends there too. */
 #define SWAY_START		 toFIXED(2)
 #define SWAY_PEAK		 toFIXED(6)
 #define SWAY_RAMP		 (toFIXED(3) / 20) /* 0.15 pixels a frame */
 #define SWAY_HOLD_FRAMES 10
 
-/* Cyclone's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst */
-/* (PARTICLE_BURST_STATE) at its start, then the leader's ride on the whirlwind.
- */
+/* Cyclone's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
+   (PARTICLE_BURST_STATE) at its start, then the leader's ride on the
+   whirlwind. */
 typedef struct CYCLONE_STATE {
-	u8 particleBurst[6920];
-	s16 cnt;
-	u8 unusedAfterCnt[2]; /* no code names it */
-	ACTOR *follower;	  /* the actor carried with the leader */
-	s16 state;			  /* the stage of the ride; 999 once it ends */
-	s16 tmr;			  /* frames into the ride */
-	s32 ang;			  /* the whirlwind's turn, 1/65536 turns */
-	s32 radius;
-	FIXED from[3]; /* where the ride starts, 16.16 pixels */
-	FIXED to[3];   /* where it ends, 16.16 pixels */
-	/* Nonzero runs the particle burst with it: a nearby cell of kind 1 */
-	/* (fdPsynergyGatherNearbyCells). */
-	s8 kind;
+	Uint8  particleBurst[6920];
+	Sint16 cnt;
+	Uint8  unusedAfterCnt[2]; /* no code names it */
+	ACTOR *follower;		  /* the actor carried with the leader */
+	Sint16 state;			  /* the stage of the ride; 999 once it ends */
+	Sint16 tmr;				  /* frames into the ride */
+	Sint32 ang;				  /* the whirlwind's turn, 1/65536 turns */
+	Sint32 radius;
+	FIXED  from[3]; /* where the ride starts, 16.16 pixels */
+	FIXED  to[3];	/* where it ends, 16.16 pixels */
+	/* Nonzero runs the particle burst with it: a nearby metatile of kind 1
+	   (fdPsynergyGatherNearbyMetatiles). */
+	Sint8 kind;
 } CYCLONE_STATE;
 
-/* The cycling glow of the Parch disc and the Ring: red stays put while green */
-/* and blue swing either side of their middles, each colour a step further */
-/* along the swing. */
-#define GLOW_RED		 28
-#define GLOW_GREEN		 23
-#define GLOW_GREEN_SWING 8
-#define GLOW_BLUE		 12
-#define GLOW_BLUE_SWING	 10
-/* The cycling shine of Burst's and Pound's canvas: one channel or two swing */
-/* CANVAS_SHINE_SWING levels either side of CANVAS_SHINE_MIDDLE. */
+/* The cycling glow of the Parch disc and the Ring: red stays put while green
+   and blue swing either side of their middles, each colour a step further along
+   the swing. */
+#define GLOW_RED			28
+#define GLOW_GREEN			23
+#define GLOW_GREEN_SWING	8
+#define GLOW_BLUE			12
+#define GLOW_BLUE_SWING		10
+/* The cycling shine of Burst's and Pound's canvas: one channel or two swing
+   CANVAS_SHINE_SWING levels either side of CANVAS_SHINE_MIDDLE. */
 #define CANVAS_SHINE_MIDDLE 16
 #define CANVAS_SHINE_SWING	12
 
-/* The map screen's marker tiles (fdMapScrInit draws them). */
+/* The map screen's marker tiles (fdMapScreenInit draws them). */
 typedef enum WORLD_MARKER_TILE {
 	WORLD_MARKER_TILE_PARTY = 0, /* where the party is */
 	WORLD_MARKER_TILE_SHIP = 2,
-	WORLD_MARKER_TILE_NEAREST =
-		3 /* the larger dot on the place nearest the cursor */
+	/* the larger dot on the place nearest the cursor */
+	WORLD_MARKER_TILE_NEAREST = 3
 } WORLD_MARKER_TILE;
 
 /* A 256-colour picture's size in the 16-colour tiles a sprite counts. */

@@ -1,6 +1,6 @@
 # Battle
 
-A battle is a sequence of its own. It knows nothing about the cave or the
+A battle is a mode of its own. It knows nothing about the cave or the
 town it was started from, and it always goes the same way: everyone picks,
 everyone acts, repeat until one side is beaten or the party runs.
 
@@ -47,9 +47,9 @@ flowchart TD
   check -- "no, all have acted" --> choose
   check -- "yes" --> spoils(["The battle ends"])
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef mode fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  class choose,sort,act sequence
+  class choose,sort,act mode
   class check request
   class spoils mainRoutine
 ```
@@ -91,15 +91,15 @@ Watch the end of Quake: the first target flinches while the ground is still
 shaking.
 
 Two pieces of code share each of those frames, and they are of the two
-kinds [the system library](system.md#waiting-and-tasks) describes. The
+kinds [the system library](system.md#waiting-and-events) describes. The
 ability's picture is its [battle effect](glossary.md#battle-effect). It is
 the code that waits: a loop that draws one frame of pillars and calls
 `sySynch(1)`. It knows nothing about damage. The battle knows the damage and
-draws no rock, and its showing is a [task](glossary.md#task), the playback,
+draws no rock, and its showing is an [event](glossary.md#event), the playback,
 which `sySynch()` calls once in each of the effect's frames.
 
 They meet at one moment. When the blow should land the effect calls one
-function, `btPlaybackStart`, and from then on the task shows what
+function, `btPlaybackStart`, and from then on the event shows what
 happened, one target at a time. Quake calls it 16 frames before its last.
 
 So an effect is free to be any length and any shape, and the rules never

@@ -1,17 +1,17 @@
-/* @file */
 /* A field effect's motion and spin each frame. */
 
 #include "system/field_effect.h"
-#include "field/event.h"
+#include "field/script.h"
 
-/* fdEffectAdvanceMotion with a fixed spin: moves the effect by its */
-/* velocity, which loses drag, grows it at its rates and turns its sprite a */
-/* sixteenth of a turn each frame. Nothing calls it. */
-UNUSED void fdEffectAdvanceMotionAndSpin(FIELD_OBJECT *object) {
+/* fdEffectAdvanceMotion with a fixed spin: moves the effect by its velocity,
+   which loses drag, grows it at its rates and turns its sprite a sixteenth of a
+   turn each frame. Nothing calls it. */
+UNUSED void fdEffectAdvanceMotionAndSpin(FIELD_OBJECT *object)
+{
 	FIELD_EFFECT *effect = &object->eff;
-	s32 velocityX;
-	s32 velocityZ;
-	s32 scaleRateX;
+	Sint32		  velocityX;
+	Sint32		  velocityZ;
+	Sint32		  scaleRateX;
 
 	/* DEAD: the leader looked up and not used; the ROM keeps the call. */
 	fdActorGetById(MainRoutineStateWork.leaderActorId);

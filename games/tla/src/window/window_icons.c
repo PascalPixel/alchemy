@@ -1,18 +1,14 @@
-/* @file */
-/* The 16x16 icons of items, Psynergy and commands, built from their pictures,
- */
-/* a frame under them and the marks over them, and the 32x32 icons and */
-/* portraits loaded with their colours. */
-/* Part of window.c. */
+/* The 16x16 icons of items, Psynergy and commands, built from their pictures, a
+   frame under them and the marks over them, and the 32x32 icons and portraits
+   loaded with their colours. Part of window.c. */
 
-/* The encoded icons: the command icons' bases and the pictures drawn over */
-/* them, the marks an item icon may carry (equipped, broken), and the digits of
- */
-/* its count. */
-extern u8 *Icon_BasePointerTable[];
-extern u8 *Icon_OverlayPointerTable[];
-extern u8 *Icon_MarkPointers[];
-extern u8 *Icon_DigitPointers[];
+/* The encoded icons: the command icons' bases and the pictures drawn over them,
+   the marks an item icon may carry (equipped, broken), and the digits of its
+   count. */
+extern Uint8 *Icon_BasePointerTable[];
+extern Uint8 *Icon_OverlayPointerTable[];
+extern Uint8 *Icon_MarkPointers[];
+extern Uint8 *Icon_DigitPointers[];
 
 /* The frames an icon is drawn over (Icon_BasePointerTable). */
 typedef enum ICON_BASE_KIND {
@@ -29,25 +25,31 @@ typedef enum ICON_MARK {
 	ICON_MARK_ARTIFACT = 2
 } ICON_MARK;
 
-/* Icon_DigitPointers: the digits 0 to 9, then the tens 10 to 30 from this */
-/* entry. */
+/* Icon_DigitPointers: the digits 0 to 9, then the tens 10 to 30 from this
+   entry. */
 #define ICON_DIGIT_TENS_FIRST 10
 
-void mnIconDecode(ICON_TRANSFER *glyph, s32 overlay);
+void mnIconDecode(ICON_TRANSFER *glyph, Sint32 overlay);
 
-/* Returns how many item icons the icon table holds; mnIconBuildItemIconTiles */
-/* draws icon 0 for a number past them. */
-s32 mnIconCountItemIcons(void) { return ItemIconsEnd - ItemIcons; }
+/* Returns how many item icons the icon table holds; mnIconBuildItemIconTiles
+   draws icon 0 for a number past them. */
+Sint32 mnIconCountItemIcons(void)
+{
+	return ItemIconsEnd - ItemIcons;
+}
 
-/* Returns how many Psynergy icons the icon table holds; */
-/* mnIconBuildAbilityIconTiles draws icon 0 for a number past them. */
-s32 mnIconCountPsynergyIcons(void) { return PsynergyIconsEnd - PsynergyIcons; }
+/* Returns how many Psynergy icons the icon table holds;
+   mnIconBuildAbilityIconTiles draws icon 0 for a number past them. */
+Sint32 mnIconCountPsynergyIcons(void)
+{
+	return PsynergyIconsEnd - PsynergyIcons;
+}
 
 /* Builds a command icon (overlay overlayIcon over base baseIcon) and loads it
- */
-/* into a sprite tile slot: *slot, or a free one when reuse is 0. */
-void mnIconBuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
-								 s32 *tileOut, s32 reuse) {
+   into a sprite tile slot: *slot, or a free one when reuse is 0. */
+void mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 baseIcon,
+	Sint32 *slot, Sint32 *tileOut, Sint32 reuse)
+{
 	ICON_TRANSFER *state;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
@@ -60,28 +62,30 @@ void mnIconBuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
 	state->height = 2;
 	mnIconDecode(state, 1);
 	if(reuse == 0) {
-		*slot = syVramCacheFindFreeEntry();
+		*slot = syVRAMCacheFindFreeEntry();
 	}
-	*tileOut = syVramCacheLoad(*slot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
+	*tileOut = syVRAMCacheLoad(*slot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 }
 
-/* Unused: builds the icon of a battle action as an item's icon */
-/* (mnIconBuildItemIconTiles), where mnAbilityBuildIconTiles builds its */
-/* Psynergy icon. */
-UNUSED void mnAbilityBuildItemIconTiles(s32 action, s32 withBase, s32 *slot,
-										s32 *tile, s32 reuse) {
-	mnIconBuildItemIconTiles(btAbilityGet(action)->icon, withBase, slot, tile,
-							 reuse);
+/* Unused: builds the icon of a battle action as an item's icon
+   (mnIconBuildItemIconTiles), where mnAbilityBuildIconTiles builds its Psynergy
+   icon. */
+UNUSED void mnAbilityBuildItemIconTiles(
+	Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse)
+{
+	mnIconBuildItemIconTiles(
+		gmAbilityGetDirectStub(action)->icon, withBase, slot, tile, reuse);
 }
 
-/* Builds item icon glyph, over the icon base when withBase is set, and loads */
-/* it into *cacheSlot (a free slot unless reuse is set). Returns the tile in */
-/* *tileOut. */
-void mnIconBuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
-							  s32 *tileOut, s32 reuse) {
+/* Builds item icon glyph, over the icon base when withBase is set, and loads it
+   into *cacheSlot (a free slot unless reuse is set). Returns the tile in
+   *tileOut. */
+void mnIconBuildItemIconTiles(Uint32 glyph, Sint32 withBase, Sint32 *cacheSlot,
+	Sint32 *tileOut, Sint32 reuse)
+{
 	ICON_TRANSFER *state;
-	s32 overlay;
+	Sint32		   overlay;
 
 	overlay = 0;
 	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
@@ -103,25 +107,25 @@ void mnIconBuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 	mnIconDecode(state, overlay);
 
 	if(reuse == 0)
-		*cacheSlot = syVramCacheFindFreeEntry();
+		*cacheSlot = syVRAMCacheFindFreeEntry();
 
 	*tileOut =
-		syVramCacheLoad(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
+		syVRAMCacheLoad(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 }
 
-/* Draws an item's icon into the glyph buffer from its inventory code */
-/* (INVENTORY_ENCODING) with the layers asked for (ICON_ flags): the frame,
- */
-/* the equipped, broken and artifact marks, and the count. Returns 256, which */
-/* no caller reads, or -1 without the glyph buffer. */
-s32 mnItemIconCompose(u32 code, u32 layers) {
-	s32 overlay;
+/* Draws an item's icon into the glyph buffer from its inventory code
+   (INVENTORY_ENCODING) with the layers asked for (ICON_ flags): the frame, the
+   equipped, broken and artifact marks, and the count. Returns 256, which no
+   caller reads, or -1 without the glyph buffer. */
+Sint32 mnItemIconCompose(Uint32 code, Uint32 layers)
+{
+	Bool			 overlay;
 	ITEM_DEFINITION *item;
-	ICON_TRANSFER *state;
-	s32 count;
+	ICON_TRANSFER	*state;
+	Sint32			 count;
 
-	overlay = 0;
+	overlay = FALSE;
 	count = 0;
 	item = gmItemGetDirectStub(code & INVENTORY_ITEM_ID_MASK);
 	state = Ram_HeapSlots->glyphTransfer;
@@ -132,7 +136,7 @@ s32 mnItemIconCompose(u32 code, u32 layers) {
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 0);
-		overlay = 1;
+		overlay = TRUE;
 	}
 	state->encoded = ItemIcons[item->icon];
 	state->width = 2;
@@ -151,7 +155,7 @@ s32 mnItemIconCompose(u32 code, u32 layers) {
 		mnIconDecode(state, 1);
 	}
 	if((layers & ICON_CURSED) && (code & INVENTORY_EQUIPPED) &&
-	   (item->flg & ITEM_CURSED) && (item->flg & ITEM_CANNOT_UNEQUIP)) {
+		(item->flg & ITEM_CURSED) && (item->flg & ITEM_CANNOT_UNEQUIP)) {
 		state->encoded = Icon_MarkPointers[ICON_MARK_ARTIFACT];
 		state->width = 2;
 		state->height = 2;
@@ -169,7 +173,7 @@ s32 mnItemIconCompose(u32 code, u32 layers) {
 	}
 	/* Counts up to a full stack show: the ones digit, and over it the tens. */
 	if(count != 0 && count <= INVENTORY_STACK_MAX) {
-		s32 ones = count % 10;
+		Sint32 ones = count % 10;
 
 		state->encoded = Icon_DigitPointers[ones];
 		state->width = 2;
@@ -186,34 +190,38 @@ s32 mnItemIconCompose(u32 code, u32 layers) {
 	return 256;
 }
 
-/* Draws an item's icon from its inventory code with the layers asked for */
-/* (mnItemIconCompose) and loads it into VRAM cache entry cacheSlot. */
-s32 mnItemIconLoadLayersIntoSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
+/* Draws an item's icon from its inventory code with the layers asked for
+   (mnItemIconCompose) and loads it into VRAM cache entry cacheSlot. */
+Sint32 mnItemIconLoadLayersIntoSlot(
+	Sint32 inventoryCode, Sint32 layers, Sint32 cacheSlot)
+{
 	ICON_TRANSFER *state;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnItemIconCompose(inventoryCode, layers);
-	syVramCacheLoad(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
+	syVRAMCacheLoad(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return 1;
 }
 
-/* Draws one of the other icons (ICON_KIND_PATTERN) and loads it into */
-/* cacheSlot, as mnItemIconLoadLayersIntoSlot does an item's. */
-s32 mnIconBuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
+/* Draws one of the other icons (ICON_KIND_PATTERN) and loads it into cacheSlot,
+   as mnItemIconLoadLayersIntoSlot does an item's. */
+Sint32 mnIconBuildMiscIconTiles(Sint32 icon, Sint32 unused, Sint32 cacheSlot)
+{
 	ICON_TRANSFER *state;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnIconDrawMisc(icon);
-	syVramCacheLoad(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
+	syVRAMCacheLoad(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return 1;
 }
 
-/* Decodes item code's icon (the first icon for code 0) into the glyph buffer.
- */
-void mnIconDrawItem(s32 code) {
-	ICON_TRANSFER *state = Ram_HeapSlots->glyphTransfer;
+/* Decodes item code's icon (the first icon for code 0) into the glyph
+   buffer. */
+void mnIconDrawItem(Sint32 code)
+{
+	ICON_TRANSFER	*state = Ram_HeapSlots->glyphTransfer;
 	ITEM_DEFINITION *item = gmItemGetDirectStub(INVENTORY_ITEM_ID_MASK & code);
 
 	if(code != 0)
@@ -225,22 +233,23 @@ void mnIconDrawItem(s32 code) {
 	mnIconDecode(state, 0);
 }
 
-/* Builds the Psynergy icon of a battle action, as mnIconBuildAbilityIconTiles.
- */
-void mnAbilityBuildIconTiles(s32 action, s32 withBase, s32 *slot, s32 *tile,
-							 s32 reuse) {
-	mnIconBuildAbilityIconTiles(btAbilityGet(action)->icon, withBase, slot,
-								tile, reuse);
+/* Builds the Psynergy icon of a battle action, as
+   mnIconBuildAbilityIconTiles. */
+void mnAbilityBuildIconTiles(
+	Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse)
+{
+	mnIconBuildAbilityIconTiles(
+		gmAbilityGetDirectStub(action)->icon, withBase, slot, tile, reuse);
 }
 
-/* Builds Psynergy icon glyph, over the icon base when withBase is set, and */
-/* loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
- */
-/* in *tileOut. */
-void mnIconBuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
-								 s32 *tileOut, s32 reuse) {
+/* Builds Psynergy icon glyph, over the icon base when withBase is set, and
+   loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
+   in *tileOut. */
+void mnIconBuildAbilityIconTiles(Uint32 glyph, Sint32 withBase,
+	Sint32 *cacheSlot, Sint32 *tileOut, Sint32 reuse)
+{
 	ICON_TRANSFER *state;
-	s32 overlay;
+	Sint32		   overlay;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	overlay = 0;
@@ -262,15 +271,16 @@ void mnIconBuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 	mnIconDecode(state, overlay);
 
 	if(reuse == 0)
-		*cacheSlot = syVramCacheFindFreeEntry();
+		*cacheSlot = syVRAMCacheFindFreeEntry();
 
 	*tileOut =
-		syVramCacheLoad(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
+		syVRAMCacheLoad(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 }
 
 /* Draws one of the other icons into the glyph buffer. */
-void mnIconDrawMisc(u32 index) {
+void mnIconDrawMisc(Uint32 index)
+{
 	ICON_TRANSFER *state = Ram_HeapSlots->glyphTransfer;
 
 	state->encoded = Icon_MiscIconPointers[index];
@@ -279,22 +289,22 @@ void mnIconDrawMisc(u32 index) {
 	mnIconDecode(state, 0);
 }
 
-/* The icon resource's row of the first sprite portrait, */
-/* PORTRAIT_FIRST_SPRITE_PORTRAIT. */
+/* The icon resource's row of the first sprite portrait,
+   PORTRAIT_FIRST_SPRITE_PORTRAIT. */
 #define PORTRAIT_FIRST_SPRITE_ICON 16
 
-/* Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a */
-/* free slot unless reuse is set) and its colours into the sprite palette */
-/* named by palette. Returns the tile in *tile. */
-/* Each icon of the resource has its PALETTE_COLORS colours before its encoded
- */
-/* tiles. Portraits (mnPortraitCreate) come through here. */
-void mnIconLoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
-						   s32 palette, s32 reuse) {
+/* Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a free
+   slot unless reuse is set) and its colours into the sprite palette named by
+   palette. Returns the tile in *tile. Each icon of the resource has its
+   PALETTE_COLORS colours before its encoded tiles. Portraits (mnPortraitCreate)
+   come through here. */
+void mnIconLoadWithPalette(Uint32 icon, Sint32 unused, Sint32 *slot,
+	Sint32 *tile, Sint32 palette, Sint32 reuse)
+{
 	ICON_TRANSFER *state;
-	u16 *table;
-	u8 *entry;
-	u32 index;
+	Uint16		  *table;
+	Uint8		  *entry;
+	Uint32		   index;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	table = syResourceGetTableEntry(RESOURCE_ICONS);
@@ -303,46 +313,48 @@ void mnIconLoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 	else
 		index =
 			icon - PORTRAIT_FIRST_SPRITE_PORTRAIT + PORTRAIT_FIRST_SPRITE_ICON;
-	entry = (u8 *)table + table[index];
-	state->encoded = entry + PALETTE_COLORS * sizeof(u16);
+	entry = (Uint8 *)table + table[index];
+	state->encoded = entry + PALETTE_COLORS * sizeof(Uint16);
 	state->width = 4;
 	state->height = 4;
 	mnIconDecode(state, 0);
 	if(reuse == 0)
-		*slot = syVramCacheFindFreeEntry();
-	*tile = syVramCacheLoad(*slot, 4 * 4 * TILE_SIZE_4BPP, state->tiles);
+		*slot = syVRAMCacheFindFreeEntry();
+	*tile = syVRAMCacheLoad(*slot, 4 * 4 * TILE_SIZE_4BPP, state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	syDMAXCopy(entry, (void *)&OBJ_PLTT_COLOR(palette, 0),
-			   DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 }
 
 /* Unused: does nothing. */
-UNUSED void mnIconReservedNoOp(void) {}
+UNUSED void mnIconReservedNoOperation(void)
+{
+}
 
-/* The tile functions syRamCodeLoad copies to RAM to run, and their sizes, as */
-/* these symbols' addresses. */
-extern u8 Tile_Decompress4bppCode[];
-extern u8 Tile_ExpandMaskedCode[];
-extern u8 Tile_ExpandOpaqueCode[];
-extern u8 Tile_Decompress4bppCodeSize[];
-extern u8 Tile_ExpandMaskedCodeSize[];
-extern u8 Tile_ExpandOpaqueCodeSize[];
+/* The tile functions RAM_CODE_LOAD copies to RAM to run, and their sizes, as
+   these symbols' addresses. */
+extern Uint8 mnTileDecompress4bppCode[];
+extern Uint8 mnTileExpandMaskedCode[];
+extern Uint8 mnTileExpandOpaqueCode[];
+extern Uint8 Tile_Decompress4bppCodeSize[];
+extern Uint8 Tile_ExpandMaskedCodeSize[];
+extern Uint8 Tile_ExpandOpaqueCodeSize[];
 
-/* Decodes a compressed icon into the glyph buffer and expands it to tiles, */
-/* opaque for the first layer, or over what is there, its colour 0 clear, when
- */
-/* overlay is set. glyph->width and height are the icon's size in tiles. */
-void mnIconDecode(ICON_TRANSFER *glyph, s32 overlay) {
+/* Decodes a compressed icon into the glyph buffer and expands it to tiles,
+   opaque for the first layer, or over what is there, its colour 0 clear, when
+   overlay is set. glyph->width and height are the icon's size in tiles. */
+void mnIconDecode(ICON_TRANSFER *glyph, Sint32 overlay)
+{
 	void *code;
 
-	syRamCodeLoad(code, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
-	((void (*)(const void *, u8 *))code)(glyph->encoded, glyph->input);
+	RAM_CODE_LOAD(code, mnTileDecompress4bppCode, Tile_Decompress4bppCodeSize);
+	((void (*)(const void *, Uint8 *))code)(glyph->encoded, glyph->input);
 	syHeapRelease(code);
 	if(overlay)
-		syRamCodeLoad(code, Tile_ExpandMaskedCode, Tile_ExpandMaskedCodeSize);
+		RAM_CODE_LOAD(code, mnTileExpandMaskedCode, Tile_ExpandMaskedCodeSize);
 	else
-		syRamCodeLoad(code, Tile_ExpandOpaqueCode, Tile_ExpandOpaqueCodeSize);
-	((void (*)(u8 *, u8 *, u32, u32))code)(
-		glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
+		RAM_CODE_LOAD(code, mnTileExpandOpaqueCode, Tile_ExpandOpaqueCodeSize);
+	((void (*)(Uint8 *, Uint8 *, Uint32, Uint32))code)(glyph->input,
+		glyph->tiles, (Uint16)glyph->width, (Uint16)glyph->height);
 	syHeapRelease(code);
 }

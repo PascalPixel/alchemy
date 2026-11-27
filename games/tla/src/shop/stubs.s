@@ -21,7 +21,7 @@ Stubs_Shop:
 	stub mnItemPickerRunToShowStub, mnItemPickerRunToShow
 	stub mnSndWaitForJingleStub, mnSndWaitForJingle
 	stub mnInnPlaySleepStub, mnInnPlaySleep
-	stub mnVramBlockLoadResourceStub, mnVramBlockLoadResource
+	stub mnVRAMBlockLoadResourceStub, mnVRAMBlockLoadResource
 	stub mnForgePartyHasMaterialStub, mnForgePartyHasMaterial
 	stub mnForgeSetItemStub, mnForgeSetItem
 	stub mnForgeGetItemStub, mnForgeGetItem

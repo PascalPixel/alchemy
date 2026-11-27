@@ -1,72 +1,67 @@
-/* @file */
-/* Characters drawn into a glyph sprite's tiles, strings measured and drawn */
-/* into windows, and numbers written as text. */
-/* Part of window.c. */
+/* Characters drawn into a glyph sprite's tiles, strings measured and drawn into
+   windows, and numbers written as text. Part of window.c. */
 
-/* The glyph's pixels, 16 to a line as its tiles are read: 16 lines for the */
-/* Japanese font, 24 for the other languages' taller one. */
+/* The glyph's pixels, 16 to a line as its tiles are read: 16 lines for the
+   Japanese font, 24 for the other languages' taller one. */
 #define GLYPH_BUFFER_WIDTH 16
 #define GLYPH_PIXEL(x, y)  ((y) * GLYPH_BUFFER_WIDTH + (x))
 
 /* The second character of a pair, in bits 8 to 23 of its code. */
 #define GLYPH_PAIR_SECOND(code) (((code) << 8) >> 16)
 
-/* The glyph buffer's size: 16 lines of pixels for the Japanese font, 24 for */
-/* the others. */
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-#define GLYPH_PIXELS_SIZE (GLYPH_BUFFER_WIDTH * 16)
-#else
-#define GLYPH_PIXELS_SIZE (GLYPH_BUFFER_WIDTH * 24)
-#endif
+/* The glyph buffer's size: 16 lines of pixels for the Japanese font, 24 for the
+   others. */
+#define GLYPH_PIXELS_SIZE \
+	JAPANESE_OR((GLYPH_BUFFER_WIDTH * 16), (GLYPH_BUFFER_WIDTH * 24))
 
-/* Draws a character, and a second one when the code carries it in bits 8 to */
-/* 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour */
-/* over a shadow, or with an outline when WIN_STATE.outline is 1. */
-s32 mnTextDrawGlyphPair(s32 code, u32 *out) {
-	u8 pixels[GLYPH_PIXELS_SIZE];
+/* Draws a character, and a second one when the code carries it in bits 8 to 15,
+   into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour over a
+   shadow, or with an outline when WIN_STATE.outline is 1. */
+Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
+{
+	Uint8	   pixels[GLYPH_PIXELS_SIZE];
 	WIN_STATE *state;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-	const u16 *mark = NULL;
-	const u16 *glyph;
-	s32 markCode;
+	const Uint16 *mark = NULL;
+	const Uint16 *glyph;
+	Sint32		  markCode;
 #else
-	const u8 *glyph;
-	s32 firstIndex;
-	s32 secondIndex;
-	u16 secondWidth;
+	const Uint8 *glyph;
+	Sint32		 firstIndex;
+	Sint32		 secondIndex;
+	Uint16		 secondWidth;
 #endif
-	s32 width;
-	s32 colour;
-	s32 shadowColour;
-	u8 *pixel;
-	s32 tileRow;
-	s32 tileColumn;
-	s32 line;
-	s32 column;
-	u32 tileLine;
+	Sint32 width;
+	Sint32 colour;
+	Bool   shadowColour;
+	Uint8 *pixel;
+	Sint32 tileRow;
+	Sint32 tileColumn;
+	Sint32 line;
+	Sint32 column;
+	Uint32 tileLine;
 
 	state = WINDOW_STATE;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 	/* The voicing mark the code carries above TEXT_MARK_SHIFT, drawn over the
-	 */
-	/* glyph one pixel wider. */
-	markCode = Font_MarkGlyphCodes[(u32)code >> TEXT_MARK_SHIFT];
+	   glyph one pixel wider. */
+	markCode = Font_MarkGlyphCodes[(Uint32)code >> TEXT_MARK_SHIFT];
 	if(markCode != 0) {
 		markCode -= TEXT_SPACE;
 		mark = Font_Glyphs[markCode].rows;
 	}
 	code &= (1 << TEXT_MARK_SHIFT) - 1;
-	if((u32)code < KANJI_FIRST_CODE) {
-		s32 index = code - TEXT_SPACE;
+	if((Uint32)code < KANJI_FIRST_CODE) {
+		Sint32 index = code - TEXT_SPACE;
 
 		/* The width, then the rows after it. */
 		glyph = &Font_Glyphs[index].width;
 		width = *glyph++;
-	}
-	else {
-		s32 index = code - KANJI_FIRST_CODE;
+	} else {
+		Sint32 index = code - KANJI_FIRST_CODE;
 
-		glyph = (const u16 *)(Font_KanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
+		glyph =
+			(const Uint16 *)(Font_KanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
 		width = KANJI_WIDTH;
 	}
 	syWordsClearEntry(pixels, GLYPH_PIXELS_SIZE);
@@ -74,19 +69,17 @@ s32 mnTextDrawGlyphPair(s32 code, u32 *out) {
 	secondIndex = GLYPH_PAIR_SECOND(code);
 	code &= TEXT_LAST_FONT_CODE;
 	firstIndex = code - TEXT_SPACE;
-	glyph = (const u8 *)Font_Glyphs + firstIndex * sizeof(GLYPH);
+	glyph = (const Uint8 *)Font_Glyphs + firstIndex * sizeof(GLYPH);
 	width = ((const GLYPH *)glyph)->width;
 	syWordsClearEntry(pixels, GLYPH_PIXELS_SIZE);
-	glyph = (const u8 *)((const GLYPH *)glyph)->rows;
+	glyph = (const Uint8 *)((const GLYPH *)glyph)->rows;
 #endif
-	/* While WIN_STATE.mindRead is set, the text is colour 8 with no shadow.
-	 */
+	/* While WIN_STATE.mindRead is set, the text is colour 8 with no shadow. */
 	if(state->mindRead != 0) {
-		shadowColour = 0;
+		shadowColour = FALSE;
 		colour = 8;
-	}
-	else {
-		shadowColour = 1;
+	} else {
+		shadowColour = TRUE;
 		colour = state->colour;
 	}
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -106,8 +99,7 @@ s32 mnTextDrawGlyphPair(s32 code, u32 *out) {
 			width++;
 		}
 		width++;
-	}
-	else {
+	} else {
 		syDecompressBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
 		if(mark != NULL)
 			syDecompressBitRuns(mark, pixels + GLYPH_PIXEL(8, 1), shadowColour);
@@ -125,26 +117,25 @@ s32 mnTextDrawGlyphPair(s32 code, u32 *out) {
 		syDecompressBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
 		syDecompressBitRuns(glyph, pixels + GLYPH_PIXEL(1, 2), colour);
 		width++;
-	}
-	else {
+	} else {
 		syDecompressBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
 		syDecompressBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
 	}
-	if((u16)secondIndex != 0) {
-		glyph = (const u8 *)(&Font_Glyphs[-TEXT_SPACE] + (u16)secondIndex);
-		secondWidth = *(const u16 *)glyph;
+	if((Uint16)secondIndex != 0) {
+		glyph =
+			(const Uint8 *)(&Font_Glyphs[-TEXT_SPACE] + (Uint16)secondIndex);
+		secondWidth = *(const Uint16 *)glyph;
 		glyph += 2;
 		if(state->outline == TEXT_STYLE_OUTLINED) {
-			u8 *dst = pixels + width;
+			Uint8 *dst = pixels + width;
 			syDecompressBitRuns(glyph, dst + GLYPH_PIXEL(1, 3), shadowColour);
 			syDecompressBitRuns(glyph, dst + GLYPH_PIXEL(2, 3), shadowColour);
 			syDecompressBitRuns(glyph, dst + GLYPH_PIXEL(0, 2), colour);
 			syDecompressBitRuns(glyph, dst + GLYPH_PIXEL(1, 2), colour);
 			secondWidth += 1;
-		}
-		else {
-			u8 *dst = pixels + width;
-			u8 *p;
+		} else {
+			Uint8 *dst = pixels + width;
+			Uint8 *p;
 			p = dst + GLYPH_PIXEL(1, 3);
 			syDecompressBitRuns(glyph, p, shadowColour);
 			p = dst + GLYPH_PIXEL(0, 2);
@@ -155,9 +146,8 @@ s32 mnTextDrawGlyphPair(s32 code, u32 *out) {
 #endif
 
 	/* Pack the cell into its four tiles, left to right and top to bottom, each
-	 */
-	/* line read from its eighth pixel back so the leftmost lands in the low */
-	/* nibble. */
+	   line read from its eighth pixel back so the leftmost lands in the low
+	   nibble. */
 	pixel = pixels + 7;
 	tileRow = 0;
 	do {
@@ -170,43 +160,42 @@ s32 mnTextDrawGlyphPair(s32 code, u32 *out) {
 					tileLine = (tileLine << 4) + *pixel--;
 				}
 				line++;
-				pixel +=
-					GLYPH_BUFFER_WIDTH + 8; /* the next line's eighth pixel */
+				/* the next line's eighth pixel */
+				pixel += GLYPH_BUFFER_WIDTH + 8;
 				*out++ = tileLine;
 			} while(line <= 7);
 			tileColumn++;
-			pixel -=
-				8 * GLYPH_BUFFER_WIDTH - 8; /* up to the tile on the right */
+			/* up to the tile on the right */
+			pixel -= 8 * GLYPH_BUFFER_WIDTH - 8;
 		} while(tileColumn <= 1);
 		tileRow++;
-		pixel +=
-			8 * GLYPH_BUFFER_WIDTH - 2 * 8; /* down to the next row of tiles */
+		/* down to the next row of tiles */
+		pixel += 8 * GLYPH_BUFFER_WIDTH - 2 * 8;
 	} while(tileRow <= 1);
 	return width;
 }
 
 /* German, Spanish, French, and Italian count ten pixels for every character up
- */
-/* to TEXT_LAST_FONT_CODE but the space, and nothing for those above it. */
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-	(LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+   to TEXT_LAST_FONT_CODE but the space, and nothing for those above it. */
+#if WIDE_STRING_FIXED_WIDTH
 #define WIDE_WIDTH_FIXED 1
 #endif
 
 /* Glyph n in the font. */
-#define FONT_GLYPH(n)                                                          \
-	((const GLYPH *)((n) * sizeof(GLYPH) + (const u8 *)Font_Glyphs))
+#define FONT_GLYPH(n) \
+	((const GLYPH *)((n) * sizeof(GLYPH) + (const Uint8 *)Font_Glyphs))
 
-/* Measures a string of 16-bit character codes in pixels: a space takes four, */
-/* a character up to TEXT_LAST_FONT_CODE its glyph's width (TEXT_MARK_VOICED */
-/* and TEXT_MARK_SEMIVOICED nothing) and a code above it KANJI_WIDTH; see */
-/* WIDE_WIDTH_FIXED for the four editions that count otherwise. */
-s32 mnTextGetWideStringWidth(u16 *text) {
-	s32 width;
-	u16 *cursor;
-	u32 code;
+/* Measures a string of 16-bit character codes in pixels: a space takes four, a
+   character up to TEXT_LAST_FONT_CODE its glyph's width (TEXT_MARK_VOICED and
+   TEXT_MARK_SEMIVOICED nothing) and a code above it KANJI_WIDTH; see
+   WIDE_WIDTH_FIXED for the four editions that count otherwise. */
+Sint32 mnTextGetWideStringWidth(Uint16 *text)
+{
+	Sint32	width;
+	Uint16 *cursor;
+	Uint32	code;
 #if !defined(WIDE_WIDTH_FIXED)
-	u32 glyphIndex;
+	Uint32 glyphIndex;
 #endif
 
 	code = *text;
@@ -215,8 +204,7 @@ s32 mnTextGetWideStringWidth(u16 *text) {
 	while(code != 0) {
 		if(code == TEXT_SPACE) {
 			width += 4;
-		}
-		else if(code <= TEXT_LAST_FONT_CODE) {
+		} else if(code <= TEXT_LAST_FONT_CODE) {
 #if defined(WIDE_WIDTH_FIXED)
 			width += 10;
 #else
@@ -226,8 +214,7 @@ s32 mnTextGetWideStringWidth(u16 *text) {
 				glyphIndex += TEXT_MARK_VOICED - TEXT_SPACE;
 				width += FONT_GLYPH(glyphIndex)->width;
 			}
-		}
-		else {
+		} else {
 			width += KANJI_WIDTH;
 #endif
 		}
@@ -238,14 +225,15 @@ s32 mnTextGetWideStringWidth(u16 *text) {
 }
 
 /* Draws a zero-terminated string of 16-bit character codes into a text canvas
- */
-/* window at pixel (x, y), running its colour, outline, line spacing and new */
-/* line codes; other control codes are skipped with their arguments. */
-void mnTextDrawWideStringAtOffset(u16 *text, WINDOW *window, s32 x, s32 y) {
+   window at pixel (x, y), running its colour, outline, line spacing and new
+   line codes; other control codes are skipped with their arguments. */
+void mnTextDrawWideStringAtOffset(
+	Uint16 *text, WINDOW *window, Sint32 x, Sint32 y)
+{
 	WIN_STATE *state;
-	u32 c;
-	u32 next;
-	s16 start;
+	Uint32	   c;
+	Uint32	   next;
+	Sint16	   start;
 
 	state = WINDOW_STATE;
 	c = 0;
@@ -265,10 +253,8 @@ void mnTextDrawWideStringAtOffset(u16 *text, WINDOW *window, s32 x, s32 y) {
 		if(c == 0)
 			break;
 		/* Colour, style, line spacing and new lines take effect; the other
-		 * control */
-		/* codes are skipped with their operands, as are codes 11, 12 and 14,
-		 * whose */
-		/* meaning is open (window_decode.c). */
+		   control codes are skipped with their operands, as are codes 11, 12
+		   and 14, whose meaning is open (window_decode.c). */
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 		if(c < TEXT_COMMANDS) {
 #else
@@ -298,8 +284,7 @@ void mnTextDrawWideStringAtOffset(u16 *text, WINDOW *window, s32 x, s32 y) {
 			case TEXT_WINDOW_ANIMATION:
 			case TEXT_ACTOR_NAME_START:
 				text++;
-				/* Skip the second operand too. */
-				/* Fall through. */
+				/* Skip the second operand too. Fall through. */
 			case 11:
 			case 12:
 			case TEXT_ACTOR_NAME:
@@ -309,47 +294,43 @@ void mnTextDrawWideStringAtOffset(u16 *text, WINDOW *window, s32 x, s32 y) {
 				text++;
 				break;
 			}
-		}
-		else {
+		} else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-			/* A kana followed by a voicing mark carries the mark in its code.
-			 */
+			/* A kana followed by a voicing mark carries the mark in its
+			   code. */
 			next = *text;
 			if(next == TEXT_MARK_VOICED) {
 				c |= 1 << TEXT_MARK_SHIFT;
 				text++;
-			}
-			else if(next == TEXT_MARK_SEMIVOICED) {
+			} else if(next == TEXT_MARK_SEMIVOICED) {
 				c |= 2 << TEXT_MARK_SHIFT;
 				text++;
 			}
 #else
 			/* Two characters narrow enough to share a glyph's 16-pixel cell are
-			 * drawn */
-			/* as one sprite. */
+			   drawn as one sprite. */
 			if((window->flg & WINDOW_FLAG_TEXT_CANVAS) == 0) {
 				next = *text;
-#if TLA_PATCH_4
+#if OUTLINED_GLYPH_PAIRS_FIT_CELL
 				if(c > TEXT_SPACE && next > TEXT_SPACE) {
-					s16 pairWidth = Font_Glyphs[c - TEXT_SPACE].width +
-									Font_Glyphs[next - TEXT_SPACE].width;
+					Sint16 pairWidth = Font_Glyphs[c - TEXT_SPACE].width +
+						Font_Glyphs[next - TEXT_SPACE].width;
 
 					/* Outlined text joins only pairs one pixel narrower. */
 					if(state->outline == TEXT_STYLE_OUTLINED) {
-						if((u16)pairWidth <= 14) {
+						if((Uint16)pairWidth <= 14) {
 							c |= next << 8;
 							text++;
 						}
-					}
-					else if((u16)pairWidth <= 15) {
+					} else if((Uint16)pairWidth <= 15) {
 						c |= next << 8;
 						text++;
 					}
 				}
 #else
 				if(c > TEXT_SPACE && next > TEXT_SPACE &&
-				   (u16)(Font_Glyphs[c - TEXT_SPACE].width +
-						 Font_Glyphs[next - TEXT_SPACE].width) <= 15) {
+					(Uint16)(Font_Glyphs[c - TEXT_SPACE].width +
+						Font_Glyphs[next - TEXT_SPACE].width) <= 15) {
 					c |= next << 8;
 					text++;
 				}
@@ -361,15 +342,15 @@ void mnTextDrawWideStringAtOffset(u16 *text, WINDOW *window, s32 x, s32 y) {
 	}
 }
 
-/* Unused: draws a string of 16-bit character codes straight into the UI */
-/* tilemap, as tiles, inside a window at tile (offsetX, offsetY) of its */
-/* interior, writing both the window state's copy and VRAM. A NULL buffer draws
- */
-/* the decoded text in WIN_STATE.textBuf. */
-UNUSED void mnTextDrawWideStringAsTiles(u16 *buffer, const WINDOW *window,
-										s32 offsetX, s32 offsetY) {
+/* Unused: draws a string of 16-bit character codes straight into the UI
+   tilemap, as tiles, inside a window at tile (offsetX, offsetY) of its
+   interior, writing both the window state's copy and VRAM. A NULL buffer draws
+   the decoded text in WIN_STATE.textBuf. */
+UNUSED void mnTextDrawWideStringAsTiles(
+	Uint16 *buffer, const WINDOW *window, Sint32 offsetX, Sint32 offsetY)
+{
 	WIN_STATE *canvas = WINDOW_STATE;
-	u32 cell;
+	Uint32	   cell;
 
 	if(buffer == NULL) {
 		buffer = canvas->textBuf;
@@ -379,24 +360,27 @@ UNUSED void mnTextDrawWideStringAsTiles(u16 *buffer, const WINDOW *window,
 
 	cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;
 	if(cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) { /* inside the tilemap */
-		s32 src;
-		s32 dst;
+		Sint32 src;
+		Sint32 dst;
 
 		cell *= 2;
-		dst = (s32)WINDOW_TILEMAP_VRAM + cell;
-		src = (s32)canvas->tilemap + cell;
+		dst = (Sint32)WINDOW_TILEMAP_VRAM + cell;
+		src = (Sint32)canvas->tilemap + cell;
 
-		mnTextDrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst, offsetX & 7);
+		mnTextDrawStringAsTiles(
+			buffer, (Uint16 *)src, (Uint16 *)dst, offsetX & 7);
 	}
 }
 
-/* Draws a string of wide (16-bit) codes into the window, one glyph per cell, */
-/* skipping the control codes and their arguments; TEXT_NEWLINE starts a new */
-/* line. With no text, the decoded text in WIN_STATE.textBuf is drawn. */
-void mnTextDrawWideStringInWindow(s16 *text, WINDOW *window, s32 x, s32 y) {
+/* Draws a string of wide (16-bit) codes into the window, one glyph per cell,
+   skipping the control codes and their arguments; TEXT_NEWLINE starts a new
+   line. With no text, the decoded text in WIN_STATE.textBuf is drawn. */
+void mnTextDrawWideStringInWindow(
+	Sint16 *text, WINDOW *window, Sint32 x, Sint32 y)
+{
 	WIN_STATE *state;
-	u16 c;
-	s16 start;
+	Uint16	   c;
+	Sint16	   start;
 
 	state = WINDOW_STATE;
 	start = x;
@@ -422,8 +406,7 @@ void mnTextDrawWideStringInWindow(s16 *text, WINDOW *window, s32 x, s32 y) {
 				case TEXT_WINDOW_ANIMATION:
 				case TEXT_ACTOR_NAME_START:
 					text++;
-					/* Skip the second operand too. */
-					/* Fall through. */
+					/* Skip the second operand too. Fall through. */
 				case TEXT_COLORS_RESET:
 				case TEXT_COLOR:
 				case TEXT_OUTLINE:
@@ -437,14 +420,13 @@ void mnTextDrawWideStringInWindow(s16 *text, WINDOW *window, s32 x, s32 y) {
 					text++;
 					break;
 				}
-			}
-			else {
+			} else {
 				mnWindowPutGlyph(window, c, x, y, GLYPH_DRAW_CHARACTER);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || \
 	(LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 				x++;
 #else
-				if((u16)(c - TEXT_MARK_VOICED) > 1)
+				if((Uint16)(c - TEXT_MARK_VOICED) > 1)
 					x++;
 #endif
 			}
@@ -456,20 +438,19 @@ void mnTextDrawWideStringInWindow(s16 *text, WINDOW *window, s32 x, s32 y) {
 /* The digits mnStringFormatNum writes, in buffer[1] to [12]. */
 #define NUMBER_DIGITS 12
 
-/* Writes value as decimal text into buffer (NUMBER_DIGITS + 2 bytes) and */
-/* returns where the text starts. With width 0 the number has no padding and a
- */
-/* minus sign when negative; otherwise it is right-aligned in width characters
- */
-/* (up to NUMBER_DIGITS) and unsigned. */
-u8 *mnStringFormatNum(u8 *buffer, s32 input, s32 width) {
-	s32 offset;
-	s32 value;
-	s32 negative;
-	s32 spaceCharacter;
-	s32 minusCharacter;
-	u8 *leading;
-	u8 *trim;
+/* Writes value as decimal text into buffer (NUMBER_DIGITS + 2 bytes) and
+   returns where the text starts. With width 0 the number has no padding and a
+   minus sign when negative; otherwise it is right-aligned in width characters
+   (up to NUMBER_DIGITS) and unsigned. */
+Uint8 *mnStringFormatNum(Uint8 *buffer, Sint32 input, Sint32 width)
+{
+	Sint32 offset;
+	Sint32 value;
+	Sint32 negative;
+	Sint32 spaceCharacter;
+	Sint32 minusCharacter;
+	Uint8 *leading;
+	Uint8 *trim;
 
 	value = input;
 	negative = 0;
@@ -480,8 +461,7 @@ u8 *mnStringFormatNum(u8 *buffer, s32 input, s32 width) {
 	}
 
 	/* The digits, then spaces for the leading zeros (the last digit stays) and
-	 */
-	/* the sign in front; the byte after them ends the text. */
+	   the sign in front; the byte after them ends the text. */
 	buffer[0] = ' ';
 	for(offset = NUMBER_DIGITS; offset != 0; offset--) {
 		buffer[offset] =
@@ -498,8 +478,7 @@ u8 *mnStringFormatNum(u8 *buffer, s32 input, s32 width) {
 		if(leading[1] == '0') {
 			if(offset != NUMBER_DIGITS)
 				leading[1] = spaceCharacter;
-		}
-		else {
+		} else {
 			if(negative != 0)
 				leading[0] = minusCharacter;
 			break;
@@ -520,7 +499,7 @@ u8 *mnStringFormatNum(u8 *buffer, s32 input, s32 width) {
 		return buffer + offset;
 	}
 
-	if((u32)width > NUMBER_DIGITS)
+	if((Uint32)width > NUMBER_DIGITS)
 		width = NUMBER_DIGITS;
 	return buffer + NUMBER_DIGITS + 1 - width;
 }

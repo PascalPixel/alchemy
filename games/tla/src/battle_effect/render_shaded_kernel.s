@@ -10,11 +10,11 @@
 @ is subs r2, r1, #0.
 .syntax unified
 	.thumb
-	.global Render_ShadedKernel
-Render_ShadedKernel:
-	.global Render_ShadedKernelEntry
+	.global btRenderShadedKernel
+btRenderShadedKernel:
+	.global btRenderShadedKernelEntry
 	.thumb_func
-Render_ShadedKernelEntry:
+btRenderShadedKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_0813ae16:
@@ -350,7 +350,7 @@ AlchemyUncreditedEnd_0813b2d4:
 .L_0813b2e4:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.global Render_ShadedKernelCodeSize
-	.set Render_ShadedKernelCodeSize, . - Render_ShadedKernel
-	.global Render_ShadedKernelCodeWords
-	.set Render_ShadedKernelCodeWords, Render_ShadedKernelCodeSize / 4
+	.global btRenderShadedKernelCodeSize
+	.set btRenderShadedKernelCodeSize, . - btRenderShadedKernel
+	.global btRenderShadedKernelCodeWords
+	.set btRenderShadedKernelCodeWords, btRenderShadedKernelCodeSize / 4

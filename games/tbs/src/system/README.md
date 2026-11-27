@@ -1,7 +1,7 @@
 # System library code
 
 This folder is the base the rest of the game runs on: start-up, the main
-routine, the frame, tasks, the heap and the save.
+routine, the frame, events, the heap and the save.
 [The system library](../../../../docs/tbs/system.md) gives the four big ideas. This page goes one step
 closer, so you know what each file is for before you open it.
 
@@ -16,29 +16,29 @@ the main routine, which never returns. It is `syInit` in
 ## The main routine
 
 `gmMainRoutineRun` in `main_routine.c` goes round three steps for as long
-as the console is on: clear away the last sequence, call the next one as a
+as the console is on: clear away the last mode, call the next one as a
 function, and when it returns work out what follows. One trip is a whole
-sequence, not a frame. The loop that goes round once a frame is
+mode, not a frame. The loop that goes round once a frame is
 [inside `sySynch()`](#the-frame-loop).
 
-### Clearing away the last sequence
+### Clearing away the last mode
 
-Before every sequence the task list is emptied, the whole heap is taken
+Before every mode the event list is emptied, the whole heap is taken
 back, looping sounds are cut off and any line-by-line screen effect is
-switched off. This is what makes each sequence start cold. Only what lies
+switched off. This is what makes each mode start cold. Only what lies
 outside the heap crosses from one to the next: the main routine's state, the
 game flags and the actor snapshot, each a fixed block of memory
 (`MainRoutineStateWork` and `ActorSnapshotWork` are declared in `ewram.s`).
 
-A scene's overlay is loaded here too, just before the field sequence is
+A scene's overlay is loaded here too, just before the field mode is
 called. A battle, Lucky Dice and Lucky Wheels load none.
 
-### Running another sequence
+### Running another mode
 
 A scene ends with an exit, which the main routine turns into a destination
 through the scene's exit table. Anything else ends with a result, and
-`scReturnFromSequence` picks the destination from it: back where the
-party stood, to the restart point after a defeat, or wherever an event
+`gmReturnFromMode` picks the destination from it: back where the
+party stood, to the restart point after a defeat, or wherever a script
 named beforehand.
 
 ## The frame loop
@@ -73,7 +73,7 @@ flowchart LR
 
 One trip, in order:
 
-1. Every task of the frame pass runs, highest rank first.
+1. Every event of the frame pass runs, highest rank first.
 2. The sprites that were asked for are written into one list
    ([The frame's sprites](#the-frames-sprites)).
 3. The frame is marked finished.
@@ -83,13 +83,13 @@ One trip, in order:
 
 The caller's own work is part of the frame as well. What it did between its
 last `sySynch()` and this one came before step 1, and is shown with what the
-tasks do. So a frame's time is the caller's work and the tasks' together.
+events do. So a frame's time is the caller's work and the events' together.
 
 ### What VBlank does
 
 The VBlank handler does two kinds of work. If the frame was marked
 finished, it copies the frame to the screen. Whether or not it was, it runs
-the tasks of its own pass, reads the buttons and prepares the next stretch
+the events of its own pass, reads the buttons and prepares the next stretch
 of sound.
 
 That split is the game's [slowdown](../../../../docs/tbs/glossary.md#slowdown). A frame
@@ -106,50 +106,50 @@ nothing is pressed for three minutes and idle sleep is on.
 ### Waiting from anywhere
 
 Any function may call `sySynch()`, however deep in its own calls it is, but
-for a [task](../../../../docs/tbs/glossary.md#task) and the VBlank handler: a task is
+for an [event](../../../../docs/tbs/glossary.md#event) and the VBlank handler: an event is
 called from inside `sySynch()` and must return for the frame to end. Code that
-a task might reach checks first (`TasksRunning`).
+an event might reach checks first (`EventsRunning`).
 
 There is one line of execution throughout: `sySynch()` starts no second one.
 It does move the stack. The loop always runs from the same fixed place in
 memory, so when the caller's stack has grown past that place, the part in
 use is copied aside first and put back when `sySynch()` returns.
 
-## The task runner
+## The event runner
 
-A [task](../../../../docs/tbs/glossary.md#task) is a function put on a list once and
-called every frame until it is taken off. The list holds 20. Each task has
+An [event](../../../../docs/tbs/glossary.md#event) is a function put on a list once and
+called every frame until it is taken off. The list holds 20. Each event has
 a rank, which the code calls its `pri`, and higher ranks run first.
-That is how one task gets to see another's finished work in the same frame.
+That is how one event gets to see another's finished work in the same frame.
 
-There are two passes. Most tasks run once a frame from the frame loop. A
+There are two passes. Most events run once a frame from the frame loop. A
 few run once a VBlank from the handler: the ones that copy something to the
 screen. When a frame runs long, those few run more than once in it. The
-rank says which pass as well: `TASK_PASS_FRAME + 10` is rank 10 of the
-frame pass, and `TASK_PASS_VBLANK` is rank 0 of the other.
-[The field's tasks](../field/README.md#the-fields-tasks) lists the ones a
+rank says which pass as well: `EVENT_PASS_FRAME + 10` is rank 10 of the
+frame pass, and `EVENT_PASS_VBLANK` is rank 0 of the other.
+[The field's events](../field/README.md#the-fields-events) lists the ones a
 town keeps on the list.
 
-### A task's life
+### An event's life
 
 `sySetEvent` puts a function on the list with a rank, and sorts the list. If
 the function is already there it only gets the new rank, so nothing is on
 the list twice. `syCloseEvent` takes it off.
 
-A task can also be suspended and resumed: it stays on the list and is
-passed over. Opening the field menu suspends every task whose function is
+An event can also be suspended and resumed: it stays on the list and is
+passed over. Opening the field menu suspends every event whose function is
 in the overlay, so the scene holds still behind the menu, and a scene can
-flag one of its tasks to keep running through that.
+flag one of its events to keep running through that.
 
-The main routine empties the list before every sequence, and the field
-sequence empties it again as it sets a scene up. So each sequence adds what
+The main routine empties the list before every mode, and the field
+mode empties it again as it sets a scene up. So each mode adds what
 it needs when it starts, and a scene adds its own on top.
 
-An entry of the list is the function, the rank and that one flag. A task
+An entry of the list is the function, the rank and that one flag. An event
 gets no arguments and no memory of its own, so what it has to remember is
-in its owner's [state](../../../../docs/tbs/glossary.md#state). No task adds a task, and no
-task calls `sySynch()` ([Who may wait](../../../../docs/tbs/system.md#who-may-wait)). It is
-all in `system_task.c`.
+in its owner's [state](../../../../docs/tbs/glossary.md#state). No event adds an event, and no
+event calls `sySynch()` ([Who may wait](../../../../docs/tbs/system.md#who-may-wait)). It is
+all in `system_event.c`.
 
 ## The frame's sprites
 
@@ -171,7 +171,7 @@ frame it belongs to (`system_io_write_queue.c`).
 The heap hands out memory like a stack of plates: each block goes on top of
 the last, and giving one back gives back everything above it. That makes
 it nearly free, and it means blocks go back in reverse order. The main
-routine empties the lot between sequences.
+routine empties the lot between modes.
 
 A block that other code has to find again is kept in a numbered
 [heap slot](../../../../docs/tbs/glossary.md#heap-slot). Such a block is its owner's
@@ -198,7 +198,7 @@ back, and only then is the old copy retired. Every sector carries a label
 and a checksum, so a half-written one is recognised and ignored.
 
 The parts hold the game flags, the main routine's state and where the
-scene's actors stand. It is `system_save.c`, and the Save command that
+scene's actors stand. It is `system_bup.c`, and the Save command that
 uses it is in [Windows](../window/README.md#saving).
 
 ## The link cable
@@ -265,7 +265,7 @@ matrices are the manual's own, down to its quirks.
 | Here | In SGL's manual |
 | --- | --- |
 | `FIXED`, 16.16; angles of 65,536 to the turn; a matrix of twelve words | `FIXED`, `ANGLE`, `MATRIX` |
-| `syRotX`, `Y` and `Z` write the same four cells with the same signs | the matrices printed for `slRotX`, `slRotY`, `slRotZ` |
+| `syRotX`, `Y` and `Z` write the same four metatiles with the same signs | the matrices printed for `slRotX`, `slRotY`, `slRotZ` |
 | The fixed-point divide takes its divisor first and returns b / a | `slDivFX` returns b / a |
 | One caller of the arctangent expects a halfword back | `slAtan` returns a 16-bit `ANGLE` |
 | The unit matrix is stored at a pointer, or at the current matrix | `slUnitMatrix` takes a pointer, or `CURRENT` |
@@ -285,7 +285,7 @@ same each time, cut down for a machine with 32K of fast memory.
 | SGL | Here |
 | --- | --- |
 | a matrix stack twenty deep | one level |
-| a list of 64 events, each with 128 bytes of work | a table of 20 tasks, sorted by priority |
+| a list of 64 scripts, each with 128 bytes of work | a table of 20 events, sorted by priority |
 | `slLookAt` with a turn about the line of sight | a camera and a target, kept level |
 | debug text at any address | debug text at a cursor |
 
@@ -359,20 +359,20 @@ The tables follow the system library's stub table, which is the ROM's own
 list of its functions, and add the inlines the rest of the game calls
 everywhere.
 
-### Events and the frame
+### Scripts and the frame
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `wait` | runs a number of frames, the frame pass's tasks in each, and returns | `slSynch`, which waits for one frame; here it is `slExecuteEvent` and `slSynch` in one |
-| `syInitEvent` | empties the task table | `slInitEvent`, for 20 tasks where SGL keeps 64 events |
-| `sySetEvent` | adds a task at a priority and sorts the table; a task already there only gets the new priority | `slSetEvent`, which takes no priority and returns the event |
-| `syCloseEvent` | takes the task off the table | `slCloseEvent`, which is given the event rather than its function |
-| `syTaskSuspend` | suspends one task, or every task for a null function | none |
-| `syTaskResume` | resumes one task, or every task | none |
-| `syExecuteEvent` | runs one pass of the tasks, the frame's or the VBlank's | `slExecuteEvent`, in two passes by priority where SGL runs one list in order |
+| `wait` | runs a number of frames, the frame pass's events in each, and returns | `slSynch`, which waits for one frame; here it is `slExecuteEvent` and `slSynch` in one |
+| `syInitEvent` | empties the event table | `slInitEvent`, for 20 events where SGL keeps 64 events |
+| `sySetEvent` | adds an event at a priority and sorts the table; an event already there only gets the new priority | `slSetEvent`, which takes no priority and returns the script |
+| `syCloseEvent` | takes the event off the table | `slCloseEvent`, which is given the script rather than its function |
+| `sySuspendEvent` | suspends one event, or every event for a null function | none |
+| `syResumeEvent` | resumes one event, or every event | none |
+| `syExecuteEvent` | runs one pass of the events, the frame's or the VBlank's | `slExecuteEvent`, in two passes by priority where SGL runs one list in order |
 | `syIntFunction` | installs a function for one interrupt and enables it; a null function disables it | `slIntFunction`, for any interrupt where SGL's is for the blanking one |
 | `syInputResetKeyRepeat` | makes held buttons wait the full delay before they repeat | none |
-| `syTaskSetFlags` | sets a task's flags, such as running on while the overlay's tasks are suspended | none |
+| `sySetEventFlags` | sets an event's flags, such as running on while the overlay's events are suspended | none |
 
 ### Maths
 
@@ -380,14 +380,14 @@ everywhere.
 | --- | --- | --- |
 | `syRandom` | the next random number, 0 to 65535 | `slRandom`, the same 16 bits; callers mask them where SGL's manual multiplies by a range |
 | `syAtan` | the angle of a vector, measured from the y axis | `slAtan`, with a 16-bit result |
-| `syMathIntegerSqrt` | an integer square root, worked out a bit at a time from the cartridge | none |
+| `sySquart` | an integer square root, worked out a bit at a time from the cartridge | none |
 | `sySquartFX` | the square root of a 16.16 number | `slSquartFX`, but only eight bits after the point are worked out |
 | `sySin` | the sine of an angle, from a table of a quarter turn | `slSin` |
 | `syCos` | the cosine, a quarter turn on from the sine | `slCos` |
 | `syVectorAddPolarOffset` | moves a point a distance in a direction on the ground | none |
 | `syMulFX` | the product of two 16.16 numbers | `slMulFX` |
 | `syDivFX` | the second number over the first, in 16.16 | `slDivFX`, the divisor first as in SGL |
-| `sySquart` | the integer square root, from fast RAM | `slSquart` |
+| `sySquartIWRAM` | the integer square root, from fast RAM | `slSquart` |
 | `syIntegerDivide` | a signed whole quotient | none |
 | `syIntegerDivideUnsigned` | an unsigned whole quotient | none |
 
@@ -396,7 +396,7 @@ everywhere.
 | Call | What it does | SGL |
 | --- | --- | --- |
 | `syInitMatrix` | sets up the save area and makes the current matrix the unit | `slInitMatrix` |
-| `syMatrixResetUnit` | makes the current matrix the unit, as a function | `slUnitMatrix(CURRENT)` |
+| `syUnitMatrixCurrent` | makes the current matrix the unit, as a function | `slUnitMatrix(CURRENT)` |
 | `syPushMatrix` | saves the current matrix | `slPushMatrix`, one level deep where SGL nests twenty; a second save is ignored |
 | `syPopMatrix` | brings the saved matrix back | `slPopMatrix` |
 | `syMatrixRotate` | turns about X, Y and Z by three angles, as one matrix | none |
@@ -407,13 +407,13 @@ everywhere.
 | `syMatrixScaleVector` | scales it by a vector | none; `slScale` takes the three as numbers |
 | `syMatrixRotateTranslate` | turns and moves it, as one matrix | none |
 | `syMatrixRotateTranslateScale` | turns, scales and moves it, as one matrix | none |
-| `syMatrixSetLookAt` | makes the current matrix a camera at one point looking at another | none |
+| `syLookAtLoad` | makes the current matrix a camera at one point looking at another | none |
 | `syConvert3Dto2D` | puts a point through the matrix and onto the screen | `slConvert3Dto2D`, which returns the depth; this returns the scale to draw at, and writes the depth third |
 | `syPerspective` | sets the projection from a field of view and a depth range | `slPerspective`, whose angle spans the screen's width; here it spans the height |
 | `sySetScreenDist` | sets the projection's focal length and depth range | `slSetScreenDist`, which takes the distance alone |
 | `syLookAt` | multiplies a camera looking at a point into the current matrix | `slLookAt`, without the turn about the line of sight; the camera is kept level |
 | `syUnitMatrix` | makes a matrix the unit | `slUnitMatrix` |
-| `syMatrixSetCurrentUnit` | makes the current matrix the unit | `slUnitMatrix(CURRENT)` |
+| `syUnitMatrixCurrentInline` | makes the current matrix the unit | `slUnitMatrix(CURRENT)` |
 | `syGetMatrix` | copies the current matrix out | `slGetMatrix` |
 | `syLoadMatrix` | copies a matrix in as the current one | `slLoadMatrix` |
 | `syMultiMatrix` | multiplies a matrix into the current one | `slMultiMatrix` |
@@ -425,12 +425,12 @@ everywhere.
 | --- | --- | --- |
 | `syHeapInit` | empties both heaps and every heap slot | none |
 | `syHeapSlotAlloc` | a heap slot's block, made on the first call, in fast RAM if it fits | none |
-| `syHeapSlotAllocEwram` | the same, trying the large RAM first | none |
+| `syHeapSlotAllocEWRAM` | the same, trying the large RAM first | none |
 | `syHeapSlotRelease` | gives back a heap slot's block and every block after it | none |
-| `syHeapGetRemainingIwram` | the bytes left in fast RAM's heap | none |
-| `syHeapGetRemainingEwram` | the bytes left in the large RAM's heap | none |
+| `syHeapGetRemainingIWRAM` | the bytes left in fast RAM's heap | none |
+| `syHeapGetRemainingEWRAM` | the bytes left in the large RAM's heap | none |
 | `syHeapAlloc` | a block with no slot, in fast RAM if it fits | none |
-| `syHeapAllocEwram` | the same, trying the large RAM first | none |
+| `syHeapAllocEWRAM` | the same, trying the large RAM first | none |
 | `syHeapRelease` | gives back a block and every block after it | none |
 | `syWordsClear` | clears whole words | none |
 | `syWordsFill` | fills whole words with a value | none |
@@ -440,12 +440,12 @@ everywhere.
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `syScrFadeToBlack` | fades to black over a number of VBlanks | none |
-| `syScrFadeFromBlack` | fades in from black | none |
-| `syScrFadeToWhite` | fades to white | none |
-| `syScrFadeFromWhite` | fades in from white | none |
-| `syScrFadeStart` | starts a fade of chosen layers, from one level to another | none; it does the job of `slColOffsetA`, which shifts every colour at once |
-| `syScrFadeWait` | waits a frame at a time until the fade is done | none |
+| `syScreenFadeToBlack` | fades to black over a number of VBlanks | none |
+| `syScreenFadeFromBlack` | fades in from black | none |
+| `syScreenFadeToWhite` | fades to white | none |
+| `syScreenFadeFromWhite` | fades in from white | none |
+| `syScreenFadeStart` | starts a fade of chosen layers, from one level to another | none; it does the job of `slColOffsetA`, which shifts every colour at once |
+| `syScreenFadeWait` | waits a frame at a time until the fade is done | none |
 
 The four short fades take every layer but BG0, where the debug text is, and
 start from wherever the last fade ended.
@@ -454,19 +454,19 @@ start from wherever the last fade ended.
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `syIoWriteQueueStore8` | queues a byte store for the VBlank | none; the queue does the job of `slTransferEntry` |
-| `syIoWriteQueueStore16` | queues a halfword store | none |
-| `syIoWriteQueueStore32` | queues a word store | none |
-| `syIoWriteQueueSetBits8` | queues setting bits of a byte register | none |
-| `syIoWriteQueueSetBits16` | queues setting bits of a halfword register | none |
-| `syIoWriteQueueSetBits32` | queues setting bits of a word register | none |
-| `syIoWriteQueueClearBits8` | queues clearing bits of a byte register | none |
-| `syIoWriteQueueClearBits16` | queues clearing bits of a halfword register | none |
-| `syIoWriteQueueClearBits32` | queues clearing bits of a word register | none |
-| `scIoWrite8` | stores a byte now | none |
-| `scIoWrite16` | stores a halfword now | none |
-| `scIoWrite32` | stores a word now | none |
-| `scIoRead16` | reads a halfword | none |
+| `syIOWriteQueueStore8` | queues a byte store for the VBlank | none; the queue does the job of `slTransferEntry` |
+| `syIOWriteQueueStore16` | queues a halfword store | none |
+| `syIOWriteQueueStore32` | queues a word store | none |
+| `syIOWriteQueueSetBits8` | queues setting bits of a byte register | none |
+| `syIOWriteQueueSetBits16` | queues setting bits of a halfword register | none |
+| `syIOWriteQueueSetBits32` | queues setting bits of a word register | none |
+| `syIOWriteQueueClearBits8` | queues clearing bits of a byte register | none |
+| `syIOWriteQueueClearBits16` | queues clearing bits of a halfword register | none |
+| `syIOWriteQueueClearBits32` | queues clearing bits of a word register | none |
+| `IO_WRITE8` | stores a byte now | none |
+| `IO_WRITE16` | stores a halfword now | none |
+| `IO_WRITE32` | stores a word now | none |
+| `syIORead16` | reads a halfword | none |
 
 ### DMA
 
@@ -474,34 +474,34 @@ start from wherever the last fade ended.
 | --- | --- | --- |
 | `syDMAXCopy` | starts a transfer: source, destination, count and channel, in one store | `slDMAXCopy`, the same four words in the same order; the count carries the transfer's flags |
 | `syDMAWait` | waits until a channel is done | `slDMAWait`, given the channel |
-| `btDmaFill16` | fills with a halfword | none |
-| `btDmaFill32` | fills with a word | none |
-| `syDma0Stop` | stops the repeating transfer a line effect left on channel 0 | none |
+| `DMA_FILL16` | fills with a halfword | none |
+| `DMA_FILL32` | fills with a word | none |
+| `DMA0_STOP` | stops the repeating transfer a line effect left on channel 0 | none |
 
 ### Decoders
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `fdDecompressByteLz` | unpacks the byte LZ format and returns the size | none |
-| `fdDecompressTaggedLz` | unpacks the tagged LZ format, plain or for palettes | none |
-| `fdDecompressMoveToFrontLz` | unpacks the move-to-front LZ format | none |
+| `syDecompressByteLZ` | unpacks the byte LZ format and returns the size | none |
+| `syDecompressTaggedLZ` | unpacks the tagged LZ format, plain or for palettes | none |
+| `syDecompressMoveToFrontLZ` | unpacks the move-to-front LZ format | none |
 | `syDecompressHalfwords` | unpacks the halfword LZ format | none |
-| `fdDecompressSprPicture` | unpacks a sprite's picture straight into its pixels | none |
-| `fdDecompressBitRuns` | draws a glyph's one-bit rows in one colour | none |
+| `syDecompressSprPicture` | unpacks a sprite's picture straight into its pixels | none |
+| `syDecompressBitRuns` | draws a glyph's one-bit rows in one colour | none |
 
 ### Sprites and VRAM
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `syVramCacheReset` | frees every block and entry of the sprite VRAM cache | none |
-| `syVramCacheFreeEntry` | frees one cache entry and its blocks | none |
-| `syVramCacheReleaseVram` | gives an entry's blocks back but keeps the entry | none |
-| `syVramCacheLoad` | gives an entry sprite VRAM and copies tiles into it | none |
-| `syVramCacheFindFreeEntry` | the first free cache entry | none |
-| `syVramCacheAllocEntry` | takes a free entry and gives it VRAM | none |
-| `syVramCacheReload` | copies tiles into an entry's VRAM again | none |
-| `syOamMatrixAllocFromTransform` | hands out the next of 32 sprite matrices and fills it | none |
-| `syOamAddSprAtDepth` | puts a sprite in one of 256 depth slots for this frame | none; `slDispSprite` takes a position instead |
+| `syVRAMCacheReset` | frees every block and entry of the sprite VRAM cache | none |
+| `syVRAMCacheFreeEntry` | frees one cache entry and its blocks | none |
+| `syVRAMCacheReleaseVRAM` | gives an entry's blocks back but keeps the entry | none |
+| `syVRAMCacheLoad` | gives an entry sprite VRAM and copies tiles into it | none |
+| `syVRAMCacheFindFreeEntry` | the first free cache entry | none |
+| `syVRAMCacheAllocEntry` | takes a free entry and gives it VRAM | none |
+| `syVRAMCacheReload` | copies tiles into an entry's VRAM again | none |
+| `syOAMMatrixAllocFromTransform` | hands out the next of 32 sprite matrices and fills it | none |
+| `syOAMAddSprAtDepth` | puts a sprite in one of 256 depth slots for this frame | none; `slDispSprite` takes a position instead |
 | `syPaletteLoadBasicSprCols` | loads the basic sprite palettes | none |
 
 ### Print
@@ -510,12 +510,12 @@ start from wherever the last fade ended.
 | --- | --- | --- |
 | `syPrint` | prints a string at the debug text cursor | `slPrint`, at a cursor where SGL takes an address |
 | `syPrintHex` | prints the last few hexadecimal digits of a number | `slPrintHex`, at the cursor |
-| `syDebugTextPrintDecimal` | prints a number in decimal | none |
-| `syDebugTextPrintBlanks` | prints blanks | none |
-| `syDebugTextClear` | clears the debug text screen and homes the cursor | none |
+| `syPrintDec` | prints a number in decimal | none |
+| `syPrintBlanks` | prints blanks | none |
+| `syPrintClear` | clears the debug text screen and homes the cursor | none |
 
-`syPrint`, `syPrintHex` and `syDebugTextPrintDecimal` print only while debug text is on;
-`syDebugTextPrintBlanks` and `syDebugTextClear` write to the screen either way.
+`syPrint`, `syPrintHex` and `syPrintDec` print only while debug text is on;
+`syPrintBlanks` and `syPrintClear` write to the screen either way.
 
 ### Link
 
@@ -524,7 +524,7 @@ start from wherever the last fade ended.
 | `sySerialInit` | sets the link port up and starts the exchange every frame | none |
 | `sySerialPollAndTransfer` | looks for the partner and, once there, makes one exchange | none |
 | `sySerialWaitForStatMask` | waits for status bits, then returns this console's place in the link | none |
-| `sySerialRemoveIrqHandlers` | stops the exchange and takes the link's interrupts away | none |
+| `sySerialRemoveIRQHandlers` | stops the exchange and takes the link's interrupts away | none |
 | `sySerialStartSend` | starts sending a block of memory, 20 bytes at a time | none |
 | `sySerialStartReceive` | starts receiving into a block of memory | none |
 | `sySerialWaitForSend` | waits until the send is done | none |
@@ -537,12 +537,12 @@ start from wherever the last fade ended.
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `sySaveInitState` | finds the flash chip's maker and reads which sectors hold what | none |
-| `sySaveWritePart` | writes a new copy of a part, then retires the old one | none |
-| `sySaveReadPart` | reads the newest copy of a part | none |
-| `sySaveDeletePart` | retires the newest copy of a part | none |
-| `sySaveLoadFileSummaries` | reads each file's summary for the file list | none |
-| `sySaveReleaseState` | stops the flash timer and gives back the save's memory | none |
+| `syBupInitState` | finds the flash chip's maker and reads which sectors hold what | none |
+| `syBupWritePart` | writes a new copy of a part, then retires the old one | none |
+| `syBupReadPart` | reads the newest copy of a part | none |
+| `syBupDeletePart` | retires the newest copy of a part | none |
+| `syBupLoadFileSummaries` | reads each file's summary for the file list | none |
+| `syBupReleaseState` | stops the flash timer and gives back the save's memory | none |
 
 ### Start-up and resources
 
@@ -554,9 +554,9 @@ start from wherever the last fade ended.
 | `syWindowLoadGraphics` | loads the window font and borders, their palette and the basic sprite palettes | none |
 | `sySndLoadReverbCode` | loads the mixer code for one reverb | none |
 | `syGetLanguage` | the cartridge's language, from the header's game code | `slGetLanguage`, which asks the console |
-| `syDummyNoOpHook` | does nothing with the number it is given | `slNoOperation`, which takes none |
+| `syDummyNoOperationHook` | does nothing with the number it is given | `slNoOperation`, which takes none |
 | `syDummyReturnZero` | does nothing and returns 0 | none |
-| `syDummyReservedNoOpA` to `syDummyReservedNoOpE` | five empty entries nothing calls | none |
+| `syDummyReservedNoOperationA` to `syDummyReservedNoOperationE` | five empty entries nothing calls | none |
 
 ### How far the port goes
 
@@ -674,7 +674,7 @@ table.
 
 - `rom_header.s` is the header, and `resource_directory.s` the 1,000
   rows.
-- [`sdk/flash`](../sdk/flash) is the SDK's flash library, the flash chip's
-  functions.
+- [`games/common/sdk/flash`](../../../common/sdk/flash) is the SDK's flash
+  library, the flash chip's functions, one copy both games build.
 - Each module's table is the `stubs.s` of its own engine folder, and the
   system library's own is `stubs.s` here.

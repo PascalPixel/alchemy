@@ -1,9 +1,8 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_PARAMS_H
 #define ALCHEMY_BATTLE_EFFECT_PARAMS_H
 
-/* @file */
-/* BATTLE_EFFECT_PARM, the command an effect's caller, dispatcher and */
-/* handlers share, and the macros that define effect kinds. */
+/* BATTLE_EFFECT_PARM, the command an effect's caller, dispatcher and handlers
+   share, and the macros that define effect kinds. */
 
 #include "static_assert.h"
 #include "types.h"
@@ -14,36 +13,36 @@ typedef enum BATTLE_EFFECT_SIDE {
 	EFFECT_SIDE_PARTY
 } BATTLE_EFFECT_SIDE;
 
-/* What a critical hit adds to an attack's effect kind: */
-/* btStagingRunAttack plays the critical version of the blow. Only */
-/* plain attacks score critical hits, and their kinds are 1 to 5, all */
-/* dispatched by id range, so it reaches kinds 201 to 205: the ring and spark */
-/* effect, the same for each. */
+/* What a critical hit adds to an attack's effect kind:
+   btStagingRunAttack plays the critical version of the blow. Only plain attacks
+   score critical hits, and their kinds are 1 to 5, all dispatched by id range,
+   so it reaches kinds 201 to 205: the ring and spark effect, the same for
+   each. */
 #define EFFECT_ID_CRITICAL_OFFSET 200
 
 /* The command shared by an effect's caller, dispatcher and handlers. */
 typedef struct BATTLE_EFFECT_PARM {
-	s32 kind;	  /* handler table index; a critical hit adds */
-				  /* EFFECT_ID_CRITICAL_OFFSET */
-	s32 side;	  /* BATTLE_EFFECT_SIDE */
-	s32 user;	  /* the user's unit id */
-	s32 firstTgt; /* the action's first target, standing or not */
-	s32 range;	  /* forwarded action range, otherwise initialized to 1 */
-	s32 tgtCnt;	  /* entries in targets, at least 1 */
-	s32 variant;  /* the ability's size, from 0 (Quake, then Earthquake) */
-	s32 prelude;  /* 1 plays a prelude: in some effects a Djinni appears */
-	s32 unused;	  /* no code names it */
-	s16 tgts[8];  /* the targets' unit ids, count of them */
+	/* handler table index; a critical hit adds EFFECT_ID_CRITICAL_OFFSET */
+	Sint32 kind;
+	Sint32 side;	 /* BATTLE_EFFECT_SIDE */
+	Sint32 user;	 /* the user's unit id */
+	Sint32 firstTgt; /* the action's first target, standing or not */
+	Sint32 range;	 /* forwarded action range, otherwise initialized to 1 */
+	Sint32 tgtCnt;	 /* entries in targets, at least 1 */
+	Sint32 variant;	 /* the ability's size, from 0 (Quake, then Earthquake) */
+	Sint32 prelude;	 /* 1 plays a prelude: in some effects a Djinni appears */
+	Sint32 unused;	 /* no code names it */
+	Sint16 tgts[8];	 /* the targets' unit ids, count of them */
 } BATTLE_EFFECT_PARM;
 
 STATIC_ASSERT(sizeof(BATTLE_EFFECT_PARM) == 52);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_PARM, tgtCnt) == 20);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_PARM, tgts) == 36);
 
-/* Loops `i` over the effect's targets, effect->tgts[0] to */
-/* effect->tgts[effect->tgtCnt - 1]: the loops that flash, shake, */
-/* strike or aim at each target in turn. */
-#define EFFECT_FOR_EACH_TARGET(i, effect)                                      \
+/* Loops `i` over the effect's targets, effect->tgts[0] to
+   effect->tgts[effect->tgtCnt - 1]: the loops that flash, shake, strike or aim
+   at each target in turn. */
+#define EFFECT_FOR_EACH_TARGET(i, effect) \
 	for((i) = 0; (i) != (effect)->tgtCnt; (i)++)
 
 #endif

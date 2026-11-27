@@ -1,14 +1,13 @@
-/* @file */
 /* The Djinn menu's labels, as each edition words them. */
 
 #include "edition.h"
 #include "types.h"
 
 #if LANGUAGE == LANGUAGE_SPANISH
-const u8 DjinnMenu_TextLevel[] = "Nv.";
+const Uint8 DjinnMenu_TextLevel[] = "Nv.";
 #elif LANGUAGE == LANGUAGE_FRENCH
-const u8 DjinnMenu_TextLevel[] = "Niv";
+const Uint8 DjinnMenu_TextLevel[] = "Niv";
 #else
-const u8 DjinnMenu_TextLevel[] = "Lv";
+const Uint8 DjinnMenu_TextLevel[] = "Lv";
 #endif
-const u8 DjinnMenu_TextSlash[] = "/";
+const Uint8 DjinnMenu_TextSlash[] = "/";

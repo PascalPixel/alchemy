@@ -9,7 +9,7 @@ waits for, like a menu.
 ## Shops
 
 A visit starts as a talk. The shopkeeper's
-[event](../../../../docs/tla/glossary.md#event) checks that Felix is facing him across the
+[script](../../../../docs/tla/glossary.md#script) checks that Felix is facing him across the
 counter, calls the shop, and waits until it returns. Talk to Daila's
 weapon seller from the side and you get gossip.
 

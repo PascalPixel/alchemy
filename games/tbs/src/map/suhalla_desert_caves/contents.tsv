@@ -1,5 +1,5 @@
 block	file	pad	edition
-cell_tiles	cell_tiles.delta1.lz	4
+metatile_tiles	metatile_tiles.delta1.lz	4
 shapes	altmiller_cave_entrance/shapes.table.lz	4
 grid	map.grid.lz	4
 animation	altin_peak_south_entrance/tileset_anims.script.lz	4

@@ -1,41 +1,39 @@
-/* @file */
-/* The quantity bar and the price sprites, the field's tint behind a counter, */
-/* and the hand cursor's moves. */
-/* Part of shop.c. */
+/* The quantity bar and the price sprites, the field's tint behind a counter,
+   and the hand cursor's moves. Part of shop.c. */
 
 #include "shop_internal.h"
 
 /* The frames the field's colours take to fade to a shop's tint and back. */
 #define SHOP_TINT_FRAMES 16
 
-/* Where each of the quantity bar's 30 segments starts in its tile buffer: a */
-/* byte column of a 4-bit tile, so four segments to a tile and the next tile */
-/* TILE_SIZE_4BPP bytes on, eight tiles in all. */
+/* Where each of the quantity bar's 30 segments starts in its tile buffer: a
+   byte column of a 4-bit tile, so four segments to a tile and the next tile
+   TILE_SIZE_4BPP bytes on, eight tiles in all. */
 /* clang-format off */
-static const u16 sQuantityBarSegmentOffsets[30] = {
-    0, 1, 2, 3,
-    32, 33, 34, 35,
-    64, 65, 66, 67,
-    96, 97, 98, 99,
-    128, 129, 130, 131,
-    160, 161, 162, 163,
-    192, 193, 194, 195,
-    224, 225,
+static const Uint16 sQuantityBarSegmentOffsets[30] = {
+	0, 1, 2, 3,
+	32, 33, 34, 35,
+	64, 65, 66, 67,
+	96, 97, 98, 99,
+	128, 129, 130, 131,
+	160, 161, 162, 163,
+	192, 193, 194, 195,
+	224, 225,
 };
 /* clang-format on */
 
-/* Colours the first itemCount segments of the quantity bar in `color` (enum */
-/* QUANTITY_BAR_COL). */
-void mnQuantityBarFill(s32 itemCount, s32 color, u8 *tileBuffer) {
-	s32 segment;
+/* Colours the first itemCount segments of the quantity bar in `color` (enum
+   QUANTITY_BAR_COL). */
+void mnQuantityBarFill(Sint32 itemCount, Sint32 color, Uint8 *tileBuffer)
+{
+	Sint32 segment;
 
 	/* One byte holds two 4-bit pixels, the left one in the low nibble: a black
-	 */
-	/* pixel (colour 1), then one of the segment's colour. */
+	   pixel (colour 1), then one of the segment's colour. */
 	color = (color << 4) + 1;
 	for(segment = 0; segment < itemCount; segment++) {
 		/* The segment's byte in rows 1 to 6. */
-		u8 *column = tileBuffer + sQuantityBarSegmentOffsets[segment];
+		Uint8 *column = tileBuffer + sQuantityBarSegmentOffsets[segment];
 
 		column[1 * TILE_ROW_SIZE_4BPP] = color;
 		column[2 * TILE_ROW_SIZE_4BPP] = color;
@@ -48,20 +46,20 @@ void mnQuantityBarFill(s32 itemCount, s32 color, u8 *tileBuffer) {
 
 /* Where each of a price's five digits starts in its tile buffer, ones first. */
 /* clang-format off */
-static const u16 sPriceDigitTileOffsets[5] = {
-    192, 144, 128, 80, 64,
+static const Uint16 sPriceDigitTileOffsets[5] = {
+	192, 144, 128, 80, 64,
 };
 /* clang-format on */
 
-/* Draws one digit of a price at its place (0 for the ones) over the blank */
-/* price's tiles. A digit is up to four rows of eight pixels, the right half of
- */
-/* one tile and the left half of the next; its glyph's bytes end at the first */
-/* 0. */
-void mnShopDrawPriceDigit(s32 digit, u8 *tileBuffer, u32 digitPosition) {
-	u8 *src = Shop_GlyphBytes + digit * TILE_SIZE_4BPP;
-	u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
-	s32 count;
+/* Draws one digit of a price at its place (0 for the ones) over the blank
+   price's tiles. A digit is up to four rows of eight pixels, the right half of
+   one tile and the left half of the next; its glyph's bytes end at the first
+   0. */
+void mnShopDrawPriceDigit(Sint32 digit, Uint8 *tileBuffer, Uint32 digitPosition)
+{
+	Uint8 *src = Shop_GlyphBytes + digit * TILE_SIZE_4BPP;
+	Uint8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
+	Sint32 count;
 
 	for(count = 0; count < 4; count++) {
 		if(*src != 0) {
@@ -80,18 +78,19 @@ void mnShopDrawPriceDigit(s32 digit, u8 *tileBuffer, u32 digitPosition) {
 }
 
 /* Builds a price of up to five digits as a sprite on window at (x, y). Returns
- */
-/* the sprite, or NULL with no free slot. */
-WINDOW_SPR *mnShopCreatePriceSpr(s32 value, WINDOW *window, s32 x, s32 y) {
-	u8 *tileBuffer;
-	s32 resourceSlot;
+   the sprite, or NULL with no free slot. */
+WINDOW_SPR *mnShopCreatePriceSpr(
+	Sint32 value, WINDOW *window, Sint32 x, Sint32 y)
+{
+	Uint8	   *tileBuffer;
+	Sint32		resourceSlot;
 	WINDOW_SPR *priceSprite;
 
-	tileBuffer = syHeapSlotAllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
+	tileBuffer = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	priceSprite = 0;
 	/* the blank price's eight tiles (8 * TILE_SIZE_4BPP bytes) */
 	syDMAXCopy(Shop_PriceTiles, tileBuffer,
-			   DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
+		DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
 	mnShopDrawPriceDigit(value % 10, tileBuffer, 0);
 	value = value / 10;
 	if(value != 0) {
@@ -101,7 +100,7 @@ WINDOW_SPR *mnShopCreatePriceSpr(s32 value, WINDOW *window, s32 x, s32 y) {
 			mnShopDrawPriceDigit(value % 10, tileBuffer, 2);
 			value = value / 10;
 			if(value != 0) {
-				s32 remainingDigits;
+				Sint32 remainingDigits;
 
 				mnShopDrawPriceDigit(value % 10, tileBuffer, 3);
 				remainingDigits = value / 10;
@@ -110,55 +109,58 @@ WINDOW_SPR *mnShopCreatePriceSpr(s32 value, WINDOW *window, s32 x, s32 y) {
 			}
 		}
 	}
-	resourceSlot = syVramCacheFindFreeEntry();
+	resourceSlot = syVRAMCacheFindFreeEntry();
 	if(resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
-		syVramCacheLoad(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
-		priceSprite = mnWindowSprCreateStub(resourceSlot, OUTPUT_SIZE_16X32,
-											window, x, y);
+		syVRAMCacheLoad(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
+		priceSprite = mnWindowSprCreateStub(
+			resourceSlot, OUTPUT_SIZE_16X32, window, x, y);
 	}
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	return priceSprite;
 }
 
-/* Saves the field's background colours in the field state and fades them to */
-/* `tint` (PALETTE_TINT_CUSTOM with a colour) over SHOP_TINT_FRAMES frames. */
-void mnShopSaveAndTintFieldPalette(s32 tint) {
+/* Saves the field's background colours in the field state and fades them to
+   `tint` (PALETTE_TINT_CUSTOM with a colour) over SHOP_TINT_FRAMES frames. */
+void mnShopSaveAndTintFieldPalette(Sint32 tint)
+{
 	/* UB: slot 32 lies past scalar FieldStateWork. */
-#ifdef UBFIX
+#if FIX_POINTER_OUTSIDE_OBJECT
 	PALETTE_FADE *paletteBuffers = PaletteFadeState;
-	u8 *fieldBytes = (u8 *)FieldStateWork;
+	Uint8		 *fieldBytes = (Uint8 *)FieldStateWork;
 #else
-	u32 *stateCells = (u32 *)&FieldStateWork;
+	Uint32		 *stateCells = (Uint32 *)&FieldStateWork;
 	PALETTE_FADE *paletteBuffers =
 		(PALETTE_FADE *)stateCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD];
-	u8 *fieldBytes = (u8 *)stateCells[0];
+	Uint8 *fieldBytes = (Uint8 *)stateCells[0];
 #endif
-	u16 *savedPalette = paletteBuffers->tgt;
+	Uint16 *savedPalette = paletteBuffers->tgt;
 
 	syDMAXCopy(savedPalette, fieldBytes + offsetof(FIELD_STATE, savedFadeTgt),
-			   DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * 3 * sizeof(u16) / 4),
-			   REG_DMA3);
+		DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * 3 * sizeof(Uint16) / 4),
+		REG_DMA3);
 	syDMAXCopy(savedPalette, paletteBuffers->cur,
-			   DMA_COPY_WORDS(sizeof(paletteBuffers->cur) / 4), REG_DMA3);
+		DMA_COPY_WORDS(sizeof(paletteBuffers->cur) / 4), REG_DMA3);
 	fdPaletteFadeSetTargetStub(tint, 1);
 	fdPaletteFadeStartInterpolationStub(SHOP_TINT_FRAMES);
 }
 
-/* Fades back to the colours mnShopSaveAndTintFieldPalette saved, over */
-/* SHOP_TINT_FRAMES frames. */
-void mnShopRestoreFieldPalette(void) {
+/* Fades back to the colours mnShopSaveAndTintFieldPalette saved, over
+   SHOP_TINT_FRAMES frames. */
+void mnShopRestoreFieldPalette(void)
+{
 	fdPaletteFadeSetTargetStub(
-		(s32)FieldStateWork + offsetof(FIELD_STATE, savedFadeTgt), 1);
+		(Sint32)FieldStateWork + offsetof(FIELD_STATE, savedFadeTgt), 1);
 	fdPaletteFadeStartInterpolationStub(SHOP_TINT_FRAMES);
 }
 
 /* Moves the cursor a frame along its straight line toward its target. */
-void mnCursorAdvance(MENU_CURSOR *cursor) {
+void mnCursorAdvance(MENU_CURSOR *cursor)
+{
 	WINDOW_SPR *sprite;
-	s32 durationFrames;
-	s32 frame;
-	s32 cursorX;
-	s32 cursorY;
+	Sint32		durationFrames;
+	Sint32		frame;
+	Sint32		cursorX;
+	Sint32		cursorY;
 
 	if(cursor == NULL)
 		return;
@@ -168,11 +170,11 @@ void mnCursorAdvance(MENU_CURSOR *cursor) {
 	sprite = cursor->anchor;
 	frame = ++cursor->frm;
 	cursorX =
-		cursor->x + (cursor->tgtX - (s16)cursor->x) * frame / durationFrames;
+		cursor->x + (cursor->tgtX - (Sint16)cursor->x) * frame / durationFrames;
 	sprite->x = cursorX;
 	sprite->spr.oam.x = cursorX;
 	cursorY =
-		cursor->y + (cursor->tgtY - (s16)cursor->y) * frame / durationFrames;
+		cursor->y + (cursor->tgtY - (Sint16)cursor->y) * frame / durationFrames;
 	sprite->y = cursorY;
 	sprite->spr.oam.y = cursorY;
 	if(frame == durationFrames) {
@@ -182,14 +184,13 @@ void mnCursorAdvance(MENU_CURSOR *cursor) {
 }
 
 /* Eases a cursor toward its target, a quarter of the way on each axis a frame
- */
-/* and at least a pixel; the settings and name-entry screens move their markers
- */
-/* with it. */
-void mnCursorMoveTowardTarget(MENU_CURSOR *cursor) {
+   and at least a pixel; the settings and name-entry screens move their markers
+   with it. */
+void mnCursorMoveTowardTarget(MENU_CURSOR *cursor)
+{
 	WINDOW_SPR *sprite;
-	s32 delta;
-	s32 step;
+	Sint32		delta;
+	Sint32		step;
 
 	sprite = cursor->anchor;
 	if(sprite != NULL) {
@@ -203,8 +204,7 @@ void mnCursorMoveTowardTarget(MENU_CURSOR *cursor) {
 			else
 				sprite->x = sprite->x - 1;
 			sprite->spr.oam.x = sprite->x;
-		}
-		else if(delta < 0) {
+		} else if(delta < 0) {
 			if(step != 0)
 				sprite->x = sprite->x + step;
 			else
@@ -222,8 +222,7 @@ void mnCursorMoveTowardTarget(MENU_CURSOR *cursor) {
 			else
 				sprite->y = sprite->y - 1;
 			sprite->spr.oam.y = sprite->y;
-		}
-		else if(delta < 0) {
+		} else if(delta < 0) {
 			if(step != 0)
 				sprite->y = sprite->y + step;
 			else
@@ -233,9 +232,11 @@ void mnCursorMoveTowardTarget(MENU_CURSOR *cursor) {
 	}
 }
 
-/* Starts a glide of the cursor from where it is to (targetX, targetY) over */
-/* `frames` frames, for mnCursorAdvance to run. */
-void mnCursorSet(MENU_CURSOR *cursor, s32 targetX, s32 targetY, s32 frames) {
+/* Starts a glide of the cursor from where it is to (targetX, targetY) over
+   `frames` frames, for mnCursorAdvance to run. */
+void mnCursorSet(
+	MENU_CURSOR *cursor, Sint32 targetX, Sint32 targetY, Sint32 frames)
+{
 	WINDOW_SPR *anchor = cursor->anchor;
 
 	cursor->x = anchor->x;
@@ -246,9 +247,10 @@ void mnCursorSet(MENU_CURSOR *cursor, s32 targetX, s32 targetY, s32 frames) {
 	cursor->frm = 0;
 }
 
-/* Places the cursor and its sprite at (x, y) at once, with a one-frame glide */
-/* that has already arrived. */
-void mnCursorSetPosImmediate(MENU_CURSOR *cursor, s32 x, s32 y) {
+/* Places the cursor and its sprite at (x, y) at once, with a one-frame glide
+   that has already arrived. */
+void mnCursorSetPosImmediate(MENU_CURSOR *cursor, Sint32 x, Sint32 y)
+{
 	cursor->tgtX = x;
 	cursor->frames = 1;
 	cursor->frm = 0;
@@ -260,23 +262,23 @@ void mnCursorSetPosImmediate(MENU_CURSOR *cursor, s32 x, s32 y) {
 }
 
 /* Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen
- */
-/* when it is NULL), over the frames shop->cursorFrm holds. */
-void mnCursorPlace(WINDOW *window, s32 x, s32 y) {
-	s32 cursorX;
-	s32 cursorY;
+   when it is NULL), over the frames shop->cursorFrm holds. */
+void mnCursorPlace(WINDOW *window, Sint32 x, Sint32 y)
+{
+	Sint32		cursorX;
+	Sint32		cursorY;
 	SHOP_STATE *shop;
 
 	cursorX = x;
 	cursorY = y;
 	shop = MenuState;
-	/* A window's position is in tiles, and its interior starts one tile (its */
-	/* frame) in */
+	/* A window's position is in tiles, and its interior starts one tile (its
+	   frame) in */
 	if(window != NULL) {
 		cursorX = cursorX + (window->x * 8) + 8;
 		cursorY = cursorY + (window->y * 8) + 8;
 	}
-	mnCursorSet(&shop->cursor, cursorX, cursorY, (s8)shop->cursorFrm);
+	mnCursorSet(&shop->cursor, cursorX, cursorY, (Sint8)shop->cursorFrm);
 }
 
 #undef SHOP_TINT_FRAMES

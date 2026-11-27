@@ -1,46 +1,39 @@
-/* @file */
-/* Yallam, the village near Taopo Swamp where Sunshine the blacksmith lives */
-/* (its houses, inn and shops are in yallam_rooms.c). East of the village is a
- */
-/* meadow of stumps ringed by worn paths round a big tree, where four children
- */
-/* play the game that goes with Yepp's songs: asked, the boy standing there */
-/* leads Felix and Jenna round the rings to the words of the songs of the */
-/* stars, the moon and the sun, which tell the way through the Sea of Time. */
-/* Cyclone scatters weeds round the village: the pair south of the Sanctum's */
-/* door hide an Antidote and the three in the south-east corner a Nut. Once */
-/* the party has Force, the log standing beside the cave mouth near Sunshine's
- */
-/* house can be tipped into the gap below it, and Cyclone on the weed patch in
- */
-/* the north-west corner opens a hole down into the cave that leads to the */
-/* Masamune's chest. */
-#include "scene/event_layer.h"
+/* Yallam, the village near Taopo Swamp where Sunshine the blacksmith lives (its
+   houses, inn and shops are in yallam_rooms.c). East of the village is a meadow
+   of stumps ringed by worn paths round a big tree, where four children play the
+   game that goes with Yepp's songs: asked, the boy standing there leads Felix
+   and Jenna round the rings to the words of the songs of the stars, the moon
+   and the sun, which tell the way through the Sea of Time. Cyclone scatters
+   weeds round the village: the pair south of the Sanctum's door hide an
+   Antidote and the three in the south-east corner a Nut. Once the party has
+   Force, the log standing beside the cave mouth near Sunshine's house can be
+   tipped into the gap below it, and Cyclone on the weed patch in the north-west
+   corner opens a hole down into the cave that leads to the Masamune's chest. */
+#include "scene/script_layer.h"
 #include "macros.h"
-#include "version.h"
+#include "edition.h"
 #include "field/actor_script.h"
-#include "field/event_inline.h"
+#include "field/script_inline.h"
 #include "field/field.h"
 #include "field/field_sprite.h"
-#include "field/field_sequence_event.h"
+#include "field/field_mode_script.h"
 #include "game/game.h"
 #include "scene/scene.h"
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-/* Set once Force has pushed the log off its ledge, where it now lies as a */
-/* step. */
+/* Set once Force has pushed the log off its ledge, where it now lies as a
+   step. */
 #define FLAG_YALLAM_LOG_FALLEN FLAG_AREA_TEMP_00
 
 /* Yallam's actors, numbering the rows of Yallam_Placements. */
 typedef enum YALLAM_ACTOR_ID {
 	/* The tree trunk on the ledge: its broken stump, which stays, and the log
-	 */
-	/* standing on it, which Force pushes off (scYallamForceLogDown). */
+	   standing on it, which Force pushes off (scYallamForceLogDown). */
 	ACTOR_LOG_STUMP = ACTOR_FIRST_PLACED,
 	ACTOR_FALLING_LOG,
-	/* Unused: a standing log, placed at the map's corner out of sight, where */
-	/* nothing moves it. */
+	/* Unused: a standing log, placed at the map's corner out of sight, where
+	   nothing moves it. */
 	ACTOR_STANDING_LOG,
 	/* "Yallam doesn't get many visitors. Hasn't for a long time." */
 	ACTOR_VILLAGER_FEW_VISITORS,
@@ -60,12 +53,11 @@ typedef enum YALLAM_ACTOR_ID {
 	ACTOR_BOATSMAN_TAUGHT_LITTLE
 } YALLAM_ACTOR_ID;
 
-/* The children's meadow's actors, numbering the rows of */
-/* Yallam_SongGamePlacements: the four children who play the song game. */
+/* The children's meadow's actors, numbering the rows of
+   Yallam_SongGamePlacements: the four children who play the song game. */
 typedef enum YALLAM_SONG_GAME_ACTOR_ID {
 	/* "Yepp's songs are a lot of fun, because he made this game..."; he offers
-	 */
-	/* the song (scYallamOfferYeppSong) and leads the game. */
+	   the song (scYallamOfferYeppSong) and leads the game. */
 	ACTOR_SONG_LEADER = ACTOR_FIRST_PLACED,
 	/* "Running around in circles here while singing one of..." */
 	ACTOR_CIRCLES_CHILD,
@@ -82,45 +74,44 @@ typedef enum YALLAM_TREASURE_ACTOR_ID {
 	ACTOR_HIDDEN_ANTIDOTE
 } YALLAM_TREASURE_ACTOR_ID;
 
-/* How near in front of it, in pixels, a running child stops for the other */
-/* child or for the leader. */
-#define STOP_RANGE 24
-/* From patch 1, a running child walks on while the leader is this near, in */
-/* pixels. */
+/* How near in front of it, in pixels, a running child stops for the other child
+   or for the leader. */
+#define STOP_RANGE			 24
+/* In every edition but the Japanese, a running child walks on while the leader
+   is this near, in pixels. */
 #define LEADER_WALK_ON_RANGE 11
 
 /* The running children keep these flags in ACTOR.tmr. */
 enum {
 	/* Set on the circles child, who runs after ACTOR_GAME_CHILD. */
 	CHILD_CHASES_GAME_CHILD = 1,
-	/* Stops the child for the leader, whatever its heading, while a talk or */
-	/* Mind Read is open; nothing here sets it, since a talk stops a child by
-	   its */
-	/* sceneByte. */
+	/* Stops the child for the leader, whatever its heading, while a talk or
+	   Mind Read is open; nothing here sets it, since a talk stops a child by
+	   its sceneByte. */
 	CHILD_TALKING = 2
 };
 
-/* The map cells Cyclone answers on, by the behaviour the map gives them: */
-/* each set of weeds it scatters. */
-typedef enum YALLAM_CELL {
-	CELL_WEEDS_OVER_CAVE_HOLE = 20,
-	CELL_WEEDS_BELOW_SHOPS = 21,
-	CELL_WEEDS_OVER_ANTIDOTE = 22,
-	CELL_WEEDS_IN_CORNER = 23,
-	CELL_WEEDS_OVER_NUT = 24,
-	CELL_WEEDS_BY_SANCTUM = 25
-} YALLAM_CELL;
+/* The map metatiles Cyclone answers on, by the behaviour the map gives them:
+   each set of weeds it scatters. */
+typedef enum YALLAM_METATILE {
+	METATILE_WEEDS_OVER_CAVE_HOLE = 20,
+	METATILE_WEEDS_BELOW_SHOPS = 21,
+	METATILE_WEEDS_OVER_ANTIDOTE = 22,
+	METATILE_WEEDS_IN_CORNER = 23,
+	METATILE_WEEDS_OVER_NUT = 24,
+	METATILE_WEEDS_BY_SANCTUM = 25
+} YALLAM_METATILE;
 
-/* Where the Antidote and the Nut lie once Cyclone has scattered the weeds */
-/* over them, in pixels. */
+/* Where the Antidote and the Nut lie once Cyclone has scattered the weeds over
+   them, in pixels. */
 #define ANTIDOTE_SPOT_X 424
 #define ANTIDOTE_SPOT_Z 232
 #define NUT_SPOT_X		680
 #define NUT_SPOT_Z		344
 
-/* The falling log's spin, in angle units a frame: it gains this much each */
-/* frame, from rest as it tips off the ledge and from TOPPLE_ROLL_SPIN as it */
-/* rolls down. */
+/* The falling log's spin, in angle units a frame: it gains this much each
+   frame, from rest as it tips off the ledge and from TOPPLE_ROLL_SPIN as it
+   rolls down. */
 #define TOPPLE_SPIN_GAIN 40
 #define TOPPLE_ROLL_SPIN 400
 
@@ -143,49 +134,50 @@ void scYallamTalkAboutSongGame(void);
 
 void scYallamForceLogDown(void);
 
-void scYallamDoNothing(void);
+void scYallamNoOperation(void);
 
-extern s32 Yallam_LogRaised[];
-extern s32 Yallam_StumpLowered[];
-extern u32 Yallam_CirclesChildRuns[];
-extern u32 Yallam_GameChildRuns[];
-extern u16 Yallam_DoorOpening[];
-extern u16 Yallam_SecondDoorOpening[];
-extern u16 Yallam_ThirdDoorOpening[];
-extern u16 Yallam_SanctumDoorOpening[];
+extern Sint32 Yallam_LogRaised[];
+extern Sint32 Yallam_StumpLowered[];
+extern Uint32 Yallam_CirclesChildRuns[];
+extern Uint32 Yallam_GameChildRuns[];
+extern Uint16 Yallam_DoorOpening[];
+extern Uint16 Yallam_SecondDoorOpening[];
+extern Uint16 Yallam_ThirdDoorOpening[];
+extern Uint16 Yallam_SanctumDoorOpening[];
 
 /* Unused: turns an actor's sprite half a turn, as an actor script's call. */
-UNUSED s32 scYallamTurnSprAround(ACTOR *actor) {
+UNUSED Sint32 scYallamTurnSprAround(ACTOR *actor)
+{
 	FIELD_SPR *sprite = actor->spr;
 
 	sprite->rotation = DEGtoANG(180);
 	return 0;
 }
 
-/* Takes the shadow off a log's part, as its actor script's call, once the */
-/* script has set it in place. */
-s32 scYallamHideShadow(ACTOR *actor) {
+/* Takes the shadow off a log's part, as its actor script's call, once the
+   script has set it in place. */
+Sint32 scYallamHideShadow(ACTOR *actor)
+{
 	fdActorSetSprFlags(actor, 0);
 	return 0;
 }
 
 #include "shared/position_distance.h"
 
-void scYallamRunSongPath(s32 id);
+void scYallamRunSongPath(Sint32 id);
 void scYallamShowSongGame(void);
 
 /* A song game runner's Actor fields of the same names, kept while the game is
- */
-/* paused for a talk. */
+   paused for a talk. */
 typedef struct SONG_RUNNER_STATE {
-	s32 tmr;
-	s32 userValue;
-	s32 sceneCnt;
-	s32 sceneByte;
+	Sint32 tmr;
+	Sint32 userValue;
+	Sint32 sceneCnt;
+	Sint32 sceneByte;
 } SONG_RUNNER_STATE;
 
-/* The song leader's userValue in the song game: a command to every runner, */
-/* which scYallamUpdateSongGame passes on and clears. */
+/* The song leader's userValue in the song game: a command to every runner,
+   which scYallamUpdateSongGame passes on and clears. */
 enum { SONG_GAME_GO = 1, SONG_GAME_HALT = 2, SONG_GAME_HALT_AND_STAND = 3 };
 
 /* A runner's sceneCnt in the song game: where it stands on its path. */
@@ -198,22 +190,23 @@ enum {
 
 /* The song game's five runners, kept while it is paused. */
 SONG_RUNNER_STATE Yallam_SavedSongGame[5] BSS_DATA ALIGNED(16);
-extern MAP_GRID_CELL_ANIMATION Yallam_Doors[];
+extern MAP_GRID_METATILE_ANIMATION				   Yallam_Doors[];
 
-s32 scYallamStopIfFacingNear(ACTOR *actor, ACTOR *target, s32 range, s32 force);
+Sint32 scYallamStopIfFacingNear(
+	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force);
 void scYallamUpdateSongGame(void);
 
-/* Stops the actor (paused, standing) when the target is nearer than range */
-/* pixels and lies ahead of it, within a sixteenth of a turn either side of its
- */
-/* heading; force stops it regardless, and so does a talk with it (its */
-/* sceneByte set). Returns 1 when it stopped. A target out of range sets it */
-/* walking again. */
-s32 scYallamStopIfFacingNear(ACTOR *actor, ACTOR *target, s32 range,
-							 s32 force) {
-	s32 result = 0;
-	s32 *targetPos;
-	s32 *actorPos;
+/* Stops the actor (paused, standing) when the target is nearer than range
+   pixels and lies ahead of it, within a sixteenth of a turn either side of its
+   heading; force stops it regardless, and so does a talk with it (its sceneByte
+   set). Returns 1 when it stopped. A target out of range sets it walking
+   again. */
+Sint32 scYallamStopIfFacingNear(
+	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force)
+{
+	Sint32	result = 0;
+	Sint32 *targetPos;
+	Sint32 *actorPos;
 
 	if(actor->sceneByte != 0) {
 		actor->paused = 1;
@@ -222,49 +215,47 @@ s32 scYallamStopIfFacingNear(ACTOR *actor, ACTOR *target, s32 range,
 	targetPos = &target->x.fixed;
 	actorPos = &actor->x.fixed;
 	if(scPosDistance(targetPos, actorPos) < range || force != 0) {
-		u32 angle = (u16)syAtan(target->z.fixed - actor->z.fixed,
-								*targetPos - *actorPos);
-		u32 left = FACING_SIXTEENTH(angle - FACING_STEP);
-		u32 right = FACING_SIXTEENTH(angle + FACING_STEP);
-		u32 ahead = FACING_SIXTEENTH(angle);
-		u32 facing = FACING_SIXTEENTH(actor->facing);
+		Uint32 angle = (Uint16)syAtan(
+			target->z.fixed - actor->z.fixed, *targetPos - *actorPos);
+		Uint32 left = FACING_SIXTEENTH(angle - FACING_STEP);
+		Uint32 right = FACING_SIXTEENTH(angle + FACING_STEP);
+		Uint32 ahead = FACING_SIXTEENTH(angle);
+		Uint32 facing = FACING_SIXTEENTH(actor->facing);
 
 		if(ahead == facing || right == facing || left == facing || force != 0) {
 			actor->paused = 1;
 			fdActorSelectAnimation(actor, ANIM_STAND);
 			result = 1;
 		}
-	}
-	else {
+	} else {
 		actor->paused = 0;
 		fdActorSelectAnimation(actor, ANIM_WALK);
 	}
 	return result;
 }
 
-#if TLA_PATCH_1
+#if CHILDREN_WALK_ON_WHEN_TOUCHING_LEADER
 /* The update of the two children running their rings. Each stops when it runs
- */
-/* up behind the other, and otherwise when the leader is in its way; from patch
- */
-/* 1 it walks on while the leader is right beside it. */
-s32 scYallamUpdateRunningChild(ACTOR *actor) {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+   up behind the other, and otherwise when the leader is in its way; from patch
+   1 it walks on while the leader is right beside it. */
+Sint32 scYallamUpdateRunningChild(ACTOR *actor)
+{
+	WIN_STATE	*state = (WIN_STATE *)Ram_HeapSlots->winState;
 	FIELD_STATE *event = Ram_HeapSlots->fieldState;
-	ACTOR *leader;
-	ACTOR *target;
-	u16 *flags;
-	s32 force = 0;
+	ACTOR		*leader;
+	ACTOR		*target;
+	Uint16		*flags;
+	Bool		 force = FALSE;
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 
 	if(scPosDistance(&leader->x.fixed, &actor->x.fixed) <=
-	   LEADER_WALK_ON_RANGE) {
+		LEADER_WALK_ON_RANGE) {
 		actor->paused = 0;
 		fdActorSelectAnimation(actor, ANIM_WALK);
 		return 0;
 	}
-	flags = (u16 *)&actor->tmr;
+	flags = (Uint16 *)&actor->tmr;
 	if(*flags & CHILD_CHASES_GAME_CHILD)
 		target = fdActorGet(ACTOR_GAME_CHILD);
 	else
@@ -272,19 +263,20 @@ s32 scYallamUpdateRunningChild(ACTOR *actor) {
 	if(scYallamStopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
 		leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 		if((event->talk != 0 || state->mindRead != 0) &&
-		   (*flags & CHILD_TALKING))
-			force = 1;
+			(*flags & CHILD_TALKING))
+			force = TRUE;
 		scYallamStopIfFacingNear(actor, leader, STOP_RANGE, force);
 	}
 	return 0;
 }
 #else
-s32 scYallamUpdateRunningChild(ACTOR *actor) {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+Sint32 scYallamUpdateRunningChild(ACTOR *actor)
+{
+	WIN_STATE	*state = (WIN_STATE *)Ram_HeapSlots->winState;
 	FIELD_STATE *event = Ram_HeapSlots->fieldState;
-	s32 force = 0;
-	ACTOR *target;
-	u16 *flags = (u16 *)&actor->tmr;
+	Bool		 force = FALSE;
+	ACTOR		*target;
+	Uint16		*flags = (Uint16 *)&actor->tmr;
 
 	if(*flags & CHILD_CHASES_GAME_CHILD)
 		target = fdActorGet(ACTOR_GAME_CHILD);
@@ -294,23 +286,32 @@ s32 scYallamUpdateRunningChild(ACTOR *actor) {
 		ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 
 		if((event->talk != 0 || state->mindRead != 0) &&
-		   (*flags & CHILD_TALKING))
-			force = 1;
+			(*flags & CHILD_TALKING))
+			force = TRUE;
 		scYallamStopIfFacingNear(actor, leader, STOP_RANGE, force);
 	}
 	return 0;
 }
 #endif
 
-const SCENE_ENTRANCE *scGetEntrances(void) { return SceneEntrances; }
+const SCENE_ENTRANCE *scGetEntrances(void)
+{
+	return SceneEntrances;
+}
 
-const SCENE_REGION *scGetExitRegions(void) { return 0; }
+const SCENE_REGION *scGetExitRegions(void)
+{
+	return 0;
+}
 
-const u32 *scGetExits(void) { return SceneExits; }
+const Uint32 *scGetExits(void)
+{
+	return SceneExits;
+}
 
-/* The children's meadow, where the song game is played: the path off the */
-/* village's east edge (cells (45, 15) to (45, 17)) leads there, and its own */
-/* way out back to the village. */
+/* The children's meadow, where the song game is played: the path off the
+   village's east edge (metatiles (45, 15) to (45, 17)) leads there, and its own
+   way out back to the village. */
 enum {
 	YALLAM_TO_SONG_GAME = 12,
 	YALLAM_FROM_SONG_GAME = 12,
@@ -322,275 +323,275 @@ extern ACTOR_PLACE Yallam_Placements[];
 extern ACTOR_PLACE Yallam_CavePlacements[];
 extern ACTOR_PLACE Yallam_SongGamePlacements[];
 
-const u8 *scGetActorPlacements(void) {
+const Uint8 *scGetActorPlacements(void)
+{
 	if(MainRoutineStateWork.next == SCENE_YALLAM &&
-	   MainRoutineStateWork.entrance == YALLAM_SONG_GAME)
+		MainRoutineStateWork.entrance == YALLAM_SONG_GAME)
 		return Yallam_SongGamePlacements;
 	if(MainRoutineStateWork.next == SCENE_YALLAM_CAVE)
 		return Yallam_CavePlacements;
 	return Yallam_Placements;
 }
 
-/* Walking north into one of Yallam's doors opens it with a click and takes */
-/* Felix inside: the inn's (cell (35, 11)), Sunshine's by the log (cell */
-/* (15, 11)), the two other huts' (cells (34, 21) and (28, 23)), the three */
-/* shops' in the ledge (cells (20, 20), (16, 19) and (13, 20)) or the */
-/* Sanctum's wide door in the cliff (cells (26, 8) and (27, 8)). */
-/* Each door's cells carry its exit's number, which also picks its picture */
-/* as it opens from `Yallam_Doors`. */
-void scYallamEnterDoor(void) {
+/* Walking north into one of Yallam's doors opens it with a click and takes
+   Felix inside: the inn's (metatile (35, 11)), Sunshine's by the log (metatile
+   (15, 11)), the two other huts' (metatiles (34, 21) and (28, 23)), the three
+   shops' in the ledge (metatiles (20, 20), (16, 19) and (13, 20)) or the
+   Sanctum's wide door in the cliff (metatiles (26, 8) and (27, 8)). Each door's
+   metatiles carry its exit's number, which also picks its picture as it opens
+   from `Yallam_Doors`. */
+void scYallamEnterDoor(void)
+{
 	FIELD_STATE *event = Ram_HeapSlots->fieldState;
-	u32 i;
-	s32 index;
+	Uint32		 i;
+	Sint32		 index;
 
-	fdEventStart();
-	syFieldEventEndLastingPsynergy(0);
+	fdScriptStart();
+	syFieldScriptEndLastingPsynergy(0);
 	for(i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
 		ACTOR *actor = fdActorGet(i);
 
 		if(actor != NULL)
 			actor->motionFlg = 0;
 	}
-	index = event->stepTrigger;
-	fdEventPlaySnd(SE_DOOR_OPEN);
+	index = event->stepCue;
+	fdScriptPlaySnd(SE_DOOR_OPEN);
 	index--;
-	fdMapGridAnimateCells(Yallam_Doors[index].steps, Yallam_Doors[index].x,
-						  Yallam_Doors[index].y);
+	fdMapGridAnimateMetatiles(Yallam_Doors[index].steps, Yallam_Doors[index].x,
+		Yallam_Doors[index].y);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	{
-		s32 owner = MainRoutineStateWork.leaderActorId;
+		Sint32 owner = MainRoutineStateWork.leaderActorId;
 
-		/* The sanctum's door is two cells wide: the leader walks straight in.
-		 */
+		/* The sanctum's door is two metatiles wide: the leader walks straight
+		   in. */
 		if(index == YALLAM_TO_MIKASALLA_ROOMS_SANCTUM - 1)
 			fdActorSetDestinationOffset(owner, 0, -4);
 		else
 			fdActorCenterAndWalk(owner, 2, -4);
 	}
-	syFieldEventWait(10);
-	syFieldEventSetExitRequest(event->stepTrigger);
-	fdEventFinishScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventEnd();
+	syFieldScriptWait(10);
+	syFieldScriptSetExitRequest(event->stepCue);
+	fdScriptFinishScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptEnd();
 }
 
-/* Cyclone cast in the weed patch in the village's north-west corner (cells */
-/* (3, 7) to (7, 11)) scatters the weeds and uncovers a wood-rimmed hole in */
-/* the middle of the patch, the way down into the cave that leads to the */
-/* Masamune's chest. */
-/* The hole's picture and its exit to the cave (`YALLAM_TO_YALLAM_CAVE_WEST`) */
-/* are copied from a spare cell below the village. */
-void scYallamUncoverCaveHole(void) {
-	fdTileCopiesCopyTouchedCells(67, 25, 5, 5, 67, 5, 1);
-	fdMapGridCopyCellsTo(23, 29, 5, 6, 1, 1);
-	fdMapGridCopyCellAttributes(23, 29, 1, 1, 5, 8);
+/* Cyclone cast in the weed patch in the village's north-west corner (metatiles
+   (3, 7) to (7, 11)) scatters the weeds and uncovers a wood-rimmed hole in the
+   middle of the patch, the way down into the cave that leads to the Masamune's
+   chest. The hole's picture and its exit to the cave
+   (`YALLAM_TO_YALLAM_CAVE_WEST`) are copied from a spare metatile below the
+   village. */
+void scYallamUncoverCaveHole(void)
+{
+	fdTileCopiesCopyTouchedMetatiles(67, 25, 5, 5, 67, 5, 1);
+	fdMapGridCopyMetatilesTo(23, 29, 5, 6, 1, 1);
+	fdMapGridCopyMetatileAttributes(23, 29, 1, 1, 5, 8);
 }
 
-/* Cyclone cast by the weeds on the ledge below the shops' doors (cells */
-/* (15, 22) and (16, 22)) scatters them; nothing lies under them. */
-/* The eastern of the two weeds south of the Sanctum's door (cell (27, 14) of */
-/* the raised ground's layer) also runs this. Cast there, Cyclone still */
-/* scatters that pair and shows the Antidote under them */
-/* (scYallamUncoverAntidote). */
-/* Only the cells Cyclone's whirl touched are cleared, and only those inside */
-/* the two cells below the shops, so a cast at the Sanctum's pair clears */
-/* nothing here: the weeds below the shops stay until Cyclone is cast beside */
-/* them. */
-void scYallamScatterWeedsBelowShops(void) {
-	syFieldTileCopiesCopyTouchedCells(67, 25, 2, 1, 79, 22, 1);
+/* Cyclone cast by the weeds on the ledge below the shops' doors (metatiles (15,
+   22) and (16, 22)) scatters them; nothing lies under them. The eastern of the
+   two weeds south of the Sanctum's door (metatile (27, 14) of the raised
+   ground's layer) also runs this. Cast there, Cyclone still scatters that pair
+   and shows the Antidote under them (scYallamUncoverAntidote). Only the
+   metatiles Cyclone's whirl touched are cleared, and only those inside the two
+   metatiles below the shops, so a cast at the Sanctum's pair clears nothing
+   here: the weeds below the shops stay until Cyclone is cast beside them. */
+void scYallamScatterWeedsBelowShops(void)
+{
+	syFieldTileCopiesCopyTouchedMetatiles(67, 25, 2, 1, 79, 22, 1);
 }
 
-/* Cyclone cast at the pair of weeds on the raised ground south of the */
-/* Sanctum's door (cell (26, 14)) scatters both and uncovers the Antidote */
-/* that lies under them, to be picked up there. */
-/* Until the Antidote is taken, its hidden item (`ACTOR_HIDDEN_ANTIDOTE`) is */
-/* set at the spot, and if Felix is standing on it he hops a cell east, off it.
- */
-void scYallamUncoverAntidote(void) {
+/* Cyclone cast at the pair of weeds on the raised ground south of the Sanctum's
+   door (metatile (26, 14)) scatters both and uncovers the Antidote that lies
+   under them, to be picked up there. Until the Antidote is taken, its hidden
+   item (`ACTOR_HIDDEN_ANTIDOTE`) is set at the spot, and if Felix is standing
+   on it he hops a metatile east, off it. */
+void scYallamUncoverAntidote(void)
+{
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 
-	syFieldTileCopiesCopyTouchedCells(26, 95, 2, 1, 26, 76, 2);
-	if(fdEventGetFlag(FLAG_YALLAM_ANTIDOTE) == 0) {
+	syFieldTileCopiesCopyTouchedMetatiles(26, 95, 2, 1, 26, 76, 2);
+	if(fdScriptGetFlag(FLAG_YALLAM_ANTIDOTE) == 0) {
 		fdActorSetPos(ACTOR_HIDDEN_ANTIDOTE, ANTIDOTE_SPOT_X, ANTIDOTE_SPOT_Z);
-		if(FIELD_CELL(leader->x.fixed) ==
-			   FIELD_CELL(toFIXED(ANTIDOTE_SPOT_X)) &&
-		   FIELD_CELL(leader->z.fixed) ==
-			   FIELD_CELL(toFIXED(ANTIDOTE_SPOT_Z))) {
-			fdEventStart();
-			syFieldEventEndLastingPsynergy(0);
+		if(FIELD_METATILE(leader->x.fixed) ==
+				FIELD_METATILE(toFIXED(ANTIDOTE_SPOT_X)) &&
+			FIELD_METATILE(leader->z.fixed) ==
+				FIELD_METATILE(toFIXED(ANTIDOTE_SPOT_Z))) {
+			fdScriptStart();
+			syFieldScriptEndLastingPsynergy(0);
 			fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
-									 ATTACHED_EFFECT_IN_FRONT |
-										 ATTACHED_EFFECT_ONCE);
-			fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 16,
-										0);
+				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+			fdActorSetDestinationOffset(
+				MainRoutineStateWork.leaderActorId, 16, 0);
 			leader->velY = toFIXED(6);
 			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-			fdEventEnd();
+			fdScriptEnd();
 		}
 	}
 }
 
-/* Cyclone cast at the three weeds in the village's south-east corner (cells */
-/* (44, 22), (43, 23) and (44, 23)) scatters them all; the Nut lies under the */
-/* one at cell (42, 21) (scYallamUncoverNut). */
-void scYallamScatterWeedsInCorner(void) {
-	syFieldTileCopiesCopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
+/* Cyclone cast at the three weeds in the village's south-east corner (metatiles
+   (44, 22), (43, 23) and (44, 23)) scatters them all; the Nut lies under the
+   one at metatile (42, 21) (scYallamUncoverNut). */
+void scYallamScatterWeedsInCorner(void)
+{
+	syFieldTileCopiesCopyTouchedMetatiles(67, 25, 3, 3, 106, 20, 1);
 }
 
-/* Cyclone cast at the westernmost of the three weeds in the village's */
-/* south-east corner (cell (42, 21)) scatters them all and uncovers the Nut */
-/* under it, to be picked up there. */
-/* Until the Nut is taken, its hidden item is set at the spot, and if Felix is
- */
-/* standing on it he hops a cell north, off it. */
-void scYallamUncoverNut(void) {
+/* Cyclone cast at the westernmost of the three weeds in the village's
+   south-east corner (metatile (42, 21)) scatters them all and uncovers the Nut
+   under it, to be picked up there. Until the Nut is taken, its hidden item is
+   set at the spot, and if Felix is standing on it he hops a metatile north, off
+   it. */
+void scYallamUncoverNut(void)
+{
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 
-	syFieldTileCopiesCopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
-	if(fdEventGetFlag(FLAG_YALLAM_NUT) == 0) {
+	syFieldTileCopiesCopyTouchedMetatiles(67, 25, 3, 3, 106, 20, 1);
+	if(fdScriptGetFlag(FLAG_YALLAM_NUT) == 0) {
 		fdActorSetPos(ACTOR_HIDDEN_NUT, NUT_SPOT_X, NUT_SPOT_Z);
-		if(FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_X)) &&
-		   FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_Z))) {
-			fdEventStart();
-			syFieldEventEndLastingPsynergy(0);
+		if(FIELD_METATILE(leader->x.fixed) ==
+				FIELD_METATILE(toFIXED(NUT_SPOT_X)) &&
+			FIELD_METATILE(leader->z.fixed) ==
+				FIELD_METATILE(toFIXED(NUT_SPOT_Z))) {
+			fdScriptStart();
+			syFieldScriptEndLastingPsynergy(0);
 			fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
-									 ATTACHED_EFFECT_IN_FRONT |
-										 ATTACHED_EFFECT_ONCE);
-			fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0,
-										-16);
+				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+			fdActorSetDestinationOffset(
+				MainRoutineStateWork.leaderActorId, 0, -16);
 			leader->velY = toFIXED(6);
 			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-			fdEventEnd();
+			fdScriptEnd();
 		}
 	}
 }
 
-/* Cyclone cast at the two weeds just west of the Sanctum's door (cells */
-/* (24, 8) and (23, 9)) scatters them; nothing lies under them. */
-void scYallamScatterWeedsBySanctum(void) {
-	syFieldTileCopiesCopyTouchedCells(67, 25, 2, 2, 87, 8, 1);
+/* Cyclone cast at the two weeds just west of the Sanctum's door (metatiles (24,
+   8) and (23, 9)) scatters them; nothing lies under them. */
+void scYallamScatterWeedsBySanctum(void)
+{
+	syFieldTileCopiesCopyTouchedMetatiles(67, 25, 2, 2, 87, 8, 1);
 }
 
-extern TRIGGER Yallam_Triggers[];
-extern TRIGGER Yallam_CaveTriggers[];
-extern TRIGGER Yallam_SongGameTriggers[];
+extern CUE Yallam_Cues[];
+extern CUE Yallam_CaveCues[];
+extern CUE Yallam_SongGameCues[];
 
-const TRIGGER *scGetTriggers(void) {
+const CUE *scGetCues(void)
+{
 	if(MainRoutineStateWork.next == SCENE_YALLAM &&
-	   MainRoutineStateWork.entrance == YALLAM_SONG_GAME)
-		return Yallam_SongGameTriggers;
+		MainRoutineStateWork.entrance == YALLAM_SONG_GAME)
+		return Yallam_SongGameCues;
 	if(MainRoutineStateWork.next == SCENE_YALLAM_CAVE)
-		return Yallam_CaveTriggers;
-	return Yallam_Triggers;
+		return Yallam_CaveCues;
+	return Yallam_Cues;
 }
 
-/* The boy standing in the children's meadow asks "Do you want to hear one of */
-/* the songs Yepp wrote?". A yes starts the song game (scYallamShowSongGame); a
- */
-/* no, and he says this is where all the kids in Yallam come to play. */
-/* Felix talks to him facing any way but west, south-west or north-west. */
-void scYallamOfferYeppSong(void) {
-	fdEventStart();
-	syFieldEventEndLastingPsynergy(0);
-	syFieldEventSetMessageId(MsgDoYouWant);
+/* The boy standing in the children's meadow asks "Do you want to hear one of
+   the songs Yepp wrote?". A yes starts the song game (scYallamShowSongGame); a
+   no, and he says this is where all the kids in Yallam come to play. Felix
+   talks to him facing any way but west, south-west or north-west. */
+void scYallamOfferYeppSong(void)
+{
+	fdScriptStart();
+	syFieldScriptEndLastingPsynergy(0);
+	syFieldScriptSetMessageId(MsgDoYouWant);
 	/* "Do you want to hear one of the songs Yepp wrote?" */
-	fdEventOpenMessage(ACTOR_SONG_LEADER, 0);
-	/* The answer animates Isaac, who is not here, where the other questions */
-	/* pass the leader: nobody nods or shakes his head. */
-	if(syFieldEventAskYesNoWithActorAnimation(ACTOR_ISAAC, 0) == 0)
+	fdScriptOpenMessage(ACTOR_SONG_LEADER, 0);
+	/* The answer animates Isaac, who is not here, where the other questions
+	   pass the leader: nobody nods or shakes his head. */
+	if(syFieldScriptAskYesNoWithActorAnimation(ACTOR_ISAAC, 0) == 0)
 		scYallamShowSongGame();
 	else
-		fdEventShowMessage(ACTOR_SONG_LEADER, 0);
-	fdEventEnd();
+		fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
+	fdScriptEnd();
 }
 
-/* The boy running round the big tree in the children's meadow stops, */
-/* turns to Felix and says running round in circles while singing one of */
-/* Yepp's songs is pretty tough, then runs on; Mind Read hears that there is a
- */
-/* lot to remember for each song. */
-/* The boy keeps his heading through the talk, so he runs on the way he was */
-/* going; Mind Read stops him without turning him. */
-void scYallamTalkAboutSongCircles(void) {
+/* The boy running round the big tree in the children's meadow stops, turns to
+   Felix and says running round in circles while singing one of Yepp's songs is
+   pretty tough, then runs on; Mind Read hears that there is a lot to remember
+   for each song. The boy keeps his heading through the talk, so he runs on the
+   way he was going; Mind Read stops him without turning him. */
+void scYallamTalkAboutSongCircles(void)
+{
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	ACTOR *actor = fdActorGet(ACTOR_CIRCLES_CHILD);
-	s16 angle = actor->facing;
+	ACTOR		*actor = fdActorGet(ACTOR_CIRCLES_CHILD);
+	Sint16		 angle = actor->facing;
 
-	fdEventStart();
-	syFieldEventEndLastingPsynergy(0);
+	fdScriptStart();
+	syFieldScriptEndLastingPsynergy(0);
 	actor->sceneByte = 1;
 	if(state->psynergy == 0) {
-		fdActorFaceActor(ACTOR_CIRCLES_CHILD,
-						 MainRoutineStateWork.leaderActorId, 0);
+		fdActorFaceActor(
+			ACTOR_CIRCLES_CHILD, MainRoutineStateWork.leaderActorId, 0);
 		/* "Running around in circles here while singing one of Yepp's songs is
-		 */
-		/* pretty tough." */
-		syFieldEventSetMessageId(MsgRunningAroundIn);
-	}
-	else {
+		   pretty tough." */
+		syFieldScriptSetMessageId(MsgRunningAroundIn);
+	} else {
 		/* "There's a lot of stuff to remember for each song. It's tough to play
-		 */
-		/* without making any mistakes." */
-		syFieldEventSetMessageId(MsgThereSALot);
+		   without making any mistakes." */
+		syFieldScriptSetMessageId(MsgThereSALot);
 	}
-	fdEventShowMessage(ACTOR_CIRCLES_CHILD, 0);
+	fdScriptShowMessage(ACTOR_CIRCLES_CHILD, 0);
 	if(state->psynergy == 0)
 		actor->facing = angle;
 	actor->sceneByte = 0;
-	fdEventEnd();
+	fdScriptEnd();
 }
 
 /* The girl with a topknot running round the big tree in the children's meadow
- */
-/* stops, turns to Felix and says the game that goes with the song is tough and
- */
-/* she wants to play something else, then runs on; Mind Read hears she once */
-/* heard that children's songs and stories have hidden meanings. */
-void scYallamTalkAboutSongGame(void) {
+   stops, turns to Felix and says the game that goes with the song is tough and
+   she wants to play something else, then runs on; Mind Read hears she once
+   heard that children's songs and stories have hidden meanings. */
+void scYallamTalkAboutSongGame(void)
+{
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	ACTOR *actor = fdActorGet(ACTOR_GAME_CHILD);
-	s16 angle = actor->facing;
+	ACTOR		*actor = fdActorGet(ACTOR_GAME_CHILD);
+	Sint16		 angle = actor->facing;
 
-	fdEventStart();
-	syFieldEventEndLastingPsynergy(0);
+	fdScriptStart();
+	syFieldScriptEndLastingPsynergy(0);
 	actor->sceneByte = 1;
 	if(state->psynergy == 0) {
-		fdActorFaceActor(ACTOR_GAME_CHILD, MainRoutineStateWork.leaderActorId,
-						 0);
+		fdActorFaceActor(
+			ACTOR_GAME_CHILD, MainRoutineStateWork.leaderActorId, 0);
 		/* "There's a game that goes along with the song, but it's tough. I want
-		 * to */
-		/* play something else." */
-		syFieldEventSetMessageId(MsgThereSAGame);
-	}
-	else {
+		   to play something else." */
+		syFieldScriptSetMessageId(MsgThereSAGame);
+	} else {
 		/* "I once heard that children's songs and stories have hidden
-		 * meanings." */
-		syFieldEventSetMessageId(MsgIOnceHeard);
+		   meanings." */
+		syFieldScriptSetMessageId(MsgIOnceHeard);
 	}
-	fdEventShowMessage(ACTOR_GAME_CHILD, 0);
+	fdScriptShowMessage(ACTOR_GAME_CHILD, 0);
 	if(state->psynergy == 0)
 		actor->facing = angle;
 	actor->sceneByte = 0;
-	fdEventEnd();
+	fdScriptEnd();
 }
 
 /* Whether an actor has reached its target, which is then unset. */
-s32 scYallamHasArrived(ACTOR *actor) {
-	s32 x = actor->tgtX;
+Bool scYallamHasArrived(ACTOR *actor)
+{
+	Sint32 x = actor->tgtX;
 
 	if(x == ACTOR_NO_TARGET && actor->tgtZ == ACTOR_NO_TARGET)
-		return 1;
-	return 0;
+		return TRUE;
+	return FALSE;
 }
 
-/* One step of a runner's path round the meadow's rings in the song game, by */
-/* its step counter, stopping or going on by the game's mode. Each verse of */
-/* the songs ends at a step the singing waits for (scYallamShowSongGame). */
-void scYallamRunSongPath(s32 actorId) {
-	ACTOR *actor = fdActorGetById(actorId);
-	u8 state = actor->sceneCnt;
-	s16 *timer;
+/* One step of a runner's path round the meadow's rings in the song game, by its
+   step counter, stopping or going on by the game's mode. Each verse of the
+   songs ends at a step the singing waits for (scYallamShowSongGame). */
+void scYallamRunSongPath(Sint32 actorId)
+{
+	ACTOR  *actor = fdActorGetById(actorId);
+	Uint8	state = actor->sceneCnt;
+	Sint16 *timer;
 
 	if(state == RUNNER_HALTED)
 		return;
@@ -604,15 +605,15 @@ void scYallamRunSongPath(s32 actorId) {
 	case RUNNER_HALTING_TO_STAND:
 		fdActorSelectAnimation(actor, ANIM_STAND);
 	case RUNNER_HALTING:
-		fdActorSetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
-							 actor->z.fixed);
+		fdActorSetMoveTarget(
+			actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		*timer &= ~1;
 		actor->sceneCnt = RUNNER_HALTED;
 		return;
 	}
 	switch(*timer) {
-	/* The stars song: north past the twins and two swirls, then twice round */
-	/* the trunk. */
+	/* The stars song: north past the twins and two swirls, then twice round the
+	   trunk. */
 	case 0:
 		fdActorSetDestination(actorId, 344, 824);
 		(*timer)++;
@@ -2087,14 +2088,16 @@ void scYallamRunSongPath(s32 actorId) {
 	(*timer)++;
 }
 
-/* A task: sets every runner's mode from the lead child's and moves them on. */
-void scYallamUpdateSongGame(void) {
+/* An event: sets every runner's mode from the lead child's and moves them
+   on. */
+void scYallamUpdateSongGame(void)
+{
 	ACTOR *songLeader = fdActorGet(ACTOR_SONG_LEADER);
 	ACTOR *gameChild = fdActorGet(ACTOR_GAME_CHILD);
 	ACTOR *circlesChild = fdActorGet(ACTOR_CIRCLES_CHILD);
 	ACTOR *storyChild = fdActorGet(ACTOR_STORY_CHILD);
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	s32 command = songLeader->userValue;
+	Sint32 command = songLeader->userValue;
 
 	switch(command) {
 	case SONG_GAME_GO:
@@ -2127,8 +2130,9 @@ void scYallamUpdateSongGame(void) {
 	scYallamRunSongPath(MainRoutineStateWork.leaderActorId);
 }
 
-/* Saves every runner's state and stops the game's task. */
-void scYallamPauseSongGame(void) {
+/* Saves every runner's state and stops the game's event. */
+void scYallamPauseSongGame(void)
+{
 	ACTOR *actor;
 
 	actor = fdActorGet(ACTOR_SONG_LEADER);
@@ -2156,11 +2160,12 @@ void scYallamPauseSongGame(void) {
 	Yallam_SavedSongGame[4].userValue = actor->userValue;
 	Yallam_SavedSongGame[4].sceneCnt = actor->sceneCnt;
 	Yallam_SavedSongGame[4].sceneByte = actor->sceneByte;
-	syFieldTaskRemove(scYallamUpdateSongGame);
+	syFieldCloseEvent(scYallamUpdateSongGame);
 }
 
-/* Restores every runner's state and starts the game's task again. */
-void scYallamResumeSongGame(void) {
+/* Restores every runner's state and starts the game's event again. */
+void scYallamResumeSongGame(void)
+{
 	ACTOR *actor;
 
 	actor = fdActorGet(ACTOR_SONG_LEADER);
@@ -2188,11 +2193,12 @@ void scYallamResumeSongGame(void) {
 	actor->userValue = Yallam_SavedSongGame[4].userValue;
 	actor->sceneCnt = Yallam_SavedSongGame[4].sceneCnt;
 	actor->sceneByte = Yallam_SavedSongGame[4].sceneByte;
-	syTaskAddFrame(scYallamUpdateSongGame, TASK_PASS_FRAME);
+	sySetFrameEvent(scYallamUpdateSongGame, EVENT_PASS_FRAME);
 }
 
 /* Readies an actor to run the song game's path from its start. */
-void scYallamStartRunner(s32 id) {
+void scYallamStartRunner(Sint32 id)
+{
 	ACTOR *actor = fdActorGet(id);
 
 	fdActorSetSpeedAndAcceleration(id, 1.2, 1.2);
@@ -2203,26 +2209,26 @@ void scYallamStartRunner(s32 id) {
 	actor->sceneByte = 0;
 }
 
-extern u32 Yallam_CirclesChildGathers[];
-extern u32 Yallam_GameChildGathers[];
-extern u32 Yallam_SongLeaderForms[];
-extern u32 Yallam_CirclesChildForms[];
-extern u32 Yallam_GameChildForms[];
-extern u32 Yallam_StoryChildForms[];
-extern u32 Yallam_SongLeaderStarts[];
-extern u32 Yallam_GameChildStarts[];
-extern u32 Yallam_CirclesChildStarts[];
+extern Uint32 Yallam_CirclesChildGathers[];
+extern Uint32 Yallam_GameChildGathers[];
+extern Uint32 Yallam_SongLeaderForms[];
+extern Uint32 Yallam_CirclesChildForms[];
+extern Uint32 Yallam_GameChildForms[];
+extern Uint32 Yallam_StoryChildForms[];
+extern Uint32 Yallam_SongLeaderStarts[];
+extern Uint32 Yallam_GameChildStarts[];
+extern Uint32 Yallam_CirclesChildStarts[];
 
-/* The boy sings the song of the stars ("If you want to go to the stars...") */
-/* while the children lead Felix and Jenna round the meadow's rings, one verse
- */
-/* at a time; then he offers the second song. */
-void scYallamShowSongGame(void) {
+/* The boy sings the song of the stars ("If you want to go to the stars...")
+   while the children lead Felix and Jenna round the meadow's rings, one verse
+   at a time; then he offers the second song. */
+void scYallamShowSongGame(void)
+{
 	ACTOR *actor = fdActorGet(ACTOR_SONG_LEADER);
 	ACTOR *leader;
-	syFieldEventSetMessageId(MsgHereLetMe);
+	syFieldScriptSetMessageId(MsgHereLetMe);
 	/* "Here, let me show you!" */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	scFieldActorStop(ACTOR_CIRCLES_CHILD);
 	scFieldActorStop(ACTOR_GAME_CHILD);
 	(fdActorGet(ACTOR_CIRCLES_CHILD))->update = 0;
@@ -2237,9 +2243,9 @@ void scYallamShowSongGame(void) {
 	fdCameraMoveTo(304, CAMERA_KEEP, 878, 1);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 296, 872);
-	fdActorFaceDirectionAndWait(MainRoutineStateWork.leaderActorId,
-								FACING_EAST);
-	fdEventPlaySnd(SOUND_FADE_OUT_BGM);
+	fdActorFaceDirectionAndWait(
+		MainRoutineStateWork.leaderActorId, FACING_EAST);
+	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	fdActorFaceDirection(ACTOR_SONG_LEADER, FACING_NORTH_NORTHWEST, 20);
 	fdActorFaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH_NORTHEAST);
 	scFieldActorJump(ACTOR_SONG_LEADER, 2, 10);
@@ -2253,8 +2259,8 @@ void scYallamShowSongGame(void) {
 	fdActorRunScriptAndWait(ACTOR_STORY_CHILD, Yallam_StoryChildForms);
 	fdActorSetPos(ACTOR_JENNA, 296, 872);
 	syWait(1);
-	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTHEAST,
-						 0);
+	fdActorFaceDirection(
+		MainRoutineStateWork.leaderActorId, FACING_NORTHEAST, 0);
 	fdActorSetSpeed(ACTOR_JENNA, 1.2);
 	fdActorWalkToAndWait(ACTOR_JENNA, 312, 854);
 	fdActorFaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
@@ -2263,21 +2269,21 @@ void scYallamShowSongGame(void) {
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	if(leader != 0) {
-		fdActorSetDestination(ACTOR_JENNA, leader->x.part[0].integer,
-							  leader->z.part[0].integer);
+		fdActorSetDestination(
+			ACTOR_JENNA, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
 	scFieldActorWaitForMoveById(ACTOR_JENNA);
 	fdActorSetPos(ACTOR_JENNA, 0, 0);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 316, 896);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 344, 912);
-	fdActorFaceDirectionAndWait(MainRoutineStateWork.leaderActorId,
-								FACING_NORTH);
-	fdEventPlaySnd(MUS_CHILDRENS_SONG);
+	fdActorFaceDirectionAndWait(
+		MainRoutineStateWork.leaderActorId, FACING_NORTH);
+	fdScriptPlaySnd(MUS_CHILDRENS_SONG);
 	fdActorFaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH);
 	/* "If you want to go to the stars, if you want to go to the stars." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
-	syEventCameraFollowActor(ACTOR_SONG_LEADER, 1);
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
+	syScriptCameraFollowActor(ACTOR_SONG_LEADER, 1);
 	fdActorSetScript(ACTOR_SONG_LEADER, Yallam_SongLeaderStarts);
 	fdActorSetScript(ACTOR_GAME_CHILD, Yallam_GameChildStarts);
 	fdActorRunScriptAndWait(ACTOR_CIRCLES_CHILD, Yallam_CirclesChildStarts);
@@ -2288,11 +2294,10 @@ void scYallamShowSongGame(void) {
 	scYallamStartRunner(ACTOR_CIRCLES_CHILD);
 	scYallamStartRunner(ACTOR_STORY_CHILD);
 	scYallamStartRunner(MainRoutineStateWork.leaderActorId);
-	syTaskAddFrame(scYallamUpdateSongGame, TASK_PASS_FRAME);
+	sySetFrameEvent(scYallamUpdateSongGame, EVENT_PASS_FRAME);
 	/* "Go north past the twins, passing two swirls, run deasil twice 'round the
-	 */
-	/* trunk." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	   trunk." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
@@ -2300,16 +2305,16 @@ void scYallamShowSongGame(void) {
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Haste without waste, and head to the east, past three to the north." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
 	while(actor->tmr != 42);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
-	/* "There, run 'round thrice and wait for the waves. When they stop, run */
-	/* north and go to the stars." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	/* "There, run 'round thrice and wait for the waves. When they stop, run
+	   north and go to the stars." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
@@ -2317,9 +2322,8 @@ void scYallamShowSongGame(void) {
 	actor->userValue = SONG_GAME_HALT_AND_STAND;
 	syWait(1);
 	/* "If you race full of folly and take the wrong way, you'll find yourself a
-	 */
-	/* watery grave." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	   watery grave." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	scYallamPauseSongGame();
 	scFieldActorJump(ACTOR_SONG_LEADER, 4, 0);
 	scFieldActorJump(ACTOR_GAME_CHILD, 4, 0);
@@ -2331,39 +2335,39 @@ void scYallamShowSongGame(void) {
 	fdActorFaceDirection(ACTOR_CIRCLES_CHILD, FACING_WEST, 0);
 	fdActorFaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_WEST);
 	/* "Do you wanna hear the second children's song Yepp wrote?" */
-	fdEventOpenMessage(ACTOR_SONG_LEADER, 0);
-	if(syFieldEventAskYesNoWithActorAnimation(
+	fdScriptOpenMessage(ACTOR_SONG_LEADER, 0);
+	if(syFieldScriptAskYesNoWithActorAnimation(
 		   MainRoutineStateWork.leaderActorId, 0) == 0) {
 		scYallamSingMoonSong();
-	}
-	else {
+	} else {
 		/* "Well, that's just fine then. Give me a holler if you ever do." */
-		syFieldEventShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
-		fdEventFinishScrTransition();
-		fdEventWaitTransitionFrames();
-		fdEventPlaySnd(SE_MAP_EXIT);
-		syFieldEventWait(40);
-		syFieldEventSetExitRequest(YALLAM_EXIT_SONG_GAME);
+		syFieldScriptShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
+		fdScriptFinishScreenTransition();
+		fdScriptWaitTransitionFrames();
+		fdScriptPlaySnd(SE_MAP_EXIT);
+		syFieldScriptWait(40);
+		syFieldScriptSetExitRequest(YALLAM_EXIT_SONG_GAME);
 	}
 }
 
 /* The moon song's words, sung verse by verse. */
-extern u8 MsgIfYouWant[];
+extern Uint8 MsgIfYouWant[];
 
-/* The song of the moon, sung and run round the meadow's rings verse by verse */
-/* as the stars song was; then the boy offers the third song. */
-void scYallamSingMoonSong(void) {
+/* The song of the moon, sung and run round the meadow's rings verse by verse as
+   the stars song was; then the boy offers the third song. */
+void scYallamSingMoonSong(void)
+{
 	ACTOR *actor = fdActorGet(ACTOR_SONG_LEADER);
 
 	fdActorFaceDirection(ACTOR_SONG_LEADER, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_GAME_CHILD, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_CIRCLES_CHILD, FACING_NORTH_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_STORY_CHILD, FACING_NORTH_NORTHWEST, 0);
-	fdActorFaceDirectionAndWait(MainRoutineStateWork.leaderActorId,
-								FACING_EAST);
-	syFieldEventSetMessageId((s32)&MsgIfYouWant);
+	fdActorFaceDirectionAndWait(
+		MainRoutineStateWork.leaderActorId, FACING_EAST);
+	syFieldScriptSetMessageId((Sint32)&MsgIfYouWant);
 	/* "If you want to go to the moon, if you want to go to the moon." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	scYallamResumeSongGame();
 	actor->userValue = SONG_GAME_GO;
 	do
@@ -2372,9 +2376,8 @@ void scYallamSingMoonSong(void) {
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Face west from the stars and run straight past three swirls, then circle
-	 */
-	/* 'round twice." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	   'round twice." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
@@ -2382,16 +2385,16 @@ void scYallamSingMoonSong(void) {
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Haste without waste, and head to the south, then one swirl west." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
 	while(actor->tmr != 154);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
-	/* "There, run 'round thrice and wait for the waves. When they stop, run */
-	/* south and go for the moon." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	/* "There, run 'round thrice and wait for the waves. When they stop, run
+	   south and go for the moon." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
@@ -2399,9 +2402,8 @@ void scYallamSingMoonSong(void) {
 	actor->userValue = SONG_GAME_HALT_AND_STAND;
 	syWait(1);
 	/* "If you race full of folly and take the wrong way, you'll find yourself a
-	 */
-	/* watery grave." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	   watery grave." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	scYallamPauseSongGame();
 	scFieldActorJump(ACTOR_SONG_LEADER, 4, 0);
 	scFieldActorJump(ACTOR_GAME_CHILD, 4, 0);
@@ -2413,41 +2415,41 @@ void scYallamSingMoonSong(void) {
 	fdActorFaceDirection(ACTOR_CIRCLES_CHILD, FACING_NORTH_NORTHEAST, 0);
 	fdActorFaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_NORTH_NORTHEAST);
 	/* "OK, so, now do you want to hear the third children's song?" */
-	fdEventOpenMessage(ACTOR_SONG_LEADER, 0);
-	if(syFieldEventAskYesNoWithActorAnimation(
+	fdScriptOpenMessage(ACTOR_SONG_LEADER, 0);
+	if(syFieldScriptAskYesNoWithActorAnimation(
 		   MainRoutineStateWork.leaderActorId, 0) == 0) {
 		scYallamSingSunSong();
-	}
-	else {
+	} else {
 		/* "Well, that's just fine then. Give me a holler if you ever do." */
-		syFieldEventShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
-		fdEventFinishScrTransition();
-		fdEventWaitTransitionFrames();
-		fdEventPlaySnd(SE_MAP_EXIT);
-		syFieldEventWait(40);
-		syFieldEventSetExitRequest(YALLAM_EXIT_SONG_GAME);
+		syFieldScriptShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
+		fdScriptFinishScreenTransition();
+		fdScriptWaitTransitionFrames();
+		fdScriptPlaySnd(SE_MAP_EXIT);
+		syFieldScriptWait(40);
+		syFieldScriptSetExitRequest(YALLAM_EXIT_SONG_GAME);
 	}
 }
 
 /* The sun song's words, sung verse by verse. */
-extern u8 MsgIfYouWantTo[];
+extern Uint8 MsgIfYouWantTo[];
 
-/* The song of the sun, sung and run round the meadow's rings verse by verse; */
-/* then each child hops away and back in turn, the boy says that is all the */
-/* games they have, and the screen fades back to the village. */
-void scYallamSingSunSong(void) {
+/* The song of the sun, sung and run round the meadow's rings verse by verse;
+   then each child hops away and back in turn, the boy says that is all the
+   games they have, and the screen fades back to the village. */
+void scYallamSingSunSong(void)
+{
 	ACTOR *actor = fdActorGet(ACTOR_SONG_LEADER);
-	FIXED x, z;
+	FIXED  x, z;
 
 	fdActorFaceDirection(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_GAME_CHILD, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_CIRCLES_CHILD, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_STORY_CHILD, FACING_SOUTH_SOUTHWEST, 0);
-	fdActorFaceDirectionAndWait(MainRoutineStateWork.leaderActorId,
-								FACING_SOUTHWEST);
-	syFieldEventSetMessageId((s32)&MsgIfYouWantTo);
+	fdActorFaceDirectionAndWait(
+		MainRoutineStateWork.leaderActorId, FACING_SOUTHWEST);
+	syFieldScriptSetMessageId((Sint32)&MsgIfYouWantTo);
 	/* "If you want to go to the sun, if you want to go to the sun." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	scYallamResumeSongGame();
 	actor->userValue = SONG_GAME_GO;
 	do
@@ -2455,9 +2457,9 @@ void scYallamSingSunSong(void) {
 	while(actor->tmr != 218);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
-	/* "Face south from the moon and run straight through two swirls, then */
-	/* circle 'round twice." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	/* "Face south from the moon and run straight through two swirls, then
+	   circle 'round twice." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
@@ -2465,16 +2467,16 @@ void scYallamSingSunSong(void) {
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Haste without waste, and head to the west, then six to the north." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
 	while(actor->tmr != 258);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
-	/* "There, run 'round thrice and wait for the waves. When they stop, run */
-	/* north and go for the sun." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	/* "There, run 'round thrice and wait for the waves. When they stop, run
+	   north and go for the sun." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
@@ -2482,9 +2484,8 @@ void scYallamSingSunSong(void) {
 	actor->userValue = SONG_GAME_HALT_AND_STAND;
 	syWait(1);
 	/* "If you race full of folly and take the wrong way, you'll find yourself a
-	 */
-	/* watery grave." */
-	fdEventShowMessage(ACTOR_SONG_LEADER, 0);
+	   watery grave." */
+	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	scYallamPauseSongGame();
 	fdActorFaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHWEST);
 	fdActorGet(ACTOR_SONG_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
@@ -2496,7 +2497,7 @@ void scYallamSingSunSong(void) {
 	fdActorMoveToAndWait(ACTOR_SONG_LEADER, 200, 670);
 	scFieldActorJump(ACTOR_SONG_LEADER, 4, 0);
 	scFieldActorSetMoveTargetFX(actor, x, 0, z);
-	syFieldEventWait(5);
+	syFieldScriptWait(5);
 	fdActorFaceDirectionAndWait(ACTOR_GAME_CHILD, FACING_SOUTH_SOUTHWEST);
 	fdActorGet(ACTOR_GAME_CHILD)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_GAME_CHILD);
@@ -2507,7 +2508,7 @@ void scYallamSingSunSong(void) {
 	fdActorMoveToAndWait(ACTOR_GAME_CHILD, 200, 670);
 	scFieldActorJump(ACTOR_GAME_CHILD, 4, 0);
 	scFieldActorSetMoveTargetFX(actor, x, 0, z);
-	syFieldEventWait(5);
+	syFieldScriptWait(5);
 	fdActorFaceDirectionAndWait(ACTOR_CIRCLES_CHILD, FACING_WEST);
 	fdActorGet(ACTOR_CIRCLES_CHILD)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_CIRCLES_CHILD);
@@ -2518,7 +2519,7 @@ void scYallamSingSunSong(void) {
 	fdActorMoveToAndWait(ACTOR_CIRCLES_CHILD, 200, 670);
 	scFieldActorJump(ACTOR_CIRCLES_CHILD, 4, 0);
 	scFieldActorSetMoveTargetFX(actor, x, 0, z);
-	syFieldEventWait(10);
+	syFieldScriptWait(10);
 	fdActorFaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_NORTH_NORTHWEST);
 	fdActorGet(ACTOR_STORY_CHILD)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_STORY_CHILD);
@@ -2533,8 +2534,8 @@ void scYallamSingSunSong(void) {
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 184, 686);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 186, 674);
-	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTHEAST,
-						 0);
+	fdActorFaceDirection(
+		MainRoutineStateWork.leaderActorId, FACING_NORTHEAST, 0);
 	fdActorGet(ACTOR_SONG_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
 	fdActorGet(ACTOR_GAME_CHILD)->steeringFlg |= ACTOR_FACES_MOTION;
 	fdActorGet(ACTOR_CIRCLES_CHILD)->steeringFlg |= ACTOR_FACES_MOTION;
@@ -2544,25 +2545,26 @@ void scYallamSingSunSong(void) {
 	fdActorFaceDirection(ACTOR_CIRCLES_CHILD, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_STORY_CHILD, FACING_WEST, 20);
 	/* "That's it. That's all the games we have for the songs... If you want to
-	 */
-	/* play some more, just give me a holler." */
-	syFieldEventShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
-	fdEventFinishScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventPlaySnd(SE_MAP_EXIT);
-	syFieldEventWait(40);
-	syFieldEventSetExitRequest(YALLAM_EXIT_SONG_GAME);
+	   play some more, just give me a holler." */
+	syFieldScriptShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
+	fdScriptFinishScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptPlaySnd(SE_MAP_EXIT);
+	syFieldScriptWait(40);
+	syFieldScriptSetExitRequest(YALLAM_EXIT_SONG_GAME);
 }
 
 /* Once Force has pushed it, the log stands in the gap where it fell. */
-void scYallamPlaceFallenLog(void) {
-	if(fdEventGetFlag(FLAG_YALLAM_LOG_FALLEN)) {
-		SET_ACTOR_POSITION(fdActorGet(ACTOR_FALLING_LOG), toFIXED(168), 0,
-						   toFIXED(192));
+void scYallamPlaceFallenLog(void)
+{
+	if(fdScriptGetFlag(FLAG_YALLAM_LOG_FALLEN)) {
+		SET_ACTOR_POSITION(
+			fdActorGet(ACTOR_FALLING_LOG), toFIXED(168), 0, toFIXED(192));
 	}
 }
 
-s32 scInit(void) {
+Sint32 scInit(void)
+{
 	if(MainRoutineStateWork.next == SCENE_YALLAM) {
 		if(MainRoutineStateWork.entrance == YALLAM_SONG_GAME)
 			scYallamStartRunningChildren();
@@ -2572,34 +2574,36 @@ s32 scInit(void) {
 	return 0;
 }
 
-s32 scPrepareMap(void) {
+Sint32 scPrepareMap(void)
+{
 	if(MainRoutineStateWork.next == SCENE_YALLAM &&
-	   fdEventGetFlag(FLAG_YALLAM_LOG_FALLEN))
-		fdMapGridCopyCellAttributes(8, 12, 1, 1, 10, 12);
+		fdScriptGetFlag(FLAG_YALLAM_LOG_FALLEN))
+		fdMapGridCopyMetatileAttributes(8, 12, 1, 1, 10, 12);
 	return 0;
 }
 
-/* Nothing happens as Force first reaches the log; the push itself is */
-/* scYallamForceLogDown. */
-void scYallamDoNothing(void) {}
+/* Nothing happens as Force first reaches the log; the push itself is
+   scYallamForceLogDown. */
+void scYallamNoOperation(void)
+{
+}
 
-/* Force cast at the log standing on its stump east of the cave mouth near */
-/* Sunshine's house tips it over west: it spins off the ledge with a crash and
- */
-/* drops upright into the gap below (cell (10, 12)), a post Felix can now hop */
-/* onto. */
-/* The hop comes from the map's own hop cell at (8, 12), whose flags are */
-/* copied onto the log's cell. */
-void scYallamForceLogDown(void) {
-	s32 step;
-	s32 i;
-	ACTOR *actor = fdActorGet(ACTOR_FALLING_LOG);
+/* Force cast at the log standing on its stump east of the cave mouth near
+   Sunshine's house tips it over west: it spins off the ledge with a crash and
+   drops upright into the gap below (metatile (10, 12)), a post Felix can now
+   hop onto. The hop comes from the map's own hop metatile at (8, 12), whose
+   flags are copied onto the log's metatile. */
+void scYallamForceLogDown(void)
+{
+	Sint32	   step;
+	Sint32	   i;
+	ACTOR	  *actor = fdActorGet(ACTOR_FALLING_LOG);
 	FIELD_SPR *sprite = actor->spr;
 
-	fdEventSetFlag(FLAG_YALLAM_LOG_FALLEN);
+	fdScriptSetFlag(FLAG_YALLAM_LOG_FALLEN);
 	actor->acceleration = toFIXED(3) / 2;
 	actor->speedLimit = toFIXED(8);
-	fdEventPlaySnd(SE_TOPPLE);
+	fdScriptPlaySnd(SE_TOPPLE);
 	scFieldActorSetMoveTarget(actor, 176, 40, 184);
 	step = 0;
 	for(i = 0; i < 16; i++) {
@@ -2615,8 +2619,8 @@ void scYallamForceLogDown(void) {
 		step += TOPPLE_SPIN_GAIN;
 	}
 	scFieldActorWaitForMove(actor);
-	syFieldEventWait(2);
-	fdEventPlaySnd(SE_LOG_FALL);
+	syFieldScriptWait(2);
+	fdScriptPlaySnd(SE_LOG_FALL);
 	/* The log stands upright and still where it fell. */
 	i = 0;
 	sprite->rotation = i;
@@ -2625,12 +2629,13 @@ void scYallamForceLogDown(void) {
 	actor->y.fixed = i;
 	actor->velY = i;
 	actor->velX = i;
-	fdMapGridCopyCellAttributes(8, 12, 1, 1, 10, 12);
+	fdMapGridCopyMetatileAttributes(8, 12, 1, 1, 10, 12);
 }
 
-/* The boy and the girl with a topknot run round the big tree in the */
-/* children's meadow, each after the other (scYallamUpdateRunningChild). */
-void scYallamStartRunningChildren(void) {
+/* The boy and the girl with a topknot run round the big tree in the children's
+   meadow, each after the other (scYallamUpdateRunningChild). */
+void scYallamStartRunningChildren(void)
+{
 	ACTOR *actor = fdActorGet(ACTOR_CIRCLES_CHILD);
 	ACTOR *other;
 
@@ -2648,386 +2653,387 @@ void scYallamUncoverAntidote(void);
 void scYallamUncoverNut(void);
 void scYallamTalkAboutSongCircles(void);
 
-extern s32 Yallam_StandingLogLowered[];
+extern Sint32 Yallam_StandingLogLowered[];
 
 /* The log standing on its stump on the ledge, raised onto it. */
-s32 Yallam_LogRaised[] = {
+Sint32 Yallam_LogRaised[] = {
 	SC_ANIMATION(3),
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, toFIXED(2)),
-	SC_CALL((s32)scYallamHideShadow),
+	SC_CALL((Sint32)scYallamHideShadow),
 	SC_END,
 };
 
 /* The stump, sunk into the ledge below the log. */
-s32 Yallam_StumpLowered[] = {
+Sint32 Yallam_StumpLowered[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, -toFIXED(16)),
-	SC_CALL((s32)scYallamHideShadow),
+	SC_CALL((Sint32)scYallamHideShadow),
 	SC_END,
 };
 
 /* The standing log, shrunk and sunk. */
-s32 Yallam_StandingLogLowered[] = {
-	SC_SET(SW_SCALE_X, FIXED_ONE * 3 / 5),
-	SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 5),
+Sint32 Yallam_StandingLogLowered[] = {
+	SC_SET(SW_SCALE_X, toFIXED(3) / 5),
+	SC_SET(SW_SCALE_Y, toFIXED(3) / 5),
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, -toFIXED(16)),
-	SC_CALL((s32)scYallamHideShadow),
+	SC_CALL((Sint32)scYallamHideShadow),
 	SC_END,
 };
 
 /* clang-format off */
 /* The boy runs round the big tree in the children's meadow, a six-sided lap. */
-u32 Yallam_CirclesChildRuns[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_SPEED(1),
-    SC_ACCELERATION(0.4),
-    SC_MOVE(328, 0, 752),
-    SC_SYNC,
-    SC_MOVE(360, 0, 752),
-    SC_SYNC,
-    SC_MOVE(376, 0, 776),
-    SC_SYNC,
-    SC_MOVE(360, 0, 792),
-    SC_SYNC,
-    SC_MOVE(328, 0, 792),
-    SC_SYNC,
-    SC_MOVE(312, 0, 776),
-    SC_SYNC,
-    SC_LOOP(SC_FOREVER, SC_TOP),
+Uint32 Yallam_CirclesChildRuns[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_SPEED(1),
+	SC_ACCELERATION(0.4),
+	SC_MOVE(328, 0, 752),
+	SC_SYNC,
+	SC_MOVE(360, 0, 752),
+	SC_SYNC,
+	SC_MOVE(376, 0, 776),
+	SC_SYNC,
+	SC_MOVE(360, 0, 792),
+	SC_SYNC,
+	SC_MOVE(328, 0, 792),
+	SC_SYNC,
+	SC_MOVE(312, 0, 776),
+	SC_SYNC,
+	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* As Yallam_CirclesChildRuns, for the game child, half a lap ahead of it. */
-u32 Yallam_GameChildRuns[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_SPEED(1),
-    SC_ACCELERATION(0.4),
-    SC_MOVE(360, 0, 792),
-    SC_SYNC,
-    SC_MOVE(328, 0, 792),
-    SC_SYNC,
-    SC_MOVE(312, 0, 776),
-    SC_SYNC,
-    SC_MOVE(328, 0, 752),
-    SC_SYNC,
-    SC_MOVE(360, 0, 752),
-    SC_SYNC,
-    SC_MOVE(376, 0, 776),
-    SC_SYNC,
-    SC_LOOP(SC_FOREVER, SC_TOP),
+Uint32 Yallam_GameChildRuns[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_SPEED(1),
+	SC_ACCELERATION(0.4),
+	SC_MOVE(360, 0, 792),
+	SC_SYNC,
+	SC_MOVE(328, 0, 792),
+	SC_SYNC,
+	SC_MOVE(312, 0, 776),
+	SC_SYNC,
+	SC_MOVE(328, 0, 752),
+	SC_SYNC,
+	SC_MOVE(360, 0, 752),
+	SC_SYNC,
+	SC_MOVE(376, 0, 776),
+	SC_SYNC,
+	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The children who were running gather by the song leader. */
-u32 Yallam_CirclesChildGathers[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(336, 0, 792),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
-    SC_WAIT(10),
-    SC_END,
+Uint32 Yallam_CirclesChildGathers[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(336, 0, 792),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_WAIT(1),
+	SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
+	SC_WAIT(10),
+	SC_END,
 };
 
 /* As Yallam_CirclesChildGathers, for the game child. */
-u32 Yallam_GameChildGathers[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(352, 0, 792),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
-    SC_WAIT(10),
-    SC_END,
+Uint32 Yallam_GameChildGathers[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(352, 0, 792),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_WAIT(1),
+	SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
+	SC_WAIT(10),
+	SC_END,
 };
 
 /* The children take their places in the ring for the game. */
-u32 Yallam_SongLeaderForms[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(316, 0, 888),
-    SC_SYNC,
-    SC_MOVE(336, 0, 888),
-    SC_SYNC,
-    SC_MOVE(344, 0, 872),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(10),
-    SC_END,
+Uint32 Yallam_SongLeaderForms[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(316, 0, 888),
+	SC_SYNC,
+	SC_MOVE(336, 0, 888),
+	SC_SYNC,
+	SC_MOVE(344, 0, 872),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_WAIT(1),
+	SC_SET(SW_FACING, FACING_WEST),
+	SC_WAIT(10),
+	SC_END,
 };
 
 /* As Yallam_SongLeaderForms, for the circles child. */
-u32 Yallam_CirclesChildForms[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(362, 0, 792),
-    SC_SYNC,
-    SC_MOVE(384, 0, 848),
-    SC_SYNC,
-    SC_MOVE(382, 0, 888),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(10),
-    SC_END,
+Uint32 Yallam_CirclesChildForms[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(362, 0, 792),
+	SC_SYNC,
+	SC_MOVE(384, 0, 848),
+	SC_SYNC,
+	SC_MOVE(382, 0, 888),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_WAIT(1),
+	SC_SET(SW_FACING, FACING_WEST),
+	SC_WAIT(10),
+	SC_END,
 };
 
 /* As Yallam_SongLeaderForms, for the game child. */
-u32 Yallam_GameChildForms[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(364, 0, 808),
-    SC_SYNC,
-    SC_MOVE(374, 0, 878),
-    SC_SYNC,
-    SC_MOVE(360, 0, 888),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(10),
-    SC_END,
+Uint32 Yallam_GameChildForms[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(364, 0, 808),
+	SC_SYNC,
+	SC_MOVE(374, 0, 878),
+	SC_SYNC,
+	SC_MOVE(360, 0, 888),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_WAIT(1),
+	SC_SET(SW_FACING, FACING_WEST),
+	SC_WAIT(10),
+	SC_END,
 };
 
 /* As Yallam_SongLeaderForms, for the story child. */
-u32 Yallam_StoryChildForms[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(274, 0, 888),
-    SC_SYNC,
-    SC_MOVE(328, 0, 888),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(10),
-    SC_END,
+Uint32 Yallam_StoryChildForms[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(274, 0, 888),
+	SC_SYNC,
+	SC_MOVE(328, 0, 888),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_SET(SW_FACING, FACING_WEST),
+	SC_WAIT(10),
+	SC_END,
 };
 
 /* The children step to where the song's run begins. */
-u32 Yallam_SongLeaderStarts[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(344, 0, 840),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_END,
+Uint32 Yallam_SongLeaderStarts[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(344, 0, 840),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_END,
 };
 
 /* As Yallam_SongLeaderStarts, for the game child. */
-u32 Yallam_GameChildStarts[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(344, 0, 888),
-    SC_SYNC,
-    SC_MOVE(344, 0, 856),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(1),
-    SC_END,
+Uint32 Yallam_GameChildStarts[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(344, 0, 888),
+	SC_SYNC,
+	SC_MOVE(344, 0, 856),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_WAIT(1),
+	SC_END,
 };
 
 /* As Yallam_SongLeaderStarts, for the circles child. */
-u32 Yallam_CirclesChildStarts[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(344, 0, 888),
-    SC_SYNC,
-    SC_MOVE(344, 0, 874),
-    SC_SYNC,
-    SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(1),
-    SC_END,
+Uint32 Yallam_CirclesChildStarts[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(344, 0, 888),
+	SC_SYNC,
+	SC_MOVE(344, 0, 874),
+	SC_SYNC,
+	SC_ANIMATION(ANIM_STAND),
+	SC_WAIT(1),
+	SC_END,
 };
 
 #include "shared/scene_entrances_default.c"
 
-u32 SceneExits[] = {
-    SCENE_EXITS(Yallam),
-    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_SOUTHEAST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_SOUTHEAST),
-    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_SOUTH, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_SOUTH),
-    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_EAST, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_EAST),
-    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_WEST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_WEST),
-    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_NORTH, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_NORTH),
-    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_WEST, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_WEST),
-    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_NORTHEAST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_NORTHEAST),
-    SCENE_EXIT(YALLAM_TO_MIKASALLA_ROOMS_SANCTUM, MikasallaRoomsSanctum, MIKASALLA_ROOMS_SANCTUM_FROM_YALLAM),
-    SCENE_EXIT(YALLAM_TO_YALLAM_CAVE_EAST, YallamCave, YALLAM_CAVE_FROM_YALLAM_EAST),
-    SCENE_EXIT(YALLAM_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_YALLAM_SOUTH),
-    SCENE_EXIT(YALLAM_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_YALLAM_NORTH),
-    SCENE_EXIT(YALLAM_TO_SONG_GAME, Yallam, YALLAM_SONG_GAME),
-    SCENE_EXIT(YALLAM_TO_YALLAM_CAVE_WEST, YallamCave, YALLAM_CAVE_FROM_YALLAM_WEST),
-    SCENE_EXIT(YALLAM_EXIT_SONG_GAME, Yallam, YALLAM_FROM_SONG_GAME),
-    SCENE_EXITS(YallamCave),
-    SCENE_EXIT(YALLAM_CAVE_TO_YALLAM_EAST, Yallam, YALLAM_FROM_YALLAM_CAVE_EAST),
-    SCENE_EXIT(YALLAM_CAVE_TO_YALLAM_WEST, Yallam, YALLAM_FROM_YALLAM_CAVE_WEST),
-    SCENE_EXITS_END,
+Uint32 SceneExits[] = {
+	SCENE_EXITS(Yallam),
+	SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_SOUTHEAST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_SOUTHEAST),
+	SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_SOUTH, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_SOUTH),
+	SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_EAST, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_EAST),
+	SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_WEST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_WEST),
+	SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_NORTH, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_NORTH),
+	SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_WEST, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_WEST),
+	SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_NORTHEAST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_NORTHEAST),
+	SCENE_EXIT(YALLAM_TO_MIKASALLA_ROOMS_SANCTUM, MikasallaRoomsSanctum, MIKASALLA_ROOMS_SANCTUM_FROM_YALLAM),
+	SCENE_EXIT(YALLAM_TO_YALLAM_CAVE_EAST, YallamCave, YALLAM_CAVE_FROM_YALLAM_EAST),
+	SCENE_EXIT(YALLAM_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_YALLAM_SOUTH),
+	SCENE_EXIT(YALLAM_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_YALLAM_NORTH),
+	SCENE_EXIT(YALLAM_TO_SONG_GAME, Yallam, YALLAM_SONG_GAME),
+	SCENE_EXIT(YALLAM_TO_YALLAM_CAVE_WEST, YallamCave, YALLAM_CAVE_FROM_YALLAM_WEST),
+	SCENE_EXIT(YALLAM_EXIT_SONG_GAME, Yallam, YALLAM_FROM_SONG_GAME),
+	SCENE_EXITS(YallamCave),
+	SCENE_EXIT(YALLAM_CAVE_TO_YALLAM_EAST, Yallam, YALLAM_FROM_YALLAM_CAVE_EAST),
+	SCENE_EXIT(YALLAM_CAVE_TO_YALLAM_WEST, Yallam, YALLAM_FROM_YALLAM_CAVE_WEST),
+	SCENE_EXITS_END,
 };
 
 /* The village, in YALLAM_ACTOR_ID order. */
 ACTOR_PLACE Yallam_Placements[] = {
-    ACTOR_PLACEMENT(SPRITE_FALLING_LOG, CONDITION_ALWAYS,
-                    (s32)Yallam_StumpLowered, 184, 0, 200, FACING_WEST,
-                    TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_FALLING_LOG, CONDITION_ALWAYS,
-                    (s32)Yallam_LogRaised, 184, 0, 200, FACING_WEST,
-                    TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_STANDING_LOG, CONDITION_ALWAYS,
-                    (s32)Yallam_StandingLogLowered, 8, 0, 8, FACING_WEST,
-                    TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 216,
-                    FACING_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 232,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-#if !TLA_PATCH_1
-    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 552, 0, 232,
-                    FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_FALLING_LOG, CONDITION_ALWAYS,
+					(Sint32)Yallam_StumpLowered, 184, 0, 200, FACING_WEST,
+					TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_FALLING_LOG, CONDITION_ALWAYS,
+					(Sint32)Yallam_LogRaised, 184, 0, 200, FACING_WEST,
+					TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_STANDING_LOG, CONDITION_ALWAYS,
+					(Sint32)Yallam_StandingLogLowered, 8, 0, 8, FACING_WEST,
+					TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 216,
+					FACING_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 232,
+					FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+#if !YALLAM_CURLY_HAIRED_MAN_WANDERS_LESS
+	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 552, 0, 232,
+					FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 #else
-    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 552, 0,
-                    248, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 552, 0,
+					248, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 #endif
-    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 360, 0, 360,
-                    FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 280,
-                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376,
-                    FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS,
-                    MOVEMENT_TYPE_STAND, 464, 0, 136, FACING_SOUTHWEST,
-                    TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS,
-                    MOVEMENT_TYPE_STAND, 392, 0, 264, FACING_SOUTH,
-                    TALK_FACING_PARTY_AND_BACK, 0),
-    {SCENE_TABLE_END},
+	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 360, 0, 360,
+					FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 280,
+					FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376,
+					FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS,
+					MOVEMENT_TYPE_STAND, 464, 0, 136, FACING_SOUTHWEST,
+					TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS,
+					MOVEMENT_TYPE_STAND, 392, 0, 264, FACING_SOUTH,
+					TALK_FACING_PARTY_AND_BACK, 0),
+	{SCENE_TABLE_END},
 };
 
 /* The cave places no actors. */
 ACTOR_PLACE Yallam_CavePlacements[] = {
-    {SCENE_TABLE_END},
+	{SCENE_TABLE_END},
 };
 
 /* The children's meadow, in YALLAM_SONG_GAME_ACTOR_ID order, and Jenna. */
 ACTOR_PLACE Yallam_SongGamePlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 872, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)Yallam_CirclesChildRuns, 312, 0, 776, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, (s32)Yallam_GameChildRuns, 376, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 800, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    {SCENE_TABLE_END},
+	ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 872, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (Sint32)Yallam_CirclesChildRuns, 312, 0, 776, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, (Sint32)Yallam_GameChildRuns, 376, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 800, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	{SCENE_TABLE_END},
 };
 
-/* The huts' doors' cell animations as they open, one for each shape of door. */
-u16 Yallam_DoorOpening[] = {
-    MAPGRID_ANIMATION_STEP(93, 28, 1, 2, 6),
-    MAPGRID_ANIMATION_STEP(92, 28, 1, 2, 6),
-    MAPGRID_ANIMATION_STEPS_END,
+/* The huts' doors' metatile animations as they open, one for each shape of */
+/* door. */
+Uint16 Yallam_DoorOpening[] = {
+	MAPGRID_ANIMATION_STEP(93, 28, 1, 2, 6),
+	MAPGRID_ANIMATION_STEP(92, 28, 1, 2, 6),
+	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The second shape of hut door's opening, as Yallam_DoorOpening. */
-u16 Yallam_SecondDoorOpening[] = {
-    MAPGRID_ANIMATION_STEP(95, 28, 1, 2, 6),
-    MAPGRID_ANIMATION_STEP(94, 28, 1, 2, 6),
-    MAPGRID_ANIMATION_STEPS_END,
+Uint16 Yallam_SecondDoorOpening[] = {
+	MAPGRID_ANIMATION_STEP(95, 28, 1, 2, 6),
+	MAPGRID_ANIMATION_STEP(94, 28, 1, 2, 6),
+	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The third shape of hut door's opening, as Yallam_DoorOpening. */
-u16 Yallam_ThirdDoorOpening[] = {
-    MAPGRID_ANIMATION_STEP(89, 28, 1, 2, 6),
-    MAPGRID_ANIMATION_STEP(90, 28, 1, 2, 6),
-    MAPGRID_ANIMATION_STEPS_END,
+Uint16 Yallam_ThirdDoorOpening[] = {
+	MAPGRID_ANIMATION_STEP(89, 28, 1, 2, 6),
+	MAPGRID_ANIMATION_STEP(90, 28, 1, 2, 6),
+	MAPGRID_ANIMATION_STEPS_END,
 };
 
-/* The sanctum's door opening, two cells wide. */
-u16 Yallam_SanctumDoorOpening[] = {
-    MAPGRID_ANIMATION_STEP(92, 30, 2, 2, 6),
-    MAPGRID_ANIMATION_STEP(94, 30, 2, 2, 6),
-    MAPGRID_ANIMATION_STEPS_END,
+/* The sanctum's door opening, two metatiles wide. */
+Uint16 Yallam_SanctumDoorOpening[] = {
+	MAPGRID_ANIMATION_STEP(92, 30, 2, 2, 6),
+	MAPGRID_ANIMATION_STEP(94, 30, 2, 2, 6),
+	MAPGRID_ANIMATION_STEPS_END,
 };
 
-/* Each door's opening and the cell it is drawn at, by its exit's number. */
-MAP_GRID_CELL_ANIMATION Yallam_Doors[] = {
-    {Yallam_DoorOpening, 98, 19},
-    {Yallam_SecondDoorOpening, 92, 20},
-    {Yallam_ThirdDoorOpening, 84, 18},
-    {Yallam_DoorOpening, 79, 7},
-    {Yallam_ThirdDoorOpening, 80, 16},
-    {Yallam_ThirdDoorOpening, 77, 17},
-    {Yallam_SecondDoorOpening, 99, 8},
-    {Yallam_SanctumDoorOpening, 90, 6},
+/* Each door's opening and the metatile it is drawn at, by its exit's number. */
+MAP_GRID_METATILE_ANIMATION Yallam_Doors[] = {
+	{Yallam_DoorOpening, 98, 19},
+	{Yallam_SecondDoorOpening, 92, 20},
+	{Yallam_ThirdDoorOpening, 84, 18},
+	{Yallam_DoorOpening, 79, 7},
+	{Yallam_ThirdDoorOpening, 80, 16},
+	{Yallam_ThirdDoorOpening, 77, 17},
+	{Yallam_SecondDoorOpening, 99, 8},
+	{Yallam_SanctumDoorOpening, 90, 6},
 };
 
-/* The village: its exits and doors, its people, the Cyclone spots and the log. */
-TRIGGER Yallam_Triggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_SOUTHEAST, CONDITION_ALWAYS, EVENT(scYallamEnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_SOUTH, CONDITION_ALWAYS, EVENT(scYallamEnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_EAST, CONDITION_ALWAYS, EVENT(scYallamEnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_WEST, CONDITION_ALWAYS, EVENT(scYallamEnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_NORTH, CONDITION_ALWAYS, EVENT(scYallamEnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_WEST, CONDITION_ALWAYS, EVENT(scYallamEnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_NORTHEAST, CONDITION_ALWAYS, EVENT(scYallamEnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_MIKASALLA_ROOMS_SANCTUM, CONDITION_ALWAYS, EVENT(scYallamEnterDoor)},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, YALLAM_TO_YALLAM_CAVE_EAST, CONDITION_ALWAYS, YALLAM_TO_YALLAM_CAVE_EAST},
-    {TRIGGER_EXIT, YALLAM_TO_WORLD_MAP_SOUTH, CONDITION_ALWAYS, YALLAM_TO_WORLD_MAP_SOUTH},
-    {TRIGGER_EXIT, YALLAM_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS, YALLAM_TO_WORLD_MAP_NORTH},
-    {TRIGGER_EXIT, YALLAM_TO_SONG_GAME, CONDITION_ALWAYS, YALLAM_TO_SONG_GAME},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, YALLAM_TO_YALLAM_CAVE_WEST, CONDITION_ALWAYS, YALLAM_TO_YALLAM_CAVE_WEST},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_CAVE_HOLE, CONDITION_ALWAYS, EVENT(scYallamUncoverCaveHole)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_BELOW_SHOPS, CONDITION_ALWAYS, EVENT(scYallamScatterWeedsBelowShops)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_ANTIDOTE, CONDITION_ALWAYS, EVENT(scYallamUncoverAntidote)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_IN_CORNER, CONDITION_ALWAYS, EVENT(scYallamScatterWeedsInCorner)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_NUT, CONDITION_ALWAYS, EVENT(scYallamUncoverNut)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_BY_SANCTUM, CONDITION_ALWAYS, EVENT(scYallamScatterWeedsBySanctum)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYallamDoesnT)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_YEPP_DIED, CONDITION_ALWAYS, MSGNO(MsgOurMasterBoatsman)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_IF_YEPP_LIVED, CONDITION_ALWAYS, MSGNO(MsgIfYeppWere)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_PEARL_BED, CONDITION_ALWAYS, MSGNO(MsgYeppFoundThis)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_PEARL_DIVERS, CONDITION_ALWAYS, MSGNO(MsgThereUsedTo)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_LOST_YEPP, CONDITION_ALWAYS, MSGNO(MsgWhenWeLost)},
-    {TRIGGER_TALK, ACTOR_BOATSMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgYeppWasThe)},
-    {TRIGGER_TALK, ACTOR_BOATSMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppToldMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYeppWasTheOne)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YEPP_DIED, CONDITION_ALWAYS, MSGNO(MsgSingingWithYepp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IF_YEPP_LIVED, CONDITION_ALWAYS, MSGNO(MsgThosePearlsYepp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PEARL_BED, CONDITION_ALWAYS, MSGNO(MsgYeppNeverTold)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PEARL_DIVERS, CONDITION_ALWAYS, MSGNO(MsgYeppWasAmazing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LOST_YEPP, CONDITION_ALWAYS, MSGNO(MsgSunshineIsA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATSMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgIVeSearched)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATSMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppAlwaysSang)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_FALLEN, (s32)(scYallamDoNothing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_FALLEN, EVENT(scYallamForceLogDown)},
-    {TRIGGER_TABLE_END},
+/* The village: its exits and doors, its people, the Cyclone spots and the */
+/* log. */
+CUE Yallam_Cues[] = {
+	{STEP_CUE_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_SOUTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scYallamEnterDoor)},
+	{STEP_CUE_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_SOUTH, CONDITION_ALWAYS, SCRIPT_REF(scYallamEnterDoor)},
+	{STEP_CUE_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_EAST, CONDITION_ALWAYS, SCRIPT_REF(scYallamEnterDoor)},
+	{STEP_CUE_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_WEST, CONDITION_ALWAYS, SCRIPT_REF(scYallamEnterDoor)},
+	{STEP_CUE_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_NORTH, CONDITION_ALWAYS, SCRIPT_REF(scYallamEnterDoor)},
+	{STEP_CUE_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_WEST, CONDITION_ALWAYS, SCRIPT_REF(scYallamEnterDoor)},
+	{STEP_CUE_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_NORTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scYallamEnterDoor)},
+	{STEP_CUE_WALKING_INTO(FACING_NORTH), YALLAM_TO_MIKASALLA_ROOMS_SANCTUM, CONDITION_ALWAYS, SCRIPT_REF(scYallamEnterDoor)},
+	{CUE_EXIT | CUE_FLAG_FACING | FACING_NORTH, YALLAM_TO_YALLAM_CAVE_EAST, CONDITION_ALWAYS, YALLAM_TO_YALLAM_CAVE_EAST},
+	{CUE_EXIT, YALLAM_TO_WORLD_MAP_SOUTH, CONDITION_ALWAYS, YALLAM_TO_WORLD_MAP_SOUTH},
+	{CUE_EXIT, YALLAM_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS, YALLAM_TO_WORLD_MAP_NORTH},
+	{CUE_EXIT, YALLAM_TO_SONG_GAME, CONDITION_ALWAYS, YALLAM_TO_SONG_GAME},
+	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, YALLAM_TO_YALLAM_CAVE_WEST, CONDITION_ALWAYS, YALLAM_TO_YALLAM_CAVE_WEST},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_OVER_CAVE_HOLE, CONDITION_ALWAYS, SCRIPT_REF(scYallamUncoverCaveHole)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_BELOW_SHOPS, CONDITION_ALWAYS, SCRIPT_REF(scYallamScatterWeedsBelowShops)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_OVER_ANTIDOTE, CONDITION_ALWAYS, SCRIPT_REF(scYallamUncoverAntidote)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_IN_CORNER, CONDITION_ALWAYS, SCRIPT_REF(scYallamScatterWeedsInCorner)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_OVER_NUT, CONDITION_ALWAYS, SCRIPT_REF(scYallamUncoverNut)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_WEEDS_BY_SANCTUM, CONDITION_ALWAYS, SCRIPT_REF(scYallamScatterWeedsBySanctum)},
+	{CUE_TALK, ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYallamDoesnT)},
+	{CUE_TALK, ACTOR_VILLAGER_YEPP_DIED, CONDITION_ALWAYS, MSGNO(MsgOurMasterBoatsman)},
+	{CUE_TALK, ACTOR_VILLAGER_IF_YEPP_LIVED, CONDITION_ALWAYS, MSGNO(MsgIfYeppWere)},
+	{CUE_TALK, ACTOR_VILLAGER_PEARL_BED, CONDITION_ALWAYS, MSGNO(MsgYeppFoundThis)},
+	{CUE_TALK, ACTOR_VILLAGER_PEARL_DIVERS, CONDITION_ALWAYS, MSGNO(MsgThereUsedTo)},
+	{CUE_TALK, ACTOR_VILLAGER_LOST_YEPP, CONDITION_ALWAYS, MSGNO(MsgWhenWeLost)},
+	{CUE_TALK, ACTOR_BOATSMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgYeppWasThe)},
+	{CUE_TALK, ACTOR_BOATSMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppToldMe)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYeppWasTheOne)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YEPP_DIED, CONDITION_ALWAYS, MSGNO(MsgSingingWithYepp)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IF_YEPP_LIVED, CONDITION_ALWAYS, MSGNO(MsgThosePearlsYepp)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PEARL_BED, CONDITION_ALWAYS, MSGNO(MsgYeppNeverTold)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PEARL_DIVERS, CONDITION_ALWAYS, MSGNO(MsgYeppWasAmazing)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LOST_YEPP, CONDITION_ALWAYS, MSGNO(MsgSunshineIsA)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATSMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgIVeSearched)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATSMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppAlwaysSang)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_FALLEN, (Sint32)(scYallamNoOperation)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_FALLEN, SCRIPT_REF(scYallamForceLogDown)},
+	{CUE_TABLE_END},
 };
 
 /* The cave's exits. */
-TRIGGER Yallam_CaveTriggers[] = {
-    {TRIGGER_EXIT, YALLAM_CAVE_TO_YALLAM_EAST, CONDITION_ALWAYS, YALLAM_CAVE_TO_YALLAM_EAST},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, YALLAM_CAVE_TO_YALLAM_WEST, CONDITION_ALWAYS, YALLAM_CAVE_TO_YALLAM_WEST},
-    {TRIGGER_TABLE_END},
+CUE Yallam_CaveCues[] = {
+	{CUE_EXIT, YALLAM_CAVE_TO_YALLAM_EAST, CONDITION_ALWAYS, YALLAM_CAVE_TO_YALLAM_EAST},
+	{CUE_EXIT | CUE_FLAG_FACING | FACING_NORTH, YALLAM_CAVE_TO_YALLAM_WEST, CONDITION_ALWAYS, YALLAM_CAVE_TO_YALLAM_WEST},
+	{CUE_TABLE_END},
 };
 /* clang-format on */
 
 /* The song game's exit and its children. */
-TRIGGER Yallam_SongGameTriggers[] = {
-	{TRIGGER_EXIT, YALLAM_EXIT_SONG_GAME, CONDITION_ALWAYS,
-	 YALLAM_EXIT_SONG_GAME},
-	{TALK_TRIGGER_FACING(FACING_EAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
-	 EVENT(scYallamOfferYeppSong)},
-	{TALK_TRIGGER_FACING(FACING_SOUTHEAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
-	 EVENT(scYallamOfferYeppSong)},
-	{TALK_TRIGGER_FACING(FACING_NORTHEAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
-	 EVENT(scYallamOfferYeppSong)},
-	{TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
-	 EVENT(scYallamOfferYeppSong)},
-	{TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
-	 EVENT(scYallamOfferYeppSong)},
+CUE Yallam_SongGameCues[] = {
+	{CUE_EXIT, YALLAM_EXIT_SONG_GAME, CONDITION_ALWAYS, YALLAM_EXIT_SONG_GAME},
+	{TALK_CUE_FACING(FACING_EAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
+		SCRIPT_REF(scYallamOfferYeppSong)},
+	{TALK_CUE_FACING(FACING_SOUTHEAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
+		SCRIPT_REF(scYallamOfferYeppSong)},
+	{TALK_CUE_FACING(FACING_NORTHEAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
+		SCRIPT_REF(scYallamOfferYeppSong)},
+	{TALK_CUE_FACING(FACING_NORTH), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
+		SCRIPT_REF(scYallamOfferYeppSong)},
+	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
+		SCRIPT_REF(scYallamOfferYeppSong)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
-	 MSGNO(MsgYeppSSongs)},
-	{TRIGGER_TALK, ACTOR_CIRCLES_CHILD, CONDITION_ALWAYS,
-	 EVENT(scYallamTalkAboutSongCircles)},
+		MSGNO(MsgYeppSSongs)},
+	{CUE_TALK, ACTOR_CIRCLES_CHILD, CONDITION_ALWAYS,
+		SCRIPT_REF(scYallamTalkAboutSongCircles)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CIRCLES_CHILD,
-	 CONDITION_ALWAYS, EVENT(scYallamTalkAboutSongCircles)},
-	{TRIGGER_TALK, ACTOR_GAME_CHILD, CONDITION_ALWAYS,
-	 EVENT(scYallamTalkAboutSongGame)},
+		CONDITION_ALWAYS, SCRIPT_REF(scYallamTalkAboutSongCircles)},
+	{CUE_TALK, ACTOR_GAME_CHILD, CONDITION_ALWAYS,
+		SCRIPT_REF(scYallamTalkAboutSongGame)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GAME_CHILD, CONDITION_ALWAYS,
-	 EVENT(scYallamTalkAboutSongGame)},
-	{TRIGGER_TALK, ACTOR_STORY_CHILD, CONDITION_ALWAYS, MSGNO(MsgYeppWroteAll)},
+		SCRIPT_REF(scYallamTalkAboutSongGame)},
+	{CUE_TALK, ACTOR_STORY_CHILD, CONDITION_ALWAYS, MSGNO(MsgYeppWroteAll)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STORY_CHILD, CONDITION_ALWAYS,
-	 MSGNO(MsgTheStoryIs)},
-	{TRIGGER_TABLE_END},
+		MSGNO(MsgTheStoryIs)},
+	{CUE_TABLE_END},
 };

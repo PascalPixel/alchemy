@@ -1,51 +1,47 @@
 #ifndef ALCHEMY_ENEMY_IDS_H
 #define ALCHEMY_ENEMY_IDS_H
 
-/* @file */
 /* Enemy ids, named from the English release. */
 
-/* The first enemy id: enemy id `ENEMY_ID_FIRST + n` is the enemy in row n of */
-/* enemy_table.c (gmEnemyGetDefinition); the ids below it are the party's */
-/* characters. */
+/* The first enemy id: enemy id `ENEMY_ID_FIRST + n` is the enemy in row n of
+   enemy_table.c (gmEnemyGetDefinition); the ids below it are the party's
+   characters. */
 #define ENEMY_ID_FIRST 8
 
 /* How many enemies enemy_table.c defines. */
 #define ENEMY_COUNT 380
 
 /* The highest enemy id a battle unit takes; an id past the table's rows takes
- */
-/* its first row. */
+   its first row. */
 #define ENEMY_ID_MAX 1000
 
 /* Enemy id `id`'s row of enemy_table.c. */
 #define ENEMY_ROW(id) ((id) - ENEMY_ID_FIRST)
 
-/* Enemy ids, one for each row of enemy_table.c in order, each named from the */
-/* English release (MsgEnemyName plus the row): an enemy id is the row plus */
-/* ENEMY_ID_FIRST. The rows the text names "?" are unused and have no names */
-/* here. Where several rows share a name, each takes what tells its battle */
-/* apart: the one place it is fought, or the Djinni a Djinni battle is with; */
-/* rows the game's own text numbers ("Serpent 6", "Ruffian 2") keep those */
-/* numbers. */
+/* Enemy ids, one for each row of enemy_table.c in order, each named from the
+   English release (MsgEnemyName plus the row): an enemy id is the row plus
+   ENEMY_ID_FIRST. The rows the text names "?" are unused and have no names
+   here. Where several rows share a name, each takes what tells its battle
+   apart: the one place it is fought, or the Djinni a Djinni battle is with;
+   rows the game's own text numbers ("Serpent 6", "Ruffian 2") keep those
+   numbers. */
 typedef enum ENEMY_ID {
 	/* Row 0: "???", in no formation; a formation's empty places list it. */
 	ENEMY_NONE = ENEMY_ID_FIRST,
-	/* The Djinn the party fights, each element's in the order of their */
-	/* numbers, The Broken Seal's rows first; gmBattleUnitSet puts them on the
-	 */
-	/* party's side. A Djinni's battle is a slot of its element's zone, which */
-	/* two Djinn share (fdEncounterGetDjinnFormation); each row is named for */
-	/* the one Djinni whose scene starts its battle (fdRequestDjinnBattle). */
-	/* Unused: The Broken Seal's row for Quartz, level 12, in no formation here.
-	 */
+	/* The Djinn the party fights, each element's in the order of their numbers,
+	   The Broken Seal's rows first; gmBattleUnitSet puts them on the party's
+	   side. A Djinni's battle is a slot of its element's zone, which two Djinn
+	   share (fdEncounterGetDjinnFormation); each row is named for the one
+	   Djinni whose scene starts its battle (fdRequestDjinnBattle). */
+	/* Unused: The Broken Seal's row for Quartz, level 12, in no formation
+	   here. */
 	ENEMY_VENUS_DJINNI_UNUSED_QUARTZ,
 	/* Unused: The Broken Seal's row for Vine, level 15. */
 	ENEMY_VENUS_DJINNI_UNUSED_VINE,
 	/* Unused: The Broken Seal's row for Bane, level 23. */
 	ENEMY_VENUS_DJINNI_UNUSED_BANE,
 	/* Unused: level 3, the battle of Echo's slot, but Echo joins on the World
-	 */
-	/* Map without a fight. */
+	   Map without a fight. */
 	ENEMY_VENUS_DJINNI_UNUSED_ECHO,
 	/* Level 9, on the World Map. */
 	ENEMY_VENUS_DJINNI_IRON,
@@ -179,11 +175,9 @@ typedef enum ENEMY_ID {
 	ENEMY_HYDRA,
 	ENEMY_PYRODRA,
 	/* Gaia Rock's Serpent: a row for each number of the four beams of sunlight
-	 */
-	/* let into its lair as it is fought, counted by */
-	/* scGaiaRockInsideChallengeSerpent, this one for none. Each beam lights a
-	 */
-	/* band across the lair's floor to the Serpent. */
+	   let into its lair as it is fought, counted by
+	   scGaiaRockInsideChallengeSerpent, this one for none. Each beam lights a
+	   band across the lair's floor to the Serpent. */
 	ENEMY_SERPENT,
 	ENEMY_SERPENT_ONE_BEAM,
 	ENEMY_SERPENT_TWO_BEAMS,
@@ -195,33 +189,29 @@ typedef enum ENEMY_ID {
 	ENEMY_MACETAIL,
 	ENEMY_BOMBANDER,
 	ENEMY_POSEIDON,
-	/* The abilities Poseidon chooses from for his second action of each turn */
-	/* (btAIChooseAction); his first takes ENEMY_POSEIDON's. */
+	/* The abilities Poseidon chooses from for his second action of each turn
+	   (btAIChooseAction); his first takes ENEMY_POSEIDON's. */
 	ENEMY_POSEIDON_SECOND_ACTION,
 	ENEMY_POSEIDON_3,
 	/* Moapa at the Trial Road's peak. He and his two Knights come weaker, with
-	 */
-	/* less defense and fewer Bosca Hits or Strong Hits, the more stage doors */
-	/* the party reached before them in the race (scTrialRoadChallengeMoapa, */
-	/* ENCOUNTER_ZONE_MOAPA): this row while it reached two or fewer, */
-	/* ENEMY_MOAPA_B at three and ENEMY_MOAPA_C at all four. */
+	   less defense and fewer Bosca Hits or Strong Hits, the more stage doors
+	   the party reached before them in the race (scTrialRoadChallengeMoapa,
+	   ENCOUNTER_ZONE_MOAPA): this row while it reached two or fewer,
+	   ENEMY_MOAPA_B at three and ENEMY_MOAPA_C at all four. */
 	ENEMY_MOAPA,
 	ENEMY_MOAPA_B,
 	ENEMY_MOAPA_C,
 	/* One of Moapa's Knights: both are this row while the party reached no
-	   stage */
-	/* door first, one at one door, and neither from two doors on, when both are
-	 */
-	/* ENEMY_KNIGHT_B. */
+	   stage door first, one at one door, and neither from two doors on, when
+	   both are ENEMY_KNIGHT_B. */
 	ENEMY_KNIGHT,
 	ENEMY_KNIGHT_B,
 	ENEMY_KNIGHT_3,
-	/* Agatio in the first two of the three battles on Jupiter Lighthouse's */
-	/* aerie (ENCOUNTER_ZONE_MOAPA, slots 5 and 6), as ENEMY_KARST is Karst. */
+	/* Agatio in the first two of the three battles on Jupiter Lighthouse's
+	   aerie (ENCOUNTER_ZONE_MOAPA, slots 5 and 6), as ENEMY_KARST is Karst. */
 	ENEMY_AGATIO,
 	/* Agatio in the third battle (slot 7), the same stats as ENEMY_AGATIO, as
-	 */
-	/* ENEMY_KARST_B is Karst. */
+	   ENEMY_KARST_B is Karst. */
 	ENEMY_AGATIO_B,
 	ENEMY_AGATIO_VS_ISAAC,
 	ENEMY_KARST,
@@ -243,8 +233,7 @@ typedef enum ENEMY_ID {
 	ENEMY_WARGOLD,
 	ENEMY_KOBOLD_KING,
 	/* The Mad Plant of the Gabomba Catacombs (ENCOUNTER_ZONE_MAD_PLANTS, slot
-	 */
-	/* 0); each Mad Plant row is the one fought in one place. */
+	   0); each Mad Plant row is the one fought in one place. */
 	ENEMY_MAD_PLANT_GABOMBA_CATACOMBS,
 	/* The Mad Plant of Taopo Swamp (slot 1). */
 	ENEMY_MAD_PLANT_TAOPO_SWAMP,
@@ -336,10 +325,9 @@ typedef enum ENEMY_ID {
 	ENEMY_GHOST_ARMY,
 	ENEMY_SOUL_ARMY,
 	ENEMY_SPIRIT_ARMY,
-	/* The Dullahan's three sets of abilities, one row each */
-	/* (BattleAI_DullahanForms): it starts its battle on one at random and moves
-	 */
-	/* to the next each time it has gone through one (btAIChooseAction). */
+	/* The Dullahan's three sets of abilities, one row each
+	   (BattleAI_DullahanForms): it starts its battle on one at random and moves
+	   to the next each time it has gone through one (btAIChooseAction). */
 	ENEMY_DULLAHAN,
 	ENEMY_DULLAHAN_B,
 	ENEMY_DULLAHAN_C,
@@ -348,20 +336,18 @@ typedef enum ENEMY_ID {
 	ENEMY_SENTINEL_UNUSED_B,
 	ENEMY_VERMIN,
 	/* The Broken Seal's ENEMY_VERMIN_WORLD_MAP, row for row the same stats; no
-	 */
-	/* formation here lists it. */
+	   formation here lists it. */
 	ENEMY_VERMIN_WORLD_MAP,
 	ENEMY_MAD_VERMIN,
 	ENEMY_BAT,
 	/* The Broken Seal's ENEMY_BAT_WORLD_MAP, the same stats; no formation here
-	 */
-	/* lists it. */
+	   lists it. */
 	ENEMY_BAT_WORLD_MAP,
 	ENEMY_RABID_BAT,
 	ENEMY_GIANT_BAT,
 	ENEMY_WILD_MUSHROOM,
-	/* The Broken Seal's ENEMY_WILD_MUSHROOM_WORLD_MAP, the same stats; no */
-	/* formation here lists it. */
+	/* The Broken Seal's ENEMY_WILD_MUSHROOM_WORLD_MAP, the same stats; no
+	   formation here lists it. */
 	ENEMY_WILD_MUSHROOM_WORLD_MAP,
 	ENEMY_DEATH_CAP,
 	ENEMY_SLIME_SOL_SANCTUM,
@@ -371,8 +357,8 @@ typedef enum ENEMY_ID {
 	ENEMY_GHOST,
 	ENEMY_GHOST_MAGE,
 	ENEMY_HORNED_GHOST,
-	/* Unused: The Broken Seal's ENEMY_LICH, the same stats, in no formation */
-	/* here; ENEMY_LICH is this game's own. */
+	/* Unused: The Broken Seal's ENEMY_LICH, the same stats, in no formation
+	   here; ENEMY_LICH is this game's own. */
 	ENEMY_LICH_UNUSED,
 	ENEMY_ZOMBIE,
 	ENEMY_UNDEAD,
@@ -459,8 +445,7 @@ typedef enum ENEMY_ID {
 	ENEMY_CHIMERA_MAGE,
 	ENEMY_GRAND_CHIMERA,
 	/* The Broken Seal's ENEMY_AMAZE_SOL_SANCTUM, the same stats; no formation
-	 */
-	/* here lists it. */
+	   here lists it. */
 	ENEMY_AMAZE_SOL_SANCTUM,
 	/* The Amaze of the Kandorean Temple's encounters (zones 16 to 18). */
 	ENEMY_AMAZE_KANDOREAN_TEMPLE,
@@ -507,10 +492,9 @@ typedef enum ENEMY_ID {
 	/* The Broken Seal's ENEMY_ZOMBIE_DJINN_LESSON, the same stats. */
 	ENEMY_ZOMBIE_DJINN_LESSON,
 	/* The Doom Dragon's three forms are rows A, E and H, and each acts again in
-	 */
-	/* a turn as the rows after it (btAIChooseAction): A's second, third */
-	/* and fourth actions are C, B and D, E's G and F, and H's second I. */
-	/* btChangeEnemyForm brings on E, then H. */
+	   a turn as the rows after it (btAIChooseAction): A's second, third and
+	   fourth actions are C, B and D, E's G and F, and H's second I.
+	   btChangeEnemyForm brings on E, then H. */
 	ENEMY_DOOM_DRAGON_A,
 	ENEMY_DOOM_DRAGON_B,
 	ENEMY_DOOM_DRAGON_C,
@@ -524,9 +508,9 @@ typedef enum ENEMY_ID {
 	ENEMY_THUNDER_BALL,
 	ENEMY_ANGER_BALL,
 	ENEMY_GUARDIAN_BALL,
-	/* Fought with ENEMY_SATRAGE_SHAMAN_VILLAGE_CAVE and */
-	/* ENEMY_NAVAMPA_SHAMAN_VILLAGE_CAVE in the Shaman Village Cave */
-	/* (ENCOUNTER_ZONE_SCRIPTED, slot 2). */
+	/* Fought with ENEMY_SATRAGE_SHAMAN_VILLAGE_CAVE and
+	   ENEMY_NAVAMPA_SHAMAN_VILLAGE_CAVE in the Shaman Village Cave
+	   (ENCOUNTER_ZONE_SCRIPTED, slot 2). */
 	ENEMY_AZART_SHAMAN_VILLAGE_CAVE,
 	ENEMY_SATRAGE_SHAMAN_VILLAGE_CAVE,
 	ENEMY_NAVAMPA_SHAMAN_VILLAGE_CAVE,

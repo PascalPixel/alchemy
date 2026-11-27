@@ -1,9 +1,10 @@
-/* fdActorPopUpSlow without the wait before it rises. */
-s32 fdActorPopUp(ACTOR *actor) {
-	s32 frame = actor->tmr;
+/* scActorPopUpSlow without the wait before it rises. */
+Bool scActorPopUp(ACTOR *actor)
+{
+	Sint32 frame = actor->tmr;
 
 	if(frame == 0) {
-		fdEventPlaySnd(SE_WHOOSH);
+		fdScriptPlaySnd(SE_WHOOSH);
 		fdActorSelectAnimation((ACTOR *)actor->watchedActor, 2);
 		actor->y.fixed =
 			fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed) +
@@ -13,25 +14,23 @@ s32 fdActorPopUp(ACTOR *actor) {
 		actor->speedLimit = toFIXED(1);
 		actor->acceleration = toFIXED(1) / 2;
 		fdActorSetSprPriorityDirect(actor, 1);
-	}
-	else if(frame <= 32) {
-		actor->scaleX = FIXED_ONE;
-		actor->scaleY = FIXED_ONE;
+	} else if(frame <= 32) {
+		actor->scaleX = toFIXED(1);
+		actor->scaleY = toFIXED(1);
 		{
-			s32 half = (actor->tmr / 2) & 1;
+			Sint32 half = (actor->tmr / 2) & 1;
 
-			fdActorSetSprColMode((ACTOR *)actor->watchedActor,
-								 half * SPRITE_COLOR_WHITE);
+			fdActorSetSprColMode(
+				(ACTOR *)actor->watchedActor, half * SPRITE_COLOR_WHITE);
 		}
-	}
-	else {
+	} else {
 		fdActorSelectAnimation((ACTOR *)actor->watchedActor, 1);
-		fdEventPlaySnd(SE_POP_UP);
+		fdScriptPlaySnd(SE_POP_UP);
 		actor->y.fixed =
 			fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 		actor->watchedActor = 0;
-		return 0;
+		return FALSE;
 	}
 	actor->tmr++;
-	return 1;
+	return TRUE;
 }

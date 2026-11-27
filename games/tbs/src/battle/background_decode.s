@@ -1,8 +1,8 @@
 @ Why btBitDecoderDecodeImage is assembly:
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
-@ Why Model_DispatchBitCommand is assembly:
-@ Dispatcher enters Model_BitCommands' shared r0/r2/r3 decoder linkage;
+@ Why btModelDispatchBitCommand is assembly:
+@ Dispatcher enters btModelBitCommands' shared r0/r2/r3 decoder linkage;
 @ bit_commands.s documents its unsaved r5 and ordinary fp mask.
 @ In this file itself: it is a two-instruction fragment of that decoder, with
 @ no entry code and no return of its own, and its tell is the computed pc into
@@ -10,7 +10,7 @@
 @ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
 @ default branch; the table it indexes starts after the nop, in the next
 @ object.
-@ Why Model_BitCommands to Model_SetBitValue are assembly:
+@ Why btModelBitCommands to btModelSetBitValue are assembly:
 @ entries share live r0/r2/r3 decoder state with their caller; delta
 @ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified
@@ -41,23 +41,23 @@ btBitDecoderDecodeImage:
 .Lcolumn:
 	mov	r7, #32
 .Lrow:
-	bl Model_DispatchBitCommand
+	bl btModelDispatchBitCommand
 	lsr	r6, r5, #25
-	bl Model_DispatchBitCommand
+	bl btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #17
-	bl Model_DispatchBitCommand
+	bl btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #9
-	bl Model_DispatchBitCommand
+	bl btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl Model_DispatchBitCommand
+	bl btModelDispatchBitCommand
 	lsr	r6, r5, #25
-	bl Model_DispatchBitCommand
+	bl btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #17
-	bl Model_DispatchBitCommand
+	bl btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #9
-	bl Model_DispatchBitCommand
+	bl btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60
@@ -76,12 +76,12 @@ btBitDecoderDecodeImage:
 	.section .rodata
 	.balign 4
 @ Constants for btBitDecoderDecodeImage
-	.4byte 0x60606060, Model_DispatchHandlers
+	.4byte 0x60606060, btModelDispatchHandlers
 .syntax unified
 	.section .text.bit_dispatch,"ax",%progbits
 	.arm
-	.global Model_DispatchBitCommand
-Model_DispatchBitCommand:
+	.global btModelDispatchBitCommand
+btModelDispatchBitCommand:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
 AlchemyUncredited_tile_decode_1:
@@ -91,21 +91,21 @@ AlchemyUncreditedEnd_tile_decode_1:
 	.balign 4
 @ Branch targets filled in at runtime in the IWRAM copy
 	.space 32, 0
-	.global Model_DispatchHandlers
-Model_DispatchHandlers:
-	.4byte Model_BitCommands, Model_AddShortDelta, Model_AddSignedDelta, Model_AddLongDelta
-	.4byte Model_BitCommands, Model_SubtractShortDelta, Model_SetBitValue, Model_SubtractLongDelta
+	.global btModelDispatchHandlers
+btModelDispatchHandlers:
+	.4byte btModelBitCommands, btModelAddShortDelta, btModelAddSignedDelta, btModelAddLongDelta
+	.4byte btModelBitCommands, btModelSubtractShortDelta, btModelSetBitValue, btModelSubtractLongDelta
 .syntax unified
 	.section .text.bit_commands,"ax",%progbits
 	.arm
-	.global Model_BitCommands
-	.global Model_AddShortDelta
-	.global Model_SubtractShortDelta
-	.global Model_AddLongDelta
-	.global Model_SubtractLongDelta
-	.global Model_AddSignedDelta
-	.global Model_SetBitValue
-Model_BitCommands:
+	.global btModelBitCommands
+	.global btModelAddShortDelta
+	.global btModelSubtractShortDelta
+	.global btModelAddLongDelta
+	.global btModelSubtractLongDelta
+	.global btModelAddSignedDelta
+	.global btModelSetBitValue
+btModelBitCommands:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -113,7 +113,7 @@ Model_BitCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Model_AddShortDelta:
+btModelAddShortDelta:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -124,7 +124,7 @@ Model_AddShortDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Model_SubtractShortDelta:
+btModelSubtractShortDelta:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -135,7 +135,7 @@ Model_SubtractShortDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Model_AddLongDelta:
+btModelAddLongDelta:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -146,7 +146,7 @@ Model_AddLongDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Model_SubtractLongDelta:
+btModelSubtractLongDelta:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -157,7 +157,7 @@ Model_SubtractLongDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Model_AddSignedDelta:
+btModelAddSignedDelta:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -170,7 +170,7 @@ Model_AddSignedDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Model_SetBitValue:
+btModelSetBitValue:
 	ror	r5, r3, #10
 	and	r5, r5, #-33554432
 	lsr	r3, r3, #10

@@ -1,24 +1,24 @@
-/* The leader slides cell by cell over ice the way they face, turned to the */
-/* nearest cardinal, until a wall, ground more than 8 pixels up, a solid actor
- */
-/* or the end of the ice stops them. */
-void fdLeaderSlideOnIceAhead(void) {
+/* The leader slides metatile by metatile over ice the way they face, turned to
+   the nearest cardinal, until a wall, ground more than 8 pixels up, a solid
+   actor or the end of the ice stops them. */
+void fdLeaderSlideOnIceAhead(void)
+{
 	VECTOR3 probe;
-	s32 heading;
-	s32 startBehavior;
-	FIXED x;
-	FIXED z;
-	ACTOR *actor;
-	s32 nextBehavior;
-	u8 *layer;
-	ACTOR *other;
-	u8 *flags;
-	s32 i;
-	FIXED startX;
-	FIXED startZ;
+	Sint32	heading;
+	Sint32	startBehavior;
+	FIXED	x;
+	FIXED	z;
+	ACTOR  *actor;
+	Sint32	nextBehavior;
+	Uint8  *layer;
+	ACTOR  *other;
+	Uint8  *flags;
+	Sint32	i;
+	FIXED	startX;
+	FIXED	startZ;
 
 	actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	heading = (s16)FACING_NEAREST_CARDINAL(actor->facing);
+	heading = (Sint16)FACING_NEAREST_CARDINAL(actor->facing);
 	for(;;) {
 		fdLeaderStopIfPending();
 		actor->speedLimit = toFIXED(1);
@@ -27,19 +27,20 @@ void fdLeaderSlideOnIceAhead(void) {
 		actor->tgtZ = ACTOR_NO_TARGET;
 		actor->velX = 0;
 		actor->velZ = 0;
-		probe.x = startX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+		probe.x = startX = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		probe.y = actor->y.fixed;
-		probe.z = startZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+		probe.z = startZ = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		x = startX;
 		z = startZ;
 		layer = &actor->layer;
-		startBehavior = syFieldMapGridGetCellBehaviorAt(*layer, startX, startZ);
+		startBehavior =
+			syFieldMapGridGetMetatileBehaviorAt(*layer, startX, startZ);
 		syFieldVectorAddPolarOffset(16, heading, &probe);
 		nextBehavior =
-			syFieldMapGridGetCellBehaviorAt(*layer, probe.x, probe.z);
-		if(nextBehavior == CELL_BEHAVIOR_WALL ||
-		   fdMapGetTerrainHeight(*layer, probe.x, probe.z) - actor->y.fixed >
-			   toFIXED(8)) {
+			syFieldMapGridGetMetatileBehaviorAt(*layer, probe.x, probe.z);
+		if(nextBehavior == METATILE_BEHAVIOR_WALL ||
+			fdMapGetTerrainHeight(*layer, probe.x, probe.z) - actor->y.fixed >
+				toFIXED(8)) {
 			actor->facing = heading;
 			actor->velX = 0;
 			actor->velZ = 0;
@@ -58,26 +59,25 @@ void fdLeaderSlideOnIceAhead(void) {
 		for(;;) {
 			syFieldVectorAddPolarOffset(16, heading, &probe);
 			nextBehavior =
-				syFieldMapGridGetCellBehaviorAt(*layer, probe.x, probe.z);
-			if(nextBehavior == CELL_BEHAVIOR_WALL) {
+				syFieldMapGridGetMetatileBehaviorAt(*layer, probe.x, probe.z);
+			if(nextBehavior == METATILE_BEHAVIOR_WALL) {
 				break;
 			}
 			if(fdMapGetTerrainHeight(*layer, probe.x, probe.z) -
-				   actor->y.fixed >
-			   toFIXED(8)) {
+					actor->y.fixed >
+				toFIXED(8)) {
 				break;
 			}
 			{
-				s32 radius = actor->radius - 2;
+				Sint32 radius = actor->radius - 2;
 				other = Ram_HeapSlots->actors;
 				flags = &other->collisionFlg;
 				for(i = 0; i < ACTOR_COUNT;
 					i++, flags += sizeof(ACTOR), other++) {
 					if(other->script != NULL && (*flags & ACTOR_SOLID) &&
-					   other != actor) {
-						if(scEventCheckSpheresOverlap(&other->x.fixed, radius,
-													  &probe.x,
-													  other->radius - 2) >= 0) {
+						other != actor) {
+						if(scScriptCheckSpheresOverlap(&other->x.fixed, radius,
+							   &probe.x, other->radius - 2) >= 0) {
 							goto stop;
 						}
 					}

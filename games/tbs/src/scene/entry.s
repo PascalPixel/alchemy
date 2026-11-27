@@ -9,5 +9,5 @@
 	unnamed_stub scGetEntrances
 	unnamed_stub scGetExits
 	unnamed_stub scGetActorPlacements
-	unnamed_stub scGetTriggers
+	unnamed_stub scGetCues
 	unnamed_stub scGetExitRegions

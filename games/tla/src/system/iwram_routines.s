@@ -10,27 +10,27 @@
 @ compiler DI multiply patterns require consecutive halves, highpart
 @ patterns discard the low half. Its Thumb entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
 @ the halfword after bx pc is never run.
-@ Why IwramClearWords to IwramFillWords are assembly:
+@ Why syIWRAMWordsClear to syIWRAMWordsFill are assembly:
 @ push saves r5-r9 without lr and computed add pc enters the unrolled store
-@ body. IwramClearWords's Thumb entry's bx pc switches to the ARM code that
+@ body. syIWRAMWordsClear's Thumb entry's bx pc switches to the ARM code that
 @ follows, a mode switch inside a function; the halfword after bx pc is
 @ never run.
-@ Why IwramSqrt is assembly:
+@ Why syIWRAMSquart is assembly:
 @ movs r1, r0 copies and tests without a shift. The compilers' copy-and-test
 @ (*movsi_compare0) is subs r1, r0, #0; a register-to-register movs comes only
 @ with a shift.
 @ Secondary: the sign exit that follows is bxmi lr. *movsi_compare0 sets plain
 @ CC, where a signed < 0 test is lt; mi is the CC_NOOV spelling, which a
 @ copy-and-test never has.
-@ Why the unnamed function after IwramSqrt is assembly:
+@ Why the unnamed function after syIWRAMSquart is assembly:
 @ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
-@ Why IwramTransformVector to IwramMultiplyMatrix are assembly:
+@ Why syIWRAMTransformVector to syIWRAMMultiMatrix are assembly:
 @ fp is a product high half rather than a frame pointer; stmia writes
 @ arithmetic-transformed vectors, not compiler block-copy data.
-@ IwramMultiplyMatrix also copies and tests without a shift (movs r1, r1).
+@ syIWRAMMultiMatrix also copies and tests without a shift (movs r1, r1).
 @ Each Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
-@ Why IwramSignedRemainder to IwramUnsignedDivide are assembly:
+@ Why syIWRAMSignedRemainder to syIWRAMUnsignedDivide are assembly:
 @ signed wrappers use unshifted movs (movs r2, r1) and return through ip
 @ (mov ip, lr; bx ip). The core returns the quotient in r0 and the remainder
 @ in r1; the remainder wrappers read that second result (mov r0, r1), a
@@ -50,8 +50,8 @@
 	.balign 4
 .syntax unified
 	.thumb
-	.global IwramMulFX
-IwramMulFX:
+	.global syIWRAMMulFX
+syIWRAMMulFX:
 	bx	pc
 AlchemyUncredited_080007d6:
 	.2byte	0x0200
@@ -66,8 +66,8 @@ AlchemyUncreditedEnd_080007d6:
 	.balign 4
 .syntax unified
 	.thumb
-	.global IwramDivFX
-IwramDivFX:
+	.global syIWRAMDivFX
+syIWRAMDivFX:
 	bx	pc
 AlchemyUncredited_080007ea:
 	.2byte	0x0200
@@ -76,7 +76,7 @@ AlchemyUncreditedEnd_080007ea:
 	push	{r1, lr}
 	mov	r1, r0
 	mov	r0, #0x40000000
-	bl	IwramDivide
+	bl	syIWRAMDivide
 	pop	{r1, lr}
 	smull	r3, r0, r1, r0
 	lsl	r0, r0, #18
@@ -88,18 +88,18 @@ AlchemyUncreditedEnd_080007ea:
 	.include "games/tla/include/edition.inc"
 .syntax unified
 	.thumb
-	.global IwramClearWords
-IwramClearWords:
+	.global syIWRAMWordsClear
+syIWRAMWordsClear:
 	bx	pc
 AlchemyUncredited_08000812:
 	.2byte	0x0200
 	.arm
 AlchemyUncreditedEnd_08000812:
 	mov	r2, #0
-	.global IwramFillWords
-IwramFillWords:
+	.global syIWRAMWordsFill
+syIWRAMWordsFill:
 @ 78 47 00 02: Thumb bx pc and lsls r0, r0, #8 for a caller in Thumb state;
-@ IwramClearWords, falling through in ARM state, runs it as this andeq.
+@ syIWRAMWordsClear, falling through in ARM state, runs it as this andeq.
 	andeq	r4, r0, #120, 14
 	push	{r5, r6, r7, r8, r9}
 	mov	r3, r2
@@ -133,8 +133,8 @@ IwramFillWords:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
 	.thumb
-	.global IwramSqrt
-IwramSqrt:
+	.global syIWRAMSquart
+syIWRAMSquart:
 	bx	pc
 AlchemyUncredited_0800088e:
 	.2byte	0x0200
@@ -157,8 +157,8 @@ AlchemyUncreditedEnd_0800088e:
 	bne	.L_030002e8
 	bx	lr
 	.thumb
-	.global IwramExpandBitRuns
-IwramExpandBitRuns:
+	.global syIWRAMExpandBitRuns
+syIWRAMExpandBitRuns:
 	bx	pc
 AlchemyUncredited_080008ce:
 	.2byte	0x0200
@@ -192,8 +192,8 @@ AlchemyUncreditedEnd_080008ce:
 	.balign 4
 .syntax unified
 	.thumb
-	.global IwramTransformVector
-IwramTransformVector:
+	.global syIWRAMTransformVector
+syIWRAMTransformVector:
 	bx	pc
 AlchemyUncredited_0800090e:
 	.2byte	0x0200
@@ -228,8 +228,8 @@ AlchemyUncreditedEnd_0800090e:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
 	.thumb
-	.global IwramMultiplyMatrix
-IwramMultiplyMatrix:
+	.global syIWRAMMultiMatrix
+syIWRAMMultiMatrix:
 	bx	pc
 AlchemyUncredited_08000982:
 	.2byte	0x0200
@@ -333,8 +333,8 @@ CurrentMatrixTranslation:
 	ldmfd	sp!, {lr}
 	bx	lr
 	.thumb
-	.global IwramSignedRemainder
-IwramSignedRemainder:
+	.global syIWRAMSignedRemainder
+syIWRAMSignedRemainder:
 	bx	pc
 AlchemyUncredited_08000ac2:
 	.2byte	0x0200
@@ -342,20 +342,20 @@ AlchemyUncredited_08000ac2:
 AlchemyUncreditedEnd_08000ac2:
 	orrs	r3, r0, r1
 	bmi	.L_030004d4
-	.global IwramUnsignedRemainder
-IwramUnsignedRemainder:
+	.global syIWRAMUnsignedRemainder
+syIWRAMUnsignedRemainder:
 @ 78 47 00 02: Thumb bx pc and lsls r0, r0, #8 for a caller in Thumb state;
-@ IwramSignedRemainder, falling through in ARM state, runs it as this andeq.
+@ syIWRAMSignedRemainder, falling through in ARM state, runs it as this andeq.
 	andeq	r4, r0, #120, 14
 	mov	ip, lr
 	bl	.L_03000534
 	mov	r0, r1
 	bx	ip
-	.global IwramDivide
-IwramDivide:
+	.global syIWRAMDivide
+syIWRAMDivide:
 	.thumb
-	.global IwramSignedDivide
-IwramSignedDivide:
+	.global syIWRAMSignedDivide
+syIWRAMSignedDivide:
 	bx	pc
 AlchemyUncredited_08000ae2:
 	.2byte	0x0200
@@ -363,10 +363,10 @@ AlchemyUncredited_08000ae2:
 AlchemyUncreditedEnd_08000ae2:
 	orrs	r3, r0, r1
 	bmi	.L_030004a8
-	.global IwramUnsignedDivide
-IwramUnsignedDivide:
+	.global syIWRAMUnsignedDivide
+syIWRAMUnsignedDivide:
 .L_03000534:
-@ The same Thumb entry word, run as andeq by bl .L_03000534 and by IwramSignedDivide falling through.
+@ The same Thumb entry word, run as andeq by bl .L_03000534 and by syIWRAMSignedDivide falling through.
 	andeq	r4, r0, #120, 14
 	mov	r2, r1
 	mov	r1, r0
@@ -468,8 +468,8 @@ IwramUnsignedDivide:
 .syntax unified
 	.arm
 	.thumb
-	.global IwramDecompress
-IwramDecompress:
+	.global syIWRAMDecompress
+syIWRAMDecompress:
 	bx	pc
 AlchemyUncredited_08000c4e:
 	.2byte	0x0200
@@ -524,8 +524,8 @@ AlchemyUncreditedEnd_08000c4e:
 .syntax unified
 	.arm
 	.thumb
-	.global IwramCopyWords
-IwramCopyWords:
+	.global syIWRAMWordsCopy
+syIWRAMWordsCopy:
 	bx	pc
 AlchemyUncredited_08000cea:
 	.2byte	0x0200

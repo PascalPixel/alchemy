@@ -1,5 +1,6 @@
-/* fdActorResetScripted as a two-argument callback. */
-void fdActorResetScriptedFor(ACTOR *actor, s32 unused) {
+/* scActorResetScripted as a two-argument callback. */
+void scActorResetScriptedFor(ACTOR *actor, Sint32 unused)
+{
 	actor->motionFlg = 0;
 	actor->collisionFlg = 0;
 	fdActorSetSprFlags(actor, 0);

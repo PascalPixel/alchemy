@@ -16,7 +16,7 @@ three windows open in place of the usual menus when extra buttons are held:
 
 - The **scene selector** shows a scene and an
   [entrance](../../../../docs/tla/glossary.md#entrance), and A goes there. It works
-  because of how the game is built: every sequence starts cold, so the
+  because of how the game is built: every mode starts cold, so the
   selector only has to write a [destination](../../../../docs/tla/glossary.md#destination)
   the way a door does and let the current scene end.
 - The **flag editor** shows the game flags as a grid of 0s and 1s to flip.
@@ -38,7 +38,7 @@ the game starts.
 ## The test scenes
 
 The last twelve of the 325 scenes are the developers' own, in five
-overlays. Eight of them share one overlay, whose only events are four
+overlays. Eight of them share one overlay, whose only scripts are four
 Djinn: Flint, Fizz, Forge and Gust. Each would join the party when talked
 to, and the room would then set that Djinni's flag back to "not caught", so
 it was there again next time. In The Lost Age the room's list of actors is
@@ -47,7 +47,7 @@ empty, so there is no Djinni to talk to.
 That is the whole scene, and it is why `test_scenes.c` is a good first
 scene to open. In about a hundred lines it has everything every scene has:
 where the party comes in, where it can leave, the table that says which
-event a talk runs, and four events of one line each.
+script a talk runs, and four scripts of one line each.
 
 **Increase item and level** (`level.c`) is The Broken Seal's room again,
 where the party can be given any item and any level. Through four of its
@@ -76,4 +76,4 @@ battle.
   `scPrepareMap`.
 - The scene selector and the flag editor are in `window/window_*.c`
   (`mnDebugSceneSelectRun`, `mnDebugFlagEditorRun`), and the palette editor
-  is `fdPaletteEditorRun` in `field/field_sequence_*.c`.
+  is `fdPaletteEditorRun` in `field/field_mode_*.c`.

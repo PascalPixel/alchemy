@@ -1,11 +1,11 @@
-@ Why Render_SolidNarrowKernelEntry is assembly:
+@ Why btRenderSolidNarrowKernelEntry is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ r11 (fp) as an ordinary register: it holds a byte pointer from its argument
 @ block (ldr fp, [r0, #20]; ldrb r1, [fp, #-1]), not a frame pointer.
 @ movs r7, r8 copies and tests without a shift; the compilers' copy-and-test
 @ is subs r7, r8, #0.
-@ Why Render_TransformKernelEntry is assembly:
+@ Why btRenderTransformKernelEntry is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ push saves r5-r9, sl and fp without lr.
@@ -13,11 +13,11 @@
 @ frame pointer.
 .syntax unified
 	.thumb
-	.global Render_SolidNarrowKernel
-Render_SolidNarrowKernel:
-	.global Render_SolidNarrowKernelEntry
+	.global btRenderSolidNarrowKernel
+btRenderSolidNarrowKernel:
+	.global btRenderSolidNarrowKernelEntry
 	.thumb_func
-Render_SolidNarrowKernelEntry:
+btRenderSolidNarrowKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_0813b7a2:
@@ -162,14 +162,14 @@ AlchemyUncreditedEnd_0813b7a2:
 .L_0813b998:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
-	.global Render_SolidNarrowKernelCodeSize
-	.set Render_SolidNarrowKernelCodeSize, . - Render_SolidNarrowKernel
+	.global btRenderSolidNarrowKernelCodeSize
+	.set btRenderSolidNarrowKernelCodeSize, . - btRenderSolidNarrowKernel
 	.thumb
-	.global Render_TransformKernel
-Render_TransformKernel:
-	.global Render_TransformKernelEntry
+	.global btRenderTransformKernel
+btRenderTransformKernel:
+	.global btRenderTransformKernelEntry
 	.thumb_func
-Render_TransformKernelEntry:
+btRenderTransformKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_0813b9a2:
@@ -221,5 +221,5 @@ AlchemyUncreditedEnd_0813b9a2:
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
 	.4byte	CurrentMatrixTranslation
-	.global Render_TransformKernelCodeSize
-	.set Render_TransformKernelCodeSize, . - Render_TransformKernel
+	.global btRenderTransformKernelCodeSize
+	.set btRenderTransformKernelCodeSize, . - btRenderTransformKernel

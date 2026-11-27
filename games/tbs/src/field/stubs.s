@@ -1,4 +1,4 @@
-@ Actors, movement, map drawing and event commands.
+@ Actors, movement, map drawing and script commands.
 	.include "games/tbs/src/system/stub_table.inc"
 	.global Stubs_Field
 Stubs_Field:
@@ -37,34 +37,34 @@ Stubs_Field:
 	stub fdSprDissolveRunStub, fdSprDissolveRun
 	stub fdSprDissolveRunManyStub, fdSprDissolveRunMany
 	stub fdMapGridLoadMapStub, fdMapGridLoadMap
-	stub scWorldMapInitPerspectiveStub, fdWorldMapInitPerspective
+	stub fdWorldMapInitPerspectiveStub, fdWorldMapInitPerspective
 	unnamed_stub fdMapGridSetCameraCenter
 	stub fdMapGridCenterOnFollowedPointStub, fdMapGridCenterOnFollowedPoint
-	stub scWorldMapUpdateCurrentTileBlockStub, fdWorldMapUpdateCurrentTileBlock
-	stub scWorldMapLoadGraphicsStub, fdWorldMapLoadGraphics
+	stub fdWorldMapUpdateCurrentTileBlockStub, fdWorldMapUpdateCurrentTileBlock
+	stub fdWorldMapLoadGraphicsStub, fdWorldMapLoadGraphics
 	stub fdActorStartIdleStub, fdActorStartIdle
 	stub fdActorWaitForScriptEndStub, fdActorWaitForScriptEnd
 	stub fdActorSetMoveTargetStub, fdActorSetMoveTarget
 	stub fdActorWaitForMoveStub, fdActorWaitForMove
-	unnamed_stub fdMapGridGetScrRelativePos
+	unnamed_stub fdMapGridGetScreenRelativePos
 	unnamed_stub fdWorldMapUpdateView
-	stub scWorldMapLoadDefaultCellsAndUpdateBlockStub, fdWorldMapLoadDefaultCellsAndUpdateBlock
+	stub fdWorldMapLoadDefaultMetatilesAndUpdateBlockStub, fdWorldMapLoadDefaultMetatilesAndUpdateBlock
 	stub fdMapGridPlayMapEditStub, fdMapGridPlayMapEdit
-	stub fdMapGridCopyCellTilesIndicesRectStub, fdMapGridCopyCellTilesIndicesRect
+	stub fdMapGridCopyMetatileTilesIndicesRectStub, fdMapGridCopyMetatileTilesIndicesRect
 	stub fdTilesetAnimResumeStub, fdTilesetAnimResume
 	stub fdTilesetAnimPauseStub, fdTilesetAnimPause
 	stub fdBlendScriptResumeStub, fdBlendScriptResume
 	stub fdBlendScriptSuspendStub, fdBlendScriptSuspend
 	stub fdMapGridGetTerrainHeightStub, fdMapGridGetTerrainHeight
-	stub fdMapGridGetCellBehaviorAtStub, fdMapGridGetCellBehaviorAt
-	stub fdMapGridCopyCellTilesCellsRectStub, fdMapGridCopyCellTilesCellsRect
-	stub fdMapGridCopyCellAttributeRectStub, fdMapGridCopyCellAttributeRect
-	stub fdMapGridCopyCellIndexRectStub, fdMapGridCopyCellIndexRect
-	stub scWorldMapSetGridTileStub, fdWorldMapSetGridTile
+	stub fdMapGridGetMetatileBehaviorAtStub, fdMapGridGetMetatileBehaviorAt
+	stub fdMapGridCopyMetatileTilesMetatilesRectStub, fdMapGridCopyMetatileTilesMetatilesRect
+	stub fdMapGridCopyMetatileAttributeRectStub, fdMapGridCopyMetatileAttributeRect
+	stub fdMapGridCopyMetatileIndexRectStub, fdMapGridCopyMetatileIndexRect
+	stub fdWorldMapSetGridTileStub, fdWorldMapSetGridTile
 	stub fdMapGridCheckCollisionStub, fdMapGridCheckCollision
 	stub fdActorSetSprFlagsStub, fdActorSetSprFlags
 	stub fdActorSetBlendModeStub, fdActorSetBlendMode
-	stub fdMapGridSetScrShakeStub, fdMapGridSetScrShake
+	stub fdMapGridSetScreenShakeStub, fdMapGridSetScreenShake
 	stub fdMapGridWaitForShakeToSettleStub, fdMapGridWaitForShakeToSettle
 	unnamed_stub fdActorSetFirstSprAnimation
 	stub fdActorSystemSuspendProjectionAndShowSprsStub, fdActorSystemSuspendProjectionAndShowSprs
@@ -72,16 +72,16 @@ Stubs_Field:
 	unnamed_stub fdActorSetSprScale
 	stub fdMapGridIsWallAtStub, fdMapGridIsWallAt
 	stub fdActorRegisterSprMetadataStub, fdActorRegisterSprMetadata
-	stub scWorldMapStartStillImageStub, fdWorldMapStartStillImage
-	stub scWorldMapLoadAreaGraphicsStub, fdWorldMapLoadAreaGraphics
+	stub fdWorldMapStartStillImageStub, fdWorldMapStartStillImage
+	stub fdWorldMapLoadAreaGraphicsStub, fdWorldMapLoadAreaGraphics
 	stub fdActorSetSprColModeStub, fdActorSetSprColMode
 	stub fdSprSetAnimationColModesStub, fdSprSetAnimationColModes
 	stub fdActorScriptCheckOverlapStub, fdActorScriptCheckOverlap
 	stub fdMapGridSetShownLayersStub, fdMapGridSetShownLayers
 	stub fdSprAnimationSumCommandLengthsStub, fdSprAnimationSumCommandLengths
-	stub scWorldMapGetBattleEnvironmentStub, fdWorldMapGetBattleEnvironment
+	stub fdWorldMapGetBattleEnvironmentStub, fdWorldMapGetBattleEnvironment
 	stub fdSprPictureCacheLoadStub, fdSprPictureCacheLoad
-	stub fdMapGridSetCellBehaviorAtStub, fdMapGridSetCellBehaviorAt
+	stub fdMapGridSetMetatileBehaviorAtStub, fdMapGridSetMetatileBehaviorAt
 	stub fdSprSetAnimationSpeedStub, fdSprSetAnimationSpeed
 	stub fdSprColRemapPixelsStub, fdSprColRemapPixels
 	stub fdTilesetAnimSuspendAllStub, fdTilesetAnimSuspendAll

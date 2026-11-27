@@ -1,9 +1,8 @@
 #ifndef ALCHEMY_ACTOR_VIEW_H
 #define ALCHEMY_ACTOR_VIEW_H
 
-/* @file */
-/* Starting an actor's sprite animations and setting its sprite's colour mode */
-/* and priority. */
+/* Starting an actor's sprite animations and setting its sprite's colour mode
+   and priority. */
 
 #include "types.h"
 #include "system.h"
@@ -14,12 +13,12 @@ struct SPR_ANIMATION;
 
 struct FIELD_SPR;
 
-void fdSprSetAnimationColModesStub(struct SPR *sprite, u32 colorMode);
+void fdSprSetAnimationColModesStub(struct SPR *sprite, Uint32 colorMode);
 
-void fdActorSetSprFlagsStub(ACTOR *actor, u32 flags);
-void fdActorSetSprColModeStub(ACTOR *actor, u32 colorMode);
+void fdActorSetSprFlagsStub(ACTOR *actor, Uint32 flags);
+void fdActorSetSprColModeStub(ACTOR *actor, Uint32 colorMode);
 
-extern const s32 Actor_CameraScript[];
-extern const s32 ActorScript_EndScript[];
+extern const Sint32 Actor_CameraScript[];
+extern const Sint32 ActorScript_EndScript[];
 
 #endif

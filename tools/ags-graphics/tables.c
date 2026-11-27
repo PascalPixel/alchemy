@@ -49,7 +49,7 @@ typeOf(const char *name)
 	if (letters == 1 && *name == 'w')
 		return "u32";
 	if ((letters == 1 && *name == 'b') || !strncmp(name, "attr", letters) ||
-		!strncmp(name, "cell", letters))
+		!strncmp(name, "metatile", letters))
 		return "u8";
 	return NULL;
 }

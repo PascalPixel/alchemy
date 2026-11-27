@@ -1,12 +1,13 @@
-/* A flame thrower's spark in flight: it drifts on, slowing, growing and */
-/* spinning; just over the leader's head it stops going on and rises away. */
-void scFlameThrowerUpdateSpark(ACTOR *actor) {
-	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIXED dx = actor->bounce;
-	FIXED dz;
+/* A flame thrower's spark in flight: it drifts on, slowing, growing and
+   spinning; just over the leader's head it stops going on and rises away. */
+void scFlameThrowerUpdateSpark(ACTOR *actor)
+{
+	ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+	FIXED	   dx = actor->bounce;
+	FIXED	   dz;
 	FIELD_SPR *sprite;
-	s32 rate;
-	s32 scale;
+	Sint32	   rate;
+	Sint32	   scale;
 
 	actor->x.fixed += dx;
 	actor->y.fixed += actor->gravity;
@@ -21,7 +22,7 @@ void scFlameThrowerUpdateSpark(ACTOR *actor) {
 	actor->scaleY += actor->acceleration;
 	sprite->rotation += actor->tmr;
 	if(leader->y.fixed == leader->groundHeight &&
-	   fdActorIsAbove(actor, leader)) {
+		scActorIsAbove(actor, leader)) {
 		actor->z.fixed -= actor->sceneWord;
 		actor->gravity += actor->sceneWord >> 2;
 		actor->sceneWord = 0;

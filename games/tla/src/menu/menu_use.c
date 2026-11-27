@@ -1,27 +1,25 @@
-/* @file */
 /* Using an item or Psynergy from the menu: what it does to the party, and the
- */
-/* sound it plays. */
-/* Part of menu.c. */
+   sound it plays. Part of menu.c. */
 
-/* Uses the item in memberId's inventory slot on targetId, or on the whole */
-/* party when its ability's range is ABILITY_RANGE_ALL. An item heals by its */
-/* ability's plain power, not by its user's elemental power as Psynergy does. */
-/* A consumed item leaves the bag and Hermes' Water leaves its Empty Bottle; */
-/* returns -1 when it did nothing, keeping the item. */
-s32 mnItemUse(s32 slot, s32 memberId, s32 targetId) {
+/* Uses the item in memberId's inventory slot on targetId, or on the whole party
+   when its ability's range is ABILITY_RANGE_ALL. An item heals by its ability's
+   plain power, not by its user's elemental power as Psynergy does. A consumed
+   item leaves the bag and Hermes' Water leaves its Empty Bottle; returns -1
+   when it did nothing, keeping the item. */
+Sint32 mnItemUse(Sint32 slot, Sint32 memberId, Sint32 targetId)
+{
 	ITEM_MENU_STATE *menu;
-	s32 useResult;
-	s32 itemId;
-	UNIT *unit;
+	Sint32			 useResult;
+	Sint32			 itemId;
+	UNIT			*unit;
 	ITEM_DEFINITION *item;
 
 	unit = syUnitGet(memberId);
 	menu = Ram_HeapSlots->menuState;
 	itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
 	item = gmItemGetDirectStub(itemId);
-	useResult = mnAbilityApplyToTargets(PSYNERGY_ABILITY_MASK & item->abilityId,
-										memberId, targetId, 1);
+	useResult = mnAbilityApplyToTargets(
+		PSYNERGY_ABILITY_MASK & item->abilityId, memberId, targetId, 1);
 	if(useResult != -1) {
 		item = gmItemGetDirectStub(unit->inventory[slot]);
 		if(item->useType == ITEM_USE_CONSUMED) {
@@ -38,31 +36,32 @@ s32 mnItemUse(s32 slot, s32 memberId, s32 targetId) {
 	return useResult;
 }
 
-s32 btCalcRecoveryStub(s32 value, s32 selector, s32 multiplier);
+Sint32 gmBattleCalcRecoveryStub(
+	Sint32 value, Sint32 selector, Sint32 multiplier);
 
-/* Applies the healing, curing, revival or lasting stat rise of ability */
-/* abilityId, used by party member userId, to targetId, or to the whole party */
-/* when its range is ABILITY_RANGE_ALL. HP healing is scaled by the user's */
-/* power in the ability's element unless plainPower is set, as it is for an */
-/* item. Leaves the result's message in the menu's state; returns 0, or -1 when
- */
-/* nothing changed. */
-s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
-							s32 plainPower) {
+/* Applies the healing, curing, revival or lasting stat rise of ability
+   abilityId, used by party member userId, to targetId, or to the whole party
+   when its range is ABILITY_RANGE_ALL. HP healing is scaled by the user's power
+   in the ability's element unless plainPower is set, as it is for an item.
+   Leaves the result's message in the menu's state; returns 0, or -1 when
+   nothing changed. */
+Sint32 mnAbilityApplyToTargets(
+	Sint32 abilityId, Sint32 userId, Sint32 targetId, Sint32 plainPower)
+{
 	ABILITY_DEFINITION *ability;
-	ITEM_MENU_STATE *menu;
-	UNIT *target;
-	UNIT *caster;
-	s32 partyMessageChosen;
-	s32 changed;
-	u8 targetIndex;
-	s16 elementPower;
-	s32 randomAdjust;
-	s32 amount;
-	s32 result;
+	ITEM_MENU_STATE	   *menu;
+	UNIT			   *target;
+	UNIT			   *caster;
+	Sint32				partyMessageChosen;
+	Sint32				changed;
+	Uint8				targetIndex;
+	Sint16				elementPower;
+	Sint32				randomAdjust;
+	Sint32				amount;
+	Sint32				result;
 
 	menu = Ram_HeapSlots->menuState;
-	ability = btAbilityGet(abilityId);
+	ability = gmAbilityGetDirectStub(abilityId);
 	changed = 0;
 	result = 0;
 	partyMessageChosen = 0;
@@ -79,7 +78,7 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 
 	for(targetIndex = 0; targetIndex < menu->partyCnt; targetIndex++) {
 		if(ability->range == ABILITY_RANGE_ALL) {
-			targetId = (u16)menu->memberIds[targetIndex];
+			targetId = (Uint16)menu->memberIds[targetIndex];
 			target = syUnitGet(targetId);
 		}
 
@@ -88,36 +87,32 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 		case ABILITY_FORMULA_HEAL_HP:
 			if(plainPower == 0) {
 				if(ability->element != ELEMENT_NONE) {
-					s32 elementIndex;
+					Sint32 elementIndex;
 
 					caster = syUnitGet(userId);
 					elementIndex = ability->element;
 					elementPower = caster->element[elementIndex].power;
-				}
-				else
+				} else
 					elementPower = HEALING_BASE_POWER;
-				amount = btCalcRecoveryStub(amount, elementPower,
-											BATTLE_MULTIPLIER_ONE);
+				amount = gmBattleCalcRecoveryStub(
+					amount, elementPower, BATTLE_MULTIPLIER_ONE);
 			}
 
 			if(target->hp <= 0) {
 				if(partyMessageChosen == 0)
 					result = ITEM_USE_RESULT_HP_NOT_RECOVERED;
-			}
-			else {
+			} else {
 				if(target->hp == target->hpMax) {
 					if(partyMessageChosen == 0)
 						result = ITEM_USE_RESULT_HP_FULL;
-				}
-				else {
+				} else {
 					target->hp += amount;
 					if(target->hp > target->hpMax) {
 						amount -= target->hp - target->hpMax;
 						target->hp = target->hpMax;
 						if(partyMessageChosen == 0)
 							result = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
-					}
-					else if(partyMessageChosen == 0) {
+					} else if(partyMessageChosen == 0) {
 						result = ITEM_USE_RESULT_HP_RECOVERED;
 					}
 					gmUnitRecalculateGaugesStub(targetId);
@@ -131,15 +126,13 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 			break;
 
 		/* The lasting rises: the item's power, give or take one, except Lucky
-		 */
-		/* Pepper's. One time in four it is one more, one time in four one less.
-		 */
+		   Pepper's. One time in four it is one more, one time in four one
+		   less. */
 		case ABILITY_FORMULA_NO_POWER:
 			randomAdjust = syRandomBelow(4);
 			if(randomAdjust == 0) {
 				randomAdjust = -1;
-			}
-			else {
+			} else {
 				if(randomAdjust == 1)
 					randomAdjust = 1;
 				else
@@ -170,8 +163,7 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 			case ABILITY_APPLE:
 				target->baseAttack += amount + randomAdjust;
 				/* "Your Attack increased!" shows no number: neither this 3 nor
-				 * the */
-				/* Apple's power is seen. */
+				   the Apple's power is seen. */
 				mnMessageArgumentPushStub(3, MESSAGE_ARGUMENT_NUMBER);
 				result = ITEM_USE_RESULT_ATTACK_UP;
 				changed = 1;
@@ -190,16 +182,14 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 			if(target->pp == target->ppMax) {
 				if(partyMessageChosen == 0)
 					result = ITEM_USE_RESULT_PP_FULL;
-			}
-			else {
+			} else {
 				target->pp += amount;
 				if(target->pp > target->ppMax) {
 					amount -= target->pp - target->ppMax;
 					target->pp = target->ppMax;
 					if(partyMessageChosen == 0)
 						result = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
-				}
-				else if(partyMessageChosen == 0) {
+				} else if(partyMessageChosen == 0) {
 					result = ITEM_USE_RESULT_PP_RECOVERED;
 				}
 				gmUnitRecalculateGaugesStub(targetId);
@@ -227,15 +217,13 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 			if(target->hp <= 0 || target->hp == target->hpMax) {
 				if(partyMessageChosen == 0)
 					result = ITEM_USE_RESULT_HP_NOT_RECOVERED;
-			}
-			else {
+			} else {
 				target->hp += amount;
 				if(target->hp > target->hpMax) {
 					target->hp = target->hpMax;
 					if(partyMessageChosen == 0)
 						result = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
-				}
-				else if(partyMessageChosen == 0) {
+				} else if(partyMessageChosen == 0) {
 					result = ITEM_USE_RESULT_HP_RECOVERED;
 				}
 				gmUnitRecalculateGaugesStub(targetId);
@@ -247,15 +235,13 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 			if(target->pp == target->ppMax) {
 				if(partyMessageChosen == 0)
 					result = ITEM_USE_RESULT_PP_FULL;
-			}
-			else {
+			} else {
 				target->pp += amount;
 				if(target->pp > target->ppMax) {
 					target->pp = target->ppMax;
 					if(partyMessageChosen == 0)
 						result = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
-				}
-				else if(partyMessageChosen == 0) {
+				} else if(partyMessageChosen == 0) {
 					result = ITEM_USE_RESULT_PP_RECOVERED;
 				}
 				gmUnitRecalculateGaugesStub(targetId);
@@ -270,23 +256,20 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 				changed = 1;
 				if(partyMessageChosen == 0)
 					result = ITEM_USE_RESULT_REVIVED;
-			}
-			else if(partyMessageChosen == 0) {
+			} else if(partyMessageChosen == 0) {
 				result = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
 
 		/* Quartz's and Dew's revivals, which only battle uses: the menu never
-		 */
-		/* reaches these two. */
+		   reaches these two. */
 		case ABILITY_EFFECT_REVIVE_HALF:
 			if(target->hp == 0) {
 				target->hp = target->hpMax / 2;
 				gmUnitRecalculateGaugesStub(targetId);
 				if(partyMessageChosen == 0)
 					result = ITEM_USE_RESULT_REVIVED;
-			}
-			else if(partyMessageChosen == 0) {
+			} else if(partyMessageChosen == 0) {
 				result = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
@@ -297,8 +280,7 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 				gmUnitRecalculateGaugesStub(targetId);
 				if(partyMessageChosen == 0)
 					result = ITEM_USE_RESULT_REVIVED;
-			}
-			else if(partyMessageChosen == 0) {
+			} else if(partyMessageChosen == 0) {
 				result = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
@@ -309,8 +291,7 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 				changed = 1;
 				if(partyMessageChosen == 0)
 					result = ITEM_USE_RESULT_POISON_PURGED;
-			}
-			else if(partyMessageChosen == 0) {
+			} else if(partyMessageChosen == 0) {
 				result = ITEM_USE_RESULT_NOT_POISONED;
 			}
 			break;
@@ -326,35 +307,35 @@ s32 mnAbilityApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 	}
 
 	for(targetIndex = 0; targetIndex < menu->partyCnt; targetIndex++)
-		gmUnitCalcStub((u16)menu->memberIds[targetIndex]);
+		gmUnitCalcStub((Uint16)menu->memberIds[targetIndex]);
 	menu->msgOfs = result;
 	return 0;
 }
 
-/* Plays the sound of using item from the menu (mnAbilityPlayUseSnd), */
-/* after a use that changed something. */
-void mnItemPlayUseSnd(s32 item) {
-	mnAbilityPlayUseSnd(gmItemGetDirectStub(item)->abilityId &
-						PSYNERGY_ABILITY_MASK);
+/* Plays the sound of using item from the menu (mnAbilityPlayUseSnd), after a
+   use that changed something. */
+void mnItemPlayUseSnd(Sint32 item)
+{
+	mnAbilityPlayUseSnd(
+		gmItemGetDirectStub(item)->abilityId & PSYNERGY_ABILITY_MASK);
 }
 
 /* Plays the sound of a Psynergy or item used from the menu; unlike in battle,
- */
-/* no animation is drawn and nothing waits. Healing HP or PP plays */
-/* SE_RECOVERY, revival MUS_RECOVERING_AFTER_COMBAT, curing poison */
-/* MUS_POISON_CURED, and any other effect MUS_LUCKY. */
-void mnAbilityPlayUseSnd(s32 abilityId) {
-	s32 formula;
-	u32 effect;
+   no animation is drawn and nothing waits. Healing HP or PP plays SE_RECOVERY,
+   revival MUS_RECOVERING_AFTER_COMBAT, curing poison MUS_POISON_CURED, and any
+   other effect MUS_LUCKY. */
+void mnAbilityPlayUseSnd(Sint32 abilityId)
+{
+	Sint32				formula;
+	Uint32				effect;
 	ABILITY_DEFINITION *ability;
 
-	ability = btAbilityGet(abilityId);
+	ability = gmAbilityGetDirectStub(abilityId);
 	formula = ABILITY_FORMULA_MASK & ability->flg;
 	switch(formula) {
 	case ABILITY_FORMULA_HEAL_HP:
 		/* Started twice on the same music player, the second start restarts the
-		 */
-		/* first in the same frame, so it is heard once. */
+		   first in the same frame, so it is heard once. */
 		mnSndPlayReturnOne(SE_RECOVERY);
 		/* Fall through. */
 	case ABILITY_FORMULA_HEAL_PP:

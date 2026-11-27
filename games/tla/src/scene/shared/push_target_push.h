@@ -1,28 +1,27 @@
-/* The leader pushes the object to its resting place: the cells it leaves are */
-/* floor again and the cells it comes to are walls. */
-void scPushTargetPush(PUSH_TARGET target) {
+/* The leader pushes the object to its resting place: the metatiles it leaves
+   are floor again and the metatiles it comes to are walls. */
+void scPushTargetPush(PUSH_TARGET target)
+{
 	MAP_STATE *map = Ram_HeapSlots->mapGrid;
-	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	ACTOR *actor = fdActorGet(target.id);
-	s32 cell[3];
-	FIXED from[3];
-	s32 rectangle;
-	s32 width;
-	s32 height;
-	s32 originX;
-	s32 originZ;
-	s32 direction;
-	s32 speed;
-	s32 acceleration;
+	ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+	ACTOR	  *actor = fdActorGet(target.id);
+	Sint32	   metatile[3];
+	FIXED	   from[3];
+	Sint32	   rectangle;
+	Sint32	   width;
+	Sint32	   height;
+	Sint32	   originX;
+	Sint32	   originZ;
+	Sint32	   direction;
+	Sint32	   speed;
+	Sint32	   acceleration;
 
 	/* BUG: the leader's facing is taken as a 16.16 number, whose whole part is
-	 */
-	/* always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was */
-	/* meant: every push takes direction 0 (east), so the pushed thing rolls
-	 * with */
-	/* animation 2 whichever way it goes and the leader's step after it is none.
-	 */
-#ifdef BUGFIX
+	   always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was
+	   meant: every push takes direction 0 (east), so the pushed thing rolls
+	   with animation 2 whichever way it goes and the leader's step after it is
+	   none. */
+#if FIX_PUSH_FACING_AND_LEADER_STEP
 	direction = FACING_INDEX(leader->facing);
 #else
 	direction = FIXEDtoINT(leader->facing);
@@ -32,61 +31,57 @@ void scPushTargetPush(PUSH_TARGET target) {
 	acceleration = leader->acceleration;
 	from[0] = actor->x.fixed;
 	from[2] = actor->z.fixed;
-	cell[0] =
-		FIELD_CELL(actor->x.fixed + toFIXED(PushRectangles[rectangle][0]));
-	cell[2] =
-		FIELD_CELL(actor->z.fixed + toFIXED(PushRectangles[rectangle][1]));
+	metatile[0] =
+		FIELD_METATILE(actor->x.fixed + toFIXED(PushRectangles[rectangle][0]));
+	metatile[2] =
+		FIELD_METATILE(actor->z.fixed + toFIXED(PushRectangles[rectangle][1]));
 	width = (ABS(PushRectangles[rectangle][0]) +
-			 ABS(PushRectangles[rectangle][2])) >>
-			4;
+				ABS(PushRectangles[rectangle][2])) >>
+		4;
 	height = (ABS(PushRectangles[rectangle][1]) +
-			  ABS(PushRectangles[rectangle][3])) >>
-			 4;
-	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2],
-									width, height, CELL_BEHAVIOR_NORMAL);
-	fdActorSetSpeedAndAcceleration(MainRoutineStateWork.leaderActorId, 0.5,
-								   0.1);
+				 ABS(PushRectangles[rectangle][3])) >>
+		4;
+	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_GROUND, metatile[0],
+		metatile[2], width, height, METATILE_BEHAVIOR_NORMAL);
+	fdActorSetSpeedAndAcceleration(
+		MainRoutineStateWork.leaderActorId, 0.5, 0.1);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_PUSH);
 	syWait(15);
 	/* The leader follows the object half its way. */
 	{
-		s32 deltaX = FIXEDtoINT(target.x - from[0]) >> 1;
-		s32 deltaZ = FIXEDtoINT(target.z - from[2]) >> 1;
+		Sint32 deltaX = FIXEDtoINT(target.x - from[0]) >> 1;
+		Sint32 deltaZ = FIXEDtoINT(target.z - from[2]) >> 1;
 
-		fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, deltaX,
-									deltaZ);
+		fdActorSetDestinationOffset(
+			MainRoutineStateWork.leaderActorId, deltaX, deltaZ);
 	}
 	fdActorGet(MainRoutineStateWork.leaderActorId)->update =
-		fdActorStopAtPushTarget;
+		scActorStopAtPushTarget;
 	syWait(4);
 	if(direction >= FACING_INDEX(FACING_SOUTHWEST) &&
-	   direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
+		direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
 		fdActorSelectAnimation(actor, 3);
 	else
 		fdActorSelectAnimation(actor, 2);
-	fdEventPlaySnd(SE_HEAVY_MOVE);
+	fdScriptPlaySnd(SE_HEAVY_MOVE);
 	fdActorSetSpeedAndAcceleration(target.id, 0.5, 0.1);
 	scFieldActorSetMoveTargetFX(actor, target.x, target.y, target.z);
 	scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
-	fdActorSetSpeedAndAcceleration(MainRoutineStateWork.leaderActorId, 0.3,
-								   0.1);
+	fdActorSetSpeedAndAcceleration(
+		MainRoutineStateWork.leaderActorId, 0.3, 0.1);
 	/* BUG: the leader's step after the push reads both halves from the step's
-	 */
-	/* z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
-	 */
-	/* meant). With direction 0 both are 0. */
+	   z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
+	   meant). With direction 0 both are 0. */
 	{
-		s32 step = PushLeaderSteps[direction];
+		Sint32 step = PushLeaderSteps[direction];
 
-#ifdef BUGFIX
+#if FIX_PUSH_FACING_AND_LEADER_STEP
 		fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId,
-									PUSH_STEP_X(step) / 2,
-									PUSH_STEP_Z(step) / 2);
+			PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
 #else
 		fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId,
-									toFIXED(step) >> 31,
-									FIXEDtoINT(toFIXED(step)) >> 1);
+			toFIXED(step) >> 31, FIXEDtoINT(toFIXED(step)) >> 1);
 #endif
 	}
 	if(target.func != 0)
@@ -97,29 +92,31 @@ void scPushTargetPush(PUSH_TARGET target) {
 	leader->speedLimit = speed;
 	leader->acceleration = acceleration;
 	scFieldActorWaitForMove(actor);
-	fdEventPlaySnd(SE_STOP_EXIT_SE);
-	fdEventPlaySnd(SE_HEAVY_STOP);
+	fdScriptPlaySnd(SE_STOP_EXIT_SE);
+	fdScriptPlaySnd(SE_HEAVY_STOP);
 	scFieldActorSetPosAndResetMotion(actor, target.x, actor->y.fixed, target.z);
 	fdActorSelectAnimation(actor, 1);
 	target.x = target.x + toFIXED(PushRectangles[rectangle][0]);
 	target.z = target.z + toFIXED(PushRectangles[rectangle][1]);
 	target.x >>= 20;
 	target.z >>= 20;
-	originX = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].ofsX);
-	originZ = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].ofsY);
-	fdMapGridCopyCellAttributes(target.x, target.z, width, height,
-								originX + target.x, originZ + target.z);
+	originX = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsX);
+	originZ = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsY);
+	fdMapGridCopyMetatileAttributes(target.x, target.z, width, height,
+		originX + target.x, originZ + target.z);
 	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_GROUND, target.x, target.z,
-									width, height, CELL_BEHAVIOR_WALL);
+		width, height, METATILE_BEHAVIOR_WALL);
 	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, target.x, target.z,
-									width, height, CELL_BEHAVIOR_WALL);
-	cell[0] = FIELD_CELL(from[0] + toFIXED(PushRectangles[rectangle][0]));
-	cell[2] = FIELD_CELL(from[2] + toFIXED(PushRectangles[rectangle][1]));
-	originX += cell[0];
-	originZ += cell[2];
-	fdMapGridCopyCellAttributes(originX, originZ, width, height, cell[0],
-								cell[2]);
-	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, cell[0], cell[2],
-									width, height, CELL_BEHAVIOR_NORMAL);
-	fdEventNoOp();
+		width, height, METATILE_BEHAVIOR_WALL);
+	metatile[0] =
+		FIELD_METATILE(from[0] + toFIXED(PushRectangles[rectangle][0]));
+	metatile[2] =
+		FIELD_METATILE(from[2] + toFIXED(PushRectangles[rectangle][1]));
+	originX += metatile[0];
+	originZ += metatile[2];
+	fdMapGridCopyMetatileAttributes(
+		originX, originZ, width, height, metatile[0], metatile[2]);
+	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, metatile[0],
+		metatile[2], width, height, METATILE_BEHAVIOR_NORMAL);
+	fdScriptNoOperation();
 }

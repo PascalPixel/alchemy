@@ -1,8 +1,8 @@
 @ Why assembly: mrs SPSR; IRQ dispatcher restores SPSR and CPU modes.
 .syntax unified
 	.arm
-	.global IwramIrqMain
-IwramIrqMain:
+	.global syIWRAMIRQMain
+syIWRAMIRQMain:
 	mov	r3, #0x4000000
 	ldr	r2, [r3, #512]!
 	ldrh	r1, [r3, #8]

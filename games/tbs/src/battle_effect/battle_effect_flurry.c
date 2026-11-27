@@ -1,112 +1,115 @@
-/* @file */
-/* Gust, Flying Attack and the rush strikes. */
-/* Part of battle_effect.c. */
+/* Gust, Flying Attack and the rush strikes. Part of battle_effect.c. */
 
 /* The motes in PARTICLES, waiting above the target. */
-#define FLURRY_WAITING_MOTES 768
+#define FLURRY_WAITING_MOTES	768
 /* The motes the strikes draw, from the first. */
-#define FLURRY_DRAWN_MOTES 512
+#define FLURRY_DRAWN_MOTES		512
 /* Each strike's run of PARTICLES, from the strike's number times this. */
 #define FLURRY_MOTES_PER_STRIKE 32
 
-/* Each plays the flurry mode `basic`, `stronger` or `strongest` as the */
-/* effect's variant (EFFECT_VARIANT) says. */
-#define FLURRY_DEFINE_BY_VARIANT(name, basic, stronger, strongest)             \
-	void name(BATTLE_EFFECT_PARM *args) {                                      \
-		if(args->variant == EFFECT_VARIANT_BASIC) {                            \
-			btEffectRunFlurry(args, basic);                                    \
-			return;                                                            \
-		}                                                                      \
-		if(args->variant == EFFECT_VARIANT_STRONGER) {                         \
-			btEffectRunFlurry(args, stronger);                                 \
-			return;                                                            \
-		}                                                                      \
-		btEffectRunFlurry(args, strongest);                                    \
+/* Each plays the flurry mode `basic`, `stronger` or `strongest` as the effect's
+   variant (EFFECT_VARIANT) says. */
+#define FLURRY_DEFINE_BY_VARIANT(name, basic, stronger, strongest) \
+	void name(BATTLE_EFFECT_PARM *args) \
+	{ \
+		if(args->variant == EFFECT_VARIANT_BASIC) { \
+			btEffectRunFlurry(args, basic); \
+			return; \
+		} \
+		if(args->variant == EFFECT_VARIANT_STRONGER) { \
+			btEffectRunFlurry(args, stronger); \
+			return; \
+		} \
+		btEffectRunFlurry(args, strongest); \
 	}
 
-/* The user strikes the first target once, twice or three times as the */
-/* variant grows with a double or triple blow, and each strike fills the */
-/* canvas with light. */
-/* */
-/* Abilities: Gust; Rapid Smash, Sonic Smash, Slice. */
-FLURRY_DEFINE_BY_VARIANT(btEffectRunGust, FLURRY_GUST, FLURRY_GUST_DOUBLE,
-						 FLURRY_GUST_TRIPLE)
+/* The user strikes the first target once, twice or three times as the variant
+   grows with a double or triple blow, and each strike fills the canvas with
+   light.
 
-/* The user strikes the first target five times. */
-/* */
-/* Abilities: Bear Claw; Counterstrike. */
-void btEffectRunBearClaw(BATTLE_EFFECT_PARM *args) {
+   Abilities: Gust; Rapid Smash, Sonic Smash, Slice. */
+FLURRY_DEFINE_BY_VARIANT(
+	btEffectRunGust, FLURRY_GUST, FLURRY_GUST_DOUBLE, FLURRY_GUST_TRIPLE)
+
+/* The user strikes the first target five times.
+
+   Abilities: Bear Claw; Counterstrike. */
+void btEffectRunBearClaw(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
-/* Ransack plays the same five strikes as Bear Claw. */
-/* */
-/* Abilities: Ransack; Mad Dash. */
-void btEffectRunRansack(BATTLE_EFFECT_PARM *args) {
+/* Ransack plays the same five strikes as Bear Claw.
+
+   Abilities: Ransack; Mad Dash. */
+void btEffectRunRansack(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
-/* Seven strikes land on the first target in the lime palette. */
-/* */
-/* Abilities: Bacteria Rush. */
-void btEffectRunBacteriaRush(BATTLE_EFFECT_PARM *args) {
+/* Seven strikes land on the first target in the lime palette.
+
+   Abilities: Bacteria Rush. */
+void btEffectRunBacteriaRush(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_BACTERIA_RUSH);
 }
 
-/* Nine strikes land on the first target in the blue palette. */
-/* */
-/* Abilities: Freebite Rush. */
-void btEffectRunFreebiteRush(BATTLE_EFFECT_PARM *args) {
+/* Nine strikes land on the first target in the blue palette.
+
+   Abilities: Freebite Rush. */
+void btEffectRunFreebiteRush(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_FREEBITE_RUSH);
 }
 
-/* One, two or three strikes land on the first target as the variant grows */
-/* with a double or triple blow. */
-/* */
-/* Abilities: Flying Attack; Swift Strike. */
+/* One, two or three strikes land on the first target as the variant grows with
+   a double or triple blow.
+
+   Abilities: Flying Attack; Swift Strike. */
 FLURRY_DEFINE_BY_VARIANT(btEffectRunFlyingAttack, FLURRY_FLYING_ATTACK,
-						 FLURRY_FLYING_ATTACK_DOUBLE,
-						 FLURRY_FLYING_ATTACK_TRIPLE)
+	FLURRY_FLYING_ATTACK_DOUBLE, FLURRY_FLYING_ATTACK_TRIPLE)
 
 /* The bytes of a Flurry_Styles row, one row a mode. */
 typedef enum FLURRY_COLUMN {
 	FLURRY_ARC_SHEET, /* the arcs (FLURRY_ARC) */
 	FLURRY_PALETTE,	  /* whose palette (FLURRY_PAL) */
 	FLURRY_STRIKES,
-	FLURRY_MOTES,	 /* motes thrown by each strike, at most */
-					 /* FLURRY_MOTES_PER_STRIKE */
+	/* motes thrown by each strike, at most FLURRY_MOTES_PER_STRIKE */
+	FLURRY_MOTES,
 	FLURRY_INTERVAL, /* frames between strikes */
 	FLURRY_FRAMES,	 /* frames in the whole effect */
 	FLURRY_FLASH	 /* 1 fills the canvas with level 47 on each hit */
 } FLURRY_COLUMN;
 
 /* The flash pictures, packed to half width after the arcs. */
-#define FLURRY_ORB_PICTURES 20736
+#define FLURRY_ORB_PICTURES	 20736
 /* The wave pictures, in the map grid buffer past the motes. */
-#define FLURRY_WAVE_PICTURES (Ram_MapGridCellBuffer + 24064)
+#define FLURRY_WAVE_PICTURES (Ram_MapGridMetatileBuffer + 24064)
 
-/* The user closes on the first target and strikes it again and again, each */
-/* strike an arc or a wave with a flash and a spray of motes; the last knocks */
-/* the target back. */
-void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
-	SCR_POINT userPos;
-	SCR_POINT targetPos;
-	SCR_POINT screen;
-	s32 screenX;
-	s32 screenY;
-	BLITTER_PAIR draw;
+/* The user closes on the first target and strikes it again and again, each
+   strike an arc or a wave with a flash and a spray of motes; the last knocks
+   the target back. */
+void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
+{
+	SCREEN_POINT		 userPos;
+	SCREEN_POINT		 targetPos;
+	SCREEN_POINT		 screen;
+	Sint32				 screenX;
+	Sint32				 screenY;
+	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	s32 frame;
-	u8 *sprites;
-	BATTLE_CAMERA *camera;
-	ACTOR *target;
-	u8 *palette;
-	s32 paletteId;
-	s32 row;
-	s32 col;
-	s32 i;
-	s32 j;
+	void				*canvas;
+	Sint32				 frame;
+	Uint8				*sprites;
+	BATTLE_CAMERA		*camera;
+	ACTOR				*target;
+	Uint8				*palette;
+	Sint32				 paletteId;
+	Sint32				 row;
+	Sint32				 col;
+	Sint32				 i;
+	Sint32				 j;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -117,29 +120,28 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	if(state->args->prelude == 1)
 		btEffectRunDjinniEntrance(args, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
-								  state->args->side, DJINNI_ANCHOR_OVER_USER,
-								  &screenX, &screenY);
+			state->args->side, DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
 
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);
 	for(row = 0; row != YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT; row++) {
 		for(col = 0; col != YELLOW_ORB_WIDTH; col++) {
-			s32 src = row * YELLOW_ORB_WIDTH + col;
-			s32 dst =
+			Sint32 src = row * YELLOW_ORB_WIDTH + col;
+			Sint32 dst =
 				row * YELLOW_ORB_PACKED_WIDTH + col / 2 + FLURRY_ORB_PICTURES;
 
 			state->sheet[dst] = state->sheet[src];
 		}
 	}
 	if(Flurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
-		btResourceLoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A, state->sheet, 1,
-									1);
+		btResourceLoadAndDecompress(
+			RESOURCE_BLUE_ARC_SHEET_A, state->sheet, 1, 1);
 	else
-		btResourceLoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1,
-									1);
-	btResourceLoadAndDecompress(RESOURCE_WAVE_SHEET, FLURRY_WAVE_PICTURES, 1,
-								0);
+		btResourceLoadAndDecompress(
+			RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1, 1);
+	btResourceLoadAndDecompress(
+		RESOURCE_WAVE_SHEET, FLURRY_WAVE_PICTURES, 1, 0);
 	switch(Flurry_Styles[mode][FLURRY_PALETTE]) {
 	case FLURRY_PALETTE_MARS_DJINNI:
 		paletteId = RESOURCE_MARS_DJINN_SHEET;
@@ -159,8 +161,8 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 	sySynch(1);
 
 	btProjectionScaledUnit(state->args->tgts[0], &targetPos);
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
-						  CANVAS_FADE_THREE_QUARTERS);
+	EFFECT_START_TRANSFER(
+		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
 	/* Motes wait above the target until their strike releases them. */
 	target = btObjectGetStub(state->args->tgts[0])->actor;
@@ -168,10 +170,9 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 		PARTICLE *mote = &PARTICLES[i];
 
 		SET_POSITION(mote, target->x.fixed, target->y.fixed + toFIXED(25),
-					 target->z.fixed);
+			target->z.fixed);
 		SET_VELOCITY(mote, (syRandom() & 255) << 12,
-					 ((syRandom() & 255) - 127) << 12,
-					 ((syRandom() & 255) - 127) << 12);
+			((syRandom() & 255) - 127) << 12, ((syRandom() & 255) - 127) << 12);
 		if(mote->x > 0)
 			mote->velX = -mote->velX;
 		mote->variant = -1; /* frames left (negative: not out yet) */
@@ -179,59 +180,50 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 	btMotionApproachTargetStub(state->args->user, state->args->tgts[0], 4, 0);
 
 	for(frame = 0; frame != Flurry_Styles[mode][FLURRY_FRAMES]; frame++) {
-		s32 strikes = Flurry_Styles[mode][FLURRY_STRIKES];
+		Sint32 strikes = Flurry_Styles[mode][FLURRY_STRIKES];
 
 		btProjectionScaledUnit(state->args->user, &userPos);
 		userPos.x /= 2;
 
 		if(state->args->side == EFFECT_SIDE_ENEMIES) {
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-								COMPOSITE_LIGHTEN);
+			EFFECT_LOAD_BLITTER(
+				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-								EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-								COMPOSITE_LIGHTEN);
-		}
-		else {
+				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
+		} else {
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-								EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-								COMPOSITE_LIGHTEN);
+				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-								EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-								COMPOSITE_LIGHTEN);
+				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_LIGHTEN);
 		}
 		draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 		for(i = 0; i != strikes; i++) {
-			s32 start = i * Flurry_Styles[mode][FLURRY_INTERVAL];
+			Sint32 start = i * Flurry_Styles[mode][FLURRY_INTERVAL];
 
 			if(frame >= start && frame < start + 6) {
-				s32 step = frame - start;
+				Sint32 step = frame - start;
 
 				if((i & 3) <= 1 ||
-				   Flurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
+					Flurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
 					if(state->args->side == EFFECT_SIDE_ENEMIES)
 						draw[i & 1](canvas,
-									state->sheet +
-										step * PICTURE_BYTES(BLUE_ARC),
-									targetPos.x / 2 - 16, targetPos.y - 40,
-									BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+							state->sheet + step * PICTURE_BYTES(BLUE_ARC),
+							targetPos.x / 2 - 16, targetPos.y - 40,
+							BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
 					else
 						draw[i & 1](canvas,
-									state->sheet +
-										step * PICTURE_BYTES(BLUE_ARC),
-									targetPos.x / 2 - 32, targetPos.y - 40,
-									BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
-				}
-				else {
+							state->sheet + step * PICTURE_BYTES(BLUE_ARC),
+							targetPos.x / 2 - 32, targetPos.y - 40,
+							BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+				} else {
 					if(state->args->side == EFFECT_SIDE_ENEMIES)
-						draw[i & 1](
-							canvas,
+						draw[i & 1](canvas,
 							FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
 							targetPos.x / 2 - 16, userPos.y - WAVE_HEIGHT / 2,
 							WAVE_WIDTH, WAVE_HEIGHT);
 					else
-						draw[i & 1](
-							canvas,
+						draw[i & 1](canvas,
 							FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
 							targetPos.x / 2 - 32, userPos.y - WAVE_HEIGHT / 2,
 							WAVE_WIDTH, WAVE_HEIGHT);
@@ -241,17 +233,16 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 				if(Flurry_Styles[mode][FLURRY_FLASH] == 1)
 					syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
 				btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_WHITE,
-									POSE_DAMAGE, 0, 4);
+					POSE_DAMAGE, 0, 4);
 				if(i == strikes - 1) {
-					btMotionApplyKnockbackStub(state->args->tgts[0],
-											   KNOCKBACK_HURL);
+					btMotionApplyKnockbackStub(
+						state->args->tgts[0], KNOCKBACK_HURL);
 					state->shakeFrm = 8;
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-				}
-				else {
+				} else {
 					if(i & 1)
-						btMotionApplyKnockbackStub(state->args->tgts[0],
-												   KNOCKBACK_JOLT);
+						btMotionApplyKnockbackStub(
+							state->args->tgts[0], KNOCKBACK_JOLT);
 					state->shakeFrm = 4;
 					sySndPlayStub(SE_HEAVY_IMPACT);
 				}
@@ -261,28 +252,28 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 			}
 			if(frame >= start + 2 && frame < start + 14)
 				draw[0](canvas,
-						state->sheet +
-							((frame - start - 2) / 2) *
-								PICTURE_BYTES(YELLOW_ORB_PACKED) +
-							FLURRY_ORB_PICTURES,
-						targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
-						targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
-						YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
+					state->sheet +
+						((frame - start - 2) / 2) *
+							PICTURE_BYTES(YELLOW_ORB_PACKED) +
+						FLURRY_ORB_PICTURES,
+					targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
+					targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
+					YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
 		}
 		EFFECT_RELEASE_BLITTERS();
 
 		/* Released motes fly and shrink as they die. */
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-							COMPOSITE_ADDITIVE);
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
-							COMPOSITE_LIGHTEN);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 		draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 		for(i = 0; i != FLURRY_DRAWN_MOTES; i++) {
 			PARTICLE *mote = &PARTICLES[i];
 
-			s32 size = mote->variant;
+			Sint32 size = mote->variant;
 
 			if(size > 0) {
 				btProjectionPoint(&mote->x, &screen);
@@ -290,7 +281,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 				size >>= 3;
 				size++;
 				EFFECT_DRAW_MOTE(draw[(i / 2) & 1], canvas, sprites, screen.x,
-								 screen.y, size);
+					screen.y, size);
 				btParticleAdvanceWithGravity3D(mote, 60, -toFIXED(1) / 64);
 				if(mote->y < toFIXED(8))
 					mote->velY = -mote->velY / 2;

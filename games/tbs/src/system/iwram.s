@@ -1,5 +1,6 @@
+	.include "games/tbs/include/edition.inc"
 	.section .sym_iwram,"aw",%nobits
-	.ifdef TBS_EDITION_DE
+	.if IWRAM_LAYOUT_SHIFT
 	.space 16
 	.endif
 	.global OamDepthLists
@@ -14,11 +15,11 @@ SavedStackSize:
 	.global VramCacheBlockOwners
 VramCacheBlockOwners:
 	.space 512
-	.global TasksRunning
-TasksRunning:
+	.global EventsRunning
+EventsRunning:
 	.space 16
-	.global TasksWork
-TasksWork:
+	.global EventBuf
+EventBuf:
 	.space 160
 	.global ScreenFadeVBlanksLeft
 ScreenFadeVBlanksLeft:
@@ -29,8 +30,8 @@ DebugTextEnabled:
 	.global BgScrollWork
 BgScrollWork:
 	.space 24
-	.global KeysHeld
-KeysHeld:
+	.global PerData
+PerData:
 	.space 4
 	.global ScreenFadeStartLevel
 ScreenFadeStartLevel:
@@ -41,17 +42,17 @@ CpuLoadTimer:
 	.global ScanlinePitch
 ScanlinePitch:
 	.space 4
-	.global KeysPressedLatch
-KeysPressedLatch:
+	.global PerPushLatch
+PerPushLatch:
 	.space 4
-	.global KeysRepeatDirected
-KeysRepeatDirected:
+	.global PerRepeatDirected
+PerRepeatDirected:
 	.space 4
-	.global KeyRepeatTimer
-KeyRepeatTimer:
+	.global PerRepeatTimer
+PerRepeatTimer:
 	.space 4
-	.global KeysRepeat
-KeysRepeat:
+	.global PerRepeat
+PerRepeat:
 	.space 12
 	.global VramCacheEntries
 VramCacheEntries:
@@ -59,8 +60,8 @@ VramCacheEntries:
 	.global DecodeFillByte
 DecodeFillByte:
 	.space 4
-	.global KeysPressed
-KeysPressed:
+	.global PerPush
+PerPush:
 	.space 4
 	.global ScreenFadeVBlanks
 ScreenFadeVBlanks:
@@ -110,8 +111,8 @@ ScreenFadeToWhite:
 	.global ProjectionWork
 ProjectionWork:
 	.space 20
-	.global KeysHeldLast
-KeysHeldLast:
+	.global PerDataLast
+PerDataLast:
 	.space 4
 	.global ScreenFadeLayers
 ScreenFadeLayers:
@@ -122,9 +123,9 @@ VBlankCallback:
 	.global OamMatrixCount
 OamMatrixCount:
 	.space 4
-	.global KeysDirection
-KeysDirection:
-	.ifdef TBS_EDITION_DE
+	.global PerDirection
+PerDirection:
+	.if IWRAM_GAP_AFTER_KEYS_DIRECTION
 	.space 12
 	.else
 	.space 4
@@ -132,8 +133,8 @@ KeysDirection:
 	.global IdleSleepEnabled
 IdleSleepEnabled:
 	.space 4
-	.global KeysHeldAtVBlank
-KeysHeldAtVBlank:
+	.global PerDataAtVBlank
+PerDataAtVBlank:
 	.space 12
 	.global OamCopyEnabled
 OamCopyEnabled:
@@ -153,9 +154,9 @@ VBlankDone:
 	.global MatrixStackTop
 MatrixStackTop:
 	.space 8
-	.global TasksInitialized
-TasksInitialized:
-	.ifdef TBS_EDITION_DE
+	.global EventsInitialized
+EventsInitialized:
+	.if IWRAM_GAP_AFTER_KEYS_DIRECTION
 	.space 4
 	.else
 	.space 12
@@ -261,8 +262,8 @@ BattleEntryTimer:
 	.global BattleBackgroundStateWork
 BattleBackgroundStateWork:
 	.space 28
-	.global SaveStateWork
-SaveStateWork:
+	.global BupStateWork
+BupStateWork:
 	.space 12
 	.global EnemyUnits
 EnemyUnits:
@@ -307,7 +308,7 @@ NumberBufferHexEnd:
 	.space 2
 	.global NumberBufferDecimalEnd
 NumberBufferDecimalEnd:
-	.ifdef TBS_EDITION_DE
+	.if IWRAM_LAYOUT_SHIFT
 	.space 118
 	.else
 	.space 134

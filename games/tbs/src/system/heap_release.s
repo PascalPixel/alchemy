@@ -46,7 +46,7 @@ syHeapRelease:
 .L_heap_heads:
 	.4byte	HeapSlots
 
-@ Why assembly: Irq_StopOnGamePakRemoved has a reachable exit with no return or
+@ Why assembly: syStopOnGamePakRemoved has a reachable exit with no return or
 @ interworking branch: when (IE & IF & 0x2000) is zero, its final bne falls
 @ straight into Thumb syInit while the CPU is still in ARM mode.
 @ Neither a procedure return nor a tail call can have this linkage.
@@ -66,8 +66,8 @@ syHeapRelease:
 	.section .text.gamepak, "ax", %progbits
 	.balign 4
 	.arm
-	.global Irq_StopOnGamePakRemoved
-Irq_StopOnGamePakRemoved:
+	.global syStopOnGamePakRemoved
+syStopOnGamePakRemoved:
 	mov	ip, #0x04000000
 	add	r3, ip, #0x200
 	ldr	r2, [r3]

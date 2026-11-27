@@ -183,14 +183,17 @@ Djinn), setto (セット, Set), sutanbai (スタンバイ, Standby) and rikabari
 
 | Word | What it means |
 | --- | --- |
-| sequence | the game's flow of modes, one after another ([sequence](#sequence)) |
+| mode | one kind of play the main routine runs ([mode](#mode)) |
+| sequence | a piece of music the sound driver plays |
+| event | a function run once a frame from a list ([event](#event)) |
+| trigger | a button of the pad, which is why a scene's signal is a [cue](#cue) |
 | work | a function's memory |
 | transfer | copying to video memory |
 | dummy | a placeholder |
 | pattern | one drawing of a sprite |
 | character | an 8 by 8 tile |
-| cell | a sprite built of several pieces, not a map's [cell](#cell) |
-| backup | the save memory |
+| cell | an 8 by 8 square, our tile, which is why a map's square is a [metatile](#metatile) |
+| backup | the save memory ([flash chip](#flash-chip)) |
 | encount | an encounter |
 | wait | frames to hold ([wait](#wait)) |
 
@@ -232,8 +235,8 @@ Sources: the game: none. SGL: none. GBATEK: none.
 For readers of the code: the source is many files, and a file can only use
 what another file has announced. A module header is the short file where one
 file of code makes its announcements. The system library's header is where
-the rest of the game learns the numbers of the [sequences](#sequence), such
-as `SEQUENCE_BATTLE`. A header sits at the same path under `include/` as its
+the rest of the game learns the numbers of the [modes](#mode), such
+as `MODE_BATTLE`. A header sits at the same path under `include/` as its
 code has under `src/`: `src/battle/battle.c` has `include/battle/battle.h`.
 The system library is announced in one header for all of it,
 `include/system.h`.
@@ -274,37 +277,38 @@ GBATEK: none.
 ### Main routine
 
 The main routine, `gmMainRoutineRun`, starts when the console is switched on
-and never finishes. All it does is call one [sequence](#sequence) as a
+and never finishes. All it does is call one [mode](#mode) as a
 function, clear away what that one set up when it returns, and call the
 next. Walk into a battle, win it and walk on, and the main routine has run
 three: the cave, the battle, the cave again. It is a loop, but one trip
-round it is a whole sequence: the loop that goes round once a
+round it is a whole mode: the loop that goes round once a
 [frame](#frame) is inside [`sySynch()`](#wait)
 ([The system library](system.md#the-main-routine)).
 
 Sources: the game: none. SGL: メインループ, the loop run once a frame. GBATEK: none.
 
-### Sequence
+### Mode
 
-A sequence is one whole kind of play, run from its start to its end. There
-are five: the field sequence (walking around a [scene](#scene)), the battle
-sequence (one fight), the dice sequence (Lucky Dice), the slots sequence
+A mode is one whole kind of play, run from its start to its end. There
+are five: the field mode (walking around a [scene](#scene)), the battle
+mode (one fight), the dice mode (Lucky Dice), the slots mode
 (Lucky Wheels) and a fifth that runs [Super Lucky Dice](#super-lucky-dice).
-The code names four of them `SEQUENCE_BATTLE`, `SEQUENCE_DICE`,
-`SEQUENCE_SLOTS` and `SEQUENCE_SUPER_DICE`. The field sequence has no such
+The code names four of them `MODE_BATTLE`, `MODE_DICE`,
+`MODE_SLOTS` and `MODE_SUPER_DICE`. The field mode has no such
 name: it is asked for by naming the scene to walk around. The Title and the
-File Screen are scenes, so the field sequence runs them too, and a menu or
-a shop is a function called from inside a sequence. Only one sequence runs
+File Screen are scenes, so the field mode runs them too, and a menu or
+a shop is a function called from inside a mode. Only one mode runs
 at a time
-([The system library](system.md#the-main-routine)). The sound driver's
-sequence is another thing, a piece of music.
+([The system library](system.md#the-main-routine)). A sequence is another
+thing, a piece of music the sound driver plays, as in SGL.
 
-Sources: the game: none. SGL: シーケンス, a piece of music. GBATEK: none.
+Sources: the game: none. SGL: `MainMode`, the main sequence mode
+(メインシーケンスモード), and シーケンス, a piece of music. GBATEK: none.
 
 ### Super Lucky Dice
 
 Super Lucky Dice is the third game of chance, beside Lucky Dice and Lucky
-Wheels, and Contigo has all three. It is a [sequence](#sequence) of its own,
+Wheels, and Contigo has all three. It is a [mode](#mode) of its own,
 run by `fdSuperLuckyDiceRun`, with a [module](#module) of its own that The Broken
 Seal does not have. Like the other two, it keeps the last two background
 palettes safe while it runs and puts them back after
@@ -312,25 +316,25 @@ palettes safe while it runs and puts them back after
 
 Sources: the game: "Super Lucky Dice" (マッチングダイス). SGL: none. GBATEK: none.
 
-### Field sequence
+### Field mode
 
-The field sequence runs one [scene](#scene), from the party's arrival to the
+The field mode runs one [scene](#scene), from the party's arrival to the
 [exit](#exit) it leaves by. In Daila it runs from the moment Daila fades in
 until Felix steps through a door. On the way it answers whatever the leader
 runs into, the [field requests](#field-request)
-([Field code](../../games/tla/src/field/README.md#the-field-sequence-serves-requests)).
+([Field code](../../games/tla/src/field/README.md#the-field-mode-serves-requests)).
 
 Sources: the game: the credits' "Field". SGL: none. GBATEK: none.
 
-### Transition and next sequence
+### Transition and next mode
 
-A transition is the handover from one [sequence](#sequence) to the next.
-Stepping through a door is one, and so is going into a battle. The sequence
+A transition is the handover from one [mode](#mode) to the next.
+Stepping through a door is one, and so is going into a battle. The mode
 that is ending writes down what should run next, a scene or another
-sequence, in the [main routine's state](#main-routines-state), and the
+mode, in the [main routine's state](#main-routines-state), and the
 [main routine](#main-routine) starts it. The word is kept for this
 handover. The wipe or fade the player sees while it happens is a screen
-transition, `fdScrTransition` in the code, which is only the drawing
+transition, `fdScreenTransition` in the code, which is only the drawing
 ([System library code](../../games/tla/src/system/README.md#the-main-routine)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
@@ -338,9 +342,9 @@ Sources: the game: none. SGL: none. GBATEK: none.
 ### Main routine's state
 
 `MainRoutineStateWork` is the block of memory that outlives every
-[sequence](#sequence): one C struct in a global. What a battle or a scene
+[mode](#mode): one C struct in a global. What a battle or a scene
 set up for itself is cleared away when it ends, but this block is left
-alone, so the next sequence can read it. It holds what runs next, who is in
+alone, so the next mode can read it. It holds what runs next, who is in
 the party and their coins, which is why a battle's winnings are still there
 back on the field. It is set to its defaults when the console is switched
 on, and a new game fills it in. Three other things are left alone with it,
@@ -355,7 +359,7 @@ Sources: the game: none. SGL: none. GBATEK: none.
 
 A frame is one image on the screen and the game's work to prepare it,
 about a sixtieth of a second. Everything that takes time is counted in
-frames. When Jenna wakes on Idejima and says `What...`, her event then
+frames. When Jenna wakes on Idejima and says `What...`, her script then
 calls [`sySynch()`](#wait) for 40 frames before she goes on: two thirds of a
 second, when nothing slows the game down
 ([System library code](../../games/tla/src/system/README.md#the-frame-loop)).
@@ -373,26 +377,29 @@ there is no other. One piece of code waits at a time. An
 the actor. When the waves rise in the Sea of Time, its code moves the
 colours one shade toward violet, waits ten frames, and goes round again
 until none has changed. So a scene can be written top to bottom, in the
-order things happen ([The system library](system.md#waiting-and-tasks)).
+order things happen ([The system library](system.md#waiting-and-events)).
 
 Sources: the game: none. SGL: `wait`, which waits for the next picture
 (次のビデオ表示を待つ). GBATEK: none.
 
-### Task
+### Event
 
-A task is a function on a list that [`sySynch()`](#wait) calls once in every
-[frame](#frame), until it is taken off the list. Tasks run only while some
-code is waiting, and a task never waits itself. A task is a whole piece
+An event is a function on a list that [`sySynch()`](#wait) calls once in every
+[frame](#frame), until it is taken off the list. Events run only while some
+code is waiting, and an event never waits itself. An event is a whole piece
 of work, such as moving every [actor](#actor) a step, not one thing in the
-world. The task that types a villager's line into its window letter by
-letter is one. Each task has a rank, which the code calls its `pri`,
-and a higher rank runs earlier in the frame. A few tasks are called by the
-[VBlank](#vblank) handler instead, once a VBlank. The list, `TasksWork`, has
-room for 24
-([System library code](../../games/tla/src/system/README.md#the-task-runner)).
+world. The event that types a villager's line into its window letter by
+letter is one. Each event has a rank, which the code calls its `pri`,
+and a higher rank runs earlier in the frame. A few events are called by the
+[VBlank](#vblank) handler instead, once a VBlank. The list, `EventBuf`, has
+room for 24. The record is `EVENT`, and the calls take SGL's names, the verb
+first: `sySetEvent`, `syCloseEvent`, `sySuspendEvent`, `syResumeEvent`,
+`syFindEvent`
+([System library code](../../games/tla/src/system/README.md#the-event-runner)).
+What happens at a door or in a cutscene is a [script](#script), not an event.
 
-Sources: the game: none. SGL: イベント (`EVENT`) with its 実行関数 is this thing; its
-タスク is the second processor's. GBATEK: none.
+Sources: the game: none. SGL: イベント (`EVENT`) with its 実行関数 is this thing,
+and `EventBuf` is its list; its タスク is the second processor's. GBATEK: none.
 
 ### VBlank
 
@@ -423,7 +430,7 @@ Sources: the game: none. SGL: 処理落ち. GBATEK: none.
 
 The console has no decimals, so a position, a speed or a scale is a whole
 number counted in 65,536ths: its upper 16 bits are the integer part and its
-lower 16 bits the decimal part. `toFIXED(0.8)` writes one, `FIXED_ONE` is
+lower 16 bits the decimal part. `toFIXED(0.8)` writes one, `toFIXED(1)` is
 1.0, and `FIXEDtoINT()` gives back the integer part, the pixel a position is
 on. In the code its type is `FIXED`. A function that takes such numbers
 where its plain form takes whole pixels ends in `FX`
@@ -464,7 +471,7 @@ free memory, one in each of the console's
 In each pool a new block always goes on top, and blocks come off from the
 top: handing one back also hands back everything that was put on after it.
 That is simple and quick. The whole heap is emptied before each
-[sequence](#sequence), so a battle starts with nothing left over from the
+[mode](#mode), so a battle starts with nothing left over from the
 cave it began in
 ([System library code](../../games/tla/src/system/README.md#the-heap)).
 
@@ -524,8 +531,13 @@ power off. It is 64 KB, divided into 16 sectors of 4 KB; an Atmel chip's
 own sectors are 128 bytes, and the game erases thirty-two of them as one
 sector of 4 KB. A sector is the smallest piece the game saves at a time
 ([The Game Pak](../../games/tla/src/system/README.md#the-flash-chip)).
+The system library's layer over the chip is named as SGL's backup library:
+its calls are `syBupReadPart`, `syBupWritePart` and the others, its layout
+`BUP_SECTOR_COUNT` and the rest. Save stays the player's word, for the
+File Screen and the save menu.
 
-Sources: the game: none. SGL: none. GBATEK: "GBA Cart Backup Flash ROM".
+Sources: the game: none. SGL: バックアップライブラリ, the backup library, `BUP_`.
+GBATEK: "GBA Cart Backup Flash ROM".
 
 ### Module
 
@@ -642,6 +654,9 @@ tiles, small square drawings laid side by side like a mosaic. A town is
 drawn on three of them: the ground, the walls, and the roofs and treetops.
 The World Map uses the two the console can scale and rotate
 ([Field code](../../games/tla/src/field/README.md#towns-and-dungeons-on-screen)).
+In names, `Scr` means a background layer, as SGL's scroll screen does
+(`mnBgScrFillRect`); the whole display is written out, `Screen`
+(`syScreenFadeToBlack`, `SCREEN_POINT`).
 
 Sources: the game: none. SGL: スクロール画面, NBG0 to NBG3 and RBG0. GBATEK: "BG",
 "BG0-BG3".
@@ -806,7 +821,7 @@ Sources: the game: the area names. SGL: none. GBATEK: none.
 ### Map
 
 A map is the ground a [scene](#scene) is drawn on: a grid of
-[cells](#cell), 128 on a side, shown as three
+[metatiles](#metatile), 128 on a side, shown as three
 [background layers](#background-layer). Two scenes can share one
 ([Maps](../../games/tla/src/map/README.md)). The World Map is a scene of its own, and the
 chart R opens on it is the [map screen](#map-screen). GBATEK's BG Map is
@@ -855,29 +870,31 @@ rooms map. The door the party comes in by picks the room
 Sources: the game: the credits' "Maps"; the debug labels' ROOM. SGL: none.
 GBATEK: none.
 
-### Cell
+### Metatile
 
-A cell is one 16-pixel square of a [map](#map). It says which [cell tiles](#cell-tiles) draw it, the
-shape and height of the ground, and its [cell behavior](#cell-behavior)
-([Maps](../../games/tla/src/map/README.md#cells)).
+A metatile is one 16-pixel square of a [map](#map). It says which [metatile tiles](#metatile-tiles) draw it, the
+shape and height of the ground, and its [metatile behavior](#metatile-behavior)
+([Maps](../../games/tla/src/map/README.md#metatiles)).
 
-Sources: the game: none. SGL: セル (`CELL`), the 8-pixel tile. GBATEK: none.
+Sources: the game: none. SGL: none; its セル (`CELL`) is the 8-pixel tile, so
+our square takes the word of other Game Boy Advance work, metatile. GBATEK:
+none.
 
-### Cell tiles
+### Metatile tiles
 
-A cell's tiles are the four tiles of the [tileset](#tileset) that draw one
-[cell](#cell) of a map, two by two. A tile is the console's own building
-block, a square 8 pixels on a side ([Maps](../../games/tla/src/map/README.md#cells)).
+A metatile's tiles are the four tiles of the [tileset](#tileset) that draw one
+[metatile](#metatile) of a map, two by two. A tile is the console's own building
+block, a square 8 pixels on a side ([Maps](../../games/tla/src/map/README.md#metatiles)).
 
 Sources: the game: none. SGL: キャラクタパターン, a square of one cell or two by two.
 GBATEK: none.
 
-### Cell behavior
+### Metatile behavior
 
-A cell behavior is what a [cell](#cell) does when the leader stands on it,
-walks into it or searches it. It is what makes one cell a wall, another a
+A metatile behavior is what a [metatile](#metatile) does when the leader stands on it,
+walks into it or searches it. It is what makes one metatile a wall, another a
 ledge to jump down, and another a jar worth pressing A at
-([Maps](../../games/tla/src/map/README.md#cells)).
+([Maps](../../games/tla/src/map/README.md#metatiles)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -916,9 +933,9 @@ Sources: the game: none. SGL: none. GBATEK: none.
 An actor script is the list of small orders an [actor](#actor) follows, a
 little each [frame](#frame): move here, wait, jump, go back to the start.
 These pages call its items orders, and keep "command" for an
-[event command](#event-command). The orders' names start `SC_`, for script
+[script command](#script-command). The orders' names start `SC_`, for script
 command, the code's own word. A script does not run by itself: one
-[task](#task) steps every actor's script each frame, and a script's wait,
+[script](#script) steps every actor's script each frame, and a script's wait,
 `SC_WAIT`, is a count in the actor, not [`sySynch()`](#wait). A villager who
 wanders near home is running one. An order can also hand the actor to a
 piece of the field's own code that steers it each frame, and the player's
@@ -947,35 +964,36 @@ the sparks of a field Psynergy. It moves, grows and spins by an
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
-### Trigger
+### Cue
 
-A trigger is one row of a scene's list of things that can happen. The row
+A cue is one row of a scene's list of things that can happen. The row
 says what starts it (talking, searching, stepping somewhere, using
 Psynergy), who or where it is for, the condition under which it still
 counts, and what it does. When the player does one of those things, the
 first row that fits runs. In Alhafra, one row says that walking into a door
-runs the [event](#event) that opens it and walks the leader through
-([Scenes](../../games/tla/src/scene/README.md#what-a-trigger-row-says)).
+runs the [script](#script) that opens it and walks the leader through
+([Scenes](../../games/tla/src/scene/README.md#what-a-cue-row-says)).
 
-Sources: the game: none. SGL: トリガー, a shoulder button. GBATEK: none.
+Sources: the game: none. SGL: none; its トリガー is a button of the pad, which is
+why ours is a cue. GBATEK: none.
 
-### Step trigger
+### Step cue
 
-A step trigger is a [trigger](#trigger) that runs when the leader steps
-onto, or walks into, a [cell](#cell) with a given
-[cell behavior](#cell-behavior). In Alhafra, stepping onto one spot starts
+A step cue is a [cue](#cue) that runs when the leader steps
+onto, or walks into, a [metatile](#metatile) with a given
+[metatile behavior](#metatile-behavior). In Alhafra, stepping onto one spot starts
 the arrival of Madra's mayor and his party, who have come hunting Briggs
-([Scenes](../../games/tla/src/scene/README.md#which-triggers-a-cell-starts)).
+([Scenes](../../games/tla/src/scene/README.md#which-cues-a-metatile-starts)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
-### Examine trigger
+### Examine cue
 
-An examine trigger is a [trigger](#trigger) that runs when the player
-presses A facing a [cell](#cell). On Idejima, searching the spot where
+An examine cue is a [cue](#cue) that runs when the player
+presses A facing a [metatile](#metatile). On Idejima, searching the spot where
 Jenna lies is one: she wakes and joins the party. Chests, jars, barrels,
 rocks, graves and trees have lines of their own, the same in every scene
-([Scenes](../../games/tla/src/scene/README.md#which-triggers-a-cell-starts)).
+([Scenes](../../games/tla/src/scene/README.md#which-cues-a-metatile-starts)).
 
 Sources: the game: "searched the" (しらべる), the game's verb. SGL: none. GBATEK:
 none.
@@ -1003,60 +1021,62 @@ GBATEK: none.
 
 A field request is a note in the field's [state](#state) that something
 needs an answer. There are twelve kinds: an exit taken, a battle due, a
-person to talk to, a cell to search, a menu to open, and others. Three
+person to talk to, a metatile to search, a menu to open, and others. Three
 kinds of code set one. The leader's [actor script](#actor-script) sets the
 ones for buttons: press Start and its order `SC_PLAYER` sets the request
-for the Pause menu. The field sequence's own function sets the ones for
-where the leader has stepped. And an [event](#event) or a menu sets one for
+for the Pause menu. The field mode's own function sets the ones for
+where the leader has stepped. And a [script](#script) or a menu sets one for
 something the field must do after it has returned. The
-[field sequence](#field-sequence) reads the requests each time its
+[field mode](#field-mode) reads the requests each time its
 `sySynch(1)` returns, never in the middle of a frame, and answers the most
 urgent first ([Field code](../../games/tla/src/field/README.md#the-twelve-requests)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
-### Event
+### Script
 
-An event is the piece of code a [trigger](#trigger) runs when something
+A script is the piece of code a [cue](#cue) runs when something
 happens in a scene: a cutscene, or a conversation that does more than show
 one line. It is named for its scene. `scIdejimaWakeJenna` is what happens
 when Felix finds Jenna lying on Idejima's shore: she wakes, asks whether he
 has checked on the others, and joins the party. In the code it sits
-between `fdEventStart` and `fdEventEnd`, one
-[event command](#event-command) to a line
-([Scenes](../../games/tla/src/scene/README.md#events)).
+between `fdScriptStart` and `fdScriptEnd`, one
+[script command](#script-command) to a line, and a cue names it as
+`SCRIPT_REF(scIdejimaWakeJenna)`
+([Scenes](../../games/tla/src/scene/README.md#scripts)). A script is not an
+[actor script](#actor-script), which is a table of orders.
 
-Sources: the game: none. SGL: イベント (`EVENT`), which names our task. GBATEK:
-none.
+Sources: the game: none. SGL: none; its イベント (`EVENT`) is our [event](#event).
+GBATEK: none.
 
-### Event command
+### Script command
 
-An event command is one step of an [event](#event). The ones whose
-names start `fdEvent` are for speech, pauses and where the party goes next,
+A script command is one step of a [script](#script). The ones whose
+names start `fdScript` are for speech, pauses and where the party goes next,
 the ones that start `fdActor` move the people, and the ones that start
 `fdCamera` move the camera.
-On Idejima, `fdEventShowMessage(ACTOR_JENNA, 0)` shows the event's next line
+On Idejima, `fdScriptShowMessage(ACTOR_JENNA, 0)` shows the script's next line
 as Jenna's. The 0 asks for nothing special. A command is a C call. It is
 not an order of an [actor script](#actor-script), although both can be
-about an actor: `fdActorWalkTo` is a command an event calls, and `SC_MOVE`
+about an actor: `fdActorWalkTo` is a command a script calls, and `SC_MOVE`
 is an order in a script's table. A command that takes time, such as
 showing a line or one whose name ends `AndWait`, calls [`sySynch()`](#wait)
 until what it started is over. One that only starts something, such as
 `fdActorWalkTo`, returns at once
-([Scenes](../../games/tla/src/scene/README.md#events)).
+([Scenes](../../games/tla/src/scene/README.md#scripts)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Destination
 
 The destination is the [scene](#scene) and [entrance](#entrance) the game
-goes to next. An [exit](#exit) sets it, and an [event](#event) can set it
+goes to next. An [exit](#exit) sets it, and a [script](#script) can set it
 itself.
 
-After a battle the party goes back where it was fighting, unless an event
+After a battle the party goes back where it was fighting, unless a script
 chose somewhere else. After a defeat it goes to the restart point, again
-unless an event chose somewhere else
-([System library code](../../games/tla/src/system/README.md#running-another-sequence)).
+unless a script chose somewhere else
+([System library code](../../games/tla/src/system/README.md#running-another-mode)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -1084,7 +1104,7 @@ straight to the one picked. With L held, Start opens a palette editor
 instead.
 
 Among the scenes it reaches are eight test scenes, which share one overlay
-whose events hand the party the Djinn Flint, Fizz, Forge and Gust. The
+whose scripts hand the party the Djinn Flint, Fizz, Forge and Gust. The
 Pause menu gains three lines, `Rough menu`, `Debug menu` and
 `Restart quest`. There is also a sound test
 ([Debug scenes](../../games/tla/src/debug/README.md#how-the-debug-scenes-are-reached)).
@@ -1099,7 +1119,7 @@ GBATEK: none.
 
 A battle is one fight between the party and a
 [formation](#formation) of enemies, from its opening to the experience and
-coins at the end. It is a [sequence](#sequence) of its own, so the scene the
+coins at the end. It is a [mode](#mode) of its own, so the scene the
 party was walking in is cleared away while it runs and set up again after
 ([Battle](battle.md)).
 
@@ -1149,7 +1169,7 @@ Sources: the game: none. SGL: none. GBATEK: none.
 The game works out what an [action](#turns-and-actions) does before it
 shows any of it. The playback queue is the list of what is left to show for
 each target: the flinch, the line such as `Felix takes 27 damage!`, the HP
-going down. A [task](#task) plays it, a little each frame, once the
+going down. An [event](#event) plays it, a little each frame, once the
 [battle effect](#battle-effect) has called `btPlaybackStart` to say the
 blow has landed
 ([Battles](../../games/tla/src/battle/README.md#how-outcomes-reach-the-screen)).
@@ -1340,7 +1360,7 @@ and what is in each.
 - `sprite`: the drawings of every person and thing that moves, and their
   animations, as [sprites](#sprite-and-oam).
 - `tileset`: the tiles and colours a map's
-  [cell tiles](#cell-tiles) come from.
+  [metatile tiles](#metatile-tiles) come from.
 - `ui`: every [interface](#interface) image, such as the menus' icons.
 
 Sources: the game: the credits' "Battle Backgrounds", "Battle Effects",
@@ -1367,7 +1387,7 @@ SGL: none. GBATEK: none.
 ### Tileset
 
 A tileset is the set of tiles, with their colours, that a map's
-[cell tiles](#cell-tiles) come from. A tile is a square 8
+[metatile tiles](#metatile-tiles) come from. A tile is a square 8
 pixels on a side, the console's own building block
 ([Graphics](../../games/tla/src/graphics/README.md#tilesets)).
 

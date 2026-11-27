@@ -1,10 +1,10 @@
 /* Lifts the leader by `height` and has the camera hold still, unless the party
- */
-/* keeps its place. */
-void fdLeaderLift(FIXED height) {
+   keeps its place. */
+void scLeaderLift(FIXED height)
+{
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 
-	if(!fdEventGetFlag(FLAG_KEEP_PARTY_POSITION)) {
+	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		actor->motionFlg = 0;
 		fdActorSetSprFlags(actor, 0);
 		actor->y.fixed += height;
@@ -12,7 +12,7 @@ void fdLeaderLift(FIXED height) {
 		actor->velY = 0;
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_KEYS;
 		actor->steeringFlg = ACTOR_FACES_MOTION;
-		syEventCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
+		syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
 		fdMapGridCenterOnFollowedPoint();
 		syWait(1);
 	}

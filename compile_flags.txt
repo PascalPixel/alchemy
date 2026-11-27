@@ -11,4 +11,5 @@
 -DMODERN=1
 -DTBS_EDITION_EN=1
 -Igames/tbs/include
+-Igames/common
 -Iout/tbs-en

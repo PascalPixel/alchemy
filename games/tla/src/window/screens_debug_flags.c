@@ -1,43 +1,38 @@
-/* @file */
 /* The debug menus' keys, the flag browser, and hexadecimal numbers written as
- */
-/* text. */
-/* Part of screens.c. */
+   text. Part of screens.c. */
 
-/* The debug destination menu's range: its scene runs 0 to DEBUG_SCENE_MAX, */
-/* its entrance 0 to DEBUG_ENTRANCE_MAX. */
+/* The debug destination menu's range: its scene runs 0 to DEBUG_SCENE_MAX, its
+   entrance 0 to DEBUG_ENTRANCE_MAX. */
 #define DEBUG_SCENE_MAX	   324
 #define DEBUG_ENTRANCE_MAX 99
 
-/* The flag browser's pages of DEBUG_FLAG_ROWS rows of DEBUG_FLAGS_PER_ROW */
-/* flags, 256 a page: every game flag. */
+/* The flag browser's pages of DEBUG_FLAG_ROWS rows of DEBUG_FLAGS_PER_ROW
+   flags, 256 a page: every game flag. */
 #define DEBUG_FLAG_PAGES	16
 #define DEBUG_FLAG_ROWS		16
 #define DEBUG_FLAGS_PER_ROW 16
 
-/* Edits the debug scene or entrance, returning -1 to exit and -2 to */
-/* cancel, else the scene after this frame's keys. Up and Down switch the */
-/* field (`field`: 0 scene, 1 entrance), Left and Right step by one and wrap */
-/* at either end. R and L step a scene by DEBUG_LARGE_STEP, setting the */
-/* entrance to 0, and past either end go to the other; they step an entrance */
-/* as far, wrapping by DEBUG_ENTRANCE_MAX (95 + 10 gives 6). */
-s32 mnDebugSceneSelectHandleRowInput(s32 window, s16 scene, s16 *entrance,
-									 s16 *field) {
-	if(InputWork.repeat & KEY_A)
+/* Edits the debug scene or entrance, returning -1 to exit and -2 to cancel,
+   else the scene after this frame's keys. Up and Down switch the field
+   (`field`: 0 scene, 1 entrance), Left and Right step by one and wrap at either
+   end. R and L step a scene by DEBUG_LARGE_STEP, setting the entrance to 0, and
+   past either end go to the other; they step an entrance as far, wrapping by
+   DEBUG_ENTRANCE_MAX (95 + 10 gives 6). */
+Sint32 mnDebugSceneSelectHandleRowInput(
+	Sint32 window, Sint16 scene, Sint16 *entrance, Sint16 *field)
+{
+	if(PerWork.repeat & KEY_A)
 		return -1;
-	if(InputWork.repeat & KEY_B)
+	if(PerWork.repeat & KEY_B)
 		return -2;
-	if(InputWork.repeat & KEY_DOWN) {
+	if(PerWork.repeat & KEY_DOWN) {
 		*field ^= 1;
-	}
-	else if(InputWork.repeat & KEY_UP) {
+	} else if(PerWork.repeat & KEY_UP) {
 		*field ^= 1;
-	}
-	else if(InputWork.repeat & KEY_RIGHT) {
+	} else if(PerWork.repeat & KEY_RIGHT) {
 		if(*field == 0) {
 			scene++;
-		}
-		else {
+		} else {
 			(*entrance)++;
 			if(*entrance > DEBUG_ENTRANCE_MAX)
 				*entrance = 0;
@@ -45,12 +40,10 @@ s32 mnDebugSceneSelectHandleRowInput(s32 window, s16 scene, s16 *entrance,
 		if(scene > DEBUG_SCENE_MAX)
 			scene = 0;
 		mnDebugSceneSelectDrawRow(window, scene, entrance);
-	}
-	else if(InputWork.repeat & KEY_LEFT) {
+	} else if(PerWork.repeat & KEY_LEFT) {
 		if(*field == 0) {
 			scene--;
-		}
-		else {
+		} else {
 			(*entrance)--;
 			if(*entrance < 0)
 				*entrance = DEBUG_ENTRANCE_MAX;
@@ -58,13 +51,11 @@ s32 mnDebugSceneSelectHandleRowInput(s32 window, s16 scene, s16 *entrance,
 		if(scene < 0)
 			scene = DEBUG_SCENE_MAX;
 		mnDebugSceneSelectDrawRow(window, scene, entrance);
-	}
-	else if(InputWork.repeat & KEY_R) {
+	} else if(PerWork.repeat & KEY_R) {
 		if(*field == 0) {
 			*entrance = 0;
 			scene += DEBUG_LARGE_STEP;
-		}
-		else {
+		} else {
 			*entrance += DEBUG_LARGE_STEP;
 			if(*entrance > DEBUG_ENTRANCE_MAX)
 				*entrance -= DEBUG_ENTRANCE_MAX;
@@ -72,13 +63,11 @@ s32 mnDebugSceneSelectHandleRowInput(s32 window, s16 scene, s16 *entrance,
 		if(scene > DEBUG_SCENE_MAX)
 			scene = 0;
 		mnDebugSceneSelectDrawRow(window, scene, entrance);
-	}
-	else if(InputWork.repeat & KEY_L) {
+	} else if(PerWork.repeat & KEY_L) {
 		if(*field == 0) {
 			*entrance = 0;
 			scene -= DEBUG_LARGE_STEP;
-		}
-		else {
+		} else {
 			*entrance -= DEBUG_LARGE_STEP;
 			if(*entrance < 0)
 				*entrance += DEBUG_ENTRANCE_MAX;
@@ -90,15 +79,16 @@ s32 mnDebugSceneSelectHandleRowInput(s32 window, s16 scene, s16 *entrance,
 	return scene;
 }
 
-/* The flag browser: shows a page of flags and takes input until closed, */
-/* starting on page 8. Returns 0. */
-s32 mnDebugFlagEditorRun(void) {
+/* The flag browser: shows a page of flags and takes input until closed,
+   starting on page 8. Returns 0. */
+Sint32 mnDebugFlagEditorRun(void)
+{
 	MENU_SPR cursorSprite;
-	s32 cursor[2]; /* column and row */
-	s32 cursorSlot;
-	s32 page;
-	WINDOW *window;
-	s32 change;
+	Sint32	 cursor[2]; /* column and row */
+	Sint32	 cursorSlot;
+	Sint32	 page;
+	WINDOW	*window;
+	Sint32	 change;
 
 	page = 8;
 	window = 0;
@@ -122,17 +112,18 @@ s32 mnDebugFlagEditorRun(void) {
 	return 0;
 }
 
-/* Writes the lowest count digits of value (up to five), most significant */
-/* first, to out as uppercase hexadecimal, without a terminating zero. */
-void mnStringFormatHexDigits(u32 value, u32 count, u8 *out) {
-	u8 digits[8];
-	u32 i;
+/* Writes the lowest count digits of value (up to five), most significant first,
+   to out as uppercase hexadecimal, without a terminating zero. */
+void mnStringFormatHexDigits(Uint32 value, Uint32 count, Uint8 *out)
+{
+	Uint8  digits[8];
+	Uint32 i;
 
 	if(count > 5)
 		count = 5;
 
 	for(i = 0; i != count; i++) {
-		u32 digit = value & 0xf;
+		Uint32 digit = value & 0xf;
 		if(digit <= 9)
 			digits[i] = digit + '0';
 		else
@@ -140,35 +131,35 @@ void mnStringFormatHexDigits(u32 value, u32 count, u8 *out) {
 		value >>= 4;
 	}
 
-	for(i = count - 1; (s32)i >= 0; i--)
+	for(i = count - 1; (Sint32)i >= 0; i--)
 		*out++ = digits[i];
 }
 
 /* Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
- */
-/* Each row: its first flag's number in three hex digits, then its 16 flags */
-/* as 0 or 1, lowest first, under a heading of hex digits. */
-void mnDebugFlagEditorDrawTable(s32 window, s32 page) {
-	s32 row;
-	s32 y;
-	s32 flag;
-	u8 label[5];
-	char bits[17];
+   Each row: its first flag's number in three hex digits, then its 16 flags as 0
+   or 1, lowest first, under a heading of hex digits. */
+void mnDebugFlagEditorDrawTable(Sint32 window, Sint32 page)
+{
+	Sint32 row;
+	Sint32 y;
+	Sint32 flag;
+	Uint8  label[5];
+	char   bits[17];
 
-	/* UB: called with no argument; the window it redraws is this one, left */
-	/* where the argument would be. The ROM's code makes the call with no */
-	/* declaration in scope; the cast to an unprototyped function keeps it so.
-	 */
-#ifdef UBFIX
+	/* UB: called with no argument; the window it redraws is this one, left
+	   where the argument would be. The ROM's code makes the call with no
+	   declaration in scope; the cast to an unprototyped function keeps it
+	   so. */
+#if FIX_FUNCTION_SIGNATURES
 	mnWindowSprPrepareForRedraw(window);
 #else
 	((void (*)())mnWindowSprPrepareForRedraw)();
 #endif
-	mnTextDrawStringInWindow((s32)Menu_HexDigitsString, window, 48, 0);
+	mnTextDrawStringInWindow((Sint32)Menu_HexDigitsString, window, 48, 0);
 
 	flag = page << 8;
 	for(row = 0; row != DEBUG_FLAG_ROWS; row++) {
-		s32 i;
+		Sint32 i;
 
 		y = row * 8 + 16;
 
@@ -176,29 +167,30 @@ void mnDebugFlagEditorDrawTable(s32 window, s32 page) {
 			label[i] = 0;
 		}
 		mnStringFormatHexDigits(flag, 3, label);
-		mnTextDrawStringInWindow((s32)label, window, 0, y);
-		mnTextDrawStringInWindow((s32)Menu_ColonString, window, 32, y);
+		mnTextDrawStringInWindow((Sint32)label, window, 0, y);
+		mnTextDrawStringInWindow((Sint32)Menu_ColonString, window, 32, y);
 
 		for(i = 0; i < DEBUG_FLAGS_PER_ROW; i++) {
-			s32 set = syGameFlagGet(flag);
+			Sint32 set = syGameFlagGet(flag);
 			bits[i] = (set != 0) + '0';
 			flag++;
 		}
 		bits[i] = 0;
-		mnTextDrawStringInWindow((s32)bits, window, 48, y);
+		mnTextDrawStringInWindow((Sint32)bits, window, 48, y);
 	}
 }
 
-/* Moves within the flag grid, changes pages, or toggles the selected flag. */
-/* Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise. */
-/* A toggles flag page * 256 + row * 16 + column; B or Select closes. L and */
-/* R turn a page, wrapping at either end; with Start held they jump */
-/* DEBUG_LARGE_STEP, to the other end when that passes it (5 - 10 gives 15). */
-s32 mnDebugFlagEditorHandleInput(s32 window, s32 *page, s32 *cursor) {
-	s32 *row = &cursor[1];
+/* Moves within the flag grid, changes pages, or toggles the selected flag.
+   Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise. A
+   toggles flag page * 256 + row * 16 + column; B or Select closes. L and R turn
+   a page, wrapping at either end; with Start held they jump DEBUG_LARGE_STEP,
+   to the other end when that passes it (5 - 10 gives 15). */
+Sint32 mnDebugFlagEditorHandleInput(Sint32 window, Sint32 *page, Sint32 *cursor)
+{
+	Sint32 *row = &cursor[1];
 
-	if(InputWork.repeat & KEY_A) {
-		s32 flag = ((*page << 4) + *row << 4) + cursor[0];
+	if(PerWork.repeat & KEY_A) {
+		Sint32 flag = ((*page << 4) + *row << 4) + cursor[0];
 
 		if(syGameFlagGet(flag))
 			syGameFlagClear(flag);
@@ -206,42 +198,35 @@ s32 mnDebugFlagEditorHandleInput(s32 window, s32 *page, s32 *cursor) {
 			syGameFlagSet(flag);
 		return 1;
 	}
-	if((InputWork.pressed & KEY_B) || (InputWork.repeat & KEY_SELECT))
+	if((PerWork.push & KEY_B) || (PerWork.repeat & KEY_SELECT))
 		return -1;
-	if(InputWork.repeat & KEY_UP) {
+	if(PerWork.repeat & KEY_UP) {
 		if(--*row < 0)
 			*row = DEBUG_FLAG_ROWS - 1;
-	}
-	else if(InputWork.repeat & KEY_DOWN) {
+	} else if(PerWork.repeat & KEY_DOWN) {
 		if(++*row > DEBUG_FLAG_ROWS - 1)
 			*row = 0;
-	}
-	else if(InputWork.repeat & KEY_LEFT) {
+	} else if(PerWork.repeat & KEY_LEFT) {
 		if(--cursor[0] < 0)
 			cursor[0] = DEBUG_FLAGS_PER_ROW - 1;
-	}
-	else if(InputWork.repeat & KEY_RIGHT) {
+	} else if(PerWork.repeat & KEY_RIGHT) {
 		if(++cursor[0] > DEBUG_FLAGS_PER_ROW - 1)
 			cursor[0] = 0;
-	}
-	else if((InputWork.repeat & KEY_L) && (InputWork.repeat & KEY_START)) {
+	} else if((PerWork.repeat & KEY_L) && (PerWork.repeat & KEY_START)) {
 		*page -= DEBUG_LARGE_STEP;
 		if(*page < 0)
 			*page = DEBUG_FLAG_PAGES - 1;
 		return 1;
-	}
-	else if((InputWork.repeat & KEY_R) && (InputWork.repeat & KEY_START)) {
+	} else if((PerWork.repeat & KEY_R) && (PerWork.repeat & KEY_START)) {
 		*page += DEBUG_LARGE_STEP;
 		if(*page > DEBUG_FLAG_PAGES - 1)
 			*page = 0;
 		return 1;
-	}
-	else if(InputWork.repeat & KEY_L) {
+	} else if(PerWork.repeat & KEY_L) {
 		if(--*page < 0)
 			*page = DEBUG_FLAG_PAGES - 1;
 		return 1;
-	}
-	else if(InputWork.repeat & KEY_R) {
+	} else if(PerWork.repeat & KEY_R) {
 		if(++*page > DEBUG_FLAG_PAGES - 1)
 			*page = 0;
 		return 1;
@@ -249,14 +234,16 @@ s32 mnDebugFlagEditorHandleInput(s32 window, s32 *page, s32 *cursor) {
 	return 0;
 }
 
-/* Unused: an empty function, the twin of the window object's */
-/* mnSelectionMenuReservedNoOp. Nothing calls it. */
-UNUSED void mnReservedNoOp(void) {}
+/* Unused: an empty function, the twin of the window object's
+   mnSelectionMenuReservedNoOperation. Nothing calls it. */
+UNUSED void mnReservedNoOperation(void)
+{
+}
 
-/* Sets the Djinni's collected flag, then adds it to the specified party */
-/* member. The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index.
- */
-void mnDjinnSetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
+/* Sets the Djinni's collected flag, then adds it to the specified party member.
+   The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index. */
+void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 index)
+{
 	syGameFlagSet((element * DJINN_PER_ELEMENT) + index + FLAG_DJINN_FIRST);
 	gmDjinnGiveStub(member, element, index);
 }

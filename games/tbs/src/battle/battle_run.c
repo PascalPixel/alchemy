@@ -1,59 +1,57 @@
-/* @file */
-/* A whole battle, btRun, and the lists of the units in it. */
-/* Part of battle.c. */
+/* A whole battle, btRun, and the lists of the units in it. Part of battle.c. */
 
 #include "battle_internal.h"
 
-/* A name letter past every edition's last (Z, the Japanese edition's 26th), */
-/* which leaves an enemy's name bare, as The Lost Age names it. */
+/* A name letter past every edition's last (Z, the Japanese edition's 26th),
+   which leaves an enemy's name bare, as The Lost Age names it. */
 #define NAME_LETTER_PAST_ALL 26
 
-/* The six enemy units, EnemyUnits, which gmUnitGet reads for unit ids 128 to */
-/* 133 while the battle lasts. */
+/* The six enemy units, EnemyUnits, which gmUnitGet reads for unit ids 128 to
+   133 while the battle lasts. */
 #define ENEMY_UNITS_SIZE (ENEMY_BATTLE_SIZE * BATTLE_UNIT_SIZE)
 
-/* The camera's zoom, in percent, from the battle's setup until the opening */
-/* sets its own: the curtain's a frame later, or the Fusion Dragon's */
-/* shattering opening's, so no frame shows it. */
+/* The camera's zoom, in percent, from the battle's setup until the opening sets
+   its own: the curtain's a frame later, or the Fusion Dragon's shattering
+   opening's, so no frame shows it. */
 #define BATTLE_ZOOM_BEFORE_OPENING 190
 
-/* The camera's yaw as a battle starts, and as each turn's commands are */
-/* chosen: about 56 degrees, a little past YAW_PARTY_ACTION. */
+/* The camera's yaw as a battle starts, and as each turn's commands are chosen:
+   about 56 degrees, a little past YAW_PARTY_ACTION. */
 #define YAW_TURN_START (TRIG_TURN * 5 / 32)
 
-/* Fights the battle against the enemy formation enemyGroup, from the opening */
-/* to the end. Returns the number of enemies defeated when the party won or the
- */
-/* link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST. */
-s32 btRun(s32 enemyGroup) {
-	BATTLE_CAMERA *camera;
-	s32 *focus;
-	BATTLE_STATE *battle;
-	u8 *enemyUnits;
+/* Fights the battle against the enemy formation enemyGroup, from the opening to
+   the end. Returns the number of enemies defeated when the party won or the
+   link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST. */
+Sint32 btRun(Sint32 enemyGroup)
+{
+	BATTLE_CAMERA			*camera;
+	Sint32					*focus;
+	BATTLE_STATE			*battle;
+	Uint8					*enemyUnits;
 	BATTLE_BACKGROUND_STATE *view;
-	BATTLE_MESSAGE_STATE *display;
-	s32 enemyCount;
-	u8 *enemyUnitDestination;
-	s32 actionCount;
-	s32 i;
-	s32 result;
-	WINDOW *tutorialWindow;
-	s32 linkWaitFrames;
-	u32 copyIndex;
-	u32 actingUnit;
-	s16 cue;
+	BATTLE_MESSAGE_STATE	*display;
+	Sint32					 enemyCount;
+	Uint8					*enemyUnitDestination;
+	Sint32					 actionCount;
+	Sint32					 i;
+	Sint32					 result;
+	WINDOW					*tutorialWindow;
+	Sint32					 linkWaitFrames;
+	Uint32					 copyIndex;
+	Uint32					 actingUnit;
+	Sint16					 snd;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	UNUSED u8 unused[48];
-	volatile u32 fill;
+	UNUSED Uint8	unused[48];
+	volatile Uint32 fill;
 
 	/* The battle's state, all in EWRAM. */
-	camera = syHeapSlotAllocEwram(HEAP_SLOT_CAMERA, sizeof(BATTLE_CAMERA));
-	battle = syHeapSlotAllocEwram(HEAP_SLOT_BATTLE, sizeof(BATTLE_STATE));
-	enemyUnits = syHeapSlotAllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
-	view = syHeapSlotAllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
-								sizeof(BATTLE_BACKGROUND_STATE));
-	syHeapSlotAllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
+	camera = syHeapSlotAllocEWRAM(HEAP_SLOT_CAMERA, sizeof(BATTLE_CAMERA));
+	battle = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE, sizeof(BATTLE_STATE));
+	enemyUnits = syHeapSlotAllocEWRAM(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
+	view = syHeapSlotAllocEWRAM(
+		HEAP_SLOT_BATTLE_BACKGROUND, sizeof(BATTLE_BACKGROUND_STATE));
+	syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_UNUSED, 640);
 	focus = camera->focus;
 	result = 0;
 	syWordsClear(enemyUnits, ENEMY_UNITS_SIZE);
@@ -66,23 +64,22 @@ s32 btRun(s32 enemyGroup) {
 	view->unusedAfterKeepRange[1] = 0;
 	REG_DISPCNT = DISPCNT_MODE_1;
 	gmFlagSetStub(FLAG_IN_BATTLE);
-	/* XXX (no evidence): what flag 0x169 marks; it is set as every battle */
-	/* starts, as The Lost Age's is, and no code of either game reads or clears
-	 */
-	/* it, so nothing the game does shows what it means. */
+	/* XXX (no evidence): what flag 0x169 marks; it is set as every battle
+	   starts, as The Lost Age's is, and no code of either game reads or clears
+	   it, so nothing the game does shows what it means. */
 	gmFlagSetStub(0x169);
 	syInitMatrix();
 
-	btDmaFill32Cell(fill, 0, camera, sizeof(BATTLE_CAMERA));
-	btDmaFill32Cell(fill, 0, battle, sizeof(BATTLE_STATE));
+	DMA_FILL32_CELL(fill, 0, camera, sizeof(BATTLE_CAMERA));
+	DMA_FILL32_CELL(fill, 0, battle, sizeof(BATTLE_STATE));
 	battle->arrowTiles = -1;
 	battle->formation = enemyGroup;
-	display = syHeapSlotAllocEwram(HEAP_SLOT_BATTLE_MESSAGE,
-								   sizeof(BATTLE_MESSAGE_STATE));
-	btDmaFill32Cell(fill, 0, display, sizeof(BATTLE_MESSAGE_STATE));
-	battle->bg = btBackgroundGetSelectedStub();
-	syHeapSlotAllocEwram(HEAP_SLOT_SPRITES, 3584);
-	syHeapSlotAllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
+	display = syHeapSlotAllocEWRAM(
+		HEAP_SLOT_BATTLE_MESSAGE, sizeof(BATTLE_MESSAGE_STATE));
+	DMA_FILL32_CELL(fill, 0, display, sizeof(BATTLE_MESSAGE_STATE));
+	battle->bg = fdBattleBackgroundGetSelectedStub();
+	syHeapSlotAllocEWRAM(HEAP_SLOT_SPRITES, 3584);
+	syHeapSlotAllocEWRAM(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
 	fdActorSystemInitStub(ACTOR_SYSTEM_BATTLE);
 	if(gmFlagGetStub(FLAG_DJINN_LESSON) != 0)
 		mnWindowSystemInitBattleStub(1);
@@ -97,16 +94,15 @@ s32 btRun(s32 enemyGroup) {
 	camera->distance = toFIXED(256);
 	enemyCount = btFormationBuildEnemyList(battle->formation);
 
-	/* A link battle: the opponent's party, which the Battle Arena left in */
-	/* ActorSpriteSlots, becomes the enemies, and both consoles start from seed
-	 * 0 */
-	/* so that their rolls agree. */
+	/* A link battle: the opponent's party, which the Battle Arena left in
+	   ActorSpriteSlots, becomes the enemies, and both consoles start from seed
+	   0 so that their rolls agree. */
 	if(gmFlagGetStub(FLAG_LINK_BATTLE) != 0) {
 		battle->isLink = 1;
-		btSetType(BATTLE_TYPE_LINK);
+		SET_BATTLE_TYPE(BATTLE_TYPE_LINK);
 	}
 	if(battle->isLink != 0) {
-		btSetRandomSeed(0);
+		SET_RANDOM_SEED(0);
 		for(linkWaitFrames = 0;;) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
 				break;
@@ -125,22 +121,21 @@ s32 btRun(s32 enemyGroup) {
 		btPartyAssignOpponentSlots();
 		battle->layout = FORMATION_LAYOUT_SHUFFLED;
 	}
-	sySetEvent(btCameraUpdate, TASK_PASS_FRAME - 1);
+	sySetEvent(btCameraUpdate, EVENT_PASS_FRAME - 1);
 
-	/* The battle music: the music an event or encounter set for this battle. */
-	/* Every battle piece plays on the music's one player (MUSIC_PLAYER_BGM), */
-	/* where the piece started last replaces the one before within the frame: */
-	/* a link battle hears Test Your Skills, and a battle with none set hears */
-	/* Colosseum Finals, never Sworn Enemies Stand in Your Way. */
-	cue = MainRoutineStateWork.battleMusic;
-	if(cue != 0) {
-		sySndPlayStub(cue);
+	/* The battle music: the music an event or encounter set for this battle.
+	   Every battle piece plays on the music's one player (MUSIC_PLAYER_BGM),
+	   where the piece started last replaces the one before within the frame: a
+	   link battle hears Test Your Skills, and a battle with none set hears
+	   Colosseum Finals, never Sworn Enemies Stand in Your Way. */
+	snd = MainRoutineStateWork.battleMusic;
+	if(snd != 0) {
+		sySndPlayStub(snd);
 		if(gmFlagGetStub(FLAG_LINK_BATTLE) != 0) {
 			sySndPlayStub(MUS_TEST_YOUR_SKILLS);
 			sySndLoadReverbCode(SOUND_REVERB_NONE);
 		}
-	}
-	else {
+	} else {
 		sySndPlayStub(MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY);
 		sySndPlayStub(MUS_COLOSSEUM_FINALS);
 	}
@@ -159,88 +154,82 @@ s32 btRun(s32 enemyGroup) {
 	btObjectPut();
 	btBackgroundInit();
 	btBackgroundLoad(BATTLE_BACKGROUND_FIXED, battle->bg, 0);
-	btCameraSetRange(toFIXED(160), toFIXED(80), 0, 0, 2 * FIXED_ONE);
+	btCameraSetRange(toFIXED(160), toFIXED(80), 0, 0, toFIXED(2));
 	btCameraSetView(0, 0, 0, BATTLE_ZOOM_BEFORE_OPENING);
-	btPartyBattleSetupNoOp(1);
+	btPartyBattleSetupNoOperation(1);
 	REG_BLDCNT = 0;
 	btSpoilsClear();
 	/* The advance arrow's tiles, taken again each turn. */
-	battle->arrowTiles = syVramCacheAllocEntry(128);
+	battle->arrowTiles = syVRAMCacheAllocEntry(128);
 
-	/* A random encounter may open with a first strike (1 in 16) or a */
-	/* surprise (1 in 32 of the rest); the Djinn tutorial always strikes first.
-	 */
+	/* A random encounter may open with a first strike (1 in 16) or a surprise
+	   (1 in 32 of the rest); the Djinn tutorial always strikes first. */
 	battle->firstStrike = FIRST_STRIKE_NONE;
 	if(gmFlagGetStub(FLAG_DJINN_LESSON) != 0) {
 		battle->firstStrike = FIRST_STRIKE_PARTY;
-	}
-	else if(MainRoutineStateWork.battleType == BATTLE_TYPE_NORMAL) {
-		if((btRandomStub() & 15) == 0)
+	} else if(MainRoutineStateWork.battleType == BATTLE_TYPE_NORMAL) {
+		if((gmBattleRandomStub() & 15) == 0)
 			battle->firstStrike = FIRST_STRIKE_PARTY;
-		else if((btRandomStub() & 31) == 0)
+		else if((gmBattleRandomStub() & 31) == 0)
 			battle->firstStrike = FIRST_STRIKE_ENEMIES;
 	}
-	/* After the entry transition the camera task owns the background */
-	/* again, and the sprite priorities are sorted every frame. */
+	/* After the entry transition the camera event owns the background again,
+	   and the sprite priorities are sorted every frame. */
 	btTransitionRun(enemyCount, enemyGroup);
 	view->keepRange = 0;
 	CpuLoadDisplayEnabled = 0;
-	sySetEvent(btObjectUpdateSprPriorities, TASK_PASS_FRAME);
+	sySetEvent(btObjectUpdateSprPriorities, EVENT_PASS_FRAME);
 
 	/* The turns. */
 	for(;;) {
-		btTurnStartNoOp();
+		btTurnStartNoOperation();
 		btSummonUpdateAvailability();
 		if(gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->summonMask != 0)
 			battle->partyStat = PARTY_STATUS_SUMMONS;
 		else
 			battle->partyStat = PARTY_STATUS_NO_SUMMONS;
-		/* The camera eases back to its starting yaw over 60 frames, and the */
-		/* party status window is drawn with or without its Djinn column. */
+		/* The camera eases back to its starting yaw over 60 frames, and the
+		   party status window is drawn with or without its Djinn column. */
 		view->tgtYaw = YAW_TURN_START;
 		view->frames = 60;
 		mnPartyStatDrawStub(battle->partyStat);
 
 		/* Every unit's action for the turn, in action order. */
 		syWordsClear(battle->actions, sizeof(battle->actions));
-		syVramCacheFreeEntry(battle->arrowTiles);
+		syVRAMCacheFreeEntry(battle->arrowTiles);
 		if(gmFlagGetStub(FLAG_AUTO_BATTLE) == 0) {
 			/* DEAD: the heap's free IWRAM and EWRAM measured and dropped,
-			 * before and */
-			/* after the commands are chosen and around each action; the ROM
-			 * keeps */
-			/* the calls. */
-			syHeapGetRemainingIwram();
-			syHeapGetRemainingEwram();
+			   before and after the commands are chosen and around each action;
+			   the ROM keeps the calls. */
+			syHeapGetRemainingIWRAM();
+			syHeapGetRemainingEWRAM();
 			actionCount = btGatherActions(battle->actions);
-			syHeapGetRemainingIwram();
-			syHeapGetRemainingEwram();
-		}
-		else {
+			syHeapGetRemainingIWRAM();
+			syHeapGetRemainingEWRAM();
+		} else {
 			actionCount = btAutoBattleBuildActions(battle->actions);
 		}
-		battle->arrowTiles = syVramCacheAllocEntry(128);
+		battle->arrowTiles = syVRAMCacheAllocEntry(128);
 		mnPartyStatDrawStub(battle->partyStat);
 		if(actionCount < 0)
 			goto aborted;
 
-		/* Each action, until one side is down or the party runs. The turn's */
-		/* first action waits 10 frames facing the party first. */
+		/* Each action, until one side is down or the party runs. The turn's
+		   first action waits 10 frames facing the party first. */
 		for(i = 0; i < actionCount; i++) {
 			actingUnit = battle->actions[i].unitId;
-			syHeapGetRemainingIwram();
-			syHeapGetRemainingEwram();
+			syHeapGetRemainingIWRAM();
+			syHeapGetRemainingEWRAM();
 			if(gmFlagGetStub(FLAG_AUTO_BATTLE) == 0) {
-				if(btStagingDispatchAction(&battle->actions[i],
-										   i == 0 ? 10 : 0) == 1)
+				if(btStagingDispatchAction(
+					   &battle->actions[i], i == 0 ? 10 : 0) == 1)
 					goto fled;
-			}
-			else {
+			} else {
 				if(btAutoBattleRunAction(&battle->actions[i]) == 1)
 					goto fled;
 			}
-			syHeapGetRemainingIwram();
-			syHeapGetRemainingEwram();
+			syHeapGetRemainingIWRAM();
+			syHeapGetRemainingEWRAM();
 			if(btUnitListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
 				goto party_lost;
 			if(btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
@@ -254,40 +243,38 @@ s32 btRun(s32 enemyGroup) {
 
 		/* The end of the turn. */
 		battle->firstStrike = FIRST_STRIKE_NONE;
-		btTurnEndNoOp();
+		btTurnEndNoOperation();
 		btProcessTurnEnd();
 		btObjectDestroyAll();
 		if(battle->isLink != 0) {
 			if(btLinkBattleSyncTurn() < 0)
 				goto aborted;
-		}
-		else {
+		} else {
 			sySynch(20);
 		}
 		if(gmFlagGetStub(FLAG_DJINN_LESSON) == 0)
 			continue;
 
-		/* The Djinn lesson's two lines after each turn. */
-		/* "See! When you unleashed me, I attacked with my mighty
-		 * stone-cleaver!" */
-		tutorialWindow = mnMessageOpenWindowStub(MsgTutorialUnleashed, 0, 4,
-												 MESSAGE_WINDOW_ZOOM);
+		/* The Djinn lesson's two lines after each turn. "See! When you
+		   unleashed me, I attacked with my mighty stone-cleaver!" */
+		tutorialWindow = mnMessageOpenWindowStub(
+			MsgTutorialUnleashed, 0, 4, MESSAGE_WINDOW_ZOOM);
 		while(mnMessageAllTypedStub() == 0)
 			sySynch(1);
 		mnWindowCloseStub(tutorialWindow, 1);
 		sySynch(1);
 		/* "After being unleashed, we Djinn will then stand by to be
-		 * summoned..." */
-		tutorialWindow = mnMessageOpenWindowStub(MsgTutorialStandby, 10, 4,
-												 MESSAGE_WINDOW_ZOOM);
+		   summoned..." */
+		tutorialWindow = mnMessageOpenWindowStub(
+			MsgTutorialStandby, 10, 4, MESSAGE_WINDOW_ZOOM);
 		btMessageWaitForAdvanceAt(92, 24);
 		mnWindowCloseStub(tutorialWindow, 1);
 		sySynch(1);
 	}
 
 won:
-	/* "X has been downed!" or "X's party goes down!", named after the first */
-	/* enemy to fall, with no letter, then the spoils. */
+	/* "X has been downed!" or "X's party goes down!", named after the first
+	   enemy to fall, with no letter, then the spoils. */
 	btClearSerialTransferPayload();
 	if(gmFlagGetStub(FLAG_DJINN_LESSON) == 0) {
 		if(battle->isLink != 0)
@@ -295,12 +282,12 @@ won:
 		if(battle->spoils.defeated != 0) {
 			sySndPlayStub(MUS_VICTORY);
 			if(battle->defeatState <= DEFEAT_SEVERAL) {
-				btUnitSetStub(FIRST_ENEMY_UNIT,
-							  battle->enemyKinds[battle->firstDefeated],
-							  NAME_LETTER_PAST_ALL);
+				gmBattleUnitSetStub(FIRST_ENEMY_UNIT,
+					battle->enemyKinds[battle->firstDefeated],
+					NAME_LETTER_PAST_ALL);
 				mnMessageArgumentClearAllStub();
-				mnMessageArgumentPushStub(FIRST_ENEMY_UNIT,
-										  MESSAGE_ARGUMENT_ACTOR);
+				mnMessageArgumentPushStub(
+					FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
 				mnBattleMessageShowAndWaitStub(battle->defeatState + MsgDowned);
 				btMessageWaitForAdvance();
 			}
@@ -308,15 +295,15 @@ won:
 		btAwardSpoils();
 	}
 	sySndPlayStub(SOUND_FADE_OUT_BGM);
-	syScrFadeToBlack(30);
-	syScrFadeWait();
+	syScreenFadeToBlack(30);
+	syScreenFadeWait();
 	result = battle->spoils.defeated;
 	goto finished;
 
 aborted:
 	/* The link broke, or no actions could be gathered. */
 	btClearSerialTransferPayload();
-	syTaskSuspend(0);
+	sySuspendEvent(0);
 	REG_DISPCNT = DISPCNT_MODE_1;
 	result = battle->spoils.defeated;
 	gmFlagSetStub(FLAG_AREA_TEMP_E8);
@@ -324,49 +311,48 @@ aborted:
 
 party_lost:
 	/* "X goes down in defeat..." for a lone party member, else "X's party has
-	 */
-	/* been defeated!". */
+	   been defeated!". */
 	btClearSerialTransferPayload();
 	sySndPlayStub(MUS_DEFEATED);
 	mnMessageArgumentClearAllStub();
-	mnMessageArgumentPushStub(MainRoutineStateWork.party[0],
-							  MESSAGE_ARGUMENT_ACTOR);
+	mnMessageArgumentPushStub(
+		MainRoutineStateWork.party[0], MESSAGE_ARGUMENT_ACTOR);
 	if(btPartyPrepareMembers(0) == 1)
 		mnBattleMessageShowAndWaitStub(MsgGoesDownInDefeat);
 	else
 		mnBattleMessageShowAndWaitStub(MsgPartyDefeated);
 	btMessageWaitForAdvance();
 	sySndPlayStub(SOUND_FADE_OUT_BGM);
-	syScrFadeToBlack(30);
+	syScreenFadeToBlack(30);
 	result = BATTLE_OUTCOME_LOST;
-	syScrFadeWait();
+	syScreenFadeWait();
 	goto finished;
 
 fled:
 	sySndPlayStub(SOUND_FADE_OUT_BGM);
-	syScrFadeToBlack(30);
-	syScrFadeWait();
+	syScreenFadeToBlack(30);
+	syScreenFadeWait();
 	result = BATTLE_OUTCOME_FLED;
 
 finished:
 	/* Every way out: Djinn recover one step and the next battle starts
-	 * normally. */
+	   normally. */
 	btPartyClearBattleStatuses();
-	btTurnEndNoOp();
+	btTurnEndNoOperation();
 	btDjinnRecoveryCountDown();
-	btSetType(BATTLE_TYPE_NORMAL);
+	SET_BATTLE_TYPE(BATTLE_TYPE_NORMAL);
 	syCloseEvent(btObjectUpdateSprPriorities);
 	btBackgroundFree();
 	return result;
 }
 
 /* Lists the party members who fight, three in a link battle, into unitIds when
- */
-/* it is not null, and returns how many. */
-s32 btPartyPrepareMembers(u16 *unitIds) {
-	s32 limit;
-	s32 count;
-	s32 index;
+   it is not null, and returns how many. */
+Sint32 btPartyPrepareMembers(Uint16 *unitIds)
+{
+	Sint32 limit;
+	Sint32 count;
+	Sint32 index;
 
 	limit = PARTY_BATTLE_SIZE;
 	if(BattleStateWork->isLink != 0)
@@ -377,7 +363,7 @@ s32 btPartyPrepareMembers(u16 *unitIds) {
 		count = limit;
 
 	for(index = 0; index < count; index++) {
-		s32 unitId = MainRoutineStateWork.party[index];
+		Sint32 unitId = MainRoutineStateWork.party[index];
 
 		if(unitIds != 0)
 			*unitIds++ = unitId;
@@ -389,14 +375,15 @@ s32 btPartyPrepareMembers(u16 *unitIds) {
 	return count;
 }
 
-/* Lists the enemy units present and returns how many, 0 when unitIds is null.
- */
-s32 btEnemyList(s16 *unitIds) {
-	s16 *output = unitIds;
-	s32 listed = 0;
-	s32 enemyCapacity = ENEMY_BATTLE_SIZE;
-	s32 count = 0;
-	s32 unitId;
+/* Lists the enemy units present and returns how many, 0 when unitIds is
+   null. */
+Sint32 btEnemyList(Sint16 *unitIds)
+{
+	Sint16 *output = unitIds;
+	Sint32	listed = 0;
+	Sint32	enemyCapacity = ENEMY_BATTLE_SIZE;
+	Sint32	count = 0;
+	Sint32	unitId;
 
 	if(output != NULL) {
 		if(gmFlagGetStub(FLAG_LINK_BATTLE) != 0)
@@ -414,18 +401,19 @@ s32 btEnemyList(s16 *unitIds) {
 	return count;
 }
 
-/* Lists the units still standing on the sides in sideMask, party first, into */
-/* unitIds when it is not null, and returns how many. */
-s32 btUnitListLiving(s32 sideMask, u16 *unitIds) {
-	u16 activeMembers[8];
-	s32 i;
-	u16 *output;
-	s32 livingCount;
-	s32 enemyCapacity;
-	s32 unitId;
-	s16 hp;
-	s32 activeCount;
-	UNIT *unit;
+/* Lists the units still standing on the sides in sideMask, party first, into
+   unitIds when it is not null, and returns how many. */
+Sint32 btUnitListLiving(Sint32 sideMask, Uint16 *unitIds)
+{
+	Uint16	activeMembers[8];
+	Sint32	i;
+	Uint16 *output;
+	Sint32	livingCount;
+	Sint32	enemyCapacity;
+	Sint32	unitId;
+	Sint16	hp;
+	Sint32	activeCount;
+	UNIT   *unit;
 
 	output = unitIds;
 	livingCount = 0;
@@ -466,12 +454,12 @@ s32 btUnitListLiving(s32 sideMask, u16 *unitIds) {
 }
 
 /* Lists the units in the battle on the sides in sideMask, standing or not, and
- */
-/* returns how many. */
-s32 btUnitListIds(s32 sideMask, u16 *unitIds) {
+   returns how many. */
+Sint32 btUnitListIds(Sint32 sideMask, Uint16 *unitIds)
+{
 	BATTLE_STATE *battle;
-	s32 count;
-	s32 i;
+	Sint32		  count;
+	Sint32		  i;
 
 	battle = BattleStateWork;
 	count = 0;

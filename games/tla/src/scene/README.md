@@ -5,7 +5,7 @@ what anyone says, every cutscene that happens there. Each scene's overlay
 is named for the place, such as `daila.c`.
 
 Open any of them and you will find the same two things: tables, and
-events.
+scripts.
 
 ## The entry table
 
@@ -32,7 +32,7 @@ is running.
 The map question is The Lost Age's own; The Broken Seal's overlays answer
 the other six. The field engine asks it once the map is in, before the
 camera finds the party, and never on the World Map. Daila uses it to
-change the cells of the puddles Parch has dried, and Alhafra to change
+change the metatiles of the puddles Parch has dried, and Alhafra to change
 four colours once Briggs is caught.
 
 The set-up is where a scene does whatever a table cannot say: stand a
@@ -84,7 +84,7 @@ SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, LemuriaDock, 
 SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, AttekaInlet, ATTEKA_INLET_FROM_WORLD_MAP_WEST, EXIT_FLAG_NONE),
 ```
 
-The last row's EXIT_FLAG_NONE, a flag word of -1, is new in The Lost Age: `scTakeExit` takes that exit
+The last row's EXIT_FLAG_NONE, a flag word of -1, is new in The Lost Age: `gmTakeExit` takes that exit
 whatever the flags hold, so the chain always ends somewhere.
 
 ### Who stands where
@@ -95,43 +95,43 @@ faces. The scene's code refers to actors by number, 8 and up in row order
 after the eight party characters. A row keeps its number even when its
 condition fails and nobody appears, so the numbers never shift.
 
-### Which triggers a cell starts
+### Which cues a metatile starts
 
-A cell on the map carries a number, its
-[cell behavior](../../../../docs/tla/glossary.md#cell-behavior). By itself the number
-means nothing. The scene's trigger table gives it a meaning: step onto a
-cell numbered 1 in Daila and the leader walks through a door.
+A metatile on the map carries a number, its
+[metatile behavior](../../../../docs/tla/glossary.md#metatile-behavior). By itself the number
+means nothing. The scene's cue table gives it a meaning: step onto a
+metatile numbered 1 in Daila and the leader walks through a door.
 
-### What a trigger row says
+### What a cue row says
 
-A [trigger](../../../../docs/tla/glossary.md#trigger) row is one thing the player can do
-here: what kind of action, on which actor or cell, under what condition,
+A [cue](../../../../docs/tla/glossary.md#cue) row is one thing the player can do
+here: what kind of action, on which actor or metatile, under what condition,
 and what runs.
 
 ```c
-{TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
- EVENT(scGarohRoomsTalkToWeaponsVendor)},
+{CUE_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
+ SCRIPT_REF(scGarohRoomsTalkToWeaponsVendor)},
 {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
- FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(scFreezePuddleIntoPillar)},
+ FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, SCRIPT_REF(scFreezePuddleIntoPillar)},
 ```
 
-What runs can be an event, or a bare message for a villager with one line.
-A path that just leads away is a row of its own kind, `TRIGGER_EXIT`,
-whose cell takes the party out by that exit.
+What runs can be a script, or a bare message for a villager with one line.
+A path that just leads away is a row of its own kind, `CUE_EXIT`,
+whose metatile takes the party out by that exit.
 
-## How a trigger is chosen
+## How a cue is chosen
 
 ![Daila's healer talked to twice from across the counter: the first time she asks whether the party has time and nowhere to go, Yes, and she sends them to Master Poi; the second time she welcomes them to the sanctum](https://alchemy.pascalpixel.com/tla/guides/map/talk-twice.gif)
 
-The field engine reads the trigger table from the top and takes the first
+The field engine reads the cue table from the top and takes the first
 row that fits. Order is therefore meaning. The east guard on the Madra
 Drawbridge has a question that counts until Madra has given the party
 passage to Osenia, then a tip that always counts:
 
 ```c
-{TRIGGER_TALK, ACTOR_EAST_GUARD, 0x913,
- EVENT(scMadraDrawbridgeAskGoingToOsenia)},
-{TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS,
+{CUE_TALK, ACTOR_EAST_GUARD, 0x913,
+ SCRIPT_REF(scMadraDrawbridgeAskGoingToOsenia)},
+{CUE_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS,
  MSGNO(MsgMadraMikasallaVillage)},
 ```
 
@@ -157,40 +157,40 @@ scene uses those for anything that should reset:
 A battle wipes neither. Every scene reuses the same two groups, so each
 gives the ones it uses a name of its own at the top of its file.
 
-## Events
+## Scripts
 
-An [event](../../../../docs/tla/glossary.md#event) is a function that plays from top to
+A [script](../../../../docs/tla/glossary.md#script) is a function that plays from top to
 bottom. This one walks the leader through one of Daila's doors:
 
 ```c
 void scDailaEnterDoor(void) {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 
-	fdEventStart();
-	fdEventEndLastingPsynergy(0);
+	fdScriptStart();
+	fdScriptEndLastingPsynergy(0);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
 	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
 	sySndPlay(SE_MAP_EXIT);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -6);
-	fdEventWait(10);
-	syImportEventSetExitRequest(state->stepTrigger);
-	fdEventFinishScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventEnd();
+	fdScriptWait(10);
+	syImportScriptSetExitRequest(state->stepCue);
+	fdScriptFinishScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptEnd();
 }
 ```
 
-Commands come in two sorts. Some take time and hold the event until they
+Commands come in two sorts. Some take time and hold the script until they
 are done: a wait, a line of dialogue. Others only start something and
 return at once. On the Madra Drawbridge `fdActorWalkTo` starts the west
-guard walking and `fdActorWalkToAndWait` holds the event until the east
+guard walking and `fdActorWalkToAndWait` holds the script until the east
 guard gets there, so the two close ranks together.
-`syImportEventSetExitRequest` does not leave the scene. It sets a request,
-which the field engine acts on once the event has returned.
+`syImportScriptSetExitRequest` does not leave the scene. It sets a request,
+which the field engine acts on once the script has returned.
 
-An event is ordinary C, so a choice is an `if`: on a flag, on a Yes or No,
+A script is ordinary C, so a choice is an `if`: on a flag, on a Yes or No,
 on which of its scenes is running.
 
 ## The Title, the File Screen and the Battle Arena

@@ -1,13 +1,13 @@
-@ Actors, movement, map drawing and event commands.
+@ Actors, movement, map drawing and script commands.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
 	.global Stubs_Field
 Stubs_Field:
-	stub syResourceGetMetadataRecordFarStub, fdResourceGetMetadataRecordStub
+	stub fdResourceGetMetadataRecordStubStub, fdResourceGetMetadataRecordStub
 	stub fdActorSystemConfigureStub, fdActorSystemConfigure
-	stub btRenderApplyProjectedPlacementStub, fdRenderApplyProjectedPlacement
-	stub btRenderApplyProjectedPlacementAtDepthStub, fdRenderApplyProjectedPlacementAtDepth
+	stub fdRenderApplyProjectedPlacementStub, fdRenderApplyProjectedPlacement
+	stub fdRenderApplyProjectedPlacementAtDepthStub, fdRenderApplyProjectedPlacementAtDepth
 	stub fdRenderPlaceProjectedSprStub, fdRenderPlaceProjectedSpr
 	stub fdSprResetAnimationsStub, fdSprResetAnimations
 	stub fdSprStartAnimationStub, fdSprStartAnimation
@@ -38,20 +38,20 @@ Stubs_Field:
 	stub fdSprDissolveRunStub, fdSprDissolveRun
 	stub fdSprDissolveRunManyStub, fdSprDissolveRunMany
 	stub fdMapGridLoadMapStub, fdMapGridLoadMap
-	stub scWorldMapInitPerspectiveStub, fdWorldMapInitPerspective
+	stub fdWorldMapInitPerspectiveStub, fdWorldMapInitPerspective
 	stub fdMapGridSetCameraCenterStub, fdMapGridSetCameraCenter
 	stub fdMapGridCenterOnFollowedPointStub, fdMapGridCenterOnFollowedPoint
-	stub scWorldMapUpdateCurrentTileBlockStub, fdWorldMapUpdateCurrentTileBlock
-	stub scWorldMapLoadGraphicsStub, fdWorldMapLoadGraphics
+	stub fdWorldMapUpdateCurrentTileBlockStub, fdWorldMapUpdateCurrentTileBlock
+	stub fdWorldMapLoadGraphicsStub, fdWorldMapLoadGraphics
 	stub fdActorStartIdleStub, fdActorStartIdle
 	stub fdActorWaitForScriptEndStub, fdActorWaitForScriptEnd
 	stub fdActorSetMoveTargetStub, fdActorSetMoveTarget
 	stub fdActorWaitForMoveStub, fdActorWaitForMove
-	stub fdMapGridGetScrRelativePosStub, fdMapGridGetScrRelativePos
+	stub fdMapGridGetScreenRelativePosStub, fdMapGridGetScreenRelativePos
 	stub fdWorldMapUpdateViewStub, fdWorldMapUpdateView
-	stub fdWorldMapLoadDefaultCellsAndUpdateBlockStub, fdWorldMapLoadDefaultCellsAndUpdateBlock
+	stub fdWorldMapLoadDefaultMetatilesAndUpdateBlockStub, fdWorldMapLoadDefaultMetatilesAndUpdateBlock
 	stub fdMapGridPlayMapEditStub, fdMapGridPlayMapEdit
-	stub fdMapGridCopyCellTilesIndicesRectStub, fdMapGridCopyCellTilesIndicesRect
+	stub fdMapGridCopyMetatileTilesIndicesRectStub, fdMapGridCopyMetatileTilesIndicesRect
 	stub fdMapApplySetFlagEditsStub, fdMapApplySetFlagEdits
 	stub fdMapSetFlagAndApplyEditsStub, fdMapSetFlagAndApplyEdits
 	stub fdMapSetFlagAndApplyAttributeEditsStub, fdMapSetFlagAndApplyAttributeEdits
@@ -61,19 +61,19 @@ Stubs_Field:
 	stub fdBlendScriptSuspendStub, fdBlendScriptSuspend
 	stub fdBlendScriptStartStub, fdBlendScriptStart
 	stub fdMapGridGetTerrainHeightStub, fdMapGridGetTerrainHeight
-	stub fdMapGridGetCellBehaviorAtStub, fdMapGridGetCellBehaviorAt
+	stub fdMapGridGetMetatileBehaviorAtStub, fdMapGridGetMetatileBehaviorAt
 	stub fdMapGridGetTerrainKindAtStub, fdMapGridGetTerrainKindAt
 	stub fdMapGridGetTerrainKindOrBumpAtStub, fdMapGridGetTerrainKindOrBumpAt
-	stub fdMapCopyCellsRectStub, fdMapCopyCellsRect
-	stub fdMapCopyCellAttributeRectStub, fdMapCopyCellAttributeRect
-	stub fdMapGridCopyCellTilesCellsRectStub, fdMapGridCopyCellTilesCellsRect
-	stub fdMapCopyRawCellsRectStub, fdMapCopyRawCellsRect
-	stub fdWorldMapSetWindowCellTileStub, fdWorldMapSetWindowCellTile
-	stub fdWorldMapSetWindowCellTileAndDrawStub, fdWorldMapSetWindowCellTileAndDraw
+	stub fdMapCopyMetatilesRectStub, fdMapCopyMetatilesRect
+	stub fdMapCopyMetatileAttributeRectStub, fdMapCopyMetatileAttributeRect
+	stub fdMapGridCopyMetatileTilesMetatilesRectStub, fdMapGridCopyMetatileTilesMetatilesRect
+	stub fdMapCopyRawMetatilesRectStub, fdMapCopyRawMetatilesRect
+	stub fdWorldMapSetWindowMetatileTileStub, fdWorldMapSetWindowMetatileTile
+	stub fdWorldMapSetWindowMetatileTileAndDrawStub, fdWorldMapSetWindowMetatileTileAndDraw
 	stub fdMapGridCheckCollisionStub, fdMapGridCheckCollision
 	stub fdActorSetSprFlagsStub, fdActorSetSprFlags
 	stub fdActorSetBlendModeStub, fdActorSetBlendMode
-	stub fdMapGridSetScrShakeStub, fdMapGridSetScrShake
+	stub fdMapGridSetScreenShakeStub, fdMapGridSetScreenShake
 	stub fdMapGridWaitForShakeToSettleStub, fdMapGridWaitForShakeToSettle
 	stub fdActorSetFirstSprAnimationStub, fdActorSetFirstSprAnimation
 	stub fdActorSystemSuspendProjectionAndShowSprsStub, fdActorSystemSuspendProjectionAndShowSprs
@@ -81,8 +81,8 @@ Stubs_Field:
 	stub fdActorSetOwnScaleStub, fdActorSetOwnScale
 	stub fdMapGridIsWallAtStub, fdMapGridIsWallAt
 	stub fdActorRegisterSprMetadataStub, fdActorRegisterSprMetadata
-	stub scWorldMapStartStillImageStub, fdWorldMapStartStillImage
-	stub scWorldMapLoadAreaGraphicsStub, fdWorldMapLoadAreaGraphics
+	stub fdWorldMapStartStillImageStub, fdWorldMapStartStillImage
+	stub fdWorldMapLoadAreaGraphicsStub, fdWorldMapLoadAreaGraphics
 	stub fdActorSetSprColModeStub, fdActorSetSprColMode
 	stub fdSprSetAnimationColModesStub, fdSprSetAnimationColModes
 	stub fdSprSetFirstAnimationColModeStub, fdSprSetFirstAnimationColMode
@@ -90,9 +90,9 @@ Stubs_Field:
 	stub fdActorScriptCheckOverlapStub, fdActorScriptCheckOverlap
 	stub fdMapGridSetShownLayersStub, fdMapGridSetShownLayers
 	stub fdSprAnimationSumCommandLengthsStub, fdSprAnimationSumCommandLengths
-	stub scWorldMapGetBattleEnvironmentStub, fdWorldMapGetBattleEnvironment
+	stub fdWorldMapGetBattleEnvironmentStub, fdWorldMapGetBattleEnvironment
 	stub fdSprPictureCacheLoadStub, fdSprPictureCacheLoad
-	stub fdMapGridSetCellBehaviorAtStub, fdMapGridSetCellBehaviorAt
+	stub fdMapGridSetMetatileBehaviorAtStub, fdMapGridSetMetatileBehaviorAt
 	stub fdSprSetAnimationSpeedStub, fdSprSetAnimationSpeed
 	stub fdSprColRemapPixelsStub, fdSprColRemapPixels
 	stub fdTilesetAnimSuspendAllStub, fdTilesetAnimSuspendAll
@@ -110,12 +110,12 @@ Stubs_Field:
 	stub fdSprWaitForTrackEndStub, fdSprWaitForTrackEnd
 	stub fdActorWaitForTrackEndStub, fdActorWaitForTrackEnd
 	stub fdCheckSpheresOverlapStub, fdCheckSpheresOverlap
-	stub WorldMap_GetBlockPlaceStub, fdWorldMapGetBlockCellBehavior
-	stub scWorldMapGetCollisionStub, fdWorldMapGetCollision
-	stub fdMapGridSetCellHeightStub, fdMapGridSetCellHeight
-	stub fdMapGridGetCellHeightStub, fdMapGridGetCellHeight
+	stub fdWorldMapGetBlockMetatileBehaviorStub, fdWorldMapGetBlockMetatileBehavior
+	stub fdWorldMapGetCollisionStub, fdWorldMapGetCollision
+	stub fdMapGridSetMetatileHeightStub, fdMapGridSetMetatileHeight
+	stub fdMapGridGetMetatileHeightStub, fdMapGridGetMetatileHeight
 	stub fdSprSkipToStopStub, fdSprSkipToStop
-	stub fdMapLoadCellsAndShapesStub, fdMapLoadCellsAndShapes
+	stub fdMapLoadMetatilesAndShapesStub, fdMapLoadMetatilesAndShapes
 	stub fdActorShadowFreeTilesStub, fdActorShadowFreeTiles
 	stub fdActorShadowLoadTilesStub, fdActorShadowLoadTiles
 	stub fdMapCopyPaletteStub, fdMapCopyPalette

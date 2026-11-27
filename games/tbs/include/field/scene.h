@@ -1,9 +1,8 @@
 #ifndef ALCHEMY_SCENE_H
 #define ALCHEMY_SCENE_H
 
-/* @file */
-/* Scenes, exit regions and scene entry tables, with the field state they */
-/* fill (field_state.h). */
+/* Scenes, exit regions and scene entry tables, with the field state they fill
+   (field_state.h). */
 
 #include "fixed_math.h"
 #include "static_assert.h"
@@ -14,54 +13,53 @@
 
 struct ACTOR;
 
-/* A scene's row in ScenesWork: its overlay's resource, its area, its scene */
-/* type and its map. */
+/* A scene's row in ScenesWork: its overlay's resource, its area, its scene type
+   and its map. */
 typedef struct SCENE {
-	s16 resourceId; /* the overlay syOverlayLoad loads into OverlayArea */
-	/* The area: entering a new one clears the FLAG_AREA_TEMP_xx flags */
-	/* and the step counters and moves Retreat's destination; */
-	/* FLAG_AREA_VISITED(area) marks it visited (scArrive). */
-	s8 area;
-	/* An SCENE_TYPE, copied to MainRoutineStateWork.sceneType: */
-	/* SCENE_TYPE_TOWN for towns and their rooms (53 rows: Vale, */
-	/* Bilibin, Kalay, Tolbi and others), SCENE_TYPE_OTHER for the rest. */
-	s8 sceneType;
-	u16 mapIdx;	  /* the map loaded for it, copied to MainRoutineStateWork.mapId
-				   */
-	u16 reserved; /* 0 in every row; not read */
+	Sint16 resourceId; /* the overlay syOverlayLoad loads into OverlayArea */
+	/* The area: entering a new one clears the FLAG_AREA_TEMP_xx flags and the
+	   step counters and moves Retreat's destination; FLAG_AREA_VISITED(area)
+	   marks it visited (gmArrive). */
+	Sint8 area;
+	/* An SCENE_TYPE, copied to MainRoutineStateWork.sceneType: SCENE_TYPE_TOWN
+	   for towns and their rooms (53 rows: Vale, Bilibin, Kalay, Tolbi and
+	   others), SCENE_TYPE_OTHER for the rest. */
+	Sint8 sceneType;
+	Uint16
+		/* the map loaded for it, copied to MainRoutineStateWork.mapId */
+		   mapIdx;
+	Uint16 reserved; /* 0 in every row; not read */
 } SCENE;
 
 STATIC_ASSERT(sizeof(SCENE) == 8);
 
-/* A scene's exit region: the box that, while its condition holds, takes the */
-/* party leader out through its exit. */
+/* A scene's exit region: the box that, while its condition holds, takes the
+   party leader out through its exit. */
 typedef struct SCENE_EXIT_REGION {
-	s16 minX, minY, minZ; /* pixels, inclusive; minX -1 ends the table */
-	s16 maxX, maxY, maxZ; /* pixels, exclusive */
-	s16 condition; /* CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else */
-				   /* the flag clear */
-	s16 value;	   /* the exit kind, stored in FIELD_STATE's exit */
+	Sint16 minX, minY, minZ; /* pixels, inclusive; minX -1 ends the table */
+	Sint16 maxX, maxY, maxZ; /* pixels, exclusive */
+	/* CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else the flag clear */
+	Sint16 condition;
+	Sint16 value; /* the exit kind, stored in FIELD_STATE's exit */
 } SCENE_EXIT_REGION;
 
 STATIC_ASSERT(sizeof(SCENE_EXIT_REGION) == 16);
 
 /* The entry table at the start of each scene overlay: its initialize function
- */
-/* and the functions returning its entrances, exits, actor placements, triggers
- */
-/* and exit regions, each behind a stub word. */
+   and the functions returning its entrances, exits, actor placements, cues and
+   exit regions, each behind a stub word. */
 typedef struct SCENE_ENTRY_POINTS {
-	u32 initializeStub;
-	s32 (*initialize)(void);
-	u32 entrancesStub;
+	Uint32 initializeStub;
+	Sint32 (*initialize)(void);
+	Uint32 entrancesStub;
 	const SCENE_ENTRANCE *(*entrances)(void);
-	u32 exitsStub;
-	const u32 *(*exits)(void);
-	u32 actorPlacementsStub;
+	Uint32 exitsStub;
+	const Uint32 *(*exits)(void);
+	Uint32 actorPlacementsStub;
 	const ACTOR_PLACE *(*actorPlacements)(void);
-	u32 triggersStub;
-	const TRIGGER *(*triggers)(void);
-	u32 regionsStub;
+	Uint32 cuesStub;
+	const CUE *(*cues)(void);
+	Uint32 regionsStub;
 	const SCENE_EXIT_REGION *(*regions)(void);
 } SCENE_ENTRY_POINTS;
 
@@ -79,8 +77,7 @@ STATIC_ASSERT(sizeof(FIELD_POS) == 12);
 /* Every scene's row, by scene number (field/scenes.s). */
 extern const SCENE ScenesWork[];
 /* The running scene's overlay, loaded into these 32 KB of EWRAM at each scene
- */
-/* change; its code opens with its 48-byte entry table. */
+   change; its code opens with its 48-byte entry table. */
 extern SCENE_ENTRY_POINTS OverlayArea;
 
 #endif

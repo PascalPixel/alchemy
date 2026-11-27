@@ -1,15 +1,14 @@
-/* @file */
 /* The digit characters and place values numbers are written with. */
 
 #include "system.h"
 
 /* The hexadecimal digit characters, indexed by a nibble's value. */
-const u8 String_HexDigits[] = "0123456789ABCDEF";
+const Uint8 String_HexDigits[] = "0123456789ABCDEF";
 
-/* Place values for decimal display, 10^9 down to 10, which */
-/* syStringFormatDecimal divides by; the ones digit is what remains. */
+/* Place values for decimal display, 10^9 down to 10, which
+   syStringFormatDecimal divides by; the ones digit is what remains. */
 /* clang-format off */
-const s32 String_PowersOfTen[9] = {
-    1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10,
+const Sint32 String_PowersOfTen[9] = {
+	1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10,
 };
 /* clang-format on */

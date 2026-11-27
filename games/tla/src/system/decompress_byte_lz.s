@@ -3,14 +3,14 @@
 @ entries. Its return pops the r1 saved at entry into r0. Its Thumb entry's
 @ bx pc switches to the ARM code that follows, a mode switch inside a function;
 @ the halfword after bx pc is never run.
-@ Why Render_BuildOamListKernel is assembly:
+@ Why syRenderBuildOAMListKernel is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ bcs consumes the carry of lsls r3, r3, #1; movs r3, r3 copies and tests
 @ without a shift; add r1, pc, #0x118 / ldm r1, {r2, sl, fp, ip} reads its
 @ four addresses with one pc-relative block load; and fp (r11) holds
 @ OamUsageWork's address, not a frame pointer.
-@ Why syRenderBuildOamList is assembly:
+@ Why syRenderBuildOAMList is assembly:
 @ it reads its three DMA words, the channel's address, the kernel and the
 @ control, with one pc-relative block load (add r1, pc, #16; ldmia r1,
 @ {r1, r2, r4}).
@@ -239,11 +239,11 @@ AlchemyUncreditedEnd_0800180c:
 	.balign 4
 .syntax unified
 	.thumb
-	.global Render_BuildOamListKernel
+	.global syRenderBuildOAMListKernel
 	.thumb_func
-Render_BuildOamListKernel:
-	.global Render_BuildOamListKernelCode
-Render_BuildOamListKernelCode:
+syRenderBuildOAMListKernel:
+	.global syRenderBuildOAMListKernelCode
+syRenderBuildOAMListKernelCode:
 	bx	pc
 AlchemyUncredited_080018b6:
 	.2byte	0x0200
@@ -336,15 +336,15 @@ AlchemyUncreditedEnd_080018b6:
 	.4byte	OamUsageWork
 	.4byte	OamDepthLists
 	.4byte	OamMatrices
-	.4byte	IwramFillWords
+	.4byte	syIWRAMWordsFill
 
 @ The kernel's loader: copies the ARM kernel by DMA into a buffer on the stack
 @ and calls it there, through lr with a lone BL suffix, as the palette
 @ kernels' loaders do.
 	.thumb
-	.global syRenderBuildOamList
+	.global syRenderBuildOAMList
 	.thumb_func
-syRenderBuildOamList:
+syRenderBuildOAMList:
 	push	{lr}
 	add	r1, pc, #16
 	ldmia	r1, {r1, r2, r4}
@@ -356,7 +356,7 @@ syRenderBuildOamList:
 	add	sp, #0x140
 	pop	{pc}
 	.4byte	0x040000d4
-	.4byte	Render_BuildOamListKernelCode
+	.4byte	syRenderBuildOAMListKernelCode
 	.4byte	0x84000050
 
 	.section .text,"ax",%progbits
@@ -924,8 +924,8 @@ ColorBuffer_DarkenPartial:
 	.balign 4
 .syntax unified
 	.thumb
-	.global Decompress_HalfwordLz
-Decompress_HalfwordLz:
+	.global syDecompressHalfwordLZ
+syDecompressHalfwordLZ:
 	.global Resource_DecodeHalfwordLz
 	.thumb_func
 Resource_DecodeHalfwordLz:
@@ -961,4 +961,4 @@ AlchemyUncreditedEnd_08001ffe:
 	bne	.L_08002040
 	b	.L_0800200c
 	.global syDecompressHalfwordsCodeSize
-	.set syDecompressHalfwordsCodeSize, . - Decompress_HalfwordLz
+	.set syDecompressHalfwordsCodeSize, . - syDecompressHalfwordLZ

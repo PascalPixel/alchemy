@@ -1,19 +1,16 @@
 #ifndef ALCHEMY_ABILITY_IDS_H
 #define ALCHEMY_ABILITY_IDS_H
 
-/* @file */
 /* Ability numbers, named from the English release. */
 
 #include "djinn_ids.h"
 
-/* Ability numbers, one for each row of AbilityDefinitions (ability_table.c) */
-/* in order. Each ability's name is the message MsgAbilityName plus its */
-/* number. Each family of abilities leaves spare numbers after its last, whose
- */
-/* rows are blank and whose names in the text are "?"; a family's first number
- */
-/* is written where spares come before it. A row whose name repeats another's */
-/* is named for what sets it apart: its strength, its holder or its use. */
+/* Ability numbers, one for each row of AbilityDefinitions (ability_table.c) in
+   order. Each ability's name is the message MsgAbilityName plus its number.
+   Each family of abilities leaves spare numbers after its last, whose rows are
+   blank and whose names in the text are "?"; a family's first number is written
+   where spares come before it. A row whose name repeats another's is named for
+   what sets it apart: its strength, its holder or its use. */
 typedef enum ABILITY {
 	ABILITY_NOTHING,
 	ABILITY_ATTACK,
@@ -64,8 +61,8 @@ typedef enum ABILITY {
 	ABILITY_BLAST,
 	ABILITY_MAD_BLAST,
 	ABILITY_FIERY_BLAST,
-	/* Power 40, against ABILITY_BLAST's 25: the row before Nova and Supernova.
-	 */
+	/* Power 40, against ABILITY_BLAST's 25: the row before Nova and
+	   Supernova. */
 	ABILITY_BLAST_STRONG,
 	ABILITY_NOVA,
 	ABILITY_SUPERNOVA,
@@ -156,16 +153,13 @@ typedef enum ABILITY {
 	ABILITY_HOVER,
 	ABILITY_BLAZE,
 	/* Cast only from the debug shortcut grid. The text names it only "Ma????"
-	 */
-	/* and its icon is a horseshoe magnet; cast in the field, it draws a ring of
-	 */
-	/* light round the caster. */
+	   and its icon is a horseshoe magnet; cast in the field, it draws a ring of
+	   light round the caster. */
 	ABILITY_MAGNET,
 	ABILITY_TELEPORT,
 	/* Cast only from the debug shortcut grid. The text names it only "A??" and
-	 */
-	/* its icon is a bow and arrow; cast in the field, a bow looses a flaming */
-	/* arrow. */
+	   its icon is a bow and arrow; cast in the field, a bow looses a flaming
+	   arrow. */
 	ABILITY_ARROW,
 	ABILITY_DRAGON_CLOUD = 160,
 	ABILITY_DEMON_NIGHT,
@@ -266,8 +260,8 @@ typedef enum ABILITY {
 	ABILITY_CORN,
 	ABILITY_AURORA_FIELD = 298,
 	ABILITY_DJINN_COUNTER,
-	/* Flint's, the first of the Djinn's: a Djinni's ability is this plus its */
-	/* DJINNI_ID. */
+	/* Flint's, the first of the Djinn's: a Djinni's ability is this plus its
+	   DJINNI_ID. */
 	ABILITY_DJINNI_FIRST,
 	ABILITY_GRANITE,
 	ABILITY_QUARTZ,
@@ -340,8 +334,8 @@ typedef enum ABILITY {
 	ABILITY_WHORL,
 	ABILITY_GASP,
 	ABILITY_LULL,
-	/* The Jupiter Djinni Gale's (djinn_table.c): an attack that may blow its */
-	/* target away. */
+	/* The Jupiter Djinni Gale's (djinn_table.c): an attack that may blow its
+	   target away. */
 	ABILITY_GALE_DJINNI,
 	ABILITY_VENUS = ABILITY_DJINNI_FIRST + DJINN_PER_ELEMENT * 4,
 	ABILITY_RAMSES,
@@ -539,8 +533,7 @@ typedef enum ABILITY {
 	ABILITY_SABRE_DANCE = 584,
 	ABILITY_BACKSTAB,
 	/* The Psynergy the Pierrot series learns at level 22 and the Hiotoko Mask
-	 */
-	/* bestows; the enemies' Fire Breath is ABILITY_FIRE_BREATH. */
+	   bestows; the enemies' Fire Breath is ABILITY_FIRE_BREATH. */
 	ABILITY_FIRE_BREATH_PIERROT,
 	ABILITY_JUGGLE,
 	ABILITY_HEAT_JUGGLE,
@@ -625,8 +618,8 @@ typedef enum ABILITY {
 	ABILITY_BOSCA_HIT,
 	ABILITY_STRONG_HIT,
 	ABILITY_ROLLING_FLAME,
-	/* Agatio's Mars Psynergy, power 250; the unleash of that name is */
-	/* ABILITY_RISING_DRAGON. */
+	/* Agatio's Mars Psynergy, power 250; the unleash of that name is
+	   ABILITY_RISING_DRAGON. */
 	ABILITY_RISING_DRAGON_AGATIO,
 	ABILITY_METEOR_BLOW,
 	ABILITY_CAGE,
@@ -648,8 +641,8 @@ typedef enum ABILITY {
 	ABILITY_POISON_STING,
 	ABILITY_KILL_STING,
 	ABILITY_BEAST_NEEDLE,
-	/* The Needle Egg's: a Mercury attack that poisons, against */
-	/* ABILITY_POISON_STING's multiplied one. */
+	/* The Needle Egg's: a Mercury attack that poisons, against
+	   ABILITY_POISON_STING's multiplied one. */
 	ABILITY_POISON_STING_NEEDLE_EGG,
 	ABILITY_STUN_STING,
 	ABILITY_MUCOUS_GEL,
@@ -657,8 +650,7 @@ typedef enum ABILITY {
 	ABILITY_HYDRO_SLASH,
 	ABILITY_REGEN_DANCE,
 	/* The Phoenix's, the Fire Bird's and the Wonder Bird's multiplied attack;
-	 */
-	/* the unleash of that name is ABILITY_FIRE_DANCE. */
+	   the unleash of that name is ABILITY_FIRE_DANCE. */
 	ABILITY_FIRE_DANCE_PHOENIX,
 	ABILITY_POWER_CRUSH,
 	ABILITY_SACK,

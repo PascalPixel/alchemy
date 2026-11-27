@@ -1,82 +1,71 @@
-/* @file */
-/* The Bilibin Cave Entrance and Bilibin Cave are two areas between Bilibin */
-/* and Imil that share this overlay. */
-/* */
-/* The Bilibin Cave Entrance is SceneId_BilibinCaveEntrance. Bilibin Cave is */
-/* SceneId_BilibinCaveRapier and, beyond it, SceneId_BilibinCaveIce, whose far
- */
-/* end opens onto the World Map farther north. */
-/* */
-/* No one speaks here. Each scene is a run of Psynergy puzzles. The getters */
-/* pick its tables by MainRoutineStateWork.next, and scInit */
-/* restores what the party has already solved in the scene being entered. */
-/* */
-/* The Bilibin Cave Entrance is a clearing below a cliff, entered from the */
-/* World Map, with a waterfall to the west. The cave has two mouths in the */
-/* cliff: a low one at ground level (cell (21, 14)) and a high one on a ledge */
-/* to the north-east (cell (27, 7)). A sprout grows at the foot of the cliff */
-/* (ACTOR_SPROUT, cell (8, 13)); Growth turns it into a vine Isaac can climb */
-/* to the ledge, and in by the high mouth (scBilibinCaveGrowPlant). */
-/* FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps it grown until the party */
-/* leaves the Bilibin Cave Entrance, into the cave or out to the World Map, */
-/* since both are other areas. */
-/* */
-/* The cliff-top path passes just above the low mouth, and its cells there */
-/* switch the mouth's way in off and on again */
-/* (scBilibinCaveCloseLowerCaveMouth, scBilibinCaveOpenLowerCaveMouth). */
-/* */
-/* Inside, in SceneId_BilibinCaveRapier, the high mouth leads to the chest of */
-/* the Elven Rapier. Coming back later with Reveal, the party finds a way */
-/* through the wall beside that chest */
-/* (scBilibinCaveRevealHiddenPath), and scBilibinCaveHideRevealedPath closes it
- */
-/* again when Reveal wears off. Beyond is a small room of two torches, the west
- */
-/* one cold and the east one lit, with a little fire burning in the doorway */
-/* between them (ACTOR_RAPIER_ROOM_FIRE). Douse puts it out for good */
-/* (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED), and the doorway leads to the cave's
- */
-/* two last chests, a Psy Crystal and Water of Life. */
-/* */
-/* SceneId_BilibinCaveIce is the cold part of the cave on the way to Imil, */
-/* full of ice pillars, with puddles, a fire and burning torches. Frost */
-/* freezes a puddle into an ice pillar, but next to a fire or a torch the ice */
-/* melts straight back (scBilibinCaveMeltFrostBack). */
-/* */
-/* The first puddle lies beside a little fire (cell (17, 14)). */
-/* Douse on the fire puts it out (FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED), and */
-/* the puddle freezes by itself into a pillar, whose top the party hops */
-/* across. */
-/* */
-/* The second puddle lies beside a lit torch near the Vial's chest, which */
-/* cannot be moved, and Frost on it always melts back. */
-/* */
-/* The third puddle starts as an ice pillar (cell (36, 23)), east of a pair of
- */
-/* torches that can be pushed or moved with Move (ACTOR_THIRD_TORCH and */
-/* ACTOR_FOURTH_TORCH). Set beside it, on cell (35, 23), either torch melts it
- */
-/* into a puddle, and the cells north and south of it become hop squares, so */
-/* the party can jump over the puddle and go on. Take the torch away and it */
-/* freezes again (scBilibinCaveUpdateThirdPuddleFromTorches). */
-/* */
-/* FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and */
-/* FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there,
- */
-/* and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted. So */
-/* coming back from SceneId_BilibinCaveRapier puts the torches and the pillar */
-/* back. Leaving Bilibin Cave resets them. */
-/* */
-/* Nine more pieces of ice only stand there: five pillars from */
-/* ACTOR_FIRST_ICE_PILLAR and four lower pieces from ACTOR_FIRST_LOW_ICE. */
-/* */
-/* Snow has blown in at the cave's mouth to the World Map, the way out to */
-/* Imil, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP. Walking onto it Isaac starts */
-/* leaving footprints (scBilibinCaveStartFootprints), and walking off it stops
- */
-/* them (scBilibinCaveStopFootprints). */
-/* */
-/* Its chests hold a Vial, a Psy Crystal and Water of Life. */
+/* The Bilibin Cave Entrance and Bilibin Cave are two areas between Bilibin and
+   Imil that share this overlay.
+
+   The Bilibin Cave Entrance is SceneId_BilibinCaveEntrance. Bilibin Cave is
+   SceneId_BilibinCaveRapier and, beyond it, SceneId_BilibinCaveIce, whose far
+   end opens onto the World Map farther north.
+
+   No one speaks here. Each scene is a run of Psynergy puzzles. The getters pick
+   its tables by MainRoutineStateWork.next, and scInit restores what the party
+   has already solved in the scene being entered.
+
+   The Bilibin Cave Entrance is a clearing below a cliff, entered from the World
+   Map, with a waterfall to the west. The cave has two mouths in the cliff: a
+   low one at ground level (metatile (21, 14)) and a high one on a ledge to the
+   north-east (metatile (27, 7)). A sprout grows at the foot of the cliff
+   (ACTOR_SPROUT, metatile (8, 13)); Growth turns it into a vine Isaac can climb
+   to the ledge, and in by the high mouth (scBilibinCaveGrowPlant).
+   FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps it grown until the party leaves
+   the Bilibin Cave Entrance, into the cave or out to the World Map, since both
+   are other areas.
+
+   The cliff-top path passes just above the low mouth, and its metatiles there
+   switch the mouth's way in off and on again (scBilibinCaveCloseLowerCaveMouth,
+   scBilibinCaveOpenLowerCaveMouth).
+
+   Inside, in SceneId_BilibinCaveRapier, the high mouth leads to the chest of
+   the Elven Rapier. Coming back later with Reveal, the party finds a way
+   through the wall beside that chest (scBilibinCaveRevealHiddenPath), and
+   scBilibinCaveHideRevealedPath closes it again when Reveal wears off. Beyond
+   is a small room of two torches, the west one cold and the east one lit, with
+   a little fire burning in the doorway between them (ACTOR_RAPIER_ROOM_FIRE).
+   Douse puts it out for good (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED), and the
+   doorway leads to the cave's two last chests, a Psy Crystal and Water of Life.
+
+   SceneId_BilibinCaveIce is the cold part of the cave on the way to Imil, full
+   of ice pillars, with puddles, a fire and burning torches. Frost freezes a
+   puddle into an ice pillar, but next to a fire or a torch the ice melts
+   straight back (scBilibinCaveMeltFrostBack).
+
+   The first puddle lies beside a little fire (metatile (17, 14)). Douse on the
+   fire puts it out (FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED), and the puddle
+   freezes by itself into a pillar, whose top the party hops across.
+
+   The second puddle lies beside a lit torch near the Vial's chest, which cannot
+   be moved, and Frost on it always melts back.
+
+   The third puddle starts as an ice pillar (metatile (36, 23)), east of a pair
+   of torches that can be pushed or moved with Move (ACTOR_THIRD_TORCH and
+   ACTOR_FOURTH_TORCH). Set beside it, on metatile (35, 23), either torch melts
+   it into a puddle, and the metatiles north and south of it become hop squares,
+   so the party can jump over the puddle and go on. Take the torch away and it
+   freezes again (scBilibinCaveUpdateThirdPuddleFromTorches).
+
+   FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
+   FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there,
+   and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted. So
+   coming back from SceneId_BilibinCaveRapier puts the torches and the pillar
+   back. Leaving Bilibin Cave resets them.
+
+   Nine more pieces of ice only stand there: five pillars from
+   ACTOR_FIRST_ICE_PILLAR and four lower pieces from ACTOR_FIRST_LOW_ICE.
+
+   Snow has blown in at the cave's mouth to the World Map, the way out to Imil,
+   around BILIBIN_CAVE_ICE_FROM_WORLD_MAP. Walking onto it Isaac starts leaving
+   footprints (scBilibinCaveStartFootprints), and walking off it stops them
+   (scBilibinCaveStopFootprints).
+
+   Its chests hold a Vial, a Psy Crystal and Water of Life. */
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -84,8 +73,9 @@
 #include "battle/battle.h"
 #include "debug/debug.h"
 #include "field/actor_script.h"
-#include "field/event.h"
+#include "field/script.h"
 #include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
 #include "graphics/graphics.h"
 #include "game/system_call.h"
 
@@ -93,34 +83,32 @@ extern SCENE_ENTRANCE BilibinCaveEntrancesOther[];
 extern SCENE_ENTRANCE BilibinCaveEntranceEntrances[];
 extern SCENE_ENTRANCE BilibinCaveRapierEntrances[];
 extern SCENE_ENTRANCE BilibinCaveIceEntrances[];
-extern u32 BilibinCaveExits[];
-extern ACTOR_PLACE BilibinCaveActorPlacementsOther[];
-extern ACTOR_PLACE BilibinCaveEntranceActorPlacements[];
-extern ACTOR_PLACE BilibinCaveRapierActorPlacements[];
-extern ACTOR_PLACE BilibinCaveIceActorPlacements[];
-extern TRIGGER BilibinCaveTriggersOther[];
-extern TRIGGER BilibinCaveEntranceTriggers[];
-extern TRIGGER BilibinCaveRapierTriggers[];
-extern TRIGGER BilibinCaveIceTriggers[];
-extern s32 PushedActor_DirectionSteps[];
+extern Uint32		  BilibinCaveExits[];
+extern ACTOR_PLACE	  BilibinCaveActorPlacementsOther[];
+extern ACTOR_PLACE	  BilibinCaveEntranceActorPlacements[];
+extern ACTOR_PLACE	  BilibinCaveRapierActorPlacements[];
+extern ACTOR_PLACE	  BilibinCaveIceActorPlacements[];
+extern CUE			  BilibinCaveCuesOther[];
+extern CUE			  BilibinCaveEntranceCues[];
+extern CUE			  BilibinCaveRapierCues[];
+extern CUE			  BilibinCaveIceCues[];
 
-/* In Bilibin Cave's ice room, a movable torch has melted the third puddle's */
-/* ice pillar. */
-#define FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED FLAG_AREA_TEMP_02
+/* In Bilibin Cave's ice room, a movable torch has melted the third puddle's ice
+   pillar. */
+#define FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED	 FLAG_AREA_TEMP_02
 /* In Bilibin Cave's ice room, the third torch stands beside the third puddle's
- */
-/* ice pillar. */
-#define FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR FLAG_AREA_TEMP_03
-/* In Bilibin Cave's ice room, the fourth torch stands beside the third */
-/* puddle's ice pillar. */
+   ice pillar. */
+#define FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR	 FLAG_AREA_TEMP_03
+/* In Bilibin Cave's ice room, the fourth torch stands beside the third puddle's
+   ice pillar. */
 #define FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR FLAG_AREA_TEMP_04
 /* At the Bilibin Cave Entrance, Growth has grown the sprout into a vine. */
-#define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_AREA_TEMP_05
+#define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN	 FLAG_AREA_TEMP_05
 
 static void scBilibinCaveRestoreEntrance(void);
 static void scBilibinCaveRestoreRapierRoom(void);
 static void scBilibinCaveRestoreIceRoom(void);
-static void scBilibinCaveEmptyActorSetupHook(s32 actorId);
+static void scBilibinCaveEmptyActorSetupHook(Sint32 actorId);
 
 /* Actors of the Bilibin Cave Entrance (SceneId_BilibinCaveEntrance). */
 enum {
@@ -128,21 +116,21 @@ enum {
 	ACTOR_SPROUT = ACTOR_FIRST_PLACED
 };
 
-/* Actors of SceneId_BilibinCaveRapier, numbered by the rows of */
-/* BilibinCaveRapierActorPlacements. */
+/* Actors of SceneId_BilibinCaveRapier, numbered by the rows of
+   BilibinCaveRapierActorPlacements. */
 enum {
-	/* A torch west of the fire. It is cold (TORCH_ANIMATION_UNLIT) where its */
-	/* twin burns. */
+	/* A torch west of the fire. It is cold (TORCH_ANIMATION_UNLIT) where its
+	   twin burns. */
 	ACTOR_RAPIER_ROOM_WEST_TORCH = ACTOR_FIRST_PLACED,
-	/* A little fire in the doorway between the two torches, which Douse puts */
-	/* out. */
+	/* A little fire in the doorway between the two torches, which Douse puts
+	   out. */
 	ACTOR_RAPIER_ROOM_FIRE,
 	/* A torch east of the fire. */
 	ACTOR_RAPIER_ROOM_EAST_TORCH
 };
 
-/* Actors of SceneId_BilibinCaveIce, numbered by the rows of */
-/* BilibinCaveIceActorPlacements. */
+/* Actors of SceneId_BilibinCaveIce, numbered by the rows of
+   BilibinCaveIceActorPlacements. */
 enum {
 	/* A little fire beside the first puddle, which Douse puts out. */
 	ACTOR_ICE_ROOM_FIRE = ACTOR_FIRST_PLACED,
@@ -153,77 +141,78 @@ enum {
 	/* The fourth torch, moved by Move or pushed. */
 	ACTOR_FOURTH_TORCH = 12,
 	/* A puddle beside ACTOR_ICE_ROOM_FIRE. It freezes into a pillar the party
-	 */
-	/* hops across once the fire is out. */
+	   hops across once the fire is out. */
 	ACTOR_FIRST_PUDDLE = 15,
 	/* A puddle beside a torch that stays put, so it never stays frozen. */
 	ACTOR_SECOND_PUDDLE = 16,
-	/* A puddle frozen into an ice pillar, melted while a torch stands on cell
-	 */
-	/* (35, 23). */
+	/* A puddle frozen into an ice pillar, melted while a torch stands on
+	   metatile (35, 23). */
 	ACTOR_THIRD_PUDDLE = 17,
-	/* Five ice pillars, 18 to 22 (PUDDLE_ANIMATION_PILLAR). Nothing acts on */
-	/* them. */
+	/* Five ice pillars, 18 to 22 (PUDDLE_ANIMATION_PILLAR). Nothing acts on
+	   them. */
 	ACTOR_FIRST_ICE_PILLAR = 18,
-	/* Four pieces of ice, 23 to 26, held at the second step of freezing */
-	/* (PUDDLE_ANIMATION_LOW_ICE). Nothing acts on them. */
+	/* Four pieces of ice, 23 to 26, held at the second step of freezing
+	   (PUDDLE_ANIMATION_LOW_ICE). Nothing acts on them. */
 	ACTOR_FIRST_LOW_ICE = 23
 };
 
 /* SPRITE_FIRE's flickering flame. */
 enum { FIRE_ANIMATION_BURNING = 2 };
 
-/* Cell behaviors the three maps' triggers answer besides the exits. */
-typedef enum BILIBIN_CAVE_CELL_BEHAVIOR {
-	/* At the entrance, the cliff-top path just above the low cave mouth, */
-	/* cells (20, 13..14) and (22, 13..14). */
-	CELL_BEHAVIOR_BILIBIN_CAVE_ABOVE_LOW_MOUTH = 10,
-	/* At the entrance, the path on either side of that stretch, cells */
-	/* (19, 12..13) and (23, 12..13). */
-	CELL_BEHAVIOR_BILIBIN_CAVE_BESIDE_LOW_MOUTH = 11,
-	/* The Elven Rapier's chest in SceneId_BilibinCaveRapier, cell (35, 28). */
-	CELL_BEHAVIOR_BILIBIN_CAVE_ELVEN_RAPIER_CHEST = 100,
-	/* The chests of SceneId_BilibinCaveIce, at (32, 16), (53, 36) and (52, 37).
-	 */
-	CELL_BEHAVIOR_BILIBIN_CAVE_VIAL_CHEST = 100,
-	CELL_BEHAVIOR_BILIBIN_CAVE_PSY_CRYSTAL_CHEST = 101,
-	CELL_BEHAVIOR_BILIBIN_CAVE_WATER_OF_LIFE_CHEST = 102,
-	/* The dotted track the two movable torches are pushed along, round */
-	/* (31..33, 19..23). */
-	CELL_BEHAVIOR_BILIBIN_CAVE_TORCH_TRACK = 10,
-	/* The track's east end, cells (34..36, 23), from which walking west pushes
-	 */
-	/* a torch. */
-	CELL_BEHAVIOR_BILIBIN_CAVE_TORCH_TRACK_END = 11,
-	/* The snow blown in at the mouth to the World Map, round (32..34, 32..35).
-	 */
-	CELL_BEHAVIOR_BILIBIN_CAVE_SNOW = 20,
-	/* The cells round the snow's edge. */
-	CELL_BEHAVIOR_BILIBIN_CAVE_SNOW_EDGE = 21
-} BILIBIN_CAVE_CELL_BEHAVIOR;
+/* Metatile behaviors the three maps' cues answer besides the exits. */
+typedef enum BILIBIN_CAVE_METATILE_BEHAVIOR {
+	/* At the entrance, the cliff-top path just above the low cave mouth,
+	   metatiles (20, 13..14) and (22, 13..14). */
+	METATILE_BEHAVIOR_BILIBIN_CAVE_ABOVE_LOW_MOUTH = 10,
+	/* At the entrance, the path on either side of that stretch, metatiles (19,
+	   12..13) and (23, 12..13). */
+	METATILE_BEHAVIOR_BILIBIN_CAVE_BESIDE_LOW_MOUTH = 11,
+	/* The Elven Rapier's chest in SceneId_BilibinCaveRapier, metatile (35,
+	   28). */
+	METATILE_BEHAVIOR_BILIBIN_CAVE_ELVEN_RAPIER_CHEST = 100,
+	/* The chests of SceneId_BilibinCaveIce, at (32, 16), (53, 36) and (52,
+	   37). */
+	METATILE_BEHAVIOR_BILIBIN_CAVE_VIAL_CHEST = 100,
+	METATILE_BEHAVIOR_BILIBIN_CAVE_PSY_CRYSTAL_CHEST = 101,
+	METATILE_BEHAVIOR_BILIBIN_CAVE_WATER_OF_LIFE_CHEST = 102,
+	/* The dotted track the two movable torches are pushed along, round (31..33,
+	   19..23). */
+	METATILE_BEHAVIOR_BILIBIN_CAVE_TORCH_TRACK = 10,
+	/* The track's east end, metatiles (34..36, 23), from which walking west
+	   pushes a torch. */
+	METATILE_BEHAVIOR_BILIBIN_CAVE_TORCH_TRACK_END = 11,
+	/* The snow blown in at the mouth to the World Map, round (32..34,
+	   32..35). */
+	METATILE_BEHAVIOR_BILIBIN_CAVE_SNOW = 20,
+	/* The metatiles round the snow's edge. */
+	METATILE_BEHAVIOR_BILIBIN_CAVE_SNOW_EDGE = 21
+} BILIBIN_CAVE_METATILE_BEHAVIOR;
 
-/* Spare cells near the top-left corner of the entrance's and the ice room's */
-/* maps, whose behaviors are copied where the low mouth, the vine and the */
-/* puddles change, as (column, row). */
-#define LOW_MOUTH_OPEN_CELL			0, 0 /* the low mouth's way into the cave */
-#define LOW_MOUTH_CLOSED_CELL		1, 0 /* plain ground on the cliff-top path */
-#define VINE_CELL					31, 0 /* a vine to climb */
-#define FIRST_PILLAR_CELL			0, 0 /* a hop square on the ice pillar's top */
-#define THIRD_PUDDLE_NORTH_HOP_CELL 0, 1 /* hop squares beside the puddle */
-#define THIRD_PUDDLE_SOUTH_HOP_CELL 0, 2
-#define THIRD_PUDDLE_NORTH_GROUND_CELL                                         \
-	1, 1 /* plain ground beside the pillar                                     \
-		  */
-#define THIRD_PUDDLE_SOUTH_GROUND_CELL 1, 2
+/* Spare metatiles near the top-left corner of the entrance's and the ice room's
+   maps, whose behaviors are copied where the low mouth, the vine and the
+   puddles change, as (column, row). */
+#define LOW_MOUTH_OPEN_METATILE			   0, 0 /* the low mouth's way into the cave */
+/* plain ground on the cliff-top path */
+#define LOW_MOUTH_CLOSED_METATILE		   1, 0
+#define VINE_METATILE					   31, 0 /* a vine to climb */
+#define FIRST_PILLAR_METATILE			   0, 0 /* a hop square on the ice pillar's top */
+/* hop squares beside the puddle */
+#define THIRD_PUDDLE_NORTH_HOP_METATILE	   0, 1
+#define THIRD_PUDDLE_SOUTH_HOP_METATILE	   0, 2
+/* plain ground beside the pillar */
+#define THIRD_PUDDLE_NORTH_GROUND_METATILE 1, 1
+#define THIRD_PUDDLE_SOUTH_GROUND_METATILE 1, 2
 
 /* A script command that draws the puddle it runs on without a shadow. */
-static s32 scBilibinCaveHideScriptedShadow(ACTOR *actor) {
+static Sint32 scBilibinCaveHideScriptedShadow(ACTOR *actor)
+{
 	fdActorSetSprFlags(actor, 0);
 	return 0;
 }
 
-const SCENE_ENTRANCE *scGetEntrances(void) {
-	s16 sceneId = MainRoutineStateWork.next;
+const SCENE_ENTRANCE *scGetEntrances(void)
+{
+	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
 		return BilibinCaveEntranceEntrances;
@@ -237,12 +226,19 @@ const SCENE_ENTRANCE *scGetEntrances(void) {
 	return BilibinCaveEntrancesOther;
 }
 
-const SCENE_EXIT_REGION *scGetExitRegions(void) { return NULL; }
+const SCENE_EXIT_REGION *scGetExitRegions(void)
+{
+	return NULL;
+}
 
-const u32 *scGetExits(void) { return BilibinCaveExits; }
+const Uint32 *scGetExits(void)
+{
+	return BilibinCaveExits;
+}
 
-const ACTOR_PLACE *scGetActorPlacements(void) {
-	s16 sceneId = MainRoutineStateWork.next;
+const ACTOR_PLACE *scGetActorPlacements(void)
+{
+	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
 		return BilibinCaveEntranceActorPlacements;
@@ -256,249 +252,256 @@ const ACTOR_PLACE *scGetActorPlacements(void) {
 	return BilibinCaveActorPlacementsOther;
 }
 
-const TRIGGER *scGetTriggers(void) {
-	s16 sceneId = MainRoutineStateWork.next;
+const CUE *scGetCues(void)
+{
+	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
-		return BilibinCaveEntranceTriggers;
+		return BilibinCaveEntranceCues;
 	}
 	if(sceneId == SCENE_BILIBIN_CAVE_RAPIER) {
-		return BilibinCaveRapierTriggers;
+		return BilibinCaveRapierCues;
 	}
 	if(sceneId == SCENE_BILIBIN_CAVE_ICE) {
-		return BilibinCaveIceTriggers;
+		return BilibinCaveIceCues;
 	}
-	return BilibinCaveTriggersOther;
+	return BilibinCaveCuesOther;
 }
 
-/* Nothing visible happens when Isaac, on the grassy path along the cliff top */
-/* from the vine toward the high cave mouth at the Bilibin Cave Entrance, */
-/* steps onto the stretch drawn just above the low mouth, cells (20, 13..14) */
-/* and (22, 13..14). The game quietly turns off the low mouth's way into the */
-/* cave, cell (21, 14), which lies between them in the map, so that walking */
-/* along the path over it does not take him in. */
-static void scBilibinCaveCloseLowerCaveMouth(void) {
-	fdMapGridCopyCellAttributes(LOW_MOUTH_CLOSED_CELL, 1, 1, 21, 14);
+/* Nothing visible happens when Isaac, on the grassy path along the cliff top
+   from the vine toward the high cave mouth at the Bilibin Cave Entrance, steps
+   onto the stretch drawn just above the low mouth, metatiles (20, 13..14) and
+   (22, 13..14). The game quietly turns off the low mouth's way into the cave,
+   metatile (21, 14), which lies between them in the map, so that walking along
+   the path over it does not take him in. */
+static void scBilibinCaveCloseLowerCaveMouth(void)
+{
+	fdMapGridCopyMetatileAttributes(LOW_MOUTH_CLOSED_METATILE, 1, 1, 21, 14);
 }
 
-/* Nothing visible happens when Isaac walks on along the cliff-top path past */
-/* that stretch at the Bilibin Cave Entrance, cells (19, 12..13) and */
-/* (23, 12..13). The game turns the low mouth's way into the cave, cell */
-/* (21, 14), back on. */
-static void scBilibinCaveOpenLowerCaveMouth(void) {
-	fdMapGridCopyCellAttributes(LOW_MOUTH_OPEN_CELL, 1, 1, 21, 14);
+/* Nothing visible happens when Isaac walks on along the cliff-top path past
+   that stretch at the Bilibin Cave Entrance, metatiles (19, 12..13) and (23,
+   12..13). The game turns the low mouth's way into the cave, metatile (21, 14),
+   back on. */
+static void scBilibinCaveOpenLowerCaveMouth(void)
+{
+	fdMapGridCopyMetatileAttributes(LOW_MOUTH_OPEN_METATILE, 1, 1, 21, 14);
 }
 
-/* Reveal in Bilibin Cave, near the Elven Rapier's chest, shows a way through */
-/* the wall beside it, cells (32, 24..26), to the room where a little fire */
-/* burns between two torches. */
-static void scBilibinCaveRevealHiddenPath(void) {
-	fdMapGridCopyCellsTo(111, 37, 97, 21, 1, 3);
+/* Reveal in Bilibin Cave, near the Elven Rapier's chest, shows a way through
+   the wall beside it, metatiles (32, 24..26), to the room where a little fire
+   burns between two torches. */
+static void scBilibinCaveRevealHiddenPath(void)
+{
+	fdMapGridCopyMetatilesTo(111, 37, 97, 21, 1, 3);
 	{
-		s32 destinationCellX = 32;
-		s32 destinationCellZ = 24;
+		Sint32 destinationMetatileX = 32;
+		Sint32 destinationMetatileZ = 24;
 
-		fdMapGridCopyCellAttributes(46, 38, 3, 2, destinationCellX,
-									destinationCellZ);
+		fdMapGridCopyMetatileAttributes(
+			46, 38, 3, 2, destinationMetatileX, destinationMetatileZ);
 	}
 }
 
-/* As Reveal wears off in Bilibin Cave, the way through the wall beside the */
-/* Elven Rapier's chest is hidden again. */
-static void scBilibinCaveHideRevealedPath(void) {
-	fdMapGridCopyCellsTo(95, 21, 97, 21, 1, 3);
+/* As Reveal wears off in Bilibin Cave, the way through the wall beside the
+   Elven Rapier's chest is hidden again. */
+static void scBilibinCaveHideRevealedPath(void)
+{
+	fdMapGridCopyMetatilesTo(95, 21, 97, 21, 1, 3);
 	{
-		s32 destinationCellX = 32;
-		s32 destinationCellZ = 25;
+		Sint32 destinationMetatileX = 32;
+		Sint32 destinationMetatileZ = 25;
 
-		fdMapGridCopyCellAttributes(46, 38, 3, 1, destinationCellX,
-									destinationCellZ);
+		fdMapGridCopyMetatileAttributes(
+			46, 38, 3, 1, destinationMetatileX, destinationMetatileZ);
 	}
 }
 
 /* Douse on the little fire in the doorway of the room of two torches, past the
- */
-/* way Reveal shows beside the Elven Rapier's chest, puts it out for good. A */
-/* rain cloud gathers over the doorway, the flame goes out, and the doorway on
- */
-/* to the cave's last two chests is open. */
-static void scBilibinCaveDouseRapierRoomFire(void) {
-	fdEventStart();
+   way Reveal shows beside the Elven Rapier's chest, puts it out for good. A
+   rain cloud gathers over the doorway, the flame goes out, and the doorway on
+   to the cave's last two chests is open. */
+static void scBilibinCaveDouseRapierRoomFire(void)
+{
+	fdScriptStart();
 	fdActorSetPos(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
 	gmFlagSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
-	fdEventEnd();
+	fdScriptEnd();
 }
 
-/* Douse on the little fire in the cold part of Bilibin Cave */
-/* (cell (17, 14)) puts it out, and the puddle beside it freezes by itself into
- */
-/* a tall ice pillar, whose top the party hops across. */
-static void scBilibinCaveDouseIceRoomFire(void) {
-	fdEventStart();
+/* Douse on the little fire in the cold part of Bilibin Cave (metatile (17, 14))
+   puts it out, and the puddle beside it freezes by itself into a tall ice
+   pillar, whose top the party hops across. */
+static void scBilibinCaveDouseIceRoomFire(void)
+{
+	fdScriptStart();
 	fdActorSetPos(ACTOR_ICE_ROOM_FIRE, 0, 0);
 	gmFlagSet(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
-	fdEventWait(40);
-	/* The pillar is drawn under the party, and its cell becomes a hop square.
-	 */
+	fdScriptWait(40);
+	/* The pillar is drawn under the party, and its metatile becomes a hop
+	   square. */
 	fdActorSetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
 	fdActorGet(ACTOR_FIRST_PUDDLE)->motionFlg = 0;
 	fdActorGet(ACTOR_FIRST_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetSprPriority(ACTOR_FIRST_PUDDLE, 2);
-	fdMapGridCopyCellAttributes(FIRST_PILLAR_CELL, 1, 1, 18, 14);
-	fdEventEnd();
+	fdMapGridCopyMetatileAttributes(FIRST_PILLAR_METATILE, 1, 1, 18, 14);
+	fdScriptEnd();
 }
 
 /* Frost on a puddle in Bilibin Cave that a fire or torch beside it keeps warm
- */
-/* forms ice on it for a moment, which melts straight back into water. */
-static inline void scBilibinCaveMeltFrostBack(s32 actorId) {
-	fdEventStart();
+   forms ice on it for a moment, which melts straight back into water. */
+static inline void scBilibinCaveMeltFrostBack(Sint32 actorId)
+{
+	fdScriptStart();
 	fdActorSetSprColById(actorId, SPRITE_COLOR_NORMAL);
-	fdEventWait(40);
+	fdScriptWait(40);
 	sySndPlay(SE_HIDDEN_PASSAGE_OPEN);
 	fdActorSetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
-	fdEventEnd();
+	fdScriptEnd();
 }
 
-/* Frost on the puddle beside the little fire in the cold part of */
-/* Bilibin Cave (cell (18, 14)), while the fire burns, makes ice that melts */
-/* straight back. Douse on the fire is what freezes it. */
-static void scBilibinCaveFreezeFirstPuddle(void) {
+/* Frost on the puddle beside the little fire in the cold part of Bilibin Cave
+   (metatile (18, 14)), while the fire burns, makes ice that melts straight
+   back. Douse on the fire is what freezes it. */
+static void scBilibinCaveFreezeFirstPuddle(void)
+{
 	scBilibinCaveMeltFrostBack(ACTOR_FIRST_PUDDLE);
 }
 
-/* Frost on the puddle beside the lit torch near the Vial's chest in the cold */
-/* part of Bilibin Cave makes ice that melts straight back. The torch cannot */
-/* be moved, so this puddle never freezes. */
-static void scBilibinCaveFreezeSecondPuddle(void) {
+/* Frost on the puddle beside the lit torch near the Vial's chest in the cold
+   part of Bilibin Cave makes ice that melts straight back. The torch cannot be
+   moved, so this puddle never freezes. */
+static void scBilibinCaveFreezeSecondPuddle(void)
+{
 	scBilibinCaveMeltFrostBack(ACTOR_SECOND_PUDDLE);
 }
 
-/* Frost on the puddle a pushed torch has melted, at cell (36, 23) in the cold
- */
-/* part of Bilibin Cave, makes ice that melts straight back while the torch */
-/* stands beside it (FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED). */
-static void scBilibinCaveFreezeThirdPuddle(void) {
+/* Frost on the puddle a pushed torch has melted, at metatile (36, 23) in the
+   cold part of Bilibin Cave, makes ice that melts straight back while the torch
+   stands beside it (FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED). */
+static void scBilibinCaveFreezeThirdPuddle(void)
+{
 	scBilibinCaveMeltFrostBack(ACTOR_THIRD_PUDDLE);
 }
 
-/* The cell beside the third puddle's ice pillar where a torch melts it. */
+/* The metatile beside the third puddle's ice pillar where a torch melts it. */
 #define TORCH_BY_PILLAR_COLUMN 35
 #define TORCH_BY_PILLAR_ROW	   23
 
-/* Move on either of the pair of torches west of the ice pillar in the cold */
-/* part of Bilibin Cave slides it a cell. Set beside the pillar, on cell */
-/* (35, 23), a torch melts the pillar into a puddle, and the */
-/* cells north and south of it, (36, 22) and (36, 24), become hop squares to */
-/* jump it by. Taken away again, the puddle freezes back into a pillar, and the
- */
-/* hop squares are plain ground once more. The same work follows every push. */
-static void scBilibinCaveUpdateThirdPuddleFromTorches(void) {
+/* Move on either of the pair of torches west of the ice pillar in the cold part
+   of Bilibin Cave slides it a metatile. Set beside the pillar, on metatile (35,
+   23), a torch melts the pillar into a puddle, and the metatiles north and
+   south of it, (36, 22) and (36, 24), become hop squares to jump it by. Taken
+   away again, the puddle freezes back into a pillar, and the hop squares are
+   plain ground once more. The same work follows every push. */
+static void scBilibinCaveUpdateThirdPuddleFromTorches(void)
+{
 	ACTOR *firstActor;
 	ACTOR *secondActor;
-	s32 destinationCellX;
+	Sint32 destinationMetatileX;
 
 	firstActor = fdActorGet(ACTOR_THIRD_TORCH);
 	secondActor = fdActorGet(ACTOR_FOURTH_TORCH);
-	if(FIELD_CELL(firstActor->x.fixed) == TORCH_BY_PILLAR_COLUMN &&
-	   (FIELD_CELL(firstActor->z.fixed)) == TORCH_BY_PILLAR_ROW) {
+	if(FIELD_METATILE(firstActor->x.fixed) == TORCH_BY_PILLAR_COLUMN &&
+		(FIELD_METATILE(firstActor->z.fixed)) == TORCH_BY_PILLAR_ROW) {
 		gmFlagSet(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
-	}
-	else {
+	} else {
 		gmFlagClear(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
 	}
-	if(FIELD_CELL(secondActor->x.fixed) == TORCH_BY_PILLAR_COLUMN &&
-	   (FIELD_CELL(secondActor->z.fixed)) == TORCH_BY_PILLAR_ROW) {
+	if(FIELD_METATILE(secondActor->x.fixed) == TORCH_BY_PILLAR_COLUMN &&
+		(FIELD_METATILE(secondActor->z.fixed)) == TORCH_BY_PILLAR_ROW) {
 		gmFlagSet(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);
-	}
-	else {
+	} else {
 		gmFlagClear(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);
 	}
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR) != 0 ||
-	   gmFlagGet(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR) != 0) {
-		if(fdEventGetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
-			fdEventStart();
-			fdEventWait(40);
+		gmFlagGet(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR) != 0) {
+		if(fdScriptGetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
+			fdScriptStart();
+			fdScriptWait(40);
 			sySndPlay(SE_HIDDEN_PASSAGE_OPEN);
-			destinationCellX = 36;
-			fdActorSetAnimationAndWait(ACTOR_THIRD_PUDDLE,
-									   PUDDLE_ANIMATION_MELT);
-			fdMapGridCopyCellAttributes(THIRD_PUDDLE_NORTH_HOP_CELL, 1, 1,
-										destinationCellX, 22);
-			fdMapGridCopyCellAttributes(THIRD_PUDDLE_SOUTH_HOP_CELL, 1, 1,
-										destinationCellX, 24);
-			fdEventEnd();
+			destinationMetatileX = 36;
+			fdActorSetAnimationAndWait(
+				ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_MELT);
+			fdMapGridCopyMetatileAttributes(THIRD_PUDDLE_NORTH_HOP_METATILE, 1,
+				1, destinationMetatileX, 22);
+			fdMapGridCopyMetatileAttributes(THIRD_PUDDLE_SOUTH_HOP_METATILE, 1,
+				1, destinationMetatileX, 24);
+			fdScriptEnd();
 		}
 		gmFlagSet(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED);
-	}
-	else {
-		if(fdEventGetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
-			fdEventStart();
-			fdEventWait(40);
+	} else {
+		if(fdScriptGetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
+			fdScriptStart();
+			fdScriptWait(40);
 			sySndPlay(SE_SHIMMER);
-			destinationCellX = 36;
-			fdActorSetAnimationAndWait(ACTOR_THIRD_PUDDLE,
-									   PUDDLE_ANIMATION_FREEZE);
-			fdMapGridCopyCellAttributes(THIRD_PUDDLE_NORTH_GROUND_CELL, 1, 1,
-										destinationCellX, 22);
-			fdMapGridCopyCellAttributes(THIRD_PUDDLE_SOUTH_GROUND_CELL, 1, 1,
-										destinationCellX, 24);
-			fdEventEnd();
+			destinationMetatileX = 36;
+			fdActorSetAnimationAndWait(
+				ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_FREEZE);
+			fdMapGridCopyMetatileAttributes(THIRD_PUDDLE_NORTH_GROUND_METATILE,
+				1, 1, destinationMetatileX, 22);
+			fdMapGridCopyMetatileAttributes(THIRD_PUDDLE_SOUTH_GROUND_METATILE,
+				1, 1, destinationMetatileX, 24);
+			fdScriptEnd();
 		}
 		gmFlagClear(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED);
 	}
 }
 
-/* Growth on the sprout at the foot of the cliff at the Bilibin Cave Entrance */
-/* (cell (8, 13)) grows it into a vine up the cliff, which Isaac can climb to */
-/* the ledge and the high cave mouth. */
-static void scBilibinCaveGrowPlant(void) {
-	fdMapGridCopyCellAttributes(VINE_CELL, 1, 1, 8, 13);
+/* Growth on the sprout at the foot of the cliff at the Bilibin Cave Entrance
+   (metatile (8, 13)) grows it into a vine up the cliff, which Isaac can climb
+   to the ledge and the high cave mouth. */
+static void scBilibinCaveGrowPlant(void)
+{
+	fdMapGridCopyMetatileAttributes(VINE_METATILE, 1, 1, 8, 13);
 	gmFlagSet(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN);
 }
 
-/* Walking onto the snow blown in at the cave mouth toward Imil, in the cold */
-/* part of Bilibin Cave (cells (32..34, 32..35)), Isaac starts leaving */
-/* footprints. */
-static void scBilibinCaveStartFootprints(void) {
+/* Walking onto the snow blown in at the cave mouth toward Imil, in the cold
+   part of Bilibin Cave (metatiles (32..34, 32..35)), Isaac starts leaving
+   footprints. */
+static void scBilibinCaveStartFootprints(void)
+{
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 	grid->footprints = 1;
 }
 
-/* Walking off the snow at the cave mouth toward Imil, onto the cells round */
-/* its edge, Isaac stops leaving footprints. */
-static void scBilibinCaveStopFootprints(void) {
+/* Walking off the snow at the cave mouth toward Imil, onto the metatiles round
+   its edge, Isaac stops leaving footprints. */
+static void scBilibinCaveStopFootprints(void)
+{
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 	grid->footprints = 0;
 }
 
 /* Sets up the scene being entered, with its puzzles already solved. */
-s32 scInit(void) {
-	s16 variant = MainRoutineStateWork.next;
+Sint32 scInit(void)
+{
+	Sint16 variant = MainRoutineStateWork.next;
 
 	if(variant == SCENE_BILIBIN_CAVE_ENTRANCE) {
 		scBilibinCaveRestoreEntrance();
-	}
-	else if(variant == SCENE_BILIBIN_CAVE_RAPIER) {
+	} else if(variant == SCENE_BILIBIN_CAVE_RAPIER) {
 		scBilibinCaveRestoreRapierRoom();
-	}
-	else if(variant == SCENE_BILIBIN_CAVE_ICE) {
+	} else if(variant == SCENE_BILIBIN_CAVE_ICE) {
 		scBilibinCaveRestoreIceRoom();
 	}
 	return 0;
 }
 
-/* Sets up the Bilibin Cave Entrance, with the vine Growth has grown and its */
-/* cell. */
-static void scBilibinCaveRestoreEntrance(void) {
+/* Sets up the Bilibin Cave Entrance, with the vine Growth has grown and its
+   metatile. */
+static void scBilibinCaveRestoreEntrance(void)
+{
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN) != 0) {
-		fdMapGridCopyCellAttributes(VINE_CELL, 1, 1, 8, 13);
+		fdMapGridCopyMetatileAttributes(VINE_METATILE, 1, 1, 8, 13);
 		fdActorSetAnimation(ACTOR_SPROUT, SPROUT_ANIMATION_VINE);
 	}
 }
 
 /* Sets up Bilibin Cave's SceneId_BilibinCaveRapier. */
-static void scBilibinCaveRestoreRapierRoom(void) {
+static void scBilibinCaveRestoreRapierRoom(void)
+{
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
@@ -507,21 +510,22 @@ static void scBilibinCaveRestoreRapierRoom(void) {
 
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
 		fdActorSetPos(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
-	}
-	else {
+	} else {
 		fdActorSetSprFlags(fdActorGet(ACTOR_RAPIER_ROOM_FIRE), 0);
 	}
 }
 
 /* Draws one of the ice room's torches or pieces of ice without a shadow. */
-static inline void scBilibinCaveHideShadow(s32 actorId) {
+static inline void scBilibinCaveHideShadow(Sint32 actorId)
+{
 	ACTOR *actor = fdActorGet(actorId);
 	fdActorSetSprFlags(actor, 0);
 }
 
 /* Sets up Bilibin Cave's SceneId_BilibinCaveIce. */
-static void scBilibinCaveRestoreIceRoom(void) {
-	s32 destinationCellX;
+static void scBilibinCaveRestoreIceRoom(void)
+{
+	Sint32 destinationMetatileX;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -571,29 +575,27 @@ static void scBilibinCaveRestoreIceRoom(void) {
 		fdActorGet(ACTOR_FIRST_PUDDLE)->y.fixed = -toFIXED(4);
 		fdActorGet(ACTOR_FIRST_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 		fdActorSetSprPriority(ACTOR_FIRST_PUDDLE, 2);
-		fdMapGridCopyCellAttributes(FIRST_PILLAR_CELL, 1, 1, 18, 14);
-	}
-	else {
+		fdMapGridCopyMetatileAttributes(FIRST_PILLAR_METATILE, 1, 1, 18, 14);
+	} else {
 		fdActorSetAnimation(ACTOR_ICE_ROOM_FIRE, FIRE_ANIMATION_BURNING);
 		fdActorSetSprFlags(fdActorGet(ACTOR_ICE_ROOM_FIRE), 0);
 		fdActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
 	}
 	fdActorSetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
-		destinationCellX = 36;
+		destinationMetatileX = 36;
 		fdActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
-		fdMapGridCopyCellAttributes(THIRD_PUDDLE_NORTH_HOP_CELL, 1, 1,
-									destinationCellX, 22);
-		fdMapGridCopyCellAttributes(THIRD_PUDDLE_SOUTH_HOP_CELL, 1, 1,
-									destinationCellX, 24);
-	}
-	else {
-		destinationCellX = 36;
+		fdMapGridCopyMetatileAttributes(
+			THIRD_PUDDLE_NORTH_HOP_METATILE, 1, 1, destinationMetatileX, 22);
+		fdMapGridCopyMetatileAttributes(
+			THIRD_PUDDLE_SOUTH_HOP_METATILE, 1, 1, destinationMetatileX, 24);
+	} else {
+		destinationMetatileX = 36;
 		fdActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-		fdMapGridCopyCellAttributes(THIRD_PUDDLE_NORTH_GROUND_CELL, 1, 1,
-									destinationCellX, 22);
-		fdMapGridCopyCellAttributes(THIRD_PUDDLE_SOUTH_GROUND_CELL, 1, 1,
-									destinationCellX, 24);
+		fdMapGridCopyMetatileAttributes(
+			THIRD_PUDDLE_NORTH_GROUND_METATILE, 1, 1, destinationMetatileX, 22);
+		fdMapGridCopyMetatileAttributes(
+			THIRD_PUDDLE_SOUTH_GROUND_METATILE, 1, 1, destinationMetatileX, 24);
 	}
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR) != 0) {
 		fdActorSetPos(ACTOR_THIRD_TORCH, 570, 376);
@@ -603,41 +605,42 @@ static void scBilibinCaveRestoreIceRoom(void) {
 	}
 }
 
-#include "shared/actor_find_at_cell.c"
+#include "shared/actor_find_at_metatile.c"
 
-/* Walking into one of the pair of torches west of the ice pillar in the cold */
-/* part of Bilibin Cave pushes it a cell along the dotted track, if nothing */
-/* stands in the cell beyond and the ground there lets it go. Then, as after */
-/* Move, it may melt or refreeze the pillar. */
-static void scBilibinCavePushTorch(void) {
-	ACTOR *leader;
-	ACTOR *target;
-	ACTOR *blocker;
-	s32 heading;
-	s32 nextCellX;
-	s32 nextCellZ;
+/* Walking into one of the pair of torches west of the ice pillar in the cold
+   part of Bilibin Cave pushes it a metatile along the dotted track, if nothing
+   stands in the metatile beyond and the ground there lets it go. Then, as after
+   Move, it may melt or refreeze the pillar. */
+static void scBilibinCavePushTorch(void)
+{
+	ACTOR	 *leader;
+	ACTOR	 *target;
+	ACTOR	 *blocker;
+	Sint32	  heading;
+	Sint32	  nextMetatileX;
+	Sint32	  nextMetatileZ;
 	FIELD_POS destination;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	heading = FACING_INDEX(leader->facing);
 
-	nextCellX = (leader->x.part[0].integer +
-				 (FIXEDtoINT(PushedActor_DirectionSteps[heading]))) >>
-				4;
-	nextCellZ = (leader->z.part[0].integer +
-				 (s16)PushedActor_DirectionSteps[heading]) >>
-				4;
-	target = scActorFindAtCell(nextCellX, nextCellZ);
+	nextMetatileX = (leader->x.part[0].integer +
+						(FIXEDtoINT(PushedActor_DirectionSteps[heading]))) >>
+		4;
+	nextMetatileZ = (leader->z.part[0].integer +
+						(Sint16)PushedActor_DirectionSteps[heading]) >>
+		4;
+	target = scActorFindAtMetatile(nextMetatileX, nextMetatileZ);
 	if(target == NULL)
 		return;
 
-	nextCellX = (target->x.part[0].integer +
-				 (FIXEDtoINT(PushedActor_DirectionSteps[heading]))) >>
-				4;
-	nextCellZ = (target->z.part[0].integer +
-				 (s16)PushedActor_DirectionSteps[heading]) >>
-				4;
-	blocker = scActorFindAtCell(nextCellX, nextCellZ);
+	nextMetatileX = (target->x.part[0].integer +
+						(FIXEDtoINT(PushedActor_DirectionSteps[heading]))) >>
+		4;
+	nextMetatileZ = (target->z.part[0].integer +
+						(Sint16)PushedActor_DirectionSteps[heading]) >>
+		4;
+	blocker = scActorFindAtMetatile(nextMetatileX, nextMetatileZ);
 	if(blocker != NULL)
 		return;
 
@@ -654,123 +657,123 @@ static void scBilibinCavePushTorch(void) {
 
 	target->speedLimit = toFIXED(1) / 5;
 	target->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(target, destination.x, destination.y,
-								destination.z);
+	syFieldActorSetMoveTargetFX(
+		target, destination.x, destination.y, destination.z);
 
 	leader->speedLimit = toFIXED(1) / 5;
 	leader->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(leader, destination.x, destination.y,
-								destination.z);
+	syFieldActorSetMoveTargetFX(
+		leader, destination.x, destination.y, destination.z);
 
 	fdActorWaitForMove(target);
 
 	target->x.fixed = destination.x;
 	target->z.fixed = destination.z;
 	/* blocker is null here: the torch comes to rest. */
-	target->velX = (s32)blocker;
-	target->velZ = (s32)blocker;
+	target->velX = (Sint32)blocker;
+	target->velZ = (Sint32)blocker;
 
 	fdActorSelectAnimation(leader, ANIM_STAND);
 	scBilibinCaveUpdateThirdPuddleFromTorches();
 }
 
-/* Does nothing: the ice room calls it for each of its torches and pieces of */
-/* ice. */
-static void scBilibinCaveEmptyActorSetupHook(s32 actorId) {}
+/* Does nothing: the ice room calls it for each of its torches and pieces of
+   ice. */
+static void scBilibinCaveEmptyActorSetupHook(Sint32 actorId)
+{
+}
 
-s32 BilibinCave_NoShadowScript[] = {
+Sint32 BilibinCave_NoShadowScript[] = {
 	SC_CALL(scBilibinCaveHideScriptedShadow),
 	SC_END,
 };
 
 SCENE_ENTRANCE BilibinCaveEntrancesOther[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1,
-	 -1, -1, 0},
+		-1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
 SCENE_ENTRANCE BilibinCaveEntranceEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1,
-	 -1, -1, 0},
+		-1, -1, 0},
 	{BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 99, 0, 447,
-	 FACING_NORTH, 0, -1, -1, -1, -1, 0},
+		FACING_NORTH, 0, -1, -1, -1, -1, 0},
 	{BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH, CONDITION_ALWAYS,
-	 342, 0, 254, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+		342, 0, 254, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH, CONDITION_ALWAYS,
-	 440, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+		440, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
 SCENE_ENTRANCE BilibinCaveRapierEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1,
-	 -1, -1, 0},
+		-1, -1, 0},
 	{BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST, CONDITION_ALWAYS, 312,
-	 0, 756, FACING_NORTH, 0, 40, 60, 630, 840, 0},
+		0, 756, FACING_NORTH, 0, 40, 60, 630, 840, 0},
 	{BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST, CONDITION_ALWAYS, 472,
-	 0, 680, FACING_NORTH, 0, 40, 60, 630, 840, 0},
+		0, 680, FACING_NORTH, 0, 40, 60, 630, 840, 0},
 	{BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST, CONDITION_ALWAYS, 392, 0,
-	 200, FACING_SOUTH, 0, 40, 60, 630, 840, 0},
+		200, FACING_SOUTH, 0, 40, 60, 630, 840, 0},
 	{BILIBIN_CAVE_RAPIER_FROM_TORCHES, CONDITION_ALWAYS, 536, 0, 426,
-	 FACING_SOUTH, 0, 40, 60, 630, 840, 0},
+		FACING_SOUTH, 0, 40, 60, 630, 840, 0},
 	{BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST, CONDITION_ALWAYS, 856, 0,
-	 124, FACING_SOUTH, 0, 760, 65, 925, 330, 0},
+		124, FACING_SOUTH, 0, 760, 65, 925, 330, 0},
 	{BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER, CONDITION_ALWAYS,
-	 808, 0, 248, FACING_NORTH, 0, 760, 65, 925, 330, 0},
+		808, 0, 248, FACING_NORTH, 0, 760, 65, 925, 330, 0},
 	{SCENE_TABLE_END},
 };
 
 SCENE_ENTRANCE BilibinCaveIceEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1,
-	 -1, -1, 0},
+		-1, -1, 0},
 	{BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST, CONDITION_ALWAYS, 120, 0,
-	 472, FACING_NORTH, 0, 60, 60, 790, 600, 0},
+		472, FACING_NORTH, 0, 60, 60, 790, 600, 0},
 	{BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST, CONDITION_ALWAYS, 312, 0,
-	 524, FACING_NORTH, 0, 60, 60, 790, 600, 0},
+		524, FACING_NORTH, 0, 60, 60, 790, 600, 0},
 	{BILIBIN_CAVE_ICE_FROM_WORLD_MAP, CONDITION_ALWAYS, 538, 0, 548,
-	 FACING_NORTH, 0, 60, 60, 790, 600, 0},
+		FACING_NORTH, 0, 60, 60, 790, 600, 0},
 	{BILIBIN_CAVE_ICE_FROM_CHESTS, CONDITION_ALWAYS, 344, 0, 176, FACING_SOUTH,
-	 0, 60, 60, 790, 600, 0},
+		0, 60, 60, 790, 600, 0},
 	{BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE, CONDITION_ALWAYS, 856, 0,
-	 632, FACING_NORTH, 0, 740, 510, 980, 690, 0},
+		632, FACING_NORTH, 0, 740, 510, 980, 690, 0},
 	{SCENE_TABLE_END},
 };
 
-u32 BilibinCaveExits[] = {
+Uint32 BilibinCaveExits[] = {
 	SCENE_EXITS(BilibinCaveEntrance),
 	SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
-			   WORLD_MAP_FROM_BILIBIN_CAVE_ENTRANCE),
+		WORLD_MAP_FROM_BILIBIN_CAVE_ENTRANCE),
 	SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH,
-			   BilibinCaveRapier,
-			   BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST),
+		BilibinCaveRapier, BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST),
 	SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH,
-			   BilibinCaveRapier,
-			   BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST),
+		BilibinCaveRapier, BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST),
 	SCENE_EXITS(BilibinCaveRapier),
 	SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST,
-			   BilibinCaveEntrance,
-			   BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH),
+		BilibinCaveEntrance,
+		BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH),
 	SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST,
-			   BilibinCaveEntrance,
-			   BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH),
+		BilibinCaveEntrance,
+		BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH),
 	SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST, BilibinCaveIce,
-			   BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST),
+		BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST),
 	SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_TORCHES, BilibinCaveRapier,
-			   BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER),
+		BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER),
 	SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST, BilibinCaveIce,
-			   BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST),
+		BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST),
 	SCENE_EXIT(BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER,
-			   BilibinCaveRapier, BILIBIN_CAVE_RAPIER_FROM_TORCHES),
+		BilibinCaveRapier, BILIBIN_CAVE_RAPIER_FROM_TORCHES),
 	SCENE_EXITS(BilibinCaveIce),
 	SCENE_EXIT(BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST, BilibinCaveRapier,
-			   BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST),
+		BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST),
 	SCENE_EXIT(BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST, BilibinCaveRapier,
-			   BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST),
+		BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST),
 	SCENE_EXIT(BILIBIN_CAVE_ICE_TO_WORLD_MAP, WorldMap,
-			   WORLD_MAP_FROM_BILIBIN_CAVE_ICE),
+		WORLD_MAP_FROM_BILIBIN_CAVE_ICE),
 	SCENE_EXIT(BILIBIN_CAVE_ICE_TO_CHESTS, BilibinCaveIce,
-			   BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE),
+		BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE),
 	SCENE_EXIT(BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE, BilibinCaveIce,
-			   BILIBIN_CAVE_ICE_FROM_CHESTS),
+		BILIBIN_CAVE_ICE_FROM_CHESTS),
 	SCENE_EXITS_END,
 };
 
@@ -780,111 +783,111 @@ ACTOR_PLACE BilibinCaveActorPlacementsOther[] = {
 
 /* clang-format off */
 ACTOR_PLACE BilibinCaveEntranceActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        136, 0, 208, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    { SCENE_TABLE_END },
+	ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		136, 0, 208, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	{ SCENE_TABLE_END },
 };
 
 ACTOR_PLACE BilibinCaveRapierActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        840, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        856, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        872, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    { SCENE_TABLE_END },
+	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		840, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		856, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		872, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	{ SCENE_TABLE_END },
 };
 
 ACTOR_PLACE BilibinCaveIceActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        280, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        152, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        520, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        504, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        536, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        504, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        584, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)BilibinCave_NoShadowScript,
-        296, 0, 230, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)BilibinCave_NoShadowScript,
-        504, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)BilibinCave_NoShadowScript,
-        584, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        344, 0, 224, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        392, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        424, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        456, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        328, 0, 288, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        200, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        248, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        136, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        184, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    { SCENE_TABLE_END },
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		280, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		152, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		520, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		504, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		536, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		504, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		584, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, (Sint32)BilibinCave_NoShadowScript,
+		296, 0, 230, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, (Sint32)BilibinCave_NoShadowScript,
+		504, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, (Sint32)BilibinCave_NoShadowScript,
+		584, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		344, 0, 224, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		392, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		424, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		456, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		328, 0, 288, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		200, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		248, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		136, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		184, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	{ SCENE_TABLE_END },
 };
 
-TRIGGER BilibinCaveTriggersOther[] = {
-    { TRIGGER_TABLE_END },
+CUE BilibinCaveCuesOther[] = {
+	{ CUE_TABLE_END },
 };
 
-TRIGGER BilibinCaveEntranceTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
-    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
-    { TRIGGER_STEP, CELL_BEHAVIOR_BILIBIN_CAVE_ABOVE_LOW_MOUTH, CONDITION_ALWAYS, EVENT(scBilibinCaveCloseLowerCaveMouth) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_BILIBIN_CAVE_BESIDE_LOW_MOUTH, CONDITION_ALWAYS, EVENT(scBilibinCaveOpenLowerCaveMouth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT(scBilibinCaveGrowPlant) },
-    { TRIGGER_TABLE_END },
+CUE BilibinCaveEntranceCues[] = {
+	{ CUE_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
+	{ CUE_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
+	{ CUE_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
+	{ CUE_STEP, METATILE_BEHAVIOR_BILIBIN_CAVE_ABOVE_LOW_MOUTH, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveCloseLowerCaveMouth) },
+	{ CUE_STEP, METATILE_BEHAVIOR_BILIBIN_CAVE_BESIDE_LOW_MOUTH, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveOpenLowerCaveMouth) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, SCRIPT_REF(scBilibinCaveGrowPlant) },
+	{ CUE_TABLE_END },
 };
 
-TRIGGER BilibinCaveRapierTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST },
-    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST },
-    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_TORCHES },
-    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST },
-    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_BILIBIN_CAVE_ELVEN_RAPIER_CHEST, FLAG_BILIBIN_CAVE_ELVEN_RAPIER, FIND_ITEM(ITEM_ELVEN_RAPIER) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(scBilibinCaveRevealHiddenPath) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(scBilibinCaveHideRevealedPath) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT(scBilibinCaveDouseRapierRoomFire) },
-    { TRIGGER_TABLE_END },
+CUE BilibinCaveRapierCues[] = {
+	{ CUE_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST },
+	{ CUE_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST },
+	{ CUE_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST },
+	{ CUE_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_TORCHES },
+	{ CUE_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST },
+	{ CUE_EXIT, 6, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER },
+	{ EXAMINE_CUE(EXAMINE_CHEST), METATILE_BEHAVIOR_BILIBIN_CAVE_ELVEN_RAPIER_CHEST, FLAG_BILIBIN_CAVE_ELVEN_RAPIER, FIND_ITEM(ITEM_ELVEN_RAPIER) },
+	{ PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveRevealHiddenPath) },
+	{ PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveHideRevealedPath) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, SCRIPT_REF(scBilibinCaveDouseRapierRoomFire) },
+	{ CUE_TABLE_END },
 };
 
-TRIGGER BilibinCaveIceTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST },
-    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_WORLD_MAP },
-    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_CHESTS },
-    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
-    { TRIGGER_STEP, CELL_BEHAVIOR_BILIBIN_CAVE_SNOW, CONDITION_ALWAYS, EVENT(scBilibinCaveStartFootprints) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_BILIBIN_CAVE_SNOW_EDGE, CONDITION_ALWAYS, EVENT(scBilibinCaveStopFootprints) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT(scBilibinCaveDouseIceRoomFire) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT(scBilibinCaveFreezeFirstPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, CONDITION_ALWAYS, EVENT(scBilibinCaveFreezeSecondPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), EVENT(scBilibinCaveFreezeThirdPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, EVENT(scBilibinCaveUpdateThirdPuddleFromTorches) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_TORCH, CONDITION_ALWAYS, EVENT(scBilibinCaveUpdateThirdPuddleFromTorches) },
-    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_BILIBIN_CAVE_TORCH_TRACK, CONDITION_ALWAYS, EVENT(scBilibinCavePushTorch) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_BILIBIN_CAVE_TORCH_TRACK_END, CONDITION_ALWAYS, EVENT(scBilibinCavePushTorch) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_BILIBIN_CAVE_VIAL_CHEST, FLAG_BILIBIN_CAVE_VIAL, FIND_ITEM(ITEM_VIAL) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_BILIBIN_CAVE_PSY_CRYSTAL_CHEST, FLAG_BILIBIN_CAVE_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_BILIBIN_CAVE_WATER_OF_LIFE_CHEST, FLAG_BILIBIN_CAVE_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { TRIGGER_TABLE_END },
+CUE BilibinCaveIceCues[] = {
+	{ CUE_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST },
+	{ CUE_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST },
+	{ CUE_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_WORLD_MAP },
+	{ CUE_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_CHESTS },
+	{ CUE_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
+	{ CUE_STEP, METATILE_BEHAVIOR_BILIBIN_CAVE_SNOW, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveStartFootprints) },
+	{ CUE_STEP, METATILE_BEHAVIOR_BILIBIN_CAVE_SNOW_EDGE, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveStopFootprints) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, SCRIPT_REF(scBilibinCaveDouseIceRoomFire) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, SCRIPT_REF(scBilibinCaveFreezeFirstPuddle) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveFreezeSecondPuddle) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), SCRIPT_REF(scBilibinCaveFreezeThirdPuddle) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveUpdateThirdPuddleFromTorches) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_TORCH, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCaveUpdateThirdPuddleFromTorches) },
+	{ STEP_CUE_WALKING, METATILE_BEHAVIOR_BILIBIN_CAVE_TORCH_TRACK, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCavePushTorch) },
+	{ STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_BILIBIN_CAVE_TORCH_TRACK_END, CONDITION_ALWAYS, SCRIPT_REF(scBilibinCavePushTorch) },
+	{ EXAMINE_CUE(EXAMINE_CHEST), METATILE_BEHAVIOR_BILIBIN_CAVE_VIAL_CHEST, FLAG_BILIBIN_CAVE_VIAL, FIND_ITEM(ITEM_VIAL) },
+	{ EXAMINE_CUE(EXAMINE_CHEST), METATILE_BEHAVIOR_BILIBIN_CAVE_PSY_CRYSTAL_CHEST, FLAG_BILIBIN_CAVE_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+	{ EXAMINE_CUE(EXAMINE_CHEST), METATILE_BEHAVIOR_BILIBIN_CAVE_WATER_OF_LIFE_CHEST, FLAG_BILIBIN_CAVE_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
+	{ CUE_TABLE_END },
 };
 /* clang-format on */
 

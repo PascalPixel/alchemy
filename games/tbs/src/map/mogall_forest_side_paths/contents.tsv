@@ -1,5 +1,5 @@
 block	file	pad	edition
-cell_tiles	cell_tiles.delta0.lz	4
+metatile_tiles	metatile_tiles.delta0.lz	4
 shapes	kolima_forest_glade/shapes.table.lz	4
 grid	map.grid.lz	4
 none

@@ -1,13 +1,13 @@
-/* @file */
 /* Waiting for an actor to stop rising or falling. */
 
 #include "system.h"
 #include "field/actor.h"
 
 /* Waits until the actor stops rising or falling, sixty frames at most. */
-void fdActorWaitUntilLanded(ACTOR *actor) {
-	s32 remainingFrames = 60;
-	s32 busy;
+void fdActorWaitUntilLanded(ACTOR *actor)
+{
+	Sint32 remainingFrames = 60;
+	Sint32 busy;
 
 	while(remainingFrames != 0) {
 		sySynch(1);

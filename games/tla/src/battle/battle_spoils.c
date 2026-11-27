@@ -1,10 +1,8 @@
-/* @file */
-/* The spoils: coins, experience, items and level ups. */
-/* Part of battle.c. */
+/* The spoils: coins, experience, items and level ups. Part of battle.c. */
 
-/* What a level up raised, as places in the halfwords gmUnitTryLevelUp fills */
-/* (LEVEL_UP_RESULT's fields, read here as an array): each is shown when */
-/* it is not 0. */
+/* What a level up raised, as places in the halfwords gmUnitTryLevelUp fills
+   (LEVEL_UP_RESULT's fields, read here as an array): each is shown when it is
+   not 0. */
 typedef enum LEVEL_UP_GAIN {
 	GAIN_HP = 2,
 	GAIN_PP,
@@ -15,17 +13,18 @@ typedef enum LEVEL_UP_GAIN {
 	GAIN_COUNT
 } LEVEL_UP_GAIN;
 
-/* Returns an item's rank among the spoils, by which the four kept are chosen */
-/* and handed out best first: its item id (INVENTORY_ITEM_ID_MASK's nine */
-/* bits), with ITEM_RARE's bit above it and ITEM_INDISPENSABLE's above that; */
-/* 0 for none. */
-u32 btSpoilsRankItem(u32 inventoryEntry) {
-	u32 priority = 0;
-	u32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
+/* Returns an item's rank among the spoils, by which the four kept are chosen
+   and handed out best first: its item id (INVENTORY_ITEM_ID_MASK's nine bits),
+   with ITEM_RARE's bit above it and ITEM_INDISPENSABLE's above that; 0 for
+   none. */
+Uint32 btSpoilsRankItem(Uint32 inventoryEntry)
+{
+	Uint32 priority = 0;
+	Uint32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
 	if(itemId == 0)
 		return 0;
 	{
-		u8 flags = gmItemGetDirectStub(itemId)->flg;
+		Uint8 flags = gmItemGetDirectStub(itemId)->flg;
 
 		if(flags & ITEM_INDISPENSABLE)
 			priority = 1;
@@ -38,17 +37,17 @@ u32 btSpoilsRankItem(u32 inventoryEntry) {
 	return priority;
 }
 
-/* Above every item's rank: the search for the lowest of the spoils' four */
-/* starts here. */
+/* Above every item's rank: the search for the lowest of the spoils' four starts
+   here. */
 #define SPOILS_RANK_CEILING (1 << 30)
 
-/* Empties the battle's spoils and the party's pending item. Called by */
-/* btRun. */
-void btSpoilsClear(void) {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+/* Empties the battle's spoils and the party's pending item. Called by btRun. */
+void btSpoilsClear(void)
+{
+	BATTLE_STATE  *battle = Ram_HeapSlots->battleState;
 	BATTLE_SPOILS *spoils = &battle->spoils;
-	u16 *items;
-	s32 index;
+	Uint16		  *items;
+	Sint32		   index;
 
 	MainRoutineStateWork.pendingItem = 0;
 	spoils->coins = 0;
@@ -59,40 +58,34 @@ void btSpoilsClear(void) {
 		items[index] = 0;
 }
 
-/* The name suffixes the scan reads back (NAME_SUFFIX_COUNT of them): the */
-/* digits 1 to 9 outside Japan, and the letters A to Z in the Japanese release.
- */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define FIRST_DIGIT_BASE  'A'
-#define FIRST_DIGIT_COUNT 26
-#else
-#define FIRST_DIGIT_BASE  '1'
-#define FIRST_DIGIT_COUNT 9
-#endif
+/* The name suffixes the scan reads back (NAME_SUFFIX_COUNT of them): the digits
+   1 to 9 outside Japan, and the letters A to Z in the Japanese release. */
+#define FIRST_DIGIT_BASE  JAPANESE_OR('A', '1')
+#define FIRST_DIGIT_COUNT JAPANESE_OR(26, 9)
 
-/* Returns an enemy name's suffix: its first digit less one (its first */
-/* letter's place in the alphabet in Japanese), or FIRST_DIGIT_COUNT when it */
-/* has none. */
-s32 btStringFindFirstDigit(u8 *name) {
-	s32 i;
+/* Returns an enemy name's suffix: its first digit less one (its first letter's
+   place in the alphabet in Japanese), or FIRST_DIGIT_COUNT when it has none. */
+Sint32 btStringFindFirstDigit(Uint8 *name)
+{
+	Sint32 i;
 
 	for(i = 0; i < UNIT_NAME_SIZE - 1; i++) {
-		if((u8)(name[i] - FIRST_DIGIT_BASE) <= FIRST_DIGIT_COUNT - 1)
+		if((Uint8)(name[i] - FIRST_DIGIT_BASE) <= FIRST_DIGIT_COUNT - 1)
 			return name[i] - FIRST_DIGIT_BASE;
 	}
 	return FIRST_DIGIT_COUNT;
 }
 
 /* Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided die
- */
-/* for every ten levels and one more, at least 30 percent of its own. */
-static __inline__ s32 btEnemyCalcCoinReward(UNIT *unit, u16 *reward) {
-	s32 rollIndex;
-	s32 bonus = 0;
-	s32 base;
-	s32 minimumBonus;
+   for every ten levels and one more, at least 30 percent of its own. */
+static __inline__ Sint32 btEnemyCalcCoinReward(UNIT *unit, Uint16 *reward)
+{
+	Sint32 rollIndex;
+	Sint32 bonus = 0;
+	Sint32 base;
+	Sint32 minimumBonus;
 
-	for(rollIndex = 0; rollIndex < (u8)(unit->level / 10U) + 1; rollIndex++)
+	for(rollIndex = 0; rollIndex < (Uint8)(unit->level / 10U) + 1; rollIndex++)
 		bonus += (syRandomBelow(6)) + 1;
 	base = *reward;
 	minimumBonus = base * 3 / 10;
@@ -101,16 +94,16 @@ static __inline__ s32 btEnemyCalcCoinReward(UNIT *unit, u16 *reward) {
 	return bonus + base;
 }
 
-/* Returns an enemy's experience with the Djinn bonus: its own plus a */
-/* four-sided die for every ten levels and one more, at least 30 percent more.
- */
-static __inline__ s32 btEnemyCalcExperienceReward(UNIT *unit, u16 *reward) {
-	s32 rollIndex;
-	s32 bonus = 0;
-	s32 base;
-	s32 minimumBonus;
+/* Returns an enemy's experience with the Djinn bonus: its own plus a four-sided
+   die for every ten levels and one more, at least 30 percent more. */
+static __inline__ Sint32 btEnemyCalcExperienceReward(UNIT *unit, Uint16 *reward)
+{
+	Sint32 rollIndex;
+	Sint32 bonus = 0;
+	Sint32 base;
+	Sint32 minimumBonus;
 
-	for(rollIndex = 0; rollIndex < (u8)(unit->level / 10U) + 1; rollIndex++)
+	for(rollIndex = 0; rollIndex < (Uint8)(unit->level / 10U) + 1; rollIndex++)
 		bonus += (syRandomBelow(4)) + 1;
 	base = *reward;
 	minimumBonus = base * 3 / 10;
@@ -119,26 +112,26 @@ static __inline__ s32 btEnemyCalcExperienceReward(UNIT *unit, u16 *reward) {
 	return bonus + base;
 }
 
-/* Counts a fallen enemy and adds its spoils, The Broken Seal's */
-/* btEnemyRecordDefeat with the battle state from its heap slot. This game */
-/* also keeps the last two defeated enemies (their ids and */
-/* btStringFindFirstDigit's first digit of their names, alternating slots, with
- */
-/* a count up to 2) and sets the defeated flag only for the enemies that have */
-/* one, below ENEMY_DEFEATED_FLAG_COUNT. */
-s32 btEnemyRecordDefeat(s32 unitId, s32 djinnBonus) {
-	UNIT *unit;
+/* Counts a fallen enemy and adds its spoils, The Broken Seal's
+   btEnemyRecordDefeat with the battle state from its heap slot. This game also
+   keeps the last two defeated enemies (their ids and btStringFindFirstDigit's
+   first digit of their names, alternating slots, with a count up to 2) and sets
+   the defeated flag only for the enemies that have one, below
+   ENEMY_DEFEATED_FLAG_COUNT. */
+Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
+{
+	UNIT				   *unit;
 	const ENEMY_DEFINITION *enemy;
-	BATTLE_STATE *battle;
-	BATTLE_SPOILS *spoils;
-	s32 itemIndex;
-	s32 dropShift;
-	s32 classSlot;
-	s32 lowestItemPriority;
-	s32 lowestSlot;
-	s32 itemPriority;
-	s32 slot;
-	s32 classIndex;
+	BATTLE_STATE		   *battle;
+	BATTLE_SPOILS		   *spoils;
+	Sint32					itemIndex;
+	Sint32					dropShift;
+	Sint32					classSlot;
+	Sint32					lowestItemPriority;
+	Sint32					lowestSlot;
+	Sint32					itemPriority;
+	Sint32					slot;
+	Sint32					classIndex;
 
 	unit = syUnitGet(unitId);
 	battle = Ram_HeapSlots->battleState;
@@ -147,17 +140,17 @@ s32 btEnemyRecordDefeat(s32 unitId, s32 djinnBonus) {
 		return -1;
 	if(unit->classId != CLASS_NONE)
 		return -2;
-	/* Queued for Regen Dance: the name letter is the first digit of the name.
-	 */
+	/* Queued for Regen Dance: the name letter is the first digit of the
+	   name. */
 	slot = spoils->queueHead = (spoils->queueHead + 1) % 2;
 	spoils->queuedSummons[slot] = unit->enemyId;
-	spoils->queuedLetters[slot] = btStringFindFirstDigit((u8 *)unit);
+	spoils->queuedLetters[slot] = btStringFindFirstDigit((Uint8 *)unit);
 	if(spoils->queueCnt <= 1)
 		spoils->queueCnt++;
 	classSlot = 0;
 	classIndex = 0;
-	/* UB: the search runs to a sixth kind, one past enemyKinds: it reads */
-	/* kindsEnd, the halfword after them. */
+	/* UB: the search runs to a sixth kind, one past enemyKinds: it reads
+	   kindsEnd, the halfword after them. */
 	if(battle->enemyKinds[0] != unit->enemyId) {
 		do {
 			if(++classIndex > (ENEMY_BATTLE_SIZE - 1))
@@ -166,10 +159,9 @@ s32 btEnemyRecordDefeat(s32 unitId, s32 djinnBonus) {
 	}
 	if(classIndex != ENEMY_BATTLE_SIZE)
 		classSlot = classIndex;
-	/* The first class to fall names the victory message. */
-	/* XXX (no evidence): whether DEFEAT_BY_PARTY_MEMBER was meant; no state is
-	 * 2, */
-	/* so the test never fails. */
+	/* The first class to fall names the victory message. XXX (no evidence):
+	   whether DEFEAT_BY_PARTY_MEMBER was meant; no state is 2, so the test
+	   never fails. */
 	if(battle->defeatState != 2) {
 		if(classSlot < battle->firstDefeated)
 			battle->firstDefeated = classSlot;
@@ -188,8 +180,7 @@ s32 btEnemyRecordDefeat(s32 unitId, s32 djinnBonus) {
 		if(enemy->experience != 0)
 			spoils->experience +=
 				btEnemyCalcExperienceReward(unit, &enemy->experience);
-	}
-	else {
+	} else {
 		spoils->coins += enemy->coins;
 		spoils->experience += enemy->experience;
 	}
@@ -208,9 +199,9 @@ s32 btEnemyRecordDefeat(s32 unitId, s32 djinnBonus) {
 			dropShift -= 2;
 		if(dropShift < 0)
 			dropShift = 0;
-		/* Twice FIXED_ONE >> n against a 16-bit random number: 1 in 2^(n - 1).
-		 */
-		if((FIXED_ONE * 2 >> dropShift) > (btRandomStub() & 0xffff)) {
+		/* Twice toFIXED(1) >> n against a 16-bit random number: 1 in 2^(n -
+		   1). */
+		if((toFIXED(2) >> dropShift) > (gmBattleRandomStub() & 0xffff)) {
 			lowestSlot = -1;
 			lowestItemPriority = SPOILS_RANK_CEILING;
 			for(itemIndex = 0; itemIndex <= 3; itemIndex++) {
@@ -220,7 +211,7 @@ s32 btEnemyRecordDefeat(s32 unitId, s32 djinnBonus) {
 					lowestSlot = itemIndex;
 				}
 			}
-			if((s32)btSpoilsRankItem(enemy->item) > lowestItemPriority)
+			if((Sint32)btSpoilsRankItem(enemy->item) > lowestItemPriority)
 				spoils->items[lowestSlot] = enemy->item;
 		}
 	}
@@ -228,117 +219,118 @@ s32 btEnemyRecordDefeat(s32 unitId, s32 djinnBonus) {
 }
 
 /* Hands out the spoils after a victory: experience to each party member still
- */
-/* standing, with every level gained, then the coins, then the items best */
-/* first. */
-void btAwardSpoils(void) {
+   standing, with every level gained, then the coins, then the items best
+   first. */
+void btAwardSpoils(void)
+{
 	BATTLE_SPOILS *spoils;
-	s32 living;
-	u16 *list;
-	s32 count;
-	s32 i;
-	s32 unitId;
-	UNIT *unit;
-	UNIT *backup;
-	s32 entry;
-	u32 learned;
-	s32 j;
-	s32 best;
-	s32 bestSlot;
-	s32 slot;
-	u16 *found;
-	s32 value;
-	s16 gains[GAIN_COUNT];
-	u16 units[10];
+	Sint32		   living;
+	Uint16		  *list;
+	Sint32		   count;
+	Sint32		   i;
+	Sint32		   unitId;
+	UNIT		  *unit;
+	UNIT		  *backup;
+	Sint32		   entry;
+	Uint32		   learned;
+	Sint32		   j;
+	Sint32		   best;
+	Sint32		   bestSlot;
+	Sint32		   slot;
+	Uint16		  *found;
+	Sint32		   value;
+	Sint16		   gains[GAIN_COUNT];
+	Uint16		   units[10];
 
 	spoils = &Ram_HeapSlots->battleState->spoils;
 	if(spoils->experience != 0) {
 		mnMessageArgumentPushStub(spoils->experience, MESSAGE_ARGUMENT_NUMBER);
 		/* "You got N experience points." */
-		mnBattleMessageShowAndWaitStub((s32)MsgGotExperience);
+		mnBattleMessageShowAndWaitStub((Sint32)MsgGotExperience);
 		btMessageWaitForAdvance();
 	}
 	list = units;
 	living = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, list);
 	count = btUnitListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, list);
-	backup = syHeapAllocEwram(sizeof(UNIT));
+	backup = syHeapAllocEWRAM(sizeof(UNIT));
 	for(i = 0; i < count; i++) {
 		unitId = list[i];
 		unit = syUnitGet(unitId);
 		if(i >= living)
-			unit->experience += (u32)spoils->experience >> 1;
+			unit->experience += (Uint32)spoils->experience >> 1;
 		else
 			unit->experience += spoils->experience;
 		while(syWordsCopyEntry(backup, unit, sizeof(UNIT)),
-			  gmUnitTryLevelUpStub(unitId, gains) != 0) {
+			gmUnitTryLevelUpStub(unitId, gains) != 0) {
 			sySndPlayStub(MUS_LEVEL_UP);
 			mnMessageArgumentClearAllStub();
 			mnMessageArgumentPushStub(unit->classId, MESSAGE_ARGUMENT_CLASS);
 			mnMessageArgumentPushStub(list[i], MESSAGE_ARGUMENT_ACTOR);
 			mnMessageArgumentPushStub(unit->level, MESSAGE_ARGUMENT_NUMBER);
 			/* "<name> is now a level N ..." */
-			mnBattleMessageShowAndWaitStub((s32)MsgLevelUp);
+			mnBattleMessageShowAndWaitStub((Sint32)MsgLevelUp);
 			btMessageWaitForAdvance();
 			for(entry = 0; entry < PSYNERGY_SLOTS; entry++) {
 				learned = unit->psynergy[entry].encodedAction;
 				/* A class ability the copy lacks is newly learned. */
 				if((learned & ACTION_ID_MASK) &&
-				   (learned >> PSYNERGY_FROM_CLASS_SHIFT)) {
+					(learned >> PSYNERGY_FROM_CLASS_SHIFT)) {
 					for(j = 0; j < PSYNERGY_SLOTS; j++) {
 						if(learned == backup->psynergy[j].encodedAction)
 							break;
 					}
 					if(j == PSYNERGY_SLOTS) {
 						mnMessageArgumentClearAllStub();
-						mnMessageArgumentPushStub(unit->classId,
-												  MESSAGE_ARGUMENT_CLASS);
-						mnMessageArgumentPushStub(unitId,
-												  MESSAGE_ARGUMENT_ACTOR);
-						mnMessageArgumentPushStub(learned & ACTION_ID_MASK,
-												  MESSAGE_ARGUMENT_ABILITY);
+						mnMessageArgumentPushStub(
+							unit->classId, MESSAGE_ARGUMENT_CLASS);
+						mnMessageArgumentPushStub(
+							unitId, MESSAGE_ARGUMENT_ACTOR);
+						mnMessageArgumentPushStub(
+							learned & ACTION_ID_MASK, MESSAGE_ARGUMENT_ABILITY);
 						sySndPlayStub(SE_CAST);
 						/* "Mastered the <class>'s <ability>" */
-						mnBattleMessageShowAndWaitStub((s32)MsgMasteredAbility);
+						mnBattleMessageShowAndWaitStub(
+							(Sint32)MsgMasteredAbility);
 						btMessageWaitForAdvance();
 					}
 				}
 			}
 			if(gains[GAIN_HP] != 0) {
-				mnMessageArgumentPushStub(gains[GAIN_HP],
-										  MESSAGE_ARGUMENT_NUMBER);
+				mnMessageArgumentPushStub(
+					gains[GAIN_HP], MESSAGE_ARGUMENT_NUMBER);
 				/* "Maximum HP rises by N!" */
-				mnBattleMessageShowAndWaitStub((s32)MsgMaxHpRises);
+				mnBattleMessageShowAndWaitStub((Sint32)MsgMaxHpRises);
 				btMessageWaitForAdvance();
 			}
 			if(gains[GAIN_PP] != 0) {
-				mnMessageArgumentPushStub(gains[GAIN_PP],
-										  MESSAGE_ARGUMENT_NUMBER);
-				mnBattleMessageShowAndWaitStub((s32)MsgMaxPpRises);
+				mnMessageArgumentPushStub(
+					gains[GAIN_PP], MESSAGE_ARGUMENT_NUMBER);
+				mnBattleMessageShowAndWaitStub((Sint32)MsgMaxPpRises);
 				btMessageWaitForAdvance();
 			}
 			if(gains[GAIN_ATTACK] != 0) {
-				mnMessageArgumentPushStub(gains[GAIN_ATTACK],
-										  MESSAGE_ARGUMENT_NUMBER);
-				mnBattleMessageShowAndWaitStub((s32)MsgAttackRises);
+				mnMessageArgumentPushStub(
+					gains[GAIN_ATTACK], MESSAGE_ARGUMENT_NUMBER);
+				mnBattleMessageShowAndWaitStub((Sint32)MsgAttackRises);
 				btMessageWaitForAdvance();
 			}
 			if(gains[GAIN_DEFENSE] != 0) {
-				mnMessageArgumentPushStub(gains[GAIN_DEFENSE],
-										  MESSAGE_ARGUMENT_NUMBER);
-				mnBattleMessageShowAndWaitStub((s32)MsgDefenseRises);
+				mnMessageArgumentPushStub(
+					gains[GAIN_DEFENSE], MESSAGE_ARGUMENT_NUMBER);
+				mnBattleMessageShowAndWaitStub((Sint32)MsgDefenseRises);
 				btMessageWaitForAdvance();
 			}
 			if(gains[GAIN_AGILITY] != 0) {
-				mnMessageArgumentPushStub(gains[GAIN_AGILITY],
-										  MESSAGE_ARGUMENT_NUMBER);
-				mnBattleMessageShowAndWaitStub((s32)MsgAgilityRises);
+				mnMessageArgumentPushStub(
+					gains[GAIN_AGILITY], MESSAGE_ARGUMENT_NUMBER);
+				mnBattleMessageShowAndWaitStub((Sint32)MsgAgilityRises);
 				btMessageWaitForAdvance();
 			}
 			if(gains[GAIN_LUCK] != 0) {
-				mnMessageArgumentPushStub(gains[GAIN_LUCK],
-										  MESSAGE_ARGUMENT_NUMBER);
+				mnMessageArgumentPushStub(
+					gains[GAIN_LUCK], MESSAGE_ARGUMENT_NUMBER);
 				/* "Luck rises by N!" */
-				mnBattleMessageShowAndWaitStub((s32)MsgLuckRises);
+				mnBattleMessageShowAndWaitStub((Sint32)MsgLuckRises);
 				btMessageWaitForAdvance();
 			}
 		}
@@ -347,7 +339,7 @@ void btAwardSpoils(void) {
 	if(spoils->coins != 0) {
 		mnMessageArgumentPushStub(spoils->coins, MESSAGE_ARGUMENT_NUMBER);
 		/* "You got N coins." */
-		mnBattleMessageShowAndWaitStub((s32)MsgGotCoins);
+		mnBattleMessageShowAndWaitStub((Sint32)MsgGotCoins);
 		gmPartyAdjustCoinsStub(spoils->coins);
 		btMessageWaitForAdvance();
 	}
@@ -366,10 +358,10 @@ void btAwardSpoils(void) {
 		}
 		if(bestSlot == -1)
 			break;
-		mnMessageArgumentPushStub(spoils->items[bestSlot],
-								  MESSAGE_ARGUMENT_ITEM);
+		mnMessageArgumentPushStub(
+			spoils->items[bestSlot], MESSAGE_ARGUMENT_ITEM);
 		/* "You got <item>." */
-		mnBattleMessageShowAndWaitStub((s32)MsgGotItem);
+		mnBattleMessageShowAndWaitStub((Sint32)MsgGotItem);
 		btMessageWaitForAdvance();
 		if(gmPartyInventoryAddStub(spoils->items[bestSlot]) == -1) {
 			*found = spoils->items[bestSlot];
@@ -378,5 +370,6 @@ void btAwardSpoils(void) {
 		spoils->items[bestSlot] = 0;
 	}
 }
+
 #undef FIRST_DIGIT_BASE
 #undef FIRST_DIGIT_COUNT

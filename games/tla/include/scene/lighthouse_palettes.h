@@ -1,11 +1,9 @@
 #ifndef ALCHEMY_LIGHTHOUSE_PALETTES_H
 #define ALCHEMY_LIGHTHOUSE_PALETTES_H
 
-/* @file */
 /* How the Jupiter Lighthouse rooms, and one Mars Lighthouse room that keeps a
- */
-/* copy, load their cycling palette */
-/* (shared/jupiter_lighthouse_load_palettes.h). */
+   copy, load their cycling palette
+   (shared/jupiter_lighthouse_load_palettes.h). */
 
 #include "types.h"
 
@@ -16,6 +14,6 @@ typedef enum LIGHTHOUSE_PALETTES {
 	LIGHTHOUSE_PALETTES_KEEP_COPIES /* by the flag, keeping the copies it has */
 } LIGHTHOUSE_PALETTES;
 
-void scJupiterLighthouseLoadPalettes(s32 mode);
+void scJupiterLighthouseLoadPalettes(Sint32 mode);
 
 #endif

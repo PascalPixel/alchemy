@@ -1,38 +1,38 @@
-/* @file */
-/* Mercury Lighthouse and its entrance: the lights that carry the leader over */
-/* the pool (mercury_lighthouse_pillar.c). */
+/* Mercury Lighthouse and its entrance: the lights that carry the leader over
+   the pool (mercury_lighthouse_pillar.c). */
 
 #include "system.h"
 
-/* Sets up the lights for a floor whose pool is the cell behavior region, */
-/* keeping their state for the pool's events. On an ordinary arrival the */
-/* leader has no lights. When the party returns to where it was, as after a */
-/* battle, the column of light over the leader and the light under them in */
-/* the pool are made again. */
-void scMercuryLighthouseRestoreLights(s32 region,
-									  MERCURY_LIGHTHOUSE_LIGHTS *lights) {
-	ACTOR *actor;
-	ACTOR *light;
-	SPR *sprite;
-	MAP_GRID_CELL *cell;
-	FIXED z;
-	s32 flag;
+/* Sets up the lights for a floor whose pool is the metatile behavior region,
+   keeping their state for the pool's scripts. On an ordinary arrival the leader
+   has no lights. When the party returns to where it was, as after a battle, the
+   column of light over the leader and the light under them in the pool are made
+   again. */
+void scMercuryLighthouseRestoreLights(
+	Sint32 region, MERCURY_LIGHTHOUSE_LIGHTS *lights)
+{
+	ACTOR			  *actor;
+	ACTOR			  *light;
+	SPR				  *sprite;
+	MAP_GRID_METATILE *metatile;
+	FIXED			   z;
+	Sint32			   flag;
 
-	*(MERCURY_LIGHTHOUSE_LIGHTS **)syHeapSlotAllocEwram(
+	*(MERCURY_LIGHTHOUSE_LIGHTS **)syHeapSlotAllocEWRAM(
 		HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(lights)) = lights;
 	flag = gmFlagGet(FLAG_KEEP_PARTY_POSITION);
 	if(flag == 0) {
-		btDmaFill32(flag, lights, sizeof(*lights));
+		DMA_FILL32(flag, lights, sizeof(*lights));
 		lights->poolBehavior = region;
 		return;
 	}
 	actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
 	z = actor->z.fixed;
-	cell = (MAP_GRID_CELL *)Ram_MapGridCellBuffer +
-		   (z / toFIXED(16)) * MAPGRID_SIZE + actor->x.fixed / toFIXED(16);
+	metatile = (MAP_GRID_METATILE *)Ram_MapGridMetatileBuffer +
+		(z / toFIXED(16)) * MAPGRID_SIZE + actor->x.fixed / toFIXED(16);
 	if(lights->levels != 0 && lights->pillar != 0) {
 		light = syFieldActorCreate(SPRITE_GOLDEN_RINGS, actor->x.fixed,
-								   actor->y.fixed + toFIXED(24), z);
+			actor->y.fixed + toFIXED(24), z);
 		if(light != NULL) {
 			light->groundHeight = actor->groundHeight;
 			sprite = light->spr;
@@ -48,13 +48,12 @@ void scMercuryLighthouseRestoreLights(s32 region,
 			}
 			lights->pillar = light;
 		}
-	}
-	else {
+	} else {
 		lights->pillar = 0;
 	}
-	if(cell->behavior == region && lights->stepEff != 0) {
+	if(metatile->behavior == region && lights->stepEff != 0) {
 		light = syFieldActorCreate(SPRITE_GOLDEN_RINGS, actor->x.fixed,
-								   actor->y.fixed, actor->z.fixed);
+			actor->y.fixed, actor->z.fixed);
 		if(light == NULL)
 			return;
 		light->groundHeight = actor->groundHeight;
@@ -69,8 +68,7 @@ void scMercuryLighthouseRestoreLights(s32 region,
 			sprite->flg = 0;
 		}
 		lights->stepEff = light;
-	}
-	else {
+	} else {
 		lights->stepEff = 0;
 	}
 }

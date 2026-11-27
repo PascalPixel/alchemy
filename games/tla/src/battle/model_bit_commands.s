@@ -1,10 +1,10 @@
-@ Why Model_BitCommands to Model_SetBitValue are assembly:
+@ Why btModelBitCommands to btModelSetBitValue are assembly:
 @ entries share live r0/r2/r3 decoder state with their caller; delta
 @ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified
 	.arm
-	.global Model_BitCommands
-Model_BitCommands:
+	.global btModelBitCommands
+btModelBitCommands:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -12,8 +12,8 @@ Model_BitCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Model_AddShortDelta
-Model_AddShortDelta:
+	.global btModelAddShortDelta
+btModelAddShortDelta:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -24,8 +24,8 @@ Model_AddShortDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Model_SubtractShortDelta
-Model_SubtractShortDelta:
+	.global btModelSubtractShortDelta
+btModelSubtractShortDelta:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -36,8 +36,8 @@ Model_SubtractShortDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Model_AddLongDelta
-Model_AddLongDelta:
+	.global btModelAddLongDelta
+btModelAddLongDelta:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -48,8 +48,8 @@ Model_AddLongDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Model_SubtractLongDelta
-Model_SubtractLongDelta:
+	.global btModelSubtractLongDelta
+btModelSubtractLongDelta:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -60,8 +60,8 @@ Model_SubtractLongDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Model_AddSignedDelta
-Model_AddSignedDelta:
+	.global btModelAddSignedDelta
+btModelAddSignedDelta:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -74,8 +74,8 @@ Model_AddSignedDelta:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Model_SetBitValue
-Model_SetBitValue:
+	.global btModelSetBitValue
+btModelSetBitValue:
 	ror	r5, r3, #10
 	and	r5, r5, #0xfe000000
 	lsr	r3, r3, #10
@@ -85,5 +85,5 @@ Model_SetBitValue:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Model_DecodeEnd
-Model_DecodeEnd:
+	.global btModelDecodeEnd
+btModelDecodeEnd:

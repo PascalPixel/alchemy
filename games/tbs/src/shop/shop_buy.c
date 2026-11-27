@@ -1,43 +1,40 @@
-/* @file */
 /* Buying: the stock list, the money and party windows, quantities and prices.
- */
-/* Part of shop.c. */
+   Part of shop.c. */
 
 #include "shop_internal.h"
 
-/* Runs the Buy and Artifacts counters: the player browses the stock seven */
-/* items a page, picks one, chooses who gets it and how many, and pays. Checks
- */
-/* room in the pack and coins first, and warns when the party member cannot */
-/* equip it. An artifact bought takes its stock counter down, and the list is */
-/* rebuilt. Repeats until B. */
-s32 mnShopSelectBuy(void) {
-	SHOP_STATE *shop = MenuState;
-	WINDOW *priceWindow = 0;
-	WINDOW *stockWindow;
-	WINDOW *messageWindow;
-	WINDOW *partyWindow;
-	s32 selected = 0;
-	s32 quantity;
+/* Runs the Buy and Artifacts counters: the player browses the stock seven items
+   a page, picks one, chooses who gets it and how many, and pays. Checks room in
+   the pack and coins first, and warns when the party member cannot equip it. An
+   artifact bought takes its stock counter down, and the list is rebuilt.
+   Repeats until B. */
+Sint32 mnShopSelectBuy(void)
+{
+	SHOP_STATE		*shop = MenuState;
+	WINDOW			*priceWindow = 0;
+	WINDOW			*stockWindow;
+	WINDOW			*messageWindow;
+	WINDOW			*partyWindow;
+	Sint32			 selected = 0;
+	Sint32			 quantity;
 	ITEM_DEFINITION *selectedDefinition;
-	s32 repromptRecipient;
-	WINDOW *itemWindow;
-	s32 redraw;
-	s32 selectionIndex;
-	s32 stockCount;
-	s32 itemId;
+	Bool			 repromptRecipient;
+	WINDOW			*itemWindow;
+	Bool			 redraw;
+	Sint32			 selectionIndex;
+	Sint32			 stockCount;
+	Sint32			 itemId;
 	ITEM_DEFINITION *stockDefinition;
-	s32 selectionResult;
-	s32 previousIndex;
-	s32 unitId;
-	s32 capacitySlot;
-	s32 removedCount;
-	s16 *stockIds;
+	Sint32			 selectionResult;
+	Sint32			 previousIndex;
+	Sint32			 unitId;
+	Sint32			 capacitySlot;
+	Sint32			 removedCount;
+	Sint16			*stockIds;
 
 	shop->itemWin = 0;
-	shop->moneyWin =
-		mnWindowCreateStub(30 - SHOP_MONEY_WINDOW_WIDTH, 7,
-						   SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
+	shop->moneyWin = mnWindowCreateStub(30 - SHOP_MONEY_WINDOW_WIDTH, 7,
+		SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
 	priceWindow =
 		mnWindowCreateStub(0, 8, SHOP_PRICE_WIDTH, 4, WINDOW_FLAG_INSTANT);
@@ -48,7 +45,7 @@ next_page:
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
 	shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
 	messageWindow = mnWindowCreateStub(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
-	redraw = 1;
+	redraw = TRUE;
 
 	while(1) {
 		stockCount = shop->stockCnt;
@@ -56,56 +53,56 @@ next_page:
 			stockIds = shop->stockItemIds;
 			itemId = stockIds[selectionIndex];
 			stockDefinition = gmItemGetDirectStub(itemId);
-			redraw = 0;
+			redraw = FALSE;
 			mnCursorPlace(stockWindow,
-						  selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
+				selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
 			shop->cursorFrm = 4;
 			mnShopDrawStock(stockWindow, selectionIndex);
 			mnShopDrawMessage(messageWindow, itemId + MsgItemPlainName);
 			mnWindowSprRedrawSavedRectStub(priceWindow);
 			mnShopDrawItemPrice(priceWindow, itemId, stockDefinition->price,
-								SHOP_PRICE_KIND_BUY);
+				SHOP_PRICE_KIND_BUY);
 		}
-		if((KeysPressed & KEY_A) != 0) {
+		if((PerPush & KEY_A) != 0) {
 			selected = selectionIndex;
 			sySndPlayStub(SE_MENU_CONFIRM);
 			selectionResult = 0;
 			break;
 		}
-		if((KeysPressed & KEY_B) != 0) {
+		if((PerPush & KEY_B) != 0) {
 			sySndPlayStub(SE_MENU_CANCEL);
 			selectionResult = -1;
 			break;
 		}
-		if((KeysRepeat & KEY_LEFT) != 0) {
+		if((PerRepeat & KEY_LEFT) != 0) {
 			previousIndex = selectionIndex;
 			selectionIndex--;
 			selectionIndex = (selectionIndex + stockCount) % stockCount;
 			if(previousIndex != selectionIndex) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = 1;
+				redraw = TRUE;
 			}
 		}
-		if((KeysRepeat & KEY_RIGHT) != 0) {
+		if((PerRepeat & KEY_RIGHT) != 0) {
 			previousIndex = selectionIndex;
 			selectionIndex++;
 			selectionIndex = (selectionIndex + stockCount) % stockCount;
 			if(previousIndex != selectionIndex) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
-				redraw = 1;
+				redraw = TRUE;
 			}
 		}
-		if((KeysRepeat & KEY_UP) != 0 &&
-		   selectionIndex - SHOP_STOCK_PAGE_ITEMS >= 0) {
+		if((PerRepeat & KEY_UP) != 0 &&
+			selectionIndex - SHOP_STOCK_PAGE_ITEMS >= 0) {
 			selectionIndex -= SHOP_STOCK_PAGE_ITEMS;
-			redraw = 1;
+			redraw = TRUE;
 		}
-		if((KeysRepeat & KEY_DOWN) != 0) {
+		if((PerRepeat & KEY_DOWN) != 0) {
 			if(selectionIndex + SHOP_STOCK_PAGE_ITEMS <
-			   (stockCount + (SHOP_STOCK_PAGE_ITEMS - 1)) /
-				   SHOP_STOCK_PAGE_ITEMS * SHOP_STOCK_PAGE_ITEMS) {
+				(stockCount + (SHOP_STOCK_PAGE_ITEMS - 1)) /
+					SHOP_STOCK_PAGE_ITEMS * SHOP_STOCK_PAGE_ITEMS) {
 				selectionIndex += SHOP_STOCK_PAGE_ITEMS;
-				redraw = 1;
+				redraw = TRUE;
 			}
 			if(selectionIndex > stockCount - 1)
 				selectionIndex = stockCount - 1;
@@ -125,23 +122,23 @@ next_page:
 	selectedDefinition = gmItemGetDirectStub(shop->selectedItem);
 	quantity = 1;
 	unitId = 0;
-	repromptRecipient = 0;
+	repromptRecipient = FALSE;
 	selectionIndex = 0;
 	partyWindow = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
 	shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
 	mnCreatePartyFiguresStub(partyWindow, 2, 0, 8, 0);
 	itemWindow = mnWindowCreateStub(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
-	redraw = 1;
+	redraw = TRUE;
 
 	while(1) {
 		if(repromptRecipient != 0) {
-			repromptRecipient = 0;
+			repromptRecipient = FALSE;
 			mnShopShowKeeperMessage(MsgWhoGetsThis);
-			redraw = 1;
+			redraw = TRUE;
 		}
 		if(redraw != 0) {
-			redraw = 0;
+			redraw = FALSE;
 			selectionIndex =
 				(selectionIndex + shop->partyMemberCnt) % shop->partyMemberCnt;
 			unitId = shop->partyMemberIds[selectionIndex];
@@ -149,59 +146,57 @@ next_page:
 			shop->cursorFrm = 3;
 			mnShopDrawParty(partyWindow, selectionIndex, shop->selectedItem);
 			if(gmItemGetEquipmentGroupStub(shop->selectedItem) ==
-			   EQUIPMENT_GROUP_NONE)
+				EQUIPMENT_GROUP_NONE)
 				mnShopDrawCarriedItem(itemWindow, unitId, shop->selectedItem);
 			else
-				mnShopDrawEquipComparison(itemWindow, unitId,
-										  shop->selectedItem);
+				mnShopDrawEquipComparison(
+					itemWindow, unitId, shop->selectedItem);
 		}
-		if((KeysPressed & KEY_A) != 0) {
+		if((PerPush & KEY_A) != 0) {
 			/* Test for room by adding one and taking it out again, before the
-			 */
-			/* coins are checked; a full bag and a full stack get different
-			 * lines */
+			   coins are checked; a full bag and a full stack get different
+			   lines */
 			capacitySlot = gmInventoryAddItemStub(unitId, shop->selectedItem);
 			if(capacitySlot < 0) {
 				sySndPlayStub(SE_MENU_CANCEL);
 				mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-				mnMessageArgumentPushStub(shop->selectedItem,
-										  MESSAGE_ARGUMENT_ITEM);
+				mnMessageArgumentPushStub(
+					shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
 				if(gmInventoryCountStub(unitId) == INVENTORY_SLOTS)
 					/* "Your pack is full, (the member). Who will you give this
-					 * to?" */
+					   to?" */
 					mnShopShowKeeperMessage(MsgPackFull);
 				else
 					/* "You can't carry any more of this item, (the member), so
-					 * who */
-					/* gets it?" */
+					   who gets it?" */
 					mnShopShowKeeperMessage(MsgCannotCarryItem);
 				continue;
 			}
 			gmInventoryRemoveStub(unitId, capacitySlot);
-			if((u32)selectedDefinition->price >
-			   MainRoutineStateWork.holdings.coins) {
+			if((Uint32)selectedDefinition->price >
+				MainRoutineStateWork.holdings.coins) {
 				sySndPlayStub(SE_MENU_CANCEL);
-				/* "Oh! That's a fine choice, but you don't have enough money."
-				 */
+				/* "Oh! That's a fine choice, but you don't have enough
+				   money." */
 				mnShopShowKeeperMessageHidingCursor(MsgBuyNotEnoughMoney);
 				selectionResult = -1;
 				break;
 			}
 			if(gmItemIsCompatibleWithUnitStub(unitId, shop->selectedItem) ==
-			   0) {
+				0) {
 				mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
-				/* "You can't equip this, (the member). Do you still want it?"
-				 */
+				/* "You can't equip this, (the member). Do you still want
+				   it?" */
 				mnShopShowKeeperMessage(MsgCannotEquipStillWant);
 				if(mnShopAskYesNo(0) != 0) {
-					repromptRecipient = 1;
+					repromptRecipient = TRUE;
 					continue;
 				}
 			}
 			sySndPlayStub(SE_MENU_CONFIRM);
 			sySynch(1);
 			quantity = mnShopSelectBuyCount(unitId, shop->selectedItem);
-			repromptRecipient = 1;
+			repromptRecipient = TRUE;
 			if(quantity == -1)
 				continue;
 			mnShopBuyDone(unitId, shop->selectedItem, quantity);
@@ -209,20 +204,20 @@ next_page:
 			selectionResult = 0;
 			break;
 		}
-		if((KeysPressed & KEY_B) != 0) {
+		if((PerPush & KEY_B) != 0) {
 			sySndPlayStub(SE_MENU_CANCEL);
 			selectionResult = -1;
 			break;
 		}
-		if((KeysRepeat & KEY_LEFT) != 0) {
+		if((PerRepeat & KEY_LEFT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			selectionIndex--;
-			redraw = 1;
+			redraw = TRUE;
 		}
-		if((KeysRepeat & KEY_RIGHT) != 0) {
+		if((PerRepeat & KEY_RIGHT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			selectionIndex++;
-			redraw = 1;
+			redraw = TRUE;
 		}
 		sySynch(1);
 	}
@@ -232,8 +227,7 @@ next_page:
 	mnWindowCloseStub(partyWindow, 2);
 	sySynch(1);
 	/* An artifact bought leaves the world's stock, one for each bought, and the
-	 */
-	/* list is made again without what is gone. */
+	   list is made again without what is gone. */
 	if(selectionResult == 0 && shop->action == SHOP_ACTION_ARTIFACTS) {
 		for(removedCount = 0; removedCount < quantity; removedCount++)
 			gmItemAdjustRareItemStockStub(shop->selectedItem, -1);
@@ -253,17 +247,18 @@ close:
 	return 0;
 }
 
-/* Draws a page of seven stock items with their prices, the page arrows, and */
-/* the chosen item lifted and pulsing. */
-void mnShopDrawStock(WINDOW *window, s32 selected) {
-	SHOP_STATE *shop;
-	s16 *itemIds;
-	s32 itemCount;
-	s32 stockIndex;
-	u32 pageSlot;
-	s16 itemId;
+/* Draws a page of seven stock items with their prices, the page arrows, and the
+   chosen item lifted and pulsing. */
+void mnShopDrawStock(WINDOW *window, Sint32 selected)
+{
+	SHOP_STATE		*shop;
+	Sint16			*itemIds;
+	Sint32			 itemCount;
+	Sint32			 stockIndex;
+	Uint32			 pageSlot;
+	Sint16			 itemId;
 	ITEM_DEFINITION *item;
-	WINDOW_SPR *icon;
+	WINDOW_SPR		*icon;
 
 	shop = MenuState;
 	itemIds = shop->stockItemIds;
@@ -272,7 +267,7 @@ void mnShopDrawStock(WINDOW *window, s32 selected) {
 	if(window != 0) {
 		mnWindowSprPrepareForRedrawStub(window);
 		/* The arrows show the shop's own icons, which closing the window
-		 * leaves. */
+		   leaves. */
 		if(stockIndex != 0) {
 			icon = mnWindowSprCreateStub(
 				shop->prevPageIcon, WINDOW_SPRITE_SIZE_16X16, window, 216, -16);
@@ -288,23 +283,23 @@ void mnShopDrawStock(WINDOW *window, s32 selected) {
 			icon->anmStep = 0;
 		}
 		pageSlot = 0;
-		if(stockIndex < (u32)itemCount) {
+		if(stockIndex < (Uint32)itemCount) {
 			/* Each price sits 16 pixels right of its item. */
-			for(;
-				pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
+			for(; pageSlot < SHOP_STOCK_PAGE_ITEMS &&
+				stockIndex < (Uint32)itemCount;
 				pageSlot++, stockIndex++) {
 				itemId = itemIds[stockIndex];
 				item = gmItemGetDirectStub(itemId);
-				icon = mnWindowSprCreateLoadedStub(itemId, ICON_BASE, window,
-												   pageSlot * 32, 0);
+				icon = mnWindowSprCreateLoadedStub(
+					itemId, ICON_BASE, window, pageSlot * 32, 0);
 				icon->depth = OAM_DEPTH_FRONT - 3;
 				if(stockIndex == selected) {
 					icon->motion = WINDOW_SPRITE_MOTION_SWELL;
 					icon->anmStep = 10;
 					icon->depth = OAM_DEPTH_FRONT - 2;
 				}
-				icon = mnShopCreatePriceSpr(item->price, window,
-											pageSlot * 32 + 16, 0);
+				icon = mnShopCreatePriceSpr(
+					item->price, window, pageSlot * 32 + 16, 0);
 				icon->depth = OAM_DEPTH_FRONT - 4;
 			}
 		}
@@ -312,33 +307,36 @@ void mnShopDrawStock(WINDOW *window, s32 selected) {
 }
 
 /* Draws the party's coins in the coins window, in the edition's layout. */
-void mnShopDrawMoney(void) {
+void mnShopDrawMoney(void)
+{
 	SHOP_STATE *shop;
-	WINDOW *window;
+	WINDOW	   *window;
 
 	shop = MenuState;
 	window = shop->moneyWin;
 	if(window != 0) {
 #if LANGUAGE != LANGUAGE_JAPANESE
 		mnTextDrawMessageAsTilesStub(MsgYourCoins, window, 0, 0);
-		mnTextDrawNumInWindowStub(MainRoutineStateWork.holdings.coins, 6,
-								  window, 32, 8);
+		mnTextDrawNumInWindowStub(
+			MainRoutineStateWork.holdings.coins, 6, window, 32, 8);
 #else
-		s32 msg = MsgYourCoins;
+		Sint32 msg = MsgYourCoins;
 
 		mnTextDrawMessageAsTilesStub(msg, window, 0, 0);
-		mnTextDrawNumInWindowStub(MainRoutineStateWork.holdings.coins, 6,
-								  window, 0, 8);
+		mnTextDrawNumInWindowStub(
+			MainRoutineStateWork.holdings.coins, 6, window, 0, 8);
 		mnTextDrawMessageAsTilesStub(msg - 2, window, 48, 8); /* MsgCoins */
 #endif
 	}
 }
 
-/* Draws the item's name and below it its price. With a price of 0 it says */
-/* instead that the shop does not buy it (SHOP_PRICE_KIND_SELL) or that it is */
-/* not broken (SHOP_PRICE_KIND_REPAIR). */
-void mnShopDrawItemPrice(WINDOW *window, s32 itemId, s32 price, s32 priceKind) {
-	s32 labelMessage;
+/* Draws the item's name and below it its price. With a price of 0 it says
+   instead that the shop does not buy it (SHOP_PRICE_KIND_SELL) or that it is
+   not broken (SHOP_PRICE_KIND_REPAIR). */
+void mnShopDrawItemPrice(
+	WINDOW *window, Sint32 itemId, Sint32 price, Sint32 priceKind)
+{
+	Sint32 labelMessage;
 
 	if(window == 0)
 		return;
@@ -370,11 +368,11 @@ draw:
 }
 
 /* Shows `message`, an item's description, in the help window; a NULL window is
- */
-/* ignored. */
-void mnShopDrawMessage(WINDOW *window, s32 message) {
+   ignored. */
+void mnShopDrawMessage(WINDOW *window, Sint32 message)
+{
 	if(window != 0) {
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 		mnWindowSprRedrawSavedRectStub(window);
 #else
 		mnWindowSprClearListStub(window);
@@ -385,58 +383,56 @@ void mnShopDrawMessage(WINDOW *window, s32 message) {
 }
 
 /* Shows the chosen party member running in place and the others standing, and
- */
-/* draws at four fifths of their size the party members who cannot equip */
-/* `itemId`. */
-void mnShopDrawParty(WINDOW *window, s32 selected, s32 itemId) {
+   draws at four fifths of their size the party members who cannot equip
+   `itemId`. */
+void mnShopDrawParty(WINDOW *window, Sint32 selected, Sint32 itemId)
+{
 	SHOP_STATE *shop = MenuState;
-	s32 memberIndex;
+	Sint32		memberIndex;
 
 	if(window != 0) {
 		for(memberIndex = 0; memberIndex < shop->partyMemberCnt;
 			memberIndex++) {
 			if(memberIndex == selected)
-				fdSprStartAnimationStub(shop->partyMemberIcons[memberIndex],
-										ANIM_PARTY_RUN);
+				fdSprStartAnimationStub(
+					shop->partyMemberIcons[memberIndex], ANIM_PARTY_RUN);
 			else
-				fdSprStartAnimationStub(shop->partyMemberIcons[memberIndex],
-										ANIM_STAND);
-			shop->partyMemberScale[memberIndex] = FIXED_ONE;
+				fdSprStartAnimationStub(
+					shop->partyMemberIcons[memberIndex], ANIM_STAND);
+			shop->partyMemberScale[memberIndex] = toFIXED(1);
 			if(!gmItemIsCompatibleWithUnitStub(
 				   shop->partyMemberIds[memberIndex], itemId))
-				shop->partyMemberScale[memberIndex] = FIXED_ONE * 4 / 5;
+				shop->partyMemberScale[memberIndex] = toFIXED(4) / 5;
 		}
 	}
 }
 
 /* Shows how Attack, Defense and Agility would change if the party member wore
- */
-/* the item, with an arrow up or down beside each that changes and the name of
- */
-/* the item it would replace. The item is tried on in that item's slot and the
- */
-/* slot put back. */
-void mnShopDrawEquipComparison(WINDOW *window, s32 unitId, s32 itemId) {
-	SHOP_STATE *shop = MenuState;
-	UNIT *unit = gmUnitGetStub(unitId);
+   the item, with an arrow up or down beside each that changes and the name of
+   the item it would replace. The item is tried on in that item's slot and the
+   slot put back. */
+void mnShopDrawEquipComparison(WINDOW *window, Sint32 unitId, Sint32 itemId)
+{
+	SHOP_STATE		*shop = MenuState;
+	UNIT			*unit = gmUnitGetStub(unitId);
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
-	s32 replacedItemId = -1;
-	s32 previewSlot;
-	s32 savedEntry;
-	s32 index;
-	s32 baseStats[4];
-	s32 previewStats[4];
+	Sint32			 replacedItemId = -1;
+	Sint32			 previewSlot;
+	Sint32			 savedEntry;
+	Sint32			 index;
+	Sint32			 baseStats[4];
+	Sint32			 previewStats[4];
 
 	if(window == 0)
 		return;
 	mnWindowSprPrepareForRedrawStub(window);
-	if(!gmItemCanUnitEquip(unitId, itemId)) {
+	if(!gmItemCanUnitEquipDirectStub(unitId, itemId)) {
 		mnTextDrawMessageStub(MsgShopCannotEquip, window, 8, 24);
 		return;
 	}
 	previewSlot = gmInventoryFindEquippedStub(unitId, item->type);
-	/* With nothing of the type equipped, borrow the first slot that is not */
-	/* equipped, else the first Psynergy item's, else slot 0. */
+	/* With nothing of the type equipped, borrow the first slot that is not
+	   equipped, else the first Psynergy item's, else slot 0. */
 	if(previewSlot == -1) {
 		for(index = 0; index < INVENTORY_SLOTS; index++) {
 			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
@@ -445,15 +441,14 @@ void mnShopDrawEquipComparison(WINDOW *window, s32 unitId, s32 itemId) {
 		if(index == INVENTORY_SLOTS) {
 			for(index = 0; index < INVENTORY_SLOTS; index++) {
 				if(gmItemGetDirectStub(unit->inventory[index])->type ==
-				   ITEM_TYPE_PSYNERGY)
+					ITEM_TYPE_PSYNERGY)
 					break;
 			}
 			if(index == INVENTORY_SLOTS)
 				index = 0;
 		}
 		previewSlot = index;
-	}
-	else {
+	} else {
 		replacedItemId = unit->inventory[previewSlot] & INVENTORY_ITEM_ID_MASK;
 	}
 	/* Luck is worked out with the rest but not shown. */
@@ -474,32 +469,34 @@ void mnShopDrawEquipComparison(WINDOW *window, s32 unitId, s32 itemId) {
 	for(index = 0; index <= 2; index++) {
 		if(baseStats[index] > previewStats[index])
 			mnWindowSprCreateStub(shop->statDownIcon, WINDOW_SPRITE_SIZE_16X16,
-								  window, 56, index * 16 - 4)
+				window, 56, index * 16 - 4)
 				->kind = WINDOW_SPRITE_PLAIN;
 		else if(baseStats[index] < previewStats[index])
 			mnWindowSprCreateStub(shop->statUpIcon, WINDOW_SPRITE_SIZE_16X16,
-								  window, 56, index * 16 - 4)
+				window, 56, index * 16 - 4)
 				->kind = WINDOW_SPRITE_PLAIN;
 		mnTextDrawNumInWindowStub(baseStats[index], 3, window, 32, index * 16);
 		if(baseStats[index] != previewStats[index])
-			mnTextDrawNumInWindowStub(previewStats[index], 3, window, 72,
-									  index * 16);
-		mnTextDrawMessageAsTilesStub(MsgShopStatLabel + index, window, 0,
-									 index * 16);
-		mnWindowDrawDividerLineStub(window, 0, index * 2 + 2, 13,
-									index * 2 + 2);
+			mnTextDrawNumInWindowStub(
+				previewStats[index], 3, window, 72, index * 16);
+		mnTextDrawMessageAsTilesStub(
+			MsgShopStatLabel + index, window, 0, index * 16);
+		mnWindowDrawDividerLineStub(
+			window, 0, index * 2 + 2, 13, index * 2 + 2);
 	}
 	if(replacedItemId != -1)
-		mnTextDrawMessageAsTilesStub(replacedItemId + MsgItemName, window, 0,
-									 48);
+		mnTextDrawMessageAsTilesStub(
+			replacedItemId + MsgItemName, window, 0, 48);
 }
+
 /* Shows the quantity already carried and the party member's inventory icons. */
-void mnShopDrawCarriedItem(WINDOW *window, s32 unitId, s32 itemId) {
-	UNIT *unit;
-	s32 x;
-	s32 y;
-	s32 itemIndex;
-	s32 slot;
+void mnShopDrawCarriedItem(WINDOW *window, Sint32 unitId, Sint32 itemId)
+{
+	UNIT	   *unit;
+	Sint32		x;
+	Sint32		y;
+	Sint32		itemIndex;
+	Sint32		slot;
 	WINDOW_SPR *icon;
 
 	unit = gmUnitGetStub(unitId);
@@ -513,15 +510,13 @@ void mnShopDrawCarriedItem(WINDOW *window, s32 unitId, s32 itemId) {
 				(unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1,
 				MESSAGE_ARGUMENT_NUMBER);
 			mnTextDrawMessageAsTilesStub(MsgYouHave, window, 0, 0);
-		}
-		else {
+		} else {
 			mnTextDrawMessageAsTilesStub(MsgShopNoneInStock, window, 0, 0);
 		}
 		itemIndex = 0;
 		if(unit->inventory[itemIndex] != 0) {
 			for(;;) {
-				icon = mnWindowSprCreateLoadedStub(
-					unit->inventory[itemIndex],
+				icon = mnWindowSprCreateLoadedStub(unit->inventory[itemIndex],
 					ICON_BASE | ICON_COUNT_ABOVE_ONE | ICON_BROKEN |
 						ICON_EQUIPPED,
 					window, x, y);
@@ -537,29 +532,29 @@ void mnShopDrawCarriedItem(WINDOW *window, s32 unitId, s32 itemId) {
 				}
 				itemIndex++;
 				if(itemIndex >= INVENTORY_SLOTS ||
-				   unit->inventory[itemIndex] == 0)
+					unit->inventory[itemIndex] == 0)
 					break;
 			}
 		}
 	}
 }
 
-/* The smaller of `a` and `b`. It reads `b` again when that is the smaller, so
- */
-/* a call passed as `b` is made a second time. */
+/* The smaller of `a` and `b`. It reads `b` again when that is the smaller, so a
+   call passed as `b` is made a second time. */
 #define SHOP_MIN(a, b) ((a) > (b) ? (b) : (a))
 
-/* Asks how many to buy when the item stacks, limited by what the coins buy, */
-/* the artifact's stock and a full stack less what the party member carries. */
-/* Returns the count (1 for other items), or -1 when cancelled. */
-s32 mnShopSelectBuyCount(s32 unitId, s32 itemId) {
-	SHOP_STATE *shop;
-	UNIT *unit;
+/* Asks how many to buy when the item stacks, limited by what the coins buy, the
+   artifact's stock and a full stack less what the party member carries. Returns
+   the count (1 for other items), or -1 when cancelled. */
+Sint32 mnShopSelectBuyCount(Sint32 unitId, Sint32 itemId)
+{
+	SHOP_STATE		*shop;
+	UNIT			*unit;
 	ITEM_DEFINITION *item;
-	s32 carriedQuantity;
-	s32 quantityLimit;
-	s32 slot;
-	s32 selectedQuantity;
+	Sint32			 carriedQuantity;
+	Sint32			 quantityLimit;
+	Sint32			 slot;
+	Sint32			 selectedQuantity;
 
 	shop = MenuState;
 	unit = gmUnitGetStub(unitId);
@@ -572,8 +567,7 @@ s32 mnShopSelectBuyCount(s32 unitId, s32 itemId) {
 		if(slot != -1) {
 			carriedQuantity =
 				(unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
-		}
-		else {
+		} else {
 			carriedQuantity = 0;
 		}
 
@@ -582,8 +576,8 @@ s32 mnShopSelectBuyCount(s32 unitId, s32 itemId) {
 			quantityLimit = MainRoutineStateWork.holdings.coins / item->price;
 
 		if(shop->action == SHOP_ACTION_ARTIFACTS) {
-			quantityLimit = SHOP_MIN(quantityLimit,
-									 gmItemAdjustRareItemStockStub(itemId, 0));
+			quantityLimit = SHOP_MIN(
+				quantityLimit, gmItemAdjustRareItemStockStub(itemId, 0));
 		}
 
 		quantityLimit += carriedQuantity;
@@ -598,106 +592,97 @@ s32 mnShopSelectBuyCount(s32 unitId, s32 itemId) {
 	return selectedQuantity;
 }
 
-/* The quantity window's count and the coins word after its total, in pixels: */
-/* German and French move both 8 left, Spanish the coins word 8 right. */
-#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
-#define SHOP_QUANTITY_NUMBER_X	   64
-#define SHOP_QUANTITY_COIN_LABEL_X 128
-#elif LANGUAGE == LANGUAGE_SPANISH
-#define SHOP_QUANTITY_NUMBER_X	   72
-#define SHOP_QUANTITY_COIN_LABEL_X 144
-#else
-#define SHOP_QUANTITY_NUMBER_X	   72
-#define SHOP_QUANTITY_COIN_LABEL_X 136
-#endif
+/* The quantity window's count and the coins word after its total, in pixels:
+   German and French move both 8 left, Spanish the coins word 8 right. */
+#define SHOP_QUANTITY_NUMBER_X	   BY_LANGUAGE(72, 72, 64, 72, 64, 72)
+#define SHOP_QUANTITY_COIN_LABEL_X BY_LANGUAGE(136, 136, 128, 144, 128, 136)
 
-/* Lets the player choose how many to buy or sell on the quantity bar, from 1 */
-/* to `maximum` less the `minimum` already carried, with the coins they come */
-/* to. Returns the number, or -1 for B. */
-s32 mnShopSelectQuantity(s32 minimum, s32 maximum, s32 price) {
-	void *tileBuffer;
-	WINDOW *window;
-	s32 redraw;
-	s32 resourceSlot;
-	s32 quantityIndex;
-	s32 selectedQuantity;
+/* Lets the player choose how many to buy or sell on the quantity bar, from 1 to
+   `maximum` less the `minimum` already carried, with the coins they come to.
+   Returns the number, or -1 for B. */
+Sint32 mnShopSelectQuantity(Sint32 minimum, Sint32 maximum, Sint32 price)
+{
+	void	   *tileBuffer;
+	WINDOW	   *window;
+	Bool		redraw;
+	Sint32		resourceSlot;
+	Sint32		quantityIndex;
+	Sint32		selectedQuantity;
 	WINDOW_SPR *quantitySprite;
 #if LANGUAGE == LANGUAGE_JAPANESE
-	s32 unitMessageBase;
+	Sint32 unitMessageBase;
 #endif
 
-	tileBuffer = syHeapSlotAllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-	redraw = 1;
+	tileBuffer = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	redraw = TRUE;
 	maximum -= minimum;
 	selectedQuantity = -1;
 	quantityIndex = 0;
 	window = mnWindowCreateStub(7, 4, 23, 3, WINDOW_FLAG_INSTANT);
 	if(window != 0) {
-		resourceSlot = syVramCacheFindFreeEntry();
+		resourceSlot = syVRAMCacheFindFreeEntry();
 		if(resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
 			/* The bar is one 8-tile entry shown as two 32x8 sprites
-			 * (OBJ_SIZE_32X8); */
-			/* the second starts at the entry's tile 4 */
-			syVramCacheLoad(resourceSlot, 8 * TILE_SIZE_4BPP, 0);
+			   (OBJ_SIZE_32X8); the second starts at the entry's tile 4 */
+			syVRAMCacheLoad(resourceSlot, 8 * TILE_SIZE_4BPP, 0);
 			mnWindowSprCreateStub(resourceSlot, OUTPUT_SIZE_32X8, window, 0, 0);
 			quantitySprite = mnWindowSprCreateStub(
 				resourceSlot, OUTPUT_SIZE_32X8, window, 32, 0);
 			quantitySprite->spr.oam.idx += 4;
 			for(;;) {
-				if(KeysPressed & KEY_A) {
+				if(PerPush & KEY_A) {
 					sySndPlayStub(SE_MENU_CONFIRM);
 					selectedQuantity = quantityIndex + 1;
 					break;
 				}
-				if(KeysPressed & KEY_B) {
+				if(PerPush & KEY_B) {
 					sySndPlayStub(SE_MENU_CANCEL);
 					selectedQuantity = -1;
 					break;
 				}
-				if(KeysRepeat & KEY_LEFT) {
+				if(PerRepeat & KEY_LEFT) {
 					sySndPlayStub(SE_MENU_CURSOR_MOVE);
-					redraw = 1;
+					redraw = TRUE;
 					quantityIndex--;
 				}
-				if(KeysRepeat & KEY_RIGHT) {
+				if(PerRepeat & KEY_RIGHT) {
 					sySndPlayStub(SE_MENU_CURSOR_MOVE);
-					redraw = 1;
+					redraw = TRUE;
 					quantityIndex++;
 				}
 				if(redraw) {
-					redraw = 0;
+					redraw = FALSE;
 					quantityIndex = (quantityIndex + maximum) % maximum;
 					syDMAXCopy(Shop_QuantityTiles, tileBuffer,
-							   DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
-							   REG_DMA3);
+						DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
 					mnQuantityBarFill(INVENTORY_STACK_MAX,
-									  QUANTITY_BAR_OUT_OF_REACH, tileBuffer);
-					mnQuantityBarFill(minimum + maximum, QUANTITY_BAR_CHOOSABLE,
-									  tileBuffer);
+						QUANTITY_BAR_OUT_OF_REACH, tileBuffer);
+					mnQuantityBarFill(
+						minimum + maximum, QUANTITY_BAR_CHOOSABLE, tileBuffer);
 					mnQuantityBarFill(minimum + quantityIndex + 1,
-									  QUANTITY_BAR_CHOSEN, tileBuffer);
+						QUANTITY_BAR_CHOSEN, tileBuffer);
 					mnQuantityBarFill(minimum, QUANTITY_BAR_HELD, tileBuffer);
-					syVramCacheLoad(resourceSlot, 8 * TILE_SIZE_4BPP,
-									tileBuffer);
+					syVRAMCacheLoad(
+						resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
 					selectedQuantity = quantityIndex + 1;
 #if LANGUAGE != LANGUAGE_JAPANESE
-					mnTextDrawNumInWindowStub(selectedQuantity, 2, window,
-											  SHOP_QUANTITY_NUMBER_X, 0);
+					mnTextDrawNumInWindowStub(
+						selectedQuantity, 2, window, SHOP_QUANTITY_NUMBER_X, 0);
 					mnTextDrawNumInWindowStub(price * selectedQuantity, 6,
-											  window,
-											  SHOP_QUANTITY_NUMBER_X + 16, 0);
-					mnTextDrawMessageAsTilesStub(MsgCoins, window,
-												 SHOP_QUANTITY_COIN_LABEL_X, 0);
+						window, SHOP_QUANTITY_NUMBER_X + 16, 0);
+					mnTextDrawMessageAsTilesStub(
+						MsgCoins, window, SHOP_QUANTITY_COIN_LABEL_X, 0);
 #else
-					mnTextDrawNumInWindowStub(selectedQuantity, 2, window, 64,
-											  0);
+					mnTextDrawNumInWindowStub(
+						selectedQuantity, 2, window, 64, 0);
 					unitMessageBase = MsgPiece;
-					mnTextDrawMessageAsTilesStub(unitMessageBase, window, 80,
-												 0);
-					mnTextDrawNumInWindowStub(price * selectedQuantity, 6,
-											  window, 96, 0);
-					mnTextDrawMessageAsTilesStub(unitMessageBase - 1, window,
-												 144, 0); /* MsgCoins */
+					mnTextDrawMessageAsTilesStub(
+						unitMessageBase, window, 80, 0);
+					mnTextDrawNumInWindowStub(
+						price * selectedQuantity, 6, window, 96, 0);
+					/* MsgCoins */
+					mnTextDrawMessageAsTilesStub(
+						unitMessageBase - 1, window, 144, 0);
 #endif
 				}
 				sySynch(1);
@@ -711,19 +696,19 @@ s32 mnShopSelectQuantity(s32 minimum, s32 maximum, s32 price) {
 }
 
 /* Gives the party member each item bought and takes its price, then offers to
- */
-/* equip it and to sell what it replaced. */
-void mnShopBuyDone(s32 unitId, s32 itemId, s32 quantity) {
-	s32 replacedSlot;
-	s32 i;
-	s32 lastAddedSlot;
+   equip it and to sell what it replaced. */
+void mnShopBuyDone(Sint32 unitId, Sint32 itemId, Sint32 quantity)
+{
+	Sint32			 replacedSlot;
+	Sint32			 i;
+	Sint32			 lastAddedSlot;
 	ITEM_DEFINITION *item;
 
 	item = gmItemGetDirectStub(itemId);
 	lastAddedSlot = 0;
 	replacedSlot = gmInventoryFindEquippedStub(unitId, item->type);
-	/* Each one is paid for on its own, and its price counts toward the next */
-	/* Game Ticket. */
+	/* Each one is paid for on its own, and its price counts toward the next
+	   Game Ticket. */
 	sySndPlayStub(SE_SHOP_PURCHASE);
 	for(i = 0; i < quantity; i++) {
 		lastAddedSlot = gmInventoryAddItemStub(unitId, itemId);
@@ -738,21 +723,22 @@ void mnShopBuyDone(s32 unitId, s32 itemId, s32 quantity) {
 	}
 }
 
-/* Offers to equip the item just bought, and warns of a curse. Returns 1 when */
-/* it was equipped. */
-s32 mnShopConfirmEquip(s32 unitId, s32 slot) {
-	SHOP_STATE *shop = MenuState;
-	UNIT *unit = gmUnitGetStub(unitId);
-	s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
+/* Offers to equip the item just bought, and warns of a curse. Returns 1 when it
+   was equipped. */
+Bool mnShopConfirmEquip(Sint32 unitId, Sint32 slot)
+{
+	SHOP_STATE		*shop = MenuState;
+	UNIT			*unit = gmUnitGetStub(unitId);
+	Sint32			 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
-	s32 replacedSlot;
-	WINDOW *itemWindow;
+	Sint32			 replacedSlot;
+	WINDOW			*itemWindow;
 
 	if(unit->inventory[slot] & INVENTORY_EQUIPPED)
-		return 0;
+		return FALSE;
 
-	if(gmItemCanUnitEquip(unitId, itemId) == 0)
-		return 0;
+	if(gmItemCanUnitEquipDirectStub(unitId, itemId) == 0)
+		return FALSE;
 
 	replacedSlot = gmInventoryFindEquippedStub(unitId, item->type);
 	if(replacedSlot != -1) {
@@ -760,14 +746,14 @@ s32 mnShopConfirmEquip(s32 unitId, s32 slot) {
 			gmItemGetDirectStub(unit->inventory[replacedSlot]);
 
 		if(equippedItem->flg & ITEM_CANNOT_UNEQUIP)
-			return 0;
+			return FALSE;
 	}
 
 	mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
 	/* "Would you like to equip it now, (the member)?" */
 	mnShopShowKeeperMessage(MsgEquipNowPrompt);
 	if(mnShopAskYesNo(0) != 0)
-		return 0;
+		return FALSE;
 
 	gmInventoryEquipStub(unitId, slot);
 	itemWindow = shop->itemWin;
@@ -786,46 +772,45 @@ s32 mnShopConfirmEquip(s32 unitId, s32 slot) {
 
 	/* "You look bolder already!" */
 	mnShopShowKeeperMessageHidingCursor(MsgLookBolder);
-	return 1;
+	return TRUE;
 }
 
-/* Offers to sell the item the new one replaced, unless there is none or it is
- */
-/* a Psynergy item or indispensable. Returns 1 when it offered. */
-s32 mnShopSellOld(s32 unitId, s32 slot) {
-	UNIT *unit;
-	s32 itemId;
+/* Offers to sell the item the new one replaced, unless there is none or it is a
+   Psynergy item or indispensable. Returns 1 when it offered. */
+Bool mnShopSellOld(Sint32 unitId, Sint32 slot)
+{
+	UNIT  *unit;
+	Sint32 itemId;
 
 	unit = gmUnitGetStub(unitId);
 	if(slot == -1) {
-		return 0;
+		return FALSE;
 	}
 	itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	if(gmItemGetDirectStub(itemId)->type == ITEM_TYPE_PSYNERGY) {
-		return 0;
+		return FALSE;
 	}
 	if(gmItemGetDirectStub(itemId)->flg & ITEM_INDISPENSABLE) {
-		return 0;
+		return FALSE;
 	}
 	mnShopSellItem(unitId, slot, -1);
-	return 1;
+	return TRUE;
 }
 
-/* Returns what the shops pay for an inventory entry: nothing for an */
-/* indispensable item, half the price for a broken one, three quarters */
-/* otherwise. */
-s32 mnShopSalePrice(s32 inventoryEntry) {
-	s32 salePrice;
+/* Returns what the shops pay for an inventory entry: nothing for an
+   indispensable item, half the price for a broken one, three quarters
+   otherwise. */
+Sint32 mnShopSalePrice(Sint32 inventoryEntry)
+{
+	Sint32 salePrice;
 
 	salePrice = gmItemGetDirectStub(inventoryEntry)->price;
 
 	if(gmItemGetDirectStub(inventoryEntry)->flg & ITEM_INDISPENSABLE) {
 		salePrice = 0;
-	}
-	else if(inventoryEntry & INVENTORY_BROKEN) {
+	} else if(inventoryEntry & INVENTORY_BROKEN) {
 		salePrice = salePrice / 2;
-	}
-	else {
+	} else {
 		salePrice = salePrice * 3 / 4;
 	}
 	return salePrice;

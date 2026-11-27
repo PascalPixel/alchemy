@@ -1,9 +1,8 @@
 #ifndef ALCHEMY_INVENTORY_H
 #define ALCHEMY_INVENTORY_H
 
-/* @file */
-/* A unit's fifteen inventory slots: counting, finding, adding and taking */
-/* items, and finding who in the party carries one. */
+/* A unit's fifteen inventory slots: counting, finding, adding and taking items,
+   and finding who in the party carries one. */
 
 #include "game/item.h"
 
@@ -11,7 +10,7 @@
 #include "system.h"
 #include "game/main_routine_state.h"
 
-ITEM_DEFINITION *gmInventoryGetEquippedDefinition(UNIT *unit, s32 type);
-s32 mnInventoryRemoveFirstUnflagged(s32 owner);
+ITEM_DEFINITION *gmInventoryGetEquippedDefinition(UNIT *unit, Sint32 type);
+Sint32			 mnInventoryRemoveFirstUnflagged(Sint32 owner);
 
 #endif

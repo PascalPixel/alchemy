@@ -3,8 +3,8 @@
 	.arm
 	.align 2
 
-	.global IwramIrqMain
-IwramIrqMain:
+	.global syIWRAMIRQMain
+syIWRAMIRQMain:
 	mov	r3, #0x04000000
 	ldr	r2, [r3, #0x200]!
 	ldrh	r1, [r3, #8]

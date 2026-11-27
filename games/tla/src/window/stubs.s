@@ -12,7 +12,7 @@ Stubs_Window:
 	stub mnMessageDecodeRawStub, mnMessageDecodeRaw
 	stub mnMessageCopyExpandedStub, mnMessageCopyExpanded
 	stub mnMessageOpenWindowStub, mnMessageOpenWindow
-	stub fdMessageShowStub, mnFieldMessageShow
+	stub mnFieldMessageShowStub, mnFieldMessageShow
 	stub mnMessageAllTypedStub, mnMessageAllTyped
 	stub mnWindowIsClosedStub, mnWindowIsClosed
 	stub mnMessageSetDecodeFlagsStub, mnMessageSetDecodeFlags
@@ -56,14 +56,14 @@ Stubs_Window:
 	stub mnSetupSelectionBothSidesStub, mnSetupSelectionBothSides
 	stub mnSelectionMenuRunStub, mnSelectionMenuRun
 	stub mnSelectionMenuRunWithSoundsStub, mnSelectionMenuRunWithSounds
-	stub mnArrowNoOp2Stub, mnArrowNoOp2
-	stub mnArrowNoOp3Stub, mnArrowNoOp3
+	stub mnArrowNoOperation2Stub, mnArrowNoOperation2
+	stub mnArrowNoOperation3Stub, mnArrowNoOperation3
 	stub mnSelectionMenuBuildEntriesStub, mnSelectionMenuBuildEntries
-	stub mnSelectionMenuReservedNoOpStub, mnSelectionMenuReservedNoOp
-	stub btCollectPartyCommandsStub, mnBattleCollectPartyCommands
+	stub mnSelectionMenuReservedNoOperationStub, mnSelectionMenuReservedNoOperation
+	stub mnBattleCollectPartyCommandsStub, mnBattleCollectPartyCommands
 	stub mnBattleMessageShowAndWaitStub, mnBattleMessageShowAndWait
 	stub mnBattleMessageOpenStub, mnBattleMessageOpen
-	stub mnArrowNoOp6Stub, mnArrowNoOp6
+	stub mnArrowNoOperation6Stub, mnArrowNoOperation6
 	stub mnPortraitGetForSpeakerStub, mnPortraitGetForSpeaker
 	stub mnFieldMenuRunStub, mnFieldMenuRun
 	stub mnFileListSelectActionStub, mnFileListSelectAction
@@ -105,10 +105,10 @@ Stubs_Window:
 	stub mnSelectionMenuSetPosStub, mnSelectionMenuSetPos
 	stub mnDebugBrowserIconsStub, mnDebugBrowserIcons
 	stub mnDebugBrowserPortraitsStub, mnDebugBrowserPortraits
-	stub gmDjinnShowJoinedMessageStub, mnDjinnShowJoinedMessage
-	stub gmPartyShowJoinedMessageStub, mnPartyShowJoinedMessage
-	stub gmPartyShowPairJoinedMessageStub, mnPartyShowPairJoinedMessage
-	stub gmSummonShowLearnedMessageStub, mnSummonShowLearnedMessage
+	stub mnDjinnShowJoinedMessageStub, mnDjinnShowJoinedMessage
+	stub mnPartyShowJoinedMessageStub, mnPartyShowJoinedMessage
+	stub mnPartyShowPairJoinedMessageStub, mnPartyShowPairJoinedMessage
+	stub mnSummonShowLearnedMessageStub, mnSummonShowLearnedMessage
 	stub mnWindowColApplyStub, mnWindowColApply
 	stub mnSettingsMenuRunStub, mnSettingsMenuRun
 	stub mnPauseMenuRunStub, mnPauseMenuRun
@@ -122,8 +122,8 @@ Stubs_Window:
 	stub mnPointingHandLoadIntoFreeSlotStub, mnPointingHandLoadIntoFreeSlot
 	stub mnTextMeasureMessageStub, mnTextMeasureMessage
 	stub mnWindowHighlightRectStub, mnWindowHighlightRect
-	stub btAbilityBuildIconTilesStub, mnAbilityBuildIconTiles
-	stub mnGraphicsExpandVramTilesByColTableStub, mnGraphicsExpandVramTilesByColTable
+	stub mnAbilityBuildIconTilesStub, mnAbilityBuildIconTiles
+	stub mnGraphicsExpandVRAMTilesByColTableStub, mnGraphicsExpandVRAMTilesByColTable
 	stub mnTextUseExtraTilesStub, mnTextUseExtraTiles
 	stub mnAnimateSelectionToEntryStub, mnAnimateSelectionToEntry
 	stub mnWindowSprGetPointerTilesStub, mnWindowSprGetPointerTiles

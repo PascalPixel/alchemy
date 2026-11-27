@@ -1,63 +1,80 @@
-/* @file */
-/* The epilogue: the party's last words, line after line, each with the */
-/* speaker's portrait in a frame beside it, over the ending's images, from */
-/* "Finally! We've reached Vale." (MsgFinallyWeVe) to The End; then it waits */
-/* for a button, or three minutes, and goes on to the file screen. */
+/* The epilogue: the party's last words, line after line, each with the
+   speaker's portrait in a frame beside it, over the ending's images, from
+   "Finally! We've reached Vale." (MsgFinallyWeVe) to The End; then it waits for
+   a button, or three minutes, and goes on to the file screen. */
 
 /* This unit declares its own form of mnEndingImageStart, below. */
-#define OWN_EndingImage_Start
+#define OWN_mnEndingImageStart
 
-#include "scene/event_layer.h"
+#include "scene/script_layer.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "menu/menu.h"
 #include "macros.h"
 #include "scene/scene.h"
 #include "window/window.h"
-#include "field/event_inline.h"
+#include "field/script_inline.h"
 
 /* The ROM's callers here are compiled with no declaration in scope, as against
- */
-/* this form: no parameter list and an s32 result, where the definition takes */
-/* nothing and returns nothing. */
-s32 mnEndingImageStart();
+   this form: no parameter list and an Sint32 result, where the definition takes
+   nothing and returns nothing. */
+Sint32 mnEndingImageStart();
 
 /* The portrait frame's VRAM cache entry. */
-s32 EpiloguePortraitFrameEntry BSS_DATA ALIGNED(16);
+Sint32 EpiloguePortraitFrameEntry BSS_DATA ALIGNED(16);
 /* Unused: 268 bytes after the frame's entry that the epilogue never touches. */
-u8 Epilogue_UnusedAfterPortraitFrameEntry[268] BSS_DATA;
+Uint8 Epilogue_UnusedAfterPortraitFrameEntry[268] BSS_DATA;
 /* The frame drawn round each portrait, a sprite under the portrait. */
 EFFECT_SPR EpiloguePortraitFrame BSS_DATA;
-s32 EpilogueMessage BSS_DATA;			/* the next line to show */
-s16 EpiloguePortraitY BSS_DATA;			/* the portrait's top, in pixels */
-s32 EpiloguePortraitFrameTile BSS_DATA; /* the frame's first tile */
+Sint32 EpilogueMessage			 BSS_DATA; /* the next line to show */
+Sint16 EpiloguePortraitY		 BSS_DATA; /* the portrait's top, in pixels */
+Sint32 EpiloguePortraitFrameTile BSS_DATA; /* the frame's first tile */
 /* Nonzero while a portrait is shown, and the frame drawn round it. */
-s8 EpiloguePortraitShown BSS_DATA;
-s16 EpiloguePortraitX BSS_DATA ALIGNED(4); /* the portrait's left, in pixels */
+Sint8 EpiloguePortraitShown BSS_DATA;
+/* the portrait's left, in pixels */
+Sint16 EpiloguePortraitX BSS_DATA ALIGNED(4);
 
 /* The colours of the epilogue's name panel (green_panel.s). */
-extern const u16 EpilogueNamePanelPalette[];
+extern const Uint16 EpilogueNamePanelPalette[];
 
-/* mnEndingImageShow as the epilogue shows each of its pictures, through an */
-/* inline as its waits go through syFieldEventWait (event_inline.h). */
-static inline void scFieldEndingImageShow(s32 resource, u8 *map, s32 position) {
+/* mnEndingImageShow as the epilogue shows each of its pictures, through an
+   inline as its waits go through syFieldScriptWait (script_inline.h). */
+static inline void scFieldEndingImageShow(
+	Sint32 resource, Uint8 *map, Sint32 position)
+{
 	mnEndingImageShow(resource, map, position);
 }
 
 #include "text/msg_ids.h"
 
-const SCENE_ENTRANCE *scGetEntrances(void) { return SceneEntrances; }
+const SCENE_ENTRANCE *scGetEntrances(void)
+{
+	return SceneEntrances;
+}
 
-const SCENE_REGION *scGetExitRegions(void) { return 0; }
+const SCENE_REGION *scGetExitRegions(void)
+{
+	return 0;
+}
 
-const u32 *scGetExits(void) { return SceneExits; }
+const Uint32 *scGetExits(void)
+{
+	return SceneExits;
+}
 
-const ACTOR_PLACE *scGetActorPlacements(void) { return ActorPlacements; }
+const ACTOR_PLACE *scGetActorPlacements(void)
+{
+	return ActorPlacements;
+}
 
-const TRIGGER *scGetTriggers(void) { return SceneEvents; }
+const CUE *scGetCues(void)
+{
+	return SceneCues;
+}
 
 /* Each frame while a portrait is shown, draws its frame round it. */
-void scEpiloguePlacePortraitFrame(void) {
+void scEpiloguePlacePortraitFrame(void)
+{
 	if(EpiloguePortraitShown != 0) {
 		EpiloguePortraitFrame.x = toFIXED(EpiloguePortraitX);
 		EpiloguePortraitFrame.y = toFIXED(EpiloguePortraitY);
@@ -67,7 +84,7 @@ void scEpiloguePlacePortraitFrame(void) {
 
 #include "shared/scene_entrances_mapless.c"
 
-u32 SceneExits[] = {
+Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
@@ -75,30 +92,31 @@ ACTOR_PLACE ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-TRIGGER SceneEvents[] = {
-	{TRIGGER_TABLE_END},
+CUE SceneCues[] = {
+	{CUE_TABLE_END},
 };
 
-/* Loads the portraits' frame, a window border round a green panel */
-/* (RESOURCE_GREEN_PANEL) drawn in portrait slot 0's palette, and starts */
-/* scEpiloguePlacePortraitFrame. */
-void scEpilogueLoadPortraitFrame(void) {
-	void *buffer = syHeapCallAlternatePool(syHeapAlloc, 64 * 64 / 2);
+/* Loads the portraits' frame, a window border round a green panel
+   (RESOURCE_GREEN_PANEL) drawn in portrait slot 0's palette, and starts
+   scEpiloguePlacePortraitFrame. */
+void scEpilogueLoadPortraitFrame(void)
+{
+	void	   *buffer = syHeapCallAlternatePool(syHeapAlloc, 64 * 64 / 2);
 	EFFECT_SPR *sprite;
-	s32 *slot;
-	s32 *tileSlot;
-	s32 value;
+	Sint32	   *slot;
+	Sint32	   *tileSlot;
+	Sint32		value;
 
 	syDMAXCopy(EpilogueNamePanelPalette,
-			   (void *)&OBJ_PLTT_COLOR(PORTRAIT_PALETTE, 0),
-			   DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+		(void *)&OBJ_PLTT_COLOR(PORTRAIT_PALETTE, 0),
+		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 	sprite = &EpiloguePortraitFrame;
-	syDecompressTaggedLz(syResourceGetTableEntry(RESOURCE_GREEN_PANEL), buffer);
+	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_GREEN_PANEL), buffer);
 	slot = &EpiloguePortraitFrameEntry;
-	value = syVramCacheFindFreeEntry();
+	value = syVRAMCacheFindFreeEntry();
 	*slot = value;
 	tileSlot = &EpiloguePortraitFrameTile;
-	value = mnVramLoad(value, 64 * 64 / 2, buffer);
+	value = mnVRAMLoad(value, 64 * 64 / 2, buffer);
 	*tileSlot = value;
 	syFieldEffectSprInit(sprite, 0, 0, OBJ_SIZE_64X64, value);
 	sprite->depth = OAM_DEPTH_WINDOW;
@@ -107,43 +125,39 @@ void scEpilogueLoadPortraitFrame(void) {
 	sprite->oam.pal = PORTRAIT_PALETTE;
 	syHeapRelease(buffer);
 	EpiloguePortraitShown = 0;
-	syFieldTaskAddFrame(scEpiloguePlacePortraitFrame, TASK_PASS_FRAME);
+	syFieldSetFrameEvent(scEpiloguePlacePortraitFrame, EVENT_PASS_FRAME);
 }
 
-/* A speaker (a sprite number) or'd with this shows the line with no portrait:
- */
-/* a voice heard from off the image. */
+/* A speaker (a sprite number) or'd with this shows the line with no portrait: a
+   voice heard from off the image. */
 #define EPILOGUE_NO_PORTRAIT 0x8000
 
 /* The epilogue's message windows appear at once, without MESSAGE_WINDOW_ZOOM,
- */
-/* and set an option bit that mnMessageOpenWindow never reads. */
+   and set an option bit that mnMessageOpenWindow never reads. */
 #define EPILOGUE_WINDOW_OPTIONS 4
 
 /* scEpilogueShowLineAt's mode for a line of seven or eight rows at the foot of
- */
-/* the screen: its window is moved a row down and given no size of its own. */
+   the screen: its window is moved a row down and given no size of its own. */
 #define EPILOGUE_TALL_LINE_AT_FOOT 2
 
-/* Opens the epilogue's message window at tile (x, y) and, unless the speaker */
-/* has EPILOGUE_NO_PORTRAIT, the speaker's portrait at tile (portraitX, */
-/* portraitY) with its frame round it, the window lowered in mode */
-/* EPILOGUE_TALL_LINE_AT_FOOT. Then it waits for the text, closes both windows
- */
-/* and waits the given frames. */
-void scEpilogueShowLineAt(s32 speaker, s32 x, s32 y, s32 portraitX,
-						  s32 portraitY, s32 frames, s32 mode) {
-	s32 noPortrait;
+/* Opens the epilogue's message window at tile (x, y) and, unless the speaker
+   has EPILOGUE_NO_PORTRAIT, the speaker's portrait at tile (portraitX,
+   portraitY) with its frame round it, the window lowered in mode
+   EPILOGUE_TALL_LINE_AT_FOOT. Then it waits for the text, closes both windows
+   and waits the given frames. */
+void scEpilogueShowLineAt(Sint32 speaker, Sint32 x, Sint32 y, Sint32 portraitX,
+	Sint32 portraitY, Sint32 frames, Sint32 mode)
+{
+	Sint32	noPortrait;
 	WINDOW *window;
 	WINDOW *portrait;
 
 	portrait = 0;
 	noPortrait = EPILOGUE_NO_PORTRAIT & speaker;
 	speaker &= EPILOGUE_NO_PORTRAIT - 1;
-	window =
-		mnMessageOpenWindow(EpilogueMessage, x, y,
-							MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(speaker)) |
-								EPILOGUE_WINDOW_OPTIONS);
+	window = mnMessageOpenWindow(EpilogueMessage, x, y,
+		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(speaker)) |
+			EPILOGUE_WINDOW_OPTIONS);
 	if(!noPortrait) {
 		portrait = mnPortraitOpenWindow(speaker, 0, portraitX, portraitY);
 		EpiloguePortraitShown = 1;
@@ -164,7 +178,7 @@ void scEpilogueShowLineAt(s32 speaker, s32 x, s32 y, s32 portraitX,
 		EpiloguePortraitShown = noPortrait;
 	}
 	if(frames > 0) {
-		s32 i = frames;
+		Sint32 i = frames;
 
 		do {
 			syWait(1);
@@ -181,20 +195,20 @@ typedef enum EPILOGUE_LINE_POS {
 } EPILOGUE_LINE_POS;
 
 /* Shows the epilogue's next line, spoken by speaker (a sprite, whose portrait
- */
-/* and voice it takes), at the given position, centred across the screen or, */
-/* beside a portrait, across the columns right of it; then holds it frames */
-/* more. */
-void scEpilogueShowLine(s32 speaker, s32 position, s32 frames) {
-	s32 x;
-	s32 y;
-	s32 width;
-	s32 height;
-	s32 mode = 0;
-	s32 portraitX;
-	s32 portraitY = 0;
-	s32 half;
-	s32 noPortrait;
+   and voice it takes), at the given position, centred across the screen or,
+   beside a portrait, across the columns right of it; then holds it frames
+   more. */
+void scEpilogueShowLine(Sint32 speaker, Sint32 position, Sint32 frames)
+{
+	Sint32 x;
+	Sint32 y;
+	Sint32 width;
+	Sint32 height;
+	Sint32 mode = 0;
+	Sint32 portraitX;
+	Sint32 portraitY = 0;
+	Sint32 half;
+	Sint32 noPortrait;
 
 	/* Default: x, y and the portrait's column start at 0. */
 	portraitX = 0;
@@ -209,8 +223,7 @@ void scEpilogueShowLine(s32 speaker, s32 position, s32 frames) {
 		else
 			x = (DISPLAY_TILE_WIDTH - width) / 2;
 		portraitX = x - PORTRAIT_WINDOW_TILES;
-	}
-	else {
+	} else {
 		x = (DISPLAY_TILE_WIDTH - width) / 2;
 		portraitX = x;
 	}
@@ -218,18 +231,15 @@ void scEpilogueShowLine(s32 speaker, s32 position, s32 frames) {
 	if(position == LINE_AT_TOP) {
 		y = 3;
 		portraitY = half + 1;
-	}
-	else if(position == LINE_IN_MIDDLE) {
+	} else if(position == LINE_IN_MIDDLE) {
 		y = 14 - half;
 		portraitY = y + half - 2;
-	}
-	else if(position == LINE_AT_FOOT) {
+	} else if(position == LINE_AT_FOOT) {
 		if(half == 3) {
 			y = 13;
 			portraitY = 15;
 			mode = EPILOGUE_TALL_LINE_AT_FOOT;
-		}
-		else {
+		} else {
 			y = 16;
 			portraitY = 15;
 		}
@@ -237,15 +247,16 @@ void scEpilogueShowLine(s32 speaker, s32 position, s32 frames) {
 	scEpilogueShowLineAt(speaker, x, y, portraitX, portraitY, frames, mode);
 }
 
-/* Runs the whole epilogue, image after image, then sets out for the file */
-/* screen, which offers to save the cleared game. Returns 0. */
-s32 scInit(void) {
+/* Runs the whole epilogue, image after image, then sets out for the file
+   screen, which offers to save the cleared game. Returns 0. */
+Sint32 scInit(void)
+{
 	MAIN_ROUTINE_STATE *state;
-	s32 savedSpeed;
-	s32 count;
-	ACTOR *leader;
-	WIN_STATE *windowState;
-	BG_SCROLL *scroll;
+	Sint32				savedSpeed;
+	Sint32				count;
+	ACTOR			   *leader;
+	WIN_STATE		   *windowState;
+	BG_SCROLL		   *scroll;
 
 	state = &MainRoutineStateWork;
 	savedSpeed = state->msgSpeed;
@@ -257,9 +268,9 @@ s32 scInit(void) {
 	windowState = (WIN_STATE *)Ram_HeapSlots->winState;
 	windowState->holdTilemapUpload = 1;
 	windowState->textMode = 1;
-	EpilogueMessage = (s32)MsgFinallyWeVe;
+	EpilogueMessage = (Sint32)MsgFinallyWeVe;
 	scEpilogueLoadPortraitFrame();
-	syFieldEventWait(30);
+	syFieldScriptWait(30);
 	scEpilogueShowLine(SPRITE_JENNA, LINE_AT_TOP, 40);
 	scEpilogueShowLine(SPRITE_GARET, LINE_IN_MIDDLE, 40);
 	scEpilogueShowLine(SPRITE_SHEBA, LINE_AT_TOP, 40);
@@ -279,13 +290,13 @@ s32 scInit(void) {
 	scEpilogueShowLine(SPRITE_JENNA, LINE_IN_MIDDLE, 40);
 	scEpilogueShowLine(SPRITE_FELIX, LINE_AT_TOP, 30);
 	scEpilogueShowLine(SPRITE_GARET, LINE_IN_MIDDLE, 30);
-	fdEventPlaySnd(MUS_EPILOGUE);
+	fdScriptPlaySnd(MUS_EPILOGUE);
 	scroll = BgScrollWork;
 	scroll[3].y = 16;
 	scroll[2].y = 16;
-	scFieldEndingImageShow(RESOURCE_ENDING_CLIFF_DAY_PICTURE, Ram_MapCellBuffer,
-						   0);
-	syFieldEventWait(100);
+	scFieldEndingImageShow(
+		RESOURCE_ENDING_CLIFF_DAY_PICTURE, Ram_MapMetatileBuffer, 0);
+	syFieldScriptWait(100);
 	scEpilogueShowLine(SPRITE_JENNAS_FATHER, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_JENNAS_MOTHER, LINE_AT_FOOT, 40);
 	scEpilogueShowLine(SPRITE_ISAAC, LINE_AT_FOOT, 30);
@@ -299,11 +310,11 @@ s32 scInit(void) {
 	mnEndingImageSetTargetRow(120);
 	syWait(1);
 	mnEndingImageWaitForScroll();
-	syFieldEventWait(30);
+	syFieldScriptWait(30);
 	/* The sunset over the cliff, shown already panned to them. */
-	scFieldEndingImageShow(RESOURCE_ENDING_CLIFF_SUNSET_PICTURE,
-						   Ram_MapCellBuffer, 120);
-	syFieldEventWait(120);
+	scFieldEndingImageShow(
+		RESOURCE_ENDING_CLIFF_SUNSET_PICTURE, Ram_MapMetatileBuffer, 120);
+	syFieldScriptWait(120);
 	scEpilogueShowLine(SPRITE_JENNA, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_PIERS, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_KRADEN, LINE_AT_FOOT, 40);
@@ -329,21 +340,21 @@ s32 scInit(void) {
 	scEpilogueShowLine(SPRITE_GARET, LINE_AT_FOOT, 30);
 #endif
 	scEpilogueShowLine(SPRITE_GARET, LINE_AT_FOOT, 30);
-	fdEventPlaySnd(SOUND_FADE_OUT_BGM);
-	scEpilogueShowLine(EPILOGUE_NO_PORTRAIT | SPRITE_MAN_IN_TEAL_SHIRT,
-					   LINE_AT_FOOT, 30);
+	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	scEpilogueShowLine(
+		EPILOGUE_NO_PORTRAIT | SPRITE_MAN_IN_TEAL_SHIRT, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_ISAAC, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(EPILOGUE_NO_PORTRAIT | SPRITE_WOMAN_IN_GREEN_HEADSCARF,
-					   LINE_AT_FOOT, 30);
+		LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_ISAAC, LINE_AT_FOOT, 30);
-	scEpilogueShowLine(EPILOGUE_NO_PORTRAIT | SPRITE_BOY_WITH_ORANGE_HAIR,
-					   LINE_AT_FOOT, 30);
+	scEpilogueShowLine(
+		EPILOGUE_NO_PORTRAIT | SPRITE_BOY_WITH_ORANGE_HAIR, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_GARET, LINE_AT_FOOT, 30);
-	scFieldEndingImageShow(RESOURCE_ENDING_VILLAGERS_PICTURE_A,
-						   Ram_MapCellBuffer, 0);
-	syFieldEventWait(60);
-	fdEventPlaySnd(MUS_EPILOGUE_VILLAGERS);
-	syFieldEventWait(30);
+	scFieldEndingImageShow(
+		RESOURCE_ENDING_VILLAGERS_PICTURE_A, Ram_MapMetatileBuffer, 0);
+	syFieldScriptWait(60);
+	fdScriptPlaySnd(MUS_EPILOGUE_VILLAGERS);
+	syFieldScriptWait(30);
 	scEpilogueShowLine(SPRITE_MAN_IN_TEAL_SHIRT, LINE_AT_FOOT, 30);
 #if LANGUAGE == LANGUAGE_GERMAN
 	scEpilogueShowLine(SPRITE_MAN_IN_TEAL_SHIRT, LINE_AT_FOOT, 30);
@@ -360,61 +371,64 @@ s32 scInit(void) {
 	mnEndingImageSetTargetRow(200);
 	syWait(1);
 	mnEndingImageWaitForScroll();
-	syFieldEventWait(30);
+	syFieldScriptWait(30);
 	scEpilogueShowLine(SPRITE_KYLE, LINE_AT_FOOT, 20);
 	scEpilogueShowLine(SPRITE_ISAAC, LINE_AT_FOOT, 40);
 	scEpilogueShowLine(SPRITE_DORA, LINE_AT_FOOT, 20);
 	scEpilogueShowLine(SPRITE_KYLE, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_DORA, LINE_AT_FOOT, 40);
 	/* No image: the villagers fade to black before the embrace. */
-	scFieldEndingImageShow(0, Ram_MapCellBuffer, 0);
-	syFieldEventWait(60);
+	scFieldEndingImageShow(0, Ram_MapMetatileBuffer, 0);
+	syFieldScriptWait(60);
 	scroll[3].y = 0;
 	scroll[2].y = 0;
 	mnEndingImageLowerTopStrip(0);
-	scFieldEndingImageShow(RESOURCE_ENDING_EMBRACE_PICTURE, Ram_MapCellBuffer,
-						   0);
-	syFieldEventWait(60);
+	scFieldEndingImageShow(
+		RESOURCE_ENDING_EMBRACE_PICTURE, Ram_MapMetatileBuffer, 0);
+	syFieldScriptWait(60);
 	/* The embrace stays until a button is pressed. */
-	while(InputWork.pressed == 0)
+	while(PerWork.push == 0)
 		syWait(1);
-	scFieldEndingImageShow(RESOURCE_ENDING_REUNION_PICTURE, Ram_MapCellBuffer,
-						   0);
-	syFieldEventWait(120);
+	scFieldEndingImageShow(
+		RESOURCE_ENDING_REUNION_PICTURE, Ram_MapMetatileBuffer, 0);
+	syFieldScriptWait(120);
 	/* The reunion pans 120 pixels right, along the party. */
 	mnEndingImageSetTargetRow(120);
 	syWait(1);
 	mnEndingImageWaitForScroll();
-	syFieldEventWait(180);
-	scFieldEndingImageShow(RESOURCE_ENDING_SUNSET_PLAIN_PICTURE,
-						   Ram_MapCellBuffer, 0);
-	syFieldEventWait(300);
-	scFieldEndingImageShow(RESOURCE_ENDING_THE_END_PICTURE, Ram_MapCellBuffer,
-						   0);
-	syFieldEventWait(180);
-	fdEventPlaySnd(SOUND_FADE_OUT_BGM);
+	syFieldScriptWait(180);
+	scFieldEndingImageShow(
+		RESOURCE_ENDING_SUNSET_PLAIN_PICTURE, Ram_MapMetatileBuffer, 0);
+	syFieldScriptWait(300);
+	scFieldEndingImageShow(
+		RESOURCE_ENDING_THE_END_PICTURE, Ram_MapMetatileBuffer, 0);
+	syFieldScriptWait(180);
+	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	MainRoutineStateWork.msgSpeed = savedSpeed;
-	syFieldEventWait(300);
+	syFieldScriptWait(300);
 	/* The End stays until a button is pressed, or for three minutes. */
 	count = 0;
-	if(InputWork.pressed == 0) {
+	if(PerWork.push == 0) {
 		do {
 			syWait(1);
 			count++;
 			if(count >= 3 * 60 * FRAMES_PER_SECOND)
 				break;
-		} while(InputWork.pressed == 0);
+		} while(PerWork.push == 0);
 	}
-	scFieldEndingImageShow(0, Ram_MapCellBuffer, 0);
-	syFieldEventWait(60);
-	syIoWrite16(0, &REG_BLDCNT);
-	syIoWrite16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
+	scFieldEndingImageShow(0, Ram_MapMetatileBuffer, 0);
+	syFieldScriptWait(60);
+	syIOWrite16(0, &REG_BLDCNT);
+	syIOWrite16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
 	syWindowLoadGraphics();
-	syDebugTextClear();
+	syPrintClear();
 	OamCopyEnabled = 1;
-	fdEventClearFlag(FLAG_CANNOT_SAVE_HERE);
-	fdEventSetDestination(SCENE_CLEAR, CLEAR_FROM_EPILOGUE);
+	fdScriptClearFlag(FLAG_CANNOT_SAVE_HERE);
+	fdScriptSetDestination(SCENE_CLEAR, CLEAR_FROM_EPILOGUE);
 	return 0;
 }
 
-s32 scPrepareMap(void) { return 0; }
+Sint32 scPrepareMap(void)
+{
+	return 0;
+}

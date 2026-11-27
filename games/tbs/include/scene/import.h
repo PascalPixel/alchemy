@@ -1,10 +1,8 @@
 #ifndef ALCHEMY_IMPORT_H
 #define ALCHEMY_IMPORT_H
 
-/* @file */
 /* The main-image headers that declare the functions scene overlays import, for
- */
-/* the overlays that call them outside event.h. */
+   the overlays that call them outside script.h. */
 
 #include "types.h"
 #include "field/field.h"
@@ -14,7 +12,7 @@
 
 struct FIELD_POS;
 struct ACTOR;
-struct TRIGGER;
+struct CUE;
 struct ACTOR_PLACE;
 
 #endif

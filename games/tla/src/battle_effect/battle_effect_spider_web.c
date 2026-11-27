@@ -1,17 +1,15 @@
-/* @file */
-/* Drawing helpers several effects share (a sprite taken from the pool, the */
-/* grey ramp, shaded discs, the mirrored palette), then the Ulysses summon, */
-/* the swirl of Poison Beat and Spinning Beat, and Spider Web. */
-/* Part of battle_effect.c. */
+/* Drawing helpers several effects share (a sprite taken from the pool, the grey
+   ramp, shaded discs, the mirrored palette), then the Ulysses summon, the swirl
+   of Poison Beat and Spinning Beat, and Spider Web. Part of battle_effect.c. */
 
 /* Takes the first free sprite of the actor system's pool with a new animation
- */
-/* entry. Its callers also pass the sprite's OAM shape and mode, which it */
-/* leaves for the caller to set. */
-void *btEffectSprAcquire(s32 width, s32 height, u32 shape, s32 mode) {
-	SPR *sprite = Ram_HeapSlots->sprs;
-	SPR *found = NULL;
-	s32 i = 0;
+   entry. Its callers also pass the sprite's OAM shape and mode, which it leaves
+   for the caller to set. */
+void *btEffectSprAcquire(Sint32 width, Sint32 height, Uint32 shape, Sint32 mode)
+{
+	SPR	  *sprite = Ram_HeapSlots->sprs;
+	SPR	  *found = NULL;
+	Sint32 i = 0;
 
 	while(i < ANIM_OBJECT_COUNT) {
 		if(sprite->width == 0) {
@@ -24,7 +22,7 @@ void *btEffectSprAcquire(s32 width, s32 height, u32 shape, s32 mode) {
 	sprite->entries[0] = btAnimationObjectAllocateEmpty();
 	sprite->width = width;
 	sprite->height = height;
-	sprite->scale = FIXED_ONE;
+	sprite->scale = toFIXED(1);
 	sprite->retainCacheEntry = 0;
 	sprite->ofsY = 0;
 	sprite->ofsX = 0;
@@ -35,15 +33,16 @@ void *btEffectSprAcquire(s32 width, s32 height, u32 shape, s32 mode) {
 	return found;
 }
 
-/* Fills BG palette colours 1 to 63, the canvas's levels, with a grey ramp, */
-/* each level i / 2. */
-void btGraphicsLoadGreyRamp(void) {
-	s32 i = 0;
-	u16 *color = (u16 *)&BG_PLTT_COLOR(0, 1);
+/* Fills BG palette colours 1 to 63, the canvas's levels, with a grey ramp, each
+   level i / 2. */
+void btGraphicsLoadGreyRamp(void)
+{
+	Sint32	i = 0;
+	Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(0, 1);
 
 	do {
 		{
-			s32 level = i / 2;
+			Sint32 level = i / 2;
 
 			i++;
 			*color = RGB(level, level, level);
@@ -52,28 +51,29 @@ void btGraphicsLoadGreyRamp(void) {
 	} while(i != CANVAS_LEVEL_BRIGHTEST);
 }
 
-/* Draws the upper left quarter of a shaded disc into a map `size` / 2 bytes */
-/* wide and `size` rows tall, centred on its bottom right corner and squeezed */
-/* to half width: each ring is darker than the one inside it by a cosine */
-/* falloff, scaled by `scale` (FIXED_ONE at full strength) and clamped at */
-/* CANVAS_LEVEL_BRIGHTEST. */
-void btEffectDrawShadedCircles(u8 *map, s32 size, FIXED scale) {
-	s32 half = size / 2;
-	s32 center = half - 1;
-	s32 last = size - 1;
-	s32 radius;
+/* Draws the upper left quarter of a shaded disc into a map `size` / 2 bytes
+   wide and `size` rows tall, centred on its bottom right corner and squeezed to
+   half width: each ring is darker than the one inside it by a cosine falloff,
+   scaled by `scale` (toFIXED(1) at full strength) and clamped at
+   CANVAS_LEVEL_BRIGHTEST. */
+void btEffectDrawShadedCircles(Uint8 *map, Sint32 size, FIXED scale)
+{
+	Sint32 half = size / 2;
+	Sint32 center = half - 1;
+	Sint32 last = size - 1;
+	Sint32 radius;
 
 	syWordsClearEntry(map, half * size);
 	for(radius = 0; radius != last; radius++) {
-		s32 x = radius;
-		s32 d = radius;
-		s32 y = 0;
-		s32 shade;
-		s32 col;
+		Sint32 x = radius;
+		Sint32 d = radius;
+		Sint32 y = 0;
+		Sint32 shade;
+		Sint32 col;
 
-		shade = FIXEDtoINT(syCos(radius * DEGtoANG(90) / last) *
-						   CANVAS_LEVEL_BRIGHTEST);
-		shade = shade * scale / (FIXED_ONE);
+		shade = FIXEDtoINT(
+			syCos(radius * DEGtoANG(90) / last) * CANVAS_LEVEL_BRIGHTEST);
+		shade = shade * scale / (toFIXED(1));
 
 		if(shade > CANVAS_LEVEL_BRIGHTEST)
 			shade = CANVAS_LEVEL_BRIGHTEST;
@@ -91,26 +91,27 @@ void btEffectDrawShadedCircles(u8 *map, s32 size, FIXED scale) {
 	}
 }
 
-/* Draws the whole shaded disc btEffectDrawShadedCircles draws a quarter */
-/* of, mirrored into the four quarters of a map `size` bytes wide and twice */
-/* `size` rows tall. */
-void btEffectDrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
-	s32 center = size / 2 - 1;
-	s32 last = size - 1;
-	s32 radius;
+/* Draws the whole shaded disc btEffectDrawShadedCircles draws a quarter of,
+   mirrored into the four quarters of a map `size` bytes wide and twice `size`
+   rows tall. */
+void btEffectDrawShadedCirclesMirrored(Uint8 *map, Sint32 size, Sint32 scale)
+{
+	Sint32 center = size / 2 - 1;
+	Sint32 last = size - 1;
+	Sint32 radius;
 
 	syWordsClearEntry(map, size * size * 2);
 	for(radius = 0; radius != last; radius++) {
-		s32 x = radius;
-		s32 d = radius;
-		s32 y = 0;
-		s32 shade;
-		s32 col;
-		s32 row;
+		Sint32 x = radius;
+		Sint32 d = radius;
+		Sint32 y = 0;
+		Sint32 shade;
+		Sint32 col;
+		Sint32 row;
 
-		shade = FIXEDtoINT(syCos(radius * DEGtoANG(90) / last) *
-						   CANVAS_LEVEL_BRIGHTEST);
-		shade = shade * scale / (FIXED_ONE);
+		shade = FIXEDtoINT(
+			syCos(radius * DEGtoANG(90) / last) * CANVAS_LEVEL_BRIGHTEST);
+		shade = shade * scale / (toFIXED(1));
 		if(shade > CANVAS_LEVEL_BRIGHTEST)
 			shade = CANVAS_LEVEL_BRIGHTEST;
 		for(; x >= y; y++) {
@@ -136,10 +137,11 @@ void btEffectDrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
 }
 
 /* Mirrors the first 64 background colours, keeping the backdrop colour. */
-void btPaletteMirrorBgCols(void) {
-	u16 saved[SHEET_PALETTE_COLORS];
-	u16 flipped[SHEET_PALETTE_COLORS];
-	s32 i;
+void btPaletteMirrorBgCols(void)
+{
+	Uint16 saved[SHEET_PALETTE_COLORS];
+	Uint16 flipped[SHEET_PALETTE_COLORS];
+	Sint32 i;
 
 	syWordsCopy(saved, (void *)BG_PLTT, SHEET_PALETTE_BYTES);
 	for(i = 1; i != SHEET_PALETTE_COLORS; i++)
@@ -149,9 +151,9 @@ void btPaletteMirrorBgCols(void) {
 	REG_BLDALPHA = BLEND_ALPHA(16, 8);
 }
 
-/* The mage is effect sprites 0 to 6, on Ulysses_ObjectX and _ObjectZ, and */
-/* sprite 7 is a white flake: its animations from ULYSSES_FLAKE_ANIMATION are */
-/* the flake turning. */
+/* The mage is effect sprites 0 to 6, on Ulysses_ObjectX and _ObjectZ, and
+   sprite 7 is a white flake: its animations from ULYSSES_FLAKE_ANIMATION are
+   the flake turning. */
 #define ULYSSES_MAGE_SPRITES	7
 #define ULYSSES_FLAKE_SPRITE	ULYSSES_MAGE_SPRITES
 #define ULYSSES_FLAKE_ANIMATION 7
@@ -159,14 +161,15 @@ void btPaletteMirrorBgCols(void) {
 /* The particle the last flake flies by: the state's last. */
 #define ULYSSES_FLAKE (state->particles[ARRAY_COUNT(state->particles) - 1])
 
-/* A frame task of Ulysses's end (btEffectRunUlysses adds and removes */
-/* it): the white flake flutters away from where the mage stood, its speed in */
-/* depth rising for 20 frames and then falling, drifting sideways from frame */
-/* 12, and turning through its eight pictures, seven frames each. */
-void btUlyssesFlutterFlake(void) {
+/* A frame event of Ulysses's end (btEffectRunUlysses adds and removes it): the
+   white flake flutters away from where the mage stood, its speed in depth
+   rising for 20 frames and then falling, drifting sideways from frame 12, and
+   turning through its eight pictures, seven frames each. */
+void btUlyssesFlutterFlake(void)
+{
 	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	SPR_SCALE scale = Ulysses_ParticleScale;
-	SPR_PLACEMENT place;
+	SPR_SCALE			 scale = Ulysses_ParticleScale;
+	SPR_PLACEMENT		 place;
 
 	place.groundHeight = 0;
 
@@ -174,8 +177,8 @@ void btUlyssesFlutterFlake(void) {
 
 	place.x = ULYSSES_FLAKE.x;
 	place.y = ULYSSES_FLAKE.y;
-	btRenderApplyProjectedPlacementStub(state->sprs[ULYSSES_FLAKE_SPRITE],
-										&place.x, &scale.x, 0);
+	fdRenderApplyProjectedPlacementStub(
+		state->sprs[ULYSSES_FLAKE_SPRITE], &place.x, &scale.x, 0);
 	ULYSSES_FLAKE.x += ULYSSES_FLAKE.velX;
 	ULYSSES_FLAKE.y += ULYSSES_FLAKE.velY;
 	if(state->frm <= 19)
@@ -185,90 +188,87 @@ void btUlyssesFlutterFlake(void) {
 	if(state->frm > 11)
 		ULYSSES_FLAKE.velX += toFIXED(1) / 16;
 	fdSprStartAnimationStub(state->sprs[ULYSSES_FLAKE_SPRITE],
-							state->frm / 7 % 8 + ULYSSES_FLAKE_ANIMATION);
+		state->frm / 7 % 8 + ULYSSES_FLAKE_ANIMATION);
 	state->frm++;
 }
 
 /* The mage's sprite scale, one to one. */
 extern const SCALE Ulysses_MageScale;
 
-/* Where UlyssesSilhouette, then FlutteringFlakeSheet's cels, are decoded in */
-/* the effect's pictures, and the silhouette's size. */
-#define ULYSSES_PICTURES		  6017
-#define ULYSSES_SILHOUETTE_WIDTH  80
-#define ULYSSES_SILHOUETTE_HEIGHT 112
+/* Where UlyssesSilhouette, then FlutteringFlakeSheet's pictures, are decoded in
+   the effect's pictures, and the silhouette's size. */
+#define ULYSSES_PICTURES			 6017
+#define ULYSSES_SILHOUETTE_WIDTH	 80
+#define ULYSSES_SILHOUETTE_HEIGHT	 112
 /* FlutteringFlakeSheet's eighteen pictures of the white flake turning. */
-#define ULYSSES_FLAKE_CELS 18
-/* Where RuneCircleSheet and YellowOrbSheet are decoded in the effect's */
-/* pictures. */
+#define ULYSSES_FLAKE_PICTURES		 18
+/* Where RuneCircleSheet and YellowOrbSheet are decoded in the effect's
+   pictures. */
 #define ULYSSES_RUNE_CIRCLE_PICTURES 10113
 #define ULYSSES_YELLOW_ORB_PICTURES	 7831
-/* FadingCrescentSheet, in the map cell buffer: a crescent of light closing to
- */
-/* a disc and shrinking, seven pictures. */
-#define ULYSSES_CRESCENT_WIDTH	64
-#define ULYSSES_CRESCENT_HEIGHT 64
-/* A crescent's scale `t` frames into its sweep: a sine that turns a */
-/* sixty-fourth of a turn a frame, at 48 sixty-fourths, so it swells to three */
-/* quarters of its size and shrinks a little. */
-#define ULYSSES_CRESCENT_SCALE(t) ((sySin((t) << 10) * 48) / 64)
+/* FadingCrescentSheet, in the map cell buffer: a crescent of light closing to a
+   disc and shrinking, seven pictures. */
+#define ULYSSES_CRESCENT_WIDTH		 64
+#define ULYSSES_CRESCENT_HEIGHT		 64
+/* A crescent's scale `t` frames into its sweep: a sine that turns a
+   sixty-fourth of a turn a frame, at 48 sixty-fourths, so it swells to three
+   quarters of its size and shrinks a little. */
+#define ULYSSES_CRESCENT_SCALE(t)	 ((sySin((t) << 10) * 48) / 64)
 
-#define ULYSSES_FRAMES                                                         \
-	326 /* frames of the runes, the summoning and the fire                     \
-		 */
-/* The flame bursts and the rune circles open, the second */
-/* ULYSSES_RUNE_CIRCLE_INTERVAL frames after the first; the mage's silhouette */
-/* glows in them, and the mage appears. */
-#define ULYSSES_RUNE_CIRCLES_FRAME	 76
-#define ULYSSES_RUNE_CIRCLE_INTERVAL 16
-#define ULYSSES_SILHOUETTE_FRAME	 92
-#define ULYSSES_APPEAR_FRAME		 108
+/* frames of the runes, the summoning and the fire */
+#define ULYSSES_FRAMES					326
+/* The flame bursts and the rune circles open, the second
+   ULYSSES_RUNE_CIRCLE_INTERVAL frames after the first; the mage's silhouette
+   glows in them, and the mage appears. */
+#define ULYSSES_RUNE_CIRCLES_FRAME		76
+#define ULYSSES_RUNE_CIRCLE_INTERVAL	16
+#define ULYSSES_SILHOUETTE_FRAME		92
+#define ULYSSES_APPEAR_FRAME			108
 /* The rune circles' colours fade, then the strikes begin. */
 #define ULYSSES_RUNE_CIRCLES_FADE_FRAME 124
 #define ULYSSES_STRIKES_FRAME			132
 /* The fire flares over the mage, and the flake flutters away. */
-#define ULYSSES_FLARE_FRAME 266
-#define ULYSSES_FLAKE_FRAME 288
+#define ULYSSES_FLARE_FRAME				266
+#define ULYSSES_FLAKE_FRAME				288
 
-/* The flake drifts down, swaying 8 pixels either way, in 1/65536 turns a */
-/* frame. */
-#define ULYSSES_FLAKE_SWAY 860
-/* The silhouette swells and shrinks back as it zooms in, in 1/65536 turns a */
-/* frame. */
-#define ULYSSES_SILHOUETTE_SWELL 800
-/* The silhouette is drawn in the two BG palettes from ULYSSES_GLOW_PALETTE, */
-/* which glow violet: brighter over its first ULYSSES_GLOW_FRAMES, and gone */
-/* ULYSSES_GLOW_END frames after it shows. */
-#define ULYSSES_GLOW_PALETTE 8
-#define ULYSSES_GLOW_COLORS	 32
-#define ULYSSES_GLOW_FRAMES	 16
-#define ULYSSES_GLOW_END	 32
-/* Colour `i` of the glow's at `level` (0 to 16): violet, brighter up the */
-/* ramp, its red three quarters of its blue. */
+/* The flake drifts down, swaying 8 pixels either way, in 1/65536 turns a
+   frame. */
+#define ULYSSES_FLAKE_SWAY			860
+/* The silhouette swells and shrinks back as it zooms in, in 1/65536 turns a
+   frame. */
+#define ULYSSES_SILHOUETTE_SWELL	800
+/* The silhouette is drawn in the two BG palettes from ULYSSES_GLOW_PALETTE,
+   which glow violet: brighter over its first ULYSSES_GLOW_FRAMES, and gone
+   ULYSSES_GLOW_END frames after it shows. */
+#define ULYSSES_GLOW_PALETTE		8
+#define ULYSSES_GLOW_COLORS			32
+#define ULYSSES_GLOW_FRAMES			16
+#define ULYSSES_GLOW_END			32
+/* Colour `i` of the glow's at `level` (0 to 16): violet, brighter up the ramp,
+   its red three quarters of its blue. */
 #define ULYSSES_GLOW_RED(i, level)	(((i) * (((level) * 9 * 4) / 16)) / 64)
 #define ULYSSES_GLOW_BLUE(i, level) (((i) * (level) * 3) / 64)
 
-/* The rune circles: the first grows to three quarters of its size, holds and */
-/* spreads out from ULYSSES_RUNE_CIRCLE_HOLD_FRAMES; the second rises from */
-/* lying flat over ULYSSES_RUNE_CIRCLE_TILT_FRAMES, then shrinks. */
+/* The rune circles: the first grows to three quarters of its size, holds and
+   spreads out from ULYSSES_RUNE_CIRCLE_HOLD_FRAMES; the second rises from lying
+   flat over ULYSSES_RUNE_CIRCLE_TILT_FRAMES, then shrinks. */
 #define ULYSSES_RUNE_CIRCLE_HOLD_FRAMES 40
 #define ULYSSES_RUNE_CIRCLE_TILT_FRAMES 24
-#define ULYSSES_RUNE_CIRCLE_TILT_X(t)                                          \
+#define ULYSSES_RUNE_CIRCLE_TILT_X(t) \
 	(ULYSSES_RUNE_CIRCLE_TILT_FRAMES * 682 - (t) * 682)
-#define ULYSSES_RUNE_CIRCLE_TILT_Z(t)                                          \
+#define ULYSSES_RUNE_CIRCLE_TILT_Z(t) \
 	((t) * 169 + TRIG_TURN - ULYSSES_RUNE_CIRCLE_TILT_FRAMES * 169)
 
-/* A flame of the opening burst and of the flare: six pictures, three or four */
-/* frames each. */
+/* A flame of the opening burst and of the flare: six pictures, three or four
+   frames each. */
 #define ULYSSES_BURST_FLAME_FRAMES 18
 #define ULYSSES_FLARE_FLAME_FRAMES 24
 #define ULYSSES_FLARE_FLAMES	   32 /* flames of the flare, in a column */
 
 /* The mage's six strikes, each ULYSSES_STRIKE_INTERVAL frames after the last,
- */
-/* by the strike's own frame: violet flames at the mage's hand, then a flake */
-/* flies, a crescent of light sweeps round the targets and closes, and the */
-/* strike lands, with a burst of light and sparks. */
+   by the strike's own frame: violet flames at the mage's hand, then a flake
+   flies, a crescent of light sweeps round the targets and closes, and the
+   strike lands, with a burst of light and sparks. */
 #define ULYSSES_STRIKES				   6
 #define ULYSSES_STRIKE_INTERVAL		   8
 #define ULYSSES_STRIKE_FLAME_FRAMES	   36
@@ -281,42 +281,45 @@ extern const SCALE Ulysses_MageScale;
 #define ULYSSES_STRIKE_HIT_FRAME	   64
 #define ULYSSES_STRIKE_BURST_FRAMES	   12
 /* The sparks each strike throws, in the effect's pictures. */
-#define ULYSSES_SPARKS		  19352
-#define ULYSSES_STRIKE_SPARKS 16
-#define ULYSSES_SPARK_COUNT	  (ULYSSES_STRIKES * ULYSSES_STRIKE_SPARKS)
+#define ULYSSES_SPARKS				   19352
+#define ULYSSES_STRIKE_SPARKS		   16
+#define ULYSSES_SPARK_COUNT			   (ULYSSES_STRIKES * ULYSSES_STRIKE_SPARKS)
 
-/* A white flake drifts down, a flame bursts and a ring of red runes opens */
-/* with the mage's silhouette glowing violet in it; the mage appears, and six */
-/* times violet flames gather at the mage's hand and a crescent of light */
-/* sweeps round the foes and strikes; then fire flares over the mage, who */
-/* fades, and a white flake flutters away. */
-/* */
-/* Abilities: Ulysses. */
-void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
-	u8 *canvas;
+/* A white flake drifts down, a flame bursts and a ring of red runes opens with
+   the mage's silhouette glowing violet in it; the mage appears, and six times
+   violet flames gather at the mage's hand and a crescent of light sweeps round
+   the foes and strikes; then fire flares over the mage, who fades, and a white
+   flake flutters away.
+
+   Abilities: Ulysses. */
+void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
+{
+	Uint8					*canvas;
 	BATTLE_BACKGROUND_STATE *background;
-	BATTLE_EFFECT_STATE *state;
-	s32 frame;
-	u8 *sprites;
-	s32 flakeAway;
-	s32 skip;
-	DRAW_RECTANGLE *blit;
+	BATTLE_EFFECT_STATE		*state;
+	Sint32					 frame;
+	Uint8					*sprites;
+	Sint32					 flakeAway;
+	Sint32					 skip;
+	DRAW_RECTANGLE			*blit;
+
 	struct {
-		s32 x;
-		s32 z;
+		Sint32 x;
+		Sint32 z;
 	} mage;
-	s32 loaded;
-	s32 draw;
-	s32 i;
-	u8 *cells;
-	u8 *picture;
+
+	Sint32		  loaded;
+	Sint32		  draw;
+	Sint32		  i;
+	Uint8		 *cells;
+	Uint8		 *picture;
 	SPR_PLACEMENT place;
-	BLITTER_PAIR blits;
+	BLITTER_PAIR  blits;
 	MODEL_TEXTURE texture;
 	MODEL_TEXTURE quadTexture;
-	SCALE mageScale;
+	SCALE		  mageScale;
 	BATTLE_STATE *battle;
-	s32 mask = RGB_LEVEL_MAX;
+	Sint32		  mask = RGB_LEVEL_MAX;
 
 	canvas = Ram_HeapSlots->battleCanvas;
 	state = Ram_HeapSlots->battleEff;
@@ -327,16 +330,16 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 	btEffectShowLivingTargets(state->args);
 	/* The battle background darkens to black, its green first. */
 	for(frame = 0; frame != 32; frame++) {
-		volatile u16 *c = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
+		volatile Uint16 *c = (volatile Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 		for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
-			s32 v = *c;
-			s32 r = mask & v;
-			s32 g;
-			s32 b;
+			Sint32 v = *c;
+			Sint32 r = mask & v;
+			Sint32 g;
+			Sint32 b;
 
-			g = (u16)RGB_GREEN((u16)v);
-			b = (u16)RGB_BLUE((u16)v);
+			g = (Uint16)RGB_GREEN((Uint16)v);
+			b = (Uint16)RGB_BLUE((Uint16)v);
 			if(g == 0) {
 				if(b > 0) {
 					b--;
@@ -353,23 +356,22 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 		sySynch(1);
 	}
 	btEffectStartCanvasLayer(0);
-	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-							DISPCNT_OBJ_ON,
-						IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
+		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON,
+		IO_WRITE_HALFWORD);
 	sySynch(1);
-	/* BG1 shows a canvas-sized picture from BG character block 2, as */
-	/* btEffectBuildCanvasTilemap writes it: the rune circles. */
+	/* BG1 shows a canvas-sized picture from BG character block 2, as
+	   btEffectBuildCanvasTilemap writes it: the rune circles. */
 	{
-		u32 *map = (u32 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
-		u32 v;
-		s32 y;
-		s32 x;
+		Uint32 *map = (Uint32 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
+		Uint32	v;
+		Sint32	y;
+		Sint32	x;
 
 		syWordsFill(map, 4 * MAP_ROW_BYTES, -1);
 		map += 4 * MAP_ROW_WORDS;
 		syWordsFill(map, 2 * MAP_ROW_BYTES,
-					MAP_ENTRY_PAIR(BG1_CLEAR_TILE, BG1_CLEAR_TILE));
+			MAP_ENTRY_PAIR(BG1_CLEAR_TILE, BG1_CLEAR_TILE));
 		v = MAP_ENTRY_PAIR(BG1_BLOCK2_FIRST_TILE, BG1_BLOCK2_FIRST_TILE + 1);
 		map += 2 * MAP_ROW_WORDS;
 		for(y = 0; y != CANVAS_TILES; y++) {
@@ -387,14 +389,14 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 	REG_BG2PA = Q_8_8(1);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
-				 BLDCNT_TGT2_ALL;
+		BLDCNT_TGT2_ALL;
 	REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
-				 BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
+		BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
 	sySynch(1);
 	blit = blits;
 	btEffectBuildCanvasBlitters(0, blit);
-	/* The silhouette, in the glow's palettes, goes to BG2's tiles and stays */
-	/* there while the rune circles go to BG1's. */
+	/* The silhouette, in the glow's palettes, goes to BG2's tiles and stays
+	   there while the rune circles go to BG1's. */
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	cells = state->sheet + ULYSSES_PICTURES;
 	btResourceLoadAndDecompress(RESOURCE_ULYSSES_SILHOUETTE, cells, 0, 0);
@@ -405,11 +407,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 	}
 	picture = state->sheet + ULYSSES_PICTURES;
 	blits[0](canvas, picture, 24, 8, ULYSSES_SILHOUETTE_WIDTH,
-			 ULYSSES_SILHOUETTE_HEIGHT);
+		ULYSSES_SILHOUETTE_HEIGHT);
 	EFFECT_PRESENT_CANVAS(state);
 	syCloseEvent(btEffectTransferCanvas);
-	btResourceLoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1,
-								0);
+	btResourceLoadAndDecompress(
+		RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 0);
 	btResourceLoadAndDecompress(RESOURCE_FLUTTERING_FLAKE_SHEET, picture, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sprites, 0, 0);
 	loaded = 0;
@@ -418,15 +420,14 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 	background->busy = 1;
 	syWordsClear(canvas, CANVAS_VIEW_BYTES);
 	REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-				  DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+		DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
 	sySynch(1);
 	for(frame = 0; frame != ULYSSES_FRAMES; frame++) {
 		PARTICLE *particle;
 		/* Once A or B is pressed, odd frames are not drawn or waited for: the
-		 */
-		/* rest plays twice as fast. */
+		   rest plays twice as fast. */
 		draw = 1;
-		if(InputWork.repeat & (KEY_A | KEY_B)) {
+		if(PerWork.repeat & (KEY_A | KEY_B)) {
 			skip = 1;
 		}
 		if((frame & draw) && skip == 1) {
@@ -437,10 +438,9 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 
 			if(!loaded) {
 				sySetEvent(btEffectProcessPendingBlock2Transfer,
-						   TASK_PASS_VBLANK + 15);
-				sySetEvent(btDispApplyBg2Affine, TASK_PASS_VBLANK + 127);
-				btResourceLoadAndDecompress(
-					RESOURCE_RUNE_CIRCLE_SHEET,
+					EVENT_PASS_VBLANK + 15);
+				sySetEvent(btDispApplyBg2Affine, EVENT_PASS_VBLANK + 127);
+				btResourceLoadAndDecompress(RESOURCE_RUNE_CIRCLE_SHEET,
 					state->sheet + ULYSSES_RUNE_CIRCLE_PICTURES, 1, 0);
 				loaded = 1;
 			}
@@ -451,11 +451,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 				BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 			REG_BG1CNT =
 				BGCNT_256_COLORS | BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
-			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
-								CANVAS_FADE_THREE_QUARTERS);
+			EFFECT_SET_TRANSFER(
+				state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 			syWordsCopyEntry((void *)BG_PLTT,
-							 syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET),
-							 SHEET_PALETTE_BYTES);
+				syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET),
+				SHEET_PALETTE_BYTES);
 			for(i = 0; i != 9; i++) {
 				p = &state->particles[i];
 				p->variant = -2 * i;
@@ -465,33 +465,34 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 		}
 		/* The white flake drifts down. */
 		if(frame < ULYSSES_RUNE_CIRCLES_FRAME) {
-			s32 k = (frame / 4) % ULYSSES_FLAKE_CELS;
-			s32 x = 60 - (FIXEDtoINT(sySin(frame * ULYSSES_FLAKE_SWAY) << 3));
-			s32 y = frame - 8;
-			u8 *source = state->sheet + ULYSSES_PICTURES + Ulysses_Pictures[k];
-			u8 w = Ulysses_PictureWidths[k];
-			s32 left = x - (w >> 1);
-			u8 h = Ulysses_PictureHeights[k];
+			Sint32 k = (frame / 4) % ULYSSES_FLAKE_PICTURES;
+			Sint32 x =
+				60 - (FIXEDtoINT(sySin(frame * ULYSSES_FLAKE_SWAY) << 3));
+			Sint32 y = frame - 8;
+			Uint8 *source =
+				state->sheet + ULYSSES_PICTURES + Ulysses_Pictures[k];
+			Uint8  w = Ulysses_PictureWidths[k];
+			Sint32 left = x - (w >> 1);
+			Uint8  h = Ulysses_PictureHeights[k];
 
 			blit[1](canvas, source, left, y - (h >> 1), w, h);
 		}
 		/* A flame bursts where it lands. */
 		if(frame >= ULYSSES_RUNE_CIRCLES_FRAME &&
-		   frame < ULYSSES_APPEAR_FRAME) {
+			frame < ULYSSES_APPEAR_FRAME) {
 			PARTICLE *p;
 
 			for(i = 0, p = state->particles; i != 4; i++, p++) {
-				if((u32)p->variant < ULYSSES_BURST_FLAME_FRAMES) {
-					s32 k = p->variant / 3;
-					s32 side = i & 1;
-					u8 *source =
+				if((Uint32)p->variant < ULYSSES_BURST_FLAME_FRAMES) {
+					Sint32 k = p->variant / 3;
+					Sint32 side = i & 1;
+					Uint8 *source =
 						state->sheet + BattleEffect_EmberStreakPictures[k];
-					u8 w = BattleEffect_EmberStreakPictureWidths[k];
+					Uint8 w = BattleEffect_EmberStreakPictureWidths[k];
 
 					blit[side](canvas, source, p->x - (w >> 1),
-							   p->y + BattleEffect_EmberStreakPictureBiasY[k] -
-								   32,
-							   w, BattleEffect_EmberStreakPictureHeights[k]);
+						p->y + BattleEffect_EmberStreakPictureBiasY[k] - 32, w,
+						BattleEffect_EmberStreakPictureHeights[k]);
 				}
 				p->variant++;
 			}
@@ -504,11 +505,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 		}
 		/* The silhouette zooms in, swelling and shrinking back, and glows. */
 		if(frame >= ULYSSES_SILHOUETTE_FRAME && frame < ULYSSES_STRIKES_FRAME) {
-			s32 t = frame - ULYSSES_SILHOUETTE_FRAME;
-			FIXED distance =
-				syCos(t * ULYSSES_SILHOUETTE_SWELL) / 3 + FIXED_ONE;
-			s32 zoom;
-			s32 level = -1;
+			Sint32 t = frame - ULYSSES_SILHOUETTE_FRAME;
+			FIXED  distance =
+				syCos(t * ULYSSES_SILHOUETTE_SWELL) / 3 + toFIXED(1);
+			Sint32 zoom;
+			Sint32 level = -1;
 
 			if(distance < toFIXED(33) / 32) {
 				distance = toFIXED(33) / 32;
@@ -520,41 +521,41 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 			state->bg2y = (64 - toFIXED(76) / distance) << 8;
 			if(t < ULYSSES_GLOW_FRAMES) {
 				level = t;
-			}
-			else if(frame >= 116 && frame <= ULYSSES_RUNE_CIRCLES_FADE_FRAME) {
+			} else if(frame >= 116 &&
+				frame <= ULYSSES_RUNE_CIRCLES_FADE_FRAME) {
 				level = ULYSSES_GLOW_END * 2 - t * 2;
 			}
 			if(level != -1) {
 				for(i = 0; i != ULYSSES_GLOW_COLORS; i++) {
-					s32 red = ULYSSES_GLOW_RED(i, level);
-					s32 blue = ULYSSES_GLOW_BLUE(i, level);
+					Sint32 red = ULYSSES_GLOW_RED(i, level);
+					Sint32 blue = ULYSSES_GLOW_BLUE(i, level);
 
-					((u16 *)&BG_PLTT_COLOR(ULYSSES_GLOW_PALETTE, 0))[i] =
+					((Uint16 *)&BG_PLTT_COLOR(ULYSSES_GLOW_PALETTE, 0))[i] =
 						RGB(red, 0, blue);
 				}
 			}
 			if(frame == 116) {
 				REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
-							  DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_OBJ_ON |
-							  DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+					DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_OBJ_ON |
+					DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
 			}
 		}
 		/* The rune circles' colours fade by 3 a frame. */
 		if(frame >= ULYSSES_RUNE_CIRCLES_FADE_FRAME &&
-		   frame < ULYSSES_STRIKES_FRAME) {
-			volatile u16 *c = (volatile u16 *)BG_PLTT;
+			frame < ULYSSES_STRIKES_FRAME) {
+			volatile Uint16 *c = (volatile Uint16 *)BG_PLTT;
 
 			for(i = 0; i != SHEET_PALETTE_COLORS; i++, c++) {
-				s32 v = *c;
-				s32 low = RGB_LEVEL_MAX;
-				s32 r;
-				s32 g;
-				s32 b;
+				Sint32 v = *c;
+				Sint32 low = RGB_LEVEL_MAX;
+				Sint32 r;
+				Sint32 g;
+				Sint32 b;
 
 				low &= v;
 				r = low - 3;
-				g = ((u16)RGB_GREEN((u16)v)) - 3;
-				b = ((u16)RGB_BLUE((u16)v)) - 3;
+				g = ((Uint16)RGB_GREEN((Uint16)v)) - 3;
+				b = ((Uint16)RGB_BLUE((Uint16)v)) - 3;
 
 				if(r < 0)
 					r = 0;
@@ -569,14 +570,13 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 			if(loaded == 1) {
 				syCloseEvent(btEffectProcessPendingBlock2Transfer);
 				syCloseEvent(btDispApplyBg2Affine);
-				sySetEvent(btEffectTransferCanvas, TASK_PASS_VBLANK + 15);
-				btResourceLoadAndDecompress(
-					RESOURCE_YELLOW_ORB_SHEET,
+				sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK + 15);
+				btResourceLoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET,
 					state->sheet + ULYSSES_YELLOW_ORB_PICTURES, 1, 0);
 				loaded = 0;
 			}
 			REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-						  DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+				DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
 			REG_BG2X = -(8 << 8);
 			REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
 			REG_BG2PA = Q_8_8(0.8);
@@ -585,8 +585,8 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 				BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			syWordsCopyEntry((void *)BG_PLTT,
-							 syResourceGetTableEntry(RESOURCE_RUNE_SHEET),
-							 SHEET_PALETTE_BYTES);
+				syResourceGetTableEntry(RESOURCE_RUNE_SHEET),
+				SHEET_PALETTE_BYTES);
 		}
 		if(frame == ULYSSES_STRIKES_FRAME + 1) {
 			PARTICLE *p;
@@ -595,14 +595,14 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 			syWordsFill(canvas, CANVAS_VIEW_BYTES, 0);
 			syWordsClear((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
 			REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-						  DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
-						  DISPCNT_WIN1_ON;
+				DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+				DISPCNT_WIN1_ON;
 			spark = (PARTICLE *)(state->sheet + ULYSSES_SPARKS);
 			for(i = 0; i != ULYSSES_STRIKES; i++) {
 				p = &state->particles[i];
-				p->x = INTtoFIXED(Ulysses_ParticleStarts[i][0]);
+				p->x = toFIXED(Ulysses_ParticleStarts[i][0]);
 				p->variant = -ULYSSES_STRIKE_INTERVAL * i;
-				p->y = INTtoFIXED(Ulysses_ParticleStarts[i][1]);
+				p->y = toFIXED(Ulysses_ParticleStarts[i][1]);
 				p->z = Ulysses_ParticleStarts[i][2] << 6;
 				p->velX = Ulysses_ParticleStarts[i][3] * (toFIXED(1) / 2);
 				p->velY = Ulysses_ParticleStarts[i][4] * (toFIXED(1) / 2);
@@ -611,8 +611,8 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 			for(i = 0; i != ULYSSES_SPARK_COUNT; i++) {
 				spark[i].variant = -1;
 			}
-			btResourceLoadAndDecompress(RESOURCE_FADING_CRESCENT_SHEET,
-										MapGridCellBuffer, 0, 0);
+			btResourceLoadAndDecompress(
+				RESOURCE_FADING_CRESCENT_SHEET, MapGridMetatileBuffer, 0, 0);
 		}
 		if(frame == ULYSSES_RUNE_CIRCLES_FRAME) {
 			sySndPlayStub(SE_ITEM_BREAK);
@@ -622,15 +622,15 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 		}
 
 		if(frame > ULYSSES_STRIKES_FRAME && frame < ULYSSES_FLARE_FRAME) {
-			void *verts;
+			void		 *verts;
 			RENDER_MODEL *model;
-			PARTICLE *sparks;
-			u8 *crescents = MapGridCellBuffer;
-			PARTICLE *spark;
-			s32 shade;
-			s32 j;
+			PARTICLE	 *sparks;
+			Uint8		 *crescents = MapGridMetatileBuffer;
+			PARTICLE	 *spark;
+			Sint32		  shade;
+			Sint32		  j;
 
-			verts = syHeapAllocEwram(32);
+			verts = syHeapAllocEWRAM(32);
 			model = btRenderAllocateModelList(1);
 			shade = 0;
 			sparks = (PARTICLE *)(state->sheet + ULYSSES_SPARKS);
@@ -646,9 +646,9 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 			model->vertices = verts;
 			for(i = 0, particle = state->particles; i != ULYSSES_STRIKES;
 				particle++, i++) {
-				s32 delay = i * ULYSSES_STRIKE_INTERVAL;
+				Sint32	  delay = i * ULYSSES_STRIKE_INTERVAL;
 				PARTICLE *anchor = particle + 8;
-				s32 t;
+				Sint32	  t;
 
 				if(++particle->variant == 0) {
 					sySndPlayStub(SE_ITEM_BREAK);
@@ -663,46 +663,45 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 					t = particle->variant;
 				}
 				/* Violet flames at the mage's hand. */
-				if((u32)t < ULYSSES_STRIKE_FLAME_FRAMES) {
-					s32 k = (t / 6) % 6;
-					u8 *source =
+				if((Uint32)t < ULYSSES_STRIKE_FLAME_FRAMES) {
+					Sint32 k = (t / 6) % 6;
+					Uint8 *source =
 						state->sheet + BattleEffect_EmberStreakPictures[k];
-					u8 w = BattleEffect_EmberStreakPictureWidths[k];
+					Uint8 w = BattleEffect_EmberStreakPictureWidths[k];
 
 					blits[0](canvas, source, FIXEDtoINT(particle->x) - (w >> 1),
-							 FIXEDtoINT(particle->y) +
-								 BattleEffect_EmberStreakPictureBiasY[k] - 36,
-							 w, BattleEffect_EmberStreakPictureHeights[k]);
+						FIXEDtoINT(particle->y) +
+							BattleEffect_EmberStreakPictureBiasY[k] - 36,
+						w, BattleEffect_EmberStreakPictureHeights[k]);
 					t = particle->variant;
 				}
 				/* A flake flies out. */
-				if((u32)(t - ULYSSES_STRIKE_FLAKE_FRAME) <
-				   ULYSSES_STRIKE_FLAKE_FRAMES) {
-					s32 k = ((t - ULYSSES_STRIKE_FLAKE_FRAME) / 4) %
-							ULYSSES_FLAKE_CELS;
-					u8 *source =
+				if((Uint32)(t - ULYSSES_STRIKE_FLAKE_FRAME) <
+					ULYSSES_STRIKE_FLAKE_FRAMES) {
+					Sint32 k = ((t - ULYSSES_STRIKE_FLAKE_FRAME) / 4) %
+						ULYSSES_FLAKE_PICTURES;
+					Uint8 *source =
 						state->sheet + ULYSSES_PICTURES + Ulysses_Pictures[k];
-					s32 x = FIXEDtoINT(particle->x);
-					u8 w = Ulysses_PictureWidths[k];
-					s32 left = x - (w >> 1);
-					s32 y = FIXEDtoINT(particle->y);
-					u8 h = Ulysses_PictureHeights[k];
+					Sint32 x = FIXEDtoINT(particle->x);
+					Uint8  w = Ulysses_PictureWidths[k];
+					Sint32 left = x - (w >> 1);
+					Sint32 y = FIXEDtoINT(particle->y);
+					Uint8  h = Ulysses_PictureHeights[k];
 
 					blit[1](canvas, source, left, y - (h >> 1), w, h);
 					t = particle->variant;
 				}
 				/* The crescent of light sweeps round the targets, wobbling, and
-				 */
-				/* closes from ULYSSES_STRIKE_CLOSE_FRAME. */
-				if((u32)(t - ULYSSES_STRIKE_CRESCENT_FRAME) <
-				   ULYSSES_STRIKE_CRESCENT_FRAMES) {
+				   closes from ULYSSES_STRIKE_CLOSE_FRAME. */
+				if((Uint32)(t - ULYSSES_STRIKE_CRESCENT_FRAME) <
+					ULYSSES_STRIKE_CRESCENT_FRAMES) {
 					FIXED scale = ULYSSES_CRESCENT_SCALE(
 						t - ULYSSES_STRIKE_CRESCENT_FRAME);
-					s32 vx;
-					s32 x = particle->x;
-					FIXED mx = x - toFIXED(64);
-					FIXED my = particle->y - toFIXED(64);
-					s32 closing = t - ULYSSES_STRIKE_CLOSE_FRAME;
+					Sint32 vx;
+					Sint32 x = particle->x;
+					FIXED  mx = x - toFIXED(64);
+					FIXED  my = particle->y - toFIXED(64);
+					Sint32 closing = t - ULYSSES_STRIKE_CLOSE_FRAME;
 
 					if(closing < 0) {
 						closing = 0;
@@ -716,24 +715,22 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 					}
 					if(particle->y < toFIXED(60)) {
 						particle->velY += toFIXED(1) / 2;
-					}
-					else {
+					} else {
 						particle->velY -= toFIXED(1) / 2;
 					}
 					if(particle->z >= 0) {
 						particle->z +=
 							FIXEDtoINT(sySin(particle->velZ) * 3 << 8);
-					}
-					else {
+					} else {
 						particle->z -=
 							FIXEDtoINT(sySin(particle->velZ) * 3 << 8);
 					}
 					particle->velZ += TRIG_TURN / 64;
 					if(draw) {
 						/* As an integer sum, the offset first. */
-						texture.pixels =
-							(u8 *)(closing * PICTURE_BYTES(ULYSSES_CRESCENT) +
-								   (s32)crescents);
+						texture.pixels = (Uint8 *)(closing *
+								PICTURE_BYTES(ULYSSES_CRESCENT) +
+							(Sint32)crescents);
 						syInitMatrix();
 						syTranslate(mx, my, 0);
 						syRotX(TRIG_TURN * 3 / 4);
@@ -746,22 +743,21 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 					t = particle->variant;
 				}
 				/* The strike lands: sparks fly, and every target is jolted and
-				 */
-				/* flashes. */
+				   flashes. */
 				if(t == ULYSSES_STRIKE_HIT_FRAME) {
 					anchor->x = FIXEDtoINT(particle->x);
 					anchor->y = FIXEDtoINT(particle->y);
 					j = 0;
 					{
-						s32 first = i * ULYSSES_STRIKE_SPARKS;
+						Sint32 first = i * ULYSSES_STRIKE_SPARKS;
 
 						/* As an integer sum, the offset first. */
-						spark = (PARTICLE *)(first * (s32)sizeof(*spark) +
-											 (s32)sparks);
+						spark = (PARTICLE *)(first * (Sint32)sizeof(*spark) +
+							(Sint32)sparks);
 					}
 					for(; j != ULYSSES_STRIKE_SPARKS; j++, spark++) {
-						s32 angle = syRandom() & TRIG_ANGLE_MASK;
-						s32 speed = (syRandom() & 15) + 8;
+						Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
+						Sint32 speed = (syRandom() & 15) + 8;
 
 						spark->variant = (syRandom() & 7) + 8;
 						spark->x = particle->x;
@@ -770,40 +766,40 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 						spark->velY = (syCos(angle) * speed) / 4;
 					}
 					for(j = 0; j != args->tgtCnt; j++) {
-						s32 lift = (syRandom() << 2) + toFIXED(1);
+						Sint32 lift = (syRandom() << 2) + toFIXED(1);
 
-						btEffectStartActorMotion(
-							args->tgts[j], 1, toFIXED(2), toFIXED(8), lift,
-							delay + (syRandom() & 31) + 52);
-						btEffectTintBattler(args->tgts[j], SPRITE_COLOR_WHITE,
-											TINT_KEEP, j, 4);
+						btEffectStartActorMotion(args->tgts[j], 1, toFIXED(2),
+							toFIXED(8), lift, delay + (syRandom() & 31) + 52);
+						btEffectTintBattler(
+							args->tgts[j], SPRITE_COLOR_WHITE, TINT_KEEP, j, 4);
 					}
 				}
 				/* A burst of light where it landed. */
-				if(draw && (u32)(particle->variant - ULYSSES_STRIKE_HIT_FRAME) <
-							   ULYSSES_STRIKE_BURST_FRAMES) {
-					s32 k =
+				if(draw &&
+					(Uint32)(particle->variant - ULYSSES_STRIKE_HIT_FRAME) <
+						ULYSSES_STRIKE_BURST_FRAMES) {
+					Sint32 k =
 						((particle->variant - ULYSSES_STRIKE_HIT_FRAME) / 2) %
 						6;
 
 					blit[1](canvas,
-							state->sheet + ULYSSES_YELLOW_ORB_PICTURES +
-								k * PICTURE_BYTES(YELLOW_ORB),
-							anchor->x - YELLOW_ORB_WIDTH / 2,
-							anchor->y - YELLOW_ORB_HEIGHT / 2, YELLOW_ORB_WIDTH,
-							YELLOW_ORB_HEIGHT);
+						state->sheet + ULYSSES_YELLOW_ORB_PICTURES +
+							k * PICTURE_BYTES(YELLOW_ORB),
+						anchor->x - YELLOW_ORB_WIDTH / 2,
+						anchor->y - YELLOW_ORB_HEIGHT / 2, YELLOW_ORB_WIDTH,
+						YELLOW_ORB_HEIGHT);
 				}
 			}
 			for(i = 0; i != ULYSSES_SPARK_COUNT; i++) {
 				spark = &sparks[i];
 				if(spark->variant >= 0) {
-					s32 n = spark->variant / 4 + 2;
+					Sint32 n = spark->variant / 4 + 2;
 
 					if(draw) {
 						blit[1](canvas,
-								sprites + BattleEffect_FlarePictures[n - 1],
-								FIXEDtoINT(spark->x) - n,
-								FIXEDtoINT(spark->y) - n, n * 2, n * 2);
+							sprites + BattleEffect_FlarePictures[n - 1],
+							FIXEDtoINT(spark->x) - n, FIXEDtoINT(spark->y) - n,
+							n * 2, n * 2);
 					}
 					btParticleAdvanceWithGravity2D(spark, 60, toFIXED(1) / 8);
 					spark->variant--;
@@ -814,11 +810,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 		}
 
 		if(draw && frame < ULYSSES_STRIKES_FRAME) {
-			void *verts;
+			void		 *verts;
 			RENDER_MODEL *model;
-			s32 j;
+			Sint32		  j;
 
-			verts = syHeapAllocEwram(32);
+			verts = syHeapAllocEWRAM(32);
 			model = btRenderAllocateModelList(1);
 			/* FAKEMATCH(dead): j takes frame * 3 + 1 here and 0 below before
 			 * any read. */
@@ -834,39 +830,37 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 			model->vertices = verts;
 			j = 0;
 			for(; j != 2; j++) {
-				s32 t = frame - ULYSSES_RUNE_CIRCLES_FRAME -
-						j * ULYSSES_RUNE_CIRCLE_INTERVAL;
+				Sint32 t = frame - ULYSSES_RUNE_CIRCLES_FRAME -
+					j * ULYSSES_RUNE_CIRCLE_INTERVAL;
 
 				if(t >= 0) {
-					s32 scale;
+					Sint32 scale;
 
 					syInitMatrix();
 					syTranslate(toFIXED(8), 0, 0);
 					syRotX(DEGtoANG(90));
 					if(j == 0) {
-						scale = t * (FIXED_ONE * 3 / 64) - FIXED_ONE * 9 / 8;
+						scale = t * (toFIXED(3) / 64) - toFIXED(9) / 8;
 						if(t < ULYSSES_RUNE_CIRCLE_HOLD_FRAMES) {
-							scale = t * (FIXED_ONE / 32);
-							if(scale > FIXED_ONE * 3 / 4) {
-								scale = FIXED_ONE * 3 / 4;
+							scale = t * (toFIXED(1) / 32);
+							if(scale > toFIXED(3) / 4) {
+								scale = toFIXED(3) / 4;
 							}
 						}
 						syMatrixScaleUniform(scale);
 						syRotY(-t * (TRIG_TURN / 128));
-					}
-					else {
+					} else {
 						if(t >= ULYSSES_RUNE_CIRCLE_TILT_FRAMES) {
-							scale = FIXED_ONE * 7 / 4 - t * (FIXED_ONE / 32);
+							scale = toFIXED(7) / 4 - t * (toFIXED(1) / 32);
 							syMatrixScaleUniform(scale);
-						}
-						else {
+						} else {
 							syRotX(ULYSSES_RUNE_CIRCLE_TILT_X(t));
 							syRotZ(ULYSSES_RUNE_CIRCLE_TILT_Z(t));
 						}
 						syRotY(t * (TRIG_TURN / 128));
 					}
-					btRenderTransformVertices(BattleEffect_GroundSquareCorners,
-											  verts, 4);
+					btRenderTransformVertices(
+						BattleEffect_GroundSquareCorners, verts, 4);
 					btRenderDrawModelList(model);
 				}
 			}
@@ -875,12 +869,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 		}
 
 		/* The mage stands from ULYSSES_APPEAR_FRAME, swaying once the strikes
-		 */
-		/* begin. */
+		   begin. */
 		if(frame >= ULYSSES_APPEAR_FRAME && frame < ULYSSES_FLAKE_FRAME) {
 			mageScale = Ulysses_MageScale;
 			if(frame > ULYSSES_STRIKES_FRAME - 1) {
-				s32 u = frame - ULYSSES_STRIKES_FRAME;
+				Sint32 u = frame - ULYSSES_STRIKES_FRAME;
 
 				mage.x = (sySin(u * (TRIG_TURN / 32)) << 1) + toFIXED(200);
 				mage.z = (sySin(u * (TRIG_TURN / 64)) << 1) + toFIXED(84);
@@ -889,11 +882,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 				place.height = place.groundHeight = 0;
 				for(i = 0; i != ULYSSES_MAGE_SPRITES; i++) {
 					place.x =
-						INTtoFIXED(Ulysses_ObjectX[i]) + mage.x - toFIXED(32);
+						toFIXED(Ulysses_ObjectX[i]) + mage.x - toFIXED(32);
 					place.y =
-						INTtoFIXED(Ulysses_ObjectZ[i]) + mage.z - toFIXED(32);
-					btRenderApplyProjectedPlacementStub(
-						state->sprs[i], &place.x, (s32 *)&mageScale, 0);
+						toFIXED(Ulysses_ObjectZ[i]) + mage.z - toFIXED(32);
+					fdRenderApplyProjectedPlacementStub(
+						state->sprs[i], &place.x, (Sint32 *)&mageScale, 0);
 				}
 			}
 		}
@@ -914,23 +907,23 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 			}
 			for(i = 0, particle = state->particles; i != ULYSSES_FLARE_FLAMES;
 				i++, particle++) {
-				if((u32)particle->variant < ULYSSES_FLARE_FLAME_FRAMES &&
-				   draw) {
-					s32 k = (particle->variant / 4) % 6;
-					u8 *source =
+				if((Uint32)particle->variant < ULYSSES_FLARE_FLAME_FRAMES &&
+					draw) {
+					Sint32 k = (particle->variant / 4) % 6;
+					Uint8 *source =
 						state->sheet + BattleEffect_EmberStreakPictures[k];
-					u8 w = BattleEffect_EmberStreakPictureWidths[k];
+					Uint8 w = BattleEffect_EmberStreakPictureWidths[k];
 
 					blits[0](canvas, source, particle->x - (w >> 1),
-							 particle->y +
-								 BattleEffect_EmberStreakPictureBiasY[k] - 48,
-							 w, BattleEffect_EmberStreakPictureHeights[k]);
+						particle->y + BattleEffect_EmberStreakPictureBiasY[k] -
+							48,
+						w, BattleEffect_EmberStreakPictureHeights[k]);
 				}
 				particle->variant++;
 			}
 		}
 		if(frame == ULYSSES_FLAKE_FRAME) {
-			sySetEvent(btUlyssesFlutterFlake, TASK_PASS_FRAME);
+			sySetEvent(btUlyssesFlutterFlake, EVENT_PASS_FRAME);
 			ULYSSES_FLAKE.x = toFIXED(188);
 			ULYSSES_FLAKE.y = toFIXED(96);
 			ULYSSES_FLAKE.velX = 0;
@@ -945,7 +938,7 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 
 	EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 	REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
-				 BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
+		BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
 	sySynch(1);
 	/* FAKEMATCH(dead): a once-only block. */
 	{
@@ -958,7 +951,7 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 	sySynch(1);
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
 	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
-				 BLDCNT_TGT2_ALL;
+		BLDCNT_TGT2_ALL;
 	REG_DISPCNT = EFFECT_DISPCNT;
 	syCloseEvent(btEffectTransferCanvas);
 	EFFECT_RELEASE_BLITTERS();
@@ -973,64 +966,59 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 	sySynch(1);
 	btBackgroundLoadStub(BATTLE_BACKGROUND_ZOOMED, battle->bg, -1);
 	REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-				 BGCNT_SCREEN_BASE(7);
+		BGCNT_SCREEN_BASE(7);
 	syWordsClear((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
 	syCloseEvent(btEffectDarkenBackgroundStep);
 	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-							DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
-							DISPCNT_WIN1_ON,
-						IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
+		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+			DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
+		IO_WRITE_HALFWORD);
 	REG_BLDCNT = 0;
 	sySynch(1);
 	/* The battle background's colours come back, red and blue first. */
 	for(frame = 0; frame != 40; frame++) {
-		u16 *src = battle->pal;
-		volatile u16 *dst = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
+		Uint16			*src = battle->pal;
+		volatile Uint16 *dst = (volatile Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 		for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++, src++, dst++) {
-			s32 v = *src;
-			s32 r = RGB_LEVEL_MAX;
-			s32 g;
-			s32 b;
-			s32 nr;
-			s32 ng;
-			s32 nb;
+			Sint32 v = *src;
+			Sint32 r = RGB_LEVEL_MAX;
+			Sint32 g;
+			Sint32 b;
+			Sint32 nr;
+			Sint32 ng;
+			Sint32 nb;
 
 			r &= v;
-			g = (u16)RGB_GREEN((u16)v);
-			b = (u16)RGB_BLUE((u16)v);
+			g = (Uint16)RGB_GREEN((Uint16)v);
+			b = (Uint16)RGB_BLUE((Uint16)v);
 			nr = r + frame - 30;
 			ng = g + frame - 40;
 			nb = b + frame - 30;
 			if(nr < 0) {
 				nr = 0;
-			}
-			else if(nr > r) {
+			} else if(nr > r) {
 				nr = r;
 			}
 			if(ng < 0) {
 				ng = 0;
-			}
-			else if(ng > g) {
+			} else if(ng > g) {
 				ng = g;
 			}
 			if(nb < 0) {
 				nb = 0;
-			}
-			else if(nb > b) {
+			} else if(nb > b) {
 				nb = b;
 			}
 			*dst = RGB(nr, ng, nb);
 		}
 		sySynch(1);
 	}
-	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-							DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
-							DISPCNT_WIN1_ON,
-						IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
+		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
+			DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
+		IO_WRITE_HALFWORD);
 	if(flakeAway == 1) {
 		syCloseEvent(btUlyssesFlutterFlake);
 	}
@@ -1046,7 +1034,7 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 #undef ULYSSES_PICTURES
 #undef ULYSSES_SILHOUETTE_WIDTH
 #undef ULYSSES_SILHOUETTE_HEIGHT
-#undef ULYSSES_FLAKE_CELS
+#undef ULYSSES_FLAKE_PICTURES
 #undef ULYSSES_RUNE_CIRCLE_PICTURES
 #undef ULYSSES_YELLOW_ORB_PICTURES
 #undef ULYSSES_CRESCENT_WIDTH
@@ -1091,68 +1079,68 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args) {
 #undef ULYSSES_STRIKE_SPARKS
 #undef ULYSSES_SPARK_COUNT
 
-/* The swirl swipe's modes (btEffectRunSwirlSwipe), each named for the */
-/* effect that plays it. */
+/* The swirl swipe's modes (btEffectRunSwirlSwipe), each named for the effect
+   that plays it. */
 typedef enum SWIRL_SWIPE_MODE {
 	SWIRL_SWIPE_POISON_BEAT,  /* lime; the target recoils at once, 48 frames */
 	SWIRL_SWIPE_SPINNING_BEAT /* magenta; the target is thrown up, 74 frames */
 } SWIRL_SWIPE_MODE;
 
-/* A lime swirl sweeps across the first target and knocks it back. */
-/* */
-/* Abilities: Poison Beat. */
-void btEffectRunPoisonBeat(BATTLE_EFFECT_PARM *args) {
+/* A lime swirl sweeps across the first target and knocks it back.
+
+   Abilities: Poison Beat. */
+void btEffectRunPoisonBeat(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunSwirlSwipe(args, SWIRL_SWIPE_POISON_BEAT);
 }
 
-/* A magenta swirl sweeps across the first target and throws it into the air. */
-/* */
-/* Abilities: Spinning Beat. */
-void btEffectRunSpinningBeat(BATTLE_EFFECT_PARM *args) {
+/* A magenta swirl sweeps across the first target and throws it into the air.
+
+   Abilities: Spinning Beat. */
+void btEffectRunSpinningBeat(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunSwirlSwipe(args, SWIRL_SWIPE_SPINNING_BEAT);
 }
 
 /* A swirl sweeps across the first target from the user's side. */
-void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, s32 mode) {
-	HEAP_SLOTS *heap;
+void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
+{
+	HEAP_SLOTS			*heap;
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	MOTION_OBJECT *target;
-	SCR_POINT position;
+	void				*canvas;
+	MOTION_OBJECT		*target;
+	SCREEN_POINT		 position;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
 	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE draw[2];
-	s32 frames;
-	s32 frame;
-	s32 picture;
+	Sint32		   frames;
+	Sint32		   frame;
+	Sint32		   picture;
 
 	/* The canvas at its own width, and a transparent blitter, mirrored when the
-	 */
-	/* targets are the party. */
+	   targets are the party. */
 	heap = Ram_HeapSlots;
 	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
 	canvas = heap->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(0);
 	if(args->side == EFFECT_SIDE_PARTY) {
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-							BLITTER_TRANSPARENT);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
 		draw[0] = heap->ramCode;
-	}
-	else {
+	} else {
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-							EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-							BLITTER_TRANSPARENT);
+			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
 		draw[0] = heap->ramCode;
 	}
-	btResourceLoadAndDecompress(RESOURCE_MAGENTA_SWIRL_SHEET, state->sheet, 1,
-								1);
-	btResourceLoadAndDecompress(RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapCellBuffer,
-								1, 0);
+	btResourceLoadAndDecompress(
+		RESOURCE_MAGENTA_SWIRL_SHEET, state->sheet, 1, 1);
+	btResourceLoadAndDecompress(
+		RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapMetatileBuffer, 1, 0);
 	if(mode == SWIRL_SWIPE_POISON_BEAT) {
 		LOAD_BG_PALETTE(RESOURCE_LIME_PALETTE);
 	}
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
-						  CANVAS_FADE_THREE_QUARTERS);
+	EFFECT_START_TRANSFER(
+		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
 	/* The canvas is placed on the first target. */
 	target = btObjectGetStub(args->tgts[0])->obj;
@@ -1167,42 +1155,41 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, s32 mode) {
 
 	for(frame = 0; frame != frames; frame++) {
 		/* The swirl: six pictures, four frames each, the last two from the
-		 * tail. */
+		   tail. */
 		picture = frame / 4;
 		if(picture <= 5) {
 			if(picture <= 3)
 				draw[0](canvas, state->sheet + SwirlSwipe_Pictures[picture],
-						SwirlSwipe_PictureX[picture + args->side * 6],
-						SwirlSwipe_PictureBiasY[picture] + 32,
-						SwirlSwipe_PictureWidths[picture],
-						SwirlSwipe_PictureHeights[picture]);
+					SwirlSwipe_PictureX[picture + args->side * 6],
+					SwirlSwipe_PictureBiasY[picture] + 32,
+					SwirlSwipe_PictureWidths[picture],
+					SwirlSwipe_PictureHeights[picture]);
 			else
 				draw[0](canvas,
-						Ram_MapCellBuffer + SwirlSwipe_Pictures[picture],
-						SwirlSwipe_PictureX[picture + args->side * 6],
-						SwirlSwipe_PictureBiasY[picture] + 32,
-						SwirlSwipe_PictureWidths[picture],
-						SwirlSwipe_PictureHeights[picture]);
+					Ram_MapMetatileBuffer + SwirlSwipe_Pictures[picture],
+					SwirlSwipe_PictureX[picture + args->side * 6],
+					SwirlSwipe_PictureBiasY[picture] + 32,
+					SwirlSwipe_PictureWidths[picture],
+					SwirlSwipe_PictureHeights[picture]);
 		}
 		if(frame == 8) {
 			if(mode == SWIRL_SWIPE_POISON_BEAT) {
 				EFFECT_SHOW_DAMAGE(SE_IMPACT);
 				btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HOP);
-			}
-			else {
+			} else {
 				sySndPlayStub(SE_HEAVY_IMPACT);
-				btEffectTintBattler(args->tgts[0], SPRITE_COLOR_WHITE,
-									POSE_DAMAGE, 0, 4);
+				btEffectTintBattler(
+					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
 			}
 			state->shakeFrm = 8;
 		}
-		/* Spinning Beat throws the target up at frame 13; it lands at frame 65.
-		 */
+		/* Spinning Beat throws the target up at frame 13; it lands at frame
+		   65. */
 		if(mode == SWIRL_SWIPE_SPINNING_BEAT) {
 			if(frame == 13) {
 				target->velY = toFIXED(12);
 				target->verticalMotionStrength = toFIXED(47) / 100;
-				target->verticalMotionPhase = FIXED_ONE / 4;
+				target->verticalMotionPhase = toFIXED(1) / 4;
 			}
 			if(frame == 65) {
 				state->shakeFrm = 4;
@@ -1216,31 +1203,32 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, s32 mode) {
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define SPIDER_WEB_FRAMES 63
+#define SPIDER_WEB_FRAMES		63
 /* SpiderWebSheet's quarter of the web, a square drawn four times mirrored. */
 #define SPIDER_WEB_QUARTER_SIZE 32
 
 /* Builds the transparent blitter for one quarter. */
-#define LOAD_QUARTER(flags)                                                    \
+#define LOAD_QUARTER(flags) \
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_TRANSPARENT)
 
 /* Draws one quarter of the web with the blitter just built. */
-#define DRAW_QUARTER(x, y)                                                     \
+#define DRAW_QUARTER(x, y) \
 	(Ram_HeapSlots->ramCode)(canvas, state->sheet, x, y, size, size)
 
-/* A spider web spreads over the targets in four mirrored quarters, fades, */
-/* and Impair's effect follows. */
-/* */
-/* Abilities: Spider Web. */
-void btEffectRunSpiderWeb(BATTLE_EFFECT_PARM *args) {
-	SCR_POINT middle;
-	void *canvas;
+/* A spider web spreads over the targets in four mirrored quarters, fades, and
+   Impair's effect follows.
+
+   Abilities: Spider Web. */
+void btEffectRunSpiderWeb(BATTLE_EFFECT_PARM *args)
+{
+	SCREEN_POINT		 middle;
+	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	volatile u16 *blend;
-	s32 size;
-	s32 flags;
-	s32 frame;
-	s32 i;
+	volatile Uint16		*blend;
+	Sint32				 size;
+	Sint32				 flags;
+	Sint32				 frame;
+	Sint32				 i;
 
 	/* The canvas, unseen at first, on the targets' middle. */
 	canvas = Ram_HeapSlots->battleCanvas;
@@ -1264,10 +1252,8 @@ void btEffectRunSpiderWeb(BATTLE_EFFECT_PARM *args) {
 			*blend = EFFECT_BLEND_CANVAS(124 - (frame << 1));
 
 		/* The four quarters: the one picture as it is, mirrored, flipped, and
-		 */
-		/* both. Each blitter is built, drawn with and released before the next
-		 */
-		/* is built. */
+		   both. Each blitter is built, drawn with and released before the next
+		   is built. */
 		flags = EFFECT_CLIP_BOUNDS;
 		LOAD_QUARTER(flags);
 		DRAW_QUARTER(33, 41);
@@ -1286,20 +1272,19 @@ void btEffectRunSpiderWeb(BATTLE_EFFECT_PARM *args) {
 		syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 
 		/* Every target flashes at frame 10, and the damage shows at 32 with a
-		 */
-		/* crack. */
+		   crack. */
 		if(frame == 32)
 			EFFECT_SHOW_DAMAGE(SE_CRACK);
 		for(i = 0; i != args->tgtCnt; i++) {
 			if(frame == 10)
-				btEffectTintBattler(args->tgts[i], SPRITE_COLOR_WHITE,
-									TINT_KEEP, i, 8);
+				btEffectTintBattler(
+					args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 		}
 		EFFECT_END_FRAME(state);
 	}
 
-	/* Both canvases are cleared, and Impair's effect follows: the targets' */
-	/* Defense drops. */
+	/* Both canvases are cleared, and Impair's effect follows: the targets'
+	   Defense drops. */
 	syCloseEvent(btEffectTransferCanvas);
 	syWordsClear((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
 	syWordsClear(canvas, CANVAS_VIEW_BYTES);

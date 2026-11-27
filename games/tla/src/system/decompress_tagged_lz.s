@@ -6,7 +6,7 @@
 @ relative to pc, including r11/fp as ordinary decoder state. Its Thumb
 @ entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
 @ the halfword after bx pc is never run.
-@ Why Decompress_MoveToFrontLzLoop to Resource_RefillMoveToFrontLzBits are assembly:
+@ Why syDecompressMoveToFrontLZLoop to Resource_RefillMoveToFrontLzBits are assembly:
 @ computed add pc (add pc, r9, r8, lsl #5) enters fixed-size 32-byte decoder
 @ code slots; command execution also carries live reader register state
 @ across entry labels. push {r5, r9} saves without lr, and r11 (fp) is an
@@ -22,11 +22,11 @@
 	.balign 4
 .syntax unified
 	.thumb
-	.global syDecompressTaggedLzArmCode
-syDecompressTaggedLzArmCode:
-	.global syDecompressTaggedLzArm
+	.global syDecompressTaggedLZArmCode
+syDecompressTaggedLZArmCode:
+	.global syDecompressTaggedLZArm
 	.thumb_func
-syDecompressTaggedLzArm:
+syDecompressTaggedLZArm:
 	bx	pc
 AlchemyUncredited_080128aa:
 	.2byte	0x0200
@@ -236,18 +236,18 @@ AlchemyUncreditedEnd_080128aa:
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	b	.L_08012b40
-	.global syDecompressTaggedLzCodeSize
-	.set syDecompressTaggedLzCodeSize, . - syDecompressTaggedLzArmCode
+	.global syDecompressTaggedLZCodeSize
+	.set syDecompressTaggedLZCodeSize, . - syDecompressTaggedLZArmCode
 
 	.section .text,"ax",%progbits
 	.balign 4
 .syntax unified
 	.thumb
-	.global Decompress_MoveToFrontLzCommandsCode
-Decompress_MoveToFrontLzCommandsCode:
-	.global Decompress_MoveToFrontLzCommands
+	.global syDecompressMoveToFrontLZCommandsCode
+syDecompressMoveToFrontLZCommandsCode:
+	.global syDecompressMoveToFrontLZCommands
 	.thumb_func
-Decompress_MoveToFrontLzCommands:
+syDecompressMoveToFrontLZCommands:
 	bx	pc
 AlchemyUncredited_08012b72:
 	.2byte	0x0200
@@ -268,7 +268,7 @@ AlchemyUncreditedEnd_08012b72:
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
 	blmi	Resource_RefillMoveToFrontLzBits
-	b	Decompress_MoveToFrontLzLoop
+	b	syDecompressMoveToFrontLZLoop
 
 .syntax unified
 	.section .rodata,"a",%progbits
@@ -332,8 +332,8 @@ AlchemyUncreditedEnd_08012b72:
 .L_08012c74:
 	strb	r5, [r1, #1]!
 	pop	{r5, r9}
-	.global Decompress_MoveToFrontLzLoop
-Decompress_MoveToFrontLzLoop:
+	.global syDecompressMoveToFrontLZLoop
+syDecompressMoveToFrontLZLoop:
 	lsrs	r2, r2, #1
 	bcs	.L_08012c34
 	lsrs	r2, r2, #1
@@ -404,12 +404,12 @@ Decompress_MoveToFrontLzLoop:
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
-	beq	Decompress_MoveToFrontLzLoop
+	beq	syDecompressMoveToFrontLZLoop
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
 	bne	.L_08012d60
-	b	Decompress_MoveToFrontLzLoop
+	b	syDecompressMoveToFrontLZLoop
 .L_08012d84:
 	sub	r6, r1, r9
 	cmp	r6, #0x800
@@ -632,8 +632,8 @@ AlchemyUncreditedEnd_08013048:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.L_08012f7c
-	.global Decompress_MoveToFrontLzCommandsEnd
-Decompress_MoveToFrontLzCommandsEnd:
+	.global syDecompressMoveToFrontLZCommandsEnd
+syDecompressMoveToFrontLZCommandsEnd:
 
 	.section .text.decode_2_loop,"ax",%progbits
 	.balign 4

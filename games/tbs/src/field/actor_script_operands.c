@@ -1,4 +1,3 @@
-/* @file */
 /* Script state values: the handler SC_SET, SC_ADD and SC_CMP call for each. */
 
 #include "field/actor_script_operands.h"

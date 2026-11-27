@@ -1,11 +1,9 @@
 #ifndef ALCHEMY_GLOBALS_H
 #define ALCHEMY_GLOBALS_H
 
-/* @file */
-/* The system library's variables, as SGL's sgl_work.h holds its work */
-/* areas: each group's variables in IWRAM, EWRAM and ROM. system.h includes */
-/* it; a file built by another compiler can include it with */
-/* system/definitions.h. */
+/* The system library's variables, as SGL keeps its system variables and work
+   areas: each group's variables in IWRAM, EWRAM and ROM. system.h includes it;
+   a file built by another compiler can include it with system/definitions.h. */
 
 #include "types.h"
 #include "fixed_math.h"
@@ -13,8 +11,8 @@
 #include "static_assert.h"
 #include "system/definitions.h"
 
-/* The structures of other parts that the system library's RAM holds, named */
-/* here by their tags; each part's own header completes its type. */
+/* The structures of other parts that the system library's RAM holds, named here
+   by their tags; each part's own header completes its type. */
 struct DISPLAY_SCROLL_OBJECT;
 struct FlashType;
 struct MusicPlayerInfo;
@@ -22,580 +20,497 @@ struct MusicPlayerTrack;
 struct SoundInfo;
 struct SoundVBlankState;
 
-/* The task group. Tasks, their priorities and the task table, with room for 24
- */
-/* tasks. */
-/* 1 while sySynch() runs the frame pass's tasks (TASK_PASS_FRAME). */
-extern volatile u8 TasksRunning;
-extern u8 TasksInitialized; /* 1 once the task table is set up */
-/* The task table, run in priority order by each pass of sySynch(). */
-extern TASK TasksWork[TASK_COUNT];
+/* The event group. Events, their priorities and the event table, with room for
+   24 events. 1 while sySynch() runs the frame pass's events
+   (EVENT_PASS_FRAME). */
+extern volatile Uint8 EventsRunning;
+extern Uint8		  EventsInitialized; /* 1 once the event table is set up */
+/* The event table, run in priority order by each pass of sySynch(). */
+extern EVENT EventBuf[EVENT_COUNT];
 
-/* The irq group. The interrupt sources, their handler table and the resident */
-/* IWRAM code the interrupts enter through. */
-/* The handler the IWRAM dispatcher calls for each interrupt source. */
+/* The irq group. The interrupt sources, their handler table and the resident
+   IWRAM code the interrupts enter through. The handler the IWRAM dispatcher
+   calls for each interrupt source. */
 extern INTERRUPT_HANDLER IrqHandlers[IRQ_COUNT];
 
 /* The handlers installed at power-on, copied into IrqHandlers. */
 extern const INTERRUPT_HANDLER DefaultIrqHandlers[IRQ_COUNT];
 
-/* The interrupt dispatcher at the start of the IWRAM-resident code, whose */
-/* other functions are reached at fixed offsets from it (the iwram_call group).
- */
-extern u8 IwramIrqMain[];
-/* Where the IWRAM-resident code lies in ROM (ld_script.ld): 4 KB of it is */
-/* copied to IwramIrqMain at power-on. */
-extern const u8 IwramResident_Rom[];
-/* The BIOS's interrupt vector, pointed at IwramIrqMain at power-on. */
+/* The interrupt dispatcher at the start of the IWRAM-resident code, whose other
+   functions are reached at fixed offsets from it (the iwram_call group). */
+extern Uint8 syIWRAMIRQMain[];
+/* Where the IWRAM-resident code lies in ROM (ld_script.ld): 4 KB of it is
+   copied to syIWRAMIRQMain at power-on. */
+extern const Uint8 IwramResident_Rom[];
+/* The BIOS's interrupt vector, pointed at syIWRAMIRQMain at power-on. */
 extern void *IrqVector;
 
-/* The heap_slots group. Two EWRAM buffers the battle engine shares with the */
-/* field engine and the link screens. */
-/* 16 KB of EWRAM at 0x02018000, where the battle's actor sprite buffers */
-/* start, 16 KB a slot; the map's cells fill it while a map is loaded. */
-extern u8 ActorSpriteSlots[];
+/* The heap_slots group. Two EWRAM buffers the battle engine shares with the
+   field engine and the link screens. 16 KB of EWRAM at 0x02018000, where the
+   battle's actor sprite buffers start, 16 KB a slot; the map's metatiles fill
+   it while a map is loaded. */
+extern Uint8 ActorSpriteSlots[];
 
 /* 24 bytes a peer: where a link battle reads its partner's signature. */
-extern u16 LinkPeerSignatures[][12];
+extern Uint16 LinkPeerSignatures[][12];
 
 /* The affine group. Sprite rotation and scaling: a sprite's transform and the
- */
-/* OAM matrices this frame hands out for it. */
-/* Matrices handed out this frame (syOamMatrixAllocFromTransform), up to 32; */
-/* syOamResetFrame sets it back to 0 after each VBlank. */
-extern u8 OamMatrixCount;
+   OAM matrices this frame hands out for it. Matrices handed out this frame
+   (syOAMMatrixAllocFromTransform), up to 32; syOAMResetFrame sets it back to 0
+   after each VBlank. */
+extern Uint8 OamMatrixCount;
 /* This frame's 32 matrices, copied into OAM with the sprites. */
 extern AFFINE_MATRIX OamMatrices[];
 
-/* The bg_scroll group. The four backgrounds' scroll offsets, written to the */
-/* hardware each VBlank. */
-/* BG0 to BG3's scroll offsets, which the VBlank handler copies to */
-/* REG_BG0HOFS to REG_BG3VOFS in the VBlank after sySynch() sets */
-/* FrameRenderPending. */
+/* The bg_scroll group. The four backgrounds' scroll offsets, written to the
+   hardware each VBlank. BG0 to BG3's scroll offsets, which the VBlank handler
+   copies to REG_BG0HOFS to REG_BG3VOFS in the VBlank after sySynch() sets
+   FrameRenderPending. */
 extern BG_SCROLL BgScrollWork[];
 
-/* The decompress group. The decoders and other ARM code the system library */
-/* copies to RAM to run (syRamCodeLoad). Such a function is declared as an array
- */
-/* of bytes, and a symbol ending in CodeSize is the length of the copy: no */
-/* object, but an address the linker sets equal to the length, which the loader
- */
-/* reads by casting it to a number. */
-/* syMatrixBuildLookAt's dot product, a Thumb entry and its ARM code: eight */
-/* words it copies onto its stack to run. */
-extern const u32 RelocatedInnerProduct[];
-/* The tagged LZ decoder in ARM, run by syDecompressTaggedLz from a heap copy.
- */
-extern const u8 syDecompressTaggedLzArmCode[];
-/* The size of syDecompressTaggedLzArmCode, which syDecompressTaggedLz copies */
-/* to the heap. */
-extern u8 syDecompressTaggedLzCodeSize[];
-/* The move-to-front LZ decoder's command loop, run by */
-/* syDecompressMoveToFrontLz from a heap copy. */
-extern const u8 Decompress_MoveToFrontLzCommandsCode[];
-/* The size of Decompress_MoveToFrontLzCommandsCode, which */
-/* syDecompressMoveToFrontLz copies to the heap (ld_script.ld). */
-extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
-/* The byte LZ decoder, run by syDecompressByteLz from a heap copy. */
-extern const u8 Resource_DecodeByteLzCode[];
-/* The size of Resource_DecodeByteLzCode, which syDecompressByteLz copies to */
-/* the heap. */
-extern u8 Resource_DecodeByteLzCodeSize[];
-/* The colour index Render_DecodePicture paints every pixel of a layer drawn */
-/* with SPRITE_COLOR_FILL; the sprite viewer sets it to 3. */
-extern u8 DecodeFillByte;
+/* The decompress group. The decoders and other ARM code the system library
+   copies to RAM to run (RAM_CODE_LOAD). Such a function is declared as an array
+   of bytes, and a symbol ending in CodeSize is the length of the copy: no
+   object, but an address the linker sets equal to the length, which the loader
+   reads by casting it to a number. syMatrixBuildLookAt's dot product, a Thumb
+   entry and its ARM code: eight words it copies onto its stack to run. */
+extern const Uint32 RelocatedInnerProduct[];
+/* The tagged LZ decoder in ARM, run by syDecompressTaggedLZ from a heap
+   copy. */
+extern const Uint8 syDecompressTaggedLZArmCode[];
+/* The size of syDecompressTaggedLZArmCode, which syDecompressTaggedLZ copies to
+   the heap. */
+extern Uint8 syDecompressTaggedLZCodeSize[];
+/* The move-to-front LZ decoder's command loop, run by syDecompressMoveToFrontLZ
+   from a heap copy. */
+extern const Uint8 syDecompressMoveToFrontLZCommandsCode[];
+/* The size of syDecompressMoveToFrontLZCommandsCode, which
+   syDecompressMoveToFrontLZ copies to the heap (ld_script.ld). */
+extern Uint8 Decompress_MoveToFrontLzCommandsCodeSize[];
+/* The byte LZ decoder, run by syDecompressByteLZ from a heap copy. */
+extern const Uint8 Resource_DecodeByteLzCode[];
+/* The size of Resource_DecodeByteLzCode, which syDecompressByteLZ copies to the
+   heap. */
+extern Uint8 Resource_DecodeByteLzCodeSize[];
+/* The colour index fdRenderDecodePicture paints every pixel of a layer drawn
+   with SPRITE_COLOR_FILL; the sprite viewer sets it to 3. */
+extern Uint8 DecodeFillByte;
 
-/* The stub group. The system module's stub table. */
-/* The stub table of the system library's functions, which the world */
-/* map's tilt reads for its arctangent. */
+/* The stub group. The system module's stub table. The stub table of the system
+   library's functions, which the world map's tilt reads for its arctangent. */
 extern const SYSTEM_STUB_TABLE Stubs_System;
 
-/* The flash group. The state of the SDK's flash library in EWRAM: */
-/* IdentifyFlash installs the chip's functions and type. */
-/* The chip type IdentifyFlash installed. */
-extern const struct FlashType *FlashWork;
-/* The byte reader copied to RAM (CopyFlashReadRoutineToRam), good only until */
-/* the caller that holds the copy returns. */
-extern u8 (*FlashReadRoutine)(u8 *source);
-/* The chip's erase-all function (FlashSetupInfo.eraseChip). */
-extern u16 (*EraseFlashChipWork)(void);
-/* The chip's erase-sector function (FlashSetupInfo.eraseSector). */
-extern u16 (*EraseFlashSectorWork)(u16 sector);
-/* The chip's program function (FlashSetupInfo.program), which */
-/* sySaveWriteSector calls. */
-extern u16 (*ProgramFlashSectorWork)(u16 sector, u8 *source);
-/* The installed chip's wait (FlashSetupInfo.wait, a FlashWaitProc). The LZ */
-/* packer borrows this cell under another type while no flash operation runs. */
-extern u16 (*WaitForFlashWriteWork)(u8 timingIndex, volatile u8 *address,
-									u8 expected);
-/* The cells of the SDK's flash library from WaitForFlashWriteWork on, under a
- */
-/* label of their own: the credits build a backdrop's grey colours there */
-/* while no flash operation runs (mnCreditsLoadBackground). */
-extern u16 Credits_GreyColors[];
-/* The chip's wait-time table (FlashSetupInfo.maxTime). */
-extern u16 *FlashMaxTime;
-/* REG_IME as StartFlashTimer found it, for StopFlashTimer to restore. */
-extern u16 FlashSavedIme;
-/* Set by FlashTimerIntr when the running operation's time is up. */
-extern u8 FlashTimeoutFlag;
-/* The hardware timer, 0 to 3, the SDK's flash library times its waits with */
-/* (SAVE_FLASH_TIMER). */
-extern u8 FlashTimerNum;
-/* Interrupts left before the running flash operation times out */
-/* (FlashTimerIntr). */
-extern volatile u16 FlashTimerCount;
-/* The selected timer's counter, syREGTMnCNTL (SetFlashTimerIntr). */
-extern u16 *FlashTimerReg;
-/* Bytes left of the sector being programmed. */
-extern u16 FlashNumRemainingBytes;
+/* The flash group. The SDK's flash library keeps its state in EWRAM
+   (sdk/flash.h, sdk/flash_data.h); one of its metatiles has a name here too.
+   The metatiles of the SDK's flash library from WaitForFlashWriteWork on, under
+   a label of their own: the credits build a backdrop's grey colours there while
+   no flash operation runs (mnCreditsLoadBackground). */
+extern Uint16 Credits_GreyColors[];
 
-/* The frame group. The frame loop's globals: the VBlanks a frame takes, the */
-/* CPU load display and the VBlank flags, which sySynch() */
-/* (system/system_frame.c) and the VBlank handler share. */
-/* The build stamp syCopyBuildStamp copies to IWRAM at power-on: twelve */
-/* digits and a zero word, at the bottom of the frame-wait stack. */
-extern s32 BuildStampWork[];
-/* The VBlank handler copies the OAM list only while it is set; scenes clear */
-/* it to keep their own sprites on screen. */
-extern u8 OamCopyEnabled;
-/* Set by sySynch() once it has built a frame's OAM list; the VBlank handler */
-/* then copies the list, the BG scroll and the queued register writes, and */
-/* clears it. */
-extern u8 FrameRenderPending;
+/* The frame group. The frame loop's globals: the VBlanks a frame takes, the CPU
+   load display and the VBlank flags, which sySynch() (system/system_frame.c)
+   and the VBlank handler share. The build stamp syCopyBuildStamp copies to
+   IWRAM at power-on: twelve digits and a zero word, at the bottom of the
+   frame-wait stack. */
+extern Sint32 BuildStampWork[];
+/* The VBlank handler copies the OAM list only while it is set; scenes clear it
+   to keep their own sprites on screen. */
+extern Uint8 OamCopyEnabled;
+/* Set by sySynch() once it has built a frame's OAM list; the VBlank handler
+   then copies the list, the BG scroll and the queued register writes, and
+   clears it. */
+extern Uint8 FrameRenderPending;
 /* Debug: sySynch() measures the CPU load into CpuLoadPeak when set. */
-extern u8 CpuLoadDisplayEnabled;
+extern Uint8 CpuLoadDisplayEnabled;
 /* VBlanks since sySynch() last started a frame: 1 when the frame took one. */
-extern u16 FrameVBlanks;
-/* FrameVBlanks as the last frame left it; the text typing paces itself by */
-/* it. */
-extern u16 LastFrameVBlanks;
-extern u32 CpuLoadTimer; /* frames CpuLoadPeak is still held */
-/* The highest CPU load in the last 30 frames: the scanline the frame's work */
-/* ended on, plus 256 for each VBlank it overran. */
-extern u32 CpuLoadPeak;
+extern Uint16 FrameVBlanks;
+/* FrameVBlanks as the last frame left it; the text typing paces itself by
+   it. */
+extern Uint16 LastFrameVBlanks;
+extern Uint32 CpuLoadTimer; /* frames CpuLoadPeak is still held */
+/* The highest CPU load in the last 30 frames: the scanline the frame's work
+   ended on, plus 256 for each VBlank it overran. */
+extern Uint32 CpuLoadPeak;
 /* Nonzero: sySynch() counts no idle time and ignores sleep requests. */
-extern volatile u8 SleepDisabled;
+extern volatile Uint8 SleepDisabled;
 /* Sleep after three idle minutes. */
-extern volatile u8 IdleSleepEnabled;
+extern volatile Uint8 IdleSleepEnabled;
 /* Frames since a key was last held. */
-extern volatile u16 IdleFrames;
+extern volatile Uint16 IdleFrames;
 /* 1: sleep this frame; more: count down to it. */
-extern volatile u8 SleepRequested;
+extern volatile Uint8 SleepRequested;
 /* Debug builds: Start+Select pauses the frame loop. */
-extern u8 DebugMode;
-extern u8 DebugPaused; /* the debug pause is on */
+extern Uint8 DebugMode;
+extern Uint8 DebugPaused; /* the debug pause is on */
 /* Set by the keypad interrupt; sySynch() performs the soft reset. */
-extern u8 ResetRequested;
-/* Written by the soft reset just before it restarts the cartridge, and */
-/* cleared by syInit; nothing else reads it. */
-extern u32 CartridgeResetMarker;
+extern Uint8 ResetRequested;
+/* Written by the soft reset just before it restarts the cartridge, and cleared
+   by syInit; nothing else reads it. */
+extern Uint32 CartridgeResetMarker;
 /* Frames sySynch() has finished. */
-extern u32 FrameCount;
-extern u32 PlayTimeFrames; /* the play time clock, in frames */
+extern Uint32 FrameCount;
+extern Uint32 PlayTimeFrames; /* the play time clock, in frames */
 
-extern u32 VBlankCount; /* counted up by every VBlank */
-/* volatile: the VBlank handler sets it while syWaitForFrameInterrupt */
-/* waits on it, so it is no device. */
-/* Bit 0 is set by the VBlank handler; syWaitForFrameInterrupt clears it */
-/* and halts until it is set again. */
-extern volatile u16 VBlankDone;
+extern Uint32 VBlankCount; /* counted up by every VBlank */
+/* volatile: the VBlank handler sets it while syWaitForFrameInterrupt waits on
+   it, so it is no device. Bit 0 is set by the VBlank handler;
+   syWaitForFrameInterrupt clears it and halts until it is set again. */
+extern volatile Uint16 VBlankDone;
 
-/* The heap_release group. The heap's allocators and releases */
-/* (system/system_heap.c). */
-/* The EWRAM heap's space, 32 KB from 0x02030000. */
-extern u8 EwramHeap[];
+/* The heap_release group. The heap's allocators and releases
+   (system/system_heap.c). The EWRAM heap's space, 32 KB from 0x02030000. */
+extern Uint8 EwramHeap[];
 /* The IWRAM heap's space, from 0x03001300 up to Ram_IwramHeapEnd. */
-extern u8 IwramHeap[];
+extern Uint8 IwramHeap[];
 
 /* The input group. The keypad state the VBlank interrupt keeps. */
-extern INPUT_STATE InputWork;
+extern INPUT_STATE PerWork;
 
-/* The io_write_queue group. The I/O write queue: register writes held until */
-/* VBlank. */
-/* The queue IO_WRITE_QUEUE_PUSH and the IoWriteQueue_Store writers fill, and */
-/* syIoWriteQueueFlushPending empties at VBlank. */
+/* The io_write_queue group. The I/O write queue: register writes held until
+   VBlank. The queue IO_WRITE_QUEUE_PUSH and the IoWriteQueue_Store writers
+   fill, and syIOWriteQueueFlushPending empties at VBlank. */
 extern IO_WRITE_QUEUE IoWriteQueueWork;
 
-/* The math_table group. The arctangent table. */
-/* Tangents in 8.8 fixed point over a quarter turn in 256 steps, which */
-/* syAtan searches. */
-extern const u16 Math_TanTable[258];
+/* The math_table group. The arctangent table. Tangents in 8.8 fixed point over
+   a quarter turn in 256 steps, which syAtan searches. */
+extern const Uint16 Math_TanTable[258];
 
-/* The matrix group. The current 3D matrix, its one-deep stack, and the unit */
-/* matrix. */
-/* The current 3D transform. syMultiMatrix multiplies the matrix it is */
-/* given into it. */
+/* The matrix group. The current 3D matrix, its one-deep stack, and the unit
+   matrix. The current 3D transform. syMultiMatrix multiplies the matrix it is
+   given into it. */
 extern MATRIX CurrentMatrix;
 
 /* Matrices saved by syPushMatrix, 0 or 1: the save area holds one. */
-extern s32 MatrixStackDepth;
-/* Where syPushMatrix saves CurrentMatrix next: the save area in heap slot */
-/* HEAP_SLOT_MATRIX_STACK, or just past it while a matrix is saved. */
-extern u8 *MatrixStackTop;
+extern Sint32 MatrixStackDepth;
+/* Where syPushMatrix saves CurrentMatrix next: the save area in heap slot
+   HEAP_SLOT_MATRIX_STACK, or just past it while a matrix is saved. */
+extern Uint8 *MatrixStackTop;
 
-/* The oam group. The frame's OAM list. */
-/* The OAM entries the frame's list holds and the most it may; sySynch() */
-/* empties it each frame. */
+/* The oam group. The frame's OAM list. The OAM entries the frame's list holds
+   and the most it may; sySynch() empties it each frame. */
 extern OAM_USAGE OamUsageWork;
 
-/* The projection group. The 3D projection the battle engine and the field */
-/* engine draw with (syPerspective, syConvert3Dto2D). */
-/* The projection the battle engine and the field engine draw with (IWRAM). */
+/* The projection group. The 3D projection the battle engine and the field
+   engine draw with (syPerspective, syConvert3Dto2D). The projection the battle
+   engine and the field engine draw with (IWRAM). */
 extern PROJECTION ProjectionWork;
 
-/* The random group. The battle engine's own random numbers. */
-/* gmBattleRandom's seed, apart from syRandom's so the battle's rolls repeat on
- */
-/* both consoles of a link battle: it starts at 0 there, and each turn the */
-/* parent (link side 0) copies RandomSeed into it and sends it to the child. */
-extern s32 BattleRandomSeed;
+/* The random group. The battle engine's own random numbers. gmBattleRandom's
+   seed, apart from syRandom's so the battle's rolls repeat on both consoles of
+   a link battle: it starts at 0 there, and each turn the parent (link side 0)
+   copies RandomSeed into it and sends it to the child. */
+extern Sint32 BattleRandomSeed;
 
 /* The ram_buffer group. EWRAM's and IWRAM's buffers at fixed addresses, named
- */
-/* by their address where a function reaches them so (FIXED_ADDRESS, with the */
-/* linked symbol beside it), and the scene's own state. */
-/* The map's shape grid, a byte a cell, which fdMapGridLoadMap decodes from */
-/* the map header's shapes and the field's actor cells read. */
-extern u8 MapShapeGrid[];
+   by their address where a function reaches them so (FIXED_ADDRESS, with the
+   linked symbol beside it), and the scene's own state. The map's shape grid, a
+   byte a metatile, which fdMapGridLoadMap decodes from the map header's shapes
+   and the field's actor metatiles read. */
+extern Uint8 MapShapeGrid[];
 
-/* The layout's cell tiles, 32 KB of EWRAM at 0x02020000: each cell's tiles */
-/* 8 bytes, its top two tile entries, then its bottom two. fdMapGridLoadMap */
-/* decodes them in. */
-extern u32 CellTiles[];
+/* The layout's metatile tiles, 32 KB of EWRAM at 0x02020000: each metatile's
+   tiles 8 bytes, its top two tile entries, then its bottom two.
+   fdMapGridLoadMap decodes them in. */
+extern Uint32 MetatileTiles[];
 
 /* Called once by the next VBlank, which clears it first; the world map sets it
- */
-/* to show its next picture. */
+   to show its next picture. */
 extern void (*VBlankCallback)(void);
 
 /* A scene's own state in EWRAM, which each scene lays out as it needs. */
-extern s8 SceneLocalState[];
-/* 120 more bytes of a scene's own state in EWRAM, which a scene that keeps */
-/* one lays out under a name of its own. */
-extern u8 SceneStateWork[];
+extern Sint8 SceneLocalState[];
+/* 120 more bytes of a scene's own state in EWRAM, which a scene that keeps one
+   lays out under a name of its own. */
+extern Uint8 SceneStateWork[];
 
 /* The game's state (MAIN_ROUTINE_STATE). */
 extern MAIN_ROUTINE_STATE MainRoutineStateWork;
-/* MainRoutineStateWork from its summonMask on, under a label of its own: the */
-/* party's DJINN_RECOVERY_TABLE, which gmDjinnGetRecoveryTable returns. Lucky */
-/* Wheels reads its won prizes 320 bytes in (REEL_SAVE). */
-extern u8 PartyDjinnRecovery[];
-/* The game flags, 4096 bits in 512 bytes, saved with the game: flag n is bit */
-/* n & 7 of byte GAME_FLAG_BYTE(n). */
-extern u8 GameFlagBytes[];
+/* MainRoutineStateWork from its summonMask on, under a label of its own: the
+   party's DJINN_RECOVERY_TABLE, which gmDjinnGetRecoveryTable returns. Lucky
+   Wheels reads its won prizes 320 bytes in (REEL_SAVE). */
+extern Uint8 PartyDjinnRecovery[];
+/* The game flags, 4096 bits in 512 bytes, saved with the game: flag n is bit n
+   & 7 of byte GAME_FLAG_BYTE(n). */
+extern Uint8 GameFlagBytes[];
 /* The party's inventories, shortcuts and order as gmInventorySnapshotSave puts
- */
-/* them aside for the Trial Road, with spare room after them. */
-extern u8 InventorySnapshot[];
-/* How many of each rare item the shops may still sell, 0 to 99, by counter */
-/* number (ITEM_COUNTER_COUNT of them; Item_RareItemCounters, */
-/* gmRareItemStockAdjust). */
-extern u8 RareItemStock[];
+   them aside for the Trial Road, with spare room after them. */
+extern Uint8 InventorySnapshot[];
+/* How many of each rare item the shops may still sell, 0 to 99, by counter
+   number (ITEM_COUNTER_COUNT of them; Item_RareItemCounters,
+   gmRareItemStockAdjust). */
+extern Uint8 RareItemStock[];
 
 /* 32 KB of EWRAM holding background tiles, such as the world map's char blocks
- */
-/* 2 and 3. */
-extern u8 BgTileBuffer[];
-/* The map's shape table, 16 KB of EWRAM: 4-byte entries that a map cell's */
-/* shape indexes. */
-extern u8 MapGridShapes[];
-/* 16 KB of EWRAM that pictures and tiles are decoded into before they are */
-/* copied on. */
-extern u8 DecodeBuffer[];
+   2 and 3. */
+extern Uint8 BgTileBuffer[];
+/* The map's shape table, 16 KB of EWRAM: 4-byte entries that a map metatile's
+   shape indexes. */
+extern Uint8 MapGridShapes[];
+/* 16 KB of EWRAM that pictures and tiles are decoded into before they are
+   copied on. */
+extern Uint8 DecodeBuffer[];
 /* The tileset animations' tiles, 16 KB of EWRAM. */
-extern u8 MapGridAnimTiles[];
-/* The map's scene data in EWRAM, loaded from its resource: its entrance */
-/* stream, then from the halfword offsets after it its edits and its bounds. */
-extern u8 MapScene[];
+extern Uint8 MapGridAnimTiles[];
+/* The map's scene data in EWRAM, loaded from its resource: its entrance stream,
+   then from the halfword offsets after it its edits and its bounds. */
+extern Uint8 MapScene[];
 /* The scene data's halfword offset of its edits, from MapScene. */
-extern u8 MapSceneEditsOffset[];
+extern Uint8 MapSceneEditsOffset[];
 /* The scene data's halfword offset of its bounds, from MapScene. */
-extern u8 MapSceneBoundsOffset[];
+extern Uint8 MapSceneBoundsOffset[];
 
 /* Where each of `The Lost Age`'s pictures is unpacked before it is copied into
- */
-/* sprite tiles. */
-extern u8 TitleIntro_LogoTileBuffer[];
+   sprite tiles. */
+extern Uint8 TitleIntro_LogoTileBuffer[];
 
-/* The battle effects' blocks in the map cell buffer, which they borrow while */
-/* no map is loaded. */
-/* The map cell buffer from its second 16 KB on, which some effects borrow as */
-/* scratch: no map is loaded during a battle. */
-extern u8 EffectScratch[];
+/* The battle effects' blocks in the map metatile buffer, which they borrow
+   while no map is loaded. The map metatile buffer from its second 16 KB on,
+   which some effects borrow as scratch: no map is loaded during a battle. */
+extern Uint8 EffectScratch[];
 /* Nirvana's mesh's end, after 112 faces. */
-extern u8 Serac_MeshEnd[];
-/* Inside EffectScratch: FLORA_WORK from its second tile number on, read at */
-/* its fixed place. */
-extern u16 Flora_PetalTiles[];
+extern Uint8 Serac_MeshEnd[];
+/* Inside EffectScratch: FLORA_WORK from its second tile number on, read at its
+   fixed place. */
+extern Uint16 Flora_PetalTiles[];
 /* Inside EffectScratch: FLORA_WORK.pal, the object palette as it fades. */
-extern u16 Flora_SpritePalettes[];
-/* In the map cell buffer: Haures's mound's faces, eight bytes a quad. */
-extern u8 Haures_MoundStrip[];
+extern Uint16 Flora_SpritePalettes[];
+/* In the map metatile buffer: Haures's mound's faces, eight bytes a quad. */
+extern Uint8 Haures_MoundStrip[];
 /* The face after Haures's mound's last, which ends the strip. */
-extern u8 Haures_MoundStripEnd[];
-/* In the map cell buffer: each of Haures's mound corners' shade. */
-extern u8 Haures_MoundShades[];
-/* In the map cell buffer: the tiles Iris draws its sprites from. */
-extern u8 Iris_TileBuffer[];
+extern Uint8 Haures_MoundStripEnd[];
+/* In the map metatile buffer: each of Haures's mound corners' shade. */
+extern Uint8 Haures_MoundShades[];
+/* In the map metatile buffer: the tiles Iris draws its sprites from. */
+extern Uint8 Iris_TileBuffer[];
 
-/* The world map's and the map screen's state in EWRAM. */
-/* The map screen's state while it is open. */
+/* The world map's and the map screen's state in EWRAM. The map screen's state
+   while it is open. */
 extern WORLD_MAP_STATE WorldMapStateWork;
 /* The destination last chosen on the world map (WORLD_MAP_CHOICE). */
 extern WORLD_MAP_CHOICE MapScreenChoice;
-/* The world map camera's yaw, in 1/65536 turns, the scanline parameters were */
-/* built for; the vertex update rebuilds them when it changes. */
-extern u32 ScanlineAngle;
+/* The world map camera's yaw, in 1/65536 turns, the scanline parameters were
+   built for; the vertex update rebuilds them when it changes. */
+extern Uint32 ScanlineAngle;
 /* The world map camera's pitch the scanline parameters were built for. */
-extern u32 ScanlinePitch;
-/* Never set (EWRAM, zero from boot). Set, the map screen would list */
-/* only the places before the first end of the place table, not the second list
- */
-/* from entry 128 on, and show each place's second marker (the high nibble of */
-/* its value). */
-/* XXX (no evidence): what the switch was for; no edition, debug room or other
- */
-/* code writes it, so the game never shows it set. */
-extern s16 MapScreen_FirstListOnly;
-/* Where the map screen's cursor glides to on its own, 16.16; 0 when it does */
-/* not. */
-extern s32 MapScreen_GlideTargetX;
+extern Uint32 ScanlinePitch;
+/* Never set (EWRAM, zero from boot). Set, the map screen would list only the
+   places before the first end of the place table, not the second list from
+   entry 128 on, and show each place's second marker (the high nibble of its
+   value). XXX (no evidence): what the switch was for; no edition, debug room or
+   other code writes it, so the game never shows it set. */
+extern Sint16 MapScreen_FirstListOnly;
+/* Where the map screen's cursor glides to on its own, 16.16; 0 when it does
+   not. */
+extern Sint32 MapScreen_GlideTargetX;
 /* As MapScreen_GlideTargetX, the second coordinate. */
-extern s32 MapScreen_GlideTargetY;
+extern Sint32 MapScreen_GlideTargetY;
 /* Nonzero while the map screen is zoomed in. */
-extern s16 MapScreen_Zoomed;
+extern Sint16 MapScreen_Zoomed;
 /* Set while the place name waits to be drawn again. */
-extern s16 MapScreen_NameRedrawPending[];
+extern Sint16 MapScreen_NameRedrawPending[];
 /* Frames before the place name is drawn again. */
-extern s16 MapScreen_NameRedrawDelay[];
+extern Sint16 MapScreen_NameRedrawDelay[];
 /* The map screen's cursor marker. */
 extern WORLD_MAP_MARKER MapScreen_CursorMarker;
 /* The world map cursor's position (x, then y, 16.16 pixels). */
 extern FIXED *MapScreen_Cursor;
-/* Where the cursor goes back to when Start is let go: the place R or L last */
-/* stepped to, 16.16 pixels. */
-extern s32 MapScreen_CursorStartX;
-extern s32 MapScreen_CursorStartY; /* as MapScreen_CursorStartX */
+/* Where the cursor goes back to when Start is let go: the place R or L last
+   stepped to, 16.16 pixels. */
+extern Sint32 MapScreen_CursorStartX;
+extern Sint32 MapScreen_CursorStartY; /* as MapScreen_CursorStartX */
 /* The map screen's scroll as Select toggles the zoom, 16.16 pixels. */
-extern s32 MapScreen_ScrollX;
-extern s32 MapScreen_ScrollY; /* as MapScreen_ScrollX */
+extern Sint32 MapScreen_ScrollX;
+extern Sint32 MapScreen_ScrollY; /* as MapScreen_ScrollX */
 
-/* The credits' state in EWRAM. */
-/* Slides the crawl has released for the slideshow to show next; the */
-/* slideshow waits while there are none. */
-extern s16 Credits_PendingSlides;
-/* The credits' sprite buffer, copied to OAM each frame: the border strips' */
-/* sprites, then the text's. */
+/* The credits' state in EWRAM. Slides the crawl has released for the slideshow
+   to show next; the slideshow waits while there are none. */
+extern Sint16 Credits_PendingSlides;
+/* The credits' sprite buffer, copied to OAM each frame: the border strips'
+   sprites, then the text's. */
 extern struct DISPLAY_SCROLL_OBJECT *DisplayScroll_Objects;
-/* 0 while the credits text scrolls; once a line stops it, the line's stop */
-/* (1 at a page mark, which A or B releases), then counted up each frame after
- */
-/* the end (CREDITS_FRAMES_AFTER_END). */
-extern s16 DisplayScroll_Busy;
+/* 0 while the credits text scrolls; once a line stops it, the line's stop (1 at
+   a page mark, which A or B releases), then counted up each frame after the end
+   (CREDITS_FRAMES_AFTER_END). */
+extern Sint16 DisplayScroll_Busy;
 /* DisplayScroll_Position when the credits last drew a line. */
-extern s16 DisplayScroll_LastPosition;
-/* How far the credits text has scrolled, in pixels: one every four VBlanks, */
-/* faster while B is held. */
-extern u16 DisplayScroll_Position;
-/* The scrolling image's state. mnEndingImageScroll, a VBlank task, moves */
-/* the scroll toward its target while mnEndingImageWaitForScroll waits for it */
-/* to arrive. */
-/* @{ */
-extern s16 EndingImage_Block;	   /* which character block the image is in */
-extern s16 EndingImage_FadeFrames; /* frames of the fade-in, to 64 */
-extern u32 EndingImage_MapScroll;  /* the tilemap's scroll, 16.16 pixels */
-extern volatile s32 EndingImage_Scroll; /* the scroll, 16.16 pixels */
+extern Sint16 DisplayScroll_LastPosition;
+/* How far the credits text has scrolled, in pixels: one every four VBlanks,
+   faster while B is held. */
+extern Uint16 DisplayScroll_Position;
+/* The scrolling image's state. mnEndingImageScroll, a VBlank event, moves the
+   scroll toward its target while mnEndingImageWaitForScroll waits for it to
+   arrive. */
+extern Sint16 EndingImage_Block; /* which character block the image is in */
+extern Sint16 EndingImage_FadeFrames; /* frames of the fade-in, to 64 */
+extern Uint32 EndingImage_MapScroll;  /* the tilemap's scroll, 16.16 pixels */
+extern volatile Sint32 EndingImage_Scroll; /* the scroll, 16.16 pixels */
 /* The row a scene asks for (mnEndingImageSetTargetRow); Row moves toward it. */
-extern s16 EndingImage_TargetRow;
-extern s16 EndingImage_Row;	  /* the row the scroll is heading for */
-extern s16 EndingImage_Speed; /* the most rows a frame moves */
-extern u8 *EndingImage_Map;	  /* the image's map */
+extern Sint16 EndingImage_TargetRow;
+extern Sint16 EndingImage_Row;	 /* the row the scroll is heading for */
+extern Sint16 EndingImage_Speed; /* the most rows a frame moves */
+extern Uint8 *EndingImage_Map;	 /* the image's map */
 /* The 24 sprites of the image's border strips. */
 extern void *EndingImage_Strips;
-/* @} */
 
-/* The File Screen's options in EWRAM. */
-/* Nonzero offers Battle on the File Screen, when a file has any game flag */
-/* counted in its summary (mnSaveScanFileSummaries). */
-extern s16 TitleBattleOptionEnabled;
-/* Nonzero offers Update on the File Screen, when a file has a party whose */
-/* summary is not marked reunited (mnSaveScanFileSummaries). */
-extern s16 TitleUpdateOptionEnabled;
+/* The File Screen's options in EWRAM. Nonzero offers Battle on the File Screen,
+   when a file has any game flag counted in its summary
+   (mnSaveScanFileSummaries). */
+extern Sint16 TitleBattleOptionEnabled;
+/* Nonzero offers Update on the File Screen, when a file has a party whose
+   summary is not marked reunited (mnSaveScanFileSummaries). */
+extern Sint16 TitleUpdateOptionEnabled;
 
 /* The save group. The save in flash: its sectors, parts and summaries, and the
- */
-/* save's state. */
-/* The current save file, or -1 for none (a new game). */
-extern s16 SaveSlot;
+   save's state. The current save file, or -1 for none (a new game). */
+extern Sint16 BupSlot;
 /* 1 when a save file on the cartridge holds a cleared game, as the save screen
- */
-/* finds on loading the summaries; a new game keeps it in */
-/* MainRoutineStateWork.clearedFileAtStart. */
-extern s16 AnyFileCleared;
-/* The buffer a save file is built in and written from, in two halves; its */
-/* summary's 16-byte header lies just before it. */
-extern u8 SaveBuffer[];
+   finds on loading the summaries; a new game keeps it in
+   MainRoutineStateWork.clearedFileAtStart. */
+extern Sint16 AnyFileCleared;
+/* The buffer a save file is built in and written from, in two halves; its
+   summary's 16-byte header lies just before it. */
+extern Uint8 BupBuffer[];
 
-/* The savedata group. The save signature and sector header template, and the */
-/* link test strings nothing reads (system/savedata.c). */
-extern const u8 Save_Signature[];
-extern const u8 Save_HeaderTemplate[8];
+/* The bupdata group. The save signature and sector header template, and the
+   link test strings nothing reads (system/bupdata.c). */
+extern const Uint8 Bup_Signature[];
+extern const Uint8 Bup_HeaderTemplate[8];
 
-extern const u32 Link_TestWord;
-extern const u8 Link_TestDataA[];
-extern const u8 Link_TestDataB[];
+extern const Uint32 Link_TestWord;
+extern const Uint8	Link_TestDataA[];
+extern const Uint8	Link_TestDataB[];
 
 /* The scene group. The running scene's overlay area, a field position, and the
- */
-/* area name a scene and entrance show. */
-/* The running scene's overlay, loaded into this EWRAM at each scene change; */
-/* its code opens with its entry table. */
+   area name a scene and entrance show. The running scene's overlay, loaded into
+   this EWRAM at each scene change; its code opens with its entry table. */
 extern void *OverlayArea[];
 
-/* The serial group. The link cable's runtime: serial packets, registers and */
-/* transfer state. */
-/* This console's block transfer state, exchanged with the partner's each */
-/* VBlank (sySerialExchangePayloads). */
+/* The serial group. The link cable's runtime: serial packets, registers and
+   transfer state. This console's block transfer state, exchanged with the
+   partner's each VBlank (sySerialExchangePayloads). */
 extern SERIAL_TRANSFER_STATE SerialTransfer;
 /* The link cable's runtime (SERIAL_RUNTIME), which sySerialInit clears. */
 extern SERIAL_STATE SerialStateWork;
-/* Nonzero while the VBlank handler exchanges packets with the partner each */
-/* frame; sySerialInit sets it. */
-extern u16 SerialExchangeActive;
-/* The data a block send reads from, 0 when none is under way */
-/* (sySerialStartSend). */
-extern s32 SerialSendSource;
-/* Bytes of the block send still to go: sySerialStartSend sets it and */
-/* sySerialStepBlockTransfer, which the VBlank handler runs, counts it down. */
-extern volatile u16 SerialSendSize;
-/* Where a block receive writes, 0 when none is under way */
-/* (sySerialStartReceive). */
-extern s32 SerialReceiveDestination;
-/* Bytes of the block receive taken so far: sySerialStepBlockTransfer, which */
-/* the VBlank handler runs, counts it up while the link code polls it. */
-extern volatile u16 SerialReceivedSize;
+/* Nonzero while the VBlank handler exchanges packets with the partner each
+   frame; sySerialInit sets it. */
+extern Uint16 SerialExchangeActive;
+/* The data a block send reads from, 0 when none is under way
+   (sySerialStartSend). */
+extern Sint32 SerialSendSource;
+/* Bytes of the block send still to go: sySerialStartSend sets it and
+   sySerialStepBlockTransfer, which the VBlank handler runs, counts it down. */
+extern volatile Uint16 SerialSendSize;
+/* Where a block receive writes, 0 when none is under way
+   (sySerialStartReceive). */
+extern Sint32 SerialReceiveDestination;
+/* Bytes of the block receive taken so far: sySerialStepBlockTransfer, which the
+   VBlank handler runs, counts it up while the link code polls it. */
+extern volatile Uint16 SerialReceivedSize;
 /* Each console's SERIAL_TRANSFER_STATE as last received, 24 bytes each. */
 extern SERIAL_TRANSFER_STATE SerialPeerPayloads[4];
-/* The block this console sends or expects next (SERIAL_BLOCK_NUMBER_MASK): */
-/* sySerialStartSend and sySerialStartReceive reset it and */
-/* sySerialStepBlockTransfer, which the VBlank handler runs, steps it. */
-extern volatile u8 SerialBlockNumber;
-/* Cleared by sySerialInit and by scLinkLobbyExchangePartyRecords; */
-/* nothing reads it. */
-extern u8 LinkExchangeState;
-/* Link status, written by the VBlank exchange handler while */
-/* sySerialWaitForStatMask and the link screens poll it. */
-extern volatile u16 LinkStatusWork;
+/* The block this console sends or expects next (SERIAL_BLOCK_NUMBER_MASK):
+   sySerialStartSend and sySerialStartReceive reset it and
+   sySerialStepBlockTransfer, which the VBlank handler runs, steps it. */
+extern volatile Uint8 SerialBlockNumber;
+/* Cleared by sySerialInit and by scLinkLobbyExchangePartyRecords; nothing reads
+   it. */
+extern Uint8 LinkExchangeState;
+/* Link status, written by the VBlank exchange handler while
+   sySerialWaitForStatMask and the link screens poll it. */
+extern volatile Uint16 LinkStatusWork;
 
-/* The screen_fade group. The screen fade's state, which syScrFadeUpdate */
-/* steps from the VBlank handler. */
-/* Which way the screen fade goes: 0 towards black, 1 towards white. */
-extern u8 ScreenFadeToWhite;
-/* volatile: syScrFadeUpdate, which the VBlank handler runs, clears it at the */
-/* fade's end while syScrFadeWait waits on it, so it is no device. */
-extern volatile u8
-	ScreenFadeVBlanks; /* the fade's length in VBlanks, 0 when idle */
-/* volatile: the fade starts set it for syScrFadeUpdate, which the VBlank */
-/* handler runs and which counts it down, so it is no device. */
-/* VBlanks until the running fade reaches its target. */
-extern volatile u8 ScreenFadeVBlanksLeft;
+/* The screen_fade group. The screen fade's state, which syScreenFadeUpdate
+   steps from the VBlank handler. Which way the screen fade goes: 0 towards
+   black, 1 towards white. */
+extern Uint8 ScreenFadeToWhite;
+/* volatile: syScreenFadeUpdate, which the VBlank handler runs, clears it at the
+   fade's end while syScreenFadeWait waits on it, so it is no device. the fade's
+   length in VBlanks, 0 when idle */
+extern volatile Uint8 ScreenFadeVBlanks;
+/* volatile: the fade starts set it for syScreenFadeUpdate, which the VBlank
+   handler runs and which counts it down, so it is no device. VBlanks until the
+   running fade reaches its target. */
+extern volatile Uint8 ScreenFadeVBlanksLeft;
 /* The BLDCNT first-target layers the screen fade covers (the low six bits). */
-extern u16 ScreenFadeLayers;
+extern Uint16 ScreenFadeLayers;
 /* The brightness the running fade started from, 0 to 16. */
-extern u8 ScreenFadeStartLevel;
-/* volatile: syScrFadeStart sets it for syScrFadeUpdate, which the VBlank */
-/* handler runs, so it is no device. */
-extern volatile u8 ScreenFadeTargetLevel; /* the brightness the fade ends at */
+extern Uint8 ScreenFadeStartLevel;
+/* volatile: syScreenFadeStart sets it for syScreenFadeUpdate, which the VBlank
+   handler runs, so it is no device. the brightness the fade ends at */
+extern volatile Uint8 ScreenFadeTargetLevel;
 
-/* The sound group. The sound driver's and the game's sound state in EWRAM */
-/* and IWRAM. */
-/* The sound driver's work, which m4aSoundInit sets up through */
-/* SoundInit. */
-extern struct SoundInfo SoundInfoWork;
-/* The sound driver's state as the frame wait runs it. */
+/* The sound group. The game's sound state in EWRAM and IWRAM; the sound
+   driver's own work is declared in sdk/sound_driver.h. The sound driver's state
+   as the frame wait runs it. */
 /* XXX: why the frame wait reads the sound driver's state as bytes rather than
- */
-/* through struct SoundInfo, whose transferCountdown is volatile; whether the */
-/* driver's own struct should make that member volatile would settle the type.
- */
-/* Where the sound driver finds its state (SOUND_INFO_PTR): a pointer to */
-/* SoundInfoWork, whose bytes the frame wait reads. */
-extern u8 *SoundInfoPointer;
-/* The song commands' handlers and the driver's helpers (MPlayFunc), which */
-/* SoundInit copies from MPlayJumpTableTemplate (MPLAY_JUMP_). */
-extern void (*MPlayJumpTable[36])(struct MusicPlayerInfo *player,
-								  struct MusicPlayerTrack *track);
-/* The 16 work bytes every music player shares (MusicPlayerInfo.workBytes), so
- */
-/* one sound can test what another has set (ply_memacc). */
-extern u8 MPlayMemAccArea[];
-/* Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it */
-/* ends. */
+   through struct SoundInfo, whose transferCountdown is volatile; whether the
+   driver's own struct should make that member volatile would settle the type.
+   Where the sound driver finds its state (SOUND_INFO_PTR): a pointer to
+   SoundInfoWork, whose bytes the frame wait reads. */
+extern Uint8 *SoundInfoPointer;
+/* Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it
+   ends. */
 extern struct MusicPlayerInfo MPlayInfo_BGM;
-/* Plays the field's and the battle's action sounds (MUSIC_PLAYER_ACTION_SE); */
-/* SOUND_FADE_OUT_ACTION_SE fades it. */
+/* Plays the field's and the battle's action sounds (MUSIC_PLAYER_ACTION_SE);
+   SOUND_FADE_OUT_ACTION_SE fades it. */
 extern struct MusicPlayerInfo MPlayInfo_ActionSE;
-/* One of the sound effects' shared players (MUSIC_PLAYER_SE5); both fades, */
-/* SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_EXIT_SE, fade it. */
+/* One of the sound effects' shared players (MUSIC_PLAYER_SE5); both fades,
+   SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_EXIT_SE, fade it. */
 extern struct MusicPlayerInfo MPlayInfo_SE5;
 /* Plays jingles; the music returns once it stops. */
 extern struct MusicPlayerInfo MPlayInfo_Jingle;
-/* The mixer's PCM output: SoundDriver_EnterVBlankUpdate hands it to */
-/* IwramSoundMixEntry, and sySndSetFixedSampleFreq clears it and points DMA 1 */
-/* at its start (the right speaker) and DMA 2 at its second half (the left). */
-extern u8 MixerPcmBuffer[];
-/* The sound mixer's workspace at the top of IWRAM; the IWRAM heap ends where */
-/* it starts (syHeapGetRemainingIwram). */
-extern u8 IwramSoundMixWorkspace[];
+/* The mixer's PCM output: SoundDriver_EnterVBlankUpdate hands it to
+   IwramSoundMixEntry, and sySndSetFixedSampleFreq clears it and points DMA 1 at
+   its start (the right speaker) and DMA 2 at its second half (the left). */
+extern Uint8 MixerPcmBuffer[];
+/* The sound mixer's workspace at the top of IWRAM; the IWRAM heap ends where it
+   starts (syHeapGetRemainingIWRAM). */
+extern Uint8 IwramSoundMixWorkspace[];
 /* Set by the resident mixer whenever it clips a sample: when a sum overflows,
- */
-/* IwramSoundNormalizeChannels saturates the samples and stores the clip mask */
-/* (0x80008000) here. Only the sound test reads it. */
-extern s32 SoundMixerClipped;
-/* volatile: the VBlank handler and the frame wait share it. */
-/* Who runs the sound update this frame: the frame wait or the VBlank handler.
- */
+   IwramSoundNormalizeChannels saturates the samples and stores the clip mask
+   (0x80008000) here. Only the sound test reads it. */
+extern Sint32 SoundMixerClipped;
+/* volatile: the VBlank handler and the frame wait share it. Who runs the sound
+   update this frame: the frame wait or the VBlank handler. */
 extern volatile struct SoundVBlankState SoundVBlankStateWork;
 /* The music playing, which sySndPlay sets from each music id it starts. */
-extern u16 CurrentBgm;
-/* One bit for each sound id, set once the sound has played (sySndFlagSet); */
-/* the link lobby offers only the tunes heard. */
-extern u8 SoundFlags[];
+extern Uint16 CurrentBgm;
+/* One bit for each sound id, set once the sound has played (sySndFlagSet); the
+   link lobby offers only the tunes heard. */
+extern Uint8 SoundFlags[];
 /* The sound effect from SOUND_SE_FIRST up each player last started, by player
- */
-/* (MUSIC_PLAYER_COUNT of them); SOUND_FADE_OUT_ACTION_SE and */
-/* SOUND_FADE_OUT_EXIT_SE clear the entries they fade. */
-extern u16 MusicPlayerLastSound[];
-/* Nonzero once SOUND_FADE_OUT_BGM has started the music's fade; further fade */
-/* requests are ignored until the next music clears it. */
-extern u8 BgmFadeRequested;
-/* The music's volume, 8.8 fixed point (BGM_UNITY_SCALE is full), ramped */
-/* toward BgmVolumeTarget by BgmVolumeStep each VBlank. */
-extern u16 BgmVolume;
+   (MUSIC_PLAYER_COUNT of them); SOUND_FADE_OUT_ACTION_SE and
+   SOUND_FADE_OUT_EXIT_SE clear the entries they fade. */
+extern Uint16 MusicPlayerLastSound[];
+/* Nonzero once SOUND_FADE_OUT_BGM has started the music's fade; further fade
+   requests are ignored until the next music clears it. */
+extern Uint8 BgmFadeRequested;
+/* The music's volume, 8.8 fixed point (BGM_UNITY_SCALE is full), ramped toward
+   BgmVolumeTarget by BgmVolumeStep each VBlank. */
+extern Uint16 BgmVolume;
 /* The volume BgmVolume ramps toward. */
-extern u16 BgmVolumeTarget;
+extern Uint16 BgmVolumeTarget;
 /* How far BgmVolume moves each VBlank (BGM_DEFAULT_RAMP_STEP). */
-extern u16 BgmVolumeStep;
-/* VBlanks after a jingle starts before the music waits for its end; held */
-/* at 1 until the jingle's player stops, then 0. */
-extern u8 BgmRestoreDelay;
+extern Uint16 BgmVolumeStep;
+/* VBlanks after a jingle starts before the music waits for its end; held at 1
+   until the jingle's player stops, then 0. */
+extern Uint8 BgmRestoreDelay;
 /* The tempo and pitch BgmTempoPitch ramps toward. */
-extern u16 BgmTempoPitchTarget;
-/* The music's combined tempo and pitch, 8.8 fixed point (BGM_UNITY_SCALE is */
-/* the song's own), ramped toward BgmTempoPitchTarget by BgmTempoPitchStep */
-/* each VBlank. */
-extern u16 BgmTempoPitch;
+extern Uint16 BgmTempoPitchTarget;
+/* The music's combined tempo and pitch, 8.8 fixed point (BGM_UNITY_SCALE is the
+   song's own), ramped toward BgmTempoPitchTarget by BgmTempoPitchStep each
+   VBlank. */
+extern Uint16 BgmTempoPitch;
 /* How far BgmTempoPitch moves each VBlank. */
-extern u16 BgmTempoPitchStep;
+extern Uint16 BgmTempoPitchStep;
 /* Set by sySndUpdateCommandMask; nothing reads it. */
-extern u8 SoundCommandMask;
+extern Uint8 SoundCommandMask;
 /* An EWRAM byte sySndInit clears and nothing reads. */
-extern u8 Sound_UnreadByte;
+extern Uint8 Sound_UnreadByte;
 
-/* The vram_cache group. The VRAM cache's entries and the blocks they own. */
-/* The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE. */
-extern u8 VramCacheBlockOwners[VRAM_BLOCK_COUNT];
+/* The vram_cache group. The VRAM cache's entries and the blocks they own. The
+   cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE. */
+extern Uint8 VramCacheBlockOwners[VRAM_BLOCK_COUNT];
 /* The cache entries by number: the slot a sprite or loaded picture holds. */
 extern VRAM_CACHE_ENTRY VramCacheEntries[];
 

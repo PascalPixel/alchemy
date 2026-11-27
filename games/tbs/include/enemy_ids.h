@@ -1,62 +1,57 @@
 #ifndef ALCHEMY_ENEMY_IDS_H
 #define ALCHEMY_ENEMY_IDS_H
 
-/* @file */
 /* Enemy ids, named from the English release. */
 
-/* The first enemy id: enemy id `ENEMY_ID_FIRST + n` is the enemy in */
-/* row n of enemy_table.c (gmEnemyGetDefinition); the ids below it are the */
-/* party's characters. A formation lists its members by row. */
+/* The first enemy id: enemy id `ENEMY_ID_FIRST + n` is the enemy in row n of
+   enemy_table.c (gmEnemyGetDefinition); the ids below it are the party's
+   characters. A formation lists its members by row. */
 #define ENEMY_ID_FIRST 8
 
 /* The highest enemy id a battle unit takes; an id past the table's rows takes
- */
-/* its first row. */
+   its first row. */
 #define ENEMY_ID_MAX 250
 
 /* Enemy id `id`'s row of enemy_table.c, as a formation lists its members. */
 #define ENEMY_ROW(id) ((id) - ENEMY_ID_FIRST)
 
-/* Enemy ids, one for each row of enemy_table.c in order: an enemy id is the */
-/* row plus ENEMY_ID_FIRST. The rows the text names "?" are unused: two */
-/* enemies in no formation, named here for the enemy whose picture each draws,
- */
-/* and three blank rows after the Djinn lesson's Zombie and the empty row that
- */
-/* ends the table, which have no names here. Where several rows share a name, */
-/* each takes what tells its battle apart: the one place it is fought (its */
-/* formation in formations.c, chosen from a zone of encounter_zones.c), the */
-/* prize a Colosso finalist carries, or the Djinni a Djinni battle is with; a */
-/* row fought in several places is named for where it is first met. */
+/* Enemy ids, one for each row of enemy_table.c in order: an enemy id is the row
+   plus ENEMY_ID_FIRST. The rows the text names "?" are unused: two enemies in
+   no formation, named here for the enemy whose picture each draws, and three
+   blank rows after the Djinn lesson's Zombie and the empty row that ends the
+   table, which have no names here. Where several rows share a name, each takes
+   what tells its battle apart: the one place it is fought (its formation in
+   formations.c, chosen from a zone of encounter_zones.c), the prize a Colosso
+   finalist carries, or the Djinni a Djinni battle is with; a row fought in
+   several places is named for where it is first met. */
 typedef enum ENEMY_ID {
 	/* Row 0: "???", in no formation; a formation's empty places list it. */
 	ENEMY_NONE = ENEMY_ID_FIRST,
-	/* Level 1: fought on the stormy night in Vale (slots 0 and 3 of */
-	/* ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum. */
+	/* Level 1: fought on the stormy night in Vale (slots 0 and 3 of
+	   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum. */
 	ENEMY_VERMIN,
-	/* Level 3: fought on the world map around Vale and Vault and in Goma Cave.
-	 */
+	/* Level 3: fought on the world map around Vale and Vault and in Goma
+	   Cave. */
 	ENEMY_VERMIN_WORLD_MAP,
 	ENEMY_MAD_VERMIN,
-	/* Level 1: fought on the stormy night in Vale (slots 1 and 3 of */
-	/* ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum. */
+	/* Level 1: fought on the stormy night in Vale (slots 1 and 3 of
+	   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum. */
 	ENEMY_BAT,
-	/* Level 3: fought on the world map and in Goma Cave and the Kolima Tunnel.
-	 */
+	/* Level 3: fought on the world map and in Goma Cave and the Kolima
+	   Tunnel. */
 	ENEMY_BAT_WORLD_MAP,
 	ENEMY_RABID_BAT,
-	/* Level 1: fought on the stormy night in Vale (slot 2 of */
-	/* ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum. */
+	/* Level 1: fought on the stormy night in Vale (slot 2 of
+	   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum. */
 	ENEMY_WILD_MUSHROOM,
-	/* Level 3: fought on the world map around Vale and Vault and in Goma Cave.
-	 */
+	/* Level 3: fought on the world map around Vale and Vault and in Goma
+	   Cave. */
 	ENEMY_WILD_MUSHROOM_WORLD_MAP,
 	ENEMY_DEATH_CAP,
 	/* Level 2: fought only in Sol Sanctum (formations 11 to 14 and 16). */
 	ENEMY_SLIME_SOL_SANCTUM,
-	/* Level 3: the Slime of the world map's first encounter region, around */
-	/* Vale and Vault (formations 23 and 27), and of Goma Cave (formation 32).
-	 */
+	/* Level 3: the Slime of the world map's first encounter region, around Vale
+	   and Vault (formations 23 and 27), and of Goma Cave (formation 32). */
 	ENEMY_SLIME_WORLD_MAP,
 	ENEMY_OOZE,
 	ENEMY_SLIME_BEAST,
@@ -64,8 +59,8 @@ typedef enum ENEMY_ID {
 	ENEMY_GHOST_MAGE,
 	ENEMY_HORNED_GHOST,
 	ENEMY_LICH,
-	/* Level 4: fought on the world map and in Goma Cave and the Kolima Tunnel.
-	 */
+	/* Level 4: fought on the world map and in Goma Cave and the Kolima
+	   Tunnel. */
 	ENEMY_ZOMBIE,
 	ENEMY_UNDEAD,
 	ENEMY_WIGHT,
@@ -152,8 +147,8 @@ typedef enum ENEMY_ID {
 	ENEMY_RAGING_ROCK,
 	ENEMY_CHIMERA,
 	ENEMY_CHIMERA_MAGE,
-	/* Unused, in no formation: the Chimera's picture in palette 3, with */
-	/* Fire Blessing, Rabid Fang, Mad Dash and Eruption. */
+	/* Unused, in no formation: the Chimera's picture in palette 3, with Fire
+	   Blessing, Rabid Fang, Mad Dash and Eruption. */
 	ENEMY_UNUSED_CHIMERA,
 	/* Level 2: fought only in Sol Sanctum. */
 	ENEMY_AMAZE_SOL_SANCTUM,
@@ -161,11 +156,10 @@ typedef enum ENEMY_ID {
 	ENEMY_AMAZE_WORLD_MAP,
 	ENEMY_CREEPER,
 	ENEMY_SPIRIT,
-	/* The battle that ends Flint's lesson on the world map */
-	/* (scWorldMapExplainSettingDjinn, slot 6 of */
-	/* ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT): ENEMY_ZOMBIE's stats but agility 1,
-	 */
-	/* and it leaves no coins, item or experience. */
+	/* The battle that ends Flint's lesson on the world map
+	   (scWorldMapExplainSettingDjinn, slot 6 of
+	   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT): ENEMY_ZOMBIE's stats but agility 1,
+	   and it leaves no coins, item or experience. */
 	ENEMY_ZOMBIE_DJINN_LESSON,
 	ENEMY_KRAKEN = ENEMY_ID_FIRST + 113,
 	ENEMY_MYSTERY_MAN,
@@ -180,23 +174,20 @@ typedef enum ENEMY_ID {
 	ENEMY_LIZARD_KING,
 	ENEMY_LIVING_STATUE,
 	ENEMY_HYDROS_STATUE,
-	/* The Colosso finalists, two rows each: whoever reaches a match's arena */
-	/* first takes its better prize, and the battle (ENCOUNTER_ZONE_COLOSSO, */
-	/* one formation a row) is with the opponent carrying what he took. */
-	/* Azart having reached the arena first: defense 20, against 2 without the
-	 */
-	/* shield. */
+	/* The Colosso finalists, two rows each: whoever reaches a match's arena
+	   first takes its better prize, and the battle (ENCOUNTER_ZONE_COLOSSO, one
+	   formation a row) is with the opponent carrying what he took. Azart having
+	   reached the arena first: defense 20, against 2 without the shield. */
 	ENEMY_AZART_IRON_SHIELD,
 	/* Azart having reached the arena second. */
 	ENEMY_AZART_PADDED_GLOVES,
-	/* Satrage having reached the arena first: defense 28, against 6 without */
-	/* the mail. */
+	/* Satrage having reached the arena first: defense 28, against 6 without the
+	   mail. */
 	ENEMY_SATRAGE_CHAIN_MAIL,
 	/* Satrage having reached the arena second. */
 	ENEMY_SATRAGE_COTTON_SHIRT,
 	/* Navampa having reached the arena first: attack 274, against 232 without
-	 */
-	/* the Claymore. */
+	   the Claymore. */
 	ENEMY_NAVAMPA_CLAYMORE,
 	/* Navampa having reached the arena second. */
 	ENEMY_NAVAMPA_HUNTERS_SWORD,
@@ -205,8 +196,8 @@ typedef enum ENEMY_ID {
 	ENEMY_DOODLE_BUG,
 	ENEMY_TOADONPA,
 	ENEMY_POISON_TOAD,
-	/* Unused, in no formation: Toadonpa's picture in palette 5, which */
-	/* only attacks. */
+	/* Unused, in no formation: Toadonpa's picture in palette 5, which only
+	   attacks. */
 	ENEMY_UNUSED_TOADONPA,
 	ENEMY_TORNADO_LIZARD,
 	ENEMY_STORM_LIZARD,
@@ -222,21 +213,17 @@ typedef enum ENEMY_ID {
 	ENEMY_MIMIC_ALTMILLER_CAVE,
 	ENEMY_MIMIC_SUHALLA_DESERT,
 	ENEMY_MIMIC_PIRATE_SHIP,
-	/* The Djinn the party fights, each element's in order of level; */
-	/* gmBattleUnitSet puts them on the party's side. A Djinni's battle is a
-	   slot */
-	/* of its element's zone (Encounter_DjinnBattles), which Djinn who join */
-	/* without a fight share; each row is named for the one Djinni whose scene
-	 */
-	/* starts its battle (fdRequestDjinnBattle). */
-	/* Level 12, in Mogall Forest. */
+	/* The Djinn the party fights, each element's in order of level;
+	   gmBattleUnitSet puts them on the party's side. A Djinni's battle is a
+	   slot of its element's zone (Encounter_DjinnBattles), which Djinn who join
+	   without a fight share; each row is named for the one Djinni whose scene
+	   starts its battle (fdRequestDjinnBattle). Level 12, in Mogall Forest. */
 	ENEMY_VENUS_DJINNI_QUARTZ,
 	/* Level 15, on the world map. */
 	ENEMY_VENUS_DJINNI_VINE,
 	/* Unused: level 23, the battle of Bane's slot, but Bane joins on Crossbone
-	 */
-	/* Isle without a fight (fdDjinnJoinParty), so no battle reaches this row.
-	 */
+	   Isle without a fight (fdDjinnJoinParty), so no battle reaches this
+	   row. */
 	ENEMY_VENUS_DJINNI_UNUSED_BANE,
 	/* Level 10, in Mercury Lighthouse. */
 	ENEMY_MERCURY_DJINNI_SLEET,

@@ -1,7 +1,8 @@
-/* Lets an actor fall to the ground and waits there: a thump as it lands, ten */
-/* frames, and it stands still again. */
-void fdActorDropAndWait(ACTOR *actor) {
-	u8 *flags = &actor->motionFlg;
+/* Lets an actor fall to the ground and waits there: a thump as it lands, ten
+   frames, and it stands still again. */
+void fdActorDropAndWait(ACTOR *actor)
+{
+	Uint8 *flags = &actor->motionFlg;
 
 	*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	do {

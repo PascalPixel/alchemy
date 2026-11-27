@@ -1,7 +1,7 @@
 /* Unused: gives a moai its water, drawn in front of it: the pool in the top of
- */
-/* its head, rippling (animation 2). */
-UNUSED void syMoaiAddWater(s32 id) {
+   its head, rippling (animation 2). */
+UNUSED void scMoaiAddWater(Sint32 id)
+{
 	ACTOR *actor = fdActorGet(id);
 
 	if(actor != 0) {

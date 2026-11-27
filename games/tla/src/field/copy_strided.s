@@ -5,9 +5,9 @@
 	.thumb
 	.global fdRenderCopyStridedCode
 fdRenderCopyStridedCode:
-	.global Render_CopyStrided
+	.global fdRenderCopyStrided
 	.thumb_func
-Render_CopyStrided:
+fdRenderCopyStrided:
 	bx	pc
 AlchemyUncredited_080217a6:
 	.2byte	0x0200
@@ -46,5 +46,5 @@ AlchemyUncreditedEnd_080217a6:
 	bgt	.L_080217b8
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
-	.global Render_CopyStridedCodeSize
-	.set Render_CopyStridedCodeSize, . - fdRenderCopyStridedCode
+	.global fdRenderCopyStridedCodeSize
+	.set fdRenderCopyStridedCodeSize, . - fdRenderCopyStridedCode

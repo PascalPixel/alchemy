@@ -1,11 +1,11 @@
-@ Why Tile_ConvertMapGrid is assembly:
+@ Why fdTileConvertMapGrid is assembly:
 @ push saves r5-r8 without lr.
 @ Why fdTileCopyStrided is assembly:
 @ push saves r5-r9/sl/fp without lr; fp holds copied data.
 .syntax unified
 	.arm
-	.global Tile_ConvertMapGrid
-Tile_ConvertMapGrid:
+	.global fdTileConvertMapGrid
+fdTileConvertMapGrid:
 	push	{r5, r6, r7, r8}
 	mov	r5, #-16777216
 	orr	r5, r5, r5, lsr #4
@@ -48,8 +48,8 @@ Tile_ConvertMapGrid:
 	bne	.Linterleave
 	pop	{r5, r6, r7, r8}
 	bx	lr
-	.global Tile_ConvertMapGridCodeSize
-	.set Tile_ConvertMapGridCodeSize, . - Tile_ConvertMapGrid
+	.global fdTileConvertMapGridCodeSize
+	.set fdTileConvertMapGridCodeSize, . - fdTileConvertMapGrid
 .syntax unified
 	.arm
 	.global fdTileCopyStrided

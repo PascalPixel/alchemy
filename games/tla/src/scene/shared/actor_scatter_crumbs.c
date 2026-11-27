@@ -1,27 +1,24 @@
-/* @file */
-/* The crumbs a fireball throws off as it crumbles away */
-/* (scActorRollAndCrumble), which three Mars Lighthouse rooms keep a copy of, */
-/* over the flames' FLAME_HIT_STATE (scene/flame_throwers.h). */
+/* The crumbs a fireball throws off as it crumbles away (scActorRollAndCrumble),
+   which three Mars Lighthouse rooms keep a copy of, over the flames'
+   FLAME_HIT_STATE (scene/flame_throwers.h). */
 
-/* A fireball crumbling away throws off a crumb, a small flame drawn with the */
-/* kept flame's tiles, that bounces off in a random direction and flickers out
- */
-/* (the includer's Crumbs_Script): as the Mars tower's fireball crashes on the
- */
-/* centre wall, it shrinks away in a spray of little flames. */
-void scActorScatterCrumbs(ACTOR *actor) {
+/* A fireball crumbling away throws off a crumb, a small flame drawn with the
+   kept flame's tiles, that bounces off in a random direction and flickers out
+   (the includer's Crumbs_Script): as the Mars tower's fireball crashes on the
+   centre wall, it shrinks away in a spray of little flames. */
+void scActorScatterCrumbs(ACTOR *actor)
+{
 	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
-	s32 i;
+	Sint32			 i;
 
 	if(state->sharedFlame == NULL)
 		return;
 	/* DEAD: a loop of one pass, as the ice chips' loop of six; the ROM keeps
-	 * its */
-	/* decrement and test. */
+	   its decrement and test. */
 	for(i = 0; i < 1; i++) {
 		ACTOR *object;
-		s32 a, b, c, d, e;
-		FIXED x, y, z;
+		Sint32 a, b, c, d, e;
+		FIXED  x, y, z;
 
 		a = syRandom();
 		b = syRandom();
@@ -33,16 +30,16 @@ void scActorScatterCrumbs(ACTOR *actor) {
 		y = c * 8 + actor->y.fixed + toFIXED(4);
 		object = (ACTOR *)syImportActorCreate(SPRITE_UNSEEN_MARKER, x, y, z);
 		if(object != NULL) {
-			s32 angle, radius;
-			u32 sum;
-			s32 scale;
-			SPR *sprite;
-			SPR *source;
+			Sint32 angle, radius;
+			Uint32 sum;
+			Sint32 scale;
+			SPR	  *sprite;
+			SPR	  *source;
 
 			angle = syRandom();
 			radius = syRandom() * 8;
 			sum = syRandom() + syRandom();
-			scale = (sum >> 2) + FIXED_ONE / 2;
+			scale = (sum >> 2) + toFIXED(1) / 2;
 			fdActorStartScript(object, Crumbs_Script);
 			fdActorSetSprFlags(object, 0);
 			object->velY = angle * 4 + toFIXED(2);
@@ -52,10 +49,10 @@ void scActorScatterCrumbs(ACTOR *actor) {
 			object->scaleX = scale;
 			object->scaleY = scale;
 			object->acceleration = 0;
-			object->bounce = FIXED_ONE / 2;
+			object->bounce = toFIXED(1) / 2;
 			sprite = object->spr;
 			source = ((ACTOR *)state->sharedFlame)->spr;
-			syVramCacheFreeEntry(sprite->slot);
+			syVRAMCacheFreeEntry(sprite->slot);
 			sprite->retainCacheEntry = 1;
 			sprite->slot = state->flameVramBlock;
 			fdSprAnimationClear(sprite->entries[0]);

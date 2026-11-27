@@ -1,24 +1,22 @@
-/* @file */
-/* Djinn: definitions, setting and standby, and their counts. */
-/* Part of game.c. */
+/* Djinn: definitions, setting and standby, and their counts. Part of game.c. */
 
 /* The most Djinn of one element a party member holds or sets. */
 #define DJINN_HELD_PER_ELEMENT_MAX 10
 /* Above any party member's count of Djinn: the fewest found so far before the
- */
-/* search, and still when nobody has room. */
-#define DJINN_COUNT_NONE 999
+   search, and still when nobody has room. */
+#define DJINN_COUNT_NONE		   999
 
-/* What gmDjinnGiveToParty returns in place of a unit when nobody gets the */
-/* Djinni; its one caller, fdDjinnJoinParty, plays the joining only for a unit.
- */
+/* What gmDjinnGiveToParty returns in place of a unit when nobody gets the
+   Djinni; its one caller, fdDjinnJoinParty, plays the joining only for a
+   unit. */
 #define DJINN_GIVE_FOUND_BEFORE -1
 #define DJINN_GIVE_NO_ROOM		-2
 
-/* Returns the definition of Djinni `djinni` of `element`; anything out of */
-/* range gives DJINNI_FLINT's. */
-const DJINN_DEFINITION *gmDjinnGetDefinition(u32 element, u32 djinni) {
-	s32 entry = 0;
+/* Returns the definition of Djinni `djinni` of `element`; anything out of range
+   gives DJINNI_FLINT's. */
+const DJINN_DEFINITION *gmDjinnGetDefinition(Uint32 element, Uint32 djinni)
+{
+	Sint32 entry = 0;
 
 	if(element < ELEMENT_COUNT && djinni < DJINN_PER_ELEMENT)
 		entry = element * DJINN_PER_ELEMENT + djinni;
@@ -26,16 +24,16 @@ const DJINN_DEFINITION *gmDjinnGetDefinition(u32 element, u32 djinni) {
 }
 
 /* Gives a newly found Djinni to the party member holding the fewest Djinn who
- */
-/* has room, on standby. Returns who got it, DJINN_GIVE_FOUND_BEFORE or */
-/* DJINN_GIVE_NO_ROOM. */
-s32 gmDjinnGiveToParty(s32 element, s32 djinn) {
-	s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
-	s32 leastLoadedMember = 0;
-	s32 fewestDjinn = DJINN_COUNT_NONE;
-	s32 partySize;
-	s32 partyIndex;
-	s32 elementIndex;
+   has room, on standby. Returns who got it, DJINN_GIVE_FOUND_BEFORE or
+   DJINN_GIVE_NO_ROOM. */
+Sint32 gmDjinnGiveToParty(Sint32 element, Sint32 djinn)
+{
+	Sint32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
+	Sint32 leastLoadedMember = 0;
+	Sint32 fewestDjinn = DJINN_COUNT_NONE;
+	Sint32 partySize;
+	Sint32 partyIndex;
+	Sint32 elementIndex;
 
 	if(gmFlagGet(flag) != 0)
 		return DJINN_GIVE_FOUND_BEFORE;
@@ -45,7 +43,7 @@ s32 gmDjinnGiveToParty(s32 element, s32 djinn) {
 		UNIT *unit = gmUnitGet(MainRoutineStateWork.party[partyIndex]);
 
 		if(unit->djinnHeldCnts[element] < DJINN_HELD_PER_ELEMENT_MAX) {
-			s32 ownedDjinn = 0;
+			Sint32 ownedDjinn = 0;
 
 			for(elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++)
 				ownedDjinn += unit->djinnHeldCnts[elementIndex];
@@ -65,9 +63,10 @@ s32 gmDjinnGiveToParty(s32 element, s32 djinn) {
 	return leastLoadedMember;
 }
 
-/* Gives a Djinni to a unit. Returns -1 when the unit holds */
-/* DJINN_HELD_PER_ELEMENT_MAX of the element or has it already. */
-s32 gmDjinnGive(s32 unitId, s32 element, s32 djinnIndex) {
+/* Gives a Djinni to a unit. Returns -1 when the unit holds
+   DJINN_HELD_PER_ELEMENT_MAX of the element or has it already. */
+Sint32 gmDjinnGive(Sint32 unitId, Sint32 element, Sint32 djinnIndex)
+{
 	UNIT *unit = gmUnitGet(unitId);
 
 	if(unit->djinnHeldCnts[element] >= DJINN_HELD_PER_ELEMENT_MAX)
@@ -79,51 +78,54 @@ s32 gmDjinnGive(s32 unitId, s32 element, s32 djinnIndex) {
 	return 0;
 }
 
-/* Returns 1 when the unit holds the Djinni and it can be set: not set, not */
-/* recovering and not held by a summon. */
-s32 gmDjinnCanSet(s32 unitId, s32 element, s32 djinnIndex) {
-	UNIT *unit = gmUnitGet(unitId);
+/* Returns 1 when the unit holds the Djinni and it can be set: not set, not
+   recovering and not held by a summon. */
+Bool gmDjinnCanSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex)
+{
+	UNIT				*unit = gmUnitGet(unitId);
 	DJINN_RECOVERY_LIST *list;
-	s32 entryIndex;
-	s32 recoveryTurns;
+	Sint32				 entryIndex;
+	Sint32				 recoveryTurns;
 
 	if(unit->djinnHeldCnts[element] == 0)
-		return 0;
+		return FALSE;
 	if(unit->djinnSetCnts[element] >= DJINN_HELD_PER_ELEMENT_MAX) {
 		unit->djinnSetCnts[element] = DJINN_HELD_PER_ELEMENT_MAX;
-		return 0;
+		return FALSE;
 	}
 	if((unit->djinnHeld[element] & (1 << djinnIndex)) == 0)
-		return 0;
+		return FALSE;
 	if((unit->djinnSet[element] & (1 << djinnIndex)) != 0)
-		return 0;
+		return FALSE;
 
 	list = &gmDjinnGetRecoveryTable(unitId < 0 || unitId > PIERS)->list;
 	for(entryIndex = 0; entryIndex < list->cnt; entryIndex++) {
 		if(element == list->entries[entryIndex].element &&
-		   djinnIndex == list->entries[entryIndex].idx)
+			djinnIndex == list->entries[entryIndex].idx)
 			break;
 	}
 	/* Ready when not listed, on standby or recovered. */
 	if(entryIndex == list->cnt ||
-	   ((recoveryTurns = list->entries[entryIndex].turns) <= 0 &&
-		recoveryTurns != DJINN_RECOVERY_SUMMONED))
-		return 1;
-	return 0;
+		((recoveryTurns = list->entries[entryIndex].turns) <= 0 &&
+			recoveryTurns != DJINN_RECOVERY_SUMMONED))
+		return TRUE;
+	return FALSE;
 }
 
 /* Returns 1 when the Djinni is set on the unit. */
-u32 gmDjinnIsSet(s32 unitId, s32 element, s32 djinnIndex) {
+Uint32 gmDjinnIsSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex)
+{
 	if(gmUnitGet(unitId)->djinnSet[element] & (1 << djinnIndex))
 		return 1;
 	return 0;
 }
 
-/* Sets a ready Djinni on the unit, counts it and works out the unit's class */
-/* again. Returns 1 when it was set. */
-s32 gmDjinnSet(s32 unitId, s32 element, s32 djinnIndex) {
-	UNIT *unit = gmUnitGet(unitId);
-	s32 isReady = gmDjinnCanSet(unitId, element, djinnIndex);
+/* Sets a ready Djinni on the unit, counts it and works out the unit's class
+   again. Returns 1 when it was set. */
+Sint32 gmDjinnSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex)
+{
+	UNIT  *unit = gmUnitGet(unitId);
+	Sint32 isReady = gmDjinnCanSet(unitId, element, djinnIndex);
 
 	if(isReady != 0) {
 		if(unit->djinnHeld[element] & (1 << djinnIndex))
@@ -136,11 +138,12 @@ s32 gmDjinnSet(s32 unitId, s32 element, s32 djinnIndex) {
 	return isReady;
 }
 
-/* Takes a set Djinni off the unit and works out its class again. Returns 1 */
-/* when it was set. */
-u32 gmDjinnPutOnStandby(s32 unitId, s32 element, s32 djinnIndex) {
-	UNIT *unit = gmUnitGet(unitId);
-	u32 wasActive = gmDjinnIsSet(unitId, element, djinnIndex);
+/* Takes a set Djinni off the unit and works out its class again. Returns 1 when
+   it was set. */
+Uint32 gmDjinnPutOnStandby(Sint32 unitId, Sint32 element, Sint32 djinnIndex)
+{
+	UNIT  *unit = gmUnitGet(unitId);
+	Uint32 wasActive = gmDjinnIsSet(unitId, element, djinnIndex);
 
 	if(wasActive != 0) {
 		unit->djinnSetCnts[element]--;
@@ -151,19 +154,19 @@ u32 gmDjinnPutOnStandby(s32 unitId, s32 element, s32 djinnIndex) {
 }
 
 /* Takes the Djinni off its side's standby and recovery list, closing the gap.
- */
-/* Returns 1 when it was there. */
-s32 gmDjinnRecoveryRemove(s32 unitId, s32 element, s32 djinnIndex) {
+   Returns 1 when it was there. */
+Sint32 gmDjinnRecoveryRemove(Sint32 unitId, Sint32 element, Sint32 djinnIndex)
+{
 	DJINN_RECOVERY_LIST *list;
-	s32 removed = 0;
-	s32 entryIndex;
+	Bool				 removed = FALSE;
+	Sint32				 entryIndex;
 
 	list = &gmDjinnGetRecoveryTable(unitId < 0 || unitId > PIERS)->list;
 	for(entryIndex = 0; entryIndex < list->cnt; entryIndex++) {
 		if(element == list->entries[entryIndex].element &&
-		   djinnIndex == list->entries[entryIndex].idx) {
+			djinnIndex == list->entries[entryIndex].idx) {
 			list->cnt--;
-			removed = 1;
+			removed = TRUE;
 			break;
 		}
 	}
@@ -173,11 +176,13 @@ s32 gmDjinnRecoveryRemove(s32 unitId, s32 element, s32 djinnIndex) {
 	return removed;
 }
 
-/* Puts a unit's Djinni at the end of its side's list on standby. Nothing */
-/* checks the list's capacity. */
-u32 *gmDjinnRecoveryAddStandby(u32 unitId, u32 element, u32 djinnIndex) {
+/* Puts a unit's Djinni at the end of its side's list on standby. Nothing checks
+   the list's capacity. */
+Uint32 *gmDjinnRecoveryAddStandby(
+	Uint32 unitId, Uint32 element, Uint32 djinnIndex)
+{
 	DJINN_RECOVERY_LIST *list;
-	s32 count;
+	Sint32				 count;
 
 	gmDjinnRecoveryRemove(unitId, element, djinnIndex);
 	list = &gmDjinnGetRecoveryTable(unitId > PIERS)->list;
@@ -187,14 +192,16 @@ u32 *gmDjinnRecoveryAddStandby(u32 unitId, u32 element, u32 djinnIndex) {
 	list->entries[count].unitId = unitId;
 	list->entries[count].turns = DJINN_RECOVERY_AFTER_BATTLE;
 	list->cnt = count + 1;
-	return (u32 *)&list->cnt;
+	return (Uint32 *)&list->cnt;
 }
 
-/* Moves a Djinni from one unit to another, set or on standby as it was. */
-/* Returns -1 when it cannot. */
-s32 gmDjinnTransfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
-	UNIT *sourceUnit = gmUnitGet(source);
-	u32 wasActive;
+/* Moves a Djinni from one unit to another, set or on standby as it was. Returns
+   -1 when it cannot. */
+Sint32 gmDjinnTransfer(
+	Sint32 source, Sint32 element, Sint32 djinnIndex, Sint32 target)
+{
+	UNIT  *sourceUnit = gmUnitGet(source);
+	Uint32 wasActive;
 
 	if((sourceUnit->djinnHeld[element] & (1 << djinnIndex)) != 0) {
 		wasActive = gmDjinnIsSet(source, element, djinnIndex);
@@ -205,8 +212,7 @@ s32 gmDjinnTransfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
 
 			if(wasActive != 0) {
 				gmDjinnSet(target, element, djinnIndex);
-			}
-			else {
+			} else {
 				gmDjinnRecoveryRemove(source, element, djinnIndex);
 				gmDjinnRecoveryAddStandby(target, element, djinnIndex);
 			}
@@ -216,17 +222,18 @@ s32 gmDjinnTransfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
 	return -1;
 }
 
-/* Counts the party's Djinn on standby, by element into counts when it is */
-/* given. */
-s32 gmDjinnRecoveryCountStandby(u8 *counts) {
-	s32 standbyCount = 0;
+/* Counts the party's Djinn on standby, by element into counts when it is
+   given. */
+Sint32 gmDjinnRecoveryCountStandby(Uint8 *counts)
+{
+	Sint32				  standbyCount = 0;
 	DJINN_RECOVERY_TABLE *recoveryTable =
 		gmDjinnGetRecoveryTable(DJINN_RECOVERY_PARTY);
 	DJINN_RECOVERY_ENTRY *entry = recoveryTable->list.entries;
-	s32 entryIndex;
+	Sint32				  entryIndex;
 
 	if(counts != 0) {
-		s32 element;
+		Sint32 element;
 
 		/* Each element's count starts at 0. */
 		for(element = 0; element < ELEMENT_COUNT; element++)
@@ -244,18 +251,19 @@ s32 gmDjinnRecoveryCountStandby(u8 *counts) {
 }
 
 /* Returns the ability the Djinni unleashes. */
-s32 gmDjinnGetAbilityId(u32 element, u32 djinni) {
+Sint32 gmDjinnGetAbilityId(Uint32 element, Uint32 djinni)
+{
 	return gmDjinnGetDefinition(element, djinni)->abilityId;
 }
 
 /* Returns how many Djinn of `element` the party holds, or of all elements for
- */
-/* -1. */
-s32 gmPartySumDjinnCounts(s32 element) {
-	u16 unitIds[16];
-	s32 djinnCount = 0;
-	s32 partySize = gmPartyListMembers(unitIds);
-	s32 i;
+   -1. */
+Sint32 gmPartySumDjinnCounts(Sint32 element)
+{
+	Uint16 unitIds[16];
+	Sint32 djinnCount = 0;
+	Sint32 partySize = gmPartyListMembers(unitIds);
+	Sint32 i;
 
 	for(i = 0; i < partySize; i++) {
 		UNIT *unit = gmUnitGet(unitIds[i]);
@@ -265,8 +273,7 @@ s32 gmPartySumDjinnCounts(s32 element) {
 			djinnCount += unit->djinnHeldCnts[ELEMENT_MERCURY];
 			djinnCount += unit->djinnHeldCnts[ELEMENT_MARS];
 			djinnCount += unit->djinnHeldCnts[ELEMENT_JUPITER];
-		}
-		else {
+		} else {
 			djinnCount += unit->djinnHeldCnts[element];
 		}
 	}

@@ -1,12 +1,11 @@
 #ifndef ALCHEMY_SHOP_INTERNAL_H
 #define ALCHEMY_SHOP_INTERNAL_H
 
-/* @file */
-/* What every part of the shop object shares: its includes, its state, the */
-/* counters and services it runs, the stock table's columns and the tables */
-/* shop_tables.c holds. shop.c includes it before the parts, and each part */
-/* includes it too, so that a part read on its own still resolves. It places */
-/* no bytes. */
+/* What every part of the shop object shares: its includes, its state, the
+   counters and services it runs, the stock table's columns and the tables
+   shop_tables.c holds. shop.c includes it before the parts, and each part
+   includes it too, so that a part read on its own still resolves. It places no
+   bytes. */
 
 #include "types.h"
 #include "window/cursor.h"
@@ -26,7 +25,6 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "text/msg_ids.h"
-#include "version.h"
 #include "menu/shop.h"
 #include "battle/battle_unit.h"
 #include "game/item.h"
@@ -35,8 +33,8 @@
 #include "game/game_flags.h"
 #include "game/class_djinn.h"
 #include "fixed_math.h"
-#include "field/field_event.h"
-#include "field/field_sequence.h"
+#include "field/field_script.h"
+#include "field/field_mode.h"
 #include "window/item_icon.h"
 #include "game/character_ids.h"
 #include "game/stubs.h"
@@ -48,9 +46,9 @@
 void mnWindowSprRedrawSavedRectStub(void *window);
 
 /* What the player chose at a shop's counter, in the order of its menu's */
-/* Buy, Sell, Artifacts and Repair, held in shop->action while it runs. The */
-/* forge, which The Lost Age adds, runs the sell counter's screens as a */
-/* counter of its own. */
+/* Buy, Sell, Artifacts and Repair, held in shop->action while it runs. The
+   forge, which The Lost Age adds, runs the sell counter's screens as a counter
+   of its own. */
 typedef enum SHOP_ACTION {
 	SHOP_ACTION_BUY,
 	SHOP_ACTION_SELL,
@@ -59,24 +57,24 @@ typedef enum SHOP_ACTION {
 	SHOP_ACTION_FORGE
 } SHOP_ACTION;
 
-/* A shop's type, the last column of its stock row: the equipment group it */
-/* sells, as gmItemGetEquipmentGroup sorts items, or a general store, which */
-/* The Lost Age adds and which lists artifacts of every group. It picks the */
-/* artifacts the shop lists and which of the keepers' lines it says: the inn */
-/* and the forge take the weapon shop's type, whose lines are the messages as */
-/* given. */
+/* A shop's type, the last column of its stock row: the equipment group it
+   sells, as gmItemGetEquipmentGroup sorts items, or a general store, which The
+   Lost Age adds and which lists artifacts of every group. It picks the
+   artifacts the shop lists and which of the keepers' lines it says: the inn and
+   the forge take the weapon shop's type, whose lines are the messages as
+   given. */
 typedef enum SHOP_TYPE {
 	SHOP_TYPE_ITEMS = EQUIPMENT_GROUP_NONE,
 	SHOP_TYPE_WEAPONS = EQUIPMENT_GROUP_WEAPON,
 	SHOP_TYPE_ARMOR = EQUIPMENT_GROUP_ARMOR,
 	SHOP_TYPE_GENERAL_STORE = 3,
-	/* Unused: lists every group's artifacts, as a general store does, but no */
-	/* stock row has it and nothing else sets it. */
+	/* Unused: lists every group's artifacts, as a general store does, but no
+	   stock row has it and nothing else sets it. */
 	SHOP_TYPE_EVERY_GROUP = 4
 } SHOP_TYPE;
 
-/* The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts */
-/* (each list ending with 0 when shorter), then the shop's type. */
+/* The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts
+   (each list ending with 0 when shorter), then the shop's type. */
 enum {
 	SHOP_STOCK_ITEMS = 0,		   /* the first ordinary item's column */
 	SHOP_STOCK_ITEM_COUNT = 24,	   /* ordinary items a row holds */
@@ -84,20 +82,18 @@ enum {
 	SHOP_STOCK_ARTIFACT_COUNT = 8, /* artifacts a row holds */
 	SHOP_STOCK_TYPE = 32,		   /* the shop's type (SHOP_TYPE) */
 	SHOP_STOCK_COLUMNS = 33,
-	/* Rows, by the stock row an event passes to mnShopRun; row 0 sells nothing
-	 */
-	/* and stands in for a row out of range. */
+	/* Rows, by the stock row a script passes to mnShopRun; row 0 sells nothing
+	   and stands in for a row out of range. */
 	SHOP_STOCK_ROWS = 32
 };
 
 /* The stock row the shop code itself names: it sells nothing and stands in for
- */
-/* a bad row. */
+   a bad row. */
 #define SHOP_STOCK_ROW_EMPTY 0
 
 enum {
-	/* Icons a row in a party member's 15-slot inventory grid, 16 pixels apart.
-	 */
+	/* Icons a row in a party member's 15-slot inventory grid, 16 pixels
+	   apart. */
 	SHOP_INVENTORY_COLUMNS = 5,
 	/* Stock items a page of the buy screen, 32 pixels apart. */
 	SHOP_STOCK_PAGE_ITEMS = 7,
@@ -116,10 +112,8 @@ typedef enum MENU_GRID_MOVE {
 } MENU_GRID_MOVE;
 
 /* What mnShopDrawItemPrice says below an item: its price, or when the price is
- */
-/* 0 that the shop does not buy it or that it is not broken; at the forge, the
- */
-/* item's condition (mnForgeGetItemCondition) in place of a price. */
+   0 that the shop does not buy it or that it is not broken; at the forge, the
+   item's condition (mnForgeGetItemCondition) in place of a price. */
 typedef enum SHOP_PRICE_KIND {
 	SHOP_PRICE_KIND_BUY = 0,	/* buying: the price, even when it is 0 */
 	SHOP_PRICE_KIND_SELL = 1,	/* selling: the shop does not buy it */
@@ -127,8 +121,8 @@ typedef enum SHOP_PRICE_KIND {
 	SHOP_PRICE_KIND_FORGE = 3	/* forging: "Processed" or "Rusted" */
 } SHOP_PRICE_KIND;
 
-/* What the sanctum does for one party member; each kind picks the party */
-/* member's status it needs, its donation and its cure (shop_sanctum.c). */
+/* What the sanctum does for one party member; each kind picks the party
+   member's status it needs, its donation and its cure (shop_sanctum.c). */
 typedef enum SANCTUM_SERVICE {
 	SANCTUM_SERVICE_REVIVE,		 /* for a downed party member (HP 0) */
 	SANCTUM_SERVICE_CURE_POISON, /* for poison or deadly poison */
@@ -136,8 +130,8 @@ typedef enum SANCTUM_SERVICE {
 	SANCTUM_SERVICE_REMOVE_CURSE /* for any curse bit set */
 } SANCTUM_SERVICE;
 
-/* What a sparkle of the sanctum's burst is doing (FIELD_PARTICLE.state, */
-/* mnSanctumUpdateBurstSparkle). */
+/* What a sparkle of the sanctum's burst is doing (FIELD_PARTICLE.state,
+   mnSanctumUpdateBurstSparkle). */
 typedef enum SANCTUM_SPARKLE_STATE {
 	/* Placed on a ring around the burst's centre and aimed inside it. */
 	SANCTUM_SPARKLE_START = 0,
@@ -147,8 +141,7 @@ typedef enum SANCTUM_SPARKLE_STATE {
 } SANCTUM_SPARKLE_STATE;
 
 /* The sanctum's particle slots (SHOP_STATE.effs), and the sparkles a burst
- */
-/* sends of them. */
+   sends of them. */
 #define SANCTUM_PARTICLE_COUNT 24
 #define SANCTUM_BURST_SPARKLES 18
 
@@ -158,87 +151,83 @@ typedef enum ITEM_PICKER_MODE {
 	ITEM_PICKER_SHOW = 1  /* an item to show, by gmInventoryCheckUnequip */
 } ITEM_PICKER_MODE;
 
-/* What the forge does with a material, its recipe's second column; the item */
-/* list shows it from MsgItemCondition on, after "----------" for an item the */
-/* forge has no recipe for. */
+/* What the forge does with a material, its recipe's second column; the item
+   list shows it from MsgItemCondition on, after "----------" for an item the
+   forge has no recipe for. */
 typedef enum FORGE_CONDITION {
 	FORGE_CONDITION_PROCESSED = 0, /* "Processed": a rare material */
 	FORGE_CONDITION_RUSTED = 1	   /* "Rusted": a rusty weapon */
 } FORGE_CONDITION;
 
-/* What the forge makes of one material: one of its results, by weight out of */
-/* 100. A rusted weapon has one result. */
+/* What the forge makes of one material: one of its results, by weight out of
+   100. A rusted weapon has one result. */
 typedef struct FORGE_RECIPE {
-	s16 item;		/* the material */
-	s16 condition;	/* FORGE_CONDITION */
-	s16 results[8]; /* the items it may become, ended by 0 when fewer */
-	s16 weights[8]; /* each result's chance, in percent */
+	Sint16 item;	   /* the material */
+	Sint16 condition;  /* FORGE_CONDITION */
+	Sint16 results[8]; /* the items it may become, ended by 0 when fewer */
+	Sint16 weights[8]; /* each result's chance, in percent */
 } FORGE_RECIPE;
 
-/* The shop's state (heap slot 220, the menus' state), as The Broken Seal's */
-/* SHOP_STATE, its lists longer here: the windows, the party row, the */
-/* stock, the hand cursor and its icons, what the player chose, the */
-/* sanctum service's particles and the item icon grid. */
+/* The shop's state (heap slot 220, the menus' state), as The Broken Seal's
+   SHOP_STATE, its lists longer here: the windows, the party row, the stock, the
+   hand cursor and its icons, what the player chose, the sanctum service's
+   particles and the item icon grid. */
 typedef struct SHOP_STATE {
-	u8 unused[8];		/* no view of the menu state names it */
-	s32 selectedMember; /* the menu screens' chosen party member; not named here
-						 */
-	void *moneyWin;		/* the coins window */
+	Uint8 unused[8]; /* no view of the menu state names it */
+	Sint32
+		/* the menu screens' chosen party member; not named here */
+		  selectedMember;
+	void *moneyWin; /* the coins window */
 	/* The menu screens' first window and their two sides; not named here. */
-	u8 menuSides[20];
+	Uint8 menuSides[20];
 	void *itemWin;
 	/* The menu screens' windows, icons and cursor grid; not named here. */
-	u8 menuWins[208];
-	void *partyMemberIcons[8]; /* the party row's sprites */
-	s16 partyMemberX[8];	   /* pixels */
-	s16 partyMemberY[8];	   /* pixels */
-	FIXED partyMemberScale[8]; /* 16.16 fixed point, FIXED_ONE full size */
+	Uint8  menuWins[208];
+	void  *partyMemberIcons[8]; /* the party row's sprites */
+	Sint16 partyMemberX[8];		/* pixels */
+	Sint16 partyMemberY[8];		/* pixels */
+	FIXED  partyMemberScale[8]; /* 16.16 fixed point, toFIXED(1) full size */
 	/* The menu screens' choices, entries and party and the row of figures; not
-	 */
-	/* named here. */
-	u8 menuLists[280];
-	s16 stockItemIds[301]; /* the items on sale, ended by 0 */
-	s16 partyMemberIds[9]; /* the party in order */
-	MENU_CURSOR cursor;	   /* the hand cursor */
+	   named here. */
+	Uint8		menuLists[280];
+	Sint16		stockItemIds[301]; /* the items on sale, ended by 0 */
+	Sint16		partyMemberIds[9]; /* the party in order */
+	MENU_CURSOR cursor;			   /* the hand cursor */
 	/* VRAM cache slots of the six cursor icons, loaded when the state is set up
-	 */
-	/* and freed with it. */
-	/* @{ */
-	u16 cursorIcon; /* the hand */
-	u16 prevPageIcon;
-	u16 nextPageIcon;
-	u16 gemIcon;
-	u16 statUpIcon;
-	u16 statDownIcon;
-	/* @} */
-	u8 unusedBeforeKeeper[2]; /* no view of the menu state names it */
-	u16 keeperGraphics; /* the shopkeeper's animation; picks the portrait */
-	u16 selectedItem;	/* the item being bought, sold or repaired */
-	u8 unusedAfterSelection[4]; /* no view of the menu state names it */
-	s16 stockCnt;
-	s8 partyMemberCnt;
-	u8 cursorFrm; /* the frames the hand cursor takes to its next place */
-	s8 shopType;  /* the stock row's type (SHOP_TYPE) */
-	s8 action;	  /* the counter or service chosen (SHOP_ACTION or */
-	/* SANCTUM_SERVICE) */
-	s8 burstMember; /* the sanctum's party member whose pose is randomized; -1
-					 */
-	/* none */
-	/* ITEM_MENU_STATE's: nonzero while mnUpdatePartyFigures places */
-	/* the party figures; cleared while a details window covers them. */
-	u8 memberSprsShown;
-	u8 figuresShown; /* ITEM_MENU_STATE's; not named here */
+	   and freed with it. */
+	Uint16 cursorIcon; /* the hand */
+	Uint16 prevPageIcon;
+	Uint16 nextPageIcon;
+	Uint16 gemIcon;
+	Uint16 statUpIcon;
+	Uint16 statDownIcon;
+	Uint8  unusedBeforeKeeper[2]; /* no view of the menu state names it */
+	Uint16 keeperGraphics; /* the shopkeeper's animation; picks the portrait */
+	Uint16 selectedItem;   /* the item being bought, sold or repaired */
+	Uint8  unusedAfterSelection[4]; /* no view of the menu state names it */
+	Sint16 stockCnt;
+	Sint8  partyMemberCnt;
+	Uint8  cursorFrm; /* the frames the hand cursor takes to its next place */
+	Sint8  shopType;  /* the stock row's type (SHOP_TYPE) */
+	Sint8  action;	  /* the counter or service chosen (SHOP_ACTION or */
+	/* SANCTUM_SERVICE) the sanctum's party member whose pose is randomized;
+	   -1 */
+	Sint8 burstMember;
+	/* none ITEM_MENU_STATE's: nonzero while mnUpdatePartyFigures places the
+	   party figures; cleared while a details window covers them. */
+	Uint8 memberSprsShown;
+	Uint8 figuresShown; /* ITEM_MENU_STATE's; not named here */
 	/* The item picker's check: 0 for an item to drop, 1 for one to remove. */
-	s8 itemMode;
+	Sint8 itemMode;
 	/* The sanctum service's particles. */
 	FIELD_PARTICLE effs[SANCTUM_PARTICLE_COUNT];
-	u8 menuIcons[72]; /* ITEM_MENU_STATE's five menu icons; not named here */
-	/* The item icon grid (mnItemIconGridShowInventory): a sprite and a VRAM */
-	/* cache slot (ICON_NONE when empty) for each inventory slot. */
+	Uint8 menuIcons[72]; /* ITEM_MENU_STATE's five menu icons; not named here */
+	/* The item icon grid (mnItemIconGridShowInventory): a sprite and a VRAM
+	   cache slot (ICON_NONE when empty) for each inventory slot. */
 	ICON_SPR iconSprs[INVENTORY_SLOTS];
-	u16 iconSlots[INVENTORY_SLOTS];
-	s8 iconsVisible; /* nonzero while mnItemIconGridDraw queues the icons */
-	void *listWin;	 /* the party row's window at the sell and forge counters */
+	Uint16	 iconSlots[INVENTORY_SLOTS];
+	Sint8 iconsVisible; /* nonzero while mnItemIconGridDraw queues the icons */
+	void *listWin; /* the party row's window at the sell and forge counters */
 } SHOP_STATE;
 
 STATIC_ASSERT(offsetof(SHOP_STATE, itemWin) == 36);
@@ -257,11 +246,10 @@ STATIC_ASSERT(offsetof(SHOP_STATE, listWin) == 3304);
 STATIC_ASSERT(sizeof(SHOP_STATE) == 3308);
 
 /* The quantity cursor's x, in pixels: buy.c and sell.c both place it, further
- */
-/* left in the longer languages. */
+   left in the longer languages. */
 #if LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_QUANTITY_CURSOR_X 120
-#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||           \
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH || \
 	LANGUAGE == LANGUAGE_ITALIAN
 #define SHOP_QUANTITY_CURSOR_X 104
 #else
@@ -269,17 +257,17 @@ STATIC_ASSERT(sizeof(SHOP_STATE) == 3308);
 #endif
 
 /* The shop's price label, sprite tiles beside an item's price (price.4bpp). */
-extern const u8 Shop_PriceTiles[];
-/* The shop's quantity label, beside the count of an item bought */
-/* (quantity.4bpp). */
-extern const u8 Shop_QuantityTiles[];
+extern const Uint8 Shop_PriceTiles[];
+/* The shop's quantity label, beside the count of an item bought
+   (quantity.4bpp). */
+extern const Uint8 Shop_QuantityTiles[];
 
-extern const u16 Shop_QuantityBarSegmentOffsets[30];
-extern const u16 Shop_PriceDigitTileOffsets[5];
-extern const s16 Shop_GameTicketCreditCosts[30];
-extern const s16 Shop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS];
+extern const Uint16		  Shop_QuantityBarSegmentOffsets[30];
+extern const Uint16		  Shop_PriceDigitTileOffsets[5];
+extern const Sint16		  Shop_GameTicketCreditCosts[30];
+extern const Sint16		  Shop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS];
 extern const FORGE_RECIPE Forge_Recipes[];
-extern const s8 Sanctum_ServiceTunes[4];
-extern const s8 Inn_PricesPerGuest[16];
+extern const Sint8		  Sanctum_ServiceTunes[4];
+extern const Sint8		  Inn_PricesPerGuest[16];
 
 #endif

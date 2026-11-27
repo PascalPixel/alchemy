@@ -1,9 +1,8 @@
 #ifndef ALCHEMY_PLAYBACK_QUEUE_H
 #define ALCHEMY_PLAYBACK_QUEUE_H
 
-/* @file */
-/* The playback queue: the commands btPlaybackPush queues and the */
-/* playback phases that play them. */
+/* The playback queue: the commands btPlaybackPush queues and the playback
+   phases that play them. */
 
 #include "edition.h"
 #include "static_assert.h"
@@ -11,9 +10,9 @@
 /* The most commands the playback queue holds. */
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
-/* BATTLE_PLAYBACK_STATE.phase: how far btPlaybackRun has got through the */
-/* action's targets. Its message phases (PLAY_MESSAGE and the like) are */
-/* private to battle_playback.c. */
+/* BATTLE_PLAYBACK_STATE.phase: how far btPlaybackRun has got through the
+   action's targets. Its message phases (PLAY_MESSAGE and the like) are private
+   to battle_playback.c. */
 typedef enum BATTLE_PLAYBACK_PHASE {
 	BATTLE_PLAYBACK_PHASE_IDLE = 0, /* paused until the effect resumes it */
 	/* Resolves the next target's commands. */
@@ -23,18 +22,16 @@ typedef enum BATTLE_PLAYBACK_PHASE {
 } BATTLE_PLAYBACK_PHASE;
 
 /* The playback queue: up to BATTLE_PLAYBACK_CAPACITY commands, each an opcode
- */
-/* (BATTLE_PLAYBACK_COMMAND) and one operand, in the order they play. It */
-/* lives in BATTLE_STATE.playback.queue: btPlaybackPush appends to it and */
-/* playback reads it. */
+   (BATTLE_PLAYBACK_COMMAND) and one operand, in the order they play. It lives
+   in BATTLE_STATE.playback.queue: btPlaybackPush appends to it and playback
+   reads it. */
 typedef struct BATTLE_PLAYBACK_QUEUE {
-	u8 opcodes[BATTLE_PLAYBACK_CAPACITY]; /* BATTLE_PLAYBACK_COMMAND */
+	Uint8 opcodes[BATTLE_PLAYBACK_CAPACITY]; /* BATTLE_PLAYBACK_COMMAND */
 	/* Each command's operand: a unit, item or ability id, a number, a message
-	 * or */
-	/* a sound. */
-	u32 operands[BATTLE_PLAYBACK_CAPACITY];
-	s32 tgtIdx; /* the plan's next target to resolve */
-	s32 cnt;	/* commands queued */
+	   or a sound. */
+	Uint32 operands[BATTLE_PLAYBACK_CAPACITY];
+	Sint32 tgtIdx; /* the plan's next target to resolve */
+	Sint32 cnt;	   /* commands queued */
 } BATTLE_PLAYBACK_QUEUE;
 
 STATIC_ASSERT(sizeof(BATTLE_PLAYBACK_QUEUE) == 328);
@@ -42,10 +39,10 @@ STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, operands) == 64);
 STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, tgtIdx) == 320);
 STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, cnt) == 324);
 
-/* The playback commands btPlaybackPush queues, each with one operand, for */
-/* btPlaybackRun (or btPlaybackRunAll) to play in order. The */
-/* names, numbers and messages build what the player reads: the arguments */
-/* first, then the message that shows them. */
+/* The playback commands btPlaybackPush queues, each with one operand, for
+   btPlaybackRun (or btPlaybackRunAll) to play in order. The names, numbers and
+   messages build what the player reads: the arguments first, then the message
+   that shows them. */
 typedef enum BATTLE_PLAYBACK_COMMAND {
 	PLAYBACK_UNIT_NAME = 0,		  /* a unit's name for the next message */
 	PLAYBACK_NUMBER = 1,		  /* a number for the next message */

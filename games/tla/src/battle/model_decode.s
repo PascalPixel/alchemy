@@ -1,15 +1,15 @@
-@ Why Model_Decode is assembly:
+@ Why btModelDecode is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
 	.thumb
-	.global Model_DecodeCode
-Model_DecodeCode:
-	.global Model_Decode
+	.global btModelDecodeCode
+btModelDecodeCode:
+	.global btModelDecode
 	.thumb_func
-Model_Decode:
+btModelDecode:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_08118162:
@@ -39,23 +39,23 @@ AlchemyUncreditedEnd_08118162:
 .L_081181ac:
 	mov	r7, #32
 .L_081181b0:
-	bl	Model_DispatchBitCommand
+	bl	btModelDispatchBitCommand
 	lsr	r6, r5, #25
-	bl	Model_DispatchBitCommand
+	bl	btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #17
-	bl	Model_DispatchBitCommand
+	bl	btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #9
-	bl	Model_DispatchBitCommand
+	bl	btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl	Model_DispatchBitCommand
+	bl	btModelDispatchBitCommand
 	lsr	r6, r5, #25
-	bl	Model_DispatchBitCommand
+	bl	btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #17
-	bl	Model_DispatchBitCommand
+	bl	btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #9
-	bl	Model_DispatchBitCommand
+	bl	btModelDispatchBitCommand
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60
@@ -71,4 +71,4 @@ AlchemyUncreditedEnd_08118162:
 	bne	.L_081181a8
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.4byte 0x60606060, Model_BitCommandTable
+	.4byte 0x60606060, btModelBitCommandTable

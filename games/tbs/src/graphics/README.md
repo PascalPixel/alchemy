@@ -85,7 +85,7 @@ Three things worth knowing about them:
 A town is not painted as one picture. It is built from a
 [tileset](../../../../docs/tbs/glossary.md#tileset): a palette of 14 short lists of 16
 colours, and tile sheets of 512 tiles each. The [map](../../../../docs/tbs/glossary.md#map)
-says which tile goes where ([Maps](../map/README.md#cells)).
+says which tile goes where ([Maps](../map/README.md#metatiles)).
 
 A map does not name a tileset as a whole. It names a palette and its tile sheets
 one by one, so maps borrow freely: the game's 182 maps are drawn from 69
@@ -107,7 +107,9 @@ the credits melt one into the next.
   ([Battle effects](../battle_effect/README.md)).
 - `font/` holds the letters: one font sheet for each language, a letter to a 16
   by 16 square, with a table of widths beside it so that an `i` takes less
-  room than a `W`.
+  room than a `W`. The six sheets are the same in both games, so they are one
+  copy in [`games/common/graphics/font`](../../../common/README.md);
+  `font/text.s` here places the edition's sheet.
 - `ui/` is the windows' borders, icons and cursors, and `title/` the
   Title's pictures. A picture with words in it has one file for each
   language that needs its own.

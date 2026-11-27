@@ -1,23 +1,23 @@
 #ifndef ALCHEMY_SHOP_STUBS_H
 #define ALCHEMY_SHOP_STUBS_H
 
-/* @file */
 /* Shops, inns and the cursors used by their screens. */
 
-s32 mnShopOpenDebugShopStub(s32 unused);
-s32 mnShopRunStub(s32 stockRow, s32 keeperId);
-s32 scSanctumRunStub(s32 unitId);
-s32 mnInnCheckInStub(s32 innId, s32 actorId);
-void mnCursorAdvanceStub(struct MENU_CURSOR *cursor);
-void mnCursorMoveTowardTargetStub(struct MENU_CURSOR *cursor);
-void mnCursorSetStub(struct MENU_CURSOR *cursor, s32 targetX, s32 targetY,
-					 s32 frames);
-void mnCursorSetPosImmediateStub(struct MENU_CURSOR *cursor, s32 x, s32 y);
-void mnQuantityBarFillStub(s32 itemCount, s32 color, u8 *tileBuffer);
-void mnShopSaveAndTintFieldPaletteStub(s32 tint);
-void mnShopRestoreFieldPaletteStub(void);
-s32 mnItemPickerRunStub(s32 *selectedUnit, s32 *selectedSlot);
-void sySndWaitForJingleStub(void);
-void mnInnPlaySleepStub(s32 roomPrice);
+Sint32 mnShopOpenDebugShopStub(Sint32 unused);
+Sint32 mnShopRunStub(Sint32 stockRow, Sint32 keeperId);
+Sint32 mnSanctumRunStub(Sint32 unitId);
+Sint32 mnInnCheckInStub(Sint32 innId, Sint32 actorId);
+void   mnCursorAdvanceStub(struct MENU_CURSOR *cursor);
+void   mnCursorMoveTowardTargetStub(struct MENU_CURSOR *cursor);
+void   mnCursorSetStub(
+	  struct MENU_CURSOR *cursor, Sint32 targetX, Sint32 targetY, Sint32 frames);
+void mnCursorSetPosImmediateStub(
+	struct MENU_CURSOR *cursor, Sint32 x, Sint32 y);
+void   mnQuantityBarFillStub(Sint32 itemCount, Sint32 color, Uint8 *tileBuffer);
+void   mnShopSaveAndTintFieldPaletteStub(Sint32 tint);
+void   mnShopRestoreFieldPaletteStub(void);
+Sint32 mnItemPickerRunStub(Sint32 *selectedUnit, Sint32 *selectedSlot);
+void   mnSndWaitForJingleStub(void);
+void   mnInnPlaySleepStub(Sint32 roomPrice);
 
 #endif

@@ -1,123 +1,129 @@
-/* @file */
-/* Gust, Flying Attack, the rush bursts and the claws: the flurry of strikes */
-/* they all play. */
-/* Part of battle_effect.c. */
+/* Gust, Flying Attack, the rush bursts and the claws: the flurry of strikes
+   they all play. Part of battle_effect.c. */
 
-/* Each plays the flurry mode `basic`, `stronger` or `strongest` as the */
-/* effect's variant (EFFECT_VARIANT) says. */
-#define FLURRY_DEFINE_BY_VARIANT(name, basic, stronger, strongest)             \
-	void name(BATTLE_EFFECT_PARM *args) {                                      \
-		if(args->variant == EFFECT_VARIANT_BASIC) {                            \
-			btEffectRunFlurry(args, basic);                                    \
-			return;                                                            \
-		}                                                                      \
-		if(args->variant == EFFECT_VARIANT_STRONGER) {                         \
-			btEffectRunFlurry(args, stronger);                                 \
-			return;                                                            \
-		}                                                                      \
-		btEffectRunFlurry(args, strongest);                                    \
+/* Each plays the flurry mode `basic`, `stronger` or `strongest` as the effect's
+   variant (EFFECT_VARIANT) says. */
+#define FLURRY_DEFINE_BY_VARIANT(name, basic, stronger, strongest) \
+	void name(BATTLE_EFFECT_PARM *args) \
+	{ \
+		if(args->variant == EFFECT_VARIANT_BASIC) { \
+			btEffectRunFlurry(args, basic); \
+			return; \
+		} \
+		if(args->variant == EFFECT_VARIANT_STRONGER) { \
+			btEffectRunFlurry(args, stronger); \
+			return; \
+		} \
+		btEffectRunFlurry(args, strongest); \
 	}
 
-/* The user strikes the first target once, twice or three times as the */
-/* variant grows with a double or triple blow, and each strike fills the */
-/* canvas with light. */
-/* */
-/* Abilities: Gust; Rapid Smash, Sonic Smash, Slice. */
-FLURRY_DEFINE_BY_VARIANT(btEffectRunGust, FLURRY_GUST, FLURRY_GUST_DOUBLE,
-						 FLURRY_GUST_TRIPLE)
+/* The user strikes the first target once, twice or three times as the variant
+   grows with a double or triple blow, and each strike fills the canvas with
+   light.
 
-/* The user strikes the first target five times. */
-/* */
-/* Abilities: Bear Claw; Counterstrike. */
-void btEffectRunBearClaw(BATTLE_EFFECT_PARM *args) {
+   Abilities: Gust; Rapid Smash, Sonic Smash, Slice. */
+FLURRY_DEFINE_BY_VARIANT(
+	btEffectRunGust, FLURRY_GUST, FLURRY_GUST_DOUBLE, FLURRY_GUST_TRIPLE)
+
+/* The user strikes the first target five times.
+
+   Abilities: Bear Claw; Counterstrike. */
+void btEffectRunBearClaw(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
-/* Ransack plays the same five strikes as Bear Claw. */
-/* */
-/* Abilities: Ransack; Mad Dash. */
-void btEffectRunRansack(BATTLE_EFFECT_PARM *args) {
+/* Ransack plays the same five strikes as Bear Claw.
+
+   Abilities: Ransack; Mad Dash. */
+void btEffectRunRansack(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
-/* Seven strikes land on the first target in the lime palette. */
-/* */
-/* Abilities: Bacteria Rush. */
-void btEffectRunBacteriaRush(BATTLE_EFFECT_PARM *args) {
+/* Seven strikes land on the first target in the lime palette.
+
+   Abilities: Bacteria Rush. */
+void btEffectRunBacteriaRush(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_BACTERIA_RUSH);
 }
 
-/* Nine strikes land on the first target in the blue palette. */
-/* */
-/* Abilities: Freebite Rush. */
-void btEffectRunFreebiteRush(BATTLE_EFFECT_PARM *args) {
+/* Nine strikes land on the first target in the blue palette.
+
+   Abilities: Freebite Rush. */
+void btEffectRunFreebiteRush(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_FREEBITE_RUSH);
 }
 
-/* One, two or three strikes land on the first target as the variant grows */
-/* with a double or triple blow. */
-/* */
-/* Abilities: Flying Attack; Swift Strike. */
-FLURRY_DEFINE_BY_VARIANT(btEffectRunFlyingAttack, FLURRY_FLYING_ATTACK,
-						 FLURRY_FLYING_ATTACK_DOUBLE,
-						 FLURRY_FLYING_ATTACK_TRIPLE)
+/* One, two or three strikes land on the first target as the variant grows with
+   a double or triple blow.
 
-/* Three strikes land on the first target in the Mars Djinni's colours. */
-/* */
-/* Abilities: Ur Flash. */
-void btEffectRunUrFlash(BATTLE_EFFECT_PARM *args) {
+   Abilities: Flying Attack; Swift Strike. */
+FLURRY_DEFINE_BY_VARIANT(btEffectRunFlyingAttack, FLURRY_FLYING_ATTACK,
+	FLURRY_FLYING_ATTACK_DOUBLE, FLURRY_FLYING_ATTACK_TRIPLE)
+
+/* Three strikes land on the first target in the Mars Djinni's colours.
+
+   Abilities: Ur Flash. */
+void btEffectRunUrFlash(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_UR_FLASH);
 }
 
-/* The user lunges further at the first target and strikes once, in the */
-/* embers' colours. */
-/* */
-/* Abilities: Claw Attack. */
-void btEffectRunClawAttack(BATTLE_EFFECT_PARM *args) {
+/* The user lunges further at the first target and strikes once, in the embers'
+   colours.
+
+   Abilities: Claw Attack. */
+void btEffectRunClawAttack(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_CLAW_ATTACK);
 }
 
-/* One strike lands on the first target while glints flicker around it. */
-/* */
-/* Abilities: Crusher Grip. */
-void btEffectRunCrusherGrip(BATTLE_EFFECT_PARM *args) {
+/* One strike lands on the first target while glints flicker around it.
+
+   Abilities: Crusher Grip. */
+void btEffectRunCrusherGrip(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_CRUSHER_GRIP);
 }
 
-/* One strike lands on the first target while the battle ripples and smoke */
-/* rises from its feet. */
-/* */
-/* Abilities: Vanish Claw. */
-void btEffectRunVanishClaw(BATTLE_EFFECT_PARM *args) {
+/* One strike lands on the first target while the battle ripples and smoke rises
+   from its feet.
+
+   Abilities: Vanish Claw. */
+void btEffectRunVanishClaw(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunFlurry(args, FLURRY_VANISH_CLAW);
 }
 
-/* Doublestep plays Gust's one, two or three strikes as the variant grows. */
-/* */
-/* Abilities: Doublestep. */
-FLURRY_DEFINE_BY_VARIANT(btEffectRunDoublestep, FLURRY_GUST, FLURRY_GUST_DOUBLE,
-						 FLURRY_GUST_TRIPLE)
+/* Doublestep plays Gust's one, two or three strikes as the variant grows.
 
-/* The motes in PARTICLES, waiting above the target; the wave, smoke and orb */
-/* pictures follow them in the map cell buffer. */
-#define FLURRY_MOTE_COUNT 256
-/* Each strike's own run of the motes, of which it throws Flurry_Styles' */
-/* FLURRY_MOTES. */
-#define FLURRY_STRIKE_MOTES 32
+   Abilities: Doublestep. */
+FLURRY_DEFINE_BY_VARIANT(
+	btEffectRunDoublestep, FLURRY_GUST, FLURRY_GUST_DOUBLE, FLURRY_GUST_TRIPLE)
+
+/* The motes in PARTICLES, waiting above the target; the wave, smoke and orb
+   pictures follow them in the map cell buffer. */
+#define FLURRY_MOTE_COUNT		 256
+/* Each strike's own run of the motes, of which it throws Flurry_Styles'
+   FLURRY_MOTES. */
+#define FLURRY_STRIKE_MOTES		 32
 /* The wave pictures, past the motes, where the effect's own pictures begin. */
-#define FLURRY_WAVE_PICTURES (Ram_MapCellBuffer + 9216)
+#define FLURRY_WAVE_PICTURES	 (Ram_MapMetatileBuffer + 9216)
 /* The smoke pictures, past the waves: an offset into the effect's pictures. */
-#define FLURRY_SMOKE_PICTURES 5000
+#define FLURRY_SMOKE_PICTURES	 5000
 /* Where BlueArcSheetA or BlueArcSheetB is decoded in the effect's pictures. */
 #define FLURRY_BLUE_ARC_PICTURES 3200
-/* The yellow orb's pictures, packed to half width past the smoke: an offset */
-/* into the effect's pictures. */
-#define FLURRY_ORB_PICTURES 11912
+/* The yellow orb's pictures, packed to half width past the smoke: an offset
+   into the effect's pictures. */
+#define FLURRY_ORB_PICTURES		 11912
 /* The level the canvas fills with on each hit, where the style flashes. */
-#define FLURRY_FLASH_LEVEL 47
+#define FLURRY_FLASH_LEVEL		 47
 
-/* Vanish Claw's smoke: sixteen puffs, each through six pictures four frames */
-/* apart. */
+/* Vanish Claw's smoke: sixteen puffs, each through six pictures four frames
+   apart. */
 #define FLURRY_SMOKE_PUFFS			16
 #define FLURRY_SMOKE_PICTURE_FRAMES 4
 #define FLURRY_SMOKE_FRAMES			(6 * FLURRY_SMOKE_PICTURE_FRAMES)
@@ -127,37 +133,38 @@ typedef enum FLURRY_COLUMN {
 	FLURRY_ARC_SHEET, /* the arcs (FLURRY_ARC) */
 	FLURRY_PALETTE,	  /* whose palette (FLURRY_PAL) */
 	FLURRY_STRIKES,
-	FLURRY_MOTES,	 /* motes thrown by each strike, at most its run of */
-					 /* FLURRY_STRIKE_MOTES */
+	/* motes thrown by each strike, at most its run of FLURRY_STRIKE_MOTES */
+	FLURRY_MOTES,
 	FLURRY_INTERVAL, /* frames between strikes */
 	FLURRY_FRAMES,	 /* frames in the whole effect */
 	FLURRY_FLASH, /* 1 fills the canvas with FLURRY_FLASH_LEVEL on each hit */
 	FLURRY_EXTRA  /* what else plays around the target (FLURRY_EXTRA_KIND) */
 } FLURRY_COLUMN;
 
-/* The user closes on the first target and strikes it again and again, each */
-/* strike an arc or a wave with a flash and a spray of motes; the last knocks */
-/* the target back. */
-void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
-	SCR_POINT actorPos;
-	SCR_POINT targetPos;
-	s32 screen[3];
-	s32 otherPoint[3];
-	SCR_POINT pos;
-	SCR_POINT spot;
-	DRAW_RECTANGLE draw[2];
+/* The user closes on the first target and strikes it again and again, each
+   strike an arc or a wave with a flash and a spray of motes; the last knocks
+   the target back. */
+void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
+{
+	SCREEN_POINT		 actorPos;
+	SCREEN_POINT		 targetPos;
+	Sint32				 screen[3];
+	Sint32				 otherPoint[3];
+	SCREEN_POINT		 pos;
+	SCREEN_POINT		 spot;
+	DRAW_RECTANGLE		 draw[2];
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	s32 frame;
-	u8 *sheet;
-	BATTLE_CAMERA *camera;
-	MOTION_OBJECT *target;
-	s32 resource;
-	u8 *pictures = FLURRY_WAVE_PICTURES;
-	s32 row;
-	s32 col;
-	s32 i;
-	s32 j;
+	void				*canvas;
+	Sint32				 frame;
+	Uint8				*sheet;
+	BATTLE_CAMERA		*camera;
+	MOTION_OBJECT		*target;
+	Sint32				 resource;
+	Uint8				*pictures = FLURRY_WAVE_PICTURES;
+	Sint32				 row;
+	Sint32				 col;
+	Sint32				 i;
+	Sint32				 j;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
@@ -166,21 +173,20 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	if(args->prelude == 1)
-		btEffectRunDjinniEntrance(
-			args,
+		btEffectRunDjinniEntrance(args,
 			DJINNI_ENTRANCE(ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG, args->side,
-							DJINNI_ANCHOR_OVER_USER),
+				DJINNI_ANCHOR_OVER_USER),
 			screen, otherPoint);
 
 	/* The pictures and the palette. */
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
-	/* The orb's pictures, packed to half width: the canvas is shown twice as */
-	/* wide. */
+	/* The orb's pictures, packed to half width: the canvas is shown twice as
+	   wide. */
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);
 	for(row = 0; row != YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT; row++) {
 		for(col = 0; col != YELLOW_ORB_WIDTH; col++) {
-			s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2;
-			s32 src = row * YELLOW_ORB_WIDTH + col;
+			Sint32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2;
+			Sint32 src = row * YELLOW_ORB_WIDTH + col;
 
 			pictures[dst + FLURRY_ORB_PICTURES] = state->sheet[src];
 		}
@@ -189,15 +195,13 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
 	if(Flurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
 		btResourceLoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A,
-									state->sheet + FLURRY_BLUE_ARC_PICTURES, 1,
-									1);
+			state->sheet + FLURRY_BLUE_ARC_PICTURES, 1, 1);
 	else
 		btResourceLoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B,
-									state->sheet + FLURRY_BLUE_ARC_PICTURES, 1,
-									1);
+			state->sheet + FLURRY_BLUE_ARC_PICTURES, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_WAVE_SHEET, pictures, 1, 0);
-	btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET,
-								pictures + FLURRY_SMOKE_PICTURES, 1, 0);
+	btResourceLoadAndDecompress(
+		RESOURCE_SMOKE_SHEET, pictures + FLURRY_SMOKE_PICTURES, 1, 0);
 	switch(Flurry_Styles[mode][FLURRY_PALETTE]) {
 	case FLURRY_PALETTE_MARS_DJINNI:
 		resource = RESOURCE_MARS_DJINN_SHEET;
@@ -213,35 +217,33 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 		break;
 	}
 	syWordsCopyEntry((void *)BG_PLTT, syResourceGetTableEntry(resource),
-					 SHEET_PALETTE_BYTES);
+		SHEET_PALETTE_BYTES);
 
 	/* The user closes in; Claw Attack lunges further and waits. */
 	if(mode == FLURRY_CLAW_ATTACK) {
 		btMotionApproachTargetStub(args->user, args->tgts[0], 8, toFIXED(6));
 		sySynch(7);
-	}
-	else {
+	} else {
 		btMotionApproachTargetStub(args->user, args->tgts[0], 4, 0);
 	}
 	sySynch(1);
 
 	btEffectPosProjectScaledBattler(args->tgts[0], &targetPos);
 	/* Each transfer leaves 3/4 of the last frame behind as an afterimage. */
-	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
-						  CANVAS_FADE_THREE_QUARTERS);
+	EFFECT_START_TRANSFER(
+		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	if(Flurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE)
-		sySetEvent(btEffectArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
+		sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 
-	/* The motes wait 25 pixels above the target, aimed away from the */
-	/* caster; none is out yet. */
+	/* The motes wait 25 pixels above the target, aimed away from the caster;
+	   none is out yet. */
 	target = btObjectGetStub(args->tgts[0])->obj;
 	for(i = 0; i != FLURRY_MOTE_COUNT; i++) {
 		PARTICLE *mote = &PARTICLES[i];
 
 		SET_POSITION(mote, target->x, target->y + toFIXED(25), target->z);
 		SET_VELOCITY(mote, (syRandom() & 255) << 12,
-					 ((syRandom() & 255) - 127) << 12,
-					 ((syRandom() & 255) - 127) << 12);
+			((syRandom() & 255) - 127) << 12, ((syRandom() & 255) - 127) << 12);
 		if(mote->x > 0)
 			mote->velX = -mote->velX;
 		mote->variant = -1;
@@ -250,7 +252,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 	for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 		PARTICLE *puff = &state->particles[i];
 
-		SET_POSITION(puff, INTtoFIXED(targetPos.x / 2), toFIXED(88), 0);
+		SET_POSITION(puff, toFIXED(targetPos.x / 2), toFIXED(88), 0);
 		puff->velX = ((syRandom() & 255) - 128) << 9;
 		puff->velY = ((syRandom() & 255) - 128) << 9;
 		puff->variant = -i;
@@ -258,12 +260,11 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 	}
 
 	for(frame = 0; frame != Flurry_Styles[mode][FLURRY_FRAMES]; frame++) {
-		s32 *lines;
-		s32 strikes;
+		Sint32 *lines;
+		Sint32	strikes;
 
 		/* The ripple's line table: each line of BG2 swings up to six pixels on
-		 * a */
-		/* sine wave. */
+		   a sine wave. */
 		lines = state->bg2xLines;
 		for(i = 0; i != DISPLAY_HEIGHT; i++)
 			*lines++ = CANVAS_WAVE_BG2X(
@@ -276,74 +277,68 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 
 		/* The arcs and waves, mirrored on odd strikes. */
 		if(args->side == EFFECT_SIDE_ENEMIES) {
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-								BLITTER_MAX);
+			EFFECT_LOAD_BLITTER(
+				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-								EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-								BLITTER_MAX);
-		}
-		else {
+				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+		} else {
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-								EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-								BLITTER_MAX);
+				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-								EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-								BLITTER_MAX);
+				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
 		}
 		draw[0] = Ram_HeapSlots->ramCode;
 		draw[1] = Ram_HeapSlots->ramCodePaired;
 		for(i = 0; i != strikes; i++) {
-			s32 start = i * Flurry_Styles[mode][FLURRY_INTERVAL];
+			Sint32 start = i * Flurry_Styles[mode][FLURRY_INTERVAL];
 
 			if(frame >= start && frame < start + 6) {
-				s32 step = frame - start;
+				Sint32 step = frame - start;
 
 				if((i & 3) <= 1 ||
-				   Flurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
+					Flurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
 					/* The arc's six pictures. */
 					if(args->side == EFFECT_SIDE_ENEMIES)
 						draw[i & 1](canvas,
-									state->sheet + FLURRY_BLUE_ARC_PICTURES +
-										step * PICTURE_BYTES(BLUE_ARC),
-									targetPos.x / 2 - 16, targetPos.y - 40,
-									BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+							state->sheet + FLURRY_BLUE_ARC_PICTURES +
+								step * PICTURE_BYTES(BLUE_ARC),
+							targetPos.x / 2 - 16, targetPos.y - 40,
+							BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
 					else
 						draw[i & 1](canvas,
-									state->sheet + FLURRY_BLUE_ARC_PICTURES +
-										step * PICTURE_BYTES(BLUE_ARC),
-									targetPos.x / 2 - 32, targetPos.y - 40,
-									BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
-				}
-				else {
+							state->sheet + FLURRY_BLUE_ARC_PICTURES +
+								step * PICTURE_BYTES(BLUE_ARC),
+							targetPos.x / 2 - 32, targetPos.y - 40,
+							BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+				} else {
 					/* The wave's six pictures. */
 					if(args->side == EFFECT_SIDE_ENEMIES)
 						draw[i & 1](canvas,
-									pictures + step * PICTURE_BYTES(WAVE),
-									targetPos.x / 2 - 16, actorPos.y - 8,
-									WAVE_WIDTH, WAVE_HEIGHT);
+							pictures + step * PICTURE_BYTES(WAVE),
+							targetPos.x / 2 - 16, actorPos.y - 8, WAVE_WIDTH,
+							WAVE_HEIGHT);
 					else
 						draw[i & 1](canvas,
-									pictures + step * PICTURE_BYTES(WAVE),
-									targetPos.x / 2 - 32, actorPos.y - 8,
-									WAVE_WIDTH, WAVE_HEIGHT);
+							pictures + step * PICTURE_BYTES(WAVE),
+							targetPos.x / 2 - 32, actorPos.y - 8, WAVE_WIDTH,
+							WAVE_HEIGHT);
 				}
 			}
 			/* The hit; the last strike knocks the target back. */
 			if(frame == start + 2) {
 				if(Flurry_Styles[mode][FLURRY_FLASH] == 1)
 					syWordsFillEntry(canvas, CANVAS_BYTES,
-									 CANVAS_FILL_WORD(FLURRY_FLASH_LEVEL));
-				btEffectTintBattler(args->tgts[0], SPRITE_COLOR_WHITE,
-									POSE_DAMAGE, 0, 4);
+						CANVAS_FILL_WORD(FLURRY_FLASH_LEVEL));
+				btEffectTintBattler(
+					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
 				if(i == strikes - 1) {
 					btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
 					state->shakeFrm = 8;
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-				}
-				else {
+				} else {
 					if(i & 1)
-						btMotionApplyKnockbackStub(args->tgts[0],
-												   KNOCKBACK_JOLT);
+						btMotionApplyKnockbackStub(
+							args->tgts[0], KNOCKBACK_JOLT);
 					state->shakeFrm = 4;
 					sySndPlayStub(SE_HEAVY_IMPACT);
 				}
@@ -354,34 +349,34 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 			/* The orb's six pictures, two frames each. */
 			if(frame >= start + 2 && frame < start + 14)
 				draw[0](canvas,
-						pictures + FLURRY_ORB_PICTURES +
-							((frame - start - 2) / 2) *
-								PICTURE_BYTES(YELLOW_ORB_PACKED),
-						targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
-						targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
-						YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
+					pictures + FLURRY_ORB_PICTURES +
+						((frame - start - 2) / 2) *
+							PICTURE_BYTES(YELLOW_ORB_PACKED),
+					targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
+					targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
+					YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
 		}
 		EFFECT_RELEASE_BLITTERS();
 
 		/* The motes, until their life runs out, bouncing off the ground. */
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-							BLITTER_ADDITIVE);
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
-							BLITTER_MAX);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 		draw[0] = Ram_HeapSlots->ramCode;
 		draw[1] = Ram_HeapSlots->ramCodePaired;
 		for(i = 0; i != FLURRY_MOTE_COUNT; i++) {
 			PARTICLE *mote = &PARTICLES[i];
-			s32 size = mote->variant;
+			Sint32	  size = mote->variant;
 
 			if(size > 0) {
 				btEffectPosProjectPoint(&mote->x, &pos);
 				pos.x /= 2;
 				size >>= 3;
 				size++;
-				EFFECT_DRAW_MOTE(draw[(i / 2) & 1], canvas, sheet, pos.x, pos.y,
-								 size);
+				EFFECT_DRAW_MOTE(
+					draw[(i / 2) & 1], canvas, sheet, pos.x, pos.y, size);
 				btParticleAdvanceWithGravity3D(mote, 60, -toFIXED(1) / 64);
 				if(mote->y < toFIXED(8))
 					mote->velY = -mote->velY / 2;
@@ -391,52 +386,52 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 		EFFECT_RELEASE_BLITTERS();
 
 		if(frame > 3) {
-			/* The glints: three a frame around the target, each with its own */
-			/* random flip, until frame 31. */
+			/* The glints: three a frame around the target, each with its own
+			   random flip, until frame 31. */
 			if(Flurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_GLINTS &&
-			   frame <= 31) {
+				frame <= 31) {
 				btEffectPosProjectScaledBattler(args->tgts[0], &spot);
 				for(i = 0; i != 3; i++) {
-					s32 angle = syRandom() & TRIG_ANGLE_MASK;
-					s32 cel = frame & 3;
-					s32 radius = (syRandom() & 31) + 4;
-					s32 x = spot.x / 2 +
-							(FIXEDtoINT(sySin(angle) * radius) >> 1) -
-							BattleEffect_GlintPictureWidths[cel] / 2;
-					s32 y = spot.y - (FIXEDtoINT(syCos(angle) * radius) >> 1) -
-							BattleEffect_GlintPictureHeights[cel] / 2;
-					u32 flip = syRandom();
+					Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
+					Sint32 picture = frame & 3;
+					Sint32 radius = (syRandom() & 31) + 4;
+					Sint32 x = spot.x / 2 +
+						(FIXEDtoINT(sySin(angle) * radius) >> 1) -
+						BattleEffect_GlintPictureWidths[picture] / 2;
+					Sint32 y = spot.y -
+						(FIXEDtoINT(syCos(angle) * radius) >> 1) -
+						BattleEffect_GlintPictureHeights[picture] / 2;
+					Uint32 flip = syRandom();
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-										Flurry_GlintFlips[flip & 3] |
-											COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-										BLITTER_ADDITIVE);
-					(Ram_HeapSlots->ramCodePaired)(
-						canvas, state->sheet + BattleEffect_GlintPictures[cel],
-						x, y, BattleEffect_GlintPictureWidths[cel],
-						BattleEffect_GlintPictureHeights[cel]);
+						Flurry_GlintFlips[flip & 3] | COMPOSITE_CLIP_X |
+							COMPOSITE_CLIP_Y,
+						BLITTER_ADDITIVE);
+					(Ram_HeapSlots->ramCodePaired)(canvas,
+						state->sheet + BattleEffect_GlintPictures[picture], x,
+						y, BattleEffect_GlintPictureWidths[picture],
+						BattleEffect_GlintPictureHeights[picture]);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 				}
 			}
 			/* The smoke: the puffs rise from the target's feet. */
 			if(Flurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE) {
-				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-									BLITTER_ADDITIVE);
+				EFFECT_LOAD_BLITTER(
+					HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 				draw[0] = Ram_HeapSlots->ramCode;
 				for(i = 0; i != FLURRY_SMOKE_PUFFS; i++) {
 					PARTICLE *puff = &state->particles[i];
 
 					if(puff->variant >= 0 &&
-					   puff->variant < FLURRY_SMOKE_FRAMES) {
-						draw[0](
-							canvas,
+						puff->variant < FLURRY_SMOKE_FRAMES) {
+						draw[0](canvas,
 							pictures + FLURRY_SMOKE_PICTURES +
 								(puff->variant / FLURRY_SMOKE_PICTURE_FRAMES) *
 									PICTURE_BYTES(SMOKE_PUFF),
 							FIXED_INTEGER_PART(puff->x) - SMOKE_PUFF_WIDTH / 2,
 							FIXED_INTEGER_PART(puff->y) - SMOKE_PUFF_HEIGHT / 2,
 							SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-						btParticleAdvanceWithGravity2D(puff, 62,
-													   -toFIXED(1) / 16);
+						btParticleAdvanceWithGravity2D(
+							puff, 62, -toFIXED(1) / 16);
 					}
 					puff->variant++;
 				}
@@ -448,7 +443,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, s32 mode) {
 	}
 
 	if(Flurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE)
-		syCloseEvent(btEffectArmBg2AffineHBlankDma);
+		syCloseEvent(btEffectArmBg2AffineHBlankDMA);
 	syCloseEvent(btEffectTransferCanvas);
 	btEffectEndCanvasLayer();
 }

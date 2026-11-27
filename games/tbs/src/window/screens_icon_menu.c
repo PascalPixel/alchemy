@@ -1,66 +1,55 @@
-/* @file */
-/* The command icon menus of the field, title and transfer screens. */
-/* Part of screens.c. */
+/* The command icon menus of the field, title and transfer screens. Part of
+   screens.c. */
 
-/* How the transfer method's help is drawn ("Use a password to..." and "Use a */
-/* Game Link cable to connect..."), and where its lines go, in pixels. */
-#if LANGUAGE == LANGUAGE_GERMAN
-#define TRANSFER_MODE_DRAW_HELP		   mnTextDrawMessageAsTiles
-#define TRANSFER_PASSWORD_HELP_X	   32
-#define TRANSFER_PASSWORD_HELP_FIRST_Y 8
-#define TRANSFER_PASSWORD_HELP_LAST_Y  24
-#define TRANSFER_CABLE_HELP_FIRST_Y	   0
-#define TRANSFER_CABLE_HELP_LAST_Y	   32
-#else
-#define TRANSFER_MODE_DRAW_HELP		   mnTextDrawMessage
-#define TRANSFER_PASSWORD_HELP_X	   PASSWORD_HELP_X
-#define TRANSFER_PASSWORD_HELP_FIRST_Y 4
-#define TRANSFER_PASSWORD_HELP_LAST_Y  16
-#define TRANSFER_CABLE_HELP_FIRST_Y	   4
-#define TRANSFER_CABLE_HELP_LAST_Y	   28
-#endif
+/* How the transfer method's help is drawn ("Use a password to..." and "Use a
+   Game Link cable to connect..."), and where its lines go, in pixels. */
+#define TRANSFER_MODE_DRAW_HELP \
+	GERMAN_OR(mnTextDrawMessageAsTiles, mnTextDrawMessage)
+#define TRANSFER_PASSWORD_HELP_X	   GERMAN_OR(32, PASSWORD_HELP_X)
+#define TRANSFER_PASSWORD_HELP_FIRST_Y GERMAN_OR(8, 4)
+#define TRANSFER_PASSWORD_HELP_LAST_Y  GERMAN_OR(24, 16)
+#define TRANSFER_CABLE_HELP_FIRST_Y	   GERMAN_OR(0, 4)
+#define TRANSFER_CABLE_HELP_LAST_Y	   GERMAN_OR(32, 28)
 /* The y of the cable help's second line, in pixels, in every edition. */
-#define TRANSFER_CABLE_HELP_SECOND_Y 16
+#define TRANSFER_CABLE_HELP_SECOND_Y   16
 
 /* The icon menus' bottom row, in tiles, where most of them stand; a Yes or No
- */
-/* may stand at the top, row 0, instead. */
+   may stand at the top, row 0, instead. */
 #define ICON_MENU_BOTTOM_ROW 17
 /* The lines an icon row covers: its label window's three tiles. */
-#define ICON_ROW_LINES 24
-/* The most icons a menu shows, and so the row length of */
-/* FileList_ActionByPosition, which has an action for each place. */
-#define ICON_MENU_MAX_ICONS ((s32)ARRAY_COUNT(IconMenuStateWork->entries))
+#define ICON_ROW_LINES		 24
+/* The most icons a menu shows, and so the row length of
+   FileList_ActionByPosition, which has an action for each place. */
+#define ICON_MENU_MAX_ICONS	 ((Sint32)ARRAY_COUNT(IconMenuStateWork->entries))
 
-/* How far the selected icon overhangs its place while it pulses at the 8.8 */
-/* `scale`: on each side, half its 24-pixel width grown by the scale, rounded */
-/* up; and past its row, half its 32-pixel height grown by the scale, rounded,
- */
-/* and a line more. */
+/* How far the selected icon overhangs its place while it pulses at the 8.8
+   `scale`: on each side, half its 24-pixel width grown by the scale, rounded
+   up; and past its row, half its 32-pixel height grown by the scale, rounded,
+   and a line more. */
 #define PULSE_OVERHANG_X(scale) ((((scale) - Q_8_8(1)) * 12 + 255) / 256)
-#define PULSE_OVERHANG_LINES(scale)                                            \
+#define PULSE_OVERHANG_LINES(scale) \
 	((((scale) - Q_8_8(1)) * 32 + 255) / 512 + 1)
 
-/* Draws the icon menu's icons, a task of the icon menus (mnIconMenuOpen). Each
- */
-/* icon is a 32x32, 256-colour sprite, and one at x 0 is not drawn; the */
-/* selected one pulses, double-size, in front of the others. While a screen */
-/* transition runs, it widens window 1 over the icon row so the icons show */
-/* through. */
-void mnIconMenuDrawIcons(void) {
+/* Draws the icon menu's icons, an event of the icon menus (mnIconMenuOpen).
+   Each icon is a 32x32, 256-colour sprite, and one at x 0 is not drawn; the
+   selected one pulses, double-size, in front of the others. While a screen
+   transition runs, it widens window 1 over the icon row so the icons show
+   through. */
+void mnIconMenuDrawIcons(void)
+{
 	ICON_MENU_STATE *iconMenuState;
 	ICON_MENU_ENTRY *entry;
 	AFFINE_TRANSFORM transform;
-	s32 pulseScale;
-	s32 affineIndex;
-	s32 span;
-	s32 spriteY;
-	u32 lastLine;
-	u32 index;
-	/* UB: edge steps from one line's window 1 edges to the next line's, past */
-	/* the member it points into. */
-	u16 *edge;
-	SCR_TRANSITION_STATE *state;
+	Sint32			 pulseScale;
+	Sint32			 affineIndex;
+	Sint32			 span;
+	Sint32			 spriteY;
+	Uint32			 lastLine;
+	Uint32			 index;
+	/* UB: edge steps from one line's window 1 edges to the next line's, past
+	   the member it points into. */
+	Uint16					*edge;
+	SCREEN_TRANSITION_STATE *state;
 
 	iconMenuState = IconMenuStateWork;
 	entry = iconMenuState->entries;
@@ -69,26 +58,24 @@ void mnIconMenuDrawIcons(void) {
 	transform.scaleX = pulseScale;
 	transform.scaleY = pulseScale;
 	transform.ang = 0;
-	affineIndex = syOamMatrixAllocFromTransform(&transform);
+	affineIndex = syOAMMatrixAllocFromTransform(&transform);
 	/* Pulse only the selection; the other icons keep their normal OAM shape. */
 	for(index = 0; index < iconMenuState->cnt; index++, entry++) {
-		s32 drawLayer;
-		u32 *word;
-		s32 x;
+		Sint32	drawLayer;
+		Uint32 *word;
+		Sint32	x;
 
 		x = entry->x;
 		if(x == 0)
 			continue;
 		if(index == iconMenuState->selection) {
-			s32 left = x + pulseScale * 7 / 512 - 20;
+			Sint32 left = x + pulseScale * 7 / 512 - 20;
 
 			/* The icon grows to 32 * scale / Q_8_8(1) pixels in the middle of
-			 * its */
-			/* 64-pixel double-size box: on the top row its top edge stays at
-			 * the */
-			/* screen's top, the box starting above it with its y wrapped within
-			 */
-			/* OAM's 8 bits; elsewhere it grows mostly upward from its row. */
+			   its 64-pixel double-size box: on the top row its top edge stays
+			   at the screen's top, the box starting above it with its y wrapped
+			   within OAM's 8 bits; elsewhere it grows mostly upward from its
+			   row. */
 			if(entry->y != 0)
 				spriteY = entry->y + pulseScale * 3 / 256 - 20;
 			else
@@ -96,17 +83,15 @@ void mnIconMenuDrawIcons(void) {
 			word = entry->spr;
 			*word++ = 0;
 			*word++ = OBJ_MATRIX(affineIndex) | spriteY | OBJ_X(left) |
-					  OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
-					  OBJ_AFFINE;
+				OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
 			*word = VramCacheEntries[entry->slot].ofs >> 5;
 			drawLayer = OAM_DEPTH_WINDOW + 6;
-		}
-		else {
-			u32 attributes;
-			u32 tileOffset;
+		} else {
+			Uint32 attributes;
+			Uint32 tileOffset;
 
 			word = entry->spr;
-			spriteY = *(s16 *)&entry->y;
+			spriteY = *(Sint16 *)&entry->y;
 			*word++ = 0;
 			attributes = spriteY | OBJ_X(x) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
 			tileOffset = VramCacheEntries[entry->slot].ofs;
@@ -114,17 +99,15 @@ void mnIconMenuDrawIcons(void) {
 			*word = tileOffset >> 5;
 			drawLayer = OAM_DEPTH_WINDOW + 5;
 		}
-		syOamAddSprAtDepth(entry, drawLayer);
+		syOAMAddSprAtDepth(entry, drawLayer);
 	}
 	/* Window 1 widens around the selected icon on the lines it overhangs, below
-	 */
-	/* it on the top row and above it on the bottom one, then covers the row's
-	 */
-	/* ICON_ROW_LINES lines from the first icon, keeping each line's right edge.
-	 */
+	   it on the top row and above it on the bottom one, then covers the row's
+	   ICON_ROW_LINES lines from the first icon, keeping each line's right
+	   edge. */
 	if(iconMenuState->row == 0) {
 		WINDOW_BUFFER *page;
-		s32 halfWidth;
+		Sint32		   halfWidth;
 
 		state = ScreenTransitionStateWork;
 		if(state == NULL || iconMenuState->cnt == 0)
@@ -146,11 +129,10 @@ void mnIconMenuDrawIcons(void) {
 		edge = &page->lines[0].win1;
 		for(index = 0; index < ICON_ROW_LINES; index++, edge += 2)
 			*edge = (*edge & 0xff) | span;
-	}
-	else {
+	} else {
 		WINDOW_BUFFER *page;
-		s32 firstLine;
-		s32 halfWidth;
+		Sint32		   firstLine;
+		Sint32		   halfWidth;
 
 		state = ScreenTransitionStateWork;
 		if(state == NULL || iconMenuState->cnt == 0)
@@ -176,25 +158,25 @@ void mnIconMenuDrawIcons(void) {
 	}
 }
 
-/* Allocates and clears the icon menu's state, which lives in */
-/* HEAP_SLOT_ICON_MENU until mnIconMenuClose frees it, and starts the task that
- */
-/* draws its icons. Every icon menu starts here. */
-void *mnIconMenuOpen(void) {
+/* Allocates and clears the icon menu's state, which lives in
+   HEAP_SLOT_ICON_MENU until mnIconMenuClose frees it, and starts the event that
+   draws its icons. Every icon menu starts here. */
+void *mnIconMenuOpen(void)
+{
 	void *state;
-	state = syHeapSlotAllocEwram(HEAP_SLOT_ICON_MENU, sizeof(ICON_MENU_STATE));
-	btDmaFill32(0, state, sizeof(ICON_MENU_STATE));
-	sySetEvent(mnIconMenuDrawIcons, TASK_PASS_FRAME - 10);
+	state = syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_MENU, sizeof(ICON_MENU_STATE));
+	DMA_FILL32(0, state, sizeof(ICON_MENU_STATE));
+	sySetEvent(mnIconMenuDrawIcons, EVENT_PASS_FRAME - 10);
 	return state;
 }
 
-/* Stops drawing the icons, closes the label window and releases each loaded */
-/* icon before freeing the icon menu's state (HEAP_SLOT_ICON_MENU), then waits
- */
-/* a frame. */
-void mnIconMenuClose(void) {
-	WINDOW *labelWindow;
-	s32 i;
+/* Stops drawing the icons, closes the label window and releases each loaded
+   icon before freeing the icon menu's state (HEAP_SLOT_ICON_MENU), then waits a
+   frame. */
+void mnIconMenuClose(void)
+{
+	WINDOW			*labelWindow;
+	Sint32			 i;
 	ICON_MENU_STATE *state;
 
 	state = IconMenuStateWork;
@@ -204,19 +186,20 @@ void mnIconMenuClose(void) {
 		mnWindowClose(labelWindow, 2);
 	}
 	for(i = 0; i < state->cnt; i++) {
-		syVramCacheFreeEntry(state->entries[i].slot);
+		syVRAMCacheFreeEntry(state->entries[i].slot);
 	}
 	syHeapSlotRelease(HEAP_SLOT_ICON_MENU);
 	sySynch(1U);
 }
 
-/* Selects an icon position with wrapped directional input. A returns the */
-/* position; B or Start returns -1. Redraws the label only after a move: the */
-/* message labelBase + position when the layout set a labelBase, else the */
-/* icon's command name. */
-s32 mnIconMenuRun(s32 initial) {
+/* Selects an icon position with wrapped directional input. A returns the
+   position; B or Start returns -1. Redraws the label only after a move: the
+   message labelBase + position when the layout set a labelBase, else the icon's
+   command name. */
+Sint32 mnIconMenuRun(Sint32 initial)
+{
 	ICON_MENU_STATE *state = IconMenuStateWork;
-	s32 resource;
+	Sint32			 resource;
 
 	state->selection = initial;
 redraw:
@@ -228,59 +211,59 @@ redraw:
 	mnTextDrawMessageAsTiles(resource, state->win, 0, 0);
 	for(;;) {
 		sySynch(1);
-		if(KeysPressed & KEY_A) {
+		if(PerPush & KEY_A) {
 			sySndPlayStub(SE_MENU_CONFIRM);
 			return state->selection;
 		}
-		if(KeysPressed & KEY_B) {
+		if(PerPush & KEY_B) {
 			sySndPlayStub(SE_MENU_CANCEL);
 			return -1;
 		}
-		if(KeysPressed & KEY_START) {
+		if(PerPush & KEY_START) {
 			sySndPlayStub(SE_MENU_CANCEL);
 			return -1;
 		}
-		if((KeysRepeat & KEY_LEFT) || (KeysRepeat & KEY_UP)) {
+		if((PerRepeat & KEY_LEFT) || (PerRepeat & KEY_UP)) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			state->selection--;
 			if(state->selection < 0)
 				state->selection = state->cnt - 1;
-		}
-		else if((KeysRepeat & KEY_RIGHT) || (KeysRepeat & KEY_DOWN)) {
+		} else if((PerRepeat & KEY_RIGHT) || (PerRepeat & KEY_DOWN)) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			state->selection++;
 			if(state->selection >= state->cnt)
 				state->selection = 0;
-		}
-		else
+		} else
 			continue;
 		goto redraw;
 	}
 }
 
-/* Returns the distance between lhs and rhs, reusing their supplied difference.
- */
-static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
+/* Returns the distance between lhs and rhs, reusing their supplied
+   difference. */
+static inline Sint32 mnAbsDiff(Sint32 diff, Sint32 lhs, Sint32 rhs)
+{
 	if(diff >= 0)
 		return diff;
 	return rhs - lhs;
 }
 
-/* Moves the selection from start to goal one icon at a time with the cursor */
-/* sound, redrawing the label each step and waiting */
-/* Menu_SelectionStepDelays[icons still to go] frames at each (12 more at the */
-/* first), then 48 frames on the goal before the confirm sound: a menu choice */
-/* made for the player to watch (mnAnimateSelectionToEntry). Returns goal. */
-s32 mnIconMenuAnimateTo(s32 start, s32 goal) {
-	s16 resourceBase;
-	s16 selection;
-	s32 diff;
-	s32 resourceId;
-	s32 distance;
-	s32 position;
-	s32 step;
-	s32 delay;
-	const u8 *stepDelays;
+/* Moves the selection from start to goal one icon at a time with the cursor
+   sound, redrawing the label each step and waiting
+   Menu_SelectionStepDelays[icons still to go] frames at each (12 more at the
+   first), then 48 frames on the goal before the confirm sound: a menu choice
+   made for the player to watch (mnAnimateSelectionToEntry). Returns goal. */
+Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
+{
+	Sint16			 resourceBase;
+	Sint16			 selection;
+	Sint32			 diff;
+	Sint32			 resourceId;
+	Sint32			 distance;
+	Sint32			 position;
+	Sint32			 step;
+	Sint32			 delay;
+	const Uint8		*stepDelays;
 	ICON_MENU_STATE *state;
 
 	state = IconMenuStateWork;
@@ -296,8 +279,7 @@ s32 mnIconMenuAnimateTo(s32 start, s32 goal) {
 		resourceBase = state->labelBase;
 		if(resourceBase != 0) {
 			resourceId = resourceBase + state->selection;
-		}
-		else {
+		} else {
 			resourceId = state->commandIcons[state->selection] + MsgCommandName;
 		}
 		mnTextDrawMessageAsTiles(resourceId, state->win, 0, 0);
@@ -305,7 +287,7 @@ s32 mnIconMenuAnimateTo(s32 start, s32 goal) {
 		selection = state->selection;
 		stepDelays = Menu_SelectionStepDelays;
 		diff = selection - goal;
-		distance = AbsoluteDifference(diff, selection, goal);
+		distance = mnAbsDiff(diff, selection, goal);
 		sySynch(stepDelays[distance] + delay);
 
 		if(position == goal)
@@ -322,34 +304,37 @@ s32 mnIconMenuAnimateTo(s32 start, s32 goal) {
 	return goal;
 }
 
-/* Decodes command icon `index` into the VRAM cache entry `slot`, through a */
-/* block it allocates and frees. */
-void mnCommandIconLoadIntoSlot(s32 slot, s32 index) {
-	s32 size = COMMAND_ICON_BYTES;
-	void *buffer = syHeapAlloc(size);
-	u16 *offsetTable = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
+/* Decodes command icon `index` into the VRAM cache entry `slot`, through a
+   block it allocates and frees. */
+void mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 index)
+{
+	Sint32	size = COMMAND_ICON_BYTES;
+	void   *buffer = syHeapAlloc(size);
+	Uint16 *offsetTable = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
 
-	fdDecompressByteLz((void *)((u32)offsetTable + offsetTable[index]), buffer);
-	syVramCacheLoad(slot, size, buffer);
+	syDecompressByteLZ(
+		(void *)((Uint32)offsetTable + offsetTable[index]), buffer);
+	syVRAMCacheLoad(slot, size, buffer);
 	syHeapRelease(buffer);
 }
 
-/* Appends a command icon if fewer than ICON_MENU_MAX_ICONS are present. It */
-/* starts on the bottom row; mnIconMenuCenter or mnIconMenuLayoutIcons places */
-/* the row. Its VRAM cache entry is taken unchecked. */
-void mnIconMenuAddIcon(s32 icon) {
+/* Appends a command icon if fewer than ICON_MENU_MAX_ICONS are present. It
+   starts on the bottom row; mnIconMenuCenter or mnIconMenuLayoutIcons places
+   the row. Its VRAM cache entry is taken unchecked. */
+void mnIconMenuAddIcon(Sint32 icon)
+{
 	ICON_MENU_STATE *state;
 	ICON_MENU_ENTRY *entry;
-	s16 index;
-	s32 slot;
-	s32 y = ICON_MENU_BOTTOM_ROW * 8;
+	Sint16			 index;
+	Sint32			 slot;
+	Sint32			 y = ICON_MENU_BOTTOM_ROW * 8;
 
 	state = IconMenuStateWork;
 	index = state->cnt;
 	if(index < ICON_MENU_MAX_ICONS) {
 		state->cnt++;
 		entry = &state->entries[index];
-		slot = syVramCacheFindFreeEntry();
+		slot = syVRAMCacheFindFreeEntry();
 		mnCommandIconLoadIntoSlot(slot, icon);
 		entry->x = index * 24 + 32;
 		entry->y = y;
@@ -358,17 +343,17 @@ void mnIconMenuAddIcon(s32 icon) {
 	}
 }
 
-/* Centres the icons and their label window together on tile row `row`. A */
-/* nonzero resourceBase is the first label message; otherwise each icon is */
-/* labelled by its command name. The icons stand three tiles apart and the */
-/* label window, `width` + 2 tiles wide and 3 tall, follows them; the centring
- */
-/* counts two thirds of the window's width. */
-void mnIconMenuCenter(s32 row, s32 width, s32 resourceBase) {
+/* Centres the icons and their label window together on tile row `row`. A
+   nonzero resourceBase is the first label message; otherwise each icon is
+   labelled by its command name. The icons stand three tiles apart and the label
+   window, `width` + 2 tiles wide and 3 tall, follows them; the centring counts
+   two thirds of the window's width. */
+void mnIconMenuCenter(Sint32 row, Sint32 width, Sint32 resourceBase)
+{
 	ICON_MENU_STATE *state = IconMenuStateWork;
-	s32 x;
-	s32 i;
-	s32 count;
+	Sint32			 x;
+	Sint32			 i;
+	Sint32			 count;
 
 	state->width = width + 2;
 	state->labelBase = resourceBase;
@@ -386,11 +371,12 @@ void mnIconMenuCenter(s32 row, s32 width, s32 resourceBase) {
 }
 
 /* Places the icons three tiles apart from tile (x, y), then opens their label
- */
-/* window, `width` + 2 tiles wide, just after them. */
-void mnIconMenuLayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
+   window, `width` + 2 tiles wide, just after them. */
+void mnIconMenuLayoutIcons(
+	Sint32 x, Sint32 y, Sint32 width, Sint32 resourceBase)
+{
 	ICON_MENU_STATE *state;
-	s32 i;
+	Sint32			 i;
 	ICON_MENU_ENTRY *entry;
 
 	state = IconMenuStateWork;
@@ -407,20 +393,22 @@ void mnIconMenuLayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
 }
 
 /* Reads the signed command-position mapping used by the icon menu. */
-static __inline__ s32 mnIconMenuReadCommandPos(s8 *table, s32 index) {
+static __inline__ Sint32 mnIconMenuReadCommandPos(Sint8 *table, Sint32 index)
+{
 	return table[index];
 }
 
-/* The field menu's row of icons: Psynergy, Djinn, Item and Status, without */
-/* Djinn when the party has none. `selection` is the command to start on and */
-/* the result the command chosen (FIELD_MENU_COMMAND), or -1 when */
-/* cancelled; two tables turn commands into icon positions and back. */
-s32 mnFieldMenuSelectCommand(s32 selection) {
-	s32 group = 0;
-	s32 offset;
-	s32 groupTriple;
-	s32 result;
-	s8 *commandPositions;
+/* The field menu's row of icons: Psynergy, Djinn, Item and Status, without
+   Djinn when the party has none. `selection` is the command to start on and the
+   result the command chosen (FIELD_MENU_COMMAND), or -1 when cancelled; two
+   tables turn commands into icon positions and back. */
+Sint32 mnFieldMenuSelectCommand(Sint32 selection)
+{
+	Sint32 group = 0;
+	Sint32 offset;
+	Sint32 groupTriple;
+	Sint32 result;
+	Sint8 *commandPositions;
 
 	if(gmPartySumDjinnCountsStub(-1) == 0) {
 		group = 1;
@@ -454,16 +442,12 @@ s32 mnFieldMenuSelectCommand(s32 selection) {
 }
 
 /* The width of the field command menu's label window, in tiles. */
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define FIELD_COMMAND_LABEL_WIDTH 7
-#else
-#define FIELD_COMMAND_LABEL_WIDTH 5
-#endif
+#define FIELD_COMMAND_LABEL_WIDTH JAPANESE_OR(5, 7)
 
 /* Opens the field command menu and animates from start to the command's icon.
- */
-/* Returns the final icon position after closing the menu. */
-s32 mnAnimateSelectionToEntry(s32 start, s32 command) {
+   Returns the final icon position after closing the menu. */
+Sint32 mnAnimateSelectionToEntry(Sint32 start, Sint32 command)
+{
 	mnPartyStatOpenAndWait();
 	mnIconMenuOpen();
 	mnIconMenuAddIcon(COMMAND_ICON_PSYNERGY);
@@ -477,33 +461,31 @@ s32 mnAnimateSelectionToEntry(s32 start, s32 command) {
 	return command;
 }
 
-/* The File Screen's rows of icons, by the files saved, each a row of */
-/* FileList_ActionByPosition. */
+/* The File Screen's rows of icons, by the files saved, each a row of
+   FileList_ActionByPosition. */
 typedef enum FILE_ACTION_ROW {
 	FILE_ROW_SOME = 0, /* one or two files: New Game, Continue, Copy, Erase */
 	FILE_ROW_FULL = 1, /* three files: Continue, Erase */
 	FILE_ROW_FULL_CLEARED = 2, /* three files, all cleared: Erase */
-	FILE_ROW_CLEARED =
-		3 /* one or two files, all cleared: New Game, Copy, Erase */
+	/* one or two files, all cleared: New Game, Copy, Erase */
+	FILE_ROW_CLEARED = 3
 } FILE_ACTION_ROW;
 
-/* The File Screen's row of icons, from the save summaries: New Game, */
-/* Continue, Copy and Erase for one or two files (starting on Continue); no New
- */
-/* Game or Copy with three; with every file cleared no Continue, and only Erase
- */
-/* with three such files; then Battle and Send when they are enabled. Returns */
-/* the action chosen (FILE_ACTION) by its position. With no files it */
-/* returns 0 at once, and -1 when cancelled or the backup memory cannot be */
-/* read. */
-s32 mnFileListSelectAction(void) {
-	s32 fileState;
-	s32 result;
-	s32 initial;
-	u32 group;
+/* The File Screen's row of icons, from the save summaries: New Game, Continue,
+   Copy and Erase for one or two files (starting on Continue); no New Game or
+   Copy with three; with every file cleared no Continue, and only Erase with
+   three such files; then Battle and Send when they are enabled. Returns the
+   action chosen (FILE_ACTION) by its position. With no files it returns 0 at
+   once, and -1 when cancelled or the backup memory cannot be read. */
+Sint32 mnFileListSelectAction(void)
+{
+	Sint32 fileState;
+	Sint32 result;
+	Bool   initial;
+	Uint32 group;
 
 	group = FILE_ROW_SOME;
-	initial = 0;
+	initial = FALSE;
 	fileState = mnSaveScanFileSummaries();
 	if(fileState < 0) {
 		return -1;
@@ -511,23 +493,20 @@ s32 mnFileListSelectAction(void) {
 	if(fileState == 0) {
 		return 0;
 	}
-	if(fileState == SAVE_FILE_COUNT) {
+	if(fileState == BUP_FILE_COUNT) {
 		group = FILE_ROW_FULL;
-	}
-	else if(fileState == SAVE_SCAN_ALL_CLEARED + SAVE_FILE_COUNT) {
+	} else if(fileState == SAVE_SCAN_ALL_CLEARED + BUP_FILE_COUNT) {
 		group = FILE_ROW_FULL_CLEARED;
-	}
-	else if(fileState > SAVE_SCAN_ALL_CLEARED) {
+	} else if(fileState > SAVE_SCAN_ALL_CLEARED) {
 		group = FILE_ROW_CLEARED;
-	}
-	else {
-		initial = 1;
+	} else {
+		initial = TRUE;
 	}
 	mnIconMenuOpen();
 	if((group == FILE_ROW_SOME) || (group == FILE_ROW_CLEARED)) {
 		mnIconMenuAddIcon(COMMAND_ICON_NEW_GAME);
 	}
-	if(group <= (u32)FILE_ROW_FULL) {
+	if(group <= (Uint32)FILE_ROW_FULL) {
 		mnIconMenuAddIcon(COMMAND_ICON_CONTINUE);
 	}
 	if((group == FILE_ROW_SOME) || (group == FILE_ROW_CLEARED)) {
@@ -544,8 +523,7 @@ s32 mnFileListSelectAction(void) {
 	result = mnIconMenuRun(initial);
 	mnIconMenuClose();
 	/* With Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE:
-	 */
-	/* FileList_ActionByPosition lists Battle before Send in every row. */
+	   FileList_ActionByPosition lists Battle before Send in every row. */
 	if(result >= 0) {
 		result =
 			FileList_ActionByPosition[result + (group * ICON_MENU_MAX_ICONS)];
@@ -553,56 +531,52 @@ s32 mnFileListSelectAction(void) {
 	return result;
 }
 
-/* The x of the list of what a password level carries, and the right edge of */
-/* the area cleared for it, in pixels. */
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define MODE_LABEL_X	 18
-#define MODE_LABEL_RIGHT 144
-#else
-#define MODE_LABEL_X	 8
-#define MODE_LABEL_RIGHT 80
-#endif
+/* The x of the list of what a password level carries, and the right edge of the
+   area cleared for it, in pixels. */
+#define MODE_LABEL_X	 JAPANESE_OR(8, 18)
+#define MODE_LABEL_RIGHT JAPANESE_OR(80, 144)
 
-/* A task of the password level menu: when the selection moves, lists what */
-/* that level's password carries, from MsgPasswordLevel on: Gold "Level", */
-/* "Djinn", "Character stats", "Items" and "Coins", Silver the first three, */
-/* Bronze the first two. */
-void mnPasswordLevelDrawHelp(void) {
+/* An event of the password level menu: when the selection moves, lists what
+   that level's password carries, from MsgPasswordLevel on: Gold "Level",
+   "Djinn", "Character stats", "Items" and "Coins", Silver the first three,
+   Bronze the first two. */
+void mnPasswordLevelDrawHelp(void)
+{
 	ICON_MENU_STATE *state = IconMenuStateWork;
 
 	if(state->drawnSelection != state->selection) {
 		state->drawnSelection = state->selection;
-		mnWindowClearInteriorTiles(state->lowerWin, 8, 40, MODE_LABEL_RIGHT,
-								   80);
+		mnWindowClearInteriorTiles(
+			state->lowerWin, 8, 40, MODE_LABEL_RIGHT, 80);
 
 		switch(state->selection) {
 		case PASSWORD_LEVEL_GOLD: {
-			s32 text = MsgPasswordLevel;
+			Sint32 text = MsgPasswordLevel;
 
 			mnTextDrawMessageAsTiles(text, state->lowerWin, MODE_LABEL_X, 40);
-			mnTextDrawMessageAsTiles(text + 1, state->lowerWin, MODE_LABEL_X,
-									 48);
-			mnTextDrawMessageAsTiles(text + 2, state->lowerWin, MODE_LABEL_X,
-									 56);
-			mnTextDrawMessageAsTiles(text + 3, state->lowerWin, MODE_LABEL_X,
-									 64);
+			mnTextDrawMessageAsTiles(
+				text + 1, state->lowerWin, MODE_LABEL_X, 48);
+			mnTextDrawMessageAsTiles(
+				text + 2, state->lowerWin, MODE_LABEL_X, 56);
+			mnTextDrawMessageAsTiles(
+				text + 3, state->lowerWin, MODE_LABEL_X, 64);
 			text += 4;
 			mnTextDrawMessageAsTiles(text, state->lowerWin, MODE_LABEL_X, 72);
 			break;
 		}
 		case PASSWORD_LEVEL_SILVER: {
-			s32 text = MsgPasswordLevel;
+			Sint32 text = MsgPasswordLevel;
 
 			mnTextDrawMessageAsTiles(text, state->lowerWin, MODE_LABEL_X, 40);
-			mnTextDrawMessageAsTiles(text + 1, state->lowerWin, MODE_LABEL_X,
-									 48);
+			mnTextDrawMessageAsTiles(
+				text + 1, state->lowerWin, MODE_LABEL_X, 48);
 			text += 2;
 			mnTextDrawMessageAsTiles(text, state->lowerWin, MODE_LABEL_X, 56);
 			break;
 		}
 		case PASSWORD_LEVEL_BRONZE:
 		default: {
-			s32 text = MsgPasswordLevel;
+			Sint32 text = MsgPasswordLevel;
 
 			mnTextDrawMessageAsTiles(text++, state->lowerWin, MODE_LABEL_X, 40);
 			mnTextDrawMessageAsTiles(text, state->lowerWin, MODE_LABEL_X, 48);
@@ -613,31 +587,26 @@ void mnPasswordLevelDrawHelp(void) {
 }
 
 /* The x of the password transfer's help lines, in pixels. */
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define PASSWORD_HELP_X 16
-#else
-#define PASSWORD_HELP_X 0
-#endif
+#define PASSWORD_HELP_X JAPANESE_OR(0, 16)
 
-/* French alone redraws the transfer help its own way: it releases the help's */
-/* window sprites instead of preparing them for a redraw, and draws Cable's help
- */
-/* only when coming from Password. */
-#if LANGUAGE == LANGUAGE_FRENCH
+/* French alone redraws the transfer help its own way: it releases the help's
+   window sprites instead of preparing them for a redraw, and draws Cable's help
+   only when coming from Password. */
+#if TRANSFER_HELP_SKIPS_EMPTY_WINDOW_REDRAW
 
-/* A task of the transfer method menu: when the selection moves between */
-/* Password and Cable, explains the one chosen. */
-void mnTransferMethodDrawHelp(void) {
+/* An event of the transfer method menu: when the selection moves between
+   Password and Cable, explains the one chosen. */
+void mnTransferMethodDrawHelp(void)
+{
 	ICON_MENU_STATE *state = IconMenuStateWork;
 
 	if(state->drawnSelection != state->selection) {
 		if(state->selection == TRANSFER_METHOD_PASSWORD) {
 			mnWindowSprClearList(state->lowerWin);
 			mnTextDrawMessage(MsgPasswordTransferHelp, state->lowerWin, 16, 4);
-			mnTextDrawMessage(MsgPasswordTransferHelp + 1, state->lowerWin, 16,
-							  16);
-		}
-		else if(state->drawnSelection == TRANSFER_METHOD_PASSWORD) {
+			mnTextDrawMessage(
+				MsgPasswordTransferHelp + 1, state->lowerWin, 16, 16);
+		} else if(state->drawnSelection == TRANSFER_METHOD_PASSWORD) {
 			mnWindowSprClearList(state->lowerWin);
 			mnTextDrawMessage(MsgCableTransferHelp, state->lowerWin, 0, 4);
 			mnTextDrawMessage(MsgCableTransferHelp + 1, state->lowerWin, 0, 16);
@@ -647,11 +616,12 @@ void mnTransferMethodDrawHelp(void) {
 	}
 }
 #else
-/* A task of the transfer method menu: when the selection moves between */
-/* Password and Cable, explains the one chosen. */
-void mnTransferMethodDrawHelp(void) {
+/* An event of the transfer method menu: when the selection moves between
+   Password and Cable, explains the one chosen. */
+void mnTransferMethodDrawHelp(void)
+{
 	ICON_MENU_STATE *state = IconMenuStateWork;
-	s16 *shown = &state->drawnSelection;
+	Sint16			*shown = &state->drawnSelection;
 
 	if(*shown != state->selection) {
 		*shown = state->selection;
@@ -659,76 +629,70 @@ void mnTransferMethodDrawHelp(void) {
 		if(state->selection == TRANSFER_METHOD_PASSWORD) {
 			/* "Use a password to" "pass along your saved quest." */
 			TRANSFER_MODE_DRAW_HELP(MsgPasswordTransferHelp, state->lowerWin,
-									TRANSFER_PASSWORD_HELP_X,
-									TRANSFER_PASSWORD_HELP_FIRST_Y);
+				TRANSFER_PASSWORD_HELP_X, TRANSFER_PASSWORD_HELP_FIRST_Y);
 			TRANSFER_MODE_DRAW_HELP(MsgPasswordTransferHelp + 1,
-									state->lowerWin, TRANSFER_PASSWORD_HELP_X,
-									TRANSFER_PASSWORD_HELP_LAST_Y);
-		}
-		else {
+				state->lowerWin, TRANSFER_PASSWORD_HELP_X,
+				TRANSFER_PASSWORD_HELP_LAST_Y);
+		} else {
 			/* "Use a Game Link cable to connect" "two Game Boy Advance
-			 * systems." */
-			/* "Pass along your saved quest." */
+			   systems." "Pass along your saved quest." */
 			TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp, state->lowerWin, 0,
-									TRANSFER_CABLE_HELP_FIRST_Y);
+				TRANSFER_CABLE_HELP_FIRST_Y);
 			TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp + 1, state->lowerWin,
-									0, TRANSFER_CABLE_HELP_SECOND_Y);
+				0, TRANSFER_CABLE_HELP_SECOND_Y);
 			TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp + 2, state->lowerWin,
-									0, TRANSFER_CABLE_HELP_LAST_Y);
+				0, TRANSFER_CABLE_HELP_LAST_Y);
 		}
 	}
 }
 #endif
 
-/* Selects either the transfer method or the password level (enum */
-/* RESOURCE_LAYOUT_MODE). */
-s32 mnIconMenuChooseSendOption(s32 mode) {
+/* Selects either the transfer method or the password level (enum
+   RESOURCE_LAYOUT_MODE). */
+Sint32 mnIconMenuChooseSendOption(Sint32 mode)
+{
 	ICON_MENU_STATE *state;
-	WINDOW *window;
-	s32 message;
-	WINDOW **upper;
-	s32 result;
+	WINDOW			*window;
+	Sint32			 message;
+	WINDOW		   **upper;
+	Sint32			 result;
 
 	mnIconMenuOpen();
 	state = IconMenuStateWork;
 	if(mode == SEND_OPTION_TRANSFER_METHOD) {
 		mnIconMenuAddIcon(COMMAND_ICON_PASSWORD);
 		mnIconMenuAddIcon(COMMAND_ICON_CABLE);
-	}
-	else {
+	} else {
 		mnIconMenuAddIcon(COMMAND_ICON_GOLD);
 		mnIconMenuAddIcon(COMMAND_ICON_SILVER);
 		mnIconMenuAddIcon(COMMAND_ICON_BRONZE);
-#if LANGUAGE == LANGUAGE_SPANISH
+#if TRANSFER_METHOD_MENU_UNCENTRED
 		mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 5, 0);
 #endif
 	}
-#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN || \
 	LANGUAGE == LANGUAGE_ITALIAN
 	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 7, 0);
-#elif LANGUAGE == LANGUAGE_SPANISH
+#elif TRANSFER_METHOD_MENU_UNCENTRED
 #elif LANGUAGE == LANGUAGE_FRENCH
 	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 9, 0);
 #else
 	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 5, 0);
 #endif
 	if(mode != SEND_OPTION_TRANSFER_METHOD) {
-		sySetEvent(mnPasswordLevelDrawHelp, TASK_PASS_FRAME - 10);
+		sySetEvent(mnPasswordLevelDrawHelp, EVENT_PASS_FRAME - 10);
 		state->drawnSelection = -1;
-		window =
-			mnWindowCreate(PASSWORD_LEVEL_WINDOW_X, 0,
-						   PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
+		window = mnWindowCreate(PASSWORD_LEVEL_WINDOW_X, 0,
+			PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 		message = MsgPasswordSelection;
 		upper = &state->upperWin;
 		*upper = window;
 		/* "Password Selection", then "The data stored in your" "password
-		 * depends */
-		/* on which" "level you select:" */
+		   depends on which" "level you select:" */
 		mnTextDrawMessage(message, window, 0, 4);
 #if LANGUAGE != LANGUAGE_JAPANESE
-		window =
-			mnWindowCreate(PASSWORD_HELP_WINDOW_X, 4,
-						   PASSWORD_HELP_WINDOW_WIDTH, 12, WINDOW_FLAG_INSTANT);
+		window = mnWindowCreate(PASSWORD_HELP_WINDOW_X, 4,
+			PASSWORD_HELP_WINDOW_WIDTH, 12, WINDOW_FLAG_INSTANT);
 		state->lowerWin = window;
 		mnTextDrawMessage(message + 1, window, 8, 0);
 		mnTextDrawMessage(message + 2, state->lowerWin, 8, 11);
@@ -741,21 +705,18 @@ s32 mnIconMenuChooseSendOption(s32 mode) {
 		message += 2;
 		mnTextDrawMessage(message, state->lowerWin, 0, 16);
 #endif
-	}
-	else {
-		sySetEvent(mnTransferMethodDrawHelp, TASK_PASS_FRAME - 10);
+	} else {
+		sySetEvent(mnTransferMethodDrawHelp, EVENT_PASS_FRAME - 10);
 		state->drawnSelection = -1;
 		window = mnWindowCreate(TRANSFER_METHOD_WINDOW_X, 0,
-								TRANSFER_METHOD_WINDOW_WIDTH, 4,
-								WINDOW_FLAG_INSTANT);
+			TRANSFER_METHOD_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 		upper = &state->upperWin;
 		*upper = window;
 		/* "Transfer Method" */
-		mnTextDrawMessage(MsgTransferMethod, window, TRANSFER_METHOD_LABEL_X,
-						  4);
-		state->lowerWin =
-			mnWindowCreate(TRANSFER_HELP_WINDOW_X, 5,
-						   TRANSFER_HELP_WINDOW_WIDTH, 7, WINDOW_FLAG_INSTANT);
+		mnTextDrawMessage(
+			MsgTransferMethod, window, TRANSFER_METHOD_LABEL_X, 4);
+		state->lowerWin = mnWindowCreate(TRANSFER_HELP_WINDOW_X, 5,
+			TRANSFER_HELP_WINDOW_WIDTH, 7, WINDOW_FLAG_INSTANT);
 	}
 	result = mnIconMenuRun(0);
 	if(mode != SEND_OPTION_TRANSFER_METHOD)
@@ -771,14 +732,14 @@ s32 mnIconMenuChooseSendOption(s32 mode) {
 	return result;
 }
 
-/* Command icons arranged in a row to choose from, such as Yes and No, each a */
-/* picture of RESOURCE_COMMAND_ICONS (COMMAND_ICON). */
+/* Command icons arranged in a row to choose from, such as Yes and No, each a
+   picture of RESOURCE_COMMAND_ICONS (COMMAND_ICON). */
 
 /* Selects a shop command (Buy, Sell, Artifacts, Repair), centred on the bottom
- */
-/* row, starting on position `selection`. */
-s32 mnSelectShopCommand(s32 selection) {
-	s32 result;
+   row, starting on position `selection`. */
+Sint32 mnSelectShopCommand(Sint32 selection)
+{
+	Sint32 result;
 
 	mnIconMenuOpen();
 	mnIconMenuAddIcon(COMMAND_ICON_BUY);
@@ -791,10 +752,11 @@ s32 mnSelectShopCommand(s32 selection) {
 	return result;
 }
 
-/* Selects a Sanctum service (Revive, Cure Poison, Repel Evil, Remove Curse), */
-/* centred on the bottom row, starting on position `selection`. */
-s32 mnSelectSanctumService(s32 selection) {
-	s32 result;
+/* Selects a Sanctum service (Revive, Cure Poison, Repel Evil, Remove Curse),
+   centred on the bottom row, starting on position `selection`. */
+Sint32 mnSelectSanctumService(Sint32 selection)
+{
+	Sint32 result;
 
 	mnIconMenuOpen();
 	mnIconMenuAddIcon(COMMAND_ICON_REVIVE);
@@ -808,8 +770,10 @@ s32 mnSelectSanctumService(s32 selection) {
 }
 
 /* Selects Yes or No, returning YES or NO; cancelling returns NO. */
-s32 mnYesNoMenuRun(s32 bottom, s32 message, s32 labelWidth, s32 selection) {
-	s32 row;
+Sint32 mnYesNoMenuRun(
+	Sint32 bottom, Sint32 message, Sint32 labelWidth, Sint32 selection)
+{
+	Sint32 row;
 
 	row = 0;
 
@@ -835,10 +799,10 @@ s32 mnYesNoMenuRun(s32 bottom, s32 message, s32 labelWidth, s32 selection) {
 }
 
 /* Selects Yes or No with the icons from tile (x, y) and the name window after
- */
-/* them, returning YES or NO; cancelling returns NO. */
-s32 mnYesNoMenuRunAt(s32 x, s32 y, s32 selection) {
-	s32 message = MsgCommandYes;
+   them, returning YES or NO; cancelling returns NO. */
+Sint32 mnYesNoMenuRunAt(Sint32 x, Sint32 y, Sint32 selection)
+{
+	Sint32 message = MsgCommandYes;
 
 	mnIconMenuOpen();
 	mnIconMenuAddIcon(COMMAND_ICON_YES);
@@ -852,20 +816,15 @@ s32 mnYesNoMenuRunAt(s32 x, s32 y, s32 selection) {
 	return selection;
 }
 
-/* The width of the label window under Coins and Lucky Medals, fitted to each */
-/* language's text. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define PAIR_WIDTH 7
-#elif LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define PAIR_WIDTH 10
-#else
-#define PAIR_WIDTH 9
-#endif
+/* The width of the label window under Coins and Lucky Medals, fitted to each
+   language's text. */
+#define PAIR_WIDTH BY_LANGUAGE(7, 9, 9, 9, 10, 10)
 
-/* Selects Coins or Lucky Medals, centred on the bottom row, starting on */
-/* position `selection`. Returns the position chosen, or -1 when cancelled. */
-s32 mnSelectCoinsOrMedals(s32 selection) {
-	s32 result;
+/* Selects Coins or Lucky Medals, centred on the bottom row, starting on
+   position `selection`. Returns the position chosen, or -1 when cancelled. */
+Sint32 mnSelectCoinsOrMedals(Sint32 selection)
+{
+	Sint32 result;
 
 	mnIconMenuOpen();
 	mnIconMenuAddIcon(COMMAND_ICON_COINS);

@@ -18,13 +18,13 @@ Two of Camelot's ideas are worth meeting first. Once they click, the rest
 of the code opens up.
 
 1. [The main routine](../../docs/tbs/system.md#the-main-routine). One
-   function runs the game from switch-on to switch-off, one sequence at a
+   function runs the game from switch-on to switch-off, one mode at a
    time: the field, a battle, Lucky Dice or Lucky Wheels.
-2. [Waiting and tasks](../../docs/tbs/system.md#waiting-and-tasks). No loop at the top
+2. [Waiting and events](../../docs/tbs/system.md#waiting-and-events). No loop at the top
    turns once a frame. The frame loop is inside one function, `sySynch()`:
    code that needs time to pass calls it, and it runs that many frames of
    the game and returns. What it runs each frame is a short list of
-   functions, the tasks. This is the part that will surprise you.
+   functions, the events. This is the part that will surprise you.
 
 ## What runs
 
@@ -34,12 +34,12 @@ of the code opens up.
 - [The battle engine](../../docs/tbs/battle.md) runs one fight, turn by
   turn, from its opening to the experience and coins.
 - [Lucky Dice and Lucky Wheels](src/field/README.md#lucky-dice-and-lucky-wheels)
-  are the two games in Tolbi, each a sequence of its own.
+  are the two games in Tolbi, each a mode of its own.
 
 ## What they all share
 
 - [The system library](../../docs/tbs/system.md) is start-up, the main
-  routine, tasks, overlays and [saving](../../docs/tbs/system.md#saving).
+  routine, events, overlays and [saving](../../docs/tbs/system.md#saving).
 - [The menu engine](../../docs/tbs/interface.md) is the windows, the menus
   and the shops.
 - [Sound](src/sound/README.md) is the music and how it comes back after a
@@ -56,7 +56,7 @@ of the code opens up.
 
 - [Source](src/README.md) says which folder holds what.
 - [Places](https://alchemy.pascalpixel.com/tbs/places) has a page for every
-  town and dungeon, with its map and a recording of each event.
+  town and dungeon, with its map and a recording of each script.
 - [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects what the
   game keeps but never plays.
 - The [glossary](../../docs/tbs/glossary.md) has every word these pages share.

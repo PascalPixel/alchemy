@@ -1,14 +1,14 @@
-/* Stepping onto a crumbling pillar of an (actor, flag) list, as */
-/* syCrumblingPillarStep: the first time it flashes and cracks, the second time
- */
-/* it gives way under the leader with a shake, dust and a thump. */
-void fdLeaderCheckCrumblingStep(const u16 *table) {
+/* Stepping onto a crumbling pillar of an (actor, flag) list, as
+   scCrumblingPillarStep: the first time it flashes and cracks, the second time
+   it gives way under the leader with a shake, dust and a thump. */
+void scLeaderCheckCrumblingStep(const Uint16 *table)
+{
 	ACTOR *leader;
 	ACTOR *trap;
-	FIXED position[3];
-	s32 id;
-	s32 flag;
-	s32 second;
+	FIXED  position[3];
+	Sint32 id;
+	Sint32 flag;
+	Sint32 second;
 
 	if(fdTryJumpForward() != 0)
 		return;
@@ -16,7 +16,7 @@ void fdLeaderCheckCrumblingStep(const u16 *table) {
 	position[0] = leader->x.fixed;
 	position[1] = leader->y.fixed;
 	position[2] = leader->z.fixed;
-	trap = fdActorFindAtCell(position, 0);
+	trap = fdActorFindAtMetatile(position, 0);
 	if(trap == 0)
 		return;
 	while(*table != ACTOR_LIST_END) {
@@ -26,7 +26,7 @@ void fdLeaderCheckCrumblingStep(const u16 *table) {
 			continue;
 		}
 		flag = table[1];
-		fdEventStart();
+		fdScriptStart();
 		if(!syGameFlagGet(flag)) {
 			sySndPlay(SE_CHEST_CLOSE);
 			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
@@ -39,8 +39,7 @@ void fdLeaderCheckCrumblingStep(const u16 *table) {
 			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 			scDustScatter(0);
 			syGameFlagSet(flag);
-		}
-		else {
+		} else {
 			second = flag + 1;
 			if(!syGameFlagGet(second)) {
 				leader->motionFlg = 0;
@@ -49,10 +48,10 @@ void fdLeaderCheckCrumblingStep(const u16 *table) {
 				scDustScatter(0);
 				sySynch(8);
 				fdActorSelectAnimation(trap, 2);
-				fdLeaderSetCellShapeAt(-2, trap->layer);
+				fdLeaderSetMetatileShapeAt(-2, trap->layer);
 				scDustScatter(1);
 				sySynch(16);
-				fdLeaderSetCellShapeAt(-2, trap->layer);
+				fdLeaderSetMetatileShapeAt(-2, trap->layer);
 				sySynch(4);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				sySynch(8);
@@ -66,7 +65,7 @@ void fdLeaderCheckCrumblingStep(const u16 *table) {
 				syGameFlagSet(second);
 			}
 		}
-		fdEventEnd();
+		fdScriptEnd();
 		return;
 	}
 }

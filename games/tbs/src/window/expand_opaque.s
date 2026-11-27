@@ -2,8 +2,8 @@
 .syntax unified
 .text
 	.arm
-	.global Tile_ExpandOpaque
-Tile_ExpandOpaque:
+	.global mnTileExpandOpaque
+mnTileExpandOpaque:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	sl, pc, #100
 	ldm	sl, {r4, r6, r7}

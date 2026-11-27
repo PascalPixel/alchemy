@@ -1,84 +1,80 @@
-/* @file */
-/* Lucky Wheels, Contigo's game of chance: the player trades game tickets for */
-/* lines, pulls the lever up to five times and locks wheels to line up */
-/* matching icons. It draws its own wheels and lines, and keeps an unused LZ */
-/* packer. */
+/* Lucky Wheels, Contigo's game of chance: the player trades game tickets for
+   lines, pulls the lever up to five times and locks wheels to line up matching
+   icons. It draws its own wheels and lines, and keeps an unused LZ packer. */
 
 #include "macros.h"
 #include "sounds.h"
-#include "version.h"
+#include "edition.h"
 #include "field/lucky_wheels_lzpack.h"
 #include "game/stubs.h"
 #include "window/stubs.h"
 #include "field/dice_game.h"
-#include "field/field_sequence.h"
+#include "field/field_mode.h"
 #include "battle/battle_effect_state.h"
 #include "item_ids.h"
 
 void fdLuckyWheelsRun(void);
 
-/* The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from */
-/* its tile 212 in the rows of its map from LUCKY_WHEELS_CANVAS_TOP_ROW to */
-/* LUCKY_WHEELS_CANVAS_BOTTOM_ROW; the rows above and below show a clear tile,
- */
-/* in the part of BG1's map below the screen that fdLuckyWheelsRun clears. */
+/* The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from its
+   tile 212 in the rows of its map from LUCKY_WHEELS_CANVAS_TOP_ROW to
+   LUCKY_WHEELS_CANVAS_BOTTOM_ROW; the rows above and below show a clear tile,
+   in the part of BG1's map below the screen that fdLuckyWheelsRun clears. */
 #define LUCKY_WHEELS_CANVAS_SIZE	   (256 * 128)
 #define LUCKY_WHEELS_CANVAS_FIRST_TILE 212
 #define LUCKY_WHEELS_CANVAS_TOP_ROW	   2
 #define LUCKY_WHEELS_CANVAS_BOTTOM_ROW 16
-#define LUCKY_WHEELS_CANVAS_TILES                                              \
+#define LUCKY_WHEELS_CANVAS_TILES \
 	(BG_CHAR_BLOCK(0) + LUCKY_WHEELS_CANVAS_FIRST_TILE * TILE_SIZE_8BPP)
 #define LUCKY_WHEELS_CANVAS_CLEAR_TILE 191
-/* The canvas's first 64 colours, its sparks', from a Djinn sprite sheet's */
-/* palette and cycled through others while a win shows. */
-#define LUCKY_WHEELS_SPARK_COLORS 64
+/* The canvas's first 64 colours, its sparks', from a Djinn sprite sheet's
+   palette and cycled through others while a win shows. */
+#define LUCKY_WHEELS_SPARK_COLORS	   64
 /* The paylines' green on the canvas, colour 64, and its lighter centre. */
-#define LUCKY_WHEELS_LINE_COLOR 64
-#define LUCKY_WHEELS_LINE_LIGHT (LUCKY_WHEELS_LINE_COLOR + 1)
-/* The machine's picture: its 16 colours in BG palette 10, and its tiles from */
-/* tile 424 of BG1's characters, all but those of the opening the wheels show */
-/* through, which BG1's map fills with a clear tile. */
-#define LUCKY_WHEELS_MACHINE_PALETTE 10
-#define LUCKY_WHEELS_MACHINE_TILE	 424
-#define LUCKY_WHEELS_CLEAR_TILE		 422
-/* The machine's opening, in map cells: columns 5 to 24 and rows 3 to 13. */
-#define LUCKY_WHEELS_IN_OPENING(column, row)                                   \
+#define LUCKY_WHEELS_LINE_COLOR		   64
+#define LUCKY_WHEELS_LINE_LIGHT		   (LUCKY_WHEELS_LINE_COLOR + 1)
+/* The machine's picture: its 16 colours in BG palette 10, and its tiles from
+   tile 424 of BG1's characters, all but those of the opening the wheels show
+   through, which BG1's map fills with a clear tile. */
+#define LUCKY_WHEELS_MACHINE_PALETTE   10
+#define LUCKY_WHEELS_MACHINE_TILE	   424
+#define LUCKY_WHEELS_CLEAR_TILE		   422
+/* The machine's opening, in map metatiles: columns 5 to 24 and rows 3 to 13. */
+#define LUCKY_WHEELS_IN_OPENING(column, row) \
 	((column) >= 5 && (column) <= 24 && (row) > 2 && (row) <= 13)
 /* The icons' picture begins with its 240 colours, the sprites' first 240. */
-#define LUCKY_WHEELS_ICON_COLORS 240
+#define LUCKY_WHEELS_ICON_COLORS		 240
 /* The jackpot banner's and the title letters' sprite palette. */
-#define LUCKY_WHEELS_JACKPOT_PALETTE 15
-/* The machine's five wheels; the cursor's next place, past the last wheel, */
-/* is the lever. */
-#define LUCKY_WHEELS_REEL_COUNT 5
-#define LUCKY_WHEELS_LEVER		LUCKY_WHEELS_REEL_COUNT
-/* Pulling the lever: 48 frames down and back up, then 8 settling; only then */
-/* can the wheels be stopped. */
+#define LUCKY_WHEELS_JACKPOT_PALETTE	 15
+/* The machine's five wheels; the cursor's next place, past the last wheel, is
+   the lever. */
+#define LUCKY_WHEELS_REEL_COUNT			 5
+#define LUCKY_WHEELS_LEVER				 LUCKY_WHEELS_REEL_COUNT
+/* Pulling the lever: 48 frames down and back up, then 8 settling; only then can
+   the wheels be stopped. */
 #define LUCKY_WHEELS_LEVER_PULL_FRAMES	 48
 #define LUCKY_WHEELS_LEVER_SETTLE_FRAMES 8
-#define LUCKY_WHEELS_LEVER_FRAMES                                              \
+#define LUCKY_WHEELS_LEVER_FRAMES \
 	(LUCKY_WHEELS_LEVER_PULL_FRAMES + LUCKY_WHEELS_LEVER_SETTLE_FRAMES)
-/* The lever sprite's place at rest, in screen pixels, and how far it is */
-/* pulled down. */
-#define LUCKY_WHEELS_LEVER_X	208
-#define LUCKY_WHEELS_LEVER_Y	40
-#define LUCKY_WHEELS_LEVER_PULL 64
-/* Left alone, the spinning wheels stop one every 32 frames; R stops one at */
-/* once. */
-#define LUCKY_WHEELS_AUTO_STOP_FRAMES 32
-/* The pause after a winning spin before the win is shown, and after the last */
-/* spin loses before the game ends. */
-#define LUCKY_WHEELS_WIN_PAUSE	60
-#define LUCKY_WHEELS_LOSS_PAUSE 45
-/* The stop prompt's window opens this many frames into a spin, and its sound */
-/* plays at LUCKY_WHEELS_STOP_PROMPT_FRAME. */
-#define LUCKY_WHEELS_STOP_WINDOW_FRAME 4
-#define LUCKY_WHEELS_STOP_PROMPT_FRAME 16
-/* Where each picture of icons.png starts in sprite tiles, in OAM's 32-byte */
-/* steps (a 256-colour tile is two): the sprite sheet is 32 pixels wide, so a */
-/* picture starts at the tile numbered as its row. The six symbols are 16 apart
- */
-/* from 0. */
+/* The lever sprite's place at rest, in screen pixels, and how far it is pulled
+   down. */
+#define LUCKY_WHEELS_LEVER_X			208
+#define LUCKY_WHEELS_LEVER_Y			40
+#define LUCKY_WHEELS_LEVER_PULL			64
+/* Left alone, the spinning wheels stop one every 32 frames; R stops one at
+   once. */
+#define LUCKY_WHEELS_AUTO_STOP_FRAMES	32
+/* The pause after a winning spin before the win is shown, and after the last
+   spin loses before the game ends. */
+#define LUCKY_WHEELS_WIN_PAUSE			60
+#define LUCKY_WHEELS_LOSS_PAUSE			45
+/* The stop prompt's window opens this many frames into a spin, and its sound
+   plays at LUCKY_WHEELS_STOP_PROMPT_FRAME. */
+#define LUCKY_WHEELS_STOP_WINDOW_FRAME	4
+#define LUCKY_WHEELS_STOP_PROMPT_FRAME	16
+/* Where each picture of icons.png starts in sprite tiles, in OAM's 32-byte
+   steps (a 256-colour tile is two): the sprite sheet is 32 pixels wide, so a
+   picture starts at the tile numbered as its row. The six symbols are 16 apart
+   from 0. */
 #define LUCKY_WHEELS_LAMP_TILES			96	/* a wheel's lamp, not locked */
 #define LUCKY_WHEELS_LOCKED_LAMP_TILES	128 /* a locked wheel's lamp */
 #define LUCKY_WHEELS_CORNER_LIGHT_TILES 224
@@ -86,33 +82,32 @@ void fdLuckyWheelsRun(void);
 #define LUCKY_WHEELS_LEVER_TILES		256
 #define LUCKY_WHEELS_LINE_TILES			272 /* a payline's gem, not bet on */
 #define LUCKY_WHEELS_LIT_LINE_TILES		464 /* a payline's gem, bet on */
-/* The slot the lever runs in, drawn in eight pieces 16 pixels tall down */
-/* beside the wheels from (LUCKY_WHEELS_LEVER_SLOT_X, */
-/* LUCKY_WHEELS_LEVER_SLOT_Y). */
-#define LUCKY_WHEELS_LEVER_SLOT_TILES  320
-#define LUCKY_WHEELS_LEVER_SLOT_PIECES 8
-#define LUCKY_WHEELS_LEVER_SLOT_X	   206
-#define LUCKY_WHEELS_LEVER_SLOT_Y	   12
-#define LUCKY_WHEELS_HAND_TILES		   496 /* the cursor's hand */
-#define LUCKY_WHEELS_PULL_TILES                                                \
-	528								 /* a pull's number, the current one large \
-									  */
-#define LUCKY_WHEELS_ARROW_TILES 688 /* the cursor's blinking arrows */
-/* The symbols round a wheel, each 16 pixels tall: a wheel turns once in 336 */
-/* pixels, 8 a frame, and stops only with a symbol centred on a line. */
-#define LUCKY_WHEELS_REEL_SYMBOLS  21
-#define LUCKY_WHEELS_SYMBOL_HEIGHT 16
-#define LUCKY_WHEELS_REEL_TURN                                                 \
+/* The slot the lever runs in, drawn in eight pieces 16 pixels tall down beside
+   the wheels from (LUCKY_WHEELS_LEVER_SLOT_X, LUCKY_WHEELS_LEVER_SLOT_Y). */
+#define LUCKY_WHEELS_LEVER_SLOT_TILES	320
+#define LUCKY_WHEELS_LEVER_SLOT_PIECES	8
+#define LUCKY_WHEELS_LEVER_SLOT_X		206
+#define LUCKY_WHEELS_LEVER_SLOT_Y		12
+#define LUCKY_WHEELS_HAND_TILES			496 /* the cursor's hand */
+/* a pull's number, the current one large */
+#define LUCKY_WHEELS_PULL_TILES			528
+#define LUCKY_WHEELS_ARROW_TILES		688 /* the cursor's blinking arrows */
+/* The symbols round a wheel, each 16 pixels tall: a wheel turns once in 336
+   pixels, 8 a frame, and stops only with a symbol centred on a line. */
+#define LUCKY_WHEELS_REEL_SYMBOLS		21
+#define LUCKY_WHEELS_SYMBOL_HEIGHT		16
+#define LUCKY_WHEELS_REEL_TURN \
 	(LUCKY_WHEELS_REEL_SYMBOLS * LUCKY_WHEELS_SYMBOL_HEIGHT)
-#define LUCKY_WHEELS_SPIN_SPEED 8
+#define LUCKY_WHEELS_SPIN_SPEED		8
 /* The seven paylines: the two diagonals (0 and 6) and the five rows between. */
-#define LUCKY_WHEELS_PAYLINES	 7
-#define LUCKY_WHEELS_MIDDLE_LINE 3
-#define LUCKY_WHEELS_BET_MAX	 4
+#define LUCKY_WHEELS_PAYLINES		7
+#define LUCKY_WHEELS_MIDDLE_LINE	3
+#define LUCKY_WHEELS_BET_MAX		4
 /* The pulls of the lever after the first, before betting again. */
-#define LUCKY_WHEELS_RESPINS 4
+#define LUCKY_WHEELS_RESPINS		4
 /* The places on each wheel given the symbols 0 to 4 and three wilds. */
 #define LUCKY_WHEELS_PLACED_SYMBOLS 8
+
 /* The wheels' symbols, in icons.png's order. */
 typedef enum LUCKY_WHEELS_SYMBOL {
 	LUCKY_WHEELS_SHIRT,
@@ -122,13 +117,14 @@ typedef enum LUCKY_WHEELS_SYMBOL {
 	LUCKY_WHEELS_RING,
 	LUCKY_WHEELS_MOON
 } LUCKY_WHEELS_SYMBOL;
+
 /* The symbol that matches any other on a payline. */
 #define LUCKY_WHEELS_WILD_SYMBOL LUCKY_WHEELS_MOON
-/* What a line of each symbol wins, as the prize sign reads it: "Shirts win */
-/* undershirts, Rings win rings, Boots win boots, Stars and Hearts win you */
-/* items..." and Moons "can win you anything." Contigo then gives one of three
- */
-/* items of the kind. */
+
+/* What a line of each symbol wins, as the prize sign reads it: "Shirts win
+   undershirts, Rings win rings, Boots win boots, Stars and Hearts win you
+   items..." and Moons "can win you anything." Contigo then gives one of three
+   items of the kind. */
 typedef enum LUCKY_WHEELS_PRIZE {
 	LUCKY_WHEELS_PRIZE_UNDERSHIRT, /* a Mythril, Silk or Running Shirt */
 	LUCKY_WHEELS_PRIZE_BOOTS,	   /* Hyper, Quick or Fur Boots */
@@ -137,53 +133,53 @@ typedef enum LUCKY_WHEELS_PRIZE {
 	LUCKY_WHEELS_PRIZE_STAR_ITEM,  /* a Water of Life, Psy Crystal or Elixir */
 	LUCKY_WHEELS_PRIZE_ANYTHING	   /* one of the five kinds above */
 } LUCKY_WHEELS_PRIZE;
-/* The machine fades in and out over 16 frames, a sixteenth of full brightness
- */
-/* a frame; the win flashes the screen darker over as many. */
-#define LUCKY_WHEELS_FADE_FRAMES 16
+
+/* The machine fades in and out over 16 frames, a sixteenth of full brightness a
+   frame; the win flashes the screen darker over as many. */
+#define LUCKY_WHEELS_FADE_FRAMES		 16
 /* The win cycles the background through five palettes, 16 frames each. */
-#define LUCKY_WHEELS_CYCLE_FRAMES	16
-#define LUCKY_WHEELS_CYCLE_PALETTES 5
+#define LUCKY_WHEELS_CYCLE_FRAMES		 16
+#define LUCKY_WHEELS_CYCLE_PALETTES		 5
 /* The jackpot sparks: four bursts of 256 in turn, one every eight frames. */
-#define LUCKY_WHEELS_BURST_SPARKS 256
-#define LUCKY_WHEELS_SPARK_COUNT  (4 * LUCKY_WHEELS_BURST_SPARKS)
+#define LUCKY_WHEELS_BURST_SPARKS		 256
+#define LUCKY_WHEELS_SPARK_COUNT		 (4 * LUCKY_WHEELS_BURST_SPARKS)
 /* A spark's size steps down every 12 frames of its life, from 2 or 3 to 1. */
 #define LUCKY_WHEELS_SPARK_SHRINK_FRAMES 12
-/* A held direction moves the cursor once, waits 12 frames, then moves it */
-/* again with 4 frames between each move. */
-#define LUCKY_WHEELS_REPEAT_DELAY	 12
-#define LUCKY_WHEELS_REPEAT_INTERVAL 4
+/* A held direction moves the cursor once, waits 12 frames, then moves it again
+   with 4 frames between each move. */
+#define LUCKY_WHEELS_REPEAT_DELAY		 12
+#define LUCKY_WHEELS_REPEAT_INTERVAL	 4
+
 /* Lucky Wheels' stages (LUCKY_WHEELS_STATE.state). */
 typedef enum LUCKY_WHEELS_STAGE {
-	LUCKY_WHEELS_BETTING =
-		0, /* Up and Down change the bet, A spins, B leaves */
+	/* Up and Down change the bet, A spins, B leaves */
+	LUCKY_WHEELS_BETTING = 0,
 	LUCKY_WHEELS_SPINNING = 1, /* the wheels spin until R or time stops each */
 	LUCKY_WHEELS_WON = 2,	   /* a payline won: a pause */
 	LUCKY_WHEELS_SHOWING_WIN = 3, /* the win is shown until A */
-	LUCKY_WHEELS_CHOOSING_LOCKS =
-		5,					  /* choose wheels to lock, or pull the lever */
+	/* choose wheels to lock, or pull the lever */
+	LUCKY_WHEELS_CHOOSING_LOCKS = 5,
 	LUCKY_WHEELS_DONE = 10,	  /* the game ends */
 	LUCKY_WHEELS_NO_WIN = 11, /* no payline won: A to choose locks */
-	LUCKY_WHEELS_OUT_OF_SPINS =
-		20, /* the fourth spin lost: a pause, then the end */
+	/* the fourth spin lost: a pause, then the end */
+	LUCKY_WHEELS_OUT_OF_SPINS = 20,
 } LUCKY_WHEELS_STAGE;
 
-/* The machine's lights, its four corners first and then the lights along its */
-/* frame. */
+/* The machine's lights, its four corners first and then the lights along its
+   frame. */
 #define LUCKY_WHEELS_MACHINE_LIGHTS 14
 #define LUCKY_WHEELS_CORNER_LIGHTS	4
 
 /* Lucky Wheels' tables, the same in both games. */
 
 /* Where each spark picture (a square 2 to 20 pixels on a side) starts: size s
- */
-/* (1 to 10) is a square 2s pixels a side, after the smaller squares' pixels. */
-const u16 LuckyWheels_SparkCellOffsets[] = {0,	 4,	  20,  56,	120,
-											220, 364, 560, 816, 1140};
+   (1 to 10) is a square 2s pixels a side, after the smaller squares' pixels. */
+const Uint16 LuckyWheels_SparkMetatileOffsets[] = {
+	0, 4, 20, 56, 120, 220, 364, 560, 816, 1140};
 
-/* The prize of each wheel symbol (LUCKY_WHEELS_PRIZE), kept in */
-/* REEL_SAVE.wonPrizes for each winning line. */
-const u8 LuckyWheels_SymbolPrizes[] = {
+/* The prize of each wheel symbol (LUCKY_WHEELS_PRIZE), kept in
+   REEL_SAVE.wonPrizes for each winning line. */
+const Uint8 LuckyWheels_SymbolPrizes[] = {
 	[LUCKY_WHEELS_SHIRT] = LUCKY_WHEELS_PRIZE_UNDERSHIRT,
 	[LUCKY_WHEELS_HEART] = LUCKY_WHEELS_PRIZE_HEART_ITEM,
 	[LUCKY_WHEELS_BOOT] = LUCKY_WHEELS_PRIZE_BOOTS,
@@ -193,43 +189,38 @@ const u8 LuckyWheels_SymbolPrizes[] = {
 };
 
 /* The tile of each title letter. */
-const u8 LuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
+const Uint8 LuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
-	0, 1, 2, 3, 4,
-	2, 5, 6
+	0, 1, 2, 3, 4, 2, 5, 6
 #elif LANGUAGE == LANGUAGE_SPANISH
-	7, 0, 1, 2, 3,
-	4, 5, 6, 7
+	7, 0, 1, 2, 3, 4, 5, 6, 7
 #else
-	0, 1, 2, 3, 4,
-	5, 6, 7
+	0, 1, 2, 3, 4, 5, 6, 7
 #endif
 };
 
-/* The positions of the machine's lights, in screen pixels: its four corners */
-/* first, then the lights along its frame. */
-const u8 LuckyWheels_MachineSpriteX[LUCKY_WHEELS_MACHINE_LIGHTS] = {
+/* The positions of the machine's lights, in screen pixels: its four corners
+   first, then the lights along its frame. */
+const Uint8 LuckyWheels_MachineSpriteX[LUCKY_WHEELS_MACHINE_LIGHTS] = {
 	2, 0, 232, 232, 32, 32, 200, 200, 28, 28, 208, 208, 219, 219};
-const u8 LuckyWheels_MachineSpriteY[LUCKY_WHEELS_MACHINE_LIGHTS] = {
+const Uint8 LuckyWheels_MachineSpriteY[LUCKY_WHEELS_MACHINE_LIGHTS] = {
 	2, 152, 0, 152, 8, 104, 8, 104, 118, 140, 118, 140, 6, 108};
 
 /* The advance of each title letter. */
-const u8 LuckyWheels_TitleLetterWidths[LUCKY_WHEELS_TITLE_LETTERS] = {
+const Uint8 LuckyWheels_TitleLetterWidths[LUCKY_WHEELS_TITLE_LETTERS] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
-	32, 24, 22, 28,
-	28, 22, 18
+	32, 24, 22, 28, 28, 22, 18
 #elif LANGUAGE == LANGUAGE_SPANISH
-	16, 28, 28, 26, 26,
-	28, 28, 20, 24
+	16, 28, 28, 26, 26, 28, 28, 20, 24
 #else
-	28, 28, 26, 26, 28,
-	28, 20, 24
+	28, 28, 26, 26, 28, 28, 20, 24
 #endif
 };
 
-/* Plays Lucky Wheels: blanks the screen, seeds the random numbers with the */
-/* play time and runs the game. Returns 0. */
-s32 fdLuckyWheelsStart(void) {
+/* Plays Lucky Wheels: blanks the screen, seeds the random numbers with the play
+   time and runs the game. Returns 0. */
+Sint32 fdLuckyWheelsStart(void)
+{
 	REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
 	RandomSeed = MainRoutineStateWork.playTime;
 	sySndPlayStub(MUS_TRY_YOUR_LUCK);
@@ -237,19 +228,21 @@ s32 fdLuckyWheelsStart(void) {
 	return 0;
 }
 
-/* Writes count RGB555 colours from src to dst scaled by scale (16.16, */
-/* FIXED_ONE keeps them). Returns 0. */
-s32 fdLuckyWheelsScaleRgb555(u16 *src, u16 *dst, FIXED scale, s32 count) {
-	s32 remaining;
-	u32 color;
-	u32 red;
-	u32 green;
-	u32 blue;
+/* Writes count RGB555 colours from src to dst scaled by scale (16.16,
+   toFIXED(1) keeps them). Returns 0. */
+Sint32 fdLuckyWheelsScaleRGB555(
+	Uint16 *src, Uint16 *dst, FIXED scale, Sint32 count)
+{
+	Sint32 remaining;
+	Uint32 color;
+	Uint32 red;
+	Uint32 green;
+	Uint32 blue;
 
 	if(count > 0) {
-		u32 redMask = RGB(31, 0, 0);
-		u32 greenMask = RGB(0, 31, 0);
-		u32 blueMask = RGB(0, 0, 31);
+		Uint32 redMask = RGB(31, 0, 0);
+		Uint32 greenMask = RGB(0, 31, 0);
+		Uint32 blueMask = RGB(0, 0, 31);
 
 		/* Each channel is scaled where it stands, and keeps the top 16 bits. */
 		remaining = count;
@@ -273,13 +266,13 @@ s32 fdLuckyWheelsScaleRgb555(u16 *src, u16 *dst, FIXED scale, s32 count) {
 	return 0;
 }
 
-/* A VBlank-pass task: on a VBlank after the canvas is ready (transferPending),
- */
-/* sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then */
-/* clears it or fades it into trails as transferMode says. */
-void fdLuckyWheelsTransferCanvas(void) {
+/* A VBlank-pass event: on a VBlank after the canvas is ready (transferPending),
+   sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
+   clears it or fades it into trails as transferMode says. */
+void fdLuckyWheelsTransferCanvas(void)
+{
 	BATTLE_EFFECT_STATE *state;
-	u8 *buf;
+	Uint8				*buf;
 
 	state = Ram_HeapSlots->battleEff;
 	if(state->transferPending == 1) {
@@ -287,14 +280,14 @@ void fdLuckyWheelsTransferCanvas(void) {
 		switch(state->transferMode) {
 		case CANVAS_COPY_AND_CLEAR:
 			syDMAXCopy(buf, (void *)LUCKY_WHEELS_CANVAS_TILES,
-					   DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
+				DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
 			syWordsFill(buf, LUCKY_WHEELS_CANVAS_SIZE, state->transferValue);
 			break;
 		case CANVAS_COPY_AND_FADE:
 			/* Trails: nonzero colour numbers drop to 1/2 or 3/4. */
 			if(state->transferValue == CANVAS_FADE_HALF)
-				syColBufferHalveNonzero(buf, (u8 *)LUCKY_WHEELS_CANVAS_TILES,
-										LUCKY_WHEELS_CANVAS_SIZE);
+				syColBufferHalveNonzero(buf, (Uint8 *)LUCKY_WHEELS_CANVAS_TILES,
+					LUCKY_WHEELS_CANVAS_SIZE);
 			else
 				syColBufferScaleNonzeroThreeQuarters(
 					buf, LUCKY_WHEELS_CANVAS_TILES, LUCKY_WHEELS_CANVAS_SIZE);
@@ -302,23 +295,23 @@ void fdLuckyWheelsTransferCanvas(void) {
 		}
 		state->transferPending = 0;
 		state->vblanksSinceTransfer = 1;
-	}
-	else {
+	} else {
 		(state->vblanksSinceTransfer)++;
 	}
 }
 
-/* Darkens the screen one step: lowers each channel of the machine's 16 */
-/* colours and of the icons' by 1. */
-void fdLuckyWheelsDarkenStep(void) {
-	u16 *col;
-	s32 i;
+/* Darkens the screen one step: lowers each channel of the machine's 16 colours
+   and of the icons' by 1. */
+void fdLuckyWheelsDarkenStep(void)
+{
+	Uint16 *col;
+	Sint32	i;
 
-	col = (u16 *)&BG_PLTT_COLOR(LUCKY_WHEELS_MACHINE_PALETTE, 0);
+	col = (Uint16 *)&BG_PLTT_COLOR(LUCKY_WHEELS_MACHINE_PALETTE, 0);
 	for(i = 0; i != PALETTE_COLORS; i++) {
-		s32 b = RGB_BLUE(*col);
-		s32 g = RGB_GREEN(*col);
-		s32 r = RGB_RED(*col);
+		Sint32 b = RGB_BLUE(*col);
+		Sint32 g = RGB_GREEN(*col);
+		Sint32 r = RGB_RED(*col);
 
 		b--;
 		g--;
@@ -332,11 +325,11 @@ void fdLuckyWheelsDarkenStep(void) {
 			r = 0;
 		*col++ = RGB(r, g, b);
 	}
-	col = (u16 *)&OBJ_PLTT[1];
+	col = (Uint16 *)&OBJ_PLTT[1];
 	for(i = 0; i != LUCKY_WHEELS_ICON_COLORS - 1; i++) {
-		s32 b = RGB_BLUE(*col);
-		s32 g = RGB_GREEN(*col);
-		s32 r = RGB_RED(*col);
+		Sint32 b = RGB_BLUE(*col);
+		Sint32 g = RGB_GREEN(*col);
+		Sint32 r = RGB_RED(*col);
 
 		b--;
 		g--;
@@ -352,22 +345,23 @@ void fdLuckyWheelsDarkenStep(void) {
 	}
 }
 
-/* Moves the sparks' colours one step toward the palette of resource; the */
-/* backdrop colour is not written back. */
-void fdLuckyWheelsStepSparkCols(s32 resource) {
-	u16 dst[LUCKY_WHEELS_SPARK_COLORS];
-	u16 *col = (u16 *)BG_PLTT;
-	s32 i;
+/* Moves the sparks' colours one step toward the palette of resource; the
+   backdrop colour is not written back. */
+void fdLuckyWheelsStepSparkCols(Sint32 resource)
+{
+	Uint16	dst[LUCKY_WHEELS_SPARK_COLORS];
+	Uint16 *col = (Uint16 *)BG_PLTT;
+	Sint32	i;
 
 	syDMAXCopy(syResourceGetTableEntry(resource), dst,
-			   DMA_COPY_WORDS(sizeof dst / 4), REG_DMA3);
+		DMA_COPY_WORDS(sizeof dst / 4), REG_DMA3);
 	for(i = 0; i != LUCKY_WHEELS_SPARK_COLORS; i++, col++) {
-		s32 r = RGB_RED(*col);
-		s32 g = RGB_GREEN(*col);
-		s32 b = RGB_BLUE(*col);
-		s32 targetRed = RGB_RED(dst[i]);
-		s32 targetGreen = RGB_GREEN(dst[i]);
-		s32 targetBlue = RGB_BLUE(dst[i]);
+		Sint32 r = RGB_RED(*col);
+		Sint32 g = RGB_GREEN(*col);
+		Sint32 b = RGB_BLUE(*col);
+		Sint32 targetRed = RGB_RED(dst[i]);
+		Sint32 targetGreen = RGB_GREEN(dst[i]);
+		Sint32 targetBlue = RGB_BLUE(dst[i]);
 
 		if(r < targetRed)
 			r++;
@@ -384,25 +378,27 @@ void fdLuckyWheelsStepSparkCols(s32 resource) {
 		dst[i] = RGB(r, g, b);
 	}
 	syDMAXCopy(dst + 1, (void *)&BG_PLTT[1],
-			   DMA_COPY_HALFWORDS(LUCKY_WHEELS_SPARK_COLORS - 1), REG_DMA3);
+		DMA_COPY_HALFWORDS(LUCKY_WHEELS_SPARK_COLORS - 1), REG_DMA3);
 }
 
 /* A line's step along its shorter axis, in 256ths of a pixel. */
 #define LINE_STEP_ONE (1 << 8)
 
-/* Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32 */
-/* tiles across), writing only over lower colour numbers. */
-void fdLuckyWheelsDrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
-	s32 dx = x1 - x0;
-	s32 dy = y1 - y0;
-	s32 frac = LINE_STEP_ONE / 2;
-	u8 *canvas = Ram_HeapSlots->battleCanvas;
-	s32 step;
-	s32 i;
-	s32 x;
-	s32 y;
-	s32 t;
-	u32 off;
+/* Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32 tiles
+   across), writing only over lower colour numbers. */
+void fdLuckyWheelsDrawCanvasLine(
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color)
+{
+	Sint32 dx = x1 - x0;
+	Sint32 dy = y1 - y0;
+	Sint32 frac = LINE_STEP_ONE / 2;
+	Uint8 *canvas = Ram_HeapSlots->battleCanvas;
+	Sint32 step;
+	Sint32 i;
+	Sint32 x;
+	Sint32 y;
+	Sint32 t;
+	Uint32 off;
 
 	if(ABS(dx) < ABS(dy)) {
 		if(dy < 0) {
@@ -421,7 +417,7 @@ void fdLuckyWheelsDrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 		step = ABS(x1 - x0) * LINE_STEP_ONE / ABS(y1 - y0);
 		x = x0;
 		for(i = y0; i != y1; i++) {
-			off = (((((u32)i >> 3) << 5) + ((u32)x >> 3)) << 3) + (i & 7);
+			off = (((((Uint32)i >> 3) << 5) + ((Uint32)x >> 3)) << 3) + (i & 7);
 			off = (off << 3) + (x & 7);
 			if(canvas[off] < color)
 				canvas[off] = color;
@@ -434,8 +430,7 @@ void fdLuckyWheelsDrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 				frac &= ~LINE_STEP_ONE;
 			}
 		}
-	}
-	else {
+	} else {
 		if(dx < 0) {
 			t = x0;
 			x0 = x1;
@@ -452,7 +447,7 @@ void fdLuckyWheelsDrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 		step = ABS(y1 - y0) * LINE_STEP_ONE / ABS(x1 - x0);
 		y = y0;
 		for(i = x0; i != x1; i++) {
-			off = (((((u32)y >> 3) << 5) + ((u32)i >> 3)) << 3) + (y & 7);
+			off = (((((Uint32)y >> 3) << 5) + ((Uint32)i >> 3)) << 3) + (y & 7);
 			off = (off << 3) + (i & 7);
 			if(canvas[off] < color)
 				canvas[off] = color;
@@ -468,31 +463,14 @@ void fdLuckyWheelsDrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 	}
 }
 
-/* The prompt windows (all locked, start, lock and spin a wheel, stop the */
-/* slots, choose the slots to lock) and the ticket count's digits, placed and */
-/* sized for each language's words. Lock reads "Stop", and Japanese shows it */
-/* and Spin in one window. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define LUCKY_WHEELS_ALL_LOCKED_X	  12
-#define LUCKY_WHEELS_ALL_LOCKED_WIDTH 18
-#define LUCKY_WHEELS_START_X		  18
-#define LUCKY_WHEELS_START_WIDTH	  12
-#elif LANGUAGE == LANGUAGE_ITALIAN
-#define LUCKY_WHEELS_ALL_LOCKED_X	  10
-#define LUCKY_WHEELS_ALL_LOCKED_WIDTH 20
-#define LUCKY_WHEELS_START_X		  21
-#define LUCKY_WHEELS_START_WIDTH	  9
-#elif LANGUAGE == LANGUAGE_SPANISH
-#define LUCKY_WHEELS_ALL_LOCKED_X	  6
-#define LUCKY_WHEELS_ALL_LOCKED_WIDTH 24
-#define LUCKY_WHEELS_START_X		  22
-#define LUCKY_WHEELS_START_WIDTH	  8
-#else
-#define LUCKY_WHEELS_ALL_LOCKED_X	  11
-#define LUCKY_WHEELS_ALL_LOCKED_WIDTH 19
-#define LUCKY_WHEELS_START_X		  16
-#define LUCKY_WHEELS_START_WIDTH	  14
-#endif
+/* The prompt windows (all locked, start, lock and spin a wheel, stop the slots,
+   choose the slots to lock) and the ticket count's digits, placed and sized for
+   each language's words. Lock reads "Stop", and Japanese shows it and Spin in
+   one window. */
+#define LUCKY_WHEELS_ALL_LOCKED_X	  BY_LANGUAGE(12, 11, 11, 6, 11, 10)
+#define LUCKY_WHEELS_ALL_LOCKED_WIDTH BY_LANGUAGE(18, 19, 19, 24, 19, 20)
+#define LUCKY_WHEELS_START_X		  BY_LANGUAGE(18, 16, 16, 22, 16, 21)
+#define LUCKY_WHEELS_START_WIDTH	  BY_LANGUAGE(12, 14, 14, 8, 14, 9)
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_LOCK_X		18
 #define LUCKY_WHEELS_LOCK_WIDTH 12
@@ -517,75 +495,54 @@ void fdLuckyWheelsDrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define LUCKY_WHEELS_SPIN_X		23
 #define LUCKY_WHEELS_SPIN_WIDTH 7
 #endif
-#if LANGUAGE == LANGUAGE_FRENCH
-#define LUCKY_WHEELS_TICKET_DIGITS 3
-#define LUCKY_WHEELS_TICKET_X	   56
-#else
-#define LUCKY_WHEELS_TICKET_DIGITS 2
-#define LUCKY_WHEELS_TICKET_X	   64
-#endif
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define LUCKY_WHEELS_STOP_X		23
-#define LUCKY_WHEELS_STOP_WIDTH 7
-#elif LANGUAGE == LANGUAGE_SPANISH
-#define LUCKY_WHEELS_STOP_X		21
-#define LUCKY_WHEELS_STOP_WIDTH 9
-#else
-#define LUCKY_WHEELS_STOP_X		18
-#define LUCKY_WHEELS_STOP_WIDTH 12
-#endif
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define LUCKY_WHEELS_CHOOSE_LOCKED_X	 7
-#define LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH 16
-#else
-#define LUCKY_WHEELS_CHOOSE_LOCKED_X	 3
-#define LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH 24
-#endif
+#define LUCKY_WHEELS_TICKET_DIGITS \
+	WHEN(LUCKY_WHEELS_THREE_DIGIT_TICKET_COUNT, 3, 2)
+#define LUCKY_WHEELS_TICKET_X \
+	WHEN(LUCKY_WHEELS_THREE_DIGIT_TICKET_COUNT, 56, 64)
+#define LUCKY_WHEELS_STOP_X				 BY_LANGUAGE(23, 18, 18, 21, 18, 18)
+#define LUCKY_WHEELS_STOP_WIDTH			 BY_LANGUAGE(7, 12, 12, 9, 12, 12)
+#define LUCKY_WHEELS_CHOOSE_LOCKED_X	 JAPANESE_OR(7, 3)
+#define LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH JAPANESE_OR(16, 24)
 /* The Spanish title's first letter is its last letter's tile turned over both
- */
-/* ways, drawn 16 pixels left and 8 down. */
-#define LUCKY_WHEELS_TITLE_FIRST_TURNED (LANGUAGE == LANGUAGE_SPANISH)
-/* The first tile of the title's letters: the Japanese letters take fewer */
-/* tiles, so they start later and end at the same place. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define LUCKY_WHEELS_TITLE_TILES 896
-#else
-#define LUCKY_WHEELS_TITLE_TILES 880
-#endif
+   ways, drawn 16 pixels left and 8 down. */
+#define LUCKY_WHEELS_TITLE_FIRST_TURNED	 (LANGUAGE == LANGUAGE_SPANISH)
+/* The first tile of the title's letters: the Japanese letters take fewer tiles,
+   so they start later and end at the same place. */
+#define LUCKY_WHEELS_TITLE_TILES		 JAPANESE_OR(896, 880)
 
-/* Lucky Wheels' state: the five reels, the game's stage, cursor, spins and */
-/* bet, the keys read, the winning lines, the reel sprites, the windows and */
-/* the scanline offsets that bend the reels. */
+/* Lucky Wheels' state: the five reels, the game's stage, cursor, spins and bet,
+   the keys read, the winning lines, the reel sprites, the windows and the
+   scanline offsets that bend the reels. */
 typedef struct LUCKY_WHEELS_STATE {
-	REEL reels[LUCKY_WHEELS_REEL_COUNT];
-	s32 state;
-	s32 cursor;
-	s32 spins;
-	s32 bet;
-	u16 keys;
-	u16 dir;
-	u16 pressed;
-	u16 repeat;
-	s32 tmr;
-	s32 sprCnt;
-	s32 winningLines[LUCKY_WHEELS_PAYLINES];
-	OAM_WORDS oam[128];
+	REEL		   reels[LUCKY_WHEELS_REEL_COUNT];
+	Sint32		   state;
+	Sint32		   cursor;
+	Sint32		   spins;
+	Sint32		   bet;
+	Uint16		   keys;
+	Uint16		   dir;
+	Uint16		   pressed;
+	Uint16		   repeat;
+	Sint32		   tmr;
+	Sint32		   sprCnt;
+	Sint32		   winningLines[LUCKY_WHEELS_PAYLINES];
+	OAM_WORDS	   oam[128];
 	struct WINDOW *win;
 	struct WINDOW *subWin;
-	u8 unusedAfterSubWin[8]; /* no code names it */
-	u16 scanlineOffsets[160];
-#if TLA_PATCH_1
-	/* The Japanese release has no phase: it closes and reopens its prompt */
-	/* window every frame. */
-	s32 phase; /* the prompt shown while choosing locks (LUCKY_WHEELS_PROMPT) */
+	Uint8		   unusedAfterSubWin[8]; /* no code names it */
+	Uint16		   scanlineOffsets[160];
+#if LUCKY_WHEELS_PROMPT_DRAWN_ONCE
+	/* The Japanese release has no phase: it closes and reopens its prompt
+	   window every frame. the prompt shown while choosing locks
+	   (LUCKY_WHEELS_PROMPT) */
+	Sint32 phase;
 #endif
 } LUCKY_WHEELS_STATE;
 
 /* The prompt window LUCKY_WHEELS_STATE.phase says is open, so that it is drawn
- */
-/* once rather than every frame. The all-locked prompt draws its two lines on */
-/* two frames; after a losing spin the first value says the "pull the lever" */
-/* line is drawn. */
+   once rather than every frame. The all-locked prompt draws its two lines on
+   two frames; after a losing spin the first value says the "pull the lever"
+   line is drawn. */
 typedef enum LUCKY_WHEELS_PROMPT {
 	LUCKY_WHEELS_PROMPT_NONE,
 	LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE,
@@ -606,26 +563,27 @@ extern char MsgSlotsStart[];	  /* "{button_icon:1}:Start machine" */
 extern char MsgSlotsAllHeld[];	  /* "If you lock all the slots," */
 extern char MsgSlotsCannotPull[]; /* "you can't pull the lever!" */
 
-/* Lucky Wheels' VBlank task: reads the keys, runs the game's state */
-/* (betting, spinning and stopping the wheels, scoring the paylines, choosing */
-/* wheels to lock, showing a win) and builds all 128 sprites: the cursor, the */
-/* title letters of a win, the frame, the lock lamps, the spin counter, the */
-/* paylines, the wheel symbols, the lever and the bottom bar. */
-void fdLuckyWheelsUpdate(void) {
-	REEL_EFFECT_STATE *fx;
-	s32 objMode;
-	u16 keys;
-	u32 dpad;
-	s32 tickets;
-	s32 allLocked;
-	s32 stoppedReels;
-	s32 col;
-	s32 v;
-	s32 x;
-	s32 y;
-	s32 lever;
-	s32 k;
-	s32 i;
+/* Lucky Wheels' VBlank event: reads the keys, runs the game's state (betting,
+   spinning and stopping the wheels, scoring the paylines, choosing wheels to
+   lock, showing a win) and builds all 128 sprites: the cursor, the title
+   letters of a win, the frame, the lock lamps, the spin counter, the paylines,
+   the wheel symbols, the lever and the bottom bar. */
+void fdLuckyWheelsUpdate(void)
+{
+	REEL_EFFECT_STATE  *fx;
+	Sint32				objMode;
+	Uint16				keys;
+	Uint32				dpad;
+	Sint32				tickets;
+	Sint32				allLocked;
+	Sint32				stoppedReels;
+	Sint32				col;
+	Sint32				v;
+	Sint32				x;
+	Sint32				y;
+	Sint32				lever;
+	Sint32				k;
+	Sint32				i;
 	LUCKY_WHEELS_STATE *state;
 
 	state = (LUCKY_WHEELS_STATE *)Ram_HeapSlots->canvasMap;
@@ -635,8 +593,8 @@ void fdLuckyWheelsUpdate(void) {
 
 	syRandom();
 
-	keys = InputWork.held;
-	dpad = InputWork.held & KEYS_DPAD;
+	keys = PerWork.data;
+	dpad = PerWork.data & KEYS_DPAD;
 	state->pressed = keys & ~state->keys;
 	state->dir = dpad;
 	if((state->keys & KEYS_DPAD) == state->dir) {
@@ -644,13 +602,11 @@ void fdLuckyWheelsUpdate(void) {
 			state->repeat = LUCKY_WHEELS_REPEAT_DELAY;
 		if(state->repeat == 0) {
 			state->repeat = LUCKY_WHEELS_REPEAT_INTERVAL;
-		}
-		else {
+		} else {
 			state->repeat--;
 			state->dir = 0;
 		}
-	}
-	else {
+	} else {
 		state->repeat = LUCKY_WHEELS_REPEAT_DELAY;
 	}
 	state->keys = keys;
@@ -659,8 +615,8 @@ void fdLuckyWheelsUpdate(void) {
 		if(state->state == LUCKY_WHEELS_BETTING) {
 			tickets = gmPartyInventoryCountItemStub(ITEM_GAME_TICKET);
 			mnTextDrawNumInWindowStub(tickets - state->bet,
-									  LUCKY_WHEELS_TICKET_DIGITS, state->subWin,
-									  LUCKY_WHEELS_TICKET_X, 0);
+				LUCKY_WHEELS_TICKET_DIGITS, state->subWin,
+				LUCKY_WHEELS_TICKET_X, 0);
 			mnTextDrawNumInWindowStub(state->bet, 2, state->subWin, 64, 8);
 			if(state->pressed & KEY_B) {
 				REEL_SAVE *save = (REEL_SAVE *)PartyDjinnRecovery;
@@ -669,15 +625,13 @@ void fdLuckyWheelsUpdate(void) {
 				/* The player quit while betting. */
 				save->wonPrizes[0] = WHEELS_PRIZES_NONE_TO_HAND_OUT;
 				mnWindowCloseStub(state->win, 1);
-			}
-			else {
+			} else {
 				if(state->pressed & KEY_UP) {
 					if(state->bet < LUCKY_WHEELS_BET_MAX &&
-					   tickets > state->bet) {
+						tickets > state->bet) {
 						state->bet++;
 						sySndPlayStub(SE_MENU_CURSOR_MOVE);
-					}
-					else {
+					} else {
 						sySndPlayStub(SE_MENU_CANCEL);
 					}
 				}
@@ -685,8 +639,7 @@ void fdLuckyWheelsUpdate(void) {
 					if(state->bet > 1) {
 						state->bet--;
 						sySndPlayStub(SE_MENU_CURSOR_MOVE);
-					}
-					else {
+					} else {
 						sySndPlayStub(SE_MENU_CANCEL);
 					}
 				}
@@ -703,8 +656,7 @@ void fdLuckyWheelsUpdate(void) {
 					sySndPlayStub(SE_LUCKY_WHEELS_SPIN);
 				}
 			}
-		}
-		else if(state->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
+		} else if(state->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
 			allLocked = 0;
 			state->tmr++;
 			for(k = 0;
@@ -723,24 +675,20 @@ void fdLuckyWheelsUpdate(void) {
 						state->reels[i].held = 0;
 						state->reels[i].stop = -1;
 					}
-				}
-				else if(state->cursor < LUCKY_WHEELS_LEVER) {
+				} else if(state->cursor < LUCKY_WHEELS_LEVER) {
 					sySndPlayStub(SE_LUCKY_WHEELS_HOLD);
 					state->reels[state->cursor].held ^= 1;
-				}
-				else if(allLocked == 0) {
+				} else if(allLocked == 0) {
 					sySndPlayStub(SE_LUCKY_WHEELS_SPIN);
 					state->state = LUCKY_WHEELS_SPINNING;
 					state->cursor = 0;
 					for(i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++)
 						state->reels[i].stop = -1;
 					state->spins++;
-				}
-				else {
+				} else {
 					sySndPlayStub(SE_MENU_CANCEL);
 				}
-			}
-			else {
+			} else {
 				if(state->dir & KEY_RIGHT) {
 					state->cursor =
 						(state->cursor + 1) % (LUCKY_WHEELS_LEVER + 1);
@@ -748,65 +696,59 @@ void fdLuckyWheelsUpdate(void) {
 				}
 				if(state->dir & KEY_LEFT) {
 					state->cursor = (state->cursor + LUCKY_WHEELS_LEVER) %
-									(LUCKY_WHEELS_LEVER + 1);
+						(LUCKY_WHEELS_LEVER + 1);
 					sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				}
 			}
 
 			if(state->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
-#if TLA_PATCH_1
+#if LUCKY_WHEELS_PROMPT_DRAWN_ONCE
 				if(state->cursor == LUCKY_WHEELS_LEVER) {
 					if(allLocked != 0) {
 						if(state->phase !=
-							   LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE &&
-						   state->phase != LUCKY_WHEELS_PROMPT_ALL_LOCKED) {
+								LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE &&
+							state->phase != LUCKY_WHEELS_PROMPT_ALL_LOCKED) {
 							mnWindowCloseStub(state->win, 1);
-							state->win = mnWindowCreateStub(
-								LUCKY_WHEELS_ALL_LOCKED_X, 0,
-								LUCKY_WHEELS_ALL_LOCKED_WIDTH, 4, 6);
-							mnTextDrawMessageAsTilesStub((s32)MsgSlotsAllHeld,
-														 state->win, 0, 0);
+							state->win =
+								mnWindowCreateStub(LUCKY_WHEELS_ALL_LOCKED_X, 0,
+									LUCKY_WHEELS_ALL_LOCKED_WIDTH, 4, 6);
+							mnTextDrawMessageAsTilesStub(
+								(Sint32)MsgSlotsAllHeld, state->win, 0, 0);
 							state->phase =
 								LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE;
-						}
-						else if(state->phase ==
-								LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE) {
+						} else if(state->phase ==
+							LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE) {
 							mnTextDrawMessageAsTilesStub(
-								(s32)MsgSlotsCannotPull, state->win, 0, 8);
+								(Sint32)MsgSlotsCannotPull, state->win, 0, 8);
 							state->phase = LUCKY_WHEELS_PROMPT_ALL_LOCKED;
 						}
-					}
-					else {
+					} else {
 						if(state->phase != LUCKY_WHEELS_PROMPT_START) {
 							mnWindowCloseStub(state->win, 1);
-							state->win = mnWindowCreateStub(
-								LUCKY_WHEELS_START_X, 0,
-								LUCKY_WHEELS_START_WIDTH, 3, 6);
-							mnTextDrawMessageAsTilesStub((s32)MsgSlotsStart,
-														 state->win, 0, 0);
+							state->win =
+								mnWindowCreateStub(LUCKY_WHEELS_START_X, 0,
+									LUCKY_WHEELS_START_WIDTH, 3, 6);
+							mnTextDrawMessageAsTilesStub(
+								(Sint32)MsgSlotsStart, state->win, 0, 0);
 						}
 						state->phase = LUCKY_WHEELS_PROMPT_START;
 					}
-				}
-				else if(state->reels[state->cursor].held == 0) {
+				} else if(state->reels[state->cursor].held == 0) {
 					if(state->phase != LUCKY_WHEELS_PROMPT_LOCK) {
 						mnWindowCloseStub(state->win, 1);
-						state->win =
-							mnWindowCreateStub(LUCKY_WHEELS_LOCK_X, 0,
-											   LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
-						mnTextDrawMessageAsTilesStub(MsgSlotsHold, state->win,
-													 0, 0);
+						state->win = mnWindowCreateStub(LUCKY_WHEELS_LOCK_X, 0,
+							LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
+						mnTextDrawMessageAsTilesStub(
+							MsgSlotsHold, state->win, 0, 0);
 					}
 					state->phase = LUCKY_WHEELS_PROMPT_LOCK;
-				}
-				else {
+				} else {
 					if(state->phase != LUCKY_WHEELS_PROMPT_SPIN) {
 						mnWindowCloseStub(state->win, 1);
-						state->win =
-							mnWindowCreateStub(LUCKY_WHEELS_SPIN_X, 0,
-											   LUCKY_WHEELS_SPIN_WIDTH, 3, 6);
-						mnTextDrawMessageAsTilesStub((s32)MsgSlotsRelease,
-													 state->win, 0, 0);
+						state->win = mnWindowCreateStub(LUCKY_WHEELS_SPIN_X, 0,
+							LUCKY_WHEELS_SPIN_WIDTH, 3, 6);
+						mnTextDrawMessageAsTilesStub(
+							(Sint32)MsgSlotsRelease, state->win, 0, 0);
 					}
 					state->phase = LUCKY_WHEELS_PROMPT_SPIN;
 				}
@@ -814,37 +756,32 @@ void fdLuckyWheelsUpdate(void) {
 				mnWindowCloseStub(state->win, 1);
 				if(state->cursor == LUCKY_WHEELS_LEVER) {
 					if(allLocked != 0) {
-						state->win = mnWindowCreateStub(
-							LUCKY_WHEELS_ALL_LOCKED_X, 0,
-							LUCKY_WHEELS_ALL_LOCKED_WIDTH, 3, 6);
-						mnTextDrawMessageAsTilesStub((s32)MsgSlotsAllHeld,
-													 state->win, 0, 0);
-					}
-					else {
 						state->win =
-							mnWindowCreateStub(LUCKY_WHEELS_START_X, 0,
-											   LUCKY_WHEELS_START_WIDTH, 3, 6);
-						mnTextDrawMessageAsTilesStub((s32)MsgSlotsStart,
-													 state->win, 0, 0);
+							mnWindowCreateStub(LUCKY_WHEELS_ALL_LOCKED_X, 0,
+								LUCKY_WHEELS_ALL_LOCKED_WIDTH, 3, 6);
+						mnTextDrawMessageAsTilesStub(
+							(Sint32)MsgSlotsAllHeld, state->win, 0, 0);
+					} else {
+						state->win = mnWindowCreateStub(LUCKY_WHEELS_START_X, 0,
+							LUCKY_WHEELS_START_WIDTH, 3, 6);
+						mnTextDrawMessageAsTilesStub(
+							(Sint32)MsgSlotsStart, state->win, 0, 0);
 					}
-				}
-				else {
+				} else {
 					state->win = mnWindowCreateStub(
 						LUCKY_WHEELS_LOCK_X, 0, LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
 					if(state->reels[state->cursor].held == 0)
-						mnTextDrawMessageAsTilesStub(MsgSlotsHold, state->win,
-													 0, 0);
+						mnTextDrawMessageAsTilesStub(
+							MsgSlotsHold, state->win, 0, 0);
 					else
-						mnTextDrawMessageAsTilesStub((s32)MsgSlotsRelease,
-													 state->win, 0, 0);
+						mnTextDrawMessageAsTilesStub(
+							(Sint32)MsgSlotsRelease, state->win, 0, 0);
 				}
 #endif
-			}
-			else {
+			} else {
 				mnWindowCloseStub(state->win, 1);
 			}
-		}
-		else if(state->state == LUCKY_WHEELS_WON) {
+		} else if(state->state == LUCKY_WHEELS_WON) {
 			state->tmr++;
 			objMode = 0;
 			if(state->tmr == LUCKY_WHEELS_WIN_PAUSE) {
@@ -857,53 +794,49 @@ void fdLuckyWheelsUpdate(void) {
 				fx->transferMode = CANVAS_COPY_AND_FADE;
 				fx->transferValue = CANVAS_FADE_THREE_QUARTERS;
 			}
-		}
-		else if(state->state == LUCKY_WHEELS_SHOWING_WIN) {
+		} else if(state->state == LUCKY_WHEELS_SHOWING_WIN) {
 			state->tmr++;
 			objMode = 0;
 			if(state->pressed & KEY_A) {
 				state->state = LUCKY_WHEELS_DONE;
 				sySndPlayStub(SE_MENU_CONFIRM);
 			}
-		}
-		else if(state->state == LUCKY_WHEELS_NO_WIN) {
-#if TLA_PATCH_1
+		} else if(state->state == LUCKY_WHEELS_NO_WIN) {
+#if LUCKY_WHEELS_PROMPT_DRAWN_ONCE
 			if(state->phase == LUCKY_WHEELS_PROMPT_NONE) {
 				state->phase = LUCKY_WHEELS_PROMPT_PULL_LEVER;
-				mnTextDrawMessageAsTilesStub(MsgSlotsPullLever, state->win, 0,
-											 8);
+				mnTextDrawMessageAsTilesStub(
+					MsgSlotsPullLever, state->win, 0, 8);
 			}
 #endif
 			if(state->pressed & KEY_A) {
 				state->state = LUCKY_WHEELS_CHOOSING_LOCKS;
-#if TLA_PATCH_1
+#if LUCKY_WHEELS_PROMPT_DRAWN_ONCE
 				state->phase = LUCKY_WHEELS_PROMPT_NONE;
 #endif
 				sySndPlayStub(SE_MENU_CONFIRM);
 				mnWindowCloseStub(state->win, 1);
 			}
-		}
-		else if(state->state == LUCKY_WHEELS_OUT_OF_SPINS) {
+		} else if(state->state == LUCKY_WHEELS_OUT_OF_SPINS) {
 			state->tmr++;
 			if(state->tmr == LUCKY_WHEELS_LOSS_PAUSE)
 				state->state = LUCKY_WHEELS_DONE;
-		}
-		else if(state->state != LUCKY_WHEELS_DONE) {
+		} else if(state->state != LUCKY_WHEELS_DONE) {
 			if(state->tmr == LUCKY_WHEELS_STOP_WINDOW_FRAME) {
-				state->win = mnWindowCreateStub(LUCKY_WHEELS_STOP_X, 17,
-												LUCKY_WHEELS_STOP_WIDTH, 3, 6);
-				mnTextDrawMessageAsTilesStub(MsgSlotsStopReels, state->win, 0,
-											 0);
+				state->win = mnWindowCreateStub(
+					LUCKY_WHEELS_STOP_X, 17, LUCKY_WHEELS_STOP_WIDTH, 3, 6);
+				mnTextDrawMessageAsTilesStub(
+					MsgSlotsStopReels, state->win, 0, 0);
 			}
 			if(state->tmr == LUCKY_WHEELS_STOP_PROMPT_FRAME)
 				sySndPlayStub(SE_LUCKY_WHEELS_STOP_PROMPT);
 			if(state->tmr > LUCKY_WHEELS_LEVER_FRAMES) {
 				if(fx->frm >= LUCKY_WHEELS_AUTO_STOP_FRAMES ||
-				   (state->pressed & KEY_R)) {
+					(state->pressed & KEY_R)) {
 					fx->frm = 0;
 					for(i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
 						if(state->reels[i].held == 0 &&
-						   state->reels[i].stop == -1) {
+							state->reels[i].stop == -1) {
 							state->reels[i].stop = (syRandom() & 3) + 4;
 							sySndPlayStub(SE_LUCKY_WHEELS_STOP);
 							break;
@@ -922,49 +855,48 @@ void fdLuckyWheelsUpdate(void) {
 				if(state->reels[i].held == 1)
 					stoppedReels++;
 				else if(state->reels[i].stop == 0 &&
-						(state->reels[i].pos &
-						 (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) ==
-							LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
+					(state->reels[i].pos & (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) ==
+						LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
 					stoppedReels++;
 			}
 
 			if(stoppedReels == LUCKY_WHEELS_REEL_COUNT) {
 				REEL_SAVE *save = (REEL_SAVE *)PartyDjinnRecovery;
-				s32 hits = 0;
+				Sint32	   hits = 0;
 
 				for(col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
-					s32 mixed;
-					s32 found;
+					Sint32 mixed;
+					Sint32 found;
 
 					found = -1;
 					mixed = 0;
 					state->winningLines[col] = 0;
 					if(col > LUCKY_WHEELS_MIDDLE_LINE - state->bet &&
-					   col < state->bet + LUCKY_WHEELS_MIDDLE_LINE) {
+						col < state->bet + LUCKY_WHEELS_MIDDLE_LINE) {
 						for(i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-							s32 sym;
+							Sint32 sym;
 
 							if(col == 0)
 								sym = state->reels[i].symbols
 										  [(i -
-											state->reels[i].pos /
-												LUCKY_WHEELS_SYMBOL_HEIGHT +
-											LUCKY_WHEELS_REEL_SYMBOLS + 1) %
-										   LUCKY_WHEELS_REEL_SYMBOLS];
+											   state->reels[i].pos /
+												   LUCKY_WHEELS_SYMBOL_HEIGHT +
+											   LUCKY_WHEELS_REEL_SYMBOLS + 1) %
+											  LUCKY_WHEELS_REEL_SYMBOLS];
 							else if(col == LUCKY_WHEELS_PAYLINES - 1)
 								sym = state->reels[i].symbols
 										  [(-i -
-											state->reels[i].pos /
-												LUCKY_WHEELS_SYMBOL_HEIGHT +
-											LUCKY_WHEELS_REEL_SYMBOLS + 5) %
-										   LUCKY_WHEELS_REEL_SYMBOLS];
+											   state->reels[i].pos /
+												   LUCKY_WHEELS_SYMBOL_HEIGHT +
+											   LUCKY_WHEELS_REEL_SYMBOLS + 5) %
+											  LUCKY_WHEELS_REEL_SYMBOLS];
 							else
 								sym = state->reels[i].symbols
 										  [(col -
-											state->reels[i].pos /
-												LUCKY_WHEELS_SYMBOL_HEIGHT +
-											LUCKY_WHEELS_REEL_SYMBOLS) %
-										   LUCKY_WHEELS_REEL_SYMBOLS];
+											   state->reels[i].pos /
+												   LUCKY_WHEELS_SYMBOL_HEIGHT +
+											   LUCKY_WHEELS_REEL_SYMBOLS) %
+											  LUCKY_WHEELS_REEL_SYMBOLS];
 							if(sym != LUCKY_WHEELS_WILD_SYMBOL) {
 								if(found == -1)
 									found = sym;
@@ -989,34 +921,32 @@ void fdLuckyWheelsUpdate(void) {
 					fx->transferValue = 0;
 					REG_BLDCNT = 0;
 					mnWindowCloseStub(state->win, 1);
-				}
-				else {
+				} else {
 					state->state = LUCKY_WHEELS_NO_WIN;
-#if TLA_PATCH_1
+#if LUCKY_WHEELS_PROMPT_DRAWN_ONCE
 					state->phase = LUCKY_WHEELS_PROMPT_NONE;
 #endif
 					mnWindowCloseStub(state->win, 1);
 					if(state->spins < LUCKY_WHEELS_RESPINS) {
-						s32 message;
+						Sint32 message;
 
-						state->win = mnWindowCreateStub(
-							LUCKY_WHEELS_CHOOSE_LOCKED_X, 16,
-							LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH, 4, 6);
-						message = (s32)MsgSlotsChooseHeld;
+						state->win =
+							mnWindowCreateStub(LUCKY_WHEELS_CHOOSE_LOCKED_X, 16,
+								LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH, 4, 6);
+						message = (Sint32)MsgSlotsChooseHeld;
 						mnTextDrawMessageAsTilesStub(message, state->win, 0, 0);
-						mnTextDrawMessageAsTilesStub(message + 1, state->win, 0,
-													 8);
+						mnTextDrawMessageAsTilesStub(
+							message + 1, state->win, 0, 8);
 					}
 					if(state->spins == LUCKY_WHEELS_RESPINS) {
-						s32 left =
+						Sint32 left =
 							gmPartyInventoryCountItemStub(ITEM_GAME_TICKET);
 						struct WINDOW *window;
-						s32 message;
+						Sint32		   message;
 
 						/* DEAD: both arms set the out-of-spins state, so the
-						 * ticket count */
-						/* cannot change it; the ROM keeps the compare and both
-						 * stores. */
+						   ticket count cannot change it; the ROM keeps the
+						   compare and both stores. */
 						if(left > 0)
 							state->state = LUCKY_WHEELS_OUT_OF_SPINS;
 						else
@@ -1037,8 +967,8 @@ void fdLuckyWheelsUpdate(void) {
 						/* "Game ticket" above "Bet". */
 						message = MsgSlotsBet;
 						mnTextDrawMessageAsTilesStub(message, window, 0, 8);
-						mnTextDrawMessageAsTilesStub(message - 1, state->subWin,
-													 0, 0);
+						mnTextDrawMessageAsTilesStub(
+							message - 1, state->subWin, 0, 0);
 					}
 				}
 			}
@@ -1051,8 +981,8 @@ void fdLuckyWheelsUpdate(void) {
 						if(reel->stop != 0)
 							reel->pos += LUCKY_WHEELS_SPIN_SPEED;
 						else if((reel->pos &
-								 (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) !=
-								LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
+									(LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) !=
+							LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
 							reel->pos += LUCKY_WHEELS_SPIN_SPEED;
 						if(reel->pos == LUCKY_WHEELS_REEL_TURN)
 							reel->pos = 0;
@@ -1080,8 +1010,7 @@ void fdLuckyWheelsUpdate(void) {
 			v * SPRITE_TILES_8BPP(32, 16) + LUCKY_WHEELS_ARROW_TILES;
 		state->sprCnt++;
 		state->oam[state->sprCnt].attr01 = OBJ_X(x + 12) | objMode | (y + 8) |
-										   OBJ_SIZE_32X16 | OBJ_256_COLORS |
-										   OBJ_HFLIP;
+			OBJ_SIZE_32X16 | OBJ_256_COLORS | OBJ_HFLIP;
 		state->oam[state->sprCnt].attr2 =
 			v * SPRITE_TILES_8BPP(32, 16) + LUCKY_WHEELS_ARROW_TILES;
 		state->sprCnt++;
@@ -1101,14 +1030,14 @@ void fdLuckyWheelsUpdate(void) {
 					objMode | ((PIXEL_PART(p->y) + 256 + 8) & OBJ_Y_MASK) |
 					OBJ_SIZE_32X32 | OBJ_HFLIP | OBJ_VFLIP;
 			else
-				state->oam[state->sprCnt].attr01 =
-					OBJ_X(PIXEL_PART(p->x)) | objMode |
-					((PIXEL_PART(p->y) + 256) & OBJ_Y_MASK) | OBJ_SIZE_32X32;
+				state->oam[state->sprCnt].attr01 = OBJ_X(PIXEL_PART(p->x)) |
+					objMode | ((PIXEL_PART(p->y) + 256) & OBJ_Y_MASK) |
+					OBJ_SIZE_32X32;
 			state->oam[state->sprCnt].attr2 =
 				(LuckyWheels_TitleLetterTiles[i] * SPRITE_TILES(32, 32) +
-				 LUCKY_WHEELS_TITLE_TILES) |
+					LUCKY_WHEELS_TITLE_TILES) |
 				OBJ_PALETTE(LUCKY_WHEELS_JACKPOT_PALETTE);
-#if TLA_PATCH_1
+#if LUCKY_WHEELS_TITLE_MOVES_TWICE_A_FRAME
 			/* The Japanese release draws the letters without moving them. */
 			p->y += p->velY;
 			p->velY += toFIXED(1) / 4;
@@ -1143,23 +1072,20 @@ void fdLuckyWheelsUpdate(void) {
 	for(i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
 		if(state->reels[i].held == 0) {
 			state->oam[state->sprCnt].attr01 = objMode | OBJ_X(i * 36 + 32) |
-											   124 | OBJ_SIZE_32X32 |
-											   OBJ_256_COLORS;
+				124 | OBJ_SIZE_32X32 | OBJ_256_COLORS;
 			state->oam[state->sprCnt].attr2 =
 				OBJ_PRIORITY(1) | LUCKY_WHEELS_LAMP_TILES;
-		}
-		else {
+		} else {
 			state->oam[state->sprCnt].attr01 = objMode | OBJ_X(i * 36 + 32) |
-											   124 | OBJ_SIZE_32X32 |
-											   OBJ_256_COLORS;
+				124 | OBJ_SIZE_32X32 | OBJ_256_COLORS;
 			state->oam[state->sprCnt].attr2 =
 				OBJ_PRIORITY(1) | LUCKY_WHEELS_LOCKED_LAMP_TILES;
 		}
 		state->sprCnt++;
 	}
 
-	/* One sprite for each pull of the lever, the first and its re-pulls; the */
-	/* current pull's takes other tiles. */
+	/* One sprite for each pull of the lever, the first and its re-pulls; the
+	   current pull's takes other tiles. */
 	for(i = 0; i != LUCKY_WHEELS_RESPINS + 1; i++) {
 		state->oam[state->sprCnt].attr01 =
 			objMode | OBJ_X(i * 16 + 32) | 3 | OBJ_SIZE_32X16 | OBJ_256_COLORS;
@@ -1170,7 +1096,7 @@ void fdLuckyWheelsUpdate(void) {
 		else
 			state->oam[state->sprCnt].attr2 =
 				(i * 2 * SPRITE_TILES_8BPP(32, 16) + LUCKY_WHEELS_PULL_TILES +
-				 SPRITE_TILES_8BPP(32, 16)) |
+					SPRITE_TILES_8BPP(32, 16)) |
 				OBJ_PRIORITY(1);
 		state->sprCnt++;
 	}
@@ -1181,7 +1107,7 @@ void fdLuckyWheelsUpdate(void) {
 			(col * LUCKY_WHEELS_SYMBOL_HEIGHT + 5) | OBJ_SIZE_32X32 |
 			OBJ_256_COLORS;
 		if(col > LUCKY_WHEELS_MIDDLE_LINE - state->bet &&
-		   col < state->bet + LUCKY_WHEELS_MIDDLE_LINE)
+			col < state->bet + LUCKY_WHEELS_MIDDLE_LINE)
 			state->oam[state->sprCnt].attr2 =
 				OBJ_PRIORITY(1) | LUCKY_WHEELS_LIT_LINE_TILES;
 		else
@@ -1194,17 +1120,17 @@ void fdLuckyWheelsUpdate(void) {
 		REEL *reel = &state->reels[i];
 
 		for(col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
-			s32 symbolY = col * LUCKY_WHEELS_SYMBOL_HEIGHT +
-						  reel->pos % LUCKY_WHEELS_SYMBOL_HEIGHT;
-			s32 index = state->sprCnt;
+			Sint32 symbolY = col * LUCKY_WHEELS_SYMBOL_HEIGHT +
+				reel->pos % LUCKY_WHEELS_SYMBOL_HEIGHT;
+			Sint32 index = state->sprCnt;
 
 			symbolY += 4;
 			state->oam[index].attr01 =
 				symbolY | OBJ_X(i * 32 + 40) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
 			state->oam[state->sprCnt].attr2 =
 				reel->symbols[(col - reel->pos / LUCKY_WHEELS_SYMBOL_HEIGHT +
-							   LUCKY_WHEELS_REEL_SYMBOLS) %
-							  LUCKY_WHEELS_REEL_SYMBOLS] *
+								  LUCKY_WHEELS_REEL_SYMBOLS) %
+					LUCKY_WHEELS_REEL_SYMBOLS] *
 					SPRITE_TILES_8BPP(32, 16) |
 				OBJ_PRIORITY(2);
 			state->sprCnt++;
@@ -1216,10 +1142,10 @@ void fdLuckyWheelsUpdate(void) {
 	if(state->state == LUCKY_WHEELS_SPINNING) {
 		if(state->tmr < LUCKY_WHEELS_LEVER_PULL_FRAMES)
 			lever = FIXEDtoINT(
-						sySin(state->tmr * (DEGtoANG(180) /
-											LUCKY_WHEELS_LEVER_PULL_FRAMES)) *
+						sySin(state->tmr *
+							(DEGtoANG(180) / LUCKY_WHEELS_LEVER_PULL_FRAMES)) *
 						LUCKY_WHEELS_LEVER_PULL) +
-					LUCKY_WHEELS_LEVER_Y;
+				LUCKY_WHEELS_LEVER_Y;
 		else if(state->tmr < LUCKY_WHEELS_LEVER_FRAMES)
 			lever =
 				FIXEDtoINT(
@@ -1227,37 +1153,31 @@ void fdLuckyWheelsUpdate(void) {
 				LUCKY_WHEELS_LEVER_Y;
 	}
 	state->oam[state->sprCnt].attr01 = lever | objMode |
-									   OBJ_X(LUCKY_WHEELS_LEVER_X) |
-									   OBJ_SIZE_32X16 | OBJ_256_COLORS;
+		OBJ_X(LUCKY_WHEELS_LEVER_X) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
 	state->oam[state->sprCnt].attr2 =
 		OBJ_PRIORITY(1) | LUCKY_WHEELS_LEVER_TILES;
 	state->sprCnt++;
 
 	/* The lever's slot, in eight pieces from its top: two of its own, four
-	 * alike */
-	/* and two for its bottom. */
+	   alike and two for its bottom. */
 	for(k = 0; k != LUCKY_WHEELS_LEVER_SLOT_PIECES; k++) {
-		state->oam[state->sprCnt].attr01 =
-			objMode | (k * 16 + LUCKY_WHEELS_LEVER_SLOT_Y) |
+		state->oam[state->sprCnt].attr01 = objMode |
+			(k * 16 + LUCKY_WHEELS_LEVER_SLOT_Y) |
 			OBJ_X(LUCKY_WHEELS_LEVER_SLOT_X) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
 		if(k == 0)
 			state->oam[state->sprCnt].attr2 =
 				OBJ_PRIORITY(1) | LUCKY_WHEELS_LEVER_SLOT_TILES;
 		else if(k == 1)
-			state->oam[state->sprCnt].attr2 =
-				OBJ_PRIORITY(1) |
+			state->oam[state->sprCnt].attr2 = OBJ_PRIORITY(1) |
 				(LUCKY_WHEELS_LEVER_SLOT_TILES + SPRITE_TILES_8BPP(32, 16));
 		else if(k == 6)
-			state->oam[state->sprCnt].attr2 =
-				OBJ_PRIORITY(1) |
+			state->oam[state->sprCnt].attr2 = OBJ_PRIORITY(1) |
 				(LUCKY_WHEELS_LEVER_SLOT_TILES + 3 * SPRITE_TILES_8BPP(32, 16));
 		else if(k == 7)
-			state->oam[state->sprCnt].attr2 =
-				OBJ_PRIORITY(1) |
+			state->oam[state->sprCnt].attr2 = OBJ_PRIORITY(1) |
 				(LUCKY_WHEELS_LEVER_SLOT_TILES + 4 * SPRITE_TILES_8BPP(32, 16));
 		else
-			state->oam[state->sprCnt].attr2 =
-				OBJ_PRIORITY(1) |
+			state->oam[state->sprCnt].attr2 = OBJ_PRIORITY(1) |
 				(LUCKY_WHEELS_LEVER_SLOT_TILES + 2 * SPRITE_TILES_8BPP(32, 16));
 		state->sprCnt++;
 	}
@@ -1270,23 +1190,23 @@ void fdLuckyWheelsUpdate(void) {
 	}
 }
 
-/* The title letters fdLuckyWheelsFinishFrame bounces in every edition: the */
-/* Japanese title's eight. The other editions also bounce every letter as */
-/* fdLuckyWheelsUpdate draws it, so there the first eight move twice a frame */
-/* and the Spanish title's ninth once. */
-/* XXX: how the Spanish title's ninth letter bounces beside the others; a */
-/* recording of a Spanish win would settle it. */
+/* The title letters fdLuckyWheelsFinishFrame bounces in every edition: the
+   Japanese title's eight. The other editions also bounce every letter as
+   fdLuckyWheelsUpdate draws it, so there the first eight move twice a frame and
+   the Spanish title's ninth once. */
+/* XXX: how the Spanish title's ninth letter bounces beside the others; a
+   recording of a Spanish win would settle it. */
 #define LUCKY_WHEELS_BOUNCED_LETTERS 8
 
-/* The end of Lucky Wheels' frame: while a win shows it bounces the title */
-/* letters, then restarts the HBlank DMA of the scanline offsets into BLDY and
- */
-/* copies the frame's sprites to OAM. */
-void fdLuckyWheelsFinishFrame(void) {
+/* The end of Lucky Wheels' frame: while a win shows it bounces the title
+   letters, then restarts the HBlank DMA of the scanline offsets into BLDY and
+   copies the frame's sprites to OAM. */
+void fdLuckyWheelsFinishFrame(void)
+{
 	LUCKY_WHEELS_STATE *state;
-	REEL_EFFECT_STATE *fx;
-	volatile u16 *dma;
-	s32 i;
+	REEL_EFFECT_STATE  *fx;
+	volatile Uint16	   *dma;
+	Sint32				i;
 
 	state = (LUCKY_WHEELS_STATE *)Ram_HeapSlots->canvasMap;
 	fx = (REEL_EFFECT_STATE *)Ram_HeapSlots->battleEff;
@@ -1315,42 +1235,39 @@ void fdLuckyWheelsFinishFrame(void) {
 	(void)dma[5];
 	/* One halfword at each HBlank (repeating, destination reloaded). */
 	syDMAXCopy(state->scanlineOffsets, (void *)&REG_BLDY,
-			   DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
+		DMA_HBLANK_HALFWORD_PER_LINE, (volatile Uint32 *)dma);
 	if(state->sprCnt > 0)
-		syDMAXCopy(state->oam, OAM, DMA_COPY_WORDS(state->sprCnt * 2),
-				   REG_DMA3);
+		syDMAXCopy(
+			state->oam, OAM, DMA_COPY_WORDS(state->sprCnt * 2), REG_DMA3);
 }
 
-/* The left edge of the title's first letter: the Spanish title has nine */
-/* letters and starts further left. */
-#if LANGUAGE == LANGUAGE_SPANISH
-#define LUCKY_WHEELS_TITLE_X 8
-#else
-#define LUCKY_WHEELS_TITLE_X 24
-#endif
+/* The left edge of the title's first letter: the Spanish title has nine letters
+   and starts further left. */
+#define LUCKY_WHEELS_TITLE_X SPANISH_OR(8, 24)
 
-/* The sparks of the jackpot, kept in the map cell buffer. */
-#define LUCKY_WHEELS_SPARKS ((PARTICLE *)Ram_MapCellBuffer)
+/* The sparks of the jackpot, kept in the map metatile buffer. */
+#define LUCKY_WHEELS_SPARKS ((PARTICLE *)Ram_MapMetatileBuffer)
 
-/* The screen lines of the wheels' top and bottom edges, and the lines from */
-/* each that fdLuckyWheelsSetUpBetting shades. */
+/* The screen lines of the wheels' top and bottom edges, and the lines from each
+   that fdLuckyWheelsSetUpBetting shades. */
 #define LUCKY_WHEELS_WHEELS_TOP	   23
 #define LUCKY_WHEELS_WHEELS_BOTTOM 110
 #define LUCKY_WHEELS_SHADE_LINES   40
 /* The darkening at the wheels' very edges, in BLDY's sixteenths. */
-#define LUCKY_WHEELS_SHADE_LEVEL 6
+#define LUCKY_WHEELS_SHADE_LEVEL   6
 
-/* Sets up the bouncing title letters of a win, the brightness wave of the */
-/* screen's lines and the betting window, and starts at betting. */
-void fdLuckyWheelsSetUpBetting(void) {
+/* Sets up the bouncing title letters of a win, the brightness wave of the
+   screen's lines and the betting window, and starts at betting. */
+void fdLuckyWheelsSetUpBetting(void)
+{
 	LUCKY_WHEELS_STATE *state;
-	REEL_EFFECT_STATE *reelEffectState;
-	PARTICLE *letter;
-	s32 left;
-	s32 i;
-	s32 angle;
-	struct WINDOW *window;
-	s32 message;
+	REEL_EFFECT_STATE  *reelEffectState;
+	PARTICLE		   *letter;
+	Sint32				left;
+	Sint32				i;
+	Sint32				angle;
+	struct WINDOW	   *window;
+	Sint32				message;
 
 	state = (LUCKY_WHEELS_STATE *)Ram_HeapSlots->canvasMap;
 	reelEffectState = (REEL_EFFECT_STATE *)Ram_HeapSlots->battleEff;
@@ -1372,16 +1289,15 @@ void fdLuckyWheelsSetUpBetting(void) {
 		state->scanlineOffsets[i] = 0;
 
 	/* The wheels darken toward their top and bottom edges, as a drum turns
-	 * away: */
-	/* BLDY falls from LUCKY_WHEELS_SHADE_LEVEL at each edge to 0 over a quarter
-	 */
-	/* turn of the cosine. */
+	   away:
+	   BLDY falls from LUCKY_WHEELS_SHADE_LEVEL at each edge to 0 over a quarter
+	   turn of the cosine. */
 	for(i = 0; i != LUCKY_WHEELS_SHADE_LINES; i++) {
 		angle = i * (DEGtoANG(90) / LUCKY_WHEELS_SHADE_LINES);
 		state->scanlineOffsets[LUCKY_WHEELS_WHEELS_TOP + i] =
-			FIXEDtoINT((u32)(syCos(angle) * LUCKY_WHEELS_SHADE_LEVEL));
+			FIXEDtoINT((Uint32)(syCos(angle) * LUCKY_WHEELS_SHADE_LEVEL));
 		state->scanlineOffsets[LUCKY_WHEELS_WHEELS_BOTTOM - i] =
-			FIXEDtoINT((u32)(syCos(angle) * LUCKY_WHEELS_SHADE_LEVEL));
+			FIXEDtoINT((Uint32)(syCos(angle) * LUCKY_WHEELS_SHADE_LEVEL));
 	}
 
 	state->spins = 0;
@@ -1398,60 +1314,54 @@ void fdLuckyWheelsSetUpBetting(void) {
 	mnTextDrawMessageAsTilesStub(message - 1, state->subWin, 0, 0);
 }
 
-/* The help window is narrower in Japanese, and one row shorter there when it */
-/* shows only the controls. The jackpot banner's tiles are the title's. */
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define LUCKY_WHEELS_HELP_WINDOW_X			6
-#define LUCKY_WHEELS_HELP_WINDOW_WIDTH		18
-#define LUCKY_WHEELS_CONTROLS_WINDOW_HEIGHT 3
-#define LUCKY_WHEELS_JACKPOT_COPY			DMA_COPY_WORDS(1024)
-#else
-#define LUCKY_WHEELS_HELP_WINDOW_X			2
-#define LUCKY_WHEELS_HELP_WINDOW_WIDTH		26
-#define LUCKY_WHEELS_CONTROLS_WINDOW_HEIGHT 4
-#define LUCKY_WHEELS_JACKPOT_COPY			DMA_COPY_WORDS(1152)
-#endif
-#define LUCKY_WHEELS_JACKPOT_TILES                                             \
+/* The help window is narrower in Japanese, and one row shorter there when it
+   shows only the controls. The jackpot banner's tiles are the title's. */
+#define LUCKY_WHEELS_HELP_WINDOW_X			JAPANESE_OR(6, 2)
+#define LUCKY_WHEELS_HELP_WINDOW_WIDTH		JAPANESE_OR(18, 26)
+#define LUCKY_WHEELS_CONTROLS_WINDOW_HEIGHT JAPANESE_OR(3, 4)
+#define LUCKY_WHEELS_JACKPOT_COPY \
+	JAPANESE_OR(DMA_COPY_WORDS(1024), DMA_COPY_WORDS(1152))
+#define LUCKY_WHEELS_JACKPOT_TILES \
 	(OBJ_VRAM0 + LUCKY_WHEELS_TITLE_TILES * TILE_SIZE_4BPP)
 
-typedef void (*DRAW_RECTANGLE)(void *canvas, const u8 *source, s32 x, s32 y,
-							   s32 width, s32 height);
+typedef void (*DRAW_RECTANGLE)(void *canvas, const Uint8 *source, Sint32 x,
+	Sint32 y, Sint32 width, Sint32 height);
 
 extern char MsgSlotsChangeBet[]; /* "Press up or down to change value" */
-extern char MsgSlotsControls[];	 /* "{button_icon:1}:Start machine */
-								 /* {button_icon:2}:Quit" */
+/* "{button_icon:1}:Start machine {button_icon:2}:Quit" */
+extern char MsgSlotsControls[];
 
-/* Lucky Wheels: loads its backgrounds, sprites and palettes, fills each of */
-/* the five wheels with 21 random symbols (with eight placed symbols of rank 0
- */
-/* to 5), then runs until the player leaves: fading in, drawing the paylines */
-/* on the canvas while betting or winning, and the jackpot's sparks and */
-/* colour cycle while showing a win. Then fades out and frees its memory. */
-void fdLuckyWheelsRun(void) {
-	s32 picks[LUCKY_WHEELS_PLACED_SYMBOLS];
-	s32 litLines[LUCKY_WHEELS_PAYLINES];
-	DRAW_RECTANGLE draw[2];
-	u8 *sheet;
-	void *canvas;
-	REEL_EFFECT_STATE *reelEffectState;
+/* Lucky Wheels: loads its backgrounds, sprites and palettes, fills each of the
+   five wheels with 21 random symbols (with eight placed symbols of rank 0 to
+   5), then runs until the player leaves: fading in, drawing the paylines on the
+   canvas while betting or winning, and the jackpot's sparks and colour cycle
+   while showing a win. Then fades out and frees its memory. */
+void fdLuckyWheelsRun(void)
+{
+	Sint32				picks[LUCKY_WHEELS_PLACED_SYMBOLS];
+	Sint32				litLines[LUCKY_WHEELS_PAYLINES];
+	DRAW_RECTANGLE		draw[2];
+	Uint8			   *sheet;
+	void			   *canvas;
+	REEL_EFFECT_STATE  *reelEffectState;
 	LUCKY_WHEELS_STATE *state;
-	REEL_SAVE *save;
-	u8 *entry;
-	u8 *tiles;
-	s32 frame;
-	u32 count;
-	s32 i;
-	s32 j;
-	s32 k;
+	REEL_SAVE		   *save;
+	Uint8			   *entry;
+	Uint8			   *tiles;
+	Sint32				frame;
+	Uint32				count;
+	Sint32				i;
+	Sint32				j;
+	Sint32				k;
 
 	sheet = syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, 1550);
 	canvas = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
-	reelEffectState = syHeapSlotAllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
+	reelEffectState = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, 31612);
 	state =
-		syHeapSlotAllocEwram(HEAP_SLOT_CANVAS_MAP, sizeof(LUCKY_WHEELS_STATE));
-	tiles = Ram_MapCellBuffer;
+		syHeapSlotAllocEWRAM(HEAP_SLOT_CANVAS_MAP, sizeof(LUCKY_WHEELS_STATE));
+	tiles = Ram_MapMetatileBuffer;
 	save = (REEL_SAVE *)PartyDjinnRecovery;
-	syResourceReservedNoOp(RESOURCE_BATTLE_EFFECT_STUBS);
+	syResourceReservedNoOperation(RESOURCE_BATTLE_EFFECT_STUBS);
 	save->wonPrizes[0] = WHEELS_PRIZES_END;
 	state->repeat = 0;
 	state->bet = 1;
@@ -1464,29 +1374,27 @@ void fdLuckyWheelsRun(void) {
 	for(k = 0; k != DISPLAY_TILE_HEIGHT; k++) {
 		for(i = 0; i != BG_SCREEN_WIDTH; i++, j += 2) {
 			if(LUCKY_WHEELS_IN_OPENING(i, k)) {
-				*(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) =
+				*(volatile Uint16 *)(BG_SCREEN_BLOCK(5) + j) =
 					BG_TILE_PALETTE(LUCKY_WHEELS_MACHINE_PALETTE) |
 					LUCKY_WHEELS_CLEAR_TILE;
-			}
-			else if(i >= DISPLAY_TILE_WIDTH) {
-				*(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0;
-			}
-			else {
-				*(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) =
+			} else if(i >= DISPLAY_TILE_WIDTH) {
+				*(volatile Uint16 *)(BG_SCREEN_BLOCK(5) + j) = 0;
+			} else {
+				*(volatile Uint16 *)(BG_SCREEN_BLOCK(5) + j) =
 					(BG_TILE_PALETTE(LUCKY_WHEELS_MACHINE_PALETTE) |
-					 LUCKY_WHEELS_MACHINE_TILE) +
+						LUCKY_WHEELS_MACHINE_TILE) +
 					count;
 				count++;
 			}
 		}
 	}
-	syDecompressTaggedLz(syResourceGetTableEntry(RESOURCE_BLUE_GLOW_SHEET),
-						 sheet);
+	syDecompressTaggedLZ(
+		syResourceGetTableEntry(RESOURCE_BLUE_GLOW_SHEET), sheet);
 	entry = syResourceGetTableEntry(RESOURCE_SLOTS_MACHINE_PICTURE);
 	syDMAXCopy(entry, (void *)&BG_PLTT_COLOR(LUCKY_WHEELS_MACHINE_PALETTE, 0),
-			   DMA_COPY_WORDS(8), REG_DMA3);
+		DMA_COPY_WORDS(8), REG_DMA3);
 	entry += PALETTE_BYTES;
-	syDecompressTaggedLz(entry, tiles);
+	syDecompressTaggedLZ(entry, tiles);
 	j = 0;
 	for(k = 0; k != DISPLAY_TILE_HEIGHT; k++) {
 		for(i = 0; i != DISPLAY_TILE_WIDTH; i++) {
@@ -1494,7 +1402,7 @@ void fdLuckyWheelsRun(void) {
 				syDMAXCopy(
 					tiles + (k * DISPLAY_TILE_WIDTH + i) * TILE_SIZE_4BPP,
 					(void *)(BG_CHAR_BLOCK(2) +
-							 LUCKY_WHEELS_MACHINE_TILE * TILE_SIZE_4BPP + j),
+						LUCKY_WHEELS_MACHINE_TILE * TILE_SIZE_4BPP + j),
 					DMA_COPY_WORDS(8), REG_DMA3);
 				j += TILE_SIZE_4BPP;
 			}
@@ -1502,18 +1410,18 @@ void fdLuckyWheelsRun(void) {
 	}
 	/* Clear BG1's map below the screen, then show the canvas on BG2. */
 	syWordsClear(BG_SCREEN_BLOCK(5) +
-					 DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(u16),
-				 BG_SCREEN_SIZE -
-					 DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(u16));
+			DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(Uint16),
+		BG_SCREEN_SIZE -
+			DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(Uint16));
 	j = 0;
 	for(k = 0; k != DISPLAY_TILE_HEIGHT; k++) {
 		for(i = 0; i != BG_SCREEN_WIDTH; i++, j += 2) {
 			if(k < LUCKY_WHEELS_CANVAS_TOP_ROW ||
-			   k > LUCKY_WHEELS_CANVAS_BOTTOM_ROW)
-				*(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) =
+				k > LUCKY_WHEELS_CANVAS_BOTTOM_ROW)
+				*(volatile Uint16 *)(BG_SCREEN_BLOCK(6) + j) =
 					LUCKY_WHEELS_CANVAS_CLEAR_TILE;
 			else
-				*(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) =
+				*(volatile Uint16 *)(BG_SCREEN_BLOCK(6) + j) =
 					(k - LUCKY_WHEELS_CANVAS_TOP_ROW) * BG_SCREEN_WIDTH + i +
 					LUCKY_WHEELS_CANVAS_FIRST_TILE;
 		}
@@ -1527,12 +1435,11 @@ void fdLuckyWheelsRun(void) {
 	BgScrollWork[2].x = 0;
 	BgScrollWork[2].y = 0;
 	REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-				WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-				WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ |
-				WININ_WIN1_CLR;
+		WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+		WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
 	REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
-				 WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
-				 WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_CLR;
+		WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
+		WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_CLR;
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_BLDALPHA = BLEND_ALPHA(16, 16);
 	REG_BG1HOFS = 0;
@@ -1540,8 +1447,7 @@ void fdLuckyWheelsRun(void) {
 	REG_BG1VOFS = -DISPLAY_HEIGHT;
 	REG_BG2VOFS = -DISPLAY_HEIGHT;
 	/* DEAD: a window round the opening, replaced at once by the whole screen;
-	 */
-	/* the ROM keeps both stores. */
+	   the ROM keeps both stores. */
 	REG_WIN0H = WIN_RANGE(40, 200);
 	REG_WIN0V = WIN_RANGE(24, 120);
 	REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
@@ -1550,9 +1456,9 @@ void fdLuckyWheelsRun(void) {
 	REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT);
 
 	{
-		u16 *bgShade = reelEffectState->bgShade;
-		u16 *shade = reelEffectState->sprShade;
-		s32 size = LUCKY_WHEELS_CANVAS_SIZE;
+		Uint16 *bgShade = reelEffectState->bgShade;
+		Uint16 *shade = reelEffectState->sprShade;
+		Sint32	size = LUCKY_WHEELS_CANVAS_SIZE;
 
 		state->state = LUCKY_WHEELS_BETTING;
 		state->cursor = 0;
@@ -1560,24 +1466,24 @@ void fdLuckyWheelsRun(void) {
 		reelEffectState->frm = 0;
 		state->tmr = 0;
 		syDMAXCopy(syResourceGetTableEntry(RESOURCE_JUPITER_DJINN_SHEET),
-				   (void *)BG_PLTT,
-				   DMA_COPY_WORDS(LUCKY_WHEELS_SPARK_COLORS / 2), REG_DMA3);
-		*(u16 *)&BG_PLTT[LUCKY_WHEELS_LINE_COLOR] = RGB(11, 28, 11);
-		*(u16 *)&BG_PLTT[LUCKY_WHEELS_LINE_LIGHT] = RGB(22, 31, 22);
+			(void *)BG_PLTT, DMA_COPY_WORDS(LUCKY_WHEELS_SPARK_COLORS / 2),
+			REG_DMA3);
+		*(Uint16 *)&BG_PLTT[LUCKY_WHEELS_LINE_COLOR] = RGB(11, 28, 11);
+		*(Uint16 *)&BG_PLTT[LUCKY_WHEELS_LINE_LIGHT] = RGB(22, 31, 22);
 		entry = syResourceGetTableEntry(RESOURCE_SLOTS_ICONS);
 		syDMAXCopy(entry, (void *)OBJ_PLTT,
-				   DMA_COPY_WORDS(LUCKY_WHEELS_ICON_COLORS / 2), REG_DMA3);
+			DMA_COPY_WORDS(LUCKY_WHEELS_ICON_COLORS / 2), REG_DMA3);
 		entry += LUCKY_WHEELS_ICON_COLORS * 2;
-		syDecompressTaggedLz(entry, tiles);
+		syDecompressTaggedLZ(entry, tiles);
 		syDMAXCopy(tiles, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6960), REG_DMA3);
 		entry = syResourceGetTableEntry(RESOURCE_SLOTS_JACKPOT_BANNER);
 		syDMAXCopy(entry,
-				   (void *)&OBJ_PLTT_COLOR(LUCKY_WHEELS_JACKPOT_PALETTE, 0),
-				   DMA_COPY_WORDS(8), REG_DMA3);
+			(void *)&OBJ_PLTT_COLOR(LUCKY_WHEELS_JACKPOT_PALETTE, 0),
+			DMA_COPY_WORDS(8), REG_DMA3);
 		entry += PALETTE_BYTES;
-		syDecompressTaggedLz(entry, tiles);
+		syDecompressTaggedLZ(entry, tiles);
 		syDMAXCopy(tiles, (void *)LUCKY_WHEELS_JACKPOT_TILES,
-				   LUCKY_WHEELS_JACKPOT_COPY, REG_DMA3);
+			LUCKY_WHEELS_JACKPOT_COPY, REG_DMA3);
 		mnWindowSystemInitFieldStub();
 		fdLuckyWheelsSetUpBetting();
 
@@ -1592,8 +1498,7 @@ void fdLuckyWheelsRun(void) {
 				reel->symbols[k] = syRandom() % LUCKY_WHEELS_WILD_SYMBOL;
 		}
 		/* Then eight different places on each wheel take symbols 0 to 4 and
-		 * three */
-		/* wilds, so every symbol is on every wheel. */
+		   three wilds, so every symbol is on every wheel. */
 		for(i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
 			REEL *reel = &state->reels[i];
 
@@ -1607,7 +1512,7 @@ void fdLuckyWheelsRun(void) {
 				}
 			}
 			for(k = 0; k != LUCKY_WHEELS_PLACED_SYMBOLS; k++) {
-				s32 rank = k;
+				Sint32 rank = k;
 
 				if(rank > LUCKY_WHEELS_WILD_SYMBOL)
 					rank = LUCKY_WHEELS_WILD_SYMBOL;
@@ -1621,15 +1526,15 @@ void fdLuckyWheelsRun(void) {
 		draw[1] = Ram_HeapSlots->ramCodePaired;
 		syWordsFillEntry(canvas, size, 0);
 		syDMAXCopy(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
-				   DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
+			DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
 		syDMAXCopy((void *)BG_PLTT, bgShade, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
-				   REG_DMA3);
+			REG_DMA3);
 		syDMAXCopy((void *)OBJ_PLTT, shade, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
-				   REG_DMA3);
-		fdLuckyWheelsScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, BG_PLTT_COLORS);
-		fdLuckyWheelsScaleRgb555(bgShade, (u16 *)BG_PLTT, 0, BG_PLTT_COLORS);
+			REG_DMA3);
+		fdLuckyWheelsScaleRGB555(shade, (Uint16 *)OBJ_PLTT, 0, BG_PLTT_COLORS);
+		fdLuckyWheelsScaleRGB555(bgShade, (Uint16 *)BG_PLTT, 0, BG_PLTT_COLORS);
 		REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
-					  DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
+			DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
 		if(gmPartyInventoryCountItemStub(ITEM_GAME_TICKET) == 1) {
 			struct WINDOW *window = mnWindowCreateStub(
 				LUCKY_WHEELS_HELP_WINDOW_X, 16, LUCKY_WHEELS_HELP_WINDOW_WIDTH,
@@ -1637,12 +1542,11 @@ void fdLuckyWheelsRun(void) {
 
 			state->win = window;
 			mnTextDrawMessageAsTilesStub(MsgSlotsControls, window, 0, 0);
-		}
-		else {
+		} else {
 			struct WINDOW *window =
 				mnWindowCreateStub(LUCKY_WHEELS_HELP_WINDOW_X, 16,
-								   LUCKY_WHEELS_HELP_WINDOW_WIDTH, 4, 6);
-			s32 message;
+					LUCKY_WHEELS_HELP_WINDOW_WIDTH, 4, 6);
+			Sint32 message;
 
 			state->win = window;
 			message = MsgSlotsChangeBet;
@@ -1650,24 +1554,22 @@ void fdLuckyWheelsRun(void) {
 			mnTextDrawMessageAsTilesStub(message + 1, state->win, 0, 8);
 		}
 		reelEffectState->transferPending = 0;
-		sySetEvent(fdLuckyWheelsUpdate, TASK_PASS_FRAME);
-		sySetEvent(fdLuckyWheelsFinishFrame, TASK_PASS_VBLANK);
-		sySetEvent(fdLuckyWheelsTransferCanvas, TASK_PASS_VBLANK);
+		sySetEvent(fdLuckyWheelsUpdate, EVENT_PASS_FRAME);
+		sySetEvent(fdLuckyWheelsFinishFrame, EVENT_PASS_VBLANK);
+		sySetEvent(fdLuckyWheelsTransferCanvas, EVENT_PASS_VBLANK);
 
 		for(frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
 			if(frame <= LUCKY_WHEELS_FADE_FRAMES) {
-				fdLuckyWheelsScaleRgb555(
-					shade, (u16 *)OBJ_PLTT,
-					frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+				fdLuckyWheelsScaleRGB555(shade, (Uint16 *)OBJ_PLTT,
+					frame * (toFIXED(1) / LUCKY_WHEELS_FADE_FRAMES),
 					BG_PLTT_COLORS);
-				fdLuckyWheelsScaleRgb555(
-					bgShade, (u16 *)BG_PLTT,
-					frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+				fdLuckyWheelsScaleRGB555(bgShade, (Uint16 *)BG_PLTT,
+					frame * (toFIXED(1) / LUCKY_WHEELS_FADE_FRAMES),
 					BG_PLTT_COLORS);
 			}
 			if(state->state == LUCKY_WHEELS_SHOWING_WIN) {
-				s32 phase = frame % (LUCKY_WHEELS_CYCLE_PALETTES *
-									 LUCKY_WHEELS_CYCLE_FRAMES);
+				Sint32 phase = frame %
+					(LUCKY_WHEELS_CYCLE_PALETTES * LUCKY_WHEELS_CYCLE_FRAMES);
 
 				if(phase < LUCKY_WHEELS_CYCLE_FRAMES)
 					fdLuckyWheelsStepSparkCols(RESOURCE_MERCURY_DJINN_SHEET);
@@ -1682,20 +1584,19 @@ void fdLuckyWheelsRun(void) {
 				if(state->tmr < LUCKY_WHEELS_FADE_FRAMES)
 					fdLuckyWheelsDarkenStep();
 				if(state->tmr > LUCKY_WHEELS_FADE_FRAMES && (frame & 7) == 0) {
-					s32 x = (syRandom() & 127) + 56;
-					s32 y = (syRandom() & 31) + 48;
-					PARTICLE *spark =
-						&LUCKY_WHEELS_SPARKS[(frame / 8 & 3) *
-											 LUCKY_WHEELS_BURST_SPARKS];
+					Sint32	  x = (syRandom() & 127) + 56;
+					Sint32	  y = (syRandom() & 31) + 48;
+					PARTICLE *spark = &LUCKY_WHEELS_SPARKS[(frame / 8 & 3) *
+						LUCKY_WHEELS_BURST_SPARKS];
 
 					for(j = 0; j != LUCKY_WHEELS_BURST_SPARKS; j++) {
-						s32 speed;
-						s32 angle;
+						Sint32 speed;
+						Sint32 angle;
 
 						speed = (syRandom() & 255) + 64;
 						angle = syRandom() & TRIG_ANGLE_MASK;
-						spark->x = INTtoFIXED(x);
-						spark->y = INTtoFIXED(y);
+						spark->x = toFIXED(x);
+						spark->y = toFIXED(y);
 						spark->velX = sySin(angle) * speed >> 6;
 						spark->velY = -(syCos(angle) * speed) >> 6;
 						spark->variant = (syRandom() & 15) + 16;
@@ -1706,27 +1607,25 @@ void fdLuckyWheelsRun(void) {
 					PARTICLE *spark = &LUCKY_WHEELS_SPARKS[j];
 
 					if(spark->variant > 0) {
-						s32 x;
+						Sint32 x;
 
 						spark->variant--;
 						x = spark->x;
 						if(x >= 0 && x <= toFIXED(256) - 1) {
-							s32 y = spark->y;
+							Sint32 y = spark->y;
 
 							if(y <= toFIXED(128) - 1) {
 								if(y >= 0) {
-									s32 drawX = FIXEDtoINT(x);
-									s32 drawY = FIXEDtoINT(y);
-									s32 size =
-										spark->variant /
+									Sint32 drawX = FIXEDtoINT(x);
+									Sint32 drawY = FIXEDtoINT(y);
+									Sint32 size = spark->variant /
 											LUCKY_WHEELS_SPARK_SHRINK_FRAMES +
 										1;
 
-									draw[j & 1](
-										canvas,
+									draw[j & 1](canvas,
 										sheet +
-											LuckyWheels_SparkCellOffsets[size -
-																		 1],
+											LuckyWheels_SparkMetatileOffsets
+												[size - 1],
 										drawX - size, drawY - size, size * 2,
 										size * 2);
 								}
@@ -1741,7 +1640,7 @@ void fdLuckyWheelsRun(void) {
 			}
 			/* The paylines bet on while betting, or those won, blinking. */
 			if(state->state == LUCKY_WHEELS_BETTING ||
-			   state->state == LUCKY_WHEELS_WON) {
+				state->state == LUCKY_WHEELS_WON) {
 				for(j = 0; j != LUCKY_WHEELS_PAYLINES; j++)
 					litLines[j] = 0;
 				if(state->state == LUCKY_WHEELS_BETTING) {
@@ -1758,37 +1657,36 @@ void fdLuckyWheelsRun(void) {
 						litLines[LUCKY_WHEELS_MIDDLE_LINE + 3] = 1;
 						litLines[LUCKY_WHEELS_MIDDLE_LINE - 3] = 1;
 					}
-				}
-				else if((frame & 7) <= 3) {
+				} else if((frame & 7) <= 3) {
 					for(j = 0; j != LUCKY_WHEELS_PAYLINES; j++)
 						litLines[j] = state->winningLines[j];
 				}
 				/* Each three pixels thick, its middle the lighter green. */
 				for(j = 0; j != 3; j++) {
-					s32 color = j != 1;
+					Sint32 color = j != 1;
 
 					color = LUCKY_WHEELS_LINE_LIGHT - color;
 					if(litLines[1])
-						fdLuckyWheelsDrawCanvasLine(20, j + 19, 200, j + 19,
-													color);
+						fdLuckyWheelsDrawCanvasLine(
+							20, j + 19, 200, j + 19, color);
 					if(litLines[2])
-						fdLuckyWheelsDrawCanvasLine(28, j + 35, 200, j + 35,
-													color);
+						fdLuckyWheelsDrawCanvasLine(
+							28, j + 35, 200, j + 35, color);
 					if(litLines[3])
-						fdLuckyWheelsDrawCanvasLine(20, j + 51, 200, j + 51,
-													color);
+						fdLuckyWheelsDrawCanvasLine(
+							20, j + 51, 200, j + 51, color);
 					if(litLines[4])
-						fdLuckyWheelsDrawCanvasLine(28, j + 67, 200, j + 67,
-													color);
+						fdLuckyWheelsDrawCanvasLine(
+							28, j + 67, 200, j + 67, color);
 					if(litLines[5])
-						fdLuckyWheelsDrawCanvasLine(20, j + 83, 200, j + 83,
-													color);
+						fdLuckyWheelsDrawCanvasLine(
+							20, j + 83, 200, j + 83, color);
 					if(litLines[0])
-						fdLuckyWheelsDrawCanvasLine(28, j + 5, 200, j + 91,
-													color);
+						fdLuckyWheelsDrawCanvasLine(
+							28, j + 5, 200, j + 91, color);
 					if(litLines[6])
-						fdLuckyWheelsDrawCanvasLine(28, j + 97, 200, j + 11,
-													color);
+						fdLuckyWheelsDrawCanvasLine(
+							28, j + 97, 200, j + 11, color);
 				}
 			}
 			reelEffectState->transferPending = 1;
@@ -1796,13 +1694,11 @@ void fdLuckyWheelsRun(void) {
 		}
 
 		for(j = 0; j != LUCKY_WHEELS_FADE_FRAMES + 1; j++) {
-			fdLuckyWheelsScaleRgb555(
-				shade, (u16 *)OBJ_PLTT,
-				FIXED_ONE - j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+			fdLuckyWheelsScaleRGB555(shade, (Uint16 *)OBJ_PLTT,
+				toFIXED(1) - j * (toFIXED(1) / LUCKY_WHEELS_FADE_FRAMES),
 				BG_PLTT_COLORS);
-			fdLuckyWheelsScaleRgb555(
-				bgShade, (u16 *)BG_PLTT,
-				FIXED_ONE - j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+			fdLuckyWheelsScaleRGB555(bgShade, (Uint16 *)BG_PLTT,
+				toFIXED(1) - j * (toFIXED(1) / LUCKY_WHEELS_FADE_FRAMES),
 				BG_PLTT_COLORS);
 			sySynch(1);
 		}
@@ -1819,34 +1715,32 @@ void fdLuckyWheelsRun(void) {
 }
 
 /* The LZ packer: a window of PACK_WINDOW_SIZE bytes with a hash chain for each
- */
-/* byte value, PACK_LOOKAHEAD bytes read ahead of the one being packed and the
- */
-/* PACK_HISTORY behind it kept in the chains, and matches of up to */
-/* PACK_MATCH_MAX bytes at most PACK_DISTANCE_MAX back. */
-#define PACK_WINDOW_SIZE  1024
-#define PACK_WINDOW_MASK  (PACK_WINDOW_SIZE - 1)
-#define PACK_BYTE_VALUES  256
-#define PACK_LOOKAHEAD	  672
-#define PACK_HISTORY	  60
-#define PACK_DISTANCE_MAX 63
-/* A match of up to 16 bytes takes two bytes; a longer one three, its length */
-/* less 17 in the third, up to PACK_MATCH_MAX. */
-#define PACK_SHORT_MATCH_MAX 16
-#define PACK_MATCH_MAX		 272
+   byte value, PACK_LOOKAHEAD bytes read ahead of the one being packed and the
+   PACK_HISTORY behind it kept in the chains, and matches of up to
+   PACK_MATCH_MAX bytes at most PACK_DISTANCE_MAX back. */
+#define PACK_WINDOW_SIZE		1024
+#define PACK_WINDOW_MASK		(PACK_WINDOW_SIZE - 1)
+#define PACK_BYTE_VALUES		256
+#define PACK_LOOKAHEAD			672
+#define PACK_HISTORY			60
+#define PACK_DISTANCE_MAX		63
+/* A match of up to 16 bytes takes two bytes; a longer one three, its length
+   less 17 in the third, up to PACK_MATCH_MAX. */
+#define PACK_SHORT_MATCH_MAX	16
+#define PACK_MATCH_MAX			272
 /* A group's flag byte is read from its top bit down, a bit an item. */
-#define PACK_FIRST_FLAG (1 << 7)
-/* A match's code, a halfword written high byte first: its distance's bits */
-/* from 8 up in bits 12 to 15, its length less one in bits 8 to 11 for a short
- */
-/* match, and its distance's low byte. */
+#define PACK_FIRST_FLAG			(1 << 7)
+/* A match's code, a halfword written high byte first: its distance's bits from
+   8 up in bits 12 to 15, its length less one in bits 8 to 11 for a short match,
+   and its distance's low byte. */
 #define PACK_CODE_DISTANCE_HIGH (~0xfff)
 #define PACK_CODE_LENGTH		0xf00
 #define PACK_CODE_DISTANCE_LOW	0xff
 
 /* Empties the LZ packer's hash chains and numbers its window nodes. */
-void fdLzPackResetSlotBuckets(void) {
-	s32 index;
+void fdLZPackResetSlotBuckets(void)
+{
+	Sint32		   index;
 	LZ_PACK_NODE **bucket;
 
 	for(index = 0; index < PACK_WINDOW_SIZE; index++) {
@@ -1860,7 +1754,8 @@ void fdLzPackResetSlotBuckets(void) {
 }
 
 /* Adds window position index to the chain of the byte it holds. */
-void fdLzPackInsertSlotNode(s32 index) {
+void fdLZPackInsertSlotNode(Sint32 index)
+{
 	LZ_PACK_STATE *state = LzPackStateWork;
 
 	state->nodes[index].prev =
@@ -1872,7 +1767,8 @@ void fdLzPackInsertSlotNode(s32 index) {
 }
 
 /* Removes window position slot from its chain. */
-void fdLzPackRemoveSlotNode(s32 slot) {
+void fdLZPackRemoveSlotNode(Sint32 slot)
+{
 	if(LzPackStateWork->nodes[slot].prev != NULL) {
 		if(LzPackStateWork->nodes[slot].next != NULL)
 			LzPackStateWork->nodes[slot].next->prev =
@@ -1882,27 +1778,29 @@ void fdLzPackRemoveSlotNode(s32 slot) {
 	}
 }
 
-/* Reads count more input bytes into the window from position start, dropping */
-/* the bytes they replace from their chains; past the end of the input the */
-/* positions are marked empty (-1). */
-void fdLzPackConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
-	s32 limit = count;
-	s32 current = 0;
+/* Reads count more input bytes into the window from position start, dropping
+   the bytes they replace from their chains; past the end of the input the
+   positions are marked empty (-1). */
+void fdLZPackConsumeSlotBytes(Sint32 start, Sint32 count, const Uint8 *input)
+{
+	Sint32 limit = count;
+	Sint32 current = 0;
 
 	if(current < count) {
-		u32 mask = PACK_WINDOW_MASK;
-		/* The byte PACK_HISTORY behind the one being packed leaves its chain.
-		 */
-		u32 removal = start + PACK_WINDOW_SIZE - PACK_LOOKAHEAD - PACK_HISTORY;
+		Uint32 mask = PACK_WINDOW_MASK;
+		/* The byte PACK_HISTORY behind the one being packed leaves its
+		   chain. */
+		Uint32 removal =
+			start + PACK_WINDOW_SIZE - PACK_LOOKAHEAD - PACK_HISTORY;
 
 		do {
-			u32 slot = start + current;
+			Uint32		   slot = start + current;
 			LZ_PACK_STATE *state;
-			u32 readOffset;
-			u32 nextOffset;
-			u8 value;
+			Uint32		   readOffset;
+			Uint32		   nextOffset;
+			Uint8		   value;
 
-			fdLzPackRemoveSlotNode(removal & mask);
+			fdLZPackRemoveSlotNode(removal & mask);
 			state = LzPackStateWork;
 			readOffset = state->inputCursor;
 			value = input[readOffset];
@@ -1915,20 +1813,20 @@ void fdLzPackConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
 			state->bucketBySlot[slot & mask] = value;
 			current++;
-			fdLzPackInsertSlotNode(slot & mask);
+			fdLZPackInsertSlotNode(slot & mask);
 			removal++;
 		} while(current < count);
 	}
 
 	current++;
 	if(current < limit) {
-		u32 mask = PACK_WINDOW_MASK;
+		Uint32 mask = PACK_WINDOW_MASK;
 
 		do {
-			u32 slot = (start + current) & mask;
+			Uint32		   slot = (start + current) & mask;
 			LZ_PACK_STATE *state;
 
-			fdLzPackRemoveSlotNode(slot);
+			fdLZPackRemoveSlotNode(slot);
 			state = LzPackStateWork;
 			current++;
 			state->bucketBySlot[slot] = -1;
@@ -1936,11 +1834,12 @@ void fdLzPackConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 	}
 }
 
-/* Appends the finished group (a flag byte and up to eight items) to the */
-/* output. */
-void fdLzPackCopyBufferedBytes(u8 *destination) {
+/* Appends the finished group (a flag byte and up to eight items) to the
+   output. */
+void fdLZPackCopyBufferedBytes(Uint8 *destination)
+{
 	LZ_PACK_STATE *state = LzPackStateWork;
-	s32 index;
+	Sint32		   index;
 
 	for(index = 0; index != state->outCnt; index++) {
 		destination[state->outTotal] = state->outBuf[index];
@@ -1948,13 +1847,13 @@ void fdLzPackCopyBufferedBytes(u8 *destination) {
 	}
 }
 
-/* Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most */
-/* PACK_DISTANCE_MAX back) for the bytes at window position start; matchLen
- */
-/* stays 1 for none. */
-static __inline__ void fdLzPackFindWindowMatch(s32 start) {
+/* Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
+   PACK_DISTANCE_MAX back) for the bytes at window position start; matchLen
+   stays 1 for none. */
+static __inline__ void fdLZPackFindWindowMatch(Sint32 start)
+{
 	LZ_PACK_NODE *node;
-	s32 len;
+	Sint32		  len;
 
 	LzPackStateWork->matchLen = 1;
 	if(LzPackStateWork->bucketBySlot[start] == -1) {
@@ -1963,14 +1862,14 @@ static __inline__ void fdLzPackFindWindowMatch(s32 start) {
 	node = LzPackStateWork->bucket[LzPackStateWork->bucketBySlot[start]];
 	if(start + PACK_MATCH_MAX > PACK_WINDOW_MASK) {
 		while(node != NULL) {
-			s32 dist = (start - node->slot) & PACK_WINDOW_MASK;
+			Sint32 dist = (start - node->slot) & PACK_WINDOW_MASK;
 
 			if(dist > 0 && dist <= PACK_DISTANCE_MAX) {
 				for(len = 1; len < PACK_MATCH_MAX; len++) {
 					if(LzPackStateWork
-						   ->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
-					   LzPackStateWork->bucketBySlot[(node->slot + len) &
-													 PACK_WINDOW_MASK]) {
+							->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
+						LzPackStateWork->bucketBySlot[(node->slot + len) &
+							PACK_WINDOW_MASK]) {
 						break;
 					}
 				}
@@ -1984,16 +1883,15 @@ static __inline__ void fdLzPackFindWindowMatch(s32 start) {
 			}
 			node = node->next;
 		}
-	}
-	else {
+	} else {
 		while(node != NULL) {
-			s32 dist = (start - node->slot) & PACK_WINDOW_MASK;
+			Sint32 dist = (start - node->slot) & PACK_WINDOW_MASK;
 
 			if(dist > 0 && dist <= PACK_DISTANCE_MAX) {
 				for(len = 1; len < PACK_MATCH_MAX; len++) {
 					if(LzPackStateWork->bucketBySlot[start + len] !=
-					   LzPackStateWork->bucketBySlot[(node->slot + len) &
-													 PACK_WINDOW_MASK]) {
+						LzPackStateWork->bucketBySlot[(node->slot + len) &
+							PACK_WINDOW_MASK]) {
 						break;
 					}
 				}
@@ -2010,24 +1908,24 @@ static __inline__ void fdLzPackFindWindowMatch(s32 start) {
 	}
 }
 
-/* Unused: packs size bytes of input into dst with a small LZ scheme and */
-/* returns the packed size. Each group starts with a flag byte, a set bit */
-/* marking a match: two bytes of distance and length (lengths 2 to 16), or */
-/* three for lengths up to 272; a match is put off by one byte when the next */
-/* position matches further. A zero match ends the stream. Nothing in this game
- */
-/* calls it. */
-UNUSED s32 fdLzPackPackStream(const u8 *input, u8 *dst, s32 size) {
-	s32 defer;
-	s32 len;
-	s32 saveOffset;
-	s32 saveLen;
-	s32 reach[2];
-	s16 code;
+/* Unused: packs size bytes of input into dst with a small LZ scheme and returns
+   the packed size. Each group starts with a flag byte, a set bit marking a
+   match: two bytes of distance and length (lengths 2 to 16), or three for
+   lengths up to 272; a match is put off by one byte when the next position
+   matches further. A zero match ends the stream. Nothing in this game calls
+   it. */
+UNUSED Sint32 fdLZPackPackStream(const Uint8 *input, Uint8 *dst, Sint32 size)
+{
+	Sint32 defer;
+	Sint32 len;
+	Sint32 saveOffset;
+	Sint32 saveLen;
+	Sint32 reach[2];
+	Sint16 code;
 
 	defer = 0;
-	LzPackStateWork = (LZ_PACK_STATE *)Ram_MapCellBuffer;
-	fdLzPackResetSlotBuckets();
+	LzPackStateWork = (LZ_PACK_STATE *)Ram_MapMetatileBuffer;
+	fdLZPackResetSlotBuckets();
 	LzPackStateWork->inputLimit = size;
 	LzPackStateWork->pos = 0;
 	LzPackStateWork->inputCursor = 0;
@@ -2035,21 +1933,21 @@ UNUSED s32 fdLzPackPackStream(const u8 *input, u8 *dst, s32 size) {
 	LzPackStateWork->flgMask = PACK_FIRST_FLAG;
 	LzPackStateWork->outBuf[0] = 0;
 	LzPackStateWork->outCnt = 1;
-	fdLzPackConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
+	fdLZPackConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
 
 	while(LzPackStateWork->bucketBySlot[LzPackStateWork->pos] != -1) {
-		fdLzPackFindWindowMatch(LzPackStateWork->pos);
+		fdLZPackFindWindowMatch(LzPackStateWork->pos);
 		if(defer == 0) {
 			len = LzPackStateWork->matchLen;
 			if(LzPackStateWork->matchLen > 1) {
 				saveOffset = LzPackStateWork->matchOfs;
 				saveLen = len;
-				fdLzPackFindWindowMatch((LzPackStateWork->pos + 1) &
-										PACK_WINDOW_MASK);
+				fdLZPackFindWindowMatch(
+					(LzPackStateWork->pos + 1) & PACK_WINDOW_MASK);
 				if(LzPackStateWork->matchLen > 2) {
 					reach[0] = LzPackStateWork->matchLen + 1;
-					fdLzPackFindWindowMatch((LzPackStateWork->pos + len) &
-											PACK_WINDOW_MASK);
+					fdLZPackFindWindowMatch(
+						(LzPackStateWork->pos + len) & PACK_WINDOW_MASK);
 					reach[1] = LzPackStateWork->matchLen + len;
 					if(reach[0] >= reach[1]) {
 						saveLen = 1;
@@ -2065,40 +1963,37 @@ UNUSED s32 fdLzPackPackStream(const u8 *input, u8 *dst, s32 size) {
 			defer = 0;
 			LzPackStateWork->outBuf[0] |= LzPackStateWork->flgMask;
 			if(LzPackStateWork->matchLen <= PACK_SHORT_MATCH_MAX) {
-				code =
-					((LzPackStateWork->matchOfs << 4) &
-					 PACK_CODE_DISTANCE_HIGH) |
+				code = ((LzPackStateWork->matchOfs << 4) &
+						   PACK_CODE_DISTANCE_HIGH) |
 					(LzPackStateWork->matchOfs & PACK_CODE_DISTANCE_LOW) |
 					(((LzPackStateWork->matchLen - 1) << 8) & PACK_CODE_LENGTH);
 				LzPackStateWork->outBuf[LzPackStateWork->outCnt++] =
-					(u16)code >> 8;
+					(Uint16)code >> 8;
 				LzPackStateWork->outBuf[LzPackStateWork->outCnt++] = code;
-			}
-			else {
+			} else {
 				code = ((LzPackStateWork->matchOfs << 4) &
-						PACK_CODE_DISTANCE_HIGH) |
-					   (LzPackStateWork->matchOfs & PACK_CODE_DISTANCE_LOW);
+						   PACK_CODE_DISTANCE_HIGH) |
+					(LzPackStateWork->matchOfs & PACK_CODE_DISTANCE_LOW);
 				LzPackStateWork->outBuf[LzPackStateWork->outCnt++] =
-					(u16)code >> 8;
+					(Uint16)code >> 8;
 				LzPackStateWork->outBuf[LzPackStateWork->outCnt++] = code;
 				LzPackStateWork->outBuf[LzPackStateWork->outCnt++] =
 					LzPackStateWork->matchLen - (PACK_SHORT_MATCH_MAX + 1);
 			}
-		}
-		else {
+		} else {
 			LzPackStateWork->outBuf[LzPackStateWork->outCnt++] =
 				LzPackStateWork->bucketBySlot[LzPackStateWork->pos];
 			LzPackStateWork->matchLen = 1;
 		}
 
-		fdLzPackConsumeSlotBytes(LzPackStateWork->pos + PACK_LOOKAHEAD,
-								 LzPackStateWork->matchLen, input);
+		fdLZPackConsumeSlotBytes(LzPackStateWork->pos + PACK_LOOKAHEAD,
+			LzPackStateWork->matchLen, input);
 		LzPackStateWork->pos =
 			(LzPackStateWork->pos + LzPackStateWork->matchLen) &
 			PACK_WINDOW_MASK;
 		LzPackStateWork->flgMask >>= 1;
 		if(LzPackStateWork->flgMask == 0) {
-			fdLzPackCopyBufferedBytes(dst);
+			fdLZPackCopyBufferedBytes(dst);
 			LzPackStateWork->flgMask = PACK_FIRST_FLAG;
 			LzPackStateWork->outBuf[0] = 0;
 			LzPackStateWork->outCnt = 1;
@@ -2108,6 +2003,6 @@ UNUSED s32 fdLzPackPackStream(const u8 *input, u8 *dst, s32 size) {
 	LzPackStateWork->outBuf[0] |= LzPackStateWork->flgMask;
 	LzPackStateWork->outBuf[LzPackStateWork->outCnt++] = 0;
 	LzPackStateWork->outBuf[LzPackStateWork->outCnt++] = 0;
-	fdLzPackCopyBufferedBytes(dst);
+	fdLZPackCopyBufferedBytes(dst);
 	return LzPackStateWork->outTotal;
 }

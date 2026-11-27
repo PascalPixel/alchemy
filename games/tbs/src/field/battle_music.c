@@ -1,15 +1,14 @@
-/* @file */
-/* The music a battle plays: the bosses, the guards of Crossbone Isle, the */
-/* Colosso finals and the fights with Saturos have their own, and every other */
-/* battle plays the usual battle music. */
+/* The music a battle plays: the bosses, the guards of Crossbone Isle, the
+   Colosso finals and the fights with Saturos have their own, and every other
+   battle plays the usual battle music. */
 
 #include "field/battle_music.h"
 #include "sounds.h"
-#include "field/field_sequence.h"
+#include "field/field_mode.h"
 
-/* Battle music: which battles have music of their own */
-/* (fdEncounterSelectBattleMusic). */
-const u16 Encounter_BattleMusic[35] = {
+/* Battle music: which battles have music of their own
+   (fdEncounterSelectBattleMusic). */
+const Uint16 Encounter_BattleMusic[35] = {
 	ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_THE_FUSION_DRAGON),
 	/* The Fusion Dragon, Venus Lighthouse's aerie. */
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 0),
@@ -38,12 +37,10 @@ const u16 Encounter_BattleMusic[35] = {
 	/* The Tempest Lizard, in Suhalla Desert's fourth sandstorm. */
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 7),
 	/* The monsters behind the east doors of Crossbone Isle Cave's floors, the
-	 */
-	/* first to the ninth: a Hobgoblin and a Virago; a Grisly and a Succubus; a
-	 */
-	/* Lich and a Fiendish Ghoul; a Gryphon; a Lizard King, a Harridan and a */
-	/* Stone Soldier; a Chimera; an Earth Lizard; a Poison Toad and a Thunder */
-	/* Lizard; a Cerebus. */
+	   first to the ninth: a Hobgoblin and a Virago; a Grisly and a Succubus; a
+	   Lich and a Fiendish Ghoul; a Gryphon; a Lizard King, a Harridan and a
+	   Stone Soldier; a Chimera; an Earth Lizard; a Poison Toad and a Thunder
+	   Lizard; a Cerebus. */
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 0),
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 1),
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 2),
@@ -56,8 +53,7 @@ const u16 Encounter_BattleMusic[35] = {
 
 	ENCOUNTER_BATTLE_MUSIC(MUS_COLOSSEUM_FINALS),
 	/* The Colosso finals: Azart with and without the Iron Shield, Satrage with
-	 */
-	/* and without the Chain Mail, Navampa with and without the Claymore. */
+	   and without the Chain Mail, Navampa with and without the Claymore. */
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 0),
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 1),
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 2),

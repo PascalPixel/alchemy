@@ -1,61 +1,59 @@
-/* @file */
-/* Actor scripts: the ones the field starts itself, and the command */
-/* table. */
+/* Actor scripts: the ones the field starts itself, and the command table. */
 
 #include "field/actor_script.h"
 #include "field/field.h"
 
-/* The script fdActorCreate gives every new actor: it does nothing and */
-/* returns to the idle script. */
-const s32 Actor_DefaultScript[] = {
+/* The script fdActorCreate gives every new actor: it does nothing and returns
+   to the idle script. */
+const Sint32 Actor_DefaultScript[] = {
 	SC_END,
 };
 
-/* Runs SC_KEY_COUNT every frame; started by fdActorStartKeyCheck. */
-/* This and the scripts below each repeat one command every frame. */
-const s32 Actor_KeyCheckScript[] = {
+/* Runs SC_KEY_COUNT every frame; started by fdActorStartKeyCheck. This and the
+   scripts below each repeat one command every frame. */
+const Sint32 Actor_KeyCheckScript[] = {
 	SC_KEY_COUNT,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Actor_KeysScript[] = {
+const Sint32 Actor_KeysScript[] = {
 	SC_KEYS,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Actor_PlayerScript[] = {
+const Sint32 Actor_PlayerScript[] = {
 	SC_PLAYER,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Actor_WorldMapScript[] = {
+const Sint32 Actor_WorldMapScript[] = {
 	SC_WORLD,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Actor_CameraScript[] = {
+const Sint32 Actor_CameraScript[] = {
 	SC_CAMERA,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Actor_ApproachWatchedScript[] = {
+const Sint32 Actor_ApproachWatchedScript[] = {
 	SC_APPROACH_WATCHED,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The idle script fdActorStartIdle gives an actor. */
-const s32 Actor_IdleScript[] = {
+const Sint32 Actor_IdleScript[] = {
 	SC_END,
 };
 
-/* The handler for each script command number; the numbers from */
-/* SCRIPT_COMMAND_COUNT on act as SC_END. */
+/* The handler for each script command number; the numbers from
+   SCRIPT_COMMAND_COUNT on act as SC_END. */
 const SCRIPT_COMMAND ActorScript_CommandTable[47] = {
 	[SCRIPT_COMMAND_WAIT] = fdActorScriptWait,
 	[SCRIPT_COMMAND_SYNC] = fdActorScriptWaitForArrival,
@@ -86,7 +84,7 @@ const SCRIPT_COMMAND ActorScript_CommandTable[47] = {
 	[SCRIPT_COMMAND_WORLD] = fdActorMoveOnWorldMap,
 	[SCRIPT_COMMAND_RELEASE] = fdActorScriptRelease,
 	[SCRIPT_COMMAND_ANIMATION] = fdActorScriptSetAnimation,
-	[SCRIPT_COMMAND_NOP] = fdActorScriptNop,
+	[SCRIPT_COMMAND_NOP] = fdActorScriptNoOperation,
 	[SCRIPT_COMMAND_SE] = fdActorScriptPlaySnd,
 	[SCRIPT_COMMAND_BASE] = fdActorScriptSetBase,
 	[SCRIPT_COMMAND_HIDE_SPRITES] = fdActorScriptHideSprs,

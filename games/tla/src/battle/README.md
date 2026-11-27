@@ -1,6 +1,6 @@
 # Battles
 
-This folder is the battle sequence: one fight from its opening curtain to
+This folder is the battle mode: one fight from its opening curtain to
 its spoils. [Battle](../../../../docs/tla/battle.md) gives the shape. This page follows a
 fight in order and says which function does each part.
 
@@ -107,7 +107,7 @@ in a single frame. What takes time is the showing: the flinch, the number,
 the line of text waiting for a button.
 
 So the two are split. Resolving changes the numbers at once and leaves
-behind a list of things to show (`btPlaybackPush`). A task plays that
+behind a list of things to show (`btPlaybackPush`). An event plays that
 list a little each frame, while the battle effect goes on drawing
 (`btPlaybackRun`). That is how lightning and text share the screen.
 
@@ -180,4 +180,6 @@ is switched from one to the other partway down the screen as it is drawn.
   and listed in the linker script in ROM order: `battle_tables.c`,
   `ability_staging.c`, `debug_parameter_sets.c`, `formations.c`,
   `battle_sprites.c` and the rest. The curtain's pictures are
-  `transition/curtain.png` and `transition/curtain_variants.png`.
+  `curtain.png` and `curtain_variants.png` in
+  [`games/common/battle/transition`](../../../common/README.md), one copy
+  for both games.

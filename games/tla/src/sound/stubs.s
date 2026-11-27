@@ -8,21 +8,21 @@ Stubs_Sound:
 	stub sySndInitStub, sySndInit
 	stub sySndPlayStub, sySndPlay
 	stub sySndVSyncStub, sySndVSync
-	stub sySndSetBgmTempoStub, sySndSetBgmTempo
-	stub sySndSetBgmPitchStub, sySndSetBgmPitch
-	stub sySndSetBgmTempoPitchTargetStub, sySndSetBgmTempoPitchTarget
-	stub sySndSetBgmVolumeStub, sySndSetBgmVolume
-	stub sySndSetBgmVolumeTargetStub, sySndSetBgmVolumeTarget
-	stub sySndGetBgmRestoreDelayStub, sySndGetBgmRestoreDelay
+	stub sySndSetBGMTempoStub, sySndSetBGMTempo
+	stub sySndSetBGMPitchStub, sySndSetBGMPitch
+	stub sySndSetBGMTempoPitchTargetStub, sySndSetBGMTempoPitchTarget
+	stub sySndSetBGMVolumeStub, sySndSetBGMVolume
+	stub sySndSetBGMVolumeTargetStub, sySndSetBGMVolumeTarget
+	stub sySndGetBGMRestoreDelayStub, sySndGetBGMRestoreDelay
 	stub sySndTestRunStub, sySndTestRun
 	stub sySndStopAllMusicPlayersStub, sySndStopAllMusicPlayers
 	stub sySndResumeAllMusicPlayersStub, sySndResumeAllMusicPlayers
 	stub sySndUpdateCommandMaskStub, sySndUpdateCommandMask
-	stub sySndGetCurrentBgmStub, sySndGetCurrentBgm
-	stub sySndWaitForBgmRestoreStub, sySndWaitForBgmRestore
+	stub sySndGetCurrentBGMStub, sySndGetCurrentBGM
+	stub sySndWaitForBGMRestoreStub, sySndWaitForBGMRestore
 	stub sySndSuspendDirectSndStub, sySndSuspendDirectSnd
-	stub sySndUpdateBgmRampsStub, sySndUpdateBgmRamps
+	stub sySndUpdateBGMRampsStub, sySndUpdateBGMRamps
 	stub sySndFlagTestStub, sySndFlagTest
 	stub sySndFlagSetStub, sySndFlagSet
 	stub sySndFlagClearStub, sySndFlagClear
-	stub sySndNoOpStub, sySndNoOp
+	stub sySndNoOperationStub, sySndNoOperation

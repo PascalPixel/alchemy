@@ -1,24 +1,21 @@
-/* @file */
-/* The Gondowan Cliffs, the maze of ledges, vines and slides west of Madra on */
-/* the way to Kibombo, and the river channel below them (SceneId_GondowanCliffs
- */
-/* and SceneId_GondowanCliffsPass, which share this overlay). Coming from */
-/* Madra, Felix finds a dog lying in the grass by the east entrance; Scoop on */
-/* the yellow sand beside it digs up a geyser that carries him up onto the */
-/* cliffs to the west. Whirlwind clears the weeds from a cave mouth nearby, */
-/* where Kibombo warriors are hiding. Further on, Move pushes a tree stump off
- */
-/* its ledge into the stream as a stepping stone, and close by Kindle, a Mars */
-/* Djinni, waits to be fought; the tightrope across the river in the far west */
-/* leads on towards Kibombo. Two puddles can be frozen with Frost once */
-/* Felix has it, the eastern one on a later visit for the Healing Fungus. If */
-/* the party comes back here after meeting Piers in Kibombo and before the */
-/* ceremony at the Gabomba Statue is over, Kraden, Jenna and Sheba turn Felix */
-/* back. Late in the game, Grind breaks the boulder in the river channel so */
-/* the ship can sail on south to the western sea. */
+/* The Gondowan Cliffs, the maze of ledges, vines and slides west of Madra on
+   the way to Kibombo, and the river channel below them (SceneId_GondowanCliffs
+   and SceneId_GondowanCliffsPass, which share this overlay). Coming from Madra,
+   Felix finds a dog lying in the grass by the east entrance; Scoop on the
+   yellow sand beside it digs up a geyser that carries him up onto the cliffs to
+   the west. Whirlwind clears the weeds from a cave mouth nearby, where Kibombo
+   warriors are hiding. Further on, Move pushes a tree stump off its ledge into
+   the stream as a stepping stone, and close by Kindle, a Mars Djinni, waits to
+   be fought; the tightrope across the river in the far west leads on towards
+   Kibombo. Two puddles can be frozen with Frost once Felix has it, the eastern
+   one on a later visit for the Healing Fungus. If the party comes back here
+   after meeting Piers in Kibombo and before the ceremony at the Gabomba Statue
+   is over, Kraden, Jenna and Sheba turn Felix back. Late in the game, Grind
+   breaks the boulder in the river channel so the ship can sail on south to the
+   western sea. */
 
-#include "field/field_sequence.h"
-#include "field/event_inline.h"
+#include "field/field_mode.h"
+#include "field/script_inline.h"
 #include "scene/scene.h"
 #include "game/game.h"
 #include "field/actor_script.h"
@@ -31,11 +28,11 @@ extern SCENE_ENTRANCE GondowanCliffs_PassEntrances[];
 
 #include "shared/tile_sprite_reset.h"
 
-/* The cliffs' actors by their rows (Jenna's and Sheba's rows take their own */
-/* numbers). */
+/* The cliffs' actors by their rows (Jenna's and Sheba's rows take their own
+   numbers). */
 enum {
-	/* The posts of the tightrope across the river, strung once Briggs is */
-	/* caught. */
+	/* The posts of the tightrope across the river, strung once Briggs is
+	   caught. */
 	ACTOR_TIGHTROPE_POST_A = ACTOR_FIRST_PLACED,
 	ACTOR_TIGHTROPE_POST_B,
 	/* The posts of the rope Lash ties from the lower one up to the cliff. */
@@ -45,8 +42,8 @@ enum {
 	ACTOR_FIRST_PUDDLE,
 	ACTOR_SECOND_PUDDLE,
 	ACTOR_WEEDS, /* over the mouth of the cave Whirlwind opens */
-	/* The stump that stands in the stream once */
-	/* FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER is set. */
+	/* The stump that stands in the stream once
+	   FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER is set. */
 	ACTOR_STUMP,
 	ACTOR_DOG,
 	ACTOR_GEYSER, /* the unseen point the geyser rises from */
@@ -54,15 +51,14 @@ enum {
 	ACTOR_FIRST_WARRIOR,
 	ACTOR_SECOND_WARRIOR,
 	/* The boulder in the river channel, seen from the cliffs above until Grind
-	 */
-	/* breaks it. */
+	   breaks it. */
 	ACTOR_SEA_ROCK,
 	ACTOR_KINDLE,
 	ACTOR_KRADEN
 };
 
-/* The river channel's actors: the unseen one that resets the tile sprites, */
-/* the tightrope's two posts and the boulder Grind breaks. */
+/* The river channel's actors: the unseen one that resets the tile sprites, the
+   tightrope's two posts and the boulder Grind breaks. */
 enum {
 	ACTOR_PASS_TILE_SPRITE_RESET = ACTOR_FIRST_PLACED,
 	ACTOR_PASS_TIGHTROPE_POST_A,
@@ -73,39 +69,47 @@ enum {
 /* The white dog's sprite curled up asleep in the grass. */
 enum { DOG_ANIMATION_LYING = 4 };
 
-/* The cell behaviour of the patch of yellow sand beside the dog, cell */
-/* (119, 45), where Scoop digs up the geyser. */
-enum { CELL_BEHAVIOR_GEYSER_SAND = 10 };
+/* The metatile behaviour of the patch of yellow sand beside the dog, metatile
+   (119, 45), where Scoop digs up the geyser. */
+enum { METATILE_BEHAVIOR_GEYSER_SAND = 10 };
 
-/* The river channel's entrance an event sends the party in by, aboard the */
-/* ship. */
+/* The river channel's entrance a script sends the party in by, aboard the
+   ship. */
 enum { ENTRANCE_PASS_BY_SHIP = 99 };
 
-/* Unused: an entrance on the tree stump's ledge, cell (79, 34), between the */
-/* stump and Kindle. No exit, event or debug room leads to it. */
+/* Unused: an entrance on the tree stump's ledge, metatile (79, 34), between the
+   stump and Kindle. No exit, script or debug room leads to it. */
 enum { ENTRANCE_STUMP_LEDGE = 99 };
 
 /* Talking to the red Djinni on the ledge near the tree stump starts the battle
- */
-/* with Kindle, a Mars Djinni, who joins Felix once beaten. */
-void scGondowanCliffsFightKindle(void) {
+   with Kindle, a Mars Djinni, who joins Felix once beaten. */
+void scGondowanCliffsFightKindle(void)
+{
 	fdRequestDjinnBattle(ACTOR_KINDLE, DJINNI_KINDLE);
 }
 
-const SCENE_ENTRANCE *scGetEntrances(void) {
+const SCENE_ENTRANCE *scGetEntrances(void)
+{
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
 		return GondowanCliffs_PassEntrances;
 	return GondowanCliffs_Entrances;
 }
 
-const SCENE_REGION *scGetExitRegions(void) { return 0; }
+const SCENE_REGION *scGetExitRegions(void)
+{
+	return 0;
+}
 
-const u32 *scGetExits(void) { return SceneExits; }
+const Uint32 *scGetExits(void)
+{
+	return SceneExits;
+}
 
 extern ACTOR_PLACE GondowanCliffs_ActorPlacements[];
 extern ACTOR_PLACE GondowanCliffs_PassActorPlacements[];
 
-const ACTOR_PLACE *scGetActorPlacements(void) {
+const ACTOR_PLACE *scGetActorPlacements(void)
+{
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
 		return GondowanCliffs_PassActorPlacements;
 	return GondowanCliffs_ActorPlacements;
@@ -123,10 +127,9 @@ const ACTOR_PLACE *scGetActorPlacements(void) {
 
 #include "../field/field_effect_move.c"
 
-/* The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
- */
-/* the yellow sand: each rises and falls on its timer, carrying the leader up */
-/* its column of water (btGeyserUpdate, btGeyserDraw). */
+/* The Gondowan Cliffs' scripts and set-up, and the geysers Scoop digs up out of
+   the yellow sand: each rises and falls on its timer, carrying the leader up
+   its column of water (scGeyserUpdate, btGeyserDraw). */
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -134,67 +137,71 @@ const ACTOR_PLACE *scGetActorPlacements(void) {
 #include "../field/field_effect_spawn.c"
 
 /* The rope Lash ties, for this visit. */
-#define FLAG_GONDOWAN_CLIFFS_ROPE_LASHED FLAG_SCENE_TEMP_00
+#define FLAG_GONDOWAN_CLIFFS_ROPE_LASHED		  FLAG_SCENE_TEMP_00
 /* Set as Frost freezes each puddle into a pillar of ice, for this visit. */
 #define FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN  FLAG_SCENE_TEMP_01
 #define FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
 
 struct ACTOR;
 struct EFFECT_OPTIONS;
-/* MAP_STATE.groundEffs read as its bit-fields: the footprints, and the kind
- */
-/* of wading (1 in rooms with a second level). */
+
+/* MAP_STATE.groundEffs read as its bit-fields: the footprints, and the kind of
+   wading (1 in rooms with a second level). */
 typedef struct MAP_GROUND_EFFECTS {
-	u8 unusedBeforeGroundEffs[23]; /* MAP_STATE's fields before it */
-	u8 footprints : 2;
-	u8 wading : 2;
-	u8 unusedHighBits : 4; /* no code names them */
+	Uint8 unusedBeforeGroundEffs[23]; /* MAP_STATE's fields before it */
+	Uint8 footprints : 2;
+	Uint8 wading : 2;
+	Uint8 unusedHighBits : 4; /* no code names them */
 } MAP_GROUND_EFFECTS;
-/* The geyser Scoop digs up: it rises and falls on its timer, carrying the */
-/* platform at its top, as Yampi Desert's geyser does. */
+
+/* The geyser Scoop digs up: it rises and falls on its timer, carrying the
+   platform at its top, as Yampi Desert's geyser does. */
 typedef struct GEYSER {
-	s16 id;				/* its actor; 0 for a free entry */
-	s16 tmr;			/* frames into its period */
-	s16 height;			/* pixels it has risen */
-	s16 period;			/* frames in one rise and fall */
-	s16 riseAt;			/* the timer it starts to rise at */
-	s16 fallAt;			/* the timer it starts to fall at */
-	s16 max;			/* pixels it rises to */
-	s16 min;			/* pixels it falls to */
-	s16 unreadSetToOne; /* set to 1 by scGeyserAdd and never read */
-	s16 step;			/* pixels a frame: 4 rising, -8 falling, 0 at rest */
-	s16 unreadCleared;	/* cleared by scGeyserAdd and never read */
-	s16 phase;			/* the platform's bob, 1/65536 turns */
-	ACTOR *rider;		/* the platform at its top, which the leader rides */
+	Sint16 id;			   /* its actor; 0 for a free entry */
+	Sint16 tmr;			   /* frames into its period */
+	Sint16 height;		   /* pixels it has risen */
+	Sint16 period;		   /* frames in one rise and fall */
+	Sint16 riseAt;		   /* the timer it starts to rise at */
+	Sint16 fallAt;		   /* the timer it starts to fall at */
+	Sint16 max;			   /* pixels it rises to */
+	Sint16 min;			   /* pixels it falls to */
+	Sint16 unreadSetToOne; /* set to 1 by scGeyserAdd and never read */
+	Sint16 step;		   /* pixels a frame: 4 rising, -8 falling, 0 at rest */
+	Sint16 unreadCleared;  /* cleared by scGeyserAdd and never read */
+	Sint16 phase;		   /* the platform's bob, 1/65536 turns */
+	ACTOR *rider;		   /* the platform at its top, which the leader rides */
 } GEYSER;
 
 /* The geysers' state, kept in the inventory snapshot's spare room. */
 typedef struct GEYSER_WORK {
-	s16 entry;		  /* the VRAM cache entry holding the column's tiles */
-	s16 firstTerrain; /* the terrain id and collision slot of the first entry */
+	Sint16 entry; /* the VRAM cache entry holding the column's tiles */
+	/* the terrain id and collision slot of the first entry */
+	Sint16 firstTerrain;
 	GEYSER entries[GEYSER_ENTRIES];
-	/* The OAM words btGeyserDraw queues: GEYSER_SPRITES sprites of three words.
-	 */
+	/* The OAM words btGeyserDraw queues: GEYSER_SPRITES sprites of three
+	   words. */
 	void *block;
 } GEYSER_WORK;
 
 void scGondowanCliffsFreezeSecondPuddle(void);
 void scGondowanCliffsBlowAwayWeeds(void);
-void scFieldEffectSpawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-						s32 velocityZ, u32 flags,
-						const EFFECT_OPTIONS *options);
-void btGeyserStart(s32 unused, s32 firstTerrain);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
+void scGeyserStart(Sint32 unused, Sint32 firstTerrain);
 
 /* The leaping stump's update: its sprite turns a 32nd of a turn a frame. */
-void scGondowanCliffsSpinStump(ACTOR *actor) {
+void scGondowanCliffsSpinStump(ACTOR *actor)
+{
 	FIELD_SPR *sprite = actor->spr;
 
 	sprite->rotation -= TRIG_TURN / 32;
 }
 
 /* Waits until the actor has come down to height (16.16), a second at most. */
-void scGondowanCliffsWaitToLand(ACTOR *actor, s32 height) {
-	s32 count = FRAMES_PER_SECOND;
+void scGondowanCliffsWaitToLand(ACTOR *actor, Sint32 height)
+{
+	Sint32 count = FRAMES_PER_SECOND;
 
 	while(count != 0) {
 		syWait(1);
@@ -204,29 +211,30 @@ void scGondowanCliffsWaitToLand(ACTOR *actor, s32 height) {
 	}
 }
 
-/* Pushing the tree stump west with Move to the edge of its ledge, cell */
-/* (76, 34), sends it rolling off: it leaps into the stream and lands upright */
-/* in the water with a thump and a splash, at cell (74, 33), a stepping stone */
-/* Felix can hop onto to cross. */
-/* */
-/* The Move row answers every push; only a push that leaves the stump in */
-/* column 76 starts the leap. The landing cell takes the hop flag of the cell */
-/* two rows north of it. */
-void scGondowanCliffsLeapStumpIntoWater(s32 mode, s32 id) {
+/* Pushing the tree stump west with Move to the edge of its ledge, metatile (76,
+   34), sends it rolling off: it leaps into the stream and lands upright in the
+   water with a thump and a splash, at metatile (74, 33), a stepping stone Felix
+   can hop onto to cross.
+
+   The Move row answers every push; only a push that leaves the stump in column
+   76 starts the leap. The landing metatile takes the hop flag of the metatile
+   two rows north of it. */
+void scGondowanCliffsLeapStumpIntoWater(Sint32 mode, Sint32 id)
+{
 	ACTOR *actor = fdActorGetById(id);
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	s32 unused[3];
+	Sint32		   unused[3];
 	EFFECT_OPTIONS options;
-	FIELD_SPR *sprite;
-	u32 i;
+	FIELD_SPR	  *sprite;
+	Uint32		   i;
 
-	if(FIELD_CELL(actor->x.fixed) != 76)
+	if(FIELD_METATILE(actor->x.fixed) != 76)
 		return;
-	fdEventStart();
-	fdEventEndLastingPsynergy(0);
-	fdMapGridCopyCellAttributes(74, 31, 1, 1, 74, 33);
-	if(FIELD_CELL(fdActorGetById(ACTOR_STUMP)->x.fixed) == 76) {
+	fdScriptStart();
+	fdScriptEndLastingPsynergy(0);
+	fdMapGridCopyMetatileAttributes(74, 31, 1, 1, 74, 33);
+	if(FIELD_METATILE(fdActorGetById(ACTOR_STUMP)->x.fixed) == 76) {
 		actor->motionFlg = 0;
 		actor->collisionFlg = 0;
 		for(i = 0; i <= 17; i++) {
@@ -244,156 +252,160 @@ void scGondowanCliffsLeapStumpIntoWater(s32 mode, s32 id) {
 		actor->layer = 0;
 		scFieldActorWaitForMoveById(id);
 		scGondowanCliffsWaitToLand(actor, 0);
-		fdEventPlaySnd(SE_THUMP);
+		fdScriptPlaySnd(SE_THUMP);
 		fdMapGridSetShake(5, 5, 1);
-		fdEventPlaySnd(SE_RUMBLE);
+		fdScriptPlaySnd(SE_RUMBLE);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		((FIELD_SPR *)actor->spr)->rotation = TRIG_TURN / 16;
 		actor->update = NULL;
 		options.type = SPRITE_SPLASH;
-		options.startScaleX = FIXED_ONE / 2;
-		options.tgtScaleX = FIXED_ONE * 3 / 2;
-		options.tgtScaleY = FIXED_ONE * 6 / 5;
-		options.startScaleY = FIXED_ONE * 4 / 5;
-		scFieldEffectSpawn(
-			actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
+		options.startScaleX = toFIXED(1) / 2;
+		options.tgtScaleX = toFIXED(3) / 2;
+		options.tgtScaleY = toFIXED(6) / 5;
+		options.startScaleY = toFIXED(4) / 5;
+		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0,
+			0,
 			EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
 			&options);
-		fdEventPlaySnd(SE_CAST);
+		fdScriptPlaySnd(SE_CAST);
 		fdActorSetAnimation(id, STUMP_ANIMATION_SPLASH);
 		syFieldMapGridWaitForShakeToSettle();
 		fdActorGetById(ACTOR_STUMP)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		fdEventSetFlag(FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER);
+		fdScriptSetFlag(FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER);
 	}
-	fdEventEnd();
+	fdScriptEnd();
 }
 
-/* Frost on the puddle in the sandy gap between two ledges, near the tree */
-/* stump, cell (81, 28), raises a pillar of ice there that Felix can hop onto */
-/* to cross the gap; it stays until he leaves the cliffs. */
-/* */
-/* The pillar's sprite stops moving, and the puddle's cell takes the hop flag */
-/* of the cell two to its west. */
-void scGondowanCliffsFreezeFirstPuddle(void) {
+/* Frost on the puddle in the sandy gap between two ledges, near the tree stump,
+   metatile (81, 28), raises a pillar of ice there that Felix can hop onto to
+   cross the gap; it stays until he leaves the cliffs.
+
+   The pillar's sprite stops moving, and the puddle's metatile takes the hop
+   flag of the metatile two to its west. */
+void scGondowanCliffsFreezeFirstPuddle(void)
+{
 	ACTOR *actor = fdActorGet(ACTOR_FIRST_PUDDLE);
 
 	actor->priFlg = 0;
 	actor->motionFlg = 0;
-	fdMapGridCopyCellAttributes(79, 28, 1, 1, 81, 28);
-	fdEventSetFlag(FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN);
+	fdMapGridCopyMetatileAttributes(79, 28, 1, 1, 81, 28);
+	fdScriptSetFlag(FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN);
 }
 
-/* Frost on the puddle in the grass at the east end of the cliffs, cell */
-/* (117, 35), raises a pillar of ice there that Felix can hop onto to jump the
- */
-/* gap on the way to the Healing Fungus; it stays until he leaves the cliffs. */
-/* */
-/* The pillar's sprite stops moving and its height is set to 32 pixels, and */
-/* the puddle's cell takes the hop flag of the cell two to its west. */
-void scGondowanCliffsFreezeSecondPuddle(void) {
+/* Frost on the puddle in the grass at the east end of the cliffs, metatile
+   (117, 35), raises a pillar of ice there that Felix can hop onto to jump the
+   gap on the way to the Healing Fungus; it stays until he leaves the cliffs.
+
+   The pillar's sprite stops moving and its height is set to 32 pixels, and the
+   puddle's metatile takes the hop flag of the metatile two to its west. */
+void scGondowanCliffsFreezeSecondPuddle(void)
+{
 	ACTOR *actor = fdActorGet(ACTOR_SECOND_PUDDLE);
 
 	actor->priFlg = 0;
 	actor->motionFlg = 0;
 	actor->groundHeight = toFIXED(32);
 	actor->y.fixed = toFIXED(32);
-	fdMapGridCopyCellAttributes(115, 35, 1, 1, 117, 35);
-	fdEventSetFlag(FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN);
+	fdMapGridCopyMetatileAttributes(115, 35, 1, 1, 117, 35);
+	fdScriptSetFlag(FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN);
 }
 
-/* Whirlwind on the weeds hanging over a cave mouth west of the dog blows it */
-/* away for good, opening the way into the cave where the Kibombo warriors */
-/* hide. */
-/* */
-/* The leaves are Whirlwind's own; the event only sets the flag that keeps the
- */
-/* weeds gone and opens the cave's exit. */
-void scGondowanCliffsBlowAwayWeeds(void) {
+/* Whirlwind on the weeds hanging over a cave mouth west of the dog blows it
+   away for good, opening the way into the cave where the Kibombo warriors hide.
+
+   The leaves are Whirlwind's own; the script only sets the flag that keeps the
+   weeds gone and opens the cave's exit. */
+void scGondowanCliffsBlowAwayWeeds(void)
+{
 	syGameFlagSet(FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN);
 }
 
-/* Scoop on the patch of yellow sand beside the dog at the east end, cell */
-/* (119, 45), digs up a geyser that from then on rises and falls there, a lift
- */
-/* Felix can ride up to the cliffs above. */
-/* */
-/* The Scoop row runs the event every frame of the dig; at `SCOOP_DUG_FRAME` */
-/* it redraws the dug ground from a spare cell of the map and moves the */
-/* geyser's unseen point onto it. */
-void scGondowanCliffsScoopUpGeyser(s32 stage, s32 frame) {
+/* Scoop on the patch of yellow sand beside the dog at the east end, metatile
+   (119, 45), digs up a geyser that from then on rises and falls there, a lift
+   Felix can ride up to the cliffs above.
+
+   The Scoop row runs the script every frame of the dig; at `SCOOP_DUG_FRAME` it
+   redraws the dug ground from a spare metatile of the map and moves the
+   geyser's unseen point onto it. */
+void scGondowanCliffsScoopUpGeyser(Sint32 stage, Sint32 frame)
+{
 	ACTOR *actor;
 
 	if(frame == SCOOP_DUG_FRAME) {
 		actor = fdActorGet(ACTOR_GEYSER);
-		fdMapGridCopyCellsLayered(124, 1, 1, 1, 119, 43);
+		fdMapGridCopyMetatilesLayered(124, 1, 1, 1, 119, 43);
 		fdActorSetPos(ACTOR_GEYSER, 1912, 728);
 		actor->groundHeight = actor->y.fixed =
 			fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
-		fdEventSetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
+		fdScriptSetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
 	}
 }
 
 #include "text/msg_ids.h"
 
-/* Talking to the white dog lying in the grass at the east end makes it bark */
-/* "Rrruff! Rrruff!" at Felix. When Felix is facing the yellow sand beside it,
- */
-/* cell (119, 45), the button opens the field menu instead, as it does where */
-/* there is nothing to talk to, so that he can choose Scoop there. */
-void scGondowanCliffsTalkToDog(void) {
+/* Talking to the white dog lying in the grass at the east end makes it bark
+   "Rrruff! Rrruff!" at Felix. When Felix is facing the yellow sand beside it,
+   metatile (119, 45), the button opens the field menu instead, as it does where
+   there is nothing to talk to, so that he can choose Scoop there. */
+void scGondowanCliffsTalkToDog(void)
+{
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
+
 	struct {
-		s32 x, y, z;
+		Sint32 x, y, z;
 	} position;
-	s32 *out = (s32 *)&position;
+
+	Sint32 *out = (Sint32 *)&position;
 
 	out[0] = actor->x.fixed;
 	out[1] = actor->y.fixed;
 	out[2] = actor->z.fixed;
 	syFieldVectorAddPolarOffset(16, actor->facing, out);
-	if(FIELD_CELL(position.x) == 119 && FIELD_CELL(position.z) == 45) {
+	if(FIELD_METATILE(position.x) == 119 && FIELD_METATILE(position.z) == 45) {
 		FieldStateWork->fieldMenu = 1;
-	}
-	else {
-		fdEventStart();
-		syFieldEventEndLastingPsynergy(0);
+	} else {
+		fdScriptStart();
+		syFieldScriptEndLastingPsynergy(0);
 		fdActorFaceEachOther(ACTOR_DOG, MainRoutineStateWork.leaderActorId, 0);
-		syFieldEventSetMessageId((s32)MsgRrruffRrruff);
+		syFieldScriptSetMessageId((Sint32)MsgRrruffRrruff);
 		/* "Rrruff! Rrruff!" */
-		fdEventShowMessage(ACTOR_DOG, 0);
+		fdScriptShowMessage(ACTOR_DOG, 0);
 		fdActorFaceDirection(ACTOR_DOG, FACING_WEST, 0);
-		fdEventEnd();
+		fdScriptEnd();
 	}
 }
 
-extern TRIGGER GondowanCliffs_PassTriggers[];
-extern TRIGGER GondowanCliffs_Triggers[];
+extern CUE GondowanCliffs_PassCues[];
+extern CUE GondowanCliffs_Cues[];
 
-/* Grind on the tall brown boulder standing in the river channel grinds it */
-/* away for good, so the ship can sail on through. */
-void scGondowanCliffsGrindTheRock(s32 unused, s32 id) {
+/* Grind on the tall brown boulder standing in the river channel grinds it away
+   for good, so the ship can sail on through. */
+void scGondowanCliffsGrindTheRock(Sint32 unused, Sint32 id)
+{
 	fdActorSetPos(id, 0, 0);
-	fdEventSetFlag(FLAG_GONDOWAN_CLIFFS_ROCK_GROUND);
+	fdScriptSetFlag(FLAG_GONDOWAN_CLIFFS_ROCK_GROUND);
 }
 
-const TRIGGER *scGetTriggers(void) {
+const CUE *scGetCues(void)
+{
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
-		return GondowanCliffs_PassTriggers;
-	return GondowanCliffs_Triggers;
+		return GondowanCliffs_PassCues;
+	return GondowanCliffs_Cues;
 }
 
-/* The water's colours as the map loads them, which the shimmer turns through.
- */
-u16 GondowanCliffs_SavedWaterColors[WATER_COLORS] BSS_DATA;
+/* The water's colours as the map loads them, which the shimmer turns
+   through. */
+Uint16 GondowanCliffs_SavedWaterColors[WATER_COLORS] BSS_DATA;
 
 /* Makes the water shimmer: its four colours turn one step every 16 frames. */
-void scGondowanCliffsCycleWaterCols(void) {
-	u16 *color = (u16 *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR);
-	u32 phase = FrameCount >> 4;
-	s32 i;
+void scGondowanCliffsCycleWaterCols(void)
+{
+	Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR);
+	Uint32	phase = FrameCount >> 4;
+	Sint32	i;
 
 	for(i = 0; i < WATER_COLORS; i++) {
-		u32 index = 3;
+		Uint32 index = 3;
 
 		index &= phase;
 		*color++ = GondowanCliffs_SavedWaterColors[index];
@@ -402,74 +414,75 @@ void scGondowanCliffsCycleWaterCols(void) {
 }
 
 /* Sets up the river channel: arriving aboard the ship, the party sails on, the
- */
-/* tightrope across the channel is strung and the water starts to shimmer. */
-void scGondowanCliffsSetUpPass(void) {
+   tightrope across the channel is strung and the water starts to shimmer. */
+void scGondowanCliffsSetUpPass(void)
+{
 	if(MainRoutineStateWork.entrance == ENTRANCE_PASS_BY_SHIP) {
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_SHIP;
 		MainRoutineStateWork.ownerOverride = 1;
-		fdEventSetDestination(SCENE_GONDOWAN_CLIFFS_PASS,
-							  GONDOWAN_CLIFFS_PASS_FROM_WORLD_MAP_NORTH);
+		fdScriptSetDestination(SCENE_GONDOWAN_CLIFFS_PASS,
+			GONDOWAN_CLIFFS_PASS_FROM_WORLD_MAP_NORTH);
 	}
 	fdTightropeInit();
-	fdTightropePlace(0, ACTOR_PASS_TIGHTROPE_POST_A,
-					 ACTOR_PASS_TIGHTROPE_POST_B);
-	syWordsCopy((s32)GondowanCliffs_SavedWaterColors,
-				(s32)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
-				sizeof(GondowanCliffs_SavedWaterColors));
-	syTaskAddFrame(scGondowanCliffsCycleWaterCols, TASK_PASS_FRAME);
+	fdTightropePlace(
+		0, ACTOR_PASS_TIGHTROPE_POST_A, ACTOR_PASS_TIGHTROPE_POST_B);
+	syWordsCopy((Sint32)GondowanCliffs_SavedWaterColors,
+		(Sint32)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
+		sizeof(GondowanCliffs_SavedWaterColors));
+	sySetFrameEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_FRAME);
 }
 
-/* Coming back to the cliffs after meeting Piers in Kibombo, before the */
-/* ceremony at the Gabomba Statue is over, the party stops as soon as it */
-/* enters: Kraden asks "Felix! Where do you intend to go?", Jenna and Sheba */
-/* side with him, everyone nods, and Felix walks back out to the world map to */
-/* go and help Piers. */
-void scGondowanCliffsTurnBackToHelpPiers(void) {
-	fdEventStart();
-	syFieldEventEndLastingPsynergy(0);
-	fdEventStartScrTransition();
-	fdEventWaitTransitionFrames();
+/* Coming back to the cliffs after meeting Piers in Kibombo, before the ceremony
+   at the Gabomba Statue is over, the party stops as soon as it enters: Kraden
+   asks "Felix! Where do you intend to go?", Jenna and Sheba side with him,
+   everyone nods, and Felix walks back out to the world map to go and help
+   Piers. */
+void scGondowanCliffsTurnBackToHelpPiers(void)
+{
+	fdScriptStart();
+	syFieldScriptEndLastingPsynergy(0);
+	fdScriptStartScreenTransition();
+	fdScriptWaitTransitionFrames();
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 552, 488);
 	fdActorPlaceOnActor(ACTOR_JENNA, MainRoutineStateWork.leaderActorId);
-	scFieldActorWatchAndSetScript(ACTOR_JENNA,
-								  MainRoutineStateWork.leaderActorId);
+	scFieldActorWatchAndSetScript(
+		ACTOR_JENNA, MainRoutineStateWork.leaderActorId);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 568, 480);
-	scFieldActorWatchAndSetScript(ACTOR_SHEBA,
-								  MainRoutineStateWork.leaderActorId);
+	scFieldActorWatchAndSetScript(
+		ACTOR_SHEBA, MainRoutineStateWork.leaderActorId);
 	fdActorPlaceOnActor(ACTOR_SHEBA, MainRoutineStateWork.leaderActorId);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 584, 472);
-	scFieldActorWatchAndSetScript(ACTOR_KRADEN,
-								  MainRoutineStateWork.leaderActorId);
+	scFieldActorWatchAndSetScript(
+		ACTOR_KRADEN, MainRoutineStateWork.leaderActorId);
 	fdActorPlaceOnActor(ACTOR_KRADEN, MainRoutineStateWork.leaderActorId);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 608, 472);
-	syFieldEventSetMessageId((s32)MsgWhereDoYou);
+	syFieldScriptSetMessageId((Sint32)MsgWhereDoYou);
 	scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
 	/* "Felix! Where do you intend to go?" */
-	fdEventShowMessage(ACTOR_KRADEN, 0);
+	fdScriptShowMessage(ACTOR_KRADEN, 0);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_WEST, 10);
 	scFieldActorJump(ACTOR_JENNA, 6, 15);
 	scFieldActorJump(ACTOR_JENNA, 6, 23);
 	/* "Kraden's right. I think we should try to help Piers, too." */
-	fdEventShowMessage(ACTOR_JENNA, 0);
+	fdScriptShowMessage(ACTOR_JENNA, 0);
 	scFieldActorStop(ACTOR_SHEBA);
 	fdActorFaceActor(ACTOR_SHEBA, ACTOR_JENNA, 0);
 	/* "I completely agree with Kraden and Jenna." */
-	fdEventShowMessage(ACTOR_SHEBA, 0);
-	scFieldActorWatchAndSetScript(ACTOR_SHEBA,
-								  MainRoutineStateWork.leaderActorId);
+	fdScriptShowMessage(ACTOR_SHEBA, 0);
+	scFieldActorWatchAndSetScript(
+		ACTOR_SHEBA, MainRoutineStateWork.leaderActorId);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	syFieldEventWait(30);
+		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	syFieldScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-	/* "It looks like the majority wins! Let's go back to Kibombo and help..."
-	 */
-	fdEventShowMessage(ACTOR_KRADEN, 0);
+	/* "It looks like the majority wins! Let's go back to Kibombo and
+	   help..." */
+	fdScriptShowMessage(ACTOR_KRADEN, 0);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_SHEBA, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-	syFieldEventWait(30);
+	syFieldScriptWait(30);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 584, 472);
 	fdActorSetPos(ACTOR_KRADEN, 0, 0);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 568, 480);
@@ -477,23 +490,25 @@ void scGondowanCliffsTurnBackToHelpPiers(void) {
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 552, 488);
 	fdActorSetPos(ACTOR_JENNA, 0, 0);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 528, 488);
-	fdEventFinishScrTransition();
-	fdEventPlaySnd(SE_MAP_EXIT);
+	fdScriptFinishScreenTransition();
+	fdScriptPlaySnd(SE_MAP_EXIT);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 512, 488);
-	fdEventWaitTransitionFrames();
-	syFieldEventSetExitRequest(GONDOWAN_CLIFFS_TO_WORLD_MAP_A);
+	fdScriptWaitTransitionFrames();
+	syFieldScriptSetExitRequest(GONDOWAN_CLIFFS_TO_WORLD_MAP_A);
 }
 
-GEYSER *scGeyserAdd(s32 slot, s32 id, s32 timer, s32 low, s32 high);
+GEYSER *scGeyserAdd(
+	Sint32 slot, Sint32 id, Sint32 timer, Sint32 low, Sint32 high);
 
-/* Sets up the scene being entered. The river channel has its own set-up; the */
-/* cliffs turn the party back while Piers still needs their help, and */
-/* otherwise tie the rope and string the tightrope, put back the weeds, the */
-/* frozen puddles, the geyser and the stump as their flags say, and start the */
-/* water shimmering. */
-s32 scInit(void) {
+/* Sets up the scene being entered. The river channel has its own set-up; the
+   cliffs turn the party back while Piers still needs their help, and otherwise
+   tie the rope and string the tightrope, put back the weeds, the frozen
+   puddles, the geyser and the stump as their flags say, and start the water
+   shimmering. */
+Sint32 scInit(void)
+{
 	ACTOR *actor;
-	s32 height;
+	Sint32 height;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -502,7 +517,7 @@ s32 scInit(void) {
 		return 0;
 	}
 	if(syGameFlagGet(FLAG_KIBOMBO_PIERS_MET) &&
-	   !syGameFlagGet(FLAG_GABOMBA_CEREMONY_ENDED)) {
+		!syGameFlagGet(FLAG_GABOMBA_CEREMONY_ENDED)) {
 		scGondowanCliffsTurnBackToHelpPiers();
 		return 0;
 	}
@@ -511,7 +526,7 @@ s32 scInit(void) {
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS) {
 		fdRopeInit();
 		fdRopePlace(0, FLAG_GONDOWAN_CLIFFS_ROPE_LASHED, ACTOR_ROPE_POST_A,
-					ACTOR_ROPE_POST_B);
+			ACTOR_ROPE_POST_B);
 		if(syGameFlagGet(FLAG_BRIGGS_CAUGHT)) {
 			fdTightropeInit();
 			fdTightropePlace(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
@@ -519,16 +534,16 @@ s32 scInit(void) {
 		if(syGameFlagGet(FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN))
 			fdActorSetPos(ACTOR_WEEDS, 0, 0);
 		else
-			fdActorGetById(ACTOR_WEEDS)->scaleY = FIXED_ONE * 5 / 4;
+			fdActorGetById(ACTOR_WEEDS)->scaleY = toFIXED(5) / 4;
 		if(syGameFlagGet(FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN))
-			fdMapGridCopyCellAttributes(79, 28, 1, 1, 81, 28);
+			fdMapGridCopyMetatileAttributes(79, 28, 1, 1, 81, 28);
 		if(syGameFlagGet(FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN))
-			fdMapGridCopyCellAttributes(115, 35, 1, 1, 117, 35);
-		btGeyserStart(0, GEYSER_FIRST_TERRAIN);
+			fdMapGridCopyMetatileAttributes(115, 35, 1, 1, 117, 35);
+		scGeyserStart(0, GEYSER_FIRST_TERRAIN);
 		scGeyserAdd(0, ACTOR_GEYSER, 0, 0, GEYSER_MAX_HEIGHT);
 		if(syGameFlagGet(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
 			actor = fdActorGetById(ACTOR_GEYSER);
-			fdMapGridCopyCellsLayered(124, 1, 1, 1, 119, 43);
+			fdMapGridCopyMetatilesLayered(124, 1, 1, 1, 119, 43);
 			fdActorSetPos(ACTOR_GEYSER, 1912, 728);
 			height = fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 			actor->y.fixed = height;
@@ -536,27 +551,27 @@ s32 scInit(void) {
 		}
 		fdActorSetAnimation(ACTOR_DOG, DOG_ANIMATION_LYING);
 		if(syGameFlagGet(FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER)) {
-			fdMapGridCopyCellAttributes(74, 31, 1, 1, 74, 33);
+			fdMapGridCopyMetatileAttributes(74, 31, 1, 1, 74, 33);
 			fdActorSetPos(ACTOR_STUMP, 1193, 530);
 			fdActorGetById(ACTOR_STUMP)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 			fdActorGetById(ACTOR_STUMP)->collisionFlg = 0;
 			fdActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
-		}
-		else {
+		} else {
 			fdActorGetById(ACTOR_STUMP)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
 		}
-		syWordsCopyEntry(((u8 *)GondowanCliffs_SavedWaterColors),
-						 (void *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
-						 sizeof(GondowanCliffs_SavedWaterColors));
-		syTaskAddFrame(scGondowanCliffsCycleWaterCols, TASK_PASS_FRAME);
+		syWordsCopyEntry(((Uint8 *)GondowanCliffs_SavedWaterColors),
+			(void *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
+			sizeof(GondowanCliffs_SavedWaterColors));
+		sySetFrameEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_FRAME);
 		((MAP_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid)->wading = 1;
 	}
 	return 0;
 }
 
-extern s16 GondowanCliffs_CameraBoxes[];
+extern Sint16 GondowanCliffs_CameraBoxes[];
 
-s32 scPrepareMap(void) {
+Sint32 scPrepareMap(void)
+{
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS)
 		((MAP_STATE *)Ram_HeapSlots->mapGrid)->cameraBoxes =
 			GondowanCliffs_CameraBoxes;
@@ -569,19 +584,21 @@ s32 scPrepareMap(void) {
 
 #include "shared/geyser_start.h"
 
-/* Makes actor id the geyser of entry slot, rising from low to high pixels */
-/* every six seconds, with an unseen platform at its top for the leader. */
-GEYSER *scGeyserAdd(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
+/* Makes actor id the geyser of entry slot, rising from low to high pixels every
+   six seconds, with an unseen platform at its top for the leader. */
+GEYSER *scGeyserAdd(
+	Sint32 slot, Sint32 id, Sint32 timer, Sint32 low, Sint32 high)
+{
 	GEYSER_WORK *state = GEYSER_STATE;
-	GEYSER *entry = &state->entries[slot];
-	ACTOR *actor = fdActorGet(id);
-	ACTOR *rider;
+	GEYSER		*entry = &state->entries[slot];
+	ACTOR		*actor = fdActorGet(id);
+	ACTOR		*rider;
 
 	fdActorGet(id);
 	fdActorSetSprFlags(actor, 0);
-	if(!fdEventGetFlag(FLAG_KEEP_PARTY_POSITION)) {
+	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		if(high < low) {
-			s32 swap = low;
+			Sint32 swap = low;
 
 			low = high;
 			high = swap;
@@ -602,9 +619,8 @@ GEYSER *scGeyserAdd(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 		entry->unreadCleared = 0;
 		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 	}
-	rider =
-		(scFieldActorCreate(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
-							actor->x.fixed, actor->y.fixed, actor->z.fixed));
+	rider = (scFieldActorCreate(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
+		actor->x.fixed, actor->y.fixed, actor->z.fixed));
 	rider->collisionFlg = 0;
 	rider->motionFlg = 0;
 	rider->priFlg |= ACTOR_PRIORITY_PLATFORM;
@@ -618,107 +634,107 @@ GEYSER *scGeyserAdd(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 
 /* The Gondowan Cliffs' tables, which the scene's getters return. */
 
-extern s32 GondowanCliffs_ResetTileSpriteScript[];
+extern Sint32 GondowanCliffs_ResetTileSpriteScript[];
 
-LATE_DATA s32 GondowanCliffs_ResetTileSpriteScript[] = {
-	SC_CALL(syTileSprReset),
+LATE_DATA Sint32 GondowanCliffs_ResetTileSpriteScript[] = {
+	SC_CALL(scTileSprReset),
 	SC_END,
 };
 
 /* clang-format off */
 LATE_DATA SCENE_ENTRANCE GondowanCliffs_Entrances[] = {
-    {0, CONDITION_ALWAYS, 680, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {GONDOWAN_CLIFFS_FROM_WORLD_MAP_A, CONDITION_ALWAYS, 536, 0, 488, FACING_EAST, 0, 512, 0, 2048, 864, 0},
-    {GONDOWAN_CLIFFS_FROM_WORLD_MAP_B, CONDITION_ALWAYS, 2024, 0, 792, FACING_WEST, 0, 512, 0, 2048, 864, 0},
-    {GONDOWAN_CLIFFS_FROM_GONDOWAN_CLIFFS_HIDEOUT, CONDITION_ALWAYS, 1576, 0, 680, FACING_SOUTH, 0, 512, 0, 2048, 864, 0},
-    {ENTRANCE_STUMP_LEDGE, CONDITION_ALWAYS, 1272, 0, 552, FACING_SOUTH, 0, 512, 0, 2048, 864, 0},
-    {SCENE_TABLE_END},
+	{0, CONDITION_ALWAYS, 680, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{GONDOWAN_CLIFFS_FROM_WORLD_MAP_A, CONDITION_ALWAYS, 536, 0, 488, FACING_EAST, 0, 512, 0, 2048, 864, 0},
+	{GONDOWAN_CLIFFS_FROM_WORLD_MAP_B, CONDITION_ALWAYS, 2024, 0, 792, FACING_WEST, 0, 512, 0, 2048, 864, 0},
+	{GONDOWAN_CLIFFS_FROM_GONDOWAN_CLIFFS_HIDEOUT, CONDITION_ALWAYS, 1576, 0, 680, FACING_SOUTH, 0, 512, 0, 2048, 864, 0},
+	{ENTRANCE_STUMP_LEDGE, CONDITION_ALWAYS, 1272, 0, 552, FACING_SOUTH, 0, 512, 0, 2048, 864, 0},
+	{SCENE_TABLE_END},
 };
 
 LATE_DATA SCENE_ENTRANCE GondowanCliffs_PassEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
+	{0, CONDITION_ALWAYS, 168, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{SCENE_TABLE_END},
 };
 
-LATE_DATA u32 SceneExits[] = {
-    SCENE_EXITS(GondowanCliffs),
-    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_WORLD_MAP_A, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_A, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_WORLD_MAP_B, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_B, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_GONDOWAN_CLIFFS_HIDEOUT, GondowanCliffsHideout, GONDOWAN_CLIFFS_HIDEOUT_FROM_GONDOWAN_CLIFFS, EXIT_FLAG_NONE),
-    SCENE_EXITS(GondowanCliffsPass),
-    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_PASS_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_PASS_NORTH, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_PASS_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_PASS_SOUTH, EXIT_FLAG_NONE),
-    SCENE_EXITS_END,
+LATE_DATA Uint32 SceneExits[] = {
+	SCENE_EXITS(GondowanCliffs),
+	SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_WORLD_MAP_A, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_A, EXIT_FLAG_NONE),
+	SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_WORLD_MAP_B, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_B, EXIT_FLAG_NONE),
+	SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_GONDOWAN_CLIFFS_HIDEOUT, GondowanCliffsHideout, GONDOWAN_CLIFFS_HIDEOUT_FROM_GONDOWAN_CLIFFS, EXIT_FLAG_NONE),
+	SCENE_EXITS(GondowanCliffsPass),
+	SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_PASS_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_PASS_NORTH, EXIT_FLAG_NONE),
+	SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_PASS_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_PASS_SOUTH, EXIT_FLAG_NONE),
+	SCENE_EXITS_END,
 };
 
 LATE_DATA ACTOR_PLACE GondowanCliffs_ActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1560, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1624, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1304, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1880, 0, 568, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1576, 0, 672, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1232, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1928, 0, 728, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SEA_ROCK, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 816, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_KINDLE), MOVEMENT_TYPE_STAND, 1336, 0, 648, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_JENNA, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_SHEBA, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_KRADEN, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    {SCENE_TABLE_END},
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1560, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1624, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1304, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1880, 0, 568, FACING_SOUTH, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1576, 0, 672, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1232, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1928, 0, 728, FACING_WEST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_SEA_ROCK, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 816, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_KINDLE), MOVEMENT_TYPE_STAND, 1336, 0, 648, FACING_SOUTH, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_JENNA, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_SHEBA, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_KRADEN, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
+	{SCENE_TABLE_END},
 };
 
 LATE_DATA ACTOR_PLACE GondowanCliffs_PassActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (s32)GondowanCliffs_ResetTileSpriteScript, 330, 0, 79, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SEA_ROCK, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 304, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
-    {SCENE_TABLE_END},
+	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)GondowanCliffs_ResetTileSpriteScript, 330, 0, 79, FACING_EAST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_SEA_ROCK, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 304, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
+	{SCENE_TABLE_END},
 };
 
-LATE_DATA const s32 *FieldEffect_DurationScripts[] = {
-    FieldEffect_ShortScript,
-    FieldEffect_MediumScript,
-    FieldEffect_LongScript,
+LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
+	FieldEffect_ShortScript,
+	FieldEffect_MediumScript,
+	FieldEffect_LongScript,
 };
 
-LATE_DATA TRIGGER GondowanCliffs_PassTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_PASS_SEA_ROCK, CONDITION_ALWAYS, EVENT(scGondowanCliffsGrindTheRock)},
-    {TRIGGER_TABLE_END},
+LATE_DATA CUE GondowanCliffs_PassCues[] = {
+	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
+	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_PASS_SEA_ROCK, CONDITION_ALWAYS, SCRIPT_REF(scGondowanCliffsGrindTheRock)},
+	{CUE_TABLE_END},
 };
 
-LATE_DATA TRIGGER GondowanCliffs_Triggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, IF_FLAG_SET(FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN), 3},
-    {TRIGGER_TALK, ACTOR_DOG, CONDITION_ALWAYS, EVENT(scGondowanCliffsTalkToDog)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOG, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, MSGNO(MsgDigHereYou)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOG, CONDITION_ALWAYS, MSGNO(MsgIKnewIt)},
-    {TRIGGER_TALK, ACTOR_FIRST_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgITriedTo)},
-    {TRIGGER_TALK, ACTOR_SECOND_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgIWonderWho)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgIfTheOther)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgILongTo)},
-    {TRIGGER_TALK, ACTOR_KINDLE, CONDITION_ALWAYS, EVENT(scGondowanCliffsFightKindle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_GONDOWAN_CLIFFS_ROPE_LASHED, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN, EVENT(scGondowanCliffsFreezeFirstPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN, EVENT(scGondowanCliffsFreezeSecondPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, CONDITION_ALWAYS, EVENT(scGondowanCliffsBlowAwayWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER, EVENT(scGondowanCliffsLeapStumpIntoWater)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_GEYSER_SAND, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, EVENT(scGondowanCliffsScoopUpGeyser)},
-    {TRIGGER_TABLE_END},
+LATE_DATA CUE GondowanCliffs_Cues[] = {
+	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
+	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
+	{CUE_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, IF_FLAG_SET(FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN), 3},
+	{CUE_TALK, ACTOR_DOG, CONDITION_ALWAYS, SCRIPT_REF(scGondowanCliffsTalkToDog)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOG, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, MSGNO(MsgDigHereYou)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOG, CONDITION_ALWAYS, MSGNO(MsgIKnewIt)},
+	{CUE_TALK, ACTOR_FIRST_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgITriedTo)},
+	{CUE_TALK, ACTOR_SECOND_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgIWonderWho)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgIfTheOther)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgILongTo)},
+	{CUE_TALK, ACTOR_KINDLE, CONDITION_ALWAYS, SCRIPT_REF(scGondowanCliffsFightKindle)},
+	{PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_GONDOWAN_CLIFFS_ROPE_LASHED, 0},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN, SCRIPT_REF(scGondowanCliffsFreezeFirstPuddle)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN, SCRIPT_REF(scGondowanCliffsFreezeSecondPuddle)},
+	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, CONDITION_ALWAYS, SCRIPT_REF(scGondowanCliffsBlowAwayWeeds)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER, SCRIPT_REF(scGondowanCliffsLeapStumpIntoWater)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_GEYSER_SAND, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, SCRIPT_REF(scGondowanCliffsScoopUpGeyser)},
+	{CUE_TABLE_END},
 };
 
 /* The parts of the cliffs the camera keeps out of, left, top, right and */
 /* bottom in pixels. */
-LATE_DATA s16 GondowanCliffs_CameraBoxes[] ALIGNED(4) = {
-    512, 512, 1024, 864,
-    1536, 0, 4096, 352,
-    -1, -1, -1, -1,
+LATE_DATA Sint16 GondowanCliffs_CameraBoxes[] ALIGNED(4) = {
+	512, 512, 1024, 864,
+	1536, 0, 4096, 352,
+	-1, -1, -1, -1,
 };
 /* clang-format on */

@@ -2,7 +2,7 @@
 @ use the second: a copy of credits_background_decode.s whose decoder writes
 @ 64 rows a band and steps 4 KB, the images' map strips.
 @
-@ EndingImage_InnerProduct: Vector_InnerProduct again. Nothing calls it.
+@ EndingImage_InnerProduct: mnVectorInnerProduct again. Nothing calls it.
 @
 @ EndingImage_Decode(source, destination, offset): decodes an image's packed
 @ map (r0) into the map buffer (r1). mnEndingImageShow (credits.c) copies it

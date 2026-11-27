@@ -1,9 +1,8 @@
-/* @file */
-/* Stat boosts and reductions (Impact, Guard, Ward, Dull, Weaken ...). */
-/* Part of battle_effect.c. */
+/* Stat boosts and reductions (Impact, Guard, Ward, Dull, Weaken ...). Part of
+   battle_effect.c. */
 
-/* The stat boosts' modes (btEffectRunStatBoost), each named for the */
-/* effect that plays it. */
+/* The stat boosts' modes (btEffectRunStatBoost), each named for the effect that
+   plays it. */
 typedef enum STAT_BOOST_MODE {
 	STAT_BOOST_IMPACT,	/* a dagger, in Mars colours */
 	STAT_BOOST_GUARD,	/* a shield, in Mars colours */
@@ -12,119 +11,128 @@ typedef enum STAT_BOOST_MODE {
 	STAT_BOOST_ZEPHYR,	/* a gust of wind, keeping the palette */
 	STAT_BOOST_FLASH,	/* a pane of light, in Mars colours */
 	STAT_BOOST_IRON, /* a shield, in Venus colours, the backdrop turning grey */
-	STAT_BOOST_UNUSED, /* a shield, in Mercury colours; no ability's effect */
-					   /* plays it */
-	STAT_BOOST_SHADE,  /* a pane of light, in Mercury colours */
-	STAT_BOOST_COAL,   /* a gust of wind, in Mars colours */
+	/* a shield, in Mercury colours; no ability's effect plays it */
+	STAT_BOOST_UNUSED,
+	STAT_BOOST_SHADE,		  /* a pane of light, in Mercury colours */
+	STAT_BOOST_COAL,		  /* a gust of wind, in Mars colours */
 	STAT_BOOST_CRUCIBLE_FIRE, /* Impact's burst without the swirling flares */
-	STAT_BOOST_STEAM, /* a shield, in Mercury colours, the backdrop turning to
-					   */
-					  /* Jupiter's */
+	/* a shield, in Mercury colours, the backdrop turning to Jupiter's */
+	STAT_BOOST_STEAM,
 	STAT_BOOST_GUARD_AURA /* a pane of light, in grey */
 } STAT_BOOST_MODE;
 
-/* Light swirls into each target and bursts, then a dagger appears in Mars */
-/* colours. */
-/* */
-/* Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge; Kindle. */
-void btEffectRunImpact(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a dagger appears in Mars
+   colours.
+
+   Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge; Kindle. */
+void btEffectRunImpact(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_IMPACT);
 }
 
-/* Light swirls into each target and bursts, then a shield appears in Mars */
-/* colours. */
-/* */
-/* Abilities: Guard, Protect, Guardian, Protector; Corona. */
-void btEffectRunGuard(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a shield appears in Mars
+   colours.
+
+   Abilities: Guard, Protect, Guardian, Protector; Corona. */
+void btEffectRunGuard(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_GUARD);
 }
 
-/* Light swirls into each target and bursts, then a shield appears in Venus */
-/* colours as the backdrop turns grey. */
-/* */
-/* Abilities: Iron. */
-void btEffectRunIron(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a shield appears in Venus
+   colours as the backdrop turns grey.
+
+   Abilities: Iron. */
+void btEffectRunIron(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_IRON);
 }
 
 /* Plays the stat boost's unused mode; no ability's effect names this one. */
-void btEffectRunUnusedStatBoost(BATTLE_EFFECT_PARM *args) {
+void btEffectRunUnusedStatBoost(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_UNUSED);
 }
 
-/* Light swirls into each target and bursts, then a shield appears in Jupiter */
-/* colours. */
-/* */
-/* Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze. */
-void btEffectRunWard(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a shield appears in Jupiter
+   colours.
+
+   Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze. */
+void btEffectRunWard(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_WARD);
 }
 
-/* Light swirls into each target and bursts, then a shield appears in Mercury */
-/* colours as the backdrop turns to Jupiter's colours. */
-/* */
-/* Abilities: Steam. */
-void btEffectRunSteam(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a shield appears in Mercury
+   colours as the backdrop turns to Jupiter's colours.
+
+   Abilities: Steam. */
+void btEffectRunSteam(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_STEAM);
 }
 
-/* Light swirls into each target and bursts, then a pane of light appears in */
-/* Venus colours. */
-/* */
-/* Abilities: Granite. */
-void btEffectRunGranite(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a pane of light appears in
+   Venus colours.
+
+   Abilities: Granite. */
+void btEffectRunGranite(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_GRANITE);
 }
 
-/* Light swirls into each target and bursts, then a pane of light appears in */
-/* Mars colours. */
-/* */
-/* Abilities: Flash. */
-void btEffectRunFlash(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a pane of light appears in
+   Mars colours.
+
+   Abilities: Flash. */
+void btEffectRunFlash(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_FLASH);
 }
 
-/* Light swirls into each target and bursts, then a pane of light appears in */
-/* Mercury colours. */
-/* */
-/* Abilities: Shade. */
-void btEffectRunShade(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a pane of light appears in
+   Mercury colours.
+
+   Abilities: Shade. */
+void btEffectRunShade(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_SHADE);
 }
 
-/* Light swirls into each target and bursts, then a pane of light appears in */
-/* grey. */
-/* */
-/* Abilities: Guard Aura. */
-void btEffectRunGuardAura(BATTLE_EFFECT_PARM *args) {
+/* Light swirls into each target and bursts, then a pane of light appears in
+   grey.
+
+   Abilities: Guard Aura. */
+void btEffectRunGuardAura(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_GUARD_AURA);
 }
 
 /* Light swirls into each target and bursts, then a gust of wind sweeps across
- */
-/* it in the colours already loaded, as this is the one boost that keeps the */
-/* palette. */
-/* */
-/* Abilities: Zephyr. */
-void btEffectRunZephyr(BATTLE_EFFECT_PARM *args) {
+   it in the colours already loaded, as this is the one boost that keeps the
+   palette.
+
+   Abilities: Zephyr. */
+void btEffectRunZephyr(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_ZEPHYR);
 }
 
 /* Light swirls into each target and bursts, then a gust of wind sweeps across
- */
-/* it in Mars colours. */
-/* */
-/* Abilities: Coal. */
-void btEffectRunCoal(BATTLE_EFFECT_PARM *args) {
+   it in Mars colours.
+
+   Abilities: Coal. */
+void btEffectRunCoal(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatBoost(args, STAT_BOOST_COAL);
 }
 
 /* The stat boost's burst with no swirling flares (STAT_BOOST_FLARES), with no
- */
-/* prelude Djinni and the fade step cleared. */
-/* */
-/* Abilities: Crucible Fire. */
-void btEffectRunCrucibleFire(BATTLE_EFFECT_PARM *args) {
+   prelude Djinni and the fade step cleared.
+
+   Abilities: Crucible Fire. */
+void btEffectRunCrucibleFire(BATTLE_EFFECT_PARM *args)
+{
 	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
 
 	state->fadeStep = 0;
@@ -140,97 +148,93 @@ typedef enum STAT_BOOST_SHEET {
 	STAT_BOOST_DJINNI = 26048	/* the Djinni */
 } STAT_BOOST_SHEET;
 
-/* When the first target's flares burst and its sprite appears, with the */
-/* damage; each later target follows STAT_BOOST_TARGET_DELAY frames behind. */
-/* Crucible Fire starts at STAT_BOOST_CRUCIBLE_FIRE_FRAME, after the flares. */
+/* When the first target's flares burst and its sprite appears, with the damage;
+   each later target follows STAT_BOOST_TARGET_DELAY frames behind. Crucible
+   Fire starts at STAT_BOOST_CRUCIBLE_FIRE_FRAME, after the flares. */
 #define STAT_BOOST_BURST_FRAME		   52
 #define STAT_BOOST_SPRITE_FRAME		   80
 #define STAT_BOOST_TARGET_DELAY		   8
 #define STAT_BOOST_CRUCIBLE_FIRE_FRAME (STAT_BOOST_BURST_FRAME + 1)
 
-/* The particles both kinds of stat change set out: the first half of the pool.
- */
-#define STAT_CHANGE_PARTICLES (PARTICLE_POOL_COUNT / 2)
-/* Each target swirls in STAT_BOOST_TARGET_FLARES flares from its own run of */
-/* STAT_BOOST_TARGET_PARTICLES particles. */
+/* The particles both kinds of stat change set out: the first half of the
+   pool. */
+#define STAT_CHANGE_PARTICLES		(PARTICLE_POOL_COUNT / 2)
+/* Each target swirls in STAT_BOOST_TARGET_FLARES flares from its own run of
+   STAT_BOOST_TARGET_PARTICLES particles. */
 #define STAT_BOOST_TARGET_PARTICLES 64
 #define STAT_BOOST_TARGET_FLARES	32
 /* How far the flares turn about the target each frame. */
-#define STAT_BOOST_FLARE_SPIN (TRIG_TURN / 64)
-/* A flare is drawn at size STAT_BOOST_FLARE_SIZE_MAX at depth */
-/* STAT_BOOST_FLARE_DEPTH_NEAR or nearer, one size smaller every */
-/* STAT_BOOST_FLARE_DEPTH_STEP farther, and at size 1 from */
-/* STAT_BOOST_FLARE_DEPTH_FAR on. */
+#define STAT_BOOST_FLARE_SPIN		(TRIG_TURN / 64)
+/* A flare is drawn at size STAT_BOOST_FLARE_SIZE_MAX at depth
+   STAT_BOOST_FLARE_DEPTH_NEAR or nearer, one size smaller every
+   STAT_BOOST_FLARE_DEPTH_STEP farther, and at size 1 from
+   STAT_BOOST_FLARE_DEPTH_FAR on. */
 #define STAT_BOOST_FLARE_SIZE_MAX	6
 #define STAT_BOOST_FLARE_DEPTH_NEAR 314
 #define STAT_BOOST_FLARE_DEPTH_STEP 64
-#define STAT_BOOST_FLARE_DEPTH_FAR                                             \
-	(STAT_BOOST_FLARE_DEPTH_NEAR +                                             \
-	 (STAT_BOOST_FLARE_SIZE_MAX - 1) * STAT_BOOST_FLARE_DEPTH_STEP)
+#define STAT_BOOST_FLARE_DEPTH_FAR \
+	(STAT_BOOST_FLARE_DEPTH_NEAR + \
+		(STAT_BOOST_FLARE_SIZE_MAX - 1) * STAT_BOOST_FLARE_DEPTH_STEP)
 /* How far the prelude's Djinni sways to either side, in pixels. */
-#define STAT_BOOST_DJINNI_SWAY 20
-/* The shift that sets the canvas, shown 1.25 times as wide, against the */
-/* screen's right edge over the party. */
+#define STAT_BOOST_DJINNI_SWAY	  20
+/* The shift that sets the canvas, shown 1.25 times as wide, against the
+   screen's right edge over the party. */
 #define STAT_BOOST_PARTY_CANVAS_X (DISPLAY_WIDTH * 4 / 5 - CANVAS_SIZE)
 
 /* Flares of light swirl in to the centre of each target in turn and burst, and
- */
-/* the mode's picture plays over it. */
-void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
+   the mode's picture plays over it. */
+void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
+{
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	DRAW_RECTANGLE draw[2];
-	s32 member;
-	s32 canvasShiftX;
-	s32 drawFlags;
-	s32 start;
-	s32 additive = BLITTER_ADDITIVE;
+	void				*canvas;
+	DRAW_RECTANGLE		 draw[2];
+	Sint32				 member;
+	Sint32				 canvasShiftX;
+	Sint32				 drawFlags;
+	Sint32				 start;
+	Sint32				 additive = BLITTER_ADDITIVE;
 	/* FAKEMATCH(temporary): 0 held in a local for the center's coordinates; as
 	 * 0. */
-	s32 zero = 0;
-	s32 flipX = COMPOSITE_FLIP_X;
-	s32 frame;
-	s32 i;
-	s32 origin[3];
-	s32 target[3];
-	SCR_POINT base;
-	s32 center[3];
-	SCR_POINT screen;
-	s32 point[3];
+	Sint32		 zero = 0;
+	Sint32		 flipX = COMPOSITE_FLIP_X;
+	Sint32		 frame;
+	Sint32		 i;
+	Sint32		 origin[3];
+	Sint32		 target[3];
+	SCREEN_POINT base;
+	Sint32		 center[3];
+	SCREEN_POINT screen;
+	Sint32		 point[3];
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
 	start = 0;
 	btEffectStartCanvasLayer(0);
 
-	/* The prelude: the Djinni appears on the far side; origin receives where.
-	 */
+	/* The prelude: the Djinni appears on the far side; origin receives
+	   where. */
 	if(args->prelude == 1) {
 		if(mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
 			btEffectRunDjinniEntrance(args,
-									  DJINNI_ENTRANCE(ELEMENT_VENUS,
-													  args->side ^ 1,
-													  DJINNI_ANCHOR_TARGET_X),
-									  origin, target);
+				DJINNI_ENTRANCE(
+					ELEMENT_VENUS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
+				origin, target);
 		else if(mode == STAT_BOOST_UNUSED || mode == STAT_BOOST_SHADE ||
-				mode == STAT_BOOST_STEAM)
+			mode == STAT_BOOST_STEAM)
 			btEffectRunDjinniEntrance(args,
-									  DJINNI_ENTRANCE(ELEMENT_MERCURY,
-													  args->side ^ 1,
-													  DJINNI_ANCHOR_TARGET_X),
-									  origin, target);
+				DJINNI_ENTRANCE(
+					ELEMENT_MERCURY, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
+				origin, target);
 		else if(mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
 			btEffectRunDjinniEntrance(args,
-									  DJINNI_ENTRANCE(ELEMENT_JUPITER,
-													  args->side ^ 1,
-													  DJINNI_ANCHOR_TARGET_X),
-									  origin, target);
+				DJINNI_ENTRANCE(
+					ELEMENT_JUPITER, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
+				origin, target);
 		else if(mode != STAT_BOOST_CRUCIBLE_FIRE)
 			btEffectRunDjinniEntrance(args,
-									  DJINNI_ENTRANCE(ELEMENT_MARS,
-													  args->side ^ 1,
-													  DJINNI_ANCHOR_TARGET_X),
-									  origin, target);
+				DJINNI_ENTRANCE(
+					ELEMENT_MARS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
+				origin, target);
 		origin[0] = origin[0] * 4 / 5;
 	}
 
@@ -243,34 +247,29 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
 	REG_BG2PA = Q_8_8(0.8); /* 1.25 times the width */
 
 	/* The pictures and the colours. */
-	btResourceLoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
-								state->sheet + STAT_BOOST_FLARES, 0, 0);
-	btResourceLoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
-								state->sheet + STAT_BOOST_BURST, 1, 1);
+	btResourceLoadAndDecompress(
+		RESOURCE_BLUE_GLOW_SHEET, state->sheet + STAT_BOOST_FLARES, 0, 0);
+	btResourceLoadAndDecompress(
+		RESOURCE_GLOW_ORB_SHEET, state->sheet + STAT_BOOST_BURST, 1, 1);
 	if(mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
-	   mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
+		mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
 		btResourceLoadAndDecompress(RESOURCE_VIOLET_STREAK_SHEET,
-									state->sheet + STAT_BOOST_PICTURE, 1, 1);
+			state->sheet + STAT_BOOST_PICTURE, 1, 1);
 		if(mode == STAT_BOOST_GRANITE) {
 			LOAD_BG_PALETTE(RESOURCE_VENUS_DJINN_SHEET);
-		}
-		else if(mode == STAT_BOOST_FLASH) {
+		} else if(mode == STAT_BOOST_FLASH) {
 			LOAD_BG_PALETTE(RESOURCE_MARS_DJINN_SHEET);
-		}
-		else {
+		} else {
 			LOAD_BG_PALETTE(RESOURCE_MERCURY_DJINN_SHEET);
 		}
-	}
-	else if(mode == STAT_BOOST_ZEPHYR) {
-		btResourceLoadAndDecompress(RESOURCE_WISP_SHEET,
-									state->sheet + STAT_BOOST_PICTURE, 1, 1);
-	}
-	else if(mode == STAT_BOOST_COAL) {
-		btResourceLoadAndDecompress(RESOURCE_WISP_SHEET,
-									state->sheet + STAT_BOOST_PICTURE, 1, 0);
+	} else if(mode == STAT_BOOST_ZEPHYR) {
+		btResourceLoadAndDecompress(
+			RESOURCE_WISP_SHEET, state->sheet + STAT_BOOST_PICTURE, 1, 1);
+	} else if(mode == STAT_BOOST_COAL) {
+		btResourceLoadAndDecompress(
+			RESOURCE_WISP_SHEET, state->sheet + STAT_BOOST_PICTURE, 1, 0);
 		LOAD_BG_PALETTE(RESOURCE_MARS_DJINN_SHEET);
-	}
-	else {
+	} else {
 		void *palette;
 
 		if(mode == STAT_BOOST_IMPACT)
@@ -294,28 +293,27 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
 		syWordsCopy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 	}
 	if(mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
-		btResourceLoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,
-									state->sheet + STAT_BOOST_DJINNI, 1, 0);
+		btResourceLoadAndDecompress(
+			RESOURCE_VENUS_DJINN_SHEET, state->sheet + STAT_BOOST_DJINNI, 1, 0);
 	else if(mode == STAT_BOOST_GUARD_AURA)
 		btGraphicsLoadGreyRamp();
 	else if(mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
 		btResourceLoadAndDecompress(RESOURCE_JUPITER_DJINN_SHEET,
-									state->sheet + STAT_BOOST_DJINNI, 1, 0);
+			state->sheet + STAT_BOOST_DJINNI, 1, 0);
 	else if(mode == STAT_BOOST_UNUSED || mode == STAT_BOOST_SHADE ||
-			mode == STAT_BOOST_STEAM)
+		mode == STAT_BOOST_STEAM)
 		btResourceLoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
-									state->sheet + STAT_BOOST_DJINNI, 1, 0);
+			state->sheet + STAT_BOOST_DJINNI, 1, 0);
 	else
-		btResourceLoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
-									state->sheet + STAT_BOOST_DJINNI, 1, 0);
+		btResourceLoadAndDecompress(
+			RESOURCE_MARS_DJINN_SHEET, state->sheet + STAT_BOOST_DJINNI, 1, 0);
 
 	/* The flares: 25 pixels across and deep, 50 up and down. */
 	for(i = 0; i != STAT_CHANGE_PARTICLES; i++) {
 		PARTICLE *flare = &PARTICLES[i];
 
 		SET_POSITION(flare, (syRandom() % 200 - 100) << 14,
-					 (syRandom() % 200 - 100) << 15,
-					 (syRandom() % 200 - 100) << 14);
+			(syRandom() % 200 - 100) << 15, (syRandom() % 200 - 100) << 14);
 		flare->variant = 0;
 	}
 
@@ -323,8 +321,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
 	if(args->tgtCnt == 1) {
 		btEffectPosProjectScaledBattler(args->tgts[0], &base);
 		canvasShiftX = -base.x * 4 / 5 + CANVAS_SIZE / 2;
-	}
-	else {
+	} else {
 		if(args->side == EFFECT_SIDE_PARTY)
 			canvasShiftX = -STAT_BOOST_PARTY_CANVAS_X;
 		else
@@ -333,17 +330,17 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
 	REG_BG2X = canvasShiftX << 8;
 	state->transferMode = CANVAS_COPY_AND_FADE;
 	state->transferValue = CANVAS_FADE_HALF;
-	sySetEvent(btEffectTransferCanvas, TASK_PASS_VBLANK);
+	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	if(args->side == EFFECT_SIDE_PARTY)
 		drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
 	else
 		drawFlags = EFFECT_CLIP_BOUNDS;
 
-	for(frame = start; frame != args->tgtCnt * STAT_BOOST_TARGET_DELAY +
-									STAT_BOOST_SPRITE_FRAME + 28;
+	for(frame = start; frame !=
+		args->tgtCnt * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME + 28;
 		frame++) {
 		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
-		s32 prelude;
+		Sint32		   prelude;
 
 		if(frame == 0)
 			sySndPlayStub(SE_SWIRL);
@@ -355,65 +352,65 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
 			EFFECT_SHOW_DAMAGE(0);
 
 		/* The prelude's Djinni sways, and from frame 32 rises two pixels a
-		 * frame; */
-		/* for its first four frames it is drawn added as well. */
+		   frame; for its first four frames it is drawn added as well. */
 		prelude = args->prelude;
 		if(prelude == 1) {
-			s32 x = (FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) *
-								STAT_BOOST_DJINNI_SWAY)) +
-					origin[0] + canvasShiftX - DJINNI_WIDTH / 2;
-			s32 y = (FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4)) +
-					origin[1] - 24;
+			Sint32 x = (FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) *
+						   STAT_BOOST_DJINNI_SWAY)) +
+				origin[0] + canvasShiftX - DJINNI_WIDTH / 2;
+			Sint32 y = (FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4)) +
+				origin[1] - 24;
 
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ flipX,
-								BLITTER_MAX);
+			EFFECT_LOAD_BLITTER(
+				HEAP_SLOT_RAM_CODE, drawFlags ^ flipX, BLITTER_MAX);
 			draw[0] = Ram_HeapSlots->ramCode;
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags ^ flipX,
-								additive);
+			EFFECT_LOAD_BLITTER(
+				HEAP_SLOT_RAM_CODE_PAIRED, drawFlags ^ flipX, additive);
 			draw[1] = Ram_HeapSlots->ramCodePaired;
 
 			if(frame > 32)
 				y = y - frame * 2 + 64;
 			draw[0](canvas, state->sheet + STAT_BOOST_DJINNI, x, y,
-					DJINNI_WIDTH, DJINNI_HEIGHT);
+				DJINNI_WIDTH, DJINNI_HEIGHT);
 			if(frame <= 3)
 				draw[1](canvas, state->sheet + STAT_BOOST_DJINNI, x, y,
-						DJINNI_WIDTH, DJINNI_HEIGHT);
+					DJINNI_WIDTH, DJINNI_HEIGHT);
 			EFFECT_RELEASE_BLITTERS();
 		}
 
 		for(member = 0; member != args->tgtCnt; member++) {
 			MOTION_OBJECT *object = btObjectGetStub(args->tgts[member])->obj;
-			s32 height = btUnitGetEffectHeightStub(args->tgts[member]) * 2 / 3;
+			Sint32		   height =
+				btUnitGetEffectHeightStub(args->tgts[member]) * 2 / 3;
 
 			if(frame ==
-			   member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME)
+				member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME)
 				sySndPlayStub(SE_POWER_UP);
 			/* The flares turn about two thirds of the target's height. */
 			EFFECT_VIEW_FROM_CAMERA(camera);
 			SET_VECTOR(point, object->x, height, object->z);
 			syMatrixTranslateVector(point);
 			if(start != 0) {
-				if(frame == member * STAT_BOOST_TARGET_DELAY +
-								STAT_BOOST_CRUCIBLE_FIRE_FRAME)
+				if(frame ==
+					member * STAT_BOOST_TARGET_DELAY +
+						STAT_BOOST_CRUCIBLE_FIRE_FRAME)
 					btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
-										TINT_KEEP, member, 16);
-			}
-			else {
+						TINT_KEEP, member, 16);
+			} else {
 				if(frame == member * STAT_BOOST_TARGET_DELAY + 48)
 					btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
-										TINT_KEEP, member, 16);
+						TINT_KEEP, member, 16);
 
 				/* Flares turn and close in on the centre. */
 				if(frame > member * STAT_BOOST_TARGET_DELAY) {
-					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
-										BLITTER_MAX);
+					EFFECT_LOAD_BLITTER(
+						HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
 					draw[0] = Ram_HeapSlots->ramCode;
-					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags,
-										additive);
+					EFFECT_LOAD_BLITTER(
+						HEAP_SLOT_RAM_CODE_PAIRED, drawFlags, additive);
 					{
-						/* FAKEMATCH(dead): slot set to NULL first, never read.
-						 */
+						/* FAKEMATCH(dead): slot set to NULL first, never
+						 * read. */
 						DRAW_RECTANGLE *slot = NULL;
 
 						slot = &Ram_HeapSlots->ramCodePaired;
@@ -421,40 +418,38 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
 					}
 					if(mode == STAT_BOOST_IMPACT) {
 						syRotX(-frame * STAT_BOOST_FLARE_SPIN);
-					}
-					else if(mode == STAT_BOOST_GUARD) {
-					}
-					else if(mode == STAT_BOOST_WARD) {
+					} else if(mode == STAT_BOOST_GUARD) {
+					} else if(mode == STAT_BOOST_WARD) {
 						syRotY(frame * STAT_BOOST_FLARE_SPIN);
-					}
-					else {
+					} else {
 						syRotY(frame * STAT_BOOST_FLARE_SPIN);
 						syRotZ(frame * STAT_BOOST_FLARE_SPIN);
 					}
 					for(i = 0; i != STAT_BOOST_TARGET_FLARES; i++) {
 						PARTICLE *flare =
 							&PARTICLES[member * STAT_BOOST_TARGET_PARTICLES +
-									   i];
+								i];
 
 						if(frame > member * STAT_BOOST_TARGET_DELAY + i) {
-							s32 xx = (flare->x >> 8) * (flare->x >> 8);
-							s32 yy = (flare->y >> 8) * (flare->y >> 8);
-							s32 zz = (flare->z >> 8) * (flare->z >> 8);
-							s32 distance = sySquart(xx + yy + zz) >> 9;
+							Sint32 xx = (flare->x >> 8) * (flare->x >> 8);
+							Sint32 yy = (flare->y >> 8) * (flare->y >> 8);
+							Sint32 zz = (flare->z >> 8) * (flare->z >> 8);
+							Sint32 distance = sySquartIWRAM(xx + yy + zz) >> 9;
 
 							if(distance != 0) {
-								s32 size;
+								Sint32 size;
 
-								btEffectPosProjectPoint((s32 *)flare, &screen);
+								btEffectPosProjectPoint(
+									(Sint32 *)flare, &screen);
 								screen.x = screen.x * 4 / 5 + canvasShiftX;
 								CLAMP(screen.depth, STAT_BOOST_FLARE_DEPTH_NEAR,
-									  STAT_BOOST_FLARE_DEPTH_FAR);
+									STAT_BOOST_FLARE_DEPTH_FAR);
 								size = STAT_BOOST_FLARE_SIZE_MAX -
-									   (screen.depth -
+									(screen.depth -
 										STAT_BOOST_FLARE_DEPTH_NEAR) /
-										   STAT_BOOST_FLARE_DEPTH_STEP;
+										STAT_BOOST_FLARE_DEPTH_STEP;
 								EFFECT_DRAW_FLARE(draw[1], canvas, state->sheet,
-												  screen.x, screen.y, size);
+									screen.x, screen.y, size);
 								flare->x -= flare->x / distance;
 								flare->y -= flare->y / distance;
 								flare->z -= flare->z / distance;
@@ -471,23 +466,23 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
 
 			/* The burst: six pictures four frames apart. */
 			if(frame >=
-				   member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_BURST_FRAME &&
-			   frame < member * STAT_BOOST_TARGET_DELAY +
-						   STAT_BOOST_BURST_FRAME + 24) {
-				s32 picture;
+					member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_BURST_FRAME &&
+				frame < member * STAT_BOOST_TARGET_DELAY +
+						STAT_BOOST_BURST_FRAME + 24) {
+				Sint32 picture;
 
 				picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-						   STAT_BOOST_BURST_FRAME) /
-						  4 % 6;
+							  STAT_BOOST_BURST_FRAME) /
+					4 % 6;
 
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
 				draw[0] = Ram_HeapSlots->ramCode;
 				draw[0](canvas,
-						state->sheet + picture * PICTURE_BYTES(GLOW_ORB) +
-							STAT_BOOST_BURST,
-						screen.x - GLOW_ORB_WIDTH / 2,
-						screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
-						GLOW_ORB_HEIGHT);
+					state->sheet + picture * PICTURE_BYTES(GLOW_ORB) +
+						STAT_BOOST_BURST,
+					screen.x - GLOW_ORB_WIDTH / 2,
+					screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
+					GLOW_ORB_HEIGHT);
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 			}
 
@@ -495,99 +490,96 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, u32 mode) {
 			if(mode == STAT_BOOST_IMPACT) {
 				/* Seven 24x40 pictures, four frames apart. */
 				if(frame >= member * STAT_BOOST_TARGET_DELAY +
-								STAT_BOOST_SPRITE_FRAME &&
-				   frame < member * STAT_BOOST_TARGET_DELAY +
-							   STAT_BOOST_SPRITE_FRAME + 28) {
-					s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-								   STAT_BOOST_SPRITE_FRAME) /
-								  4 % 7;
+							STAT_BOOST_SPRITE_FRAME &&
+					frame < member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_FRAME + 28) {
+					Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+										 STAT_BOOST_SPRITE_FRAME) /
+						4 % 7;
 
-					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
-										BLITTER_MAX);
+					EFFECT_LOAD_BLITTER(
+						HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
 					draw[0] = Ram_HeapSlots->ramCode;
 					draw[0](canvas,
-							state->sheet + picture * PICTURE_BYTES(DAGGER) +
-								STAT_BOOST_PICTURE,
-							screen.x - DAGGER_WIDTH / 2,
-							screen.y - DAGGER_HEIGHT / 2, DAGGER_WIDTH,
-							DAGGER_HEIGHT);
+						state->sheet + picture * PICTURE_BYTES(DAGGER) +
+							STAT_BOOST_PICTURE,
+						screen.x - DAGGER_WIDTH / 2,
+						screen.y - DAGGER_HEIGHT / 2, DAGGER_WIDTH,
+						DAGGER_HEIGHT);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 				}
-			}
-			else if(mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
-					mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
+			} else if(mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
+				mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
 				/* Six 32x64 pictures, four frames apart. */
 				if(frame >= member * STAT_BOOST_TARGET_DELAY +
-								STAT_BOOST_SPRITE_FRAME &&
-				   frame < member * STAT_BOOST_TARGET_DELAY +
-							   STAT_BOOST_SPRITE_FRAME + 24) {
-					s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-								   STAT_BOOST_SPRITE_FRAME) /
-								  4 % 6;
+							STAT_BOOST_SPRITE_FRAME &&
+					frame < member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_FRAME + 24) {
+					Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+										 STAT_BOOST_SPRITE_FRAME) /
+						4 % 6;
 
-					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
-										BLITTER_MAX);
+					EFFECT_LOAD_BLITTER(
+						HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
 					draw[0] = Ram_HeapSlots->ramCode;
 					draw[0](canvas,
-							state->sheet +
-								picture * PICTURE_BYTES(VIOLET_STREAK) +
-								STAT_BOOST_PICTURE,
-							screen.x - VIOLET_STREAK_WIDTH / 2,
-							screen.y - VIOLET_STREAK_HEIGHT / 2,
-							VIOLET_STREAK_WIDTH, VIOLET_STREAK_HEIGHT);
+						state->sheet + picture * PICTURE_BYTES(VIOLET_STREAK) +
+							STAT_BOOST_PICTURE,
+						screen.x - VIOLET_STREAK_WIDTH / 2,
+						screen.y - VIOLET_STREAK_HEIGHT / 2,
+						VIOLET_STREAK_WIDTH, VIOLET_STREAK_HEIGHT);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 				}
-			}
-			else if(mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
+			} else if(mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
 				/* Six 64x32 pictures two frames apart, mirrored below into
-				 * 64x64. */
+				   64x64. */
 				if(frame >= member * STAT_BOOST_TARGET_DELAY +
-								STAT_BOOST_SPRITE_FRAME &&
-				   frame < member * STAT_BOOST_TARGET_DELAY +
-							   STAT_BOOST_SPRITE_FRAME + 24) {
-					s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-								   STAT_BOOST_SPRITE_FRAME) /
-								  2 % 6;
-					u8 *wisp; /* drawn as its upper and mirrored lower half */
-					s32 lowerFlags; /* the lower half drawn flipped */
+							STAT_BOOST_SPRITE_FRAME &&
+					frame < member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_FRAME + 24) {
+					Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+										 STAT_BOOST_SPRITE_FRAME) /
+						2 % 6;
+					/* drawn as its upper and mirrored lower half */
+					Uint8 *wisp;
+					Sint32 lowerFlags; /* the lower half drawn flipped */
 
-					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
-										BLITTER_MAX);
+					EFFECT_LOAD_BLITTER(
+						HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
 					lowerFlags = drawFlags | COMPOSITE_FLIP_Y;
 					draw[0] = Ram_HeapSlots->ramCode;
 					/* Built for the 128 by 128 canvas, 7 the shift of each
-					 * side. */
+					   side. */
 					btEffectBuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-										 lowerFlags, BLITTER_MAX);
+						lowerFlags, BLITTER_MAX);
 					wisp = state->sheet + picture * PICTURE_BYTES(WISP) +
-						   STAT_BOOST_PICTURE;
+						STAT_BOOST_PICTURE;
 					draw[1] = Ram_HeapSlots->ramCodePaired;
 					draw[0](canvas, wisp, screen.x - WISP_WIDTH / 2,
-							screen.y - 24, WISP_WIDTH, WISP_HEIGHT);
+						screen.y - 24, WISP_WIDTH, WISP_HEIGHT);
 					draw[1](canvas, wisp, screen.x - WISP_WIDTH / 2,
-							screen.y + 8, WISP_WIDTH, WISP_HEIGHT);
+						screen.y + 8, WISP_WIDTH, WISP_HEIGHT);
 					EFFECT_RELEASE_BLITTERS();
 				}
-			}
-			else {
+			} else {
 				/* Six 40x40 pictures four frames apart, added to the canvas. */
 				if(frame >= member * STAT_BOOST_TARGET_DELAY +
-								STAT_BOOST_SPRITE_FRAME &&
-				   frame < member * STAT_BOOST_TARGET_DELAY +
-							   STAT_BOOST_SPRITE_FRAME + 24) {
-					s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-								   STAT_BOOST_SPRITE_FRAME) /
-								  4 % 6;
+							STAT_BOOST_SPRITE_FRAME &&
+					frame < member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_FRAME + 24) {
+					Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+										 STAT_BOOST_SPRITE_FRAME) /
+						4 % 6;
 
-					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
-										BLITTER_ADDITIVE);
+					EFFECT_LOAD_BLITTER(
+						HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_ADDITIVE);
 					draw[0] = Ram_HeapSlots->ramCode;
 					draw[0](canvas,
-							state->sheet + picture * PICTURE_BYTES(SHIELD) +
-								STAT_BOOST_PICTURE,
-							screen.x - SHIELD_WIDTH / 2,
-							screen.y - SHIELD_HEIGHT / 2, SHIELD_WIDTH,
-							SHIELD_HEIGHT);
+						state->sheet + picture * PICTURE_BYTES(SHIELD) +
+							STAT_BOOST_PICTURE,
+						screen.x - SHIELD_WIDTH / 2,
+						screen.y - SHIELD_HEIGHT / 2, SHIELD_WIDTH,
+						SHIELD_HEIGHT);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 				}
 			}
@@ -607,58 +599,62 @@ typedef enum STAT_REDUCTION_MODE {
 	STAT_REDUCTION_DULL	   /* a dagger, in the glow orb's colours */
 } STAT_REDUCTION_MODE;
 
-/* Breaks the dagger sprite into fading shards as Dull does, in the pink */
-/* burst's colours; no effect table entry reaches it. */
-UNUSED void btEffectRunUnusedStatReduction(void *action) {
+/* Breaks the dagger sprite into fading shards as Dull does, in the pink burst's
+   colours; no effect table entry reaches it. */
+UNUSED void btEffectRunUnusedStatReduction(void *action)
+{
 	btEffectRunStatReduction(action, STAT_REDUCTION_UNUSED);
 }
 
-/* A dagger appears over each target and breaks into shards that fade through */
-/* darker copies, in the glow orb's colours. */
-/* */
-/* Abilities: Dull, Blunt. */
-void btEffectRunDull(BATTLE_EFFECT_PARM *args) {
+/* A dagger appears over each target and breaks into shards that fade through
+   darker copies, in the glow orb's colours.
+
+   Abilities: Dull, Blunt. */
+void btEffectRunDull(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatReduction(args, STAT_REDUCTION_DULL);
 }
 
-/* A shield appears over each target and breaks into shards that fade through */
-/* darker copies, in the glow orb's colours. */
-/* */
-/* Abilities: Impair, Debilitate. */
-void btEffectRunImpair(BATTLE_EFFECT_PARM *args) {
+/* A shield appears over each target and breaks into shards that fade through
+   darker copies, in the glow orb's colours.
+
+   Abilities: Impair, Debilitate. */
+void btEffectRunImpair(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatReduction(args, STAT_REDUCTION_IMPAIR);
 }
 
 /* A shield appears over each target and breaks into fading shards, in the pink
- */
-/* burst's colours. */
-/* */
-/* Abilities: Weaken, Enfeeble. */
-void btEffectRunWeaken(BATTLE_EFFECT_PARM *args) {
+   burst's colours.
+
+   Abilities: Weaken, Enfeeble. */
+void btEffectRunWeaken(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunStatReduction(args, STAT_REDUCTION_WEAKEN);
 }
 
-/* Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of */
-/* STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY */
-/* frames after the target before it. */
+/* Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of
+   STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY frames
+   after the target before it. */
 #define STAT_REDUCTION_TARGET_PARTICLES 32
 #define STAT_REDUCTION_TARGET_SHARDS	24
 #define STAT_REDUCTION_TARGET_DELAY		4
 
-/* A dagger (Dull) or a shield (Impair and Weaken) appears over each target */
-/* and breaks into shards that fly off and fade. */
-void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, s32 mode) {
+/* A dagger (Dull) or a shield (Impair and Weaken) appears over each target and
+   breaks into shards that fly off and fade. */
+void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
+{
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	s32 frame;
-	s32 j;
-	s32 xOffset;
-	s32 origin[3];
-	SCR_POINT screen;
-	FIXED point[3];
-	DRAW_RECTANGLE draw[2];
-	s32 i;
-	void *palette;
+	void				*canvas;
+	Sint32				 frame;
+	Sint32				 j;
+	Sint32				 xOffset;
+	Sint32				 origin[3];
+	SCREEN_POINT		 screen;
+	FIXED				 point[3];
+	DRAW_RECTANGLE		 draw[2];
+	Sint32				 i;
+	void				*palette;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
@@ -677,51 +673,45 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, s32 mode) {
 		palette = syResourceGetTableEntry(RESOURCE_PINK_BURST_SHEET);
 	syWordsCopyEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 	btResourceLoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
-								state->sheet + STAT_REDUCTION_SHARD_PICTURES, 0,
-								0);
+		state->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 
 	for(i = 1; i != DIMMED_COPIES; i++) {
 		for(j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
-			s32 level = state->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
+			Sint32 level = state->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
 			EFFECT_CAP_LEVEL(level, DIMMED_COPY_CAP(i));
 			state->sheet[STAT_REDUCTION_SHARD_PICTURES +
-						 i * STAT_REDUCTION_SHARD_BYTES + j] = level;
+				i * STAT_REDUCTION_SHARD_BYTES + j] = level;
 		}
 	}
 
 	if(args->side == EFFECT_SIDE_PARTY) {
 		REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
 		xOffset = -NARROW_CANVAS_PARTY_X;
-	}
-	else {
+	} else {
 		REG_BG2X = 0;
 		xOffset = 0;
 	}
 
 	/* The shards start in a grid where the sprite was, in rows 6 pixels apart
-	 */
-	/* up from 10 below its centre, four to a row 2 pixels apart from 2 to one
-	 */
-	/* side (dagger) or 8 apart from 16 (shield), and fly away from the user's
-	 */
-	/* side, scattering and rising. */
+	   up from 10 below its centre, four to a row 2 pixels apart from 2 to one
+	   side (dagger) or 8 apart from 16 (shield), and fly away from the user's
+	   side, scattering and rising. */
 	for(i = 0; i != STAT_CHANGE_PARTICLES; i++) {
 		PARTICLE *shard = &PARTICLES[i];
-		s32 radius = 192;
-		s32 angle;
+		Sint32	  radius = 192;
+		Sint32	  angle;
 
 		angle = syRandom() & TRIG_ANGLE_MASK;
 		shard->x = 0;
 		if(mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
-			shard->y = INTtoFIXED(
+			shard->y = toFIXED(
 				(i & (STAT_REDUCTION_TARGET_PARTICLES - 1)) / 4 * 6 - 10);
-			shard->z = INTtoFIXED(i % 4 * 2 - 2);
-		}
-		else {
-			shard->y = INTtoFIXED(
+			shard->z = toFIXED(i % 4 * 2 - 2);
+		} else {
+			shard->y = toFIXED(
 				(i & (STAT_REDUCTION_TARGET_PARTICLES - 1)) / 4 * 6 - 10);
-			shard->z = INTtoFIXED(i % 4 * 8 - 16);
+			shard->z = toFIXED(i % 4 * 8 - 16);
 		}
 		if(args->side == EFFECT_SIDE_PARTY)
 			shard->velX = toFIXED(2);
@@ -740,24 +730,22 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, s32 mode) {
 		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
 
 		/* The loop runs count * STAT_REDUCTION_TARGET_DELAY + 64 frames, so
-		 * frame */
-		/* 72 comes only with three or more targets. With one or two, */
-		/* btPlaybackWaitForReady starts playback once the effect returns, so */
-		/* the messages follow the shards instead of overlapping them. */
+		   frame 72 comes only with three or more targets. With one or two,
+		   btPlaybackWaitForReady starts playback once the effect returns, so
+		   the messages follow the shards instead of overlapping them. */
 		if(frame == 72)
 			EFFECT_SHOW_DAMAGE(0);
 		for(j = 0; j != args->tgtCnt; j++) {
 			MOTION_OBJECT *object;
-			s32 targetFrame;
-			s32 x;
-			s32 y;
+			Sint32		   targetFrame;
+			Sint32		   x;
+			Sint32		   y;
 
 			object = btObjectGetStub(args->tgts[j])->obj;
 			targetFrame = frame - j * STAT_REDUCTION_TARGET_DELAY;
 			if(targetFrame > 0) {
 				/* DEAD: the view set from the camera a first time, which the
-				 * second */
-				/* call repeats; the ROM keeps both calls. */
+				   second call repeats; the ROM keeps both calls. */
 				EFFECT_VIEW_FROM_CAMERA(camera);
 				SET_VECTOR(point, object->x, toFIXED(20), object->z);
 				EFFECT_VIEW_FROM_CAMERA(camera);
@@ -767,21 +755,20 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, s32 mode) {
 				x = screen.x + xOffset;
 				y = screen.y;
 				if(mode == STAT_REDUCTION_UNUSED ||
-				   mode == STAT_REDUCTION_DULL) {
+					mode == STAT_REDUCTION_DULL) {
 					if(targetFrame <= 26)
 						draw[0](canvas,
-								state->sheet +
-									targetFrame / 4 % 7 * PICTURE_BYTES(DAGGER),
-								x - DAGGER_WIDTH / 2, y - DAGGER_HEIGHT / 2,
-								DAGGER_WIDTH, DAGGER_HEIGHT);
-				}
-				else {
+							state->sheet +
+								targetFrame / 4 % 7 * PICTURE_BYTES(DAGGER),
+							x - DAGGER_WIDTH / 2, y - DAGGER_HEIGHT / 2,
+							DAGGER_WIDTH, DAGGER_HEIGHT);
+				} else {
 					if(targetFrame <= 23)
 						draw[1](canvas,
-								state->sheet +
-									targetFrame / 4 % 6 * PICTURE_BYTES(SHIELD),
-								x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2,
-								SHIELD_WIDTH, SHIELD_HEIGHT);
+							state->sheet +
+								targetFrame / 4 % 6 * PICTURE_BYTES(SHIELD),
+							x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2,
+							SHIELD_WIDTH, SHIELD_HEIGHT);
 				}
 				/* The chime as the sprite breaks. */
 				if(targetFrame == 24)
@@ -789,7 +776,7 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, s32 mode) {
 
 				/* The shards fly for 36 frames, a shade darker every four. */
 				if(targetFrame >= 24 && targetFrame <= 60) {
-					s32 level;
+					Sint32 level;
 
 					level = 0;
 					if(targetFrame > 28) {
@@ -800,20 +787,20 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, s32 mode) {
 					for(i = 0; i != STAT_REDUCTION_TARGET_SHARDS; i++) {
 						PARTICLE *shard =
 							&PARTICLES[j * STAT_REDUCTION_TARGET_PARTICLES + i];
-						s32 picture;
+						Sint32 picture;
 
 						picture =
 							i % 4 * 3 + (shard->variant + targetFrame) / 8 % 3;
-						btEffectPosProjectPoint((s32 *)shard, &screen);
+						btEffectPosProjectPoint((Sint32 *)shard, &screen);
 						x = screen.x + xOffset;
 						y = screen.y;
 						draw[0](canvas,
-								state->sheet +
-									(level * STAT_REDUCTION_SHARD_BYTES +
-									 StatChange_ShardPictures[picture]) +
-									STAT_REDUCTION_SHARD_PICTURES,
-								x, y, StatChange_ShardWidths[picture],
-								StatChange_ShardHeights[picture]);
+							state->sheet +
+								(level * STAT_REDUCTION_SHARD_BYTES +
+									StatChange_ShardPictures[picture]) +
+								STAT_REDUCTION_SHARD_PICTURES,
+							x, y, StatChange_ShardWidths[picture],
+							StatChange_ShardHeights[picture]);
 						btParticleAdvanceWithGravity3D(shard, 60, 0);
 					}
 				}

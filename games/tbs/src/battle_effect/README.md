@@ -40,7 +40,7 @@ pillar hides what is behind it.
 ![Garet casts Fire at Isaac, Mia and Ivan: fireballs rise from him, hang in the air and stream across into the three, each leaving a fading trail.](https://alchemy.pascalpixel.com/abilities/fire.gif)
 
 A handler never draws on the screen. It draws on its own copy of the
-canvas, marks it ready, and waits a frame. A task, the transfer, copies it
+canvas, marks it ready, and waits a frame. An event, the transfer, copies it
 to the screen at VBlank.
 
 Straight after the copy, the transfer does one thing to the handler's
@@ -70,8 +70,8 @@ Ice's shards fall inside a band of the screen that slants with each line,
 Heartrender's hearts ripple sideways, and Meteor's sky glows blue from the
 bottom of the screen up.
 
-Those line copies, the scrolling and the shake run as tasks the handler adds,
-and they read the handler's state. So a handler removes its tasks before it
+Those line copies, the scrolling and the shake run as events the handler adds,
+and they read the handler's state. So a handler removes its events before it
 frees anything they read, and every handler ends with that tidying.
 
 ## Blitters

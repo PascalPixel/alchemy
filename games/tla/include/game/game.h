@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_GAME_H
 #define ALCHEMY_GAME_H
 
-/* @file */
 /* The item and summon tables and the game module's functions. */
 
 #include "types.h"
@@ -20,9 +19,9 @@
 struct ITEM_DEFINITION;
 struct SUMMON_DEFINITION;
 
-/* What a Psynergy does when cast on the field (an ability's fieldPsynergy), */
-/* each named for the abilities that have it in the English release. The */
-/* field effect it starts keeps it as its animation. */
+/* What a Psynergy does when cast on the field (an ability's fieldPsynergy),
+   each named for the abilities that have it in the English release. The field
+   effect it starts keeps it as its animation. */
 typedef enum FIELD_PSY {
 	FIELD_PSYNERGY_MOVE = 1,
 	FIELD_PSYNERGY_MIND_READ = 2,
@@ -68,14 +67,14 @@ typedef enum FIELD_PSYNERGY_HANDLER {
 	FIELD_PSYNERGY_HANDLER_EXTRA = 3   /* runs its kind's extra handler */
 } FIELD_PSYNERGY_HANDLER;
 
-/* The elemental power and resistance of one element level, in */
-/* Element_PowerResistByLevel. */
+/* The elemental power and resistance of one element level, in
+   Element_PowerResistByLevel. */
 typedef struct ELEMENT_LEVEL_BONUS {
-	u16 power;		/* base power, before the tenths of a level */
-	u16 resistance; /* base resistance, likewise */
+	Uint16 power;	   /* base power, before the tenths of a level */
+	Uint16 resistance; /* base resistance, likewise */
 } ELEMENT_LEVEL_BONUS;
 
-extern const ITEM_DEFINITION Item_DefinitionTable[];
+extern const ITEM_DEFINITION   Item_DefinitionTable[];
 extern const SUMMON_DEFINITION Summon_DefinitionTable[];
 
 struct BATTLE_ELEMENT_STATS;
@@ -83,39 +82,40 @@ struct BATTLE_ELEMENT_STATS;
 /* How many enemies Enemy_DragonIds and Enemy_SeaCreatureIds list. */
 #define DRAGON_ENEMY_COUNT		 47
 #define SEA_CREATURE_ENEMY_COUNT 29
-extern const u16 Enemy_DragonIds[DRAGON_ENEMY_COUNT];
-extern const u16 Enemy_SeaCreatureIds[SEA_CREATURE_ENEMY_COUNT];
+extern const Uint16				Enemy_DragonIds[DRAGON_ENEMY_COUNT];
+extern const Uint16				Enemy_SeaCreatureIds[SEA_CREATURE_ENEMY_COUNT];
 extern const ABILITY_DEFINITION AbilityDefinitions[];
-extern const DJINN_DEFINITION Djinn_DefinitionTable[];
-extern const ENEMY_DEFINITION Enemy_Definitions[];
+extern const DJINN_DEFINITION	Djinn_DefinitionTable[];
+extern const ENEMY_DEFINITION	Enemy_Definitions[];
 /* Counts the Djinn recovery down twenty times, setting every recovering Djinni
- */
-/* of a party member with HP (btDjinnRecoveryCountDownTwenty). */
+   of a party member with HP (btDjinnRecoveryCountDownTwenty). */
 void btDjinnRecoveryCountDownTwentyStub(void);
 /* Gives a Djinni to a unit. */
-s32 gmDjinnGiveStub(s32 unitId, s32 element, s32 djinnIndex);
-/* Clears each button shortcut whose Psynergy can no longer be cast */
-/* (fdPartyClearUnusableShortcuts). */
-void gmPartyClearUnusableShortcutsStub(void);
-/* Gives a unit one item, joining its first matching stack (up to */
-/* INVENTORY_STACK_MAX) or taking the first free slot. */
-s32 gmInventoryAddItemStub(s32 unitId, s32 itemId);
+Sint32 gmDjinnGiveStub(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
+/* Clears each button shortcut whose Psynergy can no longer be cast
+   (fdPartyClearUnusableShortcuts). */
+void fdPartyClearUnusableShortcutsStub(void);
+/* Gives a unit one item, joining its first matching stack (up to
+   INVENTORY_STACK_MAX) or taking the first free slot. */
+Sint32 gmInventoryAddItemStub(Sint32 unitId, Sint32 itemId);
 /* Takes one item out of slot, closing up the inventory when it was the last. */
-s32 gmInventoryRemoveStub(s32 owner, s32 slot);
-void gmUnitCalcBaseElements(s32 unitId, BATTLE_ELEMENT_STATS *destination);
-s32 gmClassDetermine(s32 character, u32 *djinn, s32 item);
-s32 gmUnitGetElementLevels(s32 enemyId, const u8 *source, s32 *output);
-s32 gmUnitRebuildPsynergyList(s32 owner);
-/* Decodes message into text with no length limit */
-/* (mnMessageDecodeRawUnbounded). */
-void mnMessageDecodeRawUnboundedStub(s32 message, u16 *text);
+Sint32 gmInventoryRemoveStub(Sint32 owner, Sint32 slot);
+void   gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *destination);
+Sint32 gmClassDetermine(Sint32 character, Uint32 *djinn, Sint32 item);
+Sint32 gmUnitGetElementLevels(
+	Sint32 enemyId, const Uint8 *source, Sint32 *output);
+Sint32 gmUnitRebuildPsynergyList(Sint32 owner);
+/* Decodes message into text with no length limit
+   (mnMessageDecodeRawUnbounded). */
+void mnMessageDecodeRawUnboundedStub(Sint32 message, Uint16 *text);
 
-/* How many summons there are (summon_table.c), and the number that ends a */
-/* list of them (gmSummonListLearned). */
+/* How many summons there are (summon_table.c), and the number that ends a list
+   of them (gmSummonListLearned). */
 #define SUMMON_COUNT 29
-/* The summons by summon id, each named for its ability, in the order of */
-/* Summon_Abilities (summon_table.c): the elements' own four, The Broken */
-/* Seal's twelve, then this game's thirteen. */
+
+/* The summons by summon id, each named for its ability, in the order of
+   Summon_Abilities (summon_table.c): the elements' own four, The Broken Seal's
+   twelve, then this game's thirteen. */
 typedef enum SUMMON_ID {
 	SUMMON_VENUS,
 	SUMMON_MERCURY,
@@ -147,41 +147,42 @@ typedef enum SUMMON_ID {
 	SUMMON_CHARON,
 	SUMMON_IRIS
 } SUMMON_ID;
+
 /* Ends the summon lists, and marks a summon already moved to the front. */
 #define SUMMON_END 32
 /* The summons in the order the Summon command lists them (summon_table.c). */
-extern const u8 Summon_OrderList[SUMMON_COUNT];
+extern const Uint8 Summon_OrderList[SUMMON_COUNT];
 /* The experience each character needs for each level (experience_table.c). */
-extern const u32 Character_LevelExpTable[];
+extern const Uint32 Character_LevelExpTable[];
 
-extern const s16 Element_PowerResistCurve[5][2];
+extern const Sint16				  Element_PowerResistCurve[5][2];
 extern const ENEMY_ELEMENT_PRESET Enemy_ElementPresetTable[];
 extern const CHARACTER_DEFINITION Character_DefinitionTable[];
-const CHARACTER_DEFINITION *gmCharacterGetDefinition(s32 character);
-extern const s32 Character_NewGameIds[];
-extern const u16 Item_RareItemCounters[512];
+const CHARACTER_DEFINITION		 *gmCharacterGetDefinition(Sint32 character);
+extern const Sint32				  Character_NewGameIds[];
+extern const Uint16				  Item_RareItemCounters[512];
 
-extern const u8 Character_ElementGroupTable[];
+extern const Uint8 Character_ElementGroupTable[];
 
-/* The Djinni sprite of each element, SPRITE_VENUS_DJINNI to */
-/* SPRITE_JUPITER_DJINNI, whose picture mnDjinnShowJoinedMessage shows as the */
-/* portrait. */
-extern const s16 Djinn_ElementSprites[];
+/* The Djinni sprite of each element, SPRITE_VENUS_DJINNI to
+   SPRITE_JUPITER_DJINNI, whose picture mnDjinnShowJoinedMessage shows as the
+   portrait. */
+extern const Sint16 Djinn_ElementSprites[];
 /* Each party member's sprite, by character; each is the character's own id. */
-extern const s16 Character_SpriteTable[];
+extern const Sint16 Character_SpriteTable[];
 
 struct LEVEL_UP_RESULT;
 
-extern const s32 Class_SeriesByElements[4][4];
-extern const u8 NewGame_SceneStateTable[4][5];
-extern const u16 DataTransfer_Flags[TRANSFERRED_FLAG_COUNT];
-extern const s16 DataTransfer_DjinnChances[ELEMENT_COUNT]
-										  [TRANSFERRED_DJINN_PER_ELEMENT];
+extern const Sint32 Class_SeriesByElements[4][4];
+extern const Uint8	NewGame_SceneStateTable[4][5];
+extern const Uint16 DataTransfer_Flags[TRANSFERRED_FLAG_COUNT];
+extern const Sint16 DataTransfer_DjinnChances[ELEMENT_COUNT]
+											 [TRANSFERRED_DJINN_PER_ELEMENT];
 void gmPartyBalanceDjinn(void);
 
-/* Where InventorySnapshot's spare space begins, past the party's equipment */
-/* gmInventorySnapshotSave keeps and the Trial Road's state: the scenes keep */
-/* their own state there (scene/flame_throwers.h's FLAME_THROWERS_STATE). */
+/* Where InventorySnapshot's spare space begins, past the party's equipment
+   gmInventorySnapshotSave keeps and the Trial Road's state: the scenes keep
+   their own state there (scene/flame_throwers.h's FLAME_THROWERS_STATE). */
 #define INVENTORY_SNAPSHOT_SPARE 392
 
 #endif

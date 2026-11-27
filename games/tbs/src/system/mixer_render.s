@@ -1,7 +1,7 @@
 @ Why IwramSoundRenderVBlank to IwramSoundSynthWave are assembly:
 @ Sound synthesis uses fp as packed volume/sample arithmetic and writes
 @ computed mixed words with stmia r5! without a matching block-copy source.
-@ Why IwramCopyWords is assembly:
+@ Why syIWRAMWordsCopy is assembly:
 @ Computed add pc enters the unrolled copy body; r5-r9 are saved without
 @ lr.
 .syntax unified
@@ -196,8 +196,8 @@ IwramSoundMixWorkspace:
 	.section .text.iwram_copy_words,"ax",%progbits
 	.arm
 
-	.global IwramCopyWords
-IwramCopyWords:
+	.global syIWRAMWordsCopy
+syIWRAMWordsCopy:
 	push	{r5, r6, r7, r8, r9}
 	ands	ip, r2, #224, 0
 	rsb	ip, ip, #240, 0

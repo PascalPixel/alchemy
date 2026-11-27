@@ -1,19 +1,16 @@
-/* @file */
-/* Save files and the file list. */
-/* Part of screens.c. */
+/* Save files and the file list. Part of screens.c. */
 
-/* A file's half in bytes: the first is written to the file's slot, the */
-/* second to the slot SAVE_FILE_COUNT on. Then the file number for no free */
-/* file. */
-#define SAVE_PART_BYTES	  4096
+/* A file's half in bytes: the first is written to the file's slot, the second
+   to the slot BUP_FILE_COUNT on. Then the file number for no free file. */
+#define BUP_PART_BYTES	  4096
 #define SAVE_NO_FREE_FILE 999
 
 /* What the save functions return when they fail, after showing the message. */
-#define SAVE_ERROR_READ -2 /* a part could not be read */
+#define SAVE_ERROR_READ		 -2 /* a part could not be read */
 /* Writing failed. "Failed to save." (or "Failed to erase.") */
-#define SAVE_ERROR_WRITE   -3
-#define SAVE_ERROR_ERASE   -4 /* erasing failed. "Failed to erase." */
-#define SAVE_ERROR_NO_FILE -5 /* no empty file to copy into */
+#define SAVE_ERROR_WRITE	 -3
+#define SAVE_ERROR_ERASE	 -4 /* erasing failed. "Failed to erase." */
+#define SAVE_ERROR_NO_FILE	 -5 /* no empty file to copy into */
 /* No backup memory. "Unable to detect backup memory." */
 #define SAVE_ERROR_NO_MEMORY -9
 
@@ -25,37 +22,37 @@
 #define MINUTES_PER_HOUR	60
 #define SECONDS_PER_MINUTE	60
 
-/* A two-digit field for mnStringFormatNum: with 100 added, its last two */
-/* digits keep their leading zero. */
+/* A two-digit field for mnStringFormatNum: with 100 added, its last two digits
+   keep their leading zero. */
 #define WITH_LEADING_ZERO(n) ((n) + 100)
 
-/* The words of SceneLocalState (system/ewram.s), which InventorySnapshotWork */
-/* follows. */
+/* The words of SceneLocalState (system/ewram.s), which InventorySnapshotWork
+   follows. */
 #define SCENE_LOCAL_STATE_WORDS 30
 /* The words from GameFlagBytes that a file's checksum sums. */
-#define SAVE_CHECKSUM_WORDS 968
+#define BUP_CHECKSUM_WORDS		968
 
-/* The file list's glow: the middle colour that HIGHLIGHT_PALETTE's colours 8 */
-/* to 11 sway round, red twice as far as green and blue. */
+/* The file list's glow: the middle colour that HIGHLIGHT_PALETTE's colours 8 to
+   11 sway round, red twice as far as green and blue. */
 #define FILE_LIST_GLOW_RED	 22
 #define FILE_LIST_GLOW_GREEN 16
 #define FILE_LIST_GLOW_BLUE	 20
 
-/* Writes the play time `frames` (at 60 frames a second) into `out` as hours */
-/* and minutes, "hhh:mm" with the hours right-aligned in three characters, and
- */
-/* returns `out`. The time stops at 999:59. */
-void *mnStringFormatPlayTime(s32 frames, u8 *out) {
-	u8 digits[64];
-	u32 totalMinutes;
-	u32 hours;
-	s32 minutes;
-	u8 *digitsCursor;
-	u8 *textCursor;
+/* Writes the play time `frames` (at 60 frames a second) into `out` as hours and
+   minutes, "hhh:mm" with the hours right-aligned in three characters, and
+   returns `out`. The time stops at 999:59. */
+void *mnStringFormatPlayTime(Sint32 frames, Uint8 *out)
+{
+	Uint8  digits[64];
+	Uint32 totalMinutes;
+	Uint32 hours;
+	Sint32 minutes;
+	Uint8 *digitsCursor;
+	Uint8 *textCursor;
 
-	totalMinutes = (u32)frames / (FRAMES_PER_SECOND * SECONDS_PER_MINUTE);
+	totalMinutes = (Uint32)frames / (FRAMES_PER_SECOND * SECONDS_PER_MINUTE);
 	if(totalMinutes >
-	   PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
+		PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
 		totalMinutes =
 			PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1;
 
@@ -83,67 +80,68 @@ void *mnStringFormatPlayTime(s32 frames, u8 *out) {
 	return out;
 }
 
-/* Returns the first save file whose summary shows it empty (level 0), or */
-/* SAVE_NO_FREE_FILE when all three are in use. The summaries must be loaded. */
-u32 mnSaveFindFreeFile(void) {
-	u32 file;
-	SAVE_FILE_SUMMARY *summary;
+/* Returns the first save file whose summary shows it empty (level 0), or
+   SAVE_NO_FREE_FILE when all three are in use. The summaries must be loaded. */
+Uint32 mnSaveFindFreeFile(void)
+{
+	Uint32			  file;
+	BUP_FILE_SUMMARY *summary;
 
-	summary = SaveStateWork->summary;
-	for(file = 0; file < SAVE_FILE_COUNT; file++, summary++) {
+	summary = BupStateWork->summary;
+	for(file = 0; file < BUP_FILE_COUNT; file++, summary++) {
 		if(summary->level == 0)
 			return file;
 	}
 	return SAVE_NO_FREE_FILE;
 }
 
-/* Returns how many save files there are, leaving out those whose summary has */
-/* its send flag set (the files saved at the end of the game) when */
-/* `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY when the backup memory */
-/* cannot be read. It opens and releases the save state itself. */
-s32 mnSaveCountFilesExcludingSent(s32 excludeSent) {
-	s32 file;
-	s32 count;
-	SAVE_FILE_SUMMARY *summary;
+/* Returns how many save files there are, leaving out those whose summary has
+   its send flag set (the files saved at the end of the game) when `excludeSent`
+   is nonzero, or SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. It
+   opens and releases the save state itself. */
+Sint32 mnSaveCountFilesExcludingSent(Sint32 excludeSent)
+{
+	Sint32			  file;
+	Sint32			  count;
+	BUP_FILE_SUMMARY *summary;
 
-	if(sySaveInitState() != 0) {
+	if(syBupInitState() != 0) {
 		count = SAVE_ERROR_NO_MEMORY;
-	}
-	else {
-		count = sySaveLoadFileSummaries();
+	} else {
+		count = syBupLoadFileSummaries();
 		if(excludeSent != 0) {
-			summary = SaveStateWork->summary;
-			for(file = 0; file < SAVE_FILE_COUNT; file++) {
+			summary = BupStateWork->summary;
+			for(file = 0; file < BUP_FILE_COUNT; file++) {
 				if(summary[file].sendFlg != 0)
 					count--;
 			}
 		}
 	}
-	sySaveReleaseState();
+	syBupReleaseState();
 	return count;
 }
 
 /* Loads the save file summaries for the File Screen and returns how many files
- */
-/* there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send */
-/* flag set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. */
-s32 mnSaveScanFileSummaries(void) {
-	s32 error;
-	s32 sentCount;
-	s32 fileCount;
+   there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send
+   flag set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. */
+Sint32 mnSaveScanFileSummaries(void)
+{
+	Sint32 error;
+	Sint32 sentCount;
+	Sint32 fileCount;
 
-	error = sySaveInitState();
+	error = syBupInitState();
 	sentCount = 0;
 	fileCount = SAVE_ERROR_NO_MEMORY;
 	if(error == 0) {
-		s32 i;
-		SAVE_STATE *state;
+		Sint32	   i;
+		BUP_STATE *state;
 
-		fileCount = sySaveLoadFileSummaries();
-		state = SaveStateWork;
+		fileCount = syBupLoadFileSummaries();
+		state = BupStateWork;
 		TitleSendOptionEnabled = 0;
 		TitleBattleOptionEnabled = 0;
-		for(i = 0; i < SAVE_FILE_COUNT; i++) {
+		for(i = 0; i < BUP_FILE_COUNT; i++) {
 			if(state->summary[i].sendFlg != 0) {
 				TitleSendOptionEnabled = 1;
 				sentCount++;
@@ -153,53 +151,53 @@ s32 mnSaveScanFileSummaries(void) {
 			}
 		}
 
-		if((KeysHeld & (KEY_R | KEY_LEFT)) != (KEY_R | KEY_LEFT)) {
+		if((PerData & (KEY_R | KEY_LEFT)) != (KEY_R | KEY_LEFT)) {
 			TitleSendOptionEnabled = 0;
 		}
 	}
-	sySaveReleaseState();
+	syBupReleaseState();
 	if(fileCount != 0 && sentCount == fileCount) {
 		return fileCount + SAVE_SCAN_ALL_CLEARED;
 	}
 	return fileCount;
 }
 
-/* Prepares the save buffer for writing: stamps the main routine's state with */
-/* the time and options, then fills the file summary shown on the file menus */
-/* (the leader's name, level and class, the play time, area, coins, Djinn of */
-/* each element, the party, the send flag and how many Djinn have been found) */
-/* and its checksum, the sum of SAVE_CHECKSUM_WORDS words from GameFlagBytes */
-/* on. */
-u32 mnSaveBuildFileSummary(void) {
-	u16 members[14];
-	SAVE_FILE_SUMMARY *summary;
-	UNIT *leader;
-	u8 *source;
-	u8 *destination;
-	u32 *word;
-	s32 i;
-	u32 sum = 0;
+/* Prepares the save buffer for writing: stamps the main routine's state with
+   the time and options, then fills the file summary shown on the file menus
+   (the leader's name, level and class, the play time, area, coins, Djinn of
+   each element, the party, the send flag and how many Djinn have been found)
+   and its checksum, the sum of BUP_CHECKSUM_WORDS words from GameFlagBytes
+   on. */
+Uint32 mnSaveBuildFileSummary(void)
+{
+	Uint16			  members[14];
+	BUP_FILE_SUMMARY *summary;
+	UNIT			 *leader;
+	Uint8			 *source;
+	Uint8			 *destination;
+	Uint32			 *word;
+	Sint32			  i;
+	Uint32			  sum = 0;
 
 	/* The summary's header comes before the save buffer. */
-	summary = (SAVE_FILE_SUMMARY *)((u32)SaveBuffer -
-									offsetof(SAVE_FILE_SUMMARY, name));
+	summary = (BUP_FILE_SUMMARY *)((Uint32)BupBuffer -
+		offsetof(BUP_FILE_SUMMARY, name));
 	MainRoutineStateWork.buildStamp = gmBuildStampGetTimeStub(0);
 	MainRoutineStateWork.playTime = PlayTimeFrames;
-	/* A second copy of the play time in the file's second part, which */
-	/* sySaveLoadFileSummaries reads back into
-	 * SAVE_FILE_SUMMARY.secondPartPlayTime: */
-	/* the file list lists a file whose two play times differ as corrupted. */
+	/* A second copy of the play time in the file's second part, which
+	   syBupLoadFileSummaries reads back into
+	   BUP_FILE_SUMMARY.secondPartPlayTime:
+	   the file list lists a file whose two play times differ as corrupted. */
 	/* UB: the copy is written through SceneLocalState past its own bytes, into
-	 */
-	/* InventorySnapshotWork's last word; UBFIX writes it through */
-	/* InventorySnapshotWork. */
+	   InventorySnapshotWork's last word; UBFIX writes it through
+	   InventorySnapshotWork. */
 	{
-#ifdef UBFIX
-		u32 *copy = (u32 *)InventorySnapshotWork;
+#if FIX_POINTER_OUTSIDE_OBJECT
+		Uint32 *copy = (Uint32 *)InventorySnapshotWork;
 		copy[SECOND_PART_PLAY_TIME_WORD - SCENE_LOCAL_STATE_WORDS] =
 			PlayTimeFrames;
 #else
-		u32 *copy = (u32 *)SceneLocalState;
+		Uint32 *copy = (Uint32 *)SceneLocalState;
 		copy[SECOND_PART_PLAY_TIME_WORD] = PlayTimeFrames;
 #endif
 	}
@@ -208,12 +206,12 @@ u32 mnSaveBuildFileSummary(void) {
 	leader = gmUnitGetStub(MainRoutineStateWork.leaderActorId);
 	destination = summary->name;
 	source = leader->name;
-	for(i = 0; i < (s32)sizeof(summary->name); i++)
+	for(i = 0; i < (Sint32)sizeof(summary->name); i++)
 		*destination++ = *source++;
 	summary->level = leader->level;
 	summary->playTime = MainRoutineStateWork.playTime;
-	summary->area = fdAreaGetNameIndexStub(MainRoutineStateWork.next,
-										   MainRoutineStateWork.entrance);
+	summary->area = fdAreaGetNameIndexStub(
+		MainRoutineStateWork.next, MainRoutineStateWork.entrance);
 	summary->classId = leader->classId;
 	summary->coins = MainRoutineStateWork.holdings.coins;
 	summary->djinn[ELEMENT_VENUS] = gmPartySumDjinnCountsStub(ELEMENT_VENUS);
@@ -238,16 +236,16 @@ u32 mnSaveBuildFileSummary(void) {
 	}
 	summary->childhood = gmFlagGetStub(FLAG_CHILDHOOD) != 0;
 	{
-		s32 n;
-		u32 frames;
+		Sint32 n;
+		Uint32 frames;
 
 		frames = MainRoutineStateWork.buildStamp;
 		/* The checksum's words, counted in fours and multiplied back below. */
-		n = SAVE_CHECKSUM_WORDS / 4;
+		n = BUP_CHECKSUM_WORDS / 4;
 		i = 0;
 		n <<= 2;
-		word = (u32 *)GameFlagBytes;
-		scIoWrite32(frames, &summary->buildStamp);
+		word = (Uint32 *)GameFlagBytes;
+		IO_WRITE32(frames, &summary->buildStamp);
 		/* A while loop, entered at its test. */
 		goto test;
 		do {
@@ -260,120 +258,120 @@ u32 mnSaveBuildFileSummary(void) {
 	return sum;
 }
 
-/* Saves the game to the current file (SaveSlot): builds the summary and */
-/* writes both halves of the save buffer, as parts SaveSlot and SaveSlot + */
-/* SAVE_FILE_COUNT. */
-s16 mnSaveWriteCurrentFile(void) {
-	s16 file;
-	s16 result;
-	s32 error;
+/* Saves the game to the current file (BupSlot): builds the summary and writes
+   both halves of the save buffer, as parts BupSlot and BupSlot +
+   BUP_FILE_COUNT. */
+Sint16 mnSaveWriteCurrentFile(void)
+{
+	Sint16 file;
+	Sint16 result;
+	Sint32 error;
 
 	result = 0;
-	file = SaveSlot;
+	file = BupSlot;
 	if(file != -1) {
-		error = sySaveInitState();
+		error = syBupInitState();
 		if(error != 0) {
 			mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
 			result = SAVE_ERROR_NO_MEMORY;
-		}
-		else {
+		} else {
 			mnSaveBuildFileSummary();
 			{
-				void *half = &SaveBuffer;
-				s32 current;
+				void  *half = &BupBuffer;
+				Sint32 current;
 
-				error = sySaveWritePart(SaveSlot, half);
-				current = SaveSlot;
-				half = (char *)half + SAVE_PART_BYTES;
-				error |= sySaveWritePart(current + SAVE_FILE_COUNT, half);
+				error = syBupWritePart(BupSlot, half);
+				current = BupSlot;
+				half = (char *)half + BUP_PART_BYTES;
+				error |= syBupWritePart(current + BUP_FILE_COUNT, half);
 				if(error != 0) {
 					mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
 					result = SAVE_ERROR_WRITE;
 				}
 			}
 		}
-		sySaveReleaseState();
+		syBupReleaseState();
 		file = result;
 	}
 	return file;
 }
 
-/* Writes both halves of the save buffer, as they are, to save file `file`. */
-/* Returns 0, or a SAVE_ERROR_* after showing its message. */
-s32 mnSaveWriteFile(s32 file) {
-	s32 error;
-	s16 result = 0;
+/* Writes both halves of the save buffer, as they are, to save file `file`.
+   Returns 0, or a SAVE_ERROR_* after showing its message. */
+Sint32 mnSaveWriteFile(Sint32 file)
+{
+	Sint32 error;
+	Sint16 result = 0;
 
-	error = sySaveInitState();
+	error = syBupInitState();
 	if(error != 0) {
 		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
 		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else {
-		void *half = &SaveBuffer;
+	} else {
+		void *half = &BupBuffer;
 
-		error = sySaveWritePart(file, half);
-		half = (char *)half + SAVE_PART_BYTES;
-		error |= sySaveWritePart(file + SAVE_FILE_COUNT, half);
+		error = syBupWritePart(file, half);
+		half = (char *)half + BUP_PART_BYTES;
+		error |= syBupWritePart(file + BUP_FILE_COUNT, half);
 		if(error != 0) {
 			mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
 			result = SAVE_ERROR_WRITE;
 		}
 	}
-	sySaveReleaseState();
+	syBupReleaseState();
 	return result;
 }
 
-/* Writes the 64-byte save stamp (BattleArenaSaveStamp, which lies in the */
-/* first half of the save buffer) into the current file's first part, leaving */
-/* the rest of the part as it was saved. */
-s32 mnSaveWriteLinkTallies(void) {
-	void *part;
-	s32 result;
-	s32 error;
-	u8 *stamp;
+/* Writes the 64-byte save stamp (BattleArenaSaveStamp, which lies in the first
+   half of the save buffer) into the current file's first part, leaving the rest
+   of the part as it was saved. */
+Sint32 mnSaveWriteLinkTallies(void)
+{
+	void  *part;
+	Sint32 result;
+	Sint32 error;
+	Uint8 *stamp;
 
-	part = syHeapAllocEwram(SAVE_PART_BYTES);
+	part = syHeapAllocEWRAM(BUP_PART_BYTES);
 	result = 0;
 	/* BUG: returns without freeing the part buffer. */
-	if(SaveSlot == -1)
+	if(BupSlot == -1)
 		return -1;
-	error = sySaveInitState();
+	error = syBupInitState();
 	if(error != 0) {
 		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
 		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else {
-		error = sySaveReadPart(SaveSlot, part);
+	} else {
+		error = syBupReadPart(BupSlot, part);
 		/* A failed read is reported, but the part is still written below from
-		 */
-		/* whatever the buffer holds. */
+		   whatever the buffer holds. */
 		if(error != 0) {
 			mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
 			result = SAVE_ERROR_READ;
 		}
 		/* The stamp's place in the part is its place in the save buffer. */
-		stamp = (u8 *)part + (s32)BattleArenaSaveStamp;
-		stamp -= (s32)SaveBuffer;
+		stamp = (Uint8 *)part + (Sint32)BattleArenaSaveStamp;
+		stamp -= (Sint32)BupBuffer;
 		syWordsCopy(stamp, BattleArenaSaveStamp, 16);
-		error = sySaveWritePart(SaveSlot, part);
+		error = syBupWritePart(BupSlot, part);
 		if(error != 0) {
 			mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
 			result = SAVE_ERROR_WRITE;
 		}
 	}
-	sySaveReleaseState();
+	syBupReleaseState();
 	syHeapRelease(part);
 	return result;
 }
 
-/* Asks whether to save over the current file and, on Yes, writes the save */
-/* stamp into it (mnSaveWriteLinkTallies) and says so. */
-UNUSED s32 mnSaveConfirmAndProcessSelectedFile(void) {
-	s32 result;
+/* Asks whether to save over the current file and, on Yes, writes the save stamp
+   into it (mnSaveWriteLinkTallies) and says so. */
+UNUSED Sint32 mnSaveConfirmAndProcessSelectedFile(void)
+{
+	Sint32 result;
 
 	/* UB: on No, result is returned without ever being set. */
-#ifdef UBFIX
+#if FIX_UNINITIALIZED_READ
 	result = 0;
 #endif
 
@@ -383,8 +381,7 @@ UNUSED s32 mnSaveConfirmAndProcessSelectedFile(void) {
 	}
 	if(mnYesNoMenuRun(1, 0, 0, 1)) {
 		mnMessageCloseFinishedWindows();
-	}
-	else {
+	} else {
 		mnMessageCloseFinishedWindows();
 		sySndPlayStub(MUS_SAVED);
 		result = mnSaveWriteLinkTallies();
@@ -395,51 +392,47 @@ UNUSED s32 mnSaveConfirmAndProcessSelectedFile(void) {
 	return result;
 }
 
-/* The file list's Copy (scene/file_screen.c): lets the player choose a file, */
-/* reads both of its parts into the save buffer, overwriting it, and writes */
-/* them to the first empty file. */
-s32 mnSaveCopyFile(void) {
-	u32 error;
-	s32 file;
-	s32 result;
+/* The file list's Copy (scene/file_screen.c): lets the player choose a file,
+   reads both of its parts into the save buffer, overwriting it, and writes them
+   to the first empty file. */
+Sint32 mnSaveCopyFile(void)
+{
+	Uint32 error;
+	Sint32 file;
+	Sint32 result;
 
 	result = 0;
-	error = sySaveInitState();
+	error = syBupInitState();
 	if(error != 0) {
 		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
 		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else {
-		sySaveLoadFileSummaries();
+	} else {
+		syBupLoadFileSummaries();
 		file = mnFileListSelectFile(0, FILE_LIST_COPY);
 		if(file == -1) {
 			result = file;
-		}
-		else {
-			void *lower = &SaveBuffer;
+		} else {
+			void *lower = &BupBuffer;
 			void *upper;
 
-			error = sySaveReadPart(file, lower);
-			upper = (u8 *)lower + SAVE_PART_BYTES;
-			error |= sySaveReadPart(file + SAVE_FILE_COUNT, upper);
+			error = syBupReadPart(file, lower);
+			upper = (Uint8 *)lower + BUP_PART_BYTES;
+			error |= syBupReadPart(file + BUP_FILE_COUNT, upper);
 			if(error != 0) {
 				mnFieldMessageShow(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
 				result = SAVE_ERROR_READ;
-			}
-			else {
+			} else {
 				file = mnSaveFindFreeFile();
 				if(file == SAVE_NO_FREE_FILE) {
 					mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
 					result = SAVE_ERROR_NO_FILE;
-				}
-				else {
-					error = sySaveWritePart(file, lower);
-					error |= sySaveWritePart(file + SAVE_FILE_COUNT, upper);
+				} else {
+					error = syBupWritePart(file, lower);
+					error |= syBupWritePart(file + BUP_FILE_COUNT, upper);
 					if(error != 0) {
 						mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
 						result = SAVE_ERROR_WRITE;
-					}
-					else {
+					} else {
 						mnFieldMessageShow(MsgFileCopied, FIELD_MESSAGE_ZOOM);
 					}
 				}
@@ -447,116 +440,118 @@ s32 mnSaveCopyFile(void) {
 		}
 	}
 
-	sySaveReleaseState();
+	syBupReleaseState();
 	return result;
 }
 
 /* The file list's Erase (scene/file_screen.c): lets the player choose a file,
- */
-/* asks whether to erase it and on Yes deletes both of its parts. */
-s32 mnSaveEraseSelectedFile(void) {
-	s32 error;
-	s32 file;
-	s32 result = 0;
+   asks whether to erase it and on Yes deletes both of its parts. */
+Sint32 mnSaveEraseSelectedFile(void)
+{
+	Sint32 error;
+	Sint32 file;
+	Sint32 result = 0;
 
-	error = sySaveInitState();
+	error = syBupInitState();
 	if(error != 0) {
 		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
 		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else {
-		sySaveLoadFileSummaries();
+	} else {
+		syBupLoadFileSummaries();
 		file = mnFileListSelectFile(0, FILE_LIST_ERASE);
 		if(file == -1) {
 			result = file;
-		}
-		else {
+		} else {
 			mnMessageOpenWindow(MsgEraseConfirm, 8, 1, 2);
 			while(mnMessageAllTyped() == 0) {
 				sySynch(1);
 			}
 			if(mnYesNoMenuRun(1, 0, 3, 1) != 0) {
 				mnMessageCloseFinishedWindows();
-			}
-			else {
+			} else {
 				mnMessageCloseFinishedWindows();
-				error = sySaveDeletePart(file);
-				error |= sySaveDeletePart(file + SAVE_FILE_COUNT);
+				error = syBupDeletePart(file);
+				error |= syBupDeletePart(file + BUP_FILE_COUNT);
 				if(error != 0) {
 					mnFieldMessageShow(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
 					result = SAVE_ERROR_ERASE;
-				}
-				else {
+				} else {
 					mnFieldMessageShow(MsgFileErased, FIELD_MESSAGE_ZOOM);
 				}
 			}
 		}
 	}
-	sySaveReleaseState();
+	syBupReleaseState();
 	return result;
 }
 
-#if TBS_PATCH_1
+#if FILE_LIST_GLOW_BAR_CURSOR
 
-/* A task that makes colours 8-11 of HIGHLIGHT_PALETTE glow: each follows a */
-/* sine wave of the frame counter, eight frames behind the one before. */
-void mnFileListUpdatePulse(void) {
-	s32 *vblankCount;
-	volatile u16 *palette;
-	s32 colour;
-	FIXED sine;
-	s32 i;
+/* An event that makes colours 8-11 of HIGHLIGHT_PALETTE glow: each follows a
+   sine wave of the frame counter, eight frames behind the one before. */
+void mnFileListUpdatePulse(void)
+{
+	Sint32			*vblankCount;
+	volatile Uint16 *palette;
+	Sint32			 colour;
+	FIXED			 sine;
+	Sint32			 i;
 
-	vblankCount = (s32 *)&VBlankCount;
+	vblankCount = (Sint32 *)&VBlankCount;
 	palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
 	i = 0;
 	do {
-#ifdef UBFIX
+#if FIX_SIGNED_OVERFLOW
 		/* Wrap the frame phase before sySin takes its low sixteen bits. */
-		sine = sySin((((u32)*vblankCount + i * 8U) * (TRIG_TURN * 3 / 256U)) &
-					 TRIG_ANGLE_MASK);
+		sine =
+			sySin((((Uint32)*vblankCount + i * 8U) * (TRIG_TURN * 3 / 256U)) &
+				TRIG_ANGLE_MASK);
 #else
 		sine = sySin((*vblankCount + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
-		colour = sine / (FIXED_ONE / 4);
+		colour = sine / (toFIXED(1) / 4);
 		{
-#ifdef UBFIX
+#if FIX_UNDEFINED_SHIFT
 			/* A negative sine must be shifted as unsigned bits. */
-			u32 red = (u32)colour << 1;
+			Uint32 red = (Uint32)colour << 1;
 #else
-			u32 red = colour << 1;
+			Uint32 red = colour << 1;
 #endif
-			u32 green = colour;
+			Uint32 green = colour;
 
 			red += FILE_LIST_GLOW_RED;
 			green += FILE_LIST_GLOW_GREEN;
 			colour += FILE_LIST_GLOW_BLUE;
-			scIoWrite16(RGB(red, green, colour), palette++);
+			IO_WRITE16(RGB(red, green, colour), palette++);
 		}
 	} while(++i <= 3);
 }
 
 #endif
 
-#if TBS_PATCH_1
+#if FILE_LIST_GLOW_BAR_CURSOR
 
-/* Starts the palette glow (mnFileListUpdatePulse) as a task. */
-void mnFileListStartPulse(void) {
-	sySetEvent(mnFileListUpdatePulse, TASK_PASS_FRAME);
+/* Starts the palette glow (mnFileListUpdatePulse) as an event. */
+void mnFileListStartPulse(void)
+{
+	sySetEvent(mnFileListUpdatePulse, EVENT_PASS_FRAME);
 }
 
 /* Stops the file list's glow (mnFileListUpdatePulse). */
-void mnFileListStopPulse(void) { syCloseEvent(mnFileListUpdatePulse); }
+void mnFileListStopPulse(void)
+{
+	syCloseEvent(mnFileListUpdatePulse);
+}
 
-/* Fills the `width` x `height` tile rectangle at (x, y) inside `window`, */
-/* clipped to the screen as mnWindowSetInteriorPaletteBit clips, with the tile
- */
-/* entry of tile 6 in HIGHLIGHT_PALETTE, the palette mnFileListUpdatePulse */
-/* animates. */
-void mnWindowFillTilemapRect(WINDOW *window, s32 x, s32 y, s32 width,
-							 s32 height) {
-	u16 *tilemap = (u16 *)WindowStateWork[0];
-	s32 sum;
+/* Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
+   clipped to the screen as mnWindowSetInteriorPaletteBit clips, with the tile
+   entry of tile 6 in HIGHLIGHT_PALETTE, the palette mnFileListUpdatePulse
+   animates. */
+void mnWindowFillTilemapRect(
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
+{
+	Uint16 *tilemap = (Uint16 *)WindowStateWork[0];
+	Sint32	sum;
 
 	sum = x + window->x;
 	x = sum + 1;
@@ -574,11 +569,10 @@ void mnWindowFillTilemapRect(WINDOW *window, s32 x, s32 y, s32 width,
 		height += y;
 		y = 0;
 	}
-	/* BUG: the bottom is tested against the screen's width, so a rectangle */
-	/* ending below row DISPLAY_TILE_HEIGHT writes past WIN_STATE.tilemap; the
-	 */
-	/* one caller, the file list's highlight, never does. */
-#ifdef BUGFIX
+	/* BUG: the bottom is tested against the screen's width, so a rectangle
+	   ending below row DISPLAY_TILE_HEIGHT writes past WIN_STATE.tilemap; the
+	   one caller, the file list's highlight, never does. */
+#if FIX_RECT_BOTTOM_CLIP
 	if(y + height > DISPLAY_TILE_HEIGHT - 1)
 #else
 	if(y + height > DISPLAY_TILE_WIDTH - 1)
@@ -587,12 +581,12 @@ void mnWindowFillTilemapRect(WINDOW *window, s32 x, s32 y, s32 width,
 
 	if(width > 0 && height > 0) {
 		/* Byte offsets: BG_SCREEN_WIDTH entries of 2 bytes a row. */
-		s32 yOffset = y * (BG_SCREEN_WIDTH * 2);
-		s32 xOffset = x << 1;
-		s32 offset = yOffset + xOffset;
+		Sint32 yOffset = y * (BG_SCREEN_WIDTH * 2);
+		Sint32 xOffset = x << 1;
+		Sint32 offset = yOffset + xOffset;
 		do {
-			s32 remaining = width;
-			u16 *cell = (u16 *)(offset + (s32)tilemap);
+			Sint32	remaining = width;
+			Uint16 *cell = (Uint16 *)(offset + (Sint32)tilemap);
 			for(; remaining != 0; remaining--)
 				*cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
 			height--;
@@ -604,22 +598,21 @@ void mnWindowFillTilemapRect(WINDOW *window, s32 x, s32 y, s32 width,
 
 #endif
 
-/* The file list shows the chosen file's party as standing sprites in a row, */
-/* and four Djinn sprites, one for each element, over the file's Djinn counts.
- */
+/* The file list shows the chosen file's party as standing sprites in a row, and
+   four Djinn sprites, one for each element, over the file's Djinn counts. */
 #define FILE_LIST_SPRITE_SPACING 3
 
 /* Shows the party of save file `summary` (up to four party members) as sprites
- */
-/* in a row from tile (x, y) inside `window`, and starts placing them every */
-/* frame (mnFileListPlacePartySprs). */
-void mnFileListShowPartySprs(WINDOW *window, s32 x, s32 y,
-							 SAVE_FILE_SUMMARY *summary) {
+   in a row from tile (x, y) inside `window`, and starts placing them every
+   frame (mnFileListPlacePartySprs). */
+void mnFileListShowPartySprs(
+	WINDOW *window, Sint32 x, Sint32 y, BUP_FILE_SUMMARY *summary)
+{
 	SHOP_STATE *menu = MenuState;
-	s32 i;
+	Sint32		i;
 
 	for(i = 0; i < 4 && summary->party[i] != -1; i++) {
-		SPR *sprite = fdSprCreateStub(gmPartyGetCharacterSprForChildhoodStub(
+		SPR *sprite = fdSprCreateStub(fdPartyGetCharacterSprForChildhoodStub(
 			summary->party[i], summary->childhood));
 
 		if(sprite != NULL) {
@@ -632,16 +625,17 @@ void mnFileListShowPartySprs(WINDOW *window, s32 x, s32 y,
 		menu->partyMemberX[i] =
 			(x + window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
 		menu->partyMemberY[i] = (y + window->y) * 8 + 16;
-		menu->partyMemberScale[i] = FIXED_ONE;
+		menu->partyMemberScale[i] = toFIXED(1);
 	}
 
-	sySetEvent(mnFileListPlacePartySprs, TASK_PASS_FRAME);
+	sySetEvent(mnFileListPlacePartySprs, EVENT_PASS_FRAME);
 }
 
 /* Stops placing the party sprites of the file list and releases them. */
-void mnFileListHidePartySprs(void) {
+void mnFileListHidePartySprs(void)
+{
 	SHOP_STATE *menu = MenuState;
-	s32 i;
+	Sint32		i;
 
 	syCloseEvent(mnFileListPlacePartySprs);
 	for(i = 0; i < 4; i++) {
@@ -652,14 +646,15 @@ void mnFileListHidePartySprs(void) {
 	}
 }
 
-/* A task: draws each party sprite of the file list at its */
-/* place and scale for this frame. */
-void mnFileListPlacePartySprs(void) {
-	SHOP_STATE *menu = MenuState;
-	SPR_SCALE scale;
+/* An event: draws each party sprite of the file list at its place and scale for
+   this frame. */
+void mnFileListPlacePartySprs(void)
+{
+	SHOP_STATE	 *menu = MenuState;
+	SPR_SCALE	  scale;
 	SPR_PLACEMENT position;
-	s32 index = 0;
-	SPR *sprite;
+	Sint32		  index = 0;
+	SPR			 *sprite;
 
 	while(1) {
 		sprite = menu->partyMemberIcons[index];
@@ -671,8 +666,8 @@ void mnFileListPlacePartySprs(void) {
 			position.height = toFIXED(500);
 			position.y = toFIXED(menu->partyMemberY[index]) + toFIXED(500);
 			position.groundHeight = 0;
-			fdRenderApplyProjectedPlacementStub(sprite, &position, &scale,
-												FACING_SOUTH);
+			fdRenderApplyProjectedPlacementStub(
+				sprite, &position, &scale, FACING_SOUTH);
 		}
 		index += 1;
 		if(index > 3) {
@@ -681,12 +676,13 @@ void mnFileListPlacePartySprs(void) {
 	}
 }
 
-/* Shows the four Djinn sprites, one for each element, in a row from tile */
-/* (x, y) inside `window`, and starts placing them every frame */
-/* (mnFileListPlaceDjinnSprs). Does nothing when `window` is NULL. */
-void mnFileListShowDjinnSprs(WINDOW *window, s32 x, s32 y) {
+/* Shows the four Djinn sprites, one for each element, in a row from tile (x, y)
+   inside `window`, and starts placing them every frame
+   (mnFileListPlaceDjinnSprs). Does nothing when `window` is NULL. */
+void mnFileListShowDjinnSprs(WINDOW *window, Sint32 x, Sint32 y)
+{
 	ITEM_MENU_STATE *menu = MenuState;
-	s32 i;
+	Sint32			 i;
 
 	if(window != NULL) {
 		for(i = 0; i < 4; i++) {
@@ -704,14 +700,15 @@ void mnFileListShowDjinnSprs(WINDOW *window, s32 x, s32 y) {
 			menu->figureY[i] = (window->y + y) * 8 + 16;
 		}
 
-		sySetEvent(mnFileListPlaceDjinnSprs, TASK_PASS_FRAME);
+		sySetEvent(mnFileListPlaceDjinnSprs, EVENT_PASS_FRAME);
 	}
 }
 
 /* Stops placing the Djinn sprites of the file list and releases them. */
-void mnFileListHideDjinnSprs(void) {
+void mnFileListHideDjinnSprs(void)
+{
 	ITEM_MENU_STATE *menu = MenuState;
-	s32 i;
+	Sint32			 i;
 
 	syCloseEvent(mnFileListPlaceDjinnSprs);
 	for(i = 0; i < 4; i++) {
@@ -722,19 +719,20 @@ void mnFileListHideDjinnSprs(void) {
 	}
 }
 
-/* A task: draws each Djinn sprite of the file list at its */
-/* place, at scale 1.0, for this frame. */
-void mnFileListPlaceDjinnSprs(void) {
+/* An event: draws each Djinn sprite of the file list at its place, at scale
+   1.0, for this frame. */
+void mnFileListPlaceDjinnSprs(void)
+{
 	ITEM_MENU_STATE *menu = MenuState;
-	SPR_SCALE scale;
-	SPR_PLACEMENT position;
-	s32 index;
+	SPR_SCALE		 scale;
+	SPR_PLACEMENT	 position;
+	Sint32			 index;
 
 	for(index = 0; index <= 3; index++) {
 		SPR *sprite = menu->figures[index];
 
 		if(sprite != NULL) {
-			FIXED fullSize = FIXED_ONE;
+			FIXED fullSize = toFIXED(1);
 			FIXED height = toFIXED(500);
 
 			scale.x = fullSize;
@@ -743,56 +741,51 @@ void mnFileListPlaceDjinnSprs(void) {
 			position.height = height;
 			position.y = toFIXED(menu->figureY[index]) + height;
 			position.groundHeight = 0;
-			fdRenderApplyProjectedPlacementStub(sprite, &position, &scale,
-												FACING_SOUTH);
+			fdRenderApplyProjectedPlacementStub(
+				sprite, &position, &scale, FACING_SOUTH);
 		}
 	}
 }
 
-/* Draws the Djinn counts of save file `summary`, one for each element, two */
-/* digits each, 24 pixels apart on row 16 of `window`, under the Djinn sprites.
- */
-void mnFileListDrawDjinnCounts(WINDOW *window, SAVE_FILE_SUMMARY *summary) {
-	s32 i;
+/* Draws the Djinn counts of save file `summary`, one for each element, two
+   digits each, 24 pixels apart on row 16 of `window`, under the Djinn
+   sprites. */
+void mnFileListDrawDjinnCounts(WINDOW *window, BUP_FILE_SUMMARY *summary)
+{
+	Sint32 i;
 
 	if(window != NULL) {
 		for(i = 0; i < 4; i++)
 			mnTextDrawNumAtOffset(summary->djinn[i], 2, window,
-								  i * FILE_LIST_SPRITE_SPACING * 8, 16);
+				i * FILE_LIST_SPRITE_SPACING * 8, 16);
 	}
 }
 
 /* Where each edition draws the "Lv" label and the coin label, in pixels. */
-#if LANGUAGE == LANGUAGE_SPANISH
-#define SUMMARY_LEVEL_X	   64
-#define SUMMARY_COINS_X	   56
-#define SUMMARY_DRAW_LEVEL mnTextDrawStringAtOffset
-#elif LANGUAGE == LANGUAGE_FRENCH
-#define SUMMARY_LEVEL_X	   59
-#define SUMMARY_COINS_X	   56
-#define SUMMARY_DRAW_LEVEL mnTextDrawStringAtOffset
-#else
-#define SUMMARY_LEVEL_X	   72
-#define SUMMARY_COINS_X	   48
-#define SUMMARY_DRAW_LEVEL mnTextDrawStringInWindow
-#endif
+#define SUMMARY_LEVEL_X BY_LANGUAGE(72, 72, 72, 64, 59, 72)
+#define SUMMARY_COINS_X BY_LANGUAGE(48, 48, 48, 56, 56, 48)
+#define SUMMARY_DRAW_LEVEL \
+	BY_LANGUAGE(mnTextDrawStringInWindow, mnTextDrawStringInWindow, \
+		mnTextDrawStringInWindow, mnTextDrawStringAtOffset, \
+		mnTextDrawStringAtOffset, mnTextDrawStringInWindow)
 
-/* Draws the summary of save file `summary` into `window`: the leader's name, */
-/* level and class, the play time and the coins. */
-void mnFileListDrawSummary(WINDOW *window, SAVE_FILE_SUMMARY *summary) {
-	u32 playTime[4];
-	s32 y;
+/* Draws the summary of save file `summary` into `window`: the leader's name,
+   level and class, the play time and the coins. */
+void mnFileListDrawSummary(WINDOW *window, BUP_FILE_SUMMARY *summary)
+{
+	Uint32 playTime[4];
+	Sint32 y;
 
 	if(window != 0) {
 		mnWindowSprPrepareForRedraw(window);
 		mnWindowDrawDividerLine(window, 0, 4, 13, 4);
 		mnTextDrawStringAtOffset(summary->name, window, 0, 0);
 		y = 0;
-		SUMMARY_DRAW_LEVEL(StatusScreen_LevelLetterString, window,
-						   SUMMARY_LEVEL_X, 0);
+		SUMMARY_DRAW_LEVEL(
+			StatusScreen_LevelLetterString, window, SUMMARY_LEVEL_X, 0);
 		mnTextDrawNumAtOffset(summary->level, 2, window, 80, y);
-		mnTextDrawMessageAsTiles(summary->classId + MsgClassName, window, 0,
-								 16);
+		mnTextDrawMessageAsTiles(
+			summary->classId + MsgClassName, window, 0, 16);
 #if LANGUAGE == LANGUAGE_JAPANESE
 		/* Coins on the third row, then "Play Time:" and the time. */
 		y = 32;
@@ -800,14 +793,14 @@ void mnFileListDrawSummary(WINDOW *window, SAVE_FILE_SUMMARY *summary) {
 		mnTextDrawMessageAsTiles(MsgCoins, window, 72, 32);
 		mnTextDrawMessageAsTiles(MsgStatusLabel, window, 0, 48);
 		mnTextDrawStringInWindow(
-			mnStringFormatPlayTime(summary->playTime, (u8 *)playTime), window,
-			48, 48);
+			mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime),
+			window, 48, 48);
 #else
 		/* "Play Time:" with the time under it, then the coins. */
 		mnTextDrawMessageAsTiles(MsgStatusLabel, window, 0, 32);
 		mnTextDrawStringInWindow(
-			mnStringFormatPlayTime(summary->playTime, (u8 *)playTime), window,
-			48, 40);
+			mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime),
+			window, 48, 40);
 		y = 48;
 		mnTextDrawNumInWindow(summary->coins, 6, window, 0, y);
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -824,144 +817,135 @@ void mnFileListDrawSummary(WINDOW *window, SAVE_FILE_SUMMARY *summary) {
 }
 
 /* The file list: lists the three files with each one's leader and area (or why
- */
-/* it cannot be chosen) and, for the file under the cursor, its summary, its */
-/* party and its Djinn, with the file's own palette glow. */
-s32 mnFileListSelectFile(s32 selectedFile, s32 menuMode) {
+   it cannot be chosen) and, for the file under the cursor, its summary, its
+   party and its Djinn, with the file's own palette glow. */
+Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
+{
 	WINDOW *fileList;
-#if TBS_PATCH_1
-	SAVE_STATE *save;
-	WINDOW *summaryWindow;
-	WINDOW *partyWindow;
-	WINDOW *djinnWindow;
-	SAVE_FILE_SUMMARY *summary;
-	WINDOW_SPR *modePicture;
-	s32 summaryDirty;
-	WIN_STATE *state;
-	u32 buildStamp;
-	SHOP_STATE *spriteState;
-	s32 result;
-	s32 i;
-	s32 y;
+#if FILE_LIST_GLOW_BAR_CURSOR
+	BUP_STATE		 *save;
+	WINDOW			 *summaryWindow;
+	WINDOW			 *partyWindow;
+	WINDOW			 *djinnWindow;
+	BUP_FILE_SUMMARY *summary;
+	WINDOW_SPR		 *modePicture;
+	Bool			  summaryDirty;
+	WIN_STATE		 *state;
+	Uint32			  buildStamp;
+	SHOP_STATE		 *spriteState;
+	Sint32			  result;
+	Sint32			  i;
+	Sint32			  y;
 #else
-	WINDOW *summaryWindow;
-	SAVE_STATE *save;
-	WINDOW *partyWindow;
-	WINDOW *djinnWindow;
-	SAVE_FILE_SUMMARY *summary;
-	WINDOW_SPR *modePicture;
-	s32 cursorStyle;
-	s32 summaryDirty;
-	WIN_STATE *state;
-	u32 buildStamp;
-	SHOP_STATE *spriteState;
-	MENU_CURSOR fileCursor;
-	s32 result;
-	s32 i;
-	s32 x;
-	s32 y;
-	s32 vramSlot;
-	WINDOW_SPR *cursorSprite;
+	WINDOW			 *summaryWindow;
+	BUP_STATE		 *save;
+	WINDOW			 *partyWindow;
+	WINDOW			 *djinnWindow;
+	BUP_FILE_SUMMARY *summary;
+	WINDOW_SPR		 *modePicture;
+	Sint32			  cursorStyle;
+	Bool			  summaryDirty;
+	WIN_STATE		 *state;
+	Uint32			  buildStamp;
+	SHOP_STATE		 *spriteState;
+	MENU_CURSOR		  fileCursor;
+	Sint32			  result;
+	Sint32			  i;
+	Sint32			  x;
+	Sint32			  y;
+	Sint32			  vramSlot;
+	WINDOW_SPR		 *cursorSprite;
 #endif
 
 	spriteState = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(*spriteState));
-	save = SaveStateWork;
+	save = BupStateWork;
 	summaryWindow = NULL;
 	partyWindow = NULL;
 	djinnWindow = NULL;
-	summaryDirty = 1;
+	summaryDirty = TRUE;
 	state = WINDOW_STATE;
 	buildStamp = gmBuildStampGetTimeStub();
 	/* Start on the first file the mode allows. */
-	/* BUG: when none is, the jump to done returns FILE_LIST_NO_FILE without */
-	/* releasing spriteState's HEAP_SLOT_MENU block. */
+	/* BUG: when none is, the jump to done returns FILE_LIST_NO_FILE without
+	   releasing spriteState's HEAP_SLOT_MENU block. */
 	if(selectedFile < 0)
 		selectedFile = 0;
-#if TBS_PATCH_1
+#if FILE_LIST_GLOW_BAR_CURSOR
 	if(menuMode == FILE_LIST_CONTINUE) {
-		for(i = 0;
-			i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
-									save->summary[selectedFile].sendFlg != 0);
+		for(i = 0; i < BUP_FILE_COUNT &&
+			(save->summary[selectedFile].level == 0 ||
+				save->summary[selectedFile].sendFlg != 0);
 			i++) {
 			selectedFile++;
-			if(selectedFile == SAVE_FILE_COUNT)
+			if(selectedFile == BUP_FILE_COUNT)
 				selectedFile = 0;
 		}
-		if(i == SAVE_FILE_COUNT) {
+		if(i == BUP_FILE_COUNT) {
 			result = FILE_LIST_NO_FILE;
 			goto done;
 		}
-	}
-	else if(menuMode == FILE_LIST_BATTLE) {
-		for(i = 0;
-			i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
-									save->summary[selectedFile].djinnCnt == 0);
+	} else if(menuMode == FILE_LIST_BATTLE) {
+		for(i = 0; i < BUP_FILE_COUNT &&
+			(save->summary[selectedFile].level == 0 ||
+				save->summary[selectedFile].djinnCnt == 0);
 			i++) {
 			selectedFile++;
-			if(selectedFile == SAVE_FILE_COUNT)
+			if(selectedFile == BUP_FILE_COUNT)
 				selectedFile = 0;
 		}
-		if(i == SAVE_FILE_COUNT) {
+		if(i == BUP_FILE_COUNT) {
 			result = FILE_LIST_NO_FILE;
 			goto done;
 		}
-	}
-	else if(menuMode == FILE_LIST_CLEARED) {
-		for(i = 0;
-			i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
-									save->summary[selectedFile].sendFlg == 0);
+	} else if(menuMode == FILE_LIST_CLEARED) {
+		for(i = 0; i < BUP_FILE_COUNT &&
+			(save->summary[selectedFile].level == 0 ||
+				save->summary[selectedFile].sendFlg == 0);
 			i++) {
 			selectedFile++;
-			if(selectedFile == SAVE_FILE_COUNT)
+			if(selectedFile == BUP_FILE_COUNT)
 				selectedFile = 0;
 		}
-		if(i == SAVE_FILE_COUNT) {
+		if(i == BUP_FILE_COUNT) {
 			result = FILE_LIST_NO_FILE;
 			goto done;
 		}
-	}
-	else if(menuMode != FILE_LIST_SAVE) {
+	} else if(menuMode != FILE_LIST_SAVE) {
 		for(i = 0;
-			i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0);
+			i < BUP_FILE_COUNT && (save->summary[selectedFile].level == 0);
 			i++) {
 			selectedFile++;
-			if(selectedFile == SAVE_FILE_COUNT)
+			if(selectedFile == BUP_FILE_COUNT)
 				selectedFile = 0;
 		}
-		if(i == SAVE_FILE_COUNT) {
+		if(i == BUP_FILE_COUNT) {
 			result = FILE_LIST_NO_FILE;
 			goto done;
 		}
 	}
 
 	/* The file list, and the mode's sprite above it. */
-	btDmaFill32(0, spriteState, sizeof(*spriteState));
+	DMA_FILL32(0, spriteState, sizeof(*spriteState));
 	mnFileListStartPulse();
 	fileList = mnWindowCreate(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
 	summary = save->summary;
 	y = 0;
-	for(i = 0; i < SAVE_FILE_COUNT; i++, y += 16, summary++) {
+	for(i = 0; i < BUP_FILE_COUNT; i++, y += 16, summary++) {
 		if(summary->level == 0) {
 			mnTextDrawMessage(MsgSaveNoData, fileList, 10, y);
-		}
-		else if(summary->buildStamp < buildStamp) {
+		} else if(summary->buildStamp < buildStamp) {
 			/* Saved by an older build: "(Continue from a Sanctum)", since such
-			 * a */
-			/* file resumes at MAIN_ROUTINE_STATE.restartScene, not where it was
-			 * saved */
-			/* (scene/file_screen.c). */
+			   a file resumes at MAIN_ROUTINE_STATE.restartScene, not where it
+			   was saved (scene/file_screen.c). */
 			mnTextDrawMessage(MsgSaveContinue, fileList, 10, y);
-		}
-		else if(summary->playTime != summary->secondPartPlayTime) {
+		} else if(summary->playTime != summary->secondPartPlayTime) {
 			mnTextDrawMessage(MsgSaveCorrupted, fileList, 10, y);
-		}
-		else if(menuMode == FILE_LIST_CLEARED && summary->sendFlg == 0) {
+		} else if(menuMode == FILE_LIST_CLEARED && summary->sendFlg == 0) {
 			mnTextDrawMessage(MsgSaveNotCleared, fileList, 10, y);
-		}
-		else {
+		} else {
 			mnTextDrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
-			mnTextDrawMessage(summary->area + MsgDebugAreaName, fileList, 62,
-							  y);
+			mnTextDrawMessage(
+				summary->area + MsgDebugAreaName, fileList, 62, y);
 			state->dirty = 1;
 		}
 	}
@@ -970,94 +954,90 @@ s32 mnFileListSelectFile(s32 selectedFile, s32 menuMode) {
 #else
 	if(menuMode != FILE_LIST_SAVE) {
 		for(i = 0;
-			i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0);
+			i < BUP_FILE_COUNT && (save->summary[selectedFile].level == 0);
 			i++) {
 			selectedFile++;
-			if(selectedFile == SAVE_FILE_COUNT)
+			if(selectedFile == BUP_FILE_COUNT)
 				selectedFile = 0;
 		}
-		if(i == SAVE_FILE_COUNT) {
+		if(i == BUP_FILE_COUNT) {
 			result = FILE_LIST_NO_FILE;
 			goto done;
 		}
 	}
 	if(menuMode == FILE_LIST_CONTINUE) {
 		for(i = 0;
-			i < SAVE_FILE_COUNT && (save->summary[selectedFile].sendFlg != 0);
+			i < BUP_FILE_COUNT && (save->summary[selectedFile].sendFlg != 0);
 			i++) {
 			selectedFile++;
-			if(selectedFile == SAVE_FILE_COUNT)
+			if(selectedFile == BUP_FILE_COUNT)
 				selectedFile = 0;
 		}
-		if(i == SAVE_FILE_COUNT) {
+		if(i == BUP_FILE_COUNT) {
 			result = FILE_LIST_NO_FILE;
 			goto done;
 		}
 	}
 	if(menuMode == FILE_LIST_BATTLE) {
 		for(i = 0;
-			i < SAVE_FILE_COUNT && (save->summary[selectedFile].djinnCnt == 0);
+			i < BUP_FILE_COUNT && (save->summary[selectedFile].djinnCnt == 0);
 			i++) {
 			selectedFile++;
-			if(selectedFile == SAVE_FILE_COUNT)
+			if(selectedFile == BUP_FILE_COUNT)
 				selectedFile = 0;
 		}
-		if(i == SAVE_FILE_COUNT) {
+		if(i == BUP_FILE_COUNT) {
 			result = FILE_LIST_NO_FILE;
 			goto done;
 		}
 	}
 	if(menuMode == FILE_LIST_CLEARED) {
 		for(i = 0;
-			i < SAVE_FILE_COUNT && (save->summary[selectedFile].sendFlg == 0);
+			i < BUP_FILE_COUNT && (save->summary[selectedFile].sendFlg == 0);
 			i++) {
 			selectedFile++;
-			if(selectedFile == SAVE_FILE_COUNT)
+			if(selectedFile == BUP_FILE_COUNT)
 				selectedFile = 0;
 		}
-		if(i == SAVE_FILE_COUNT) {
+		if(i == BUP_FILE_COUNT) {
 			result = FILE_LIST_NO_FILE;
 			goto done;
 		}
 	}
 
 	/* The file list, and the mode's sprite above it. */
-	btDmaFill32(0, spriteState, sizeof(*spriteState));
+	DMA_FILL32(0, spriteState, sizeof(*spriteState));
 	fileList = mnWindowCreate(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
 
-	for(i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
+	for(i = 0, summary = save->summary; i < BUP_FILE_COUNT; i++, summary++) {
 		if(save->summary[i].level == 0) {
 			mnTextDrawMessage(MsgSaveNoData, fileList, 10, i * 16);
-		}
-		else if(save->summary[i].buildStamp < buildStamp) {
+		} else if(save->summary[i].buildStamp < buildStamp) {
 			/* Saved by an older build: see the other editions' list above. */
 			mnTextDrawMessage(MsgSaveContinue, fileList, 10, i * 16);
-		}
-		else if(save->summary[i].playTime !=
-				save->summary[i].secondPartPlayTime) {
+		} else if(save->summary[i].playTime !=
+			save->summary[i].secondPartPlayTime) {
 			mnTextDrawMessage(MsgSaveCorrupted, fileList, 10, i * 16);
-		}
-		else if(menuMode == FILE_LIST_CLEARED &&
-				save->summary[i].sendFlg == 0) {
+		} else if(menuMode == FILE_LIST_CLEARED &&
+			save->summary[i].sendFlg == 0) {
 			mnTextDrawMessage(MsgSaveNotCleared, fileList, 10, i * 16);
-		}
-		else {
+		} else {
 			y = i * 16;
 			mnTextDrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
-			mnTextDrawMessage(save->summary[i].area + MsgDebugAreaName,
-							  fileList, 72, y);
+			mnTextDrawMessage(
+				save->summary[i].area + MsgDebugAreaName, fileList, 72, y);
 			state->dirty = 1;
 		}
 	}
 	mnWindowDrawDividerLine(fileList, 0, 2, 27, 2);
 	mnWindowDrawDividerLine(fileList, 0, 4, 27, 4);
-	vramSlot = syVramCacheFindFreeEntry();
+	vramSlot = syVRAMCacheFindFreeEntry();
 	if(vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-		syVramCacheLoad(vramSlot, 128, PointingHandTiles);
+		syVRAMCacheLoad(vramSlot, 128, PointingHandTiles);
 		x = -12;
 		y = selectedFile * 16 + 4;
-		cursorSprite = mnWindowSprCreate(vramSlot, WINDOW_SPRITE_SIZE_16X16,
-										 fileList, x, y);
+		cursorSprite = mnWindowSprCreate(
+			vramSlot, WINDOW_SPRITE_SIZE_16X16, fileList, x, y);
 		cursorSprite->motion = WINDOW_SPRITE_MOTION_STILL;
 		fileCursor.anchor = cursorSprite;
 	}
@@ -1068,45 +1048,43 @@ s32 mnFileListSelectFile(s32 selectedFile, s32 menuMode) {
 	while(1) {
 		/* Show the file under the cursor after it moves. */
 		if(summaryDirty != 0) {
-			summaryDirty = 0;
+			summaryDirty = FALSE;
 			if(save->summary[selectedFile].level != 0) {
 				mnWindowColApply(save->summary[selectedFile].winHue,
-								 save->summary[selectedFile].winBrightness);
+					save->summary[selectedFile].winBrightness);
 				if(summaryWindow == NULL)
 					summaryWindow =
 						mnWindowCreate(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
-				mnFileListDrawSummary(summaryWindow,
-									  &save->summary[selectedFile]);
+				mnFileListDrawSummary(
+					summaryWindow, &save->summary[selectedFile]);
 				sySynch(1);
 				if(partyWindow == NULL)
 					partyWindow =
 						mnWindowCreate(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
 				mnFileListHidePartySprs();
-				mnFileListShowPartySprs(partyWindow, 0, 0,
-										&save->summary[selectedFile]);
+				mnFileListShowPartySprs(
+					partyWindow, 0, 0, &save->summary[selectedFile]);
 				sySynch(1);
 				if(save->summary[selectedFile].djinn[0] +
-					   save->summary[selectedFile].djinn[1] +
-					   save->summary[selectedFile].djinn[2] +
-					   save->summary[selectedFile].djinn[3] !=
-				   0) {
+						save->summary[selectedFile].djinn[1] +
+						save->summary[selectedFile].djinn[2] +
+						save->summary[selectedFile].djinn[3] !=
+					0) {
 					if(djinnWindow == NULL)
 						djinnWindow =
 							mnWindowCreate(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
-					mnFileListDrawDjinnCounts(djinnWindow,
-											  &save->summary[selectedFile]);
+					mnFileListDrawDjinnCounts(
+						djinnWindow, &save->summary[selectedFile]);
 					mnFileListHideDjinnSprs();
 					mnFileListShowDjinnSprs(djinnWindow, 0, 0);
-				}
-				else {
+				} else {
 					mnFileListHideDjinnSprs();
 					mnWindowClose(djinnWindow, 2);
 					djinnWindow = NULL;
 				}
-			}
-			else {
+			} else {
 				mnWindowColApply(MainRoutineStateWork.winHue,
-								 MainRoutineStateWork.winBrightness);
+					MainRoutineStateWork.winBrightness);
 				mnFileListHideDjinnSprs();
 				mnFileListHidePartySprs();
 				mnWindowClose(djinnWindow, 2);
@@ -1116,7 +1094,7 @@ s32 mnFileListSelectFile(s32 selectedFile, s32 menuMode) {
 				partyWindow = NULL;
 				summaryWindow = NULL;
 			}
-#if TBS_PATCH_1
+#if FILE_LIST_GLOW_BAR_CURSOR
 			mnWindowSprRedrawSavedRect(fileList);
 			mnWindowDrawDividerLine(fileList, 0, 2, 27, 2);
 			mnWindowDrawDividerLine(fileList, 0, 4, 27, 4);
@@ -1133,46 +1111,42 @@ s32 mnFileListSelectFile(s32 selectedFile, s32 menuMode) {
 		mnTitleBob(modePicture);
 		sySynch(1);
 		/* Up and down move to the previous or next file the mode allows; saving
-		 */
-		/* allows every file, an empty one too. */
-		if(KeysRepeat & KEY_UP) {
+		   allows every file, an empty one too. */
+		if(PerRepeat & KEY_UP) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			summaryDirty = 1;
+			summaryDirty = TRUE;
 			do {
 				selectedFile =
-					(selectedFile + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT;
+					(selectedFile + BUP_FILE_COUNT - 1) % BUP_FILE_COUNT;
 				if(menuMode == FILE_LIST_SAVE)
 					break;
 			} while((save->summary[selectedFile].level == 0 ||
-					 (menuMode == FILE_LIST_CONTINUE &&
-					  save->summary[selectedFile].sendFlg != 0) ||
-					 (menuMode == FILE_LIST_BATTLE &&
-					  save->summary[selectedFile].djinnCnt == 0) ||
-					 (menuMode == FILE_LIST_CLEARED &&
-					  save->summary[selectedFile].sendFlg == 0)));
-		}
-		else if(KeysRepeat & KEY_DOWN) {
+				(menuMode == FILE_LIST_CONTINUE &&
+					save->summary[selectedFile].sendFlg != 0) ||
+				(menuMode == FILE_LIST_BATTLE &&
+					save->summary[selectedFile].djinnCnt == 0) ||
+				(menuMode == FILE_LIST_CLEARED &&
+					save->summary[selectedFile].sendFlg == 0)));
+		} else if(PerRepeat & KEY_DOWN) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			summaryDirty = 1;
+			summaryDirty = TRUE;
 			do {
 				selectedFile =
-					(selectedFile + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT;
+					(selectedFile + BUP_FILE_COUNT + 1) % BUP_FILE_COUNT;
 				if(menuMode == FILE_LIST_SAVE)
 					break;
 			} while((save->summary[selectedFile].level == 0 ||
-					 (menuMode == FILE_LIST_CONTINUE &&
-					  save->summary[selectedFile].sendFlg != 0) ||
-					 (menuMode == FILE_LIST_BATTLE &&
-					  save->summary[selectedFile].djinnCnt == 0) ||
-					 (menuMode == FILE_LIST_CLEARED &&
-					  save->summary[selectedFile].sendFlg == 0)));
-		}
-		else if(KeysPressed & KEY_B) {
+				(menuMode == FILE_LIST_CONTINUE &&
+					save->summary[selectedFile].sendFlg != 0) ||
+				(menuMode == FILE_LIST_BATTLE &&
+					save->summary[selectedFile].djinnCnt == 0) ||
+				(menuMode == FILE_LIST_CLEARED &&
+					save->summary[selectedFile].sendFlg == 0)));
+		} else if(PerPush & KEY_B) {
 			sySndPlayStub(SE_MENU_CANCEL);
 			result = -1;
 			break;
-		}
-		else if(KeysPressed & KEY_A) {
+		} else if(PerPush & KEY_A) {
 			sySndPlayStub(SE_MENU_CONFIRM);
 			result = selectedFile;
 			break;
@@ -1185,45 +1159,43 @@ s32 mnFileListSelectFile(s32 selectedFile, s32 menuMode) {
 	mnWindowClose(partyWindow, 2);
 	mnWindowClose(summaryWindow, 2);
 	mnWindowClose(fileList, 2);
-#if TBS_PATCH_1
+#if FILE_LIST_GLOW_BAR_CURSOR
 	mnFileListStopPulse();
 #endif
 	syHeapSlotRelease(HEAP_SLOT_MENU);
-	mnWindowColApply(MainRoutineStateWork.winHue,
-					 MainRoutineStateWork.winBrightness);
+	mnWindowColApply(
+		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
 	sySynch(1);
 done:
 	return result;
 }
 
-/* The Save command: lets the player choose a file (the current one first), */
-/* asks whether to save over it when it has data, then saves the game to it, */
-/* ActorsWork included, and makes it the current file. */
-s32 mnSaveToChosenFile(void) {
-	s32 result;
-	s32 file;
-	s32 error;
-	SAVE_STATE *state;
+/* The Save command: lets the player choose a file (the current one first), asks
+   whether to save over it when it has data, then saves the game to it,
+   ActorsWork included, and makes it the current file. */
+Sint32 mnSaveToChosenFile(void)
+{
+	Sint32	   result;
+	Sint32	   file;
+	Sint32	   error;
+	BUP_STATE *state;
 
 	result = 0;
-	error = sySaveInitState();
+	error = syBupInitState();
 	if(error != 0) {
 		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
 		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else {
-		sySaveLoadFileSummaries();
-		state = SaveStateWork;
-		file = mnFileListSelectFile(SaveSlot, FILE_LIST_SAVE);
+	} else {
+		syBupLoadFileSummaries();
+		state = BupStateWork;
+		file = mnFileListSelectFile(BupSlot, FILE_LIST_SAVE);
 		if(file == -1) {
 			result = file;
-		}
-		else {
+		} else {
 			if(state->summary[file].level != 0) {
 				mnFieldMessageShow(MsgOverwriteConfirm,
-								   FIELD_MESSAGE_ZOOM |
-									   FIELD_MESSAGE_KEEP_OPEN |
-									   FIELD_MESSAGE_LOWER);
+					FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
+						FIELD_MESSAGE_LOWER);
 				while(mnMessageAllTyped() == 0) {
 					sySynch(1);
 				}
@@ -1233,83 +1205,81 @@ s32 mnSaveToChosenFile(void) {
 				}
 				mnMessageCloseFinishedWindows();
 			}
-			SaveSlot = file;
+			BupSlot = file;
 			sySndPlayStub(MUS_SAVED);
-			mnFieldMessageShow(MsgSaving, FIELD_MESSAGE_ZOOM |
-											  FIELD_MESSAGE_KEEP_OPEN |
-											  FIELD_MESSAGE_LOWER);
+			mnFieldMessageShow(MsgSaving,
+				FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
+					FIELD_MESSAGE_LOWER);
 			while(mnMessageAllTyped() == 0) {
 				sySynch(1);
 			}
 			mnSaveBuildFileSummary();
 			fdActorSnapshotStub();
-			error = sySaveWritePart(file, SaveBuffer);
-			error |= sySaveWritePart(file + SAVE_FILE_COUNT,
-									 SaveBuffer + SAVE_PART_BYTES);
+			error = syBupWritePart(file, BupBuffer);
+			error |= syBupWritePart(
+				file + BUP_FILE_COUNT, BupBuffer + BUP_PART_BYTES);
 			mnMessageCloseFinishedWindows();
 			if(error != 0) {
 				mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
 				result = SAVE_ERROR_WRITE;
-			}
-			else {
-				mnFieldMessageShow(MsgGameSaved,
-								   FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
+			} else {
+				mnFieldMessageShow(
+					MsgGameSaved, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
 			}
 		}
 	}
 done:
-	sySaveReleaseState();
+	syBupReleaseState();
 	return result;
 }
 
-/* Lets the player choose a file in file list `mode` (see FILE_MENU_MODE) and */
-/* loads it into the save buffer as the current file, restoring its play time */
-/* and options. */
-s32 mnSaveChooseAndLoadFile(s32 mode) {
-	s32 result = 0;
-	s32 error = sySaveInitState();
+/* Lets the player choose a file in file list `mode` (see FILE_MENU_MODE) and
+   loads it into the save buffer as the current file, restoring its play time
+   and options. */
+Sint32 mnSaveChooseAndLoadFile(Sint32 mode)
+{
+	Sint32 result = 0;
+	Sint32 error = syBupInitState();
 
 	if(error != 0) {
 		mnFieldMessageShow(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
 		result = SAVE_ERROR_NO_MEMORY;
-	}
-	else {
-		s32 file;
+	} else {
+		Sint32 file;
 
-		sySaveLoadFileSummaries();
-		file = mnFileListSelectFile(SaveSlot, mode);
+		syBupLoadFileSummaries();
+		file = mnFileListSelectFile(BupSlot, mode);
 		if(file == -1) {
 			result = file;
-		}
-		else {
-			void *half = &SaveBuffer;
+		} else {
+			void *half = &BupBuffer;
 
-			error = sySaveReadPart(file, half);
-			half = (char *)half + SAVE_PART_BYTES;
-			error |= sySaveReadPart(file + SAVE_FILE_COUNT, half);
+			error = syBupReadPart(file, half);
+			half = (char *)half + BUP_PART_BYTES;
+			error |= syBupReadPart(file + BUP_FILE_COUNT, half);
 			if(error != 0) {
 				mnFieldMessageShow(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
 				result = SAVE_ERROR_READ;
-			}
-			else {
+			} else {
 				PlayTimeFrames = MainRoutineStateWork.playTime;
 				IdleSleepEnabled = MainRoutineStateWork.idleSleepEnabled;
 				IdleFrames = 0;
-				SaveSlot = file;
+				BupSlot = file;
 			}
 		}
 	}
-	sySaveReleaseState();
+	syBupReleaseState();
 	return result;
 }
 
-/* Loads the pointing hand cursor's tiles (PointingHandTiles, 128 bytes) into */
-/* a free VRAM slot and returns the slot, which the caller frees with */
-/* syVramCacheFreeEntry. */
-s32 mnPointingHandLoadIntoFreeSlot(void) {
-	s32 slot;
+/* Loads the pointing hand cursor's tiles (PointingHandTiles, 128 bytes) into a
+   free VRAM slot and returns the slot, which the caller frees with
+   syVRAMCacheFreeEntry. */
+Sint32 mnPointingHandLoadIntoFreeSlot(void)
+{
+	Sint32 slot;
 
-	slot = syVramCacheFindFreeEntry();
-	syVramCacheLoad(slot, 128, PointingHandTiles);
+	slot = syVRAMCacheFindFreeEntry();
+	syVRAMCacheLoad(slot, 128, PointingHandTiles);
 	return slot;
 }

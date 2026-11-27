@@ -1,26 +1,24 @@
-/* @file */
-/* Scoop: the giant hand digging, the actor dropped from it and the item dug */
-/* up. */
-/* Part of field_psynergy.c. */
+/* Scoop: the giant hand digging, the actor dropped from it and the item dug up.
+   Part of field_psynergy.c. */
 
-/* A dig at nothing draws the first SCOOP_DRAWN_DUST of the particles of dust */
-/* and sparkles Scoop throws up, a dig on a target the first */
-/* SCOOP_DRAWN_TARGET_DUST. */
+/* A dig at nothing draws the first SCOOP_DRAWN_DUST of the particles of dust
+   and sparkles Scoop throws up, a dig on a target the first
+   SCOOP_DRAWN_TARGET_DUST. */
 #define SCOOP_DRAWN_DUST		18
 #define SCOOP_DRAWN_TARGET_DUST 20
 /* The sparkles the hand bursts into when it cannot dig. */
-#define SCOOP_SPARKLES 16
-/* A dig at nothing turns something up when syRandom() falls below this, one */
-/* time in sixteen; what turns up is an item below SCOOP_ITEM_CHANCE, three */
-/* times in four, and coins otherwise. */
-#define SCOOP_FIND_CHANCE (FIXED_ONE / 16)
-#define SCOOP_ITEM_CHANCE (FIXED_ONE * 3 / 4)
+#define SCOOP_SPARKLES			16
+/* A dig at nothing turns something up when syRandom() falls below this, one
+   time in sixteen; what turns up is an item below SCOOP_ITEM_CHANCE, three
+   times in four, and coins otherwise. */
+#define SCOOP_FIND_CHANCE		(toFIXED(1) / 16)
+#define SCOOP_ITEM_CHANCE		(toFIXED(3) / 4)
 
 /* The kinds of dig (SCOOP_STATE.mode). */
 typedef enum SCOOP_MODE {
 	SCOOP_EARTH = 0,  /* at nothing: earth is thrown up */
 	SCOOP_FINDS = 1,  /* at nothing, one time in sixteen: something turns up */
-	SCOOP_TARGET = 2, /* on a target: the place's Scoop event runs */
+	SCOOP_TARGET = 2, /* on a target: the place's Scoop script runs */
 	SCOOP_SPARKLE = 3 /* at nothing where lit: sparkles rise */
 } SCOOP_MODE;
 
@@ -43,18 +41,19 @@ typedef enum SCOOP_FAILURE {
 /* Moves the state on to its next phase, its timer restarted. */
 #define NEXT_PHASE(state) ((state)->phase++, (state)->tmr = -1)
 
-/* Task of the Scoop: the hand digs and rises, then the earth, sparkles or */
-/* dust it threw up show, each kind of dig at its own pace. */
-void fdScoopUpdate(void) {
-	SCOOP_STATE *state;
-	ACTOR *hand;
-	EFFECT_SPR *sprite;
+/* Event of the Scoop: the hand digs and rises, then the earth, sparkles or dust
+   it threw up show, each kind of dig at its own pace. */
+void fdScoopUpdate(void)
+{
+	SCOOP_STATE				*state;
+	ACTOR					*hand;
+	EFFECT_SPR				*sprite;
 	FIELD_PSYNERGY_PARTICLE *particle;
-	u8 *vram;
-	u8 *picture;
-	s16 *phase;
-	s32 jitter;
-	s32 i;
+	Uint8					*vram;
+	Uint8					*picture;
+	Sint16					*phase;
+	Sint32					 jitter;
+	Sint32					 i;
 
 	state = Ram_HeapSlots->battleEff;
 	hand = state->actor;
@@ -62,7 +61,7 @@ void fdScoopUpdate(void) {
 		switch(state->phase) {
 		case SCOOP_DIGS:
 			if(state->tmr == 1)
-				state->other->scaleX = FIXED_ONE;
+				state->other->scaleX = toFIXED(1);
 			if(state->tmr == 4)
 				NEXT_PHASE(state);
 			break;
@@ -84,10 +83,10 @@ void fdScoopUpdate(void) {
 		phase = &state->phase;
 		if(*phase == SCOOP_SETTLES) {
 			picture = state->picture;
-			vram = (u8 *)OBJ_VRAM0 + state->pictureTile * TILE_SIZE_4BPP;
+			vram = (Uint8 *)OBJ_VRAM0 + state->pictureTile * TILE_SIZE_4BPP;
 			fdPictureShiftColumnsByWave(state->tiles, picture, state->tmr + 14);
-			((const u8 *(*)(const u8 *, s32, s32,
-							void *))Ram_HeapSlots->pictureUploader)(
+			((const Uint8 *(*)(const Uint8 *, Sint32, Sint32,
+				void *))Ram_HeapSlots->pictureUploader)(
 				picture, SCOOP_PICTURE_SIZE, SCOOP_PICTURE_SIZE, vram);
 			sprite = &state->pictureSpr;
 			fdEffectSprDraw(sprite);
@@ -97,17 +96,16 @@ void fdScoopUpdate(void) {
 				i++, particle++) {
 				sprite = &state->sprs[i];
 				if(particle->tmr >= 0 && particle->tmr < 32)
-					fdScoopDustUpdateGrain(sprite, particle,
-										   state->particleTile);
+					fdScoopDustUpdateGrain(
+						sprite, particle, state->particleTile);
 				particle->tmr++;
 			}
 		}
-	}
-	else if(state->mode == SCOOP_SPARKLE) {
+	} else if(state->mode == SCOOP_SPARKLE) {
 		switch(state->phase) {
 		case SCOOP_DIGS:
 			if(state->tmr == 1)
-				state->other->scaleX = FIXED_ONE;
+				state->other->scaleX = toFIXED(1);
 			if(state->tmr == 4)
 				NEXT_PHASE(state);
 			break;
@@ -133,16 +131,15 @@ void fdScoopUpdate(void) {
 					sprite = &state->sprs[i];
 					fdEffectSprDrawAtWorldPos(sprite, particle);
 					if(particle->tmr < 42) {
-						particle->y -= FIXED_ONE;
+						particle->y -= toFIXED(1);
 						jitter = syRandom();
-						particle->x += jitter - (s32)syRandom();
+						particle->x += jitter - (Sint32)syRandom();
 					}
 				}
 				particle->tmr++;
 			}
 		}
-	}
-	else if(state->mode == SCOOP_FINDS) {
+	} else if(state->mode == SCOOP_FINDS) {
 		switch(state->phase) {
 		case SCOOP_DIGS:
 			if(state->tmr == 8)
@@ -160,8 +157,7 @@ void fdScoopUpdate(void) {
 				state->phase = FIELD_PSYNERGY_FINISHED;
 			break;
 		}
-	}
-	else {
+	} else {
 		switch(state->phase) {
 		case SCOOP_DIGS:
 			if(state->tmr == 8)
@@ -191,45 +187,48 @@ void fdScoopUpdate(void) {
 }
 
 /* Scoop cast on a target: runs fdPsynergyScoop. */
-void fdPsynergyScoopOnTarget(void) { fdPsynergyScoop(); }
+void fdPsynergyScoopOnTarget(void)
+{
+	fdPsynergyScoop();
+}
 
-s32 fdMapGridCanScoop(s32 x, s32 z, s32 layer);
-void fdScoopDigUpItem(void);
+Sint32 fdMapGridCanScoop(Sint32 x, Sint32 z, Sint32 layer);
+void   fdScoopDigUpItem(void);
 
-/* Scoop ("Dig in soft ground."): a giant hand rises before the caster and */
-/* digs the cell 16 pixels ahead. With an actor in the way, out of reach or on
- */
-/* ground that cannot be dug it stops with the error sound; else earth (or, in
- */
-/* a lit place, sparkles) is thrown up and the place's Scoop event runs. */
-void fdPsynergyScoop(void) {
+/* Scoop ("Dig in soft ground."): a giant hand rises before the caster and digs
+   the metatile 16 pixels ahead. With an actor in the way, out of reach or on
+   ground that cannot be dug it stops with the error sound; else earth (or, in a
+   lit place, sparkles) is thrown up and the place's Scoop script runs. */
+void fdPsynergyScoop(void)
+{
 	SCOOP_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*state));
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
-	ACTOR *caster = scene->caster;
-	ACTOR *boulder = NULL;
-	ACTOR *hand;
-	ACTOR *target;
-	EFFECT_SPR *sprite;
+	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	ACTOR					*caster = scene->caster;
+	ACTOR					*boulder = NULL;
+	ACTOR					*hand;
+	ACTOR					*target;
+	EFFECT_SPR				*sprite;
 	FIELD_PSYNERGY_PARTICLE *particle;
-	void *pending;
-	void *data;
-	s32 particleEntry = VRAM_CACHE_ENTRY_COUNT;
-	s32 particleTile;
-	s32 pictureEntry = VRAM_CACHE_ENTRY_COUNT;
-	s32 pictureTile;
-	FIXED pos[3];
-	s32 failed;
-	s8 *lit;
-	s32 stage;
-	s32 frame;
-	s32 i;
+	void					*pending;
+	void					*data;
+	Sint32					 particleEntry = VRAM_CACHE_ENTRY_COUNT;
+	Sint32					 particleTile;
+	Sint32					 pictureEntry = VRAM_CACHE_ENTRY_COUNT;
+	Sint32					 pictureTile;
+	FIXED					 pos[3];
+	Sint32					 failed;
+	Sint8					*lit;
+	Sint32					 stage;
+	Sint32					 frame;
+	Sint32					 i;
 
 	if(field->mode != ACTOR_SYSTEM_WORLD_MAP) {
-		SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
-					 caster->y.fixed,
-					 (caster->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
+		SET_POSITION(scene,
+			(caster->x.fixed & FIELD_METATILE_MASK) + toFIXED(8),
+			caster->y.fixed,
+			(caster->z.fixed & FIELD_METATILE_MASK) + toFIXED(8));
 		syVectorAddPolarOffset(toFIXED(16), scene->ang, &scene->x);
 	}
 	fdPsynergyFadeToCastCol();
@@ -239,12 +238,11 @@ void fdPsynergyScoop(void) {
 		hand->motionFlg = 0;
 		if(field->psynergyDrawFlg & PSYNERGY_DRAW_FIXED_PRIORITY) {
 			if((hand->sprStorageKind & ACTOR_SPRITE_KIND_MASK) ==
-			   ACTOR_SPRITE_ONE) {
+				ACTOR_SPRITE_ONE) {
 				((EFFECT_SPR *)hand->spr)->oam.pri = 1;
 				hand->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 			}
-		}
-		else {
+		} else {
 			hand->priFlg = ACTOR_PRIORITY_AUTOMATIC;
 		}
 		hand->facing = caster->facing;
@@ -253,8 +251,8 @@ void fdPsynergyScoop(void) {
 		if(*lit != 0)
 			fdActorSetSprColModeStub(hand, SPRITE_COLOR_GREY);
 		if(*lit == 0)
-			boulder = fdActorSpawn(SPRITE_BROWN_BOULDER, scene->x, scene->y,
-								   scene->z);
+			boulder = fdActorSpawn(
+				SPRITE_BROWN_BOULDER, scene->x, scene->y, scene->z);
 		else
 			boulder =
 				fdActorSpawn(SPRITE_GREY_BOULDER, scene->x, scene->y, scene->z);
@@ -267,8 +265,8 @@ void fdPsynergyScoop(void) {
 			if(!(field->psynergyDrawFlg & PSYNERGY_DRAW_NO_SCENE_SPRITE))
 				fdPsynergyStartSceneSpr();
 			sySndPlayStub(SE_ITEM_BREAK);
-			fdPsynergyGrowFromCaster(hand, scene->x, scene->y + toFIXED(32),
-									 scene->z);
+			fdPsynergyGrowFromCaster(
+				hand, scene->x, scene->y + toFIXED(32), scene->z);
 			sySynch(10);
 			fdActorSelectAnimationStub(hand, 1);
 			sySynch(15);
@@ -283,20 +281,20 @@ void fdPsynergyScoop(void) {
 			for(i = 0; i < FIELD_ACTOR_COUNT; i++) {
 				target = field->actors[i];
 				if(target != NULL && target->script != NULL &&
-				   (fdActorGetSprIdStub(target) == SPRITE_STAKE ||
-					(target->collisionFlg & ACTOR_SOLID)) &&
-				   target != scene->caster && ((SPR *)target->spr)->cnt != 0 &&
-				   fdPsynergyCheckOverlap(&scene->x, 4, &target->x.fixed,
-										  target->radius - 2) >= 0) {
+					(fdActorGetSprIdStub(target) == SPRITE_STAKE ||
+						(target->collisionFlg & ACTOR_SOLID)) &&
+					target != scene->caster && ((SPR *)target->spr)->cnt != 0 &&
+					fdPsynergyCheckOverlap(&scene->x, 4, &target->x.fixed,
+						target->radius - 2) >= 0) {
 					failed = SCOOP_ACTOR_IN_WAY;
 					break;
 				}
 			}
-			if(fdMapGridGetCellBehavior(scene->x, scene->z, caster->layer) ==
-			   CELL_BEHAVIOR_WALL)
+			if(fdMapGridGetMetatileBehavior(
+				   scene->x, scene->z, caster->layer) == METATILE_BEHAVIOR_WALL)
 				failed = SCOOP_WALL;
-			if(fdMeasurePsynergyHeight(scene->fieldPsynergy, caster,
-									   &scene->x) == -1)
+			if(fdMeasurePsynergyHeight(
+				   scene->fieldPsynergy, caster, &scene->x) == -1)
 				failed = SCOOP_OUT_OF_REACH;
 			if(fdMapGridCanScoop(scene->x, scene->z, caster->layer) == 0)
 				failed = SCOOP_HARD_GROUND;
@@ -307,8 +305,7 @@ void fdPsynergyScoop(void) {
 						hand->x.fixed, hand->y.fixed, hand->z.fixed);
 				sySndPlayStub(SE_MENU_ERROR);
 				sySynch(1);
-			}
-			else {
+			} else {
 
 				if(scene->aimAhead != 0) {
 					if(syRandom() < SCOOP_FIND_CHANCE)
@@ -317,89 +314,86 @@ void fdPsynergyScoop(void) {
 						state->mode = SCOOP_EARTH;
 					else
 						state->mode = SCOOP_SPARKLE;
-				}
-				else {
+				} else {
 					state->mode = SCOOP_TARGET;
 				}
 
 				if(state->mode == SCOOP_EARTH) {
-					syDecompressTaggedLz(
+					syDecompressTaggedLZ(
 						syResourceGetTableEntry(RESOURCE_DUST_PUFF_A), state);
-					particleEntry = syVramCacheFindFreeEntry();
-					particleTile = syVramCacheLoad(particleEntry, 2048, state);
+					particleEntry = syVRAMCacheFindFreeEntry();
+					particleTile = syVRAMCacheLoad(particleEntry, 2048, state);
 					state->particleTile = particleTile;
 					i = 0;
 					particle = state->particles;
 					for(; i < SCOOP_PARTICLE_COUNT; i++, particle++) {
 						sprite = &state->sprs[i];
-						fdEffectSprInit(sprite, 8, 8, OBJ_SIZE_16X16,
-										particleTile);
+						fdEffectSprInit(
+							sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
 						sprite->oam.fullCol = 1;
 						sprite->oam.pal = 0;
 						sprite->oam.pri = fdActorGetSprPriority(boulder);
 						sprite->depth = fdActorGetSprDepth(boulder) + 1;
-						sprite->scaleY = sprite->scaleX = FIXED_ONE / 5;
+						sprite->scaleY = sprite->scaleX = toFIXED(1) / 5;
 						SET_POSITION(particle, scene->x, scene->y, scene->z);
-						syVectorAddPolarOffset(toFIXED(2), syRandom(),
-											   &particle->x);
+						syVectorAddPolarOffset(
+							toFIXED(2), syRandom(), &particle->x);
 						particle->velX = 0;
 						particle->velY = 0;
 						particle->velZ = 0;
-						syVectorAddPolarOffset(toFIXED(1.2), syRandom(),
-											   &particle->velX);
+						syVectorAddPolarOffset(
+							toFIXED(1.2), syRandom(), &particle->velX);
 						particle->tmr = -i * 2;
 					}
-				}
-				else if(state->mode == SCOOP_TARGET) {
+				} else if(state->mode == SCOOP_TARGET) {
 					if(*lit == 0)
 						data = syResourceGetTableEntry(RESOURCE_DUST_PUFF_A);
 					else
 						data = syResourceGetTableEntry(RESOURCE_DUST_PUFF_B);
-					syDecompressTaggedLz(data, state);
-					particleEntry = syVramCacheFindFreeEntry();
-					particleTile = syVramCacheLoad(particleEntry, 2048, state);
+					syDecompressTaggedLZ(data, state);
+					particleEntry = syVRAMCacheFindFreeEntry();
+					particleTile = syVRAMCacheLoad(particleEntry, 2048, state);
 					state->particleTile = particleTile;
 					i = 0;
 					particle = state->particles;
 					for(; i < SCOOP_PARTICLE_COUNT; i++, particle++) {
 						sprite = &state->sprs[i];
-						fdEffectSprInit(sprite, 8, 8, OBJ_SIZE_16X16,
-										particleTile);
+						fdEffectSprInit(
+							sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
 						sprite->oam.fullCol = 1;
 						sprite->oam.pal = 0;
 						sprite->oam.pri = fdActorGetSprPriority(boulder);
 						sprite->depth = fdActorGetSprDepth(boulder) + 1;
 						SET_POSITION(particle, scene->x, scene->y, scene->z);
-						syVectorAddPolarOffset(toFIXED(2), syRandom(),
-											   &particle->x);
+						syVectorAddPolarOffset(
+							toFIXED(2), syRandom(), &particle->x);
 						particle->velX = 0;
 						particle->velY = 0;
 						particle->velZ = 0;
-						syVectorAddPolarOffset(toFIXED(1), syRandom(),
-											   &particle->velX);
+						syVectorAddPolarOffset(
+							toFIXED(1), syRandom(), &particle->velX);
 						particle->tmr = -i;
 					}
-				}
-				else if(state->mode == SCOOP_SPARKLE) {
-					syDecompressTaggedLz(
+				} else if(state->mode == SCOOP_SPARKLE) {
+					syDecompressTaggedLZ(
 						syResourceGetTableEntry(RESOURCE_WHITE_SPARKLE), state);
-					particleEntry = syVramCacheFindFreeEntry();
-					particleTile = syVramCacheLoad(particleEntry, 128, state);
+					particleEntry = syVRAMCacheFindFreeEntry();
+					particleTile = syVRAMCacheLoad(particleEntry, 128, state);
 					state->particleTile = particleTile;
 					i = 0;
 					particle = state->particles;
 					sprite = state->sprs;
 					for(; i < SCOOP_PARTICLE_COUNT; i++) {
-						fdEffectSprInit(sprite, 4, 4, 0,
-										particleTile + (i & 1) * 2);
+						fdEffectSprInit(
+							sprite, 4, 4, 0, particleTile + (i & 1) * 2);
 						sprite->oam.fullCol = 1;
 						sprite->oam.pal = 0;
 						sprite->oam.pri = fdActorGetSprPriority(hand);
 						sprite->depth = fdActorGetSprDepth(hand) - 1;
 						SET_POSITION(particle, scene->x, scene->y + toFIXED(40),
-									 scene->z);
+							scene->z);
 						syVectorAddPolarOffset(syRandom() * 4 + toFIXED(3),
-											   syRandom(), &particle->x);
+							syRandom(), &particle->x);
 						particle->tmr = -i * 3 / 4;
 						sprite++;
 						particle++;
@@ -407,10 +401,10 @@ void fdPsynergyScoop(void) {
 				}
 
 				if(state->mode == SCOOP_EARTH) {
-					syDecompressTaggedLz(
+					syDecompressTaggedLZ(
 						syResourceGetTableEntry(RESOURCE_SCOOP_EARTH), state);
-					pictureEntry = syVramCacheFindFreeEntry();
-					pictureTile = syVramCacheLoad(pictureEntry, 1024, NULL);
+					pictureEntry = syVRAMCacheFindFreeEntry();
+					pictureTile = syVRAMCacheLoad(pictureEntry, 1024, NULL);
 					state->pictureTile = pictureTile;
 					sprite = &state->pictureSpr;
 					fdEffectSprInit(sprite, 16, 0, OBJ_SIZE_32X32, pictureTile);
@@ -421,23 +415,22 @@ void fdPsynergyScoop(void) {
 					pos[0] = hand->x.fixed;
 					pos[1] = hand->y.fixed + toFIXED(32);
 					pos[2] = hand->z.fixed;
-					fdCameraWorldToScr(pos);
+					fdCameraWorldToScreen(pos);
 					sprite->x = pos[0];
 					sprite->y = pos[2];
 				}
 				if(state->mode == SCOOP_EARTH || state->mode == SCOOP_SPARKLE) {
 					sySynch(6);
-					state->other->scaleX = FIXED_ONE;
+					state->other->scaleX = toFIXED(1);
 					sySynch(4);
-				}
-				else {
+				} else {
 					sySynch(10);
 				}
 
 				state->phase = SCOOP_DIGS;
 				state->tmr = 0;
 				{
-					s32 order = TASK_PASS_FRAME;
+					Sint32 order = EVENT_PASS_FRAME;
 
 					sySetEvent(fdScoopUpdate, order);
 				}
@@ -449,12 +442,10 @@ void fdPsynergyScoop(void) {
 						sySynch(1);
 						frame++;
 					}
-				}
-				else {
-					pending = scFindPsynergyTrigger(
-						PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
-						scene->fieldPsynergy,
-						scSelectPsynergyTarget(scene->fieldPsynergy));
+				} else {
+					pending = fdFindPsynergyCue(
+						PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
+						fdSelectPsynergyTarget(scene->fieldPsynergy));
 					frame = 0;
 					while(state->phase != FIELD_PSYNERGY_FINISHED) {
 						stage = 0;
@@ -465,19 +456,20 @@ void fdPsynergyScoop(void) {
 							stage = SCOOP_STAGE_DUG_UP;
 						scene->stage = stage;
 						scene->frm = frame;
-						fdRunPsynergyEvent(pending, stage, frame);
+						fdRunPsynergyScript(pending, stage, frame);
 						frame++;
 					}
-					fdRunPsynergyEvent(pending, FIELD_PSYNERGY_FINISHED, frame);
+					fdRunPsynergyScript(
+						pending, FIELD_PSYNERGY_FINISHED, frame);
 				}
 				syCloseEvent(fdScoopUpdate);
 				sySndPlayStub(SE_MENU_ERROR);
-				fdPsynergyShrinkToCaster(hand, hand->x.fixed, hand->y.fixed,
-										 hand->z.fixed);
+				fdPsynergyShrinkToCaster(
+					hand, hand->x.fixed, hand->y.fixed, hand->z.fixed);
 				if(particleEntry != VRAM_CACHE_ENTRY_COUNT)
-					syVramCacheFreeEntry(particleEntry);
+					syVRAMCacheFreeEntry(particleEntry);
 				if(pictureEntry != VRAM_CACHE_ENTRY_COUNT)
-					syVramCacheFreeEntry(pictureEntry);
+					syVRAMCacheFreeEntry(pictureEntry);
 			}
 		}
 	}
@@ -487,13 +479,14 @@ void fdPsynergyScoop(void) {
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/* Drops an actor from Scoop's hand (if there is one) to fall to the ground, */
-/* waits 50 frames, then asks for its talk, which opens it without its */
-/* "checked the ..." message (FIELD_TALK_SILENT). */
-void fdScoopDropFromHand(s32 id) {
+/* Drops an actor from Scoop's hand (if there is one) to fall to the ground,
+   waits 50 frames, then asks for its talk, which opens it without its "checked
+   the ..." message (FIELD_TALK_SILENT). */
+void fdScoopDropFromHand(Sint32 id)
+{
 	FIELD_STATE *field = Ram_HeapSlots->fieldState;
-	ACTOR *hand;
-	ACTOR *actor;
+	ACTOR		*hand;
+	ACTOR		*actor;
 
 	hand = ((SCOOP_STATE *)Ram_HeapSlots->battleEff)->actor;
 	actor = fdActorGetById(id);
@@ -503,8 +496,7 @@ void fdScoopDropFromHand(s32 id) {
 	if(field->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		actor->motionFlg = ACTOR_FALLS;
 		actor->groundHeight = 0;
-	}
-	else {
+	} else {
 		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	}
 	actor->gravity = toFIXED(9) / 100;
@@ -512,21 +504,21 @@ void fdScoopDropFromHand(s32 id) {
 	field->talk = id | FIELD_TALK_SILENT;
 }
 
-extern const u16 Scoop_DugItems[16];
+extern const Uint16 Scoop_DugItems[16];
 
-/* SCOOPED_ITEM_ACTOR at the hand, fetched or spawned (SPRITE_UNSEEN_MARKER), */
-/* shows what Scoop dug up: three times in four one of Scoop_DugItems's */
-/* sixteen items (a coin when there is no room for it), else coins up to twice
- */
-/* the leader's level; it then drops (fdScoopDropFromHand). */
-void fdScoopDigUpItem(void) {
+/* SCOOPED_ITEM_ACTOR at the hand, fetched or spawned (SPRITE_UNSEEN_MARKER),
+   shows what Scoop dug up: three times in four one of Scoop_DugItems's sixteen
+   items (a coin when there is no room for it), else coins up to twice the
+   leader's level; it then drops (fdScoopDropFromHand). */
+void fdScoopDigUpItem(void)
+{
 	SCOOP_STATE *state = Ram_HeapSlots->battleEff;
-	ACTOR *hand;
+	ACTOR		*hand;
 	FIELD_STATE *field;
-	UNIT *unit;
-	ACTOR *actor;
-	s32 item;
-	s32 id = SCOOPED_ITEM_ACTOR;
+	UNIT		*unit;
+	ACTOR		*actor;
+	Sint32		 item;
+	Sint32		 id = SCOOPED_ITEM_ACTOR;
 
 	hand = state->actor;
 	field = Ram_HeapSlots->fieldState;
@@ -534,8 +526,8 @@ void fdScoopDigUpItem(void) {
 
 	actor = fdActorGetById(id);
 	if(actor == NULL) {
-		actor = fdActorCreateStub(SPRITE_UNSEEN_MARKER, hand->x.fixed,
-								  hand->y.fixed, hand->z.fixed);
+		actor = fdActorCreateStub(
+			SPRITE_UNSEEN_MARKER, hand->x.fixed, hand->y.fixed, hand->z.fixed);
 		if(actor == NULL)
 			return;
 		field->actors[id] = actor;
@@ -544,8 +536,7 @@ void fdScoopDigUpItem(void) {
 		item = Scoop_DugItems[syRandomBelow(ARRAY_COUNT(Scoop_DugItems))];
 		if(gmPartyInventoryFindRoomStub(item) == -1)
 			item = SCOOPED_COINS | 1;
-	}
-	else {
+	} else {
 		item = (syRandomBelow(unit->level * 2) + 1) | SCOOPED_COINS;
 	}
 	SET_ACTOR_POSITION(actor, hand->x.fixed, hand->y.fixed, hand->z.fixed);
@@ -553,6 +544,7 @@ void fdScoopDigUpItem(void) {
 	field->scoopedItem = item;
 	fdScoopDropFromHand(id);
 }
+
 #undef NEXT_PHASE
 #undef SCOOP_DRAWN_DUST
 #undef SCOOP_DRAWN_TARGET_DUST

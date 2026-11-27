@@ -1,6 +1,6 @@
 	.section .sym_ewram,"aw",%nobits
-	.global SaveBuffer
-SaveBuffer:
+	.global BupBuffer
+BupBuffer:
 	.space 0x00000040
 	.global GameFlagBytes
 GameFlagBytes:
@@ -57,11 +57,11 @@ OamDepthLists:
 	.global VramCacheBlockOwners
 VramCacheBlockOwners:
 	.space 0x00000200
-	.global TasksWork
-TasksWork:
+	.global EventBuf
+EventBuf:
 	.space 0x000000c0
-	.global SaveSlot
-SaveSlot:
+	.global BupSlot
+BupSlot:
 	.space 0x00000004
 	.global SerialSendSize
 SerialSendSize:
@@ -314,8 +314,8 @@ ScriptedBattle_Snapshot:
 	.space 0x0000000c
 	.space 0x00000002
 	.space 0x00000006
-	.global MapGridCellBuffer
-MapGridCellBuffer:
+	.global MapGridMetatileBuffer
+MapGridMetatileBuffer:
 	.space 0x00000001
 	.space 0x00000001
 	.space 0x00000016
@@ -470,8 +470,8 @@ TitleIntro_LighthouseTilesTail:
 	.global DecodeBuffer
 DecodeBuffer:
 	.space 0x00004000
-	.global CellTiles
-CellTiles:
+	.global MetatileTiles
+MetatileTiles:
 	.space 0x00000004
 	.space 0x000001fe
 	.space 0x00003dfe

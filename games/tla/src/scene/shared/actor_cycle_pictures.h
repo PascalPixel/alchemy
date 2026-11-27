@@ -1,7 +1,8 @@
-/* Flashes an actor's sprite on its timer: white three frames in four, its */
-/* own colours on the fourth, redrawn each frame. */
-void fdActorCyclePictures(ACTOR *actor) {
-	ANIMATED_SPR *sprite = (ANIMATED_SPR *)actor->spr;
+/* Flashes an actor's sprite on its timer: white three frames in four, its own
+   colours on the fourth, redrawn each frame. */
+void scActorCyclePictures(ACTOR *actor)
+{
+	ANIMATED_SPR  *sprite = (ANIMATED_SPR *)actor->spr;
 	SPR_ANIMATION *animation = sprite->anm;
 
 	switch(actor->tmr & 3) {

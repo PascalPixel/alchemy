@@ -1,7 +1,7 @@
-@ Why IwramMulFXReturnIp is assembly:
+@ Why syIWRAMMulFXReturnIp is assembly:
 @ Unpaired live smull halves r2/r0; add ip,#1 and bx ip return through a
 @ non-procedure-standard register.
-@ Why IwramMulFX is assembly:
+@ Why syIWRAMMulFX is assembly:
 @ smull r2, r0, r1, r0 puts the low half in r2 and the high half in r0.
 @ mulsidi3 writes a DI register pair, RdHi = RdLo + 1, earlyclobbered and so
 @ apart from both inputs; here RdHi is r0, not r3, and is also an input. So
@@ -11,36 +11,36 @@
 @ This proves a hand-written multiply, not by itself a hand-written
 @ file. The function has no other tell: its four instructions are a frameless
 @ leaf that reuses the argument registers, as compiled code also may.
-@ Why IwramDivFX is assembly:
+@ Why syIWRAMDivFX is assembly:
 @ Both smull halves are consumed from nonconsecutive r3/r0; compiler DI
 @ multiply patterns require consecutive halves, highpart patterns discard low
 @ half.
-@ Why IwramClearWords to IwramFillWords are assembly:
+@ Why syIWRAMWordsClear to syIWRAMWordsFill are assembly:
 @ push saves r5-r9 without lr and computed add pc enters the unrolled store
 @ body.
-@ Why IwramSqrt is assembly:
+@ Why syIWRAMSquart is assembly:
 @ movs r1, r0 copies and tests without a shift. The compilers' copy-and-test
 @ (*movsi_compare0) is subs r1, r0, #0; a register-to-register movs comes only
 @ with a shift.
 @ Secondary: the sign exit that follows is bxmi lr. *movsi_compare0 sets plain
 @ CC, where a signed < 0 test is lt; mi is the CC_NOOV spelling, which a
 @ copy-and-test never has.
-@ Why IwramExpandBitRuns is assembly:
+@ Why syIWRAMExpandBitRuns is assembly:
 @ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
-@ Why IwramTransformVector to IwramMultiplyMatrix are assembly:
+@ Why syIWRAMTransformVector to syIWRAMMultiMatrix are assembly:
 @ fp is a product high half rather than a frame pointer; stmia writes
 @ arithmetic-transformed vectors, not compiler block-copy data.
-@ Why IwramSignedDivide to IwramUnsignedDivide are assembly:
+@ Why syIWRAMSignedDivide to syIWRAMUnsignedDivide are assembly:
 @ signed wrappers use unshifted movs and return through ip. The core
 @ returns quotient in r0 and remainder in r1; the remainder wrappers read
 @ that second result, a custom internal linkage.
-@ Why IwramDecompress is assembly:
+@ Why syIWRAMDecompress is assembly:
 @ push saves r5/r6/r7 without lr.
 .syntax unified
 	.arm
 
-	.global IwramMulFXReturnIp
-IwramMulFXReturnIp:
+	.global syIWRAMMulFXReturnIp
+syIWRAMMulFXReturnIp:
 	smull	r2, r0, r1, r0
 	lsl	r0, r0, #16
 	orr	r0, r0, r2, lsr #16
@@ -49,8 +49,8 @@ IwramMulFXReturnIp:
 .syntax unified
 	.arm
 
-	.global IwramMulFX
-IwramMulFX:
+	.global syIWRAMMulFX
+syIWRAMMulFX:
 	smull	r2, r0, r1, r0
 	lsl	r0, r0, #16
 	orr	r0, r0, r2, lsr #16
@@ -58,13 +58,13 @@ IwramMulFX:
 .syntax unified
 	.arm
 
-	.global IwramDivFX
-IwramDivFX:
+	.global syIWRAMDivFX
+syIWRAMDivFX:
 	stmfd	sp!, {lr}
 	mov	r4, r1
 	mov	r1, r0
 	mov	r0, #0x40000000
-	bl	IwramSignedDivide
+	bl	syIWRAMSignedDivide
 	smull	r3, r0, r4, r0
 	ldmfd	sp!, {lr}
 	lsl	r0, r0, #18
@@ -73,11 +73,11 @@ IwramDivFX:
 .syntax unified
 	.arm
 
-	.global IwramClearWords
-IwramClearWords:
+	.global syIWRAMWordsClear
+syIWRAMWordsClear:
 	mov	r2, #0
-	.global IwramFillWords
-IwramFillWords:
+	.global syIWRAMWordsFill
+syIWRAMWordsFill:
 	push	{r5, r6, r7, r8, r9}
 	mov	r3, r2
 	mov	r4, r2
@@ -112,8 +112,8 @@ IwramFillWords:
 .syntax unified
 	.arm
 
-	.global IwramSqrt
-IwramSqrt:
+	.global syIWRAMSquart
+syIWRAMSquart:
 	movs	r1, r0
 	mov	r0, #0
 	bxmi	lr
@@ -134,8 +134,8 @@ IwramSqrt:
 .syntax unified
 	.arm
 
-	.global IwramExpandBitRuns
-IwramExpandBitRuns:
+	.global syIWRAMExpandBitRuns
+syIWRAMExpandBitRuns:
 	.ifeq EDITION_INTERNATIONAL
 	add	ip, r0, #24
 	.else
@@ -162,8 +162,8 @@ IwramExpandBitRuns:
 .syntax unified
 	.arm
 
-	.global IwramTransformVector
-IwramTransformVector:
+	.global syIWRAMTransformVector
+syIWRAMTransformVector:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldm	r0, {r2, r3, r4}
 	add	r0, pc, #240
@@ -193,8 +193,8 @@ IwramTransformVector:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
 
-	.global IwramMultiplyMatrix
-IwramMultiplyMatrix:
+	.global syIWRAMMultiMatrix
+syIWRAMMultiMatrix:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	sub	sp, sp, #36
 	mov	r4, sp
@@ -245,8 +245,8 @@ CurrentMatrix:
 	.section .text.iwram_divide,"ax",%progbits
 	.arm
 
-	.global IwramSignedDivide
-IwramSignedDivide:
+	.global syIWRAMSignedDivide
+syIWRAMSignedDivide:
 	eor	ip, r0, r1
 	movs	r2, r1
 	rsbmi	r2, r2, #0
@@ -259,8 +259,8 @@ IwramSignedDivide:
 	rsb	r0, r0, #0
 	bx	ip
 
-	.global IwramSignedRemainder
-IwramSignedRemainder:
+	.global syIWRAMSignedRemainder
+syIWRAMSignedRemainder:
 	stmfd	sp!, {lr}
 	eor	ip, r0, r1
 	movs	r2, r1
@@ -275,15 +275,15 @@ IwramSignedRemainder:
 	ldmfd	sp!, {lr}
 	bx	lr
 
-	.global IwramUnsignedRemainder
-IwramUnsignedRemainder:
+	.global syIWRAMUnsignedRemainder
+syIWRAMUnsignedRemainder:
 	mov	ip, lr
-	bl	IwramUnsignedDivide
+	bl	syIWRAMUnsignedDivide
 	mov	r0, r1
 	bx	ip
 
-	.global IwramUnsignedDivide
-IwramUnsignedDivide:
+	.global syIWRAMUnsignedDivide
+syIWRAMUnsignedDivide:
 	mov	r2, r1
 	mov	r1, r0
 	mov	r0, #0
@@ -411,8 +411,8 @@ IwramUnsignedDivide:
 .syntax unified
 	.arm
 
-	.global IwramDecompress
-IwramDecompress:
+	.global syIWRAMDecompress
+syIWRAMDecompress:
 	ldrb	r2, [r0], #1
 	ldrb	r3, [r0], #1
 	orrs	r2, r2, r3, lsl #8

@@ -1,10 +1,9 @@
 #ifndef ALCHEMY_CHARACTER_IDS_H
 #define ALCHEMY_CHARACTER_IDS_H
 
-/* @file */
-/* The eight playable characters' ids, with each one's Japanese name: one for */
-/* each row of Character_DefinitionTable in order. Unit ids below */
-/* ENEMY_ID_FIRST are these, and so are the characters' sprites. */
+/* The eight playable characters' ids, with each one's Japanese name: one for
+   each row of Character_DefinitionTable in order. Unit ids below ENEMY_ID_FIRST
+   are these, and so are the characters' sprites. */
 
 #define ISAAC 0 /* Robin */
 #define GARET 1 /* Jerald */

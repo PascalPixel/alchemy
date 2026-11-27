@@ -1,37 +1,36 @@
-/* @file */
-/* Enemy formations: the enemies chosen, levelled and told apart by name */
-/* suffixes, and each enemy class's sprite, palette, size and attack effect. */
-/* Part of battle.c. */
+/* Enemy formations: the enemies chosen, levelled and told apart by name
+   suffixes, and each enemy class's sprite, palette, size and attack effect.
+   Part of battle.c. */
 
 /* The most formations a monster battle chooses among. */
-#define FORMATION_POOL_SIZE 32
+#define FORMATION_POOL_SIZE		  32
 /* How far above the party's level a monster battle's formation may be. */
-#define FORMATION_LEVEL_MARGIN 3
-/* Above any formation's average level: where the search for the pool's */
-/* lowest entry starts. */
+#define FORMATION_LEVEL_MARGIN	  3
+/* Above any formation's average level: where the search for the pool's lowest
+   entry starts. */
 #define FORMATION_SCORE_ABOVE_ALL 999
 
 /* Chooses a monster battle's formation for the party's level plus its winning
- */
-/* streak, at random among those at most FORMATION_LEVEL_MARGIN above it, and */
-/* returns it with the levels its enemies must gain in outMargin. */
-s32 btFormationSelectLevelMatchedCandidate(s32 *outMargin) {
-	s32 matchCount = 0;
+   streak, at random among those at most FORMATION_LEVEL_MARGIN above it, and
+   returns it with the levels its enemies must gain in outMargin. */
+Sint32 btFormationSelectLevelMatchedCandidate(Sint32 *outMargin)
+{
+	Sint32				 matchCount = 0;
 	FORMATION_CANDIDATE *pool =
-		syHeapAllocEwram(FORMATION_POOL_SIZE * sizeof *pool);
-	u16 party[8];
-	s32 targetLevel = 0;
-	s32 unitCount = btPartyPrepareMembers(party);
-	s32 i;
-	s32 poolIndex;
-	s32 result;
+		syHeapAllocEWRAM(FORMATION_POOL_SIZE * sizeof *pool);
+	Uint16 party[8];
+	Sint32 targetLevel = 0;
+	Sint32 unitCount = btPartyPrepareMembers(party);
+	Sint32 i;
+	Sint32 poolIndex;
+	Sint32 result;
 
 	if(unitCount > 0) {
-		u16 *unitCursor = party;
+		Uint16 *unitCursor = party;
 
 		i = unitCount;
 		do {
-			u8 level = syUnitGet(*unitCursor)->level;
+			Uint8 level = syUnitGet(*unitCursor)->level;
 
 			i--;
 			unitCursor++;
@@ -41,7 +40,7 @@ s32 btFormationSelectLevelMatchedCandidate(s32 *outMargin) {
 
 	/* The flag byte is -1 once a series has ended, which takes a level off. */
 	targetLevel = targetLevel / unitCount;
-	targetLevel += (s8)syGameFlagGetByte(FLAG_MONSTER_BATTLE_WINS);
+	targetLevel += (Sint8)syGameFlagGetByte(FLAG_MONSTER_BATTLE_WINS);
 	if(targetLevel <= 0)
 		targetLevel = 1;
 	if(targetLevel > UNIT_LEVEL_MAX)
@@ -50,9 +49,9 @@ s32 btFormationSelectLevelMatchedCandidate(s32 *outMargin) {
 	for(i = 0; i < FORMATION_POOL_SIZE; i++)
 		pool[i].score = -1;
 
-	/* A boss beaten in another of its forms marks one form beaten: the */
-	/* Serpent's four-beam one, the Knight's second, Moapa's third, and the */
-	/* Doom Dragon's first only once its last has fallen. */
+	/* A boss beaten in another of its forms marks one form beaten: the
+	   Serpent's four-beam one, the Knight's second, Moapa's third, and the Doom
+	   Dragon's first only once its last has fallen. */
 	if(syGameFlagGet(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT)))
 		syGameFlagSet(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
 	if(syGameFlagGet(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_ONE_BEAM)))
@@ -75,12 +74,11 @@ s32 btFormationSelectLevelMatchedCandidate(s32 *outMargin) {
 	for(i = 0; i < ARRAY_COUNT(BattleFormation_ExcludedEnemies); i++)
 		syGameFlagClear(
 			ENEMY_DEFEATED_FLAG(BattleFormation_ExcludedEnemies[i]));
-	/* BUG: the three enemies formations 241 to 248 are made of are set by */
-	/* their enemy ids, not their defeated flags, so they stay unavailable */
-	/* unless beaten, and FLAG_DJINNI(DJINNI_SPRITZ), FLAG_DJINNI(DJINNI_ETHER)
-	 */
-	/* and flag 0xe6 are set instead. */
-#ifdef BUGFIX
+	/* BUG: the three enemies formations 241 to 248 are made of are set by their
+	   enemy ids, not their defeated flags, so they stay unavailable unless
+	   beaten, and FLAG_DJINNI(DJINNI_SPRITZ), FLAG_DJINNI(DJINNI_ETHER) and
+	   flag 0xe6 are set instead. */
+#if FIX_MONSTER_BATTLE_DEFEATED_FLAGS
 	syGameFlagSet(ENEMY_DEFEATED_FLAG(ENEMY_PUNCH_ANT));
 	syGameFlagSet(ENEMY_DEFEATED_FLAG(ENEMY_GIANT_BAT));
 	syGameFlagSet(ENEMY_DEFEATED_FLAG(ENEMY_WILD_WOLF));
@@ -90,14 +88,14 @@ s32 btFormationSelectLevelMatchedCandidate(s32 *outMargin) {
 	syGameFlagSet(ENEMY_WILD_WOLF);
 #endif
 
-	/* Each qualifying formation replaces the pool's lowest entry; empty */
-	/* entries score -1, so the pool fills first. */
-	for(i = 0; (u32)i < FORMATION_COUNT; i++) {
-		s32 score = btFormationAverageLevel(i);
+	/* Each qualifying formation replaces the pool's lowest entry; empty entries
+	   score -1, so the pool fills first. */
+	for(i = 0; (Uint32)i < FORMATION_COUNT; i++) {
+		Sint32 score = btFormationAverageLevel(i);
 
 		if(score >= 0 && score <= targetLevel + FORMATION_LEVEL_MARGIN) {
-			s32 lowestIndex = -1;
-			s32 lowestLevel;
+			Sint32 lowestIndex = -1;
+			Sint32 lowestLevel;
 
 			for(lowestLevel = FORMATION_SCORE_ABOVE_ALL, poolIndex = 0;
 				poolIndex < FORMATION_POOL_SIZE; poolIndex++) {
@@ -124,8 +122,7 @@ s32 btFormationSelectLevelMatchedCandidate(s32 *outMargin) {
 
 		result = chosen->recordId;
 		*outMargin = targetLevel - chosen->score;
-	}
-	else {
+	} else {
 		*outMargin = matchCount;
 		result = 1;
 	}
@@ -134,26 +131,24 @@ s32 btFormationSelectLevelMatchedCandidate(s32 *outMargin) {
 	return result;
 }
 
-/* What an enemy gains a level (btEnemyAdjustLevel), each stat in tenths */
-/* of a point: 9.7 HP, 1.5 PP, 12.3 Attack, 3.3 Defense and 5.1 Agility; and */
-/* its element power in whole points. */
-/* @{ */
+/* What an enemy gains a level (btEnemyAdjustLevel), each stat in tenths of a
+   point: 9.7 HP, 1.5 PP, 12.3 Attack, 3.3 Defense and 5.1 Agility; and its
+   element power in whole points. */
 #define HP_GAIN_TENTHS		97
 #define PP_GAIN_TENTHS		15
 #define ATTACK_GAIN_TENTHS	123
 #define DEFENSE_GAIN_TENTHS 33
 #define AGILITY_GAIN_TENTHS 51
 #define ELEMENT_POWER_GAIN	15
-/* @} */
 
 /* Raises an enemy by levels, or lowers it for a negative count, each stat by a
- */
-/* fixed amount a level and no lower than 70 percent of what it was. */
-UNREAD_RESULT btEnemyAdjustLevel(s32 unitId, s32 levels) {
-	BATTLE_BASE_STATS *base = syHeapAllocEwram(sizeof *base);
-	UNIT *unit = syUnitGet(unitId);
-	s32 value;
-	s32 element;
+   fixed amount a level and no lower than 70 percent of what it was. */
+UNREAD_RESULT btEnemyAdjustLevel(Sint32 unitId, Sint32 levels)
+{
+	BATTLE_BASE_STATS *base = syHeapAllocEWRAM(sizeof *base);
+	UNIT			  *unit = syUnitGet(unitId);
+	Sint32			   value;
+	Sint32			   element;
 
 	syWordsCopyEntry(base, &unit->baseHp, sizeof *base);
 
@@ -189,13 +184,13 @@ UNREAD_RESULT btEnemyAdjustLevel(s32 unitId, s32 levels) {
 }
 
 /* Raises a unit's base HP by half and base Attack and Defense by a quarter, at
- */
-/* least 70 percent of the old values and at most UNIT_ENEMY_HP_MAX and */
-/* UNIT_STAT_MAX: an enemy on the HARD level (FLAG_HARD_LEVEL). */
-void btUnitStrengthen(s32 unitId) {
-	BATTLE_BASE_STATS *saved = syHeapAllocEwram(sizeof *saved);
-	UNIT *unit = syUnitGet(unitId);
-	s32 value;
+   least 70 percent of the old values and at most UNIT_ENEMY_HP_MAX and
+   UNIT_STAT_MAX: an enemy on the HARD level (FLAG_HARD_LEVEL). */
+void btUnitStrengthen(Sint32 unitId)
+{
+	BATTLE_BASE_STATS *saved = syHeapAllocEWRAM(sizeof *saved);
+	UNIT			  *unit = syUnitGet(unitId);
+	Sint32			   value;
 
 	syWordsCopyEntry(saved, &unit->baseHp, sizeof *saved);
 	value = unit->baseHp * 3 / 2;
@@ -214,14 +209,15 @@ void btUnitStrengthen(s32 unitId) {
 /* The suffixes a class's mask holds, one bit each. */
 #define NAME_SUFFIX_MASK_BITS 32
 
-/* Gives an enemy of the class its name suffix, which tells it from others of */
-/* its kind: digits abroad and the alphabet in Japanese. Returns -1 when five */
-/* classes are already listed. */
-s32 btEnemyClaimNameLetter(s32 classId, s32 unused) {
+/* Gives an enemy of the class its name suffix, which tells it from others of
+   its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
+   classes are already listed. */
+Sint32 btEnemyClaimNameLetter(Sint32 classId, Sint32 unused)
+{
 	BATTLE_STATE *battle;
-	s32 classCount;
-	s32 classIndex;
-	s32 attempt;
+	Sint32		  classCount;
+	Sint32		  classIndex;
+	Sint32		  attempt;
 
 	battle = Ram_HeapSlots->battleState;
 	classCount = battle->enemyKindCnt;
@@ -238,17 +234,16 @@ s32 btEnemyClaimNameLetter(s32 classId, s32 unused) {
 			return ENEMY_LETTER_FIRST_TOO | 1;
 		}
 		/* The next suffix after the last given that is free; after 32 tries the
-		 */
-		/* last one tried is reused. */
+		   last one tried is reused. */
 		for(; attempt < NAME_SUFFIX_MASK_BITS; attempt++) {
 			battle->lastNameLetter[classIndex] =
 				(battle->lastNameLetter[classIndex] + 1) % NAME_SUFFIX_COUNT;
 			if((battle->nameLetterMasks[classIndex] &
-				(1 << battle->lastNameLetter[classIndex])) == 0)
+				   (1 << battle->lastNameLetter[classIndex])) == 0)
 				break;
 		}
-		battle->nameLetterMasks[classIndex] |=
-			1 << battle->lastNameLetter[classIndex];
+		battle->nameLetterMasks[classIndex] |= 1
+			<< battle->lastNameLetter[classIndex];
 		return battle->lastNameLetter[classIndex];
 	}
 	if(classCount <= 4) {
@@ -262,14 +257,15 @@ s32 btEnemyClaimNameLetter(s32 classId, s32 unused) {
 }
 
 /* Frees a departing enemy's name suffix for the next of its class. */
-UNREAD_RESULT btEnemyReleaseNameLetter(s32 unitId) {
+UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
+{
 	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
-	UNIT *unit;
-	s32 count = battle->enemyKindCnt;
-	s32 index;
-	s32 nameLength;
-	s32 suffix;
-	s32 classId;
+	UNIT		 *unit;
+	Sint32		  count = battle->enemyKindCnt;
+	Sint32		  index;
+	Sint32		  nameLength;
+	Sint32		  suffix;
+	Sint32		  classId;
 
 	unit = syUnitGet(unitId);
 	if(unit->classId != CLASS_NONE)
@@ -288,11 +284,11 @@ UNREAD_RESULT btEnemyReleaseNameLetter(s32 unitId) {
 			break;
 	}
 
-	/* UB: an empty name shifts by NAME_SUFFIX_MASK_BITS, which the ARM turns */
-	/* into 0, so no suffix is freed. A name with no suffix instead uses its */
-	/* last character as one. */
+	/* UB: an empty name shifts by NAME_SUFFIX_MASK_BITS, which the ARM turns
+	   into 0, so no suffix is freed. A name with no suffix instead uses its
+	   last character as one. */
 	suffix = NAME_SUFFIX_MASK_BITS;
-#ifdef UBFIX
+#if FIX_UNDEFINED_SHIFT
 	if(nameLength == 0)
 		return;
 #endif
@@ -301,14 +297,15 @@ UNREAD_RESULT btEnemyReleaseNameLetter(s32 unitId) {
 	battle->nameLetterMasks[index] &= ~(1 << suffix);
 }
 
-/* Gives the first enemy of the class on the field the first suffix (0), */
-/* appended to its name, once a second of its class arrives. */
-s32 btEnemyLetterFirstOfKind(s32 enemyId) {
-	UNIT *unit;
-	s32 enemyIndex;
-	s32 nameIndex;
-	s32 terminatorIndex;
-	u8 nameByte;
+/* Gives the first enemy of the class on the field the first suffix (0),
+   appended to its name, once a second of its class arrives. */
+Sint32 btEnemyLetterFirstOfKind(Sint32 enemyId)
+{
+	UNIT  *unit;
+	Sint32 enemyIndex;
+	Sint32 nameIndex;
+	Sint32 terminatorIndex;
+	Uint8  nameByte;
 
 	for(enemyIndex = 0; enemyIndex < ENEMY_BATTLE_SIZE; enemyIndex++) {
 		unit = syUnitGet(enemyIndex + FIRST_ENEMY_UNIT);
@@ -318,8 +315,7 @@ s32 btEnemyLetterFirstOfKind(s32 enemyId) {
 		if(unit->enemyId != enemyId)
 			continue;
 		/* nameByte still holds BATTLE_SIDE_ENEMY here, used as the index after
-		 */
-		/* the suffix; nameIndex holds the terminator, 0. */
+		   the suffix; nameIndex holds the terminator, 0. */
 		nameIndex = 0;
 		if(unit->name[0] == 0) {
 			unit->name[0] = ENEMY_NAME_LETTER_FIRST;
@@ -342,18 +338,19 @@ s32 btEnemyLetterFirstOfKind(s32 enemyId) {
 }
 
 /* Returns the class of a random member of the formation that may appear. */
-s32 btFormationGetRandomMember(s32 recordId) {
-	s32 *choicesBase;
-	s32 choices[FORMATION_MEMBERS];
+Sint32 btFormationGetRandomMember(Sint32 recordId)
+{
+	Sint32	  *choicesBase;
+	Sint32	   choices[FORMATION_MEMBERS];
 	FORMATION *record;
-	s32 *choiceCursor;
-	u8 *maximumCount;
-	u16 *memberId;
-	s32 remaining;
-	u32 count;
+	Sint32	  *choiceCursor;
+	Uint8	  *maximumCount;
+	Uint16	  *memberId;
+	Sint32	   remaining;
+	Uint32	   count;
 
 	count = 0;
-	if((u32)recordId >= FORMATION_COUNT)
+	if((Uint32)recordId >= FORMATION_COUNT)
 		recordId = 1;
 
 	record = &Formations[recordId];
@@ -363,7 +360,7 @@ s32 btFormationGetRandomMember(s32 recordId) {
 	choiceCursor = choicesBase;
 	for(remaining = 0; remaining < FORMATION_MEMBERS; remaining++) {
 		if(*maximumCount++ != 0) {
-			s32 id = *memberId;
+			Sint32 id = *memberId;
 
 			count++;
 			*choiceCursor++ = id + ENEMY_ID_FIRST;
@@ -374,34 +371,34 @@ s32 btFormationGetRandomMember(s32 recordId) {
 	return choices[(syRandom() * count) >> 16];
 }
 
-/* The enemy sprite slots an enemy of the class takes: one for a small enemy, */
-/* two for any other. */
+/* The enemy sprite slots an enemy of the class takes: one for a small enemy,
+   two for any other. */
 #define ENEMY_SLOTS_TAKEN(classId) (2 - (btSprIsSmall(classId) != 0))
 
 /* Builds the battle's enemies from a formation and returns how many there are:
- */
-/* each member its fewest times and at random up to its most while the sprite */
-/* slots hold them, laid out as the formation says. */
-s32 btFormationBuildEnemyList(s32 recordId) {
-	u16 *enemyClasses;
+   each member its fewest times and at random up to its most while the sprite
+   slots hold them, laid out as the formation says. */
+Sint32 btFormationBuildEnemyList(Sint32 recordId)
+{
+	Uint16		 *enemyClasses;
 	BATTLE_STATE *battle;
-	FORMATION *record;
-	s32 freeSpriteSlots;
-	s32 enemyCount;
-	s32 levelAdjustment;
-	u16 listBuffer[UNIT_MAX];
-	s32 extraCounts[FORMATION_MEMBERS];
-	s32 memberCounts[FORMATION_MEMBERS];
-	s32 memberOrder[FORMATION_MEMBERS];
-	s32 changed;
-	s32 additionalRoom;
-	s32 spriteSlots;
-	s32 fittingCount;
-	s32 classId;
-	s32 remainingKinds;
-	s32 copies;
-	u32 i;
-	s32 memberIndex;
+	FORMATION	 *record;
+	Sint32		  freeSpriteSlots;
+	Sint32		  enemyCount;
+	Sint32		  levelAdjustment;
+	Uint16		  listBuffer[UNIT_MAX];
+	Sint32		  extraCounts[FORMATION_MEMBERS];
+	Sint32		  memberCounts[FORMATION_MEMBERS];
+	Sint32		  memberOrder[FORMATION_MEMBERS];
+	Bool		  changed;
+	Sint32		  additionalRoom;
+	Sint32		  spriteSlots;
+	Sint32		  fittingCount;
+	Sint32		  classId;
+	Sint32		  remainingKinds;
+	Sint32		  copies;
+	Uint32		  i;
+	Sint32		  memberIndex;
 
 	battle = (BATTLE_STATE *)Ram_HeapSlots->battleState;
 	levelAdjustment = 0;
@@ -409,7 +406,7 @@ s32 btFormationBuildEnemyList(s32 recordId) {
 	enemyClasses = listBuffer;
 	if(syGameFlagGet(FLAG_MONSTER_BATTLE))
 		recordId = btFormationSelectLevelMatchedCandidate(&levelAdjustment);
-	if((u32)recordId >= FORMATION_COUNT)
+	if((Uint32)recordId >= FORMATION_COUNT)
 		recordId = 1;
 	record = &Formations[recordId];
 	for(memberIndex = 0;
@@ -423,7 +420,7 @@ s32 btFormationBuildEnemyList(s32 recordId) {
 	enemyCount = 0;
 	for(i = 0; i < FORMATION_MEMBERS; i++) {
 		if(record->minCnts[i] != 0) {
-			s32 requiredSlots =
+			Sint32 requiredSlots =
 				ENEMY_SLOTS_TAKEN(record->memberIds[i] + ENEMY_ID_FIRST);
 
 			freeSpriteSlots -= requiredSlots * record->minCnts[i];
@@ -431,40 +428,38 @@ s32 btFormationBuildEnemyList(s32 recordId) {
 	}
 
 	for(i = 0; i < FORMATION_MEMBERS; i++) {
-		s32 minimum;
-		s32 maximum;
+		Sint32 minimum;
+		Sint32 maximum;
 
 		memberCounts[i] = minimum = record->minCnts[i];
 		maximum = record->maxCnts[i];
 		additionalRoom = maximum - minimum;
 		if(additionalRoom > 0) {
-			s32 memberSlots =
+			Sint32 memberSlots =
 				ENEMY_SLOTS_TAKEN(record->memberIds[i] + ENEMY_ID_FIRST);
 
 			fittingCount = freeSpriteSlots / memberSlots;
 			if(fittingCount < additionalRoom)
 				additionalRoom = fittingCount;
 			extraCounts[i] = ((additionalRoom + 1) * syRandom()) >> 16;
-		}
-		else {
+		} else {
 			extraCounts[i] = 0;
 		}
 	}
 
 	do {
-		changed = 0;
+		changed = FALSE;
 		for(i = 0; i < FORMATION_MEMBERS; i++) {
 			classId = record->memberIds[i] + ENEMY_ID_FIRST;
 			if(extraCounts[i] != 0) {
 				spriteSlots = ENEMY_SLOTS_TAKEN(classId);
 				if(spriteSlots > freeSpriteSlots) {
 					extraCounts[i] = 0;
-				}
-				else {
+				} else {
 					memberCounts[i]++;
 					extraCounts[i]--;
 					freeSpriteSlots -= spriteSlots;
-					changed = 1;
+					changed = TRUE;
 				}
 			}
 		}
@@ -476,16 +471,16 @@ s32 btFormationBuildEnemyList(s32 recordId) {
 		for(i = 0; i < FORMATION_MEMBERS; i++)
 			memberOrder[i] = i;
 		for(i = 0; i <= 9; i++) {
-			s32 first = syRandomBelow(FORMATION_MEMBERS);
-			s32 second = syRandomBelow(FORMATION_MEMBERS);
-			s32 swap = memberOrder[first];
+			Sint32 first = syRandomBelow(FORMATION_MEMBERS);
+			Sint32 second = syRandomBelow(FORMATION_MEMBERS);
+			Sint32 swap = memberOrder[first];
 
 			memberOrder[first] = memberOrder[second];
 			memberOrder[second] = swap;
 		}
 		for(i = 0; i < FORMATION_MEMBERS; i++) {
-			s32 copyIndex;
-			s32 slot = memberOrder[i];
+			Sint32 copyIndex;
+			Sint32 slot = memberOrder[i];
 
 			for(copyIndex = 0; copyIndex < memberCounts[slot]; copyIndex++)
 				enemyClasses[enemyCount++] =
@@ -494,7 +489,7 @@ s32 btFormationBuildEnemyList(s32 recordId) {
 		break;
 	case FORMATION_LAYOUT_INTERLEAVED:
 		for(;;) {
-			s32 member;
+			Sint32 member;
 
 			remainingKinds = 0;
 			for(i = 0; i < FORMATION_MEMBERS; i++) {
@@ -528,20 +523,20 @@ s32 btFormationBuildEnemyList(s32 recordId) {
 	if(enemyClasses[0] != 0) {
 		for(;;) {
 			/* Repeated enemy classes get distinct suffixes within this
-			 * encounter. */
-			s32 suffix = btEnemyClaimNameLetter(enemyClasses[i], 1);
-			UNIT *unit;
-			s32 enemyId;
+			   encounter. */
+			Sint32 suffix = btEnemyClaimNameLetter(enemyClasses[i], 1);
+			UNIT  *unit;
+			Sint32 enemyId;
 
 			if(suffix & ENEMY_LETTER_FIRST_TOO)
 				btEnemyLetterFirstOfKind(enemyClasses[i]);
-			btUnitSetStub(i + FIRST_ENEMY_UNIT, enemyClasses[i],
-						  suffix & ENEMY_LETTER_MASK);
+			gmBattleUnitSetStub(i + FIRST_ENEMY_UNIT, enemyClasses[i],
+				suffix & ENEMY_LETTER_MASK);
 			unit = syUnitGet(i + FIRST_ENEMY_UNIT);
 			if(levelAdjustment != 0)
 				btEnemyAdjustLevel(i + FIRST_ENEMY_UNIT, levelAdjustment);
 			else if(!syGameFlagGet(FLAG_MONSTER_BATTLE) &&
-					syGameFlagGet(FLAG_HARD_LEVEL))
+				syGameFlagGet(FLAG_HARD_LEVEL))
 				btUnitStrengthen(i + FIRST_ENEMY_UNIT);
 			battle->forceField = 0;
 			enemyId = unit->enemyId;
@@ -561,12 +556,13 @@ s32 btFormationBuildEnemyList(s32 recordId) {
 	return i;
 }
 
-/* Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen */
-/* enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked. */
-u32 btSprGetDefeatSnd(s32 index) {
-	u32 kind = BattleSprites[index].defeatSnd;
+/* Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
+   enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked. */
+Uint32 btSprGetDefeatSnd(Sint32 index)
+{
+	Uint32 kind = BattleSprites[index].defeatSnd;
 
-	if((s32)kind > 4)
+	if((Sint32)kind > 4)
 		kind = -1U;
 	return kind;
 }
@@ -575,42 +571,44 @@ u32 btSprGetDefeatSnd(s32 index) {
 #define ENEMY_CLASS_LAST 386
 
 /* Returns the class's battle sprite, row 0's for a class out of range. */
-s32 btSprGetSpr(s32 index) {
-	if((u32)index > ENEMY_CLASS_LAST)
+Sint32 btSprGetSpr(Sint32 index)
+{
+	if((Uint32)index > ENEMY_CLASS_LAST)
 		return BattleSprites[0].anm;
 	return BattleSprites[index].anm;
 }
 
 /* Returns the class's sprite palette. For a class out of range it returns row
- */
-/* 0's sprite, not a palette. */
-s32 btSprGetPalette(s32 index) {
-	if((u32)index > ENEMY_CLASS_LAST)
+   0's sprite, not a palette. */
+Sint32 btSprGetPalette(Sint32 index)
+{
+	if((Uint32)index > ENEMY_CLASS_LAST)
 		return BattleSprites[0].anm;
 	return BattleSprites[index].pal;
 }
 
-/* Returns 1 for a small class, which takes one enemy sprite slot instead of */
-/* two and stands closer to its neighbours; 0 out of range. */
-s32 btSprIsSmall(s32 index) {
+/* Returns 1 for a small class, which takes one enemy sprite slot instead of two
+   and stands closer to its neighbours; 0 out of range. */
+Sint32 btSprIsSmall(Sint32 index)
+{
 
-	s32 result;
-	u32 flags;
+	Bool   result;
+	Uint32 flags;
 
-	if((u32)index > ENEMY_CLASS_LAST)
+	if((Uint32)index > ENEMY_CLASS_LAST)
 		return 0;
-	result = 0;
+	result = FALSE;
 	flags = BattleSprites[index].isSmall;
 	if(flags)
-		result = 1;
+		result = TRUE;
 	return result;
 }
 
 /* Returns the battle effect a class's plain attack shows, 1 for none or out of
- */
-/* range. */
-u32 btSprGetAttackEffect(u32 index) {
-	u16 value;
+   range. */
+Uint32 btSprGetAttackEffect(Uint32 index)
+{
+	Uint16 value;
 
 	if(index > ENEMY_CLASS_LAST)
 		return 1;
@@ -618,10 +616,11 @@ u32 btSprGetAttackEffect(u32 index) {
 	return value ? value : 1;
 }
 
-/* Returns how high a class hops as it runs up to attack, in pixels; 0 out of */
-/* range. */
-u32 btSprGetAttackHop(u32 index) {
-	u16 value;
+/* Returns how high a class hops as it runs up to attack, in pixels; 0 out of
+   range. */
+Uint32 btSprGetAttackHop(Uint32 index)
+{
+	Uint16 value;
 
 	if(index > ENEMY_CLASS_LAST)
 		return 0;
@@ -629,17 +628,19 @@ u32 btSprGetAttackHop(u32 index) {
 	return value ? value : 0;
 }
 
-/* Returns 1 for a class whose blow lands with a heavier impact; 0 out of */
-/* range. */
-s32 btSprHasHeavyImpact(s32 index) {
-	if((u32)index > ENEMY_CLASS_LAST)
+/* Returns 1 for a class whose blow lands with a heavier impact; 0 out of
+   range. */
+Sint32 btSprHasHeavyImpact(Sint32 index)
+{
+	if((Uint32)index > ENEMY_CLASS_LAST)
 		return 0;
 	return BattleSprites[index].heavyImpact;
 }
 
-/* Returns the height an animation is drawn at over a class, in pixels, or 0 */
-/* for its size's default; 0 out of range. */
-u32 btSprGetEffectHeight(u32 index) {
+/* Returns the height an animation is drawn at over a class, in pixels, or 0 for
+   its size's default; 0 out of range. */
+Uint32 btSprGetEffectHeight(Uint32 index)
+{
 	if(index > ENEMY_CLASS_LAST)
 		return 0;
 	return BattleSprites[index].effHeight;

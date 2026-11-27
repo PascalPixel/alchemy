@@ -1,13 +1,13 @@
-/* syFlameUpdateForward for a flame flying east or west: it goes along x, and a
- */
-/* leader it reaches is knocked back along x. */
-void syFlameUpdateSideways(ACTOR *actor) {
+/* scFlameUpdateForward for a flame flying east or west: it goes along x, and a
+   leader it reaches is knocked back along x. */
+void scFlameUpdateSideways(ACTOR *actor)
+{
 	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
-	ACTOR *other = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
-	FIXED dx = actor->bounce;
-	FIXED dz;
-	s32 i;
+	ACTOR			*other = fdActorGet(MainRoutineStateWork.leaderActorId);
+	FIELD_STATE		*event = Ram_HeapSlots->fieldState;
+	FIXED			 dx = actor->bounce;
+	FIXED			 dz;
+	Sint32			 i;
 	KNOCK_BACK_DIRECTION *direction;
 
 	actor->z.fixed += dx;
@@ -20,8 +20,8 @@ void syFlameUpdateSideways(ACTOR *actor) {
 	actor->scaleY += actor->acceleration;
 	((FIELD_SPR *)actor->spr)->rotation += actor->tmr;
 	if(other->y.fixed == other->groundHeight &&
-	   fdActorIsTouching(actor, other) &&
-	   MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
+		fdActorIsTouching(actor, other) &&
+		MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
 		if(actor->sceneWord != 0) {
 			state->dir.z = 0;
 			direction = &state->dir;
@@ -35,23 +35,22 @@ void syFlameUpdateSideways(ACTOR *actor) {
 		actor->gravity += actor->bounce >> 2;
 		actor->sceneWord = 0;
 		state->active = 1;
-		event->stepTrigger = state->hitTrigger;
+		event->stepCue = state->hitCue;
 	}
 	for(i = 0; i < 4; i++) {
-		s32 id = state->slots[i].id;
+		Sint32 id = state->slots[i].id;
 
 		if(id == 0)
 			break;
 		other = fdActorGet(id);
 		if(other->y.fixed == other->groundHeight &&
-		   fdActorIsBeside(actor, other)) {
+			fdActorIsBeside(actor, other)) {
 			if(state->slots[i].blocked == 0) {
 				actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 				actor->z.fixed -= actor->sceneWord;
 				actor->gravity += actor->sceneWord >> 2;
 				actor->sceneWord = 0;
-			}
-			else {
+			} else {
 				state->blocked = 1;
 			}
 		}

@@ -1,54 +1,52 @@
-/* @file */
 /* Triple Chomp, and the entry points of Beam, Rolling Flame, Ghost Soldier and
- */
-/* Blast Breath. */
-/* Part of battle_effect.c. */
+   Blast Breath. Part of battle_effect.c. */
 
-#define TRIPLE_CHOMP_FRAMES 50
+#define TRIPLE_CHOMP_FRAMES		 50
 /* The bites, closing at TripleChomp_BiteFrames' three frames. */
-#define TRIPLE_CHOMP_BITES 3
+#define TRIPLE_CHOMP_BITES		 3
 /* The canvas line each bite closes on, this far above the target's place. */
 #define TRIPLE_CHOMP_BITE_HEIGHT 24
 
-/* The sparks, TRIPLE_CHOMP_SPARK_COUNT of EXTRA_PARTICLES: each bite throws */
-/* TRIPLE_CHOMP_BITE_SPARKS from the start of its own run of */
-/* TRIPLE_CHOMP_BITE_SPARK_SLOTS. */
+/* The sparks, TRIPLE_CHOMP_SPARK_COUNT of EXTRA_PARTICLES: each bite throws
+   TRIPLE_CHOMP_BITE_SPARKS from the start of its own run of
+   TRIPLE_CHOMP_BITE_SPARK_SLOTS. */
 #define TRIPLE_CHOMP_SPARK_COUNT	  512
 #define TRIPLE_CHOMP_BITE_SPARKS	  32
 #define TRIPLE_CHOMP_BITE_SPARK_SLOTS 128
 
-/* Each bite's ring, FireRingTexture on a square: the first three particles */
-/* hold where each is spark. A ring swells from a quarter of its size by */
-/* TRIPLE_CHOMP_RING_GROWTH a frame for TRIPLE_CHOMP_RING_FRAMES, spark whole */
-/* for the first half and then losing TRIPLE_CHOMP_RING_FADE of its shade a */
-/* frame. */
+/* Each bite's ring, FireRingTexture on a square: the first three particles hold
+   where each is spark. A ring swells from a quarter of its size by
+   TRIPLE_CHOMP_RING_GROWTH a frame for TRIPLE_CHOMP_RING_FRAMES, spark whole
+   for the first half and then losing TRIPLE_CHOMP_RING_FADE of its shade a
+   frame. */
 #define BITE_RING(bite)			 (&state->particles[bite])
 #define TRIPLE_CHOMP_RING_FRAMES 16
 #define TRIPLE_CHOMP_RING_GROWTH toFIXED(0.15552)
 #define TRIPLE_CHOMP_RING_FADE	 8
 
-/* The user lunges most of the way to the target, and three bites close on */
-/* it, TripleChomp_BiteFrames apart. Each throws blue sparks that fly off */
-/* away from the user, jolts the target back and flashes it, and swells a */
-/* ring of light over it, tilted back and turned a quarter further each bite, */
-/* that fades as it grows. The last bite shows the damage. */
-/* */
-/* Abilities: Triple Chomp. */
-void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args) {
+/* The user lunges most of the way to the target, and three bites close on it,
+   TripleChomp_BiteFrames apart. Each throws blue sparks that fly off away from
+   the user, jolts the target back and flashes it, and swells a ring of light
+   over it, tilted back and turned a quarter further each bite, that fades as it
+   grows. The last bite shows the damage.
+
+   Abilities: Triple Chomp. */
+void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
+{
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	s32 frame;
+	void				*canvas;
+	Sint32				 frame;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
-	BLITTER_PAIR draw;
-	u8 *graphics;
-	void *vertices;
+	BLITTER_PAIR  draw;
+	Uint8		 *graphics;
+	void		 *vertices;
 	RENDER_MODEL *model;
 	MODEL_TEXTURE texture;
-	SCR_POINT position;
-	PARTICLE *spark;
-	s32 i;
-	s32 j;
-	u8 *pixels = Ram_MapCellBuffer;
+	SCREEN_POINT  position;
+	PARTICLE	 *spark;
+	Sint32		  i;
+	Sint32		  j;
+	Uint8		 *pixels = Ram_MapMetatileBuffer;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
@@ -61,16 +59,16 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args) {
 	btEffectSetApproachMotion(args->user, args->tgts[0], 8, 80);
 	sySynch(8);
 
-	/* A clipped, mirrored blitter keeping the brighter for the sparks; the */
-	/* ring's texture, the spark sprite sheet and the blue flame's colours. */
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-						EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+	/* A clipped, mirrored blitter keeping the brighter for the sparks; the
+	   ring's texture, the spark sprite sheet and the blue flame's colours. */
+	EFFECT_LOAD_BLITTER(
+		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	draw[0] = Ram_HeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
 	syWordsCopyEntry((void *)BG_PLTT,
-					 syResourceGetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
-					 SHEET_PALETTE_BYTES);
+		syResourceGetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
+		SHEET_PALETTE_BYTES);
 
 	for(frame = 0; frame != TRIPLE_CHOMP_FRAMES; frame++) {
 		if(frame == 0) {
@@ -78,9 +76,9 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args) {
 				EXTRA_PARTICLES[i].variant = -1;
 		}
 
-		/* This frame's ring: one model drawing the square with the 128x128 */
-		/* texture. */
-		vertices = syHeapAllocEwram(32);
+		/* This frame's ring: one model drawing the square with the 128x128
+		   texture. */
+		vertices = syHeapAllocEWRAM(32);
 		model = btRenderAllocateModelList(1);
 		btEffectPosProjectBattler(args->tgts[0], &position);
 		texture.logWidth = 7;
@@ -93,16 +91,15 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args) {
 
 		for(i = 0; i != TRIPLE_CHOMP_BITES; i++) {
 			/* The bite closes: its sparks fly from the target's middle, and the
-			 */
-			/* target jolts and flashes. The last bite shows the damage. */
+			   target jolts and flashes. The last bite shows the damage. */
 			if(frame == TripleChomp_BiteFrames[i]) {
 				for(j = 0; j != TRIPLE_CHOMP_BITE_SPARKS; j++) {
 					PARTICLE *spark =
 						&EXTRA_PARTICLES[i * TRIPLE_CHOMP_BITE_SPARK_SLOTS + j];
-					s32 angle;
-					s32 force;
+					Sint32 angle;
+					Sint32 force;
 
-					spark->x = INTtoFIXED(position.x / 2);
+					spark->x = toFIXED(position.x / 2);
 					spark->y =
 						INTtoFIXED(position.y - TRIPLE_CHOMP_BITE_HEIGHT);
 					angle = syRandom();
@@ -121,35 +118,35 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args) {
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				else
 					sySndPlayStub(SE_HEAVY_IMPACT);
-				btEffectStartActorMotion(args->tgts[0], 1, toFIXED(2),
-										 toFIXED(8), 0, i * 20 + 120);
-				btEffectTintBattler(args->tgts[0], SPRITE_COLOR_WHITE,
-									POSE_DAMAGE, 0, 8);
+				btEffectStartActorMotion(
+					args->tgts[0], 1, toFIXED(2), toFIXED(8), 0, i * 20 + 120);
+				btEffectTintBattler(
+					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 				state->shakeFrm = 8;
 			}
 
 			/* The bite's ring swells and fades. */
 			if(frame >= TripleChomp_BiteFrames[i] &&
-			   frame < TripleChomp_BiteFrames[i] + TRIPLE_CHOMP_RING_FRAMES) {
-				s32 age = frame - TripleChomp_BiteFrames[i];
-				s32 shade =
+				frame < TripleChomp_BiteFrames[i] + TRIPLE_CHOMP_RING_FRAMES) {
+				Sint32 age = frame - TripleChomp_BiteFrames[i];
+				Sint32 shade =
 					TRIPLE_CHOMP_RING_FRAMES / 2 * TRIPLE_CHOMP_RING_FADE -
 					age * TRIPLE_CHOMP_RING_FADE;
-				FIXED scale = age * TRIPLE_CHOMP_RING_GROWTH + FIXED_ONE / 4;
+				FIXED scale = age * TRIPLE_CHOMP_RING_GROWTH + toFIXED(1) / 4;
 
 				if(shade > 0)
 					shade = 0;
 				if(shade > MODEL_SHADE_INVISIBLE) {
 					model->shade = shade;
 					syInitMatrix();
-					syScale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 					syTranslate(INTtoFIXED(BITE_RING(i)->x - 128),
-								INTtoFIXED(BITE_RING(i)->y - 64), 0);
+						INTtoFIXED(BITE_RING(i)->y - 64), 0);
 					syRotZ(i * (DEGtoANG(90)) + DEGtoANG(45));
 					syRotX(-TRIG_TURN / 16);
 					syMatrixScaleUniform(scale);
-					btRenderTransformVertices(BattleEffect_GroundSquareCorners,
-											  vertices, 4);
+					btRenderTransformVertices(
+						BattleEffect_GroundSquareCorners, vertices, 4);
 					btRenderDrawModelList(model);
 				}
 			}
@@ -158,18 +155,18 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args) {
 		/* Each spark is spark and moved twice a frame, shrinking as it dies. */
 		spark = EXTRA_PARTICLES;
 		for(i = 0; i != TRIPLE_CHOMP_SPARK_COUNT; i++) {
-			s32 life = spark->variant;
+			Sint32 life = spark->variant;
 
 			if(life >= 0) {
-				s32 size = (life >> 2) + 3;
+				Sint32 size = (life >> 2) + 3;
 
 				EFFECT_DRAW_MOTE(draw[0], canvas, graphics,
-								 FIXED_INTEGER_PART(spark->x),
-								 FIXED_INTEGER_PART(spark->y), size);
+					FIXED_INTEGER_PART(spark->x), FIXED_INTEGER_PART(spark->y),
+					size);
 				btParticleAdvanceWithGravity2D(spark, 62, 0);
 				EFFECT_DRAW_MOTE(draw[0], canvas, graphics,
-								 FIXED_INTEGER_PART(spark->x),
-								 FIXED_INTEGER_PART(spark->y), size);
+					FIXED_INTEGER_PART(spark->x), FIXED_INTEGER_PART(spark->y),
+					size);
 				btParticleAdvanceWithGravity2D(spark, 62, 0);
 				spark->variant--;
 			}
@@ -187,41 +184,45 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args) {
 	btEffectEndCanvasLayer();
 }
 
-/* Motes of fire gather on the user and a beam of fire shoots from it across */
-/* the targets, a ring of light flying along it. */
-/* */
-/* Abilities: Beam, Cycle Beam, Searing Beam. */
-void btEffectRunBeam(BATTLE_EFFECT_PARM *args) {
+/* Motes of fire gather on the user and a beam of fire shoots from it across the
+   targets, a ring of light flying along it.
+
+   Abilities: Beam, Cycle Beam, Searing Beam. */
+void btEffectRunBeam(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBreaths(args, BREATH_BEAM);
 }
 
-/* A ball of flame rolls from the user onto the targets and fire billows over */
-/* them, always at the strongest variant. */
-/* */
-/* Abilities: Rolling Flame. */
-void btEffectRunRollingFlame(BATTLE_EFFECT_PARM *args) {
+/* A ball of flame rolls from the user onto the targets and fire billows over
+   them, always at the strongest variant.
+
+   Abilities: Rolling Flame. */
+void btEffectRunRollingFlame(BATTLE_EFFECT_PARM *args)
+{
 	args->variant = EFFECT_VARIANT_STRONGEST;
 	btEffectRunBreaths(args, BREATH_ROLLING_FLAME);
 }
 
-/* A ghostly soldier with a pike appears in the user's stead, gathers violet */
-/* light and fires a blast of blue light and a ring at the target, always at */
-/* the strongest variant. */
-/* */
-/* Abilities: Ghost Soldier, Pike Assault. */
-void btEffectRunGhostSoldier(BATTLE_EFFECT_PARM *args) {
+/* A ghostly soldier with a pike appears in the user's stead, gathers violet
+   light and fires a blast of blue light and a ring at the target, always at the
+   strongest variant.
+
+   Abilities: Ghost Soldier, Pike Assault. */
+void btEffectRunGhostSoldier(BATTLE_EFFECT_PARM *args)
+{
 	args->variant = EFFECT_VARIANT_STRONGEST;
 	btEffectRunBreaths(args, BREATH_PIKE);
 }
 
 /* A jet of fire streams from the user onto the targets, crossed rings of fire
- */
-/* flaring where it lands. */
-/* */
-/* Abilities: Blast Breath. */
-void btEffectRunBlastBreath(BATTLE_EFFECT_PARM *args) {
+   flaring where it lands.
+
+   Abilities: Blast Breath. */
+void btEffectRunBlastBreath(BATTLE_EFFECT_PARM *args)
+{
 	btEffectRunBreaths(args, BREATH_BLAST);
 }
+
 #undef TRIPLE_CHOMP_FRAMES
 #undef TRIPLE_CHOMP_BITES
 #undef TRIPLE_CHOMP_BITE_HEIGHT

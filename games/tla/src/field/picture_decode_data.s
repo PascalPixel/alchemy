@@ -7,8 +7,8 @@
 	.4byte	0x00000000
 	.4byte	SpriteColorTables - 0xe0
 	.4byte	SpriteColorTables - 0x100
-	.global Render_DecodePictureCopyEnd
-Render_DecodePictureCopyEnd:
+	.global fdRenderDecodePictureCopyEnd
+fdRenderDecodePictureCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
@@ -17,5 +17,5 @@ Render_DecodePictureCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0
-	.global Render_DecodePictureEnd
-Render_DecodePictureEnd:
+	.global fdRenderDecodePictureEnd
+fdRenderDecodePictureEnd:

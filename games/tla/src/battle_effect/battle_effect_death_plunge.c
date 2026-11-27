@@ -1,94 +1,88 @@
-/* @file */
-/* Death Plunge. */
-/* Part of battle_effect.c. */
+/* Death Plunge. Part of battle_effect.c. */
 
-#define DEATH_PLUNGE_FRAMES 96
-/* The plunge strikes: the target flashes, the user flashes and the damage */
-/* shows. */
+#define DEATH_PLUNGE_FRAMES		  96
+/* The plunge strikes: the target flashes, the user flashes and the damage
+   shows. */
 #define DEATH_PLUNGE_STRIKE_FRAME 54
 /* Both land the right way up, and Death Leap's rings start to fade. */
-#define DEATH_PLUNGE_LAND_FRAME 64
+#define DEATH_PLUNGE_LAND_FRAME	  64
 /* How far toward the target the user runs, in hundredths of the way. */
-#define DEATH_PLUNGE_RUN_PERCENT 90
+#define DEATH_PLUNGE_RUN_PERCENT  90
 /* The flashes thrown in a ring after the strike. */
 #define DEATH_PLUNGE_RING_FLASHES 16
 
 /* Death Leap's bursts, given a countdown that sets out four a frame, of which
- */
-/* the first DEATH_LEAP_BURSTS fly from the target; each shows */
-/* FlashBurstSheet's six pictures for four frames apiece as it rises. */
-#define DEATH_LEAP_BURST_SLOTS	32
-#define DEATH_LEAP_BURSTS		16
-#define DEATH_LEAP_BURST_FRAMES (6 * 4)
+   the first DEATH_LEAP_BURSTS fly from the target; each shows FlashBurstSheet's
+   six pictures for four frames apiece as it rises. */
+#define DEATH_LEAP_BURST_SLOTS		 32
+#define DEATH_LEAP_BURSTS			 16
+#define DEATH_LEAP_BURST_FRAMES		 (6 * 4)
 /* Death Leap's two rings of light, FireRingTexture a quarter turn apart, swell
- */
-/* from a quarter of their size by an eighth a frame (FIXED_ONE >> */
-/* (16 - DEATH_LEAP_RING_GROWTH_SHIFT)) and fade DEATH_LEAP_RING_FADE a frame */
-/* from DEATH_PLUNGE_LAND_FRAME. */
+   from a quarter of their size by an eighth a frame (toFIXED(1) >> (16
+   - DEATH_LEAP_RING_GROWTH_SHIFT)) and fade DEATH_LEAP_RING_FADE a frame from
+	 DEATH_PLUNGE_LAND_FRAME. */
 #define DEATH_LEAP_RINGS			 2
 #define DEATH_LEAP_RING_GROWTH_SHIFT 13
 #define DEATH_LEAP_RING_FADE		 4
 
-/* The user runs at the first target, both leap and turn upside down, and on */
-/* the hit they bounce apart while a ball of fire swells over them. Death Leap
- */
-/* draws in violet: bursts fly up from the target and two rings of light */
-/* swell over it. */
-/* */
-/* Abilities: Death Plunge, Death Leap. */
-void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args) {
+/* The user runs at the first target, both leap and turn upside down, and on the
+   hit they bounce apart while a ball of fire swells over them. Death Leap draws
+   in violet: bursts fly up from the target and two rings of light swell over
+   it.
+
+   Abilities: Death Plunge, Death Leap. */
+void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
+{
 	BATTLE_EFFECT_STATE *state;
-	void *canvas;
-	s32 frame;
+	void				*canvas;
+	Sint32				 frame;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
-	BLITTER_PAIR draw;
+	BLITTER_PAIR   draw;
 	BATTLE_OBJECT *userObject;
 	BATTLE_OBJECT *targetObject;
-	ACTOR *user;
-	ACTOR *target;
-	s32 percent;
-	FIXED x;
-	FIXED z;
-	s32 userHeight;
-	s32 targetHeight;
-	SCR_POINT targetScreen;
-	FIXED point[3];
-	SCR_POINT screen;
-	MODEL_TEXTURE texture;
-	PARTICLE *burst;
-	RENDER_MODEL *model;
-	void *vertices;
-	s32 i;
-	u8 *pixels;
+	ACTOR		  *user;
+	ACTOR		  *target;
+	Sint32		   percent;
+	FIXED		   x;
+	FIXED		   z;
+	Sint32		   userHeight;
+	Sint32		   targetHeight;
+	SCREEN_POINT   targetScreen;
+	FIXED		   point[3];
+	SCREEN_POINT   screen;
+	MODEL_TEXTURE  texture;
+	PARTICLE	  *burst;
+	RENDER_MODEL  *model;
+	void		  *vertices;
+	Sint32		   i;
+	Uint8		  *pixels;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
 
 	/* Set up the canvas, the flash sprite sheet, the rings' texture and a
-	 * clipped */
-	/* blitter keeping the brighter; Death Leap takes violet colours. */
+	   clipped blitter keeping the brighter; Death Leap takes violet colours. */
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
-	pixels = Ram_MapCellBuffer;
+	pixels = Ram_MapMetatileBuffer;
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
 	if(args->variant == EFFECT_VARIANT_STRONGER) {
 		syWordsCopyEntry((void *)BG_PLTT,
-						 syResourceGetTableEntry(RESOURCE_VIOLET_PALETTE_F),
-						 SHEET_PALETTE_BYTES);
+			syResourceGetTableEntry(RESOURCE_VIOLET_PALETTE_F),
+			SHEET_PALETTE_BYTES);
 		state->transferValue = CANVAS_FADE_HALF;
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-							BLITTER_MAX);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 		REG_BLDALPHA = EFFECT_BLEND_ADD;
-	}
-	else {
-		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
-							CANVAS_FADE_THREE_QUARTERS);
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-							BLITTER_MAX);
+	} else {
+		EFFECT_SET_TRANSFER(
+			state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+		EFFECT_LOAD_BLITTER(
+			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	}
 	state->transferMode = CANVAS_COPY_AND_FADE;
 	draw[0] = Ram_HeapSlots->ramCode;
-	sySetEvent(btEffectTransferCanvas, TASK_PASS_VBLANK);
+	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
 	/* The run, most of the way to the target. */
 	userObject = btObjectGetStub(args->user);
@@ -128,11 +122,10 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args) {
 		}
 
 		/* The target flashes and both bounce; the user heads back towards the
-		 */
-		/* middle of the field. */
+		   middle of the field. */
 		if(frame == DEATH_PLUNGE_STRIKE_FRAME) {
-			btEffectTintBattler(args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
-								0, 10);
+			btEffectTintBattler(
+				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 10);
 			target->velY = toFIXED(8);
 			target->gravity = BATTLE_UNIT_GRAVITY;
 			user->velY = toFIXED(5);
@@ -151,34 +144,33 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args) {
 			btEffectPosProjectPoint(point, &screen);
 			screen.x >>= 1;
 			if(frame == DEATH_PLUNGE_STRIKE_FRAME ||
-			   frame == DEATH_PLUNGE_STRIKE_FRAME + 1)
+				frame == DEATH_PLUNGE_STRIKE_FRAME + 1)
 				draw[0](canvas, state->sheet, screen.x - FLASH_BURST_WIDTH / 2,
-						screen.y - 16, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+					screen.y - 16, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 			if(frame >= 56 && frame <= 67) {
 				for(i = 0; i != DEATH_PLUNGE_RING_FLASHES; i++) {
-					s32 angle = i * (TRIG_TURN / DEATH_PLUNGE_RING_FLASHES);
-					s32 rx = screen.x +
-							 (FIXEDtoINT(sySin(angle) * (frame - 46) * 2));
-					s32 ry = (FIXEDtoINT(syCos(angle) * (frame - 46) * 2)) -
-							 frame + 100;
+					Sint32 angle = i * (TRIG_TURN / DEATH_PLUNGE_RING_FLASHES);
+					Sint32 rx = screen.x +
+						(FIXEDtoINT(sySin(angle) * (frame - 46) * 2));
+					Sint32 ry = (FIXEDtoINT(syCos(angle) * (frame - 46) * 2)) -
+						frame + 100;
 
 					draw[0](canvas,
-							state->sheet +
-								(frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
-							rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
-							FLASH_BURST_HEIGHT);
+						state->sheet +
+							(frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
+						rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
+						FLASH_BURST_HEIGHT);
 				}
 			}
-		}
-		else if(frame > 55) {
+		} else if(frame > 55) {
 			/* The bursts fly from the target. */
 			if(frame == 56) {
 				burst = state->particles;
 				for(i = 0; i != DEATH_LEAP_BURST_SLOTS; i++) {
-					s32 angle;
-					s32 force;
+					Sint32 angle;
+					Sint32 force;
 
-					burst->x = INTtoFIXED(targetScreen.x / 2);
+					burst->x = toFIXED(targetScreen.x / 2);
 					burst->y = INTtoFIXED(targetScreen.y - 16);
 					angle = syRandom();
 					force = (syRandom() & 255) + 64;
@@ -192,9 +184,8 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args) {
 			for(i = 0; i != DEATH_LEAP_BURSTS; i++) {
 				burst = &state->particles[i];
 				if(burst->variant >= 0 &&
-				   burst->variant < DEATH_LEAP_BURST_FRAMES) {
-					draw[0](
-						canvas,
+					burst->variant < DEATH_LEAP_BURST_FRAMES) {
+					draw[0](canvas,
 						state->sheet +
 							burst->variant / 4 * PICTURE_BYTES(FLASH_BURST),
 						FIXED_INTEGER_PART(burst->x) - FLASH_BURST_WIDTH / 2,
@@ -208,18 +199,18 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args) {
 
 		if(args->variant == EFFECT_VARIANT_STRONGER) {
 			/* The rings swell from frame 56. */
-			vertices = syHeapAllocEwram(512);
+			vertices = syHeapAllocEWRAM(512);
 			model = btRenderAllocateModelList(1);
 			if(frame > 55) {
 				FIXED scale = ((frame - 56) << DEATH_LEAP_RING_GROWTH_SHIFT) +
-							  FIXED_ONE / 4;
-				s32 shade = 0;
+					toFIXED(1) / 4;
+				Sint32 shade = 0;
 
 				if(frame >= DEATH_PLUNGE_LAND_FRAME)
 					shade = (DEATH_PLUNGE_LAND_FRAME - frame) *
-							DEATH_LEAP_RING_FADE;
+						DEATH_LEAP_RING_FADE;
 				if(shade > MODEL_SHADE_INVISIBLE) {
-					s32 angle;
+					Sint32 angle;
 
 					texture.logWidth = 7;
 					texture.logHeight = 7;
@@ -233,7 +224,7 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args) {
 						angle += DEGtoANG(90), i++) {
 						syInitMatrix();
 						syTranslate(INTtoFIXED(targetScreen.x / 2 - 64),
-									toFIXED(32), 0);
+							toFIXED(32), 0);
 						syScale(scale, scale, scale);
 						syRotZ(angle);
 						syRotX(-TRIG_TURN / 16);
@@ -254,8 +245,7 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args) {
 			user->y.fixed -= userHeight;
 			target->y.fixed -= targetHeight;
 			/* The user takes its first animation, a party member's stance
-			 * between */
-			/* turns. */
+			   between turns. */
 			fdActorSelectAnimationStub(user, POSE_STILL);
 		}
 		if(frame == DEATH_PLUNGE_STRIKE_FRAME) {

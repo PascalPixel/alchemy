@@ -1,59 +1,56 @@
-/* @file */
-/* The map screen's image: drawing it, scrolling it with the cursor, */
-/* its area markers, and zooming the view out while L is held. */
-/* Part of field_psynergy.c. */
+/* The map screen's image: drawing it, scrolling it with the cursor, its area
+   markers, and zooming the view out while L is held. Part of
+   field_psynergy.c. */
 
-/* The map screen's image on BG1, in 256 colours. The large image */
-/* (RESOURCE_WORLD_MAP_PICTURE_LARGE) is 64 by 48 tiles, each row of tiles */
-/* packed on its own and decoded into the map-cell buffer, which holds 24 rows
- */
-/* and wraps. BG1 holds 32 by 24 of its tiles from char block 1 on, wrapping */
-/* the same way, and BG1's map (fdWorldMapLoadGraphics) numbers them from the */
-/* fifth row, where the still image starts. */
-#define IMAGE_WIDTH		   512
-#define IMAGE_HEIGHT	   384
-#define IMAGE_TILES_ACROSS (IMAGE_WIDTH / 8)
-#define IMAGE_ROW_BYTES	   (IMAGE_TILES_ACROSS * TILE_SIZE_8BPP)
+/* The map screen's image on BG1, in 256 colours. The large image
+   (RESOURCE_WORLD_MAP_PICTURE_LARGE) is 64 by 48 tiles, each row of tiles
+   packed on its own and decoded into the map-metatile buffer, which holds 24
+   rows and wraps. BG1 holds 32 by 24 of its tiles from char block 1 on,
+   wrapping the same way, and BG1's map (fdWorldMapLoadGraphics) numbers them
+   from the fifth row, where the still image starts. */
+#define IMAGE_WIDTH			512
+#define IMAGE_HEIGHT		384
+#define IMAGE_TILES_ACROSS	(IMAGE_WIDTH / 8)
+#define IMAGE_ROW_BYTES		(IMAGE_TILES_ACROSS * TILE_SIZE_8BPP)
 /* The image's tiles BG1 holds, where its map's tile numbers wrap. */
-#define MAP_SCREEN_TILES (MAP_SCREEN_TILE_ROWS * BG_SCREEN_WIDTH)
+#define MAP_SCREEN_TILES	(MAP_SCREEN_TILE_ROWS * BG_SCREEN_WIDTH)
 /* The scroll that shows the image's bottom right corner. */
-#define IMAGE_SCROLL_MAX_X toFIXED(IMAGE_WIDTH - DISPLAY_WIDTH)
-#define IMAGE_SCROLL_MAX_Y toFIXED(IMAGE_HEIGHT - DISPLAY_HEIGHT)
-/* The tiles drawn for one screen: 30 by 20, and the column and row partly */
-/* scrolled in. */
+#define IMAGE_SCROLL_MAX_X	toFIXED(IMAGE_WIDTH - DISPLAY_WIDTH)
+#define IMAGE_SCROLL_MAX_Y	toFIXED(IMAGE_HEIGHT - DISPLAY_HEIGHT)
+/* The tiles drawn for one screen: 30 by 20, and the column and row partly
+   scrolled in. */
 #define IMAGE_DRAWN_COLUMNS (DISPLAY_WIDTH / 8 + 1)
 #define IMAGE_DRAWN_ROWS	(DISPLAY_HEIGHT / 8 + 1)
 
 /* The cursor's limits on the image, in pixels; y goes from 0. */
-/* @{ */
-#define WORLD_MAP_CURSOR_MIN_X 16
-#define WORLD_MAP_CURSOR_MAX_X (IMAGE_WIDTH - 1)
-#define WORLD_MAP_CURSOR_MAX_Y 365
-/* @} */
-#define WORLD_MAP_CURSOR_MIN_SPEED toFIXED(1) /* pixels a frame */
-#define WORLD_MAP_CURSOR_MAX_SPEED toFIXED(6) /* pixels a frame */
+#define WORLD_MAP_CURSOR_MIN_X		  16
+#define WORLD_MAP_CURSOR_MAX_X		  (IMAGE_WIDTH - 1)
+#define WORLD_MAP_CURSOR_MAX_Y		  365
+#define WORLD_MAP_CURSOR_MIN_SPEED	  toFIXED(1) /* pixels a frame */
+#define WORLD_MAP_CURSOR_MAX_SPEED	  toFIXED(6) /* pixels a frame */
 /* Added to the cursor's speed each frame the d-pad is held. */
 #define WORLD_MAP_CURSOR_ACCELERATION (toFIXED(1) / 8)
 /* How near the cursor a marker's name shows, in pixels. */
-#define WORLD_MAP_NAME_REACH		 8
-#define WORLD_MAP_MARKER_BLEND_STEPS 32 /* WorldMap_MarkerBlendCycle's rows */
+#define WORLD_MAP_NAME_REACH		  8
+#define WORLD_MAP_MARKER_BLEND_STEPS  32 /* WorldMap_MarkerBlendCycle's rows */
 
-/* R (step 1) and L (step -1) on the map screen: the cursor jumps to the */
-/* next or the previous marked place round from the one nearest it, and its */
-/* point on the image is written to screenX and screenY. */
-void fdMapScrStepToPlace(s32 *screenX, s32 *screenY, s32 step) {
+/* R (step 1) and L (step -1) on the map screen: the cursor jumps to the next or
+   the previous marked place round from the one nearest it, and its point on the
+   image is written to screenX and screenY. */
+void fdMapScreenStepToPlace(Sint32 *screenX, Sint32 *screenY, Sint32 step)
+{
 	const WORLD_MAP_PLACE *places;
 	const WORLD_MAP_PLACE *place;
 	const WORLD_MAP_PLACE *next;
-	s32 best;
-	s32 bestDistance;
-	s32 cursorX;
-	s32 cursorY;
-	s32 count;
-	s32 wraps;
-	s32 flag;
-	u32 marker;
-	WORLD_MAP_STATE *worldMapState = Ram_WorldMapState;
+	Sint32				   best;
+	Sint32				   bestDistance;
+	Sint32				   cursorX;
+	Sint32				   cursorY;
+	Sint32				   count;
+	Sint32				   wraps;
+	Sint32				   flag;
+	Uint32				   marker;
+	WORLD_MAP_STATE		  *worldMapState = Ram_WorldMapState;
 
 	/* DEAD: the leader looked up and never used; the ROM keeps the call. */
 	fdPartyGetLeaderActor();
@@ -74,12 +71,12 @@ void fdMapScrStepToPlace(s32 *screenX, s32 *screenY, s32 step) {
 		marker = fdWorldMapPlaceGetMarker(place);
 
 		if(marker != WORLD_MAP_MARKER_NONE && marker != WORLD_MAP_MARKER_SHIP &&
-		   syGameFlagGet(flag)) {
-			s32 sx = MAP_SCREEN_X(place->x);
-			s32 sy = MAP_SCREEN_Y(place->z);
-			s32 dx = sx - cursorX;
-			s32 dy = sy - cursorY;
-			s32 distance = dx * dx + dy * dy;
+			syGameFlagGet(flag)) {
+			Sint32 sx = MAP_SCREEN_X(place->x);
+			Sint32 sy = MAP_SCREEN_Y(place->z);
+			Sint32 dx = sx - cursorX;
+			Sint32 dy = sy - cursorY;
+			Sint32 distance = dx * dx + dy * dy;
 
 			if(bestDistance > distance) {
 				bestDistance = distance;
@@ -88,7 +85,7 @@ void fdMapScrStepToPlace(s32 *screenX, s32 *screenY, s32 step) {
 		}
 	}
 	if(best == -1) {
-		fdMapScrGetLeaderPoint(screenX, screenY);
+		fdMapScreenGetLeaderPoint(screenX, screenY);
 		return;
 	}
 	place = &places[best];
@@ -99,19 +96,18 @@ void fdMapScrStepToPlace(s32 *screenX, s32 *screenY, s32 step) {
 			if(best < 0) {
 				best = count - 1;
 				wraps++;
-			}
-			else {
+			} else {
 				next = &places[best];
 				if(next->flg == 0) {
 					best = 0;
 					wraps++;
-				}
-				else {
+				} else {
 					flag = FLAG_PLACE_VISITED(next->flg);
 					marker = fdWorldMapPlaceGetMarker(next);
 
 					if(marker != WORLD_MAP_MARKER_NONE &&
-					   marker != WORLD_MAP_MARKER_SHIP && syGameFlagGet(flag)) {
+						marker != WORLD_MAP_MARKER_SHIP &&
+						syGameFlagGet(flag)) {
 						place = next;
 						break;
 					}
@@ -124,9 +120,9 @@ void fdMapScrStepToPlace(s32 *screenX, s32 *screenY, s32 step) {
 }
 
 /* Moves every window sprite of a list by dx, dy: the output's position and its
- */
-/* queued sprite's OAM x and y. */
-void fdWindowSprListMove(WINDOW_SPR_LIST *list, s32 dx, s32 dy) {
+   queued sprite's OAM x and y. */
+void fdWindowSprListMove(WINDOW_SPR_LIST *list, Sint32 dx, Sint32 dy)
+{
 	WINDOW_SPR *output;
 	QUEUED_SPR *sprite;
 
@@ -143,76 +139,72 @@ void fdWindowSprListMove(WINDOW_SPR_LIST *list, s32 dx, s32 dy) {
 	}
 }
 
-/* Where the name of the place nearest the cursor is drawn: its top this many */
-/* pixels above the place, and its left edge WORLD_MAP_NAME_LEFT pixels left */
-/* of it (1 when zoomed). A name that would run off the screen's right edge */
-/* ends WORLD_MAP_NAME_RIGHT_MARGIN pixels short of it instead, and is raised */
-/* WORLD_MAP_NAME_RAISE more. */
+/* Where the name of the place nearest the cursor is drawn: its top this many
+   pixels above the place, and its left edge WORLD_MAP_NAME_LEFT pixels left of
+   it (1 when zoomed). A name that would run off the screen's right edge ends
+   WORLD_MAP_NAME_RIGHT_MARGIN pixels short of it instead, and is raised
+   WORLD_MAP_NAME_RAISE more. */
 #define WORLD_MAP_NAME_ABOVE		11
 #define WORLD_MAP_NAME_RIGHT_MARGIN 8
 #define WORLD_MAP_NAME_RAISE		10
-/* The cursor sprite's left edge, this many pixels left of the cursor's point.
- */
-#define MAP_SCREEN_CURSOR_LEFT 17
+/* The cursor sprite's left edge, this many pixels left of the cursor's
+   point. */
+#define MAP_SCREEN_CURSOR_LEFT		17
 
 /* The scrolled name's left edge, in pixels left of its place. */
-#if LANGUAGE == LANGUAGE_GERMAN
-#define WORLD_MAP_NAME_LEFT 3
-#else
-#define WORLD_MAP_NAME_LEFT 1
-#endif
+#define WORLD_MAP_NAME_LEFT GERMAN_OR(3, 1)
 
 /* The upper halfword of value, its whole pixels. */
-#define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
-/* A place on the World Map, in pixels, as a place on the image, 300 pixels */
-/* to every 640. */
+#define WORLD_MAP_HIGH(value)  (((Sint16 *)&(value))[1])
+/* A place on the World Map, in pixels, as a place on the image, 300 pixels to
+   every 640. */
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
 /* The names a marker shows besides its place's own. */
 #define MARKER_NAME_PARTY -1 /* "Present location" */
 #define MARKER_NAME_SHIP  -2 /* "Boat" */
 
-/* Each frame of the map screen: moves the cursor with the d-pad, faster */
-/* the longer it is held, or glides it toward its target; draws a marker at */
-/* each place visited, at the ship once it sails and at the party; with the */
-/* d-pad released draws the cursor onto the nearest marker in reach, and shows
- */
-/* that marker's name beside it. */
-void fdMapScrUpdateMarkers(void) {
-	WORLD_MAP_STATE *state;
-	WORLD_MAP_MARKER *marker;
-	s32 tileBase;
-	s32 blend;
-	s32 nearest;
-	s32 nearestDistance;
-	s32 nearestX;
-	s32 nearestY;
-	s32 name;
-	s32 nearestName;
-	s32 nearestEntrance;
-	s32 entrance;
+/* Each frame of the map screen: moves the cursor with the d-pad, faster the
+   longer it is held, or glides it toward its target; draws a marker at each
+   place visited, at the ship once it sails and at the party; with the d-pad
+   released draws the cursor onto the nearest marker in reach, and shows that
+   marker's name beside it. */
+void fdMapScreenUpdateMarkers(void)
+{
+	WORLD_MAP_STATE		  *state;
+	WORLD_MAP_MARKER	  *marker;
+	Sint32				   tileBase;
+	Sint32				   blend;
+	Sint32				   nearest;
+	Sint32				   nearestDistance;
+	Sint32				   nearestX;
+	Sint32				   nearestY;
+	Sint32				   name;
+	Sint32				   nearestName;
+	Sint32				   nearestEntrance;
+	Sint32				   entrance;
 	const WORLD_MAP_PLACE *places;
-	s32 scrollX;
-	s32 scrollY;
+	Sint32				   scrollX;
+	Sint32				   scrollY;
 	const WORLD_MAP_PLACE *place;
-	s32 width;
-	s32 height;
-	s32 placeX;
-	s32 placeY;
-	FIXED pos[3];
-	s32 x;
-	s32 y;
-	s32 dx;
-	s32 dz;
-	FIXED distance;
-	FIXED step;
-	s32 cursorX;
-	s32 cursorY;
-	u16 angle;
-	s32 tile;
-	s32 always;
-	s32 flag;
-	s32 i;
+	Sint32				   width;
+	Sint32				   height;
+	Sint32				   placeX;
+	Sint32				   placeY;
+	FIXED				   pos[3];
+	Sint32				   x;
+	Sint32				   y;
+	Sint32				   dx;
+	Sint32				   dz;
+	FIXED				   distance;
+	FIXED				   step;
+	Sint32				   cursorX;
+	Sint32				   cursorY;
+	Uint16				   angle;
+	Sint32				   tile;
+	Sint32				   always;
+	Sint32				   flag;
+	Sint32				   i;
 
 	/* DEAD: the leader looked up and never used; the ROM keeps the call. */
 	fdPartyGetLeaderActor();
@@ -227,14 +219,14 @@ void fdMapScrUpdateMarkers(void) {
 	scrollX = state->scrollX & FIELD_PIXEL_MASK;
 	scrollY = state->scrollZ & FIELD_PIXEL_MASK;
 	blend = WorldMap_MarkerBlendCycle[(FrameCount >> 1) &
-									  (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
+		(WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
 	if(MapScreen_GlideTargetX != 0) {
 		x = MapScreen_GlideTargetX;
 		y = MapScreen_GlideTargetY;
-		dx = (x - state->x) / FIXED_ONE;
-		dz = (y - state->z) / FIXED_ONE;
-		distance = toFIXED(sySquart(dx * dx + dz * dz));
+		dx = (x - state->x) / toFIXED(1);
+		dz = (y - state->z) / toFIXED(1);
+		distance = toFIXED(sySquartIWRAM(dx * dx + dz * dz));
 		dx = x - state->x;
 		dz = y - state->z;
 		if(distance < toFIXED(64))
@@ -247,8 +239,7 @@ void fdMapScrUpdateMarkers(void) {
 			state->z = y;
 			MapScreen_GlideTargetX = 0;
 			MapScreen_GlideTargetY = 0;
-		}
-		else {
+		} else {
 			if(distance > step) {
 				dx = syMulFX(syDivFX(distance, dx), step);
 				dz = syMulFX(syDivFX(distance, dz), step);
@@ -256,9 +247,8 @@ void fdMapScrUpdateMarkers(void) {
 			state->x += dx;
 			state->z += dz;
 		}
-	}
-	else {
-		angle = WorldMap_CursorDirectionAngles[DPAD_INDEX(InputWork.held)];
+	} else {
+		angle = WorldMap_CursorDirectionAngles[DPAD_INDEX(PerWork.data)];
 		if(angle != WORLD_MAP_KEY_HEADING_NONE) {
 			pos[0] = state->x;
 			pos[1] = 0;
@@ -294,9 +284,8 @@ void fdMapScrUpdateMarkers(void) {
 			name = MARKER_NAME_PARTY;
 			tile = WORLD_MARKER_TILE_PARTY;
 			always = 0;
-			fdMapScrGetLeaderPoint(&placeX, &placeY);
-		}
-		else {
+			fdMapScreenGetLeaderPoint(&placeX, &placeY);
+		} else {
 			name = place->visitScene;
 			entrance = place->visitEntrance;
 			flag = FLAG_PLACE_VISITED(place->flg);
@@ -313,8 +302,7 @@ void fdMapScrUpdateMarkers(void) {
 				always = 0;
 				placeX = MAP_SCREEN_X(FIXEDtoINT(MainRoutineStateWork.shipX));
 				placeY = MAP_SCREEN_Y(FIXEDtoINT(MainRoutineStateWork.shipZ));
-			}
-			else {
+			} else {
 				if(!syGameFlagGet(flag))
 					continue;
 				always = 1;
@@ -327,7 +315,7 @@ void fdMapScrUpdateMarkers(void) {
 		if(MapScreen_Zoomed == 0) {
 			x = placeX - FIXEDtoINT(scrollX) - 1;
 			y = placeY - FIXEDtoINT(scrollY) - 1;
-			if((u32)(x + 4) > 247)
+			if((Uint32)(x + 4) > 247)
 				continue;
 			if(y < -4)
 				continue;
@@ -335,8 +323,7 @@ void fdMapScrUpdateMarkers(void) {
 				continue;
 			marker->x = x & OBJ_X_MASK;
 			marker->y = y;
-		}
-		else {
+		} else {
 			marker->x = WORLD_MAP_SCALE(placeX) - 1;
 			marker->y = WORLD_MAP_SCALE(placeY) - 1;
 		}
@@ -351,29 +338,27 @@ void fdMapScrUpdateMarkers(void) {
 			nearestY = placeY;
 		}
 		if(always != 0 || (FrameCount & 15) <= 7)
-			syOamAddSprAtDepthClamped(marker++, MAP_SCREEN_MARKER_DEPTH);
+			syOAMAddSprAtDepthClamped(marker++, MAP_SCREEN_MARKER_DEPTH);
 	} while(++i, place++, i < MAP_SCREEN_PLACE_COUNT);
 
-	if(InputWork.held == 0) {
+	if(PerWork.data == 0) {
 		if(nearest != -1) {
 			if(nearestDistance <= 2) {
 				state->x = toFIXED(nearestX);
 				state->z = toFIXED(nearestY);
 				state->speed = WORLD_MAP_CURSOR_MIN_SPEED;
-			}
-			else {
+			} else {
 				angle = syAtan(nearestY - cursorY, nearestX - cursorX);
 				pos[0] = state->x;
 				pos[1] = 0;
 				pos[2] = state->z;
-				syVectorAddPolarOffset(state->speed, (u16)angle, pos);
+				syVectorAddPolarOffset(state->speed, (Uint16)angle, pos);
 				state->x = pos[0];
 				state->z = pos[2];
 			}
 			cursorX = WORLD_MAP_HIGH(state->x);
 			cursorY = WORLD_MAP_HIGH(state->z);
-		}
-		else {
+		} else {
 			state->speed = WORLD_MAP_CURSOR_MIN_SPEED;
 		}
 	}
@@ -384,12 +369,11 @@ void fdMapScrUpdateMarkers(void) {
 		if(MapScreen_Zoomed == 0) {
 			marker->x = nearestX - FIXEDtoINT(scrollX) - 2;
 			marker->y = nearestY - FIXEDtoINT(scrollY) - 2;
-		}
-		else {
+		} else {
 			marker->x = WORLD_MAP_SCALE(nearestX) - 2;
 			marker->y = WORLD_MAP_SCALE(nearestY) - 2;
 		}
-		syOamAddSprAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
+		syOAMAddSprAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
 	}
 
 	marker = &MapScreen_CursorMarker;
@@ -397,25 +381,22 @@ void fdMapScrUpdateMarkers(void) {
 		marker->affineIdx = 0;
 		marker->x = cursorX - FIXEDtoINT(scrollX) - MAP_SCREEN_CURSOR_LEFT;
 		marker->y = cursorY - FIXEDtoINT(scrollY) + 1;
-	}
-	else {
+	} else {
 		marker->x = WORLD_MAP_SCALE(cursorX) - MAP_SCREEN_CURSOR_LEFT;
 		marker->y = WORLD_MAP_SCALE(cursorY) + 1;
 	}
-	syOamAddSprAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
+	syOAMAddSprAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
 
 	if(state->shown != nearest) {
 		/* The Japanese release prepares the window and draws the new name in
-		 * the */
-		/* same frame; the later ones draw it 6 frames after preparing the
-		 * window. */
-#if TLA_PATCH_1
+		   the same frame; the later ones draw it 6 frames after preparing the
+		   window. */
+#if MAP_SCREEN_NAME_DELAYED_REDRAW
 		if(MapScreen_NameRedrawPending[0] == 0) {
 			mnWindowSprPrepareForRedrawStub(state->win);
 			MapScreen_NameRedrawPending[0] = 1;
 			MapScreen_NameRedrawDelay[0] = 6;
-		}
-		else if(--MapScreen_NameRedrawDelay[0] <= 0) {
+		} else if(--MapScreen_NameRedrawDelay[0] <= 0) {
 			MapScreen_NameRedrawPending[0] = 0;
 			state->shown = nearest;
 #else
@@ -425,21 +406,20 @@ void fdMapScrUpdateMarkers(void) {
 #endif
 			if(nearest != -1) {
 				if(nearestName == MARKER_NAME_PARTY)
-					nearestName = (s32)MsgPresentLocation;
+					nearestName = (Sint32)MsgPresentLocation;
 				else if(nearestName == MARKER_NAME_SHIP)
-					nearestName = (s32)MsgBoat;
+					nearestName = (Sint32)MsgBoat;
 				else
 					nearestName =
 						fdAreaGetNameIndex(nearestName, nearestEntrance) +
-						(s32)MsgDebugAreaName;
+						(Sint32)MsgDebugAreaName;
 				mnTextMeasureMessageStub(nearestName, &width, &height);
 				if(MapScreen_Zoomed == 0) {
 					cursorX = nearestX - WORLD_MAP_NAME_LEFT;
 					cursorY = nearestY - WORLD_MAP_NAME_ABOVE;
 					cursorX -= FIXEDtoINT(scrollX);
 					cursorY -= FIXEDtoINT(scrollY);
-				}
-				else {
+				} else {
 					cursorX = WORLD_MAP_SCALE(nearestX) - 1;
 					cursorY = WORLD_MAP_SCALE(nearestY) - WORLD_MAP_NAME_ABOVE;
 				}
@@ -450,16 +430,15 @@ void fdMapScrUpdateMarkers(void) {
 				}
 				if(cursorY < 0)
 					cursorY = 0;
-				mnTextDrawMessageStub(nearestName, state->win, cursorX,
-									  cursorY);
+				mnTextDrawMessageStub(
+					nearestName, state->win, cursorX, cursorY);
 				state->nameBox.width = width;
 				state->nameBox.height = height;
 				state->nameBox.x = cursorX;
 				state->nameBox.y = cursorY;
 			}
 		}
-	}
-	else if(nearest != -1) {
+	} else if(nearest != -1) {
 		width = state->nameBox.width;
 		height = state->nameBox.height;
 		if(MapScreen_Zoomed == 0) {
@@ -467,8 +446,7 @@ void fdMapScrUpdateMarkers(void) {
 			cursorY = nearestY - WORLD_MAP_NAME_ABOVE;
 			cursorX -= FIXEDtoINT(scrollX);
 			cursorY -= FIXEDtoINT(scrollY);
-		}
-		else {
+		} else {
 			cursorX = WORLD_MAP_SCALE(nearestX) - 1;
 			cursorY = WORLD_MAP_SCALE(nearestY) - WORLD_MAP_NAME_ABOVE;
 		}
@@ -485,39 +463,41 @@ void fdMapScrUpdateMarkers(void) {
 		state->nameBox.y = cursorY;
 	}
 
-	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
-	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-						((BLEND_WEIGHT_MAX - blend) << 8) | blend,
-						IO_WRITE_HALFWORD);
-	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 0, IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH(
+		(Uint32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDALPHA,
+		((BLEND_WEIGHT_MAX - blend) << 8) | blend, IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDY, 0, IO_WRITE_HALFWORD);
 }
+
 #undef WORLD_MAP_NAME_LEFT
 #undef MARKER_NAME_PARTY
 #undef MARKER_NAME_SHIP
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
 
-/* Draws the map screen on BG1 with the cursor in the middle of the screen */
-/* (or the whole world, RESOURCE_WORLD_MAP_PICTURE, at the origin while */
-/* WorldMapStateWork.centered is set): the palette, then 21 rows of 31 tiles. */
-void fdMapScrDraw(void) {
+/* Draws the map screen on BG1 with the cursor in the middle of the screen (or
+   the whole world, RESOURCE_WORLD_MAP_PICTURE, at the origin while
+   WorldMapStateWork.centered is set): the palette, then 21 rows of 31 tiles. */
+void fdMapScreenDraw(void)
+{
 	WORLD_MAP_STATE *state = &WorldMapStateWork;
-	u8 *buffer;
-	s32 resource = RESOURCE_WORLD_MAP_PICTURE_LARGE;
-	s32 *cursor = state->cursor;
-	s32 x = *cursor++ - toFIXED(DISPLAY_WIDTH / 2);
-	s32 z = *cursor - toFIXED(DISPLAY_HEIGHT / 2);
-	u32 *graphics;
-	u32 column;
-	u32 firstRow;
-	u32 row;
-	s32 bufferRow;
-	s32 unwrapped;
-	u32 i;
-	FIXED right;
-	FIXED bottom;
-	s32 tile;
-	s32 cell;
+	Uint8			*buffer;
+	Sint32			 resource = RESOURCE_WORLD_MAP_PICTURE_LARGE;
+	Sint32			*cursor = state->cursor;
+	Sint32			 x = *cursor++ - toFIXED(DISPLAY_WIDTH / 2);
+	Sint32			 z = *cursor - toFIXED(DISPLAY_HEIGHT / 2);
+	Uint32			*graphics;
+	Uint32			 column;
+	Uint32			 firstRow;
+	Uint32			 row;
+	Sint32			 bufferRow;
+	Sint32			 unwrapped;
+	Uint32			 i;
+	FIXED			 right;
+	FIXED			 bottom;
+	Sint32			 tile;
+	Sint32			 metatile;
 
 	if(state->centered != 0) {
 		resource = RESOURCE_WORLD_MAP_PICTURE;
@@ -525,10 +505,10 @@ void fdMapScrDraw(void) {
 		z = 0;
 	}
 	graphics = syResourceGetTableEntry(resource);
-	syDMAXCopy((u8 *)graphics + graphics[0], (void *)BG_PLTT,
-			   DMA_COPY_WORDS(120), REG_DMA3);
-	*(u16 *)BG_PLTT = 0;
-	buffer = Ram_MapCellBuffer;
+	syDMAXCopy((Uint8 *)graphics + graphics[0], (void *)BG_PLTT,
+		DMA_COPY_WORDS(120), REG_DMA3);
+	*(Uint16 *)BG_PLTT = 0;
+	buffer = Ram_MapMetatileBuffer;
 	right = IMAGE_SCROLL_MAX_X;
 	bottom = IMAGE_SCROLL_MAX_Y;
 	if(x < 0)
@@ -541,47 +521,47 @@ void fdMapScrDraw(void) {
 		z = bottom;
 	BgScrollWork[1].x = FIXEDtoINT(x);
 	BgScrollWork[1].y = FIXEDtoINT(z);
-	x = FIELD_HALF_CELL((u32)x);
+	x = FIELD_HALF_METATILE((Uint32)x);
 	column = x;
-	firstRow = FIELD_HALF_CELL((u32)z);
+	firstRow = FIELD_HALF_METATILE((Uint32)z);
 	for(row = 0; row < IMAGE_DRAWN_ROWS; row++) {
 		bufferRow = firstRow + row;
 		unwrapped = bufferRow;
 		if(bufferRow >= MAP_SCREEN_TILE_ROWS)
 			bufferRow -= MAP_SCREEN_TILE_ROWS;
-		cell = bufferRow * IMAGE_TILES_ACROSS + column;
+		metatile = bufferRow * IMAGE_TILES_ACROSS + column;
 		/* z is reused for the tile's place in BG1's map. */
 		z = (column & (BG_SCREEN_WIDTH - 1)) + unwrapped * BG_SCREEN_WIDTH;
 		tile = (z + MAP_SCREEN_MAP_START) % MAP_SCREEN_TILES +
-			   MAP_SCREEN_FIRST_TILE;
-		syDecompressTaggedLz((u8 *)graphics + graphics[unwrapped + 1],
-							 buffer + bufferRow * IMAGE_ROW_BYTES);
+			MAP_SCREEN_FIRST_TILE;
+		syDecompressTaggedLZ((Uint8 *)graphics + graphics[unwrapped + 1],
+			buffer + bufferRow * IMAGE_ROW_BYTES);
 		for(i = 0; i < IMAGE_DRAWN_COLUMNS; i++) {
-			syDMAXCopy(buffer + cell * TILE_SIZE_8BPP,
-					   (void *)(VRAM + tile * TILE_SIZE_8BPP),
-					   DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
-			cell++;
+			syDMAXCopy(buffer + metatile * TILE_SIZE_8BPP,
+				(void *)(VRAM + tile * TILE_SIZE_8BPP),
+				DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
+			metatile++;
 			tile++;
 			/* BG1's map is 32 tiles wide: the next column wraps to its left
-			 * edge. */
+			   edge. */
 			if(i + column == BG_SCREEN_WIDTH - 1)
 				tile -= BG_SCREEN_WIDTH;
 		}
 	}
 }
 
-/* Draws one row of the map screen on BG1 as it scrolls in, from a column to */
-/* the image's right edge, at most 31 tiles (the Japanese release always */
-/* draws 32): decodes the row into the map-cell buffer and copies its tiles to
- */
-/* BG1's. */
-void fdMapScrDrawRow(u32 column, s32 row) {
-	s32 resource = RESOURCE_WORLD_MAP_PICTURE_LARGE;
-	u32 *graphics;
-	s32 unwrapped;
-	s32 cell;
-	s32 tile;
-	u32 i;
+/* Draws one row of the map screen on BG1 as it scrolls in, from a column to the
+   image's right edge, at most 31 tiles (the Japanese release always draws 32):
+   decodes the row into the map-metatile buffer and copies its tiles to
+   BG1's. */
+void fdMapScreenDrawRow(Uint32 column, Sint32 row)
+{
+	Sint32	resource = RESOURCE_WORLD_MAP_PICTURE_LARGE;
+	Uint32 *graphics;
+	Sint32	unwrapped;
+	Sint32	metatile;
+	Sint32	tile;
+	Uint32	i;
 
 	if(MapScreen_Zoomed != 0)
 		resource = RESOURCE_WORLD_MAP_PICTURE;
@@ -589,52 +569,53 @@ void fdMapScrDrawRow(u32 column, s32 row) {
 	unwrapped = row;
 	if(row >= MAP_SCREEN_TILE_ROWS)
 		row -= MAP_SCREEN_TILE_ROWS;
-	cell = row * IMAGE_TILES_ACROSS + column;
+	metatile = row * IMAGE_TILES_ACROSS + column;
 	tile = (column & (BG_SCREEN_WIDTH - 1)) + row * BG_SCREEN_WIDTH;
 	tile = (tile + MAP_SCREEN_MAP_START) % MAP_SCREEN_TILES +
-		   MAP_SCREEN_FIRST_TILE;
-	syDecompressTaggedLz((u8 *)graphics + graphics[unwrapped + 1],
-						 Ram_MapCellBuffer + row * IMAGE_ROW_BYTES);
-	/* From patch 1 the copy stops at the image's last column instead of */
-	/* running past it. */
-#if TLA_PATCH_1
+		MAP_SCREEN_FIRST_TILE;
+	syDecompressTaggedLZ((Uint8 *)graphics + graphics[unwrapped + 1],
+		Ram_MapMetatileBuffer + row * IMAGE_ROW_BYTES);
+	/* In every edition but the Japanese the copy stops at the image's last
+	   column instead of running past it. */
+#if MAP_SCREEN_ROW_COPIES_31_TILES_WITHIN_IMAGE
 	for(i = 0; i < IMAGE_DRAWN_COLUMNS && column + i < IMAGE_TILES_ACROSS;
 		i++) {
 #else
 	for(i = 0; i < BG_SCREEN_WIDTH; i++) {
 #endif
-		syDMAXCopy(Ram_MapCellBuffer + cell * TILE_SIZE_8BPP,
-				   (void *)(VRAM + tile * TILE_SIZE_8BPP),
-				   DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
-		cell++;
+		syDMAXCopy(Ram_MapMetatileBuffer + metatile * TILE_SIZE_8BPP,
+			(void *)(VRAM + tile * TILE_SIZE_8BPP),
+			DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
+		metatile++;
 		tile++;
 		if(i + column == BG_SCREEN_WIDTH - 1)
 			tile -= BG_SCREEN_WIDTH;
 	}
 }
 
-/* Draws one column of the map screen on BG1 as it scrolls in, 21 tiles */
-/* down from a row, from the rows already decoded in the map-cell buffer. */
-void fdMapScrDrawColumn(s32 column, s32 row) {
-	u32 i;
+/* Draws one column of the map screen on BG1 as it scrolls in, 21 tiles down
+   from a row, from the rows already decoded in the map-metatile buffer. */
+void fdMapScreenDrawColumn(Sint32 column, Sint32 row)
+{
+	Uint32 i;
 
 	for(i = 0; i < IMAGE_DRAWN_ROWS; i++) {
-		s32 line = row + i;
-		s32 bufferRow = line;
-		s32 cell;
-		s32 tile;
+		Sint32 line = row + i;
+		Sint32 bufferRow = line;
+		Sint32 metatile;
+		Sint32 tile;
 
 		if(line >= MAP_SCREEN_TILE_ROWS)
 			bufferRow = line - MAP_SCREEN_TILE_ROWS;
-		cell = column + bufferRow * IMAGE_TILES_ACROSS;
+		metatile = column + bufferRow * IMAGE_TILES_ACROSS;
 		tile = ((column & (BG_SCREEN_WIDTH - 1)) + line * BG_SCREEN_WIDTH +
-				MAP_SCREEN_MAP_START) %
-			   MAP_SCREEN_TILES;
-		cell *= TILE_SIZE_8BPP;
+				   MAP_SCREEN_MAP_START) %
+			MAP_SCREEN_TILES;
+		metatile *= TILE_SIZE_8BPP;
 		tile *= TILE_SIZE_8BPP;
-		syDMAXCopy(Ram_MapCellBuffer + cell,
-				   (u8 *)(VRAM + MAP_SCREEN_FIRST_TILE * TILE_SIZE_8BPP) + tile,
-				   DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
+		syDMAXCopy(Ram_MapMetatileBuffer + metatile,
+			(Uint8 *)(VRAM + MAP_SCREEN_FIRST_TILE * TILE_SIZE_8BPP) + tile,
+			DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
 		/* FAKEMATCH(dead): line set to 0 at the step's end, where nothing reads
 		 * it; as no store. */
 		line = 0;
@@ -645,26 +626,25 @@ void fdMapScrDrawColumn(s32 column, s32 row) {
 #define SCROLL_X Ram_WorldMapScroll[0]
 #define SCROLL_Y Ram_WorldMapScroll[1]
 
-/* The map screen's scroll follows the cursor. The target puts the */
-/* cursor in the middle of the screen (clamped to the image); unless the */
-/* whole world shows, the scroll moves a quarter of the way there each frame, */
-/* at most 8 pixels, and stops when nearer than a quarter pixel. Each time the
- */
-/* scroll crosses into a new column or row of tiles, that column */
-/* (fdMapScrDrawColumn) or row (fdMapScrDrawRow) is drawn; BG1 */
-/* scrolls with it. */
-void fdMapScrUpdateScroll(void) {
-	s32 *cursor = MapScreen_Cursor;
-	s32 x = *cursor++ - toFIXED(DISPLAY_WIDTH / 2);
-	s32 y = *cursor - toFIXED(DISPLAY_HEIGHT / 2);
-	s32 dx;
-	s32 dy;
-	FIXED distance;
-	FIXED step;
-	u32 column;
-	u32 row;
-	s32 limit;
-	s32 bottom = IMAGE_SCROLL_MAX_Y;
+/* The map screen's scroll follows the cursor. The target puts the cursor in the
+   middle of the screen (clamped to the image); unless the whole world shows,
+   the scroll moves a quarter of the way there each frame, at most 8 pixels, and
+   stops when nearer than a quarter pixel. Each time the scroll crosses into a
+   new column or row of tiles, that column (fdMapScreenDrawColumn) or row
+   (fdMapScreenDrawRow) is drawn; BG1 scrolls with it. */
+void fdMapScreenUpdateScroll(void)
+{
+	Sint32 *cursor = MapScreen_Cursor;
+	Sint32	x = *cursor++ - toFIXED(DISPLAY_WIDTH / 2);
+	Sint32	y = *cursor - toFIXED(DISPLAY_HEIGHT / 2);
+	Sint32	dx;
+	Sint32	dy;
+	FIXED	distance;
+	FIXED	step;
+	Uint32	column;
+	Uint32	row;
+	Sint32	limit;
+	Sint32	bottom = IMAGE_SCROLL_MAX_Y;
 
 	if(x < 0)
 		x = 0;
@@ -676,9 +656,9 @@ void fdMapScrUpdateScroll(void) {
 	if(y > bottom)
 		y = bottom;
 	if(MapScreen_Zoomed == 0) {
-		dx = (x - SCROLL_X) / FIXED_ONE;
-		dy = (y - SCROLL_Y) / FIXED_ONE;
-		distance = toFIXED(sySquart(dx * dx + dy * dy));
+		dx = (x - SCROLL_X) / toFIXED(1);
+		dy = (y - SCROLL_Y) / toFIXED(1);
+		distance = toFIXED(sySquartIWRAM(dx * dx + dy * dy));
 		dx = x - SCROLL_X;
 		dy = y - SCROLL_Y;
 		/* Near the target the whole-pixel distance is too coarse. */
@@ -701,24 +681,24 @@ void fdMapScrUpdateScroll(void) {
 			if(x > limit)
 				x = limit;
 			/* DEAD: y held to x's limit, which a scroll toward a target within
-			 * the */
-			/* image never passes; the ROM keeps the compare and the store. */
+			   the image never passes; the ROM keeps the compare and the
+			   store. */
 			if(y > limit)
 				y = limit;
 		}
-		column = FIELD_HALF_CELL((u32)x);
-		row = FIELD_HALF_CELL((u32)y);
+		column = FIELD_HALF_METATILE((Uint32)x);
+		row = FIELD_HALF_METATILE((Uint32)y);
 		if((SCROLL_X ^ x) & toFIXED(8)) {
 			if(SCROLL_X < x)
-				fdMapScrDrawColumn(column + DISPLAY_WIDTH / 8, row);
+				fdMapScreenDrawColumn(column + DISPLAY_WIDTH / 8, row);
 			else
-				fdMapScrDrawColumn(column, row);
+				fdMapScreenDrawColumn(column, row);
 		}
 		if((SCROLL_Y ^ y) & toFIXED(8)) {
 			if(SCROLL_Y < y)
-				fdMapScrDrawRow(column, row + DISPLAY_HEIGHT / 8);
+				fdMapScreenDrawRow(column, row + DISPLAY_HEIGHT / 8);
 			else
-				fdMapScrDrawRow(column, row);
+				fdMapScreenDrawRow(column, row);
 		}
 		BgScrollWork[1].x = FIXEDtoINT(x);
 		BgScrollWork[1].y = FIXEDtoINT(y);
@@ -727,43 +707,44 @@ void fdMapScrUpdateScroll(void) {
 	SCROLL_Y = y;
 }
 
-/* The map screen, over the map-cell buffer, until A or B closes it, to */
-/* look or to choose where to Teleport (MAP_SCR_MODE). While Start is */
-/* held the cursor glides to the party, and back when it is let go; R and L */
-/* step it between the places, and Select shows the whole world or the */
-/* scrolling image. */
-s32 fdMapScrShow(s32 mode) {
-	s32 savedDelay;
-	u8 savedFlags[ARRAY_COUNT(((MAP_STATE *)NULL)->anim)];
-	s32 screenX;
-	s32 screenY;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
-	WORLD_MAP_VIEW *view = Ram_HeapSlots->mapGrid;
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
-	ACTOR_SYSTEM_STATE *actorSystem = Ram_HeapSlots->actorSystem;
-	s16 blend;
-	s32 messageShown = 0;
-	s32 zoomed = 0;
-	s32 gliding = 0;
-	WORLD_MAP_STATE *state = &WorldMapStateWork;
-	MAP_ANIMATION *layer;
+/* The map screen, over the map-metatile buffer, until A or B closes it, to look
+   or to choose where to Teleport (MAP_SCREEN_MODE). While Start is held the
+   cursor glides to the party, and back when it is let go; R and L step it
+   between the places, and Select shows the whole world or the scrolling
+   image. */
+Sint32 fdMapScreenShow(Sint32 mode)
+{
+	Sint32				   savedDelay;
+	Uint8				   savedFlags[ARRAY_COUNT(((MAP_STATE *)NULL)->anim)];
+	Sint32				   screenX;
+	Sint32				   screenY;
+	MAP_STATE			  *map = Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW		  *view = Ram_HeapSlots->mapGrid;
+	FIELD_STATE			  *field = Ram_HeapSlots->fieldState;
+	ACTOR_SYSTEM_STATE	  *actorSystem = Ram_HeapSlots->actorSystem;
+	Sint16				   blend;
+	Bool				   messageShown = FALSE;
+	Sint32				   zoomed = 0;
+	Sint32				   gliding = 0;
+	WORLD_MAP_STATE		  *state = &WorldMapStateWork;
+	MAP_ANIMATION		  *layer;
 	const WORLD_MAP_PLACE *place;
-	u32 *tiles;
-	u32 tile;
-	s32 row;
-	s32 column;
-	s32 i;
-	INPUT_STATE *input;
-	INPUT_STATE *keys;
-	s32 *wayX;
-	s32 *wayZ;
-	s32 *cursorX;
-	s32 *cursorZ;
-	s32 *scrollX;
-	s32 *scrollZ;
-	s32 value;
-	WORLD_MAP_CHOICE *choice = &MapScreenChoice;
-	MAIN_ROUTINE_STATE *routine = &MainRoutineStateWork;
+	Uint32				  *tiles;
+	Uint32				   tile;
+	Sint32				   row;
+	Sint32				   column;
+	Sint32				   i;
+	INPUT_STATE			  *input;
+	INPUT_STATE			  *keys;
+	Sint32				  *wayX;
+	Sint32				  *wayZ;
+	Sint32				  *cursorX;
+	Sint32				  *cursorZ;
+	Sint32				  *scrollX;
+	Sint32				  *scrollZ;
+	Sint32				   value;
+	WORLD_MAP_CHOICE	  *choice = &MapScreenChoice;
+	MAIN_ROUTINE_STATE	  *routine = &MainRoutineStateWork;
 
 	state->mode = mode;
 	if(mode != MAP_SCREEN_LOOK || field->mode != ACTOR_SYSTEM_WORLD_MAP)
@@ -771,10 +752,10 @@ s32 fdMapScrShow(s32 mode) {
 	if(field->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		savedDelay = field->transitionFrm;
 		field->transitionFrm = 6;
-		fdEventFinishScrTransition();
-		fdEventWaitTransitionFrames();
+		fdScriptFinishScreenTransition();
+		fdScriptWaitTransitionFrames();
 		layer = map->anim;
-		for(i = 0; i < (s32)ARRAY_COUNT(savedFlags); i++) {
+		for(i = 0; i < (Sint32)ARRAY_COUNT(savedFlags); i++) {
 			savedFlags[i] = layer->paused;
 			layer->paused = 1;
 			layer++;
@@ -784,27 +765,24 @@ s32 fdMapScrShow(s32 mode) {
 		view->viewHeld = 1;
 		do {
 			/* FAKEMATCH(dead): the read in a once-only block; as the plain
-			 * statement.
-			 */
+			 * statement. */
 			blend = REG_BLDALPHA;
 		} while(0);
-	}
-	else {
-		syIoWrite8(1, &field->camera->paused);
+	} else {
+		syIOWrite8(1, &field->camera->paused);
 		savedDelay = field->transitionFrm;
 		field->transitionFrm = 6;
 		field->transition = 0;
-		fdEventFinishScrTransition();
-		fdEventWaitTransitionFrames();
+		fdScriptFinishScreenTransition();
+		fdScriptWaitTransitionFrames();
 		syInitEvent();
 		mnWindowSystemInitFieldStub();
 		actorSystem->suspended = 1;
 		sySynch(1);
 		blend = REG_BLDALPHA;
 		/* BG1's map numbers the image's tiles as fdWorldMapLoadGraphics does,
-		 */
-		/* two a word: from the fifth row, then on round. */
-		tiles = (u32 *)BG_SCREEN_BLOCK(6);
+		   two a word: from the fifth row, then on round. */
+		tiles = (Uint32 *)BG_SCREEN_BLOCK(6);
 		tile = TILE_PAIR(MAP_SCREEN_FIRST_TILE + MAP_SCREEN_MAP_START);
 		for(row = 0; row < MAP_SCREEN_TILE_ROWS - 4; row++)
 			for(column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
@@ -826,75 +804,72 @@ s32 fdMapScrShow(s32 mode) {
 		map->origin = 0;
 		BgScrollWork[1].x = 0;
 		BgScrollWork[1].y = 0;
-		syIoWrite16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
-					&REG_BG1CNT);
-		syIoWrite16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
-						DISPCNT_OBJ_ON,
-					&REG_DISPCNT);
+		syIOWrite16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
+			&REG_BG1CNT);
+		syIOWrite16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+				DISPCNT_OBJ_ON,
+			&REG_DISPCNT);
 	}
 	wayX = NULL;
 	cursorX = NULL;
 	cursorZ = NULL;
 	scrollX = NULL;
 	scrollZ = NULL;
-	fdMapScrInit();
+	fdMapScreenInit();
 	for(;;) {
 		MapScreen_Zoomed = zoomed;
-		fdMapScrDraw();
+		fdMapScreenDraw();
 		sySynch(1);
-		syIoWrite16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS |
-						BGCNT_SCREEN_BASE(6) | BGCNT_SIZE(2),
-					&REG_BG1CNT);
-		syIoWrite16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
-						DISPCNT_OBJ_ON,
-					&REG_DISPCNT);
+		syIOWrite16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS |
+				BGCNT_SCREEN_BASE(6) | BGCNT_SIZE(2),
+			&REG_BG1CNT);
+		syIOWrite16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+				DISPCNT_OBJ_ON,
+			&REG_DISPCNT);
 		if((syGameFlagGet(FLAG_WORLD_MAP_LEFT) ||
-			syGameFlagGet(FLAG_LEADER_OFF_MAP_SCREEN)) &&
-		   !messageShown) {
-			fdMessageShowStub((s32)MsgNotOnMap, FIELD_MESSAGE_ZOOM);
-			messageShown = 1;
+			   syGameFlagGet(FLAG_LEADER_OFF_MAP_SCREEN)) &&
+			!messageShown) {
+			mnFieldMessageShowStub((Sint32)MsgNotOnMap, FIELD_MESSAGE_ZOOM);
+			messageShown = TRUE;
 		}
-		keys = &InputWork;
+		keys = &PerWork;
 		wayX = &MapScreen_CursorStartX;
 		cursorX = &MapScreen_GlideTargetX;
 		cursorZ = &MapScreen_GlideTargetY;
 		for(;;) {
-			fdMapScrUpdateScroll();
-			fdMapScrUpdateMarkers();
+			fdMapScreenUpdateScroll();
+			fdMapScreenUpdateMarkers();
 			input = keys;
 			sySynch(1);
 			if((input->repeat & KEY_START) && gliding == 0) {
-				fdMapScrGetLeaderPoint(&screenX, &screenY);
+				fdMapScreenGetLeaderPoint(&screenX, &screenY);
 				*cursorX = toFIXED(screenX);
-				/* DEAD: input set again to the &InputWork it already holds; the
-				 * ROM */
-				/* keeps the load. */
-				input = &InputWork;
+				/* DEAD: input set again to the &PerWork it already holds; the
+				   ROM keeps the load. */
+				input = &PerWork;
 				*cursorZ = toFIXED(screenY);
 				gliding = 1;
 			}
-			if(!(keys->held & KEY_START) && gliding == 1) {
+			if(!(keys->data & KEY_START) && gliding == 1) {
 				*cursorX = *wayX;
-				/* DEAD: input set again to the &InputWork it already holds; the
-				 * ROM */
-				/* keeps the reload. */
-				input = &InputWork;
+				/* DEAD: input set again to the &PerWork it already holds; the
+				   ROM keeps the reload. */
+				input = &PerWork;
 				*cursorZ = MapScreen_CursorStartY;
 				gliding = 0;
 			}
 			if(keys->repeat & KEY_R) {
-				fdMapScrStepToPlace(&screenX, &screenY, 1);
+				fdMapScreenStepToPlace(&screenX, &screenY, 1);
 				*cursorX = toFIXED(screenX);
 				/* wayZ only ever holds &MapScreen_CursorStartY, set where it is
-				 */
-				/* used. */
+				   used. */
 				wayZ = &MapScreen_CursorStartY;
 				*cursorZ = toFIXED(screenY);
 				*wayX = *cursorX;
 				*wayZ = *cursorZ;
 			}
 			if(input->repeat & KEY_L) {
-				fdMapScrStepToPlace(&screenX, &screenY, -1);
+				fdMapScreenStepToPlace(&screenX, &screenY, -1);
 				*cursorX = toFIXED(screenX);
 				wayZ = &MapScreen_CursorStartY;
 				*cursorZ = toFIXED(screenY);
@@ -904,12 +879,12 @@ s32 fdMapScrShow(s32 mode) {
 			if(input->repeat & KEY_SELECT) {
 				state->shown = -1;
 				mnWindowSprPrepareForRedrawStub(state->win);
-				syIoWrite16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
+				syIOWrite16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
 				zoomed ^= 1;
 				if(*cursorX != 0) {
-					s32 minimum = 0;
-					s32 limitX = toFIXED(272);
-					s32 limitZ = toFIXED(224);
+					Sint32 minimum = 0;
+					Sint32 limitX = toFIXED(272);
+					Sint32 limitZ = toFIXED(224);
 
 					state->x = *cursorX;
 					state->z = *cursorZ;
@@ -952,7 +927,7 @@ s32 fdMapScrShow(s32 mode) {
 					{
 						/* FAKEMATCH(temporary): none, -1 held in a local; as -1
 						 * at its uses. */
-						s32 none = -1;
+						Sint32 none = -1;
 
 						choice->flg = none;
 					}
@@ -962,17 +937,17 @@ s32 fdMapScrShow(s32 mode) {
 		}
 	}
 done:
-	fdMapScrRelease();
-	syIoWrite16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
+	fdMapScreenRelease();
+	syIOWrite16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
 	if(mode != MAP_SCREEN_LOOK || field->mode != ACTOR_SYSTEM_WORLD_MAP) {
 		field->exit = EXIT_KEEP_DESTINATION;
 		syGameFlagSet(FLAG_KEEP_PARTY_POSITION);
-	}
-	else {
-		scWorldMapLoadAreaGraphicsStub();
-		IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_HALFWORD);
+	} else {
+		fdWorldMapLoadAreaGraphicsStub();
+		IO_WRITE_QUEUE_PUSH(
+			(Uint32)&REG_BLDALPHA, (Uint16)blend, IO_WRITE_HALFWORD);
 		layer = map->anim;
-		for(i = 0; i < (s32)ARRAY_COUNT(savedFlags); i++) {
+		for(i = 0; i < (Sint32)ARRAY_COUNT(savedFlags); i++) {
 			layer->paused = savedFlags[i];
 			layer++;
 		}
@@ -980,8 +955,8 @@ done:
 		BgScrollWork[1].x = 0;
 		BgScrollWork[1].y = 0;
 		view->viewHeld = 0;
-		fdEventStartScrTransition();
-		fdEventWaitTransitionFrames();
+		fdScriptStartScreenTransition();
+		fdScriptWaitTransitionFrames();
 		field->transitionFrm = savedDelay;
 		field->camera->paused = 0;
 	}
@@ -991,28 +966,33 @@ done:
 /* The World Map's places, ended by a zero flag. */
 extern const WORLD_MAP_PLACE WorldMapPlaces[];
 
-/* On the world map, zooms the view out to eight thirteenths while L is held, */
-/* then back, six frames each way (FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM). */
-void fdWorldMapZoomOutWhileLHeld(void) {
+/* On the world map, zooms the view out to eight thirteenths while L is held,
+   then back, six frames each way (FIELD_RAISED_CUE_WORLD_MAP_ZOOM). */
+void fdWorldMapZoomOutWhileLHeld(void)
+{
 	MAIN_ROUTINE_STATE *party;
 
 	if(FieldStateWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		fdLeaderStopMoving();
-		fdWorldMapStartZoom(FIXED_ONE * 8 / 13, 6);
-		while(InputWork.held & KEY_L)
+		fdWorldMapStartZoom(toFIXED(8) / 13, 6);
+		while(PerWork.data & KEY_L)
 			sySynch(1);
 		party = &MainRoutineStateWork;
 
 		/* DEAD: both arms alike; the ROM keeps the test and both calls. */
 		if(party->ownerOverride != 0)
-			fdWorldMapStartZoom(FIXED_ONE, 6);
+			fdWorldMapStartZoom(toFIXED(1), 6);
 		else
-			fdWorldMapStartZoom(FIXED_ONE, 6);
+			fdWorldMapStartZoom(toFIXED(1), 6);
 	}
 }
 
 /* Returns the flag entry table, 20-byte entries ended by a zero flag. */
-const WORLD_MAP_PLACE *fdWorldMapPlacesGetTable(void) { return WorldMapPlaces; }
+const WORLD_MAP_PLACE *fdWorldMapPlacesGetTable(void)
+{
+	return WorldMapPlaces;
+}
+
 #undef IMAGE_WIDTH
 #undef IMAGE_HEIGHT
 #undef IMAGE_TILES_ACROSS

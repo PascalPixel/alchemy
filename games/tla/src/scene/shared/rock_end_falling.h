@@ -1,9 +1,10 @@
-/* Ends the falling rocks: removes their task and frees their picture and */
-/* state. */
-void syRockEndFalling(void) {
+/* Ends the falling rocks: removes their event and frees their picture and
+   state. */
+void scRockEndFalling(void)
+{
 	ROCK_STATE *state = Ram_HeapSlots->menuState;
 
-	syFieldTaskRemove(btParticleUpdateFalling);
-	syVramCacheFreeEntry(state->resource);
+	syFieldCloseEvent(scParticleUpdateFalling);
+	syVRAMCacheFreeEntry(state->resource);
 	syHeapSlotRelease(HEAP_SLOT_MENU);
 }

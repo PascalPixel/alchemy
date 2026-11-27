@@ -1,36 +1,33 @@
-/* @file */
-/* The main image's copy of the overlays' effect spawner */
-/* (field_effect_spawn.c), an object of its own between the event commands: */
-/* Carry's ring of dust (fdEffectSpawnRadialParticleRing) spawns through */
-/* it. */
+/* The main image's copy of the overlays' effect spawner (field_effect_spawn.c),
+   an object of its own between the script commands: Carry's ring of dust
+   (fdEffectSpawnRadialParticleRing) spawns through it. */
 
-#include "field/field_sequence_functions.h"
+#include "field/field_mode_functions.h"
 #include "sprite_ids.h"
 #include "system/field_effect.h"
 #include "field/sprite.h"
 
-extern const s32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffect_DurationScripts[];
 
-/* Places a small effect at (x, y, z) moving at a velocity: a dust cloud, or */
-/* options' type when EFFECT_USE_TYPE asks for it, its script one of */
-/* FieldEffect_DurationScripts and its options chosen by the EFFECT_USE_ */
-/* flags. */
-void fdEffectSpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-						   s32 velocityZ, u32 flags,
-						   const EFFECT_OPTIONS *options) {
+/* Places a small effect at (x, y, z) moving at a velocity: a dust cloud, or
+   options' type when EFFECT_USE_TYPE asks for it, its script one of
+   FieldEffect_DurationScripts and its options chosen by the EFFECT_USE_
+   flags. */
+void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options)
+{
 	/* UB: actor 0 is Isaac's, on stage only while he leads; with Felix leading
-	 */
-	/* fdActorGetById returns NULL, and the sprite priority below is read
-	 * through */
-	/* it. UBFIX takes the leader's, as the overlays' copy does. */
-#ifdef UBFIX
+	   fdActorGetById returns NULL, and the sprite priority below is read
+	   through it. UBFIX takes the leader's, as the overlays' copy does. */
+#if FIX_RESIDENT_SPAWN_LEADER_ACTOR
 	ACTOR *party = fdActorGetById(MainRoutineStateWork.leaderActorId);
 #else
 	ACTOR *party = fdActorGetById(ACTOR_ISAAC);
 #endif
 	FIELD_EFFECT *effect;
-	FIELD_SPR *sprite;
-	const s32 *script;
+	FIELD_SPR	 *sprite;
+	const Sint32 *script;
 
 	if((flags & EFFECT_USE_TYPE) != 0 && options != 0)
 		effect = (FIELD_EFFECT *)fdActorCreateStub(options->type, x, y, z);
@@ -41,10 +38,9 @@ void fdEffectSpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 		return;
 
 	sprite = effect->spr;
-	fdActorSelectAnimationStub((ACTOR *)effect,
-							   (flags + 1) & EFFECT_SCRIPT_MASK);
-	fdActorStartScriptStub(
-		(void *)effect,
+	fdActorSelectAnimationStub(
+		(ACTOR *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+	fdActorStartScriptStub((void *)effect,
 		FieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
 	effect->motionFlg = 0;
 	sprite->flg = 0;
@@ -73,15 +69,14 @@ void fdEffectSpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 		script = FieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
 		if((flags & EFFECT_USE_START_SCALE) != 0) {
 			effect->scaleRateX = (options->tgtScaleX - effect->scaleX) /
-								 script[EFFECT_SCRIPT_REPEAT_COUNT];
+				script[EFFECT_SCRIPT_REPEAT_COUNT];
 			effect->scaleRateY = (options->tgtScaleY - effect->scaleY) /
-								 script[EFFECT_SCRIPT_REPEAT_COUNT];
-		}
-		else {
-			effect->scaleRateX = (options->tgtScaleX - FIXED_ONE) /
-								 script[EFFECT_SCRIPT_REPEAT_COUNT];
-			effect->scaleRateY = (options->tgtScaleY - FIXED_ONE) /
-								 script[EFFECT_SCRIPT_REPEAT_COUNT];
+				script[EFFECT_SCRIPT_REPEAT_COUNT];
+		} else {
+			effect->scaleRateX = (options->tgtScaleX - toFIXED(1)) /
+				script[EFFECT_SCRIPT_REPEAT_COUNT];
+			effect->scaleRateY = (options->tgtScaleY - toFIXED(1)) /
+				script[EFFECT_SCRIPT_REPEAT_COUNT];
 		}
 	}
 	if((flags & EFFECT_USE_SCRIPT) != 0) {

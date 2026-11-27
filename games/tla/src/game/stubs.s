@@ -19,13 +19,13 @@ Stubs_Game:
 	stub gmInventoryRepairStub, gmInventoryRepair
 	stub gmItemGetTargetModeStub, gmItemGetTargetMode
 	stub gmInventoryGetEquippedItemStub, gmInventoryGetEquippedItem
-	stub btAbilityGet, gmAbilityGetDirect
+	stub gmAbilityGetDirectStub, gmAbilityGetDirect
 	stub gmUnitLearnPsynergyStub, gmUnitLearnPsynergy
 	stub gmUnitKnowsPsynergyStub, gmUnitKnowsPsynergy
 	stub gmMainRoutineStateInitDefaultsStub, gmMainRoutineStateInitDefaults
 	stub gmUnitCheckLevelUpStub, gmUnitCheckLevelUp
 	stub gmPartyInitCharactersStub, gmPartyInitCharacters
-	stub gmUnitLevelNoOpStub, gmUnitLevelNoOp
+	stub gmUnitLevelNoOperationStub, gmUnitLevelNoOperation
 	stub gmUnitTryLevelUpStub, gmUnitTryLevelUp
 	stub gmRestartQuestStub, gmRestartQuest
 	stub gmUnitAddHpStub, gmUnitAddHp
@@ -33,34 +33,34 @@ Stubs_Game:
 	stub gmUnitRecalculateGaugesStub, gmUnitRecalculateGauges
 	stub gmUnitSetHpStub, gmUnitSetHp
 	stub gmUnitSetPpStub, gmUnitSetPp
-	stub btUnitSetStub, gmBattleUnitSet
+	stub gmBattleUnitSetStub, gmBattleUnitSet
 	stub gmPartyCountMembersStub, gmPartyCountMembers
 	stub gmPartyAddMemberStub, gmPartyAddMember
 	stub gmPartyListMembersStub, gmPartyListMembers
 	stub gmEquipmentRollUnleashStub, gmEquipmentRollUnleash
 	stub gmPartyRemoveMemberStub, gmPartyRemoveMember
 	stub gmUnitGetAttackElementStub, gmUnitGetAttackElement
-	stub btRollEffectSuccessStub, gmBattleRollEffectSuccess
-	stub btCalcAttackDamageStub, gmBattleCalcAttackDamage
-	stub btCalcPsynergyPowerStub, gmBattleCalcPsynergyPower
-	stub btCalcRecoveryStub, gmBattleCalcRecovery
+	stub gmBattleRollEffectSuccessStub, gmBattleRollEffectSuccess
+	stub gmBattleCalcAttackDamageStub, gmBattleCalcAttackDamage
+	stub gmBattleCalcPsynergyPowerStub, gmBattleCalcPsynergyPower
+	stub gmBattleCalcRecoveryStub, gmBattleCalcRecovery
 	stub gmEnemyGetDefinitionStub, gmEnemyGetDefinition
-	stub btRandomStub, gmBattleRandom
+	stub gmBattleRandomStub, gmBattleRandom
 	stub gmDjinnGiveStub, gmDjinnGive
 	stub gmDjinnSetStub, gmDjinnSet
 	stub gmDjinnPutOnStandbyStub, gmDjinnPutOnStandby
-	stub btDjinnRecoveryRemoveStub, gmDjinnRecoveryRemove
-	stub btDjinnRecoveryAddStandbyStub, gmDjinnRecoveryAddStandby
+	stub gmDjinnRecoveryRemoveStub, gmDjinnRecoveryRemove
+	stub gmDjinnRecoveryAddStandbyStub, gmDjinnRecoveryAddStandby
 	stub gmDjinnTransferStub, gmDjinnTransfer
 	stub gmSummonListLearnedStub, gmSummonListLearned
-	stub gmSummonDefinitionGet, gmSummonDefinitionGetNear
+	stub gmSummonDefinitionGetNearStub, gmSummonDefinitionGetNear
 	stub gmDjinnGetAbilityIdStub, gmDjinnGetAbilityId
 	stub gmUnitLevelUpToStub, gmUnitLevelUpTo
 	stub gmUnitGetElementLevelStub, gmUnitGetElementLevel
 	stub gmDjinnRecoveryCountStandbyStub, gmDjinnRecoveryCountStandby
 	stub gmDjinnIsSetStub, gmDjinnIsSet
 	stub gmDjinnCanSetStub, gmDjinnCanSet
-	stub gmItemCanUnitEquip, gmItemCanUnitEquipDirect
+	stub gmItemCanUnitEquipDirectStub, gmItemCanUnitEquipDirect
 	stub gmItemIsCompatibleWithUnitStub, gmItemIsCompatibleWithUnit
 	stub gmInventoryFindEquippedStub, gmInventoryFindEquipped
 	stub gmPartyAdjustCoinsStub, gmPartyAdjustCoins
@@ -74,7 +74,7 @@ Stubs_Game:
 	stub gmPartySetLeaderJennaStub, gmPartySetLeaderJenna
 	stub gmPartySetLeaderFelixStub, gmPartySetLeaderFelix
 	stub gmPartyGivePiersDjinnStub, gmPartyGivePiersDjinn
-	stub gmUnitReservedNoOpStub, gmUnitReservedNoOp
+	stub gmUnitReservedNoOperationStub, gmUnitReservedNoOperation
 	stub gmDataTransferApplyStub, gmDataTransferApply
 	stub gmPartyAddIsaacsPartyStub, gmPartyAddIsaacsParty
 	stub gmDjinnGiveToPartyStub, gmDjinnGiveToParty
@@ -84,14 +84,14 @@ Stubs_Game:
 	stub gmInventoryCheckDiscardStub, gmInventoryCheckDiscard
 	stub gmInventoryCheckUnequipStub, gmInventoryCheckUnequip
 	stub gmInventoryDiscardStub, gmInventoryDiscard
-	stub btIsReviveEffectStub, gmBattleIsReviveEffect
+	stub gmBattleIsReviveEffectStub, gmBattleIsReviveEffect
 	stub gmUnitRefreshPsynergyStub, gmUnitRefreshPsynergy
 	stub gmPartyGetAverageLevelStub, gmPartyGetAverageLevel
 	stub gmUnitUpdateClassStub, gmUnitUpdateClass
 	stub gmInventoryCountItemStub, gmInventoryCountItem
 	stub gmPartyInventoryCountItemStub, gmPartyInventoryCountItem
 	stub gmPartyInventoryDiscardStub, gmPartyInventoryDiscard
-	stub syGameFlagRefreshLureCapStub, gmFlagRefreshLureCap
+	stub gmFlagRefreshLureCapStub, gmFlagRefreshLureCap
 	stub gmEquipmentGetUnleashRateBonusStub, gmEquipmentGetUnleashRateBonus
 	stub gmBuildStampGetTimeStub, gmBuildStampGetTime
 	stub gmPartyInventoryCountFreeSlotsStub, gmPartyInventoryCountFreeSlots

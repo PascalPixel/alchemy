@@ -1,21 +1,21 @@
-/* @file */
-/* Vale and the World Map: the golden ring that rises around someone using */
-/* Psynergy. */
+/* Vale and the World Map: the golden ring that rises around someone using
+   Psynergy. */
 
 #include "field/field_psynergy_state.h"
 
-/* Sets off a golden ring around the actor: its two halves */
-/* (field_effect_vertical.c), drawn from the Psynergy's cached tiles. */
-void scSpawnGoldenRing(ACTOR *parent) {
-	ACTOR *pair[2];
-	ACTOR *child;
-	SPR *sprite;
+/* Sets off a golden ring around the actor: its two halves
+   (field_effect_vertical.c), drawn from the Psynergy's cached tiles. */
+void scSpawnGoldenRing(ACTOR *parent)
+{
+	ACTOR			   *pair[2];
+	ACTOR			   *child;
+	SPR				   *sprite;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
-	s32 i;
+	Sint32				i;
 
 	for(i = 0; i < 2; ++i) {
 		child = syFieldActorCreate(SPRITE_GOLDEN_RINGS, parent->x.fixed,
-								   parent->y.fixed, parent->z.fixed);
+			parent->y.fixed, parent->z.fixed);
 		pair[i] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
@@ -26,7 +26,7 @@ void scSpawnGoldenRing(ACTOR *parent) {
 			if(sprite != NULL) {
 				fdSprStartAnimation(sprite, 0);
 				sprite->flg = 0;
-				syVramCacheFreeEntry(sprite->slot);
+				syVRAMCacheFreeEntry(sprite->slot);
 				sprite->slot = effectState->tileSlot;
 				sprite->retainCacheEntry = 1;
 				sprite->image.tile =
@@ -41,14 +41,14 @@ void scSpawnGoldenRing(ACTOR *parent) {
 	}
 	{
 		ACTOR *effect = pair[0];
-		SPR *effectSprite = effect->spr;
+		SPR	  *effectSprite = effect->spr;
 
 		effect->update = scFieldEffectRiseRingFrontHalf;
 		effectSprite->image.pri = 1;
 	}
 	{
 		ACTOR *effect = pair[1];
-		SPR *effectSprite = effect->spr;
+		SPR	  *effectSprite = effect->spr;
 
 		effectSprite->image.pri = 1;
 		effect->update = scFieldEffectRiseRingBackHalf;

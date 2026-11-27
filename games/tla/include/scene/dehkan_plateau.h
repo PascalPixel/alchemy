@@ -1,18 +1,17 @@
 #ifndef ALCHEMY_SCENE_DEHKAN_PLATEAU_H
 #define ALCHEMY_SCENE_DEHKAN_PLATEAU_H
 
-/* @file */
-/* Dehkan Plateau's tables and events, and functions several scenes keep a */
-/* copy of and declare from here (fdPoundSinkTarget, fdActorSetCellOpen, */
-/* scFieldEffectSpawn). */
+/* Dehkan Plateau's tables and scripts, and functions several scenes keep a copy
+   of and declare from here (fdPoundSinkTarget, fdActorSetMetatileOpen,
+   scFieldEffectSpawn). */
 
 #include "types.h"
 
 struct ACTOR;
 struct EFFECT_OPTIONS;
 
-/* Cannon: meeting him at the rope bridge, the chase across the cracks and */
-/* stakes, the fight in his cave and the Pound Cube he drops. */
+/* Cannon: meeting him at the rope bridge, the chase across the cracks and
+   stakes, the fight in his cave and the Pound Cube he drops. */
 void scDehkanPlateauMeetCannon(void);
 void scDehkanPlateauCannonLeapsAway(void);
 void scDehkanPlateauCannonFleesOverCracks(void);
@@ -35,9 +34,9 @@ void scDehkanPlateauStepOnFullMetalVestChestPillars(void);
 void scDehkanPlateauStepOnThemisAxeChestPillars(void);
 void scDehkanPlateauStepOnTightropesPillars(void);
 void scDehkanPlateauStepOnCannonPillar(void);
-void scDehkanPlateauCrackPillar(s32 id, s32 standingId, s32 flag);
-void scDehkanPlateauSetThemisAxeChestStandingPillarCells(void);
-void scDehkanPlateauSetTightropesStandingPillarCells(void);
+void scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flag);
+void scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles(void);
+void scDehkanPlateauSetTightropesStandingPillarMetatiles(void);
 
 /* The stone and vine pillars Move lifts and Felix pushes into the gaps. */
 void scDehkanPlateauDropFullMetalVestChestPillarIntoGap(void);
@@ -60,7 +59,7 @@ void scDehkanPlateauEnterLowerPath(void);
 void scDehkanPlateauLeaveRoom(void);
 
 /* The unseen blocks that draw Felix behind a cliff's edge. */
-void scDehkanPlateauSetBlocksShown(s32 show);
+void scDehkanPlateauSetBlocksShown(Sint32 show);
 void scDehkanPlateauShowBlocks(void);
 void scDehkanPlateauHideBlocks(void);
 void scDehkanPlateauHideFullMetalVestChestBlocks(void);
@@ -79,40 +78,40 @@ void scDehkanPlateauInitCannon(void);
 /* Sets up the field engine's ropes for the scene (fdRopeInit). */
 void scDehkanPlateauInitRopes(void);
 
-/* A crack record's halfwords: a crack in a room's floor that Felix can fall */
-/* through, and the hole it leaves in the ceiling of the cave below. */
+/* A crack record's halfwords: a crack in a room's floor that Felix can fall
+   through, and the hole it leaves in the ceiling of the cave below. */
 typedef enum DEHKAN_PLATEAU_CRACK_FIELD {
 	CRACK_STARTS_CRACKED, /* nonzero: cracked when the room is first entered */
-	CRACK_X,			  /* its map cell */
+	CRACK_X,			  /* its map metatile */
 	CRACK_Z,
 	CRACK_HOLE,	  /* its hole picture, a pair of the room's hole pictures */
-	CRACK_HOLE_X, /* the map cell the hole is drawn at */
+	CRACK_HOLE_X, /* the map metatile the hole is drawn at */
 	CRACK_HOLE_Z,
 	CRACK_FIELDS
 } DEHKAN_PLATEAU_CRACK_FIELD;
 
 /* The cracks' pictures and records (each room's crack table). */
-extern u16 DehkanPlateau_PoundCubeCrackPictures[];
-extern u16 DehkanPlateau_PoundCubeCracks[][CRACK_FIELDS];
-extern u16 DehkanPlateau_FullMetalVestChestHolePictures[];
-extern u16 DehkanPlateau_ThemisAxeChestHolePictures[];
-extern u16 DehkanPlateau_TightropesHolePictures[];
-extern u16 DehkanPlateau_PoundCubeHolePictures[];
+extern Uint16 DehkanPlateau_PoundCubeCrackPictures[];
+extern Uint16 DehkanPlateau_PoundCubeCracks[][CRACK_FIELDS];
+extern Uint16 DehkanPlateau_FullMetalVestChestHolePictures[];
+extern Uint16 DehkanPlateau_ThemisAxeChestHolePictures[];
+extern Uint16 DehkanPlateau_TightropesHolePictures[];
+extern Uint16 DehkanPlateau_PoundCubeHolePictures[];
 
 /* Functions and scripts other scenes keep a copy of. */
-void fdPoundSinkTarget(u16 *list, s32 mode, s32 count);
+void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 count);
 void fdActorDropAndWait(struct ACTOR *actor);
-void syCrumblingPillarPrepare(s32 id);
-void syCrumblingPillarPlace(u16 *list);
-void scDustScatter(s32 spread);
+void syCrumblingPillarPrepare(Sint32 id);
+void syCrumblingPillarPlace(Uint16 *list);
+void scDustScatter(Sint32 spread);
 void scDustBurst(void);
-void fdLeaderSetCellShapeAt(s32 level, s32 layer);
-void fdActorSetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
-void fdActorSetCellShape(s32 level, s32 layer, s32 owner);
-void scFieldEffectSpawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-						s32 velocityZ, u32 flags,
-						const struct EFFECT_OPTIONS *options);
-extern u32 FieldEffect_ShortScript[];
-extern u32 FieldEffect_MediumScript[];
+void fdLeaderSetMetatileShapeAt(Sint32 level, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flag, Sint32 layer);
+void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 owner);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const struct EFFECT_OPTIONS *options);
+extern Uint32 FieldEffect_ShortScript[];
+extern Uint32 FieldEffect_MediumScript[];
 
 #endif

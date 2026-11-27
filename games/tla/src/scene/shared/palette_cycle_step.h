@@ -1,15 +1,16 @@
 #include "palette_cycle_places.h"
 
-/* Steps the palette cycle, unless an event, Reveal, the pause menu or any */
-/* field Psynergy but Hover holds the field. */
-void fdPaletteCycleStep(void) {
-	u16 colors[16];
-	s32 phase = (PaletteCycleFrame / CYCLE_STEP_FRAMES) % CYCLE_PLACES;
-	s32 i;
+/* Steps the palette cycle, unless a script, Reveal, the pause menu or any field
+   Psynergy but Hover holds the field. */
+void fdPaletteCycleStep(void)
+{
+	Uint16 colors[16];
+	Sint32 phase = (PaletteCycleFrame / CYCLE_STEP_FRAMES) % CYCLE_PLACES;
+	Sint32 i;
 
-	if(PaletteCyclePausesInEvents != 0) {
+	if(PaletteCyclePausesInScripts != 0) {
 		FIELD_STATE *fieldState = Ram_HeapSlots->fieldState;
-		s16 *state = &fieldState->psynergy;
+		Sint16		*state = &fieldState->psynergy;
 
 		if(*state != 0 && ABILITY_ID(*state) != ABILITY_HOVER)
 			return;
@@ -22,7 +23,7 @@ void fdPaletteCycleStep(void) {
 		colors[(phase + i) % CYCLE_PLACES] =
 			PaletteCycleColors[i + CYCLE_FIRST_COLOR];
 	syDMAXCopy(colors, (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
-			   DMA_COPY_WORDS((CYCLE_PLACES - 1) / 2), REG_DMA3);
+		DMA_COPY_WORDS((CYCLE_PLACES - 1) / 2), REG_DMA3);
 	PaletteCycleFrame++;
 }
 

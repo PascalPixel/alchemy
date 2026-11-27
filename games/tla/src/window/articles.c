@@ -1,8 +1,6 @@
-/* @file */
-/* Window text tables: each edition's articles and possessives, the kana */
-/* marks and the sprite motion curves. mnMessageDecode copies an article table
- */
-/* whole (ARTICLE_TABLE); each table's words come just before it. */
+/* Window text tables: each edition's articles and possessives, the kana marks
+   and the sprite motion curves. mnMessageDecode copies an article table whole
+   (ARTICLE_TABLE); each table's words come just before it. */
 
 #include "graphics/text_font.h"
 
@@ -10,199 +8,199 @@
 /* clang-format off */
 /* The glyph drawn over a kana for the mark in its code's top two bits: none, */
 /* the voiced mark (dakuten) or the semi-voiced mark (handakuten). */
-const u16 Font_MarkGlyphCodes[] = {
-    TEXT_MARK_NONE,
-    TEXT_MARK_VOICED,
-    TEXT_MARK_SEMIVOICED,
-    TEXT_MARK_NONE
+const Uint16 Font_MarkGlyphCodes[] = {
+	TEXT_MARK_NONE,
+	TEXT_MARK_VOICED,
+	TEXT_MARK_SEMIVOICED,
+	TEXT_MARK_NONE
 };
 #endif
 
 /* Unused: two fractions of one tenth (2^32 / 10, rounded up); nothing reads */
 /* them. */
-const u32 UnusedTenthFractions[2] = {0x1999999a, 0x1999999a};
+const Uint32 UnusedTenthFractions[2] = {0x1999999a, 0x1999999a};
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 
-const s8 Article_Empty[] = "";
+const Sint8 Article_Empty[] = "";
 
-static const s8 sArticleEin[] = "ein ";
-static const s8 sArticleEine[] = "eine ";
-static const s8 sArticleDie[] = "die ";
-static const s8 sArticleDas[] = "das ";
+static const Sint8 sArticleEin[] = "ein ";
+static const Sint8 sArticleEine[] = "eine ";
+static const Sint8 sArticleDie[] = "die ";
+static const Sint8 sArticleDas[] = "das ";
 
 /* The article of each article class. */
-const s8 *const Article_Table[8] = {
-    Article_Empty,
-    sArticleEin,
-    sArticleEine,
-    sArticleDie,
-    sArticleDas,
-    Article_Empty,
-    Article_Empty,
-    Article_Empty,
+const Sint8 *const Article_Table[8] = {
+	Article_Empty,
+	sArticleEin,
+	sArticleEine,
+	sArticleDie,
+	sArticleDas,
+	Article_Empty,
+	Article_Empty,
+	Article_Empty,
 };
 
 /* Counted nouns, each plural before its singular; LocalizedWord_CountedNouns */
 /* (counted_nouns.c) pairs them as {singular, plural}. */
-const u8 LocalizedWord_Battles[] = "K\xe4pfe";
-const u8 LocalizedWord_Battle[] = "Kampf";
-const u8 LocalizedWord_Tickets[] = "Tickets";
-const u8 LocalizedWord_Ticket[] = "Ticket";
-const u8 LocalizedWord_Rounds[] = "Runden";
-const u8 LocalizedWord_Round[] = "Runde";
-const u8 LocalizedWord_Coins[] = "M\xfcnzen";
-const u8 LocalizedWord_Coin[] = "M\xfcnze";
-const u8 LocalizedWord_Points[] = "Punkte";
-const u8 LocalizedWord_Point[] = "Punkt";
+const Uint8 LocalizedWord_Battles[] = "K\xe4pfe";
+const Uint8 LocalizedWord_Battle[] = "Kampf";
+const Uint8 LocalizedWord_Tickets[] = "Tickets";
+const Uint8 LocalizedWord_Ticket[] = "Ticket";
+const Uint8 LocalizedWord_Rounds[] = "Runden";
+const Uint8 LocalizedWord_Round[] = "Runde";
+const Uint8 LocalizedWord_Coins[] = "M\xfcnzen";
+const Uint8 LocalizedWord_Coin[] = "M\xfcnze";
+const Uint8 LocalizedWord_Points[] = "Punkte";
+const Uint8 LocalizedWord_Point[] = "Punkt";
 
-static const s8 sPossessiveDein[] = "dein ";
-static const s8 sPossessiveDeine[] = "deine ";
+static const Sint8 sPossessiveDein[] = "dein ";
+static const Sint8 sPossessiveDeine[] = "deine ";
 
 /* The possessive ("your") for each item gender (LocalizedWord_ItemGenders). */
-const s8 *const LocalizedWord_ItemPossessives[4] = {
-    sPossessiveDein,
-    sPossessiveDeine,
-    sPossessiveDein,
-    Article_Empty,
+const Sint8 *const LocalizedWord_ItemPossessives[4] = {
+	sPossessiveDein,
+	sPossessiveDeine,
+	sPossessiveDein,
+	Article_Empty,
 };
 
 #elif (LANGUAGE == LANGUAGE_SPANISH)
 
-const s8 Article_Empty[] = "";
+const Sint8 Article_Empty[] = "";
 
-static const s8 sArticleEl[] = "el ";
-static const s8 sArticleLa[] = "la ";
-static const s8 sArticleLos[] = "los ";
-static const s8 sArticleLas[] = "las ";
+static const Sint8 sArticleEl[] = "el ";
+static const Sint8 sArticleLa[] = "la ";
+static const Sint8 sArticleLos[] = "los ";
+static const Sint8 sArticleLas[] = "las ";
 
 /* The definite article of each article class. */
-const s8 *const Article_Table[5] = {
-    Article_Empty,
-    sArticleEl,
-    sArticleLa,
-    sArticleLos,
-    sArticleLas,
+const Sint8 *const Article_Table[5] = {
+	Article_Empty,
+	sArticleEl,
+	sArticleLa,
+	sArticleLos,
+	sArticleLas,
 };
 
-static const s8 sArticleUn[] = "un ";
-static const s8 sArticleUna[] = "una ";
-static const s8 sArticleUnos[] = "unos ";
-static const s8 sArticleUnas[] = "unas ";
+static const Sint8 sArticleUn[] = "un ";
+static const Sint8 sArticleUna[] = "una ";
+static const Sint8 sArticleUnos[] = "unos ";
+static const Sint8 sArticleUnas[] = "unas ";
 
 /* The indefinite article of each article class. */
-const s8 *const Article_Indefinite[5] = {
-    Article_Empty,
-    sArticleUn,
-    sArticleUna,
-    sArticleUnos,
-    sArticleUnas,
+const Sint8 *const Article_Indefinite[5] = {
+	Article_Empty,
+	sArticleUn,
+	sArticleUna,
+	sArticleUnos,
+	sArticleUnas,
 };
 
-static const s8 sPossessiveTu[] = "tu ";
-static const s8 sPossessiveTus[] = "tus ";
+static const Sint8 sPossessiveTu[] = "tu ";
+static const Sint8 sPossessiveTus[] = "tus ";
 
 /* The possessive ("your") for {singular, plural}. */
-const s8 *const LocalizedWord_ItemPossessives[2] = {
-    sPossessiveTu,
-    sPossessiveTus,
+const Sint8 *const LocalizedWord_ItemPossessives[2] = {
+	sPossessiveTu,
+	sPossessiveTus,
 };
 
 #elif (LANGUAGE == LANGUAGE_FRENCH)
 
-static const s8 sArticleDeElided[] = "d'";
-static const s8 sArticleDe[] = "de ";
+static const Sint8 sArticleDeElided[] = "d'";
+static const Sint8 sArticleDe[] = "de ";
 
 /* "de", elided and whole. */
-const s8 *const Text_DeArticles[2] = {
-    sArticleDeElided,
-    sArticleDe,
+const Sint8 *const Text_DeArticles[2] = {
+	sArticleDeElided,
+	sArticleDe,
 };
 
-const s8 Article_Empty[] = "";
+const Sint8 Article_Empty[] = "";
 
-static const s8 sArticleLe[] = "le ";
-static const s8 sArticleLa[] = "la ";
-static const s8 sArticleL[] = "l' ";
-static const s8 sArticleLes[] = "les ";
-static const s8 sArticleUn[] = "un ";
-static const s8 sArticleUne[] = "une ";
-static const s8 sArticleDes[] = "des ";
+static const Sint8 sArticleLe[] = "le ";
+static const Sint8 sArticleLa[] = "la ";
+static const Sint8 sArticleL[] = "l' ";
+static const Sint8 sArticleLes[] = "les ";
+static const Sint8 sArticleUn[] = "un ";
+static const Sint8 sArticleUne[] = "une ";
+static const Sint8 sArticleDes[] = "des ";
 
 /* The article of each article class. */
-const s8 *const Article_Table[8] = {
-    Article_Empty,
-    sArticleLe,
-    sArticleLa,
-    sArticleL,
-    sArticleLes,
-    sArticleUn,
-    sArticleUne,
-    sArticleDes,
+const Sint8 *const Article_Table[8] = {
+	Article_Empty,
+	sArticleLe,
+	sArticleLa,
+	sArticleL,
+	sArticleLes,
+	sArticleUn,
+	sArticleUne,
+	sArticleDes,
 };
 
-const s8 LocalizedWord_ItemPronoun[] = "vous ";
+const Sint8 LocalizedWord_ItemPronoun[] = "vous ";
 
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
 
-const s8 Article_Empty[] = "";
+const Sint8 Article_Empty[] = "";
 
-static const s8 sArticleIl[] = "il ";
-static const s8 sArticleL[] = "l' ";
-static const s8 sArticleLa[] = "la ";
-static const s8 sArticleLo[] = "lo ";
-static const s8 sArticleLe[] = "le ";
-static const s8 sArticleGli[] = "gli ";
-static const s8 sArticleUn[] = "un ";
-static const s8 sArticleUnElided[] = "un' ";
-static const s8 sArticleUno[] = "uno ";
-static const s8 sArticleUna[] = "una ";
+static const Sint8 sArticleIl[] = "il ";
+static const Sint8 sArticleL[] = "l' ";
+static const Sint8 sArticleLa[] = "la ";
+static const Sint8 sArticleLo[] = "lo ";
+static const Sint8 sArticleLe[] = "le ";
+static const Sint8 sArticleGli[] = "gli ";
+static const Sint8 sArticleUn[] = "un ";
+static const Sint8 sArticleUnElided[] = "un' ";
+static const Sint8 sArticleUno[] = "uno ";
+static const Sint8 sArticleUna[] = "una ";
 
 /* The article of each article class. */
-const s8 *const Article_Table[11] = {
-    Article_Empty,
-    sArticleIl,
-    sArticleL,
-    sArticleLa,
-    sArticleLo,
-    sArticleLe,
-    sArticleGli,
-    sArticleUn,
-    sArticleUnElided,
-    sArticleUno,
-    sArticleUna,
+const Sint8 *const Article_Table[11] = {
+	Article_Empty,
+	sArticleIl,
+	sArticleL,
+	sArticleLa,
+	sArticleLo,
+	sArticleLe,
+	sArticleGli,
+	sArticleUn,
+	sArticleUnElided,
+	sArticleUno,
+	sArticleUna,
 };
 
-static const s8 sPossessiveIlTuo[] = "Il tuo ";
-static const s8 sPossessiveLaTua[] = "la tua ";
+static const Sint8 sPossessiveIlTuo[] = "Il tuo ";
+static const Sint8 sPossessiveLaTua[] = "la tua ";
 
 /* The possessive ("your") for each item gender (LocalizedWord_ItemGenders). */
-const s8 *const LocalizedWord_ItemPossessives[4] = {
-    sPossessiveIlTuo,
-    sPossessiveLaTua,
-    sPossessiveIlTuo,
-    Article_Empty,
+const Sint8 *const LocalizedWord_ItemPossessives[4] = {
+	sPossessiveIlTuo,
+	sPossessiveLaTua,
+	sPossessiveIlTuo,
+	Article_Empty,
 };
 
 #elif (LANGUAGE == LANGUAGE_ENGLISH)
 
-const s8 Article_Empty[] = "";
+const Sint8 Article_Empty[] = "";
 
-static const s8 sArticleA[] = "a ";
-static const s8 sArticleAn[] = "an ";
-static const s8 sArticleSome[] = "some ";
-static const s8 sArticleThe[] = "the ";
+static const Sint8 sArticleA[] = "a ";
+static const Sint8 sArticleAn[] = "an ";
+static const Sint8 sArticleSome[] = "some ";
+static const Sint8 sArticleThe[] = "the ";
 
 /* The article of each article class. */
-const s8 *const Article_Table[8] = {
-    Article_Empty,
-    sArticleA,
-    sArticleAn,
-    sArticleSome,
-    Article_Empty,
-    sArticleThe,
-    Article_Empty,
-    Article_Empty,
+const Sint8 *const Article_Table[8] = {
+	Article_Empty,
+	sArticleA,
+	sArticleAn,
+	sArticleSome,
+	Article_Empty,
+	sArticleThe,
+	Article_Empty,
+	Article_Empty,
 };
 
 #endif
@@ -211,32 +209,32 @@ const s8 *const Article_Table[8] = {
 
 /* The next-page arrow's bob (WINDOW_SPRITE_MOTION_PAGE_ARROW): a smooth rise */
 /* and fall of 8 pixels over 80 frames. */
-const u8 WindowSprite_CursorBobOffsets[80] = {
-    0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
-    5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
-    7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7,
-    7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5,
-    5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1,
+const Uint8 WindowSprite_CursorBobOffsets[80] = {
+	0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
+	5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
+	7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7,
+	7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5,
+	5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1,
 };
 
 /* A swing along an arc of radius 4, as {x, y} pairs: x runs 0, 4, 0, -4, 0 */
 /* while y rises at each side. */
-const s8 WindowSprite_WobbleOffsets[40] = {
-    0, 4, 1, 4, 2, 3, 3, 2,
-    4, 1, 4, 0, 4, 1, 3, 2,
-    2, 3, 1, 4, 0, 4, -1, 4,
-    -2, 3, -3, 2, -4, 1, -4, 0,
-    -4, 1, -3, 2, -2, 3, -1, 4,
+const Sint8 WindowSprite_WobbleOffsets[40] = {
+	0, 4, 1, 4, 2, 3, 3, 2,
+	4, 1, 4, 0, 4, 1, 3, 2,
+	2, 3, 1, 4, 0, 4, -1, 4,
+	-2, 3, -3, 2, -4, 1, -4, 0,
+	-4, 1, -3, 2, -2, 3, -1, 4,
 };
 
 /* Nothing in the game reads these 16 bytes. */
-const u8 WindowSprite_WobbleTail[16] = {
-    4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+const Uint8 WindowSprite_WobbleTail[16] = {
+	4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 /* A hop of up to 8 pixels over 16 frames, for WINDOW_SPRITE_MOTION_HOP_UP and */
 /* the other hops. */
-const u8 WindowSprite_BounceOffsets[16] = {
-    0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
+const Uint8 WindowSprite_BounceOffsets[16] = {
+	0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
 };
 /* clang-format on */

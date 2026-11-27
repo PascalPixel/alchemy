@@ -1,9 +1,8 @@
-/* @file */
-/* Enemy units, the active party, coins and counters, and summons. */
-/* Part of game.c. */
+/* Enemy units, the active party, coins and counters, and summons. Part of
+   game.c. */
 
-/* The letter that tells apart enemies of one kind: digits from 1 abroad, the */
-/* alphabet in Japan. */
+/* The letter that tells apart enemies of one kind: digits from 1 abroad, the
+   alphabet in Japan. */
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ENEMY_SUFFIX_FIRST '1' /* suffix 0's character */
 #define ENEMY_SUFFIX_LAST  8   /* the last suffix shown, '9' */
@@ -13,29 +12,28 @@
 #endif
 
 /* Fills a battle unit with an enemy: its stats, its name with its letter, its
- */
-/* items, rewards and elements. A Djinni fought is put on the party's side */
-/* (README.md, "The unit"). Returns 0 for an id out of range. */
-s32 gmBattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
-	UNIT *unit;
+   items, rewards and elements. A Djinni fought is put on the party's side
+   (README.md, "The unit"). Returns 0 for an id out of range. */
+Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
+{
+	UNIT				   *unit;
 	const ENEMY_DEFINITION *enemy;
-	u16 name[UNIT_NAME_SIZE];
-	s32 i;
-	u32 index;
-	s32 copy;
-	s32 count;
+	Uint16					name[UNIT_NAME_SIZE];
+	Sint32					i;
+	Uint32					index;
+	Sint32					copy;
+	Sint32					count;
 
 	index = enemyId - ENEMY_ID_FIRST;
 	if(unitId < FIRST_ENEMY_UNIT)
-		return 0;
+		return FALSE;
 	/* BUG: one too many: unit FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE passes, but
-	 */
-	/* gmUnitGet has no seventh enemy unit and gives NULL. No caller passes it.
-	 */
+	   gmUnitGet has no seventh enemy unit and gives NULL. No caller passes
+	   it. */
 	if(unitId > FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE)
-		return 0;
+		return FALSE;
 	if(index > ENEMY_ID_MAX - ENEMY_ID_FIRST)
-		return 0;
+		return FALSE;
 	unit = gmUnitGet(unitId);
 	syWordsClear(unit, BATTLE_UNIT_SIZE);
 	if(index >= ENEMY_DEFINITION_COUNT)
@@ -61,8 +59,7 @@ s32 gmBattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
 	for(i = 0; i < UNIT_NAME_SIZE - 1 && name[i] != 0; i++)
 		unit->name[i] = name[i];
 	/* Enemies of one kind are told apart by a letter after the name; past the
-	 */
-	/* last letter the name stays bare. */
+	   last letter the name stays bare. */
 	if(suffix <= ENEMY_SUFFIX_LAST) {
 		unit->name[i] = ENEMY_SUFFIX_FIRST + suffix;
 		i++;
@@ -102,16 +99,17 @@ s32 gmBattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
 		unit->side = BATTLE_SIDE_PARTY;
 		break;
 	}
-	return 1;
+	return TRUE;
 }
 
-/* The party: the FLAG_IN_PARTY flags say who is in it, and */
-/* MainRoutineStateWork.party lists them in order. */
+/* The party: the FLAG_IN_PARTY flags say who is in it, and
+   MainRoutineStateWork.party lists them in order. */
 
 /* Returns the number of party members, counted from its FLAG_IN_PARTY flags. */
-s32 gmPartyCountMembers(void) {
-	s32 unitId;
-	s32 count;
+Sint32 gmPartyCountMembers(void)
+{
+	Sint32 unitId;
+	Sint32 count;
 
 	count = 0;
 	for(unitId = 0; unitId <= PIERS; unitId++) {
@@ -121,11 +119,12 @@ s32 gmPartyCountMembers(void) {
 	return count;
 }
 
-/* Adds a character to the end of the party unless it is there already, and */
-/* returns the party size. */
-s32 gmPartyAddMember(s32 unitId) {
-	s32 partySize = gmPartyCountMembers();
-	s32 partyIndex;
+/* Adds a character to the end of the party unless it is there already, and
+   returns the party size. */
+Sint32 gmPartyAddMember(Sint32 unitId)
+{
+	Sint32 partySize = gmPartyCountMembers();
+	Sint32 partyIndex;
 
 	gmFlagSet(FLAG_IN_PARTY(unitId));
 	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
@@ -136,12 +135,13 @@ s32 gmPartyAddMember(s32 unitId) {
 	return partySize + 1;
 }
 
-/* Takes character `unitId` out of the party: clears its game flag and closes */
-/* the gap it leaves in MainRoutineStateWork.party. Returns the party size. */
-s32 gmPartyRemoveMember(s32 unitId) {
-	s32 partySize = gmPartyCountMembers();
-	s32 removedIndex;
-	s32 partyIndex;
+/* Takes character `unitId` out of the party: clears its game flag and closes
+   the gap it leaves in MainRoutineStateWork.party. Returns the party size. */
+Sint32 gmPartyRemoveMember(Sint32 unitId)
+{
+	Sint32 partySize = gmPartyCountMembers();
+	Sint32 removedIndex;
+	Sint32 partyIndex;
 
 	gmFlagClear(FLAG_IN_PARTY(unitId));
 	for(removedIndex = 0; removedIndex < partySize; removedIndex++) {
@@ -155,11 +155,12 @@ s32 gmPartyRemoveMember(s32 unitId) {
 }
 
 /* Writes the party members to unitIds and returns how many there are. */
-s32 gmPartyListMembers(s16 *unitIds) {
-	s32 count = 0;
+Sint32 gmPartyListMembers(Sint16 *unitIds)
+{
+	Sint32 count = 0;
 
 	if(unitIds != NULL) {
-		s32 index;
+		Sint32 index;
 
 		count = gmPartyCountMembers();
 		for(index = 0; index != count; index++) {
@@ -170,10 +171,11 @@ s32 gmPartyListMembers(s16 *unitIds) {
 	return count;
 }
 
-/* Adds `amount` to the party's coins, kept between 0 and COIN_MAX, and */
-/* returns the new total. */
-s32 gmPartyAdjustCoins(s32 amount) {
-	s32 value;
+/* Adds `amount` to the party's coins, kept between 0 and COIN_MAX, and returns
+   the new total. */
+Sint32 gmPartyAdjustCoins(Sint32 amount)
+{
+	Sint32				value;
 	MAIN_ROUTINE_STATE *routine;
 
 	routine = &MainRoutineStateWork;
@@ -189,21 +191,22 @@ s32 gmPartyAdjustCoins(s32 amount) {
 	return value;
 }
 
-/* Each adds amount to a counter, kept between 0 and max, and returns the new */
-/* value: the shop credit and the Game Tickets given. */
-#define PARTY_DEFINE_ADJUST(name, field, max)                                  \
-	s32 name(s32 amount) {                                                     \
-		s32 value;                                                             \
-		MAIN_ROUTINE_STATE *progress = &MainRoutineStateWork;                  \
-                                                                               \
-		value = progress->field;                                               \
-		value += amount;                                                       \
-		if(value > max)                                                        \
-			value = max;                                                       \
-		if(value < 0)                                                          \
-			value = 0;                                                         \
-		progress->field = value;                                               \
-		return value;                                                          \
+/* Each adds amount to a counter, kept between 0 and max, and returns the new
+   value: the shop credit and the Game Tickets given. */
+#define PARTY_DEFINE_ADJUST(name, field, max) \
+	Sint32 name(Sint32 amount) \
+	{ \
+		Sint32				value; \
+		MAIN_ROUTINE_STATE *progress = &MainRoutineStateWork; \
+\
+		value = progress->field; \
+		value += amount; \
+		if(value > max) \
+			value = max; \
+		if(value < 0) \
+			value = 0; \
+		progress->field = value; \
+		return value; \
 	}
 
 /* Adds amount to the shop credit, kept from 0 to COIN_MAX. */
@@ -212,18 +215,18 @@ PARTY_DEFINE_ADJUST(gmPartyAdjustShopCredit, holdings.shopCredit, COIN_MAX)
 PARTY_DEFINE_ADJUST(gmPartyAdjustShopGifts, holdings.shopGifts, SHOP_GIFTS_MAX)
 
 /* Writes the summons the party can call to output, in menu order, ending with
- */
-/* SUMMON_END, and returns how many. */
-s32 gmSummonListLearned(u8 *output) {
-	const u8 *summon = Summon_OrderList;
-	const u8 *last = &Summon_OrderList[ARRAY_COUNT(Summon_OrderList) - 1];
-	s32 count = 0;
+   SUMMON_END, and returns how many. */
+Sint32 gmSummonListLearned(Uint8 *output)
+{
+	const Uint8 *summon = Summon_OrderList;
+	const Uint8 *last = &Summon_OrderList[ARRAY_COUNT(Summon_OrderList) - 1];
+	Sint32		 count = 0;
 
 	do {
-		u8 summonId = *summon++;
+		Uint8 summonId = *summon++;
 
 		if(gmDjinnGetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask &
-		   (1 << summonId)) {
+			(1 << summonId)) {
 			*output++ = summonId;
 			count++;
 		}
@@ -233,7 +236,8 @@ s32 gmSummonListLearned(u8 *output) {
 }
 
 /* Returns summon `summonId`'s definition, or NULL past the last. */
-const SUMMON_DEFINITION *gmSummonDefinitionGetNear(u32 summonId) {
+const SUMMON_DEFINITION *gmSummonDefinitionGetNear(Uint32 summonId)
+{
 	/* The order list holds every summon once. */
 	if(summonId >= ARRAY_COUNT(Summon_OrderList))
 		return NULL;

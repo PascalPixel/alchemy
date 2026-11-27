@@ -1,16 +1,15 @@
 #ifndef ALCHEMY_ITEM_IDS_H
 #define ALCHEMY_ITEM_IDS_H
 
-/* @file */
 /* Item numbers, named from the English release. */
 
-/* Item ids, one for each row of Item_DefinitionTable (item_table.c) in */
-/* order, named from the English release: an item's name is the message */
-/* MsgItemName + its id. Each kind of item leaves spare ids after its last, */
-/* whose rows are blank and whose names in the text are "?"; nothing reaches */
-/* them but the debug menus' item browser (debug/level.c, items 0 to 269) */
-/* and Shop_UnusedItemIds, which nothing reads. A kind's first id is written */
-/* where spares come before it. */
+/* Item ids, one for each row of Item_DefinitionTable (item_table.c) in order,
+   named from the English release: an item's name is the message MsgItemName +
+   its id. Each kind of item leaves spare ids after its last, whose rows are
+   blank and whose names in the text are "?"; nothing reaches them but the debug
+   menus' item browser (debug/level.c, items 0 to 269) and Shop_UnusedItemIds,
+   which nothing reads. A kind's first id is written where spares come before
+   it. */
 typedef enum ITEM_ID {
 	ITEM_NONE,
 	ITEM_LONG_SWORD,
@@ -205,9 +204,8 @@ typedef enum ITEM_ID {
 	ITEM_FAIRY_RING,
 	ITEM_CLERICS_RING,
 	/* Rows 269 to 323 are spares, the same weapon for Isaac priced 100: nothing
-	 */
-	/* gives them, and the debug menus' item browser stops at 269, whose name */
-	/* shows "???"; past it, MsgItemName + an id is an enemy's name. */
+	   gives them, and the debug menus' item browser stops at 269, whose name
+	   shows "???"; past it, MsgItemName + an id is an enemy's name. */
 	ITEM_SPARE_FIRST,
 	ITEM_SPARE_LAST = 323
 } ITEM_ID;

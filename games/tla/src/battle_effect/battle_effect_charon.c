@@ -1,36 +1,31 @@
-/* @file */
 /* Charon, and the function that builds the quad strips other effects map their
- */
-/* textures on. */
-/* Part of battle_effect.c. */
+   textures on. Part of battle_effect.c. */
 
-/* The attack's particles in the effect state: the drops, each target's curse */
-/* (where on the screen it caught the target, and the frames since, -1 */
-/* before) and its home, then the four columns of light; the last particle's */
-/* variant holds the shockwave's radius. */
-#define DROPS		(state->particles)
-#define CURSES		(state->particles + 16)
-#define HOMES		(state->particles + 32)
-#define COLUMNS		(state->particles + 48)
-#define WAVE_RADIUS (state->particles[63].variant)
-/* The drops' particles, how many of them fall, and their size: shaded */
-/* circles of this radius, in the act's pictures. */
-#define CHARON_DROP_SLOTS  16
-#define CHARON_DROPS	   12
-#define CHARON_DROP_RADIUS 16
+/* The attack's particles in the effect state: the drops, each target's curse
+   (where on the screen it caught the target, and the frames since, -1 before)
+   and its home, then the four columns of light; the last particle's variant
+   holds the shockwave's radius. */
+#define DROPS					 (state->particles)
+#define CURSES					 (state->particles + 16)
+#define HOMES					 (state->particles + 32)
+#define COLUMNS					 (state->particles + 48)
+#define WAVE_RADIUS				 (state->particles[63].variant)
+/* The drops' particles, how many of them fall, and their size: shaded circles
+   of this radius, in the act's pictures. */
+#define CHARON_DROP_SLOTS		 16
+#define CHARON_DROPS			 12
+#define CHARON_DROP_RADIUS		 16
 /* The columns of light: each this tall and the next this much lower, its left
- */
-/* end rounded by a shaded quarter circle of size CHARON_COLUMN_END. */
-#define CHARON_COLUMNS		 4
-#define CHARON_COLUMN_HEIGHT 30
-#define CHARON_COLUMN_END	 56
-/* The summon's sprites in the effect state: the red dome's until */
-/* CHARON_ARRIVAL_FRAME, then Charon's. */
-#define OBJECTS ((SPR **)state->sprs)
+   end rounded by a shaded quarter circle of size CHARON_COLUMN_END. */
+#define CHARON_COLUMNS			 4
+#define CHARON_COLUMN_HEIGHT	 30
+#define CHARON_COLUMN_END		 56
+/* The summon's sprites in the effect state: the red dome's until
+   CHARON_ARRIVAL_FRAME, then Charon's. */
+#define OBJECTS					 ((SPR **)state->sprs)
 /* Charon (CrimsonBeastTiles) as a grid of sprites four across and three down,
- */
-/* its wisp (WhiteWispsTiles, in a sprite palette of its own) and the 64x64 */
-/* sprite the red orb is revealed in. */
+   its wisp (WhiteWispsTiles, in a sprite palette of its own) and the 64x64
+   sprite the red orb is revealed in. */
 #define CHARON_BEAST_SPRITES	 12
 #define CHARON_BEAST_COLUMNS	 4
 #define CHARON_BEAST_SPRITE_SIZE 32
@@ -39,71 +34,66 @@
 #define CHARON_OBJECTS			 14
 #define CHARON_WISP_PALETTE		 14
 /* The dark shards (TumblingShardTiles, in a sprite palette of their own): the
- */
-/* pictures of an 8x8 shard tumbling, and the sprites that swarm with them. A */
-/* shard's tumble counts CHARON_SHARD_TURN to a turn of its pictures. */
-#define CHARON_SHARD_FRAMES	 16
-#define CHARON_SHARDS		 48
-#define CHARON_SHARD_PALETTE 15
-#define CHARON_SHARD_TURN	 256
+   pictures of an 8x8 shard tumbling, and the sprites that swarm with them. A
+   shard's tumble counts CHARON_SHARD_TURN to a turn of its pictures. */
+#define CHARON_SHARD_FRAMES		 16
+#define CHARON_SHARDS			 48
+#define CHARON_SHARD_PALETTE	 15
+#define CHARON_SHARD_TURN		 256
 
-/* The map cell buffer: the shards' sprites from its start, where the attack */
-/* later decodes FlashBurstSheet (SPRITE_BUFFER). At 16384, a list of */
-/* CHARON_HIDDEN_SPRITES sprites built at frame 0, which the summon never */
-/* reads; from the frame before CHARON_ORB_FRAME the red orb's 64x64 picture */
-/* (RedOrbTiles) over it (ORB_BUFFER, read back as REVEAL_BUFFER) and the order
- */
-/* it is revealed in after it. Then the particles. */
-#define SPRITES				  ((SPR **)Ram_MapCellBuffer)
-#define SPRITE_BUFFER		  MapGridCellBuffer
-#define OAM_BUFFER			  ((u32 *)(MapGridCellBuffer + 16384))
-#define CHARON_HIDDEN_SPRITES 64
-#define ORB_BUFFER			  (MapGridCellBuffer + 16384)
-#define REVEAL_BUFFER		  (Ram_MapCellBuffer + 16384)
-#define CHARON_PARTICLES	  ((PARTICLE *)(Ram_MapCellBuffer + 16896))
-/* The swarm: CHARON_SWARM particles fly up from CHARON_ARRIVAL_FRAME, the */
-/* shards ride those from CHARON_SWARM_SHARDS on, the first CHARON_LARGE_SHARDS
- */
-/* a quarter larger, and each CHARON_SWARM_GROUP particles tumble a step faster
- */
-/* than the group before. */
-#define CHARON_SWARM		128
-#define CHARON_SWARM_SHARDS (CHARON_PARTICLES + 64)
-#define CHARON_LARGE_SHARDS 10
-#define CHARON_SWARM_GROUP	16
-/* The attack's particles: the motes of each target's curse, the flash bursts */
-/* (FlashBurstSheet's six pictures, four frames each) and the sparks among */
-/* them. */
-#define CHARON_CURSE_MOTES	16 /* for each target */
-#define CHARON_MOTE_COUNT	(ENEMY_BATTLE_SIZE * CHARON_CURSE_MOTES)
-#define CHARON_BURSTS		(CHARON_PARTICLES + CHARON_MOTE_COUNT)
-#define CHARON_BURST_COUNT	32
-#define CHARON_BURSTS_DRAWN 16
-#define CHARON_BURST_FRAMES 24
-#define CHARON_SPARKS		(CHARON_BURSTS + CHARON_BURST_COUNT)
-#define CHARON_SPARK_COUNT	128
-/* The colours of the 256-colour sprites: the red dome's (RedDomeTiles) from */
-/* CHARON_DOME_FIRST_COLOR, Charon's from the first, and the red orb's */
-/* (RedOrbTiles) in the two palettes from CHARON_ORB_PALETTE. */
+/* The map cell buffer: the shards' sprites from its start, where the attack
+   later decodes FlashBurstSheet (SPRITE_BUFFER). At 16384, a list of
+   CHARON_HIDDEN_SPRITES sprites built at frame 0, which the summon never reads;
+   from the frame before CHARON_ORB_FRAME the red orb's 64x64 picture
+   (RedOrbTiles) over it (ORB_BUFFER, read back as REVEAL_BUFFER) and the order
+   it is revealed in after it. Then the particles. */
+#define SPRITES					((SPR **)Ram_MapMetatileBuffer)
+#define SPRITE_BUFFER			MapGridMetatileBuffer
+#define OAM_BUFFER				((Uint32 *)(MapGridMetatileBuffer + 16384))
+#define CHARON_HIDDEN_SPRITES	64
+#define ORB_BUFFER				(MapGridMetatileBuffer + 16384)
+#define REVEAL_BUFFER			(Ram_MapMetatileBuffer + 16384)
+#define CHARON_PARTICLES		((PARTICLE *)(Ram_MapMetatileBuffer + 16896))
+/* The swarm: CHARON_SWARM particles fly up from CHARON_ARRIVAL_FRAME, the
+   shards ride those from CHARON_SWARM_SHARDS on, the first CHARON_LARGE_SHARDS
+   a quarter larger, and each CHARON_SWARM_GROUP particles tumble a step faster
+   than the group before. */
+#define CHARON_SWARM			128
+#define CHARON_SWARM_SHARDS		(CHARON_PARTICLES + 64)
+#define CHARON_LARGE_SHARDS		10
+#define CHARON_SWARM_GROUP		16
+/* The attack's particles: the motes of each target's curse, the flash bursts
+   (FlashBurstSheet's six pictures, four frames each) and the sparks among
+   them. */
+#define CHARON_CURSE_MOTES		16 /* for each target */
+#define CHARON_MOTE_COUNT		(ENEMY_BATTLE_SIZE * CHARON_CURSE_MOTES)
+#define CHARON_BURSTS			(CHARON_PARTICLES + CHARON_MOTE_COUNT)
+#define CHARON_BURST_COUNT		32
+#define CHARON_BURSTS_DRAWN		16
+#define CHARON_BURST_FRAMES		24
+#define CHARON_SPARKS			(CHARON_BURSTS + CHARON_BURST_COUNT)
+#define CHARON_SPARK_COUNT		128
+/* The colours of the 256-colour sprites: the red dome's (RedDomeTiles) from
+   CHARON_DOME_FIRST_COLOR, Charon's from the first, and the red orb's
+   (RedOrbTiles) in the two palettes from CHARON_ORB_PALETTE. */
 #define CHARON_DOME_FIRST_COLOR 32
 #define CHARON_DOME_COLORS		160
 #define CHARON_BEAST_COLORS		192
 #define CHARON_ORB_PALETTE		12
 #define CHARON_ORB_FIRST_COLOR	(CHARON_ORB_PALETTE * PALETTE_COLORS)
 #define CHARON_ORB_COLORS		32
-/* The red orb is revealed in its sprite two pixels at a time, the same */
-/* pair in each of its tiles, in a shuffled order of the tile's pairs. */
-#define CHARON_REVEAL_TILES	  (OBJ_64X64_8BPP_BYTES / TILE_SIZE_8BPP)
-#define CHARON_DISSOLVE_PAIRS (TILE_SIZE_8BPP / 2)
-/* The battle background's tiles from column 4 of row 5, where the rune seal */
-/* is stamped. */
-#define CHARON_SEAL_TILES (BG_CHAR_BLOCK(2) + (5 * 32 + 4) * 64)
-/* The rune seal's colours take a background palette of their own: a seal */
-/* pixel of colour c is stamped as the byte c + CHARON_SEAL_COLOR, which wraps
- */
-/* to colour c of that palette. */
-#define CHARON_SEAL_PALETTE 14
-#define CHARON_SEAL_COLOR                                                      \
+/* The red orb is revealed in its sprite two pixels at a time, the same pair in
+   each of its tiles, in a shuffled order of the tile's pairs. */
+#define CHARON_REVEAL_TILES		(OBJ_64X64_8BPP_BYTES / TILE_SIZE_8BPP)
+#define CHARON_DISSOLVE_PAIRS	(TILE_SIZE_8BPP / 2)
+/* The battle background's tiles from column 4 of row 5, where the rune seal is
+   stamped. */
+#define CHARON_SEAL_TILES		(BG_CHAR_BLOCK(2) + (5 * 32 + 4) * 64)
+/* The rune seal's colours take a background palette of their own: a seal pixel
+   of colour c is stamped as the byte c + CHARON_SEAL_COLOR, which wraps to
+   colour c of that palette. */
+#define CHARON_SEAL_PALETTE		14
+#define CHARON_SEAL_COLOR \
 	(CHARON_SEAL_PALETTE * PALETTE_COLORS - BG_PLTT_COLORS)
 
 extern const SCALE Charon_SwarmScale;
@@ -112,79 +102,70 @@ extern const SCALE Charon_RevealScale;
 extern const SCALE Charon_FinaleScale;
 
 /* Where the pictures that load once are decoded in the effect's sprite sheet:
- */
-/* the rune seal as it is stamped (RuneSealSheet, 184 by 80), then at */
-/* CHARON_ARRIVAL_FRAME Charon's, its wisp's and BlueGlowSheet's in turn. */
+   the rune seal as it is stamped (RuneSealSheet, 184 by 80), then at
+   CHARON_ARRIVAL_FRAME Charon's, its wisp's and BlueGlowSheet's in turn. */
 #define CHARON_BEAST_PICTURES 9216
 #define CHARON_RUNE_SEAL	  9216
 #define RUNE_SEAL_WIDTH		  184
 #define RUNE_SEAL_HEIGHT	  80
-/* Where each act decodes its own sprite sheet in the effect's pictures: */
-/* SwirlTexture with CharmRingSheet, CurseSealSheet, FireRingTexture or shaded
- */
-/* circles. */
-#define CHARON_ACT_PICTURES 4096
-/* The finale's brightest block, which the four columns of light are drawn */
-/* from, and GlowRingTexture made all bright. */
-#define CHARON_BRIGHT_BLOCK 8192
-#define CHARON_GLOW_RING	12288
+/* Where each act decodes its own sprite sheet in the effect's pictures:
+   SwirlTexture with CharmRingSheet, CurseSealSheet, FireRingTexture or shaded
+   circles. */
+#define CHARON_ACT_PICTURES	  4096
+/* The finale's brightest block, which the four columns of light are drawn from,
+   and GlowRingTexture made all bright. */
+#define CHARON_BRIGHT_BLOCK	  8192
+#define CHARON_GLOW_RING	  12288
 /* The bytes of either, a 64x64 texture. */
-#define CHARON_TEXTURE_BYTES (64 * 64)
+#define CHARON_TEXTURE_BYTES  (64 * 64)
 
-/* The ring of motes the seal sends out: CHARON_RING_MOTES motes of mote */
-/* picture CHARON_RING_MOTE (4 pixels wide, 8 tall), drawn from */
-/* CHARON_RING_SHADES copies in the battle sprite sheet, each 7 levels darker */
-/* than the last. */
+/* The ring of motes the seal sends out: CHARON_RING_MOTES motes of mote picture
+   CHARON_RING_MOTE (4 pixels wide, 8 tall), drawn from CHARON_RING_SHADES
+   copies in the battle sprite sheet, each 7 levels darker than the last. */
 #define CHARON_RING_MOTES	   256
 #define CHARON_RING_MOTE	   4
 #define CHARON_RING_SHADES	   10
 #define CHARON_RING_MOTE_BYTES (CHARON_RING_MOTE * CHARON_RING_MOTE * 2)
 
-/* The opening's swirl: it shrinks from CHARON_SWIRL_SCALE by */
-/* CHARON_SCALE_STEP a frame until the seal is stamped, then grows again from */
-/* half its size. A second swirl, mirrored, turns the other way inside it, and
- */
-/* from the seal on the charm ring turns with a smaller mirrored one inside it.
- */
-/* The swirls are drawn only while brighter than CHARON_SWIRL_SHADE_MIN. */
+/* The opening's swirl: it shrinks from CHARON_SWIRL_SCALE by CHARON_SCALE_STEP
+   a frame until the seal is stamped, then grows again from half its size. A
+   second swirl, mirrored, turns the other way inside it, and from the seal on
+   the charm ring turns with a smaller mirrored one inside it. The swirls are
+   drawn only while brighter than CHARON_SWIRL_SHADE_MIN. */
 #define CHARON_SWIRL_SCALE		 115536
 #define CHARON_SCALE_STEP		 1524
 #define CHARON_INNER_SWIRL_SCALE 42768
 #define CHARON_CHARM_RING_SCALE	 22768
 #define CHARON_INNER_RING_SCALE	 12768
 #define CHARON_SWIRL_SHADE_MIN	 (-48)
-/* The curse seal falls at frame 200 and the swirl under it at 232, both from */
-/* CHARON_FALL_SCALE: the seal shrinks CHARON_SCALE_STEP a frame down to */
-/* CHARON_SEAL_SCALE_MIN, the swirl CHARON_SWIRL_SHRINK. */
-#define CHARON_FALL_SCALE	  100000
-#define CHARON_SEAL_SCALE_MIN 13800
-#define CHARON_SWIRL_SHRINK	  1200
+/* The curse seal falls at frame 200 and the swirl under it at 232, both from
+   CHARON_FALL_SCALE: the seal shrinks CHARON_SCALE_STEP a frame down to
+   CHARON_SEAL_SCALE_MIN, the swirl CHARON_SWIRL_SHRINK. */
+#define CHARON_FALL_SCALE		 100000
+#define CHARON_SEAL_SCALE_MIN	 13800
+#define CHARON_SWIRL_SHRINK		 1200
 /* The glow ring that rises at each cursed target grows this much a step. */
-#define CHARON_GLOW_RING_GROWTH 1016
+#define CHARON_GLOW_RING_GROWTH	 1016
 
-#define CHARON_FRAMES                                                          \
+#define CHARON_FRAMES \
 	394 /* frames of Charon's coming, unless A or B skips it */
-#define CHARON_ATTACK_FRAMES 180 /* frames of the attack that follows */
-#define CHARON_FLASHES		 3 /* the backdrop's flashes, at Charon_FlashFrames */
-/* Charon's coming, in frames. From CHARON_DRAIN_FRAME the backdrop's red */
-/* drains away and its blue comes back; the rune seal is stamped on the ground
- */
-/* after the canvas flashes (CHARON_SEAL_FRAME), and the swirls fade from */
-/* CHARON_SWIRL_FADE_FRAME. The backdrop's green and then its red drain away */
-/* from CHARON_GREEN_DRAIN_FRAME, and in a white flash Charon appears among a */
-/* swarm of shards (CHARON_ARRIVAL_FRAME); the backdrop fades toward a red dusk
- */
-/* from CHARON_DUSK_FRAME. The curse seal falls turning (CHARON_CURSE_FRAME), */
-/* the swirl turns under it from CHARON_CURSE_SWIRL_FRAME, and it fades from */
-/* CHARON_CURSE_FADE_FRAME; the red orb is revealed from CHARON_ORB_FRAME and */
-/* is gone at CHARON_ORB_GONE_FRAME. A white flash brings three rings of fire */
-/* (CHARON_RINGS_FRAME); the orb comes back magenta and swells */
-/* (CHARON_MAGENTA_FRAME), and the dark disc rimmed in magenta swells over the
- */
-/* canvas from CHARON_DISC_FRAME. Charon's own colours are tinted toward violet
- */
-/* from CHARON_VIOLET_FRAME, back from CHARON_UNVIOLET_FRAME, and toward red */
-/* from CHARON_REDDEN_FRAME. */
+#define CHARON_ATTACK_FRAMES	 180 /* frames of the attack that follows */
+#define CHARON_FLASHES			 3 /* the backdrop's flashes, at Charon_FlashFrames */
+/* Charon's coming, in frames. From CHARON_DRAIN_FRAME the backdrop's red drains
+   away and its blue comes back; the rune seal is stamped on the ground after
+   the canvas flashes (CHARON_SEAL_FRAME), and the swirls fade from
+   CHARON_SWIRL_FADE_FRAME. The backdrop's green and then its red drain away
+   from CHARON_GREEN_DRAIN_FRAME, and in a white flash Charon appears among a
+   swarm of shards (CHARON_ARRIVAL_FRAME); the backdrop fades toward a red dusk
+   from CHARON_DUSK_FRAME. The curse seal falls turning (CHARON_CURSE_FRAME),
+   the swirl turns under it from CHARON_CURSE_SWIRL_FRAME, and it fades from
+   CHARON_CURSE_FADE_FRAME; the red orb is revealed from CHARON_ORB_FRAME and is
+   gone at CHARON_ORB_GONE_FRAME. A white flash brings three rings of fire
+   (CHARON_RINGS_FRAME); the orb comes back magenta and swells
+   (CHARON_MAGENTA_FRAME), and the dark disc rimmed in magenta swells over the
+   canvas from CHARON_DISC_FRAME. Charon's own colours are tinted toward violet
+   from CHARON_VIOLET_FRAME, back from CHARON_UNVIOLET_FRAME, and toward red
+   from CHARON_REDDEN_FRAME. */
 #define CHARON_DRAIN_FRAME		 32
 #define CHARON_SEAL_FRAME		 56
 #define CHARON_SWIRL_FADE_FRAME	 96
@@ -202,96 +183,94 @@ extern const SCALE Charon_FinaleScale;
 #define CHARON_MAGENTA_FRAME	 330
 #define CHARON_DISC_FRAME		 347
 #define CHARON_REDDEN_FRAME		 348
-/* As the red drains, the backdrop's green is held this many levels darker, */
-/* and its blue comes back from as dark; at the seal, half as dark in green */
-/* and as dark in blue. */
-#define CHARON_DRAIN_DIMMING 20
+/* As the red drains, the backdrop's green is held this many levels darker, and
+   its blue comes back from as dark; at the seal, half as dark in green and as
+   dark in blue. */
+#define CHARON_DRAIN_DIMMING	 20
 /* The rune seal glows this many levels brighter than its own colours, pulsing
- */
-/* by CHARON_SEAL_GLOW_PULSE either way. */
-#define CHARON_SEAL_GLOW	   16
-#define CHARON_SEAL_GLOW_PULSE 12
-/* The red dusk the backdrop fades toward: its own colours this many levels */
-/* darker in green and blue and CHARON_DUSK_REDDENING redder, and after the */
-/* flash that brings the rings of fire, CHARON_DEEP_DUSK_DIMMING darker. */
+   by CHARON_SEAL_GLOW_PULSE either way. */
+#define CHARON_SEAL_GLOW		 16
+#define CHARON_SEAL_GLOW_PULSE	 12
+/* The red dusk the backdrop fades toward: its own colours this many levels
+   darker in green and blue and CHARON_DUSK_REDDENING redder, and after the
+   flash that brings the rings of fire, CHARON_DEEP_DUSK_DIMMING darker. */
 #define CHARON_DUSK_DIMMING		 16
 #define CHARON_DEEP_DUSK_DIMMING 20
 #define CHARON_DUSK_REDDENING	 8
 /* The deep red the wisp darkens to from white. */
-#define CHARON_WISP_RED_MIN	  12
-#define CHARON_WISP_GREEN_MIN 4
-#define CHARON_WISP_BLUE_MIN  4
-/* The dark disc rimmed in magenta swells at this x on the canvas, and from */
-/* CHARON_DISC_SWAY_FRAME sways as far either side of it. */
-#define CHARON_DISC_X		   54
-#define CHARON_DISC_SWAY_FRAME 350
-/* The top of the attack's ramp, a pink violet: full red with these levels of */
-/* green and blue. */
-#define CHARON_RAMP_GREEN 8
-#define CHARON_RAMP_BLUE  27
-/* Each flash as the targets are drawn in fades the background back to this */
-/* many levels darker in green, and half that in red and blue. */
-#define CHARON_FLASH_DIMMING 20
+#define CHARON_WISP_RED_MIN		 12
+#define CHARON_WISP_GREEN_MIN	 4
+#define CHARON_WISP_BLUE_MIN	 4
+/* The dark disc rimmed in magenta swells at this x on the canvas, and from
+   CHARON_DISC_SWAY_FRAME sways as far either side of it. */
+#define CHARON_DISC_X			 54
+#define CHARON_DISC_SWAY_FRAME	 350
+/* The top of the attack's ramp, a pink violet: full red with these levels of
+   green and blue. */
+#define CHARON_RAMP_GREEN		 8
+#define CHARON_RAMP_BLUE		 27
+/* Each flash as the targets are drawn in fades the background back to this many
+   levels darker in green, and half that in red and blue. */
+#define CHARON_FLASH_DIMMING	 20
 
 /* Charon: over a red wasteland a violet whirlpool turns about a red dome that
- */
-/* rises out of it; in a white flash among dark shards Charon appears and */
-/* slashes across the vortex, and a black shadow sweeps from the left over the
- */
-/* foes. */
-/* */
-/* Abilities: Charon. */
-void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
-	u16 tiles[CHARON_SHARD_FRAMES];
-	s16 emptyList[UNIT_MAX];
-	FIXED swarmPlace[4];
-	FIXED pulsePlace[4];
-	FIXED objectPlace[4];
-	FIXED revealPlace[4];
-	FIXED finalePlace[4];
-	DRAW_RECTANGLE blitters[2];
-	MODEL_TEXTURE sealTexture;
-	MODEL_TEXTURE fireRingTexture;
-	MODEL_TEXTURE swirlTexture;
-	MODEL_TEXTURE glowRingTexture;
-	u8 *canvas;
-	BATTLE_EFFECT_STATE *state;
+   rises out of it; in a white flash among dark shards Charon appears and
+   slashes across the vortex, and a black shadow sweeps from the left over the
+   foes.
+
+   Abilities: Charon. */
+void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
+{
+	Uint16					 tiles[CHARON_SHARD_FRAMES];
+	Sint16					 emptyList[UNIT_MAX];
+	FIXED					 swarmPlace[4];
+	FIXED					 pulsePlace[4];
+	FIXED					 objectPlace[4];
+	FIXED					 revealPlace[4];
+	FIXED					 finalePlace[4];
+	DRAW_RECTANGLE			 blitters[2];
+	MODEL_TEXTURE			 sealTexture;
+	MODEL_TEXTURE			 fireRingTexture;
+	MODEL_TEXTURE			 swirlTexture;
+	MODEL_TEXTURE			 glowRingTexture;
+	Uint8					*canvas;
+	BATTLE_EFFECT_STATE		*state;
 	BATTLE_BACKGROUND_STATE *backgroundView;
-	s32 j;
-	s32 frame;
-	u32 savedScrollX;
-	u8 *motePictures;
-	BATTLE_STATE *battle;
-	DRAW_RECTANGLE *blit;
-	FIXED beastX;
-	FIXED beastZ;
-	s32 sealFrame;
-	s32 red;
-	s32 green;
-	s32 blue;
-	BATTLE_CAMERA *camera;
-	s32 shake;
-	s16 savedYaw;
-	s32 i;
-	s32 tinted;
-	u16 *palette;
-	u8 *source;
-	s32 darkenFrame;
-	SPR **sprites;
-	VRAM_CACHE_ENTRY *slots;
-	VRAM_CACHE_ENTRY *objectSlots;
-	s32 moteSize;
-	s32 phase;
-	s32 halfWidth;
-	s32 dimming;
-	s32 width;
+	Sint32					 j;
+	Sint32					 frame;
+	Uint32					 savedScrollX;
+	Uint8					*motePictures;
+	BATTLE_STATE			*battle;
+	DRAW_RECTANGLE			*blit;
+	FIXED					 beastX;
+	FIXED					 beastZ;
+	Sint32					 sealFrame;
+	Sint32					 red;
+	Sint32					 green;
+	Sint32					 blue;
+	BATTLE_CAMERA			*camera;
+	Sint32					 shake;
+	Sint16					 savedYaw;
+	Sint32					 i;
+	Sint32					 tinted;
+	Uint16					*palette;
+	Uint8					*source;
+	Sint32					 darkenFrame;
+	SPR					   **sprites;
+	VRAM_CACHE_ENTRY		*slots;
+	VRAM_CACHE_ENTRY		*objectSlots;
+	Sint32					 moteSize;
+	Sint32					 phase;
+	Sint32					 halfWidth;
+	Sint32					 dimming;
+	Sint32					 width;
 
 	canvas = Ram_HeapSlots->battleCanvas;
 	state = Ram_HeapSlots->battleEff;
 	backgroundView = Ram_HeapSlots->battleBg;
 	savedScrollX = BgScrollWork[1].x;
 	motePictures = Ram_HeapSlots->battleSheet;
-	sprites = (SPR **)MapGridCellBuffer;
+	sprites = (SPR **)MapGridMetatileBuffer;
 	battle = Ram_HeapSlots->battleState;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
@@ -300,7 +279,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	BG_PLTT_COLOR(0, 1) = 0;
 	state->transferMode = CANVAS_COPY;
 	{
-		s32 order = TASK_PASS_VBLANK;
+		Sint32 order = EVENT_PASS_VBLANK;
 
 		sySetEvent(btEffectTransferCanvas, order);
 	}
@@ -311,13 +290,13 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	emptyList[0] = BATTLE_UNIT_LIST_END;
 	btActorSpawnObjectsForListStub(emptyList, 0);
 	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
-				WININ_WIN1_BG2 | WININ_WIN1_CLR;
+		WININ_WIN1_BG2 | WININ_WIN1_CLR;
 	REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 	sySynch(1);
 	syPaletteLoadBasicSprCols();
 	battle->keepBackdropPal = 1;
-	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, RESOURCE_AERIAL_VIEW_BACKDROP,
-						 0);
+	btBackgroundLoadStub(
+		BATTLE_BACKGROUND_FIXED, RESOURCE_AERIAL_VIEW_BACKDROP, 0);
 	btPaletteBrightenSavedBattleBg(0, -20, -20);
 	btEffectWipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -327,10 +306,11 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	blit = blitters;
 	btEffectBuildCanvasBlitters(0, blit);
 
-	source = (u8 *)syResourceGetTableEntry(RESOURCE_RED_DOME_TILES);
-	syWordsCopy((u16 *)&OBJ_PLTT_COLOR(2, 0), source, CHARON_DOME_COLORS * 2);
+	source = (Uint8 *)syResourceGetTableEntry(RESOURCE_RED_DOME_TILES);
+	syWordsCopy(
+		(Uint16 *)&OBJ_PLTT_COLOR(2, 0), source, CHARON_DOME_COLORS * 2);
 	source += CHARON_DOME_COLORS * 2;
-	syDecompressTaggedLz(source, state->sheet);
+	syDecompressTaggedLZ(source, state->sheet);
 	for(i = 0; i != OBJ_64X64_8BPP_BYTES; i++) {
 		if(state->sheet[i] != 0) {
 			state->sheet[i] += CHARON_DOME_FIRST_COLOR;
@@ -344,23 +324,23 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 		object->image.pri = 3;
 		slots = VramCacheEntries;
 		syWordsCopy(OBJ_VRAM + slots[object->slot].ofs, state->sheet,
-					OBJ_64X64_8BPP_BYTES);
+			OBJ_64X64_8BPP_BYTES);
 	}
 	OBJECTS[0]->image.objMode = 0;
 	OBJECTS[0]->ofsY = 32;
 
-	source = (u8 *)syResourceGetTableEntry(RESOURCE_TUMBLING_SHARD_TILES);
-	syWordsCopy((u16 *)&OBJ_PLTT_COLOR(CHARON_SHARD_PALETTE, 0), source,
-				PALETTE_BANK_BYTES);
+	source = (Uint8 *)syResourceGetTableEntry(RESOURCE_TUMBLING_SHARD_TILES);
+	syWordsCopy((Uint16 *)&OBJ_PLTT_COLOR(CHARON_SHARD_PALETTE, 0), source,
+		PALETTE_BANK_BYTES);
 	source += PALETTE_BANK_BYTES;
-	syDecompressTaggedLz(source, state->sheet);
+	syDecompressTaggedLZ(source, state->sheet);
 	for(i = 0; i != CHARON_SHARD_FRAMES; i++) {
 		SPR *object = btEffectSprCreateWithTiles(
 			16, 16, 0, OBJ_PALETTE(CHARON_SHARD_PALETTE));
 		SPRITES[i] = object;
 		object->image.pri = 1;
 		syWordsCopy(OBJ_VRAM + slots[object->slot].ofs,
-					state->sheet + i * TILE_SIZE_4BPP, TILE_SIZE_4BPP);
+			state->sheet + i * TILE_SIZE_4BPP, TILE_SIZE_4BPP);
 		tiles[i] = SPRITES[i]->image.tile;
 	}
 	for(i = 0; i != CHARON_SHARDS - CHARON_SHARD_FRAMES; i++) {
@@ -374,7 +354,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	for(j = 0; j != CHARON_RING_SHADES; j++) {
 		moteSize = CHARON_RING_MOTE;
 		for(i = 0; i != moteSize * moteSize * 2; i++) {
-			s32 value =
+			Sint32 value =
 				state->sheet[BattleEffect_MotePictures[moteSize - 1] + i];
 
 			if(value != 0) {
@@ -387,9 +367,9 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 		}
 	}
 	btResourceLoadAndDecompress(RESOURCE_SWIRL_TEXTURE, state->sheet, 0, 0);
-	btResourceLoadAndDecompress(RESOURCE_CHARM_RING_SHEET,
-								state->sheet + CHARON_ACT_PICTURES, 1, 1);
-	source = (u8 *)syResourceGetTableEntry(RESOURCE_BOLT_SHEET);
+	btResourceLoadAndDecompress(
+		RESOURCE_CHARM_RING_SHEET, state->sheet + CHARON_ACT_PICTURES, 1, 1);
+	source = (Uint8 *)syResourceGetTableEntry(RESOURCE_BOLT_SHEET);
 	syWordsCopy(BG_PLTT, source, SHEET_PALETTE_BYTES);
 	REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 	REG_BG2X = Q_8_8(8);
@@ -397,20 +377,19 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	beastZ = 0;
 
 	for(frame = 0;
-		frame != CHARON_FRAMES && !(InputWork.repeat & (KEY_A | KEY_B));
+		frame != CHARON_FRAMES && !(PerWork.repeat & (KEY_A | KEY_B));
 		frame++) {
-		u8 *order = REVEAL_BUFFER + (frame - CHARON_ORB_FRAME) * 2;
+		Uint8 *order = REVEAL_BUFFER + (frame - CHARON_ORB_FRAME) * 2;
 
 		/* The backdrop's red drains away and its blue comes back. */
 		darkenFrame = frame - CHARON_DRAIN_FRAME;
 		if(darkenFrame >= 0 && darkenFrame < 22) {
-			btPaletteBrightenSavedBattleBg(
-				-darkenFrame, -CHARON_DRAIN_DIMMING,
+			btPaletteBrightenSavedBattleBg(-darkenFrame, -CHARON_DRAIN_DIMMING,
 				frame - (CHARON_DRAIN_FRAME + CHARON_DRAIN_DIMMING));
 		}
 		if(frame == CHARON_SEAL_FRAME - 1) {
-			btPaletteBrightenSavedBattleBg(0, -CHARON_DRAIN_DIMMING / 2,
-										   -CHARON_DRAIN_DIMMING);
+			btPaletteBrightenSavedBattleBg(
+				0, -CHARON_DRAIN_DIMMING / 2, -CHARON_DRAIN_DIMMING);
 		}
 		if(frame == 4) {
 			sySndPlayStub(SE_TREMOR);
@@ -446,39 +425,40 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			sySndPlayStub(SE_LAUNCH);
 		}
 		if(frame == 0) {
-			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
-								CANVAS_FADE_THREE_QUARTERS);
+			EFFECT_SET_TRANSFER(
+				state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			/* A list of sprites off the screen's corner, each showing the shard
-			 */
-			/* picture of a particle's tumble; the particles hold nothing yet.
-			 */
+			   picture of a particle's tumble; the particles hold nothing
+			   yet. */
 			{
-				u32 hidden;
+				Uint32 hidden;
+
 				/* FAKEMATCH(temporary): the mask held in a halfword struct set
 				 * in the for clause. */
 				struct {
-					u16 value;
+					Uint16 value;
 				} mask;
+
 				/* FAKEMATCH(temporary): tumble, a pointer to each particle's
 				 * variant stepped a particle at a time; as a particle pointer
 				 * walked. */
-				s32 *tumble;
-				u32 *b;
-				u32 *a;
+				Sint32 *tumble;
+				Uint32 *b;
+				Uint32 *a;
 
 				for(i = 0, hidden = OBJ_X(DISPLAY_WIDTH) + DISPLAY_HEIGHT,
 				mask.value = OBJ_PALETTE(CHARON_SHARD_PALETTE),
 				tumble = &CHARON_PARTICLES[0].variant,
-				b = (u32 *)(REVEAL_BUFFER + 4), a = OAM_BUFFER;
+				b = (Uint32 *)(REVEAL_BUFFER + 4), a = OAM_BUFFER;
 					i != CHARON_HIDDEN_SPRITES; i++) {
-					s32 t;
+					Sint32 t;
 
 					*a = hidden;
 					t = *tumble;
 					tumble += sizeof(PARTICLE) / sizeof(*tumble);
 					*b = tiles[t / (CHARON_SHARD_TURN / CHARON_SHARD_FRAMES)] |
-						 mask.value;
+						mask.value;
 					b += 2;
 					a += 2;
 				}
@@ -487,8 +467,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 		if(frame >= CHARON_ARRIVAL_FRAME && frame < 240) {
 			SCALE swarmScale = Charon_SwarmScale;
 
-			swarmScale.y = FIXED_ONE * 5 / 4;
-			swarmScale.x = FIXED_ONE * 5 / 4;
+			swarmScale.y = toFIXED(5) / 4;
+			swarmScale.x = toFIXED(5) / 4;
 			if(frame == CHARON_ARRIVAL_FRAME) {
 				for(i = 0; i != CHARON_SWARM; i++) {
 					CHARON_PARTICLES[i].x = INTtoFIXED(syRandom() % 160 + 40);
@@ -501,23 +481,22 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			}
 			for(i = 0; i != CHARON_SHARDS; i++) {
 				if(i == CHARON_LARGE_SHARDS) {
-					swarmScale.y = FIXED_ONE;
-					swarmScale.x = FIXED_ONE;
+					swarmScale.y = toFIXED(1);
+					swarmScale.x = toFIXED(1);
 				}
 				swarmPlace[3] = 0;
 				swarmPlace[1] = toFIXED(255);
 				swarmPlace[0] = CHARON_SWARM_SHARDS[i].x;
 				swarmPlace[2] = CHARON_SWARM_SHARDS[i].y + toFIXED(32);
-				btRenderApplyProjectedPlacementStub(SPRITES[i], swarmPlace,
-													&swarmScale.x, 0);
-				SPRITES[i]->image.tile =
-					tiles[CHARON_SWARM_SHARDS[i].variant /
-						  (CHARON_SHARD_TURN / CHARON_SHARD_FRAMES)];
+				fdRenderApplyProjectedPlacementStub(
+					SPRITES[i], swarmPlace, &swarmScale.x, 0);
+				SPRITES[i]->image.tile = tiles[CHARON_SWARM_SHARDS[i].variant /
+					(CHARON_SHARD_TURN / CHARON_SHARD_FRAMES)];
 			}
 			for(i = 0; i != CHARON_SWARM; i++) {
 				if(CHARON_PARTICLES[i].y > -toFIXED(16) &&
-				   CHARON_PARTICLES[i].x > -toFIXED(16) &&
-				   CHARON_PARTICLES[i].x < toFIXED(256)) {
+					CHARON_PARTICLES[i].x > -toFIXED(16) &&
+					CHARON_PARTICLES[i].x < toFIXED(256)) {
 					CHARON_PARTICLES[i].x += CHARON_PARTICLES[i].velX;
 					CHARON_PARTICLES[i].y += CHARON_PARTICLES[i].velY;
 				}
@@ -532,54 +511,50 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			SCALE pulseScale = Charon_PulseScale;
 
 			pulseScale.x = pulseScale.y =
-				sySin(sealFrame << 7) * 2 + FIXED_ONE / 4;
+				sySin(sealFrame << 7) * 2 + toFIXED(1) / 4;
 			pulsePlace[3] = 0;
 			pulsePlace[1] = toFIXED(255);
 			pulsePlace[0] = toFIXED(114);
 			/* DEAD: sealFrame is never negative here; the ROM keeps the test
-			 * and its */
-			/* other height. */
+			   and its other height. */
 			pulsePlace[2] = sealFrame >= 0 ? toFIXED(78) : toFIXED(100);
-			btRenderApplyProjectedPlacementStub(OBJECTS[0], pulsePlace,
-												&pulseScale.x, 0);
+			fdRenderApplyProjectedPlacementStub(
+				OBJECTS[0], pulsePlace, &pulseScale.x, 0);
 		}
 		if(frame == CHARON_ARRIVAL_FRAME - 1) {
-			btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
-								 RESOURCE_AERIAL_VIEW_BACKDROP, 0);
-			syWordsFill((u16 *)&BG_PLTT_COLOR(6, 0),
-						BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
+			btBackgroundLoadStub(
+				BATTLE_BACKGROUND_FIXED, RESOURCE_AERIAL_VIEW_BACKDROP, 0);
+			syWordsFill((Uint16 *)&BG_PLTT_COLOR(6, 0),
+				BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
 			syWordsFill(canvas, CANVAS_VIEW_BYTES,
-						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
 		if(frame >= CHARON_ARRIVAL_FRAME && frame < CHARON_ARRIVAL_FRAME + 15) {
 			syWordsFill(canvas, CANVAS_VIEW_BYTES,
-						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST -
-										 (frame - CHARON_ARRIVAL_FRAME) * 4));
+				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST -
+					(frame - CHARON_ARRIVAL_FRAME) * 4));
 		}
 		/* Every fourth frame the backdrop fades a step from the flash's white
-		 * to */
-		/* its own colours, and from CHARON_DUSK_FRAME on toward a red dusk; the
-		 */
-		/* wisp darkens from white to a deep red. */
+		   to its own colours, and from CHARON_DUSK_FRAME on toward a red dusk;
+		   the wisp darkens from white to a deep red. */
 		if((frame & 3) == 0 && (frame >= CHARON_ARRIVAL_FRAME && frame < 240)) {
-			u16 *target =
+			Uint16 *target =
 				syResourceGetTableEntry(RESOURCE_AERIAL_VIEW_BACKDROP);
-			u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
+			Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 			for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++, target++, color++) {
-				s32 b = RGB_BLUE(*color);
-				s32 g = RGB_GREEN(*color);
-				s32 r = RGB_RED(*color);
-				s32 tb;
-				s32 tg;
-				s32 tr;
+				Sint32 b = RGB_BLUE(*color);
+				Sint32 g = RGB_GREEN(*color);
+				Sint32 r = RGB_RED(*color);
+				Sint32 tb;
+				Sint32 tg;
+				Sint32 tr;
 
 				if(frame < CHARON_DUSK_FRAME) {
 					tb = RGB_BLUE(*target);
 					tg = RGB_GREEN(*target);
 					tr = RGB_RED(*target);
-				}
-				else {
+				} else {
 					tb = RGB_BLUE(*target) - CHARON_DUSK_DIMMING;
 					tg = RGB_GREEN(*target) - CHARON_DUSK_DIMMING;
 					tr = RGB_RED(*target) + CHARON_DUSK_REDDENING;
@@ -605,9 +580,9 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				*color = RGB(r, g, b);
 			}
 			for(i = 0; i != PALETTE_COLORS - 1; i++) {
-				s32 r = RGB_LEVEL_MAX - (frame - CHARON_ARRIVAL_FRAME) / 4;
-				s32 g = r;
-				s32 b = r;
+				Sint32 r = RGB_LEVEL_MAX - (frame - CHARON_ARRIVAL_FRAME) / 4;
+				Sint32 g = r;
+				Sint32 b = r;
 
 				if(r > RGB_LEVEL_MAX) {
 					r = RGB_LEVEL_MAX;
@@ -631,16 +606,17 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			}
 		}
 		if(frame >= CHARON_ARRIVAL_FRAME && frame < 240) {
-			u16 *target = syResourceGetTableEntry(RESOURCE_CRIMSON_BEAST_TILES);
-			u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 0);
+			Uint16 *target =
+				syResourceGetTableEntry(RESOURCE_CRIMSON_BEAST_TILES);
+			Uint16 *color = (Uint16 *)&OBJ_PLTT_COLOR(0, 0);
 
 			for(i = 0; i != CHARON_BEAST_COLORS; i++, target++, color++) {
-				s32 b = RGB_BLUE(*color);
-				s32 g = RGB_GREEN(*color);
-				s32 r = RGB_RED(*color);
-				s32 tb = RGB_BLUE(*target);
-				s32 tg = RGB_GREEN(*target);
-				s32 tr = RGB_RED(*target);
+				Sint32 b = RGB_BLUE(*color);
+				Sint32 g = RGB_GREEN(*color);
+				Sint32 r = RGB_RED(*color);
+				Sint32 tb = RGB_BLUE(*target);
+				Sint32 tg = RGB_GREEN(*target);
+				Sint32 tr = RGB_RED(*target);
 
 				if(b > tb) {
 					b--;
@@ -654,11 +630,11 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				*color = RGB(r, g, b);
 			}
 		}
-		/* Charon's own colours are tinted toward violet, back, and toward red.
-		 */
+		/* Charon's own colours are tinted toward violet, back, and toward
+		   red. */
 		tinted = 0;
 		if(frame >= CHARON_VIOLET_FRAME && frame < 246) {
-			s32 t = (frame - CHARON_VIOLET_FRAME) / 4;
+			Sint32 t = (frame - CHARON_VIOLET_FRAME) / 4;
 
 			red = t / 2;
 			green = 0;
@@ -666,7 +642,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			tinted = 1;
 		}
 		if(frame >= CHARON_UNVIOLET_FRAME && frame < 283) {
-			s32 t = (frame - CHARON_UNVIOLET_FRAME) / 2;
+			Sint32 t = (frame - CHARON_UNVIOLET_FRAME) / 2;
 
 			red = 4 - t / 4;
 			green = -(t / 2);
@@ -680,12 +656,13 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			tinted = 1;
 		}
 		if(tinted == 1) {
-			u16 *color = syResourceGetTableEntry(RESOURCE_CRIMSON_BEAST_TILES);
+			Uint16 *color =
+				syResourceGetTableEntry(RESOURCE_CRIMSON_BEAST_TILES);
 
 			for(i = 0; i != CHARON_BEAST_COLORS; i++, color++) {
-				s32 r = RGB_RED(*color) + red;
-				s32 g = RGB_GREEN(*color) + green;
-				s32 b = RGB_BLUE(*color) + blue;
+				Sint32 r = RGB_RED(*color) + red;
+				Sint32 g = RGB_GREEN(*color) + green;
+				Sint32 b = RGB_BLUE(*color) + blue;
 
 				if(r > RGB_LEVEL_MAX) {
 					r = RGB_LEVEL_MAX;
@@ -711,13 +688,13 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 		if(frame >= CHARON_ARRIVAL_FRAME && frame < 860) {
 			if(frame == CHARON_ARRIVAL_FRAME) {
 				fdSprDestroyStub((SPR *)OBJECTS[0]);
-				source =
-					(u8 *)syResourceGetTableEntry(RESOURCE_CRIMSON_BEAST_TILES);
-				syWordsFill((u16 *)&OBJ_PLTT_COLOR(0, 0),
-							CHARON_BEAST_COLORS * 2, COLOR_PAIR(RGB_WHITE));
+				source = (Uint8 *)syResourceGetTableEntry(
+					RESOURCE_CRIMSON_BEAST_TILES);
+				syWordsFill((Uint16 *)&OBJ_PLTT_COLOR(0, 0),
+					CHARON_BEAST_COLORS * 2, COLOR_PAIR(RGB_WHITE));
 				source += CHARON_BEAST_COLORS * 2;
-				syDecompressTaggedLz(source,
-									 state->sheet + CHARON_BEAST_PICTURES);
+				syDecompressTaggedLZ(
+					source, state->sheet + CHARON_BEAST_PICTURES);
 				for(i = 0, objectSlots = VramCacheEntries;
 					i != CHARON_BEAST_SPRITES; i++) {
 					SPR *object = btEffectSprCreateWithTiles(
@@ -727,34 +704,33 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					object->image.pri = 3;
 					OBJECTS[i] = object;
 					syWordsCopy(OBJ_VRAM + objectSlots[object->slot].ofs,
-								state->sheet + CHARON_BEAST_PICTURES +
-									i * OBJ_32X32_8BPP_BYTES,
-								OBJ_32X32_8BPP_BYTES);
+						state->sheet + CHARON_BEAST_PICTURES +
+							i * OBJ_32X32_8BPP_BYTES,
+						OBJ_32X32_8BPP_BYTES);
 				}
-				source =
-					(u8 *)syResourceGetTableEntry(RESOURCE_WHITE_WISPS_TILES);
-				syWordsCopy((u16 *)&OBJ_PLTT_COLOR(CHARON_WISP_PALETTE, 0),
-							source, PALETTE_BANK_BYTES);
-				syWordsFill((u16 *)&OBJ_PLTT_COLOR(CHARON_WISP_PALETTE, 0),
-							PALETTE_BANK_BYTES, COLOR_PAIR(RGB_WHITE));
+				source = (Uint8 *)syResourceGetTableEntry(
+					RESOURCE_WHITE_WISPS_TILES);
+				syWordsCopy((Uint16 *)&OBJ_PLTT_COLOR(CHARON_WISP_PALETTE, 0),
+					source, PALETTE_BANK_BYTES);
+				syWordsFill((Uint16 *)&OBJ_PLTT_COLOR(CHARON_WISP_PALETTE, 0),
+					PALETTE_BANK_BYTES, COLOR_PAIR(RGB_WHITE));
 				source += PALETTE_BANK_BYTES;
-				syDecompressTaggedLz(source,
-									 state->sheet + CHARON_BEAST_PICTURES);
+				syDecompressTaggedLZ(
+					source, state->sheet + CHARON_BEAST_PICTURES);
 				{
-					SPR *object = btEffectSprCreateWithTiles(
-						64, 64, OBJ_SIZE_64X64,
-						OBJ_PALETTE(CHARON_WISP_PALETTE));
+					SPR *object = btEffectSprCreateWithTiles(64, 64,
+						OBJ_SIZE_64X64, OBJ_PALETTE(CHARON_WISP_PALETTE));
 					VRAM_CACHE_ENTRY *tileSlots;
 
 					OBJECTS[CHARON_WISP] = object;
 					object->image.pri = 3;
 					tileSlots = VramCacheEntries;
 					{
-						u8 *vram = OBJ_VRAM;
+						Uint8 *vram = OBJ_VRAM;
 
 						vram += tileSlots[object->slot].ofs;
 						syWordsCopy(vram, state->sheet + CHARON_BEAST_PICTURES,
-									OBJ_64X64_4BPP_BYTES);
+							OBJ_64X64_4BPP_BYTES);
 					}
 					object = btEffectSprCreateWithTiles(
 						64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
@@ -762,53 +738,51 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					object->image.pri = 2;
 					object->ofsY = 32;
 					syWordsFill(OBJ_VRAM + tileSlots[object->slot].ofs,
-								OBJ_64X64_8BPP_BYTES, 0);
+						OBJ_64X64_8BPP_BYTES, 0);
 				}
 				source =
-					(u8 *)syResourceGetTableEntry(RESOURCE_VIOLET_PALETTE_E);
+					(Uint8 *)syResourceGetTableEntry(RESOURCE_VIOLET_PALETTE_E);
 				syWordsCopy(BG_PLTT, source, SHEET_PALETTE_BYTES);
-				btResourceLoadAndDecompress(
-					RESOURCE_BLUE_GLOW_SHEET,
+				btResourceLoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
 					state->sheet + CHARON_BEAST_PICTURES, 0, 0);
 				syWordsCopy(motePictures, state->sheet + CHARON_BEAST_PICTURES,
-							MOTE_SET_BYTES);
+					MOTE_SET_BYTES);
 				btResourceLoadAndDecompress(RESOURCE_CURSE_SEAL_SHEET,
-											state->sheet + CHARON_ACT_PICTURES,
-											1, 1);
+					state->sheet + CHARON_ACT_PICTURES, 1, 1);
 				beastX = toFIXED(72);
 				beastZ = toFIXED(56);
 			}
 			if(frame == CHARON_ORB_FRAME - 1) {
-				source = (u8 *)syResourceGetTableEntry(RESOURCE_RED_ORB_TILES);
-				syWordsFill((u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
-							CHARON_ORB_COLORS * 2, 0);
+				source =
+					(Uint8 *)syResourceGetTableEntry(RESOURCE_RED_ORB_TILES);
+				syWordsFill((Uint16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
+					CHARON_ORB_COLORS * 2, 0);
 				source += CHARON_ORB_COLORS * 2;
-				syDecompressTaggedLz(source, ORB_BUFFER);
+				syDecompressTaggedLZ(source, ORB_BUFFER);
 				for(i = 0; i != OBJ_64X64_8BPP_BYTES; i++) {
 					if(ORB_BUFFER[i] != 0) {
 						ORB_BUFFER[i] += CHARON_ORB_FIRST_COLOR;
 					}
 				}
 				/* The order the pixel pairs are revealed in, after the picture:
-				 * each */
-				/* pair is swapped with one picked at random. */
+				   each pair is swapped with one picked at random. */
 				for(i = 0; i != CHARON_DISSOLVE_PAIRS; i++) {
 					REVEAL_BUFFER[OBJ_64X64_8BPP_BYTES + i] = i;
 				}
 				{
-					u8 *slot;
-					s32 orderOffset = OBJ_64X64_8BPP_BYTES;
+					Uint8 *slot;
+					Sint32 orderOffset = OBJ_64X64_8BPP_BYTES;
 
 					for(i = 0, slot = REVEAL_BUFFER + OBJ_64X64_8BPP_BYTES;
 						i != CHARON_DISSOLVE_PAIRS;) {
-						u8 *other;
-						s32 swap;
-						s32 value;
-						s32 mask = CHARON_DISSOLVE_PAIRS - 1;
+						Uint8 *other;
+						Sint32 swap;
+						Sint32 value;
+						Sint32 mask = CHARON_DISSOLVE_PAIRS - 1;
 
 						/* FAKEMATCH(temporary): orderOffset, the constant set
-						 * again in the loop; as other += OBJ_64X64_8BPP_BYTES.
-						 */
+						 * again in the loop; as other +=
+						 * OBJ_64X64_8BPP_BYTES. */
 						orderOffset = OBJ_64X64_8BPP_BYTES;
 						other = (syRandom() & mask) + ORB_BUFFER;
 						other += orderOffset;
@@ -816,8 +790,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 						value = *other;
 						/* FAKEMATCH(dead): swap and value cast to the bytes
 						 * they already are. */
-						swap = (u8)swap;
-						value = (u8)value;
+						swap = (Uint8)swap;
+						value = (Uint8)value;
 						i++;
 						*slot = value;
 						*other = swap;
@@ -833,47 +807,44 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				if(frame < 160) {
 					beastX += toFIXED(1) / 8;
 					beastZ -= toFIXED(1) / 4;
-				}
-				else if(frame < 332) {
+				} else if(frame < 332) {
 					beastX += toFIXED(1) / 8;
 					beastZ += toFIXED(1) / 16;
-				}
-				else {
+				} else {
 					beastX += toFIXED(1) / 8;
 				}
-				objectScale[1] = FIXED_ONE * 5 / 4;
-				objectScale[0] = FIXED_ONE * 5 / 4;
-				objectScale[0] = objectScale[1] = beastZ / 48 + FIXED_ONE / 4;
+				objectScale[1] = toFIXED(5) / 4;
+				objectScale[0] = toFIXED(5) / 4;
+				objectScale[0] = objectScale[1] = beastZ / 48 + toFIXED(1) / 4;
 				objectPlace[0] = beastX + toFIXED(64);
 				objectPlace[2] = toFIXED(144);
-				btRenderApplyProjectedPlacementStub(
+				fdRenderApplyProjectedPlacementStub(
 					OBJECTS[CHARON_WISP], objectPlace, objectScale, 0);
-				objectScale[1] = FIXED_ONE;
-				objectScale[0] = FIXED_ONE;
+				objectScale[1] = toFIXED(1);
+				objectScale[0] = toFIXED(1);
 				for(i = 0; i != CHARON_BEAST_SPRITES; i++) {
-					objectPlace[0] = INTtoFIXED((i % CHARON_BEAST_COLUMNS) *
-												CHARON_BEAST_SPRITE_SIZE) +
-									 beastX;
-					objectPlace[2] = INTtoFIXED((i / CHARON_BEAST_COLUMNS) *
-												CHARON_BEAST_SPRITE_SIZE) +
-									 beastZ;
-					btRenderApplyProjectedPlacementStub(OBJECTS[i], objectPlace,
-														objectScale, 0);
+					objectPlace[0] = toFIXED((i % CHARON_BEAST_COLUMNS) *
+										 CHARON_BEAST_SPRITE_SIZE) +
+						beastX;
+					objectPlace[2] = toFIXED((i / CHARON_BEAST_COLUMNS) *
+										 CHARON_BEAST_SPRITE_SIZE) +
+						beastZ;
+					fdRenderApplyProjectedPlacementStub(
+						OBJECTS[i], objectPlace, objectScale, 0);
 				}
 			}
 			if(frame == CHARON_CURSE_FRAME) {
-				source = (u8 *)syResourceGetTableEntry(RESOURCE_BOLT_SHEET);
+				source = (Uint8 *)syResourceGetTableEntry(RESOURCE_BOLT_SHEET);
 				syWordsCopy(BG_PLTT, source, SHEET_PALETTE_BYTES);
 			}
 			/* The curse seal falls turning onto the ground and fades; the swirl
-			 */
-			/* turns under it. */
+			   turns under it. */
 			if(frame >= CHARON_CURSE_FRAME && frame < CHARON_RINGS_FRAME) {
-				void *texture = syHeapAllocEwram(32);
+				void		 *texture = syHeapAllocEWRAM(32);
 				RENDER_MODEL *model = btRenderAllocateModelList(1);
-				s32 t = frame - 200;
-				s32 shade;
-				s32 scale;
+				Sint32		  t = frame - 200;
+				Sint32		  shade;
+				Sint32		  scale;
 
 				shade = t * 4 + MODEL_SHADE_INVISIBLE;
 				scale = CHARON_FALL_SCALE - t * CHARON_SCALE_STEP;
@@ -887,8 +858,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					shade = 0;
 				}
 				model->shade = shade;
-				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
-									CANVAS_FADE_THREE_QUARTERS);
+				EFFECT_SET_TRANSFER(
+					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 				sealTexture.logWidth = 7;
 				sealTexture.logHeight = 7;
 				sealTexture.pixels = state->sheet + CHARON_ACT_PICTURES;
@@ -903,8 +874,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					syRotX(TRIG_TURN * 7 / 8);
 					syRotZ(DEGtoANG(90) - t * (TRIG_TURN / 256));
 					syRotY(-t * (TRIG_TURN / 64));
-					btRenderTransformVertices(BattleEffect_GroundSquareCorners,
-											  texture, 4);
+					btRenderTransformVertices(
+						BattleEffect_GroundSquareCorners, texture, 4);
 					btRenderDrawModelList(model);
 				}
 				if(frame > CHARON_CURSE_SWIRL_FRAME - 1) {
@@ -930,73 +901,73 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					syScale(scale, scale, scale);
 					syRotX(TRIG_TURN * 3 / 4);
 					syRotY(-t * (TRIG_TURN / 64));
-					btRenderTransformVertices(BattleEffect_GroundSquareCorners,
-											  texture, 4);
+					btRenderTransformVertices(
+						BattleEffect_GroundSquareCorners, texture, 4);
 					btRenderDrawModelList(model);
 				}
 				syHeapRelease(model);
 				syHeapRelease(texture);
 			}
 			/* The red orb is revealed in its sprite, two pixel pairs of every
-			 * tile a */
-			/* frame, as its colours rise from black, and it shrinks away to */
-			/* nothing. */
+			   tile a frame, as its colours rise from black, and it shrinks away
+			   to nothing. */
 			if(frame >= CHARON_ORB_FRAME && frame < CHARON_ORB_GONE_FRAME) {
 				SCALE revealScale = Charon_RevealScale;
 
 				if(frame < 260) {
-					u8 *low = REVEAL_BUFFER;
-					u8 *high = REVEAL_BUFFER + 1;
+					Uint8 *low = REVEAL_BUFFER;
+					Uint8 *high = REVEAL_BUFFER + 1;
 					/* FAKEMATCH(temporary): orderCopy, a copy of order set
 					 * again in the loop. */
-					u8 *orderCopy = order;
+					Uint8 *orderCopy = order;
 
 					for(i = 0; i != CHARON_REVEAL_TILES; i++) {
-						s32 pair =
+						Sint32 pair =
 							(orderCopy = order)[OBJ_64X64_8BPP_BYTES] * 2;
-						s32 tile = i * TILE_SIZE_8BPP;
-						s32 pixel = tile + pair;
-						u8 *lowByte = low + pixel;
-						u8 *highByte = high + pixel;
-						s32 texel = *lowByte | (*highByte << 8);
+						Sint32 tile = i * TILE_SIZE_8BPP;
+						Sint32 pixel = tile + pair;
+						Uint8 *lowByte = low + pixel;
+						Uint8 *highByte = high + pixel;
+						Sint32 texel = *lowByte | (*highByte << 8);
 
-						*(u16 *)(OBJ_VRAM +
-								 (tile +
-								  VramCacheEntries[OBJECTS[CHARON_REVEAL]->slot]
-									  .ofs) +
-								 pair) = texel;
+						*(Uint16 *)(OBJ_VRAM +
+							(tile +
+								VramCacheEntries[OBJECTS[CHARON_REVEAL]->slot]
+									.ofs) +
+							pair) = texel;
 						pair = orderCopy[OBJ_64X64_8BPP_BYTES + 1] * 2;
 						pixel = tile + pair;
 						lowByte = low + pixel;
 						highByte = high + pixel;
 						texel = *lowByte | (*highByte << 8);
-						*(u16 *)(OBJ_VRAM +
-								 (tile +
-								  VramCacheEntries[OBJECTS[CHARON_REVEAL]->slot]
-									  .ofs) +
-								 pair) = texel;
+						*(Uint16 *)(OBJ_VRAM +
+							(tile +
+								VramCacheEntries[OBJECTS[CHARON_REVEAL]->slot]
+									.ofs) +
+							pair) = texel;
 					}
 				}
 				revealScale.y = revealScale.x =
-					310 * (FIXED_ONE / 32) - frame * (FIXED_ONE / 32);
+					310 * (toFIXED(1) / 32) - frame * (toFIXED(1) / 32);
 				revealPlace[3] = 0;
 				revealPlace[1] = toFIXED(255);
 				revealPlace[0] = toFIXED(92);
 				revealPlace[2] = toFIXED(72);
-				btRenderApplyProjectedPlacementStub(
+				fdRenderApplyProjectedPlacementStub(
 					OBJECTS[CHARON_REVEAL], revealPlace, &revealScale.x, 0);
 				{
-					u16 *target =
+					Uint16 *target =
 						syResourceGetTableEntry(RESOURCE_RED_ORB_TILES);
-					u16 *color = (u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0);
+					Uint16 *color =
+						(Uint16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0);
 
 					for(i = 0; i != CHARON_ORB_COLORS; i++, target++, color++) {
-						s32 b = RGB_BLUE(*color);
-						s32 g = RGB_GREEN(*color);
-						s32 r = RGB_RED(*color);
-						s32 tb = RGB_BLUE(*target);
-						s32 tg = RGB_GREEN(*target);
-						s32 tr = RGB_RED(*target);
+						Sint32 b = RGB_BLUE(*color);
+						Sint32 g = RGB_GREEN(*color);
+						Sint32 r = RGB_RED(*color);
+						Sint32 tb = RGB_BLUE(*target);
+						Sint32 tg = RGB_GREEN(*target);
+						Sint32 tr = RGB_RED(*target);
 
 						if(b < tb) {
 							b++;
@@ -1012,38 +983,39 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				}
 			}
 			/* A white flash; the backdrop comes back and fades toward a deeper
-			 * dusk, */
-			/* and three rings of fire spread, eight frames apart. */
+			   dusk, and three rings of fire spread, eight frames apart. */
 			if(frame > CHARON_RINGS_FRAME - 1) {
 				if(frame == CHARON_RINGS_FRAME) {
 					syWordsFill(canvas, CANVAS_VIEW_BYTES,
-								CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-					syWordsFill((u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
-								CHARON_ORB_COLORS * 2, COLOR_PAIR(RGB_WHITE));
-					syWordsCopy(
-						(u16 *)&BG_PLTT_COLOR(6, 0),
+						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+					syWordsFill(
+						(Uint16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
+						CHARON_ORB_COLORS * 2, COLOR_PAIR(RGB_WHITE));
+					syWordsCopy((Uint16 *)&BG_PLTT_COLOR(6, 0),
 						syResourceGetTableEntry(RESOURCE_AERIAL_VIEW_BACKDROP),
 						BATTLE_BACKGROUND_COLORS * 2);
-					source = (u8 *)syResourceGetTableEntry(RESOURCE_BOLT_SHEET);
+					source =
+						(Uint8 *)syResourceGetTableEntry(RESOURCE_BOLT_SHEET);
 					syWordsCopy(BG_PLTT, source, SHEET_PALETTE_BYTES);
-					btResourceLoadAndDecompress(
-						RESOURCE_FIRE_RING_TEXTURE,
+					btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
 						state->sheet + CHARON_ACT_PICTURES, 0, 0);
 					btGraphicsLoadGreyRamp();
 				}
 				if(frame > CHARON_RINGS_FRAME + 1) {
-					u16 *target =
+					Uint16 *target =
 						syResourceGetTableEntry(RESOURCE_AERIAL_VIEW_BACKDROP);
-					u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
+					Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 					for(i = 0; i != BATTLE_BACKGROUND_COLORS;
 						i++, target++, color++) {
-						s32 b = RGB_BLUE(*color);
-						s32 g = RGB_GREEN(*color);
-						s32 r = RGB_RED(*color);
-						s32 tb = RGB_BLUE(*target) - CHARON_DEEP_DUSK_DIMMING;
-						s32 tg = RGB_GREEN(*target) - CHARON_DEEP_DUSK_DIMMING;
-						s32 tr = RGB_RED(*target) + CHARON_DUSK_REDDENING;
+						Sint32 b = RGB_BLUE(*color);
+						Sint32 g = RGB_GREEN(*color);
+						Sint32 r = RGB_RED(*color);
+						Sint32 tb =
+							RGB_BLUE(*target) - CHARON_DEEP_DUSK_DIMMING;
+						Sint32 tg =
+							RGB_GREEN(*target) - CHARON_DEEP_DUSK_DIMMING;
+						Sint32 tr = RGB_RED(*target) + CHARON_DUSK_REDDENING;
 
 						if(tb < 0) {
 							tb = 0;
@@ -1067,11 +1039,11 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					}
 				}
 				if(frame > CHARON_RINGS_FRAME - 1) {
-					s32 k;
-					s32 x;
-					s32 stripShade;
-					s32 size;
-					void *texture = syHeapAllocEwram(32);
+					Sint32		  k;
+					Sint32		  x;
+					Sint32		  stripShade;
+					Sint32		  size;
+					void		 *texture = syHeapAllocEWRAM(32);
 					RENDER_MODEL *model = btRenderAllocateModelList(1);
 
 					fireRingTexture.logWidth = 7;
@@ -1098,11 +1070,9 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 							syScale(size / 2, size, size / 2);
 							if(k == 0) {
 								syRotZ(TRIG_TURN * 15 / 16);
-							}
-							else if(k == 1) {
+							} else if(k == 1) {
 								syRotZ(DEGtoANG(45));
-							}
-							else {
+							} else {
 								syRotZ(TRIG_TURN * 7 / 8);
 							}
 							syRotX(TRIG_TURN / 32);
@@ -1116,45 +1086,42 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				}
 			}
 			/* The orb turns magenta and swells from nothing, shaking from the
-			 */
-			/* disc's frame on. */
+			   disc's frame on. */
 			if(frame == CHARON_MAGENTA_FRAME) {
-				syWordsFill((u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
-							CHARON_ORB_COLORS * 2,
-							COLOR_PAIR(RGB(RGB_LEVEL_MAX, 0, RGB_LEVEL_MAX)));
+				syWordsFill((Uint16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
+					CHARON_ORB_COLORS * 2,
+					COLOR_PAIR(RGB(RGB_LEVEL_MAX, 0, RGB_LEVEL_MAX)));
 			}
 			if(frame >= CHARON_MAGENTA_FRAME && frame < 351) {
-				SCALE finaleScale = Charon_FinaleScale;
-				s32 dx = 0;
-				s32 dz = 0;
+				SCALE  finaleScale = Charon_FinaleScale;
+				Sint32 dx = 0;
+				Sint32 dz = 0;
 
 				if(frame > CHARON_DISC_FRAME - 1) {
 					dx = 347 - frame;
 					dz = (frame - CHARON_DISC_FRAME) / 4;
 				}
-				finaleScale.x = finaleScale.y =
-					frame * (FIXED_ONE / 32) -
-					CHARON_MAGENTA_FRAME * (FIXED_ONE / 32);
+				finaleScale.x = finaleScale.y = frame * (toFIXED(1) / 32) -
+					CHARON_MAGENTA_FRAME * (toFIXED(1) / 32);
 				finalePlace[3] = 0;
 				finalePlace[1] = toFIXED(255);
-				finalePlace[0] = INTtoFIXED(dx) + toFIXED(92);
-				finalePlace[2] = INTtoFIXED(dz) + toFIXED(72);
-				btRenderApplyProjectedPlacementStub(
+				finalePlace[0] = toFIXED(dx) + toFIXED(92);
+				finalePlace[2] = toFIXED(dz) + toFIXED(72);
+				fdRenderApplyProjectedPlacementStub(
 					OBJECTS[CHARON_REVEAL], finalePlace, &finaleScale.x, 0);
 			}
 			/* The canvas is drawn opaque in magenta: a dark disc rimmed in
-			 * magenta */
-			/* swells, and from CHARON_DISC_SWAY_FRAME sways across; the
-			 * backdrop */
-			/* flashes white twice, 19 frames apart, from ten frames on. */
+			   magenta swells, and from CHARON_DISC_SWAY_FRAME sways across; the
+			   backdrop flashes white twice, 19 frames apart, from ten frames
+			   on. */
 			if(frame == CHARON_DISC_FRAME) {
 				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 				REG_BLDCNT = 0;
 				{
-					u16 *entry = (u16 *)&BG_PLTT_COLOR(0, 1);
+					Uint16 *entry = (Uint16 *)&BG_PLTT_COLOR(0, 1);
 					for(i = 0; i != SHEET_PALETTE_COLORS - 1; i++, entry++) {
-						s32 r = RGB_LEVEL_MAX - i;
-						s32 b = r;
+						Sint32 r = RGB_LEVEL_MAX - i;
+						Sint32 b = r;
 
 						if(r < 0) {
 							r = 0;
@@ -1167,14 +1134,14 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				}
 			}
 			if(frame > CHARON_DISC_FRAME - 1) {
-				s32 radius = (frame - (CHARON_DISC_FRAME - 2)) * 4;
-				s32 centerX = CHARON_DISC_X;
+				Sint32 radius = (frame - (CHARON_DISC_FRAME - 2)) * 4;
+				Sint32 centerX = CHARON_DISC_X;
 
 				if(frame >= CHARON_DISC_SWAY_FRAME) {
 					centerX =
 						(FIXEDtoINT(-(sySin((frame - CHARON_DISC_SWAY_FRAME) *
-											(TRIG_TURN / 64)) *
-									  CHARON_DISC_X))) +
+										  (TRIG_TURN / 64)) *
+							CHARON_DISC_X))) +
 						CHARON_DISC_X;
 				}
 				if(frame == 360) {
@@ -1182,46 +1149,43 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				}
 				if(frame <= 371) {
 					btEffectDrawShadedCircles(
-						state->sheet + CHARON_ACT_PICTURES, radius, FIXED_ONE);
-				}
-				else {
+						state->sheet + CHARON_ACT_PICTURES, radius, toFIXED(1));
+				} else {
 					radius = 104;
 				}
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
-				btCanvasBlitMirroredQuarters(state->sheet + CHARON_ACT_PICTURES,
-											 centerX, 58, radius);
+				btCanvasBlitMirroredQuarters(
+					state->sheet + CHARON_ACT_PICTURES, centerX, 58, radius);
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-									EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
+					EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 				blit[1] = Ram_HeapSlots->ramCodePaired;
 			}
 			for(j = 0; j != 2; j++) {
-				s32 flashFrame = frame - (CHARON_DISC_FRAME + 10) - j * 19;
+				Sint32 flashFrame = frame - (CHARON_DISC_FRAME + 10) - j * 19;
 
 				if(flashFrame == 0) {
-					syWordsFill((u16 *)&BG_PLTT_COLOR(6, 0),
-								BATTLE_BACKGROUND_COLORS * 2,
-								COLOR_PAIR(RGB_WHITE));
+					syWordsFill((Uint16 *)&BG_PLTT_COLOR(6, 0),
+						BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
 				}
 				if(flashFrame >= 0 && flashFrame < 160) {
-					u16 *target =
+					Uint16 *target =
 						syResourceGetTableEntry(RESOURCE_AERIAL_VIEW_BACKDROP);
-					u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
+					Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 					for(i = 0; i != BATTLE_BACKGROUND_COLORS;
 						i++, target++, color++) {
-						s32 b = RGB_BLUE(*color);
-						s32 g = RGB_GREEN(*color);
-						s32 r = RGB_RED(*color);
-						s32 tb;
-						s32 tg;
-						s32 tr;
+						Sint32 b = RGB_BLUE(*color);
+						Sint32 g = RGB_GREEN(*color);
+						Sint32 r = RGB_RED(*color);
+						Sint32 tb;
+						Sint32 tg;
+						Sint32 tr;
 
 						if(flashFrame < 8) {
 							tb = RGB_BLUE(*target);
 							tg = RGB_GREEN(*target);
 							tr = RGB_RED(*target);
-						}
-						else {
+						} else {
 							tb = RGB_BLUE(*target) - CHARON_DUSK_DIMMING;
 							tg = RGB_GREEN(*target) - CHARON_DUSK_DIMMING;
 							tr = RGB_RED(*target) + CHARON_DUSK_REDDENING;
@@ -1250,42 +1214,41 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			}
 		}
 		/* As the seal is stamped a ring of motes spreads from it, darker as it
-		 */
-		/* grows. */
+		   grows. */
 		if(sealFrame >= 0 && sealFrame < 24) {
-			s32 radius = frame * 2 - 104;
-			s32 shade = (radius - 10) / 6;
-			s32 x;
-			s32 y;
-			s32 w;
-			s32 h;
-			FIXED cosine;
+			Sint32 radius = frame * 2 - 104;
+			Sint32 shade = (radius - 10) / 6;
+			Sint32 x;
+			Sint32 y;
+			Sint32 w;
+			Sint32 h;
+			FIXED  cosine;
 
 			if(shade < 0) {
 				shade = 0;
 			}
 			w = CHARON_RING_MOTE;
 			for(i = 0, h = CHARON_RING_MOTE * 2; i != CHARON_RING_MOTES; i++) {
-				x = FIXEDtoINT(sySin(i * (TRIG_TURN / CHARON_RING_MOTES)) *
-							   radius * 2);
+				x = FIXEDtoINT(
+					sySin(i * (TRIG_TURN / CHARON_RING_MOTES)) * radius * 2);
 				cosine = syCos(i * (TRIG_TURN / CHARON_RING_MOTES));
 				y = (FIXEDtoINT(cosine * radius)) + 68;
 				x += 66;
 				blitters[0](canvas,
-							motePictures + shade * CHARON_RING_MOTE_BYTES,
-							x - w / 2, y, w, h);
+					motePictures + shade * CHARON_RING_MOTE_BYTES, x - w / 2, y,
+					w, h);
 			}
 		}
-		/* Before Charon comes the backdrop's green drains away, then its red.
-		 */
+		/* Before Charon comes the backdrop's green drains away, then its
+		   red. */
 		if(frame >= 108 && frame < CHARON_ARRIVAL_FRAME) {
-			u16 *color;
+			Uint16 *color;
 
-			for(i = 0, color = (u16 *)&BG_PLTT_COLOR(6, 0);
+			for(i = 0, color = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 				i != BATTLE_BACKGROUND_COLORS; i++, color++) {
-				s32 r = RGB_RED(*color);
-				s32 g = RGB_GREEN(*color);
-				s32 b = RGB_BLUE(*color);
+				Sint32 r = RGB_RED(*color);
+				Sint32 g = RGB_GREEN(*color);
+				Sint32 b = RGB_BLUE(*color);
 
 				g--;
 				if(g < 0) {
@@ -1293,76 +1256,72 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				}
 				if(r > RGB_LEVEL_MAX) {
 					r = RGB_LEVEL_MAX;
-				}
-				else if(r < 0) {
+				} else if(r < 0) {
 					r = 0;
 				}
 				if(g > RGB_LEVEL_MAX) {
 					g = RGB_LEVEL_MAX;
-				}
-				else if(g < 0) {
+				} else if(g < 0) {
 					g = 0;
 				}
 				if(b > RGB_LEVEL_MAX) {
 					b = RGB_LEVEL_MAX;
-				}
-				else if(b < 0) {
+				} else if(b < 0) {
 					b = 0;
 				}
 				*color = RGB(r, g, b);
 			}
 		}
 		/* The rune seal is stamped into the battle background's own tiles, on
-		 * the */
-		/* ground, and its colours pulse for 32 frames. */
+		   the ground, and its colours pulse for 32 frames. */
 		if(sealFrame >= 0 && sealFrame < 36) {
 			if(frame == CHARON_SEAL_FRAME) {
-				s32 x;
-				s32 y;
+				Sint32 x;
+				Sint32 y;
 
-				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN,
-									CANVAS_FILL_WORD(4));
+				EFFECT_SET_TRANSFER(
+					state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 				source =
-					(u8 *)syResourceGetTableEntry(RESOURCE_RUNE_SEAL_SHEET);
+					(Uint8 *)syResourceGetTableEntry(RESOURCE_RUNE_SEAL_SHEET);
 				source += PALETTE_BANK_BYTES;
-				syDecompressTaggedLz(source, state->sheet + CHARON_RUNE_SEAL);
+				syDecompressTaggedLZ(source, state->sheet + CHARON_RUNE_SEAL);
 				for(y = 0; y != RUNE_SEAL_HEIGHT; y++) {
 					for(x = 0; x != RUNE_SEAL_WIDTH; x += 2) {
-						u16 *dst =
-							(u16 *)(CHARON_SEAL_TILES +
-									((((y / 8) * 32 + x / 8) * 8 + (y & 7)) *
-										 8 +
-									 (x & 7)));
-						u8 hi = *dst >> 8;
-						u8 lo = *dst;
+						Uint16 *dst = (Uint16 *)(CHARON_SEAL_TILES +
+							((((y / 8) * 32 + x / 8) * 8 + (y & 7)) * 8 +
+								(x & 7)));
+						Uint8	hi = *dst >> 8;
+						Uint8	lo = *dst;
 
 						if(state->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH +
-										x + 1] != 0) {
+							   x + 1] != 0) {
 							hi = state->sheet[CHARON_RUNE_SEAL +
-											  y * RUNE_SEAL_WIDTH + x + 1] +
-								 CHARON_SEAL_COLOR;
+									 y * RUNE_SEAL_WIDTH + x + 1] +
+								CHARON_SEAL_COLOR;
 						}
 						if(state->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH +
-										x] != 0) {
+							   x] != 0) {
 							lo = state->sheet[CHARON_RUNE_SEAL +
-											  y * RUNE_SEAL_WIDTH + x] +
-								 CHARON_SEAL_COLOR;
+									 y * RUNE_SEAL_WIDTH + x] +
+								CHARON_SEAL_COLOR;
 						}
 						*dst = (hi << 8) | lo;
 					}
 				}
 			}
 			if(frame < CHARON_SEAL_FRAME + 32) {
-				u16 *color = syResourceGetTableEntry(RESOURCE_RUNE_SEAL_SHEET);
-				u16 *entry = (u16 *)&BG_PLTT_COLOR(CHARON_SEAL_PALETTE, 0);
+				Uint16 *color =
+					syResourceGetTableEntry(RESOURCE_RUNE_SEAL_SHEET);
+				Uint16 *entry =
+					(Uint16 *)&BG_PLTT_COLOR(CHARON_SEAL_PALETTE, 0);
 
 				for(i = 0; i != PALETTE_COLORS; i++, color++, entry++) {
-					s32 add = (FIXEDtoINT(syCos(sealFrame << 9) *
-										  CHARON_SEAL_GLOW_PULSE)) +
-							  CHARON_SEAL_GLOW;
-					s32 r = RGB_RED(*color) + add;
-					s32 g = RGB_GREEN(*color) + add;
-					s32 b = RGB_BLUE(*color) + add;
+					Sint32 add = (FIXEDtoINT(syCos(sealFrame << 9) *
+									 CHARON_SEAL_GLOW_PULSE)) +
+						CHARON_SEAL_GLOW;
+					Sint32 r = RGB_RED(*color) + add;
+					Sint32 g = RGB_GREEN(*color) + add;
+					Sint32 b = RGB_BLUE(*color) + add;
 
 					if(r > RGB_LEVEL_MAX) {
 						r = RGB_LEVEL_MAX;
@@ -1380,25 +1339,24 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 		/* The canvas flashes as the seal comes: half bright, then white. */
 		if(frame == 54) {
 			syWordsFill(canvas, CANVAS_VIEW_BYTES,
-						CANVAS_FILL_WORD((CANVAS_LEVEL_BRIGHTEST + 1) / 2));
+				CANVAS_FILL_WORD((CANVAS_LEVEL_BRIGHTEST + 1) / 2));
 		}
 		if(frame == 55) {
 			syWordsFill(canvas, CANVAS_VIEW_BYTES,
-						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
 		/* Until Charon comes the swirl turns on the ground, a second inside it
-		 */
-		/* the other way; from the seal on, the charm ring and a smaller one
-		 * inside */
-		/* it turn with them. */
+		   the other way; from the seal on, the charm ring and a smaller one
+		   inside it turn with them. */
 		if(frame < CHARON_ARRIVAL_FRAME) {
-			s32 risingScale;
-			s32 shade;
-			s32 rise = FIXED_ONE / 2 - CHARON_SEAL_FRAME * CHARON_SCALE_STEP;
-			s32 base;
-			s32 quarter;
-			s32 twice;
-			void *texture = syHeapAllocEwram(32);
+			Sint32 risingScale;
+			Sint32 shade;
+			Sint32 rise =
+				toFIXED(1) / 2 - CHARON_SEAL_FRAME * CHARON_SCALE_STEP;
+			Sint32		  base;
+			Sint32		  quarter;
+			Sint32		  twice;
+			void		 *texture = syHeapAllocEWRAM(32);
 			RENDER_MODEL *model = btRenderAllocateModelList(1);
 
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -1432,12 +1390,11 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				syRotX(DEGtoANG(45));
 				if(frame >= CHARON_SEAL_FRAME) {
 					syRotY(frame * (TRIG_TURN / 64));
-				}
-				else {
+				} else {
 					syRotY(-frame * (TRIG_TURN / 64));
 				}
-				btRenderTransformVertices(BattleEffect_GroundSquareCorners,
-										  texture, 4);
+				btRenderTransformVertices(
+					BattleEffect_GroundSquareCorners, texture, 4);
 				btRenderDrawModelList(model);
 			}
 			if(frame > CHARON_SWIRL_FADE_FRAME - 1) {
@@ -1450,12 +1407,12 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				syMatrixScaleUniform(-CHARON_INNER_SWIRL_SCALE);
 				syRotX(DEGtoANG(45));
 				syRotY(-frame * (TRIG_TURN / 128));
-				btRenderTransformVertices(BattleEffect_GroundSquareCorners,
-										  texture, 4);
+				btRenderTransformVertices(
+					BattleEffect_GroundSquareCorners, texture, 4);
 				btRenderDrawModelList(model);
 			}
 			if(frame >= CHARON_SEAL_FRAME) {
-				s32 ringShade = frame * 2 - 208;
+				Sint32 ringShade = frame * 2 - 208;
 
 				swirlTexture.pixels = state->sheet + CHARON_ACT_PICTURES;
 				if(ringShade >= MODEL_SHADE_INVISIBLE / 2) {
@@ -1467,36 +1424,33 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				syMatrixScaleUniform(CHARON_CHARM_RING_SCALE);
 				syRotX(DEGtoANG(45));
 				syRotY(frame * (TRIG_TURN / 64));
-				btRenderTransformVertices(BattleEffect_GroundSquareCorners,
-										  texture, 4);
+				btRenderTransformVertices(
+					BattleEffect_GroundSquareCorners, texture, 4);
 				btRenderDrawModelList(model);
 				/* FAKEMATCH(dead): twice raised to frame though nothing reads
-				 * it again.
-				 */
+				 * it again. */
 				if(frame > twice) {
 					twice = frame;
 				}
 				/* DEAD: the swirls' test of their shade, made of frame, which
-				 * is never */
-				/* that low; the ROM keeps the test. */
+				   is never that low; the ROM keeps the test. */
 				if(frame > CHARON_SWIRL_SHADE_MIN) {
 					syInitMatrix();
 					syTranslate(toFIXED(2), -toFIXED(48), 0);
 					syMatrixScaleUniform(-CHARON_INNER_RING_SCALE);
 					syRotX(DEGtoANG(45));
 					syRotY(-frame * (TRIG_TURN / 64));
-					btRenderTransformVertices(BattleEffect_GroundSquareCorners,
-											  texture, 4);
+					btRenderTransformVertices(
+						BattleEffect_GroundSquareCorners, texture, 4);
 					btRenderDrawModelList(model);
 				}
 			}
 			syHeapRelease(model);
 			syHeapRelease(texture);
 			/* DEAD: each test reads the count twice and drops the first read;
-			 * the ROM */
-			/* keeps both loads. */
-			while(state->vblanksSinceTransfer,
-				  state->vblanksSinceTransfer <= 1) {
+			   the ROM keeps both loads. */
+			while(
+				state->vblanksSinceTransfer, state->vblanksSinceTransfer <= 1) {
 			}
 		}
 		state->transferPending = 1;
@@ -1506,8 +1460,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	sySndPlayStub(SE_WAVE);
 	if(frame < CHARON_ARRIVAL_FRAME) {
 		fdSprDestroyStub((SPR *)OBJECTS[0]);
-	}
-	else {
+	} else {
 		for(i = 0; i != CHARON_OBJECTS; i++) {
 			fdSprDestroyStub((SPR *)OBJECTS[i]);
 		}
@@ -1520,8 +1473,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
 	sySynch(1);
 	battle->keepBackdropPal = 0;
-	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, battle->bg,
-						 BACKGROUND_DARKENED_LEVEL);
+	btBackgroundLoadStub(
+		BATTLE_BACKGROUND_FIXED, battle->bg, BACKGROUND_DARKENED_LEVEL);
 	IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
 	IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -1534,13 +1487,13 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 4);
 	REG_BG2X = 0;
 	REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-				 BGCNT_SCREEN_BASE(7);
+		BGCNT_SCREEN_BASE(7);
 	/* The attack's ramp runs from a pink violet down to black. */
 	for(i = 1; i != SHEET_PALETTE_COLORS; i++) {
-		s32 q = i * 2 / 3;
-		s32 r = RGB_LEVEL_MAX - q;
-		s32 g = CHARON_RAMP_GREEN - i / 2;
-		s32 b = CHARON_RAMP_BLUE - q;
+		Sint32 q = i * 2 / 3;
+		Sint32 r = RGB_LEVEL_MAX - q;
+		Sint32 g = CHARON_RAMP_GREEN - i / 2;
+		Sint32 b = CHARON_RAMP_BLUE - q;
 
 		if(r < 0) {
 			r = 0;
@@ -1555,18 +1508,18 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	}
 	arg->tgts[arg->tgtCnt] = BATTLE_UNIT_LIST_END;
 	btActorSpawnObjectsForListStub(arg->tgts, 0);
-	btEffectDrawShadedCircles(state->sheet, CHARON_COLUMN_END, FIXED_ONE);
-	btEffectDrawShadedCircles(state->sheet + CHARON_ACT_PICTURES,
-							  CHARON_DROP_RADIUS, FIXED_ONE);
+	btEffectDrawShadedCircles(state->sheet, CHARON_COLUMN_END, toFIXED(1));
+	btEffectDrawShadedCircles(
+		state->sheet + CHARON_ACT_PICTURES, CHARON_DROP_RADIUS, toFIXED(1));
 	syWordsFill(state->sheet + CHARON_BRIGHT_BLOCK, CHARON_TEXTURE_BYTES,
-				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-	btResourceLoadAndDecompress(RESOURCE_GLOW_RING_TEXTURE,
-								state->sheet + CHARON_GLOW_RING, 0, 0);
+		CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+	btResourceLoadAndDecompress(
+		RESOURCE_GLOW_RING_TEXTURE, state->sheet + CHARON_GLOW_RING, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
-	/* DEAD: i counts to MOTE_SET_BYTES by 35, and nothing reads it; the ROM */
-	/* keeps the add and the test. */
+	/* DEAD: i counts to MOTE_SET_BYTES by 35, and nothing reads it; the ROM
+	   keeps the add and the test. */
 	{
-		s32 limit;
+		Sint32 limit;
 
 		i = 0;
 		limit = MOTE_SET_BYTES;
@@ -1581,12 +1534,13 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			state->sheet[CHARON_GLOW_RING + i] = CANVAS_LEVEL_BRIGHTEST;
 		}
 	}
-	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH(
+		(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 	for(i = 0; i != CHARON_DROP_SLOTS; i++) {
 		DROPS[i].variant = -i;
 	}
-	EFFECT_FREE_PARTICLES(i, CHARON_PARTICLES,
-						  CHARON_MOTE_COUNT + CHARON_BURST_COUNT);
+	EFFECT_FREE_PARTICLES(
+		i, CHARON_PARTICLES, CHARON_MOTE_COUNT + CHARON_BURST_COUNT);
 	for(i = 0; i != arg->tgtCnt; i++) {
 		ACTOR *actor = btObjectGetStub(arg->tgts[i])->obj;
 
@@ -1599,7 +1553,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 	dimming = CHARON_FLASH_DIMMING;
 	frame = 0;
 	do {
-		if((InputWork.repeat & (KEY_A | KEY_B)) && frame < 120) {
+		if((PerWork.repeat & (KEY_A | KEY_B)) && frame < 120) {
 			frame = 120;
 		}
 		if(frame == 0) {
@@ -1613,7 +1567,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				ACTOR *actor = btObjectGetStub(arg->tgts[i])->obj;
 
 				btEffectTintBattler(arg->tgts[i], SPRITE_COLOR_NORMAL,
-									POSE_DAMAGE, TINT_KEEP, -1);
+					POSE_DAMAGE, TINT_KEEP, -1);
 				actor->x.fixed = -(i + 4) * toFIXED(128);
 				actor->z.fixed = 0;
 				actor->y.fixed = toFIXED(20);
@@ -1623,12 +1577,10 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 		if(frame == 120) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 			/* The battle's own background comes back as dark as a canvas
-			 * effect's */
-			/* fade leaves it. */
-			syColBufferScaleStub(battle->pal, (u16 *)&BG_PLTT_COLOR(6, 0),
-								 FIXED_ONE - BACKGROUND_DARKEN_FRAMES *
-												 BACKGROUND_LEVEL_STEP,
-								 BATTLE_BACKGROUND_COLORS);
+			   effect's fade leaves it. */
+			btColBufferScaleStub(battle->pal, (Uint16 *)&BG_PLTT_COLOR(6, 0),
+				toFIXED(1) - BACKGROUND_DARKEN_FRAMES * BACKGROUND_LEVEL_STEP,
+				BATTLE_BACKGROUND_COLORS);
 			for(i = 0; i != arg->tgtCnt; i++) {
 				ACTOR *actor = btObjectGetStub(arg->tgts[i])->obj;
 
@@ -1640,13 +1592,12 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
 		/* At frame 140 the curse breaks in a white flash: flash bursts and
-		 * sparks */
-		/* fly from the middle, and the targets are thrown up. */
+		   sparks fly from the middle, and the targets are thrown up. */
 		if(frame >= 140) {
 			if(frame == 140) {
 				for(i = 0; i != CHARON_BURST_COUNT; i++) {
-					s32 speed = (syRandom() & 511) + 32;
-					s32 angle = syRandom();
+					Sint32 speed = (syRandom() & 511) + 32;
+					Sint32 angle = syRandom();
 
 					CHARON_BURSTS[i].x = toFIXED(60);
 					CHARON_BURSTS[i].y = toFIXED(60);
@@ -1655,8 +1606,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					CHARON_BURSTS[i].variant = 0;
 				}
 				for(i = 0; i != CHARON_SPARK_COUNT; i++) {
-					s32 speed = (syRandom() & 255) + 32;
-					s32 angle = syRandom();
+					Sint32 speed = (syRandom() & 255) + 32;
+					Sint32 angle = syRandom();
 
 					CHARON_SPARKS[i].x = toFIXED(60);
 					CHARON_SPARKS[i].y = toFIXED(60);
@@ -1664,49 +1615,48 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					CHARON_SPARKS[i].velY = (syCos(angle) * speed) >> 6;
 					CHARON_SPARKS[i].variant = (syRandom() & 15) + 16;
 				}
-				btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-											SPRITE_BUFFER, 1, 0);
+				btResourceLoadAndDecompress(
+					RESOURCE_FLASH_BURST_SHEET, SPRITE_BUFFER, 1, 0);
 				sySndPlayStub(SE_CLATTER);
 				syWordsFill(canvas, CANVAS_VIEW_BYTES,
-							CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-							 BGCNT_SCREEN_BASE(7);
-				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
-									CANVAS_FADE_HALF);
+					BGCNT_SCREEN_BASE(7);
+				EFFECT_SET_TRANSFER(
+					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 				for(i = 0; i != arg->tgtCnt; i++) {
 					ACTOR *actor = btObjectGetStub(arg->tgts[i])->obj;
 
 					SET_ACTOR_POSITION(actor, 0, toFIXED(32), HOMES[i].z);
 				}
 				for(i = 0; i != arg->tgtCnt; i++) {
-					s32 roll = syRandom();
-					s32 percent = (syRandom() & 31) + 120;
-					s32 velocityY = roll * 2 + toFIXED(2);
+					Sint32 roll = syRandom();
+					Sint32 percent = (syRandom() & 31) + 120;
+					Sint32 velocityY = roll * 2 + toFIXED(2);
 
 					btEffectStartActorMotion(arg->tgts[i], 1, toFIXED(4),
-											 toFIXED(8), velocityY, percent);
-					btEffectTintBattler(arg->tgts[i], SPRITE_COLOR_WHITE,
-										POSE_DAMAGE, i, 32);
+						toFIXED(8), velocityY, percent);
+					btEffectTintBattler(
+						arg->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 32);
 				}
 				state->shakeFrm = 3;
 			}
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-								EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-								BLITTER_MAX);
+				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
 			blitters[0] = (Ram_HeapSlots->ramCode);
 			for(i = 0; i != CHARON_BURSTS_DRAWN; i++) {
 				PARTICLE *p = &CHARON_BURSTS[i];
 
 				if(p->variant >= 0 && p->variant < CHARON_BURST_FRAMES) {
-					s32 row = (p->variant / 4) * PICTURE_BYTES(FLASH_BURST);
-					u8 *buffer = SPRITE_BUFFER;
-					s32 x = (FIXEDtoINT(p->x)) - FLASH_BURST_WIDTH / 2;
+					Sint32 row = (p->variant / 4) * PICTURE_BYTES(FLASH_BURST);
+					Uint8 *buffer = SPRITE_BUFFER;
+					Sint32 x = (FIXEDtoINT(p->x)) - FLASH_BURST_WIDTH / 2;
 
-					row += (s32)buffer;
-					buffer = (u8 *)row;
+					row += (Sint32)buffer;
+					buffer = (Uint8 *)row;
 					blitters[0](canvas, buffer, x,
-								(FIXEDtoINT(p->y)) - FLASH_BURST_HEIGHT / 2,
-								FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+						(FIXEDtoINT(p->y)) - FLASH_BURST_HEIGHT / 2,
+						FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 					btParticleAdvanceWithGravity2D(p, 60, -toFIXED(1) / 8);
 				}
 				p->variant++;
@@ -1715,15 +1665,14 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				PARTICLE *p = &CHARON_SPARKS[i];
 
 				if(p->variant >= 0) {
-					s32 size = (p->variant >> 3) + 2;
-					s32 k;
+					Sint32 size = (p->variant >> 3) + 2;
+					Sint32 k;
 
 					for(k = 0; k != 4; k++) {
 						blitters[0](canvas,
-									motePictures +
-										BattleEffect_MotePictures[size - 1],
-									(FIXEDtoINT(p->x)) - size / 2,
-									(FIXEDtoINT(p->y)) - size, size, size * 2);
+							motePictures + BattleEffect_MotePictures[size - 1],
+							(FIXEDtoINT(p->x)) - size / 2,
+							(FIXEDtoINT(p->y)) - size, size, size * 2);
 						btParticleAdvanceWithGravity2D(p, 63, 0);
 						if(p->y > toFIXED(112)) {
 							p->velY = -p->velY;
@@ -1734,27 +1683,26 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			}
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 		}
-		/* The backdrop flashes white three times as the targets are drawn in.
-		 */
+		/* The backdrop flashes white three times as the targets are drawn
+		   in. */
 		if(frame < 120) {
 			for(i = 0; i != CHARON_FLASHES; i++) {
 				if(frame == Charon_FlashFrames[i]) {
-					syWordsFill((u16 *)&BG_PLTT_COLOR(6, 0),
-								BATTLE_BACKGROUND_COLORS * 2,
-								COLOR_PAIR(RGB_WHITE));
+					syWordsFill((Uint16 *)&BG_PLTT_COLOR(6, 0),
+						BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
 				}
 				if(frame >= Charon_FlashFrames[i] + 1 &&
-				   frame < Charon_FlashFrames[i] + 16) {
-					u16 *target = Ram_HeapSlots->battleState->pal;
-					u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
+					frame < Charon_FlashFrames[i] + 16) {
+					Uint16 *target = Ram_HeapSlots->battleState->pal;
+					Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 					for(j = 0; j != BATTLE_BACKGROUND_COLORS; j++) {
-						s32 tr = RGB_RED(target[j]) - dimming / 2;
-						s32 tg = RGB_GREEN(target[j]) - CHARON_FLASH_DIMMING;
-						s32 tb = RGB_BLUE(target[j]) - dimming / 2;
-						s32 r = RGB_RED(color[j]);
-						s32 g = RGB_GREEN(color[j]);
-						s32 b = RGB_BLUE(color[j]);
+						Sint32 tr = RGB_RED(target[j]) - dimming / 2;
+						Sint32 tg = RGB_GREEN(target[j]) - CHARON_FLASH_DIMMING;
+						Sint32 tb = RGB_BLUE(target[j]) - dimming / 2;
+						Sint32 r = RGB_RED(color[j]);
+						Sint32 g = RGB_GREEN(color[j]);
+						Sint32 b = RGB_BLUE(color[j]);
 
 						if(tr < 0) {
 							tr = 0;
@@ -1786,17 +1734,16 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				camera->yaw = savedYaw;
 			}
 			if(frame < 148) {
-				s32 step = 8 - (frame - 120) / 6;
-				s32 wave = WAVE_RADIUS;
+				Sint32 step = 8 - (frame - 120) / 6;
+				Sint32 wave = WAVE_RADIUS;
 
 				WAVE_RADIUS = wave - step;
 				if(wave > 0) {
-					btEffectDrawShadedCircles(state->sheet, wave, FIXED_ONE);
+					btEffectDrawShadedCircles(state->sheet, wave, toFIXED(1));
 					btCanvasBlitMirroredQuarters(state->sheet, 60, 60, wave);
 				}
 			}
-		}
-		else {
+		} else {
 			if(frame >= 4 && frame < 26) {
 				shake += 4;
 			}
@@ -1807,15 +1754,14 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				}
 			}
 			for(i = 0; i != arg->tgtCnt; i++) {
-				ACTOR *actor = btObjectGetStub(arg->tgts[i])->obj;
+				ACTOR	 *actor = btObjectGetStub(arg->tgts[i])->obj;
 				PARTICLE *curse = &CURSES[i];
-				s32 landed = 0;
+				Sint32	  landed = 0;
 
 				if(actor->y.fixed < toFIXED(100)) {
 					if(curse->variant == -1) {
 						actor->x.fixed += toFIXED(10);
-					}
-					else {
+					} else {
 						actor->x.fixed += toFIXED(2);
 					}
 					if(curse->variant == -1) {
@@ -1824,21 +1770,21 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 						}
 						if(landed == 1) {
 							curse->variant = 0;
-							btEffectPosProjectScaledBattler(arg->tgts[i],
-															curse);
+							btEffectPosProjectScaledBattler(
+								arg->tgts[i], curse);
 							sySndPlayStub(SE_CURSE);
 							for(j = 0; j != CHARON_CURSE_MOTES; j++) {
-								s32 angle = syRandom() & (TRIG_TURN / 2 - 1);
-								s32 speed;
+								Sint32 angle = syRandom() & (TRIG_TURN / 2 - 1);
+								Sint32 speed;
 								PARTICLE *p =
 									&CHARON_PARTICLES[i * CHARON_CURSE_MOTES +
-													  j];
+										j];
 
 								speed = (syRandom() & 255) + 256;
 
 								/* The canvas is half the screen's width. */
-								p->x = curse->x * (FIXED_ONE / 2);
-								p->y = INTtoFIXED(curse->y);
+								p->x = curse->x * (toFIXED(1) / 2);
+								p->y = toFIXED(curse->y);
 								p->velX = -(sySin(angle) * speed) >> 7;
 								p->velY = (syCos(angle) * speed) >> 6;
 								p->variant = (syRandom() & 15) + 16;
@@ -1847,8 +1793,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					}
 				}
 				if(curse->variant == 2 || curse->variant == 7) {
-					btEffectTintBattler(arg->tgts[i], SPRITE_COLOR_WHITE,
-										POSE_DAMAGE, i, 32);
+					btEffectTintBattler(
+						arg->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 32);
 				}
 				/* FAKEMATCH(dead): landed set to 2 though nothing reads it
 				 * again. */
@@ -1856,8 +1802,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					landed = 2;
 				}
 				if(curse->variant == 6) {
-					btEffectTintBattler(arg->tgts[i], SPRITE_COLOR_HIDDEN,
-										TINT_KEEP, i, 32);
+					btEffectTintBattler(
+						arg->tgts[i], SPRITE_COLOR_HIDDEN, TINT_KEEP, i, 32);
 				}
 				if(curse->variant == 8) {
 					SET_ACTOR_POSITION(actor, 0, toFIXED(148), 0);
@@ -1866,13 +1812,12 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 			if(frame >= 0) {
 				BgScrollWork[1].x -= 12;
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-									EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-									BLITTER_MAX);
+					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
 				{
 					PARTICLE *column;
-					s32 x;
-					s32 y;
-					s32 y2;
+					Sint32	  x;
+					Sint32	  y;
+					Sint32	  y2;
 					for(i = 0, y2 = -26, y = 0, x = shake,
 					phase = frame * (TRIG_TURN / 64), column = COLUMNS,
 					halfWidth = width / 2;
@@ -1886,12 +1831,10 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 							column->y = y2;
 							syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-												EFFECT_CLIP_BOUNDS,
-												BLITTER_MAX);
+								EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 						}
 						(Ram_HeapSlots->ramCode)(canvas, state->sheet,
-												 column->x - halfWidth,
-												 column->y, halfWidth, width);
+							column->x - halfWidth, column->y, halfWidth, width);
 					}
 				}
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -1902,7 +1845,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 						drop->variant = 0;
 					}
 					if(drop->variant == 0) {
-						drop->x = INTtoFIXED(syRandom() % 24 + shake - i * 2);
+						drop->x = toFIXED(syRandom() % 24 + shake - i * 2);
 						drop->y = toFIXED(80) + i * toFIXED(3);
 						drop->velX =
 							-(syRandom() & TRIG_ANGLE_MASK) - toFIXED(0.25);
@@ -1918,34 +1861,31 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 					}
 				}
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-									EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-									BLITTER_MAX);
+					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
 				blitters[0] = (Ram_HeapSlots->ramCode);
 				for(i = 0; i != CHARON_COLUMNS; i++) {
-					s32 width = 120 - COLUMNS[i].x;
+					Sint32 width = 120 - COLUMNS[i].x;
 
 					if(width > 0) {
 						blitters[0](canvas, state->sheet + CHARON_BRIGHT_BLOCK,
-									COLUMNS[i].x, i * CHARON_COLUMN_HEIGHT,
-									width, CHARON_COLUMN_HEIGHT);
+							COLUMNS[i].x, i * CHARON_COLUMN_HEIGHT, width,
+							CHARON_COLUMN_HEIGHT);
 					}
 				}
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-									EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-									BLITTER_TRANSPARENT);
+					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_TRANSPARENT);
 				blitters[0] = (Ram_HeapSlots->ramCode);
 				for(i = 0; i != CHARON_MOTE_COUNT; i++) {
 					PARTICLE *p = &CHARON_PARTICLES[i];
 
 					if(p->variant >= 0) {
-						s32 size = (p->variant >> 3) + 2;
+						Sint32 size = (p->variant >> 3) + 2;
 
 						blitters[0](canvas,
-									motePictures +
-										BattleEffect_MotePictures[size - 1],
-									(FIXEDtoINT(p->x)) - size / 2,
-									(FIXEDtoINT(p->y)) - size, size, size * 2);
+							motePictures + BattleEffect_MotePictures[size - 1],
+							(FIXEDtoINT(p->x)) - size / 2,
+							(FIXEDtoINT(p->y)) - size, size, size * 2);
 						btParticleAdvanceWithGravity2D(p, 60, 0);
 						p->variant--;
 					}
@@ -1953,7 +1893,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 			}
 			{
-				void *texture = syHeapAllocEwram(32);
+				void		 *texture = syHeapAllocEWRAM(32);
 				RENDER_MODEL *model = btRenderAllocateModelList(1);
 
 				glowRingTexture.logWidth = 6;
@@ -1965,19 +1905,19 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 				model->vertices = texture;
 				for(i = 0; i != arg->tgtCnt; i++) {
 					PARTICLE *curse = &CURSES[i];
-					s32 timer = curse->variant;
+					Sint32	  timer = curse->variant;
 
 					if(timer >= 0 && timer < 18) {
-						s32 step = timer * 3;
-						s32 shade = step + MODEL_SHADE_INVISIBLE;
-						s32 size =
+						Sint32 step = timer * 3;
+						Sint32 shade = step + MODEL_SHADE_INVISIBLE;
+						Sint32 size =
 							step * CHARON_GLOW_RING_GROWTH + toFIXED(1) / 32;
 
 						curse->variant = timer + 1;
 						model->shade = shade;
 						syInitMatrix();
 						syTranslate(INTtoFIXED(curse->x / 2 - 56),
-									INTtoFIXED(curse->y - 56), 0);
+							INTtoFIXED(curse->y - 56), 0);
 						syScale(size / 3, size, size);
 						syRotX(TRIG_TURN * 3 / 4);
 						btRenderTransformVertices(
@@ -1985,8 +1925,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 						btRenderDrawModelList(model);
 					}
 					/* A release only sets its pool back to the block, so the
-					 * next */
-					/* target still draws from the same model. */
+					   next target still draws from the same model. */
 					syHeapRelease(model);
 					syHeapRelease(texture);
 				}
@@ -1998,8 +1937,8 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg) {
 		sySynch(1);
 		frame++;
 	} while(frame != CHARON_ATTACK_FRAMES);
-	/* DEAD: an empty loop over the targets; the ROM keeps its count and test.
-	 */
+	/* DEAD: an empty loop over the targets; the ROM keeps its count and
+	   test. */
 	for(i = 0; i != arg->tgtCnt; i++) {
 	}
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -2013,11 +1952,12 @@ typedef struct STRIP_QUAD {
 	MESH_TRIANGLE lower;
 } STRIP_QUAD;
 
-/* Builds count quads of a vertex strip two vertices apart, each width texels */
-/* wide and height texels tall, and ends the list with an empty triangle. */
-void btRenderBuildQuadStrip(STRIP_QUAD *quad, s32 width, s32 height,
-							s32 count) {
-	s32 i;
+/* Builds count quads of a vertex strip two vertices apart, each width texels
+   wide and height texels tall, and ends the list with an empty triangle. */
+void btRenderBuildQuadStrip(
+	STRIP_QUAD *quad, Sint32 width, Sint32 height, Sint32 count)
+{
+	Sint32 i;
 
 	for(i = 0; i != count; i++) {
 		quad[i].upper.uv[0][1] = 1;
@@ -2041,6 +1981,7 @@ void btRenderBuildQuadStrip(STRIP_QUAD *quad, s32 width, s32 height,
 	}
 	SET_VECTOR(quad[count].upper.vertex, 0, 0, 0);
 }
+
 #undef SPRITES
 #undef SPRITE_BUFFER
 #undef OAM_BUFFER

@@ -1,5 +1,6 @@
 /* Stops an actor where it stands. */
-void fdActorFreeze(s32 id) {
+void scActorFreeze(Sint32 id)
+{
 	ACTOR *actor = fdActorGet(id);
 
 	if(actor != NULL) {

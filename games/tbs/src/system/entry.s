@@ -1,4 +1,4 @@
-@ Why System_Entry is assembly:
+@ Why syEntry is assembly:
 @ msr CPSR_fc selects IRQ and system modes before their stack setup.
 @ Why IwramSoundReverbCodes is assembly:
 @ fp is a packed sample operand in arithmetic and rotates, not a frame
@@ -19,8 +19,8 @@
 .syntax unified
 .text
 	.arm
-	.global System_Entry
-System_Entry:
+	.global syEntry
+syEntry:
 	mov	r0, #18
 	msr	CPSR_fc, r0
 	ldr	sp, [pc, #40]
@@ -33,7 +33,7 @@ System_Entry:
 	ldr	r1, [pc, #20]
 	mov	lr, pc
 	bx	r1
-	b System_Entry
+	b syEntry
 	.4byte 0x03007f00
 	.4byte 0x03007fa0
 	.4byte 0x03007ffc

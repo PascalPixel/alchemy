@@ -1,49 +1,49 @@
-/* @file */
-/* The hole mask over the cracked tile the leader stands on, shared by the */
-/* Jupiter and Mars Lighthouse rooms and the Anemos Inner Sanctum, each of */
-/* which lists the cells its map watches in its own CrackedTiles. While he */
-/* drops through the tile (scCrackedTileFall), the mask is drawn into the OBJ */
-/* window, where no sprite shows, so that he sinks out of sight through the */
-/* hole. The including file names its overlay's import of syOamAddSprAtDepth */
-/* (CELL_PUSH_SLOT_ENTRY). */
+/* The hole mask over the cracked tile the leader stands on, shared by the
+   Jupiter and Mars Lighthouse rooms and the Anemos Inner Sanctum, each of which
+   lists the metatiles its map watches in its own CrackedTiles. While he drops
+   through the tile (scCrackedTileFall), the mask is drawn into the OBJ window,
+   where no sprite shows, so that he sinks out of sight through the hole. The
+   including file names its overlay's import of syOAMAddSprAtDepth
+   (METATILE_PUSH_SLOT_ENTRY). */
 
-#include "field/field_sequence_functions.h"
+#include "field/field_mode_functions.h"
 #include "field/actor.h"
 #include "field/map_grid.h"
-#include "field/cell_target.h"
+#include "field/metatile_target.h"
 #include "field/field_sprite.h"
 
-/* The mask, HOLE_MASK_WIDTH by 32, hangs from HOLE_MASK_TOP pixels down its */
-/* cell. */
+/* The mask, HOLE_MASK_WIDTH by 32, hangs from HOLE_MASK_TOP pixels down its
+   metatile. */
 #define HOLE_MASK_WIDTH 16
 #define HOLE_MASK_TOP	14
 
 /* The cracked tiles the including map watches, in its own table. */
-extern CELL_TARGET CrackedTiles;
+extern METATILE_TARGET CrackedTiles;
 
-s32 fdMapGetTerrainHeight(s32 layer, s32 x, s32 z);
-void CELL_PUSH_SLOT_ENTRY(void *entry, s32 priority);
+Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
+void   METATILE_PUSH_SLOT_ENTRY(void *entry, Sint32 priority);
 
-/* Clears the current entry once the leader has left its cell; while the */
-/* leader stays on it and the mask is shown, draws the mask over the cell at */
-/* the height of the ground there, unless it is off screen. */
-void fdCrackedTileUpdate(void) {
-	CELL_TARGET *table = &CrackedTiles;
-	CELL_TARGET_ENTRY *entry;
-	ACTOR *leader;
-	MAP_STATE *map;
-	s32 viewX, viewZ, viewY, tile;
-	s32 screenX, height, z, screenY, depth;
+/* Clears the current entry once the leader has left its metatile; while the
+   leader stays on it and the mask is shown, draws the mask over the metatile at
+   the height of the ground there, unless it is off screen. */
+void fdCrackedTileUpdate(void)
+{
+	METATILE_TARGET		  *table = &CrackedTiles;
+	METATILE_TARGET_ENTRY *entry;
+	ACTOR				  *leader;
+	MAP_STATE			  *map;
+	Sint32				   viewX, viewZ, viewY, tile;
+	Sint32				   screenX, height, z, screenY, depth;
 
 	if(table->cur == -1)
 		return;
 	entry = &table->entries[table->cur];
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if((FIELD_CELL(leader->x.fixed)) != entry->x ||
-	   (FIELD_CELL(leader->z.fixed)) != entry->z)
+	if((FIELD_METATILE(leader->x.fixed)) != entry->x ||
+		(FIELD_METATILE(leader->z.fixed)) != entry->z)
 		table->cur = -1;
 	{
-		s16 current = table->cur;
+		Sint16 current = table->cur;
 
 		if(current == -1)
 			return;
@@ -55,11 +55,11 @@ void fdCrackedTileUpdate(void) {
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	viewY = map->origin[1];
 	tile = VramCacheEntries[table->tile].ofs >> 5;
-	screenX = FIELD_CELL_ORIGIN(entry->x) - viewX;
-	height = fdMapGetTerrainHeight(0, FIELD_CELL_ORIGIN(entry->x),
-								   FIELD_CELL_ORIGIN(entry->z)) -
-			 viewY;
-	z = FIELD_CELL_ORIGIN(entry->z) - viewZ - viewY;
+	screenX = FIELD_METATILE_ORIGIN(entry->x) - viewX;
+	height = fdMapGetTerrainHeight(0, FIELD_METATILE_ORIGIN(entry->x),
+				 FIELD_METATILE_ORIGIN(entry->z)) -
+		viewY;
+	z = FIELD_METATILE_ORIGIN(entry->z) - viewZ - viewY;
 	screenY = z - height;
 	screenX = FIXEDtoINT(screenX);
 	height += z;
@@ -67,10 +67,10 @@ void fdCrackedTileUpdate(void) {
 	screenY = FIXEDtoINT(screenY);
 	screenY += HOLE_MASK_TOP;
 	depth = height + SCENE_SPRITE_DEPTH;
-	/* On screen, or within the mask's size of it: x from -15 to 319, y from */
-	/* -15 to 239. */
-	if((u32)(screenX + HOLE_MASK_WIDTH - 1) > 334 || screenY < -15 ||
-	   screenY > 239)
+	/* On screen, or within the mask's size of it: x from -15 to 319, y from -15
+	   to 239. */
+	if((Uint32)(screenX + HOLE_MASK_WIDTH - 1) > 334 || screenY < -15 ||
+		screenY > 239)
 		return;
 	screenX &= OBJ_X_MASK;
 	screenY &= OBJ_Y_MASK;
@@ -78,7 +78,7 @@ void fdCrackedTileUpdate(void) {
 	table->oam[1] =
 		screenY | OBJ_X(screenX) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
 	table->oam[2] = tile | OBJ_PRIORITY(1);
-	CELL_PUSH_SLOT_ENTRY(table->oam, depth);
+	METATILE_PUSH_SLOT_ENTRY(table->oam, depth);
 }
 
 #undef HOLE_MASK_WIDTH

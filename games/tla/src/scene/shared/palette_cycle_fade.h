@@ -1,10 +1,11 @@
 /* Steps a palette cycle that fades as it slows. */
-void fdPaletteCycleFade(void) {
-	s32 step;
-	u32 i;
-	u16 *src;
-	volatile u16 *dst;
-	int red, green, blue;
+void fdPaletteCycleFade(void)
+{
+	Sint32			 step;
+	Uint32			 i;
+	Uint16			*src;
+	volatile Uint16 *dst;
+	int				 red, green, blue;
 
 	step = 0;
 	if(PaletteCycleTimer != 0) {
@@ -21,7 +22,7 @@ void fdPaletteCycleFade(void) {
 	for(i = 0; i < PaletteCycleLength; i++) {
 		dst =
 			&BG_PLTT[PaletteCycleSlots[PaletteCycleIndex * PaletteCycleLength +
-									   i]];
+				i]];
 		red = *src++;
 		green = *src++;
 		blue = *src++;

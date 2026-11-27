@@ -1,12 +1,10 @@
-/* @file */
-/* The forge: its recipes, the materials the party holds and the roll for the */
-/* result. */
-/* Part of shop.c. */
+/* The forge: its recipes, the materials the party holds and the roll for the
+   result. Part of shop.c. */
 
 /* The forge's recipe for an item, or NULL when it has none; the table ends at
- */
-/* an item of -1. */
-const FORGE_RECIPE *mnForgeFindRecipe(s32 itemId) {
+   an item of -1. */
+const FORGE_RECIPE *mnForgeFindRecipe(Sint32 itemId)
+{
 	const FORGE_RECIPE *recipe;
 
 	itemId &= INVENTORY_ITEM_ID_MASK;
@@ -17,9 +15,10 @@ const FORGE_RECIPE *mnForgeFindRecipe(s32 itemId) {
 	return NULL;
 }
 
-/* Returns what the forge makes of an item, counted from MsgItemCondition: 0 */
-/* for an item it has no recipe for, then FORGE_CONDITION plus one. */
-s32 mnForgeGetItemCondition(s32 itemId) {
+/* Returns what the forge makes of an item, counted from MsgItemCondition: 0 for
+   an item it has no recipe for, then FORGE_CONDITION plus one. */
+Sint32 mnForgeGetItemCondition(Sint32 itemId)
+{
 	const FORGE_RECIPE *recipe = mnForgeFindRecipe(itemId);
 
 	if(recipe != NULL)
@@ -28,14 +27,14 @@ s32 mnForgeGetItemCondition(s32 itemId) {
 }
 
 /* Rolls what the forge makes of a material: one of its recipe's results, each
- */
-/* as likely as its weight; 0 for an item with no recipe. */
-s32 mnForgeRollResult(s32 itemId) {
+   as likely as its weight; 0 for an item with no recipe. */
+Sint32 mnForgeRollResult(Sint32 itemId)
+{
 	const FORGE_RECIPE *recipe = mnForgeFindRecipe(itemId);
-	s32 total = 0;
-	s32 result = 0;
-	s32 i;
-	s32 roll;
+	Sint32				total = 0;
+	Sint32				result = 0;
+	Sint32				i;
+	Sint32				roll;
 
 	if(recipe != NULL) {
 		for(i = 0; i < 8 && recipe->results[i] != 0; i++)
@@ -53,44 +52,48 @@ s32 mnForgeRollResult(s32 itemId) {
 }
 
 /* Returns 1 when the party member carries anything the forge takes. */
-s32 mnForgeUnitHasMaterial(s32 unitId) {
-	UNIT *unit;
-	u16 *inventory;
-	s32 slot;
+Bool mnForgeUnitHasMaterial(Sint32 unitId)
+{
+	UNIT   *unit;
+	Uint16 *inventory;
+	Sint32	slot;
 
 	unit = syUnitGet(unitId);
 	slot = 0;
 	inventory = unit->inventory;
 	for(; slot < INVENTORY_SLOTS; slot++) {
 		if(mnForgeGetItemCondition(*inventory++) != 0)
-			return 1;
+			return TRUE;
 	}
-	return 0;
+	return FALSE;
 }
 
 /* Returns 1 when anyone in the party carries anything the forge takes. */
-s32 mnForgePartyHasMaterial(void) {
-	u16 partyMemberIds[16];
-	s32 count;
-	s32 i;
+Bool mnForgePartyHasMaterial(void)
+{
+	Uint16 partyMemberIds[16];
+	Sint32 count;
+	Sint32 i;
 
 	count = gmPartyListMembersStub(partyMemberIds);
 	for(i = 0; i < count; i++) {
 		if(mnForgeUnitHasMaterial(partyMemberIds[i]) != 0)
-			return 1;
+			return TRUE;
 	}
-	return 0;
+	return FALSE;
 }
 
 /* Records the item the forge is making, for the smith to hand over later. */
-void mnForgeSetItem(s32 itemId) {
+void mnForgeSetItem(Sint32 itemId)
+{
 	MainRoutineStateWork.forgeItem = itemId & INVENTORY_ITEM_ID_MASK;
 }
 
 /* Returns the item the forge is making. */
-s32 mnForgeGetItem(void) {
-	u32 itemId = MainRoutineStateWork.forgeItem;
-	u32 mask;
+Sint32 mnForgeGetItem(void)
+{
+	Uint32 itemId = MainRoutineStateWork.forgeItem;
+	Uint32 mask;
 
 	mask = INVENTORY_ITEM_ID_MASK;
 	mask &= itemId;

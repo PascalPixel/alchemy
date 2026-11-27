@@ -1,22 +1,20 @@
-/* @file */
-/* The sprite VRAM cache: blocks, entries and loading pictures. */
-/* Part of system.c. */
+/* The sprite VRAM cache: blocks, entries and loading pictures. Part of
+   system.c. */
 
 /* Sprite tile VRAM (OBJ_VRAM0) is VRAM_BLOCK_COUNT blocks of VRAM_BLOCK_BYTES,
- */
-/* and VramCacheBlockOwners records each block's owner, its cache entry. An */
-/* entry whose offset is VRAM_CACHE_OFFSET_FREE is free, and one whose size is
- */
-/* VRAM_CACHE_SIZE_NO_BLOCKS or less owns no VRAM. */
+   and VramCacheBlockOwners records each block's owner, its cache entry. An
+   entry whose offset is VRAM_CACHE_OFFSET_FREE is free, and one whose size is
+   VRAM_CACHE_SIZE_NO_BLOCKS or less owns no VRAM. */
 
-/* Finds the first run of free blocks that holds `size` bytes and gives it to */
-/* entry `id`, writing `id` into VramCacheBlockOwners for each block. */
-s32 syVramCacheAllocateBlocks(u32 id, u32 size) {
-	u32 blocks;
-	s32 ret;
-	s32 pos;
-	u32 end;
-	u32 i;
+/* Finds the first run of free blocks that holds `size` bytes and gives it to
+   entry `id`, writing `id` into VramCacheBlockOwners for each block. */
+Sint32 syVRAMCacheAllocateBlocks(Uint32 id, Uint32 size)
+{
+	Uint32 blocks;
+	Sint32 ret;
+	Sint32 pos;
+	Uint32 end;
+	Uint32 i;
 
 	blocks = size / VRAM_BLOCK_BYTES;
 	if(id >= VRAM_CACHE_ENTRY_COUNT) {
@@ -51,16 +49,16 @@ s32 syVramCacheAllocateBlocks(u32 id, u32 size) {
 }
 
 /* Unused: returns the length, in blocks, of the longest run of free blocks. */
-s32 syVramCacheGetLongestFreeRun(void) {
-	s32 run = 0;
-	s32 longestRun = 0;
-	s32 i;
+Sint32 syVRAMCacheGetLongestFreeRun(void)
+{
+	Sint32 run = 0;
+	Sint32 longestRun = 0;
+	Sint32 i;
 
 	for(i = 0; i < VRAM_BLOCK_COUNT; i++) {
 		if(VramCacheBlockOwners[i] != VRAM_BLOCK_OWNER_FREE) {
 			run = 0;
-		}
-		else {
+		} else {
 			run++;
 			if(longestRun < run)
 				longestRun = run;
@@ -69,14 +67,15 @@ s32 syVramCacheGetLongestFreeRun(void) {
 	return longestRun;
 }
 
-/* Frees every block entry `id` owns in VramCacheBlockOwners. Returns -1 when */
-/* it freed any (or `id` is out of range) and 0 when the entry owned none. */
-s32 syVramCacheFreeBlocks(s32 id) {
-	s32 freed = 0;
-	u8 *owner;
-	s32 block;
+/* Frees every block entry `id` owns in VramCacheBlockOwners. Returns -1 when it
+   freed any (or `id` is out of range) and 0 when the entry owned none. */
+Sint32 syVRAMCacheFreeBlocks(Sint32 id)
+{
+	Sint32 freed = 0;
+	Uint8 *owner;
+	Sint32 block;
 
-	if((u32)id >= VRAM_CACHE_ENTRY_COUNT)
+	if((Uint32)id >= VRAM_CACHE_ENTRY_COUNT)
 		return -1;
 	owner = VramCacheBlockOwners;
 	for(block = 0; block < VRAM_BLOCK_COUNT; block++, owner++) {
@@ -90,15 +89,16 @@ s32 syVramCacheFreeBlocks(s32 id) {
 	return 0;
 }
 
-/* Frees cache entry `id`: its blocks go back and the entry is marked free */
-/* (offset VRAM_CACHE_OFFSET_FREE). */
-s32 syVramCacheFreeEntry(u32 id) {
+/* Frees cache entry `id`: its blocks go back and the entry is marked free
+   (offset VRAM_CACHE_OFFSET_FREE). */
+Sint32 syVRAMCacheFreeEntry(Uint32 id)
+{
 	VRAM_CACHE_ENTRY *entry = &VramCacheEntries[id];
 
 	if(id >= VRAM_CACHE_ENTRY_COUNT)
 		return -1;
 	if(entry->ofs != VRAM_CACHE_OFFSET_FREE) {
-		syVramCacheFreeBlocks(id);
+		syVRAMCacheFreeBlocks(id);
 		entry->ofs |= VRAM_CACHE_OFFSET_FREE;
 		entry->size = 0;
 	}
@@ -106,28 +106,29 @@ s32 syVramCacheFreeEntry(u32 id) {
 }
 
 /* Gives back entry `id`'s blocks but keeps the entry taken, with size 1, so a
- */
-/* later syVramCacheLoad can refill it. */
-s32 syVramCacheReleaseVram(u32 id) {
+   later syVRAMCacheLoad can refill it. */
+Sint32 syVRAMCacheReleaseVRAM(Uint32 id)
+{
 	VRAM_CACHE_ENTRY *entry = &VramCacheEntries[id];
 
 	if(id >= VRAM_CACHE_ENTRY_COUNT)
 		return -1;
 	if(entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
-		syVramCacheFreeBlocks(id);
+		syVRAMCacheFreeBlocks(id);
 		entry->size = 1;
 	}
 	return 0;
 }
 
-/* Gives cache entry `id` `size` bytes of sprite VRAM and copies `src` there, */
-/* or clears them for VRAM_CACHE_CLEAR, or leaves them for a null `src`. An */
-/* entry that already holds VRAM of the same size keeps it. Returns the first */
-/* sprite tile number of its VRAM, or 0 when it cannot. */
-s32 syVramCacheLoad(u32 id, u32 size, const void *src) {
+/* Gives cache entry `id` `size` bytes of sprite VRAM and copies `src` there, or
+   clears them for VRAM_CACHE_CLEAR, or leaves them for a null `src`. An entry
+   that already holds VRAM of the same size keeps it. Returns the first sprite
+   tile number of its VRAM, or 0 when it cannot. */
+Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src)
+{
 	VRAM_CACHE_ENTRY *entry;
-	s32 offset;
-	void *dst;
+	Sint32			  offset;
+	void			 *dst;
 
 	entry = &VramCacheEntries[id];
 	if(id >= VRAM_CACHE_ENTRY_COUNT)
@@ -137,41 +138,39 @@ s32 syVramCacheLoad(u32 id, u32 size, const void *src) {
 	/* A same-size upload keeps its existing VRAM run. */
 	if(entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
 		if(entry->size != size) {
-			syVramCacheFreeEntry(id);
-			offset = syVramCacheAllocateBlocks(id, size);
-		}
-		else {
+			syVRAMCacheFreeEntry(id);
+			offset = syVRAMCacheAllocateBlocks(id, size);
+		} else {
 			offset = entry->ofs;
 		}
-	}
-	else {
-		offset = syVramCacheAllocateBlocks(id, size);
+	} else {
+		offset = syVRAMCacheAllocateBlocks(id, size);
 	}
 
 	if(offset != -1) {
-		/* Commit the allocation before copying, clearing or leaving its pixels.
-		 */
+		/* Commit the allocation before copying, clearing or leaving its
+		   pixels. */
 		dst = (void *)(OBJ_VRAM0 + offset);
 		entry->size = size;
 		entry->ofs = offset;
 		if(src != 0) {
 			if(src == VRAM_CACHE_CLEAR) {
 				syWordsClear(dst, size);
-			}
-			else {
+			} else {
 				syDMAXCopy(src, dst, DMA_COPY_WORDS(size >> 2), REG_DMA3);
 			}
 		}
-		return (u32)offset / TILE_SIZE_4BPP;
+		return (Uint32)offset / TILE_SIZE_4BPP;
 	}
 	return 0;
 }
 
 /* Frees every block and every cache entry. */
-void syVramCacheReset(void) {
-	u32 limit = VRAM_BLOCK_COUNT - 1;
-	u8 *p = VramCacheBlockOwners;
-	u32 n;
+void syVRAMCacheReset(void)
+{
+	Uint32 limit = VRAM_BLOCK_COUNT - 1;
+	Uint8 *p = VramCacheBlockOwners;
+	Uint32 n;
 
 	for(n = 0; n <= limit; n++) {
 		*p++ = VRAM_BLOCK_OWNER_FREE;
@@ -189,11 +188,11 @@ void syVramCacheReset(void) {
 }
 
 /* Returns the number of the first free cache entry, or VRAM_CACHE_ENTRY_COUNT
- */
-/* when all are taken. */
-s32 syVramCacheFindFreeEntry(void) {
-	s32 ret = VRAM_CACHE_ENTRY_COUNT;
-	s32 id;
+   when all are taken. */
+Sint32 syVRAMCacheFindFreeEntry(void)
+{
+	Sint32			  ret = VRAM_CACHE_ENTRY_COUNT;
+	Sint32			  id;
 	VRAM_CACHE_ENTRY *entry = VramCacheEntries;
 
 	for(id = 0; id < VRAM_CACHE_ENTRY_COUNT; id++, entry++) {
@@ -205,18 +204,20 @@ s32 syVramCacheFindFreeEntry(void) {
 	return ret;
 }
 
-/* Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns */
-/* its number. */
-s32 syVramCacheAllocEntry(s32 size) {
-	s32 id;
+/* Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
+   its number. */
+Sint32 syVRAMCacheAllocEntry(Sint32 size)
+{
+	Sint32 id;
 
-	id = syVramCacheFindFreeEntry();
-	syVramCacheLoad(id, size, 0);
+	id = syVRAMCacheFindFreeEntry();
+	syVRAMCacheLoad(id, size, 0);
 	return id;
 }
 
-/* Copies `src` again into entry `id`'s VRAM, keeping its size. Returns the */
-/* first sprite tile number. */
-s32 syVramCacheReload(s32 id, s32 src) {
-	return syVramCacheLoad(id, VramCacheEntries[id].size, (const void *)src);
+/* Copies `src` again into entry `id`'s VRAM, keeping its size. Returns the
+   first sprite tile number. */
+Sint32 syVRAMCacheReload(Sint32 id, Sint32 src)
+{
+	return syVRAMCacheLoad(id, VramCacheEntries[id].size, (const void *)src);
 }

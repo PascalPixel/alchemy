@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_OBJDISP_H
 #define ALCHEMY_OBJDISP_H
 
-/* @file */
 /* Finding a free actor, releasing one and starting its script. */
 
 #include "types.h"
@@ -9,6 +8,6 @@
 
 struct ACTOR;
 
-void fdActorStartScriptStub(struct ACTOR *actor, const s32 *script);
+void fdActorStartScriptStub(struct ACTOR *actor, const Sint32 *script);
 
 #endif

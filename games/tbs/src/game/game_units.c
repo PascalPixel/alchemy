@@ -1,73 +1,76 @@
-/* @file */
-/* The party's units and their stats, a new game, the prologue, HP and PP. */
-/* Part of game.c. */
+/* The party's units and their stats, a new game, the prologue, HP and PP. Part
+   of game.c. */
 
 #include "window/message_speed.h"
 
-/* EWRAM from SceneLocalState on, as a new game clears it: the scene's state, */
-/* the equipment put aside for the Colosso and the actors kept across a battle.
- */
+/* EWRAM from SceneLocalState on, as a new game clears it: the scene's state,
+   the equipment put aside for the Colosso and the actors kept across a
+   battle. */
 typedef struct SCENE_STATE_VIEW {
-	u8 sceneState[120];			  /* SceneLocalState */
-	u16 inventorySnapshot[70];	  /* InventorySnapshotWork */
-	ACTOR_SNAPSHOT actorSnapshot; /* ActorSnapshotWork */
+	Uint8		   sceneState[120];		  /* SceneLocalState */
+	Uint16		   inventorySnapshot[70]; /* InventorySnapshotWork */
+	ACTOR_SNAPSHOT actorSnapshot;		  /* ActorSnapshotWork */
 } SCENE_STATE_VIEW;
 
 /* The running totals gmUnitCalc builds a unit's stats in. */
 typedef struct STAT_STATE {
-	s32 hp;		   /* maximum HP */
-	s32 pp;		   /* maximum PP */
-	s32 attack;	   /* Attack, 0 to UNIT_STAT_MAX once clamped */
-	s32 defense;   /* Defense, 0 to UNIT_STAT_MAX once clamped */
-	s32 agility;   /* Agility, 0 to UNIT_STAT_MAX once clamped */
-	s32 unused;	   /* never written; a gap between Agility and Luck */
-	s32 luck;	   /* Luck, 0 to UNIT_LUCK_MAX once clamped */
-	s32 actionCnt; /* actions a turn, 0 to 2 */
-	s32 hpRegen;   /* HP regained each turn */
-	s32 ppRegen;   /* PP regained each turn */
+	Sint32 hp;		  /* maximum HP */
+	Sint32 pp;		  /* maximum PP */
+	Sint32 attack;	  /* Attack, 0 to UNIT_STAT_MAX once clamped */
+	Sint32 defense;	  /* Defense, 0 to UNIT_STAT_MAX once clamped */
+	Sint32 agility;	  /* Agility, 0 to UNIT_STAT_MAX once clamped */
+	Sint32 unused;	  /* never written; a gap between Agility and Luck */
+	Sint32 luck;	  /* Luck, 0 to UNIT_LUCK_MAX once clamped */
+	Sint32 actionCnt; /* actions a turn, 0 to 2 */
+	Sint32 hpRegen;	  /* HP regained each turn */
+	Sint32 ppRegen;	  /* PP regained each turn */
+
 	struct {
-		s32 power;
-		s32 resistance;
+		Sint32 power;
+		Sint32 resistance;
 	} element[ELEMENT_COUNT]; /* each element's power and resistance */
-	s32 kind;				  /* the item effect being applied */
-	s32 unusedAfterKind[2];	  /* never written */
-	s32 amount;				  /* the amount of the item effect being applied */
+
+	Sint32 kind;			   /* the item effect being applied */
+	Sint32 unusedAfterKind[2]; /* never written */
+	Sint32 amount;			   /* the amount of the item effect being applied */
 	const ITEM_DEFINITION *item; /* the equipped item being applied */
-	s32 unusedAfterItem;		 /* never written */
+	Sint32				   unusedAfterItem; /* never written */
 } STAT_STATE;
 
-/* A new game's settings: voice sounds "On" (MsgSpeechSetting + 1) and */
-/* "Window brightness" one step brighter than the hue's own colour. */
+/* A new game's settings: voice sounds "On" (MsgSpeechSetting + 1) and "Window
+   brightness" one step brighter than the hue's own colour. */
 #define NEW_GAME_SPEECH			   1
 #define NEW_GAME_WINDOW_BRIGHTNESS (WINDOW_BRIGHTNESS_NEUTRAL + 1)
 
 /* The distance between `a` and `b`, |a - b|. */
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-/* Starts a new game: clears the main routine's state and restarts at the */
-/* opening. */
-void gmRestartQuest(void) {
+/* Starts a new game: clears the main routine's state and restarts at the
+   opening. */
+void gmRestartQuest(void)
+{
 	gmMainRoutineStateInitDefaults();
 	gmMainRoutineRunStub(0);
 }
 
 /* Returns a side's Djinn recovery table, its standby Djinn and their turns to
- */
-/* recover: the party's (DJINN_RECOVERY_PARTY), kept in MainRoutineStateWork, */
-/* or the opponent's (DJINN_RECOVERY_OPPONENT), in OPPONENT_RECOVERY_UNIT's */
-/* record. */
-DJINN_RECOVERY_TABLE *gmDjinnGetRecoveryTable(s32 enemySide) {
+   recover: the party's (DJINN_RECOVERY_PARTY), kept in MainRoutineStateWork, or
+   the opponent's (DJINN_RECOVERY_OPPONENT), in OPPONENT_RECOVERY_UNIT's
+   record. */
+DJINN_RECOVERY_TABLE *gmDjinnGetRecoveryTable(Sint32 enemySide)
+{
 	if(enemySide != 0)
 		return (DJINN_RECOVERY_TABLE *)gmUnitGet(OPPONENT_RECOVERY_UNIT);
 	return (DJINN_RECOVERY_TABLE *)&MainRoutineStateWork.holdings;
 }
 
-/* Returns the average level of the party members, rounded down (0 with no */
-/* party members). */
-u32 gmPartyGetAverageLevel(void) {
-	s32 totalLevels = 0;
-	s32 partySize = gmPartyCountMembers();
-	s32 i;
+/* Returns the average level of the party members, rounded down (0 with no party
+   members). */
+Uint32 gmPartyGetAverageLevel(void)
+{
+	Sint32 totalLevels = 0;
+	Sint32 partySize = gmPartyCountMembers();
+	Sint32 i;
 
 	if(partySize == 0)
 		return 0;
@@ -77,15 +80,15 @@ u32 gmPartyGetAverageLevel(void) {
 	return totalLevels;
 }
 
-/* Returns the unit of unitId: ISAAC to PIERS the characters, the six from */
-/* FIRST_ENEMY_UNIT the enemies of the current battle; NULL for anything else.
- */
-UNIT *gmUnitGet(u32 unitId) {
+/* Returns the unit of unitId: ISAAC to PIERS the characters, the six from
+   FIRST_ENEMY_UNIT the enemies of the current battle; NULL for anything
+   else. */
+UNIT *gmUnitGet(Uint32 unitId)
+{
 	UNIT *states;
 	UNIT *unit;
 	/* DEAD: the return address, read and never used; the ROM keeps its copy of
-	 */
-	/* lr into r3. */
+	   lr into r3. */
 	UNUSED void *caller = __builtin_return_address(0);
 
 	states = CharacterUnits;
@@ -108,16 +111,16 @@ UNIT *gmUnitGet(u32 unitId) {
 	return NULL;
 }
 
-/* Returns the definition of enemy `enemyId`; enemy ids start past the eight */
-/* characters', so that one id names any unit. */
-const ENEMY_DEFINITION *gmEnemyGetDefinition(s32 enemyId) {
-	u32 row = enemyId - ENEMY_ID_FIRST;
+/* Returns the definition of enemy `enemyId`; enemy ids start past the eight
+   characters', so that one id names any unit. */
+const ENEMY_DEFINITION *gmEnemyGetDefinition(Sint32 enemyId)
+{
+	Uint32 row = enemyId - ENEMY_ID_FIRST;
 
-	/* BUG: only rows from ENEMY_ID_MAX are refused, so those from */
-	/* ENEMY_DEFINITION_COUNT (165) to ENEMY_ID_MAX - 1 read the tables after
-	 * it. */
-	/* gmBattleUnitSet refuses them itself. */
-#ifdef BUGFIX
+	/* BUG: only rows from ENEMY_ID_MAX are refused, so those from
+	   ENEMY_DEFINITION_COUNT (165) to ENEMY_ID_MAX - 1 read the tables after
+	   it. gmBattleUnitSet refuses them itself. */
+#if FIX_ENEMY_ID_BOUND
 	if(row >= ENEMY_DEFINITION_COUNT) {
 #else
 	if(row > ENEMY_ID_MAX - 1U) {
@@ -127,43 +130,44 @@ const ENEMY_DEFINITION *gmEnemyGetDefinition(s32 enemyId) {
 	return &Enemy_Definitions[row];
 }
 
-/* Unused: copies `count` bytes from `first` to `second` when `direction` is */
-/* set, and from `second` to `first` otherwise. */
-UNUSED void gmMemoryCopyBytesDirectional(u8 *first, u8 *second, s32 count,
-										 s32 direction) {
-	s32 i;
+/* Unused: copies `count` bytes from `first` to `second` when `direction` is
+   set, and from `second` to `first` otherwise. */
+UNUSED void gmMemoryCopyBytesDirectional(
+	Uint8 *first, Uint8 *second, Sint32 count, Sint32 direction)
+{
+	Sint32 i;
 
 	if(direction != 0) {
 		for(i = 0; i < count; i++)
 			*second++ = *first++;
-	}
-	else {
+	} else {
 		for(i = 0; i < count; i++)
 			*first++ = *second++;
 	}
 }
 
 /* A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP. */
-#define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
-/* The PP an Adept regains at the end of each battle turn, on top of its own, */
-/* inside the lighthouse of its element. */
+#define SCALE_EFFECT(kind)	((kind) - EQUIP_EFFECT_SCALE_HP)
+/* The PP an Adept regains at the end of each battle turn, on top of its own,
+   inside the lighthouse of its element. */
 #define LIGHTHOUSE_PP_REGEN 4
 
-/* Works out a unit's stats from its base stats, equipment, set Djinn, class */
-/* and battle stat levels; its HP and PP keep their share of a new maximum. */
-void gmUnitCalc(s32 unitId) {
+/* Works out a unit's stats from its base stats, equipment, set Djinn, class and
+   battle stat levels; its HP and PP keep their share of a new maximum. */
+void gmUnitCalc(Sint32 unitId)
+{
 	STAT_STATE *stats;
-	UNIT *unit;
-	s32 index, effectIndex, elementIndex;
-	s32 value;
-	s32 inOwnLighthouse;
-	s32 effectKind;
-	s32 effectAmount;
-	s32 statLimit;
-	s16 previousMaximum;
+	UNIT	   *unit;
+	Sint32		index, effectIndex, elementIndex;
+	Sint32		value;
+	Sint32		inOwnLighthouse;
+	Sint32		effectKind;
+	Sint32		effectAmount;
+	Sint32		statLimit;
+	Sint16		previousMaximum;
 
 	/* Start with the unit's base stats and elemental power/resistance. */
-	stats = syHeapAllocEwram(sizeof(STAT_STATE));
+	stats = syHeapAllocEWRAM(sizeof(STAT_STATE));
 	unit = gmUnitGet(unitId);
 	stats->hp = unit->baseHp;
 	stats->pp = unit->basePp;
@@ -180,20 +184,19 @@ void gmUnitCalc(s32 unitId) {
 	}
 
 	/* HP and PP keep their share of the maximum; gauges that no longer match
-	 * are */
-	/* reset to full first. */
+	   are reset to full first. */
 	if(UNIT_STAT_DIFF(unit->hpMax * unit->hpGauge / UNIT_GAUGE_FULL, unit->hp) >
-		   1 ||
-	   UNIT_STAT_DIFF(unit->ppMax * unit->ppGauge / UNIT_GAUGE_FULL, unit->pp) >
-		   1) {
+			1 ||
+		UNIT_STAT_DIFF(
+			unit->ppMax * unit->ppGauge / UNIT_GAUGE_FULL, unit->pp) > 1) {
 		unit->hpGauge = UNIT_GAUGE_FULL;
 		unit->ppGauge = UNIT_GAUGE_FULL;
 		unit->hp = unit->hpMax;
 		unit->pp = unit->ppMax;
 	}
 
-	/* CURSE_KEEP_BOUND keeps CURSE_BOUND, and CURSE_REMOVABLE clears */
-	/* both again below. */
+	/* CURSE_KEEP_BOUND keeps CURSE_BOUND, and CURSE_REMOVABLE clears both again
+	   below. */
 	unit->curse &= ~(CURSE_BOUND | CURSE_ITEM);
 	if(unit->curse & CURSE_KEEP_BOUND)
 		unit->curse |= CURSE_BOUND;
@@ -202,8 +205,8 @@ void gmUnitCalc(s32 unitId) {
 	unit->equipBonus[0] = 0;
 	unit->equipBonus[1] = 0;
 
-	/* Apply additive equipment and set-Djinn bonuses before class scaling. */
-	/* An enemy (CLASS_NONE) skips equipment, Djinn and class entirely. */
+	/* Apply additive equipment and set-Djinn bonuses before class scaling. An
+	   enemy (CLASS_NONE) skips equipment, Djinn and class entirely. */
 	if(unit->classId != CLASS_NONE) {
 		for(index = 0; index < INVENTORY_SLOTS; index++) {
 			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
@@ -284,7 +287,7 @@ void gmUnitCalc(s32 unitId) {
 
 		/* Only set Djinn contribute their stat bonuses. */
 		for(elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
-			u32 activeDjinn = unit->djinnSet[elementIndex];
+			Uint32 activeDjinn = unit->djinnSet[elementIndex];
 
 			for(index = 0; index < DJINN_PER_ELEMENT; index++) {
 				if(activeDjinn & (1 << index)) {
@@ -301,8 +304,8 @@ void gmUnitCalc(s32 unitId) {
 			}
 		}
 
-		/* The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat).
-		 */
+		/* The class's multipliers are in tenths (STAT_SCALE_ONE keeps a
+		   stat). */
 		{
 			CLASS_DEFINITION *classDefinition =
 				gmClassGetDefinition(unit->classId);
@@ -318,8 +321,8 @@ void gmUnitCalc(s32 unitId) {
 			stats->luck = stats->luck * classDefinition->luck / STAT_SCALE_ONE;
 		}
 
-		/* Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to */
-		/* EQUIP_EFFECT_SCALE_LUCK, also in tenths. */
+		/* Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
+		   EQUIP_EFFECT_SCALE_LUCK, also in tenths. */
 		for(index = 0; index < INVENTORY_SLOTS; index++) {
 			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
 				continue;
@@ -367,15 +370,14 @@ void gmUnitCalc(s32 unitId) {
 	}
 
 	/* Then the battle's changes apply: the Attack, Defense and Agility stages,
-	 */
-	/* a summon's boost to each element's power, and the Resistance stage. */
+	   a summon's boost to each element's power, and the Resistance stage. */
 	stats->attack = stats->attack * (unit->attackStage + 8) / 8;
 	stats->defense = stats->defense * (unit->defenseStage + 8) / 8;
 	stats->agility = stats->agility * (unit->agilityStage + 8) / 8;
 	for(index = 0; index < ELEMENT_COUNT; index++)
 		stats->element[index].power +=
 			(unit->summonBoost[index] * unit->summonBoost[index] +
-			 unit->summonBoost[index]) *
+				unit->summonBoost[index]) *
 			5;
 	for(index = 0; index < ELEMENT_COUNT; index++)
 		stats->element[index].resistance +=
@@ -384,7 +386,7 @@ void gmUnitCalc(s32 unitId) {
 	if(unit->classId != CLASS_NONE) {
 		inOwnLighthouse = 0;
 		/* Faster PP recovery inside the lighthouse of the character's own
-		 * element. */
+		   element. */
 		switch(unit->id) {
 		case ISAAC:
 			inOwnLighthouse = gmFlagGet(FLAG_IN_VENUS_LIGHTHOUSE);
@@ -460,21 +462,21 @@ void gmUnitCalc(s32 unitId) {
 }
 
 /* Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item with
- */
-/* EQUIP_EFFECT_LURE) equipped, and clears it otherwise. */
-void gmFlagRefreshLureCap(void) {
-	s32 partySize;
-	s32 member;
+   EQUIP_EFFECT_LURE) equipped, and clears it otherwise. */
+void gmFlagRefreshLureCap(void)
+{
+	Sint32 partySize;
+	Sint32 member;
 
 	gmFlagClear(FLAG_LURE_CAP);
 	partySize = gmPartyCountMembers();
 	for(member = 0; member < partySize; member++) {
-		UNIT *unit = gmUnitGet(MainRoutineStateWork.party[member]);
-		s32 slot;
+		UNIT  *unit = gmUnitGet(MainRoutineStateWork.party[member]);
+		Sint32 slot;
 
 		for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
 			const ITEM_DEFINITION *item;
-			s32 effect;
+			Sint32				   effect;
 
 			if(!(unit->inventory[slot] & INVENTORY_EQUIPPED))
 				continue;
@@ -488,26 +490,25 @@ void gmFlagRefreshLureCap(void) {
 }
 
 /* Set in every build stamp's time. */
-#define BUILD_STAMP_MARK 0x1000
-/* Set on top of the time in a debug build's stamp (DebugMode): bit 15, */
-/* sign-extended, so that its stamp is above every release build's. A release's
- */
-/* saves show there as from an older build, and its own never do in a release.
- */
+#define BUILD_STAMP_MARK  0x1000
+/* Set on top of the time in a debug build's stamp (DebugMode): bit 15,
+   sign-extended, so that its stamp is above every release build's. A release's
+   saves show there as from an older build, and its own never do in a
+   release. */
 #define BUILD_STAMP_DEBUG 0xffff8000
 
-/* Encodes the build stamp's time, which a new game takes as its start stamp */
-/* and the file list compares saves with. */
-u32 gmBuildStampGetTime(void) {
+/* Encodes the build stamp's time, which a new game takes as its start stamp and
+   the file list compares saves with. */
+Uint32 gmBuildStampGetTime(void)
+{
 	/* The stamp is six ASCII digits, hhmmss. The hours count 1024, the minutes
-	 */
-	/* 64 and the seconds 1, so the minutes past 15 reach into the hours. */
-	const u8 *digits = syResourceGetTableEntry(RESOURCE_BUILD_STAMP);
-	s32 hours;
-	s32 minutes;
-	s32 seconds;
-	s16 time;
-	s32 stamp;
+	   64 and the seconds 1, so the minutes past 15 reach into the hours. */
+	const Uint8 *digits = syResourceGetTableEntry(RESOURCE_BUILD_STAMP);
+	Sint32		 hours;
+	Sint32		 minutes;
+	Sint32		 seconds;
+	Sint16		 time;
+	Sint32		 stamp;
 
 	hours = (*digits++ - '0') * 10;
 	hours += *digits++ - '0';
@@ -521,25 +522,25 @@ u32 gmBuildStampGetTime(void) {
 
 	if(DebugMode != 0)
 		stamp |= BUILD_STAMP_DEBUG;
-	return (u16)stamp;
+	return (Uint16)stamp;
 }
 
-/* Clears the game's state and sets a new game's defaults: Isaac alone in the */
-/* party, the standard buttons, the message speed and the Lucky Wheels odds. */
-void gmMainRoutineStateInitDefaults(void) {
-	volatile s32 zero;
+/* Clears the game's state and sets a new game's defaults: Isaac alone in the
+   party, the standard buttons, the message speed and the Lucky Wheels odds. */
+void gmMainRoutineStateInitDefaults(void)
+{
+	volatile Sint32 zero;
 
 	/* Clear the state up to the characters, the scene state with its snapshots,
-	 */
-	/* and the flags. */
-	btDmaFill32Cell(zero, 0, &MainRoutineStateWork,
-					sizeof(MainRoutineStateWork));
-	btDmaFill32Cell(zero, 0, SceneLocalState, sizeof(SCENE_STATE_VIEW));
+	   and the flags. */
+	DMA_FILL32_CELL(
+		zero, 0, &MainRoutineStateWork, sizeof(MainRoutineStateWork));
+	DMA_FILL32_CELL(zero, 0, SceneLocalState, sizeof(SCENE_STATE_VIEW));
 	WAIT_DMA();
-	btDmaFill32Cell(zero, 0, GameFlagBytes, GAME_FLAG_COUNT / 8);
+	DMA_FILL32_CELL(zero, 0, GameFlagBytes, GAME_FLAG_COUNT / 8);
 	((SCENE_STATE_VIEW *)SceneLocalState)->actorSnapshot.slots[0] =
 		ACTOR_SNAPSHOT_EMPTY;
-	btDmaFill32Cell(zero, 0, CharacterUnits, sizeof(CharacterUnits));
+	DMA_FILL32_CELL(zero, 0, CharacterUnits, sizeof(CharacterUnits));
 	gmPartyInitCharacters();
 	MainRoutineStateWork.aKeys = KEY_A;
 	MainRoutineStateWork.bKeys = KEY_B;
@@ -565,10 +566,9 @@ void gmMainRoutineStateInitDefaults(void) {
 	IdleSleepEnabled = 0;
 	MainRoutineStateWork.idleSleepEnabled = IdleSleepEnabled;
 	IdleFrames = 0;
-	SaveSlot = -1;
+	BupSlot = -1;
 	/* The spring game's medal prizes, three to a ring, each ring out from the
-	 */
-	/* centre twice as likely as the one inside it. */
+	   centre twice as likely as the one inside it. */
 	MainRoutineStateWork.holdings.prizeWeights[0] = 4;
 	MainRoutineStateWork.holdings.prizeWeights[1] = 4;
 	MainRoutineStateWork.holdings.prizeWeights[2] = 4;
@@ -586,9 +586,10 @@ void gmMainRoutineStateInitDefaults(void) {
 	MainRoutineStateWork.holdings.prizeWeights[14] = 64;
 }
 
-/* Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes */
-/* then take their childhood forms. */
-void gmPartyStartChildhood(void) {
+/* Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes then
+   take their childhood forms. */
+void gmPartyStartChildhood(void)
+{
 	gmFlagSet(FLAG_CHILDHOOD);
 	gmUnitUpdateClass(ISAAC);
 	gmUnitUpdateClass(GARET);
@@ -601,11 +602,12 @@ void gmPartyStartChildhood(void) {
 /* The coins the party sets out with after the prologue. */
 #define PROLOGUE_COINS 300
 
-/* The party after the prologue: Isaac and Garet healed and given the Short */
-/* Sword, Move and Retreat for Isaac, Move for Garet, Mind Read for Ivan, and */
-/* PROLOGUE_COINS. */
-void gmPartyEndChildhood(void) {
-	s32 unitId;
+/* The party after the prologue: Isaac and Garet healed and given the Short
+   Sword, Move and Retreat for Isaac, Move for Garet, Mind Read for Ivan, and
+   PROLOGUE_COINS. */
+void gmPartyEndChildhood(void)
+{
+	Sint32 unitId;
 
 	gmFlagClear(FLAG_CHILDHOOD);
 	gmFlagClear(FLAG_ISAAC_WEARS_TUNIC);
@@ -616,16 +618,16 @@ void gmPartyEndChildhood(void) {
 	gmFlagSet(FLAG_KEEP_MUSIC_ONCE);
 
 	for(unitId = ISAAC; unitId <= GARET; unitId++) {
-		UNIT *unit = gmUnitGet(unitId);
-		s32 slot;
+		UNIT  *unit = gmUnitGet(unitId);
+		Sint32 slot;
 
 		unit->hp = unit->hpMax;
 		unit->pp = unit->ppMax;
-		gmUnitUpdateGauges(unit);
+		UNIT_UPDATE_GAUGES(unit);
 
 		for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
 			if((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) ==
-			   ITEM_MACHETE) {
+				ITEM_MACHETE) {
 				unit->inventory[slot] = ITEM_SHORT_SWORD;
 				gmInventoryEquip(unitId, slot);
 				break;
@@ -644,12 +646,13 @@ void gmPartyEndChildhood(void) {
 	MainRoutineStateWork.holdings.coins += PROLOGUE_COINS;
 }
 
-/* Restores every party member's HP and PP; with `cureConditions` 1 it also */
-/* cures poison and haunting. */
-void gmPartyRestoreHpPp(s32 cureConditions) {
-	s32 partySize;
-	s32 partyIndex;
-	UNIT *unit;
+/* Restores every party member's HP and PP; with `cureConditions` 1 it also
+   cures poison and haunting. */
+void gmPartyRestoreHpPp(Sint32 cureConditions)
+{
+	Sint32 partySize;
+	Sint32 partyIndex;
+	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
 	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
@@ -657,7 +660,7 @@ void gmPartyRestoreHpPp(s32 cureConditions) {
 
 		unit->hp = unit->hpMax;
 		unit->pp = unit->ppMax;
-		gmUnitUpdateGauges(unit);
+		UNIT_UPDATE_GAUGES(unit);
 
 		if(cureConditions == 1) {
 			unit->poison = 0;
@@ -666,16 +669,17 @@ void gmPartyRestoreHpPp(s32 cureConditions) {
 	}
 }
 
-/* Refills the PP of each party member whose lighthouse group */
-/* (Character_LighthouseGroupTable) holds the lighthouse the party is inside. */
-/* The aeries of Venus and Mercury Lighthouse call it. */
-void gmPartyRestorePpInLighthouse(void) {
-	s32 partySize;
-	s32 partyIndex;
-	u8 unitId;
-	s32 lighthouseGroup;
-	s32 restorePp;
-	UNIT *unit;
+/* Refills the PP of each party member whose lighthouse group
+   (Character_LighthouseGroupTable) holds the lighthouse the party is inside.
+   The aeries of Venus and Mercury Lighthouse call it. */
+void gmPartyRestorePpInLighthouse(void)
+{
+	Sint32 partySize;
+	Sint32 partyIndex;
+	Uint8  unitId;
+	Sint32 lighthouseGroup;
+	Sint32 restorePp;
+	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
 	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
@@ -684,13 +688,12 @@ void gmPartyRestorePpInLighthouse(void) {
 		restorePp = 0;
 		if(lighthouseGroup == LIGHTHOUSE_GROUP_VENUS_MARS) {
 			if(gmFlagGet(FLAG_IN_VENUS_LIGHTHOUSE) ||
-			   gmFlagGet(FLAG_IN_MARS_LIGHTHOUSE)) {
+				gmFlagGet(FLAG_IN_MARS_LIGHTHOUSE)) {
 				restorePp = 1;
 			}
-		}
-		else {
+		} else {
 			if(gmFlagGet(FLAG_IN_MERCURY_LIGHTHOUSE) ||
-			   gmFlagGet(FLAG_IN_JUPITER_LIGHTHOUSE)) {
+				gmFlagGet(FLAG_IN_JUPITER_LIGHTHOUSE)) {
 				restorePp = 1;
 			}
 		}
@@ -701,25 +704,29 @@ void gmPartyRestorePpInLighthouse(void) {
 
 		unit = gmUnitGet(unitId);
 		unit->pp = unit->ppMax;
-		gmUnitUpdateGauges(unit);
+		UNIT_UPDATE_GAUGES(unit);
 	}
 }
 
 /* Unused: reserved entry; keeps its place in the stub table. */
-UNUSED void gmUnitGaugeNoOp(void) {}
+UNUSED void gmUnitGaugeNoOperation(void)
+{
+}
 
-/* Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so */
-/* that gmUnitCalc keeps the same fractions. */
-void gmUnitRecalculateGauges(s32 unitId) {
+/* Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
+   that gmUnitCalc keeps the same fractions. */
+void gmUnitRecalculateGauges(Sint32 unitId)
+{
 	UNIT *unit;
 
 	unit = gmUnitGet(unitId);
-	gmUnitUpdateGauges(unit);
+	UNIT_UPDATE_GAUGES(unit);
 }
 
 /* Clamps a new HP or PP value to 0 and the maximum. */
-static inline s32 gmUnitClampGaugeValue(s32 value, s32 maximum) {
-	s32 result;
+static inline Sint32 gmUnitClampGaugeValue(Sint32 value, Sint32 maximum)
+{
+	Sint32 result;
 
 	if(value > maximum)
 		result = maximum;
@@ -732,47 +739,47 @@ static inline s32 gmUnitClampGaugeValue(s32 value, s32 maximum) {
 }
 
 /* Each sets the unit's HP or PP, clamped to 0 and its maximum, and recomputes
- */
-/* its HP and PP gauges. */
-#define UNIT_DEFINE_SET(name, field, maximum)                                  \
-	void name(UNIT *unit, s32 value) {                                         \
-		s32 clamped;                                                           \
-                                                                               \
-		clamped = gmUnitClampGaugeValue(value, unit->maximum);                 \
-		unit->field = clamped;                                                 \
-		gmUnitUpdateGauges(unit);                                              \
+   its HP and PP gauges. */
+#define UNIT_DEFINE_SET(name, field, maximum) \
+	void name(UNIT *unit, Sint32 value) \
+	{ \
+		Sint32 clamped; \
+\
+		clamped = gmUnitClampGaugeValue(value, unit->maximum); \
+		unit->field = clamped; \
+		UNIT_UPDATE_GAUGES(unit); \
 	}
 
-/* Sets the unit's HP, clamped to 0 and its maximum, and recomputes its gauges.
- */
+/* Sets the unit's HP, clamped to 0 and its maximum, and recomputes its
+   gauges. */
 UNIT_DEFINE_SET(gmUnitSetHp, hp, hpMax)
-/* Unused: only its unnamed entry in the game module's stub table refers */
-/* to it. */
+/* Unused: only its unnamed entry in the game module's stub table refers to
+   it. */
 UNIT_DEFINE_SET(gmUnitSetPp, pp, ppMax)
 
-/* Each adds delta to the HP or PP of unit unitId, clamped to 0 and its */
-/* maximum, recomputes its gauges and returns the new value, as `type`. */
-#define UNIT_DEFINE_ADD(type, name, field, maximum)                            \
-	type name(s32 unitId, s32 delta) {                                         \
-		UNIT *unit = gmUnitGet(unitId);                                        \
-		s32 current = unit->field;                                             \
-		s32 limit = unit->maximum;                                             \
-		s32 value = current + delta;                                           \
-		s32 result;                                                            \
-                                                                               \
-		result = gmUnitClampGaugeValue(value, limit);                          \
-		unit->field = result;                                                  \
-		gmUnitRecalculateGauges(unitId);                                       \
-		return unit->field;                                                    \
+/* Each adds delta to the HP or PP of unit unitId, clamped to 0 and its maximum,
+   recomputes its gauges and returns the new value, as `type`. */
+#define UNIT_DEFINE_ADD(type, name, field, maximum) \
+	type name(Sint32 unitId, Sint32 delta) \
+	{ \
+		UNIT  *unit = gmUnitGet(unitId); \
+		Sint32 current = unit->field; \
+		Sint32 limit = unit->maximum; \
+		Sint32 value = current + delta; \
+		Sint32 result; \
+\
+		result = gmUnitClampGaugeValue(value, limit); \
+		unit->field = result; \
+		gmUnitRecalculateGauges(unitId); \
+		return unit->field; \
 	}
 
 /* Adds `delta` to a unit's HP, for the field's healing and damage, battle and
- */
-/* the debug menu. */
-UNIT_DEFINE_ADD(s32, gmUnitAddHp, hp, hpMax)
-/* Adds `delta` to a unit's PP, for Psynergy used in the field, in battle and */
-/* from the menu, PP recovery at each battle turn's end and the debug menu. */
-UNIT_DEFINE_ADD(s16, gmUnitAddPp, pp, ppMax)
+   the debug menu. */
+UNIT_DEFINE_ADD(Sint32, gmUnitAddHp, hp, hpMax)
+/* Adds `delta` to a unit's PP, for Psynergy used in the field, in battle and
+   from the menu, PP recovery at each battle turn's end and the debug menu. */
+UNIT_DEFINE_ADD(Sint16, gmUnitAddPp, pp, ppMax)
 
 #undef UNIT_DEFINE_SET
 #undef UNIT_DEFINE_ADD

@@ -1,118 +1,107 @@
-/* @file */
 /* Lighthouse Aerie (SceneId_VenusLighthouseAerie), the top of Venus Lighthouse
- */
-/* and the only scene of this overlay. */
-/* */
-/* What happens here is one chain of events cut by two battles and two trips */
-/* to the World Map. Each part starts in scInit from */
-/* the entrance the part before sent the party to. Every arrival blocks */
-/* Retreat and sets FLAG_IN_VENUS_LIGHTHOUSE. */
-/* */
-/* The parts, in the order the entrances chain them: */
-/* - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR, */
-/*   scVenusLighthouseAerieOverhearSaturosAndMenardi). A floating platform */
-/*   carries Isaac up beside the tower in the north-east onto its top, and */
-/*   the party overhears Saturos, Menardi, Felix and Sheba arguing at the */
-/*   beacon, with one yes-or-no question that changes only the reply. */
-/* - Two rows of three floating platforms bob in the air, one between the */
-/*   tower and the middle of the aerie and one west of the middle */
-/*   (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM, */
-/*   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS). Isaac jumps */
-/*   from one to the next, and each stops bobbing and dips under him as he */
-/*   lands. FLAG_VENUS_AERIE_ON_PLATFORM is set while he stands on one. */
-/* - The confrontation, when Isaac walks up to the beacon */
-/*   (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON, */
-/*   scVenusLighthouseAerieConfrontSaturosAndMenardi). The Shaman's Rod is */
-/*   handed over for Sheba's sake, remembered in FLAG_SHAMANS_ROD_CARRIED_BY */
-/*   plus the party member who carried it. The first battle follows */
-/*   (ENCOUNTER_ZONE_SCRIPTED, slot 1, FLAG_AERIE_FIRST_BATTLE_BEGUN). */
-/* - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE, */
-/*   scVenusLighthouseAerieCombineSaturosAndMenardi). Saturos throws the Venus
- */
-/*   Star into the beacon (ACTOR_VENUS_STAR_SHADOW), Felix and Sheba leave, */
-/*   and Saturos and Menardi fuse. gmPartyRestorePpInLighthouse refills the PP
- */
-/*   of Isaac and Garet, inside the lighthouse of their element group, and the
- */
-/*   second battle follows (slot 0, FLAG_AERIE_SECOND_BATTLE_BEGUN). */
-/* - After that (VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE, */
-/*   scVenusLighthouseAerieFinishSaturosAndMenardiBattle). Saturos and Menardi
- */
-/*   fall into the lighthouse, and the beacon erupts. Its beam */
-/*   (ACTOR_BEAM_BOTTOM to ACTOR_BEAM_TOP) rises, the aerie splits and its */
-/*   statues move apart. The light lifts the party away to the World Map's */
-/*   lighthouse transition (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT). The beam's */
-/*   five segments are sprites stacked over the beacon, with particles rising */
-/*   round them. The split is drawn by copying the map's cells */
-/*   (fdMapGridCopyCellsTo in scVenusLighthouseAerieEruptBeacon). */
-/* - A look back (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, */
-/*   scVenusLighthouseAerieShowShebaInDanger). Sheba hangs from the broken */
-/*   aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the World Map */
-/*   (WORLD_MAP_BEFORE_SHEBAS_FALL) with its music kept. */
-/* - Sheba's fall (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP, */
-/*   scVenusLighthouseAerieStageShebasFall). Sheba and Felix fall, and the */
-/*   party is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C) */
-/*   with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED set. */
-/* */
-/* A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives */
-/* the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
- */
-/* (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B). */
+   and the only scene of this overlay.
+
+   What happens here is one chain of scripts cut by two battles and two trips to
+   the World Map. Each part starts in scInit from the entrance the part before
+   sent the party to. Every arrival blocks Retreat and sets
+   FLAG_IN_VENUS_LIGHTHOUSE.
+
+   The parts, in the order the entrances chain them:
+   - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
+	 scVenusLighthouseAerieOverhearSaturosAndMenardi). A floating platform
+	 carries Isaac up beside the tower in the north-east onto its top, and
+	 the party overhears Saturos, Menardi, Felix and Sheba arguing at the
+	 beacon, with one yes-or-no question that changes only the reply.
+   - Two rows of three floating platforms bob in the air, one between the
+	 tower and the middle of the aerie and one west of the middle
+	 (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+   METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS). Isaac jumps
+   from one to the next, and each stops bobbing and dips under him as he lands.
+   FLAG_VENUS_AERIE_ON_PLATFORM is set while he stands on one.
+   - The confrontation, when Isaac walks up to the beacon
+	 (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
+	 scVenusLighthouseAerieConfrontSaturosAndMenardi). The Shaman's Rod is
+	 handed over for Sheba's sake, remembered in FLAG_SHAMANS_ROD_CARRIED_BY
+	 plus the party member who carried it. The first battle follows
+	 (ENCOUNTER_ZONE_SCRIPTED, slot 1, FLAG_AERIE_FIRST_BATTLE_BEGUN).
+   - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
+	 scVenusLighthouseAerieCombineSaturosAndMenardi). Saturos throws the Venus
+	 Star into the beacon (ACTOR_VENUS_STAR_SHADOW), Felix and Sheba leave,
+	 and Saturos and Menardi fuse. gmPartyRestorePpInLighthouse refills the PP
+	 of Isaac and Garet, inside the lighthouse of their element group, and the
+	 second battle follows (slot 0, FLAG_AERIE_SECOND_BATTLE_BEGUN).
+   - After that (VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE,
+	 scVenusLighthouseAerieFinishSaturosAndMenardiBattle). Saturos and Menardi
+	 fall into the lighthouse, and the beacon erupts. Its beam
+	 (ACTOR_BEAM_BOTTOM to ACTOR_BEAM_TOP) rises, the aerie splits and its
+	 statues move apart. The light lifts the party away to the World Map's
+	 lighthouse transition (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT). The beam's
+	 five segments are sprites stacked over the beacon, with particles rising
+	 round them. The split is drawn by copying the map's metatiles
+	 (fdMapGridCopyMetatilesTo in scVenusLighthouseAerieEruptBeacon).
+   - A look back (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
+	 scVenusLighthouseAerieShowShebaInDanger). Sheba hangs from the broken
+	 aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the World Map
+	 (WORLD_MAP_BEFORE_SHEBAS_FALL) with its music kept.
+   - Sheba's fall (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP,
+	 scVenusLighthouseAerieStageShebasFall). Sheba and Felix fall, and the
+	 party is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C)
+	 with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED set.
+
+   A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives the
+   Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
+   (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B). */
 
 #include "flags.h"
 #include "item_ids.h"
 #include "macros.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
-#include "field/event_inline.h"
+#include "field/script_inline.h"
 #include "field/field_psynergy_state.h"
 #include "field/map_grid_scroll.h"
 #include "graphics/graphics.h"
-#include "scene/event_psynergy.h"
+#include "scene/script_psynergy.h"
 #include "text/msg_ids.h"
 
-extern s32 VenusLighthouseAerie_JoinLeaderScript[];
-extern s32 VenusLighthouseAerie_StepBackWestScript[];
-extern s32 VenusLighthouseAerie_StepBackEastScript[];
-extern s32 VenusLighthouseAerie_BreatheHeavilyScript[];
-extern s32 VenusLighthouseAerie_BeamOpenScript[];
-extern s32 VenusLighthouseAerie_BeamNarrowScript[];
-extern s32 VenusLighthouseAerie_BeamRiseScript[];
-extern s32 VenusLighthouseAerie_BeamCloseScript[];
-extern s32 VenusLighthouseAerie_BeamEndScript[];
-extern s32 VenusLighthouseAerie_OrbitParticleScript[];
-extern s32 VenusLighthouseAerie_RiseParticleScript[];
-extern s32 VenusLighthouseAerie_WalkOutScript[];
-extern s32 VenusLighthouseAerie_OrbPulseScript[];
-extern s32 VenusLighthouseAerie_ShebaFallScript[];
-extern s32 VenusLighthouseAerie_FelixDiveScript[];
-extern s32 VenusLighthouseAerie_PartyExitScript[];
-extern s32 VenusLighthouseAerie_LookAboutScript[];
+extern Sint32		  VenusLighthouseAerie_JoinLeaderScript[];
+extern Sint32		  VenusLighthouseAerie_StepBackWestScript[];
+extern Sint32		  VenusLighthouseAerie_StepBackEastScript[];
+extern Sint32		  VenusLighthouseAerie_BreatheHeavilyScript[];
+extern Sint32		  VenusLighthouseAerie_BeamOpenScript[];
+extern Sint32		  VenusLighthouseAerie_BeamNarrowScript[];
+extern Sint32		  VenusLighthouseAerie_BeamRiseScript[];
+extern Sint32		  VenusLighthouseAerie_BeamCloseScript[];
+extern Sint32		  VenusLighthouseAerie_BeamEndScript[];
+extern Sint32		  VenusLighthouseAerie_OrbitParticleScript[];
+extern Sint32		  VenusLighthouseAerie_RiseParticleScript[];
+extern Sint32		  VenusLighthouseAerie_WalkOutScript[];
+extern Sint32		  VenusLighthouseAerie_OrbPulseScript[];
+extern Sint32		  VenusLighthouseAerie_ShebaFallScript[];
+extern Sint32		  VenusLighthouseAerie_FelixDiveScript[];
+extern Sint32		  VenusLighthouseAerie_PartyExitScript[];
+extern Sint32		  VenusLighthouseAerie_LookAboutScript[];
 extern SCENE_ENTRANCE VenusLighthouseAerieEntrances[];
-extern u32 VenusLighthouseAerieExits[];
-extern ACTOR_PLACE VenusLighthouseAerieActorPlacements[];
-extern s32 VenusLighthouseAerie_LandedPlatform;
-extern TRIGGER VenusLighthouseAerieTriggers[];
-extern s32 Beacon_SparkScript[];
+extern Uint32		  VenusLighthouseAerieExits[];
+extern ACTOR_PLACE	  VenusLighthouseAerieActorPlacements[];
+extern Sint32		  VenusLighthouseAerie_LandedPlatform;
+extern CUE			  VenusLighthouseAerieCues[];
+extern Sint32		  Beacon_SparkScript[];
 
 /* The aerie's actors, in the order of its actor placements (its entrances and
- */
-/* exits are in scene_exits.h); */
-/* Garet, Ivan, Mia and Sheba keep their character numbers. */
+   exits are in scene_exits.h); Garet, Ivan, Mia and Sheba keep their character
+   numbers. */
 enum {
 	/* The four statues around the beacon (SPRITE_STATUE_WITH_WREATH), the east
-	 */
-	/* two drawn mirrored. When the beacon erupts and splits the aerie, the west
-	 */
-	/* two move west with their half and the east two east. */
+	   two drawn mirrored. When the beacon erupts and splits the aerie, the west
+	   two move west with their half and the east two east. */
 	ACTOR_BEACON_STATUE_SOUTHWEST = 8,
 	ACTOR_BEACON_STATUE_NORTHWEST = 9,
 	ACTOR_BEACON_STATUE_NORTHEAST = 10,
 	ACTOR_BEACON_STATUE_SOUTHEAST = 11,
 	/* Six round platforms (SPRITE_FLOATING_PLATFORM) the leader jumps across,
-	 */
-	/* each dipping under him as he lands, and the one that carries him up to */
-	/* the aerie. */
+	   each dipping under him as he lands, and the one that carries him up to
+	   the aerie. */
 	ACTOR_FIRST_PLATFORM = 12,
 	ACTOR_LAST_PLATFORM = 17,
 	ACTOR_RISING_PLATFORM = 18,
@@ -120,18 +109,15 @@ enum {
 	ACTOR_SATUROS = 20,
 	ACTOR_FELIX = 21,
 	/* A blank actor (SPRITE_BLANK) that runs across the floor under the Venus
-	 */
-	/* Star as Saturos throws it into the beacon, so that only its shadow shows,
-	 */
-	/* the star's shadow. */
+	   Star as Saturos throws it into the beacon, so that only its shadow shows,
+	   the star's shadow. */
 	ACTOR_VENUS_STAR_SHADOW = 22,
-	/* The orb the rising particles circle as the party is lifted away: */
-	/* SPRITE_BLUE_ORB drawn in SPRITE_COLOR_GBR, which turns its blue to green,
-	 */
-	/* and later solid white (SPRITE_COLOR_WHITE). */
+	/* The orb the rising particles circle as the party is lifted away:
+	   SPRITE_BLUE_ORB drawn in SPRITE_COLOR_GBR, which turns its blue to green,
+	   and later solid white (SPRITE_COLOR_WHITE). */
 	ACTOR_BEACON_ORB = 23,
-	/* The beacon's beam, in five segments (SPRITE_PIPE_NORTH_SOUTH) from the */
-	/* bottom up; particles circle the lowest. */
+	/* The beacon's beam, in five segments (SPRITE_PIPE_NORTH_SOUTH) from the
+	   bottom up; particles circle the lowest. */
 	ACTOR_BEAM_BOTTOM = 24,
 	ACTOR_BEAM_LOWER = 25,
 	ACTOR_BEAM_MIDDLE = 26,
@@ -139,21 +125,21 @@ enum {
 	ACTOR_BEAM_TOP = 28
 };
 
-/* An area flag, plus the party member (0 to 3) who carried the Shaman's Rod */
-/* when it was handed over before the aerie's first battle. A defeat gives it */
-/* back. */
+/* An area flag, plus the party member (0 to 3) who carried the Shaman's Rod
+   when it was handed over before the aerie's first battle. A defeat gives it
+   back. */
 #define FLAG_SHAMANS_ROD_CARRIED_BY FLAG_AREA_TEMP_45
 
-/* Area flags that choose the aerie's field music after each battle. */
-/* */
-/* They work by the scene's field music rules (Scene_MusicRules, */
-/* field/music_rules.s). The music is MUS_SILENCE before the first */
-/* battle, MUS_BABIS_THEME once the first has begun and MUS_ELEMENTAL_STARS */
-/* once the second has. */
-/* */
-/* VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same */
-/* area, keep their Psynergy Stones in the same two flags, which no one goes */
-/* back down to see. */
+/* Area flags that choose the aerie's field music after each battle.
+
+   They work by the scene's field music rules (Scene_MusicRules,
+   field/music_rules.s). The music is MUS_SILENCE before the first battle,
+   MUS_BABIS_THEME once the first has begun and MUS_ELEMENTAL_STARS once the
+   second has.
+
+   VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same area,
+   keep their Psynergy Stones in the same two flags, which no one goes back down
+   to see. */
 enum {
 	FLAG_AERIE_FIRST_BATTLE_BEGUN = FLAG_AREA_TEMP_50,
 	FLAG_AERIE_SECOND_BATTLE_BEGUN = FLAG_AREA_TEMP_51
@@ -161,12 +147,12 @@ enum {
 
 static void scVenusLighthouseAerieFloatPlatforms(void);
 static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void);
-static void scVenusLighthouseAerieShowPartyMember(s32 actorId, s32 shown);
+static void scVenusLighthouseAerieShowPartyMember(Sint32 actorId, Sint32 shown);
 static void scVenusLighthouseAerieFlashActorPalette(ACTOR *actor);
 static void scSpawnPsynergyRings(ACTOR *parent);
 static void scVenusLighthouseAerieUpdateShebaPalette(void);
 static void scVenusLighthouseAerieCombineSaturosAndMenardi(void);
-static void scVenusLighthouseAerieFlashScr(void);
+static void scVenusLighthouseAerieFlashScreen(void);
 static void scVenusLighthouseAerieSpawnUpperOrbitParticles(void);
 static void scVenusLighthouseAerieUpdateFusion(void);
 static void scVenusLighthouseAerieFinishSaturosAndMenardiBattle(void);
@@ -184,33 +170,31 @@ static void scVenusLighthouseAerieAdvanceActorRise(ACTOR *actor);
 static void scVenusLighthouseAerieSpawnSideOrbitParticles(void);
 static void scVenusLighthouseAerieUpdateOrbitingEffect(ACTOR *actor);
 
-/* The cell behaviors the aerie's step triggers answer. */
-typedef enum VENUS_LIGHTHOUSE_AERIE_CELL_BEHAVIOR {
-	CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON =
-		5, /* before the beacon, where Isaac confronts Saturos and Menardi */
-	CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM =
-		10, /* a floating platform's cells */
-	/* The floor beside the platforms, from which the leader jumps */
-	/* onto them. */
-	CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS = 11
-} VENUS_LIGHTHOUSE_AERIE_CELL_BEHAVIOR;
+/* The metatile behaviors the aerie's step cues answer. */
+typedef enum VENUS_LIGHTHOUSE_AERIE_METATILE_BEHAVIOR {
+	/* before the beacon, where Isaac confronts Saturos and Menardi */
+	METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON = 5,
+	/* a floating platform's metatiles */
+	METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM = 10,
+	/* The floor beside the platforms, from which the leader jumps onto them. */
+	METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS = 11
+} VENUS_LIGHTHOUSE_AERIE_METATILE_BEHAVIOR;
 
-/* Animations the aerie plays by number beyond ACTOR_ANIMATION. */
-/* */
-/* They come from each sprite's animation table */
-/* (graphics/sprite/<name>.tsv). The party's are reached through their */
-/* animation lists. */
+/* Animations the aerie plays by number beyond ACTOR_ANIMATION.
+
+   They come from each sprite's animation table (graphics/sprite/<name>.tsv).
+   The party's are reached through their animation lists. */
 enum {
 	/* Menardi standing, her hair blown back (menardi.tsv). */
 	MENARDI_ANIMATION_STAND_WINDSWEPT = 5,
 	MENARDI_ANIMATION_LIE = 7, /* lying on her side */
-	/* Menardi falling into the lighthouse, as SATUROS_ANIMATION_TIP to _SINK.
-	 */
+	/* Menardi falling into the lighthouse, as SATUROS_ANIMATION_TIP to
+	   _SINK. */
 	MENARDI_ANIMATION_TIP = 8,
 	MENARDI_ANIMATION_SLUMP = 9,
 	MENARDI_ANIMATION_SINK = 10,
-	/* Garet on his knees, Ivan and Mia lying down, as the party lies on the */
-	/* broken aerie (garet.tsv to mia.tsv). */
+	/* Garet on his knees, Ivan and Mia lying down, as the party lies on the
+	   broken aerie (garet.tsv to mia.tsv). */
 	ANIM_PARTY_KNOCKED_DOWN = 18,
 	ANIM_LEADER_KNOCKED_DOWN = 19 /* Isaac lying on his back (isaac.tsv) */
 };
@@ -218,48 +202,50 @@ enum {
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
 
-/* The heavy breathing of someone worn out: Saturos and Menardi lying hurt */
-/* after the first battle, and Isaac as he gets up after Sheba's fall. The */
-/* sprite stretches taller and narrower and settles back over six frames, */
-/* then keeps still for 80 to 159 frames before the next breath. */
-static s32 scVenusLighthouseAeriePulseActorScale(ACTOR *actor) {
+/* The heavy breathing of someone worn out: Saturos and Menardi lying hurt after
+   the first battle, and Isaac as he gets up after Sheba's fall. The sprite
+   stretches taller and narrower and settles back over six frames, then keeps
+   still for 80 to 159 frames before the next breath. */
+static Sint32 scVenusLighthouseAeriePulseActorScale(ACTOR *actor)
+{
 	switch(actor->tmr) {
 	case 6:
-		actor->scaleX -= FIXED_ONE / 8;
-		actor->scaleY += FIXED_ONE / 16;
+		actor->scaleX -= toFIXED(1) / 8;
+		actor->scaleY += toFIXED(1) / 16;
 		break;
 	case 4:
-		actor->scaleX += FIXED_ONE / 16;
-		actor->scaleY -= FIXED_ONE / 32;
+		actor->scaleX += toFIXED(1) / 16;
+		actor->scaleY -= toFIXED(1) / 32;
 		break;
 	case 2:
-		actor->scaleX += FIXED_ONE / 32;
-		actor->scaleY -= FIXED_ONE / 64;
+		actor->scaleX += toFIXED(1) / 32;
+		actor->scaleY -= toFIXED(1) / 64;
 		break;
 	case 0:
-		actor->scaleX += FIXED_ONE / 32;
-		actor->scaleY -= FIXED_ONE / 64;
+		actor->scaleX += toFIXED(1) / 32;
+		actor->scaleY -= toFIXED(1) / 64;
 		actor->tmr = syMathRemainderUnsigned(syRandomNext(), 80) + 80;
 		break;
 	}
 	{
-		s32 frames = (u16)actor->tmr;
+		Sint32 frames = (Uint16)actor->tmr;
 		frames--;
 		actor->tmr = frames;
 	}
 	return 1;
 }
 
-/* A drifting particle loses a PARTICLE_DRAG_X-th of its x speed and a */
-/* PARTICLE_DRAG_Z-th of its z speed each frame. */
+/* A drifting particle loses a PARTICLE_DRAG_X-th of its x speed and a
+   PARTICLE_DRAG_Z-th of its z speed each frame. */
 enum { PARTICLE_DRAG_X = 22, PARTICLE_DRAG_Z = 20 };
 
-/* A particle of the bursts that fly out of Saturos and Menardi as they draw */
-/* on the beacon: it slows as it drifts, turning and shrinking. */
-static void scVenusLighthouseAerieUpdateDriftingParticle(ACTOR *actor) {
+/* A particle of the bursts that fly out of Saturos and Menardi as they draw on
+   the beacon: it slows as it drifts, turning and shrinking. */
+static void scVenusLighthouseAerieUpdateDriftingParticle(ACTOR *actor)
+{
 	FIELD_EFFECT *effect = (FIELD_EFFECT *)actor;
-	s32 velocityX = effect->vel.x;
-	s32 velocityZ;
+	Sint32		  velocityX = effect->vel.x;
+	Sint32		  velocityZ;
 
 	effect->x += velocityX;
 	effect->y += effect->vel.y;
@@ -272,18 +258,17 @@ static void scVenusLighthouseAerieUpdateDriftingParticle(ACTOR *actor) {
 	effect->spr->rotation += effect->spin;
 }
 
-/* Felix's sprite turns as he dives off the broken aerie after Sheba, 5/128 of
- */
-/* a turn a frame, until he has turned over: from upright, 13 frames and about
- */
-/* half a turn. */
-static void scVenusLighthouseAerieStepSprRotation(ACTOR *actor) {
-	SPR *sprite = actor->spr;
-	u16 rotation = sprite->rotation;
+/* Felix's sprite turns as he dives off the broken aerie after Sheba, 5/128 of a
+   turn a frame, until he has turned over: from upright, 13 frames and about
+   half a turn. */
+static void scVenusLighthouseAerieStepSprRotation(ACTOR *actor)
+{
+	SPR	  *sprite = actor->spr;
+	Uint16 rotation = sprite->rotation;
 
-	if((s16)(rotation - 1) < 0) {
+	if((Sint16)(rotation - 1) < 0) {
 		{
-			s32 nextRotation = rotation - TRIG_TURN * 5 / 128;
+			Sint32 nextRotation = rotation - TRIG_TURN * 5 / 128;
 			sprite->rotation = nextRotation;
 		}
 	}
@@ -291,18 +276,25 @@ static void scVenusLighthouseAerieStepSprRotation(ACTOR *actor) {
 
 #include "shared/actor_heading.c"
 
-const SCENE_ENTRANCE *scGetEntrances(void) {
+const SCENE_ENTRANCE *scGetEntrances(void)
+{
 	return VenusLighthouseAerieEntrances;
 }
 
-const SCENE_EXIT_REGION *scGetExitRegions(void) { return 0; }
+const SCENE_EXIT_REGION *scGetExitRegions(void)
+{
+	return 0;
+}
 
-const u32 *scGetExits(void) { return VenusLighthouseAerieExits; }
+const Uint32 *scGetExits(void)
+{
+	return VenusLighthouseAerieExits;
+}
 
 /* Returns the beacon's statues, the platforms, Saturos and Menardi, Felix and
- */
-/* Sheba, the party and the beacon effects. */
-const ACTOR_PLACE *scGetActorPlacements(void) {
+   Sheba, the party and the beacon effects. */
+const ACTOR_PLACE *scGetActorPlacements(void)
+{
 	return VenusLighthouseAerieActorPlacements;
 }
 
@@ -316,28 +308,31 @@ const ACTOR_PLACE *scGetActorPlacements(void) {
 /* The beacon has erupted, and its particles rise higher. */
 #define FLAG_VENUS_AERIE_BEACON_ERUPTED FLAG_SCENE_TEMP_36
 /* The beacon's light has lifted the party and flashed white. */
-#define FLAG_VENUS_AERIE_PARTY_LIFTED FLAG_SCENE_TEMP_37
+#define FLAG_VENUS_AERIE_PARTY_LIFTED	FLAG_SCENE_TEMP_37
 /* The leader stands on one of the floating platforms. */
-#define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_SCENE_TEMP_50
+#define FLAG_VENUS_AERIE_ON_PLATFORM	FLAG_SCENE_TEMP_50
 
-/* Walking off the edge of the floor or of a platform toward the next one, */
-/* Isaac springs and leaps two cells across onto it, if there is somewhere */
-/* to land. */
-static void scVenusLighthouseAerieJumpToNextPlatform(void) {
+/* Walking off the edge of the floor or of a platform toward the next one, Isaac
+   springs and leaps two metatiles across onto it, if there is somewhere to
+   land. */
+static void scVenusLighthouseAerieJumpToNextPlatform(void)
+{
 	ACTOR *actor;
+
 	union {
 		FIELD_POS pos;
-		s32 coordinates[3];
+		Sint32	  coordinates[3];
 	} destination;
-	s32 angle;
-	u8 flags;
+
+	Sint32 angle;
+	Uint8  flags;
 
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
 	angle = FACING_NEAREST_EIGHTH(actor->facing);
 	flags = actor->motionFlg;
 	SET_VECTOR(destination.coordinates,
-			   (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8), actor->y.fixed,
-			   (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
+		(actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8), actor->y.fixed,
+		(actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8));
 	syVectorAddPolarOffset(toFIXED(32), angle, destination.coordinates);
 	if(syFieldActorCheckMovementCollision(actor, &destination.pos) == 0) {
 		gmFlagClear(FLAG_VENUS_AERIE_ON_PLATFORM);
@@ -352,23 +347,24 @@ static void scVenusLighthouseAerieJumpToNextPlatform(void) {
 		actor->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
 		fdActorSetSprFlags(actor, 0);
 		fdActorMoveToAndWait(ACTOR_PARTY_LEADER,
-							 FIXEDtoINT(destination.coordinates[0]),
-							 FIXEDtoINT(destination.coordinates[2]));
+			FIXEDtoINT(destination.coordinates[0]),
+			FIXEDtoINT(destination.coordinates[2]));
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
 		actor->motionFlg = flags;
 	}
 }
 
-/* As Isaac lands on a platform, it stops bobbing, dips under him and springs */
-/* back up. */
-static void scVenusLighthouseAerieLandOnPlatform(void) {
+/* As Isaac lands on a platform, it stops bobbing, dips under him and springs
+   back up. */
+static void scVenusLighthouseAerieLandOnPlatform(void)
+{
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 	ACTOR *platform;
-	s32 platformId;
-	FIXED reboundStep;
+	Sint32 platformId;
+	FIXED  reboundStep;
 
-	fdEventStart();
+	fdScriptStart();
 	platformId = scActorFindNearestFloatingPlatform();
 	VenusLighthouseAerie_LandedPlatform = platformId;
 	if(platformId != 0) {
@@ -397,15 +393,15 @@ static void scVenusLighthouseAerieLandOnPlatform(void) {
 		leader->y.fixed += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
 	}
-	fdEventEnd();
+	fdScriptEnd();
 }
 
-/* Stepping onto the floor at either end of a row of platforms (cells */
-/* (12, 12) and (25, 12) beside the middle of the aerie, and (31, 10) on the */
-/* tower in the north-east), and just before each jump, sets all six */
-/* platforms bobbing in the air again, so the one Isaac stood on no longer */
-/* holds still. */
-static void scVenusLighthouseAerieFloatPlatforms(void) {
+/* Stepping onto the floor at either end of a row of platforms (metatiles (12,
+   12) and (25, 12) beside the middle of the aerie, and (31, 10) on the tower in
+   the north-east), and just before each jump, sets all six platforms bobbing in
+   the air again, so the one Isaac stood on no longer holds still. */
+static void scVenusLighthouseAerieFloatPlatforms(void)
+{
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdActorGet(ACTOR_FIRST_PLATFORM)->motionFlg = ACTOR_FLOATS;
@@ -416,15 +412,19 @@ static void scVenusLighthouseAerieFloatPlatforms(void) {
 	fdActorGet(ACTOR_LAST_PLATFORM)->motionFlg = ACTOR_FLOATS;
 }
 
-/* The aerie's events: the platforms, and the beacon where Saturos and */
-/* Menardi wait. */
-const TRIGGER *scGetTriggers(void) { return VenusLighthouseAerieTriggers; }
+/* The aerie's scripts: the platforms, and the beacon where Saturos and Menardi
+   wait. */
+const CUE *scGetCues(void)
+{
+	return VenusLighthouseAerieCues;
+}
 
 /* Sets up the beacon's statues and the six platforms. */
-s32 scInit(void) {
-	FIXED mirroredScale;
-	u32 platformId;
-	s16 entrance;
+Sint32 scInit(void)
+{
+	FIXED  mirroredScale;
+	Uint32 platformId;
+	Sint16 entrance;
 	ACTOR *platform;
 
 	gmFlagSet(FLAG_RETREAT_BLOCKED);
@@ -434,7 +434,7 @@ s32 scInit(void) {
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEACON_STATUE_NORTHWEST), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEACON_STATUE_NORTHEAST), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEACON_STATUE_SOUTHEAST), 0);
-	mirroredScale = -FIXED_ONE;
+	mirroredScale = -toFIXED(1);
 	fdActorGet(ACTOR_BEACON_STATUE_NORTHEAST)->scaleX = mirroredScale;
 	fdActorGet(ACTOR_BEACON_STATUE_SOUTHEAST)->scaleX = mirroredScale;
 	for(platformId = ACTOR_FIRST_PLATFORM; platformId <= ACTOR_LAST_PLATFORM;
@@ -468,25 +468,22 @@ s32 scInit(void) {
 		scVenusLighthouseAerieStageShebasFall();
 		break;
 	case VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT:
-		fdEventStart();
+		fdScriptStart();
 		if(gmFlagGet(FLAG_SHAMANS_ROD_CARRIED_BY) != 0) {
 			gmInventoryAddItem(ISAAC, ITEM_SHAMANS_ROD);
-		}
-		else if(gmFlagGet(FLAG_SHAMANS_ROD_CARRIED_BY + 1) != 0) {
+		} else if(gmFlagGet(FLAG_SHAMANS_ROD_CARRIED_BY + 1) != 0) {
 			gmInventoryAddItem(GARET, ITEM_SHAMANS_ROD);
-		}
-		else if(gmFlagGet(FLAG_SHAMANS_ROD_CARRIED_BY + 2) != 0) {
+		} else if(gmFlagGet(FLAG_SHAMANS_ROD_CARRIED_BY + 2) != 0) {
 			gmInventoryAddItem(IVAN, ITEM_SHAMANS_ROD);
-		}
-		else {
+		} else {
 			gmInventoryAddItem(MIA, ITEM_SHAMANS_ROD);
 		}
-		syImportEventSetExitRequest(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B);
+		syImportScriptSetExitRequest(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B);
 		break;
 	}
 
 	if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
-		s32 slot = scActorFindNearestFloatingPlatform();
+		Sint32 slot = scActorFindNearestFloatingPlatform();
 
 		if(slot != 0) {
 			ACTOR *nearestPlatform = fdActorGet(slot);
@@ -498,27 +495,30 @@ s32 scInit(void) {
 	return 0;
 }
 
-/* Shows the event's next line, then waits ten frames. */
-static void scVenusLighthouseAerieShowMessage(s32 speaker) {
-	fdEventShowMessage(speaker, 0);
-	fdEventWait(10);
+/* Shows the script's next line, then waits ten frames. */
+static void scVenusLighthouseAerieShowMessage(Sint32 speaker)
+{
+	fdScriptShowMessage(speaker, 0);
+	fdScriptWait(10);
 }
 
 /* Turns one actor and waits ten frames. */
-static void scVenusLighthouseAerieFaceActor(s32 actorId, s32 facing) {
+static void scVenusLighthouseAerieFaceActor(Sint32 actorId, Sint32 facing)
+{
 	fdActorFaceDirection(actorId, facing, 10);
 }
 
-/* A floating platform carries Isaac up beside the tower in the north-east of */
-/* the aerie onto its top, and the party looks across to the beacon, where */
-/* Saturos and Menardi argue with Felix over Sheba and the lighthouses still */
-/* to light. */
-static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
+/* A floating platform carries Isaac up beside the tower in the north-east of
+   the aerie onto its top, and the party looks across to the beacon, where
+   Saturos and Menardi argue with Felix over Sheba and the lighthouses still to
+   light. */
+static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void)
+{
 	ACTOR *arrivalPlatform;
 	ACTOR *leader;
 
 	arrivalPlatform = fdActorGet(ACTOR_RISING_PLATFORM);
-	fdEventStart();
+	fdScriptStart();
 	scVenusLighthouseAerieShowPartyMember(ACTOR_GARET, 0);
 	scVenusLighthouseAerieShowPartyMember(ACTOR_IVAN, 0);
 	scVenusLighthouseAerieShowPartyMember(ACTOR_MIA, 0);
@@ -534,9 +534,9 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 581, 288);
 	sySynch(1);
-	fdEventStartScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventWait(20);
+	fdScriptStartScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_RISING_PLATFORM, 1);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
@@ -550,7 +550,7 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	fdActorSetDestination(ACTOR_RISING_PLATFORM, 515, 171);
 	fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 516, 121);
 	sySndPlay(SE_STOP_ACTION_SE);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
 	fdActorWaitForAnimationChange(ACTOR_PARTY_LEADER);
 	leader->x.fixed = toFIXED(516);
@@ -563,11 +563,11 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	sySndPlay(SE_JUMP);
 	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
 	fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
-	fdEventWait(10);
+	fdScriptWait(10);
 	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
 	leader->facing = FACING_SOUTH;
 	leader->y.fixed = -toFIXED(32);
-	fdEventWait(20);
+	fdScriptWait(20);
 	sySndPlay(SE_MATERIALIZE);
 	fdActorMoveToAndWait(ACTOR_RISING_PLATFORM, 524, 191);
 	fdActorSetSprFlags(fdActorGet(ACTOR_RISING_PLATFORM), 0);
@@ -593,7 +593,7 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	fdActorWaitForMoveById(ACTOR_RISING_PLATFORM);
 	fdActorSetPos(ACTOR_RISING_PLATFORM, 0, 0);
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
-	fdEventSetMessageId(MsgVenusLongLastTime);
+	fdScriptSetMessageId(MsgVenusLongLastTime);
 	/* "At long last, the time has come to light Venus Lighthouse's beacon." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MENARDI);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -604,7 +604,7 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	fdCameraSetSpeed(4.8);
 	fdCameraMoveTo(304, 32, 158, 1);
 	fdCameraWaitForMove();
-	fdEventWait(20);
+	fdScriptWait(20);
 	scVenusLighthouseAerieFaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 1);
 	sySndPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
@@ -626,11 +626,11 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 20);
 	fdCameraSetSpeed(1.6);
 	fdCameraMoveTo(294, CAMERA_KEEP, 194, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_FELIX, 0.8);
 	fdActorWalkToAndWait(ACTOR_FELIX, 272, 200);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "Why are you still here, Felix?" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
@@ -647,7 +647,7 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	/* "A promise, you say?" */
-	fdEventShowMessageThenWait(ACTOR_MENARDI, 0, 40);
+	fdScriptShowMessageThenWait(ACTOR_MENARDI, 0, 40);
 	fdActorShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
 	scVenusLighthouseAerieFaceActor(ACTOR_MENARDI, FACING_WEST);
 	/* "You must mean Sheba..." */
@@ -667,16 +667,16 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	/* "And that's what brought you back here?" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-	/* "You promised not to involve anyone who wasn't related to this matter."
-	 */
-	fdEventShowMessageThenWait(ACTOR_FELIX, 0, 20);
+	/* "You promised not to involve anyone who wasn't related to this
+	   matter." */
+	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 20);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_WEST, 40);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
 	/* "Sheba is special." */
-	fdEventShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 40);
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 40);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
 	/* "Of course..." */
-	fdEventShowMessageThenWait(ACTOR_FELIX, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 20);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 20);
 	fdActorStartRepeatedMotion(ACTOR_FELIX, 2);
 	/* "Because Sheba is a special Adept?" */
@@ -694,31 +694,31 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorStartRepeatedMotion(ACTOR_MENARDI, 1);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
 	/* "Right now, we have Fire, Earth, and Water Adepts, but no Wind Adept." */
-	fdEventShowMessageThenWait(ACTOR_FELIX, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 20);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
 	/* "That does seem to be the case." */
-	fdEventShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 20);
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 20);
 	scVenusLighthouseAerieFaceActor(ACTOR_FELIX, FACING_NORTH_NORTHWEST);
 	/* "Do we need Sheba to get into the Jupiter Lighthouse?" */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	scVenusLighthouseAerieFaceActor(ACTOR_SHEBA, FACING_SOUTH_SOUTHEAST);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
-	fdEventWait(20);
+	fdScriptWait(20);
 	scVenusLighthouseAerieFaceActor(ACTOR_FELIX, FACING_NORTH_NORTHEAST);
 	fdActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
 	/* "I'm sorry, Felix, but we cannot even enter without a Wind Adept." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
-	/* "That being the case, I guess I understand why you can't set Sheba free."
-	 */
+	/* "That being the case, I guess I understand why you can't set Sheba
+	   free." */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
-	/* "It seems that you, too, have learned something. If that is all, then..."
-	 */
+	/* "It seems that you, too, have learned something. If that is all,
+	   then..." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
 	/* "No. I cannot leave Sheba behind!" */
@@ -739,12 +739,12 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	/* "What are you talking about, Felix?" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorStartRepeatedMotion(ACTOR_FELIX, 2);
-	/* "We don't know what will happen when you light this beacon. I won't..."
-	 */
+	/* "We don't know what will happen when you light this beacon. I
+	   won't..." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FELIX);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
 	/* "We told you that we'd protect Sheba. Don't you trust us?" */
-	syFieldEventShowMessageThenWait(
+	syFieldScriptShowMessageThenWait(
 		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 20);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
 	/* "That's not what I'm saying... It's just best to be safe." */
@@ -757,32 +757,32 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FELIX);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
 	/* "How can we, after you just demanded we free Sheba?" */
-	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW |
-									  SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
+	scVenusLighthouseAerieShowMessage(
+		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
 	/* "If we had trusted you a moment ago, Sheba would be free now." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_WEST, 20);
 	/* "Come with me, Sheba! I shall protect you!" */
-	fdEventShowMessageThenWait(
+	fdScriptShowMessageThenWait(
 		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
 	fdActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
 	/* "Are you ready to do this, even though it means fighting us?" */
-	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW |
-									  SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
+	scVenusLighthouseAerieShowMessage(
+		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_EAST, 40);
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_NOD);
 	/* "...I believe he is! He would not have defied us if he lacked the
-	 * will..." */
+	   will..." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
 	/* "If it means protecting Sheba from harm, then I must." */
-	fdEventShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_FELIX, 0, 20);
+	fdScriptShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_FELIX, 0, 20);
 	/* "You have seen what we can do. You know you can't stop us." */
-	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW |
-									  SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
+	scVenusLighthouseAerieShowMessage(
+		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
 	/* "How can you protect Sheba, when you can't even protect yourself?" */
@@ -790,31 +790,31 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	fdActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
 	/* "This rebellious attitude is exactly why we've never let you fight." */
-	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW |
-									  SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
+	scVenusLighthouseAerieShowMessage(
+		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
 	/* "Haven't you been given enough reason to fear us in these travels?" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_SATUROS, 2);
 	/* "You're no fighter, Felix. How can you hope to stand against us?" */
-	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW |
-									  SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
+	scVenusLighthouseAerieShowMessage(
+		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
 	/* "You've questioned us for the last time! Let's see what you can do!" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-	fdEventFinishScrTransition();
-	fdEventWaitTransitionFrames();
+	fdScriptFinishScreenTransition();
+	fdScriptWaitTransitionFrames();
 	fdCameraMoveTo(504, -24, 168, 0);
 	sySynch(1);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	fdEventStartScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventWait(20);
+	fdScriptStartScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 1);
 	/* "It looks like they're having a falling out over Sheba." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GARET);
@@ -823,21 +823,21 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_MIA);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	/* "It seems Saturos and Menardi no longer trust Felix." */
-	fdEventShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 40);
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 40);
 	fdActorJump(ACTOR_GARET, 2, 20);
 	/* "Looks like the perfect opportunity has just fallen into our laps!" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GARET);
 	/* "Now's our only chance to prevent them from lighting the beacon!" */
-	fdEventOpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_GARET, 0);
+	fdScriptOpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_GARET, 0);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
-	if(fdEventAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
+	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
 		FieldStateWork->msg += 1;
 	}
-	fdEventWait(20);
-	/* Yes: "There's not a moment to spare! Let's move!" */
-	/* No: "Don't chicken out now! If we hesitate, they'll light the beacon!" */
+	fdScriptWait(20);
+	/* Yes: "There's not a moment to spare! Let's move!" No: "Don't chicken out
+	   now! If we hesitate, they'll light the beacon!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_GARET);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_WEST, 20);
@@ -848,36 +848,36 @@ static void scVenusLighthouseAerieOverhearSaturosAndMenardi(void) {
 	fdActorSetScript(ACTOR_GARET, VenusLighthouseAerie_JoinLeaderScript);
 	fdActorSetScript(ACTOR_IVAN, VenusLighthouseAerie_JoinLeaderScript);
 	fdActorRunScriptAndWait(ACTOR_MIA, VenusLighthouseAerie_JoinLeaderScript);
-	fdEventWait(20);
-	fdEventEnd();
+	fdScriptWait(20);
+	fdScriptEnd();
 }
 
 /* Shows or hides one companion, setting its movement speed when shown. */
-static void scVenusLighthouseAerieShowPartyMember(s32 actorId, s32 shown) {
+static void scVenusLighthouseAerieShowPartyMember(Sint32 actorId, Sint32 shown)
+{
 	if(shown != 0) {
 		fdActorSetSprColById(actorId, SPRITE_COLOR_NORMAL);
 		fdActorSetSprFlags(fdActorGet(actorId), SPRITE_FLAG_SHADOW);
 		fdActorSetSpeed(actorId, 0.8);
-	}
-	else {
+	} else {
 		fdActorSetSprColById(actorId, SPRITE_COLOR_HIDDEN);
 		fdActorSetSprFlags(fdActorGet(actorId), 0);
 	}
 }
 
-/* Isaac walks up to the beacon in the middle of the aerie (cells (20, 14) and
- */
-/* (21, 14)) and the party confronts Saturos and Menardi. Saturos offers a */
-/* deal for the Shaman's Rod, the party hands it over for Sheba's sake, */
-/* Saturos keeps her all the same, and the battle begins. */
-static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
-	s32 rodHolder;
+/* Isaac walks up to the beacon in the middle of the aerie (metatiles (20, 14)
+   and (21, 14)) and the party confronts Saturos and Menardi. Saturos offers a
+   deal for the Shaman's Rod, the party hands it over for Sheba's sake, Saturos
+   keeps her all the same, and the battle begins. */
+static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void)
+{
+	Sint32 rodHolder;
 	ACTOR *actor;
-	s32 answeredYes;
-	u32 frame;
-	s32 receiptMessage;
+	Sint32 answeredYes;
+	Uint32 frame;
+	Sint32 receiptMessage;
 
-	fdEventStart();
+	fdScriptStart();
 	fdCameraGetActor()->motionFlg = 0;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(332, 32, 180, 1);
@@ -885,10 +885,10 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 340, 184);
 	scVenusLighthouseAerieFaceActor(ACTOR_PARTY_LEADER, FACING_WEST);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
-	fdEventSetMessageId(MsgVenusIsaac);
+	fdScriptSetMessageId(MsgVenusIsaac);
 	/* "Isaac..." */
-	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW |
-									  SPEAKER_PORTRAIT_LEFT | ACTOR_FELIX);
+	scVenusLighthouseAerieShowMessage(
+		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_FELIX);
 	fdCameraGetActor()->motionFlg = 0;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(304, 32, 180, 1);
@@ -928,22 +928,22 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorStartRepeatedMotion(ACTOR_FELIX, 2);
 	/* "I was just about to settle things with Saturos and Menardi... You
-	 * can..." */
-	fdEventShowMessageThenWait(ACTOR_FELIX, 0, 20);
+	   can..." */
+	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 20);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 40);
 	/* "And then we'll show you the true power of this beacon's light!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
 	scVenusLighthouseAerieFaceActor(ACTOR_FELIX, FACING_EAST);
 	/* "But...Sheba has nothing to do with this! So set Sheba free!" */
-	fdEventShowMessageThenWait(ACTOR_FELIX, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 20);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 1);
 	scVenusLighthouseAerieFaceActor(ACTOR_SATUROS, FACING_WEST);
-	/* "Silence! You'd best tread lightly, Felix, or both you and Sheba will..."
-	 */
+	/* "Silence! You'd best tread lightly, Felix, or both you and Sheba
+	   will..." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
-	fdActorSetAttachedEffect(ACTOR_MIA,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorStartRepeatedMotion(ACTOR_MIA, 2);
 	/* "If anything happens to Sheba, we will have failed Faran..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_MIA);
@@ -985,7 +985,7 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	/* "The rod required to reach the Jupiter Lighthouse!" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_SHEBA, ANIM_NOD);
 	/* "Ye-Yes..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_SHEBA);
@@ -1010,15 +1010,15 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorFaceDirection(ACTOR_FELIX, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_EAST, 20);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
-	fdEventWait(40);
-	scStartEventPsynergy();
+	fdScriptWait(40);
+	scStartScriptPsynergy();
 	sySynch(1);
 	for(frame = 0; frame <= 39; frame++) {
 		scVenusLighthouseAerieFlashActorPalette(fdActorGet(ACTOR_SHEBA));
 		sySynch(1);
 	}
-	syTaskAddFrame(scVenusLighthouseAerieUpdateShebaPalette, TASK_PASS_FRAME);
-	fdEventWait(80);
+	sySetFrameEvent(scVenusLighthouseAerieUpdateShebaPalette, EVENT_PASS_FRAME);
+	fdScriptWait(80);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
@@ -1031,8 +1031,8 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	scVenusLighthouseAerieFaceActor(ACTOR_FELIX, FACING_WEST);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 	/* "How about it, Sheba?" */
-	syFieldEventShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0,
-									20);
+	syFieldScriptShowMessageThenWait(
+		SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 20);
 	fdActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
 	fdActorStartRepeatedMotion(ACTOR_MENARDI, 2);
 	/* "Well, Sheba?" */
@@ -1041,7 +1041,7 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	sySynch(1);
 	fdActorSetSprColById(ACTOR_SHEBA, SPRITE_COLOR_NORMAL);
 	sySynch(10);
-	scEndEventPsynergy();
+	scEndScriptPsynergy();
 	fdActorJump(ACTOR_SHEBA, 2, 40);
 	/* "...Perhaps..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_SHEBA);
@@ -1051,7 +1051,7 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
 	fdActorGet(ACTOR_SHEBA)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SHEBA, 250, 176);
-	fdEventWait(1);
+	fdScriptWait(1);
 	fdActorGet(ACTOR_SHEBA)->steeringFlg |= ACTOR_FACES_MOTION;
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_EAST, 20);
@@ -1061,21 +1061,21 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	/* "We're not yelling! We just want a straight answer." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
-	fdEventWait(40);
+	fdScriptWait(40);
 	fdActorSetSpeed(ACTOR_SHEBA, 0.6);
 	fdActorGet(ACTOR_SHEBA)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SHEBA, 248, 172);
-	fdEventWait(1);
+	fdScriptWait(1);
 	fdActorGet(ACTOR_SHEBA)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
 	/* "So, Sheba?" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 	/* "Their minds are veiled. I cannot see clearly...but I think...it's
-	 * the..." */
+	   the..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_SHEBA);
 	fdActorFaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 20);
@@ -1089,28 +1089,27 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_MENARDI);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 100);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	scVenusLighthouseAerieFaceActor(ACTOR_SATUROS, FACING_EAST);
 	scVenusLighthouseAerieFaceActor(ACTOR_MENARDI, FACING_EAST);
 	/* "Do you know the terms we will require before we agree not to harm
-	 * Sheba?" */
-	fdEventOpenMessage(ACTOR_SATUROS, 0);
+	   Sheba?" */
+	fdScriptOpenMessage(ACTOR_SATUROS, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
-	if(fdEventAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-		fdEventWait(20);
+	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
 		answeredYes = 1;
-	}
-	else {
-		fdEventWait(20);
+	} else {
+		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
 		FieldStateWork->msg += 1;
 		answeredYes = 0;
 	}
-	/* Yes: "You're smarter than I thought if you've already figured it out." */
-	/* No: "I want the rod that will get us into Jupiter Lighthouse." */
+	/* Yes: "You're smarter than I thought if you've already figured it out."
+	   No: "I want the rod that will get us into Jupiter Lighthouse." */
 	scVenusLighthouseAerieShowMessage(ACTOR_SATUROS);
 	if(answeredYes != 0) {
 		FieldStateWork->msg += 1;
@@ -1120,25 +1119,23 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorFaceDirection(ACTOR_MIA, FACING_WEST, 20);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
 	/* "If you give us the Shaman's Rod, Sheba will not be harmed. Agreed?" */
-	fdEventOpenMessage(ACTOR_SATUROS, 0);
+	fdScriptOpenMessage(ACTOR_SATUROS, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
-	if(fdEventAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-		fdEventWait(20);
+	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+		fdScriptWait(20);
 		fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
 		answeredYes = 1;
-	}
-	else {
-		fdEventWait(20);
+	} else {
+		fdScriptWait(20);
 		fdActorSetAnimation(ACTOR_IVAN, ANIM_SHAKE_HEAD);
 		FieldStateWork->msg += 1;
 		answeredYes = 0;
 	}
 	/* Yes: "The Shaman's Rod? If it means saving Sheba, I will give it to you."
-	 */
-	/* No: "He wants the Shaman's Rod. If it will save Sheba, I'll give it up."
-	 */
+	   No: "He wants the Shaman's Rod. If it will save Sheba, I'll give it
+	   up." */
 	scVenusLighthouseAerieShowMessage(ACTOR_IVAN);
 	if(answeredYes != 0) {
 		FieldStateWork->msg += 1;
@@ -1156,7 +1153,7 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
 	/* "Then you will give us the rod!" */
-	fdEventShowMessageThenWait(ACTOR_SATUROS, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_SATUROS, 0, 20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
@@ -1167,14 +1164,14 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_MENARDI);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 20);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
-	fdEventWait(40);
+	fdScriptWait(40);
 	scVenusLighthouseAerieFaceActor(ACTOR_SATUROS, FACING_WEST);
 	/* "Go get it, Felix!" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 2);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "Why me?" */
-	fdEventShowMessageThenWait(ACTOR_FELIX, 0, 40);
+	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 40);
 	/* "To ensure your loyalty to us!" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
@@ -1184,18 +1181,18 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_FELIX, 0.8);
 	fdActorWalkToAndWait(ACTOR_FELIX, 288, 192);
 	fdActorFaceDirection(ACTOR_MENARDI, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_EAST, 0);
 	fdActorWalkToAndWait(ACTOR_FELIX, 310, 192);
 	fdActorWalkToAndWait(ACTOR_FELIX, 328, 186);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 2);
 
-	/* Felix takes the Shaman's Rod from Isaac and carries it back to Saturos.
-	 */
+	/* Felix takes the Shaman's Rod from Isaac and carries it back to
+	   Saturos. */
 	receiptMessage = MsgVenusIsaacHandedOverShamansRod;
 	/* "Isaac handed over the Shaman's Rod." */
 	mnFieldMessageShow(receiptMessage, 1);
@@ -1205,7 +1202,7 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorWalkToAndWait(ACTOR_FELIX, 288, 192);
 	fdActorWalkToAndWait(ACTOR_FELIX, 262, 176);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_EAST, 40);
-	fdEventSetMessageId(receiptMessage + 1);
+	fdScriptSetMessageId(receiptMessage + 1);
 	/* "What should I do with the rod?" */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
@@ -1259,8 +1256,8 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_MIA);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHEAST, 20);
-	/* "You seem to have misunderstood. I said we wouldn't harm Sheba... but..."
-	 */
+	/* "You seem to have misunderstood. I said we wouldn't harm Sheba...
+	   but..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_SATUROS);
 	fdActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1282,15 +1279,15 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	/* "What do you mean?" */
-	fdEventShowMessageThenWait(ACTOR_MIA, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 20);
 	scVenusLighthouseAerieFaceActor(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST);
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
 	/* "Sheba can't get back to Lalivero alone." */
 	scVenusLighthouseAerieShowMessage(ACTOR_MENARDI);
-	fdActorSetAttachedEffect(ACTOR_IVAN,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	/* "What do you mean? We're going to take Sheba... Oh no..." */
-	fdEventShowMessageThenWait(ACTOR_IVAN, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_IVAN, 0, 20);
 	scVenusLighthouseAerieFaceActor(ACTOR_MENARDI, FACING_EAST);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
 	/* "That's right. You won't be going back. This is it for you!" */
@@ -1318,7 +1315,7 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
 	fdActorStartRepeatedMotion(ACTOR_SATUROS, 2);
 	/* "Bring it on, whelp! You won't live long enough to regret your
-	 * stupidity!" */
+	   stupidity!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_SATUROS);
 	fdActorRunRepeatedMotion(ACTOR_MENARDI, 1);
 	/* "Prepare to experience first-hand the horror of a master Fire Adept!" */
@@ -1334,21 +1331,21 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 	fdActorGet(ACTOR_SATUROS)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorGet(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorGet(ACTOR_SHEBA)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorSetScript(ACTOR_PARTY_LEADER,
-					 VenusLighthouseAerie_StepBackWestScript);
+	fdActorSetScript(
+		ACTOR_PARTY_LEADER, VenusLighthouseAerie_StepBackWestScript);
 	fdActorSetScript(ACTOR_GARET, VenusLighthouseAerie_StepBackWestScript);
 	fdActorSetScript(ACTOR_IVAN, VenusLighthouseAerie_StepBackWestScript);
 	fdActorSetScript(ACTOR_MIA, VenusLighthouseAerie_StepBackWestScript);
 	fdActorSetScript(ACTOR_MENARDI, VenusLighthouseAerie_StepBackEastScript);
 	fdActorSetScript(ACTOR_SATUROS, VenusLighthouseAerie_StepBackEastScript);
 	fdActorSetScript(ACTOR_FELIX, VenusLighthouseAerie_StepBackWestScript);
-	fdActorRunScriptAndWait(ACTOR_SHEBA,
-							VenusLighthouseAerie_StepBackWestScript);
-	btSetType(BATTLE_TYPE_SCRIPTED);
-	fdEventSetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
-									 VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE);
-	fdEventSetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
-								VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
+	fdActorRunScriptAndWait(
+		ACTOR_SHEBA, VenusLighthouseAerie_StepBackWestScript);
+	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
+	fdScriptSetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
+		VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE);
+	fdScriptSetDefeatDestination(
+		SCENE_VENUS_LIGHTHOUSE_AERIE, VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 1);
 	gmFlagSet(FLAG_AERIE_FIRST_BATTLE_BEGUN);
 }
@@ -1356,13 +1353,13 @@ static void scVenusLighthouseAerieConfrontSaturosAndMenardi(void) {
 /* The frames between the Psynergy rings round a flashing actor. */
 enum { PSYNERGY_RINGS_INTERVAL = 15 };
 
-/* Flashes the actor white two frames in four, with Psynergy rings every */
-/* PSYNERGY_RINGS_INTERVAL frames. */
-static void scVenusLighthouseAerieFlashActorPalette(ACTOR *actor) {
+/* Flashes the actor white two frames in four, with Psynergy rings every
+   PSYNERGY_RINGS_INTERVAL frames. */
+static void scVenusLighthouseAerieFlashActorPalette(ACTOR *actor)
+{
 	if(FrameCount & 2) {
 		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
-	}
-	else {
+	} else {
 		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	if(syMathRemainderUnsigned(FrameCount, PSYNERGY_RINGS_INTERVAL) == 0) {
@@ -1370,9 +1367,10 @@ static void scVenusLighthouseAerieFlashActorPalette(ACTOR *actor) {
 	}
 }
 
-/* Cycles the actor through palettes 0 to 5, with Psynergy rings every */
-/* PSYNERGY_RINGS_INTERVAL frames. */
-static void scVenusLighthouseAerieCycleActorPalette(ACTOR *actor) {
+/* Cycles the actor through palettes 0 to 5, with Psynergy rings every
+   PSYNERGY_RINGS_INTERVAL frames. */
+static void scVenusLighthouseAerieCycleActorPalette(ACTOR *actor)
+{
 	if(FrameCount & 1) {
 		fdActorSetColMode(actor, syMathRemainderUnsigned(FrameCount >> 1, 6));
 	}
@@ -1385,22 +1383,25 @@ static void scVenusLighthouseAerieCycleActorPalette(ACTOR *actor) {
 #define PSYNERGY_RINGS_SOUND SE_PSYNERGY_SPARKLE
 #include "shared/psynergy_rings.c"
 
-#include "shared/event_psynergy.c"
+#include "shared/script_psynergy.c"
 
-/* Sheba glows through changing colours, with rings of Psynergy, each frame */
-/* while she reads the party's minds. */
-static void scVenusLighthouseAerieUpdateShebaPalette(void) {
+/* Sheba glows through changing colours, with rings of Psynergy, each frame
+   while she reads the party's minds. */
+static void scVenusLighthouseAerieUpdateShebaPalette(void)
+{
 	scVenusLighthouseAerieCycleActorPalette(fdActorGet(ACTOR_SHEBA));
 }
 
-/* A burst of particles flies out in BURST_DIRECTIONS directions round a */
-/* turn, the first one twice. */
+/* A burst of particles flies out in BURST_DIRECTIONS directions round a turn,
+   the first one twice. */
 enum { BURST_DIRECTIONS = 16 };
 
 /* Builds the horizontal velocity for an elliptical radial particle burst. */
-static inline void scVenusLighthouseAerieAimBurst(s32 velocity[3], s32 angle) {
-	s32 sine;
-	s32 cosine;
+static inline void scVenusLighthouseAerieAimBurst(
+	Sint32 velocity[3], Sint32 angle)
+{
+	Sint32 sine;
+	Sint32 cosine;
 
 	velocity[0] = syCos(angle);
 	velocity[1] = 0;
@@ -1413,8 +1414,9 @@ static inline void scVenusLighthouseAerieAimBurst(s32 velocity[3], s32 angle) {
 }
 
 /* Gives Felix, Sheba and the party the same reaction, then waits after Mia. */
-static inline void scVenusLighthouseAerieShowGroupEmote(s32 emote,
-														s32 waitFrames) {
+static inline void scVenusLighthouseAerieShowGroupEmote(
+	Sint32 emote, Sint32 waitFrames)
+{
 	fdActorShowEmote(ACTOR_FELIX, emote, 0);
 	fdActorShowEmote(ACTOR_SHEBA, emote, 0);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, emote, 0);
@@ -1423,25 +1425,26 @@ static inline void scVenusLighthouseAerieShowGroupEmote(s32 emote,
 	fdActorShowEmote(ACTOR_MIA, emote, waitFrames);
 }
 
-/* After the first battle, Saturos and Menardi rise again. Saturos throws the */
-/* Venus Star into the beacon, Felix and Sheba leave, and the two fuse into */
-/* the Fusion Dragon for the second battle */
-/* (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE). */
-static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
+/* After the first battle, Saturos and Menardi rise again. Saturos throws the
+   Venus Star into the beacon, Felix and Sheba leave, and the two fuse into the
+   Fusion Dragon for the second battle
+   (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE). */
+static void scVenusLighthouseAerieCombineSaturosAndMenardi(void)
+{
 	EFFECT_OPTIONS menardiBurst;
-	s32 velocity[3];
+	Sint32		   velocity[3];
 	EFFECT_OPTIONS saturosBurst;
-	ACTOR *actor;
-	ACTOR *menardi;
-	ACTOR *saturos;
-	ACTOR *star = NULL;
-	ACTOR *starShadow;
-	SPR *sprite;
+	ACTOR		  *actor;
+	ACTOR		  *menardi;
+	ACTOR		  *saturos;
+	ACTOR		  *star = NULL;
+	ACTOR		  *starShadow;
+	SPR			  *sprite;
 	ICON_TRANSFER *transfer;
-	u32 answeredYes;
+	Uint32		   answeredYes;
 
-	fdEventStart();
-	fdMapGridCopyCellAttributes(17, 10, 4, 2, 17, 8);
+	fdScriptStart();
+	fdMapGridCopyMetatileAttributes(17, 10, 4, 2, 17, 8);
 	fdActorGet(ACTOR_GARET)->facing = FACING_WEST;
 	fdActorSetPos(ACTOR_GARET, 328, 168);
 	fdActorGet(ACTOR_IVAN)->facing = FACING_WEST;
@@ -1471,13 +1474,13 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	sySynch(1);
 	fdMapGridRedraw();
 	sySynch(1);
-	fdEventStartScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventWait(80);
+	fdScriptStartScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptWait(80);
 
 	fdActorJump(ACTOR_GARET, 2, 20);
 	scVenusLighthouseAerieFaceActor(ACTOR_GARET, FACING_SOUTHEAST);
-	fdEventSetMessageId(MsgVenusBeatEm);
+	fdScriptSetMessageId(MsgVenusBeatEm);
 	/* "We did it! We beat 'em!" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET);
 	scVenusLighthouseAerieFaceActor(ACTOR_MIA, FACING_NORTHWEST);
@@ -1489,9 +1492,9 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorSetSpeed(ACTOR_FELIX, 0.8);
 	fdActorGet(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_FELIX, 280, 164);
-	fdEventWait(1);
+	fdScriptWait(1);
 	fdActorGet(ACTOR_FELIX)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
 	/* "Felix! What are you doing?" */
 	scVenusLighthouseAerieShowMessage(ACTOR_IVAN);
@@ -1525,14 +1528,13 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorRunRepeatedMotion(ACTOR_GARET, 1);
 	scVenusLighthouseAerieFaceActor(ACTOR_GARET, FACING_SOUTHEAST);
 	/* "So, wait... If he means to light the beacons, then he's our enemy,
-	 * right?" */
-	fdEventOpenMessage(ACTOR_GARET, 0);
+	   right?" */
+	fdScriptOpenMessage(ACTOR_GARET, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
-	if(fdEventAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
 		answeredYes = TRUE;
-	}
-	else {
+	} else {
 		FieldStateWork->msg++;
 		answeredYes = FALSE;
 	}
@@ -1542,26 +1544,26 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	scVenusLighthouseAerieFaceActor(ACTOR_MIA, FACING_NORTHWEST);
 	scVenusLighthouseAerieFaceActor(ACTOR_FELIX, FACING_EAST);
 	/* Yes: "Do what you will, Isaac, but if you try to stop me, I'll fight
-	 * you." */
-	/* No: "Friend or enemy, you won't stop me from taking Sheba with me!" */
-	fdEventShowMessage(ACTOR_FELIX, 0);
+	   you." No: "Friend or enemy, you won't stop me from taking Sheba with
+	   me!" */
+	fdScriptShowMessage(ACTOR_FELIX, 0);
 	sySndPlay(SOUND_FADE_OUT_BGM);
-	fdEventWait(40);
+	fdScriptWait(40);
 	if(answeredYes) {
 		FieldStateWork->msg++;
 	}
 
 	/* Saturos and Menardi recover from their defeat before using the Venus
-	 * Star. */
+	   Star. */
 	fdActorStop(ACTOR_SATUROS);
 	fdActorStop(ACTOR_MENARDI);
 	sySynch(1);
 	actor = fdActorGet(ACTOR_SATUROS);
-	actor->scaleX = FIXED_ONE;
-	actor->scaleY = FIXED_ONE;
+	actor->scaleX = toFIXED(1);
+	actor->scaleY = toFIXED(1);
 	actor = fdActorGet(ACTOR_MENARDI);
-	actor->scaleX = FIXED_ONE;
-	actor->scaleY = FIXED_ONE;
+	actor->scaleX = toFIXED(1);
+	actor->scaleY = toFIXED(1);
 	sySynch(1);
 	/* "I hope you don't think you've finished us off." */
 	scVenusLighthouseAerieShowMessage(ACTOR_SATUROS);
@@ -1572,16 +1574,16 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorFaceDirection(ACTOR_MIA, FACING_WEST, 40);
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_STAND);
 	fdActorSetSprFlags(fdActorGet(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_SATUROS, 0.2);
 	fdActorWalkToAndWait(ACTOR_SATUROS, 300, 206);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-	fdEventWait(20);
-	fdActorGet(ACTOR_SATUROS)->scaleX = -FIXED_ONE;
+	fdScriptWait(20);
+	fdActorGet(ACTOR_SATUROS)->scaleX = -toFIXED(1);
 	sySndPlay(SE_RATTLE);
 	fdActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_BREATHE);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_STAND);
 	fdActorSetSprFlags(fdActorGet(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
 	fdActorJump(ACTOR_MENARDI, 4, 40);
@@ -1591,21 +1593,21 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorSetSpeed(ACTOR_MENARDI, 0.1);
 	fdActorWalkToAndWait(ACTOR_MENARDI, 292, 186);
 	fdActorGet(ACTOR_MENARDI)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_MENARDI)->scaleX = -FIXED_ONE;
+	fdActorGet(ACTOR_MENARDI)->scaleX = -toFIXED(1);
 	sySndPlay(SE_RATTLE);
 	fdActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_STAND_WINDSWEPT);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_MENARDI, 2);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-	fdEventWait(80);
+	fdScriptWait(80);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
 	/* "You may not be finished, but you can barely stand." */
-	fdEventShowMessageThenWait(ACTOR_MIA, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 20);
 	fdActorRunRepeatedMotion(ACTOR_MENARDI, 2);
-	fdEventWait(40);
+	fdScriptWait(40);
 	/* "Right now, yes... But we'll be back on our feet... as soon as we do
-	 * THIS!" */
+	   THIS!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_MENARDI);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
@@ -1618,12 +1620,12 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 
 	actor = fdActorGet(ACTOR_SATUROS);
 	actor->facing = FACING_SOUTH_SOUTHEAST;
-	actor->scaleX = FIXED_ONE;
+	actor->scaleX = toFIXED(1);
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_STAND);
-	fdEventWait(10);
+	fdScriptWait(10);
 	scVenusLighthouseAerieFaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
 	fdActorJump(ACTOR_SATUROS, 6, 0);
-	fdEventWait(10);
+	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -1631,8 +1633,7 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
 	star = (ACTOR *)syFieldActorCreate(SPRITE_BLANK, actor->x.fixed,
-									   actor->y.fixed + toFIXED(8),
-									   actor->z.fixed);
+		actor->y.fixed + toFIXED(8), actor->z.fixed);
 	if(star != NULL) {
 		sprite = star->spr;
 		sprite->cnt = 0;
@@ -1648,7 +1649,7 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 			syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		/* Display the Venus Star icon before sending it toward the beacon. */
 		gmItemLoadIcon(ITEM_VENUS_STAR);
-		mnVramLoad(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
+		mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 	fdActorSetSprPriority(ACTOR_VENUS_STAR_SHADOW, 1);
@@ -1659,8 +1660,8 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	starShadow->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	starShadow->speedLimit = toFIXED(8) / 5;
 	starShadow->acceleration = toFIXED(4) / 5;
-	starShadow->scaleX = 3 * FIXED_ONE / 4;
-	starShadow->scaleY = 3 * FIXED_ONE / 4;
+	starShadow->scaleX = toFIXED(3) / 4;
+	starShadow->scaleY = toFIXED(3) / 4;
 	if(star != NULL) {
 		star->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		((FIELD_EFFECT *)star)->vel.y = toFIXED(3) / 5;
@@ -1672,12 +1673,12 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorSetPos(ACTOR_VENUS_STAR_SHADOW, 0, 0);
 	fdActorSetSprPriority(ACTOR_FELIX, 0);
 	if(star != NULL) {
-		fdEventPlaySnd(SE_STAR_BOUNCE);
+		fdScriptPlaySnd(SE_STAR_BOUNCE);
 		fdActorSetSprFlags(star, 0);
 		star->velY = toFIXED(4);
 		syFieldActorSetMoveTarget(star, 314, 32, 137);
 		fdActorWaitForMove(star);
-		fdEventPlaySnd(SE_STAR_BOUNCE);
+		fdScriptPlaySnd(SE_STAR_BOUNCE);
 		star->spr->image.pri = 1;
 		star->velY = toFIXED(6);
 		syFieldActorSetMoveTarget(star, 285, 32, 146);
@@ -1692,8 +1693,8 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 		star->z.fixed = 0;
 		scVenusLighthouseAerieStopActorMotion(star);
 	}
-	scVenusLighthouseAerieShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-										 30);
+	scVenusLighthouseAerieShowGroupEmote(
+		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 	fdActorSetSprPriority(ACTOR_FELIX, 1);
 	fdActorGet(ACTOR_FELIX)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 2);
@@ -1701,10 +1702,10 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_IVAN);
 	fdActorRunRepeatedMotion(ACTOR_MIA, 1);
 	/* "How could this happen... We couldn't keep them from lighting the
-	 * beacon!" */
-	fdEventShowMessageThenWait(ACTOR_MIA, 0, 40);
+	   beacon!" */
+	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 40);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "That's not all..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_SATUROS);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 0);
@@ -1720,30 +1721,28 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 40);
 	/* "How can it restore their power? Venus is the earth elemental, right?" */
-	fdEventOpenMessage(ACTOR_GARET, 0);
-	if(fdEventAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+	fdScriptOpenMessage(ACTOR_GARET, 0);
+	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
 		fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
 		answeredYes = TRUE;
-	}
-	else {
+	} else {
 		FieldStateWork->msg++;
 		fdActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
 		answeredYes = FALSE;
 	}
-	/* Yes: "Then why would Venus give power to Fire Adepts?" */
-	/* No: "Have you forgotten everything we've learned? Venus is earth. It..."
-	 */
+	/* Yes: "Then why would Venus give power to Fire Adepts?" No: "Have you
+	   forgotten everything we've learned? Venus is earth. It..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_GARET);
 	if(answeredYes) {
 		FieldStateWork->msg++;
 	}
-	fdEventWait(20);
+	fdScriptWait(20);
 
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEAM_BOTTOM), 0);
 	fdActorSetSprColById(ACTOR_BEAM_BOTTOM, SPRITE_COLOR_WHITE);
 	actor = fdActorGet(ACTOR_BEAM_BOTTOM);
-	actor->scaleY = -FIXED_ONE;
-	actor->scaleX = FIXED_ONE / 10;
+	actor->scaleY = -toFIXED(1);
+	actor->scaleX = toFIXED(1) / 10;
 	actor->motionFlg = 0;
 	actor->y.fixed = toFIXED(64);
 	actor->x.fixed = toFIXED(304);
@@ -1751,8 +1750,8 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEAM_LOWER), 0);
 	fdActorSetSprColById(ACTOR_BEAM_LOWER, SPRITE_COLOR_WHITE);
 	actor = fdActorGet(ACTOR_BEAM_LOWER);
-	actor->scaleY = -FIXED_ONE;
-	actor->scaleX = FIXED_ONE / 10;
+	actor->scaleY = -toFIXED(1);
+	actor->scaleX = toFIXED(1) / 10;
 	actor->motionFlg = 0;
 	actor->y.fixed = toFIXED(96);
 	actor->x.fixed = toFIXED(304);
@@ -1767,26 +1766,26 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorSetScript(ACTOR_BEAM_LOWER, VenusLighthouseAerie_BeamOpenScript);
 	sySndPlay(SE_CRASH);
 	fdMapGridSetShake(6, 6, 1);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24),
-							 PALETTES_ALL);
+	fdPaletteFadeApplyTarget(
+		PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
 	fdPaletteFadeInterpolate(16);
 	sySynch(20);
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeInterpolate(24);
 	sySynch(60);
-	syTaskAddFrame(scVenusLighthouseAerieSpawnUpperOrbitParticles,
-				   TASK_PASS_FRAME);
+	sySetFrameEvent(
+		scVenusLighthouseAerieSpawnUpperOrbitParticles, EVENT_PASS_FRAME);
 	sySndPlay(SE_RUMBLE);
 	fdMapGridSetShake(4, 4, 1);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24),
-							 PALETTES_ALL);
+	fdPaletteFadeApplyTarget(
+		PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
 	fdPaletteFadeInterpolate(120);
 	fdActorSetScript(ACTOR_BEAM_BOTTOM, VenusLighthouseAerie_BeamNarrowScript);
 	fdActorSetScript(ACTOR_BEAM_LOWER, VenusLighthouseAerie_BeamNarrowScript);
 	sySynch(120);
 	fdMapGridSetShake(3, 3, 1);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12),
-							 PALETTES_ALL);
+	fdPaletteFadeApplyTarget(
+		PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
 	fdPaletteFadeInterpolate(120);
 	sySynch(120);
 	sySndPlay(MUS_MOUNT_ALEPH_ERUPTS);
@@ -1798,11 +1797,11 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_STAND);
 	fdActorFaceDirection(ACTOR_MENARDI, FACING_EAST, 0);
-	fdActorGet(ACTOR_MENARDI)->scaleX = FIXED_ONE;
+	fdActorGet(ACTOR_MENARDI)->scaleX = toFIXED(1);
 	fdActorJump(ACTOR_MENARDI, 4, 40);
 	fdActorRunRepeatedMotion(ACTOR_MENARDI, 1);
 	/* "Fire and earth share a symbiotic relationship." */
-	fdEventShowMessageThenWait(ACTOR_MENARDI, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_MENARDI, 0, 20);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -1831,7 +1830,7 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	scVenusLighthouseAerieFaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
 	/* "Bear witness to the true strength of the northern wilds!" */
-	fdEventShowMessageThenWait(ACTOR_SATUROS, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_SATUROS, 0, 20);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 1);
 	/* "Oh, give it up! We beat you once, we'll do it again!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_GARET);
@@ -1891,8 +1890,8 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 20);
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
-	/* "Wouldn't you be just a little sad to see your childhood friend perish?"
-	 */
+	/* "Wouldn't you be just a little sad to see your childhood friend
+	   perish?" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 80);
 	/* "What are you saying?" */
@@ -1913,11 +1912,11 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
-	/* "I wouldn't say that... But it would be best not to raise our suspicion."
-	 */
-	fdEventShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 40);
+	/* "I wouldn't say that... But it would be best not to raise our
+	   suspicion." */
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 40);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "Now, who's telling whom what's best? Fine! I'll take Sheba for you!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1931,12 +1930,12 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHWEST, 20);
 	/* "Come on, Sheba!" */
-	scVenusLighthouseAerieShowMessage(SPEAKER_WINDOW_BELOW |
-									  SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX);
+	scVenusLighthouseAerieShowMessage(
+		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX);
 	fdActorSetSpeed(ACTOR_SHEBA, 1);
 	fdActorSetSpeed(ACTOR_FELIX, 1);
 	fdActorSetScript(ACTOR_FELIX, VenusLighthouseAerie_WalkOutScript);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetScript(ACTOR_SHEBA, VenusLighthouseAerie_WalkOutScript);
 	scVenusLighthouseAerieFaceActor(ACTOR_GARET, FACING_SOUTHWEST);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
@@ -1951,52 +1950,50 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_WEST, 0);
-	scVenusLighthouseAerieFlashScr();
+	scVenusLighthouseAerieFlashScreen();
 	fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_WHITE);
 	fdActorSetSprColById(ACTOR_MENARDI, SPRITE_COLOR_WHITE);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
 	fdActorSetSprColById(ACTOR_MENARDI, SPRITE_COLOR_BLINK);
-	fdEventWait(20);
-	scVenusLighthouseAerieFlashScr();
+	fdScriptWait(20);
+	scVenusLighthouseAerieFlashScreen();
 	fdActorJump(ACTOR_MIA, 2, 20);
 	/* "Oh my-they're glowing!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_MIA);
 	scVenusLighthouseAerieFaceActor(ACTOR_MENARDI, FACING_EAST);
 	/* "It's time you learned what true power is!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_MENARDI);
-	scVenusLighthouseAerieFlashScr();
+	scVenusLighthouseAerieFlashScreen();
 
 	menardi = fdActorGet(ACTOR_MENARDI);
 	menardiBurst.pal = 7;
 	menardiBurst.update = scVenusLighthouseAerieUpdateDriftingParticle;
-	menardiBurst.startScaleX = FIXED_ONE;
-	menardiBurst.startScaleY = FIXED_ONE;
+	menardiBurst.startScaleX = toFIXED(1);
+	menardiBurst.startScaleY = toFIXED(1);
 	for(answeredYes = 0; answeredYes <= BURST_DIRECTIONS; answeredYes++) {
 		scVenusLighthouseAerieAimBurst(
 			velocity, answeredYes * (TRIG_TURN / BURST_DIRECTIONS));
 		fdEffectSpawn(menardi->x.fixed, menardi->y.fixed, menardi->z.fixed,
-					  velocity[0], velocity[1], velocity[2],
-					  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-						  EFFECT_USE_PALETTE,
-					  &menardiBurst);
+			velocity[0], velocity[1], velocity[2],
+			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+			&menardiBurst);
 	}
 	sySndPlay(SE_POWER_UP);
 	sySynch(6);
-	scVenusLighthouseAerieFlashScr();
+	scVenusLighthouseAerieFlashScreen();
 	saturos = fdActorGet(ACTOR_SATUROS);
 	saturosBurst.pal = 7;
 	saturosBurst.update = scVenusLighthouseAerieUpdateDriftingParticle;
-	saturosBurst.startScaleX = FIXED_ONE;
-	saturosBurst.startScaleY = FIXED_ONE;
+	saturosBurst.startScaleX = toFIXED(1);
+	saturosBurst.startScaleY = toFIXED(1);
 	for(answeredYes = 0; answeredYes <= BURST_DIRECTIONS; answeredYes++) {
 		scVenusLighthouseAerieAimBurst(
 			velocity, answeredYes * (TRIG_TURN / BURST_DIRECTIONS));
 		fdEffectSpawn(saturos->x.fixed, saturos->y.fixed, saturos->z.fixed,
-					  velocity[0], velocity[1], velocity[2],
-					  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-						  EFFECT_USE_PALETTE,
-					  &saturosBurst);
+			velocity[0], velocity[1], velocity[2],
+			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+			&saturosBurst);
 	}
 	sySndPlay(SE_POWER_UP);
 	fdActorJump(ACTOR_IVAN, 6, 20);
@@ -2006,40 +2003,40 @@ static void scVenusLighthouseAerieCombineSaturosAndMenardi(void) {
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
 	/* "Hya ha ha! It's too late to run!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_SATUROS);
-	scVenusLighthouseAerieFlashScr();
+	scVenusLighthouseAerieFlashScreen();
 	fdActorSetSpeed(ACTOR_SATUROS, 0.2);
 	fdActorSetSpeed(ACTOR_MENARDI, 0.2);
 	fdActorGet(ACTOR_SATUROS)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorGet(ACTOR_MENARDI)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestination(ACTOR_SATUROS, 294, 196);
 	fdActorSetDestination(ACTOR_MENARDI, 294, 196);
-	syTaskAddFrame(scVenusLighthouseAerieUpdateFusion, TASK_PASS_FRAME);
+	sySetFrameEvent(scVenusLighthouseAerieUpdateFusion, EVENT_PASS_FRAME);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
 	/* "Uh-oh... They're fusing!" */
-	fdEventShowMessage(ACTOR_GARET, 0);
+	fdScriptShowMessage(ACTOR_GARET, 0);
 	gmFlagSet(FLAG_VENUS_AERIE_FUSION_SLIDING);
 	/* "They've merged into one another! Everyone get back!" */
-	fdEventShowMessage(ACTOR_IVAN, 0);
+	fdScriptShowMessage(ACTOR_IVAN, 0);
 	gmFlagSet(FLAG_VENUS_AERIE_FUSION_GROWING);
-	scVenusLighthouseAerieFlashScr();
-	fdEventWait(20);
-	scVenusLighthouseAerieFlashScr();
-	fdEventWait(20);
-	btSetType(BATTLE_TYPE_SCRIPTED);
-	fdEventSetAfterBattleDestination(
-		SCENE_VENUS_LIGHTHOUSE_AERIE,
+	scVenusLighthouseAerieFlashScreen();
+	fdScriptWait(20);
+	scVenusLighthouseAerieFlashScreen();
+	fdScriptWait(20);
+	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
+	fdScriptSetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
 		VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE);
-	fdEventSetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
-								VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
+	fdScriptSetDefeatDestination(
+		SCENE_VENUS_LIGHTHOUSE_AERIE, VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
 	gmPartyRestorePpInLighthouse();
 	gmFlagSet(FLAG_AERIE_SECOND_BATTLE_BEGUN);
 }
 
-/* The aerie flashes white and goes back to the dark red it turns while a */
-/* thin beam of light rises from the beacon and Saturos and Menardi glow with */
-/* its power. */
-static void scVenusLighthouseAerieFlashScr(void) {
+/* The aerie flashes white and goes back to the dark red it turns while a thin
+   beam of light rises from the beacon and Saturos and Menardi glow with its
+   power. */
+static void scVenusLighthouseAerieFlashScreen(void)
+{
 	sySndPlay(SE_FALLING_LIGHT);
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(1);
@@ -2049,11 +2046,12 @@ static void scVenusLighthouseAerieFlashScr(void) {
 	sySynch(1);
 }
 
-/* A sparkle circling the beam of light over the beacon, a thirty-second of a */
-/* turn a frame, in a flat ellipse. */
-static void scVenusLighthouseAerieUpdateUpperOrbit(ACTOR *effect) {
+/* A sparkle circling the beam of light over the beacon, a thirty-second of a
+   turn a frame, in a flat ellipse. */
+static void scVenusLighthouseAerieUpdateUpperOrbit(ACTOR *effect)
+{
 	ACTOR *center = fdActorGet(ACTOR_BEAM_BOTTOM);
-	u16 angle = effect->tmr;
+	Uint16 angle = effect->tmr;
 
 	effect->x.fixed = center->x.fixed + syCos(angle) * (effect->speedLimit + 3);
 	effect->z.fixed = center->z.fixed + sySin(angle) * 2;
@@ -2062,15 +2060,16 @@ static void scVenusLighthouseAerieUpdateUpperOrbit(ACTOR *effect) {
 	effect->tmr -= TRIG_TURN / 32;
 }
 
-/* A sparkle circling the orb of light as it rises out of the beacon, in an */
-/* ellipse that widens as the orb climbs. */
-static void scVenusLighthouseAerieUpdateRisingOrbit(ACTOR *actor) {
+/* A sparkle circling the orb of light as it rises out of the beacon, in an
+   ellipse that widens as the orb climbs. */
+static void scVenusLighthouseAerieUpdateRisingOrbit(ACTOR *actor)
+{
 	ACTOR *anchor = fdActorGet(ACTOR_BEACON_ORB);
-	s32 angle = (u16)actor->tmr;
-	FIXED cosine;
-	FIXED sine;
-	FIXED along;
-	FIXED across;
+	Sint32 angle = (Uint16)actor->tmr;
+	FIXED  cosine;
+	FIXED  sine;
+	FIXED  along;
+	FIXED  across;
 
 	cosine = syCos(angle);
 	along =
@@ -2085,36 +2084,34 @@ static void scVenusLighthouseAerieUpdateRisingOrbit(ACTOR *actor) {
 	actor->tgtZ = across;
 
 	{
-		s32 next = (u16)actor->tmr;
+		Sint32 next = (Uint16)actor->tmr;
 		next -= TRIG_TURN / 32;
 		actor->tmr = next;
 	}
 }
 
-/* Sparkles rise around the beam of light over the beacon, more of them and */
-/* higher once it has erupted. */
-static void scVenusLighthouseAerieSpawnUpperOrbitParticles(void) {
+/* Sparkles rise around the beam of light over the beacon, more of them and
+   higher once it has erupted. */
+static void scVenusLighthouseAerieSpawnUpperOrbitParticles(void)
+{
 	ACTOR *center;
 	ACTOR *effect;
-	SPR *sprite;
-	s32 angle;
+	SPR	  *sprite;
+	Sint32 angle;
 
-	if(fdEventGetFlag(FLAG_VENUS_AERIE_BEACON_ERUPTED) == 0 &&
-	   syMathRemainderUnsigned(FrameCount, 3) != 0) {
+	if(fdScriptGetFlag(FLAG_VENUS_AERIE_BEACON_ERUPTED) == 0 &&
+		syMathRemainderUnsigned(FrameCount, 3) != 0) {
 		return;
 	}
 	center = fdActorGet(ACTOR_BEAM_BOTTOM);
 	if(gmFlagGet(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
 		effect = syFieldActorCreate(SPRITE_PARTICLE, center->x.fixed,
-									(s32)toFIXED(syRandomBelow(256)) +
-										center->y.fixed - toFIXED(28),
-									center->z.fixed);
-	}
-	else {
+			(Sint32)toFIXED(syRandomBelow(256)) + center->y.fixed - toFIXED(28),
+			center->z.fixed);
+	} else {
 		effect = syFieldActorCreate(SPRITE_PARTICLE, center->x.fixed,
-									(s32)toFIXED(syRandomBelow(64)) +
-										center->y.fixed - toFIXED(28),
-									center->z.fixed);
+			(Sint32)toFIXED(syRandomBelow(64)) + center->y.fixed - toFIXED(28),
+			center->z.fixed);
 	}
 	if(effect != NULL) {
 		sprite = effect->spr;
@@ -2132,35 +2129,35 @@ static void scVenusLighthouseAerieSpawnUpperOrbitParticles(void) {
 	}
 }
 
-/* Whether an actor has no move target left: it has reached where it was */
-/* sent, or was never sent anywhere. */
-static inline s32 scVenusLighthouseAerieHasArrived(ACTOR *actor) {
+/* Whether an actor has no move target left: it has reached where it was sent,
+   or was never sent anywhere. */
+static inline Sint32 scVenusLighthouseAerieHasArrived(ACTOR *actor)
+{
 	if(actor->tgtX == ACTOR_NO_TARGET && actor->tgtY == actor->tgtX &&
-	   actor->tgtZ == actor->tgtY) {
+		actor->tgtZ == actor->tgtY) {
 		return 1;
 	}
 	return 0;
 }
 
-/* Each frame of the fusion: Saturos and Menardi, facing east, flicker in */
-/* turn, one shown while the other is hidden, so that they seem to merge. */
-/* While FLAG_VENUS_AERIE_FUSION_GROWING is set both glow white and grow to a */
-/* quarter larger, and while FLAG_VENUS_AERIE_FUSION_SLIDING is set they slide
- */
-/* together toward the beacon. */
-static void scVenusLighthouseAerieUpdateFusion(void) {
+/* Each frame of the fusion: Saturos and Menardi, facing east, flicker in turn,
+   one shown while the other is hidden, so that they seem to merge. While
+   FLAG_VENUS_AERIE_FUSION_GROWING is set both glow white and grow to a quarter
+   larger, and while FLAG_VENUS_AERIE_FUSION_SLIDING is set they slide together
+   toward the beacon. */
+static void scVenusLighthouseAerieUpdateFusion(void)
+{
 	ACTOR *saturos;
 	ACTOR *menardi;
-	s32 pairArrived;
+	Sint32 pairArrived;
 
 	saturos = fdActorGet(ACTOR_SATUROS);
 	menardi = fdActorGet(ACTOR_MENARDI);
 	/* BUG: Saturos's test is overwritten by Menardi's, so only Menardi needs to
-	 */
-	/* have arrived. */
-#ifdef BUGFIX
+	   have arrived. */
+#if FIX_FUSION_WAITS_FOR_BOTH
 	pairArrived = scVenusLighthouseAerieHasArrived(saturos) &&
-				  scVenusLighthouseAerieHasArrived(menardi);
+		scVenusLighthouseAerieHasArrived(menardi);
 #else
 	pairArrived = scVenusLighthouseAerieHasArrived(saturos);
 	pairArrived = scVenusLighthouseAerieHasArrived(menardi);
@@ -2171,19 +2168,17 @@ static void scVenusLighthouseAerieUpdateFusion(void) {
 		if(gmFlagGet(FLAG_VENUS_AERIE_FUSION_GROWING) != 0) {
 			fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_WHITE);
 			fdActorSetSprColById(ACTOR_MENARDI, SPRITE_COLOR_WHITE);
-			if(saturos->scaleX < 5 * FIXED_ONE / 4) {
-				saturos->scaleX += FIXED_ONE / 128;
-				saturos->scaleY += FIXED_ONE / 128;
-				menardi->scaleX += FIXED_ONE / 128;
-				menardi->scaleY += FIXED_ONE / 128;
+			if(saturos->scaleX < toFIXED(5) / 4) {
+				saturos->scaleX += toFIXED(1) / 128;
+				saturos->scaleY += toFIXED(1) / 128;
+				menardi->scaleX += toFIXED(1) / 128;
+				menardi->scaleY += toFIXED(1) / 128;
 			}
-		}
-		else {
+		} else {
 			if((FrameCount & 2) != 0) {
 				fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
 				fdActorSetSprColById(ACTOR_MENARDI, SPRITE_COLOR_NORMAL);
-			}
-			else {
+			} else {
 				fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_NORMAL);
 				fdActorSetSprColById(ACTOR_MENARDI, SPRITE_COLOR_HIDDEN);
 			}
@@ -2202,21 +2197,22 @@ static void scVenusLighthouseAerieUpdateFusion(void) {
 }
 
 /* Plays Saturos and Menardi's defeat, the party's discussion and the beacon's
- */
-/* eruption. */
-static void scVenusLighthouseAerieFinishSaturosAndMenardiBattle(void) {
-	fdEventStart();
+   eruption. */
+static void scVenusLighthouseAerieFinishSaturosAndMenardiBattle(void)
+{
+	fdScriptStart();
 	scVenusLighthouseAerieShowSaturosAndMenardiFall();
 	scVenusLighthouseAerieDiscussSaturosAndMenardiDefeat();
 	scVenusLighthouseAerieEruptBeacon();
-	fdEventEnd();
+	fdScriptEnd();
 }
 
-/* A look back from the World Map shows Sheba in danger */
-/* (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, after the World Map's lighthouse */
-/* transition). */
-static void scVenusLighthouseAerieShowShebaInDanger(void) {
-	fdEventStart();
+/* A look back from the World Map shows Sheba in danger
+   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, after the World Map's lighthouse
+   transition). */
+static void scVenusLighthouseAerieShowShebaInDanger(void)
+{
+	fdScriptStart();
 	scVenusLighthouseAerieRestorePartyOnBrokenAerie();
 	scVenusLighthouseAerieTryToPreventFall();
 	gmFlagSet(FLAG_KEEP_MUSIC_ONCE);
@@ -2225,27 +2221,28 @@ static void scVenusLighthouseAerieShowShebaInDanger(void) {
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
 	FieldStateWork->transitionFrm = 24;
 
-	fdEventFinishScrTransition();
-	fdEventWaitTransitionFrames();
-	syImportEventSetExitRequest(VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP);
-	fdEventEnd();
+	fdScriptFinishScreenTransition();
+	fdScriptWaitTransitionFrames();
+	syImportScriptSetExitRequest(VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP);
+	fdScriptEnd();
 }
 
-/* Back from the World Map, stages the broken aerie for Sheba's fall and the */
-/* party's escape (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP). */
-static void scVenusLighthouseAerieStageShebasFall(void) {
+/* Back from the World Map, stages the broken aerie for Sheba's fall and the
+   party's escape (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP). */
+static void scVenusLighthouseAerieStageShebasFall(void)
+{
 	ACTOR *leader;
 	ACTOR *actor;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	fdEventStart();
+	fdScriptStart();
 	fdCameraGetActor()->motionFlg = 0;
-	fdMapGridCopyCellsTo(102, 4, 74, 4, 18, 23);
-	fdMapGridCopyCellsTo(39, 72, 11, 72, 16, 20);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 22, 6);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 13, 6);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 22, 13);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 13, 13);
+	fdMapGridCopyMetatilesTo(102, 4, 74, 4, 18, 23);
+	fdMapGridCopyMetatilesTo(39, 72, 11, 72, 16, 20);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 22, 6);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 13, 6);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 22, 13);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 13, 13);
 	sySynch(1);
 	fdCameraMoveTo(192, -64, 238, 0);
 	sySynch(1);
@@ -2306,26 +2303,27 @@ static void scVenusLighthouseAerieStageShebasFall(void) {
 	fdActorGet(ACTOR_BEACON_ORB)->motionFlg = ACTOR_FLOATS;
 	fdActorSetSprColById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
 	fdActorGet(ACTOR_BEACON_ORB)->y.fixed = toFIXED(40);
-	syTaskAddFrame(scVenusLighthouseAerieSpawnSideOrbitParticles,
-				   TASK_PASS_FRAME);
+	sySetFrameEvent(
+		scVenusLighthouseAerieSpawnSideOrbitParticles, EVENT_PASS_FRAME);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
 	FieldStateWork->transitionFrm = 24;
-	fdEventStartScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventWait(40);
+	fdScriptStartScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptWait(40);
 	scVenusLighthouseAeriePlayShebasFall();
 	gmFlagSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
-	syImportEventSetExitRequest(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C);
+	syImportScriptSetExitRequest(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C);
 }
 
-/* Shows Saturos and Menardi falling into the beacon after their final defeat.
- */
-static void scVenusLighthouseAerieShowSaturosAndMenardiFall(void) {
+/* Shows Saturos and Menardi falling into the beacon after their final
+   defeat. */
+static void scVenusLighthouseAerieShowSaturosAndMenardiFall(void)
+{
 	ACTOR *actor;
 
 	sySndPlay(SE_RUMBLE);
-	fdMapGridCopyCellAttributes(17, 10, 4, 2, 17, 8);
+	fdMapGridCopyMetatileAttributes(17, 10, 4, 2, 17, 8);
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTHWEST;
 	fdActorGet(ACTOR_GARET)->facing = FACING_NORTHWEST;
 	fdActorSetPos(ACTOR_GARET, 328, 168);
@@ -2346,8 +2344,8 @@ static void scVenusLighthouseAerieShowSaturosAndMenardiFall(void) {
 	fdActorSetSprColById(ACTOR_BEAM_BOTTOM, SPRITE_COLOR_WHITE);
 	fdActorSetSprPriority(ACTOR_BEAM_BOTTOM, 1);
 	actor = fdActorGet(ACTOR_BEAM_BOTTOM);
-	actor->scaleY = -FIXED_ONE;
-	actor->scaleX = FIXED_ONE / 5;
+	actor->scaleY = -toFIXED(1);
+	actor->scaleX = toFIXED(1) / 5;
 	actor->motionFlg = 0;
 	actor->x.fixed = toFIXED(304);
 	actor->y.fixed = toFIXED(2);
@@ -2357,33 +2355,33 @@ static void scVenusLighthouseAerieShowSaturosAndMenardiFall(void) {
 	fdActorSetSprColById(ACTOR_BEAM_LOWER, SPRITE_COLOR_WHITE);
 	fdActorSetSprPriority(ACTOR_BEAM_LOWER, 1);
 	actor = fdActorGet(ACTOR_BEAM_LOWER);
-	actor->scaleY = -FIXED_ONE;
-	actor->scaleX = FIXED_ONE / 5;
+	actor->scaleY = -toFIXED(1);
+	actor->scaleX = toFIXED(1) / 5;
 	actor->motionFlg = 0;
 	actor->x.fixed = toFIXED(304);
 	actor->y.fixed = toFIXED(34);
 	actor->z.fixed = toFIXED(96);
 
-	syTaskAddFrame(scVenusLighthouseAerieSpawnUpperOrbitParticles,
-				   TASK_PASS_FRAME);
+	sySetFrameEvent(
+		scVenusLighthouseAerieSpawnUpperOrbitParticles, EVENT_PASS_FRAME);
 	fdCameraGetActor()->motionFlg = 0;
 	fdCameraMoveTo(304, 32, 180, 0);
 	sySynch(1);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdMapGridSetShake(1, 1, 1);
-	fdEventStartScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventWait(40);
+	fdScriptStartScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-	fdEventWait(10);
-	fdEventSetMessageId(MsgVenusPairDefeated);
+	fdScriptWait(10);
+	fdScriptSetMessageId(MsgVenusPairDefeated);
 	/* "How... How... did we lose?" */
 	scVenusLighthouseAerieShowMessage(ACTOR_SATUROS);
 	fdActorRunRepeatedMotion(ACTOR_MENARDI, 3);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "We are superior in every way, but still we were defeated..." */
-	fdEventShowMessageThenWait(ACTOR_MENARDI, 0, 40);
+	fdScriptShowMessageThenWait(ACTOR_MENARDI, 0, 40);
 	sySndPlay(SOUND_FADE_OUT_BGM);
 
 	actor = fdActorGet(ACTOR_SATUROS);
@@ -2391,17 +2389,17 @@ static void scVenusLighthouseAerieShowSaturosAndMenardiFall(void) {
 	actor->y.fixed = toFIXED(28);
 	actor->z.fixed = toFIXED(152);
 	fdActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_TIP);
-	fdEventWait(20);
+	fdScriptWait(20);
 	actor->x.fixed = toFIXED(306);
 	actor->y.fixed = toFIXED(28);
 	actor->z.fixed = toFIXED(152);
 	fdActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_SLUMP);
-	fdEventWait(12);
+	fdScriptWait(12);
 	actor->x.fixed = toFIXED(304);
 	actor->y.fixed = toFIXED(21);
 	actor->z.fixed = toFIXED(152);
 	fdActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_SINK);
-	fdEventWait(8);
+	fdScriptWait(8);
 	fdActorReleaseById(ACTOR_SATUROS);
 
 	actor = fdActorGet(ACTOR_MENARDI);
@@ -2409,51 +2407,51 @@ static void scVenusLighthouseAerieShowSaturosAndMenardiFall(void) {
 	actor->y.fixed = toFIXED(28);
 	actor->z.fixed = toFIXED(152);
 	fdActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_TIP);
-	fdEventWait(20);
+	fdScriptWait(20);
 	actor->x.fixed = toFIXED(300);
 	actor->y.fixed = toFIXED(27);
 	actor->z.fixed = toFIXED(152);
 	fdActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_SLUMP);
-	fdEventWait(12);
+	fdScriptWait(12);
 	actor->x.fixed = toFIXED(304);
 	actor->y.fixed = toFIXED(17);
 	actor->z.fixed = toFIXED(152);
 	fdActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_SINK);
-	fdEventWait(8);
+	fdScriptWait(8);
 	fdActorReleaseById(ACTOR_MENARDI);
-	fdEventWait(160);
+	fdScriptWait(160);
 }
 
-/* Lets the party discuss the battle while Felix and Sheba remain on the aerie.
- */
-static void scVenusLighthouseAerieDiscussSaturosAndMenardiDefeat(void) {
-	s32 answeredYes;
-	s32 garetSpeaker;
-	s32 miaSpeaker;
+/* Lets the party discuss the battle while Felix and Sheba remain on the
+   aerie. */
+static void scVenusLighthouseAerieDiscussSaturosAndMenardiDefeat(void)
+{
+	Sint32 answeredYes;
+	Sint32 garetSpeaker;
+	Sint32 miaSpeaker;
 
 	fdActorRunRepeatedMotion(ACTOR_GARET, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "We did it! We won!" */
-	fdEventShowMessageThenWait(ACTOR_GARET, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_GARET, 0, 20);
 	fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "We beat them...but have we really won?" */
-	fdEventOpenMessage(ACTOR_IVAN, 0);
+	fdScriptOpenMessage(ACTOR_IVAN, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 	scVenusLighthouseAerieFaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH);
 	answeredYes = 0;
-	if(fdEventAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-		fdEventWait(20);
+	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
 		answeredYes = 1;
-	}
-	else {
-		fdEventWait(20);
+	} else {
+		fdScriptWait(20);
 		fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
 		FieldStateWork->msg += 1;
 	}
-	/* Yes: "Even though we couldn't stop the beacon from being lit?" */
-	/* No: "All our efforts were for naught." */
+	/* Yes: "Even though we couldn't stop the beacon from being lit?" No: "All
+	   our efforts were for naught." */
 	scVenusLighthouseAerieShowMessage(ACTOR_IVAN);
 	if(answeredYes != 0) {
 		FieldStateWork->msg += 1;
@@ -2476,7 +2474,7 @@ static void scVenusLighthouseAerieDiscussSaturosAndMenardiDefeat(void) {
 	scVenusLighthouseAerieShowMessage(garetSpeaker);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 40);
 	/* "We beat them! They're gone! You saw them fall down into the pit..." */
-	fdEventShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_GARET, 0, 40);
+	fdScriptShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_GARET, 0, 40);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 20);
 	/* "So we don't have to worry about any more beacons being lit!" */
 	scVenusLighthouseAerieShowMessage(garetSpeaker);
@@ -2508,14 +2506,14 @@ static void scVenusLighthouseAerieDiscussSaturosAndMenardiDefeat(void) {
 	fdCameraSetSpeed(3.2);
 	fdCameraMoveTo(252, 0, 190, 1);
 	fdCameraWaitForMove();
-	fdEventWait(40);
+	fdScriptWait(40);
 	sySndPlay(MUS_DUNGEON_THEME);
-	fdActorSetAttachedEffect(ACTOR_FELIX,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	/* "Did you finish them?" */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "No one knew their power better than I did. If you destroyed them..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
@@ -2524,15 +2522,15 @@ static void scVenusLighthouseAerieDiscussSaturosAndMenardiDefeat(void) {
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 20);
 	/* "Come, Sheba!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
-	fdActorSetAttachedEffect(ACTOR_SHEBA,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	miaSpeaker = SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA;
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_MIA, 2);
 	/* "Wait, Felix!" */
 	scVenusLighthouseAerieShowMessage(miaSpeaker);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 2);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "Why do you run from us?" */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN);
 	scVenusLighthouseAerieFaceActor(ACTOR_FELIX, FACING_NORTHEAST);
@@ -2541,14 +2539,14 @@ static void scVenusLighthouseAerieDiscussSaturosAndMenardiDefeat(void) {
 	scVenusLighthouseAerieShowMessage(ACTOR_GARET);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
 	/* "Poor fools... If you think it's over, you are sadly mistaken!" */
-	fdEventShowMessageThenWait(ACTOR_FELIX, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 20);
 	/* "If you plan to light the other beacons, you will still need..." */
 	scVenusLighthouseAerieShowMessage(miaSpeaker);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
 	/* "The Elemental Stars? We have them!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
-	fdActorSetAttachedEffect(ACTOR_IVAN,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	/* "They're gone, Felix! You don't have to light the beacons anymore..." */
 	scVenusLighthouseAerieShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_NOD);
@@ -2564,22 +2562,23 @@ static void scVenusLighthouseAerieDiscussSaturosAndMenardiDefeat(void) {
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHWEST, 20);
 	fdActorJump(ACTOR_MIA, 4, 20);
 	/* "If you won't release Sheba, we'll have to take her back!" */
-	fdEventShowMessageThenWait(miaSpeaker, 0, 20);
+	fdScriptShowMessageThenWait(miaSpeaker, 0, 20);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
 }
 
-static s32 sBeaconRiseTimer; /* set as the light starts lifting the party */
-/* The frames scVenusLighthouseAerieUpdateBeaconRise has run, held while the */
-/* orb rises. */
-static s32 sBeaconRiseStep;
+static Sint32 sBeaconRiseTimer; /* set as the light starts lifting the party */
+/* The frames scVenusLighthouseAerieUpdateBeaconRise has run, held while the orb
+   rises. */
+static Sint32 sBeaconRiseStep;
 
 /* Raises the beacon effects and splits the aerie beneath the group. */
-static void scVenusLighthouseAerieEruptBeacon(void) {
+static void scVenusLighthouseAerieEruptBeacon(void)
+{
 	ACTOR *middle;
 	ACTOR *upper;
 	ACTOR *top;
 	ACTOR *actor;
-	u16 white;
+	Uint16 white;
 
 	sySndPlay(MUS_SILENCE);
 	sySndPlay(SE_STOP_ACTION_SE);
@@ -2597,18 +2596,18 @@ static void scVenusLighthouseAerieEruptBeacon(void) {
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTH_NORTHEAST, 0);
 	fdMapGridSetShake(2, 2, 1);
-	fdEventWait(10);
+	fdScriptWait(10);
 	fdMapGridSetShake(1, 1, 1);
 	fdCameraMoveTo(304, 32, 180, 1);
 	fdCameraWaitForMove();
-	fdActorGet(ACTOR_BEAM_BOTTOM)->scaleX = FIXED_ONE / 10;
-	fdActorGet(ACTOR_BEAM_LOWER)->scaleX = FIXED_ONE / 10;
+	fdActorGet(ACTOR_BEAM_BOTTOM)->scaleX = toFIXED(1) / 10;
+	fdActorGet(ACTOR_BEAM_LOWER)->scaleX = toFIXED(1) / 10;
 	fdActorSetScript(ACTOR_BEAM_BOTTOM, VenusLighthouseAerie_BeamOpenScript);
 	fdActorSetScript(ACTOR_BEAM_LOWER, VenusLighthouseAerie_BeamOpenScript);
 	sySndPlay(SE_CRASH);
 	fdMapGridSetShake(6, 6, 1);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24),
-							 PALETTES_ALL);
+	fdPaletteFadeApplyTarget(
+		PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(16);
 	sySynch(20);
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
@@ -2622,7 +2621,7 @@ static void scVenusLighthouseAerieEruptBeacon(void) {
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEAM_MIDDLE), 0);
 	/* Stack three more beam segments above the lower two. */
 	middle = fdActorGet(ACTOR_BEAM_MIDDLE);
-	middle->scaleY = -FIXED_ONE;
+	middle->scaleY = -toFIXED(1);
 	middle->scaleX = fdActorGet(ACTOR_BEAM_BOTTOM)->scaleX;
 	middle->motionFlg = 0;
 	middle->x.fixed = toFIXED(304);
@@ -2631,7 +2630,7 @@ static void scVenusLighthouseAerieEruptBeacon(void) {
 	fdActorSetSprColById(ACTOR_BEAM_UPPER, SPRITE_COLOR_WHITE);
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEAM_UPPER), 0);
 	upper = fdActorGet(ACTOR_BEAM_UPPER);
-	upper->scaleY = -FIXED_ONE;
+	upper->scaleY = -toFIXED(1);
 	upper->scaleX = fdActorGet(ACTOR_BEAM_BOTTOM)->scaleX;
 	upper->motionFlg = 0;
 	upper->x.fixed = toFIXED(304);
@@ -2640,18 +2639,18 @@ static void scVenusLighthouseAerieEruptBeacon(void) {
 	fdActorSetSprColById(ACTOR_BEAM_TOP, SPRITE_COLOR_WHITE);
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEAM_TOP), 0);
 	top = fdActorGet(ACTOR_BEAM_TOP);
-	top->scaleY = -FIXED_ONE;
+	top->scaleY = -toFIXED(1);
 	top->scaleX = fdActorGet(ACTOR_BEAM_BOTTOM)->scaleX;
 	top->motionFlg = 0;
 	top->x.fixed = toFIXED(304);
 	top->y.fixed = toFIXED(32);
 	top->z.fixed = toFIXED(96);
-	fdMapGridCopyCellsTo(102, 4, 74, 4, 18, 23);
-	fdMapGridCopyCellsTo(39, 72, 11, 72, 16, 21);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 22, 6);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 13, 6);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 22, 13);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 13, 13);
+	fdMapGridCopyMetatilesTo(102, 4, 74, 4, 18, 23);
+	fdMapGridCopyMetatilesTo(39, 72, 11, 72, 16, 21);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 22, 6);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 13, 6);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 22, 13);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 13, 13);
 	sySynch(1);
 	actor = fdActorGet(ACTOR_BEACON_STATUE_SOUTHWEST);
 	actor->x.fixed -= toFIXED(16);
@@ -2687,8 +2686,8 @@ static void scVenusLighthouseAerieEruptBeacon(void) {
 	fdActorSetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
 	fdActorSetSprFlags(fdActorGet(ACTOR_SHEBA), 0);
 	fdMapGridSetShake(4, 4, 1);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24),
-							 PALETTES_ALL);
+	fdPaletteFadeApplyTarget(
+		PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(120);
 	fdActorSetScript(ACTOR_BEAM_BOTTOM, VenusLighthouseAerie_BeamRiseScript);
 	fdActorSetScript(ACTOR_BEAM_LOWER, VenusLighthouseAerie_BeamRiseScript);
@@ -2697,8 +2696,8 @@ static void scVenusLighthouseAerieEruptBeacon(void) {
 	fdActorSetScript(ACTOR_BEAM_TOP, VenusLighthouseAerie_BeamRiseScript);
 	sySynch(120);
 	fdMapGridSetShake(3, 3, 1);
-	fdPaletteFadeApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12),
-							 PALETTES_ALL);
+	fdPaletteFadeApplyTarget(
+		PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(120);
 	sySynch(120);
 	fdMapGridSetShake(2, 2, 1);
@@ -2706,33 +2705,33 @@ static void scVenusLighthouseAerieEruptBeacon(void) {
 	fdPaletteFadeStartInterpolation(120);
 	sySynch(120);
 	fdMapGridSetShake(1, 1, 1);
-	fdActorGet(ACTOR_BEAM_BOTTOM)->scaleY = FIXED_ONE / 50;
+	fdActorGet(ACTOR_BEAM_BOTTOM)->scaleY = toFIXED(1) / 50;
 	fdActorSetScript(ACTOR_BEAM_LOWER, VenusLighthouseAerie_BeamCloseScript);
 	fdActorSetScript(ACTOR_BEAM_MIDDLE, VenusLighthouseAerie_BeamCloseScript);
 	fdActorSetScript(ACTOR_BEAM_UPPER, VenusLighthouseAerie_BeamCloseScript);
-	fdActorRunScriptAndWait(ACTOR_BEAM_TOP,
-							VenusLighthouseAerie_BeamCloseScript);
+	fdActorRunScriptAndWait(
+		ACTOR_BEAM_TOP, VenusLighthouseAerie_BeamCloseScript);
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdActorSetSprColById(ACTOR_BEAM_BOTTOM, SPRITE_COLOR_HIDDEN);
-	fdEventWait(20);
-	fdActorRunScriptAndWait(ACTOR_BEAM_BOTTOM,
-							VenusLighthouseAerie_BeamEndScript);
+	fdScriptWait(20);
+	fdActorRunScriptAndWait(
+		ACTOR_BEAM_BOTTOM, VenusLighthouseAerie_BeamEndScript);
 	syCloseEvent(scVenusLighthouseAerieSpawnUpperOrbitParticles);
 	fdActorJump(ACTOR_IVAN, 2, 20);
 	/* "The lighthouse...!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_IVAN);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
-	fdActorSetAttachedEffect(ACTOR_GARET,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdEventWait(20);
+	fdActorSetAttachedEffect(
+		ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
 	/* "Isaac! They're too far away! We can't reach Felix!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_GARET);
 	fdActorSetSpeed(ACTOR_MIA, 0.8);
 	fdActorWalkToAndWait(ACTOR_MIA, 326, 220);
-	fdEventWait(40);
-	fdActorSetAttachedEffect(ACTOR_MIA,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdScriptWait(40);
+	fdActorSetAttachedEffect(
+		ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	/* "That's not all! There's light coming from down below!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_MIA);
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
@@ -2770,38 +2769,39 @@ static void scVenusLighthouseAerieEruptBeacon(void) {
 	sBeaconRiseStep = 0;
 	/* DEAD: nothing reads sBeaconRiseTimer; the ROM keeps its store. */
 	sBeaconRiseTimer = 240;
-	syTaskAddFrame(scVenusLighthouseAerieUpdateBeaconRise, TASK_PASS_FRAME);
+	sySetFrameEvent(scVenusLighthouseAerieUpdateBeaconRise, EVENT_PASS_FRAME);
 	do {
 		sySynch(1);
 	} while(gmFlagGet(FLAG_VENUS_AERIE_PARTY_LIFTED) == 0);
 	gmFlagSet(FLAG_SKIP_SCENE_CHANGE_SOUND);
-	fdEventWait(30);
+	fdScriptWait(30);
 	gmFlagSet(FLAG_KEEP_MUSIC_ONCE);
 	fdActorSnapshot();
-	fdEventSetDestination(SCENE_WORLD_MAP,
-						  WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
+	fdScriptSetDestination(
+		SCENE_WORLD_MAP, WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
 	white = RGB_WHITE;
 
 	PLTT_BACKDROP = white;
 	FieldStateWork->transitionFrm = 1;
-	fdEventFinishScrTransition();
-	fdEventWaitTransitionFrames();
+	fdScriptFinishScreenTransition();
+	fdScriptWaitTransitionFrames();
 }
 
 /* Places the party on the broken platform and resumes its falling effects. */
-static void scVenusLighthouseAerieRestorePartyOnBrokenAerie(void) {
+static void scVenusLighthouseAerieRestorePartyOnBrokenAerie(void)
+{
 	ACTOR *actor;
 
 	fdActorReleaseById(ACTOR_SATUROS);
 	fdActorReleaseById(ACTOR_MENARDI);
 	sySndPlay(SE_RUMBLE);
-	fdMapGridCopyCellAttributes(17, 10, 4, 2, 17, 8);
-	fdMapGridCopyCellsTo(102, 4, 74, 4, 18, 23);
-	fdMapGridCopyCellsTo(39, 72, 11, 72, 16, 21);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 22, 6);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 13, 6);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 22, 13);
-	fdMapGridCopyCellAttributes(19, 6, 3, 7, 13, 13);
+	fdMapGridCopyMetatileAttributes(17, 10, 4, 2, 17, 8);
+	fdMapGridCopyMetatilesTo(102, 4, 74, 4, 18, 23);
+	fdMapGridCopyMetatilesTo(39, 72, 11, 72, 16, 21);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 22, 6);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 13, 6);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 22, 13);
+	fdMapGridCopyMetatileAttributes(19, 6, 3, 7, 13, 13);
 	fdMapGridSetShake(2, 2, 1);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdActorRestore();
@@ -2853,10 +2853,10 @@ static void scVenusLighthouseAerieRestorePartyOnBrokenAerie(void) {
 	fdActorGet(ACTOR_SHEBA)->sceneCnt = 0;
 	fdActorGet(ACTOR_BEACON_ORB)->motionFlg |= ACTOR_FLOATS;
 	fdActorSetSprColById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
-	syTaskAddFrame(scVenusLighthouseAerieSpawnSideOrbitParticles,
-				   TASK_PASS_FRAME);
+	sySetFrameEvent(
+		scVenusLighthouseAerieSpawnSideOrbitParticles, EVENT_PASS_FRAME);
 	FieldStateWork->transitionFrm = 1;
-	fdEventStartScrTransition();
+	fdScriptStartScreenTransition();
 	fdPaletteFadeApplySource(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(40);
@@ -2864,8 +2864,9 @@ static void scVenusLighthouseAerieRestorePartyOnBrokenAerie(void) {
 }
 
 /* Shows Felix urging Sheba to hold on at the edge of the platform. */
-static void scVenusLighthouseAerieTryToPreventFall(void) {
-	fdEventSetMessageId(MsgVenusNoooo);
+static void scVenusLighthouseAerieTryToPreventFall(void)
+{
+	fdScriptSetMessageId(MsgVenusNoooo);
 	/* "Noooo! Sheba!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_FELIX);
 	sySndPlay(MUS_SHEBA_HANGS_ON);
@@ -2874,105 +2875,106 @@ static void scVenusLighthouseAerieTryToPreventFall(void) {
 	fdCameraSetSpeed(4);
 	fdCameraMoveTo(192, -64, 238, 1);
 	fdCameraWaitForMove();
-	fdEventWait(40);
+	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
 	/* "Hold on, Sheba! Take my hand!" */
-	syFieldEventShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0,
-									40);
+	syFieldScriptShowMessageThenWait(
+		SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 3);
 	/* "I can't..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_SHEBA);
-	fdActorSetAttachedEffect(ACTOR_FELIX,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdEventWait(60);
+	fdActorSetAttachedEffect(
+		ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdScriptWait(60);
 	/* "You must try! If you don't, you'll fall!" */
-	fdEventShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 80);
-	fdActorSetAttachedEffect(ACTOR_SHEBA,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdEventWait(40);
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 80);
+	fdActorSetAttachedEffect(
+		ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdScriptWait(40);
 	fdActorStartRepeatedMotion(ACTOR_SHEBA, 2);
 	/* "Look down... The foundations of the lighthouse are crumbling!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_SHEBA);
 }
 
 /* Shows Sheba falling, Felix jumping after her and the party escaping. */
-static void scVenusLighthouseAeriePlayShebasFall(void) {
+static void scVenusLighthouseAeriePlayShebasFall(void)
+{
 	ACTOR *actor;
-	s32 answeredYes;
+	Sint32 answeredYes;
 
 	answeredYes = 0;
 	/* Sheba loses her grip while Felix tries to keep her on the platform. */
-	fdEventSetMessageId(MsgVenusWhyHappeningProtectVenusLighthouse);
-	fdActorSetAttachedEffect(ACTOR_FELIX,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdEventWait(20);
+	fdScriptSetMessageId(MsgVenusWhyHappeningProtectVenusLighthouse);
+	fdActorSetAttachedEffect(
+		ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdScriptWait(20);
 	/* "Why is this happening? Is it to protect Venus Lighthouse?" */
-	syFieldEventShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0,
-									20);
+	syFieldScriptShowMessageThenWait(
+		SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 20);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
 	/* "I'm slipping... I can't hold on any longer." */
-	fdEventShowMessageThenWait(ACTOR_SHEBA, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 20);
 	fdActorSetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_HANG);
-	fdEventWait(10);
+	fdScriptWait(10);
 	fdActorStartRepeatedMotion(ACTOR_FELIX, 2);
 	/* "Nooo! Don't let go! You can't! You'll..." */
-	fdEventShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
 	fdActorSetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_SLIP);
 	/* "Good-bye, Felix, and thank you." */
-	fdEventShowMessageThenWait(ACTOR_SHEBA, 0, 20);
+	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 20);
 	sySndPlay(SOUND_FADE_OUT_BGM);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
 	fdActorSetScript(ACTOR_SHEBA, VenusLighthouseAerie_ShebaFallScript);
-	fdEventWait(20);
-	fdActorSetAttachedEffect(ACTOR_FELIX,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdScriptWait(20);
+	fdActorSetAttachedEffect(
+		ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorStartRepeatedMotion(ACTOR_FELIX, 3);
 	fdActorWaitForScriptEndById(ACTOR_SHEBA);
-	fdEventWait(160);
+	fdScriptWait(160);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorGet(ACTOR_FELIX)->facing = FACING_SOUTH_SOUTHWEST;
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_STILL);
-	fdEventWait(80);
+	fdScriptWait(80);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
-	fdEventWait(40);
+	fdScriptWait(40);
 	/* "Sheba!!! No! I won't let you die!" */
-	fdEventShowMessageThenWait(ACTOR_FELIX, 0, 40);
+	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 40);
 	fdActorSetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
-	fdEventWait(10);
+	fdScriptWait(10);
 	fdActorSetSprFlags(fdActorGet(ACTOR_FELIX), 0);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_STILL);
 	fdActorJump(ACTOR_FELIX, 6, 0);
 	fdActorSetSpeed(ACTOR_FELIX, 3);
 	fdActorGet(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_FELIX);
-	/* Felix jumps after Sheba; the remaining party watches from the far side.
-	 */
+	/* Felix jumps after Sheba; the remaining party watches from the far
+	   side. */
 	actor->update = scVenusLighthouseAerieStepSprRotation;
 	actor->facing = FACING_WEST;
 	fdActorMoveToAndWait(ACTOR_FELIX, 184, 237);
 	fdActorRunScriptAndWait(ACTOR_FELIX, VenusLighthouseAerie_FelixDiveScript);
-	fdEventWait(120);
+	fdScriptWait(120);
 	/* "!!!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_PARTY_LEADER);
 	sySndPlay(MUS_FELIXS_RESOLVE);
 	fdCameraSetSpeed(4);
 	fdCameraMoveTo(342, 32, 212, 1);
 	fdCameraWaitForMove();
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	fdEventWait(40);
+	fdScriptWait(40);
 	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorJump(ACTOR_PARTY_LEADER, 6, 60);
 	fdActorGet(ACTOR_PARTY_LEADER)->tmr = 10;
-	fdActorSetScript(ACTOR_PARTY_LEADER,
-					 VenusLighthouseAerie_BreatheHeavilyScript);
+	fdActorSetScript(
+		ACTOR_PARTY_LEADER, VenusLighthouseAerie_BreatheHeavilyScript);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
 	/* "Sheba fell after that last tremor..." */
-	fdEventShowMessageThenWait(ACTOR_GARET, 0, 40);
+	fdScriptShowMessageThenWait(ACTOR_GARET, 0, 40);
 	fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	/* "Felix didn't dive into the sea after her, did he?" */
 	scVenusLighthouseAerieShowMessage(ACTOR_IVAN);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -2982,7 +2984,7 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdActorJump(ACTOR_GARET, 6, 60);
 	fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
 	fdActorJump(ACTOR_IVAN, 6, 40);
@@ -2991,8 +2993,8 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 	fdActorJump(ACTOR_MIA, 6, 60);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 60);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
-	/* "You idiot, Felix! I can't believe he said he'd light the other beacons."
-	 */
+	/* "You idiot, Felix! I can't believe he said he'd light the other
+	   beacons." */
 	scVenusLighthouseAerieShowMessage(ACTOR_GARET);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 20);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_SHAKE_HEAD);
@@ -3001,16 +3003,16 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 	scVenusLighthouseAerieFaceActor(ACTOR_MIA, FACING_SOUTHWEST);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
 	/* "But he sacrificed himself to save Sheba. He's not like Saturos." */
-	fdEventShowMessageThenWait(ACTOR_MIA, 0, 80);
+	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 80);
 	scVenusLighthouseAerieFaceActor(ACTOR_GARET, FACING_SOUTH);
 	/* "I'm at a loss, Isaac. We have to decide what to do next." */
-	fdEventShowMessageThenWait(ACTOR_GARET, 0, 40);
+	fdScriptShowMessageThenWait(ACTOR_GARET, 0, 40);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
 	/* "What to do? What can we do?" */
-	fdEventShowMessageThenWait(ACTOR_IVAN, 0, 40);
+	fdScriptShowMessageThenWait(ACTOR_IVAN, 0, 40);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 1);
 	fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 20);
 	fdActorRunRepeatedMotion(ACTOR_MIA, 1);
@@ -3028,23 +3030,23 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 	fdActorFaceDirection(ACTOR_GARET, FACING_EAST, 20);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 1);
 	/* "Isaac! Listen up! We've got to find Jenna!" */
-	fdEventShowMessageThenWait(ACTOR_GARET, 0, 80);
+	fdScriptShowMessageThenWait(ACTOR_GARET, 0, 80);
 	fdActorStop(ACTOR_PARTY_LEADER);
 	sySynch(1);
-	actor->scaleX = FIXED_ONE;
-	actor->scaleY = FIXED_ONE;
-	fdEventWait(40);
-	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-					 80);
+	actor->scaleX = toFIXED(1);
+	actor->scaleY = toFIXED(1);
+	fdScriptWait(40);
+	fdActorShowEmote(
+		ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
 	scVenusLighthouseAerieFaceActor(ACTOR_GARET, FACING_SOUTHEAST);
 	fdActorJump(ACTOR_GARET, 4, 0);
 	/* "Look at that! Isaac has finally come back to his senses!" */
 	scVenusLighthouseAerieShowMessage(ACTOR_GARET);
 	scVenusLighthouseAerieFaceActor(ACTOR_GARET, FACING_NORTHEAST);
 	/* "Shouldn't we go find Jenna and the others right away?" */
-	fdEventOpenMessage(ACTOR_GARET, 0);
-	if(fdEventAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-		fdEventWait(20);
+	fdScriptOpenMessage(ACTOR_GARET, 0);
+	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
 		/* "It's about time you started agreeing with me!" */
 		scVenusLighthouseAerieShowMessage(ACTOR_GARET);
@@ -3055,12 +3057,11 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 		/* "I know it will be hard, but you'll be there to comfort her." */
 		scVenusLighthouseAerieShowMessage(ACTOR_MIA);
 		answeredYes = 1;
-	}
-	else {
+	} else {
 		FieldStateWork->msg += 3;
-		fdEventWait(60);
-		/* "After all this, you don't have the guts to tell Jenna about Felix?"
-		 */
+		fdScriptWait(60);
+		/* "After all this, you don't have the guts to tell Jenna about
+		   Felix?" */
 		scVenusLighthouseAerieShowMessage(ACTOR_GARET);
 		fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
 		/* "If you don't tell her what happened to Felix, then who will?" */
@@ -3073,9 +3074,9 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 		FieldStateWork->msg += 3;
 	}
 	scVenusLighthouseAerieFaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH);
-	fdActorSetAttachedEffect(ACTOR_PARTY_LEADER,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdEventWait(80);
+	fdActorSetAttachedEffect(
+		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdScriptWait(80);
 	sySndPlay(SOUND_FADE_OUT_BGM);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
@@ -3093,20 +3094,20 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 	fdActorFaceDirection(ACTOR_MIA, FACING_WEST, 40);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 40);
-	fdActorSetAttachedEffect(ACTOR_MIA,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdEventWait(60);
+	fdActorSetAttachedEffect(
+		ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdScriptWait(60);
 	/* "Good point. This is going to make leaving very difficult..." */
 	scVenusLighthouseAerieShowMessage(ACTOR_MIA);
 	sySndPlay(SE_RUMBLE);
 	fdMapGridSetShake(6, 6, 1);
-	fdEventWait(40);
+	fdScriptWait(40);
 	sySndPlay(SE_CRASH);
-	fdMapGridCopyCellsTo(110, 105, 74, 4, 18, 23);
-	fdMapGridCopyCellsTo(92, 86, 83, 4, 8, 23);
-	fdMapGridCopyCellsTo(75, 28, 75, 4, 8, 23);
-	fdMapGridCopyCellsTo(92, 86, 11, 72, 16, 20);
-	fdMapGridCopyCellsTo(19, 92, 19, 68, 8, 21);
+	fdMapGridCopyMetatilesTo(110, 105, 74, 4, 18, 23);
+	fdMapGridCopyMetatilesTo(92, 86, 83, 4, 8, 23);
+	fdMapGridCopyMetatilesTo(75, 28, 75, 4, 8, 23);
+	fdMapGridCopyMetatilesTo(92, 86, 11, 72, 16, 20);
+	fdMapGridCopyMetatilesTo(19, 92, 19, 68, 8, 21);
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
 	actor->z.fixed -= toFIXED(32);
 	actor->userValue = 0;
@@ -3143,13 +3144,13 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 	fdActorSetScript(ACTOR_IVAN, VenusLighthouseAerie_LookAboutScript);
 	fdActorSetScript(ACTOR_MIA, VenusLighthouseAerie_LookAboutScript);
 	fdMapGridSetShake(3, 3, 1);
-	fdEventWait(80);
+	fdScriptWait(80);
 	fdMapGridSetShake(6, 6, 1);
-	fdEventWait(40);
+	fdScriptWait(40);
 	sySndPlay(SE_CRASH);
-	fdMapGridCopyCellAttributes(110, 106, 18, 14, 10, 5);
-	fdMapGridCopyCellsTo(110, 105, 74, 4, 18, 23);
-	fdMapGridCopyCellsTo(92, 86, 11, 68, 16, 20);
+	fdMapGridCopyMetatileAttributes(110, 106, 18, 14, 10, 5);
+	fdMapGridCopyMetatilesTo(110, 105, 74, 4, 18, 23);
+	fdMapGridCopyMetatilesTo(92, 86, 11, 68, 16, 20);
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
 	actor->x.fixed -= toFIXED(16);
 	scVenusLighthouseAerieStopActorMotion(actor);
@@ -3177,27 +3178,27 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 	fdCameraMoveTo(322, 32, 180, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	fdActorSetAttachedEffect(ACTOR_PARTY_LEADER,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_GARET,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_IVAN,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(ACTOR_MIA,
-							 ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(
+		ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorJump(ACTOR_PARTY_LEADER, 6, 0);
 	fdActorJump(ACTOR_GARET, 6, 0);
 	fdActorJump(ACTOR_IVAN, 6, 0);
 	fdActorJump(ACTOR_MIA, 6, 0);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdEventWait(80);
+	fdScriptWait(80);
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
-	fdEventWait(40);
+	fdScriptWait(40);
 	fdActorStop(ACTOR_PARTY_LEADER);
 	fdActorStop(ACTOR_GARET);
 	fdActorStop(ACTOR_IVAN);
 	fdActorStop(ACTOR_MIA);
-	fdEventWait(120);
+	fdScriptWait(120);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
 	fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
@@ -3217,41 +3218,42 @@ static void scVenusLighthouseAeriePlayShebasFall(void) {
 	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-	fdEventWait(20);
+	fdScriptWait(20);
 	scVenusLighthouseAerieFaceActor(ACTOR_GARET, FACING_EAST);
 	/* "All right, let's go, Isaac! It's time to find Jenna." */
 	scVenusLighthouseAerieShowMessage(ACTOR_GARET);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-	fdEventWait(20);
+	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_IVAN, 1);
 	fdActorSetSpeed(ACTOR_MIA, 1);
 	fdActorSetScript(ACTOR_GARET, VenusLighthouseAerie_PartyExitScript);
 	fdActorSetScript(ACTOR_IVAN, VenusLighthouseAerie_PartyExitScript);
 	fdActorSetScript(ACTOR_MIA, VenusLighthouseAerie_PartyExitScript);
-	fdEventWait(60);
+	fdScriptWait(60);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 272, 254);
-	fdEventWait(80);
+	fdScriptWait(80);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
-	fdEventFinishScrTransition();
-	fdEventWaitTransitionFrames();
-	fdEventWait(80);
+	fdScriptFinishScreenTransition();
+	fdScriptWaitTransitionFrames();
+	fdScriptWait(80);
 	fdActorSystemSuspendProjectionAndShowSprs();
 	((WIN_STATE *)WindowStateWork[0])->voiceSnd = 0;
 	((WIN_STATE *)WindowStateWork[0])->voiceCountdown = 0;
 	/* "But despite a long and tiring search, Jenna was nowhere to be found." */
 	mnFieldMessageShowCentered(MsgVenusDespiteLongTiring, 0, 0);
 	fdActorSystemResumeProjectionAndHideLayers();
-	fdEventWait(80);
+	fdScriptWait(80);
 }
 
 /* Stops an actor where it stands, with no move under way. */
-static void scVenusLighthouseAerieStopActorMotion(ACTOR *actor) {
+static void scVenusLighthouseAerieStopActorMotion(ACTOR *actor)
+{
 	actor->tgtX = ACTOR_NO_TARGET;
 	actor->tgtY = ACTOR_NO_TARGET;
 	actor->tgtZ = ACTOR_NO_TARGET;
@@ -3262,18 +3264,18 @@ static void scVenusLighthouseAerieStopActorMotion(ACTOR *actor) {
 }
 
 /* Each frame as the beacon's light lifts the party away: a flash and a shake,
- */
-/* then from frame 24 the orb rises from below the aerie, held at frame 25 */
-/* until it is above the floor and at 26 until it is 40 pixels up, with */
-/* particles circling it to frame 34; the screen fades to white at 36, and at */
-/* 48 the party is lifted (FLAG_VENUS_AERIE_PARTY_LIFTED). */
-static void scVenusLighthouseAerieUpdateBeaconRise(void) {
+   then from frame 24 the orb rises from below the aerie, held at frame 25 until
+   it is above the floor and at 26 until it is 40 pixels up, with particles
+   circling it to frame 34; the screen fades to white at 36, and at 48 the party
+   is lifted (FLAG_VENUS_AERIE_PARTY_LIFTED). */
+static void scVenusLighthouseAerieUpdateBeaconRise(void)
+{
 	ACTOR *center;
 	ACTOR *effect;
-	SPR *sprite;
-	s32 spawnParticles;
-	u32 randomHeight;
-	s32 angle;
+	SPR	  *sprite;
+	Sint32 spawnParticles;
+	Uint32 randomHeight;
+	Sint32 angle;
 
 	center = fdActorGet(ACTOR_BEACON_ORB);
 	spawnParticles = 0;
@@ -3281,8 +3283,8 @@ static void scVenusLighthouseAerieUpdateBeaconRise(void) {
 	case 0:
 		sySndPlay(SE_SHIMMER);
 		fdMapGridSetShake(6, 6, 1);
-		fdPaletteFadeApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 31, 24),
-								 PALETTES_BG);
+		fdPaletteFadeApplyTarget(
+			PALETTE_TINT_CUSTOM | RGB(31, 31, 24), PALETTES_BG);
 		fdPaletteFadeStartInterpolation(8);
 		break;
 	case 8:
@@ -3297,16 +3299,16 @@ static void scVenusLighthouseAerieUpdateBeaconRise(void) {
 		center->x.fixed = toFIXED(304);
 		center->y.fixed = -toFIXED(360);
 		center->z.fixed = toFIXED(164);
-		center->scaleX = FIXED_ONE;
-		center->scaleY = FIXED_ONE;
+		center->scaleX = toFIXED(1);
+		center->scaleY = toFIXED(1);
 		scVenusLighthouseAerieStopActorMotion(center);
 		fdActorSetScript(ACTOR_BEACON_ORB, VenusLighthouseAerie_OrbPulseScript);
 		break;
 	case 25:
 		sBeaconRiseStep--;
 		if(center->y.fixed > 0) {
-			fdPaletteFadeApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12),
-									 PALETTES_ALL);
+			fdPaletteFadeApplyTarget(
+				PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
 			fdPaletteFadeStartInterpolation(16);
 			sBeaconRiseStep++;
 			fdActorGet(ACTOR_PARTY_LEADER)->sceneCnt = 1;
@@ -3315,8 +3317,7 @@ static void scVenusLighthouseAerieUpdateBeaconRise(void) {
 			fdActorGet(ACTOR_MIA)->sceneCnt = 1;
 			fdActorGet(ACTOR_FELIX)->sceneCnt = 1;
 			fdActorGet(ACTOR_SHEBA)->sceneCnt = 1;
-		}
-		else {
+		} else {
 			if((FrameCount & 7) == 0)
 				sySndPlay(SE_GLITTER);
 			spawnParticles = 1;
@@ -3329,8 +3330,7 @@ static void scVenusLighthouseAerieUpdateBeaconRise(void) {
 			fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 			fdPaletteFadeStartInterpolation(40);
 			sBeaconRiseStep++;
-		}
-		else {
+		} else {
 			if((FrameCount & 7) == 0)
 				sySndPlay(SE_GLITTER);
 			spawnParticles = 1;
@@ -3354,14 +3354,13 @@ static void scVenusLighthouseAerieUpdateBeaconRise(void) {
 		break;
 	case 48:
 		fdActorStop(ACTOR_BEACON_ORB);
-		fdEventSetFlag(FLAG_VENUS_AERIE_PARTY_LIFTED);
+		fdScriptSetFlag(FLAG_VENUS_AERIE_PARTY_LIFTED);
 		break;
 	}
 	if(spawnParticles) {
 		randomHeight = toFIXED(syRandomBelow(80));
 		effect = syFieldActorCreate(SPRITE_PARTICLE, center->x.fixed,
-									center->y.fixed - randomHeight - toFIXED(8),
-									center->z.fixed);
+			center->y.fixed - randomHeight - toFIXED(8), center->z.fixed);
 		if(effect != NULL) {
 			sprite = effect->spr;
 			fdActorStartScript(effect, VenusLighthouseAerie_RiseParticleScript);
@@ -3390,11 +3389,12 @@ static void scVenusLighthouseAerieUpdateBeaconRise(void) {
 /* An actor the light lifts rises this many quarter pixels, one a frame. */
 enum { RISE_QUARTER_PIXELS = 32 };
 
-/* Lifts one of the party, Felix or Sheba off the aerie as the beacon's light */
-/* takes them, a quarter pixel a frame up to 8 pixels. */
-static void scVenusLighthouseAerieAdvanceActorRise(ACTOR *actor) {
+/* Lifts one of the party, Felix or Sheba off the aerie as the beacon's light
+   takes them, a quarter pixel a frame up to 8 pixels. */
+static void scVenusLighthouseAerieAdvanceActorRise(ACTOR *actor)
+{
 	if(actor->sceneByte != 0) {
-		u8 counter = actor->sceneCnt;
+		Uint8 counter = actor->sceneCnt;
 
 		actor->y.fixed = actor->sceneWord + toFIXED(counter >> 2);
 
@@ -3408,33 +3408,32 @@ static void scVenusLighthouseAerieAdvanceActorRise(ACTOR *actor) {
 	}
 }
 
-/* Sparkles circle the foot of the beam of light, each on its own flat */
-/* ellipse. */
-static void scVenusLighthouseAerieSpawnSideOrbitParticles(void) {
-	ACTOR *center;
-	ACTOR *effect;
-	SPR *sprite;
+/* Sparkles circle the foot of the beam of light, each on its own flat
+   ellipse. */
+static void scVenusLighthouseAerieSpawnSideOrbitParticles(void)
+{
+	ACTOR				  *center;
+	ACTOR				  *effect;
+	SPR					  *sprite;
 	MAP_GRID_SCROLL_STATE *grid;
-	s32 drift;
-	s32 phase;
-	s32 angle;
+	Sint32				   drift;
+	Sint32				   phase;
+	Sint32				   angle;
 
 	center = fdActorGet(ACTOR_BEACON_ORB);
 	grid = MapGridState[0];
 	drift = toFIXED(syRandomBelow(48));
-	if((s16)(FIXEDtoINT(grid->view[1])) <= 129) {
+	if((Sint16)(FIXEDtoINT(grid->view[1])) <= 129) {
 		if(FrameCount & 1) {
 			fdActorSetPos(ACTOR_BEACON_ORB, 304, 164);
-			fdActorGet(ACTOR_BEACON_ORB)->scaleX = FIXED_ONE;
-			fdActorGet(ACTOR_BEACON_ORB)->scaleY = FIXED_ONE;
-		}
-		else {
+			fdActorGet(ACTOR_BEACON_ORB)->scaleX = toFIXED(1);
+			fdActorGet(ACTOR_BEACON_ORB)->scaleY = toFIXED(1);
+		} else {
 			fdActorSetPos(ACTOR_BEACON_ORB, 304, 171);
-			fdActorGet(ACTOR_BEACON_ORB)->scaleX = 13 * FIXED_ONE / 10;
-			fdActorGet(ACTOR_BEACON_ORB)->scaleY = 13 * FIXED_ONE / 10;
+			fdActorGet(ACTOR_BEACON_ORB)->scaleX = toFIXED(13) / 10;
+			fdActorGet(ACTOR_BEACON_ORB)->scaleY = toFIXED(13) / 10;
 		}
-	}
-	else {
+	} else {
 		fdActorSetPos(ACTOR_BEACON_ORB, 0, 0);
 	}
 	if(center == NULL)
@@ -3443,10 +3442,9 @@ static void scVenusLighthouseAerieSpawnSideOrbitParticles(void) {
 	if(phase != 0)
 		return;
 	effect = syFieldActorCreate(SPRITE_PARTICLE, center->x.fixed + toFIXED(8),
-								center->y.fixed + drift + toFIXED(8),
-								center->z.fixed);
+		center->y.fixed + drift + toFIXED(8), center->z.fixed);
 	drift /= toFIXED(6);
-	drift = INTtoFIXED(drift);
+	drift = toFIXED(drift);
 	if(effect == NULL)
 		return;
 	sprite = effect->spr;
@@ -3464,10 +3462,11 @@ static void scVenusLighthouseAerieSpawnSideOrbitParticles(void) {
 }
 
 /* Moves a sparkle round the foot of the beam on its ellipse. */
-static void scVenusLighthouseAerieUpdateOrbitingEffect(ACTOR *actor) {
+static void scVenusLighthouseAerieUpdateOrbitingEffect(ACTOR *actor)
+{
 	FIELD_EFFECT *effect = (FIELD_EFFECT *)actor;
-	ACTOR *anchor;
-	s32 spin;
+	ACTOR		 *anchor;
+	Sint32		  spin;
 
 	anchor = (ACTOR *)actor->watchedActor;
 	spin = effect->spin;
@@ -3480,15 +3479,15 @@ static void scVenusLighthouseAerieUpdateOrbitingEffect(ACTOR *actor) {
 
 #include "shared/field_effect_duration_scripts.c"
 
-const s32 *FieldEffect_DurationScripts[] = {
+const Sint32 *FieldEffect_DurationScripts[] = {
 	FieldEffect_ShortScript,
 	FieldEffect_MediumScript,
 	FieldEffect_LongScript,
 };
 
-/* Garet, Ivan and Mia walk up to Isaac on the tower once the party has */
-/* agreed to stop Saturos and Menardi, and step out of sight into him. */
-s32 VenusLighthouseAerie_JoinLeaderScript[] = {
+/* Garet, Ivan and Mia walk up to Isaac on the tower once the party has agreed
+   to stop Saturos and Menardi, and step out of sight into him. */
+Sint32 VenusLighthouseAerie_JoinLeaderScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(492, 0, 164),
 	SC_SYNC,
@@ -3498,9 +3497,9 @@ s32 VenusLighthouseAerie_JoinLeaderScript[] = {
 	SC_END,
 };
 
-/* Everyone steps half a cell apart as the first battle begins: the party, */
-/* Felix and Sheba west, Saturos and Menardi east. */
-s32 VenusLighthouseAerie_StepBackWestScript[] = {
+/* Everyone steps half a metatile apart as the first battle begins: the party,
+   Felix and Sheba west, Saturos and Menardi east. */
+Sint32 VenusLighthouseAerie_StepBackWestScript[] = {
 	SC_SPEED(0.2),
 	SC_ACCELERATION(0.1),
 	SC_ANIMATION(ANIM_WALK),
@@ -3509,7 +3508,7 @@ s32 VenusLighthouseAerie_StepBackWestScript[] = {
 	SC_END,
 };
 
-s32 VenusLighthouseAerie_StepBackEastScript[] = {
+Sint32 VenusLighthouseAerie_StepBackEastScript[] = {
 	SC_SPEED(0.2),
 	SC_ACCELERATION(0.1),
 	SC_ANIMATION(ANIM_WALK),
@@ -3518,55 +3517,63 @@ s32 VenusLighthouseAerie_StepBackEastScript[] = {
 	SC_END,
 };
 
-/* Breathes heavily for as long as it runs */
-/* (scVenusLighthouseAeriePulseActorScale). */
-s32 VenusLighthouseAerie_BreatheHeavilyScript[] = {
+/* Breathes heavily for as long as it runs
+   (scVenusLighthouseAeriePulseActorScale). */
+Sint32 VenusLighthouseAerie_BreatheHeavilyScript[] = {
 	SC_CALL(scVenusLighthouseAeriePulseActorScale),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Widens a beam segment from a sliver. */
-s32 VenusLighthouseAerie_BeamOpenScript[] = {
-	SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+Sint32 VenusLighthouseAerie_BeamOpenScript[] = {
+	SC_ADD(SW_SCALE_X, toFIXED(1) / 16),
 	SC_WAIT(1),
 	SC_LOOP(32, SC_TOP),
 	SC_END,
 };
 
 /* Narrows a beam segment again as Saturos and Menardi take its power. */
-s32 VenusLighthouseAerie_BeamNarrowScript[] = {
-	SC_ADD(SW_SCALE_X, -7 * FIXED_ONE / 512),
+Sint32 VenusLighthouseAerie_BeamNarrowScript[] = {
+	SC_ADD(SW_SCALE_X, -toFIXED(7) / 512),
 	SC_WAIT(1),
 	SC_LOOP(140, SC_TOP),
 	SC_END,
 };
 
-/* Narrows each segment of the erupting beam, for longer than */
-/* VenusLighthouseAerie_BeamNarrowScript. */
-s32 VenusLighthouseAerie_BeamRiseScript[] = {
-	SC_ADD(SW_SCALE_X, -7 * FIXED_ONE / 512),
+/* Narrows each segment of the erupting beam, for longer than
+   VenusLighthouseAerie_BeamNarrowScript. */
+Sint32 VenusLighthouseAerie_BeamRiseScript[] = {
+	SC_ADD(SW_SCALE_X, -toFIXED(7) / 512),
 	SC_WAIT(1),
 	SC_LOOP(160, SC_TOP),
 	SC_END,
 };
 
 /* Lifts a beam segment four pixels a frame, then takes it off the stage. */
-s32 VenusLighthouseAerie_BeamCloseScript[] = {
-	SC_ADD(SW_Y, toFIXED(4)), SC_WAIT(1), SC_LOOP(30, SC_TOP),
-	SC_POSITION(0, 0, 0),	  SC_WAIT(1), SC_END,
+Sint32 VenusLighthouseAerie_BeamCloseScript[] = {
+	SC_ADD(SW_Y, toFIXED(4)),
+	SC_WAIT(1),
+	SC_LOOP(30, SC_TOP),
+	SC_POSITION(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
 };
 
-/* Lifts the beam's flattened bottom two pixels a frame, then takes it off */
-/* the stage. */
-s32 VenusLighthouseAerie_BeamEndScript[] = {
-	SC_ADD(SW_Y, toFIXED(2)), SC_WAIT(1), SC_LOOP(160, SC_TOP),
-	SC_POSITION(0, 0, 0),	  SC_WAIT(1), SC_END,
+/* Lifts the beam's flattened bottom two pixels a frame, then takes it off the
+   stage. */
+Sint32 VenusLighthouseAerie_BeamEndScript[] = {
+	SC_ADD(SW_Y, toFIXED(2)),
+	SC_WAIT(1),
+	SC_LOOP(160, SC_TOP),
+	SC_POSITION(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
 };
 
 /* A sparkle round the beam over the beacon rises 16 pixels and is gone. */
-s32 VenusLighthouseAerie_OrbitParticleScript[] = {
-	SC_SET(SW_SCALE_X, 4 * FIXED_ONE / 5),
-	SC_SET(SW_SCALE_Y, 4 * FIXED_ONE / 5),
+Sint32 VenusLighthouseAerie_OrbitParticleScript[] = {
+	SC_SET(SW_SCALE_X, toFIXED(4) / 5),
+	SC_SET(SW_SCALE_Y, toFIXED(4) / 5),
 	SC_ANIMATION(ANIM_STAND),
 	SC_LABEL(1),
 	SC_ADD(SW_Y, toFIXED(1)),
@@ -3578,9 +3585,9 @@ s32 VenusLighthouseAerie_OrbitParticleScript[] = {
 };
 
 /* A sparkle round the rising orb sinks 16 pixels and is gone. */
-s32 VenusLighthouseAerie_RiseParticleScript[] = {
-	SC_SET(SW_SCALE_X, 4 * FIXED_ONE / 5),
-	SC_SET(SW_SCALE_Y, 4 * FIXED_ONE / 5),
+Sint32 VenusLighthouseAerie_RiseParticleScript[] = {
+	SC_SET(SW_SCALE_X, toFIXED(4) / 5),
+	SC_SET(SW_SCALE_Y, toFIXED(4) / 5),
 	SC_ANIMATION(ANIM_STAND),
 	SC_LABEL(1),
 	SC_ADD(SW_Y, -toFIXED(1)),
@@ -3591,9 +3598,9 @@ s32 VenusLighthouseAerie_RiseParticleScript[] = {
 	SC_RELEASE,
 };
 
-/* Felix, then Sheba, walk off down the aerie's stairs after the first */
-/* battle. */
-s32 VenusLighthouseAerie_WalkOutScript[] = {
+/* Felix, then Sheba, walk off down the aerie's stairs after the first
+   battle. */
+Sint32 VenusLighthouseAerie_WalkOutScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(268, 0, 186),
 	SC_SYNC,
@@ -3613,23 +3620,23 @@ s32 VenusLighthouseAerie_WalkOutScript[] = {
 	SC_END,
 };
 
-/* The orb rising out of the beacon narrows and widens again, four frames */
-/* each way, as long as it shows. */
-s32 VenusLighthouseAerie_OrbPulseScript[] = {
+/* The orb rising out of the beacon narrows and widens again, four frames each
+   way, as long as it shows. */
+Sint32 VenusLighthouseAerie_OrbPulseScript[] = {
 	SC_LABEL(1),
-	SC_ADD(SW_SCALE_X, -3 * FIXED_ONE / 128),
+	SC_ADD(SW_SCALE_X, -toFIXED(3) / 128),
 	SC_WAIT(1),
 	SC_LOOP(4, SC_TO(1)),
 	SC_LABEL(2),
-	SC_ADD(SW_SCALE_X, 3 * FIXED_ONE / 128),
+	SC_ADD(SW_SCALE_X, toFIXED(3) / 128),
 	SC_WAIT(1),
 	SC_LOOP(4, SC_TO(2)),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* Sheba drops from the broken aerie, 90 pixels over two seconds, and is gone.
- */
-s32 VenusLighthouseAerie_ShebaFallScript[] = {
+/* Sheba drops from the broken aerie, 90 pixels over two seconds, and is
+   gone. */
+Sint32 VenusLighthouseAerie_ShebaFallScript[] = {
 	SC_ADD(SW_Y, -(toFIXED(3) / 4)),
 	SC_WAIT(1),
 	SC_LOOP(120, SC_TOP),
@@ -3639,7 +3646,7 @@ s32 VenusLighthouseAerie_ShebaFallScript[] = {
 };
 
 /* Felix dives after her, much faster, and is gone. */
-s32 VenusLighthouseAerie_FelixDiveScript[] = {
+Sint32 VenusLighthouseAerie_FelixDiveScript[] = {
 	SC_ADD(SW_Y, -(toFIXED(9) / 2)),
 	SC_WAIT(1),
 	SC_LOOP(80, SC_TOP),
@@ -3648,117 +3655,123 @@ s32 VenusLighthouseAerie_FelixDiveScript[] = {
 	SC_END,
 };
 
-/* Garet, Ivan and Mia walk off ahead of Isaac as the party leaves to find */
-/* Jenna. */
-s32 VenusLighthouseAerie_PartyExitScript[] = {
-	SC_ANIMATION(ANIM_WALK), SC_MOVE(330, 0, 173), SC_SYNC, SC_RELEASE, SC_END,
+/* Garet, Ivan and Mia walk off ahead of Isaac as the party leaves to find
+   Jenna. */
+Sint32 VenusLighthouseAerie_PartyExitScript[] = {
+	SC_ANIMATION(ANIM_WALK),
+	SC_MOVE(330, 0, 173),
+	SC_SYNC,
+	SC_RELEASE,
+	SC_END,
 };
 
 /* The party looks about them at random. */
-s32 VenusLighthouseAerie_LookAboutScript[] = {
+Sint32 VenusLighthouseAerie_LookAboutScript[] = {
 	SC_CALL(scLookAboutRandomly),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 SCENE_ENTRANCE VenusLighthouseAerieEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 304, 0, 216, FACING_SOUTH_SOUTHEAST, 0,
-	 0, 0, 600, 420, 0},
+		0, 0, 600, 420, 0},
 	{VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
-	 CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTH_SOUTHEAST, 0, 0, 0, 600, 420,
-	 0},
+		CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTH_SOUTHEAST, 0, 0, 0, 600,
+		420, 0},
 	{VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE, CONDITION_ALWAYS, 340, 0, 184,
-	 FACING_WEST, 0, 0, 0, 600, 420, 0},
+		FACING_WEST, 0, 0, 0, 600, 420, 0},
 	{VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE, CONDITION_ALWAYS, 340, 0, 184,
-	 FACING_WEST, 0, 0, 0, 600, 420, 0},
+		FACING_WEST, 0, 0, 0, 600, 420, 0},
 	{VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, CONDITION_ALWAYS, 0, 0, 0,
-	 FACING_WEST, 0, 0, 0, 600, 420, 0},
+		FACING_WEST, 0, 0, 0, 600, 420, 0},
 	{SCENE_TABLE_END},
 };
 
-u32 VenusLighthouseAerieExits[] = {
+Uint32 VenusLighthouseAerieExits[] = {
 	SCENE_EXITS(VenusLighthouseAerie),
 	SCENE_EXIT(VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP, WorldMap,
-			   WORLD_MAP_BEFORE_SHEBAS_FALL),
+		WORLD_MAP_BEFORE_SHEBAS_FALL),
 	SCENE_EXIT(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C, TimberRoomsC,
-			   TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE),
+		TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE),
 	SCENE_EXIT(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B, TimberRoomsB,
-			   TIMBER_ROOMS_B_SANCTUM),
+		TIMBER_ROOMS_B_SANCTUM),
 	SCENE_EXITS_END,
 };
 
 /* clang-format off */
 ACTOR_PLACE VenusLighthouseAerieActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_STATUE_WITH_WREATH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        248, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STATUE_WITH_WREATH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        280, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_STATUE_WITH_WREATH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        328, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_STATUE_WITH_WREATH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        360, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        440, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        472, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        504, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        104, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        136, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        168, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        504, 0, 148, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        504, 0, 148, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        504, 0, 148, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        280, 0, 164, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        296, 0, 180, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(ACTOR_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        248, 0, 172, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        264, 0, 252, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    { SCENE_TABLE_END },
+	ACTOR_PLACEMENT(SPRITE_STATUE_WITH_WREATH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		248, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_STATUE_WITH_WREATH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		280, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_STATUE_WITH_WREATH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		328, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_STATUE_WITH_WREATH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		360, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+		440, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+		472, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+		504, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+		104, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+		136, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+		168, 0, 252, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		504, 0, 148, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		504, 0, 148, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		504, 0, 148, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		280, 0, 164, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		296, 0, 180, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(ACTOR_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		248, 0, 172, FACING_EAST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		264, 0, 252, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	{ SCENE_TABLE_END },
 };
 /* clang-format on */
 
 /* The floating platform the leader has landed on, 0 when none. */
-s32 VenusLighthouseAerie_LandedPlatform = 0;
+Sint32 VenusLighthouseAerie_LandedPlatform = 0;
 
-TRIGGER VenusLighthouseAerieTriggers[] = {
-	{TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-	 CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS, CONDITION_ALWAYS,
-	 EVENT(scVenusLighthouseAerieJumpToNextPlatform)},
-	{TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
-	 CONDITION_ALWAYS, EVENT(scVenusLighthouseAerieFloatPlatforms)},
-	{TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-	 CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM, CONDITION_ALWAYS,
-	 EVENT(scVenusLighthouseAerieJumpToNextPlatform)},
-	{TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
-	 FLAG_VENUS_AERIE_ON_PLATFORM, EVENT(scVenusLighthouseAerieLandOnPlatform)},
-	{TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
-	 CONDITION_ALWAYS, EVENT(scVenusLighthouseAerieConfrontSaturosAndMenardi)},
-	{TRIGGER_TABLE_END},
+CUE VenusLighthouseAerieCues[] = {
+	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+		METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
+		CONDITION_ALWAYS, SCRIPT_REF(scVenusLighthouseAerieJumpToNextPlatform)},
+	{CUE_STEP, METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
+		CONDITION_ALWAYS, SCRIPT_REF(scVenusLighthouseAerieFloatPlatforms)},
+	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+		METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM, CONDITION_ALWAYS,
+		SCRIPT_REF(scVenusLighthouseAerieJumpToNextPlatform)},
+	{CUE_STEP, METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+		FLAG_VENUS_AERIE_ON_PLATFORM,
+		SCRIPT_REF(scVenusLighthouseAerieLandOnPlatform)},
+	{CUE_STEP, METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
+		CONDITION_ALWAYS,
+		SCRIPT_REF(scVenusLighthouseAerieConfrontSaturosAndMenardi)},
+	{CUE_TABLE_END},
 };
 
 #include "shared/beacon_spark_script.c"

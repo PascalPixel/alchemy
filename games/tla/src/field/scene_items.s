@@ -1,13 +1,13 @@
 	.include "enums/flags.inc"
 	.include "enums/item_ids.inc"
 	.include "enums/game/game.inc"
-	.include "enums/src/field/field_sequence_internal.inc"
+	.include "enums/src/field/field_mode_internal.inc"
 
 @ What a treasure spot is comes from CONTAINER_KIND
-@ (field_sequence_internal.h). The rest the build cannot hand to assembly,
+@ (field_mode_internal.h). The rest the build cannot hand to assembly,
 @ since their headers compute values: four of EXAMINE
 @ (field/scene_tables.h), the mark on a scene's header and on coins
-@ (field_sequence_internal.h), and the nine Mimics counted from the Kandorean
+@ (field_mode_internal.h), and the nine Mimics counted from the Kandorean
 @ Temple's (enemy_ids.h).
 	.equiv EXAMINE_JAR, 2
 	.equiv EXAMINE_BARREL, 3
@@ -29,7 +29,7 @@
 @ Stones, summon tablets, the items lying about or in the shallows, and what
 @ is hidden in jars, barrels, graves and wooden boxes. fdPlaceTreasureSpots
 @ makes a scene's rows its actors from FIELD_TREASURE_ACTOR on, sixteen at
-@ most, and scTalkToActor opens them.
+@ most, and fdTalkToActor opens them.
 @
 @ A scene's header: its scene marked SCENE_ITEMS_HEADER, and a flag (-1 for
 @ none) whose being set passes these rows over for a later header of the same

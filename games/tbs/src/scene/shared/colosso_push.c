@@ -1,21 +1,20 @@
-/* @file */
 /* The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
- */
-/* the rocks, weights and pillars on a stage that Isaac pushes, and finding */
-/* what stands ahead of him. */
+   the rocks, weights and pillars on a stage that Isaac pushes, and finding what
+   stands ahead of him. */
 
-/* The leader pushes the actor standing in the next cell ahead one cell on */
-/* (a rock, a weight or a stone pillar on the stages), when nothing solid */
-/* stands beyond it or on top of it and the ground lets it move, with the */
-/* pushing pose and SE_PUSH_STEP. */
-static void scColossoPushActorAhead(void) {
-	ACTOR *leader;
-	ACTOR *pushed;
-	ACTOR *blocker;
-	u32 step;
-	u32 direction;
+/* The leader pushes the actor standing in the next metatile ahead one metatile
+   on (a rock, a weight or a stone pillar on the stages), when nothing solid
+   stands beyond it or on top of it and the ground lets it move, with the
+   pushing pose and SE_PUSH_STEP. */
+static void scColossoPushActorAhead(void)
+{
+	ACTOR	 *leader;
+	ACTOR	 *pushed;
+	ACTOR	 *blocker;
+	Uint32	  step;
+	Uint32	  direction;
 	FIELD_POS position;
-	s32 leaderId;
+	Sint32	  leaderId;
 
 	leaderId = MainRoutineStateWork.leaderActorId;
 	leader = fdActorGet(leaderId);
@@ -88,29 +87,30 @@ static void scColossoPushActorAhead(void) {
 	fdActorSelectAnimation(leader, ANIM_STAND);
 }
 
-/* Returns the placed actor standing one cell, or else two cells, ahead */
-/* of the actor the player moves (straight ahead in the nearest of the */
-/* four directions), or 0 when there is none. */
-void *scColossoFindActorAhead(void) {
-	ACTOR *leader;
-	s32 facing;
+/* Returns the placed actor standing one metatile, or else two metatiles, ahead
+   of the actor the player moves (straight ahead in the nearest of the four
+   directions), or 0 when there is none. */
+void *scColossoFindActorAhead(void)
+{
+	ACTOR	 *leader;
+	Sint32	  facing;
 	FIELD_POS position;
-	ACTOR *occupant;
+	ACTOR	 *occupant;
 
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
 	facing = FACING_NEAREST_CARDINAL(leader->facing);
 
-	position.x = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+	position.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	position.y = leader->y.fixed;
-	position.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+	position.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	syVectorAddPolarOffset(toFIXED(16), facing, (FIXED *)&position);
 
 	occupant = scActorFindAtPos(&position, leader);
 	if(occupant == NULL) {
-		position.x = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+		position.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		position.y = leader->y.fixed;
-		position.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+		position.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		syVectorAddPolarOffset(toFIXED(32), facing, (FIXED *)&position);
 
 		occupant = scActorFindAtPos(&position, leader);

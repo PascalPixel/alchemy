@@ -1,4 +1,4 @@
-@ Where the party returns to after a defeat (scSetRestartPoint). Each
+@ Where the party returns to after a defeat (fdSetRestartPoint). Each
 @ row: the scene and entrance (-1 for any) it matches, then the scene and
 @ entrance the party restarts at; scene -1 ends the table.
 	.macro restart_point scene:req, entrance:req, restart_scene:req, restart_entrance:req

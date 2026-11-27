@@ -1,9 +1,9 @@
 @ Two ARM kernels, each copied into a heap block and run there:
-@ Render_FillMeshKernel, an ARM build of btRenderFillMesh (its size is
-@ Render_FillMeshKernelCodeSize, which btRenderRunFillMeshKernel copies), and
+@ btRenderFillMeshKernel, an ARM build of btRenderFillMesh (its size is
+@ btRenderFillMeshKernelCodeSize, which btRenderRunFillMeshKernel copies), and
 @ Data_0813847c after it.
 @
-@ Why Render_FillMeshKernelEntry is assembly:
+@ Why btRenderFillMeshKernelEntry is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ Why the function after Data_0813847c is assembly:
@@ -12,11 +12,11 @@
 @ a mode switch inside a function.
 .syntax unified
 	.thumb
-	.global Render_FillMeshKernel
-Render_FillMeshKernel:
-	.global Render_FillMeshKernelEntry
+	.global btRenderFillMeshKernel
+btRenderFillMeshKernel:
+	.global btRenderFillMeshKernelEntry
 	.thumb_func
-Render_FillMeshKernelEntry:
+btRenderFillMeshKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_081380ae:
@@ -234,8 +234,8 @@ AlchemyUncreditedEnd_081380ae:
 	eor	r2, r2, r3
 	str	r2, [sp, #20]
 	b	.L_08138450
-	.4byte	IwramTransformVector
-	.4byte	IwramSignedDivide
+	.4byte	syIWRAMTransformVector
+	.4byte	syIWRAMSignedDivide
 .L_081383d8:
 	asr	r0, r5, #16
 	asr	r3, r7, #16
@@ -282,8 +282,8 @@ AlchemyUncreditedEnd_081380ae:
 	add	sp, sp, #44
 	pop	{r5, r6, r7, r8, r9, sl, lr}
 	bx	lr
-	.global Render_FillMeshKernelCodeSize
-	.set Render_FillMeshKernelCodeSize, . - Render_FillMeshKernel
+	.global btRenderFillMeshKernelCodeSize
+	.set btRenderFillMeshKernelCodeSize, . - btRenderFillMeshKernel
 	.4byte	ModelTransformState
 	.global Data_0813847c
 Data_0813847c:
@@ -550,7 +550,7 @@ Data_0813847c:
 	rsb	r3, r0, #0
 	mov	r0, #0
 	b	.L_08138888
-	.4byte	IwramSignedDivide
+	.4byte	syIWRAMSignedDivide
 .L_08138880:
 	sub	r3, r0, #127
 	mov	r0, #127
@@ -650,7 +650,7 @@ Data_0813847c:
 	movlt	r7, r3
 	str	r0, [sp, #124]
 	b	.L_0813878c
-	.4byte	IwramSignedDivide
+	.4byte	syIWRAMSignedDivide
 .L_081389f0:
 	ldr	r1, [sp, #56]
 	str	r1, [sp, #140]
@@ -932,7 +932,7 @@ Data_0813847c:
 	rsb	r3, r0, #0
 	mov	r0, #0
 	b	.L_08138e38
-	.4byte	IwramSignedDivide
+	.4byte	syIWRAMSignedDivide
 .L_08138e30:
 	sub	r3, r0, #127
 	mov	r0, #127
@@ -1033,7 +1033,7 @@ Data_0813847c:
 	movlt	r7, r3
 	str	r0, [sp, #136]
 	b	.L_08138d38
-	.4byte	IwramSignedDivide
+	.4byte	syIWRAMSignedDivide
 .L_08138fa4:
 	ldr	r1, [sp, #56]
 	str	r1, [sp, #152]

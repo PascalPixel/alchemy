@@ -1,5 +1,5 @@
-/* The menus' labels, as each edition words them: the status panel's level, HP
-   and PP, the item menu's key hints and the signs beside a number. */
+// The menus' labels, as each edition words them: the status panel's level, HP and PP, the item
+// menu's key hints and the signs beside a number.
 
 #include "types.h"
 
@@ -25,20 +25,20 @@ const Uint8 StatusPanelHpString[] = "HP";
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
 const Uint8 StatusPanelSlashString[] = "/";
-const Uint8 StatusPanelPpString[] = "PP";
-const Uint8 MenuTimesString[] = "x";
+const Uint8 StatusPanelPpString[]    = "PP";
+const Uint8 MenuTimesString[]        = "x";
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE
-const Uint8 ItemMenuArrangeKeysString[] = "L+A:";
+const Uint8 ItemMenuArrangeKeysString[]  = "L+A:";
 const Uint8 ItemMenuEquipmentKeyString[] = "R:";
 #endif
-const Uint8 MenuPointString[] = ".";
-const Uint8 MenuPlusSignString[] = "+";
+const Uint8 MenuPointString[]     = ".";
+const Uint8 MenuPlusSignString[]  = "+";
 const Uint8 MenuMinusSignString[] = "-";
 #if LANGUAGE == LANGUAGE_JAPANESE
-const Uint8 MenuShortcutLString[] = "L";
+const Uint8 MenuShortcutLString[]      = "L";
 const Uint8 MenuShortcutLColonString[] = "L:";
-const Uint8 MenuShortcutRString[] = "R";
+const Uint8 MenuShortcutRString[]      = "R";
 const Uint8 MenuShortcutRColonString[] = "R:";
 #endif
 #if LANGUAGE == LANGUAGE_SPANISH

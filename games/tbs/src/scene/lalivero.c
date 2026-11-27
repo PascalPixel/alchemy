@@ -1,32 +1,28 @@
-/* Lalivero (SceneIdLalivero), the walled desert town by Babi Lighthouse, with
-   a gate in its north and south walls and a stone obelisk in a pool at its
-   middle. Its houses, shops, inn and Sanctum are timber_rooms_bc.c.
-
-   The story brings the party here twice, and the town's people and what answers
-   the party change with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus
-   Lighthouse's aerie.
-
-   The first time, the party walks in through the south gate with Iodem and
-   finds two of Tolbi's soldiers lying beaten in the gateway
-   (scLaliveroWatchWoundedSoldiers, once, FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN).
-   They tell Iodem that Sheba's captors went to the ruins beneath Babi
-   Lighthouse, with Faran after them. The townsfolk talk of Sheba, and the
-   soldier at the door of the shack in the north-west lets no one in.
-
-   The second time, the party comes back from Venus Lighthouse into Faran's
-   house in the south-west. A few steps out of its door Garet stops Isaac, for
-   Iodem asked them to wait; Iodem comes out, talks of Lemuria and gives the
-   party the Black Orb that sails Babi's ship (scLaliveroIodemGivesBlackOrb,
-   once, FLAG_IODEM_FAREWELL_SEEN). If the party saw the ship at Idejima, they
-   talk of it too (scLaliveroTalkAboutIdejimaShip). From then on the soldier at
-   the shack lets the party in (FLAG_LALIVERO_WHARF_OPEN), Garet turns Isaac
-   back from the south gate, and a sign and a wall close the north gate.
-
-   On both visits Torch, a Mars Djinni, waits on a roof until spoken to, and a
-   jar, a stone pillar and a chest hold a Water of Life, a Psy Crystal and a
-   Warrior's Helm. Each door opens before Isaac walks in, and the hatches in two
-   of the flat roofs lead down into Faran's house and the weapon and armor shop.
-   Both gates lead out to the World Map. */
+// Lalivero (SceneIdLalivero), the walled desert town by Babi Lighthouse, with a gate in its north
+// and south walls and a stone obelisk in a pool at its middle. Its houses, shops, inn and Sanctum
+// are timber_rooms_bc.c.
+//
+// The story brings the party here twice, and the town's people and what answers the party change
+// with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
+//
+// The first time, the party walks in through the south gate with Iodem and finds two of Tolbi's
+// soldiers lying beaten in the gateway (scLaliveroWatchWoundedSoldiers, once,
+// FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). They tell Iodem that Sheba's captors went to the ruins
+// beneath Babi Lighthouse, with Faran after them. The townsfolk talk of Sheba, and the soldier at
+// the door of the shack in the north-west lets no one in.
+//
+// The second time, the party comes back from Venus Lighthouse into Faran's house in the south-west.
+// A few steps out of its door Garet stops Isaac, for Iodem asked them to wait; Iodem comes out,
+// talks of Lemuria and gives the party the Black Orb that sails Babi's ship
+// (scLaliveroIodemGivesBlackOrb, once, FLAG_IODEM_FAREWELL_SEEN). If the party saw the ship at
+// Idejima, they talk of it too (scLaliveroTalkAboutIdejimaShip). From then on the soldier at the
+// shack lets the party in (FLAG_LALIVERO_WHARF_OPEN), Garet turns Isaac back from the south gate,
+// and a sign and a wall close the north gate.
+//
+// On both visits Torch, a Mars Djinni, waits on a roof until spoken to, and a jar, a stone pillar
+// and a chest hold a Water of Life, a Psy Crystal and a Warrior's Helm. Each door opens before
+// Isaac walks in, and the hatches in two of the flat roofs lead down into Faran's house and the
+// weapon and armor shop. Both gates lead out to the World Map.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -38,103 +34,99 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-Sint32				  scInit(void);
-extern Sint32		  LaliveroCryingScript[];
+Sint32                scInit(void);
+extern Sint32         LaliveroCryingScript[];
 extern SCENE_ENTRANCE LaliveroEntrances[];
-extern Uint32		  LaliveroExits[];
-extern ACTOR_PLACE	  LaliveroActorPlacements[];
-extern ACTOR_PLACE	  LaliveroActorPlacementsAfterLighthouse[];
-extern Sint16		  LaliveroDoorMetatiles[][2];
-extern Uint16		  LaliveroDoorOpenSteps[];
-extern Uint16		  LaliveroGateOpenSteps[];
-extern CUE			  LaliveroCues[];
-extern CUE			  LaliveroCuesAfterLighthouse[];
+extern Uint32         LaliveroExits[];
+extern ACTOR_PLACE    LaliveroActorPlacements[];
+extern ACTOR_PLACE    LaliveroActorPlacementsAfterLighthouse[];
+extern Sint16         LaliveroDoorMetatiles[][2];
+extern Uint16         LaliveroDoorOpenSteps[];
+extern Uint16         LaliveroGateOpenSteps[];
+extern CUE            LaliveroCues[];
+extern CUE            LaliveroCuesAfterLighthouse[];
 
-static void scLaliveroTalkAboutIdejimaShip(void);
+static void           scLaliveroTalkAboutIdejimaShip(void);
 
-/* Entrances that set up the visit after Venus Lighthouse, the first as if the
-   party had also seen the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit
-   leads to them and the entrance table has no row for them (the aerie's exit
-   leads into Faran's house, TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE). Only
-   the debug scene selector, which exits to any entrance from 0 to 99, reaches
-   them. */
-enum {
-	LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE = 90,
+// Entrances that set up the visit after Venus Lighthouse, the first as if the party had also seen
+// the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit leads to them and the entrance table has
+// no row for them (the aerie's exit leads into Faran's house,
+// TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE). Only the debug scene selector, which exits to any
+// entrance from 0 to 99, reaches them.
+enum
+{
+	LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE         = 90,
 	LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE_QUIETLY = 91
 };
 
-/* The placed actors, numbered in the order of LaliveroActorPlacements.
-   LaliveroActorPlacementsAfterLighthouse, for the later visit, places the same
-   people in the same rows, then the sign and the Black Orb. Its rows for Garet,
-   Ivan and Mia take their own actor ids (fdScriptSpawnActorPlacements). */
-typedef enum LALIVERO_ACTOR_ID {
-	/* Tolbi's soldiers, lying beaten in the street on the first visit.
-	   "Uhhnn... We were taken by surprise..." Later, "Ha ha! I thought they had
-	   done me in for sure, but I'm all better now." */
+// The placed actors, numbered in the order of LaliveroActorPlacements.
+// LaliveroActorPlacementsAfterLighthouse, for the later visit, places the same people in the same
+// rows, then the sign and the Black Orb. Its rows for Garet, Ivan and Mia take their own actor ids
+// (fdScriptSpawnActorPlacements).
+typedef enum LALIVERO_ACTOR_ID
+{
+	// Tolbi's soldiers, lying beaten in the street on the first visit. "Uhhnn... We were taken by
+	// surprise..." Later, "Ha ha! I thought they had done me in for sure, but I'm all better now."
 	ACTOR_WEST_SOLDIER = ACTOR_FIRST_PLACED,
-	/* "They were terrible! We were no match..." */
+	// "They were terrible! We were no match..."
 	ACTOR_EAST_SOLDIER,
-	/* A young man with brown hair who sobs for Sheba (LaliveroCryingScript).
-	   "Ohh... They took Sheba and headed for the ruins." */
+	// A young man with brown hair who sobs for Sheba (LaliveroCryingScript). "Ohh... They took
+	// Sheba and headed for the ruins."
 	ACTOR_VILLAGER_THEY_TOOK_SHEBA,
-	/* A woman with fair hair. "Sheba is our only hope. If something happens to
-	   her, Lalivero is finished." Later she asks whether the party is leaving
-	   Lalivero. */
+	// A woman with fair hair. "Sheba is our only hope. If something happens to her, Lalivero is
+	// finished." Later she asks whether the party is leaving Lalivero.
 	ACTOR_WOMAN_OUR_ONLY_HOPE,
-	/* A man in a white turban. "This all happened because Tolbi took Sheba away
-	   from us..." */
+	// A man in a white turban. "This all happened because Tolbi took Sheba away from us..."
 	ACTOR_VILLAGER_BLAMING_TOLBI,
-	/* A woman in a green dress. "Faran followed Sheba. I'm sure he'll rescue
-	   her." */
+	// A woman in a green dress. "Faran followed Sheba. I'm sure he'll rescue her."
 	ACTOR_WOMAN_TRUSTING_FARAN,
-	/* An old man with a cane. */
+	// An old man with a cane.
 	ACTOR_OLD_MAN_RUMBLING_WARNING,
-	/* An old woman. */
+	// An old woman.
 	ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE,
-	/* A small boy with fair hair. "If I were bigger, I would have saved Sheba
-	   myself!" */
+	// A small boy with fair hair. "If I were bigger, I would have saved Sheba myself!"
 	ACTOR_BOY_IF_I_WERE_BIGGER,
-	/* A little girl with orange pigtails. "I bet Sheba can use her powers to
-	   escape them." */
+	// A little girl with orange pigtails. "I bet Sheba can use her powers to escape them."
 	ACTOR_GIRL_SHEBAS_POWERS,
-	/* A soldier who keeps the door to Babi's ship. "Babi's most precious
-	   belonging is kept here. No one may enter!" */
+	// A soldier who keeps the door to Babi's ship. "Babi's most precious belonging is kept here. No
+	// one may enter!"
 	ACTOR_WHARF_GUARD,
-	/* Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
-	   and Suhalla Gate. Here they stand half grown, block nothing and no cue
-	   answers them. */
+	// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing and Suhalla Gate.
+	// Here they stand half grown, block nothing and no cue answers them.
 	ACTOR_FIRST_PLANT,
-	/* Placed off the map until needed. */
+	// Placed off the map until needed.
 	ACTOR_IODEM = ACTOR_FIRST_PLACED + 14,
-	/* Torch, a Mars Djinni, placed until it joins. */
+	// Torch, a Mars Djinni, placed until it joins.
 	ACTOR_TORCH,
-	/* Placed after Venus Lighthouse. "No trespassing. Danger beyond this
-	   point." */
+	// Placed after Venus Lighthouse. "No trespassing. Danger beyond this point."
 	ACTOR_NORTH_EXIT_SIGN,
-	/* The orb Iodem holds out, drawn from its item icon. */
+	// The orb Iodem holds out, drawn from its item icon.
 	ACTOR_BLACK_ORB
 } LALIVERO_ACTOR_ID;
 
-/* The metatiles of the town the scene gives a meaning of its own. Each door's
-   and roof hatch's metatile is the number of the exit it leads by. */
-typedef enum LALIVERO_METATILE_BEHAVIOR {
-	/* The Sanctum's door, a gate two metatiles wide. */
-	METATILE_BEHAVIOR_LALIVERO_SANCTUM_GATE =
-		LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST,
-	/* Two metatiles a few steps from Faran's door, (6, 23) and (6, 24), where
-	   Garet stops Isaac for Iodem's farewell. */
+// The metatiles of the town the scene gives a meaning of its own. Each door's and roof hatch's
+// metatile is the number of the exit it leads by.
+typedef enum LALIVERO_METATILE_BEHAVIOR
+{
+	// The Sanctum's door, a gate two metatiles wide.
+	METATILE_BEHAVIOR_LALIVERO_SANCTUM_GATE         = LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST,
+	// Two metatiles a few steps from Faran's door, (6, 23) and (6, 24), where Garet stops Isaac for
+	// Iodem's farewell.
 	METATILE_BEHAVIOR_LALIVERO_OUTSIDE_FARANS_HOUSE = 50,
-	/* The south gateway, metatiles (12, 25) to (18, 25), where after the
-	   farewell Garet turns Isaac back toward the ship. */
-	METATILE_BEHAVIOR_LALIVERO_SOUTH_GATE = 51
+	// The south gateway, metatiles (12, 25) to (18, 25), where after the farewell Garet turns Isaac
+	// back toward the ship.
+	METATILE_BEHAVIOR_LALIVERO_SOUTH_GATE           = 51
 } LALIVERO_METATILE_BEHAVIOR;
 
-/* A metatile of the wall along the town's south edge (METATILE_BEHAVIOR_WALL),
-   whose attributes scInit copies onto metatiles the party may not cross. */
-enum { WALL_METATILE_X = 20, WALL_METATILE_Y = 23 };
+// A metatile of the wall along the town's south edge (METATILE_BEHAVIOR_WALL), whose attributes
+// scInit copies onto metatiles the party may not cross.
+enum
+{
+	WALL_METATILE_X = 20,
+	WALL_METATILE_Y = 23
+};
 
-/* Talking to Torch, a Mars Djinni on a roof in Lalivero, makes it join the
-   party, on either visit. */
+// Talking to Torch, a Mars Djinni on a roof in Lalivero, makes it join the party, on either visit.
 static void scLaliveroTalkToTorch(void)
 {
 	fdDjinnJoinParty(ACTOR_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
@@ -155,55 +147,57 @@ const Uint32 *scGetExits(void)
 	return LaliveroExits;
 }
 
-/* The townsfolk, who stand differently once the party is back from Venus
-   Lighthouse. */
+// The townsfolk, who stand differently once the party is back from Venus Lighthouse.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+	if (gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0)
+	{
 		return LaliveroActorPlacementsAfterLighthouse;
 	}
 	return LaliveroActorPlacements;
 }
 
-/* On the first visit to Lalivero, the young man sobbing for Sheba stops to say
-   she was taken to the ruins, then turns away north and sobs again. */
+// On the first visit to Lalivero, the young man sobbing for Sheba stops to say she was taken to the
+// ruins, then turns away north and sobs again.
 static void scLaliveroTalkToVillagerTheyTookSheba(Sint32 actorId)
 {
 	fdActorGet(actorId)->scaleX = toFIXED(1);
 	fdActorGet(actorId)->scaleY = toFIXED(1);
 	fdScriptSetMessageId(MsgLaliveroOhhTheyTookShebaHeaded);
-	/* "Ohh... They took Sheba and headed for the ruins." */
+	// "Ohh... They took Sheba and headed for the ruins."
 	fdScriptShowMessage(actorId, 0);
 	fdActorFaceDirection(actorId, FACING_NORTH, 0);
 	fdScriptWait(20);
 	fdActorSetScript(actorId, LaliveroCryingScript);
 }
 
-/* After Venus Lighthouse, the fair-haired woman in Lalivero asks whether the
-   party is leaving Lalivero, and wishes it well either way. */
+// After Venus Lighthouse, the fair-haired woman in Lalivero asks whether the party is leaving
+// Lalivero, and wishes it well either way.
 static void scLaliveroWomanAsksIfLeaving(Sint32 actorId)
 {
 	Sint32 message = MsgLaliveroLeavingLalivero;
 	fdScriptSetMessageId(message);
-	/* "Are you leaving Lalivero?" */
+	// "Are you leaving Lalivero?"
 	fdScriptOpenMessage(actorId, 0);
-	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
+	{
 		fdScriptWait(10);
 		fdScriptSetMessageId(message + 1);
-	} else {
+	}
+	else
+	{
 		fdScriptSetMessageId(message + 2);
 	}
 	fdScriptShowMessage(actorId, 0);
 }
 
-/* After Venus Lighthouse, the soldier at the door of the shack in the
-   north-west of Lalivero says he was told to let the party in, and steps aside
-   west of the door (FLAG_LALIVERO_WHARF_OPEN). */
+// After Venus Lighthouse, the soldier at the door of the shack in the north-west of Lalivero says
+// he was told to let the party in, and steps aside west of the door (FLAG_LALIVERO_WHARF_OPEN).
 static void scLaliveroWharfGuardLetsPartyThrough(void)
 {
 	gmFlagSet(FLAG_LALIVERO_WHARF_OPEN);
 	fdScriptSetMessageId(MsgLaliveroWasToldLetInIf);
-	/* "I was told to let you in if you showed up... The door is open." */
+	// "I was told to let you in if you showed up... The door is open."
 	fdScriptShowMessage(ACTOR_WHARF_GUARD, 0);
 	fdActorSetSpeed(ACTOR_WHARF_GUARD, 1);
 	fdActorWalkByAndWait(ACTOR_WHARF_GUARD, -16, 0);
@@ -211,20 +205,22 @@ static void scLaliveroWharfGuardLetsPartyThrough(void)
 	fdScriptWait(10);
 }
 
-/* Walking north into one of Lalivero's doors opens it, or the Sanctum's gate,
-   and Isaac walks in. */
+// Walking north into one of Lalivero's doors opens it, or the Sanctum's gate, and Isaac walks in.
 static void scLaliveroEnterDoor(void)
 {
-	Sint32 door = FieldStateWork->stepCue;
-	Sint32 x = LaliveroDoorMetatiles[door][0];
-	Sint32 y = LaliveroDoorMetatiles[door][1];
+	Sint32 door                                 = FieldStateWork->stepCue;
+	Sint32 x                                    = LaliveroDoorMetatiles[door][0];
+	Sint32 y                                    = LaliveroDoorMetatiles[door][1];
 
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FALLS;
 	sySoundPlay(SE_DOOR_OPEN);
-	if(door == METATILE_BEHAVIOR_LALIVERO_SANCTUM_GATE) {
+	if (door == METATILE_BEHAVIOR_LALIVERO_SANCTUM_GATE)
+	{
 		fdMapGridAnimateMetatiles(LaliveroGateOpenSteps, (Uint16)x, (Uint16)y);
 		fdActorWalkBy(ACTOR_PARTY_LEADER, 0, -16);
-	} else {
+	}
+	else
+	{
 		fdMapGridAnimateMetatiles(LaliveroDoorOpenSteps, (Uint16)x, (Uint16)y);
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	}
@@ -233,29 +229,28 @@ static void scLaliveroEnterDoor(void)
 	syImportScriptSetExitRequest(door);
 }
 
-/* Stepping onto the hatch in the flat roof of Faran's house (metatile (6, 18))
-   or of the weapon and armor shop (metatile (26, 15)) in Lalivero takes Isaac
-   down inside. */
+// Stepping onto the hatch in the flat roof of Faran's house (metatile (6, 18)) or of the weapon and
+// armor shop (metatile (26, 15)) in Lalivero takes Isaac down inside.
 static void scLaliveroEnterDoorway(void)
 {
-	FIELD_STATE *state = FieldStateWork;
-	Sint16		*cue = (Sint16 *)&state->stepCue;
-	Sint32		 exit = *cue;
+	FIELD_STATE *state     = FieldStateWork;
+	Sint16      *cue       = (Sint16 *)&state->stepCue;
+	Sint32       exit      = *cue;
 
 	state->transitionFrame = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(exit);
 }
 
-/* On the first visit to Lalivero, walking in through the south gate with Iodem,
-   the party finds two more of Tolbi's soldiers lying beaten in the gateway, who
-   tell Iodem that Sheba's captors went to the ruins beneath Babi Lighthouse. */
+// On the first visit to Lalivero, walking in through the south gate with Iodem, the party finds two
+// more of Tolbi's soldiers lying beaten in the gateway, who tell Iodem that Sheba's captors went to
+// the ruins beneath Babi Lighthouse.
 static void scLaliveroWatchWoundedSoldiers(void)
 {
 	ACTOR *leader;
 
 	fdScriptStart();
 	fdScriptSetMessageId(MsgLaliveroMoreTolbisSoldiersLayDefeated);
-	/* The party walks in from the south; the two soldiers lie on the ground. */
+	// The party walks in from the south; the two soldiers lie on the ground.
 	fdActorSetPos(ACTOR_PARTY_LEADER, 248, 424);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorSetAnimation(ACTOR_WEST_SOLDIER, ANIM_STILL);
@@ -263,7 +258,7 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
-	/* Iodem steps out from the party and looks them over. */
+	// Iodem steps out from the party and looks them over.
 	syFieldActorLaunchFromLeader(ACTOR_IODEM, 8, -16, FACING_NORTH);
 	fdActorWaitForMoveById(ACTOR_IODEM);
 	fdScriptWait(20);
@@ -277,41 +272,41 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "More of Tolbi's soldiers lay defeated..." */
+	// "More of Tolbi's soldiers lay defeated..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
 	fdScriptWait(30);
-	/* "Is this more of their work?" */
+	// "Is this more of their work?"
 	fdScriptOpenMessage(ACTOR_IODEM, 0);
 	fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(30);
-	/* The soldiers know Iodem's voice: seven attackers took Sheba. */
+	// The soldiers know Iodem's voice: seven attackers took Sheba.
 	fdActorRunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
 	fdScriptWait(20);
-	/* "That voice... It's Iodem..." */
+	// "That voice... It's Iodem..."
 	fdScriptShowMessage(ACTOR_WEST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorFaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 30);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "You survived!" */
+	// "You survived!"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdActorSetAnimation(ACTOR_WEST_SOLDIER, ANIM_STAND);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
 	fdScriptWait(30);
-	/* "We suffered great losses..." */
+	// "We suffered great losses..."
 	fdScriptShowMessage(ACTOR_WEST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(20);
-	/* "Were you fighting a group of six people?" */
+	// "Were you fighting a group of six people?"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
 	fdScriptWait(20);
-	/* "There were...seven..." */
+	// "There were...seven..."
 	fdScriptShowMessage(ACTOR_EAST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorFaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 0);
@@ -319,7 +314,7 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdActorSetAnimation(ACTOR_EAST_SOLDIER, ANIM_STAND);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-	/* "You've survived as well!" */
+	// "You've survived as well!"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -329,33 +324,33 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "There were seven? Is this the same group you were following..." */
+	// "There were seven? Is this the same group you were following..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
 	fdScriptWait(30);
-	/* "I'm certain of it. One of them must have been...Sheba." */
+	// "I'm certain of it. One of them must have been...Sheba."
 	fdScriptShowMessage(ACTOR_EAST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
 	fdActorFaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 20);
-	/* "Sheba, you say... Is this true!?" */
+	// "Sheba, you say... Is this true!?"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
 	fdScriptWait(20);
-	/* "The scholar Kraden was protecting her. I'm sure it was Sheba..." */
+	// "The scholar Kraden was protecting her. I'm sure it was Sheba..."
 	fdScriptShowMessage(ACTOR_WEST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
 	fdScriptWait(30);
-	/* "Did you hear that, Isaac? What do they want with Sheba?" */
+	// "Did you hear that, Isaac? What do they want with Sheba?"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdScriptWait(20);
 	fdScriptWait(20);
-	/* Iodem paces while they tell where the attackers went. */
+	// Iodem paces while they tell where the attackers went.
 	fdActorShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
 	fdActorSetSpeed(ACTOR_IODEM, 1.8);
 	fdActorWalkToAndWait(ACTOR_IODEM, 256, 360);
@@ -366,23 +361,23 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdScriptWait(30);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
 	fdScriptWait(30);
-	/* "Sheba... They all..." */
+	// "Sheba... They all..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
 	fdScriptWait(20);
-	/* "Once they finished with us, they headed for Babi Lighthouse." */
+	// "Once they finished with us, they headed for Babi Lighthouse."
 	fdScriptShowMessage(ACTOR_EAST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
 	fdScriptWait(20);
-	/* "What do they hope to find at Babi Lighthouse?" */
+	// "What do they hope to find at Babi Lighthouse?"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_EAST_SOLDIER, ANIM_NOD);
 	fdScriptWait(30);
-	/* "They spoke of the ruins beneath the lighthouse..." */
+	// "They spoke of the ruins beneath the lighthouse..."
 	fdScriptShowMessage(ACTOR_EAST_SOLDIER, 0);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
@@ -391,26 +386,26 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdActorWalkToAndWait(ACTOR_IODEM, 256, 384);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_EAST, 0);
 	fdScriptWait(20);
-	/* "Ruins? Of course! The foundations of the lighthouse!" */
+	// "Ruins? Of course! The foundations of the lighthouse!"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
 	fdScriptWait(20);
-	/* "And Faran, the master of the Lalivero, followed them into..." */
+	// "And Faran, the master of the Lalivero, followed them into..."
 	fdScriptShowMessage(ACTOR_WEST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_WEST, 0);
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(20);
-	/* "I see. Faran, too..." */
+	// "I see. Faran, too..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetSpeed(ACTOR_IODEM, 1.2);
-	/* Iodem resolves to follow; the soldiers send the party on. */
+	// Iodem resolves to follow; the soldiers send the party on.
 	fdActorWalkByAndWait(ACTOR_IODEM, 0, 16);
 	fdScriptWait(10);
-	/* "Isaac! We must head for Babi Lighthouse as well." */
+	// "Isaac! We must head for Babi Lighthouse as well."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -421,12 +416,12 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "Are you concerned about these soldiers?" */
+	// "Are you concerned about these soldiers?"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
 	fdScriptWait(20);
-	/* "We're fine... You must hurry to the lighthouse." */
+	// "We're fine... You must hurry to the lighthouse."
 	fdScriptShowMessage(ACTOR_EAST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_EAST, 0);
@@ -434,7 +429,7 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
 	fdScriptWait(20);
-	/* "The lighthouse... Sheba... If anything happens... Just hurry..." */
+	// "The lighthouse... Sheba... If anything happens... Just hurry..."
 	fdScriptShowMessage(ACTOR_WEST_SOLDIER, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_WEST, 0);
@@ -445,20 +440,20 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "Even the soldiers insist, Isaac! Come on!" */
+	// "Even the soldiers insist, Isaac! Come on!"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* Iodem walks back into the leader. */
+	// Iodem walks back into the leader.
 	fdActorSetSpeed(ACTOR_IODEM, 1.2);
 	fdActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(leader != NULL) {
-		fdActorSetDestination(
-			ACTOR_IODEM, leader->x.part[0].integer, leader->z.part[0].integer);
+	if (leader != NULL)
+	{
+		fdActorSetDestination(ACTOR_IODEM, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_IODEM);
 	fdActorSetPos(ACTOR_IODEM, 0, 0);
@@ -466,11 +461,10 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdScriptEnd();
 }
 
-/* After Venus Lighthouse, a few steps out of Faran's house in the south-west of
-   Lalivero (metatiles (6, 23) and (6, 24)), Garet stops Isaac, for Iodem asked
-   them to wait. Iodem comes out of the house, talks of Lemuria and of Babi's
-   promise, and gives the party the Black Orb that sails Babi's ship. Plays
-   once. */
+// After Venus Lighthouse, a few steps out of Faran's house in the south-west of Lalivero (metatiles
+// (6, 23) and (6, 24)), Garet stops Isaac, for Iodem asked them to wait. Iodem comes out of the
+// house, talks of Lemuria and of Babi's promise, and gives the party the Black Orb that sails
+// Babi's ship. Plays once.
 static void scLaliveroIodemGivesBlackOrb(void)
 {
 	ACTOR *leader;
@@ -478,8 +472,7 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	gmFlagSet(FLAG_IODEM_FAREWELL_SEEN);
 	fdScriptStart();
 	fdScriptSetMessageId(MsgLaliveroWhereGoingIsaacIodemAsked);
-	/* Garet reminds the leader that Iodem asked them to wait; the answer picks
-	   Mia's reply. */
+	// Garet reminds the leader that Iodem asked them to wait; the answer picks Mia's reply.
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 104, 376);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
 	syFieldActorLaunchFromLeader(ACTOR_GARET, -32, 0, FACING_EAST);
@@ -487,29 +480,32 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdActorLaunchFromLeader(ACTOR_IVAN, 0, 16, FACING_NORTH);
 	fdActorWaitForMoveById(ACTOR_GARET);
 	fdScriptWait(30);
-	/* "Where are you going, Isaac? Iodem asked us to wait. Did you..." */
+	// "Where are you going, Isaac? Iodem asked us to wait. Did you..."
 	fdScriptOpenMessage(ACTOR_GARET, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
 	fdScriptWait(10);
-	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
+	{
 		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
 		fdScriptWait(20);
-		/* "We're going to need to work on your memory, Isaac." */
+		// "We're going to need to work on your memory, Isaac."
 		fdScriptShowMessage(ACTOR_MIA, 0);
 		FieldStateWork->msg += 1;
-	} else {
+	}
+	else
+	{
 		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
 		fdScriptWait(20);
 		FieldStateWork->msg += 1;
-		/* "I know we need to leave, but we should hear what Iodem has..." */
+		// "I know we need to leave, but we should hear what Iodem has..."
 		fdScriptShowMessage(ACTOR_MIA, 0);
 	}
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-	/* "We can delay our departure a little longer. Let's wait." */
+	// "We can delay our departure a little longer. Let's wait."
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdScriptWait(10);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -518,7 +514,7 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
 	fdScriptWait(30);
-	/* The party lines up facing Iodem's door. */
+	// The party lines up facing Iodem's door.
 	fdActorWalkByAndWait(ACTOR_PARTY_LEADER, -16, 0);
 	fdActorWalkBy(ACTOR_IVAN, 0, -16);
 	fdActorWalkBy(ACTOR_MIA, 0, -8);
@@ -531,8 +527,8 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
 	fdScriptWait(80);
-	/* Iodem comes out: the door opens (metatiles 34, 0 drawn at 4, 18) and
-	   closes behind him (metatiles 32, 0). */
+	// Iodem comes out: the door opens (metatiles 34, 0 drawn at 4, 18) and closes behind him
+	// (metatiles 32, 0).
 	fdActorSetSpeed(ACTOR_IODEM, 0.8);
 	fdActorGet(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
 	fdActorSetSpritePriority(ACTOR_IODEM, 2);
@@ -550,11 +546,11 @@ static void scLaliveroIodemGivesBlackOrb(void)
 #else
 	fdActorWalkByAndWait(ACTOR_IODEM, 0, 16);
 #endif
-	/* The door shuts. */
+	// The door shuts.
 	fdMapGridCopyMetatilesLayered(32, 0, 1, 2, 4, 18);
 	sySoundPlay(SE_DOOR_CLOSE);
 	fdScriptWait(20);
-	/* "Thank you for waiting for me." */
+	// "Thank you for waiting for me."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -568,35 +564,35 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* "As you no doubt have guessed, I need to speak with you about..." */
+	// "As you no doubt have guessed, I need to speak with you about..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
 	fdScriptWait(30);
-	/* "Yes, the island of the ancients far out to sea." */
+	// "Yes, the island of the ancients far out to sea."
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "When you could not find Jenna, you returned to Venus Lighthouse." */
+	// "When you could not find Jenna, you returned to Venus Lighthouse."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 2);
 	fdScriptWait(20);
-	/* "Yeah. The base of the lighthouse was flooded, so we couldn't..." */
+	// "Yeah. The base of the lighthouse was flooded, so we couldn't..."
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-	/* "And that's when you gazed out to sea, as you promised Babi..." */
+	// "And that's when you gazed out to sea, as you promised Babi..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	/* "Yes... And we saw an area wrapped in mist." */
+	// "Yes... And we saw an area wrapped in mist."
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* "I remembered how Babi said Lemuria was always covered in mist." */
+	// "I remembered how Babi said Lemuria was always covered in mist."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -610,96 +606,99 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* "I am not sure, but I am beginning to think that may be..." */
+	// "I am not sure, but I am beginning to think that may be..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-	/* "If it is, then Babi's life..." */
+	// "If it is, then Babi's life..."
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(20);
-	/* "...could be saved? Yes." */
+	// "...could be saved? Yes."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
 	fdScriptWait(20);
-	/* "Then I guess we have no choice but to go..." */
+	// "Then I guess we have no choice but to go..."
 	fdScriptOpenMessage(ACTOR_GARET, 0);
-	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
+	{
 		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
 		fdScriptWait(20);
-		/* "Good. Then it's settled. I'll make arrangements for you to..." */
+		// "Good. Then it's settled. I'll make arrangements for you to..."
 		fdScriptShowMessage(ACTOR_IODEM, 0);
 		FieldStateWork->msg += 1;
-	} else {
+	}
+	else
+	{
 		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
 		fdScriptWait(20);
 		FieldStateWork->msg += 1;
-		/* "You swore an oath. It is meaningless unless you go immediately." */
+		// "You swore an oath. It is meaningless unless you go immediately."
 		fdScriptShowMessage(ACTOR_IODEM, 0);
 	}
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-	/* "But...we have to find Jenna first..." */
+	// "But...we have to find Jenna first..."
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
 	fdActorShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
-	/* "That is the other reason I wanted to see you... to give you..." */
+	// "That is the other reason I wanted to see you... to give you..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(20);
-	/* Iodem takes out the Black Orb. */
+	// Iodem takes out the Black Orb.
 	fdActorSetPos(ACTOR_BLACK_ORB, 88, 332);
-	/* "Iodem takes out the Black Orb." */
+	// "Iodem takes out the Black Orb."
 	fdScriptShowMessage(-1, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 	fdActorJump(ACTOR_MIA, 4, 13);
 	fdActorJump(ACTOR_MIA, 4, 30);
-	/* "Oh, isn't that..." */
+	// "Oh, isn't that..."
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* "You will need it to sail Babi's ship." */
+	// "You will need it to sail Babi's ship."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
-	/* Arriving through the aerie, the party also talks about the ship they saw
-	   at Idejima. */
-	if(gmFlagGet(FLAG_SAW_SHIP_AT_IDEJIMA) != 0) {
+	// Arriving through the aerie, the party also talks about the ship they saw at Idejima.
+	if (gmFlagGet(FLAG_SAW_SHIP_AT_IDEJIMA) != 0)
+	{
 		scLaliveroTalkAboutIdejimaShip();
 	}
 	fdScriptSetMessageId(MsgLaliveroBabiToldMeShipAncients);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "Babi told me the ship of the ancients is an incredible vessel." */
+	// "Babi told me the ship of the ancients is an incredible vessel."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* "It will make your search for Jenna easier." */
+	// "It will make your search for Jenna easier."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	/* "We appreciate it." */
+	// "We appreciate it."
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "But I want you to find Lemuria as soon as possible." */
+	// "But I want you to find Lemuria as soon as possible."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(30);
-	/* "We promised Babi we would find Lemuria. We will not fail him." */
+	// "We promised Babi we would find Lemuria. We will not fail him."
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* He holds the orb out, the leader takes it, and he steps back. */
+	// He holds the orb out, the leader takes it, and he steps back.
 	fdActorSetSpeed(ACTOR_BLACK_ORB, 0.8);
 	fdActorSetDestinationOffset(ACTOR_BLACK_ORB, 0, 16);
 	fdActorWalkByAndWait(ACTOR_IODEM, 0, 16);
@@ -715,12 +714,12 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdScriptWait(30);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	/* "The ship is docked at the edge of town. You will know it..." */
+	// "The ship is docked at the edge of town. You will know it..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* "Farewell! And bring back news of Lemuria!" */
+	// "Farewell! And bring back news of Lemuria!"
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -731,7 +730,7 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 	fdScriptWait(30);
-	/* Iodem goes back inside. */
+	// Iodem goes back inside.
 	fdActorWalkByAndWait(ACTOR_IODEM, -16, 0);
 	fdActorFaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
 	fdScriptWait(20);
@@ -741,26 +740,26 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdActorWalkByAndWait(ACTOR_IODEM, 0, -16);
 	fdActorSetPos(ACTOR_IODEM, 0, 0);
 	fdScriptWait(10);
-	/* The door shuts. */
+	// The door shuts.
 	fdMapGridCopyMetatilesLayered(32, 0, 1, 2, 4, 18);
 	sySoundPlay(SE_DOOR_CLOSE);
 	fdScriptWait(50);
-	/* The others are eager to sail, then walk back into the leader. */
+	// The others are eager to sail, then walk back into the leader.
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(20);
-	/* "Right on, Isaac! We finally get to see the ocean!" */
+	// "Right on, Isaac! We finally get to see the ocean!"
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_MIA, 2);
 	fdScriptWait(20);
-	/* "To sea we go!" */
+	// "To sea we go!"
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(30);
-	/* "It is time to depart." */
+	// "It is time to depart."
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdScriptWait(10);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -774,25 +773,25 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdActorSetSpeed(ACTOR_IVAN, 1.2);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_WALK);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(leader != NULL) {
-		fdActorSetDestination(
-			ACTOR_GARET, leader->x.part[0].integer, leader->z.part[0].integer);
+	if (leader != NULL)
+	{
+		fdActorSetDestination(ACTOR_GARET, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_GARET);
 	fdActorSetPos(ACTOR_GARET, 0, 0);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_WALK);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(leader != NULL) {
-		fdActorSetDestination(
-			ACTOR_MIA, leader->x.part[0].integer, leader->z.part[0].integer);
+	if (leader != NULL)
+	{
+		fdActorSetDestination(ACTOR_MIA, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_MIA);
 	fdActorSetPos(ACTOR_MIA, 0, 0);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(leader != NULL) {
-		fdActorSetDestination(
-			ACTOR_IVAN, leader->x.part[0].integer, leader->z.part[0].integer);
+	if (leader != NULL)
+	{
+		fdActorSetDestination(ACTOR_IVAN, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_IVAN);
 	fdActorSetPos(ACTOR_IVAN, 0, 0);
@@ -800,21 +799,20 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdScriptEnd();
 }
 
-/* During Iodem's farewell, if the party saw the ship at Idejima, Iodem says it
-   was not Babi's, which is here in Lalivero, and Garet guesses it was
-   Saturos's. */
+// During Iodem's farewell, if the party saw the ship at Idejima, Iodem says it was not Babi's,
+// which is here in Lalivero, and Garet guesses it was Saturos's.
 static void scLaliveroTalkAboutIdejimaShip(void)
 {
 	fdScriptSetMessageId(MsgLaliveroThoughtShipWeSawAt);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_IODEM, 2);
 	fdScriptWait(20);
-	/* "I thought the ship we saw at Idejima was Babi's..." */
+	// "I thought the ship we saw at Idejima was Babi's..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
 	fdScriptWait(20);
-	/* "His ship is here in Lalivero." */
+	// "His ship is here in Lalivero."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -824,21 +822,21 @@ static void scLaliveroTalkAboutIdejimaShip(void)
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 2);
 	fdScriptWait(20);
-	/* "So the ship at the peninsula was Saturos's ship!" */
+	// "So the ship at the peninsula was Saturos's ship!"
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
 	fdScriptWait(20);
-	/* "Perhaps, but we have no way of finding that out now..." */
+	// "Perhaps, but we have no way of finding that out now..."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-	/* "Yes... They're gone..." */
+	// "Yes... They're gone..."
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
 	fdScriptWait(30);
-	/* "But now we can sail the ship of the ancients!" */
+	// "But now we can sail the ship of the ancients!"
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -847,55 +845,55 @@ static void scLaliveroTalkAboutIdejimaShip(void)
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(30);
-	/* "It certainly will aid us in our search for Jenna." */
+	// "It certainly will aid us in our search for Jenna."
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 }
 
-/* After Iodem's farewell, walking out through Lalivero's south gate (metatiles
-   (12, 25) to (18, 25)) makes Garet ask whether they are not taking Babi's
-   ship, and Isaac steps back into town. */
+// After Iodem's farewell, walking out through Lalivero's south gate (metatiles (12, 25) to (18,
+// 25)) makes Garet ask whether they are not taking Babi's ship, and Isaac steps back into town.
 static void scLaliveroTurnBackToTheShip(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgLaliveroWhereGoingArentWeTaking);
-	/* "Where are you going? Aren't we taking Babi's ship? Then we..." */
+	// "Where are you going? Aren't we taking Babi's ship? Then we..."
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
 	fdScriptEnd();
 }
 
-/* What the party can talk to, touch and search, which changes once they are
-   back from Venus Lighthouse. */
+// What the party can talk to, touch and search, which changes once they are back from Venus
+// Lighthouse.
 const CUE *scGetCues(void)
 {
-	if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+	if (gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0)
+	{
 		return LaliveroCuesAfterLighthouse;
 	}
 	return LaliveroCues;
 }
 
-/* Sets Lalivero up as the party enters: the Black Orb Iodem will hold out, the
-   wounded soldiers of the first visit (and their scene), or the sign at the
-   closed north gate after Venus Lighthouse. */
+// Sets Lalivero up as the party enters: the Black Orb Iodem will hold out, the wounded soldiers of
+// the first visit (and their scene), or the sign at the closed north gate after Venus Lighthouse.
 Sint32 scInit(void)
 {
-	ACTOR		  *actor;
-	SPR			  *sprite;
+	ACTOR         *actor;
+	SPR           *sprite;
 	ICON_TRANSFER *icon;
 
-	/* Coming back from the lighthouse switches the town to its later state. */
-	if(MainRoutineStateWork.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE) {
+	// Coming back from the lighthouse switches the town to its later state.
+	if (MainRoutineStateWork.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE)
+	{
 		gmFlagSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
 		gmFlagSet(FLAG_SAW_SHIP_AT_IDEJIMA);
 	}
-	if(MainRoutineStateWork.entrance ==
-		LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE_QUIETLY) {
+	if (MainRoutineStateWork.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE_QUIETLY)
+	{
 		gmFlagSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
 	}
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	FieldStateWork->transition      = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrame = 24;
 
-	/* The three plants stand half grown and block nothing. */
+	// The three plants stand half grown and block nothing.
 	fdActorSetAnimation(ACTOR_FIRST_PLANT, SPROUT_ANIMATION_HALF_GROWN);
 	fdActorGet(ACTOR_FIRST_PLANT)->collisionFlags = 0;
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_PLANT), 0);
@@ -907,83 +905,77 @@ Sint32 scInit(void)
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_PLANT + 2), 0);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLACK_ORB), 0);
 
-	/* The Black Orb Iodem hands over is drawn from its item icon, floating 10
-	   pixels up. */
-	actor = fdActorGet(ACTOR_BLACK_ORB);
+	// The Black Orb Iodem hands over is drawn from its item icon, floating 10 pixels up.
+	actor                    = fdActorGet(ACTOR_BLACK_ORB);
 	actor->retainSpriteCache = 1;
-	actor->motionFlags = 0;
-	sprite = actor->sprite;
-	actor->y.fixed = toFIXED(10);
-	sprite->count = 0;
-	sprite->image.fullColor = 0;
-	sprite->image.palette = 0;
-	icon = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	actor->motionFlags       = 0;
+	sprite                   = actor->sprite;
+	actor->y.fixed           = toFIXED(10);
+	sprite->count            = 0;
+	sprite->image.fullColor  = 0;
+	sprite->image.palette    = 0;
+	icon                     = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnIconDrawItem(ITEM_BLACK_ORB);
 	syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 
-	if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-		/* A sign now stands at the north exit, and the three open metatiles of
-		   the gap in the north wall become wall, closing the way north. */
+	if (gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED))
+	{
+		// A sign now stands at the north exit, and the three open metatiles of the gap in the north
+		// wall become wall, closing the way north.
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_NORTH_EXIT_SIGN), 0);
 		fdActorGet(ACTOR_NORTH_EXIT_SIGN)->collisionFlags = 0;
-		fdMapGridCopyMetatileAttributes(
-			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 14, 4);
-		fdMapGridCopyMetatileAttributes(
-			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 15, 4);
-		fdMapGridCopyMetatileAttributes(
-			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 16, 4);
-		if(gmFlagGet(FLAG_LALIVERO_WHARF_OPEN)) {
+		fdMapGridCopyMetatileAttributes(WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 14, 4);
+		fdMapGridCopyMetatileAttributes(WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 15, 4);
+		fdMapGridCopyMetatileAttributes(WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 16, 4);
+		if (gmFlagGet(FLAG_LALIVERO_WHARF_OPEN))
+		{
 			fdActorSetPos(ACTOR_WHARF_GUARD, 56, 184);
 		}
-	} else {
-		/* The first visit: the two soldiers lie on the ground, drawn under the
-		   party with their own collision off, and the two metatiles each covers
-		   become wall instead. The third metatile copied, at x 78, lies outside
-		   the town's 32 columns, where the camera never goes, and changes
-		   nothing. */
-		actor = fdActorGet(ACTOR_WEST_SOLDIER);
-		actor->collisionFlags = 0;
-		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->sprite->flags = 0;
-		actor->sprite->rotation = FACING_NORTH;
-		actor = fdActorGet(ACTOR_EAST_SOLDIER);
-		actor->collisionFlags = 0;
-		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->sprite->flags = 0;
-		actor->sprite->rotation = FACING_SOUTH;
-		fdMapGridCopyMetatileAttributes(
-			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 13, 23);
-		fdMapGridCopyMetatileAttributes(
-			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 14, 23);
-		fdMapGridCopyMetatileAttributes(
-			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 78, 23);
-		fdMapGridCopyMetatileAttributes(
-			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 17, 23);
-		fdMapGridCopyMetatileAttributes(
-			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 18, 23);
-		if((MainRoutineStateWork.entrance == LALIVERO_FROM_WORLD_MAP_EAST ||
-			   MainRoutineStateWork.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
-			!fdScriptGetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
+	}
+	else
+	{
+		// The first visit: the two soldiers lie on the ground, drawn under the party with their own
+		// collision off, and the two metatiles each covers become wall instead. The third metatile
+		// copied, at x 78, lies outside the town's 32 columns, where the camera never goes, and
+		// changes nothing.
+		actor                    = fdActorGet(ACTOR_WEST_SOLDIER);
+		actor->collisionFlags    = 0;
+		actor->priorityFlags    |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->sprite->flags     = 0;
+		actor->sprite->rotation  = FACING_NORTH;
+		actor                    = fdActorGet(ACTOR_EAST_SOLDIER);
+		actor->collisionFlags    = 0;
+		actor->priorityFlags    |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->sprite->flags     = 0;
+		actor->sprite->rotation  = FACING_SOUTH;
+		fdMapGridCopyMetatileAttributes(WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 13, 23);
+		fdMapGridCopyMetatileAttributes(WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 14, 23);
+		fdMapGridCopyMetatileAttributes(WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 78, 23);
+		fdMapGridCopyMetatileAttributes(WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 17, 23);
+		fdMapGridCopyMetatileAttributes(WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 18, 23);
+		if ((MainRoutineStateWork.entrance == LALIVERO_FROM_WORLD_MAP_EAST
+		     || MainRoutineStateWork.entrance == LALIVERO_FROM_WORLD_MAP_WEST)
+		    && !fdScriptGetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN))
+		{
 			gmFlagSet(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
-			/* The woman and the girl who wander nearest the soldiers stay put
-			   during the script. */
-			actor = fdActorGet(ACTOR_WOMAN_OUR_ONLY_HOPE);
+			// The woman and the girl who wander nearest the soldiers stay put during the script.
+			actor         = fdActorGet(ACTOR_WOMAN_OUR_ONLY_HOPE);
 			actor->paused = 1;
-			actor = fdActorGet(ACTOR_GIRL_SHEBAS_POWERS);
+			actor         = fdActorGet(ACTOR_GIRL_SHEBAS_POWERS);
 			actor->paused = 1;
 			scLaliveroWatchWoundedSoldiers();
-			actor = fdActorGet(ACTOR_WOMAN_OUR_ONLY_HOPE);
+			actor         = fdActorGet(ACTOR_WOMAN_OUR_ONLY_HOPE);
 			actor->paused = 0;
-			actor = fdActorGet(ACTOR_GIRL_SHEBAS_POWERS);
+			actor         = fdActorGet(ACTOR_GIRL_SHEBAS_POWERS);
 			actor->paused = 0;
 		}
 	}
 	return 0;
 }
 
-/* The sobbing of ACTOR_VILLAGER_THEY_TOOK_SHEBA: the sprite squashes and
-   stretches twice, then rests 80 ticks. */
+// The sobbing of ACTOR_VILLAGER_THEY_TOOK_SHEBA: the sprite squashes and stretches twice, then
+// rests 80 ticks.
 Sint32 LaliveroCryingScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
@@ -1015,69 +1007,154 @@ Sint32 LaliveroCryingScript[] = {
 };
 
 SCENE_ENTRANCE LaliveroEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
-		-1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST, CONDITION_ALWAYS, 72, 0, 184,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_B_WEST, CONDITION_ALWAYS, 152, 0, 216,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_C_NORTHEAST, CONDITION_ALWAYS, 200, 0, 168,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_B_NORTHWEST, CONDITION_ALWAYS, 296, 0, 168,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_B_NORTH, CONDITION_ALWAYS, 360, 0, 168,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_B_NORTHEAST, CONDITION_ALWAYS, 432, 0, 152,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_C_SOUTHWEST, CONDITION_ALWAYS, 72, 0, 328,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_C_SOUTH, CONDITION_ALWAYS, 104, 0, 312,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_B_SOUTH, CONDITION_ALWAYS, 360, 0, 280,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST, CONDITION_ALWAYS, 440, 0, 328,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_TIMBER_ROOMS_B_EAST_SOUTHEAST, CONDITION_ALWAYS, 424, 0, 264,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 248, 0, 416, FACING_NORTH,
-		0, -1, -1, -1, -1, 0},
-	{LALIVERO_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 248, 0, 64, FACING_SOUTH,
-		0, -1, -1, -1, -1, 0},
+	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST,
+     CONDITION_ALWAYS, 72,
+     0, 184,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_B_WEST,
+     CONDITION_ALWAYS, 152,
+     0, 216,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_C_NORTHEAST,
+     CONDITION_ALWAYS, 200,
+     0, 168,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_B_NORTHWEST,
+     CONDITION_ALWAYS, 296,
+     0, 168,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_B_NORTH,
+     CONDITION_ALWAYS, 360,
+     0, 168,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_B_NORTHEAST,
+     CONDITION_ALWAYS, 432,
+     0, 152,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_C_SOUTHWEST,
+     CONDITION_ALWAYS, 72,
+     0, 328,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_C_SOUTH,
+     CONDITION_ALWAYS, 104,
+     0, 312,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_B_SOUTH,
+     CONDITION_ALWAYS, 360,
+     0, 280,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST,
+     CONDITION_ALWAYS, 440,
+     0, 328,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_TIMBER_ROOMS_B_EAST_SOUTHEAST,
+     CONDITION_ALWAYS, 424,
+     0, 264,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_WORLD_MAP_EAST,
+     CONDITION_ALWAYS, 248,
+     0, 416,
+     FACING_NORTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{LALIVERO_FROM_WORLD_MAP_WEST,
+     CONDITION_ALWAYS, 248,
+     0, 64,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
 	{SCENE_TABLE_END},
 };
 
 Uint32 LaliveroExits[] = {
 	SCENE_EXITS(Lalivero),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST, TimberRoomsC,
-		TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_WEST, TimberRoomsB,
-		TIMBER_ROOMS_B_FROM_LALIVERO_WEST),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST, TimberRoomsC,
-		TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST, TimberRoomsB,
-		TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_NORTH, TimberRoomsB,
-		TIMBER_ROOMS_B_FROM_LALIVERO_NORTH),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST, TimberRoomsB,
-		TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST, TimberRoomsC,
-		TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_SOUTH, TimberRoomsC,
-		TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_SOUTH, TimberRoomsB,
-		TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST, TimberRoomsB,
-		TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST),
-	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST, TimberRoomsB,
-		TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST),
 	SCENE_EXIT(
-		LALIVERO_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_LALIVERO_EAST),
+		LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST, TimberRoomsC, TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST),
+	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_WEST, TimberRoomsB, TIMBER_ROOMS_B_FROM_LALIVERO_WEST),
 	SCENE_EXIT(
-		LALIVERO_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_LALIVERO_WEST),
+		LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST, TimberRoomsC, TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST),
+	SCENE_EXIT(
+		LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST, TimberRoomsB, TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST),
+	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_NORTH, TimberRoomsB, TIMBER_ROOMS_B_FROM_LALIVERO_NORTH),
+	SCENE_EXIT(
+		LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST, TimberRoomsB, TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST),
+	SCENE_EXIT(
+		LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST, TimberRoomsC, TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST),
+	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_SOUTH, TimberRoomsC, TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH),
+	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_SOUTH, TimberRoomsB, TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH),
+	SCENE_EXIT(
+		LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST, TimberRoomsB, TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST),
+	SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST,
+               TimberRoomsB,
+               TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST),
+	SCENE_EXIT(LALIVERO_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_LALIVERO_EAST),
+	SCENE_EXIT(LALIVERO_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_LALIVERO_WEST),
 	SCENE_EXITS_END,
 };
 
-/* clang-format off */
+// clang-format off
 ACTOR_PLACE LaliveroActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		224, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1160,8 +1237,7 @@ ACTOR_PLACE LaliveroActorPlacementsAfterLighthouse[] = {
 	{ SCENE_TABLE_END },
 };
 
-/* The metatile of each door by its metatile behaviour, and a door opening */
-/* and the Sanctum's gate opening. */
+// The metatile of each door by its metatile behaviour, and a door opening and the Sanctum's gate opening.
 Sint16 LaliveroDoorMetatiles[][2] = {
 	{ 0, 0 }, { 4, 9 }, { 9, 11 }, { 12, 8 }, { 18, 8 }, { 22, 8 }, { 26, 7 }, { 4, 18 },
 	{ 0, 0 }, { 22, 15 }, { 27, 18 }, { 0, 0 },
@@ -1212,9 +1288,7 @@ CUE LaliveroCues[] = {
 	{ CUE_TALK, ACTOR_TORCH, CONDITION_ALWAYS, SCRIPT_REF(scLaliveroTalkToTorch) },
 	{ EXAMINE_CUE(EXAMINE_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
 	{ EXAMINE_CUE(EXAMINE_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-	/* XXX (no evidence): why this chest opens only facing west, when */
-	/* LaliveroCuesAfterLighthouse opens it from any side; the chest and the */
-	/* ground around it are the same on both visits. */
+	// XXX (no evidence): why this chest opens only facing west, when LaliveroCuesAfterLighthouse opens it from any side; the chest and the ground around it are the same on both visits.
 	{ EXAMINE_CHEST_FACING(FACING_WEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
 	{ CUE_TABLE_END },
 };
@@ -1264,4 +1338,4 @@ CUE LaliveroCuesAfterLighthouse[] = {
 	{ EXAMINE_CUE(EXAMINE_CHEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
 	{ CUE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on

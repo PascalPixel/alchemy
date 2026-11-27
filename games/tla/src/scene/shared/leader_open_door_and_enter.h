@@ -1,8 +1,6 @@
-/* Felix walks into a door: it opens, he walks through it, lined up with it, and
-   the screen closes as he leaves by exit. Eastern Alhafra's ship cabin and
-   Lemuria's palace doors open so. */
-void scLeaderOpenDoorAndEnter(
-	const MAP_GRID_METATILE_ANIMATION *door, Sint32 exit, Sint32 unused)
+// Felix walks into a door: it opens, he walks through it, lined up with it, and the screen closes
+// as he leaves by exit. Eastern Alhafra's ship cabin and Lemuria's palace doors open so.
+void scLeaderOpenDoorAndEnter(const MAP_GRID_METATILE_ANIMATION *door, Sint32 exit, Sint32 unused)
 {
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);

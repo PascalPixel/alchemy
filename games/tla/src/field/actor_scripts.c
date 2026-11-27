@@ -1,38 +1,33 @@
-/* The actor scripts the field and its scenes run. */
+// The actor scripts the field and its scenes run.
 
 #include "field/actor.h"
 #include "field/field_mode_functions.h"
 #include "field/actor_script.h"
 #include "field/sprite.h"
 
-/* Each SC_CALL function takes the actor and returns nonzero to go on with the
-   script this tick. They take different views of the actor, so the
-   declarations leave the parameters unspecified. */
-Sint32 fdActorStepAngle();
-Sint32 fdActorClearSpriteAndCollisionFlags();
-Sint32 fdActorClearSpriteFlags();
-Sint32 fdActorIgnoreRises();
-Sint32 fdActorMoveTowardTarget();
-Sint32 fdActorTurnTowardWatchedActor();
+// Each SC_CALL function takes the actor and returns nonzero to go on with the script this tick.
+// They take different views of the actor, so the declarations leave the parameters unspecified.
+Sint32       fdActorStepAngle();
+Sint32       fdActorClearSpriteAndCollisionFlags();
+Sint32       fdActorClearSpriteFlags();
+Sint32       fdActorIgnoreRises();
+Sint32       fdActorMoveTowardTarget();
+Sint32       fdActorTurnTowardWatchedActor();
 
-/* Unused: three rows of 0, 2, 4, 2 that nothing reads. */
-/* clang-format off */
+// Unused: three rows of 0, 2, 4, 2 that nothing reads.
+// clang-format off
 const Uint8 ScreenTransitionShapesTail[12] = {
 	0, 2, 4, 2,
 	0, 2, 4, 2,
 	0, 2, 4, 2,
 };
 
-/* {key, value} rows ended by a key of -1; this list has only the end. */
+// {key, value} rows ended by a key of -1; this list has only the end.
 const Sint32 PairTable[2] = {
 	-1, -1,
 };
 
-/* The pixels of an 8 by 8 tile (a pixel's row times 8 plus its column), one */
-/* diagonal at a time from the top left corner, each diagonal ended by -1; */
-/* -4 follows the longest diagonal and -9 the last. fdHeadingClose clears a */
-/* diagonal of every tile each two ticks (fdHeadingWipeTilePixel) and tests */
-/* only for a negative entry and for -9; the last entry pads the table. */
+// The pixels of an 8 by 8 tile (a pixel's row times 8 plus its column), one diagonal at a time from the top left corner, each diagonal ended by -1; -4 follows the longest diagonal and -9 the last. fdHeadingClose clears a diagonal of every tile each two ticks (fdHeadingWipeTilePixel) and tests only for a negative entry and for -9; the last entry pads the table.
 const Sint16 HeadingWipeSteps[80] = {
 	0, -1,
 	1, 8, -1,
@@ -51,19 +46,18 @@ const Sint16 HeadingWipeSteps[80] = {
 	63, -9,
 	0,
 };
-/* clang-format on */
+// clang-format on
 
-/* The walk-by script (fdActorWalkByById): waits for the actor to arrive, then
-   stands it in its first animation. */
+// The walk-by script (fdActorWalkByById): waits for the actor to arrive, then stands it in its
+// first animation.
 const Sint32 ActorOffsetScript[] = {
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
 	SC_END,
 };
 
-/* The launch script (fdActorLaunchFromLeader): waits for the actor to arrive
-   and a tick more, stands it, then turns it a step toward the facing in its
-   timer. */
+// The launch script (fdActorLaunchFromLeader): waits for the actor to arrive and a tick more,
+// stands it, then turns it a step toward the facing in its timer.
 const Sint32 ActorLaunchScript[] = {
 	SC_SYNC,
 	SC_WAIT(1),
@@ -72,14 +66,14 @@ const Sint32 ActorLaunchScript[] = {
 	SC_END,
 };
 
-/* Turns the actor a step toward the facing in its timer. */
+// Turns the actor a step toward the facing in its timer.
 const Sint32 ActorStepAngleScript[] = {
 	SC_CALL(fdActorStepAngle),
 	SC_END,
 };
 
-/* The countdown between the sounds of a message's voice as it types, by the
-   message speed the player chose (fdMessageSetVoiceFromActor). */
+// The countdown between the sounds of a message's voice as it types, by the message speed the
+// player chose (fdMessageSetVoiceFromActor).
 const Uint8 MessageSpeedVoiceRates[4] = {
 	1,
 	3,
@@ -87,8 +81,8 @@ const Uint8 MessageSpeedVoiceRates[4] = {
 	0,
 };
 
-/* An emote bubble's script (fdActorShowEmoteById): it pops up, squashing and
-   stretching, stays 30 ticks and is released. */
+// An emote bubble's script (fdActorShowEmoteById): it pops up, squashing and stretching, stays 30
+// ticks and is released.
 const Sint32 EmoteBubbleScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 2),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 4),
@@ -118,14 +112,14 @@ const Sint32 EmoteBubbleScript[] = {
 	SC_RELEASE,
 };
 
-/* Waits 40 ticks, then releases the actor: the one-off effect
-   fdEffectSetAttached shows over an actor. */
+// Waits 40 ticks, then releases the actor: the one-off effect fdEffectSetAttached shows over an
+// actor.
 const Sint32 ActorWaitScript[] = {
 	SC_WAIT(40),
 	SC_RELEASE,
 };
 
-/* MOVEMENT_TYPE_WANDER: wanders near home, pausing between steps. */
+// MOVEMENT_TYPE_WANDER: wanders near home, pausing between steps.
 const Sint32 MovementTypeWanderScript[] = {
 	SC_SPEED(0.5),
 	SC_ACCELERATION(0.05),
@@ -150,32 +144,31 @@ const Sint32 MovementTypeWanderScript[] = {
 	SC_END,
 };
 
-/* MOVEMENT_TYPE_STAND: does nothing, as The Broken Seal's ActorIdleScript. */
+// MOVEMENT_TYPE_STAND: does nothing, as The Broken Seal's ActorIdleScript.
 const Sint32 MovementTypeStandScript[] = {
 	SC_END,
 };
 
-/* MOVEMENT_TYPE_CLEAR_COLLISION: clears the actor's sprite and collision
-   flags. */
+// MOVEMENT_TYPE_CLEAR_COLLISION: clears the actor's sprite and collision flags.
 const Sint32 MovementTypeClearCollisionScript[] = {
 	SC_CALL(fdActorClearSpriteAndCollisionFlags),
 	SC_END,
 };
 
-/* MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS: clears the actor's sprite flags. */
+// MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS: clears the actor's sprite flags.
 const Sint32 MovementTypeClearSpriteFlagsScript[] = {
 	SC_CALL(fdActorClearSpriteFlags),
 	SC_END,
 };
 
-/* MOVEMENT_TYPE_IGNORE_RISES: the actor takes its metatiles' priority even
-   where the ground in front rises. */
+// MOVEMENT_TYPE_IGNORE_RISES: the actor takes its metatiles' priority even where the ground in
+// front rises.
 const Sint32 MovementTypeIgnoreRisesScript[] = {
 	SC_CALL(fdActorIgnoreRises),
 	SC_END,
 };
 
-/* MOVEMENT_TYPE_WANDER_NEAR: wanders a shorter way near home. */
+// MOVEMENT_TYPE_WANDER_NEAR: wanders a shorter way near home.
 const Sint32 MovementTypeWanderNearScript[] = {
 	SC_SPEED(0.5),
 	SC_ACCELERATION(0.05),
@@ -200,7 +193,7 @@ const Sint32 MovementTypeWanderNearScript[] = {
 	SC_END,
 };
 
-/* MOVEMENT_TYPE_WANDER_CLOSE: wanders near home without pausing. */
+// MOVEMENT_TYPE_WANDER_CLOSE: wanders near home without pausing.
 const Sint32 MovementTypeWanderCloseScript[] = {
 	SC_SPEED(0.4),
 	SC_ACCELERATION(0.2),
@@ -212,8 +205,7 @@ const Sint32 MovementTypeWanderCloseScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-/* MOVEMENT_TYPE_SQUASH: squashes and stretches, two bounces at a time, for
-   ever. */
+// MOVEMENT_TYPE_SQUASH: squashes and stretches, two bounces at a time, for ever.
 const Sint32 MovementTypeSquashScript[] = {
 	SC_LABEL(1),
 	SC_SET(SW_SCALE_X, toFIXED(1)),
@@ -245,29 +237,26 @@ const Sint32 MovementTypeSquashScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-/* MOVEMENT_TYPE_FOLLOW_WATCHED: moves the actor toward its watched actor every
-   tick. */
+// MOVEMENT_TYPE_FOLLOW_WATCHED: moves the actor toward its watched actor every tick.
 const Sint32 MovementTypeFollowWatchedScript[] = {
 	SC_CALL(fdActorMoveTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* MOVEMENT_TYPE_FACE_LEADER: turns the actor toward its watched actor, the
-   leader, every tick. */
+// MOVEMENT_TYPE_FACE_LEADER: turns the actor toward its watched actor, the leader, every tick.
 const Sint32 MovementTypeFaceLeaderScript[] = {
 	SC_CALL(fdActorTurnTowardWatchedActor),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* MOVEMENT_TYPE_TAKE_LEADER_LAYER: keeps the leader's display layer, every
-   tick. */
+// MOVEMENT_TYPE_TAKE_LEADER_LAYER: keeps the leader's display layer, every tick.
 const Sint32 MovementTypeTakeLeaderLayerScript[] = {
 	SC_CALL(fdActorTakeLeaderLayer),
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* Faces the watched actor every tick, forever. */
+// Faces the watched actor every tick, forever.
 const Sint32 ActorFaceWatchedScript[] = {
 	SC_FACE_WATCHED,
 	SC_WAIT(1),

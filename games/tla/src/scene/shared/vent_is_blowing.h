@@ -1,4 +1,4 @@
-/* Whether vent index is blowing now. */
+// Whether vent index is blowing now.
 Sint32 scVentIsBlowing(Sint32 index)
 {
 	VENT_WORK *state;

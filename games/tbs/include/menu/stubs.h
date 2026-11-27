@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_MENU_STUBS_H
 #define ALCHEMY_MENU_STUBS_H
 
-/* The menu module's stub calls: the Item, Psynergy, Djinn and Status screens
-   and the party member chooser. */
+// The menu module's stub calls: the Item, Psynergy, Djinn and Status screens and the party member
+// chooser.
 
 Sint32 mnItemMenuRunStub(void);
 Sint32 mnPsynergyMenuRunStub(void);

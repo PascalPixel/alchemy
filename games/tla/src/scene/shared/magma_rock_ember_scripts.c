@@ -1,7 +1,7 @@
-/* The scripts of the embers that fly up in Magma Rock, which its outside and
-   its inside keep a copy of. */
+// The scripts of the embers that fly up in Magma Rock, which its outside and its inside keep a copy
+// of.
 
-/* An ember's actor script. */
+// An ember's actor script.
 Uint32 MagmaRockEmberScript[] = {
 	SC_ANIMATION(2),
 	SC_WAIT(18),
@@ -11,7 +11,7 @@ Uint32 MagmaRockEmberScript[] = {
 	SC_END,
 };
 
-/* A flame ember's actor script. */
+// A flame ember's actor script.
 Sint32 MagmaRockFlameEmberScript[] = {
 	SC_ANIMATION(3),
 	SC_WAIT(23),

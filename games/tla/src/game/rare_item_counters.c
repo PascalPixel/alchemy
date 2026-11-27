@@ -1,22 +1,20 @@
-/* Each item's place among the shops' rare item counters, and two short lists a
-   new game reads. Part of game.c. */
+// Each item's place among the shops' rare item counters, and two short lists a new game reads. Part
+// of game.c.
 
-/* Four rows of five numbers that gmMainRoutineStateInitDefaults copies after
-   RareItemStock. Every value is below 18, the Djinn of one element, and there
-   are four rows, as there are elements. XXX (no evidence): what reads the copy,
-   and so what the numbers are; no object of the main image or of any overlay
-   reads SceneLocalState or RareItemStock that far in or holds the copy's
-   address, and The Broken Seal has no such table. */
+// Four rows of five numbers that gmMainRoutineStateInitDefaults copies after RareItemStock. Every
+// value is below 18, the Djinn of one element, and there are four rows, as there are elements. XXX
+// (no evidence): what reads the copy, and so what the numbers are; no object of the main image or
+// of any overlay reads SceneLocalState or RareItemStock that far in or holds the copy's address,
+// and The Broken Seal has no such table.
 const Uint8 NewGameSceneStateTable[4][5] = {
 	{15, 16, 10, 11, 12},
-	{1, 8, 15, 16, 17},
-	{5, 6, 7, 8, 9},
-	{0, 1, 2, 3, 4},
+	{1,  8,  15, 16, 17},
+	{5,  6,  7,  8,  9 },
+	{0,  1,  2,  3,  4 },
 };
 
-/* clang-format off */
-/* Each item's rare item counter number plus one, 0 for an ordinary item; the */
-/* shops' stock of a rare item is counted by it (gmItemAdjustRareItemStock). */
+// clang-format off
+// Each item's rare item counter number plus one, 0 for an ordinary item; the shops' stock of a rare item is counted by it (gmItemAdjustRareItemStock).
 const Uint16 ItemRareItemCounters[512] = {
 	0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0, 0, 0, 0,
 	0, 0, 0, 0, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0,
@@ -51,9 +49,7 @@ const Uint16 ItemRareItemCounters[512] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
-/* clang-format on */
+// clang-format on
 
-/* The characters gmPartyInitCharacters gives their starting equipment, ended by
-   -1. */
-const Sint32 CharacterNewGameIds[] = {
-	ISAAC, GARET, IVAN, MIA, FELIX, JENNA, SHEBA, PIERS, -1};
+// The characters gmPartyInitCharacters gives their starting equipment, ended by -1.
+const Sint32 CharacterNewGameIds[] = {ISAAC, GARET, IVAN, MIA, FELIX, JENNA, SHEBA, PIERS, -1};

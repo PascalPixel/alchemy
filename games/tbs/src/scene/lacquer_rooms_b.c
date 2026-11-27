@@ -1,25 +1,20 @@
-/* The insides of Xian (SceneIdLacquerRoomsB): its houses, its inn and its
-   shop, red lacquered rooms laid side by side on one rooms map, and the small
-   bedroom behind Master Feh's school.
-
-   Each of Xian's doors opens into a room of its own here. Three are villagers'
-   houses, two to a house. The inn's front room has the innkeeper and a cook,
-   and an inner doorway leads to the room behind it with its beds. In the shop
-   the weapon, armor and item merchants stand side by side behind one long white
-   counter. Every villager has a line, and a thought for Mind Read, for before
-   and after the village hears that Hsu is trapped
-   (FLAG_XIAN_HEARD_HSU_TRAPPED); two of them ask a question with an answer for
-   yes and one for no. The merchants and the innkeeper serve the party only when
-   spoken to across the counter, and otherwise just talk.
-
-   The bedroom is reached only through a door of Master Feh's school
-   (fuchin_temple.c) and has its own actors and cues. Once Xian has heard of
-   Hsu, he lies there in bed with Feizhi at his side and Master Feh by the wall.
-   If the party lifted the boulder off him at the Alpine Crossing, Feizhi thanks
-   it and Master Hama; if he was freed while the party was away
-   (FLAG_HSU_RESCUED_WITHOUT_PARTY), she thanks Hama alone, and the three of
-   them think otherwise under Mind Read. Coming in from the school clears
-   FLAG_SHOW_AREA_NAME. */
+// The insides of Xian (SceneIdLacquerRoomsB): its houses, its inn and its shop, red lacquered rooms
+// laid side by side on one rooms map, and the small bedroom behind Master Feh's school.
+//
+// Each of Xian's doors opens into a room of its own here. Three are villagers' houses, two to a
+// house. The inn's front room has the innkeeper and a cook, and an inner doorway leads to the room
+// behind it with its beds. In the shop the weapon, armor and item merchants stand side by side
+// behind one long white counter. Every villager has a line, and a thought for Mind Read, for before
+// and after the village hears that Hsu is trapped (FLAG_XIAN_HEARD_HSU_TRAPPED); two of them ask a
+// question with an answer for yes and one for no. The merchants and the innkeeper serve the party
+// only when spoken to across the counter, and otherwise just talk.
+//
+// The bedroom is reached only through a door of Master Feh's school (fuchin_temple.c) and has its
+// own actors and cues. Once Xian has heard of Hsu, he lies there in bed with Feizhi at his side and
+// Master Feh by the wall. If the party lifted the boulder off him at the Alpine Crossing, Feizhi
+// thanks it and Master Hama; if he was freed while the party was away
+// (FLAG_HSU_RESCUED_WITHOUT_PARTY), she thanks Hama alone, and the three of them think otherwise
+// under Mind Read. Coming in from the school clears FLAG_SHOW_AREA_NAME.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -30,54 +25,63 @@
 #include "text/msg_ids.h"
 
 extern SCENE_ENTRANCE LacquerRoomsBEntrances[];
-extern Uint32		  LacquerRoomsBExits[];
-extern ACTOR_PLACE	  LacquerRoomsBActorPlacements[];
-extern ACTOR_PLACE	  LacquerRoomsBSchoolRoomActorPlacements[];
-extern CUE			  LacquerRoomsBCues[];
-extern CUE			  LacquerRoomsBSchoolRoomCues[];
+extern Uint32         LacquerRoomsBExits[];
+extern ACTOR_PLACE    LacquerRoomsBActorPlacements[];
+extern ACTOR_PLACE    LacquerRoomsBSchoolRoomActorPlacements[];
+extern CUE            LacquerRoomsBCues[];
+extern CUE            LacquerRoomsBSchoolRoomCues[];
 
-/* The actors of the houses, shops and inn, numbered by the rows of
-   LacquerRoomsBActorPlacements. Each villager is named by what they talk of
-   before Xian hears of Hsu. */
-typedef enum LACQUER_ROOMS_B_ACTOR_ID {
-	/* A man with a topknot, at the table of his house. */
+// The actors of the houses, shops and inn, numbered by the rows of LacquerRoomsBActorPlacements.
+// Each villager is named by what they talk of before Xian hears of Hsu.
+typedef enum LACQUER_ROOMS_B_ACTOR_ID
+{
+	// A man with a topknot, at the table of his house.
 	ACTOR_MAN_ON_THE_MULBERRY_HARVEST = ACTOR_FIRST_PLACED,
-	/* A woman in a green apron, in the same house. */
+	// A woman in a green apron, in the same house.
 	ACTOR_FARM_WORKER,
-	/* A young man in a blue jacket, at the back of another house. */
+	// A young man in a blue jacket, at the back of another house.
 	ACTOR_YOUNG_MAN_ON_SILK_ROAD,
-	/* A young woman with black hair who walks about the same house. */
+	// A young woman with black hair who walks about the same house.
 	ACTOR_WOMAN_ON_TOLBI,
-	/* An old man in blue, by the door of the third house. */
+	// An old man in blue, by the door of the third house.
 	ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD,
-	/* An old woman with a cane, in the same house. */
+	// An old woman with a cane, in the same house.
 	ACTOR_OLD_WOMAN_ON_THE_ALTIN_MINE,
 	ACTOR_XIAN_WEAPON_MERCHANT,
 	ACTOR_XIAN_ARMOR_MERCHANT,
 	ACTOR_XIAN_ITEM_MERCHANT,
 	ACTOR_XIAN_INNKEEPER,
-	/* A woman in a pink apron who walks about the inn's back room. */
+	// A woman in a pink apron who walks about the inn's back room.
 	ACTOR_WOMAN_AWAITING_MERCHANTS,
-	/* A man in a cook's cap, in the inn's front room with the innkeeper. */
+	// A man in a cook's cap, in the inn's front room with the innkeeper.
 	ACTOR_COOK
 } LACQUER_ROOMS_B_ACTOR_ID;
 
-/* Xian's shops and inn, by their numbers in the shop and inn tables. */
-enum {
+// Xian's shops and inn, by their numbers in the shop and inn tables.
+enum
+{
 	XIAN_WEAPON_STOCK = 16,
-	XIAN_ARMOR_STOCK = 17,
-	XIAN_ITEM_STOCK = 18,
-	XIAN_INN = 5
+	XIAN_ARMOR_STOCK  = 17,
+	XIAN_ITEM_STOCK   = 18,
+	XIAN_INN          = 5
 };
 
-/* The three in the bedroom behind Master Feh's school once Xian has heard of
-   Hsu: Master Feh, who says Feizhi's prediction came true, Feizhi, and Hsu,
-   hurt by the rocks on his way from Lama Temple. */
-enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
+// The three in the bedroom behind Master Feh's school once Xian has heard of Hsu: Master Feh, who
+// says Feizhi's prediction came true, Feizhi, and Hsu, hurt by the rocks on his way from Lama
+// Temple.
+enum
+{
+	ACTOR_FEH = ACTOR_FIRST_PLACED,
+	ACTOR_FEIZHI,
+	ACTOR_HSU
+};
 
-/* Hsu on his back with his arms at his sides, as he lies in the bed in the
-   bedroom behind the school (hsu.png's frame 36). */
-enum { ANIM_HSU_IN_BED = 6 };
+// Hsu on his back with his arms at his sides, as he lies in the bed in the bedroom behind the
+// school (hsu.png's frame 36).
+enum
+{
+	ANIM_HSU_IN_BED = 6
+};
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
@@ -97,201 +101,214 @@ const Uint32 *scGetExits(void)
 	return LacquerRoomsBExits;
 }
 
-/* The room behind the school places only Master Feh, Feizhi and Hsu. */
+// The room behind the school places only Master Feh, Feizhi and Hsu.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	if(MainRoutineStateWork.entrance ==
-		LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+	if (MainRoutineStateWork.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL)
+	{
 		return LacquerRoomsBSchoolRoomActorPlacements;
 	}
 	fdAssignViewFlags(LacquerRoomsBActorPlacements);
 	return LacquerRoomsBActorPlacements;
 }
 
-/* The way the leader faces, read before the script turns anyone. */
+// The way the leader faces, read before the script turns anyone.
 static inline Uint32 scLacquerRoomsBGetLeaderFacing(void)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 	return leader->facing;
 }
 
-/* Talking to the bald weapon merchant in Xian's shop from in front of the
-   counter opens the weapon shop. From anywhere else he talks of martial arts,
-   or once the village has heard of Hsu, of the lesson his injury taught. */
+// Talking to the bald weapon merchant in Xian's shop from in front of the counter opens the weapon
+// shop. From anywhere else he talks of martial arts, or once the village has heard of Hsu, of the
+// lesson his injury taught.
 static void scLacquerRoomsBTalkToWeaponMerchant(void)
 {
 	Uint32 leaderFacing = scLacquerRoomsBGetLeaderFacing();
 
 	fdScriptStart();
-	/* Across the counter: facing north, between northwest and northeast. */
-	if(leaderFacing >= FACING_NORTHWEST + 1 &&
-		leaderFacing <= FACING_NORTHEAST - 1) {
+	// Across the counter: facing north, between northwest and northeast.
+	if (leaderFacing >= FACING_NORTHWEST + 1 && leaderFacing <= FACING_NORTHEAST - 1)
+	{
 		mnShopRun(XIAN_WEAPON_STOCK, ACTOR_XIAN_WEAPON_MERCHANT);
-	} else {
-		if(gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+	}
+	else
+	{
+		if (gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0)
+		{
 			fdScriptSetMessageId(MsgXianXianHasMartialArtsBut);
-			/* "Xian has martial arts, but kung fu alone is not enough...." */
-		} else {
+			// "Xian has martial arts, but kung fu alone is not enough...."
+		}
+		else
+		{
 			fdScriptSetMessageId(MsgXianHsusInjuryTaughtGoodLesson);
-			/* "Hsu's injury taught a good lesson. Even kung fu is no
-			   good..." */
+			// "Hsu's injury taught a good lesson. Even kung fu is no good..."
 		}
 		fdScriptShowMessage(ACTOR_XIAN_WEAPON_MERCHANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Talking to the young armor merchant in Xian's shop from in front of the
-   counter opens the armor shop. From anywhere else he talks of armor and kung
-   fu. */
+// Talking to the young armor merchant in Xian's shop from in front of the counter opens the armor
+// shop. From anywhere else he talks of armor and kung fu.
 static void scLacquerRoomsBTalkToArmorMerchant(void)
 {
 	Uint32 leaderFacing = scLacquerRoomsBGetLeaderFacing();
 
 	fdScriptStart();
-	/* Across the counter: facing north, between northwest and northeast. */
-	if(leaderFacing >= FACING_NORTHWEST + 1 &&
-		leaderFacing <= FACING_NORTHEAST - 1) {
+	// Across the counter: facing north, between northwest and northeast.
+	if (leaderFacing >= FACING_NORTHWEST + 1 && leaderFacing <= FACING_NORTHEAST - 1)
+	{
 		mnShopRun(XIAN_ARMOR_STOCK, ACTOR_XIAN_ARMOR_MERCHANT);
-	} else {
-		if(gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+	}
+	else
+	{
+		if (gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0)
+		{
 			fdScriptSetMessageId(MsgXianMartialArtistsCantUseHeavy);
-			/* "Martial artists can't use heavy armor. If they do, they
-			   can't..." */
-		} else {
+			// "Martial artists can't use heavy armor. If they do, they can't..."
+		}
+		else
+		{
 			fdScriptSetMessageId(MsgXianKungFuMakesQuickDoes);
-			/* "Kung fu makes you quick, does it not? Even so, Hsu could
-			   not..." */
+			// "Kung fu makes you quick, does it not? Even so, Hsu could not..."
 		}
 		fdScriptShowMessage(ACTOR_XIAN_ARMOR_MERCHANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Talking to the item merchant, the woman at the end of Xian's shop counter,
-   from in front of it opens the item shop. From anywhere else she talks of
-   Xian's armor, or once the village has heard of Hsu, asks whether the party
-   means to cross the desert. */
+// Talking to the item merchant, the woman at the end of Xian's shop counter, from in front of it
+// opens the item shop. From anywhere else she talks of Xian's armor, or once the village has heard
+// of Hsu, asks whether the party means to cross the desert.
 static void scLacquerRoomsBTalkToItemMerchant(void)
 {
 	Uint32 leaderFacing = scLacquerRoomsBGetLeaderFacing();
 
 	fdScriptStart();
-	/* Across the counter: facing north, between northwest and northeast. */
-	if(leaderFacing >= FACING_NORTHWEST + 1 &&
-		leaderFacing <= FACING_NORTHEAST - 1) {
+	// Across the counter: facing north, between northwest and northeast.
+	if (leaderFacing >= FACING_NORTHWEST + 1 && leaderFacing <= FACING_NORTHEAST - 1)
+	{
 		mnShopRun(XIAN_ITEM_STOCK, ACTOR_XIAN_ITEM_MERCHANT);
-	} else if(gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+	}
+	else if (gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0)
+	{
 		fdScriptSetMessageId(MsgXianXiansSpecialArmorNotSuited);
-		/* "Xian's special armor is not suited to warriors... It is..." */
+		// "Xian's special armor is not suited to warriors... It is..."
 		fdScriptShowMessage(ACTOR_XIAN_ITEM_MERCHANT, 0);
-	} else {
+	}
+	else
+	{
 		fdScriptSetMessageId(MsgXianDoPlanCrossDesertWarrior);
-		/* "Do you plan to cross the desert, warrior?" Yes: "It will take much
-		   strength. Perhaps you should buy many..." No: "You are wise, warrior.
-		   The wise man knows to avoid danger." */
+		// "Do you plan to cross the desert, warrior?" Yes: "It will take much strength. Perhaps you
+		// should buy many..." No: "You are wise, warrior. The wise man knows to avoid danger."
 		fdScriptAskYesNo(ACTOR_XIAN_ITEM_MERCHANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Talking to Xian's innkeeper across his counter, from the west, lets the party
-   stay at the inn. From anywhere else he talks of towns, or of how few guests
-   come these days. */
+// Talking to Xian's innkeeper across his counter, from the west, lets the party stay at the inn.
+// From anywhere else he talks of towns, or of how few guests come these days.
 static void scLacquerRoomsBTalkToInnkeeper(void)
 {
 	Uint32 leaderFacing = scLacquerRoomsBGetLeaderFacing();
 
 	fdScriptStart();
-	/* Across the counter: facing east, between northeast and southeast. */
-	if(leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST) {
+	// Across the counter: facing east, between northeast and southeast.
+	if (leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST)
+	{
 		mnInnCheckIn(XIAN_INN, ACTOR_XIAN_INNKEEPER);
-	} else {
-		if(gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+	}
+	else
+	{
+		if (gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0)
+		{
 			fdScriptSetMessageId(MsgXianWarriorsShouldLearnAboutTowns);
-			/* "Warriors should learn about the towns they visit. Just..." */
-		} else {
+			// "Warriors should learn about the towns they visit. Just..."
+		}
+		else
+		{
 			fdScriptSetMessageId(MsgXianWeHaveFewCustomersThese);
-			/* "We have few customers these days. Customers can't come if..." */
+			// "We have few customers these days. Customers can't come if..."
 		}
 		fdScriptShowMessage(ACTOR_XIAN_INNKEEPER, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Once Xian has heard of Hsu, a young man at home asks whether something is
-   wrong on Silk Road and in Lamakan Desert. */
+// Once Xian has heard of Hsu, a young man at home asks whether something is wrong on Silk Road and
+// in Lamakan Desert.
 static void scLacquerRoomsBAskAboutSilkRoad(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgXianSomethingWrongOnSilkRoad);
-	/* "Is something wrong on Silk Road? In Lamakan Desert, too?" Yes: "That is
-	   terrible. No one can use Silk Road!" No: "The desert is fine? That is
-	   good to hear." */
+	// "Is something wrong on Silk Road? In Lamakan Desert, too?" Yes: "That is terrible. No one can
+	// use Silk Road!" No: "The desert is fine? That is good to hear."
 	fdScriptAskYesNo(ACTOR_YOUNG_MAN_ON_SILK_ROAD, 0);
 	fdScriptEnd();
 }
 
-/* Once Xian has heard of Hsu, an old man at home asks whether the monsters in
-   Altin really spat water, as Feizhi says. */
+// Once Xian has heard of Hsu, an old man at home asks whether the monsters in Altin really spat
+// water, as Feizhi says.
 static void scLacquerRoomsBAskAboutAltinMonsters(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgXianDidMonstersInAltinSpit);
-	/* "Did the monsters in Altin spit water?" Yes: "The town was flooded by
-	   monsters? That takes much water. How..." No: "It is not true? But why
-	   would Feizhi lie?" */
+	// "Did the monsters in Altin spit water?" Yes: "The town was flooded by monsters? That takes
+	// much water. How..." No: "It is not true? But why would Feizhi lie?"
 	fdScriptAskYesNo(ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
 	fdScriptEnd();
 }
 
-/* In the bedroom behind Master Feh's school, Feizhi welcomes the party, turns
-   to look at Hsu in his bed and back, and thanks it and Master Hama for saving
-   him. */
+// In the bedroom behind Master Feh's school, Feizhi welcomes the party, turns to look at Hsu in his
+// bed and back, and thanks it and Master Hama for saving him.
 static void scLacquerRoomsBFeizhiThanksParty(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgXianWarriorWelcome);
-	/* "Oh, warrior! Welcome!" */
+	// "Oh, warrior! Welcome!"
 	fdScriptShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
 	fdActorFaceActor(ACTOR_FEIZHI, ACTOR_HSU, 0);
 	fdScriptWait(60);
 	fdActorFaceActor(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(20);
-	/* "Hsu was saved, thanks to you and Master Hama. You have my..." */
+	// "Hsu was saved, thanks to you and Master Hama. You have my..."
 	fdScriptShowMessage(ACTOR_FEIZHI, 0);
 	fdScriptEnd();
 }
 
-/* The room behind the school has its own cues. */
+// The room behind the school has its own cues.
 const CUE *scGetCues(void)
 {
-	if(MainRoutineStateWork.entrance ==
-		LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+	if (MainRoutineStateWork.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL)
+	{
 		return LacquerRoomsBSchoolRoomCues;
 	}
 	return LacquerRoomsBCues;
 }
 
-/* Each room opens with the window transition. The inn and the shop also get
-   unseen still actors of SPRITE_CHEST's sprite sheet near their counters
-   (fdActorCreateConfigured), and the bedroom lays Hsu in his bed. */
+// Each room opens with the window transition. The inn and the shop also get unseen still actors of
+// SPRITE_CHEST's sprite sheet near their counters (fdActorCreateConfigured), and the bedroom lays
+// Hsu in his bed.
 Sint32 scInit(void)
 {
 	Sint16 entrance;
 
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	entrance = MainRoutineStateWork.entrance;
-	/* XXX (no evidence): what these hidden chests are for; the player neither
-	   sees nor meets them. */
-	if(entrance == LACQUER_ROOMS_B_INN_SOUTH ||
-		entrance == LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS) {
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	entrance                   = MainRoutineStateWork.entrance;
+	// XXX (no evidence): what these hidden chests are for; the player neither sees nor meets them.
+	if (entrance == LACQUER_ROOMS_B_INN_SOUTH
+	    || entrance == LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS)
+	{
 		fdActorCreateConfigured(248, 0, 417, SPRITE_CHEST);
-	} else if(entrance == LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP) {
+	}
+	else if (entrance == LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP)
+	{
 		fdActorCreateConfigured(460, 0, 568, SPRITE_CHEST);
 		fdActorCreateConfigured(484, 0, 568, SPRITE_CHEST);
-	} else if(entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+	}
+	else if (entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL)
+	{
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
 		fdActorSetAnimation(ACTOR_HSU, ANIM_HSU_IN_BED);
 	}
@@ -307,49 +324,81 @@ const Sint32 *FieldEffectDurationScripts[] = {
 };
 
 SCENE_ENTRANCE LacquerRoomsBEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
-		-1, -1, 0},
-	{LACQUER_ROOMS_B_HOUSE, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24,
-		8, 248, 208, 0},
-	{LACQUER_ROOMS_B_HOUSE_NORTH, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH,
-		0, 288, 8, 592, 224, 0},
-	{LACQUER_ROOMS_B_FROM_XIAN_EAST, CONDITION_ALWAYS, 736, 0, 200,
-		FACING_NORTH, 0, 608, 8, 848, 224, 0},
-	{LACQUER_ROOMS_B_INN_SOUTH, CONDITION_ALWAYS, 160, 0, 472, FACING_NORTH, 0,
-		48, 288, 336, 496, 0},
-	{LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN, CONDITION_ALWAYS, 472, 0, 360,
-		FACING_EAST, 0, 384, 288, 672, 496, 0},
-	{LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 512, 0, 696,
-		FACING_NORTH, 0, 352, 496, 656, 720, 0},
-	{LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS, CONDITION_ALWAYS, 120, 0, 360,
-		FACING_EAST, 0, 48, 288, 336, 496, 0},
-	{LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL, CONDITION_ALWAYS, 120, 0,
-		696, FACING_NORTH, 0, 64, 544, 304, 744, 0},
+	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{LACQUER_ROOMS_B_HOUSE, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24, 8, 248, 208, 0},
+	{LACQUER_ROOMS_B_HOUSE_NORTH,
+     CONDITION_ALWAYS, 448,
+     0, 200,
+     FACING_NORTH, 0,
+     288, 8,
+     592, 224,
+     0},
+	{LACQUER_ROOMS_B_FROM_XIAN_EAST,
+     CONDITION_ALWAYS, 736,
+     0, 200,
+     FACING_NORTH, 0,
+     608, 8,
+     848, 224,
+     0},
+	{LACQUER_ROOMS_B_INN_SOUTH,
+     CONDITION_ALWAYS, 160,
+     0, 472,
+     FACING_NORTH, 0,
+     48, 288,
+     336, 496,
+     0},
+	{LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN,
+     CONDITION_ALWAYS, 472,
+     0, 360,
+     FACING_EAST, 0,
+     384, 288,
+     672, 496,
+     0},
+	{LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP,
+     CONDITION_ALWAYS, 512,
+     0, 696,
+     FACING_NORTH, 0,
+     352, 496,
+     656, 720,
+     0},
+	{LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS,
+     CONDITION_ALWAYS, 120,
+     0, 360,
+     FACING_EAST, 0,
+     48, 288,
+     336, 496,
+     0},
+	{LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL,
+     CONDITION_ALWAYS, 120,
+     0, 696,
+     FACING_NORTH, 0,
+     64, 544,
+     304, 744,
+     0},
 	{SCENE_TABLE_END},
 };
 
 Uint32 LacquerRoomsBExits[] = {
 	SCENE_EXITS(LacquerRoomsB),
-	SCENE_EXIT(LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN, Xian,
-		XIAN_FROM_WEAPON_AND_ARMOR_SHOP),
 	SCENE_EXIT(
-		LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN, Xian, XIAN_FROM_HOUSE_NORTH),
-	SCENE_EXIT(
-		LACQUER_ROOMS_B_TO_XIAN_EAST, Xian, XIAN_FROM_LACQUER_ROOMS_B_EAST),
-	SCENE_EXIT(
-		LACQUER_ROOMS_B_TO_XIAN_SOUTH, Xian, XIAN_FROM_LACQUER_ROOMS_B_SOUTH),
-	SCENE_EXIT(LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN, LacquerRoomsB,
-		LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS),
-	SCENE_EXIT(
-		LACQUER_ROOMS_B_TO_XIAN_WEST, Xian, XIAN_FROM_LACQUER_ROOMS_B_WEST),
-	SCENE_EXIT(LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS, LacquerRoomsB,
-		LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN),
-	SCENE_EXIT(LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL, LacquerRoomsA,
-		LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE),
+		LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN, Xian, XIAN_FROM_WEAPON_AND_ARMOR_SHOP),
+	SCENE_EXIT(LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN, Xian, XIAN_FROM_HOUSE_NORTH),
+	SCENE_EXIT(LACQUER_ROOMS_B_TO_XIAN_EAST, Xian, XIAN_FROM_LACQUER_ROOMS_B_EAST),
+	SCENE_EXIT(LACQUER_ROOMS_B_TO_XIAN_SOUTH, Xian, XIAN_FROM_LACQUER_ROOMS_B_SOUTH),
+	SCENE_EXIT(LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN,
+               LacquerRoomsB,
+               LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS),
+	SCENE_EXIT(LACQUER_ROOMS_B_TO_XIAN_WEST, Xian, XIAN_FROM_LACQUER_ROOMS_B_WEST),
+	SCENE_EXIT(LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS,
+               LacquerRoomsB,
+               LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN),
+	SCENE_EXIT(LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL,
+               LacquerRoomsA,
+               LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE),
 	SCENE_EXITS_END,
 };
 
-/* clang-format off */
+// clang-format off
 ACTOR_PLACE LacquerRoomsBActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_TOPKNOT, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		144, 0, 152, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -474,4 +523,4 @@ CUE LacquerRoomsBSchoolRoomCues[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HSU, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsIKnewHelpWouldComeWhenI) },
 	{ CUE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on

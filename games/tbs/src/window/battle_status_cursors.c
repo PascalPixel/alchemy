@@ -1,11 +1,9 @@
-/* The Status screen's cursor stops. */
+// The Status screen's cursor stops.
 
 #include "window/battle_status.h"
 
-/* clang-format off */
-/* Rows 0 to 8 with Djinn in the party, 9 to 15 without, which leave out the */
-/* class and Djinn stops: {help, column, row, highlight column, highlight row, */
-/* highlight width}. */
+// clang-format off
+// Rows 0 to 8 with Djinn in the party, 9 to 15 without, which leave out the class and Djinn stops: {help, column, row, highlight column, highlight row, highlight width}.
 const BATTLE_SUMMARY_STAT_CURSOR BattleStatusScreenStatCursors[] = {
 	{OWNER_STATUS_HELP_NAME,          2,  0,  0, 0,  12},
 	{OWNER_STATUS_HELP_EXPERIENCE,    8,  1,  0, 1,  13},
@@ -25,7 +23,7 @@ const BATTLE_SUMMARY_STAT_CURSOR BattleStatusScreenStatCursors[] = {
 	{OWNER_STATUS_HELP_RESIST,        13, 12, 0, 12, 20},
 };
 
-/* {help, column, row} */
+// {help, column, row}
 const BATTLE_SUMMARY_CURSOR BattleStatusScreenEquipmentCursors[] = {
 	{OWNER_STATUS_HELP_ATTACK,  19, 1},
 	{OWNER_STATUS_HELP_DEFENSE, 19, 2},
@@ -33,7 +31,7 @@ const BATTLE_SUMMARY_CURSOR BattleStatusScreenEquipmentCursors[] = {
 	{OWNER_STATUS_HELP_LUCK,    19, 4},
 };
 
-/* The eight status icons' places: {help, column, row} */
+// The eight status icons' places: {help, column, row}
 const BATTLE_SUMMARY_CURSOR BattleStatusScreenConditionCursors[] = {
 	{OWNER_STATUS_HELP_CONDITION + 0, 13, 0},
 	{OWNER_STATUS_HELP_CONDITION + 1, 15, 0},
@@ -44,4 +42,4 @@ const BATTLE_SUMMARY_CURSOR BattleStatusScreenConditionCursors[] = {
 	{OWNER_STATUS_HELP_CONDITION + 6, 25, 0},
 	{OWNER_STATUS_HELP_LAST_CONDITION, 27, 0},
 };
-/* clang-format on */
+// clang-format on

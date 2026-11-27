@@ -1,99 +1,97 @@
-/* Script commands that move the leader by the pad, on the map and the world
-   map, and the configured keys checked from a script. Part of field.c. */
+// Script commands that move the leader by the pad, on the map and the world map, and the configured
+// keys checked from a script. Part of field.c.
 
-/* The flying ship's animation once it is 4 pixels up: its picture moved 10
-   pixels (ANIMCMD_OFFSET_Y) and its wings beating, the seventh of
-   winged_ship_flying_small.tsv. */
-#define ANIM_SHIP_FLY_HIGH 6
+// The flying ship's animation once it is 4 pixels up: its picture moved 10 pixels
+// (ANIMCMD_OFFSET_Y) and its wings beating, the seventh of winged_ship_flying_small.tsv.
+#define ANIM_SHIP_FLY_HIGH  6
 
-/* A world map camera turn of less than this either way is made at once. */
-#define WORLD_MAP_YAW_SNAP	16
-/* The flying ship's camera turns toward the pad's yaw by at most this a
-   tick. */
+// A world map camera turn of less than this either way is made at once.
+#define WORLD_MAP_YAW_SNAP  16
+// The flying ship's camera turns toward the pad's yaw by at most this a tick.
 #define FLYING_YAW_STEP_MAX (TRIG_TURN / 2048)
 
-/* SC_WORLD: moves the player on the world map by the direction pad, as
-   SC_PLAYER does on the field, and turns the world map camera with the pad. */
+// SC_WORLD: moves the player on the world map by the direction pad, as SC_PLAYER does on the field,
+// and turns the world map camera with the pad.
 Sint32 fdActorMoveOnWorldMap(ACTOR *actor)
 {
-	POS				pos;
-	POS				leftPos;
-	POS				rightPos;
-	Sint16			angleOffsets[22];
-	Sint32			collision;
-	Sint32			angle;
-	Uint16			direction;
-	Sint32			angleIndex;
-	Sint32			movementAnimation;
-	Sint32			count;
-	Sint32			difference;
-	Sint32			terrainCollision;
-	FIXED			speed;
-	Sint32			targetCameraYaw;
+	POS             pos;
+	POS             leftPos;
+	POS             rightPos;
+	Sint16          angleOffsets[22];
+	Sint32          collision;
+	Sint32          angle;
+	Uint16          direction;
+	Sint32          angleIndex;
+	Sint32          movementAnimation;
+	Sint32          count;
+	Sint32          difference;
+	Sint32          terrainCollision;
+	FIXED           speed;
+	Sint32          targetCameraYaw;
 	WORLD_MAP_VIEW *camera;
-	Sint32			yawStep;
-	PLAYER_SPR	   *playerSprite;
-	ACTOR		   *ripple;
-	PLAYER_SPR	   *rippleSprite;
-	FIELD_STATE	   *state;
+	Sint32          yawStep;
+	PLAYER_SPR     *playerSprite;
+	ACTOR          *ripple;
+	PLAYER_SPR     *rippleSprite;
+	FIELD_STATE    *state;
 
 	movementAnimation = ANIM_WALK;
-	collision = 0;
-	count = 0;
-	if(PerWork.data & MainRoutineStateWork.dashKeys) {
-		actor->speedLimit = WORLD_MAP_RUN_SPEED;
+	collision         = 0;
+	count             = 0;
+	if (PerWork.data & MainRoutineStateWork.dashKeys)
+	{
+		actor->speedLimit   = WORLD_MAP_RUN_SPEED;
 		actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
-		movementAnimation = ANIM_LEADER_RUN;
-	} else {
-		actor->speedLimit = WORLD_MAP_WALK_SPEED;
+		movementAnimation   = ANIM_LEADER_RUN;
+	}
+	else
+	{
+		actor->speedLimit   = WORLD_MAP_WALK_SPEED;
 		actor->acceleration = WORLD_MAP_ACCELERATION;
 	}
 
-	angle = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
+	angle     = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
 	direction = angle;
-	if(direction == WORLD_MAP_KEY_HEADING_NONE) {
+	if (direction == WORLD_MAP_KEY_HEADING_NONE)
+	{
 		collision |= PLAYER_STEP_STOPPED;
-	} else {
+	}
+	else
+	{
 		collision = 0;
 		SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		syVectorAddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &pos);
-		if(DebugMode == 0 ||
-			((PerWork.data & KEY_L) == 0 &&
-				syGameFlagGet(FLAG_DEBUG_STEPS_OFF) == 0)) {
-			SET_POSITION(
-				&leftPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-			syVectorAddPolarOffset(
-				WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(30), &leftPos);
-			SET_POSITION(
-				&rightPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-			syVectorAddPolarOffset(
-				WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(30), &rightPos);
-			if((fdWorldMapIsWalkable(actor, &pos) |
-				   fdWorldMapIsWalkable(actor, &leftPos) |
-				   fdWorldMapIsWalkable(actor, &rightPos)) != 0) {
+		if (DebugMode == 0
+		    || ((PerWork.data & KEY_L) == 0 && syGameFlagGet(FLAG_DEBUG_STEPS_OFF) == 0))
+		{
+			SET_POSITION(&leftPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			syVectorAddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(30), &leftPos);
+			SET_POSITION(&rightPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			syVectorAddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(30), &rightPos);
+			if ((fdWorldMapIsWalkable(actor, &pos) | fdWorldMapIsWalkable(actor, &leftPos)
+			     | fdWorldMapIsWalkable(actor, &rightPos))
+			    != 0)
+			{
 				angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
 				angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
 				angleOffsets[count++] = direction + DEGtoANG(45);
 				angleOffsets[count++] = direction - DEGtoANG(45);
 				angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
 				angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
-				for(angleIndex = 0; angleIndex < count; angleIndex++) {
+				for (angleIndex = 0; angleIndex < count; angleIndex++)
+				{
 					direction = angleOffsets[angleIndex];
-					SET_POSITION(
-						&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+					SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+					syVectorAddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &pos);
+					SET_POSITION(&leftPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 					syVectorAddPolarOffset(
-						WORLD_MAP_PROBE_RADIUS, direction, &pos);
-					SET_POSITION(&leftPos, actor->x.fixed, actor->y.fixed,
-						actor->z.fixed);
-					syVectorAddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-						direction + DEGtoANG(30), &leftPos);
-					SET_POSITION(&rightPos, actor->x.fixed, actor->y.fixed,
-						actor->z.fixed);
-					syVectorAddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-						direction - DEGtoANG(30), &rightPos);
-					if((fdWorldMapIsWalkable(actor, &pos) |
-						   fdWorldMapIsWalkable(actor, &leftPos) |
-						   fdWorldMapIsWalkable(actor, &rightPos)) != 0)
+						WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(30), &leftPos);
+					SET_POSITION(&rightPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+					syVectorAddPolarOffset(
+						WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(30), &rightPos);
+					if ((fdWorldMapIsWalkable(actor, &pos) | fdWorldMapIsWalkable(actor, &leftPos)
+					     | fdWorldMapIsWalkable(actor, &rightPos))
+					    != 0)
 						continue;
 					angle = (Sint16)direction;
 					goto update_object;
@@ -105,94 +103,106 @@ Sint32 fdActorMoveOnWorldMap(ACTOR *actor)
 
 update_object:
 	state = RamHeapSlots->fieldState;
-	if(state != NULL) {
-		if((collision & PLAYER_STEP_BLOCKED) != 0)
+	if (state != NULL)
+	{
+		if ((collision & PLAYER_STEP_BLOCKED) != 0)
 			state->blockedSteps++;
 		else
 			state->blockedSteps = 0;
 	}
-	if(collision != 0)
+	if (collision != 0)
 		fdActorSelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
 	else
 		fdActorSelectAnimation(actor, movementAnimation);
 
-	if(collision != 0) {
-		actor->targetX = ACTOR_NO_TARGET;
-		actor->targetY = ACTOR_NO_TARGET;
-		actor->targetZ = ACTOR_NO_TARGET;
+	if (collision != 0)
+	{
+		actor->targetX   = ACTOR_NO_TARGET;
+		actor->targetY   = ACTOR_NO_TARGET;
+		actor->targetZ   = ACTOR_NO_TARGET;
 		actor->velocityX = 0;
 		actor->velocityZ = 0;
-		if((collision & PLAYER_STEP_BLOCKED) != 0) {
-			direction = angle;
+		if ((collision & PLAYER_STEP_BLOCKED) != 0)
+		{
+			direction  = angle;
 			difference = (Sint16)(direction - actor->facing);
-			if(difference > FIELD_BLOCKED_TURN_MAX)
+			if (difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
-			if(difference < -FIELD_BLOCKED_TURN_MAX)
+			if (difference < -FIELD_BLOCKED_TURN_MAX)
 				difference = -FIELD_BLOCKED_TURN_MAX;
 			actor->facing += difference;
 		}
-		actor->timer = 0;
+		actor->timer     = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
-	} else {
+	}
+	else
+	{
 		fdActorSetMoveTarget(actor, pos.x, pos.y, pos.z);
-		speed = sySquartFX(syMulFX(actor->velocityX, actor->velocityX) +
-			syMulFX(actor->velocityZ, actor->velocityZ));
+		speed            = sySquartFX(syMulFX(actor->velocityX, actor->velocityX)
+                           + syMulFX(actor->velocityZ, actor->velocityZ));
 		actor->velocityX = collision;
 		actor->velocityZ = collision;
 		syVectorAddPolarOffset(speed, (Uint16)angle, (POS *)&actor->velocityX);
-		if(actor->timer != 0)
+		if (actor->timer != 0)
 			actor->timer--;
 	}
 
-	camera = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
+	camera          = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	targetCameraYaw = WorldMapKeyYaws[DPAD_INDEX(PerWork.data)];
-	yawStep = (Sint16)(targetCameraYaw - camera->yaw) / 8;
-	if(yawStep > WORLD_MAP_YAW_STEP_MAX)
+	yawStep         = (Sint16)(targetCameraYaw - camera->yaw) / 8;
+	if (yawStep > WORLD_MAP_YAW_STEP_MAX)
 		yawStep = WORLD_MAP_YAW_STEP_MAX;
-	if(yawStep < -WORLD_MAP_YAW_STEP_MAX)
+	if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
 		yawStep = -WORLD_MAP_YAW_STEP_MAX;
-	if(yawStep > -WORLD_MAP_YAW_SNAP && yawStep < WORLD_MAP_YAW_SNAP)
+	if (yawStep > -WORLD_MAP_YAW_SNAP && yawStep < WORLD_MAP_YAW_SNAP)
 		yawStep = targetCameraYaw - camera->yaw;
 	camera->yaw += yawStep;
 
-	if(actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
-		playerSprite = actor->sprite;
+	if (actor->spriteStorageKind == ACTOR_SPRITE_ONE)
+	{
+		playerSprite     = actor->sprite;
 		terrainCollision = fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
-		if(terrainCollision == WORLD_MAP_COLLISION_FOREST) {
+		if (terrainCollision == WORLD_MAP_COLLISION_FOREST)
+		{
 			playerSprite->secondLayer->priority = 1;
-			playerSprite->flags = 0;
-		} else {
-			playerSprite->secondLayer->priority = SPRITE_LAYER_NOT_DRAWN;
-			playerSprite->flags = SPRITE_FLAG_SHADOW;
+			playerSprite->flags                 = 0;
 		}
-		if(terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
-			actor->timer == 0 && collision == 0) {
-			ripple = fdActorCreate(SPRITE_SPLASH_RING, actor->x.fixed,
-				actor->y.fixed, actor->z.fixed);
-			if(ripple != 0) {
+		else
+		{
+			playerSprite->secondLayer->priority = SPRITE_LAYER_NOT_DRAWN;
+			playerSprite->flags                 = SPRITE_FLAG_SHADOW;
+		}
+		if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER && actor->timer == 0
+		    && collision == 0)
+		{
+			ripple =
+				fdActorCreate(SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			if (ripple != 0)
+			{
 				rippleSprite = ripple->sprite;
 				fdActorStartScript(ripple, ActorRippleScript);
 				ripple->motionFlags = collision;
-				ripple->layer = 1;
-				if(rippleSprite != 0) {
+				ripple->layer       = 1;
+				if (rippleSprite != 0)
+				{
 					fdSpriteStartAnimation(rippleSprite, 1);
-					rippleSprite->flags = collision;
+					rippleSprite->flags      = collision;
 					rippleSprite->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-					rippleSprite->priority = 2;
+					rippleSprite->priority   = 2;
 				}
 				actor->timer = 10;
 			}
 		}
 	}
 	fdCheckConfiguredKeys();
-	if(PerWork.push & MainRoutineStateWork.aKeys)
+	if (PerWork.push & MainRoutineStateWork.aKeys)
 		FieldStateWork->raisedCue = WORLD_MAP_RAISED_BOARD_SHIP;
 	actor->scriptCursor++;
 	return 1;
 }
 
-/* SC_KEY_COUNT: checks the configured keys (fdCheckConfiguredKeys) and steps
-   the script on. Returns 1. */
+// SC_KEY_COUNT: checks the configured keys (fdCheckConfiguredKeys) and steps the script on.
+// Returns 1.
 Sint32 fdCheckConfiguredKeysAndCount(ACTOR *actor)
 {
 
@@ -201,133 +211,138 @@ Sint32 fdCheckConfiguredKeysAndCount(ACTOR *actor)
 	return 1;
 }
 
-/* The ship turns toward the pad by this much a tick, once the turn left is
-   wider than FIELD_BLOCKED_TURN_MAX; a narrower one it makes at once. */
+// The ship turns toward the pad by this much a tick, once the turn left is wider than
+// FIELD_BLOCKED_TURN_MAX; a narrower one it makes at once.
 #define SHIP_TURN_STEP (TRIG_TURN / 64)
 
-/* SC_SAIL (LEADER_MOVEMENT_SHIP_ON_MAP): the ship moved by the direction pad on
-   a field map, as the party's actor (MainRoutineStateWork.ownerOverride), as at
-   Lemuria's entrance; A leaves the ship. */
+// SC_SAIL (LEADER_MOVEMENT_SHIP_ON_MAP): the ship moved by the direction pad on a field map, as the
+// party's actor (MainRoutineStateWork.ownerOverride), as at Lemuria's entrance; A leaves the ship.
 Sint32 fdActorSailOnMap(ACTOR *interpreter)
 {
-	ACTOR *actor = interpreter;
+	ACTOR       *actor = interpreter;
 
-	POS			 pos;
-	POS			 testPos;
-	POS			 contact;
-	Sint16		 angleOffsets[22];
-	Sint32		 collision;
-	Sint32		 pushed;
-	Sint16		 heading;
-	Uint16		 angle;
-	Uint16		 direction;
-	Sint32		 angleIndex;
-	Sint32		 headingCount;
-	Bool		 onPlatform;
-	Sint32		 difference;
-	ACTOR		*other;
+	POS          pos;
+	POS          testPos;
+	POS          contact;
+	Sint16       angleOffsets[22];
+	Sint32       collision;
+	Sint32       pushed;
+	Sint16       heading;
+	Uint16       angle;
+	Uint16       direction;
+	Sint32       angleIndex;
+	Sint32       headingCount;
+	Bool         onPlatform;
+	Sint32       difference;
+	ACTOR       *other;
 	FIELD_STATE *state;
 
-	collision = 0;
-	pushed = 0;
+	collision    = 0;
+	pushed       = 0;
 	headingCount = 0;
-	/* Debug: holding L counts the free sprite VRAM blocks, cache entries,
-	   actors and sprites. */
-	/* DEAD: nothing reads the four counts, so the tests are gone; the ROM keeps
-	   each loop's count and its branch (512, 96, 64 and 64 passes). */
-	if(DebugMode != 0) {
-		if(PerWork.data & KEY_L) {
-			Sint32 freeBlocks = 0;
+	// Debug: holding L counts the free sprite VRAM blocks, cache entries, actors and sprites. DEAD:
+	// nothing reads the four counts, so the tests are gone; the ROM keeps each loop's count and its
+	// branch (512, 96, 64 and 64 passes).
+	if (DebugMode != 0)
+	{
+		if (PerWork.data & KEY_L)
+		{
+			Sint32 freeBlocks  = 0;
 			Sint32 freeEntries = 0;
-			Sint32 freeActors = 0;
+			Sint32 freeActors  = 0;
 			Sint32 freeSprites = 0;
 			Sint32 i;
 
-			for(i = 0; i < VRAM_BLOCK_COUNT; i++)
-				if(VramCacheBlockOwners[i] == VRAM_BLOCK_OWNER_FREE)
+			for (i = 0; i < VRAM_BLOCK_COUNT; i++)
+				if (VramCacheBlockOwners[i] == VRAM_BLOCK_OWNER_FREE)
 					freeBlocks++;
-			for(i = 0; i < VRAM_CACHE_ENTRY_COUNT; i++)
-				if(VramCacheEntries[i].offset == VRAM_CACHE_OFFSET_FREE)
+			for (i = 0; i < VRAM_CACHE_ENTRY_COUNT; i++)
+				if (VramCacheEntries[i].offset == VRAM_CACHE_OFFSET_FREE)
 					freeEntries++;
-			for(i = 0; i < ACTOR_COUNT; i++)
-				if(((ACTOR *)RamHeapSlots->actors)[i].script == NULL)
+			for (i = 0; i < ACTOR_COUNT; i++)
+				if (((ACTOR *)RamHeapSlots->actors)[i].script == NULL)
 					freeActors++;
-			for(i = 0; i < ANIM_OBJECT_COUNT; i++)
-				if(((SPR *)RamHeapSlots->sprites)[i].width == 0)
+			for (i = 0; i < ANIM_OBJECT_COUNT; i++)
+				if (((SPR *)RamHeapSlots->sprites)[i].width == 0)
 					freeSprites++;
 		}
 	}
-	actor->speedLimit = FIELD_WALK_SPEED;
+	actor->speedLimit   = FIELD_WALK_SPEED;
 	actor->acceleration = FIELD_ACCELERATION;
-	if(syGameFlagGet(FLAG_FAST_WALK) != 0 && (PerWork.data & KEY_B)) {
-		actor->speedLimit = FIELD_FAST_WALK_SPEED;
+	if (syGameFlagGet(FLAG_FAST_WALK) != 0 && (PerWork.data & KEY_B))
+	{
+		actor->speedLimit   = FIELD_FAST_WALK_SPEED;
 		actor->acceleration = FIELD_FAST_WALK_ACCELERATION;
 	}
 
 	angle = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
-	if((Uint16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+	if ((Uint16)angle == WORLD_MAP_KEY_HEADING_NONE)
+	{
 		collision |= PLAYER_STEP_STOPPED;
 		goto counted;
 	}
 	collision = 0;
 	SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	syVectorAddPolarOffset(toFIXED(19), (Uint16)angle, &pos);
-	if(actor->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
+	if (actor->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS)
+	{
 		onPlatform = FALSE;
-		other = (ACTOR *)RamHeapSlots->actors;
-		for(angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
+		other      = (ACTOR *)RamHeapSlots->actors;
+		for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++)
+		{
 			FIXED dy;
 
-			if(other->script == NULL)
+			if (other->script == NULL)
 				continue;
-			if(!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
+			if (!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
 				continue;
-			if(other == actor)
+			if (other == actor)
 				continue;
 			dy = actor->y.fixed - other->y.fixed;
-			if((dy - toFIXED(16) < 0 ? -(dy - toFIXED(16)) : dy - toFIXED(16)) >
-				toFIXED(8) - 1)
+			if ((dy - toFIXED(16) < 0 ? -(dy - toFIXED(16)) : dy - toFIXED(16)) > toFIXED(8) - 1)
 				continue;
-			if(SAME_METATILE(actor->x.fixed, other->x.fixed) &&
-				SAME_METATILE(actor->z.fixed, other->z.fixed))
+			if (SAME_METATILE(actor->x.fixed, other->x.fixed)
+			    && SAME_METATILE(actor->z.fixed, other->z.fixed))
 				onPlatform = TRUE;
-			if(SAME_METATILE(pos.x, other->x.fixed) &&
-				SAME_METATILE(pos.z, other->z.fixed)) {
+			if (SAME_METATILE(pos.x, other->x.fixed) && SAME_METATILE(pos.z, other->z.fixed))
+			{
 				collision = 0;
-				heading = angle;
+				heading   = angle;
 				goto counted;
 			}
 		}
-		if(onPlatform && !fdMapGridCheckCollision(actor, &pos)) {
+		if (onPlatform && !fdMapGridCheckCollision(actor, &pos))
+		{
 			collision = 0;
-			heading = angle;
+			heading   = angle;
 			goto counted;
 		}
 	}
-	if(DebugMode != 0 && (PerWork.data & KEY_L)) {
+	if (DebugMode != 0 && (PerWork.data & KEY_L))
+	{
 		collision = 0;
-		heading = angle;
+		heading   = angle;
 		goto counted;
 	}
-	if(!fdMapGridCheckCollision(actor, &pos) &&
-		SIDE_PROBES_CLEAR(fdMapGridCheckCollision, actor, toFIXED(19),
-			(Uint16)angle, &testPos)) {
+	if (!fdMapGridCheckCollision(actor, &pos)
+	    && SIDE_PROBES_CLEAR(fdMapGridCheckCollision, actor, toFIXED(19), (Uint16)angle, &testPos))
+	{
 		heading = angle;
 		goto push_objects;
 	}
-	direction = angle;
+	direction                    = angle;
 	angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
 	angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
 	angleOffsets[headingCount++] = direction + DEGtoANG(45);
 	angleOffsets[headingCount++] = direction - DEGtoANG(45);
 	angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
 	angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
-	for(angleIndex = 0; angleIndex < headingCount; angleIndex++) {
+	for (angleIndex = 0; angleIndex < headingCount; angleIndex++)
+	{
 		heading = angleOffsets[angleIndex];
-		if(PROBE_CLEAR(fdMapGridCheckCollision, actor, toFIXED(19),
-			   (Uint16)heading, &pos) &&
-			SIDE_PROBES_CLEAR(fdMapGridCheckCollision, actor, toFIXED(19),
-				(Uint16)heading, &testPos))
+		if (PROBE_CLEAR(fdMapGridCheckCollision, actor, toFIXED(19), (Uint16)heading, &pos)
+		    && SIDE_PROBES_CLEAR(
+				fdMapGridCheckCollision, actor, toFIXED(19), (Uint16)heading, &testPos))
 			goto push_objects;
 	}
 	SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -337,49 +352,48 @@ push_objects:
 	SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	syVectorAddPolarOffset(toFIXED(15), (Uint16)heading, &contact);
 	other = (ACTOR *)RamHeapSlots->actors;
-	for(angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
+	for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++)
+	{
 		Sint32 radius;
 
 		radius = actor->radius - 2;
-		if(other->script == NULL)
+		if (other->script == NULL)
 			continue;
-		if(!(other->collisionFlags & ACTOR_SOLID))
+		if (!(other->collisionFlags & ACTOR_SOLID))
 			continue;
-		if(other == actor)
+		if (other == actor)
 			continue;
-		if(fdCheckSpheresOverlap(
-			   &other->x.fixed, radius, &contact.x, other->radius - 2) < 0)
+		if (fdCheckSpheresOverlap(&other->x.fixed, radius, &contact.x, other->radius - 2) < 0)
 			continue;
-		if((other->collisionFlags & ACTOR_PUSHABLE) && other->paused == 0) {
-			direction = syAtan(other->z.fixed - actor->z.fixed,
-				other->x.fixed - actor->x.fixed);
-			SET_POSITION(
-				&testPos, other->x.fixed, other->y.fixed, other->z.fixed);
+		if ((other->collisionFlags & ACTOR_PUSHABLE) && other->paused == 0)
+		{
+			direction = syAtan(other->z.fixed - actor->z.fixed, other->x.fixed - actor->x.fixed);
+			SET_POSITION(&testPos, other->x.fixed, other->y.fixed, other->z.fixed);
 			heading = direction;
 			syVectorAddPolarOffset(toFIXED(1) / 4, direction, &testPos);
-			if(!fdActorScriptCheckOverlap(other, &testPos.x)) {
-				SET_POSITION(
-					&testPos, other->x.fixed, other->y.fixed, other->z.fixed);
+			if (!fdActorScriptCheckOverlap(other, &testPos.x))
+			{
+				SET_POSITION(&testPos, other->x.fixed, other->y.fixed, other->z.fixed);
 				syVectorAddPolarOffset(toFIXED(21), direction, &testPos);
-				if(!fdMapGridCheckCollision(other, &testPos)) {
-					SET_POSITION(&testPos, other->x.fixed, other->y.fixed,
-						other->z.fixed);
-					syVectorAddPolarOffset(
-						toFIXED(21), direction + FIELD_PROBE_ANGLE, &testPos);
-					/* The same probe is tested twice. */
-					if(!fdMapGridCheckCollision(other, &testPos) &&
-						!fdMapGridCheckCollision(other, &testPos)) {
-						SET_POSITION(&testPos, other->x.fixed, other->y.fixed,
-							other->z.fixed);
-						syVectorAddPolarOffset(toFIXED(21),
-							direction - FIELD_PROBE_ANGLE, &testPos);
-						if(!fdMapGridCheckCollision(other, &testPos)) {
-							syVectorAddPolarOffset(toFIXED(1) / 4, direction,
-								(POS *)&other->x.fixed);
-							other->targetX = ACTOR_NO_TARGET;
-							other->targetY = ACTOR_NO_TARGET;
-							other->targetZ = ACTOR_NO_TARGET;
-							pushed |= 1;
+				if (!fdMapGridCheckCollision(other, &testPos))
+				{
+					SET_POSITION(&testPos, other->x.fixed, other->y.fixed, other->z.fixed);
+					syVectorAddPolarOffset(toFIXED(21), direction + FIELD_PROBE_ANGLE, &testPos);
+					// The same probe is tested twice.
+					if (!fdMapGridCheckCollision(other, &testPos)
+					    && !fdMapGridCheckCollision(other, &testPos))
+					{
+						SET_POSITION(&testPos, other->x.fixed, other->y.fixed, other->z.fixed);
+						syVectorAddPolarOffset(
+							toFIXED(21), direction - FIELD_PROBE_ANGLE, &testPos);
+						if (!fdMapGridCheckCollision(other, &testPos))
+						{
+							syVectorAddPolarOffset(
+								toFIXED(1) / 4, direction, (POS *)&other->x.fixed);
+							other->targetX  = ACTOR_NO_TARGET;
+							other->targetY  = ACTOR_NO_TARGET;
+							other->targetZ  = ACTOR_NO_TARGET;
+							pushed         |= 1;
 							continue;
 						}
 					}
@@ -388,128 +402,136 @@ push_objects:
 		}
 		collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
 	}
-	if(collision == 0 && pushed != 0) {
-		actor->speedLimit = toFIXED(1) / 4;
+	if (collision == 0 && pushed != 0)
+	{
+		actor->speedLimit   = toFIXED(1) / 4;
 		actor->acceleration = toFIXED(1) / 8;
 	}
 
 counted:
 	state = RamHeapSlots->fieldState;
-	if(state != NULL) {
-		if(collision & PLAYER_STEP_BLOCKED)
+	if (state != NULL)
+	{
+		if (collision & PLAYER_STEP_BLOCKED)
 			state->blockedSteps++;
 		else
 			state->blockedSteps = 0;
 		state->heldKeys = PerWork.data;
 	}
-	if(pushed != 0 || collision != 0)
+	if (pushed != 0 || collision != 0)
 		fdActorSelectAnimation(actor, ANIM_STAND);
 	else
 		fdActorSelectAnimation(actor, ANIM_WALK);
 
-	if(PerWork.push & MainRoutineStateWork.aKeys) {
-		FieldStateWork->raisedCue = WORLD_MAP_RAISED_LEAVE_SHIP;
-		collision |= PLAYER_STEP_STOPPED;
+	if (PerWork.push & MainRoutineStateWork.aKeys)
+	{
+		FieldStateWork->raisedCue  = WORLD_MAP_RAISED_LEAVE_SHIP;
+		collision                 |= PLAYER_STEP_STOPPED;
 	}
 
-	if(collision != 0) {
-		actor->targetX = ACTOR_NO_TARGET;
-		actor->targetY = ACTOR_NO_TARGET;
-		actor->targetZ = ACTOR_NO_TARGET;
+	if (collision != 0)
+	{
+		actor->targetX   = ACTOR_NO_TARGET;
+		actor->targetY   = ACTOR_NO_TARGET;
+		actor->targetZ   = ACTOR_NO_TARGET;
 		actor->velocityX = 0;
 		actor->velocityZ = 0;
-		if(collision & PLAYER_STEP_BLOCKED) {
+		if (collision & PLAYER_STEP_BLOCKED)
+		{
 			difference = (Sint16)((Uint16)angle - actor->facing);
-			if(difference > FIELD_BLOCKED_TURN_MAX)
+			if (difference > FIELD_BLOCKED_TURN_MAX)
 				difference = SHIP_TURN_STEP;
-			if(difference < -FIELD_BLOCKED_TURN_MAX)
+			if (difference < -FIELD_BLOCKED_TURN_MAX)
 				difference = -SHIP_TURN_STEP;
 			actor->facing += difference;
 		}
-		actor->timer = 0;
+		actor->timer     = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
-	} else {
+	}
+	else
+	{
 		FIXED speed;
 
 		fdActorSetMoveTarget(actor, pos.x, pos.y, pos.z);
-		speed = sySquartFX(syMulFX(actor->velocityX, actor->velocityX) +
-			syMulFX(actor->velocityZ, actor->velocityZ));
+		speed            = sySquartFX(syMulFX(actor->velocityX, actor->velocityX)
+                           + syMulFX(actor->velocityZ, actor->velocityZ));
 		actor->velocityX = collision;
 		actor->velocityZ = collision;
-		syVectorAddPolarOffset(
-			speed, (Uint16)heading, (POS *)&actor->velocityX);
-		if(actor->timer != 0)
+		syVectorAddPolarOffset(speed, (Uint16)heading, (POS *)&actor->velocityX);
+		if (actor->timer != 0)
 			actor->timer--;
 		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-		difference = (Sint16)((Uint16)angle - actor->facing);
-		if(difference > FIELD_BLOCKED_TURN_MAX)
+		difference            = (Sint16)((Uint16)angle - actor->facing);
+		if (difference > FIELD_BLOCKED_TURN_MAX)
 			difference = SHIP_TURN_STEP;
-		if(difference < -FIELD_BLOCKED_TURN_MAX)
+		if (difference < -FIELD_BLOCKED_TURN_MAX)
 			difference = -SHIP_TURN_STEP;
 		actor->facing += difference;
 	}
-	if(actor->spriteStorageKind == ACTOR_SPRITE_ONE)
+	if (actor->spriteStorageKind == ACTOR_SPRITE_ONE)
 		fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
 	fdCheckConfiguredKeys();
 	actor->scriptCursor++;
 	return 1;
 }
 
-/* SC_WORLD_SAIL (LEADER_MOVEMENT_SHIP): the ship sailing the world map. It
-   keeps the kind of water under the ship in FIELD_STATE.terrainKind, sails at a
-   run and turns a little at a time, leaving ripples; A goes ashore, and a dash
-   key takes off once the ship has its wings (FIELD_STATE.hoverReady). */
+// SC_WORLD_SAIL (LEADER_MOVEMENT_SHIP): the ship sailing the world map. It keeps the kind of water
+// under the ship in FIELD_STATE.terrainKind, sails at a run and turns a little at a time, leaving
+// ripples; A goes ashore, and a dash key takes off once the ship has its wings
+// (FIELD_STATE.hoverReady).
 Sint32 fdActorSailOnWorldMap(ACTOR *actor)
 {
-	POS				pos;
-	POS				testPos;
-	Sint16			angleOffsets[28];
-	Sint32			collision;
-	Sint32			angle;
-	Uint16			direction;
-	Sint32			angleIndex;
-	Sint32			count;
-	Sint32			difference;
-	Sint32			terrain;
-	FIXED			speed;
-	Sint32			targetCameraYaw;
+	POS             pos;
+	POS             testPos;
+	Sint16          angleOffsets[28];
+	Sint32          collision;
+	Sint32          angle;
+	Uint16          direction;
+	Sint32          angleIndex;
+	Sint32          count;
+	Sint32          difference;
+	Sint32          terrain;
+	FIXED           speed;
+	Sint32          targetCameraYaw;
 	WORLD_MAP_VIEW *camera;
-	Sint32			yawStep;
-	ACTOR		   *ripple;
-	PLAYER_SPR	   *rippleSprite;
-	FIELD_STATE	   *state;
-	FIELD_STATE	   *worldState;
-	Uint32			kind;
+	Sint32          yawStep;
+	ACTOR          *ripple;
+	PLAYER_SPR     *rippleSprite;
+	FIELD_STATE    *state;
+	FIELD_STATE    *worldState;
+	Uint32          kind;
 
-	count = 0;
-	terrain = fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
+	count      = 0;
+	terrain    = fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
 	worldState = RamHeapSlots->fieldState;
-	if(terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
-		terrain < WORLD_MAP_COLLISION_SEA_LAST)
+	if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST && terrain < WORLD_MAP_COLLISION_SEA_LAST)
 		worldState->terrainKind = SHIP_TERRAIN_SEA;
-	if(terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST &&
-		terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
+	if (terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST
+	    && terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
 		worldState->terrainKind = SHIP_TERRAIN_SHALLOWS;
-	if(terrain == WORLD_MAP_COLLISION_SEA_LAST)
+	if (terrain == WORLD_MAP_COLLISION_SEA_LAST)
 		worldState->terrainKind = SHIP_TERRAIN_SEA_LAST;
-	if(terrain >= WORLD_MAP_COLLISION_DEFAULT &&
-		terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
+	if (terrain >= WORLD_MAP_COLLISION_DEFAULT && terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
 		worldState->terrainKind = SHIP_TERRAIN_GROUND;
 
-	collision = 0;
-	actor->speedLimit = toFIXED(5) / 4;
+	collision           = 0;
+	actor->speedLimit   = toFIXED(5) / 4;
 	actor->acceleration = toFIXED(1) / 2;
-	angle = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
-	direction = angle;
-	if(direction == WORLD_MAP_KEY_HEADING_NONE) {
+	angle               = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
+	direction           = angle;
+	if (direction == WORLD_MAP_KEY_HEADING_NONE)
+	{
 		collision |= PLAYER_STEP_STOPPED;
-	} else {
+	}
+	else
+	{
 		SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		syVectorAddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &pos);
-		if(DebugMode == 0 || (PerWork.data & KEY_L) == 0) {
-			if(fdWorldMapIsSailable(actor, &pos) == 0 &&
-				SIDE_PROBES_CLEAR(fdWorldMapIsSailable, actor,
-					WORLD_MAP_PROBE_RADIUS, direction, &testPos))
+		if (DebugMode == 0 || (PerWork.data & KEY_L) == 0)
+		{
+			if (fdWorldMapIsSailable(actor, &pos) == 0
+			    && SIDE_PROBES_CLEAR(
+					fdWorldMapIsSailable, actor, WORLD_MAP_PROBE_RADIUS, direction, &testPos))
 				goto update_object;
 			angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
 			angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
@@ -517,12 +539,14 @@ Sint32 fdActorSailOnWorldMap(ACTOR *actor)
 			angleOffsets[count++] = direction - DEGtoANG(45);
 			angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
 			angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
-			for(angleIndex = 0; angleIndex < count; angleIndex++) {
+			for (angleIndex = 0; angleIndex < count; angleIndex++)
+			{
 				direction = angleOffsets[angleIndex];
-				if(PROBE_CLEAR(fdWorldMapIsSailable, actor,
-					   WORLD_MAP_PROBE_RADIUS, direction, &pos) &&
-					SIDE_PROBES_CLEAR(fdWorldMapIsSailable, actor,
-						WORLD_MAP_PROBE_RADIUS, direction, &testPos)) {
+				if (PROBE_CLEAR(
+						fdWorldMapIsSailable, actor, WORLD_MAP_PROBE_RADIUS, direction, &pos)
+				    && SIDE_PROBES_CLEAR(
+						fdWorldMapIsSailable, actor, WORLD_MAP_PROBE_RADIUS, direction, &testPos))
+				{
 					angle = (Sint16)direction;
 					goto update_object;
 				}
@@ -533,93 +557,105 @@ Sint32 fdActorSailOnWorldMap(ACTOR *actor)
 
 update_object:
 	state = RamHeapSlots->fieldState;
-	if(state != NULL) {
-		if((collision & PLAYER_STEP_BLOCKED) != 0)
+	if (state != NULL)
+	{
+		if ((collision & PLAYER_STEP_BLOCKED) != 0)
 			state->blockedSteps++;
 		else
 			state->blockedSteps = 0;
 		state->heldKeys = PerWork.data;
 	}
-	if(collision != 0)
+	if (collision != 0)
 		fdActorSelectAnimation(actor, ANIM_STAND);
 	else
 		fdActorSelectAnimation(actor, ANIM_WALK);
 
-	if(PerWork.push & MainRoutineStateWork.aKeys) {
-		FieldStateWork->raisedCue = WORLD_MAP_RAISED_LEAVE_SHIP;
-		collision |= PLAYER_STEP_STOPPED;
+	if (PerWork.push & MainRoutineStateWork.aKeys)
+	{
+		FieldStateWork->raisedCue  = WORLD_MAP_RAISED_LEAVE_SHIP;
+		collision                 |= PLAYER_STEP_STOPPED;
 	}
-	if(PerWork.push & MainRoutineStateWork.dashKeys) {
+	if (PerWork.push & MainRoutineStateWork.dashKeys)
+	{
 		FIELD_STATE *fieldState = RamHeapSlots->fieldState;
-		if(fieldState->hoverReady != 0) {
+		if (fieldState->hoverReady != 0)
+		{
 			syGameFlagClear(FLAG_SHIP_HOVERING);
 			((FIELD_STATE *)fieldState)->raisedCue = WORLD_MAP_RAISED_TAKE_OFF;
 		}
 	}
 
-	if(collision != 0) {
-		actor->targetX = ACTOR_NO_TARGET;
-		actor->targetY = ACTOR_NO_TARGET;
-		actor->targetZ = ACTOR_NO_TARGET;
+	if (collision != 0)
+	{
+		actor->targetX   = ACTOR_NO_TARGET;
+		actor->targetY   = ACTOR_NO_TARGET;
+		actor->targetZ   = ACTOR_NO_TARGET;
 		actor->velocityX = 0;
 		actor->velocityZ = 0;
-		if((collision & PLAYER_STEP_BLOCKED) != 0) {
-			direction = angle;
+		if ((collision & PLAYER_STEP_BLOCKED) != 0)
+		{
+			direction  = angle;
 			difference = (Sint16)(direction - actor->facing);
-			if(difference > FIELD_BLOCKED_TURN_MAX)
+			if (difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
-			if(difference < -FIELD_BLOCKED_TURN_MAX)
+			if (difference < -FIELD_BLOCKED_TURN_MAX)
 				difference = -FIELD_BLOCKED_TURN_MAX;
 			actor->facing += difference;
 		}
-		actor->timer = 0;
+		actor->timer     = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
-	} else {
+	}
+	else
+	{
 		fdActorSetMoveTarget(actor, pos.x, pos.y, pos.z);
-		speed = sySquartFX(syMulFX(actor->velocityX, actor->velocityX) +
-			syMulFX(actor->velocityZ, actor->velocityZ));
+		speed            = sySquartFX(syMulFX(actor->velocityX, actor->velocityX)
+                           + syMulFX(actor->velocityZ, actor->velocityZ));
 		actor->velocityX = collision;
 		actor->velocityZ = collision;
-		direction = angle;
+		direction        = angle;
 		syVectorAddPolarOffset(speed, direction, (POS *)&actor->velocityX);
-		if(actor->timer != 0)
+		if (actor->timer != 0)
 			actor->timer--;
 		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-		difference = (Sint16)(direction - actor->facing);
-		if(difference > FIELD_BLOCKED_TURN_MAX)
+		difference            = (Sint16)(direction - actor->facing);
+		if (difference > FIELD_BLOCKED_TURN_MAX)
 			difference = SHIP_TURN_STEP;
-		if(difference < -FIELD_BLOCKED_TURN_MAX)
+		if (difference < -FIELD_BLOCKED_TURN_MAX)
 			difference = -SHIP_TURN_STEP;
 		actor->facing += difference;
 	}
 
-	camera = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
+	camera          = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	targetCameraYaw = WorldMapKeyYaws[DPAD_INDEX(PerWork.data)];
-	yawStep = (Sint16)(targetCameraYaw - camera->yaw) / 8;
-	if(yawStep > WORLD_MAP_YAW_STEP_MAX)
+	yawStep         = (Sint16)(targetCameraYaw - camera->yaw) / 8;
+	if (yawStep > WORLD_MAP_YAW_STEP_MAX)
 		yawStep = WORLD_MAP_YAW_STEP_MAX;
-	if(yawStep < -WORLD_MAP_YAW_STEP_MAX)
+	if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
 		yawStep = -WORLD_MAP_YAW_STEP_MAX;
-	if(yawStep > -WORLD_MAP_YAW_SNAP && yawStep < WORLD_MAP_YAW_SNAP)
+	if (yawStep > -WORLD_MAP_YAW_SNAP && yawStep < WORLD_MAP_YAW_SNAP)
 		yawStep = targetCameraYaw - camera->yaw;
 	camera->yaw += yawStep;
 
-	kind = actor->spriteStorageKind;
-	if(kind == ACTOR_SPRITE_ONE) {
+	kind         = actor->spriteStorageKind;
+	if (kind == ACTOR_SPRITE_ONE)
+	{
 		fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
-		if(actor->timer == 0 && collision == 0) {
-			ripple = fdActorCreate(SPRITE_SPLASH_RING, actor->x.fixed,
-				actor->y.fixed, actor->z.fixed);
-			if(ripple != 0) {
+		if (actor->timer == 0 && collision == 0)
+		{
+			ripple =
+				fdActorCreate(SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			if (ripple != 0)
+			{
 				rippleSprite = ripple->sprite;
 				fdActorStartScript(ripple, ActorRippleScript);
 				ripple->motionFlags = 0;
-				ripple->layer = kind;
-				if(rippleSprite != 0) {
+				ripple->layer       = kind;
+				if (rippleSprite != 0)
+				{
 					fdSpriteStartAnimation(rippleSprite, 2);
-					rippleSprite->flags = 0;
+					rippleSprite->flags      = 0;
 					rippleSprite->objectMode = OBJ_MODE_NORMAL;
-					rippleSprite->priority = 2;
+					rippleSprite->priority   = 2;
 				}
 				actor->timer = 10;
 			}
@@ -630,65 +666,66 @@ update_object:
 	return 1;
 }
 
-/* SC_WORLD_FLY (LEADER_MOVEMENT_FLYING_SHIP): the ship with its wings on the
-   world map, flying over the ground the sea alone would stop
-   (fdWorldMapIsFlyable). A or B climbs, up to 12 pixels, and the ship sinks
-   otherwise, faster once the party's PP is spent; coming down after a climb
-   lands it. */
+// SC_WORLD_FLY (LEADER_MOVEMENT_FLYING_SHIP): the ship with its wings on the world map, flying over
+// the ground the sea alone would stop (fdWorldMapIsFlyable). A or B climbs, up to 12 pixels, and
+// the ship sinks otherwise, faster once the party's PP is spent; coming down after a climb lands
+// it.
 Sint32 fdActorFlyOnWorldMap(ACTOR *actor)
 {
-	POS				position;
-	POS				testPosition;
-	Sint16			angleOffsets[28];
-	Sint32			collision;
-	Sint32			angle;
-	Uint16			direction;
-	Sint32			angleIndex;
-	Sint32			count;
-	Sint32			difference;
-	Sint32			terrain;
-	FIXED			speed;
-	FIXED			targetCameraYaw;
+	POS             position;
+	POS             testPosition;
+	Sint16          angleOffsets[28];
+	Sint32          collision;
+	Sint32          angle;
+	Uint16          direction;
+	Sint32          angleIndex;
+	Sint32          count;
+	Sint32          difference;
+	Sint32          terrain;
+	FIXED           speed;
+	FIXED           targetCameraYaw;
 	WORLD_MAP_VIEW *camera;
-	Sint32			yawStep;
-	ACTOR		   *ripple;
-	PLAYER_SPR	   *rippleSprite;
-	FIELD_STATE	   *state;
-	FIELD_STATE	   *worldState;
-	ACTOR		   *other;
-	Uint32			kind;
-	FIELD_STATE	   *flightState;
+	Sint32          yawStep;
+	ACTOR          *ripple;
+	PLAYER_SPR     *rippleSprite;
+	FIELD_STATE    *state;
+	FIELD_STATE    *worldState;
+	ACTOR          *other;
+	Uint32          kind;
+	FIELD_STATE    *flightState;
 
-	count = 0;
-	terrain = fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
+	count      = 0;
+	terrain    = fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
 	worldState = RamHeapSlots->fieldState;
-	if(terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
-		terrain < WORLD_MAP_COLLISION_SEA_LAST)
+	if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST && terrain < WORLD_MAP_COLLISION_SEA_LAST)
 		worldState->terrainKind = SHIP_TERRAIN_SEA;
-	if(terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST &&
-		terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
+	if (terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST
+	    && terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
 		worldState->terrainKind = SHIP_TERRAIN_SHALLOWS;
-	if(terrain == WORLD_MAP_COLLISION_SEA_LAST)
+	if (terrain == WORLD_MAP_COLLISION_SEA_LAST)
 		worldState->terrainKind = SHIP_TERRAIN_SEA_LAST;
-	if(terrain >= WORLD_MAP_COLLISION_DEFAULT &&
-		terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
+	if (terrain >= WORLD_MAP_COLLISION_DEFAULT && terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
 		worldState->terrainKind = SHIP_TERRAIN_GROUND;
 
-	actor->motionFlags = 0;
-	collision = 0;
-	actor->speedLimit = actor->y.fixed / 16 + toFIXED(1.25);
+	actor->motionFlags  = 0;
+	collision           = 0;
+	actor->speedLimit   = actor->y.fixed / 16 + toFIXED(1.25);
 	actor->acceleration = toFIXED(1) / 2;
-	angle = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
-	direction = angle;
-	if(direction == WORLD_MAP_KEY_HEADING_NONE) {
+	angle               = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
+	direction           = angle;
+	if (direction == WORLD_MAP_KEY_HEADING_NONE)
+	{
 		collision |= PLAYER_STEP_STOPPED;
-	} else {
+	}
+	else
+	{
 		SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		syVectorAddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
-		if(DebugMode == 0 || (PerWork.data & KEY_L) == 0) {
-			if(fdWorldMapIsFlyable(actor, &position) == 0 &&
-				SIDE_PROBES_CLEAR(fdWorldMapIsFlyable, actor,
-					WORLD_MAP_PROBE_RADIUS, direction, &testPosition))
+		if (DebugMode == 0 || (PerWork.data & KEY_L) == 0)
+		{
+			if (fdWorldMapIsFlyable(actor, &position) == 0
+			    && SIDE_PROBES_CLEAR(
+					fdWorldMapIsFlyable, actor, WORLD_MAP_PROBE_RADIUS, direction, &testPosition))
 				goto check_actors;
 			angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
 			angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
@@ -696,12 +733,17 @@ Sint32 fdActorFlyOnWorldMap(ACTOR *actor)
 			angleOffsets[count++] = direction - DEGtoANG(45);
 			angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
 			angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
-			for(angleIndex = 0; angleIndex < count; angleIndex++) {
+			for (angleIndex = 0; angleIndex < count; angleIndex++)
+			{
 				direction = angleOffsets[angleIndex];
-				if(PROBE_CLEAR(fdWorldMapIsFlyable, actor,
-					   WORLD_MAP_PROBE_RADIUS, direction, &position) &&
-					SIDE_PROBES_CLEAR(fdWorldMapIsFlyable, actor,
-						WORLD_MAP_PROBE_RADIUS, direction, &testPosition)) {
+				if (PROBE_CLEAR(
+						fdWorldMapIsFlyable, actor, WORLD_MAP_PROBE_RADIUS, direction, &position)
+				    && SIDE_PROBES_CLEAR(fdWorldMapIsFlyable,
+				                         actor,
+				                         WORLD_MAP_PROBE_RADIUS,
+				                         direction,
+				                         &testPosition))
+				{
 					angle = (Sint16)direction;
 					goto check_actors;
 				}
@@ -710,119 +752,132 @@ Sint32 fdActorFlyOnWorldMap(ACTOR *actor)
 
 		check_actors:
 			other = RamHeapSlots->actors;
-			for(angleIndex = 0; angleIndex < ACTOR_COUNT;
-				angleIndex++, other++) {
-				if(other->script != NULL &&
-					(other->collisionFlags & ACTOR_SOLID) && other != actor &&
-					fdCheckSpheresOverlap(&other->x.fixed, other->radius,
-						&position.x, actor->radius) >= 0)
+			for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++)
+			{
+				if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) && other != actor
+				    && fdCheckSpheresOverlap(
+						   &other->x.fixed, other->radius, &position.x, actor->radius)
+				           >= 0)
 					collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
 			}
 		}
 	}
 	state = RamHeapSlots->fieldState;
-	if(state != NULL) {
-		if((collision & PLAYER_STEP_BLOCKED) != 0)
+	if (state != NULL)
+	{
+		if ((collision & PLAYER_STEP_BLOCKED) != 0)
 			state->blockedSteps++;
 		else
 			state->blockedSteps = 0;
 		state->heldKeys = PerWork.data;
 	}
-	if(actor->y.fixed >= toFIXED(4))
+	if (actor->y.fixed >= toFIXED(4))
 		fdActorSelectAnimation(actor, ANIM_SHIP_FLY_HIGH);
-	else if(collision != 0)
+	else if (collision != 0)
 		fdActorSelectAnimation(actor, ANIM_STAND);
 	else
 		fdActorSelectAnimation(actor, ANIM_WALK);
 
-	if(collision != 0) {
-		actor->targetX = ACTOR_NO_TARGET;
-		actor->targetY = ACTOR_NO_TARGET;
-		actor->targetZ = ACTOR_NO_TARGET;
+	if (collision != 0)
+	{
+		actor->targetX   = ACTOR_NO_TARGET;
+		actor->targetY   = ACTOR_NO_TARGET;
+		actor->targetZ   = ACTOR_NO_TARGET;
 		actor->velocityX = 0;
 		actor->velocityZ = 0;
-		if((collision & PLAYER_STEP_BLOCKED) != 0) {
-			direction = angle;
+		if ((collision & PLAYER_STEP_BLOCKED) != 0)
+		{
+			direction  = angle;
 			difference = (Sint16)(direction - actor->facing);
-			if(difference > FIELD_BLOCKED_TURN_MAX)
+			if (difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
-			if(difference < -FIELD_BLOCKED_TURN_MAX)
+			if (difference < -FIELD_BLOCKED_TURN_MAX)
 				difference = -FIELD_BLOCKED_TURN_MAX;
 			actor->facing += difference;
 		}
-		actor->timer = 0;
+		actor->timer     = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
-	} else {
+	}
+	else
+	{
 		fdActorSetMoveTarget(actor, position.x, position.y, position.z);
-		speed = sySquartFX(syMulFX(actor->velocityX, actor->velocityX) +
-			syMulFX(actor->velocityZ, actor->velocityZ));
+		speed            = sySquartFX(syMulFX(actor->velocityX, actor->velocityX)
+                           + syMulFX(actor->velocityZ, actor->velocityZ));
 		actor->velocityX = collision;
 		actor->velocityZ = collision;
-		direction = angle;
+		direction        = angle;
 		syVectorAddPolarOffset(speed, direction, (POS *)&actor->velocityX);
-		if(actor->timer != 0)
+		if (actor->timer != 0)
 			actor->timer--;
 		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-		difference = (Sint16)(direction - actor->facing);
-		if(difference > FIELD_BLOCKED_TURN_MAX)
+		difference            = (Sint16)(direction - actor->facing);
+		if (difference > FIELD_BLOCKED_TURN_MAX)
 			difference = SHIP_TURN_STEP;
-		if(difference < -FIELD_BLOCKED_TURN_MAX)
+		if (difference < -FIELD_BLOCKED_TURN_MAX)
 			difference = -SHIP_TURN_STEP;
 		actor->facing += difference;
 	}
 
 	camera = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
-	targetCameraYaw = syMulFX(WorldMapKeyYaws[DPAD_INDEX(PerWork.data)],
-		actor->y.fixed / 4 + toFIXED(1));
+	targetCameraYaw =
+		syMulFX(WorldMapKeyYaws[DPAD_INDEX(PerWork.data)], actor->y.fixed / 4 + toFIXED(1));
 	yawStep = (Sint16)(targetCameraYaw - camera->yaw) / 8;
-	if(yawStep > FLYING_YAW_STEP_MAX)
+	if (yawStep > FLYING_YAW_STEP_MAX)
 		yawStep = FLYING_YAW_STEP_MAX;
-	if(yawStep < -FLYING_YAW_STEP_MAX)
+	if (yawStep < -FLYING_YAW_STEP_MAX)
 		yawStep = -FLYING_YAW_STEP_MAX;
-	if(yawStep >= -1 && yawStep <= 1)
+	if (yawStep >= -1 && yawStep <= 1)
 		yawStep = targetCameraYaw - camera->yaw;
 	camera->yaw += yawStep;
 
-	kind = actor->spriteStorageKind;
-	if(kind == ACTOR_SPRITE_ONE) {
-		if(actor->y.fixed < toFIXED(4)) {
-			if(actor->timer == 0 && collision == 0) {
-				ripple = fdActorCreate(
-					SPRITE_SPLASH_RING, actor->x.fixed, 0, actor->z.fixed);
-				if(ripple != 0) {
+	kind         = actor->spriteStorageKind;
+	if (kind == ACTOR_SPRITE_ONE)
+	{
+		if (actor->y.fixed < toFIXED(4))
+		{
+			if (actor->timer == 0 && collision == 0)
+			{
+				ripple = fdActorCreate(SPRITE_SPLASH_RING, actor->x.fixed, 0, actor->z.fixed);
+				if (ripple != 0)
+				{
 					rippleSprite = ripple->sprite;
 					fdActorStartScript(ripple, ActorRippleScript);
 					ripple->motionFlags = 0;
-					ripple->layer = kind;
-					if(rippleSprite != 0) {
+					ripple->layer       = kind;
+					if (rippleSprite != 0)
+					{
 						fdSpriteStartAnimation(rippleSprite, 1);
-						rippleSprite->flags = 0;
+						rippleSprite->flags      = 0;
 						rippleSprite->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-						rippleSprite->priority = 2;
+						rippleSprite->priority   = 2;
 					}
 					actor->timer = 10;
 				}
 			}
-		} else {
+		}
+		else
+		{
 			fdActorSetSpriteFlags(actor, TickCount & kind);
 		}
 	}
 
 	flightState = RamHeapSlots->fieldState;
-	if(PerWork.data &
-		(MainRoutineStateWork.aKeys | MainRoutineStateWork.bKeys)) {
-		flightState->climbing = 1;
-		actor->y.fixed += toFIXED(1) / 8;
-	} else {
+	if (PerWork.data & (MainRoutineStateWork.aKeys | MainRoutineStateWork.bKeys))
+	{
+		flightState->climbing  = 1;
+		actor->y.fixed        += toFIXED(1) / 8;
+	}
+	else
+	{
 		actor->y.fixed -= toFIXED(1) / 4;
 	}
-	if(gmPartyGetPpRatioStub() == 0)
+	if (gmPartyGetPpRatioStub() == 0)
 		actor->y.fixed -= toFIXED(1) / 4;
-	if(actor->y.fixed <= 0 && flightState->climbing != 0)
+	if (actor->y.fixed <= 0 && flightState->climbing != 0)
 		((FIELD_STATE *)flightState)->raisedCue = WORLD_MAP_RAISED_LAND;
-	if(actor->y.fixed >= toFIXED(12))
+	if (actor->y.fixed >= toFIXED(12))
 		actor->y.fixed = toFIXED(12);
-	if(actor->y.fixed <= 0)
+	if (actor->y.fixed <= 0)
 		actor->y.fixed = 0;
 	actor->scriptCursor++;
 	return 1;

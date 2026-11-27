@@ -1,5 +1,5 @@
-/* The eight test scenes that share one room, whose talk scripts would give
-   Flint, Fizz, Forge or Gust; the room places no actors to talk to. */
+// The eight test scenes that share one room, whose talk scripts would give Flint, Fizz, Forge or
+// Gust; the room places no actors to talk to.
 
 #include "field/field.h"
 #include "game/game.h"
@@ -7,18 +7,19 @@
 #include "field/script_inline.h"
 #include "macros.h"
 
-/* The actors the talk scripts answer: the first Djinni of each element. The
-   room's actor list is empty, so none of them is ever there. */
-typedef enum TEST_ACTOR_ID {
+// The actors the talk scripts answer: the first Djinni of each element. The room's actor list is
+// empty, so none of them is ever there.
+typedef enum TEST_ACTOR_ID
+{
 	ACTOR_FLINT = ACTOR_FIRST_PLACED,
 	ACTOR_FIZZ,
 	ACTOR_FORGE,
 	ACTOR_GUST
 } TEST_ACTOR_ID;
 
-void dbTestReceiveFizz(void);
+void                  dbTestReceiveFizz(void);
 
-void dbTestReceiveForge(void);
+void                  dbTestReceiveForge(void);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -40,8 +41,8 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return ActorPlacements;
 }
 
-/* Gives the first Djinni of an element, then clears its found flag again, so
-   talking to it can give it once more. */
+// Gives the first Djinni of an element, then clears its found flag again, so talking to it can give
+// it once more.
 static __inline__ void dbTestGiveDjinni(Sint32 actorId, Sint32 element)
 {
 	fdDjinnJoinParty(actorId, element, 0);
@@ -73,7 +74,7 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-/* Nothing to set up. */
+// Nothing to set up.
 Sint32 scInit(void)
 {
 	return 0;
@@ -109,8 +110,7 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* Unused: four halfwords and an end of -1s after the room's tables; nothing
-   reads them. */
+// Unused: four halfwords and an end of -1s after the room's tables; nothing reads them.
 Sint16 TestScenesUnusedRow[] ALIGNED(4) = {
 	512,
 	512,

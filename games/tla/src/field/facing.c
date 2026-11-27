@@ -1,48 +1,43 @@
-/* Which picture a sprite shows for the way it faces, and the small tables and
-   scripts the actors read as they move: the direction pad's headings, the World
-   Map camera's lean, a floating actor's bob, how long a footprint lasts, the
-   order a sprite dissolves in and the World Map's graphics sets. */
+// Which picture a sprite shows for the way it faces, and the small tables and scripts the actors
+// read as they move: the direction pad's headings, the World Map camera's lean, a floating actor's
+// bob, how long a footprint lasts, the order a sprite dissolves in and the World Map's graphics
+// sets.
 
 #include "field/actor_script.h"
 #include "field/object.h"
 
-/* clang-format off */
-/* The facing tables: for each animation facing kind, the picture to draw for */
-/* each sector of the facing angle, MIRRORED where the picture is drawn */
-/* mirrored, as The Broken Seal's. */
+// clang-format off
+// The facing tables: for each animation facing kind, the picture to draw for each sector of the facing angle, MIRRORED where the picture is drawn mirrored, as The Broken Seal's.
 
-/* ANIM_FACING_ONE_PICTURE's table: one picture, mirrored to the left. */
+// ANIM_FACING_ONE_PICTURE's table: one picture, mirrored to the left.
 const Uint8 AnimationFacingOnePicture[16] = {
 	0, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), 0,
 	MIRRORED(0), MIRRORED(0), MIRRORED(0), 0, 0, 0, 0, MIRRORED(0),
 };
 
-/* ANIM_FACING_FRONT_BACK_SWAPPED's table: a front and a back picture, the */
-/* front mirrored the other way. */
+// ANIM_FACING_FRONT_BACK_SWAPPED's table: a front and a back picture, the front mirrored the other way.
 const Uint8 AnimationFacingFrontBackSwapped[8] = {
 	MIRRORED(0), MIRRORED(0), 0, 0, 1, 1, MIRRORED(1), MIRRORED(1),
 };
 
-/* ANIM_FACING_FRONT_BACK's table: a front and a back picture. */
+// ANIM_FACING_FRONT_BACK's table: a front and a back picture.
 const Uint8 AnimationFacingFrontBack[8] = {
 	0, 0, MIRRORED(0), MIRRORED(0), 1, 1, MIRRORED(1), MIRRORED(1),
 };
 
-/* ANIM_FACING_THREE_PICTURES's table: front, side and back. */
+// ANIM_FACING_THREE_PICTURES's table: front, side and back.
 const Uint8 AnimationFacingThreePictures[16] = {
 	1, 1, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(1), MIRRORED(1),
 	MIRRORED(1), MIRRORED(1), MIRRORED(2), MIRRORED(2), 2, 2, 2, 1,
 };
 
-/* Unused: The Broken Seal's sixteen-sector table for its five pictures, */
-/* which nothing in The Lost Age reads. */
+// Unused: The Broken Seal's sixteen-sector table for its five pictures, which nothing in The Lost Age reads.
 const Uint8 AnimationFacingFivePicturesUnused[16] = {
 	1, 0, 0, 3, 3, MIRRORED(0), MIRRORED(0), MIRRORED(1),
 	MIRRORED(1), MIRRORED(2), MIRRORED(2), 4, 4, 2, 2, 1,
 };
 
-/* ANIM_FACING_FIVE_PICTURES's table: five pictures over 64 sectors, where */
-/* The Broken Seal's has 16. */
+// ANIM_FACING_FIVE_PICTURES's table: five pictures over 64 sectors, where The Broken Seal's has 16.
 const Uint8 AnimationFacingFivePictures[64] = {
 	1, 1, 1, 1, 0, 0, 0, 0,
 	0, 0, 0, 0, 3, 3, 3, 3,
@@ -54,13 +49,12 @@ const Uint8 AnimationFacingFivePictures[64] = {
 	2, 2, 2, 2, 1, 1, 1, 1,
 };
 
-/* ANIM_FACING_EIGHT_PICTURES's table: a picture for each compass direction. */
+// ANIM_FACING_EIGHT_PICTURES's table: a picture for each compass direction.
 const Uint8 AnimationFacingEightPictures[8] = {
 	2, 1, 0, 7, 6, 5, 4, 3,
 };
 
-/* The order in which the 64 pixels of a sprite's tile in OBJ VRAM dissolve; */
-/* read by fdSpriteDissolveStep. */
+// The order in which the 64 pixels of a sprite's tile in OBJ VRAM dissolve; read by fdSpriteDissolveStep.
 const Uint8 SpriteDissolvePixelOrder[64] = {
 	4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
 	50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,
@@ -68,16 +62,15 @@ const Uint8 SpriteDissolvePixelOrder[64] = {
 	6, 48, 52, 9, 43, 28, 0, 40, 24, 34, 20, 47, 54, 39, 38, 18,
 };
 
-/* Two bytes after the dissolve order; no code names them, in either game. */
+// Two bytes after the dissolve order; no code names them, in either game.
 const Uint16 SpriteDissolvePixelOrderTail = 511;
 
-/* An actor sprite's scale at full size, across and down. */
+// An actor sprite's scale at full size, across and down.
 const FIXED ActorSpriteFullScale[2] = {
 	toFIXED(1), toFIXED(1),
 };
 
-/* The fixed camera's view matrix (16.16): identity with a -0.8 shear of y by */
-/* x, as The Broken Seal's. */
+// The fixed camera's view matrix (16.16): identity with a -0.8 shear of y by x, as The Broken Seal's.
 const FIXED CameraFixedViewMatrix[12] = {
 	toFIXED(1), 0, 0,
 	-(toFIXED(4) / 5), toFIXED(1), 0,
@@ -85,7 +78,7 @@ const FIXED CameraFixedViewMatrix[12] = {
 	0, 0, 0,
 };
 
-/* One period of a triangle wave, which bobs a floating actor up and down. */
+// One period of a triangle wave, which bobs a floating actor up and down.
 const Sint32 ActorScriptCycleTable[32] = {
 	1, 2, 3, 4, 5, 6, 7, 8,
 	7, 6, 5, 4, 3, 2, 1, 0,
@@ -93,21 +86,17 @@ const Sint32 ActorScriptCycleTable[32] = {
 	-7, -6, -5, -4, -3, -2, -1, 0,
 };
 
-/* The idle script an actor returns to when its own one ends: a lone SC_END, */
-/* which reloads it. fdActorScriptEnd (SC_END) points an actor here. */
+// The idle script an actor returns to when its own one ends: a lone SC_END, which reloads it. fdActorScriptEnd (SC_END) points an actor here.
 const Sint32 ActorScriptIdleScript[1] = {
 	SC_END,
 };
 
-/* Halfwords that follow the idle script; no code names them, in either game. */
+// Halfwords that follow the idle script; no code names them, in either game.
 const Sint16 ActorScriptIdleScriptTail[8] = {
 	4096, -8192, 12288, -16384, 24576, -32768, 16384, 0,
 };
 
-/* The heading for each state of the direction pad (bits 4-7 of the keys: */
-/* Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down DEGtoANG(90), */
-/* Left DEGtoANG(180) and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE */
-/* means no direction is held, or only an opposite pair. */
+// The heading for each state of the direction pad (bits 4-7 of the keys: Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down DEGtoANG(90), Left DEGtoANG(180) and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE means no direction is held, or only an opposite pair.
 const Uint16 WorldMapKeyHeadings[16] = {
 	WORLD_MAP_KEY_HEADING_NONE, 0, DEGtoANG(180), WORLD_MAP_KEY_HEADING_NONE,
 	TRIG_TURN * 3 / 4, TRIG_TURN * 7 / 8, TRIG_TURN * 5 / 8, TRIG_TURN * 3 / 4,
@@ -115,39 +104,35 @@ const Uint16 WorldMapKeyHeadings[16] = {
 	WORLD_MAP_KEY_HEADING_NONE, 0, DEGtoANG(180), WORLD_MAP_KEY_HEADING_NONE,
 };
 
-/* A footprint's script: wait 120 ticks, then release the actor, as The */
-/* Broken Seal's WorldMapFootprintActions. */
+// A footprint's script: wait 120 ticks, then release the actor, as The Broken Seal's WorldMapFootprintActions.
 const Sint32 ActorFootprintScript[] = {
 	SC_WAIT(120),
 	SC_RELEASE,
 };
 
-/* A splash's script: wait 20 ticks, then release the actor. */
+// A splash's script: wait 20 ticks, then release the actor.
 const Sint32 ActorSplashScript[] = {
 	SC_WAIT(20),
 	SC_RELEASE,
 };
 
-/* A ripple's script: wait 32 ticks, then release the actor. */
+// A ripple's script: wait 32 ticks, then release the actor.
 const Sint32 ActorRippleScript[] = {
 	SC_WAIT(32),
 	SC_RELEASE,
 };
 
-/* The yaw the World Map camera leans to for each state of the direction pad: */
-/* a 128th of a turn for Right or Left, three quarters of that with Up or */
-/* Down but not both; none otherwise. */
+// The yaw the World Map camera leans to for each state of the direction pad: a 128th of a turn for Right or Left, three quarters of that with Up or Down but not both; none otherwise.
 const Sint32 WorldMapKeyYaws[16] = {
 	0, -(TRIG_TURN / 128), TRIG_TURN / 128, 0,
 	0, -(TRIG_TURN * 3 / 512), TRIG_TURN * 3 / 512, 0,
 	0, -(TRIG_TURN * 3 / 512), TRIG_TURN * 3 / 512, 0,
 	0, 0, 0, 0,
 };
-/* clang-format on */
+// clang-format on
 
-/* A puff of sand the leader leaves behind as he moves (SPRITE_SAND_PUFF): its
-   sceneByte byte counts down from 15 a step every 5 ticks, 14 steps, then the
-   puff is shrunk to nothing and goes. */
+// A puff of sand the leader leaves behind as he moves (SPRITE_SAND_PUFF): its sceneByte byte counts
+// down from 15 a step every 5 ticks, 14 steps, then the puff is shrunk to nothing and goes.
 const Sint32 ActorWakeScript[] = {
 	SC_SET(SW_SCENE_BYTE, 15),
 	SC_LABEL(1),
@@ -159,59 +144,38 @@ const Sint32 ActorWakeScript[] = {
 	SC_RELEASE,
 };
 
-/* A grain of the Sand's script: wait 60 ticks, then release the actor. */
+// A grain of the Sand's script: wait 60 ticks, then release the actor.
 const Sint32 SandGrainScript[] = {
 	SC_WAIT(60),
 	SC_RELEASE,
 };
 
-/* The World Map's graphics in four sets, by resource id: each a palette, its
-   tile animation and metatile tiles attributes, and six tile sets;
-   fdWorldMapPreloadCurrentTileBlock chooses one by the region the party is
-   in. */
+// The World Map's graphics in four sets, by resource id: each a palette, its tile animation and
+// metatile tiles attributes, and six tile sets; fdWorldMapPreloadCurrentTileBlock chooses one by
+// the region the party is in.
 const Uint32 WorldMapGraphicsResources[4][9] = {
 	{
-		RESOURCE_WORLD_MAP_PALETTE_A,
-		RESOURCE_DEFAULT_MAP_ANIMATION,
-		RESOURCE_DEFAULT_METATILE_TILES_ATTRIBUTES,
-		RESOURCE_WORLD_MAP_TILES_A1,
-		RESOURCE_WORLD_MAP_TILES_A2,
-		RESOURCE_WORLD_MAP_TILES_A3,
-		RESOURCE_WORLD_MAP_TILES_A4,
-		RESOURCE_WORLD_MAP_TILES_A5,
-		RESOURCE_WORLD_MAP_TILES_A6,
-	},
+     RESOURCE_WORLD_MAP_PALETTE_A, RESOURCE_DEFAULT_MAP_ANIMATION,
+     RESOURCE_DEFAULT_METATILE_TILES_ATTRIBUTES,			   RESOURCE_WORLD_MAP_TILES_A1,
+     RESOURCE_WORLD_MAP_TILES_A2,					RESOURCE_WORLD_MAP_TILES_A3,
+     RESOURCE_WORLD_MAP_TILES_A4,					RESOURCE_WORLD_MAP_TILES_A5,
+     RESOURCE_WORLD_MAP_TILES_A6, },
 	{
-		RESOURCE_WORLD_MAP_PALETTE_C,
-		RESOURCE_WORLD_MAP_ANIMATION_C,
-		RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_C,
-		RESOURCE_WORLD_MAP_TILES_C1,
-		RESOURCE_WORLD_MAP_TILES_C2,
-		RESOURCE_WORLD_MAP_TILES_C3,
-		RESOURCE_WORLD_MAP_TILES_C4,
-		RESOURCE_WORLD_MAP_TILES_C5,
-		RESOURCE_WORLD_MAP_TILES_C6,
-	},
+     RESOURCE_WORLD_MAP_PALETTE_C,						   RESOURCE_WORLD_MAP_ANIMATION_C,
+     RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_C,							 RESOURCE_WORLD_MAP_TILES_C1,
+     RESOURCE_WORLD_MAP_TILES_C2, RESOURCE_WORLD_MAP_TILES_C3,
+     RESOURCE_WORLD_MAP_TILES_C4,					RESOURCE_WORLD_MAP_TILES_C5,
+     RESOURCE_WORLD_MAP_TILES_C6, },
 	{
-		RESOURCE_WORLD_MAP_PALETTE_B,
-		RESOURCE_WORLD_MAP_ANIMATION_B,
-		RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_B,
-		RESOURCE_WORLD_MAP_TILES_B1,
-		RESOURCE_WORLD_MAP_TILES_B2,
-		RESOURCE_WORLD_MAP_TILES_B3,
-		RESOURCE_WORLD_MAP_TILES_B4,
-		RESOURCE_WORLD_MAP_TILES_B5,
-		RESOURCE_WORLD_MAP_TILES_B6,
-	},
+     RESOURCE_WORLD_MAP_PALETTE_B, RESOURCE_WORLD_MAP_ANIMATION_B,
+     RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_B,						  RESOURCE_WORLD_MAP_TILES_B1,
+     RESOURCE_WORLD_MAP_TILES_B2,				   RESOURCE_WORLD_MAP_TILES_B3,
+     RESOURCE_WORLD_MAP_TILES_B4, RESOURCE_WORLD_MAP_TILES_B5,
+     RESOURCE_WORLD_MAP_TILES_B6, },
 	{
-		RESOURCE_WORLD_MAP_PALETTE_D,
-		RESOURCE_WORLD_MAP_ANIMATION_D,
-		RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_D,
-		RESOURCE_WORLD_MAP_TILES_D1,
-		RESOURCE_WORLD_MAP_TILES_D2,
-		RESOURCE_WORLD_MAP_TILES_D3,
-		RESOURCE_WORLD_MAP_TILES_D4,
-		RESOURCE_WORLD_MAP_TILES_D5,
-		RESOURCE_WORLD_MAP_TILES_D6,
-	},
+     RESOURCE_WORLD_MAP_PALETTE_D, RESOURCE_WORLD_MAP_ANIMATION_D,
+     RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_D, RESOURCE_WORLD_MAP_TILES_D1,
+     RESOURCE_WORLD_MAP_TILES_D2,				RESOURCE_WORLD_MAP_TILES_D3,
+     RESOURCE_WORLD_MAP_TILES_D4,				   RESOURCE_WORLD_MAP_TILES_D5,
+     RESOURCE_WORLD_MAP_TILES_D6, },
 };

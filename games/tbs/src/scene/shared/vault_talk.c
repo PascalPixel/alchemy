@@ -1,10 +1,10 @@
-/* Vault and its interiors: a villager's thought read with Mind Read. */
+// Vault and its interiors: a villager's thought read with Mind Read.
 
-/* Shows the message already set as the actor's thought: the actor stops and
-   stands while the thought is shown. */
+// Shows the message already set as the actor's thought: the actor stops and stands while the
+// thought is shown.
 static void scVaultShowThought(Sint32 actorId)
 {
-	ACTOR *actor = fdActorGetById(actorId);
+	ACTOR *actor  = fdActorGetById(actorId);
 
 	actor->paused = 1;
 	fdScriptStart();

@@ -1,20 +1,18 @@
-/* The window shapes of WINDOW_TRANSITION_SHAPE, one for each step of its
-   progress (fdScreenTransitionUpdateScanlineTable): a clock wipe, a wedge from
-   the screen's centre (120, 80) that sweeps round from twelve o'clock, over the
-   right half in the first 16 steps and the left half in the next 16. */
+// The window shapes of WINDOW_TRANSITION_SHAPE, one for each step of its progress
+// (fdScreenTransitionUpdateScanlineTable): a clock wipe, a wedge from the screen's centre (120, 80)
+// that sweeps round from twelve o'clock, over the right half in the first 16 steps and the left
+// half in the next 16.
 
 #include "field_mode_internal.h"
 
-/* A run of lines all with the window from left to right; (255, 255) is a window
-   that shows nothing. */
+// A run of lines all with the window from left to right; (255, 255) is a window that shows nothing.
 #define SPAN_FILL(lines, left, right) {lines, WIN_RANGE(left, right)}
-/* A run of lines whose window edges slide from (leftFrom, rightFrom) toward
-   (leftTo, rightTo). */
-#define SPAN_SLOPE(lines, leftFrom, leftTo, rightFrom, rightTo) \
+// A run of lines whose window edges slide from (leftFrom, rightFrom) toward (leftTo, rightTo).
+#define SPAN_SLOPE(lines, leftFrom, leftTo, rightFrom, rightTo)                                    \
 	{lines, 0, leftFrom, leftTo, rightFrom, rightTo}
 
-/* clang-format off */
-/* One shape for each step of the transition before the screen is open. */
+// clang-format off
+// One shape for each step of the transition before the screen is open.
 TRANSITION_SHAPE ScreenTransitionShapes[TRANSITION_OPEN] = {
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_FILL(160, 255, 255)}},
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 134, 120), SPAN_FILL(80, 255, 255)}},
@@ -49,7 +47,7 @@ TRANSITION_SHAPE ScreenTransitionShapes[TRANSITION_OPEN] = {
 	{TRANSITION_SHOW_LOW_BYTE, TRANSITION_SHOW_BG0, {SPAN_SLOPE(80, 90, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
 	{TRANSITION_SHOW_LOW_BYTE, TRANSITION_SHOW_BG0, {SPAN_SLOPE(80, 106, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
 };
-/* clang-format on */
+// clang-format on
 
-/* Unused: twelve bytes after the shapes that no code names. */
+// Unused: twelve bytes after the shapes that no code names.
 Uint8 ScreenTransitionUnusedBytes[] = {0, 2, 4, 2, 0, 2, 4, 2, 0, 2, 4, 2};

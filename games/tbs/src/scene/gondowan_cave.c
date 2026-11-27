@@ -1,43 +1,37 @@
-/* Gondowan Passage and Gondowan Cave, south and south-east of Tolbi.
-
-   Gondowan Passage (SceneIdGondowanPassage) is the bridge from Tolbi into
-   Gondowan: a gatehouse at its north end, three soldiers in spiked helmets at
-   the gate, then a drawbridge and a long stone bridge running south over the
-   water. The soldiers swear nobody gets through the cave to the east to Kalay.
-   Once Babi has sent the party after Colosso (FLAG_BABI_SPOKE_AFTER_COLOSSO),
-   Iodem waits at the north end of the drawbridge and comes along to Babi
-   Lighthouse. While he travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his
-   actor is kept out of sight, and heading back north through the gate with him
-   makes him step out and ask why. Retreat does not work on the bridge
-   (FLAG_RETREAT_BLOCKED).
-
-   Gondowan Cave (SceneIdGondowanCave) is the way the soldiers say is
-   impossible: a cave from the world map east of the bridge through to the Kalay
-   side. Its west mouth opens on a passage that forks. The right fork, the short
-   way to the east cave, is blocked by a boulder that only Lift clears. The left
-   fork leads to the river room (SceneIdGondowanCaveRiver), where Isaac hops
-   along a line of posts in the water to the chest on its islet, and from there
-   into the east cave. In the east cave Move sends a stump off its ledge into
-   the water, where it floats as one more post to hop on, and the tall pillar by
-   the narrow crevice is moved into the crevice to clear the way to it. Isaac
-   jumps the crevice and walks out of the cave's east mouth.
-
-   One exit table serves every scene. The other getters choose by
-   MainRoutineStateWork.next, and Gondowan Passage's actor placements and cues
-   also by FLAG_BABI_SPOKE_AFTER_COLOSSO. An empty set answers any other scene.
-   Every scene's cue table carries the river room's two chests.
-
-   The stump and the pillar are kept in story flags, so the cave stays solved
-   and scInit puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED once the stump has
-   leapt in, FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the pillar has dropped into
-   the crevice, shown from then on by ACTOR_DROPPED_PILLAR.
-
-   Dropping the pillar also copies map metatile (108, 17) over (107, 17), the
-   crevice's metatile (43, 17) as the second layer of the map holds it, 64
-   columns over, and every arrival by the east mouth makes the same copy, solved
-   or not. Nothing on screen depends on it: the crevice looks the same, Isaac
-   jumps it from either side, and the pillar settles at the same height wherever
-   it drops. */
+// Gondowan Passage and Gondowan Cave, south and south-east of Tolbi.
+//
+// Gondowan Passage (SceneIdGondowanPassage) is the bridge from Tolbi into Gondowan: a gatehouse at
+// its north end, three soldiers in spiked helmets at the gate, then a drawbridge and a long stone
+// bridge running south over the water. The soldiers swear nobody gets through the cave to the east
+// to Kalay. Once Babi has sent the party after Colosso (FLAG_BABI_SPOKE_AFTER_COLOSSO), Iodem waits
+// at the north end of the drawbridge and comes along to Babi Lighthouse. While he travels with the
+// party (FLAG_IODEM_FOLLOWING_PARTY) his actor is kept out of sight, and heading back north through
+// the gate with him makes him step out and ask why. Retreat does not work on the bridge
+// (FLAG_RETREAT_BLOCKED).
+//
+// Gondowan Cave (SceneIdGondowanCave) is the way the soldiers say is impossible: a cave from the
+// world map east of the bridge through to the Kalay side. Its west mouth opens on a passage that
+// forks. The right fork, the short way to the east cave, is blocked by a boulder that only Lift
+// clears. The left fork leads to the river room (SceneIdGondowanCaveRiver), where Isaac hops along
+// a line of posts in the water to the chest on its islet, and from there into the east cave. In the
+// east cave Move sends a stump off its ledge into the water, where it floats as one more post to
+// hop on, and the tall pillar by the narrow crevice is moved into the crevice to clear the way to
+// it. Isaac jumps the crevice and walks out of the cave's east mouth.
+//
+// One exit table serves every scene. The other getters choose by MainRoutineStateWork.next, and
+// Gondowan Passage's actor placements and cues also by FLAG_BABI_SPOKE_AFTER_COLOSSO. An empty set
+// answers any other scene. Every scene's cue table carries the river room's two chests.
+//
+// The stump and the pillar are kept in story flags, so the cave stays solved and scInit puts them
+// back: FLAG_GONDOWAN_CAVE_STUMP_MOVED once the stump has leapt in,
+// FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the pillar has dropped into the crevice, shown from then
+// on by ACTOR_DROPPED_PILLAR.
+//
+// Dropping the pillar also copies map metatile (108, 17) over (107, 17), the crevice's metatile
+// (43, 17) as the second layer of the map holds it, 64 columns over, and every arrival by the east
+// mouth makes the same copy, solved or not. Nothing on screen depends on it: the crevice looks the
+// same, Isaac jumps it from either side, and the pillar settles at the same height wherever it
+// drops.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -51,105 +45,96 @@
 extern SCENE_ENTRANCE GondowanPassageEntrances[];
 extern SCENE_ENTRANCE GondowanCaveRiverEntrances[];
 extern SCENE_ENTRANCE GondowanCaveEntrances[];
-extern Uint32		  GondowanCaveExits[];
-extern ACTOR_PLACE	  GondowanCaveActorPlacementsOther[];
-extern ACTOR_PLACE	  GondowanPassageActorPlacements[];
-extern ACTOR_PLACE	  GondowanPassageActorPlacementsWithIodem[];
-extern ACTOR_PLACE	  GondowanCaveRiverActorPlacements[];
-extern ACTOR_PLACE	  GondowanCaveActorPlacements[];
-extern CUE			  GondowanCaveCuesOther[];
-extern CUE			  GondowanPassageCues[];
-extern CUE			  GondowanPassageCuesWithIodem[];
-extern CUE			  GondowanCaveRiverCues[];
-extern CUE			  GondowanCaveCues[];
+extern Uint32         GondowanCaveExits[];
+extern ACTOR_PLACE    GondowanCaveActorPlacementsOther[];
+extern ACTOR_PLACE    GondowanPassageActorPlacements[];
+extern ACTOR_PLACE    GondowanPassageActorPlacementsWithIodem[];
+extern ACTOR_PLACE    GondowanCaveRiverActorPlacements[];
+extern ACTOR_PLACE    GondowanCaveActorPlacements[];
+extern CUE            GondowanCaveCuesOther[];
+extern CUE            GondowanPassageCues[];
+extern CUE            GondowanPassageCuesWithIodem[];
+extern CUE            GondowanCaveRiverCues[];
+extern CUE            GondowanCaveCues[];
 
-/* The metatiles of the bridge and the cave that run scripts. The cave's way out
-   east is a step cue whose metatile is its exit's number
-   (GONDOWAN_CAVE_TO_WORLD_MAP_EAST). */
-enum {
-	/* Gondowan Passage: the gate through the gatehouse, at its north end. */
-	METATILE_BEHAVIOR_GONDOWAN_PASSAGE_GATE = 10,
-	/* Gondowan Passage: the north end of the drawbridge, where Iodem waits. */
-	METATILE_BEHAVIOR_GONDOWAN_PASSAGE_IODEM = 11,
-	/* Gondowan Cave: the west edge of the crevice beside the tall pillar. */
+// The metatiles of the bridge and the cave that run scripts. The cave's way out east is a step cue
+// whose metatile is its exit's number (GONDOWAN_CAVE_TO_WORLD_MAP_EAST).
+enum
+{
+	// Gondowan Passage: the gate through the gatehouse, at its north end.
+	METATILE_BEHAVIOR_GONDOWAN_PASSAGE_GATE           = 10,
+	// Gondowan Passage: the north end of the drawbridge, where Iodem waits.
+	METATILE_BEHAVIOR_GONDOWAN_PASSAGE_IODEM          = 11,
+	// Gondowan Cave: the west edge of the crevice beside the tall pillar.
 	METATILE_BEHAVIOR_GONDOWAN_CAVE_CREVICE_WEST_EDGE = 10,
-	/* Gondowan Cave: the east edge of the crevice. */
+	// Gondowan Cave: the east edge of the crevice.
 	METATILE_BEHAVIOR_GONDOWAN_CAVE_CREVICE_EAST_EDGE = 11,
-	/* Gondowan Cave: the tall pillar's first metatile, west of the crevice. */
-	METATILE_BEHAVIOR_GONDOWAN_CAVE_PILLAR = 50
+	// Gondowan Cave: the tall pillar's first metatile, west of the crevice.
+	METATILE_BEHAVIOR_GONDOWAN_CAVE_PILLAR            = 50
 };
 
-/* Gondowan Passage's placed actors, numbered in the order of
-   GondowanPassageActorPlacements and GondowanPassageActorPlacementsWithIodem
-   from ACTOR_FIRST_PLACED.
-
-   They are the soldiers who guard the bridge, and in the second table Iodem
-   after them. */
-typedef enum GONDOWAN_PASSAGE_ACTOR_ID {
-	/* On the road south of the gatehouse; asks whether the party will cross
-	   into Gondowan. */
+// Gondowan Passage's placed actors, numbered in the order of GondowanPassageActorPlacements and
+// GondowanPassageActorPlacementsWithIodem from ACTOR_FIRST_PLACED.
+//
+// They are the soldiers who guard the bridge, and in the second table Iodem after them.
+typedef enum GONDOWAN_PASSAGE_ACTOR_ID
+{
+	// On the road south of the gatehouse; asks whether the party will cross into Gondowan.
 	ACTOR_FIRST_SOLDIER = ACTOR_FIRST_PLACED,
-	/* West of the gate. */
+	// West of the gate.
 	ACTOR_SECOND_SOLDIER,
-	/* East of the gate; says nobody gets through the cave to the east to
-	   Kalay. */
+	// East of the gate; says nobody gets through the cave to the east to Kalay.
 	ACTOR_THIRD_SOLDIER,
-	/* Waits at the north end of the drawbridge once Babi has sent the party
-	   after Colosso. */
+	// Waits at the north end of the drawbridge once Babi has sent the party after Colosso.
 	ACTOR_IODEM
 } GONDOWAN_PASSAGE_ACTOR_ID;
 
-/* The river room's placed actor, the one row of
-   GondowanCaveRiverActorPlacements that a cue names. */
-typedef enum GONDOWAN_CAVE_RIVER_ACTOR_ID {
-	/* The boulder in the passage south of the river, raised by Lift. */
+// The river room's placed actor, the one row of GondowanCaveRiverActorPlacements that a cue names.
+typedef enum GONDOWAN_CAVE_RIVER_ACTOR_ID
+{
+	// The boulder in the passage south of the river, raised by Lift.
 	ACTOR_RIVER_BOULDER = ACTOR_FIRST_PLACED
 } GONDOWAN_CAVE_RIVER_ACTOR_ID;
 
-/* Gondowan Cave's placed actors, numbered in the order of
-   GondowanCaveActorPlacements from ACTOR_FIRST_PLACED. */
-typedef enum GONDOWAN_CAVE_ACTOR_ID {
-	/* The squat stump on the ledge in the middle of the east cave, beside the
-	   torch; Move sends it into the water west of the ledge. It is drawn in the
-	   sprite of the Goma Cave stump. */
+// Gondowan Cave's placed actors, numbered in the order of GondowanCaveActorPlacements from
+// ACTOR_FIRST_PLACED.
+typedef enum GONDOWAN_CAVE_ACTOR_ID
+{
+	// The squat stump on the ledge in the middle of the east cave, beside the torch; Move sends it
+	// into the water west of the ledge. It is drawn in the sprite of the Goma Cave stump.
 	ACTOR_STUMP = ACTOR_FIRST_PLACED,
-	/* The tall pillar on the west side of the crevice, pushed or moved with
-	   Move, in the sprite the stone pillars of other scenes use
-	   (crossbone_isle_stepping_stones.c). */
+	// The tall pillar on the west side of the crevice, pushed or moved with Move, in the sprite the
+	// stone pillars of other scenes use (crossbone_isle_stepping_stones.c).
 	ACTOR_PILLAR,
-	/* Stands in for the pillar once it has dropped in.
-
-	   It is out of sight at first. It is drawn in the stump's sprite, splashing
-	   in (STUMP_ANIMATION_SPLASH) and on later visits afloat
-	   (STUMP_ANIMATION_SINK). */
+	// Stands in for the pillar once it has dropped in.
+	//
+	// It is out of sight at first. It is drawn in the stump's sprite, splashing in
+	// (STUMP_ANIMATION_SPLASH) and on later visits afloat (STUMP_ANIMATION_SINK).
 	ACTOR_DROPPED_PILLAR,
-	/* The boulder in the right fork north of the west mouth, raised by Lift. */
+	// The boulder in the right fork north of the west mouth, raised by Lift.
 	ACTOR_BOULDER,
-	/* An invisible actor (SPRITE_BLANK, its shadow turned off) 16 pixels west
-	   of the boulder.
-
-	   It fills the gap between the boulder and the passage's west wall, so the
-	   boulder blocks the fork until Lift takes both away
-	   (https://alchemy.pascalpixel.com/places/gondowan-cave/map-4.png shows the
-	   gap). */
+	// An invisible actor (SPRITE_BLANK, its shadow turned off) 16 pixels west of the boulder.
+	//
+	// It fills the gap between the boulder and the passage's west wall, so the boulder blocks the
+	// fork until Lift takes both away
+	// (https://alchemy.pascalpixel.com/places/gondowan-cave/map-4.png shows the gap).
 	ACTOR_BOULDER_GAP
 } GONDOWAN_CAVE_ACTOR_ID;
 
-/* The stump's column at the edge of its ledge (its placement, x 496). Move west
-   takes it off this column, and it leaps into the water. */
-#define STUMP_COLUMN 31
+// The stump's column at the edge of its ledge (its placement, x 496). Move west takes it off this
+// column, and it leaps into the water.
+#define STUMP_COLUMN       31
 
-/* The crevice's column, two east of the pillar's first metatile (x 696, where
-   ACTOR_DROPPED_PILLAR stands). Pushed or moved this far, the pillar drops
-   in. */
+// The crevice's column, two east of the pillar's first metatile (x 696, where ACTOR_DROPPED_PILLAR
+// stands). Pushed or moved this far, the pillar drops in.
 #define PILLAR_DROP_COLUMN 43
 
-/* Move on the tall pillar beside the crevice in the east cave, and each push of
-   it: once it reaches the crevice (metatile (43, 17)) it drops into the water
-   at its foot with a splash and stays there, clearing the way to the edge. */
+// Move on the tall pillar beside the crevice in the east cave, and each push of it: once it reaches
+// the crevice (metatile (43, 17)) it drops into the water at its foot with a splash and stays
+// there, clearing the way to the edge.
 static void scGondowanCaveMovePillar(void);
-/* The actor spins in place, leaps off the ledge and lands with a shake and a
-   ring of dust, then hops on into the water with a splash and floats there. */
+// The actor spins in place, leaps off the ledge and lands with a shake and a ring of dust, then
+// hops on into the water with a splash and floats there.
 static void scGondowanCaveLeapStump(Sint32 actorId);
 
 #include "shared/field_effect_create.c"
@@ -161,13 +146,16 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_GONDOWAN_PASSAGE) {
+	if (sceneId == SCENE_GONDOWAN_PASSAGE)
+	{
 		return GondowanPassageEntrances;
 	}
-	if(sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
+	if (sceneId == SCENE_GONDOWAN_CAVE_RIVER)
+	{
 		return GondowanCaveRiverEntrances;
 	}
-	if(sceneId == SCENE_GONDOWAN_CAVE) {
+	if (sceneId == SCENE_GONDOWAN_CAVE)
+	{
 		return GondowanCaveEntrances;
 	}
 	return SceneFallbackEntrances;
@@ -178,72 +166,79 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return NULL;
 }
 
-/* Every scene of the overlay shares one exit table. */
+// Every scene of the overlay shares one exit table.
 const Uint32 *scGetExits(void)
 {
 	return GondowanCaveExits;
 }
 
-/* Iodem waits on Gondowan Passage once Babi has sent the party after
-   Colosso. */
+// Iodem waits on Gondowan Passage once Babi has sent the party after Colosso.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_GONDOWAN_PASSAGE) {
-		if(gmFlagGet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+	if (sceneId == SCENE_GONDOWAN_PASSAGE)
+	{
+		if (gmFlagGet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0)
+		{
 			return GondowanPassageActorPlacementsWithIodem;
 		}
 		return GondowanPassageActorPlacements;
 	}
-	if(sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
+	if (sceneId == SCENE_GONDOWAN_CAVE_RIVER)
+	{
 		return GondowanCaveRiverActorPlacements;
 	}
-	if(sceneId == SCENE_GONDOWAN_CAVE) {
+	if (sceneId == SCENE_GONDOWAN_CAVE)
+	{
 		return GondowanCaveActorPlacements;
 	}
 	return GondowanCaveActorPlacementsOther;
 }
 
-/* The cues of each scene, with Iodem's in Gondowan Passage when he is there. */
+// The cues of each scene, with Iodem's in Gondowan Passage when he is there.
 const CUE *scGetCues(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_GONDOWAN_PASSAGE) {
-		if(gmFlagGet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+	if (sceneId == SCENE_GONDOWAN_PASSAGE)
+	{
+		if (gmFlagGet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0)
+		{
 			return GondowanPassageCuesWithIodem;
 		}
 		return GondowanPassageCues;
 	}
-	if(sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
+	if (sceneId == SCENE_GONDOWAN_CAVE_RIVER)
+	{
 		return GondowanCaveRiverCues;
 	}
-	if(sceneId == SCENE_GONDOWAN_CAVE) {
+	if (sceneId == SCENE_GONDOWAN_CAVE)
+	{
 		return GondowanCaveCues;
 	}
 	return GondowanCaveCuesOther;
 }
 
-/* Isaac heads back north through the gatehouse's gate on Gondowan Passage
-   (metatiles (8, 7) to (10, 7)) with Iodem in the party, before Iodem has
-   reached Babi Lighthouse: Iodem steps out beside him and asks whether he needs
-   something he left behind.
-
-   Answered yes, Iodem walks back to the north end of the drawbridge to wait
-   there, and a defeat from then on returns the party to the Tolbi Sanctum.
-   Answered no, he says they should go on to the lighthouse and falls in again,
-   and Isaac steps back south off the gate. */
+// Isaac heads back north through the gatehouse's gate on Gondowan Passage (metatiles (8, 7) to (10,
+// 7)) with Iodem in the party, before Iodem has reached Babi Lighthouse: Iodem steps out beside him
+// and asks whether he needs something he left behind.
+//
+// Answered yes, Iodem walks back to the north end of the drawbridge to wait there, and a defeat
+// from then on returns the party to the Tolbi Sanctum. Answered no, he says they should go on to
+// the lighthouse and falls in again, and Isaac steps back south off the gate.
 static void scGondowanCaveIodemAsksWhyTurningBack(void)
 {
 	ACTOR *leader;
 
-	if(gmFlagGet(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0 &&
-		fdScriptGetFlag(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
+	if (gmFlagGet(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0
+	    && fdScriptGetFlag(FLAG_IODEM_FOLLOWING_PARTY) != 0)
+	{
 		fdScriptStart();
 		fdActorSetSpeed(ACTOR_IODEM, 1);
 		leader = fdActorGet(ACTOR_PARTY_LEADER);
-		if(leader != NULL) {
+		if (leader != NULL)
+		{
 			fdActorSetPosFX(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
 		}
 		fdActorSetDestinationOffset(ACTOR_IODEM, -8, 16);
@@ -252,33 +247,36 @@ static void scGondowanCaveIodemAsksWhyTurningBack(void)
 		fdScriptWait(10);
 		fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
 		fdScriptSetMessageId(MsgKaragolWhyGoingBackIsaacDo);
-		/* "Why are you going back, Isaac?" "Do you need to get something you
-		   left behind?" */
+		// "Why are you going back, Isaac?" "Do you need to get something you left behind?"
 		fdScriptOpenMessage(ACTOR_IODEM, 0);
-		if(fdScriptAskYesNoWithActorAnimation(0, 0) == 0) {
-			/* "I see... In that case, I shall wait here for you to return." */
+		if (fdScriptAskYesNoWithActorAnimation(0, 0) == 0)
+		{
+			// "I see... In that case, I shall wait here for you to return."
 			fdScriptShowMessage(ACTOR_IODEM, 0);
 			fdActorWalkTo(ACTOR_IODEM, 152, 232);
 			fdScriptClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
 			fdActorWaitForMoveById(ACTOR_IODEM);
 			fdActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
-			/* A defeat now returns the party to the Tolbi Sanctum. */
-			MainRoutineStateWork.restartScene = SCENE_STUCCO_ROOMS_B;
+			// A defeat now returns the party to the Tolbi Sanctum.
+			MainRoutineStateWork.restartScene    = SCENE_STUCCO_ROOMS_B;
 			MainRoutineStateWork.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
-		} else {
+		}
+		else
+		{
 			FieldStateWork->msg += 1;
-			/* "Then we should continue on our way to the lighthouse." */
+			// "Then we should continue on our way to the lighthouse."
 			fdScriptShowMessage(ACTOR_IODEM, 0);
 			fdActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
 			leader = fdActorGet(ACTOR_PARTY_LEADER);
-			if(leader != NULL) {
-				fdActorSetDestination(ACTOR_IODEM, leader->x.part[0].integer,
-					leader->z.part[0].integer);
+			if (leader != NULL)
+			{
+				fdActorSetDestination(
+					ACTOR_IODEM, leader->x.part[0].integer, leader->z.part[0].integer);
 			}
 			fdActorWaitForMoveById(ACTOR_IODEM);
 			fdActorSetPos(ACTOR_IODEM, 0, 0);
 			fdScriptWait(30);
-			/* Isaac steps back south off the gate. */
+			// Isaac steps back south off the gate.
 			fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 			fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
 			fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
@@ -288,10 +286,9 @@ static void scGondowanCaveIodemAsksWhyTurningBack(void)
 	}
 }
 
-/* Isaac talks to Iodem, waiting at the north end of the drawbridge on Gondowan
-   Passage, or walks up to him (metatiles (8, 14) to (10, 14)): Iodem says he
-   has been waiting and they should go to Babi Lighthouse, walks into Isaac and
-   travels with the party from then on. */
+// Isaac talks to Iodem, waiting at the north end of the drawbridge on Gondowan Passage, or walks up
+// to him (metatiles (8, 14) to (10, 14)): Iodem says he has been waiting and they should go to Babi
+// Lighthouse, walks into Isaac and travels with the party from then on.
 static void scGondowanCaveIodemComesAlong(void)
 {
 	fdScriptStart();
@@ -301,16 +298,15 @@ static void scGondowanCaveIodemComesAlong(void)
 	fdScriptWait(10);
 	fdActorTurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
 	fdScriptSetMessageId(MsgKaragolIveBeenWaitingForIsaac);
-	/* "I've been waiting for you, Isaac! We should go to Babi Lighthouse
-	   soon." */
+	// "I've been waiting for you, Isaac! We should go to Babi Lighthouse soon."
 	fdScriptShowMessage(ACTOR_IODEM, 0);
 	fdActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
 	{
 		ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-		if(leader != NULL)
-			fdActorSetDestination(ACTOR_IODEM, leader->x.part[0].integer,
-				leader->z.part[0].integer);
+		if (leader != NULL)
+			fdActorSetDestination(
+				ACTOR_IODEM, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_IODEM);
 	fdActorSetPos(ACTOR_IODEM, 0, 0);
@@ -319,68 +315,69 @@ static void scGondowanCaveIodemComesAlong(void)
 	fdScriptEnd();
 }
 
-/* Isaac talks to the soldier on the road south of the gatehouse on Gondowan
-   Passage, before Babi has sent the party on: he asks whether they wish to
-   cross into Gondowan.
-
-   Answered yes, he won't stop them but would sooner watch Colosso in Tolbi, or,
-   once Colosso is over, simply wouldn't go without business there. Answered no,
-   he agrees: they wouldn't be let into Babi Lighthouse anyway. */
+// Isaac talks to the soldier on the road south of the gatehouse on Gondowan Passage, before Babi
+// has sent the party on: he asks whether they wish to cross into Gondowan.
+//
+// Answered yes, he won't stop them but would sooner watch Colosso in Tolbi, or, once Colosso is
+// over, simply wouldn't go without business there. Answered no, he agrees: they wouldn't be let
+// into Babi Lighthouse anyway.
 static void scGondowanCaveSoldierAsksAboutCrossing(void)
 {
 	Sint32 firstMsg;
 
 	firstMsg = MsgKaragolDoYouWishCrossInto;
 	fdScriptSetMessageId(firstMsg);
-	/* "Do you wish to cross into Gondowan?" */
+	// "Do you wish to cross into Gondowan?"
 	fdScriptOpenMessage(ACTOR_FIRST_SOLDIER, 0);
-	if(fdScriptAskYesNoWithActorAnimation(0, 0) == 0) {
-		/* Yes: "I won't stop you, but I wouldn't go unless I had business
-		   there." "I'd go to Tolbi and watch Colosso. That's what I'd do." */
-		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-			if(gmFlagGet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
-				/* Once Colosso is over, the shorter answer eight messages on:
-				   "I won't stop you, but I wouldn't go unless I had business
-				   there!" */
+	if (fdScriptAskYesNoWithActorAnimation(0, 0) == 0)
+	{
+		// Yes: "I won't stop you, but I wouldn't go unless I had business there." "I'd go to Tolbi
+		// and watch Colosso. That's what I'd do."
+		if (gmFlagGet(FLAG_COLOSSO_OVER) != 0)
+		{
+			if (gmFlagGet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
+			{
+				// Once Colosso is over, the shorter answer eight messages on: "I won't stop you,
+				// but I wouldn't go unless I had business there!"
 				fdScriptSetMessageId(firstMsg + 8);
 			}
 		}
 		fdScriptShowMessage(ACTOR_FIRST_SOLDIER, 0);
-	} else {
+	}
+	else
+	{
 		FieldStateWork->msg++;
-		/* No: "That's a good idea. They wouldn't let you into Babi Lighthouse,
-		   anyway." */
+		// No: "That's a good idea. They wouldn't let you into Babi Lighthouse, anyway."
 		fdScriptShowMessage(ACTOR_FIRST_SOLDIER, 0);
 	}
 }
 
-/* Mind Read on the soldier west of the gate on Gondowan Passage, before Babi
-   has sent the party on: he grumbles about being stuck on guard duty, while the
-   warriors fight or, once it is over, through all of Colosso. */
+// Mind Read on the soldier west of the gate on Gondowan Passage, before Babi has sent the party on:
+// he grumbles about being stuck on guard duty, while the warriors fight or, once it is over,
+// through all of Colosso.
 static void scGondowanCaveReadSoldierMind(void)
 {
-	if(gmFlagGet(FLAG_COLOSSO_OVER) != 0 &&
-		gmFlagGet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
+	if (gmFlagGet(FLAG_COLOSSO_OVER) != 0 && gmFlagGet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
 		fdScriptSetMessageId(MsgKaragolWeMissedColossoBecauseWe);
 	else
 		fdScriptSetMessageId(MsgKaragolWarriorsHaveBeenFightingWhile);
 	fdScriptShowMessage(ACTOR_SECOND_SOLDIER, 0);
 }
 
-/* Isaac walks out of Gondowan Cave by its east mouth, at the foot of the path
-   in the south-east corner of the east cave (metatile (49, 29)), and comes out
-   on the world map. */
+// Isaac walks out of Gondowan Cave by its east mouth, at the foot of the path in the south-east
+// corner of the east cave (metatile (49, 29)), and comes out on the world map.
 static void scGondowanCaveLeaveToWorldMapEast(void)
 {
 	FIELD_STATE *state;
 
 	state = FieldStateWork;
 	fdScriptStart();
-	/* XXX (no evidence): what story flags 0x9a3, 0x9a4 and 0x9a6 hold, among
-	   FLAG_GONDOWAN_CAVE_STUMP_MOVED and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED;
-	   only this block touches them, nothing in either game reads them, and
-	   nothing sets FLAG_SCENE_TEMP_04, so no play or render shows them. */
-	if(gmFlagGet(FLAG_SCENE_TEMP_04) != 0) {
+	// XXX (no evidence): what story flags 0x9a3, 0x9a4 and 0x9a6 hold, among
+	// FLAG_GONDOWAN_CAVE_STUMP_MOVED and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED; only this block touches
+	// them, nothing in either game reads them, and nothing sets FLAG_SCENE_TEMP_04, so no play or
+	// render shows them.
+	if (gmFlagGet(FLAG_SCENE_TEMP_04) != 0)
+	{
 		gmFlagClear(0x9a3);
 		fdScriptClearFlag(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
 		fdScriptClearFlag(0x9a4);
@@ -394,30 +391,29 @@ static void scGondowanCaveLeaveToWorldMapEast(void)
 	fdScriptEnd();
 }
 
-/* Isaac walks to the edge of the narrow crevice in the east cave (metatile (42,
-   17) on its west side, (44, 17) on its east) and keeps walking: he jumps
-   across it.
-
-   fdTryJumpForward carries him two metatiles on where the map allows. */
+// Isaac walks to the edge of the narrow crevice in the east cave (metatile (42,
+// 17) on its west side, (44, 17) on its east) and keeps walking: he jumps
+// across it.
+//
+// fdTryJumpForward carries him two metatiles on where the map allows.
 static void scGondowanCaveJumpCrevice(void)
 {
 	fdTryJumpForward();
 }
 
-/* Move on the squat stump on the ledge in the middle of the east cave, steered
-   west: it spins, hops off the ledge onto the ground below in a ring of dust,
-   and on into the water with a splash, where it floats (metatile (27, 19)) for
-   Isaac to hop on.
-
-   Its metatile takes the attributes of metatile (29, 19), a square Isaac hops
-   from, so the water there becomes one too. Once it has leapt Move on it no
-   longer runs this. */
+// Move on the squat stump on the ledge in the middle of the east cave, steered west: it spins, hops
+// off the ledge onto the ground below in a ring of dust, and on into the water with a splash, where
+// it floats (metatile (27, 19)) for Isaac to hop on.
+//
+// Its metatile takes the attributes of metatile (29, 19), a square Isaac hops from, so the water
+// there becomes one too. Once it has leapt Move on it no longer runs this.
 static void scGondowanCaveMoveStump(void)
 {
-	/* DEAD: the stump looked up and dropped; the ROM keeps its call. */
+	// DEAD: the stump looked up and dropped; the ROM keeps its call.
 	fdActorGet(ACTOR_STUMP);
 	fdScriptStart();
-	if(FIELD_METATILE(fdActorGet(ACTOR_STUMP)->x.fixed) < STUMP_COLUMN) {
+	if (FIELD_METATILE(fdActorGet(ACTOR_STUMP)->x.fixed) < STUMP_COLUMN)
+	{
 		scGondowanCaveLeapStump(ACTOR_STUMP);
 		fdMapGridCopyMetatileAttributes(29, 19, 1, 1, 27, 19);
 		gmFlagSet(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
@@ -425,16 +421,15 @@ static void scGondowanCaveMoveStump(void)
 	fdScriptEnd();
 }
 
-/* Isaac, standing where the tall pillar first stood beside the crevice
-   (metatile (41, 17)), walks into it: he pushes it a metatile east, and at the
-   crevice it drops in. */
+// Isaac, standing where the tall pillar first stood beside the crevice (metatile (41, 17)), walks
+// into it: he pushes it a metatile east, and at the crevice it drops in.
 static void scGondowanCavePushPillar(void)
 {
 	scPushedActorAdvancePair();
 	scGondowanCaveMovePillar();
 }
 
-/* Hides the pillar and shows the actor that stands in for it in its place. */
+// Hides the pillar and shows the actor that stands in for it in its place.
 static inline void scGondowanCavePlaceDroppedPillar(Sint32 animation)
 {
 	fdActorSetPos(ACTOR_PILLAR, 0, 0);
@@ -445,8 +440,8 @@ static inline void scGondowanCavePlaceDroppedPillar(Sint32 animation)
 static void scGondowanCaveMovePillar(void)
 {
 	fdScriptStart();
-	if(FIELD_METATILE(fdActorGet(ACTOR_PILLAR)->x.fixed) >=
-		PILLAR_DROP_COLUMN) {
+	if (FIELD_METATILE(fdActorGet(ACTOR_PILLAR)->x.fixed) >= PILLAR_DROP_COLUMN)
+	{
 		fdMapGridCopyMetatileAttributes(108, 17, 1, 1, 107, 17);
 		fdScriptWait(8);
 		scGondowanCavePlaceDroppedPillar(STUMP_ANIMATION_SPLASH);
@@ -456,81 +451,88 @@ static void scGondowanCaveMovePillar(void)
 	fdScriptEnd();
 }
 
-/* Unused: an empty function nothing refers to. */
+// Unused: an empty function nothing refers to.
 static UNUSED void scGondowanCaveUnusedNoOperationA(void)
 {
 }
 
-/* Spins the leaping stump a sixty-fourth of a turn each tick. */
+// Spins the leaping stump a sixty-fourth of a turn each tick.
 static void scGondowanCaveSpinStump(ACTOR *actor)
 {
 	actor->sprite->rotation -= TRIG_TURN / 64;
 }
 
-/* Waits until the actor has come down to height (16.16), forty ticks at most:
-   scActorWaitBelowHeight with a shorter limit. */
+// Waits until the actor has come down to height (16.16), forty ticks at most:
+// scActorWaitBelowHeight with a shorter limit.
 static void scGondowanCaveWaitBelowHeight(ACTOR *actor, Sint32 height)
 {
 	Sint32 ticksRemaining = 40;
 
-	while(ticksRemaining != 0) {
+	while (ticksRemaining != 0)
+	{
 		sySynch(1);
 		ticksRemaining--;
-		if(actor->y.fixed <= height) {
+		if (actor->y.fixed <= height)
+		{
 			break;
 		}
 	}
 }
 
-/* The stump tips over the ledge, leaps spinning off it with a whoosh, lands
-   with a shake and a ring of dust, and slides on into the water, where it
-   splashes and settles to float.
-
-   Goma Cave's stumps leap the same way (shared/stump_leap.c); this one spins
-   and leaps slower, lands with no thump, slides on without a bounce and throws
-   no spray, so it is written again here. */
+// The stump tips over the ledge, leaps spinning off it with a whoosh, lands with a shake and a ring
+// of dust, and slides on into the water, where it splashes and settles to float.
+//
+// Goma Cave's stumps leap the same way (shared/stump_leap.c); this one spins and leaps slower,
+// lands with no thump, slides on without a bounce and throws no spray, so it is written again here.
 static void scGondowanCaveLeapStump(Sint32 actorId)
 {
 	ACTOR  *actor;
-	Uint32	stepIndex;
+	Uint32  stepIndex;
 	VECTOR3 particleVelocity;
-	Sint32	angle;
+	Sint32  angle;
 
-	actor = fdActorGet(actorId);
-	/* It winds up its spin in place. */
+	actor              = fdActorGet(actorId);
+	// It winds up its spin in place.
 	actor->motionFlags = 0;
-	for(stepIndex = 0; stepIndex < 9; stepIndex++) {
+	for (stepIndex = 0; stepIndex < 9; stepIndex++)
+	{
 		sySynch(1);
 		actor->sprite->rotation -= TRIG_TURN / 256;
-		actor->x.fixed -= syCos(actor->sprite->rotation) / 2;
-		actor->targetX = ACTOR_NO_TARGET;
+		actor->x.fixed          -= syCos(actor->sprite->rotation) / 2;
+		actor->targetX           = ACTOR_NO_TARGET;
 	}
 	actor->update = scGondowanCaveSpinStump;
 	sySoundPlay(SE_WHOOSH);
 	fdActorSetSpeed(actorId, 2);
 	fdActorSetDestination(actorId, 472, 288);
-	actor->gravity = toFIXED(4) / 5;
+	actor->gravity     = toFIXED(4) / 5;
 	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	actor->layer = 0;
+	actor->layer       = 0;
 	fdActorWaitForMoveById(actorId);
 	scGondowanCaveWaitBelowHeight(actor, toFIXED(32));
 	fdMapGridSetShake(5, 5, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	for(stepIndex = 0; stepIndex <= TRIG_TURN / FACING_STEP; stepIndex++) {
-		angle = stepIndex * FACING_STEP;
-		particleVelocity.x = syCos(angle);
-		particleVelocity.y = 0;
-		particleVelocity.z = sySin(angle);
+	for (stepIndex = 0; stepIndex <= TRIG_TURN / FACING_STEP; stepIndex++)
+	{
+		angle               = stepIndex * FACING_STEP;
+		particleVelocity.x  = syCos(angle);
+		particleVelocity.y  = 0;
+		particleVelocity.z  = sySin(angle);
 		particleVelocity.x -= particleVelocity.x / 4;
 		particleVelocity.z -= particleVelocity.z / 2;
-		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			particleVelocity.x, particleVelocity.y, particleVelocity.z, 0,
-			NULL);
+		fdEffectSpawn(actor->x.fixed,
+		              actor->y.fixed,
+		              actor->z.fixed,
+		              particleVelocity.x,
+		              particleVelocity.y,
+		              particleVelocity.z,
+		              0,
+		              NULL);
 	}
 	fdActorSetDestination(actorId, 440, 308);
 	fdActorWaitForMoveById(actorId);
 	scGondowanCaveWaitBelowHeight(actor, toFIXED(32));
-	actor->update = NULL;
+	actor->update           = NULL;
 	actor->sprite->rotation = TRIG_TURN / 16;
 	sySoundPlay(SE_CAST);
 	fdActorSetAnimation(actorId, STUMP_ANIMATION_SPLASH);
@@ -539,42 +541,48 @@ static void scGondowanCaveLeapStump(Sint32 actorId)
 	fdActorSetAnimation(actorId, STUMP_ANIMATION_SINK);
 }
 
-/* Unused: an empty function nothing refers to. */
+// Unused: an empty function nothing refers to.
 static UNUSED void scGondowanCaveUnusedNoOperationB(void)
 {
 }
 
-/* Lift on the boulder in the right fork north of the cave's west mouth raises
-   it away, and clears the short way north to the east cave.
-
-   Lift removes the boulder itself; the script takes away ACTOR_BOULDER_GAP,
-   which stood in the gap beside it. */
+// Lift on the boulder in the right fork north of the cave's west mouth raises it away, and clears
+// the short way north to the east cave.
+//
+// Lift removes the boulder itself; the script takes away ACTOR_BOULDER_GAP, which stood in the gap
+// beside it.
 static void scGondowanCaveLiftBoulder(void)
 {
 	fdActorSetPos(ACTOR_BOULDER_GAP, 0, 0);
 }
 
-/* Sets up the scene as the party enters. */
+// Sets up the scene as the party enters.
 Sint32 scInit(void)
 {
-	if(MainRoutineStateWork.next == SCENE_GONDOWAN_PASSAGE) {
+	if (MainRoutineStateWork.next == SCENE_GONDOWAN_PASSAGE)
+	{
 		gmFlagSet(FLAG_RETREAT_BLOCKED);
-		if(gmFlagGet(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
+		if (gmFlagGet(FLAG_IODEM_FOLLOWING_PARTY) != 0)
+		{
 			fdActorSetPos(ACTOR_IODEM, 0, 0);
 		}
 	}
-	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CAVE) {
-		/* XXX (no evidence): why this arrival changes the drop's metatile; the
-		   change has no effect that play shows. */
-		if(MainRoutineStateWork.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
+	if (MainRoutineStateWork.next == SCENE_GONDOWAN_CAVE)
+	{
+		// XXX (no evidence): why this arrival changes the drop's metatile; the change has no effect
+		// that play shows.
+		if (MainRoutineStateWork.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST)
+		{
 			fdMapGridCopyMetatileAttributes(108, 17, 1, 1, 107, 17);
 		}
-		if(gmFlagGet(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
+		if (gmFlagGet(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0)
+		{
 			fdActorSetPos(ACTOR_STUMP, 440, 308);
 			fdActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
 			fdMapGridCopyMetatileAttributes(29, 19, 1, 1, 27, 19);
 		}
-		if(gmFlagGet(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
+		if (gmFlagGet(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0)
+		{
 			scGondowanCavePlaceDroppedPillar(STUMP_ANIMATION_SINK);
 		}
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_BOULDER_GAP), 0);
@@ -585,7 +593,7 @@ Sint32 scInit(void)
 #include "shared/field_effect_duration_scripts.c"
 
 #include "shared/pushed_actor_tables.c"
-/* clang-format off */
+// clang-format off
 
 const Sint32 *FieldEffectDurationScripts[] = {
 	FieldEffectShortScript,
@@ -735,9 +743,7 @@ CUE GondowanCaveRiverCues[] = {
 	{ CUE_TABLE_END },
 };
 
-/* Move on the tall pillar runs while FLAG_SCENE_TEMP_05 is clear, which is */
-/* always, since nothing sets it; once the pillar has dropped it stands at */
-/* (0, 0), out of reach. */
+// Move on the tall pillar runs while FLAG_SCENE_TEMP_05 is clear, which is always, since nothing sets it; once the pillar has dropped it stands at (0, 0), out of reach.
 CUE GondowanCaveCues[] = {
 	{ CUE_STEP, GONDOWAN_CAVE_TO_WORLD_MAP_EAST, CONDITION_ALWAYS, SCRIPT_REF(scGondowanCaveLeaveToWorldMapEast) },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },
@@ -755,4 +761,4 @@ CUE GondowanCaveCues[] = {
 	{ EXAMINE_CUE(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ CUE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on

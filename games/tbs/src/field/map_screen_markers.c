@@ -1,26 +1,22 @@
-/* The map screen's markers (fdMapScreenShow). */
+// The map screen's markers (fdMapScreenShow).
 
 #include "flags.h"
 #include "scene_ids.h"
 #include "field/script_commands.h"
 
-/* A marker row: the marker tile (MAP_SCREEN_MARKER_TILE), the area group whose
-   FLAG_AREA_VISITED shows it, and the scene whose area name
-   (fdAreaGetNameIndex) the cursor shows near it. */
-#define MAP_SCREEN_MARKER(tile, group, scene) \
-	(tile) << 16 | FLAG_AREA_VISITED(group), (scene)
-/* A town's or a place on the way's marker. */
-#define AREA_MARKER(group, scene) \
-	MAP_SCREEN_MARKER(MAP_SCREEN_MARKER_AREA, group, scene)
-/* A lighthouse's or Sol Sanctum's marker. */
-#define LIGHTHOUSE_MARKER(group, scene) \
+// A marker row: the marker tile (MAP_SCREEN_MARKER_TILE), the area group whose FLAG_AREA_VISITED
+// shows it, and the scene whose area name (fdAreaGetNameIndex) the cursor shows near it.
+#define MAP_SCREEN_MARKER(tile, group, scene) (tile) << 16 | FLAG_AREA_VISITED(group), (scene)
+// A town's or a place on the way's marker.
+#define AREA_MARKER(group, scene)             MAP_SCREEN_MARKER(MAP_SCREEN_MARKER_AREA, group, scene)
+// A lighthouse's or Sol Sanctum's marker.
+#define LIGHTHOUSE_MARKER(group, scene)                                                            \
 	MAP_SCREEN_MARKER(MAP_SCREEN_MARKER_LIGHTHOUSE, group, scene)
 
-/* A row for each World Map actor from WORLD_MAP_FIRST_AREA_ACTOR, whose marker
-   is drawn where that actor stands, so a place's spot on the image is its
-   actor's on the World Map. A row of zeros is an actor with no marker, and -1
-   ends the table. */
-/* clang-format off */
+// A row for each World Map actor from WORLD_MAP_FIRST_AREA_ACTOR, whose marker is drawn where that
+// actor stands, so a place's spot on the image is its actor's on the World Map. A row of zeros is
+// an actor with no marker, and -1 ends the table.
+// clang-format off
 const Sint32 MapScreenAreaMarkers[] = {
 	AREA_MARKER(3, SCENE_VALE_PROLOGUE),
 	AREA_MARKER(5, SCENE_VAULT),
@@ -65,4 +61,4 @@ const Sint32 MapScreenAreaMarkers[] = {
 	AREA_MARKER(44, SCENE_GONDOWAN_PASSAGE),
 	-1, 0,
 };
-/* clang-format on */
+// clang-format on

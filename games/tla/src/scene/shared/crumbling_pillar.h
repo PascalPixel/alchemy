@@ -1,7 +1,6 @@
-/* The crumbling and pounded pillars of the Izumo Ruins and Dehkan Plateau:
-   lists of (actor, flag) or (actor, kind, flag) entries ended by
-   ACTOR_LIST_END, placed from their flags and stepped on, struck or pounded
-   until they fall. */
+// The crumbling and pounded pillars of the Izumo Ruins and Dehkan Plateau: lists of (actor, flag)
+// or (actor, kind, flag) entries ended by ACTOR_LIST_END, placed from their flags and stepped on,
+// struck or pounded until they fall.
 #include "pillar_place.h"
 
 #include "pound_sink_target.h"
@@ -10,80 +9,81 @@
 
 #include "pillar_stand_in.h"
 
-/* Places each crumbling pillar of an (actor, flag) list: one that has given way
-   is moved out of sight; the others stand as their metatile's ground, 32 pixels
-   above the floor, which the leader jumps onto (MAP_METATILE_JUMP), and a
-   cracked one shows its cracks. A leader below the ground where he stands is
-   raised onto it. */
+// Places each crumbling pillar of an (actor, flag) list: one that has given way is moved out of
+// sight; the others stand as their metatile's ground, 32 pixels above the floor, which the leader
+// jumps onto (MAP_METATILE_JUMP), and a cracked one shows its cracks. A leader below the ground
+// where he stands is raised onto it.
 void syCrumblingPillarPlace(Uint16 *list)
 {
 	MAP_STATE *map = RamHeapSlots->mapGrid;
-	ACTOR	  *leader;
-	Sint32	   height;
+	ACTOR     *leader;
+	Sint32     height;
 
-	while(list[0] != ACTOR_LIST_END) {
-		Uint32		  id = list[0];
-		ACTOR		 *actor = fdActorGet(id);
-		Sint32		  flag = list[1];
-		Sint32		  next = flag + 1;
+	while (list[0] != ACTOR_LIST_END)
+	{
+		Uint32        id        = list[0];
+		ACTOR        *actor     = fdActorGet(id);
+		Sint32        flag      = list[1];
+		Sint32        next      = flag + 1;
 		MAP_METATILE *metatiles = map->layers[actor->layer].metatiles;
-		Uint8		 *shapes =
-			MapShapeGrid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
+		Uint8        *shapes    = MapShapeGrid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 
-		if(fdScriptGetFlag(next)) {
+		if (fdScriptGetFlag(next))
+		{
 			fdActorSetPos(id, 0, 0);
-		} else {
-			Sint32		  index = fdActorGetMetatileIndex(actor);
+		}
+		else
+		{
+			Sint32        index = fdActorGetMetatileIndex(actor);
 			MAP_METATILE *metatile;
-			Uint8		 *slot;
-			Sint32		  shape, ground;
+			Uint8        *slot;
+			Sint32        shape, ground;
 
 			metatile = metatiles + index;
-			slot = shapes + index;
-			shape = fdMapGridGetTerrainKind(
-				actor->layer, actor->x.fixed, actor->z.fixed);
-			ground = fdMapGetTerrainHeight(
-				actor->layer, actor->x.fixed, actor->z.fixed);
+			slot     = shapes + index;
+			shape    = fdMapGridGetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
+			ground   = fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
 
 			fdActorDisableById(id);
 			metatile->attributeB = MAP_METATILE_JUMP;
-			*slot = fdMapShapeFindOrAdd(
-				actor->layer, shape, METATILE_HEIGHT_STEPS(ground) + 4);
-			if(fdScriptGetFlag(flag))
+			*slot = fdMapShapeFindOrAdd(actor->layer, shape, METATILE_HEIGHT_STEPS(ground) + 4);
+			if (fdScriptGetFlag(flag))
 				fdActorSelectAnimation(actor, 0);
 		}
 		list += 2;
 	}
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	height =
-		fdMapGetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
-	if(leader->y.fixed < height) {
+	height = fdMapGetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
+	if (leader->y.fixed < height)
+	{
 		leader->groundHeight = height;
-		leader->y.fixed = height;
+		leader->y.fixed      = height;
 	}
 }
 
-/* Stepping onto a crumbling pillar: the first time it cracks, the second time
-   it gives way with the leader. */
+// Stepping onto a crumbling pillar: the first time it cracks, the second time it gives way with the
+// leader.
 void scCrumblingPillarStep(Uint16 *list)
 {
 	ACTOR *leader;
 	ACTOR *pillar;
 	FIXED  pos[3];
 
-	if(fdTryJumpForward() != 0)
+	if (fdTryJumpForward() != 0)
 		return;
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	pos[0] = leader->x.fixed;
 	pos[1] = leader->y.fixed;
 	pos[2] = leader->z.fixed;
 	pillar = fdActorFindAtMetatile(pos, 0);
-	if(pillar == 0)
+	if (pillar == 0)
 		return;
-	while(list[0] != ACTOR_LIST_END) {
+	while (list[0] != ACTOR_LIST_END)
+	{
 		Uint32 id = list[0];
 
-		if(fdActorGetById(id) != pillar) {
+		if (fdActorGetById(id) != pillar)
+		{
 			list += 2;
 			continue;
 		}
@@ -91,7 +91,8 @@ void scCrumblingPillarStep(Uint16 *list)
 			Sint32 flag = list[1];
 
 			fdScriptStart();
-			if(!syGameFlagGet(flag)) {
+			if (!syGameFlagGet(flag))
+			{
 				sySoundPlay(SE_CHEST_CLOSE);
 				fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
 				sySynch(2);
@@ -103,10 +104,12 @@ void scCrumblingPillarStep(Uint16 *list)
 				fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 				scDustScatter(0);
 				syGameFlagSet(flag);
-			} else if(!syGameFlagGet(flag + 1)) {
+			}
+			else if (!syGameFlagGet(flag + 1))
+			{
 				Uint8 *motionFlags = &leader->motionFlags;
 
-				*motionFlags = 0;
+				*motionFlags       = 0;
 				sySoundPlay(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
@@ -134,23 +137,25 @@ void scCrumblingPillarStep(Uint16 *list)
 	}
 }
 
-/* A crumbling pillar named in an (actor, flag) list gives way with a shake,
-   dust and a thump. */
+// A crumbling pillar named in an (actor, flag) list gives way with a shake, dust and a thump.
 void scCrumblingPillarCollapse(const void *data, Sint32 id)
 {
 	const TRAP_ENTRY *entry = data;
-	ACTOR			 *actor = fdActorGet(id);
-	Sint32			  flag;
+	ACTOR            *actor = fdActorGet(id);
+	Sint32            flag;
 
-	while(entry->actor != ACTOR_LIST_END) {
-		if(entry->actor != id) {
+	while (entry->actor != ACTOR_LIST_END)
+	{
+		if (entry->actor != id)
+		{
 			entry++;
 			continue;
 		}
 		{
 			flag = entry->flags;
 			fdScriptStart();
-			if(!fdScriptGetFlag(flag + 1)) {
+			if (!fdScriptGetFlag(flag + 1))
+			{
 				fdScriptPlaySound(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
@@ -175,30 +180,25 @@ void scCrumblingPillarCollapse(const void *data, Sint32 id)
 	}
 }
 
-/* Keeps an actor's sprite picture loaded even out of sight, and stops it
-   moving, colliding and showing (fdActorDisableById). */
+// Keeps an actor's sprite picture loaded even out of sight, and stops it moving, colliding and
+// showing (fdActorDisableById).
 void syCrumblingPillarPrepare(Sint32 id)
 {
-	fdActorGet(id)->retainSpriteCache =
-		ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+	fdActorGet(id)->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
 	fdActorDisableById(id);
 }
 
-/* As syCrumblingPillarPlace, in a room whose pillars share one sprite: first
-   loads the stand-in's and the two pictures' sprites beside the leader, the
-   cracked one showing its cracks, then puts them out of sight; a cracked pillar
-   takes the cracked picture. */
+// As syCrumblingPillarPlace, in a room whose pillars share one sprite: first loads the stand-in's
+// and the two pictures' sprites beside the leader, the cracked one showing its cracks, then puts
+// them out of sight; a cracked pillar takes the cracked picture.
 void scCrumblingPillarPlaceWithStandIn(Uint16 *list)
 {
 	MAP_STATE *map = RamHeapSlots->mapGrid;
-	Uint8	  *grid;
+	Uint8     *grid;
 
-	fdActorPlaceOnActor(
-		ACTOR_PILLAR_STAND_IN, MainRoutineStateWork.leaderActorId);
-	fdActorPlaceOnActor(
-		ACTOR_CRACKED_PILLAR_SPRITE, MainRoutineStateWork.leaderActorId);
-	fdActorPlaceOnActor(
-		ACTOR_WHOLE_PILLAR_SPRITE, MainRoutineStateWork.leaderActorId);
+	fdActorPlaceOnActor(ACTOR_PILLAR_STAND_IN, MainRoutineStateWork.leaderActorId);
+	fdActorPlaceOnActor(ACTOR_CRACKED_PILLAR_SPRITE, MainRoutineStateWork.leaderActorId);
+	fdActorPlaceOnActor(ACTOR_WHOLE_PILLAR_SPRITE, MainRoutineStateWork.leaderActorId);
 	syWait(1);
 	syCrumblingPillarPrepare(ACTOR_PILLAR_STAND_IN);
 	syCrumblingPillarPrepare(ACTOR_CRACKED_PILLAR_SPRITE);
@@ -210,35 +210,34 @@ void scCrumblingPillarPlaceWithStandIn(Uint16 *list)
 	fdActorSetPos(ACTOR_WHOLE_PILLAR_SPRITE, 0, 0);
 	syWait(1);
 	grid = MapShapeGrid;
-	while(list[0] != ACTOR_LIST_END) {
-		Uint32		  id = list[0];
-		ACTOR		 *actor = fdActorGet(id);
-		Sint32		  flag = list[1];
-		Sint32		  next = flag + 1;
-		MAP_METATILE *metatiles = map->layers[actor->layer].metatiles;
-		Uint8		 *shapes =
-			grid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
+	while (list[0] != ACTOR_LIST_END)
+	{
+		Uint32        id         = list[0];
+		ACTOR        *actor      = fdActorGet(id);
+		Sint32        flag       = list[1];
+		Sint32        next       = flag + 1;
+		MAP_METATILE *metatiles  = map->layers[actor->layer].metatiles;
+		Uint8        *shapes     = grid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 
-		actor->retainSpriteCache =
-			ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
-		if(fdScriptGetFlag(next)) {
+		actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+		if (fdScriptGetFlag(next))
+		{
 			fdActorSetPos(id, 0, 0);
-		} else {
-			Sint32		  index = fdActorGetMetatileIndex(actor);
+		}
+		else
+		{
+			Sint32        index    = fdActorGetMetatileIndex(actor);
 			MAP_METATILE *metatile = metatiles + index;
-			Uint8		 *shape = shapes + index;
-			Sint32		  kind, ground;
+			Uint8        *shape    = shapes + index;
+			Sint32        kind, ground;
 
-			kind = fdMapGridGetTerrainKind(
-				actor->layer, actor->x.fixed, actor->z.fixed);
-			ground = fdMapGetTerrainHeight(
-				actor->layer, actor->x.fixed, actor->z.fixed);
+			kind   = fdMapGridGetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
+			ground = fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
 
 			fdActorDisableById(id);
 			metatile->attributeB = MAP_METATILE_JUMP;
-			*shape = fdMapShapeFindOrAdd(
-				actor->layer, kind, METATILE_HEIGHT_STEPS(ground) + 4);
-			if(fdScriptGetFlag(flag))
+			*shape = fdMapShapeFindOrAdd(actor->layer, kind, METATILE_HEIGHT_STEPS(ground) + 4);
+			if (fdScriptGetFlag(flag))
 				fdActorCopyGraphics(id, ACTOR_CRACKED_PILLAR_SPRITE);
 		}
 		list += 2;
@@ -248,9 +247,8 @@ void scCrumblingPillarPlaceWithStandIn(Uint16 *list)
 
 #include "actor_take_place_of.h"
 
-/* As scCrumblingPillarStep, in a room whose pillars share one sprite: the
-   stand-in takes the pillar's place to crack or give way, and a cracked pillar
-   takes the cracked picture. */
+// As scCrumblingPillarStep, in a room whose pillars share one sprite: the stand-in takes the
+// pillar's place to crack or give way, and a cracked pillar takes the cracked picture.
 void scCrumblingPillarStepWithStandIn(Uint16 *list)
 {
 	ACTOR *leader;
@@ -258,20 +256,22 @@ void scCrumblingPillarStepWithStandIn(Uint16 *list)
 	ACTOR *pillar;
 	FIXED  pos[3];
 
-	if(fdTryJumpForward() != 0)
+	if (fdTryJumpForward() != 0)
 		return;
-	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	leader  = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	standIn = fdActorGetById(ACTOR_PILLAR_STAND_IN);
-	pos[0] = leader->x.fixed;
-	pos[1] = leader->y.fixed;
-	pos[2] = leader->z.fixed;
-	pillar = fdActorFindAtMetatile(pos, 0);
-	if(pillar == 0)
+	pos[0]  = leader->x.fixed;
+	pos[1]  = leader->y.fixed;
+	pos[2]  = leader->z.fixed;
+	pillar  = fdActorFindAtMetatile(pos, 0);
+	if (pillar == 0)
 		return;
-	while(list[0] != ACTOR_LIST_END) {
+	while (list[0] != ACTOR_LIST_END)
+	{
 		Uint32 id = list[0];
 
-		if(fdActorGetById(id) != pillar) {
+		if (fdActorGetById(id) != pillar)
+		{
 			list += 2;
 			continue;
 		}
@@ -279,35 +279,34 @@ void scCrumblingPillarStepWithStandIn(Uint16 *list)
 			Sint32 flag = list[1];
 
 			fdScriptStart();
-			if(!syGameFlagGet(flag)) {
+			if (!syGameFlagGet(flag))
+			{
 				fdActorSelectAnimation(standIn, 1);
 				scActorTakePlaceOf(standIn, pillar);
 				sySynch(1);
 				sySoundPlay(SE_CHEST_CLOSE);
-				fdActorSetSpriteColor(
-					fdActorGetById(ACTOR_PILLAR_STAND_IN), SPRITE_COLOR_WHITE);
+				fdActorSetSpriteColor(fdActorGetById(ACTOR_PILLAR_STAND_IN), SPRITE_COLOR_WHITE);
 				sySynch(2);
 				fdActorSelectAnimation(standIn, 0);
 				fdActorCopyGraphics(id, ACTOR_CRACKED_PILLAR_SPRITE);
-				fdActorSetSpriteColor(
-					fdActorGetById(ACTOR_PILLAR_STAND_IN), SPRITE_COLOR_NORMAL);
+				fdActorSetSpriteColor(fdActorGetById(ACTOR_PILLAR_STAND_IN), SPRITE_COLOR_NORMAL);
 				sySynch(2);
-				fdActorSetSpriteColor(
-					fdActorGetById(ACTOR_PILLAR_STAND_IN), SPRITE_COLOR_WHITE);
+				fdActorSetSpriteColor(fdActorGetById(ACTOR_PILLAR_STAND_IN), SPRITE_COLOR_WHITE);
 				sySynch(4);
-				fdActorSetSpriteColor(
-					fdActorGetById(ACTOR_PILLAR_STAND_IN), SPRITE_COLOR_NORMAL);
+				fdActorSetSpriteColor(fdActorGetById(ACTOR_PILLAR_STAND_IN), SPRITE_COLOR_NORMAL);
 				scDustScatter(0);
 				scActorTakePlaceOf(pillar, standIn);
 				sySynch(1);
 				syGameFlagSet(flag);
-			} else if(!syGameFlagGet(flag + 1)) {
+			}
+			else if (!syGameFlagGet(flag + 1))
+			{
 				Uint8 *motionFlags;
 
 				fdActorSelectAnimation(standIn, 0);
 				scActorTakePlaceOf(standIn, pillar);
 				sySynch(1);
-				motionFlags = &leader->motionFlags;
+				motionFlags  = &leader->motionFlags;
 				*motionFlags = 0;
 				sySoundPlay(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);

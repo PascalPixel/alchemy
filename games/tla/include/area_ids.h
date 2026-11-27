@@ -1,14 +1,14 @@
 #ifndef ALCHEMY_AREA_IDS_H
 #define ALCHEMY_AREA_IDS_H
 
-/* The areas: groups of scenes that share their music, their area flags and the
-   name shown on arriving from another area. Each scene's row of ScenesWork
-   (field/scenes.s) gives its area, and the music and area name rules match by
-   it (field/music_rules.s, field/area_name_rules.s). Each is named after the
-   area name its rule shows (MsgDebugAreaName); where two areas show one name,
-   the second is named after the scenes it holds. */
+// The areas: groups of scenes that share their music, their area flags and the name shown on
+// arriving from another area. Each scene's row of ScenesWork (field/scenes.s) gives its area, and
+// the music and area name rules match by it (field/music_rules.s, field/area_name_rules.s). Each is
+// named after the area name its rule shows (MsgDebugAreaName); where two areas show one name, the
+// second is named after the scenes it holds.
 
-typedef enum AREA_ID {
+typedef enum AREA_ID
+{
 	AREA_TITLE_SCREEN,
 	AREA_CLEAR_DATA,
 	AREA_WORLD_MAP,
@@ -18,7 +18,7 @@ typedef enum AREA_ID {
 	AREA_IDEJIMA,
 	AREA_DAILA,
 	AREA_KANDOREAN_TEMPLE,
-	AREA_KANDOREAN_TEMPLE_GATE, /* shows "Kandorean Temple" */
+	AREA_KANDOREAN_TEMPLE_GATE, // shows "Kandorean Temple"
 	AREA_SHRINE_OF_THE_SEA_GOD,
 	AREA_DEHKAN_PLATEAU,
 	AREA_LEMURIAN_SHIP,
@@ -32,7 +32,7 @@ typedef enum AREA_ID {
 	AREA_YAMPI_DESERT,
 	AREA_YAMPI_DESERT_CAVE,
 	AREA_AIRS_ROCK,
-	AREA_AIRS_ROCK_INSIDE, /* shows "Air's Rock" */
+	AREA_AIRS_ROCK_INSIDE, // shows "Air's Rock"
 	AREA_ALHAFRA,
 	AREA_EASTERN_ALHAFRA,
 	AREA_ALHAFRAN_CAVE,
@@ -40,7 +40,7 @@ typedef enum AREA_ID {
 	AREA_NARIBWE,
 	AREA_KIBOMBO_MOUNTAINS,
 	AREA_KIBOMBO,
-	AREA_KIBOMBO_CEREMONY, /* shows "Kibombo" */
+	AREA_KIBOMBO_CEREMONY, // shows "Kibombo"
 	AREA_GABOMBA_STATUE,
 	AREA_GABOMBA_CATACOMBS,
 	AREA_WEST_INDRA_ISLET,
@@ -50,20 +50,20 @@ typedef enum AREA_ID {
 	AREA_SEA_OF_TIME_ISLET,
 	AREA_ISLET_CAVE,
 	AREA_YALLAM,
-	AREA_TAOPO_SWAMP_ENTRANCE, /* shows "Taopo Swamp" */
+	AREA_TAOPO_SWAMP_ENTRANCE, // shows "Taopo Swamp"
 	AREA_TAOPO_SWAMP,
 	AREA_APOJII_ISLANDS,
 	AREA_APOJII_ISLANDS_CAVE,
 	AREA_AQUA_ROCK,
-	AREA_AQUA_ROCK_INSIDE, /* shows "Aqua Rock" */
+	AREA_AQUA_ROCK_INSIDE, // shows "Aqua Rock"
 	AREA_IZUMO,
 	AREA_IZUMO_RUINS,
 	AREA_GAIA_ROCK,
-	AREA_GAIA_ROCK_INSIDE, /* shows "Gaia Rock" */
+	AREA_GAIA_ROCK_INSIDE, // shows "Gaia Rock"
 	AREA_CHAMPA,
 	AREA_ANKOHL_RUINS,
 	AREA_SEA_OF_TIME,
-	AREA_LEMURIA_ENTRANCE, /* shows "Lemuria" */
+	AREA_LEMURIA_ENTRANCE, // shows "Lemuria"
 	AREA_LEMURIA,
 	AREA_TUNDARIA_TOWER,
 	AREA_GONDOWAN_SETTLEMENT,
@@ -71,14 +71,14 @@ typedef enum AREA_ID {
 	AREA_KALT_ISLAND,
 	AREA_SOUTHWEST_ATTEKA_ISLET,
 	AREA_MAGMA_ROCK,
-	AREA_MAGMA_ROCK_INSIDE, /* shows "Magma Rock" */
+	AREA_MAGMA_ROCK_INSIDE, // shows "Magma Rock"
 	AREA_ATTEKA_INLET,
 	AREA_CONTIGO,
 	AREA_ANEMOS_SANCTUM,
 	AREA_SHAMAN_VILLAGE_CAVE,
 	AREA_SHAMAN_VILLAGE,
 	AREA_TRIAL_ROAD,
-	AREA_TRIAL_ROAD_CAVE, /* shows "Trial Road" */
+	AREA_TRIAL_ROAD_CAVE, // shows "Trial Road"
 	AREA_JUPITER_LIGHTHOUSE,
 	AREA_LOHO,
 	AREA_NORTHERN_REACHES,
@@ -108,4 +108,4 @@ typedef enum AREA_ID {
 	AREA_SHOP_TEST,
 } AREA_ID;
 
-#endif /* ALCHEMY_AREA_IDS_H */
+#endif // ALCHEMY_AREA_IDS_H

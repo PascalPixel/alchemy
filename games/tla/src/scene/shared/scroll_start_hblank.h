@@ -1,4 +1,4 @@
-/* Starts the HBlank scroll handler and its event. */
+// Starts the HBlank scroll handler and its event.
 void scScrollStartHBlank(void)
 {
 	Sint32 priority;

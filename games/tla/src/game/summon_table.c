@@ -1,43 +1,19 @@
-/* The summons: the order the Summon command lists them in, and each one's
-   ability and the Djinn it needs. Part of game.c. */
+// The summons: the order the Summon command lists them in, and each one's ability and the Djinn it
+// needs. Part of game.c.
 
-/* The order the Summon command lists the summons in: by the number of Djinn
-   they need, fewest first. */
+// The order the Summon command lists the summons in: by the number of Djinn they need, fewest
+// first.
 const Uint8 SummonOrderList[SUMMON_COUNT] = {
-	SUMMON_VENUS,
-	SUMMON_MERCURY,
-	SUMMON_MARS,
-	SUMMON_JUPITER,
-	SUMMON_RAMSES,
-	SUMMON_NEREID,
-	SUMMON_KIRIN,
-	SUMMON_ATALANTA,
-	SUMMON_ZAGAN,
-	SUMMON_MEGAERA,
-	SUMMON_CYBELE,
-	SUMMON_NEPTUNE,
-	SUMMON_TIAMAT,
-	SUMMON_PROCNE,
-	SUMMON_FLORA,
-	SUMMON_MOLOCH,
-	SUMMON_JUDGMENT,
-	SUMMON_BOREAS,
-	SUMMON_METEOR,
-	SUMMON_THOR,
-	SUMMON_ULYSSES,
-	SUMMON_HAURES,
-	SUMMON_ECLIPSE,
-	SUMMON_COATLICUE,
-	SUMMON_DAEDALUS,
-	SUMMON_AZUL,
-	SUMMON_CATASTROPHE,
-	SUMMON_CHARON,
-	SUMMON_IRIS,
+	SUMMON_VENUS,   SUMMON_MERCURY,     SUMMON_MARS,     SUMMON_JUPITER,   SUMMON_RAMSES,
+	SUMMON_NEREID,  SUMMON_KIRIN,       SUMMON_ATALANTA, SUMMON_ZAGAN,     SUMMON_MEGAERA,
+	SUMMON_CYBELE,  SUMMON_NEPTUNE,     SUMMON_TIAMAT,   SUMMON_PROCNE,    SUMMON_FLORA,
+	SUMMON_MOLOCH,  SUMMON_JUDGMENT,    SUMMON_BOREAS,   SUMMON_METEOR,    SUMMON_THOR,
+	SUMMON_ULYSSES, SUMMON_HAURES,      SUMMON_ECLIPSE,  SUMMON_COATLICUE, SUMMON_DAEDALUS,
+	SUMMON_AZUL,    SUMMON_CATASTROPHE, SUMMON_CHARON,   SUMMON_IRIS,
 };
 
-/* clang-format off */
-/* The 29 summons, by summon id, read through gmSummonDefinitionGetNearStub. Each */
-/* needs this many standby Djinn of each element. */
+// clang-format off
+// The 29 summons, by summon id, read through gmSummonDefinitionGetNearStub. Each needs this many standby Djinn of each element.
 const SUMMON_DEFINITION SummonDefinitionTable[] = {
 	[SUMMON_VENUS] = {
 		.abilityId = ABILITY_VENUS,
@@ -156,4 +132,4 @@ const SUMMON_DEFINITION SummonDefinitionTable[] = {
 		.djinnRequired = {[ELEMENT_MERCURY] = 4, [ELEMENT_MARS] = 9},
 	},
 };
-/* clang-format on */
+// clang-format on

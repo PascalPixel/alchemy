@@ -1,12 +1,12 @@
-/* 1 when two actors stand side by side. */
+// 1 when two actors stand side by side.
 Bool fdActorIsBeside(ACTOR *a, ACTOR *b)
 {
 	FIXED dy;
 
-	if(ABS(a->x.fixed - b->x.fixed) < toFIXED(12)) {
+	if (ABS(a->x.fixed - b->x.fixed) < toFIXED(12))
+	{
 		dy = a->y.fixed - b->y.fixed;
-		if(dy > -toFIXED(8) && dy < toFIXED(24) &&
-			ABS(a->z.fixed - b->z.fixed) < toFIXED(12))
+		if (dy > -toFIXED(8) && dy < toFIXED(24) && ABS(a->z.fixed - b->z.fixed) < toFIXED(12))
 			return TRUE;
 	}
 	return FALSE;

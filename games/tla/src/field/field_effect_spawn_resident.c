@@ -1,6 +1,6 @@
-/* The main image's copy of the overlays' effect spawner (field_effect_spawn.c),
-   an object of its own between the script commands: Carry's ring of dust
-   (fdEffectSpawnRadialParticleRing) spawns through it. */
+// The main image's copy of the overlays' effect spawner (field_effect_spawn.c), an object of its
+// own between the script commands: Carry's ring of dust (fdEffectSpawnRadialParticleRing) spawns
+// through it.
 
 #include "field/field_mode_functions.h"
 #include "sprite_ids.h"
@@ -9,84 +9,92 @@
 
 extern const Sint32 *FieldEffectDurationScripts[];
 
-/* Places a small effect at (x, y, z) moving at a velocity: a dust cloud, or
-   options' type when EFFECT_USE_TYPE asks for it, its script one of
-   FieldEffectDurationScripts and its options chosen by the EFFECT_USE_
-   flags. */
-void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options)
+// Places a small effect at (x, y, z) moving at a velocity: a dust cloud, or options' type when
+// EFFECT_USE_TYPE asks for it, its script one of FieldEffectDurationScripts and its options chosen
+// by the EFFECT_USE_ flags.
+void                 fdEffectSpawnResident(Sint32                x,
+                                           Sint32                y,
+                                           Sint32                z,
+                                           Sint32                velocityX,
+                                           Sint32                velocityY,
+                                           Sint32                velocityZ,
+                                           Uint32                flags,
+                                           const EFFECT_OPTIONS *options)
 {
-	/* UB: actor 0 is Isaac's, on stage only while he leads; with Felix leading
-	   fdActorGetById returns NULL, and the sprite priority below is read
-	   through it. UBFIX takes the leader's, as the overlays' copy does. */
+	// UB: actor 0 is Isaac's, on stage only while he leads; with Felix leading fdActorGetById
+	// returns NULL, and the sprite priority below is read through it. UBFIX takes the leader's, as
+	// the overlays' copy does.
 #if FIX_RESIDENT_SPAWN_LEADER_ACTOR
 	ACTOR *party = fdActorGetById(MainRoutineStateWork.leaderActorId);
 #else
 	ACTOR *party = fdActorGetById(ACTOR_ISAAC);
 #endif
 	FIELD_EFFECT *effect;
-	FIELD_SPR	 *sprite;
+	FIELD_SPR    *sprite;
 	const Sint32 *script;
 
-	if((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+	if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
 		effect = (FIELD_EFFECT *)fdActorCreateStub(options->type, x, y, z);
 	else
-		effect =
-			(FIELD_EFFECT *)fdActorCreateStub(EFFECT_DEFAULT_TYPE, x, y, z);
-	if(effect == 0)
+		effect = (FIELD_EFFECT *)fdActorCreateStub(EFFECT_DEFAULT_TYPE, x, y, z);
+	if (effect == 0)
 		return;
 
 	sprite = effect->sprite;
-	fdActorSelectAnimationStub(
-		(ACTOR *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-	fdActorStartScriptStub(
-		(void *)effect, FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK]);
+	fdActorSelectAnimationStub((ACTOR *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+	fdActorStartScriptStub((void *)effect, FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK]);
 	effect->motionFlags = 0;
-	sprite->flags = 0;
-	effect->update = fdEffectUpdateMotionScaleAndSpin;
-	effect->velocity.x = velocityX;
-	effect->velocity.y = velocityY;
-	effect->velocity.z = velocityZ;
-	sprite->priority = ((SPR *)party->sprite)->image.priority;
-	effect->scaleRateX = 0;
-	effect->scaleRateY = 0;
-	effect->spin = 0;
+	sprite->flags       = 0;
+	effect->update      = fdEffectUpdateMotionScaleAndSpin;
+	effect->velocity.x  = velocityX;
+	effect->velocity.y  = velocityY;
+	effect->velocity.z  = velocityZ;
+	sprite->priority    = ((SPR *)party->sprite)->image.priority;
+	effect->scaleRateX  = 0;
+	effect->scaleRateY  = 0;
+	effect->spin        = 0;
 
-	if((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
+	if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
 		return;
-	if((flags & EFFECT_USE_PALETTE) != 0)
+	if ((flags & EFFECT_USE_PALETTE) != 0)
 		fdActorSetSpriteColor((ACTOR *)effect, options->palette);
-	if((flags & EFFECT_USE_PRIORITY) != 0) {
+	if ((flags & EFFECT_USE_PRIORITY) != 0)
+	{
 		effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-		sprite->priority = options->priority;
+		sprite->priority       = options->priority;
 	}
-	if((flags & EFFECT_USE_START_SCALE) != 0) {
+	if ((flags & EFFECT_USE_START_SCALE) != 0)
+	{
 		effect->scaleX = options->startScaleX;
 		effect->scaleY = options->startScaleY;
 	}
-	if((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+	if ((flags & EFFECT_SCALE_TO_TARGET) != 0)
+	{
 		script = FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK];
-		if((flags & EFFECT_USE_START_SCALE) != 0) {
-			effect->scaleRateX = (options->targetScaleX - effect->scaleX) /
-				script[EFFECT_SCRIPT_REPEAT_COUNT];
-			effect->scaleRateY = (options->targetScaleY - effect->scaleY) /
-				script[EFFECT_SCRIPT_REPEAT_COUNT];
-		} else {
-			effect->scaleRateX = (options->targetScaleX - toFIXED(1)) /
-				script[EFFECT_SCRIPT_REPEAT_COUNT];
-			effect->scaleRateY = (options->targetScaleY - toFIXED(1)) /
-				script[EFFECT_SCRIPT_REPEAT_COUNT];
+		if ((flags & EFFECT_USE_START_SCALE) != 0)
+		{
+			effect->scaleRateX =
+				(options->targetScaleX - effect->scaleX) / script[EFFECT_SCRIPT_REPEAT_COUNT];
+			effect->scaleRateY =
+				(options->targetScaleY - effect->scaleY) / script[EFFECT_SCRIPT_REPEAT_COUNT];
+		}
+		else
+		{
+			effect->scaleRateX =
+				(options->targetScaleX - toFIXED(1)) / script[EFFECT_SCRIPT_REPEAT_COUNT];
+			effect->scaleRateY =
+				(options->targetScaleY - toFIXED(1)) / script[EFFECT_SCRIPT_REPEAT_COUNT];
 		}
 	}
-	if((flags & EFFECT_USE_SCRIPT) != 0) {
+	if ((flags & EFFECT_USE_SCRIPT) != 0)
+	{
 		fdActorSelectAnimationStub((ACTOR *)effect, 1);
 		fdActorStartScriptStub((void *)effect, options->script);
 	}
-	if((flags & EFFECT_USE_ROTATION) != 0)
+	if ((flags & EFFECT_USE_ROTATION) != 0)
 		sprite->rotation = options->rotation;
-	if((flags & EFFECT_USE_SPIN) != 0)
+	if ((flags & EFFECT_USE_SPIN) != 0)
 		effect->spin = options->spin;
-	if((flags & EFFECT_USE_UPDATE) != 0)
+	if ((flags & EFFECT_USE_UPDATE) != 0)
 		effect->update = options->update;
 }

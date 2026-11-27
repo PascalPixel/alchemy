@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_BATTLE_TARGET_H
 #define ALCHEMY_BATTLE_TARGET_H
 
-/* A fallen target replaced by a living unit of its side. */
+// A fallen target replaced by a living unit of its side.
 
 #include "edition.h"
 #include "battle_action.h"

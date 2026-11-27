@@ -1,8 +1,8 @@
-/* The script of a stone head bursting out of Gaia Rock's walls
-   (scStoneHeadBurstOut), which its outside and inside keep a copy of. */
+// The script of a stone head bursting out of Gaia Rock's walls (scStoneHeadBurstOut), which its
+// outside and inside keep a copy of.
 
-/* The head swells by half and settles back in three steps, three times over,
-   then rests 20 ticks: three rounds in all. */
+// The head swells by half and settles back in three steps, three times over, then rests 20 ticks:
+// three rounds in all.
 Sint32 StoneHeadRiseScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 2),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 2),

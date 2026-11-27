@@ -1,10 +1,8 @@
-/* Half a ring of light, which Contigo's sparkle and the Psynergy test room's
-   rings draw twice, the second flipped, for a whole ring. */
+// Half a ring of light, which Contigo's sparkle and the Psynergy test room's rings draw twice, the
+// second flipped, for a whole ring.
 
-/* clang-format off */
-/* The ring's picture at 4 bits a pixel, 32 by 16, eight rows of a tile to */
-/* every two lines: each word is a row of a tile's eight pixels, a hex digit */
-/* each, the leftmost in the lowest digit. */
+// clang-format off
+// The ring's picture at 4 bits a pixel, 32 by 16, eight rows of a tile to every two lines: each word is a row of a tile's eight pixels, a hex digit each, the leftmost in the lowest digit.
 Uint32 LightRingTiles[] = {
 	0, 0, 0, 0,
 	0, 0, 0x70000000, 0xf7700000,
@@ -22,7 +20,7 @@ Uint32 LightRingTiles[] = {
 	0, 0, 0, 0,
 	0x00007fff, 0x0007ffff, 0x007ffff7, 0x07ffff70,
 	0x07fff700, 0x7ffff700, 0x7fff7000, 0x7fff7000,
-	/* Unused: the same half ring outlined in colour 4. */
+	// Unused: the same half ring outlined in colour 4.
 	0, 0, 0, 0,
 	0, 0, 0x40000000, 0xf4400000,
 	0, 0, 0, 0,
@@ -39,7 +37,7 @@ Uint32 LightRingTiles[] = {
 	0, 0, 0, 0,
 	0x00004fff, 0x0004ffff, 0x004ffff4, 0x04ffff40,
 	0x04fff400, 0x4ffff400, 0x4fff4000, 0x4fff4000,
-	/* Unused: three 8 by 8 sparkles of 256 colours, two words a row. */
+	// Unused: three 8 by 8 sparkles of 256 colours, two words a row.
 	0xe9000000, 0x000000e9, 0xeb000000, 0x000000eb,
 	0xedeb0000, 0x0000ebed, 0xeeedebe9, 0xe9ebedee,
 	0xeeedebe9, 0xe9ebedee, 0xedeb0000, 0x0000ebed,
@@ -53,4 +51,4 @@ Uint32 LightRingTiles[] = {
 	0xeeedebe9, 0xe9ebedee, 0xedebe900, 0x00e9ebed,
 	0xebe90000, 0x0000e9eb, 0xe9000000, 0x000000e9,
 };
-/* clang-format on */
+// clang-format on

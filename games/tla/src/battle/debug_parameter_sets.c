@@ -1,7 +1,6 @@
-/* The debug parameter sets: runs of party members, each run ended by
-   DEBUG_PARAMETER_SET_END, that btDebugParamSetLoad gives the party when the
-   man hidden below the Battle lobby is given the run's number. From set 70 on,
-   an even set brings the odd one after it too. */
+// The debug parameter sets: runs of party members, each run ended by DEBUG_PARAMETER_SET_END, that
+// btDebugParamSetLoad gives the party when the man hidden below the Battle lobby is given the run's
+// number. From set 70 on, an even set brings the odd one after it too.
 
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -9,9 +8,9 @@
 #include "battle/debug_parameter_set.h"
 #include "game/character_ids.h"
 
-/* clang-format off */
+// clang-format off
 DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
-	/* Set 0 */
+	// Set 0
 	{
 		.owner = FELIX,
 		.level = 90,
@@ -22,7 +21,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 1 */
+	// Set 1
 	{
 		.owner = FELIX,
 		.level = 90,
@@ -52,7 +51,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 2 */
+	// Set 2
 	{
 		.owner = JENNA,
 		.level = 50,
@@ -82,7 +81,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 3 */
+	// Set 3
 	{
 		.owner = FELIX,
 		.level = 90,
@@ -112,7 +111,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 4 */
+	// Set 4
 	{
 		.owner = FELIX,
 		.level = 90,
@@ -141,7 +140,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 5 */
+	// Set 5
 	{
 		.owner = JENNA,
 		.level = 5,
@@ -163,7 +162,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 6 */
+	// Set 6
 	{
 		.owner = JENNA,
 		.level = 6,
@@ -186,7 +185,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 7 */
+	// Set 7
 	{
 		.owner = JENNA,
 		.level = 7,
@@ -210,7 +209,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 8 */
+	// Set 8
 	{
 		.owner = JENNA,
 		.level = 8,
@@ -234,7 +233,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 9 */
+	// Set 9
 	{
 		.owner = JENNA,
 		.level = 9,
@@ -258,7 +257,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 10 */
+	// Set 10
 	{
 		.owner = JENNA,
 		.level = 10,
@@ -282,7 +281,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 11 */
+	// Set 11
 	{
 		.owner = JENNA,
 		.level = 11,
@@ -306,7 +305,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 12 */
+	// Set 12
 	{
 		.owner = JENNA,
 		.level = 12,
@@ -330,7 +329,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 13 */
+	// Set 13
 	{
 		.owner = JENNA,
 		.level = 13,
@@ -354,7 +353,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 14 */
+	// Set 14
 	{
 		.owner = JENNA,
 		.level = 14,
@@ -378,7 +377,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 15 */
+	// Set 15
 	{
 		.owner = JENNA,
 		.level = 15,
@@ -402,7 +401,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 16 */
+	// Set 16
 	{
 		.owner = JENNA,
 		.level = 16,
@@ -426,7 +425,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 17 */
+	// Set 17
 	{
 		.owner = JENNA,
 		.level = 17,
@@ -450,7 +449,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 18 */
+	// Set 18
 	{
 		.owner = JENNA,
 		.level = 18,
@@ -474,7 +473,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 19 */
+	// Set 19
 	{
 		.owner = JENNA,
 		.level = 19,
@@ -504,7 +503,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 20 */
+	// Set 20
 	{
 		.owner = JENNA,
 		.level = 20,
@@ -534,7 +533,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 21 */
+	// Set 21
 	{
 		.owner = JENNA,
 		.level = 21,
@@ -564,7 +563,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 22 */
+	// Set 22
 	{
 		.owner = JENNA,
 		.level = 22,
@@ -594,7 +593,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 23 */
+	// Set 23
 	{
 		.owner = JENNA,
 		.level = 23,
@@ -624,7 +623,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 24 */
+	// Set 24
 	{
 		.owner = JENNA,
 		.level = 24,
@@ -654,7 +653,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 25 */
+	// Set 25
 	{
 		.owner = JENNA,
 		.level = 25,
@@ -684,7 +683,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 26 */
+	// Set 26
 	{
 		.owner = JENNA,
 		.level = 26,
@@ -714,7 +713,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 27 */
+	// Set 27
 	{
 		.owner = JENNA,
 		.level = 27,
@@ -744,7 +743,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 28 */
+	// Set 28
 	{
 		.owner = JENNA,
 		.level = 28,
@@ -774,7 +773,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 29 */
+	// Set 29
 	{
 		.owner = JENNA,
 		.level = 29,
@@ -804,7 +803,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 30 */
+	// Set 30
 	{
 		.owner = JENNA,
 		.level = 30,
@@ -834,7 +833,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 31 */
+	// Set 31
 	{
 		.owner = JENNA,
 		.level = 31,
@@ -864,7 +863,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 32 */
+	// Set 32
 	{
 		.owner = JENNA,
 		.level = 32,
@@ -894,7 +893,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 33 */
+	// Set 33
 	{
 		.owner = ISAAC,
 		.level = 1,
@@ -921,7 +920,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 34 */
+	// Set 34
 	{
 		.owner = ISAAC,
 		.level = 1,
@@ -948,7 +947,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 35 */
+	// Set 35
 	{
 		.owner = ISAAC,
 		.level = 1,
@@ -975,7 +974,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 36 */
+	// Set 36
 	{
 		.owner = ISAAC,
 		.level = 1,
@@ -1002,7 +1001,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 37 */
+	// Set 37
 	{
 		.owner = JENNA,
 		.level = 26,
@@ -1025,7 +1024,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 38 */
+	// Set 38
 	{
 		.owner = FELIX,
 		.level = 27,
@@ -1055,7 +1054,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 39 */
+	// Set 39
 	{
 		.owner = JENNA,
 		.level = 32,
@@ -1085,7 +1084,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 40 */
+	// Set 40
 	{
 		.owner = JENNA,
 		.level = 5,
@@ -1105,7 +1104,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 41 */
+	// Set 41
 	{
 		.owner = JENNA,
 		.level = 29,
@@ -1135,7 +1134,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 42 */
+	// Set 42
 	{
 		.owner = JENNA,
 		.level = 20,
@@ -1165,7 +1164,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 43 */
+	// Set 43
 	{
 		.owner = JENNA,
 		.level = 29,
@@ -1195,7 +1194,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 44 */
+	// Set 44
 	{
 		.owner = ISAAC,
 		.level = 1,
@@ -1222,7 +1221,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 45 */
+	// Set 45
 	{
 		.owner = JENNA,
 		.level = 5,
@@ -1244,7 +1243,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 46 */
+	// Set 46
 	{
 		.owner = JENNA,
 		.level = 9,
@@ -1268,7 +1267,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 47 */
+	// Set 47
 	{
 		.owner = JENNA,
 		.level = 12,
@@ -1292,7 +1291,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 48 */
+	// Set 48
 	{
 		.owner = JENNA,
 		.level = 14,
@@ -1316,7 +1315,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 49 */
+	// Set 49
 	{
 		.owner = JENNA,
 		.level = 15,
@@ -1340,7 +1339,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 50 */
+	// Set 50
 	{
 		.owner = JENNA,
 		.level = 17,
@@ -1364,7 +1363,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 51 */
+	// Set 51
 	{
 		.owner = JENNA,
 		.level = 19,
@@ -1394,7 +1393,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 52 */
+	// Set 52
 	{
 		.owner = JENNA,
 		.level = 23,
@@ -1424,7 +1423,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 53 */
+	// Set 53
 	{
 		.owner = JENNA,
 		.level = 24,
@@ -1454,7 +1453,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 54 */
+	// Set 54
 	{
 		.owner = JENNA,
 		.level = 25,
@@ -1484,7 +1483,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 55 */
+	// Set 55
 	{
 		.owner = JENNA,
 		.level = 27,
@@ -1514,7 +1513,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 56 */
+	// Set 56
 	{
 		.owner = JENNA,
 		.level = 31,
@@ -1544,7 +1543,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 57 */
+	// Set 57
 	{
 		.owner = JENNA,
 		.level = 32,
@@ -1574,7 +1573,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 58 */
+	// Set 58
 	{
 		.owner = JENNA,
 		.level = 33,
@@ -1604,7 +1603,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 59 */
+	// Set 59
 	{
 		.owner = JENNA,
 		.level = 35,
@@ -1634,7 +1633,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 60 */
+	// Set 60
 	{
 		.owner = FELIX,
 		.level = 40,
@@ -1664,7 +1663,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 61 */
+	// Set 61
 	{
 		.owner = FELIX,
 		.level = 30,
@@ -1694,7 +1693,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 62 */
+	// Set 62
 	{
 		.owner = FELIX,
 		.level = 20,
@@ -1724,7 +1723,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 63 */
+	// Set 63
 	{
 		.owner = FELIX,
 		.level = 15,
@@ -1754,7 +1753,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 64 */
+	// Set 64
 	{
 		.owner = FELIX,
 		.level = 10,
@@ -1784,7 +1783,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 65 */
+	// Set 65
 	{
 		.owner = FELIX,
 		.level = 40,
@@ -1808,7 +1807,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 66 */
+	// Set 66
 	{
 		.owner = FELIX,
 		.level = 30,
@@ -1832,7 +1831,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 67 */
+	// Set 67
 	{
 		.owner = FELIX,
 		.level = 20,
@@ -1856,7 +1855,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 68 */
+	// Set 68
 	{
 		.owner = FELIX,
 		.level = 15,
@@ -1880,7 +1879,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 69 */
+	// Set 69
 	{
 		.owner = FELIX,
 		.level = 10,
@@ -1904,7 +1903,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 70 */
+	// Set 70
 	{
 		.owner = JENNA,
 		.level = 33,
@@ -1934,7 +1933,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 71 */
+	// Set 71
 	{
 		.owner = IVAN,
 		.level = 33,
@@ -1965,7 +1964,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 72 */
+	// Set 72
 	{
 		.owner = JENNA,
 		.level = 34,
@@ -1995,7 +1994,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 73 */
+	// Set 73
 	{
 		.owner = IVAN,
 		.level = 34,
@@ -2026,7 +2025,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 74 */
+	// Set 74
 	{
 		.owner = JENNA,
 		.level = 35,
@@ -2056,7 +2055,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 75 */
+	// Set 75
 	{
 		.owner = IVAN,
 		.level = 35,
@@ -2087,7 +2086,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 76 */
+	// Set 76
 	{
 		.owner = JENNA,
 		.level = 36,
@@ -2117,7 +2116,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 77 */
+	// Set 77
 	{
 		.owner = IVAN,
 		.level = 36,
@@ -2148,7 +2147,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 78 */
+	// Set 78
 	{
 		.owner = JENNA,
 		.level = 37,
@@ -2178,7 +2177,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 79 */
+	// Set 79
 	{
 		.owner = IVAN,
 		.level = 37,
@@ -2209,7 +2208,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 80 */
+	// Set 80
 	{
 		.owner = JENNA,
 		.level = 38,
@@ -2239,7 +2238,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 81 */
+	// Set 81
 	{
 		.owner = IVAN,
 		.level = 38,
@@ -2270,7 +2269,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 82 */
+	// Set 82
 	{
 		.owner = JENNA,
 		.level = 39,
@@ -2300,7 +2299,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 83 */
+	// Set 83
 	{
 		.owner = IVAN,
 		.level = 39,
@@ -2331,7 +2330,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 84 */
+	// Set 84
 	{
 		.owner = JENNA,
 		.level = 40,
@@ -2361,7 +2360,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 85 */
+	// Set 85
 	{
 		.owner = IVAN,
 		.level = 40,
@@ -2392,7 +2391,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 86 */
+	// Set 86
 	{
 		.owner = JENNA,
 		.level = 50,
@@ -2422,7 +2421,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 87 */
+	// Set 87
 	{
 		.owner = IVAN,
 		.level = 50,
@@ -2453,7 +2452,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 88 */
+	// Set 88
 	{
 		.owner = JENNA,
 		.level = 60,
@@ -2483,7 +2482,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 89 */
+	// Set 89
 	{
 		.owner = IVAN,
 		.level = 60,
@@ -2514,7 +2513,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 90 */
+	// Set 90
 	{
 		.owner = JENNA,
 		.level = 70,
@@ -2544,7 +2543,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 91 */
+	// Set 91
 	{
 		.owner = IVAN,
 		.level = 70,
@@ -2575,7 +2574,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 92 */
+	// Set 92
 	{
 		.owner = JENNA,
 		.level = 35,
@@ -2605,7 +2604,7 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 93 */
+	// Set 93
 	{
 		.owner = IVAN,
 		.level = 35,
@@ -2636,9 +2635,9 @@ DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 94: none, a second end marker */
+	// Set 94: none, a second end marker
 	{
 		.owner = DEBUG_PARAMETER_SET_END,
 	},
 };
-/* clang-format on */
+// clang-format on

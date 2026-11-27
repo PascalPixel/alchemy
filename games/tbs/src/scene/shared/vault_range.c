@@ -1,28 +1,29 @@
-/* Vault, before and after the thieves are caught: villagers who walk about stop
-   when someone is close in front of them. */
+// Vault, before and after the thieves are caught: villagers who walk about stop when someone is
+// close in front of them.
 
-/* Stops the actor (paused, standing) when the target is nearer than range
-   pixels and lies ahead of it, within a sixteenth of a turn either side of its
-   heading; force stops it regardless. Returns 1 when it stopped. A target out
-   of range sets it walking again. */
-Sint32 scVaultStopIfFacingNear(
-	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force)
+// Stops the actor (paused, standing) when the target is nearer than range pixels and lies ahead of
+// it, within a sixteenth of a turn either side of its heading; force stops it regardless. Returns 1
+// when it stopped. A target out of range sets it walking again.
+Sint32 scVaultStopIfFacingNear(ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force)
 {
 	Sint32 result = 0;
-	if(fdActorDistance(target, actor) < range || force != 0) {
-		Uint32 angle = (Uint16)syAtan(
-			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
-		Uint32 left = FACING_SIXTEENTH(angle - FACING_STEP);
-		Uint32 right = FACING_SIXTEENTH(angle + FACING_STEP);
+	if (fdActorDistance(target, actor) < range || force != 0)
+	{
+		Uint32 angle =
+			(Uint16)syAtan(target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
+		Uint32 left    = FACING_SIXTEENTH(angle - FACING_STEP);
+		Uint32 right   = FACING_SIXTEENTH(angle + FACING_STEP);
 		Uint32 forward = FACING_SIXTEENTH(angle);
-		Uint32 facing = FACING_SIXTEENTH(actor->facing);
-		if(forward == facing || right == facing || left == facing ||
-			force != 0) {
+		Uint32 facing  = FACING_SIXTEENTH(actor->facing);
+		if (forward == facing || right == facing || left == facing || force != 0)
+		{
 			actor->paused = 1;
 			fdActorSelectAnimation(actor, ANIM_STAND);
 			result = 1;
 		}
-	} else {
+	}
+	else
+	{
 		actor->paused = 0;
 		fdActorSelectAnimation(actor, ANIM_WALK);
 	}

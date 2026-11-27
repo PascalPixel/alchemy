@@ -1,18 +1,15 @@
-/* The flight paths of two battle effects: Atalanta's across the screen, and the
-   flame of Dragon Cloud and Epicenter. Each opens with its start, x and then y
-   as 16-bit pixels written a byte to a row (high byte, low byte), and goes on
-   with a change of x and y in pixels for each tick. Both are resources
-   (ResourceIdAtalantaPath, ResourceIdDragonCloudFlamePath), as The Broken
-   Seal's are. */
+// The flight paths of two battle effects: Atalanta's across the screen, and the flame of Dragon
+// Cloud and Epicenter. Each opens with its start, x and then y as 16-bit pixels written a byte to a
+// row (high byte, low byte), and goes on with a change of x and y in pixels for each tick. Both are
+// resources (ResourceIdAtalantaPath, ResourceIdDragonCloudFlamePath), as The Broken Seal's are.
 
 #include "types.h"
 
-/* clang-format off */
-/* Atalanta's flight while she gathers her shafts, a step a tick */
-/* (RESOURCE_ATALANTA_PATH). */
+// clang-format off
+// Atalanta's flight while she gathers her shafts, a step a tick (RESOURCE_ATALANTA_PATH).
 const Sint8 BattleEffectAtalantaPath[][2] = {
-	{0, -96}, /* starts at x 160 */
-	{0, 95},  /* and y 95 */
+	{0, -96}, // starts at x 160
+	{0, 95},  // and y 95
 	{-5, -3},
 	{-4, -3},
 	{-4, -3},
@@ -225,11 +222,10 @@ const Sint8 BattleEffectAtalantaPath[][2] = {
 	{8, 6},
 };
 
-/* The flame's flight from the user, from tick 18 to 58 of Dragon Cloud and */
-/* Epicenter (RESOURCE_DRAGON_CLOUD_FLAME_PATH). */
+// The flame's flight from the user, from tick 18 to 58 of Dragon Cloud and Epicenter (RESOURCE_DRAGON_CLOUD_FLAME_PATH).
 const Sint8 BattleEffectDragonCloudFlamePath[][2] = {
-	{0, 17},   /* starts at x 17 */
-	{-1, -39}, /* and y -39, which the effect moves 16 pixels down */
+	{0, 17},   // starts at x 17
+	{-1, -39}, // and y -39, which the effect moves 16 pixels down
 	{6, 5},
 	{6, 5},
 	{6, 6},
@@ -271,4 +267,4 @@ const Sint8 BattleEffectDragonCloudFlamePath[][2] = {
 	{-18, 29},
 	{0, 0},
 };
-/* clang-format on */
+// clang-format on

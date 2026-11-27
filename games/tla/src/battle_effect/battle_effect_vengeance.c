@@ -1,395 +1,486 @@
-/* Vengeance and Life Shear, a geyser, swarms of stars and a column of bubbles,
-   and the Coatlicue summon. Part of battle_effect.c. */
+// Vengeance and Life Shear, a geyser, swarms of stars and a column of bubbles, and the Coatlicue
+// summon. Part of battle_effect.c.
 
-/* The star swarm's modes (btEffectRunStarSwarm). */
-typedef enum STAR_SWARM_MODE {
+// The star swarm's modes (btEffectRunStarSwarm).
+typedef enum STAR_SWARM_MODE
+{
 	STAR_SWARM_DJINN_STUN,
 	STAR_SWARM_MYSTIC_CALL
 } STAR_SWARM_MODE;
 
-/* The geyser's modes (btEffectRunGeyser), each named for the effect that plays
-   it. */
-typedef enum GEYSER_MODE {
+// The geyser's modes (btEffectRunGeyser), each named for the effect that plays it.
+typedef enum GEYSER_MODE
+{
 	GEYSER_PURGATORY,
 	GEYSER_DJINN_STORM,
 	GEYSER_DJINN_BLAST
 } GEYSER_MODE;
 
-/* Vengeance: the archer's flaming arrows. */
+// Vengeance: the archer's flaming arrows.
 
-#define VENGEANCE_TICKS		 124
-/* arrows shot, one every VENGEANCE_SHOT_INTERVAL */
-#define VENGEANCE_ARROWS	 7
-#define VENGEANCE_FIRST_SHOT 22 /* the first arrow's turn */
-#define VENGEANCE_SHOT_INTERVAL \
-	12 /* ticks between one arrow's turn and the next */
-/* The ticks from an arrow's turn to its flight, while it rests on the drawn
-   bow (the first rests there from the start); then the string is at rest until
-   the next arrow's turn. */
-#define VENGEANCE_NOCK_TICKS	   4
-/* The ticks a struck arrow stays in the target, its flame out. */
-#define VENGEANCE_STUCK_TICKS	   4
-/* Vengeance's sprite sheet: the archer twice, her bow drawn and its string at
-   rest after a shot, then the flame around an arrow's head, the arrow, and her
-   shoulder, drawn again over a nocked arrow so that its end passes behind
-   it. */
-#define VENGEANCE_ARCHER_WIDTH	   88
-#define VENGEANCE_ARCHER_HEIGHT	   96
-#define VENGEANCE_ARCHER_LOOSED	   PICTURE_BYTES(VENGEANCE_ARCHER)
-#define VENGEANCE_FLAME_TIP		   (2 * PICTURE_BYTES(VENGEANCE_ARCHER))
+#define VENGEANCE_TICKS            124
+// arrows shot, one every VENGEANCE_SHOT_INTERVAL
+#define VENGEANCE_ARROWS           7
+#define VENGEANCE_FIRST_SHOT       22 // the first arrow's turn
+#define VENGEANCE_SHOT_INTERVAL    12 // ticks between one arrow's turn and the next
+// The ticks from an arrow's turn to its flight, while it rests on the drawn bow (the first rests
+// there from the start); then the string is at rest until the next arrow's turn.
+#define VENGEANCE_NOCK_TICKS       4
+// The ticks a struck arrow stays in the target, its flame out.
+#define VENGEANCE_STUCK_TICKS      4
+// Vengeance's sprite sheet: the archer twice, her bow drawn and its string at rest after a shot,
+// then the flame around an arrow's head, the arrow, and her shoulder, drawn again over a nocked
+// arrow so that its end passes behind it.
+#define VENGEANCE_ARCHER_WIDTH     88
+#define VENGEANCE_ARCHER_HEIGHT    96
+#define VENGEANCE_ARCHER_LOOSED    PICTURE_BYTES(VENGEANCE_ARCHER)
+#define VENGEANCE_FLAME_TIP        (2 * PICTURE_BYTES(VENGEANCE_ARCHER))
 #define VENGEANCE_FLAME_TIP_WIDTH  17
 #define VENGEANCE_FLAME_TIP_HEIGHT 12
-#define VENGEANCE_ARROW \
-	(VENGEANCE_FLAME_TIP + PICTURE_BYTES(VENGEANCE_FLAME_TIP))
-#define VENGEANCE_ARROW_WIDTH	  51
-#define VENGEANCE_ARROW_HEIGHT	  12
-#define VENGEANCE_SHOULDER		  (VENGEANCE_ARROW + PICTURE_BYTES(VENGEANCE_ARROW))
-#define VENGEANCE_SHOULDER_WIDTH  14
-#define VENGEANCE_SHOULDER_HEIGHT 13
-/* Where the archer stands on the canvas on the enemies' side, and her shoulder
-   over her picture; on the party's side both are mirrored. */
-#define VENGEANCE_ARCHER_X		  32
-#define VENGEANCE_SHOULDER_X	  (VENGEANCE_ARCHER_X + 56)
-#define VENGEANCE_SHOULDER_Y	  29
-/* The screen line the archer's picture starts on: her windows cover her height
-   from it. */
-#define VENGEANCE_TOP			  40
-/* The arrows fly this far down the canvas, plus their own y, level with her
-   bow. The canvas below her picture is a strip the far half of the map shows
-   level with them, in its tile rows 3 to 6, and each arrow is drawn there
-   again, to fly on across that half. */
-#define VENGEANCE_ARROW_Y		  24
-#define VENGEANCE_STRIP_Y		  VENGEANCE_ARCHER_HEIGHT
-/* The camera turns this far a tick while she slides in. */
-#define VENGEANCE_CAMERA_TURN	  (TRIG_TURN / 512)
-/* On the enemies' side, while she slides in, her windows open this far right of
-   the background's place. */
-#define VENGEANCE_WINDOW_LEFT	  120
+#define VENGEANCE_ARROW            (VENGEANCE_FLAME_TIP + PICTURE_BYTES(VENGEANCE_FLAME_TIP))
+#define VENGEANCE_ARROW_WIDTH      51
+#define VENGEANCE_ARROW_HEIGHT     12
+#define VENGEANCE_SHOULDER         (VENGEANCE_ARROW + PICTURE_BYTES(VENGEANCE_ARROW))
+#define VENGEANCE_SHOULDER_WIDTH   14
+#define VENGEANCE_SHOULDER_HEIGHT  13
+// Where the archer stands on the canvas on the enemies' side, and her shoulder over her picture; on
+// the party's side both are mirrored.
+#define VENGEANCE_ARCHER_X         32
+#define VENGEANCE_SHOULDER_X       (VENGEANCE_ARCHER_X + 56)
+#define VENGEANCE_SHOULDER_Y       29
+// The screen line the archer's picture starts on: her windows cover her height from it.
+#define VENGEANCE_TOP              40
+// The arrows fly this far down the canvas, plus their own y, level with her bow. The canvas below
+// her picture is a strip the far half of the map shows level with them, in its tile rows 3 to 6,
+// and each arrow is drawn there again, to fly on across that half.
+#define VENGEANCE_ARROW_Y          24
+#define VENGEANCE_STRIP_Y          VENGEANCE_ARCHER_HEIGHT
+// The camera turns this far a tick while she slides in.
+#define VENGEANCE_CAMERA_TURN      (TRIG_TURN / 512)
+// On the enemies' side, while she slides in, her windows open this far right of the background's
+// place.
+#define VENGEANCE_WINDOW_LEFT      120
 
-/* An archer slides in from the far side on a window of her own, her bow drawn,
-   and from tick 26 looses a flaming arrow every twelve ticks; seven fly
-   across, and those the level picks strike the target, the last one hardest.
-   Everything is mirrored on the party's side.
-
-   Abilities: Vengeance. */
+// An archer slides in from the far side on a window of her own, her bow drawn, and from tick 26
+// looses a flaming arrow every twelve ticks; seven fly across, and those the level picks strike the
+// target, the last one hardest. Everything is mirrored on the party's side.
+//
+// Abilities: Vengeance.
 void btEffectRunVengeance(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
-	void				*canvas;
-	Sint32				 frame;
-	BATTLE_CAMERA		*camera;
-	/* The plain blitter and the flipped one. */
-	DRAW_RECTANGLE draw[2];
-	SCREEN_POINT   targetScreen;
-	PARTICLE	  *arrow;
-	FIXED		   backgroundX;
-	Sint32		   speed;
-	Sint32		   loosed;
-	Sint32		   row;
-	Sint32		   column;
-	Sint32		   i;
-	Sint32		   strikes;
-	Sint32		   ticks;
+	void                *canvas;
+	Sint32               frame;
+	BATTLE_CAMERA       *camera;
+	// The plain blitter and the flipped one.
+	DRAW_RECTANGLE       draw[2];
+	SCREEN_POINT         targetScreen;
+	PARTICLE            *arrow;
+	FIXED                backgroundX;
+	Sint32               speed;
+	Sint32               loosed;
+	Sint32               row;
+	Sint32               column;
+	Sint32               i;
+	Sint32               strikes;
+	Sint32               ticks;
 
-	state = RamHeapSlots->battleEffect;
+	state  = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartTiledCanvas(0);
-	REG_BG2PA = Q_8_8(1);
+	REG_BG2PA    = Q_8_8(1);
 	REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 4);
 
-	/* The map, 256 pixels wide, two tiles to an entry: the half on her side
-	   shows the canvas's first twelve tile rows, where she is drawn; the far
-	   half shows in its rows 3 to 6 the strip below her picture. */
-	i = 0;
-	for(row = 0; row != 16; row++) {
-		for(column = 0; column != 16; column++, i += 2) {
+	// The map, 256 pixels wide, two tiles to an entry: the half on her side shows the canvas's
+	// first twelve tile rows, where she is drawn; the far half shows in its rows 3 to 6 the strip
+	// below her picture.
+	i            = 0;
+	for (row = 0; row != 16; row++)
+	{
+		for (column = 0; column != 16; column++, i += 2)
+		{
 			Sint32 tileX;
 			Sint32 tileY;
 			Sint32 tile;
 			Sint16 entry;
 
-			/* The strip takes the left half on the enemies' side and the right
-			   half on the party's. */
-			if(args->side == EFFECT_SIDE_ENEMIES && column <= 7) {
-				if((Uint32)(row - VENGEANCE_ARROW_Y / 8) > 3) {
+			// The strip takes the left half on the enemies' side and the right half on the party's.
+			if (args->side == EFFECT_SIDE_ENEMIES && column <= 7)
+			{
+				if ((Uint32)(row - VENGEANCE_ARROW_Y / 8) > 3)
+				{
 					tileX = 0;
 					tileY = 0;
-				} else {
+				}
+				else
+				{
 					tileX = column;
 					tileY = row + (VENGEANCE_STRIP_Y - VENGEANCE_ARROW_Y) / 8;
 				}
-			} else if(args->side == EFFECT_SIDE_ENEMIES || column <= 7) {
-				if(row >= VENGEANCE_STRIP_Y / 8) {
+			}
+			else if (args->side == EFFECT_SIDE_ENEMIES || column <= 7)
+			{
+				if (row >= VENGEANCE_STRIP_Y / 8)
+				{
 					tileX = 0;
 					tileY = 0;
-				} else {
+				}
+				else
+				{
 					tileX = column & 7;
 					tileY = row;
 				}
-			} else if((Uint32)(row - VENGEANCE_ARROW_Y / 8) <= 3) {
+			}
+			else if ((Uint32)(row - VENGEANCE_ARROW_Y / 8) <= 3)
+			{
 				tileX = column & 7;
 				tileY = row + (VENGEANCE_STRIP_Y - VENGEANCE_ARROW_Y) / 8;
-			} else {
+			}
+			else
+			{
 				tileX = 0;
 				tileY = 0;
 			}
-			tile = (tileY * 8 + tileX) * 2;
-			entry = ((tile + 1) << 8) | tile;
+			tile                                             = (tileY * 8 + tileX) * 2;
+			entry                                            = ((tile + 1) << 8) | tile;
 			*(volatile Sint16 *)((Uint8 *)BG_CANVAS_MAP + i) = entry;
 		}
 	}
-	REG_BG2Y = -(VENGEANCE_TOP << 8);
+	REG_BG2Y  = -(VENGEANCE_TOP << 8);
 	REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
-	REG_WIN0V =
-		WIN_RANGE(VENGEANCE_TOP, VENGEANCE_TOP + VENGEANCE_ARCHER_HEIGHT);
+	REG_WIN0V = WIN_RANGE(VENGEANCE_TOP, VENGEANCE_TOP + VENGEANCE_ARCHER_HEIGHT);
 	REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
-	REG_WIN1V =
-		WIN_RANGE(VENGEANCE_TOP, VENGEANCE_TOP + VENGEANCE_ARCHER_HEIGHT);
-	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
-		WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
-	REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_OBJ |
-		WINOUT_WIN01_CLR | WINOUT_WINOBJ_CLR;
+	REG_WIN1V = WIN_RANGE(VENGEANCE_TOP, VENGEANCE_TOP + VENGEANCE_ARCHER_HEIGHT);
+	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 | WININ_WIN1_BG2
+	          | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+	REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR
+	           | WINOUT_WINOBJ_CLR;
 	btResourceLoadAndDecompress(RESOURCE_ARCHER_SHEET, state->sheet, 1, 1);
-	EFFECT_LOAD_BLITTER(
-		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
+	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
 	draw[0] = RamHeapSlots->ramCode;
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
+	EFFECT_LOAD_BLITTER(
+		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
 	draw[1] = RamHeapSlots->ramCodePaired;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	backgroundX = toFIXED(86);
-	speed = toFIXED(16);
-	ticks = VENGEANCE_TICKS;
+	speed       = toFIXED(16);
+	ticks       = VENGEANCE_TICKS;
 
-	for(frame = 0; frame != ticks; frame++) {
+	for (frame = 0; frame != ticks; frame++)
+	{
 		camera = RamHeapSlots->cameraState;
 		btEffectPosProjectScaledBattler(args->targets[0], &targetScreen);
-		if(frame <= 31) {
-			if(args->side == EFFECT_SIDE_ENEMIES) {
+		if (frame <= 31)
+		{
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
 				camera->yaw -= VENGEANCE_CAMERA_TURN;
-			} else {
+			}
+			else
+			{
 				camera->yaw += VENGEANCE_CAMERA_TURN;
 			}
 		}
-		if(frame >= ticks - BLEND_WEIGHT_MAX) {
+		if (frame >= ticks - BLEND_WEIGHT_MAX)
+		{
 			REG_BLDALPHA = BLEND_ALPHA(ticks - frame - 1, BLEND_WEIGHT_MAX);
 		}
-		if(frame == 0) {
-			if(args->side == EFFECT_SIDE_ENEMIES) {
+		if (frame == 0)
+		{
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
 				backgroundX = toFIXED(86);
-				speed = toFIXED(16);
-			} else {
-				backgroundX = -toFIXED(86);
-				speed = -toFIXED(16);
+				speed       = toFIXED(16);
 			}
-			for(i = 0; i != VENGEANCE_ARROWS; i++) {
+			else
+			{
+				backgroundX = -toFIXED(86);
+				speed       = -toFIXED(16);
+			}
+			for (i = 0; i != VENGEANCE_ARROWS; i++)
+			{
 				arrow = &state->particles[i];
-				if(args->side == EFFECT_SIDE_ENEMIES) {
-					arrow->x = toFIXED(160);
+				if (args->side == EFFECT_SIDE_ENEMIES)
+				{
+					arrow->x         = toFIXED(160);
 					arrow->velocityX = toFIXED(12);
-				} else {
-					arrow->x = toFIXED(32);
+				}
+				else
+				{
+					arrow->x         = toFIXED(32);
 					arrow->velocityX = -toFIXED(12);
 				}
 				arrow->y = toFIXED(12);
-				strikes = VengeanceArrowStrikes[args->variant][i];
-				if(strikes != 0) {
+				strikes  = VengeanceArrowStrikes[args->variant][i];
+				if (strikes != 0)
+				{
 					strikes = 1;
 				}
-				arrow->z = strikes;
-				arrow->velocityY =
-					(syRandom() & TRIG_ANGLE_MASK) - DEGtoANG(180);
+				arrow->z         = strikes;
+				arrow->velocityY = (syRandom() & TRIG_ANGLE_MASK) - DEGtoANG(180);
 				arrow->velocityZ = 0;
-				arrow->variant = 0;
+				arrow->variant   = 0;
 			}
 		}
 
-		/* The archer slides in, her window following. */
-		if(frame <= 24) {
+		// The archer slides in, her window following.
+		if (frame <= 24)
+		{
 			REG_BG2X = -(FIXEDtoINT(backgroundX)) << 8;
-			if(args->side == EFFECT_SIDE_ENEMIES) {
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
 				REG_WIN0H =
-					WIN_RANGE(FIXEDtoINT(backgroundX) + VENGEANCE_WINDOW_LEFT,
-						DISPLAY_WIDTH);
+					WIN_RANGE(FIXEDtoINT(backgroundX) + VENGEANCE_WINDOW_LEFT, DISPLAY_WIDTH);
 				REG_WIN1H =
-					WIN_RANGE(FIXEDtoINT(backgroundX) + VENGEANCE_WINDOW_LEFT,
-						DISPLAY_WIDTH);
-			} else {
+					WIN_RANGE(FIXEDtoINT(backgroundX) + VENGEANCE_WINDOW_LEFT, DISPLAY_WIDTH);
+			}
+			else
+			{
 				REG_WIN0H = FIXEDtoINT(backgroundX) + DISPLAY_WIDTH;
 				REG_WIN1H = FIXEDtoINT(backgroundX) + DISPLAY_WIDTH;
 			}
-		} else {
-			REG_BG2X = -(FIXEDtoINT(backgroundX)) << 8;
+		}
+		else
+		{
+			REG_BG2X  = -(FIXEDtoINT(backgroundX)) << 8;
 			REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 			REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
 		}
 		backgroundX -= speed;
-		speed = speed * 52 / DAMPING_SCALE;
+		speed        = speed * 52 / DAMPING_SCALE;
 
-		/* The bow is drawn until the first shot and while each arrow is
-		   nocked. */
-		loosed = 0;
-		if(frame >=
-			VENGEANCE_FIRST_SHOT + VENGEANCE_ARROWS * VENGEANCE_SHOT_INTERVAL) {
-			loosed = 1;
-		} else if(frame >= VENGEANCE_FIRST_SHOT &&
-			(frame - VENGEANCE_FIRST_SHOT) % VENGEANCE_SHOT_INTERVAL >=
-				VENGEANCE_NOCK_TICKS) {
+		// The bow is drawn until the first shot and while each arrow is nocked.
+		loosed       = 0;
+		if (frame >= VENGEANCE_FIRST_SHOT + VENGEANCE_ARROWS * VENGEANCE_SHOT_INTERVAL)
+		{
 			loosed = 1;
 		}
-		if(args->side == EFFECT_SIDE_ENEMIES) {
-			if(loosed == 0) {
-				draw[0](canvas, state->sheet, VENGEANCE_ARCHER_X, 0,
-					VENGEANCE_ARCHER_WIDTH, VENGEANCE_ARCHER_HEIGHT);
-			} else {
-				draw[0](canvas, state->sheet + VENGEANCE_ARCHER_LOOSED,
-					VENGEANCE_ARCHER_X, 0, VENGEANCE_ARCHER_WIDTH,
-					VENGEANCE_ARCHER_HEIGHT);
+		else if (frame >= VENGEANCE_FIRST_SHOT
+		         && (frame - VENGEANCE_FIRST_SHOT) % VENGEANCE_SHOT_INTERVAL
+		                >= VENGEANCE_NOCK_TICKS)
+		{
+			loosed = 1;
+		}
+		if (args->side == EFFECT_SIDE_ENEMIES)
+		{
+			if (loosed == 0)
+			{
+				draw[0](canvas,
+				        state->sheet,
+				        VENGEANCE_ARCHER_X,
+				        0,
+				        VENGEANCE_ARCHER_WIDTH,
+				        VENGEANCE_ARCHER_HEIGHT);
 			}
-		} else if(loosed == 0) {
-			draw[1](canvas, state->sheet,
-				CANVAS_SIZE - VENGEANCE_ARCHER_X - VENGEANCE_ARCHER_WIDTH, 0,
-				VENGEANCE_ARCHER_WIDTH, VENGEANCE_ARCHER_HEIGHT);
-		} else {
-			draw[1](canvas, state->sheet + VENGEANCE_ARCHER_LOOSED,
-				CANVAS_SIZE - VENGEANCE_ARCHER_X - VENGEANCE_ARCHER_WIDTH, 0,
-				VENGEANCE_ARCHER_WIDTH, VENGEANCE_ARCHER_HEIGHT);
+			else
+			{
+				draw[0](canvas,
+				        state->sheet + VENGEANCE_ARCHER_LOOSED,
+				        VENGEANCE_ARCHER_X,
+				        0,
+				        VENGEANCE_ARCHER_WIDTH,
+				        VENGEANCE_ARCHER_HEIGHT);
+			}
+		}
+		else if (loosed == 0)
+		{
+			draw[1](canvas,
+			        state->sheet,
+			        CANVAS_SIZE - VENGEANCE_ARCHER_X - VENGEANCE_ARCHER_WIDTH,
+			        0,
+			        VENGEANCE_ARCHER_WIDTH,
+			        VENGEANCE_ARCHER_HEIGHT);
+		}
+		else
+		{
+			draw[1](canvas,
+			        state->sheet + VENGEANCE_ARCHER_LOOSED,
+			        CANVAS_SIZE - VENGEANCE_ARCHER_X - VENGEANCE_ARCHER_WIDTH,
+			        0,
+			        VENGEANCE_ARCHER_WIDTH,
+			        VENGEANCE_ARCHER_HEIGHT);
 		}
 
-		/* The arrows: each is nocked in its turn, flies once it has rested on
-		   the bow, and a striking one stays in the target a few ticks. */
-		for(i = 0; i != VENGEANCE_ARROWS; i++) {
+		// The arrows: each is nocked in its turn, flies once it has rested on the bow, and a
+		// striking one stays in the target a few ticks.
+		for (i = 0; i != VENGEANCE_ARROWS; i++)
+		{
 			arrow = &state->particles[i];
-			if(frame < i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT &&
-				(frame >= VENGEANCE_FIRST_SHOT || i != 0)) {
+			if (frame < i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT
+			    && (frame >= VENGEANCE_FIRST_SHOT || i != 0))
+			{
 				continue;
 			}
-			if(frame >= i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT +
-						VENGEANCE_NOCK_TICKS &&
-				arrow->variant == 0) {
+			if (frame >= i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT + VENGEANCE_NOCK_TICKS
+			    && arrow->variant == 0)
+			{
 				arrow->x -= arrow->velocityX;
 				arrow->y += arrow->velocityY;
 			}
-			if(arrow->variant > VENGEANCE_STUCK_TICKS) {
+			if (arrow->variant > VENGEANCE_STUCK_TICKS)
+			{
 				continue;
 			}
-			if(arrow->variant > 0) {
+			if (arrow->variant > 0)
+			{
 				arrow->variant++;
 			}
-			if(arrow->z == 1 && arrow->variant == 0) {
+			if (arrow->z == 1 && arrow->variant == 0)
+			{
 				Sint32 hit = 0;
 
-				if(args->side == EFFECT_SIDE_ENEMIES) {
-					if((FIXEDtoINT(arrow->x)) < targetScreen.x / 2 + 16) {
+				if (args->side == EFFECT_SIDE_ENEMIES)
+				{
+					if ((FIXEDtoINT(arrow->x)) < targetScreen.x / 2 + 16)
+					{
 						hit = 1;
 					}
-				} else if((FIXEDtoINT(arrow->x)) > targetScreen.x / 2 + 48) {
+				}
+				else if ((FIXEDtoINT(arrow->x)) > targetScreen.x / 2 + 48)
+				{
 					hit = 1;
 				}
-				if(hit == 1) {
+				if (hit == 1)
+				{
 					state->shakeFrame = 4;
-					if(i == VENGEANCE_ARROWS - 1) {
-						btMotionApplyKnockbackStub(
-							args->targets[0], KNOCKBACK_HURL);
+					if (i == VENGEANCE_ARROWS - 1)
+					{
+						btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_HURL);
 						EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-					} else {
-						/* Each arrow pushes the target further back: to 110
-						   percent of its place, ten more for each arrow
-						   before. */
-						btEffectStartActorMotion(args->targets[0], 1,
-							toFIXED(2), toFIXED(8), toFIXED(2), i * 10 + 110);
+					}
+					else
+					{
+						// Each arrow pushes the target further back: to 110 percent of its place,
+						// ten more for each arrow before.
+						btEffectStartActorMotion(
+							args->targets[0], 1, toFIXED(2), toFIXED(8), toFIXED(2), i * 10 + 110);
 						sySoundPlayStub(SE_IMPACT);
 					}
-					btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-						POSE_DAMAGE, 0, 4);
-					/* A struck arrow keeps its place against the target, in
-					   pixels. */
+					btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
+					// A struck arrow keeps its place against the target, in pixels.
 					arrow->variant = 1;
-					if(args->side == EFFECT_SIDE_ENEMIES) {
-						arrow->x =
-							targetScreen.x / 2 - FIXED_INTEGER_PART(arrow->x);
-					} else {
-						arrow->x = targetScreen.x / 2 -
-							FIXED_INTEGER_PART(arrow->x) + CANVAS_SIZE;
+					if (args->side == EFFECT_SIDE_ENEMIES)
+					{
+						arrow->x = targetScreen.x / 2 - FIXED_INTEGER_PART(arrow->x);
+					}
+					else
+					{
+						arrow->x = targetScreen.x / 2 - FIXED_INTEGER_PART(arrow->x) + CANVAS_SIZE;
 					}
 				}
 			}
-			/* Each arrow is drawn in her half and again in the strip, a canvas
-			   width along, with the flame around its head while it flies. */
-			if(args->side == EFFECT_SIDE_ENEMIES) {
-				if(arrow->variant == 0) {
-					draw[0](canvas, state->sheet + VENGEANCE_ARROW,
-						(FIXEDtoINT(arrow->x)) -
-							(CANVAS_SIZE - VENGEANCE_FLAME_TIP_WIDTH),
-						FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
-						VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
-					draw[0](canvas, state->sheet + VENGEANCE_ARROW,
-						FIXED_INTEGER_PART(arrow->x) +
-							VENGEANCE_FLAME_TIP_WIDTH,
-						FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
-						VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
-					draw[0](canvas, state->sheet + VENGEANCE_FLAME_TIP,
-						FIXED_INTEGER_PART(arrow->x) - CANVAS_SIZE,
-						FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
-						VENGEANCE_FLAME_TIP_WIDTH, VENGEANCE_FLAME_TIP_HEIGHT);
-					draw[0](canvas, state->sheet + VENGEANCE_FLAME_TIP,
-						FIXED_INTEGER_PART(arrow->x),
-						FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
-						VENGEANCE_FLAME_TIP_WIDTH, VENGEANCE_FLAME_TIP_HEIGHT);
-				} else {
-					draw[0](canvas, state->sheet + VENGEANCE_ARROW,
-						targetScreen.x / 2 + arrow->x -
-							(CANVAS_SIZE - VENGEANCE_FLAME_TIP_WIDTH),
-						FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
-						VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
-					draw[0](canvas, state->sheet + VENGEANCE_ARROW,
-						targetScreen.x / 2 + arrow->x +
-							VENGEANCE_FLAME_TIP_WIDTH,
-						FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
-						VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
+			// Each arrow is drawn in her half and again in the strip, a canvas width along, with
+			// the flame around its head while it flies.
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
+				if (arrow->variant == 0)
+				{
+					draw[0](canvas,
+					        state->sheet + VENGEANCE_ARROW,
+					        (FIXEDtoINT(arrow->x)) - (CANVAS_SIZE - VENGEANCE_FLAME_TIP_WIDTH),
+					        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+					        VENGEANCE_ARROW_WIDTH,
+					        VENGEANCE_ARROW_HEIGHT);
+					draw[0](canvas,
+					        state->sheet + VENGEANCE_ARROW,
+					        FIXED_INTEGER_PART(arrow->x) + VENGEANCE_FLAME_TIP_WIDTH,
+					        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+					        VENGEANCE_ARROW_WIDTH,
+					        VENGEANCE_ARROW_HEIGHT);
+					draw[0](canvas,
+					        state->sheet + VENGEANCE_FLAME_TIP,
+					        FIXED_INTEGER_PART(arrow->x) - CANVAS_SIZE,
+					        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+					        VENGEANCE_FLAME_TIP_WIDTH,
+					        VENGEANCE_FLAME_TIP_HEIGHT);
+					draw[0](canvas,
+					        state->sheet + VENGEANCE_FLAME_TIP,
+					        FIXED_INTEGER_PART(arrow->x),
+					        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+					        VENGEANCE_FLAME_TIP_WIDTH,
+					        VENGEANCE_FLAME_TIP_HEIGHT);
 				}
-			} else if(arrow->variant == 0) {
-				draw[1](canvas, state->sheet + VENGEANCE_ARROW,
-					FIXEDtoINT(arrow->x),
-					FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
-					VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
-				draw[1](canvas, state->sheet + VENGEANCE_ARROW,
-					FIXED_INTEGER_PART(arrow->x) - CANVAS_SIZE,
-					FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
-					VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
-				draw[1](canvas, state->sheet + VENGEANCE_FLAME_TIP,
-					FIXED_INTEGER_PART(arrow->x) + VENGEANCE_ARROW_WIDTH,
-					FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
-					VENGEANCE_FLAME_TIP_WIDTH, VENGEANCE_FLAME_TIP_HEIGHT);
-				draw[1](canvas, state->sheet + VENGEANCE_FLAME_TIP,
-					FIXED_INTEGER_PART(arrow->x) -
-						(CANVAS_SIZE - VENGEANCE_ARROW_WIDTH),
-					FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
-					VENGEANCE_FLAME_TIP_WIDTH, VENGEANCE_FLAME_TIP_HEIGHT);
-			} else {
-				draw[1](canvas, state->sheet + VENGEANCE_ARROW,
-					targetScreen.x / 2 + arrow->x,
-					FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
-					VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
-				draw[1](canvas, state->sheet + VENGEANCE_ARROW,
-					targetScreen.x / 2 + arrow->x - CANVAS_SIZE,
-					FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
-					VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
+				else
+				{
+					draw[0](canvas,
+					        state->sheet + VENGEANCE_ARROW,
+					        targetScreen.x / 2 + arrow->x
+					            - (CANVAS_SIZE - VENGEANCE_FLAME_TIP_WIDTH),
+					        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+					        VENGEANCE_ARROW_WIDTH,
+					        VENGEANCE_ARROW_HEIGHT);
+					draw[0](canvas,
+					        state->sheet + VENGEANCE_ARROW,
+					        targetScreen.x / 2 + arrow->x + VENGEANCE_FLAME_TIP_WIDTH,
+					        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+					        VENGEANCE_ARROW_WIDTH,
+					        VENGEANCE_ARROW_HEIGHT);
+				}
+			}
+			else if (arrow->variant == 0)
+			{
+				draw[1](canvas,
+				        state->sheet + VENGEANCE_ARROW,
+				        FIXEDtoINT(arrow->x),
+				        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+				        VENGEANCE_ARROW_WIDTH,
+				        VENGEANCE_ARROW_HEIGHT);
+				draw[1](canvas,
+				        state->sheet + VENGEANCE_ARROW,
+				        FIXED_INTEGER_PART(arrow->x) - CANVAS_SIZE,
+				        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+				        VENGEANCE_ARROW_WIDTH,
+				        VENGEANCE_ARROW_HEIGHT);
+				draw[1](canvas,
+				        state->sheet + VENGEANCE_FLAME_TIP,
+				        FIXED_INTEGER_PART(arrow->x) + VENGEANCE_ARROW_WIDTH,
+				        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+				        VENGEANCE_FLAME_TIP_WIDTH,
+				        VENGEANCE_FLAME_TIP_HEIGHT);
+				draw[1](canvas,
+				        state->sheet + VENGEANCE_FLAME_TIP,
+				        FIXED_INTEGER_PART(arrow->x) - (CANVAS_SIZE - VENGEANCE_ARROW_WIDTH),
+				        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+				        VENGEANCE_FLAME_TIP_WIDTH,
+				        VENGEANCE_FLAME_TIP_HEIGHT);
+			}
+			else
+			{
+				draw[1](canvas,
+				        state->sheet + VENGEANCE_ARROW,
+				        targetScreen.x / 2 + arrow->x,
+				        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+				        VENGEANCE_ARROW_WIDTH,
+				        VENGEANCE_ARROW_HEIGHT);
+				draw[1](canvas,
+				        state->sheet + VENGEANCE_ARROW,
+				        targetScreen.x / 2 + arrow->x - CANVAS_SIZE,
+				        FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+				        VENGEANCE_ARROW_WIDTH,
+				        VENGEANCE_ARROW_HEIGHT);
 			}
 		}
 
-		/* Her shoulder over the nocked arrow, while the bow is drawn. */
-		if(loosed == 0) {
-			if(args->side == EFFECT_SIDE_ENEMIES) {
-				EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
-					VENGEANCE_SHOULDER, VENGEANCE_SHOULDER_X,
-					VENGEANCE_SHOULDER_Y);
-			} else {
-				EFFECT_DRAW_PICTURE(draw[1], canvas, state->sheet,
-					VENGEANCE_SHOULDER,
-					CANVAS_SIZE - VENGEANCE_SHOULDER_X -
-						VENGEANCE_SHOULDER_WIDTH,
-					VENGEANCE_SHOULDER_Y);
+		// Her shoulder over the nocked arrow, while the bow is drawn.
+		if (loosed == 0)
+		{
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
+				EFFECT_DRAW_PICTURE(draw[0],
+				                    canvas,
+				                    state->sheet,
+				                    VENGEANCE_SHOULDER,
+				                    VENGEANCE_SHOULDER_X,
+				                    VENGEANCE_SHOULDER_Y);
+			}
+			else
+			{
+				EFFECT_DRAW_PICTURE(draw[1],
+				                    canvas,
+				                    state->sheet,
+				                    VENGEANCE_SHOULDER,
+				                    CANVAS_SIZE - VENGEANCE_SHOULDER_X - VENGEANCE_SHOULDER_WIDTH,
+				                    VENGEANCE_SHOULDER_Y);
 			}
 		}
 		btEffectCountDownBattlerTints();
@@ -401,96 +492,96 @@ void btEffectRunVengeance(BATTLE_EFFECT_PARM *args)
 	EFFECT_FINISH_CANVAS();
 }
 
-/* The shears, in the state's first particle: roll is its z, snip its velocityZ
-   and timer its variant. */
-typedef struct SHEARS {
+// The shears, in the state's first particle: roll is its z, snip its velocityZ and timer its
+// variant.
+typedef struct SHEARS
+{
 	Sint32 x;
 	Sint32 y;
 	Sint32 roll;
 	Sint32 velocityX;
 	Sint32 velocityY;
-	Sint32 snip; /* steps of the blades closing, a 32nd of a turn each */
+	Sint32 snip; // steps of the blades closing, a 32nd of a turn each
 	Sint32 timer;
 } SHEARS;
 
-#define LIFE_SHEAR_TICKS		90
-#define LIFE_SHEAR_SNIP_TICK	50 /* the shears snap shut through the target */
-/* Life Shear's sprite sheet, decoded into the map cell buffer: a woman leaping
-   and the same woman striking, then the shears' two blades, each with its pivot
-   ring and handle loop (a pale one 128 by 64 and an orange one 128 by 32), and
-   the flame the flash is made of, 32 by 32. */
-#define LIFE_SHEAR_WOMAN_WIDTH	55
-#define LIFE_SHEAR_WOMAN_HEIGHT 88
-#define LIFE_SHEAR_STRIKING \
-	(RamMapMetatileBuffer + PICTURE_BYTES(LIFE_SHEAR_WOMAN))
-#define LIFE_SHEAR_STRIKING_WIDTH  59
-#define LIFE_SHEAR_STRIKING_HEIGHT 89
-#define LIFE_SHEAR_PALE_BLADE \
-	(LIFE_SHEAR_STRIKING + PICTURE_BYTES(LIFE_SHEAR_STRIKING))
-#define LIFE_SHEAR_PALE_BLADE_WIDTH	 128
-#define LIFE_SHEAR_PALE_BLADE_HEIGHT 64
-#define LIFE_SHEAR_ORANGE_BLADE \
-	(LIFE_SHEAR_PALE_BLADE + PICTURE_BYTES(LIFE_SHEAR_PALE_BLADE))
+#define LIFE_SHEAR_TICKS               90
+#define LIFE_SHEAR_SNIP_TICK           50 // the shears snap shut through the target
+// Life Shear's sprite sheet, decoded into the map cell buffer: a woman leaping and the same woman
+// striking, then the shears' two blades, each with its pivot ring and handle loop (a pale one 128
+// by 64 and an orange one 128 by 32), and the flame the flash is made of, 32 by 32.
+#define LIFE_SHEAR_WOMAN_WIDTH         55
+#define LIFE_SHEAR_WOMAN_HEIGHT        88
+#define LIFE_SHEAR_STRIKING            (RamMapMetatileBuffer + PICTURE_BYTES(LIFE_SHEAR_WOMAN))
+#define LIFE_SHEAR_STRIKING_WIDTH      59
+#define LIFE_SHEAR_STRIKING_HEIGHT     89
+#define LIFE_SHEAR_PALE_BLADE          (LIFE_SHEAR_STRIKING + PICTURE_BYTES(LIFE_SHEAR_STRIKING))
+#define LIFE_SHEAR_PALE_BLADE_WIDTH    128
+#define LIFE_SHEAR_PALE_BLADE_HEIGHT   64
+#define LIFE_SHEAR_ORANGE_BLADE        (LIFE_SHEAR_PALE_BLADE + PICTURE_BYTES(LIFE_SHEAR_PALE_BLADE))
 #define LIFE_SHEAR_ORANGE_BLADE_WIDTH  128
 #define LIFE_SHEAR_ORANGE_BLADE_HEIGHT 32
-#define LIFE_SHEAR_FLAME \
-	(LIFE_SHEAR_ORANGE_BLADE + PICTURE_BYTES(LIFE_SHEAR_ORANGE_BLADE))
-/* Where her striking picture stands on the canvas on the enemies' side, and how
-   far she glides to it; on the party's side both are mirrored. */
-#define LIFE_SHEAR_STRIKE_X		64
-/* The shears' scale until they tumble away, and the flash's as it starts. */
-#define LIFE_SHEAR_SHEARS_SCALE 45536
-#define LIFE_SHEAR_FLASH_SCALE	85536
-/* How far the flash's four flames are turned, beyond their quarter turns. */
-#define LIFE_SHEAR_FLASH_ANGLE	22096
+#define LIFE_SHEAR_FLAME               (LIFE_SHEAR_ORANGE_BLADE + PICTURE_BYTES(LIFE_SHEAR_ORANGE_BLADE))
+// Where her striking picture stands on the canvas on the enemies' side, and how far she glides to
+// it; on the party's side both are mirrored.
+#define LIFE_SHEAR_STRIKE_X            64
+// The shears' scale until they tumble away, and the flash's as it starts.
+#define LIFE_SHEAR_SHEARS_SCALE        45536
+#define LIFE_SHEAR_FLASH_SCALE         85536
+// How far the flash's four flames are turned, beyond their quarter turns.
+#define LIFE_SHEAR_FLASH_ANGLE         22096
 
-/* A woman (a tiled background picture) glides in from the far side and strikes
-   from tick 24: a pair of shears (two blade models turning about their pivot)
-   swings back and into the target at tick 32, opens, and snaps shut through it
-   at tick 50 in a flash of four flames. From tick 62 she drifts off and the
-   shears tumble away. Everything is mirrored on the party's side.
-
-   Abilities: Life Shear. */
+// A woman (a tiled background picture) glides in from the far side and strikes from tick 24: a pair
+// of shears (two blade models turning about their pivot) swings back and into the target at tick
+// 32, opens, and snaps shut through it at tick 50 in a flash of four flames. From tick 62 she
+// drifts off and the shears tumble away. Everything is mirrored on the party's side.
+//
+// Abilities: Life Shear.
 void btEffectRunLifeShear(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
-	void				*canvas;
-	DRAW_RECTANGLE		 blit[2];
-	SCREEN_POINT		 target;
-	MODEL_TEXTURE		 texture;
-	FIXED				 womanX;
-	FIXED				 womanY;
-	Sint32				 speed;
-	Sint32				 frame;
-	SHEARS				*shears;
-	Sint32				 i;
+	void                *canvas;
+	DRAW_RECTANGLE       blit[2];
+	SCREEN_POINT         target;
+	MODEL_TEXTURE        texture;
+	FIXED                womanX;
+	FIXED                womanY;
+	Sint32               speed;
+	Sint32               frame;
+	SHEARS              *shears;
+	Sint32               i;
 
-	state = RamHeapSlots->battleEffect;
+	state  = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	if(args->side == EFFECT_SIDE_ENEMIES) {
+	if (args->side == EFFECT_SIDE_ENEMIES)
+	{
 		btEffectStartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
-	} else {
+	}
+	else
+	{
 		btEffectStartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
 	}
-	REG_BG2PA = Q_8_8(1);
+	REG_BG2PA    = Q_8_8(1);
 	REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 6);
-	btResourceLoadAndDecompress(
-		RESOURCE_LIFE_SHEAR_SHEET, MapGridMetatileBuffer, 1, 1);
-	if(args->side == EFFECT_SIDE_ENEMIES) {
+	btResourceLoadAndDecompress(RESOURCE_LIFE_SHEAR_SHEET, MapGridMetatileBuffer, 1, 1);
+	if (args->side == EFFECT_SIDE_ENEMIES)
+	{
+		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
+	}
+	else
+	{
 		EFFECT_LOAD_BLITTER(
-			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	} else {
-		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
+			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
 	}
 	blit[0] = RamHeapSlots->ramCode;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	womanX = 0;
 	womanY = 0;
-	speed = 0;
+	speed  = 0;
 	btEffectPosProjectScaledBattler(args->targets[0], &target);
 
-	for(frame = 0; frame != LIFE_SHEAR_TICKS; frame++) {
+	for (frame = 0; frame != LIFE_SHEAR_TICKS; frame++)
+	{
 		Sint32 x;
 		Sint32 shift;
 		Sint32 phase;
@@ -498,220 +589,260 @@ void btEffectRunLifeShear(BATTLE_EFFECT_PARM *args)
 		Sint32 timer;
 		Sint32 width = 7;
 
-		shift = 0;
-		if(frame == 0) {
+		shift        = 0;
+		if (frame == 0)
+		{
 			sySoundPlayStub(SE_CURSE_FALL);
-			if(args->side == EFFECT_SIDE_ENEMIES) {
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
 				state->particles[0].x = toFIXED(32);
 				state->particles[0].y = -toFIXED(64);
 				state->particles[0].z = -7216;
-			} else {
+			}
+			else
+			{
 				state->particles[0].x = -toFIXED(32);
 				state->particles[0].y = -toFIXED(64);
 				state->particles[0].z = -7216;
 			}
 			state->particles[0].velocityZ = 0;
-			state->particles[0].variant = 0;
-			womanY = toFIXED(24);
-			if(args->side == EFFECT_SIDE_ENEMIES) {
+			state->particles[0].variant   = 0;
+			womanY                        = toFIXED(24);
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
 				womanX = INTtoFIXED(target.x + 176);
-				speed = toFIXED(15);
-			} else {
+				speed  = toFIXED(15);
+			}
+			else
+			{
 				womanX = INTtoFIXED(target.x - 304);
-				speed = -toFIXED(15);
+				speed  = -toFIXED(15);
 			}
 		}
-		if(frame > 61) {
-			if(args->side == EFFECT_SIDE_ENEMIES) {
+		if (frame > 61)
+		{
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
 				womanX += toFIXED(2);
-			} else {
+			}
+			else
+			{
 				womanX -= toFIXED(2);
 			}
 			womanY -= toFIXED(14) / 3;
 		}
-		/* She glides in, slowing; the background carries her up to 120 pixels
-		   across, and the canvas the rest. */
+		// She glides in, slowing; the background carries her up to 120 pixels across, and the
+		// canvas the rest.
 		womanX -= speed;
-		speed = speed * 60 / DAMPING_SCALE;
-		x = FIXEDtoINT(womanX);
-		if(x > 120) {
+		speed   = speed * 60 / DAMPING_SCALE;
+		x       = FIXEDtoINT(womanX);
+		if (x > 120)
+		{
 			shift = x - 120;
-			x = 120;
-		} else if(x < 0) {
+			x     = 120;
+		}
+		else if (x < 0)
+		{
 			shift = x;
-			x = 0;
+			x     = 0;
 		}
 		REG_BG2X = -x << 8;
-		if((Uint32)(frame - 24) <= 39) {
+		if ((Uint32)(frame - 24) <= 39)
+		{
 			x = args->side == EFFECT_SIDE_ENEMIES
-				? LIFE_SHEAR_STRIKE_X
-				: CANVAS_SIZE - LIFE_SHEAR_STRIKE_X - LIFE_SHEAR_STRIKING_WIDTH;
-			blit[0](canvas, LIFE_SHEAR_STRIKING, x + shift, FIXEDtoINT(womanY),
-				LIFE_SHEAR_STRIKING_WIDTH, LIFE_SHEAR_STRIKING_HEIGHT);
-		} else {
-			if(args->side == EFFECT_SIDE_ENEMIES) {
+			      ? LIFE_SHEAR_STRIKE_X
+			      : CANVAS_SIZE - LIFE_SHEAR_STRIKE_X - LIFE_SHEAR_STRIKING_WIDTH;
+			blit[0](canvas,
+			        LIFE_SHEAR_STRIKING,
+			        x + shift,
+			        FIXEDtoINT(womanY),
+			        LIFE_SHEAR_STRIKING_WIDTH,
+			        LIFE_SHEAR_STRIKING_HEIGHT);
+		}
+		else
+		{
+			if (args->side == EFFECT_SIDE_ENEMIES)
+			{
 				x = frame * 2 + 16;
-				if(x > LIFE_SHEAR_STRIKE_X) {
+				if (x > LIFE_SHEAR_STRIKE_X)
+				{
 					x = LIFE_SHEAR_STRIKE_X;
 				}
-			} else {
+			}
+			else
+			{
 				x = 57 - frame * 2;
-				if(x <= 8) {
+				if (x <= 8)
+				{
 					x = 9;
 				}
 			}
-			blit[0](canvas, MapGridMetatileBuffer, x + shift,
-				FIXEDtoINT(womanY), LIFE_SHEAR_WOMAN_WIDTH,
-				LIFE_SHEAR_WOMAN_HEIGHT);
+			blit[0](canvas,
+			        MapGridMetatileBuffer,
+			        x + shift,
+			        FIXEDtoINT(womanY),
+			        LIFE_SHEAR_WOMAN_WIDTH,
+			        LIFE_SHEAR_WOMAN_HEIGHT);
 		}
 
-		/* The shears' path: still, a backswing from timer 24 and the strike at
-		   33. */
-		for(i = 0; i != 1; i++) {
+		// The shears' path: still, a backswing from timer 24 and the strike at 33.
+		for (i = 0; i != 1; i++)
+		{
 			shears = &((SHEARS *)state->particles)[i];
-			if(++shears->timer <= 0) {
+			if (++shears->timer <= 0)
+			{
 				continue;
 			}
-			if(shears->timer == 1) {
+			if (shears->timer == 1)
+			{
 				shears->velocityX = 0;
 				shears->velocityY = 0;
 			}
-			if(shears->timer == 24) {
+			if (shears->timer == 24)
+			{
 				shears->velocityX = -toFIXED(4);
 				shears->velocityY = toFIXED(8);
 			}
-			if(shears->timer == 33) {
+			if (shears->timer == 33)
+			{
 				shears->velocityX = toFIXED(4);
 				shears->velocityY = -toFIXED(8);
 				state->shakeFrame = 4;
-				speed = 0;
+				speed             = 0;
 				sySoundPlayStub(SE_IMPACT);
-				btEffectTintBattler(
-					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 			}
-			if(shears->timer == 35) {
+			if (shears->timer == 35)
+			{
 				shears->velocityX = 0;
 				shears->velocityY = 0;
 			}
-			/* From tick 64 they tumble away, turning faster each tick. */
-			if(frame > 63) {
-				Sint32 tumble = (frame - 64) * (TRIG_TURN / 512);
+			// From tick 64 they tumble away, turning faster each tick.
+			if (frame > 63)
+			{
+				Sint32 tumble      = (frame - 64) * (TRIG_TURN / 512);
 
 				shears->velocityY -= toFIXED(1) / 4;
-				if(tumble > TRIG_TURN / 64) {
+				if (tumble > TRIG_TURN / 64)
+				{
 					tumble = TRIG_TURN / 64;
 				}
 				shears->roll -= tumble;
 			}
-			if(shears->timer > 8) {
-				if(args->side == EFFECT_SIDE_ENEMIES) {
+			if (shears->timer > 8)
+			{
+				if (args->side == EFFECT_SIDE_ENEMIES)
+				{
 					shears->x += shears->velocityX;
-				} else {
+				}
+				else
+				{
 					shears->x -= shears->velocityX;
 				}
 				shears->y += shears->velocityY;
 			}
 		}
 
-		/* The snip, the shears' two blades and the flash, drawn as models. */
+		// The snip, the shears' two blades and the flash, drawn as models.
 		{
-			void		 *vertices = syHeapAllocateEWRAM(32);
-			RENDER_MODEL *model = btRenderAllocateModelList(1);
-			Sint32		  shade = 0;
+			void         *vertices = syHeapAllocateEWRAM(32);
+			RENDER_MODEL *model    = btRenderAllocateModelList(1);
+			Sint32        shade    = 0;
 
-			phase = frame - LIFE_SHEAR_SNIP_TICK;
-			if(phase == -4) {
+			phase                  = frame - LIFE_SHEAR_SNIP_TICK;
+			if (phase == -4)
+			{
 				sySoundPlayStub(SE_POWER_UP);
 			}
-			if(phase == 0) {
+			if (phase == 0)
+			{
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				state->shakeFrame = 12;
-				btEffectTintBattler(
-					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
-				syWordsFillEntry(canvas, CANVAS_BYTES,
-					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+				btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				syWordsFillEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_HURL);
 			}
-			/* The blades close from tick 44, shut just after the snip, and
-			   part a little again. */
+			// The blades close from tick 44, shut just after the snip, and part a little again.
 			timer = state->particles[0].variant;
-			if((Uint32)(frame - 44) <= 13) {
+			if ((Uint32)(frame - 44) <= 13)
+			{
 				state->particles[0].velocityZ++;
 			}
-			if(timer >= 0) {
+			if (timer >= 0)
+			{
 				scale = LIFE_SHEAR_SHEARS_SCALE;
-				if(frame > 63) {
+				if (frame > 63)
+				{
 					scale = scale - (frame - 64) * (toFIXED(1) / 128);
 				}
-				if(scale > 0) {
-					model->shade = shade;
-					model->kind = MODEL_SHADED;
+				if (scale > 0)
+				{
+					model->shade    = shade;
+					model->kind     = MODEL_SHADED;
 					model->vertices = vertices;
-					model->texture = &texture;
+					model->texture  = &texture;
 					syInitMatrix();
-					syTranslate(state->particles[0].x + toFIXED(shift),
-						state->particles[0].y, 0);
-					if(args->side == EFFECT_SIDE_PARTY) {
+					syTranslate(state->particles[0].x + toFIXED(shift), state->particles[0].y, 0);
+					if (args->side == EFFECT_SIDE_PARTY)
+					{
 						syRotY(DEGtoANG(180));
 					}
 					syRotZ(state->particles[0].z);
 					syMatrixScaleUniform(scale);
 					texture.logHeight = 5;
-					texture.pixels = LIFE_SHEAR_ORANGE_BLADE;
-					texture.logWidth = width;
-					model->mesh = LifeShearOrangeBladeMesh;
+					texture.pixels    = LIFE_SHEAR_ORANGE_BLADE;
+					texture.logWidth  = width;
+					model->mesh       = LifeShearOrangeBladeMesh;
 					syPushMatrix();
-					syRotZ((sySin(state->particles[0].velocityZ *
-								(TRIG_TURN / 32)) >>
-							   3) -
-						DEGtoANG(45));
-					btRenderTransformVertices(
-						LifeShearBladeCorners, vertices, 4);
+					syRotZ((sySin(state->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3)
+					       - DEGtoANG(45));
+					btRenderTransformVertices(LifeShearBladeCorners, vertices, 4);
 					btRenderDrawModelList(model);
 					syPopMatrix();
-					model->mesh = LifeShearPaleBladeMesh;
-					texture.logWidth = width;
+					model->mesh       = LifeShearPaleBladeMesh;
+					texture.logWidth  = width;
 					texture.logHeight = 6;
-					texture.pixels = LIFE_SHEAR_PALE_BLADE;
-					syRotZ(DEGtoANG(45) -
-						(sySin(state->particles[0].velocityZ *
-							 (TRIG_TURN / 32)) >>
-							3));
+					texture.pixels    = LIFE_SHEAR_PALE_BLADE;
+					syRotZ(DEGtoANG(45)
+					       - (sySin(state->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3));
 					syScale(toFIXED(1), 90000, toFIXED(1));
-					btRenderTransformVertices(
-						LifeShearBladeCorners, vertices, 4);
+					btRenderTransformVertices(LifeShearBladeCorners, vertices, 4);
 					btRenderDrawModelList(model);
 				}
 
-				/* The flash: four flames, long and short in turn, shrinking
-				   over eight ticks. */
-				if((Uint32)phase <= 7) {
-					scale = LIFE_SHEAR_FLASH_SCALE -
-						(frame - LIFE_SHEAR_SNIP_TICK) * (toFIXED(1) / 8);
+				// The flash: four flames, long and short in turn, shrinking over eight ticks.
+				if ((Uint32)phase <= 7)
+				{
+					scale =
+						LIFE_SHEAR_FLASH_SCALE - (frame - LIFE_SHEAR_SNIP_TICK) * (toFIXED(1) / 8);
 					syInitMatrix();
-					if(args->side == EFFECT_SIDE_ENEMIES) {
+					if (args->side == EFFECT_SIDE_ENEMIES)
+					{
 						syTranslate(-toFIXED(16), 0, 0);
-					} else {
+					}
+					else
+					{
 						syTranslate(toFIXED(16), 0, 0);
 					}
 					syScale(scale, scale, scale);
-					if(args->side == EFFECT_SIDE_PARTY) {
+					if (args->side == EFFECT_SIDE_PARTY)
+					{
 						syRotY(DEGtoANG(180));
 					}
-					model->kind = MODEL_SHADED_MAX;
-					model->mesh = BattleEffectSmallSquareMeshReversed;
-					texture.logWidth = 5;
+					model->kind       = MODEL_SHADED_MAX;
+					model->mesh       = BattleEffectSmallSquareMeshReversed;
+					texture.logWidth  = 5;
 					texture.logHeight = 5;
-					texture.pixels = LIFE_SHEAR_FLAME;
-					for(i = 0; i != 4; i++) {
+					texture.pixels    = LIFE_SHEAR_FLAME;
+					for (i = 0; i != 4; i++)
+					{
 						syPushMatrix();
 						syRotZ(i * (DEGtoANG(90)) + LIFE_SHEAR_FLASH_ANGLE);
 						syScale(toFIXED(1) / 4,
-							(i & 1) * (toFIXED(1) / 2) + toFIXED(3) / 4,
-							toFIXED(1) / 2);
+						        (i & 1) * (toFIXED(1) / 2) + toFIXED(3) / 4,
+						        toFIXED(1) / 2);
 						syMatrixScaleUniform(toFIXED(1));
-						btRenderTransformVertices(
-							BattleEffectStandingSquareCorners, vertices, 4);
+						btRenderTransformVertices(BattleEffectStandingSquareCorners, vertices, 4);
 						btRenderDrawModelList(model);
 						syPopMatrix();
 					}
@@ -726,258 +857,269 @@ void btEffectRunLifeShear(BATTLE_EFFECT_PARM *args)
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/* Abilities: Purgatory. */
+// Abilities: Purgatory.
 void btEffectRunPurgatory(BATTLE_EFFECT_PARM *args)
 {
 	btEffectRunGeyser(args, GEYSER_PURGATORY);
 }
 
-/* Abilities: Djinn Blast. */
+// Abilities: Djinn Blast.
 void btEffectRunDjinnBlast(BATTLE_EFFECT_PARM *args)
 {
 	btEffectRunGeyser(args, GEYSER_DJINN_BLAST);
 }
 
-/* Abilities: Djinn Storm. */
+// Abilities: Djinn Storm.
 void btEffectRunDjinnStorm(BATTLE_EFFECT_PARM *args)
 {
 	btEffectRunGeyser(args, GEYSER_DJINN_STORM);
 }
 
-#define GEYSER_TICKS			54
-#define GEYSER_DRAW_TICKS		40	/* the column is drawn */
-#define GEYSER_PEAK_TICK		20	/* the result phase starts */
-#define GEYSER_DROP_COUNT		512 /* drops in PARTICLES, used in a ring */
-/* The drops that burst on the first tick, and Djinn Storm's that follow each
-   tick to tick 23; Djinn Blast's are fewer. */
-#define GEYSER_BURST			200
-#define GEYSER_STREAM			16
-#define DJINN_BLAST_BURST		100
-#define DJINN_BLAST_STREAM		2
-/* A drop's picture is a size for every eight ticks of its life past these, no
-   smaller than its mode's smallest. */
+#define GEYSER_TICKS            54
+#define GEYSER_DRAW_TICKS       40  // the column is drawn
+#define GEYSER_PEAK_TICK        20  // the result phase starts
+#define GEYSER_DROP_COUNT       512 // drops in PARTICLES, used in a ring
+// The drops that burst on the first tick, and Djinn Storm's that follow each tick to tick 23; Djinn
+// Blast's are fewer.
+#define GEYSER_BURST            200
+#define GEYSER_STREAM           16
+#define DJINN_BLAST_BURST       100
+#define DJINN_BLAST_STREAM      2
+// A drop's picture is a size for every eight ticks of its life past these, no smaller than its
+// mode's smallest.
 #define GEYSER_DROP_SHRUNK_LIFE 16
-/* How far the column leans back. */
-#define GEYSER_TILT				2000
+// How far the column leans back.
+#define GEYSER_TILT             2000
 
-/* Copies a sheet's 64 colours into the background palette. */
+// Copies a sheet's 64 colours into the background palette.
 static inline void btGeyserCopyPalette(const void *palette)
 {
 	syWordsCopyEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 }
 
-/* A geyser between the targets. A textured column, its texture scrolling
-   upward, stands on the floor at the targets' midpoint, and drops burst from
-   its foot, fall back under gravity and bounce once on the floor. Purgatory's
-   is the cross texture in orange; its column rises and falls on a sine and 200
-   drops burst at once. Djinn Storm's column keeps widening and fades from tick
-   32, with 200 drops and 16 more each tick to tick 23; Djinn Blast's is thin,
-   with 100 drops and 2 more each tick. Theirs also step the palette through
-   the Mercury, Mars and Jupiter Djinn's. At tick 20 the target is knocked back
-   and the result phase starts. */
+// A geyser between the targets. A textured column, its texture scrolling upward, stands on the
+// floor at the targets' midpoint, and drops burst from its foot, fall back under gravity and bounce
+// once on the floor. Purgatory's is the cross texture in orange; its column rises and falls on a
+// sine and 200 drops burst at once. Djinn Storm's column keeps widening and fades from tick 32,
+// with 200 drops and 16 more each tick to tick 23; Djinn Blast's is thin, with 100 drops and 2 more
+// each tick. Theirs also step the palette through the Mercury, Mars and Jupiter Djinn's. At tick 20
+// the target is knocked back and the result phase starts.
 void btEffectRunGeyser(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	MODEL_TEXTURE		 texture;
-	DRAW_RECTANGLE		 draw[2];
-	SCREEN_POINT		 midpoint;
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
-	void				*canvas = RamHeapSlots->battleCanvas;
-	Uint8				*sparkPictures = RamHeapSlots->battleSheet;
-	PARTICLE			*drop;
-	RENDER_MODEL		*column;
-	void				*vertices;
-	Sint32				 frame;
-	Sint32				 i;
-	Sint32				 count;
-	Sint32				 scale;
-	Sint32				 shade;
+	MODEL_TEXTURE        texture;
+	DRAW_RECTANGLE       draw[2];
+	SCREEN_POINT         midpoint;
+	BATTLE_EFFECT_STATE *state         = RamHeapSlots->battleEffect;
+	void                *canvas        = RamHeapSlots->battleCanvas;
+	Uint8               *sparkPictures = RamHeapSlots->battleSheet;
+	PARTICLE            *drop;
+	RENDER_MODEL        *column;
+	void                *vertices;
+	Sint32               frame;
+	Sint32               i;
+	Sint32               count;
+	Sint32               scale;
+	Sint32               shade;
 
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
-	if(mode == GEYSER_PURGATORY)
+	if (mode == GEYSER_PURGATORY)
 		REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 12);
 	else
 		REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, draw);
 	{
 		Sint32 spawned;
-		EFFECT_SET_TRANSFER(
-			state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 		sySetEvent((Sint32)btEffectTransferCanvas, EVENT_PASS_VBLANK);
 		spawned = 0;
-		btResourceLoadAndDecompress(
-			RESOURCE_YELLOW_GLOW_SHEET, sparkPictures, 0, 0);
-		if(mode == GEYSER_PURGATORY) {
-			btResourceLoadAndDecompress(
-				RESOURCE_CROSS_TEXTURE_SHEET, state->sheet, 1, 1);
-			btGeyserCopyPalette(
-				syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B));
-		} else {
-			btResourceLoadAndDecompress(
-				RESOURCE_EMBER_TEXTURE, state->sheet, 0, 0);
+		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkPictures, 0, 0);
+		if (mode == GEYSER_PURGATORY)
+		{
+			btResourceLoadAndDecompress(RESOURCE_CROSS_TEXTURE_SHEET, state->sheet, 1, 1);
+			btGeyserCopyPalette(syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B));
+		}
+		else
+		{
+			btResourceLoadAndDecompress(RESOURCE_EMBER_TEXTURE, state->sheet, 0, 0);
 			btGeyserCopyPalette(syResourceGetTableEntry(RESOURCE_BLAST_SHEET));
 		}
 
-		for(frame = 0; frame != GEYSER_TICKS; frame++) {
-			/* The geyser follows the targets' midpoint while it rises. */
-			if(frame < GEYSER_PEAK_TICK)
+		for (frame = 0; frame != GEYSER_TICKS; frame++)
+		{
+			// The geyser follows the targets' midpoint while it rises.
+			if (frame < GEYSER_PEAK_TICK)
 				btEffectGetTargetsMidpoint(&midpoint);
-			if(frame == 0)
+			if (frame == 0)
 				sySoundPlayStub(SE_CLATTER);
-			if(frame == 0)
+			if (frame == 0)
 				state->shakeFrame = 16;
-			if(frame == GEYSER_PEAK_TICK) {
+			if (frame == GEYSER_PEAK_TICK)
+			{
 				state->shakeFrame = 8;
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_HOP);
 			}
 
-			/* The first tick clears every drop. */
-			if(frame == 0) {
+			// The first tick clears every drop.
+			if (frame == 0)
+			{
 				spawned = 0;
-				/* UB: the lives are cleared through one Sint32 pointer stepped
-				   a whole drop at a time, past the drop's other members. */
+				// UB: the lives are cleared through one Sint32 pointer stepped a whole drop at a
+				// time, past the drop's other members.
 #if FIX_POINTER_OUTSIDE_OBJECT
-				for(i = 0; i != GEYSER_DROP_COUNT; i++)
+				for (i = 0; i != GEYSER_DROP_COUNT; i++)
 					PARTICLES[i].variant = -1;
 #else
 				{
 					Sint32 *life;
 
-					i = 0;
+					i    = 0;
 					life = &PARTICLES->variant;
-					for(; i != GEYSER_DROP_COUNT; i++) {
-						*life = -1;
-						life += sizeof(PARTICLE) / sizeof(*life);
+					for (; i != GEYSER_DROP_COUNT; i++)
+					{
+						*life  = -1;
+						life  += sizeof(PARTICLE) / sizeof(*life);
 					}
 				}
 #endif
 			}
 
-			/* Djinn Storm and Djinn Blast step the palette three times a tick
-			   from tick 8:
-			   toward the Mercury Djinn's, from tick 20 the Mars Djinn's and
-			   from tick 32 the Jupiter Djinn's. */
-			if(mode == GEYSER_DJINN_STORM || mode == GEYSER_DJINN_BLAST) {
-				for(i = 0; i != 3; i++) {
-					if(frame >= 8) {
-						if(frame < 20)
-							btEffectStepPaletteToResource(
-								RESOURCE_MERCURY_DJINN_SHEET);
-						else if(frame < 32)
-							btEffectStepPaletteToResource(
-								RESOURCE_MARS_DJINN_SHEET);
+			// Djinn Storm and Djinn Blast step the palette three times a tick from tick 8: toward
+			// the Mercury Djinn's, from tick 20 the Mars Djinn's and from tick 32 the Jupiter
+			// Djinn's.
+			if (mode == GEYSER_DJINN_STORM || mode == GEYSER_DJINN_BLAST)
+			{
+				for (i = 0; i != 3; i++)
+				{
+					if (frame >= 8)
+					{
+						if (frame < 20)
+							btEffectStepPaletteToResource(RESOURCE_MERCURY_DJINN_SHEET);
+						else if (frame < 32)
+							btEffectStepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
 						else
-							btEffectStepPaletteToResource(
-								RESOURCE_JUPITER_DJINN_SHEET);
+							btEffectStepPaletteToResource(RESOURCE_JUPITER_DJINN_SHEET);
 					}
 				}
 			}
 
-			/* How many drops burst this tick. */
+			// How many drops burst this tick.
 			count = 0;
-			if(mode == GEYSER_DJINN_BLAST) {
-				if(frame == 0)
+			if (mode == GEYSER_DJINN_BLAST)
+			{
+				if (frame == 0)
 					count = DJINN_BLAST_BURST;
-				if(frame >= 1 && frame < 24)
+				if (frame >= 1 && frame < 24)
 					count = DJINN_BLAST_STREAM;
-			} else {
-				if(frame == 0)
+			}
+			else
+			{
+				if (frame == 0)
 					count = GEYSER_BURST;
-				if(mode == GEYSER_DJINN_STORM || mode == GEYSER_DJINN_BLAST) {
-					if(frame >= 1 && frame < 24)
+				if (mode == GEYSER_DJINN_STORM || mode == GEYSER_DJINN_BLAST)
+				{
+					if (frame >= 1 && frame < 24)
 						count = GEYSER_STREAM;
 				}
 			}
-			for(i = 0; i != count; i++, spawned++) {
+			for (i = 0; i != count; i++, spawned++)
+			{
 				Sint32 speed;
 				Sint32 angle;
 
-				drop = &PARTICLES[spawned & (GEYSER_DROP_COUNT - 1)];
-				speed = (syRandom() & 1023) + 32;
-				angle = (syRandom() & 0x7fff) - DEGtoANG(90);
+				drop    = &PARTICLES[spawned & (GEYSER_DROP_COUNT - 1)];
+				speed   = (syRandom() & 1023) + 32;
+				angle   = (syRandom() & 0x7fff) - DEGtoANG(90);
 				drop->x = toFIXED(midpoint.x / 2);
 				drop->y = toFIXED(108);
-				if(mode == GEYSER_DJINN_BLAST)
+				if (mode == GEYSER_DJINN_BLAST)
 					drop->velocityX = (sySin(angle) * speed) >> 8;
 				else
 					drop->velocityX = (sySin(angle) * speed) >> 6;
 				drop->velocityY = -(syCos(angle) * speed * 2) >> 7;
-				drop->variant = (syRandom() & 7) + 48;
+				drop->variant   = (syRandom() & 7) + 48;
 			}
 
-			/* Each drop falls, bounces off the floor at y 120, and is drawn
-			   while it is on the canvas, its picture shrinking as it burns
-			   down. */
+			// Each drop falls, bounces off the floor at y 120, and is drawn while it is on the
+			// canvas, its picture shrinking as it burns down.
 			drop = PARTICLES;
-			for(i = 0; i != GEYSER_DROP_COUNT; i++, drop++) {
-				if(drop->variant > 0) {
+			for (i = 0; i != GEYSER_DROP_COUNT; i++, drop++)
+			{
+				if (drop->variant > 0)
+				{
 					Sint32 x;
 					Sint32 y;
 
 					drop->variant--;
-					btParticleAdvanceWithGravity2D(
-						drop, 60, GeyserDropGravity[mode]);
+					btParticleAdvanceWithGravity2D(drop, 60, GeyserDropGravity[mode]);
 					y = FIXEDtoINT(drop->y);
-					if(y > 120) {
+					if (y > 120)
+					{
 						drop->velocityY = -drop->velocityY / 2;
-					} else if(drop->x >= 0 &&
-						(x = FIXEDtoINT(drop->x)) <= 126 && drop->y >= 0) {
-						Sint32 size =
-							(drop->variant - GEYSER_DROP_SHRUNK_LIFE) / 8;
+					}
+					else if (drop->x >= 0 && (x = FIXEDtoINT(drop->x)) <= 126 && drop->y >= 0)
+					{
+						Sint32 size = (drop->variant - GEYSER_DROP_SHRUNK_LIFE) / 8;
 
-						if(size < GeyserDropMinSizes[mode])
+						if (size < GeyserDropMinSizes[mode])
 							size = GeyserDropMinSizes[mode];
 						draw[i & 1](canvas,
-							sparkPictures + BattleEffectMotePictures[size - 1],
-							x - size / 2, y - size, size, size * 2);
+						            sparkPictures + BattleEffectMotePictures[size - 1],
+						            x - size / 2,
+						            y - size,
+						            size,
+						            size * 2);
 					}
 				}
 			}
 
-			/* The column, for the first 40 ticks. */
-			if(frame < GEYSER_DRAW_TICKS) {
-				vertices = syHeapAllocateEWRAM(512);
-				column = btRenderAllocateModelList(1);
-				texture.logWidth = 5;
+			// The column, for the first 40 ticks.
+			if (frame < GEYSER_DRAW_TICKS)
+			{
+				vertices          = syHeapAllocateEWRAM(512);
+				column            = btRenderAllocateModelList(1);
+				texture.logWidth  = 5;
 				texture.logHeight = 5;
-				texture.pixels = state->sheet;
-				column->scrollU = (frame << 2) & 31;
-				column->scrollV = (frame << 1) & 31;
+				texture.pixels    = state->sheet;
+				column->scrollU   = (frame << 2) & 31;
+				column->scrollV   = (frame << 1) & 31;
 				syInitMatrix();
-				syTranslate(INTtoFIXED(midpoint.x / 2 - CANVAS_SIZE / 2),
-					-toFIXED(16), 0);
+				syTranslate(INTtoFIXED(midpoint.x / 2 - CANVAS_SIZE / 2), -toFIXED(16), 0);
 				syRotX(GEYSER_TILT);
-				/* At half brightness, the Djinn's fading from tick 32. */
-				if(mode == GEYSER_PURGATORY) {
-					/* Up on a sine in 16 ticks, held, and down again from
-					   tick 24. */
-					if(frame < 16)
+				// At half brightness, the Djinn's fading from tick 32.
+				if (mode == GEYSER_PURGATORY)
+				{
+					// Up on a sine in 16 ticks, held, and down again from tick 24.
+					if (frame < 16)
 						scale = sySin(frame * (TRIG_TURN / 64));
-					else if(frame < 24)
+					else if (frame < 24)
 						scale = toFIXED(1);
 					else
 						scale = sySin(frame * (TRIG_TURN / 64) - DEGtoANG(45));
 					shade = MODEL_SHADE_INVISIBLE / 2;
-				} else if(mode == GEYSER_DJINN_STORM) {
-					/* Wider every tick. */
+				}
+				else if (mode == GEYSER_DJINN_STORM)
+				{
+					// Wider every tick.
 					scale = frame * (toFIXED(1) / 16);
 					shade = MODEL_SHADE_INVISIBLE / 2;
-					if(frame > 31)
-						shade = 224 - (frame << 3);
-				} else {
-					scale = toFIXED(1) / 4;
-					shade = MODEL_SHADE_INVISIBLE / 2;
-					if(frame > 31)
+					if (frame > 31)
 						shade = 224 - (frame << 3);
 				}
-				column->kind = MODEL_SHADED_ADDITIVE;
-				column->shade = shade;
-				column->mesh = GeyserMesh;
-				column->texture = &texture;
+				else
+				{
+					scale = toFIXED(1) / 4;
+					shade = MODEL_SHADE_INVISIBLE / 2;
+					if (frame > 31)
+						shade = 224 - (frame << 3);
+				}
+				column->kind     = MODEL_SHADED_ADDITIVE;
+				column->shade    = shade;
+				column->mesh     = GeyserMesh;
+				column->texture  = &texture;
 				column->vertices = vertices;
 				syScale(scale * 2, toFIXED(7), scale * 2);
-				btRenderTransformVertices(
-					BattleEffectOctagonBandCorners, vertices, 16);
+				btRenderTransformVertices(BattleEffectOctagonBandCorners, vertices, 16);
 				btRenderDrawModelList(column);
 				syHeapRelease(column);
 				syHeapRelease(vertices);
@@ -992,203 +1134,208 @@ void btEffectRunGeyser(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btEffectEndCanvasLayer();
 }
 
-/* Abilities: Djinn Stun. */
+// Abilities: Djinn Stun.
 void btEffectRunDjinnStun(BATTLE_EFFECT_PARM *args)
 {
 	btEffectRunStarSwarm(args, STAR_SWARM_DJINN_STUN);
 }
 
-/* Abilities: Mystic Call. */
+// Abilities: Mystic Call.
 void btEffectRunMysticCall(BATTLE_EFFECT_PARM *args)
 {
 	btEffectRunStarSwarm(args, STAR_SWARM_MYSTIC_CALL);
 }
 
-#define STARS_PER_TARGET  64 /* each target's slice of PARTICLES */
-#define STAR_TOTAL		  (6 * STARS_PER_TARGET) /* six targets' slices */
-/* The stars of each target's swarm. */
+#define STARS_PER_TARGET  64                     // each target's slice of PARTICLES
+#define STAR_TOTAL        (6 * STARS_PER_TARGET) // six targets' slices
+// The stars of each target's swarm.
 #define DJINN_STUN_STARS  16
 #define MYSTIC_CALL_STARS 48
-/* A star is drawn STAR_LARGEST pixels wide at STAR_NEAR_DEPTH or nearer, a
-   pixel less for every STAR_DEPTH_STEP deeper, down to 3. */
-#define STAR_LARGEST	  9
-#define STAR_NEAR_DEPTH	  250
-#define STAR_DEPTH_STEP	  64
-#define STAR_FAR_DEPTH	  (STAR_NEAR_DEPTH + 6 * STAR_DEPTH_STEP)
-/* A star's speed: STAR_SPEED_MIN and a random part, masked by
-   STAR_SPEED_RANDOM. */
-#define STAR_SPEED_MIN	  128
+// A star is drawn STAR_LARGEST pixels wide at STAR_NEAR_DEPTH or nearer, a pixel less for every
+// STAR_DEPTH_STEP deeper, down to 3.
+#define STAR_LARGEST      9
+#define STAR_NEAR_DEPTH   250
+#define STAR_DEPTH_STEP   64
+#define STAR_FAR_DEPTH    (STAR_NEAR_DEPTH + 6 * STAR_DEPTH_STEP)
+// A star's speed: STAR_SPEED_MIN and a random part, masked by STAR_SPEED_RANDOM.
+#define STAR_SPEED_MIN    128
 #define STAR_SPEED_RANDOM 255
 
-/* Swarms of stars over the targets. Each target gets a swarm, eight ticks
-   after the one before: its stars burst from a point that rises out of it, each
-   turning about the point on one of four axes and drawn smaller the deeper it
-   is, and from tick 24 they are pulled back into the point, each one gone once
-   it has arrived. The palette steps through the Mercury, Mars and Jupiter
-   Djinn's. Djinn Stun: 16 stars a target, the target flashes as its swarm
-   starts, and the effect lasts eight ticks a target more than 38. Mystic Call:
-   48 stars, a flash at the start and 55 ticks later, 72 ticks in all. */
+// Swarms of stars over the targets. Each target gets a swarm, eight ticks after the one before: its
+// stars burst from a point that rises out of it, each turning about the point on one of four axes
+// and drawn smaller the deeper it is, and from tick 24 they are pulled back into the point, each
+// one gone once it has arrived. The palette steps through the Mercury, Mars and Jupiter Djinn's.
+// Djinn Stun: 16 stars a target, the target flashes as its swarm starts, and the effect lasts eight
+// ticks a target more than 38. Mystic Call: 48 stars, a flash at the start and 55 ticks later, 72
+// ticks in all.
 void btEffectRunStarSwarm(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
-	void				*canvas = RamHeapSlots->battleCanvas;
-	DRAW_RECTANGLE		 draw[2];
-	Sint32				 member;
-	Uint8				*sparkPictures = RamHeapSlots->battleSheet;
-	Sint32				 ticks;
-	BATTLE_CAMERA		*camera;
-	Sint32				 frame;
-	Sint32				 i;
-	SCREEN_POINT		 screen;
+	BATTLE_EFFECT_STATE *state  = RamHeapSlots->battleEffect;
+	void                *canvas = RamHeapSlots->battleCanvas;
+	DRAW_RECTANGLE       draw[2];
+	Sint32               member;
+	Uint8               *sparkPictures = RamHeapSlots->battleSheet;
+	Sint32               ticks;
+	BATTLE_CAMERA       *camera;
+	Sint32               frame;
+	Sint32               i;
+	SCREEN_POINT         screen;
 
 	btEffectStartCanvasLayer(0);
-	REG_BLDALPHA = EFFECT_BLEND_ADD;
+	REG_BLDALPHA     = EFFECT_BLEND_ADD;
 	state->fadeFrame = BACKGROUND_DARKEN_TICKS;
-	state->fadeStep = 0;
-	btResourceLoadAndDecompress(
-		RESOURCE_YELLOW_GLOW_SHEET, sparkPictures, 0, 0);
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
+	state->fadeStep  = 0;
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkPictures, 0, 0);
+	EFFECT_LOAD_BLITTER(
+		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
 	draw[0] = RamHeapSlots->ramCode;
-	if(mode == STAR_SWARM_DJINN_STUN)
+	if (mode == STAR_SWARM_DJINN_STUN)
 		ticks = args->targetCount * 8 + 38;
 	else
 		ticks = 72;
-	EFFECT_SET_TRANSFER(
-		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	sySetEvent((Sint32)btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
-	for(frame = 0; frame != ticks; frame++) {
+	for (frame = 0; frame != ticks; frame++)
+	{
 		camera = RamHeapSlots->cameraState;
 
-		/* The first tick sets each target's point on it, rising, and every
-		   star at its point with a random push across the floor. */
-		if(frame == 0) {
-			for(i = 0; i != args->targetCount; i++) {
-				MOTION_OBJECT *object =
-					btObjectGetStub(args->targets[i])->object;
+		// The first tick sets each target's point on it, rising, and every star at its point with a
+		// random push across the floor.
+		if (frame == 0)
+		{
+			for (i = 0; i != args->targetCount; i++)
+			{
+				MOTION_OBJECT *object = btObjectGetStub(args->targets[i])->object;
 
 				state->particles[i].x = object->x;
 				state->particles[i].y = 0;
 				state->particles[i].z = object->z;
-				if(mode == STAR_SWARM_MYSTIC_CALL) {
+				if (mode == STAR_SWARM_MYSTIC_CALL)
+				{
 					state->particles[i].velocityX = 0;
 					state->particles[i].velocityY = toFIXED(1) / 2;
-				} else {
+				}
+				else
+				{
 					state->particles[i].velocityX = -object->x / 40;
 					state->particles[i].velocityY = toFIXED(3);
 				}
 				state->particles[i].velocityZ = 0;
 			}
-			for(i = 0; i != STAR_TOTAL; i++) {
-				PARTICLE *star = &PARTICLES[i];
-				Sint32	  angle = syRandom() & TRIG_ANGLE_MASK;
-				Sint32	  speed = STAR_SPEED_RANDOM;
+			for (i = 0; i != STAR_TOTAL; i++)
+			{
+				PARTICLE *star   = &PARTICLES[i];
+				Sint32    angle  = syRandom() & TRIG_ANGLE_MASK;
+				Sint32    speed  = STAR_SPEED_RANDOM;
 
-				/* Each star flies off at a random angle and a random speed. */
-				speed &= syRandom();
+				// Each star flies off at a random angle and a random speed.
+				speed           &= syRandom();
 				SET_POSITION(star, 0, INTtoFIXED((syRandom() & 31) + 20), 0);
-				speed += STAR_SPEED_MIN;
-				star->velocityX = (sySin(angle) * speed) >> 5;
-				star->velocityY = 0;
-				star->velocityZ = (syCos(angle) * speed) >> 5;
-				star->variant = 0;
+				speed           += STAR_SPEED_MIN;
+				star->velocityX  = (sySin(angle) * speed) >> 5;
+				star->velocityY  = 0;
+				star->velocityZ  = (syCos(angle) * speed) >> 5;
+				star->variant    = 0;
 			}
 			syWordsCopyEntry((void *)BG_PLTT,
-				syResourceGetTableEntry(RESOURCE_BLAST_SHEET),
-				SHEET_PALETTE_BYTES);
+			                 syResourceGetTableEntry(RESOURCE_BLAST_SHEET),
+			                 SHEET_PALETTE_BYTES);
 		}
 
-		/* Two palette steps a tick from tick 8. */
-		for(i = 0; i != 2; i++) {
-			if(frame >= 8) {
-				if(frame < 20)
+		// Two palette steps a tick from tick 8.
+		for (i = 0; i != 2; i++)
+		{
+			if (frame >= 8)
+			{
+				if (frame < 20)
 					btEffectStepPaletteToResource(RESOURCE_MERCURY_DJINN_SHEET);
-				else if(frame < 32)
+				else if (frame < 32)
 					btEffectStepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
 				else
 					btEffectStepPaletteToResource(RESOURCE_JUPITER_DJINN_SHEET);
 			}
 		}
 
-		for(member = 0; member != args->targetCount; member++) {
-			PARTICLE *point = &state->particles[member];
-			Sint32	  startFrame = member;
-			Sint32	  starCount;
+		for (member = 0; member != args->targetCount; member++)
+		{
+			PARTICLE *point      = &state->particles[member];
+			Sint32    startFrame = member;
+			Sint32    starCount;
 
 			startFrame *= 8;
-			starCount = DJINN_STUN_STARS;
-			if(mode != STAR_SWARM_DJINN_STUN)
+			starCount   = DJINN_STUN_STARS;
+			if (mode != STAR_SWARM_DJINN_STUN)
 				starCount = MYSTIC_CALL_STARS;
-			if(frame == startFrame) {
-				if(mode == STAR_SWARM_DJINN_STUN)
-					btEffectTintBattler(args->targets[member],
-						SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 16);
+			if (frame == startFrame)
+			{
+				if (mode == STAR_SWARM_DJINN_STUN)
+					btEffectTintBattler(
+						args->targets[member], SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 16);
 				else
-					btEffectTintBattler(args->targets[member],
-						SPRITE_COLOR_WHITE, TINT_KEEP, member, 16);
+					btEffectTintBattler(
+						args->targets[member], SPRITE_COLOR_WHITE, TINT_KEEP, member, 16);
 			}
-			if(frame == startFrame + 55 && mode != STAR_SWARM_DJINN_STUN)
-				btEffectTintBattler(args->targets[member], SPRITE_COLOR_WHITE,
-					TINT_KEEP, member, 16);
+			if (frame == startFrame + 55 && mode != STAR_SWARM_DJINN_STUN)
+				btEffectTintBattler(
+					args->targets[member], SPRITE_COLOR_WHITE, TINT_KEEP, member, 16);
 
-			/* The swarm turns about its point, which rises from tick 4. */
+			// The swarm turns about its point, which rises from tick 4.
 			syInitMatrix();
 			syLookAtLoad(camera->eye, camera->focus);
-			if(frame >= startFrame + 4 && startFrame < 44)
+			if (frame >= startFrame + 4 && startFrame < 44)
 				btParticleAdvanceWithGravity3D(point, PARTICLE_DAMPING_NONE, 0);
 			syMatrixTranslateVector(&point->x);
 
-			/* Each star turns about the point on one of four axes, faster the
-			   later it is in the swarm. */
-			for(i = 0; i != starCount; i++) {
+			// Each star turns about the point on one of four axes, faster the later it is in the
+			// swarm.
+			for (i = 0; i != starCount; i++)
+			{
 				PARTICLE *star = &PARTICLES[member * STARS_PER_TARGET + i];
 
-				if(frame >= i / 8 + startFrame && star->variant == 0) {
+				if (frame >= i / 8 + startFrame && star->variant == 0)
+				{
 					Sint32 size;
 
 					syPushMatrix();
-					switch((member + i) & 3) {
-					case 0:
-						syRotY(frame * (i + 8) * (TRIG_TURN / 2048));
-						break;
-					case 1:
-						syRotX(-frame * (i + 8) * (TRIG_TURN / 2048));
-						break;
-					case 2:
-						syRotZ(-frame * (i + 8) * (TRIG_TURN / 2048));
-						break;
-					case 3:
-						syRotX(-frame * (i + 8) * (TRIG_TURN / 2048));
-						syRotZ(-frame * (i + 8) * (TRIG_TURN / 2048));
-						break;
+					switch ((member + i) & 3)
+					{
+						case 0: syRotY(frame * (i + 8) * (TRIG_TURN / 2048)); break;
+						case 1: syRotX(-frame * (i + 8) * (TRIG_TURN / 2048)); break;
+						case 2: syRotZ(-frame * (i + 8) * (TRIG_TURN / 2048)); break;
+						case 3:
+							syRotX(-frame * (i + 8) * (TRIG_TURN / 2048));
+							syRotZ(-frame * (i + 8) * (TRIG_TURN / 2048));
+							break;
 					}
 					btEffectPosProjectPoint(&star->x, &screen);
 					screen.x >>= 1;
 					syPopMatrix();
 					CLAMP(screen.depth, STAR_NEAR_DEPTH, STAR_FAR_DEPTH);
-					size = STAR_LARGEST -
-						(screen.depth - STAR_NEAR_DEPTH) / STAR_DEPTH_STEP;
+					size = STAR_LARGEST - (screen.depth - STAR_NEAR_DEPTH) / STAR_DEPTH_STEP;
 					draw[0](canvas,
-						sparkPictures + BattleEffectMotePictures[size - 1],
-						screen.x - size / 2, screen.y - size, size, size * 2);
+					        sparkPictures + BattleEffectMotePictures[size - 1],
+					        screen.x - size / 2,
+					        screen.y - size,
+					        size,
+					        size * 2);
 					btParticleAdvanceWithGravity3D(star, 60, 0);
 
-					/* The pull back into the point; a star within four pixels
-					   of it across the floor is gone. */
-					if(frame >= i / 8 + 24) {
-						Sint32 dx = -star->x >> 7;
-						Sint32 dy = -star->y >> 7;
-						Sint32 dz = -star->z >> 7;
+					// The pull back into the point; a star within four pixels of it across the
+					// floor is gone.
+					if (frame >= i / 8 + 24)
+					{
+						Sint32 dx        = -star->x >> 7;
+						Sint32 dy        = -star->y >> 7;
+						Sint32 dz        = -star->z >> 7;
 
 						star->velocityX += dx;
 						star->velocityY += dy;
 						star->velocityZ += dz;
-						star->velocityX = star->velocityX * 62 / DAMPING_SCALE;
-						star->velocityY = star->velocityY * 62 / DAMPING_SCALE;
-						star->velocityZ = star->velocityZ * 62 / DAMPING_SCALE;
-						if((dx >= -2047 && dx <= 2047) &&
-							(dz >= -2047 && dz <= 2047))
+						star->velocityX  = star->velocityX * 62 / DAMPING_SCALE;
+						star->velocityY  = star->velocityY * 62 / DAMPING_SCALE;
+						star->velocityZ  = star->velocityZ * 62 / DAMPING_SCALE;
+						if ((dx >= -2047 && dx <= 2047) && (dz >= -2047 && dz <= 2047))
 							star->variant = -1;
 					}
 				}
@@ -1204,107 +1351,112 @@ void btEffectRunStarSwarm(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btEffectEndCanvasLayer();
 }
 
-/* Unused: nothing calls it. Opens the canvas layer added over the battle,
-   darkens the background behind it, and plays the column of bubbles. */
+// Unused: nothing calls it. Opens the canvas layer added over the battle, darkens the background
+// behind it, and plays the column of bubbles.
 UNUSED void btEffectStartBubbleColumn(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 
 	btEffectStartCanvasLayer(0);
-	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	REG_BLDALPHA = EFFECT_BLEND_ADD;
+	REG_BLDCNT       = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+	REG_BLDALPHA     = EFFECT_BLEND_ADD;
 	state->fadeFrame = BACKGROUND_DARKEN_TICKS;
-	state->fadeStep = 0;
+	state->fadeStep  = 0;
 	btEffectRunBubbleColumn(args);
 }
 
 #define BUBBLE_COLUMN_BUBBLES 256
-#define BUBBLE_TICKS		  60
-/* The bubbles, in the map cell buffer: each keeps its picture in z and its life
-   in variant, -1 once it has left the top of the canvas. */
-#define BUBBLES				  ((PARTICLE *)(RamMapMetatileBuffer + 20480))
-/* A bubble's variant while it floats: any value from 0 up. */
-#define BUBBLE_FLOATING		  32
+#define BUBBLE_TICKS          60
+// The bubbles, in the map cell buffer: each keeps its picture in z and its life in variant, -1 once
+// it has left the top of the canvas.
+#define BUBBLES               ((PARTICLE *)(RamMapMetatileBuffer + 20480))
+// A bubble's variant while it floats: any value from 0 up.
+#define BUBBLE_FLOATING       32
 
-/* Unused: only btEffectStartBubbleColumn plays it. A column of bubbles. On the
-   first tick 256 glowing ovals of random size appear below the canvas; for 60
-   ticks they float up and drift sideways, drawn with the max blitter in the
-   blue beam's palette, and each one is gone once it has risen past the top.
-   From tick 18 the targets flash one by one, eight ticks apart, each with the
-   recovery sound. */
+// Unused: only btEffectStartBubbleColumn plays it. A column of bubbles. On the first tick 256
+// glowing ovals of random size appear below the canvas; for 60 ticks they float up and drift
+// sideways, drawn with the max blitter in the blue beam's palette, and each one is gone once it has
+// risen past the top. From tick 18 the targets flash one by one, eight ticks apart, each with the
+// recovery sound.
 void btEffectRunBubbleColumn(BATTLE_EFFECT_PARM *args)
 {
-	void				*canvas = RamHeapSlots->battleCanvas;
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
-	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
-	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
-	DRAW_RECTANGLE draw[2];
-	Sint32		   frame;
-	Sint32		   i;
-	PARTICLE	  *bubble;
+	void                *canvas = RamHeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state  = RamHeapSlots->battleEffect;
+	// LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+	// * tick reserves and never touches; as one DRAW_RECTANGLE.
+	DRAW_RECTANGLE       draw[2];
+	Sint32               frame;
+	Sint32               i;
+	PARTICLE            *bubble;
 
-	/* Each tick the transfer event copies the canvas and clears it. */
+	// Each tick the transfer event copies the canvas and clears it.
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	draw[0] = RamHeapSlots->ramCode;
 
-	/* The blue beam's palette colours the bubble pictures. */
-	syWordsCopyEntry((void *)BG_PLTT,
-		syResourceGetTableEntry(RESOURCE_BLUE_BEAM_SHEET), SHEET_PALETTE_BYTES);
-	btResourceLoadAndDecompress(
-		RESOURCE_BUBBLE_ANIMATION_SHEET, state->sheet, 0, 0);
+	// The blue beam's palette colours the bubble pictures.
+	syWordsCopyEntry(
+		(void *)BG_PLTT, syResourceGetTableEntry(RESOURCE_BLUE_BEAM_SHEET), SHEET_PALETTE_BYTES);
+	btResourceLoadAndDecompress(RESOURCE_BUBBLE_ANIMATION_SHEET, state->sheet, 0, 0);
 
-	for(frame = 0; frame != BUBBLE_TICKS; frame++) {
-		/* The first tick scatters every bubble below the bottom left. */
-		if(frame == 0) {
+	for (frame = 0; frame != BUBBLE_TICKS; frame++)
+	{
+		// The first tick scatters every bubble below the bottom left.
+		if (frame == 0)
+		{
 			PARTICLE *spawn = BUBBLES;
 
-			for(i = 0; i != BUBBLE_COLUMN_BUBBLES; i++) {
-				spawn->x = toFIXED(syRandom() & 127);
-				spawn->y = INTtoFIXED((syRandom() & 127) + 120);
+			for (i = 0; i != BUBBLE_COLUMN_BUBBLES; i++)
+			{
+				spawn->x         = toFIXED(syRandom() & 127);
+				spawn->y         = INTtoFIXED((syRandom() & 127) + 120);
 				spawn->velocityX = ((syRandom() & 31) - 16) << 13;
 				spawn->velocityY = (8 - (syRandom() & 31)) << 12;
-				spawn->z = (syRandom() & 7) + 5;
-				spawn->variant = BUBBLE_FLOATING;
+				spawn->z         = (syRandom() & 7) + 5;
+				spawn->variant   = BUBBLE_FLOATING;
 				spawn++;
 			}
 		}
 
-		/* Draw each bubble centred on its place, let it rise, and drop it once
-		   it is wholly above the canvas. */
+		// Draw each bubble centred on its place, let it rise, and drop it once it is wholly above
+		// the canvas.
 		bubble = BUBBLES;
-		for(i = 0; i != BUBBLE_COLUMN_BUBBLES; i++) {
-			if(bubble->variant >= 0) {
+		for (i = 0; i != BUBBLE_COLUMN_BUBBLES; i++)
+		{
+			if (bubble->variant >= 0)
+			{
 				Sint32 picture = bubble->z;
-				Uint8 *src = state->sheet + BubbleColumnPictures[picture];
+				Uint8 *src     = state->sheet + BubbleColumnPictures[picture];
 				Sint32 centerX = FIXED_INTEGER_PART(bubble->x);
-				Uint8  width = BubbleColumnPictureWidths[picture];
-				Sint32 x = centerX - (width >> 1);
+				Uint8  width   = BubbleColumnPictureWidths[picture];
+				Sint32 x       = centerX - (width >> 1);
 				Sint32 centerY = FIXED_INTEGER_PART(bubble->y);
-				Uint8  height = BubbleColumnPictureHeights[picture];
+				Uint8  height  = BubbleColumnPictureHeights[picture];
 
 				draw[0](canvas, src, x, centerY - (height >> 1), width, height);
 				btParticleAdvanceWithGravity2D(bubble, 63, -toFIXED(1) / 4);
-				if(bubble->y < -toFIXED(BubbleColumnPictureHeights[picture]))
+				if (bubble->y < -toFIXED(BubbleColumnPictureHeights[picture]))
 					bubble->variant = -1;
 			}
 			bubble++;
 		}
 
-		/* The targets flash in turn from tick 18; the first hit lets the
-		   battle show the damage. */
-		for(i = 0; i != args->targetCount; i++) {
-			if(frame == i * 8 + 18) {
-				if(i == 0) {
-					btEffectTintBattler(
-						args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 16);
+		// The targets flash in turn from tick 18; the first hit lets the battle show the damage.
+		for (i = 0; i != args->targetCount; i++)
+		{
+			if (frame == i * 8 + 18)
+			{
+				if (i == 0)
+				{
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 16);
 					EFFECT_SHOW_DAMAGE(SE_RECOVERY);
 					sySoundPlayStub(SE_RECOVERY);
-				} else {
+				}
+				else
+				{
 					sySoundPlayStub(SE_RECOVERY);
-					btEffectTintBattler(
-						args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 16);
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 16);
 				}
 			}
 		}
@@ -1317,221 +1469,213 @@ void btEffectRunBubbleColumn(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-/* Coatlicue's summon. */
+// Coatlicue's summon.
 
-/* The backdrop's colour on each screen line, which DMA writes in the HBlank
-   before the line: from BATTLE_VIEW_TOP - 1 a gradient over the battle view,
-   each channel a level darker every so many lines, blue and green starting
-   above red, all lifted by `lift`; black below it. */
-#define GRADIENT_BLUE_LIFT	32
+// The backdrop's colour on each screen line, which DMA writes in the HBlank before the line: from
+// BATTLE_VIEW_TOP - 1 a gradient over the battle view, each channel a level darker every so many
+// lines, blue and green starting above red, all lifted by `lift`; black below it.
+#define GRADIENT_BLUE_LIFT  32
 #define GRADIENT_GREEN_LIFT 16
-#define FILL_GRADIENT(table, i, lift, c) \
-	do { \
-		for(; i != BATTLE_VIEW_BOTTOM - 1; i++) { \
-			Sint32 t_ = i - (BATTLE_VIEW_TOP - 1); \
-			Sint32 b_ = \
-				(lift) - t_ / GRADIENT_BLUE_LINES + GRADIENT_BLUE_LIFT; \
-			Sint32 g_ = \
-				(lift) - t_ / GRADIENT_GREEN_LINES + GRADIENT_GREEN_LIFT; \
-			Sint32 r_ = (lift) - t_ / GRADIENT_RED_LINES; \
-\
-			if(b_ < 0) \
-				b_ = 0; \
-			if(b_ > RGB_LEVEL_MAX) \
-				b_ = RGB_LEVEL_MAX; \
-			if(g_ < 0) \
-				g_ = 0; \
-			if(g_ > RGB_LEVEL_MAX) \
-				g_ = RGB_LEVEL_MAX; \
-			if(r_ < 0) \
-				r_ = 0; \
-			if(r_ > RGB_LEVEL_MAX) \
-				r_ = RGB_LEVEL_MAX; \
-			c = RGB(r_, g_, b_); \
-			*table++ = c; \
-		} \
-		for(; i != DISPLAY_HEIGHT; i++) { \
-			*table++ = 0; \
-		} \
-	} while(0)
+#define FILL_GRADIENT(table, i, lift, c)                                                           \
+	do                                                                                             \
+	{                                                                                              \
+		for (; i != BATTLE_VIEW_BOTTOM - 1; i++)                                                   \
+		{                                                                                          \
+			Sint32 t_ = i - (BATTLE_VIEW_TOP - 1);                                                 \
+			Sint32 b_ = (lift) - t_ / GRADIENT_BLUE_LINES + GRADIENT_BLUE_LIFT;                    \
+			Sint32 g_ = (lift) - t_ / GRADIENT_GREEN_LINES + GRADIENT_GREEN_LIFT;                  \
+			Sint32 r_ = (lift) - t_ / GRADIENT_RED_LINES;                                          \
+                                                                                                   \
+			if (b_ < 0)                                                                            \
+				b_ = 0;                                                                            \
+			if (b_ > RGB_LEVEL_MAX)                                                                \
+				b_ = RGB_LEVEL_MAX;                                                                \
+			if (g_ < 0)                                                                            \
+				g_ = 0;                                                                            \
+			if (g_ > RGB_LEVEL_MAX)                                                                \
+				g_ = RGB_LEVEL_MAX;                                                                \
+			if (r_ < 0)                                                                            \
+				r_ = 0;                                                                            \
+			if (r_ > RGB_LEVEL_MAX)                                                                \
+				r_ = RGB_LEVEL_MAX;                                                                \
+			c        = RGB(r_, g_, b_);                                                            \
+			*table++ = c;                                                                          \
+		}                                                                                          \
+		for (; i != DISPLAY_HEIGHT; i++)                                                           \
+		{                                                                                          \
+			*table++ = 0;                                                                          \
+		}                                                                                          \
+	} while (0)
 
-/* Draws bubble picture n of the copy at `base`, centred on (x, y). */
-#define BLIT_BUBBLE(base, n, x, y) \
-	do { \
-		Uint8 *src_ = state->sheet + (base) + CoatlicuePictures[n]; \
-		Uint8  w_ = CoatlicuePictureWidths[n]; \
-		Sint32 x_ = (x) - (w_ >> 1); \
-		Uint8  h_ = CoatlicuePictureHeights[n]; \
-\
-		blit[0](canvas, src_, x_, (y) - (h_ >> 1), w_, h_); \
-	} while(0)
+// Draws bubble picture n of the copy at `base`, centred on (x, y).
+#define BLIT_BUBBLE(base, n, x, y)                                                                 \
+	do                                                                                             \
+	{                                                                                              \
+		Uint8 *src_ = state->sheet + (base) + CoatlicuePictures[n];                                \
+		Uint8  w_   = CoatlicuePictureWidths[n];                                                   \
+		Sint32 x_   = (x) - (w_ >> 1);                                                             \
+		Uint8  h_   = CoatlicuePictureHeights[n];                                                  \
+                                                                                                   \
+		blit[0](canvas, src_, x_, (y) - (h_ >> 1), w_, h_);                                        \
+	} while (0)
 
-/* Draws a rising bubble, moves it on, and drops it once it has left the top of
-   the canvas. */
-#define DRAW_BUBBLE(p) \
-	do { \
-		Sint32 n_ = (p)->z; \
-\
-		{ \
-			Uint8 *src_ = state->sheet + COATLICUE_BUBBLE_PICTURES + \
-				CoatlicuePictures[n_]; \
-			Sint32 x0_ = FIXED_INTEGER_PART((p)->x); \
-			Uint8  w_ = CoatlicuePictureWidths[n_]; \
-			Sint32 x_ = x0_ - (w_ >> 1); \
-			Sint32 y_ = FIXED_INTEGER_PART((p)->y); \
-			Uint8  h_ = CoatlicuePictureHeights[n_]; \
-\
-			blit[0](canvas, src_, x_, y_ - (h_ >> 1), w_, h_); \
-		} \
-		btParticleAdvanceWithGravity2D(p, 63, -toFIXED(1) / 4); \
-		if((p)->y < -toFIXED(CoatlicuePictureHeights[n_])) { \
-			(p)->variant = -1; \
-		} \
-	} while(0)
+// Draws a rising bubble, moves it on, and drops it once it has left the top of the canvas.
+#define DRAW_BUBBLE(p)                                                                             \
+	do                                                                                             \
+	{                                                                                              \
+		Sint32 n_ = (p)->z;                                                                        \
+                                                                                                   \
+		{                                                                                          \
+			Uint8 *src_ = state->sheet + COATLICUE_BUBBLE_PICTURES + CoatlicuePictures[n_];        \
+			Sint32 x0_  = FIXED_INTEGER_PART((p)->x);                                              \
+			Uint8  w_   = CoatlicuePictureWidths[n_];                                              \
+			Sint32 x_   = x0_ - (w_ >> 1);                                                         \
+			Sint32 y_   = FIXED_INTEGER_PART((p)->y);                                              \
+			Uint8  h_   = CoatlicuePictureHeights[n_];                                             \
+                                                                                                   \
+			blit[0](canvas, src_, x_, y_ - (h_ >> 1), w_, h_);                                     \
+		}                                                                                          \
+		btParticleAdvanceWithGravity2D(p, 63, -toFIXED(1) / 4);                                    \
+		if ((p)->y < -toFIXED(CoatlicuePictureHeights[n_]))                                        \
+		{                                                                                          \
+			(p)->variant = -1;                                                                     \
+		}                                                                                          \
+	} while (0)
 
-/* Coatlicue's pictures in the effect's sprite sheet: CogTexture's quarter
-   mirrored into a whole cog, 128 by 128; ScaleTexture, 128 by 16; then
-   BubbleAnimationSheet's fifteen pictures and a copy of them at half
-   brightness. */
-#define COATLICUE_COG			  0
-#define COATLICUE_SCALES		  (128 * 128)
-#define COATLICUE_BUBBLE_PICTURES (COATLICUE_SCALES + 128 * 16)
-#define BUBBLE_SHEET_BYTES		  3000
-#define BUBBLE_PICTURE_COUNT	  15
-#define COATLICUE_DIM_BUBBLE_PICTURES \
-	(COATLICUE_BUBBLE_PICTURES + BUBBLE_SHEET_BYTES)
-/* The coils' band in the map cell buffer, past the fire ring's texture: its
-   corners, two for each of its segments, and its mesh. */
-#define COATLICUE_COIL_CORNERS	   (RamMapMetatileBuffer + 17408)
-#define COATLICUE_COIL_MESH		   (RamMapMetatileBuffer + 18432)
-#define COATLICUE_COIL_SEGMENTS	   32
-/* Coatlicue's figure, CoatlicueTiles: twelve 32x32 sprites, three across. */
-#define COATLICUE_SPRITES		   12
-#define COATLICUE_COLUMNS		   3
-#define COATLICUE_SPRITE_SIZE	   32
-#define COATLICUE_BUBBLE_COUNT	   384
-/* The bubbles of the cloud scattered at tick 310, the only ones drawn from
-   tick 360, and after them those of the stream from tick 274, one a tick. */
-#define COATLICUE_CLOUD_BUBBLES	   80
-#define COATLICUE_STREAM_BUBBLES   24
-/* A bubble of the cloud is drawn at its kind's own picture at this depth, six
-   pictures smaller for every COATLICUE_CLOUD_DEPTH_STEP deeper. */
-#define COATLICUE_CLOUD_NEAR_DEPTH 228
-#define COATLICUE_CLOUD_DEPTH_STEP 50
-/* The bursts, columns of bubbles rising from the floor, each tick in
-   CoatlicueBurstTicks, in the state's particles. */
-#define COATLICUE_BURSTS		   9
-#define COATLICUE_BURST_BUBBLES	   7
-/* Pressing A or B whitens the canvas over these ticks and ends the summon. */
-#define COATLICUE_SKIP_TICKS	   18
-/* The canvas's level as it flashes. */
-#define COATLICUE_FLASH_LEVEL	   47
-/* The backdrop's brightness at its flare, from tick 300. */
-#define COATLICUE_BACKDROP_FLARE   14
-/* How far the cog and the fire ring lean back, the cog at last
-   COATLICUE_TILT_MIN; and how far the cog is rolled while it spins up. */
-#define COATLICUE_TILT			   4000
-#define COATLICUE_TILT_MIN		   3000
-#define COATLICUE_COG_ROLL		   74752
-/* The cog of light appears at COATLICUE_COG_TICK, fading in over eight ticks
-   and growing over 64 from a quarter of its size to COATLICUE_COG_SCALE; at
-   COATLICUE_COG_SWELL_TICK it swells over 16 more to COATLICUE_COG_SCALE_MAX,
-   leaning back to COATLICUE_TILT_MIN a 1024th of a turn a tick, and from
-   COATLICUE_COG_FADE_TICK it fades away. */
-#define COATLICUE_COG_TICK		   210
-#define COATLICUE_COG_SWELL_TICK   274
-#define COATLICUE_COG_FADE_TICK	   310
-#define COATLICUE_COG_SCALE		   55536
-#define COATLICUE_COG_SCALE_MAX	   85536
-#define COATLICUE_COG_GROWTH	   ((COATLICUE_COG_SCALE - toFIXED(1) / 4) / 64)
-#define COATLICUE_COG_SWELL \
-	((COATLICUE_COG_SCALE_MAX - COATLICUE_COG_SCALE) / 16)
-/* The cog's glows about her each grow to full size over 22 ticks. */
-#define COATLICUE_GLOW_GROWTH		 (toFIXED(1) / 22)
-/* The cloud of bubbles is drawn squashed: about 0.85 of its size across, 0.69
-   high and 0.42 deep. Flung away at COATLICUE_FLING_TICK, it stretches across
-   from a 16th of its width by COATLICUE_FLING_STRETCH a tick. */
-#define COATLICUE_CLOUD_WIDTH_SCALE	 55536
-#define COATLICUE_CLOUD_HEIGHT_SCALE 45536
-#define COATLICUE_CLOUD_DEPTH_SCALE	 27768
-#define COATLICUE_FLING_TICK		 540
-#define COATLICUE_FLING_STRETCH		 1500
-/* The fire ring's flashes at CoatlicueRingTicks, as it shines at
-   CoatlicueFlashTicks, the cog's glows at CoatlicueGlowTicks, and the two
-   coils of scaled water. */
-#define COATLICUE_RINGS				 4
-#define COATLICUE_FLASHES			 3
-#define COATLICUE_GLOWS				 3
-/* As it shines the fire ring brightens COATLICUE_FLASH_SHADE_STEP a tick from
-   COATLICUE_FLASH_SHADE, to its full light from its fourth tick. */
-#define COATLICUE_FLASH_SHADE		 (-56)
-#define COATLICUE_FLASH_SHADE_STEP	 16
-#define COATLICUE_COILS				 2
-/* Each coil leans forward by COATLICUE_COIL_TILT as it starts, the second at
-   COATLICUE_SECOND_COIL_START, and leans back COATLICUE_COIL_TILT_SPEED a
-   tick. */
-#define COATLICUE_COIL_TILT			 3000
-#define COATLICUE_COIL_TILT_SPEED	 22
-#define COATLICUE_SECOND_COIL_START	 82
-/* From COATLICUE_COIL_SHRINK_TICK the coils shrink away a 16th a tick from
-   COATLICUE_COIL_SHRINK_SCALE, the second from COATLICUE_SECOND_COIL_EXTRA
-   more, each gone below a quarter. */
-#define COATLICUE_COIL_SHRINK_TICK	 294
-#define COATLICUE_COIL_SHRINK_SCALE	 75536
-#define COATLICUE_SECOND_COIL_EXTRA	 26384
-/* The healing's ticks after the summon, and how far toward blue it lifts the
-   battle background. */
-#define COATLICUE_WASH_TICKS		 60
-#define COATLICUE_WASH_COGS			 3
-#define COATLICUE_WASH_BLUE			 11
+// Coatlicue's pictures in the effect's sprite sheet: CogTexture's quarter mirrored into a whole
+// cog, 128 by 128; ScaleTexture, 128 by 16; then BubbleAnimationSheet's fifteen pictures and a copy
+// of them at half brightness.
+#define COATLICUE_COG                 0
+#define COATLICUE_SCALES              (128 * 128)
+#define COATLICUE_BUBBLE_PICTURES     (COATLICUE_SCALES + 128 * 16)
+#define BUBBLE_SHEET_BYTES            3000
+#define BUBBLE_PICTURE_COUNT          15
+#define COATLICUE_DIM_BUBBLE_PICTURES (COATLICUE_BUBBLE_PICTURES + BUBBLE_SHEET_BYTES)
+// The coils' band in the map cell buffer, past the fire ring's texture: its corners, two for each
+// of its segments, and its mesh.
+#define COATLICUE_COIL_CORNERS        (RamMapMetatileBuffer + 17408)
+#define COATLICUE_COIL_MESH           (RamMapMetatileBuffer + 18432)
+#define COATLICUE_COIL_SEGMENTS       32
+// Coatlicue's figure, CoatlicueTiles: twelve 32x32 sprites, three across.
+#define COATLICUE_SPRITES             12
+#define COATLICUE_COLUMNS             3
+#define COATLICUE_SPRITE_SIZE         32
+#define COATLICUE_BUBBLE_COUNT        384
+// The bubbles of the cloud scattered at tick 310, the only ones drawn from tick 360, and after them
+// those of the stream from tick 274, one a tick.
+#define COATLICUE_CLOUD_BUBBLES       80
+#define COATLICUE_STREAM_BUBBLES      24
+// A bubble of the cloud is drawn at its kind's own picture at this depth, six pictures smaller for
+// every COATLICUE_CLOUD_DEPTH_STEP deeper.
+#define COATLICUE_CLOUD_NEAR_DEPTH    228
+#define COATLICUE_CLOUD_DEPTH_STEP    50
+// The bursts, columns of bubbles rising from the floor, each tick in CoatlicueBurstTicks, in the
+// state's particles.
+#define COATLICUE_BURSTS              9
+#define COATLICUE_BURST_BUBBLES       7
+// Pressing A or B whitens the canvas over these ticks and ends the summon.
+#define COATLICUE_SKIP_TICKS          18
+// The canvas's level as it flashes.
+#define COATLICUE_FLASH_LEVEL         47
+// The backdrop's brightness at its flare, from tick 300.
+#define COATLICUE_BACKDROP_FLARE      14
+// How far the cog and the fire ring lean back, the cog at last COATLICUE_TILT_MIN; and how far the
+// cog is rolled while it spins up.
+#define COATLICUE_TILT                4000
+#define COATLICUE_TILT_MIN            3000
+#define COATLICUE_COG_ROLL            74752
+// The cog of light appears at COATLICUE_COG_TICK, fading in over eight ticks and growing over 64
+// from a quarter of its size to COATLICUE_COG_SCALE; at COATLICUE_COG_SWELL_TICK it swells over 16
+// more to COATLICUE_COG_SCALE_MAX, leaning back to COATLICUE_TILT_MIN a 1024th of a turn a tick,
+// and from COATLICUE_COG_FADE_TICK it fades away.
+#define COATLICUE_COG_TICK            210
+#define COATLICUE_COG_SWELL_TICK      274
+#define COATLICUE_COG_FADE_TICK       310
+#define COATLICUE_COG_SCALE           55536
+#define COATLICUE_COG_SCALE_MAX       85536
+#define COATLICUE_COG_GROWTH          ((COATLICUE_COG_SCALE - toFIXED(1) / 4) / 64)
+#define COATLICUE_COG_SWELL           ((COATLICUE_COG_SCALE_MAX - COATLICUE_COG_SCALE) / 16)
+// The cog's glows about her each grow to full size over 22 ticks.
+#define COATLICUE_GLOW_GROWTH         (toFIXED(1) / 22)
+// The cloud of bubbles is drawn squashed: about 0.85 of its size across, 0.69 high and 0.42 deep.
+// Flung away at COATLICUE_FLING_TICK, it stretches across from a 16th of its width by
+// COATLICUE_FLING_STRETCH a tick.
+#define COATLICUE_CLOUD_WIDTH_SCALE   55536
+#define COATLICUE_CLOUD_HEIGHT_SCALE  45536
+#define COATLICUE_CLOUD_DEPTH_SCALE   27768
+#define COATLICUE_FLING_TICK          540
+#define COATLICUE_FLING_STRETCH       1500
+// The fire ring's flashes at CoatlicueRingTicks, as it shines at CoatlicueFlashTicks, the cog's
+// glows at CoatlicueGlowTicks, and the two coils of scaled water.
+#define COATLICUE_RINGS               4
+#define COATLICUE_FLASHES             3
+#define COATLICUE_GLOWS               3
+// As it shines the fire ring brightens COATLICUE_FLASH_SHADE_STEP a tick from
+// COATLICUE_FLASH_SHADE, to its full light from its fourth tick.
+#define COATLICUE_FLASH_SHADE         (-56)
+#define COATLICUE_FLASH_SHADE_STEP    16
+#define COATLICUE_COILS               2
+// Each coil leans forward by COATLICUE_COIL_TILT as it starts, the second at
+// COATLICUE_SECOND_COIL_START, and leans back COATLICUE_COIL_TILT_SPEED a tick.
+#define COATLICUE_COIL_TILT           3000
+#define COATLICUE_COIL_TILT_SPEED     22
+#define COATLICUE_SECOND_COIL_START   82
+// From COATLICUE_COIL_SHRINK_TICK the coils shrink away a 16th a tick from
+// COATLICUE_COIL_SHRINK_SCALE, the second from COATLICUE_SECOND_COIL_EXTRA more, each gone below a
+// quarter.
+#define COATLICUE_COIL_SHRINK_TICK    294
+#define COATLICUE_COIL_SHRINK_SCALE   75536
+#define COATLICUE_SECOND_COIL_EXTRA   26384
+// The healing's ticks after the summon, and how far toward blue it lifts the battle background.
+#define COATLICUE_WASH_TICKS          60
+#define COATLICUE_WASH_COGS           3
+#define COATLICUE_WASH_BLUE           11
 
-#define COATLICUE_TICKS 602 /* ticks of the summon after its opening */
+#define COATLICUE_TICKS               602 // ticks of the summon after its opening
 
-/* Coatlicue: the battle gives way to deep blue, where two coils of scaled water
-   turn and a ring of light flashes. From tick 210 a cog of light rises; a
-   white flash at 273 brings Coatlicue in as a cyan silhouette among rising
-   bubbles, and she takes her colours. The bubbles gather into a cloud that
-   spins, flashes three times and is flung away as she leaves; then three cogs
-   of blue light rise over the party, and each target flashes as it is healed. A
-   or B skips the summon.
-
-   Abilities: Coatlicue. */
+// Coatlicue: the battle gives way to deep blue, where two coils of scaled water turn and a ring of
+// light flashes. From tick 210 a cog of light rises; a white flash at 273 brings Coatlicue in as a
+// cyan silhouette among rising bubbles, and she takes her colours. The bubbles gather into a cloud
+// that spins, flashes three times and is flung away as she leaves; then three cogs of blue light
+// rise over the party, and each target flashes as it is healed. A or B skips the summon.
+//
+// Abilities: Coatlicue.
 void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 {
-	Uint8				*canvas;
+	Uint8               *canvas;
 	BATTLE_EFFECT_STATE *state;
-	Uint8				*sprites;
-	Uint8				*cellBuf = MapGridMetatileBuffer;
-	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
-	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
-	DRAW_RECTANGLE blit[2];
-	POINT2_D	   grid;
-	Sint32		   skip;
-	Uint16		  *table;
-	Sint32		   tick;
-	Sint32		   i;
-	Sint32		   k;
-	Sint32		   y;
-	Sint32		   lift;
-	Sint32		   color;
-	Sint32		   scale;
-	Sint32		   shade;
-	Sint32		   rise;
-	Sint32		   spin;
-	/* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-	Sint32		  zero;
-	Uint8		 *coilMesh = COATLICUE_COIL_MESH;
-	Sint16		  units[UNIT_MAX];
-	FIXED		  placement[4];
-	SCALE		  figureScale;
-	SCREEN_POINT  bubbleScreen;
-	MODEL_TEXTURE texture;
-	MODEL_TEXTURE washTexture;
-	SPR			 *sprite;
-	PARTICLE	 *bubble;
+	Uint8               *sprites;
+	Uint8               *cellBuf = MapGridMetatileBuffer;
+	// LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+	// * tick reserves and never touches; as one DRAW_RECTANGLE.
+	DRAW_RECTANGLE       blit[2];
+	POINT2_D             grid;
+	Sint32               skip;
+	Uint16              *table;
+	Sint32               tick;
+	Sint32               i;
+	Sint32               k;
+	Sint32               y;
+	Sint32               lift;
+	Sint32               color;
+	Sint32               scale;
+	Sint32               shade;
+	Sint32               rise;
+	Sint32               spin;
+	// FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses.
+	Sint32               zero;
+	Uint8               *coilMesh = COATLICUE_COIL_MESH;
+	Sint16               units[UNIT_MAX];
+	FIXED                placement[4];
+	SCALE                figureScale;
+	SCREEN_POINT         bubbleScreen;
+	MODEL_TEXTURE        texture;
+	MODEL_TEXTURE        washTexture;
+	SPR                 *sprite;
+	PARTICLE            *bubble;
 
-	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEffect;
+	canvas  = RamHeapSlots->battleCanvas;
+	state   = RamHeapSlots->battleEffect;
 	sprites = RamHeapSlots->battleSheet;
 	btEffectConfigureEffectDisplay();
 	btEffectStartCanvasLayer(0);
@@ -1539,28 +1683,28 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 	state->transferMode = CANVAS_COPY;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	y = -80;
-	for(tick = 0; tick != 27; tick++) {
-		y += 4;
-		REG_BG2X = y << 8;
+	for (tick = 0; tick != 27; tick++)
+	{
+		y        += 4;
+		REG_BG2X  = y << 8;
 		EFFECT_PRESENT_CANVAS(state);
 	}
 	zero = 0;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	blit[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
-	EFFECT_SET_TRANSFER(
-		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	table = state->backdropLines;
-	lift = -8;
+	lift  = -8;
 	color = 0;
-	for(i = 0; i != BATTLE_VIEW_TOP - 1; i++) {
+	for (i = 0; i != BATTLE_VIEW_TOP - 1; i++)
+	{
 		*table++ = color;
 	}
 	FILL_GRADIENT(table, i, lift, color);
 	sySetEvent(btEffectArmPaletteHBlankDMA, EVENT_PASS_VBLANK + 126);
 	skip = 0;
-	btMeshBuildCylinderBand(
-		COATLICUE_COIL_CORNERS, coilMesh, COATLICUE_COIL_SEGMENTS);
+	btMeshBuildCylinderBand(COATLICUE_COIL_CORNERS, coilMesh, COATLICUE_COIL_SEGMENTS);
 	units[0] = BATTLE_UNIT_LIST_END;
 	btActorSpawnObjectsForListStub(units, 0);
 	{
@@ -1571,502 +1715,586 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 		{
 			Uint8 *cells;
 
-			i = 0;
+			i     = 0;
 			cells = MapGridMetatileBuffer;
-			for(; i != COATLICUE_SPRITES; cells += OBJ_32X32_8BPP_BYTES, i++) {
-				sprite = btEffectSpriteCreateWithTiles(
-					32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
+			for (; i != COATLICUE_SPRITES; cells += OBJ_32X32_8BPP_BYTES, i++)
+			{
+				sprite = btEffectSpriteCreateWithTiles(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 				sprite->image.priority = 2;
-				state->sprites[i] = sprite;
-				syWordsCopy(
-					(void *)OBJ_TILES(sprite), cells, OBJ_32X32_8BPP_BYTES);
+				state->sprites[i]      = sprite;
+				syWordsCopy((void *)OBJ_TILES(sprite), cells, OBJ_32X32_8BPP_BYTES);
 			}
 		}
 	}
 	btGraphicsLoadGreyRamp();
 	btResourceLoadAndDecompress(RESOURCE_COG_TEXTURE, cellBuf, 0, 0);
 	btPictureMirrorIntoQuadrants(cellBuf, state->sheet + COATLICUE_COG, 64, 64);
-	btResourceLoadAndDecompress(
-		RESOURCE_SCALE_TEXTURE, state->sheet + COATLICUE_SCALES, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_SCALE_TEXTURE, state->sheet + COATLICUE_SCALES, 0, 0);
 	{
 		Uint8 *src = state->sheet + COATLICUE_BUBBLE_PICTURES;
 
 		btResourceLoadAndDecompress(RESOURCE_BUBBLE_ANIMATION_SHEET, src, 0, 0);
-		for(i = 0; i != BUBBLE_SHEET_BYTES; i++) {
+		for (i = 0; i != BUBBLE_SHEET_BYTES; i++)
+		{
 			state->sheet[COATLICUE_DIM_BUBBLE_PICTURES + i] = src[i] >> 1;
 		}
 	}
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cellBuf, 0, 0);
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
-		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
-			DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
-		IO_WRITE_HALFWORD);
+	                    DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON
+	                        | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
+	                    IO_WRITE_HALFWORD);
 	ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
-	REG_BG2PA = Q_8_8(0.5);
-	REG_BG2X = 0;
-	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	REG_BLDALPHA = EFFECT_BLEND_ADD;
-	for(tick = 0; tick != COATLICUE_TICKS; tick++) {
-		/* A 128th of a turn a tick. */
+	REG_BG2PA              = Q_8_8(0.5);
+	REG_BG2X               = 0;
+	REG_BLDCNT             = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+	REG_BLDALPHA           = EFFECT_BLEND_ADD;
+	for (tick = 0; tick != COATLICUE_TICKS; tick++)
+	{
+		// A 128th of a turn a tick.
 		spin = ((tick - 1) << 9) + TRIG_TURN / 128;
-		if((PerWork.repeat & (KEY_A | KEY_B)) && tick <= 581 && skip == 0) {
+		if ((PerWork.repeat & (KEY_A | KEY_B)) && tick <= 581 && skip == 0)
+		{
 			skip = 1;
 		}
-		/* Once skipped, the canvas whitens four levels a tick. */
-		if(skip > 0) {
+		// Once skipped, the canvas whitens four levels a tick.
+		if (skip > 0)
+		{
 			Sint32 *value = &state->transferValue;
-			Sint32	v = CANVAS_FILL_WORD(skip) << 2;
+			Sint32  v     = CANVAS_FILL_WORD(skip) << 2;
 
-			*value = v;
-			if(v > CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST)) {
+			*value        = v;
+			if (v > CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST))
+			{
 				*value = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
 			}
 			state->transferMode = CANVAS_COPY_AND_CLEAR;
-			if(++skip == COATLICUE_SKIP_TICKS + 1) {
+			if (++skip == COATLICUE_SKIP_TICKS + 1)
+			{
 				break;
 			}
 		}
-		if(tick == 0) {
-			for(i = 0; i != COATLICUE_BUBBLE_COUNT; i++) {
+		if (tick == 0)
+		{
+			for (i = 0; i != COATLICUE_BUBBLE_COUNT; i++)
+			{
 				BUBBLES[i].variant = -1;
 			}
-			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
+			for (i = 0; i != ARRAY_COUNT(state->particles); i++)
+			{
 				state->particles[i].variant = -1;
 			}
 			grid.x = toFIXED(88);
 			grid.y = toFIXED(36);
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
-		if(tick == 82) {
-			syWordsFillEntry(
-				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
+		if (tick == 82)
+		{
+			syWordsFillEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
 			sySoundPlayStub(SE_PSYNERGY_START);
 		}
-		if(tick == 210) {
-			syWordsFillEntry(
-				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
+		if (tick == 210)
+		{
+			syWordsFillEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
 			sySoundPlayStub(SE_PSYNERGY_START);
 		}
-		if(tick == 274) {
+		if (tick == 274)
+		{
 			sySoundPlayStub(SE_DJINNI_SET);
 		}
-		if(tick == 310) {
+		if (tick == 310)
+		{
 			sySoundPlayStub(SE_CURSE_FALL);
 		}
-		if(tick == 316) {
+		if (tick == 316)
+		{
 			sySoundPlayStub(SE_CAST);
 		}
-		if(tick == 466) {
+		if (tick == 466)
+		{
 			sySoundPlayStub(SE_SWIRL);
 		}
-		if(tick == 498) {
+		if (tick == 498)
+		{
 			sySoundPlayStub(SE_CAST);
 		}
-		if(tick == 503) {
+		if (tick == 503)
+		{
 			sySoundPlayStub(SE_CAST);
 		}
-		if(tick == 508) {
+		if (tick == 508)
+		{
 			sySoundPlayStub(SE_CAST);
 		}
-		if(tick == 520) {
+		if (tick == 520)
+		{
 			sySoundPlayStub(SE_POWER_UP);
 		}
-		if(tick == 540) {
+		if (tick == 540)
+		{
 			sySoundPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
 		}
-		/* The backdrop brightens a level every 32 ticks until it is 8 up; it
-		   flares from tick 300, settles back from 312, and brightens from
-		   540. */
-		/* DEAD: tick never reaches 1999999, so the test always passes; the ROM
-		   keeps its load and compare. */
-		if(tick <= 1999999) {
-			Uint16 *row = state->backdropLines;
-			Sint32	brightness = tick / 32 - 8;
+		// The backdrop brightens a level every 32 ticks until it is 8 up; it flares from tick 300,
+		// settles back from 312, and brightens from 540. DEAD: tick never reaches 1999999, so the
+		// test always passes; the ROM keeps its load and compare.
+		if (tick <= 1999999)
+		{
+			Uint16 *row        = state->backdropLines;
+			Sint32  brightness = tick / 32 - 8;
 
-			if(brightness > 8) {
+			if (brightness > 8)
+			{
 				brightness = 8;
 			}
 			color = 0;
-			for(i = 0; i != BATTLE_VIEW_TOP - 1; i++) {
+			for (i = 0; i != BATTLE_VIEW_TOP - 1; i++)
+			{
 				*row++ = color;
 			}
-			if(tick > 539) {
+			if (tick > 539)
+			{
 				brightness = (tick - 540) / 2 + 8;
-			} else if(tick > 311) {
+			}
+			else if (tick > 311)
+			{
 				brightness = COATLICUE_BACKDROP_FLARE - (tick - 312) / 4;
-				if(brightness <= 7) {
+				if (brightness <= 7)
+				{
 					brightness = 8;
 				}
-			} else if(tick > 299) {
+			}
+			else if (tick > 299)
+			{
 				brightness += (tick - 300) / 2;
-				if(brightness > COATLICUE_BACKDROP_FLARE) {
+				if (brightness > COATLICUE_BACKDROP_FLARE)
+				{
 					brightness = COATLICUE_BACKDROP_FLARE;
 				}
 			}
 			i = BATTLE_VIEW_TOP - 1;
 			FILL_GRADIENT(row, i, brightness, color);
 		}
-		/* From tick 282 every sprite colour is one cyan, brightening: her
-		   silhouette. */
-		if((Uint32)(tick - 282) <= 17) {
-			Sint32	green = (tick - 282) / 2 + 14;
-			Uint16 *dest = (Uint16 *)OBJ_PLTT;
-			Sint32	blue = tick - 253;
-			Uint32	color;
+		// From tick 282 every sprite colour is one cyan, brightening: her silhouette.
+		if ((Uint32)(tick - 282) <= 17)
+		{
+			Sint32  green = (tick - 282) / 2 + 14;
+			Uint16 *dest  = (Uint16 *)OBJ_PLTT;
+			Sint32  blue  = tick - 253;
+			Uint32  color;
 
-			if(green > RGB_LEVEL_MAX) {
+			if (green > RGB_LEVEL_MAX)
+			{
 				green = RGB_LEVEL_MAX;
 			}
-			if(blue > RGB_LEVEL_MAX) {
+			if (blue > RGB_LEVEL_MAX)
+			{
 				blue = RGB_LEVEL_MAX;
 			}
-			i = 0;
+			i     = 0;
 			color = RGB(0, green, blue);
-			for(; i != OBJ_PLTT_SIZE / 2; i++) {
+			for (; i != OBJ_PLTT_SIZE / 2; i++)
+			{
 				*dest++ = color;
 			}
 		}
-		/* From tick 300 every sprite colour steps two levels a tick toward
-		   Coatlicue's own, lifted by redLift, greenLift and blueLift: first to
-		   white, then to a pale cyan, then to her colours. */
-		if(tick > 299) {
-			Uint16 *src = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
-			Uint16 *dest = (Uint16 *)OBJ_PLTT;
-			Sint32	redLift = RGB_LEVEL_MAX;
-			Sint32	greenLift = RGB_LEVEL_MAX;
-			Sint32	blueLift = 15;
+		// From tick 300 every sprite colour steps two levels a tick toward Coatlicue's own, lifted
+		// by redLift, greenLift and blueLift: first to white, then to a pale cyan, then to her
+		// colours.
+		if (tick > 299)
+		{
+			Uint16 *src       = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
+			Uint16 *dest      = (Uint16 *)OBJ_PLTT;
+			Sint32  redLift   = RGB_LEVEL_MAX;
+			Sint32  greenLift = RGB_LEVEL_MAX;
+			Sint32  blueLift  = 15;
 
-			if(tick > 315) {
-				redLift = 4;
+			if (tick > 315)
+			{
+				redLift   = 4;
 				greenLift = 12;
-				blueLift = 16;
+				blueLift  = 16;
 			}
-			if(tick > 337) {
-				redLift = 0;
+			if (tick > 337)
+			{
+				redLift   = 0;
 				greenLift = 0;
-				blueLift = 0;
+				blueLift  = 0;
 			}
-			for(i = 0; i != OBJ_PLTT_SIZE / 2; i++, src++, dest++) {
-				Sint32 blue = RGB_BLUE(*dest);
-				Sint32 green = RGB_GREEN(*dest);
-				Sint32 red = RGB_RED(*dest);
-				Sint32 goalBlue = RGB_BLUE(*src) + blueLift;
+			for (i = 0; i != OBJ_PLTT_SIZE / 2; i++, src++, dest++)
+			{
+				Sint32 blue      = RGB_BLUE(*dest);
+				Sint32 green     = RGB_GREEN(*dest);
+				Sint32 red       = RGB_RED(*dest);
+				Sint32 goalBlue  = RGB_BLUE(*src) + blueLift;
 				Sint32 goalGreen = RGB_GREEN(*src) + greenLift;
-				Sint32 goalRed = RGB_RED(*src) + redLift;
+				Sint32 goalRed   = RGB_RED(*src) + redLift;
 
-				if(blue < goalBlue - 1) {
+				if (blue < goalBlue - 1)
+				{
 					blue += 2;
-				} else if(blue > goalBlue + 1) {
+				}
+				else if (blue > goalBlue + 1)
+				{
 					blue -= 2;
 				}
-				if(green < goalGreen - 1) {
+				if (green < goalGreen - 1)
+				{
 					green += 2;
-				} else if(green > goalGreen + 1) {
+				}
+				else if (green > goalGreen + 1)
+				{
 					green -= 2;
 				}
-				if(red < goalRed - 1) {
+				if (red < goalRed - 1)
+				{
 					red += 2;
-				} else if(red > goalRed + 1) {
+				}
+				else if (red > goalRed + 1)
+				{
 					red -= 2;
 				}
-				if(blue > RGB_LEVEL_MAX) {
+				if (blue > RGB_LEVEL_MAX)
+				{
 					blue = RGB_LEVEL_MAX;
 				}
-				if(green > RGB_LEVEL_MAX) {
+				if (green > RGB_LEVEL_MAX)
+				{
 					green = RGB_LEVEL_MAX;
 				}
-				if(red > RGB_LEVEL_MAX) {
+				if (red > RGB_LEVEL_MAX)
+				{
 					red = RGB_LEVEL_MAX;
 				}
-				if(blue < 0) {
+				if (blue < 0)
+				{
 					blue = 0;
 				}
-				if(green < 0) {
+				if (green < 0)
+				{
 					green = 0;
 				}
-				if(red < 0) {
+				if (red < 0)
+				{
 					red = 0;
 				}
 				*dest = RGB(red, green, blue);
 			}
 		}
-		/* From tick 520 her colours brighten, red fastest and blue slowest. */
-		if(tick > 519) {
-			Sint32	lift = tick - 520;
-			Uint16 *src = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
+		// From tick 520 her colours brighten, red fastest and blue slowest.
+		if (tick > 519)
+		{
+			Sint32  lift = tick - 520;
+			Uint16 *src  = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
 			Uint16 *dest = (Uint16 *)OBJ_PLTT;
-			Sint32	half;
+			Sint32  half;
 
-			i = 0;
+			i    = 0;
 			half = lift / 2;
-			for(; i != OBJ_PLTT_SIZE / 2; i++, src++, dest++) {
+			for (; i != OBJ_PLTT_SIZE / 2; i++, src++, dest++)
+			{
 				Sint32 blue;
 				Sint32 green;
 				Sint32 red;
 
-				red = RGB_RED(*src) + lift;
+				red   = RGB_RED(*src) + lift;
 				green = RGB_GREEN(*src) + half;
-				blue = RGB_BLUE(*src) + lift / 4;
+				blue  = RGB_BLUE(*src) + lift / 4;
 
-				if(red > RGB_LEVEL_MAX) {
+				if (red > RGB_LEVEL_MAX)
+				{
 					red = RGB_LEVEL_MAX;
 				}
-				if(green > RGB_LEVEL_MAX) {
+				if (green > RGB_LEVEL_MAX)
+				{
 					green = RGB_LEVEL_MAX;
 				}
-				if(blue > RGB_LEVEL_MAX) {
+				if (blue > RGB_LEVEL_MAX)
+				{
 					blue = RGB_LEVEL_MAX;
 				}
 				*dest = RGB(red, green, blue);
 			}
 		}
-		/* Her figure, twelve sprites, from tick 292: back in place at 360, it
-		   drifts a quarter pixel a tick from 396 to 507 and moves off 16
-		   pixels a tick from 540. */
-		if((Uint32)(tick - 292) <= 253) {
-			figureScale = CoatlicueUnitScale;
+		// Her figure, twelve sprites, from tick 292: back in place at 360, it drifts a quarter
+		// pixel a tick from 396 to 507 and moves off 16 pixels a tick from 540.
+		if ((Uint32)(tick - 292) <= 253)
+		{
+			figureScale  = CoatlicueUnitScale;
 			placement[1] = toFIXED(255);
 			placement[3] = zero;
-			if(tick == 360) {
+			if (tick == 360)
+			{
 				grid.y = toFIXED(36);
 			}
-			if((Uint32)(tick - 396) <= 111) {
+			if ((Uint32)(tick - 396) <= 111)
+			{
 				grid.y += toFIXED(1) / 4;
 			}
-			if(tick > 539) {
+			if (tick > 539)
+			{
 				grid.y += toFIXED(16);
 			}
-			for(i = 0; i != COATLICUE_SPRITES; i++) {
-				placement[0] =
-					toFIXED((i % COATLICUE_COLUMNS) * COATLICUE_SPRITE_SIZE) +
-					grid.x;
-				placement[2] =
-					toFIXED((i / COATLICUE_COLUMNS) * COATLICUE_SPRITE_SIZE) +
-					grid.y;
+			for (i = 0; i != COATLICUE_SPRITES; i++)
+			{
+				placement[0] = toFIXED((i % COATLICUE_COLUMNS) * COATLICUE_SPRITE_SIZE) + grid.x;
+				placement[2] = toFIXED((i / COATLICUE_COLUMNS) * COATLICUE_SPRITE_SIZE) + grid.y;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprites[i], placement, (Sint32 *)&figureScale, 0);
 			}
 		}
-		/* The stream, from tick 274. */
+		// The stream, from tick 274.
 		{
 			Sint32 d = tick - 274;
-			if((Uint32)d <= COATLICUE_STREAM_BUBBLES - 1) {
+			if ((Uint32)d <= COATLICUE_STREAM_BUBBLES - 1)
+			{
 				PARTICLE *bubble = &(&BUBBLES[COATLICUE_CLOUD_BUBBLES])[d];
 				{
-					Sint32 x = INTtoFIXED((syRandom() & 15) + 52);
+					Sint32 x  = INTtoFIXED((syRandom() & 15) + 52);
 
 					bubble->y = toFIXED(100);
 					bubble->x = x;
 				}
 				bubble->velocityX = ((syRandom() & 31) - 16) << 12;
 				bubble->velocityY = -((syRandom() & 15) + 8) << 12;
-				bubble->z = (syRandom() & 7) + 5;
-				bubble->variant = BUBBLE_FLOATING;
+				bubble->z         = (syRandom() & 7) + 5;
+				bubble->variant   = BUBBLE_FLOATING;
 			}
 		}
-		/* The cloud, at tick 310. */
-		if(tick == 310) {
+		// The cloud, at tick 310.
+		if (tick == 310)
+		{
 			PARTICLE *bubble = BUBBLES;
 
-			for(i = 0; i != COATLICUE_CLOUD_BUBBLES; i++, bubble++) {
-				bubble->x = INTtoFIXED((syRandom() & 63) + 28);
-				bubble->y = INTtoFIXED(syRandom() % 80 + 56);
+			for (i = 0; i != COATLICUE_CLOUD_BUBBLES; i++, bubble++)
+			{
+				bubble->x         = INTtoFIXED((syRandom() & 63) + 28);
+				bubble->y         = INTtoFIXED(syRandom() % 80 + 56);
 				bubble->velocityX = ((syRandom() & 31) - 16) << 12;
 				bubble->velocityY = (8 - (syRandom() & 31)) << 12;
-				bubble->z = (syRandom() & 7) + 5;
-				bubble->variant = BUBBLE_FLOATING;
+				bubble->z         = (syRandom() & 7) + 5;
+				bubble->variant   = BUBBLE_FLOATING;
 			}
 		}
-		for(k = 0; k != COATLICUE_BURSTS; k++) {
-			if(tick == CoatlicueBurstTicks[k]) {
-				for(i = 0; i != COATLICUE_BURST_BUBBLES; i++) {
+		for (k = 0; k != COATLICUE_BURSTS; k++)
+		{
+			if (tick == CoatlicueBurstTicks[k])
+			{
+				for (i = 0; i != COATLICUE_BURST_BUBBLES; i++)
+				{
 					PARTICLE *bubble =
-						&state->particles[(k % COATLICUE_BURSTS) *
-								COATLICUE_BURST_BUBBLES +
-							i];
+						&state->particles[(k % COATLICUE_BURSTS) * COATLICUE_BURST_BUBBLES + i];
 
-					bubble->x = toFIXED(syRandom() % CoatlicueBurstSpreadX[k] +
-						CoatlicueBurstX[k]);
-					bubble->y = toFIXED((syRandom() & 3) +
-						i * CoatlicueBurstSpacingY[k] + CoatlicueBurstY[k]);
-					bubble->velocityX =
-						CoatlicueBurstVelocityX[k] * (toFIXED(1) / 16);
-					bubble->velocityY =
-						CoatlicueBurstVelocityY[k] * (toFIXED(1) / 16);
-					bubble->z = toFIXED((syRandom() & 3) + CoatlicueBurstZ[k]);
-					bubble->velocityZ =
-						CoatlicueBurstVelocityZ[k] * (toFIXED(1) / 64);
-					bubble->variant = zero;
+					bubble->x = toFIXED(syRandom() % CoatlicueBurstSpreadX[k] + CoatlicueBurstX[k]);
+					bubble->y = toFIXED((syRandom() & 3) + i * CoatlicueBurstSpacingY[k]
+					                    + CoatlicueBurstY[k]);
+					bubble->velocityX = CoatlicueBurstVelocityX[k] * (toFIXED(1) / 16);
+					bubble->velocityY = CoatlicueBurstVelocityY[k] * (toFIXED(1) / 16);
+					bubble->z         = toFIXED((syRandom() & 3) + CoatlicueBurstZ[k]);
+					bubble->velocityZ = CoatlicueBurstVelocityZ[k] * (toFIXED(1) / 64);
+					bubble->variant   = zero;
 				}
 			}
 		}
-		/* Until tick 360 the bubbles rise on the canvas; then the cloud's turn
-		   as one body, which spins from 454, flips at 518 and is flung up at
-		   540. */
-		if(tick <= 359) {
+		// Until tick 360 the bubbles rise on the canvas; then the cloud's turn as one body, which
+		// spins from 454, flips at 518 and is flung up at 540.
+		if (tick <= 359)
+		{
 			bubble = BUBBLES;
 
-			for(i = 0; i != COATLICUE_BUBBLE_COUNT; i++, bubble++) {
-				if(bubble->variant >= 0) {
+			for (i = 0; i != COATLICUE_BUBBLE_COUNT; i++, bubble++)
+			{
+				if (bubble->variant >= 0)
+				{
 					DRAW_BUBBLE(bubble);
 				}
 			}
-		} else {
+		}
+		else
+		{
 			syInitMatrix();
 			syTranslate(0, 0, toFIXED(256));
-			if(tick > 539) {
-				syScale(tick * COATLICUE_FLING_STRETCH -
-						(COATLICUE_FLING_TICK * COATLICUE_FLING_STRETCH -
-							toFIXED(1) / 16),
-					toFIXED(1), toFIXED(1));
-			} else if(tick > 517) {
+			if (tick > 539)
+			{
+				syScale(tick * COATLICUE_FLING_STRETCH
+				            - (COATLICUE_FLING_TICK * COATLICUE_FLING_STRETCH - toFIXED(1) / 16),
+				        toFIXED(1),
+				        toFIXED(1));
+			}
+			else if (tick > 517)
+			{
 				syScale(0, 0, toFIXED(1));
-			} else if(tick > 485) {
-				Sint32 scale =
-					518 * (toFIXED(1) / 32) - tick * (toFIXED(1) / 32);
+			}
+			else if (tick > 485)
+			{
+				Sint32 scale = 518 * (toFIXED(1) / 32) - tick * (toFIXED(1) / 32);
 
 				syScale(scale, scale, toFIXED(1));
 			}
-			if(tick > 539) {
+			if (tick > 539)
+			{
 				syRotY(tick * (TRIG_TURN / 64));
-			} else if(tick > 517) {
+			}
+			else if (tick > 517)
+			{
 				syRotY(TRIG_TURN);
 				syRotX(DEGtoANG(180));
-			} else if(tick > 453) {
-				/* A 64th of a turn a tick, rocking as it turns. */
+			}
+			else if (tick > 453)
+			{
+				// A 64th of a turn a tick, rocking as it turns.
 				Sint32 a = (tick - 454) << 10;
 
 				syRotY(a);
 				syRotX(sySin(a) >> 3);
 			}
-			syScale(COATLICUE_CLOUD_WIDTH_SCALE, COATLICUE_CLOUD_HEIGHT_SCALE,
-				COATLICUE_CLOUD_DEPTH_SCALE);
-			if(tick == 360) {
+			syScale(COATLICUE_CLOUD_WIDTH_SCALE,
+			        COATLICUE_CLOUD_HEIGHT_SCALE,
+			        COATLICUE_CLOUD_DEPTH_SCALE);
+			if (tick == 360)
+			{
 				PARTICLE *bubble;
 
-				if(skip == 0) {
-					EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
-						CANVAS_FADE_THREE_QUARTERS);
+				if (skip == 0)
+				{
+					EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 				}
 				bubble = BUBBLES;
-				for(i = 0; i != COATLICUE_BUBBLE_COUNT; i++, bubble++) {
+				for (i = 0; i != COATLICUE_BUBBLE_COUNT; i++, bubble++)
+				{
 					bubble->variant = syRandom() & 3;
-					SET_POSITION(bubble, toFIXED(syRandom() % 160 - 80),
-						INTtoFIXED(syRandom() % 160 + 48),
-						toFIXED(syRandom() % 160 - 80));
+					SET_POSITION(bubble,
+					             toFIXED(syRandom() % 160 - 80),
+					             INTtoFIXED(syRandom() % 160 + 48),
+					             toFIXED(syRandom() % 160 - 80));
 					bubble->velocityX = zero;
-					/* Each rises half a pixel to a pixel and a half a tick,
-					   and a pixel more for the first kind, half as much for
-					   each after. */
-					bubble->velocityY = (-((syRandom() & 63) + 32) << 10) -
-						(1 << (16 - bubble->variant));
+					// Each rises half a pixel to a pixel and a half a tick, and a pixel more for
+					// the first kind, half as much for each after.
+					bubble->velocityY =
+						(-((syRandom() & 63) + 32) << 10) - (1 << (16 - bubble->variant));
 					bubble->velocityZ = syRandom();
 				}
 			}
-			if(tick == 540) {
+			if (tick == 540)
+			{
 				PARTICLE *bubble = BUBBLES;
 
-				i = 0;
-				for(; i != COATLICUE_BUBBLE_COUNT; i++, bubble++) {
-					bubble->y = zero;
+				i                = 0;
+				for (; i != COATLICUE_BUBBLE_COUNT; i++, bubble++)
+				{
+					bubble->y         = zero;
 					bubble->velocityY = -((syRandom() & 63) + 32) << 15;
 				}
 			}
 			{
 				bubble = BUBBLES;
 
-				for(i = 0; i != COATLICUE_CLOUD_BUBBLES; i++, bubble++) {
+				for (i = 0; i != COATLICUE_CLOUD_BUBBLES; i++, bubble++)
+				{
 					Sint32 n;
 
-					if(bubble->variant < 0) {
+					if (bubble->variant < 0)
+					{
 						continue;
 					}
 					btEffectPosProjectPoint(bubble, &bubbleScreen);
 					bubbleScreen.depth =
-						FIXED_INTEGER_PART(
-							syScreenPointCoordinates(&bubbleScreen)[2]) -
-						COATLICUE_CLOUD_NEAR_DEPTH;
-					n = bubbleScreen.depth * 6 / COATLICUE_CLOUD_DEPTH_STEP +
-						CoatlicuePictureBias[bubble->variant];
-					if(n < 0) {
+						FIXED_INTEGER_PART(syScreenPointCoordinates(&bubbleScreen)[2])
+						- COATLICUE_CLOUD_NEAR_DEPTH;
+					n = bubbleScreen.depth * 6 / COATLICUE_CLOUD_DEPTH_STEP
+					  + CoatlicuePictureBias[bubble->variant];
+					if (n < 0)
+					{
 						n = 0;
 					}
-					if(n > BUBBLE_PICTURE_COUNT - 1) {
+					if (n > BUBBLE_PICTURE_COUNT - 1)
+					{
 						n = BUBBLE_PICTURE_COUNT - 1;
 					}
 					{
-						Sint32 x = FIXED_INTEGER_PART(
-							syScreenPointCoordinates(&bubbleScreen)[0]);
+						Sint32 x = FIXED_INTEGER_PART(syScreenPointCoordinates(&bubbleScreen)[0]);
 
-						bubbleScreen.y = FIXED_INTEGER_PART(
-							syScreenPointCoordinates(&bubbleScreen)[1]);
+						bubbleScreen.y =
+							FIXED_INTEGER_PART(syScreenPointCoordinates(&bubbleScreen)[1]);
 						bubbleScreen.x = x + 60;
 					}
-					if(tick > 539) {
+					if (tick > 539)
+					{
 						bubbleScreen.y = bubbleScreen.y + (tick << 4) - 8608;
-					} else if(tick > 517) {
+					}
+					else if (tick > 517)
+					{
 						bubbleScreen.y = bubbleScreen.y + 16;
-					} else if(tick <= 453) {
+					}
+					else if (tick <= 453)
+					{
 						bubbleScreen.y = bubbleScreen.y + 80;
-					} else {
+					}
+					else
+					{
 						bubbleScreen.y = bubbleScreen.y - tick + 534;
 					}
-					if(bubble->variant <= 1) {
-						BLIT_BUBBLE(COATLICUE_BUBBLE_PICTURES, n,
-							bubbleScreen.x, bubbleScreen.y);
-					} else {
-						BLIT_BUBBLE(COATLICUE_DIM_BUBBLE_PICTURES, n,
-							bubbleScreen.x, bubbleScreen.y);
+					if (bubble->variant <= 1)
+					{
+						BLIT_BUBBLE(COATLICUE_BUBBLE_PICTURES, n, bubbleScreen.x, bubbleScreen.y);
 					}
-					if(tick <= 453 || tick >= i / 16 + 540) {
+					else
+					{
+						BLIT_BUBBLE(
+							COATLICUE_DIM_BUBBLE_PICTURES, n, bubbleScreen.x, bubbleScreen.y);
+					}
+					if (tick <= 453 || tick >= i / 16 + 540)
+					{
 						bubble->y += bubble->velocityY;
 					}
 				}
 			}
 		}
-		/* Each burst rises as a column, its bubbles stacked from the lowest and
-		   swaying, until its last has left the top. */
-		for(k = 0; k != COATLICUE_BURSTS; k++) {
+		// Each burst rises as a column, its bubbles stacked from the lowest and swaying, until its
+		// last has left the top.
+		for (k = 0; k != COATLICUE_BURSTS; k++)
+		{
 			FIXED top = 0;
 
-			for(i = 0; i != COATLICUE_BURST_BUBBLES; i++) {
-				PARTICLE *step =
-					&state->particles[k * COATLICUE_BURST_BUBBLES + i];
+			for (i = 0; i != COATLICUE_BURST_BUBBLES; i++)
+			{
+				PARTICLE *step = &state->particles[k * COATLICUE_BURST_BUBBLES + i];
 
-				if(state->particles[k * COATLICUE_BURST_BUBBLES +
-							COATLICUE_BURST_BUBBLES - 1]
-						.variant >= 0) {
-					Sint32 n =
-						BUBBLE_PICTURE_COUNT - 1 - FIXED_INTEGER_PART(step->z);
-					Sint32 x = FIXEDtoINT(step->x +
-						(sySin((tick - (i % COATLICUE_BURST_BUBBLES) * 8) *
-							 (TRIG_TURN / 64))
-							<< 2));
+				if (state->particles[k * COATLICUE_BURST_BUBBLES + COATLICUE_BURST_BUBBLES - 1]
+				        .variant
+				    >= 0)
+				{
+					Sint32 n = BUBBLE_PICTURE_COUNT - 1 - FIXED_INTEGER_PART(step->z);
+					Sint32 x = FIXEDtoINT(
+						step->x
+						+ (sySin((tick - (i % COATLICUE_BURST_BUBBLES) * 8) * (TRIG_TURN / 64))
+					       << 2));
 
-					if(i == 0) {
+					if (i == 0)
+					{
 						top = step->y;
 					}
-					if(n < 0) {
+					if (n < 0)
+					{
 						n = 0;
 					}
 					{
-						Uint8 *src = state->sheet +
-							COATLICUE_DIM_BUBBLE_PICTURES +
-							CoatlicuePictures[n];
-						Uint8  w = CoatlicuePictureWidths[n];
+						Uint8 *src =
+							state->sheet + COATLICUE_DIM_BUBBLE_PICTURES + CoatlicuePictures[n];
+						Uint8  w  = CoatlicuePictureWidths[n];
 						Sint32 x0 = x - (w >> 1);
 						Sint32 y0 = FIXEDtoINT(top);
-						Uint8  h = CoatlicuePictureHeights[n];
+						Uint8  h  = CoatlicuePictureHeights[n];
 
 						blit[0](canvas, src, x0, y0 - (h >> 1), w, h);
 					}
-					btParticleAdvanceWithGravity3D(
-						step, PARTICLE_DAMPING_NONE, 0);
-					if(step->z < 0) {
+					btParticleAdvanceWithGravity3D(step, PARTICLE_DAMPING_NONE, 0);
+					if (step->z < 0)
+					{
 						step->z = zero;
 					}
-					if(i == COATLICUE_BURST_BUBBLES - 1 &&
-						step->y < -toFIXED(CoatlicuePictureHeights[n])) {
+					if (i == COATLICUE_BURST_BUBBLES - 1
+					    && step->y < -toFIXED(CoatlicuePictureHeights[n]))
+					{
 						step->variant = -1;
 					}
 					top = top + step->z + toFIXED(8);
@@ -2074,57 +2302,62 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		{
-			void		 *verts;
-			Sint32		  cogTick;
+			void         *verts;
+			Sint32        cogTick;
 			RENDER_MODEL *model;
 
-			verts = syHeapAllocateEWRAM(512);
-			model = btRenderAllocateModelList(1);
-			model->texture = &texture;
-			texture.logWidth = 7;
+			verts             = syHeapAllocateEWRAM(512);
+			model             = btRenderAllocateModelList(1);
+			model->texture    = &texture;
+			texture.logWidth  = 7;
 			texture.logHeight = 7;
-			model->mesh = BattleEffectLargeSquareMesh;
-			model->vertices = verts;
-			/* The cog, from tick 210: it rises and grows as it fades in,
-			   spinning, then from 274 rises and swells again, leaning back, and
-			   from 310 fades away. */
-			cogTick = tick - COATLICUE_COG_TICK;
-			if((Uint32)cogTick <= 107) {
+			model->mesh       = BattleEffectLargeSquareMesh;
+			model->vertices   = verts;
+			// The cog, from tick 210: it rises and grows as it fades in, spinning, then from 274
+			// rises and swells again, leaning back, and from 310 fades away.
+			cogTick           = tick - COATLICUE_COG_TICK;
+			if ((Uint32)cogTick <= 107)
+			{
 				Sint32 pitch;
 
-				rise = tick * (toFIXED(3) / 8) - toFIXED(315) / 4;
+				rise  = tick * (toFIXED(3) / 8) - toFIXED(315) / 4;
 				pitch = COATLICUE_TILT;
-				if(rise > toFIXED(24)) {
+				if (rise > toFIXED(24))
+				{
 					rise = toFIXED(24);
 				}
-				scale = (tick - COATLICUE_COG_TICK) * COATLICUE_COG_GROWTH +
-					toFIXED(1) / 4;
-				if(scale > COATLICUE_COG_SCALE) {
+				scale = (tick - COATLICUE_COG_TICK) * COATLICUE_COG_GROWTH + toFIXED(1) / 4;
+				if (scale > COATLICUE_COG_SCALE)
+				{
 					scale = COATLICUE_COG_SCALE;
 				}
-				if(tick >= COATLICUE_COG_SWELL_TICK) {
+				if (tick >= COATLICUE_COG_SWELL_TICK)
+				{
 					rise = tick * (toFIXED(1) / 2) - toFIXED(113);
-					if(rise > toFIXED(32)) {
+					if (rise > toFIXED(32))
+					{
 						rise = toFIXED(32);
 					}
-					pitch = COATLICUE_TILT + COATLICUE_COG_SWELL_TICK * 64 -
-						(tick << 6);
-					if(pitch < COATLICUE_TILT_MIN) {
+					pitch = COATLICUE_TILT + COATLICUE_COG_SWELL_TICK * 64 - (tick << 6);
+					if (pitch < COATLICUE_TILT_MIN)
+					{
 						pitch = COATLICUE_TILT_MIN;
 					}
-					scale = scale +
-						(tick - COATLICUE_COG_SWELL_TICK) * COATLICUE_COG_SWELL;
-					if(scale > COATLICUE_COG_SCALE_MAX) {
+					scale = scale + (tick - COATLICUE_COG_SWELL_TICK) * COATLICUE_COG_SWELL;
+					if (scale > COATLICUE_COG_SCALE_MAX)
+					{
 						scale = COATLICUE_COG_SCALE_MAX;
 					}
 				}
-				model->kind = MODEL_SHADED_MAX;
+				model->kind    = MODEL_SHADED_MAX;
 				texture.pixels = state->sheet + COATLICUE_COG;
-				shade = (tick << 3) - (COATLICUE_COG_TICK + 8) * 8;
-				if(shade > 0) {
+				shade          = (tick << 3) - (COATLICUE_COG_TICK + 8) * 8;
+				if (shade > 0)
+				{
 					shade = 0;
 				}
-				if(tick >= COATLICUE_COG_FADE_TICK) {
+				if (tick >= COATLICUE_COG_FADE_TICK)
+				{
 					shade = (COATLICUE_COG_FADE_TICK - tick) << 3;
 				}
 				model->shade = shade;
@@ -2132,37 +2365,38 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 				syTranslate(0, rise, 0);
 				syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 				syMatrixScaleUniform(scale);
-				if(tick < COATLICUE_COG_SWELL_TICK) {
+				if (tick < COATLICUE_COG_SWELL_TICK)
+				{
 					syRotZ(spin - COATLICUE_COG_ROLL);
 				}
 				syRotX(pitch);
 				syRotY(spin);
-				btRenderTransformVertices(
-					BattleEffectGroundSquareCorners, verts, 64);
+				btRenderTransformVertices(BattleEffectGroundSquareCorners, verts, 64);
 				btRenderDrawModelList(model);
 			}
-			/* A white flash from tick 273, four levels dimmer each tick. */
-			if((Uint32)(tick - 273) <= 7 && skip == 0) {
-				Sint32	d = tick - 273;
+			// A white flash from tick 273, four levels dimmer each tick.
+			if ((Uint32)(tick - 273) <= 7 && skip == 0)
+			{
+				Sint32  d = tick - 273;
 				Sint32 *value;
 
 				state->transferMode = CANVAS_COPY_AND_CLEAR;
-				value = &state->transferValue;
-				*value = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST) -
-					(CANVAS_FILL_WORD(d) << 2);
+				value               = &state->transferValue;
+				*value = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST) - (CANVAS_FILL_WORD(d) << 2);
 			}
-			if(tick == 281 && skip == 0) {
-				EFFECT_SET_TRANSFER(
-					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+			if (tick == 281 && skip == 0)
+			{
+				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 			}
-			/* The fire ring, from tick 274, growing and spinning, fading from
-			   294. */
-			if((Uint32)(tick - 274) <= 27) {
-				scale = (tick - 266) * (toFIXED(1) / 32);
+			// The fire ring, from tick 274, growing and spinning, fading from 294.
+			if ((Uint32)(tick - 274) <= 27)
+			{
+				scale          = (tick - 266) * (toFIXED(1) / 32);
 				texture.pixels = cellBuf;
-				model->kind = MODEL_SHADED_ADDITIVE;
-				shade = 0;
-				if(tick > 293) {
+				model->kind    = MODEL_SHADED_ADDITIVE;
+				shade          = 0;
+				if (tick > 293)
+				{
 					shade = (294 - tick) << 3;
 				}
 				model->shade = shade;
@@ -2171,63 +2405,71 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 				syMatrixScaleUniform(scale);
 				syRotX(COATLICUE_TILT);
 				syRotY(tick * (TRIG_TURN / 128));
-				btRenderTransformVertices(
-					BattleEffectGroundSquareCorners, verts, 64);
+				btRenderTransformVertices(BattleEffectGroundSquareCorners, verts, 64);
 				btRenderDrawModelList(model);
 			}
-			/* The fire ring flashes outward for ten ticks from each of its
-			   ticks, the last two about her. */
-			if(tick > 80) {
-				for(i = 0; i != COATLICUE_RINGS; i++) {
+			// The fire ring flashes outward for ten ticks from each of its ticks, the last two
+			// about her.
+			if (tick > 80)
+			{
+				for (i = 0; i != COATLICUE_RINGS; i++)
+				{
 					Sint32 startTick = CoatlicueRingTicks[i];
 
-					if(tick > startTick && tick < startTick + 10) {
+					if (tick > startTick && tick < startTick + 10)
+					{
 						Sint32 d;
 
 						texture.pixels = MapGridMetatileBuffer;
-						shade = MODEL_SHADE_INVISIBLE / 4;
-						d = tick - startTick;
-						model->kind = MODEL_SHADED_MAX;
-						model->shade = shade;
+						shade          = MODEL_SHADE_INVISIBLE / 4;
+						d              = tick - startTick;
+						model->kind    = MODEL_SHADED_MAX;
+						model->shade   = shade;
 						syInitMatrix();
 						scale = d * (toFIXED(1) / 8);
-						if(i > 1) {
+						if (i > 1)
+						{
 							Sint32 rise = -toFIXED(44);
 
-							/* From tick 540 they move off with her. */
-							if(tick > 539) {
+							// From tick 540 they move off with her.
+							if (tick > 539)
+							{
 								rise += INTtoFIXED((tick - 539) * 16);
 							}
 							syTranslate(-toFIXED(4), rise, 0);
 							syScale(scale, scale, scale);
-						} else {
+						}
+						else
+						{
 							syScale(scale, d * (toFIXED(1) / 4), scale);
 						}
 						syRotX(DEGtoANG(90));
 						syRotY(tick * (TRIG_TURN / 128));
-						btRenderTransformVertices(
-							BattleEffectGroundSquareCorners, verts, 64);
+						btRenderTransformVertices(BattleEffectGroundSquareCorners, verts, 64);
 						btRenderDrawModelList(model);
 					}
 				}
 			}
-			/* At each of its flash ticks the canvas flashes and the fire ring
-			   shines about her, shrinking, turned a quarter more each time. */
-			if(tick > 80) {
-				for(i = 0; i != COATLICUE_FLASHES; i++) {
-					if(tick == CoatlicueFlashTicks[i]) {
-						syWordsFillEntry(canvas, CANVAS_BYTES,
-							CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
+			// At each of its flash ticks the canvas flashes and the fire ring shines about her,
+			// shrinking, turned a quarter more each time.
+			if (tick > 80)
+			{
+				for (i = 0; i != COATLICUE_FLASHES; i++)
+				{
+					if (tick == CoatlicueFlashTicks[i])
+					{
+						syWordsFillEntry(
+							canvas, CANVAS_BYTES, CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
 					}
-					if(tick > CoatlicueFlashTicks[i] &&
-						tick < CoatlicueFlashTicks[i] + 10) {
-						Sint32 d = tick - CoatlicueFlashTicks[i];
-						scale = toFIXED(5) / 4 - d * (toFIXED(1) / 8);
+					if (tick > CoatlicueFlashTicks[i] && tick < CoatlicueFlashTicks[i] + 10)
+					{
+						Sint32 d       = tick - CoatlicueFlashTicks[i];
+						scale          = toFIXED(5) / 4 - d * (toFIXED(1) / 8);
 						texture.pixels = cellBuf;
-						model->kind = MODEL_SHADED_ADDITIVE;
-						shade = d * COATLICUE_FLASH_SHADE_STEP +
-							COATLICUE_FLASH_SHADE;
-						if(shade > 0) {
+						model->kind    = MODEL_SHADED_ADDITIVE;
+						shade          = d * COATLICUE_FLASH_SHADE_STEP + COATLICUE_FLASH_SHADE;
+						if (shade > 0)
+						{
 							shade = 0;
 						}
 						model->shade = shade;
@@ -2237,130 +2479,152 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 						syRotZ(i * (DEGtoANG(90)) + DEGtoANG(45));
 						syRotX(-TRIG_TURN / 16);
 						syRotY(tick * (TRIG_TURN / 128));
-						btRenderTransformVertices(
-							BattleEffectGroundSquareCorners, verts, 64);
+						btRenderTransformVertices(BattleEffectGroundSquareCorners, verts, 64);
 						btRenderDrawModelList(model);
 					}
 				}
 			}
-			/* The cog glows about her from each of its glow ticks, growing. */
-			if(tick > 80) {
-				/* UB: the loop reads three glow ticks from a table of one; the
-				   two after it are the coils' bytes, read as ticks 20992 and
-				   4096, which never come. */
+			// The cog glows about her from each of its glow ticks, growing.
+			if (tick > 80)
+			{
+				// UB: the loop reads three glow ticks from a table of one; the two after it are the
+				// coils' bytes, read as ticks 20992 and 4096, which never come.
 #if FIX_COATLICUE_GLOW_OVERRUN
-				for(i = 0; i != 1; i++) {
+				for (i = 0; i != 1; i++)
+				{
 #else
-				for(i = 0; i != COATLICUE_GLOWS; i++) {
+				for (i = 0; i != COATLICUE_GLOWS; i++)
+				{
 #endif
 					Sint32 startTick = CoatlicueGlowTicks[i];
 
-					if(tick > startTick && tick < startTick + 100) {
-						rise = -toFIXED(44);
+					if (tick > startTick && tick < startTick + 100)
+					{
+						rise  = -toFIXED(44);
 						scale = (tick - startTick) * COATLICUE_GLOW_GROWTH;
-						if(scale > toFIXED(1) - 1) {
+						if (scale > toFIXED(1) - 1)
+						{
 							scale = toFIXED(1);
 						}
 						texture.pixels = state->sheet + COATLICUE_COG;
-						shade = MODEL_SHADE_INVISIBLE / 4;
-						model->kind = MODEL_SHADED_MAX;
-						model->shade = shade;
+						shade          = MODEL_SHADE_INVISIBLE / 4;
+						model->kind    = MODEL_SHADED_MAX;
+						model->shade   = shade;
 						syInitMatrix();
-						/* From tick 540 it moves off with her. */
-						if(tick > 539) {
+						// From tick 540 it moves off with her.
+						if (tick > 539)
+						{
 							rise = INTtoFIXED((tick - 539) * 16) - toFIXED(44);
 						}
 						syTranslate(-toFIXED(4), rise, 0);
 						syScale(scale, scale / 2, scale);
 						syRotX(DEGtoANG(90));
 						syRotY(tick * (TRIG_TURN / 32));
-						btRenderTransformVertices(
-							BattleEffectGroundSquareCorners, verts, 64);
+						btRenderTransformVertices(BattleEffectGroundSquareCorners, verts, 64);
 						btRenderDrawModelList(model);
 					}
 				}
 			}
-			/* The coils, bands of scaled water about her: each grows from its
-			   start, the second sweeping in from the left and fading in; from
-			   tick 210 they shrink with the cog's rise, from 274 swell and
-			   fade, and from 294 shrink away. */
-			texture.logWidth = 7;
+			// The coils, bands of scaled water about her: each grows from its start, the second
+			// sweeping in from the left and fading in; from tick 210 they shrink with the cog's
+			// rise, from 274 swell and fade, and from 294 shrink away.
+			texture.logWidth  = 7;
 			texture.logHeight = 4;
-			texture.pixels = state->sheet + COATLICUE_SCALES;
-			model->kind = MODEL_SHADED_ADDITIVE;
-			model->mesh = coilMesh;
-			model->vertices = verts;
-			model->scrollU = zero;
-			model->scrollV = zero;
-			for(i = 0; i != COATLICUE_COILS; i++) {
-				if(tick < CoatlicueCoilStarts[i]) {
+			texture.pixels    = state->sheet + COATLICUE_SCALES;
+			model->kind       = MODEL_SHADED_ADDITIVE;
+			model->mesh       = coilMesh;
+			model->vertices   = verts;
+			model->scrollU    = zero;
+			model->scrollV    = zero;
+			for (i = 0; i != COATLICUE_COILS; i++)
+			{
+				if (tick < CoatlicueCoilStarts[i])
+				{
 					continue;
 				}
-				if(tick < COATLICUE_COIL_SHRINK_TICK) {
-					scale = CoatlicueCoilScales[i] +
-						(tick - CoatlicueCoilStarts[i]) *
-							CoatlicueCoilGrowth[i];
-					if(scale > CoatlicueCoilMaxScales[i]) {
+				if (tick < COATLICUE_COIL_SHRINK_TICK)
+				{
+					scale = CoatlicueCoilScales[i]
+					      + (tick - CoatlicueCoilStarts[i]) * CoatlicueCoilGrowth[i];
+					if (scale > CoatlicueCoilMaxScales[i])
+					{
 						scale = CoatlicueCoilMaxScales[i];
 					}
-					if(tick > 209) {
+					if (tick > 209)
+					{
 						scale -= cogTick * CoatlicueCoilGrowth[i];
 					}
 					syInitMatrix();
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
-					if(tick > 273) {
+					if (tick > 273)
+					{
 						scale = scale + (tick - 274) * (toFIXED(1) / 8);
 					}
 					syMatrixScaleUniform(scale);
-					if(i == 0) {
-						if(tick > 209) {
+					if (i == 0)
+					{
+						if (tick > 209)
+						{
 							Sint32 distance = cogTick;
 
-							if(distance > 48) {
+							if (distance > 48)
+							{
 								distance = 48;
 							}
 							syTranslate(0, toFIXED(distance), 0);
 						}
 						syRotZ(CoatlicueCoilRolls[i] - (tick << 8));
 						shade = MODEL_SHADE_INVISIBLE / 4;
-					} else {
+					}
+					else
+					{
 						Sint32 x = -48;
 
-						if(tick > 127) {
+						if (tick > 127)
+						{
 							x = tick - 176;
 						}
-						if(x > -16) {
+						if (x > -16)
+						{
 							x = -16;
 						}
 						syTranslate(toFIXED(x), 0, 0);
 						syRotZ(CoatlicueCoilRolls[i] + (tick << 8));
-						if(tick > 209) {
+						if (tick > 209)
+						{
 							syRotZ((tick - 210) * (TRIG_TURN / 256));
 						}
-						shade = ((tick - CoatlicueCoilStarts[i]) << 2) +
-							MODEL_SHADE_INVISIBLE;
-						if(shade > MODEL_SHADE_INVISIBLE / 4) {
+						shade = ((tick - CoatlicueCoilStarts[i]) << 2) + MODEL_SHADE_INVISIBLE;
+						if (shade > MODEL_SHADE_INVISIBLE / 4)
+						{
 							shade = MODEL_SHADE_INVISIBLE / 4;
 						}
 					}
-					if(tick > 273) {
+					if (tick > 273)
+					{
 						shade = 1080 - (tick << 2);
-						if(i == 0) {
+						if (i == 0)
+						{
 							syRotZ((274 - tick) * (TRIG_TURN / 64));
-						} else {
+						}
+						else
+						{
 							syRotZ((tick - 274) * (TRIG_TURN / 128));
 						}
 					}
-				} else {
+				}
+				else
+				{
 					shade = (tick << 2) - (i << 3) - 1240;
-					if(shade > MODEL_SHADE_INVISIBLE / 4) {
+					if (shade > MODEL_SHADE_INVISIBLE / 4)
+					{
 						shade = MODEL_SHADE_INVISIBLE / 4;
 					}
-					scale = i * COATLICUE_SECOND_COIL_EXTRA -
-						tick * (toFIXED(1) / 16) +
-						(COATLICUE_COIL_SHRINK_TICK * (toFIXED(1) / 16) +
-							COATLICUE_COIL_SHRINK_SCALE);
-					if(scale < toFIXED(1) / 4) {
+					scale = i * COATLICUE_SECOND_COIL_EXTRA - tick * (toFIXED(1) / 16)
+					      + (COATLICUE_COIL_SHRINK_TICK * (toFIXED(1) / 16)
+					         + COATLICUE_COIL_SHRINK_SCALE);
+					if (scale < toFIXED(1) / 4)
+					{
 						continue;
 					}
 					syInitMatrix();
@@ -2368,35 +2632,36 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 					syTranslate(0, toFIXED(32), 0);
 					syMatrixScaleUniform(scale);
 				}
-				if(shade > MODEL_SHADE_INVISIBLE) {
+				if (shade > MODEL_SHADE_INVISIBLE)
+				{
 					model->shade = shade;
-					syRotX((tick - i * COATLICUE_SECOND_COIL_START) *
-							COATLICUE_COIL_TILT_SPEED -
-						COATLICUE_COIL_TILT);
+					syRotX((tick - i * COATLICUE_SECOND_COIL_START) * COATLICUE_COIL_TILT_SPEED
+					       - COATLICUE_COIL_TILT);
 					syRotY(-tick * (TRIG_TURN / 64));
-					btRenderTransformVertices(COATLICUE_COIL_CORNERS, verts,
-						2 * COATLICUE_COIL_SEGMENTS);
+					btRenderTransformVertices(
+						COATLICUE_COIL_CORNERS, verts, 2 * COATLICUE_COIL_SEGMENTS);
 					btRenderDrawModelList(model);
 				}
 			}
 			syHeapRelease(model);
 			syHeapRelease(verts);
 		}
-		while(state->framesSinceTransfer <= 1) {
+		while (state->framesSinceTransfer <= 1)
+		{
 		}
 		EFFECT_PRESENT_CANVAS(state);
 	}
-	syWordsFill((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES,
-		CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-	IO_WRITE_QUEUE_PUSH(
-		(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
-	for(i = 0; i != COATLICUE_SPRITES; i++) {
+	syWordsFill((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
+	for (i = 0; i != COATLICUE_SPRITES; i++)
+	{
 		fdSpriteDestroyStub(state->sprites[i]);
 	}
 	syPaletteLoadBasicSpriteColors();
 	syDMAXCopy((const void *)OBJ_PLTT,
-		(void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
-		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+	           (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
+	           DMA_COPY_HALFWORDS(PALETTE_COLORS),
+	           REG_DMA3);
 	BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
 		BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 	btEffectShowLivingTargets(state->args);
@@ -2404,97 +2669,106 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectArmPaletteHBlankDMA);
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
 	sySynch(1);
-	syWordsCopyEntry((void *)BG_PLTT,
-		syResourceGetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
-		SHEET_PALETTE_BYTES);
+	syWordsCopyEntry(
+		(void *)BG_PLTT, syResourceGetTableEntry(RESOURCE_BLUE_FLAME_SHEET), SHEET_PALETTE_BYTES);
 	syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-	/* The healing: the battle background lifted toward blue, bubbles rising,
-	   the targets flashing in turn, and three cogs of light rising over
-	   them. */
+	// The healing: the battle background lifted toward blue, bubbles rising, the targets flashing
+	// in turn, and three cogs of light rising over them.
 	btPaletteBrightenSavedBattleBg(0, 0, COATLICUE_WASH_BLUE);
 	tick = 0;
-	for(; tick != COATLICUE_WASH_TICKS; tick++) {
-		Sint32		  scale;
-		Sint32		  height;
+	for (; tick != COATLICUE_WASH_TICKS; tick++)
+	{
+		Sint32        scale;
+		Sint32        height;
 		RENDER_MODEL *washModel;
-		void		 *washVertices;
-		Sint32		  cogTick;
+		void         *washVertices;
+		Sint32        cogTick;
 
-		if(tick == 16) {
-			EFFECT_SET_TRANSFER(
-				state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+		if (tick == 16)
+		{
+			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 		}
-		if(tick > 52) {
+		if (tick > 52)
+		{
 			btPaletteBrightenBgEntries(-4, -4, -4);
 		}
-		if(tick > 48) {
+		if (tick > 48)
+		{
 			Sint32 fade = tick - 48;
 
-			btPaletteBrightenSavedBattleBg(
-				-fade, -fade, COATLICUE_WASH_BLUE - fade * 2);
+			btPaletteBrightenSavedBattleBg(-fade, -fade, COATLICUE_WASH_BLUE - fade * 2);
 		}
-		if(tick == 0) {
-			EFFECT_SET_TRANSFER(
-				state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+		if (tick == 0)
+		{
+			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 			{
 				PARTICLE *bubble = BUBBLES;
 
-				for(i = 0; i != BUBBLE_COLUMN_BUBBLES; i++, bubble++) {
-					bubble->x = toFIXED(syRandom() & 127);
-					bubble->y = INTtoFIXED((syRandom() & 255) + 120);
+				for (i = 0; i != BUBBLE_COLUMN_BUBBLES; i++, bubble++)
+				{
+					bubble->x         = toFIXED(syRandom() & 127);
+					bubble->y         = INTtoFIXED((syRandom() & 255) + 120);
 					bubble->velocityX = ((syRandom() & 31) - 16) << 13;
 					bubble->velocityY = (8 - (syRandom() & 31)) << 12;
-					bubble->z = (syRandom() & 7) + 5;
-					bubble->variant = BUBBLE_FLOATING;
+					bubble->z         = (syRandom() & 7) + 5;
+					bubble->variant   = BUBBLE_FLOATING;
 				}
 			}
 		}
-		for(i = 0; i != BUBBLE_COLUMN_BUBBLES; i++) {
+		for (i = 0; i != BUBBLE_COLUMN_BUBBLES; i++)
+		{
 			PARTICLE *bubble = &BUBBLES[i];
 
-			if(bubble->variant >= 0) {
+			if (bubble->variant >= 0)
+			{
 				DRAW_BUBBLE(bubble);
 			}
 		}
-		for(i = 0; i != args->targetCount; i++) {
-			if(tick == i * 8 + 18) {
-				if(i == 0) {
-					btEffectTintBattler(
-						args->targets[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 16);
+		for (i = 0; i != args->targetCount; i++)
+		{
+			if (tick == i * 8 + 18)
+			{
+				if (i == 0)
+				{
+					btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 16);
 					EFFECT_SHOW_DAMAGE(SE_RECOVERY);
 					sySoundPlayStub(SE_RECOVERY);
-				} else {
+				}
+				else
+				{
 					sySoundPlayStub(SE_RECOVERY);
-					btEffectTintBattler(
-						args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 16);
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 16);
 				}
 			}
 		}
-		washVertices = syHeapAllocateEWRAM(512);
-		washModel = btRenderAllocateModelList(1);
-		washModel->texture = &washTexture;
-		washTexture.logWidth = 7;
+		washVertices          = syHeapAllocateEWRAM(512);
+		washModel             = btRenderAllocateModelList(1);
+		washModel->texture    = &washTexture;
+		washTexture.logWidth  = 7;
 		washTexture.logHeight = 7;
-		washModel->mesh = BattleEffectLargeSquareMesh;
-		washModel->vertices = washVertices;
-		washModel->kind = MODEL_SHADED_MAX;
-		washTexture.pixels = state->sheet + COATLICUE_COG;
-		/* The cogs rise from tick 16, eight ticks apart, each growing as it
-		   rises and fading after 16 ticks. */
-		i = 0;
-		height = tick * 8 - 128;
-		scale = (tick - 16) * (toFIXED(1) / 8);
-		cogTick = tick - 16;
-		for(; i != COATLICUE_WASH_COGS;
-			height -= 64, scale -= toFIXED(1), i++, cogTick -= 8) {
-			if(cogTick >= 0) {
+		washModel->mesh       = BattleEffectLargeSquareMesh;
+		washModel->vertices   = washVertices;
+		washModel->kind       = MODEL_SHADED_MAX;
+		washTexture.pixels    = state->sheet + COATLICUE_COG;
+		// The cogs rise from tick 16, eight ticks apart, each growing as it rises and fading after
+		// 16 ticks.
+		i                     = 0;
+		height                = tick * 8 - 128;
+		scale                 = (tick - 16) * (toFIXED(1) / 8);
+		cogTick               = tick - 16;
+		for (; i != COATLICUE_WASH_COGS; height -= 64, scale -= toFIXED(1), i++, cogTick -= 8)
+		{
+			if (cogTick >= 0)
+			{
 				Sint32 washShade = 0;
 
-				if(cogTick > 15) {
+				if (cogTick > 15)
+				{
 					washShade = (16 - cogTick) << 3;
 				}
 				washModel->shade = washShade;
-				if(washShade > MODEL_SHADE_INVISIBLE) {
+				if (washShade > MODEL_SHADE_INVISIBLE)
+				{
 					syInitMatrix();
 					syTranslate(0, toFIXED(112 - height), 0);
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
@@ -2502,8 +2776,7 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 					syRotZ(i * (DEGtoANG(90)) + DEGtoANG(45));
 					syRotX(-TRIG_TURN / 16);
 					syRotY(tick * (TRIG_TURN / 64));
-					btRenderTransformVertices(
-						BattleEffectGroundSquareCorners, washVertices, 4);
+					btRenderTransformVertices(BattleEffectGroundSquareCorners, washVertices, 4);
 					btRenderDrawModelList(washModel);
 				}
 			}

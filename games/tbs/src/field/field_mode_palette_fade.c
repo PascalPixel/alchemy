@@ -1,41 +1,37 @@
-/* The palette fade: palettes moved toward target colours. Part of
-   field_mode.c. */
+// The palette fade: palettes moved toward target colours. Part of field_mode.c.
 
 #include "field_mode_internal.h"
 
-/* The colours a palette fade moves: the BG's 224, then the OBJ's 224. */
-#define COLOR_HALF			224
-#define COLOR_MAX			(2 * COLOR_HALF)
-/* Palette fade state holds each channel of a colour in bits 14..10 of a
-   halfword, where RGB555 keeps blue: green's bits move up BLUE_SHIFT -
-   GREEN_SHIFT to get there, red's BLUE_SHIFT. */
-#define BLUE_CHANNEL(color) ((color) & BLUE_BITS)
-#define GREEN_CHANNEL(color) \
-	(((color) & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT))
-#define RED_CHANNEL(color) (((color) & RED_BITS) << BLUE_SHIFT)
-/* For the brightness 2R + 4G + B: red's level doubled and green's quadrupled,
-   each in the channel's place. */
-#define RED_CHANNEL_DOUBLED(color) \
+// The colours a palette fade moves: the BG's 224, then the OBJ's 224.
+#define COLOR_HALF           224
+#define COLOR_MAX            (2 * COLOR_HALF)
+// Palette fade state holds each channel of a colour in bits 14..10 of a halfword, where RGB555
+// keeps blue: green's bits move up BLUE_SHIFT - GREEN_SHIFT to get there, red's BLUE_SHIFT.
+#define BLUE_CHANNEL(color)  ((color) & BLUE_BITS)
+#define GREEN_CHANNEL(color) (((color) & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT))
+#define RED_CHANNEL(color)   (((color) & RED_BITS) << BLUE_SHIFT)
+// For the brightness 2R + 4G + B: red's level doubled and green's quadrupled, each in the channel's
+// place.
+#define RED_CHANNEL_DOUBLED(color)                                                                 \
 	(((color) << BRIGHTNESS_RED_SHIFT) & (RED_BITS << BRIGHTNESS_RED_SHIFT))
-#define GREEN_CHANNEL_QUADRUPLED(color) \
-	(((color) << BRIGHTNESS_GREEN_SHIFT) & \
-		(GREEN_BITS << BRIGHTNESS_GREEN_SHIFT))
+#define GREEN_CHANNEL_QUADRUPLED(color)                                                            \
+	(((color) << BRIGHTNESS_GREEN_SHIFT) & (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT))
 
-/* Sets each channel of step (three for each of the 448 colours) to the amount
-   to add each tick for source to reach target in ticks ticks; with ticks 0
-   or less step is left as it was. */
-void fdPaletteFadeCalculateSteps(
-	Sint16 *src, Sint16 *target, Sint16 *step, Sint32 ticks)
+// Sets each channel of step (three for each of the 448 colours) to the amount to add each tick for
+// source to reach target in ticks ticks; with ticks 0 or less step is left as it was.
+void fdPaletteFadeCalculateSteps(Sint16 *src, Sint16 *target, Sint16 *step, Sint32 ticks)
 {
 	Sint32 i;
 	Sint32 srcChannel;
 	Sint32 targetChannel;
 
-	if(ticks > 0) {
-		for(i = 0; i < PALETTE_FADE_CHANNELS; i++) {
-			srcChannel = *src;
+	if (ticks > 0)
+	{
+		for (i = 0; i < PALETTE_FADE_CHANNELS; i++)
+		{
+			srcChannel    = *src;
 			targetChannel = *target;
-			*step = syIntegerDivide(targetChannel - srcChannel, ticks);
+			*step         = syIntegerDivide(targetChannel - srcChannel, ticks);
 			src++;
 			target++;
 			step++;
@@ -43,71 +39,73 @@ void fdPaletteFadeCalculateSteps(
 	}
 }
 
-/* Each tick (unless FLAG_PALETTE_BLEND_HELD is set): moves the palette fade
-   one step toward its target, packs it into RGB555 and queues it for the BG and
-   OBJ palettes. */
+// Each tick (unless FLAG_PALETTE_BLEND_HELD is set): moves the palette fade one step toward its
+// target, packs it into RGB555 and queues it for the BG and OBJ palettes.
 void fdPaletteFadeUpdate(void)
 {
-	PALETTE_FADE *state = PaletteFadeState;
-	Uint16		 *channelDelta = state->delta;
-	Sint32		  i;
+	PALETTE_FADE *state        = PaletteFadeState;
+	Uint16       *channelDelta = state->delta;
+	Sint32        i;
 
-	if(gmFlagGetStub(FLAG_PALETTE_BLEND_HELD) != 0) {
+	if (gmFlagGetStub(FLAG_PALETTE_BLEND_HELD) != 0)
+	{
 		return;
 	}
-	if(state->duration == 0) {
+	if (state->duration == 0)
+	{
 		return;
 	}
-	/* Accumulate modular 16-bit channel steps; on the last tick copy the
-	   target itself, so rounding in the steps never leaves the colours
-	   short. */
-	if(++state->step < state->duration) {
+	// Accumulate modular 16-bit channel steps; on the last tick copy the target itself, so rounding
+	// in the steps never leaves the colours short.
+	if (++state->step < state->duration)
+	{
 		Uint16 *currentChannel = state->current;
-		for(i = 0; i < PALETTE_FADE_CHANNELS; i++) {
+		for (i = 0; i < PALETTE_FADE_CHANNELS; i++)
+		{
 			*currentChannel++ += *channelDelta++;
 		}
-	} else {
+	}
+	else
+	{
 		syWordsCopy(state->current, state->target, sizeof(state->current));
 		state->duration = 0;
 	}
 
 	{
-		/* Pack the channels into the hidden page as RGB555: each channel's bits
-		   14..10 become its colour's level. */
-		Uint16 *packed = state->packed[1 ^ state->page];
-		Sint32	blueMask = BLUE_BITS;
+		// Pack the channels into the hidden page as RGB555: each channel's bits 14..10 become its
+		// colour's level.
+		Uint16 *packed   = state->packed[1 ^ state->page];
+		Sint32  blueMask = BLUE_BITS;
 		Uint16 *current;
 
-		i = COLOR_MAX;
+		i       = COLOR_MAX;
 		current = state->current;
-		for(; i != 0; i--) {
-			*packed++ = (current[0] & blueMask) |
-				(((Sint16)current[1] >> (BLUE_SHIFT - GREEN_SHIFT)) &
-					GREEN_BITS) |
-				(((Sint16)current[2] >> BLUE_SHIFT) & RED_BITS);
+		for (; i != 0; i--)
+		{
+			*packed++ = (current[0] & blueMask)
+			          | (((Sint16)current[1] >> (BLUE_SHIFT - GREEN_SHIFT)) & GREEN_BITS)
+			          | (((Sint16)current[2] >> BLUE_SHIFT) & RED_BITS);
 			current += 3;
 		}
 	}
 
-	/* Show the page just written: queue its BG half and OBJ half (224 colours,
-	   112 words each) for the palettes. */
+	// Show the page just written: queue its BG half and OBJ half (224 colours, 112 words each) for
+	// the palettes.
 	state->page ^= 1;
 	{
 		Uint16 *packed = state->packed[state->page];
 
+		IO_WRITE_QUEUE_PUSH((Uint32)BG_PLTT, (Uint32)packed, DMA_COPY_WORDS(COLOR_HALF / 2));
 		IO_WRITE_QUEUE_PUSH(
-			(Uint32)BG_PLTT, (Uint32)packed, DMA_COPY_WORDS(COLOR_HALF / 2));
-		IO_WRITE_QUEUE_PUSH((Uint32)OBJ_PLTT, (Uint32)(packed + COLOR_HALF),
-			DMA_COPY_WORDS(COLOR_HALF / 2));
+			(Uint32)OBJ_PLTT, (Uint32)(packed + COLOR_HALF), DMA_COPY_WORDS(COLOR_HALF / 2));
 	}
 }
 
-/* Builds palette fade colours from the palette src into dest, three channels a
-   colour. mode is one RGB555 colour, below PALETTE_TINT_FROM_SOURCE, for every
-   colour alike; PALETTE_TINT_FROM_SOURCE for the backdrop colour alike; a
-   PALETTE_TINT_* value to tint each colour; or the address of ready channels to
-   copy. half is the palette selection: PALETTES_ALL for all 448 colours,
-   PALETTES_BG for the BG's 224, PALETTES_SPRITES for the OBJ's 224. */
+// Builds palette fade colours from the palette src into dest, three channels a colour. mode is one
+// RGB555 colour, below PALETTE_TINT_FROM_SOURCE, for every colour alike; PALETTE_TINT_FROM_SOURCE
+// for the backdrop colour alike; a PALETTE_TINT_* value to tint each colour; or the address of
+// ready channels to copy. half is the palette selection: PALETTES_ALL for all 448 colours,
+// PALETTES_BG for the BG's 224, PALETTES_SPRITES for the OBJ's 224.
 void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dest, Sint32 half)
 {
 	Uint32 i;
@@ -117,219 +115,236 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dest, Sint32 half)
 	Uint32 color;
 	Sint32 green;
 
-	if(mode == PALETTE_TINT_FROM_SOURCE)
+	if (mode == PALETTE_TINT_FROM_SOURCE)
 		mode = *(Uint16 *)BG_PLTT;
-	if(half == PALETTES_BG) {
-		colorCount = COLOR_HALF;
-	} else if(half == PALETTES_SPRITES) {
-		dest += COLOR_HALF * 3;
-		src += COLOR_HALF;
+	if (half == PALETTES_BG)
+	{
 		colorCount = COLOR_HALF;
 	}
+	else if (half == PALETTES_SPRITES)
+	{
+		dest       += COLOR_HALF * 3;
+		src        += COLOR_HALF;
+		colorCount  = COLOR_HALF;
+	}
 
-	/* One colour: write it once, then let DMA copy it over the rest. */
-	if(mode < PALETTE_TINT_FROM_SOURCE) {
+	// One colour: write it once, then let DMA copy it over the rest.
+	if (mode < PALETTE_TINT_FROM_SOURCE)
+	{
 		*dest++ = BLUE_CHANNEL(mode);
 		*dest++ = GREEN_CHANNEL(mode);
 		*dest++ = RED_CHANNEL(mode);
-		syDMAXCopy(dest - 3, dest,
-			DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
-	} else if(mode < PALETTE_TINT_FLAGS) {
-		switch(mode) {
-		case PALETTE_TINT_GRAYSCALE:
-			/* Grey, of brightness (2R + 4G + B) / 7. */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RED_CHANNEL_DOUBLED(color);
-				green = GREEN_CHANNEL_QUADRUPLED(color);
-				blue = BLUE_CHANNEL(color);
-				color = syIntegerDivide(red + green + blue, 7);
-				*dest++ = color;
-				*dest++ = color;
-				*dest++ = color;
-			}
-			break;
-		case PALETTE_TINT_SEPIA:
-			/* The brightness, red stronger, each level within 8 to 28. */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				color =
-					syIntegerDivide(red + RGB_GREEN(color) + RGB_BLUE(color),
-						SEPIA_SHADE_DIVISOR);
-				red = color * 4 + 5;
-				blue = color * 3 + 5;
-				green = blue;
-				if(red < 8)
-					red = 8;
-				if(green < 8)
-					green = 8;
-				if(blue < 8)
-					blue = 8;
-				if(red > 28)
-					red = 28;
-				if(green > 28)
-					green = 28;
-				if(blue > 28)
-					blue = 28;
-				*dest++ = ColorBufferChannelCurveLight[blue];
-				*dest++ = ColorBufferChannelCurveLight[green];
-				*dest++ = ColorBufferChannelCurveLight[red];
-			}
-			break;
-		case PALETTE_TINT_DIM:
-			/* Half R + 10, two thirds G + 8, B - 7; black stays black. */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
-				if((red | green | blue) != 0) {
-					red -= (Uint32)red >> 1;
-					green -= green / 3;
-					red += 10;
-					green += 8;
-					blue -= 7;
-					red = fdPaletteFadeClampChannel(red);
-					green = fdPaletteFadeClampChannel(green);
-					blue = fdPaletteFadeClampChannel(blue);
+		syDMAXCopy(dest - 3, dest, DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
+	}
+	else if (mode < PALETTE_TINT_FLAGS)
+	{
+		switch (mode)
+		{
+			case PALETTE_TINT_GRAYSCALE:
+				// Grey, of brightness (2R + 4G + B) / 7.
+				for (i = 0; i < colorCount; i++)
+				{
+					color   = *src++;
+					red     = RED_CHANNEL_DOUBLED(color);
+					green   = GREEN_CHANNEL_QUADRUPLED(color);
+					blue    = BLUE_CHANNEL(color);
+					color   = syIntegerDivide(red + green + blue, 7);
+					*dest++ = color;
+					*dest++ = color;
+					*dest++ = color;
 				}
-				*dest++ = ColorBufferChannelCurveContrast[blue];
-				*dest++ = ColorBufferChannelCurveLight[green];
-				*dest++ = ColorBufferChannelCurve[red];
-			}
-			break;
-		case PALETTE_TINT_MUTED:
-			/* Each level narrowed to a middle range, G and B + 2. */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
-				if(red < 10)
-					red = 10;
-				if(green < 16)
-					green = 16;
-				if(blue < 16)
-					blue = 16;
-				if(red > 28)
-					red = 28;
-				if(green > 24)
-					green = 24;
-				if(blue > 26)
-					blue = 26;
-				green += 2;
-				blue += 2;
-				red = fdPaletteFadeClampChannel(red);
-				green = fdPaletteFadeClampChannel(green);
-				blue = fdPaletteFadeClampChannel(blue);
-				*dest++ = ColorBufferChannelCurve[blue];
-				*dest++ = ColorBufferChannelCurve[green];
-				*dest++ = ColorBufferChannelCurve[red];
-			}
-			break;
-		case PALETTE_TINT_PALE:
-			/* Half of each level, plus the mean. */
-			for(i = 0; i < colorCount; i++) {
-				Sint32 mean;
+				break;
+			case PALETTE_TINT_SEPIA:
+				// The brightness, red stronger, each level within 8 to 28.
+				for (i = 0; i < colorCount; i++)
+				{
+					color = *src++;
+					red   = RGB_RED(color);
+					color = syIntegerDivide(red + RGB_GREEN(color) + RGB_BLUE(color),
+					                        SEPIA_SHADE_DIVISOR);
+					red   = color * 4 + 5;
+					blue  = color * 3 + 5;
+					green = blue;
+					if (red < 8)
+						red = 8;
+					if (green < 8)
+						green = 8;
+					if (blue < 8)
+						blue = 8;
+					if (red > 28)
+						red = 28;
+					if (green > 28)
+						green = 28;
+					if (blue > 28)
+						blue = 28;
+					*dest++ = ColorBufferChannelCurveLight[blue];
+					*dest++ = ColorBufferChannelCurveLight[green];
+					*dest++ = ColorBufferChannelCurveLight[red];
+				}
+				break;
+			case PALETTE_TINT_DIM:
+				// Half R + 10, two thirds G + 8, B - 7; black stays black.
+				for (i = 0; i < colorCount; i++)
+				{
+					color = *src++;
+					red   = RGB_RED(color);
+					green = RGB_GREEN(color);
+					blue  = RGB_BLUE(color);
+					if ((red | green | blue) != 0)
+					{
+						red   -= (Uint32)red >> 1;
+						green -= green / 3;
+						red   += 10;
+						green += 8;
+						blue  -= 7;
+						red    = fdPaletteFadeClampChannel(red);
+						green  = fdPaletteFadeClampChannel(green);
+						blue   = fdPaletteFadeClampChannel(blue);
+					}
+					*dest++ = ColorBufferChannelCurveContrast[blue];
+					*dest++ = ColorBufferChannelCurveLight[green];
+					*dest++ = ColorBufferChannelCurve[red];
+				}
+				break;
+			case PALETTE_TINT_MUTED:
+				// Each level narrowed to a middle range, G and B + 2.
+				for (i = 0; i < colorCount; i++)
+				{
+					color = *src++;
+					red   = RGB_RED(color);
+					green = RGB_GREEN(color);
+					blue  = RGB_BLUE(color);
+					if (red < 10)
+						red = 10;
+					if (green < 16)
+						green = 16;
+					if (blue < 16)
+						blue = 16;
+					if (red > 28)
+						red = 28;
+					if (green > 24)
+						green = 24;
+					if (blue > 26)
+						blue = 26;
+					green   += 2;
+					blue    += 2;
+					red      = fdPaletteFadeClampChannel(red);
+					green    = fdPaletteFadeClampChannel(green);
+					blue     = fdPaletteFadeClampChannel(blue);
+					*dest++  = ColorBufferChannelCurve[blue];
+					*dest++  = ColorBufferChannelCurve[green];
+					*dest++  = ColorBufferChannelCurve[red];
+				}
+				break;
+			case PALETTE_TINT_PALE:
+				// Half of each level, plus the mean.
+				for (i = 0; i < colorCount; i++)
+				{
+					Sint32 mean;
 
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
-				mean = fdPaletteFadeClampChannel((red + green + blue) / 3);
-				red = (red >> 1) + mean;
-				green = (green >> 1) + mean;
-				blue = (blue >> 1) + mean;
-				red = fdPaletteFadeClampChannel(red);
-				green = fdPaletteFadeClampChannel(green);
-				blue = fdPaletteFadeClampChannel(blue);
-				dest[0] = ColorBufferChannelCurveContrast[blue];
-				dest[1] = ColorBufferChannelCurveContrast[green];
-				dest[2] = ColorBufferChannelCurveContrast[red];
-				dest += 3;
-			}
-			break;
-		case PALETTE_TINT_RED:
-			/* An eighth of G and B added to R; G and B two thirds. */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
-				red += ((green >> 3) + (blue >> 3));
-				red = fdPaletteFadeClampChannel(red);
-				green -= green / 3;
-				blue -= blue / 3;
-				dest[0] = ColorBufferChannelCurve[blue];
-				dest[1] = ColorBufferChannelCurve[green];
-				dest[2] = ColorBufferChannelCurveLight[red];
-				dest += 3;
-			}
-			break;
-		case PALETTE_TINT_DIMMER:
-			/* Half R + 6, two thirds G + 4, B - 6. */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
-				red -= (Uint32)red >> 1;
-				green -= green / 3;
-				red += 6;
-				green += 4;
-				blue -= 6;
-				red = fdPaletteFadeClampChannel(red);
-				green = fdPaletteFadeClampChannel(green);
-				blue = fdPaletteFadeClampChannel(blue);
-				dest[0] = ColorBufferChannelCurveContrast[blue];
-				dest[1] = ColorBufferChannelCurveLight[green];
-				dest[2] = ColorBufferChannelCurve[red];
-				dest += 3;
-			}
-			break;
-		default:
-			/* Unchanged. */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				dest[i * 3 + 0] = BLUE_CHANNEL(color);
-				dest[i * 3 + 1] = GREEN_CHANNEL(color);
-				dest[i * 3 + 2] = RED_CHANNEL(color);
-			}
-			break;
+					color    = *src++;
+					red      = RGB_RED(color);
+					green    = RGB_GREEN(color);
+					blue     = RGB_BLUE(color);
+					mean     = fdPaletteFadeClampChannel((red + green + blue) / 3);
+					red      = (red >> 1) + mean;
+					green    = (green >> 1) + mean;
+					blue     = (blue >> 1) + mean;
+					red      = fdPaletteFadeClampChannel(red);
+					green    = fdPaletteFadeClampChannel(green);
+					blue     = fdPaletteFadeClampChannel(blue);
+					dest[0]  = ColorBufferChannelCurveContrast[blue];
+					dest[1]  = ColorBufferChannelCurveContrast[green];
+					dest[2]  = ColorBufferChannelCurveContrast[red];
+					dest    += 3;
+				}
+				break;
+			case PALETTE_TINT_RED:
+				// An eighth of G and B added to R; G and B two thirds.
+				for (i = 0; i < colorCount; i++)
+				{
+					color    = *src++;
+					red      = RGB_RED(color);
+					green    = RGB_GREEN(color);
+					blue     = RGB_BLUE(color);
+					red     += ((green >> 3) + (blue >> 3));
+					red      = fdPaletteFadeClampChannel(red);
+					green   -= green / 3;
+					blue    -= blue / 3;
+					dest[0]  = ColorBufferChannelCurve[blue];
+					dest[1]  = ColorBufferChannelCurve[green];
+					dest[2]  = ColorBufferChannelCurveLight[red];
+					dest    += 3;
+				}
+				break;
+			case PALETTE_TINT_DIMMER:
+				// Half R + 6, two thirds G + 4, B - 6.
+				for (i = 0; i < colorCount; i++)
+				{
+					color    = *src++;
+					red      = RGB_RED(color);
+					green    = RGB_GREEN(color);
+					blue     = RGB_BLUE(color);
+					red     -= (Uint32)red >> 1;
+					green   -= green / 3;
+					red     += 6;
+					green   += 4;
+					blue    -= 6;
+					red      = fdPaletteFadeClampChannel(red);
+					green    = fdPaletteFadeClampChannel(green);
+					blue     = fdPaletteFadeClampChannel(blue);
+					dest[0]  = ColorBufferChannelCurveContrast[blue];
+					dest[1]  = ColorBufferChannelCurveLight[green];
+					dest[2]  = ColorBufferChannelCurve[red];
+					dest    += 3;
+				}
+				break;
+			default:
+				// Unchanged.
+				for (i = 0; i < colorCount; i++)
+				{
+					color           = *src++;
+					dest[i * 3 + 0] = BLUE_CHANNEL(color);
+					dest[i * 3 + 1] = GREEN_CHANNEL(color);
+					dest[i * 3 + 2] = RED_CHANNEL(color);
+				}
+				break;
 		}
-	} else if(mode & PALETTE_TINT_CUSTOM) {
-		/* The brightness (2R + 4G + B) / 96 times each level of mode's
-		   colour. */
+	}
+	else if (mode & PALETTE_TINT_CUSTOM)
+	{
+		// The brightness (2R + 4G + B) / 96 times each level of mode's colour.
 		Uint32 tintRed;
 		Uint32 tintGreen;
 		Uint32 tintBlue;
 		Sint32 red;
 		Sint32 green;
 
-		tintRed = RGB_RED(mode);
+		tintRed   = RGB_RED(mode);
 		tintGreen = RGB_GREEN(mode);
-		tintBlue = RGB_BLUE(mode);
-		for(i = 0; i < colorCount; i++) {
-			color = *src++;
-			red = RED_CHANNEL_DOUBLED(color);
-			green = GREEN_CHANNEL_QUADRUPLED(color);
-			blue = BLUE_CHANNEL(color);
-			color = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
-			red = color * tintRed;
-			green = color * tintGreen;
-			blue = color * tintBlue;
-			red = fdPaletteFadeClampShiftedChannel(red);
-			green = fdPaletteFadeClampShiftedChannel(green);
-			blue = fdPaletteFadeClampShiftedChannel(blue);
-			dest[0] = blue;
-			dest[1] = green;
-			dest[2] = red;
-			dest += 3;
+		tintBlue  = RGB_BLUE(mode);
+		for (i = 0; i < colorCount; i++)
+		{
+			color    = *src++;
+			red      = RED_CHANNEL_DOUBLED(color);
+			green    = GREEN_CHANNEL_QUADRUPLED(color);
+			blue     = BLUE_CHANNEL(color);
+			color    = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
+			red      = color * tintRed;
+			green    = color * tintGreen;
+			blue     = color * tintBlue;
+			red      = fdPaletteFadeClampShiftedChannel(red);
+			green    = fdPaletteFadeClampShiftedChannel(green);
+			blue     = fdPaletteFadeClampShiftedChannel(blue);
+			dest[0]  = blue;
+			dest[1]  = green;
+			dest[2]  = red;
+			dest    += 3;
 		}
-	} else if(mode & PALETTE_TINT_BLEND) {
-		/* The brightness R + G + B shared out in the proportions of mode's
-		   colour. */
+	}
+	else if (mode & PALETTE_TINT_BLEND)
+	{
+		// The brightness R + G + B shared out in the proportions of mode's colour.
 		Uint32 tintRed;
 		Uint32 tintGreen;
 		Uint32 tintBlue;
@@ -337,134 +352,132 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dest, Sint32 half)
 		FIXED  blendedGreen;
 		FIXED  blendedBlue;
 
-		tintRed = RGB_RED(mode);
+		tintRed   = RGB_RED(mode);
 		tintGreen = RGB_GREEN(mode);
-		tintBlue = RGB_BLUE(mode);
-		for(i = 0; i < colorCount; i++) {
-			color = *src++;
-			red = RGB_RED(color);
-			color =
-				syIntegerDivide((red + RGB_GREEN(color) + RGB_BLUE(color)) << 4,
-					tintRed + tintGreen + tintBlue);
-			blendedRed = syMulFX(
-				toFIXED((color * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
-			blendedGreen = syMulFX(toFIXED((color * tintGreen) >> 4),
-				(Sint32)toFIXED(tintGreen) >> 4);
-			blendedBlue = syMulFX(toFIXED((color * tintBlue) >> 4),
-				(Sint32)toFIXED(tintBlue) >> 4);
-			blendedRed =
-				fdPaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedRed));
+		tintBlue  = RGB_BLUE(mode);
+		for (i = 0; i < colorCount; i++)
+		{
+			color      = *src++;
+			red        = RGB_RED(color);
+			color      = syIntegerDivide((red + RGB_GREEN(color) + RGB_BLUE(color)) << 4,
+                                    tintRed + tintGreen + tintBlue);
+			blendedRed = syMulFX(toFIXED((color * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
 			blendedGreen =
-				fdPaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedGreen));
-			blendedBlue =
-				fdPaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedBlue));
-			*dest++ = ColorBufferChannelCurve[blendedBlue];
-			*dest++ = ColorBufferChannelCurve[blendedGreen];
-			*dest++ = ColorBufferChannelCurve[blendedRed];
+				syMulFX(toFIXED((color * tintGreen) >> 4), (Sint32)toFIXED(tintGreen) >> 4);
+			blendedBlue = syMulFX(toFIXED((color * tintBlue) >> 4), (Sint32)toFIXED(tintBlue) >> 4);
+			blendedRed  = fdPaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedRed));
+			blendedGreen = fdPaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedGreen));
+			blendedBlue  = fdPaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedBlue));
+			*dest++      = ColorBufferChannelCurve[blendedBlue];
+			*dest++      = ColorBufferChannelCurve[blendedGreen];
+			*dest++      = ColorBufferChannelCurve[blendedRed];
 		}
-	} else if(mode & PALETTE_TINT_SPLIT) {
-		/* The colours unchanged, as the default tint writes them. */
-		for(i = 0; i < colorCount; i++) {
-			color = *src++;
+	}
+	else if (mode & PALETTE_TINT_SPLIT)
+	{
+		// The colours unchanged, as the default tint writes them.
+		for (i = 0; i < colorCount; i++)
+		{
+			color           = *src++;
 			dest[i * 3 + 0] = BLUE_CHANNEL(color);
 			dest[i * 3 + 1] = GREEN_CHANNEL(color);
 			dest[i * 3 + 2] = RED_CHANNEL(color);
 		}
-	} else {
-		/* Copy a ready buffer: mode is its address, and the OBJ half starts 224
-		   colours of three halfwords in. */
-		if(half == PALETTES_SPRITES)
+	}
+	else
+	{
+		// Copy a ready buffer: mode is its address, and the OBJ half starts 224 colours of three
+		// halfwords in.
+		if (half == PALETTES_SPRITES)
 			mode += COLOR_HALF * 3 * sizeof(Uint16);
-		syDMAXCopy((const void *)mode, dest,
-			DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
+		syDMAXCopy((const void *)mode, dest, DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
 	}
 }
 
-/* Sets up the palette fade (PaletteFadeState) from the BG and OBJ palettes and
-   starts updating the palettes from it each tick. */
+// Sets up the palette fade (PaletteFadeState) from the BG and OBJ palettes and starts updating the
+// palettes from it each tick.
 void fdPaletteFadeInit(void)
 {
 	PALETTE_FADE *state;
 
 	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_PALETTE_FADE, sizeof(*state));
 	DMA_FILL32(0, state, sizeof(*state));
-	syDMAXCopy((void *)BG_PLTT, &state->palette[0],
-		DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
-	syDMAXCopy((void *)OBJ_PLTT, &state->palette[COLOR_HALF],
-		DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
-	fdPaletteFadeBuild(
-		PALETTE_TINT_NONE, state->palette, state->target, PALETTES_ALL);
+	syDMAXCopy((void *)BG_PLTT, &state->palette[0], DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
+	syDMAXCopy(
+		(void *)OBJ_PLTT, &state->palette[COLOR_HALF], DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
+	fdPaletteFadeBuild(PALETTE_TINT_NONE, state->palette, state->target, PALETTES_ALL);
 	sySetEvent(fdPaletteFadeUpdate, EVENT_PASS_TICK + 15);
 }
 
-/* Stops the palette fade and frees it. */
+// Stops the palette fade and frees it.
 void fdPaletteFadeRelease(void)
 {
 	syCloseEvent(&fdPaletteFadeUpdate);
 	syHeapSlotRelease(HEAP_SLOT_PALETTE_FADE);
 }
 
-/* Sets the colours the buffer moves toward (see fdPaletteFadeBuild); does
-   nothing without a palette fade. */
+// Sets the colours the buffer moves toward (see fdPaletteFadeBuild); does nothing without a palette
+// fade.
 void fdPaletteFadeSetTarget(Sint32 mode, Sint32 half)
 {
 	PALETTE_FADE *state = PaletteFadeState;
 
-	if(state != NULL) {
+	if (state != NULL)
+	{
 		fdPaletteFadeBuild(mode, state->palette, state->target, half);
 	}
 }
 
-/* Sets the colours the buffer shows now (see fdPaletteFadeBuild). */
+// Sets the colours the buffer shows now (see fdPaletteFadeBuild).
 void fdPaletteFadeSetSource(Sint32 mode, Sint32 half)
 {
 	PALETTE_FADE *state = PaletteFadeState;
 
-	if(state != NULL) {
+	if (state != NULL)
+	{
 		fdPaletteFadeBuild(mode, state->palette, state->current, half);
 	}
 }
 
-/* Sets the buffer's source backdrop colour (BG colour 0 of its palette
-   copy). */
+// Sets the buffer's source backdrop colour (BG colour 0 of its palette copy).
 void fdPaletteFadeSetBackdrop(Uint32 color)
 {
 	PALETTE_FADE *state = PaletteFadeState;
 
-	if(state != NULL) {
+	if (state != NULL)
+	{
 		state->palette[0] = color;
 	}
 }
 
-/* Starts moving the shown colours to the target colours over ticks ticks:
-   sets state->duration, clears state->step and fills state->delta. */
+// Starts moving the shown colours to the target colours over ticks ticks: sets state->duration,
+// clears state->step and fills state->delta.
 void fdPaletteFadeStartInterpolation(Sint32 ticks)
 {
 	PALETTE_FADE *state = PaletteFadeState;
 
-	if(state != NULL) {
+	if (state != NULL)
+	{
 		state->duration = ticks;
-		state->step = 0;
-		fdPaletteFadeCalculateSteps(
-			state->current, state->target, state->delta, ticks);
+		state->step     = 0;
+		fdPaletteFadeCalculateSteps(state->current, state->target, state->delta, ticks);
 	}
 }
 
-/* Clamps a 5-bit colour channel to 0 to 31. */
+// Clamps a 5-bit colour channel to 0 to 31.
 Sint32 fdPaletteFadeClampChannel(Sint32 value)
 {
-	if(value > RGB_LEVEL_MAX)
+	if (value > RGB_LEVEL_MAX)
 		return RGB_LEVEL_MAX;
-	if(value < 0)
+	if (value < 0)
 		value = 0;
 	return value;
 }
 
-/* Clamps a colour channel in its place (bits 14..10) to at most the brightest
-   level. */
+// Clamps a colour channel in its place (bits 14..10) to at most the brightest level.
 Sint32 fdPaletteFadeClampShiftedChannel(Sint32 value)
 {
-	if(value > RGB_LEVEL_MAX << BLUE_SHIFT)
+	if (value > RGB_LEVEL_MAX << BLUE_SHIFT)
 		value = RGB_LEVEL_MAX << BLUE_SHIFT;
 	return value;
 }

@@ -1,40 +1,35 @@
-/* Log rooms C (SceneIdLogRoomsC), a rooms map drawn in logs, holds only
-   Kolima's rooms: the village's houses, shops and inn.
-
-   Some of its exits join its own rooms, by the stairs up the inn and the weapon
-   and armor shop. Five lead back out to the village (SceneIdKolima) and one
-   into Kolima Tunnel (SceneIdKolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
-
-   Like the people outside, the fifteen residents (ACTOR_FIRST_VILLAGER to
-   ACTOR_LAST_VILLAGER) were turned into trees when the curse fell. Until it is
-   lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED), scGetActorPlacements
-   gives them tree sprites that stand still. They answer only Mind Read, each
-   with the thoughts of someone stuck as a tree ("Who caused all this? Someone
-   must have tried to cut down Tret!").
-
-   Once the curse is lifted they talk. They speak of the warriors said to have
-   saved the village, of McCoy's halted palace and the lumberjacks' lost work,
-   and of a father's secret treasure "hidden deep in the forest". The weapon,
-   armor and item sellers and the innkeeper serve the party across their
-   counters.
-
-   Three bookcases hold books on the holy tree ("Tret and Laurel are the spirits
-   of the holy trees protecting Kolima forest"), on trees and flowers and on
-   logging. A jar holds a Lucky Medal and a barrel 7 coins.
-
-   scInit opens with a window transition and draws one of two rooms into the
-   same place on the map.
-
-   Entered by its door from the village (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH),
-   it is the father's house, with its bookcase and rug and the father's family
-   (ACTOR_FATHER_WITH_A_SECRET, ACTOR_WIFE_KEPT_FROM_THE_SECRET and
-   ACTOR_CHILD_TOLD_THE_SECRET).
-
-   It can also be entered from behind: by the village doorway the leader steps
-   south into (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH), or up the ladder from
-   Kolima Tunnel (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL). Then other metatiles are
-   copied in, and it is a storeroom of crates and sacks with the ladder down in
-   its floor. The family is put out of sight. */
+// Log rooms C (SceneIdLogRoomsC), a rooms map drawn in logs, holds only Kolima's rooms: the
+// village's houses, shops and inn.
+//
+// Some of its exits join its own rooms, by the stairs up the inn and the weapon and armor shop.
+// Five lead back out to the village (SceneIdKolima) and one into Kolima Tunnel
+// (SceneIdKolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
+//
+// Like the people outside, the fifteen residents (ACTOR_FIRST_VILLAGER to ACTOR_LAST_VILLAGER) were
+// turned into trees when the curse fell. Until it is lifted in Kolima Forest
+// (FLAG_KOLIMA_CURSE_LIFTED), scGetActorPlacements gives them tree sprites that stand still. They
+// answer only Mind Read, each with the thoughts of someone stuck as a tree ("Who caused all this?
+// Someone must have tried to cut down Tret!").
+//
+// Once the curse is lifted they talk. They speak of the warriors said to have saved the village, of
+// McCoy's halted palace and the lumberjacks' lost work, and of a father's secret treasure "hidden
+// deep in the forest". The weapon, armor and item sellers and the innkeeper serve the party across
+// their counters.
+//
+// Three bookcases hold books on the holy tree ("Tret and Laurel are the spirits of the holy trees
+// protecting Kolima forest"), on trees and flowers and on logging. A jar holds a Lucky Medal and a
+// barrel 7 coins.
+//
+// scInit opens with a window transition and draws one of two rooms into the same place on the map.
+//
+// Entered by its door from the village (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH), it is the father's
+// house, with its bookcase and rug and the father's family (ACTOR_FATHER_WITH_A_SECRET,
+// ACTOR_WIFE_KEPT_FROM_THE_SECRET and ACTOR_CHILD_TOLD_THE_SECRET).
+//
+// It can also be entered from behind: by the village doorway the leader steps south into
+// (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH), or up the ladder from Kolima Tunnel
+// (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL). Then other metatiles are copied in, and it is a storeroom of
+// crates and sacks with the ladder down in its floor. The family is put out of sight.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -45,68 +40,69 @@
 #include "text/msg_ids.h"
 
 extern SCENE_ENTRANCE LogRoomsCEntrances[];
-extern Uint32		  LogRoomsCExits[];
-extern ACTOR_PLACE	  LogRoomsCActorPlacements[];
-extern CUE			  LogRoomsCCues[];
+extern Uint32         LogRoomsCExits[];
+extern ACTOR_PLACE    LogRoomsCActorPlacements[];
+extern CUE            LogRoomsCCues[];
 
-/* The metatiles the jar, the barrel and the three bookcases answer. */
-typedef enum LOG_ROOMS_C_METATILE_BEHAVIOR {
-	METATILE_BEHAVIOR_LOG_ROOMS_C_JAR = 100,
-	METATILE_BEHAVIOR_LOG_ROOMS_C_BARREL = 101,
-	/* "The Holy Tree of Kolima Forest." */
+// The metatiles the jar, the barrel and the three bookcases answer.
+typedef enum LOG_ROOMS_C_METATILE_BEHAVIOR
+{
+	METATILE_BEHAVIOR_LOG_ROOMS_C_JAR                = 100,
+	METATILE_BEHAVIOR_LOG_ROOMS_C_BARREL             = 101,
+	// "The Holy Tree of Kolima Forest."
 	METATILE_BEHAVIOR_LOG_ROOMS_C_HOLY_TREE_BOOKCASE = 200,
-	/* "Dictionary of Trees and Flowers." */
-	METATILE_BEHAVIOR_LOG_ROOMS_C_TREES_BOOKCASE = 201,
-	/* "The Art of Logging." */
-	METATILE_BEHAVIOR_LOG_ROOMS_C_LOGGING_BOOKCASE = 202
+	// "Dictionary of Trees and Flowers."
+	METATILE_BEHAVIOR_LOG_ROOMS_C_TREES_BOOKCASE     = 201,
+	// "The Art of Logging."
+	METATILE_BEHAVIOR_LOG_ROOMS_C_LOGGING_BOOKCASE   = 202
 } LOG_ROOMS_C_METATILE_BEHAVIOR;
 
-/* Kolima's shops and inn, as mnShopRun and mnInnCheckIn number them. */
-enum {
+// Kolima's shops and inn, as mnShopRun and mnInnCheckIn number them.
+enum
+{
 	KOLIMA_WEAPON_SHOP = 13,
-	KOLIMA_ARMOR_SHOP = 14,
-	KOLIMA_ITEM_SHOP = 15,
-	KOLIMA_INN = 3
+	KOLIMA_ARMOR_SHOP  = 14,
+	KOLIMA_ITEM_SHOP   = 15,
+	KOLIMA_INN         = 3
 };
 
-/* The residents, numbering LogRoomsCActorPlacements' rows from
-   ACTOR_FIRST_PLACED. Their notes quote what they say once the curse is
-   lifted. */
-typedef enum KOLIMA_ROOM_ACTOR_ID {
-	/* An old man with a cane. */
+// The residents, numbering LogRoomsCActorPlacements' rows from ACTOR_FIRST_PLACED. Their notes
+// quote what they say once the curse is lifted.
+typedef enum KOLIMA_ROOM_ACTOR_ID
+{
+	// An old man with a cane.
 	ACTOR_OLD_MAN_HEARD_OF_WARRIORS = ACTOR_FIRST_PLACED,
-	/* An old woman. */
+	// An old woman.
 	ACTOR_OLD_WOMAN_BEARDED_WARRIORS,
-	/* The father with a secret, a burly grey-haired man: "You saved Kolima?
-	   Wow! That makes me want to tell you a secret!" His thoughts: "It's hidden
-	   deep in the forest, but I can't tell him that!" */
+	// The father with a secret, a burly grey-haired man: "You saved Kolima? Wow! That makes me want
+	// to tell you a secret!" His thoughts: "It's hidden deep in the forest, but I can't tell him
+	// that!"
 	ACTOR_FATHER_WITH_A_SECRET,
-	/* His wife, a woman in a green dress. */
+	// His wife, a woman in a green dress.
 	ACTOR_WIFE_KEPT_FROM_THE_SECRET,
-	/* Their son, a small boy with fair hair. */
+	// Their son, a small boy with fair hair.
 	ACTOR_CHILD_TOLD_THE_SECRET,
-	/* A strongman, stocky and muscular. */
+	// A strongman, stocky and muscular.
 	ACTOR_LUMBERJACK_FATHER,
-	/* His daughter, a woman with long fair hair. */
+	// His daughter, a woman with long fair hair.
 	ACTOR_LUMBERJACKS_DAUGHTER,
-	/* His son, a small boy with fair hair. */
+	// His son, a small boy with fair hair.
 	ACTOR_LUMBERJACKS_HUNGRY_SON,
 	ACTOR_WEAPON_MERCHANT,
 	ACTOR_ARMOR_MERCHANT,
 	ACTOR_ITEM_MERCHANT,
 	ACTOR_INNKEEPER,
-	/* A woman in a pink dress and an apron. */
+	// A woman in a pink dress and an apron.
 	ACTOR_VILLAGER_QUIET_VILLAGE,
-	/* A strongman, stocky and muscular. */
+	// A strongman, stocky and muscular.
 	ACTOR_LUMBERJACK_FROM_IMIL,
-	/* A man carrying a pack. */
+	// A man carrying a pack.
 	ACTOR_MERCHANT_GUEST,
 	ACTOR_FIRST_VILLAGER = ACTOR_OLD_MAN_HEARD_OF_WARRIORS,
-	ACTOR_LAST_VILLAGER = ACTOR_MERCHANT_GUEST
+	ACTOR_LAST_VILLAGER  = ACTOR_MERCHANT_GUEST
 } KOLIMA_ROOM_ACTOR_ID;
 
-/* Replaces the cursed residents' sprites and disables their movement and
-   turning. */
+// Replaces the cursed residents' sprites and disables their movement and turning.
 static void scLogRoomsCTurnVillagersIntoTrees(ACTOR_PLACE *placement)
 {
 	Uint32 villagerIndex;
@@ -114,23 +110,22 @@ static void scLogRoomsCTurnVillagersIntoTrees(ACTOR_PLACE *placement)
 	villagerIndex = 0;
 	{
 		Uint8  talkFacing = TALK_FACING_KEEP;
-		Sint32 behavior = MOVEMENT_TYPE_STAND;
+		Sint32 behavior   = MOVEMENT_TYPE_STAND;
 
-		do {
+		do
+		{
 			placement->talkFacing = talkFacing;
-			placement->movement = behavior;
-			placement->sprite = SPRITE_TREE;
-			/* The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the
-			   small tree. */
-			if(villagerIndex ==
-					ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
-				villagerIndex ==
-					ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
+			placement->movement   = behavior;
+			placement->sprite     = SPRITE_TREE;
+			// The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the small tree.
+			if (villagerIndex == ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER
+			    || villagerIndex == ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER)
+			{
 				placement->sprite = SPRITE_SMALL_TREE;
 			}
 			villagerIndex++;
 			placement++;
-		} while(villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
+		} while (villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
 	}
 }
 
@@ -144,18 +139,19 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return NULL;
 }
 
-/* The exits between the rooms, back to the village and into Kolima Tunnel. */
+// The exits between the rooms, back to the village and into Kolima Tunnel.
 const Uint32 *scGetExits(void)
 {
 	return LogRoomsCExits;
 }
 
-/* Kolima's residents, turned into trees first while the curse lasts. */
+// Kolima's residents, turned into trees first while the curse lasts.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	ACTOR_PLACE *placements;
 
-	if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+	if (gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
+	{
 		scLogRoomsCTurnVillagersIntoTrees(LogRoomsCActorPlacements);
 	}
 	placements = LogRoomsCActorPlacements;
@@ -163,119 +159,129 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return placements;
 }
 
-/* Kolima's weapon seller, once the curse is lifted, opens the shop when spoken
-   to across the counter (facing north). */
+// Kolima's weapon seller, once the curse is lifted, opens the shop when spoken to across the
+// counter (facing north).
 static void scLogRoomsCTalkToWeaponMerchant(void)
 {
 	Uint32 facing = fdActorGet(ACTOR_PARTY_LEADER)->facing;
 
 	fdScriptStart();
-	if(FACING_IS_NORTH(facing)) {
+	if (FACING_IS_NORTH(facing))
+	{
 		mnShopRun(KOLIMA_WEAPON_SHOP, ACTOR_WEAPON_MERCHANT);
-	} else {
+	}
+	else
+	{
 		fdScriptSetMessageId(MsgKolimaFuchinTempleOnOtherSide);
-		/* "Fuchin Temple is on the other side of the river. It's quite..." */
+		// "Fuchin Temple is on the other side of the river. It's quite..."
 		fdScriptShowMessage(ACTOR_WEAPON_MERCHANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Kolima's armor seller, once the curse is lifted, opens the shop across the
-   counter. */
+// Kolima's armor seller, once the curse is lifted, opens the shop across the counter.
 static void scLogRoomsCTalkToArmorMerchant(void)
 {
 	Uint32 facing = fdActorGet(ACTOR_PARTY_LEADER)->facing;
 
 	fdScriptStart();
-	if(FACING_IS_NORTH(facing)) {
+	if (FACING_IS_NORTH(facing))
+	{
 		mnShopRun(KOLIMA_ARMOR_SHOP, ACTOR_ARMOR_MERCHANT);
-	} else {
+	}
+	else
+	{
 		fdScriptSetMessageId(MsgKolimaGrandBridgeAcrossRiverPride);
-		/* "The grand bridge across the river is the pride of Kolima." */
+		// "The grand bridge across the river is the pride of Kolima."
 		fdScriptShowMessage(ACTOR_ARMOR_MERCHANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Kolima's item seller, once the curse is lifted, opens the shop across the
-   counter. */
+// Kolima's item seller, once the curse is lifted, opens the shop across the counter.
 static void scLogRoomsCTalkToItemMerchant(void)
 {
 	Uint32 facing = fdActorGet(ACTOR_PARTY_LEADER)->facing;
 
 	fdScriptStart();
-	if(FACING_IS_NORTH(facing)) {
+	if (FACING_IS_NORTH(facing))
+	{
 		mnShopRun(KOLIMA_ITEM_SHOP, ACTOR_ITEM_MERCHANT);
-	} else {
+	}
+	else
+	{
 		fdScriptSetMessageId(MsgKolimaWhenWasTreeLearnedAppreciate);
-		/* "When I was a tree, I learned to appreciate the sun." */
+		// "When I was a tree, I learned to appreciate the sun."
 		fdScriptShowMessage(ACTOR_ITEM_MERCHANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Kolima's innkeeper, once the curse is lifted, opens the inn across the
-   counter. */
+// Kolima's innkeeper, once the curse is lifted, opens the inn across the counter.
 static void scLogRoomsCTalkToInnkeeper(void)
 {
 	Uint32 facing = fdActorGet(ACTOR_PARTY_LEADER)->facing;
 
 	fdScriptStart();
 
-	if(FACING_IS_NORTH(facing)) {
+	if (FACING_IS_NORTH(facing))
+	{
 		mnInnCheckIn(KOLIMA_INN, ACTOR_INNKEEPER);
-	} else {
+	}
+	else
+	{
 		fdScriptSetMessageId(MsgKolimaTheySayMccoyHaltedConstruction);
-		/* "They say that McCoy halted construction of the palace. With..." */
+		// "They say that McCoy halted construction of the palace. With..."
 		fdScriptShowMessage(ACTOR_INNKEEPER, 0);
 	}
 
 	fdScriptEnd();
 }
 
-/* The exits, the residents' words and thoughts, the shops, the bookcases, the
-   jar and the barrel. */
+// The exits, the residents' words and thoughts, the shops, the bookcases, the jar and the barrel.
 const CUE *scGetCues(void)
 {
 	return LogRoomsCCues;
 }
 
-/* Sets up the houses for the curse and the way they're entered. */
+// Sets up the houses for the curse and the way they're entered.
 Sint32 scInit(void)
 {
 	FIELD_STATE *state = FieldStateWork;
-	Uint32		 actorId;
+	Uint32       actorId;
 
-	state->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
-	/* While the curse lasts, the trees cast no shadow. */
-	if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-		for(actorId = ACTOR_FIRST_VILLAGER; actorId <= ACTOR_LAST_VILLAGER;
-			actorId++) {
+	// While the curse lasts, the trees cast no shadow.
+	if (gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
+	{
+		for (actorId = ACTOR_FIRST_VILLAGER; actorId <= ACTOR_LAST_VILLAGER; actorId++)
+		{
 			ACTOR *actor = fdActorGet(actorId);
 
 			fdActorSetSpriteFlags(actor, 0);
 		}
 	}
 
-	/* By the village's south door the room is the father's house. By the north
-	   doorway or up from Kolima Tunnel, the two entrances after it, other
-	   metatiles make it a storeroom and the family is put out of sight. */
-	if(MainRoutineStateWork.entrance == LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH) {
+	// By the village's south door the room is the father's house. By the north doorway or up from
+	// Kolima Tunnel, the two entrances after it, other metatiles make it a storeroom and the family
+	// is put out of sight.
+	if (MainRoutineStateWork.entrance == LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH)
+	{
 		Sint32 height;
 		Sint32 width;
-		width = 13;
+		width  = 13;
 		height = 8;
 		fdMapGridCopyMetatilesTo(34, 34, 18, 16, width, height);
 		fdMapGridCopyMetatilesTo(34, 94, 18, 76, width, height);
 		fdMapGridCopyMetatilesTo(94, 34, 78, 16, width, height);
-	} else if(MainRoutineStateWork.entrance >=
-			LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH &&
-		MainRoutineStateWork.entrance <= LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) {
+	}
+	else if (MainRoutineStateWork.entrance >= LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH
+	         && MainRoutineStateWork.entrance <= LOG_ROOMS_C_FROM_KOLIMA_TUNNEL)
+	{
 		Sint32 height;
 		Sint32 width;
-		width = 11;
+		width  = 11;
 		height = 8;
 		fdMapGridCopyMetatilesTo(34, 43, 19, 23, width, height);
 		fdMapGridCopyMetatilesTo(34, 94, 19, 83, width, height);
@@ -288,81 +294,145 @@ Sint32 scInit(void)
 }
 
 SCENE_ENTRANCE LogRoomsCEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
-		-1, -1, 0},
+	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP,
-		CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0},
+     CONDITION_ALWAYS, 128,
+     0, 192,
+     FACING_EAST, 0,
+     16, 56,
+     256, 216,
+     0},
 	{LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR,
-		CONDITION_ALWAYS, 192, 0, 168, FACING_SOUTHWEST, 0, 16, 56, 256, 216,
-		0},
-	{LOG_ROOMS_C_ITEM_SHOP_FROM_KOLIMA, CONDITION_ALWAYS, 392, 0, 200,
-		FACING_NORTH, 0, 288, 64, 512, 232, 0},
-	{LOG_ROOMS_C_INN_FROM_KOLIMA, CONDITION_ALWAYS, 648, 0, 200, FACING_NORTH,
-		0, 528, 64, 768, 232, 0},
-	{LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR, CONDITION_ALWAYS, 704, 0, 168,
-		FACING_SOUTHWEST, 0, 528, 64, 768, 224, 0},
-	{LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR, CONDITION_ALWAYS, 128,
-		0, 416, FACING_EAST, 0, 16, 280, 256, 440, 0},
-	{LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH, CONDITION_ALWAYS, 392, 0, 472,
-		FACING_NORTH, 0, 288, 264, 512, 504, 0},
-	{LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH, CONDITION_ALWAYS, 392, 0, 328,
-		FACING_SOUTH, 0, 288, 264, 512, 496, 0},
-	{LOG_ROOMS_C_FROM_KOLIMA_TUNNEL, CONDITION_ALWAYS, 392, 0, 344,
-		FACING_NORTH, 0, 288, 264, 512, 496, 0},
-	{LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA, CONDITION_ALWAYS, 648, 0,
-		424, FACING_NORTH, 0, 528, 288, 768, 456, 0},
+     CONDITION_ALWAYS, 192,
+     0, 168,
+     FACING_SOUTHWEST, 0,
+     16, 56,
+     256, 216,
+     0},
+	{LOG_ROOMS_C_ITEM_SHOP_FROM_KOLIMA,
+     CONDITION_ALWAYS, 392,
+     0, 200,
+     FACING_NORTH, 0,
+     288, 64,
+     512, 232,
+     0},
+	{LOG_ROOMS_C_INN_FROM_KOLIMA,
+     CONDITION_ALWAYS, 648,
+     0, 200,
+     FACING_NORTH, 0,
+     528, 64,
+     768, 232,
+     0},
+	{LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR,
+     CONDITION_ALWAYS, 704,
+     0, 168,
+     FACING_SOUTHWEST, 0,
+     528, 64,
+     768, 224,
+     0},
+	{LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR,
+     CONDITION_ALWAYS, 128,
+     0, 416,
+     FACING_EAST, 0,
+     16, 280,
+     256, 440,
+     0},
+	{LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH,
+     CONDITION_ALWAYS, 392,
+     0, 472,
+     FACING_NORTH, 0,
+     288, 264,
+     512, 504,
+     0},
+	{LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH,
+     CONDITION_ALWAYS, 392,
+     0, 328,
+     FACING_SOUTH, 0,
+     288, 264,
+     512, 496,
+     0},
+	{LOG_ROOMS_C_FROM_KOLIMA_TUNNEL,
+     CONDITION_ALWAYS, 392,
+     0, 344,
+     FACING_NORTH, 0,
+     288, 264,
+     512, 496,
+     0},
+	{LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA,
+     CONDITION_ALWAYS, 648,
+     0, 424,
+     FACING_NORTH, 0,
+     528, 288,
+     768, 456,
+     0},
 	{LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
-		CONDITION_ALWAYS, 704, 0, 392, FACING_SOUTHWEST, 0, 528, 288, 768, 448,
-		0},
-	{LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN, CONDITION_ALWAYS, 128, 0, 688,
-		FACING_EAST, 0, 16, 552, 256, 712, 0},
-	{LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR, CONDITION_ALWAYS, 192,
-		0, 664, FACING_SOUTHWEST, 0, 16, 552, 256, 712, 0},
+     CONDITION_ALWAYS, 704,
+     0, 392,
+     FACING_SOUTHWEST, 0,
+     528, 288,
+     768, 448,
+     0},
+	{LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN,
+     CONDITION_ALWAYS, 128,
+     0, 688,
+     FACING_EAST, 0,
+     16, 552,
+     256, 712,
+     0},
+	{LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR,
+     CONDITION_ALWAYS, 192,
+     0, 664,
+     FACING_SOUTHWEST, 0,
+     16, 552,
+     256, 712,
+     0},
 	{LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
-		CONDITION_ALWAYS, 400, 0, 688, FACING_NORTH, 0, 288, 552, 528, 712, 0},
+     CONDITION_ALWAYS, 400,
+     0, 688,
+     FACING_NORTH, 0,
+     288, 552,
+     528, 712,
+     0},
 	{SCENE_TABLE_END},
 };
 
 Uint32 LogRoomsCExits[] = {
 	SCENE_EXITS(LogRoomsC),
-	SCENE_EXIT(
-		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP,
-		LogRoomsC,
-		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR),
+	SCENE_EXIT(LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP,
+               LogRoomsC,
+               LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR),
 	SCENE_EXIT(
 		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR,
 		LogRoomsC,
 		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR),
 	SCENE_EXIT(LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA, Kolima, KOLIMA_FROM_ITEM_SHOP),
 	SCENE_EXIT(LOG_ROOMS_C_INN_TO_KOLIMA, Kolima, KOLIMA_FROM_INN),
-	SCENE_EXIT(LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR, LogRoomsC,
-		LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN),
-	SCENE_EXIT(LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR, LogRoomsC,
-		LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR),
 	SCENE_EXIT(
-		LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH, Kolima, KOLIMA_FROM_HOUSE_SOUTH),
+		LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR, LogRoomsC, LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN),
+	SCENE_EXIT(LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR,
+               LogRoomsC,
+               LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR),
+	SCENE_EXIT(LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH, Kolima, KOLIMA_FROM_HOUSE_SOUTH),
+	SCENE_EXIT(LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH, Kolima, KOLIMA_FROM_HOUSE_NORTH),
 	SCENE_EXIT(
-		LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH, Kolima, KOLIMA_FROM_HOUSE_NORTH),
-	SCENE_EXIT(LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA, Kolima,
-		KOLIMA_FROM_WEAPON_AND_ARMOR_SHOP),
+		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA, Kolima, KOLIMA_FROM_WEAPON_AND_ARMOR_SHOP),
+	SCENE_EXIT(LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
+               LogRoomsC,
+               LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP),
 	SCENE_EXIT(
-		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
-		LogRoomsC,
-		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP),
-	SCENE_EXIT(LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN, LogRoomsC,
-		LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR),
-	SCENE_EXIT(LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR, LogRoomsC,
-		LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR),
+		LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN, LogRoomsC, LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR),
+	SCENE_EXIT(LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR,
+               LogRoomsC,
+               LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR),
 	SCENE_EXIT(
 		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
 		LogRoomsC,
 		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR),
-	SCENE_EXIT(LOG_ROOMS_C_TO_KOLIMA_TUNNEL, KolimaTunnel,
-		KOLIMA_TUNNEL_FROM_LOG_ROOMS_C),
+	SCENE_EXIT(LOG_ROOMS_C_TO_KOLIMA_TUNNEL, KolimaTunnel, KOLIMA_TUNNEL_FROM_LOG_ROOMS_C),
 	SCENE_EXITS_END,
 };
 
-/* clang-format off */
+// clang-format off
 ACTOR_PLACE LogRoomsCActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
 		166, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -464,4 +534,4 @@ CUE LogRoomsCCues[] = {
 	{ EXAMINE_CUE(EXAMINE_BOOKCASE), METATILE_BEHAVIOR_LOG_ROOMS_C_LOGGING_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledTheArt)) },
 	{ CUE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on

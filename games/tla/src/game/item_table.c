@@ -1,55 +1,48 @@
-/* The 516 items, by item id. Each name is the English release's (MsgItemName
-   plus the item id); the 55 rows past the last name have none. Part of
-   game.c. */
+// The 516 items, by item id. Each name is the English release's (MsgItemName plus the item id); the
+// 55 rows past the last name have none. Part of game.c.
 
-/* Isaac, Garet, Felix and Piers: most swords and axes, and the heavier armour,
-   shields and helms. */
-#define EQUIP_WARRIORS \
-	(EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | \
-		EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(PIERS))
-/* Ivan, Mia, Jenna and Sheba: the staffs, robes, armlets and circlets. */
-#define EQUIP_MAGES \
-	(EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA) | \
-		EQUIP_CHARACTER(SHEBA))
-/* Everyone but Mia and Sheba: the short swords and rapiers. */
-#define EQUIP_LIGHT_BLADE_WIELDERS \
-	(EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | \
-		EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA) | \
-		EQUIP_CHARACTER(PIERS))
-/* Everyone but Ivan and Jenna. */
-#define EQUIP_MACE_WIELDERS \
-	(EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(MIA) | \
-		EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(SHEBA) | \
-		EQUIP_CHARACTER(PIERS))
-/* Mia, Jenna and Sheba: the dresses. */
-#define EQUIP_WOMEN \
-	(EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA) | EQUIP_CHARACTER(SHEBA))
-/* Everyone but Mia, Jenna and Sheba. */
-#define EQUIP_MEN \
-	(EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | \
-		EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(PIERS))
+// Isaac, Garet, Felix and Piers: most swords and axes, and the heavier armour, shields and helms.
+#define EQUIP_WARRIORS                                                                             \
+	(EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX)                      \
+	 | EQUIP_CHARACTER(PIERS))
+// Ivan, Mia, Jenna and Sheba: the staffs, robes, armlets and circlets.
+#define EQUIP_MAGES                                                                                \
+	(EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA) | EQUIP_CHARACTER(SHEBA))
+// Everyone but Mia and Sheba: the short swords and rapiers.
+#define EQUIP_LIGHT_BLADE_WIELDERS                                                                 \
+	(EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN)                       \
+	 | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA) | EQUIP_CHARACTER(PIERS))
+// Everyone but Ivan and Jenna.
+#define EQUIP_MACE_WIELDERS                                                                        \
+	(EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(MIA)                        \
+	 | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(SHEBA) | EQUIP_CHARACTER(PIERS))
+// Mia, Jenna and Sheba: the dresses.
+#define EQUIP_WOMEN (EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA) | EQUIP_CHARACTER(SHEBA))
+// Everyone but Mia, Jenna and Sheba.
+#define EQUIP_MEN                                                                                  \
+	(EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN)                       \
+	 | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(PIERS))
 
-/* The 55 rows past the Magma Ball, to the last item id, 515: one placeholder
-   weapon repeated, with no name or icon, that only Isaac can equip. Its unleash
-   chance of 64 steps (320 percent) unleashes Move on every attack. Nothing
-   gives one. */
-#define ITEM_PLACEHOLDER_WEAPON \
-	{ \
-		.price = 100, \
-		.type = ITEM_TYPE_WEAPON, \
-		.equipMask = EQUIP_CHARACTER(ISAAC), \
-		.attack = 11, \
-		.defense = 12, \
-		.unleashChance = 64, \
-		.unleashAbility = ABILITY_MOVE, \
-		.element = ELEMENT_VENUS, \
-		.effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}}, \
+// The 55 rows past the Magma Ball, to the last item id, 515: one placeholder weapon repeated, with
+// no name or icon, that only Isaac can equip. Its unleash chance of 64 steps (320 percent)
+// unleashes Move on every attack. Nothing gives one.
+#define ITEM_PLACEHOLDER_WEAPON                                                                    \
+	{                                                                                              \
+		.price          = 100,                                                                     \
+		.type           = ITEM_TYPE_WEAPON,                                                        \
+		.equipMask      = EQUIP_CHARACTER(ISAAC),                                                  \
+		.attack         = 11,                                                                      \
+		.defense        = 12,                                                                      \
+		.unleashChance  = 64,                                                                      \
+		.unleashAbility = ABILITY_MOVE,                                                            \
+		.element        = ELEMENT_VENUS,                                                           \
+		.effects        = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},                           \
 	}
 
-/* clang-format off */
-/* The 516 items, by item id, read through gmItemGetDirect. */
+// clang-format off
+// The 516 items, by item id, read through gmItemGetDirect.
 const ITEM_DEFINITION ItemDefinitionTable[] = {
-	/* No item; the text names it "???". */
+	// No item; the text names it "???".
 	[ITEM_NONE] = {
 		.element = ELEMENT_NONE,
 	},
@@ -1626,7 +1619,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.icon = 120,
 		.element = ELEMENT_NONE,
 	},
-	/* Mythril Bag */
+	// Mythril Bag
 	[ITEM_MYTHRIL_BAG_MARS_STAR] = {
 		.type = ITEM_TYPE_ELEMENTAL_STAR,
 		.flags = ITEM_CANNOT_UNEQUIP | ITEM_INDISPENSABLE | ITEM_NOT_TRANSFERRED,
@@ -1634,7 +1627,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.icon = 148,
 		.element = ELEMENT_NONE,
 	},
-	/* Mythril Bag */
+	// Mythril Bag
 	[ITEM_MYTHRIL_BAG_JUPITER_STAR] = {
 		.type = ITEM_TYPE_ELEMENTAL_STAR,
 		.flags = ITEM_CANNOT_UNEQUIP | ITEM_INDISPENSABLE | ITEM_NOT_TRANSFERRED,
@@ -1776,7 +1769,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.icon = 191,
 		.element = ELEMENT_NONE,
 	},
-	/* Mythril Bag */
+	// Mythril Bag
 	[ITEM_MYTHRIL_BAG_B] = {
 		.type = ITEM_TYPE_ELEMENTAL_STAR,
 		.flags = ITEM_CANNOT_UNEQUIP | ITEM_INDISPENSABLE | ITEM_NOT_TRANSFERRED,
@@ -2746,7 +2739,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.element = ELEMENT_NONE,
 		.effects = {{.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 30}},
 	},
-	/* Dragon Shield */
+	// Dragon Shield
 	[ITEM_DRAGON_SHIELD_FORGED] = {
 		.price = 7400,
 		.type = ITEM_TYPE_SHIELD,
@@ -2869,7 +2862,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.element = ELEMENT_NONE,
 		.effects = {{.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 20}},
 	},
-	/* Spirit Gloves */
+	// Spirit Gloves
 	[ITEM_SPIRIT_GLOVES_UNUSED] = {
 		.price = 7200,
 		.type = ITEM_TYPE_SHIELD,
@@ -3343,7 +3336,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.attack = 9,
 		.element = ELEMENT_NONE,
 	},
-	/* Rusty Sword */
+	// Rusty Sword
 	[ITEM_RUSTY_SWORD_ROBBERS_BLADE] = {
 		.price = 370,
 		.type = ITEM_TYPE_WEAPON,
@@ -3353,7 +3346,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.attack = 10,
 		.element = ELEMENT_NONE,
 	},
-	/* Rusty Sword */
+	// Rusty Sword
 	[ITEM_RUSTY_SWORD_PIRATES_SABRE] = {
 		.price = 520,
 		.type = ITEM_TYPE_WEAPON,
@@ -3363,7 +3356,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.attack = 13,
 		.element = ELEMENT_NONE,
 	},
-	/* Rusty Sword */
+	// Rusty Sword
 	[ITEM_RUSTY_SWORD_SOUL_BRAND] = {
 		.price = 580,
 		.type = ITEM_TYPE_WEAPON,
@@ -3382,7 +3375,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.attack = 10,
 		.element = ELEMENT_NONE,
 	},
-	/* Rusty Axe */
+	// Rusty Axe
 	[ITEM_RUSTY_AXE_VIKING_AXE] = {
 		.price = 550,
 		.type = ITEM_TYPE_WEAPON,
@@ -3401,7 +3394,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.attack = 12,
 		.element = ELEMENT_NONE,
 	},
-	/* Rusty Mace */
+	// Rusty Mace
 	[ITEM_RUSTY_MACE_HAGBONE_MACE] = {
 		.price = 420,
 		.type = ITEM_TYPE_WEAPON,
@@ -3420,7 +3413,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.attack = 13,
 		.element = ELEMENT_NONE,
 	},
-	/* Rusty Staff */
+	// Rusty Staff
 	[ITEM_RUSTY_STAFF_GLOWER_STAFF] = {
 		.price = 500,
 		.type = ITEM_TYPE_WEAPON,
@@ -3430,7 +3423,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.attack = 12,
 		.element = ELEMENT_NONE,
 	},
-	/* Rusty Staff */
+	// Rusty Staff
 	[ITEM_RUSTY_STAFF_GOBLINS_ROD] = {
 		.price = 480,
 		.type = ITEM_TYPE_WEAPON,
@@ -3533,7 +3526,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.icon = 338,
 		.element = ELEMENT_NONE,
 	},
-	/* A spare ring row the text names "?": nothing gives it. */
+	// A spare ring row the text names "?": nothing gives it.
 	[ITEM_HEALING_FUNGUS - 1] = {
 		.price = 10,
 		.type = ITEM_TYPE_RING,
@@ -3618,4 +3611,4 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 	},
 	[ITEM_MAGMA_BALL + 1 ... 515] = ITEM_PLACEHOLDER_WEAPON,
 };
-/* clang-format on */
+// clang-format on

@@ -1,7 +1,7 @@
-/* The eight characters' definitions, by character id. Part of game.c. */
+// The eight characters' definitions, by character id. Part of game.c.
 
-/* clang-format off */
-/* The eight characters' definitions, by character id. */
+// clang-format off
+// The eight characters' definitions, by character id.
 const CHARACTER_DEFINITION CharacterDefinitionTable[] = {
 	[ISAAC] = {
 		.hp = {30, 182, 334, 486, 638, 790},
@@ -92,4 +92,4 @@ const CHARACTER_DEFINITION CharacterDefinitionTable[] = {
 		.items = {ITEM_BATTLE_MACE, ITEM_CHAIN_MAIL, ITEM_IRON_SHIELD, ITEM_BRONZE_HELM, ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR},
 	},
 };
-/* clang-format on */
+// clang-format on

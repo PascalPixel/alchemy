@@ -1,7 +1,7 @@
-/* Three actor scripts that four Mars Lighthouse rooms keep a copy of, in this
-   order: a scripted part's, and the crumbs' and embers', which are the same. */
+// Three actor scripts that four Mars Lighthouse rooms keep a copy of, in this order: a scripted
+// part's, and the crumbs' and embers', which are the same.
 
-/* A scripted part waits half a second, is placed at 0, 0, 0 and released. */
+// A scripted part waits half a second, is placed at 0, 0, 0 and released.
 Sint32 ScriptedPartScript[] = {
 	SC_WAIT(30),
 	SC_SET(SW_HOOK, 0),
@@ -10,8 +10,7 @@ Sint32 ScriptedPartScript[] = {
 	SC_RELEASE,
 };
 
-/* A crumb (scActorScatterCrumbs) waits 20 ticks, flickers for ten pairs of
-   ticks and is released. */
+// A crumb (scActorScatterCrumbs) waits 20 ticks, flickers for ten pairs of ticks and is released.
 Uint32 CrumbsScript[] = {
 	SC_WAIT(20),
 	SC_LABEL(1),
@@ -23,7 +22,7 @@ Uint32 CrumbsScript[] = {
 	SC_RELEASE,
 };
 
-/* An ice chip (scIceChipsSpawn) does the same. */
+// An ice chip (scIceChipsSpawn) does the same.
 Uint32 IceChipsScript[] = {
 	SC_WAIT(20),
 	SC_LABEL(1),

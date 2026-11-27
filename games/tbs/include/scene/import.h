@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_IMPORT_H
 #define ALCHEMY_IMPORT_H
 
-/* The main-image headers that declare the functions scene overlays import, for
-   the overlays that call them outside script.h. */
+// The main-image headers that declare the functions scene overlays import, for the overlays that
+// call them outside script.h.
 
 #include "types.h"
 #include "field/field.h"

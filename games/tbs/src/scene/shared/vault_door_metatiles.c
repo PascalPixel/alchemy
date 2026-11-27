@@ -1,8 +1,7 @@
-/* Vault's doors opening, on both visits (one map): two ticks of map metatiles
-   each, named for the room the door opens into (scVaultEnterGemOwnersHouse and
-   the rest). */
+// Vault's doors opening, on both visits (one map): two ticks of map metatiles each, named for the
+// room the door opens into (scVaultEnterGemOwnersHouse and the rest).
 
-/* Each door's opening, by the room it opens into. */
+// Each door's opening, by the room it opens into.
 Uint16 VaultGemOwnersHouseDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 4),
 	MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 4),

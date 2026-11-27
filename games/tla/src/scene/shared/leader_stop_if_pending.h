@@ -1,9 +1,10 @@
-/* Stops the leader while an action waits. */
+// Stops the leader while an action waits.
 void fdLeaderStopIfPending(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	if(state->busy != 0) {
+	if (state->busy != 0)
+	{
 		fdScriptSetFlag(FLAG_MENU_OPEN);
 		fdLeaderStopMoving();
 		fdScriptEndAllLastingPsynergy();

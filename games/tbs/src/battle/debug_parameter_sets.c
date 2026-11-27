@@ -1,14 +1,14 @@
-/* The debug parameter sets: runs of party members, each run ended by
-   DEBUG_PARAMETER_SET_END, that btDebugParamSetLoad gives the party. */
+// The debug parameter sets: runs of party members, each run ended by DEBUG_PARAMETER_SET_END, that
+// btDebugParamSetLoad gives the party.
 
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "battle/debug_parameter_set.h"
 #include "game/character_ids.h"
 
-/* clang-format off */
+// clang-format off
 DEBUG_PARM_SET_ROW DebugParameterSets[] = {
-	/* Set 0 */
+	// Set 0
 	{
 		.unitId = ISAAC,
 		.level = 35,
@@ -39,7 +39,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 1 */
+	// Set 1
 	{
 		.unitId = ISAAC,
 		.level = 3,
@@ -56,7 +56,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 2 */
+	// Set 2
 	{
 		.unitId = ISAAC,
 		.level = 6,
@@ -81,7 +81,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 3 */
+	// Set 3
 	{
 		.unitId = ISAAC,
 		.level = 11,
@@ -112,7 +112,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 4 */
+	// Set 4
 	{
 		.unitId = ISAAC,
 		.level = 15,
@@ -143,7 +143,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 5 */
+	// Set 5
 	{
 		.unitId = ISAAC,
 		.level = 18,
@@ -174,7 +174,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 6 */
+	// Set 6
 	{
 		.unitId = ISAAC,
 		.level = 20,
@@ -205,7 +205,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 7 */
+	// Set 7
 	{
 		.unitId = ISAAC,
 		.level = 35,
@@ -236,7 +236,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 8 */
+	// Set 8
 	{
 		.unitId = ISAAC,
 		.level = 35,
@@ -267,7 +267,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 9 */
+	// Set 9
 	{
 		.unitId = ISAAC,
 		.level = 35,
@@ -298,7 +298,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 10 */
+	// Set 10
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -320,7 +320,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 11 */
+	// Set 11
 	{
 		.unitId = ISAAC,
 		.level = 2,
@@ -342,7 +342,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 12 */
+	// Set 12
 	{
 		.unitId = ISAAC,
 		.level = 3,
@@ -358,7 +358,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 13 */
+	// Set 13
 	{
 		.unitId = ISAAC,
 		.level = 4,
@@ -380,7 +380,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 14 */
+	// Set 14
 	{
 		.unitId = ISAAC,
 		.level = 5,
@@ -403,7 +403,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 15 */
+	// Set 15
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -430,7 +430,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 16 */
+	// Set 16
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -457,7 +457,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 17 */
+	// Set 17
 	{
 		.unitId = GARET,
 		.level = 30,
@@ -488,7 +488,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 18 */
+	// Set 18
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -515,7 +515,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 19 */
+	// Set 19
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -542,7 +542,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 20 */
+	// Set 20
 	{
 		.unitId = ISAAC,
 		.level = 6,
@@ -567,7 +567,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 21 */
+	// Set 21
 	{
 		.unitId = ISAAC,
 		.level = 7,
@@ -592,7 +592,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 22 */
+	// Set 22
 	{
 		.unitId = ISAAC,
 		.level = 8,
@@ -617,7 +617,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 23 */
+	// Set 23
 	{
 		.unitId = ISAAC,
 		.level = 9,
@@ -642,7 +642,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 24 */
+	// Set 24
 	{
 		.unitId = ISAAC,
 		.level = 9,
@@ -667,7 +667,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 25 */
+	// Set 25
 	{
 		.unitId = ISAAC,
 		.level = 10,
@@ -698,7 +698,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 26 */
+	// Set 26
 	{
 		.unitId = ISAAC,
 		.level = 10,
@@ -729,7 +729,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 27 */
+	// Set 27
 	{
 		.unitId = ISAAC,
 		.level = 10,
@@ -760,7 +760,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 28 */
+	// Set 28
 	{
 		.unitId = ISAAC,
 		.level = 10,
@@ -791,7 +791,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 29 */
+	// Set 29
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -818,7 +818,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 30 */
+	// Set 30
 	{
 		.unitId = ISAAC,
 		.level = 11,
@@ -849,7 +849,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 31 */
+	// Set 31
 	{
 		.unitId = ISAAC,
 		.level = 11,
@@ -880,7 +880,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 32 */
+	// Set 32
 	{
 		.unitId = ISAAC,
 		.level = 12,
@@ -911,7 +911,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 33 */
+	// Set 33
 	{
 		.unitId = ISAAC,
 		.level = 13,
@@ -942,7 +942,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 34 */
+	// Set 34
 	{
 		.unitId = ISAAC,
 		.level = 14,
@@ -973,7 +973,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 35 */
+	// Set 35
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1000,7 +1000,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 36 */
+	// Set 36
 	{
 		.unitId = ISAAC,
 		.level = 15,
@@ -1031,7 +1031,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 37 */
+	// Set 37
 	{
 		.unitId = ISAAC,
 		.level = 15,
@@ -1062,7 +1062,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 38 */
+	// Set 38
 	{
 		.unitId = ISAAC,
 		.level = 15,
@@ -1093,7 +1093,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 39 */
+	// Set 39
 	{
 		.unitId = ISAAC,
 		.level = 15,
@@ -1124,7 +1124,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 40 */
+	// Set 40
 	{
 		.unitId = ISAAC,
 		.level = 15,
@@ -1155,7 +1155,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 41 */
+	// Set 41
 	{
 		.unitId = ISAAC,
 		.level = 15,
@@ -1186,7 +1186,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 42 */
+	// Set 42
 	{
 		.unitId = ISAAC,
 		.level = 16,
@@ -1217,7 +1217,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 43 */
+	// Set 43
 	{
 		.unitId = ISAAC,
 		.level = 17,
@@ -1248,7 +1248,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 44 */
+	// Set 44
 	{
 		.unitId = ISAAC,
 		.level = 17,
@@ -1279,7 +1279,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 45 */
+	// Set 45
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1306,7 +1306,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 46 */
+	// Set 46
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1333,7 +1333,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 47 */
+	// Set 47
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1360,7 +1360,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 48 */
+	// Set 48
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1387,7 +1387,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 49 */
+	// Set 49
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1414,7 +1414,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 50 */
+	// Set 50
 	{
 		.unitId = ISAAC,
 		.level = 17,
@@ -1445,7 +1445,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 51 */
+	// Set 51
 	{
 		.unitId = ISAAC,
 		.level = 18,
@@ -1476,7 +1476,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 52 */
+	// Set 52
 	{
 		.unitId = ISAAC,
 		.level = 18,
@@ -1487,7 +1487,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 53 */
+	// Set 53
 	{
 		.unitId = ISAAC,
 		.level = 19,
@@ -1498,7 +1498,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 54 */
+	// Set 54
 	{
 		.unitId = ISAAC,
 		.level = 19,
@@ -1509,7 +1509,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 55 */
+	// Set 55
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1536,7 +1536,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 56 */
+	// Set 56
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1563,7 +1563,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 57 */
+	// Set 57
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1590,7 +1590,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 58 */
+	// Set 58
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1617,7 +1617,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 59 */
+	// Set 59
 	{
 		.unitId = ISAAC,
 		.level = 1,
@@ -1644,7 +1644,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 60 */
+	// Set 60
 	{
 		.unitId = ISAAC,
 		.level = 20,
@@ -1675,7 +1675,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 61 */
+	// Set 61
 	{
 		.unitId = ISAAC,
 		.level = 20,
@@ -1706,7 +1706,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 62 */
+	// Set 62
 	{
 		.unitId = ISAAC,
 		.level = 21,
@@ -1737,7 +1737,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 63 */
+	// Set 63
 	{
 		.unitId = ISAAC,
 		.level = 22,
@@ -1768,7 +1768,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 64 */
+	// Set 64
 	{
 		.unitId = ISAAC,
 		.level = 23,
@@ -1799,7 +1799,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 65 */
+	// Set 65
 	{
 		.unitId = ISAAC,
 		.level = 24,
@@ -1830,7 +1830,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 66 */
+	// Set 66
 	{
 		.unitId = ISAAC,
 		.level = 25,
@@ -1861,7 +1861,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 67 */
+	// Set 67
 	{
 		.unitId = ISAAC,
 		.level = 27,
@@ -1892,7 +1892,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 68 */
+	// Set 68
 	{
 		.unitId = ISAAC,
 		.level = 28,
@@ -1923,7 +1923,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 69 */
+	// Set 69
 	{
 		.unitId = ISAAC,
 		.level = 29,
@@ -1954,7 +1954,7 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 70 */
+	// Set 70
 	{
 		.unitId = ISAAC,
 		.level = 33,
@@ -1985,9 +1985,9 @@ DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
-	/* Set 71, empty */
+	// Set 71, empty
 	{
 		.unitId = DEBUG_PARAMETER_SET_END,
 	},
 };
-/* clang-format on */
+// clang-format on

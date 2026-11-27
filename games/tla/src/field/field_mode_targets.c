@@ -1,11 +1,9 @@
-/* The actor a field Psynergy or item aims at, and the helpers that follow it.
-   Part of field_mode.c. */
+// The actor a field Psynergy or item aims at, and the helpers that follow it. Part of field_mode.c.
 
-/* Picks the actor nearest actor id, under 32 pixels away and 48 pixels in
-   height. Distances to treasure spots count double and to actors with
-   ACTOR_NEAR_TALK ten thirteenths; beyond 11 pixels the actor must also lie
-   within three sixteenths of a turn of id's facing. Returns -1 when none
-   qualifies. */
+// Picks the actor nearest actor id, under 32 pixels away and 48 pixels in height. Distances to
+// treasure spots count double and to actors with ACTOR_NEAR_TALK ten thirteenths; beyond 11 pixels
+// the actor must also lie within three sixteenths of a turn of id's facing. Returns -1 when none
+// qualifies.
 Sint32 fdFindNearbyTalkTarget(Sint32 id)
 {
 	ACTOR *self;
@@ -23,167 +21,173 @@ Sint32 fdFindNearbyTalkTarget(Sint32 id)
 	Sint32 distance;
 	Sint32 angle;
 
-	best = -1;
+	best         = -1;
 	bestDistance = 32;
-	self = fdActorLookup(id);
-	if(self != 0) {
-		for(i = 0; i <= FIELD_ACTOR_COUNT; i++) {
-			if(i == id)
+	self         = fdActorLookup(id);
+	if (self != 0)
+	{
+		for (i = 0; i <= FIELD_ACTOR_COUNT; i++)
+		{
+			if (i == id)
 				continue;
 
 			candidate = fdActorLookup(i);
-			if(candidate == 0 ||
-				(candidate->collisionFlags & ACTOR_NOT_TARGETED) != 0)
+			if (candidate == 0 || (candidate->collisionFlags & ACTOR_NOT_TARGETED) != 0)
 				continue;
 
-			if(candidate->y.fixed - self->y.fixed >= 0) {
-				if(candidate->y.fixed - self->y.fixed >= toFIXED(48))
+			if (candidate->y.fixed - self->y.fixed >= 0)
+			{
+				if (candidate->y.fixed - self->y.fixed >= toFIXED(48))
 					continue;
-			} else if(self->y.fixed - candidate->y.fixed >= toFIXED(48)) {
+			}
+			else if (self->y.fixed - candidate->y.fixed >= toFIXED(48))
+			{
 				continue;
 			}
 
-			dx = (candidate->x.fixed - self->x.fixed) / toFIXED(1);
-			dy = (candidate->y.fixed - self->y.fixed) / toFIXED(1);
-			dz = (candidate->z.fixed - self->z.fixed) / toFIXED(1);
+			dx              = (candidate->x.fixed - self->x.fixed) / toFIXED(1);
+			dy              = (candidate->y.fixed - self->y.fixed) / toFIXED(1);
+			dz              = (candidate->z.fixed - self->z.fixed) / toFIXED(1);
 
-			xx = dx * dx;
-			yy = dy * dy;
-			zz = dz * dz;
+			xx              = dx * dx;
+			yy              = dy * dy;
+			zz              = dz * dz;
 			distanceSquared = xx + yy + zz;
-			distance = sySquartIWRAM(distanceSquared);
-			if(i > FIELD_TREASURE_ACTOR - 1)
+			distance        = sySquartIWRAM(distanceSquared);
+			if (i > FIELD_TREASURE_ACTOR - 1)
 				distance <<= 1;
-			if((candidate->collisionFlags & ACTOR_NEAR_TALK) != 0)
+			if ((candidate->collisionFlags & ACTOR_NEAR_TALK) != 0)
 				distance = distance * 10 / 13;
-			if(distance >= bestDistance)
+			if (distance >= bestDistance)
 				continue;
 
 			angle = (Uint16)syAtan(candidate->z.fixed - self->z.fixed,
-				candidate->x.fixed - self->x.fixed);
-			if(distance > 11) {
+			                       candidate->x.fixed - self->x.fixed);
+			if (distance > 11)
+			{
 				Sint32 difference = (Sint16)(angle - self->facing);
 
-				if(difference < -(TRIG_TURN * 3 / 16 - 1))
+				if (difference < -(TRIG_TURN * 3 / 16 - 1))
 					continue;
-				if(difference > TRIG_TURN * 3 / 16 - 1)
+				if (difference > TRIG_TURN * 3 / 16 - 1)
 					continue;
 			}
 
-			best = i;
+			best         = i;
 			bestDistance = distance;
 		}
 	}
 	return best;
 }
 
-/* Returns the row of FieldPsynergyReach for a field Psynergy kind: its range,
-   height and facing width. A kind not found returns the -1 terminator. */
+// Returns the row of FieldPsynergyReach for a field Psynergy kind: its range, height and facing
+// width. A kind not found returns the -1 terminator.
 const FIELD_PSYNERGY_REACH *fdGetPsynergyReach(Sint32 id)
 {
 	const FIELD_PSYNERGY_REACH *entry = FieldPsynergyReach;
 
-	while(entry->fieldPsynergy != -1 && id != entry->fieldPsynergy)
+	while (entry->fieldPsynergy != -1 && id != entry->fieldPsynergy)
 		entry++;
 	return entry;
 }
 
-/* Returns how far the ground at position lies above or below the actor's, made
-   positive, when that is within the kind's reach in height, else -1. */
+// Returns how far the ground at position lies above or below the actor's, made positive, when that
+// is within the kind's reach in height, else -1.
 Sint32 fdMeasurePsynergyHeight(Sint32 id, ACTOR *actor, Sint32 *pos)
 {
 	const FIELD_PSYNERGY_REACH *entry = fdGetPsynergyReach(id);
-	Sint32						height = fdMapGridGetTerrainHeightAboveStub(
-		 pos[0], pos[2], actor->layer, actor->groundHeight);
+	Sint32                      height =
+		fdMapGridGetTerrainHeightAboveStub(pos[0], pos[2], actor->layer, actor->groundHeight);
 
-	if(ABS(height) <= toFIXED(entry->height))
+	if (ABS(height) <= toFIXED(entry->height))
 		return ABS(height);
 	return -1;
 }
 
-/* A facing's sixteenths of a turn (FACING_STEP), as a shift. */
+// A facing's sixteenths of a turn (FACING_STEP), as a shift.
 #define FACING_STEP_SHIFT 12
 
-/* How far actor otherId stands from actor selfId, in pixels over the ground,
-   when it lies within the reach of field Psynergy kind in front of selfId; -1
-   when it does not. */
+// How far actor otherId stands from actor selfId, in pixels over the ground, when it lies within
+// the reach of field Psynergy kind in front of selfId; -1 when it does not.
 Sint32 fdMeasurePsynergyReach(Sint32 kind, Sint32 selfId, Sint32 otherId)
 {
-	ACTOR					   *self;
-	ACTOR					   *other;
+	ACTOR                      *self;
+	ACTOR                      *other;
 	const FIELD_PSYNERGY_REACH *rule;
-	Sint32						height;
-	Sint32						range;
-	Sint32						dx;
-	Sint32						dz;
-	Sint32						distance;
-	Sint32						width;
-	Sint32						facing;
-	Sint32						difference;
-	Sint32						angle;
+	Sint32                      height;
+	Sint32                      range;
+	Sint32                      dx;
+	Sint32                      dz;
+	Sint32                      distance;
+	Sint32                      width;
+	Sint32                      facing;
+	Sint32                      difference;
+	Sint32                      angle;
 
-	self = fdActorLookup(selfId);
+	self  = fdActorLookup(selfId);
 	other = fdActorLookup(otherId);
-	if(self == 0 || other == 0 ||
-		(other->collisionFlags & ACTOR_NOT_TARGETED) != 0)
+	if (self == 0 || other == 0 || (other->collisionFlags & ACTOR_NOT_TARGETED) != 0)
 		return -1;
 
-	/* Height: within the rule's pixels above or below; Pound compares the
-	   ground the two stand on, not their own heights. */
-	rule = fdGetPsynergyReach(kind);
+	// Height: within the rule's pixels above or below; Pound compares the ground the two stand on,
+	// not their own heights.
+	rule   = fdGetPsynergyReach(kind);
 	height = toFIXED(rule->height);
-	if(kind == FIELD_PSYNERGY_POUND) {
-		if(ABS(other->groundHeight - self->groundHeight) > height)
+	if (kind == FIELD_PSYNERGY_POUND)
+	{
+		if (ABS(other->groundHeight - self->groundHeight) > height)
 			return -1;
-	} else {
-		if(ABS(other->y.fixed - self->y.fixed) > height)
+	}
+	else
+	{
+		if (ABS(other->y.fixed - self->y.fixed) > height)
 			return -1;
 	}
 
-	/* Distance over the ground; actors with ACTOR_NEAR_PSYNERGY count from half
-	   as far again. */
+	// Distance over the ground; actors with ACTOR_NEAR_PSYNERGY count from half as far again.
 	range = rule->range + 1;
-	if((other->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)
+	if ((other->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)
 		range = range * 3 / 2;
-	dx = (other->x.fixed - self->x.fixed) / toFIXED(1);
-	dz = (other->z.fixed - self->z.fixed) / toFIXED(1);
+	dx       = (other->x.fixed - self->x.fixed) / toFIXED(1);
+	dz       = (other->z.fixed - self->z.fixed) / toFIXED(1);
 	distance = sySquartIWRAM(dx * dx + dz * dz);
-	if(distance > range)
+	if (distance > range)
 		return -1;
 
-	/* Beyond 11 pixels it must also lie in front: within the rule's width of
-	   the caster's facing, rounded to a quarter turn (two thirds as wide beyond
-	   19 pixels). */
-	if(distance > 11) {
+	// Beyond 11 pixels it must also lie in front: within the rule's width of the caster's facing,
+	// rounded to a quarter turn (two thirds as wide beyond 19 pixels).
+	if (distance > 11)
+	{
 		width = rule->width;
-		if(distance > 19)
+		if (distance > 19)
 			width = width * 2 / 3;
-		facing = (self->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-		angle = (Uint16)syAtan(
-			other->z.fixed - self->z.fixed, other->x.fixed - self->x.fixed);
+		facing     = (self->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+		angle      = (Uint16)syAtan(other->z.fixed - self->z.fixed, other->x.fixed - self->x.fixed);
 		difference = (Sint16)(angle - facing);
-		if(difference < 0)
+		if (difference < 0)
 			difference = -difference;
-		if(difference >= width)
+		if (difference >= width)
 			return -1;
 	}
 	return distance;
 }
 
-/* Returns the actor nearest in front of actor self that field Psynergy kind can
-   reach, or -1. */
+// Returns the actor nearest in front of actor self that field Psynergy kind can reach, or -1.
 Sint32 fdFindNearbyPsynergyTarget(Sint32 self, Sint32 kind)
 {
 	Sint32 nearest = BEYOND_REACH;
-	Sint32 found = -1;
+	Sint32 found   = -1;
 	Sint32 i;
 
-	for(i = 0; i <= FIELD_ACTOR_COUNT; i++) {
-		if(i != self) {
+	for (i = 0; i <= FIELD_ACTOR_COUNT; i++)
+	{
+		if (i != self)
+		{
 			Sint32 distance = fdMeasurePsynergyReach(kind, self, i);
 
-			if(distance != -1 && nearest > distance) {
-				found = i;
+			if (distance != -1 && nearest > distance)
+			{
+				found   = i;
 				nearest = distance;
 			}
 		}
@@ -191,17 +195,18 @@ Sint32 fdFindNearbyPsynergyTarget(Sint32 self, Sint32 kind)
 	return found;
 }
 
-/* Unused: only the stub table refers to it. Opens a chest: if actor target
-   exists, plays SE_CHEST_OPEN, opens its lid and, 12 ticks later, shows itemId
-   in front of actor actorId with sparkles. */
+// Unused: only the stub table refers to it. Opens a chest: if actor target exists, plays
+// SE_CHEST_OPEN, opens its lid and, 12 ticks later, shows itemId in front of actor actorId with
+// sparkles.
 Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 target, Sint32 itemId)
 {
 	void  *targetActor;
 	Sint32 emitter;
 
 	targetActor = fdActorGetById(target);
-	emitter = 0;
-	if(targetActor != 0) {
+	emitter     = 0;
+	if (targetActor != 0)
+	{
 		sySoundPlayStub(SE_CHEST_OPEN);
 		fdActorSelectAnimationStub(targetActor, TREASURE_SPOT_CHEST_OPENING);
 		sySynch(12);
@@ -210,12 +215,11 @@ Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 target, Sint32 itemId)
 	return emitter;
 }
 
-/* Whether the actor 16 pixels in front of the leader, along its facing rounded
-   to a quarter turn, can be pushed on by 16 pixels: 1 when nothing solid stands
-   on the metatile beyond it or above it and its terrain test passes there, else
-   0. fdLeaderPushObjectAhead, after it, makes the push. In every edition but
-   the Japanese the actor Halt has stopped (MainRoutineStateWork.haltedActor)
-   cannot be pushed; the Japanese release has no such test. */
+// Whether the actor 16 pixels in front of the leader, along its facing rounded to a quarter turn,
+// can be pushed on by 16 pixels: 1 when nothing solid stands on the metatile beyond it or above it
+// and its terrain test passes there, else 0. fdLeaderPushObjectAhead, after it, makes the push. In
+// every edition but the Japanese the actor Halt has stopped (MainRoutineStateWork.haltedActor)
+// cannot be pushed; the Japanese release has no such test.
 Bool fdLeaderCanPushObjectAhead(void)
 {
 	Sint32 pos[3];
@@ -228,24 +232,24 @@ Bool fdLeaderCanPushObjectAhead(void)
 	Sint32 result;
 	Sint32 angle = owner->facing / FACING_STEP;
 
-	/* The facing rounded to the nearest quarter turn, in sixteenths; the probe
-	   starts at the leader's height rounded to the nearest 8 pixels. */
-	angle = ((angle + 2) & 0xc) << FACING_STEP_SHIFT;
-	pos[0] = owner->x.fixed;
-	pos[1] = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
-	pos[2] = owner->z.fixed;
+	// The facing rounded to the nearest quarter turn, in sixteenths; the probe starts at the
+	// leader's height rounded to the nearest 8 pixels.
+	angle        = ((angle + 2) & 0xc) << FACING_STEP_SHIFT;
+	pos[0]       = owner->x.fixed;
+	pos[1]       = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
+	pos[2]       = owner->z.fixed;
 	syVectorAddPolarOffset(toFIXED(16), angle, pos);
 	target = fdActorFindAtMetatile(pos, TRUE);
-	if(target == 0)
+	if (target == 0)
 		return FALSE;
-	if(target->sceneCount != 0)
+	if (target->sceneCount != 0)
 		return FALSE;
 #if HALTED_ACTOR_CANNOT_BE_PUSHED
-	/* With nothing halted the id is -1, for which fdActorGetById returns NULL,
-	   so the test against 1 (where -1 looks meant) changes the result only when
-	   actor 1 is the halted one, which it then lets be pushed. */
+	// With nothing halted the id is -1, for which fdActorGetById returns NULL, so the test against
+	// 1 (where -1 looks meant) changes the result only when actor 1 is the halted one, which it
+	// then lets be pushed.
 	id = MainRoutineStateWork.haltedActor;
-	if(id != 1 && target == fdActorGetById(id))
+	if (id != 1 && target == fdActorGetById(id))
 		return FALSE;
 #endif
 	pos[0] = target->x.fixed;
@@ -253,26 +257,25 @@ Bool fdLeaderCanPushObjectAhead(void)
 	pos[2] = target->z.fixed;
 	syVectorAddPolarOffset(toFIXED(16), angle, pos);
 	hit = fdActorFindAtMetatile(pos, TRUE);
-	if(hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
+	if (hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
 		return FALSE;
 	above[0] = target->x.fixed;
 	above[1] = target->y.fixed + toFIXED(16);
 	above[2] = target->z.fixed;
-	hit = fdActorFindAtMetatile(above, TRUE);
-	if(hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
+	hit      = fdActorFindAtMetatile(above, TRUE);
+	if (hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
 		return FALSE;
-	/* The metatile beyond is tested on the map's overhead layer. */
-	terrain = target->layer;
+	// The metatile beyond is tested on the map's overhead layer.
+	terrain       = target->layer;
 	target->layer = MAPGRID_LAYER_OVERHEAD;
-	result = fdMapGridCheckCollisionStub(target, pos);
+	result        = fdMapGridCheckCollisionStub(target, pos);
 	target->layer = terrain;
-	if(result > 0)
+	if (result > 0)
 		return FALSE;
 	return TRUE;
 }
 
-/* Pushes the actor ahead of the leader on by 16 pixels, as
-   fdLeaderCanPushObjectAhead allowed. */
+// Pushes the actor ahead of the leader on by 16 pixels, as fdLeaderCanPushObjectAhead allowed.
 void fdLeaderPushObjectAhead(void)
 {
 	Sint32 pos[3];
@@ -284,43 +287,45 @@ void fdLeaderPushObjectAhead(void)
 	Sint32 acceleration;
 	Sint32 angle = owner->facing / FACING_STEP;
 
-	angle = ((angle + 2) & 0xc) << FACING_STEP_SHIFT;
-	pos[0] = owner->x.fixed;
-	pos[1] = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
-	pos[2] = owner->z.fixed;
+	angle        = ((angle + 2) & 0xc) << FACING_STEP_SHIFT;
+	pos[0]       = owner->x.fixed;
+	pos[1]       = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
+	pos[2]       = owner->z.fixed;
 	syVectorAddPolarOffset(toFIXED(16), angle, pos);
 	target = fdActorFindAtMetatile(pos, TRUE);
 	pos[0] = target->x.fixed;
 	pos[1] = target->y.fixed;
 	pos[2] = target->z.fixed;
 	syVectorAddPolarOffset(toFIXED(16), angle, pos);
-	/* The metatile beyond is tested on the map's overhead layer. */
-	terrain = target->layer;
+	// The metatile beyond is tested on the map's overhead layer.
+	terrain       = target->layer;
 	target->layer = MAPGRID_LAYER_OVERHEAD;
-	result = fdMapGridCheckCollisionStub(target, pos);
+	result        = fdMapGridCheckCollisionStub(target, pos);
 	target->layer = terrain;
-	if(result <= 0) {
+	if (result <= 0)
+	{
 		fdActorSelectAnimationStub(owner, ANIM_PUSH);
 		sySynch(15);
 		sySoundPlayStub(SE_PUSH);
-		target->speedLimit = toFIXED(1) / 5;
+		target->speedLimit   = toFIXED(1) / 5;
 		target->acceleration = toFIXED(1) / 5;
 		fdActorSetMoveTargetStub(target, pos[0], pos[1], pos[2]);
 		sySynch(2);
-		acceleration = owner->acceleration;
+		acceleration        = owner->acceleration;
 		owner->acceleration = toFIXED(1) / 5;
-		speed = owner->speedLimit;
-		owner->speedLimit = toFIXED(1) / 5;
+		speed               = owner->speedLimit;
+		owner->speedLimit   = toFIXED(1) / 5;
 		fdActorSetMoveTargetStub(owner, pos[0], pos[1], pos[2]);
 		fdActorWaitForMoveStub(target);
 		sySynch(1);
 		fdScriptNoOperation();
 		fdActorSetPosAndResetMotionStub(target, pos[0], pos[1], pos[2]);
 		fdActorSetPosAndResetMotionStub(owner,
-			toFIXED(owner->x.part[0].integer), owner->y.fixed,
-			toFIXED(owner->z.part[0].integer));
+		                                toFIXED(owner->x.part[0].integer),
+		                                owner->y.fixed,
+		                                toFIXED(owner->z.part[0].integer));
 		fdActorSelectAnimationStub(owner, ANIM_STAND);
-		owner->speedLimit = speed;
+		owner->speedLimit   = speed;
 		owner->acceleration = acceleration;
 	}
 }

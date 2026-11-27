@@ -1,8 +1,7 @@
 #ifndef ALCHEMY_SYSTEM_STUBS_H
 #define ALCHEMY_SYSTEM_STUBS_H
 
-/* Events, ticks, memory, resources and the other services the system library
-   provides. */
+// Events, ticks, memory, resources and the other services the system library provides.
 
 void   sySynchStub(Sint32 ticks);
 Sint32 sySetEventStub(EVENT_FUNC callback, Sint32 order);
@@ -16,11 +15,11 @@ void  *syHeapSlotAllocateStub(Sint32 kind, Sint32 size);
 void  *syHeapSlotAllocateEWRAMStub(Sint32 kind, Sint32 size);
 void  *syHeapAllocateStub(Sint32 size);
 void  *syHeapAllocateEWRAMStub(Sint32 size);
-/* Unpacks a byte-oriented LZ resource with a RAM copy of its ARM decoder, and
-   returns the unpacked size in bytes. */
+// Unpacks a byte-oriented LZ resource with a RAM copy of its ARM decoder, and returns the unpacked
+// size in bytes.
 Sint32 syDecompressByteLZStub(const void *src, void *dest);
-/* Unpacks a tagged LZ resource (a first byte of 0 or 1) the same way and
-   returns the unpacked size in bytes. */
+// Unpacks a tagged LZ resource (a first byte of 0 or 1) the same way and returns the unpacked size
+// in bytes.
 Sint32 syDecompressTaggedLZStub(const void *src, void *dest);
 Sint32 syVRAMCacheFreeEntryStub(Uint32 entry);
 Sint32 syVRAMCacheReleaseVRAMStub(Uint32 entry);
@@ -31,8 +30,8 @@ void   syOAMAddSpriteAtDepthStub(void *slotEntry, Sint32 slot);
 void   syWindowLoadGraphicsStub(void);
 void  *syResourceGetTableEntryStub(Sint32 index);
 void   syDummyNoOperationHookStub(Sint32 unused);
-/* Fades BG1 to BG3, the sprites and the backdrop out to black over `frames`
-   Frames; it only starts the screen fade. */
+// Fades BG1 to BG3, the sprites and the backdrop out to black over `frames` Frames; it only starts
+// the screen fade.
 void   syScreenFadeToBlackStub(Sint32 frames);
 void   syScreenFadeWaitStub(void);
 void   sySerialInitStub(void);

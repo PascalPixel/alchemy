@@ -1,17 +1,17 @@
 #ifndef ALCHEMY_WINDOW_SPRITE_H
 #define ALCHEMY_WINDOW_SPRITE_H
 
-/* Sprites as the windows draw them: a sprite's OAM attributes, and the lists of
-   characters, icons and portraits each window shows as sprites. */
+// Sprites as the windows draw them: a sprite's OAM attributes, and the lists of characters, icons
+// and portraits each window shows as sprites.
 
 #include "edition.h"
 #include "static_assert.h"
 #include "types.h"
 #include "stubs.h"
 
-/* A 16-byte rectangle. Only the Japanese glyph renderer declares one, and no
-   code reads its fields. */
-typedef struct GLYPH_RECT {
+// A 16-byte rectangle. Only the Japanese glyph renderer declares one, and no code reads its fields.
+typedef struct GLYPH_RECT
+{
 	Uint8  unused[8];
 	Uint16 width;
 	Uint16 height;
@@ -23,82 +23,86 @@ STATIC_ASSERT(sizeof(GLYPH_RECT) == 16);
 STATIC_ASSERT(offsetof(GLYPH_RECT, width) == 8);
 STATIC_ASSERT(offsetof(GLYPH_RECT, x) == 12);
 
-/* A sprite's OAM attribute 2 (tile index, priority and palette) and the
-   halfword after it, as one word or as fields. */
-typedef union OAM_ATTR2_WORD {
+// A sprite's OAM attribute 2 (tile index, priority and palette) and the halfword after it, as one
+// word or as fields.
+typedef union OAM_ATTR2_WORD
+{
 	Uint32 value;
 
-	struct {
-		unsigned short index : 10;
+	struct
+	{
+		unsigned short index    : 10;
 		unsigned short priority : 2;
-		unsigned short palette : 4;
-		Uint16		   high;
+		unsigned short palette  : 4;
+		Uint16         high;
 	} bits;
 
-	struct {
+	struct
+	{
 		Uint16 low;
 		Uint16 high;
 	} half;
 } OAM_ATTR2_WORD;
 
-/* Attributes zero through two copied to OAM, plus the halfword after them. */
-typedef struct OAM_DATA {
-	Uint16 y : 8; /* screen pixels */
-	/* OBJ_AFFINE, and OBJ_DOUBLE_SIZE to turn it without clipping. */
+// Attributes zero through two copied to OAM, plus the halfword after them.
+typedef struct OAM_DATA
+{
+	Uint16 y          : 8; // screen pixels
+	// OBJ_AFFINE, and OBJ_DOUBLE_SIZE to turn it without clipping.
 	Uint16 affineMode : 2;
-	Uint16 objectMode : 2; /* an SPR_MODE */
-	Uint16 mosaic : 1;
-	Uint16 fullColor : 1; /* 256 colours instead of a 16-colour palette */
-	Uint16 shape : 2;	  /* square, wide or tall, as the OBJ_SIZE_ macros */
-	Uint16 x : 9;		  /* screen pixels */
-	/* The affine matrix; for a plain sprite, the OBJ_HFLIP and OBJ_VFLIP
-	   bits. */
-	Uint16 matrix : 5;
-	Uint16 size : 2;   /* with shape, the sprite's size */
-	Uint16 index : 10; /* first sprite tile in VRAM */
-	/* 0 to 3: drawn over every background of the same or a larger priority
-	   number. */
-	Uint16 priority : 2;
-	Uint16 palette : 4; /* 16-colour palette */
+	Uint16 objectMode : 2; // an SPR_MODE
+	Uint16 mosaic     : 1;
+	Uint16 fullColor  : 1; // 256 colours instead of a 16-colour palette
+	Uint16 shape      : 2; // square, wide or tall, as the OBJ_SIZE_ macros
+	Uint16 x          : 9; // screen pixels
+	// The affine matrix; for a plain sprite, the OBJ_HFLIP and OBJ_VFLIP bits.
+	Uint16 matrix     : 5;
+	Uint16 size       : 2;  // with shape, the sprite's size
+	Uint16 index      : 10; // first sprite tile in VRAM
+	// 0 to 3: drawn over every background of the same or a larger priority number.
+	Uint16 priority   : 2;
+	Uint16 palette    : 4; // 16-colour palette
 	Uint16 high;
 } OAM_DATA;
 
-/* A sprite as the depth queue takes it: syOAMAddSpriteAtDepth writes the link
-   to the next sprite queued at the same depth, and the OAM attributes follow.
- */
-typedef struct QUEUED_SPR {
-	struct QUEUED_SPR *next; /* the next sprite queued at its depth */
-	OAM_DATA		   oam;
+// A sprite as the depth queue takes it: syOAMAddSpriteAtDepth writes the link to the next sprite
+// queued at the same depth, and the OAM attributes follow.
+typedef struct QUEUED_SPR
+{
+	struct QUEUED_SPR *next; // the next sprite queued at its depth
+	OAM_DATA           oam;
 } QUEUED_SPR;
 
-/* WINDOW_SPR.kind: what a window sprite owns besides itself, which
-   mnWindowSpriteRelease frees. */
-typedef enum WINDOW_SPR_KIND {
-	WINDOW_SPRITE_PLAIN = 0,   /* a glyph in the window's glyph tiles */
-	WINDOW_SPRITE_ICON = 1,	   /* its own VRAM cache entry */
-	WINDOW_SPRITE_PORTRAIT = 2 /* a VRAM cache entry and a palette slot */
+// WINDOW_SPR.kind: what a window sprite owns besides itself, which mnWindowSpriteRelease frees.
+typedef enum WINDOW_SPR_KIND
+{
+	WINDOW_SPRITE_PLAIN    = 0, // a glyph in the window's glyph tiles
+	WINDOW_SPRITE_ICON     = 1, // its own VRAM cache entry
+	WINDOW_SPRITE_PORTRAIT = 2  // a VRAM cache entry and a palette slot
 } WINDOW_SPR_KIND;
 
-/* A window sprite: a sprite in a window's sprite list (a character, an icon or
-   a portrait), with its VRAM cache slot and OAM attributes. */
-typedef struct WINDOW_SPR {
-	struct WINDOW_SPR *next; /* the next sprite in its list */
-	Uint8			   kind; /* an WINDOW_SPR_KIND */
-	Uint8  motion; /* its WINDOW_SPRITE_MOTION_ motion; 0 while free */
-	Uint16 x;	   /* screen pixels */
-	Uint16 y;	   /* screen pixels */
-	Uint16 unused;
-	Uint16 animationStep; /* step of its motion's animation */
-	Uint8  index; /* VRAM cache slot, or a glyph's tile after glyphTiles */
-	/* The depth slot it is drawn at (syOAMAddSpriteAtDepth): a higher slot is
-	   drawn in front. The windows' glyphs take 254. */
-	Uint8	   depth;
-	QUEUED_SPR sprite; /* queued at its depth each tick */
+// A window sprite: a sprite in a window's sprite list (a character, an icon or a portrait), with
+// its VRAM cache slot and OAM attributes.
+typedef struct WINDOW_SPR
+{
+	struct WINDOW_SPR *next;          // the next sprite in its list
+	Uint8              kind;          // an WINDOW_SPR_KIND
+	Uint8              motion;        // its WINDOW_SPRITE_MOTION_ motion; 0 while free
+	Uint16             x;             // screen pixels
+	Uint16             y;             // screen pixels
+	Uint16             unused;
+	Uint16             animationStep; // step of its motion's animation
+	Uint8              index;         // VRAM cache slot, or a glyph's tile after glyphTiles
+	// The depth slot it is drawn at (syOAMAddSpriteAtDepth): a higher slot is drawn in front. The
+	// windows' glyphs take 254.
+	Uint8              depth;
+	QUEUED_SPR         sprite; // queued at its depth each tick
 } WINDOW_SPR;
 
-/* A list of window sprites: its first sprite and the link to append after. */
-typedef struct WINDOW_SPR_LIST {
-	WINDOW_SPR	*head;
+// A list of window sprites: its first sprite and the link to append after.
+typedef struct WINDOW_SPR_LIST
+{
+	WINDOW_SPR  *head;
 	WINDOW_SPR **tailLink;
 } WINDOW_SPR_LIST;
 

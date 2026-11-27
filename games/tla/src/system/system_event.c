@@ -1,36 +1,34 @@
-/* Events: per-tick and VBlank functions in priority order. Part of
-   system.c. */
+// Events: per-tick and VBlank functions in priority order. Part of system.c.
 
-/* Empties the event table: every slot gets no function, priority
-   EVENT_PRIORITY_EMPTY and no flags. */
+// Empties the event table: every slot gets no function, priority EVENT_PRIORITY_EMPTY and no flags.
 void syInitEvent(void)
 {
 	EVENT *event = EventBuf;
 	Sint32 i;
 
 	EventsInitialized = 0;
-	EventsRunning = 0;
-	for(i = 0; i < EVENT_COUNT; i++) {
-		event->callback = 0;
+	EventsRunning     = 0;
+	for (i = 0; i < EVENT_COUNT; i++)
+	{
+		event->callback  = 0;
 		event->priority |= EVENT_PRIORITY_EMPTY;
-		event->flags = 0;
+		event->flags     = 0;
 		event++;
 	}
 	EventsInitialized = 1;
 }
 
-/* Unused: copies `byteCount` bytes a word at a time. */
+// Unused: copies `byteCount` bytes a word at a time.
 UNUSED void syCopyEventWords(Uint32 *dest, Uint32 *src, Uint32 byteCount)
 {
 	Uint32 index;
 	byteCount >>= 2;
-	for(index = 0; index < byteCount; index++)
+	for (index = 0; index < byteCount; index++)
 		*dest++ = *src++;
 }
 
-/* Bubble-sorts the event table by priority, highest first, so each pass runs
-   its events from the highest priority down; removed events
-   (EVENT_PRIORITY_REMOVED) rise to the front. */
+// Bubble-sorts the event table by priority, highest first, so each pass runs its events from the
+// highest priority down; removed events (EVENT_PRIORITY_REMOVED) rise to the front.
 void sySortEvents(void)
 {
 	EVENT  saved;
@@ -38,16 +36,20 @@ void sySortEvents(void)
 	Sint32 pass;
 	Sint32 index;
 
-	/* BUG: the last pass, which would settle the first two events, never runs,
-	   so the events in slots 0 and 1 can stay out of order */
+	// BUG: the last pass, which would settle the first two events, never runs, so the events in
+	// slots 0 and 1 can stay out of order
 #if FIX_TASK_SORT_LAST_PASS
-	for(pass = EVENT_COUNT - 1; pass > 0; pass--) {
+	for (pass = EVENT_COUNT - 1; pass > 0; pass--)
+	{
 #else
-	for(pass = EVENT_COUNT - 1; pass > 1; pass--) {
+	for (pass = EVENT_COUNT - 1; pass > 1; pass--)
+	{
 #endif
 		event = EventBuf;
-		for(index = 0; index < pass; index++) {
-			if((Sint16)event[1].priority > (Sint16)event->priority) {
+		for (index = 0; index < pass; index++)
+		{
+			if ((Sint16)event[1].priority > (Sint16)event->priority)
+			{
 				memcpy(&saved, event, sizeof(saved));
 				memcpy(event, event + 1, sizeof(saved));
 				memcpy(event + 1, &saved, sizeof(saved));
@@ -57,7 +59,7 @@ void sySortEvents(void)
 	}
 }
 
-/* Unused: returns the table index of the event running `callback`, or -1. */
+// Unused: returns the table index of the event running `callback`, or -1.
 UNUSED Sint32 syFindEvent(EVENT_FUNC callback)
 {
 	Sint32 result;
@@ -66,10 +68,12 @@ UNUSED Sint32 syFindEvent(EVENT_FUNC callback)
 	Sint32 i;
 
 	result = -1;
-	event = EventBuf;
+	event  = EventBuf;
 	IRQ_LOCK(savedIme);
-	for(i = 0; i < EVENT_COUNT; i++, event++) {
-		if(event->callback == (Uint32)callback) {
+	for (i = 0; i < EVENT_COUNT; i++, event++)
+	{
+		if (event->callback == (Uint32)callback)
+		{
 			result = i;
 			break;
 		}
@@ -78,9 +82,9 @@ UNUSED Sint32 syFindEvent(EVENT_FUNC callback)
 	return result;
 }
 
-/* Adds an event running `callback` with priority `priority`, or gives an event
-   already running it the new priority, and re-sorts the table. Returns its
-   slot, or -1 when all EVENT_COUNT slots are taken. */
+// Adds an event running `callback` with priority `priority`, or gives an event already running it
+// the new priority, and re-sorts the table. Returns its slot, or -1 when all EVENT_COUNT slots are
+// taken.
 Sint32 sySetEvent(EVENT_FUNC callback, Sint32 priority)
 {
 	Uint32 savedIme;
@@ -90,26 +94,30 @@ Sint32 sySetEvent(EVENT_FUNC callback, Sint32 priority)
 
 	index = -1;
 	event = EventBuf;
-	/* DEAD: nothing uses the status read here; the ROM keeps the load. */
+	// DEAD: nothing uses the status read here; the ROM keeps the load.
 	(void)EventsRunning;
 	IRQ_LOCK(savedIme);
-	/* An event already running callback takes the new priority; else a free
-	   slot. */
-	for(i = 0; i < EVENT_COUNT; i++, event++) {
-		if(event->callback == (Uint32)callback) {
+	// An event already running callback takes the new priority; else a free slot.
+	for (i = 0; i < EVENT_COUNT; i++, event++)
+	{
+		if (event->callback == (Uint32)callback)
+		{
 			event->priority = priority;
-			index = i;
+			index           = i;
 			break;
 		}
 	}
 	event = EventBuf;
-	if(index == -1) {
-		for(i = 0; i < EVENT_COUNT; i++, event++) {
-			if(event->callback == 0) {
+	if (index == -1)
+	{
+		for (i = 0; i < EVENT_COUNT; i++, event++)
+		{
+			if (event->callback == 0)
+			{
 				event->callback = (Uint32)callback;
 				event->priority = priority;
-				event->flags = 0;
-				index = i;
+				event->flags    = 0;
+				index           = i;
 				break;
 			}
 		}
@@ -119,19 +127,18 @@ Sint32 sySetEvent(EVENT_FUNC callback, Sint32 priority)
 	return index;
 }
 
-/* Unused: an empty function. */
+// Unused: an empty function.
 UNUSED void syEventNoOperationA(void)
 {
 }
 
-/* Unused: an empty function. */
+// Unused: an empty function.
 UNUSED void syEventNoOperationB(void)
 {
 }
 
-/* Removes the event running `callback`: clears its function and gives it
-   priority EVENT_PRIORITY_REMOVED, which no pass matches. Returns its old
-   index, or -1. */
+// Removes the event running `callback`: clears its function and gives it priority
+// EVENT_PRIORITY_REMOVED, which no pass matches. Returns its old index, or -1.
 Sint32 syCloseEvent(EVENT_FUNC callback)
 {
 	EVENT *event;
@@ -139,14 +146,16 @@ Sint32 syCloseEvent(EVENT_FUNC callback)
 	Sint32 result;
 	Sint32 i;
 
-	event = EventBuf;
+	event  = EventBuf;
 	result = -1;
 	IRQ_LOCK(savedIme);
-	for(i = 0; i < EVENT_COUNT; i++, event++) {
-		if(event->callback == (Uint32)callback) {
+	for (i = 0; i < EVENT_COUNT; i++, event++)
+	{
+		if (event->callback == (Uint32)callback)
+		{
 			event->callback = 0;
 			event->priority = EVENT_PRIORITY_REMOVED;
-			result = i;
+			result          = i;
 			break;
 		}
 	}
@@ -154,9 +163,9 @@ Sint32 syCloseEvent(EVENT_FUNC callback)
 	return result;
 }
 
-/* Suspends the event running `callback`, or every event when `callback` is
-   null, by setting EVENT_SUSPENDED in its priority's high byte, which then
-   matches neither pass. Returns the last slot suspended, or -1. */
+// Suspends the event running `callback`, or every event when `callback` is null, by setting
+// EVENT_SUSPENDED in its priority's high byte, which then matches neither pass. Returns the last
+// slot suspended, or -1.
 Sint32 sySuspendEvent(EVENT_FUNC callback)
 {
 	EVENT *event;
@@ -164,24 +173,25 @@ Sint32 sySuspendEvent(EVENT_FUNC callback)
 	Sint32 result;
 	Sint32 i;
 
-	event = EventBuf;
+	event  = EventBuf;
 	result = -1;
 	IRQ_LOCK(savedIme);
-	for(i = 0; i < EVENT_COUNT; i++, event++) {
-		if(callback != 0) {
-			if(event->callback != (Uint32)callback)
+	for (i = 0; i < EVENT_COUNT; i++, event++)
+	{
+		if (callback != 0)
+		{
+			if (event->callback != (Uint32)callback)
 				continue;
 		}
-		syIOWrite8(EVENT_STATE_HIGH(event) | EVENT_SUSPENDED,
-			&EVENT_STATE_HIGH(event));
+		syIOWrite8(EVENT_STATE_HIGH(event) | EVENT_SUSPENDED, &EVENT_STATE_HIGH(event));
 		result = i;
 	}
 	IRQ_UNLOCK(savedIme);
 	return result;
 }
 
-/* Suspends every event whose function is in an overlay (EVENT_IN_OVERLAY)
-   unless its flags hold EVENT_FLAG_KEEP_RUNNING, as sySuspendEvent does. */
+// Suspends every event whose function is in an overlay (EVENT_IN_OVERLAY) unless its flags hold
+// EVENT_FLAG_KEEP_RUNNING, as sySuspendEvent does.
 Sint32 sySuspendOverlayEvents(void)
 {
 	EVENT *event;
@@ -189,14 +199,14 @@ Sint32 sySuspendOverlayEvents(void)
 	Sint32 result;
 	Sint32 i;
 
-	event = EventBuf;
+	event  = EventBuf;
 	result = -1;
 	IRQ_LOCK(savedIme);
-	for(i = 0; i < EVENT_COUNT; i++, event++) {
-		if(EVENT_IN_OVERLAY(event) &&
-			(event->flags & EVENT_FLAG_KEEP_RUNNING) == 0) {
-			syIOWrite8(EVENT_STATE_HIGH(event) | EVENT_SUSPENDED,
-				&EVENT_STATE_HIGH(event));
+	for (i = 0; i < EVENT_COUNT; i++, event++)
+	{
+		if (EVENT_IN_OVERLAY(event) && (event->flags & EVENT_FLAG_KEEP_RUNNING) == 0)
+		{
+			syIOWrite8(EVENT_STATE_HIGH(event) | EVENT_SUSPENDED, &EVENT_STATE_HIGH(event));
 			result = i;
 		}
 	}
@@ -204,8 +214,8 @@ Sint32 sySuspendOverlayEvents(void)
 	return result;
 }
 
-/* Stores `mask` as the flags of the event running `callback`
-   (EVENT_FLAG_KEEP_RUNNING). Returns its slot, or -1. */
+// Stores `mask` as the flags of the event running `callback` (EVENT_FLAG_KEEP_RUNNING). Returns its
+// slot, or -1.
 Sint32 sySetEventFlags(EVENT_FUNC callback, Uint32 mask)
 {
 	EVENT *event;
@@ -214,12 +224,14 @@ Sint32 sySetEventFlags(EVENT_FUNC callback, Uint32 mask)
 	Sint32 i;
 
 	result = -1;
-	event = EventBuf;
+	event  = EventBuf;
 	IRQ_LOCK(savedIme);
-	for(i = 0; i < EVENT_COUNT; i++, event++) {
-		if(event->callback == (Uint32)callback) {
+	for (i = 0; i < EVENT_COUNT; i++, event++)
+	{
+		if (event->callback == (Uint32)callback)
+		{
 			event->flags = mask;
-			result = i;
+			result       = i;
 			break;
 		}
 	}
@@ -227,8 +239,8 @@ Sint32 sySetEventFlags(EVENT_FUNC callback, Uint32 mask)
 	return result;
 }
 
-/* Resumes the event running `callback`, or every event when `callback` is null,
-   by clearing EVENT_SUSPENDED. Returns the last slot resumed, or -1. */
+// Resumes the event running `callback`, or every event when `callback` is null, by clearing
+// EVENT_SUSPENDED. Returns the last slot resumed, or -1.
 Sint32 syResumeEvent(EVENT_FUNC callback)
 {
 	EVENT *event;
@@ -237,20 +249,22 @@ Sint32 syResumeEvent(EVENT_FUNC callback)
 	Sint32 i;
 
 	result = -1;
-	event = EventBuf;
+	event  = EventBuf;
 	IRQ_LOCK(savedIme);
-	for(i = 0; i < EVENT_COUNT; i++, event++) {
-		if(callback == 0 || event->callback == (Uint32)callback) {
+	for (i = 0; i < EVENT_COUNT; i++, event++)
+	{
+		if (callback == 0 || event->callback == (Uint32)callback)
+		{
 			EVENT_STATE_HIGH(event) &= ~EVENT_SUSPENDED;
-			result = i;
+			result                   = i;
 		}
 	}
 	IRQ_UNLOCK(savedIme);
 	return result;
 }
 
-/* Resumes every event whose function is in an overlay, flagged or not. Returns
-   the last index changed, or -1. */
+// Resumes every event whose function is in an overlay, flagged or not. Returns the last index
+// changed, or -1.
 Sint32 syResumeOverlayEvents(void)
 {
 	EVENT *event;
@@ -259,39 +273,42 @@ Sint32 syResumeOverlayEvents(void)
 	Sint32 i;
 
 	result = -1;
-	event = EventBuf;
+	event  = EventBuf;
 	IRQ_LOCK(savedIme);
-	for(i = 0; i < EVENT_COUNT; i++, event++) {
-		if(EVENT_IN_OVERLAY(event)) {
+	for (i = 0; i < EVENT_COUNT; i++, event++)
+	{
+		if (EVENT_IN_OVERLAY(event))
+		{
 			EVENT_STATE_HIGH(event) &= ~EVENT_SUSPENDED;
-			result = i;
+			result                   = i;
 		}
 	}
 	IRQ_UNLOCK(savedIme);
 	return result;
 }
 
-/* Runs one pass of the events: every event whose priority's high byte matches
-   `pass`'s (EVENT_PASS_VBLANK or EVENT_PASS_TICK), in table order. */
+// Runs one pass of the events: every event whose priority's high byte matches `pass`'s
+// (EVENT_PASS_VBLANK or EVENT_PASS_TICK), in table order.
 void syExecuteEvent(Sint32 pass)
 {
 	EVENT *event = EventBuf;
 	Sint32 i;
 
-	/* A pass matches the high byte only; the low byte has already ranked the
-	   events through the sort, and a suspended event's odd high byte matches no
-	   pass. */
+	// A pass matches the high byte only; the low byte has already ranked the events through the
+	// sort, and a suspended event's odd high byte matches no pass.
 	pass >>= 8;
-	if(EventsInitialized == 1) {
+	if (EventsInitialized == 1)
+	{
 		i = EVENT_COUNT + 1;
 		event--;
-		for(;;) {
-			if(--i == 0)
+		for (;;)
+		{
+			if (--i == 0)
 				return;
 			event++;
-			if(EVENT_STATE_HIGH(event) == pass) {
-				/* UB: events return void, and the stored word is not a pointer
-				   object. */
+			if (EVENT_STATE_HIGH(event) == pass)
+			{
+				// UB: events return void, and the stored word is not a pointer object.
 #if FIX_FUNCTION_SIGNATURES
 				EVENT_FUNC callback = (EVENT_FUNC)event->callback;
 #else
@@ -304,8 +321,8 @@ void syExecuteEvent(Sint32 pass)
 	}
 }
 
-/* Returns how many events run in pass `pass` (EVENT_PASS_VBLANK or
-   EVENT_PASS_TICK); before the event table is set up, the pass's high byte. */
+// Returns how many events run in pass `pass` (EVENT_PASS_VBLANK or EVENT_PASS_TICK); before the
+// event table is set up, the pass's high byte.
 Sint32 syCountEventsInPass(Sint32 pass)
 {
 	Uint32 cursor;
@@ -315,43 +332,48 @@ Sint32 syCountEventsInPass(Sint32 pass)
 	Uint8 *status = &EventsInitialized;
 	Uint32 observed;
 
-	count = 0;
-	observed = *status;
-	cursor = (Uint32)EventBuf;
-	pass >>= 8;
-	if(observed == 1) {
-		i = EVENT_COUNT + 1;
+	count      = 0;
+	observed   = *status;
+	cursor     = (Uint32)EventBuf;
+	pass     >>= 8;
+	if (observed == 1)
+	{
+		i       = EVENT_COUNT + 1;
 		cursor -= sizeof(*event);
-		for(;;) {
-			if(--i == 0)
+		for (;;)
+		{
+			if (--i == 0)
 				return count;
 			cursor += sizeof(*event);
-			event = (EVENT *)cursor;
-			if(EVENT_STATE_HIGH(event) == pass)
+			event   = (EVENT *)cursor;
+			if (EVENT_STATE_HIGH(event) == pass)
 				count++;
 		}
 	}
 	return pass;
 }
 
-/* Runs pass `pass`'s events in table order, up to the first event of the tick
-   pass: the VBlank handler's pass, whose events sort before the tick's. */
+// Runs pass `pass`'s events in table order, up to the first event of the tick pass: the VBlank
+// handler's pass, whose events sort before the tick's.
 void syRunPassBeforeTickEvents(Sint32 pass)
 {
 	EVENT *event = EventBuf;
 	Sint32 remaining;
 
 	pass >>= 8;
-	if(EventsInitialized == 1) {
+	if (EventsInitialized == 1)
+	{
 		remaining = EVENT_COUNT + 1;
 		event--;
-		for(;;) {
-			if(--remaining == 0)
+		for (;;)
+		{
+			if (--remaining == 0)
 				return;
 			event++;
-			if(EVENT_STATE_HIGH(event) == EVENT_PASS_TICK >> 8)
+			if (EVENT_STATE_HIGH(event) == EVENT_PASS_TICK >> 8)
 				return;
-			if(EVENT_STATE_HIGH(event) == pass) {
+			if (EVENT_STATE_HIGH(event) == pass)
+			{
 				EVENT_INT_FUNC callback = *(EVENT_INT_FUNC *)&event->callback;
 
 				callback();

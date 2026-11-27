@@ -1,6 +1,5 @@
-/* Sprite scales, motion curves and lookup tables of the window and menu code,
-   the sound test's labels and the debug warps' names; The Broken Seal's
-   scales.c. */
+// Sprite scales, motion curves and lookup tables of the window and menu code, the sound test's
+// labels and the debug warps' names; The Broken Seal's scales.c.
 
 #include "sprite_ids.h"
 #include "game/character_ids.h"
@@ -8,10 +7,9 @@
 #include "window/window.h"
 #include "macros.h"
 
-/* clang-format off */
+// clang-format off
 
-/* A sprite's pulse, as a scale where 256 is its normal size: it swells to 1.5 */
-/* times and back over 32 steps (window_sprites.c). */
+// A sprite's pulse, as a scale where 256 is its normal size: it swells to 1.5 times and back over 32 steps (window_sprites.c).
 const Uint16 WindowSpriteBounceScales[32] = {
 	256, 256, 260, 266, 274, 284, 294, 306,
 	320, 332, 344, 354, 364, 372, 378, 382,
@@ -19,19 +17,17 @@ const Uint16 WindowSpriteBounceScales[32] = {
 	320, 306, 294, 284, 274, 266, 260, 256,
 };
 
-/* Nothing in the game reads these eight offsets, as in The Broken Seal. */
+// Nothing in the game reads these eight offsets, as in The Broken Seal.
 const Sint8 WindowSpriteBounceScalesTail[8] = {
 	-15, -28, -36, -40, -36, -28, -15, 0,
 };
 
-/* The selection cursor's bob: a 16-step wave of up to 3 pixels each way. */
+// The selection cursor's bob: a 16-step wave of up to 3 pixels each way.
 const Sint8 MenuCursorBobOffsets[16] = {
 	0, 1, 2, 3, 2, 1, 0, 0, 0, -1, -2, -3, -2, -1, 0, 0,
 };
 
-/* The window colour wheel: one colour channel's level (0 to 31) by hue step, */
-/* fading out, resting and fading in; The Broken Seal's 25 further steps are */
-/* gone. */
+// The window colour wheel: one colour channel's level (0 to 31) by hue step, fading out, resting and fading in; The Broken Seal's 25 further steps are gone.
 const Uint8 WindowColorWaveTable[96] = {
 	31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
 	15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
@@ -41,74 +37,72 @@ const Uint8 WindowColorWaveTable[96] = {
 	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
 };
 
-/* The settings menu's command icons for each setting's choices: message speed */
-/* Slow, Normal and Fast. */
+// The settings menu's command icons for each setting's choices: message speed Slow, Normal and Fast.
 const Sint8 SettingsMenuSpeedIcons[3] = {
 	COMMAND_ICON_SPEED_SLOW,
 	COMMAND_ICON_SPEED_NORMAL,
 	COMMAND_ICON_SPEED_FAST,
 };
 
-/* Speech Off and On. */
+// Speech Off and On.
 const Sint8 SettingsMenuSpeechIcons[2] = {
 	COMMAND_ICON_SPEECH_OFF,
 	COMMAND_ICON_SPEECH_ON,
 };
 
-/* Auto-Sleep Off and On. */
+// Auto-Sleep Off and On.
 const Sint8 SettingsMenuSleepIcons[2] = {
 	COMMAND_ICON_AUTO_SLEEP_OFF,
 	COMMAND_ICON_AUTO_SLEEP_ON,
 };
 
-/* The window colour presets SELECT cycles through on the settings menu: the */
-/* colour (hue, 0 to 23) of each. */
+// The window colour presets SELECT cycles through on the settings menu: the colour (hue, 0 to 23) of each.
 const Uint8 SettingsMenuHuePresets[6] = {
 	4, 16, 8, 21, 1, 13,
 };
 
-/* The brightness (0 to 14, 7 neutral) of each preset. */
+// The brightness (0 to 14, 7 neutral) of each preset.
 const Uint8 SettingsMenuBrightnessPresets[6] = {
 	0, 11, 13, 7, 14, 14,
 };
 
-/* The command icon of each entry in the Pause menu (Save your quest, Sleep, */
-/* Change settings, and the debug entries after them). */
+// The command icon of each entry in the Pause menu (Save your quest, Sleep, Change settings, and the debug entries after them).
 const Sint8 PauseMenuIcons[8] = {
 	COMMAND_ICON_SAVE_QUEST, COMMAND_ICON_SLEEP, COMMAND_ICON_CHANGE_SETTINGS,
 	COMMAND_ICON_DROP,       COMMAND_ICON_DROP,  COMMAND_ICON_DROP,
 	0,                       0,
 };
 
-/* clang-format on */
+// clang-format on
 
-/* The sound test's starting music, jingle, sound effect and sound preset. */
-const SND_TEST_VALUES DebugSoundTestStartValues = {{0, 80, 100, 2}};
+// The sound test's starting music, jingle, sound effect and sound preset.
+const SND_TEST_VALUES DebugSoundTestStartValues = {
+	{0, 80, 100, 2}
+};
 
-/* The sound test's row labels: music, jingle, sound effect and sound preset. */
-const Uint8 SoundTestMusicString[] ALIGNED(4) = "Music";
-const Uint8 SoundTestJingleString[] ALIGNED(4) = "Jingle";
-const Uint8 SoundTestSeString[] ALIGNED(4) = "SE";
-const Uint8 SoundTestEffectString[] ALIGNED(4) = "FX";
+// The sound test's row labels: music, jingle, sound effect and sound preset.
+const Uint8 SoundTestMusicString[] ALIGNED(4)       = "Music";
+const Uint8 SoundTestJingleString[] ALIGNED(4)      = "Jingle";
+const Uint8 SoundTestSeString[] ALIGNED(4)          = "SE";
+const Uint8 SoundTestEffectString[] ALIGNED(4)      = "FX";
 
-/* The debug warp menu's row names (DebugWarpPresets), last first. */
+// The debug warp menu's row names (DebugWarpPresets), last first.
 const Uint8 DebugWarpKaoruSpecial1Name[] ALIGNED(4) = "8:Kaoru Special1";
 const Uint8 DebugWarpKaoruSpecial2Name[] ALIGNED(4) = "7:Kaoru Special2";
 const Uint8 DebugWarpKaoruSpecial3Name[] ALIGNED(4) = "6:Kaoru Special3";
 const Uint8 DebugWarpKaoruSpecial4Name[] ALIGNED(4) = "5:Kaoru Special4";
-const Uint8 DebugWarpChampa2Name[] ALIGNED(4) = "4:CHAMPA2";
-const Uint8 DebugWarpArafura3Name[] ALIGNED(4) = "3:Arafura3";
-const Uint8 DebugWarpEnergySampleName[] ALIGNED(4) = "2:Energy Sample";
-const Uint8 DebugWarpArafura2Name[] ALIGNED(4) = "1:Arafura2";
-const Uint8 DebugWarpJupiterName[] ALIGNED(4) = "0:Jupiter";
+const Uint8 DebugWarpChampa2Name[] ALIGNED(4)       = "4:CHAMPA2";
+const Uint8 DebugWarpArafura3Name[] ALIGNED(4)      = "3:Arafura3";
+const Uint8 DebugWarpEnergySampleName[] ALIGNED(4)  = "2:Energy Sample";
+const Uint8 DebugWarpArafura2Name[] ALIGNED(4)      = "1:Arafura2";
+const Uint8 DebugWarpJupiterName[] ALIGNED(4)       = "0:Jupiter";
 
-/* An empty ability's name, which the debug menu draws. */
+// An empty ability's name, which the debug menu draws.
 const Uint8 DebugShortcutNoAbilityName[] ALIGNED(4) = "----";
 
-/* clang-format off */
+// clang-format off
 
-/* {character, portrait} pairs of the playable characters, ending in -1, which */
-/* the speaker's portrait lookup searches first. */
+// {character, portrait} pairs of the playable characters, ending in -1, which the speaker's portrait lookup searches first.
 const Sint16 PortraitCharacterMap[18] ALIGNED(4) = {
 	ISAAC, PORTRAIT_ISAAC,
 	GARET, PORTRAIT_GARET,
@@ -121,7 +115,7 @@ const Sint16 PortraitCharacterMap[18] ALIGNED(4) = {
 	-1, -1,
 };
 
-/* {sprite, portrait} pairs of the other speakers, ending in -1. */
+// {sprite, portrait} pairs of the other speakers, ending in -1.
 const Sint16 PortraitSpriteMap[] = {
 	SPRITE_JUPITER_DJINNI, SPRITE_PORTRAIT_JUPITER_DJINNI,
 	SPRITE_VENUS_DJINNI, SPRITE_PORTRAIT_VENUS_DJINNI,
@@ -184,12 +178,11 @@ const Sint16 PortraitSpriteMap[] = {
 	SPRITE_DORA, SPRITE_PORTRAIT_DORA,
 	SPRITE_WOMAN_IN_GREEN_HEADSCARF, SPRITE_PORTRAIT_WOMAN_IN_GREEN_HEADSCARF,
 	SPRITE_MAN_IN_TEAL_SHIRT, SPRITE_PORTRAIT_MAN_IN_TEAL_SHIRT,
-	/* The two young men speak with an old man's and an old woman's portraits, */
-	/* and the boy with orange hair with a row that holds none. */
+	// The two young men speak with an old man's and an old woman's portraits, and the boy with orange hair with a row that holds none.
 	SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, SPRITE_PORTRAIT_OLD_MAN_WITH_GREY_BEARD,
 	SPRITE_YOUNG_MAN_WITH_RED_HAIR, SPRITE_PORTRAIT_OLD_WOMAN_WITH_GREY_HAIR,
 	SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, SPRITE_PORTRAIT_WOMAN_WITH_ORANGE_PONYTAIL,
 	SPRITE_BOY_WITH_ORANGE_HAIR, SPRITE_PORTRAIT_MISSING,
 	-1, -1,
 };
-/* clang-format on */
+// clang-format on

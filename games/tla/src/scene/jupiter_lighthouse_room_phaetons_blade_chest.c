@@ -1,18 +1,14 @@
-/* The upper rooms of Jupiter Lighthouse's right tower, the last before its top.
-   First a hall floored with cracked tiles, where two stone faces in the walls
-   blow whirlwinds across the floor at Felix as he passes
-   (scJupiterLighthouseRaiseWhirlwind), and a cracked tile gives way under a
-   second step, dropping the party to the room below
-   (scJupiterLighthouseStepOnUpperCrackedTile). Then, south and up, the hall of
-   Hover pads, where Felix can Hover almost anywhere: two lines of dark cracked
-   tiles run up it, and four stone statues in its middle blow whirlwinds along
-   the two rows in front of them at Felix as he floats past
-   (scJupiterLighthouseRaiseUpperWhirlwind). Its west passage leads to the
-   Phaeton's Blade's chest, its east one on towards the top; the stairs down
-   between the statues are walled off while he Hovers
-   (scJupiterLighthouseStartHovering). */
+// The upper rooms of Jupiter Lighthouse's right tower, the last before its top. First a hall
+// floored with cracked tiles, where two stone faces in the walls blow whirlwinds across the floor
+// at Felix as he passes (scJupiterLighthouseRaiseWhirlwind), and a cracked tile gives way under a
+// second step, dropping the party to the room below (scJupiterLighthouseStepOnUpperCrackedTile).
+// Then, south and up, the hall of Hover pads, where Felix can Hover almost anywhere: two lines of
+// dark cracked tiles run up it, and four stone statues in its middle blow whirlwinds along the two
+// rows in front of them at Felix as he floats past (scJupiterLighthouseRaiseUpperWhirlwind). Its
+// west passage leads to the Phaeton's Blade's chest, its east one on towards the top; the stairs
+// down between the statues are walled off while he Hovers (scJupiterLighthouseStartHovering).
 
-/* This unit declares its own form of fdMapGridGetMetatileBehavior, below. */
+// This unit declares its own form of fdMapGridGetMetatileBehavior, below.
 #define OWN_fdMapGridGetMetatileBehavior
 
 #include "field/field_mode.h"
@@ -26,71 +22,79 @@
 #include "field/actor_script.h"
 #include "scene/lighthouse_palettes.h"
 
-/* Where a stone face's whirlwind starts: an unseen actor moved to the face that
-   blows, which the whirlwind takes its place and heading from. */
-enum { ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED };
+// Where a stone face's whirlwind starts: an unseen actor moved to the face that blows, which the
+// whirlwind takes its place and heading from.
+enum
+{
+	ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED
+};
 
-/* The step cues before the stone faces that blow whirlwinds: two rows of the
-   cracked hall's floor, (8, 37) to (17, 37) blown west and (9, 42) to (18, 42)
-   blown east, and four short rows before the statues in the Hover hall, at rows
-   11 and 17, the west pair blown west and the east pair east. */
-enum {
-	CUE_FLOOR_WHIRLWIND_WEST = 30,
-	CUE_FLOOR_WHIRLWIND_EAST = 31,
+// The step cues before the stone faces that blow whirlwinds: two rows of the cracked hall's floor,
+// (8, 37) to (17, 37) blown west and (9, 42) to (18, 42) blown east, and four short rows before the
+// statues in the Hover hall, at rows 11 and 17, the west pair blown west and the east pair east.
+enum
+{
+	CUE_FLOOR_WHIRLWIND_WEST      = 30,
+	CUE_FLOOR_WHIRLWIND_EAST      = 31,
 	CUE_UPPER_WHIRLWIND_SOUTHWEST = 50,
 	CUE_UPPER_WHIRLWIND_NORTHWEST,
 	CUE_UPPER_WHIRLWIND_SOUTHEAST,
 	CUE_UPPER_WHIRLWIND_NORTHEAST
 };
 
-/* A cracked tile's metatile behavior in the cracked hall, which takes the next
-   one up as it cracks; the Hover hall's are METATILE_BEHAVIOR_CRACKED_TILE. */
-enum { METATILE_BEHAVIOR_UPPER_CRACKED_TILE = 43 };
+// A cracked tile's metatile behavior in the cracked hall, which takes the next one up as it cracks;
+// the Hover hall's are METATILE_BEHAVIOR_CRACKED_TILE.
+enum
+{
+	METATILE_BEHAVIOR_UPPER_CRACKED_TILE = 43
+};
 
-/* Through a cracked tile of the cracked hall to the room below, on the same
-   map: the exit and the entrance it lands at share the number, as
-   THROUGH_CRACKED_TILE's do. */
-enum { THROUGH_UPPER_CRACKED_TILE = 14 };
+// Through a cracked tile of the cracked hall to the room below, on the same map: the exit and the
+// entrance it lands at share the number, as THROUGH_CRACKED_TILE's do.
+enum
+{
+	THROUGH_UPPER_CRACKED_TILE = 14
+};
 
-/* The entrances scInit tells apart: the cracked hall's two stairs, north and
-   south, and the Hover hall's two. */
-enum {
+// The entrances scInit tells apart: the cracked hall's two stairs, north and south, and the Hover
+// hall's two.
+enum
+{
 	ENTRANCE_LOWER_HALL_NORTH = 3,
 	ENTRANCE_LOWER_HALL_SOUTH = 5,
 	ENTRANCE_HOVER_HALL_SOUTH = 6,
 	ENTRANCE_HOVER_HALL_NORTH = 7
 };
 
-/* The Hover hall's stairs down, metatile (34, 17), whose metatile takes the
-   exit by its number. */
-enum { EXIT_HOVER_HALL_STAIRS = 6 };
+// The Hover hall's stairs down, metatile (34, 17), whose metatile takes the exit by its number.
+enum
+{
+	EXIT_HOVER_HALL_STAIRS = 6
+};
 
 struct ACTOR;
 struct LIGHT_OAM;
-void scCrackedTilePlaceLanding(Sint32 x, Sint32 z, Sint32 effect);
-/* The state of the code every Jupiter Lighthouse room's overlay keeps its own
-   copy of: a whirlwind's ride (shared/whirlwind_*.h), the palette cycle
-   (shared/palette_cycle_step.h), the lit actors' sprites
-   (shared/light_sprites_*.h) and the cracked tiles
-   (shared/cracked_tile_*.h). */
-Sint32 WhirlwindRiding BSS_DATA;
-Uint16				   PaletteCycleColors[16] BSS_DATA;
-/* Palette 13's first two colours; it is copied whole, with the unlit colours
-   after them. */
-Uint16					   PaletteCycleUnlitPalette[2] BSS_DATA;
-Uint16					   PaletteCycleUnlitColors[14] BSS_DATA;
-Sint16 LightSpriteTile	   BSS_DATA;
-Sint16 LightSpriteCount	   BSS_DATA;
-ACTOR					  *LightSpriteActors[16] BSS_DATA;
-LIGHT_OAM				   LightSpriteOams[16] BSS_DATA;
-Sint16 LightSpritesLarge   BSS_DATA;
-Sint16 LightSpritePriority BSS_DATA;
-/* The metatiles scCrackedTileStep watches, and the metatile it copies over the
-   one the leader steps on. */
+void                         scCrackedTilePlaceLanding(Sint32 x, Sint32 z, Sint32 effect);
+// The state of the code every Jupiter Lighthouse room's overlay keeps its own copy of: a
+// whirlwind's ride (shared/whirlwind_*.h), the palette cycle (shared/palette_cycle_step.h), the lit
+// actors' sprites (shared/light_sprites_*.h) and the cracked tiles (shared/cracked_tile_*.h).
+Sint32 WhirlwindRiding       BSS_DATA;
+Uint16                       PaletteCycleColors[16] BSS_DATA;
+// Palette 13's first two colours; it is copied whole, with the unlit colours after them.
+Uint16                       PaletteCycleUnlitPalette[2] BSS_DATA;
+Uint16                       PaletteCycleUnlitColors[14] BSS_DATA;
+Sint16 LightSpriteTile       BSS_DATA;
+Sint16 LightSpriteCount      BSS_DATA;
+ACTOR                       *LightSpriteActors[16] BSS_DATA;
+LIGHT_OAM                    LightSpriteOams[16] BSS_DATA;
+Sint16 LightSpritesLarge     BSS_DATA;
+Sint16 LightSpritePriority   BSS_DATA;
+// The metatiles scCrackedTileStep watches, and the metatile it copies over the one the leader steps
+// on.
 METATILE_TARGET CrackedTiles BSS_DATA;
-void						 scJupiterLighthouseStopHovering(void);
+void                         scJupiterLighthouseStopHovering(void);
 
-const SCENE_ENTRANCE *scGetEntrances(void)
+const SCENE_ENTRANCE        *scGetEntrances(void)
 {
 	return SceneEntrances;
 }
@@ -110,135 +114,138 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return ActorPlacements;
 }
 
-/* The step handlers below pass on the metatile behavior their cue hands them;
-   scCrackedTileStep finds the leader's metatile itself and never reads it. */
+// The step handlers below pass on the metatile behavior their cue hands them; scCrackedTileStep
+// finds the leader's metatile itself and never reads it.
 Bool   scCrackedTileStep();
 ACTOR *scWhirlwindSpawn(ACTOR *src);
 
-/* Nothing visible happens when Felix starts to Hover; while he floats, the
-   Hover hall's stairs down between the statues, metatile (34, 17), are walled
-   off, so that he cannot drift down them. */
-void scJupiterLighthouseStartHovering(void)
+// Nothing visible happens when Felix starts to Hover; while he floats, the Hover hall's stairs down
+// between the statues, metatile (34, 17), are walled off, so that he cannot drift down them.
+void   scJupiterLighthouseStartHovering(void)
 {
-	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_HOVER)
-		syFieldMapGridSetMetatileBehavior(toFIXED(544), toFIXED(272),
-			MAPGRID_LAYER_GROUND, METATILE_BEHAVIOR_WALL);
+	if (MainRoutineStateWork.movementMode == LEADER_MOVEMENT_HOVER)
+		syFieldMapGridSetMetatileBehavior(
+			toFIXED(544), toFIXED(272), MAPGRID_LAYER_GROUND, METATILE_BEHAVIOR_WALL);
 }
 
-/* Nothing visible happens when Felix's Hover ends; the Hover hall's stairs
-   down, metatile (34, 17), lead down again. */
+// Nothing visible happens when Felix's Hover ends; the Hover hall's stairs down, metatile (34, 17),
+// lead down again.
 void scJupiterLighthouseStopHovering(void)
 {
-	fdMapGridSetMetatileBehavior(toFIXED(544), toFIXED(272),
-		MAPGRID_LAYER_GROUND, EXIT_HOVER_HALL_STAIRS);
+	fdMapGridSetMetatileBehavior(
+		toFIXED(544), toFIXED(272), MAPGRID_LAYER_GROUND, EXIT_HOVER_HALL_STAIRS);
 }
 
-/* Felix walks across the row in front of a stone face in the cracked hall's
-   wall, metatiles (8, 37) to (17, 37) or (9, 42) to (18, 42): the face blows a
-   big whirlwind at him that catches him and carries him spinning across the
-   hall, west along the first row or east along the second, and drops him
-   (fdWhirlwindCarryLeader). Nothing happens while a whirlwind is already
-   carrying him. */
+// Felix walks across the row in front of a stone face in the cracked hall's wall, metatiles (8, 37)
+// to (17, 37) or (9, 42) to (18, 42): the face blows a big whirlwind at him that catches him and
+// carries him spinning across the hall, west along the first row or east along the second, and
+// drops him (fdWhirlwindCarryLeader). Nothing happens while a whirlwind is already carrying him.
 void scJupiterLighthouseRaiseWhirlwind(Sint32 id)
 {
 	ACTOR *actor;
 
-	if(WhirlwindRiding == 0) {
+	if (WhirlwindRiding == 0)
+	{
 		actor = fdActorGet(ACTOR_WHIRLWIND_SOURCE);
-		if(id == CUE_FLOOR_WHIRLWIND_WEST) {
+		if (id == CUE_FLOOR_WHIRLWIND_WEST)
+		{
 			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 296, 600);
 			actor->y.fixed = 0;
-			actor->facing = FACING_WEST;
-		} else if(id == CUE_FLOOR_WHIRLWIND_EAST) {
+			actor->facing  = FACING_WEST;
+		}
+		else if (id == CUE_FLOOR_WHIRLWIND_EAST)
+		{
 			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 136, 680);
 			actor->y.fixed = 0;
-			actor->facing = FACING_EAST;
+			actor->facing  = FACING_EAST;
 		}
 		scWhirlwindSpawn(actor);
 		WhirlwindRiding = 1;
 	}
 }
 
-/* Felix, Hovering in the Hover hall, floats across the row in front of one of
-   the four stone statues in its middle, at row 11 or 17: the statue blows a
-   slower whirlwind at him, west from the west pair or east from the east pair,
-   over the line of dark cracked tiles, and it carries him off
-   (fdWhirlwindCarryLeader). Walking there without Hover, or while a whirlwind
-   is already carrying him, does nothing. */
+// Felix, Hovering in the Hover hall, floats across the row in front of one of the four stone
+// statues in its middle, at row 11 or 17: the statue blows a slower whirlwind at him, west from the
+// west pair or east from the east pair, over the line of dark cracked tiles, and it carries him off
+// (fdWhirlwindCarryLeader). Walking there without Hover, or while a whirlwind is already carrying
+// him, does nothing.
 void scJupiterLighthouseRaiseUpperWhirlwind(Sint32 id)
 {
 	ACTOR *actor;
 	ACTOR *motion;
 
-	if(WhirlwindRiding == 0 &&
-		fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed > 0) {
+	if (WhirlwindRiding == 0 && fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed > 0)
+	{
 		actor = fdActorGet(ACTOR_WHIRLWIND_SOURCE);
-		if(id == CUE_UPPER_WHIRLWIND_SOUTHWEST) {
+		if (id == CUE_UPPER_WHIRLWIND_SOUTHWEST)
+		{
 			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 488, 280);
 			actor->y.fixed = toFIXED(32);
-			actor->facing = FACING_WEST;
-		} else if(id == CUE_UPPER_WHIRLWIND_NORTHWEST) {
+			actor->facing  = FACING_WEST;
+		}
+		else if (id == CUE_UPPER_WHIRLWIND_NORTHWEST)
+		{
 			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 472, 184);
 			actor->y.fixed = toFIXED(32);
-			actor->facing = FACING_WEST;
-		} else if(id == CUE_UPPER_WHIRLWIND_SOUTHEAST) {
+			actor->facing  = FACING_WEST;
+		}
+		else if (id == CUE_UPPER_WHIRLWIND_SOUTHEAST)
+		{
 			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 616, 280);
 			actor->y.fixed = toFIXED(32);
-			actor->facing = FACING_EAST;
-		} else if(id == CUE_UPPER_WHIRLWIND_NORTHEAST) {
+			actor->facing  = FACING_EAST;
+		}
+		else if (id == CUE_UPPER_WHIRLWIND_NORTHEAST)
+		{
 			fdActorSetPos(ACTOR_WHIRLWIND_SOURCE, 632, 184);
 			actor->y.fixed = toFIXED(32);
-			actor->facing = FACING_EAST;
+			actor->facing  = FACING_EAST;
 		}
 		motion = scWhirlwindSpawn(actor);
-		if(motion != NULL)
+		if (motion != NULL)
 			motion->speedLimit = toFIXED(1);
 		WhirlwindRiding = 1;
 	}
 }
 
-/* Felix steps on a cracked tile in the Hover hall with his feet on the floor:
-   it gives way under him (a tile not yet cracked takes one step first) and the
-   party falls to the cracked hall below. */
+// Felix steps on a cracked tile in the Hover hall with his feet on the floor: it gives way under
+// him (a tile not yet cracked takes one step first) and the party falls to the cracked hall below.
 void scJupiterLighthouseStepOnLowerCrackedTile(Sint32 metatileBehavior)
 {
-	if(fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed == 0 &&
-		scCrackedTileStep(metatileBehavior) != 0)
+	if (fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed == 0
+	    && scCrackedTileStep(metatileBehavior) != 0)
 		syFieldScriptSetExitRequest(THROUGH_CRACKED_TILE);
 }
 
-/* Felix steps on a cracked tile in the cracked hall: it cracks, and at the
-   second step it gives way and the party falls to the room below. Two of the
-   tiles lie just north of the great white wind-face statues carved into the
-   hall's walls, metatile (18, 34) against the east wall and metatile (8, 39)
-   against the west; on those he is drawn behind the statue's head
-   (`scFieldActorSetSpritePriority`) as he sinks through the hole. */
+// Felix steps on a cracked tile in the cracked hall: it cracks, and at the second step it gives way
+// and the party falls to the room below. Two of the tiles lie just north of the great white
+// wind-face statues carved into the hall's walls, metatile (18, 34) against the east wall and
+// metatile (8, 39) against the west; on those he is drawn behind the statue's head
+// (`scFieldActorSetSpritePriority`) as he sinks through the hole.
 void scJupiterLighthouseStepOnUpperCrackedTile(Sint32 metatileBehavior)
 {
 	ACTOR *leader;
 	Sint32 x;
 	Sint32 z;
 
-	if(fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed == 0) {
+	if (fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed == 0)
+	{
 		leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-		x = FIELD_METATILE(leader->x.fixed);
-		z = FIELD_METATILE(leader->z.fixed);
-		if(x == 18 && z == 34)
-			scFieldActorSetSpritePriority(
-				MainRoutineStateWork.leaderActorId, 3);
-		if(x == 8 && z == 39)
-			scFieldActorSetSpritePriority(
-				MainRoutineStateWork.leaderActorId, 3);
-		if(scCrackedTileStep(metatileBehavior) != 0)
+		x      = FIELD_METATILE(leader->x.fixed);
+		z      = FIELD_METATILE(leader->z.fixed);
+		if (x == 18 && z == 34)
+			scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+		if (x == 8 && z == 39)
+			scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+		if (scCrackedTileStep(metatileBehavior) != 0)
 			syFieldScriptSetExitRequest(THROUGH_UPPER_CRACKED_TILE);
 	}
 }
 
-/* Felix steps on one of the dark cracked tiles in the two lines running up the
-   Hover hall, columns 25 and 43. With his feet on the floor it gives way at
-   once and the party falls to the cracked hall below. Hovering over it at row
-   11 or 17, in front of a statue, he is blown away as on the rows before the
-   statues (scJupiterLighthouseRaiseUpperWhirlwind). */
+// Felix steps on one of the dark cracked tiles in the two lines running up the Hover hall, columns
+// 25 and 43. With his feet on the floor it gives way at once and the party falls to the cracked
+// hall below. Hovering over it at row 11 or 17, in front of a statue, he is blown away as on the
+// rows before the statues (scJupiterLighthouseRaiseUpperWhirlwind).
 void scJupiterLighthouseStepOnCrackedTileOrWhirlwind(Sint32 metatileBehavior)
 {
 	ACTOR *leader;
@@ -246,26 +253,27 @@ void scJupiterLighthouseStepOnCrackedTileOrWhirlwind(Sint32 metatileBehavior)
 	Sint32 z;
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	if(leader->y.fixed <= 0) {
+	if (leader->y.fixed <= 0)
+	{
 		scJupiterLighthouseStepOnLowerCrackedTile(metatileBehavior);
-	} else {
+	}
+	else
+	{
 		x = FIELD_METATILE(leader->x.fixed);
 		z = FIELD_METATILE(leader->z.fixed);
-		if(x == 25) {
-			if(z == 17)
-				scJupiterLighthouseRaiseUpperWhirlwind(
-					CUE_UPPER_WHIRLWIND_SOUTHWEST);
-			if(z == 11)
-				scJupiterLighthouseRaiseUpperWhirlwind(
-					CUE_UPPER_WHIRLWIND_NORTHWEST);
+		if (x == 25)
+		{
+			if (z == 17)
+				scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_SOUTHWEST);
+			if (z == 11)
+				scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_NORTHWEST);
 		}
-		if(x == 43) {
-			if(z == 17)
-				scJupiterLighthouseRaiseUpperWhirlwind(
-					CUE_UPPER_WHIRLWIND_SOUTHEAST);
-			if(z == 11)
-				scJupiterLighthouseRaiseUpperWhirlwind(
-					CUE_UPPER_WHIRLWIND_NORTHEAST);
+		if (x == 43)
+		{
+			if (z == 17)
+				scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_SOUTHEAST);
+			if (z == 11)
+				scJupiterLighthouseRaiseUpperWhirlwind(CUE_UPPER_WHIRLWIND_NORTHEAST);
 		}
 	}
 }
@@ -275,45 +283,46 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-/* Sets up the rooms: the Phaeton's Blade's chest set back in the drawing order
-   (`scFieldActorSetSpritePriority`), the cracked tiles, and the landing when
-   the party fell through a crack from the hall above. */
+// Sets up the rooms: the Phaeton's Blade's chest set back in the drawing order
+// (`scFieldActorSetSpritePriority`), the cracked tiles, and the landing when the party fell through
+// a crack from the hall above.
 Sint32 scInit(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	state->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+	state->transition  = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	scFieldActorSetSpritePriority(FIELD_TREASURE_ACTOR, 3);
-	WhirlwindRiding = 0;
+	WhirlwindRiding                                 = 0;
 	fdActorGet(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
-	if(MainRoutineStateWork.entrance >= ENTRANCE_HOVER_HALL_SOUTH &&
-		MainRoutineStateWork.entrance <= ENTRANCE_HOVER_HALL_NORTH) {
-		scCrackedTileFind(METATILE_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
-			FLAG_AREA_TEMP_80, 48, 1);
-		scCrackedTilePlaceLanding(0, 0,
-			SCENE_TRANSITION(
-				TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-	} else if(MainRoutineStateWork.entrance == ENTRANCE_LOWER_HALL_NORTH ||
-		MainRoutineStateWork.entrance == ENTRANCE_LOWER_HALL_SOUTH ||
-		MainRoutineStateWork.entrance == THROUGH_CRACKED_TILE) {
-		scCrackedTileFind(METATILE_BEHAVIOR_UPPER_CRACKED_TILE,
-			FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 49, 1);
-		scCrackedTilePlaceLanding(-21, 32,
-			SCENE_TRANSITION(
-				TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-	} else {
-		scCrackedTileFind(METATILE_BEHAVIOR_UPPER_CRACKED_TILE,
-			FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 0);
-		scCrackedTilePlaceLanding(-2, -27,
-			SCENE_TRANSITION(
-				TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
+	if (MainRoutineStateWork.entrance >= ENTRANCE_HOVER_HALL_SOUTH
+	    && MainRoutineStateWork.entrance <= ENTRANCE_HOVER_HALL_NORTH)
+	{
+		scCrackedTileFind(
+			METATILE_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 48, 1);
+		scCrackedTilePlaceLanding(
+			0, 0, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
+	}
+	else if (MainRoutineStateWork.entrance == ENTRANCE_LOWER_HALL_NORTH
+	         || MainRoutineStateWork.entrance == ENTRANCE_LOWER_HALL_SOUTH
+	         || MainRoutineStateWork.entrance == THROUGH_CRACKED_TILE)
+	{
+		scCrackedTileFind(
+			METATILE_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 49, 1);
+		scCrackedTilePlaceLanding(
+			-21, 32, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
+	}
+	else
+	{
+		scCrackedTileFind(
+			METATILE_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 0);
+		scCrackedTilePlaceLanding(
+			-2, -27, SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
 	}
 	return 0;
 }
 
-/* Sets the scene's arrival flags and loads the lighthouse's palettes before the
-   map is built. Returns 0. */
+// Sets the scene's arrival flags and loads the lighthouse's palettes before the map is built.
+// Returns 0.
 Sint32 scPrepareMap(void)
 {
 	scSetArrivalFlags(0);
@@ -323,15 +332,15 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void          syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 extern Sint32 PaletteCyclePausesInScripts;
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-extern Sint32 PaletteCycleTick;
+extern Sint32      PaletteCycleTick;
 
-/* Sets the palette cycle's tick (PaletteCycleTick). */
+// Sets the palette cycle's tick (PaletteCycleTick).
 static inline void scPaletteCycleSetTick(Sint32 value)
 {
 	PaletteCycleTick = value;
@@ -349,14 +358,19 @@ static inline void scPaletteCycleSetTick(Sint32 value)
 
 extern Sint32 WhirlwindEndScript[];
 
-/* The ROM's callers here are compiled against this form, which returns an
-   Sint32 where the definition returns a Uint8. */
-Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
+// The ROM's callers here are compiled against this form, which returns an Sint32 where the
+// definition returns a Uint8.
+Sint32        fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32                x,
+                        Sint32                y,
+                        Sint32                z,
+                        Sint32                velocityX,
+                        Sint32                velocityY,
+                        Sint32                velocityZ,
+                        Uint32                flags,
+                        const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -374,7 +388,7 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
 
 #include "shared/light_sprites_add.h"
 
-/* Sets the priority the lit actors' sprites are drawn at. */
+// Sets the priority the lit actors' sprites are drawn at.
 void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
@@ -384,7 +398,7 @@ void scLightSpritesSetPriority(Sint32 value)
 
 extern Uint32 FieldEffectLongScript[];
 
-/* clang-format off */
+// clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
 #include "shared/scene_entrances_default.c"
@@ -473,7 +487,7 @@ Sint32 WhirlwindEndScript[] = {
 	SC_WAIT(12),
 	SC_RELEASE,
 };
-/* clang-format on */
+// clang-format on
 
 const Sint32 *FieldEffectDurationScripts[] = {
 	FieldEffectShortScript,
@@ -485,7 +499,7 @@ const Sint32 *FieldEffectDurationScripts[] = {
 
 extern const Sint32 *FieldEffectDurationScripts[];
 
-#define EFFECT_SET_MODE	  fdActorSelectAnimation
+#define EFFECT_SET_MODE   fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
@@ -504,7 +518,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 
 #undef METATILE_PUSH_SLOT_ENTRY
 
-void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
+void          scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 extern Uint32 FieldEffectShortScript[];
 extern Uint32 FieldEffectMediumScript[];
 

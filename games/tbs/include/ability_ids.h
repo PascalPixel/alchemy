@@ -1,16 +1,16 @@
 #ifndef ALCHEMY_ABILITY_IDS_H
 #define ALCHEMY_ABILITY_IDS_H
 
-/* Ability numbers, named from the English release. */
+// Ability numbers, named from the English release.
 
 #include "djinn_ids.h"
 
-/* Ability numbers, one for each row of AbilityDefinitions (ability_table.c) in
-   order. Each ability's name is the message MsgAbilityName plus its number.
-   Each family of abilities leaves spare numbers after its last, whose rows are
-   blank and whose names in the text are "?"; a family's first number is written
-   where spares come before it. */
-typedef enum ABILITY {
+// Ability numbers, one for each row of AbilityDefinitions (ability_table.c) in order. Each
+// ability's name is the message MsgAbilityName plus its number. Each family of abilities leaves
+// spare numbers after its last, whose rows are blank and whose names in the text are "?"; a
+// family's first number is written where spares come before it.
+typedef enum ABILITY
+{
 	ABILITY_NONE,
 	ABILITY_ATTACK,
 	ABILITY_DEFEND,
@@ -53,12 +53,11 @@ typedef enum ABILITY {
 	ABILITY_VOLCANO,
 	ABILITY_ERUPTION,
 	ABILITY_PYROCLASM,
-	/* Power 25, against ABILITY_BLAST_STRONG's 40. */
+	// Power 25, against ABILITY_BLAST_STRONG's 40.
 	ABILITY_BLAST,
 	ABILITY_MAD_BLAST,
 	ABILITY_FIERY_BLAST,
-	/* Power 40, against ABILITY_BLAST's 25: the row before Nova and
-	   Supernova. */
+	// Power 40, against ABILITY_BLAST's 25: the row before Nova and Supernova.
 	ABILITY_BLAST_STRONG,
 	ABILITY_NOVA,
 	ABILITY_SUPERNOVA,
@@ -113,7 +112,7 @@ typedef enum ABILITY {
 	ABILITY_CURSE,
 	ABILITY_CONDEMN,
 	ABILITY_DRAIN,
-	ABILITY_PSY_DRAIN, /* takes a foe's PP, and costs none itself */
+	ABILITY_PSY_DRAIN, // takes a foe's PP, and costs none itself
 	ABILITY_BREAK,
 	ABILITY_REGENERATE,
 	ABILITY_REFLECT,
@@ -146,8 +145,8 @@ typedef enum ABILITY {
 	ABILITY_MAGIC_SHIELD,
 	ABILITY_DEATH_PLUNGE,
 	ABILITY_SHURIKEN,
-	/* Its instant death is rolled as the action is planned, so that its burst
-	   can show whether it landed. */
+	// Its instant death is rolled as the action is planned, so that its burst can show whether it
+	// landed.
 	ABILITY_ANNIHILATION,
 	ABILITY_PUNJI,
 	ABILITY_PUNJI_TRAP,
@@ -161,7 +160,7 @@ typedef enum ABILITY {
 	ABILITY_THUNDERCLAP,
 	ABILITY_THUNDERBOLT,
 	ABILITY_THUNDERSTORM,
-	/* Jupiter Psynergy that deludes its targets. */
+	// Jupiter Psynergy that deludes its targets.
 	ABILITY_MIST,
 	ABILITY_RAGNAROK,
 	ABILITY_CUTTING_EDGE,
@@ -182,9 +181,8 @@ typedef enum ABILITY {
 	ABILITY_PSY_LEECH,
 	ABILITY_BROIL,
 	ABILITY_MELTDOWN,
-	/* The first of the enemy abilities btActionRunBuild announces in their own
-	   words; the others run from ABILITY_SONIC_WAVE to
-	   ABILITY_SEARCH_FOR_HELP. */
+	// The first of the enemy abilities btActionRunBuild announces in their own words; the others
+	// run from ABILITY_SONIC_WAVE to ABILITY_SEARCH_FOR_HELP.
 	ABILITY_HEAT_MIRAGE,
 	ABILITY_BARRAGE,
 	ABILITY_DEMON_FIRE,
@@ -209,8 +207,7 @@ typedef enum ABILITY {
 	ABILITY_ANTIDOTE,
 	ABILITY_ELIXIR,
 	ABILITY_WATER_OF_LIFE,
-	/* The stat items' abilities, each raising one base stat for good (the item
-	   menu's use). */
+	// The stat items' abilities, each raising one base stat for good (the item menu's use).
 	ABILITY_POWER_BREAD = 260,
 	ABILITY_COOKIE,
 	ABILITY_APPLE,
@@ -221,9 +218,8 @@ typedef enum ABILITY {
 	ABILITY_SLEEP_BOMB,
 	ABILITY_ADEPT_RING,
 	ABILITY_CORN,
-	/* The first Djinni's ability: Djinni n of element e has ability
-	   ABILITY_DJINNI_FIRST + e * DJINN_PER_ELEMENT + n, djinn_table.c's ability
-	   column, whose name is the Djinni's. */
+	// The first Djinni's ability: Djinni n of element e has ability ABILITY_DJINNI_FIRST + e *
+	// DJINN_PER_ELEMENT + n, djinn_table.c's ability column, whose name is the Djinni's.
 	ABILITY_DJINNI_FIRST = 300,
 	ABILITY_GRANITE,
 	ABILITY_QUARTZ,
@@ -233,8 +229,7 @@ typedef enum ABILITY {
 	ABILITY_BANE,
 	ABILITY_FIZZ = ABILITY_DJINNI_FIRST + DJINN_PER_ELEMENT,
 	ABILITY_SLEET,
-	/* The Mercury Djinni Mist's (djinn_table.c): an attack that may put its
-	   target to sleep. */
+	// The Mercury Djinni Mist's (djinn_table.c): an attack that may put its target to sleep.
 	ABILITY_MIST_DJINNI,
 	ABILITY_SPRITZ,
 	ABILITY_HAIL,
@@ -254,8 +249,8 @@ typedef enum ABILITY {
 	ABILITY_KITE,
 	ABILITY_SQUALL,
 	ABILITY_LUFF,
-	/* The summons: four to an element, in the order of their Djinn costs, each
-	   element's six ids apart. */
+	// The summons: four to an element, in the order of their Djinn costs, each element's six ids
+	// apart.
 	ABILITY_VENUS = 380,
 	ABILITY_RAMSES,
 	ABILITY_CYBELE,
@@ -272,39 +267,39 @@ typedef enum ABILITY {
 	ABILITY_ATALANTA,
 	ABILITY_PROCNE,
 	ABILITY_THOR,
-	/* Power 60: the Salamander's. */
+	// Power 60: the Salamander's.
 	ABILITY_FIRE_BLESSING = 420,
-	/* Power 90: the Dread Hound's, the Chimera's and the Chimera Mage's. */
+	// Power 90: the Dread Hound's, the Chimera's and the Chimera Mage's.
 	ABILITY_FIRE_BLESSING_STRONG,
-	/* Power 130: ENEMY_UNUSED_CHIMERA's. */
+	// Power 130: ENEMY_UNUSED_CHIMERA's.
 	ABILITY_FIRE_BLESSING_STRONGEST,
-	/* Power 25: the Lizard Man's and the Living Statue's. */
+	// Power 25: the Lizard Man's and the Living Statue's.
 	ABILITY_WATER_BLESSING,
-	/* Power 50: the Lizard Fighter's and the Hydros Statue's. */
+	// Power 50: the Lizard Fighter's and the Hydros Statue's.
 	ABILITY_WATER_BLESSING_STRONG,
-	/* Power 100: the Kraken's. */
+	// Power 100: the Kraken's.
 	ABILITY_WATER_BLESSING_STRONGEST,
-	/* Power 50: the Gargoyle's. */
+	// Power 50: the Gargoyle's.
 	ABILITY_ICE_BLESSING,
-	/* Power 90: the Ice Gargoyle's. */
+	// Power 90: the Ice Gargoyle's.
 	ABILITY_ICE_BLESSING_STRONG,
-	/* Power 180: the Cerebus's, the Fenrir's and the Lizard King's. */
+	// Power 180: the Cerebus's, the Fenrir's and the Lizard King's.
 	ABILITY_ICE_BLESSING_STRONGEST,
-	/* Venus, power 70: the Kraken's. */
+	// Venus, power 70: the Kraken's.
 	ABILITY_DARK_BLESSING,
-	/* Venus, power 110; no enemy's abilities hold it. */
+	// Venus, power 110; no enemy's abilities hold it.
 	ABILITY_DARK_BLESSING_STRONG,
-	/* Mars, power 170, lowering defense: the Toadonpa's. */
+	// Mars, power 170, lowering defense: the Toadonpa's.
 	ABILITY_DARK_BLESSING_MARS,
 	ABILITY_ACID_BLESSING,
-	/* Power 190: the Thunder Lizard's. */
+	// Power 190: the Thunder Lizard's.
 	ABILITY_STORM_BLESSING,
-	/* Power 220; no enemy's abilities hold it. */
+	// Power 220; no enemy's abilities hold it.
 	ABILITY_STORM_BLESSING_STRONG,
-	/* Power 5: ENEMY_BAT_WORLD_MAP's. */
+	// Power 5: ENEMY_BAT_WORLD_MAP's.
 	ABILITY_SONIC_WAVE,
-	/* Power 45 against ENEMY_BAT_WORLD_MAP's 5: the Rabid Bat's, the Clay
-	   Gargoyle's, the Ant Lion's and the Roach's. */
+	// Power 45 against ENEMY_BAT_WORLD_MAP's 5: the Rabid Bat's, the Clay Gargoyle's, the Ant
+	// Lion's and the Roach's.
 	ABILITY_SONIC_WAVE_STRONG,
 	ABILITY_SHRIEK,
 	ABILITY_BANSHEE_HOWL,
@@ -369,16 +364,15 @@ typedef enum ABILITY {
 	ABILITY_THREATEN,
 	ABILITY_TREMBLE,
 	ABILITY_FORTIFY,
-	/* Not a surge of speed: the enemy splits itself in two ("attempts to
-	   divide!", then "It split off into" its copy, or "It failed to
-	   divide!"). */
+	// Not a surge of speed: the enemy splits itself in two ("attempts to divide!", then "It split
+	// off into" its copy, or "It failed to divide!").
 	ABILITY_SPEED_SURGE,
 	ABILITY_ALLY_SEARCH,
 	ABILITY_SIDESTEP,
 	ABILITY_TOTAL_DEFENSE,
 	ABILITY_STAND_READY,
 	ABILITY_SEARCH_FOR_HELP,
-	/* What an enemy with nothing it can use commands. */
+	// What an enemy with nothing it can use commands.
 	ABILITY_CANT_USE,
 	ABILITY_POISON_BEAT,
 	ABILITY_SPINNING_BEAT,
@@ -387,9 +381,9 @@ typedef enum ABILITY {
 	ABILITY_OUTER_SPACE,
 	ABILITY_DRAGON_DRIVER,
 	ABILITY_DRAIN_FANG,
-	/* The last row of AbilityStaging. */
+	// The last row of AbilityStaging.
 	ABILITY_SEVERE_BLOW,
-	/* The last row of ability_table.c and AbilityBattleEffects. */
+	// The last row of ability_table.c and AbilityBattleEffects.
 	ABILITY_THRASH,
 	ABILITY_COUNT
 } ABILITY;

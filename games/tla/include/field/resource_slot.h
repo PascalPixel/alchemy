@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_FIELD_RESOURCE_SLOT_H
 #define ALCHEMY_FIELD_RESOURCE_SLOT_H
 
-/* What the resource_slot object lends the field and the scenes: a few of its
-   functions through their stub calls, and the sprite animation reset. */
+// What the resource_slot object lends the field and the scenes: a few of its functions through
+// their stub calls, and the sprite animation reset.
 
 #include "types.h"
 #include "resource_ids.h"

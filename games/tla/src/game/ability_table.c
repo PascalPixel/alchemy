@@ -1,10 +1,9 @@
-/* The 734 abilities, by ability id. Each name is the English release's
-   (MsgAbilityName plus the ability id); where the game gives two abilities one
-   name, the id adds what tells them apart and a comment above the row gives the
-   name the player sees. Part of game.c. */
+// The 734 abilities, by ability id. Each name is the English release's (MsgAbilityName plus the
+// ability id); where the game gives two abilities one name, the id adds what tells them apart and a
+// comment above the row gives the name the player sees. Part of game.c.
 
-/* clang-format off */
-/* The 734 abilities, by ability id. */
+// clang-format off
+// The 734 abilities, by ability id.
 const ABILITY_DEFINITION AbilityDefinitions[] = {
 	[ABILITY_NOTHING] = {
 		.targetMode = ABILITY_TARGET_FOES,
@@ -418,7 +417,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.ppCost = 19,
 		.power = 110,
 	},
-	/* Blast */
+	// Blast
 	[ABILITY_BLAST_STRONG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
@@ -1182,7 +1181,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 		.ppCost = 1,
 	},
-	/* Ma???? */
+	// Ma????
 	[ABILITY_MAGNET] = {
 		.flags = ABILITY_FORMULA_NO_POWER,
 		.icon = 170,
@@ -1198,7 +1197,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 		.ppCost = 3,
 	},
-	/* A?? */
+	// A??
 	[ABILITY_ARROW] = {
 		.flags = ABILITY_FORMULA_NO_POWER,
 		.element = ELEMENT_JUPITER,
@@ -2118,8 +2117,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.effect = ABILITY_EFFECT_CRYSTAL,
 		.range = ABILITY_RANGE_ALL,
 	},
-	/* Each element's Djinn after its eighteenth are spares, and so are their */
-	/* abilities: these rows, named after the element in the text ("Earth18"). */
+	// Each element's Djinn after its eighteenth are spares, and so are their abilities: these rows, named after the element in the text ("Earth18").
 	[ABILITY_CRYSTAL + 1 ... ABILITY_FIZZ - 1] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
@@ -2140,7 +2138,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 		.power = 30,
 	},
-	/* Mist */
+	// Mist
 	[ABILITY_MIST_DJINNI] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
@@ -2528,7 +2526,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.effect = ABILITY_EFFECT_CEASE_FIRE,
 		.range = 1,
 	},
-	/* Gale */
+	// Gale
 	[ABILITY_GALE_DJINNI] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
@@ -2710,7 +2708,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 6,
 		.power = 100,
 	},
-	/* Daedalus */
+	// Daedalus
 	[ABILITY_DAEDALUS_STRIKE] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
@@ -2793,7 +2791,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 60,
 	},
-	/* Fire Breath */
+	// Fire Breath
 	[ABILITY_FIRE_BREATH_STRONG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2801,7 +2799,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 90,
 	},
-	/* Fire Breath */
+	// Fire Breath
 	[ABILITY_FIRE_BREATH_STRONGEST] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2816,7 +2814,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 25,
 	},
-	/* Water Breath */
+	// Water Breath
 	[ABILITY_WATER_BREATH_STRONG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2824,7 +2822,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 50,
 	},
-	/* Water Breath */
+	// Water Breath
 	[ABILITY_WATER_BREATH_STRONGEST] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2839,7 +2837,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 50,
 	},
-	/* Ice Breath */
+	// Ice Breath
 	[ABILITY_ICE_BREATH_STRONG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2847,7 +2845,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 90,
 	},
-	/* Ice Breath */
+	// Ice Breath
 	[ABILITY_ICE_BREATH_STRONGEST] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2862,7 +2860,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 70,
 	},
-	/* Dark Breath */
+	// Dark Breath
 	[ABILITY_DARK_BREATH_STRONG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2878,7 +2876,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 170,
 	},
-	/* Acid Breath */
+	// Acid Breath
 	[ABILITY_ACID_BREATH_STRONG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2895,7 +2893,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 190,
 	},
-	/* Storm Breath */
+	// Storm Breath
 	[ABILITY_STORM_BREATH_STRONG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -2911,7 +2909,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 		.power = 5,
 	},
-	/* Sonic Wave */
+	// Sonic Wave
 	[ABILITY_SONIC_WAVE_STRONG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -3541,7 +3539,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 		.power = 30,
 	},
-	/* Hurricane */
+	// Hurricane
 	[ABILITY_HURRICANE_UNLEASH] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
@@ -3820,7 +3818,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 		.power = 57,
 	},
-	/* Supernova */
+	// Supernova
 	[ABILITY_SUPERNOVA_UNLEASH] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
@@ -3863,7 +3861,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.ppCost = 16,
 		.power = 35,
 	},
-	/* Fire Breath */
+	// Fire Breath
 	[ABILITY_FIRE_BREATH_PIERROT] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -4367,7 +4365,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 140,
 	},
-	/* Fire Breath */
+	// Fire Breath
 	[ABILITY_FIRE_BREATH_PYRODRA] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
@@ -4540,7 +4538,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 2,
 		.power = 100,
 	},
-	/* Rising Dragon */
+	// Rising Dragon
 	[ABILITY_RISING_DRAGON_AGATIO] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
@@ -4691,7 +4689,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 		.power = 15,
 	},
-	/* Poison Sting */
+	// Poison Sting
 	[ABILITY_POISON_STING_NEEDLE_EGG] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
@@ -4735,7 +4733,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.effect = ABILITY_EFFECT_CALL_QUEUED,
 		.range = 1,
 	},
-	/* Fire Dance */
+	// Fire Dance
 	[ABILITY_FIRE_DANCE_PHOENIX] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
@@ -4905,4 +4903,4 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 	},
 };
-/* clang-format on */
+// clang-format on

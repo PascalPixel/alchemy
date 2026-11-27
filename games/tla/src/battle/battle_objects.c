@@ -1,148 +1,156 @@
-/* Each tick's sprite priorities, the status icons, the poses and the sprites
-   of the battle objects, and the camera they are projected through. Part of
-   battle.c. */
+// Each tick's sprite priorities, the status icons, the poses and the sprites of the battle objects,
+// and the camera they are projected through. Part of battle.c.
 
-/* A sprite animation's priority above 3, which is not drawn: a shadow's while
-   its unit is in the air. */
+// A sprite animation's priority above 3, which is not drawn: a shadow's while its unit is in the
+// air.
 #define SHADOW_HIDDEN_PRIORITY 9
 
-/* The status icons' bits in BATTLE_OBJECT.activeStatuses. */
-#define ICON_POISON			   0x01
-#define ICON_VENOM			   0x02 /* deadly poison */
-#define ICON_STUN			   0x04
-#define ICON_PSY_SEAL		   0x08
-#define ICON_SLEEP			   0x10
-#define ICON_DELUSION		   0x20
-#define ICON_HAUNT			   0x40
-/* The curse's turns left, 1 to 7, shown as bits 7 to 13. */
+// The status icons' bits in BATTLE_OBJECT.activeStatuses.
+#define ICON_POISON            0x01
+#define ICON_VENOM             0x02 // deadly poison
+#define ICON_STUN              0x04
+#define ICON_PSY_SEAL          0x08
+#define ICON_SLEEP             0x10
+#define ICON_DELUSION          0x20
+#define ICON_HAUNT             0x40
+// The curse's turns left, 1 to 7, shown as bits 7 to 13.
 #define ICON_GRIM_REAPER_SHIFT 6
 
-/* Builds the status icon bits of unit id's statuses into its battle object's
-   activeStatuses, which btStatusIconCycle shows; an object marked visible keeps
-   its bits. A stun shows no icon on the Serpent, the Kraken or the Fusion
-   Dragon. */
+// Builds the status icon bits of unit id's statuses into its battle object's activeStatuses, which
+// btStatusIconCycle shows; an object marked visible keeps its bits. A stun shows no icon on the
+// Serpent, the Kraken or the Fusion Dragon.
 void btUnitBuildStatusFlags(Sint32 id, BATTLE_OBJECT *object)
 {
 	Uint32 flags = 0;
 
-	if(object->visible == 0) {
-		UNIT *unit = syUnitGet(id);
+	if (object->visible == 0)
+	{
+		UNIT *unit   = syUnitGet(id);
 		Sint8 poison = unit->poison;
 
-		if(poison == POISON_NORMAL)
+		if (poison == POISON_NORMAL)
 			flags = ICON_POISON;
-		/* Deadly poison: poison is ICON_VENOM. */
-		if(poison == POISON_VENOM)
+		// Deadly poison: poison is ICON_VENOM.
+		if (poison == POISON_VENOM)
 			flags |= poison;
-		if(unit->delusion != 0)
+		if (unit->delusion != 0)
 			flags |= ICON_DELUSION;
-		if(unit->stun != 0) {
+		if (unit->stun != 0)
+		{
 			flags |= ICON_STUN;
-			switch(unit->enemyId) {
-			case ENEMY_SERPENT:
-			case ENEMY_SERPENT_ONE_BEAM:
-			case ENEMY_SERPENT_TWO_BEAMS:
-			case ENEMY_SERPENT_THREE_BEAMS:
-			case ENEMY_SERPENT_FOUR_BEAMS:
-			case ENEMY_SERPENT_6:
-			case ENEMY_SERPENT_7:
-			case ENEMY_KRAKEN:
-			case ENEMY_FUSION_DRAGON:
-				flags &= ~ICON_STUN;
-				break;
+			switch (unit->enemyId)
+			{
+				case ENEMY_SERPENT:
+				case ENEMY_SERPENT_ONE_BEAM:
+				case ENEMY_SERPENT_TWO_BEAMS:
+				case ENEMY_SERPENT_THREE_BEAMS:
+				case ENEMY_SERPENT_FOUR_BEAMS:
+				case ENEMY_SERPENT_6:
+				case ENEMY_SERPENT_7:
+				case ENEMY_KRAKEN:
+				case ENEMY_FUSION_DRAGON      : flags &= ~ICON_STUN; break;
 			}
 		}
-		if(unit->psySeal != 0)
+		if (unit->psySeal != 0)
 			flags |= ICON_PSY_SEAL;
-		if(unit->haunt != 0)
+		if (unit->haunt != 0)
 			flags |= ICON_HAUNT;
-		if(unit->sleep != 0)
+		if (unit->sleep != 0)
 			flags |= ICON_SLEEP;
-		if(unit->grimReaper != 0)
+		if (unit->grimReaper != 0)
 			flags |= 1 << (unit->grimReaper + ICON_GRIM_REAPER_SHIFT);
 		object->activeStatuses = flags;
 	}
 }
 
-#define ICON_MAX 14 /* the kinds of icon */
+#define ICON_MAX              14 // the kinds of icon
 
-/* The ticks each status icon shows before the next one's turn. */
-#define ICON_CYCLE_TICKS 80
+// The ticks each status icon shows before the next one's turn.
+#define ICON_CYCLE_TICKS      80
 
-/* The icons' first animations, for units 32 pixels wide and for the rest: each
-   adds the icon's bit number. */
+// The icons' first animations, for units 32 pixels wide and for the rest: each adds the icon's bit
+// number.
 #define ICON_ANIMATION_NARROW SPRITE_STATUS_POISON
-#define ICON_ANIMATION_WIDE	  SPRITE_STATUS_WIDE_POISON
+#define ICON_ANIMATION_WIDE   SPRITE_STATUS_WIDE_POISON
 
-/* Shows the unit's status icons in turn, each for ICON_CYCLE_TICKS, and moves
-   on at once when the shown status ends. */
+// Shows the unit's status icons in turn, each for ICON_CYCLE_TICKS, and moves on at once when the
+// shown status ends.
 void btStatusIconCycle(BATTLE_OBJECT *slot)
 {
 	SPR_ANIMATION *icon;
-	SPR			  *sprite;
+	SPR           *sprite;
 	MOTION_OBJECT *owner;
-	Sint32		   animation;
-	Sint32		   handle;
-	Sint32		   shown;
-	Sint32		   changed = 0;
+	Sint32         animation;
+	Sint32         handle;
+	Sint32         shown;
+	Sint32         changed = 0;
 
-	if(slot->cycleTimer >= 0)
+	if (slot->cycleTimer >= 0)
 		slot->cycleTimer--;
 
-	if(((Sint16)slot->activeStatuses != 0 && slot->animationEntry == 0) ||
-		(slot->animationEntry != 0 &&
-			(((Sint16)slot->activeStatuses >> slot->selectedCondition) & 1) ==
-				0) ||
-		slot->cycleTimer == 0) {
+	if (((Sint16)slot->activeStatuses != 0 && slot->animationEntry == 0)
+	    || (slot->animationEntry != 0
+	        && (((Sint16)slot->activeStatuses >> slot->selectedCondition) & 1) == 0)
+	    || slot->cycleTimer == 0)
+	{
 		animation = -1;
-		owner = slot->object;
-		if((Sint16)slot->activeStatuses != 0) {
+		owner     = slot->object;
+		if ((Sint16)slot->activeStatuses != 0)
+		{
 			shown = slot->selectedCondition;
-			for(animation = shown + 1;; animation++) {
-				if(animation > ICON_MAX - 1)
+			for (animation = shown + 1;; animation++)
+			{
+				if (animation > ICON_MAX - 1)
 					animation = 0;
-				if((((Sint16)slot->activeStatuses >> animation) & 1) != 0)
+				if ((((Sint16)slot->activeStatuses >> animation) & 1) != 0)
 					break;
 			}
 
-			if(shown != animation || slot->animationEntry == 0) {
+			if (shown != animation || slot->animationEntry == 0)
+			{
 				slot->selectedCondition = animation;
-				changed = 1;
+				changed                 = 1;
 			}
 			slot->cycleTimer = ICON_CYCLE_TICKS;
-		} else {
+		}
+		else
+		{
 			changed = 1;
 		}
 
 		sprite = btActorGetSprite(owner, 0);
-		if(sprite != 0) {
-			if(animation >= 0) {
-				if(sprite->width == 32)
+		if (sprite != 0)
+		{
+			if (animation >= 0)
+			{
+				if (sprite->width == 32)
 					animation += ICON_ANIMATION_NARROW;
 				else
 					animation += ICON_ANIMATION_WIDE;
 			}
 
-			if(slot->animationEntry != 0 && changed != 0) {
-				fdSpriteRemoveAnimationStub(
-					sprite, (Sint32)slot->animationEntry);
+			if (slot->animationEntry != 0 && changed != 0)
+			{
+				fdSpriteRemoveAnimationStub(sprite, (Sint32)slot->animationEntry);
 				slot->animationEntry = 0;
 			}
 
-			if(animation >= 0 && changed != 0) {
-				handle = fdSpriteAddAnimationStub(sprite, animation);
+			if (animation >= 0 && changed != 0)
+			{
+				handle               = fdSpriteAddAnimationStub(sprite, animation);
 				slot->animationEntry = (SPR_ANIMATION *)handle;
-				if(handle == -1)
+				if (handle == -1)
 					slot->animationEntry = 0;
 				icon = (SPR_ANIMATION *)slot->animationEntry;
-				if(icon != 0) {
+				if (icon != 0)
+				{
 					icon->priority = 3;
 					fdSpriteAnimationStartStub(icon, 0);
 				}
 			}
 
 			sprite->dirty = 1;
-			if(animation >= 0)
+			if (animation >= 0)
 				slot->animation = animation;
 			else
 				slot->animation = 0;
@@ -150,361 +158,382 @@ void btStatusIconCycle(BATTLE_OBJECT *slot)
 	}
 }
 
-/* Sets a unit's pose to match its state, held, down or standing, and sets its
-   sway a little out of step with its neighbours': from two steps below normal
-   speed to one above, by its id. */
+// Sets a unit's pose to match its state, held, down or standing, and sets its sway a little out of
+// step with its neighbours': from two steps below normal speed to one above, by its id.
 void btObjectUpdatePose(Sint32 id)
 {
 	UNIT  *unit;
 	Sint32 value;
 
-	unit = syUnitGet(id);
+	unit  = syUnitGet(id);
 	value = POSE_STANDING;
-	if(unit->hp != 0) {
-		if(unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
-			value =
-				unit->side == BATTLE_SIDE_ENEMY ? POSE_STILL : POSE_PARTY_HELD;
-	} else if(unit->side == BATTLE_SIDE_ENEMY) {
+	if (unit->hp != 0)
+	{
+		if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
+			value = unit->side == BATTLE_SIDE_ENEMY ? POSE_STILL : POSE_PARTY_HELD;
+	}
+	else if (unit->side == BATTLE_SIDE_ENEMY)
+	{
 		value = POSE_ENEMY_DOWN;
-	} else {
+	}
+	else
+	{
 		value = POSE_PARTY_HELD;
 	}
 
 	fdActorSelectAnimationStub((ACTOR *)btObjectGet(id)->object, value);
-	fdActorSetAnimationSpeedStub(
-		(ACTOR *)btObjectGet(id)->object, ANIM_STEP_NORMAL - 2 + (id & 3));
+	fdActorSetAnimationSpeedStub((ACTOR *)btObjectGet(id)->object, ANIM_STEP_NORMAL - 2 + (id & 3));
 }
 
-/* Destroys a unit's sprites, its status icon and shadow with them, leaving its
-   battle object with none. */
+// Destroys a unit's sprites, its status icon and shadow with them, leaving its battle object with
+// none.
 void btObjectDestroySprites(Sint32 unitId)
 {
 	BATTLE_OBJECT *slot;
 	MOTION_OBJECT *object;
-	Sint32		   i;
-	void		  *sprite;
+	Sint32         i;
+	void          *sprite;
 
 	slot = btObjectGet(unitId);
-	if(slot != NULL) {
+	if (slot != NULL)
+	{
 		object = slot->object;
-		if(object != NULL) {
+		if (object != NULL)
+		{
 			slot->animationEntry = 0;
-			slot->shadowEntry = 0;
-			for(i = 0; (sprite = btActorGetSprite(object, i)) != NULL; i += 1) {
+			slot->shadowEntry    = 0;
+			for (i = 0; (sprite = btActorGetSprite(object, i)) != NULL; i += 1)
+			{
 				fdSpriteDestroyStub(sprite);
 			}
 			object->recordStorageKind = ACTOR_SPRITE_NONE;
-			object->records = NULL;
+			object->records           = NULL;
 		}
 	}
 }
 
-/* Readies the sprites of the units in unitIds (ended by BATTLE_UNIT_LIST_END):
-   with releaseOthers, first destroys those of every unit not listed; then
-   creates each listed unit's sprites (body, overlay, status icon and shadow; or
-   the two parts of a two-part enemy) unless it has them, builds its status
-   icons and sets its pose. With refreshPoses, sets every listed unit's pose
-   again afterwards. */
-void btObjectSpawnObjectsForList(
-	Sint16 *unitIds, Sint32 refreshPoses, Sint32 releaseOthers)
+// Readies the sprites of the units in unitIds (ended by BATTLE_UNIT_LIST_END): with releaseOthers,
+// first destroys those of every unit not listed; then creates each listed unit's sprites (body,
+// overlay, status icon and shadow; or the two parts of a two-part enemy) unless it has them, builds
+// its status icons and sets its pose. With refreshPoses, sets every listed unit's pose again
+// afterwards.
+void btObjectSpawnObjectsForList(Sint16 *unitIds, Sint32 refreshPoses, Sint32 releaseOthers)
 {
-	Sint32		   unitIndex;
-	Sint32		   unitId;
+	Sint32         unitIndex;
+	Sint32         unitId;
 	BATTLE_OBJECT *battleObject;
 	MOTION_OBJECT *object;
-	SPR			  *record;
+	SPR           *record;
 	SPR_ANIMATION *entry;
-	SPR			 **records;
-	Sint32		   spriteId;
-	Sint32		   releasedUnitId;
-	Uint8		   footprint;
+	SPR          **records;
+	Sint32         spriteId;
+	Sint32         releasedUnitId;
+	Uint8          footprint;
 
-	if(releaseOthers) {
-		for(unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
-			if(!btPlacementContainsId(unitIds, unitIndex)) {
-				releasedUnitId =
-					unitIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-				if(unitIndex <= ALLY_MAX)
+	if (releaseOthers)
+	{
+		for (unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++)
+		{
+			if (!btPlacementContainsId(unitIds, unitIndex))
+			{
+				releasedUnitId = unitIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+				if (unitIndex <= ALLY_MAX)
 					releasedUnitId = unitIndex;
 				btObjectDestroySprites(releasedUnitId);
 			}
 		}
 	}
-	if(EventsRunning == 0)
+	if (EventsRunning == 0)
 		sySynch(1);
 
-	for(unitIndex = 0; unitIndex < UNIT_MAX &&
-		(unitId = unitIds[unitIndex]) != BATTLE_UNIT_LIST_END;
-		unitIndex++) {
-		if(unitId == BATTLE_UNIT_REMOVED)
+	for (unitIndex = 0;
+	     unitIndex < UNIT_MAX && (unitId = unitIds[unitIndex]) != BATTLE_UNIT_LIST_END;
+	     unitIndex++)
+	{
+		if (unitId == BATTLE_UNIT_REMOVED)
 			continue;
 		battleObject = btObjectGet(unitId);
-		if(battleObject == 0)
+		if (battleObject == 0)
 			continue;
-		if(battleObject->fading != 0)
+		if (battleObject->fading != 0)
 			continue;
 		btUnitBuildStatusFlags(unitId, battleObject);
 		object = battleObject->object;
-		if(object == 0)
+		if (object == 0)
 			continue;
-		if(object->recordStorageKind != ACTOR_SPRITE_NONE)
+		if (object->recordStorageKind != ACTOR_SPRITE_NONE)
 			continue;
-		if((battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_SERPENT ||
-			(battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_KRAKEN ||
-			(battleObject->resource & SPRITE_ID_MASK) ==
-				SPRITE_BATTLE_FUSION_DRAGON ||
-			(battleObject->resource & SPRITE_ID_MASK) ==
-				SPRITE_BATTLE_POSEIDON ||
-			(battleObject->resource & SPRITE_ID_MASK) ==
-				SPRITE_BATTLE_DOOM_DRAGON_A ||
-			(battleObject->resource & SPRITE_ID_MASK) ==
-				SPRITE_BATTLE_DOOM_DRAGON_E ||
-			(battleObject->resource & SPRITE_ID_MASK) ==
-				SPRITE_BATTLE_DOOM_DRAGON_H) {
-			/* A two-part enemy: its two sprites in the actor system's next
-			   group table. BUG: a failed create leaves record null, and its
-			   flags are still written. */
-			records = (SPR **)RamHeapSlots->actorSystem->spriteGroups +
-				RamHeapSlots->actorSystem->count;
-			spriteId = battleObject->resource;
+		if ((battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_SERPENT
+		    || (battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_KRAKEN
+		    || (battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_FUSION_DRAGON
+		    || (battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_POSEIDON
+		    || (battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_DOOM_DRAGON_A
+		    || (battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_DOOM_DRAGON_E
+		    || (battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_DOOM_DRAGON_H)
+		{
+			// A two-part enemy: its two sprites in the actor system's next group table. BUG: a
+			// failed create leaves record null, and its flags are still written.
+			records =
+				(SPR **)RamHeapSlots->actorSystem->spriteGroups + RamHeapSlots->actorSystem->count;
+			spriteId                  = battleObject->resource;
 			object->recordStorageKind = ACTOR_SPRITE_GROUP;
-			object->records = records;
+			object->records           = records;
 			syWordsClearEntry(records, ACTOR_SPRITE_GROUP_SIZE * sizeof(SPR *));
 			record = (SPR *)fdSpriteCreateStub(spriteId);
-			if(record != 0) {
-				record->scale = syMulFX(record->scale, battleObject->scale);
-				footprint =
-					fdResourceGetMetadataRecordStubStub(spriteId)->footprint;
+			if (record != 0)
+			{
+				record->scale  = syMulFX(record->scale, battleObject->scale);
+				footprint      = fdResourceGetMetadataRecordStubStub(spriteId)->footprint;
 				object->height = footprint >> 1;
-				*records = record;
+				*records       = record;
 				records++;
 			}
 			record->flags = 0;
-			record = (SPR *)fdSpriteCreateStub(spriteId + SPRITE_SECOND_PART);
-			if(record != 0) {
+			record        = (SPR *)fdSpriteCreateStub(spriteId + SPRITE_SECOND_PART);
+			if (record != 0)
+			{
 				record->scale = syMulFX(record->scale, battleObject->scale);
-				*records = record;
+				*records      = record;
 			}
 			record->flags = 0;
-		} else {
+		}
+		else
+		{
 			record = (SPR *)fdSpriteCreateStub(battleObject->resource);
-			if(record != 0) {
+			if (record != 0)
+			{
 				object->recordStorageKind = ACTOR_SPRITE_ONE;
-				object->records = record;
-				record->scale = syMulFX(record->scale, battleObject->scale);
-				entry = record->entries[0];
-				entry->colorMode = battleObject->palette;
-				entry->priority = 1;
-				if((spriteId = battleObject->overlay) != 0) {
-					entry = (SPR_ANIMATION *)fdSpriteAddAnimationStub(
-						record, spriteId);
+				object->records           = record;
+				record->scale             = syMulFX(record->scale, battleObject->scale);
+				entry                     = record->entries[0];
+				entry->colorMode          = battleObject->palette;
+				entry->priority           = 1;
+				if ((spriteId = battleObject->overlay) != 0)
+				{
+					entry           = (SPR_ANIMATION *)fdSpriteAddAnimationStub(record, spriteId);
 					entry->priority = 1;
 				}
-				if((spriteId = battleObject->animation) != 0) {
-					entry = (SPR_ANIMATION *)fdSpriteAddAnimationStub(
-						record, spriteId);
+				if ((spriteId = battleObject->animation) != 0)
+				{
+					entry = (SPR_ANIMATION *)fdSpriteAddAnimationStub(record, spriteId);
 					battleObject->animationEntry = entry;
 					fdSpriteAnimationStartStub(entry, 0);
 					entry->priority = 3;
 				}
-				if((spriteId = battleObject->shadow) != 0) {
-					if(record->width == 32)
+				if ((spriteId = battleObject->shadow) != 0)
+				{
+					if (record->width == 32)
 						spriteId = SPRITE_BATTLE_SHADOW_NARROW;
-					entry = (SPR_ANIMATION *)fdSpriteAddAnimationStub(
-						record, spriteId);
+					entry = (SPR_ANIMATION *)fdSpriteAddAnimationStub(record, spriteId);
 					battleObject->shadowEntry = entry;
-					entry->priority = 0;
-					record->flags = 0;
+					entry->priority           = 0;
+					record->flags             = 0;
 				}
 			}
 		}
 		btObjectUpdatePose(unitId);
 	}
 
-	if(refreshPoses) {
+	if (refreshPoses)
+	{
 		unitIndex = 0;
-		if((spriteId = unitIds[0]) != BATTLE_UNIT_LIST_END) {
-			for(;;) {
-				/* DEAD: object = battleObject->object in the test, never read
-				   after it; the ROM keeps the store. */
-				if(unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
-					(battleObject = btObjectGet(spriteId)) != 0 &&
-					(object = battleObject->object) != 0)
+		if ((spriteId = unitIds[0]) != BATTLE_UNIT_LIST_END)
+		{
+			for (;;)
+			{
+				// DEAD: object = battleObject->object in the test, never read after it; the ROM
+				// keeps the store.
+				if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED
+				    && (battleObject = btObjectGet(spriteId)) != 0
+				    && (object = battleObject->object) != 0)
 					btObjectUpdatePose(spriteId);
 				unitIndex++;
-				if(unitIndex >= UNIT_MAX ||
-					(spriteId = unitIds[unitIndex]) == BATTLE_UNIT_LIST_END)
+				if (unitIndex >= UNIT_MAX
+				    || (spriteId = unitIds[unitIndex]) == BATTLE_UNIT_LIST_END)
 					break;
 			}
 		}
 	}
 }
 
-/* Readies the sprites of the units in list, ended by BATTLE_UNIT_LIST_END, and
-   destroys every other unit's; with refresh, sets the listed units' poses
-   again. */
+// Readies the sprites of the units in list, ended by BATTLE_UNIT_LIST_END, and destroys every other
+// unit's; with refresh, sets the listed units' poses again.
 void btActorSpawnObjectsForList(Sint16 *list, Sint32 refresh)
 {
 	btObjectSpawnObjectsForList(list, refresh, 1);
 }
 
-/* Detaches the scripts from the four sprite entries of one sprite. */
+// Detaches the scripts from the four sprite entries of one sprite.
 void btSpriteDetachScripts(void *recordGroup)
 {
-	SPR	  *record = recordGroup;
+	SPR   *record = recordGroup;
 	Sint32 entryIndex;
 
-	if(record != NULL) {
-		for(entryIndex = 0; entryIndex < (Sint32)ARRAY_COUNT(record->entries);
-			entryIndex++) {
-			if(record->entries[entryIndex] != NULL)
+	if (record != NULL)
+	{
+		for (entryIndex = 0; entryIndex < (Sint32)ARRAY_COUNT(record->entries); entryIndex++)
+		{
+			if (record->entries[entryIndex] != NULL)
 				record->entries[entryIndex]->script = NULL;
 		}
 	}
 }
 
-/* Returns a unit's battle object, through its place in BATTLE_STATE.placement,
-   or null for a unit with no place. */
+// Returns a unit's battle object, through its place in BATTLE_STATE.placement, or null for a unit
+// with no place.
 static __inline__ BATTLE_OBJECT *btObjectFindSlot(Sint32 id)
 {
 	BATTLE_STATE  *battle = RamHeapSlots->battleState;
-	BATTLE_OBJECT *slots = battle->slots;
+	BATTLE_OBJECT *slots  = battle->slots;
 
-	if(id > ALLY_MAX)
+	if (id > ALLY_MAX)
 		id -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-	if(battle->placement[id] == BATTLE_OBJECT_NONE)
+	if (battle->placement[id] == BATTLE_OBJECT_NONE)
 		return NULL;
 	return &slots[battle->placement[id]];
 }
 
-/* Event, each tick of a battle: advances every unit's status icon, sets its
-   shadow's priority by whether it is airborne, draws the nearer side in front
-   and draws a unit under Haze (DEFEND_VANISHED) as an outline. */
+// Event, each tick of a battle: advances every unit's status icon, sets its shadow's priority by
+// whether it is airborne, draws the nearer side in front and draws a unit under Haze
+// (DEFEND_VANISHED) as an outline.
 void btObjectUpdateSpritePriorities(void)
 {
 	BATTLE_STATE  *battle = RamHeapSlots->battleState;
-	Uint16		   unitIds[UNIT_MAX];
+	Uint16         unitIds[UNIT_MAX];
 	MOTION_OBJECT *objects[UNIT_MAX];
-	Sint32		   partyCount;
-	Sint32		   enemyCount;
-	Sint32		   partyPriority, enemyPriority;
-	Sint32		   unitIndex;
-	Sint32		   recordIndex;
+	Sint32         partyCount;
+	Sint32         enemyCount;
+	Sint32         partyPriority, enemyPriority;
+	Sint32         unitIndex;
+	Sint32         recordIndex;
 	MOTION_OBJECT *object;
-	SPR			  *record;
-	SPR			 **records;
-	SPR			  *part;
+	SPR           *record;
+	SPR          **records;
+	SPR           *part;
 
 	partyCount = btUnitListIds(BATTLE_SIDE_MASK_PARTY, unitIds);
 	enemyCount = btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, &unitIds[partyCount]);
-	unitIndex = 0;
-	if(unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
-		for(;;) {
+	unitIndex  = 0;
+	if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END)
+	{
+		for (;;)
+		{
 			BATTLE_OBJECT *slot;
 
 			object = 0;
-			slot = btObjectFindSlot(unitIds[unitIndex]);
-			if(slot != 0) {
+			slot   = btObjectFindSlot(unitIds[unitIndex]);
+			if (slot != 0)
+			{
 				object = slot->object;
 				btStatusIconCycle(slot);
-				if(slot->shadowEntry != 0) {
+				if (slot->shadowEntry != 0)
+				{
 					part = btActorGetSprite(object, 0);
 
-					if(part != 0) {
+					if (part != 0)
+					{
 						SPR_ANIMATION *effect;
-						Sint32		   effectPriority = 0;
+						Sint32         effectPriority = 0;
 
-						/* An airborne unit's shadow is hidden. */
-						if(object->y != 0)
+						// An airborne unit's shadow is hidden.
+						if (object->y != 0)
 							effectPriority = SHADOW_HIDDEN_PRIORITY;
 						effect = slot->shadowEntry;
-						if(effect->priority != effectPriority) {
+						if (effect->priority != effectPriority)
+						{
 							effect->priority = effectPriority;
-							part->dirty = 1;
+							part->dirty      = 1;
 						}
 					}
 				}
 			}
 			objects[unitIndex] = object;
 			unitIndex++;
-			if(unitIndex >= UNIT_MAX ||
-				unitIds[unitIndex] == BATTLE_UNIT_LIST_END)
+			if (unitIndex >= UNIT_MAX || unitIds[unitIndex] == BATTLE_UNIT_LIST_END)
 				break;
 		}
 	}
 
-	if(battle->keepObjectPriorities != 0)
+	if (battle->keepObjectPriorities != 0)
 		return;
 
-	if(((BATTLE_CAMERA *)RamHeapSlots->cameraState)->yaw >= 0) {
+	if (((BATTLE_CAMERA *)RamHeapSlots->cameraState)->yaw >= 0)
+	{
 		partyPriority = 1;
 		enemyPriority = 2;
-	} else {
+	}
+	else
+	{
 		partyPriority = 2;
 		enemyPriority = 1;
 	}
 
-	for(unitIndex = 0; unitIndex < partyCount; unitIndex++) {
+	for (unitIndex = 0; unitIndex < partyCount; unitIndex++)
+	{
 		object = objects[unitIndex];
-		if(object != 0) {
-			switch(object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
-			case ACTOR_SPRITE_ONE:
-				record = object->records;
-				record->image.priority = partyPriority;
-				if(syUnitGet(unitIds[unitIndex])->defendLevel ==
-					DEFEND_VANISHED)
-					record->flags |= SPRITE_FLAG_OUTLINED;
-				else
-					record->flags &= ~SPRITE_FLAG_OUTLINED;
-				break;
-			case ACTOR_SPRITE_GROUP:
-				records = object->records;
-				for(recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE;
-					recordIndex++) {
-					part = *records++;
+		if (object != 0)
+		{
+			switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK)
+			{
+				case ACTOR_SPRITE_ONE:
+					record                 = object->records;
+					record->image.priority = partyPriority;
+					if (syUnitGet(unitIds[unitIndex])->defendLevel == DEFEND_VANISHED)
+						record->flags |= SPRITE_FLAG_OUTLINED;
+					else
+						record->flags &= ~SPRITE_FLAG_OUTLINED;
+					break;
+				case ACTOR_SPRITE_GROUP:
+					records = object->records;
+					for (recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE; recordIndex++)
+					{
+						part = *records++;
 
-					if(part != 0) {
-						record = part;
-						record->image.priority = partyPriority;
+						if (part != 0)
+						{
+							record                 = part;
+							record->image.priority = partyPriority;
+						}
 					}
-				}
-				break;
+					break;
 			}
 		}
 	}
 
-	for(unitIndex = partyCount; unitIndex < partyCount + enemyCount;
-		unitIndex++) {
+	for (unitIndex = partyCount; unitIndex < partyCount + enemyCount; unitIndex++)
+	{
 		object = objects[unitIndex];
-		if(object != 0) {
-			switch(object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
-			case ACTOR_SPRITE_ONE:
-				record = object->records;
-				record->image.priority = enemyPriority;
-				if(syUnitGet(unitIds[unitIndex])->defendLevel ==
-					DEFEND_VANISHED)
-					record->flags |= SPRITE_FLAG_OUTLINED;
-				else
-					record->flags &= ~SPRITE_FLAG_OUTLINED;
-				break;
-			case ACTOR_SPRITE_GROUP:
-				records = object->records;
-				for(recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE;
-					recordIndex++) {
-					part = *records++;
+		if (object != 0)
+		{
+			switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK)
+			{
+				case ACTOR_SPRITE_ONE:
+					record                 = object->records;
+					record->image.priority = enemyPriority;
+					if (syUnitGet(unitIds[unitIndex])->defendLevel == DEFEND_VANISHED)
+						record->flags |= SPRITE_FLAG_OUTLINED;
+					else
+						record->flags &= ~SPRITE_FLAG_OUTLINED;
+					break;
+				case ACTOR_SPRITE_GROUP:
+					records = object->records;
+					for (recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE; recordIndex++)
+					{
+						part = *records++;
 
-					if(part != 0) {
-						record = part;
-						record->image.priority = enemyPriority;
+						if (part != 0)
+						{
+							record                 = part;
+							record->image.priority = enemyPriority;
+						}
 					}
-				}
-				break;
+					break;
 			}
 		}
 	}
 }
 
-/* Unused: detaches the scripts from every sprite of a unit's actor. */
+// Unused: detaches the scripts from every sprite of a unit's actor.
 void btActorDetachSpriteScripts(MOTION_OBJECT *object)
 {
 	Sint32 storageKind;
@@ -512,51 +541,56 @@ void btActorDetachSpriteScripts(MOTION_OBJECT *object)
 	void **recordGroups;
 	void  *recordGroup;
 
-	if(object != NULL) {
+	if (object != NULL)
+	{
 		storageKind = object->recordStorageKind & ACTOR_SPRITE_KIND_MASK;
-		switch(storageKind) {
-		case ACTOR_SPRITE_ONE:
-			btSpriteDetachScripts(object->records);
-			return;
-		case ACTOR_SPRITE_GROUP:
-			recordGroups = object->records;
-			for(remaining = 0; remaining < 4; remaining++) {
-				recordGroup = *recordGroups++;
-				if(recordGroup != NULL) {
-					btSpriteDetachScripts(recordGroup);
+		switch (storageKind)
+		{
+			case ACTOR_SPRITE_ONE: btSpriteDetachScripts(object->records); return;
+			case ACTOR_SPRITE_GROUP:
+				recordGroups = object->records;
+				for (remaining = 0; remaining < 4; remaining++)
+				{
+					recordGroup = *recordGroups++;
+					if (recordGroup != NULL)
+					{
+						btSpriteDetachScripts(recordGroup);
+					}
 				}
-			}
-			break;
+				break;
 		}
 	}
 }
 
-/* Frees the enemy sprite slots a unit holds and marks its actor for release at
-   the end of the action. Returns 0. */
+// Frees the enemy sprite slots a unit holds and marks its actor for release at the end of the
+// action. Returns 0.
 Sint32 btObjectMarkForRelease(Sint32 objectId)
 {
 	BATTLE_OBJECT *slot;
 
 	btObjectReleaseSpriteSlots(objectId);
-	slot = btObjectFindSlot(objectId);
+	slot         = btObjectFindSlot(objectId);
 	slot->active = 1;
 	return 0;
 }
 
-/* Releases the actor of every battle object marked for release. */
+// Releases the actor of every battle object marked for release.
 void btMotionDestroyAllSlotObjects(void)
 {
-	Sint32		   unitId;
-	Sint32		   i;
+	Sint32         unitId;
+	Sint32         i;
 	BATTLE_OBJECT *slot;
 
-	for(i = 0; i < UNIT_MAX; i += 1) {
+	for (i = 0; i < UNIT_MAX; i += 1)
+	{
 		unitId = i + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-		if(i <= ALLY_MAX) {
+		if (i <= ALLY_MAX)
+		{
 			unitId = i;
 		}
 		slot = btObjectFindSlot(unitId);
-		if((slot != NULL) && (slot->active != 0)) {
+		if ((slot != NULL) && (slot->active != 0))
+		{
 			fdActorReleaseStub((ACTOR *)slot->object);
 			slot->object = NULL;
 			slot->active = 0;
@@ -564,12 +598,11 @@ void btMotionDestroyAllSlotObjects(void)
 	}
 }
 
-/* Unused: writes the anchor of the battle object in place `slot` to out, at
-   height 0. */
+// Unused: writes the anchor of the battle object in place `slot` to out, at height 0.
 Sint32 btObjectGetAnchor(Sint32 slot, POS *out)
 {
 	BATTLE_STATE *battle = RamHeapSlots->battleState;
-	Sint32		  result;
+	Sint32        result;
 
 	out->x = battle->slots[slot].anchorX;
 	out->y = 0;
@@ -578,35 +611,37 @@ Sint32 btObjectGetAnchor(Sint32 slot, POS *out)
 	return result;
 }
 
-/* Sets up the camera's view for projecting points, tilted further while
-   commands are chosen. */
+// Sets up the camera's view for projecting points, tilted further while commands are chosen.
 UNREAD_RESULT btCameraApplyTransform(void)
 {
 	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 	syInitMatrix();
-	if(syGameFlagGet(FLAG_CHOOSING_COMMANDS) != 0) {
+	if (syGameFlagGet(FLAG_CHOOSING_COMMANDS) != 0)
+	{
 		syMultiMatrix(BattleCameraCommandMatrix);
 		syLookAt(camera->eye, camera->focus);
-	} else {
+	}
+	else
+	{
 		syLookAtLoad(camera->eye, camera->focus);
 	}
 }
 
-/* Projects a battle object's position to the screen, in projected. */
+// Projects a battle object's position to the screen, in projected.
 Sint32 btMotionProjectPos(Sint32 id, Sint32 *projected)
 {
 	MOTION_OBJECT *object = btObjectFindSlot(id)->object;
-	SPR			  *record = btActorGetSprite(object, 0);
-	Sint32		   pos[3];
-	Sint32		   scaled;
+	SPR           *record = btActorGetSprite(object, 0);
+	Sint32         pos[3];
+	Sint32         scaled;
 
 	btCameraApplyTransform();
 	{
 		Sint32 *out;
 
 		pos[0] = object->x;
-		out = projected;
+		out    = projected;
 		pos[1] = object->y;
 		pos[2] = object->z;
 		scaled = syConvert3Dto2D(pos, out);
@@ -615,34 +650,38 @@ Sint32 btMotionProjectPos(Sint32 id, Sint32 *projected)
 	return 0;
 }
 
-/* Returns sprite recordIndex of an actor (0 only, for a single sprite), or null
-   when it has no such sprite. */
+// Returns sprite recordIndex of an actor (0 only, for a single sprite), or null when it has no such
+// sprite.
 void *btActorGetSprite(MOTION_OBJECT *object, Sint32 recordIndex)
 {
 	Sint32 storageKind;
 
-	if(object == NULL)
+	if (object == NULL)
 		return NULL;
 	storageKind = object->recordStorageKind & ACTOR_SPRITE_KIND_MASK;
-	if(storageKind == ACTOR_SPRITE_ONE) {
-		if(recordIndex == 0) {
+	if (storageKind == ACTOR_SPRITE_ONE)
+	{
+		if (recordIndex == 0)
+		{
 			return object->records;
 		}
-	} else if(storageKind == ACTOR_SPRITE_GROUP) {
+	}
+	else if (storageKind == ACTOR_SPRITE_GROUP)
+	{
 		return ((void **)object->records)[recordIndex];
 	}
 	return NULL;
 }
 
-/* Puts the battle camera at its default view of the battlefield's centre. */
+// Puts the battle camera at its default view of the battlefield's centre.
 void btCameraSetDefaultView(void)
 {
 	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
-	POINT		   eyeOffset;
+	POINT          eyeOffset;
 
-	/* A pitch of -1/128 of a turn, 510 pixels away. */
-	camera->yaw = TRIG_TURN * 3 / 16;
-	camera->pitch = TRIG_TURN - TRIG_TURN / 128;
+	// A pitch of -1/128 of a turn, 510 pixels away.
+	camera->yaw      = TRIG_TURN * 3 / 16;
+	camera->pitch    = TRIG_TURN - TRIG_TURN / 128;
 	camera->distance = BATTLE_CAMERA_DISTANCE;
 	SET_VECTOR(camera->focus, 0, 0, 0);
 	camera->followPos = 0;
@@ -657,20 +696,21 @@ void btCameraSetDefaultView(void)
 	syCalcPoint(eyeOffset, (Sint32 *)camera);
 }
 
-/* Returns a unit's battle object, through its place, or null for a unit with no
-   place. btObjectFindSlot's lookup written out: calling it compiles
-   otherwise. */
+// Returns a unit's battle object, through its place, or null for a unit with no place.
+// btObjectFindSlot's lookup written out: calling it compiles otherwise.
 BATTLE_OBJECT *btObjectGet(Sint32 objectId)
 {
 	BATTLE_STATE  *battle = RamHeapSlots->battleState;
-	BATTLE_OBJECT *slots = battle->slots;
-	Sint32		   index;
+	BATTLE_OBJECT *slots  = battle->slots;
+	Sint32         index;
 
-	if(objectId > ALLY_MAX) {
+	if (objectId > ALLY_MAX)
+	{
 		objectId -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
 	}
 	index = objectId;
-	if(battle->placement[index] == BATTLE_OBJECT_NONE) {
+	if (battle->placement[index] == BATTLE_OBJECT_NONE)
+	{
 		return NULL;
 	}
 	return &slots[battle->placement[index]];

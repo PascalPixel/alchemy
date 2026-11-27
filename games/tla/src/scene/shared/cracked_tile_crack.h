@@ -1,4 +1,4 @@
-/* Cracks the tile under the leader, swapping in its cracked picture. */
+// Cracks the tile under the leader, swapping in its cracked picture.
 void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry)
 {
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);

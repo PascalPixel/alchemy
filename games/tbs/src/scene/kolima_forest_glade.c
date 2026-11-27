@@ -1,20 +1,17 @@
-/* Kolima Forest (SceneIdKolimaForestGlade), the second of the forest's five
-   scenes, on the party's way to Tret between SceneIdKolimaForestEntrance and
-   SceneIdKolimaForestCliff.
-
-   Three logs lie in the grass to be rolled by walking into them. A Nut floats
-   out of reach until Catch pulls it in (FLAG_KOLIMA_FOREST_NUT_CAUGHT).
-
-   Until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED), scKolimaPaletteCurse
-   gives the forest redder, darker colours.
-
-   Until the third patch the Nut's actor placement row tested Vale's
-   FLAG_VALE_NUT_CAUGHT rather than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once
-   Vale's Nut had been caught this one was never placed.
-
-   The scene's name, Glade, is ours, for what sets the scene apart. It is open
-   grass and stumps ringed by trees, with no cliff or river
-   (places/kolima-forest-glade_cursed/map-0.png). */
+// Kolima Forest (SceneIdKolimaForestGlade), the second of the forest's five scenes, on the party's
+// way to Tret between SceneIdKolimaForestEntrance and SceneIdKolimaForestCliff.
+//
+// Three logs lie in the grass to be rolled by walking into them. A Nut floats out of reach until
+// Catch pulls it in (FLAG_KOLIMA_FOREST_NUT_CAUGHT).
+//
+// Until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED), scKolimaPaletteCurse gives the forest
+// redder, darker colours.
+//
+// Until the third patch the Nut's actor placement row tested Vale's FLAG_VALE_NUT_CAUGHT rather
+// than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once Vale's Nut had been caught this one was never placed.
+//
+// The scene's name, Glade, is ours, for what sets the scene apart. It is open grass and stumps
+// ringed by trees, with no cliff or river (places/kolima-forest-glade_cursed/map-0.png).
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -28,27 +25,26 @@
 #include "scene/kolima_palette.h"
 
 extern SCENE_ENTRANCE KolimaForestGladeEntrances[];
-extern Uint32		  KolimaForestGladeExits[];
-extern ACTOR_PLACE	  KolimaForestGladeActorPlacements[];
-extern CUE			  KolimaForestGladeCues[];
+extern Uint32         KolimaForestGladeExits[];
+extern ACTOR_PLACE    KolimaForestGladeActorPlacements[];
+extern CUE            KolimaForestGladeCues[];
 
-/* Kolima Forest's actors, numbering the rows of
-   KolimaForestGladeActorPlacements. */
-typedef enum KOLIMA_FOREST_GLADE_ACTOR_ID {
-	/* The three logs. */
+// Kolima Forest's actors, numbering the rows of KolimaForestGladeActorPlacements.
+typedef enum KOLIMA_FOREST_GLADE_ACTOR_ID
+{
+	// The three logs.
 	ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-	/* The Nut that floats until Catch pulls it in. */
-	ACTOR_NUT = ACTOR_FIRST_LOG + 3
+	// The Nut that floats until Catch pulls it in.
+	ACTOR_NUT       = ACTOR_FIRST_LOG + 3
 } KOLIMA_FOREST_GLADE_ACTOR_ID;
 
-/* How far the curse tints the glade until it is lifted: green and blue lose 1 /
-   GLADE_CURSE_DIVISOR of themselves (scKolimaPaletteCurse). */
+// How far the curse tints the glade until it is lifted: green and blue lose 1 / GLADE_CURSE_DIVISOR
+// of themselves (scKolimaPaletteCurse).
 #define GLADE_CURSE_DIVISOR 11
 
 #include "shared/pushed_actor.c"
 
-/* Where the party enters, from SceneIdKolimaForestEntrance and
-   SceneIdKolimaForestCliff. */
+// Where the party enters, from SceneIdKolimaForestEntrance and SceneIdKolimaForestCliff.
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	return KolimaForestGladeEntrances;
@@ -59,55 +55,56 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return 0;
 }
 
-/* The ways on into the forest (SceneIdKolimaForestCliff) and back
-   (SceneIdKolimaForestEntrance). */
+// The ways on into the forest (SceneIdKolimaForestCliff) and back (SceneIdKolimaForestEntrance).
 const Uint32 *scGetExits(void)
 {
 	return KolimaForestGladeExits;
 }
 
-/* The three logs and the Nut. */
+// The three logs and the Nut.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	return KolimaForestGladeActorPlacements;
 }
 
-/* In Kolima Forest (SceneIdKolimaForestGlade), walking into a log rolls it
-   ahead until something stops it. */
+// In Kolima Forest (SceneIdKolimaForestGlade), walking into a log rolls it ahead until something
+// stops it.
 static void scKolimaForestGladePushLog(void)
 {
 	PUSHED_ACTOR_PROBE result;
 	fdScriptStart();
-	if(scPushedActorFindClearPos(&result))
+	if (scPushedActorFindClearPos(&result))
 		scPushedActorRoll(result);
 	fdScriptEnd();
 }
 
-/* In Kolima Forest (SceneIdKolimaForestGlade), Catch on the floating Nut makes
-   it vanish, and the party finds a Nut. */
+// In Kolima Forest (SceneIdKolimaForestGlade), Catch on the floating Nut makes it vanish, and the
+// party finds a Nut.
 static void scKolimaForestGladeCatchNut(void)
 {
 	scCatchNut(ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT);
 }
 
-/* The logs, the Nut and the two ways out. */
+// The logs, the Nut and the two ways out.
 const CUE *scGetCues(void)
 {
 	return KolimaForestGladeCues;
 }
 
-/* Sets up the floating Nut and the logs on entry. */
+// Sets up the floating Nut and the logs on entry.
 Sint32 scInit(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	if(gmFlagGet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
+	if (gmFlagGet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0)
+	{
 		scFloatNut(ACTOR_NUT);
 	}
 	scPushedActorBlockFootprint(ACTOR_FIRST_LOG);
 	scPushedActorBlockFootprint(ACTOR_FIRST_LOG + 1);
 	scPushedActorBlockFootprint(ACTOR_FIRST_LOG + 2);
-	if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+	if (gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
+	{
 		scKolimaPaletteCurse(GLADE_CURSE_DIVISOR);
 	}
 	return 0;
@@ -117,7 +114,7 @@ Sint32 scInit(void)
 #include "shared/floating_nut.c"
 
 #include "shared/pushed_actor_tables.c"
-/* clang-format off */
+// clang-format off
 
 SCENE_ENTRANCE KolimaForestGladeEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -126,8 +123,7 @@ SCENE_ENTRANCE KolimaForestGladeEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-/* KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and */
-/* KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back. */
+// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back.
 Uint32 KolimaForestGladeExits[] = {
 	SCENE_EXITS(KolimaForestGlade),
 	SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
@@ -135,8 +131,7 @@ Uint32 KolimaForestGladeExits[] = {
 	SCENE_EXITS_END,
 };
 
-/* Until the third patch the Nut's actor placement tested Vale's */
-/* FLAG_VALE_NUT_CAUGHT, not the flag catching it sets. */
+// Until the third patch the Nut's actor placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag catching it sets.
 ACTOR_PLACE KolimaForestGladeActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		360, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -153,21 +148,22 @@ ACTOR_PLACE KolimaForestGladeActorPlacements[] = {
 #endif
 	{ SCENE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on
 
 CUE KolimaForestGladeCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF},
-	{CUE_EXIT, 2, CONDITION_ALWAYS,
-		KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
-	{CUE_STEP | STEP_CUE_FLAG_WALKING, 10, CONDITION_ALWAYS,
-		SCRIPT_REF(scKolimaForestGladePushLog)},
-	{PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
-		SCRIPT_REF(scKolimaForestGladeCatchNut)},
+	{CUE_EXIT, 2, CONDITION_ALWAYS, KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
+	{CUE_STEP | STEP_CUE_FLAG_WALKING,
+     10, CONDITION_ALWAYS,
+     SCRIPT_REF(scKolimaForestGladePushLog)},
+	{PSYNERGY_ON_ACTOR(ABILITY_CATCH),
+     ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
+     SCRIPT_REF(scKolimaForestGladeCatchNut)},
 	{CUE_TABLE_END},
 };
 
-/* The healthy colours, kept by scKolimaPaletteSaveHealthy: the palette fade's
-   448 background and sprite colours, in the array's first half. */
+// The healthy colours, kept by scKolimaPaletteSaveHealthy: the palette fade's 448 background and
+// sprite colours, in the array's first half.
 Uint8 KolimaPaletteHealthy[1792] BSS_DATA ALIGNED(16);
-/* The cursed colours, kept by scKolimaPaletteSaveCursed. */
-Uint8 KolimaPaletteCursed[896] BSS_DATA;
+// The cursed colours, kept by scKolimaPaletteSaveCursed.
+Uint8                                     KolimaPaletteCursed[896] BSS_DATA;

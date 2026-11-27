@@ -1,70 +1,67 @@
-/* Mogall Forest (SceneIdMogallForestSign to SceneIdMogallForestSidePaths),
-   the endless woods between Fuchin Temple and Xian. Master Nyunpa teaches the
-   party Force to find the way through: apes hide in the great hollow purple
-   stumps, and Force on a stump brings its ape out to show the way on, or to
-   attack. Each area is a few screens of clearings joined by paths, and a wrong
-   path leads into the side paths and back.
-
-   - The first area (SceneIdMogallForestSign) is entered from the World Map
-	 at the north of its first clearing. The first time, an ape peeks out of
-	 the stump in the middle and dives back in
-	 (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A broken sign by the path reads
-	 `North: Fuchin Temple South: Mogall Prairie...` Force on the stump sends
-	 its ape off south. Two clearings on, by the river, the stump on the west
-	 of the south bank holds an ape that attacks. Logs on the south bank are
-	 pushed about until the last one rolls into the river, a stepping place up
-	 to the raised meadow north of it, where the ape in the big stump points
-	 east to the second area. A Nut hangs in a tree on the river's east bank.
-   - The second area (SceneIdMogallForestQuartz). In the clearing of two
-	 stumps the west one's ape leads south and the east one's east, to a pond
-	 with an Apple in a chest. South, by the river, Move puts a rock into a
-	 ring on the ground so that the log above it can be pushed on, and another
-	 log rolls into the stream. The ape in the stump on the island in the
-	 stream first leaps to a stump on the west bank, then leads west to the
-	 third area. Quartz, a Venus Djinni, waits at the bottom of the clearing to
-	 be fought.
-   - The third area (SceneIdMogallForestKillerApe). Of three stumps in a row
-	 the east one's ape attacks, the middle one's leads south and the west
-	 one's west, to an Elven Shirt in a chest that a rock moved with Move and
-	 a log pushed east let the party reach. South, two logs on an island roll
-	 into the river and a rock settles with Move, and the ape in the stump on
-	 its own island leaps to a lower stump, then leads south. There a lone
-	 stump stands on an island between two log bridges. Walking up to it, the
-	 ape bursts out and runs off south over the bridge
-	 (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE). Following it, at the top of the
-	 bridge the Killer Ape bursts out and attacks
-	 (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1), and coming back
-	 from the battle at MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS marks
-	 it beaten (FLAG_MOGALL_FOREST_KILLER_APE_BEATEN). The way south leads out
-	 to the World Map and Xian. Entering that clearing at
-	 MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER or
-	 MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP once Force is learned and the
-	 Killer Ape beaten sets FLAG_NYUNPA_ENLIGHTENED. Back at Fuchin Temple the
-	 monks then say that Nyunpa has reached enlightenment and passed away.
-   - SceneIdMogallForestSidePaths, also named Mogall Forest: small clearings
-	 that the wrong paths lead into, whose far sides lead back. A Psynergy
-	 Stone lies there.
-
-   The apes that attack, one in the first area and one in the third, start a
-   battle with an Ape (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0). An
-   ape stays gone once out, and logs pushed into the river stay there, for as
-   long as the party is in the forest (area flags from FLAG_AREA_TEMP_00).
-
-   One overlay serves all four scenes. scGetEntrances, _GetActorPlacements and
-   _GetCues choose each scene's tables. scInit puts back the apes already out,
-   the rolled logs and the settled rocks, scene by scene and entrance by
-   entrance.
-
-   The third area's east ape is also the ape at the lone stump and the Killer
-   Ape. The editions differ in how it is kept out of sight once it has come out
-   (the #if blocks below and in scInit).
-
-   The apes and rocks are told apart by colour mode (SPR_COL_MODE). An ape in
-   hiding is SPRITE_COLOR_HIDDEN. A guide that comes out is drawn green, its red
-   and green swapped (SPRITE_COLOR_GRB), and an ape that attacks keeps
-   SPRITE_APE's own tan. The Killer Ape is the same sprite a fifth larger and
-   blue, its colours rotated (SPRITE_COLOR_BRG). The rocks Move pushes are
-   SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY). */
+// Mogall Forest (SceneIdMogallForestSign to SceneIdMogallForestSidePaths), the endless woods
+// between Fuchin Temple and Xian. Master Nyunpa teaches the party Force to find the way through:
+// apes hide in the great hollow purple stumps, and Force on a stump brings its ape out to show the
+// way on, or to attack. Each area is a few screens of clearings joined by paths, and a wrong path
+// leads into the side paths and back.
+//
+// - The first area (SceneIdMogallForestSign) is entered from the World Map
+//       at the north of its first clearing. The first time, an ape peeks out of
+//       the stump in the middle and dives back in
+//       (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A broken sign by the path reads
+//       `North: Fuchin Temple South: Mogall Prairie...` Force on the stump
+// sends its ape off south. Two clearings on, by the river, the stump on the west of the south bank
+// holds an ape that attacks. Logs on the south bank are
+//       pushed about until the last one rolls into the river, a stepping place
+// up to the raised meadow north of it, where the ape in the big stump points
+//       east to the second area. A Nut hangs in a tree on the river's east
+// bank.
+// - The second area (SceneIdMogallForestQuartz). In the clearing of two
+//       stumps the west one's ape leads south and the east one's east, to a
+// pond with an Apple in a chest. South, by the river, Move puts a rock into a
+//       ring on the ground so that the log above it can be pushed on, and
+// another log rolls into the stream. The ape in the stump on the island in the
+//       stream first leaps to a stump on the west bank, then leads west to the
+//       third area. Quartz, a Venus Djinni, waits at the bottom of the clearing
+// to be fought.
+// - The third area (SceneIdMogallForestKillerApe). Of three stumps in a row
+//       the east one's ape attacks, the middle one's leads south and the west
+//       one's west, to an Elven Shirt in a chest that a rock moved with Move
+// and a log pushed east let the party reach. South, two logs on an island roll
+//       into the river and a rock settles with Move, and the ape in the stump
+// on its own island leaps to a lower stump, then leads south. There a lone
+//       stump stands on an island between two log bridges. Walking up to it,
+// the ape bursts out and runs off south over the bridge
+//       (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE). Following it, at the top of the
+//       bridge the Killer Ape bursts out and attacks
+//       (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1), and coming back
+//       from the battle at MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS
+// marks it beaten (FLAG_MOGALL_FOREST_KILLER_APE_BEATEN). The way south leads out to the World Map
+// and Xian. Entering that clearing at
+//       MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER or
+//       MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP once Force is learned and the
+//       Killer Ape beaten sets FLAG_NYUNPA_ENLIGHTENED. Back at Fuchin Temple
+// the monks then say that Nyunpa has reached enlightenment and passed away.
+// - SceneIdMogallForestSidePaths, also named Mogall Forest: small clearings
+//       that the wrong paths lead into, whose far sides lead back. A Psynergy
+//       Stone lies there.
+//
+// The apes that attack, one in the first area and one in the third, start a battle with an Ape
+// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0). An ape stays gone once out, and logs
+// pushed into the river stay there, for as long as the party is in the forest (area flags from
+// FLAG_AREA_TEMP_00).
+//
+// One overlay serves all four scenes. scGetEntrances, _GetActorPlacements and _GetCues choose each
+// scene's tables. scInit puts back the apes already out, the rolled logs and the settled rocks,
+// scene by scene and entrance by entrance.
+//
+// The third area's east ape is also the ape at the lone stump and the Killer Ape. The editions
+// differ in how it is kept out of sight once it has come out (the #if blocks below and in scInit).
+//
+// The apes and rocks are told apart by colour mode (SPR_COL_MODE). An ape in hiding is
+// SPRITE_COLOR_HIDDEN. A guide that comes out is drawn green, its red and green swapped
+// (SPRITE_COLOR_GRB), and an ape that attacks keeps SPRITE_APE's own tan. The Killer Ape is the
+// same sprite a fifth larger and blue, its colours rotated (SPRITE_COLOR_BRG). The rocks Move
+// pushes are SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY).
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -77,106 +74,100 @@
 #include "scene/catch_nut.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  MogallForestActorScript[];
+extern Sint32         MogallForestActorScript[];
 extern SCENE_ENTRANCE MogallForestSignEntrances[];
 extern SCENE_ENTRANCE MogallForestQuartzEntrances[];
 extern SCENE_ENTRANCE MogallForestKillerApeEntrances[];
 extern SCENE_ENTRANCE MogallForestSidePathsEntrances[];
-extern Uint32		  MogallForestExits[];
-extern ACTOR_PLACE	  MogallForestSignActorPlacements[];
-extern ACTOR_PLACE	  MogallForestQuartzActorPlacements[];
-extern ACTOR_PLACE	  MogallForestKillerApeActorPlacements[];
-extern ACTOR_PLACE	  MogallForestSidePathsActorPlacements[];
-extern CUE			  MogallForestSignCues[];
-extern CUE			  MogallForestQuartzCues[];
-extern CUE			  MogallForestKillerApeCues[];
-extern CUE			  MogallForestSidePathsCues[];
+extern Uint32         MogallForestExits[];
+extern ACTOR_PLACE    MogallForestSignActorPlacements[];
+extern ACTOR_PLACE    MogallForestQuartzActorPlacements[];
+extern ACTOR_PLACE    MogallForestKillerApeActorPlacements[];
+extern ACTOR_PLACE    MogallForestSidePathsActorPlacements[];
+extern CUE            MogallForestSignCues[];
+extern CUE            MogallForestQuartzCues[];
+extern CUE            MogallForestKillerApeCues[];
+extern CUE            MogallForestSidePathsCues[];
 
-/* Actors of the first area (SceneIdMogallForestSign), numbered in the order of
-   MogallForestSignActorPlacements. */
-typedef enum MOGALL_FOREST_SIGN_ACTOR_ID {
-	/* A log lying north to south at (488, 464), pushed as the river log is but
-	   with nothing happening where it stops. */
+// Actors of the first area (SceneIdMogallForestSign), numbered in the order of
+// MogallForestSignActorPlacements.
+typedef enum MOGALL_FOREST_SIGN_ACTOR_ID
+{
+	// A log lying north to south at (488, 464), pushed as the river log is but with nothing
+	// happening where it stops.
 	ACTOR_FIRST_AREA_LOG = ACTOR_FIRST_PLACED,
-	/* The log lying west to east on the river's south bank, which rolls into
-	   the river. */
+	// The log lying west to east on the river's south bank, which rolls into the river.
 	ACTOR_FIRST_AREA_RIVER_LOG,
-	/* The ape in the stump in the middle of the clearing entered from the World
-	   Map, the one that peeks out on the first arrival. */
+	// The ape in the stump in the middle of the clearing entered from the World Map, the one that
+	// peeks out on the first arrival.
 	ACTOR_FIRST_AREA_NORTH_APE,
-	/* The ape in the stump on the west of the river's south bank. */
+	// The ape in the stump on the west of the river's south bank.
 	ACTOR_FIRST_AREA_ATTACKING_APE,
-	/* The ape in the big stump on the raised meadow north of the river. */
+	// The ape in the big stump on the raised meadow north of the river.
 	ACTOR_FIRST_AREA_EAST_APE,
-	/* The stumps themselves: blank actors on the apes' spots, the targets of
-	   Force. */
+	// The stumps themselves: blank actors on the apes' spots, the targets of Force.
 	ACTOR_FIRST_AREA_NORTH_APE_STUMP,
 	ACTOR_FIRST_AREA_ATTACKING_APE_STUMP,
 	ACTOR_FIRST_AREA_EAST_APE_STUMP,
-	/* A Nut in a tree on the river's east bank, caught with Catch. */
+	// A Nut in a tree on the river's east bank, caught with Catch.
 	ACTOR_NUT
 } MOGALL_FOREST_SIGN_ACTOR_ID;
 
-/* Actors of the second area (SceneIdMogallForestQuartz), numbered in the order
-   of MogallForestQuartzActorPlacements. */
-typedef enum MOGALL_FOREST_QUARTZ_ACTOR_ID {
-	/* The upper log lying west to east by the river, held by the rock below
-	   it. */
+// Actors of the second area (SceneIdMogallForestQuartz), numbered in the order of
+// MogallForestQuartzActorPlacements.
+typedef enum MOGALL_FOREST_QUARTZ_ACTOR_ID
+{
+	// The upper log lying west to east by the river, held by the rock below it.
 	ACTOR_SECOND_AREA_LOG = ACTOR_FIRST_PLACED,
-	/* A log lying west to east at (592, 456), south of ACTOR_SECOND_AREA_LOG,
-	   pushed with nothing happening where it stops. */
+	// A log lying west to east at (592, 456), south of ACTOR_SECOND_AREA_LOG, pushed with nothing
+	// happening where it stops.
 	ACTOR_SECOND_AREA_SOUTH_LOG,
-	/* The log lying north to south by the stream, which rolls into it. */
+	// The log lying north to south by the stream, which rolls into it.
 	ACTOR_SECOND_AREA_RIVER_LOG,
-	/* The small rock below the upper log, moved with Move.
-
-	   It is drawn as the rocks of Altmiller Cave's color puzzle
-	   (MsgAltmillerRotatedRock), drawn plain as those are while Reveal is
-	   off. */
+	// The small rock below the upper log, moved with Move.
+	//
+	// It is drawn as the rocks of Altmiller Cave's color puzzle (MsgAltmillerRotatedRock), drawn
+	// plain as those are while Reveal is off.
 	ACTOR_SECOND_AREA_ROCK,
-	/* The apes in the two stumps side by side in the clearing of stumps. */
+	// The apes in the two stumps side by side in the clearing of stumps.
 	ACTOR_SECOND_AREA_WEST_APE,
 	ACTOR_SECOND_AREA_EAST_APE,
-	/* The ape in the stump on the island in the stream, which moves to a stump
-	   on the stream's west bank. */
+	// The ape in the stump on the island in the stream, which moves to a stump on the stream's west
+	// bank.
 	ACTOR_SECOND_AREA_SOUTH_APE,
 	ACTOR_SECOND_AREA_WEST_APE_STUMP,
 	ACTOR_SECOND_AREA_EAST_APE_STUMP,
 	ACTOR_SECOND_AREA_SOUTH_APE_STUMP,
-	/* Quartz, a Venus Djinni, at the bottom of the river clearing until the
-	   party has it. */
+	// Quartz, a Venus Djinni, at the bottom of the river clearing until the party has it.
 	ACTOR_SECOND_AREA_QUARTZ
 } MOGALL_FOREST_QUARTZ_ACTOR_ID;
 
-/* Actors of the third area (SceneIdMogallForestKillerApe), numbered in the
-   order of MogallForestKillerApeActorPlacements. */
-typedef enum MOGALL_FOREST_KILLER_APE_ACTOR_ID {
-	/* The log lying north to south beside the Elven Shirt's chest. */
+// Actors of the third area (SceneIdMogallForestKillerApe), numbered in the order of
+// MogallForestKillerApeActorPlacements.
+typedef enum MOGALL_FOREST_KILLER_APE_ACTOR_ID
+{
+	// The log lying north to south beside the Elven Shirt's chest.
 	ACTOR_THIRD_AREA_LOG = ACTOR_FIRST_PLACED,
-	/* The upper of the two logs lying north to south on the island in the
-	   river, which roll east into it. */
+	// The upper of the two logs lying north to south on the island in the river, which roll east
+	// into it.
 	ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
-	/* A log lying north to south at (552, 480), west of the two river logs,
-	   pushed with nothing happening where it stops. */
+	// A log lying north to south at (552, 480), west of the two river logs, pushed with nothing
+	// happening where it stops.
 	ACTOR_THIRD_AREA_WEST_LOG,
 	ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
-	/* A log lying west to east at (544, 536), south of
-	   ACTOR_THIRD_AREA_WEST_LOG, pushed with nothing happening where it
-	   stops. */
+	// A log lying west to east at (544, 536), south of ACTOR_THIRD_AREA_WEST_LOG, pushed with
+	// nothing happening where it stops.
 	ACTOR_THIRD_AREA_SOUTHWEST_LOG,
-	/* Two rocks moved with Move, as in the second area: the one beside the
-	   Elven Shirt's log and the one beside the upper log on the river
-	   island. */
+	// Two rocks moved with Move, as in the second area: the one beside the Elven Shirt's log and
+	// the one beside the upper log on the river island.
 	ACTOR_THIRD_AREA_NORTH_ROCK,
 	ACTOR_THIRD_AREA_SOUTH_ROCK,
-	/* The apes in the three stumps in a row: the east one, the middle and the
-	   west. */
+	// The apes in the three stumps in a row: the east one, the middle and the west.
 	ACTOR_THIRD_AREA_ATTACKING_APE,
 	ACTOR_THIRD_AREA_MIDDLE_APE,
 	ACTOR_THIRD_AREA_WEST_APE,
-	/* The ape in the stump on its own island in the river clearing, which moves
-	   to a lower stump. It is also the ape at the lone stump and the Killer
-	   Ape. */
+	// The ape in the stump on its own island in the river clearing, which moves to a lower stump.
+	// It is also the ape at the lone stump and the Killer Ape.
 	ACTOR_THIRD_AREA_EAST_APE,
 	ACTOR_THIRD_AREA_ATTACKING_APE_STUMP,
 	ACTOR_THIRD_AREA_MIDDLE_APE_STUMP,
@@ -184,29 +175,31 @@ typedef enum MOGALL_FOREST_KILLER_APE_ACTOR_ID {
 	ACTOR_THIRD_AREA_EAST_APE_STUMP
 } MOGALL_FOREST_KILLER_APE_ACTOR_ID;
 
-/* The animations of a river log's sprite (SPRITE_LOG_NORTH_SOUTH and
-   SPRITE_LOG_WEST_EAST), named by when these scenes play them. */
-typedef enum MOGALL_FOREST_LOG_ANIMATION {
-	MOGALL_FOREST_LOG_ROLLING = 3,	  /* as it rolls over the bank */
-	MOGALL_FOREST_LOG_IN_RIVER = 4,	  /* lying in the river, set on arrival */
-	MOGALL_FOREST_LOG_STEPPED_ON = 7, /* as the leader jumps onto it */
-	MOGALL_FOREST_LOG_FALLING_IN = 8  /* as it drops into the water */
+// The animations of a river log's sprite (SPRITE_LOG_NORTH_SOUTH and SPRITE_LOG_WEST_EAST), named
+// by when these scenes play them.
+typedef enum MOGALL_FOREST_LOG_ANIMATION
+{
+	MOGALL_FOREST_LOG_ROLLING    = 3, // as it rolls over the bank
+	MOGALL_FOREST_LOG_IN_RIVER   = 4, // lying in the river, set on arrival
+	MOGALL_FOREST_LOG_STEPPED_ON = 7, // as the leader jumps onto it
+	MOGALL_FOREST_LOG_FALLING_IN = 8  // as it drops into the water
 } MOGALL_FOREST_LOG_ANIMATION;
 
-/* Kept until the party leaves the forest.
-
-   There is one for each ape once it has come out (or, for two, moved on to a
-   second hiding place) and one for each rolled log. */
-enum {
+// Kept until the party leaves the forest.
+//
+// There is one for each ape once it has come out (or, for two, moved on to a second hiding place)
+// and one for each rolled log.
+enum
+{
 	FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT = FLAG_AREA_TEMP_00,
-	/* The ape that leaps at the leader instead of pointing the way. */
+	// The ape that leaps at the leader instead of pointing the way.
 	FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT,
 	FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT,
 	FLAG_MOGALL_FOREST_SECOND_AREA_WEST_APE_OUT,
 	FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT,
 	FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED,
 	FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT,
-	/* The ape that leaps at the leader instead of pointing the way. */
+	// The ape that leaps at the leader instead of pointing the way.
 	FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT,
 	FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT,
 	FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT,
@@ -219,52 +212,50 @@ enum {
 	FLAG_MOGALL_FOREST_PSYNERGY_STONE = FLAG_AREA_TEMP_50
 };
 
-/* The metatile behaviors the cue tables answer. */
-typedef enum MOGALL_FOREST_METATILE_BEHAVIOR {
-	/* Under each log the party pushes by walking into it. */
-	METATILE_BEHAVIOR_MOGALL_FOREST_LOG = 20,
-	/* Beside the lone stump on the island between the two log bridges,
-	   metatiles (12, 22) and (12, 23). */
+// The metatile behaviors the cue tables answer.
+typedef enum MOGALL_FOREST_METATILE_BEHAVIOR
+{
+	// Under each log the party pushes by walking into it.
+	METATILE_BEHAVIOR_MOGALL_FOREST_LOG               = 20,
+	// Beside the lone stump on the island between the two log bridges, metatiles (12, 22) and (12,
+	// 23).
 	METATILE_BEHAVIOR_MOGALL_FOREST_BESIDE_LONE_STUMP = 22,
-	/* At the top of the south log bridge below the lone stump, metatile (8,
-	   27). */
-	METATILE_BEHAVIOR_MOGALL_FOREST_BELOW_LONE_STUMP = 23,
-	/* Where walking on jumps across water: from the first area's river log up
-	   to the meadow north of it, and onto the third area's lower river log from
-	   the bank east of it. */
-	METATILE_BEHAVIOR_MOGALL_FOREST_JUMP = 25,
-	/* The edge of the first area's meadow above the river log, where walking
-	   south jumps down onto it. */
-	METATILE_BEHAVIOR_MOGALL_FOREST_JUMP_SOUTH = 26,
-	/* The broken sign at the first clearing, metatiles (9, 3) and (9, 4). */
-	METATILE_BEHAVIOR_MOGALL_FOREST_BROKEN_SIGN = 27
+	// At the top of the south log bridge below the lone stump, metatile (8, 27).
+	METATILE_BEHAVIOR_MOGALL_FOREST_BELOW_LONE_STUMP  = 23,
+	// Where walking on jumps across water: from the first area's river log up to the meadow north
+	// of it, and onto the third area's lower river log from the bank east of it.
+	METATILE_BEHAVIOR_MOGALL_FOREST_JUMP              = 25,
+	// The edge of the first area's meadow above the river log, where walking south jumps down onto
+	// it.
+	METATILE_BEHAVIOR_MOGALL_FOREST_JUMP_SOUTH        = 26,
+	// The broken sign at the first clearing, metatiles (9, 3) and (9, 4).
+	METATILE_BEHAVIOR_MOGALL_FOREST_BROKEN_SIGN       = 27
 } MOGALL_FOREST_METATILE_BEHAVIOR;
 
-/* An exit metatile: its metatile behavior is the number of the exit it
-   takes. */
+// An exit metatile: its metatile behavior is the number of the exit it takes.
 #define EXIT_METATILE(exit) {CUE_EXIT, (exit), CONDITION_ALWAYS, (exit)}
 
-/* Scene flag, kept while the party stays in the area. */
-enum { FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14 };
+// Scene flag, kept while the party stays in the area.
+enum
+{
+	FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14
+};
 
-/* The third area's east ape, at (744, 400). The English edition places it as
-   the other apes, only while it has not come out
-   (FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT clear); the Japanese and European
-   editions place it always. */
+// The third area's east ape, at (744, 400). The English edition places it as the other apes, only
+// while it has not come out (FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT clear); the Japanese and
+// European editions place it always.
 #if MOGALL_THIRD_AREA_EAST_APE_PLACED_UNTIL_OUT
-#define MOGALL_FOREST_EAST_ACTOR_CONDITION \
-	FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
+#	define MOGALL_FOREST_EAST_ACTOR_CONDITION FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
 #else
-#define MOGALL_FOREST_EAST_ACTOR_CONDITION CONDITION_ALWAYS
+#	define MOGALL_FOREST_EAST_ACTOR_CONDITION CONDITION_ALWAYS
 #endif
 
-/* The east ape's hiding place, which shares its sprite: the Japanese edition
-   places it always, the others only while the ape has not come out. */
+// The east ape's hiding place, which shares its sprite: the Japanese edition places it always, the
+// others only while the ape has not come out.
 #if !MOGALL_THIRD_AREA_EAST_APE_HIDING_PLACE_UNTIL_OUT
-#define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION CONDITION_ALWAYS
+#	define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION CONDITION_ALWAYS
 #else
-#define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION \
-	FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
+#	define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
 #endif
 
 #include "shared/pushed_actor.c"
@@ -272,34 +263,34 @@ enum { FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14 };
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
 
-/* Talking to Quartz, the Venus Djinni at the bottom of the second area's river
-   clearing, starts the battle with it. */
+// Talking to Quartz, the Venus Djinni at the bottom of the second area's river clearing, starts the
+// battle with it.
 static void scMogallForestStartDjinnBattle(void)
 {
 	fdRequestDjinnBattle(ACTOR_SECOND_AREA_QUARTZ, DJINNI_QUARTZ);
 }
 
-/* The leader springs and leaps to a spot (in 16.16 pixels). Returns 0, and does
-   nothing, when the spot is blocked. */
+// The leader springs and leaps to a spot (in 16.16 pixels). Returns 0, and does nothing, when the
+// spot is blocked.
 static Bool scMogallForestTryJumpLeaderTo(FIELD_POS *pos)
 {
-	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
+	ACTOR *leader           = fdActorGet(ACTOR_PARTY_LEADER);
 	Sint32 savedMotionFlags = leader->motionFlags;
-	Sint32 collision = syFieldActorCheckMovementCollision(leader, pos);
+	Sint32 collision        = syFieldActorCheckMovementCollision(leader, pos);
 
-	if(collision == 0) {
+	if (collision == 0)
+	{
 		fdScriptStart();
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
 		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
-		leader->speedLimit = toFIXED(3);
-		leader->acceleration = toFIXED(2);
-		leader->velocityY = toFIXED(4);
-		leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		leader->speedLimit    = toFIXED(3);
+		leader->acceleration  = toFIXED(2);
+		leader->velocityY     = toFIXED(4);
+		leader->motionFlags  &= ACTOR_JUMP_KEEPS_MOTION;
 		fdActorSetSpriteFlags(leader, 0);
-		fdActorMoveToAndWait(
-			ACTOR_PARTY_LEADER, FIXEDtoINT(pos->x), FIXEDtoINT(pos->z));
+		fdActorMoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(pos->x), FIXEDtoINT(pos->z));
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		fdActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
 		leader->motionFlags = savedMotionFlags;
@@ -309,24 +300,26 @@ static Bool scMogallForestTryJumpLeaderTo(FIELD_POS *pos)
 	return FALSE;
 }
 
-/* An actor script call: draws the actor in the colour mode its timer holds. */
+// An actor script call: draws the actor in the colour mode its timer holds.
 static Sint32 scMogallForestSetColorFromTimer(ACTOR *actor)
 {
 	fdActorSetSpriteColor(actor, actor->timer);
 	return 0;
 }
 
-/* Clears the actor's sprite flags when its script requests it. */
+// Clears the actor's sprite flags when its script requests it.
 static Sint32 scMogallForestClearActorSpriteFlags(ACTOR *actor)
 {
 	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
-/* Hops an actor to a destination in whole pixels with a vertical speed in 16.16
-   fixed point; scenes call it through scMogallForestHopActorTo. */
-static void scMogallForestHopActorToWithSpeedFX(
-	Sint32 actorId, Sint32 targetX, Sint32 targetZ, FIXED verticalSpeed)
+// Hops an actor to a destination in whole pixels with a vertical speed in 16.16 fixed point; scenes
+// call it through scMogallForestHopActorTo.
+static void scMogallForestHopActorToWithSpeedFX(Sint32 actorId,
+                                                Sint32 targetX,
+                                                Sint32 targetZ,
+                                                FIXED  verticalSpeed)
 {
 	ACTOR *actor;
 
@@ -335,8 +328,8 @@ static void scMogallForestHopActorToWithSpeedFX(
 	fdActorSetSpeed(actorId, 3);
 	sySoundPlay(SE_JUMP);
 	actor->velocityY = verticalSpeed;
-	actor->gravity = toFIXED(1) / 2;
-	actor->bounce = 0;
+	actor->gravity   = toFIXED(1) / 2;
+	actor->bounce    = 0;
 	fdActorSetSpriteFlags(actor, 0);
 	fdActorMoveToAndWait(actorId, targetX, targetZ);
 	fdActorSetPos(actorId, targetX, targetZ);
@@ -344,39 +337,44 @@ static void scMogallForestHopActorToWithSpeedFX(
 	actor->gravity = toFIXED(1);
 }
 
-/* Hops an actor with a vertical speed in pixels a tick:
-   `scMogallForestHopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6)`. */
-#define scMogallForestHopActorTo(actorId, targetX, targetZ, verticalSpeed) \
-	scMogallForestHopActorToWithSpeedFX( \
-		actorId, targetX, targetZ, toFIXED(verticalSpeed))
+// Hops an actor with a vertical speed in pixels a tick:
+// `scMogallForestHopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6)`.
+#define scMogallForestHopActorTo(actorId, targetX, targetZ, verticalSpeed)                         \
+	scMogallForestHopActorToWithSpeedFX(actorId, targetX, targetZ, toFIXED(verticalSpeed))
 
-/* With a thump, scatters a ring of puffs of dust round an actor: the puff an
-   ape makes popping out of a stump or diving back in. */
+// With a thump, scatters a ring of puffs of dust round an actor: the puff an ape makes popping out
+// of a stump or diving back in.
 static void scMogallForestSpawnPuffRing(Sint32 id)
 {
-	VECTOR3		   velocity;
+	VECTOR3        velocity;
 	EFFECT_OPTIONS options;
-	ACTOR		  *actor;
-	Uint32		   direction;
+	ACTOR         *actor;
+	Uint32         direction;
 
 	actor = fdActorGet(id);
 	sySoundPlay(SE_THUMP);
 	options.priority = 1;
-	/* Seventeen puffs a sixteenth of a turn apart, the first and last together,
-	   spread a third wider east to west. */
-	for(direction = 0; direction <= TRIG_TURN / FACING_STEP; direction++) {
-		velocity.x = syCos(direction * FACING_STEP);
-		velocity.y = 0;
-		velocity.z = sySin(direction * FACING_STEP);
+	// Seventeen puffs a sixteenth of a turn apart, the first and last together, spread a third
+	// wider east to west.
+	for (direction = 0; direction <= TRIG_TURN / FACING_STEP; direction++)
+	{
+		velocity.x  = syCos(direction * FACING_STEP);
+		velocity.y  = 0;
+		velocity.z  = sySin(direction * FACING_STEP);
 		velocity.x += velocity.x / 3;
-		fdEffectSpawn(actor->x.fixed, toFIXED(16), actor->z.fixed, velocity.x,
-			velocity.y + toFIXED(1) / 10, velocity.z, EFFECT_USE_PRIORITY,
-			&options);
+		fdEffectSpawn(actor->x.fixed,
+		              toFIXED(16),
+		              actor->z.fixed,
+		              velocity.x,
+		              velocity.y + toFIXED(1) / 10,
+		              velocity.z,
+		              EFFECT_USE_PRIORITY,
+		              &options);
 	}
 }
 
-/* Pans the camera to an ape's stump and, half a second later, brings the ape
-   out in a puff of dust, drawn in the colour mode given. */
+// Pans the camera to an ape's stump and, half a second later, brings the ape out in a puff of dust,
+// drawn in the colour mode given.
 static void scMogallForestApeComesOut(Sint32 actorId, Sint32 color)
 {
 	fdCameraSetSpeedParams(toFIXED(2), toFIXED(1) / 4);
@@ -387,15 +385,14 @@ static void scMogallForestApeComesOut(Sint32 actorId, Sint32 color)
 	fdActorSetSpriteColorById(actorId, color);
 }
 
-/* The ape turns to the leader, hops on the spot and gestures the way on. */
+// The ape turns to the leader, hops on the spot and gestures the way on.
 static inline void scMogallForestApePointsTheWay(Sint32 guideId)
 {
 	fdCameraFollowActor(guideId, 1);
 	fdActorTurnToFaceEachOther(guideId, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(20);
 	fdActorStartRepeatedMotion(guideId, 2);
-	fdActorSetAttachedEffect(
-		guideId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(guideId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(60);
 }
 
@@ -403,13 +400,16 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_MOGALL_FOREST_SIGN) {
+	if (scene == SCENE_MOGALL_FOREST_SIGN)
+	{
 		return MogallForestSignEntrances;
 	}
-	if(scene == SCENE_MOGALL_FOREST_QUARTZ) {
+	if (scene == SCENE_MOGALL_FOREST_QUARTZ)
+	{
 		return MogallForestQuartzEntrances;
 	}
-	if(scene == SCENE_MOGALL_FOREST_KILLER_APE) {
+	if (scene == SCENE_MOGALL_FOREST_KILLER_APE)
+	{
 		return MogallForestKillerApeEntrances;
 	}
 	return MogallForestSidePathsEntrances;
@@ -420,7 +420,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return NULL;
 }
 
-/* Returns the exits, one table for all four scenes. */
+// Returns the exits, one table for all four scenes.
 const Uint32 *scGetExits(void)
 {
 	return MogallForestExits;
@@ -430,80 +430,80 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_MOGALL_FOREST_SIGN) {
+	if (scene == SCENE_MOGALL_FOREST_SIGN)
+	{
 		return MogallForestSignActorPlacements;
 	}
-	if(scene == SCENE_MOGALL_FOREST_QUARTZ) {
+	if (scene == SCENE_MOGALL_FOREST_QUARTZ)
+	{
 		return MogallForestQuartzActorPlacements;
 	}
-	if(scene == SCENE_MOGALL_FOREST_KILLER_APE) {
+	if (scene == SCENE_MOGALL_FOREST_KILLER_APE)
+	{
 		return MogallForestKillerApeActorPlacements;
 	}
 	return MogallForestSidePathsActorPlacements;
 }
 
-/* The map rows and columns where a pushed log reaches the water and rolls in,
-   or is out of the way. */
-enum {
-	/* The first area's river log, at the river's south bank. */
-	FIRST_AREA_RIVER_BANK_ROW = 26,
-	/* The second area's upper log, pushed a metatile south into the place of
-	   the rock below it. */
-	SECOND_AREA_LOG_OPENS_WAY_ROW = 23,
-	/* The second area's river log, at the stream's east bank. */
-	SECOND_AREA_RIVER_BANK_COLUMN = 35,
-	/* The third area's upper river log, at the island's east bank. */
+// The map rows and columns where a pushed log reaches the water and rolls in, or is out of the way.
+enum
+{
+	// The first area's river log, at the river's south bank.
+	FIRST_AREA_RIVER_BANK_ROW          = 26,
+	// The second area's upper log, pushed a metatile south into the place of the rock below it.
+	SECOND_AREA_LOG_OPENS_WAY_ROW      = 23,
+	// The second area's river log, at the stream's east bank.
+	SECOND_AREA_RIVER_BANK_COLUMN      = 35,
+	// The third area's upper river log, at the island's east bank.
 	THIRD_AREA_NORTH_RIVER_BANK_COLUMN = 42,
-	/* The third area's lower river log, at the island's east bank. */
+	// The third area's lower river log, at the island's east bank.
 	THIRD_AREA_SOUTH_RIVER_BANK_COLUMN = 40
 };
 
-/* Isaac pushes a log on the first area's river bank a metatile by walking into
-   it. The log lying west to east, pushed north to the river (row 26), rolls in
-   and lies there, a stepping place up to the meadow on the far side.
-
-   Rolling in, the log gives the metatiles (31, 25) to (34, 26) the jump north
-   on their north row, copied from a spare stretch of the map at (38, 27). */
+// Isaac pushes a log on the first area's river bank a metatile by walking into it. The log lying
+// west to east, pushed north to the river (row 26), rolls in and lies there, a stepping place up to
+// the meadow on the far side.
+//
+// Rolling in, the log gives the metatiles (31, 25) to (34, 26) the jump north on their north row,
+// copied from a spare stretch of the map at (38, 27).
 static void scMogallForestFirstAreaPushLog(void)
 {
 	PUSHED_ACTOR_PROBE probe;
 
 	fdScriptStart();
-	if(scPushedActorFindClearPos(&probe) != 0) {
+	if (scPushedActorFindClearPos(&probe) != 0)
+	{
 		scPushedActorRoll(probe);
-		if(probe.actorSlot == ACTOR_FIRST_AREA_RIVER_LOG &&
-			FIELD_METATILE(probe.pos.z) == FIRST_AREA_RIVER_BANK_ROW) {
+		if (probe.actorSlot == ACTOR_FIRST_AREA_RIVER_LOG
+		    && FIELD_METATILE(probe.pos.z) == FIRST_AREA_RIVER_BANK_ROW)
+		{
 			gmFlagSet(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
-			fdActorSetAnimation(
-				ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
-			fdActorSetSpeedAndAcceleration(
-				ACTOR_FIRST_AREA_RIVER_LOG, 0.25, 0.5);
+			fdActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
+			fdActorSetSpeedAndAcceleration(ACTOR_FIRST_AREA_RIVER_LOG, 0.25, 0.5);
 			fdActorSetDestinationOffsetById(ACTOR_FIRST_AREA_RIVER_LOG, 0, -16);
 			fdScriptWait(45);
-			fdActorSetAnimation(
-				ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_FALLING_IN);
+			fdActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_FALLING_IN);
 			sySoundPlay(SE_LOG_FALL);
 			fdActorSetSpritePriority(ACTOR_FIRST_AREA_RIVER_LOG, 1);
-			fdActorGet(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
-				ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(38, 27, 4, 2, 31, 25);
 		}
 	}
 	fdScriptEnd();
 }
 
-/* Walking north along the log lying in the first area's river (metatiles (31,
-   25) to (34, 25)) makes Isaac leap up onto the raised meadow north of it, by
-   the big stump. */
+// Walking north along the log lying in the first area's river (metatiles (31,
+// 25) to (34, 25)) makes Isaac leap up onto the raised meadow north of it, by
+// the big stump.
 static void scMogallForestFirstAreaJumpNorth(void)
 {
 	FIELD_POS pos;
 #if JUMP_LANDS_ON_CELL_CENTER
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-	pos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	pos.y = leader->y.fixed;
-	pos.z = (leader->z.fixed & FIELD_METATILE_MASK) - toFIXED(24);
+	pos.x         = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	pos.y         = leader->y.fixed;
+	pos.z         = (leader->z.fixed & FIELD_METATILE_MASK) - toFIXED(24);
 #else
 	pos.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed;
 	pos.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
@@ -512,16 +512,16 @@ static void scMogallForestFirstAreaJumpNorth(void)
 	scMogallForestTryJumpLeaderTo(&pos);
 }
 
-/* Walking south off the edge of the first area's raised meadow (metatiles (31,
-   23) to (34, 23)) makes Isaac leap down onto the log lying in the river, which
-   dips under him.
-
-   The ground and the leader sink a pixel, then another, and rise back. */
+// Walking south off the edge of the first area's raised meadow (metatiles (31,
+// 23) to (34, 23)) makes Isaac leap down onto the log lying in the river, which
+// dips under him.
+//
+// The ground and the leader sink a pixel, then another, and rise back.
 static void scMogallForestFirstAreaJumpSouth(void)
 {
 	FIELD_POS pos;
-	ACTOR	 *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32	  savedMotionFlags = leader->motionFlags;
+	ACTOR    *leader           = fdActorGet(ACTOR_PARTY_LEADER);
+	Sint32    savedMotionFlags = leader->motionFlags;
 
 #if JUMP_LANDS_ON_CELL_CENTER
 	pos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
@@ -532,31 +532,30 @@ static void scMogallForestFirstAreaJumpSouth(void)
 	pos.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
 	pos.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed + toFIXED(32);
 #endif
-	if(scMogallForestTryJumpLeaderTo(&pos) != 0) {
+	if (scMogallForestTryJumpLeaderTo(&pos) != 0)
+	{
 		fdScriptStart();
 		leader->motionFlags = 0;
-		fdActorSetAnimation(
-			ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_STEPPED_ON);
-		leader->y.fixed -= toFIXED(1);
+		fdActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_STEPPED_ON);
+		leader->y.fixed      -= toFIXED(1);
 		leader->groundHeight -= toFIXED(1);
 		sySynch(2);
-		leader->y.fixed -= toFIXED(1);
+		leader->y.fixed      -= toFIXED(1);
 		leader->groundHeight -= toFIXED(1);
 		sySynch(10);
-		leader->y.fixed += toFIXED(1);
+		leader->y.fixed      += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
 		sySynch(4);
-		leader->y.fixed += toFIXED(1);
+		leader->y.fixed      += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
-		leader->motionFlags = savedMotionFlags;
+		leader->motionFlags   = savedMotionFlags;
 		fdScriptEnd();
 	}
 }
 
-/* Isaac reads the broken sign by the path just inside the forest, a broken post
-   a step from where he arrives from the World Map (metatiles (9, 3) and (9,
-   4)):
-   `The broken sign reads: North: Fuchin Temple South: Mogall Prairie...` */
+// Isaac reads the broken sign by the path just inside the forest, a broken post a step from where
+// he arrives from the World Map (metatiles (9, 3) and (9, 4)): `The broken sign reads: North:
+// Fuchin Temple South: Mogall Prairie...`
 static void scMogallForestReadBrokenSign(void)
 {
 	fdScriptStart();
@@ -565,9 +564,8 @@ static void scMogallForestReadBrokenSign(void)
 	fdScriptEnd();
 }
 
-/* Force on the stump in the middle of the first clearing brings a green ape out
-   of it. The ape turns to Isaac, points the way, and hops off south, the way on
-   to the river. */
+// Force on the stump in the middle of the first clearing brings a green ape out of it. The ape
+// turns to Isaac, points the way, and hops off south, the way on to the river.
 static void scMogallForestFirstAreaNorthApeShowsWay(void)
 {
 	ACTOR *ape;
@@ -579,8 +577,8 @@ static void scMogallForestFirstAreaNorthApeShowsWay(void)
 	scMogallForestApeComesOut(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
 	scMogallForestHopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6);
 
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(24), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(24), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 
 	scMogallForestApePointsTheWay(ACTOR_FIRST_AREA_NORTH_APE);
 
@@ -603,9 +601,8 @@ static void scMogallForestFirstAreaNorthApeShowsWay(void)
 	fdScriptEnd();
 }
 
-/* Force on the stump on the west of the river's south bank, in the first area,
-   brings out an ape that cries out in anger, leaps at Isaac and starts a battle
-   with it. */
+// Force on the stump on the west of the river's south bank, in the first area, brings out an ape
+// that cries out in anger, leaps at Isaac and starts a battle with it.
 static void scMogallForestFirstAreaApeAttacks(void)
 {
 	ACTOR *ape;
@@ -614,26 +611,24 @@ static void scMogallForestFirstAreaApeAttacks(void)
 
 	fdScriptStart();
 
-	scMogallForestApeComesOut(
-		ACTOR_FIRST_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
+	scMogallForestApeComesOut(ACTOR_FIRST_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
 	scMogallForestHopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE, 408, 456, 6);
 
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(24), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(24), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 
 	fdCameraFollowActor(ACTOR_FIRST_AREA_ATTACKING_APE, 1);
-	fdActorTurnToFaceEachOther(
-		ACTOR_FIRST_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER, 0);
+	fdActorTurnToFaceEachOther(ACTOR_FIRST_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(30);
 	fdActorStartRepeatedMotion(ACTOR_FIRST_AREA_ATTACKING_APE, 2);
-	fdActorShowEmote(
-		ACTOR_FIRST_AREA_ATTACKING_APE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+	fdActorShowEmote(ACTOR_FIRST_AREA_ATTACKING_APE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
 	sySoundPlay(SE_BEAST_CRY);
 	fdScriptWait(60);
 
 	scMogallForestHopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE,
-		fdActorGet(ACTOR_PARTY_LEADER)->x.part[0].integer,
-		fdActorGet(ACTOR_PARTY_LEADER)->z.part[0].integer, 4);
+	                         fdActorGet(ACTOR_PARTY_LEADER)->x.part[0].integer,
+	                         fdActorGet(ACTOR_PARTY_LEADER)->z.part[0].integer,
+	                         4);
 
 	fdScriptWait(10);
 	gmFlagSet(FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT);
@@ -641,15 +636,13 @@ static void scMogallForestFirstAreaApeAttacks(void)
 
 	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
 
-	fdRequestBattleFromEncounterTable(
-		ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
+	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
 
 	fdScriptEnd();
 }
 
-/* Force on the big stump on the meadow north of the first area's river brings a
-   green ape out of it. The ape points the way and hops off east, the way to the
-   second area. */
+// Force on the big stump on the meadow north of the first area's river brings a green ape out of
+// it. The ape points the way and hops off east, the way to the second area.
 static void scMogallForestFirstAreaEastApeShowsWay(void)
 {
 	ACTOR *ape;
@@ -661,8 +654,8 @@ static void scMogallForestFirstAreaEastApeShowsWay(void)
 	scMogallForestApeComesOut(ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_GRB);
 	scMogallForestHopActorTo(ACTOR_FIRST_AREA_EAST_APE, 536, 344, 7);
 
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(16), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(16), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 
 	scMogallForestApePointsTheWay(ACTOR_FIRST_AREA_EAST_APE);
 
@@ -684,54 +677,53 @@ static void scMogallForestFirstAreaEastApeShowsWay(void)
 	fdScriptEnd();
 }
 
-/* Catch on the Nut in the tree on the east bank of the first area's river
-   brings it down to Isaac: `Isaac got a Nut.` */
+// Catch on the Nut in the tree on the east bank of the first area's river brings it down to Isaac:
+// `Isaac got a Nut.`
 static void scMogallForestCatchNut(void)
 {
 	scCatchNut(ACTOR_NUT, FLAG_MOGALL_FOREST_NUT_CAUGHT);
 }
 
-/* Isaac pushes a log in the second area's river clearing a metatile by walking
-   into it. Once Move has put the rock below it into its ring, the upper log can
-   go a metatile south and the way on is open. The log by the stream, pushed
-   west to its bank, rolls into the stream and lies there as a way across.
-
-   The upper log's push copies the metatiles (35, 67) to (38, 67) onto the row
-   below them. The rolled log copies its metatiles in the stream from a spare
-   stretch of the map at (44, 30). */
+// Isaac pushes a log in the second area's river clearing a metatile by walking into it. Once Move
+// has put the rock below it into its ring, the upper log can go a metatile south and the way on is
+// open. The log by the stream, pushed west to its bank, rolls into the stream and lies there as a
+// way across.
+//
+// The upper log's push copies the metatiles (35, 67) to (38, 67) onto the row below them. The
+// rolled log copies its metatiles in the stream from a spare stretch of the map at (44, 30).
 static void scMogallForestSecondAreaPushLog(void)
 {
 	PUSHED_ACTOR_PROBE probe;
-	Sint32			   destColumn;
-	Sint32			   destRow;
+	Sint32             destColumn;
+	Sint32             destRow;
 
 	fdScriptStart();
 
-	if(scPushedActorFindClearPos(&probe) != 0) {
+	if (scPushedActorFindClearPos(&probe) != 0)
+	{
 		scPushedActorRoll(probe);
 
-		if(probe.actorSlot == ACTOR_SECOND_AREA_LOG &&
-			(FIELD_METATILE(probe.pos.z)) == SECOND_AREA_LOG_OPENS_WAY_ROW) {
+		if (probe.actorSlot == ACTOR_SECOND_AREA_LOG
+		    && (FIELD_METATILE(probe.pos.z)) == SECOND_AREA_LOG_OPENS_WAY_ROW)
+		{
 			destColumn = 35;
-			destRow = 68;
+			destRow    = 68;
 			fdMapGridCopyMetatileAttributes(35, 67, 4, 1, destColumn, destRow);
-		} else if(probe.actorSlot == ACTOR_SECOND_AREA_RIVER_LOG &&
-			(FIELD_METATILE(probe.pos.x)) == SECOND_AREA_RIVER_BANK_COLUMN) {
+		}
+		else if (probe.actorSlot == ACTOR_SECOND_AREA_RIVER_LOG
+		         && (FIELD_METATILE(probe.pos.x)) == SECOND_AREA_RIVER_BANK_COLUMN)
+		{
 			gmFlagSet(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED);
-			fdActorSetAnimation(
-				ACTOR_SECOND_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
-			fdActorSetDestinationOffsetById(
-				ACTOR_SECOND_AREA_RIVER_LOG, -16, 6);
+			fdActorSetAnimation(ACTOR_SECOND_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
+			fdActorSetDestinationOffsetById(ACTOR_SECOND_AREA_RIVER_LOG, -16, 6);
 			fdScriptWait(30);
-			fdActorSetAnimation(
-				ACTOR_SECOND_AREA_RIVER_LOG, MOGALL_FOREST_LOG_FALLING_IN);
+			fdActorSetAnimation(ACTOR_SECOND_AREA_RIVER_LOG, MOGALL_FOREST_LOG_FALLING_IN);
 			sySoundPlay(SE_LOG_FALL);
 
-			fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
-				ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
-			destColumn = 34;
-			destRow = 30;
+			destColumn                                             = 34;
+			destRow                                                = 30;
 			fdMapGridCopyMetatileAttributes(44, 30, 2, 4, destColumn, destRow);
 			scMapGridFillCollisionRectangle(2, 35, 30, 1, 4, 0);
 		}
@@ -740,26 +732,20 @@ static void scMogallForestSecondAreaPushLog(void)
 	fdScriptEnd();
 }
 
-/* Makes the rock's new metatile solid and clears the four metatiles round it,
-   one of which it came from. */
+// Makes the rock's new metatile solid and clears the four metatiles round it, one of which it came
+// from.
 static inline void scMogallForestUpdateRockMetatiles(Sint32 column, Sint32 row)
 {
-	scMapGridFillCollisionRectangle(
-		2, column, row, 1, 1, METATILE_BEHAVIOR_WALL);
-	scMapGridFillCollisionRectangle(
-		2, column + 1, row, 1, 1, METATILE_BEHAVIOR_NORMAL);
-	scMapGridFillCollisionRectangle(
-		2, column - 1, row, 1, 1, METATILE_BEHAVIOR_NORMAL);
-	scMapGridFillCollisionRectangle(
-		2, column, row + 1, 1, 1, METATILE_BEHAVIOR_NORMAL);
-	scMapGridFillCollisionRectangle(
-		2, column, row - 1, 1, 1, METATILE_BEHAVIOR_NORMAL);
+	scMapGridFillCollisionRectangle(2, column, row, 1, 1, METATILE_BEHAVIOR_WALL);
+	scMapGridFillCollisionRectangle(2, column + 1, row, 1, 1, METATILE_BEHAVIOR_NORMAL);
+	scMapGridFillCollisionRectangle(2, column - 1, row, 1, 1, METATILE_BEHAVIOR_NORMAL);
+	scMapGridFillCollisionRectangle(2, column, row + 1, 1, 1, METATILE_BEHAVIOR_NORMAL);
+	scMapGridFillCollisionRectangle(2, column, row - 1, 1, 1, METATILE_BEHAVIOR_NORMAL);
 }
 
-/* Move on the small grey rock below the upper log in the second area's river
-   clearing pushes it a metatile. Pushed south into the ring on the ground
-   (metatile (36, 24)), it sinks 2 pixels into place and stays, and the log can
-   be pushed. */
+// Move on the small grey rock below the upper log in the second area's river clearing pushes it a
+// metatile. Pushed south into the ring on the ground (metatile (36, 24)), it sinks 2 pixels into
+// place and stays, and the log can be pushed.
 static void scMogallForestSecondAreaUpdateRock(void)
 {
 	Sint32 column;
@@ -768,24 +754,24 @@ static void scMogallForestSecondAreaUpdateRock(void)
 	fdScriptStart();
 
 	column = FIELD_METATILE(fdActorGet(ACTOR_SECOND_AREA_ROCK)->x.fixed);
-	row = FIELD_METATILE(fdActorGet(ACTOR_SECOND_AREA_ROCK)->z.fixed);
+	row    = FIELD_METATILE(fdActorGet(ACTOR_SECOND_AREA_ROCK)->z.fixed);
 
 	scMogallForestUpdateRockMetatiles(column, row);
 
-	if(column == 36 && row == 24) {
-		ACTOR *rock = fdActorGet(ACTOR_SECOND_AREA_ROCK);
+	if (column == 36 && row == 24)
+	{
+		ACTOR *rock        = fdActorGet(ACTOR_SECOND_AREA_ROCK);
 
-		rock->motionFlags = 0;
+		rock->motionFlags  = 0;
 		rock->groundHeight = -toFIXED(2);
-		rock->y.fixed = -toFIXED(2);
+		rock->y.fixed      = -toFIXED(2);
 	}
 
 	fdScriptEnd();
 }
 
-/* Force on the west one of the two stumps side by side in the second area
-   brings a green ape out of it. The ape points the way and hops off south, the
-   way on toward the river. */
+// Force on the west one of the two stumps side by side in the second area brings a green ape out of
+// it. The ape points the way and hops off south, the way on toward the river.
 static void scMogallForestSecondAreaWestApeShowsWay(void)
 {
 	ACTOR *ape;
@@ -795,8 +781,8 @@ static void scMogallForestSecondAreaWestApeShowsWay(void)
 	scMogallForestApeComesOut(ACTOR_SECOND_AREA_WEST_APE, SPRITE_COLOR_GRB);
 	scMogallForestHopActorTo(ACTOR_SECOND_AREA_WEST_APE, 392, 104, 7);
 	fdScriptWait(10);
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + toFIXED(4)), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, (ape->z.fixed + toFIXED(4)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 	scMogallForestApePointsTheWay(ACTOR_SECOND_AREA_WEST_APE);
 	scMogallForestHopActorTo(ACTOR_SECOND_AREA_WEST_APE, 424, 120, 3);
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_WEST_APE, 0);
@@ -816,9 +802,8 @@ static void scMogallForestSecondAreaWestApeShowsWay(void)
 	fdScriptEnd();
 }
 
-/* Force on the east one of the two stumps side by side in the second area
-   brings a green ape out of it. The ape points the way and hops off east,
-   toward the pond with the Apple's chest. */
+// Force on the east one of the two stumps side by side in the second area brings a green ape out of
+// it. The ape points the way and hops off east, toward the pond with the Apple's chest.
 static void scMogallForestSecondAreaEastApeShowsWay(void)
 {
 	ACTOR *ape;
@@ -831,8 +816,8 @@ static void scMogallForestSecondAreaEastApeShowsWay(void)
 	scMogallForestHopActorTo(ACTOR_SECOND_AREA_EAST_APE, 456, 104, 7);
 	fdScriptWait(10);
 
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 
 	scMogallForestApePointsTheWay(ACTOR_SECOND_AREA_EAST_APE);
 
@@ -859,9 +844,8 @@ static void scMogallForestSecondAreaEastApeShowsWay(void)
 	fdScriptEnd();
 }
 
-/* Force on the stump on the island in the second area's stream brings a green
-   ape out, which leaps west across the stream into the stump on the bank and
-   hides again. */
+// Force on the stump on the island in the second area's stream brings a green ape out, which leaps
+// west across the stream into the stump on the bank and hides again.
 static void scMogallForestSecondAreaSouthApeHidesAgain(void)
 {
 	fdScriptStart();
@@ -877,9 +861,8 @@ static void scMogallForestSecondAreaSouthApeHidesAgain(void)
 	fdScriptEnd();
 }
 
-/* Force on the stump on the west bank of the second area's stream, where the
-   ape from the island hid, brings it out again. It points the way and hops off
-   west, the way to the third area. */
+// Force on the stump on the west bank of the second area's stream, where the ape from the island
+// hid, brings it out again. It points the way and hops off west, the way to the third area.
 static void scMogallForestSecondAreaSouthApeShowsWay(void)
 {
 	ACTOR *ape;
@@ -892,8 +875,8 @@ static void scMogallForestSecondAreaSouthApeShowsWay(void)
 	scMogallForestHopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 392, 504, 6);
 	fdScriptWait(10);
 
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 
 	scMogallForestApePointsTheWay(ACTOR_SECOND_AREA_SOUTH_APE);
 
@@ -922,49 +905,49 @@ static void scMogallForestSecondAreaSouthApeShowsWay(void)
 	fdScriptEnd();
 }
 
-/* Isaac pushes a log in the third area a metatile by walking into it: the log
-   by the Elven Shirt's chest, or the logs on the island in the river clearing.
-   The two lying north to south on the island, pushed east to its bank, roll
-   into the river and lie there as ways across.
-
-   At every push the chest's log and the upper river log copy metatiles onto
-   their new column from spare stretches of the map, in rows 49 to 52 and 68 to
-   71. A rolled log copies its metatiles in the river from (26, 20). */
+// Isaac pushes a log in the third area a metatile by walking into it: the log by the Elven Shirt's
+// chest, or the logs on the island in the river clearing. The two lying north to south on the
+// island, pushed east to its bank, roll into the river and lie there as ways across.
+//
+// At every push the chest's log and the upper river log copy metatiles onto their new column from
+// spare stretches of the map, in rows 49 to 52 and 68 to
+// 71. A rolled log copies its metatiles in the river from (26, 20).
 static void scMogallForestThirdAreaPushLog(void)
 {
 	PUSHED_ACTOR_PROBE probe;
-	Sint32			   landed;
+	Sint32             landed;
 
 	fdScriptStart();
 	landed = 0;
-	if(scPushedActorFindClearPos(&probe) != 0) {
+	if (scPushedActorFindClearPos(&probe) != 0)
+	{
 		scPushedActorRoll(probe);
-		if(probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG ||
-			probe.actorSlot == ACTOR_THIRD_AREA_SOUTH_RIVER_LOG) {
-			if(probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG) {
-				fdMapGridCopyMetatileAttributes(
-					38, 68, 1, 4, FIELD_METATILE(probe.pos.x), 68);
-				if(FIELD_METATILE(probe.pos.x) ==
-					THIRD_AREA_NORTH_RIVER_BANK_COLUMN) {
-					fdMapGridCopyMetatileAttributes(
-						26, 20, 2, 4, FIELD_METATILE(probe.pos.x), 23);
-					fdActorSetSpritePriority(
-						ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 1);
+		if (probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG
+		    || probe.actorSlot == ACTOR_THIRD_AREA_SOUTH_RIVER_LOG)
+		{
+			if (probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG)
+			{
+				fdMapGridCopyMetatileAttributes(38, 68, 1, 4, FIELD_METATILE(probe.pos.x), 68);
+				if (FIELD_METATILE(probe.pos.x) == THIRD_AREA_NORTH_RIVER_BANK_COLUMN)
+				{
+					fdMapGridCopyMetatileAttributes(26, 20, 2, 4, FIELD_METATILE(probe.pos.x), 23);
+					fdActorSetSpritePriority(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 1);
 					landed = 1;
 					gmFlagSet(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED);
 				}
-			} else {
-				if(FIELD_METATILE(probe.pos.x) ==
-					THIRD_AREA_SOUTH_RIVER_BANK_COLUMN) {
-					fdMapGridCopyMetatileAttributes(
-						26, 20, 2, 4, FIELD_METATILE(probe.pos.x), 32);
-					fdActorSetSpritePriority(
-						ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 1);
+			}
+			else
+			{
+				if (FIELD_METATILE(probe.pos.x) == THIRD_AREA_SOUTH_RIVER_BANK_COLUMN)
+				{
+					fdMapGridCopyMetatileAttributes(26, 20, 2, 4, FIELD_METATILE(probe.pos.x), 32);
+					fdActorSetSpritePriority(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 1);
 					landed = 1;
 					gmFlagSet(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED);
 				}
 			}
-			if(landed == 0) {
+			if (landed == 0)
+			{
 				fdScriptEnd();
 				return;
 			}
@@ -973,63 +956,62 @@ static void scMogallForestThirdAreaPushLog(void)
 			fdScriptWait(30);
 			fdActorSetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_FALLING_IN);
 			sySoundPlay(SE_LOG_FALL);
-			fdActorGet(probe.actorSlot)->priorityFlags =
-				ACTOR_PRIORITY_UNDERFOOT;
-		} else {
-			if(probe.actorSlot == ACTOR_THIRD_AREA_LOG)
-				fdMapGridCopyMetatileAttributes(
-					42, 49, 1, 4, FIELD_METATILE(probe.pos.x), 49);
+			fdActorGet(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		}
+		else
+		{
+			if (probe.actorSlot == ACTOR_THIRD_AREA_LOG)
+				fdMapGridCopyMetatileAttributes(42, 49, 1, 4, FIELD_METATILE(probe.pos.x), 49);
 		}
 	}
 	fdScriptEnd();
 }
 
-/* Walking west off the bank east of the third area's river channel (metatiles
-   (43, 32) to (43, 35)) makes Isaac leap onto the lower log once it lies in the
-   channel, which dips under him. */
+// Walking west off the bank east of the third area's river channel (metatiles (43, 32) to (43, 35))
+// makes Isaac leap onto the lower log once it lies in the channel, which dips under him.
 static void scMogallForestThirdAreaJumpWest(void)
 {
-	ACTOR	 *leader;
-	Uint8	  savedMotionFlags;
+	ACTOR    *leader;
+	Uint8     savedMotionFlags;
 	FIELD_POS pos;
 
-	leader = fdActorGet(ACTOR_PARTY_LEADER);
+	leader           = fdActorGet(ACTOR_PARTY_LEADER);
 	savedMotionFlags = leader->motionFlags;
 
-	pos.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
-	pos.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
-	pos.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed;
+	pos.x            = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
+	pos.y            = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
+	pos.z            = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed;
 
-	if(scMogallForestTryJumpLeaderTo(&pos) != 0) {
+	if (scMogallForestTryJumpLeaderTo(&pos) != 0)
+	{
 		fdScriptStart();
 
 		leader->motionFlags = 0;
-		fdActorSetAnimation(
-			ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, MOGALL_FOREST_LOG_STEPPED_ON);
+		fdActorSetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, MOGALL_FOREST_LOG_STEPPED_ON);
 
-		leader->y.fixed -= toFIXED(1);
+		leader->y.fixed      -= toFIXED(1);
 		leader->groundHeight -= toFIXED(1);
 		sySynch(2);
 
-		leader->y.fixed -= toFIXED(1);
+		leader->y.fixed      -= toFIXED(1);
 		leader->groundHeight -= toFIXED(1);
 		sySynch(10);
 
-		leader->y.fixed += toFIXED(1);
+		leader->y.fixed      += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
 		sySynch(4);
 
-		leader->y.fixed += toFIXED(1);
+		leader->y.fixed      += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
 
-		leader->motionFlags = savedMotionFlags;
+		leader->motionFlags   = savedMotionFlags;
 		fdScriptEnd();
 	}
 }
 
-/* Move on the rock beside the log by the Elven Shirt's chest pushes it a
-   metatile. In the ring among the stumps by the stream (metatile (45, 6)) it
-   settles into place and stays, out of the way of the log. */
+// Move on the rock beside the log by the Elven Shirt's chest pushes it a metatile. In the ring
+// among the stumps by the stream (metatile (45, 6)) it settles into place and stays, out of the way
+// of the log.
 static void scMogallForestThirdAreaUpdateNorthRock(void)
 {
 	Sint32 column;
@@ -1038,26 +1020,27 @@ static void scMogallForestThirdAreaUpdateNorthRock(void)
 	fdScriptStart();
 
 	column = FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed);
-	row = FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed);
+	row    = FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed);
 
 	scMogallForestUpdateRockMetatiles(column, row);
 
-	if(column == 45 && row == 6) {
-		ACTOR *rock = fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK);
+	if (column == 45 && row == 6)
+	{
+		ACTOR *rock        = fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK);
 
-		rock->motionFlags = 0;
+		rock->motionFlags  = 0;
 		rock->groundHeight = -toFIXED(2);
-		rock->y.fixed = -toFIXED(2);
+		rock->y.fixed      = -toFIXED(2);
 	}
 
 	fdScriptEnd();
 }
 
-/* Move on the rock beside the upper log on the third area's river island pushes
-   it a metatile. Pushed south into the ring on row 27, it settles into place
-   and stays, and the metatile (43, 23) across the channel is made solid.
-
-   scInit runs it too, to settle the rock again on arrival. */
+// Move on the rock beside the upper log on the third area's river island pushes it a metatile.
+// Pushed south into the ring on row 27, it settles into place and stays, and the metatile (43, 23)
+// across the channel is made solid.
+//
+// scInit runs it too, to settle the rock again on arrival.
 static void scMogallForestThirdAreaUpdateSouthRock(void)
 {
 	ACTOR *rock;
@@ -1066,21 +1049,20 @@ static void scMogallForestThirdAreaUpdateSouthRock(void)
 	scMogallForestUpdateRockMetatiles(
 		FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
 		FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed));
-	if(FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed) == 27) {
-		rock = fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK);
-		rock->motionFlags = 0;
+	if (FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed) == 27)
+	{
+		rock               = fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK);
+		rock->motionFlags  = 0;
 		rock->groundHeight = -toFIXED(2);
-		rock->y.fixed = -toFIXED(2);
+		rock->y.fixed      = -toFIXED(2);
 		gmFlagSet(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
-		scMapGridFillCollisionRectangle(
-			2, 43, 23, 1, 1, METATILE_BEHAVIOR_WALL);
+		scMapGridFillCollisionRectangle(2, 43, 23, 1, 1, METATILE_BEHAVIOR_WALL);
 	}
 	fdScriptEnd();
 }
 
-/* Force on the east one of the three stumps in a row in the third area brings
-   out an ape that cries out in anger, leaps at Isaac and starts a battle with
-   it. */
+// Force on the east one of the three stumps in a row in the third area brings out an ape that cries
+// out in anger, leaps at Isaac and starts a battle with it.
 static void scMogallForestThirdAreaApeAttacks(void)
 {
 	ACTOR *ape;
@@ -1089,36 +1071,31 @@ static void scMogallForestThirdAreaApeAttacks(void)
 
 	ape = fdActorGet(ACTOR_THIRD_AREA_ATTACKING_APE);
 	fdScriptStart();
-	scMogallForestApeComesOut(
-		ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
+	scMogallForestApeComesOut(ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, 472, 104, 8);
 	fdScriptWait(10);
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + toFIXED(8)), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, (ape->z.fixed + toFIXED(8)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 	fdCameraFollowActor(ACTOR_THIRD_AREA_ATTACKING_APE, 1);
-	fdActorTurnToFaceEachOther(
-		ACTOR_THIRD_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER, 0);
+	fdActorTurnToFaceEachOther(ACTOR_THIRD_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(30);
 	fdActorStartRepeatedMotion(ACTOR_THIRD_AREA_ATTACKING_APE, 2);
-	fdActorShowEmote(
-		ACTOR_THIRD_AREA_ATTACKING_APE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+	fdActorShowEmote(ACTOR_THIRD_AREA_ATTACKING_APE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
 	sySoundPlay(SE_BEAST_CRY);
 	fdScriptWait(60);
-	leaderX = fdActorGet(ACTOR_PARTY_LEADER)->x.part[0].integer;
+	leaderX    = fdActorGet(ACTOR_PARTY_LEADER)->x.part[0].integer;
 	leaderForZ = fdActorGet(ACTOR_PARTY_LEADER);
-	scMogallForestHopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, leaderX,
-		leaderForZ->z.part[0].integer, 6);
+	scMogallForestHopActorTo(
+		ACTOR_THIRD_AREA_ATTACKING_APE, leaderX, leaderForZ->z.part[0].integer, 6);
 	fdScriptWait(10);
 	gmFlagSet(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT);
 	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
-	fdRequestBattleFromEncounterTable(
-		ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
+	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
 	fdScriptEnd();
 }
 
-/* Force on the middle one of the three stumps in a row in the third area brings
-   a green ape out of it. The ape points the way and hops off south, the way on
-   to the river. */
+// Force on the middle one of the three stumps in a row in the third area brings a green ape out of
+// it. The ape points the way and hops off south, the way on to the river.
 static void scMogallForestThirdAreaMiddleApeShowsWay(void)
 {
 	ACTOR *ape;
@@ -1131,8 +1108,8 @@ static void scMogallForestThirdAreaMiddleApeShowsWay(void)
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 456, 152, 6);
 	fdScriptWait(10);
 
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 
 	scMogallForestApePointsTheWay(ACTOR_THIRD_AREA_MIDDLE_APE);
 
@@ -1157,9 +1134,8 @@ static void scMogallForestThirdAreaMiddleApeShowsWay(void)
 	fdScriptEnd();
 }
 
-/* Force on the west one of the three stumps in a row in the third area brings a
-   green ape out of it. The ape points the way and hops off west, toward the
-   Elven Shirt's chest. */
+// Force on the west one of the three stumps in a row in the third area brings a green ape out of
+// it. The ape points the way and hops off west, toward the Elven Shirt's chest.
 static void scMogallForestThirdAreaWestApeShowsWay(void)
 {
 	ACTOR *ape;
@@ -1172,8 +1148,8 @@ static void scMogallForestThirdAreaWestApeShowsWay(void)
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_WEST_APE, 392, 104, 6);
 	fdScriptWait(10);
 
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 
 	scMogallForestApePointsTheWay(ACTOR_THIRD_AREA_WEST_APE);
 
@@ -1198,9 +1174,8 @@ static void scMogallForestThirdAreaWestApeShowsWay(void)
 	fdScriptEnd();
 }
 
-/* Force on the stump on its own island in the third area's river clearing
-   brings a green ape out, which leaps south into a lower stump and hides again,
-   the camera following it. */
+// Force on the stump on its own island in the third area's river clearing brings a green ape out,
+// which leaps south into a lower stump and hides again, the camera following it.
 static void scMogallForestThirdAreaEastApeHidesAgain(void)
 {
 	fdScriptStart();
@@ -1216,9 +1191,8 @@ static void scMogallForestThirdAreaEastApeHidesAgain(void)
 	fdScriptEnd();
 }
 
-/* Force on the lower stump in the third area's river clearing, where the ape
-   from the island hid, brings it out again. It points the way and hops off
-   south, the way to the lone stump. */
+// Force on the lower stump in the third area's river clearing, where the ape from the island hid,
+// brings it out again. It points the way and hops off south, the way to the lone stump.
 static void scMogallForestThirdAreaEastApeShowsWay(void)
 {
 	ACTOR *ape;
@@ -1231,8 +1205,8 @@ static void scMogallForestThirdAreaEastApeShowsWay(void)
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 536, 6);
 	fdScriptWait(10);
 
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, ape->z.fixed + toFIXED(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 
 	scMogallForestApePointsTheWay(ACTOR_THIRD_AREA_EAST_APE);
 
@@ -1260,10 +1234,9 @@ static void scMogallForestThirdAreaEastApeShowsWay(void)
 	fdScriptEnd();
 }
 
-/* Walking up to the lone stump on the island between the two log bridges, on
-   its east side (metatiles (12, 22) and (12, 23)), the ape that led the party
-   there bursts out of it and hops away south over the bridge. It happens
-   once. */
+// Walking up to the lone stump on the island between the two log bridges, on its east side
+// (metatiles (12, 22) and (12, 23)), the ape that led the party there bursts out of it and hops
+// away south over the bridge. It happens once.
 static void scMogallForestApeLeadsToKillerApe(void)
 {
 	ACTOR *ape;
@@ -1274,11 +1247,11 @@ static void scMogallForestApeLeadsToKillerApe(void)
 	scMogallForestApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 408, 8);
 	fdScriptWait(10);
-	fdEffectSpawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + toFIXED(4)), 0, 0,
-		0, EFFECT_SCRIPT_MEDIUM, 0);
+	fdEffectSpawn(
+		ape->x.fixed, ape->y.fixed, (ape->z.fixed + toFIXED(4)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM, 0);
 	fdActorFaceDirection(ACTOR_THIRD_AREA_EAST_APE, FACING_NORTH, 40);
 	fdActorSetAttachedEffect(ACTOR_THIRD_AREA_EAST_APE,
-		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	                         ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorRunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);
 	fdCameraFollowActor(ACTOR_THIRD_AREA_EAST_APE, 1);
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 440, 6);
@@ -1297,17 +1270,17 @@ static void scMogallForestApeLeadsToKillerApe(void)
 	fdScriptEnd();
 }
 
-/* Stepping onto the top of the south bridge below the lone stump (metatile (8,
-   27)) until the Killer Ape is beaten: the camera turns to the stump and the
-   ground shakes twice with puffs of dust round it. Then the Killer Ape, a big
-   blue ape, bursts out, roars, leaps at Isaac and its battle begins. */
+// Stepping onto the top of the south bridge below the lone stump (metatile (8, 27)) until the
+// Killer Ape is beaten: the camera turns to the stump and the ground shakes twice with puffs of
+// dust round it. Then the Killer Ape, a big blue ape, bursts out, roars, leaps at Isaac and its
+// battle begins.
 static void scMogallForestKillerApeAttacks(void)
 {
 	VECTOR3 velocity;
 	ACTOR  *actor;
-	Uint32	directionIndex;
-	Sint32	x;
-	FIXED	z;
+	Uint32  directionIndex;
+	Sint32  x;
+	FIXED   z;
 
 	actor = fdActorGet(ACTOR_THIRD_AREA_EAST_APE);
 	fdScriptStart();
@@ -1336,19 +1309,19 @@ static void scMogallForestKillerApeAttacks(void)
 	fdActorSetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_BRG);
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 392, 15);
 	fdScriptWait(15);
-	/* The larger reveal uses a wider, level ring of puffs. */
+	// The larger reveal uses a wider, level ring of puffs.
 	fdMapGridSetShake(5, 5, 1);
-	for(directionIndex = 0; directionIndex <= TRIG_TURN / FACING_STEP;
-		directionIndex++) {
-		velocity.x = syCos(directionIndex * FACING_STEP);
-		velocity.y = 0;
-		z = sySin(directionIndex * FACING_STEP);
-		x = velocity.x;
-		velocity.z = z;
-		x += x / 2;
-		velocity.x = x;
-		fdEffectSpawn(actor->x.fixed, 0, actor->z.fixed, x, velocity.y, z,
-			EFFECT_SCRIPT_MEDIUM, NULL);
+	for (directionIndex = 0; directionIndex <= TRIG_TURN / FACING_STEP; directionIndex++)
+	{
+		velocity.x  = syCos(directionIndex * FACING_STEP);
+		velocity.y  = 0;
+		z           = sySin(directionIndex * FACING_STEP);
+		x           = velocity.x;
+		velocity.z  = z;
+		x          += x / 2;
+		velocity.x  = x;
+		fdEffectSpawn(
+			actor->x.fixed, 0, actor->z.fixed, x, velocity.y, z, EFFECT_SCRIPT_MEDIUM, NULL);
 	}
 	fdScriptWait(30);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1356,19 +1329,20 @@ static void scMogallForestKillerApeAttacks(void)
 	sySoundPlay(SE_BOSS_ROAR);
 	fdActorRunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);
 	fdScriptWait(20);
-	/* It leaps at Isaac, and the battle begins. */
+	// It leaps at Isaac, and the battle begins.
 	{
 		Sint32 leaderX = fdActorGet(ACTOR_PARTY_LEADER)->x.part[0].integer;
 
-		scMogallForestHopActorTo(ACTOR_THIRD_AREA_EAST_APE, leaderX,
-			fdActorGet(ACTOR_PARTY_LEADER)->z.part[0].integer - 16, 8);
+		scMogallForestHopActorTo(ACTOR_THIRD_AREA_EAST_APE,
+		                         leaderX,
+		                         fdActorGet(ACTOR_PARTY_LEADER)->z.part[0].integer - 16,
+		                         8);
 	}
 	fdScriptWait(10);
 	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
 	fdScriptSetAfterBattleDestination(SCENE_MOGALL_FOREST_KILLER_APE,
-		MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS);
-	fdRequestBattleFromEncounterTable(
-		ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 1);
+	                                  MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS);
+	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 1);
 	fdScriptEnd();
 }
 
@@ -1376,21 +1350,24 @@ const CUE *scGetCues(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_MOGALL_FOREST_SIGN) {
+	if (scene == SCENE_MOGALL_FOREST_SIGN)
+	{
 		return MogallForestSignCues;
 	}
-	if(scene == SCENE_MOGALL_FOREST_QUARTZ) {
+	if (scene == SCENE_MOGALL_FOREST_QUARTZ)
+	{
 		return MogallForestQuartzCues;
 	}
-	if(scene == SCENE_MOGALL_FOREST_KILLER_APE) {
+	if (scene == SCENE_MOGALL_FOREST_KILLER_APE)
+	{
 		return MogallForestKillerApeCues;
 	}
 	return MogallForestSidePathsCues;
 }
 
-/* Sets up the clearing entered. On the first arrival in the forest it plays the
-   ape peeking out of the first stump; otherwise it puts back the apes already
-   out, the logs in the river and the settled rocks. */
+// Sets up the clearing entered. On the first arrival in the forest it plays the ape peeking out of
+// the first stump; otherwise it puts back the apes already out, the logs in the river and the
+// settled rocks.
 Sint32 scInit(void)
 {
 	ACTOR *actor;
@@ -1400,283 +1377,289 @@ Sint32 scInit(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	sceneId = MainRoutineStateWork.next;
-	if(sceneId == SCENE_MOGALL_FOREST_SIGN) {
+	if (sceneId == SCENE_MOGALL_FOREST_SIGN)
+	{
 		entrance = MainRoutineStateWork.entrance;
-		switch(entrance) {
-		case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
-		case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
-		case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
-		case MOGALL_FOREST_SIGN_ENTRANCE_FROM_SOUTHWEST_CLEARING:
-			if(fdScriptGetFlag(FLAG_MOGALL_FOREST_FIRST_APE_SEEN) == 0) {
-				fdScriptStart();
-				sySynch(1);
-				fdActorSetSpriteColorById(
-					ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
-				fdActorSetPos(ACTOR_FIRST_AREA_NORTH_APE, 92, 120);
-				fdActorFaceDirection(
-					ACTOR_FIRST_AREA_NORTH_APE, FACING_NORTH_NORTHEAST, 0);
-				fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
-				fdActorWalkTo(ACTOR_PARTY_LEADER, 136, 64);
-				fdScriptStartScreenTransition();
-				fdScriptWaitTransitionTicks();
-				fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
-				fdScriptWait(30);
-				fdActorShowEmote(ACTOR_FIRST_AREA_NORTH_APE,
-					EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-				fdActorRunRepeatedMotion(ACTOR_FIRST_AREA_NORTH_APE, 2);
-				fdScriptWait(30);
-				scMogallForestHopActorTo(
-					ACTOR_FIRST_AREA_NORTH_APE, 136, 116, 7);
-				scMogallForestSpawnPuffRing(ACTOR_FIRST_AREA_NORTH_APE);
-				fdActorSetSpriteColorById(
-					ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSpriteFlags(
-					fdActorGet(ACTOR_FIRST_AREA_NORTH_APE), 0);
-				gmFlagSet(FLAG_MOGALL_FOREST_FIRST_APE_SEEN);
-				fdScriptWait(60);
-				fdScriptEnd();
-			}
-			if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
-				break;
-			}
-			if(gmFlagGet(FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT) != 0) {
-				break;
-			}
-			fdActorSetSpriteColorById(
-				ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetPos(ACTOR_FIRST_AREA_NORTH_APE, 136, 116);
-			break;
-
-		case MOGALL_FOREST_SIGN_RIVER_FROM_SOUTHWEST_CLEARING:
-		case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
-		case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ:
-			actor = fdActorGet(ACTOR_PARTY_LEADER);
-			if(actor != NULL) {
-				fdActorSetPosFX(ACTOR_NUT, actor->x.fixed, actor->z.fixed);
-			}
-			fdActorGet(ACTOR_NUT)->update = 0;
-			if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
-				fdActorGet(ACTOR_NUT)->y.fixed = toFIXED(32);
-			}
-			sySynch(1);
-			fdActorSetPos(ACTOR_NUT, 632, 440);
-			if(gmFlagGet(FLAG_MOGALL_FOREST_NUT_CAUGHT) == 0) {
-				scFloatNut(ACTOR_NUT);
-			}
-			fdActorSetSpriteColorById(
-				ACTOR_FIRST_AREA_ATTACKING_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSpriteColorById(
-				ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSpriteFlags(
-				fdActorGet(ACTOR_FIRST_AREA_ATTACKING_APE), 0);
-			fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_AREA_EAST_APE), 0);
-			scPushedActorBlockFootprint(ACTOR_FIRST_AREA_LOG);
-			if(gmFlagGet(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED) == 0) {
-				scPushedActorBlockFootprint(ACTOR_FIRST_AREA_RIVER_LOG);
-				break;
-			}
-			sySynch(1);
-			fdActorSetPos(ACTOR_FIRST_AREA_RIVER_LOG, 528, 408);
-			fdActorSetAnimation(
-				ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_IN_RIVER);
-			fdMapGridCopyMetatileAttributes(38, 27, 4, 2, 31, 25);
-			fdActorGet(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
-				ACTOR_PRIORITY_UNDERFOOT;
-			break;
-		}
-	} else if(sceneId == SCENE_MOGALL_FOREST_QUARTZ) {
-		entrance = MainRoutineStateWork.entrance;
-		switch(entrance) {
-		case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
-		case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING:
-		case MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND:
-		case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING:
-			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_WEST_APE_OUT) == 0) {
-				fdActorSetSpriteColorById(
-					ACTOR_SECOND_AREA_WEST_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSpriteFlags(
-					fdActorGet(ACTOR_SECOND_AREA_WEST_APE), 0);
-			}
-			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT) != 0) {
-				break;
-			}
-			fdActorSetSpriteColorById(
-				ACTOR_SECOND_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_AREA_EAST_APE), 0);
-			break;
-
-		case MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING:
-		case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE:
-		case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
-			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED) == 0) {
-				scPushedActorBlockFootprint(ACTOR_SECOND_AREA_RIVER_LOG);
-			} else {
-				sySynch(1);
-				fdActorSetPos(ACTOR_SECOND_AREA_RIVER_LOG, 552, 510);
-				fdActorSetAnimation(
-					ACTOR_SECOND_AREA_RIVER_LOG, MOGALL_FOREST_LOG_IN_RIVER);
-				fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
-					ACTOR_PRIORITY_UNDERFOOT;
-				fdMapGridCopyMetatileAttributes(44, 30, 2, 4, 34, 30);
-#if MOGALL_SECOND_AREA_LOG_PUSH_CELL_CLEARED_ON_RETURN
-				scMapGridFillCollisionRectangle(0, 35, 29, 1, 4, 0);
-#endif
-			}
-			scPushedActorBlockFootprint(ACTOR_SECOND_AREA_LOG);
-			scPushedActorBlockFootprint(ACTOR_SECOND_AREA_SOUTH_LOG);
-			scMapGridFillCollisionRectangle(2,
-				FIELD_METATILE(fdActorGet(ACTOR_SECOND_AREA_ROCK)->x.fixed),
-				FIELD_METATILE(fdActorGet(ACTOR_SECOND_AREA_ROCK)->z.fixed), 1,
-				1, METATILE_BEHAVIOR_WALL);
-			sySynch(1);
-			fdActorSetSpriteColorById(
-				ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
-			fdActorGet(ACTOR_SECOND_AREA_LOG)->collisionFlags |=
-				ACTOR_NOT_TARGETED;
-			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT) != 0) {
-				break;
-			}
-			fdActorSetSpriteColorById(
-				ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_AREA_SOUTH_APE), 0);
-			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED) == 0) {
-				break;
-			}
-			fdActorSetPos(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480);
-			fdActorSetPos(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 424, 480);
-			break;
-		}
-	} else if(sceneId == SCENE_MOGALL_FOREST_KILLER_APE) {
-		entrance = MainRoutineStateWork.entrance;
-		switch(entrance) {
-		case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
-		case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST:
-		case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING:
-		case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER:
-			sySynch(1);
-			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT) ==
-				0) {
-				fdActorSetSpriteColorById(
-					ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSpriteFlags(
-					fdActorGet(ACTOR_THIRD_AREA_ATTACKING_APE), 0);
-				fdActorSetSpriteFlags(
-					fdActorGet(ACTOR_THIRD_AREA_ATTACKING_APE_STUMP), 0);
-			}
-			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT) == 0) {
-				fdActorSetSpriteColorById(
-					ACTOR_THIRD_AREA_MIDDLE_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSpriteFlags(
-					fdActorGet(ACTOR_THIRD_AREA_MIDDLE_APE), 0);
-				fdActorSetSpriteFlags(
-					fdActorGet(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP), 0);
-			}
-			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT) != 0) {
-				break;
-			}
-			fdActorSetSpriteColorById(
-				ACTOR_THIRD_AREA_WEST_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_WEST_APE), 0);
-			fdActorSetSpriteFlags(
-				fdActorGet(ACTOR_THIRD_AREA_WEST_APE_STUMP), 0);
-			break;
-
-		case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
-			scMapGridFillCollisionRectangle(2,
-				FIELD_METATILE(
-					fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed),
-				FIELD_METATILE(
-					fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed),
-				1, 1, METATILE_BEHAVIOR_WALL);
-			fdActorSetSpriteColorById(
-				ACTOR_THIRD_AREA_NORTH_ROCK, SPRITE_COLOR_GREY);
-			sySynch(1);
-			fdActorGet(ACTOR_THIRD_AREA_LOG)->collisionFlags |=
-				ACTOR_NOT_TARGETED;
-			scPushedActorBlockFootprint(ACTOR_THIRD_AREA_LOG);
-			break;
-
-		case MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS:
-		case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
-		case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
-		case MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES:
-			/* XXX (no evidence): what these two crates are for; they are
-			   hidden, not solid and never a target, so the player neither sees
-			   nor meets them. */
-			fdActorCreateConfigured(734, 0, 370, SPRITE_CRATE);
-			fdActorCreateConfigured(754, 0, 370, SPRITE_CRATE);
-			scPushedActorBlockFootprint(ACTOR_THIRD_AREA_WEST_LOG);
-			scPushedActorBlockFootprint(ACTOR_THIRD_AREA_SOUTHWEST_LOG);
-			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED) == 0) {
-				scPushedActorBlockFootprint(ACTOR_THIRD_AREA_NORTH_RIVER_LOG);
-			} else {
-				sySynch(1);
-				fdActorSetAnimation(ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
-					MOGALL_FOREST_LOG_IN_RIVER);
-				fdActorSetPos(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 698, 398);
-				fdActorGet(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->priorityFlags |=
-					ACTOR_PRIORITY_UNDERFOOT;
-				fdMapGridCopyMetatileAttributes(26, 20, 2, 4, 42, 23);
-				gmFlagSet(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
-				fdActorSetPos(ACTOR_THIRD_AREA_SOUTH_ROCK, 632, 440);
-				fdActorSetSpriteFlags(
-					fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK), 0);
-			}
-			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED) == 0) {
-				scPushedActorBlockFootprint(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG);
-			} else {
-				sySynch(1);
-				fdActorSetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
-					MOGALL_FOREST_LOG_IN_RIVER);
-				fdActorSetPos(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 666, 550);
-				fdActorGet(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG)->priorityFlags =
-					ACTOR_PRIORITY_UNDERFOOT;
-				fdMapGridCopyMetatileAttributes(26, 20, 2, 4, 40, 32);
-			}
-			scMapGridFillCollisionRectangle(2,
-				FIELD_METATILE(
-					fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
-				FIELD_METATILE(
-					fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed),
-				1, 1, METATILE_BEHAVIOR_WALL);
-			fdActorSetSpriteColorById(
-				ACTOR_THIRD_AREA_SOUTH_ROCK, SPRITE_COLOR_GREY);
-			sySynch(1);
-			fdActorGet(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |=
-				ACTOR_NOT_TARGETED;
-			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT) == 0) {
-				fdActorSetSpriteColorById(
-					ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_EAST_APE), 0);
-				if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED) !=
-					0) {
-					fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE_STUMP, 744, 504);
-					fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE, 744, 504);
+		switch (entrance)
+		{
+			case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
+			case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
+			case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
+			case MOGALL_FOREST_SIGN_ENTRANCE_FROM_SOUTHWEST_CLEARING:
+				if (fdScriptGetFlag(FLAG_MOGALL_FOREST_FIRST_APE_SEEN) == 0)
+				{
+					fdScriptStart();
+					sySynch(1);
+					fdActorSetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
+					fdActorSetPos(ACTOR_FIRST_AREA_NORTH_APE, 92, 120);
+					fdActorFaceDirection(ACTOR_FIRST_AREA_NORTH_APE, FACING_NORTH_NORTHEAST, 0);
+					fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
+					fdActorWalkTo(ACTOR_PARTY_LEADER, 136, 64);
+					fdScriptStartScreenTransition();
+					fdScriptWaitTransitionTicks();
+					fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
+					fdScriptWait(30);
+					fdActorShowEmote(
+						ACTOR_FIRST_AREA_NORTH_APE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+					fdActorRunRepeatedMotion(ACTOR_FIRST_AREA_NORTH_APE, 2);
+					fdScriptWait(30);
+					scMogallForestHopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 136, 116, 7);
+					scMogallForestSpawnPuffRing(ACTOR_FIRST_AREA_NORTH_APE);
+					fdActorSetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_HIDDEN);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_AREA_NORTH_APE), 0);
+					gmFlagSet(FLAG_MOGALL_FOREST_FIRST_APE_SEEN);
+					fdScriptWait(60);
+					fdScriptEnd();
 				}
-#if MOGALL_THIRD_AREA_EAST_APE_MOVED_OFF_ON_ENTRY
-			} else {
-				fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE, 0, 0);
+				if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+				{
+					break;
+				}
+				if (gmFlagGet(FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT) != 0)
+				{
+					break;
+				}
+				fdActorSetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_HIDDEN);
+				fdActorSetPos(ACTOR_FIRST_AREA_NORTH_APE, 136, 116);
+				break;
+
+			case MOGALL_FOREST_SIGN_RIVER_FROM_SOUTHWEST_CLEARING:
+			case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
+			case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ:
+				actor = fdActorGet(ACTOR_PARTY_LEADER);
+				if (actor != NULL)
+				{
+					fdActorSetPosFX(ACTOR_NUT, actor->x.fixed, actor->z.fixed);
+				}
+				fdActorGet(ACTOR_NUT)->update = 0;
+				if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)
+				{
+					fdActorGet(ACTOR_NUT)->y.fixed = toFIXED(32);
+				}
+				sySynch(1);
+				fdActorSetPos(ACTOR_NUT, 632, 440);
+				if (gmFlagGet(FLAG_MOGALL_FOREST_NUT_CAUGHT) == 0)
+				{
+					scFloatNut(ACTOR_NUT);
+				}
+				fdActorSetSpriteColorById(ACTOR_FIRST_AREA_ATTACKING_APE, SPRITE_COLOR_HIDDEN);
+				fdActorSetSpriteColorById(ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_AREA_ATTACKING_APE), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_AREA_EAST_APE), 0);
+				scPushedActorBlockFootprint(ACTOR_FIRST_AREA_LOG);
+				if (gmFlagGet(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED) == 0)
+				{
+					scPushedActorBlockFootprint(ACTOR_FIRST_AREA_RIVER_LOG);
+					break;
+				}
+				sySynch(1);
+				fdActorSetPos(ACTOR_FIRST_AREA_RIVER_LOG, 528, 408);
+				fdActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_IN_RIVER);
+				fdMapGridCopyMetatileAttributes(38, 27, 4, 2, 31, 25);
+				fdActorGet(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+				break;
+		}
+	}
+	else if (sceneId == SCENE_MOGALL_FOREST_QUARTZ)
+	{
+		entrance = MainRoutineStateWork.entrance;
+		switch (entrance)
+		{
+			case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
+			case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING:
+			case MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND:
+			case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING:
+				if (gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_WEST_APE_OUT) == 0)
+				{
+					fdActorSetSpriteColorById(ACTOR_SECOND_AREA_WEST_APE, SPRITE_COLOR_HIDDEN);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_AREA_WEST_APE), 0);
+				}
+				if (gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT) != 0)
+				{
+					break;
+				}
+				fdActorSetSpriteColorById(ACTOR_SECOND_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_AREA_EAST_APE), 0);
+				break;
+
+			case MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING:
+			case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE:
+			case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
+				if (gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED) == 0)
+				{
+					scPushedActorBlockFootprint(ACTOR_SECOND_AREA_RIVER_LOG);
+				}
+				else
+				{
+					sySynch(1);
+					fdActorSetPos(ACTOR_SECOND_AREA_RIVER_LOG, 552, 510);
+					fdActorSetAnimation(ACTOR_SECOND_AREA_RIVER_LOG, MOGALL_FOREST_LOG_IN_RIVER);
+					fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
+						ACTOR_PRIORITY_UNDERFOOT;
+					fdMapGridCopyMetatileAttributes(44, 30, 2, 4, 34, 30);
+#if MOGALL_SECOND_AREA_LOG_PUSH_CELL_CLEARED_ON_RETURN
+					scMapGridFillCollisionRectangle(0, 35, 29, 1, 4, 0);
 #endif
-			}
-			scMogallForestThirdAreaUpdateSouthRock();
-			break;
-
-		case MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER:
-		case MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP:
-			fdActorSetScript(
-				ACTOR_THIRD_AREA_EAST_APE, MogallForestActorScript);
-			if(gmFlagGet(FLAG_NYUNPA_TAUGHT_FORCE) == 0) {
+				}
+				scPushedActorBlockFootprint(ACTOR_SECOND_AREA_LOG);
+				scPushedActorBlockFootprint(ACTOR_SECOND_AREA_SOUTH_LOG);
+				scMapGridFillCollisionRectangle(
+					2,
+					FIELD_METATILE(fdActorGet(ACTOR_SECOND_AREA_ROCK)->x.fixed),
+					FIELD_METATILE(fdActorGet(ACTOR_SECOND_AREA_ROCK)->z.fixed),
+					1,
+					1,
+					METATILE_BEHAVIOR_WALL);
+				sySynch(1);
+				fdActorSetSpriteColorById(ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
+				fdActorGet(ACTOR_SECOND_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
+				if (gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT) != 0)
+				{
+					break;
+				}
+				fdActorSetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_AREA_SOUTH_APE), 0);
+				if (gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED) == 0)
+				{
+					break;
+				}
+				fdActorSetPos(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480);
+				fdActorSetPos(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 424, 480);
 				break;
-			}
-			if(gmFlagGet(FLAG_MOGALL_FOREST_KILLER_APE_BEATEN) == 0) {
+		}
+	}
+	else if (sceneId == SCENE_MOGALL_FOREST_KILLER_APE)
+	{
+		entrance = MainRoutineStateWork.entrance;
+		switch (entrance)
+		{
+			case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
+			case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST:
+			case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING:
+			case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER:
+				sySynch(1);
+				if (gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT) == 0)
+				{
+					fdActorSetSpriteColorById(ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_HIDDEN);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_ATTACKING_APE), 0);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_ATTACKING_APE_STUMP), 0);
+				}
+				if (gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT) == 0)
+				{
+					fdActorSetSpriteColorById(ACTOR_THIRD_AREA_MIDDLE_APE, SPRITE_COLOR_HIDDEN);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_MIDDLE_APE), 0);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP), 0);
+				}
+				if (gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT) != 0)
+				{
+					break;
+				}
+				fdActorSetSpriteColorById(ACTOR_THIRD_AREA_WEST_APE, SPRITE_COLOR_HIDDEN);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_WEST_APE), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_WEST_APE_STUMP), 0);
 				break;
-			}
-			gmFlagSet(FLAG_NYUNPA_ENLIGHTENED);
-			break;
 
-		case MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS:
-			gmFlagSet(FLAG_MOGALL_FOREST_KILLER_APE_BEATEN);
-			break;
+			case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
+				scMapGridFillCollisionRectangle(
+					2,
+					FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed),
+					FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed),
+					1,
+					1,
+					METATILE_BEHAVIOR_WALL);
+				fdActorSetSpriteColorById(ACTOR_THIRD_AREA_NORTH_ROCK, SPRITE_COLOR_GREY);
+				sySynch(1);
+				fdActorGet(ACTOR_THIRD_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
+				scPushedActorBlockFootprint(ACTOR_THIRD_AREA_LOG);
+				break;
+
+			case MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS:
+			case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
+			case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
+			case MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES:
+				// XXX (no evidence): what these two crates are for; they are hidden, not solid and
+				// never a target, so the player neither sees nor meets them.
+				fdActorCreateConfigured(734, 0, 370, SPRITE_CRATE);
+				fdActorCreateConfigured(754, 0, 370, SPRITE_CRATE);
+				scPushedActorBlockFootprint(ACTOR_THIRD_AREA_WEST_LOG);
+				scPushedActorBlockFootprint(ACTOR_THIRD_AREA_SOUTHWEST_LOG);
+				if (gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED) == 0)
+				{
+					scPushedActorBlockFootprint(ACTOR_THIRD_AREA_NORTH_RIVER_LOG);
+				}
+				else
+				{
+					sySynch(1);
+					fdActorSetAnimation(ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
+					                    MOGALL_FOREST_LOG_IN_RIVER);
+					fdActorSetPos(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 698, 398);
+					fdActorGet(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->priorityFlags |=
+						ACTOR_PRIORITY_UNDERFOOT;
+					fdMapGridCopyMetatileAttributes(26, 20, 2, 4, 42, 23);
+					gmFlagSet(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
+					fdActorSetPos(ACTOR_THIRD_AREA_SOUTH_ROCK, 632, 440);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK), 0);
+				}
+				if (gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED) == 0)
+				{
+					scPushedActorBlockFootprint(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG);
+				}
+				else
+				{
+					sySynch(1);
+					fdActorSetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
+					                    MOGALL_FOREST_LOG_IN_RIVER);
+					fdActorSetPos(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 666, 550);
+					fdActorGet(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG)->priorityFlags =
+						ACTOR_PRIORITY_UNDERFOOT;
+					fdMapGridCopyMetatileAttributes(26, 20, 2, 4, 40, 32);
+				}
+				scMapGridFillCollisionRectangle(
+					2,
+					FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
+					FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed),
+					1,
+					1,
+					METATILE_BEHAVIOR_WALL);
+				fdActorSetSpriteColorById(ACTOR_THIRD_AREA_SOUTH_ROCK, SPRITE_COLOR_GREY);
+				sySynch(1);
+				fdActorGet(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
+				if (gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT) == 0)
+				{
+					fdActorSetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_EAST_APE), 0);
+					if (gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED) != 0)
+					{
+						fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE_STUMP, 744, 504);
+						fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE, 744, 504);
+					}
+#if MOGALL_THIRD_AREA_EAST_APE_MOVED_OFF_ON_ENTRY
+				}
+				else
+				{
+					fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE, 0, 0);
+#endif
+				}
+				scMogallForestThirdAreaUpdateSouthRock();
+				break;
+
+			case MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER:
+			case MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP:
+				fdActorSetScript(ACTOR_THIRD_AREA_EAST_APE, MogallForestActorScript);
+				if (gmFlagGet(FLAG_NYUNPA_TAUGHT_FORCE) == 0)
+				{
+					break;
+				}
+				if (gmFlagGet(FLAG_MOGALL_FOREST_KILLER_APE_BEATEN) == 0)
+				{
+					break;
+				}
+				gmFlagSet(FLAG_NYUNPA_ENLIGHTENED);
+				break;
+
+			case MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS:
+				gmFlagSet(FLAG_MOGALL_FOREST_KILLER_APE_BEATEN);
+				break;
 		}
 	}
 	return 0;
@@ -1685,7 +1668,7 @@ Sint32 scInit(void)
 #include "shared/floating_nut.c"
 
 #include "shared/pushed_actor_tables.c"
-/* clang-format off */
+// clang-format off
 
 #include "shared/field_effect_duration_scripts.c"
 
@@ -1695,7 +1678,7 @@ const Sint32 *FieldEffectDurationScripts[] = {
 	FieldEffectLongScript,
 };
 
-/* The script of each rock moved with Move, which draws it in greys. */
+// The script of each rock moved with Move, which draws it in greys.
 Sint32 MogallForestRockScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SET(SW_TIMER, SPRITE_COLOR_GREY),
@@ -1703,8 +1686,7 @@ Sint32 MogallForestRockScript[] = {
 	SC_END,
 };
 
-/* The script of each ape, at four fifths of its size, hidden while it hides, */
-/* and with its shadow off. */
+// The script of each ape, at four fifths of its size, hidden while it hides, and with its shadow off.
 Sint32 MogallForestActorScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(4) / 5),
 	SC_SET(SW_SCALE_Y, toFIXED(4) / 5),
@@ -1714,8 +1696,7 @@ Sint32 MogallForestActorScript[] = {
 	SC_END,
 };
 
-/* The script of each stump's blank actor, the target of Force, which stays */
-/* still with its sprite hidden. */
+// The script of each stump's blank actor, the target of Force, which stays still with its sprite hidden.
 Sint32 MogallForestHidingPlaceScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_Y, 0),
@@ -1978,7 +1959,7 @@ CUE MogallForestQuartzCues[] = {
 	{ CUE_TALK, ACTOR_SECOND_AREA_QUARTZ, CONDITION_ALWAYS, SCRIPT_REF(scMogallForestStartDjinnBattle) },
 	{ CUE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on
 
 CUE MogallForestKillerApeCues[] = {
 	EXIT_METATILE(MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_TO_STUMPS),
@@ -1994,38 +1975,42 @@ CUE MogallForestKillerApeCues[] = {
 	EXIT_METATILE(MOGALL_FOREST_KILLER_APE_RIVER_TO_BRIDGES),
 	EXIT_METATILE(MOGALL_FOREST_KILLER_APE_BRIDGES_TO_RIVER),
 	EXIT_METATILE(MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP),
-	{STEP_CUE_WALKING, METATILE_BEHAVIOR_MOGALL_FOREST_LOG, CONDITION_ALWAYS,
-		SCRIPT_REF(scMogallForestThirdAreaPushLog)},
-	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_MOGALL_FOREST_JUMP,
-		CONDITION_ALWAYS, SCRIPT_REF(scMogallForestThirdAreaJumpWest)},
-	{CUE_STEP, METATILE_BEHAVIOR_MOGALL_FOREST_BESIDE_LONE_STUMP,
-		FLAG_MOGALL_FOREST_LED_TO_KILLER_APE,
-		SCRIPT_REF(scMogallForestApeLeadsToKillerApe)},
-	{CUE_STEP, METATILE_BEHAVIOR_MOGALL_FOREST_BELOW_LONE_STUMP,
-		FLAG_MOGALL_FOREST_KILLER_APE_BEATEN,
-		SCRIPT_REF(scMogallForestKillerApeAttacks)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_AREA_NORTH_ROCK,
-		CONDITION_ALWAYS, SCRIPT_REF(scMogallForestThirdAreaUpdateNorthRock)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_AREA_SOUTH_ROCK,
-		FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED,
-		SCRIPT_REF(scMogallForestThirdAreaUpdateSouthRock)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_ATTACKING_APE_STUMP,
-		FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT,
-		SCRIPT_REF(scMogallForestThirdAreaApeAttacks)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_MIDDLE_APE_STUMP,
-		FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT,
-		SCRIPT_REF(scMogallForestThirdAreaMiddleApeShowsWay)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_WEST_APE_STUMP,
-		FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT,
-		SCRIPT_REF(scMogallForestThirdAreaWestApeShowsWay)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_EAST_APE_STUMP,
-		FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED,
-		SCRIPT_REF(scMogallForestThirdAreaEastApeHidesAgain)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_EAST_APE_STUMP,
-		FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT,
-		SCRIPT_REF(scMogallForestThirdAreaEastApeShowsWay)},
-	{EXAMINE_CUE(EXAMINE_CHEST), 100, FLAG_MOGALL_FOREST_ELVEN_SHIRT_CHEST,
-		FIND_ITEM(ITEM_ELVEN_SHIRT)},
+	{STEP_CUE_WALKING,
+                                             METATILE_BEHAVIOR_MOGALL_FOREST_LOG, CONDITION_ALWAYS,
+                                             SCRIPT_REF(scMogallForestThirdAreaPushLog)},
+	{STEP_CUE_WALKING_INTO(FACING_WEST),
+                                             METATILE_BEHAVIOR_MOGALL_FOREST_JUMP, CONDITION_ALWAYS,
+                                             SCRIPT_REF(scMogallForestThirdAreaJumpWest)},
+	{CUE_STEP,
+                                             METATILE_BEHAVIOR_MOGALL_FOREST_BESIDE_LONE_STUMP, FLAG_MOGALL_FOREST_LED_TO_KILLER_APE,
+                                             SCRIPT_REF(scMogallForestApeLeadsToKillerApe)},
+	{CUE_STEP,
+                                             METATILE_BEHAVIOR_MOGALL_FOREST_BELOW_LONE_STUMP, FLAG_MOGALL_FOREST_KILLER_APE_BEATEN,
+                                             SCRIPT_REF(scMogallForestKillerApeAttacks)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE),
+                                             ACTOR_THIRD_AREA_NORTH_ROCK, CONDITION_ALWAYS,
+                                             SCRIPT_REF(scMogallForestThirdAreaUpdateNorthRock)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE),
+                                             ACTOR_THIRD_AREA_SOUTH_ROCK, FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED,
+                                             SCRIPT_REF(scMogallForestThirdAreaUpdateSouthRock)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FORCE),
+                                             ACTOR_THIRD_AREA_ATTACKING_APE_STUMP, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT,
+                                             SCRIPT_REF(scMogallForestThirdAreaApeAttacks)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FORCE),
+                                             ACTOR_THIRD_AREA_MIDDLE_APE_STUMP, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT,
+                                             SCRIPT_REF(scMogallForestThirdAreaMiddleApeShowsWay)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FORCE),
+                                             ACTOR_THIRD_AREA_WEST_APE_STUMP, FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT,
+                                             SCRIPT_REF(scMogallForestThirdAreaWestApeShowsWay)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FORCE),
+                                             ACTOR_THIRD_AREA_EAST_APE_STUMP, FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED,
+                                             SCRIPT_REF(scMogallForestThirdAreaEastApeHidesAgain)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FORCE),
+                                             ACTOR_THIRD_AREA_EAST_APE_STUMP, FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT,
+                                             SCRIPT_REF(scMogallForestThirdAreaEastApeShowsWay)},
+	{EXAMINE_CUE(EXAMINE_CHEST),
+                                             100, FLAG_MOGALL_FOREST_ELVEN_SHIRT_CHEST,
+                                             FIND_ITEM(ITEM_ELVEN_SHIRT)},
 	{CUE_TABLE_END},
 };
 
@@ -2038,19 +2023,16 @@ CUE MogallForestSidePathsCues[] = {
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_EAST),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_SOUTH),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_EAST),
-	/* The two exit metatiles whose metatile behaviors are 11 and 12 take exits
-	   20 and 19, not their own numbers. */
-	{CUE_EXIT, 11, CONDITION_ALWAYS,
-		MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_WEST},
-	{CUE_EXIT, 12, CONDITION_ALWAYS,
-		MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_EAST},
+	// The two exit metatiles whose metatile behaviors are 11 and 12 take exits
+    // 20 and 19, not their own numbers.
+	{CUE_EXIT, 11, CONDITION_ALWAYS, MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_WEST},
+	{CUE_EXIT, 12, CONDITION_ALWAYS, MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_EAST},
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_CENTER_CLEARING),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_EAST_CLEARING),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_SOUTHWEST_CLEARING),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_NORTHWEST),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_SOUTHWEST),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_SOUTHEAST_CLEARING),
-	{EXAMINE_CUE(EXAMINE_SILENT), 100, FLAG_MOGALL_FOREST_PSYNERGY_STONE,
-		FIND_PSYNERGY_STONE},
+	{EXAMINE_CUE(EXAMINE_SILENT), 100, FLAG_MOGALL_FOREST_PSYNERGY_STONE, FIND_PSYNERGY_STONE},
 	{CUE_TABLE_END},
 };

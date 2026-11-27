@@ -1,149 +1,148 @@
-/* Sand: the leader sinking into the ground and moving as sand, the grains it
-   throws up, the event that ends it off sand, and the dust puff it ends with.
-   Part of field_psynergy.c. */
+// Sand: the leader sinking into the ground and moving as sand, the grains it throws up, the event
+// that ends it off sand, and the dust puff it ends with. Part of field_psynergy.c.
 
-/* The grains of sand thrown up round the leader, and how many of them are drawn
-   as it sinks and as it rises. */
-#define SAND_GRAIN_COUNT		64
-#define SAND_SINK_GRAINS		33
-#define SAND_RISE_GRAINS		30
-/* The leader's picture, 32 pixels square; Sand takes only a leader drawn so. */
-#define SAND_PICTURE_SIZE		32
-/* The phase the leader's sunk picture rises from, 1.5 less each tick. */
-#define SAND_RISE_PHASE			92
-/* An OAM attribute's high byte: the bits below its top two, the shape in
-   attribute 0 and the size in attribute 1, and the size bits of a sprite 32
-   pixels square. */
+// The grains of sand thrown up round the leader, and how many of them are drawn as it sinks and as
+// it rises.
+#define SAND_GRAIN_COUNT        64
+#define SAND_SINK_GRAINS        33
+#define SAND_RISE_GRAINS        30
+// The leader's picture, 32 pixels square; Sand takes only a leader drawn so.
+#define SAND_PICTURE_SIZE       32
+// The phase the leader's sunk picture rises from, 1.5 less each tick.
+#define SAND_RISE_PHASE         92
+// An OAM attribute's high byte: the bits below its top two, the shape in attribute 0 and the size
+// in attribute 1, and the size bits of a sprite 32 pixels square.
 #define OAM_BELOW_SHAPE_OR_SIZE 63
-#define OAM_SIZE_32X32_BYTE		(OBJ_SIZE_32X32 >> 24)
+#define OAM_SIZE_32X32_BYTE     (OBJ_SIZE_32X32 >> 24)
 
-/* Sand's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the leader's picture and
-   the copy it sinks into the ground, the grains of sand thrown up round it and
-   the sprite the sinking leader is drawn with. */
-typedef struct SAND_STATE {
-	/* The leader's picture, 8 bits a pixel. */
-	Uint8 picture[SAND_PICTURE_SIZE * SAND_PICTURE_SIZE];
-	/* The picture with its columns sunk by a wave. */
-	Uint8					sunken[SAND_PICTURE_SIZE * SAND_PICTURE_SIZE];
-	EFFECT_SPR				grainSprites[SAND_GRAIN_COUNT];
+// Sand's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the leader's picture and the copy it sinks into
+// the ground, the grains of sand thrown up round it and the sprite the sinking leader is drawn
+// with.
+typedef struct SAND_STATE
+{
+	// The leader's picture, 8 bits a pixel.
+	Uint8                   picture[SAND_PICTURE_SIZE * SAND_PICTURE_SIZE];
+	// The picture with its columns sunk by a wave.
+	Uint8                   sunken[SAND_PICTURE_SIZE * SAND_PICTURE_SIZE];
+	EFFECT_SPR              grainSprites[SAND_GRAIN_COUNT];
 	FIELD_PSYNERGY_PARTICLE grains[SAND_GRAIN_COUNT];
-	EFFECT_SPR				leader;
-	Uint8					unused[4];
+	EFFECT_SPR              leader;
+	Uint8                   unused[4];
 } SAND_STATE;
 
-/* The ROM's callers here are compiled against this form, which returns an
-   Sint32 where the definition returns a Uint8. */
+// The ROM's callers here are compiled against this form, which returns an Sint32 where the
+// definition returns a Uint8.
 Sint32 fdMapGridIsClimbableMetatile(Sint32 x, Sint32 z, Sint32 layer);
 
-/* fdActorCheckBlocked's bit for another solid actor overlapping the actor. */
+// fdActorCheckBlocked's bit for another solid actor overlapping the actor.
 #define BLOCKED_BY_ACTOR 2
 
-/* Why the Sand ends (fdPsynergyWatchSandGround). */
-typedef enum SAND_END {
-	SAND_GOES_ON = 0,
-	SAND_END_UPPER_LEVEL = 1, /* the leader is on a scene's upper level */
-	SAND_END_OFF_SAND = 2,
-	/* climbing as sand, it left the climbable metatiles */
-	SAND_END_OFF_CLIMB = 3,
-	/* climbing as sand, the metatile above is not one */
+// Why the Sand ends (fdPsynergyWatchSandGround).
+typedef enum SAND_END
+{
+	SAND_GOES_ON         = 0,
+	SAND_END_UPPER_LEVEL = 1, // the leader is on a scene's upper level
+	SAND_END_OFF_SAND    = 2,
+	// climbing as sand, it left the climbable metatiles
+	SAND_END_OFF_CLIMB   = 3,
+	// climbing as sand, the metatile above is not one
 	SAND_END_FACING_WALL = 4
 } SAND_END;
 
-/* Event of the Sand: ends it (sound ABILITY_SAND | ACT_PACKED) when the leader,
-   not blocked by another actor, stands off sand or on a scene's upper level
-   (MainRoutineStateWork.onUpperLevel), or while it climbs as sand it leaves a
-   climbable metatile or faces one that is not. */
+// Event of the Sand: ends it (sound ABILITY_SAND | ACT_PACKED) when the leader, not blocked by
+// another actor, stands off sand or on a scene's upper level (MainRoutineStateWork.onUpperLevel),
+// or while it climbs as sand it leaves a climbable metatile or faces one that is not.
 void fdPsynergyWatchSandGround(void)
 {
-	FIELD_STATE		   *field = RamHeapSlots->fieldState;
-	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
-	ACTOR			   *actor = fdActorLookup(party->leaderActorId);
-	Sint32				reason = SAND_GOES_ON;
+	FIELD_STATE        *field  = RamHeapSlots->fieldState;
+	MAIN_ROUTINE_STATE *party  = &MainRoutineStateWork;
+	ACTOR              *actor  = fdActorLookup(party->leaderActorId);
+	Sint32              reason = SAND_GOES_ON;
 
-	if(party->onUpperLevel != 0)
+	if (party->onUpperLevel != 0)
 		reason = SAND_END_UPPER_LEVEL;
-	if(fdMapGridIsSandMetatile(actor->x.fixed, actor->z.fixed, actor->layer) ==
-		0)
+	if (fdMapGridIsSandMetatile(actor->x.fixed, actor->z.fixed, actor->layer) == 0)
 		reason = SAND_END_OFF_SAND;
-	if(party->movementMode == LEADER_MOVEMENT_SAND && actor->userValue != 0 &&
-		actor->timer == 0) {
+	if (party->movementMode == LEADER_MOVEMENT_SAND && actor->userValue != 0 && actor->timer == 0)
+	{
 		FIXED x;
 		FIXED z;
 
-		if(fdMapGridIsClimbableMetatile(actor->x.fixed, actor->z.fixed, 2) == 0)
+		if (fdMapGridIsClimbableMetatile(actor->x.fixed, actor->z.fixed, 2) == 0)
 			reason = SAND_END_OFF_CLIMB;
 		x = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		z = (actor->z.fixed & FIELD_METATILE_MASK) - toFIXED(8);
-		if(fdMapGridIsClimbableMetatile(x, z, 2) == 0)
+		if (fdMapGridIsClimbableMetatile(x, z, 2) == 0)
 			reason = SAND_END_FACING_WALL;
 	}
-	if(reason != SAND_GOES_ON &&
-		(fdActorCheckBlocked(actor) & BLOCKED_BY_ACTOR) == 0)
+	if (reason != SAND_GOES_ON && (fdActorCheckBlocked(actor) & BLOCKED_BY_ACTOR) == 0)
 		field->psynergy = ABILITY_SAND | ACT_PACKED;
 }
 
-/* How a picture is stored. */
-#define PICTURE_FORMAT_TAGGED_LZ 1 /* one tagged LZ stream */
-#define PICTURE_FORMAT_COMPRESSED \
-	3 /* compressed, then run through the decoder */
+// How a picture is stored.
+#define PICTURE_FORMAT_TAGGED_LZ  1 // one tagged LZ stream
+#define PICTURE_FORMAT_COMPRESSED 3 // compressed, then run through the decoder
 
-/* A sprite layer (SPR_ANIMATION) as fdPsynergyDecodePicture reads it: how its
-   pictures are coded and the one shown. */
-typedef struct PICTURE_SOURCE {
-	Uint8		 unused[5];	 /* no code names it */
-	Uint8		 decodeMode; /* its colorMode */
-	Uint8		 priority;	 /* no code here names it */
-	Uint8		 format;	 /* its mode */
+// A sprite layer (SPR_ANIMATION) as fdPsynergyDecodePicture reads it: how its pictures are coded
+// and the one shown.
+typedef struct PICTURE_SOURCE
+{
+	Uint8        unused[5];               // no code names it
+	Uint8        decodeMode;              // its colorMode
+	Uint8        priority;                // no code here names it
+	Uint8        format;                  // its mode
 	const void **pictures;
-	Uint8		 unusedAfterPictures[10]; /* no code names it */
-	Uint8		 picture;
+	Uint8        unusedAfterPictures[10]; // no code names it
+	Uint8        picture;
 } PICTURE_SOURCE;
 
-typedef void (*PICTURE_DECODER)(
-	const void *source, void *destination, Sint32 mode);
+typedef void       (*PICTURE_DECODER)(const void *source, void *destination, Sint32 mode);
 
-/* The ARM picture decoder fdPsynergyDecodePicture copies into RAM. */
+// The ARM picture decoder fdPsynergyDecodePicture copies into RAM.
 extern const Uint8 BattleEffectDecodePictureCode[];
-/* The end of the part of the decoder that is copied. */
+// The end of the part of the decoder that is copied.
 extern const Uint8 BattleEffectDecodePictureCopyEnd[];
-/* The decoder with its tables and its state (ld_script.ld). The block is larger
-   than the copy, which stops before the state. */
-extern Uint8 BattleEffectDecodePictureBlockSize[];
+// The decoder with its tables and its state (ld_script.ld). The block is larger than the copy,
+// which stops before the state.
+extern Uint8       BattleEffectDecodePictureBlockSize[];
 
-/* Draws the current picture into a cleared buffer of the given size. The ARM
-   picture decoder runs from RAM: when no copy is loaded yet, this loads one for
-   the call and releases it afterwards. */
-void fdPsynergyDecodePicture(PICTURE_SOURCE *src, void *buf, Sint32 size)
+// Draws the current picture into a cleared buffer of the given size. The ARM picture decoder runs
+// from RAM: when no copy is loaded yet, this loads one for the call and releases it afterwards.
+void               fdPsynergyDecodePicture(PICTURE_SOURCE *src, void *buf, Sint32 size)
 {
-	Sint32			decoderLoaded = 1;
-	PICTURE_DECODER decode = RamHeapSlots->frameScratch;
+	Sint32          decoderLoaded = 1;
+	PICTURE_DECODER decode        = RamHeapSlots->frameScratch;
 
-	if(decode == NULL) {
-		syDMAXCopy(BattleEffectDecodePictureCode,
-			syHeapSlotAllocate(HEAP_SLOT_TICK_SCRATCH,
-				(Sint32)BattleEffectDecodePictureBlockSize),
-			DMA_COPY_WORDS((Uint32)(BattleEffectDecodePictureCopyEnd -
-							   BattleEffectDecodePictureCode) >>
-				2),
+	if (decode == NULL)
+	{
+		syDMAXCopy(
+			BattleEffectDecodePictureCode,
+			syHeapSlotAllocate(HEAP_SLOT_TICK_SCRATCH, (Sint32)BattleEffectDecodePictureBlockSize),
+			DMA_COPY_WORDS(
+				(Uint32)(BattleEffectDecodePictureCopyEnd - BattleEffectDecodePictureCode) >> 2),
 			REG_DMA3);
-		decode = RamHeapSlots->frameScratch;
+		decode        = RamHeapSlots->frameScratch;
 		decoderLoaded = 0;
 	}
 
 	syWordsClearEntry(buf, size);
-	if(src->format == PICTURE_FORMAT_TAGGED_LZ) {
+	if (src->format == PICTURE_FORMAT_TAGGED_LZ)
+	{
 		syDecompressTaggedLZ(src->pictures[src->picture], buf);
-	} else if(src->format == PICTURE_FORMAT_COMPRESSED) {
-		const void *stream =
-			syDecompressSpritePicture(src->pictures[src->picture], buf);
+	}
+	else if (src->format == PICTURE_FORMAT_COMPRESSED)
+	{
+		const void *stream = syDecompressSpritePicture(src->pictures[src->picture], buf);
 
-		if(stream != NULL)
+		if (stream != NULL)
 			decode(stream, buf, 0);
-	} else {
+	}
+	else
+	{
 		decode(src->pictures[src->picture], buf, src->decodeMode);
 	}
 
-	if(!decoderLoaded)
+	if (!decoderLoaded)
 		syHeapSlotRelease(HEAP_SLOT_TICK_SCRATCH);
 }
 
@@ -151,52 +150,59 @@ void fdPsynergyDecodePicture(PICTURE_SOURCE *src, void *buf, Sint32 size)
 #undef PICTURE_FORMAT_TAGGED_LZ
 #undef PICTURE_FORMAT_COMPRESSED
 
-/* fdPictureShiftColumnsByWave as the Sand sinks the leader into the ground:
-   each column's pixels below a wave line move down by phase (1.3 pixels a
-   step), those above it stay. */
+// fdPictureShiftColumnsByWave as the Sand sinks the leader into the ground: each column's pixels
+// below a wave line move down by phase (1.3 pixels a step), those above it stay.
 void fdPictureSinkColumnsByWave(Uint8 *src, Uint8 *dest, Sint32 phase)
 {
-	Sint32 width = SAND_PICTURE_SIZE;
+	Sint32 width  = SAND_PICTURE_SIZE;
 	Sint32 height = SAND_PICTURE_SIZE;
 	Sint32 column;
 	Sint32 row;
 
 	syWordsClear(dest, SAND_PICTURE_SIZE * SAND_PICTURE_SIZE);
-	for(column = 0; column < width; column++) {
+	for (column = 0; column < width; column++)
+	{
 		Sint32 wave = sySin(column * (TRIG_TURN / 8)) * 8 + toFIXED(8);
 
-		for(row = 0; row < height; row++) {
-			Sint32 base = phase * (toFIXED(13) / 10);
+		for (row = 0; row < height; row++)
+		{
+			Sint32 base      = phase * (toFIXED(13) / 10);
 			Sint32 rowOffset = row * toFIXED(4) - toFIXED(124);
-			Sint32 shift = base + rowOffset - wave;
+			Sint32 shift     = base + rowOffset - wave;
 
-			shift = FIXEDtoINT(shift);
-			if(shift < 0) {
+			shift            = FIXEDtoINT(shift);
+			if (shift < 0)
+			{
 				dest[row * width + column] = src[row * width + column];
-			} else if(shift + row < height) {
+			}
+			else if (shift + row < height)
+			{
 				dest[((shift + row) << 5) + column] = src[row * width + column];
 			}
 		}
 	}
 }
 
-/* Sets up the sprite the Sand draws the sinking leader as: the leader's depth,
-   priority, scale (three quarters on the world map) and place. */
+// Sets up the sprite the Sand draws the sinking leader as: the leader's depth, priority, scale
+// (three quarters on the world map) and place.
 void fdSandInitLeaderSprite(EFFECT_SPR *sprite, Sint32 tiles)
 {
 	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
-	FIELD_STATE		   *field = RamHeapSlots->fieldState;
-	FIXED				pos[3];
+	FIELD_STATE        *field = RamHeapSlots->fieldState;
+	FIXED               pos[3];
 
 	fdEffectSpriteInit(sprite, 16, 30, OBJ_SIZE_32X32, tiles);
-	sprite->depth = fdActorGetSpriteDepth(scene->caster);
-	sprite->oam.priority = fdActorGetSpritePriority(scene->caster);
+	sprite->depth         = fdActorGetSpriteDepth(scene->caster);
+	sprite->oam.priority  = fdActorGetSpritePriority(scene->caster);
 	sprite->oam.fullColor = 1;
-	sprite->oam.palette = 0;
-	if(field->mode == ACTOR_SYSTEM_WORLD_MAP) {
+	sprite->oam.palette   = 0;
+	if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
+	{
 		sprite->scaleX = toFIXED(3) / 4;
 		sprite->scaleY = toFIXED(3) / 4;
-	} else {
+	}
+	else
+	{
 		sprite->scaleX = scene->caster->scaleX;
 		sprite->scaleY = scene->caster->scaleY;
 	}
@@ -208,36 +214,37 @@ void fdSandInitLeaderSprite(EFFECT_SPR *sprite, Sint32 tiles)
 	sprite->y = pos[2];
 }
 
-/* Draws fdSandInitLeaderSprite's sprite. */
+// Draws fdSandInitLeaderSprite's sprite.
 void fdSandDrawLeaderSprite(void *sprite)
 {
 	fdEffectSpriteDraw(sprite);
 }
 
-/* One grain of sand thrown up round the leader as it sinks: 4 pixels out, or,
-   cast off sand (high), 2 pixels up and 2 out and drifting more slowly; drawn
-   small just in front of the leader. */
-void fdSandSpawnGrain(EFFECT_SPR *sprite, FIELD_PSYNERGY_PARTICLE *particle,
-	Sint32 unused, Sint32 tiles, Sint32 high)
+// One grain of sand thrown up round the leader as it sinks: 4 pixels out, or, cast off sand (high),
+// 2 pixels up and 2 out and drifting more slowly; drawn small just in front of the leader.
+void fdSandSpawnGrain(
+	EFFECT_SPR *sprite, FIELD_PSYNERGY_PARTICLE *particle, Sint32 unused, Sint32 tiles, Sint32 high)
 {
-	ACTOR *mainActor =
-		((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->caster;
-	FIXED pos[3];
-	FIXED y;
+	ACTOR *mainActor = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->caster;
+	FIXED  pos[3];
+	FIXED  y;
 
 	pos[0] = mainActor->x.fixed;
 	pos[1] = y = mainActor->y.fixed;
-	pos[2] = mainActor->z.fixed;
-	if(high) {
+	pos[2]     = mainActor->z.fixed;
+	if (high)
+	{
 		pos[1] = y + toFIXED(2);
 		syVectorAddPolarOffset(toFIXED(2), syRandom(), pos);
-	} else {
+	}
+	else
+	{
 		syVectorAddPolarOffset(toFIXED(4), syRandom(), pos);
 	}
 	SET_POSITION(particle, pos[0], pos[1], pos[2]);
 	pos[2] = 0;
 	pos[0] = 0;
-	if(high)
+	if (high)
 		syVectorAddPolarOffset(toFIXED(0.2), syRandom(), pos);
 	else
 		syVectorAddPolarOffset(toFIXED(0.8), syRandom(), pos);
@@ -245,38 +252,40 @@ void fdSandSpawnGrain(EFFECT_SPR *sprite, FIELD_PSYNERGY_PARTICLE *particle,
 	particle->velocityY = 0;
 	particle->velocityZ = pos[2];
 	fdEffectSpriteInit(sprite, 8, 8, OBJ_SIZE_16X16, tiles);
-	sprite->scaleX = toFIXED(1) / 5;
-	sprite->scaleY = toFIXED(1) / 5;
-	sprite->oam.priority = fdActorGetSpritePriority(mainActor);
-	sprite->depth = fdActorGetSpriteDepth(mainActor) + 2;
+	sprite->scaleX        = toFIXED(1) / 5;
+	sprite->scaleY        = toFIXED(1) / 5;
+	sprite->oam.priority  = fdActorGetSpritePriority(mainActor);
+	sprite->depth         = fdActorGetSpriteDepth(mainActor) + 2;
 	sprite->oam.fullColor = 1;
-	sprite->oam.palette = 0;
+	sprite->oam.palette   = 0;
 }
 
-/* Advances one particle by a tick. For its first 32 ticks its sprite steps
-   through eight pictures of eight tiles from tiles, four ticks each, grows by
-   a tenth of its size a tick to full size, is placed on screen at the
-   particle's position and drawn, and the particle moves on; after that only its
-   age counts on. Reached from fdPsynergyEndSand and fdPsynergySand. */
-void fdGrowingParticleUpdate(EFFECT_SPR *sprite,
-	FIELD_PSYNERGY_PARTICLE *particle, Sint32 unused, Sint32 tiles)
+// Advances one particle by a tick. For its first 32 ticks its sprite steps through eight pictures
+// of eight tiles from tiles, four ticks each, grows by a tenth of its size a tick to full size, is
+// placed on screen at the particle's position and drawn, and the particle moves on; after that only
+// its age counts on. Reached from fdPsynergyEndSand and fdPsynergySand.
+void fdGrowingParticleUpdate(EFFECT_SPR              *sprite,
+                             FIELD_PSYNERGY_PARTICLE *particle,
+                             Sint32                   unused,
+                             Sint32                   tiles)
 {
 	Sint32 pos[3];
 	Sint32 scale;
 	Sint32 picture;
 
-	if((Uint32)particle->timer <= 31) {
-		picture = (particle->timer >> 2) & 7;
+	if ((Uint32)particle->timer <= 31)
+	{
+		picture           = (particle->timer >> 2) & 7;
 		sprite->oam.index = tiles + picture * 8;
-		scale = sprite->scaleX + toFIXED(1) / 10;
-		sprite->scaleX = scale;
-		if(scale > toFIXED(1))
+		scale             = sprite->scaleX + toFIXED(1) / 10;
+		sprite->scaleX    = scale;
+		if (scale > toFIXED(1))
 			scale = toFIXED(1);
 		sprite->scaleX = scale;
 		sprite->scaleY = scale;
-		pos[0] = particle->x;
-		pos[1] = particle->y;
-		pos[2] = particle->z;
+		pos[0]         = particle->x;
+		pos[1]         = particle->y;
+		pos[2]         = particle->z;
 		fdCameraWorldToScreen(pos);
 		sprite->x = pos[0];
 		sprite->y = pos[2];
@@ -288,47 +297,46 @@ void fdGrowingParticleUpdate(EFFECT_SPR *sprite,
 
 struct PENDING_CUE;
 
-/* Gives an actor's first sprite layer another sprite's animations. */
+// Gives an actor's first sprite layer another sprite's animations.
 void fdActorSetFirstSpriteAnimationStub(ACTOR *actor, Sint32 index);
-/* Sets a sprite's first layer to a SPR_COL_MODE and redraws it. */
+// Sets a sprite's first layer to a SPR_COL_MODE and redraws it.
 void fdSpriteSetFirstAnimationColorModeStub(void *animation, Sint32 value);
 
-/* Ends Sand: the leader rises out of the ground in a spray of grains and takes
-   its own sprite back; on sand, the place's Sand script then runs. */
+// Ends Sand: the leader rises out of the ground in a spray of grains and takes its own sprite back;
+// on sand, the place's Sand script then runs.
 void fdPsynergyEndSand(void)
 {
-	SAND_STATE *state =
-		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(SAND_STATE));
-	FIELD_EFFECT_STATE		*effect = RamHeapSlots->fieldEffectState;
-	FIELD_STATE				*field = RamHeapSlots->fieldState;
-	Sint32					 pictureEntry;
-	ACTOR					*owner = effect->caster;
-	Sint32					 particleEntry;
-	Sint32					 particleTiles;
-	Sint32					 sprite;
+	SAND_STATE         *state  = syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(SAND_STATE));
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
+	FIELD_STATE        *field  = RamHeapSlots->fieldState;
+	Sint32              pictureEntry;
+	ACTOR              *owner = effect->caster;
+	Sint32              particleEntry;
+	Sint32              particleTiles;
+	Sint32              sprite;
 	FIELD_PSYNERGY_PARTICLE *particle;
-	EFFECT_SPR				*particleSprite;
-	Uint8					*animation;
-	Sint32					 pictureOffset;
-	Sint32					 frame;
-	Sint32					 i;
-	Sint32					 delay;
-	Sint32					 mask;
+	EFFECT_SPR              *particleSprite;
+	Uint8                   *animation;
+	Sint32                   pictureOffset;
+	Sint32                   frame;
+	Sint32                   i;
+	Sint32                   delay;
+	Sint32                   mask;
 
 	fdPsynergyMarkWorldMapTilesUsed();
 	MainRoutineStateWork.sandActive = 0;
 	fdActorSetOthersPaused(owner, 1, 0);
 	syCloseEvent(fdPsynergyWatchSandGround);
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_DUST_PUFF_A), state);
-	particleEntry = syVRAMCacheFindFreeEntry();
-	particleTiles = syVRAMCacheLoad(particleEntry, 2048, state);
-	i = 0;
-	particle = state->grains;
-	delay = 0;
+	particleEntry  = syVRAMCacheFindFreeEntry();
+	particleTiles  = syVRAMCacheLoad(particleEntry, 2048, state);
+	i              = 0;
+	particle       = state->grains;
+	delay          = 0;
 	particleSprite = state->grainSprites;
-	for(; i < SAND_GRAIN_COUNT; i++) {
-		fdSandSpawnGrain(
-			particleSprite, particle, i, particleTiles, field->standing);
+	for (; i < SAND_GRAIN_COUNT; i++)
+	{
+		fdSandSpawnGrain(particleSprite, particle, i, particleTiles, field->standing);
 		particle->timer = delay;
 		particleSprite++;
 		delay -= 2;
@@ -336,71 +344,77 @@ void fdPsynergyEndSand(void)
 	}
 	fdCameraMoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	owner->motionFlags = 0;
-	mask = OAM_BELOW_SHAPE_OR_SIZE;
+	mask               = OAM_BELOW_SHAPE_OR_SIZE;
 	fdActorSetPosAndResetMotionStub(
 		owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
-	fdActorSetFirstSpriteAnimationStub(
-		owner, MainRoutineStateWork.leaderActorId);
-	/* The image's OAM shape and size: square, 32 by 32 pixels. */
+	fdActorSetFirstSpriteAnimationStub(owner, MainRoutineStateWork.leaderActorId);
+	// The image's OAM shape and size: square, 32 by 32 pixels.
 	((Uint8 *)owner->sprite)[5] &= mask;
-	mask &= ((Uint8 *)owner->sprite)[7];
-	mask |= OAM_SIZE_32X32_BYTE;
-	((Uint8 *)owner->sprite)[7] = mask;
-	if(field->mode == ACTOR_SYSTEM_WORLD_MAP)
+	mask                        &= ((Uint8 *)owner->sprite)[7];
+	mask                        |= OAM_SIZE_32X32_BYTE;
+	((Uint8 *)owner->sprite)[7]  = mask;
+	if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
 		((SPR *)owner->sprite)->scale = toFIXED(3) / 4;
 	owner->facing = DEGtoANG(90);
 	fdActorSelectAnimationStub(owner, 0);
 	fdSpriteSetFirstAnimationColorModeStub(owner->sprite, SPRITE_COLOR_HIDDEN);
 	sySynch(1);
 	fdSpriteSetFirstAnimationColorModeStub(owner->sprite, SPRITE_COLOR_NORMAL);
-	fdPsynergyDecodePicture(((SPR *)owner->sprite)->entries[0], state->picture,
-		sizeof(state->picture));
+	fdPsynergyDecodePicture(
+		((SPR *)owner->sprite)->entries[0], state->picture, sizeof(state->picture));
 	fdSpriteSetFirstAnimationColorModeStub(owner->sprite, SPRITE_COLOR_HIDDEN);
 	pictureEntry = syVRAMCacheFindFreeEntry();
-	sprite = syVRAMCacheLoad(pictureEntry, sizeof(state->picture), NULL);
+	sprite       = syVRAMCacheLoad(pictureEntry, sizeof(state->picture), NULL);
 	fdSandInitLeaderSprite(&state->leader, sprite);
 	sySynch(1);
 
 	frame = 0;
-	for(; frame < 78; frame++) {
-		if(frame == 0)
+	for (; frame < 78; frame++)
+	{
+		if (frame == 0)
 			sySoundPlayStub(SE_SAND_END);
-		if(frame <= 64) {
+		if (frame <= 64)
+		{
 			fdPictureSinkColumnsByWave(
 				state->picture, state->sunken, SAND_RISE_PHASE - frame * 3 / 2);
 			pictureOffset = sprite * TILE_SIZE_4BPP;
-			((void (*)(void *, Sint32, Sint32,
-				void *))RamHeapSlots->pictureUploader)(state->sunken,
-				SAND_PICTURE_SIZE, SAND_PICTURE_SIZE,
+			((void (*)(void *, Sint32, Sint32, void *))RamHeapSlots->pictureUploader)(
+				state->sunken,
+				SAND_PICTURE_SIZE,
+				SAND_PICTURE_SIZE,
 				(Uint8 *)OBJ_VRAM0 + pictureOffset);
 			fdSandDrawLeaderSprite(&state->leader);
 		}
-		if(frame == 66) {
+		if (frame == 66)
+		{
 			fdActorSelectAnimationStub(owner, 1);
-			fdSpriteSetFirstAnimationColorModeStub(
-				owner->sprite, SPRITE_COLOR_NORMAL);
-			fdActorSetSpriteFlagsStub(
-				fdActorGetById(effect->casterId), SPRITE_FLAG_SHADOW);
+			fdSpriteSetFirstAnimationColorModeStub(owner->sprite, SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteFlagsStub(fdActorGetById(effect->casterId), SPRITE_FLAG_SHADOW);
 			fdCameraFollowActor(effect->casterId, 1);
 			sySoundPlayStub(SE_SAND_EMERGE);
-			if(field->mode == ACTOR_SYSTEM_WORLD_MAP) {
+			if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
+			{
 				MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WORLD_MAP;
-				owner->motionFlags = ACTOR_FALLS;
-			} else {
-				MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-				owner->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				owner->motionFlags                = ACTOR_FALLS;
 			}
-			if(field->standing == 0)
+			else
+			{
+				MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
+				owner->motionFlags                = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			}
+			if (field->standing == 0)
 				fdRunPsynergyScript(
 					fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_FADES),
-						effect->fieldPsynergy,
-						fdSelectPsynergyTarget(effect->fieldPsynergy)),
-					effect->casterId, -1);
+				                      effect->fieldPsynergy,
+				                      fdSelectPsynergyTarget(effect->fieldPsynergy)),
+					effect->casterId,
+					-1);
 		}
-		i = 0;
-		particle = state->grains;
+		i              = 0;
+		particle       = state->grains;
 		particleSprite = state->grainSprites;
-		for(; i < SAND_RISE_GRAINS; i++) {
+		for (; i < SAND_RISE_GRAINS; i++)
+		{
 			fdGrowingParticleUpdate(particleSprite, particle, i, particleTiles);
 			particleSprite++;
 			particle++;
@@ -413,62 +427,59 @@ void fdPsynergyEndSand(void)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/* Sand cast on a target: runs fdPsynergySand. */
+// Sand cast on a target: runs fdPsynergySand.
 void fdPsynergySandOnTarget(void)
 {
 	fdPsynergySand();
 }
 
-/* Sand: the leader spins and sinks into the ground in a spray of grains, then
-   moves on as a mound of sand (LEADER_MOVEMENT_SAND, or
-   LEADER_MOVEMENT_WORLD_SAND on the World Map) until fdPsynergyWatchSandGround
-   ends it. Off sand it rises again at once; a leader whose sprite is not 32 by
-   32 pixels does nothing. */
+// Sand: the leader spins and sinks into the ground in a spray of grains, then moves on as a mound
+// of sand (LEADER_MOVEMENT_SAND, or LEADER_MOVEMENT_WORLD_SAND on the World Map) until
+// fdPsynergyWatchSandGround ends it. Off sand it rises again at once; a leader whose sprite is not
+// 32 by 32 pixels does nothing.
 void fdPsynergySand(void)
 {
-	SAND_STATE *state =
-		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(SAND_STATE));
-	FIELD_EFFECT_STATE		*effect = RamHeapSlots->fieldEffectState;
-	FIELD_STATE				*field = RamHeapSlots->fieldState;
-	ACTOR					*owner;
-	Sint32					 pictureEntry;
-	Sint32					 particleEntry;
-	Sint32					 particleTiles;
-	FIXED					 savedY;
-	Uint8					 savedFlags;
-	Uint8					*motionFlags;
-	Sint32					 pictureTiles;
-	EFFECT_SPR				*sprite;
+	SAND_STATE         *state  = syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(SAND_STATE));
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
+	FIELD_STATE        *field  = RamHeapSlots->fieldState;
+	ACTOR              *owner;
+	Sint32              pictureEntry;
+	Sint32              particleEntry;
+	Sint32              particleTiles;
+	FIXED               savedY;
+	Uint8               savedFlags;
+	Uint8              *motionFlags;
+	Sint32              pictureTiles;
+	EFFECT_SPR         *sprite;
 	FIELD_PSYNERGY_PARTICLE *particle;
-	Sint32					 frame;
-	Sint32					 delay;
-	Sint32					 i;
+	Sint32                   frame;
+	Sint32                   delay;
+	Sint32                   i;
 
-	owner = effect->caster;
-	savedY = owner->y.fixed;
+	owner       = effect->caster;
+	savedY      = owner->y.fixed;
 	motionFlags = &owner->motionFlags;
-	savedFlags = *motionFlags;
-	if(((SPR *)owner->sprite)->width == SAND_PICTURE_SIZE &&
-		((SPR *)owner->sprite)->height == SAND_PICTURE_SIZE) {
+	savedFlags  = *motionFlags;
+	if (((SPR *)owner->sprite)->width == SAND_PICTURE_SIZE
+	    && ((SPR *)owner->sprite)->height == SAND_PICTURE_SIZE)
+	{
 		fdPsynergyMarkWorldMapTilesUsed();
 		fdActorSetOthersPaused(owner, 1, 0);
-		if(fdMapGridIsSandMetatile(
-			   owner->x.fixed, owner->z.fixed, owner->layer) == 0)
+		if (fdMapGridIsSandMetatile(owner->x.fixed, owner->z.fixed, owner->layer) == 0)
 			field->standing = 1;
 		else
 			field->standing = 0;
 		fdPsynergyFadeToCastColor();
-		syDecompressTaggedLZ(
-			syResourceGetTableEntry(RESOURCE_DUST_PUFF_A), state);
+		syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_DUST_PUFF_A), state);
 		particleEntry = syVRAMCacheFindFreeEntry();
 		particleTiles = syVRAMCacheLoad(particleEntry, 2048, state);
-		i = 0;
-		particle = state->grains;
-		delay = -12;
-		sprite = state->grainSprites;
-		for(; i < SAND_GRAIN_COUNT; i++) {
-			fdSandSpawnGrain(
-				sprite, particle, i, particleTiles, field->standing);
+		i             = 0;
+		particle      = state->grains;
+		delay         = -12;
+		sprite        = state->grainSprites;
+		for (; i < SAND_GRAIN_COUNT; i++)
+		{
+			fdSandSpawnGrain(sprite, particle, i, particleTiles, field->standing);
 			particle->timer = delay;
 			sprite++;
 			delay -= 2;
@@ -476,74 +487,74 @@ void fdPsynergySand(void)
 		}
 		fdCameraMoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 		fdBattleEffectSetObjectUpdateMode(effect->caster, CASTER_LOOK_NORMAL);
-		fdActorSetPosAndResetMotionStub(
-			owner, owner->x.fixed, owner->y.fixed, owner->z.fixed);
+		fdActorSetPosAndResetMotionStub(owner, owner->x.fixed, owner->y.fixed, owner->z.fixed);
 		*motionFlags = 0;
 		sySynch(2);
-		for(frame = 0; frame < 40; frame++) {
-			if(frame > 0)
+		for (frame = 0; frame < 40; frame++)
+		{
+			if (frame > 0)
 				owner->y.fixed += toFIXED(9) / 40;
-			if(frame & 31)
+			if (frame & 31)
 				sySoundPlayStub(SE_SPIRAL);
 			owner->facing += DEGtoANG(45);
 			sySynch(1);
 		}
 		owner->facing = DEGtoANG(90);
 		sySynch(1);
-		fdPsynergyDecodePicture(
-			(PICTURE_SOURCE *)((SPR *)owner->sprite)->entries[0],
-			state->picture, sizeof(state->picture));
+		fdPsynergyDecodePicture((PICTURE_SOURCE *)((SPR *)owner->sprite)->entries[0],
+		                        state->picture,
+		                        sizeof(state->picture));
 		pictureEntry = syVRAMCacheFindFreeEntry();
-		pictureTiles =
-			syVRAMCacheLoad(pictureEntry, sizeof(state->picture), NULL);
+		pictureTiles = syVRAMCacheLoad(pictureEntry, sizeof(state->picture), NULL);
 		fdSandInitLeaderSprite(&state->leader, pictureTiles);
 		frame = 15;
-		for(; frame <= 92; frame++) {
-			fdPictureSinkColumnsByWave(
-				state->picture, state->sunken, frame * 3 / 2);
-			((void (*)(void *, Sint32, Sint32,
-				void *))RamHeapSlots->pictureUploader)(state->sunken,
-				SAND_PICTURE_SIZE, SAND_PICTURE_SIZE,
+		for (; frame <= 92; frame++)
+		{
+			fdPictureSinkColumnsByWave(state->picture, state->sunken, frame * 3 / 2);
+			((void (*)(void *, Sint32, Sint32, void *))RamHeapSlots->pictureUploader)(
+				state->sunken,
+				SAND_PICTURE_SIZE,
+				SAND_PICTURE_SIZE,
 				(Uint8 *)OBJ_VRAM0 + pictureTiles * TILE_SIZE_4BPP);
 			fdSandDrawLeaderSprite(&state->leader);
-			i = 0;
+			i        = 0;
 			particle = state->grains;
-			sprite = state->grainSprites;
-			for(; i < SAND_SINK_GRAINS; i++) {
+			sprite   = state->grainSprites;
+			for (; i < SAND_SINK_GRAINS; i++)
+			{
 				fdGrowingParticleUpdate(sprite, particle, i, particleTiles);
 				sprite++;
 				particle++;
 			}
-			if(frame == 16)
-				fdSpriteSetFirstAnimationColorModeStub(
-					owner->sprite, SPRITE_COLOR_HIDDEN);
-			if(frame == 45)
+			if (frame == 16)
+				fdSpriteSetFirstAnimationColorModeStub(owner->sprite, SPRITE_COLOR_HIDDEN);
+			if (frame == 45)
 				sySoundPlayStub(SE_WHOOSH);
-			if(frame == 60) {
+			if (frame == 60)
+			{
 				fdActorSetFirstSpriteAnimationStub(owner, SPRITE_SAND_RIPPLE);
-				/* The image's OAM shape and size: 16 by 16 pixels. */
+				// The image's OAM shape and size: 16 by 16 pixels.
 				((FIELD_SPR *)owner->sprite)->shape = OBJ_SHAPE_SQUARE;
-				((FIELD_SPR *)owner->sprite)->size = 1;
+				((FIELD_SPR *)owner->sprite)->size  = 1;
 				fdActorSelectAnimationStub(owner, 1);
 				fdActorSetSpriteFlagsStub(fdActorGetById(effect->casterId), 0);
 				fdCameraFollowActor(effect->casterId, 1);
 				owner->y.fixed = savedY;
-				*motionFlags = savedFlags;
+				*motionFlags   = savedFlags;
 			}
-			if(frame == 61)
-				fdSpriteSetFirstAnimationColorModeStub(
-					owner->sprite, SPRITE_COLOR_NORMAL);
+			if (frame == 61)
+				fdSpriteSetFirstAnimationColorModeStub(owner->sprite, SPRITE_COLOR_NORMAL);
 			sySynch(1);
 		}
-		if(field->mode == ACTOR_SYSTEM_WORLD_MAP)
+		if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
 			MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WORLD_SAND;
 		else
 			MainRoutineStateWork.movementMode = LEADER_MOVEMENT_SAND;
-		owner->timer = 0;
-		owner->userValue = 0;
-		field->sandTrailPriority = 3;
+		owner->timer                    = 0;
+		owner->userValue                = 0;
+		field->sandTrailPriority        = 3;
 		MainRoutineStateWork.sandActive = 1;
-		if(field->standing == 0)
+		if (field->standing == 0)
 			sySetEvent(fdPsynergyWatchSandGround, EVENT_PASS_TICK);
 		fdActorSetOthersPaused(owner, 0, ANIM_STEP_NORMAL);
 		syVRAMCacheFreeEntry(pictureEntry);
@@ -551,7 +562,7 @@ void fdPsynergySand(void)
 		fdPsynergyFadeFromCastColor();
 	}
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
-	if(field->standing != 0)
+	if (field->standing != 0)
 		fdPsynergyEndSand();
 }
 

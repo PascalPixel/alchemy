@@ -1,30 +1,30 @@
 #ifndef ALCHEMY_CHARACTER_IDS_H
 #define ALCHEMY_CHARACTER_IDS_H
 
-/* Character numbers, with each character's Japanese name, and the portraits. */
+// Character numbers, with each character's Japanese name, and the portraits.
 
-/* The characters, one for each row of CharacterDefinitionTable
-   (character_table.c) in order; unit ids below ENEMY_ID_FIRST are these. */
-typedef enum CHARACTER_ID {
-	ISAAC, /* Robin */
-	GARET, /* Jerald */
+// The characters, one for each row of CharacterDefinitionTable (character_table.c) in order; unit
+// ids below ENEMY_ID_FIRST are these.
+typedef enum CHARACTER_ID
+{
+	ISAAC, // Robin
+	GARET, // Jerald
 	IVAN,
-	MIA,   /* Mary */
-	FELIX, /* Garcia */
-	JENNA, /* Jasmine */
+	MIA,   // Mary
+	FELIX, // Garcia
+	JENNA, // Jasmine
 	SHEBA,
-	PIERS /* Picard */
+	PIERS  // Picard
 } CHARACTER_ID;
 
-/* The portraits, one for each row of the portrait icons (UiIcons,
-   graphics/ui/icons/icons.tsv) in order; rows 8 to 15 and 65 to 79 are empty
-   and have no names. A character's portrait is its character id.
-   mnIconLoadWithPalette takes a portrait number below PORTRAIT_SPRITE_MAP_FIRST
-   as its row, and the other speakers' portraits, numbered from it
-   (mnPortraitGetForSpeaker), as the rows from PORTRAIT_JUPITER_DJINNI on; each
-   of those is the face of the speaker whose sprite PortraitSpriteMap pairs
-   with it, and takes that sprite's name. */
-typedef enum PORTRAIT_ID {
+// The portraits, one for each row of the portrait icons (UiIcons, graphics/ui/icons/icons.tsv) in
+// order; rows 8 to 15 and 65 to 79 are empty and have no names. A character's portrait is its
+// character id. mnIconLoadWithPalette takes a portrait number below PORTRAIT_SPRITE_MAP_FIRST as
+// its row, and the other speakers' portraits, numbered from it (mnPortraitGetForSpeaker), as the
+// rows from PORTRAIT_JUPITER_DJINNI on; each of those is the face of the speaker whose sprite
+// PortraitSpriteMap pairs with it, and takes that sprite's name.
+typedef enum PORTRAIT_ID
+{
 	PORTRAIT_ISAAC,
 	PORTRAIT_GARET,
 	PORTRAIT_IVAN,
@@ -79,15 +79,15 @@ typedef enum PORTRAIT_ID {
 	PORTRAIT_JENNA_CHILD,
 	PORTRAIT_FELIX_MASKED,
 	PORTRAIT_TRET_WRATHFUL,
-	/* The row PortraitSpriteMap pairs with SPRITE_FELIX, drawn from
-	   icons.tsv's FELIX, as PORTRAIT_FELIX is. */
+	// The row PortraitSpriteMap pairs with SPRITE_FELIX, drawn from icons.tsv's FELIX, as
+	// PORTRAIT_FELIX is.
 	PORTRAIT_FELIX_UNMASKED,
 	PORTRAIT_INVISIBLE_BABI,
 	PORTRAIT_FARAN
 } PORTRAIT_ID;
 
-/* The portrait number of PortraitSpriteMap's first speaker: the speakers that
-   are no playable character are numbered from it. */
+// The portrait number of PortraitSpriteMap's first speaker: the speakers that are no playable
+// character are numbered from it.
 #define PORTRAIT_SPRITE_MAP_FIRST 128
 
 #endif

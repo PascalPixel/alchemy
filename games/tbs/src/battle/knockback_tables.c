@@ -1,9 +1,8 @@
-/* How far, how fast and how high each knockback sends a unit, by variant
-   (BATTLE_KNOCKBACK). */
+// How far, how fast and how high each knockback sends a unit, by variant (BATTLE_KNOCKBACK).
 
 #include "battle/battle.h"
 
-/* clang-format off */
+// clang-format off
 FIXED BattleKnockbackAcceleration[] = {
 	[KNOCKBACK_NUDGE]  = toFIXED(1),
 	[KNOCKBACK_HOP]    = toFIXED(1),
@@ -47,7 +46,7 @@ Sint32 BattleKnockbackDistancePercent[] = {
 	[KNOCKBACK_BOUNCE] = 100,
 	[KNOCKBACK_JOLT]   = 100,
 };
-/* clang-format on */
+// clang-format on
 
-/* Unused: three words after the knockback tables that no code names. */
+// Unused: three words after the knockback tables that no code names.
 Sint32 BattleKnockbackUnusedWords[] = {0, 20, 27};

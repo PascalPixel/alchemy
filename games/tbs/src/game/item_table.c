@@ -1,17 +1,16 @@
-/* Every item, by item id: its price, what it is and who can equip it, the
-   Attack and Defense it adds, its unleash, what it does while worn, and the
-   ability it is used for. The icon is its picture's number in ItemIcons. */
+// Every item, by item id: its price, what it is and who can equip it, the Attack and Defense it
+// adds, its unleash, what it does while worn, and the ability it is used for. The icon is its
+// picture's number in ItemIcons.
 
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "game/game.h"
 
-/* A weapon's chance to unleash, in percent, as unleashChance keeps it: in steps
-   of 5 percent. Every weapon that unleashes does so 35 percent of the time,
-   before what other equipment adds. */
+// A weapon's chance to unleash, in percent, as unleashChance keeps it: in steps of 5 percent. Every
+// weapon that unleashes does so 35 percent of the time, before what other equipment adds.
 #define UNLEASH_PERCENT(percent) ((percent) / 5)
 
-/* clang-format off */
+// clang-format off
 const ITEM_DEFINITION ItemDefinitionTable[] = {
 	[ITEM_NONE] = {
 		.element = ELEMENT_NONE,
@@ -1765,9 +1764,7 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.element = ELEMENT_NONE,
 		.effects = {{.kind = EQUIP_EFFECT_CURSE_REMOVABLE}},
 	},
-	/* Spares: one placeholder weapon for Isaac copied to every row, which would */
-	/* unleash Move on every attack. Nothing gives them and the text has no */
-	/* names for them. */
+	// Spares: one placeholder weapon for Isaac copied to every row, which would unleash Move on every attack. Nothing gives them and the text has no names for them.
 	[ITEM_SPARE_FIRST ... ITEM_SPARE_LAST] = {
 		.price = 100,
 		.type = ITEM_TYPE_WEAPON,
@@ -1780,4 +1777,4 @@ const ITEM_DEFINITION ItemDefinitionTable[] = {
 		.effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
 	},
 };
-/* clang-format on */
+// clang-format on

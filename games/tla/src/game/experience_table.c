@@ -1,21 +1,20 @@
-/* Each character's element group, what the data transfer from The Broken Seal
-   copies and hands out, and the experience each character needs for each level.
-   Part of game.c. */
+// Each character's element group, what the data transfer from The Broken Seal copies and hands out,
+// and the experience each character needs for each level. Part of game.c.
 
-/* Each character's element group, as The Broken Seal has it. */
+// Each character's element group, as The Broken Seal has it.
 const Uint8 CharacterElementGroupTable[] = {
 	[ISAAC] = ELEMENT_GROUP_VENUS_MARS,
 	[GARET] = ELEMENT_GROUP_VENUS_MARS,
-	[IVAN] = ELEMENT_GROUP_MERCURY_JUPITER,
-	[MIA] = ELEMENT_GROUP_MERCURY_JUPITER,
+	[IVAN]  = ELEMENT_GROUP_MERCURY_JUPITER,
+	[MIA]   = ELEMENT_GROUP_MERCURY_JUPITER,
 	[FELIX] = ELEMENT_GROUP_VENUS_MARS,
 	[JENNA] = ELEMENT_GROUP_VENUS_MARS,
 	[SHEBA] = ELEMENT_GROUP_MERCURY_JUPITER,
 	[PIERS] = ELEMENT_GROUP_MERCURY_JUPITER,
 };
 
-/* The six flags of The Broken Seal's save gmDataTransferApply copies into
-   FLAG_TRANSFERRED_DODONPA_LOCKED_UP and the five after it, in that order. */
+// The six flags of The Broken Seal's save gmDataTransferApply copies into
+// FLAG_TRANSFERRED_DODONPA_LOCKED_UP and the five after it, in that order.
 const Uint16 DataTransferFlags[TRANSFERRED_FLAG_COUNT] = {
 	FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP,
 	FLAG_BROKEN_SEAL_WON_COLOSSO,
@@ -25,20 +24,19 @@ const Uint16 DataTransferFlags[TRANSFERRED_FLAG_COUNT] = {
 	FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES,
 };
 
-/* The percent chance that gmDataTransferGiveDefaultDjinn hands out each of The
-   Broken Seal's seven Djinn of each element, one row per element. */
-const Sint16 DataTransferDjinnChances[ELEMENT_COUNT]
-									 [TRANSFERRED_DJINN_PER_ELEMENT] = {
-										 {100, 70, 70, 30, 40, 50, 20},
-										 {100, 50, 70, 70, 30, 30, 70},
-										 {70, 50, 30, 60, 70, 40, 70},
-										 {50, 50, 70, 50, 20, 70, 70},
+// The percent chance that gmDataTransferGiveDefaultDjinn hands out each of The Broken Seal's seven
+// Djinn of each element, one row per element.
+const Sint16 DataTransferDjinnChances[ELEMENT_COUNT][TRANSFERRED_DJINN_PER_ELEMENT] = {
+	{100, 70, 70, 30, 40, 50, 20},
+	{100, 50, 70, 70, 30, 30, 70},
+	{70,  50, 30, 60, 70, 40, 70},
+	{50,  50, 70, 50, 20, 70, 70},
 };
 
-/* Experience per level, 99 levels for each character in turn. */
-/* clang-format off */
+// Experience per level, 99 levels for each character in turn.
+// clang-format off
 const Uint32 CharacterLevelExpTable[] = {
-	/* Isaac */
+	// Isaac
 	0, 24, 67, 144, 283, 519, 873, 1369,
 	2039, 2910, 3999, 5306, 6861, 8696, 10843, 13334,
 	16224, 19548, 23371, 27767, 32778, 38491, 45004, 52429,
@@ -52,7 +50,7 @@ const Uint32 CharacterLevelExpTable[] = {
 	5475682, 5619053, 5762424, 5905795, 6049166, 6192537, 6335908, 6479279,
 	6622650, 6766021, 6909392, 7052763, 7196134, 7339505, 7482876, 7626247,
 	7769618, 7912989, 8056360,
-	/* Garet */
+	// Garet
 	0, 30, 84, 176, 332, 582, 957, 1482,
 	2191, 3113, 4265, 5647, 7292, 9233, 11504, 14138,
 	17193, 20706, 24746, 29271, 34339, 40015, 46372, 53492,
@@ -66,7 +64,7 @@ const Uint32 CharacterLevelExpTable[] = {
 	5610317, 5755827, 5901337, 6046847, 6192357, 6337867, 6483377, 6628887,
 	6774397, 6919907, 7065417, 7210927, 7356437, 7501947, 7647457, 7792967,
 	7938477, 8083987, 8229497,
-	/* Ivan */
+	// Ivan
 	0, 32, 90, 194, 350, 568, 895, 1418,
 	2150, 3102, 4292, 5720, 7419, 9424, 11770, 14491,
 	17647, 21276, 25449, 30248, 35719, 41956, 49066, 57171,
@@ -80,7 +78,7 @@ const Uint32 CharacterLevelExpTable[] = {
 	5718463, 5869880, 6021297, 6172714, 6324131, 6475548, 6626965, 6778382,
 	6929799, 7081216, 7232633, 7384050, 7535467, 7686884, 7838301, 7989718,
 	8141135, 8292552, 8443969,
-	/* Mia */
+	// Mia
 	0, 31, 87, 188, 350, 609, 997, 1540,
 	2273, 3226, 4341, 5657, 7197, 8999, 11107, 13594,
 	16529, 19992, 24078, 28899, 34395, 40660, 47802, 55944,
@@ -94,7 +92,7 @@ const Uint32 CharacterLevelExpTable[] = {
 	5653987, 5801523, 5949059, 6096595, 6244131, 6391667, 6539203, 6686739,
 	6834275, 6981811, 7129347, 7276883, 7424419, 7571955, 7719491, 7867027,
 	8014563, 8162099, 8309635,
-	/* Felix */
+	// Felix
 	0, 25, 70, 151, 289, 524, 876, 1369,
 	2035, 2901, 3983, 5281, 6826, 8649, 10782, 13256,
 	16126, 19426, 23221, 27585, 32560, 38232, 44698, 52069,
@@ -108,7 +106,7 @@ const Uint32 CharacterLevelExpTable[] = {
 	5435863, 5578191, 5720519, 5862847, 6005175, 6147503, 6289831, 6432159,
 	6574487, 6716815, 6859143, 7001471, 7143799, 7286127, 7428455, 7570783,
 	7713111, 7855439, 7997767,
-	/* Jenna */
+	// Jenna
 	0, 28, 76, 158, 297, 533, 889, 1391,
 	2079, 2973, 4091, 5433, 7030, 8914, 11118, 13675,
 	16641, 20052, 23975, 28486, 33629, 39492, 46176, 53796,
@@ -122,7 +120,7 @@ const Uint32 CharacterLevelExpTable[] = {
 	5619835, 5766981, 5914127, 6061273, 6208419, 6355565, 6502711, 6649857,
 	6797003, 6944149, 7091295, 7238441, 7385587, 7532733, 7679879, 7827025,
 	7974171, 8121317, 8268463,
-	/* Sheba */
+	// Sheba
 	0, 29, 81, 169, 319, 559, 919, 1423,
 	2103, 2987, 4092, 5473, 7199, 9270, 11693, 14504,
 	17765, 21515, 25827, 30656, 36064, 42121, 48905, 56639,
@@ -136,7 +134,7 @@ const Uint32 CharacterLevelExpTable[] = {
 	5756132, 5906808, 6057484, 6208160, 6358836, 6509512, 6660188, 6810864,
 	6961540, 7112216, 7262892, 7413568, 7564244, 7714920, 7865596, 8016272,
 	8166948, 8317624, 8468300,
-	/* Piers */
+	// Piers
 	0, 33, 92, 198, 368, 640, 1051, 1631,
 	2414, 3432, 4704, 6294, 8282, 10668, 13531, 16909,
 	20827, 25333, 30425, 36128, 42401, 49301, 56891, 65240,
@@ -151,7 +149,7 @@ const Uint32 CharacterLevelExpTable[] = {
 	7004606, 7156027, 7307448, 7458869, 7610290, 7761711, 7913132, 8064553,
 	8215974, 8367395, 8518816,
 };
-/* clang-format on */
+// clang-format on
 
-/* Unused: a copy of StringOneTenth that nothing reads. */
+// Unused: a copy of StringOneTenth that nothing reads.
 const Uint32 ExperienceOneTenth = RECIPROCAL_OF(10);

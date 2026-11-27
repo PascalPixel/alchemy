@@ -1,24 +1,23 @@
-/* The initialization that two rooms of Sol Sanctum share,
-   SceneIdSolSanctumMaze and SceneIdSolSanctumCorridor. */
+// The initialization that two rooms of Sol Sanctum share, SceneIdSolSanctumMaze and
+// SceneIdSolSanctumCorridor.
 
 #include "flags.h"
 
-/* The scene opens in the window transition over 16 ticks; after the eruption
-   the ground rumbles and shakes, and the weather's sparkles start
-   (fdEffectInitSparkles). */
+// The scene opens in the window transition over 16 ticks; after the eruption the ground rumbles and
+// shakes, and the weather's sparkles start (fdEffectInitSparkles).
 Sint32 scInit(void)
 {
 	FIELD_STATE *state;
 
-	FIXED shakeX = toFIXED(1);
-	FIXED shakeY = toFIXED(1);
-	FIXED shakeDecay = toFIXED(1);
+	FIXED        shakeX     = toFIXED(1);
+	FIXED        shakeY     = toFIXED(1);
+	FIXED        shakeDecay = toFIXED(1);
 
-	state = FieldStateWork;
-	state->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+	state                   = FieldStateWork;
+	state->transition      = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	state->transitionFrame = MAP_TRANSITION_TICKS;
-	if(gmFlagGet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+	if (gmFlagGet(FLAG_SOL_SANCTUM_ERUPTED) != 0)
+	{
 		fdQueueMusic(SE_RUMBLE);
 		fdMapGridSetScreenShake(shakeX, shakeY, shakeDecay);
 		fdEffectInitSparkles();

@@ -1,17 +1,17 @@
 #ifndef ALCHEMY_ABILITY_IDS_H
 #define ALCHEMY_ABILITY_IDS_H
 
-/* Ability numbers, named from the English release. */
+// Ability numbers, named from the English release.
 
 #include "djinn_ids.h"
 
-/* Ability numbers, one for each row of AbilityDefinitions (ability_table.c) in
-   order. Each ability's name is the message MsgAbilityName plus its number.
-   Each family of abilities leaves spare numbers after its last, whose rows are
-   blank and whose names in the text are "?"; a family's first number is written
-   where spares come before it. A row whose name repeats another's is named for
-   what sets it apart: its strength, its holder or its use. */
-typedef enum ABILITY {
+// Ability numbers, one for each row of AbilityDefinitions (ability_table.c) in order. Each
+// ability's name is the message MsgAbilityName plus its number. Each family of abilities leaves
+// spare numbers after its last, whose rows are blank and whose names in the text are "?"; a
+// family's first number is written where spares come before it. A row whose name repeats another's
+// is named for what sets it apart: its strength, its holder or its use.
+typedef enum ABILITY
+{
 	ABILITY_NOTHING,
 	ABILITY_ATTACK,
 	ABILITY_DEFEND,
@@ -57,12 +57,11 @@ typedef enum ABILITY {
 	ABILITY_VOLCANO,
 	ABILITY_ERUPTION,
 	ABILITY_PYROCLASM,
-	/* Power 25, against ABILITY_BLAST_STRONG's 40. */
+	// Power 25, against ABILITY_BLAST_STRONG's 40.
 	ABILITY_BLAST,
 	ABILITY_MAD_BLAST,
 	ABILITY_FIERY_BLAST,
-	/* Power 40, against ABILITY_BLAST's 25: the row before Nova and
-	   Supernova. */
+	// Power 40, against ABILITY_BLAST's 25: the row before Nova and Supernova.
 	ABILITY_BLAST_STRONG,
 	ABILITY_NOVA,
 	ABILITY_SUPERNOVA,
@@ -152,14 +151,12 @@ typedef enum ABILITY {
 	ABILITY_GRIND,
 	ABILITY_HOVER,
 	ABILITY_BLAZE,
-	/* Cast only from the debug shortcut grid. The text names it only "Ma????"
-	   and its icon is a horseshoe magnet; cast in the field, it draws a ring of
-	   light round the caster. */
+	// Cast only from the debug shortcut grid. The text names it only "Ma????" and its icon is a
+	// horseshoe magnet; cast in the field, it draws a ring of light round the caster.
 	ABILITY_MAGNET,
 	ABILITY_TELEPORT,
-	/* Cast only from the debug shortcut grid. The text names it only "A??" and
-	   its icon is a bow and arrow; cast in the field, a bow looses a flaming
-	   arrow. */
+	// Cast only from the debug shortcut grid. The text names it only "A??" and its icon is a bow
+	// and arrow; cast in the field, a bow looses a flaming arrow.
 	ABILITY_ARROW,
 	ABILITY_DRAGON_CLOUD = 160,
 	ABILITY_DEMON_NIGHT,
@@ -260,8 +257,7 @@ typedef enum ABILITY {
 	ABILITY_CORN,
 	ABILITY_AURORA_FIELD = 298,
 	ABILITY_DJINN_COUNTER,
-	/* Flint's, the first of the Djinn's: a Djinni's ability is this plus its
-	   DJINNI_ID. */
+	// Flint's, the first of the Djinn's: a Djinni's ability is this plus its DJINNI_ID.
 	ABILITY_DJINNI_FIRST,
 	ABILITY_GRANITE,
 	ABILITY_QUARTZ,
@@ -282,7 +278,7 @@ typedef enum ABILITY {
 	ABILITY_CRYSTAL,
 	ABILITY_FIZZ = ABILITY_DJINNI_FIRST + DJINN_PER_ELEMENT,
 	ABILITY_SLEET,
-	/* The Mercury Djinni Mist's (djinn_table.c). */
+	// The Mercury Djinni Mist's (djinn_table.c).
 	ABILITY_MIST_DJINNI,
 	ABILITY_SPRITZ,
 	ABILITY_HAIL,
@@ -334,8 +330,7 @@ typedef enum ABILITY {
 	ABILITY_WHORL,
 	ABILITY_GASP,
 	ABILITY_LULL,
-	/* The Jupiter Djinni Gale's (djinn_table.c): an attack that may blow its
-	   target away. */
+	// The Jupiter Djinni Gale's (djinn_table.c): an attack that may blow its target away.
 	ABILITY_GALE_DJINNI,
 	ABILITY_VENUS = ABILITY_DJINNI_FIRST + DJINN_PER_ELEMENT * 4,
 	ABILITY_RAMSES,
@@ -367,35 +362,35 @@ typedef enum ABILITY {
 	ABILITY_FLORA,
 	ABILITY_ECLIPSE,
 	ABILITY_CATASTROPHE,
-	/* Power 60. */
+	// Power 60.
 	ABILITY_FIRE_BREATH = 420,
-	/* Power 90. */
+	// Power 90.
 	ABILITY_FIRE_BREATH_STRONG,
-	/* Power 130. */
+	// Power 130.
 	ABILITY_FIRE_BREATH_STRONGEST,
-	/* Power 25. */
+	// Power 25.
 	ABILITY_WATER_BREATH,
-	/* Power 50. */
+	// Power 50.
 	ABILITY_WATER_BREATH_STRONG,
-	/* Power 100. */
+	// Power 100.
 	ABILITY_WATER_BREATH_STRONGEST,
-	/* Power 50. */
+	// Power 50.
 	ABILITY_ICE_BREATH,
-	/* Power 90. */
+	// Power 90.
 	ABILITY_ICE_BREATH_STRONG,
-	/* Power 180. */
+	// Power 180.
 	ABILITY_ICE_BREATH_STRONGEST,
-	/* Power 70, deluding its targets. */
+	// Power 70, deluding its targets.
 	ABILITY_DARK_BREATH,
-	/* Power 110, deluding its targets. */
+	// Power 110, deluding its targets.
 	ABILITY_DARK_BREATH_STRONG,
-	/* Mars, power 170, lowering defense. */
+	// Mars, power 170, lowering defense.
 	ABILITY_ACID_BREATH,
-	/* Mars, power 190, lowering defense. */
+	// Mars, power 190, lowering defense.
 	ABILITY_ACID_BREATH_STRONG,
-	/* Power 190, stunning its targets. */
+	// Power 190, stunning its targets.
 	ABILITY_STORM_BREATH,
-	/* Power 220, stunning its targets. */
+	// Power 220, stunning its targets.
 	ABILITY_STORM_BREATH_STRONG,
 	ABILITY_SONIC_WAVE,
 	ABILITY_SONIC_WAVE_STRONG,
@@ -490,7 +485,7 @@ typedef enum ABILITY {
 	ABILITY_VENGEANCE,
 	ABILITY_ACHERONS_GRIEF,
 	ABILITY_MEGIDDO,
-	/* The Storm Brand's unleash, named as the Psynergy ABILITY_HURRICANE is. */
+	// The Storm Brand's unleash, named as the Psynergy ABILITY_HURRICANE is.
 	ABILITY_HURRICANE_UNLEASH = 535,
 	ABILITY_DREAMTIDE,
 	ABILITY_STUN_CLOUD,
@@ -526,14 +521,14 @@ typedef enum ABILITY {
 	ABILITY_LIGHT_SURGE,
 	ABILITY_RAIDENS_WRATH,
 	ABILITY_VOID_BEAM,
-	/* The Stellar Axe's unleash, named as the Psynergy ABILITY_SUPERNOVA is. */
+	// The Stellar Axe's unleash, named as the Psynergy ABILITY_SUPERNOVA is.
 	ABILITY_SUPERNOVA_UNLEASH,
 	ABILITY_APOCALYPSE,
 	ABILITY_LEGEND,
 	ABILITY_SABRE_DANCE = 584,
 	ABILITY_BACKSTAB,
-	/* The Psynergy the Pierrot series learns at level 22 and the Hiotoko Mask
-	   bestows; the enemies' Fire Breath is ABILITY_FIRE_BREATH. */
+	// The Psynergy the Pierrot series learns at level 22 and the Hiotoko Mask bestows; the enemies'
+	// Fire Breath is ABILITY_FIRE_BREATH.
 	ABILITY_FIRE_BREATH_PIERROT,
 	ABILITY_JUGGLE,
 	ABILITY_HEAT_JUGGLE,
@@ -593,7 +588,7 @@ typedef enum ABILITY {
 	ABILITY_DARKSOL_GASP,
 	ABILITY_FLAME_BREATH,
 	ABILITY_AQUA_BREATH,
-	/* Power 180: the Pyrodra's, the Fire Dragon's and the Grand Chimera's. */
+	// Power 180: the Pyrodra's, the Fire Dragon's and the Grand Chimera's.
 	ABILITY_FIRE_BREATH_PYRODRA,
 	ABILITY_CHILL_BREATH,
 	ABILITY_FLASH_PUNCH = 660,
@@ -618,8 +613,7 @@ typedef enum ABILITY {
 	ABILITY_BOSCA_HIT,
 	ABILITY_STRONG_HIT,
 	ABILITY_ROLLING_FLAME,
-	/* Agatio's Mars Psynergy, power 250; the unleash of that name is
-	   ABILITY_RISING_DRAGON. */
+	// Agatio's Mars Psynergy, power 250; the unleash of that name is ABILITY_RISING_DRAGON.
 	ABILITY_RISING_DRAGON_AGATIO,
 	ABILITY_METEOR_BLOW,
 	ABILITY_CAGE,
@@ -641,16 +635,16 @@ typedef enum ABILITY {
 	ABILITY_POISON_STING,
 	ABILITY_KILL_STING,
 	ABILITY_BEAST_NEEDLE,
-	/* The Needle Egg's: a Mercury attack that poisons, against
-	   ABILITY_POISON_STING's multiplied one. */
+	// The Needle Egg's: a Mercury attack that poisons, against ABILITY_POISON_STING's multiplied
+	// one.
 	ABILITY_POISON_STING_NEEDLE_EGG,
 	ABILITY_STUN_STING,
 	ABILITY_MUCOUS_GEL,
 	ABILITY_POISON_GEL,
 	ABILITY_HYDRO_SLASH,
 	ABILITY_REGEN_DANCE,
-	/* The Phoenix's, the Fire Bird's and the Wonder Bird's multiplied attack;
-	   the unleash of that name is ABILITY_FIRE_DANCE. */
+	// The Phoenix's, the Fire Bird's and the Wonder Bird's multiplied attack; the unleash of that
+	// name is ABILITY_FIRE_DANCE.
 	ABILITY_FIRE_DANCE_PHOENIX,
 	ABILITY_POWER_CRUSH,
 	ABILITY_SACK,
@@ -678,7 +672,7 @@ typedef enum ABILITY {
 	ABILITY_PRESSURE
 } ABILITY;
 
-/* How many abilities AbilityDefinitions holds. */
+// How many abilities AbilityDefinitions holds.
 #define ABILITY_COUNT 734
 
 #endif

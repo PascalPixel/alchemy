@@ -1,109 +1,95 @@
-/* The ground mask: 16-pixel sprites kept beside an actor where the ground
-   before it rises, in a fade form nothing starts and a blank form Aqua Rock
-   starts, which draws no visible pixel; and the effect sprites that borrow
-   their tiles. Part of field_mode.c. */
+// The ground mask: 16-pixel sprites kept beside an actor where the ground before it rises, in a
+// fade form nothing starts and a blank form Aqua Rock starts, which draws no visible pixel; and the
+// effect sprites that borrow their tiles. Part of field_mode.c.
 
-/* A screen row's map metatile, in pixels, in an OAM entry's 8-bit y, as
-   MAPGRID_METATILE_PIXEL_MASK is for a whole pixel coordinate. */
+// A screen row's map metatile, in pixels, in an OAM entry's 8-bit y, as MAPGRID_METATILE_PIXEL_MASK
+// is for a whole pixel coordinate.
 #define METATILE_GRID_ROW_MASK 0xf0
-/* MAP_METATILE.attributeB's lowest bit, on the map's third layer: a metatile
-   the blank overlay marks. The marks' tiles are colour 0, transparent (GBATEK
-   "Color Palette RAM", Transparent Colors), so the player sees nothing of
-   them. */
+// MAP_METATILE.attributeB's lowest bit, on the map's third layer: a metatile the blank overlay
+// marks. The marks' tiles are colour 0, transparent (GBATEK "Color Palette RAM", Transparent
+// Colors), so the player sees nothing of them.
 #define METATILE_BLANK_OVERLAY 0x01
 
-/* Each tick of the fade overlay: on each of the two metatiles beside the actor
-   (left and right of it), where the ground one or two metatiles south rises
-   above the actor's floor, draws a semi-transparent 16-pixel-wide sprite of
-   colour 1 at the height of that ground. */
+// Each tick of the fade overlay: on each of the two metatiles beside the actor (left and right of
+// it), where the ground one or two metatiles south rises above the actor's floor, draws a
+// semi-transparent 16-pixel-wide sprite of colour 1 at the height of that ground.
 void fdFadeOverlayDrawMarks(void)
 {
-	FADE_OVERLAY_STATE *state = RamHeapSlots->fadeOverlay;
-	Sint32				cameraX =
-		(Sint16)FIXEDtoINT(syMapStateView(RamHeapSlots->mapGrid)[0]);
-	Sint32 cameraZ =
-		(Sint16)FIXEDtoINT(syMapStateView(RamHeapSlots->mapGrid)[1]);
-	ANIMATION_SPR_PART *mark = state->marks;
-	FADE_ACTOR		   *actor = state->actor;
-	FIXED				x;
-	FIXED				z;
-	Sint32				terrainFloor;
-	Uint8				terrainLayer;
-	Uint32				tile;
-	Sint32				height;
-	Sint32				secondHeight;
-	Sint32				screenRow;
-	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-	 * touches. */
-	UNUSED Sint16 unused[2];
+	FADE_OVERLAY_STATE *state   = RamHeapSlots->fadeOverlay;
+	Sint32              cameraX = (Sint16)FIXEDtoINT(syMapStateView(RamHeapSlots->mapGrid)[0]);
+	Sint32              cameraZ = (Sint16)FIXEDtoINT(syMapStateView(RamHeapSlots->mapGrid)[1]);
+	ANIMATION_SPR_PART *mark    = state->marks;
+	FADE_ACTOR         *actor   = state->actor;
+	FIXED               x;
+	FIXED               z;
+	Sint32              terrainFloor;
+	Uint8               terrainLayer;
+	Uint32              tile;
+	Sint32              height;
+	Sint32              secondHeight;
+	Sint32              screenRow;
+	// LEFTOVER(frame): an unused local the ROM's frame reserves and never
+	// * touches.
+	UNUSED Sint16       unused[2];
 
-	if(actor == 0)
+	if (actor == 0)
 		return;
-	z = actor->z;
-	x = actor->x;
-	terrainFloor = actor->floor;
-	terrainLayer = actor->terrainId;
-	/* The first tile of the solid block fdEffectStartFadeOverlay loaded. */
-	tile =
-		VramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
-	/* The left metatile, 8 pixels left of the actor. */
-	x -= toFIXED(8);
-	height = FIXEDtoINT(
-		fdMapGridGetTerrainHeightStub(terrainLayer, x, z + toFIXED(16)));
-	secondHeight = FIXEDtoINT(fdMapGridGetTerrainHeightStub(
-					   terrainLayer, x, z + toFIXED(32))) -
-		16;
-	if(secondHeight > height)
+	z             = actor->z;
+	x             = actor->x;
+	terrainFloor  = actor->floor;
+	terrainLayer  = actor->terrainId;
+	// The first tile of the solid block fdEffectStartFadeOverlay loaded.
+	tile          = VramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
+	// The left metatile, 8 pixels left of the actor.
+	x            -= toFIXED(8);
+	height        = FIXEDtoINT(fdMapGridGetTerrainHeightStub(terrainLayer, x, z + toFIXED(16)));
+	secondHeight = FIXEDtoINT(fdMapGridGetTerrainHeightStub(terrainLayer, x, z + toFIXED(32))) - 16;
+	if (secondHeight > height)
 		height = secondHeight;
-	if(height > 0 && height > terrainFloor) {
-		/* The sprite mode and priority set next replace what the two words put
-		   there, so the left and right marks end up alike although their third
-		   words differ. */
+	if (height > 0 && height > terrainFloor)
+	{
+		// The sprite mode and priority set next replace what the two words put there, so the left
+		// and right marks end up alike although their third words differ.
 		((Uint32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
 		((Uint32 *)mark)[2] = OBJ_PRIORITY(1);
-		mark->priority = 0;
-		mark->tile = tile;
-		mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-		/* Snapped to the metatile's grid, then moved up by the ground's
-		   height. */
-		mark->x =
-			((Uint32)FIXEDtoINT(x) & MAPGRID_METATILE_PIXEL_MASK) - cameraX;
-		screenRow = FIXEDtoINT(z) & METATILE_GRID_ROW_MASK;
-		mark->y = screenRow - cameraZ - height + 16;
+		mark->priority      = 0;
+		mark->tile          = tile;
+		mark->objectMode    = OBJ_MODE_SEMI_TRANSPARENT;
+		// Snapped to the metatile's grid, then moved up by the ground's height.
+		mark->x             = ((Uint32)FIXEDtoINT(x) & MAPGRID_METATILE_PIXEL_MASK) - cameraX;
+		screenRow           = FIXEDtoINT(z) & METATILE_GRID_ROW_MASK;
+		mark->y             = screenRow - cameraZ - height + 16;
 		syOAMAddSpriteAtDepthClamped(mark, 0);
 	}
-	/* The right metatile, 8 pixels right of the actor, read the same way. */
-	x += toFIXED(16);
-	height = FIXEDtoINT(
-		fdMapGridGetTerrainHeightStub(terrainLayer, x, z + toFIXED(16)));
-	mark = &state->marks[1];
-	secondHeight = FIXEDtoINT(fdMapGridGetTerrainHeightStub(
-					   terrainLayer, x, z + toFIXED(32))) -
-		16;
-	if(secondHeight > height)
+	// The right metatile, 8 pixels right of the actor, read the same way.
+	x      += toFIXED(16);
+	height  = FIXEDtoINT(fdMapGridGetTerrainHeightStub(terrainLayer, x, z + toFIXED(16)));
+	mark    = &state->marks[1];
+	secondHeight = FIXEDtoINT(fdMapGridGetTerrainHeightStub(terrainLayer, x, z + toFIXED(32))) - 16;
+	if (secondHeight > height)
 		height = secondHeight;
-	if(height > 0 && height > terrainFloor) {
+	if (height > 0 && height > terrainFloor)
+	{
 		((Uint32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
 		((Uint32 *)mark)[2] = 0;
-		mark->priority = 0;
-		mark->tile = tile;
-		mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-		mark->x =
-			((Uint32)FIXEDtoINT(x) & MAPGRID_METATILE_PIXEL_MASK) - cameraX;
-		screenRow = FIXEDtoINT(z) & METATILE_GRID_ROW_MASK;
-		mark->y = screenRow - cameraZ - height + 16;
+		mark->priority      = 0;
+		mark->tile          = tile;
+		mark->objectMode    = OBJ_MODE_SEMI_TRANSPARENT;
+		mark->x             = ((Uint32)FIXEDtoINT(x) & MAPGRID_METATILE_PIXEL_MASK) - cameraX;
+		screenRow           = FIXEDtoINT(z) & METATILE_GRID_ROW_MASK;
+		mark->y             = screenRow - cameraZ - height + 16;
 		syOAMAddSpriteAtDepthClamped(mark, 0);
 	}
 }
 
-/* Starts the fade overlay on an actor (the party leader when NULL): loads its
-   solid tiles, sets the blending and draws it each tick. Unused: nothing calls
-   it or its stub call, fdEffectStartFadeOverlayStub. */
+// Starts the fade overlay on an actor (the party leader when NULL): loads its solid tiles, sets the
+// blending and draws it each tick. Unused: nothing calls it or its stub call,
+// fdEffectStartFadeOverlayStub.
 void fdEffectStartFadeOverlay(void *actor)
 {
 	FADE_OVERLAY_STATE *state;
-	Uint8			   *tiles;
-	volatile Uint32		fill;
+	Uint8              *tiles;
+	volatile Uint32     fill;
 
 	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FADE_OVERLAY, sizeof(*state));
 	tiles = syHeapSlotAllocate(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -111,153 +97,154 @@ void fdEffectStartFadeOverlay(void *actor)
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	sySetEvent(fdFadeOverlayDrawMarks, EVENT_PASS_TICK);
-	syIOWrite16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
-			BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
-		&REG_BLDCNT);
+	syIOWrite16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ
+	                | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+	            &REG_BLDCNT);
 	syIOWrite16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
-	/* 31 is above the register's useful maximum, BLEND_FADE_MAX, and acts as
-	   it. */
+	// 31 is above the register's useful maximum, BLEND_FADE_MAX, and acts as it.
 	syIOWrite16(31, &REG_BLDY);
 	DMA_FILL32_CELL(fill, 0, state, sizeof(*state));
-	if(actor == NULL)
+	if (actor == NULL)
 		actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
 	state->actor = actor;
 }
 
-/* Stops drawing the fade overlay, keeping its state. */
+// Stops drawing the fade overlay, keeping its state.
 void fdFadeOverlaySuspend(void)
 {
 	sySuspendEvent(fdFadeOverlayDrawMarks);
 }
 
-/* Draws the fade overlay again after fdFadeOverlaySuspend. */
+// Draws the fade overlay again after fdFadeOverlaySuspend.
 void fdFadeOverlayResume(void)
 {
 	syResumeEvent(fdFadeOverlayDrawMarks);
 }
 
-/* The blank overlay's event, which fdEffectStartBlankOverlay starts: each tick
-   it draws a 16-pixel mark beside the actor where the map's third layer flags a
-   metatile two rows up (left or right of the actor), and another for the row
-   one up. */
+// The blank overlay's event, which fdEffectStartBlankOverlay starts: each tick it draws a 16-pixel
+// mark beside the actor where the map's third layer flags a metatile two rows up (left or right of
+// the actor), and another for the row one up.
 void fdBlankOverlayDrawMarks(void)
 {
-	ANIMATION_SPR_PART *mark = RamHeapSlots->fadeOverlay;
-	MAP_STATE		   *map = RamHeapSlots->mapGrid;
-	Sint16				cameraX = FIXEDtoINT(syMapStateView(map)[0]);
-	Sint16				cameraZ = FIXEDtoINT(syMapStateView(map)[1]);
-	FADE_ACTOR		   *actor = ((FADE_OVERLAY_STATE *)mark)->actor;
-	Sint32				x;
-	Sint32				row;
-	Uint32				tile;
-	MAP_METATILE	   *metatiles;
-	MAP_METATILE	   *right;
-	MAP_METATILE	   *left;
+	ANIMATION_SPR_PART *mark    = RamHeapSlots->fadeOverlay;
+	MAP_STATE          *map     = RamHeapSlots->mapGrid;
+	Sint16              cameraX = FIXEDtoINT(syMapStateView(map)[0]);
+	Sint16              cameraZ = FIXEDtoINT(syMapStateView(map)[1]);
+	FADE_ACTOR         *actor   = ((FADE_OVERLAY_STATE *)mark)->actor;
+	Sint32              x;
+	Sint32              row;
+	Uint32              tile;
+	MAP_METATILE       *metatiles;
+	MAP_METATILE       *right;
+	MAP_METATILE       *left;
 	ANIMATION_SPR_PART *m;
 
-	if(actor == 0)
+	if (actor == 0)
 		return;
-	x = ((Sint16 *)&actor->x)[1];
-	row = FIXEDtoINT(actor->z - actor->y);
-	tile =
-		VramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
+	x         = ((Sint16 *)&actor->x)[1];
+	row       = FIXEDtoINT(actor->z - actor->y);
+	tile      = VramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
 	metatiles = map->layers[2].metatiles;
-	right = metatiles + (x + 8) / MAPGRID_METATILE_PIXELS +
-		(row / MAPGRID_METATILE_PIXELS - 2) * MAPGRID_SIZE;
-	left = metatiles + (x - 8) / MAPGRID_METATILE_PIXELS +
-		(row / MAPGRID_METATILE_PIXELS - 2) * MAPGRID_SIZE;
-	if((right->attributeB & METATILE_BLANK_OVERLAY) ||
-		(left->attributeB & METATILE_BLANK_OVERLAY)) {
-		m = mark;
+	right     = metatiles + (x + 8) / MAPGRID_METATILE_PIXELS
+	      + (row / MAPGRID_METATILE_PIXELS - 2) * MAPGRID_SIZE;
+	left = metatiles + (x - 8) / MAPGRID_METATILE_PIXELS
+	     + (row / MAPGRID_METATILE_PIXELS - 2) * MAPGRID_SIZE;
+	if ((right->attributeB & METATILE_BLANK_OVERLAY) || (left->attributeB & METATILE_BLANK_OVERLAY))
+	{
+		m                = mark;
 		((Uint32 *)m)[1] = OBJ_SIZE_16X16;
 		((Uint32 *)m)[2] = OBJ_PRIORITY(1);
-		m->tile = tile;
-		m->x = (Uint16)(x - cameraX) - 8;
-		m->y = (Uint16)(((Uint16)row & METATILE_GRID_ROW_MASK) - cameraZ) - 32;
-		mark = m + 1;
+		m->tile          = tile;
+		m->x             = (Uint16)(x - cameraX) - 8;
+		m->y             = (Uint16)(((Uint16)row & METATILE_GRID_ROW_MASK) - cameraZ) - 32;
+		mark             = m + 1;
 		syOAMAddSpriteAtDepthClamped(m, 1);
 	}
-	right = metatiles + (x + 8) / MAPGRID_METATILE_PIXELS +
-		(row / MAPGRID_METATILE_PIXELS - 1) * MAPGRID_SIZE;
-	left = metatiles + (x - 8) / MAPGRID_METATILE_PIXELS +
-		(row / MAPGRID_METATILE_PIXELS - 1) * MAPGRID_SIZE;
-	if((right->attributeB & METATILE_BLANK_OVERLAY) ||
-		(left->attributeB & METATILE_BLANK_OVERLAY)) {
-		m = mark;
+	right = metatiles + (x + 8) / MAPGRID_METATILE_PIXELS
+	      + (row / MAPGRID_METATILE_PIXELS - 1) * MAPGRID_SIZE;
+	left = metatiles + (x - 8) / MAPGRID_METATILE_PIXELS
+	     + (row / MAPGRID_METATILE_PIXELS - 1) * MAPGRID_SIZE;
+	if ((right->attributeB & METATILE_BLANK_OVERLAY) || (left->attributeB & METATILE_BLANK_OVERLAY))
+	{
+		m                = mark;
 		((Uint32 *)m)[1] = OBJ_SIZE_16X16;
 		((Uint32 *)m)[2] = OBJ_PRIORITY(1);
-		m->tile = tile;
-		m->x = (Uint16)(x - cameraX) - 8;
-		m->y = (Uint16)(((Uint16)row & METATILE_GRID_ROW_MASK) - cameraZ) - 16;
+		m->tile          = tile;
+		m->x             = (Uint16)(x - cameraX) - 8;
+		m->y             = (Uint16)(((Uint16)row & METATILE_GRID_ROW_MASK) - cameraZ) - 16;
 		syOAMAddSpriteAtDepthClamped(m, 1);
 	}
 }
 
-/* Like fdEffectStartFadeOverlay with blank tiles and no blending:
-   loads 512 bytes of blank tiles into VRAM_CACHE_ENTRY_FADE_OVERLAY and starts
-   fdBlankOverlayDrawMarks on an actor (the party leader when 0). Aqua Rock's
-   rooms start it; its marks are all colour 0, so nothing shows. */
+// Like fdEffectStartFadeOverlay with blank tiles and no blending: loads 512 bytes of blank tiles
+// into VRAM_CACHE_ENTRY_FADE_OVERLAY and starts fdBlankOverlayDrawMarks on an actor (the party
+// leader when 0). Aqua Rock's rooms start it; its marks are all colour 0, so nothing shows.
 void fdEffectStartBlankOverlay(Sint32 actor)
 {
-	FADE_OVERLAY_STATE *state =
-		syHeapSlotAllocateEWRAM(HEAP_SLOT_FADE_OVERLAY, sizeof(*state));
-	void *buf = syHeapSlotAllocate(HEAP_SLOT_TILE_SCRATCH, 1024);
+	FADE_OVERLAY_STATE *state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FADE_OVERLAY, sizeof(*state));
+	void               *buf   = syHeapSlotAllocate(HEAP_SLOT_TILE_SCRATCH, 1024);
 
 	DMA_FILL32(0, buf, 512);
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, buf);
 	sySetEvent(fdBlankOverlayDrawMarks, EVENT_PASS_TICK);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
-	if(actor == 0)
+	if (actor == 0)
 		actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
 	state->actor = (FADE_ACTOR *)actor;
 }
 
-/* Suspends the fdBlankOverlayDrawMarks overlay event. */
+// Suspends the fdBlankOverlayDrawMarks overlay event.
 void fdBlankOverlaySuspend(void)
 {
 	sySuspendEvent(fdBlankOverlayDrawMarks);
 }
 
-/* Resumes the fdBlankOverlayDrawMarks overlay event. */
+// Resumes the fdBlankOverlayDrawMarks overlay event.
 void fdBlankOverlayResume(void)
 {
 	syResumeEvent(fdBlankOverlayDrawMarks);
 }
 
-/* Fills the overlay's 512 bytes of sprite tiles (VRAM_CACHE_ENTRY_FADE_OVERLAY)
-   with PIXELS_8BPP(1) when solid is set, which in these 16-colour tiles is
-   colour 1 in every other column (no caller sets it), else clears them. */
+// Fills the overlay's 512 bytes of sprite tiles (VRAM_CACHE_ENTRY_FADE_OVERLAY) with PIXELS_8BPP(1)
+// when solid is set, which in these 16-colour tiles is colour 1 in every other column (no caller
+// sets it), else clears them.
 void fdFadeOverlayFillTiles(Sint32 solid)
 {
 	void *buf = syHeapSlotAllocate(HEAP_SLOT_TILE_SCRATCH, 1024);
 
-	if(solid == 0) {
+	if (solid == 0)
+	{
 		DMA_FILL32(0, buf, 512);
-	} else {
+	}
+	else
+	{
 		DMA_FILL32(PIXELS_8BPP(1), buf, 512);
 	}
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, buf);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 }
 
-/* Sets up sprite through fdEffectSpriteInit with the overlay's tiles
-   (VRAM_CACHE_ENTRY_FADE_OVERLAY), at priority 1 in palette 0. */
-void fdEffectSpriteInitWithFadeOverlay(
-	EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY, Uint32 attributes)
+// Sets up sprite through fdEffectSpriteInit with the overlay's tiles
+// (VRAM_CACHE_ENTRY_FADE_OVERLAY), at priority 1 in palette 0.
+void fdEffectSpriteInitWithFadeOverlay(EFFECT_SPR *sprite,
+                                       Sint32      pivotX,
+                                       Sint32      pivotY,
+                                       Uint32      attributes)
 {
-	fdEffectSpriteInit(sprite, pivotX, pivotY, attributes,
-		VramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset /
-			TILE_SIZE_4BPP);
-	sprite->depth = 0;
-	sprite->oam.priority = 1;
+	fdEffectSpriteInit(sprite,
+	                   pivotX,
+	                   pivotY,
+	                   attributes,
+	                   VramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP);
+	sprite->depth         = 0;
+	sprite->oam.priority  = 1;
 	sprite->oam.fullColor = 0;
-	sprite->oam.palette = 0;
+	sprite->oam.palette   = 0;
 }
 
-/* Projects the world position (x, y, z) to the screen, stores it as the effect
-   sprite's position and draws the sprite. */
-void fdEffectSpriteDrawAtWorldXYZ(
-	EFFECT_SPR *sprite, Sint32 x, Sint32 y, Sint32 z)
+// Projects the world position (x, y, z) to the screen, stores it as the effect sprite's position
+// and draws the sprite.
+void fdEffectSpriteDrawAtWorldXYZ(EFFECT_SPR *sprite, Sint32 x, Sint32 y, Sint32 z)
 {
 	Sint32 pos[3];
 
@@ -268,17 +255,21 @@ void fdEffectSpriteDrawAtWorldXYZ(
 	fdEffectSpriteDraw(sprite);
 }
 
-/* As fdEffectSpriteInitWithFadeOverlay, semi-transparent and at priority 0. */
-void fdEffectSpriteInitWithFadeOverlayBlended(
-	EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY, Uint32 attributes)
+// As fdEffectSpriteInitWithFadeOverlay, semi-transparent and at priority 0.
+void fdEffectSpriteInitWithFadeOverlayBlended(EFFECT_SPR *sprite,
+                                              Sint32      pivotX,
+                                              Sint32      pivotY,
+                                              Uint32      attributes)
 {
-	fdEffectSpriteInit(sprite, pivotX, pivotY, attributes,
-		VramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset /
-			TILE_SIZE_4BPP);
-	sprite->depth = 0;
-	sprite->oam.priority = 0;
-	sprite->oam.fullColor = 0;
-	sprite->oam.palette = 0;
+	fdEffectSpriteInit(sprite,
+	                   pivotX,
+	                   pivotY,
+	                   attributes,
+	                   VramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP);
+	sprite->depth          = 0;
+	sprite->oam.priority   = 0;
+	sprite->oam.fullColor  = 0;
+	sprite->oam.palette    = 0;
 	sprite->oam.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
 }
 

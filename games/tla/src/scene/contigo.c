@@ -1,23 +1,19 @@
-/* Contigo, the village of the Jupiter clan north of Atteka Inlet, beside the
-   crater below Jupiter Lighthouse, and the rooms of its overlay: the houses,
-   shops, inn and Sanctum, the three game tents, and the Anemos geoglyph east of
-   the village, where the villagers build the Wings of Anemos in front of the
-   Anemos Sanctum.
-
-   On Felix's first visit the village is busy with the wings. Scoop in the open
-   gap of the big weed patch east of the village gate finds the Djinni Salt, and
-   Cyclone on the clump of weeds beside the house at the top of the hill
-   uncovers a Bramble Seed. The tent left of the inn holds Lucky Wheels, and the
-   two tents north of the Teleport circle Super Lucky Dice (west) and Lucky Dice
-   (east). Once Jupiter Lighthouse's beacon is lit, the villagers are away
-   transporting the wings and four doors are locked; Isaac's party waits in the
-   house at the top of the hill, and walking in starts the reunion
-   (scContigoTheReunion). That house becomes Hamma's new home, and on the
-   party's first visit after the ship has its wings she talks with Ivan
-   (scContigoReturnToNewHome). In a linked game, Force on the tree stump behind
-   the inn frees the Djinni Shine. Late in the game, Reveal in front of the
-   Sanctum opens its middle door, and Teleport on the circle in the middle of
-   the village leads into the Anemos Inner Sanctum. */
+// Contigo, the village of the Jupiter clan north of Atteka Inlet, beside the crater below Jupiter
+// Lighthouse, and the rooms of its overlay: the houses, shops, inn and Sanctum, the three game
+// tents, and the Anemos geoglyph east of the village, where the villagers build the Wings of Anemos
+// in front of the Anemos Sanctum.
+//
+// On Felix's first visit the village is busy with the wings. Scoop in the open gap of the big weed
+// patch east of the village gate finds the Djinni Salt, and Cyclone on the clump of weeds beside
+// the house at the top of the hill uncovers a Bramble Seed. The tent left of the inn holds Lucky
+// Wheels, and the two tents north of the Teleport circle Super Lucky Dice (west) and Lucky Dice
+// (east). Once Jupiter Lighthouse's beacon is lit, the villagers are away transporting the wings
+// and four doors are locked; Isaac's party waits in the house at the top of the hill, and walking
+// in starts the reunion (scContigoTheReunion). That house becomes Hamma's new home, and on the
+// party's first visit after the ship has its wings she talks with Ivan (scContigoReturnToNewHome).
+// In a linked game, Force on the tree stump behind the inn frees the Djinni Shine. Late in the
+// game, Reveal in front of the Sanctum opens its middle door, and Teleport on the circle in the
+// middle of the village leads into the Anemos Inner Sanctum.
 
 #include "scene/script_layer.h"
 #include "macros.h"
@@ -29,52 +25,47 @@
 #include "edition.h"
 #include "shop/shop.h"
 
-/* Force has freed Shine from the tree stump it was stuck in. */
-#define FLAG_SHINE_FREED		  0x9e7
-/* Set as Shine, freed, joins the party; until then it waits where it landed. */
-#define FLAG_SHINE_CAUGHT		  0x9e6
-/* Set once Hamma has welcomed the party to her new home, after it set out with
-   the wings, and told Ivan why she kept from him that she is his sister
-   (scContigoReturnToNewHome). */
-#define FLAG_HAMMA_WELCOMED_PARTY 0x9d1
+// Force has freed Shine from the tree stump it was stuck in.
+#define FLAG_SHINE_FREED           0x9e7
+// Set as Shine, freed, joins the party; until then it waits where it landed.
+#define FLAG_SHINE_CAUGHT          0x9e6
+// Set once Hamma has welcomed the party to her new home, after it set out with the wings, and told
+// Ivan why she kept from him that she is his sister (scContigoReturnToNewHome).
+#define FLAG_HAMMA_WELCOMED_PARTY  0x9d1
 
-/* The village's temp flag: the camera follows the leader east past the village
-   gate as far as the weed patch, rather than stopping at the gate
-   (scContigoWidenCameraBounds). */
+// The village's temp flag: the camera follows the leader east past the village gate as far as the
+// weed patch, rather than stopping at the gate (scContigoWidenCameraBounds).
 #define FLAG_WHOLE_VILLAGE_IN_VIEW FLAG_SCENE_TEMP_00
 
-/* The map metatiles the village's, the geoglyph's and the houses' cue rows
-   answer. A door's metatile takes the number of the exit it leaves by, so those
-   rows use the exit's own name. */
-typedef enum CONTIGO_METATILE_BEHAVIOR {
-	/* The geoglyph's west edge, where the path from the village's east edge
-	   comes in. */
-	METATILE_BEHAVIOR_GEOGLYPH_WEST_EDGE = 12,
-	/* The doors at the head of the Sanctum's west, middle and east steps. */
-	METATILE_BEHAVIOR_SANCTUM_WEST_DOOR = 13,
-	METATILE_BEHAVIOR_SANCTUM_MIDDLE_DOOR = 14,
-	METATILE_BEHAVIOR_SANCTUM_EAST_DOOR = 15,
-	/* A door shut while the villagers are away with the wings
-	   (scContigoLockDoors). */
-	METATILE_BEHAVIOR_LOCKED_DOOR = 19,
-	/* Across the three ways from the middle of the village down to its south
-	   part: the north line keeps the view west of the gate, the south one lets
-	   it follow the leader east. */
-	METATILE_BEHAVIOR_VIEW_WEST_OF_GATE = 20,
-	METATILE_BEHAVIOR_VIEW_EAST_OF_GATE = 21,
-	/* Just inside the door of Hamma's new home. */
-	METATILE_BEHAVIOR_INSIDE_HAMMAS_DOOR = 20,
-	/* The Sanctum's carved wall beside the translation sign. */
-	METATILE_BEHAVIOR_CARVED_WALL = 22,
-	/* The signs outside the three game tents. */
-	METATILE_BEHAVIOR_LUCKY_WHEELS_SIGN = 24,
-	METATILE_BEHAVIOR_SUPER_LUCKY_DICE_SIGN = 25,
-	METATILE_BEHAVIOR_LUCKY_DICE_SIGN = 26,
-	METATILE_BEHAVIOR_TELEPORT_CIRCLE = 30,
-	/* The open gap in the middle of the weed patch, where Salt hides. */
-	METATILE_BEHAVIOR_WEED_PATCH_GAP = 32,
-	/* The clumps of weeds about the village, and the five rows of the big patch
-	   east of the gate, from north to south. */
+// The map metatiles the village's, the geoglyph's and the houses' cue rows answer. A door's
+// metatile takes the number of the exit it leaves by, so those rows use the exit's own name.
+typedef enum CONTIGO_METATILE_BEHAVIOR
+{
+	// The geoglyph's west edge, where the path from the village's east edge comes in.
+	METATILE_BEHAVIOR_GEOGLYPH_WEST_EDGE      = 12,
+	// The doors at the head of the Sanctum's west, middle and east steps.
+	METATILE_BEHAVIOR_SANCTUM_WEST_DOOR       = 13,
+	METATILE_BEHAVIOR_SANCTUM_MIDDLE_DOOR     = 14,
+	METATILE_BEHAVIOR_SANCTUM_EAST_DOOR       = 15,
+	// A door shut while the villagers are away with the wings (scContigoLockDoors).
+	METATILE_BEHAVIOR_LOCKED_DOOR             = 19,
+	// Across the three ways from the middle of the village down to its south part: the north line
+	// keeps the view west of the gate, the south one lets it follow the leader east.
+	METATILE_BEHAVIOR_VIEW_WEST_OF_GATE       = 20,
+	METATILE_BEHAVIOR_VIEW_EAST_OF_GATE       = 21,
+	// Just inside the door of Hamma's new home.
+	METATILE_BEHAVIOR_INSIDE_HAMMAS_DOOR      = 20,
+	// The Sanctum's carved wall beside the translation sign.
+	METATILE_BEHAVIOR_CARVED_WALL             = 22,
+	// The signs outside the three game tents.
+	METATILE_BEHAVIOR_LUCKY_WHEELS_SIGN       = 24,
+	METATILE_BEHAVIOR_SUPER_LUCKY_DICE_SIGN   = 25,
+	METATILE_BEHAVIOR_LUCKY_DICE_SIGN         = 26,
+	METATILE_BEHAVIOR_TELEPORT_CIRCLE         = 30,
+	// The open gap in the middle of the weed patch, where Salt hides.
+	METATILE_BEHAVIOR_WEED_PATCH_GAP          = 32,
+	// The clumps of weeds about the village, and the five rows of the big patch east of the gate,
+	// from north to south.
 	METATILE_BEHAVIOR_WEEDS_WEST_OF_ITEM_SHOP = 39,
 	METATILE_BEHAVIOR_WEEDS_BEHIND_INN,
 	METATILE_BEHAVIOR_WEEDS_OVER_BRAMBLE_SEED,
@@ -88,203 +79,184 @@ typedef enum CONTIGO_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_WEED_PATCH_MIDDLE_ROW,
 	METATILE_BEHAVIOR_WEED_PATCH_FOURTH_ROW,
 	METATILE_BEHAVIOR_WEED_PATCH_BOTTOM_ROW,
-	/* The pots and ovens in the houses: the bean soup, the corn bread and the
-	   cookies. */
+	// The pots and ovens in the houses: the bean soup, the corn bread and the cookies.
 	METATILE_BEHAVIOR_BEAN_SOUP = 200,
 	METATILE_BEHAVIOR_CORN_BREAD,
 	METATILE_BEHAVIOR_COOKIES
 } CONTIGO_METATILE_BEHAVIOR;
 
-/* The tile row of Hamma's portrait as she and Isaac speak at once in the
-   reunion (scContigoTheReunion): two rows higher from the first patch on. */
+// The tile row of Hamma's portrait as she and Isaac speak at once in the reunion
+// (scContigoTheReunion): two rows higher from the first patch on.
 #define REUNION_HAMMA_PORTRAIT_Y JAPANESE_OR(12, 10)
 
-/* What the dice and wheels attendants say as the party comes back from a game
-   (scContigoInitLuckyDice); the Spanish text numbers these lines
-   differently. */
-#define COIN_WON_MESSAGE \
-	SPANISH_OR(((Sint32)MsgContigoHeyYaDontHaveEnough + 1), \
-		((Sint32)MsgContigoYaWonCoinTalkAbout))
-#define COIN_LOST_MESSAGE \
-	SPANISH_OR(((Sint32)MsgContigoHeyYaDontHaveEnough + 2), \
-		((Sint32)MsgContigoYaLostCoinBetterLuck))
-#define READ_SIGN_MESSAGE \
-	SPANISH_OR(((Sint32)MsgContigoYaWonCoinTalkAbout), \
-		((Sint32)MsgContigoTheRulesAreListedOn))
-#define CONGRATULATIONS_MESSAGE \
-	SPANISH_OR(((Sint32)MsgContigoYaLostCoinBetterLuck), \
-		((Sint32)MsgContigoCongratulations))
-#define FIRST_PRIZE_MESSAGE \
-	SPANISH_OR(((Sint32)MsgContigoTheRulesAreListedOn), \
-		((Sint32)MsgContigoYouWonHereYouGo))
-#define NEXT_PRIZE_MESSAGE \
-	SPANISH_OR(((Sint32)MsgContigoCongratulations), \
-		((Sint32)MsgContigoAndYouWonHereYou))
-#define COME_AGAIN_MESSAGE ((Sint32)MsgContigoComeAgain)
+// What the dice and wheels attendants say as the party comes back from a game
+// (scContigoInitLuckyDice); the Spanish text numbers these lines differently.
+#define COIN_WON_MESSAGE                                                                           \
+	SPANISH_OR(((Sint32)MsgContigoHeyYaDontHaveEnough + 1), ((Sint32)MsgContigoYaWonCoinTalkAbout))
+#define COIN_LOST_MESSAGE                                                                          \
+	SPANISH_OR(((Sint32)MsgContigoHeyYaDontHaveEnough + 2),                                        \
+	           ((Sint32)MsgContigoYaLostCoinBetterLuck))
+#define READ_SIGN_MESSAGE                                                                          \
+	SPANISH_OR(((Sint32)MsgContigoYaWonCoinTalkAbout), ((Sint32)MsgContigoTheRulesAreListedOn))
+#define CONGRATULATIONS_MESSAGE                                                                    \
+	SPANISH_OR(((Sint32)MsgContigoYaLostCoinBetterLuck), ((Sint32)MsgContigoCongratulations))
+#define FIRST_PRIZE_MESSAGE                                                                        \
+	SPANISH_OR(((Sint32)MsgContigoTheRulesAreListedOn), ((Sint32)MsgContigoYouWonHereYouGo))
+#define NEXT_PRIZE_MESSAGE                                                                         \
+	SPANISH_OR(((Sint32)MsgContigoCongratulations), ((Sint32)MsgContigoAndYouWonHereYou))
+#define COME_AGAIN_MESSAGE   ((Sint32)MsgContigoComeAgain)
 
-/* Set as the party leaves the dice hall for one of its games, so that the hall
-   greets it on its way back by the game's entrance. */
+// Set as the party leaves the dice hall for one of its games, so that the hall greets it on its way
+// back by the game's entrance.
 #define FLAG_LEFT_FOR_A_GAME 0x9e5
 
-/* The dice hall's ways back from its games. */
-typedef enum CONTIGO_DICE_HALL_ENTRANCE {
+// The dice hall's ways back from its games.
+typedef enum CONTIGO_DICE_HALL_ENTRANCE
+{
 	ENTRANCE_FROM_SUPER_LUCKY_DICE = 18,
 	ENTRANCE_FROM_LUCKY_DICE,
 	ENTRANCE_FROM_LUCKY_WHEELS
 } CONTIGO_DICE_HALL_ENTRANCE;
 
-/* The village's people and Djinn (ContigoVillagePlacements). */
-typedef enum CONTIGO_VILLAGE_ACTOR_ID {
-	/* "The Anemos blood in our veins often brings about strange..." */
+// The village's people and Djinn (ContigoVillagePlacements).
+typedef enum CONTIGO_VILLAGE_ACTOR_ID
+{
+	// "The Anemos blood in our veins often brings about strange..."
 	ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND = ACTOR_FIRST_PLACED,
-	/* "The beacon within Jupiter Lighthouse will soon be lit. I know this
-	   because of a strange premonition I had three years ago." */
+	// "The beacon within Jupiter Lighthouse will soon be lit. I know this because of a strange
+	// premonition I had three years ago."
 	ACTOR_WOMAN_FORESEEING_THE_BEACON,
-	/* "It must be so exciting to travel around the world in a flying ship." */
+	// "It must be so exciting to travel around the world in a flying ship."
 	ACTOR_MAN_ON_THE_FLYING_SHIP,
-	/* "The people of Anemos possessed power over the wind." */
+	// "The people of Anemos possessed power over the wind."
 	ACTOR_WOMAN_ON_THE_ANEMOS,
-	/* "If a ship can rise up from the sea, why can't a city rise up from the
-	   ground?" */
+	// "If a ship can rise up from the sea, why can't a city rise up from the ground?"
 	ACTOR_OLD_MAN_ON_THE_RISEN_CITY,
-	/* "The Anemos geoglyphs show a boat with wings..." */
+	// "The Anemos geoglyphs show a boat with wings..."
 	ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS,
-	/* The two children walking round the middle of the village: the boy,
-	   "Cities flying up into the sky? I don't buy that for a second!"
-	   (scContigoTalkToDoubtingBoy), and the girl, "It wasn't what I expected,
-	   but seeing the ship take off was still amazing."
-	   (scContigoTalkAboutTheShip) */
+	// The two children walking round the middle of the village: the boy, "Cities flying up into the
+	// sky? I don't buy that for a second!" (scContigoTalkToDoubtingBoy), and the girl, "It wasn't
+	// what I expected, but seeing the ship take off was still amazing." (scContigoTalkAboutTheShip)
 	ACTOR_BOY_DOUBTING_THE_LEGENDS,
 	ACTOR_GIRL_ON_THE_SHIP,
-	/* The Djinn Salt (Venus) and Shine (Mars). */
+	// The Djinn Salt (Venus) and Shine (Mars).
 	ACTOR_SALT,
 	ACTOR_SHINE
 } CONTIGO_VILLAGE_ACTOR_ID;
 
-/* The shops and inn before the reunion
-   (ContigoShopsPlacementsBeforeReunion). */
-typedef enum CONTIGO_SHOPS_ACTOR_ID {
-	/* "I guess the lighthouse was lit because Ivan and Hamma finally returned
-	   to Contigo." */
+// The shops and inn before the reunion (ContigoShopsPlacementsBeforeReunion).
+typedef enum CONTIGO_SHOPS_ACTOR_ID
+{
+	// "I guess the lighthouse was lit because Ivan and Hamma finally returned to Contigo."
 	ACTOR_MAN_ON_IVANS_RETURN = ACTOR_FIRST_PLACED,
-	/* "Ivan doesn't remember his mother..." */
+	// "Ivan doesn't remember his mother..."
 	ACTOR_WOMAN_ON_IVANS_MOTHER,
-	/* "From the look on Ivan's..."; his thought: "Someday I'm gonna fight
-	   Ivan..." */
+	// "From the look on Ivan's..."; his thought: "Someday I'm gonna fight Ivan..."
 	ACTOR_BOY_WHO_WOULD_FIGHT_IVAN,
-	/* "Long ago, the people of Hesperia attacked Atteka." */
+	// "Long ago, the people of Hesperia attacked Atteka."
 	ACTOR_OLD_MAN_ON_HESPERIA,
-	/* "Winter just ended, but it keeps getting colder. What's going on?" */
+	// "Winter just ended, but it keeps getting colder. What's going on?"
 	ACTOR_OLD_WOMAN_FEELING_THE_COLD,
-	/* The woman behind the item shop's counter
-	   (scContigoTalkToItemMerchant). */
+	// The woman behind the item shop's counter (scContigoTalkToItemMerchant).
 	ACTOR_ITEM_MERCHANT,
-	/* "Soon, the siblings with the power of the Anemos will return." */
+	// "Soon, the siblings with the power of the Anemos will return."
 	ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
-	/* "The power of the Anemos is all but gone in Contigo." */
+	// "The power of the Anemos is all but gone in Contigo."
 	ACTOR_WOMAN_ON_THE_ANEMOS_POWER,
-	/* The baby's brother: "I don't have any powers like the Anemos did, but my
-	   sister, Ahri, is different." */
+	// The baby's brother: "I don't have any powers like the Anemos did, but my sister, Ahri, is
+	// different."
 	ACTOR_BABYS_BROTHER,
-	/* The baby whose furrowed brow brings the wind (scContigoBabyThinks). */
+	// The baby whose furrowed brow brings the wind (scContigoBabyThinks).
 	ACTOR_BABY,
-	/* The two men behind the counter of swords and shields: the weapon
-	   merchant, and the armor merchant, "Mining materials in the ruins is
-	   dangerous work, so my armor is selling well." */
+	// The two men behind the counter of swords and shields: the weapon merchant, and the armor
+	// merchant, "Mining materials in the ruins is dangerous work, so my armor is selling well."
 	ACTOR_WEAPON_MERCHANT,
 	ACTOR_ARMOR_MERCHANT,
 	ACTOR_INNKEEPER,
-	/* "All the work on the wings means that our inn is always full!" */
+	// "All the work on the wings means that our inn is always full!"
 	ACTOR_INN_WORKER,
-	/* "Gotta make all the beds before everyone returns from Anemos
-	   Sanctum..." */
+	// "Gotta make all the beds before everyone returns from Anemos Sanctum..."
 	ACTOR_WOMAN_MAKING_THE_BEDS,
-	/* "I must be the greatest chef in the world!" */
+	// "I must be the greatest chef in the world!"
 	ACTOR_COOK,
-	/* The workers on the wings, resting at the inn: "I worked myself half to
-	   death yesterday." */
+	// The workers on the wings, resting at the inn: "I worked myself half to death yesterday."
 	ACTOR_WORN_OUT_WORKER,
-	/* "The prophecies of the Anemos tell that someday soon..." */
+	// "The prophecies of the Anemos tell that someday soon..."
 	ACTOR_WORKER_ON_THE_PROPHECIES,
-	/* "I'm afraid I'm too old to help in the construction..." */
+	// "I'm afraid I'm too old to help in the construction..."
 	ACTOR_OLD_MAN_TOO_OLD_TO_HELP,
-	/* "When is that miracle of the Anemos gonna hurry up..." */
+	// "When is that miracle of the Anemos gonna hurry up..."
 	ACTOR_OLD_WOMAN_AWAITING_THE_MIRACLE,
-	/* The robed man behind the Sanctum's counter (scContigoTalkToHealer). */
+	// The robed man behind the Sanctum's counter (scContigoTalkToHealer).
 	ACTOR_HEALER
 } CONTIGO_SHOPS_ACTOR_ID;
 
-/* Hamma and Kraden at the reunion and after it (ContigoShopsPlacements,
-   ContigoShopsPlacementsReunion). */
-typedef enum CONTIGO_REUNION_ACTOR_ID {
+// Hamma and Kraden at the reunion and after it (ContigoShopsPlacements,
+// ContigoShopsPlacementsReunion).
+typedef enum CONTIGO_REUNION_ACTOR_ID
+{
 	ACTOR_HAMMA = ACTOR_FIRST_PLACED,
 	ACTOR_KRADEN
 } CONTIGO_REUNION_ACTOR_ID;
 
-/* The dice and wheels hall (ContigoLuckyDicePlacements). */
-typedef enum CONTIGO_LUCKY_DICE_ACTOR_ID {
-	/* A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), who runs
-	   Super Lucky Dice (scContigoOfferSuperLuckyDice). */
+// The dice and wheels hall (ContigoLuckyDicePlacements).
+typedef enum CONTIGO_LUCKY_DICE_ACTOR_ID
+{
+	// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), who runs Super Lucky Dice
+	// (scContigoOfferSuperLuckyDice).
 	ACTOR_SUPER_LUCKY_DICE_ATTENDANT = ACTOR_FIRST_PLACED,
-	/* Beside him, in his sprite, pointing the party to the rules: "If you want
-	   to learn about the rules to Super Lucky Dice, just check out the
-	   sign." */
+	// Beside him, in his sprite, pointing the party to the rules: "If you want to learn about the
+	// rules to Super Lucky Dice, just check out the sign."
 	ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT,
-	/* The players: "This kid's got unlucky written all over his face" (his
-	   thought); "If you lose the hi-lo game, you don't win anything..."; "I
-	   almost always get at least one pair..." */
+	// The players: "This kid's got unlucky written all over his face" (his thought); "If you lose
+	// the hi-lo game, you don't win anything..."; "I almost always get at least one pair..."
 	ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS,
 	ACTOR_OLD_MAN_ON_THE_HI_LO_GAME,
 	ACTOR_WOMAN_WHO_LOSES_AT_HI_LO,
-	/* The sign of Super Lucky Dice's rules
-	   (scContigoReadSuperLuckyDiceRules). */
+	// The sign of Super Lucky Dice's rules (scContigoReadSuperLuckyDiceRules).
 	ACTOR_SUPER_LUCKY_DICE_RULES_SIGN,
-	/* A young man with fair hair, in other colours, who runs Lucky Dice
-	   (scContigoOfferLuckyDice). */
+	// A young man with fair hair, in other colours, who runs Lucky Dice (scContigoOfferLuckyDice).
 	ACTOR_LUCKY_DICE_ATTENDANT,
-	/* Beside him, in his sprite, pointing the party to the rules: "Read the
-	   sign if ya don't know the rules." */
+	// Beside him, in his sprite, pointing the party to the rules: "Read the sign if ya don't know
+	// the rules."
 	ACTOR_LUCKY_DICE_RULES_ATTENDANT,
-	/* Lucky Dice's two signs: how to play (scContigoReadLuckyDiceRules), and
-	   what pairs, triples and four of a kind win
-	   (scContigoReadLuckyDicePairs). */
+	// Lucky Dice's two signs: how to play (scContigoReadLuckyDiceRules), and what pairs, triples
+	// and four of a kind win (scContigoReadLuckyDicePairs).
 	ACTOR_LUCKY_DICE_RULES_SIGN,
 	ACTOR_LUCKY_DICE_PAIRS_SIGN,
-	/* A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who runs Lucky
-	   Wheels (scContigoTalkToWheelsAttendant). */
+	// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who runs Lucky Wheels
+	// (scContigoTalkToWheelsAttendant).
 	ACTOR_LUCKY_WHEELS_ATTENDANT,
-	/* Lucky Wheels' signs: its rules (scContigoReadLuckyWheelsRules), and its
-	   prizes (scContigoReadLuckyWheelsPrizes). */
+	// Lucky Wheels' signs: its rules (scContigoReadLuckyWheelsRules), and its prizes
+	// (scContigoReadLuckyWheelsPrizes).
 	ACTOR_LUCKY_WHEELS_RULES_SIGN,
 	ACTOR_LUCKY_WHEELS_PRIZE_SIGN
 } CONTIGO_LUCKY_DICE_ACTOR_ID;
 
-/* The geoglyph, where the Wings of Anemos are built
-   (ContigoGeoglyphPlacements). */
-typedef enum CONTIGO_GEOGLYPH_ACTOR_ID {
-	/* "I've come a long way to see the flying boat." */
+// The geoglyph, where the Wings of Anemos are built (ContigoGeoglyphPlacements).
+typedef enum CONTIGO_GEOGLYPH_ACTOR_ID
+{
+	// "I've come a long way to see the flying boat."
 	ACTOR_VISITOR_FROM_AFAR = ACTOR_FIRST_PLACED,
-	/* "The wings are almost done." */
+	// "The wings are almost done."
 	ACTOR_WOMAN_ON_THE_WINGS,
-	/* The four workers building the wings: "Which part goes where? Does this
-	   metal feather connect to that wooden post?" */
+	// The four workers building the wings: "Which part goes where? Does this metal feather connect
+	// to that wooden post?"
 	ACTOR_WING_WORKER_A,
 	ACTOR_WING_WORKER_B,
 	ACTOR_WING_WORKER_C,
 	ACTOR_WING_WORKER_D,
-	/* The four men in long robes by the Sanctum's wall: "Have you taken a good
-	   look at the Anemos geoglyph?"; "I know that devoted pilgrims will
-	   appreciate having this translation."; "I want to get a good look at the
-	   inside of the sanctum, but I can't get this door open."; "The merchant
-	   Hammet took the gold in this room with him when he left Contigo." */
+	// The four men in long robes by the Sanctum's wall: "Have you taken a good look at the Anemos
+	// geoglyph?"; "I know that devoted pilgrims will appreciate having this translation."; "I want
+	// to get a good look at the inside of the sanctum, but I can't get this door open."; "The
+	// merchant Hammet took the gold in this room with him when he left Contigo."
 	ACTOR_MAN_ON_THE_GEOGLYPH,
 	ACTOR_MAN_WHO_TRANSLATED_THE_WALL,
 	ACTOR_MAN_LOCKED_OUT_OF_THE_SANCTUM,
 	ACTOR_MAN_ON_HAMMET,
-	/* The sign with a translation of the characters carved into the wall. */
+	// The sign with a translation of the characters carved into the wall.
 	ACTOR_SIGN,
-	/* The wings' parts lying about: three ticks, five metal feathers and seven
-	   loose pieces. */
+	// The wings' parts lying about: three ticks, five metal feathers and seven loose pieces.
 	ACTOR_WING_FRAME_A,
 	ACTOR_WING_FRAME_B,
 	ACTOR_WING_FRAME_C,
@@ -308,80 +280,81 @@ typedef enum CONTIGO_GEOGLYPH_ACTOR_ID {
 struct ACTOR;
 
 void scContigoOfferLuckyWheels(Sint32 mode);
-void scContigoOpenSanctumDoor(
-	Sint32 srcX, Sint32 srcY, Sint32 doorX, Sint32 doorY);
+void scContigoOpenSanctumDoor(Sint32 srcX, Sint32 srcY, Sint32 doorX, Sint32 doorY);
 
 #include "scene/scene.h"
 #include "field/field_mode_script.h"
 #include "game/game.h"
 
-/* The village's treasure actors after the Power Bread's (SceneItems): the Corn,
-   and the Bramble Seed under the weeds north of the Teleport circle. */
-enum {
-	ACTOR_CORN = FIELD_TREASURE_ACTOR + 1,
+// The village's treasure actors after the Power Bread's (SceneItems): the Corn, and the Bramble
+// Seed under the weeds north of the Teleport circle.
+enum
+{
+	ACTOR_CORN         = FIELD_TREASURE_ACTOR + 1,
 	ACTOR_BRAMBLE_SEED = FIELD_TREASURE_ACTOR + 2
 };
 
 extern const Sint32 *FieldEffectDurationScripts[];
-extern ACTOR_PLACE	 ContigoVillagePlacements[];
-extern ACTOR_PLACE	 ContigoGeoglyphPlacements[];
-extern ACTOR_PLACE	 ContigoShopsPlacementsBeforeReunion[];
-extern ACTOR_PLACE	 ContigoShopsPlacementsReunion[];
-extern ACTOR_PLACE	 ContigoShopsPlacements[];
-extern ACTOR_PLACE	 ContigoLuckyDicePlacements[];
-extern CUE			 ContigoVillageCues[];
-extern CUE			 ContigoShopsCues[];
-extern CUE			 ContigoShopsReunionCues[];
+extern ACTOR_PLACE   ContigoVillagePlacements[];
+extern ACTOR_PLACE   ContigoGeoglyphPlacements[];
+extern ACTOR_PLACE   ContigoShopsPlacementsBeforeReunion[];
+extern ACTOR_PLACE   ContigoShopsPlacementsReunion[];
+extern ACTOR_PLACE   ContigoShopsPlacements[];
+extern ACTOR_PLACE   ContigoLuckyDicePlacements[];
+extern CUE           ContigoVillageCues[];
+extern CUE           ContigoShopsCues[];
+extern CUE           ContigoShopsReunionCues[];
 
-void scTeleportStartShimmer(void);
+void                 scTeleportStartShimmer(void);
 
-void scTeleportStopShimmer(void);
+void                 scTeleportStopShimmer(void);
 
-extern Uint32 ContigoWheelsPrizes[];
+extern Uint32        ContigoWheelsPrizes[];
 
-/* The Lucky Wheels' icons that win prizes, shirts, boots, rings, then the
-   stars' and hearts' items, three prizes to each (ContigoWheelsPrizes); the
-   Moon after them is wild, any of the five at random. */
-enum {
-	WHEELS_PRIZE_ICONS = 5,
-	WHEELS_ICON_MOON = WHEELS_PRIZE_ICONS,
+// The Lucky Wheels' icons that win prizes, shirts, boots, rings, then the stars' and hearts' items,
+// three prizes to each (ContigoWheelsPrizes); the Moon after them is wild, any of the five at
+// random.
+enum
+{
+	WHEELS_PRIZE_ICONS     = 5,
+	WHEELS_ICON_MOON       = WHEELS_PRIZE_ICONS,
 	WHEELS_PRIZES_PER_ICON = 3
 };
 
-extern Sint32 ContigoEnterSanctumDoorScript[];
-extern Uint32 ContigoRejoinLeaderScript[];
-void		  scContigoInitVillage(void);
-void		  scContigoInitGeoglyph(void);
-void		  scContigoInitShops(void);
-void		  scContigoInitLuckyDice(void);
-extern Uint16 TeleportCirclePaletteSlots[];
-extern Uint16 TeleportCircleColors[];
-extern Uint16 TeleportCircleShimmerColors[];
-extern Uint16 TeleportCircleShimmerSlots[];
-extern Sint32 ContigoShiverScript[];
-extern Uint32 LightRingTiles[];
-extern Uint32 FieldEffectShortScript[];
-extern Uint32 FieldEffectMediumScript[];
-extern Uint32 FieldEffectLongScript[];
-extern Uint32 ContigoDoubtingBoyScript[];
-extern Uint32 ContigoGirlOnTheShipScript[];
-extern Sint32 ContigoPuzzledWorkerScript[];
+extern Sint32                     ContigoEnterSanctumDoorScript[];
+extern Uint32                     ContigoRejoinLeaderScript[];
+void                              scContigoInitVillage(void);
+void                              scContigoInitGeoglyph(void);
+void                              scContigoInitShops(void);
+void                              scContigoInitLuckyDice(void);
+extern Uint16                     TeleportCirclePaletteSlots[];
+extern Uint16                     TeleportCircleColors[];
+extern Uint16                     TeleportCircleShimmerColors[];
+extern Uint16                     TeleportCircleShimmerSlots[];
+extern Sint32                     ContigoShiverScript[];
+extern Uint32                     LightRingTiles[];
+extern Uint32                     FieldEffectShortScript[];
+extern Uint32                     FieldEffectMediumScript[];
+extern Uint32                     FieldEffectLongScript[];
+extern Uint32                     ContigoDoubtingBoyScript[];
+extern Uint32                     ContigoGirlOnTheShipScript[];
+extern Sint32                     ContigoPuzzledWorkerScript[];
 
-Uint16 PaletteCycleBright		  BSS_DATA;
-Uint16 *PaletteCycleSlots		  BSS_DATA;
-Uint16 PaletteCycleTimer		  BSS_DATA;
+Uint16 PaletteCycleBright         BSS_DATA;
+Uint16 *PaletteCycleSlots         BSS_DATA;
+Uint16 PaletteCycleTimer          BSS_DATA;
 Uint16 PaletteCycleDelay BSS_DATA ALIGNED(4);
-Uint16 *PaletteSlots			  BSS_DATA;
-Uint16 *PaletteColors			  BSS_DATA;
-Uint16 *PaletteCycleColors		  BSS_DATA;
-Uint16 PaletteCycleLength		  BSS_DATA;
+Uint16 *PaletteSlots              BSS_DATA;
+Uint16 *PaletteColors             BSS_DATA;
+Uint16 *PaletteCycleColors        BSS_DATA;
+Uint16 PaletteCycleLength         BSS_DATA;
 Uint16 PaletteCycleIndex BSS_DATA ALIGNED(4);
 
-void scTeleportArriveWhirling(void);
+void                              scTeleportArriveWhirling(void);
 
-Sint32 syListCountEntries(Uint16 *list);
+Sint32                            syListCountEntries(Uint16 *list);
 
-void fdPaletteCycleFade(void);
+void                              fdPaletteCycleFade(void);
 
 #include "shared/teleport_shimmer.c"
 
@@ -391,26 +364,24 @@ void fdPaletteCycleFade(void);
 
 #include "text/msg_ids.h"
 
-#define EFFECT_SET_MODE	  fdActorSelectAnimation
+#define EFFECT_SET_MODE   fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
-/* Salt, popped up out of the gap in the weed patch east of the village gate,
-   joins the party: "Felix found the Venus Djinni Salt!" */
+// Salt, popped up out of the gap in the weed patch east of the village gate, joins the party:
+// "Felix found the Venus Djinni Salt!"
 void scContigoSaltJoinsParty(void)
 {
-	fdDjinnJoinParty(
-		ACTOR_SALT, DJINNI_SALT / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_SALT));
+	fdDjinnJoinParty(ACTOR_SALT, DJINNI_SALT / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_SALT));
 }
 
-/* Talking to Shine where it landed, beside the tree stump behind the inn, once
-   Force has freed it: the Mars Djinni joins the party. */
+// Talking to Shine where it landed, beside the tree stump behind the inn, once Force has freed it:
+// the Mars Djinni joins the party.
 void scContigoFreedDjinniJoinsParty(void)
 {
-	fdDjinnJoinParty(ACTOR_SHINE, DJINNI_SHINE / DJINN_PER_ELEMENT,
-		DJINNI_INDEX(DJINNI_SHINE));
+	fdDjinnJoinParty(ACTOR_SHINE, DJINNI_SHINE / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_SHINE));
 	syGameFlagSet(FLAG_SHINE_CAUGHT);
 }
 
@@ -418,42 +389,41 @@ void scContigoFreedDjinniJoinsParty(void)
 
 #include "shared/actor_is_facing_near.h"
 
-/* The update of the two children walking round the middle of the village: each
-   stands while it is talked to, while Mind Read shows its thoughts, or while it
-   faces the other child or the leader close by, and walks on otherwise or once
-   the leader is right by it. */
+// The update of the two children walking round the middle of the village: each stands while it is
+// talked to, while Mind Read shows its thoughts, or while it faces the other child or the leader
+// close by, and walks on otherwise or once the leader is right by it.
 Sint32 scContigoPauseWhenFaced(ACTOR *self)
 {
-	FIELD_STATE		   *event = RamHeapSlots->fieldState;
-	Uint8			   *state;
-	Uint32				mode;
+	FIELD_STATE        *event = RamHeapSlots->fieldState;
+	Uint8              *state;
+	Uint32              mode;
 	FIELD_EFFECT_STATE *effect;
-	ACTOR			   *other;
+	ACTOR              *other;
 
-	fdActorSetSpritePriorityDirect(self,
-		fdActorGetSpritePriority(
-			fdActorGetById(MainRoutineStateWork.leaderActorId)));
-	mode = ABILITY_ID(event->psynergy);
+	fdActorSetSpritePriorityDirect(
+		self, fdActorGetSpritePriority(fdActorGetById(MainRoutineStateWork.leaderActorId)));
+	mode  = ABILITY_ID(event->psynergy);
 	state = &self->paused;
-	if(mode == ABILITY_MIND_READ) {
+	if (mode == ABILITY_MIND_READ)
+	{
 		effect = RamHeapSlots->fieldEffectState;
-		if((Sint8)effect->msgShown != 0)
+		if ((Sint8)effect->msgShown != 0)
 			goto stand;
 	}
-	if(self->sceneByte == 1)
+	if (self->sceneByte == 1)
 		goto stand;
 	other = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(scPosDistance(&self->x.fixed, &other->x.fixed) <= CHILD_WALKS_ON_RANGE)
+	if (scPosDistance(&self->x.fixed, &other->x.fixed) <= CHILD_WALKS_ON_RANGE)
 		goto walk;
-	if(self->sceneCount == 1)
+	if (self->sceneCount == 1)
 		other = fdActorGetById(ACTOR_GIRL_ON_THE_SHIP);
 	else
 		other = fdActorGetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
-	if(scActorIsFacingNear(self, other, CHILD_SEES_CHILD_RANGE) != 0)
+	if (scActorIsFacingNear(self, other, CHILD_SEES_CHILD_RANGE) != 0)
 		goto stand;
-	if(scActorIsFacingNear(self,
-		   fdActorGetById(MainRoutineStateWork.leaderActorId),
-		   CHILD_SEES_LEADER_RANGE) != 0)
+	if (scActorIsFacingNear(
+			self, fdActorGetById(MainRoutineStateWork.leaderActorId), CHILD_SEES_LEADER_RANGE)
+	    != 0)
 		goto stand;
 walk:
 	*state = 0;
@@ -465,12 +435,11 @@ stand:
 	return 0;
 }
 
-/* A question mark over the worker wondering which part goes where, as he looks
-   from one part of the wings to another (ContigoPuzzledWorkerScript). */
+// A question mark over the worker wondering which part goes where, as he looks from one part of the
+// wings to another (ContigoPuzzledWorkerScript).
 Sint32 scContigoShowWorkerPuzzled(void)
 {
-	scFieldActorShowEmote(
-		ACTOR_WING_WORKER_B, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+	scFieldActorShowEmote(ACTOR_WING_WORKER_B, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	return 0;
 }
 
@@ -495,21 +464,23 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_CONTIGO)
+	if (scene == SCENE_CONTIGO)
 		return ContigoVillagePlacements;
-	if(scene == SCENE_CONTIGO_GEOGLYPH)
+	if (scene == SCENE_CONTIGO_GEOGLYPH)
 		return ContigoGeoglyphPlacements;
-	if(scene == SCENE_CONTIGO_SHOPS) {
-		if(MainRoutineStateWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH) {
-			if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
+	if (scene == SCENE_CONTIGO_SHOPS)
+	{
+		if (MainRoutineStateWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH)
+		{
+			if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
 				return ContigoShopsPlacements;
-			if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0 &&
-				syGameFlagGet(FLAG_REUNION_AT_CONTIGO) == 0)
+			if (syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0
+			    && syGameFlagGet(FLAG_REUNION_AT_CONTIGO) == 0)
 				return ContigoShopsPlacementsReunion;
 		}
 		return ContigoShopsPlacementsBeforeReunion;
 	}
-	if(scene == SCENE_CONTIGO_LUCKY_DICE)
+	if (scene == SCENE_CONTIGO_LUCKY_DICE)
 		return ContigoLuckyDicePlacements;
 	return ContigoPlacements;
 }
@@ -522,98 +493,96 @@ const CUE *scGetCues(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_CONTIGO)
+	if (scene == SCENE_CONTIGO)
 		return ContigoVillageCues;
-	if(scene == SCENE_CONTIGO_GEOGLYPH)
+	if (scene == SCENE_CONTIGO_GEOGLYPH)
 		return ContigoGeoglyphCues;
-	if(scene == SCENE_CONTIGO_SHOPS) {
-		if(MainRoutineStateWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH)
+	if (scene == SCENE_CONTIGO_SHOPS)
+	{
+		if (MainRoutineStateWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH)
 			return ContigoShopsReunionCues;
 		return ContigoShopsCues;
 	}
-	if(scene == SCENE_CONTIGO_LUCKY_DICE)
+	if (scene == SCENE_CONTIGO_LUCKY_DICE)
 		return ContigoLuckyDiceCues;
 	return ContigoCues;
 }
 
-/* Felix examines the Sanctum's front wall between its west and middle steps,
-   behind the translation sign (metatiles (45, 18) and (46, 18)): "There are
-   characters carved into it", which he cannot make sense of. */
+// Felix examines the Sanctum's front wall between its west and middle steps, behind the translation
+// sign (metatiles (45, 18) and (46, 18)): "There are characters carved into it", which he cannot
+// make sense of.
 void scContigoExamineWall(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	/* "Felix examined the wall. There are characters carved into it...." */
+	// "Felix examined the wall. There are characters carved into it...."
 	mnFieldMessageShow((Sint32)MsgContigoFelixExaminedTheWallThere, 1);
 	fdScriptEnd();
 }
 
-/* Felix reads the small sign in front of the Sanctum's carved wall: "The
-   characters from the wall are translated" on it. */
+// Felix reads the small sign in front of the Sanctum's carved wall: "The characters from the wall
+// are translated" on it.
 void scContigoReadSign(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	/* "Felix examined the sign. The characters from the wall are
-	   translated..." */
+	// "Felix examined the sign. The characters from the wall are translated..."
 	mnFieldMessageShow((Sint32)MsgContigoFelixExaminedTheSignThe, 1);
 	fdScriptEnd();
 }
 
-/* Felix reads the sign outside the Lucky Wheels tent, left of the inn (metatile
-   (4, 55)): "Turn the slot and get a prize! The lottery slots are over
-   here." */
+// Felix reads the sign outside the Lucky Wheels tent, left of the inn (metatile (4, 55)): "Turn the
+// slot and get a prize! The lottery slots are over here."
 void scContigoReadLuckyWheelsSign(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	/* "Turn the slot and get a prize! The lottery slots are over here." */
+	// "Turn the slot and get a prize! The lottery slots are over here."
 	mnFieldMessageShow((Sint32)MsgContigoTurnTheSlotAndGet, 1);
 	fdScriptEnd();
 }
 
-/* Felix reads the sign west of the two tents north of the Teleport circle
-   (metatile (11, 47)), which points to Super Lucky Dice in the west tent: "Drop
-   some cash and double up! The hi-lo dice are over here!" */
+// Felix reads the sign west of the two tents north of the Teleport circle (metatile (11, 47)),
+// which points to Super Lucky Dice in the west tent: "Drop some cash and double up! The hi-lo dice
+// are over here!"
 void scContigoReadSuperLuckyDiceSign(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	/* "Drop some cash and double up! The hi-lo dice are over here!" */
+	// "Drop some cash and double up! The hi-lo dice are over here!"
 	mnFieldMessageShow((Sint32)MsgContigoDropSomeCashAndDouble, 1);
 	fdScriptEnd();
 }
 
-/* Felix reads the sign east of the two tents north of the Teleport circle
-   (metatile (19, 47)), which points to Lucky Dice in the east tent: "You never
-   know what the dice will do next! Come and give our dice a toss!" */
+// Felix reads the sign east of the two tents north of the Teleport circle (metatile (19, 47)),
+// which points to Lucky Dice in the east tent: "You never know what the dice will do next! Come and
+// give our dice a toss!"
 void scContigoReadLuckyDiceSign(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	/* "You never know what the dice will do next! Come and give our dice
-	   a..." */
+	// "You never know what the dice will do next! Come and give our dice a..."
 	mnFieldMessageShow((Sint32)MsgContigoYouNeverKnowWhatThe, 1);
 	fdScriptEnd();
 }
 
 #include "shared/scene_show_entrance_locked.h"
 
-/* Until Jupiter Lighthouse is lit, the young man a few steps inside the village
-   gate asks Felix whether he knows the legend of the people who could control
-   the wind and air, and answers his yes or no. */
+// Until Jupiter Lighthouse is lit, the young man a few steps inside the village gate asks Felix
+// whether he knows the legend of the people who could control the wind and air, and answers his yes
+// or no.
 void scContigoAskAboutWindLegend(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)MsgContigoDoYouKnowAnythingAbout);
-	/* "Do you know anything about a legend about these people who could..." */
+	// "Do you know anything about a legend about these people who could..."
 	fdScriptAskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, 0);
 	fdScriptEnd();
 }
 
-/* The update of a leaf in the baby's whirlwind: it circles on a random radius,
-   now and then pausing to spin faster, and is released after 101 ticks. */
+// The update of a leaf in the baby's whirlwind: it circles on a random radius, now and then pausing
+// to spin faster, and is released after 101 ticks.
 void scContigoWhirlLeaf(ACTOR *effect)
 {
 	FIXED  radius;
@@ -621,51 +590,54 @@ void scContigoWhirlLeaf(ACTOR *effect)
 	FIXED  dx;
 	FIXED  dz;
 
-	/* syRandom is 0 to 1 in 16.16, so 2 to 3 pixels. */
-	radius = syRandom() + toFIXED(2);
-	angle = effect->facing;
-	dx = syMulFX(radius, syCos(angle));
-	dz = syMulFX(radius, sySin(angle));
+	// syRandom is 0 to 1 in 16.16, so 2 to 3 pixels.
+	radius           = syRandom() + toFIXED(2);
+	angle            = effect->facing;
+	dx               = syMulFX(radius, syCos(angle));
+	dz               = syMulFX(radius, sySin(angle));
 	effect->x.fixed += dx;
 	effect->z.fixed += dz;
-	/* A small backwards drift, a 4096th of a turn a tick. */
-	effect->facing += -(TRIG_TURN / 4096);
-	if(effect->turnFrame != 0) {
+	// A small backwards drift, a 4096th of a turn a tick.
+	effect->facing  += -(TRIG_TURN / 4096);
+	if (effect->turnFrame != 0)
+	{
 		effect->turnFrame--;
 		effect->facing += TRIG_TURN / 32;
-	} else if(syRandomBelow(32) == 0) {			   /* one chance in 32 */
-		effect->turnFrame = syRandomBelow(16) + 8; /* 8 to 23 ticks */
 	}
-	if(++effect->swirlFrame == 101)
+	else if (syRandomBelow(32) == 0)
+	{                                              // one chance in 32
+		effect->turnFrame = syRandomBelow(16) + 8; // 8 to 23 ticks
+	}
+	if (++effect->swirlFrame == 101)
 		fdActorRelease(effect);
 }
 
-/* An event that spawns a leaf in the baby's whirlwind every eighth tick, flung
-   up to fall back as it circles. */
+// An event that spawns a leaf in the baby's whirlwind every eighth tick, flung up to fall back as
+// it circles.
 void scContigoRaiseLeaves(void)
 {
-	if((TickCount & 7) == 0) {
-		ACTOR *actor =
-			fdActorSpawn(SPRITE_LEAF, toFIXED(706), toFIXED(0.8), toFIXED(116));
+	if ((TickCount & 7) == 0)
+	{
+		ACTOR *actor = fdActorSpawn(SPRITE_LEAF, toFIXED(706), toFIXED(0.8), toFIXED(116));
 
-		if(actor != NULL) {
+		if (actor != NULL)
+		{
 			fdActorSetSpriteFlags(actor, 0);
-			actor->update = scContigoWhirlLeaf;
+			actor->update      = scContigoWhirlLeaf;
 			actor->motionFlags = 0;
-			actor->swirlFrame = -(Sint32)(syRandomBelow(16)) * 2 + 20;
-			actor->turnFrame = 0;
-			actor->gravity = toFIXED(1) / 10;
-			actor->velocityY = toFIXED(3);
-			actor->facing = syRandom();
+			actor->swirlFrame  = -(Sint32)(syRandomBelow(16)) * 2 + 20;
+			actor->turnFrame   = 0;
+			actor->gravity     = toFIXED(1) / 10;
+			actor->velocityY   = toFIXED(3);
+			actor->facing      = syRandom();
 		}
 	}
 }
 
-/* Talking to the baby in its cradle, in the house north of the weapon shop:
-   "The baby's forehead is furrowed, like it's thinking." The room turns dark
-   blue, a whirlwind grows over the cradle and leaves whirl up in it, then the
-   light comes back, the baby babbles "Babu bawaba bibaw.", and its brother
-   grumbles that the shabby old house is drafty. */
+// Talking to the baby in its cradle, in the house north of the weapon shop: "The baby's forehead is
+// furrowed, like it's thinking." The room turns dark blue, a whirlwind grows over the cradle and
+// leaves whirl up in it, then the light comes back, the baby babbles "Babu bawaba bibaw.", and its
+// brother grumbles that the shabby old house is drafty.
 void scContigoBabyThinks(void)
 {
 	ACTOR *effect;
@@ -675,27 +647,28 @@ void scContigoBabyThinks(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
-		/* "The baby's forehead is furrowed, like it's thinking." */
+	if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
+		// "The baby's forehead is furrowed, like it's thinking."
 		mnFieldMessageShow((Sint32)MsgContigoTheBabysForeheadIsFurrowedLike, 1);
 	else
-		/* "The baby's forehead is furrowed, like it's thinking." */
+		// "The baby's forehead is furrowed, like it's thinking."
 		mnFieldMessageShow((Sint32)MsgContigoTheBabysForeheadIsFurrowed, 1);
 	fdActorSetAnimationById(ACTOR_BABY, 3);
 	fdPaletteFadeSetSource(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeSetTarget(PALETTE_TINT_CUSTOM | RGB(4, 4, 16), PALETTES_BG);
 	fdPaletteFadeStartInterpolation(16);
 	fdBattleEffectStartArcEffect();
-	fdBattleEffectSetObjectUpdateMode(
-		fdActorGetById(ACTOR_BABY), CASTER_LOOK_CYCLING_COLORS);
+	fdBattleEffectSetObjectUpdateMode(fdActorGetById(ACTOR_BABY), CASTER_LOOK_CYCLING_COLORS);
 	effect = syImportActorCreate(SPRITE_WHIRLWIND, x, 0, z);
-	if(effect != 0) {
+	if (effect != 0)
+	{
 		fdActorSetSpriteFlags(effect, 0);
 		fdActorSelectAnimation(effect, 2);
 		effect->motionFlags = 0;
-		effect->scaleX = toFIXED(1) / 10;
-		effect->scaleY = toFIXED(1) / 10;
-		for(i = 0; i < 28; i++) {
+		effect->scaleX      = toFIXED(1) / 10;
+		effect->scaleY      = toFIXED(1) / 10;
+		for (i = 0; i < 28; i++)
+		{
 			effect->scaleX += toFIXED(1) / 40;
 			effect->scaleY += toFIXED(1) / 40;
 			sySynch(1);
@@ -704,197 +677,199 @@ void scContigoBabyThinks(void)
 	sySetEvent(scContigoRaiseLeaves, EVENT_PASS_TICK);
 	fdScriptWait(120);
 	syCloseEvent(scContigoRaiseLeaves);
-	if(effect != 0) {
-		for(i = 0; i < 28; i++) {
-			effect->scaleX -= toFIXED(1) / 40;
-			effect->scaleY -= toFIXED(1) / 40;
+	if (effect != 0)
+	{
+		for (i = 0; i < 28; i++)
+		{
+			effect->scaleX  -= toFIXED(1) / 40;
+			effect->scaleY  -= toFIXED(1) / 40;
 			effect->y.fixed += toFIXED(1) / 2;
 			sySynch(1);
 		}
 		fdActorRelease(effect);
 	}
-	fdBattleEffectSetObjectUpdateMode(
-		fdActorGetById(ACTOR_BABY), CASTER_LOOK_NORMAL);
+	fdBattleEffectSetObjectUpdateMode(fdActorGetById(ACTOR_BABY), CASTER_LOOK_NORMAL);
 	fdBattleEffectWaitForArcGroups();
 	fdBattleEffectEndArcEffect();
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(16);
-	if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
-		/* "Goo goo. Gaa gaa... Waaa!" */
+	if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
+		// "Goo goo. Gaa gaa... Waaa!"
 		fdScriptSetMessageId((Sint32)MsgContigoGooGooGaaGaaWaaa);
 	else
-		/* "Babu bawaba bibaw." */
+		// "Babu bawaba bibaw."
 		fdScriptSetMessageId((Sint32)MsgContigoBabuBawabaBibaw);
 	fdActorRunRepeatedMotion(ACTOR_BABY, 2);
 	fdScriptShowMessageAndWait(ACTOR_BABY, 0);
 	fdActorSetAnimationById(ACTOR_BABY, 1);
-	scFieldActorShowEmote(
-		ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+	scFieldActorShowEmote(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
 	fdActorFaceDirection(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FACING_WEST, 20);
-	/* "It sure is drafty in this shabby old house." */
+	// "It sure is drafty in this shabby old house."
 	fdScriptShowMessageAndWait(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, 0);
-	fdActorFaceDirectionAndRefreshById(
-		ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FACING_EAST);
-	/* "When the Wings of Anemos are complete, let's fix the house!" */
+	fdActorFaceDirectionAndRefreshById(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FACING_EAST);
+	// "When the Wings of Anemos are complete, let's fix the house!"
 	fdScriptShowMessageAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, 0);
 	fdActorSetAnimationById(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, ANIM_NOD);
-	fdActorFaceDirection(
-		ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FACING_NORTH_NORTHEAST, 0);
-	fdActorFaceDirectionAndWait(
-		ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FACING_SOUTH_SOUTHEAST);
+	fdActorFaceDirection(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FACING_NORTH_NORTHEAST, 0);
+	fdActorFaceDirectionAndWait(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FACING_SOUTH_SOUTHEAST);
 	fdScriptEnd();
 }
 
 #include "shared/leader_is_facing_north.h"
 
-/* Contigo's shops, as mnShopRun numbers them. */
-enum {
+// Contigo's shops, as mnShopRun numbers them.
+enum
+{
 	SHOP_CONTIGO_WEAPONS = 26,
-	SHOP_CONTIGO_ARMOR = 27,
-	SHOP_CONTIGO_ITEMS = 28
+	SHOP_CONTIGO_ARMOR   = 27,
+	SHOP_CONTIGO_ITEMS   = 28
 };
 
-/* Contigo's inn, as mnInnCheckIn numbers the inns. */
-enum { CONTIGO_INN = 12 };
+// Contigo's inn, as mnInnCheckIn numbers the inns.
+enum
+{
+	CONTIGO_INN = 12
+};
 
-/* Talking to the item merchant across her counter, in the west of the two
-   houses south of the Teleport circle, opens the item shop; from any other side
-   she talks of the wings. */
+// Talking to the item merchant across her counter, in the west of the two houses south of the
+// Teleport circle, opens the item shop; from any other side she talks of the wings.
 void scContigoTalkToItemMerchant(void)
 {
-	if(scLeaderIsFacingNorth()) {
+	if (scLeaderIsFacingNorth())
+	{
 		mnShopRun(SHOP_CONTIGO_ITEMS, ACTOR_ITEM_MERCHANT);
-	} else {
+	}
+	else
+	{
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
-			/* "It's always such a letdown when you finish off a major event
-			   like..." */
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
+			// "It's always such a letdown when you finish off a major event like..."
 			fdScriptSetMessageId((Sint32)MsgContigoItsAlwaysSuchALetdown);
 		else
-			/* "The villagers are working their hardest to complete the wings
-			   and..." */
+			// "The villagers are working their hardest to complete the wings and..."
 			fdScriptSetMessageId((Sint32)MsgContigoTheVillagersAreWorkingTheir);
 		fdScriptShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
 		fdScriptEnd();
 	}
 }
 
-/* Talking to the weapon merchant, the west of the two men behind the counter in
-   the shop east of the Teleport circle, across it opens his shop; from any
-   other side he talks of Atteka's traditions. */
+// Talking to the weapon merchant, the west of the two men behind the counter in the shop east of
+// the Teleport circle, across it opens his shop; from any other side he talks of Atteka's
+// traditions.
 void scContigoTalkToWeaponMerchant(void)
 {
-	if(scLeaderIsFacingNorth()) {
+	if (scLeaderIsFacingNorth())
+	{
 		mnShopRun(SHOP_CONTIGO_WEAPONS, ACTOR_WEAPON_MERCHANT);
-	} else {
+	}
+	else
+	{
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
-			/* "A cannon? Yeah, I think I heard something about a town up
-			   in..." */
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
+			// "A cannon? Yeah, I think I heard something about a town up in..."
 			fdScriptSetMessageId((Sint32)MsgContigoACannonYeahIThink);
 		else
-			/* "It was a longstanding tradition that people in Atteka would take
-			   a..." */
+			// "It was a longstanding tradition that people in Atteka would take a..."
 			fdScriptSetMessageId((Sint32)MsgContigoItWasALongstandingTradition);
 		fdScriptShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
 		fdScriptEnd();
 	}
 }
 
-/* Talking to the armor merchant, the east of the two men behind the counter in
-   the shop east of the Teleport circle, across it opens his shop; from any
-   other side he talks of the mining in the ruins. */
+// Talking to the armor merchant, the east of the two men behind the counter in the shop east of the
+// Teleport circle, across it opens his shop; from any other side he talks of the mining in the
+// ruins.
 void scContigoTalkToArmorMerchant(void)
 {
-	if(scLeaderIsFacingNorth()) {
+	if (scLeaderIsFacingNorth())
+	{
 		mnShopRun(SHOP_CONTIGO_ARMOR, ACTOR_ARMOR_MERCHANT);
-	} else {
+	}
+	else
+	{
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
-			/* "Now that the wings are finished, I doubt anyone will be buying
-			   any..." */
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
+			// "Now that the wings are finished, I doubt anyone will be buying any..."
 			fdScriptSetMessageId((Sint32)MsgContigoNowThatTheWingsAre);
 		else
-			/* "Mining materials in the ruins is dangerous work, so my armor
-			   is..." */
+			// "Mining materials in the ruins is dangerous work, so my armor is..."
 			fdScriptSetMessageId((Sint32)MsgContigoMiningMaterialsInTheRuins);
 		fdScriptShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
 		fdScriptEnd();
 	}
 }
 
-/* Talking to the innkeeper across the counter of the inn, right of the Lucky
-   Wheels tent, offers a night's rest; from any other side the innkeeper talks
-   of the visitors and the wings. */
+// Talking to the innkeeper across the counter of the inn, right of the Lucky Wheels tent, offers a
+// night's rest; from any other side the innkeeper talks of the visitors and the wings.
 void scContigoTalkToInnkeeper(void)
 {
-	if(scLeaderIsFacingNorth()) {
+	if (scLeaderIsFacingNorth())
+	{
 		mnInnCheckIn(CONTIGO_INN, ACTOR_INNKEEPER);
-	} else {
+	}
+	else
+	{
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
-			/* "All of our work and all of our celebration are finally at an
-			   end...." */
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
+			// "All of our work and all of our celebration are finally at an end...."
 			fdScriptSetMessageId((Sint32)MsgContigoAllOfOurWorkAnd);
-		else if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT))
-			/* "You have to hurry! I think the ship from the geoglyphs is going
-			   to..." */
+		else if (syGameFlagGet(FLAG_JUPITER_BEACON_LIT))
+			// "You have to hurry! I think the ship from the geoglyphs is going to..."
 			fdScriptSetMessageId((Sint32)MsgContigoYouHaveToHurryI);
 		else
-			/* "We've had so many people coming to Contigo lately that we're
-			   full..." */
+			// "We've had so many people coming to Contigo lately that we're full..."
 			fdScriptSetMessageId((Sint32)MsgContigoWeveHadSoManyPeople);
 		fdScriptShowMessageAndWait(ACTOR_INNKEEPER, 0);
 		fdScriptEnd();
 	}
 }
 
-/* Talking to the healer across his counter, at the head of the red carpet in
-   the Sanctum north-east of the Teleport circle, offers the Sanctum's healing;
-   from any other side he talks of the miracle of the wings. */
+// Talking to the healer across his counter, at the head of the red carpet in the Sanctum north-east
+// of the Teleport circle, offers the Sanctum's healing; from any other side he talks of the miracle
+// of the wings.
 void scContigoTalkToHealer(void)
 {
-	if(scLeaderIsFacingNorth()) {
+	if (scLeaderIsFacingNorth())
+	{
 		mnSanctumRun(ACTOR_HEALER);
-	} else {
+	}
+	else
+	{
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
-			/* "It was a miracle that made all of the legends of the Anemos
-			   come..." */
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
+			// "It was a miracle that made all of the legends of the Anemos come..."
 			fdScriptSetMessageId((Sint32)MsgContigoItWasAMiracleThat);
-		else if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT))
-			/* "A flying ship... Surely, it must be a miracle. I'll have to
-			   study..." */
+		else if (syGameFlagGet(FLAG_JUPITER_BEACON_LIT))
+			// "A flying ship... Surely, it must be a miracle. I'll have to study..."
 			fdScriptSetMessageId((Sint32)MsgContigoAFlyingShipSurelyIt);
 		else
-			/* "The real miracle will be if these wings actually make a boat
-			   fly...." */
+			// "The real miracle will be if these wings actually make a boat fly...."
 			fdScriptSetMessageId((Sint32)MsgContigoTheRealMiracleWillBe);
 		fdScriptShowMessageAndWait(ACTOR_HEALER, 0);
 		fdScriptEnd();
 	}
 }
 
-/* In the Super Lucky Dice tent, one of the players asks Felix whether he has
-   ever played Superdice before, and answers his yes or no. */
+// In the Super Lucky Dice tent, one of the players asks Felix whether he has ever played Superdice
+// before, and answers his yes or no.
 void scContigoAskAboutSuperDice(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)MsgContigoSoTellMePalHave);
-	/* "So, tell me, pal... Have you ever played Superdice before?" */
+	// "So, tell me, pal... Have you ever played Superdice before?"
 	fdScriptAskYesNoAndShowResponse(ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS, 0);
 	fdScriptEnd();
 }
 
-/* Felix reads the rules sign in the Super Lucky Dice tent: four dice thrown at
-   once, what matching pairs and fours win, and the hi-lo game after a win. */
+// Felix reads the rules sign in the Super Lucky Dice tent: four dice thrown at once, what matching
+// pairs and fours win, and the hi-lo game after a win.
 void scContigoReadSuperLuckyDiceRules(void)
 {
 	Sint32 msg;
@@ -902,34 +877,29 @@ void scContigoReadSuperLuckyDiceRules(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	msg = (Sint32)MsgContigoSuperLuckyDiceTheRules;
-	/* "Super Lucky Dice The Rules of the Game." */
+	// "Super Lucky Dice The Rules of the Game."
 	mnFieldMessageShow(msg, 1);
-	/* "Throw all four dice onto the table in a single toss." */
+	// "Throw all four dice onto the table in a single toss."
 	mnFieldMessageShow(msg + 1, 1);
-	/* "If two of the dice match, it's a push, and you win your money back." */
+	// "If two of the dice match, it's a push, and you win your money back."
 	mnFieldMessageShow(msg + 2, 1);
-	/* "If three of the dice match, you win back twice the bet you placed." */
+	// "If three of the dice match, you win back twice the bet you placed."
 	mnFieldMessageShow(msg + 3, 1);
-	/* "If you get two pairs of matching dice, you win three times the bet
-	   you..." */
+	// "If you get two pairs of matching dice, you win three times the bet you..."
 	mnFieldMessageShow(msg + 4, 1);
-	/* "If all four dice match, it's a perfect toss! You win eight times
-	   your..." */
+	// "If all four dice match, it's a perfect toss! You win eight times your..."
 	mnFieldMessageShow(msg + 5, 1);
-	/* "If you get one pair, two pair, three of a kind, or a perfect four,
-	   you..." */
+	// "If you get one pair, two pair, three of a kind, or a perfect four, you..."
 	mnFieldMessageShow(msg + 6, 1);
-	/* "You have to guess whether the next roll of the dice will be more
-	   or..." */
+	// "You have to guess whether the next roll of the dice will be more or..."
 	mnFieldMessageShow(msg + 7, 1);
-	/* "If you win the hi-lo game, you double your winnings! You can do
-	   this..." */
+	// "If you win the hi-lo game, you double your winnings! You can do this..."
 	mnFieldMessageShow(msg + 8, 1);
 	fdScriptEnd();
 }
 
-/* Felix reads the first of the two signs in the Lucky Dice tent: throw the dice
-   on the table and try to get the same numbers. */
+// Felix reads the first of the two signs in the Lucky Dice tent: throw the dice on the table and
+// try to get the same numbers.
 void scContigoReadLuckyDiceRules(void)
 {
 	Sint32 msg;
@@ -937,19 +907,18 @@ void scContigoReadLuckyDiceRules(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	msg = (Sint32)MsgContigoLuckyDice;
-	/* "Lucky Dice" */
+	// "Lucky Dice"
 	mnFieldMessageShow(msg, 1);
-	/* "Throw the dice on the table and try to get the same numbers." */
+	// "Throw the dice on the table and try to get the same numbers."
 	mnFieldMessageShow(msg + 1, 1);
-	/* "Prizes are based on the numbers rolled and where each die lands." */
+	// "Prizes are based on the numbers rolled and where each die lands."
 	mnFieldMessageShow(msg + 2, 1);
-	/* "The more numbers that match, the more you win." */
+	// "The more numbers that match, the more you win."
 	mnFieldMessageShow(msg + 3, 1);
 	fdScriptEnd();
 }
 
-/* Felix reads the second sign in the Lucky Dice tent: what pairs, triples and
-   four of a kind win. */
+// Felix reads the second sign in the Lucky Dice tent: what pairs, triples and four of a kind win.
 void scContigoReadLuckyDicePairs(void)
 {
 	Sint32 msg;
@@ -957,24 +926,23 @@ void scContigoReadLuckyDicePairs(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	msg = (Sint32)MsgContigoLuckyDiceB;
-	/* "Lucky Dice" */
+	// "Lucky Dice"
 	mnFieldMessageShow(msg, 1);
-	/* "If two numbers match on either the dice or the table..." */
+	// "If two numbers match on either the dice or the table..."
 	mnFieldMessageShow(msg + 1, 1);
-	/* "it's called a pair, and you don't win or lose anything." */
+	// "it's called a pair, and you don't win or lose anything."
 	mnFieldMessageShow(msg + 2, 1);
-	/* "Two pair doubles your money. Triple matches triple your money." */
+	// "Two pair doubles your money. Triple matches triple your money."
 	mnFieldMessageShow(msg + 3, 1);
-	/* "Four of a kind is perfect, and you win five times your bet." */
+	// "Four of a kind is perfect, and you win five times your bet."
 	mnFieldMessageShow(msg + 4, 1);
-	/* "Plus, if your dice come up perfect on the Perfect Bonus spot on
-	   the..." */
+	// "Plus, if your dice come up perfect on the Perfect Bonus spot on the..."
 	mnFieldMessageShow(msg + 5, 1);
 	fdScriptEnd();
 }
 
-/* Talking to the young woman by the slot machine in the Lucky Wheels tent
-   offers a game for game tickets (scContigoOfferLuckyWheels). */
+// Talking to the young woman by the slot machine in the Lucky Wheels tent offers a game for game
+// tickets (scContigoOfferLuckyWheels).
 void scContigoTalkToWheelsAttendant(void)
 {
 	fdScriptStart();
@@ -983,8 +951,8 @@ void scContigoTalkToWheelsAttendant(void)
 	fdScriptEnd();
 }
 
-/* Felix reads the rules sign in the Lucky Wheels tent: five pulls of the lever,
-   stars to hold a wheel, and more lines for more tickets. */
+// Felix reads the rules sign in the Lucky Wheels tent: five pulls of the lever, stars to hold a
+// wheel, and more lines for more tickets.
 void scContigoReadLuckyWheelsRules(void)
 {
 	Sint32 msg;
@@ -992,24 +960,23 @@ void scContigoReadLuckyWheelsRules(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	msg = (Sint32)MsgContigoLuckyWheelsRules;
-	/* "Lucky Wheels Rules" */
+	// "Lucky Wheels Rules"
 	mnFieldMessageShow(msg, 1);
-	/* "Pull the lever and try to line up matching icons to win big." */
+	// "Pull the lever and try to line up matching icons to win big."
 	mnFieldMessageShow(msg + 1, 1);
-	/* "You have only 5 chances to pull the lever." */
+	// "You have only 5 chances to pull the lever."
 	mnFieldMessageShow(msg + 2, 1);
-	/* "Press the star to keep a wheel from spinning and match other wheels." */
+	// "Press the star to keep a wheel from spinning and match other wheels."
 	mnFieldMessageShow(msg + 3, 1);
-	/* "You get 1 line for 1 game ticket, 3 lines for 2 tickets," */
+	// "You get 1 line for 1 game ticket, 3 lines for 2 tickets,"
 	mnFieldMessageShow(msg + 4, 1);
-	/* "5 lines for 3 tickets, and 7 lines for 4 tickets. Use all your
-	   tickets..." */
+	// "5 lines for 3 tickets, and 7 lines for 4 tickets. Use all your tickets..."
 	mnFieldMessageShow(msg + 5, 1);
 	fdScriptEnd();
 }
 
-/* Felix reads the prizes sign in the Lucky Wheels tent: shirts, rings and boots
-   win their kind, stars and hearts win items, and the Moon is wild. */
+// Felix reads the prizes sign in the Lucky Wheels tent: shirts, rings and boots win their kind,
+// stars and hearts win items, and the Moon is wild.
 void scContigoReadLuckyWheelsPrizes(void)
 {
 	Sint32 msg;
@@ -1017,119 +984,111 @@ void scContigoReadLuckyWheelsPrizes(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	msg = (Sint32)MsgContigoLuckyWheelsPrizes;
-	/* "Lucky Wheels Prizes" */
+	// "Lucky Wheels Prizes"
 	mnFieldMessageShow(msg, 1);
-	/* "Prizes are determined by which icons you match." */
+	// "Prizes are determined by which icons you match."
 	mnFieldMessageShow(msg + 1, 1);
-	/* "Shirts win undershirts, Rings win rings, Boots win boots," */
+	// "Shirts win undershirts, Rings win rings, Boots win boots,"
 	mnFieldMessageShow(msg + 2, 1);
-	/* "Stars and Hearts win you items..." */
+	// "Stars and Hearts win you items..."
 	mnFieldMessageShow(msg + 3, 1);
-	/* The Spanish sign ends after four messages. */
+	// The Spanish sign ends after four messages.
 #if LANGUAGE != LANGUAGE_SPANISH
-	/* "And Moons are wild°they can win you anything." */
+	// "And Moons are wild°they can win you anything."
 	mnFieldMessageShow(msg + 4, 1);
 #endif
 	fdScriptEnd();
 }
 
-/* On Felix's first visit, the man in a long robe between the Sanctum's middle
-   and east steps asks whether he has taken a good look at the Anemos geoglyph,
-   and answers his yes or no. */
+// On Felix's first visit, the man in a long robe between the Sanctum's middle and east steps asks
+// whether he has taken a good look at the Anemos geoglyph, and answers his yes or no.
 void scContigoAskAboutGeoglyph(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)MsgContigoHaveYouTakenAGood);
-	/* "Have you taken a good look at the Anemos geoglyph?" */
+	// "Have you taken a good look at the Anemos geoglyph?"
 	fdScriptAskYesNoAndShowResponse(ACTOR_MAN_ON_THE_GEOGLYPH, 0);
 	fdScriptEnd();
 }
 
-/* Talking to the boy walking about the middle of the village with a girl: he
-   talks of the geoglyphs and of the crater where the city of the Anemos is said
-   to have stood, and Mind Read hears that he will not believe it flew. He turns
-   to Felix to talk, but not for Mind Read, and turns back after. */
+// Talking to the boy walking about the middle of the village with a girl: he talks of the geoglyphs
+// and of the crater where the city of the Anemos is said to have stood, and Mind Read hears that he
+// will not believe it flew. He turns to Felix to talk, but not for Mind Read, and turns back after.
 void scContigoTalkToDoubtingBoy(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	ACTOR		*actor = fdActorGetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
-	Sint16		 angle = actor->facing;
+	ACTOR       *actor = fdActorGetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
+	Sint16       angle = actor->facing;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	actor->sceneByte = 1;
-	if(state->psynergy == 0) {
-		fdActorFaceActorById(ACTOR_BOY_DOUBTING_THE_LEGENDS,
-			MainRoutineStateWork.leaderActorId, 0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
-			/* "I've seen a lot of weird things lately... Maybe I ought to
-			   listen..." */
+	if (state->psynergy == 0)
+	{
+		fdActorFaceActorById(ACTOR_BOY_DOUBTING_THE_LEGENDS, MainRoutineStateWork.leaderActorId, 0);
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
+			// "I've seen a lot of weird things lately... Maybe I ought to listen..."
 			fdScriptSetMessageId((Sint32)MsgContigoIveSeenALotOf);
-		else if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0)
-			/* "That crater behind the village is supposed to be where the city
-			   of..." */
+		else if (syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0)
+			// "That crater behind the village is supposed to be where the city of..."
 			fdScriptSetMessageId((Sint32)MsgContigoThatCraterBehindTheVillage);
 		else
-			/* "If you want to get a look at the Anemos geoglyphs, you ought to
-			   go..." */
+			// "If you want to get a look at the Anemos geoglyphs, you ought to go..."
 			fdScriptSetMessageId((Sint32)MsgContigoIfYouWantToGet);
-	} else {
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
-			/* "Wait... The city of Anemos flew up into the sky? All right,
-			   that's..." */
+	}
+	else
+	{
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
+			// "Wait... The city of Anemos flew up into the sky? All right, that's..."
 			fdScriptSetMessageId((Sint32)MsgContigoWaitTheCityOfAnemos);
-		else if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0)
-			/* "Cities flying up into the sky? I don't buy that for a
-			   second!" */
+		else if (syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0)
+			// "Cities flying up into the sky? I don't buy that for a second!"
 			fdScriptSetMessageId((Sint32)MsgContigoCitiesFlyingUpIntoThe);
 		else
-			/* "The Anemos geoglyphs are the most amazing carvings I've ever
-			   seen..." */
+			// "The Anemos geoglyphs are the most amazing carvings I've ever seen..."
 			fdScriptSetMessageId((Sint32)MsgContigoTheAnemosGeoglyphsAreThe);
 	}
 	fdScriptShowMessageAndWait(ACTOR_BOY_DOUBTING_THE_LEGENDS, 0);
-	if(state->psynergy == 0)
+	if (state->psynergy == 0)
 		actor->facing = angle;
 	actor->sceneByte = 0;
 	fdScriptEnd();
 }
 
-/* Talking to the girl walking about the middle of the village with the boy: she
-   talks of the wings the village built and, once they are gone, of seeing the
-   ship take off; Mind Read hears her thoughts on the same. She turns to Felix
-   to talk, but not for Mind Read, and turns back after. */
+// Talking to the girl walking about the middle of the village with the boy: she talks of the wings
+// the village built and, once they are gone, of seeing the ship take off; Mind Read hears her
+// thoughts on the same. She turns to Felix to talk, but not for Mind Read, and turns back after.
 void scContigoTalkAboutTheShip(void)
 {
 	FIELD_STATE *event = RamHeapSlots->fieldState;
-	ACTOR		*actor = fdActorGetById(ACTOR_GIRL_ON_THE_SHIP);
-	Sint16		 angle = actor->facing;
+	ACTOR       *actor = fdActorGetById(ACTOR_GIRL_ON_THE_SHIP);
+	Sint16       angle = actor->facing;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	actor->sceneByte = 1;
-	if(event->psynergy == 0) {
-		fdActorFaceActorById(
-			ACTOR_GIRL_ON_THE_SHIP, MainRoutineStateWork.leaderActorId, 0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
-			/* "It wasn't what I expected, but seeing the ship take off was
-			   still..." */
+	if (event->psynergy == 0)
+	{
+		fdActorFaceActorById(ACTOR_GIRL_ON_THE_SHIP, MainRoutineStateWork.leaderActorId, 0);
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
+			// "It wasn't what I expected, but seeing the ship take off was still..."
 			fdScriptSetMessageId((Sint32)MsgContigoItWasntWhatIExpected);
 		else
-			/* "Our people have labored for some time to build the Wings of
-			   the..." */
+			// "Our people have labored for some time to build the Wings of the..."
 			fdScriptSetMessageId((Sint32)MsgContigoOurPeopleHaveLaboredFor);
-	} else {
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
-			/* "All of those legends did nothing but build up people's..." */
+	}
+	else
+	{
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
+			// "All of those legends did nothing but build up people's..."
 			fdScriptSetMessageId((Sint32)MsgContigoAllOfThoseLegendsDid);
 		else
-			/* "We built the Wings of Anemos out of materials we found in
-			   the..." */
+			// "We built the Wings of Anemos out of materials we found in the..."
 			fdScriptSetMessageId((Sint32)MsgContigoWeBuiltTheWingsOf);
 	}
 	fdScriptShowMessageAndWait(ACTOR_GIRL_ON_THE_SHIP, 0);
-	if(event->psynergy == 0)
+	if (event->psynergy == 0)
 		actor->facing = angle;
 	actor->sceneByte = 0;
 	fdScriptEnd();
@@ -1137,10 +1096,9 @@ void scContigoTalkAboutTheShip(void)
 
 void fdTeleportPlaySparks(void);
 
-/* Teleport cast on the carved stone circle in the middle of the village
-   (metatiles (16, 50) and (17, 50)): the village turns grey, the circle
-   shimmers and sparks of coloured light rise, and the party arrives on a circle
-   like it in the Anemos Inner Sanctum. */
+// Teleport cast on the carved stone circle in the middle of the village (metatiles (16, 50) and
+// (17, 50)): the village turns grey, the circle shimmers and sparks of coloured light rise, and the
+// party arrives on a circle like it in the Anemos Inner Sanctum.
 void scContigoTeleportOut(void)
 {
 	scTeleportStartShimmer();
@@ -1148,57 +1106,57 @@ void scContigoTeleportOut(void)
 
 	MainRoutineStateWork.teleportState = TELEPORT_ARRIVING;
 	fdScriptSetDestination(SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST,
-		ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_CONTIGO);
+	                       ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_CONTIGO);
 	fdScriptWait(40);
 	scTeleportStopShimmer();
 }
 
-/* Cyclone scatters the clump of weeds just west of the item shop, the west of
-   the two houses south of the Teleport circle (metatile (8, 56)), leaving bare
-   ground. Each clump's script copies bare ground from a metatile nearby over
-   the clump's metatiles that Cyclone's whirl touched. Where the ground is
-   raised, as here, a clump is drawn some rows north of the metatile it answers
-   on. */
+// Cyclone scatters the clump of weeds just west of the item shop, the west of the two houses south
+// of the Teleport circle (metatile (8, 56)), leaving bare ground. Each clump's script copies bare
+// ground from a metatile nearby over the clump's metatiles that Cyclone's whirl touched. Where the
+// ground is raised, as here, a clump is drawn some rows north of the metatile it answers on.
 void scContigoScatterWeedsWestOfItemShop(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(3, 50, 1, 1, 8, 54, 0);
 }
 
-/* Cyclone scatters the clump of weeds behind the inn, beside the tree stump
-   where Shine is stuck (metatiles (2, 45) and (3, 45)), leaving bare ground. */
+// Cyclone scatters the clump of weeds behind the inn, beside the tree stump where Shine is stuck
+// (metatiles (2, 45) and (3, 45)), leaving bare ground.
 void scContigoScatterWeedsBehindInn(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(4, 43, 2, 1, 2, 43, 0);
 }
 
-/* The scene's own name for fdTileCopiesCopyTouchedMetatiles, which the Bramble
-   Seed's clump calls. */
-static __inline__ void scContigoCopyTouchedMetatiles(Sint32 srcX, Sint32 srcZ,
-	Sint32 width, Sint32 height, Sint32 windowX, Sint32 windowZ, Sint32 layer)
+// The scene's own name for fdTileCopiesCopyTouchedMetatiles, which the Bramble Seed's clump calls.
+static __inline__ void scContigoCopyTouchedMetatiles(Sint32 srcX,
+                                                     Sint32 srcZ,
+                                                     Sint32 width,
+                                                     Sint32 height,
+                                                     Sint32 windowX,
+                                                     Sint32 windowZ,
+                                                     Sint32 layer)
 {
-	fdTileCopiesCopyTouchedMetatiles(
-		srcX, srcZ, width, height, windowX, windowZ, layer);
+	fdTileCopiesCopyTouchedMetatiles(srcX, srcZ, width, height, windowX, windowZ, layer);
 }
 
-/* Cyclone scatters the clump of weeds beside the east wall of the house at the
-   top of the hill (metatile (17, 41)), and unless it was taken the Bramble Seed
-   lies uncovered there. If Felix stands on that very spot, he hops a step north
-   off it. */
+// Cyclone scatters the clump of weeds beside the east wall of the house at the top of the hill
+// (metatile (17, 41)), and unless it was taken the Bramble Seed lies uncovered there. If Felix
+// stands on that very spot, he hops a step north off it.
 void scContigoScatterWeedsOverBrambleSeed(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
 	scContigoCopyTouchedMetatiles(16, 37, 1, 1, 17, 37, 0);
-	if(syGameFlagGet(FLAG_CONTIGO_BRAMBLE_SEED_TAKEN) == 0) {
+	if (syGameFlagGet(FLAG_CONTIGO_BRAMBLE_SEED_TAKEN) == 0)
+	{
 		fdActorSetPos(ACTOR_BRAMBLE_SEED, 280, 664);
-		if(FIELD_METATILE(leader->x.fixed) == 17 &&
-			FIELD_METATILE(leader->z.fixed) == 41) {
+		if (FIELD_METATILE(leader->x.fixed) == 17 && FIELD_METATILE(leader->z.fixed) == 41)
+		{
 			fdScriptStart();
 			fdScriptEndLastingPsynergy(0);
 			fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
-				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-			fdActorSetDestinationOffset(
-				MainRoutineStateWork.leaderActorId, 0, -16);
+			                    ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+			fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0, -16);
 			leader->velocityY = toFIXED(6);
 			fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
@@ -1206,114 +1164,111 @@ void scContigoScatterWeedsOverBrambleSeed(void)
 	}
 }
 
-/* Cyclone scatters the clump of weeds against the west wall of the weapon and
-   armor shop, east of the Teleport circle (metatiles (23, 49) and (23, 50)),
-   leaving bare ground. */
+// Cyclone scatters the clump of weeds against the west wall of the weapon and armor shop, east of
+// the Teleport circle (metatiles (23, 49) and (23, 50)), leaving bare ground.
 void scContigoScatterWeedsWestOfWeaponShop(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(29, 35, 1, 2, 23, 47, 0);
 }
 
-/* Cyclone scatters the weeds just east of the village gate's east post
-   (metatiles (29, 59) and (30, 58) to (30, 60)), leaving bare ground. */
+// Cyclone scatters the weeds just east of the village gate's east post (metatiles (29, 59) and (30,
+// 58) to (30, 60)), leaving bare ground.
 void scContigoScatterWeedsByGate(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(32, 55, 2, 3, 29, 58, 0);
 }
 
-/* Cyclone scatters the clump of weeds below the Lucky Wheels tent, at the edge
-   of the slope (metatile (3, 58)), leaving bare ground. */
+// Cyclone scatters the clump of weeds below the Lucky Wheels tent, at the edge of the slope
+// (metatile (3, 58)), leaving bare ground.
 void scContigoScatterWeedsBelowLuckyWheels(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(3, 60, 1, 1, 3, 56, 0);
 }
 
-/* Cyclone scatters the western of the two clumps of weeds on top of the cliff
-   south of the item shop (metatiles (7, 60) and (8, 60)), leaving bare
-   ground. */
+// Cyclone scatters the western of the two clumps of weeds on top of the cliff south of the item
+// shop (metatiles (7, 60) and (8, 60)), leaving bare ground.
 void scContigoScatterWeedsOnCliffWest(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(7, 62, 2, 1, 7, 58, 0);
 }
 
-/* Cyclone scatters the eastern of the two clumps of weeds on top of the cliff
-   south of the item shop (metatiles (10, 61) and (11, 61)), leaving bare
-   ground. */
+// Cyclone scatters the eastern of the two clumps of weeds on top of the cliff south of the item
+// shop (metatiles (10, 61) and (11, 61)), leaving bare ground.
 void scContigoScatterWeedsOnCliffEast(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(10, 63, 2, 1, 10, 59, 0);
 }
 
-/* Cyclone scatters the top row of the big weed patch east of the village gate
-   (metatiles (40, 57) to (42, 57)), leaving bare ground. The patch's five rows
-   each have a script, and they and the weeds by the gate take their bare ground
-   from a metatile between the gate and the patch. */
+// Cyclone scatters the top row of the big weed patch east of the village gate (metatiles (40, 57)
+// to (42, 57)), leaving bare ground. The patch's five rows each have a script, and they and the
+// weeds by the gate take their bare ground from a metatile between the gate and the patch.
 void scContigoScatterWeedPatchTopRow(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(32, 55, 3, 1, 40, 57, 0);
 }
 
-/* Cyclone scatters the second row from the top of the big weed patch east of
-   the village gate (metatiles (39, 58) to (43, 58)), leaving bare ground. */
+// Cyclone scatters the second row from the top of the big weed patch east of the village gate
+// (metatiles (39, 58) to (43, 58)), leaving bare ground.
 void scContigoScatterWeedPatchSecondRow(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(32, 55, 5, 1, 39, 58, 0);
 }
 
-/* Cyclone scatters the middle row of the big weed patch east of the village
-   gate, either side of the open gap where Salt hides (metatiles (39, 59), (40,
-   59), (42, 59) and (43, 59)), leaving bare ground. */
+// Cyclone scatters the middle row of the big weed patch east of the village gate, either side of
+// the open gap where Salt hides (metatiles (39, 59), (40, 59), (42, 59) and (43, 59)), leaving bare
+// ground.
 void scContigoScatterWeedPatchMiddleRow(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(32, 55, 5, 1, 39, 59, 0);
 }
 
-/* Cyclone scatters the second row from the bottom of the big weed patch east of
-   the village gate (metatiles (39, 60) to (43, 60)), leaving bare ground. */
+// Cyclone scatters the second row from the bottom of the big weed patch east of the village gate
+// (metatiles (39, 60) to (43, 60)), leaving bare ground.
 void scContigoScatterWeedPatchFourthRow(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(32, 55, 5, 1, 39, 60, 0);
 }
 
-/* Cyclone scatters the bottom row of the big weed patch east of the village
-   gate (metatiles (40, 61) to (42, 61)), leaving bare ground. */
+// Cyclone scatters the bottom row of the big weed patch east of the village gate (metatiles (40,
+// 61) to (42, 61)), leaving bare ground.
 void scContigoScatterWeedPatchBottomRow(void)
 {
 	syFieldTileCopiesCopyTouchedMetatiles(32, 55, 3, 1, 40, 61, 0);
 }
 
-/* Nothing visible happens when Felix walks south from the middle of the village
-   into its south part, on one of the three ways in: west of the item shop,
-   between it and the house beside it, or east of that house (metatiles (5, 55)
-   to (8, 55), (14, 55) and (18, 57) to (20, 57)). From then on the view follows
-   him east past the village gate to the big weed patch, where it stopped just
-   past the gate before. FLAG_WHOLE_VILLAGE_IN_VIEW marks the wider view. */
+// Nothing visible happens when Felix walks south from the middle of the village into its south
+// part, on one of the three ways in: west of the item shop, between it and the house beside it, or
+// east of that house (metatiles (5, 55) to (8, 55), (14, 55) and (18, 57) to (20, 57)). From then
+// on the view follows him east past the village gate to the big weed patch, where it stopped just
+// past the gate before. FLAG_WHOLE_VILLAGE_IN_VIEW marks the wider view.
 void scContigoWidenCameraBounds(void)
 {
 	fdSetCameraBounds(0, toFIXED(512), toFIXED(880), toFIXED(1024));
 	syGameFlagSet(FLAG_WHOLE_VILLAGE_IN_VIEW);
 }
 
-/* Nothing visible happens when Felix walks back north from the village's south
-   part into its middle, on one of the three ways (metatiles (4, 54) to (8, 54),
-   (14, 54) and (18, 56) to (20, 56)); the view stops at the village gate again,
-   and FLAG_WHOLE_VILLAGE_IN_VIEW is cleared. */
+// Nothing visible happens when Felix walks back north from the village's south part into its
+// middle, on one of the three ways (metatiles (4, 54) to (8, 54), (14, 54) and (18, 56) to (20,
+// 56)); the view stops at the village gate again, and FLAG_WHOLE_VILLAGE_IN_VIEW is cleared.
 void scContigoNarrowCameraBounds(void)
 {
 	fdSetCameraBounds(0, toFIXED(512), toFIXED(512), toFIXED(1024));
 	syGameFlagClear(FLAG_WHOLE_VILLAGE_IN_VIEW);
 }
 
-/* The cue scContigoScoopForSalt raises once Salt has popped up, which runs
-   scContigoSaltJoinsParty. */
-typedef enum CONTIGO_RAISED_CUE { RAISED_SALT_FOUND = 200 } CONTIGO_RAISED_CUE;
+// The cue scContigoScoopForSalt raises once Salt has popped up, which runs scContigoSaltJoinsParty.
+typedef enum CONTIGO_RAISED_CUE
+{
+	RAISED_SALT_FOUND = 200
+} CONTIGO_RAISED_CUE;
 
-/* Scoop cast in the open gap in the middle of the big weed patch east of the
-   village gate (metatile (41, 59)): until the party has Salt, the Venus Djinni
-   pops up there, turns to Felix and joins the party. */
+// Scoop cast in the open gap in the middle of the big weed patch east of the village gate (metatile
+// (41, 59)): until the party has Salt, the Venus Djinni pops up there, turns to Felix and joins the
+// party.
 void scContigoScoopForSalt(void)
 {
-	if(!syGameFlagGet(FLAG_DJINNI(DJINNI_SALT))) {
+	if (!syGameFlagGet(FLAG_DJINNI(DJINNI_SALT)))
+	{
 		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		fdScriptStart();
@@ -1326,14 +1281,12 @@ void scContigoScoopForSalt(void)
 	}
 }
 
-/* Felix casts Reveal anywhere at the geoglyph or the Sanctum's front: the
-   carved wall at the head of the Sanctum's main steps shows as a dark open
-   doorway, its middle door, and while Reveal lasts walking north into it
-   (metatiles (48, 19) and (49, 19)) leads inside, on the way to the Dragon
-   Skin's chest. The open door is the picture the unused
-   scContigoEnterSanctumMiddleDoor would open it with; the doorway's exit
-   metatiles are kept out of reach at the top of the map, (48, 1), and copied
-   into place. */
+// Felix casts Reveal anywhere at the geoglyph or the Sanctum's front: the carved wall at the head
+// of the Sanctum's main steps shows as a dark open doorway, its middle door, and while Reveal lasts
+// walking north into it (metatiles (48, 19) and (49, 19)) leads inside, on the way to the Dragon
+// Skin's chest. The open door is the picture the unused scContigoEnterSanctumMiddleDoor would open
+// it with; the doorway's exit metatiles are kept out of reach at the top of the map, (48, 1), and
+// copied into place.
 void scContigoRevealMiddleDoor(void)
 {
 	fdMapGridCopyMetatilesTo(27, 4, 48, 12, 1, 2);
@@ -1341,8 +1294,8 @@ void scContigoRevealMiddleDoor(void)
 	fdMapGridCopyMetatileAttributes(48, 1, 2, 1, 48, 19);
 }
 
-/* As Reveal fades in front of the Sanctum, its middle door shows shut again and
-   walking into it leads nowhere. */
+// As Reveal fades in front of the Sanctum, its middle door shows shut again and walking into it
+// leads nowhere.
 void scContigoHideMiddleDoor(void)
 {
 	fdMapGridCopyMetatilesTo(27, 8, 48, 12, 1, 2);
@@ -1350,19 +1303,18 @@ void scContigoHideMiddleDoor(void)
 	fdMapGridCopyMetatileAttributes(48, 0, 2, 1, 48, 19);
 }
 
-/* Force cast on the tree stump behind the inn, where Shine is stuck: the ground
-   shakes with a thump, a ring of dust bursts out of the stump, and Shine leaps
-   out and lands just north-west of it, Felix hopping aside if it lands on him.
-   Force comes only with the Orb of Force, carried over from The Broken Seal in
-   a linked game. */
+// Force cast on the tree stump behind the inn, where Shine is stuck: the ground shakes with a
+// thump, a ring of dust bursts out of the stump, and Shine leaps out and lands just north-west of
+// it, Felix hopping aside if it lands on him. Force comes only with the Orb of Force, carried over
+// from The Broken Seal in a linked game.
 void scContigoForceFreesDjinni(void)
 {
-	ACTOR		  *actor = fdActorGetById(ACTOR_SHINE);
-	ACTOR		  *leader;
+	ACTOR         *actor = fdActorGetById(ACTOR_SHINE);
+	ACTOR         *leader;
 	EFFECT_OPTIONS options;
-	FIXED		   velocity[3];
-	Sint32		   angle;
-	Uint32		   i;
+	FIXED          velocity[3];
+	Sint32         angle;
+	Uint32         i;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -1371,15 +1323,21 @@ void scContigoForceFreesDjinni(void)
 	options.priority = 2;
 	sySoundPlay(SE_THUMP);
 	fdMapGridSetShake(1, 2, 1);
-	for(i = 0; i <= DUST_RING_PUFFS; i++) {
-		angle = i * (TRIG_TURN / DUST_RING_PUFFS);
-		velocity[0] = syCos(angle);
-		velocity[1] = 0;
-		velocity[2] = sySin(angle);
+	for (i = 0; i <= DUST_RING_PUFFS; i++)
+	{
+		angle        = i * (TRIG_TURN / DUST_RING_PUFFS);
+		velocity[0]  = syCos(angle);
+		velocity[1]  = 0;
+		velocity[2]  = sySin(angle);
 		velocity[0] += velocity[0] / 3;
-		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			velocity[0], velocity[1] + (toFIXED(1) / 10), velocity[2],
-			EFFECT_USE_PRIORITY, &options);
+		scFieldEffectSpawn(actor->x.fixed,
+		                   actor->y.fixed,
+		                   actor->z.fixed,
+		                   velocity[0],
+		                   velocity[1] + (toFIXED(1) / 10),
+		                   velocity[2],
+		                   EFFECT_USE_PRIORITY,
+		                   &options);
 	}
 	fdActorSetSpriteColor(fdActorGetById(ACTOR_SHINE), SPRITE_COLOR_NORMAL);
 	fdActorSetSpriteFlags(fdActorGetById(ACTOR_SHINE), 1);
@@ -1388,24 +1346,23 @@ void scContigoForceFreesDjinni(void)
 	fdActorMoveToAndWait(ACTOR_SHINE, 40, 680);
 	fdScriptWait(10);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(FIELD_METATILE(actor->x.fixed) == FIELD_METATILE(leader->x.fixed) &&
-		FIELD_METATILE(actor->z.fixed) == FIELD_METATILE(leader->z.fixed)) {
+	if (FIELD_METATILE(actor->x.fixed) == FIELD_METATILE(leader->x.fixed)
+	    && FIELD_METATILE(actor->z.fixed) == FIELD_METATILE(leader->z.fixed))
+	{
 		fdActorJump(MainRoutineStateWork.leaderActorId, 6, 0);
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
 		fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 68, 680);
 	}
 	fdMapGridSetShake(0, 0, 0);
-	fdActorTurnToFaceEachOther(
-		MainRoutineStateWork.leaderActorId, ACTOR_SHINE, 0);
+	fdActorTurnToFaceEachOther(MainRoutineStateWork.leaderActorId, ACTOR_SHINE, 0);
 	fdScriptWait(10);
 	syGameFlagSet(FLAG_SHINE_FREED);
 	fdScriptEnd();
 }
 
-/* Once Jupiter Lighthouse's beacon is lit, while the villagers are away
-   transporting the wings: the doors of the item shop, the house beside it, the
-   weapon and armor shop and the baby's house north of it show shut, and trying
-   one says it is locked (scShowEntranceLocked). */
+// Once Jupiter Lighthouse's beacon is lit, while the villagers are away transporting the wings: the
+// doors of the item shop, the house beside it, the weapon and armor shop and the baby's house north
+// of it show shut, and trying one says it is locked (scShowEntranceLocked).
 void scContigoLockDoors(void)
 {
 	fdMapGridCopyMetatilesTo(0, 1, 26, 42, 1, 2);
@@ -1418,20 +1375,20 @@ void scContigoLockDoors(void)
 	fdMapCopyMetatileAttributeRect(0, 32, 1, 1, 16, 57);
 }
 
-/* Lays a tick or feather of the wings flat on the ground, drawn behind. */
+// Lays a tick or feather of the wings flat on the ground, drawn behind.
 void scContigoPlaceWingPart(Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
 
 	fdActorSetSpritePriority(id, 3);
-	actor->collisionFlags = ACTOR_NOT_TARGETED;
-	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-	actor->motionFlags = 0;
-	actor->y.fixed = toFIXED(64);
+	actor->collisionFlags  = ACTOR_NOT_TARGETED;
+	actor->priorityFlags  |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags     = 0;
+	actor->y.fixed         = toFIXED(64);
 }
 
-/* Lays out the wings' parts by the geoglyph: each tick and feather shows its
-   own piece and lies flat, and the loose parts block the way. */
+// Lays out the wings' parts by the geoglyph: each tick and feather shows its own piece and lies
+// flat, and the loose parts block the way.
 void scContigoSetUpWingParts(void)
 {
 	fdActorSetAnimationById(ACTOR_WING_FRAME_A, 0);
@@ -1469,293 +1426,292 @@ void scContigoSetUpWingParts(void)
 	fdActorSetAnimationById(ACTOR_LOOSE_PART_G, 0);
 }
 
-/* The Lucky Wheels attendant asks whether Felix will use his game tickets,
-   warns when the party has little room for prizes, and sends it to the slot
-   machine; `spoken` is nonzero as the party comes back from a game, when she
-   asks only whether to keep playing. */
+// The Lucky Wheels attendant asks whether Felix will use his game tickets, warns when the party has
+// little room for prizes, and sends it to the slot machine; `spoken` is nonzero as the party comes
+// back from a game, when she asks only whether to keep playing.
 void scContigoOfferLuckyWheels(Sint32 spoken)
 {
 	Sint32 tickets = gmPartyInventoryCountItem(ITEM_GAME_TICKET);
 	Sint32 room;
 
 	fdActorTableSnapshot();
-	if(spoken == 0) {
+	if (spoken == 0)
+	{
 		Sint32 msg = (Sint32)MsgContigoStepRightUpAndTry;
 
 		fdScriptSetMessageId(msg);
-		/* "Step right up and try your hand at lucky wheels!" */
+		// "Step right up and try your hand at lucky wheels!"
 		fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-		if(tickets == 0) {
-			/* "You gotta have game tickets to play." */
+		if (tickets == 0)
+		{
+			// "You gotta have game tickets to play."
 			fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 			return;
 		}
 		fdScriptSetMessageId(msg + 2);
 		mnMessageArgumentPush(tickets, MESSAGE_ARGUMENT_NUMBER);
-		/* "You have ... game ticket, Felix. Would you like to use these
-		   tickets?" */
+		// "You have ... game ticket, Felix. Would you like to use these tickets?"
 		fdMessageShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-		if(fdScriptAskYesNoWithActorAnimation(
-			   MainRoutineStateWork.leaderActorId, 0) == 1) {
-			/* "The rules are listed on the sign. Take a look, take a look." */
+		if (fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0) == 1)
+		{
+			// "The rules are listed on the sign. Take a look, take a look."
 			fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 			return;
 		}
 		room = gmPartyInventoryCountFreeSlots();
-		if(room == 0) {
+		if (room == 0)
+		{
 			fdScriptSetMessageId(msg + 4);
-			/* "You can't carry any more items. Are you sure you want to
-			   play?" */
-			fdMessageShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-		} else if(room <= 6) {
-			fdScriptSetMessageId(msg + 5);
-			/* "If you win anything, you might not be able to take it with
-			   you..." */
+			// "You can't carry any more items. Are you sure you want to play?"
 			fdMessageShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 		}
-		if(room <= 6 &&
-			fdScriptAskYesNoWithActorAnimation(
-				MainRoutineStateWork.leaderActorId, 0) == 1) {
+		else if (room <= 6)
+		{
+			fdScriptSetMessageId(msg + 5);
+			// "If you win anything, you might not be able to take it with you..."
+			fdMessageShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
+		}
+		if (room <= 6
+		    && fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0) == 1)
+		{
 			fdScriptSetMessageId((Sint32)MsgContigoThenGetRidOfSome);
-			/* "Then get rid of some items and come again." */
+			// "Then get rid of some items and come again."
 			fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 			return;
 		}
-	} else {
-		if(tickets == 0) {
+	}
+	else
+	{
+		if (tickets == 0)
+		{
 			fdScriptSetMessageId((Sint32)MsgContigoTooBadComeBackAfter);
-			/* "Too bad... Come back after you get some tickets." */
+			// "Too bad... Come back after you get some tickets."
 			fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 			return;
 		}
 		fdScriptSetMessageId((Sint32)MsgContigoTooBadWouldYouLike);
-		/* "Too bad... Would you like to use your tickets to keep playing?" */
+		// "Too bad... Would you like to use your tickets to keep playing?"
 		fdMessageShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-		if(fdScriptAskYesNoWithActorAnimation(0, 0) == 1) {
+		if (fdScriptAskYesNoWithActorAnimation(0, 0) == 1)
+		{
 			fdScriptSetMessageId((Sint32)MsgContigoComeAgain);
-			/* "Come again!" */
+			// "Come again!"
 			fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 			return;
 		}
 	}
 	fdScriptSetMessageId((Sint32)MsgContigoStepRightUpAndEnjoy);
-	/* "Step right up and enjoy yourself." */
+	// "Step right up and enjoy yourself."
 	fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 	syGameFlagSet(FLAG_KEEP_PARTY_POSITION);
 	syGameFlagSet(FLAG_LEFT_FOR_A_GAME);
 	sySynch(1);
 	fdScriptLeaveFor(MODE_SLOTS, 0);
-	fdScriptSetAfterBattleDestination(
-		SCENE_CONTIGO_LUCKY_DICE, ENTRANCE_FROM_LUCKY_WHEELS);
+	fdScriptSetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, ENTRANCE_FROM_LUCKY_WHEELS);
 }
 
-/* The prize for an icon matched on the Lucky Wheels: one of the icon's three,
-   never the one it gave last; the Moon picks an icon at random, and a negative
-   icon gives nothing. */
+// The prize for an icon matched on the Lucky Wheels: one of the icon's three, never the one it gave
+// last; the Moon picks an icon at random, and a negative icon gives nothing.
 Sint32 scContigoSelectLuckyWheelsPrize(Sint32 icon)
 {
 	MAIN_ROUTINE_STATE *state;
-	Sint32				cursor;
-	Sint32				variant;
-	Sint32				index;
+	Sint32              cursor;
+	Sint32              variant;
+	Sint32              index;
 
-	if(icon < 0)
+	if (icon < 0)
 		return 0;
-	if(icon == WHEELS_ICON_MOON)
+	if (icon == WHEELS_ICON_MOON)
 		icon = (Sint32)(syRandomBelow(WHEELS_PRIZE_ICONS));
-	state = &MainRoutineStateWork;
-	cursor = state->wheelsPrizeCursors[icon];
-	variant =
-		(cursor + (Sint32)(syRandomBelow(2)) + 4) % WHEELS_PRIZES_PER_ICON;
+	state   = &MainRoutineStateWork;
+	cursor  = state->wheelsPrizeCursors[icon];
+	variant = (cursor + (Sint32)(syRandomBelow(2)) + 4) % WHEELS_PRIZES_PER_ICON;
 	state->wheelsPrizeCursors[icon] = variant;
-	index = icon * 2;
+	index                           = icon * 2;
 
 	return ContigoWheelsPrizes[index + icon + variant];
 }
 
-/* The dice games cost 10 coins for each level of the party's average level; a
-   win of 5,000 coins or more, or of 20,000, is greeted with a bigger jingle. */
-enum {
+// The dice games cost 10 coins for each level of the party's average level; a win of 5,000 coins or
+// more, or of 20,000, is greeted with a bigger jingle.
+enum
+{
 	LUCKY_DICE_COINS_PER_LEVEL = 10,
-	LUCKY_DICE_MEDIUM_WIN = 5000,
-	LUCKY_DICE_LARGE_WIN = 20000
+	LUCKY_DICE_MEDIUM_WIN      = 5000,
+	LUCKY_DICE_LARGE_WIN       = 20000
 };
 
-/* Talking to the young man running the Lucky Dice tent offers a game, at 10
-   coins for each level of the party's average level: "Hey, buddy, wanna try yer
-   luck at the dice?" */
+// Talking to the young man running the Lucky Dice tent offers a game, at 10 coins for each level of
+// the party's average level: "Hey, buddy, wanna try yer luck at the dice?"
 void scContigoOfferLuckyDice(void)
 {
 	Uint32 price = gmPartyGetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	if(MainRoutineStateWork.coins < price) {
+	if (MainRoutineStateWork.coins < price)
+	{
 		fdScriptSetMessageId((Sint32)MsgContigoHeyYaDontHaveEnough);
-		/* "Hey! Ya don't have enough coins! Ya gotta pay to play." */
+		// "Hey! Ya don't have enough coins! Ya gotta pay to play."
 		fdMessageShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
 		return;
 	}
 	fdScriptSetMessageId((Sint32)MsgContigoHeyBuddyWannaTryYer);
 	mnMessageArgumentPush(price, MESSAGE_ARGUMENT_NUMBER);
-	/* "Hey, buddy, wanna try yer luck at the dice? It's coin to play." Yes:
-	   "OK! Then take the dice." No: "No? Oh, well. Who's next?" */
+	// "Hey, buddy, wanna try yer luck at the dice? It's coin to play." Yes: "OK! Then take the
+	// dice." No: "No? Oh, well. Who's next?"
 	fdMessageShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
-	if(fdScriptAskYesNoWithActorAnimation(
-		   MainRoutineStateWork.leaderActorId, 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0) == 0)
+	{
 		*(Sint32 *)SceneStateWork = MainRoutineStateWork.coins;
-		/* FAKEMATCH(dead): tests of the coins, never above COIN_MAX, around a
-		 * store to price, which nothing reads again. */
-		if(MainRoutineStateWork.coins > COIN_MAX) {
-			if(MainRoutineStateWork.coins != 0)
+		// FAKEMATCH(dead): tests of the coins, never above COIN_MAX, around a
+		// * store to price, which nothing reads again.
+		if (MainRoutineStateWork.coins > COIN_MAX)
+		{
+			if (MainRoutineStateWork.coins != 0)
 				price = 0;
 		}
 		fdActorTableSnapshot();
-		/* "OK! Then take the dice." */
+		// "OK! Then take the dice."
 		fdScriptShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
 		syGameFlagSet(FLAG_KEEP_PARTY_POSITION);
 		syGameFlagSet(FLAG_LEFT_FOR_A_GAME);
 		sySynch(1);
 		fdScriptLeaveFor(MODE_DICE, 0);
-		fdScriptSetAfterBattleDestination(
-			SCENE_CONTIGO_LUCKY_DICE, ENTRANCE_FROM_LUCKY_DICE);
-	} else {
+		fdScriptSetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, ENTRANCE_FROM_LUCKY_DICE);
+	}
+	else
+	{
 		FieldStateWork->msg++;
-		/* "No? Oh, well. Who's next?" */
+		// "No? Oh, well. Who's next?"
 		fdScriptShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Talking to the young man running the Super Lucky Dice tent offers a game at
-   the same price as Lucky Dice, which his offer does not say:
-   "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?" */
+// Talking to the young man running the Super Lucky Dice tent offers a game at the same price as
+// Lucky Dice, which his offer does not say: "Welcome, welcome, step right up! Care for a round of
+// Super Lucky Dice?"
 void scContigoOfferSuperLuckyDice(void)
 {
 	Uint32 price = gmPartyGetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	if(MainRoutineStateWork.coins < price) {
-		/* Shown at the Lucky Dice attendant, who stands in the next tent: the
-		   box opens at the top of the screen as his welcome does, a little
-		   further right. */
+	if (MainRoutineStateWork.coins < price)
+	{
+		// Shown at the Lucky Dice attendant, who stands in the next tent: the box opens at the top
+		// of the screen as his welcome does, a little further right.
 		fdScriptSetMessageId((Sint32)MsgContigoSorryPalButYouveGotta);
-		/* "Sorry, pal, but you've gotta have more coins to play." */
+		// "Sorry, pal, but you've gotta have more coins to play."
 		fdMessageShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
 		return;
 	}
 	fdScriptSetMessageId((Sint32)MsgContigoWelcomeWelcomeStepRightUp);
-	/* "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?"
-	   Yes: "OK, then let 'em roll!" No: "Oh really? That's a shame!" */
+	// "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?" Yes: "OK, then let
+	// 'em roll!" No: "Oh really? That's a shame!"
 	fdMessageShowAtActor(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
-	if(fdScriptAskYesNoWithActorAnimation(
-		   MainRoutineStateWork.leaderActorId, 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0) == 0)
+	{
 		*(Sint32 *)SceneStateWork = MainRoutineStateWork.coins;
-		/* FAKEMATCH(dead): tests of the coins, never above COIN_MAX, around a
-		 * store to price, which nothing reads again. */
-		if(MainRoutineStateWork.coins > COIN_MAX) {
-			if(MainRoutineStateWork.coins != 0)
+		// FAKEMATCH(dead): tests of the coins, never above COIN_MAX, around a
+		// * store to price, which nothing reads again.
+		if (MainRoutineStateWork.coins > COIN_MAX)
+		{
+			if (MainRoutineStateWork.coins != 0)
 				price = 0;
 		}
 		fdActorTableSnapshot();
-		/* "OK, then let 'em roll!" */
+		// "OK, then let 'em roll!"
 		fdScriptShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
 		syGameFlagSet(FLAG_KEEP_PARTY_POSITION);
 		syGameFlagSet(FLAG_LEFT_FOR_A_GAME);
 		sySynch(1);
 		fdScriptLeaveFor(MODE_SUPER_DICE, 0);
-		fdScriptSetAfterBattleDestination(
-			SCENE_CONTIGO_LUCKY_DICE, ENTRANCE_FROM_SUPER_LUCKY_DICE);
-	} else {
+		fdScriptSetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, ENTRANCE_FROM_SUPER_LUCKY_DICE);
+	}
+	else
+	{
 		FieldStateWork->msg++;
-		/* "Oh really? That's a shame!" */
+		// "Oh really? That's a shame!"
 		fdScriptShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Draws an actor at seven tenths of its size, as the geoglyph's and the dice
-   hall's signs are drawn. */
+// Draws an actor at seven tenths of its size, as the geoglyph's and the dice hall's signs are
+// drawn.
 void scContigoShrinkActor(Sint32 id)
 {
-	ACTOR *actor = fdActorGetById(id);
+	ACTOR *actor  = fdActorGetById(id);
 
 	actor->scaleX = toFIXED(7) / 10;
 	actor->scaleY = toFIXED(7) / 10;
 	actor->radius = 8;
 }
 
-/* A thump, and the door at the head of the Sanctum's steps shows open; Felix
-   walks slowly in through it and the screen fades out. */
-void scContigoOpenSanctumDoor(
-	Sint32 srcX, Sint32 srcY, Sint32 doorX, Sint32 doorY)
+// A thump, and the door at the head of the Sanctum's steps shows open; Felix walks slowly in
+// through it and the screen fades out.
+void scContigoOpenSanctumDoor(Sint32 srcX, Sint32 srcY, Sint32 doorX, Sint32 doorY)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	sySoundPlay(SE_THUMP);
 	{
-		Sint32 width = 1;
+		Sint32 width  = 1;
 		Sint32 height = 2;
 
-		fdMapGridCopyMetatileTilesIndicesRect(
-			srcX, srcY, doorX, doorY, width, height);
-		fdMapGridCopyMetatileTilesIndicesRect(
-			srcX, srcY + 2, doorX + 1, doorY, width, height);
+		fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY, doorX, doorY, width, height);
+		fdMapGridCopyMetatileTilesIndicesRect(srcX, srcY + 2, doorX + 1, doorY, width, height);
 	}
 	fdScriptWait(20);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
-	fdActorSetMovementTypeById(
-		MainRoutineStateWork.leaderActorId, ContigoEnterSanctumDoorScript);
+	fdActorSetMovementTypeById(MainRoutineStateWork.leaderActorId, ContigoEnterSanctumDoorScript);
 	sySynch(12);
 	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 }
 
-/* Felix walks up the Sanctum's west steps into its door (metatiles (42, 20) and
-   (43, 20)): it opens with a thump, he walks in, and he arrives in a small
-   stone room of the Sanctum with dragon statues. */
+// Felix walks up the Sanctum's west steps into its door (metatiles (42, 20) and (43, 20)): it opens
+// with a thump, he walks in, and he arrives in a small stone room of the Sanctum with dragon
+// statues.
 void scContigoEnterSanctumWestDoor(void)
 {
 	scContigoOpenSanctumDoor(27, 0, 42, 13);
-	syImportScriptSetExitRequest(
-		CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTH);
+	syImportScriptSetExitRequest(CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTH);
 }
 
-/* Unused: the same for the Sanctum's middle door, which Reveal opens as a plain
-   exit instead (scContigoRevealMiddleDoor). */
+// Unused: the same for the Sanctum's middle door, which Reveal opens as a plain exit instead
+// (scContigoRevealMiddleDoor).
 UNUSED void scContigoEnterSanctumMiddleDoor(void)
 {
 	scContigoOpenSanctumDoor(27, 4, 48, 12);
-	syImportScriptSetExitRequest(
-		CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST);
+	syImportScriptSetExitRequest(CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST);
 }
 
-/* Felix walks up the Sanctum's east steps into its door (metatiles (54, 20) and
-   (55, 20)): it opens with a thump, he walks in, and he arrives in a small
-   stone room of the Sanctum with dragon statues. */
+// Felix walks up the Sanctum's east steps into its door (metatiles (54, 20) and (55, 20)): it opens
+// with a thump, he walks in, and he arrives in a small stone room of the Sanctum with dragon
+// statues.
 void scContigoEnterSanctumEastDoor(void)
 {
 	scContigoOpenSanctumDoor(27, 0, 54, 13);
-	syImportScriptSetExitRequest(
-		CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_SOUTH);
+	syImportScriptSetExitRequest(CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_SOUTH);
 }
 
-extern Uint32							   ContigoJennaReunionScript[];
-extern Uint32							   ContigoPiersReunionScript[];
-extern Uint32							   ContigoShebaReunionScript[];
-extern Uint32							   ContigoKradenReunionScript[];
-extern Uint32							   ContigoJoinLeaderScript[];
+extern Uint32                              ContigoJennaReunionScript[];
+extern Uint32                              ContigoPiersReunionScript[];
+extern Uint32                              ContigoShebaReunionScript[];
+extern Uint32                              ContigoKradenReunionScript[];
+extern Uint32                              ContigoJoinLeaderScript[];
 SPARKLE_STATE ContigoSparkleState BSS_DATA ALIGNED(16);
 void scContigoStartSparkle(ACTOR *actor, SPARKLE_STATE *state);
 void scContigoStopSparkle(ACTOR *actor);
 
-/* Walking into the house at the top of the hill once Jupiter Lighthouse's
-   beacon is lit: Isaac, Garet, Mia and Ivan are waiting, and the reunion begins
-   (scContigoInitShops). The two parties make peace, Kraden tells why Felix has
-   been lighting the beacons, and Hamma comes to send them all to Mars
-   Lighthouse as one party. */
+// Walking into the house at the top of the hill once Jupiter Lighthouse's beacon is lit: Isaac,
+// Garet, Mia and Ivan are waiting, and the reunion begins (scContigoInitShops). The two parties
+// make peace, Kraden tells why Felix has been lighting the beacons, and Hamma comes to send them
+// all to Mars Lighthouse as one party.
 void scContigoTheReunion(void)
 {
 	ACTOR *actor;
@@ -1800,35 +1756,32 @@ void scContigoTheReunion(void)
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
 	fdScriptSetMessageId((Sint32)MsgGladYouKeptYourPromise);
-	/* "I'm glad you kept your promise, Felix." */
+	// "I'm glad you kept your promise, Felix."
 	fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
 	fdActorSetAnimationById(ACTOR_GARET, ANIM_NOD);
-	/* "All right, let's hear what he has to say for himself!" */
+	// "All right, let's hear what he has to say for himself!"
 	fdScriptShowMessageAndWait(ACTOR_GARET, 0);
-	fdActorSetAttachedEffect(
-		ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(20);
-	/* "What can we say, Isaac? Has Felix ever harmed you? Have we ever..." */
+	// "What can we say, Isaac? Has Felix ever harmed you? Have we ever..."
 	fdScriptShowMessageAndWait(ACTOR_JENNA, 0);
 	fdActorSetAnimationById(ACTOR_SHEBA, ANIM_NOD);
-	/* "Felix's been avoiding you, but he never had any intention of..." */
+	// "Felix's been avoiding you, but he never had any intention of..."
 	fdScriptShowMessageAndWait(ACTOR_SHEBA, 0);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-	/* "And he definitely helped us out back at Jupiter Lighthouse." */
+	// "And he definitely helped us out back at Jupiter Lighthouse."
 	fdScriptShowMessageAndWait(ACTOR_MIA, 0);
 	fdActorSetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-	/* "Isaac's been worrying about Jenna nonstop since this nightmare..." */
+	// "Isaac's been worrying about Jenna nonstop since this nightmare..."
 	fdScriptShowMessageAndWait(ACTOR_IVAN, 0);
-	fdActorSetAttachedEffect(
-		ACTOR_PIERS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	/* "She was afraid that if we met, we would be forced to fight... She..." */
+	fdActorSetAttachedEffect(ACTOR_PIERS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	// "She was afraid that if we met, we would be forced to fight... She..."
 	fdScriptShowMessageAndWait(ACTOR_PIERS, 0);
 	scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-	/* "I know that, now... But it doesn't explain why you're doing this..." */
+	// "I know that, now... But it doesn't explain why you're doing this..."
 	fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-	/* "Felix betrayed his hometown, Vale... That's why he hasn't been
-	   able..." */
+	// "Felix betrayed his hometown, Vale... That's why he hasn't been able..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
 	fdActorFaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
@@ -1844,107 +1797,103 @@ void scContigoTheReunion(void)
 	fdActorWalkToAndWaitById(ACTOR_KRADEN, 146, 342);
 	fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-	/* "Felix had hoped to play the villain alone, without getting Jenna
-	   or..." */
+	// "Felix had hoped to play the villain alone, without getting Jenna or..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorJump(ACTOR_GARET, 2, 10);
-	/* "He betrayed Vale? Kraden, what are you talking about?" */
+	// "He betrayed Vale? Kraden, what are you talking about?"
 	fdScriptShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_GARET, 0);
-	/* "He conspired to steal the Elemental Stars and fire the beacons of..." */
+	// "He conspired to steal the Elemental Stars and fire the beacons of..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorSetAnimationById(ACTOR_MIA, ANIM_SHAKE_HEAD);
-	/* "That's what Saturos and Menardi were trying to do..." */
+	// "That's what Saturos and Menardi were trying to do..."
 	fdScriptShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_MIA, 0);
-	/* "Why were you helping them?" */
+	// "Why were you helping them?"
 	fdScriptShowMessageAndWait(ACTOR_IVAN, 0);
 	scFieldActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
 	fdActorFaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
-	/* "Our parents' lives were at stake! We had to help!" */
+	// "Our parents' lives were at stake! We had to help!"
 	fdScriptShowMessageAndWait(ACTOR_JENNA, 0);
 	fdActorFaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
 	scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	scFieldActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	/* "Parents? But...your parents died three years ago, in that storm..." */
+	// "Parents? But...your parents died three years ago, in that storm..."
 	fdScriptShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-	/* "That night, Saturos and his men had raided Sol Sanctum... The
-	   storm..." */
+	// "That night, Saturos and his men had raided Sol Sanctum... The storm..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
 	fdActorFaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
 	fdActorFaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
 	fdActorSetAnimationById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
-	/* "Garet, you saw two strangers that night°Saturos and Menardi.
-	   They..." */
+	// "Garet, you saw two strangers that night°Saturos and Menardi. They..."
 	fdScriptShowMessageAndWait(ACTOR_JENNA, 0);
 	fdActorFaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
 	scFieldActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	/* "They had failed to solve the mystery of Sol Sanctum. In doing so..." */
+	// "They had failed to solve the mystery of Sol Sanctum. In doing so..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorSetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
-	/* "Everyone thought that you were killed by that boulder, Felix. I..." */
+	// "Everyone thought that you were killed by that boulder, Felix. I..."
 	fdScriptShowMessageAndWait(ACTOR_JENNA, 0);
 	fdActorSetAnimationById(ACTOR_GARET, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-	/* "In fact, nobody was killed by the boulder that day!" */
+	// "In fact, nobody was killed by the boulder that day!"
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
-	/* "So that means..." */
+	// "So that means..."
 	fdScriptShowMessageThenWait(ACTOR_ISAAC, 0, 40);
 	scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-	/* "Wait a minute, Kraden... Did you just say that nobody was killed
-	   by..." */
+	// "Wait a minute, Kraden... Did you just say that nobody was killed by..."
 	fdScriptShowMessageAndWait(ACTOR_IVAN, 0);
 	scFieldActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorFaceDirectionAndWait(ACTOR_MIA, FACING_SOUTH);
-	/* "But what about Isaac's dad? And Jenna and Felix's parents? I
-	   thought..." */
+	// "But what about Isaac's dad? And Jenna and Felix's parents? I thought..."
 	fdScriptShowMessageAndWait(ACTOR_MIA, 0);
 	fdActorFaceDirectionAndWait(ACTOR_IVAN, FACING_NORTH);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdActorFaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
 	fdActorFaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
 	scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-	/* "I'm not so sure now..." */
+	// "I'm not so sure now..."
 	fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
 	fdActorFaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
 	scFieldActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdActorFaceDirectionAndWait(ACTOR_GARET, FACING_NORTHEAST);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-	/* "Yes! If Felix survived, Kyle and the others may have as well..." */
+	// "Yes! If Felix survived, Kyle and the others may have as well..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	scFieldActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
 	fdActorFaceDirectionAndWait(ACTOR_MIA, FACING_SOUTHEAST);
-	/* "Why didn't you tell us? We could have worked together to save
-	   your..." */
+	// "Why didn't you tell us? We could have worked together to save your..."
 	fdMessageShowAtActor(ACTOR_MIA, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
-	answer = fdScriptAskYesNoWithActorAnimation(
-		MainRoutineStateWork.leaderActorId, 0);
-	if(answer == 0) {
+	answer = fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0);
+	if (answer == 0)
+	{
 		fdActorWaitForAnimationChange(MainRoutineStateWork.leaderActorId);
 		fdActorSetAnimationById(ACTOR_IVAN, ANIM_NOD);
-		/* "Except that we had only just begun our journey, and we simply..." */
+		// "Except that we had only just begun our journey, and we simply..."
 		fdScriptShowMessageAndWait(ACTOR_IVAN, 0);
 		FieldStateWork->msg++;
-	} else {
+	}
+	else
+	{
 		fdActorWaitForAnimationChange(MainRoutineStateWork.leaderActorId);
 		FieldStateWork->msg++;
 		fdActorSetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-		/* "He's right. They were too powerful then... It would have been..." */
+		// "He's right. They were too powerful then... It would have been..."
 		fdScriptShowMessageAndWait(ACTOR_IVAN, 0);
 	}
 	fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-	/* "There's more to it than that. He had another reason to light the..." */
+	// "There's more to it than that. He had another reason to light the..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
@@ -1953,18 +1902,16 @@ void scContigoTheReunion(void)
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
 	fdActorFaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
 	scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-	/* "Unless the lighthouse beacons are all lit, Weyard will eventually
-	   be..." */
+	// "Unless the lighthouse beacons are all lit, Weyard will eventually be..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 20);
-	/* "Destroyed? But...how? Why?" */
+	// "Destroyed? But...how? Why?"
 	fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
 	fdActorFaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
 	fdActorSetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
-	/* "King Hydros, ruler of Lemuria, says that our world is steadily
-	   shrinking." */
+	// "King Hydros, ruler of Lemuria, says that our world is steadily shrinking."
 	fdScriptShowMessageAndWait(ACTOR_PIERS, 0);
 	fdActorFaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
@@ -1975,70 +1922,63 @@ void scContigoTheReunion(void)
 	scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorFaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
-	/* "Elemental energy drives the growth of civilization. Without it, we
-	   and..." */
+	// "Elemental energy drives the growth of civilization. Without it, we and..."
 	fdScriptShowMessageAndWait(ACTOR_SHEBA, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
 	scFieldActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-	/* "All that because the lighthouses aren't illuminated?" */
+	// "All that because the lighthouses aren't illuminated?"
 	fdScriptShowMessageAndWait(ACTOR_MIA, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
 	scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-	/* "According to my research, that seems to be the case." */
+	// "According to my research, that seems to be the case."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
-	fdActorSetAttachedEffect(
-		ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(20);
-	/* "But...once the lighthouses are all lit, you said the world would
-	   end..." */
+	// "But...once the lighthouses are all lit, you said the world would end..."
 	fdScriptShowMessageAndWait(ACTOR_GARET, 0);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-	/* "That...might be true, too... But if we do nothing, the world will..." */
+	// "That...might be true, too... But if we do nothing, the world will..."
 	fdScriptShowMessageThenWait(ACTOR_KRADEN, 0, 80);
-	/* "Wait for the end of the world to come or wind up accidentally..." */
+	// "Wait for the end of the world to come or wind up accidentally..."
 	fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-	/* "Nothing is certain. There is no way to prevent the world from
-	   reaching..." */
+	// "Nothing is certain. There is no way to prevent the world from reaching..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
-	/* "However, we can fight to save the world from withering away due to
-	   the..." */
+	// "However, we can fight to save the world from withering away due to the..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorFaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
-	/* "And, Felix, you knew this? You were helping them because you knew
-	   what..." */
+	// "And, Felix, you knew this? You were helping them because you knew what..."
 	fdScriptOpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
-	fdActorFaceDirectionById(
-		MainRoutineStateWork.leaderActorId, FACING_NORTHWEST, 0);
+	fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
-	answer = fdScriptAskYesNoWithActorAnimation(
-		MainRoutineStateWork.leaderActorId, 0);
-	if(answer == 0) {
+	answer = fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0);
+	if (answer == 0)
+	{
 		fdActorWaitForAnimationChange(MainRoutineStateWork.leaderActorId);
-		fdActorSetAttachedEffect(
-			ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		/* "You're a lot smarter than I remember you being..." */
+		fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		// "You're a lot smarter than I remember you being..."
 		fdScriptShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
 		FieldStateWork->msg++;
-	} else {
+	}
+	else
+	{
 		fdActorWaitForAnimationChange(MainRoutineStateWork.leaderActorId);
 		scFieldActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
 		FieldStateWork->msg++;
-		/* "You just figured it out along the way, huh? That's still
-		   pretty..." */
+		// "You just figured it out along the way, huh? That's still pretty..."
 		fdScriptShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
 	}
 	fdActorFaceDirection(ACTOR_JENNA, FACING_WEST, 0);
 	fdActorFaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
 	scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-	/* "Why did you wait so long to tell me? I would have helped you..." */
+	// "Why did you wait so long to tell me? I would have helped you..."
 	fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
 	fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-	/* "You wouldn't have done it before, Isaac... It would have meant..." */
+	// "You wouldn't have done it before, Isaac... It would have meant..."
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -2047,10 +1987,9 @@ void scContigoTheReunion(void)
 	sySoundPlay(MUS_SILENCE);
 	fdActorSetSpriteColor(fdActorGetById(ACTOR_HAMMA), SPRITE_COLOR_HIDDEN);
 	angle = FACING_NORTH_NORTHWEST;
-	fdActorSetHorizontalPosAndAngleWithTerrain(
-		ACTOR_HAMMA, toFIXED(160), toFIXED(466), angle);
+	fdActorSetHorizontalPosAndAngleWithTerrain(ACTOR_HAMMA, toFIXED(160), toFIXED(466), angle);
 	sySynch(1);
-	/* "Now that we know all of this, shouldn't we be going?" */
+	// "Now that we know all of this, shouldn't we be going?"
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 	fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_HAMMA);
 	fdActorWatchAndSetScript(ACTOR_JENNA, ACTOR_HAMMA);
@@ -2069,7 +2008,7 @@ void scContigoTheReunion(void)
 	fdActorSetSpeed(ACTOR_HAMMA, 0.8);
 	fdActorWalkToAndWait(ACTOR_HAMMA, 146, 406);
 	scFieldActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-	/* "Hamma!" */
+	// "Hamma!"
 	fdScriptShowMessageAndWait(ACTOR_MIA, 0);
 	fdActorStop(MainRoutineStateWork.leaderActorId);
 	fdActorStop(ACTOR_JENNA);
@@ -2081,7 +2020,7 @@ void scContigoTheReunion(void)
 	fdActorStop(ACTOR_IVAN);
 	sySoundPlay(MUS_REUNITING_WITH_HAMA);
 	fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
-	/* "Hello again..." */
+	// "Hello again..."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_JENNA, ANIM_NOD);
@@ -2093,18 +2032,18 @@ void scContigoTheReunion(void)
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(20);
 	scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-	/* "Hamma! You...know Isaac? And his companions, too?" */
+	// "Hamma! You...know Isaac? And his companions, too?"
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
 	fdActorSetAnimationById(ACTOR_ISAAC, ANIM_NOD);
 	fdScriptWait(10);
-	/* Isaac: "We met at the temple on the edge of the Lamakan Desert...", and
-	   Hamma at once: "I'm Hamma, descendant of the Anemos." */
-	syFieldScriptShowTwoMessagesAndWait(ACTOR_ISAAC, 5, 5, 8, 10, ACTOR_HAMMA,
-		9, 20, 18, REUNION_HAMMA_PORTRAIT_Y, 10);
+	// Isaac: "We met at the temple on the edge of the Lamakan Desert...", and Hamma at once: "I'm
+	// Hamma, descendant of the Anemos."
+	syFieldScriptShowTwoMessagesAndWait(
+		ACTOR_ISAAC, 5, 5, 8, 10, ACTOR_HAMMA, 9, 20, 18, REUNION_HAMMA_PORTRAIT_Y, 10);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
-	scFieldActorShowEmote(MainRoutineStateWork.leaderActorId,
-		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+	scFieldActorShowEmote(
+		MainRoutineStateWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	scFieldActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	scFieldActorShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	scFieldActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2114,33 +2053,30 @@ void scContigoTheReunion(void)
 	scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 	fdActorSetAnimationById(ACTOR_HAMMA, ANIM_NOD);
-	/* "I was born in Contigo, and I inherited the power of the Anemos." */
+	// "I was born in Contigo, and I inherited the power of the Anemos."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-	fdActorSetAttachedEffect(
-		ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(20);
-	/* "Hey... We just got into Contigo, and we found out this is where
-	   Ivan..." */
+	// "Hey... We just got into Contigo, and we found out this is where Ivan..."
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
-	/* "Yeah... We also learned that he's got a sister!" */
+	// "Yeah... We also learned that he's got a sister!"
 	fdScriptShowMessageAndWait(ACTOR_MIA, 0);
 	fdActorFaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
-	/* "Sister... You don't mean..." */
+	// "Sister... You don't mean..."
 	fdScriptShowMessageAndWait(ACTOR_SHEBA, 0);
 	scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
 	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, FACING_EAST);
-	/* "That would be me, yes." */
+	// "That would be me, yes."
 	fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
 	fdActorSetSpeed(ACTOR_IVAN, 0.8);
 	fdActorWalkToAndWait(ACTOR_IVAN, 130, 400);
 	fdActorFaceDirectionById(ACTOR_IVAN, FACING_EAST, 0);
 	fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_WEST);
-	/* "Not now, Ivan... This isn't the time." */
+	// "Not now, Ivan... This isn't the time."
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMA, 0);
 	scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorSetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
-	/* "Three lighthouses have been lit... The elements have been thrown
-	   out..." */
+	// "Three lighthouses have been lit... The elements have been thrown out..."
 	fdScriptShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMA, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
@@ -2150,62 +2086,49 @@ void scContigoTheReunion(void)
 	fdActorFaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTH, 40);
 	fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_NORTH_NORTHEAST);
-	/* "Jupiter is growing stronger, and the north grows colder with
-	   every..." */
+	// "Jupiter is growing stronger, and the north grows colder with every..."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
-	fdActorFaceDirection(
-		MainRoutineStateWork.leaderActorId, FACING_SOUTHWEST, 0);
+	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
 	fdActorSetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
-	/* "You must hurry to Mars Lighthouse. Ignite its beacon, before all
-	   of..." */
+	// "You must hurry to Mars Lighthouse. Ignite its beacon, before all of..."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-	/* "Mars Lighthouse? Agatio has the Mars Star. He's on his way to light
-	   it..." */
+	// "Mars Lighthouse? Agatio has the Mars Star. He's on his way to light it..."
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	scContigoStartSparkle(actor, &ContigoSparkleState);
 	fdScriptWait(80);
 	scContigoStopSparkle(actor);
 	fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
-	/* "I doubt they will be able to light the Mars beacon..." */
+	// "I doubt they will be able to light the Mars beacon..."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-	fdActorSetAttachedEffect(
-		ACTOR_PIERS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	/* "Why's that?" */
+	fdActorSetAttachedEffect(ACTOR_PIERS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	// "Why's that?"
 	fdScriptShowMessageThenWait(ACTOR_PIERS, 0, 10);
 	scContigoStartSparkle(actor, &ContigoSparkleState);
 	fdScriptWait(80);
 	scContigoStopSparkle(actor);
 	fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_NORTH_NORTHEAST);
 	fdActorSetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
-	/* "There is a powerful force that does not want to see Mars rekindled." */
+	// "There is a powerful force that does not want to see Mars rekindled."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-	fdActorSetAttachedEffect(
-		ACTOR_ISAAC, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_ISAAC, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
-		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_PIERS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	                         ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_PIERS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(20);
 	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, angle);
 	fdActorSetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
-	/* "You will fail as well...unless you pool your strengths together
-	   and..." */
+	// "You will fail as well...unless you pool your strengths together and..."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 	fdActorFaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
@@ -2216,7 +2139,7 @@ void scContigoTheReunion(void)
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_WEST, 0);
 	fdActorJump(ACTOR_KRADEN, 4, 10);
-	/* "This is bad. We have to go...now!" */
+	// "This is bad. We have to go...now!"
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	fdActorSetAnimationById(ACTOR_ISAAC, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_GARET, ANIM_NOD);
@@ -2227,13 +2150,12 @@ void scContigoTheReunion(void)
 	fdActorSetAnimationById(ACTOR_SHEBA, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_PIERS, ANIM_NOD);
 	scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-	/* "I had hoped that you would feel that way..." */
+	// "I had hoped that you would feel that way..."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-	/* "I've prepared a gift for you, to aid you on your way to Mars
-	   Lighthouse." */
+	// "I've prepared a gift for you, to aid you on your way to Mars Lighthouse."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 	fdActorSetAnimationById(ACTOR_HAMMA, ANIM_NOD);
-	/* "I must leave you now, but we will meet at the inlet." */
+	// "I must leave you now, but we will meet at the inlet."
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdCameraMoveTo(180, CAMERA_KEEP, 410, 1);
@@ -2244,8 +2166,7 @@ void scContigoTheReunion(void)
 	fdCameraWaitForArrival();
 	gmPlayMusic();
 	scFieldActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-	/* "I'm sorry we left Venus Lighthouse without seeing you... I'm sorry
-	   for..." */
+	// "I'm sorry we left Venus Lighthouse without seeing you... I'm sorry for..."
 	fdScriptShowMessageAndWait(ACTOR_JENNA, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
@@ -2256,60 +2177,54 @@ void scContigoTheReunion(void)
 	fdActorJump(ACTOR_JENNA, 2, 0);
 	fdActorFaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
 	fdActorSetAnimationById(ACTOR_JENNA, ANIM_NOD);
-	/* "Maybe when this is all over, we can all go on a trip together." */
+	// "Maybe when this is all over, we can all go on a trip together."
 	fdScriptShowMessageAndWait(ACTOR_JENNA, 0);
 	fdActorFaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTHWEST);
-	fdActorSetAttachedEffect(
-		ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	/* "Hey, Jenna, you sure seem calm, considering that we're racing to
-	   meet..." */
+	fdActorSetAttachedEffect(ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	// "Hey, Jenna, you sure seem calm, considering that we're racing to meet..."
 	fdScriptShowMessageAndWait(ACTOR_SHEBA, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
 	scFieldActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-	/* "I'm just relieved that we've sorted our differences..." */
+	// "I'm just relieved that we've sorted our differences..."
 	fdScriptShowMessageAndWait(ACTOR_MIA, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_WEST, 0);
 	fdActorSetAnimationById(ACTOR_PIERS, ANIM_NOD);
-	/* "Me too, Mia... We could not have stood divided against a common foe." */
+	// "Me too, Mia... We could not have stood divided against a common foe."
 	fdScriptShowMessageAndWait(ACTOR_PIERS, 0);
 	scFieldActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-	/* "Yeah, I guess I'm a little happy that we're not going to have to
-	   beat..." */
+	// "Yeah, I guess I'm a little happy that we're not going to have to beat..."
 	fdScriptShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
 	fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
 	fdActorSetAnimationById(ACTOR_ISAAC, ANIM_NOD);
-	/* "Listen, this is Felix's quest now... We're just doing what we can
-	   to..." */
+	// "Listen, this is Felix's quest now... We're just doing what we can to..."
 	fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
 	scFieldActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
-	/* "Aren't you happy?" */
+	// "Aren't you happy?"
 	fdMessageShowAtActor(ACTOR_JENNA, 0);
-	fdActorFaceDirectionById(
-		MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
-	if(fdScriptAskYesNoWithActorAnimation(
-		   MainRoutineStateWork.leaderActorId, 0) == 0) {
+	fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
+	if (fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0) == 0)
+	{
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
 		fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
-		/* "Everything's finally come together... This is how it was meant
-		   to..." */
+		// "Everything's finally come together... This is how it was meant to..."
 		fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
 		FieldStateWork->msg++;
-	} else {
+	}
+	else
+	{
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
 		FieldStateWork->msg++;
 		fdActorSetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-		/* "Don't worry about the future, Felix... Enjoy this brief
-		   moment's..." */
+		// "Don't worry about the future, Felix... Enjoy this brief moment's..."
 		fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
 	}
 	fdActorWalkToAndWait(ACTOR_KRADEN, 146, 368);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_EAST, 40);
 	fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-	/* "But Hamma's waiting for us. Let's go to our ship!" */
-	fdScriptShowMessageAndWait(
-		SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
+	// "But Hamma's waiting for us. Let's go to our ship!"
+	fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
 	fdActorSetAnimationById(ACTOR_ISAAC, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_GARET, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_MIA, ANIM_NOD);
@@ -2333,14 +2248,14 @@ void scContigoTheReunion(void)
 
 extern Uint32 ContigoLeaderVisitsScript[];
 
-/* The party's first steps into the house at the top of the hill after the ship
-   has its wings (metatiles (7, 25) to (12, 25), just inside the door): Hamma
-   welcomes it to her new home, tells Ivan why she kept from him that she is his
-   sister, and warns that the world is falling into ruin unless Mars Lighthouse
-   is lit. */
-void scContigoReturnToNewHome(void)
+// The party's first steps into the house at the top of the hill after the ship has its wings
+// (metatiles (7, 25) to (12, 25), just inside the door): Hamma welcomes it to her new home, tells
+// Ivan why she kept from him that she is his sister, and warns that the world is falling into ruin
+// unless Mars Lighthouse is lit.
+void          scContigoReturnToNewHome(void)
 {
-	if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS)) {
+	if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
+	{
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdCameraSetSpeed(0.8);
@@ -2353,21 +2268,18 @@ void scContigoReturnToNewHome(void)
 		fdActorSetSpeed(ACTOR_IVAN, 0.8);
 		fdActorWalkToAndWaitById(ACTOR_IVAN, 144, 374);
 		fdActorFaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
-		scFieldActorShowEmote(
-			ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+		scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
 		fdScriptSetMessageId((Sint32)MsgReturnedToMyNewHome);
-		/* "Ah, you've returned! What brings you to my new home?" */
+		// "Ah, you've returned! What brings you to my new home?"
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 		fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-		/* "Hamma..." */
+		// "Hamma..."
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
 		fdActorSetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-		/* "You're my sister... Why didn't you tell me sooner? Why didn't
-		   you..." */
+		// "You're my sister... Why didn't you tell me sooner? Why didn't you..."
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
 		fdActorSetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
-		/* "You play an important role in all this. If I'd told you, you
-		   would..." */
+		// "You play an important role in all this. If I'd told you, you would..."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 		fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 40);
 		fdActorWalkToAndWait(ACTOR_IVAN, 180, 364);
@@ -2375,275 +2287,233 @@ void scContigoReturnToNewHome(void)
 		fdActorWalkToAndWait(ACTOR_IVAN, 186, 388);
 		fdScriptWait(40);
 		fdActorWalkToAndWait(ACTOR_IVAN, 146, 380);
-		scFieldActorShowEmote(
-			ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-		/* "This place is so familiar... I feel like I've lived here my whole
-		   life." */
+		scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+		// "This place is so familiar... I feel like I've lived here my whole life."
 		fdScriptShowMessageAndWait(ACTOR_IVAN, 0);
-		scFieldActorShowEmote(
-			ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-		/* "Look at me, Ivan." */
+		scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+		// "Look at me, Ivan."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 		scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 		fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 40);
-		/* "You're too sentimental. You would have given up your quest to
-		   find..." */
+		// "You're too sentimental. You would have given up your quest to find..."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-		scFieldActorShowEmote(
-			ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-		/* "What are you saying, sister?" */
+		scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+		// "What are you saying, sister?"
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
 		fdActorSetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
-		/* "No, not sister... Do not think of me as your sister until you
-		   have..." */
+		// "No, not sister... Do not think of me as your sister until you have..."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-		fdActorSetAttachedEffect(
-			ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		/* "W-Why?" */
+		fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		// "W-Why?"
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-		scFieldActorShowEmote(
-			ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-		/* "Our world is falling into ruin..." */
+		scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+		// "Our world is falling into ruin..."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 		fdActorPlaceOnActor(ACTOR_ISAAC, MainRoutineStateWork.leaderActorId);
 		sySynch(1);
-		scFieldActorShowEmote(
-			ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+		scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 		fdActorSetSpeed(ACTOR_ISAAC, 1.2);
 		fdActorWalkToAndWaitById(ACTOR_ISAAC, 168, 380);
 		fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
-		/* "What? Hamma, what do you mean? What's happening?" */
+		// "What? Hamma, what do you mean? What's happening?"
 		fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
-		scFieldActorShowEmote(
-			ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+		scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 		fdActorFaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST, 0);
 		fdActorPlaceOnActor(ACTOR_KRADEN, MainRoutineStateWork.leaderActorId);
 		sySynch(1);
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
-		fdActorSetMovementTypeById(
-			MainRoutineStateWork.leaderActorId, ContigoLeaderVisitsScript);
+		fdActorSetMovementTypeById(MainRoutineStateWork.leaderActorId, ContigoLeaderVisitsScript);
 		fdActorSetSpeed(ACTOR_KRADEN, 0.8);
 		fdActorWalkToAndWait(ACTOR_KRADEN, 182, 378);
 		fdActorWalkToAndWaitById(ACTOR_KRADEN, 182, 360);
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
-		scFieldActorShowEmote(
-			ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-		/* "Look, I don't want to interrupt your reunion or anything, but..." */
+		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+		// "Look, I don't want to interrupt your reunion or anything, but..."
 		fdScriptShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
 		fdActorFaceDirectionById(ACTOR_HAMMA, FACING_EAST, 0);
-		fdActorSetAttachedEffect(
-			ACTOR_KRADEN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		/* "I couldn't help overhearing you say something about the world..." */
+		fdActorSetAttachedEffect(ACTOR_KRADEN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		// "I couldn't help overhearing you say something about the world..."
 		fdScriptShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
 		fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
-		/* "Our world requires a delicate balance of elemental forces.
-		   That..." */
+		// "Our world requires a delicate balance of elemental forces. That..."
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
 		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-		scFieldActorShowEmote(MainRoutineStateWork.leaderActorId,
-			EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+		scFieldActorShowEmote(
+			MainRoutineStateWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 		scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 		scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 		fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST);
-		/* "Without that balance, one element might be lost beneath the
-		   others..." */
+		// "Without that balance, one element might be lost beneath the others..."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-		/* "You're talking about Mars Lighthouse, right?" */
+		// "You're talking about Mars Lighthouse, right?"
 		fdScriptShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
 		fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, FACING_EAST);
 		fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
 		fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-		fdActorFaceDirection(
-			MainRoutineStateWork.leaderActorId, FACING_SOUTHEAST, 40);
-		fdActorFaceDirectionById(
-			MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
+		fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_SOUTHEAST, 40);
+		fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
 		fdActorFaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
-		/* "Isn't Agatio taking care of Mars Lighthouse? Everything should
-		   be..." */
+		// "Isn't Agatio taking care of Mars Lighthouse? Everything should be..."
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-		scFieldActorShowEmote(
-			ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+		scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
 		fdActorFaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST, 20);
-		/* "Agatio will not light Mars Lighthouse." */
+		// "Agatio will not light Mars Lighthouse."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 		fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
 		fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
 		fdActorFaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
 		fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
-		/* "You don't think he can do it?" */
+		// "You don't think he can do it?"
 		fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
-		fdActorSetAttachedEffect(
-			ACTOR_HAMMA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		fdActorSetAttachedEffect(ACTOR_HAMMA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST);
-		/* "No. A great power stands ready to oppose them." */
+		// "No. A great power stands ready to oppose them."
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
-		scFieldActorShowEmote(MainRoutineStateWork.leaderActorId,
-			EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 		scFieldActorShowEmote(
-			ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-		scFieldActorShowEmote(
-			ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-		scFieldActorShowEmote(
-			ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+			MainRoutineStateWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+		scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+		scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 		fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST);
 		fdActorSetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
-		/* "They lack the power to resist that force, and they will fall before
-		   it." */
+		// "They lack the power to resist that force, and they will fall before it."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 		fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
 		fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
 		fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-		fdActorFaceDirectionById(
-			MainRoutineStateWork.leaderActorId, FACING_SOUTHEAST, 40);
+		fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_SOUTHEAST, 40);
 		fdEffectSetAttached(0, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdScriptWait(20);
 		fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
-		/* "But what will happen if Mars Lighthouse isn't lit quickly
-		   enough?" */
+		// "But what will happen if Mars Lighthouse isn't lit quickly enough?"
 		fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
-		fdActorFaceDirectionById(
-			MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
+		fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
 		fdActorFaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
 		fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-		scFieldActorShowEmote(
-			ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+		scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
 		fdActorFaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST, 0);
-		/* "Our world will be plunged into ice." */
+		// "Our world will be plunged into ice."
 		fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
 		fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
-		/* "But what would make that happen?" */
+		// "But what would make that happen?"
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
 		fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST);
-		/* "Even I do not know the answer to that question." */
+		// "Even I do not know the answer to that question."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-		scFieldActorShowEmote(
-			ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
 		fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
 		fdActorFaceDirectionById(ACTOR_HAMMA, FACING_EAST, 80);
-		scFieldActorShowEmote(
-			ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
 		scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-		scFieldActorShowEmote(MainRoutineStateWork.leaderActorId,
-			EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-		scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 		scFieldActorShowEmote(
-			ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-		/* "Ah... Yes, given the way that the elements interact, I see..." */
+			MainRoutineStateWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+		scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+		// "Ah... Yes, given the way that the elements interact, I see..."
 		fdScriptShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
-		/* "Kraden, you understand?" */
+		// "Kraden, you understand?"
 		fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
 		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
 		fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
-		/* "Well, I'm only guessing... But I think it's a good guess." */
+		// "Well, I'm only guessing... But I think it's a good guess."
 		fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 		fdActorJump(ACTOR_IVAN, 2, 10);
-		/* "Quit fooling around and tell me!" */
+		// "Quit fooling around and tell me!"
 		fdScriptShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 		fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-		/* "The earth is nurturing and warm. Many creatures are reared in
-		   this..." */
+		// "The earth is nurturing and warm. Many creatures are reared in this..."
 		fdMessageShowAtActor(ACTOR_KRADEN, 0);
 		scFieldActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 		fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-		if(fdScriptAskYesNoWithActorAnimation(
-			   MainRoutineStateWork.leaderActorId, 0) == 0) {
+		if (fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0) == 0)
+		{
 			fdActorFaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
 			fdActorSetAnimationById(ACTOR_IVAN, ANIM_NOD);
-			/* "I follow you..." */
+			// "I follow you..."
 			fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
 			FieldStateWork->msg++;
-		} else {
+		}
+		else
+		{
 			fdActorFaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
 			FieldStateWork->msg++;
 			fdActorSetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-			/* "It's OK, Felix... I don't really get it either, but let's
-			   see..." */
+			// "It's OK, Felix... I don't really get it either, but let's see..."
 			fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
 		}
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 		fdActorSetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-		/* "Now, think about the ocean. It is a cold place, is it not?" */
+		// "Now, think about the ocean. It is a cold place, is it not?"
 		fdMessageShowAtActor(ACTOR_KRADEN, 0);
 		scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 		fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
-		if(fdScriptAskYesNoWithActorAnimation(
-			   MainRoutineStateWork.leaderActorId, 0) == 0) {
+		if (fdScriptAskYesNoWithActorAnimation(MainRoutineStateWork.leaderActorId, 0) == 0)
+		{
 			fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
 			fdActorSetAnimationById(ACTOR_ISAAC, ANIM_NOD);
-			/* "Yeah, it is awfully cold..." */
+			// "Yeah, it is awfully cold..."
 			fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
 			FieldStateWork->msg++;
-		} else {
+		}
+		else
+		{
 			fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
 			FieldStateWork->msg++;
 			fdActorSetAnimationById(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
-			/* "I don't know what point he's trying to make, but I have to
-			   agree..." */
+			// "I don't know what point he's trying to make, but I have to agree..."
 			fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
 		}
 		fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-		/* "Both lighthouses were lit, and a balance was reached." */
+		// "Both lighthouses were lit, and a balance was reached."
 		fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
-		scFieldActorShowEmote(
-			ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
-		/* "But with only the lighthouse of wind lit, the balance has
-		   been..." */
+		// "But with only the lighthouse of wind lit, the balance has been..."
 		fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
-		fdActorSetAttachedEffect(
-			ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		/* "I get it... Wind cools things down, but it can't heat them up..." */
+		fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		// "I get it... Wind cools things down, but it can't heat them up..."
 		fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 		fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
-		/* "When you burn your hand on something hot, you blow on it to cool
-		   it..." */
+		// "When you burn your hand on something hot, you blow on it to cool it..."
 		fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 		fdActorSetAnimationById(ACTOR_ISAAC, ANIM_NOD);
-		/* "Right, yeah... I've always done that without thinking about it,
-		   but..." */
+		// "Right, yeah... I've always done that without thinking about it, but..."
 		fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
 		scFieldActorShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-		/* "When Mercury Lighthouse was lit, this didn't happen, though.
-		   I..." */
+		// "When Mercury Lighthouse was lit, this didn't happen, though. I..."
 		fdScriptShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
 		fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
-		/* "Water cannot cool things as swiftly as wind, perhaps." */
+		// "Water cannot cool things as swiftly as wind, perhaps."
 		fdScriptShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-		scFieldActorShowEmote(
-			ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-		/* "Or maybe the combined power of water and wind is cooling things
-		   down..." */
+		scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+		// "Or maybe the combined power of water and wind is cooling things down..."
 		fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 		fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
-		/* "If what Hamma's saying is true, we'd better get moving again,
-		   Felix." */
+		// "If what Hamma's saying is true, we'd better get moving again, Felix."
 		fdScriptShowMessageAndWait(ACTOR_ISAAC, 0);
-		fdActorSetAttachedEffect(
-			ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdActorFaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
-		/* "I got too worked up about seeing my sister... Sorry." */
+		// "I got too worked up about seeing my sister... Sorry."
 		fdScriptShowMessageAndWait(ACTOR_IVAN, 0);
 		fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST);
 		fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
-		/* "It's all right. I'm happy that you cared so much..." */
+		// "It's all right. I'm happy that you cared so much..."
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 		fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
 		fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
-		/* "All right, Felix! Let's head to Mars Lighthouse!" */
+		// "All right, Felix! Let's head to Mars Lighthouse!"
 		fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
-		fdActorSetAnimationAndWait(
-			MainRoutineStateWork.leaderActorId, ANIM_NOD);
+		fdActorSetAnimationAndWait(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 		fdActorSetSpeed(ACTOR_IVAN, 1.2);
 		fdActorSetSpeed(ACTOR_ISAAC, 1.2);
 		fdActorSetSpeed(ACTOR_KRADEN, 1.2);
 		fdActorSetMovementTypeById(ACTOR_IVAN, ContigoRejoinLeaderScript);
 		fdActorSetMovementTypeById(ACTOR_ISAAC, ContigoRejoinLeaderScript);
-		fdActorSetMovementTypeAndWaitById(
-			ACTOR_KRADEN, ContigoRejoinLeaderScript);
+		fdActorSetMovementTypeAndWaitById(ACTOR_KRADEN, ContigoRejoinLeaderScript);
 		syGameFlagSet(FLAG_HAMMA_WELCOMED_PARTY);
 		fdScriptEnd();
 	}
@@ -2653,13 +2523,13 @@ Sint32 scInit(void)
 {
 	Sint32 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_CONTIGO)
+	if (scene == SCENE_CONTIGO)
 		scContigoInitVillage();
-	else if(scene == SCENE_CONTIGO_GEOGLYPH)
+	else if (scene == SCENE_CONTIGO_GEOGLYPH)
 		scContigoInitGeoglyph();
-	else if(scene == SCENE_CONTIGO_SHOPS)
+	else if (scene == SCENE_CONTIGO_SHOPS)
 		scContigoInitShops();
-	else if(scene == SCENE_CONTIGO_LUCKY_DICE)
+	else if (scene == SCENE_CONTIGO_LUCKY_DICE)
 		scContigoInitLuckyDice();
 	return 0;
 }
@@ -2669,81 +2539,88 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-/* An event that draws the Corn at the leader's sprite priority. */
+// An event that draws the Corn at the leader's sprite priority.
 void scContigoKeepPriorityWithLeader(void)
 {
-	if(fdActorGetById(ACTOR_CORN) != 0) {
+	if (fdActorGetById(ACTOR_CORN) != 0)
+	{
 		ACTOR *owner = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
-		fdActorSetSpritePriority(
-			ACTOR_CORN, ((FIELD_SPR *)owner->sprite)->priority);
+		fdActorSetSpritePriority(ACTOR_CORN, ((FIELD_SPR *)owner->sprite)->priority);
 	}
 }
 
-/* Sets up the village: the two children walking about its middle stop when
-   faced (scContigoPauseWhenFaced); once Jupiter Lighthouse's beacon is lit,
-   until the ship has its wings, the girl and the old woman are gone and four
-   doors are locked; Shine waits where it landed until caught. Arriving by the
-   gate, or out of the two houses south of the Teleport circle or the Lucky
-   Wheels tent, the view follows Felix east past the gate to the weed patch;
-   then the Teleport circle's colours are set. */
+// Sets up the village: the two children walking about its middle stop when faced
+// (scContigoPauseWhenFaced); once Jupiter Lighthouse's beacon is lit, until the ship has its wings,
+// the girl and the old woman are gone and four doors are locked; Shine waits where it landed until
+// caught. Arriving by the gate, or out of the two houses south of the Teleport circle or the Lucky
+// Wheels tent, the view follows Felix east past the gate to the weed patch; then the Teleport
+// circle's colours are set.
 void scContigoInitVillage(void)
 {
 	ACTOR *actor = fdActorGetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
 
 	sySetEvent(scContigoKeepPriorityWithLeader, EVENT_PASS_TICK);
 	actor->sceneCount = 1;
-	actor->sceneByte = 0;
-	actor->update = scContigoPauseWhenFaced;
-	if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0 &&
-		syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) == 0) {
+	actor->sceneByte  = 0;
+	actor->update     = scContigoPauseWhenFaced;
+	if (syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0 && syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) == 0)
+	{
 		fdActorStop(ACTOR_GIRL_ON_THE_SHIP);
 		fdActorSetPos(ACTOR_GIRL_ON_THE_SHIP, 0, 0);
 		fdActorSetPos(ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, 0, 0);
 		scContigoLockDoors();
-	} else {
-		actor = fdActorGetById(ACTOR_GIRL_ON_THE_SHIP);
-		actor->sceneCount = 0;
-		actor->sceneByte = 0;
-		actor->update = scContigoPauseWhenFaced;
 	}
-	if(syGameFlagGet(FLAG_SHINE_FREED) != 0 &&
-		syGameFlagGet(FLAG_SHINE_CAUGHT) == 0) {
+	else
+	{
+		actor             = fdActorGetById(ACTOR_GIRL_ON_THE_SHIP);
+		actor->sceneCount = 0;
+		actor->sceneByte  = 0;
+		actor->update     = scContigoPauseWhenFaced;
+	}
+	if (syGameFlagGet(FLAG_SHINE_FREED) != 0 && syGameFlagGet(FLAG_SHINE_CAUGHT) == 0)
+	{
 		fdActorSetPos(ACTOR_SHINE, 32, 708);
-	} else {
+	}
+	else
+	{
 		fdActorSetSpriteColor(fdActorGetById(ACTOR_SHINE), SPRITE_COLOR_HIDDEN);
 		fdActorSetSpriteFlags(fdActorGetById(ACTOR_SHINE), 0);
 	}
-	if(syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
-		switch(MainRoutineStateWork.entrance) {
-		case CONTIGO_FROM_WORLD_MAP:
-		case CONTIGO_FROM_CONTIGO_SHOPS_SOUTH:
-		case CONTIGO_FROM_CONTIGO_SHOPS_SOUTHWEST:
-		case CONTIGO_FROM_CONTIGO_LUCKY_DICE_SOUTHWEST:
-			syGameFlagSet(FLAG_WHOLE_VILLAGE_IN_VIEW);
-			break;
-		default:
-			fdSetCameraBounds(0, toFIXED(512), toFIXED(512), toFIXED(1024));
-			break;
+	if (syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+	{
+		switch (MainRoutineStateWork.entrance)
+		{
+			case CONTIGO_FROM_WORLD_MAP:
+			case CONTIGO_FROM_CONTIGO_SHOPS_SOUTH:
+			case CONTIGO_FROM_CONTIGO_SHOPS_SOUTHWEST:
+			case CONTIGO_FROM_CONTIGO_LUCKY_DICE_SOUTHWEST:
+				syGameFlagSet(FLAG_WHOLE_VILLAGE_IN_VIEW);
+				break;
+			default: fdSetCameraBounds(0, toFIXED(512), toFIXED(512), toFIXED(1024)); break;
 		}
 	}
-	if(syGameFlagGet(FLAG_WHOLE_VILLAGE_IN_VIEW) != 0) {
+	if (syGameFlagGet(FLAG_WHOLE_VILLAGE_IN_VIEW) != 0)
+	{
 		fdSetCameraBounds(0, toFIXED(512), toFIXED(880), toFIXED(1024));
 		fdCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
 		fdMapGridCenterOnFollowedPoint();
 		sySynch(1);
 	}
-	scPaletteSetColorsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
-		TeleportCircleShimmerColors, TeleportCircleShimmerSlots);
+	scPaletteSetColorsFade(TeleportCirclePaletteSlots,
+	                       TeleportCircleColors,
+	                       TeleportCircleShimmerColors,
+	                       TeleportCircleShimmerSlots);
 }
 
-/* Sets up the geoglyph: until Jupiter Lighthouse's beacon is lit the wings'
-   parts lie on it among the workers; after, they and the workers are gone, and
-   the men in long robes too until the ship has its wings. */
+// Sets up the geoglyph: until Jupiter Lighthouse's beacon is lit the wings' parts lie on it among
+// the workers; after, they and the workers are gone, and the men in long robes too until the ship
+// has its wings.
 void scContigoInitGeoglyph(void)
 {
 	scContigoShrinkActor(ACTOR_SIGN);
-	if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0) {
+	if (syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0)
+	{
 		fdMapGridCopyMetatileAttributes(44, 40, 8, 3, 44, 36);
 		fdActorSetPos(ACTOR_WING_FRAME_A, 0, 0);
 		fdActorSetPos(ACTOR_WING_FRAME_B, 0, 0);
@@ -2765,44 +2642,50 @@ void scContigoInitGeoglyph(void)
 		fdActorSetPos(ACTOR_WING_WORKER_B, 0, 0);
 		fdActorSetPos(ACTOR_WING_WORKER_C, 0, 0);
 		fdActorSetPos(ACTOR_WING_WORKER_D, 0, 0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) == 0) {
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) == 0)
+		{
 			fdActorSetPos(ACTOR_WING_WORKER_A, 0, 0);
 			fdActorSetPos(ACTOR_MAN_ON_THE_GEOGLYPH, 0, 0);
 			fdActorSetPos(ACTOR_MAN_WHO_TRANSLATED_THE_WALL, 0, 0);
 			fdActorSetPos(ACTOR_MAN_LOCKED_OUT_OF_THE_SANCTUM, 0, 0);
 			fdActorSetPos(ACTOR_MAN_ON_HAMMET, 0, 0);
-		} else {
-			fdActorGetById(ACTOR_WING_WORKER_A)->facing =
-				FACING_NORTH_NORTHEAST;
+		}
+		else
+		{
+			fdActorGetById(ACTOR_WING_WORKER_A)->facing = FACING_NORTH_NORTHEAST;
 			sySynch(1);
 		}
-	} else {
+	}
+	else
+	{
 		scContigoSetUpWingParts();
 	}
 }
 
-/* Sets up the houses: walking into the house at the top of the hill once the
-   beacon is lit starts the reunion; in the others the baby lies in its cradle,
-   the old man on Hesperia shivers once the ship has its wings, and the workers
-   resting at the inn are gone after the reunion. */
+// Sets up the houses: walking into the house at the top of the hill once the beacon is lit starts
+// the reunion; in the others the baby lies in its cradle, the old man on Hesperia shivers once the
+// ship has its wings, and the workers resting at the inn are gone after the reunion.
 void scContigoInitShops(void)
 {
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	if(MainRoutineStateWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH) {
-		if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0 &&
-			syGameFlagGet(FLAG_REUNION_AT_CONTIGO) == 0)
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	if (MainRoutineStateWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH)
+	{
+		if (syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0
+		    && syGameFlagGet(FLAG_REUNION_AT_CONTIGO) == 0)
 			scContigoTheReunion();
-	} else if(MainRoutineStateWork.entrance ==
-		CONTIGO_SHOPS_FROM_ATTEKA_INLET_GEODE) {
+	}
+	else if (MainRoutineStateWork.entrance == CONTIGO_SHOPS_FROM_ATTEKA_INLET_GEODE)
+	{
 		syGameFlagClear(FLAG_SHOW_AREA_NAME);
-	} else {
+	}
+	else
+	{
 		fdActorSetAnimationById(ACTOR_BABY, 2);
 		fdActorSetSpriteFlags(fdActorGetById(ACTOR_BABY), 0);
-		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
-			fdActorSetMovementTypeById(
-				ACTOR_OLD_MAN_ON_HESPERIA, ContigoShiverScript);
-		if(syGameFlagGet(FLAG_REUNION_AT_CONTIGO) != 0) {
+		if (syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
+			fdActorSetMovementTypeById(ACTOR_OLD_MAN_ON_HESPERIA, ContigoShiverScript);
+		if (syGameFlagGet(FLAG_REUNION_AT_CONTIGO) != 0)
+		{
 			fdActorSetPos(ACTOR_WORN_OUT_WORKER, 0, 0);
 			fdActorSetPos(ACTOR_WORKER_ON_THE_PROPHECIES, 0, 0);
 			fdActorSetPos(ACTOR_OLD_MAN_TOO_OLD_TO_HELP, 0, 0);
@@ -2811,8 +2694,8 @@ void scContigoInitShops(void)
 	}
 }
 
-/* Back from a dice game, the attendant reports the coins the party won, with a
-   jingle for the size of the win, or lost. */
+// Back from a dice game, the attendant reports the coins the party won, with a jingle for the size
+// of the win, or lost.
 static inline void scContigoReportCoinChange(void)
 {
 	Sint32 coinChange;
@@ -2822,132 +2705,141 @@ static inline void scContigoReportCoinChange(void)
 	fdScriptEndLastingPsynergy(0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	if(coinChange > 0) {
-		if(coinChange >= LUCKY_DICE_LARGE_WIN)
+	if (coinChange > 0)
+	{
+		if (coinChange >= LUCKY_DICE_LARGE_WIN)
 			sySoundPlay(MUS_SUPER_LUCKY);
-		else if(coinChange >= LUCKY_DICE_MEDIUM_WIN)
+		else if (coinChange >= LUCKY_DICE_MEDIUM_WIN)
 			sySoundPlay(MUS_VERY_LUCKY);
 		else
 			sySoundPlay(MUS_LUCKY);
 		fdScriptWait(20);
 		fdScriptSetMessageId(COIN_WON_MESSAGE);
 		mnMessageArgumentPush(coinChange, MESSAGE_ARGUMENT_NUMBER);
-		/* "Ya won ... coin! Talk about lucky!" */
+		// "Ya won ... coin! Talk about lucky!"
 		fdScriptShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
 		mnSoundWaitForJingle();
-	} else if(coinChange < 0) {
+	}
+	else if (coinChange < 0)
+	{
 		fdScriptSetMessageId(COIN_LOST_MESSAGE);
 		mnMessageArgumentPush(-coinChange, MESSAGE_ARGUMENT_NUMBER);
-		/* "Ya lost ... coin. Better luck next time." */
+		// "Ya lost ... coin. Better luck next time."
 		fdScriptShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
 	}
 	fdScriptEnd();
 }
 
-/* Sets up the dice hall: its signs drawn small and its attendants' colours, and
-   on the party's return from a game the coins won or lost, or the prizes. */
+// Sets up the dice hall: its signs drawn small and its attendants' colours, and on the party's
+// return from a game the coins won or lost, or the prizes.
 void scContigoInitLuckyDice(void)
 {
 	Sint8 *wonPrizes;
 	Sint8 *prize;
 	Sint32 item;
 
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	scContigoShrinkActor(ACTOR_SUPER_LUCKY_DICE_RULES_SIGN);
 	scContigoShrinkActor(ACTOR_LUCKY_DICE_RULES_SIGN);
 	scContigoShrinkActor(ACTOR_LUCKY_DICE_PAIRS_SIGN);
 	scContigoShrinkActor(ACTOR_LUCKY_WHEELS_RULES_SIGN);
 	scContigoShrinkActor(ACTOR_LUCKY_WHEELS_PRIZE_SIGN);
-	fdActorSetSpriteColor(
-		fdActorGetById(ACTOR_LUCKY_DICE_ATTENDANT), SPRITE_COLOR_GRB);
-	fdActorSetSpriteColor(
-		fdActorGetById(ACTOR_LUCKY_DICE_RULES_ATTENDANT), SPRITE_COLOR_RBG);
-	fdActorSetSpriteColor(
-		fdActorGetById(ACTOR_SUPER_LUCKY_DICE_ATTENDANT), SPRITE_COLOR_NORMAL);
-	fdActorSetSpriteColor(
-		fdActorGetById(ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT),
-		SPRITE_COLOR_BGR);
-	if(!fdScriptGetFlag(FLAG_LEFT_FOR_A_GAME))
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_LUCKY_DICE_ATTENDANT), SPRITE_COLOR_GRB);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_LUCKY_DICE_RULES_ATTENDANT), SPRITE_COLOR_RBG);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_SUPER_LUCKY_DICE_ATTENDANT), SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT), SPRITE_COLOR_BGR);
+	if (!fdScriptGetFlag(FLAG_LEFT_FOR_A_GAME))
 		return;
 	syGameFlagClear(FLAG_LEFT_FOR_A_GAME);
-	/* The dice games come back here to report the change in the party's
-	   coins. */
-	if(MainRoutineStateWork.entrance == ENTRANCE_FROM_SUPER_LUCKY_DICE) {
+	// The dice games come back here to report the change in the party's coins.
+	if (MainRoutineStateWork.entrance == ENTRANCE_FROM_SUPER_LUCKY_DICE)
+	{
 		scContigoReportCoinChange();
-	} else if(MainRoutineStateWork.entrance == ENTRANCE_FROM_LUCKY_DICE) {
+	}
+	else if (MainRoutineStateWork.entrance == ENTRANCE_FROM_LUCKY_DICE)
+	{
 		scContigoReportCoinChange();
-	} else if(MainRoutineStateWork.entrance == ENTRANCE_FROM_LUCKY_WHEELS) {
-		/* Lucky Wheels comes back with the icons matched, for the attendant to
-		   award a prize for each. */
+	}
+	else if (MainRoutineStateWork.entrance == ENTRANCE_FROM_LUCKY_WHEELS)
+	{
+		// Lucky Wheels comes back with the icons matched, for the attendant to award a prize for
+		// each.
 		wonPrizes = MainRoutineStateWork.wheelsPrizes;
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
 		fdScriptWait(20);
-		if(wonPrizes[0] == WHEELS_PRIZES_END) {
+		if (wonPrizes[0] == WHEELS_PRIZES_END)
+		{
 			scContigoOfferLuckyWheels(1);
-		} else if(wonPrizes[0] == WHEELS_PRIZES_NONE_TO_HAND_OUT) {
+		}
+		else if (wonPrizes[0] == WHEELS_PRIZES_NONE_TO_HAND_OUT)
+		{
 			fdScriptSetMessageId(READ_SIGN_MESSAGE);
-			/* "The rules are listed on the sign. Take a look, take a look." */
+			// "The rules are listed on the sign. Take a look, take a look."
 			fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-		} else {
+		}
+		else
+		{
 			fdScriptSetMessageId(CONGRATULATIONS_MESSAGE);
-			/* "Congratulations!" */
+			// "Congratulations!"
 			fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-			if(wonPrizes[0] != WHEELS_PRIZES_END) {
-				for(prize = wonPrizes; *prize != WHEELS_PRIZES_END; prize++) {
-					if(prize == wonPrizes)
+			if (wonPrizes[0] != WHEELS_PRIZES_END)
+			{
+				for (prize = wonPrizes; *prize != WHEELS_PRIZES_END; prize++)
+				{
+					if (prize == wonPrizes)
 						fdScriptSetMessageId(FIRST_PRIZE_MESSAGE);
 					else
 						fdScriptSetMessageId(NEXT_PRIZE_MESSAGE);
 					item = scContigoSelectLuckyWheelsPrize(*prize);
 					mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
-					/* "You won ...! Here you go.", then "And you won ...! Here
-					   you go." */
+					// "You won ...! Here you go.", then "And you won ...! Here you go."
 					fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-					fdItemDisplayShowItem(
-						item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
+					fdItemDisplayShowItem(item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 					fdPartyInventoryGiveItem(item, 0);
 					fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
 				}
 			}
-			MainRoutineStateWork.wheelsPrizes[0] =
-				WHEELS_PRIZES_NONE_TO_HAND_OUT;
+			MainRoutineStateWork.wheelsPrizes[0] = WHEELS_PRIZES_NONE_TO_HAND_OUT;
 			fdScriptSetMessageId(COME_AGAIN_MESSAGE);
-			/* "Come again!" */
+			// "Come again!"
 			fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 		}
 		fdScriptEnd();
 	}
 }
 
-/* The sparkle's update, played over Hamma as she speaks of Mars Lighthouse in
-   the reunion: two pairs of white half-rings rise around her, a pair starting
-   every 16 ticks, until both have climbed RING_CLIMB pixels. */
+// The sparkle's update, played over Hamma as she speaks of Mars Lighthouse in the reunion: two
+// pairs of white half-rings rise around her, a pair starting every 16 ticks, until both have
+// climbed RING_CLIMB pixels.
 void scContigoRaiseSparkle(ACTOR *actor)
 {
-	VECTOR3		   pos;
-	Sint32		   x, z;
-	FIXED		   sine;
-	Sint32		   i, j;
+	VECTOR3        pos;
+	Sint32         x, z;
+	FIXED          sine;
+	Sint32         i, j;
 	SPARKLE_STATE *state = (SPARKLE_STATE *)actor->watchedActor;
-	Uint8		  *count = &actor->sceneByte;
-	EFFECT_SPR	  *sprite;
+	Uint8         *count = &actor->sceneByte;
+	EFFECT_SPR    *sprite;
 
-	if(*count & 1)
-		fdActorSetSpriteColorMode(actor,
-			(Uint8)((Uint32)((COUNTER_BITS *)count)->rest %
-				(SPRITE_COLOR_BRG + 1)));
-	if(actor->sceneCount == 0) {
-		if((*count & (RING_INTERVAL - 1)) == 0) {
+	if (*count & 1)
+		fdActorSetSpriteColorMode(
+			actor, (Uint8)((Uint32)((COUNTER_BITS *)count)->rest % (SPRITE_COLOR_BRG + 1)));
+	if (actor->sceneCount == 0)
+	{
+		if ((*count & (RING_INTERVAL - 1)) == 0)
+		{
 			sySoundPlay(SE_RISING_RINGS);
-			state->heights[state->nextPair] = 0;
-			state->nextPair ^= 1;
+			state->heights[state->nextPair]  = 0;
+			state->nextPair                 ^= 1;
 		}
-	} else if(actor->sceneCount == 1) {
-		if(state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
+	}
+	else if (actor->sceneCount == 1)
+	{
+		if (state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB)
+		{
 			fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 			syVRAMCacheFreeEntry(state->vramEntry);
 			actor->update = 0;
@@ -2955,29 +2847,36 @@ void scContigoRaiseSparkle(ACTOR *actor)
 		}
 	}
 	(*count)++;
-	for(i = 0; i < 2; i++) {
-		/* Its size: half a turn of sine over the climb. */
+	for (i = 0; i < 2; i++)
+	{
+		// Its size: half a turn of sine over the climb.
 		sine = sySin(state->heights[i] * (DEGtoANG(180) / RING_CLIMB));
-		if(state->heights[i] >= 0) {
-			if(state->heights[i] < RING_CLIMB) {
+		if (state->heights[i] >= 0)
+		{
+			if (state->heights[i] < RING_CLIMB)
+			{
 				pos.x = actor->x.fixed;
 				pos.y = actor->y.fixed + toFIXED(state->heights[i]);
 				pos.z = actor->z.fixed;
 				fdCameraWorldToScreen(&pos);
-				x = pos.x;
-				z = pos.z;
+				x      = pos.x;
+				z      = pos.z;
 				sprite = &state->sprites[i * 2];
-				for(j = 0; j < 2; j++) {
-					sprite->x = x;
-					sprite->y = z;
+				for (j = 0; j < 2; j++)
+				{
+					sprite->x      = x;
+					sprite->y      = z;
 					sprite->scaleX = sine;
 					sprite->scaleY = sine;
-					if(j == 0) {
+					if (j == 0)
+					{
 						sprite->depth = fdActorGetSpriteDepth(actor) - 1;
-					} else {
-						sprite->depth = fdActorGetSpriteDepth(actor) + 1;
-						sprite->y -= toFIXED(1);
-						sprite->scaleY = -sprite->scaleY;
+					}
+					else
+					{
+						sprite->depth   = fdActorGetSpriteDepth(actor) + 1;
+						sprite->y      -= toFIXED(1);
+						sprite->scaleY  = -sprite->scaleY;
 					}
 					fdEffectSpriteDraw(sprite);
 					sprite++;
@@ -2988,51 +2887,51 @@ void scContigoRaiseSparkle(ACTOR *actor)
 	}
 }
 
-/* Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
-   hands the object to its update, scContigoRaiseSparkle. */
+// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and hands the object to its
+// update, scContigoRaiseSparkle.
 void scContigoStartSparkle(ACTOR *actor, SPARKLE_STATE *state)
 {
 	EFFECT_SPR *sprite;
-	Sint32		tile;
-	Sint32		row;
-	Sint32		column;
+	Sint32      tile;
+	Sint32      row;
+	Sint32      column;
 
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->vramEntry, 256, LightRingTiles);
-	state->nextPair = 0;
-	state->heights[0] = RING_NOT_STARTED;
-	state->heights[1] = RING_NOT_STARTED;
-	state->actor = actor;
-	actor->sceneCount = 0;
-	actor->sceneByte = 0;
-	actor->update = scContigoRaiseSparkle;
-	tile = VramCacheEntries[state->vramEntry].offset >> 5;
+	state->nextPair     = 0;
+	state->heights[0]   = RING_NOT_STARTED;
+	state->heights[1]   = RING_NOT_STARTED;
+	state->actor        = actor;
+	actor->sceneCount   = 0;
+	actor->sceneByte    = 0;
+	actor->update       = scContigoRaiseSparkle;
+	tile                = VramCacheEntries[state->vramEntry].offset >> 5;
 	actor->watchedActor = (FIELD_OBJECT *)state;
-	for(row = 0; row <= 1; row++) {
-		for(column = 1, sprite = state->sprites + row + row; column >= 0;
-			column--) {
+	for (row = 0; row <= 1; row++)
+	{
+		for (column = 1, sprite = state->sprites + row + row; column >= 0; column--)
+		{
 			fdEffectSpriteInit(sprite, 16, 16, OBJ_SIZE_32X16, tile);
 			sprite->oam.fullColor = 0;
-			sprite->oam.palette = 0;
-			sprite->oam.priority = fdActorGetSpritePriority(actor);
+			sprite->oam.palette   = 0;
+			sprite->oam.priority  = fdActorGetSpritePriority(actor);
 			sprite++;
 		}
 	}
 }
 
-/* Ends the sparkle: its update finishes once both pairs have risen. */
+// Ends the sparkle: its update finishes once both pairs have risen.
 void scContigoStopSparkle(ACTOR *actor)
 {
 	actor->sceneCount = 1;
 }
 
-/* clang-format off */
+// clang-format off
 #include "shared/light_ring_tiles.c"
 
 #include "shared/field_effect_duration_scripts.c"
 
-/* The Lucky Wheels' prizes, three to each icon that wins them */
-/* (scContigoSelectLuckyWheelsPrize). */
+// The Lucky Wheels' prizes, three to each icon that wins them (scContigoSelectLuckyWheelsPrize).
 Uint32 ContigoWheelsPrizes[] = {
 	ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT,  ITEM_RUNNING_SHIRT,
 	ITEM_HYPER_BOOTS,   ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,
@@ -3142,8 +3041,7 @@ Uint32 ContigoKradenReunionScript[] = {
 	SC_END,
 };
 
-/* The end of the reunion: each walks to the leader and goes into him, as the */
-/* two parties become one. */
+// The end of the reunion: each walks to the leader and goes into him, as the two parties become one.
 Uint32 ContigoJoinLeaderScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(160, 0, 382),
@@ -3153,15 +3051,13 @@ Uint32 ContigoJoinLeaderScript[] = {
 	SC_POSITION_ORIGIN,
 	SC_WAIT(1),
 	SC_END,
-	/* Unused: past the end. */
+	// Unused: past the end.
 	SC_ANIMATION(ANIM_WALK),
 	SC_WAIT(10),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* The old man on Hesperia shivering once the party has set out with the */
-/* wings: "Brrr...Brrr... It's been really cold since the lighthouse beacon */
-/* was lit!" */
+// The old man on Hesperia shivering once the party has set out with the wings: "Brrr...Brrr... It's been really cold since the lighthouse beacon was lit!"
 Sint32 ContigoShiverScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
@@ -3180,7 +3076,7 @@ Sint32 ContigoShiverScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* In Hamma's new home the leader steps up to face her from the west. */
+// In Hamma's new home the leader steps up to face her from the west.
 Uint32 ContigoLeaderVisitsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(128, 0, 378),
@@ -3194,8 +3090,7 @@ Uint32 ContigoLeaderVisitsScript[] = {
 	SC_END,
 };
 
-/* The end of the visit to Hamma's new home: Ivan, Isaac and Kraden walk to */
-/* the leader and go into him. */
+// The end of the visit to Hamma's new home: Ivan, Isaac and Kraden walk to the leader and go into him.
 Uint32 ContigoRejoinLeaderScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(132, 0, 359),
@@ -3207,8 +3102,7 @@ Uint32 ContigoRejoinLeaderScript[] = {
 	SC_END,
 };
 
-/* The worker wondering which part goes where looks from one part of the */
-/* wings to another, and wonders (scContigoShowWorkerPuzzled). */
+// The worker wondering which part goes where looks from one part of the wings to another, and wonders (scContigoShowWorkerPuzzled).
 Sint32 ContigoPuzzledWorkerScript[] = {
 	SC_SET(SW_FACING, FACING_WEST),
 	SC_WAIT(120),

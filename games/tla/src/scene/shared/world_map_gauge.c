@@ -1,108 +1,110 @@
-/* The Psynergy gauge over the leader as the ship flies, which the world map and
-   the staff credits' overlays keep a copy of: its tiles redrawn for the party's
-   PP, the event that drains it while A or B is held aloft, and its set-up and
-   end. */
+// The Psynergy gauge over the leader as the ship flies, which the world map and the staff credits'
+// overlays keep a copy of: its tiles redrawn for the party's PP, the event that drains it while A
+// or B is held aloft, and its set-up and end.
 
 #include "system.h"
 
-/* syWordsCopy reached through the linked IWRAM code's symbol, syIWRAMIRQMain,
-   at its offset rather than at its fixed address, as the Daedalus effect and
-   the item menu reach it. */
-#define GAUGE_COPY_WORDS \
-	((Sint32 (*)(void *, const void *, Sint32))( \
-		syIWRAMIRQMain + syWordsCopyOffset))
+// syWordsCopy reached through the linked IWRAM code's symbol, syIWRAMIRQMain, at its offset rather
+// than at its fixed address, as the Daedalus effect and the item menu reach it.
+#define GAUGE_COPY_WORDS                                                                           \
+	((Sint32 (*)(void *, const void *, Sint32))(syIWRAMIRQMain + syWordsCopyOffset))
 
-/* The gauge's source tiles (WorldMapPackedTilesC): a bar of four tiles with its
-   PP line lit, the same bar dark, and a chequered one for no PP. The bar is
-   filled a pixel a level, eight levels to a tile. */
-#define GAUGE_LIT_BAR	  0
-#define GAUGE_DARK_BAR	  4
-#define GAUGE_EMPTY_BAR	  8
+// The gauge's source tiles (WorldMapPackedTilesC): a bar of four tiles with its PP line lit, the
+// same bar dark, and a chequered one for no PP. The bar is filled a pixel a level, eight levels to
+// a tile.
+#define GAUGE_LIT_BAR     0
+#define GAUGE_DARK_BAR    4
+#define GAUGE_EMPTY_BAR   8
 #define GAUGE_TILE_PIXELS 8
-/* The PP line's rows in a bar tile, from the second. */
-#define GAUGE_LINE_ROWS	  3
-/* A 4bpp tile row's byte holds two pixels, the left one in its low nibble. */
-#define LEFT_PIXEL		  0x0f
-#define RIGHT_PIXEL		  0xf0
-/* The ticks between two PP drained while the ship is held aloft. */
+// The PP line's rows in a bar tile, from the second.
+#define GAUGE_LINE_ROWS   3
+// A 4bpp tile row's byte holds two pixels, the left one in its low nibble.
+#define LEFT_PIXEL        0x0f
+#define RIGHT_PIXEL       0xf0
+// The ticks between two PP drained while the ship is held aloft.
 #define GAUGE_DRAIN_TICKS 10
 
-/* Redraws the gauge for `progress`, the party's PP as a 16.16 fraction of its
-   most; at half or less it blinks, and faster at a quarter. */
+// Redraws the gauge for `progress`, the party's PP as a 16.16 fraction of its most; at half or less
+// it blinks, and faster at a quarter.
 void scGaugeDraw(Sint32 progress)
 {
 	Sint32 level = FIXEDtoINT(progress * GAUGE_LEVELS + toFIXED(1) / 2) + 1;
-	Sint32 kind = GAUGE_EMPTY;
+	Sint32 kind  = GAUGE_EMPTY;
 	Sint32 count, base, i;
 
-	if(progress != 0)
+	if (progress != 0)
 		kind = GAUGE_SHOWN;
-	if(level <= GAUGE_LEVELS / 2 && (TickCount & 15) <= 1)
+	if (level <= GAUGE_LEVELS / 2 && (TickCount & 15) <= 1)
 		kind = GAUGE_LOW;
-	if(level <= GAUGE_LEVELS / 4 && (TickCount & 7) <= 1)
+	if (level <= GAUGE_LEVELS / 4 && (TickCount & 7) <= 1)
 		kind = GAUGE_LOW;
-	if(kind + level == GaugeShown)
+	if (kind + level == GaugeShown)
 		return;
 	GaugeShown = kind + level;
 	syWordsClear((Sint32)(GaugeTiles), (Sint32)(GAUGE_SIZE));
-	if(kind == GAUGE_EMPTY) {
-		GAUGE_COPY_WORDS(
-			GaugeTiles, GaugeSourceTiles[GAUGE_EMPTY_BAR], 4 * TILE_SIZE_4BPP);
-	} else {
-		if(kind == GAUGE_SHOWN)
-			GAUGE_COPY_WORDS(GaugeTiles, GaugeSourceTiles[GAUGE_DARK_BAR],
-				4 * TILE_SIZE_4BPP);
+	if (kind == GAUGE_EMPTY)
+	{
+		GAUGE_COPY_WORDS(GaugeTiles, GaugeSourceTiles[GAUGE_EMPTY_BAR], 4 * TILE_SIZE_4BPP);
+	}
+	else
+	{
+		if (kind == GAUGE_SHOWN)
+			GAUGE_COPY_WORDS(GaugeTiles, GaugeSourceTiles[GAUGE_DARK_BAR], 4 * TILE_SIZE_4BPP);
 		else
-			GAUGE_COPY_WORDS(GaugeTiles, GaugeSourceTiles[GAUGE_EMPTY_BAR],
-				4 * TILE_SIZE_4BPP);
-		/* Whole tiles of the lit bar first, then the rest a pixel at a time. */
-		base = 0;
+			GAUGE_COPY_WORDS(GaugeTiles, GaugeSourceTiles[GAUGE_EMPTY_BAR], 4 * TILE_SIZE_4BPP);
+		// Whole tiles of the lit bar first, then the rest a pixel at a time.
+		base  = 0;
 		count = level;
-		if(count >= GAUGE_TILE_PIXELS) {
-			GAUGE_COPY_WORDS(
-				GaugeTiles, GaugeSourceTiles[GAUGE_LIT_BAR], TILE_SIZE_4BPP);
-			base = GAUGE_TILE_PIXELS;
+		if (count >= GAUGE_TILE_PIXELS)
+		{
+			GAUGE_COPY_WORDS(GaugeTiles, GaugeSourceTiles[GAUGE_LIT_BAR], TILE_SIZE_4BPP);
+			base   = GAUGE_TILE_PIXELS;
 			count -= GAUGE_TILE_PIXELS;
 		}
-		if(level >= 2 * GAUGE_TILE_PIXELS) {
-			GAUGE_COPY_WORDS(GaugeTiles[1], GaugeSourceTiles[GAUGE_LIT_BAR + 1],
-				TILE_SIZE_4BPP);
-			count = level;
-			base = 2 * GAUGE_TILE_PIXELS;
+		if (level >= 2 * GAUGE_TILE_PIXELS)
+		{
+			GAUGE_COPY_WORDS(GaugeTiles[1], GaugeSourceTiles[GAUGE_LIT_BAR + 1], TILE_SIZE_4BPP);
+			count  = level;
+			base   = 2 * GAUGE_TILE_PIXELS;
 			count -= 2 * GAUGE_TILE_PIXELS;
 		}
-		if(level >= 3 * GAUGE_TILE_PIXELS) {
-			GAUGE_COPY_WORDS(GaugeTiles[2], GaugeSourceTiles[GAUGE_LIT_BAR + 2],
-				TILE_SIZE_4BPP);
-			count = level;
-			base = 3 * GAUGE_TILE_PIXELS;
+		if (level >= 3 * GAUGE_TILE_PIXELS)
+		{
+			GAUGE_COPY_WORDS(GaugeTiles[2], GaugeSourceTiles[GAUGE_LIT_BAR + 2], TILE_SIZE_4BPP);
+			count  = level;
+			base   = 3 * GAUGE_TILE_PIXELS;
 			count -= 3 * GAUGE_TILE_PIXELS;
 		}
-		if(level > GAUGE_LEVELS) {
-			GAUGE_COPY_WORDS(GaugeTiles[3], GaugeSourceTiles[GAUGE_LIT_BAR + 3],
-				TILE_SIZE_4BPP);
-			base = 0;
+		if (level > GAUGE_LEVELS)
+		{
+			GAUGE_COPY_WORDS(GaugeTiles[3], GaugeSourceTiles[GAUGE_LIT_BAR + 3], TILE_SIZE_4BPP);
+			base  = 0;
 			count = 0;
 		}
-		if(count != 0) {
-			for(i = 0; i < count; i++) {
-				Uint8 *src = &GaugeSourceTiles[GAUGE_LIT_BAR +
-								 base / GAUGE_TILE_PIXELS][4] +
-					i / 2;
+		if (count != 0)
+		{
+			for (i = 0; i < count; i++)
+			{
+				Uint8 *src = &GaugeSourceTiles[GAUGE_LIT_BAR + base / GAUGE_TILE_PIXELS][4] + i / 2;
 				Uint8 *dest = &GaugeTiles[base / GAUGE_TILE_PIXELS][4] + i / 2;
 				Sint32 j;
 
-				if((i & 1) == 0) {
-					for(j = 1; j <= GAUGE_LINE_ROWS; j++) {
-						*dest = (*dest & RIGHT_PIXEL) | (*src & LEFT_PIXEL);
-						src += 4;
-						dest += 4;
+				if ((i & 1) == 0)
+				{
+					for (j = 1; j <= GAUGE_LINE_ROWS; j++)
+					{
+						*dest  = (*dest & RIGHT_PIXEL) | (*src & LEFT_PIXEL);
+						src   += 4;
+						dest  += 4;
 					}
-				} else {
-					for(j = 0; j < GAUGE_LINE_ROWS; j++) {
-						*dest = (*dest & LEFT_PIXEL) | (*src & RIGHT_PIXEL);
-						src += 4;
-						dest += 4;
+				}
+				else
+				{
+					for (j = 0; j < GAUGE_LINE_ROWS; j++)
+					{
+						*dest  = (*dest & LEFT_PIXEL) | (*src & RIGHT_PIXEL);
+						src   += 4;
+						dest  += 4;
 					}
 				}
 			}
@@ -111,52 +113,52 @@ void scGaugeDraw(Sint32 progress)
 	mnVRAMLoad(GaugeVram, GAUGE_SIZE, GaugeTiles);
 }
 
-/* The Psynergy gauge over the leader as the ship flies: while A or B is held
-   aloft it drains a PP every ten ticks, then redraws the gauge and queues its
-   sprite. */
+// The Psynergy gauge over the leader as the ship flies: while A or B is held aloft it drains a PP
+// every ten ticks, then redraws the gauge and queues its sprite.
 void scGaugeUpdate(void)
 {
-	Uint32 *oam = GaugeSprite;
-	Sint32	tile = VramCacheEntries[GaugeVram].offset >> 5;
+	Uint32 *oam    = GaugeSprite;
+	Sint32  tile   = VramCacheEntries[GaugeVram].offset >> 5;
 	ACTOR  *leader = fdActorGet(syFieldPartyGetLeaderActor());
-	Sint32	screen[3];
-	Uint32	attributes;
+	Sint32  screen[3];
+	Uint32  attributes;
 
-	if((PerWork.data & (KEY_A | KEY_B)) != 0 &&
-		fdScriptGetFlag(FLAG_MENU_OPEN) == 0 && leader->y.fixed > toFIXED(4)) {
-		if(--GaugeCountdown <= 0) {
+	if ((PerWork.data & (KEY_A | KEY_B)) != 0 && fdScriptGetFlag(FLAG_MENU_OPEN) == 0
+	    && leader->y.fixed > toFIXED(4))
+	{
+		if (--GaugeCountdown <= 0)
+		{
 			gmPartyDrainPp(1);
 			GaugeCountdown = GAUGE_DRAIN_TICKS;
 		}
 	}
 	scGaugeDraw(gmPartyGetPpRatio());
 	attributes = OBJ_SIZE_32X16;
-	Call2((void (*)())syConvert3Dto2D, (Sint32)(&leader->x.fixed),
-		(Sint32)(screen));
-	/* The 32 by 16 gauge, centred 32 pixels above the leader. */
+	Call2((void (*)())syConvert3Dto2D, (Sint32)(&leader->x.fixed), (Sint32)(screen));
+	// The 32 by 16 gauge, centred 32 pixels above the leader.
 	{
 		Sint32 x = screen[0] - 16;
 		Sint32 y = screen[1] - 32;
 
-		*oam++ = 0;
-		*oam++ = (y | OBJ_X(x)) | attributes;
+		*oam++   = 0;
+		*oam++   = (y | OBJ_X(x)) | attributes;
 	}
 	*oam = tile | OBJ_PRIORITY(1);
 	syOAMAddSpriteAtDepthClamped(GaugeSprite, OAM_DEPTH_FRONT);
 }
 
-/* Sets up the gauge. */
+// Sets up the gauge.
 void scGaugeInit(void)
 {
 	syDecompressTaggedLZ(WorldMapPackedTilesC, GaugeSourceTiles);
 	GaugeVram = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(GaugeVram, GAUGE_SIZE, 0);
-	GaugeShown = -1;
+	GaugeShown     = -1;
 	GaugeCountdown = GAUGE_DRAIN_TICKS;
 	sySetTickEvent(scGaugeUpdate, EVENT_PASS_TICK - 10);
 }
 
-/* Takes the gauge down. */
+// Takes the gauge down.
 void scGaugeEnd(void)
 {
 	syDecompressTaggedLZ(WorldMapPackedTilesC, GaugeSourceTiles);

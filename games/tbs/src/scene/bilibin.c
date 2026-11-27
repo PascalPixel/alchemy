@@ -1,29 +1,24 @@
-/* Bilibin, the Bilibin Treasury and the Bilibin Barricade, three scenes that
-   share one overlay; the getters pick each scene's tables by
-   MainRoutineStateWork.next.
-
-   Bilibin is the town past Goma Cave, whose chief, Lord McCoy, has closed the
-   road to Kolima. Almost everything here turns on FLAG_KOLIMA_CURSE_LIFTED, set
-   in Kolima Forest when the party heals Tret: until then a man turned into a
-   tree stands at the entrance (Mind Read hears `Help me... Somebody...`), and
-   each villager has a line and a thought for either time. Seven doors open as
-   the party walks into them: the inn, three houses, the item shop, the weapon
-   and armor shop, and the Sanctum's double door.
-
-   Two ways lead into the Treasury, `McCoy's Hidden Warehouse` by its sign,
-   where Gust waits: the cave mouth at the town's west edge, behind ivy that
-   Whirlwind blows away, and a hole under the golden statue in front of the
-   weapon and armor shop, which Move or a push slides aside. Inside, a second
-   golden statue slides along a walkway between two pools.
-
-   The Bilibin Barricade is the road east to Kolima, shut by McCoy's wall of
-   crates; the stack at its left end slides out and opens the way. By the river
-   stand three trees, one on another's shoulders: the Gang of Three, children
-   turned into trees by the curse. Once Saturos is beaten at Mercury Lighthouse
-   the travelers from Imil have pushed them over to cross, and Jill's tree
-   drifts in the river until Isaac pulls her ashore with Move. With the curse
-   lifted they are children again, and Jill, if she was saved, gives Isaac a
-   Hard Nut. */
+// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three scenes that share one overlay; the
+// getters pick each scene's tables by MainRoutineStateWork.next.
+//
+// Bilibin is the town past Goma Cave, whose chief, Lord McCoy, has closed the road to Kolima.
+// Almost everything here turns on FLAG_KOLIMA_CURSE_LIFTED, set in Kolima Forest when the party
+// heals Tret: until then a man turned into a tree stands at the entrance (Mind Read hears `Help
+// me... Somebody...`), and each villager has a line and a thought for either time. Seven doors open
+// as the party walks into them: the inn, three houses, the item shop, the weapon and armor shop,
+// and the Sanctum's double door.
+//
+// Two ways lead into the Treasury, `McCoy's Hidden Warehouse` by its sign, where Gust waits: the
+// cave mouth at the town's west edge, behind ivy that Whirlwind blows away, and a hole under the
+// golden statue in front of the weapon and armor shop, which Move or a push slides aside. Inside, a
+// second golden statue slides along a walkway between two pools.
+//
+// The Bilibin Barricade is the road east to Kolima, shut by McCoy's wall of crates; the stack at
+// its left end slides out and opens the way. By the river stand three trees, one on another's
+// shoulders: the Gang of Three, children turned into trees by the curse. Once Saturos is beaten at
+// Mercury Lighthouse the travelers from Imil have pushed them over to cross, and Jill's tree drifts
+// in the river until Isaac pulls her ashore with Move. With the curse lifted they are children
+// again, and Jill, if she was saved, gives Isaac a Hard Nut.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -36,141 +31,135 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  BilibinFaceLeaderScript[];
+extern Sint32         BilibinFaceLeaderScript[];
 extern SCENE_ENTRANCE BilibinEntrancesOther[];
 extern SCENE_ENTRANCE BilibinEntrances[];
 extern SCENE_ENTRANCE BilibinBarricadeEntrances[];
 extern SCENE_ENTRANCE BilibinTreasuryEntrances[];
-extern Sint16		  BilibinTreasuryRegions[];
-extern Uint32		  BilibinExits[];
-extern ACTOR_PLACE	  BilibinActorPlacementsOther[];
-extern ACTOR_PLACE	  BilibinActorPlacements[];
-extern ACTOR_PLACE	  BilibinBarricadeActorPlacements[];
-extern ACTOR_PLACE	  BilibinTreasuryActorPlacements[];
-extern CUE			  BilibinCuesOther[];
-extern CUE			  BilibinCues[];
-extern CUE			  BilibinBarricadeCues[];
-extern CUE			  BilibinTreasuryCues[];
-extern Uint16		 *BilibinDoorSteps[];
-extern Sint16		  BilibinDoorMetatiles[][2];
-/* The metatiles round the crates' place that push them, as column and row
-   pairs. */
-extern Uint8  BilibinCratesPushMetatiles[];
-extern Sint32 BilibinRippleScript[];
+extern Sint16         BilibinTreasuryRegions[];
+extern Uint32         BilibinExits[];
+extern ACTOR_PLACE    BilibinActorPlacementsOther[];
+extern ACTOR_PLACE    BilibinActorPlacements[];
+extern ACTOR_PLACE    BilibinBarricadeActorPlacements[];
+extern ACTOR_PLACE    BilibinTreasuryActorPlacements[];
+extern CUE            BilibinCuesOther[];
+extern CUE            BilibinCues[];
+extern CUE            BilibinBarricadeCues[];
+extern CUE            BilibinTreasuryCues[];
+extern Uint16        *BilibinDoorSteps[];
+extern Sint16         BilibinDoorMetatiles[][2];
+// The metatiles round the crates' place that push them, as column and row pairs.
+extern Uint8          BilibinCratesPushMetatiles[];
+extern Sint32         BilibinRippleScript[];
 
-static void scBilibinRestoreVillageActors(void);
-/* Move on the golden statue in front of Bilibin's weapon and armor shop slides
-   it a metatile. Moved off metatile (16, 13), it uncovers the hole into the
-   Treasury; moved back on, it covers it again.
+static void           scBilibinRestoreVillageActors(void);
+// Move on the golden statue in front of Bilibin's weapon and armor shop slides it a metatile. Moved
+// off metatile (16, 13), it uncovers the hole into the Treasury; moved back on, it covers it again.
+//
+// The same work follows every push and every arrival in Bilibin. The metatiles of the statue's
+// dotted square, (15..17, 12..14), are made ground that pushes the statue again, the statue's own
+// metatile is walled off, and the hole's metatile is given its exit unless the statue stands on it.
+// If the statue lands on the hole while Isaac is standing on it, he starts with a "!" and hops
+// clear, to the north or the east.
+static void           scBilibinUpdateVillageStatueMetatiles(void);
+static void           scBilibinRestoreRiverActors(void);
+// Move on the stack of two crates at the left end of the Bilibin Barricade drags it out of the wall
+// of crates, opening a gap through the barricade to the road to Kolima.
+//
+// The same work follows every push and every arrival at the barricade: the ten metatiles round the
+// crate's place, listed in BilibinCratesPushMetatiles, are made ground that pushes the crate, and
+// the crate's own metatile is walled off.
+static void           scBilibinUpdateCratesMetatiles(void);
+static void           scBilibinSetUpTreasury(void);
+static void           scBilibinUpdateRiverRipples(void);
+static void           scBilibinSpawnRipple(ACTOR *actor);
+// Move on the golden statue in the Treasury slides it up or down the walkway between the two pools,
+// where Gust waits on the ledge to the east.
+//
+// The statue rests either in its alcove at the top, metatile (14, 6), or at the walkway's foot,
+// metatile (14, 9). The same work follows every push and every arrival: the metatile the statue
+// stands on is walled off, the alcove when empty lets Isaac hop east or west across the pools, and
+// the foot when empty lets him push the statue back up or hop south off the walkway.
+static void           scBilibinUpdateTreasuryStatueMetatiles(void);
 
-   The same work follows every push and every arrival in Bilibin. The metatiles
-   of the statue's dotted square, (15..17, 12..14), are made ground that pushes
-   the statue again, the statue's own metatile is walled off, and the hole's
-   metatile is given its exit unless the statue stands on it. If the statue
-   lands on the hole while Isaac is standing on it, he starts with a "!" and
-   hops clear, to the north or the east. */
-static void scBilibinUpdateVillageStatueMetatiles(void);
-static void scBilibinRestoreRiverActors(void);
-/* Move on the stack of two crates at the left end of the Bilibin Barricade
-   drags it out of the wall of crates, opening a gap through the barricade to
-   the road to Kolima.
-
-   The same work follows every push and every arrival at the barricade: the ten
-   metatiles round the crate's place, listed in BilibinCratesPushMetatiles, are
-   made ground that pushes the crate, and the crate's own metatile is walled
-   off. */
-static void scBilibinUpdateCratesMetatiles(void);
-static void scBilibinSetUpTreasury(void);
-static void scBilibinUpdateRiverRipples(void);
-static void scBilibinSpawnRipple(ACTOR *actor);
-/* Move on the golden statue in the Treasury slides it up or down the walkway
-   between the two pools, where Gust waits on the ledge to the east.
-
-   The statue rests either in its alcove at the top, metatile (14, 6), or at the
-   walkway's foot, metatile (14, 9). The same work follows every push and every
-   arrival: the metatile the statue stands on is walled off, the alcove when
-   empty lets Isaac hop east or west across the pools, and the foot when empty
-   lets him push the statue back up or hop south off the walkway. */
-static void scBilibinUpdateTreasuryStatueMetatiles(void);
-
-/* Actors of Bilibin, numbering its actor placements from ACTOR_FIRST_PLACED.
-   The ten villagers are named by what they say before the curse is lifted. */
-typedef enum BILIBIN_ACTOR_ID {
-	/* The bush of ivy over the cave mouth at the west edge, the way into the
-	   Treasury, drawn half as tall again. Whirlwind blows it away. */
+// Actors of Bilibin, numbering its actor placements from ACTOR_FIRST_PLACED. The ten villagers are
+// named by what they say before the curse is lifted.
+typedef enum BILIBIN_ACTOR_ID
+{
+	// The bush of ivy over the cave mouth at the west edge, the way into the Treasury, drawn half
+	// as tall again. Whirlwind blows it away.
 	ACTOR_IVY = ACTOR_FIRST_PLACED,
-	/* The man turned into a tree at the village entrance, drawn as a tree. */
+	// The man turned into a tree at the village entrance, drawn as a tree.
 	ACTOR_TREE_MAN,
-	/* A young man with brown hair. */
+	// A young man with brown hair.
 	ACTOR_YOUNG_MAN_WELCOME,
-	/* A woman with fair hair. */
+	// A woman with fair hair.
 	ACTOR_VILLAGER_GROUP_TO_IMIL,
-	/* A burly grey-haired man (scBilibinAskAboutEntranceTree). */
+	// A burly grey-haired man (scBilibinAskAboutEntranceTree).
 	ACTOR_VILLAGER_ASKS_ABOUT_TREE,
-	/* A woman in a green dress. */
+	// A woman in a green dress.
 	ACTOR_VILLAGER_MCCOY_FRIGHTENED,
-	/* An old man with a cane (scBilibinAskAboutSoutheastRoute). */
+	// An old man with a cane (scBilibinAskAboutSoutheastRoute).
 	ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
-	/* An old woman. */
+	// An old woman.
 	ACTOR_OLD_WOMAN_ROAD_BLOCKED,
-	/* A small boy. */
+	// A small boy.
 	ACTOR_BOY_SCARED_OF_ENTRANCE,
-	/* A little girl. */
+	// A little girl.
 	ACTOR_GIRL_RED_SKY,
-	/* A strongman, stocky and muscular. */
+	// A strongman, stocky and muscular.
 	ACTOR_STRONGMAN_IMIL_TOWER,
-	/* A man with a pickaxe. */
+	// A man with a pickaxe.
 	ACTOR_VILLAGER_STRANGE_CREATURES,
-	/* The golden statue in front of the weapon and armor shop, over the hole
-	   into the Treasury. It slides a metatile under Move or a push. */
+	// The golden statue in front of the weapon and armor shop, over the hole into the Treasury. It
+	// slides a metatile under Move or a push.
 	ACTOR_VILLAGE_STATUE,
-	/* The same man once the curse is lifted, a stocky, muscular man with black
-	   hair. */
+	// The same man once the curse is lifted, a stocky, muscular man with black hair.
 	ACTOR_FORMER_TREE_MAN
 } BILIBIN_ACTOR_ID;
 
-/* Actors of the Bilibin Barricade (BilibinBarricade), numbering its actor
-   placements from ACTOR_FIRST_PLACED. */
-typedef enum BILIBIN_BARRICADE_ACTOR_ID {
-	/* The stack of two crates at the barricade's left end, which slides a
-	   metatile under Move or a push. */
+// Actors of the Bilibin Barricade (BilibinBarricade), numbering its actor placements from
+// ACTOR_FIRST_PLACED.
+typedef enum BILIBIN_BARRICADE_ACTOR_ID
+{
+	// The stack of two crates at the barricade's left end, which slides a metatile under Move or a
+	// push.
 	ACTOR_BARRICADE_CRATES = ACTOR_FIRST_PLACED,
-	/* The bottom of the three trees. */
+	// The bottom of the three trees.
 	ACTOR_BOTTOM_TREE,
-	/* The tree 32 pixels up, which the travelers from Imil push down onto its
-	   side by the river. */
+	// The tree 32 pixels up, which the travelers from Imil push down onto its side by the river.
 	ACTOR_MIDDLE_TREE,
-	/* Jill as a tree, the top of the three. */
+	// Jill as a tree, the top of the three.
 	ACTOR_JILL_TREE,
-	/* Jill's two friends, once the curse is lifted, east and west of her. They
-	   are two boys with brown hair. With her they were the "Gang of Three". */
+	// Jill's two friends, once the curse is lifted, east and west of her. They are two boys with
+	// brown hair. With her they were the "Gang of Three".
 	ACTOR_GANG_MEMBER_EAST,
 	ACTOR_GANG_MEMBER_WEST,
-	/* Jill herself, once the curse is lifted, drawn as the woman with long fair
-	   hair the villages use (SPRITE_WOMAN_WITH_FAIR_HAIR), though the text
-	   calls the three children. */
+	// Jill herself, once the curse is lifted, drawn as the woman with long fair hair the villages
+	// use (SPRITE_WOMAN_WITH_FAIR_HAIR), though the text calls the three children.
 	ACTOR_JILL,
-	/* Unused: a blank actor (SPRITE_WORLD_MAP_FOREST_COVER) placed at the map's
-	   origin. No code or cue addresses it, so it never shows or answers
-	   anything. */
+	// Unused: a blank actor (SPRITE_WORLD_MAP_FOREST_COVER) placed at the map's origin. No code or
+	// cue addresses it, so it never shows or answers anything.
 	ACTOR_INVISIBLE_AT_ORIGIN,
-	/* The invisible actor (SPRITE_BLANK) that stands where the middle tree lies
-	   pushed down and answers for it. */
+	// The invisible actor (SPRITE_BLANK) that stands where the middle tree lies pushed down and
+	// answers for it.
 	ACTOR_FALLEN_TREE_STAND_IN
 } BILIBIN_BARRICADE_ACTOR_ID;
 
-/* Actors of the Bilibin Treasury (BilibinTreasury), numbering its actor
-   placements from ACTOR_FIRST_PLACED. */
-typedef enum BILIBIN_TREASURY_ACTOR_ID {
-	/* The golden statue at the top of the walkway between the pools, which
-	   slides up and down it under Move or a push. */
+// Actors of the Bilibin Treasury (BilibinTreasury), numbering its actor placements from
+// ACTOR_FIRST_PLACED.
+typedef enum BILIBIN_TREASURY_ACTOR_ID
+{
+	// The golden statue at the top of the walkway between the pools, which slides up and down it
+	// under Move or a push.
 	ACTOR_TREASURY_STATUE = ACTOR_FIRST_PLACED,
-	/* Gust, a Jupiter Djinni, placed until he has joined. */
+	// Gust, a Jupiter Djinni, placed until he has joined.
 	ACTOR_GUST
 } BILIBIN_TREASURY_ACTOR_ID;
 
-/* Counts ticks between the ripples, one every 30 ticks. */
-typedef struct BILIBIN_RIPPLE_TIMER {
+// Counts ticks between the ripples, one every 30 ticks.
+typedef struct BILIBIN_RIPPLE_TIMER
+{
 	Sint16 ticks;
 } BILIBIN_RIPPLE_TIMER;
 
@@ -178,129 +167,130 @@ BILIBIN_RIPPLE_TIMER BilibinRippleTimer;
 
 #include "shared/actor_facing.c"
 
-/* The party has looked once at the tree at Bilibin's entrance, so a second look
-   says it looks like a living person. */
-#define FLAG_BILIBIN_TREE_EXAMINED		   FLAG_AREA_TEMP_01
-/* McCoy's gate guards have let the party in but it has not yet entered the
-   palace. The garden guard who reads it is in another area, so it is cleared
-   before he can. */
+// The party has looked once at the tree at Bilibin's entrance, so a second look says it looks like
+// a living person.
+#define FLAG_BILIBIN_TREE_EXAMINED         FLAG_AREA_TEMP_01
+// McCoy's gate guards have let the party in but it has not yet entered the palace. The garden guard
+// who reads it is in another area, so it is cleared before he can.
 #define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_AREA_TEMP_04
 
-/* Metatile behaviors the three maps' cues answer besides the exits and the
-   doors, whose metatile behaviors are their exits' numbers. */
-typedef enum BILIBIN_METATILE_BEHAVIOR {
-	/* Bilibin's well, metatiles (20..21, 13..14). */
-	METATILE_BEHAVIOR_BILIBIN_WELL = 90,
-	/* The jar at metatile (22, 10), with a Herb in it. */
-	METATILE_BEHAVIOR_BILIBIN_HERB_JAR = 100,
-	/* The jar at metatile (9, 19), with 5 coins in it. */
-	METATILE_BEHAVIOR_BILIBIN_COINS_JAR = 101,
-	/* The metatiles round the village statue's dotted square, (15..17, 12..14),
-	   where walking into the statue pushes it. */
-	METATILE_BEHAVIOR_BILIBIN_STATUE_SQUARE = 20,
-	/* At the barricade, metatile (14, 10), from which Isaac hops north. */
-	METATILE_BEHAVIOR_BILIBIN_BARRICADE_HOP_NORTH = 9,
-	/* At the barricade, metatile (8, 17) beside the crates: Isaac hops west
-	   from it or pushes the crates south. */
+// Metatile behaviors the three maps' cues answer besides the exits and the doors, whose metatile
+// behaviors are their exits' numbers.
+typedef enum BILIBIN_METATILE_BEHAVIOR
+{
+	// Bilibin's well, metatiles (20..21, 13..14).
+	METATILE_BEHAVIOR_BILIBIN_WELL                    = 90,
+	// The jar at metatile (22, 10), with a Herb in it.
+	METATILE_BEHAVIOR_BILIBIN_HERB_JAR                = 100,
+	// The jar at metatile (9, 19), with 5 coins in it.
+	METATILE_BEHAVIOR_BILIBIN_COINS_JAR               = 101,
+	// The metatiles round the village statue's dotted square, (15..17, 12..14), where walking into
+	// the statue pushes it.
+	METATILE_BEHAVIOR_BILIBIN_STATUE_SQUARE           = 20,
+	// At the barricade, metatile (14, 10), from which Isaac hops north.
+	METATILE_BEHAVIOR_BILIBIN_BARRICADE_HOP_NORTH     = 9,
+	// At the barricade, metatile (8, 17) beside the crates: Isaac hops west from it or pushes the
+	// crates south.
 	METATILE_BEHAVIOR_BILIBIN_BARRICADE_BESIDE_CRATES = 10,
-	/* The barricade's sign, metatile (5, 22). */
-	METATILE_BEHAVIOR_BILIBIN_BARRICADE_SIGN = 11,
-	/* The metatiles round the crates' place, where walking into them pushes
-	   them. */
-	METATILE_BEHAVIOR_BILIBIN_BARRICADE_CRATES_PUSH = 12,
-	/* Beside the Gang of Three, metatiles (13, 10..12) to their west and (18,
-	   10..12) to their east. */
-	METATILE_BEHAVIOR_BILIBIN_BARRICADE_BESIDE_GANG = 13,
-	/* The barricade's door, metatile (10, 17), locked until the curse is
-	   lifted. */
-	METATILE_BEHAVIOR_BILIBIN_BARRICADE_DOOR = 30,
-	/* The Treasury's sign, metatile (16, 14). */
-	METATILE_BEHAVIOR_BILIBIN_TREASURY_SIGN = 10,
-	/* The statue's alcove at the top of the walkway, metatile (14, 6), when
-	   empty:
-	   Isaac hops east or west from it across the pools, or pushes the statue
-	   south. */
-	METATILE_BEHAVIOR_BILIBIN_TREASURY_ALCOVE = 11,
-	/* The walkway's foot, metatile (14, 9), when empty: Isaac pushes the statue
-	   north from it, or hops south off the walkway. */
-	METATILE_BEHAVIOR_BILIBIN_TREASURY_WALKWAY_FOOT = 12,
-	/* The walkway between them, metatiles (14, 7) and (14, 8). */
-	METATILE_BEHAVIOR_BILIBIN_TREASURY_WALKWAY = 13
+	// The barricade's sign, metatile (5, 22).
+	METATILE_BEHAVIOR_BILIBIN_BARRICADE_SIGN          = 11,
+	// The metatiles round the crates' place, where walking into them pushes them.
+	METATILE_BEHAVIOR_BILIBIN_BARRICADE_CRATES_PUSH   = 12,
+	// Beside the Gang of Three, metatiles (13, 10..12) to their west and (18, 10..12) to their
+	// east.
+	METATILE_BEHAVIOR_BILIBIN_BARRICADE_BESIDE_GANG   = 13,
+	// The barricade's door, metatile (10, 17), locked until the curse is lifted.
+	METATILE_BEHAVIOR_BILIBIN_BARRICADE_DOOR          = 30,
+	// The Treasury's sign, metatile (16, 14).
+	METATILE_BEHAVIOR_BILIBIN_TREASURY_SIGN           = 10,
+	// The statue's alcove at the top of the walkway, metatile (14, 6), when empty: Isaac hops east
+	// or west from it across the pools, or pushes the statue south.
+	METATILE_BEHAVIOR_BILIBIN_TREASURY_ALCOVE         = 11,
+	// The walkway's foot, metatile (14, 9), when empty: Isaac pushes the statue north from it, or
+	// hops south off the walkway.
+	METATILE_BEHAVIOR_BILIBIN_TREASURY_WALKWAY_FOOT   = 12,
+	// The walkway between them, metatiles (14, 7) and (14, 8).
+	METATILE_BEHAVIOR_BILIBIN_TREASURY_WALKWAY        = 13
 } BILIBIN_METATILE_BEHAVIOR;
 
-/* Spare metatiles in row 0 of each map, whose behaviors are copied where a
-   statue or the crates leave or land. */
-typedef enum BILIBIN_SPARE_METATILE {
-	SPARE_METATILE_ROW = 0,
-	/* Bilibin's: the exit down into the Treasury */
-	VILLAGE_HOLE_METATILE_COLUMN = 0,
-	VILLAGE_WALL_METATILE_COLUMN = 1,
-	TREASURY_ALCOVE_METATILE_COLUMN = 0, /* the empty alcove's */
-	TREASURY_FOOT_METATILE_COLUMN = 1,	 /* the empty walkway foot's */
-	TREASURY_WALL_METATILE_COLUMN = 2,
-	BARRICADE_WALL_METATILE_COLUMN = 0,
-	/* METATILE_BEHAVIOR_BILIBIN_BARRICADE_CRATES_PUSH */
-	BARRICADE_PUSH_METATILE_COLUMN = 1
+// Spare metatiles in row 0 of each map, whose behaviors are copied where a statue or the crates
+// leave or land.
+typedef enum BILIBIN_SPARE_METATILE
+{
+	SPARE_METATILE_ROW              = 0,
+	// Bilibin's: the exit down into the Treasury
+	VILLAGE_HOLE_METATILE_COLUMN    = 0,
+	VILLAGE_WALL_METATILE_COLUMN    = 1,
+	TREASURY_ALCOVE_METATILE_COLUMN = 0, // the empty alcove's
+	TREASURY_FOOT_METATILE_COLUMN   = 1, // the empty walkway foot's
+	TREASURY_WALL_METATILE_COLUMN   = 2,
+	BARRICADE_WALL_METATILE_COLUMN  = 0,
+	// METATILE_BEHAVIOR_BILIBIN_BARRICADE_CRATES_PUSH
+	BARRICADE_PUSH_METATILE_COLUMN  = 1
 } BILIBIN_SPARE_METATILE;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_BILIBIN) {
+	if (sceneId == SCENE_BILIBIN)
+	{
 		return BilibinEntrances;
 	}
-	if(sceneId == SCENE_BILIBIN_BARRICADE) {
+	if (sceneId == SCENE_BILIBIN_BARRICADE)
+	{
 		return BilibinBarricadeEntrances;
 	}
-	if(sceneId == SCENE_BILIBIN_TREASURY) {
+	if (sceneId == SCENE_BILIBIN_TREASURY)
+	{
 		return BilibinTreasuryEntrances;
 	}
 	return BilibinEntrancesOther;
 }
 
-/* Only the Bilibin Treasury has exit regions. */
+// Only the Bilibin Treasury has exit regions.
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
-	if(MainRoutineStateWork.next == SCENE_BILIBIN_TREASURY) {
+	if (MainRoutineStateWork.next == SCENE_BILIBIN_TREASURY)
+	{
 		return (const SCENE_EXIT_REGION *)BilibinTreasuryRegions;
 	}
 	return 0;
 }
 
-/* Returns the packed exits shared by the three scenes. */
+// Returns the packed exits shared by the three scenes.
 const Uint32 *scGetExits(void)
 {
 	return BilibinExits;
 }
 
-/* Talking to Gust in the Bilibin Treasury makes Gust, a Jupiter Djinni, join
-   the party. */
+// Talking to Gust in the Bilibin Treasury makes Gust, a Jupiter Djinni, join the party.
 static void scBilibinGustJoins(void)
 {
 	fdDjinnJoinParty(ACTOR_GUST, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_GUST));
 }
 
-/* Selects the actors of Bilibin, the Bilibin Barricade or the Bilibin
-   Treasury. */
+// Selects the actors of Bilibin, the Bilibin Barricade or the Bilibin Treasury.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_BILIBIN) {
+	if (sceneId == SCENE_BILIBIN)
+	{
 		return BilibinActorPlacements;
 	}
-	if(sceneId == SCENE_BILIBIN_BARRICADE) {
+	if (sceneId == SCENE_BILIBIN_BARRICADE)
+	{
 		return BilibinBarricadeActorPlacements;
 	}
-	if(sceneId == SCENE_BILIBIN_TREASURY) {
+	if (sceneId == SCENE_BILIBIN_TREASURY)
+	{
 		return BilibinTreasuryActorPlacements;
 	}
 	return BilibinActorPlacementsOther;
 }
 
-/* Searching the well in Bilibin, the leader peers in, and its bottom cannot be
-   seen. */
+// Searching the well in Bilibin, the leader peers in, and its bottom cannot be seen.
 static void scBilibinInspectWell(void)
 {
 	fdScriptStart();
@@ -313,20 +303,23 @@ const CUE *scGetCues(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_BILIBIN) {
+	if (sceneId == SCENE_BILIBIN)
+	{
 		return BilibinCues;
 	}
-	if(sceneId == SCENE_BILIBIN_BARRICADE) {
+	if (sceneId == SCENE_BILIBIN_BARRICADE)
+	{
 		return BilibinBarricadeCues;
 	}
-	if(sceneId == SCENE_BILIBIN_TREASURY) {
+	if (sceneId == SCENE_BILIBIN_TREASURY)
+	{
 		return BilibinTreasuryCues;
 	}
 	return BilibinCuesOther;
 }
 
-/* Searching the sign at the Bilibin Barricade: "This area is off-limits to all
-   those without a permit. —Lord McCoy" */
+// Searching the sign at the Bilibin Barricade: "This area is off-limits to all
+// those without a permit. —Lord McCoy"
 static void scBilibinReadOffLimitsSign(void)
 {
 	fdScriptStart();
@@ -334,8 +327,7 @@ static void scBilibinReadOffLimitsSign(void)
 	fdScriptEnd();
 }
 
-/* Searching the sign in the Bilibin Treasury: "McCoy's Hidden Warehouse / Do
-   Not Enter!" */
+// Searching the sign in the Bilibin Treasury: "McCoy's Hidden Warehouse / Do Not Enter!"
 static void scBilibinReadWarehouseSign(void)
 {
 	fdScriptStart();
@@ -343,7 +335,7 @@ static void scBilibinReadWarehouseSign(void)
 	fdScriptEnd();
 }
 
-/* The Gang of Three's trees at the Bilibin Barricade look like people. */
+// The Gang of Three's trees at the Bilibin Barricade look like people.
 static void scBilibinInspectHumanShapedTree(void)
 {
 	fdScriptStart();
@@ -351,13 +343,14 @@ static void scBilibinInspectHumanShapedTree(void)
 	fdScriptEnd();
 }
 
-/* The tree at Bilibin's entrance almost looks like a man and, looked at again,
-   like a living person. */
+// The tree at Bilibin's entrance almost looks like a man and, looked at again, like a living
+// person.
 static void scBilibinExamineTreeMan(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgBilibinItsTreeButAlmostLooks);
-	if(fdScriptGetFlag(FLAG_BILIBIN_TREE_EXAMINED) != 0) {
+	if (fdScriptGetFlag(FLAG_BILIBIN_TREE_EXAMINED) != 0)
+	{
 		FieldStateWork->msg++;
 	}
 	fdScriptShowMessage(ACTOR_TREE_MAN, 0);
@@ -365,115 +358,120 @@ static void scBilibinExamineTreeMan(void)
 	fdScriptEnd();
 }
 
-/* A burly man asks about the tree at Bilibin's entrance. */
+// A burly man asks about the tree at Bilibin's entrance.
 static void scBilibinAskAboutEntranceTree(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgBilibinDidSeeTreeAtEntrance);
-	/* "Did you see the tree at the entrance?" Yes: "That tree was once a man...
-	   He came to our village under a..." No: "I can't believe you missed the
-	   tree... You should look..." */
+	// "Did you see the tree at the entrance?" Yes: "That tree was once a man... He came to our
+	// village under a..." No: "I can't believe you missed the tree... You should look..."
 	fdScriptAskYesNo(ACTOR_VILLAGER_ASKS_ABOUT_TREE, 0);
 	fdScriptEnd();
 }
 
-/* An old man asks whether the party has tried heading southeast. */
+// An old man asks whether the party has tried heading southeast.
 static void scBilibinAskAboutSoutheastRoute(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgBilibinHaveTriedHeadingSoutheastFrom);
-	/* "Have you tried heading southeast from here?" Yes: "That barricade was
-	   built because there's been trouble in Kolima." No: "The road is blocked,
-	   so you might as well not even bother. I..." */
+	// "Have you tried heading southeast from here?" Yes: "That barricade was built because there's
+	// been trouble in Kolima." No: "The road is blocked, so you might as well not even bother.
+	// I..."
 	fdScriptAskYesNo(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
 	fdScriptEnd();
 }
 
-/* The man who was the tree at the entrance talks about it. */
+// The man who was the tree at the entrance talks about it.
 static void scBilibinAskAboutBeingATree(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgBilibinWasTurnedIntoTreeFor);
-	/* "I was turned into a tree for a while... Can you believe it?" Yes: "I
-	   think I now know what it means to sink your roots in one..." No: "Yeah, I
-	   can't even believe it myself." */
+	// "I was turned into a tree for a while... Can you believe it?" Yes: "I think I now know what
+	// it means to sink your roots in one..." No: "Yeah, I can't even believe it myself."
 	fdScriptAskYesNo(ACTOR_FORMER_TREE_MAN, 0);
 	fdScriptEnd();
 }
 
-/* A small boy asks whether the party broke the curse. */
+// A small boy asks whether the party broke the curse.
 static void scBilibinAskAboutCurseBreakers(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgBilibinCurseWasBrokenThanksEfforts);
-	/* "The curse was broken all thanks to the efforts of three..." Yes: "That's
-	   amazing! You broke the so-called curse!" No: "I didn't think so. You
-	   don't look very tough at all." */
+	// "The curse was broken all thanks to the efforts of three..." Yes: "That's amazing! You broke
+	// the so-called curse!" No: "I didn't think so. You don't look very tough at all."
 	fdScriptAskYesNo(ACTOR_BOY_SCARED_OF_ENTRANCE, 0);
 	fdScriptEnd();
 }
 
-/* A strongman asks whether the party has been to Imil. */
+// A strongman asks whether the party has been to Imil.
 static void scBilibinAskAboutImil(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgBilibinHaveEverBeenVillageImil);
-	/* "Have you ever been to the village of Imil, up north?" Yes: "Did you see
-	   the great lighthouse over there? I bet it was..." No: "If you ever go
-	   there, be sure to visit their famous lighthouse." */
+	// "Have you ever been to the village of Imil, up north?" Yes: "Did you see the great lighthouse
+	// over there? I bet it was..." No: "If you ever go there, be sure to visit their famous
+	// lighthouse."
 	fdScriptAskYesNo(ACTOR_STRONGMAN_IMIL_TOWER, 0);
 	fdScriptEnd();
 }
 
-/* Walking up to a door in Bilibin opens it, and Isaac walks in: the inn
-   (metatile (23, 22)), the houses east (12, 20), west (6, 21) and north (10,
-   13), the item shop (4, 13), the weapon and armor shop (18, 11) or the
-   Sanctum's double door (24..25, 10).
-
-   Everyone in town stops where they are while the door opens. The Sanctum's
-   door opens with a thump instead of the sound of the others, and the screen
-   fades as Isaac walks through. */
+// Walking up to a door in Bilibin opens it, and Isaac walks in: the inn (metatile (23, 22)), the
+// houses east (12, 20), west (6, 21) and north (10, 13), the item shop (4, 13), the weapon and
+// armor shop (18, 11) or the Sanctum's double door (24..25, 10).
+//
+// Everyone in town stops where they are while the door opens. The Sanctum's door opens with a thump
+// instead of the sound of the others, and the screen fades as Isaac walks through.
 static void scBilibinOpenDoorAndLeave(void)
 {
-	Uint32		 actorSlot;
-	ACTOR		*actor;
-	Sint32		 exitIndex;
-	Sint32		 column;
-	Sint32		 row;
+	Uint32       actorSlot;
+	ACTOR       *actor;
+	Sint32       exitIndex;
+	Sint32       column;
+	Sint32       row;
 	FIELD_STATE *state;
 
 	state = FieldStateWork;
 	fdScriptStart();
-	/* Freeze placed actors before the exit metatiles start animating. */
-	for(actorSlot = ACTOR_FIRST_PLACED; actorSlot < ACTOR_ID_COUNT;
-		actorSlot++) {
+	// Freeze placed actors before the exit metatiles start animating.
+	for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < ACTOR_ID_COUNT; actorSlot++)
+	{
 		actor = fdActorGet(actorSlot);
-		if(actor != NULL) {
+		if (actor != NULL)
+		{
 			actor->motionFlags = 0;
 		}
 	}
 	exitIndex = (Sint16)(state->stepCue - BILIBIN_TO_INN);
-	if(exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
+	if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN)
+	{
 		sySoundPlay(SE_THUMP);
-	} else {
+	}
+	else
+	{
 		sySoundPlay(SE_DOOR_OPEN);
 	}
-	/* Each door has its metatile and the steps that draw it opening. */
+	// Each door has its metatile and the steps that draw it opening.
 	column = BilibinDoorMetatiles[exitIndex][0];
-	row = BilibinDoorMetatiles[exitIndex][1];
+	row    = BilibinDoorMetatiles[exitIndex][1];
 	fdMapGridPlayMapEdit(BilibinDoorSteps[exitIndex], column, row);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	if(exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
+	FieldStateWork->transition                  = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN)
+	{
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
-	} else {
+	}
+	else
+	{
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	}
-	if(exitIndex == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
+	if (exitIndex == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN)
+	{
 		fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
-	} else {
+	}
+	else
+	{
 		fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	}
 	fdScriptWait(16);
@@ -481,19 +479,19 @@ static void scBilibinOpenDoorAndLeave(void)
 	fdScriptEnd();
 }
 
-/* Move on Jill's tree, adrift in the river at the Bilibin Barricade, lets Isaac
-   pull her ashore. Once Move has brought her one metatile east, into metatile
-   column 6, he hauls her out in three tugs, walks back up the bank, and her
-   thought comes through: she thanks him for saving her from being washed
-   downstream. */
+// Move on Jill's tree, adrift in the river at the Bilibin Barricade, lets Isaac pull her ashore.
+// Once Move has brought her one metatile east, into metatile column 6, he hauls her out in three
+// tugs, walks back up the bank, and her thought comes through: she thanks him for saving her from
+// being washed downstream.
 static void scBilibinPullJillFromRiver(void)
 {
 	ACTOR *leader;
 	ACTOR *jillTree;
 
-	leader = fdActorGet(ACTOR_PARTY_LEADER);
+	leader   = fdActorGet(ACTOR_PARTY_LEADER);
 	jillTree = fdActorGet(ACTOR_JILL_TREE);
-	if(FIELD_METATILE(jillTree->x.fixed) == 6) {
+	if (FIELD_METATILE(jillTree->x.fixed) == 6)
+	{
 		fdScriptStart();
 		fdActorSetSpritePriority(ACTOR_JILL_TREE, 1);
 		fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -501,12 +499,11 @@ static void scBilibinPullJillFromRiver(void)
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
 		fdActorSetSpeed(ACTOR_JILL_TREE, 0.2);
 		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-		jillTree->motionFlags = 0;
-		/* Each tug: the leader faces about, strains and draws her in, then
-		   steps on. */
-		leader->scaleX = -toFIXED(1);
+		jillTree->motionFlags                          = 0;
+		// Each tug: the leader faces about, strains and draws her in, then steps on.
+		leader->scaleX                                 = -toFIXED(1);
 		fdActorSetAttachedEffect(ACTOR_PARTY_LEADER,
-			ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		                         ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
 		fdActorMoveToAndWait(ACTOR_JILL_TREE, 111, 196);
 		leader->scaleX = toFIXED(1);
@@ -514,7 +511,7 @@ static void scBilibinPullJillFromRiver(void)
 		fdScriptWait(20);
 		leader->scaleX = -toFIXED(1);
 		fdActorSetAttachedEffect(ACTOR_PARTY_LEADER,
-			ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		                         ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
 		fdActorMoveToAndWait(ACTOR_JILL_TREE, 121, 190);
 		leader->scaleX = toFIXED(1);
@@ -522,10 +519,10 @@ static void scBilibinPullJillFromRiver(void)
 		fdScriptWait(20);
 		leader->scaleX = -toFIXED(1);
 		fdActorSetAttachedEffect(ACTOR_PARTY_LEADER,
-			ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		                         ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
 		fdActorMoveToAndWait(ACTOR_JILL_TREE, 132, 186);
-		leader->scaleX = toFIXED(1);
+		leader->scaleX                                 = toFIXED(1);
 		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.6);
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
@@ -534,7 +531,7 @@ static void scBilibinPullJillFromRiver(void)
 		fdPsynergyStartMindReadWave(0, ACTOR_JILL_TREE);
 		sySynch(10);
 		fdScriptSetMessageId(MsgBilibinThankSavedMeFromBeing);
-		/* "Thank you! You saved me from being washed downstream!" */
+		// "Thank you! You saved me from being washed downstream!"
 		fdScriptShowMessage(ACTOR_JILL_TREE, 0);
 		fdPsynergyStopMindReadWave();
 		sySynch(10);
@@ -543,51 +540,46 @@ static void scBilibinPullJillFromRiver(void)
 	}
 }
 
-/* Walking on into a gap from one of a few ledges, Isaac hops across it: in the
-   Treasury east or west across the pools from the statue's empty alcove, or
-   south off the foot of the walkway; at the Bilibin Barricade north from
-   metatile (14, 10), or west from metatile (8, 17) beside the crates. */
+// Walking on into a gap from one of a few ledges, Isaac hops across it: in the Treasury east or
+// west across the pools from the statue's empty alcove, or south off the foot of the walkway; at
+// the Bilibin Barricade north from metatile (14, 10), or west from metatile (8, 17) beside the
+// crates.
 static void scBilibinHopAcross(void)
 {
 	fdTryJumpForward();
 }
 
-/* Jill and her friends thank the leader with a Hard Nut. */
+// Jill and her friends thank the leader with a Hard Nut.
 static void scBilibinJillGivesHardNut(void)
 {
 	ACTOR *leader;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0 ||
-		gmFlagGet(FLAG_BILIBIN_JILL_RESCUED) == 0)
+	if (gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0 || gmFlagGet(FLAG_BILIBIN_JILL_RESCUED) == 0)
 		return;
 
 	fdScriptStart();
-	/* The camera moves over to the three; the friend nearer the leader speaks
-	   first. */
+	// The camera moves over to the three; the friend nearer the leader speaks first.
 	fdCameraSetSpeed(2.4);
 	fdCameraMoveTo(263, CAMERA_KEEP, 173, 1);
 	fdCameraWaitForMove();
-	if(fdActorGet(ACTOR_GANG_MEMBER_EAST)->x.fixed > leader->x.fixed) {
-		fdActorFaceDirection(
-			ACTOR_GANG_MEMBER_WEST, FACING_SOUTH_SOUTHWEST, 20);
-		fdActorShowEmote(
-			ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+	if (fdActorGet(ACTOR_GANG_MEMBER_EAST)->x.fixed > leader->x.fixed)
+	{
+		fdActorFaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH_SOUTHWEST, 20);
+		fdActorShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 		fdScriptSetMessageId(MsgBilibinYoureGuy);
-		/* "Hey! You're that guy!" */
+		// "Hey! You're that guy!"
 		fdScriptShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
-		fdActorShowEmote(
-			ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-	} else {
-		fdActorFaceDirection(
-			ACTOR_GANG_MEMBER_EAST, FACING_SOUTH_SOUTHEAST, 20);
-		fdActorShowEmote(
-			ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+		fdActorShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+	}
+	else
+	{
+		fdActorFaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH_SOUTHEAST, 20);
+		fdActorShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 		fdScriptSetMessageId(MsgBilibinYoureGuy);
-		/* "Hey! You're that guy!" */
+		// "Hey! You're that guy!"
 		fdScriptShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
-		fdActorShowEmote(
-			ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+		fdActorShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	}
 	fdActorShowEmote(ACTOR_JILL, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorFaceDirection(ACTOR_JILL, FACING_SOUTH_SOUTHEAST, 0);
@@ -596,25 +588,24 @@ static void scBilibinJillGivesHardNut(void)
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 268, 184);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
 	fdActorRunRepeatedMotion(ACTOR_GANG_MEMBER_WEST, 2);
-	/* "Jill, are these the people who saved you?" */
+	// "Jill, are these the people who saved you?"
 	fdScriptShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
 	fdActorFaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_JILL, FACING_SOUTH_SOUTHEAST, 20);
 	fdActorFaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_WEST, 20);
 	fdActorSetAnimationAndWait(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
-	fdActorSetAttachedEffect(
-		ACTOR_JILL, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_JILL, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_JILL, FACING_SOUTH_SOUTHEAST, 10);
 	fdActorFaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH_SOUTHEAST, 10);
 	fdActorRunRepeatedMotion(ACTOR_JILL, 1);
-	/* "Remember me? I was that tree!" */
+	// "Remember me? I was that tree!"
 	fdScriptShowMessageThenWait(ACTOR_JILL, 0, 10);
 	fdActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
 	fdScriptWait(20);
-	/* "I would have been swept down the river if it wasn't for you." */
+	// "I would have been swept down the river if it wasn't for you."
 	fdScriptShowMessage(ACTOR_JILL, 0);
 	fdActorSetSpeed(ACTOR_JILL, 0.6);
 	fdActorGet(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -623,7 +614,7 @@ static void scBilibinJillGivesHardNut(void)
 	fdActorGet(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
-	/* "Please, take this. It is a small token of my appreciation." */
+	// "Please, take this. It is a small token of my appreciation."
 	fdScriptShowMessageThenWait(ACTOR_JILL, 0, 10);
 	mnFieldMessageShow(MsgBilibinJillGaveIsaacSpecialGift, 1);
 	FieldStateWork->msg++;
@@ -637,10 +628,10 @@ static void scBilibinJillGivesHardNut(void)
 	fdActorWalkToAndWait(ACTOR_JILL, 262, 156);
 	fdScriptWait(1);
 	{
-		ACTOR *jill = fdActorGet(ACTOR_JILL);
+		ACTOR *jill          = fdActorGet(ACTOR_JILL);
 		Uint8  steeringFlags = jill->steeringFlags | ACTOR_FACES_MOTION;
 
-		jill->steeringFlags = steeringFlags;
+		jill->steeringFlags  = steeringFlags;
 	}
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_GANG_MEMBER_EAST, 2);
@@ -648,73 +639,88 @@ static void scBilibinJillGivesHardNut(void)
 	fdActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
-	/* From now on the three turn to face the leader wherever he goes. */
+	// From now on the three turn to face the leader wherever he goes.
 	syFieldActorWatchAndStartScript(ACTOR_GANG_MEMBER_EAST,
-		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, BilibinFaceLeaderScript);
+	                                ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+	                                BilibinFaceLeaderScript);
 	syFieldActorWatchAndStartScript(ACTOR_GANG_MEMBER_WEST,
-		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, BilibinFaceLeaderScript);
-	syFieldActorWatchAndStartScript(ACTOR_JILL,
-		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, BilibinFaceLeaderScript);
+	                                ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+	                                BilibinFaceLeaderScript);
+	syFieldActorWatchAndStartScript(
+		ACTOR_JILL, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, BilibinFaceLeaderScript);
 	gmFlagSet(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
 	fdScriptEnd();
 }
 
-/* Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
-   Bilibin Treasury. */
+// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the Bilibin Treasury.
 Sint32 scInit(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	if(MainRoutineStateWork.next == SCENE_BILIBIN) {
+	if (MainRoutineStateWork.next == SCENE_BILIBIN)
+	{
 		scBilibinRestoreVillageActors();
-	} else if(MainRoutineStateWork.next == SCENE_BILIBIN_BARRICADE) {
+	}
+	else if (MainRoutineStateWork.next == SCENE_BILIBIN_BARRICADE)
+	{
 		scBilibinRestoreRiverActors();
 		sySetTickEvent(scBilibinUpdateRiverRipples, EVENT_PASS_TICK);
-	} else if(MainRoutineStateWork.next == SCENE_BILIBIN_TREASURY) {
+	}
+	else if (MainRoutineStateWork.next == SCENE_BILIBIN_TREASURY)
+	{
 		scBilibinSetUpTreasury();
 	}
 	return 0;
 }
 
-/* Sets up Bilibin. */
+// Sets up Bilibin.
 static void scBilibinRestoreVillageActors(void)
 {
 	Sint16 entrance;
 
-	if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+	if (gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
+	{
 		fdActorSetPos(ACTOR_TREE_MAN, 0, 0);
-		fdActorFaceDirection(
-			ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, FACING_SOUTH_SOUTHEAST, 0);
-		fdActorFaceDirection(
-			ACTOR_OLD_WOMAN_ROAD_BLOCKED, FACING_SOUTH_SOUTHWEST, 0);
-	} else {
+		fdActorFaceDirection(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, FACING_SOUTH_SOUTHEAST, 0);
+		fdActorFaceDirection(ACTOR_OLD_WOMAN_ROAD_BLOCKED, FACING_SOUTH_SOUTHWEST, 0);
+	}
+	else
+	{
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_TREE_MAN), 0);
 		fdActorSetPos(ACTOR_FORMER_TREE_MAN, 0, 0);
 	}
 	fdActorGet(ACTOR_IVY)->scaleY = toFIXED(3) / 2;
-	/* Whirlwind's row runs no script, so nothing remembers the ivy blown away:
-	   it is back unless the party has just come out of the cave behind it. */
-	entrance = MainRoutineStateWork.entrance;
-	if(entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
+	// Whirlwind's row runs no script, so nothing remembers the ivy blown away: it is back unless
+	// the party has just come out of the cave behind it.
+	entrance                      = MainRoutineStateWork.entrance;
+	if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST)
+	{
 		fdActorSetPos(ACTOR_IVY, 0, 0);
-	} else if(entrance == BILIBIN_FROM_SANCTUM) {
+	}
+	else if (entrance == BILIBIN_FROM_SANCTUM)
+	{
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
 	}
-	if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
+	if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+	{
 		entrance = MainRoutineStateWork.entrance;
-		if(entrance == BILIBIN_FROM_BILIBIN_TREASURY_EAST) {
+		if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_EAST)
+		{
 			fdActorSetPos(ACTOR_VILLAGE_STATUE, 248, 216);
 		}
 	}
 	scBilibinUpdateVillageStatueMetatiles();
-	if(gmFlagGet(FLAG_MCCOY_PALACE_ADMITTED) != 0 &&
-		gmFlagGet(FLAG_MCCOY_PALACE_VISITED) == 0) {
+	if (gmFlagGet(FLAG_MCCOY_PALACE_ADMITTED) != 0 && gmFlagGet(FLAG_MCCOY_PALACE_VISITED) == 0)
+	{
 		gmFlagSet(FLAG_BILIBIN_KEEPING_MCCOY_WAITING);
 	}
 }
 
-/* The metatile the village statue first stands on, over the way down to the
-   Bilibin Treasury. */
-enum { TREASURY_WAY_COLUMN = 16, TREASURY_WAY_ROW = 13 };
+// The metatile the village statue first stands on, over the way down to the Bilibin Treasury.
+enum
+{
+	TREASURY_WAY_COLUMN = 16,
+	TREASURY_WAY_ROW    = 13
+};
 
 static void scBilibinUpdateVillageStatueMetatiles(void)
 {
@@ -725,37 +731,43 @@ static void scBilibinUpdateVillageStatueMetatiles(void)
 	FIXED  statueX;
 	Sint32 statueRow;
 
-	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	statue = fdActorGet(ACTOR_VILLAGE_STATUE);
-	statueRow = FIELD_METATILE(statue->z.fixed);
+	leader       = fdActorGet(ACTOR_PARTY_LEADER);
+	statue       = fdActorGet(ACTOR_VILLAGE_STATUE);
+	statueRow    = FIELD_METATILE(statue->z.fixed);
 	leaderColumn = FIELD_METATILE(leader->x.fixed);
-	leaderRow = FIELD_METATILE(leader->z.fixed);
-	statueX = statue->x.fixed;
-	/* Make the statue's square plain pushing ground, then wall off its
-	   metatile. */
+	leaderRow    = FIELD_METATILE(leader->z.fixed);
+	statueX      = statue->x.fixed;
+	// Make the statue's square plain pushing ground, then wall off its metatile.
 	fdMapGridCopyMetatileAttributes(15, 11, 3, 1, 15, 12);
 	fdMapGridCopyMetatileAttributes(15, 11, 3, 1, 15, 13);
 	fdMapGridCopyMetatileAttributes(15, 11, 3, 1, 15, 14);
-	fdMapGridCopyMetatileAttributes(VILLAGE_WALL_METATILE_COLUMN,
-		SPARE_METATILE_ROW, 1, 1, FIELD_METATILE(statueX), statueRow);
-	if(FIELD_METATILE(statueX) != TREASURY_WAY_COLUMN ||
-		statueRow != TREASURY_WAY_ROW) {
+	fdMapGridCopyMetatileAttributes(
+		VILLAGE_WALL_METATILE_COLUMN, SPARE_METATILE_ROW, 1, 1, FIELD_METATILE(statueX), statueRow);
+	if (FIELD_METATILE(statueX) != TREASURY_WAY_COLUMN || statueRow != TREASURY_WAY_ROW)
+	{
 		fdMapGridCopyMetatileAttributes(VILLAGE_HOLE_METATILE_COLUMN,
-			SPARE_METATILE_ROW, 1, 1, TREASURY_WAY_COLUMN, TREASURY_WAY_ROW);
+		                                SPARE_METATILE_ROW,
+		                                1,
+		                                1,
+		                                TREASURY_WAY_COLUMN,
+		                                TREASURY_WAY_ROW);
 	}
-	/* The statue may have moved onto the leader while this script was
-	   running. */
-	if(leaderColumn == TREASURY_WAY_COLUMN) {
-		if(leaderRow == TREASURY_WAY_ROW) {
+	// The statue may have moved onto the leader while this script was running.
+	if (leaderColumn == TREASURY_WAY_COLUMN)
+	{
+		if (leaderRow == TREASURY_WAY_ROW)
+		{
 			fdScriptStart();
-			fdActorShowEmote(
-				ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+			fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 			fdActorSetSpeed(ACTOR_PARTY_LEADER, 2);
 			fdActorJump(ACTOR_PARTY_LEADER, 6, 0);
-			if(statueRow == TREASURY_WAY_ROW) {
+			if (statueRow == TREASURY_WAY_ROW)
+			{
 				fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 262, 196);
 				fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-			} else {
+			}
+			else
+			{
 				fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 286, 218);
 				fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
 			}
@@ -764,7 +776,7 @@ static void scBilibinUpdateVillageStatueMetatiles(void)
 	}
 }
 
-/* Sets up the Bilibin Barricade. */
+// Sets up the Bilibin Barricade.
 static void scBilibinRestoreRiverActors(void)
 {
 	ACTOR *jillTree;
@@ -773,33 +785,35 @@ static void scBilibinRestoreRiverActors(void)
 	Sint32 crossingState;
 
 	fallenTree = fdActorGet(ACTOR_MIDDLE_TREE);
-	jillTree = fdActorGet(ACTOR_JILL_TREE);
+	jillTree   = fdActorGet(ACTOR_JILL_TREE);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_BARRICADE_CRATES), 0);
 	populationState = gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED);
-	if(populationState != 0) {
-		/* The curse is lifted: the trees are gone. */
+	if (populationState != 0)
+	{
+		// The curse is lifted: the trees are gone.
 		fdActorSetPos(ACTOR_BOTTOM_TREE, 0, 0);
 		fdActorSetPos(ACTOR_MIDDLE_TREE, 0, 0);
 		fdActorSetPos(ACTOR_JILL_TREE, 0, 0);
-		/* The door in the barricade stands open, and the party can walk
-		   through. */
+		// The door in the barricade stands open, and the party can walk through.
 		fdMapGridCopyMetatilesTo(56, 15, 40, 15, 1, 2);
 		fdMapGridCopyMetatileAttributes(26, 15, 1, 3, 10, 15);
-		if(gmFlagGet(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
-			if(gmFlagGet(FLAG_BILIBIN_JILL_RESCUED) == 0) {
+		if (gmFlagGet(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0)
+		{
+			if (gmFlagGet(FLAG_BILIBIN_JILL_RESCUED) == 0)
+			{
 				fdActorSetPos(ACTOR_JILL, 0, 0);
-				fdActorFaceDirection(
-					ACTOR_GANG_MEMBER_EAST, FACING_NORTH_NORTHEAST, 0);
-				fdActorFaceDirection(
-					ACTOR_GANG_MEMBER_WEST, FACING_NORTH_NORTHWEST, 0);
+				fdActorFaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_NORTH_NORTHEAST, 0);
+				fdActorFaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_NORTH_NORTHWEST, 0);
 			}
-		} else {
-			fdActorFaceDirection(
-				ACTOR_GANG_MEMBER_EAST, FACING_NORTH_NORTHEAST, 0);
-			fdActorFaceDirection(
-				ACTOR_GANG_MEMBER_WEST, FACING_NORTH_NORTHWEST, 0);
 		}
-	} else {
+		else
+		{
+			fdActorFaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_NORTH_NORTHEAST, 0);
+			fdActorFaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_NORTH_NORTHWEST, 0);
+		}
+	}
+	else
+	{
 		fdActorSetPos(ACTOR_GANG_MEMBER_EAST, 0, 0);
 		fdActorSetPos(ACTOR_GANG_MEMBER_WEST, 0, 0);
 		fdActorSetPos(ACTOR_JILL, 0, 0);
@@ -807,39 +821,42 @@ static void scBilibinRestoreRiverActors(void)
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_MIDDLE_TREE), 0);
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_JILL_TREE), 0);
 		fallenTree->motionFlags = populationState;
-		/* Once FLAG_SATUROS_BEATEN_AT_MERCURY is set ("They crossed the river
-		   after pushing us down"), the middle tree lies on its side and Jill is
-		   in the water, or on the bank where she was pulled ashore. */
-		crossingState = gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY);
-		if(crossingState != 0) {
-			fdActorGet(ACTOR_BOTTOM_TREE)->collisionFlags |=
-				ACTOR_NEAR_PSYNERGY;
-			fdActorGet(ACTOR_FALLEN_TREE_STAND_IN)->collisionFlags |=
-				ACTOR_NEAR_PSYNERGY;
-			fdActorGet(ACTOR_JILL_TREE)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+		// Once FLAG_SATUROS_BEATEN_AT_MERCURY is set ("They crossed the river after pushing us
+		// down"), the middle tree lies on its side and Jill is in the water, or on the bank where
+		// she was pulled ashore.
+		crossingState           = gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY);
+		if (crossingState != 0)
+		{
+			fdActorGet(ACTOR_BOTTOM_TREE)->collisionFlags          |= ACTOR_NEAR_PSYNERGY;
+			fdActorGet(ACTOR_FALLEN_TREE_STAND_IN)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+			fdActorGet(ACTOR_JILL_TREE)->collisionFlags            |= ACTOR_NEAR_PSYNERGY;
 			fdActorSetPos(ACTOR_FALLEN_TREE_STAND_IN, 142, 156);
 			fdActorSetSpriteFlags(fdActorGet(ACTOR_FALLEN_TREE_STAND_IN), 0);
 			fdActorSetPos(ACTOR_MIDDLE_TREE, 142, 156);
-			fallenTree->sprite->rotation = DEGtoANG(90);
-			fallenTree->y.fixed -= toFIXED(8);
-			if(gmFlagGet(FLAG_BILIBIN_JILL_RESCUED) != 0) {
+			fallenTree->sprite->rotation  = DEGtoANG(90);
+			fallenTree->y.fixed          -= toFIXED(8);
+			if (gmFlagGet(FLAG_BILIBIN_JILL_RESCUED) != 0)
+			{
 				fdActorSetPos(ACTOR_JILL_TREE, 132, 186);
-			} else {
+			}
+			else
+			{
 				fdActorSetPos(ACTOR_JILL_TREE, 88, 196);
 				fdActorSetSpritePriority(ACTOR_JILL_TREE, 3);
 				jillTree->collisionFlags |= ACTOR_NEAR_TALK;
 			}
-		} else {
-			fallenTree->y.fixed = toFIXED(32);
+		}
+		else
+		{
+			fallenTree->y.fixed   = toFIXED(32);
 			jillTree->motionFlags = crossingState;
-			jillTree->y.fixed = toFIXED(48);
+			jillTree->y.fixed     = toFIXED(48);
 		}
 	}
 	scBilibinUpdateCratesMetatiles();
 }
 
-/* The metatiles round the crate's place, as BilibinCratesPushMetatiles lists
-   them. */
+// The metatiles round the crate's place, as BilibinCratesPushMetatiles lists them.
 #define CRATES_LANE_METATILES 10
 
 static void scBilibinUpdateCratesMetatiles(void)
@@ -849,21 +866,25 @@ static void scBilibinUpdateCratesMetatiles(void)
 	Sint32 cratesRow;
 	Uint32 i;
 
-	actor = fdActorGet(ACTOR_BARRICADE_CRATES);
+	actor        = fdActorGet(ACTOR_BARRICADE_CRATES);
 	cratesColumn = FIELD_METATILE(actor->x.fixed);
-	cratesRow = FIELD_METATILE(actor->z.fixed);
+	cratesRow    = FIELD_METATILE(actor->z.fixed);
 
-	for(i = 0; i < 2 * CRATES_LANE_METATILES; i += 2) {
+	for (i = 0; i < 2 * CRATES_LANE_METATILES; i += 2)
+	{
 		fdMapGridCopyMetatileAttributes(BARRICADE_PUSH_METATILE_COLUMN,
-			SPARE_METATILE_ROW, 1, 1, BilibinCratesPushMetatiles[i],
-			BilibinCratesPushMetatiles[i + 1]);
+		                                SPARE_METATILE_ROW,
+		                                1,
+		                                1,
+		                                BilibinCratesPushMetatiles[i],
+		                                BilibinCratesPushMetatiles[i + 1]);
 	}
 
-	fdMapGridCopyMetatileAttributes(BARRICADE_WALL_METATILE_COLUMN,
-		SPARE_METATILE_ROW, 1, 1, cratesColumn, cratesRow);
+	fdMapGridCopyMetatileAttributes(
+		BARRICADE_WALL_METATILE_COLUMN, SPARE_METATILE_ROW, 1, 1, cratesColumn, cratesRow);
 }
 
-/* Sets up the Bilibin Treasury. */
+// Sets up the Bilibin Treasury.
 static void scBilibinSetUpTreasury(void)
 {
 	ACTOR *leader;
@@ -871,14 +892,15 @@ static void scBilibinSetUpTreasury(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	scBilibinUpdateTreasuryStatueMetatiles();
-	if(MainRoutineStateWork.entrance == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
-		MainRoutineStateWork.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
-		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
+	if (MainRoutineStateWork.entrance == BILIBIN_TREASURY_UPPER_FROM_LOWER
+	    || MainRoutineStateWork.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH)
+	{
+		if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+		{
 			leader = fdActorGet(ACTOR_PARTY_LEADER);
 			fdScriptStart();
 			leader->y.fixed = toFIXED(16);
-			fdCameraMoveWithinMapBounds(
-				leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
+			fdCameraMoveWithinMapBounds(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
 			fdMapGridCenterOnFollowedPoint();
 			fdScriptEnd();
 			sySynch(1);
@@ -888,100 +910,99 @@ static void scBilibinSetUpTreasury(void)
 
 #include "shared/actor_find_at_metatile.c"
 
-/* Pushing a statue in Bilibin or the Bilibin Treasury, or the crates at the
-   Bilibin Barricade, slides it one metatile ahead with the leader behind it, if
-   the metatile is free. */
+// Pushing a statue in Bilibin or the Bilibin Treasury, or the crates at the Bilibin Barricade,
+// slides it one metatile ahead with the leader behind it, if the metatile is free.
 static void scBilibinPushStatueOrCrates(void)
 {
-	ACTOR	 *leader;
-	ACTOR	 *pushed;
-	Uint32	  direction;
+	ACTOR    *leader;
+	ACTOR    *pushed;
+	Uint32    direction;
 	FIELD_POS dest;
 
-	leader = fdActorGet(ACTOR_PARTY_LEADER);
+	leader    = fdActorGet(ACTOR_PARTY_LEADER);
 	direction = FACING_INDEX(leader->facing);
-	pushed = scActorFindAtMetatile(
-		(leader->x.part[0].integer +
-			(FIXEDtoINT(PushedActorDirectionSteps[direction]))) >>
-			4,
-		(leader->z.part[0].integer +
-			(Sint16)PushedActorDirectionSteps[direction]) >>
-			4);
-	if(pushed != NULL) {
+	pushed    = scActorFindAtMetatile(
+        (leader->x.part[0].integer + (FIXEDtoINT(PushedActorDirectionSteps[direction]))) >> 4,
+        (leader->z.part[0].integer + (Sint16)PushedActorDirectionSteps[direction]) >> 4);
+	if (pushed != NULL)
+	{
 		pushed->layer = 2;
 		fdActorStepFrom(&dest, pushed, PushedActorDirectionSteps[direction]);
-		if(syFieldActorCheckMovementCollision(pushed, &dest) <= 0) {
-			/* The leader leans on it, then both move together. */
+		if (syFieldActorCheckMovementCollision(pushed, &dest) <= 0)
+		{
+			// The leader leans on it, then both move together.
 			fdActorSelectAnimation(leader, ANIM_PUSH);
 			sySynch(15);
 			sySoundPlay(SE_PUSH);
-			pushed->speedLimit = toFIXED(1) / 5;
+			pushed->speedLimit   = toFIXED(1) / 5;
 			pushed->acceleration = toFIXED(1) / 5;
 			syFieldActorSetMoveTargetFX(pushed, dest.x, dest.y, dest.z);
-			leader->speedLimit = toFIXED(1) / 5;
+			leader->speedLimit   = toFIXED(1) / 5;
 			leader->acceleration = toFIXED(1) / 5;
 			syFieldActorSetMoveTargetFX(leader, dest.x, dest.y, dest.z);
 			fdActorWaitForMove(pushed);
-			pushed->x.fixed = dest.x;
-			pushed->z.fixed = dest.z;
+			pushed->x.fixed   = dest.x;
+			pushed->z.fixed   = dest.z;
 			pushed->velocityX = 0;
 			pushed->velocityZ = 0;
 			fdActorSelectAnimation(leader, ANIM_STAND);
-			/* Each scene derives its metatile behaviors from this same moved
-			   actor. */
-			if(MainRoutineStateWork.next == SCENE_BILIBIN_BARRICADE)
+			// Each scene derives its metatile behaviors from this same moved actor.
+			if (MainRoutineStateWork.next == SCENE_BILIBIN_BARRICADE)
 				scBilibinUpdateCratesMetatiles();
-			else if(MainRoutineStateWork.next == SCENE_BILIBIN)
+			else if (MainRoutineStateWork.next == SCENE_BILIBIN)
 				scBilibinUpdateVillageStatueMetatiles();
-			else if(MainRoutineStateWork.next == SCENE_BILIBIN_TREASURY)
+			else if (MainRoutineStateWork.next == SCENE_BILIBIN_TREASURY)
 				scBilibinUpdateTreasuryStatueMetatiles();
 		}
 	}
 }
 
-/* While Isaac wades in the river at the Bilibin Barricade, west of the fallen
-   tree, a ripple spreads from his feet every 30 ticks. It runs every tick. */
+// While Isaac wades in the river at the Bilibin Barricade, west of the fallen tree, a ripple
+// spreads from his feet every 30 ticks. It runs every tick.
 static void scBilibinUpdateRiverRipples(void)
 {
 	ACTOR *actor;
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	if(actor->x.fixed < toFIXED(142)) {
-		if(actor->y.fixed < toFIXED(8)) {
-			if(BilibinRippleTimer.ticks == 0)
+	if (actor->x.fixed < toFIXED(142))
+	{
+		if (actor->y.fixed < toFIXED(8))
+		{
+			if (BilibinRippleTimer.ticks == 0)
 				scBilibinSpawnRipple(actor);
-			if(++BilibinRippleTimer.ticks == 30)
+			if (++BilibinRippleTimer.ticks == 30)
 				BilibinRippleTimer.ticks = 0;
-		} else {
+		}
+		else
+		{
 			BilibinRippleTimer.ticks = 0;
 		}
 	}
 }
 
-/* Spawns a semi-transparent ripple (SPRITE_RIPPLE's spreading rings) at the
-   wader, which releases itself after 30 ticks. */
+// Spawns a semi-transparent ripple (SPRITE_RIPPLE's spreading rings) at the wader, which releases
+// itself after 30 ticks.
 static void scBilibinSpawnRipple(ACTOR *actor)
 {
 	ACTOR *effect;
-	SPR	  *sprite;
+	SPR   *sprite;
 
-	effect = syFieldActorCreate(
-		SPRITE_RIPPLE, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	if(effect == NULL)
+	effect = syFieldActorCreate(SPRITE_RIPPLE, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+	if (effect == NULL)
 		return;
 
 	sprite = effect->sprite;
 	fdActorStartScript(effect, BilibinRippleScript);
-	effect->motionFlags = 0;
-	effect->layer = 1;
+	effect->motionFlags   = 0;
+	effect->layer         = 1;
 	effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-	if(sprite == NULL)
+	if (sprite == NULL)
 		return;
 
 	fdSpriteStartAnimation(sprite, 2);
-	sprite->flags = 0;
+	sprite->flags            = 0;
 	sprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-	sprite->image.priority = 3;
+	sprite->image.priority   = 3;
 }
 
 static void scBilibinUpdateTreasuryStatueMetatiles(void)
@@ -989,17 +1010,17 @@ static void scBilibinUpdateTreasuryStatueMetatiles(void)
 	ACTOR *statue;
 
 	statue = fdActorGet(ACTOR_TREASURY_STATUE);
-	if(statue == NULL)
+	if (statue == NULL)
 		return;
 
-	if(FIELD_METATILE(statue->z.fixed) == 6)
+	if (FIELD_METATILE(statue->z.fixed) == 6)
 		fdMapGridCopyMetatileAttributes(
 			TREASURY_WALL_METATILE_COLUMN, SPARE_METATILE_ROW, 1, 1, 14, 6);
 	else
 		fdMapGridCopyMetatileAttributes(
 			TREASURY_ALCOVE_METATILE_COLUMN, SPARE_METATILE_ROW, 1, 1, 14, 6);
 
-	if(FIELD_METATILE(statue->z.fixed) == 9)
+	if (FIELD_METATILE(statue->z.fixed) == 9)
 		fdMapGridCopyMetatileAttributes(
 			TREASURY_WALL_METATILE_COLUMN, SPARE_METATILE_ROW, 1, 1, 14, 9);
 	else
@@ -1012,64 +1033,112 @@ Sint32 BilibinFaceLeaderScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* Unused: the entrances for a scene other than the three, which never loads
-   this overlay. Its one row has no SCENE_TABLE_END after it. */
+// Unused: the entrances for a scene other than the three, which never loads this overlay. Its one
+// row has no SCENE_TABLE_END after it.
 SCENE_ENTRANCE BilibinEntrancesOther[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
-		-1, -1, 0},
+	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 };
 
 SCENE_ENTRANCE BilibinEntrances[] = {
-	{BILIBIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 240, 0, 472, FACING_NORTH, 0, -1,
-		-1, -1, -1, 0},
-	{BILIBIN_FROM_MCCOY_PALACE_GROUNDS, CONDITION_ALWAYS, 224, 0, 88,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{BILIBIN_FROM_INN, CONDITION_ALWAYS, 376, 0, 360, FACING_SOUTH, 0, -1, -1,
-		-1, -1, 0},
-	{BILIBIN_FROM_HOUSE_EAST, CONDITION_ALWAYS, 200, 0, 328, FACING_SOUTH, 0,
-		-1, -1, -1, -1, 0},
-	{BILIBIN_FROM_HOUSE_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_SOUTH, 0,
-		-1, -1, -1, -1, 0},
-	{BILIBIN_FROM_HOUSE_NORTH, CONDITION_ALWAYS, 168, 0, 216, FACING_SOUTH, 0,
-		-1, -1, -1, -1, 0},
-	{BILIBIN_FROM_ITEM_SHOP, CONDITION_ALWAYS, 72, 0, 216, FACING_SOUTH, 0, -1,
-		-1, -1, -1, 0},
-	{BILIBIN_FROM_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 296, 0, 184,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{BILIBIN_FROM_SANCTUM, CONDITION_ALWAYS, 400, 0, 168, FACING_SOUTH, 0, -1,
-		-1, -1, -1, 0},
-	{BILIBIN_FROM_BILIBIN_TREASURY_WEST, CONDITION_ALWAYS, 40, 0, 152,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{BILIBIN_FROM_BILIBIN_TREASURY_EAST, CONDITION_ALWAYS, 264, 0, 200,
-		FACING_NORTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 240, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_FROM_MCCOY_PALACE_GROUNDS,
+     CONDITION_ALWAYS, 224,
+     0, 88,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{BILIBIN_FROM_INN, CONDITION_ALWAYS, 376, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_FROM_HOUSE_EAST, CONDITION_ALWAYS, 200, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_FROM_HOUSE_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_FROM_HOUSE_NORTH, CONDITION_ALWAYS, 168, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_FROM_ITEM_SHOP, CONDITION_ALWAYS, 72, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_FROM_WEAPON_AND_ARMOR_SHOP,
+     CONDITION_ALWAYS, 296,
+     0, 184,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{BILIBIN_FROM_SANCTUM, CONDITION_ALWAYS, 400, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_FROM_BILIBIN_TREASURY_WEST,
+     CONDITION_ALWAYS, 40,
+     0, 152,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{BILIBIN_FROM_BILIBIN_TREASURY_EAST,
+     CONDITION_ALWAYS, 264,
+     0, 200,
+     FACING_NORTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
 	{SCENE_TABLE_END},
 };
 
 SCENE_ENTRANCE BilibinBarricadeEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
-		-1, -1, 0},
-	{BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 56, 0, 376,
-		FACING_EAST, 0, 16, 16, 400, 400, 0},
-	{BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 376, 0, 184,
-		FACING_WEST, 0, 16, 16, 400, 400, 0},
+	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST,
+     CONDITION_ALWAYS, 56,
+     0, 376,
+     FACING_EAST, 0,
+     16, 16,
+     400, 400,
+     0},
+	{BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST,
+     CONDITION_ALWAYS, 376,
+     0, 184,
+     FACING_WEST, 0,
+     16, 16,
+     400, 400,
+     0},
 	{SCENE_TABLE_END},
 };
 
 SCENE_ENTRANCE BilibinTreasuryEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 232, 0, 144, FACING_SOUTH, 0, -1, -1,
-		-1, -1, 0},
-	{BILIBIN_TREASURY_FROM_BILIBIN_SOUTH, CONDITION_ALWAYS, 120, 0, 408,
-		FACING_NORTH, 0, 0, 288, 240, 448, 0},
-	{BILIBIN_TREASURY_LOWER_FROM_UPPER, CONDITION_ALWAYS, 120, 0, 384,
-		FACING_SOUTH, 0, 0, 288, 240, 448, 0},
-	{BILIBIN_TREASURY_UPPER_FROM_LOWER, CONDITION_ALWAYS, 72, 4, 128,
-		FACING_NORTH, 0, 32, 32, 384, 304, 0},
-	{BILIBIN_TREASURY_FROM_BILIBIN_NORTH, CONDITION_ALWAYS, 296, 4, 224,
-		FACING_NORTH, 0, 32, 32, 384, 304, 0},
+	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 232, 0, 144, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{BILIBIN_TREASURY_FROM_BILIBIN_SOUTH,
+     CONDITION_ALWAYS, 120,
+     0, 408,
+     FACING_NORTH, 0,
+     0, 288,
+     240, 448,
+     0},
+	{BILIBIN_TREASURY_LOWER_FROM_UPPER,
+     CONDITION_ALWAYS, 120,
+     0, 384,
+     FACING_SOUTH, 0,
+     0, 288,
+     240, 448,
+     0},
+	{BILIBIN_TREASURY_UPPER_FROM_LOWER,
+     CONDITION_ALWAYS, 72,
+     4, 128,
+     FACING_NORTH, 0,
+     32, 32,
+     384, 304,
+     0},
+	{BILIBIN_TREASURY_FROM_BILIBIN_NORTH,
+     CONDITION_ALWAYS, 296,
+     4, 224,
+     FACING_NORTH, 0,
+     32, 32,
+     384, 304,
+     0},
 	{SCENE_TABLE_END},
 };
 
-/* clang-format off */
+// clang-format off
 Sint16 BilibinTreasuryRegions[] = {
 	66, 26, 128, 78, 38, 140, CONDITION_ALWAYS, BILIBIN_TREASURY_UPPER_TO_LOWER,
 	290, 26, 224, 302, 38, 236, CONDITION_ALWAYS, BILIBIN_TREASURY_TO_BILIBIN_NORTH,
@@ -1287,7 +1356,7 @@ CUE BilibinTreasuryCues[] = {
 	{ CUE_TABLE_END },
 };
 
-/* Each door's opening, as map grid animations, and the doors in turn. */
+// Each door's opening, as map grid animations, and the doors in turn.
 Uint16 BilibinSanctumDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(37, 33, 4, 2, 5), MAPGRID_ANIMATION_STEP(33, 33, 4, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
@@ -1319,22 +1388,17 @@ Uint16 *BilibinDoorSteps[] = {
 	BilibinSanctumDoorSteps,
 };
 
-/* Where each door's opening is drawn on the map grid, in the order of */
-/* BilibinDoorSteps. The doors are drawn on map layer 1, whose metatiles */
-/* begin at the map's column 32: the inn's (54, 20) is that layer's (22, 20), */
-/* the door just above the ground metatile (23, 22) Isaac walks into (render */
-/* probe Bilibin --entrance 3 --mark-metatiles 22,20,23,21,1). */
+// Where each door's opening is drawn on the map grid, in the order of BilibinDoorSteps. The doors are drawn on map layer 1, whose metatiles begin at the map's column 32: the inn's (54, 20) is that layer's (22, 20), the door just above the ground metatile (23, 22) Isaac walks into (render probe Bilibin --entrance 3 --mark-metatiles 22,20,23,21,1).
 Sint16 BilibinDoorMetatiles[][2] = {
 	{54, 20}, {43, 18}, {37, 19}, {41, 11}, {35, 11}, {49, 9}, {55, 6},
 };
 
-/* The ten metatiles round the crates' place at the Bilibin Barricade that */
-/* push them, as column and row. */
+// The ten metatiles round the crates' place at the Bilibin Barricade that push them, as column and row.
 Uint8 BilibinCratesPushMetatiles[] = {
 	8,  18, 9,  18, 10, 18, 8,  19, 9,  19,
 	10, 19, 11, 19, 9,  20, 10, 20, 11, 20,
 };
-/* clang-format on */
+// clang-format on
 
 #include "shared/pushed_actor_direction_steps.c"
 

@@ -1,22 +1,19 @@
-/* The window shapes of WINDOW_TRANSITION_SHAPE, one for each step of its
-   progress (fdScreenTransitionUpdateScanlineTable): a hand sweeping clockwise
-   from twelve o'clock round the centre of the screen, as The Broken Seal has
-   them. */
+// The window shapes of WINDOW_TRANSITION_SHAPE, one for each step of its progress
+// (fdScreenTransitionUpdateScanlineTable): a hand sweeping clockwise from twelve o'clock round the
+// centre of the screen, as The Broken Seal has them.
 
 #include "field/screen_transition.h"
 
-/* A run of lines all with the window from left to right; (255, 255) is a window
-   that shows nothing. */
+// A run of lines all with the window from left to right; (255, 255) is a window that shows nothing.
 #define SPAN_FILL(lines, left, right) {lines, WIN_RANGE(left, right)}
-/* A run of lines whose window edges slide from (leftFrom, rightFrom) on its
-   first line toward (leftTo, rightTo) on its last. */
-#define SPAN_SLOPE(lines, leftFrom, leftTo, rightFrom, rightTo) \
+// A run of lines whose window edges slide from (leftFrom, rightFrom) on its first line toward
+// (leftTo, rightTo) on its last.
+#define SPAN_SLOPE(lines, leftFrom, leftTo, rightFrom, rightTo)                                    \
 	{lines, 0, leftFrom, leftTo, rightFrom, rightTo}
 
-/* One shape for each step of the transition: WINOUT and WININ, then its runs of
-   lines down the screen. The first seventeen open a window over the right half,
-   the rest close one over the left. */
-/* clang-format off */
+// One shape for each step of the transition: WINOUT and WININ, then its runs of lines down the
+// screen. The first seventeen open a window over the right half, the rest close one over the left.
+// clang-format off
 TRANSITION_SHAPE ScreenTransitionShapes[] = {
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_FILL(160, 255, 255)}},
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 134, 120), SPAN_FILL(80, 255, 255)}},
@@ -51,4 +48,4 @@ TRANSITION_SHAPE ScreenTransitionShapes[] = {
 	{TRANSITION_SHOW_LOW_BYTE, WININ_WIN0_BG0 | WININ_WIN1_BG0, {SPAN_SLOPE(80, 90, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
 	{TRANSITION_SHOW_LOW_BYTE, WININ_WIN0_BG0 | WININ_WIN1_BG0, {SPAN_SLOPE(80, 106, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
 };
-/* clang-format on */
+// clang-format on

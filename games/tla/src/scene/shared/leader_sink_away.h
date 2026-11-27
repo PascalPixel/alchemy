@@ -1,18 +1,17 @@
-/* The leader walks 8 pixels north in a trail of mist, then turns blue and loses
-   his shadow as the screen closes, and leaves by exit `entrance`, with the
-   sparkling sound of a hidden way: Aqua Rock's and the Apojii Islands' passages
-   through water. scLeaderRiseFromWater is the arrival. */
+// The leader walks 8 pixels north in a trail of mist, then turns blue and loses his shadow as the
+// screen closes, and leaves by exit `entrance`, with the sparkling sound of a hidden way: Aqua
+// Rock's and the Apojii Islands' passages through water. scLeaderRiseFromWater is the arrival.
 void scLeaderSinkAway(Sint32 entrance)
 {
 	ACTOR  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Sint32 *owner = &MainRoutineStateWork.leaderActorId;
+	Sint32 *owner  = &MainRoutineStateWork.leaderActorId;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdScriptPlaySound(SE_SPARKLING_PASSAGE);
-	leader->update = (OBJECT_UPDATE)scActorEmitMist;
+	leader->update      = (OBJECT_UPDATE)scActorEmitMist;
 	leader->motionFlags = 0;
-	leader->speedLimit = toFIXED(1) / 5;
+	leader->speedLimit  = toFIXED(1) / 5;
 	fdActorSetAnimation(*owner, 2);
 	fdActorSetDestinationOffset(*owner, 0, -8);
 	scFieldActorWaitForMoveById(*owner);

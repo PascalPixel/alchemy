@@ -1,64 +1,44 @@
-/* The two ways into an effect, a summon or an ordinary ability, with the sheet,
-   state and canvas they lend it; and the helpers the summons share for window
-   0's ragged edge and the targets' sprites. Part of battle_effect.c. */
+// The two ways into an effect, a summon or an ordinary ability, with the sheet, state and canvas
+// they lend it; and the helpers the summons share for window 0's ragged edge and the targets'
+// sprites. Part of battle_effect.c.
 
-/* Calls the empty btEffectNoOperation count times: a busy delay. */
+// Calls the empty btEffectNoOperation count times: a busy delay.
 void btEffectCallNoOperation(Sint32 count)
 {
 	Sint32 i;
 
-	for(i = 0; i != count; i++)
+	for (i = 0; i != count; i++)
 		btEffectNoOperation();
 }
 
-/* Runs one of the large battle effects, the summons: takes the effect's sheet,
-   state and canvas, runs it and frees them again. */
+// Runs one of the large battle effects, the summons: takes the effect's sheet, state and canvas,
+// runs it and frees them again.
 void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
 {
 	syHeapSlotAllocate(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
 	syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
 	syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-	if(args->kind == SUMMON_EFFECT_NONE) {
+	if (args->kind == SUMMON_EFFECT_NONE)
+	{
 		btEffectRunMeteor(args);
-	} else {
-		switch(args->kind) {
-		case SUMMON_EFFECT_RAMSES:
-			btEffectRunRamses(args);
-			break;
-		case SUMMON_EFFECT_NEREID:
-			btEffectRunNereid(args);
-			break;
-		case SUMMON_EFFECT_KIRIN:
-			btEffectRunKirin(args);
-			break;
-		case SUMMON_EFFECT_ATALANTA:
-			btEffectRunAtalanta(args);
-			break;
-		case SUMMON_EFFECT_CYBELE:
-			btEffectRunCybele(args);
-			break;
-		case SUMMON_EFFECT_NEPTUNE:
-			btEffectRunNeptune(args);
-			break;
-		case SUMMON_EFFECT_TIAMAT:
-			btEffectRunTiamat(args);
-			break;
-		case SUMMON_EFFECT_PROCNE:
-			btEffectRunProcne(args);
-			break;
-		case SUMMON_EFFECT_JUDGMENT:
-			btEffectRunJudgment(args);
-			break;
-		case SUMMON_EFFECT_BOREAS:
-			btEffectRunBoreas(args);
-			break;
-		case SUMMON_EFFECT_METEOR:
-			btEffectRunMeteor(args);
-			break;
-		case SUMMON_EFFECT_THOR:
-			btEffectRunThor(args);
-			break;
+	}
+	else
+	{
+		switch (args->kind)
+		{
+			case SUMMON_EFFECT_RAMSES  : btEffectRunRamses(args); break;
+			case SUMMON_EFFECT_NEREID  : btEffectRunNereid(args); break;
+			case SUMMON_EFFECT_KIRIN   : btEffectRunKirin(args); break;
+			case SUMMON_EFFECT_ATALANTA: btEffectRunAtalanta(args); break;
+			case SUMMON_EFFECT_CYBELE  : btEffectRunCybele(args); break;
+			case SUMMON_EFFECT_NEPTUNE : btEffectRunNeptune(args); break;
+			case SUMMON_EFFECT_TIAMAT  : btEffectRunTiamat(args); break;
+			case SUMMON_EFFECT_PROCNE  : btEffectRunProcne(args); break;
+			case SUMMON_EFFECT_JUDGMENT: btEffectRunJudgment(args); break;
+			case SUMMON_EFFECT_BOREAS  : btEffectRunBoreas(args); break;
+			case SUMMON_EFFECT_METEOR  : btEffectRunMeteor(args); break;
+			case SUMMON_EFFECT_THOR    : btEffectRunThor(args); break;
 		}
 	}
 
@@ -67,21 +47,21 @@ void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/* Runs an ordinary battle effect from BattleEffectHandlers, with the sprite
-   sheet, state and canvas it lends. */
+// Runs an ordinary battle effect from BattleEffectHandlers, with the sprite sheet, state and canvas
+// it lends.
 void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 {
-	Sint32				 kind;
+	Sint32               kind;
 	BATTLE_EFFECT_STATE *state;
 
 	syHeapSlotAllocate(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
 	syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
 	syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+	state       = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	state->args = args;
-	kind = args->kind;
-	if(kind == BATTLE_EFFECT_NONE)
+	kind        = args->kind;
+	if (kind == BATTLE_EFFECT_NONE)
 		args->variant = EFFECT_VARIANT_BASIC;
 	else
 		BattleEffectHandlers[kind - 1](args);
@@ -91,32 +71,34 @@ void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/* The first screen line of window 0's ragged edge. */
+// The first screen line of window 0's ragged edge.
 #define WINDOW_EDGE_FIRST_LINE 8
 
-/* Builds window 0's right edge for every line, ragged by each line's inset, and
-   restarts the DMA that writes it; the summons run it each VBlank while the
-   window opens across the screen. */
+// Builds window 0's right edge for every line, ragged by each line's inset, and restarts the DMA
+// that writes it; the summons run it each VBlank while the window opens across the screen.
 void btEffectBuildWindowEdgeTable(void)
 {
 	Uint16 *baseRightEdge;
 	Uint16 *scanlineEdges;
 	Uint8  *edgeOffsets;
-	Sint32	scanline;
-	Sint32	rightEdge;
+	Sint32  scanline;
+	Sint32  rightEdge;
 
 	baseRightEdge = WINDOW_EDGE_RIGHT;
 	scanlineEdges = (Uint16 *)WINDOW_EDGE_LINES;
-	edgeOffsets = WINDOW_EDGE_INSETS;
-	for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-		if(scanline >= WINDOW_EDGE_FIRST_LINE &&
-			scanline < WINDOW_EDGE_FIRST_LINE + WINDOW_EDGE_INSET_LINES) {
-			rightEdge =
-				*baseRightEdge - edgeOffsets[scanline - WINDOW_EDGE_FIRST_LINE];
+	edgeOffsets   = WINDOW_EDGE_INSETS;
+	for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++)
+	{
+		if (scanline >= WINDOW_EDGE_FIRST_LINE
+		    && scanline < WINDOW_EDGE_FIRST_LINE + WINDOW_EDGE_INSET_LINES)
+		{
+			rightEdge = *baseRightEdge - edgeOffsets[scanline - WINDOW_EDGE_FIRST_LINE];
 			CLAMP(rightEdge, 0, DISPLAY_WIDTH);
 			scanlineEdges[scanline] = rightEdge;
-		} else {
-			/* Empty: the left edge is past the screen's right. */
+		}
+		else
+		{
+			// Empty: the left edge is past the screen's right.
 			scanlineEdges[scanline] = WIN_RANGE(255, 241);
 		}
 	}
@@ -124,12 +106,14 @@ void btEffectBuildWindowEdgeTable(void)
 		volatile Uint16 *channel = REG_DMA0;
 
 		btDMAStop(channel);
-		syDMAXCopy(WINDOW_EDGE_LINES, &REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
-			(volatile Uint32 *)channel);
+		syDMAXCopy(WINDOW_EDGE_LINES,
+		           &REG_WIN0H,
+		           DMA_HBLANK_HALFWORD_PER_LINE,
+		           (volatile Uint32 *)channel);
 	}
 }
 
-/* Spawns the battle sprites of every unit with HP left on the targets' side. */
+// Spawns the battle sprites of every unit with HP left on the targets' side.
 void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args)
 {
 	Sint16 list[UNIT_MAX];
@@ -137,16 +121,21 @@ void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args)
 	Sint32 i;
 
 	count = 0;
-	if(args->targets[0] >= FIRST_ENEMY_UNIT) {
-		for(i = 0; i != ENEMY_BATTLE_SIZE; i++) {
+	if (args->targets[0] >= FIRST_ENEMY_UNIT)
+	{
+		for (i = 0; i != ENEMY_BATTLE_SIZE; i++)
+		{
 			Sint32 id = i + FIRST_ENEMY_UNIT;
 
-			if(gmUnitGetStub(id)->hp > 0)
+			if (gmUnitGetStub(id)->hp > 0)
 				list[count++] = id;
 		}
-	} else {
-		for(i = 0; i != PARTY_UNIT_COUNT; i++) {
-			if(gmUnitGetStub(i)->hp > 0)
+	}
+	else
+	{
+		for (i = 0; i != PARTY_UNIT_COUNT; i++)
+		{
+			if (gmUnitGetStub(i)->hp > 0)
 				list[count++] = i;
 		}
 	}
@@ -154,62 +143,61 @@ void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args)
 	btObjectSpawnObjectsForListStub(list, 0);
 }
 
-/* Shows the battle background, darkened as a canvas leaves it, behind a cleared
-   canvas. */
+// Shows the battle background, darkened as a canvas leaves it, behind a cleared canvas.
 void btEffectSetupBlendedDisplay(void)
 {
-	void **slots = &HeapSlots[HEAP_SLOT_BATTLE];
-	Uint8 *canvas =
-		HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE, HEAP_SLOT_BATTLE_CANVAS);
+	void          **slots  = &HeapSlots[HEAP_SLOT_BATTLE];
+	Uint8          *canvas = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE, HEAP_SLOT_BATTLE_CANVAS);
 	BATTLE_STATE   *battle = slots[0];
 	volatile Uint32 fill;
 
-	REG_DISPCNT = DISPCNT_MODE_1;
+	REG_DISPCNT       = DISPCNT_MODE_1;
 	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-	btBackgroundLoadStub(
-		BATTLE_BACKGROUND_FIXED, battle->bg, BACKGROUND_DARKENED_LEVEL);
+	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, battle->bg, BACKGROUND_DARKENED_LEVEL);
 	DMA_FILL32_CELL(fill, 0, canvas, CANVAS_BYTES);
 	DMA_FILL32_CELL(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);
 	sySynch(1);
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
-	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
-		BLDCNT_TGT2_ALL;
-	REG_DISPCNT = EFFECT_DISPCNT;
+	REG_BLDCNT   = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+	REG_DISPCNT  = EFFECT_DISPCNT;
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
 
-/* Tints one unit's sprite: every part but its shadow takes `palette`
-   (SPRITE_COLOR_NORMAL gives the unit its own back), the sprite starts
-   `animation`, and timer `timerSlot` of the effect counts `timerTicks` down to
-   the tint's end (btEffectCountDownBattlerTints); TINT_KEEP leaves any of the
-   three as it is. */
-void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 animation,
-	Sint32 timerSlot, Sint32 timerTicks)
+// Tints one unit's sprite: every part but its shadow takes `palette` (SPRITE_COLOR_NORMAL gives the
+// unit its own back), the sprite starts `animation`, and timer `timerSlot` of the effect counts
+// `timerTicks` down to the tint's end (btEffectCountDownBattlerTints); TINT_KEEP leaves any of the
+// three as it is.
+void btEffectTintBattler(
+	Sint32 unitId, Sint32 palette, Sint32 animation, Sint32 timerSlot, Sint32 timerTicks)
 {
-	BATTLE_OBJECT		*slot;
-	SPR					*group;
+	BATTLE_OBJECT       *slot;
+	SPR                 *group;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 groupIndex;
+	Sint32               groupIndex;
 
-	slot = btObjectGetStub(unitId);
+	slot  = btObjectGetStub(unitId);
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-	for(groupIndex = 0;
-		(group = btActorGetSpriteStub(slot->actor, groupIndex)) != NULL;
-		groupIndex++) {
-		if(timerSlot != TINT_KEEP) {
+	for (groupIndex = 0; (group = btActorGetSpriteStub(slot->actor, groupIndex)) != NULL;
+	     groupIndex++)
+	{
+		if (timerSlot != TINT_KEEP)
+		{
 			state->actorTimers[timerSlot] = timerTicks;
 		}
-		if(slot->fading == 0) {
-			if(palette != TINT_KEEP) {
+		if (slot->fading == 0)
+		{
+			if (palette != TINT_KEEP)
+			{
 				Sint32 partIndex;
 
-				for(partIndex = 0; partIndex != group->count; partIndex++) {
+				for (partIndex = 0; partIndex != group->count; partIndex++)
+				{
 					SPR_ANIMATION *part = group->entries[partIndex];
 
-					if(part != NULL && part != slot->shadowEntry &&
-						part != slot->animationEntry) {
-						if(palette == SPRITE_COLOR_NORMAL)
+					if (part != NULL && part != slot->shadowEntry && part != slot->animationEntry)
+					{
+						if (palette == SPRITE_COLOR_NORMAL)
 							part->colorMode = btObjectGetPaletteStub(unitId);
 						else
 							part->colorMode = palette;
@@ -217,13 +205,13 @@ void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 animation,
 					}
 				}
 			}
-			if(animation != TINT_KEEP)
+			if (animation != TINT_KEEP)
 				fdSpriteStartAnimationStub(group, animation);
 		}
 	}
 }
 
-/* Opens the tiled canvas at priority 1 and closes it again at once. */
+// Opens the tiled canvas at priority 1 and closes it again at once.
 UNUSED void btEffectOpenAndCloseTiledCanvas(void)
 {
 	btEffectStartTiledCanvas(BGCNT_PRIORITY(1));

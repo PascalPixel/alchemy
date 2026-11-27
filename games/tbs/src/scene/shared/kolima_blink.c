@@ -1,14 +1,16 @@
-/* Kolima and Kolima Forest (SceneIdKolima and SceneIdKolimaForestEntrance):
-   the sparkling dust that falls when Tret's curse strikes. "That sparkly stuff
-   on the ground... What is it?" */
+// Kolima and Kolima Forest (SceneIdKolima and SceneIdKolimaForestEntrance): the sparkling dust that
+// falls when Tret's curse strikes. "That sparkly stuff on the ground... What is it?"
 
-/* An actor script call, each tick of the fall: the speck flickers between a
-   red tint and white, two ticks of each. */
+// An actor script call, each tick of the fall: the speck flickers between a red tint and white, two
+// ticks of each.
 static Sint32 scKolimaFlickerCurseDust(ACTOR *speck)
 {
-	if((TickCount >> 1) & 1) {
+	if ((TickCount >> 1) & 1)
+	{
 		fdActorSetSpriteColor(speck, SPRITE_COLOR_RED_TINT);
-	} else {
+	}
+	else
+	{
 		fdActorSetSpriteColor(speck, SPRITE_COLOR_WHITE);
 	}
 	return 0;

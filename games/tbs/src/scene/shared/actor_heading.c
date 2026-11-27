@@ -1,18 +1,19 @@
-/* Kalay and Venus Lighthouse's aerie: people who look about. */
+// Kalay and Venus Lighthouse's aerie: people who look about.
 
-/* An actor script call, each tick: when the actor's countdown (userValue) runs
-   out, it turns by a random amount up to half a turn and waits a random 0 to 79
-   ticks. */
+// An actor script call, each tick: when the actor's countdown (userValue) runs out, it turns by a
+// random amount up to half a turn and waits a random 0 to 79 ticks.
 static Sint32 scLookAboutRandomly(ACTOR *actor)
 {
 	Uint32 nextTimer;
 
-	if(actor->userValue == 0) {
-		actor->facing += syRandomBelow(32768);
-		nextTimer = syRandomBelow(80);
-		actor->userValue = nextTimer;
+	if (actor->userValue == 0)
+	{
+		actor->facing    += syRandomBelow(32768);
+		nextTimer         = syRandomBelow(80);
+		actor->userValue  = nextTimer;
 	}
-	if(actor->userValue != 0) {
+	if (actor->userValue != 0)
+	{
 		actor->userValue--;
 	}
 	return 1;

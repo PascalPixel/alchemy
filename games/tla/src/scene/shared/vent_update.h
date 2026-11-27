@@ -1,18 +1,22 @@
-/* Runs the room's hook, then steps the vents: each active one puffs every ten
-   ticks. */
+// Runs the room's hook, then steps the vents: each active one puffs every ten ticks.
 void scVentUpdate(void)
 {
 	VENT_WORK  *state = VENT_STATE;
 	VENT_ENTRY *entry = state->entries;
-	Sint32		i;
+	Sint32      i;
 
 	state->hook();
-	for(i = sizeof(state->entries) / sizeof(*entry) - 1; i >= 0; i--, entry++) {
-		if(entry->active != 0) {
-			if(entry->timer <= 0) {
+	for (i = sizeof(state->entries) / sizeof(*entry) - 1; i >= 0; i--, entry++)
+	{
+		if (entry->active != 0)
+		{
+			if (entry->timer <= 0)
+			{
 				scVentPuff(&entry->x, entry->value);
 				entry->timer = 9;
-			} else {
+			}
+			else
+			{
 				entry->timer--;
 			}
 		}

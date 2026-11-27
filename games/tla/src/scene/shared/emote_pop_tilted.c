@@ -8,24 +8,24 @@
 #include "field/field_script.h"
 #include "field/script.h"
 
-/* Pops an emote up at (x, y, z), 16.16 pixels: SPRITE_EMOTE's animation 1,
-   tilted by `rotation`, with the SE_LIGHT_APPEAR sound; its script keeps it 46
-   ticks and releases it. Idejima and the Shaman Village each pop a pair,
-   tilted either way, in a conversation. */
+// Pops an emote up at (x, y, z), 16.16 pixels: SPRITE_EMOTE's animation 1, tilted by `rotation`,
+// with the SE_LIGHT_APPEAR sound; its script keeps it 46 ticks and releases it. Idejima and the
+// Shaman Village each pop a pair, tilted either way, in a conversation.
 void   syEmotePopTilted(x, y, z, rotation) Sint32 x, y, z;
 Sint16 rotation;
 {
-	ACTOR	  *object;
+	ACTOR     *object;
 	FIELD_SPR *sprite;
 
 	object = syImportActorCreate(SPRITE_EMOTE, x, y, z);
-	if(object != 0) {
+	if (object != 0)
+	{
 		sprite = object->sprite;
 		sySoundPlay(SE_LIGHT_APPEAR);
 		syImportActorSelectAnimation(object, 1);
 		syImportActorStartScript(object, EmotePopTiltedScript);
 		object->motionFlags = 0;
-		sprite->flags = 0;
-		sprite->rotation = rotation;
+		sprite->flags       = 0;
+		sprite->rotation    = rotation;
 	}
 }

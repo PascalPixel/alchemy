@@ -1,11 +1,10 @@
-/* The script_commands object, its parts in script_commands/ in ROM order,
-   ending with the script commands that follow it: the effect scene, Mind Read
-   to Cloak, the rest of Cloak and Carry. script_commands_internal.h holds the
-   includes every part shares. */
+// The script_commands object, its parts in script_commands/ in ROM order, ending with the script
+// commands that follow it: the effect scene, Mind Read to Cloak, the rest of Cloak and Carry.
+// script_commands_internal.h holds the includes every part shares.
 
 #include "script_commands_internal.h"
 
-/* The parts, in ROM order. */
+// The parts, in ROM order.
 #include "script_commands_actor_commands.c"
 #include "script_commands_messages.c"
 #include "script_commands_camera.c"

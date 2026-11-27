@@ -1,20 +1,19 @@
-/* The field_psynergy object: the field Psynergy that spread effects around
-   their target, then in ROM order the tile copies, the field Psynergy The Lost
-   Age adds, from Cyclone to Hover (each part named for the Psynergy it runs,
-   its kind in fdPsynergyRun), the summon tablets, the actors' metatiles, the
-   step vectors and field particles, and the world and map screen and its image.
-   field_psynergy_internal.h holds the includes every part shares; the parts
-   beside it, field_psynergy_<part>.c, are included here in ROM order. The ROM
-   shows one object; the parts are ours. */
+// The field_psynergy object: the field Psynergy that spread effects around their target, then in
+// ROM order the tile copies, the field Psynergy The Lost Age adds, from Cyclone to Hover (each part
+// named for the Psynergy it runs, its kind in fdPsynergyRun), the summon tablets, the actors'
+// metatiles, the step vectors and field particles, and the world and map screen and its image.
+// field_psynergy_internal.h holds the includes every part shares; the parts beside it,
+// field_psynergy_<part>.c, are included here in ROM order. The ROM shows one object; the parts are
+// ours.
 
-/* Two parts declare their own forms of fdMapGridGetMetatileBehavior and
-   fdMapGridIsClimbableMetatile. */
+// Two parts declare their own forms of fdMapGridGetMetatileBehavior and
+// fdMapGridIsClimbableMetatile.
 #define OWN_fdMapGridGetMetatileBehavior
 #define OWN_fdMapGridIsClimbableMetatile
 
 #include "field_psynergy_internal.h"
 
-/* The parts, in ROM order. */
+// The parts, in ROM order.
 #include "field_psynergy_radial_effects.c"
 
 #undef fdActorCreateStub

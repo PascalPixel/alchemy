@@ -1,12 +1,11 @@
 #ifndef ALCHEMY_STUBS_H
 #define ALCHEMY_STUBS_H
 
-/* The stub calls: how one module of the main image calls a function of another.
-   A module's code moves whenever the module is rebuilt, so each module opens
-   with a table of 8-byte stubs that never moves, and callers jump through it.
-   An entry is its target's name with Far added (mnTextDrawNumberAtOffsetStub
-   reaches mnTextDrawNumberAtOffset); each module's header here lists its
-   entries in the order of its table, the stubs.s of its own folder. */
+// The stub calls: how one module of the main image calls a function of another. A module's code
+// moves whenever the module is rebuilt, so each module opens with a table of 8-byte stubs that
+// never moves, and callers jump through it. An entry is its target's name with Far added
+// (mnTextDrawNumberAtOffsetStub reaches mnTextDrawNumberAtOffset); each module's header here lists
+// its entries in the order of its table, the stubs.s of its own folder.
 
 #include "edition.h"
 #include "types.h"
@@ -29,8 +28,8 @@ struct SPR_PLACEMENT;
 struct SPR_SCALE;
 struct WORLD_POS;
 
-/* An entry takes its target's parameters, except the seven declared with empty
-   lists, whose callers pass other arguments than the target takes. */
+// An entry takes its target's parameters, except the seven declared with empty lists, whose callers
+// pass other arguments than the target takes.
 #include "system/stubs.h"
 #include "field/stubs.h"
 #include "window/stubs.h"

@@ -1,11 +1,9 @@
-/* The tangent table syAtan searches. */
+// The tangent table syAtan searches.
 
 #include "system.h"
 
-/* clang-format off */
-/* Tangents scaled by 256: index i is tan(i * 45 / 128 degrees), so index 128 */
-/* is tan(45 degrees). syAtan starts its binary search at index 127; the */
-/* same as The Broken Seal's. */
+// clang-format off
+// Tangents scaled by 256: index i is tan(i * 45 / 128 degrees), so index 128 is tan(45 degrees). syAtan starts its binary search at index 127; the same as The Broken Seal's.
 const Uint16 MathTanTable[258] = {
 	0, 1, 3, 4, 6, 7, 9, 11,
 	12, 14, 15, 17, 18, 20, 22, 23,
@@ -41,4 +39,4 @@ const Uint16 MathTanTable[258] = {
 	5444, 6264, 7374, 8962, 11421, 15736, 25290, 64362,
 	65535, 0,
 };
-/* clang-format on */
+// clang-format on

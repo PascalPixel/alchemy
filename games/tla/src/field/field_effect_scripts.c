@@ -1,13 +1,12 @@
-/* Four effect scripts of the field mode module, the found item's picture
-   growing in and pulsing, a sinking particle and a Reveal marker, then the
-   screen transitions' tables and the palette tints' channel curves, as The
-   Broken Seal's field_mode_tables.c has them. */
+// Four effect scripts of the field mode module, the found item's picture growing in and pulsing, a
+// sinking particle and a Reveal marker, then the screen transitions' tables and the palette tints'
+// channel curves, as The Broken Seal's field_mode_tables.c has them.
 
 #include "field/actor_script.h"
 #include "field/screen_transition.h"
 
-/* The found item's picture growing in over the leader, from half size to full
-   size, a step every 2 ticks (field_mode_item_display.c). */
+// The found item's picture growing in over the leader, from half size to full size, a step every 2
+// ticks (field_mode_item_display.c).
 const Sint32 ItemDisplayGrowInScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1) / 2),
 	SC_SET(SW_SCALE_Y, toFIXED(1) / 2),
@@ -26,8 +25,8 @@ const Sint32 ItemDisplayGrowInScript[] = {
 	SC_END,
 };
 
-/* Pulses twice, to 1.5 times full size, then rests, over and over: the found
-   item's picture held over the leader (field_mode_item_display.c). */
+// Pulses twice, to 1.5 times full size, then rests, over and over: the found item's picture held
+// over the leader (field_mode_item_display.c).
 const Sint32 ItemDisplayPulseScript[] = {
 	SC_WAIT(10),
 	SC_SET(SW_SCALE_X, toFIXED(11) / 8),
@@ -59,8 +58,8 @@ const Sint32 ItemDisplayPulseScript[] = {
 	SC_END,
 };
 
-/* A sparkle round the found item, sinking a quarter pixel a tick for 60 ticks
-   before it goes (field_mode_item_display.c). */
+// A sparkle round the found item, sinking a quarter pixel a tick for 60 ticks before it goes
+// (field_mode_item_display.c).
 const Sint32 ItemDisplaySparkleScript[] = {
 	SC_ADD(SW_Y, -toFIXED(1) / 4),
 	SC_WAIT(1),
@@ -68,29 +67,29 @@ const Sint32 ItemDisplaySparkleScript[] = {
 	SC_RELEASE,
 };
 
-/* A Reveal marker: stays while fdIsRevealActive returns nonzero (SC_CALL runs
-   it again each tick), and releases itself once Reveal ends; the same as The
-   Broken Seal's FieldEffectMarkerParticleScript. */
+// A Reveal marker: stays while fdIsRevealActive returns nonzero (SC_CALL runs it again each tick),
+// and releases itself once Reveal ends; the same as The Broken Seal's
+// FieldEffectMarkerParticleScript.
 const Sint32 RevealMarkerScript[] = {
 	SC_CALL(fdIsRevealActive),
 	SC_RELEASE,
 };
 
-/* clang-format off */
+// clang-format off
 
-/* The width of the bars of WINDOW_TRANSITION_BARS, by progress. */
+// The width of the bars of WINDOW_TRANSITION_BARS, by progress.
 const Uint8 ScreenTransitionNoiseWidths[34] = {
 	0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13,
 	16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240,
 };
 
-/* The wobble of the circle edge of WINDOW_TRANSITION_RIPPLE. */
+// The wobble of the circle edge of WINDOW_TRANSITION_RIPPLE.
 const Sint8 ScreenTransitionEdgeOffsets[32] = {
 	-4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3,
 	4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3,
 };
 
-/* 0 to 63 shuffled: the order in which the dissolve sets the pixels. */
+// 0 to 63 shuffled: the order in which the dissolve sets the pixels.
 const Uint8 ScreenTransitionDitherTable[64] = {
 	0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31,
 	16, 42, 47, 51, 20, 23, 43, 32, 8, 52, 17, 41, 54, 15, 63, 24,
@@ -98,9 +97,7 @@ const Uint8 ScreenTransitionDitherTable[64] = {
 	62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21,
 };
 
-/* Colour channel curves of the palette tints (field_mode_palette_fade.c): */
-/* each maps a 5-bit channel (0 to 31) to a palette fade channel, shifted up */
-/* 10 bits, so 31 is 31 << 10. */
+// Colour channel curves of the palette tints (field_mode_palette_fade.c): each maps a 5-bit channel (0 to 31) to a palette fade channel, shifted up 10 bits, so 31 is 31 << 10.
 Uint16 FieldEffectChannelCurve[32] = {
 	0, 524, 1071, 1643, 2240, 2863, 3513, 4191,
 	4898, 5635, 6403, 7202, 8035, 8901, 9803, 10740,
@@ -119,4 +116,4 @@ Uint16 FieldEffectChannelCurveContrast[32] = {
 	12784, 14325, 15996, 17806, 19767, 21888, 24183, 26662,
 	29340, 31744, 31744, 31744, 31744, 31744, 31744, 31744,
 };
-/* clang-format on */
+// clang-format on

@@ -1,13 +1,12 @@
-/* Sprite scales, motion curves and lookup tables of the window and menu
-   code. */
+// Sprite scales, motion curves and lookup tables of the window and menu code.
 
 #include "sprite_ids.h"
 #include "game/character_ids.h"
 #include "window/window.h"
 
-/* A sprite's pulse, as a scale where 256 is its normal size: it swells to 1.5
-   times and back over 32 steps. */
-/* clang-format off */
+// A sprite's pulse, as a scale where 256 is its normal size: it swells to 1.5 times and back over
+// 32 steps.
+// clang-format off
 const Uint16 WindowSpriteBounceScales[32] = {
 	256, 256, 260, 266, 274, 284, 294, 306,
 	320, 332, 344, 354, 364, 372, 378, 382,
@@ -15,18 +14,17 @@ const Uint16 WindowSpriteBounceScales[32] = {
 	320, 306, 294, 284, 274, 266, 260, 256,
 };
 
-/* Unused: eight offsets after the pulse that nothing reads. */
+// Unused: eight offsets after the pulse that nothing reads.
 const Sint8 WindowSpriteBounceScalesTail[8] = {
 	-15, -28, -36, -40, -36, -28, -15, 0,
 };
 
-/* The selection cursor's bob: a 16-step wave of up to 3 pixels each way. */
+// The selection cursor's bob: a 16-step wave of up to 3 pixels each way.
 const Sint8 MenuCursorBobOffsets[16] = {
 	0, 1, 2, 3, 2, 1, 0, 0, 0, -1, -2, -3, -2, -1, 0, 0,
 };
 
-/* The window colour wheel: one colour channel's level (0 to 31) over 96 hue */
-/* steps. */
+// The window colour wheel: one colour channel's level (0 to 31) over 96 hue steps.
 const Uint8 WindowColorWaveTable[121] = {
 	31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
 	15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
@@ -38,8 +36,7 @@ const Uint8 WindowColorWaveTable[121] = {
 	41, 44, 47, 49, 52, 54, 57, 60, 62,
 };
 
-/* The settings menu's command icons for each setting's choices: message speed */
-/* Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On. */
+// The settings menu's command icons for each setting's choices: message speed Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
 const Sint8 SettingsMenuSpeedIcons[3] = {
 	COMMAND_ICON_SPEED_SLOW,
 	COMMAND_ICON_SPEED_NORMAL,
@@ -56,8 +53,7 @@ const Sint8 SettingsMenuSleepIcons[2] = {
 	COMMAND_ICON_AUTO_SLEEP_ON,
 };
 
-/* The window colour presets SELECT cycles through on the settings menu: the */
-/* colour (hue, 0 to 23) and the brightness (0 to 14, 7 neutral) of each. */
+// The window colour presets SELECT cycles through on the settings menu: the colour (hue, 0 to 23) and the brightness (0 to 14, 7 neutral) of each.
 const Uint8 SettingsMenuHuePresets[6] = {
 	4, 16, 8, 21, 1, 13,
 };
@@ -65,16 +61,14 @@ const Uint8 SettingsMenuBrightnessPresets[6] = {
 	0, 11, 13, 7, 14, 14,
 };
 
-/* The command icon of each entry in the Pause menu (Save your quest, Sleep, */
-/* Change settings, and the debug entries after them). */
+// The command icon of each entry in the Pause menu (Save your quest, Sleep, Change settings, and the debug entries after them).
 const Sint8 PauseMenuIcons[8] = {
 	COMMAND_ICON_SAVE_QUEST, COMMAND_ICON_SLEEP, COMMAND_ICON_CHANGE_SETTINGS,
 	COMMAND_ICON_DROP,       COMMAND_ICON_DROP,  COMMAND_ICON_DROP,
 	0,                       0,
 };
 
-/* {character, portrait} pairs of the playable characters, ending in -1, which */
-/* mnPortraitGetForSpeaker searches for speakers below 20. */
+// {character, portrait} pairs of the playable characters, ending in -1, which mnPortraitGetForSpeaker searches for speakers below 20.
 const Sint16 PortraitCharacterMap[20] = {
 	ISAAC, PORTRAIT_ISAAC,
 	SPRITE_ISAAC_CHILD, PORTRAIT_ISAAC_CHILD,
@@ -88,14 +82,10 @@ const Sint16 PortraitCharacterMap[20] = {
 	-1, -1,
 };
 
-/* A speaker's portrait as PortraitSpriteMap numbers it, from */
-/* PORTRAIT_JUPITER_DJINNI's. */
+// A speaker's portrait as PortraitSpriteMap numbers it, from PORTRAIT_JUPITER_DJINNI's.
 #define SPRITE_MAP_PORTRAIT(portrait) ((portrait) - PORTRAIT_JUPITER_DJINNI)
 
-/* {sprite, portrait} pairs of the other speakers, ending in -1: */
-/* mnPortraitGetForSpeaker numbers portrait n of this list */
-/* PORTRAIT_SPRITE_MAP_FIRST + n, which mnIconLoadWithPalette draws as the row */
-/* PORTRAIT_JUPITER_DJINNI + n. */
+// {sprite, portrait} pairs of the other speakers, ending in -1: mnPortraitGetForSpeaker numbers portrait n of this list PORTRAIT_SPRITE_MAP_FIRST + n, which mnIconLoadWithPalette draws as the row PORTRAIT_JUPITER_DJINNI + n.
 const Sint16 PortraitSpriteMap[100] = {
 	SPRITE_JUPITER_DJINNI, SPRITE_MAP_PORTRAIT(PORTRAIT_JUPITER_DJINNI),
 	SPRITE_VENUS_DJINNI, SPRITE_MAP_PORTRAIT(PORTRAIT_VENUS_DJINNI),
@@ -148,4 +138,4 @@ const Sint16 PortraitSpriteMap[100] = {
 	SPRITE_FARAN, SPRITE_MAP_PORTRAIT(PORTRAIT_FARAN),
 	-1, -1,
 };
-/* clang-format on */
+// clang-format on

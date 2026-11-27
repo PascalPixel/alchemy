@@ -1,5 +1,4 @@
-/* Takes an actor out of play and out of sight: disabled, painted transparent
-   and drawn underfoot. */
+// Takes an actor out of play and out of sight: disabled, painted transparent and drawn underfoot.
 void scActorHide(Sint32 id)
 {
 	fdActorDisableById(id);

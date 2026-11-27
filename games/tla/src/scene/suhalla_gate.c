@@ -1,22 +1,20 @@
-/* The Suhalla Gate, in the prologue: Jenna and Kraden cross it on their way to
-   Idejima, while Alex holds back the soldiers behind them. Its three rooms
-   share this overlay:
-
-   - The road past the gate (SceneIdSuhallaGateRoad), coming from the Venus
-	 Lighthouse in the east, where a Ruffian spots the two and fights them
-	 (scSuhallaGateRuffianSpotsParty), and a door in the rock at its west end
-	 leads on to the cliffs.
-   - The cliffs (SceneIdSuhallaGateAmbush), whose two vines lead down to the
-	 crevice where three Ruffians wait in ambush
-	 (scSuhallaGateRuffiansAmbushParty).
-   - The cave beyond the crevice (SceneIdSuhallaGatePsynergyStone), where a
-	 Punch Ant jumps out at the two on the way to the Psynergy Stone
-	 (scSuhallaGatePunchAntJumpsOut), and whose far end leads to Idejima.
-
-   Every battle sends the party back to ENTRANCE_AFTER_SUHALLA_GATE_BATTLE in
-   its room, and a lost one to the Venus Lighthouse's entrance
-   (VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT). Back from each, its flag set, the
-   beaten Ruffians lie where they fell. */
+// The Suhalla Gate, in the prologue: Jenna and Kraden cross it on their way to Idejima, while Alex
+// holds back the soldiers behind them. Its three rooms share this overlay:
+//
+// - The road past the gate (SceneIdSuhallaGateRoad), coming from the Venus
+//       Lighthouse in the east, where a Ruffian spots the two and fights them
+//       (scSuhallaGateRuffianSpotsParty), and a door in the rock at its west
+// end leads on to the cliffs.
+// - The cliffs (SceneIdSuhallaGateAmbush), whose two vines lead down to the
+//       crevice where three Ruffians wait in ambush
+//       (scSuhallaGateRuffiansAmbushParty).
+// - The cave beyond the crevice (SceneIdSuhallaGatePsynergyStone), where a
+//       Punch Ant jumps out at the two on the way to the Psynergy Stone
+//       (scSuhallaGatePunchAntJumpsOut), and whose far end leads to Idejima.
+//
+// Every battle sends the party back to ENTRANCE_AFTER_SUHALLA_GATE_BATTLE in its room, and a lost
+// one to the Venus Lighthouse's entrance (VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT). Back from each,
+// its flag set, the beaten Ruffians lie where they fell.
 #include "item_ids.h"
 #include "field/actor_script.h"
 #include "field/script_inline.h"
@@ -26,91 +24,92 @@
 #include "scene/scene.h"
 #include "text/msg_ids.h"
 
-/* Set as the party comes back from beating the Ruffian on the road; he then
-   lies beaten by it. */
+// Set as the party comes back from beating the Ruffian on the road; he then lies beaten by it.
 #define FLAG_SUHALLA_GATE_RUFFIAN_BEATEN   0x894
-/* Set as the party comes back from beating the three Ruffians at the crevice;
-   they then lie beaten before it. */
-#define FLAG_SUHALLA_GATE_AMBUSH_BEATEN	   0x895
-/* Set once Kraden has talked over the Punch Ant's battle; the cave's Punch Ant
-   then stays away. */
+// Set as the party comes back from beating the three Ruffians at the crevice; they then lie beaten
+// before it.
+#define FLAG_SUHALLA_GATE_AMBUSH_BEATEN    0x895
+// Set once Kraden has talked over the Punch Ant's battle; the cave's Punch Ant then stays away.
 #define FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN 0x896
-/* Set once the chest on the cliffs, at metatile (10, 22), has given its
-   Mint. */
-#define FLAG_SUHALLA_GATE_MINT			   0xfb4
+// Set once the chest on the cliffs, at metatile (10, 22), has given its Mint.
+#define FLAG_SUHALLA_GATE_MINT             0xfb4
 
-/* The entrance each room's battle sends the party back to, 99 in each of the
-   three. */
+// The entrance each room's battle sends the party back to, 99 in each of the three.
 #define ENTRANCE_AFTER_SUHALLA_GATE_BATTLE 99
 
-/* The road's one placed actor. */
-typedef enum SUHALLA_GATE_ROAD_ACTOR_ID {
-	/* The Ruffian who spots Jenna and Kraden on the road. */
+// The road's one placed actor.
+typedef enum SUHALLA_GATE_ROAD_ACTOR_ID
+{
+	// The Ruffian who spots Jenna and Kraden on the road.
 	ACTOR_ROAD_RUFFIAN = ACTOR_FIRST_PLACED
 } SUHALLA_GATE_ROAD_ACTOR_ID;
 
-/* The cliffs' placed actors. */
-typedef enum SUHALLA_GATE_CLIFFS_ACTOR_ID {
-	/* Five sprouts (SPRITE_SPROUT, the sprout Growth grows), with no collision,
-	   each drawn half or fully grown as the party enters. */
+// The cliffs' placed actors.
+typedef enum SUHALLA_GATE_CLIFFS_ACTOR_ID
+{
+	// Five sprouts (SPRITE_SPROUT, the sprout Growth grows), with no collision, each drawn half or
+	// fully grown as the party enters.
 	ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
-	/* The three Ruffians of the ambush, west to east as they line up. */
+	// The three Ruffians of the ambush, west to east as they line up.
 	ACTOR_WEST_RUFFIAN = ACTOR_FIRST_PLACED + 5,
 	ACTOR_MIDDLE_RUFFIAN,
 	ACTOR_EAST_RUFFIAN,
-	/* Kraden, who jumps out from behind Jenna to point the way. */
+	// Kraden, who jumps out from behind Jenna to point the way.
 	ACTOR_CLIFFS_KRADEN
 } SUHALLA_GATE_CLIFFS_ACTOR_ID;
 
-/* The cave's placed actors. */
-typedef enum SUHALLA_GATE_CAVE_ACTOR_ID {
+// The cave's placed actors.
+typedef enum SUHALLA_GATE_CAVE_ACTOR_ID
+{
 	ACTOR_PUNCH_ANT = ACTOR_FIRST_PLACED,
 	ACTOR_CAVE_KRADEN
 } SUHALLA_GATE_CAVE_ACTOR_ID;
 
-/* SPRITE_SPROUT's animations as the sprouts here stand, half grown or fully
-   grown. */
-enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
+// SPRITE_SPROUT's animations as the sprouts here stand, half grown or fully grown.
+enum
+{
+	SPROUT_ANIMATION_HALF_GROWN = 3,
+	SPROUT_ANIMATION_GROWN      = 4
+};
 
-/* The metatiles that run the rooms' scripts. */
-typedef enum SUHALLA_GATE_METATILE {
-	/* The door in the rock at the road's west end, metatile (8, 18), holding
-	   the number of the exit it leads by. */
-	ROAD_DOOR_METATILE = 3,
-	/* The road's metatiles (29, 21), (30, 21) and (30, 22), where the Ruffian
-	   spots the party. */
-	RUFFIAN_SPOTS_PARTY_METATILE = 20,
-	/* Unused: no metatile of the road's map holds it. */
-	ROAD_UNUSED_METATILE = 12,
-	/* On the cliffs, metatiles (31, 54), (32, 54) and (31, 55), away from the
-	   crevice, where Kraden calls Jenna back. */
+// The metatiles that run the rooms' scripts.
+typedef enum SUHALLA_GATE_METATILE
+{
+	// The door in the rock at the road's west end, metatile (8, 18), holding the number of the exit
+	// it leads by.
+	ROAD_DOOR_METATILE             = 3,
+	// The road's metatiles (29, 21), (30, 21) and (30, 22), where the Ruffian spots the party.
+	RUFFIAN_SPOTS_PARTY_METATILE   = 20,
+	// Unused: no metatile of the road's map holds it.
+	ROAD_UNUSED_METATILE           = 12,
+	// On the cliffs, metatiles (31, 54), (32, 54) and (31, 55), away from the crevice, where Kraden
+	// calls Jenna back.
 	KRADEN_POINTS_THE_WAY_METATILE = 21,
-	/* The cliffs' chest, metatile (10, 22). */
-	CLIFFS_CHEST_METATILE = 100,
-	/* On the way to the Psynergy Stone, metatiles (31, 26) to (33, 29), where
-	   the Punch Ant jumps out. */
-	PUNCH_ANT_METATILE = 22,
-	/* Unused: no metatile of the cave's map holds it. */
-	CAVE_UNUSED_METATILE = 23
+	// The cliffs' chest, metatile (10, 22).
+	CLIFFS_CHEST_METATILE          = 100,
+	// On the way to the Psynergy Stone, metatiles (31, 26) to (33, 29), where the Punch Ant jumps
+	// out.
+	PUNCH_ANT_METATILE             = 22,
+	// Unused: no metatile of the cave's map holds it.
+	CAVE_UNUSED_METATILE           = 23
 } SUHALLA_GATE_METATILE;
 
-void scSuhallaGateAfterPunchAntBattle(void);
-void scSuhallaGateFightPunchAnt(void);
+void                  scSuhallaGateAfterPunchAntBattle(void);
+void                  scSuhallaGateFightPunchAnt(void);
 
 extern SCENE_ENTRANCE SuhallaGateRoadEntrances[];
 extern SCENE_ENTRANCE SuhallaGateCliffsEntrances[];
 extern SCENE_ENTRANCE SuhallaGateCaveEntrances[];
-extern ACTOR_PLACE	  SuhallaGateCavePlacements[];
-extern ACTOR_PLACE	  SuhallaGateCliffsPlacements[];
-extern ACTOR_PLACE	  SuhallaGateRoadPlacements[];
-extern CUE			  SuhallaGateRoadCues[];
-extern CUE			  SuhallaGateCliffsCues[];
-extern CUE			  SuhallaGateCaveCues[];
+extern ACTOR_PLACE    SuhallaGateCavePlacements[];
+extern ACTOR_PLACE    SuhallaGateCliffsPlacements[];
+extern ACTOR_PLACE    SuhallaGateRoadPlacements[];
+extern CUE            SuhallaGateRoadCues[];
+extern CUE            SuhallaGateCliffsCues[];
+extern CUE            SuhallaGateCaveCues[];
 
-/* Unused: talking to the west Ruffian at the crevice would start a battle with
-   the Djinni Dew, but his own line, "Maybe I should have eaten a bigger
-   breakfast.", always answers first. */
-void scSuhallaGateFightDew(void)
+// Unused: talking to the west Ruffian at the crevice would start a battle with the Djinni Dew, but
+// his own line, "Maybe I should have eaten a bigger breakfast.", always answers first.
+void                  scSuhallaGateFightDew(void)
 {
 	fdRequestDjinnBattle(ACTOR_WEST_RUFFIAN, DJINNI_DEW);
 }
@@ -119,9 +118,9 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_SUHALLA_GATE_AMBUSH)
+	if (scene == SCENE_SUHALLA_GATE_AMBUSH)
 		return SuhallaGateCliffsEntrances;
-	if(scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
+	if (scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
 		return SuhallaGateCaveEntrances;
 	return SuhallaGateRoadEntrances;
 }
@@ -140,9 +139,9 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_SUHALLA_GATE_AMBUSH)
+	if (scene == SCENE_SUHALLA_GATE_AMBUSH)
 		return SuhallaGateCliffsPlacements;
-	if(scene == SCENE_SUHALLA_GATE_ROAD)
+	if (scene == SCENE_SUHALLA_GATE_ROAD)
 		return SuhallaGateRoadPlacements;
 	return SuhallaGateCavePlacements;
 }
@@ -151,34 +150,34 @@ const CUE *scGetCues(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
-	if(scene == SCENE_SUHALLA_GATE_AMBUSH)
+	if (scene == SCENE_SUHALLA_GATE_AMBUSH)
 		return SuhallaGateCliffsCues;
-	if(scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
+	if (scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
 		return SuhallaGateCaveCues;
 	return SuhallaGateRoadCues;
 }
 
-/* Back from his battle, the road's Ruffian lies beaten by it. */
+// Back from his battle, the road's Ruffian lies beaten by it.
 void scSuhallaGateSetUpRoad(void)
 {
-	if(MainRoutineStateWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
+	if (MainRoutineStateWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
 		fdScriptSetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN);
-	if(fdScriptGetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN)) {
+	if (fdScriptGetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN))
+	{
 		fdActorSetPos(ACTOR_ROAD_RUFFIAN, 456, 312);
-		fdActorFallOverWithAnimationById(
-			ACTOR_ROAD_RUFFIAN, FACING_SOUTH, ANIM_STILL);
-		fdActorSetMovementType(
-			fdActorGetById(ACTOR_ROAD_RUFFIAN), MOVEMENT_TYPE_SQUASH);
+		fdActorFallOverWithAnimationById(ACTOR_ROAD_RUFFIAN, FACING_SOUTH, ANIM_STILL);
+		fdActorSetMovementType(fdActorGetById(ACTOR_ROAD_RUFFIAN), MOVEMENT_TYPE_SQUASH);
 	}
 }
 
-/* Back from the ambush, its three Ruffians lie beaten before the crevice. */
+// Back from the ambush, its three Ruffians lie beaten before the crevice.
 void scSuhallaGateSetUpCliffs(void)
 {
 	fdMapGridCopyMetatileAttributes(108, 38, 1, 1, 102, 56);
-	if(MainRoutineStateWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
+	if (MainRoutineStateWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
 		fdScriptSetFlag(FLAG_SUHALLA_GATE_AMBUSH_BEATEN);
-	if(fdScriptGetFlag(FLAG_SUHALLA_GATE_AMBUSH_BEATEN)) {
+	if (fdScriptGetFlag(FLAG_SUHALLA_GATE_AMBUSH_BEATEN))
+	{
 		fdActorSetPos(ACTOR_WEST_RUFFIAN, 590, 920);
 		fdActorSetPos(ACTOR_MIDDLE_RUFFIAN, 624, 939);
 		fdActorSetPos(ACTOR_EAST_RUFFIAN, 632, 920);
@@ -188,9 +187,9 @@ void scSuhallaGateSetUpCliffs(void)
 		fdActorFallOverById(ACTOR_MIDDLE_RUFFIAN, FACING_EAST);
 		fdActorGetById(ACTOR_EAST_RUFFIAN)->facing = FACING_NORTH;
 		fdActorFallOverById(ACTOR_EAST_RUFFIAN, FACING_EAST);
-		fdActorGetById(ACTOR_WEST_RUFFIAN)->collisionFlags = ACTOR_SOLID;
+		fdActorGetById(ACTOR_WEST_RUFFIAN)->collisionFlags   = ACTOR_SOLID;
 		fdActorGetById(ACTOR_MIDDLE_RUFFIAN)->collisionFlags = ACTOR_SOLID;
-		fdActorGetById(ACTOR_EAST_RUFFIAN)->collisionFlags = ACTOR_SOLID;
+		fdActorGetById(ACTOR_EAST_RUFFIAN)->collisionFlags   = ACTOR_SOLID;
 	}
 	fdActorSetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);
 	fdActorSetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIMATION_GROWN);
@@ -199,50 +198,48 @@ void scSuhallaGateSetUpCliffs(void)
 	fdActorSetAnimation(ACTOR_FIRST_SPROUT + 4, SPROUT_ANIMATION_HALF_GROWN);
 }
 
-/* Back from the Punch Ant's battle, Kraden talks it over. */
+// Back from the Punch Ant's battle, Kraden talks it over.
 void scSuhallaGateSetUpCave(void)
 {
-	if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-		MainRoutineStateWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
+	if (fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0
+	    && MainRoutineStateWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
 		scSuhallaGateAfterPunchAntBattle();
 }
 
-/* Suhalla Gate's setup for each of its rooms: the road by the house, the cliffs
-   of the ambush, and the cave of the Psynergy Stone. */
+// Suhalla Gate's setup for each of its rooms: the road by the house, the cliffs of the ambush, and
+// the cave of the Psynergy Stone.
 Sint32 scInit(void)
 {
 	FIELD_STATE *state;
-	Sint16		 scene;
+	Sint16       scene;
 
-	state = RamHeapSlots->fieldState;
+	state             = RamHeapSlots->fieldState;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	scene = MainRoutineStateWork.next;
-	if(scene == SCENE_SUHALLA_GATE_ROAD)
+	scene             = MainRoutineStateWork.next;
+	if (scene == SCENE_SUHALLA_GATE_ROAD)
 		scSuhallaGateSetUpRoad();
-	else if(scene == SCENE_SUHALLA_GATE_AMBUSH)
+	else if (scene == SCENE_SUHALLA_GATE_AMBUSH)
 		scSuhallaGateSetUpCliffs();
-	else if(scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
+	else if (scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
 		scSuhallaGateSetUpCave();
 	return 0;
 }
 
-/* Unused: copies the cliffs' metatile as their set-up does, and sets
-   FLAG_SHIP_CAN_SAIL, which the Lemurian Ship's deck sets once the party can
-   sail it; no cue runs it. */
+// Unused: copies the cliffs' metatile as their set-up does, and sets FLAG_SHIP_CAN_SAIL, which the
+// Lemurian Ship's deck sets once the party can sail it; no cue runs it.
 UNUSED void scSuhallaGateOpenCliffsMetatile(void)
 {
 	fdMapGridCopyMetatileAttributes(108, 38, 1, 1, 102, 56);
 	fdScriptSetFlag(FLAG_SHIP_CAN_SAIL);
 }
 
-/* Walking into the door in the rock at the road's west end, metatile (8, 18),
-   the door opens and the screen fades out with the leader still standing before
-   it; the party comes out on the cliffs. The code walks `ACTOR_ISAAC` in
-   through the doorway, as The Broken Seal's doors walk their leader, but here
-   Jenna leads and Isaac is not on stage, so nobody is seen to go in. */
+// Walking into the door in the rock at the road's west end, metatile (8, 18), the door opens and
+// the screen fades out with the leader still standing before it; the party comes out on the cliffs.
+// The code walks `ACTOR_ISAAC` in through the doorway, as The Broken Seal's doors walk their
+// leader, but here Jenna leads and Isaac is not on stage, so nobody is seen to go in.
 void scSuhallaGateEnterRockDoor(void)
 {
-	Sint32 exit = FieldStateWork->stepCue;
+	Sint32 exit                              = FieldStateWork->stepCue;
 
 	fdActorGetById(ACTOR_ISAAC)->motionFlags = 0;
 	fdScriptPlaySound(SE_DOOR_OPEN);
@@ -255,11 +252,11 @@ void scSuhallaGateEnterRockDoor(void)
 	syImportScriptSetExitRequest(exit);
 }
 
-/* Walking out of the cave's far end, metatile (41, 39), Jenna and Kraden leave
-   for Idejima, and Felix becomes the leader again. */
+// Walking out of the cave's far end, metatile (41, 39), Jenna and Kraden leave for Idejima, and
+// Felix becomes the leader again.
 void scSuhallaGateLeaveForIdejima(void)
 {
-	Sint32 exit = FieldStateWork->stepCue;
+	Sint32 exit                        = FieldStateWork->stepCue;
 
 	MainRoutineStateWork.leaderActorId = ACTOR_FELIX;
 	fdScriptPlaySound(SE_MAP_EXIT);
@@ -271,9 +268,9 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-/* Walking west along the road, metatiles (29, 21) to (30, 22), Jenna and Kraden
-   are spotted by a Ruffian: "Waahhh! It's them!" He looks for Alex, decides he
-   can handle "some girl and her grandpa", and fights them. */
+// Walking west along the road, metatiles (29, 21) to (30, 22), Jenna and Kraden are spotted by a
+// Ruffian: "Waahhh! It's them!" He looks for Alex, decides he can handle "some girl and her
+// grandpa", and fights them.
 void scSuhallaGateRuffianSpotsParty(void)
 {
 	fdScriptStart();
@@ -283,12 +280,11 @@ void scSuhallaGateRuffianSpotsParty(void)
 	fdCameraMoveTo(456, CAMERA_KEEP, 280, 1);
 	fdCameraWaitForArrival();
 	fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-	fdActorFaceDirection(
-		MainRoutineStateWork.leaderActorId, FACING_NORTHWEST, 0);
+	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTHWEST, 0);
 	fdScriptWait(10);
 	fdActorJump(ACTOR_ROAD_RUFFIAN, 6, 20);
 	fdScriptWait(20);
-	/* "Waahhh! It's them!" */
+	// "Waahhh! It's them!"
 	fdScriptShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
 	{
 		Sint32 emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
@@ -296,30 +292,28 @@ void scSuhallaGateRuffianSpotsParty(void)
 
 		scFieldActorShowEmote(ACTOR_ROAD_RUFFIAN, emote, ticks);
 	}
-	/* "Whoa there... Where'd the blue-haired guy go?" */
+	// "Whoa there... Where'd the blue-haired guy go?"
 	fdScriptShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_ROAD_RUFFIAN, ANIM_NOD);
 	fdScriptWait(30);
-	/* "Who cares! I can handle some girl and her grandpa!" */
+	// "Who cares! I can handle some girl and her grandpa!"
 	fdScriptShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
 	fdActorWalkToAndWait(ACTOR_ROAD_RUFFIAN, 456, 312);
-	fdScriptSetAfterBattleDestination(
-		SCENE_SUHALLA_GATE_ROAD, ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
+	fdScriptSetAfterBattleDestination(SCENE_SUHALLA_GATE_ROAD, ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
 	fdScriptSetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-		VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
+	                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 1);
 	fdScriptEnd();
 }
 
-/* Trying to enter the crevice below the cliffs' vines, metatile (38, 57), Jenna
-   steps up to it and backs away as three Ruffians step out of it one by one:
-   "Ha! That was a good idea, waiting here for 'em!" Then they fight her and
-   Kraden. */
+// Trying to enter the crevice below the cliffs' vines, metatile (38, 57), Jenna steps up to it and
+// backs away as three Ruffians step out of it one by one: "Ha! That was a good idea, waiting here
+// for 'em!" Then they fight her and Kraden.
 void scSuhallaGateRuffiansAmbushParty(void)
 {
 	MAIN_ROUTINE_STATE *state;
-	Sint32			   *owner;
+	Sint32             *owner;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -343,49 +337,47 @@ void scSuhallaGateRuffiansAmbushParty(void)
 	fdActorWalkToAndWait(ACTOR_MIDDLE_RUFFIAN, 616, 920);
 	fdActorRunRepeatedMotion(ACTOR_WEST_RUFFIAN, 2);
 	syFieldScriptWait(20);
-	/* "Ha! That was a good idea, waiting here for 'em!" */
+	// "Ha! That was a good idea, waiting here for 'em!"
 	syFieldScriptShowMessageThenWait(ACTOR_WEST_RUFFIAN, 0, 10);
-	/* "You two aren't going anywhere!" */
+	// "You two aren't going anywhere!"
 	syFieldScriptShowMessageThenWait(ACTOR_MIDDLE_RUFFIAN, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_EAST_RUFFIAN, ANIM_NOD);
 	syFieldScriptWait(30);
-	/* "Except with us, back to Master Iodem!" */
+	// "Except with us, back to Master Iodem!"
 	syFieldScriptShowMessageThenWait(ACTOR_EAST_RUFFIAN, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_WEST_RUFFIAN, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_MIDDLE_RUFFIAN, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_EAST_RUFFIAN, ANIM_NOD);
-	syFieldScriptSetAfterBattleDestination(
-		SCENE_SUHALLA_GATE_AMBUSH, ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
+	syFieldScriptSetAfterBattleDestination(SCENE_SUHALLA_GATE_AMBUSH,
+	                                       ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
 	fdScriptSetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-		VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
+	                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
 	state->battleType = BATTLE_TYPE_NO_ESCAPE;
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 2);
 	fdScriptEnd();
 }
 
-/* The Punch Ant leaps at Jenna and its battle begins. */
+// The Punch Ant leaps at Jenna and its battle begins.
 void scSuhallaGateFightPunchAnt(void)
 {
 	ACTOR *owner;
 
 	fdActorJump(ACTOR_PUNCH_ANT, 4, 0);
 	owner = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(owner != NULL)
-		fdActorSetDestination(ACTOR_PUNCH_ANT, owner->x.part[0].integer,
-			owner->z.part[0].integer);
+	if (owner != NULL)
+		fdActorSetDestination(ACTOR_PUNCH_ANT, owner->x.part[0].integer, owner->z.part[0].integer);
 	fdScriptWait(20);
-	fdScriptSetAfterBattleDestination(
-		SCENE_SUHALLA_GATE_PSYNERGY_STONE, ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
+	fdScriptSetAfterBattleDestination(SCENE_SUHALLA_GATE_PSYNERGY_STONE,
+	                                  ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
 	fdScriptSetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-		VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
+	                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 3);
 	fdScriptEnd();
 }
 
-/* On the way to the Psynergy Stone, metatiles (31, 26) to (33, 29), a Punch Ant
-   jumps out from the south-west; Jenna turns to it with a start, and it hops up
-   to her and attacks. */
+// On the way to the Psynergy Stone, metatiles (31, 26) to (33, 29), a Punch Ant jumps out from the
+// south-west; Jenna turns to it with a start, and it hops up to her and attacks.
 void scSuhallaGatePunchAntJumpsOut(void)
 {
 	fdScriptStart();
@@ -393,8 +385,8 @@ void scSuhallaGatePunchAntJumpsOut(void)
 	fdActorSetPos(ACTOR_PUNCH_ANT, 472, 480);
 	fdScriptWait(16);
 	fdActorFaceActor(MainRoutineStateWork.leaderActorId, ACTOR_PUNCH_ANT, 0);
-	scFieldActorShowEmote(MainRoutineStateWork.leaderActorId,
-		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+	scFieldActorShowEmote(
+		MainRoutineStateWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdCameraFollowActor(ACTOR_PUNCH_ANT, 1);
 	fdCameraWaitForArrival();
 	fdActorJump(ACTOR_PUNCH_ANT, 4, 0);
@@ -411,9 +403,8 @@ void scSuhallaGatePunchAntJumpsOut(void)
 	scSuhallaGateFightPunchAnt();
 }
 
-/* Unused: the Punch Ant would jump out as in scSuhallaGatePunchAntJumpsOut, but
-   with Jenna first stepping aside and the ant hopping further east after her;
-   no spot in the cave sets it off. */
+// Unused: the Punch Ant would jump out as in scSuhallaGatePunchAntJumpsOut, but with Jenna first
+// stepping aside and the ant hopping further east after her; no spot in the cave sets it off.
 void scSuhallaGatePunchAntJumpsOutAsLeaderStepsAside(void)
 {
 	Sint32 emote, ticks;
@@ -445,8 +436,8 @@ void scSuhallaGatePunchAntJumpsOutAsLeaderStepsAside(void)
 	scSuhallaGateFightPunchAnt();
 }
 
-/* Back from the Punch Ant's battle, Kraden finds the fight invigorating: "My!
-   That was invigorating!" Then he falls in behind Jenna again. */
+// Back from the Punch Ant's battle, Kraden finds the fight invigorating: "My! That was
+// invigorating!" Then he falls in behind Jenna again.
 void scSuhallaGateAfterPunchAntBattle(void)
 {
 	ACTOR *leader;
@@ -458,32 +449,31 @@ void scSuhallaGateAfterPunchAntBattle(void)
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 528, 432);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	/* "My! That was invigorating! He wasn't too strong..." */
+	// "My! That was invigorating! He wasn't too strong..."
 	fdScriptShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
 	fdActorSetAnimationAndWait(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_CAVE_KRADEN, 2);
 	fdScriptWait(20);
-	/* "I never knew fighting could be so fun! Ah, but we'd better get on to the
-	   peninsula..." */
+	// "I never knew fighting could be so fun! Ah, but we'd better get on to the peninsula..."
 	fdScriptShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
 	fdActorSetAnimationAndWait(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	fdScriptWait(30);
 	fdScriptSetFlag(FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN);
 	fdActorSetAnimation(ACTOR_CAVE_KRADEN, ANIM_WALK);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(leader)
-		fdActorSetDestination(ACTOR_CAVE_KRADEN, leader->x.part[0].integer,
-			leader->z.part[0].integer);
+	if (leader)
+		fdActorSetDestination(
+			ACTOR_CAVE_KRADEN, leader->x.part[0].integer, leader->z.part[0].integer);
 	fdActorWaitForMoveById(ACTOR_CAVE_KRADEN);
 	fdActorSetPos(ACTOR_CAVE_KRADEN, 0, 0);
 	fdScriptWait(10);
 	fdScriptEnd();
 }
 
-/* Walking onto metatiles (31, 54), (32, 54) or (31, 55) on the cliffs, away
-   from the crevice, Kraden jumps out of the party beside Jenna: "Not that way,
-   Jenna! The meeting spot is down this way." She steps back east. */
+// Walking onto metatiles (31, 54), (32, 54) or (31, 55) on the cliffs, away from the crevice,
+// Kraden jumps out of the party beside Jenna: "Not that way, Jenna! The meeting spot is down this
+// way." She steps back east.
 void scSuhallaGatePointToMeetingSpot(void)
 {
 	ACTOR *leader;
@@ -493,15 +483,14 @@ void scSuhallaGatePointToMeetingSpot(void)
 	fdScriptSetMessageId((Sint32)&MsgNotThatWay);
 	fdActorLaunchFromLeader(ACTOR_CLIFFS_KRADEN, -16, 0, FACING_EAST);
 	fdActorWaitForMoveById(ACTOR_CLIFFS_KRADEN);
-	/* "Not that way, Jenna! The meeting spot is down this way." "We must climb
-	   down here and go into that cave." */
-	fdScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_CLIFFS_KRADEN, 0, 10);
+	// "Not that way, Jenna! The meeting spot is down this way." "We must climb down here and go
+	// into that cave."
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_CLIFFS_KRADEN, 0, 10);
 	fdActorSetAnimation(ACTOR_CLIFFS_KRADEN, ANIM_WALK);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(leader)
-		fdActorSetDestination(ACTOR_CLIFFS_KRADEN, leader->x.part[0].integer,
-			leader->z.part[0].integer);
+	if (leader)
+		fdActorSetDestination(
+			ACTOR_CLIFFS_KRADEN, leader->x.part[0].integer, leader->z.part[0].integer);
 	fdActorWaitForMoveById(ACTOR_CLIFFS_KRADEN);
 	fdActorSetPos(ACTOR_CLIFFS_KRADEN, 0, 0);
 	fdScriptWait(10);
@@ -509,9 +498,8 @@ void scSuhallaGatePointToMeetingSpot(void)
 	fdScriptEnd();
 }
 
-/* clang-format off */
-/* Unused: a script that squashes and stretches its actor over and over; */
-/* nothing runs it. */
+// clang-format off
+// Unused: a script that squashes and stretches its actor over and over; nothing runs it.
 Sint32 SuhallaGateSquashScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4),
@@ -642,21 +630,21 @@ ACTOR_PLACE SuhallaGateRoadPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 264, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
-/* clang-format on */
+// clang-format on
 
 CUE SuhallaGateRoadCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_A},
 	{CUE_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_B},
-	{CUE_EXIT, 5, CONDITION_ALWAYS,
-		SUHALLA_GATE_ROAD_TO_VENUS_LIGHTHOUSE_ENTRANCE_EAST},
-	{STEP_CUE_WALKING_INTO(FACING_NORTH), ROAD_DOOR_METATILE, CONDITION_ALWAYS,
-		SCRIPT_REF(scSuhallaGateEnterRockDoor)},
-	{CUE_STEP, RUFFIAN_SPOTS_PARTY_METATILE, FLAG_SUHALLA_GATE_RUFFIAN_BEATEN,
-		SCRIPT_REF(scSuhallaGateRuffianSpotsParty)},
-	/* Unused: no metatile of the road's map runs it. */
-	{CUE_STEP, ROAD_UNUSED_METATILE, CONDITION_ALWAYS,
-		SCRIPT_REF(scSuhallaGatePointToMeetingSpot)},
+	{CUE_EXIT, 5, CONDITION_ALWAYS, SUHALLA_GATE_ROAD_TO_VENUS_LIGHTHOUSE_ENTRANCE_EAST},
+	{STEP_CUE_WALKING_INTO(FACING_NORTH),
+     ROAD_DOOR_METATILE, CONDITION_ALWAYS,
+     SCRIPT_REF(scSuhallaGateEnterRockDoor)},
+	{CUE_STEP,
+     RUFFIAN_SPOTS_PARTY_METATILE, FLAG_SUHALLA_GATE_RUFFIAN_BEATEN,
+     SCRIPT_REF(scSuhallaGateRuffianSpotsParty)},
+	// Unused: no metatile of the road's map runs it.
+	{CUE_STEP, ROAD_UNUSED_METATILE, CONDITION_ALWAYS, SCRIPT_REF(scSuhallaGatePointToMeetingSpot)},
 	{CUE_TALK, ACTOR_ROAD_RUFFIAN, CONDITION_ALWAYS, MSGNO(MsgOoooogMaybeI)},
 	{CUE_TABLE_END},
 };
@@ -666,33 +654,34 @@ CUE SuhallaGateCliffsCues[] = {
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
 	{CUE_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_ROAD_B},
-	/* The way into the cave, until the ambush is beaten. */
-	{CUE_STEP, 5, FLAG_SUHALLA_GATE_AMBUSH_BEATEN,
-		SCRIPT_REF(scSuhallaGateRuffiansAmbushParty)},
-	{CUE_EXIT, 5, CONDITION_ALWAYS,
-		SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_PSYNERGY_STONE},
-	{CUE_STEP, KRADEN_POINTS_THE_WAY_METATILE, CONDITION_ALWAYS,
-		SCRIPT_REF(scSuhallaGatePointToMeetingSpot)},
+	// The way into the cave, until the ambush is beaten.
+	{CUE_STEP, 5, FLAG_SUHALLA_GATE_AMBUSH_BEATEN, SCRIPT_REF(scSuhallaGateRuffiansAmbushParty)},
+	{CUE_EXIT, 5, CONDITION_ALWAYS, SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_PSYNERGY_STONE},
+	{CUE_STEP,
+     KRADEN_POINTS_THE_WAY_METATILE, CONDITION_ALWAYS,
+     SCRIPT_REF(scSuhallaGatePointToMeetingSpot)},
 	{CUE_TALK, ACTOR_WEST_RUFFIAN, CONDITION_ALWAYS, MSGNO(MsgMaybeIShould)},
 	{CUE_TALK, ACTOR_MIDDLE_RUFFIAN, CONDITION_ALWAYS, MSGNO(MsgAllRightSo)},
 	{CUE_TALK, ACTOR_EAST_RUFFIAN, CONDITION_ALWAYS, MSGNO(MsgOhManThere)},
-	{CUE_TALK, ACTOR_WEST_RUFFIAN, CONDITION_ALWAYS,
-		SCRIPT_REF(scSuhallaGateFightDew)},
-	{EXAMINE_CUE(EXAMINE_CHEST), CLIFFS_CHEST_METATILE, FLAG_SUHALLA_GATE_MINT,
-		FIND_ITEM(ITEM_MINT)},
+	{CUE_TALK, ACTOR_WEST_RUFFIAN, CONDITION_ALWAYS, SCRIPT_REF(scSuhallaGateFightDew)},
+	{EXAMINE_CUE(EXAMINE_CHEST),
+     CLIFFS_CHEST_METATILE, FLAG_SUHALLA_GATE_MINT,
+     FIND_ITEM(ITEM_MINT)},
 	{CUE_TABLE_END},
 };
 
 CUE SuhallaGateCaveCues[] = {
-	{CUE_EXIT, 1, CONDITION_ALWAYS,
-		SUHALLA_GATE_PSYNERGY_STONE_TO_SUHALLA_GATE_AMBUSH},
+	{CUE_EXIT, 1, CONDITION_ALWAYS, SUHALLA_GATE_PSYNERGY_STONE_TO_SUHALLA_GATE_AMBUSH},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
-	{CUE_STEP, SUHALLA_GATE_PSYNERGY_STONE_TO_IDEJIMA, CONDITION_ALWAYS,
-		SCRIPT_REF(scSuhallaGateLeaveForIdejima)},
-	{CUE_STEP, PUNCH_ANT_METATILE, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
-		SCRIPT_REF(scSuhallaGatePunchAntJumpsOut)},
-	{CUE_STEP, CAVE_UNUSED_METATILE, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
-		SCRIPT_REF(scSuhallaGatePunchAntJumpsOutAsLeaderStepsAside)},
+	{CUE_STEP,
+     SUHALLA_GATE_PSYNERGY_STONE_TO_IDEJIMA, CONDITION_ALWAYS,
+     SCRIPT_REF(scSuhallaGateLeaveForIdejima)},
+	{CUE_STEP,
+     PUNCH_ANT_METATILE, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
+     SCRIPT_REF(scSuhallaGatePunchAntJumpsOut)},
+	{CUE_STEP,
+     CAVE_UNUSED_METATILE, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
+     SCRIPT_REF(scSuhallaGatePunchAntJumpsOutAsLeaderStepsAside)},
 	{CUE_TABLE_END},
 };

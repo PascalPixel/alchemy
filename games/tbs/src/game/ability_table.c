@@ -1,11 +1,10 @@
-/* The 519 abilities, by ability id: Psynergy, the party's and enemies' moves,
-   item uses, Djinn and summons. Each name is the English release's
-   (MsgAbilityName plus the ability's number). */
+// The 519 abilities, by ability id: Psynergy, the party's and enemies' moves, item uses, Djinn and
+// summons. Each name is the English release's (MsgAbilityName plus the ability's number).
 
 #include "ability_ids.h"
 #include "game/game.h"
 
-/* clang-format off */
+// clang-format off
 const ABILITY_DEFINITION AbilityDefinitions[] = {
 	[ABILITY_NONE] = {
 		.targetMode = ABILITY_TARGET_FOES,
@@ -1776,8 +1775,7 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.range = 1,
 		.power = 60,
 	},
-	/* Each element's Djinn after its seventh are spares, and so are their */
-	/* abilities: this row, named "=" in the text. */
+	// Each element's Djinn after its seventh are spares, and so are their abilities: this row, named "=" in the text.
 	[ABILITY_BANE + 1 ... ABILITY_FIZZ - 1] = {
 		.targetMode = ABILITY_TARGET_FOES,
 		.flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
@@ -2796,4 +2794,4 @@ const ABILITY_DEFINITION AbilityDefinitions[] = {
 		.power = 30,
 	},
 };
-/* clang-format on */
+// clang-format on

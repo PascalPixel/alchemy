@@ -1,17 +1,16 @@
-/* The battle background of each scene (fdBattleBackgroundSelectForMap). */
+// The battle background of each scene (fdBattleBackgroundSelectForMap).
 
 #include "battle/battle.h"
 #include "resource_ids.h"
 #include "scene_ids.h"
 
-/* A battle background's word: bit 31 set, its resource id below. The id is the
-   address of an absolute symbol, which C adds to but cannot OR with. */
+// A battle background's word: bit 31 set, its resource id below. The id is the address of an
+// absolute symbol, which C adds to but cannot OR with.
 #define BATTLE_BACKGROUND(resource) ((resource) + (Sint32)0x80000000)
 
-/* Each battle background followed by the scenes that use it, ended by 0; a
-   scene takes the background listed last before it, and a scene not listed
-   takes the last one. */
-/* clang-format off */
+// Each battle background followed by the scenes that use it, ended by 0; a scene takes the
+// background listed last before it, and a scene not listed takes the last one.
+// clang-format off
 Sint32 SceneBattleBackgroundRules[] = {
 	BATTLE_BACKGROUND(RESOURCE_VALE_STORM_BACKDROP),
 		SCENE_VALE_PROLOGUE,
@@ -148,4 +147,4 @@ Sint32 SceneBattleBackgroundRules[] = {
 	BATTLE_BACKGROUND(RESOURCE_GOMA_CAVE_BACKDROP),
 	0,
 };
-/* clang-format on */
+// clang-format on

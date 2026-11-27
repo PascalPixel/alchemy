@@ -1,18 +1,17 @@
-/* The 165 enemies, by enemy id less ENEMY_ID_FIRST. Each name is the English
-   release's; the name field itself is blank, and gmBattleUnitSet takes the name
-   from the messages. */
+// The 165 enemies, by enemy id less ENEMY_ID_FIRST. Each name is the English release's; the name
+// field itself is blank, and gmBattleUnitSet takes the name from the messages.
 
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "game/game.h"
 
-/* The name field of an enemy's row, left blank: fourteen spaces. */
+// The name field of an enemy's row, left blank: fourteen spaces.
 #define BLANK_NAME "              "
 
-/* clang-format off */
-/* The enemies, by enemy id less ENEMY_ID_FIRST. */
+// clang-format off
+// The enemies, by enemy id less ENEMY_ID_FIRST.
 const ENEMY_DEFINITION EnemyDefinitions[] = {
-	/* ??? */
+	// ???
 	{
 		.name = BLANK_NAME,
 		.hp = 18,
@@ -24,7 +23,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 1,
 		.experience = 1,
 	},
-	/* Vermin */
+	// Vermin
 	{
 		.name = BLANK_NAME,
 		.level = 1,
@@ -42,7 +41,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 2,
 	},
-	/* Vermin */
+	// Vermin
 	{
 		.name = BLANK_NAME,
 		.level = 3,
@@ -60,7 +59,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 4,
 	},
-	/* Mad Vermin */
+	// Mad Vermin
 	{
 		.name = BLANK_NAME,
 		.level = 15,
@@ -78,7 +77,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 55,
 	},
-	/* Bat */
+	// Bat
 	{
 		.name = BLANK_NAME,
 		.level = 1,
@@ -96,7 +95,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 1,
 	},
-	/* Bat */
+	// Bat
 	{
 		.name = BLANK_NAME,
 		.level = 3,
@@ -114,7 +113,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 2,
 	},
-	/* Rabid Bat */
+	// Rabid Bat
 	{
 		.name = BLANK_NAME,
 		.level = 17,
@@ -132,7 +131,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 61,
 	},
-	/* Wild Mushroom */
+	// Wild Mushroom
 	{
 		.name = BLANK_NAME,
 		.level = 1,
@@ -150,7 +149,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 1,
 	},
-	/* Wild Mushroom */
+	// Wild Mushroom
 	{
 		.name = BLANK_NAME,
 		.level = 3,
@@ -168,7 +167,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 3,
 	},
-	/* Death Cap */
+	// Death Cap
 	{
 		.name = BLANK_NAME,
 		.level = 15,
@@ -186,7 +185,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 48,
 	},
-	/* Slime */
+	// Slime
 	{
 		.name = BLANK_NAME,
 		.level = 2,
@@ -204,7 +203,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 2,
 	},
-	/* Slime */
+	// Slime
 	{
 		.name = BLANK_NAME,
 		.level = 3,
@@ -222,7 +221,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 4,
 	},
-	/* Ooze */
+	// Ooze
 	{
 		.name = BLANK_NAME,
 		.level = 9,
@@ -240,7 +239,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 26,
 	},
-	/* Slime Beast */
+	// Slime Beast
 	{
 		.name = BLANK_NAME,
 		.level = 13,
@@ -258,7 +257,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 51,
 	},
-	/* Ghost */
+	// Ghost
 	{
 		.name = BLANK_NAME,
 		.level = 5,
@@ -281,7 +280,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 9,
 	},
-	/* Ghost Mage */
+	// Ghost Mage
 	{
 		.name = BLANK_NAME,
 		.level = 15,
@@ -301,7 +300,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 80,
 	},
-	/* Horned Ghost */
+	// Horned Ghost
 	{
 		.name = BLANK_NAME,
 		.level = 23,
@@ -321,7 +320,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 199,
 	},
-	/* Lich */
+	// Lich
 	{
 		.name = BLANK_NAME,
 		.level = 23,
@@ -342,7 +341,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 263,
 	},
-	/* Zombie */
+	// Zombie
 	{
 		.name = BLANK_NAME,
 		.level = 4,
@@ -360,7 +359,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 7,
 	},
-	/* Undead */
+	// Undead
 	{
 		.name = BLANK_NAME,
 		.level = 15,
@@ -378,7 +377,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 74,
 	},
-	/* Wight */
+	// Wight
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -396,7 +395,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 92,
 	},
-	/* Bandit */
+	// Bandit
 	{
 		.name = BLANK_NAME,
 		.level = 7,
@@ -418,7 +417,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 36,
 	},
-	/* Thief */
+	// Thief
 	{
 		.name = BLANK_NAME,
 		.level = 6,
@@ -438,7 +437,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 32,
 		.experience = 15,
 	},
-	/* Brigand */
+	// Brigand
 	{
 		.name = BLANK_NAME,
 		.level = 21,
@@ -459,7 +458,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 162,
 	},
-	/* Skeleton */
+	// Skeleton
 	{
 		.name = BLANK_NAME,
 		.level = 5,
@@ -477,7 +476,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 10,
 	},
-	/* Bone Fighter */
+	// Bone Fighter
 	{
 		.name = BLANK_NAME,
 		.level = 11,
@@ -495,7 +494,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 51,
 	},
-	/* Skull Warrior */
+	// Skull Warrior
 	{
 		.name = BLANK_NAME,
 		.level = 26,
@@ -515,7 +514,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 301,
 	},
-	/* Will Head */
+	// Will Head
 	{
 		.name = BLANK_NAME,
 		.level = 5,
@@ -533,7 +532,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 9,
 	},
-	/* Death Head */
+	// Death Head
 	{
 		.name = BLANK_NAME,
 		.level = 12,
@@ -553,7 +552,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 55,
 	},
-	/* Willowisp */
+	// Willowisp
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -573,7 +572,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 227,
 	},
-	/* Rat */
+	// Rat
 	{
 		.name = BLANK_NAME,
 		.level = 6,
@@ -591,7 +590,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 14,
 	},
-	/* Armored Rat */
+	// Armored Rat
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -609,7 +608,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 77,
 	},
-	/* Plated Rat */
+	// Plated Rat
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -627,7 +626,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 208,
 	},
-	/* Rat Soldier */
+	// Rat Soldier
 	{
 		.name = BLANK_NAME,
 		.level = 6,
@@ -645,7 +644,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 17,
 	},
-	/* Rat Fighter */
+	// Rat Fighter
 	{
 		.name = BLANK_NAME,
 		.level = 13,
@@ -666,7 +665,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 63,
 	},
-	/* Rat Warrior */
+	// Rat Warrior
 	{
 		.name = BLANK_NAME,
 		.level = 20,
@@ -687,7 +686,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 100,
 	},
-	/* Drone Bee */
+	// Drone Bee
 	{
 		.name = BLANK_NAME,
 		.level = 7,
@@ -705,7 +704,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 19,
 	},
-	/* Fighter Bee */
+	// Fighter Bee
 	{
 		.name = BLANK_NAME,
 		.level = 14,
@@ -723,7 +722,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 67,
 	},
-	/* Warrior Bee */
+	// Warrior Bee
 	{
 		.name = BLANK_NAME,
 		.level = 20,
@@ -741,7 +740,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 65,
 	},
-	/* Troll */
+	// Troll
 	{
 		.name = BLANK_NAME,
 		.level = 7,
@@ -760,7 +759,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 30,
 	},
-	/* Cave Troll */
+	// Cave Troll
 	{
 		.name = BLANK_NAME,
 		.level = 16,
@@ -779,7 +778,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 106,
 	},
-	/* Brutal Troll */
+	// Brutal Troll
 	{
 		.name = BLANK_NAME,
 		.level = 21,
@@ -798,7 +797,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 150,
 	},
-	/* Spider */
+	// Spider
 	{
 		.name = BLANK_NAME,
 		.level = 8,
@@ -816,7 +815,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 25,
 	},
-	/* Tarantula */
+	// Tarantula
 	{
 		.name = BLANK_NAME,
 		.level = 13,
@@ -834,7 +833,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 58,
 	},
-	/* Recluse */
+	// Recluse
 	{
 		.name = BLANK_NAME,
 		.level = 27,
@@ -852,7 +851,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 7,
 		.experience = 243,
 	},
-	/* Gnome */
+	// Gnome
 	{
 		.name = BLANK_NAME,
 		.level = 8,
@@ -872,7 +871,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 29,
 	},
-	/* Gnome Mage */
+	// Gnome Mage
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -892,7 +891,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 86,
 	},
-	/* Gnome Wizard */
+	// Gnome Wizard
 	{
 		.name = BLANK_NAME,
 		.level = 24,
@@ -912,7 +911,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 219,
 	},
-	/* Ghoul */
+	// Ghoul
 	{
 		.name = BLANK_NAME,
 		.level = 9,
@@ -930,7 +929,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 34,
 	},
-	/* Fiendish Ghoul */
+	// Fiendish Ghoul
 	{
 		.name = BLANK_NAME,
 		.level = 17,
@@ -948,7 +947,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 87,
 	},
-	/* Cannibal Ghoul */
+	// Cannibal Ghoul
 	{
 		.name = BLANK_NAME,
 		.level = 23,
@@ -966,7 +965,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 194,
 	},
-	/* Mauler */
+	// Mauler
 	{
 		.name = BLANK_NAME,
 		.level = 9,
@@ -984,7 +983,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 37,
 	},
-	/* Ravager */
+	// Ravager
 	{
 		.name = BLANK_NAME,
 		.level = 15,
@@ -1002,7 +1001,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 90,
 	},
-	/* Grisly */
+	// Grisly
 	{
 		.name = BLANK_NAME,
 		.level = 23,
@@ -1020,7 +1019,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 243,
 	},
-	/* Cuttle */
+	// Cuttle
 	{
 		.name = BLANK_NAME,
 		.level = 10,
@@ -1038,7 +1037,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 27,
 	},
-	/* Calamar */
+	// Calamar
 	{
 		.name = BLANK_NAME,
 		.level = 13,
@@ -1056,7 +1055,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 59,
 	},
-	/* Man o' War */
+	// Man o' War
 	{
 		.name = BLANK_NAME,
 		.level = 17,
@@ -1074,7 +1073,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 55,
 	},
-	/* Harpy */
+	// Harpy
 	{
 		.name = BLANK_NAME,
 		.level = 10,
@@ -1092,7 +1091,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 38,
 	},
-	/* Virago */
+	// Virago
 	{
 		.name = BLANK_NAME,
 		.level = 17,
@@ -1110,7 +1109,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 87,
 	},
-	/* Harridan */
+	// Harridan
 	{
 		.name = BLANK_NAME,
 		.level = 22,
@@ -1130,7 +1129,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 150,
 	},
-	/* Siren */
+	// Siren
 	{
 		.name = BLANK_NAME,
 		.level = 10,
@@ -1150,7 +1149,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 45,
 	},
-	/* Succubus */
+	// Succubus
 	{
 		.name = BLANK_NAME,
 		.level = 17,
@@ -1170,7 +1169,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 101,
 	},
-	/* Nightmare */
+	// Nightmare
 	{
 		.name = BLANK_NAME,
 		.level = 24,
@@ -1190,7 +1189,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 7,
 		.experience = 241,
 	},
-	/* Mole */
+	// Mole
 	{
 		.name = BLANK_NAME,
 		.level = 11,
@@ -1208,7 +1207,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 39,
 	},
-	/* Mad Mole */
+	// Mad Mole
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -1226,7 +1225,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 71,
 	},
-	/* Mole Mage */
+	// Mole Mage
 	{
 		.name = BLANK_NAME,
 		.level = 24,
@@ -1245,7 +1244,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 191,
 	},
-	/* Dirge */
+	// Dirge
 	{
 		.name = BLANK_NAME,
 		.level = 11,
@@ -1263,7 +1262,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 47,
 	},
-	/* Foul Dirge */
+	// Foul Dirge
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -1281,7 +1280,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 82,
 	},
-	/* Vile Dirge */
+	// Vile Dirge
 	{
 		.name = BLANK_NAME,
 		.level = 21,
@@ -1299,7 +1298,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 75,
 	},
-	/* Ape */
+	// Ape
 	{
 		.name = BLANK_NAME,
 		.level = 15,
@@ -1317,7 +1316,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 3,
 		.experience = 96,
 	},
-	/* Killer Ape */
+	// Killer Ape
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -1338,7 +1337,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 460,
 	},
-	/* Dirty Ape */
+	// Dirty Ape
 	{
 		.name = BLANK_NAME,
 		.level = 20,
@@ -1356,7 +1355,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 114,
 	},
-	/* Grub */
+	// Grub
 	{
 		.name = BLANK_NAME,
 		.level = 14,
@@ -1374,7 +1373,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 62,
 	},
-	/* Worm */
+	// Worm
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -1392,7 +1391,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 60,
 	},
-	/* Acid Maggot */
+	// Acid Maggot
 	{
 		.name = BLANK_NAME,
 		.level = 22,
@@ -1410,7 +1409,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 86,
 	},
-	/* Orc */
+	// Orc
 	{
 		.name = BLANK_NAME,
 		.level = 14,
@@ -1428,7 +1427,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 68,
 	},
-	/* Orc Captain */
+	// Orc Captain
 	{
 		.name = BLANK_NAME,
 		.level = 21,
@@ -1450,7 +1449,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 125,
 	},
-	/* Orc Lord */
+	// Orc Lord
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -1473,7 +1472,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 8,
 		.experience = 260,
 	},
-	/* Salamander */
+	// Salamander
 	{
 		.name = BLANK_NAME,
 		.level = 14,
@@ -1493,7 +1492,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 84,
 	},
-	/* Earth Lizard */
+	// Earth Lizard
 	{
 		.name = BLANK_NAME,
 		.level = 28,
@@ -1514,7 +1513,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 545,
 	},
-	/* Thunder Lizard */
+	// Thunder Lizard
 	{
 		.name = BLANK_NAME,
 		.level = 28,
@@ -1532,7 +1531,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 8,
 		.experience = 422,
 	},
-	/* Manticore */
+	// Manticore
 	{
 		.name = BLANK_NAME,
 		.level = 20,
@@ -1553,7 +1552,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 590,
 	},
-	/* Magicore */
+	// Magicore
 	{
 		.name = BLANK_NAME,
 		.level = 22,
@@ -1573,7 +1572,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 8,
 		.experience = 169,
 	},
-	/* Manticore King */
+	// Manticore King
 	{
 		.name = BLANK_NAME,
 		.level = 26,
@@ -1593,7 +1592,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 7,
 		.experience = 342,
 	},
-	/* Kobold */
+	// Kobold
 	{
 		.name = BLANK_NAME,
 		.level = 20,
@@ -1615,7 +1614,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 107,
 	},
-	/* Goblin */
+	// Goblin
 	{
 		.name = BLANK_NAME,
 		.level = 24,
@@ -1637,7 +1636,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 221,
 	},
-	/* Hobgoblin */
+	// Hobgoblin
 	{
 		.name = BLANK_NAME,
 		.level = 23,
@@ -1659,7 +1658,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 223,
 	},
-	/* Gargoyle */
+	// Gargoyle
 	{
 		.name = BLANK_NAME,
 		.level = 16,
@@ -1679,7 +1678,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 84,
 	},
-	/* Clay Gargoyle */
+	// Clay Gargoyle
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -1699,7 +1698,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 100,
 	},
-	/* Ice Gargoyle */
+	// Ice Gargoyle
 	{
 		.name = BLANK_NAME,
 		.level = 26,
@@ -1719,7 +1718,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 7,
 		.experience = 307,
 	},
-	/* Gryphon */
+	// Gryphon
 	{
 		.name = BLANK_NAME,
 		.level = 23,
@@ -1740,7 +1739,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 303,
 	},
-	/* Wild Gryphon */
+	// Wild Gryphon
 	{
 		.name = BLANK_NAME,
 		.level = 26,
@@ -1760,7 +1759,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 8,
 		.experience = 322,
 	},
-	/* Wise Gryphon */
+	// Wise Gryphon
 	{
 		.name = BLANK_NAME,
 		.hp = 18,
@@ -1777,7 +1776,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 1,
 		.experience = 1,
 	},
-	/* Golem */
+	// Golem
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -1795,7 +1794,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 7,
 		.experience = 105,
 	},
-	/* Earth Golem */
+	// Earth Golem
 	{
 		.name = BLANK_NAME,
 		.level = 23,
@@ -1813,7 +1812,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 8,
 		.experience = 218,
 	},
-	/* Grand Golem */
+	// Grand Golem
 	{
 		.name = BLANK_NAME,
 		.level = 28,
@@ -1831,7 +1830,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 8,
 		.experience = 412,
 	},
-	/* Dread Hound */
+	// Dread Hound
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -1849,7 +1848,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 7,
 		.experience = 116,
 	},
-	/* Cerebus */
+	// Cerebus
 	{
 		.name = BLANK_NAME,
 		.level = 35,
@@ -1870,7 +1869,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 1863,
 	},
-	/* Fenrir */
+	// Fenrir
 	{
 		.name = BLANK_NAME,
 		.level = 28,
@@ -1888,7 +1887,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 9,
 		.experience = 402,
 	},
-	/* Stone Soldier */
+	// Stone Soldier
 	{
 		.name = BLANK_NAME,
 		.level = 22,
@@ -1907,7 +1906,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 98,
 	},
-	/* Boulder Beast */
+	// Boulder Beast
 	{
 		.name = BLANK_NAME,
 		.level = 27,
@@ -1926,7 +1925,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 8,
 		.experience = 278,
 	},
-	/* Raging Rock */
+	// Raging Rock
 	{
 		.name = BLANK_NAME,
 		.hp = 18,
@@ -1942,7 +1941,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 1,
 		.experience = 1,
 	},
-	/* Chimera */
+	// Chimera
 	{
 		.name = BLANK_NAME,
 		.level = 28,
@@ -1963,7 +1962,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 465,
 	},
-	/* Chimera Mage */
+	// Chimera Mage
 	{
 		.name = BLANK_NAME,
 		.level = 26,
@@ -1998,7 +1997,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 1,
 		.experience = 1,
 	},
-	/* Amaze */
+	// Amaze
 	{
 		.name = BLANK_NAME,
 		.level = 2,
@@ -2017,7 +2016,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 3,
 	},
-	/* Amaze */
+	// Amaze
 	{
 		.name = BLANK_NAME,
 		.level = 3,
@@ -2036,7 +2035,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 5,
 	},
-	/* Creeper */
+	// Creeper
 	{
 		.name = BLANK_NAME,
 		.level = 8,
@@ -2056,7 +2055,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 32,
 	},
-	/* Spirit */
+	// Spirit
 	{
 		.name = BLANK_NAME,
 		.level = 11,
@@ -2076,7 +2075,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 49,
 	},
-	/* Zombie */
+	// Zombie
 	{
 		.name = BLANK_NAME,
 		.level = 4,
@@ -2090,7 +2089,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DELUSION},
 	},
-	/* Three spare rows, each named "?" in the text. */
+	// Three spare rows, each named "?" in the text.
 	{
 		.name = "",
 	},
@@ -2100,7 +2099,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 	{
 		.name = "",
 	},
-	/* Kraken */
+	// Kraken
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -2121,7 +2120,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 711,
 	},
-	/* Mystery Man */
+	// Mystery Man
 	{
 		.name = BLANK_NAME,
 		.level = 10,
@@ -2137,7 +2136,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_FIREBALL, ABILITY_FIREBALL, ABILITY_ERUPTION, ABILITY_ERUPTION, ABILITY_HEAT_FLASH, ABILITY_HEAT_FLASH, ABILITY_ATTACK, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Saturos */
+	// Saturos
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -2158,7 +2157,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 331,
 	},
-	/* Saturos */
+	// Saturos
 	{
 		.name = BLANK_NAME,
 		.level = 38,
@@ -2177,7 +2176,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 3600,
 		.experience = 3000,
 	},
-	/* Mystery Woman */
+	// Mystery Woman
 	{
 		.name = BLANK_NAME,
 		.level = 10,
@@ -2193,7 +2192,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_FLARE_WALL, ABILITY_MAD_BLAST, ABILITY_NOVA, ABILITY_NOVA, ABILITY_DEATH_SIZE, ABILITY_DEATH_SIZE, ABILITY_ATTACK, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Menardi */
+	// Menardi
 	{
 		.name = BLANK_NAME,
 		.level = 38,
@@ -2212,7 +2211,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 4200,
 		.experience = 3000,
 	},
-	/* Lizard Man */
+	// Lizard Man
 	{
 		.name = BLANK_NAME,
 		.level = 10,
@@ -2230,7 +2229,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 42,
 	},
-	/* Lizard Fighter */
+	// Lizard Fighter
 	{
 		.name = BLANK_NAME,
 		.level = 17,
@@ -2248,7 +2247,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 5,
 		.experience = 89,
 	},
-	/* Lizard King */
+	// Lizard King
 	{
 		.name = BLANK_NAME,
 		.level = 28,
@@ -2269,7 +2268,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 535,
 	},
-	/* Living Statue */
+	// Living Statue
 	{
 		.name = BLANK_NAME,
 		.level = 17,
@@ -2289,7 +2288,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 377,
 	},
-	/* Hydros Statue */
+	// Hydros Statue
 	{
 		.name = BLANK_NAME,
 		.level = 19,
@@ -2310,7 +2309,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 496,
 	},
-	/* Azart */
+	// Azart
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -2328,7 +2327,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
 	},
-	/* Azart */
+	// Azart
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -2346,7 +2345,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
 	},
-	/* Satrage */
+	// Satrage
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -2364,7 +2363,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
 	},
-	/* Satrage */
+	// Satrage
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -2382,7 +2381,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
 	},
-	/* Navampa */
+	// Navampa
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -2400,7 +2399,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
 	},
-	/* Navampa */
+	// Navampa
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -2418,7 +2417,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
 	},
-	/* Ant Lion */
+	// Ant Lion
 	{
 		.name = BLANK_NAME,
 		.level = 16,
@@ -2438,7 +2437,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 4,
 		.experience = 168,
 	},
-	/* Roach */
+	// Roach
 	{
 		.name = BLANK_NAME,
 		.level = 22,
@@ -2458,7 +2457,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 6,
 		.experience = 144,
 	},
-	/* Doodle Bug */
+	// Doodle Bug
 	{
 		.name = BLANK_NAME,
 		.hp = 18,
@@ -2473,7 +2472,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 1,
 		.experience = 1,
 	},
-	/* Toadonpa */
+	// Toadonpa
 	{
 		.name = BLANK_NAME,
 		.level = 27,
@@ -2493,7 +2492,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 999,
 	},
-	/* Poison Toad */
+	// Poison Toad
 	{
 		.name = BLANK_NAME,
 		.level = 34,
@@ -2526,7 +2525,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 1,
 		.experience = 1,
 	},
-	/* Tornado Lizard */
+	// Tornado Lizard
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -2547,7 +2546,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 4,
 		.experience = 620,
 	},
-	/* Storm Lizard */
+	// Storm Lizard
 	{
 		.name = BLANK_NAME,
 		.level = 28,
@@ -2568,7 +2567,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 1300,
 	},
-	/* Tempest Lizard */
+	// Tempest Lizard
 	{
 		.name = BLANK_NAME,
 		.level = 28,
@@ -2589,7 +2588,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 1360,
 	},
-	/* Tret */
+	// Tret
 	{
 		.name = BLANK_NAME,
 		.level = 14,
@@ -2609,7 +2608,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 226,
 	},
-	/* Fusion Dragon */
+	// Fusion Dragon
 	{
 		.name = BLANK_NAME,
 		.level = 39,
@@ -2625,7 +2624,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.actionStrategy = ACTION_STRATEGY_FALLING,
 		.abilities = {ABILITY_OUTER_SPACE, ABILITY_ATTACK, ABILITY_EVIL_BLESSING, ABILITY_DRAGON_DRIVER, ABILITY_BREAK, ABILITY_DRAIN_FANG, ABILITY_DEADLY_GAS, ABILITY_SEVERE_BLOW},
 	},
-	/* Deadbeard */
+	// Deadbeard
 	{
 		.name = BLANK_NAME,
 		.level = 43,
@@ -2645,7 +2644,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 8000,
 	},
-	/* Mimic */
+	// Mimic
 	{
 		.name = BLANK_NAME,
 		.level = 13,
@@ -2665,7 +2664,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 164,
 	},
-	/* Mimic */
+	// Mimic
 	{
 		.name = BLANK_NAME,
 		.level = 14,
@@ -2685,7 +2684,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 190,
 	},
-	/* Mimic */
+	// Mimic
 	{
 		.name = BLANK_NAME,
 		.level = 16,
@@ -2705,7 +2704,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 241,
 	},
-	/* Mimic */
+	// Mimic
 	{
 		.name = BLANK_NAME,
 		.level = 19,
@@ -2725,7 +2724,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 321,
 	},
-	/* Mimic */
+	// Mimic
 	{
 		.name = BLANK_NAME,
 		.level = 20,
@@ -2745,7 +2744,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 347,
 	},
-	/* Mimic */
+	// Mimic
 	{
 		.name = BLANK_NAME,
 		.level = 21,
@@ -2765,7 +2764,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 374,
 	},
-	/* Mimic */
+	// Mimic
 	{
 		.name = BLANK_NAME,
 		.level = 26,
@@ -2785,7 +2784,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 669,
 	},
-	/* Mimic */
+	// Mimic
 	{
 		.name = BLANK_NAME,
 		.level = 30,
@@ -2805,7 +2804,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.itemChance = 1,
 		.experience = 1009,
 	},
-	/* Venus Djinni */
+	// Venus Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 12,
@@ -2824,7 +2823,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 201,
 		.experience = 172,
 	},
-	/* Venus Djinni */
+	// Venus Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 15,
@@ -2843,7 +2842,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 277,
 		.experience = 230,
 	},
-	/* Venus Djinni */
+	// Venus Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 23,
@@ -2862,7 +2861,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 464,
 		.experience = 534,
 	},
-	/* Mercury Djinni */
+	// Mercury Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 10,
@@ -2881,7 +2880,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 151,
 		.experience = 130,
 	},
-	/* Mercury Djinni */
+	// Mercury Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 13,
@@ -2900,7 +2899,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 226,
 		.experience = 190,
 	},
-	/* Mercury Djinni */
+	// Mercury Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -2919,7 +2918,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 340,
 		.experience = 279,
 	},
-	/* Mercury Djinni */
+	// Mercury Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 24,
@@ -2938,7 +2937,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 484,
 		.experience = 606,
 	},
-	/* Mars Djinni */
+	// Mars Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 5,
@@ -2957,7 +2956,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 85,
 		.experience = 28,
 	},
-	/* Mars Djinni */
+	// Mars Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 13,
@@ -2976,7 +2975,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 210,
 		.experience = 173,
 	},
-	/* Mars Djinni */
+	// Mars Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 22,
@@ -2995,7 +2994,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 445,
 		.experience = 460,
 	},
-	/* Jupiter Djinni */
+	// Jupiter Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 8,
@@ -3014,7 +3013,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 100,
 		.experience = 88,
 	},
-	/* Jupiter Djinni */
+	// Jupiter Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 11,
@@ -3033,7 +3032,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 176,
 		.experience = 150,
 	},
-	/* Jupiter Djinni */
+	// Jupiter Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 18,
@@ -3052,7 +3051,7 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 352,
 		.experience = 295,
 	},
-	/* Jupiter Djinni */
+	// Jupiter Djinni
 	{
 		.name = BLANK_NAME,
 		.level = 25,
@@ -3071,11 +3070,11 @@ const ENEMY_DEFINITION EnemyDefinitions[] = {
 		.coins = 506,
 		.experience = 677,
 	},
-	/* (no name message) */
+	// (no name message)
 	{
 		.name = "\xff",
 	},
 };
-/* clang-format on */
+// clang-format on
 
 #undef BLANK_NAME

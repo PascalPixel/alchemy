@@ -1,10 +1,9 @@
-/* The eight party members' growth curves, element bonuses, starting levels and
-   starting equipment. */
+// The eight party members' growth curves, element bonuses, starting levels and starting equipment.
 
 #include "item_ids.h"
 #include "game/game.h"
 
-/* clang-format off */
+// clang-format off
 const CHARACTER_DEFINITION CharacterDefinitionTable[] = {
 	[ISAAC] = {
 		.hp = {30, 182, 334, 486, 638, 790},
@@ -65,4 +64,4 @@ const CHARACTER_DEFINITION CharacterDefinitionTable[] = {
 	[SHEBA] = {},
 	[PIERS] = {},
 };
-/* clang-format on */
+// clang-format on

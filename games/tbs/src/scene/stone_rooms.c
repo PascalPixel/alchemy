@@ -1,29 +1,28 @@
-/* Stone rooms (SceneIdStoneRooms), a rooms map drawn in stone.
-
-   The game packs rooms of several places that share a tile style onto one map.
-   This one holds two, whose area names differ by entrance.
-
-   The entrance also picks the tables. STONE_ROOMS_FROM_VAULT and
-   STONE_ROOMS_FROM_LUNPA take the thieves' tables, and
-   STONE_ROOMS_FROM_VAULT_REVISIT takes the prisoner's.
-
-   The two rooms, in story order, by the exits that lead in:
-
-   - Vault (STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_VAULT_REVISIT), the
-	 metatile behind Vault's jail door. Once the party has beaten the three
-	 thieves in the inn's loft (FLAG_VAULT_THIEVES_JAILED, log_rooms_a.c),
-	 coming in from Vault finds them behind the bars. Each has his own talk
-	 and Mind Read. Later Vault becomes its later scene (vault_revisit.c),
-	 whose villagers say the thieves have broken out. Its jail door then
-	 comes in by STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner
-	 instead.
-   - Lunpa (STONE_ROOMS_FROM_LUNPA), Lunpa's hidden room, which the town's
-	 hidden passage reaches (lunpa.c). Its six chests are each opened once
-	 (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), and
-   METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR leads back up into Lunpa.
-   Arriving  this way clears FLAG_SHOW_AREA_NAME, so no area name is shown.
-   The room  uses the thieves' tables, so its chests and exit sit in the same
-   cue table as the thieves' talk and the Vault door. */
+// Stone rooms (SceneIdStoneRooms), a rooms map drawn in stone.
+//
+// The game packs rooms of several places that share a tile style onto one map. This one holds two,
+// whose area names differ by entrance.
+//
+// The entrance also picks the tables. STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_LUNPA take the
+// thieves' tables, and STONE_ROOMS_FROM_VAULT_REVISIT takes the prisoner's.
+//
+// The two rooms, in story order, by the exits that lead in:
+//
+// - Vault (STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_VAULT_REVISIT), the
+//       metatile behind Vault's jail door. Once the party has beaten the three
+//       thieves in the inn's loft (FLAG_VAULT_THIEVES_JAILED, log_rooms_a.c),
+//       coming in from Vault finds them behind the bars. Each has his own talk
+//       and Mind Read. Later Vault becomes its later scene (vault_revisit.c),
+//       whose villagers say the thieves have broken out. Its jail door then
+//       comes in by STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner
+//       instead.
+// - Lunpa (STONE_ROOMS_FROM_LUNPA), Lunpa's hidden room, which the town's
+//       hidden passage reaches (lunpa.c). Its six chests are each opened once
+//       (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), and
+// METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR leads back up into Lunpa.
+// Arriving  this way clears FLAG_SHOW_AREA_NAME, so no area name is shown.
+// The room  uses the thieves' tables, so its chests and exit sit in the same
+// cue table as the thieves' talk and the Vault door.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -35,16 +34,17 @@
 #include "text/msg_ids.h"
 
 extern const SCENE_ENTRANCE StoneRoomsEntrances[];
-extern const Uint32			StoneRoomsExits[];
-extern const ACTOR_PLACE	StoneRoomsThiefActorPlacements[];
-extern const ACTOR_PLACE	StoneRoomsPrisonerActorPlacements[];
-extern const CUE			StoneRoomsThiefCues[];
-extern const CUE			StoneRoomsPrisonerCues[];
+extern const Uint32         StoneRoomsExits[];
+extern const ACTOR_PLACE    StoneRoomsThiefActorPlacements[];
+extern const ACTOR_PLACE    StoneRoomsPrisonerActorPlacements[];
+extern const CUE            StoneRoomsThiefCues[];
+extern const CUE            StoneRoomsPrisonerCues[];
 
-/* The metatile behaviors the jail's cues answer. */
-typedef enum STONE_ROOMS_METATILE_BEHAVIOR {
-	METATILE_BEHAVIOR_VAULT_JAIL_DOOR = 1,
-	METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR = 2,
+// The metatile behaviors the jail's cues answer.
+typedef enum STONE_ROOMS_METATILE_BEHAVIOR
+{
+	METATILE_BEHAVIOR_VAULT_JAIL_DOOR                       = 1,
+	METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR                = 2,
 	METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE = 100,
 	METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
 	METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
@@ -53,32 +53,32 @@ typedef enum STONE_ROOMS_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR
 } STONE_ROOMS_METATILE_BEHAVIOR;
 
-/* The placed actors, numbering the rows of the table scGetActorPlacements
-   returns.
-
-   They are the three thieves of StoneRoomsThiefActorPlacements, or the
-   prisoner of StoneRoomsPrisonerActorPlacements in the same first slot. */
-typedef enum JAIL_ACTOR_ID {
-	/* The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of
-	   the metatile. */
+// The placed actors, numbering the rows of the table scGetActorPlacements returns.
+//
+// They are the three thieves of StoneRoomsThiefActorPlacements, or the prisoner of
+// StoneRoomsPrisonerActorPlacements in the same first slot.
+typedef enum JAIL_ACTOR_ID
+{
+	// The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of the metatile.
 	ACTOR_THIEF_LEADER = ACTOR_FIRST_PLACED,
-	/* The thief on the left (SPRITE_PERSON_IN_PURPLE). */
+	// The thief on the left (SPRITE_PERSON_IN_PURPLE).
 	ACTOR_LEFT_THIEF,
-	/* The thief on the right (SPRITE_PERSON_IN_PURPLE). */
+	// The thief on the right (SPRITE_PERSON_IN_PURPLE).
 	ACTOR_RIGHT_THIEF,
-	/* The lone prisoner after the thieves have broken out
-	   (SPRITE_STRONGMAN). */
+	// The lone prisoner after the thieves have broken out (SPRITE_STRONGMAN).
 	ACTOR_PRISONER = ACTOR_FIRST_PLACED
 } JAIL_ACTOR_ID;
 
-/* The jail's occupants count as nearer than they stand for talk and Psynergy
-   targets, so the party reaches them across the bars.
+// The jail's occupants count as nearer than they stand for talk and Psynergy targets, so the party
+// reaches them across the bars.
+//
+// fdFindNearbyTalkTarget scales their distance by 10/13.
+enum
+{
+	JAIL_REACH_ACROSS_BARS = ACTOR_NEAR_TALK | ACTOR_NEAR_PSYNERGY
+};
 
-   fdFindNearbyTalkTarget scales their distance by 10/13. */
-enum { JAIL_REACH_ACROSS_BARS = ACTOR_NEAR_TALK | ACTOR_NEAR_PSYNERGY };
-
-/* Returns the entrances from Vault, from Lunpa and from Vault's revisit
-   scene. */
+// Returns the entrances from Vault, from Lunpa and from Vault's revisit scene.
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	return StoneRoomsEntrances;
@@ -89,31 +89,33 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return NULL;
 }
 
-/* Returns the exits to Vault, to Vault's revisit scene and to Lunpa. */
+// Returns the exits to Vault, to Vault's revisit scene and to Lunpa.
 const Uint32 *scGetExits(void)
 {
 	return StoneRoomsExits;
 }
 
-/* Places the three jailed thieves, or the lone prisoner. */
+// Places the three jailed thieves, or the lone prisoner.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	if(MainRoutineStateWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+	if (MainRoutineStateWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT)
+	{
 		return StoneRoomsPrisonerActorPlacements;
 	}
 	return StoneRoomsThiefActorPlacements;
 }
 
-/* Returns the thieves' cues, or the prisoner's. */
+// Returns the thieves' cues, or the prisoner's.
 const CUE *scGetCues(void)
 {
-	if(MainRoutineStateWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+	if (MainRoutineStateWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT)
+	{
 		return StoneRoomsPrisonerCues;
 	}
 	return StoneRoomsThiefCues;
 }
 
-/* In Vault's jail, the thieves' leader silences his men and vows revenge. */
+// In Vault's jail, the thieves' leader silences his men and vows revenge.
 static void scStoneRoomsLeaderSilencesThieves(void)
 {
 	fdScriptStart();
@@ -125,10 +127,10 @@ static void scStoneRoomsLeaderSilencesThieves(void)
 	fdScriptWait(40);
 
 	fdScriptSetMessageId(MsgVaultThiefLeaderSilencesThieves);
-	/* "Shut yer yaps!" */
+	// "Shut yer yaps!"
 	fdScriptShowMessage(ACTOR_THIEF_LEADER, 0);
 
-	/* The two thieves start. */
+	// The two thieves start.
 	fdActorStartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
 	fdActorRunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
 	fdScriptWait(20);
@@ -139,107 +141,108 @@ static void scStoneRoomsLeaderSilencesThieves(void)
 	fdActorRunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
 	fdScriptWait(20);
 
-	/* "They got us this time, but next time... Oh, they'll pay for..." */
+	// "They got us this time, but next time... Oh, they'll pay for..."
 	fdScriptShowMessage(ACTOR_THIEF_LEADER, 0);
 
 	fdScriptEnd();
 }
 
-/* In Vault's jail, the thief on the left wishes they had escaped to the cave
-   northeast of Goma Range. */
+// In Vault's jail, the thief on the left wishes they had escaped to the cave northeast of Goma
+// Range.
 static void scStoneRoomsLeftThiefRegretsEscape(void)
 {
 	fdScriptStart();
 	fdActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
 	fdScriptWait(20);
 	fdScriptSetMessageId(MsgVaultLeftThiefRegretsEscape);
-	/* "If only we had escaped to the cave northeast of Goma Range." */
+	// "If only we had escaped to the cave northeast of Goma Range."
 	fdScriptShowMessage(ACTOR_LEFT_THIEF, 0);
 	fdScriptEnd();
 }
 
-/* In Vault's jail, the thief on the right shakes his head and says he knew they
-   should have skipped town sooner. */
+// In Vault's jail, the thief on the right shakes his head and says he knew they should have skipped
+// town sooner.
 static void scStoneRoomsRightThiefRegretsStaying(void)
 {
 	fdScriptStart();
 	fdActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
 	fdScriptWait(20);
 	fdScriptSetMessageId(MsgVaultRightThiefRegretsStaying);
-	/* "Blast! I knew we should have skipped town sooner." */
+	// "Blast! I knew we should have skipped town sooner."
 	fdScriptShowMessage(ACTOR_RIGHT_THIEF, 0);
 	fdScriptEnd();
 }
 
-/* Mind Read on the thieves' leader in Vault's jail shows him thinking he'll be
-   out of this jail before you know it. */
+// Mind Read on the thieves' leader in Vault's jail shows him thinking he'll be out of this jail
+// before you know it.
 static void scStoneRoomsReadLeaderMind(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultThiefLeaderThoughts);
-	/* "I'll be out of this jail before you know it. You'll see!" */
+	// "I'll be out of this jail before you know it. You'll see!"
 	fdScriptShowMessage(ACTOR_THIEF_LEADER, 0);
 	fdScriptEnd();
 }
 
-/* Mind Read on the thief on the left shows him wondering whether he will ever
-   run free again. */
+// Mind Read on the thief on the left shows him wondering whether he will ever run free again.
 static void scStoneRoomsReadLeftThiefMind(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultLeftThiefThoughts);
-	/* "Sigh... Will I ever run free again?" */
+	// "Sigh... Will I ever run free again?"
 	fdScriptShowMessage(ACTOR_LEFT_THIEF, 0);
 	fdScriptEnd();
 }
 
-/* Mind Read on the thief on the right shows him wondering whether this is
-   because they stole Hammet's Shaman's Rod. */
+// Mind Read on the thief on the right shows him wondering whether this is because they stole
+// Hammet's Shaman's Rod.
 static void scStoneRoomsReadRightThiefMind(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultRightThiefThoughts);
-	/* "I wonder if this is because we stole Hammet's Shaman's Rod." */
+	// "I wonder if this is because we stole Hammet's Shaman's Rod."
 	fdScriptShowMessage(ACTOR_RIGHT_THIEF, 0);
 	fdScriptEnd();
 }
 
-/* The party steps out of Vault's jail into Vault, with the exit sound. */
+// The party steps out of Vault's jail into Vault, with the exit sound.
 static void scStoneRoomsLeaveForVault(void)
 {
 	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(STONE_ROOMS_TO_VAULT);
 }
 
-/* Opens the map through a window transition and lets the party reach the jail's
-   occupants across the bars. */
+// Opens the map through a window transition and lets the party reach the jail's occupants across
+// the bars.
 Sint32 scInit(void)
 {
 	Sint16 entrance;
 
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	entrance = MainRoutineStateWork.entrance;
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	entrance                   = MainRoutineStateWork.entrance;
 
-	if(entrance == STONE_ROOMS_FROM_LUNPA) {
-		/* The room is in Vault's area, so coming from Lunpa changes the area
-		   and gmArrive asks for the area name, which AreaNameRules gives as
-		   "Lunpa" for this entrance: the town the party has just left. Clearing
-		   the flag keeps that banner from showing. */
+	if (entrance == STONE_ROOMS_FROM_LUNPA)
+	{
+		// The room is in Vault's area, so coming from Lunpa changes the area and gmArrive asks for
+		// the area name, which AreaNameRules gives as "Lunpa" for this entrance: the town the party
+		// has just left. Clearing the flag keeps that banner from showing.
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
-	} else if(entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+	}
+	else if (entrance == STONE_ROOMS_FROM_VAULT_REVISIT)
+	{
 		fdActorGet(ACTOR_PRISONER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
-	} else {
-		fdActorGet(ACTOR_THIEF_LEADER)->collisionFlags |=
-			JAIL_REACH_ACROSS_BARS;
-		fdActorGet(ACTOR_LEFT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
-		fdActorGet(ACTOR_RIGHT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+	}
+	else
+	{
+		fdActorGet(ACTOR_THIEF_LEADER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+		fdActorGet(ACTOR_LEFT_THIEF)->collisionFlags   |= JAIL_REACH_ACROSS_BARS;
+		fdActorGet(ACTOR_RIGHT_THIEF)->collisionFlags  |= JAIL_REACH_ACROSS_BARS;
 	}
 
 	return 0;
 }
 
-/* clang-format off */
+// clang-format off
 const SCENE_ENTRANCE StoneRoomsEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ STONE_ROOMS_FROM_VAULT, CONDITION_ALWAYS, 80, 0, 232, FACING_NORTH, 0, 16, 48, 304, 256, 0 },
@@ -300,13 +303,13 @@ const CUE StoneRoomsThiefCues[] = {
 	  FIND_ITEM(ITEM_ELIXIR) },
 	{ CUE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on
 
 const CUE StoneRoomsPrisonerCues[] = {
-	{CUE_EXIT, METATILE_BEHAVIOR_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
-		STONE_ROOMS_TO_VAULT_REVISIT},
+	{CUE_EXIT, METATILE_BEHAVIOR_VAULT_JAIL_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_VAULT_REVISIT},
 	{CUE_TALK, ACTOR_PRISONER, CONDITION_ALWAYS, MsgVaultPrisonerRegretsFight},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRISONER, CONDITION_ALWAYS,
-		MsgVaultPrisonerThoughts},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_PRISONER, CONDITION_ALWAYS,
+     MsgVaultPrisonerThoughts},
 	{CUE_TABLE_END},
 };

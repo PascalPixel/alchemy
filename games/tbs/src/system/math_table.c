@@ -1,11 +1,9 @@
-/* Trigonometry tables: a quarter-wave sine, tangents and the quadrants'
-   sines. */
+// Trigonometry tables: a quarter-wave sine, tangents and the quadrants' sines.
 
 #include "system.h"
 
-/* A quarter-wave sine table, scaled by 65536: entry i is the sine of i/1024 of
-   a turn. */
-/* clang-format off */
+// A quarter-wave sine table, scaled by 65536: entry i is the sine of i/1024 of a turn.
+// clang-format off
 const Uint16 MathSinQuarter[256] = {
 	0, 402, 804, 1206, 1608, 2010, 2412, 2814,
 	3216, 3617, 4019, 4420, 4821, 5222, 5623, 6023,
@@ -41,19 +39,17 @@ const Uint16 MathSinQuarter[256] = {
 	65457, 65476, 65492, 65505, 65516, 65525, 65531, 65535,
 };
 
-/* Unused: floor(i * 2π) for i from 0 to 7; nothing reads it. */
+// Unused: floor(i * 2π) for i from 0 to 7; nothing reads it.
 const Uint16 MathTwoPiSteps[8] = {
 	0, 6, 12, 18, 25, 31, 37, 43,
 };
 
-/* Unused: the sine at 0, 90, 180 and 270 degrees, in 16.16; nothing reads it. */
+// Unused: the sine at 0, 90, 180 and 270 degrees, in 16.16; nothing reads it.
 const Sint32 MathQuadrantSin[4] = {
 	0, toFIXED(1), 0, toFIXED(-1),
 };
 
-/* Tangents scaled by 256: index i is about tan(i * 45 / 128 degrees), so */
-/* index 128 is tan(45 degrees); the last entries before 90 degrees run high. */
-/* syAtan starts its binary search at index 127. */
+// Tangents scaled by 256: index i is about tan(i * 45 / 128 degrees), so index 128 is tan(45 degrees); the last entries before 90 degrees run high. syAtan starts its binary search at index 127.
 const Uint16 MathTanTable[258] = {
 	0, 1, 3, 4, 6, 7, 9, 11,
 	12, 14, 15, 17, 18, 20, 22, 23,
@@ -89,4 +85,4 @@ const Uint16 MathTanTable[258] = {
 	5444, 6264, 7374, 8962, 11421, 15736, 25290, 64362,
 	65535, 0,
 };
-/* clang-format on */
+// clang-format on

@@ -1,14 +1,12 @@
-/* What fdMapGridCheckCollision says of a step to a position (COLLISION), under
-   The Broken Seal's name for it. */
-static inline Sint32 scFieldActorCheckMovementCollision(
-	ACTOR *actor, Sint32 *pos)
+// What fdMapGridCheckCollision says of a step to a position (COLLISION), under The Broken Seal's
+// name for it.
+static inline Sint32 scFieldActorCheckMovementCollision(ACTOR *actor, Sint32 *pos)
 {
 	return fdMapGridCheckCollision(actor, pos);
 }
 
-/* Finds where the actor ahead stops when pushed: a metatile at a time, the
-   whole of its rectangle (PushRectangles) until a wall blocks it; 1 when it
-   moves at all. */
+// Finds where the actor ahead stops when pushed: a metatile at a time, the whole of its rectangle
+// (PushRectangles) until a wall blocks it; 1 when it moves at all.
 Bool scPushTargetFindStop(PUSH_TARGET *target)
 {
 	ACTOR *actor;
@@ -25,31 +23,30 @@ Bool scPushTargetFindStop(PUSH_TARGET *target)
 	Uint8 *layer;
 
 	actor = scPushTargetFindAhead(&direction, &target->id, &target->rectangle);
-	if(actor != 0) {
+	if (actor != 0)
+	{
 		rectangle = target->rectangle;
-		width = (ABS(PushRectangles[rectangle][0]) +
-					ABS(PushRectangles[rectangle][2])) >>
-			4;
-		height = (ABS(PushRectangles[rectangle][1]) +
-					 ABS(PushRectangles[rectangle][3])) >>
-			4;
-		/* A push step holds x pixels in its high half and z in its low. */
-		dx = PushLeaderSteps[direction] & FIELD_PIXEL_MASK;
-		dz = toFIXED(PushLeaderSteps[direction]);
+		width     = (ABS(PushRectangles[rectangle][0]) + ABS(PushRectangles[rectangle][2])) >> 4;
+		height    = (ABS(PushRectangles[rectangle][1]) + ABS(PushRectangles[rectangle][3])) >> 4;
+		// A push step holds x pixels in its high half and z in its low.
+		dx        = PushLeaderSteps[direction] & FIELD_PIXEL_MASK;
+		dz        = toFIXED(PushLeaderSteps[direction]);
 		target->callback = 0;
-		count = 0;
-		layer = &actor->layer;
-		*layer = MAPGRID_LAYER_OVERHEAD;
-		target->x = actor->x.fixed + dx;
-		target->z = actor->z.fixed + dz;
-		pos[1] = actor->y.fixed;
-		for(;;) {
+		count            = 0;
+		layer            = &actor->layer;
+		*layer           = MAPGRID_LAYER_OVERHEAD;
+		target->x        = actor->x.fixed + dx;
+		target->z        = actor->z.fixed + dz;
+		pos[1]           = actor->y.fixed;
+		for (;;)
+		{
 			pos[2] = target->z + toFIXED(PushRectangles[rectangle][1]);
-			for(row = 0; row < height; row++) {
+			for (row = 0; row < height; row++)
+			{
 				pos[0] = target->x + toFIXED(PushRectangles[rectangle][0]);
-				for(column = 0; column < width; column++) {
-					if(scFieldActorCheckMovementCollision(actor, pos) ==
-						COLLISION_IMPASSABLE)
+				for (column = 0; column < width; column++)
+				{
+					if (scFieldActorCheckMovementCollision(actor, pos) == COLLISION_IMPASSABLE)
 						goto blocked;
 					pos[0] += toFIXED(MAPGRID_METATILE_PIXELS);
 				}
@@ -61,7 +58,7 @@ Bool scPushTargetFindStop(PUSH_TARGET *target)
 		}
 	blocked:
 		*layer = MAPGRID_LAYER_GROUND;
-		if(count == 0)
+		if (count == 0)
 			return FALSE;
 		target->x = actor->x.fixed + dx * count;
 		target->y = actor->y.fixed;

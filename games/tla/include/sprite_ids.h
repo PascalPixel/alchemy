@@ -1,16 +1,16 @@
 #ifndef ALCHEMY_SPRITE_IDS_H
 #define ALCHEMY_SPRITE_IDS_H
 
-/* Sprite numbers, named where their sprite sheet is. A sprite's picture is
-   src/graphics/sprite/<name>.png, its id's name in lowercase without SPRITE_
-   (jenna.png for SPRITE_JENNA). */
+// Sprite numbers, named where their sprite sheet is. A sprite's picture is
+// src/graphics/sprite/<name>.png, its id's name in lowercase without SPRITE_ (jenna.png for
+// SPRITE_JENNA).
 
-/* Sprite ids, one for each row of the sprite table (sprite/sprites.tsv) in
-   order. A party member's field sprite shares its character number, so the
-   field draws a character id as its sprite. A row that only borrows another
-   sprite's pictures and animations has no name here; the next named row's
-   number is written after it. */
-typedef enum SPR_ID {
+// Sprite ids, one for each row of the sprite table (sprite/sprites.tsv) in order. A party member's
+// field sprite shares its character number, so the field draws a character id as its sprite. A row
+// that only borrows another sprite's pictures and animations has no name here; the next named row's
+// number is written after it.
+typedef enum SPR_ID
+{
 	SPRITE_ISAAC,
 	SPRITE_GARET,
 	SPRITE_IVAN,
@@ -24,12 +24,11 @@ typedef enum SPR_ID {
 	SPRITE_WINGED_SHIP_FLYING_SMALL,
 	SPRITE_WINGED_SHIP,
 	SPRITE_WINGED_SHIP_FLYING,
-	/* A gold coin that spins on its edge and bursts into sparkles. */
+	// A gold coin that spins on its edge and bursts into sparkles.
 	SPRITE_SPINNING_GOLD_COIN,
-	/* The splash at the feet of an actor wading through water
-	   (fdActorSpawnWaterSplash). */
+	// The splash at the feet of an actor wading through water (fdActorSpawnWaterSplash).
 	SPRITE_WADING_SPLASH,
-	/* A thin blue circle, drawn as an outline only. */
+	// A thin blue circle, drawn as an outline only.
 	SPRITE_THIN_BLUE_RING,
 	SPRITE_BRIGGS,
 	SPRITE_TAVI,
@@ -140,7 +139,7 @@ typedef enum SPR_ID {
 	SPRITE_IZUMO_WOMAN_IN_GREEN,
 	SPRITE_IZUMO_WOMAN_IN_ORANGE,
 	SPRITE_IZUMO_OLD_MAN,
-	/* An old woman of Izumo (izumo_old_woman.png). */
+	// An old woman of Izumo (izumo_old_woman.png).
 	SPRITE_IZUMO_OLD_WOMAN,
 	SPRITE_IZUMO_BOY,
 	SPRITE_IZUMO_GIRL,
@@ -174,17 +173,15 @@ typedef enum SPR_ID {
 	SPRITE_PROX_MAN_WITH_GREEN_HAIR,
 	SPRITE_LEMURIAN_WOMAN,
 	SPRITE_LEMURIAN_GIRL,
-	/* Avimander, the salamander grown into a red beast with a spiked green
-	   tail. */
+	// Avimander, the salamander grown into a red beast with a spiked green tail.
 	SPRITE_AVIMANDER,
 	SPRITE_POSEIDON = 159,
 	SPRITE_LEMURIAN_MAN,
 	SPRITE_GIRL_WITH_RED_BOW,
-	/* A turtle in a 32-pixel sprite sheet, standing alone and with a child
-	   riding it; it stands on one of the islets of the turtle trade. */
+	// A turtle in a 32-pixel sprite sheet, standing alone and with a child riding it; it stands on
+	// one of the islets of the turtle trade.
 	SPRITE_TURTLE_WITH_RIDER,
-	/* A smaller turtle in a 16-pixel sprite sheet, the one the islets' trade
-	   spawns wading. */
+	// A smaller turtle in a 16-pixel sprite sheet, the one the islets' trade spawns wading.
 	SPRITE_TURTLE_SMALL,
 	SPRITE_LEMURIAN_OLD_WOMAN,
 	SPRITE_LEMURIAN_IN_TEAL,
@@ -288,10 +285,10 @@ typedef enum SPR_ID {
 	SPRITE_PSYNERGY_STONE,
 	SPRITE_WORLD_MAP_FOREST_COVER,
 	SPRITE_DOORWAY,
-	/* The band an EXIT_STYLE_HIDDEN_LAYER exit adds over the top of the
-	   leader's sprite (fdExitAddHiddenLeaderLayer). */
+	// The band an EXIT_STYLE_HIDDEN_LAYER exit adds over the top of the leader's sprite
+	// (fdExitAddHiddenLeaderLayer).
 	SPRITE_HIDDEN_LAYER,
-	/* Rings that widen and fade on water, as Taopo Swamp's splashes end. */
+	// Rings that widen and fade on water, as Taopo Swamp's splashes end.
 	SPRITE_SPLASH_RING,
 	SPRITE_FOOTPRINTS,
 	SPRITE_GOLDEN_RINGS,
@@ -356,36 +353,36 @@ typedef enum SPR_ID {
 	SPRITE_STONE_DOOR_HALF,
 	SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
 	SPRITE_FALLEN_COLUMN_WEST_EAST,
-	/* A purple post with a glowing top, along Atteka Inlet's shore. */
+	// A purple post with a glowing top, along Atteka Inlet's shore.
 	SPRITE_GLOWING_POST,
 	SPRITE_ORANGE_PILLAR,
 	SPRITE_FLAME_PILLAR,
 	SPRITE_LADY_STATUE,
 	SPRITE_UNSEEN_BLOCK,
-	SPRITE_SALAMANDER, /* Obaba's small red salamander */
+	SPRITE_SALAMANDER, // Obaba's small red salamander
 	SPRITE_ANGEL_STATUE = 339,
 	SPRITE_ARCHER_STATUE,
 	SPRITE_WHITE_WINGS,
 	SPRITE_MOORED_BOAT,
-	/* A pale statue of a long-haired woman, one arm raised, on a round base. */
+	// A pale statue of a long-haired woman, one arm raised, on a round base.
 	SPRITE_WOMAN_STATUE_WITH_RAISED_ARM,
 	SPRITE_PERSON_WITH_SWORD,
 	SPRITE_SHIP,
 	SPRITE_MENARDIS_SHIP,
 	SPRITE_GANGWAY,
 	SPRITE_WATER_DROP,
-	/* A small blue orb of energy and the rings it bursts into: the Gabomba
-	   Statue's charges, "the energy charge" that runs over its blocks. */
+	// A small blue orb of energy and the rings it bursts into: the Gabomba Statue's charges, "the
+	// energy charge" that runs over its blocks.
 	SPRITE_ENERGY_CHARGE,
-	/* A white hand in nine poses: open, flat, edge on, and fists. */
+	// A white hand in nine poses: open, flat, edge on, and fists.
 	SPRITE_WHITE_HAND,
 	SPRITE_STEAM_VENT,
 	SPRITE_POUND_FIST,
 	SPRITE_SCOOP_HAND,
 	SPRITE_BROWN_BOULDER,
 	SPRITE_GREY_BOULDER,
-	/* The puffs of sand the leader as sand leaves behind as he moves
-	   (fdActorMoveAsSand, fdActorMoveAsSandOnWorldMap). */
+	// The puffs of sand the leader as sand leaves behind as he moves (fdActorMoveAsSand,
+	// fdActorMoveAsSandOnWorldMap).
 	SPRITE_SAND_PUFF,
 	SPRITE_BLUE_COG,
 	SPRITE_GREEN_COG,
@@ -398,8 +395,8 @@ typedef enum SPR_ID {
 	SPRITE_SMALL_FLAME,
 	SPRITE_BLAZE_FLAME,
 	SPRITE_BLAZE_FLICKER,
-	/* Kibombo's signal fire: a stone fire pit glowing blue over red embers,
-	   puffs of smoke rising, and the embers alone. */
+	// Kibombo's signal fire: a stone fire pit glowing blue over red embers, puffs of smoke rising,
+	// and the embers alone.
 	SPRITE_SIGNAL_FIRE,
 	SPRITE_PLANK_BRIDGE,
 	SPRITE_LOG_PAIR,
@@ -410,19 +407,17 @@ typedef enum SPR_ID {
 	SPRITE_SEATED_IDOL,
 	SPRITE_CARVED_FACE,
 	SPRITE_WIND_STATUE,
-	/* The yellow stone head with red eyes that bursts out under Felix at Gaia
-	   Rock. */
+	// The yellow stone head with red eyes that bursts out under Felix at Gaia Rock.
 	SPRITE_STONE_HEAD,
-	/* The grey cap with a yellow slit on top of a Magma Rock statue, which its
-	   flame column raises. */
+	// The grey cap with a yellow slit on top of a Magma Rock statue, which its flame column raises.
 	SPRITE_STATUE_CAP,
 	SPRITE_MOAI,
-	/* The water a Moai pours from its mouth once Douse fills it, a pool and a
-	   stream added to its sprite (AquaRockInsideSetMoaiFace). */
+	// The water a Moai pours from its mouth once Douse fills it, a pool and a stream added to its
+	// sprite (AquaRockInsideSetMoaiFace).
 	SPRITE_MOAI_WATER,
 	SPRITE_TWISTER_ROCK,
 	SPRITE_WATER_DROP_LARGE,
-	SPRITE_GREAT_FIRE, /* the great fire before Magma Rock's way in */
+	SPRITE_GREAT_FIRE, // the great fire before Magma Rock's way in
 	SPRITE_ALTAR = 385,
 	SPRITE_LIT_CANDLESTICK,
 	SPRITE_CANDLESTICK,
@@ -432,72 +427,67 @@ typedef enum SPR_ID {
 	SPRITE_STONE_FACE_PILLAR_HALF_A,
 	SPRITE_STONE_FACE_PILLAR,
 	SPRITE_STONE_FACE_PILLAR_HALF_B,
-	/* Gaia Rock's arrow plant, a sprig whose leaf swells into an arrowhead
-	   pointing one of four ways. */
+	// Gaia Rock's arrow plant, a sprig whose leaf swells into an arrowhead pointing one of four
+	// ways.
 	SPRITE_ARROW_PLANT,
-	/* The Gabomba statue's eye: ringed with light, then plain. */
+	// The Gabomba statue's eye: ringed with light, then plain.
 	SPRITE_GABOMBA_EYE,
-	/* The Gabomba statue's tongue, stretching out and drawing back. */
+	// The Gabomba statue's tongue, stretching out and drawing back.
 	SPRITE_GABOMBA_TONGUE,
 	SPRITE_DOLL,
 	SPRITE_BARREL,
 	SPRITE_PENGUIN,
 	SPRITE_PENGUIN_WITH_BOW,
-	SPRITE_FISH, /* a small fish swimming, and curling */
+	SPRITE_FISH, // a small fish swimming, and curling
 	SPRITE_ICY_SEA_ROCK = 402,
 	SPRITE_FLAME_PUFF,
 	SPRITE_BURST_PILLAR,
 	SPRITE_ORANGE_BIRD,
 	SPRITE_STAKE,
 	SPRITE_TIGHTROPE_POST,
-	/* A stone column, cracked, then crumbled to a stump of rubble. */
+	// A stone column, cracked, then crumbled to a stump of rubble.
 	SPRITE_CRUMBLING_STONE_COLUMN,
 	SPRITE_STONE_COLUMN,
 	SPRITE_EXCLAMATION_BUBBLE,
-	/* A block of the Gabomba statue's channel, which the energy charge runs
-	   over. */
+	// A block of the Gabomba statue's channel, which the energy charge runs over.
 	SPRITE_CHANNEL_BLOCK,
 	SPRITE_FIREBALL,
 	SPRITE_DRAGON_STATUE,
 	SPRITE_DRAGON_HEAD,
-	/* A white dragon head seen from the side, a Mars Lighthouse flame
-	   thrower. */
+	// A white dragon head seen from the side, a Mars Lighthouse flame thrower.
 	SPRITE_DRAGON_HEAD_SIDE,
 	SPRITE_ROBED_STATUE,
-	/* A flame as wide as it is tall, 32 pixels, in three ticks. */
+	// A flame as wide as it is tall, 32 pixels, in three ticks.
 	SPRITE_BROAD_FLAME,
 	SPRITE_MARS_TORCH_LIT,
 	SPRITE_MARS_TORCH,
 	SPRITE_CANNON,
 	SPRITE_LOHO_CANNON,
-	/* A wooden frame of the Wings of Anemos, lying by the geoglyph. */
+	// A wooden frame of the Wings of Anemos, lying by the geoglyph.
 	SPRITE_WING_FRAME,
-	/* A metal feather of the Wings of Anemos, lying by the geoglyph. */
+	// A metal feather of the Wings of Anemos, lying by the geoglyph.
 	SPRITE_METAL_FEATHER,
 	SPRITE_SEA_ROCK,
 	SPRITE_STONE_BASIN,
-	/* A white quarter disc, 32 pixels across, held (white_quarter_disc.png). */
+	// A white quarter disc, 32 pixels across, held (white_quarter_disc.png).
 	SPRITE_WHITE_QUARTER_DISC,
-	/* A thin upright beam of blue light, 32 pixels tall. */
+	// A thin upright beam of blue light, 32 pixels tall.
 	SPRITE_THIN_BLUE_BEAM,
 	SPRITE_STONE_BLOCK,
 	SPRITE_COILED_DRAGON_STATUE,
-	/* A grey stone block, concentric squares on its face, that carries a
-	   glowing symbol in the Anemos Inner Sanctum. */
+	// A grey stone block, concentric squares on its face, that carries a glowing symbol in the
+	// Anemos Inner Sanctum.
 	SPRITE_SYMBOL_BLOCK,
 	SPRITE_MIMIC_STONE = 431,
 	SPRITE_ARROW_PANEL,
 	SPRITE_WORLD_MAP_ISLAND,
-	/* A white gloved hand pointing down at something. */
+	// A white gloved hand pointing down at something.
 	SPRITE_POINTING_HAND,
-	/* The right eye of the stone face's lit picture (SPRITE_STONE_FACE_LIT),
-	   glowing green. */
+	// The right eye of the stone face's lit picture (SPRITE_STONE_FACE_LIT), glowing green.
 	SPRITE_STONE_FACE_RIGHT_EYE,
-	/* The left eye of the stone face's lit picture (SPRITE_STONE_FACE_LIT),
-	   glowing green. */
+	// The left eye of the stone face's lit picture (SPRITE_STONE_FACE_LIT), glowing green.
 	SPRITE_STONE_FACE_LEFT_EYE,
-	/* SPRITE_STONE_FACE's third picture alone: the great stone face with its
-	   eyes lit green. */
+	// SPRITE_STONE_FACE's third picture alone: the great stone face with its eyes lit green.
 	SPRITE_STONE_FACE_LIT,
 	SPRITE_WORLD_MAP_VILLAGE,
 	SPRITE_WORLD_MAP_TOWN,
@@ -528,7 +518,7 @@ typedef enum SPR_ID {
 	SPRITE_WORLD_MAP_GAIA_ROCK,
 	SPRITE_WORLD_MAP_MAGMA_ROCK,
 	SPRITE_FLOWER_VASE,
-	SPRITE_WHITE_ROCK, /* a pale round rock */
+	SPRITE_WHITE_ROCK, // a pale round rock
 	SPRITE_WORLD_MAP_TAOPO_SWAMP = 468,
 	SPRITE_WORLD_MAP_ANKOHL_RUINS,
 	SPRITE_WORLD_MAP_SHRINE_OF_THE_SEA_GOD,
@@ -587,12 +577,10 @@ typedef enum SPR_ID {
 	SPRITE_WEAPON_PIERS_AXE,
 	SPRITE_WEAPON_PIERS_SWORD,
 	SPRITE_WEAPON_PIERS_LIGHT_BLADE,
-	/* The enemies' battle sprites, from here to SPRITE_BATTLE_BANDIT:
-	   animations only, drawn from each class's battle pictures, named for the
-	   first class SummonEntryTable gives each. Three belong to no class, and
-	   are named for the monster pictures that stand at their place in the
-	   resource directory (graphics/monster): the red beast, the pink worm and
-	   the blue crab. */
+	// The enemies' battle sprites, from here to SPRITE_BATTLE_BANDIT: animations only, drawn from
+	// each class's battle pictures, named for the first class SummonEntryTable gives each. Three
+	// belong to no class, and are named for the monster pictures that stand at their place in the
+	// resource directory (graphics/monster): the red beast, the pink worm and the blue crab.
 	SPRITE_BATTLE_BLUE_DRAGON,
 	SPRITE_BATTLE_RED_DEMON,
 	SPRITE_BATTLE_AKA_MANAH,
@@ -628,9 +616,9 @@ typedef enum SPR_ID {
 	SPRITE_BATTLE_WILD_WOLF,
 	SPRITE_BATTLE_URCHIN_BEAST,
 	SPRITE_BATTLE_VALUKAR,
-	/* The Serpent's left half; SPRITE_BATTLE_SERPENT_RIGHT is drawn 64 pixels
-	   to its right (sprites.tsv), as are the Doom Dragon's, Poseidon's, the
-	   Kraken's and the Fusion Dragon's right halves. */
+	// The Serpent's left half; SPRITE_BATTLE_SERPENT_RIGHT is drawn 64 pixels to its right
+	// (sprites.tsv), as are the Doom Dragon's, Poseidon's, the Kraken's and the Fusion Dragon's
+	// right halves.
 	SPRITE_BATTLE_SERPENT,
 	SPRITE_BATTLE_SERPENT_RIGHT,
 	SPRITE_BATTLE_SEA_DRAGON,
@@ -677,8 +665,7 @@ typedef enum SPR_ID {
 	SPRITE_BATTLE_DREAD_HOUND,
 	SPRITE_BATTLE_MAULER,
 	SPRITE_BATTLE_SIREN,
-	/* The Vermin's, which the eight party rows of SummonEntryTable also
-	   give. */
+	// The Vermin's, which the eight party rows of SummonEntryTable also give.
 	SPRITE_BATTLE_VERMIN,
 	SPRITE_BATTLE_WILD_MUSHROOM,
 	SPRITE_BATTLE_SLIME,
@@ -712,7 +699,7 @@ typedef enum SPR_ID {
 	SPRITE_GARET_MACHETE,
 	SPRITE_BATTLE_FUSION_DRAGON,
 	SPRITE_BATTLE_FUSION_DRAGON_RIGHT,
-	/* The Colosso finalists Azart, Satrage and Navampa in battle. */
+	// The Colosso finalists Azart, Satrage and Navampa in battle.
 	SPRITE_BATTLE_WARRIOR_IN_GOLDEN_HELMET,
 	SPRITE_BATTLE_BANDIT,
 	SPRITE_THOR,
@@ -730,16 +717,15 @@ typedef enum SPR_ID {
 	SPRITE_MOLOCH,
 	SPRITE_ULYSSES,
 	SPRITE_MEGAERA,
-	/* A sword of Megaera's summon (btEffectRunMegaera). */
+	// A sword of Megaera's summon (btEffectRunMegaera).
 	SPRITE_MEGAERA_SWORD,
 	SPRITE_ZAGAN,
 	SPRITE_HAURES,
 	SPRITE_HAURES_FLAME,
 	SPRITE_HAURES_DOT,
-	/* Daedalus's finned rocket, the second strike's
-	   (btEffectRunDaedalusStrike). */
+	// Daedalus's finned rocket, the second strike's (btEffectRunDaedalusStrike).
 	SPRITE_DAEDALUS_ROCKET,
-	/* A missile, sixteen of which Daedalus dives onto the foes. */
+	// A missile, sixteen of which Daedalus dives onto the foes.
 	SPRITE_DAEDALUS_MISSILE,
 	SPRITE_TRIDENT = 664,
 	SPRITE_SUN,
@@ -757,20 +743,20 @@ typedef enum SPR_ID {
 	SPRITE_CRESCENT,
 	SPRITE_LETTER_Z,
 	SPRITE_BOOKSHELF,
-	/* A loose part of the Wings of Anemos, lying by the geoglyph. */
+	// A loose part of the Wings of Anemos, lying by the geoglyph.
 	SPRITE_WING_PART,
 	SPRITE_SNOWFLAKE,
 	SPRITE_KEY,
 	SPRITE_JAIL_KEY,
 	SPRITE_SANDSTORM,
-	/* Moapa's battle shadow (btObjectMake): moapa_shadow.png's three pictures
-	   put the battle shadow's ellipse right of centre, left of it and centred,
-	   where SPRITE_BATTLE_SHADOW's one picture has it centred. */
+	// Moapa's battle shadow (btObjectMake): moapa_shadow.png's three pictures put the battle
+	// shadow's ellipse right of centre, left of it and centred, where SPRITE_BATTLE_SHADOW's one
+	// picture has it centred.
 	SPRITE_MOAPA_SHADOW,
 	SPRITE_BATTLE_SHADOW = 686,
 	SPRITE_BATTLE_SHADOW_NARROW,
-	/* The status icons btStatusIconCycle shows in turn over a battler wider
-	   than 32 pixels, one for each condition. */
+	// The status icons btStatusIconCycle shows in turn over a battler wider than 32 pixels, one for
+	// each condition.
 	SPRITE_STATUS_WIDE_POISON,
 	SPRITE_STATUS_WIDE_VENOM,
 	SPRITE_STATUS_WIDE_STUN,
@@ -778,8 +764,7 @@ typedef enum SPR_ID {
 	SPRITE_STATUS_WIDE_SLEEP,
 	SPRITE_STATUS_WIDE_DELUSION,
 	SPRITE_STATUS_WIDE_HAUNT,
-	/* The Grim Reaper's mark: a flame for each of its count, 1 to 7, as the
-	   name's number. */
+	// The Grim Reaper's mark: a flame for each of its count, 1 to 7, as the name's number.
 	SPRITE_STATUS_WIDE_GRIM_REAPER_1,
 	SPRITE_STATUS_WIDE_GRIM_REAPER_2,
 	SPRITE_STATUS_WIDE_GRIM_REAPER_3,
@@ -787,7 +772,7 @@ typedef enum SPR_ID {
 	SPRITE_STATUS_WIDE_GRIM_REAPER_5,
 	SPRITE_STATUS_WIDE_GRIM_REAPER_6,
 	SPRITE_STATUS_WIDE_GRIM_REAPER_7,
-	/* The same status icons, for battlers 32 pixels wide. */
+	// The same status icons, for battlers 32 pixels wide.
 	SPRITE_STATUS_POISON,
 	SPRITE_STATUS_VENOM,
 	SPRITE_STATUS_STUN,
@@ -804,49 +789,49 @@ typedef enum SPR_ID {
 	SPRITE_STATUS_GRIM_REAPER_7
 } SPR_ID;
 
-/* SPRITE_STUMP's animations beyond its standing frame (stump.tsv). */
-typedef enum STUMP_ANIMATION {
-	/* Sinks until only its cut top shows, level with the ground or the
-	   water. */
-	STUMP_ANIMATION_SINK = 2,
-	STUMP_ANIMATION_SPLASH = 3 /* drops into water with a splash */
+// SPRITE_STUMP's animations beyond its standing frame (stump.tsv).
+typedef enum STUMP_ANIMATION
+{
+	// Sinks until only its cut top shows, level with the ground or the water.
+	STUMP_ANIMATION_SINK   = 2,
+	STUMP_ANIMATION_SPLASH = 3 // drops into water with a splash
 } STUMP_ANIMATION;
 
-/* The animations of SPRITE_FLOATING_LOG_WEST_EAST and
-   SPRITE_FLOATING_LOG_NORTH_SOUTH (floating_log_west_east.tsv,
-   floating_log_north_south.tsv), the logs the leader rides in the Islet
-   Cave. */
-typedef enum FLOATING_LOG_ANIMATION {
-	FLOATING_LOG_ANIMATION_FLOAT = 1, /* bobbing on the water */
-	/* A dip under the leader's step, then FLOATING_LOG_ANIMATION_FLOAT. */
-	FLOATING_LOG_ANIMATION_SETTLE = 2,
-	/* Rolling over as it rides east or south. */
+// The animations of SPRITE_FLOATING_LOG_WEST_EAST and SPRITE_FLOATING_LOG_NORTH_SOUTH
+// (floating_log_west_east.tsv, floating_log_north_south.tsv), the logs the leader rides in the
+// Islet Cave.
+typedef enum FLOATING_LOG_ANIMATION
+{
+	FLOATING_LOG_ANIMATION_FLOAT              = 1, // bobbing on the water
+	// A dip under the leader's step, then FLOATING_LOG_ANIMATION_FLOAT.
+	FLOATING_LOG_ANIMATION_SETTLE             = 2,
+	// Rolling over as it rides east or south.
 	FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH = 3,
-	/* Rolling over the other way, as it rides west or north. */
+	// Rolling over the other way, as it rides west or north.
 	FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH = 4
 } FLOATING_LOG_ANIMATION;
 
-/* SPRITE_ENERGY_CHARGE's animation that bursts the orb into rings. */
+// SPRITE_ENERGY_CHARGE's animation that bursts the orb into rings.
 #define ENERGY_CHARGE_ANIMATION_BURST 3
-/* SPRITE_ARROW_PANEL's animation with its arrow pointing up: a lift ready. */
-#define ARROW_PANEL_ANIMATION_UP	  2
+// SPRITE_ARROW_PANEL's animation with its arrow pointing up: a lift ready.
+#define ARROW_PANEL_ANIMATION_UP      2
 
-/* SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice
-   pillar, held, and the puddle, the unfrozen water glinting. */
-#define PUDDLE_ANIMATION_FROZEN 0
-#define PUDDLE_ANIMATION_PUDDLE 1
+// SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice pillar, held, and the
+// puddle, the unfrozen water glinting.
+#define PUDDLE_ANIMATION_FROZEN       0
+#define PUDDLE_ANIMATION_PUDDLE       1
 
-/* SPRITE_MOVE_HAND's animations (move_hand.tsv), The Broken Seal's sheet and
-   numbers. */
-typedef enum MOVE_HAND_ANIMATION {
-	MOVE_HAND_ANIMATION_OPEN = 1, /* open, its fingers spread, tilted */
-	MOVE_HAND_ANIMATION_PALM = 2, /* open, its palm flat toward the viewer */
-	MOVE_HAND_ANIMATION_GRIP = 3, /* its fingers bent as if gripping */
-	/* MOVE_HAND_ANIMATION_OPEN and MOVE_HAND_ANIMATION_GRIP in turn, as it
-	   strains against what it pushes. */
-	MOVE_HAND_ANIMATION_FLEX = 4,
-	MOVE_HAND_ANIMATION_FIST = 5,
-	/* Open, gripping, then a fist held, in turn: the hand clenching. */
+// SPRITE_MOVE_HAND's animations (move_hand.tsv), The Broken Seal's sheet and numbers.
+typedef enum MOVE_HAND_ANIMATION
+{
+	MOVE_HAND_ANIMATION_OPEN   = 1, // open, its fingers spread, tilted
+	MOVE_HAND_ANIMATION_PALM   = 2, // open, its palm flat toward the viewer
+	MOVE_HAND_ANIMATION_GRIP   = 3, // its fingers bent as if gripping
+	// MOVE_HAND_ANIMATION_OPEN and MOVE_HAND_ANIMATION_GRIP in turn, as it strains against what it
+	// pushes.
+	MOVE_HAND_ANIMATION_FLEX   = 4,
+	MOVE_HAND_ANIMATION_FIST   = 5,
+	// Open, gripping, then a fist held, in turn: the hand clenching.
 	MOVE_HAND_ANIMATION_CLENCH = 6
 } MOVE_HAND_ANIMATION;
 

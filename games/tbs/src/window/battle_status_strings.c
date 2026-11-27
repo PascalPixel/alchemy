@@ -1,10 +1,10 @@
-/* The battle status screen's labels, as each edition words them. */
+// The battle status screen's labels, as each edition words them.
 
 #include "types.h"
 
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
 const Uint8 BattleStatusScreenNivString[] = "Niv";
-const Uint8 BattleStatusScreenNvString[] = "Nv.";
+const Uint8 BattleStatusScreenNvString[]  = "Nv.";
 #endif
 #if LANGUAGE == LANGUAGE_FRENCH
 const Uint8 BattleStatusScreenLevelString[] = "Niv";

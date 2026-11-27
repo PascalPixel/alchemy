@@ -1,55 +1,49 @@
-/* West Lunpa Cave (SceneIdWestLunpaCave, area name West Lunpa Cave), the cave
-   between the World Map and Lunpa, with a gate across it, where the party meets
-   Bunza on the way out of Lunpa with Hammet.
-
-   From the World Map the party comes in at the south end (metatile (10, 40))
-   into a round chamber, and goes north up a passage split by a column of rock.
-   Further on, a green metal gate stands half raised across the way, with a
-   puddle under it. Beyond the gate the cave runs on to Lunpa, whose passage
-   leaves from the east (metatile (34, 21)).
-
-   Frost on the puddle under the gate, as the walkthrough says, freezes it into
-   a tall ice pillar that pushes the gate up and opens the way. Two switches on
-   the cave wall move the gate too. The one east of the gate, on the World Map
-   side (metatile (24, 15)), drops it to the floor over the puddle; the one
-   north of it, on the Lunpa side (metatile (21, 8)), raises it so the party can
-   walk under. Each does nothing while the gate already stands where it would
-   put it, and neither does anything once the ice pillar holds the gate up. Two
-   more puddles freeze into ice pillars: one by the rocks on the first chamber's
-   west side, and one in the passage north of the gate.
-
-   WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no exit names, repeats
-   WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
-
-   The gate and the pillars are kept in scene flags, which scInit redraws:
-
-   - FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate's puddle is frozen,
-	 propping the gate open.
-   - FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has lowered the
-	 gate.
-   - FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
-   - FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen.
-   - FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the puddle in the first
-	 chamber is frozen into a pillar.
-
-   The reunion with Bunza, a Kalay merchant, plays here once
-   (FLAG_LUNPA_CAVE_REUNION_SEEN), after the party has brought Hammet out of
-   Lunpa Fortress (FLAG_DODONPA_LOCKED_UP). On the way back to the World Map, as
-   the party comes down the passage into the first chamber (metatile (11, 29)),
-   Bunza steps out further up the passage behind them and Hammet knows him
-   (scWestLunpaCaveHammetFindsBunza). They all talk in the first chamber
-   (scWestLunpaCaveHoldReunion), and Isaac's answers decide whether the party
-   rides home to Kalay in Bunza's wagon or stays behind
-   (scWestLunpaCaveAskAboutWagon).
-
-   Riding leaves by WEST_LUNPA_CAVE_BY_WAGON to WORLD_MAP_FROM_WEST_LUNPA_CAVE,
-   where world_map.c plays the departure. If the party stays, Hammet and Bunza
-   leave alone. Either way FLAG_BUNZAS_WAGON_LEFT is set, on the World Map or
-   here.
-
-   Unused: a fourth puddle is placed at the map's top-left corner, metatile (0,
-   0), where no part of the cave the screen shows reaches, so Frost can never be
-   cast on it (scWestLunpaCaveUnusedFreezePuddle). */
+// West Lunpa Cave (SceneIdWestLunpaCave, area name West Lunpa Cave), the cave between the World Map
+// and Lunpa, with a gate across it, where the party meets Bunza on the way out of Lunpa with
+// Hammet.
+//
+// From the World Map the party comes in at the south end (metatile (10, 40)) into a round chamber,
+// and goes north up a passage split by a column of rock. Further on, a green metal gate stands half
+// raised across the way, with a puddle under it. Beyond the gate the cave runs on to Lunpa, whose
+// passage leaves from the east (metatile (34, 21)).
+//
+// Frost on the puddle under the gate, as the walkthrough says, freezes it into a tall ice pillar
+// that pushes the gate up and opens the way. Two switches on the cave wall move the gate too. The
+// one east of the gate, on the World Map side (metatile (24, 15)), drops it to the floor over the
+// puddle; the one north of it, on the Lunpa side (metatile (21, 8)), raises it so the party can
+// walk under. Each does nothing while the gate already stands where it would put it, and neither
+// does anything once the ice pillar holds the gate up. Two more puddles freeze into ice pillars:
+// one by the rocks on the first chamber's west side, and one in the passage north of the gate.
+//
+// WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no exit names, repeats WEST_LUNPA_CAVE_FROM_LUNPA with a
+// shorter camera.
+//
+// The gate and the pillars are kept in scene flags, which scInit redraws:
+//
+// - FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate's puddle is frozen,
+//       propping the gate open.
+// - FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has lowered the
+//       gate.
+// - FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
+// - FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen.
+// - FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the puddle in the first
+//       chamber is frozen into a pillar.
+//
+// The reunion with Bunza, a Kalay merchant, plays here once (FLAG_LUNPA_CAVE_REUNION_SEEN), after
+// the party has brought Hammet out of Lunpa Fortress (FLAG_DODONPA_LOCKED_UP). On the way back to
+// the World Map, as the party comes down the passage into the first chamber (metatile (11, 29)),
+// Bunza steps out further up the passage behind them and Hammet knows him
+// (scWestLunpaCaveHammetFindsBunza). They all talk in the first chamber
+// (scWestLunpaCaveHoldReunion), and Isaac's answers decide whether the party rides home to Kalay in
+// Bunza's wagon or stays behind (scWestLunpaCaveAskAboutWagon).
+//
+// Riding leaves by WEST_LUNPA_CAVE_BY_WAGON to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where world_map.c
+// plays the departure. If the party stays, Hammet and Bunza leave alone. Either way
+// FLAG_BUNZAS_WAGON_LEFT is set, on the World Map or here.
+//
+// Unused: a fourth puddle is placed at the map's top-left corner, metatile (0, 0), where no part of
+// the cave the screen shows reaches, so Frost can never be cast on it
+// (scWestLunpaCaveUnusedFreezePuddle).
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -58,43 +52,47 @@
 #include "text/msg_ids.h"
 
 extern const SCENE_ENTRANCE WestLunpaCaveEntrances[];
-extern const Uint32			WestLunpaCaveExits[];
-extern const ACTOR_PLACE	WestLunpaCaveNoActorPlacements[];
-extern const ACTOR_PLACE	WestLunpaCaveActorPlacements[];
-extern const CUE			WestLunpaCaveCues[];
+extern const Uint32         WestLunpaCaveExits[];
+extern const ACTOR_PLACE    WestLunpaCaveNoActorPlacements[];
+extern const ACTOR_PLACE    WestLunpaCaveActorPlacements[];
+extern const CUE            WestLunpaCaveCues[];
 
-/* The metatiles the cave's cues answer: the two ways out, the two switches and
-   the spot where Bunza is seen. */
-typedef enum WEST_LUNPA_CAVE_METATILE_BEHAVIOR {
-	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE = 1,
-	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE = 2,
-	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_LOWERING_SWITCH = 3,
-	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_RAISING_SWITCH = 4,
+// The metatiles the cave's cues answer: the two ways out, the two switches and the spot where Bunza
+// is seen.
+typedef enum WEST_LUNPA_CAVE_METATILE_BEHAVIOR
+{
+	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE  = 1,
+	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE      = 2,
+	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_LOWERING_SWITCH    = 3,
+	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_RAISING_SWITCH     = 4,
 	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
 } WEST_LUNPA_CAVE_METATILE_BEHAVIOR;
 
-/* The cave's actors, numbered in the order of WestLunpaCaveActorPlacements. */
-typedef enum WEST_LUNPA_CAVE_ACTOR_ID {
-	/* Placed at the map's top-left corner, off every part of the cave the
-	   screen shows, so the player never sees it
-	   (scWestLunpaCaveUnusedFreezePuddle). */
+// The cave's actors, numbered in the order of WestLunpaCaveActorPlacements.
+typedef enum WEST_LUNPA_CAVE_ACTOR_ID
+{
+	// Placed at the map's top-left corner, off every part of the cave the screen shows, so the
+	// player never sees it (scWestLunpaCaveUnusedFreezePuddle).
 	ACTOR_UNUSED_PUDDLE = ACTOR_FIRST_PLACED,
-	/* By the rocks on the first chamber's west side. */
+	// By the rocks on the first chamber's west side.
 	ACTOR_SOUTH_PUDDLE,
-	/* Under the gate. */
+	// Under the gate.
 	ACTOR_GATE_PUDDLE,
-	/* In the passage north of the gate. */
+	// In the passage north of the gate.
 	ACTOR_NORTH_PUDDLE,
 	ACTOR_BUNZA,
 	ACTOR_HAMMET
 } WEST_LUNPA_CAVE_ACTOR_ID;
 
-/* The sprite priority the gate's puddle takes once the gate has come down. */
-enum { GATE_PILLAR_PRIORITY = 3 };
+// The sprite priority the gate's puddle takes once the gate has come down.
+enum
+{
+	GATE_PILLAR_PRIORITY = 3
+};
 
-/* The party's lines as Bunza steps out behind them
-   (scWestLunpaCaveHammetFindsBunza), in order. */
-typedef enum SIGHTING_MESSAGE {
+// The party's lines as Bunza steps out behind them (scWestLunpaCaveHammetFindsBunza), in order.
+typedef enum SIGHTING_MESSAGE
+{
 	SIGHTING_GARET_SAW_SOMEONE,
 	SIGHTING_MIA_SAW_SOMETHING,
 	SIGHTING_IVAN_ASKS_IF_FOUND,
@@ -102,18 +100,18 @@ typedef enum SIGHTING_MESSAGE {
 	SIGHTING_GARET_ASKS_WHAT_ELSE
 } SIGHTING_MESSAGE;
 
-/* Hammet and Bunza recognizing each other (scWestLunpaCaveHammetFindsBunza), in
-   order. */
-typedef enum RECOGNITION_MESSAGE {
+// Hammet and Bunza recognizing each other (scWestLunpaCaveHammetFindsBunza), in order.
+typedef enum RECOGNITION_MESSAGE
+{
 	RECOGNITION_HAMMET_CALLS_OUT,
 	RECOGNITION_HAMMET_NAMES_BUNZA,
 	RECOGNITION_BUNZA_KNOWS_VOICE,
 	RECOGNITION_BUNZA_NAMES_HAMMET
 } RECOGNITION_MESSAGE;
 
-/* The reunion's talk in the first chamber (scWestLunpaCaveHoldReunion), in
-   order. */
-typedef enum REUNION_MESSAGE {
+// The reunion's talk in the first chamber (scWestLunpaCaveHoldReunion), in order.
+typedef enum REUNION_MESSAGE
+{
 	REUNION_BUNZA_ASKS_ABOUT_RELEASE,
 	REUNION_HAMMET_CREDITS_IVAN,
 	REUNION_IVAN_CREDITS_LEADER,
@@ -157,8 +155,9 @@ typedef enum REUNION_MESSAGE {
 	REUNION_BUNZA_AGREES_NOT_TO_FIGHT
 } REUNION_MESSAGE;
 
-/* Hammet asking Bunza's plan, and Bunza's wagon to Kalay, in order. */
-typedef enum PLAN_MESSAGE {
+// Hammet asking Bunza's plan, and Bunza's wagon to Kalay, in order.
+typedef enum PLAN_MESSAGE
+{
 	PLAN_HAMMET_ASKS_PLAN,
 	PLAN_BUNZA_HAS_WAGON,
 	PLAN_MIA_ASKS_ABOUT_WAGON,
@@ -169,28 +168,31 @@ typedef enum PLAN_MESSAGE {
 	PLAN_BUNZA_IS_UNSUSPECTED
 } PLAN_MESSAGE;
 
-/* The lines before the wagon question (scWestLunpaCaveAskAboutWagon). */
-typedef enum WAGON_MESSAGE {
+// The lines before the wagon question (scWestLunpaCaveAskAboutWagon).
+typedef enum WAGON_MESSAGE
+{
 	WAGON_BUNZA_LEADS_THE_WAY,
 	WAGON_GARET_ASKS_TO_RIDE
 } WAGON_MESSAGE;
 
-/* Ivan, confused by Isaac's answers, and Garet asking the wagon question
-   again. */
-typedef enum CONFUSION_MESSAGE {
+// Ivan, confused by Isaac's answers, and Garet asking the wagon question again.
+typedef enum CONFUSION_MESSAGE
+{
 	CONFUSION_IVAN_IS_CONFUSED,
 	CONFUSION_GARET_ASKS_AGAIN
 } CONFUSION_MESSAGE;
 
-/* The lines of scWestLunpaCaveBunzaCannotWait. */
-typedef enum WARNING_MESSAGE {
+// The lines of scWestLunpaCaveBunzaCannotWait.
+typedef enum WARNING_MESSAGE
+{
 	WARNING_IVAN_ASKS_IF_STAYING,
 	WARNING_BUNZA_CANNOT_WAIT,
 	WARNING_MIA_ASKS_ABOUT_BUSINESS
 } WARNING_MESSAGE;
 
-/* The lines as the party stays behind (scWestLunpaCaveStayBehind). */
-typedef enum FAREWELL_MESSAGE {
+// The lines as the party stays behind (scWestLunpaCaveStayBehind).
+typedef enum FAREWELL_MESSAGE
+{
 	FAREWELL_GARET_STAYS,
 	FAREWELL_MIA_STAYS,
 	FAREWELL_IVAN_STAYS,
@@ -202,38 +204,39 @@ typedef enum FAREWELL_MESSAGE {
 	FAREWELL_GARET_MOVES_ON
 } FAREWELL_MESSAGE;
 
-/* The lines as the party rides the wagon (scWestLunpaCaveRideWagon). */
-typedef enum DEPARTURE_MESSAGE {
+// The lines as the party rides the wagon (scWestLunpaCaveRideWagon).
+typedef enum DEPARTURE_MESSAGE
+{
 	DEPARTURE_GARET_HEADS_FOR_KALAY,
 	DEPARTURE_IVAN_THINKS_OF_LAYANA,
 	DEPARTURE_HAMMET_LONGS_FOR_LAYANA,
 	DEPARTURE_BUNZA_SETS_OFF
 } DEPARTURE_MESSAGE;
 
-/* The gate's puddle is frozen into a pillar, propping the gate open. */
-#define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN	 FLAG_SCENE_TEMP_00
-/* The lowering switch has lowered the gate. */
-#define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED		 FLAG_SCENE_TEMP_01
-/* The gate is raised, by the raising switch or the ice pillar under it. */
-#define FLAG_WEST_LUNPA_CAVE_GATE_RAISED		 FLAG_SCENE_TEMP_02
-/* The north puddle is frozen into a pillar. */
+// The gate's puddle is frozen into a pillar, propping the gate open.
+#define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN  FLAG_SCENE_TEMP_00
+// The lowering switch has lowered the gate.
+#define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED        FLAG_SCENE_TEMP_01
+// The gate is raised, by the raising switch or the ice pillar under it.
+#define FLAG_WEST_LUNPA_CAVE_GATE_RAISED         FLAG_SCENE_TEMP_02
+// The north puddle is frozen into a pillar.
 #define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
-/* The puddle in the first chamber is frozen into a pillar. */
+// The puddle in the first chamber is frozen into a pillar.
 #define FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
 
-static void	 scWestLunpaCaveHoldReunion(void);
-static void	 scWestLunpaCaveAskAboutWagon(void);
-static Uint8 scWestLunpaCaveLeaderAnswersYes(void);
-static Uint8 scWestLunpaCaveGaretAsksIfNotRiding(void);
-static Uint8 scWestLunpaCaveGaretAsksAboutUnfinishedBusiness(void);
-static Uint8 scWestLunpaCaveConfirmStaying(void);
-static Uint8 scWestLunpaCaveBunzaAsksAboutUnfinishedBusiness(void);
-static Uint8 scWestLunpaCaveGaretChecksNothingLeftToDo(void);
-static Uint8 scWestLunpaCaveMiaAsksIfRidingAfterAll(void);
-static Uint8 scWestLunpaCaveBunzaCannotWait(void);
-static Uint8 scWestLunpaCaveGaretAsksAboutThingsToDo(void);
-static void	 scWestLunpaCaveStayBehind(void);
-static void	 scWestLunpaCaveRideWagon(void);
+static void           scWestLunpaCaveHoldReunion(void);
+static void           scWestLunpaCaveAskAboutWagon(void);
+static Uint8          scWestLunpaCaveLeaderAnswersYes(void);
+static Uint8          scWestLunpaCaveGaretAsksIfNotRiding(void);
+static Uint8          scWestLunpaCaveGaretAsksAboutUnfinishedBusiness(void);
+static Uint8          scWestLunpaCaveConfirmStaying(void);
+static Uint8          scWestLunpaCaveBunzaAsksAboutUnfinishedBusiness(void);
+static Uint8          scWestLunpaCaveGaretChecksNothingLeftToDo(void);
+static Uint8          scWestLunpaCaveMiaAsksIfRidingAfterAll(void);
+static Uint8          scWestLunpaCaveBunzaCannotWait(void);
+static Uint8          scWestLunpaCaveGaretAsksAboutThingsToDo(void);
+static void           scWestLunpaCaveStayBehind(void);
+static void           scWestLunpaCaveRideWagon(void);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -245,71 +248,72 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return NULL;
 }
 
-/* The ways out: to the World Map, to Lunpa, and away in Bunza's wagon. */
+// The ways out: to the World Map, to Lunpa, and away in Bunza's wagon.
 const Uint32 *scGetExits(void)
 {
 	return WestLunpaCaveExits;
 }
 
-/* The puddles, and Bunza, Hammet and the party for the reunion, kept off the
-   stage until it plays. */
+// The puddles, and Bunza, Hammet and the party for the reunion, kept off the stage until it plays.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	if(MainRoutineStateWork.next == SCENE_WEST_LUNPA_CAVE) {
+	if (MainRoutineStateWork.next == SCENE_WEST_LUNPA_CAVE)
+	{
 		return WestLunpaCaveActorPlacements;
 	}
 	return WestLunpaCaveNoActorPlacements;
 }
 
-/* The cave's scripts: its ways out, the two switches, Frost on each puddle and
-   the spot where Bunza is seen. */
+// The cave's scripts: its ways out, the two switches, Frost on each puddle and the spot where Bunza
+// is seen.
 const CUE *scGetCues(void)
 {
 	return WestLunpaCaveCues;
 }
 
-/* Unused: Frost on the fourth puddle, at the map's top-left corner (metatile
-   (0, 0)) where the screen never goes, would freeze it, and no flag would
-   remember it. The player can never cast it there. */
+// Unused: Frost on the fourth puddle, at the map's top-left corner (metatile (0, 0)) where the
+// screen never goes, would freeze it, and no flag would remember it. The player can never cast it
+// there.
 static void scWestLunpaCaveUnusedFreezePuddle(void)
 {
 	ACTOR *puddle;
 
 	puddle = fdActorGet(ACTOR_UNUSED_PUDDLE);
-	if(puddle != NULL) {
+	if (puddle != NULL)
+	{
 		fdActorSetSpriteFlags(puddle, 0);
 	}
 }
 
-/* Frost on the puddle by the rocks on the first chamber's west side (metatile
-   (8, 32)) freezes it into a tall ice pillar against the wall. It only stands
-   in the way: walking into it from the east, Isaac stops beside it and does not
-   climb onto it. */
+// Frost on the puddle by the rocks on the first chamber's west side (metatile (8, 32)) freezes it
+// into a tall ice pillar against the wall. It only stands in the way: walking into it from the
+// east, Isaac stops beside it and does not climb onto it.
 static void scWestLunpaCaveFreezeSouthPuddle(void)
 {
 	ACTOR *puddle;
 
 	puddle = fdActorGet(ACTOR_SOUTH_PUDDLE);
-	if(puddle != NULL) {
+	if (puddle != NULL)
+	{
 		puddle->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-		puddle->motionFlags = 0;
+		puddle->motionFlags   = 0;
 	}
-	/* The pillar's metatile takes the height of the metatiles along the west
-	   wall, (7, 30..34), 64 pixels up: the top of the wall's rock, which no
-	   floor leads onto. */
+	// The pillar's metatile takes the height of the metatiles along the west wall, (7, 30..34), 64
+	// pixels up: the top of the wall's rock, which no floor leads onto.
 	fdMapGridCopyMetatileAttributes(7, 32, 1, 1, 8, 32);
 	gmFlagSet(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN);
 }
 
-/* The gate rises onto the ice pillar under it in steps of four ticks and stays
-   up, and the way under it opens. */
+// The gate rises onto the ice pillar under it in steps of four ticks and stays up, and the way
+// under it opens.
 static void scWestLunpaCaveGateDrawPropped(void)
 {
 	ACTOR *pillar;
 
 	pillar = fdActorGet(ACTOR_GATE_PUDDLE);
 	fdActorSetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-	if(pillar != NULL) {
+	if (pillar != NULL)
+	{
 		fdActorSetSpriteFlags(pillar, 0);
 		pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
@@ -327,20 +331,22 @@ static void scWestLunpaCaveGateDrawPropped(void)
 	fdMapGridCopyMetatileAttributes(19, 17, 1, 1, 21, 14);
 }
 
-/* Frost on the puddle under the half-raised gate (metatile (21, 15)) freezes it
-   into a tall ice pillar. Unless the gate is already raised, the pillar pushes
-   it up and the puzzle-solved tune plays: the way on is open. */
+// Frost on the puddle under the half-raised gate (metatile (21, 15)) freezes it into a tall ice
+// pillar. Unless the gate is already raised, the pillar pushes it up and the puzzle-solved tune
+// plays: the way on is open.
 static void scWestLunpaCaveFreezeGatePuddle(void)
 {
 	ACTOR *pillar;
 
 	pillar = fdActorGet(ACTOR_GATE_PUDDLE);
 	gmFlagSet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN);
-	if(pillar != NULL) {
+	if (pillar != NULL)
+	{
 		fdActorSetSpriteFlags(pillar, 0);
 		pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
-	if(fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
+	if (fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0)
+	{
 		sySoundPlay(SE_GATE_MOVE);
 		scWestLunpaCaveGateDrawPropped();
 		sySoundPlay(MUS_PUZZLE_SOLVED);
@@ -348,19 +354,19 @@ static void scWestLunpaCaveFreezeGatePuddle(void)
 	}
 }
 
-/* Frost on the puddle in the passage north of the gate, east of the raising
-   switch (metatile (26, 8)), freezes it into a tall ice pillar, which is still
-   there when the party comes back. */
+// Frost on the puddle in the passage north of the gate, east of the raising switch (metatile (26,
+// 8)), freezes it into a tall ice pillar, which is still there when the party comes back.
 static void scWestLunpaCaveFreezeNorthPuddle(void)
 {
 	gmFlagSet(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN);
 }
 
-/* The gate drops to the floor in steps of four ticks, over the puddle, and the
-   way under it is shut. */
+// The gate drops to the floor in steps of four ticks, over the puddle, and the way under it is
+// shut.
 static void scWestLunpaCaveGateLower(void)
 {
-	if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) != 0) {
+	if (gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) != 0)
+	{
 		fdMapGridCopyMetatiles(41, 86, 2, 6, 21, 57);
 		sySynch(4);
 		fdMapGridCopyMetatiles(43, 86, 2, 6, 21, 57);
@@ -382,14 +388,15 @@ static void scWestLunpaCaveGateLower(void)
 	fdMapGridCopyMetatileAttributes(19, 17, 1, 1, 22, 15);
 }
 
-/* Isaac flips the switch on the wall east of the gate, on the World Map side
-   (metatile (24, 15)): "Isaac flipped the switch." The gate drops to the floor,
-   covering the puddle. Nothing happens while the gate is already down or the
-   ice pillar holds it up. */
+// Isaac flips the switch on the wall east of the gate, on the World Map side (metatile (24, 15)):
+// "Isaac flipped the switch." The gate drops to the floor, covering the puddle. Nothing happens
+// while the gate is already down or the ice pillar holds it up.
 static void scWestLunpaCaveFlipLoweringSwitch(void)
 {
-	if(fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0) {
-		if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
+	if (fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0)
+	{
+		if (gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0)
+		{
 			mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
 			sySoundPlay(SE_GATE_MOVE);
 			scWestLunpaCaveGateLower();
@@ -399,7 +406,7 @@ static void scWestLunpaCaveFlipLoweringSwitch(void)
 	}
 }
 
-/* The gate rises clear in steps of four ticks, and the way under it opens. */
+// The gate rises clear in steps of four ticks, and the way under it opens.
 static void scWestLunpaCaveGateRaise(void)
 {
 	fdMapGridCopyMetatiles(41, 87, 2, 5, 21, 59);
@@ -415,14 +422,15 @@ static void scWestLunpaCaveGateRaise(void)
 	fdMapGridCopyMetatileAttributes(19, 17, 1, 1, 21, 14);
 }
 
-/* Isaac flips the switch on the wall north of the gate, on the Lunpa side
-   (metatile (21, 8)): "Isaac flipped the switch." The gate rises so the party
-   can walk under it. Nothing happens while the gate is already raised or the
-   ice pillar holds it up. */
+// Isaac flips the switch on the wall north of the gate, on the Lunpa side (metatile (21, 8)):
+// "Isaac flipped the switch." The gate rises so the party can walk under it. Nothing happens while
+// the gate is already raised or the ice pillar holds it up.
 static void scWestLunpaCaveFlipRaisingSwitch(void)
 {
-	if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
-		if(fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
+	if (gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0)
+	{
+		if (fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0)
+		{
 			mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
 			sySoundPlay(SE_GATE_MOVE);
 			scWestLunpaCaveGateRaise();
@@ -432,18 +440,18 @@ static void scWestLunpaCaveFlipRaisingSwitch(void)
 	}
 }
 
-/* On the way out of Lunpa with Hammet, as the party comes down the passage into
-   the first chamber (metatile (11, 29)), Bunza steps out further up the passage
-   behind them. Garet and Mia saw someone, and Ivan asks whether Dodonpa's
-   henchmen have found them. Whatever Isaac answers, Hammet calls out, "Is that
-   you, Bunza?", and Bunza knows his voice: "It's Hammet!" The screen closes for
-   the talk that follows. */
+// On the way out of Lunpa with Hammet, as the party comes down the passage into the first chamber
+// (metatile (11, 29)), Bunza steps out further up the passage behind them. Garet and Mia saw
+// someone, and Ivan asks whether Dodonpa's henchmen have found them. Whatever Isaac answers, Hammet
+// calls out, "Is that you, Bunza?", and Bunza knows his voice: "It's Hammet!" The screen closes for
+// the talk that follows.
 static void scWestLunpaCaveHammetFindsBunza(void)
 {
 	Sint32 sighting;
 	Sint32 recognition;
 
-	if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) != 0) {
+	if (gmFlagGet(FLAG_DODONPA_LOCKED_UP) != 0)
+	{
 		gmFlagSet(FLAG_LUNPA_CAVE_REUNION_SEEN);
 		fdScriptStart();
 		fdActorSetPos(ACTOR_BUNZA, 144, 400);
@@ -478,8 +486,7 @@ static void scWestLunpaCaveHammetFindsBunza(void)
 		fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
 		fdScriptWait(30);
 
-		/* The party spots someone ahead, before Bunza recognizes Hammet's
-		   voice. */
+		// The party spots someone ahead, before Bunza recognizes Hammet's voice.
 		fdActorRunRepeatedMotion(ACTOR_GARET, 1);
 		sighting = MsgLunpaThinkSawSomeone;
 		fdScriptSetMessageId(sighting + SIGHTING_GARET_SAW_SOMEONE);
@@ -497,10 +504,13 @@ static void scWestLunpaCaveHammetFindsBunza(void)
 		fdActorFaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
 		fdActorFaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
 		fdScriptWait(30);
-		if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+		if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
+		{
 			fdScriptSetMessageId(sighting + SIGHTING_GARET_WILL_FIGHT);
 			fdScriptShowMessage(ACTOR_GARET, 0);
-		} else {
+		}
+		else
+		{
 			fdScriptSetMessageId(sighting + SIGHTING_GARET_ASKS_WHAT_ELSE);
 			fdScriptShowMessage(ACTOR_GARET, 0);
 		}
@@ -545,16 +555,15 @@ static void scWestLunpaCaveHammetFindsBunza(void)
 	}
 }
 
-/* The screen opens on everyone gathered in the first chamber. Bunza learns that
-   Dodonpa never meant to free Hammet and that Ivan and his friends came to the
-   rescue, tells how he came to be hiding in the cave, and offers them all a
-   ride to Kalay in his wagon. */
+// The screen opens on everyone gathered in the first chamber. Bunza learns that Dodonpa never meant
+// to free Hammet and that Ivan and his friends came to the rescue, tells how he came to be hiding
+// in the cave, and offers them all a ride to Kalay in his wagon.
 static void scWestLunpaCaveHoldReunion(void)
 {
 	Sint32 reunion;
 	Sint32 msgBase;
 
-	/* Arrange the reunion while the screen is closed, then reveal the group. */
+	// Arrange the reunion while the screen is closed, then reveal the group.
 	fdScriptStart();
 	fdActorSetPos(ACTOR_GARET, 200, 544);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 184, 544);
@@ -622,7 +631,7 @@ static void scWestLunpaCaveHoldReunion(void)
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(30);
 
-	/* Bunza explains how he reached the cave despite being refused entry. */
+	// Bunza explains how he reached the cave despite being refused entry.
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 	fdActorFaceActor(ACTOR_MIA, ACTOR_BUNZA, 0);
 	fdScriptSetMessageId(reunion + REUNION_MIA_PRAISES_BUNZA);
@@ -711,8 +720,7 @@ static void scWestLunpaCaveHoldReunion(void)
 	fdScriptWait(20);
 	fdScriptSetMessageId(reunion + REUNION_BUNZA_LINKS_COMMOTION);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-	fdActorSetAttachedEffect(
-		ACTOR_BUNZA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_BUNZA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptSetMessageId(reunion + REUNION_BUNZA_HAD_TO_KNOW);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
@@ -737,8 +745,7 @@ static void scWestLunpaCaveHoldReunion(void)
 	fdActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
 	fdScriptWait(30);
 
-	/* Bunza checks the passage, worries about pursuit and proposes his
-	   wagon. */
+	// Bunza checks the passage, worries about pursuit and proposes his wagon.
 	fdActorFaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
 	fdActorShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	fdActorSetSpeed(ACTOR_BUNZA, 1.5);
@@ -783,10 +790,13 @@ static void scWestLunpaCaveHoldReunion(void)
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
 	fdScriptSetMessageId(reunion + REUNION_GARET_ASKS_TO_FIGHT);
 	fdScriptOpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
-	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
+	{
 		fdScriptSetMessageId(reunion + REUNION_BUNZA_DISCOURAGES_FIGHT);
 		fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-	} else {
+	}
+	else
+	{
 		fdScriptSetMessageId(reunion + REUNION_BUNZA_AGREES_NOT_TO_FIGHT);
 		fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
 	}
@@ -846,9 +856,9 @@ static void scWestLunpaCaveHoldReunion(void)
 	scWestLunpaCaveAskAboutWagon();
 }
 
-/* Garet asks whether they should ride in the wagon too, and the questions go on
-   until Isaac's answers settle it: the party rides to Kalay, or stays behind to
-   finish its business in Lunpa (the walkthrough's No, Yes, Yes). */
+// Garet asks whether they should ride in the wagon too, and the questions go on until Isaac's
+// answers settle it: the party rides to Kalay, or stays behind to finish its business in Lunpa (the
+// walkthrough's No, Yes, Yes).
 static void scWestLunpaCaveAskAboutWagon(void)
 {
 	Sint32 wagon;
@@ -867,33 +877,43 @@ static void scWestLunpaCaveAskAboutWagon(void)
 	fdActorFaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
 
 ask_to_ride:
-	if(scWestLunpaCaveLeaderAnswersYes()) {
+	if (scWestLunpaCaveLeaderAnswersYes())
+	{
 	ask_about_business:
-		if(!scWestLunpaCaveBunzaAsksAboutUnfinishedBusiness()) {
+		if (!scWestLunpaCaveBunzaAsksAboutUnfinishedBusiness())
+		{
 			goto ride;
 		}
 		insisted = FALSE;
-		if(!scWestLunpaCaveGaretAsksAboutThingsToDo()) {
+		if (!scWestLunpaCaveGaretAsksAboutThingsToDo())
+		{
 		insist_nothing_left:
 			insisted = TRUE;
 		check_nothing_left:
 			scWestLunpaCaveGaretChecksNothingLeftToDo();
-			if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+			if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
+			{
 				goto ride;
 			}
 		}
-		if(scWestLunpaCaveBunzaCannotWait() || !insisted) {
+		if (scWestLunpaCaveBunzaCannotWait() || !insisted)
+		{
 			goto stay;
 		}
 		goto check_nothing_left;
-	} else {
-		if(scWestLunpaCaveGaretAsksIfNotRiding()) {
-			if(scWestLunpaCaveGaretAsksAboutUnfinishedBusiness()) {
+	}
+	else
+	{
+		if (scWestLunpaCaveGaretAsksIfNotRiding())
+		{
+			if (scWestLunpaCaveGaretAsksAboutUnfinishedBusiness())
+			{
 				goto stay;
 			}
 			goto insist_nothing_left;
 		}
-		if(scWestLunpaCaveMiaAsksIfRidingAfterAll()) {
+		if (scWestLunpaCaveMiaAsksIfRidingAfterAll())
+		{
 			goto ask_about_business;
 		}
 		confusion = MsgLunpaTotallyConfusedChanged;
@@ -911,68 +931,66 @@ stay:
 	scWestLunpaCaveStayBehind();
 }
 
-/* The yes-or-no menu answers 0 for Yes; this turns that into true or false. */
+// The yes-or-no menu answers 0 for Yes; this turns that into true or false.
 static Uint8 scWestLunpaCaveLeaderAnswersYes(void)
 {
 	return fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* Garet asks, "Huh? You don't want to ride in Bunza's wagon?" */
+// Garet asks, "Huh? You don't want to ride in Bunza's wagon?"
 static Uint8 scWestLunpaCaveGaretAsksIfNotRiding(void)
 {
 	fdScriptSetMessageId(MsgLunpaGaretAsksIfNotRiding);
-	/* "Huh? You don't want to ride in Bunza's wagon?" */
+	// "Huh? You don't want to ride in Bunza's wagon?"
 	fdScriptOpenMessage(ACTOR_GARET, 0);
 	return fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* Garet asks, "Do you have some unfinished business in Lunpa?" */
+// Garet asks, "Do you have some unfinished business in Lunpa?"
 static Uint8 scWestLunpaCaveGaretAsksAboutUnfinishedBusiness(void)
 {
 	fdScriptSetMessageId(MsgLunpaGaretAsksAboutUnfinishedBusiness);
-	/* "Do you have some unfinished business in Lunpa?" */
+	// "Do you have some unfinished business in Lunpa?"
 	fdScriptOpenMessage(ACTOR_GARET, 0);
 	return fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* A step before the party stays that shows nothing and always agrees. */
+// A step before the party stays that shows nothing and always agrees.
 static Uint8 scWestLunpaCaveConfirmStaying(void)
 {
 	return TRUE;
 }
 
-/* Bunza asks, "Do you have any unfinished business?" */
+// Bunza asks, "Do you have any unfinished business?"
 static Uint8 scWestLunpaCaveBunzaAsksAboutUnfinishedBusiness(void)
 {
 	fdScriptSetMessageId(MsgLunpaBunzaAsksAboutUnfinishedBusiness);
-	/* "Do you have any unfinished business?" */
+	// "Do you have any unfinished business?"
 	fdScriptOpenMessage(ACTOR_BUNZA, 0);
 	return fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* Garet asks, "Don't startle me! You don't have anything left to do, do you?"
-   scWestLunpaCaveAskAboutWagon takes the answer. */
+// Garet asks, "Don't startle me! You don't have anything left to do, do you?"
+// scWestLunpaCaveAskAboutWagon takes the answer.
 static Uint8 scWestLunpaCaveGaretChecksNothingLeftToDo(void)
 {
 	fdScriptSetMessageId(MsgLunpaGaretChecksNothingLeft);
-	/* "Don't startle me! You don't have anything left to do, do you?" */
+	// "Don't startle me! You don't have anything left to do, do you?"
 	fdScriptOpenMessage(ACTOR_GARET, 0);
 	return TRUE;
 }
 
-/* Mia asks, "So, what? You've changed your mind? You do want to go with
-   them?" */
+// Mia asks, "So, what? You've changed your mind? You do want to go with them?"
 static Uint8 scWestLunpaCaveMiaAsksIfRidingAfterAll(void)
 {
 	fdScriptSetMessageId(MsgLunpaMiaAsksIfRidingAfter);
-	/* "So, what? You've changed your mind? You do want to go with them?" */
+	// "So, what? You've changed your mind? You do want to go with them?"
 	fdScriptOpenMessage(ACTOR_MIA, 0);
 	return fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* Ivan winces: so they won't ride in the wagon? Bunza shakes his head, he
-   cannot safely wait any longer, and Mia asks whether they mean to stay and
-   finish their business. */
+// Ivan winces: so they won't ride in the wagon? Bunza shakes his head, he cannot safely wait any
+// longer, and Mia asks whether they mean to stay and finish their business.
 static Uint8 scWestLunpaCaveBunzaCannotWait(void)
 {
 	Sint32 warning;
@@ -993,20 +1011,18 @@ static Uint8 scWestLunpaCaveBunzaCannotWait(void)
 	return fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* Garet asks, "Are you saying you still have some things to do here in
-   Lunpa?" */
+// Garet asks, "Are you saying you still have some things to do here in Lunpa?"
 static Uint8 scWestLunpaCaveGaretAsksAboutThingsToDo(void)
 {
 	fdScriptSetMessageId(MsgLunpaGaretAsksAboutThingsTo);
-	/* "Are you saying you still have some things to do here in Lunpa?" */
+	// "Are you saying you still have some things to do here in Lunpa?"
 	fdScriptOpenMessage(ACTOR_GARET, 0);
 	return fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* The party stays: Garet, Mia and Ivan each say they'll stay with Isaac, Hammet
-   lets Ivan go, and Hammet and Bunza walk off south out of the cave. The others
-   sigh after them, hope they reach Kalay safely, and fall in behind Isaac
-   again. */
+// The party stays: Garet, Mia and Ivan each say they'll stay with Isaac, Hammet lets Ivan go, and
+// Hammet and Bunza walk off south out of the cave. The others sigh after them, hope they reach
+// Kalay safely, and fall in behind Isaac again.
 static void scWestLunpaCaveStayBehind(void)
 {
 	Sint32 farewell;
@@ -1094,9 +1110,8 @@ static void scWestLunpaCaveStayBehind(void)
 	gmFlagSet(FLAG_BUNZAS_WAGON_LEFT);
 }
 
-/* The party rides: Garet says on to Kalay, Ivan and Hammet look forward to
-   seeing Lady Layana, and everyone walks out of the cave to the south, where
-   the World Map plays the wagon's departure. */
+// The party rides: Garet says on to Kalay, Ivan and Hammet look forward to seeing Lady Layana, and
+// everyone walks out of the cave to the south, where the World Map plays the wagon's departure.
 static void scWestLunpaCaveRideWagon(void)
 {
 	Sint32 departure;
@@ -1169,37 +1184,43 @@ static void scWestLunpaCaveRideWagon(void)
 	syImportScriptSetExitRequest(WEST_LUNPA_CAVE_BY_WAGON);
 }
 
-/* Draws the gate and the ice pillars as the party left them. */
+// Draws the gate and the ice pillars as the party left them.
 Sint32 scInit(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	if(MainRoutineStateWork.next == SCENE_WEST_LUNPA_CAVE) {
+	if (MainRoutineStateWork.next == SCENE_WEST_LUNPA_CAVE)
+	{
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_UNUSED_PUDDLE), 0);
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_SOUTH_PUDDLE), 0);
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_GATE_PUDDLE), 0);
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_NORTH_PUDDLE), 0);
 		fdActorGet(ACTOR_NORTH_PUDDLE)->scaleY = toFIXED(19) / 20;
-		if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) != 0) {
+		if (gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) != 0)
+		{
 			scWestLunpaCaveGateLower();
 		}
-		if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) != 0) {
+		if (gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) != 0)
+		{
 			scWestLunpaCaveGateRaise();
 		}
-		if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) != 0) {
+		if (gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) != 0)
+		{
 			scWestLunpaCaveGateDrawPropped();
 		}
-		if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN) != 0) {
+		if (gmFlagGet(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN) != 0)
+		{
 			fdActorSetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 		}
-		if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN) != 0) {
+		if (gmFlagGet(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN) != 0)
+		{
 			fdActorSetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 		}
 	}
 	return 0;
 }
 
-/* clang-format off */
+// clang-format off
 const SCENE_ENTRANCE WestLunpaCaveEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ WEST_LUNPA_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
@@ -1236,7 +1257,7 @@ const ACTOR_PLACE WestLunpaCaveActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-/* Unused: an empty cue table nothing returns. */
+// Unused: an empty cue table nothing returns.
 const CUE WestLunpaCaveNoCues[] = {
 	{ CUE_TABLE_END },
 };
@@ -1260,4 +1281,4 @@ const CUE WestLunpaCaveCues[] = {
 	  SCRIPT_REF(scWestLunpaCaveFreezeNorthPuddle) },
 	{ CUE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on

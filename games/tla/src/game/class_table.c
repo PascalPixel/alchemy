@@ -1,10 +1,10 @@
-/* The 244 classes, by class id. Each name is the English release's
-   (MsgClassName plus the class id). Part of game.c. */
+// The 244 classes, by class id. Each name is the English release's (MsgClassName plus the class
+// id). Part of game.c.
 
-/* clang-format off */
-/* The 244 classes, by class id. */
+// clang-format off
+// The 244 classes, by class id.
 const CLASS_DEFINITION ClassDefinitionTable[] = {
-	/* NPC */
+	// NPC
 	{
 		.series = CLASS_SERIES_NPC,
 		.hp = 10,
@@ -14,7 +14,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		.agility = 10,
 		.luck = 10,
 	},
-	/* Squire */
+	// Squire
 	{
 		.series = CLASS_SERIES_SQUIRE,
 		.required = {5},
@@ -42,7 +42,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
-	/* Knight */
+	// Knight
 	{
 		.series = CLASS_SERIES_SQUIRE,
 		.required = {7},
@@ -70,7 +70,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
-	/* Gallant */
+	// Gallant
 	{
 		.series = CLASS_SERIES_SQUIRE,
 		.required = {9},
@@ -99,7 +99,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
-	/* Lord */
+	// Lord
 	{
 		.series = CLASS_SERIES_SQUIRE,
 		.required = {11},
@@ -128,7 +128,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
-	/* Slayer */
+	// Slayer
 	{
 		.series = CLASS_SERIES_SQUIRE,
 		.required = {13},
@@ -157,15 +157,15 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Guard */
+	// Guard
 	{
 		.series = CLASS_SERIES_GUARD,
 		.required = {0, 0, 5},
@@ -190,7 +190,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Soldier */
+	// Soldier
 	{
 		.series = CLASS_SERIES_GUARD,
 		.required = {0, 0, 7},
@@ -215,7 +215,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Warrior */
+	// Warrior
 	{
 		.series = CLASS_SERIES_GUARD,
 		.required = {0, 0, 9},
@@ -244,7 +244,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Champion */
+	// Champion
 	{
 		.series = CLASS_SERIES_GUARD,
 		.required = {0, 0, 11},
@@ -273,7 +273,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Hero */
+	// Hero
 	{
 		.series = CLASS_SERIES_GUARD,
 		.required = {0, 0, 13},
@@ -302,17 +302,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Wind Seer */
+	// Wind Seer
 	{
 		.series = CLASS_SERIES_WIND_SEER,
 		.required = {0, 0, 0, 5},
@@ -341,7 +341,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Magician */
+	// Magician
 	{
 		.series = CLASS_SERIES_WIND_SEER,
 		.required = {0, 0, 0, 7},
@@ -370,7 +370,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Mage */
+	// Mage
 	{
 		.series = CLASS_SERIES_WIND_SEER,
 		.required = {0, 0, 0, 9},
@@ -399,7 +399,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Magister */
+	// Magister
 	{
 		.series = CLASS_SERIES_WIND_SEER,
 		.required = {0, 0, 0, 11},
@@ -428,7 +428,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Sorcerer */
+	// Sorcerer
 	{
 		.series = CLASS_SERIES_WIND_SEER,
 		.required = {0, 0, 0, 13},
@@ -457,17 +457,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Water Seer */
+	// Water Seer
 	{
 		.series = CLASS_SERIES_WATER_SEER,
 		.required = {0, 5},
@@ -495,7 +495,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
 	},
-	/* Scribe */
+	// Scribe
 	{
 		.series = CLASS_SERIES_WATER_SEER,
 		.required = {0, 7},
@@ -523,7 +523,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
 	},
-	/* Cleric */
+	// Cleric
 	{
 		.series = CLASS_SERIES_WATER_SEER,
 		.required = {0, 9},
@@ -551,7 +551,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
 	},
-	/* Paragon */
+	// Paragon
 	{
 		.series = CLASS_SERIES_WATER_SEER,
 		.required = {0, 11},
@@ -579,7 +579,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
 	},
-	/* Angel */
+	// Angel
 	{
 		.series = CLASS_SERIES_WATER_SEER,
 		.required = {0, 13},
@@ -607,17 +607,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Swordsman */
+	// Swordsman
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {5},
@@ -644,7 +644,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
 	},
-	/* Defender */
+	// Defender
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {5, 2},
@@ -672,7 +672,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Cavalier */
+	// Cavalier
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {5, 4},
@@ -700,7 +700,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Guardian */
+	// Guardian
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {6, 6},
@@ -728,7 +728,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Protector */
+	// Protector
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {7, 7},
@@ -756,17 +756,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Swordsman */
+	// Swordsman
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {0, 0, 5},
@@ -794,7 +794,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
 	},
-	/* Defender */
+	// Defender
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {0, 2, 5},
@@ -823,7 +823,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Cavalier */
+	// Cavalier
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {0, 4, 5},
@@ -852,7 +852,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Luminier */
+	// Luminier
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {0, 6, 6},
@@ -881,7 +881,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Radiant */
+	// Radiant
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {0, 7, 7},
@@ -910,17 +910,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Dragoon */
+	// Dragoon
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {3, 3, 3},
@@ -950,7 +950,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Templar */
+	// Templar
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {4, 4, 4},
@@ -980,7 +980,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Paladin */
+	// Paladin
 	{
 		.series = CLASS_SERIES_SWORDSMAN,
 		.required = {4, 5, 4},
@@ -1010,21 +1010,21 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Apprentice */
+	// Apprentice
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {5},
@@ -1054,7 +1054,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Illusionist */
+	// Illusionist
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {5, 0, 0, 2},
@@ -1084,7 +1084,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Enchanter */
+	// Enchanter
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {5, 0, 0, 4},
@@ -1114,7 +1114,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Conjurer */
+	// Conjurer
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {6, 0, 0, 6},
@@ -1144,7 +1144,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* War Adept */
+	// War Adept
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {7, 0, 0, 7},
@@ -1174,17 +1174,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Page */
+	// Page
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {0, 0, 5},
@@ -1214,7 +1214,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Illusionist */
+	// Illusionist
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {0, 0, 5, 2},
@@ -1244,7 +1244,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Enchanter */
+	// Enchanter
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {0, 0, 5, 4},
@@ -1274,7 +1274,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Conjurer */
+	// Conjurer
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {0, 0, 6, 6},
@@ -1304,7 +1304,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* War Adept */
+	// War Adept
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {0, 0, 7, 7},
@@ -1334,17 +1334,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Ninja */
+	// Ninja
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {3, 0, 3, 3},
@@ -1374,7 +1374,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Disciple */
+	// Disciple
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {4, 0, 4, 4},
@@ -1404,7 +1404,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Master */
+	// Master
 	{
 		.series = CLASS_SERIES_APPRENTICE,
 		.required = {4, 0, 4, 5},
@@ -1434,21 +1434,21 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Seer */
+	// Seer
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {0, 5},
@@ -1478,7 +1478,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* Diviner */
+	// Diviner
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {2, 5},
@@ -1508,7 +1508,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* Shaman */
+	// Shaman
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {4, 5},
@@ -1538,7 +1538,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* Druid */
+	// Druid
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {6, 6},
@@ -1568,7 +1568,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* Oracle */
+	// Oracle
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {7, 7},
@@ -1598,17 +1598,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Seer */
+	// Seer
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {0, 0, 0, 5},
@@ -1637,7 +1637,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* Diviner */
+	// Diviner
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {2, 0, 0, 5},
@@ -1666,7 +1666,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* Shaman */
+	// Shaman
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {4, 0, 0, 5},
@@ -1695,7 +1695,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* Druid */
+	// Druid
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {6, 0, 0, 6},
@@ -1724,7 +1724,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* Oracle */
+	// Oracle
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {7, 0, 0, 7},
@@ -1753,17 +1753,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Medium */
+	// Medium
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {3, 3, 0, 3},
@@ -1792,7 +1792,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
-	/* Conjurer */
+	// Conjurer
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {4, 4, 0, 4},
@@ -1821,7 +1821,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
-	/* Dark Mage */
+	// Dark Mage
 	{
 		.series = CLASS_SERIES_SEER,
 		.required = {5, 4, 0, 4},
@@ -1850,21 +1850,21 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Pilgrim */
+	// Pilgrim
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 5},
@@ -1893,7 +1893,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Wanderer */
+	// Wanderer
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 5, 2},
@@ -1922,7 +1922,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Ascetic */
+	// Ascetic
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 5, 4},
@@ -1951,7 +1951,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Water Monk */
+	// Water Monk
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 6, 6},
@@ -1980,7 +1980,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Guru */
+	// Guru
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 7, 7},
@@ -2009,17 +2009,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Pilgrim */
+	// Pilgrim
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 0, 0, 5},
@@ -2047,7 +2047,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Wanderer */
+	// Wanderer
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 0, 2, 5},
@@ -2075,7 +2075,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Ascetic */
+	// Ascetic
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 0, 4, 5},
@@ -2103,7 +2103,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Fire Monk */
+	// Fire Monk
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 0, 6, 6},
@@ -2131,7 +2131,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Guru */
+	// Guru
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 0, 7, 7},
@@ -2159,17 +2159,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Ranger */
+	// Ranger
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 3, 3, 3},
@@ -2198,7 +2198,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Bard */
+	// Bard
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 4, 4, 4},
@@ -2227,7 +2227,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* Warlock */
+	// Warlock
 	{
 		.series = CLASS_SERIES_PILGRIM,
 		.required = {0, 4, 5, 4},
@@ -2256,21 +2256,21 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Brute */
+	// Brute
 	{
 		.series = CLASS_SERIES_BRUTE,
 		.required = {1, 0, 1},
@@ -2300,7 +2300,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
-	/* Ruffian */
+	// Ruffian
 	{
 		.series = CLASS_SERIES_BRUTE,
 		.required = {2, 0, 2},
@@ -2330,7 +2330,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
-	/* Savage */
+	// Savage
 	{
 		.series = CLASS_SERIES_BRUTE,
 		.required = {4, 0, 4},
@@ -2360,7 +2360,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
-	/* Barbarian */
+	// Barbarian
 	{
 		.series = CLASS_SERIES_BRUTE,
 		.required = {5, 0, 5},
@@ -2390,7 +2390,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
-	/* Berserker */
+	// Berserker
 	{
 		.series = CLASS_SERIES_BRUTE,
 		.required = {6, 0, 6},
@@ -2420,7 +2420,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
-	/* Chaos Lord */
+	// Chaos Lord
 	{
 		.series = CLASS_SERIES_BRUTE,
 		.required = {7, 0, 7},
@@ -2450,15 +2450,15 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Samurai */
+	// Samurai
 	{
 		.series = CLASS_SERIES_BRUTE,
 		.required = {4, 0, 4, 3},
@@ -2488,7 +2488,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
-	/* Ronin */
+	// Ronin
 	{
 		.series = CLASS_SERIES_BRUTE,
 		.required = {5, 0, 5, 4},
@@ -2518,23 +2518,23 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Hermit */
+	// Hermit
 	{
 		.series = CLASS_SERIES_HERMIT,
 		.required = {0, 1, 0, 1},
@@ -2563,7 +2563,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Elder */
+	// Elder
 	{
 		.series = CLASS_SERIES_HERMIT,
 		.required = {0, 2, 0, 2},
@@ -2592,7 +2592,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Scholar */
+	// Scholar
 	{
 		.series = CLASS_SERIES_HERMIT,
 		.required = {0, 4, 0, 4},
@@ -2621,7 +2621,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Savant */
+	// Savant
 	{
 		.series = CLASS_SERIES_HERMIT,
 		.required = {0, 5, 0, 5},
@@ -2650,7 +2650,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Sage */
+	// Sage
 	{
 		.series = CLASS_SERIES_HERMIT,
 		.required = {0, 6, 0, 6},
@@ -2679,7 +2679,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* Wizard */
+	// Wizard
 	{
 		.series = CLASS_SERIES_HERMIT,
 		.required = {0, 7, 0, 7},
@@ -2708,15 +2708,15 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* White Mage */
+	// White Mage
 	{
 		.series = CLASS_SERIES_HERMIT,
 		.required = {3, 4, 0, 4},
@@ -2745,7 +2745,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESIST, .level = 31},
 		},
 	},
-	/* Pure Mage */
+	// Pure Mage
 	{
 		.series = CLASS_SERIES_HERMIT,
 		.required = {4, 5, 0, 5},
@@ -2774,23 +2774,23 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESIST, .level = 31},
 		},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Flame User */
+	// Flame User
 	{
 		.series = CLASS_SERIES_FLAME_USER,
 		.required = {0, 0, 5},
@@ -2818,7 +2818,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Witch */
+	// Witch
 	{
 		.series = CLASS_SERIES_FLAME_USER,
 		.required = {0, 0, 7},
@@ -2846,7 +2846,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Hex */
+	// Hex
 	{
 		.series = CLASS_SERIES_FLAME_USER,
 		.required = {0, 0, 9},
@@ -2874,7 +2874,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Fire Master */
+	// Fire Master
 	{
 		.series = CLASS_SERIES_FLAME_USER,
 		.required = {0, 0, 11},
@@ -2902,7 +2902,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* Justice */
+	// Justice
 	{
 		.series = CLASS_SERIES_FLAME_USER,
 		.required = {0, 0, 13},
@@ -2930,17 +2930,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Mariner */
+	// Mariner
 	{
 		.series = CLASS_SERIES_MARINER,
 		.required = {0, 5},
@@ -2966,7 +2966,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
 	},
-	/* Privateer */
+	// Privateer
 	{
 		.series = CLASS_SERIES_MARINER,
 		.required = {0, 7},
@@ -2993,7 +2993,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Commander */
+	// Commander
 	{
 		.series = CLASS_SERIES_MARINER,
 		.required = {0, 9},
@@ -3020,7 +3020,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Captain */
+	// Captain
 	{
 		.series = CLASS_SERIES_MARINER,
 		.required = {0, 11},
@@ -3047,7 +3047,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Admiral */
+	// Admiral
 	{
 		.series = CLASS_SERIES_MARINER,
 		.required = {0, 13},
@@ -3074,17 +3074,17 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Pierrot */
+	// Pierrot
 	{
 		.series = CLASS_SERIES_PIERROT,
 		.hp = 10,
@@ -3111,7 +3111,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Harlequin */
+	// Harlequin
 	{
 		.series = CLASS_SERIES_PIERROT,
 		.required = {1, 1, 1, 1},
@@ -3139,7 +3139,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Punchinello */
+	// Punchinello
 	{
 		.series = CLASS_SERIES_PIERROT,
 		.required = {2, 2, 2, 2},
@@ -3167,7 +3167,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* Acrobat */
+	// Acrobat
 	{
 		.series = CLASS_SERIES_PIERROT,
 		.required = {3, 3, 3, 3},
@@ -3195,19 +3195,19 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Tamer */
+	// Tamer
 	{
 		.series = CLASS_SERIES_TAMER,
 		.hp = 10,
@@ -3235,7 +3235,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Trainer */
+	// Trainer
 	{
 		.series = CLASS_SERIES_TAMER,
 		.required = {1, 1, 1, 1},
@@ -3264,7 +3264,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Beastkeeper */
+	// Beastkeeper
 	{
 		.series = CLASS_SERIES_TAMER,
 		.required = {2, 2, 2, 2},
@@ -3293,7 +3293,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* Beast Lord */
+	// Beast Lord
 	{
 		.series = CLASS_SERIES_TAMER,
 		.required = {3, 3, 3, 3},
@@ -3322,19 +3322,19 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* ? */
+	// ?
 	{0},
-	/* Dark Mage */
+	// Dark Mage
 	{
 		.series = CLASS_SERIES_DARK_MAGE,
 		.hp = 8,
@@ -3361,7 +3361,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
-	/* Crypt Lord */
+	// Crypt Lord
 	{
 		.series = CLASS_SERIES_DARK_MAGE,
 		.required = {1, 1, 1, 1},
@@ -3389,7 +3389,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
-	/* Necrolyte */
+	// Necrolyte
 	{
 		.series = CLASS_SERIES_DARK_MAGE,
 		.required = {2, 2, 2, 2},
@@ -3417,7 +3417,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		},
 		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
-	/* Necromage */
+	// Necromage
 	{
 		.series = CLASS_SERIES_DARK_MAGE,
 		.required = {3, 3, 3, 3},
@@ -3446,4 +3446,4 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
 };
-/* clang-format on */
+// clang-format on

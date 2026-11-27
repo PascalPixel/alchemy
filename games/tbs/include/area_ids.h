@@ -1,14 +1,14 @@
 #ifndef ALCHEMY_AREA_IDS_H
 #define ALCHEMY_AREA_IDS_H
 
-/* The areas: groups of scenes that share their music and the name shown on
-   arriving from another area. Each scene's row of ScenesWork (field/scenes.s)
-   gives its area, and the music and area name rules match by it
-   (field/music_rules.s, field/area_name_rules.s). Each is named after the area
-   name its rule shows (MsgDebugAreaName); where two areas show one name, or an
-   area's rule shows none, it is named after the scenes it holds. */
+// The areas: groups of scenes that share their music and the name shown on arriving from another
+// area. Each scene's row of ScenesWork (field/scenes.s) gives its area, and the music and area name
+// rules match by it (field/music_rules.s, field/area_name_rules.s). Each is named after the area
+// name its rule shows (MsgDebugAreaName); where two areas show one name, or an area's rule shows
+// none, it is named after the scenes it holds.
 
-typedef enum AREA_ID {
+typedef enum AREA_ID
+{
 	AREA_TITLE_SCREEN,
 	AREA_CLEAR_DATA,
 	AREA_WORLD_MAP,
@@ -25,7 +25,7 @@ typedef enum AREA_ID {
 	AREA_KOLIMA_FOREST,
 	AREA_TRET_TREE,
 	AREA_BILIBIN_CAVE,
-	AREA_BILIBIN_CAVE_ENTRANCE, /* shows no name of its own */
+	AREA_BILIBIN_CAVE_ENTRANCE, // shows no name of its own
 	AREA_IMIL,
 	AREA_IMIL_FALLS_CAVE,
 	AREA_MERCURY_LIGHTHOUSE,
@@ -38,7 +38,7 @@ typedef enum AREA_ID {
 	AREA_ALTIN_PEAK,
 	AREA_LAMA_TEMPLE,
 	AREA_LAMAKAN_DESERT,
-	AREA_VALE_CAVE_MOUTH, /* shows "Vale" */
+	AREA_VALE_CAVE_MOUTH, // shows "Vale"
 	AREA_VALE_CAVE,
 	AREA_VAULT_CAVE,
 	AREA_KALAY,
@@ -50,8 +50,8 @@ typedef enum AREA_ID {
 	AREA_TOLBI_DOCKS,
 	AREA_CROSSBONE_ISLE_CAVE,
 	AREA_TOLBI,
-	AREA_BABI_PALACE, /* shows no name of its own */
-	AREA_COLOSSEUM,	  /* shows no name of its own */
+	AREA_BABI_PALACE, // shows no name of its own
+	AREA_COLOSSEUM,   // shows no name of its own
 	AREA_ALTMILLER_CAVE,
 	AREA_GONDOWAN_PASSAGE,
 	AREA_KALAY_TUNNEL_ENTRANCE,
@@ -69,7 +69,7 @@ typedef enum AREA_ID {
 	AREA_VENUS_LIGHTHOUSE,
 	AREA_LEMURIAN_SHIP,
 	AREA_TOLBI_SPRING,
-	AREA_BATTLE_ARENA, /* shows no name of its own */
+	AREA_BATTLE_ARENA, // shows no name of its own
 	AREA_TEST_0,
 	AREA_TEST_1,
 	AREA_TEST_2,
@@ -82,4 +82,4 @@ typedef enum AREA_ID {
 	AREA_MENU_TEST,
 } AREA_ID;
 
-#endif /* ALCHEMY_AREA_IDS_H */
+#endif // ALCHEMY_AREA_IDS_H

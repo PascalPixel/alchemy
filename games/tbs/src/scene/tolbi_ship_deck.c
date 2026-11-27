@@ -1,73 +1,69 @@
-/* Tolbi-bound Ship (SceneIdTolbiShipDeck), its deck: the ship that carries the
-   party and a tour group bound for Colosso across the Karagol Sea from Kalay to
-   Tolbi.
-
-   The ship's other scenes are its mast (tolbi_ship_mast.c) and below decks
-   (ship_rooms.c).
-
-   The deck runs north and south. At its north end a ladder climbs to a carved
-   door, the way to the passengers' hold; a small stairway in the middle of the
-   deck leads down, walking west, to the hold of crates and barrels; and the
-   door of the cabin at the south end is the captain's quarters. At Kalay a
-   gangplank on the east side leads back to the dock, and at Tolbi one on the
-   west side leads ashore.
-
-   The voyage's stage, read from its flags, chooses the deck's actor placements
-   and scripts. The stages are:
-
-   - at Kalay,
-   - under sail once the first attack is fought off
-	 (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF),
-   - while the oars move (FLAG_TOLBI_SHIP_ROWING),
-   - at anchor off Crossbone Isle (FLAG_TOLBI_SHIP_AT_ISLAND),
-   - and at Tolbi (FLAG_TOLBI_SHIP_REACHED_TOLBI).
-
-   The setup redraws the deck's metatiles for the stage. While under sail it
-   rocks the view and scrolls the sea. It rows the oars to the strokes of the
-   passengers at the seats (TolbiShipDeckRowerStrokes), and plays the script its
-   entrance names.
-
-   Each script leaves into the next, in another of the ship's scenes or on the
-   World Map, whose entrances sail the ship on. In story order:
-
-   - At Kalay (TOLBI_SHIP_DECK_FROM_KALAY_DOCKS), while the ship waits for
-	 its replacement from Tolbi. Once the tour group has left Kalay
-	 (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking up to the crew
-   (METATILE_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW) plays the captain, Kaja and a
-	 crewman talking over the delay. The captain will sail trusting his anchor
-	 charm, and the crewman slips below
-	 (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY). Coming up to his door brings him
-	 out denying everything (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT), and Mind Read
-	 shows he hid the charm on the mast. Once it is back
-	 (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) the passengers who promised to row
-	 stand on deck.
-   - Setting sail (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY): Kaja
-	 brings word that all is ready ("Preparations... Ready!"), which leads
-	 to the lookout on the mast.
-   - The attacks: sea monsters are sighted
-	 (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS), which leads to
-	 the captain's quarters, where the captain turns the ship. Then monsters
-	 leap aboard (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD), harry
-	 Ouranos and Sean, the warriors bound for Colosso who guard the deck with
-	 Kaja (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK), and drop onto
-	 the deck (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK). Each of
-	 these three leads below to the fight among the oars. At
-	 TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN the party jumps down to
-	 the deck and fights the Kraken, and returns to
-	 TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE, where Kaja thanks Isaac
-	 (FLAG_TOLBI_SHIP_KRAKEN_DEFEATED).
-   - Land: the lookout's call leads either to
-	 TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED and Tolbi, or, by how
-	 the passengers chosen to row pull (tolbi_ship_mast.c), to
-	 TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, where the coast is not
-	 Tolbi's and the crew make for an island. At anchor off it, Crossbone Isle
-	 (reached by TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE), Sean asks the
-	 party to scout it (FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED). Back aboard
-	 (TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) the rowers switch sides below and the
-	 ship sails on to Tolbi.
-   - At Tolbi (TOLBI_SHIP_DECK_FROM_WORLD_MAP): the passengers who rowed come
-	 up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
-	 leads ashore to Tolbi Docks (SceneIdTolbiDocks). */
+// Tolbi-bound Ship (SceneIdTolbiShipDeck), its deck: the ship that carries the party and a tour
+// group bound for Colosso across the Karagol Sea from Kalay to Tolbi.
+//
+// The ship's other scenes are its mast (tolbi_ship_mast.c) and below decks (ship_rooms.c).
+//
+// The deck runs north and south. At its north end a ladder climbs to a carved door, the way to the
+// passengers' hold; a small stairway in the middle of the deck leads down, walking west, to the
+// hold of crates and barrels; and the door of the cabin at the south end is the captain's quarters.
+// At Kalay a gangplank on the east side leads back to the dock, and at Tolbi one on the west side
+// leads ashore.
+//
+// The voyage's stage, read from its flags, chooses the deck's actor placements and scripts. The
+// stages are:
+//
+// - at Kalay,
+// - under sail once the first attack is fought off
+//       (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF),
+// - while the oars move (FLAG_TOLBI_SHIP_ROWING),
+// - at anchor off Crossbone Isle (FLAG_TOLBI_SHIP_AT_ISLAND),
+// - and at Tolbi (FLAG_TOLBI_SHIP_REACHED_TOLBI).
+//
+// The setup redraws the deck's metatiles for the stage. While under sail it rocks the view and
+// scrolls the sea. It rows the oars to the strokes of the passengers at the seats
+// (TolbiShipDeckRowerStrokes), and plays the script its entrance names.
+//
+// Each script leaves into the next, in another of the ship's scenes or on the World Map, whose
+// entrances sail the ship on. In story order:
+//
+// - At Kalay (TOLBI_SHIP_DECK_FROM_KALAY_DOCKS), while the ship waits for
+//       its replacement from Tolbi. Once the tour group has left Kalay
+//       (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking up to the crew
+// (METATILE_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW) plays the captain, Kaja and a
+//       crewman talking over the delay. The captain will sail trusting his
+// anchor charm, and the crewman slips below
+//       (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY). Coming up to his door brings
+// him out denying everything (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT), and Mind Read
+//       shows he hid the charm on the mast. Once it is back
+//       (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) the passengers who promised to
+// row stand on deck.
+// - Setting sail (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY): Kaja
+//       brings word that all is ready ("Preparations... Ready!"), which leads
+//       to the lookout on the mast.
+// - The attacks: sea monsters are sighted
+//       (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS), which leads to
+//       the captain's quarters, where the captain turns the ship. Then monsters
+//       leap aboard (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD), harry
+//       Ouranos and Sean, the warriors bound for Colosso who guard the deck
+// with Kaja (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK), and drop onto
+//       the deck (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK). Each of
+//       these three leads below to the fight among the oars. At
+//       TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN the party jumps down to
+//       the deck and fights the Kraken, and returns to
+//       TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE, where Kaja thanks Isaac
+//       (FLAG_TOLBI_SHIP_KRAKEN_DEFEATED).
+// - Land: the lookout's call leads either to
+//       TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED and Tolbi, or, by how
+//       the passengers chosen to row pull (tolbi_ship_mast.c), to
+//       TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, where the coast is not
+//       Tolbi's and the crew make for an island. At anchor off it, Crossbone
+// Isle (reached by TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE), Sean asks the
+//       party to scout it (FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED). Back aboard
+//       (TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) the rowers switch sides below and
+// the ship sails on to Tolbi.
+// - At Tolbi (TOLBI_SHIP_DECK_FROM_WORLD_MAP): the passengers who rowed come
+//       up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
+//       leads ashore to Tolbi Docks (SceneIdTolbiDocks).
 
 #include "ability_ids.h"
 #include "macros.h"
@@ -81,28 +77,28 @@
 #include "scene/tolbi_ship.h"
 #include "text/msg_ids.h"
 
-extern const Sint32			   TolbiShipDeckKajaLeavesActions[];
-extern const Sint32			   TolbiShipDeckCaptainStepsAsideActions[];
-extern const Sint32			   TolbiShipDeckSquashAndStretchActions[];
-extern const Sint32			   TolbiShipDeckMonsterLeapsAboardActions[];
-extern const Sint32			   TolbiShipDeckSeanPacesActions[];
-extern const Sint32			   TolbiShipDeckOuranosPatrolsActions[];
-extern const Sint32			   TolbiShipDeckHoverAndDiveAtOuranosActions[];
-extern const Sint32			   TolbiShipDeckHoverAndDiveAtSeanActions[];
-extern const Sint32			   TolbiShipDeckBobActions[];
-extern const Sint32			   TolbiShipDeckLookAroundActions[];
-extern const Sint32			   TolbiShipDeckSwellActions[];
-extern const Sint32			   TolbiShipDeckMonsterGoesBelowActions[];
-extern const Sint32			   TolbiShipDeckLeapAtOuranosActions[];
-extern const Sint32			   TolbiShipDeckLeapAtSeanActions[];
-extern const Sint32			   TolbiShipDeckHopActions[];
-extern const Sint32			   TolbiShipDeckRowerLeavesActions[];
-extern const Sint32			   TolbiShipDeckGoBelowActions[];
-extern const Sint32			   TolbiShipDeckSeanLooksAboutActions[];
-extern const SCENE_ENTRANCE	   TolbiShipDeckEntrances[];
+extern const Sint32            TolbiShipDeckKajaLeavesActions[];
+extern const Sint32            TolbiShipDeckCaptainStepsAsideActions[];
+extern const Sint32            TolbiShipDeckSquashAndStretchActions[];
+extern const Sint32            TolbiShipDeckMonsterLeapsAboardActions[];
+extern const Sint32            TolbiShipDeckSeanPacesActions[];
+extern const Sint32            TolbiShipDeckOuranosPatrolsActions[];
+extern const Sint32            TolbiShipDeckHoverAndDiveAtOuranosActions[];
+extern const Sint32            TolbiShipDeckHoverAndDiveAtSeanActions[];
+extern const Sint32            TolbiShipDeckBobActions[];
+extern const Sint32            TolbiShipDeckLookAroundActions[];
+extern const Sint32            TolbiShipDeckSwellActions[];
+extern const Sint32            TolbiShipDeckMonsterGoesBelowActions[];
+extern const Sint32            TolbiShipDeckLeapAtOuranosActions[];
+extern const Sint32            TolbiShipDeckLeapAtSeanActions[];
+extern const Sint32            TolbiShipDeckHopActions[];
+extern const Sint32            TolbiShipDeckRowerLeavesActions[];
+extern const Sint32            TolbiShipDeckGoBelowActions[];
+extern const Sint32            TolbiShipDeckSeanLooksAboutActions[];
+extern const SCENE_ENTRANCE    TolbiShipDeckEntrances[];
 extern const SCENE_EXIT_REGION TolbiShipDeckRegions[];
-extern const Uint32			   TolbiShipDeckExits[];
-extern const ACTOR_PLACE	   TolbiShipDeckActorPlacements[];
+extern const Uint32            TolbiShipDeckExits[];
+extern const ACTOR_PLACE       TolbiShipDeckActorPlacements[];
 #if FIX_SHIP_DECK_CONST_TABLE_WRITTEN
 extern ACTOR_PLACE TolbiShipDeckActorPlacementsWaiting[];
 #else
@@ -117,61 +113,65 @@ extern const ACTOR_PLACE TolbiShipDeckSecondAttackActorPlacements[];
 extern const ACTOR_PLACE TolbiShipDeckThirdAttackActorPlacements[];
 extern const ACTOR_PLACE TolbiShipDeckKrakenActorPlacements[];
 extern const ACTOR_PLACE TolbiShipDeckActorPlacementsArrived[];
-extern const CUE		 TolbiShipDeckCues[];
-extern const CUE		 TolbiShipDeckCuesAtSea[];
-extern const CUE		 TolbiShipDeckCuesArrived[];
-extern const CUE		 TolbiShipDeckCuesAtIsland[];
-extern const Sint32		 TolbiShipDeckRowerStrokes[];
+extern const CUE         TolbiShipDeckCues[];
+extern const CUE         TolbiShipDeckCuesAtSea[];
+extern const CUE         TolbiShipDeckCuesArrived[];
+extern const CUE         TolbiShipDeckCuesAtIsland[];
+extern const Sint32      TolbiShipDeckRowerStrokes[];
 
-static void scTolbiShipDeckConfrontCrewman(void);
-static void scTolbiShipDeckApplyEntryState(void);
-static void scTolbiShipDeckPlaceWaitingPassengers(void);
-static void scTolbiShipDeckPlacePassengersAgreedToRow(void);
-static void scTolbiShipDeckSetUpUnderSail(void);
-static void scTolbiShipDeckSetUpAfterKraken(void);
-static void scTolbiShipDeckSetUpAtAnchor(void);
-static void scTolbiShipDeckDepartFromKalay(void);
-static void scTolbiShipDeckDepartWithParty(void);
-static void scTolbiShipDeckAnnouncePreparationsReady(
-	Sint32 messenger, Sint32 crewMember);
-static void	  scTolbiShipDeckSightSeaMonsters(void);
-static void	  scTolbiShipDeckMonstersBoard(void);
-static void	  scTolbiShipDeckMonstersAttackCrew(void);
-static void	  scTolbiShipDeckMonsterLandsOnDeck(void);
-static void	  scTolbiShipDeckJumpIntoKrakenBattle(void);
-static void	  scTolbiShipDeckThankForKraken(void);
-static void	  scTolbiShipDeckSightLand(void);
-static void	  scTolbiShipDeckRowersDisembark(void);
+static void              scTolbiShipDeckConfrontCrewman(void);
+static void              scTolbiShipDeckApplyEntryState(void);
+static void              scTolbiShipDeckPlaceWaitingPassengers(void);
+static void              scTolbiShipDeckPlacePassengersAgreedToRow(void);
+static void              scTolbiShipDeckSetUpUnderSail(void);
+static void              scTolbiShipDeckSetUpAfterKraken(void);
+static void              scTolbiShipDeckSetUpAtAnchor(void);
+static void              scTolbiShipDeckDepartFromKalay(void);
+static void              scTolbiShipDeckDepartWithParty(void);
+static void   scTolbiShipDeckAnnouncePreparationsReady(Sint32 messenger, Sint32 crewMember);
+static void   scTolbiShipDeckSightSeaMonsters(void);
+static void   scTolbiShipDeckMonstersBoard(void);
+static void   scTolbiShipDeckMonstersAttackCrew(void);
+static void   scTolbiShipDeckMonsterLandsOnDeck(void);
+static void   scTolbiShipDeckJumpIntoKrakenBattle(void);
+static void   scTolbiShipDeckThankForKraken(void);
+static void   scTolbiShipDeckSightLand(void);
+static void   scTolbiShipDeckRowersDisembark(void);
 static Sint32 scTolbiShipDeckGetRowerAtSeat(Uint32 seat);
-static void	  scTolbiShipDeckRockDeck(void);
-static void	  scTolbiShipDeckSetUpOars(void);
-static void	  scTolbiShipDeckShowOar(Sint32 actorId);
-static void	  scTolbiShipDeckChooseOarStrokes(void);
+static void   scTolbiShipDeckRockDeck(void);
+static void   scTolbiShipDeckSetUpOars(void);
+static void   scTolbiShipDeckShowOar(Sint32 actorId);
+static void   scTolbiShipDeckChooseOarStrokes(void);
 static Sint32 scTolbiShipDeckGetSeatStroke(Uint32 seat);
-static void	  scTolbiShipDeckRowOars(void);
-static void	  scTolbiShipDeckAdvanceStroke(Sint32 actorId, Sint32 slot);
-static void	  scTolbiShipDeckSwingOar(Sint32 id, Sint32 slot, Sint32 flags);
+static void   scTolbiShipDeckRowOars(void);
+static void   scTolbiShipDeckAdvanceStroke(Sint32 actorId, Sint32 slot);
+static void   scTolbiShipDeckSwingOar(Sint32 id, Sint32 slot, Sint32 flags);
 
-/* How scTolbiShipDeckSwingOar swings an oar: on the starboard side, mirrored;
-   and at rest, at the angle it has rather than its stroke's. */
-enum { OAR_SWING_MIRRORED = 1, OAR_SWING_AT_REST = 2 };
+// How scTolbiShipDeckSwingOar swings an oar: on the starboard side, mirrored; and at rest, at the
+// angle it has rather than its stroke's.
+enum
+{
+	OAR_SWING_MIRRORED = 1,
+	OAR_SWING_AT_REST  = 2
+};
 
-/* How hard a rower pulls, which sets how fast his oars go round: the oar left
-   still, then ever faster. A seat no one rows still has its oars swing
-   steadily. */
-typedef enum OAR_STROKE {
+// How hard a rower pulls, which sets how fast his oars go round: the oar left still, then ever
+// faster. A seat no one rows still has its oars swing steadily.
+typedef enum OAR_STROKE
+{
 	OAR_STROKE_STILL = 1,
 	OAR_STROKE_SLOW,
 	OAR_STROKE_STEADY,
 	OAR_STROKE_FAST
 } OAR_STROKE;
 
-/* SPRITE_OAR's animations (oar.tsv): the dry blade in the air, the blade
-   splashing in the water, and the blade dipping in with a splash. */
-enum {
-	OAR_ANIMATION_IN_AIR = 1,
+// SPRITE_OAR's animations (oar.tsv): the dry blade in the air, the blade splashing in the water,
+// and the blade dipping in with a splash.
+enum
+{
+	OAR_ANIMATION_IN_AIR   = 1,
 	OAR_ANIMATION_IN_WATER = 2,
-	OAR_ANIMATION_DIPPING = 3
+	OAR_ANIMATION_DIPPING  = 3
 };
 
 static void scTolbiShipDeckRestOars(void);
@@ -183,524 +183,532 @@ static void scTolbiShipDeckSightIsland(void);
 static void scTolbiShipDeckReturnFromIsland(void);
 static void scTolbiShipDeckPlaceLeaderOnDeck(void);
 
-/* Who is who on deck, numbering each actor placement table's rows from
-   ACTOR_FIRST_PLACED.
-
-   Every table starts with the same twelve rows of oars, and the scripts add
-   their actors after a table's last row (fdScriptAppendActorPlacements). So
-   each stage of the voyage has its own names, which carry its prefix.
-
-   At Kalay (TolbiShipDeckActorPlacementsWaiting) the captain talks the delay
-   over with Kaja, the deck's fighter, and a crewman, who asks Kaja how the
-   oarsmen are ("Say, Kaja, how are the oarsmen doing?").
-
-   At sea TolbiShipDeckCrewActorPlacements places Kaja and the warriors Ouranos
-   and Sean, who help him guard the deck ("That'll be me, Ouranos, and Sean on
-   deck"). */
-typedef enum TOLBI_SHIP_DECK_ACTOR_ID {
-	/* Four oars, with the same sprite as the others, that keep the strokes of
-	   TolbiShipDeckRowerStrokes.
-
-	   There is one for each OAR_STROKE, from the still oar to the fastest,
-	   drawn under the deck. Each oar at the sides copies the frames of its
-	   seat's stroke (scTolbiShipDeckSwingOar). At rest the first stands in for
-	   the first oar. */
+// Who is who on deck, numbering each actor placement table's rows from ACTOR_FIRST_PLACED.
+//
+// Every table starts with the same twelve rows of oars, and the scripts add their actors after a
+// table's last row (fdScriptAppendActorPlacements). So each stage of the voyage has its own names,
+// which carry its prefix.
+//
+// At Kalay (TolbiShipDeckActorPlacementsWaiting) the captain talks the delay over with Kaja, the
+// deck's fighter, and a crewman, who asks Kaja how the oarsmen are ("Say, Kaja, how are the oarsmen
+// doing?").
+//
+// At sea TolbiShipDeckCrewActorPlacements places Kaja and the warriors Ouranos and Sean, who help
+// him guard the deck ("That'll be me, Ouranos, and Sean on deck").
+typedef enum TOLBI_SHIP_DECK_ACTOR_ID
+{
+	// Four oars, with the same sprite as the others, that keep the strokes of
+	// TolbiShipDeckRowerStrokes.
+	//
+	// There is one for each OAR_STROKE, from the still oar to the fastest, drawn under the deck.
+	// Each oar at the sides copies the frames of its seat's stroke (scTolbiShipDeckSwingOar). At
+	// rest the first stands in for the first oar.
 	ACTOR_FIRST_STROKE_OAR = ACTOR_FIRST_PLACED,
-	/* The eight oars at the ship's sides (SPRITE_OAR).
+	// The eight oars at the ship's sides (SPRITE_OAR).
+	//
+	// There are four at x 132, then four at x 300, which are drawn mirrored. They stand out from
+	// the hull while the ship is rowed.
+	ACTOR_FIRST_OAR        = ACTOR_FIRST_STROKE_OAR + 4,
 
-	   There are four at x 132, then four at x 300, which are drawn mirrored.
-	   They stand out from the hull while the ship is rowed. */
-	ACTOR_FIRST_OAR = ACTOR_FIRST_STROKE_OAR + 4,
-
-	/* At Kalay: TolbiShipDeckActorPlacements, then
-	   TolbiShipDeckActorPlacementsWaiting. The crewman, a man in a blue bandana
-	   (SPRITE_MAN_IN_BLUE_BANDANA), who hid the captain's anchor charm on the
-	   mast and denies everything. */
-	ACTOR_KALAY_CREWMAN = ACTOR_FIRST_OAR + 8,
-	/* One of the crew, a man in a yellow bandana
-	   (SPRITE_MAN_IN_YELLOW_BANDANA), who answers the tour guide beside him.
-
-	   When the ship leaves he calls "Preparations... Ready!"
-	   (MsgTolbiShipPreparationsReady). */
+	// At Kalay: TolbiShipDeckActorPlacements, then TolbiShipDeckActorPlacementsWaiting. The
+	// crewman, a man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA), who hid the captain's anchor
+	// charm on the mast and denies everything.
+	ACTOR_KALAY_CREWMAN    = ACTOR_FIRST_OAR + 8,
+	// One of the crew, a man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA), who answers the
+	// tour guide beside him.
+	//
+	// When the ship leaves he calls "Preparations... Ready!" (MsgTolbiShipPreparationsReady).
 	ACTOR_KALAY_CREW_MEMBER,
-	/* The captain, an old man with a white beard in green
-	   (SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN). */
+	// The captain, an old man with a white beard in green (SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN).
 	ACTOR_KALAY_CAPTAIN,
-	/* Kaja, a bald man with a beard (SPRITE_KAJA). */
+	// Kaja, a bald man with a beard (SPRITE_KAJA).
 	ACTOR_KALAY_KAJA,
-	/* The tour group's guide, a man carrying a pack
-	   (SPRITE_MAN_CARRYING_A_PACK) as on the Tolbi Docks.
-
-	   Mind Read hears "I just hope we don't have to refund their money at the
-	   end of the trip." */
+	// The tour group's guide, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) as on the Tolbi
+	// Docks.
+	//
+	// Mind Read hears "I just hope we don't have to refund their money at the end of the trip."
 	ACTOR_KALAY_TOUR_GUIDE,
-	/* Three of the tour group's passengers, named by what they say first.
-
-	   This one is a chef (SPRITE_CHEF). */
+	// Three of the tour group's passengers, named by what they say first.
+	//
+	// This one is a chef (SPRITE_CHEF).
 	ACTOR_KALAY_PASSENGER_WAITING_LONG,
-	/* A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN). */
+	// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN).
 	ACTOR_KALAY_PASSENGER_SEEING_COLOSSO,
-	/* A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN). */
+	// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN).
 	ACTOR_KALAY_PASSENGER_KARAGOL,
 
-	/* At sea: TolbiShipDeckCrewActorPlacements after the oars, then each
-	   script's own rows. */
+	// At sea: TolbiShipDeckCrewActorPlacements after the oars, then each script's own rows.
 	ACTOR_SEA_KAJA = ACTOR_FIRST_OAR + 8,
-	/* Ouranos, a young man with red hair (SPRITE_YOUNG_MAN_WITH_RED_HAIR). */
+	// Ouranos, a young man with red hair (SPRITE_YOUNG_MAN_WITH_RED_HAIR).
 	ACTOR_SEA_OURANOS,
-	/* Sean, a young man with blue hair (SPRITE_YOUNG_MAN_WITH_BLUE_HAIR). */
+	// Sean, a young man with blue hair (SPRITE_YOUNG_MAN_WITH_BLUE_HAIR).
 	ACTOR_SEA_SEAN,
-	/* With ACTOR_KALAY_CREW_MEMBER's sprite.
-
-	   At anchor, Mind Read hears "I want to be a sailor like Kaja". On later
-	   departures he calls "Preparations... Ready!" */
+	// With ACTOR_KALAY_CREW_MEMBER's sprite.
+	//
+	// At anchor, Mind Read hears "I want to be a sailor like Kaja". On later departures he calls
+	// "Preparations... Ready!"
 	ACTOR_SEA_CREW_MEMBER,
-	/* The first attack's three monsters, all of one sprite.
-
-	   They belong to TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD
-	   (TolbiShipDeckMonstersBoardActorPlacements). They leap aboard and go
-	   below by the carved door at the north end, where
-	   ShipRoomsFirstAttackMonsters places them. */
+	// The first attack's three monsters, all of one sprite.
+	//
+	// They belong to TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD
+	// (TolbiShipDeckMonstersBoardActorPlacements). They leap aboard and go below by the carved door
+	// at the north end, where ShipRoomsFirstAttackMonsters places them.
 	ACTOR_SEA_FIRST_ATTACK_MONSTER,
-	/* Four monsters of one sprite that hover by the deck.
-
-	   They belong to TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK
-	   (TolbiShipDeckSecondAttackActorPlacements). The first two dive at Sean
-	   and the others at Ouranos. */
+	// Four monsters of one sprite that hover by the deck.
+	//
+	// They belong to TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK
+	// (TolbiShipDeckSecondAttackActorPlacements). The first two dive at Sean and the others at
+	// Ouranos.
 	ACTOR_SEA_FIRST_HOVERING_MONSTER = ACTOR_SEA_CREW_MEMBER + 1,
-	/* Then the second attack's three come aboard and go below.
-
-	   Two are of the hovering monsters' sprite and one other, as
-	   ShipRoomsSecondAttackMonsters places them. */
-	ACTOR_SEA_SECOND_ATTACK_MONSTER = ACTOR_SEA_FIRST_HOVERING_MONSTER + 4,
-	/* The splash that swells for 24 ticks at the rail where the last of them
-	   leaps aboard out of the sea (SPRITE_SPLASH). */
-	ACTOR_SEA_SPLASH = ACTOR_SEA_SECOND_ATTACK_MONSTER + 3,
-	/* Four monsters with the first attack's sprite, that leap at Sean, the
-	   first two, and at Ouranos.
-
-	   They belong to TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK
-	   (TolbiShipDeckThirdAttackActorPlacements). */
-	ACTOR_SEA_FIRST_LEAPING_MONSTER = ACTOR_SEA_CREW_MEMBER + 1,
-	/* Then the third attack's three, which go below.
-
-	   Two have the first attack's sprite and one other, as
-	   ShipRoomsThirdAttackMonsters places them. The last drops onto the
-	   deck. */
-	ACTOR_SEA_THIRD_ATTACK_MONSTER = ACTOR_SEA_FIRST_LEAPING_MONSTER + 4,
-	/* The falling monster's shadow, standing in for its own while it drops.
-
-	   A blank sprite (SPRITE_BLANK) draws only its shadow, which grows from a
-	   tenth of its size where the monster will land. It goes the moment the
-	   monster lands and its own shadow is switched on. */
+	// Then the second attack's three come aboard and go below.
+	//
+	// Two are of the hovering monsters' sprite and one other, as ShipRoomsSecondAttackMonsters
+	// places them.
+	ACTOR_SEA_SECOND_ATTACK_MONSTER  = ACTOR_SEA_FIRST_HOVERING_MONSTER + 4,
+	// The splash that swells for 24 ticks at the rail where the last of them leaps aboard out of
+	// the sea (SPRITE_SPLASH).
+	ACTOR_SEA_SPLASH                 = ACTOR_SEA_SECOND_ATTACK_MONSTER + 3,
+	// Four monsters with the first attack's sprite, that leap at Sean, the first two, and at
+	// Ouranos.
+	//
+	// They belong to TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK
+	// (TolbiShipDeckThirdAttackActorPlacements).
+	ACTOR_SEA_FIRST_LEAPING_MONSTER  = ACTOR_SEA_CREW_MEMBER + 1,
+	// Then the third attack's three, which go below.
+	//
+	// Two have the first attack's sprite and one other, as ShipRoomsThirdAttackMonsters places
+	// them. The last drops onto the deck.
+	ACTOR_SEA_THIRD_ATTACK_MONSTER   = ACTOR_SEA_FIRST_LEAPING_MONSTER + 4,
+	// The falling monster's shadow, standing in for its own while it drops.
+	//
+	// A blank sprite (SPRITE_BLANK) draws only its shadow, which grows from a tenth of its size
+	// where the monster will land. It goes the moment the monster lands and its own shadow is
+	// switched on.
 	ACTOR_SEA_FALLING_MONSTER_SHADOW = ACTOR_SEA_THIRD_ATTACK_MONSTER + 3,
-	/* The Kraken, which the party charges.
-
-	   It belongs to TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN and at anchor
-	   (TolbiShipDeckKrakenActorPlacements, after Garet, Ivan and Mia in their
-	   own slots). At anchor the same rows place it only for it to be released
-	   at once. */
-	ACTOR_SEA_KRAKEN = ACTOR_SEA_CREW_MEMBER + 1,
-	/* An invisible actor (SPRITE_BLANK) the camera follows across the deck. */
+	// The Kraken, which the party charges.
+	//
+	// It belongs to TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN and at anchor
+	// (TolbiShipDeckKrakenActorPlacements, after Garet, Ivan and Mia in their own slots). At anchor
+	// the same rows place it only for it to be released at once.
+	ACTOR_SEA_KRAKEN                 = ACTOR_SEA_CREW_MEMBER + 1,
+	// An invisible actor (SPRITE_BLANK) the camera follows across the deck.
 	ACTOR_INVISIBLE_SEA_CAMERA_TARGET,
-	/* The tour guide, who comes up from below at anchor, back from the island
-	   (TolbiShipDeckTourGuideActorPlacements).
-
-	   Kaja says "Tell our tourists they can enjoy a nice, long break after we
-	   arrive." */
+	// The tour guide, who comes up from below at anchor, back from the island
+	// (TolbiShipDeckTourGuideActorPlacements).
+	//
+	// Kaja says "Tell our tourists they can enjoy a nice, long break after we arrive."
 	ACTOR_TOUR_GUIDE_AT_ANCHOR,
 
-	/* At Tolbi: TolbiShipDeckActorPlacementsArrived. */
+	// At Tolbi: TolbiShipDeckActorPlacementsArrived.
 	ACTOR_ARRIVED_KAJA = ACTOR_FIRST_OAR + 8,
-	/* A man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA).
-
-	   Mind Read hears "I'm just going to hang out in Tolbi and enjoy myself for
-	   a while." */
+	// A man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA).
+	//
+	// Mind Read hears "I'm just going to hang out in Tolbi and enjoy myself for a while."
 	ACTOR_ARRIVED_ASKS_ABOUT_COLOSSO,
-	/* With ACTOR_KALAY_CREW_MEMBER's sprite. */
+	// With ACTOR_KALAY_CREW_MEMBER's sprite.
 	ACTOR_ARRIVED_CREW_MEMBER,
-	/* The first of the nine passengers who could promise to row.
-
-	   They come in the order of each seat's group of flags
-	   (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and the others) and of
-	   TolbiShipDeckRowerStrokes. They are the tour group's two guides, the
-	   chef, the young woman in green, the bald, muscular man, the woman with a
-	   sword, the young man with brown hair, the woman with fair hair and an old
-	   man with a cane (SPRITE_OLD_MAN_WITH_CANE). */
+	// The first of the nine passengers who could promise to row.
+	//
+	// They come in the order of each seat's group of flags (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and
+	// the others) and of TolbiShipDeckRowerStrokes. They are the tour group's two guides, the chef,
+	// the young woman in green, the bald, muscular man, the woman with a sword, the young man with
+	// brown hair, the woman with fair hair and an old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
 	ACTOR_ARRIVED_FIRST_PASSENGER,
-	/* An invisible actor (SPRITE_BLANK) the camera follows as the rowers come
-	   up. */
+	// An invisible actor (SPRITE_BLANK) the camera follows as the rowers come up.
 	ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET = ACTOR_ARRIVED_FIRST_PASSENGER + 9
 } TOLBI_SHIP_DECK_ACTOR_ID;
 
-/* Sean or Ouranos lying on his back, arms flung out
-   (young_man_with_blue_hair.png, young_man_with_red_hair.png), beyond enum
-   ACTOR_ANIMATION. */
-enum { ANIM_LYING_FLAT = 5 };
+// Sean or Ouranos lying on his back, arms flung out (young_man_with_blue_hair.png,
+// young_man_with_red_hair.png), beyond enum ACTOR_ANIMATION.
+enum
+{
+	ANIM_LYING_FLAT = 5
+};
 
-/* The metatiles of the deck at Kalay that start the scenes with the crew. The
-   ways below are metatiles numbered as their exits instead
-   (scTolbiShipDeckGoBelow). */
-typedef enum TOLBI_SHIP_DECK_METATILE_BEHAVIOR {
-	/* The deck beside the stairway in the middle and south-east of it,
-	   metatiles (12, 39) to (15, 46), where Isaac comes upon the crew talking
-	   over the delay. */
-	METATILE_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW = 10,
-	/* Beside the door of the cabin at the south end, which the crewman slipped
-	   through: west of it, metatiles (12, 50) and (12, 51)... */
+// The metatiles of the deck at Kalay that start the scenes with the crew. The ways below are
+// metatiles numbered as their exits instead (scTolbiShipDeckGoBelow).
+typedef enum TOLBI_SHIP_DECK_METATILE_BEHAVIOR
+{
+	// The deck beside the stairway in the middle and south-east of it, metatiles (12, 39) to (15,
+	// 46), where Isaac comes upon the crew talking over the delay.
+	METATILE_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW            = 10,
+	// Beside the door of the cabin at the south end, which the crewman slipped through: west of it,
+	// metatiles (12, 50) and (12, 51)...
 	METATILE_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_CABIN_DOOR = 11,
-	/* ...and east of it, metatiles (14, 50) and (14, 51). */
+	// ...and east of it, metatiles (14, 50) and (14, 51).
 	METATILE_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_CABIN_DOOR = 12
 } TOLBI_SHIP_DECK_METATILE_BEHAVIOR;
 
 #include "shared/squash_and_stretch.c"
 
-/* The door to the passengers' hold has been drawn open this visit. */
-#define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN	 FLAG_SCENE_TEMP_71
-/* The door to the captain's quarters has been drawn open this visit. */
+// The door to the passengers' hold has been drawn open this visit.
+#define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN    FLAG_SCENE_TEMP_71
+// The door to the captain's quarters has been drawn open this visit.
 #define FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN FLAG_SCENE_TEMP_72
 
-/* An actor script call that shows the actor's sprite.
-
-   Returns 0 to end the call. */
+// An actor script call that shows the actor's sprite.
+//
+// Returns 0 to end the call.
 static Sint32 scTolbiShipDeckShowSprite(ACTOR *a)
 {
 	fdActorSetSpriteFlags(a, SPRITE_FLAG_SHADOW);
 	return 0;
 }
 
-/* The diving scripts own the actor's scratch fields: sceneWord is sideways
-   drift in 16.16 pixels per tick, sceneCount the dive step
-   (TOLBI_SHIP_DECK_DIVE_STEP), sceneByte the return side, timer the drift
-   direction and userValue the bob direction. */
+// The diving scripts own the actor's scratch fields: sceneWord is sideways drift in 16.16 pixels
+// per tick, sceneCount the dive step (TOLBI_SHIP_DECK_DIVE_STEP), sceneByte the return side, timer
+// the drift direction and userValue the bob direction.
 
-/* The steps of a hovering monster's dive (TOLBI_SHIP_DECK_HOVER_AND_DIVE), in
-   sceneCount. After each move is started one tick passes before the arrival is
-   tested. */
-typedef enum TOLBI_SHIP_DECK_DIVE_STEP {
-	DIVE_STEP_HOVERING, /* drifting and bobbing on its side */
-	DIVE_STEP_DIVE,		/* sets off at the warrior */
+// The steps of a hovering monster's dive (TOLBI_SHIP_DECK_HOVER_AND_DIVE), in sceneCount. After
+// each move is started one tick passes before the arrival is tested.
+typedef enum TOLBI_SHIP_DECK_DIVE_STEP
+{
+	DIVE_STEP_HOVERING, // drifting and bobbing on its side
+	DIVE_STEP_DIVE,     // sets off at the warrior
 	DIVE_STEP_DIVE_STARTED,
-	/* on arriving it cries, and the warrior turns and jumps */
+	// on arriving it cries, and the warrior turns and jumps
 	DIVE_STEP_DIVING,
 	DIVE_STEP_WARRIOR_JUMPED,
-	DIVE_STEP_RETURN, /* sets off back to its side */
+	DIVE_STEP_RETURN,    // sets off back to its side
 	DIVE_STEP_RETURN_STARTED,
-	DIVE_STEP_RETURNING, /* on arriving it slows and stops drifting */
+	DIVE_STEP_RETURNING, // on arriving it slows and stops drifting
 	DIVE_STEP_BACK
 } TOLBI_SHIP_DECK_DIVE_STEP;
 
-/* Defines `name`, the update of a sea monster hovering by one warrior's side of
-   the deck while the monsters attack.
-
-   It drifts between minX and maxX and bobs, at random. One tick in a hundred
-   it dives at the warrior to (diveX, diveZ), 20 pixels up, and the warrior
-   turns and jumps (sometimes with an emote). Then it returns to its side,
-   (eastX, eastZ) or (westX, westZ) as sceneByte picks.
-
-   Returns 1 to keep running. */
-#define TOLBI_SHIP_DECK_HOVER_AND_DIVE( \
-	name, warrior, diveX, diveZ, eastX, eastZ, westX, westZ, minX, maxX) \
-	static Sint32 name(ACTOR *actor) \
-	{ \
-		if(actor->sceneCount != DIVE_STEP_HOVERING) { \
-			switch(actor->sceneCount) { \
-			case DIVE_STEP_DIVE: \
-				actor->speedLimit = toFIXED(4); \
-				actor->acceleration = toFIXED(2); \
-				syFieldActorSetMoveTarget(actor, diveX, 20, diveZ); \
-				actor->sceneCount++; \
-				break; \
-			case DIVE_STEP_DIVE_STARTED: \
-				actor->sceneCount++; \
-				break; \
-			case DIVE_STEP_DIVING: \
-				if(actor->targetX == ACTOR_NO_TARGET && \
-					actor->targetY == actor->targetX && \
-					actor->targetZ == actor->targetY) { \
-					actor->sceneCount++; \
-					sySoundPlay(SE_ENEMY_CRY); \
-					if(actor->sceneByte != 0) \
-						fdActorFaceDirection( \
-							warrior, FACING_NORTH_NORTHEAST, 0); \
-					else \
-						fdActorFaceDirection( \
-							warrior, FACING_NORTH_NORTHWEST, 0); \
-					if(syRandomBelow(4) != 0) { \
-						fdActorGet(warrior)->velocityY = toFIXED(2); \
-					} else { \
-						fdActorShowEmote( \
-							warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0); \
-						fdActorGet(warrior)->velocityY = toFIXED(6); \
-					} \
-				} \
-				break; \
-			case DIVE_STEP_WARRIOR_JUMPED: \
-				actor->sceneCount++; \
-				break; \
-			case DIVE_STEP_RETURN: \
-				if(actor->sceneByte != 0) \
-					syFieldActorSetMoveTarget(actor, eastX, 0, eastZ); \
-				else \
-					syFieldActorSetMoveTarget(actor, westX, 0, westZ); \
-				actor->sceneCount++; \
-				break; \
-			case DIVE_STEP_RETURN_STARTED: \
-				actor->sceneCount++; \
-				break; \
-			case DIVE_STEP_RETURNING: \
-				if(actor->targetX == ACTOR_NO_TARGET && \
-					actor->targetY == actor->targetX && \
-					actor->targetZ == actor->targetY) { \
-					actor->speedLimit = toFIXED(2); \
-					actor->acceleration = toFIXED(1); \
-					actor->timer = 0; \
-					actor->userValue = 0; \
-					actor->sceneCount++; \
-					actor->sceneWord = 0; \
-				} \
-				break; \
-			case DIVE_STEP_BACK: \
-				actor->sceneCount = DIVE_STEP_HOVERING; \
-				break; \
-			} \
-		} else { \
-			if(actor->timer != 0) { \
-				actor->sceneWord -= syRandomBelow(4096); \
-				if(actor->sceneWord < -toFIXED(1) / 4) \
-					actor->timer = 0; \
-			} else { \
-				actor->sceneWord += syRandomBelow(4096); \
-				if(actor->sceneWord > toFIXED(1) / 4) \
-					actor->timer = 1; \
-			} \
-			if(actor->x.fixed > toFIXED(minX) && \
-				actor->x.fixed < toFIXED(maxX)) \
-				actor->x.fixed += actor->sceneWord; \
-			if(actor->userValue != 0) { \
-				actor->y.fixed = \
-					actor->y.fixed - (syRandomBelow(32768)) - toFIXED(1) / 2; \
-				if(actor->y.fixed < 0) \
-					actor->userValue = 0; \
-			} else { \
-				actor->y.fixed = \
-					actor->y.fixed + (syRandomBelow(32768)) + toFIXED(1) / 2; \
-				if(actor->y.fixed > toFIXED(8)) \
-					actor->userValue = 1; \
-			} \
-		} \
-		if(syRandomBelow(100) == 0) \
-			actor->sceneCount = DIVE_STEP_DIVE; \
-		return 1; \
+// Defines `name`, the update of a sea monster hovering by one warrior's side of the deck while the
+// monsters attack.
+//
+// It drifts between minX and maxX and bobs, at random. One tick in a hundred it dives at the
+// warrior to (diveX, diveZ), 20 pixels up, and the warrior turns and jumps (sometimes with an
+// emote). Then it returns to its side, (eastX, eastZ) or (westX, westZ) as sceneByte picks.
+//
+// Returns 1 to keep running.
+#define TOLBI_SHIP_DECK_HOVER_AND_DIVE(                                                            \
+	name, warrior, diveX, diveZ, eastX, eastZ, westX, westZ, minX, maxX)                           \
+	static Sint32 name(ACTOR *actor)                                                               \
+	{                                                                                              \
+		if (actor->sceneCount != DIVE_STEP_HOVERING)                                               \
+		{                                                                                          \
+			switch (actor->sceneCount)                                                             \
+			{                                                                                      \
+				case DIVE_STEP_DIVE:                                                               \
+					actor->speedLimit   = toFIXED(4);                                              \
+					actor->acceleration = toFIXED(2);                                              \
+					syFieldActorSetMoveTarget(actor, diveX, 20, diveZ);                            \
+					actor->sceneCount++;                                                           \
+					break;                                                                         \
+				case DIVE_STEP_DIVE_STARTED: actor->sceneCount++; break;                           \
+				case DIVE_STEP_DIVING:                                                             \
+					if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX      \
+					    && actor->targetZ == actor->targetY)                                       \
+					{                                                                              \
+						actor->sceneCount++;                                                       \
+						sySoundPlay(SE_ENEMY_CRY);                                                 \
+						if (actor->sceneByte != 0)                                                 \
+							fdActorFaceDirection(warrior, FACING_NORTH_NORTHEAST, 0);              \
+						else                                                                       \
+							fdActorFaceDirection(warrior, FACING_NORTH_NORTHWEST, 0);              \
+						if (syRandomBelow(4) != 0)                                                 \
+						{                                                                          \
+							fdActorGet(warrior)->velocityY = toFIXED(2);                           \
+						}                                                                          \
+						else                                                                       \
+						{                                                                          \
+							fdActorShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);       \
+							fdActorGet(warrior)->velocityY = toFIXED(6);                           \
+						}                                                                          \
+					}                                                                              \
+					break;                                                                         \
+				case DIVE_STEP_WARRIOR_JUMPED: actor->sceneCount++; break;                         \
+				case DIVE_STEP_RETURN:                                                             \
+					if (actor->sceneByte != 0)                                                     \
+						syFieldActorSetMoveTarget(actor, eastX, 0, eastZ);                         \
+					else                                                                           \
+						syFieldActorSetMoveTarget(actor, westX, 0, westZ);                         \
+					actor->sceneCount++;                                                           \
+					break;                                                                         \
+				case DIVE_STEP_RETURN_STARTED: actor->sceneCount++; break;                         \
+				case DIVE_STEP_RETURNING:                                                          \
+					if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX      \
+					    && actor->targetZ == actor->targetY)                                       \
+					{                                                                              \
+						actor->speedLimit   = toFIXED(2);                                          \
+						actor->acceleration = toFIXED(1);                                          \
+						actor->timer        = 0;                                                   \
+						actor->userValue    = 0;                                                   \
+						actor->sceneCount++;                                                       \
+						actor->sceneWord = 0;                                                      \
+					}                                                                              \
+					break;                                                                         \
+				case DIVE_STEP_BACK: actor->sceneCount = DIVE_STEP_HOVERING; break;                \
+			}                                                                                      \
+		}                                                                                          \
+		else                                                                                       \
+		{                                                                                          \
+			if (actor->timer != 0)                                                                 \
+			{                                                                                      \
+				actor->sceneWord -= syRandomBelow(4096);                                           \
+				if (actor->sceneWord < -toFIXED(1) / 4)                                            \
+					actor->timer = 0;                                                              \
+			}                                                                                      \
+			else                                                                                   \
+			{                                                                                      \
+				actor->sceneWord += syRandomBelow(4096);                                           \
+				if (actor->sceneWord > toFIXED(1) / 4)                                             \
+					actor->timer = 1;                                                              \
+			}                                                                                      \
+			if (actor->x.fixed > toFIXED(minX) && actor->x.fixed < toFIXED(maxX))                  \
+				actor->x.fixed += actor->sceneWord;                                                \
+			if (actor->userValue != 0)                                                             \
+			{                                                                                      \
+				actor->y.fixed = actor->y.fixed - (syRandomBelow(32768)) - toFIXED(1) / 2;         \
+				if (actor->y.fixed < 0)                                                            \
+					actor->userValue = 0;                                                          \
+			}                                                                                      \
+			else                                                                                   \
+			{                                                                                      \
+				actor->y.fixed = actor->y.fixed + (syRandomBelow(32768)) + toFIXED(1) / 2;         \
+				if (actor->y.fixed > toFIXED(8))                                                   \
+					actor->userValue = 1;                                                          \
+			}                                                                                      \
+		}                                                                                          \
+		if (syRandomBelow(100) == 0)                                                               \
+			actor->sceneCount = DIVE_STEP_DIVE;                                                    \
+		return 1;                                                                                  \
 	}
 
-/* A monster hovering on Ouranos's side, diving at him. */
-TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeckHoverAndDiveAtOuranos,
-	ACTOR_SEA_OURANOS, 268, 692, 282, 658, 254, 668, 248, 292)
+// A monster hovering on Ouranos's side, diving at him.
+TOLBI_SHIP_DECK_HOVER_AND_DIVE(
+	TolbiShipDeckHoverAndDiveAtOuranos, ACTOR_SEA_OURANOS, 268, 692, 282, 658, 254, 668, 248, 292)
 
-/* A monster hovering on Sean's side, diving at him. */
-TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeckHoverAndDiveAtSean, ACTOR_SEA_SEAN,
-	256, 640, 264, 600, 242, 604, 232, 272)
+// A monster hovering on Sean's side, diving at him.
+TOLBI_SHIP_DECK_HOVER_AND_DIVE(
+	TolbiShipDeckHoverAndDiveAtSean, ACTOR_SEA_SEAN, 256, 640, 264, 600, 242, 604, 232, 272)
 
-/* The four strokes' phases, which the oars at the sides follow (65,536 to a
-   turn). */
-static Uint16 StrokePhase[4] ALIGNED(16);
+// The four strokes' phases, which the oars at the sides follow (65,536 to a turn).
+static Uint16        StrokePhase[4] ALIGNED(16);
 
-/* The deck's rocking up and down (65,536 to a turn). */
-static Sint32 RockAngleY;
-/* Unused: nothing reads or writes it. */
+// The deck's rocking up and down (65,536 to a turn).
+static Sint32        RockAngleY;
+// Unused: nothing reads or writes it.
 UNUSED static Sint32 UnusedAfterRockY;
 
-/* Each oar's angle in its swing (65,536 to a turn). */
-static Uint16 OarAngle[8];
+// Each oar's angle in its swing (65,536 to a turn).
+static Uint16        OarAngle[8];
 
-/* The sea layer's scroll across and down, 16.16 pixels within
-   TOLBI_SHIP_DECK_SEA_WRAP. */
-static Sint32 SeaScroll[2];
+// The sea layer's scroll across and down, 16.16 pixels within TOLBI_SHIP_DECK_SEA_WRAP.
+static Sint32        SeaScroll[2];
 
-/* The deck's rocking from side to side (65,536 to a turn). */
-static Sint32 RockAngleX;
-/* Unused: nothing reads or writes it. */
+// The deck's rocking from side to side (65,536 to a turn).
+static Sint32        RockAngleX;
+// Unused: nothing reads or writes it.
 UNUSED static Sint32 UnusedAfterRockX;
 
-/* How fast the sea scrolls across and down, 16.16 pixels a tick. */
-static Sint32 SeaSpeed[2];
+// How fast the sea scrolls across and down, 16.16 pixels a tick.
+static Sint32        SeaSpeed[2];
 
-/* The eight oars' strokes (scTolbiShipDeckChooseOarStrokes) and the z each
-   swings about, in 16.16. */
-static Uint32 OarStroke[8] ALIGNED(16);
-static Sint32 OarDepth[8];
+// The eight oars' strokes (scTolbiShipDeckChooseOarStrokes) and the z each swings about, in 16.16.
+static Uint32        OarStroke[8] ALIGNED(16);
+static Sint32        OarDepth[8];
 
-/* Bobs the actor between 4 and 12 pixels high by a random amount each tick. */
-static Sint32 scTolbiShipDeckBob(ACTOR *actor)
+// Bobs the actor between 4 and 12 pixels high by a random amount each tick.
+static Sint32        scTolbiShipDeckBob(ACTOR *actor)
 {
-	if(actor->userValue != 0) {
+	if (actor->userValue != 0)
+	{
 		actor->y.fixed -= (syRandomBelow(32768)) + toFIXED(1) / 2;
-		if(actor->y.fixed < toFIXED(4)) {
+		if (actor->y.fixed < toFIXED(4))
+		{
 			actor->userValue = 0;
 		}
-	} else {
+	}
+	else
+	{
 		actor->y.fixed += (syRandomBelow(32768)) + toFIXED(1) / 2;
-		if(actor->y.fixed > toFIXED(12)) {
+		if (actor->y.fixed > toFIXED(12))
+		{
 			actor->userValue = 1;
 		}
 	}
 	return 1;
 }
 
-/* Now and then (two chances in 32) turns the actor to look north-northeast or
-   north-northwest.
-
-   Returns 1. */
+// Now and then (two chances in 32) turns the actor to look north-northeast or north-northwest.
+//
+// Returns 1.
 static Sint32 scTolbiShipDeckLookAround(ACTOR *actor)
 {
 	Uint32 roll = syRandomBelow(32);
 
-	if(roll == 6)
+	if (roll == 6)
 		actor->facing = FACING_NORTH_NORTHEAST;
-	else if(roll == 9)
+	else if (roll == 9)
 		actor->facing = FACING_NORTH_NORTHWEST;
 	return 1;
 }
 
-/* The steps of a monster's leap on deck (TOLBI_SHIP_DECK_LEAP_AT), in timer.
-   After each jump is started one tick passes before the landing is tested. */
-typedef enum TOLBI_SHIP_DECK_LEAP_STEP {
-	LEAP_STEP_WAITING, /* one tick in 40 it gets ready */
+// The steps of a monster's leap on deck (TOLBI_SHIP_DECK_LEAP_AT), in timer. After each jump is
+// started one tick passes before the landing is tested.
+typedef enum TOLBI_SHIP_DECK_LEAP_STEP
+{
+	LEAP_STEP_WAITING,  // one tick in 40 it gets ready
 	LEAP_STEP_READY,
-	LEAP_STEP_LEAP, /* jumps at the warrior */
+	LEAP_STEP_LEAP,     // jumps at the warrior
 	LEAP_STEP_LEAP_STARTED,
-	LEAP_STEP_LEAPING, /* on landing the warrior turns and jumps */
+	LEAP_STEP_LEAPING,  // on landing the warrior turns and jumps
 	LEAP_STEP_WARRIOR_JUMPED,
-	LEAP_STEP_HOP_AWAY, /* jumps to where it lands */
+	LEAP_STEP_HOP_AWAY, // jumps to where it lands
 	LEAP_STEP_HOP_STARTED,
 	LEAP_STEP_HOPPING,
 	LEAP_STEP_LANDED
 } TOLBI_SHIP_DECK_LEAP_STEP;
 
-/* Defines `name`, the update of a monster on deck that, at random, leaps at a
-   warrior.
-
-   It jumps to him at (atX, atZ), he turns and jumps back (sometimes with an
-   emote), and it lands. While sceneByte is set he turns to setFacing and it
-   lands on (setX, setZ), else clearFacing and (clearX, clearZ).
-
-   The actor's timer holds the step (TOLBI_SHIP_DECK_LEAP_STEP). Returns 1. */
-#define TOLBI_SHIP_DECK_LEAP_AT(name, warrior, atX, atZ, setFacing, \
-	clearFacing, setX, setZ, clearX, clearZ) \
-	static Sint32 name(ACTOR *actor) \
-	{ \
-		switch(actor->timer) { \
-		case LEAP_STEP_WAITING: \
-			if((syRandomBelow(40)) == 0) { \
-				actor->timer++; \
-			} \
-			break; \
-		case LEAP_STEP_READY: \
-			actor->timer++; \
-			break; \
-		case LEAP_STEP_LEAP: \
-			actor->velocityY = toFIXED(4); \
-			actor->speedLimit = toFIXED(4); \
-			actor->acceleration = toFIXED(2); \
-			syFieldActorSetMoveTarget(actor, atX, 0, atZ); \
-			actor->timer++; \
-			break; \
-		case LEAP_STEP_LEAP_STARTED: \
-			actor->timer++; \
-			break; \
-		case LEAP_STEP_LEAPING: \
-			if(actor->targetX == ACTOR_NO_TARGET && \
-				actor->targetY == actor->targetX && \
-				actor->targetZ == actor->targetY) { \
-				actor->timer++; \
-				sySoundPlay(SE_JUMP); \
-				if(actor->sceneByte != 0) { \
-					fdActorFaceDirection(warrior, setFacing, 0); \
-				} else { \
-					fdActorFaceDirection(warrior, clearFacing, 0); \
-				} \
-				if(syRandomBelow(4) != 0) { \
-					fdActorGet(warrior)->velocityY = toFIXED(2); \
-				} else { \
-					fdActorShowEmote( \
-						warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0); \
-					fdActorGet(warrior)->velocityY = toFIXED(6); \
-				} \
-			} \
-			break; \
-		case LEAP_STEP_WARRIOR_JUMPED: \
-			actor->timer++; \
-			break; \
-		case LEAP_STEP_HOP_AWAY: \
-			actor->timer++; \
-			actor->velocityY = toFIXED(4); \
-			actor->speedLimit = toFIXED(2); \
-			actor->acceleration = toFIXED(1); \
-			if(actor->sceneByte != 0) { \
-				syFieldActorSetMoveTarget(actor, setX, 0, setZ); \
-			} else { \
-				syFieldActorSetMoveTarget(actor, clearX, 0, clearZ); \
-			} \
-			break; \
-		case LEAP_STEP_HOP_STARTED: \
-			actor->timer++; \
-			break; \
-		case LEAP_STEP_HOPPING: \
-			if(actor->targetX == ACTOR_NO_TARGET && \
-				actor->targetY == actor->targetX && \
-				actor->targetZ == actor->targetY) { \
-				actor->timer++; \
-			} \
-			break; \
-		case LEAP_STEP_LANDED: \
-			actor->timer = LEAP_STEP_WAITING; \
-			break; \
-		} \
-		return 1; \
+// Defines `name`, the update of a monster on deck that, at random, leaps at a warrior.
+//
+// It jumps to him at (atX, atZ), he turns and jumps back (sometimes with an emote), and it lands.
+// While sceneByte is set he turns to setFacing and it lands on (setX, setZ), else clearFacing and
+// (clearX, clearZ).
+//
+// The actor's timer holds the step (TOLBI_SHIP_DECK_LEAP_STEP). Returns 1.
+#define TOLBI_SHIP_DECK_LEAP_AT(                                                                   \
+	name, warrior, atX, atZ, setFacing, clearFacing, setX, setZ, clearX, clearZ)                   \
+	static Sint32 name(ACTOR *actor)                                                               \
+	{                                                                                              \
+		switch (actor->timer)                                                                      \
+		{                                                                                          \
+			case LEAP_STEP_WAITING:                                                                \
+				if ((syRandomBelow(40)) == 0)                                                      \
+				{                                                                                  \
+					actor->timer++;                                                                \
+				}                                                                                  \
+				break;                                                                             \
+			case LEAP_STEP_READY: actor->timer++; break;                                           \
+			case LEAP_STEP_LEAP:                                                                   \
+				actor->velocityY    = toFIXED(4);                                                  \
+				actor->speedLimit   = toFIXED(4);                                                  \
+				actor->acceleration = toFIXED(2);                                                  \
+				syFieldActorSetMoveTarget(actor, atX, 0, atZ);                                     \
+				actor->timer++;                                                                    \
+				break;                                                                             \
+			case LEAP_STEP_LEAP_STARTED: actor->timer++; break;                                    \
+			case LEAP_STEP_LEAPING:                                                                \
+				if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX          \
+				    && actor->targetZ == actor->targetY)                                           \
+				{                                                                                  \
+					actor->timer++;                                                                \
+					sySoundPlay(SE_JUMP);                                                          \
+					if (actor->sceneByte != 0)                                                     \
+					{                                                                              \
+						fdActorFaceDirection(warrior, setFacing, 0);                               \
+					}                                                                              \
+					else                                                                           \
+					{                                                                              \
+						fdActorFaceDirection(warrior, clearFacing, 0);                             \
+					}                                                                              \
+					if (syRandomBelow(4) != 0)                                                     \
+					{                                                                              \
+						fdActorGet(warrior)->velocityY = toFIXED(2);                               \
+					}                                                                              \
+					else                                                                           \
+					{                                                                              \
+						fdActorShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);           \
+						fdActorGet(warrior)->velocityY = toFIXED(6);                               \
+					}                                                                              \
+				}                                                                                  \
+				break;                                                                             \
+			case LEAP_STEP_WARRIOR_JUMPED: actor->timer++; break;                                  \
+			case LEAP_STEP_HOP_AWAY:                                                               \
+				actor->timer++;                                                                    \
+				actor->velocityY    = toFIXED(4);                                                  \
+				actor->speedLimit   = toFIXED(2);                                                  \
+				actor->acceleration = toFIXED(1);                                                  \
+				if (actor->sceneByte != 0)                                                         \
+				{                                                                                  \
+					syFieldActorSetMoveTarget(actor, setX, 0, setZ);                               \
+				}                                                                                  \
+				else                                                                               \
+				{                                                                                  \
+					syFieldActorSetMoveTarget(actor, clearX, 0, clearZ);                           \
+				}                                                                                  \
+				break;                                                                             \
+			case LEAP_STEP_HOP_STARTED: actor->timer++; break;                                     \
+			case LEAP_STEP_HOPPING:                                                                \
+				if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX          \
+				    && actor->targetZ == actor->targetY)                                           \
+				{                                                                                  \
+					actor->timer++;                                                                \
+				}                                                                                  \
+				break;                                                                             \
+			case LEAP_STEP_LANDED: actor->timer = LEAP_STEP_WAITING; break;                        \
+		}                                                                                          \
+		return 1;                                                                                  \
 	}
 
-/* A monster on deck leaping at Ouranos. */
-TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeckLeapAtOuranos, ACTOR_SEA_OURANOS, 264, 662,
-	FACING_NORTH_NORTHWEST, FACING_SOUTH_SOUTHWEST, 252, 646, 256, 686)
-/* A monster on deck leaping at Sean. */
-TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeckLeapAtSean, ACTOR_SEA_SEAN, 176, 696,
-	FACING_NORTH_NORTHEAST, FACING_EAST, 184, 672, 202, 692)
+// A monster on deck leaping at Ouranos.
+TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeckLeapAtOuranos,
+                        ACTOR_SEA_OURANOS,
+                        264,
+                        662,
+                        FACING_NORTH_NORTHWEST,
+                        FACING_SOUTH_SOUTHWEST,
+                        252,
+                        646,
+                        256,
+                        686)
+// A monster on deck leaping at Sean.
+TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeckLeapAtSean,
+                        ACTOR_SEA_SEAN,
+                        176,
+                        696,
+                        FACING_NORTH_NORTHEAST,
+                        FACING_EAST,
+                        184,
+                        672,
+                        202,
+                        692)
 
-/* Makes the actor hop at random, one tick in 40 on average.
-
-   Returns 1. */
+// Makes the actor hop at random, one tick in 40 on average.
+//
+// Returns 1.
 static Sint32 scTolbiShipDeckRandomlyStartActorHop(ACTOR *actor)
 {
-	if((syRandomBelow(40)) == 0)
+	if ((syRandomBelow(40)) == 0)
 		actor->velocityY = toFIXED(4);
 	return 1;
 }
 
-/* The update that shrinks an enlarged actor by 1/32 a tick until it is back to
-   normal size. */
+// The update that shrinks an enlarged actor by 1/32 a tick until it is back to normal size.
 static void scTolbiShipDeckShrinkToNormalSize(ACTOR *actor)
 {
-	if(actor->scaleX > toFIXED(1)) {
+	if (actor->scaleX > toFIXED(1))
+	{
 		actor->scaleX -= toFIXED(1) / 32;
 		actor->scaleY -= toFIXED(1) / 32;
 	}
 }
 
-/* Turns the actor east, northeast-by-north or southeast-by-south at random
-   intervals of 80 to 160 ticks. */
+// Turns the actor east, northeast-by-north or southeast-by-south at random intervals of 80 to 160
+// ticks.
 static Sint32 scTolbiShipDeckIdleTurn(ACTOR *actor)
 {
-	if(actor->sceneCount != 0) {
+	if (actor->sceneCount != 0)
+	{
 		actor->sceneCount--;
-	} else {
+	}
+	else
+	{
 		Uint32 roll = syRandomBelow(300);
 
-		if(roll > 200) {
+		if (roll > 200)
+		{
 			actor->facing = FACING_NORTH_NORTHEAST;
-		} else if(roll > 100) {
+		}
+		else if (roll > 100)
+		{
 			actor->facing = FACING_SOUTH_SOUTHWEST;
-		} else {
+		}
+		else
+		{
 			actor->facing = FACING_EAST;
 		}
 		actor->sceneCount = (syRandomBelow(80)) + 80;
@@ -723,33 +731,30 @@ const Uint32 *scGetExits(void)
 	return TolbiShipDeckExits;
 }
 
-/* The talk facing of a Kalay actor's row in
-   TolbiShipDeckActorPlacementsWaiting. */
-#define KALAY_TALK_FACING(actorId) \
-	STORE_CONST( \
-		TolbiShipDeckActorPlacementsWaiting[(actorId) - ACTOR_FIRST_PLACED] \
-			.talkFacing)
+// The talk facing of a Kalay actor's row in TolbiShipDeckActorPlacementsWaiting.
+#define KALAY_TALK_FACING(actorId)                                                                 \
+	STORE_CONST(TolbiShipDeckActorPlacementsWaiting[(actorId) - ACTOR_FIRST_PLACED].talkFacing)
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	if(gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
+	if (gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
 		return TolbiShipDeckActorPlacementsArrived;
-	if(gmFlagGet(FLAG_TOLBI_SHIP_ROWING))
+	if (gmFlagGet(FLAG_TOLBI_SHIP_ROWING))
 		return TolbiShipDeckActorPlacementsRowing;
-	if(gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
+	if (gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
 		return TolbiShipDeckActorPlacementsAtSea;
-	if(gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
-		if(gmFlagGet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
-			KALAY_TALK_FACING(ACTOR_KALAY_CREW_MEMBER) = TALK_FACING_PARTY;
-			KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) =
-				TALK_FACING_KEEP;
-			KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) =
-				TALK_FACING_KEEP;
-		} else if(gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
-			KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) =
-				TALK_FACING_PARTY_AND_BACK;
-			KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) =
-				TALK_FACING_PARTY_AND_BACK;
+	if (gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT))
+	{
+		if (gmFlagGet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED))
+		{
+			KALAY_TALK_FACING(ACTOR_KALAY_CREW_MEMBER)              = TALK_FACING_PARTY;
+			KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG)   = TALK_FACING_KEEP;
+			KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = TALK_FACING_KEEP;
+		}
+		else if (gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN))
+		{
+			KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG)   = TALK_FACING_PARTY_AND_BACK;
+			KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = TALK_FACING_PARTY_AND_BACK;
 		}
 		return TolbiShipDeckActorPlacementsWaiting;
 	}
@@ -760,179 +765,187 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
 const CUE *scGetCues(void)
 {
-	if(gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
+	if (gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
 		return TolbiShipDeckCuesArrived;
-	if(gmFlagGet(FLAG_TOLBI_SHIP_AT_ISLAND))
+	if (gmFlagGet(FLAG_TOLBI_SHIP_AT_ISLAND))
 		return TolbiShipDeckCuesAtIsland;
-	if(gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
+	if (gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
 		return TolbiShipDeckCuesAtSea;
 	return TolbiShipDeckCues;
 }
 
-/* At Kalay, the sailor in a yellow bandana beside the tour guide, south-east on
-   deck, snaps that they will sail when the replacement ship arrives.
-
-   While the two warriors are off at the captain's quarters he frets `Somebody
-   stop them...`, and once the anchor charm is back he says they ought to leave
-   soon, though the passengers may not want to row. */
+// At Kalay, the sailor in a yellow bandana beside the tour guide, south-east on deck, snaps that
+// they will sail when the replacement ship arrives.
+//
+// While the two warriors are off at the captain's quarters he frets `Somebody stop them...`, and
+// once the anchor charm is back he says they ought to leave soon, though the passengers may not
+// want to row.
 static void scTolbiShipDeckTalkToCrewMember(void)
 {
 	ACTOR *crewMember;
 	Sint32 ticks;
 
 	fdScriptStart();
-	if(gmFlagGet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
+	if (gmFlagGet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0)
+	{
 		fdScriptSetMessageId(MsgTolbiShipNowWeHaveProtectShip);
-		/* "Now that we have you to protect the ship, we ought to be..." */
+		// "Now that we have you to protect the ship, we ought to be..."
 		fdScriptShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
-	} else {
-		if(gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
+	}
+	else
+	{
+		if (gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0)
+		{
 			fdActorRunRepeatedMotion(ACTOR_KALAY_CREW_MEMBER, 2);
 			fdScriptSetMessageId(MsgTolbiShipSomebodyStopThem);
-			/* "Somebody stop them..." */
+			// "Somebody stop them..."
 			fdScriptShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
-			crewMember = fdActorGet(ACTOR_KALAY_CREW_MEMBER);
-			ticks = syRandomBelow(90) + 60;
+			crewMember        = fdActorGet(ACTOR_KALAY_CREW_MEMBER);
+			ticks             = syRandomBelow(90) + 60;
 			crewMember->timer = ticks;
-			fdActorSetScript(
-				ACTOR_KALAY_CREW_MEMBER, TolbiShipDeckSquashAndStretchActions);
-		} else {
-			fdActorShowEmote(
-				ACTOR_KALAY_CREW_MEMBER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+			fdActorSetScript(ACTOR_KALAY_CREW_MEMBER, TolbiShipDeckSquashAndStretchActions);
+		}
+		else
+		{
+			fdActorShowEmote(ACTOR_KALAY_CREW_MEMBER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
 			fdActorStartRepeatedMotion(ACTOR_KALAY_CREW_MEMBER, 3);
 			fdScriptSetMessageId(MsgTolbiShipToldWereLeavingSoonSet);
-			/* "I told you, we're leaving soon. We'll set sail when our..." */
+			// "I told you, we're leaving soon. We'll set sail when our..."
 			fdScriptShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
 		}
 	}
 	fdScriptEnd();
 }
 
-/* At Kalay, the tour guide with a pack, south-east on deck, complains that
-   Colosso will start without his group.
-
-   While the two warriors are off at the captain's quarters he frets that they
-   can't be planning a mutiny, and once the anchor charm is back he says the
-   passengers will have to promise to row. */
+// At Kalay, the tour guide with a pack, south-east on deck, complains that Colosso will start
+// without his group.
+//
+// While the two warriors are off at the captain's quarters he frets that they can't be planning a
+// mutiny, and once the anchor charm is back he says the passengers will have to promise to row.
 static void scTolbiShipDeckTalkToTourGuide(void)
 {
 	ACTOR *guide;
 	Sint32 ticks;
 
 	fdScriptStart();
-	if(gmFlagGet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
+	if (gmFlagGet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0)
+	{
 		fdScriptSetMessageId(MsgTolbiShipHaveMakeThemPromiseHelp);
-		/* "We'll have to make them promise to help row before we can..." */
+		// "We'll have to make them promise to help row before we can..."
 		fdScriptShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
-	} else {
-		if(gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
+	}
+	else
+	{
+		if (gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0)
+		{
 			fdActorRunRepeatedMotion(ACTOR_KALAY_TOUR_GUIDE, 2);
 			fdScriptSetMessageId(MsgTolbiShipTheyCantPlanningMutiny);
-			/* "They can't be planning a mutiny..." */
+			// "They can't be planning a mutiny..."
 			fdScriptShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
-			guide = fdActorGet(ACTOR_KALAY_TOUR_GUIDE);
-			ticks = syRandomBelow(90) + 60;
+			guide        = fdActorGet(ACTOR_KALAY_TOUR_GUIDE);
+			ticks        = syRandomBelow(90) + 60;
 			guide->timer = ticks;
-			fdActorSetScript(
-				ACTOR_KALAY_TOUR_GUIDE, TolbiShipDeckSquashAndStretchActions);
-		} else {
-			fdActorShowEmote(
-				ACTOR_KALAY_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+			fdActorSetScript(ACTOR_KALAY_TOUR_GUIDE, TolbiShipDeckSquashAndStretchActions);
+		}
+		else
+		{
+			fdActorShowEmote(ACTOR_KALAY_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
 			fdActorStartRepeatedMotion(ACTOR_KALAY_TOUR_GUIDE, 3);
 			fdScriptSetMessageId(MsgTolbiShipIfWeDontLeaveSoon);
-			/* "If we don't leave soon, Colosso will start without us!
-			   Will..." */
+			// "If we don't leave soon, Colosso will start without us! Will..."
 			fdScriptShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
 		}
 	}
 	fdScriptEnd();
 }
 
-/* At Tolbi, the sailor in a blue bandana by the gangplank, on the west side of
-   the deck, asks whether Isaac is headed for Colosso too.
-
-   Yes, and he says most people are at this time of year; no, and he calls Isaac
-   strange, like the group of six they ferried across a while back. */
+// At Tolbi, the sailor in a blue bandana by the gangplank, on the west side of the deck, asks
+// whether Isaac is headed for Colosso too.
+//
+// Yes, and he says most people are at this time of year; no, and he calls Isaac strange, like the
+// group of six they ferried across a while back.
 static void scTolbiShipDeckAskHeadedForColosso(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgTolbiShipHeadedColosso);
-	/* "Are you headed for Colosso, too?" Yes: "I thought so. Most people coming
-	   at this time of year..." No: "You came all this way, and you're not going
-	   to Colosso? That..." */
+	// "Are you headed for Colosso, too?" Yes: "I thought so. Most people coming at this time of
+	// year..." No: "You came all this way, and you're not going to Colosso? That..."
 	fdScriptAskYesNo(ACTOR_ARRIVED_ASKS_ABOUT_COLOSSO, 0);
 	fdScriptEnd();
 }
 
-/* The carved door up the ladder at the north end of the deck swings open, once
-   a visit. */
+// The carved door up the ladder at the north end of the deck swings open, once a visit.
 static void scTolbiShipDeckOpenFirstDoor(void)
 {
-	if(fdScriptGetFlag(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN) == 0) {
+	if (fdScriptGetFlag(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN) == 0)
+	{
 		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridCopyMetatilesTo(30, 94, 13, 94, 1, 3);
 		gmFlagSet(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN);
 	}
 }
 
-/* The door of the cabin at the south end of the deck swings open, once a
-   visit. */
+// The door of the cabin at the south end of the deck swings open, once a visit.
 static void scTolbiShipDeckOpenSecondDoor(void)
 {
-	if(fdScriptGetFlag(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN) == 0) {
+	if (fdScriptGetFlag(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN) == 0)
+	{
 		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridCopyMetatilesTo(30, 108, 13, 108, 1, 2);
 		gmFlagSet(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN);
 	}
 }
 
-/* Isaac goes below: through the carved door up the ladder at the north end of
-   the deck (metatile (13, 37)), down the small stairway in the middle of the
-   deck, walking west (metatile (13, 41)), or through the door of the cabin at
-   the south end (metatile (13, 50)), the captain's quarters.
-
-   A door swings open and he walks into it; the stairway plays the exit sound.
-   Each metatile's behaviour is its exit's number, which the cue rows name. */
+// Isaac goes below: through the carved door up the ladder at the north end of the deck (metatile
+// (13, 37)), down the small stairway in the middle of the deck, walking west (metatile (13, 41)),
+// or through the door of the cabin at the south end (metatile (13, 50)), the captain's quarters.
+//
+// A door swings open and he walks into it; the stairway plays the exit sound. Each metatile's
+// behaviour is its exit's number, which the cue rows name.
 static void scTolbiShipDeckGoBelow(void)
 {
-	Sint32		 throughDoor;
+	Sint32       throughDoor;
 	FIELD_STATE *state;
 
 	state = FieldStateWork;
 	fdScriptStart();
 	throughDoor = 0;
-	switch(state->stepCue) {
-	case TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD:
-		throughDoor = 1;
-		scTolbiShipDeckOpenFirstDoor();
-		break;
-	case TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM:
-		throughDoor = 1;
-		scTolbiShipDeckOpenSecondDoor();
-		break;
+	switch (state->stepCue)
+	{
+		case TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD:
+			throughDoor = 1;
+			scTolbiShipDeckOpenFirstDoor();
+			break;
+		case TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM:
+			throughDoor = 1;
+			scTolbiShipDeckOpenSecondDoor();
+			break;
 	}
-	if(throughDoor != 0) {
+	if (throughDoor != 0)
+	{
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.6);
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 1, -10);
 		fdScriptWait(10);
-	} else {
+	}
+	else
+	{
 		sySoundPlay(SE_MAP_EXIT);
 	}
 	syImportScriptSetExitRequest(state->stepCue);
 }
 
 #if TOLBI_SHIP_STAIRWAY_TAKEN_ON_STEP
-/* In the German, Spanish, French and Italian editions, Isaac goes down the
-   small stairway in the middle of the deck (metatile (13, 41)) as soon as he
-   steps onto it facing west, walked to its middle first; elsewhere he has to
-   keep walking west on it.
-
-   There the stairway is a plain step cue, and this checks his facing. */
+// In the German, Spanish, French and Italian editions, Isaac goes down the small stairway in the
+// middle of the deck (metatile (13, 41)) as soon as he steps onto it facing west, walked to its
+// middle first; elsewhere he has to keep walking west on it.
+//
+// There the stairway is a plain step cue, and this checks his facing.
 static void scTolbiShipDeckGoBelowWhileFacingWest(void)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-	if(leader->facing > FACING_SOUTHWEST && leader->facing < FACING_NORTHWEST) {
+	if (leader->facing > FACING_SOUTHWEST && leader->facing < FACING_NORTHWEST)
+	{
 		fdScriptStart();
 		fdActorWalkTo(ACTOR_PARTY_LEADER, 214, 664);
 		fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
@@ -941,16 +954,16 @@ static void scTolbiShipDeckGoBelowWhileFacingWest(void)
 }
 #endif
 
-/* At Kalay, once the tour group has gone, walking past the stairway in the
-   middle of the deck brings the camera round to the captain, Kaja and the
-   crewman in a blue bandana talking over the late replacement ship.
-
-   The captain will sail trusting his anchor charm. Kaja goes off, the captain
-   steps aside, and the crewman slips through the door of the cabin at the south
-   end. */
+// At Kalay, once the tour group has gone, walking past the stairway in the middle of the deck
+// brings the camera round to the captain, Kaja and the crewman in a blue bandana talking over the
+// late replacement ship.
+//
+// The captain will sail trusting his anchor charm. Kaja goes off, the captain steps aside, and the
+// crewman slips through the door of the cabin at the south end.
 static void scTolbiShipDeckWatchCrewDecideToSail(void)
 {
-	if(gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+	if (gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0)
+	{
 		fdScriptStart();
 		fdEndBusyAndReveal();
 		fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_KALAY_CREWMAN, 10);
@@ -960,82 +973,72 @@ static void scTolbiShipDeckWatchCrewDecideToSail(void)
 		fdScriptWait(40);
 		fdActorRunRepeatedMotion(ACTOR_KALAY_CAPTAIN, 1);
 		fdScriptSetMessageId(MsgTolbiShipWonderCouldHaveHappened);
-		/* "I wonder what could have happened." */
+		// "I wonder what could have happened."
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
 		fdActorShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 		fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
-		/* "You mean you still intend to cross this dangerous sea?" */
+		// "You mean you still intend to cross this dangerous sea?"
 		scTolbiShipDeckSay(ACTOR_KALAY_CREWMAN);
 		fdActorRunRepeatedMotion(ACTOR_KALAY_CAPTAIN, 1);
 		fdActorFaceDirection(ACTOR_KALAY_CAPTAIN, FACING_SOUTH_SOUTHWEST, 0);
-		/* "It would be too big a loss to let so many passengers get away..." */
+		// "It would be too big a loss to let so many passengers get away..."
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
 		fdActorRunRepeatedMotion(ACTOR_KALAY_CREWMAN, 1);
 		scTolbiShipDeckTurn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHWEST);
-		/* "Say, Kaja, how are the oarsmen doing?" */
+		// "Say, Kaja, how are the oarsmen doing?"
 		scTolbiShipDeckSay(ACTOR_KALAY_CREWMAN);
 		scTolbiShipDeckTurn(ACTOR_KALAY_KAJA, FACING_SOUTH_SOUTHEAST);
 		fdActorSetAnimation(ACTOR_KALAY_KAJA, ANIM_NOD);
-		/* "They're fearless. There's no problem there. It's just that..." */
+		// "They're fearless. There's no problem there. It's just that..."
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
-		fdActorShowEmote(
-			ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+		fdActorShowEmote(ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 		fdActorFaceDirection(ACTOR_KALAY_CAPTAIN, FACING_WEST, 20);
-		/* ""It's just that"...what?" */
+		// ""It's just that"...what?"
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
 		scTolbiShipDeckTurn(ACTOR_KALAY_KAJA, FACING_EAST);
 		fdActorSetAnimationAndWait(ACTOR_KALAY_KAJA, ANIM_SHAKE_HEAD);
-		/* "If a whole bunch of...them appear while we're crossing the sea, I
-		   won't be able to handle them alone." */
+		// "If a whole bunch of...them appear while we're crossing the sea, I won't be able to
+		// handle them alone."
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
-		fdActorShowEmote(
-			ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+		fdActorShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 		fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
-		/* "I'm sorry, but you'll have to. I can't let anyone else fight but
-		   you, Kaja." */
+		// "I'm sorry, but you'll have to. I can't let anyone else fight but you, Kaja."
 		scTolbiShipDeckSay(ACTOR_KALAY_CREWMAN);
 		fdActorSetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
-		/* "Remember, the oarsmen will have their hands full rowing. They can't
-		   fight." */
+		// "Remember, the oarsmen will have their hands full rowing. They can't fight."
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
 		scTolbiShipDeckTurn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHEAST);
 		fdActorSetAnimation(ACTOR_KALAY_KAJA, ANIM_NOD);
 		fdActorSetAnimationAndWait(ACTOR_KALAY_CREWMAN, ANIM_NOD);
 		fdScriptWait(60);
-		fdActorShowEmote(
-			ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+		fdActorShowEmote(ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
 		scTolbiShipDeckTurn(ACTOR_KALAY_CAPTAIN, FACING_SOUTH_SOUTHWEST);
 		fdScriptSetMessageId(MsgTolbiShipTheresNothingWeCanDo);
 		fdActorStartRepeatedMotion(ACTOR_KALAY_CAPTAIN, 1);
-		/* "There's nothing we can do... Let's set sail!" */
+		// "There's nothing we can do... Let's set sail!"
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
-		fdActorShowEmote(
-			ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+		fdActorShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 		fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
-		/* "Wha-What are you talking about! If we set sail now, we'll never make
-		   it to Tolbi." */
+		// "Wha-What are you talking about! If we set sail now, we'll never make it to Tolbi."
 		scTolbiShipDeckSay(ACTOR_KALAY_CREWMAN);
 		fdActorShowEmote(ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-		/* "We'll be fine... We have a protective amulet!" */
-		fdScriptShowMessageThenWait(
-			SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
+		// "We'll be fine... We have a protective amulet!"
+		fdScriptShowMessageThenWait(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
 		fdActorShowEmote(ACTOR_KALAY_KAJA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-		/* "Amulet... Amulet, you say... You mean that little anchor charm?" */
+		// "Amulet... Amulet, you say... You mean that little anchor charm?"
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
 		scTolbiShipDeckTurn(ACTOR_KALAY_CAPTAIN, FACING_WEST);
 		fdActorSetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
-		/* "The little anchor has always protected us from danger." */
-		fdScriptShowMessageThenWait(
-			SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
+		// "The little anchor has always protected us from danger."
+		fdScriptShowMessageThenWait(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
 		fdActorShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
 		fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
-		/* "Captain, get ahold of yourself! That's just foolish
-		   superstition!" */
+		// "Captain, get ahold of yourself! That's just foolish superstition!"
 		scTolbiShipDeckSay(ACTOR_KALAY_CREWMAN);
 		scTolbiShipDeckTurn(ACTOR_KALAY_CAPTAIN, FACING_SOUTH_SOUTHWEST);
 		fdActorSetAnimation(ACTOR_KALAY_CAPTAIN, ANIM_SHAKE_HEAD);
-		/* "It's okay. We'll be fine. Even if we can't find any mercenaries,
-		   that little charm will protect us." */
+		// "It's okay. We'll be fine. Even if we can't find any mercenaries, that little charm will
+		// protect us."
 		scTolbiShipDeckSay(ACTOR_KALAY_CAPTAIN);
 		fdActorFaceDirection(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHWEST, 0);
 		fdActorFaceDirection(ACTOR_KALAY_KAJA, FACING_SOUTH_SOUTHEAST, 40);
@@ -1043,38 +1046,34 @@ static void scTolbiShipDeckWatchCrewDecideToSail(void)
 		fdActorFaceDirection(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHEAST, 20);
 		fdActorRunRepeatedMotion(ACTOR_KALAY_CAPTAIN, 2);
 		fdScriptWait(20);
-		/* "Now then, let's hurry up! Prepare to set sail!" */
+		// "Now then, let's hurry up! Prepare to set sail!"
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
-		fdActorSetAttachedEffect(
-			ACTOR_KALAY_KAJA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		fdActorSetAttachedEffect(ACTOR_KALAY_KAJA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdActorSetAttachedEffect(ACTOR_KALAY_CREWMAN,
-			ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+		                         ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdScriptWait(40);
 		fdActorSetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
-		/* "This is great... We'll be setting sail soon!" */
+		// "This is great... We'll be setting sail soon!"
 		scTolbiShipDeckSay(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
 		fdCameraSetSpeed(0.8);
 		fdCameraMoveTo(182, CAMERA_KEEP, 760, 1);
 		fdActorSetSpeed(ACTOR_KALAY_KAJA, 0.8);
 		fdActorSetScript(ACTOR_KALAY_KAJA, TolbiShipDeckKajaLeavesActions);
 		fdActorSetSpeed(ACTOR_KALAY_CAPTAIN, 0.8);
-		fdActorSetScript(
-			ACTOR_KALAY_CAPTAIN, TolbiShipDeckCaptainStepsAsideActions);
+		fdActorSetScript(ACTOR_KALAY_CAPTAIN, TolbiShipDeckCaptainStepsAsideActions);
 		fdActorSetSpeed(ACTOR_KALAY_CREWMAN, 0.8);
 		fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 182, 760);
 		fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
-		fdActorShowEmote(
-			ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+		fdActorShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 		scTolbiShipDeckTurn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHEAST);
-		/* "(Not if I have anything to say about it.)" */
+		// "(Not if I have anything to say about it.)"
 		fdScriptShowMessageThenWait(ACTOR_KALAY_CREWMAN, 0, 20);
 		fdActorSetAnimationAndWait(ACTOR_KALAY_CREWMAN, ANIM_NOD);
 		fdActorJump(ACTOR_KALAY_CREWMAN, 4, 0);
 		fdActorFaceDirection(ACTOR_KALAY_CREWMAN, FACING_SOUTH_SOUTHEAST, 40);
 		fdCameraSetSpeed(1);
 		fdCameraMoveTo(216, CAMERA_KEEP, 790, 1);
-		fdActorGet(ACTOR_KALAY_CREWMAN)->priorityFlags |=
-			ACTOR_PRIORITY_AUTOMATIC;
+		fdActorGet(ACTOR_KALAY_CREWMAN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 		fdActorSetSpeed(ACTOR_KALAY_CREWMAN, 1.2);
 		fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 182, 782);
 		fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 192, 808);
@@ -1091,98 +1090,88 @@ static void scTolbiShipDeckWatchCrewDecideToSail(void)
 	}
 }
 
-/* At Kalay, when Isaac comes up to the door of the cabin at the south end from
-   the west (metatiles (12, 50) and (12, 51)), the crewman in a blue bandana
-   bursts out, says `I didn't do anything...`, sidles away east and runs off up
-   that side of the deck.
-
-   He is next found at the far north end of the deck. */
+// At Kalay, when Isaac comes up to the door of the cabin at the south end from the west (metatiles
+// (12, 50) and (12, 51)), the crewman in a blue bandana bursts out, says `I didn't do anything...`,
+// sidles away east and runs off up that side of the deck.
+//
+// He is next found at the far north end of the deck.
 static void scTolbiShipDeckCatchCrewmanFromWest(void)
 {
-	if(gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-		if(gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
+	if (gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0)
+	{
+		if (gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
+		{
 			fdScriptStart();
 			fdEndBusyAndReveal();
 			scTolbiShipDeckConfrontCrewman();
 			fdActorSetSpeed(ACTOR_KALAY_CREWMAN, 0.4);
-			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags &=
-				~ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 232, 816);
 			fdScriptWait(1);
-			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags |=
-				ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags |= ACTOR_FACES_MOTION;
 			fdScriptWait(20);
 			fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
-			/* "Really, I mean it..." */
+			// "Really, I mean it..."
 			scTolbiShipDeckSay(ACTOR_KALAY_CREWMAN);
 			fdActorSetSpeed(ACTOR_KALAY_CREWMAN, 1.2);
-			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags &=
-				~ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 244, 804);
 			fdScriptWait(1);
-			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags |=
-				ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags |= ACTOR_FACES_MOTION;
 			fdScriptWait(20);
 			fdActorSetSpeed(ACTOR_KALAY_CREWMAN, 3.2);
 			fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 248, 778);
 			fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 248, 700);
 			fdActorSetPos(ACTOR_KALAY_CREWMAN, 246, 512);
 			fdActorFaceDirection(ACTOR_KALAY_CREWMAN, FACING_EAST, 0);
-			fdActorShowEmote(
-				ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+			fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 			fdScriptEnd();
 		}
 	}
 }
 
-/* At Kalay, when Isaac comes up to the door of the cabin at the south end from
-   the east (metatiles (14, 50) and (14, 51)), the crewman in a blue bandana
-   bursts out, says `I didn't do anything...`, sidles away west and runs off up
-   that side of the deck.
-
-   He is next found at the far north end of the deck, as when caught from the
-   west. */
+// At Kalay, when Isaac comes up to the door of the cabin at the south end from the east (metatiles
+// (14, 50) and (14, 51)), the crewman in a blue bandana bursts out, says `I didn't do anything...`,
+// sidles away west and runs off up that side of the deck.
+//
+// He is next found at the far north end of the deck, as when caught from the west.
 static void scTolbiShipDeckCatchCrewmanFromEast(void)
 {
-	if(gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-		if(gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
+	if (gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0)
+	{
+		if (gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
+		{
 			fdScriptStart();
 			fdEndBusyAndReveal();
 			scTolbiShipDeckConfrontCrewman();
 			fdActorSetSpeed(ACTOR_KALAY_CREWMAN, 0.4);
-			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags &=
-				~ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 202, 816);
 			fdScriptWait(1);
-			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags |=
-				ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags |= ACTOR_FACES_MOTION;
 			fdScriptWait(20);
 			fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
-			/* "Really, I mean it..." */
+			// "Really, I mean it..."
 			scTolbiShipDeckSay(ACTOR_KALAY_CREWMAN);
 			fdActorSetSpeed(ACTOR_KALAY_CREWMAN, 1.2);
-			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags &=
-				~ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 192, 804);
 			fdScriptWait(1);
-			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags |=
-				ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_KALAY_CREWMAN)->steeringFlags |= ACTOR_FACES_MOTION;
 			fdScriptWait(20);
 			fdActorSetSpeed(ACTOR_KALAY_CREWMAN, 3.2);
 			fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 180, 778);
 			fdActorWalkToAndWait(ACTOR_KALAY_CREWMAN, 180, 700);
 			fdActorSetPos(ACTOR_KALAY_CREWMAN, 246, 512);
 			fdActorFaceDirection(ACTOR_KALAY_CREWMAN, FACING_EAST, 0);
-			fdActorShowEmote(
-				ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+			fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 			fdScriptEnd();
 		}
 	}
 }
 
-/* The camera moves down to the cabin door, which opens, and the crewman steps
-   out, shakes his head and starts at the sight of Isaac. Both ways of catching
-   him start this way. */
+// The camera moves down to the cabin door, which opens, and the crewman steps out, shakes his head
+// and starts at the sight of Isaac. Both ways of catching him start this way.
 static void scTolbiShipDeckConfrontCrewman(void)
 {
 	fdCameraSetSpeed(1.6);
@@ -1198,138 +1187,153 @@ static void scTolbiShipDeckConfrontCrewman(void)
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_KALAY_CREWMAN, 10);
 	fdActorSetAnimationAndWait(ACTOR_KALAY_CREWMAN, ANIM_SHAKE_HEAD);
 	fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
-	fdActorShowEmote(
-		ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+	fdActorShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorFaceActor(ACTOR_KALAY_CREWMAN, ACTOR_PARTY_LEADER, 20);
 	fdActorStartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
 	fdScriptSetMessageId(MsgTolbiShipDidntDoAnything);
-	/* "I didn't do anything..." */
+	// "I didn't do anything..."
 	fdScriptShowMessageThenWait(ACTOR_KALAY_CREWMAN, 0, 20);
 	fdActorShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 	gmFlagSet(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT);
 }
 
-/* Boards the deck: the view centred, the sea still, the rocking's angles drawn
-   at random, and then the voyage's stage and script set up
-   (scTolbiShipDeckApplyEntryState). */
+// Boards the deck: the view centred, the sea still, the rocking's angles drawn at random, and then
+// the voyage's stage and script set up (scTolbiShipDeckApplyEntryState).
 Sint32 scInit(void)
 {
-	MAP_GRID_LAYER_SCROLL *sea = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])
-									  ->layers[MAPGRID_LAYER_GROUND];
+	MAP_GRID_LAYER_SCROLL *sea =
+		&((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[MAPGRID_LAYER_GROUND];
 
 	gmFlagClear(FLAG_WORLD_MAP_LEFT);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	sea->speedY = 0;
-	RockAngleX = (Uint16)syRandomNext();
-	RockAngleY = (Uint16)syRandomNext();
-	SeaScroll[0] = 0;
-	SeaScroll[1] = 0;
-	SeaSpeed[0] = 0;
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	sea->speedY                = 0;
+	RockAngleX                 = (Uint16)syRandomNext();
+	RockAngleY                 = (Uint16)syRandomNext();
+	SeaScroll[0]               = 0;
+	SeaScroll[1]               = 0;
+	SeaSpeed[0]                = 0;
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	scTolbiShipDeckApplyEntryState();
 	return 0;
 }
 
-/* Redraws the deck for the voyage's stage, starts the oars, the rocking and the
-   sea as the ship moves, plays the script the entrance names, and otherwise
-   places the people on deck for the stage. */
+// Redraws the deck for the voyage's stage, starts the oars, the rocking and the sea as the ship
+// moves, plays the script the entrance names, and otherwise places the people on deck for the
+// stage.
 static void scTolbiShipDeckApplyEntryState(void)
 {
 	Sint32 flag;
 
 	gmFlagSet(FLAG_RETREAT_BLOCKED);
-	if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
+	if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)
+	{
 		gmFlagClear(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN);
 		gmFlagClear(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN);
 	}
-	if(gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
+	if (gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0)
+	{
 		scTolbiShipDeckCopyUnderwayMetatiles();
 		scTolbiShipDeckCopyAnchoredMetatiles();
-		fdActorSetSpriteColorById(
-			ACTOR_ARRIVED_FIRST_PASSENGER + 1, SPRITE_COLOR_RBG);
-	} else if(gmFlagGet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
+		fdActorSetSpriteColorById(ACTOR_ARRIVED_FIRST_PASSENGER + 1, SPRITE_COLOR_RBG);
+	}
+	else if (gmFlagGet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0)
+	{
 		scTolbiShipDeckCopyUnderwayMetatiles();
 		scTolbiShipDeckCopyAnchoredMetatiles();
-	} else if((flag = gmFlagGet(FLAG_TOLBI_SHIP_ROWING)) != 0) {
+	}
+	else if ((flag = gmFlagGet(FLAG_TOLBI_SHIP_ROWING)) != 0)
+	{
 		scTolbiShipDeckCopyUnderwayMetatiles();
 		scTolbiShipDeckSetUpOars();
 		sySetTickEvent(scTolbiShipDeckRowOars, EVENT_PASS_TICK);
 		SeaScroll[1] = toFIXED(32);
-		SeaSpeed[1] = toFIXED(6) / 5;
+		SeaSpeed[1]  = toFIXED(6) / 5;
 		sySetTickEvent(scTolbiShipDeckRockDeck, EVENT_PASS_TICK);
-	} else if(gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
+	}
+	else if (gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0)
+	{
 		scTolbiShipDeckCopyUnderwayMetatiles();
 		SeaScroll[1] = flag;
-		SeaSpeed[1] = flag;
+		SeaSpeed[1]  = flag;
 		sySetTickEvent(scTolbiShipDeckRockDeck, EVENT_PASS_TICK);
 	}
-	if(gmFlagGet(FLAG_TOLBI_SHIP_ROWING) == 0) {
+	if (gmFlagGet(FLAG_TOLBI_SHIP_ROWING) == 0)
+	{
 		scTolbiShipDeckRestOars();
 	}
-	switch(MainRoutineStateWork.entrance) {
-	case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST:
-		fdActorGet(ACTOR_PARTY_LEADER)->sprite->image.priority = 1;
-		break;
-	case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY:
-		if(gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
-			scTolbiShipDeckDepartWithParty();
-		} else {
-			scTolbiShipDeckDepartFromKalay();
-		}
-		return;
-	case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS:
-		scTolbiShipDeckSightSeaMonsters();
-		return;
-	case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD:
-		scTolbiShipDeckMonstersBoard();
-		return;
-	case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK:
-		scTolbiShipDeckMonstersAttackCrew();
-		return;
-	case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK:
-		scTolbiShipDeckMonsterLandsOnDeck();
-		return;
-	case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN:
-		scTolbiShipDeckJumpIntoKrakenBattle();
-		return;
-	case TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE:
-		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
-			scTolbiShipDeckSetUpAfterKraken();
-		} else {
-			scTolbiShipDeckThankForKraken();
-		}
-		return;
-	case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED:
-		scTolbiShipDeckSightLand();
-		return;
-	case TOLBI_SHIP_DECK_FROM_WORLD_MAP:
-		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
-			scTolbiShipDeckRowersDisembark();
-		}
-		return;
-	case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE:
-		scTolbiShipDeckSightIsland();
-		return;
+	switch (MainRoutineStateWork.entrance)
+	{
+		case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST:
+			fdActorGet(ACTOR_PARTY_LEADER)->sprite->image.priority = 1;
+			break;
+		case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY:
+			if (gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0)
+			{
+				scTolbiShipDeckDepartWithParty();
+			}
+			else
+			{
+				scTolbiShipDeckDepartFromKalay();
+			}
+			return;
+		case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS:
+			scTolbiShipDeckSightSeaMonsters();
+			return;
+		case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD: scTolbiShipDeckMonstersBoard(); return;
+		case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK:
+			scTolbiShipDeckMonstersAttackCrew();
+			return;
+		case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK:
+			scTolbiShipDeckMonsterLandsOnDeck();
+			return;
+		case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN: scTolbiShipDeckJumpIntoKrakenBattle(); return;
+		case TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE:
+			if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)
+			{
+				scTolbiShipDeckSetUpAfterKraken();
+			}
+			else
+			{
+				scTolbiShipDeckThankForKraken();
+			}
+			return;
+		case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED: scTolbiShipDeckSightLand(); return;
+		case TOLBI_SHIP_DECK_FROM_WORLD_MAP:
+			if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0)
+			{
+				scTolbiShipDeckRowersDisembark();
+			}
+			return;
+		case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE: scTolbiShipDeckSightIsland(); return;
 	}
-	if(gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
+	if (gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0)
+	{
 		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->minX = toFIXED(65);
-	} else if(gmFlagGet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
+	}
+	else if (gmFlagGet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0)
+	{
 		scTolbiShipDeckSetUpAtAnchor();
-	} else if(gmFlagGet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
+	}
+	else if (gmFlagGet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0)
+	{
 		scTolbiShipDeckSetUpAfterKraken();
-	} else if(gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
+	}
+	else if (gmFlagGet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0)
+	{
 		scTolbiShipDeckSetUpUnderSail();
-	} else if(gmFlagGet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
+	}
+	else if (gmFlagGet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0)
+	{
 		scTolbiShipDeckPlacePassengersAgreedToRow();
-	} else if(gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+	}
+	else if (gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0)
+	{
 		scTolbiShipDeckPlaceWaitingPassengers();
 	}
 }
 
-/* At Kalay while the ship waits, places the passengers by what has happened so
-   far. */
+// At Kalay while the ship waits, places the passengers by what has happened so far.
 static void scTolbiShipDeckPlaceWaitingPassengers(void)
 {
 	Sint32 flag;
@@ -1339,34 +1343,37 @@ static void scTolbiShipDeckPlaceWaitingPassengers(void)
 	fdActorSetSpritePriority(ACTOR_KALAY_CAPTAIN, 1);
 	fdActorSetSpritePriority(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO, 1);
 	fdActorSetSpritePriority(ACTOR_KALAY_TOUR_GUIDE, 1);
-	if(gmFlagGet(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY) != 0) {
+	if (gmFlagGet(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY) != 0)
+	{
 		fdActorSetPos(ACTOR_KALAY_CAPTAIN, 162, 666);
 		fdActorGet(ACTOR_KALAY_CAPTAIN)->facing = FACING_WEST;
 		fdActorSetPos(ACTOR_KALAY_KAJA, 0, 0);
 		fdActorSetPos(ACTOR_KALAY_CREWMAN, 0, 0);
 	}
 	flag = gmFlagGet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN);
-	if(flag != 0) {
+	if (flag != 0)
+	{
 		fdActorSetPos(ACTOR_KALAY_CREW_MEMBER, 264, 702);
 		fdActorGet(ACTOR_KALAY_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHWEST;
-		fdActorGet(ACTOR_KALAY_CREW_MEMBER)->timer = SQUASH_AND_STRETCH_PAUSE();
-		fdActorSetScript(
-			ACTOR_KALAY_CREW_MEMBER, TolbiShipDeckSquashAndStretchActions);
+		fdActorGet(ACTOR_KALAY_CREW_MEMBER)->timer  = SQUASH_AND_STRETCH_PAUSE();
+		fdActorSetScript(ACTOR_KALAY_CREW_MEMBER, TolbiShipDeckSquashAndStretchActions);
 		fdActorSetPos(ACTOR_KALAY_TOUR_GUIDE, 248, 680);
 		fdActorGet(ACTOR_KALAY_TOUR_GUIDE)->timer = SQUASH_AND_STRETCH_PAUSE();
-		fdActorSetScript(
-			ACTOR_KALAY_TOUR_GUIDE, TolbiShipDeckSquashAndStretchActions);
+		fdActorSetScript(ACTOR_KALAY_TOUR_GUIDE, TolbiShipDeckSquashAndStretchActions);
 		fdActorSetPos(ACTOR_KALAY_CAPTAIN, 0, 0);
-	} else {
-		if(gmFlagGet(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0) {
+	}
+	else
+	{
+		if (gmFlagGet(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0)
+		{
 			fdActorSetPos(ACTOR_KALAY_CREWMAN, 246, 512);
 			fdActorGet(ACTOR_KALAY_CREWMAN)->facing = flag;
 		}
 	}
 }
 
-/* At Kalay once the anchor charm is back
-   (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED), moves the people on deck. */
+// At Kalay once the anchor charm is back (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED), moves the people
+// on deck.
 static void scTolbiShipDeckPlacePassengersAgreedToRow(void)
 {
 	fdActorSetPos(ACTOR_KALAY_CREW_MEMBER, 262, 706);
@@ -1378,8 +1385,7 @@ static void scTolbiShipDeckPlacePassengersAgreedToRow(void)
 	fdActorGet(ACTOR_KALAY_PASSENGER_WAITING_LONG)->facing = FACING_WEST;
 	fdActorSetSpritePriority(ACTOR_KALAY_PASSENGER_WAITING_LONG, 1);
 	fdActorSetPos(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO, 188, 678);
-	fdActorGet(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO)->facing =
-		FACING_NORTH_NORTHWEST;
+	fdActorGet(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO)->facing = FACING_NORTH_NORTHWEST;
 	fdActorSetPos(ACTOR_KALAY_PASSENGER_KARAGOL, 186, 635);
 	fdActorGet(ACTOR_KALAY_PASSENGER_KARAGOL)->facing = FACING_SOUTH_SOUTHWEST;
 	fdActorSetPos(ACTOR_KALAY_CAPTAIN, 0, 0);
@@ -1387,36 +1393,35 @@ static void scTolbiShipDeckPlacePassengersAgreedToRow(void)
 	fdActorSetPos(ACTOR_KALAY_CREWMAN, 0, 0);
 }
 
-/* Under sail, the crew take their places, the two lookouts start their rounds
-   and, when the party keeps its position, the leader stands on deck. */
+// Under sail, the crew take their places, the two lookouts start their rounds and, when the party
+// keeps its position, the leader stands on deck.
 static void scTolbiShipDeckSetUpUnderSail(void)
 {
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
 	fdActorSetPos(ACTOR_SEA_KAJA, 0, 0);
 	fdActorSetPos(ACTOR_SEA_CREW_MEMBER, 238, 626);
 	fdActorSetPos(ACTOR_SEA_SEAN, 204, 521);
-	fdActorGet(ACTOR_SEA_SEAN)->y.fixed = toFIXED(16);
+	fdActorGet(ACTOR_SEA_SEAN)->y.fixed         = toFIXED(16);
 	fdActorGet(ACTOR_SEA_SEAN)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
 	fdActorSetSpeed(ACTOR_SEA_SEAN, 0.6);
 	fdActorSetScript(ACTOR_SEA_SEAN, TolbiShipDeckSeanPacesActions);
 	fdActorGet(ACTOR_SEA_OURANOS)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
 	fdActorSetSpeed(ACTOR_SEA_OURANOS, 0.8);
 	fdActorSetScript(ACTOR_SEA_OURANOS, TolbiShipDeckOuranosPatrolsActions);
-	if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
+	if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)
+	{
 		scTolbiShipDeckPlaceLeaderOnDeck();
 	}
 	fdScriptEnd();
 }
 
-/* After the Kraken, the deck is as under sail, with Sean at the helm. */
+// After the Kraken, the deck is as under sail, with Sean at the helm.
 static void scTolbiShipDeckSetUpAfterKraken(void)
 {
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
 	fdActorSetPos(ACTOR_SEA_KAJA, 0, 0);
 	fdActorSetPos(ACTOR_SEA_CREW_MEMBER, 238, 626);
@@ -1426,44 +1431,47 @@ static void scTolbiShipDeckSetUpAfterKraken(void)
 	fdActorGet(ACTOR_SEA_OURANOS)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
 	fdActorSetSpeed(ACTOR_SEA_OURANOS, 0.8);
 	fdActorSetScript(ACTOR_SEA_OURANOS, TolbiShipDeckOuranosPatrolsActions);
-	if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
+	if (gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0)
+	{
 		scTolbiShipDeckPlaceLeaderOnDeck();
 	}
 	fdScriptEnd();
 }
 
-/* At anchor off the island, the crew stand where they were left, by whether the
-   party has agreed to scout the island. */
+// At anchor off the island, the crew stand where they were left, by whether the party has agreed to
+// scout the island.
 static void scTolbiShipDeckSetUpAtAnchor(void)
 {
 	((MAP_GRID_SCROLL_STATE *)MapGridState[0])->minX = toFIXED(65);
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckKrakenActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckKrakenActorPlacements);
 	sySynch(1);
 	fdActorReleaseById(ACTOR_SEA_KRAKEN);
 	fdActorSetPos(ACTOR_SEA_CREW_MEMBER, 238, 626);
 	fdActorGet(ACTOR_SEA_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHEAST;
-	if(gmFlagGet(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED) != 0) {
+	if (gmFlagGet(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED) != 0)
+	{
 		fdActorSetPos(ACTOR_SEA_SEAN, 162, 634);
 		fdActorGet(ACTOR_SEA_SEAN)->facing = FACING_SOUTH_SOUTHEAST;
 		fdActorSetPos(ACTOR_SEA_OURANOS, 162, 676);
 		fdActorGet(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHEAST;
-	} else {
+	}
+	else
+	{
 		fdActorSetPos(ACTOR_SEA_SEAN, 160, 652);
 		fdActorGet(ACTOR_SEA_SEAN)->facing = FACING_SOUTH_SOUTHEAST;
 		fdActorSetPos(ACTOR_SEA_OURANOS, 166, 668);
 		fdActorGet(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHWEST;
 	}
-	if(MainRoutineStateWork.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
+	if (MainRoutineStateWork.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS)
+	{
 		scTolbiShipDeckReturnFromIsland();
 	}
 	fdScriptEnd();
 }
 
-/* Setting sail from Kalay before the party is on deck, Kaja comes up through
-   the carved door at the north end and tells the sailor in a yellow bandana
-   that all is ready. */
+// Setting sail from Kalay before the party is on deck, Kaja comes up through the carved door at the
+// north end and tells the sailor in a yellow bandana that all is ready.
 static void scTolbiShipDeckDepartFromKalay(void)
 {
 	fdScriptStart();
@@ -1483,18 +1491,15 @@ static void scTolbiShipDeckDepartFromKalay(void)
 	fdCameraMoveTo(232, CAMERA_KEEP, 636, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	scTolbiShipDeckAnnouncePreparationsReady(
-		ACTOR_KALAY_KAJA, ACTOR_KALAY_CREW_MEMBER);
+	scTolbiShipDeckAnnouncePreparationsReady(ACTOR_KALAY_KAJA, ACTOR_KALAY_CREW_MEMBER);
 }
 
-/* On later departures, with the party aboard, Kaja comes up through the carved
-   door at the north end and tells the sailor in a yellow bandana that all is
-   ready. */
+// On later departures, with the party aboard, Kaja comes up through the carved door at the north
+// end and tells the sailor in a yellow bandana that all is ready.
 static void scTolbiShipDeckDepartWithParty(void)
 {
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 232, 636);
 	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1513,14 +1518,12 @@ static void scTolbiShipDeckDepartWithParty(void)
 	fdActorSetPos(ACTOR_SEA_CREW_MEMBER, 232, 650);
 	fdActorGet(ACTOR_SEA_CREW_MEMBER)->facing = FACING_NORTH_NORTHWEST;
 	sySynch(1);
-	scTolbiShipDeckAnnouncePreparationsReady(
-		ACTOR_SEA_KAJA, ACTOR_SEA_CREW_MEMBER);
+	scTolbiShipDeckAnnouncePreparationsReady(ACTOR_SEA_KAJA, ACTOR_SEA_CREW_MEMBER);
 }
 
-/* The messenger comes up through the carved door at the north end and nods, and
-   the sailor waiting beside it jumps and calls `Preparations... Ready!`. */
-static void scTolbiShipDeckAnnouncePreparationsReady(
-	Sint32 messenger, Sint32 crewMember)
+// The messenger comes up through the carved door at the north end and nods, and the sailor waiting
+// beside it jumps and calls `Preparations... Ready!`.
+static void scTolbiShipDeckAnnouncePreparationsReady(Sint32 messenger, Sint32 crewMember)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
@@ -1540,66 +1543,57 @@ static void scTolbiShipDeckAnnouncePreparationsReady(
 	fdActorJump(crewMember, 4, 40);
 	fdActorStartRepeatedMotion(crewMember, 2);
 	fdScriptSetMessageId(MsgTolbiShipPreparationsReady);
-	/* "Preparations... Ready!" */
+	// "Preparations... Ready!"
 	fdScriptShowMessageThenWait(crewMember, 0, 20);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
-	syImportScriptSetExitRequest(
-		TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR);
+	syImportScriptSetExitRequest(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR);
 }
 
-/* Kaja calls "Aye, Captain! Sea monsters!" and Sean begs the captain to turn
-   the rudder hard to starboard, which leads to the captain's quarters. */
+// Kaja calls "Aye, Captain! Sea monsters!" and Sean begs the captain to turn the rudder hard to
+// starboard, which leads to the captain's quarters.
 static void scTolbiShipDeckSightSeaMonsters(void)
 {
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
 	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_SEA_KAJA, 1);
 	fdScriptSetMessageId(MsgTolbiShipAyeCaptainSeaMonsters);
-	/* "Aye, Captain! Sea monsters!" */
+	// "Aye, Captain! Sea monsters!"
 	fdScriptShowMessageThenWait(ACTOR_SEA_KAJA, 0, 10);
 	scTolbiShipDeckTurn(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHWEST);
 	fdActorJump(ACTOR_SEA_SEAN, 4, 20);
 	fdActorStartRepeatedMotion(ACTOR_SEA_SEAN, 2);
-	/* "Captain, turn the rudder hard to starboard!" */
+	// "Captain, turn the rudder hard to starboard!"
 	fdScriptShowMessageThenWait(
-		SPEAKER(ACTOR_SEA_SEAN, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT),
-		0, 20);
+		SPEAKER(ACTOR_SEA_SEAN, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT), 0, 20);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_TURN);
 }
 
-/* Ouranos runs up the deck crying it is too late, three monsters leap over the
-   rail and go below by the carved door, and Ouranos is heard to cry "Arrgh!" as
-   the fight moves below. */
+// Ouranos runs up the deck crying it is too late, three monsters leap over the rail and go below by
+// the carved door, and Ouranos is heard to cry "Arrgh!" as the fight moves below.
 static void scTolbiShipDeckMonstersBoard(void)
 {
 	const Sint32 *shared;
 
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckMonstersBoardActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckMonstersBoardActorPlacements);
 	sySynch(1);
 	fdActorSetPos(ACTOR_SEA_OURANOS, 248, 728);
 	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptStartScreenTransition();
 	fdActorSetSpeed(ACTOR_SEA_OURANOS, 1.6);
 	fdActorWalkToAndWait(ACTOR_SEA_OURANOS, 242, 692);
@@ -1607,13 +1601,12 @@ static void scTolbiShipDeckMonstersBoard(void)
 	fdActorWalkToAndWait(ACTOR_SEA_OURANOS, 182, 654);
 	fdActorRunRepeatedMotion(ACTOR_SEA_OURANOS, 2);
 	fdScriptSetMessageId(MsgTolbiShipNoUseLate);
-	/* "It's no use. It's too late!" */
-	scTolbiShipDeckSay(SPEAKER(
-		ACTOR_SEA_OURANOS, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
+	// "It's no use. It's too late!"
+	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_OURANOS, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 2.4);
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 154, 609);
 	sySoundPlay(SE_ENEMY_CRY);
-	fdActorGet(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer = 0;
+	fdActorGet(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer     = 0;
 	fdActorGet(ACTOR_SEA_FIRST_ATTACK_MONSTER + 1)->timer = 0;
 	fdActorGet(ACTOR_SEA_FIRST_ATTACK_MONSTER + 2)->timer = 0;
 	fdActorSetPos(ACTOR_SEA_FIRST_ATTACK_MONSTER, 32, 484);
@@ -1627,14 +1620,14 @@ static void scTolbiShipDeckMonstersBoard(void)
 	fdActorSetScript(ACTOR_SEA_FIRST_ATTACK_MONSTER + 1, shared);
 	fdActorSetScript(ACTOR_SEA_FIRST_ATTACK_MONSTER + 2, shared);
 	fdActorSetSpriteColorById(ACTOR_SEA_FIRST_ATTACK_MONSTER, SPRITE_COLOR_BGR);
-	fdActorSetSpriteColorById(
-		ACTOR_SEA_FIRST_ATTACK_MONSTER + 1, SPRITE_COLOR_BGR);
-	fdActorSetSpriteColorById(
-		ACTOR_SEA_FIRST_ATTACK_MONSTER + 2, SPRITE_COLOR_BGR);
-	/* The door opens once the first monster has leapt aboard. */
-	for(;;) {
+	fdActorSetSpriteColorById(ACTOR_SEA_FIRST_ATTACK_MONSTER + 1, SPRITE_COLOR_BGR);
+	fdActorSetSpriteColorById(ACTOR_SEA_FIRST_ATTACK_MONSTER + 2, SPRITE_COLOR_BGR);
+	// The door opens once the first monster has leapt aboard.
+	for (;;)
+	{
 		sySynch(1);
-		if(fdActorGet(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer != 0) {
+		if (fdActorGet(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer != 0)
+		{
 			scTolbiShipDeckOpenFirstDoor();
 			break;
 		}
@@ -1647,63 +1640,51 @@ static void scTolbiShipDeckMonstersBoard(void)
 	fdScriptWait(10);
 	fdActorSystemSuspendProjectionAndShowSprites();
 	fdMessageSetVoiceFromActor(ACTOR_SEA_OURANOS);
-	/* "Arrgh!" */
+	// "Arrgh!"
 	mnFieldMessageShowCentered(MsgTolbiShipArrgh, 1, 0);
 	fdActorSystemResumeProjectionAndHideLayers();
 	syImportScriptSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_FIRST_ATTACK);
 }
 
-/* The monsters harry the crew while more of them climb aboard. */
+// The monsters harry the crew while more of them climb aboard.
 static void scTolbiShipDeckMonstersAttackCrew(void)
 {
 	fdScriptStart();
 	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckSecondAttackActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckSecondAttackActorPlacements);
 	sySynch(1);
 	fdActorSetAnimation(ACTOR_SEA_SPLASH, 0);
-	fdActorSetSpriteFlags(
-		fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER), SPRITE_FLAG_SHADOW);
-	fdActorSetSpriteFlags(
-		fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1), SPRITE_FLAG_SHADOW);
-	fdActorSetSpriteFlags(
-		fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2), SPRITE_FLAG_SHADOW);
-	fdActorSetSpriteFlags(
-		fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3), SPRITE_FLAG_SHADOW);
-	fdActorSetSpriteFlags(
-		fdActorGet(ACTOR_SEA_SECOND_ATTACK_MONSTER), SPRITE_FLAG_SHADOW);
-	fdActorSetSpriteFlags(
-		fdActorGet(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_SECOND_ATTACK_MONSTER), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_SEA_SEAN, 256, 640);
 	fdActorSetScript(ACTOR_SEA_SEAN, TolbiShipDeckLookAroundActions);
 	fdActorSetPos(ACTOR_SEA_OURANOS, 268, 692);
-	/* XXX: Sean is given this script twice and Ouranos none; whether Ouranos
-	   keeps still through the second attack would settle whether it is a
-	   slip. */
+	// XXX: Sean is given this script twice and Ouranos none; whether Ouranos keeps still through
+	// the second attack would settle whether it is a slip.
 	fdActorSetScript(ACTOR_SEA_SEAN, TolbiShipDeckLookAroundActions);
 	fdActorSetPos(ACTOR_SEA_FIRST_HOVERING_MONSTER, 242, 604);
 	fdActorSetPos(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1, 264, 600);
 	fdActorSetPos(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2, 254, 668);
 	fdActorSetPos(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3, 282, 658);
-	fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER)->sceneByte = 0;
+	fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER)->sceneByte     = 0;
 	fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1)->sceneByte = 1;
 	fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2)->sceneByte = 0;
 	fdActorGet(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3)->sceneByte = 1;
-	fdActorSetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER,
-		TolbiShipDeckHoverAndDiveAtSeanActions);
-	fdActorSetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1,
-		TolbiShipDeckHoverAndDiveAtSeanActions);
+	fdActorSetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER, TolbiShipDeckHoverAndDiveAtSeanActions);
+	fdActorSetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1, TolbiShipDeckHoverAndDiveAtSeanActions);
 	fdActorSetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2,
-		TolbiShipDeckHoverAndDiveAtOuranosActions);
+	                 TolbiShipDeckHoverAndDiveAtOuranosActions);
 	fdActorSetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3,
-		TolbiShipDeckHoverAndDiveAtOuranosActions);
+	                 TolbiShipDeckHoverAndDiveAtOuranosActions);
 	fdActorSetPos(ACTOR_SEA_KAJA, 0, 0);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(400);
@@ -1718,8 +1699,7 @@ static void scTolbiShipDeckMonstersAttackCrew(void)
 	fdActorMoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER, 180, 580);
 	sySoundPlay(SE_ENEMY_CRY);
 	fdActorSetScript(ACTOR_SEA_SECOND_ATTACK_MONSTER, TolbiShipDeckBobActions);
-	fdActorSetScript(
-		ACTOR_SEA_SECOND_ATTACK_MONSTER + 1, TolbiShipDeckBobActions);
+	fdActorSetScript(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1, TolbiShipDeckBobActions);
 	sySoundPlay(SE_LOG_FALL);
 	fdActorSetPos(ACTOR_SEA_SPLASH, 134, 594);
 	fdActorSetScript(ACTOR_SEA_SPLASH, TolbiShipDeckSwellActions);
@@ -1728,22 +1708,19 @@ static void scTolbiShipDeckMonstersAttackCrew(void)
 	fdActorSetSpeed(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 4);
 	fdActorGet(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2)->velocityY = toFIXED(8);
 	fdActorMoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 186, 612);
-	fdActorSetSpriteFlags(
-		fdActorGet(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2), SPRITE_FLAG_SHADOW);
 	fdScriptWait(10);
 	fdActorSetSpeed(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 2);
 	fdActorMoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 216, 600);
 	scTolbiShipDeckTurn(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, FACING_NORTH);
 	scTolbiShipDeckOpenFirstDoor();
 	fdScriptWait(10);
-	fdActorSetScript(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2,
-		TolbiShipDeckMonsterGoesBelowActions);
+	fdActorSetScript(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, TolbiShipDeckMonsterGoesBelowActions);
 	fdScriptWait(10);
-	fdActorSetScript(
-		ACTOR_SEA_SECOND_ATTACK_MONSTER, TolbiShipDeckMonsterGoesBelowActions);
+	fdActorSetScript(ACTOR_SEA_SECOND_ATTACK_MONSTER, TolbiShipDeckMonsterGoesBelowActions);
 	fdScriptWait(10);
 	fdActorRunScriptAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1,
-		TolbiShipDeckMonsterGoesBelowActions);
+	                        TolbiShipDeckMonsterGoesBelowActions);
 	fdScriptWait(20);
 	sySoundPlay(SE_BEAST_CRY);
 	fdScriptFinishScreenTransition();
@@ -1755,27 +1732,25 @@ static void scTolbiShipDeckMonstersAttackCrew(void)
 	fdScriptWait(10);
 	fdActorSystemSuspendProjectionAndShowSprites();
 	fdMessageSetVoiceFromActor(ACTOR_SEA_OURANOS);
-	/* "Arrgh!" */
+	// "Arrgh!"
 	mnFieldMessageShowCentered(MsgTolbiShipArrgh, 1, 0);
 	fdActorSystemResumeProjectionAndHideLayers();
 	syImportScriptSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SECOND_ATTACK);
 }
 
-/* A great shape rises from the sea and a monster drops onto the deck. */
+// A great shape rises from the sea and a monster drops onto the deck.
 static void scTolbiShipDeckMonsterLandsOnDeck(void)
 {
-	ACTOR		 *monster;
-	Uint32		  frame;
+	ACTOR        *monster;
+	Uint32        frame;
 	const Sint32 *sailorActions;
 
 	fdScriptStart();
 	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckThirdAttackActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckThirdAttackActorPlacements);
 	sySynch(1);
 	fdActorSetPos(ACTOR_SEA_SEAN, 176, 696);
 	fdActorGet(ACTOR_SEA_SEAN)->facing = FACING_NORTH_NORTHEAST;
@@ -1787,67 +1762,55 @@ static void scTolbiShipDeckMonsterLandsOnDeck(void)
 	fdActorSetPos(ACTOR_SEA_FIRST_LEAPING_MONSTER + 3, 256, 686);
 	fdActorSetPos(ACTOR_SEA_THIRD_ATTACK_MONSTER, 172, 632);
 	fdActorSetPos(ACTOR_SEA_THIRD_ATTACK_MONSTER + 1, 256, 622);
-	fdActorGet(ACTOR_SEA_FIRST_LEAPING_MONSTER)->sceneByte = 0;
+	fdActorGet(ACTOR_SEA_FIRST_LEAPING_MONSTER)->sceneByte     = 0;
 	fdActorGet(ACTOR_SEA_FIRST_LEAPING_MONSTER + 1)->sceneByte = 1;
 	fdActorGet(ACTOR_SEA_FIRST_LEAPING_MONSTER + 2)->sceneByte = 0;
 	fdActorGet(ACTOR_SEA_FIRST_LEAPING_MONSTER + 3)->sceneByte = 2;
 	fdActorSetPos(ACTOR_SEA_KAJA, 0, 0);
-	fdActorSetScript(
-		ACTOR_SEA_FIRST_LEAPING_MONSTER, TolbiShipDeckLeapAtSeanActions);
-	fdActorSetScript(
-		ACTOR_SEA_FIRST_LEAPING_MONSTER + 1, TolbiShipDeckLeapAtSeanActions);
-	fdActorSetScript(
-		ACTOR_SEA_FIRST_LEAPING_MONSTER + 2, TolbiShipDeckLeapAtOuranosActions);
-	fdActorSetScript(
-		ACTOR_SEA_FIRST_LEAPING_MONSTER + 3, TolbiShipDeckLeapAtOuranosActions);
+	fdActorSetScript(ACTOR_SEA_FIRST_LEAPING_MONSTER, TolbiShipDeckLeapAtSeanActions);
+	fdActorSetScript(ACTOR_SEA_FIRST_LEAPING_MONSTER + 1, TolbiShipDeckLeapAtSeanActions);
+	fdActorSetScript(ACTOR_SEA_FIRST_LEAPING_MONSTER + 2, TolbiShipDeckLeapAtOuranosActions);
+	fdActorSetScript(ACTOR_SEA_FIRST_LEAPING_MONSTER + 3, TolbiShipDeckLeapAtOuranosActions);
 	fdActorSetScript(ACTOR_SEA_THIRD_ATTACK_MONSTER, TolbiShipDeckHopActions);
-	fdActorSetScript(
-		ACTOR_SEA_THIRD_ATTACK_MONSTER + 1, TolbiShipDeckHopActions);
-	fdActorSetSpriteColorById(
-		ACTOR_SEA_FIRST_LEAPING_MONSTER, SPRITE_COLOR_BGR);
-	fdActorSetSpriteColorById(
-		ACTOR_SEA_FIRST_LEAPING_MONSTER + 1, SPRITE_COLOR_BGR);
-	fdActorSetSpriteColorById(
-		ACTOR_SEA_FIRST_LEAPING_MONSTER + 2, SPRITE_COLOR_BGR);
-	fdActorSetSpriteColorById(
-		ACTOR_SEA_FIRST_LEAPING_MONSTER + 3, SPRITE_COLOR_BGR);
+	fdActorSetScript(ACTOR_SEA_THIRD_ATTACK_MONSTER + 1, TolbiShipDeckHopActions);
+	fdActorSetSpriteColorById(ACTOR_SEA_FIRST_LEAPING_MONSTER, SPRITE_COLOR_BGR);
+	fdActorSetSpriteColorById(ACTOR_SEA_FIRST_LEAPING_MONSTER + 1, SPRITE_COLOR_BGR);
+	fdActorSetSpriteColorById(ACTOR_SEA_FIRST_LEAPING_MONSTER + 2, SPRITE_COLOR_BGR);
+	fdActorSetSpriteColorById(ACTOR_SEA_FIRST_LEAPING_MONSTER + 3, SPRITE_COLOR_BGR);
 	fdActorSetSpriteColorById(ACTOR_SEA_THIRD_ATTACK_MONSTER, SPRITE_COLOR_BGR);
-	fdActorSetSpriteColorById(
-		ACTOR_SEA_THIRD_ATTACK_MONSTER + 1, SPRITE_COLOR_BGR);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+	fdActorSetSpriteColorById(ACTOR_SEA_THIRD_ATTACK_MONSTER + 1, SPRITE_COLOR_BGR);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(80);
 	sySoundPlay(SE_BEAST_CRY);
-	/* The shadow grows where the monster will land, then it drops from 80
-	   pixels up. */
-	monster = fdActorGet(ACTOR_SEA_FALLING_MONSTER_SHADOW);
-	monster->scaleX = toFIXED(1) / 10;
-	monster->scaleY = toFIXED(1) / 10;
+	// The shadow grows where the monster will land, then it drops from 80 pixels up.
+	monster          = fdActorGet(ACTOR_SEA_FALLING_MONSTER_SHADOW);
+	monster->scaleX  = toFIXED(1) / 10;
+	monster->scaleY  = toFIXED(1) / 10;
 	monster->x.fixed = toFIXED(194);
 	monster->z.fixed = toFIXED(642);
-	for(frame = 0; frame < 16; frame++) {
+	for (frame = 0; frame < 16; frame++)
+	{
 		monster->scaleX += toFIXED(3) / 50;
 		monster->scaleY += toFIXED(3) / 50;
 		sySynch(1);
 	}
-	monster = fdActorGet(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2);
-	monster->scaleX = toFIXED(11) / 10;
-	monster->scaleY = toFIXED(11) / 10;
+	monster          = fdActorGet(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2);
+	monster->scaleX  = toFIXED(11) / 10;
+	monster->scaleY  = toFIXED(11) / 10;
 	monster->x.fixed = toFIXED(194);
 	monster->y.fixed = toFIXED(80);
 	monster->z.fixed = toFIXED(642);
-	monster->facing = FACING_SOUTH_SOUTHWEST;
-	monster->bounce = toFIXED(2) / 5;
+	monster->facing  = FACING_SOUTH_SOUTHWEST;
+	monster->bounce  = toFIXED(2) / 5;
 	monster->gravity = toFIXED(2);
 	fdScriptWait(80);
 	sySoundPlay(SE_BEAST_CRY);
 	fdActorSetPos(ACTOR_SEA_FALLING_MONSTER_SHADOW, 0, 0);
-	fdActorSetSpriteFlags(
-		fdActorGet(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2), SPRITE_FLAG_SHADOW);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.6);
-	monster = fdActorGet(ACTOR_PARTY_LEADER);
+	monster              = fdActorGet(ACTOR_PARTY_LEADER);
 	monster->motionFlags = 0;
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 216, 612);
 	fdActorSetSpeed(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, 1.6);
@@ -1858,8 +1821,7 @@ static void scTolbiShipDeckMonsterLandsOnDeck(void)
 	fdActorSetSpeed(ACTOR_SEA_THIRD_ATTACK_MONSTER, 1.6);
 	sailorActions = TolbiShipDeckMonsterGoesBelowActions;
 	fdActorSetScript(ACTOR_SEA_THIRD_ATTACK_MONSTER, sailorActions);
-	scTolbiShipDeckTurn(
-		ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, FACING_NORTH_NORTHEAST);
+	scTolbiShipDeckTurn(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, FACING_NORTH_NORTHEAST);
 	scTolbiShipDeckOpenFirstDoor();
 	fdScriptWait(10);
 	fdActorSetScript(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, sailorActions);
@@ -1879,20 +1841,19 @@ static void scTolbiShipDeckMonsterLandsOnDeck(void)
 	fdScriptWait(10);
 	fdActorSystemSuspendProjectionAndShowSprites();
 	fdMessageSetVoiceFromActor(ACTOR_SEA_OURANOS);
-	/* "Arrgh!" */
+	// "Arrgh!"
 	mnFieldMessageShowCentered(MsgTolbiShipArrgh, 1, 0);
 	fdActorSystemResumeProjectionAndHideLayers();
 	syImportScriptSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_THIRD_ATTACK);
 }
 
-/* The party jumps down to the deck, gathers and charges the Kraken. */
+// The party jumps down to the deck, gathers and charges the Kraken.
 static void scTolbiShipDeckJumpIntoKrakenBattle(void)
 {
 	ACTOR *actor;
 
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckKrakenActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckKrakenActorPlacements);
 	sySynch(1);
 	fdCameraFollowActor(ACTOR_INVISIBLE_SEA_CAMERA_TARGET, 1);
 	sySynch(1);
@@ -1900,8 +1861,7 @@ static void scTolbiShipDeckJumpIntoKrakenBattle(void)
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_OURANOS), 0);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 0, 0);
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
@@ -1927,13 +1887,13 @@ static void scTolbiShipDeckJumpIntoKrakenBattle(void)
 	sySoundPlay(SE_MONSTER_ROAR);
 	fdActorSetSpritePriority(ACTOR_SEA_SEAN, 2);
 	fdActorSetAnimation(ACTOR_SEA_SEAN, ANIM_LYING_FLAT);
-	actor = fdActorGet(ACTOR_SEA_SEAN);
+	actor            = fdActorGet(ACTOR_SEA_SEAN);
 	actor->velocityY = toFIXED(8);
-	actor->gravity = toFIXED(7) / 10;
-	actor->scaleX = toFIXED(13) / 8;
-	actor->scaleY = toFIXED(13) / 8;
-	actor->update = scTolbiShipDeckShrinkToNormalSize;
-	actor->bounce = toFIXED(1) / 2;
+	actor->gravity   = toFIXED(7) / 10;
+	actor->scaleX    = toFIXED(13) / 8;
+	actor->scaleY    = toFIXED(13) / 8;
+	actor->update    = scTolbiShipDeckShrinkToNormalSize;
+	actor->bounce    = toFIXED(1) / 2;
 	fdActorSetSpeed(ACTOR_SEA_SEAN, 6);
 	fdActorMoveToAndWait(ACTOR_SEA_SEAN, 182, 618);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_SEA_SEAN), 0);
@@ -1944,15 +1904,18 @@ static void scTolbiShipDeckJumpIntoKrakenBattle(void)
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 208, 598);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 248, 598);
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
-	if(actor != NULL) {
+	if (actor != NULL)
+	{
 		fdActorSetPosFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
 	}
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
-	if(actor != NULL) {
+	if (actor != NULL)
+	{
 		fdActorSetPosFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
 	}
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
-	if(actor != NULL) {
+	if (actor != NULL)
+	{
 		fdActorSetPosFX(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
 	}
 	fdActorSetSpeed(ACTOR_GARET, 1);
@@ -1971,14 +1934,10 @@ static void scTolbiShipDeckJumpIntoKrakenBattle(void)
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 20);
 	sySoundPlay(SE_MONSTER_ROAR);
 	fdScriptWait(40);
-	fdActorSetAttachedEffect(
-		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(60);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorSetSpeed(ACTOR_GARET, 0.8);
@@ -1990,23 +1949,21 @@ static void scTolbiShipDeckJumpIntoKrakenBattle(void)
 	fdActorWalkTo(ACTOR_IVAN, 248, 564);
 	fdActorWalkTo(ACTOR_MIA, 248, 564);
 	fdScriptWait(20);
-	MainRoutineStateWork.restartScene = SCENE_SHIP_ROOMS;
-	MainRoutineStateWork.restartEntrance =
-		SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+	MainRoutineStateWork.restartScene    = SCENE_SHIP_ROOMS;
+	MainRoutineStateWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
 	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
-	fdScriptSetAfterBattleDestination(
-		SCENE_TOLBI_SHIP_DECK, TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
+	fdScriptSetAfterBattleDestination(SCENE_TOLBI_SHIP_DECK,
+	                                  TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 3);
 	fdScriptEnd();
 }
 
-/* After the Kraken, Kaja thanks Isaac, says they lost another oarsman and asks
-   him to find someone to row while he checks the hull, and goes below. */
+// After the Kraken, Kaja thanks Isaac, says they lost another oarsman and asks him to find someone
+// to row while he checks the hull, and goes below.
 static void scTolbiShipDeckThankForKraken(void)
 {
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
 	fdActorSetPos(ACTOR_SEA_KAJA, 182, 618);
 	fdActorSetPos(ACTOR_SEA_CREW_MEMBER, 238, 626);
@@ -2026,16 +1983,16 @@ static void scTolbiShipDeckThankForKraken(void)
 	scTolbiShipDeckTurn(ACTOR_PARTY_LEADER, FACING_WEST);
 	fdActorRunRepeatedMotion(ACTOR_SEA_KAJA, 1);
 	fdScriptSetMessageId(MsgTolbiShipThankIsaacDidGoodAgainst);
-	/* "Thank you, Isaac. You did good against that Kraken." */
+	// "Thank you, Isaac. You did good against that Kraken."
 	scTolbiShipDeckSay(ACTOR_SEA_KAJA);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_SEA_KAJA, FACING_SOUTH_SOUTHWEST, 20);
 	fdActorShowEmote(ACTOR_SEA_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-	/* "We lost another oarsman, though." */
+	// "We lost another oarsman, though."
 	fdScriptShowMessageThenWait(ACTOR_SEA_KAJA, 0, 40);
 	scTolbiShipDeckTurn(ACTOR_SEA_KAJA, FACING_EAST);
-	/* "I need to check the hull. Go find someone to row the ship." */
+	// "I need to check the hull. Go find someone to row the ship."
 	scTolbiShipDeckSay(ACTOR_SEA_KAJA);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
@@ -2046,22 +2003,19 @@ static void scTolbiShipDeckThankForKraken(void)
 	fdScriptWait(10);
 	fdActorWalkToAndWait(ACTOR_SEA_KAJA, 216, 580);
 	fdActorSetPos(ACTOR_SEA_KAJA, 0, 0);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	gmFlagSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
 	gmFlagClear(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
 	fdScriptEnd();
 }
 
-/* Sean sees land, Ouranos says they have made it, and the ship sails on to
-   Tolbi on the World Map. */
+// Sean sees land, Ouranos says they have made it, and the ship sails on to Tolbi on the World Map.
 static void scTolbiShipDeckSightLand(void)
 {
 	fdScriptStart();
 	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
 	fdActorSetPos(ACTOR_SEA_KAJA, 196, 502);
 	fdActorGet(ACTOR_SEA_KAJA)->facing = FACING_NORTHWEST;
@@ -2070,11 +2024,10 @@ static void scTolbiShipDeckSightLand(void)
 	fdActorSetSpritePriority(ACTOR_SEA_OURANOS, 1);
 	fdActorSetPos(ACTOR_SEA_OURANOS, 184, 632);
 	fdActorGet(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHWEST;
-	/* UB: the field state's pointer is read through a Uint32 lvalue, which
-	   keeps the facing store ahead of its load; UBFIX reads it as declared. */
+	// UB: the field state's pointer is read through a Uint32 lvalue, which keeps the facing store
+	// ahead of its load; UBFIX reads it as declared.
 #if FIX_TYPE_PUNNING
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #else
 	((FIELD_STATE *)*(Uint32 *)&FieldStateWork)->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -2085,49 +2038,51 @@ static void scTolbiShipDeckSightLand(void)
 	fdActorJump(ACTOR_SEA_SEAN, 4, 10);
 	fdActorJump(ACTOR_SEA_SEAN, 6, 20);
 	fdScriptSetMessageId(MsgTolbiShipCanSeeLand);
-	/* "Hey, I can see land!" */
+	// "Hey, I can see land!"
 	scTolbiShipDeckSay(ACTOR_SEA_SEAN);
 	fdActorSetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
 	fdActorSetSpeed(ACTOR_SEA_OURANOS, 3);
 	fdActorWalkToAndWait(ACTOR_SEA_OURANOS, 180, 546);
 	fdActorFaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 40);
 	fdActorRunRepeatedMotion(ACTOR_SEA_OURANOS, 1);
-	/* "It looks like we made it!" */
+	// "It looks like we made it!"
 	scTolbiShipDeckSay(ACTOR_SEA_OURANOS);
 	syImportScriptSetExitRequest(TOLBI_SHIP_DECK_TO_WORLD_MAP_REACH_TOLBI);
 }
 
-/* What each rower says coming up at Tolbi, named by its message.
-
-   The first four found take the first four replies in the order found. Three
-   passengers have their own. */
-typedef enum TOLBI_SHIP_DECK_ROWER_REPLY {
-	ROWER_REPLY_FINALLY_LUCKY = 0,	/* MsgTolbiShipMadeFinallyLucky */
-	ROWER_REPLY_OTHERS_ALREADY = 1, /* MsgTolbiShipOtherPassengersAlready */
-	ROWER_REPLY_DONE_ROWING = 2,	/* MsgTolbiShipDontRowAnymore */
-	ROWER_REPLY_NO_WORKOUT = 3,		/* MsgTolbiShipOhhhHaventWorkout */
-	ROWER_REPLY_ROWING_MORE = 10,	/* MsgTolbiShipRowingShipMore */
-	ROWER_REPLY_LOST_AT_SEA = 11,	/* MsgTolbiShipTotallyLostOcean */
-	ROWER_REPLY_OLD_MAN = 20		/* MsgTolbiShipMakeOldMan */
+// What each rower says coming up at Tolbi, named by its message.
+//
+// The first four found take the first four replies in the order found. Three passengers have their
+// own.
+typedef enum TOLBI_SHIP_DECK_ROWER_REPLY
+{
+	ROWER_REPLY_FINALLY_LUCKY  = 0,  // MsgTolbiShipMadeFinallyLucky
+	ROWER_REPLY_OTHERS_ALREADY = 1,  // MsgTolbiShipOtherPassengersAlready
+	ROWER_REPLY_DONE_ROWING    = 2,  // MsgTolbiShipDontRowAnymore
+	ROWER_REPLY_NO_WORKOUT     = 3,  // MsgTolbiShipOhhhHaventWorkout
+	ROWER_REPLY_ROWING_MORE    = 10, // MsgTolbiShipRowingShipMore
+	ROWER_REPLY_LOST_AT_SEA    = 11, // MsgTolbiShipTotallyLostOcean
+	ROWER_REPLY_OLD_MAN        = 20  // MsgTolbiShipMakeOldMan
 } TOLBI_SHIP_DECK_ROWER_REPLY;
 
-/* Takes `passenger` as the next to come up, with `reply`, when one of the four
-   seats holds them. */
-#define TOLBI_SHIP_DECK_TAKE_ROWER(passenger, reply) \
-	do { \
-		member = (passenger); \
-		for(index = 0; index <= 3; index++) { \
-			if(roster[index] == member) { \
-				matched[found] = member; \
-				category[found] = (reply); \
-				found++; \
-				break; \
-			} \
-		} \
-	} while(0)
+// Takes `passenger` as the next to come up, with `reply`, when one of the four seats holds them.
+#define TOLBI_SHIP_DECK_TAKE_ROWER(passenger, reply)                                               \
+	do                                                                                             \
+	{                                                                                              \
+		member = (passenger);                                                                      \
+		for (index = 0; index <= 3; index++)                                                       \
+		{                                                                                          \
+			if (roster[index] == member)                                                           \
+			{                                                                                      \
+				matched[found]  = member;                                                          \
+				category[found] = (reply);                                                         \
+				found++;                                                                           \
+				break;                                                                             \
+			}                                                                                      \
+		}                                                                                          \
+	} while (0)
 
-/* At Tolbi, the four passengers who rowed come up from below in turn and each
-   says something. */
+// At Tolbi, the four passengers who rowed come up from below in turn and each says something.
 static void scTolbiShipDeckRowersDisembark(void)
 {
 	Sint32 roster[4];
@@ -2140,38 +2095,36 @@ static void scTolbiShipDeckRowersDisembark(void)
 	ACTOR *actor;
 
 	found = 0;
-	for(index = 0; index <= 3; index++) {
-		roster[index] = scTolbiShipDeckGetRowerAtSeat(index);
+	for (index = 0; index <= 3; index++)
+	{
+		roster[index]   = scTolbiShipDeckGetRowerAtSeat(index);
 		category[index] = 0;
 	}
 
-	/* The first four in this order take the first four replies; three others
-	   have their own, for when fewer than four of the first rowed. */
+	// The first four in this order take the first four replies; three others have their own, for
+	// when fewer than four of the first rowed.
 	TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER, found);
 	TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 1, found);
 	TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 2, found);
 	TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 4, found);
-	if(found != 4)
+	if (found != 4)
 		TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 5, found);
-	if(found != 4)
+	if (found != 4)
 		TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 6, found);
-	if(found != 4)
-		TOLBI_SHIP_DECK_TAKE_ROWER(
-			ACTOR_ARRIVED_FIRST_PASSENGER + 3, ROWER_REPLY_ROWING_MORE);
-	if(found != 4)
-		TOLBI_SHIP_DECK_TAKE_ROWER(
-			ACTOR_ARRIVED_FIRST_PASSENGER + 7, ROWER_REPLY_LOST_AT_SEA);
-	if(found != 4)
-		TOLBI_SHIP_DECK_TAKE_ROWER(
-			ACTOR_ARRIVED_FIRST_PASSENGER + 8, ROWER_REPLY_OLD_MAN);
+	if (found != 4)
+		TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 3, ROWER_REPLY_ROWING_MORE);
+	if (found != 4)
+		TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 7, ROWER_REPLY_LOST_AT_SEA);
+	if (found != 4)
+		TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 8, ROWER_REPLY_OLD_MAN);
 
 	fdScriptStart();
 	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
-	if(actor != NULL) {
-		fdActorSetPosFX(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET, actor->x.fixed,
-			actor->z.fixed);
+	if (actor != NULL)
+	{
+		fdActorSetPosFX(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET, actor->x.fixed, actor->z.fixed);
 	}
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -2182,63 +2135,63 @@ static void scTolbiShipDeckRowersDisembark(void)
 
 	fdScriptWait(10);
 
-	for(index = 0; index <= 3; index++) {
+	for (index = 0; index <= 3; index++)
+	{
 		actorId = matched[index];
 		fdActorSetPos(actorId, 216, 584);
-		if(category[index] == ROWER_REPLY_OLD_MAN) {
+		if (category[index] == ROWER_REPLY_OLD_MAN)
+		{
 			fdActorSetSpeed(actorId, 0.8);
-		} else {
+		}
+		else
+		{
 			fdActorSetSpeed(actorId, 1);
 		}
 		fdActorWalkToAndWait(actorId, 216, 600);
 		fdActorWalkToAndWait(actorId, 192, 618);
 		fdActorWalkToAndWait(actorId, 192, 656);
 
-		switch(category[index]) {
-		case ROWER_REPLY_FINALLY_LUCKY:
-			fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-			/* "We made it? Finally! We're lucky to be alive after all those
-			   attacks!" */
-			fdScriptSetMessageId(MsgTolbiShipMadeFinallyLucky);
-			break;
-		case ROWER_REPLY_OTHERS_ALREADY:
-			scTolbiShipDeckTurn(actorId, FACING_NORTH_NORTHEAST);
-			fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-			/* "The other passengers have already disembarked... Didn't even say
-			   good-bye." */
-			fdScriptSetMessageId(MsgTolbiShipOtherPassengersAlready);
-			break;
-		case ROWER_REPLY_DONE_ROWING:
-			fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-			/* "We don't have to row anymore? Oh, what a relief!" */
-			fdScriptSetMessageId(MsgTolbiShipDontRowAnymore);
-			break;
-		case ROWER_REPLY_NO_WORKOUT:
-			fdActorRunRepeatedMotion(actorId, 1);
-			/* "Ohhh! I haven't had a workout like that in years!" */
-			fdScriptSetMessageId(MsgTolbiShipOhhhHaventWorkout);
-			break;
-		case ROWER_REPLY_ROWING_MORE:
-			fdActorSetAnimationAndWait(actorId, ANIM_NOD);
-			/* "Rowing the ship was more fun than I expected! I'm pretty buff
-			   now!" */
-			fdScriptSetMessageId(MsgTolbiShipRowingShipMore);
-			break;
-		case ROWER_REPLY_LOST_AT_SEA:
-			fdActorSetAnimation(actorId, ANIM_SHAKE_HEAD);
-			/* "I totally lost out... An ocean cruise, and I didn't get to enjoy
-			   the view!" */
-			fdScriptSetMessageId(MsgTolbiShipTotallyLostOcean);
-			break;
-		case ROWER_REPLY_OLD_MAN:
-			fdActorSetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
-			fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
-			/* "You make an old man row the ship, then you try to beat him
-			   onshore? That's pretty pathetic." */
-			fdScriptSetMessageId(MsgTolbiShipMakeOldMan);
-			break;
-		default:
-			break;
+		switch (category[index])
+		{
+			case ROWER_REPLY_FINALLY_LUCKY:
+				fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+				// "We made it? Finally! We're lucky to be alive after all those attacks!"
+				fdScriptSetMessageId(MsgTolbiShipMadeFinallyLucky);
+				break;
+			case ROWER_REPLY_OTHERS_ALREADY:
+				scTolbiShipDeckTurn(actorId, FACING_NORTH_NORTHEAST);
+				fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+				// "The other passengers have already disembarked... Didn't even say good-bye."
+				fdScriptSetMessageId(MsgTolbiShipOtherPassengersAlready);
+				break;
+			case ROWER_REPLY_DONE_ROWING:
+				fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+				// "We don't have to row anymore? Oh, what a relief!"
+				fdScriptSetMessageId(MsgTolbiShipDontRowAnymore);
+				break;
+			case ROWER_REPLY_NO_WORKOUT:
+				fdActorRunRepeatedMotion(actorId, 1);
+				// "Ohhh! I haven't had a workout like that in years!"
+				fdScriptSetMessageId(MsgTolbiShipOhhhHaventWorkout);
+				break;
+			case ROWER_REPLY_ROWING_MORE:
+				fdActorSetAnimationAndWait(actorId, ANIM_NOD);
+				// "Rowing the ship was more fun than I expected! I'm pretty buff now!"
+				fdScriptSetMessageId(MsgTolbiShipRowingShipMore);
+				break;
+			case ROWER_REPLY_LOST_AT_SEA:
+				fdActorSetAnimation(actorId, ANIM_SHAKE_HEAD);
+				// "I totally lost out... An ocean cruise, and I didn't get to enjoy the view!"
+				fdScriptSetMessageId(MsgTolbiShipTotallyLostOcean);
+				break;
+			case ROWER_REPLY_OLD_MAN:
+				fdActorSetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
+				fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+				// "You make an old man row the ship, then you try to beat him onshore? That's
+				// pretty pathetic."
+				fdScriptSetMessageId(MsgTolbiShipMakeOldMan);
+				break;
+			default: break;
 		}
 
 		scTolbiShipDeckSay(actorId);
@@ -2255,7 +2208,7 @@ static void scTolbiShipDeckRowersDisembark(void)
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 216, 600);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 190, 612);
 	fdScriptSetMessageId(MsgTolbiShipThanksHardWork);
-	/* "Thanks for all your hard work." */
+	// "Thanks for all your hard work."
 	scTolbiShipDeckSay(ACTOR_ARRIVED_KAJA);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 
@@ -2267,16 +2220,16 @@ static void scTolbiShipDeckRowersDisembark(void)
 	fdActorWalkToAndWait(ACTOR_ARRIVED_KAJA, 182, 555);
 	fdActorFaceDirection(ACTOR_ARRIVED_KAJA, FACING_SOUTH_SOUTHEAST, 20);
 	fdActorRunRepeatedMotion(ACTOR_ARRIVED_KAJA, 1);
-	/* "Your efforts got this ship to shore." */
+	// "Your efforts got this ship to shore."
 	scTolbiShipDeckSay(ACTOR_ARRIVED_KAJA);
 	fdActorSetAnimationAndWait(ACTOR_ARRIVED_KAJA, ANIM_NOD);
-	/* "I thank you again." */
+	// "I thank you again."
 	scTolbiShipDeckSay(ACTOR_ARRIVED_KAJA);
 	fdActorFaceDirection(ACTOR_ARRIVED_KAJA, FACING_WEST, 40);
-	/* "Hurry, everyone! Colosso is already underway in Tolbi!" */
+	// "Hurry, everyone! Colosso is already underway in Tolbi!"
 	scTolbiShipDeckSay(ACTOR_ARRIVED_KAJA);
 	scTolbiShipDeckTurn(ACTOR_ARRIVED_KAJA, FACING_SOUTH_SOUTHEAST);
-	/* "You'd better get moving to Tolbi, too." */
+	// "You'd better get moving to Tolbi, too."
 	scTolbiShipDeckSay(ACTOR_ARRIVED_KAJA);
 	fdActorSetAnimationAndWait(ACTOR_ARRIVED_KAJA, ANIM_NOD);
 	fdCameraFollowActor(ACTOR_PARTY_LEADER, 1);
@@ -2288,30 +2241,24 @@ static void scTolbiShipDeckRowersDisembark(void)
 	fdScriptEnd();
 }
 
-/* Returns the passenger (ACTOR_ARRIVED_FIRST_PASSENGER and the eight after) who
-   promised to row at a seat (0 to 3), or 0 if the seat is empty. */
+// Returns the passenger (ACTOR_ARRIVED_FIRST_PASSENGER and the eight after) who promised to row at
+// a seat (0 to 3), or 0 if the seat is empty.
 static Sint32 scTolbiShipDeckGetRowerAtSeat(Uint32 seat)
 {
-	Sint32 flag = 0;
+	Sint32 flag      = 0;
 	Sint32 passenger = ACTOR_ARRIVED_FIRST_PASSENGER;
 	Uint32 i;
 
-	switch(seat) {
-	case 0:
-		flag = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
-		break;
-	case 1:
-		flag = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
-		break;
-	case 2:
-		flag = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
-		break;
-	case 3:
-		flag = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
-		break;
+	switch (seat)
+	{
+		case 0: flag = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS; break;
+		case 1: flag = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS; break;
+		case 2: flag = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS; break;
+		case 3: flag = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS; break;
 	}
-	for(i = 0; i < 9; i++) {
-		if(gmFlagGet(flag) != 0)
+	for (i = 0; i < 9; i++)
+	{
+		if (gmFlagGet(flag) != 0)
 			return passenger;
 		flag++;
 		passenger++;
@@ -2319,45 +2266,48 @@ static Sint32 scTolbiShipDeckGetRowerAtSeat(Uint32 seat)
 	return 0;
 }
 
-/* The sea's pattern repeats every 32 pixels, where its scroll wraps. */
+// The sea's pattern repeats every 32 pixels, where its scroll wraps.
 #define TOLBI_SHIP_DECK_SEA_WRAP toFIXED(32)
 
-/* The event that rocks the deck while under sail. */
+// The event that rocks the deck while under sail.
 static void scTolbiShipDeckRockDeck(void)
 {
-	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
-	Sint32				  *origin = grid->origin;
-	FIXED				   dx = syCos(RockAngleX);
-	FIXED				   dy = sySin(RockAngleY);
+	MAP_GRID_SCROLL_STATE *grid   = MapGridState[0];
+	Sint32                *origin = grid->origin;
+	FIXED                  dx     = syCos(RockAngleX);
+	FIXED                  dy     = sySin(RockAngleY);
 	MAP_GRID_LAYER_SCROLL *layer;
 
-	*origin++ += dx >> 1;
-	*origin += dy;
-	RockAngleX += syRandomBelow(384);
-	RockAngleY += syRandomBelow(512);
-	RockAngleX &= TRIG_ANGLE_MASK;
-	RockAngleY &= TRIG_ANGLE_MASK;
-	layer = &grid->layers[MAPGRID_LAYER_GROUND];
-	layer->offsetX = SeaScroll[0];
-	SeaScroll[0] -= SeaSpeed[0];
-	if(SeaScroll[0] < 0) {
+	*origin++      += dx >> 1;
+	*origin        += dy;
+	RockAngleX     += syRandomBelow(384);
+	RockAngleY     += syRandomBelow(512);
+	RockAngleX     &= TRIG_ANGLE_MASK;
+	RockAngleY     &= TRIG_ANGLE_MASK;
+	layer           = &grid->layers[MAPGRID_LAYER_GROUND];
+	layer->offsetX  = SeaScroll[0];
+	SeaScroll[0]   -= SeaSpeed[0];
+	if (SeaScroll[0] < 0)
+	{
 		SeaScroll[0] += TOLBI_SHIP_DECK_SEA_WRAP;
 	}
-	if(SeaScroll[0] > TOLBI_SHIP_DECK_SEA_WRAP) {
+	if (SeaScroll[0] > TOLBI_SHIP_DECK_SEA_WRAP)
+	{
 		SeaScroll[0] -= TOLBI_SHIP_DECK_SEA_WRAP;
 	}
-	layer->offsetY = SeaScroll[1];
-	SeaScroll[1] -= SeaSpeed[1];
-	if(SeaScroll[1] < 0) {
+	layer->offsetY  = SeaScroll[1];
+	SeaScroll[1]   -= SeaSpeed[1];
+	if (SeaScroll[1] < 0)
+	{
 		SeaScroll[1] += TOLBI_SHIP_DECK_SEA_WRAP;
 	}
 }
 
-/* Under sail, shows the stroke oars (ACTOR_FIRST_STROKE_OAR) and the oars at
-   the sides (ACTOR_FIRST_OAR, the right-hand ones mirrored). */
+// Under sail, shows the stroke oars (ACTOR_FIRST_STROKE_OAR) and the oars at the sides
+// (ACTOR_FIRST_OAR, the right-hand ones mirrored).
 static void scTolbiShipDeckSetUpOars(void)
 {
-	fdActorGet(ACTOR_FIRST_STROKE_OAR)->collisionFlags = 0;
+	fdActorGet(ACTOR_FIRST_STROKE_OAR)->collisionFlags     = 0;
 	fdActorGet(ACTOR_FIRST_STROKE_OAR + 1)->collisionFlags = 0;
 	fdActorGet(ACTOR_FIRST_STROKE_OAR + 2)->collisionFlags = 0;
 	fdActorGet(ACTOR_FIRST_STROKE_OAR + 3)->collisionFlags = 0;
@@ -2381,58 +2331,60 @@ static void scTolbiShipDeckSetUpOars(void)
 	fdActorGet(ACTOR_FIRST_OAR + 5)->scaleX = -toFIXED(1);
 	fdActorGet(ACTOR_FIRST_OAR + 6)->scaleX = -toFIXED(1);
 	fdActorGet(ACTOR_FIRST_OAR + 7)->scaleX = -toFIXED(1);
-	OarDepth[4] = fdActorGet(ACTOR_FIRST_OAR + 4)->z.fixed;
-	OarDepth[5] = fdActorGet(ACTOR_FIRST_OAR + 5)->z.fixed;
-	OarDepth[6] = fdActorGet(ACTOR_FIRST_OAR + 6)->z.fixed;
-	OarDepth[7] = fdActorGet(ACTOR_FIRST_OAR + 7)->z.fixed;
+	OarDepth[4]                             = fdActorGet(ACTOR_FIRST_OAR + 4)->z.fixed;
+	OarDepth[5]                             = fdActorGet(ACTOR_FIRST_OAR + 5)->z.fixed;
+	OarDepth[6]                             = fdActorGet(ACTOR_FIRST_OAR + 6)->z.fixed;
+	OarDepth[7]                             = fdActorGet(ACTOR_FIRST_OAR + 7)->z.fixed;
 	scTolbiShipDeckChooseOarStrokes();
 }
 
-/* Shows an oar drawn under the deck, with no collision. */
+// Shows an oar drawn under the deck, with no collision.
 static void scTolbiShipDeckShowOar(Sint32 actorId)
 {
 	ACTOR *oar = fdActorGet(actorId);
 
-	if(oar != NULL) {
+	if (oar != NULL)
+	{
 		fdActorSetSpritePriority(actorId, 3);
 		fdActorSetSpriteFlags(oar, 0);
 		oar->collisionFlags = 0;
 		{
 			Sint32 flags;
-			flags = ACTOR_PRIORITY_UNDERFOOT | oar->priorityFlags;
+			flags              = ACTOR_PRIORITY_UNDERFOOT | oar->priorityFlags;
 			oar->priorityFlags = flags;
 		}
 	}
 }
 
-/* Gives each oar the stroke of its seat's rower. */
+// Gives each oar the stroke of its seat's rower.
 static void scTolbiShipDeckChooseOarStrokes(void)
 {
 	Uint32 *mode = OarStroke;
-	Uint32	i;
+	Uint32  i;
 
-	for(i = 0; i <= 3; i++) {
-		if(scTolbiShipDeckGetRowerAtSeat(i) != 0)
+	for (i = 0; i <= 3; i++)
+	{
+		if (scTolbiShipDeckGetRowerAtSeat(i) != 0)
 			*mode = scTolbiShipDeckGetSeatStroke(i);
 		else
 			*mode = OAR_STROKE_STEADY;
 		mode++;
 	}
-	if(scTolbiShipDeckGetRowerAtSeat(0) != 0)
+	if (scTolbiShipDeckGetRowerAtSeat(0) != 0)
 		OarStroke[0] = scTolbiShipDeckGetSeatStroke(0);
 	else
 		OarStroke[0] = OAR_STROKE_STEADY;
-	if(scTolbiShipDeckGetRowerAtSeat(2) != 0)
+	if (scTolbiShipDeckGetRowerAtSeat(2) != 0)
 		OarStroke[1] = scTolbiShipDeckGetSeatStroke(2);
 	else
 		OarStroke[1] = OAR_STROKE_STEADY;
 	OarStroke[2] = OAR_STROKE_STEADY;
 	OarStroke[3] = OAR_STROKE_STEADY;
-	if(scTolbiShipDeckGetRowerAtSeat(1) != 0)
+	if (scTolbiShipDeckGetRowerAtSeat(1) != 0)
 		OarStroke[4] = scTolbiShipDeckGetSeatStroke(1);
 	else
 		OarStroke[4] = OAR_STROKE_STEADY;
-	if(scTolbiShipDeckGetRowerAtSeat(3) != 0)
+	if (scTolbiShipDeckGetRowerAtSeat(3) != 0)
 		OarStroke[5] = scTolbiShipDeckGetSeatStroke(3);
 	else
 		OarStroke[5] = OAR_STROKE_STEADY;
@@ -2440,36 +2392,29 @@ static void scTolbiShipDeckChooseOarStrokes(void)
 	OarStroke[7] = OAR_STROKE_STEADY;
 }
 
-/* Returns the stroke (1 to 4) of the rower at a seat, or 0 if the seat is
-   empty. */
+// Returns the stroke (1 to 4) of the rower at a seat, or 0 if the seat is empty.
 static Sint32 scTolbiShipDeckGetSeatStroke(Uint32 seat)
 {
 	Sint32 base = 0;
 	Uint32 i;
 
-	switch(seat) {
-	case 0:
-		base = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
-		break;
-	case 1:
-		base = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
-		break;
-	case 2:
-		base = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
-		break;
-	case 3:
-		base = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
-		break;
+	switch (seat)
+	{
+		case 0: base = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS; break;
+		case 1: base = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS; break;
+		case 2: base = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS; break;
+		case 3: base = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS; break;
 	}
-	for(i = 0; i < 9; i++) {
-		if(gmFlagGet(base + i) != 0)
+	for (i = 0; i < 9; i++)
+	{
+		if (gmFlagGet(base + i) != 0)
 			return TolbiShipDeckRowerStrokes[i];
 	}
 	return 0;
 }
 
-/* The event that rows, which advances the four strokes and swings the eight
-   oars at the sides, each following its stroke's phase. */
+// The event that rows, which advances the four strokes and swings the eight oars at the sides, each
+// following its stroke's phase.
 static void scTolbiShipDeckRowOars(void)
 {
 	scTolbiShipDeckAdvanceStroke(ACTOR_FIRST_STROKE_OAR, 0);
@@ -2490,79 +2435,86 @@ static void scTolbiShipDeckRowOars(void)
 	scTolbiShipDeckSwingOar(ACTOR_FIRST_OAR + 7, 7, OAR_SWING_MIRRORED);
 }
 
-/* Advances one stroke's phase, by its oar's angle in the turn: the blade is in
-   the water from 7/16 to 15/16 of the turn and goes round slowly there, slowest
-   as it dips in and comes out over the first and last 1/32, and swings back
-   through the air fastest. */
+// Advances one stroke's phase, by its oar's angle in the turn: the blade is in the water from 7/16
+// to 15/16 of the turn and goes round slowly there, slowest as it dips in and comes out over the
+// first and last 1/32, and swings back through the air fastest.
 static void scTolbiShipDeckAdvanceStroke(Sint32 actorId, Sint32 slot)
 {
 	Uint16 value = OarAngle[slot];
 
-	if(value >= TRIG_TURN * 13 / 32 + 1 && value <= TRIG_TURN * 7 / 16 - 1) {
+	if (value >= TRIG_TURN * 13 / 32 + 1 && value <= TRIG_TURN * 7 / 16 - 1)
+	{
 		StrokePhase[slot] += TRIG_TURN * 7 / 4096;
 		fdActorSetAnimation(actorId, OAR_ANIMATION_DIPPING);
-	} else if(value >= TRIG_TURN * 29 / 32 + 1 &&
-		value <= TRIG_TURN * 15 / 16 - 1) {
+	}
+	else if (value >= TRIG_TURN * 29 / 32 + 1 && value <= TRIG_TURN * 15 / 16 - 1)
+	{
 		StrokePhase[slot] += TRIG_TURN * 7 / 2048;
 		fdActorSetAnimation(actorId, OAR_ANIMATION_DIPPING);
-	} else if(value >= TRIG_TURN * 7 / 16 + 1 &&
-		value <= TRIG_TURN * 15 / 16 - 1) {
+	}
+	else if (value >= TRIG_TURN * 7 / 16 + 1 && value <= TRIG_TURN * 15 / 16 - 1)
+	{
 		StrokePhase[slot] += TRIG_TURN * 7 / 1024;
 		fdActorSetAnimation(actorId, OAR_ANIMATION_IN_WATER);
-	} else {
+	}
+	else
+	{
 		StrokePhase[slot] += TRIG_TURN * 3 / 256;
 		fdActorSetAnimation(actorId, OAR_ANIMATION_IN_AIR);
 	}
 }
 
-/* Swings one oar at the side to its angle, turning it and moving it fore and
-   aft about its depth; a rowing oar first takes its stroke's angle and
-   ticks. */
+// Swings one oar at the side to its angle, turning it and moving it fore and aft about its depth; a
+// rowing oar first takes its stroke's angle and ticks.
 static void scTolbiShipDeckSwingOar(Sint32 id, Sint32 slot, Sint32 flags)
 {
-	ACTOR *actor = fdActorGet(id);
-	SPR	  *sprite = actor->sprite;
+	ACTOR *actor  = fdActorGet(id);
+	SPR   *sprite = actor->sprite;
 	FIXED  sine;
 
-	if((flags & OAR_SWING_AT_REST) == 0) {
-		switch(OarStroke[slot]) {
-		case OAR_STROKE_STILL:
-			OarAngle[slot] = StrokePhase[0];
-			fdActorCopyGraphics(id, ACTOR_FIRST_STROKE_OAR);
-			break;
-		case OAR_STROKE_SLOW:
-			OarAngle[slot] = StrokePhase[1];
-			fdActorCopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 1);
-			break;
-		case OAR_STROKE_STEADY:
-			OarAngle[slot] = StrokePhase[2];
-			fdActorCopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 2);
-			break;
-		case OAR_STROKE_FAST:
-			OarAngle[slot] = StrokePhase[3];
-			fdActorCopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 3);
-			break;
+	if ((flags & OAR_SWING_AT_REST) == 0)
+	{
+		switch (OarStroke[slot])
+		{
+			case OAR_STROKE_STILL:
+				OarAngle[slot] = StrokePhase[0];
+				fdActorCopyGraphics(id, ACTOR_FIRST_STROKE_OAR);
+				break;
+			case OAR_STROKE_SLOW:
+				OarAngle[slot] = StrokePhase[1];
+				fdActorCopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 1);
+				break;
+			case OAR_STROKE_STEADY:
+				OarAngle[slot] = StrokePhase[2];
+				fdActorCopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 2);
+				break;
+			case OAR_STROKE_FAST:
+				OarAngle[slot] = StrokePhase[3];
+				fdActorCopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 3);
+				break;
 		}
 	}
-	if(flags & OAR_SWING_MIRRORED) {
-		sine = sySin(OarAngle[slot]);
+	if (flags & OAR_SWING_MIRRORED)
+	{
+		sine             = sySin(OarAngle[slot]);
 		sprite->rotation = sySin(OarAngle[slot] + DEGtoANG(180)) >> 5;
-		actor->z.fixed = OarDepth[slot] - (sine << 2) - (sine << 1);
-	} else {
-		sine = sySin(OarAngle[slot] + DEGtoANG(180));
+		actor->z.fixed   = OarDepth[slot] - (sine << 2) - (sine << 1);
+	}
+	else
+	{
+		sine             = sySin(OarAngle[slot] + DEGtoANG(180));
 		sprite->rotation = sySin(OarAngle[slot]) >> 5;
-		actor->z.fixed = OarDepth[slot] + (sine << 2) + (sine << 1);
+		actor->z.fixed   = OarDepth[slot] + (sine << 2) + (sine << 1);
 	}
 }
 
-/* When not under sail, the oars lie at rest, all copying the first stroke
-   oar. */
+// When not under sail, the oars lie at rest, all copying the first stroke oar.
 static void scTolbiShipDeckRestOars(void)
 {
 	ACTOR *actor;
 	Uint32 i;
 
-	for(i = 0; i <= 7; i++)
+	for (i = 0; i <= 7; i++)
 		OarAngle[i] = TRIG_TURN * 3 / 4;
 	scTolbiShipDeckShowOar(ACTOR_FIRST_STROKE_OAR);
 	fdActorSetPos(ACTOR_FIRST_STROKE_OAR + 1, 0, 0);
@@ -2576,10 +2528,10 @@ static void scTolbiShipDeckRestOars(void)
 	OarStroke[1] = 0;
 	OarStroke[2] = 0;
 	OarStroke[3] = 0;
-	OarDepth[0] = fdActorGet(ACTOR_FIRST_STROKE_OAR)->z.fixed;
-	OarDepth[1] = fdActorGet(ACTOR_FIRST_OAR + 1)->z.fixed;
-	OarDepth[2] = fdActorGet(ACTOR_FIRST_OAR + 2)->z.fixed;
-	OarDepth[3] = fdActorGet(ACTOR_FIRST_OAR + 3)->z.fixed;
+	OarDepth[0]  = fdActorGet(ACTOR_FIRST_STROKE_OAR)->z.fixed;
+	OarDepth[1]  = fdActorGet(ACTOR_FIRST_OAR + 1)->z.fixed;
+	OarDepth[2]  = fdActorGet(ACTOR_FIRST_OAR + 2)->z.fixed;
+	OarDepth[3]  = fdActorGet(ACTOR_FIRST_OAR + 3)->z.fixed;
 	scTolbiShipDeckShowOar(ACTOR_FIRST_OAR + 4);
 	scTolbiShipDeckShowOar(ACTOR_FIRST_OAR + 5);
 	scTolbiShipDeckShowOar(ACTOR_FIRST_OAR + 6);
@@ -2588,16 +2540,16 @@ static void scTolbiShipDeckRestOars(void)
 	fdActorGet(ACTOR_FIRST_OAR + 5)->scaleX = -toFIXED(1);
 	fdActorGet(ACTOR_FIRST_OAR + 6)->scaleX = -toFIXED(1);
 	fdActorGet(ACTOR_FIRST_OAR + 7)->scaleX = -toFIXED(1);
-	OarStroke[4] = 0;
-	OarStroke[5] = 0;
-	OarStroke[6] = 0;
-	OarStroke[7] = 0;
-	OarDepth[4] = fdActorGet(ACTOR_FIRST_OAR + 4)->z.fixed;
-	OarDepth[5] = fdActorGet(ACTOR_FIRST_OAR + 5)->z.fixed;
-	OarDepth[6] = fdActorGet(ACTOR_FIRST_OAR + 6)->z.fixed;
-	OarDepth[7] = fdActorGet(ACTOR_FIRST_OAR + 7)->z.fixed;
-	actor = fdActorGet(ACTOR_PARTY_LEADER);
-	if(actor != NULL)
+	OarStroke[4]                            = 0;
+	OarStroke[5]                            = 0;
+	OarStroke[6]                            = 0;
+	OarStroke[7]                            = 0;
+	OarDepth[4]                             = fdActorGet(ACTOR_FIRST_OAR + 4)->z.fixed;
+	OarDepth[5]                             = fdActorGet(ACTOR_FIRST_OAR + 5)->z.fixed;
+	OarDepth[6]                             = fdActorGet(ACTOR_FIRST_OAR + 6)->z.fixed;
+	OarDepth[7]                             = fdActorGet(ACTOR_FIRST_OAR + 7)->z.fixed;
+	actor                                   = fdActorGet(ACTOR_PARTY_LEADER);
+	if (actor != NULL)
 		fdActorSetPosFX(ACTOR_FIRST_STROKE_OAR, actor->x.fixed, actor->z.fixed);
 	sySynch(1);
 	fdActorCopyGraphics(ACTOR_FIRST_OAR + 1, ACTOR_FIRST_STROKE_OAR);
@@ -2608,13 +2560,13 @@ static void scTolbiShipDeckRestOars(void)
 	fdActorCopyGraphics(ACTOR_FIRST_OAR + 6, ACTOR_FIRST_STROKE_OAR);
 	fdActorCopyGraphics(ACTOR_FIRST_OAR + 7, ACTOR_FIRST_STROKE_OAR);
 	fdActorGet(ACTOR_FIRST_STROKE_OAR)->retainSpriteCache = 1;
-	fdActorGet(ACTOR_FIRST_OAR + 1)->retainSpriteCache = 1;
-	fdActorGet(ACTOR_FIRST_OAR + 2)->retainSpriteCache = 1;
-	fdActorGet(ACTOR_FIRST_OAR + 3)->retainSpriteCache = 1;
-	fdActorGet(ACTOR_FIRST_OAR + 4)->retainSpriteCache = 1;
-	fdActorGet(ACTOR_FIRST_OAR + 5)->retainSpriteCache = 1;
-	fdActorGet(ACTOR_FIRST_OAR + 6)->retainSpriteCache = 1;
-	fdActorGet(ACTOR_FIRST_OAR + 7)->retainSpriteCache = 1;
+	fdActorGet(ACTOR_FIRST_OAR + 1)->retainSpriteCache    = 1;
+	fdActorGet(ACTOR_FIRST_OAR + 2)->retainSpriteCache    = 1;
+	fdActorGet(ACTOR_FIRST_OAR + 3)->retainSpriteCache    = 1;
+	fdActorGet(ACTOR_FIRST_OAR + 4)->retainSpriteCache    = 1;
+	fdActorGet(ACTOR_FIRST_OAR + 5)->retainSpriteCache    = 1;
+	fdActorGet(ACTOR_FIRST_OAR + 6)->retainSpriteCache    = 1;
+	fdActorGet(ACTOR_FIRST_OAR + 7)->retainSpriteCache    = 1;
 	sySynch(1);
 	fdActorSetPos(ACTOR_FIRST_STROKE_OAR, 132, 632);
 	sySynch(1);
@@ -2622,18 +2574,14 @@ static void scTolbiShipDeckRestOars(void)
 	scTolbiShipDeckSwingOar(ACTOR_FIRST_OAR + 1, 1, OAR_SWING_AT_REST);
 	scTolbiShipDeckSwingOar(ACTOR_FIRST_OAR + 2, 2, OAR_SWING_AT_REST);
 	scTolbiShipDeckSwingOar(ACTOR_FIRST_OAR + 3, 3, OAR_SWING_AT_REST);
-	scTolbiShipDeckSwingOar(
-		ACTOR_FIRST_OAR + 4, 4, OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
-	scTolbiShipDeckSwingOar(
-		ACTOR_FIRST_OAR + 5, 5, OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
-	scTolbiShipDeckSwingOar(
-		ACTOR_FIRST_OAR + 6, 6, OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
-	scTolbiShipDeckSwingOar(
-		ACTOR_FIRST_OAR + 7, 7, OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
+	scTolbiShipDeckSwingOar(ACTOR_FIRST_OAR + 4, 4, OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
+	scTolbiShipDeckSwingOar(ACTOR_FIRST_OAR + 5, 5, OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
+	scTolbiShipDeckSwingOar(ACTOR_FIRST_OAR + 6, 6, OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
+	scTolbiShipDeckSwingOar(ACTOR_FIRST_OAR + 7, 7, OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
 }
 
-/* Redraws a block of the deck's metatiles and attributes, as it is whenever the
-   ship has left the Kalay dock. */
+// Redraws a block of the deck's metatiles and attributes, as it is whenever the ship has left the
+// Kalay dock.
 static void scTolbiShipDeckCopyUnderwayMetatiles(void)
 {
 	fdMapGridCopyMetatilesTo(78, 39, 78, 40, 5, 1);
@@ -2643,35 +2591,33 @@ static void scTolbiShipDeckCopyUnderwayMetatiles(void)
 	fdMapGridCopyMetatileAttributes(17, 38, 5, 2, 17, 40);
 }
 
-/* Redraws two more blocks of metatiles, as they are at anchor. */
+// Redraws two more blocks of metatiles, as they are at anchor.
 static void scTolbiShipDeckCopyAnchoredMetatiles(void)
 {
 	fdMapGridCopyMetatilesTo(66, 61, 64, 40, 5, 4);
 	fdMapGridCopyMetatileAttributes(0, 0, 5, 4, 5, 39);
 }
 
-/* Shows the current message from a speaker and waits 10 ticks. */
+// Shows the current message from a speaker and waits 10 ticks.
 static void scTolbiShipDeckSay(Sint32 speaker)
 {
 	fdScriptShowMessage(speaker, 0);
 	fdScriptWait(10);
 }
 
-/* Turns an actor to a facing over 10 ticks. */
+// Turns an actor to a facing over 10 ticks.
 static void scTolbiShipDeckTurn(Sint32 actorId, Sint32 facing)
 {
 	fdActorFaceDirection(actorId, facing, 10);
 }
 
-/* After the lookout's call, Kaja sees the coast is not Tolbi's and the ship is
-   off course. */
+// After the lookout's call, Kaja sees the coast is not Tolbi's and the ship is off course.
 static void scTolbiShipDeckSightIsland(void)
 {
 	fdScriptStart();
 	SeaScroll[0] = toFIXED(4);
-	SeaSpeed[0] = -toFIXED(1) / 2;
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
+	SeaSpeed[0]  = -toFIXED(1) / 2;
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckCrewActorPlacements);
 	sySynch(1);
 	fdActorSetPos(ACTOR_SEA_OURANOS, 182, 618);
 	fdActorGet(ACTOR_SEA_OURANOS)->facing = FACING_NORTH;
@@ -2683,33 +2629,28 @@ static void scTolbiShipDeckSightIsland(void)
 	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	sySynch(1);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdActorSetSpeed(ACTOR_SEA_OURANOS, 0.8);
 	fdActorWalkToAndWait(ACTOR_SEA_OURANOS, 182, 532);
 	fdActorFaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 40);
 	fdScriptSetMessageId(MsgTolbiShipFinallyReachedTolbi);
-	/* "Hmm... So we've finally reached Tolbi, huh?" */
+	// "Hmm... So we've finally reached Tolbi, huh?"
 	scTolbiShipDeckSay(ACTOR_SEA_OURANOS);
 	fdActorRunRepeatedMotion(ACTOR_SEA_KAJA, 2);
 	fdActorSetAnimation(ACTOR_SEA_KAJA, ANIM_SHAKE_HEAD);
-	/* "Umm... No. That doesn't look like Tolbi's coast." */
-	scTolbiShipDeckSay(
-		SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
+	// "Umm... No. That doesn't look like Tolbi's coast."
+	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
 	fdActorFaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST, 0);
 	fdActorShowEmote(ACTOR_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdActorShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	fdActorSetAnimation(ACTOR_SEA_KAJA, ANIM_NOD);
-	/* "We must be off course. I don't recognize this place." */
-	scTolbiShipDeckSay(
-		SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
-	fdActorSetAttachedEffect(
-		ACTOR_SEA_OURANOS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorSetAttachedEffect(
-		ACTOR_SEA_SEAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	// "We must be off course. I don't recognize this place."
+	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
+	fdActorSetAttachedEffect(ACTOR_SEA_OURANOS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_SEA_SEAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(80);
 	fdActorShowEmote(ACTOR_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorSetSpeed(ACTOR_SEA_OURANOS, 1.6);
@@ -2722,20 +2663,17 @@ static void scTolbiShipDeckSightIsland(void)
 	fdActorWalkToAndWait(ACTOR_SEA_KAJA, 210, 508);
 	scTolbiShipDeckTurn(ACTOR_SEA_KAJA, FACING_NORTH_NORTHWEST);
 	fdActorRunRepeatedMotion(ACTOR_SEA_OURANOS, 1);
-	/* "You're right... That looks like an island." */
-	scTolbiShipDeckSay(SPEAKER(
-		ACTOR_SEA_OURANOS, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT));
+	// "You're right... That looks like an island."
+	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_OURANOS, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT));
 	fdActorSetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
 	scTolbiShipDeckTurn(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST);
-	/* "Hmm... Maybe we should stop for a minute." */
-	scTolbiShipDeckSay(
-		SPEAKER(ACTOR_SEA_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
+	// "Hmm... Maybe we should stop for a minute."
+	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
 	fdActorFaceDirection(ACTOR_SEA_KAJA, FACING_WEST, 20);
 	fdActorSetAnimation(ACTOR_SEA_KAJA, ANIM_SHAKE_HEAD);
-	/* "We need time to check the ship's position... Let's head for that island
-	   and get our bearings." */
-	scTolbiShipDeckSay(
-		SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
+	// "We need time to check the ship's position... Let's head for that island and get our
+	// bearings."
+	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
 	fdActorWalkToAndWait(ACTOR_SEA_KAJA, 204, 536);
 	fdActorFaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHWEST, 0);
 	fdActorWalkToAndWait(ACTOR_SEA_KAJA, 182, 548);
@@ -2747,8 +2685,8 @@ static void scTolbiShipDeckSightIsland(void)
 	syImportScriptSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_ISLAND);
 }
 
-/* At anchor off the island, talking to Sean or Ouranos, the party is asked to
-   scout the island for the arguing tour group. */
+// At anchor off the island, talking to Sean or Ouranos, the party is asked to scout the island for
+// the arguing tour group.
 static void scTolbiShipDeckOfferToScoutIsland(void)
 {
 	ACTOR *leader;
@@ -2758,15 +2696,18 @@ static void scTolbiShipDeckOfferToScoutIsland(void)
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 180, 654);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(leader != NULL) {
+	if (leader != NULL)
+	{
 		fdActorSetPosFX(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
 	}
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(leader != NULL) {
+	if (leader != NULL)
+	{
 		fdActorSetPosFX(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
 	}
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(leader != NULL) {
+	if (leader != NULL)
+	{
 		fdActorSetPosFX(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
 	}
 	fdActorSetSpeed(ACTOR_GARET, 1.2);
@@ -2783,63 +2724,63 @@ static void scTolbiShipDeckOfferToScoutIsland(void)
 	scTolbiShipDeckTurn(ACTOR_MIA, FACING_WEST);
 	scTolbiShipDeckTurn(ACTOR_SEA_SEAN, FACING_EAST);
 	fdScriptSetMessageId(MsgTolbiShipIsaacTalkedPassengersDidntTour);
-	/* "Isaac, you talked to the passengers, didn't you? The tour group is
-	   arguing about whether they should leave the ship." */
+	// "Isaac, you talked to the passengers, didn't you? The tour group is arguing about whether
+	// they should leave the ship."
 	scTolbiShipDeckSay(ACTOR_SEA_SEAN);
 	scTolbiShipDeckTurn(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST);
-	/* "We'd like to go ashore and see if it's safe out there... But we promised
-	   we'd protect the ship." */
+	// "We'd like to go ashore and see if it's safe out there... But we promised we'd protect the
+	// ship."
 	fdScriptShowMessageThenWait(ACTOR_SEA_OURANOS, 0, 40);
 	fdActorShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorRunRepeatedMotion(ACTOR_SEA_SEAN, 1);
-	/* "...That's it! Isaac! Can you go check out the island and see if there
-	   are any monsters?" */
+	// "...That's it! Isaac! Can you go check out the island and see if there are any monsters?"
 	fdScriptOpenMessage(ACTOR_SEA_SEAN, 0);
-	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
+	if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1)
+	{
 		fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-		/* "The passengers all seem to be upset, so let's try to do as they
-		   ask." */
+		// "The passengers all seem to be upset, so let's try to do as they ask."
 		scTolbiShipDeckSay(ACTOR_IVAN);
 		scTolbiShipDeckTurn(ACTOR_MIA, FACING_NORTHWEST);
 		fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-		/* "That's right. We have to do something, or there'll be no resolving
-		   this." */
+		// "That's right. We have to do something, or there'll be no resolving this."
 		scTolbiShipDeckSay(ACTOR_MIA);
 		scTolbiShipDeckTurn(ACTOR_GARET, FACING_SOUTHWEST);
 		fdActorRunRepeatedMotion(ACTOR_GARET, 1);
-		/* "It would be fun to explore the island! What do you say, Isaac?" */
+		// "It would be fun to explore the island! What do you say, Isaac?"
 		fdScriptOpenMessage(ACTOR_GARET, 0);
-		for(;;) {
-			if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
+		for (;;)
+		{
+			if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1)
+			{
 				fdActorRunRepeatedMotion(ACTOR_IVAN, 1);
 				fdScriptSetMessageId(MsgTolbiShipIsaacDontTalkLikeShouldnt);
-				/* "Isaac, don't talk like that. Shouldn't we listen to
-				   them?" */
+				// "Isaac, don't talk like that. Shouldn't we listen to them?"
 				fdScriptOpenMessage(ACTOR_IVAN, 0);
-			} else
+			}
+			else
 				break;
 		}
 	}
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_SEA_SEAN, ANIM_NOD);
 	fdScriptSetMessageId(MsgTolbiShipSeeYoureGoingGoFor);
-	/* "I see, you're going to go for me, aren't you? I'm sure no one will
-	   complain if we scout out the island." */
+	// "I see, you're going to go for me, aren't you? I'm sure no one will complain if we scout out
+	// the island."
 	scTolbiShipDeckSay(ACTOR_SEA_SEAN);
 	fdActorSetSpeed(ACTOR_SEA_SEAN, 1);
 	fdActorSetSpeed(ACTOR_SEA_OURANOS, 1);
 	fdActorGet(ACTOR_SEA_SEAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SEA_SEAN, 162, 634);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_SEA_SEAN)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SEA_SEAN)->steeringFlags    |= ACTOR_FACES_MOTION;
 	fdActorGet(ACTOR_SEA_OURANOS)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SEA_OURANOS, 162, 676);
 	fdScriptWait(1);
 	fdActorGet(ACTOR_SEA_OURANOS)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHEAST, 0);
 	scTolbiShipDeckTurn(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST);
-	/* "There's no telling what kind of monsters are lurking on this island...
-	   Be extremely careful!" */
+	// "There's no telling what kind of monsters are lurking on this island... Be extremely
+	// careful!"
 	scTolbiShipDeckSay(ACTOR_SEA_SEAN);
 	fdActorWalkTo(ACTOR_GARET, 180, 654);
 	fdActorWalkTo(ACTOR_IVAN, 180, 654);
@@ -2851,12 +2792,11 @@ static void scTolbiShipDeckOfferToScoutIsland(void)
 	fdScriptEnd();
 }
 
-/* Back on deck from the island, the party is asked whether it explored it. */
+// Back on deck from the island, the party is asked whether it explored it.
 static void scTolbiShipDeckReturnFromIsland(void)
 {
 	fdScriptStart();
-	fdScriptAppendActorPlacements(
-		(ACTOR_PLACE *)TolbiShipDeckTourGuideActorPlacements);
+	fdScriptAppendActorPlacements((ACTOR_PLACE *)TolbiShipDeckTourGuideActorPlacements);
 	sySynch(1);
 	fdScriptStartScreenTransition();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -2865,20 +2805,21 @@ static void scTolbiShipDeckReturnFromIsland(void)
 	fdActorRunRepeatedMotion(ACTOR_SEA_SEAN, 1);
 	scTolbiShipDeckTurn(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHWEST);
 	fdScriptSetMessageId(MsgTolbiShipHowWasIsaacDidExplore);
-	/* "How was it, Isaac? Did you explore the island thoroughly?" */
+	// "How was it, Isaac? Did you explore the island thoroughly?"
 	fdScriptOpenMessage(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT), 0);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-		/* "If we don't decide if we can go ashore, they'll never stop whining.
-		   ...I hate to ask you, but would you go exploring one more time?" */
+	if (fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1)
+	{
+		// "If we don't decide if we can go ashore, they'll never stop whining. ...I hate to ask
+		// you, but would you go exploring one more time?"
 		scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT));
 		fdScriptEnd();
 		return;
 	}
 	FieldStateWork->msg++;
-	/* "Well... Did you see any monsters out there?" Yes: "...I see. Then we
-	   can't let the tourists go ashore after all?" No: "If there aren't any
-	   monsters, I guess we can let the tourists out!" */
+	// "Well... Did you see any monsters out there?" Yes: "...I see. Then we can't let the tourists
+	// go ashore after all?" No: "If there aren't any monsters, I guess we can let the tourists
+	// out!"
 	fdScriptAskYesNo(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT), 0);
 	scTolbiShipDeckOpenFirstDoor();
 	fdActorSetPos(ACTOR_TOUR_GUIDE_AT_ANCHOR, 216, 588);
@@ -2891,48 +2832,45 @@ static void scTolbiShipDeckReturnFromIsland(void)
 	scTolbiShipDeckTurn(ACTOR_TOUR_GUIDE_AT_ANCHOR, FACING_SOUTH_SOUTHWEST);
 	fdActorJump(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2, 0);
 	fdActorSetAnimation(ACTOR_TOUR_GUIDE_AT_ANCHOR, ANIM_SHAKE_HEAD);
-	/* "The passengers are going stir crazy! They're out of control! You're
-	   going to have to let the passengers go ashore." */
+	// "The passengers are going stir crazy! They're out of control! You're going to have to let the
+	// passengers go ashore."
 	fdScriptShowMessage(ACTOR_TOUR_GUIDE_AT_ANCHOR, 0);
 	fdActorSetPos(ACTOR_SEA_KAJA, 180, 777);
 	fdActorSetSpeed(ACTOR_SEA_KAJA, 1);
 	fdActorWalkToAndWait(ACTOR_SEA_KAJA, 180, 664);
 	fdActorFaceDirection(ACTOR_SEA_KAJA, FACING_NORTH_NORTHEAST, 0);
-	/* "There's no need for that." */
+	// "There's no need for that."
 	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHEAST, 0);
-	fdActorShowEmote(
-		ACTOR_TOUR_GUIDE_AT_ANCHOR, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+	fdActorShowEmote(ACTOR_TOUR_GUIDE_AT_ANCHOR, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	fdActorRunRepeatedMotion(ACTOR_SEA_KAJA, 1);
-	/* "We figured out the course to Tolbi." */
+	// "We figured out the course to Tolbi."
 	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
 	fdActorStartRepeatedMotion(ACTOR_SEA_OURANOS, 2);
-	/* "Really? We can go?" */
+	// "Really? We can go?"
 	scTolbiShipDeckSay(ACTOR_SEA_OURANOS);
 	fdActorFaceDirection(ACTOR_SEA_KAJA, FACING_SOUTH_SOUTHWEST, 20);
 	fdActorSetAnimation(ACTOR_SEA_KAJA, ANIM_NOD);
-	/* "Let's go to Tolbi before the sea gets any rougher. Tell our tourists
-	   they can enjoy a nice, long break after we arrive." */
-	scTolbiShipDeckSay(
-		SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
+	// "Let's go to Tolbi before the sea gets any rougher. Tell our tourists they can enjoy a nice,
+	// long break after we arrive."
+	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
 	fdActorJump(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2, 20);
 	fdActorSetAnimation(ACTOR_TOUR_GUIDE_AT_ANCHOR, ANIM_SHAKE_HEAD);
-	/* "It's too late... Nothing we can say will calm them down." */
+	// "It's too late... Nothing we can say will calm them down."
 	scTolbiShipDeckSay(ACTOR_TOUR_GUIDE_AT_ANCHOR);
 	fdActorWalkToAndWait(ACTOR_SEA_KAJA, 182, 640);
 	fdActorFaceDirection(ACTOR_SEA_KAJA, FACING_NORTH_NORTHEAST, 0);
-	/* "If we hurry, we can make it to Colosso in time." */
+	// "If we hurry, we can make it to Colosso in time."
 	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_BELOW));
-	fdActorShowEmote(
-		ACTOR_TOUR_GUIDE_AT_ANCHOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+	fdActorShowEmote(ACTOR_TOUR_GUIDE_AT_ANCHOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorStartRepeatedMotion(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2);
-	/* "I see! If we can get them to Colosso, they'll all be happy." */
+	// "I see! If we can get them to Colosso, they'll all be happy."
 	scTolbiShipDeckSay(ACTOR_TOUR_GUIDE_AT_ANCHOR);
 	fdActorSetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
 	scTolbiShipDeckTurn(ACTOR_SEA_SEAN, FACING_EAST);
 	fdActorRunRepeatedMotion(ACTOR_SEA_SEAN, 1);
-	/* "All right then, go and tell the tourists." */
+	// "All right then, go and tell the tourists."
 	scTolbiShipDeckSay(ACTOR_SEA_SEAN);
 	fdActorSetSpeed(ACTOR_SEA_SEAN, 1.6);
 	fdActorSetScript(ACTOR_SEA_SEAN, TolbiShipDeckGoBelowActions);
@@ -2943,20 +2881,18 @@ static void scTolbiShipDeckReturnFromIsland(void)
 	fdActorSetScript(ACTOR_TOUR_GUIDE_AT_ANCHOR, TolbiShipDeckGoBelowActions);
 	fdScriptWait(40);
 	scTolbiShipDeckTurn(ACTOR_SEA_KAJA, FACING_WEST);
-	/* "It's not much farther. I'll ask the oarsmen to work 'til the very
-	   end." */
+	// "It's not much farther. I'll ask the oarsmen to work 'til the very end."
 	scTolbiShipDeckSay(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
 	scTolbiShipDeckTurn(ACTOR_PARTY_LEADER, FACING_NORTHEAST);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SWITCH_TEAMS);
 }
 
-/* Places the leader on the deck facing south, with the camera on them. */
+// Places the leader on the deck facing south, with the camera on them.
 static void scTolbiShipDeckPlaceLeaderOnDeck(void)
 {
 	fdCameraMoveTo(232, CAMERA_KEEP, 676, 0);
@@ -2966,8 +2902,7 @@ static void scTolbiShipDeckPlaceLeaderOnDeck(void)
 	sySynch(1);
 }
 
-/* At Kalay, as the crew's talk of the delay ends, Kaja walks off and is
-   hidden. */
+// At Kalay, as the crew's talk of the delay ends, Kaja walks off and is hidden.
 const Sint32 TolbiShipDeckKajaLeavesActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(202, 0, 600),
@@ -2977,7 +2912,7 @@ const Sint32 TolbiShipDeckKajaLeavesActions[] = {
 	SC_END,
 };
 
-/* At the same moment the captain steps aside and turns west. */
+// At the same moment the captain steps aside and turns west.
 const Sint32 TolbiShipDeckCaptainStepsAsideActions[] = {
 	SC_WAIT(20),
 	SC_ANIMATION(ANIM_WALK),
@@ -2988,18 +2923,18 @@ const Sint32 TolbiShipDeckCaptainStepsAsideActions[] = {
 	SC_END,
 };
 
-/* The crew member's and the tour guide's impatience at Kalay.
-
-   They squash and stretch on the spot, the wait between in their timer. */
+// The crew member's and the tour guide's impatience at Kalay.
+//
+// They squash and stretch on the spot, the wait between in their timer.
 const Sint32 TolbiShipDeckSquashAndStretchActions[] = {
 	SC_CALL(scSquashAndStretch),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* A first-attack monster runs in, leaps over the rail onto the deck and goes
-   below by the carved door at the north end.
-
-   It is used at TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD. */
+// A first-attack monster runs in, leaps over the rail onto the deck and goes below by the carved
+// door at the north end.
+//
+// It is used at TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD.
 const Sint32 TolbiShipDeckMonsterLeapsAboardActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(140, 0, 586),
@@ -3019,8 +2954,7 @@ const Sint32 TolbiShipDeckMonsterLeapsAboardActions[] = {
 	SC_END,
 };
 
-/* Sean on guard at sea, pacing between two spots on the deck and looking out at
-   each. */
+// Sean on guard at sea, pacing between two spots on the deck and looking out at each.
 const Sint32 TolbiShipDeckSeanPacesActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(228, 0, 521),
@@ -3041,8 +2975,8 @@ const Sint32 TolbiShipDeckSeanPacesActions[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* Ouranos on guard at sea, walking the four corners of a square on the deck and
-   looking out at each. */
+// Ouranos on guard at sea, walking the four corners of a square on the deck and looking out at
+// each.
 const Sint32 TolbiShipDeckOuranosPatrolsActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(168, 0, 672),
@@ -3079,10 +3013,10 @@ const Sint32 TolbiShipDeckOuranosPatrolsActions[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* The second attack's hovering monsters (ACTOR_SEA_FIRST_HOVERING_MONSTER).
-
-   Their scratch fields are cleared, then TolbiShipDeckHoverAndDiveAtOuranos or
-   TolbiShipDeckHoverAndDiveAtSean runs each tick. */
+// The second attack's hovering monsters (ACTOR_SEA_FIRST_HOVERING_MONSTER).
+//
+// Their scratch fields are cleared, then TolbiShipDeckHoverAndDiveAtOuranos or
+// TolbiShipDeckHoverAndDiveAtSean runs each tick.
 const Sint32 TolbiShipDeckHoverAndDiveAtOuranosActions[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_TIMER, 0),
@@ -3101,8 +3035,7 @@ const Sint32 TolbiShipDeckHoverAndDiveAtSeanActions[] = {
 	SC_CALL(TolbiShipDeckHoverAndDiveAtSean),
 };
 
-/* The second attack's boarding monsters, bobbing in the air
-   (scTolbiShipDeckBob). */
+// The second attack's boarding monsters, bobbing in the air (scTolbiShipDeckBob).
 const Sint32 TolbiShipDeckBobActions[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_USER_VALUE, 0),
@@ -3113,8 +3046,7 @@ const Sint32 TolbiShipDeckLookAroundActions[] = {
 	SC_CALL(scTolbiShipDeckLookAround),
 };
 
-/* ACTOR_SEA_SPLASH swells from 7/10 of its size for 24 ticks, then is
-   hidden. */
+// ACTOR_SEA_SPLASH swells from 7/10 of its size for 24 ticks, then is hidden.
 const Sint32 TolbiShipDeckSwellActions[] = {
 	SC_ANIMATION(ANIM_STAND),
 	SC_SET(SW_SCALE_X, toFIXED(7) / 10),
@@ -3130,8 +3062,7 @@ const Sint32 TolbiShipDeckSwellActions[] = {
 	SC_END,
 };
 
-/* A monster on deck goes below by the carved door at the north end and is
-   hidden. */
+// A monster on deck goes below by the carved door at the north end and is hidden.
 const Sint32 TolbiShipDeckMonsterGoesBelowActions[] = {
 	SC_MOVE(216, 0, 586),
 	SC_SYNC,
@@ -3139,10 +3070,10 @@ const Sint32 TolbiShipDeckMonsterGoesBelowActions[] = {
 	SC_END,
 };
 
-/* The third attack's leaping monsters (ACTOR_SEA_FIRST_LEAPING_MONSTER).
-
-   Their timer is cleared, then TolbiShipDeckLeapAtOuranos or
-   TolbiShipDeckLeapAtSean runs each tick. */
+// The third attack's leaping monsters (ACTOR_SEA_FIRST_LEAPING_MONSTER).
+//
+// Their timer is cleared, then TolbiShipDeckLeapAtOuranos or TolbiShipDeckLeapAtSean runs each
+// tick.
 const Sint32 TolbiShipDeckLeapAtOuranosActions[] = {
 	SC_SET(SW_TIMER, 0),
 	SC_CALL(TolbiShipDeckLeapAtOuranos),
@@ -3153,13 +3084,12 @@ const Sint32 TolbiShipDeckLeapAtSeanActions[] = {
 	SC_CALL(TolbiShipDeckLeapAtSean),
 };
 
-/* The third attack's boarding monsters, hopping at random. */
+// The third attack's boarding monsters, hopping at random.
 const Sint32 TolbiShipDeckHopActions[] = {
 	SC_CALL(scTolbiShipDeckRandomlyStartActorHop),
 };
 
-/* At Tolbi, a passenger who rowed walks away once they have spoken, and is
-   hidden. */
+// At Tolbi, a passenger who rowed walks away once they have spoken, and is hidden.
 const Sint32 TolbiShipDeckRowerLeavesActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(82, 0, 656),
@@ -3169,8 +3099,8 @@ const Sint32 TolbiShipDeckRowerLeavesActions[] = {
 	SC_END,
 };
 
-/* Back from the island, Sean, Ouranos and the tour guide go below by the carved
-   door at the north end, one after another. */
+// Back from the island, Sean, Ouranos and the tour guide go below by the carved door at the north
+// end, one after another.
 const Sint32 TolbiShipDeckGoBelowActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(186, 0, 604),
@@ -3185,51 +3115,161 @@ const Sint32 TolbiShipDeckGoBelowActions[] = {
 	SC_END,
 };
 
-/* Sean standing by, turning now and then (scTolbiShipDeckIdleTurn). */
+// Sean standing by, turning now and then (scTolbiShipDeckIdleTurn).
 const Sint32 TolbiShipDeckSeanLooksAboutActions[] = {
 	SC_SET(SW_SCENE_COUNTER, 0),
 	SC_CALL(scTolbiShipDeckIdleTurn),
 };
 
 const SCENE_ENTRANCE TolbiShipDeckEntrances[] = {
-	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 179, 0, 653, FACING_SOUTH, 0, -1, -1,
-		-1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_PASSENGER_HOLD, CONDITION_ALWAYS, 216, 0,
-		600, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, 232, 0, 664,
-		FACING_EAST, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, 216, 0,
-		808, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST, CONDITION_ALWAYS, 216, 4, 648,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 312, -4, 656,
-		FACING_WEST, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 120, -4, 656,
-		FACING_EAST, 0, 65, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY, CONDITION_ALWAYS, 232, 0, 664,
-		FACING_EAST, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS, CONDITION_ALWAYS, 212, 0,
-		521, FACING_EAST, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD, CONDITION_ALWAYS, 192, 0,
-		650, FACING_EAST, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK, CONDITION_ALWAYS, 232,
-		0, 654, FACING_EAST, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK, CONDITION_ALWAYS, 216,
-		0, 657, FACING_EAST, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN, CONDITION_ALWAYS, 216, 0, 640,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE, CONDITION_ALWAYS, 216, 0,
-		540, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED, CONDITION_ALWAYS, 216,
-		0, 540, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_WORLD_MAP, CONDITION_ALWAYS, 196, 0, 652,
-		FACING_SOUTH, 0, 65, -1, -1, -1, 0},
-	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, CONDITION_ALWAYS, 212, 0,
-		521, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 179, 0, 653, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_PASSENGER_HOLD,
+     CONDITION_ALWAYS, 216,
+     0, 600,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CRATE_HOLD,
+     CONDITION_ALWAYS, 232,
+     0, 664,
+     FACING_EAST, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CAPTAINS_ROOM,
+     CONDITION_ALWAYS, 216,
+     0, 808,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST,
+     CONDITION_ALWAYS, 216,
+     4, 648,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_KALAY_DOCKS,
+     CONDITION_ALWAYS, 312,
+     -4,
+     656, FACING_WEST,
+     0, -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS,
+     CONDITION_ALWAYS, 120,
+     -4,
+     656, FACING_EAST,
+     0, 65,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY,
+     CONDITION_ALWAYS, 232,
+     0, 664,
+     FACING_EAST, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS,
+     CONDITION_ALWAYS, 212,
+     0, 521,
+     FACING_EAST, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD,
+     CONDITION_ALWAYS, 192,
+     0, 650,
+     FACING_EAST, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK,
+     CONDITION_ALWAYS, 232,
+     0, 654,
+     FACING_EAST, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK,
+     CONDITION_ALWAYS, 216,
+     0, 657,
+     FACING_EAST, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN,
+     CONDITION_ALWAYS, 216,
+     0, 640,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE,
+     CONDITION_ALWAYS, 216,
+     0, 540,
+     FACING_NORTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED,
+     CONDITION_ALWAYS, 216,
+     0, 540,
+     FACING_NORTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_WORLD_MAP,
+     CONDITION_ALWAYS, 196,
+     0, 652,
+     FACING_SOUTH, 0,
+     65, -1,
+     -1,
+     -1,
+     0},
+	{TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE,
+     CONDITION_ALWAYS, 212,
+     0, 521,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
 	{SCENE_TABLE_END},
 };
 
-/* clang-format off */
+// clang-format off
 const SCENE_EXIT_REGION TolbiShipDeckRegions[] = {
 	{208, 24, 634, 224, 40, 650, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST},
 	{SCENE_TABLE_END},
@@ -3285,8 +3325,7 @@ const ACTOR_PLACE TolbiShipDeckActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-/* UB: a table the script writes (its talkFacing), defined const and kept */
-/* with the constants; UBFIX makes it writable. */
+// UB: a table the script writes (its talkFacing), defined const and kept with the constants; UBFIX makes it writable.
 #if FIX_SHIP_DECK_CONST_TABLE_WRITTEN
 ACTOR_PLACE TolbiShipDeckActorPlacementsWaiting[] = {
 #else
@@ -3625,7 +3664,7 @@ const CUE TolbiShipDeckCuesAtIsland[] = {
 	{ CUE_STEP, TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, SCRIPT_REF(scTolbiShipDeckGoBelowWhileFacingWest) },
 #endif
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, SCRIPT_REF(scTolbiShipDeckGoBelow) },
-	/* At anchor the west gangplank's metatiles lead to Crossbone Isle. */
+	// At anchor the west gangplank's metatiles lead to Crossbone Isle.
 	{ CUE_EXIT, TOLBI_SHIP_DECK_TO_TOLBI_DOCKS, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE },
 	{ CUE_TALK, ACTOR_SEA_CREW_MEMBER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckKajaAndTheCaptainAreProfessionals) },
 	{ CUE_TALK, ACTOR_SEA_SEAN, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, SCRIPT_REF(scTolbiShipDeckOfferToScoutIsland) },
@@ -3639,12 +3678,17 @@ const CUE TolbiShipDeckCuesAtIsland[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckWhatWeCanDoNowIs) },
 	{ CUE_TABLE_END },
 };
-/* clang-format on */
+// clang-format on
 
-/* How hard each passenger rows, from ACTOR_ARRIVED_FIRST_PASSENGER on.
-
-   An empty seat's oars take OAR_STROKE_STEADY
-   (scTolbiShipDeckChooseOarStrokes). */
-const Sint32 TolbiShipDeckRowerStrokes[] = {OAR_STROKE_STEADY, OAR_STROKE_SLOW,
-	OAR_STROKE_STEADY, OAR_STROKE_STILL, OAR_STROKE_FAST, OAR_STROKE_FAST,
-	OAR_STROKE_SLOW, OAR_STROKE_STILL, OAR_STROKE_STILL};
+// How hard each passenger rows, from ACTOR_ARRIVED_FIRST_PASSENGER on.
+//
+// An empty seat's oars take OAR_STROKE_STEADY (scTolbiShipDeckChooseOarStrokes).
+const Sint32 TolbiShipDeckRowerStrokes[] = {OAR_STROKE_STEADY,
+                                            OAR_STROKE_SLOW,
+                                            OAR_STROKE_STEADY,
+                                            OAR_STROKE_STILL,
+                                            OAR_STROKE_FAST,
+                                            OAR_STROKE_FAST,
+                                            OAR_STROKE_SLOW,
+                                            OAR_STROKE_STILL,
+                                            OAR_STROKE_STILL};

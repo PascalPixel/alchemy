@@ -1,19 +1,14 @@
-/* The sound driver's tables: the song commands' jump table, the PCM and CGB
-   pitch tables, the CGB wave channel's volumes, the note lengths and the
-   extended commands. */
+// The sound driver's tables: the song commands' jump table, the PCM and CGB pitch tables, the CGB
+// wave channel's volumes, the note lengths and the extended commands.
 
 #include "types.h"
 #include "sdk/sound_driver.h"
 
-/* An entry of MPlayJumpTableTemplate, whose helpers take other parameters than
-   the song commands. */
+// An entry of MPlayJumpTableTemplate, whose helpers take other parameters than the song commands.
 typedef void (*SoundFunc)();
 
-/* clang-format off */
-/* The jump table SoundInit copies into MPlayJumpTable (MPlayJumpTableCopy, 36 */
-/* entries): entries 0 to 29 run song bytes 0xB1 to 0xCE and 30 to 35 are the */
-/* driver's helpers (MPLAY_JUMP_ in sound_driver_types.h); a byte with nothing */
-/* to do ends the track. */
+// clang-format off
+// The jump table SoundInit copies into MPlayJumpTable (MPlayJumpTableCopy, 36 entries): entries 0 to 29 run song bytes 0xB1 to 0xCE and 30 to 35 are the driver's helpers (MPLAY_JUMP_ in sound_driver_types.h); a byte with nothing to do ends the track.
 const SoundFunc MPlayJumpTableTemplate[] = {
 	ply_fine,
 	ply_goto,
@@ -53,9 +48,7 @@ const SoundFunc MPlayJumpTableTemplate[] = {
 	SoundMainBTM
 };
 
-/* Each PCM key's code, keys 0 to 179 (MidiKeyToFreq): the low four bits */
-/* pick its semitone in FreqTable, the high four bits how many */
-/* octaves to shift that down, 14 for key 0, 9 for key 60 and 0 for key 168. */
+// Each PCM key's code, keys 0 to 179 (MidiKeyToFreq): the low four bits pick its semitone in FreqTable, the high four bits how many octaves to shift that down, 14 for key 0, 9 for key 60 and 0 for key 168.
 const u8 ScaleTable[] = {
 	0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb,
 	0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb,
@@ -74,23 +67,19 @@ const u8 ScaleTable[] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b
 };
 
-/* The top octave's step for each semitone n, 2^31 times 2^(n / 12) */
-/* (0xb504f334 is 2^31 times the square root of 2). */
+// The top octave's step for each semitone n, 2^31 times 2^(n / 12) (0xb504f334 is 2^31 times the square root of 2).
 const u32 FreqTable[] = {
 	0x80000000, 0x879c7c97, 0x8facd61e, 0x9837f052,
 	0xa14517cc, 0xaadc0848, 0xb504f334, 0xbfc886bb,
 	0xcb2ff52a, 0xd744fccb, 0xe411f03a, 0xf1a1bf39
 };
 
-/* Samples mixed a frame for rates 1 to 12 (mode bits 19..16, SoundInfo.rate); */
-/* each, times 59.7275, is its sample rate, 5734 to 42048 a second. */
+// Samples mixed a frame for rates 1 to 12 (mode bits 19..16, SoundInfo.rate); each, times 59.7275, is its sample rate, 5734 to 42048 a second.
 const u16 PcmSamplesPerVBlankTable[] = {
 	96, 132, 176, 224, 264, 304, 352, 448, 528, 608, 672, 704
 };
 
-/* Each tone key's code, keys 36 to 167 (MidiKeyToCgbFreq): the low four */
-/* bits pick its semitone in CgbFreqTable, the high four bits how */
-/* many octaves to halve that period. */
+// Each tone key's code, keys 36 to 167 (MidiKeyToCgbFreq): the low four bits pick its semitone in CgbFreqTable, the high four bits how many octaves to halve that period.
 const u8 CgbScaleTable[] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b,
@@ -105,14 +94,12 @@ const u8 CgbScaleTable[] = {
 	0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab
 };
 
-/* The negative period of each semitone of the lowest octave, from key 36; */
-/* adding 2048 gives the tone channels' frequency value. */
+// The negative period of each semitone of the lowest octave, from key 36; adding 2048 gives the tone channels' frequency value.
 const s16 CgbFreqTable[] = {
 	-2004, -1891, -1785, -1685, -1591, -1501, -1417, -1337, -1262, -1192, -1125, -1062
 };
 
-/* The NR43 value for each noise key, 21 to 80 (MidiKeyToCgbFreq); bit 3, */
-/* the counter width, comes from the voice instead (CgbSound). */
+// The NR43 value for each noise key, 21 to 80 (MidiKeyToCgbFreq); bit 3, the counter width, comes from the voice instead (CgbSound).
 const u8 NoiseTable[] = {
 	0xd7, 0xd6, 0xd5, 0xd4, 0xc7, 0xc6, 0xc5, 0xc4, 0xb7, 0xb6, 0xb5, 0xb4,
 	0xa7, 0xa6, 0xa5, 0xa4, 0x97, 0x96, 0x95, 0x94, 0x87, 0x86, 0x85, 0x84,
@@ -121,13 +108,12 @@ const u8 NoiseTable[] = {
 	0x17, 0x16, 0x15, 0x14, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00
 };
 
-/* CGB_CHANNEL_WAVE's NR32 volume code for each envelope level 0 to 15. */
+// CGB_CHANNEL_WAVE's NR32 volume code for each envelope level 0 to 15.
 const u8 Cgb3Vol[] = {
 	0x00, 0x00, 0x60, 0x60, 0x60, 0x60, 0x40, 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0x80, 0x20, 0x20
 };
 
-/* The ticks each length code 0 to 48 stands for; MPlayMain and ply_note */
-/* read it for the lengths of their waits and notes. */
+// The ticks each length code 0 to 48 stands for; MPlayMain and ply_note read it for the lengths of their waits and notes.
 const u8 ClockTable[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 	16, 17, 18, 19, 20, 21, 22, 23, 24, 28, 30, 32, 36, 40, 42, 44,
@@ -135,10 +121,7 @@ const u8 ClockTable[] = {
 	96
 };
 
-/* The extended commands, song byte 0xCD and then the index: 1, 2 and 4 to 11 */
-/* set a field of the track's voice or its notes' echo, and 0 and 3 end the */
-/* track (ply_xxx). pret's later version of the SDK's sound library adds */
-/* ply_xwait and ply_xcmd_0D as 12 and 13; this one stops at 11. */
+// The extended commands, song byte 0xCD and then the index: 1, 2 and 4 to 11 set a field of the track's voice or its notes' echo, and 0 and 3 end the track (ply_xxx). pret's later version of the SDK's sound library adds ply_xwait and ply_xcmd_0D as 12 and 13; this one stops at 11.
 const MPlayFunc XcmdTable[] = {
 	ply_xxx,
 	ply_xwave,
@@ -153,4 +136,4 @@ const MPlayFunc XcmdTable[] = {
 	ply_xleng,
 	ply_xswee
 };
-/* clang-format on */
+// clang-format on

@@ -1,11 +1,10 @@
-/* How far each field Psynergy reaches. */
+// How far each field Psynergy reaches.
 
 #include "field/field.h"
 #include "game/game.h"
 
-/* clang-format off */
-/* One row a field Psynergy, with one more for the things Tremor's shaking */
-/* reaches; the last row, ended by -1, is the reach of a kind not listed. */
+// clang-format off
+// One row a field Psynergy, with one more for the things Tremor's shaking reaches; the last row, ended by -1, is the reach of a kind not listed.
 const FIELD_PSYNERGY_REACH FieldPsynergyReach[] = {
 	{FIELD_PSYNERGY_PLY,                           16, 8,  DEGtoANG(33.75)},
 	{FIELD_PSYNERGY_FROST,                         16, 8,  DEGtoANG(33.75)},
@@ -30,4 +29,4 @@ const FIELD_PSYNERGY_REACH FieldPsynergyReach[] = {
 	{FIELD_PSYNERGY_CYCLONE,                       0,  0,  0},
 	{-1,                                           16, 8,  DEGtoANG(33.75)},
 };
-/* clang-format on */
+// clang-format on

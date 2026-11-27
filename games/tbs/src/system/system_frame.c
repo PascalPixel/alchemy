@@ -1,73 +1,75 @@
-/* Interrupt handlers, the tick wait, key repeat and the VBlank handler. Part
-   of system.c. */
+// Interrupt handlers, the tick wait, key repeat and the VBlank handler. Part of system.c.
 
-/* The word a soft reset leaves in CartridgeResetMarker: a date, 4 July 1967,
-   its digits packed four bits each. */
+// The word a soft reset leaves in CartridgeResetMarker: a date, 4 July 1967, its digits packed four
+// bits each.
 #define CARTRIDGE_RESET_MARK 0x19670704
 
-/* DISPSTAT's low byte: its flags and interrupt enables, without the VCount line
-   above them. */
-#define DISPSTAT_FLAGS 0xff
+// DISPSTAT's low byte: its flags and interrupt enables, without the VCount line above them.
+#define DISPSTAT_FLAGS       0xff
 
-/* The lines REG_VCOUNT counts in VBlank, after the DISPLAY_HEIGHT drawn: it
-   runs to DISPLAY_TOTAL_LINES - 1. */
-#define VBLANK_LINES (DISPLAY_TOTAL_LINES - DISPLAY_HEIGHT)
+// The lines REG_VCOUNT counts in VBlank, after the DISPLAY_HEIGHT drawn: it runs to
+// DISPLAY_TOTAL_LINES - 1.
+#define VBLANK_LINES         (DISPLAY_TOTAL_LINES - DISPLAY_HEIGHT)
 
-/* Every bit of a key word, as KEYINPUT's 16 bits. */
-#define KEY_WORD_BITS 0xffff
+// Every bit of a key word, as KEYINPUT's 16 bits.
+#define KEY_WORD_BITS        0xffff
 
-/* Restarts the game from the cartridge entry point. The marker word it leaves
-   in IWRAM is cleared again by syInit; nothing else reads it. */
+// Restarts the game from the cartridge entry point. The marker word it leaves in IWRAM is cleared
+// again by syInit; nothing else reads it.
 static __inline__ void sySoftReset(void)
 {
 	Sint32 (*reset)(void) = (Sint32 (*)(void))CartStart;
 
-	CartridgeResetMarker = CARTRIDGE_RESET_MARK;
+	CartridgeResetMarker  = CARTRIDGE_RESET_MARK;
 	IO_WRITE16(0, &REG_IME);
 	reset();
 }
 
-/* Halts the CPU (the BIOS Halt) until the VBlank handler has run once. */
-#define SYNCH_WAIT_VBLANK() \
-	{ \
-		VBlankDone &= ~1; \
-		do { \
-			ASM_BIOS_HALT(); \
-		} while(!(VBlankDone & 1)); \
+// Halts the CPU (the BIOS Halt) until the VBlank handler has run once.
+#define SYNCH_WAIT_VBLANK()                                                                        \
+	{                                                                                              \
+		VBlankDone &= ~1;                                                                          \
+		do                                                                                         \
+		{                                                                                          \
+			ASM_BIOS_HALT();                                                                       \
+		} while (!(VBlankDone & 1));                                                               \
 	}
 
-/* Installs `handler` for interrupt `irq` and enables that interrupt, or with a
-   null handler disables it and installs the do-nothing handler. */
+// Installs `handler` for interrupt `irq` and enables that interrupt, or with a null handler
+// disables it and installs the do-nothing handler.
 void syIntFunction(Uint32 irq, Sint32 vcount, INTERRUPT_HANDLER handler)
 {
-	if(irq <= IRQ_GAMEPAK) {
+	if (irq <= IRQ_GAMEPAK)
+	{
 		Uint32 ime;
 		Uint32 bit;
 		Uint32 ie;
 
 		IRQ_LOCK(ime);
 		bit = 1 << irq;
-		ie = REG_IE & ~bit;
-		if(handler != 0)
+		ie  = REG_IE & ~bit;
+		if (handler != 0)
 			ie |= bit;
 		REG_IE = ie;
-		if(irq <= IRQ_VCOUNT) {
-			/* The display interrupts also need their DISPSTAT enable */
+		if (irq <= IRQ_VCOUNT)
+		{
+			// The display interrupts also need their DISPSTAT enable
 			Uint32 enable = DISPSTAT_VBLANK_INTR << irq;
-			Uint32 keep = ~enable;
+			Uint32 keep   = ~enable;
 			Uint32 status;
 
-			if(irq == IRQ_VCOUNT) {
+			if (irq == IRQ_VCOUNT)
+			{
 				enable |= DISPSTAT_VCOUNT_LINE(vcount);
-				/* The old line goes too. */
-				keep &= DISPSTAT_FLAGS;
+				// The old line goes too.
+				keep   &= DISPSTAT_FLAGS;
 			}
 			status = REG_DISPSTAT & keep;
-			if(handler != 0)
+			if (handler != 0)
 				status |= enable;
 			REG_DISPSTAT = status;
 		}
-		if(handler != 0)
+		if (handler != 0)
 			IrqHandlers[irq] = handler;
 		else
 			IrqHandlers[irq] = syIRQIgnore;
@@ -75,19 +77,23 @@ void syIntFunction(Uint32 irq, Sint32 vcount, INTERRUPT_HANDLER handler)
 	}
 }
 
-/* Durations used by the sleep transitions: the first two in ticks, the last
-   two in frames, since the sleep waits on SYNCH_WAIT_VBLANK alone. */
-enum {
-	SLEEP_IDLE_TICKS = 3 * 60 * 60, /* three minutes with no key held */
-	SLEEP_COMBO_TICKS = 3 * 60,		/* three seconds holding only L and R */
-	SLEEP_WHITE_FRAMES = 60,		/* the white screen shown before the Stop */
-	SLEEP_WAKE_FRAMES = 10			/* waited after waking, screen restored */
+// Durations used by the sleep transitions: the first two in ticks, the last two in frames, since
+// the sleep waits on SYNCH_WAIT_VBLANK alone.
+enum
+{
+	SLEEP_IDLE_TICKS   = 3 * 60 * 60, // three minutes with no key held
+	SLEEP_COMBO_TICKS  = 3 * 60,      // three seconds holding only L and R
+	SLEEP_WHITE_FRAMES = 60,          // the white screen shown before the Stop
+	SLEEP_WAKE_FRAMES  = 10           // waited after waking, screen restored
 };
 
-/* Ticks the debug CPU-load display holds a peak. */
-enum { CPU_LOAD_PEAK_TICKS = 30 };
+// Ticks the debug CPU-load display holds a peak.
+enum
+{
+	CPU_LOAD_PEAK_TICKS = 30
+};
 
-/* The game's tick loop: runs `ticks` ticks and returns. */
+// The game's tick loop: runs `ticks` ticks and returns.
 void sySynch(Sint32 ticks)
 {
 	Uint8 *sp;
@@ -100,116 +106,134 @@ void sySynch(Sint32 ticks)
 
 	ASM_STACK_POINTER_GET(sp);
 
-	/* Save the caller's stack and continue at the tick-wait stack top */
+	// Save the caller's stack and continue at the tick-wait stack top
 	base = sp;
-	if(base < RamTickWaitStackTop) {
-		Uint8 *top = RamTickWaitStackTop;
+	if (base < RamTickWaitStackTop)
+	{
+		Uint8 *top     = RamTickWaitStackTop;
 
 		SavedStackSize = top - base;
-		syDMAXCopy(
-			base, SavedStack, DMA_COPY_WORDS(SavedStackSize >> 2), REG_DMA3);
+		syDMAXCopy(base, SavedStack, DMA_COPY_WORDS(SavedStackSize >> 2), REG_DMA3);
 		ASM_STACK_POINTER_SET(top);
 	}
-	for(frameIndex = 0; frameIndex < ticks; frameIndex++) {
-		/* Run the tick pass's events and build this tick's sprites */
+	for (frameIndex = 0; frameIndex < ticks; frameIndex++)
+	{
+		// Run the tick pass's events and build this tick's sprites
 		EventsRunning = 1;
 		syExecuteEvent(EVENT_PASS_TICK);
 		EventsRunning = 0;
 		syOAMBuildBuffer(syHeapSlotAllocate(HEAP_SLOT_TICK_SCRATCH, 1024));
 		TickRenderPending = 1;
-		if(CpuLoadDisplayEnabled) {
-			/* CPU load: the scanline the tick's work ended on, counted from
-			   the last VBlank, plus 256 for each VBlank it overran; the peak is
-			   held for 30 ticks The meter reads the line through a plain
-			   pointer, where fdScreenTransitionUpdateScanline reads the
-			   volatile register. */
+		if (CpuLoadDisplayEnabled)
+		{
+			// CPU load: the scanline the tick's work ended on, counted from the last VBlank, plus
+			// 256 for each VBlank it overran; the peak is held for 30 ticks The meter reads the
+			// line through a plain pointer, where fdScreenTransitionUpdateScanline reads the
+			// volatile register.
 			line = *(Uint16 *)&REG_VCOUNT;
-			if(line >= DISPLAY_HEIGHT)
+			if (line >= DISPLAY_HEIGHT)
 				line -= DISPLAY_HEIGHT;
 			else
 				line += VBLANK_LINES;
 			line += (TickFrames - 1) << 8;
-			if(CpuLoadTimer == 0)
+			if (CpuLoadTimer == 0)
 				CpuLoadPeak = 0;
 			else
 				CpuLoadTimer--;
-			if(CpuLoadPeak < line) {
-				CpuLoadPeak = line;
+			if (CpuLoadPeak < line)
+			{
+				CpuLoadPeak  = line;
 				CpuLoadTimer = CPU_LOAD_PEAK_TICKS;
 			}
 		}
-		/* Count idle ticks and the L+R hold that request sleep */
-		if(SleepDisabled == 0) {
-			if(IdleSleepEnabled) {
-				if(PerData)
+		// Count idle ticks and the L+R hold that request sleep
+		if (SleepDisabled == 0)
+		{
+			if (IdleSleepEnabled)
+			{
+				if (PerData)
 					IdleTicks = 0;
-				else {
+				else
+				{
 					IdleTicks++;
-					if(IdleTicks > SLEEP_IDLE_TICKS)
+					if (IdleTicks > SLEEP_IDLE_TICKS)
 						SleepRequested = 1;
 				}
 			}
-			if(PerData == KEYS_SHOULDERS) {
+			if (PerData == KEYS_SHOULDERS)
+			{
 				SleepComboTicks++;
-				if(SleepComboTicks >= SLEEP_COMBO_TICKS) {
+				if (SleepComboTicks >= SLEEP_COMBO_TICKS)
+				{
 					SleepComboTicks = 0;
-					SleepRequested = 1;
+					SleepRequested  = 1;
 				}
-			} else {
+			}
+			else
+			{
 				SleepComboTicks = 0;
 			}
 		}
-		/* Debug builds: Start+Select pauses the game; while paused, A, B,
-		   Select or the D-pad advances one tick and Start resumes */
-		if(DebugMode) {
-			for(;;) {
-				if(DebugPaused) {
-					if(PerRepeat & (KEY_A | KEY_B | KEY_SELECT))
+		// Debug builds: Start+Select pauses the game; while paused, A, B, Select or the D-pad
+		// advances one tick and Start resumes
+		if (DebugMode)
+		{
+			for (;;)
+			{
+				if (DebugPaused)
+				{
+					if (PerRepeat & (KEY_A | KEY_B | KEY_SELECT))
 						break;
-					if(PerData & KEYS_DPAD)
+					if (PerData & KEYS_DPAD)
 						break;
-					if(PerRepeat & KEY_START) {
+					if (PerRepeat & KEY_START)
+					{
 						DebugPaused = 0;
 						break;
 					}
-				} else {
-					if(PerData != (KEY_START | KEY_SELECT))
+				}
+				else
+				{
+					if (PerData != (KEY_START | KEY_SELECT))
 						break;
 					DebugPaused = 1;
 				}
 				SYNCH_WAIT_VBLANK();
 				syInputUpdateKeyRepeatAndDirection();
-				if(ResetRequested) {
+				if (ResetRequested)
+				{
 					ResetRequested = 0;
 					sySoftReset();
 				}
 			}
 		}
-		/* Wait for VBlank, then start the next tick */
+		// Wait for VBlank, then start the next tick
 		LastTickFrames = TickFrames;
-		TickFrames = 0;
+		TickFrames     = 0;
 		SYNCH_WAIT_VBLANK();
 		syHeapSlotRelease(HEAP_SLOT_TICK_SCRATCH);
 		syOAMResetTick();
 		TickCount++;
 		PlayTimeTicks++;
 		syInputUpdateKeyRepeatAndDirection();
-		if(SerialExchangeActive) {
+		if (SerialExchangeActive)
+		{
 			sySerialPollStatus();
-			if(SerialStateWork.mode)
+			if (SerialStateWork.mode)
 				SerialStateWork.transferEnabled = 1;
 		}
-		/* Sleep: after a second of white screen, Stop the CPU until L and R
-		   wake it, then restore the screen. A request above 1 counts down
-		   first. */
-		if(SleepRequested && SleepDisabled == 0) {
+		// Sleep: after a second of white screen, Stop the CPU until L and R wake it, then restore
+		// the screen. A request above 1 counts down first.
+		if (SleepRequested && SleepDisabled == 0)
+		{
 			savedDisplayControl = REG_DISPCNT;
-			savedBackdropColor = PLTT_BACKDROP;
-			if(SleepRequested == 1) {
+			savedBackdropColor  = PLTT_BACKDROP;
+			if (SleepRequested == 1)
+			{
 				IO_WRITE16(0, &REG_DISPCNT);
 				IO_WRITE16(RGB_WHITE, &PLTT_BACKDROP);
-				for(delayFrame = 0; delayFrame < SLEEP_WHITE_FRAMES;
-					delayFrame++) {
+				for (delayFrame = 0; delayFrame < SLEEP_WHITE_FRAMES; delayFrame++)
+				{
 					SYNCH_WAIT_VBLANK();
 				}
 				SleepActive = 1;
@@ -221,63 +245,67 @@ void sySynch(Sint32 ticks)
 				SleepActive = 0;
 				IO_WRITE16((Uint16)savedDisplayControl, &REG_DISPCNT);
 				IO_WRITE16((Uint16)savedBackdropColor, &PLTT_BACKDROP);
-				for(delayFrame = 0; delayFrame < SLEEP_WAKE_FRAMES;
-					delayFrame++) {
+				for (delayFrame = 0; delayFrame < SLEEP_WAKE_FRAMES; delayFrame++)
+				{
 					SYNCH_WAIT_VBLANK();
 				}
 				SleepRequested = 0;
-				IdleTicks = 0;
-			} else {
+				IdleTicks      = 0;
+			}
+			else
+			{
 				SleepRequested--;
 			}
 		}
-		if(ResetRequested) {
+		if (ResetRequested)
+		{
 			ResetRequested = 0;
 			sySoftReset();
 		}
 	}
-	/* Put the caller's stack back */
+	// Put the caller's stack back
 	{
 		Uint32 *size = &SavedStackSize;
 
-		if(*size != 0) {
-			/* FAKEMATCH(dead): updates of base that cancel out, under a test of
-			 * base against size, keep the old base live up to the read. */
-			if(base != (Uint8 *)size) {
+		if (*size != 0)
+		{
+			// FAKEMATCH(dead): updates of base that cancel out, under a test of
+			// * base against size, keep the old base live up to the read.
+			if (base != (Uint8 *)size)
+			{
 				base++;
 				base--;
 			}
 			ASM_STACK_POINTER_GET(base);
-			/* FAKEMATCH(dead): updates of size by the new base that cancel out,
-			 * before the size is read again and the copy's size by name. */
+			// FAKEMATCH(dead): updates of size by the new base that cancel out,
+			// * before the size is read again and the copy's size by name.
 			size += (Uint32)base;
 			size -= (Uint32)base;
 			base -= *size;
-			sp = base;
+			sp    = base;
 			ASM_STACK_POINTER_SET(sp);
-			syDMAXCopy(SavedStack, base, DMA_COPY_WORDS(SavedStackSize >> 2),
-				REG_DMA3);
-			while(DMA3->control & DMA_BUSY)
+			syDMAXCopy(SavedStack, base, DMA_COPY_WORDS(SavedStackSize >> 2), REG_DMA3);
+			while (DMA3->control & DMA_BUSY)
 				;
 			SavedStackSize = 0;
 		}
 	}
 }
 
-/* Ticks a key is held before it first repeats, and between later repeats. */
+// Ticks a key is held before it first repeats, and between later repeats.
 #define INPUT_KEY_REPEAT_FIRST 19
 #define INPUT_KEY_REPEAT_NEXT  6
 
-/* Restarts the key repeat delay, so held keys wait the full delay again. */
+// Restarts the key repeat delay, so held keys wait the full delay again.
 void syInputResetKeyRepeat(void)
 {
 	PerRepeatTimer = INPUT_KEY_REPEAT_FIRST;
 }
 
-/* Works out this tick's repeating and newly pressed keys, once a tick after
-   VBlank (sySynch()). Held keys repeat after INPUT_KEY_REPEAT_FIRST ticks,
-   then every INPUT_KEY_REPEAT_NEXT; PerRepeatDirected is that repeat with at
-   most one D-pad direction, the newer of two held and none of four. */
+// Works out this tick's repeating and newly pressed keys, once a tick after VBlank (sySynch()).
+// Held keys repeat after INPUT_KEY_REPEAT_FIRST ticks, then every INPUT_KEY_REPEAT_NEXT;
+// PerRepeatDirected is that repeat with at most one D-pad direction, the newer of two held and none
+// of four.
 void syInputUpdateKeyRepeatAndDirection(void)
 {
 	Sint32 delay = PerRepeatTimer;
@@ -286,118 +314,129 @@ void syInputUpdateKeyRepeatAndDirection(void)
 	Uint32 directionCount;
 	Uint32 mask;
 
-	if(delay <= 0) {
+	if (delay <= 0)
+	{
 		PerRepeat = PerData;
-		keys = PerRepeat;
-		if(delay == 0)
+		keys      = PerRepeat;
+		if (delay == 0)
 			PerRepeatTimer = INPUT_KEY_REPEAT_NEXT;
 		else
 			PerRepeatTimer = INPUT_KEY_REPEAT_FIRST;
-	} else {
+	}
+	else
+	{
 		PerRepeat = 0;
-		keys = PerRepeat;
+		keys      = PerRepeat;
 	}
 
-	if(keys != 0) {
-		/* Count the D-pad directions in the repeat */
+	if (keys != 0)
+	{
+		// Count the D-pad directions in the repeat
 		directionCount = 0;
-		if(keys & KEY_UP)
+		if (keys & KEY_UP)
 			directionCount = 1;
-		if(keys & KEY_DOWN)
+		if (keys & KEY_DOWN)
 			directionCount++;
-		if(keys & KEY_LEFT)
+		if (keys & KEY_LEFT)
 			directionCount++;
-		if(keys & KEY_RIGHT)
+		if (keys & KEY_RIGHT)
 			directionCount++;
 
 		PerRepeatDirected = keys;
-		switch(directionCount) {
-		default:
-			PerDirection = KEYS_HORIZONTAL;
-			mask = KEY_WORD_BITS & ~KEYS_DPAD;
-			PerRepeatDirected &= mask;
-			break;
-		case 0:
-			PerDirection = KEYS_HORIZONTAL;
-			break;
-		case 1:
-			PerDirection = keys & KEYS_DPAD;
-			break;
-		case 2:
-			if((PerDirection & PerRepeatDirected) == 0)
-				PerDirection = KEYS_HORIZONTAL;
-			PerRepeatDirected &= PerDirection ^ KEY_WORD_BITS;
-			break;
-		case 3:
-			if(PerDirection & KEYS_HORIZONTAL)
-				axis = KEYS_HORIZONTAL;
-			if(PerDirection & KEYS_VERTICAL)
-				axis = KEYS_VERTICAL;
-			mask = KEY_WORD_BITS ^ axis;
-			PerDirection = keys & mask;
-			PerRepeatDirected &= mask;
-			break;
+		switch (directionCount)
+		{
+			default:
+				PerDirection       = KEYS_HORIZONTAL;
+				mask               = KEY_WORD_BITS & ~KEYS_DPAD;
+				PerRepeatDirected &= mask;
+				break;
+			case 0: PerDirection = KEYS_HORIZONTAL; break;
+			case 1: PerDirection = keys & KEYS_DPAD; break;
+			case 2:
+				if ((PerDirection & PerRepeatDirected) == 0)
+					PerDirection = KEYS_HORIZONTAL;
+				PerRepeatDirected &= PerDirection ^ KEY_WORD_BITS;
+				break;
+			case 3:
+				if (PerDirection & KEYS_HORIZONTAL)
+					axis = KEYS_HORIZONTAL;
+				if (PerDirection & KEYS_VERTICAL)
+					axis = KEYS_VERTICAL;
+				mask               = KEY_WORD_BITS ^ axis;
+				PerDirection       = keys & mask;
+				PerRepeatDirected &= mask;
+				break;
 		}
-	} else {
+	}
+	else
+	{
 		PerRepeatDirected = keys;
 	}
 
-	PerPush = (PerData ^ PerDataLast) & PerData;
+	PerPush     = (PerData ^ PerDataLast) & PerData;
 	PerDataLast = PerData;
 }
 
-#define SOUND_REVERB_CODE_COUNT 5	/* reverb codes in IwramSoundReverbCodes */
-#define SOUND_REVERB_CODE_SIZE	152 /* bytes in each reverb code */
+#define SOUND_REVERB_CODE_COUNT 5   // reverb codes in IwramSoundReverbCodes
+#define SOUND_REVERB_CODE_SIZE  152 // bytes in each reverb code
 
-/* The VBlank interrupt handler, installed by syInit. */
+// The VBlank interrupt handler, installed by syInit.
 void syVBlankHandler(void)
 {
 	Uint32 keys;
-	void (*hook)(void);
+	void   (*hook)(void);
 
-	/* The display writes come first, while the blank lasts: OAM can be written
-	   only in a blank, and a palette or scroll changed while lines are drawn
-	   shows half changed. */
+	// The display writes come first, while the blank lasts: OAM can be written only in a blank, and
+	// a palette or scroll changed while lines are drawn shows half changed.
 	DMA0_STOP();
-	if(SerialExchangeActive != 0) {
-		LinkStatusWork = sySerialExchangePayloads(
-			(void *)&SerialTransfer, SerialPeerPayloads);
+	if (SerialExchangeActive != 0)
+	{
+		LinkStatusWork = sySerialExchangePayloads((void *)&SerialTransfer, SerialPeerPayloads);
 		sySerialStepBlockTransfer();
 	}
 	sySoundUpdateBGMRampsStub();
 	syScreenFadeUpdate();
-	if(TickRenderPending != 0) {
-		if(OamCopyEnabled != 0)
+	if (TickRenderPending != 0)
+	{
+		if (OamCopyEnabled != 0)
 			syDMAXCopy(((HEAP_STATE *)HeapSlots)->slots[HEAP_SLOT_TICK_SCRATCH],
-				OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
+			           OAM,
+			           DMA_COPY_WORDS(OAM_SIZE / 4),
+			           REG_DMA3);
 		syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
 		syIOWriteQueueFlushPending();
 		TickRenderPending = 0;
 	}
-	/* The hook runs once: it is cleared before it is called */
+	// The hook runs once: it is cleared before it is called
 	hook = VBlankCallback;
-	if(hook != 0) {
+	if (hook != 0)
+	{
 		VBlankCallback = 0;
 		hook();
 	}
 	syExecuteEvent(EVENT_PASS_VBLANK);
 
-	/* Read the keypad (its bits are 0 while pressed). */
+	// Read the keypad (its bits are 0 while pressed).
 	keys = REG_KEYINPUT ^ KEYS_MASK;
 	{
-		Uint32 pressed = keys & ~PerData;
+		Uint32 pressed  = keys & ~PerData;
 
-		PerPush = pressed;
-		PerPushLatch |= pressed;
+		PerPush         = pressed;
+		PerPushLatch   |= pressed;
 	}
 	PerData = keys;
-	if(keys == 0) {
+	if (keys == 0)
+	{
 		PerRepeatTimer = INPUT_KEY_REPEAT_FIRST;
-		PerRepeat = keys;
-	} else if(PerData & (PerDataAtVBlank ^ KEY_WORD_BITS)) {
+		PerRepeat      = keys;
+	}
+	else if (PerData & (PerDataAtVBlank ^ KEY_WORD_BITS))
+	{
 		PerRepeatTimer = -1;
-		PerRepeat = keys;
-	} else if(PerRepeatTimer > 0) {
+		PerRepeat      = keys;
+	}
+	else if (PerRepeatTimer > 0)
+	{
 		PerRepeatTimer--;
 	}
 	PerDataAtVBlank = keys;
@@ -407,23 +446,25 @@ void syVBlankHandler(void)
 	MixerEnter();
 }
 
-/* Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
-   else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode. */
+// Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything else loads
+// SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode.
 Sint32 sySoundLoadReverbCode(Sint32 code)
 {
 	Sint32 index;
 
 	index = code;
-	if(code < 0 || code >= SOUND_REVERB_CODE_COUNT) {
+	if (code < 0 || code >= SOUND_REVERB_CODE_COUNT)
+	{
 		index = 0;
 	}
 	syDMAXCopy(IwramSoundReverbCodes + index * SOUND_REVERB_CODE_SIZE,
-		IwramSoundReverbCode, DMA_COPY_WORDS(SOUND_REVERB_CODE_SIZE / 4),
-		REG_DMA3);
+	           IwramSoundReverbCode,
+	           DMA_COPY_WORDS(SOUND_REVERB_CODE_SIZE / 4),
+	           REG_DMA3);
 	return 0;
 }
 
-/* Unused: two empty functions after the reverb loader, which nothing calls. */
+// Unused: two empty functions after the reverb loader, which nothing calls.
 UNUSED void sySoundReservedNoOperationA(void)
 {
 }
@@ -432,11 +473,12 @@ UNUSED void sySoundReservedNoOperationB(void)
 {
 }
 
-/* The keypad interrupt, from the handler table: A+B+Select+Start was pressed,
-   so it sets ResetRequested for the tick loop and disarms the interrupt. */
+// The keypad interrupt, from the handler table: A+B+Select+Start was pressed, so it sets
+// ResetRequested for the tick loop and disarms the interrupt.
 void syInputHandleKeyInterrupt(void)
 {
-	if(SleepActive == 0) {
+	if (SleepActive == 0)
+	{
 		IO_WRITE16(KEYCNT_DISARMED, &REG_KEYCNT);
 		ResetRequested = 1;
 	}

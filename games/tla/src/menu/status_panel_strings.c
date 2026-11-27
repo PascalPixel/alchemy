@@ -1,4 +1,4 @@
-/* The status panel's labels, as each edition words them. */
+// The status panel's labels, as each edition words them.
 
 #include "edition.h"
 #include "types.h"
@@ -21,7 +21,7 @@ const Uint8 StatusPanelHpString[] = "HP";
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
 const Uint8 StatusPanelSlashString[] = "/";
-const Uint8 StatusPanelPpString[] = "PP";
+const Uint8 StatusPanelPpString[]    = "PP";
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE
 const Uint8 StatusPanelHpRowString[] = "HP    /";

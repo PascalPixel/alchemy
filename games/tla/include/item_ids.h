@@ -1,15 +1,15 @@
 #ifndef ALCHEMY_ITEM_IDS_H
 #define ALCHEMY_ITEM_IDS_H
 
-/* Item numbers, named from the English release. */
+// Item numbers, named from the English release.
 
-/* Item ids, one for each row of ItemDefinitionTable (item_table.c) in order,
-   named from the English release: an item's name is the message MsgItemName +
-   its id. Each kind of item leaves spare ids after its last, whose rows are
-   blank and whose names in the text are "?"; a kind's first id is written where
-   spares come before it. A row whose name repeats another's is named for what
-   sets it apart (ITEM_SPIRIT_GLOVES_UNUSED). */
-typedef enum ITEM_ID {
+// Item ids, one for each row of ItemDefinitionTable (item_table.c) in order, named from the English
+// release: an item's name is the message MsgItemName + its id. Each kind of item leaves spare ids
+// after its last, whose rows are blank and whose names in the text are "?"; a kind's first id is
+// written where spares come before it. A row whose name repeats another's is named for what sets it
+// apart (ITEM_SPIRIT_GLOVES_UNUSED).
+typedef enum ITEM_ID
+{
 	ITEM_NONE,
 	ITEM_LONG_SWORD,
 	ITEM_BROAD_SWORD,
@@ -173,7 +173,7 @@ typedef enum ITEM_ID {
 	ITEM_GRINDSTONE,
 	ITEM_HOVER_JADE,
 	ITEM_TELEPORT_LAPIS = 217,
-	ITEM_VENUS_STAR = 220,
+	ITEM_VENUS_STAR     = 220,
 	ITEM_MERCURY_STAR,
 	ITEM_MYTHRIL_BAG_MARS_STAR,
 	ITEM_MYTHRIL_BAG_JUPITER_STAR,
@@ -198,8 +198,8 @@ typedef enum ITEM_ID {
 	ITEM_BLACK_CRYSTAL,
 	ITEM_RED_KEY,
 	ITEM_BLUE_KEY,
-	/* A second plain Mythril Bag, its row ITEM_MYTHRIL_BAG's: nothing gives it,
-	   and scJupiterLighthouseCastTheJupiterStar takes it as the star leaves. */
+	// A second plain Mythril Bag, its row ITEM_MYTHRIL_BAG's: nothing gives it, and
+	// scJupiterLighthouseCastTheJupiterStar takes it as the star leaves.
 	ITEM_MYTHRIL_BAG_B,
 	ITEM_JUPITER_STAR,
 	ITEM_MARS_STAR,
@@ -266,7 +266,7 @@ typedef enum ITEM_ID {
 	ITEM_LACHESIS_RULE,
 	ITEM_CLOTHOS_DISTAFF,
 	ITEM_STAFF_OF_ANUBIS,
-	ITEM_TRIDENT = 326,
+	ITEM_TRIDENT      = 326,
 	ITEM_PLANET_ARMOR = 328,
 	ITEM_DRAGON_MAIL,
 	ITEM_CHRONOS_MAIL,
@@ -301,8 +301,7 @@ typedef enum ITEM_ID {
 	ITEM_BIG_BANG_GLOVES,
 	ITEM_CRAFTED_GLOVES,
 	ITEM_RIOT_GLOVES,
-	/* Unused: a second Spirit Gloves, raising PP by 20; no chest, shop, forge
-	   or foe gives it. */
+	// Unused: a second Spirit Gloves, raising PP by 20; no chest, shop, forge or foe gives it.
 	ITEM_SPIRIT_GLOVES_UNUSED,
 	ITEM_CLEAR_BRACELET = 368,
 	ITEM_MYTHRIL_ARMLET,
@@ -389,11 +388,11 @@ typedef enum ITEM_ID {
 	ITEM_MAGMA_BALL
 } ITEM_ID;
 
-/* An item cue's filter in place of one item (fdItemMatchesFilter): any weapon,
-   armor, shield or helm, the heavier items Trial Road's chests take. */
+// An item cue's filter in place of one item (fdItemMatchesFilter): any weapon, armor, shield or
+// helm, the heavier items Trial Road's chests take.
 #define ITEM_FILTER_HEAVY 510
-/* An item cue's filter in place of one item: any item, whatever is shown to
-   Moapa and his Knights in Shaman Village. */
-#define ITEM_FILTER_ANY	  511
+// An item cue's filter in place of one item: any item, whatever is shown to Moapa and his Knights
+// in Shaman Village.
+#define ITEM_FILTER_ANY   511
 
 #endif

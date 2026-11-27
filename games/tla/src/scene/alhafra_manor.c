@@ -1,9 +1,8 @@
-/* The mayor of Alhafra's manor, where the party stays as his guests once Briggs
-   is caught and hears in the night that Briggs has escaped
-   (scAlhafraManorBriggsEscapes), with other people about once the boat's mast
-   is cleared (FLAG_ALHAFRA_MAST_CLEARED). */
+// The mayor of Alhafra's manor, where the party stays as his guests once Briggs is caught and hears
+// in the night that Briggs has escaped (scAlhafraManorBriggsEscapes), with other people about once
+// the boat's mast is cleared (FLAG_ALHAFRA_MAST_CLEARED).
 
-/* This unit declares its own form of fdActorTakeLeaderLayer, below. */
+// This unit declares its own form of fdActorTakeLeaderLayer, below.
 #define OWN_fdActorTakeLeaderLayer
 
 #include "text/msg_ids.h"
@@ -13,76 +12,74 @@
 #include "field/script_inline.h"
 #include "graphics/palette_buffers.h"
 
-/* Talks each person gives once, the first time spoken to: Madra's mayor
-   complains of Alhafra's, Jiya defends him, and Alhafra's mayor tells of the
-   Eastern Sea. */
+// Talks each person gives once, the first time spoken to: Madra's mayor complains of Alhafra's,
+// Jiya defends him, and Alhafra's mayor tells of the Eastern Sea.
 #define FLAG_COMPLAINED_ABOUT_THE_MAYOR 0x8ba
-#define FLAG_DEFENDED_THE_MAYOR			0x8bb
-#define FLAG_TOLD_OF_THE_EASTERN_SEA	0x8bc
+#define FLAG_DEFENDED_THE_MAYOR         0x8bb
+#define FLAG_TOLD_OF_THE_EASTERN_SEA    0x8bc
 
-/* The manor's entrances its set-up tests or sets. */
-typedef enum ALHAFRA_MANOR_ENTRANCE {
-	/* The mayor's room, by its south door, where the party is left after Briggs
-	   escapes. */
-	ENTRANCE_MAYORS_ROOM = 8,
-	/* The watchtower, where the man gazing at Air's Rock stands. */
-	ENTRANCE_WATCHTOWER = 14,
-	/* Where Eastern Alhafra sends the party to see Briggs escape from the manor
-	   (scAlhafraManorBriggsEscapes). */
+// The manor's entrances its set-up tests or sets.
+typedef enum ALHAFRA_MANOR_ENTRANCE
+{
+	// The mayor's room, by its south door, where the party is left after Briggs escapes.
+	ENTRANCE_MAYORS_ROOM    = 8,
+	// The watchtower, where the man gazing at Air's Rock stands.
+	ENTRANCE_WATCHTOWER     = 14,
+	// Where Eastern Alhafra sends the party to see Briggs escape from the manor
+	// (scAlhafraManorBriggsEscapes).
 	ENTRANCE_BRIGGS_ESCAPES = 81,
-	/* Unused: no exit leads here. The camera pans west across the room and
-	   waits for a key, then the party enters again by
-	   ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW. */
-	ENTRANCE_PAN_WEST = 99
+	// Unused: no exit leads here. The camera pans west across the room and waits for a key, then
+	// the party enters again by ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW.
+	ENTRANCE_PAN_WEST       = 99
 } ALHAFRA_MANOR_ENTRANCE;
 
-/* The household and guests of ActorPlacements, while the mast lies fallen. */
-typedef enum ALHAFRA_MANOR_ACTOR_ID {
-	/* Jiya, the mayor's aide: "Milord, these things take time..." */
+// The household and guests of ActorPlacements, while the mast lies fallen.
+typedef enum ALHAFRA_MANOR_ACTOR_ID
+{
+	// Jiya, the mayor's aide: "Milord, these things take time..."
 	ACTOR_JIYA = ACTOR_FIRST_PLACED,
-	/* Alhafra's mayor, who plans a sailing ship to trade across the sea. */
+	// Alhafra's mayor, who plans a sailing ship to trade across the sea.
 	ACTOR_MAYOR,
-	/* "You should go to the watchtower and gaze southward." */
+	// "You should go to the watchtower and gaze southward."
 	ACTOR_BOY_ON_THE_WATCHTOWER = ACTOR_FIRST_PLACED + 2,
-	/* Who asks what the party thinks of Alhafra; her thought: "Why do they
-	   always tell me to send adventure-seekers to South Osenia?" */
+	// Who asks what the party thinks of Alhafra; her thought: "Why do they always tell me to send
+	// adventure-seekers to South Osenia?"
 	ACTOR_WOMAN_ON_SOUTH_OSENIA,
-	/* "Our town was rife with pirates until just recently." */
+	// "Our town was rife with pirates until just recently."
 	ACTOR_WOMAN_ON_THE_PIRATES,
-	/* "The mountains to the east of Alhafra are the Balloo Range." */
+	// "The mountains to the east of Alhafra are the Balloo Range."
 	ACTOR_OLD_WOMAN_ON_THE_BALLOO_RANGE,
-	/* "Lookee here! Can't you see Air's Rock..."
-	   (scAlhafraManorPointOutAirsRock) */
+	// "Lookee here! Can't you see Air's Rock..." (scAlhafraManorPointOutAirsRock)
 	ACTOR_MAN_GAZING_AT_AIRS_ROCK = ACTOR_FIRST_PLACED + 6,
-	/* "I'd been saying Indra wasn't in the right place for some time now." */
+	// "I'd been saying Indra wasn't in the right place for some time now."
 	ACTOR_OLD_MAN_ON_INDRA,
-	/* Who asks whether the party are the heroes; her thought: "I wish someone
-	   would go do something about that cursed village south of us." */
+	// Who asks whether the party are the heroes; her thought: "I wish someone would go do something
+	// about that cursed village south of us."
 	ACTOR_WOMAN_ON_THE_CURSED_VILLAGE,
-	/* "I heard the pirates talking about the warriors who beat them." */
+	// "I heard the pirates talking about the warriors who beat them."
 	ACTOR_GIRL_ON_THE_WARRIORS,
 	ACTOR_MADRAS_MAYOR,
 	ACTOR_MADRAS_ELDER
 } ALHAFRA_MANOR_ACTOR_ID;
 
-/* Who is in the manor the night Briggs escapes, once the mast is cleared
-   (AlhafraManorActorPlacementsOnceTheMastIsCleared, Jiya and the mayor first
-   as before). */
-typedef enum ALHAFRA_MANOR_ONCE_THE_MAST_IS_CLEARED_ACTOR_ID {
-	/* "Briggs destroyed the prison and escaped with his pirates!" */
+// Who is in the manor the night Briggs escapes, once the mast is cleared
+// (AlhafraManorActorPlacementsOnceTheMastIsCleared, Jiya and the mayor first as before).
+typedef enum ALHAFRA_MANOR_ONCE_THE_MAST_IS_CLEARED_ACTOR_ID
+{
+	// "Briggs destroyed the prison and escaped with his pirates!"
 	ACTOR_JAIL_GUARD = ACTOR_FIRST_PLACED + 3,
-	/* "Mayor! The mast has been raised!" */
+	// "Mayor! The mast has been raised!"
 	ACTOR_WORKER,
 	ACTOR_KRADEN
 } ALHAFRA_MANOR_ONCE_THE_MAST_IS_CLEARED_ACTOR_ID;
 
-void scAlhafraManorBriggsEscapes(void);
-void scAlhafraManorKeepToTheLeadersLayer(void);
+void                  scAlhafraManorBriggsEscapes(void);
+void                  scAlhafraManorKeepToTheLeadersLayer(void);
 
-void scAlhafraManorComplainAboutTheMayor(void);
+void                  scAlhafraManorComplainAboutTheMayor(void);
 
-void scAlhafraManorDefendTheMayor(void);
-void scAlhafraManorTellOfTheEasternSea(void);
+void                  scAlhafraManorDefendTheMayor(void);
+void                  scAlhafraManorTellOfTheEasternSea(void);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -104,35 +101,36 @@ extern ACTOR_PLACE AlhafraManorActorPlacementsOnceTheMastIsCleared[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	if(syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED))
+	if (syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED))
 		return AlhafraManorActorPlacementsOnceTheMastIsCleared;
 	return ActorPlacements;
 }
 
-/* The woman who asks what the party thinks of Alhafra, and answers yes or
-   no. */
+// The woman who asks what the party thinks of Alhafra, and answers yes or no.
 void scAlhafraManorAskAboutAlhafra(Sint32 actor)
 {
 	Sint32 msg = (Sint32)&MsgAlhafraManorWhatDoYouThinkOf;
 
 	fdScriptSetMessageId(msg);
-	/* "What do you think of Alhafra? Have you taken a fancy to it?" */
+	// "What do you think of Alhafra? Have you taken a fancy to it?"
 	fdMessageShowAtActor(actor, 0);
-	if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) == 0)
+	{
 		fdScriptWait(10);
-		/* Yes: "Then you are welcome to stay here and relax for as long as you
-		   please..." */
+		// Yes: "Then you are welcome to stay here and relax for as long as you please..."
 		fdScriptSetMessageId(msg + 1);
-	} else {
+	}
+	else
+	{
 		fdScriptWait(20);
-		/* No: "Then why don't you follow your feet to the south?..." */
+		// No: "Then why don't you follow your feet to the south?..."
 		fdScriptSetMessageId(msg + 2);
 	}
 	fdScriptShowMessageAndWait(actor, 0);
 }
 
-/* The man gazing south asks whether the party can see Air's Rock; on a yes the
-   leader steps up beside him and the world map shows it. */
+// The man gazing south asks whether the party can see Air's Rock; on a yes the leader steps up
+// beside him and the world map shows it.
 void scAlhafraManorPointOutAirsRock(Sint32 actor)
 {
 	Sint32 msg = (Sint32)&MsgAlhafraManorLookeeHereCantYouSee;
@@ -140,51 +138,52 @@ void scAlhafraManorPointOutAirsRock(Sint32 actor)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId(msg);
-	/* "Lookee here! Can't you see Air's Rock out there?" */
+	// "Lookee here! Can't you see Air's Rock out there?"
 	fdMessageShowAtActor(actor, 0);
-	if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) == 0)
+	{
 		fdScriptWait(20);
 		fdActorWatchAndSetScript(actor, MainRoutineStateWork.leaderActorId);
 		fdActorWalkToAndWaitById(MainRoutineStateWork.leaderActorId, 760, 320);
-		fdActorFaceDirection(
-			ACTOR_MAN_GAZING_AT_AIRS_ROCK, FACING_SOUTH_SOUTHWEST, 0);
-		fdActorFaceDirectionById(
-			MainRoutineStateWork.leaderActorId, FACING_SOUTH, 0);
+		fdActorFaceDirection(ACTOR_MAN_GAZING_AT_AIRS_ROCK, FACING_SOUTH_SOUTHWEST, 0);
+		fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_SOUTH, 0);
 		fdScriptWait(10);
 		fdScriptSetDestination(SCENE_WORLD_MAP, WORLD_MAP_ALHAFRA_MANOR_VIEW);
-	} else {
+	}
+	else
+	{
 		fdScriptSetMessageId(msg + 2);
-		/* No: "Oh... I guess today is a bit cloudier than usual..." */
+		// No: "Oh... I guess today is a bit cloudier than usual..."
 		fdScriptShowMessageAndWait(actor, 0);
 	}
 	fdScriptEnd();
 }
 
-/* The woman who asks whether the party are the heroes who beat the pirates, and
-   answers yes or no. */
+// The woman who asks whether the party are the heroes who beat the pirates, and answers yes or no.
 void scAlhafraManorAskIfTheHeroes(Sint32 actor)
 {
 	Sint32 msg = (Sint32)&MsgAlhafraManorAreYouTheBraveHero;
 
 	fdScriptSetMessageId(msg);
-	/* "Are you the brave hero who defeated the pirates?" */
+	// "Are you the brave hero who defeated the pirates?"
 	fdMessageShowAtActor(actor, 0);
-	if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) == 0)
+	{
 		fdScriptWait(10);
-		/* Yes: "Well, I wonder if even a hero like you can stand up against a
-		   creature..." */
+		// Yes: "Well, I wonder if even a hero like you can stand up against a creature..."
 		fdScriptSetMessageId(msg + 1);
-	} else {
+	}
+	else
+	{
 		fdScriptWait(20);
-		/* No: "I know you're the one who beat the pirates... Don't try to act
-		   humble..." */
+		// No: "I know you're the one who beat the pirates... Don't try to act humble..."
 		fdScriptSetMessageId(msg + 2);
 	}
 	fdScriptShowMessageAndWait(actor, 0);
 }
 
-/* Talking to the mayor of Madra, or reading his mind, once: he complains that
-   Alhafra's mayor never meant to fix the mast. */
+// Talking to the mayor of Madra, or reading his mind, once: he complains that Alhafra's mayor never
+// meant to fix the mast.
 void scAlhafraManorComplainAboutTheMayor(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
@@ -193,26 +192,24 @@ void scAlhafraManorComplainAboutTheMayor(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)&MsgAlhafraManorDarnThatMayor);
-	if(state->psynergy != 0)
-		fdActorShowEmote(
-			ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-	fdActorFaceActorById(
-		ACTOR_MADRAS_MAYOR, MainRoutineStateWork.leaderActorId, 0);
+	if (state->psynergy != 0)
+		fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+	fdActorFaceActorById(ACTOR_MADRAS_MAYOR, MainRoutineStateWork.leaderActorId, 0);
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
-	/* "Darn that mayor..." */
+	// "Darn that mayor..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "I thought he'd get that mast fixed up for us right away..." */
+	// "I thought he'd get that mast fixed up for us right away..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_MAYOR, 4);
-	/* "I'm starting to think the mayor of Alhafra never planned on..." */
+	// "I'm starting to think the mayor of Alhafra never planned on..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdScriptEnd();
 }
 
-/* Talking to Jiya, or reading his mind, once: he explains why the mayor keeps
-   the pirates' money for Alhafra's own repairs. */
+// Talking to Jiya, or reading his mind, once: he explains why the mayor keeps the pirates' money
+// for Alhafra's own repairs.
 void scAlhafraManorDefendTheMayor(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
@@ -221,55 +218,50 @@ void scAlhafraManorDefendTheMayor(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)&MsgAlhafraManorImSureTheMayorHas);
-	if(state->psynergy != 0)
+	if (state->psynergy != 0)
 		fdActorShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 	fdActorWatchAndSetScript(ACTOR_JIYA, MainRoutineStateWork.leaderActorId);
 	fdActorWalkToAndWaitById(MainRoutineStateWork.leaderActorId, 304, 152);
 	fdActorFaceDirectionById(ACTOR_JIYA, FACING_EAST, 0);
-	fdActorFaceDirectionById(
-		MainRoutineStateWork.leaderActorId, FACING_WEST, 0);
+	fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_WEST, 0);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_JIYA, 2);
 	fdScriptWait(10);
-	/* "I'm sure the mayor has his reasons for halting repairs on the..." */
+	// "I'm sure the mayor has his reasons for halting repairs on the..."
 	syFieldScriptShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_JIYA, 3);
 	fdScriptWait(10);
-	/* "The mayor feels that Madra should only get back what was stolen
-	   from..." */
+	// "The mayor feels that Madra should only get back what was stolen from..."
 	syFieldScriptShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_JIYA, 2);
 	fdScriptWait(10);
-	/* "But now, it seems the Madrans are getting the better end of the
-	   deal..." */
+	// "But now, it seems the Madrans are getting the better end of the deal..."
 	syFieldScriptShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_JIYA, FACING_NORTHEAST, 0);
 	fdScriptWait(50);
 	fdActorFaceDirectionById(ACTOR_JIYA, FACING_EAST, 0);
 	fdScriptWait(10);
-	/* "The mayor thinks it unfair that Madra should benefit while
-	   Alhafra..." */
+	// "The mayor thinks it unfair that Madra should benefit while Alhafra..."
 	syFieldScriptShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_JIYA, 2);
 	fdScriptWait(10);
-	/* "That's why he's keeping the pirates' money and using it to repair..." */
+	// "That's why he's keeping the pirates' money and using it to repair..."
 	syFieldScriptShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_JIYA, 4);
-	/* "If Madra wants their boat fixed, then they can just pay us to
-	   have..." */
+	// "If Madra wants their boat fixed, then they can just pay us to have..."
 	fdScriptShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
 	fdScriptEnd();
 }
 
-/* Talking to Alhafra's mayor, or reading his mind, once: he tells of the towns
-   Briggs speaks of across the eastern sea. */
+// Talking to Alhafra's mayor, or reading his mind, once: he tells of the towns Briggs speaks of
+// across the eastern sea.
 void scAlhafraManorTellOfTheEasternSea(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	if(state->psynergy != 0) {
-		fdActorFaceActorById(
-			ACTOR_MAYOR, MainRoutineStateWork.leaderActorId, 0);
+	if (state->psynergy != 0)
+	{
+		fdActorFaceActorById(ACTOR_MAYOR, MainRoutineStateWork.leaderActorId, 0);
 		fdScriptWait(10);
 	}
 	syGameFlagSet(FLAG_TOLD_OF_THE_EASTERN_SEA);
@@ -279,56 +271,54 @@ void scAlhafraManorTellOfTheEasternSea(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_MAYOR, 2);
 	fdScriptWait(10);
-	/* "Briggs tells me there are huge towns on a continent that lies
-	   across..." */
+	// "Briggs tells me there are huge towns on a continent that lies across..."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MAYOR, 3);
 	fdScriptWait(10);
-	/* "He tells me that, by trading with one another, all of these towns..." */
+	// "He tells me that, by trading with one another, all of these towns..."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorFaceDirectionById(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
 	fdScriptWait(30);
-	/* "I've made a decision... If Alhafra is to prosper, then we must..." */
+	// "I've made a decision... If Alhafra is to prosper, then we must..."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorFaceActorById(ACTOR_MAYOR, MainRoutineStateWork.leaderActorId, 0);
 	fdScriptWait(20);
-	/* "I'm going to build an entire trade fleet and make lots of money!" */
+	// "I'm going to build an entire trade fleet and make lots of money!"
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-	/* "Still...there must be other pirates and freebooters still roaming..." */
+	// "Still...there must be other pirates and freebooters still roaming..."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 20);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-	/* "Felix, Briggs told me you and your friends fought with great
-	   strength." */
+	// "Felix, Briggs told me you and your friends fought with great strength."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MAYOR, 4);
-	/* "If you could lend me that strength, we would need not fear any
-	   pirates." */
+	// "If you could lend me that strength, we would need not fear any pirates."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MAYOR, 3);
 	fdScriptWait(10);
-	/* "So if you'd just be willing to help us out, our town could begin..." */
+	// "So if you'd just be willing to help us out, our town could begin..."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_MAYOR, 2);
 	fdScriptWait(10);
-	/* "What do you say? Do we have a deal?" Yes: "Great! Why don't you just
-	   stay here in Alhafra..." No: "Ah, such a pity that you don't see the
-	   potential..." */
+	// "What do you say? Do we have a deal?" Yes: "Great! Why don't you just stay here in
+	// Alhafra..." No: "Ah, such a pity that you don't see the potential..."
 	fdMessageShowAtActor(ACTOR_MAYOR, 0);
-	if(fdScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0)
+	{
 		fdScriptWait(20);
-		/* "Great! Why don't you just stay here in Alhafra until we're ready
-		   for..." */
+		// "Great! Why don't you just stay here in Alhafra until we're ready for..."
 		fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 		FieldStateWork->msg++;
-	} else {
+	}
+	else
+	{
 		fdScriptWait(30);
 		FieldStateWork->msg++;
-		/* "Ah, such a pity that you don't see the potential of this..." */
+		// "Ah, such a pity that you don't see the potential of this..."
 		fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	}
 	fdScriptEnd();
-	if(state->psynergy != 0)
+	if (state->psynergy != 0)
 		fdActorFaceDirection(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
 }
 
@@ -339,52 +329,47 @@ const CUE *scGetCues(void)
 
 Sint32 scInit(void)
 {
-	FIXED	cameraY = -1;
-	FIXED	cameraZ = toFIXED(320);
+	FIXED   cameraY = -1;
+	FIXED   cameraZ = toFIXED(320);
 	Sint16 *entrance;
 
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fdActorGetById(ACTOR_OLD_MAN_ON_INDRA)->update =
-		scAlhafraManorKeepToTheLeadersLayer;
-	if(MainRoutineStateWork.entrance == ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW) {
-		MainRoutineStateWork.entrance = MainRoutineStateWork.returnEntrance =
-			ENTRANCE_WATCHTOWER;
-		fdActorFaceDirectionById(
-			ACTOR_MAN_GAZING_AT_AIRS_ROCK, FACING_SOUTH_SOUTHWEST, 0);
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	fdActorGetById(ACTOR_OLD_MAN_ON_INDRA)->update = scAlhafraManorKeepToTheLeadersLayer;
+	if (MainRoutineStateWork.entrance == ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW)
+	{
+		MainRoutineStateWork.entrance = MainRoutineStateWork.returnEntrance = ENTRANCE_WATCHTOWER;
+		fdActorFaceDirectionById(ACTOR_MAN_GAZING_AT_AIRS_ROCK, FACING_SOUTH_SOUTHWEST, 0);
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
 		fdScriptWait(10);
 		fdScriptSetMessageId((Sint32)&MsgAlhafraManorFromHereItJustLooks);
-		/* "From here, it just looks like a regular old rock, but from up
-		   close..." */
+		// "From here, it just looks like a regular old rock, but from up close..."
 		fdScriptShowMessageAndWait(ACTOR_MAN_GAZING_AT_AIRS_ROCK, 0);
 		syGameFlagClear(FLAG_SHOW_AREA_NAME);
 	}
 	entrance = &MainRoutineStateWork.entrance;
-	if(*entrance == ENTRANCE_BRIGGS_ESCAPES) {
-		MainRoutineStateWork.entrance = MainRoutineStateWork.returnEntrance =
-			ENTRANCE_MAYORS_ROOM;
+	if (*entrance == ENTRANCE_BRIGGS_ESCAPES)
+	{
+		MainRoutineStateWork.entrance = MainRoutineStateWork.returnEntrance = ENTRANCE_MAYORS_ROOM;
 		scAlhafraManorBriggsEscapes();
 	}
-	if(!syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED) &&
-		syGameFlagGet(FLAG_GABOMBA_MESSAGE_CARRIED)) {
+	if (!syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED) && syGameFlagGet(FLAG_GABOMBA_MESSAGE_CARRIED))
+	{
 		fdActorSetPos(ACTOR_MADRAS_MAYOR, 0, 0);
 		fdActorSetPos(ACTOR_MADRAS_ELDER, 0, 0);
 	}
-	if(MainRoutineStateWork.entrance == ENTRANCE_PAN_WEST) {
+	if (MainRoutineStateWork.entrance == ENTRANCE_PAN_WEST)
+	{
 		fdCameraMoveWithinMapBounds(toFIXED(304), cameraY, cameraZ, 0);
-		FieldStateWork->transition =
-			SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
 		fdScriptWait(10);
 		fdCameraSetSpeed(2);
 		fdCameraMoveWithinMapBounds(toFIXED(144), cameraY, cameraZ, 1);
-		while(PerWork.data == 0)
+		while (PerWork.data == 0)
 			sySynch(1);
-		fdScriptSetDestination(
-			SCENE_ALHAFRA_MANOR, ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW);
+		fdScriptSetDestination(SCENE_ALHAFRA_MANOR, ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW);
 	}
 	return 0;
 }
@@ -394,29 +379,28 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-/* Counts one more weird answer Felix gives (fdScriptCountAnswer, through the
-   overlay's own import row). */
+// Counts one more weird answer Felix gives (fdScriptCountAnswer, through the overlay's own import
+// row).
 void scAlhafraManorCountAnswer(void);
 
-/* Walks actor `id` to the controlled character's metatile, when it has one. */
-#define WALK_TO_LEADER(id) \
-	{ \
-		ACTOR *leader_; \
-		fdActorSetSpeed((id), 1.2); \
-		fdActorSetAnimationById((id), 2); \
-		leader_ = fdActorGetById(MainRoutineStateWork.leaderActorId); \
-		if(leader_ != 0) \
-			fdActorSetDestinationById( \
-				(id), leader_->x.part[0].integer, leader_->z.part[0].integer); \
-		fdActorWaitForMoveById((id)); \
-		fdActorSetPos((id), 0, 0); \
+// Walks actor `id` to the controlled character's metatile, when it has one.
+#define WALK_TO_LEADER(id)                                                                         \
+	{                                                                                              \
+		ACTOR *leader_;                                                                            \
+		fdActorSetSpeed((id), 1.2);                                                                \
+		fdActorSetAnimationById((id), 2);                                                          \
+		leader_ = fdActorGetById(MainRoutineStateWork.leaderActorId);                              \
+		if (leader_ != 0)                                                                          \
+			fdActorSetDestinationById(                                                             \
+				(id), leader_->x.part[0].integer, leader_->z.part[0].integer);                     \
+		fdActorWaitForMoveById((id));                                                              \
+		fdActorSetPos((id), 0, 0);                                                                 \
 	}
 
-/* The night at the mayor's manor: the party thanks the mayor for his house,
-   Jenna and Sheba doubt he will hand the boat over to Madra, the mayor asks
-   Jiya after the repairs, and a guard runs in with news: Briggs has escaped.
-   Felix saying yes to going after Briggs for the mayor counts among his weird
-   answers. */
+// The night at the mayor's manor: the party thanks the mayor for his house, Jenna and Sheba doubt
+// he will hand the boat over to Madra, the mayor asks Jiya after the repairs, and a guard runs in
+// with news: Briggs has escaped. Felix saying yes to going after Briggs for the mayor counts among
+// his weird answers.
 void scAlhafraManorBriggsEscapes(void)
 {
 	fdScriptStart();
@@ -432,47 +416,41 @@ void scAlhafraManorBriggsEscapes(void)
 	fdScriptWait(30);
 	fdCameraMoveTo(344, CAMERA_KEEP, 120, 0);
 	FieldStateWork->transitionFrame = 60;
-	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	FieldStateWork->transition      = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, 3);
 	fdScriptWait(20);
-	/* "Thank you again, Mayor. You keep a fine house." */
+	// "Thank you again, Mayor. You keep a fine house."
 	fdScriptShowMessageThenWait(ACTOR_KRADEN, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MAYOR, 4);
-	/* "Don't be silly. You've done us a great deed." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+	// "Don't be silly. You've done us a great deed."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-	/* "It was the least I could do." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+	// "It was the least I could do."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
 	fdScriptWait(20);
-	/* "Even if he gets the boat fixed, I don't think he's going to hand
-	   it..." */
+	// "Even if he gets the boat fixed, I don't think he's going to hand it..."
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_JENNA, FACING_SOUTHWEST, 0);
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
 	fdScriptWait(20);
-	/* "I agree... He's being way too nice for me not to be a little..." */
+	// "I agree... He's being way too nice for me not to be a little..."
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
 	fdActorFaceDirection(ACTOR_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(20);
-	/* "I'm sorry, did you girls have something you'd like to share with us?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+	// "I'm sorry, did you girls have something you'd like to share with us?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
 	fdActorStartRepeatedMotion(ACTOR_SHEBA, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorStartRepeatedMotion(ACTOR_JENNA, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
@@ -482,9 +460,8 @@ void scAlhafraManorBriggsEscapes(void)
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_MAYOR, 3);
 	fdScriptWait(20);
-	/* "I see!" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+	// "I see!"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
 	fdActorFaceDirection(ACTOR_MAYOR, FACING_WEST, 0);
 	fdScriptWait(40);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -506,8 +483,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
 	fdActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
 	fdActorStartRepeatedMotion(ACTOR_MAYOR, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_MAYOR, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_MAYOR, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
@@ -519,11 +495,9 @@ void scAlhafraManorBriggsEscapes(void)
 	fdScriptWait(35);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
 	fdActorStartRepeatedMotion(ACTOR_SHEBA, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_SHEBA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorStartRepeatedMotion(ACTOR_JENNA, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(60);
 	fdActorSetAnimationAndWait(ACTOR_MAYOR, 3);
 	fdScriptWait(30);
@@ -554,18 +528,18 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorFaceDirection(ACTOR_MAYOR, FACING_SOUTHEAST, 0);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-	/* "Jiya, how are the repairs coming along? Things seem to be moving..." */
+	// "Jiya, how are the repairs coming along? Things seem to be moving..."
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 45);
 	fdActorWalkByAndWait(ACTOR_JIYA, -16, 0);
 	fdActorFaceDirection(ACTOR_JIYA, FACING_NORTHWEST, 0);
 	fdScriptWait(10);
-	/* "Milord, these things take time..." */
+	// "Milord, these things take time..."
 	fdScriptShowMessageThenWait(ACTOR_JIYA, 0, 20);
 	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorSetPos(ACTOR_JAIL_GUARD, 344, 176);
 	fdActorWalkByAndWait(ACTOR_JAIL_GUARD, 0, -16);
-	/* "Sir, there's a problem!" */
+	// "Sir, there's a problem!"
 	fdScriptShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
@@ -576,7 +550,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorFaceDirection(ACTOR_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_JIYA, FACING_WEST, 0);
 	fdScriptWait(20);
-	/* "Calm down, man! You're a soldier! What are you so flustered about!?" */
+	// "Calm down, man! You're a soldier! What are you so flustered about!?"
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorSetSpeed(ACTOR_JAIL_GUARD, 1.8);
 	fdActorWalkByAndWait(ACTOR_JAIL_GUARD, 16, -24);
@@ -587,7 +561,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorFaceDirection(ACTOR_JAIL_GUARD, FACING_NORTH_NORTHEAST, 0);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_JAIL_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-	/* "Briggs destroyed the prison and escaped with his pirates!" */
+	// "Briggs destroyed the prison and escaped with his pirates!"
 	fdScriptShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
 	sySoundPlay(MUS_BATTLE_JENNA);
 	fdActorShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -598,26 +572,24 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorShowEmoteById(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-	/* "What, were you asleep while this was going on?" */
+	// "What, were you asleep while this was going on?"
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_JAIL_GUARD, 4);
-	/* "Don't... Don't be silly!" */
+	// "Don't... Don't be silly!"
 	fdScriptShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
 	fdActorShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-	/* "How could Briggs possibly break out of our prison? It's one of
-	   the..." */
+	// "How could Briggs possibly break out of our prison? It's one of the..."
 	fdScriptShowMessageThenWait(ACTOR_JIYA, 0, 10);
 	fdActorShowEmoteById(ACTOR_JAIL_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
 	fdActorFaceDirectionById(ACTOR_JAIL_GUARD, FACING_EAST, 0);
 	fdScriptWait(10);
-	/* "I don't know what happened, but before I knew it, they'd smashed
-	   a..." */
+	// "I don't know what happened, but before I knew it, they'd smashed a..."
 	fdScriptShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 20);
 	fdActorSetPos(ACTOR_WORKER, 344, 176);
 	fdActorWalkByAndWait(ACTOR_WORKER, 0, -16);
 	fdScriptWait(10);
 	fdActorShowEmoteById(ACTOR_WORKER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-	/* "Mayor! The mast has been raised!" */
+	// "Mayor! The mast has been raised!"
 	fdScriptShowMessageThenWait(ACTOR_WORKER, 0, 10);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
@@ -637,47 +609,46 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorFaceDirection(ACTOR_WORKER, FACING_NORTH_NORTHEAST, 0);
 	fdScriptWait(30);
 	fdActorShowEmoteById(ACTOR_WORKER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-	/* "Hey, what's up?" */
+	// "Hey, what's up?"
 	fdScriptShowMessageThenWait(ACTOR_WORKER, 0, 10);
 	fdActorFaceDirection(ACTOR_JAIL_GUARD, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(30);
 	fdActorShowEmoteById(ACTOR_WORKER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
 	fdActorWalkByAndWait(ACTOR_WORKER, 0, -8);
 	fdScriptWait(10);
-	/* "Wait, you're supposed to be guarding the prisoners... What happened?" */
+	// "Wait, you're supposed to be guarding the prisoners... What happened?"
 	fdScriptShowMessageThenWait(ACTOR_WORKER, 0, 10);
 	fdActorShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-	/* "It appears that Briggs has escaped." */
+	// "It appears that Briggs has escaped."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorShowEmoteById(ACTOR_WORKER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	/* "That's no good..." */
+	// "That's no good..."
 	fdScriptShowMessageThenWait(ACTOR_WORKER, 0, 10);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_JIYA, 2);
 	fdScriptWait(10);
-	/* "What are you standing around for!? Search the area! Find Briggs at
-	   once!" */
+	// "What are you standing around for!? Search the area! Find Briggs at once!"
 	fdScriptShowMessageThenWait(ACTOR_WORKER, 0, 10);
 	fdActorFaceDirectionById(ACTOR_JAIL_GUARD, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_WORKER, FACING_EAST, 0);
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_JAIL_GUARD, 2);
 	fdScriptWait(10);
-	/* "It...might not be quite that easy..." */
+	// "It...might not be quite that easy..."
 	fdScriptShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
 	fdActorFaceDirection(ACTOR_JAIL_GUARD, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_WORKER, FACING_NORTH_NORTHEAST, 0);
 	fdScriptWait(35);
 	fdActorRunRepeatedMotion(ACTOR_WORKER, 2);
 	fdScriptWait(10);
-	/* "He is a pirate, after all... A famous one!" */
+	// "He is a pirate, after all... A famous one!"
 	fdScriptShowMessageThenWait(ACTOR_WORKER, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_JAIL_GUARD, 3);
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_WORKER, 3);
 	fdScriptWait(30);
 	fdActorShowEmoteById(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-	/* "Enough of that! Move it!" */
+	// "Enough of that! Move it!"
 	fdScriptShowMessageThenWait(ACTOR_JIYA, 0, 10);
 	fdActorJump(ACTOR_WORKER, 6, 0);
 	fdActorJump(ACTOR_JAIL_GUARD, 6, 25);
@@ -697,7 +668,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorFaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
 	fdScriptWait(20);
-	/* "Regardless, I'm going to go inspect my boat..." */
+	// "Regardless, I'm going to go inspect my boat..."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	fdActorSetSpeed(ACTOR_MAYOR, 1);
 	fdActorSetSpeed(ACTOR_JIYA, 1);
@@ -716,14 +687,12 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorStop(ACTOR_JENNA);
 	fdActorStop(ACTOR_SHEBA);
 	fdActorShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-	/* "Oh, and Felix and his crew were there, too, weren't they?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+	// "Oh, and Felix and his crew were there, too, weren't they?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
 	fdActorFaceDirectionById(ACTOR_MAYOR, FACING_NORTH_NORTHWEST, 0);
 	fdScriptWait(20);
-	/* "I treated you like an honored guest in my home..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+	// "I treated you like an honored guest in my home..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
 	fdActorFaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
@@ -731,10 +700,8 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(50);
 	fdActorShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-	/* "Usually, one feels a certain obligation to those who do them such
-	   a..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+	// "Usually, one feels a certain obligation to those who do them such a..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
@@ -743,17 +710,17 @@ void scAlhafraManorBriggsEscapes(void)
 	fdScriptWait(35);
 	fdActorRunRepeatedMotion(ACTOR_MAYOR, 2);
 	fdScriptWait(10);
-	/* "So, don't just stand there! Return the favor and find me Briggs!" */
+	// "So, don't just stand there! Return the favor and find me Briggs!"
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
 	fdActorWalkByAndWaitById(ACTOR_JIYA, -32, 0);
 	fdScriptWait(10);
 	fdActorJump(ACTOR_JIYA, 6, 15);
 	fdActorJump(ACTOR_JIYA, 6, 23);
-	/* "Come on! Hurry up! Let's go! Move it!" */
+	// "Come on! Hurry up! Let's go! Move it!"
 	fdScriptShowMessageThenWait(ACTOR_JIYA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
 	fdScriptWait(20);
-	/* "Let's go see the boat." */
+	// "Let's go see the boat."
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
 	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorFaceDirectionById(ACTOR_JIYA, FACING_SOUTH_SOUTHWEST, 0);
@@ -770,11 +737,10 @@ void scAlhafraManorBriggsEscapes(void)
 	fdScriptWait(30);
 	gmPlayMusic();
 	fdActorShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-	/* "The mayor of Alhafra certainly does know how to look out for his
-	   own..." */
+	// "The mayor of Alhafra certainly does know how to look out for his own..."
 	fdScriptShowMessageThenWait(ACTOR_PIERS, 0, 10);
 	fdActorShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-	/* "That's one way of putting it!" */
+	// "That's one way of putting it!"
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_JENNA, FACING_NORTH, 0);
 	fdScriptWait(20);
@@ -783,42 +749,40 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorFaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(20);
-	/* "Well, so what do we do? Do we go after Briggs?" Yes: "Don't feel like
-	   you have to do them any favors!" No: "That's right! Why should we help
-	   the mayor..." */
+	// "Well, so what do we do? Do we go after Briggs?" Yes: "Don't feel like you have to do them
+	// any favors!" No: "That's right! Why should we help the mayor..."
 	fdMessageShowAtActor(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-	if(fdScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+	if (fdScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0)
+	{
 		scAlhafraManorCountAnswer();
 		fdScriptWait(30);
 		fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
-		/* "Don't feel like you have to do them any favors!" */
+		// "Don't feel like you have to do them any favors!"
 		fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 		(FieldStateWork->msg)++;
-	} else {
+	}
+	else
+	{
 		fdScriptWait(40);
 		fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 		fdScriptWait(10);
 		(FieldStateWork->msg)++;
-		/* "That's right! Why should we help the mayor, after the way he
-		   treated..." */
+		// "That's right! Why should we help the mayor, after the way he treated..."
 		fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	}
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, 3);
 	fdScriptWait(10);
-	/* "Felix can decide for himself what to do..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
+	// "Felix can decide for himself what to do..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
 	fdActorFaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
 	fdScriptWait(30);
 	fdActorShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-	/* "At the very least, I want to go see the sailing ship now that
-	   it's..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
+	// "At the very least, I want to go see the sailing ship now that it's..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, 3);
 	fdScriptWait(10);
-	/* "Let's just go outside and take a quick look." */
+	// "Let's just go outside and take a quick look."
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
 	fdActorSetAnimationById(ACTOR_FELIX, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_SHEBA, ANIM_NOD);
@@ -832,17 +796,15 @@ void scAlhafraManorBriggsEscapes(void)
 	fdCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
 	fdScriptEnd();
 	FieldStateWork->transitionFrame = 16;
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	FieldStateWork->transition      = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	syGameFlagClear(FLAG_SHOW_AREA_NAME);
 }
 
-/* The ROM's caller here is compiled against this form, which takes nothing and
-   returns nothing where the definition takes the actor and returns an
-   Sint32. */
+// The ROM's caller here is compiled against this form, which takes nothing and returns nothing
+// where the definition takes the actor and returns an Sint32.
 void fdActorTakeLeaderLayer(void);
 
-/* The old man's update: he takes the party leader's display layer. */
+// The old man's update: he takes the party leader's display layer.
 void scAlhafraManorKeepToTheLeadersLayer(void)
 {
 	fdActorTakeLeaderLayer();
@@ -850,19 +812,30 @@ void scAlhafraManorKeepToTheLeadersLayer(void)
 
 SCENE_ENTRANCE SceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW, CONDITION_ALWAYS, 760, 0, 320,
-		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-	{ENTRANCE_BRIGGS_ESCAPES, CONDITION_ALWAYS, 312, 0, 120, FACING_NORTHEAST,
-		0, 224, 16, 464, 192, 0},
-	{ENTRANCE_PAN_WEST, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1,
-		-1, -1, 0},
+	{ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW,
+     CONDITION_ALWAYS, 760,
+     0, 320,
+     FACING_SOUTH, 0,
+     -1,
+     -1,
+     -1,
+     -1,
+     0},
+	{ENTRANCE_BRIGGS_ESCAPES,
+     CONDITION_ALWAYS, 312,
+     0, 120,
+     FACING_NORTHEAST, 0,
+     224, 16,
+     464, 192,
+     0},
+	{ENTRANCE_PAN_WEST, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
 Uint32 SceneExits[] = {
 	SCENE_EXITS(AlhafraManor),
-	SCENE_EXIT_UNLESS(ALHAFRA_MANOR_TO_ALHAFRA, Alhafra,
-		ALHAFRA_FROM_ALHAFRA_MANOR, EXIT_FLAG_NONE),
+	SCENE_EXIT_UNLESS(
+		ALHAFRA_MANOR_TO_ALHAFRA, Alhafra, ALHAFRA_FROM_ALHAFRA_MANOR, EXIT_FLAG_NONE),
 	SCENE_EXIT_UNLESS(2, AlhafraManor, 7, EXIT_FLAG_NONE),
 	SCENE_EXIT_UNLESS(3, AlhafraManor, ENTRANCE_MAYORS_ROOM, EXIT_FLAG_NONE),
 	SCENE_EXIT_UNLESS(4, AlhafraManor, 9, EXIT_FLAG_NONE),
@@ -883,70 +856,204 @@ Uint32 SceneExits[] = {
 };
 
 ACTOR_PLACE ActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 280, 0, 152, FACING_EAST,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_ALHAFRAS_MAYOR, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 372, 0, 92, FACING_NORTH,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 296, 0, 344, FACING_NORTHEAST, TALK_FACING_PARTY,
-		0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 152, 0, 328, FACING_SOUTHEAST, TALK_FACING_PARTY,
-		0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 568, 0, 104, FACING_NORTH,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 616, 0, 120, FACING_EAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 808, 0, 296, FACING_NORTHWEST, TALK_FACING_PARTY,
-		0),
-	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 728, 0, 248, FACING_NORTHWEST,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 152, 0, 680, FACING_EAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_WANDER, 104, 0, 504, FACING_SOUTH, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_MADRAS_MAYOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-		88, 0, 120, FACING_WEST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_MADRAS_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-		128, 0, 112, FACING_SOUTH, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    280,
+                    0,
+                    152,
+                    FACING_EAST,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_ALHAFRAS_MAYOR,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    372,
+                    0,
+                    92,
+                    FACING_NORTH,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    296,
+                    0,
+                    344,
+                    FACING_NORTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    152,
+                    0,
+                    328,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    568,
+                    0,
+                    104,
+                    FACING_NORTH,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    616,
+                    0,
+                    120,
+                    FACING_EAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    808,
+                    0,
+                    296,
+                    FACING_NORTHWEST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    728,
+                    0,
+                    248,
+                    FACING_NORTHWEST,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    152,
+                    0,
+                    680,
+                    FACING_EAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER,
+                    104,
+                    0,
+                    504,
+                    FACING_SOUTH,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_MADRAS_MAYOR,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    88,
+                    0,
+                    120,
+                    FACING_WEST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_MADRAS_ELDER,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    128,
+                    0,
+                    112,
+                    FACING_SOUTH,
+                    TALK_FACING_PARTY,
+                    0),
 	{SCENE_TABLE_END},
 };
 
 ACTOR_PLACE AlhafraManorActorPlacementsOnceTheMastIsCleared[] = {
-	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_WEST,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_ALHAFRAS_MAYOR, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_WEST,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 344, 0, 320, FACING_EAST,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_WANDER, -56, 0, -56, FACING_NORTH,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH,
-		TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56,
-		0, -56, FACING_EAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0,
-		-56, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0,
-		-56, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0,
-		-56, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    -56,
+                    0,
+                    -56,
+                    FACING_WEST,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_ALHAFRAS_MAYOR,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    -56,
+                    0,
+                    -56,
+                    FACING_WEST,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    344,
+                    0,
+                    320,
+                    FACING_EAST,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER,
+                    -56,
+                    0,
+                    -56,
+                    FACING_NORTH,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    -56,
+                    0,
+                    -56,
+                    FACING_NORTH,
+                    TALK_FACING_PARTY_AND_BACK,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_KRADEN,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    -56,
+                    0,
+                    -56,
+                    FACING_EAST,
+                    TALK_FACING_KEEP,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_JENNA,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    -56,
+                    0,
+                    -56,
+                    FACING_NORTHEAST,
+                    TALK_FACING_KEEP,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_SHEBA,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    -56,
+                    0,
+                    -56,
+                    FACING_NORTHEAST,
+                    TALK_FACING_KEEP,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_PIERS,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    -56,
+                    0,
+                    -56,
+                    FACING_NORTHEAST,
+                    TALK_FACING_KEEP,
+                    0),
 	{SCENE_TABLE_END},
 };
 
 CUE SceneCues[] = {
-	{CUE_EXIT, ALHAFRA_MANOR_TO_ALHAFRA, CONDITION_ALWAYS,
-		ALHAFRA_MANOR_TO_ALHAFRA},
+	{CUE_EXIT, ALHAFRA_MANOR_TO_ALHAFRA, CONDITION_ALWAYS, ALHAFRA_MANOR_TO_ALHAFRA},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
 	{CUE_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -963,76 +1070,94 @@ CUE SceneCues[] = {
 	{CUE_EXIT, 15, CONDITION_ALWAYS, 15},
 	{CUE_EXIT, 16, CONDITION_ALWAYS, 16},
 	{CUE_EXIT, 17, CONDITION_ALWAYS, 17},
-	{CUE_TALK, ACTOR_BOY_ON_THE_WATCHTOWER,
-		IF_FLAG_SET(FLAG_ALHAFRA_MAST_CLEARED),
-		MSGNO(MsgAlhafraManorEveryoneInTownIsTalking)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_WATCHTOWER,
-		IF_FLAG_SET(FLAG_ALHAFRA_MAST_CLEARED),
-		MSGNO(MsgAlhafraManorIDontKnowWhatThe)},
-	{CUE_TALK, ACTOR_BOY_ON_THE_WATCHTOWER, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorYouShouldGoToThe)},
-	{CUE_TALK, ACTOR_WOMAN_ON_SOUTH_OSENIA, CONDITION_ALWAYS,
-		SCRIPT_REF(scAlhafraManorAskAboutAlhafra)},
-	{CUE_TALK, ACTOR_WOMAN_ON_THE_PIRATES, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorOurTownWasRifeWith)},
-	{CUE_TALK, ACTOR_OLD_WOMAN_ON_THE_BALLOO_RANGE, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorTheMountainsToTheEast)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_WATCHTOWER,
-		CONDITION_ALWAYS, MSGNO(MsgAlhafraManorThereAreNumerousTalesAbout)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_SOUTH_OSENIA,
-		CONDITION_ALWAYS, MSGNO(MsgAlhafraManorWhyDoTheyAlwaysTell)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_PIRATES,
-		CONDITION_ALWAYS, MSGNO(MsgAlhafraManorThosePiratesNeverDidUs)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_BALLOO_RANGE,
-		CONDITION_ALWAYS, MSGNO(MsgAlhafraManorTheresNoWayToCross)},
-	{CUE_TALK, ACTOR_MAN_GAZING_AT_AIRS_ROCK, CONDITION_ALWAYS,
-		SCRIPT_REF(scAlhafraManorPointOutAirsRock)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_GAZING_AT_AIRS_ROCK,
-		CONDITION_ALWAYS, MSGNO(MsgAlhafraManorTheLongerISitHere)},
-	{CUE_TALK, ACTOR_OLD_MAN_ON_INDRA, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorIdBeenSayingIndraWasnt)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_INDRA,
-		CONDITION_ALWAYS, MSGNO(MsgAlhafraManorISatAndGazedAt)},
-	{CUE_TALK, ACTOR_WOMAN_ON_THE_CURSED_VILLAGE, CONDITION_ALWAYS,
-		SCRIPT_REF(scAlhafraManorAskIfTheHeroes)},
-	{CUE_TALK, ACTOR_GIRL_ON_THE_WARRIORS, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorIHeardThePiratesTalking)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CURSED_VILLAGE,
-		CONDITION_ALWAYS, MSGNO(MsgAlhafraManorIWishSomeoneWouldGo)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_WARRIORS,
-		CONDITION_ALWAYS, MSGNO(MsgAlhafraManorIHopeTheWarriorsWho)},
-	{CUE_TALK, ACTOR_MADRAS_MAYOR, FLAG_COMPLAINED_ABOUT_THE_MAYOR,
-		SCRIPT_REF(scAlhafraManorComplainAboutTheMayor)},
+	{CUE_TALK,
+     ACTOR_BOY_ON_THE_WATCHTOWER, IF_FLAG_SET(FLAG_ALHAFRA_MAST_CLEARED),
+     MSGNO(MsgAlhafraManorEveryoneInTownIsTalking)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
-		ACTOR_MADRAS_MAYOR | CUE_SUBJECT_OWN_EFFECT,
-		FLAG_COMPLAINED_ABOUT_THE_MAYOR,
-		SCRIPT_REF(scAlhafraManorComplainAboutTheMayor)},
-	{CUE_TALK, ACTOR_MADRAS_MAYOR, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorImStartingToThinkThe)},
-	{CUE_TALK, ACTOR_MADRAS_ELDER, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorHesAlreadyBeenPaidTo)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MADRAS_MAYOR, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorIfWeLeaveTheBoat)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MADRAS_ELDER, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorTheMoneyBriggsUsedTo)},
-	{CUE_TALK, ACTOR_JIYA, FLAG_DEFENDED_THE_MAYOR,
-		SCRIPT_REF(scAlhafraManorDefendTheMayor)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JIYA | CUE_SUBJECT_OWN_EFFECT,
-		FLAG_DEFENDED_THE_MAYOR, SCRIPT_REF(scAlhafraManorDefendTheMayor)},
-	{CUE_TALK, ACTOR_MAYOR, FLAG_TOLD_OF_THE_EASTERN_SEA,
-		SCRIPT_REF(scAlhafraManorTellOfTheEasternSea)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR | CUE_SUBJECT_OWN_EFFECT,
-		FLAG_TOLD_OF_THE_EASTERN_SEA,
-		SCRIPT_REF(scAlhafraManorTellOfTheEasternSea)},
-	{CUE_TALK, ACTOR_MAYOR, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorIAmPlanningAGlorious)},
-	{CUE_TALK, ACTOR_JIYA, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorTheMayorWontHelpFix)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorThisIsSuchAFantastic)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JIYA, CONDITION_ALWAYS,
-		MSGNO(MsgAlhafraManorTheMayorHatesSeeingAnyone)},
-	{EXAMINE_CUE(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-		FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThatSeafoodStewHasAn))},
+     ACTOR_BOY_ON_THE_WATCHTOWER, IF_FLAG_SET(FLAG_ALHAFRA_MAST_CLEARED),
+     MSGNO(MsgAlhafraManorIDontKnowWhatThe)},
+	{CUE_TALK,
+     ACTOR_BOY_ON_THE_WATCHTOWER, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorYouShouldGoToThe)},
+	{CUE_TALK,
+     ACTOR_WOMAN_ON_SOUTH_OSENIA, CONDITION_ALWAYS,
+     SCRIPT_REF(scAlhafraManorAskAboutAlhafra)},
+	{CUE_TALK,
+     ACTOR_WOMAN_ON_THE_PIRATES, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorOurTownWasRifeWith)},
+	{CUE_TALK,
+     ACTOR_OLD_WOMAN_ON_THE_BALLOO_RANGE, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheMountainsToTheEast)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_BOY_ON_THE_WATCHTOWER, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorThereAreNumerousTalesAbout)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_WOMAN_ON_SOUTH_OSENIA, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorWhyDoTheyAlwaysTell)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_WOMAN_ON_THE_PIRATES, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorThosePiratesNeverDidUs)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_OLD_WOMAN_ON_THE_BALLOO_RANGE, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheresNoWayToCross)},
+	{CUE_TALK,
+     ACTOR_MAN_GAZING_AT_AIRS_ROCK, CONDITION_ALWAYS,
+     SCRIPT_REF(scAlhafraManorPointOutAirsRock)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_MAN_GAZING_AT_AIRS_ROCK, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheLongerISitHere)},
+	{CUE_TALK,
+     ACTOR_OLD_MAN_ON_INDRA, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIdBeenSayingIndraWasnt)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_OLD_MAN_ON_INDRA, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorISatAndGazedAt)},
+	{CUE_TALK,
+     ACTOR_WOMAN_ON_THE_CURSED_VILLAGE, CONDITION_ALWAYS,
+     SCRIPT_REF(scAlhafraManorAskIfTheHeroes)},
+	{CUE_TALK,
+     ACTOR_GIRL_ON_THE_WARRIORS, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIHeardThePiratesTalking)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_WOMAN_ON_THE_CURSED_VILLAGE, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIWishSomeoneWouldGo)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_GIRL_ON_THE_WARRIORS, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIHopeTheWarriorsWho)},
+	{CUE_TALK,
+     ACTOR_MADRAS_MAYOR, FLAG_COMPLAINED_ABOUT_THE_MAYOR,
+     SCRIPT_REF(scAlhafraManorComplainAboutTheMayor)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_MADRAS_MAYOR | CUE_SUBJECT_OWN_EFFECT,
+     FLAG_COMPLAINED_ABOUT_THE_MAYOR, SCRIPT_REF(scAlhafraManorComplainAboutTheMayor)},
+	{CUE_TALK, ACTOR_MADRAS_MAYOR, CONDITION_ALWAYS, MSGNO(MsgAlhafraManorImStartingToThinkThe)},
+	{CUE_TALK, ACTOR_MADRAS_ELDER, CONDITION_ALWAYS, MSGNO(MsgAlhafraManorHesAlreadyBeenPaidTo)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_MADRAS_MAYOR, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIfWeLeaveTheBoat)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_MADRAS_ELDER, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheMoneyBriggsUsedTo)},
+	{CUE_TALK, ACTOR_JIYA, FLAG_DEFENDED_THE_MAYOR, SCRIPT_REF(scAlhafraManorDefendTheMayor)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_JIYA | CUE_SUBJECT_OWN_EFFECT,
+     FLAG_DEFENDED_THE_MAYOR, SCRIPT_REF(scAlhafraManorDefendTheMayor)},
+	{CUE_TALK,
+     ACTOR_MAYOR, FLAG_TOLD_OF_THE_EASTERN_SEA,
+     SCRIPT_REF(scAlhafraManorTellOfTheEasternSea)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_MAYOR | CUE_SUBJECT_OWN_EFFECT,
+     FLAG_TOLD_OF_THE_EASTERN_SEA, SCRIPT_REF(scAlhafraManorTellOfTheEasternSea)},
+	{CUE_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgAlhafraManorIAmPlanningAGlorious)},
+	{CUE_TALK, ACTOR_JIYA, CONDITION_ALWAYS, MSGNO(MsgAlhafraManorTheMayorWontHelpFix)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_MAYOR, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorThisIsSuchAFantastic)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_JIYA, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheMayorHatesSeeingAnyone)},
+	{EXAMINE_CUE(EXAMINE_OVEN),
+     200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThatSeafoodStewHasAn))},
 	{CUE_TABLE_END},
 };

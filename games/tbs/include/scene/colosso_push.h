@@ -1,13 +1,12 @@
 #ifndef ALCHEMY_COLOSSO_PUSH_H
 #define ALCHEMY_COLOSSO_PUSH_H
 
-/* The rocks, weights and stone pillars Isaac pushes on the stages of the three
-   Colosso finals matches (shared/colosso_push.c). */
+// The rocks, weights and stone pillars Isaac pushes on the stages of the three Colosso finals
+// matches (shared/colosso_push.c).
 
 #include "types.h"
 
-/* Returns the placed actor one metatile, or else two, ahead of the one the
-   player moves, or 0. */
+// Returns the placed actor one metatile, or else two, ahead of the one the player moves, or 0.
 void *scColossoFindActorAhead(void);
 
 #endif

@@ -1,5 +1,4 @@
-/* Ends the falling rocks: removes their event and frees their picture and
-   state. */
+// Ends the falling rocks: removes their event and frees their picture and state.
 void scRockEndFalling(void)
 {
 	ROCK_STATE *state = RamHeapSlots->menuState;

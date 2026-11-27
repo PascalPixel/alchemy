@@ -1,9 +1,7 @@
-/* The Sanctum and Sol Sanctum's Elemental Star room: how an Elemental Star's
-   icon appears. */
+// The Sanctum and Sol Sanctum's Elemental Star room: how an Elemental Star's icon appears.
 
-/* An item icon's entrance: drawn at half size, it grows to full size over 8
-   ticks, holds for 16, then swells to one and a half times its size and back
-   twice. */
+// An item icon's entrance: drawn at half size, it grows to full size over 8 ticks, holds for 16,
+// then swells to one and a half times its size and back twice.
 Sint32 ItemIconGrowScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1) / 2),
 	SC_SET(SW_SCALE_Y, toFIXED(1) / 2),

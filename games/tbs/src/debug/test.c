@@ -1,5 +1,5 @@
-/* The debug room Menu test, whose actors each run a test of the menus, the
-   shops or the bags when talked to. */
+// The debug room Menu test, whose actors each run a test of the menus, the shops or the bags when
+// talked to.
 
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -12,56 +12,54 @@
 #include "text/msg_ids.h"
 
 const SCENE_ENTRANCE *scGetEntrances(void);
-const Uint32		 *scGetExits(void);
-const ACTOR_PLACE	 *scGetActorPlacements(void);
-const CUE			 *scGetCues(void);
-Sint32				  scInit(void);
-extern Uint32		  TestUnusedRows[];
-extern char			  MenuTestItemPrompt[12];
-extern char			  MenuTestItemHelp[24];
-extern char			  MenuTestItemFull[20];
+const Uint32         *scGetExits(void);
+const ACTOR_PLACE    *scGetActorPlacements(void);
+const CUE            *scGetCues(void);
+Sint32                scInit(void);
+extern Uint32         TestUnusedRows[];
+extern char           MenuTestItemPrompt[12];
+extern char           MenuTestItemHelp[24];
+extern char           MenuTestItemFull[20];
 extern SCENE_ENTRANCE MenuTestEntrances[];
-extern Uint32		  MenuTestExits[];
-extern ACTOR_PLACE	  MenuTestActorPlacements[];
-extern CUE			  MenuTestCues[];
-extern Sint32		  MenuTestNextLevel;
-extern Sint32		  MenuTestFillLetter;
+extern Uint32         MenuTestExits[];
+extern ACTOR_PLACE    MenuTestActorPlacements[];
+extern CUE            MenuTestCues[];
+extern Sint32         MenuTestNextLevel;
+extern Sint32         MenuTestFillLetter;
 
-/* The level scInit raises Garet, Mia and Ivan to. */
+// The level scInit raises Garet, Mia and Ivan to.
 #define DEBUG_PARTY_LEVEL 30
-/* The level scInit raises Isaac to, higher in the international editions. */
-#define DEBUG_ISAAC_LEVEL \
-	WHEN(DEBUG_MENU_TEST_ISAAC_LEVEL_50, 50, DEBUG_PARTY_LEVEL)
+// The level scInit raises Isaac to, higher in the international editions.
+#define DEBUG_ISAAC_LEVEL WHEN(DEBUG_MENU_TEST_ISAAC_LEVEL_50, 50, DEBUG_PARTY_LEVEL)
 
-/* The placed actors, numbered in the order of MenuTestActorPlacements after
-   its four party rows, which keep their characters' ids. Each runs its test
-   when talked to. */
-typedef enum MENU_TEST_ACTOR_ID {
-	/* Kraden: the picker a full party drops an item with. */
+// The placed actors, numbered in the order of MenuTestActorPlacements after its four party rows,
+// which keep their characters' ids. Each runs its test when talked to.
+typedef enum MENU_TEST_ACTOR_ID
+{
+	// Kraden: the picker a full party drops an item with.
 	ACTOR_KRADEN = ACTOR_FIRST_PLACED,
-	ACTOR_DORA,	   /* gives the party Djinn: "You got a Djinni!" */
-	ACTOR_SATUROS, /* hurts the party: "The body is being torn apart." */
-	ACTOR_MENARDI, /* gives the party treasure: "You got treasure!" */
-	/* Vale's armor merchant: the debug shop. */
+	ACTOR_DORA,    // gives the party Djinn: "You got a Djinni!"
+	ACTOR_SATUROS, // hurts the party: "The body is being torn apart."
+	ACTOR_MENARDI, // gives the party treasure: "You got treasure!"
+	               // Vale's armor merchant: the debug shop.
 	ACTOR_ARMOR_MERCHANT,
-	/* Dora again: the sanctum in Japanese, English and German, a Nut in French,
-	   and in Spanish and Italian "That IS dangerous!" */
+	// Dora again: the sanctum in Japanese, English and German, a Nut in French, and in Spanish and
+	// Italian "That IS dangerous!"
 	ACTOR_SECOND_DORA,
-	/* Saturos again: "Kyle... Will they be able to stop the Boulder?" */
+	// Saturos again: "Kyle... Will they be able to stop the Boulder?"
 	ACTOR_SECOND_SATUROS,
-	/* The ivy: the icon browser. Whirlwind, Force and Catch leave it be. */
+	// The ivy: the icon browser. Whirlwind, Force and Catch leave it be.
 	ACTOR_IVY,
-	/* Felix: in Japanese the party member chooser; in the other editions the
-	   lines of the weapon, armor and item shops and the sanctum, one for each
-	   way the leader faces him. */
+	// Felix: in Japanese the party member chooser; in the other editions the lines of the weapon,
+	// armor and item shops and the sanctum, one for each way the leader faces him.
 	ACTOR_FELIX,
-	/* Felix again: in Japanese the item browser; in the other editions the
-	   warrior shops' lines in the same way, and in German, French, Spanish and
-	   Italian a message test while the leader faces south. */
+	// Felix again: in Japanese the item browser; in the other editions the warrior shops' lines in
+	// the same way, and in German, French, Spanish and Italian a message test while the leader
+	// faces south.
 	ACTOR_SECOND_FELIX
 } MENU_TEST_ACTOR_ID;
 
-/* Recalculates the four heroes after a debug inventory or stat change. */
+// Recalculates the four heroes after a debug inventory or stat change.
 static __inline__ void dbMenuTestRecalculateParty(void)
 {
 	gmUnitCalculate(ISAAC);
@@ -75,7 +73,7 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	return MenuTestEntrances;
 }
 
-/* The scene has no exit regions: its regions entry returns none. */
+// The scene has no exit regions: its regions entry returns none.
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
 	return 0;
@@ -92,52 +90,60 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 }
 
 #if DEBUG_SHOP_MESSAGE_BROWSER
-/* The lines of one shop, as many as the weapon shop's. */
-#define SHOP_MESSAGES (MsgArmorShopWelcome - MsgWeaponShopWelcome)
+// The lines of one shop, as many as the weapon shop's.
+#	define SHOP_MESSAGES (MsgArmorShopWelcome - MsgWeaponShopWelcome)
 
-/* Closes the finished message windows, opens the message and waits until it is
-   typed out, then a tick more. */
+// Closes the finished message windows, opens the message and waits until it is typed out, then a
+// tick more.
 static void dbMenuTestShowMessageAndWait(Sint32 msgId)
 {
 	mnMessageCloseFinishedWindows();
-	mnMessageOpenWindow(
-		msgId, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
-	while(mnMessageAllTyped() == 0) {
+	mnMessageOpenWindow(msgId, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
+	while (mnMessageAllTyped() == 0)
+	{
 		sySynch(1);
 	}
 	sySynch(1);
 }
 
-/* Browses sample dialogue with A/Down and Up; B closes the window. */
+// Browses sample dialogue with A/Down and Up; B closes the window.
 static void dbMenuTestBrowseMessageRange(Sint32 msgId, Sint32 msgCount)
 {
 	WINDOW *window;
-	Sint32	msgIndex;
+	Sint32  msgIndex;
 
 	MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_FAST;
-	window = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
-	for(msgIndex = 0; msgIndex < msgCount; msgIndex++) {
-		/* A sample name, item and number for each message to show: Garet, the
-		   Virtuous Armlet and a number of six digits. */
+	window                        = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
+	for (msgIndex = 0; msgIndex < msgCount; msgIndex++)
+	{
+		// A sample name, item and number for each message to show: Garet, the Virtuous Armlet and a
+		// number of six digits.
 		mnMessageArgumentPush(GARET, MESSAGE_ARGUMENT_ACTOR);
 		mnMessageArgumentPush(ITEM_VIRTUOUS_ARMLET, MESSAGE_ARGUMENT_ITEM);
 		mnMessageArgumentPush(123456, MESSAGE_ARGUMENT_NUMBER);
 		dbMenuTestShowMessageAndWait(msgId);
-		for(;;) {
-			if((PerData & KEY_B) != 0) {
+		for (;;)
+		{
+			if ((PerData & KEY_B) != 0)
+			{
 				goto end;
 			}
-			if((PerData & KEY_A) != 0 || (PerData & KEY_DOWN) != 0) {
+			if ((PerData & KEY_A) != 0 || (PerData & KEY_DOWN) != 0)
+			{
 				msgId++;
 				break;
 			}
-			if((PerData & KEY_UP) != 0) {
+			if ((PerData & KEY_UP) != 0)
+			{
 				msgId--;
 				break;
 			}
-			if(PerData == 0) {
+			if (PerData == 0)
+			{
 				sySynch(1);
-			} else {
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -147,8 +153,8 @@ end:
 	mnWindowClose(window, 2);
 }
 
-/* The shop message browsers, run by talking to ACTOR_FELIX and
-   ACTOR_SECOND_FELIX while the leader faces a given way (MenuTestCues). */
+// The shop message browsers, run by talking to ACTOR_FELIX and ACTOR_SECOND_FELIX while the leader
+// faces a given way (MenuTestCues).
 static void dbMenuTestBrowseWeaponShopMessages(void)
 {
 	dbMenuTestBrowseMessageRange(MsgWeaponShopWelcome, SHOP_MESSAGES);
@@ -166,8 +172,7 @@ static void dbMenuTestBrowseItemShopMessages(void)
 
 static void dbMenuTestBrowseSanctumMessages(void)
 {
-	dbMenuTestBrowseMessageRange(
-		MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
+	dbMenuTestBrowseMessageRange(MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
 static void dbMenuTestBrowseWarriorShopMessages(void)
@@ -187,30 +192,30 @@ static void dbMenuTestBrowseWarriorItemShopMessages(void)
 #endif
 
 #if DEBUG_SECOND_FELIX_MESSAGE_TEST
-/* Sets the script's message twice, so the second is the one shown, with no
-   speaker, and waits until it closes. */
+// Sets the script's message twice, so the second is the one shown, with no speaker, and waits until
+// it closes.
 static void dbMenuTestRunMessageTest(void)
 {
 	fdScriptSetMessageId(MSGNO(MsgBattleAdditionalPsynergyHelp));
 	fdScriptSetMessageId(MSGNO(MsgValeComeOnHurry));
-	/* "Come on, Isaac. We have to go-now!" */
+	// "Come on, Isaac. We have to go-now!"
 	fdScriptShowMessage(-1, 0);
 }
 #endif
 
-/* Talking to ACTOR_ARMOR_MERCHANT: the debug shop. */
+// Talking to ACTOR_ARMOR_MERCHANT: the debug shop.
 static void dbMenuTestOpenDebugShop(void)
 {
 	mnShopOpenDebugShop(1);
 }
 
-/* Unused: a script that does nothing. */
+// Unused: a script that does nothing.
 UNUSED static void dbMenuTestNoOperation(void)
 {
 }
 
-/* Talking to ACTOR_KRADEN: the picker a full party drops an item with, whose
-   choice of member and slot nothing uses. */
+// Talking to ACTOR_KRADEN: the picker a full party drops an item with, whose choice of member and
+// slot nothing uses.
 static void dbMenuTestOpenItemPicker(void)
 {
 	Sint32 selectedOwner;
@@ -218,28 +223,28 @@ static void dbMenuTestOpenItemPicker(void)
 	mnItemPickerRun(&selectedOwner, &selectedSlot);
 }
 
-/* Talking to Mia: the name entry screen for Isaac. */
+// Talking to Mia: the name entry screen for Isaac.
 static void dbMenuTestEditIsaacName(void)
 {
 	mnNameEntryEditMemberName(ISAAC);
 }
 
-/* Whirlwind, Force and Catch cast at ACTOR_IVY: nothing happens to it. */
+// Whirlwind, Force and Catch cast at ACTOR_IVY: nothing happens to it.
 static void dbMenuTestIgnorePsynergy(void)
 {
 }
 
-/* Keeps Force from pushing ACTOR_IVY: run as Force is cast at it, before the
-   shot, this sets the effect's leaveTarget, and the shot then leaves its target
-   where it is (field/script_commands_force.c). */
+// Keeps Force from pushing ACTOR_IVY: run as Force is cast at it, before the shot, this sets the
+// effect's leaveTarget, and the shot then leaves its target where it is
+// (field/script_commands_force.c).
 static void dbMenuTestKeepIvyInPlace(void)
 {
 	((FIELD_EFFECT_STATE *)FieldEffectStateWork)->leaveTarget = 1;
 }
 
 #if DEBUG_SECOND_DORA_NUT_GIFT
-/* Gives a Nut through the ordinary party gift and full-inventory dialogue.
-   Talking to ACTOR_SECOND_DORA in French only. */
+// Gives a Nut through the ordinary party gift and full-inventory dialogue. Talking to
+// ACTOR_SECOND_DORA in French only.
 UNUSED static void dbMenuTestGiveItemToParty(void)
 {
 	fdPartyInventoryGiveItem(ITEM_NUT, 0);
@@ -251,11 +256,10 @@ const CUE *scGetCues(void)
 	return MenuTestCues;
 }
 
-/* Talking to Garet: levels the four to MenuTestNextLevel, then raises it by
-   ten. */
+// Talking to Garet: levels the four to MenuTestNextLevel, then raises it by ten.
 static void dbMenuTestRaisePartyLevels(void)
 {
-	/* "You went up a level!" */
+	// "You went up a level!"
 	mnFieldMessageShow(MsgDebugWentLevel, FIELD_MESSAGE_ZOOM);
 	gmUnitLevelUpTo(ISAAC, MenuTestNextLevel);
 	gmUnitLevelUpTo(GARET, MenuTestNextLevel);
@@ -265,13 +269,13 @@ static void dbMenuTestRaisePartyLevels(void)
 	dbMenuTestRecalculateParty();
 }
 
-/* Talking to Ivan: gives the four stacks of items to use: healing items, Psy
-   Crystals, Sacred Feathers and the foods that raise a stat. */
+// Talking to Ivan: gives the four stacks of items to use: healing items, Psy Crystals, Sacred
+// Feathers and the foods that raise a stat.
 static void dbMenuTestGiveConsumableTestStock(void)
 {
-	/* "You got an item!" */
+	// "You got an item!"
 	mnFieldMessageShow(MsgDebugGotItem, FIELD_MESSAGE_ZOOM);
-	/* Isaac: 17 Antidotes, 14 Herbs, 11 Nuts, 13 Vials and 9 Potions. */
+	// Isaac: 17 Antidotes, 14 Herbs, 11 Nuts, 13 Vials and 9 Potions.
 	gmInventoryAddItem(ISAAC, ITEM_ANTIDOTE);
 	gmInventoryAddItem(ISAAC, ITEM_ANTIDOTE);
 	gmInventoryAddItem(ISAAC, ITEM_ANTIDOTE);
@@ -336,7 +340,7 @@ static void dbMenuTestGiveConsumableTestStock(void)
 	gmInventoryAddItem(ISAAC, ITEM_POTION);
 	gmInventoryAddItem(ISAAC, ITEM_POTION);
 	gmInventoryAddItem(ISAAC, ITEM_POTION);
-	/* Garet: 13 Psy Crystals and 12 Antidotes. */
+	// Garet: 13 Psy Crystals and 12 Antidotes.
 	gmInventoryAddItem(GARET, ITEM_PSY_CRYSTAL);
 	gmInventoryAddItem(GARET, ITEM_PSY_CRYSTAL);
 	gmInventoryAddItem(GARET, ITEM_PSY_CRYSTAL);
@@ -362,7 +366,7 @@ static void dbMenuTestGiveConsumableTestStock(void)
 	gmInventoryAddItem(GARET, ITEM_ANTIDOTE);
 	gmInventoryAddItem(GARET, ITEM_ANTIDOTE);
 	gmInventoryAddItem(GARET, ITEM_ANTIDOTE);
-	/* Ivan: 14 Elixirs, 11 Waters of Life and 16 Sacred Feathers. */
+	// Ivan: 14 Elixirs, 11 Waters of Life and 16 Sacred Feathers.
 	gmInventoryAddItem(IVAN, ITEM_ELIXIR);
 	gmInventoryAddItem(IVAN, ITEM_ELIXIR);
 	gmInventoryAddItem(IVAN, ITEM_ELIXIR);
@@ -404,8 +408,7 @@ static void dbMenuTestGiveConsumableTestStock(void)
 	gmInventoryAddItem(IVAN, ITEM_SACRED_FEATHER);
 	gmInventoryAddItem(IVAN, ITEM_SACRED_FEATHER);
 	gmInventoryAddItem(IVAN, ITEM_SACRED_FEATHER);
-	/* Mia: 11 Power Breads, 11 Cookies, 11 Apples, 7 Hard Nuts, 13 Mints and 8
-	   Lucky Peppers. */
+	// Mia: 11 Power Breads, 11 Cookies, 11 Apples, 7 Hard Nuts, 13 Mints and 8 Lucky Peppers.
 	gmInventoryAddItem(MIA, ITEM_POWER_BREAD);
 	gmInventoryAddItem(MIA, ITEM_POWER_BREAD);
 	gmInventoryAddItem(MIA, ITEM_POWER_BREAD);
@@ -471,39 +474,40 @@ static void dbMenuTestGiveConsumableTestStock(void)
 }
 
 #if !DEBUG_DJINN_GIFT_FILL_LOOP_DROPPED
-/* The Japanese release's leftover loop fills the buffer this many times, with
-   this many letters the first time and one more each time after. */
-#define FILL_PASSES		  16
-#define FILL_FIRST_LENGTH 32
+// The Japanese release's leftover loop fills the buffer this many times, with this many letters the
+// first time and one more each time after.
+#	define FILL_PASSES       16
+#	define FILL_FIRST_LENGTH 32
 #endif
 
-/* Talking to ACTOR_DORA: gives each of the four seven Djinn of their element
-   (Ivan six) and sets them. */
+// Talking to ACTOR_DORA: gives each of the four seven Djinn of their element (Ivan six) and sets
+// them.
 static void dbMenuTestGivePartyDjinn(void)
 {
-	/* LEFTOVER(frame): the buffer the Japanese release's loop below fills
-	   FILL_PASSES times. */
+	// LEFTOVER(frame): the buffer the Japanese release's loop below fills FILL_PASSES times.
 	UNUSED Uint8 fillBuf[256];
 #if !DEBUG_DJINN_GIFT_FILL_LOOP_DROPPED
 	Sint32 pass;
 	Sint32 characterIndex;
 
-	for(pass = 0; pass < FILL_PASSES; pass++) {
-		for(characterIndex = 0; characterIndex < (Sint32)sizeof(fillBuf);
-			characterIndex++) {
+	for (pass = 0; pass < FILL_PASSES; pass++)
+	{
+		for (characterIndex = 0; characterIndex < (Sint32)sizeof(fillBuf); characterIndex++)
+		{
 			fillBuf[characterIndex] = 0;
 		}
-		for(characterIndex = 0; characterIndex < pass + FILL_FIRST_LENGTH;
-			characterIndex++) {
+		for (characterIndex = 0; characterIndex < pass + FILL_FIRST_LENGTH; characterIndex++)
+		{
 			fillBuf[characterIndex] = MenuTestFillLetter + 1;
 		}
 		MenuTestFillLetter++;
-		if(MenuTestFillLetter >= 'a') {
+		if (MenuTestFillLetter >= 'a')
+		{
 			MenuTestFillLetter = 'A';
 		}
 	}
 #endif
-	/* "You got a Djinni!" */
+	// "You got a Djinni!"
 	mnFieldMessageShow(MsgDebugGotDjinni, FIELD_MESSAGE_ZOOM);
 	gmDjinnGive(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
 	gmDjinnGive(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
@@ -562,14 +566,14 @@ static void dbMenuTestGivePartyDjinn(void)
 	dbMenuTestRecalculateParty();
 }
 
-/* Talking to ACTOR_SATUROS: takes HP and PP from the four, then poisons and
-   haunts Isaac, and binds Garet and gives him deadly poison. */
+// Talking to ACTOR_SATUROS: takes HP and PP from the four, then poisons and haunts Isaac, and binds
+// Garet and gives him deadly poison.
 static void dbMenuTestDamageAndAfflictParty(void)
 {
 	UNIT *isaac;
 	UNIT *garet;
 
-	/* "The body is being torn apart." */
+	// "The body is being torn apart."
 	mnFieldMessageShow(MsgDebugBodyTornApart, FIELD_MESSAGE_ZOOM);
 	syFieldUnitAddHp(ISAAC, -100);
 	syFieldUnitAddHp(GARET, -100);
@@ -579,19 +583,19 @@ static void dbMenuTestDamageAndAfflictParty(void)
 	gmUnitAddPp(GARET, -40);
 	gmUnitAddPp(IVAN, -35);
 	gmUnitAddPp(MIA, -20);
-	isaac = gmUnitGet(ISAAC);
+	isaac         = gmUnitGet(ISAAC);
 	isaac->poison = POISON_NORMAL;
-	isaac->haunt = 1;
-	garet = gmUnitGet(GARET);
-	garet->curse = CURSE_BOUND;
+	isaac->haunt  = 1;
+	garet         = gmUnitGet(GARET);
+	garet->curse  = CURSE_BOUND;
 	garet->poison = POISON_VENOM;
 	dbMenuTestRecalculateParty();
 }
 
-/* Talking to Jenna: gives the four weapons and armor. */
+// Talking to Jenna: gives the four weapons and armor.
 static void dbMenuTestGiveEquipmentTestStock(void)
 {
-	/* "You got sturdy equipment!" */
+	// "You got sturdy equipment!"
 	mnFieldMessageShow(MsgDebugGotSturdyEquipment, FIELD_MESSAGE_ZOOM);
 	gmInventoryAddItem(ISAAC, ITEM_SPIKED_ARMOR);
 	gmInventoryAddItem(ISAAC, ITEM_ASURAS_ARMOR);
@@ -630,96 +634,108 @@ static void dbMenuTestGiveEquipmentTestStock(void)
 	dbMenuTestRecalculateParty();
 }
 
-/* The Japanese item browser: `Item No:` over an item's name, its icon and what
-   equipping it does; A gives it to the party, and B, or A once the bags are
-   full, leaves. Unlike the Increase item and level room's, it stops on numbers
-   with no item. */
+// The Japanese item browser: `Item No:` over an item's name, its icon and what equipping it does; A
+// gives it to the party, and B, or A once the bags are full, leaves. Unlike the Increase item and
+// level room's, it stops on numbers with no item.
 static void dbMenuTestSelectItem(void)
 {
 	WINDOW *window;
 	WINDOW *details;
-	Sint32	selectedItemId;
-	Sint32	redraw;
-	Sint32	itemId;
-	Sint32	itemCount;
+	Sint32  selectedItemId;
+	Sint32  redraw;
+	Sint32  itemId;
+	Sint32  itemCount;
 
 	itemCount = DEBUG_ITEM_COUNT;
 	sySoundPlay(SE_MENU_CONFIRM);
-	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
-	details = mnWindowCreate(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
+	window         = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	details        = mnWindowCreate(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
 	selectedItemId = 1;
-	redraw = 1;
-	/* Lend HIGHLIGHT_PALETTE to the item icons, as the Increase item and level
-	   room's browser does. */
+	redraw         = 1;
+	// Lend HIGHLIGHT_PALETTE to the item icons, as the Increase item and level room's browser does.
 	syDMAXCopy((const void *)OBJ_PLTT,
-		(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-	syDMAXCopy(
-		(const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
-		(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
-		DMA_COPY_HALFWORDS(1), REG_DMA3);
+	           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
+	           DMA_COPY_HALFWORDS(PALETTE_COLORS),
+	           REG_DMA3);
+	syDMAXCopy((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+	           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
+	           DMA_COPY_HALFWORDS(1),
+	           REG_DMA3);
 	sySynch(1);
-	while(1) {
-		if(redraw) {
-			redraw = 0;
+	while (1)
+	{
+		if (redraw)
+		{
+			redraw         = 0;
 			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCount;
 			mnWindowSpriteRedrawSavedRect(window);
 			mnWindowSpriteClearList(window);
 			mnTextDrawStringInWindow(MenuTestItemPrompt, window, 0, 0);
 			mnTextDrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
-			if(gmPartyInventoryHasSpace()) {
+			if (gmPartyInventoryHasSpace())
+			{
 				mnTextDrawStringInWindow(MenuTestItemHelp, window, 0, 32);
 				itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
-				/* DEAD: the item's definition is looked up and not used; the
-				   ROM keeps the call. */
+				// DEAD: the item's definition is looked up and not used; the ROM keeps the call.
 				gmItemGetDirect(itemId);
 				mnTextDrawMessageAsTiles(itemId + MsgItemName, window, 120, 0);
 				mnTextDrawMessage(itemId + MsgItemPlainName, window, 0, 16);
 				mnWindowSpriteRedrawSavedRect(details);
 				mnItemMenuDrawItemDetails(details, selectedItemId);
-			} else {
+			}
+			else
+			{
 				mnTextDrawStringInWindow(MenuTestItemFull, window, 0, 32);
 			}
 		}
-		if(PerPush & KEY_A) {
-			if(gmPartyInventoryAdd(selectedItemId) == -1) {
+		if (PerPush & KEY_A)
+		{
+			if (gmPartyInventoryAdd(selectedItemId) == -1)
+			{
 				sySoundPlay(SE_MENU_CANCEL);
 				break;
 			}
 			sySoundPlay(SE_NOTE_HIGH);
 		}
-		if(PerPush & KEY_B) {
+		if (PerPush & KEY_B)
+		{
 			sySoundPlay(SE_MENU_CANCEL);
 			break;
 		}
-		if(PerRepeat & KEY_UP) {
+		if (PerRepeat & KEY_UP)
+		{
 			selectedItemId--;
 			redraw = 1;
 			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
-		if(PerRepeat & KEY_DOWN) {
+		if (PerRepeat & KEY_DOWN)
+		{
 			selectedItemId++;
 			redraw = 1;
 			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
-		if(PerRepeat & KEY_RIGHT) {
+		if (PerRepeat & KEY_RIGHT)
+		{
 			selectedItemId += DEBUG_BROWSER_ROW_STEP;
-			redraw = 1;
+			redraw          = 1;
 			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
-		if(PerRepeat & KEY_LEFT) {
+		if (PerRepeat & KEY_LEFT)
+		{
 			selectedItemId -= DEBUG_BROWSER_ROW_STEP;
-			redraw = 1;
+			redraw          = 1;
 			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
-		if(PerRepeat & KEY_R) {
+		if (PerRepeat & KEY_R)
+		{
 			selectedItemId += DEBUG_BROWSER_PAGE_STEP;
-			redraw = 1;
+			redraw          = 1;
 			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
-		if(PerRepeat & KEY_L) {
+		if (PerRepeat & KEY_L)
+		{
 			selectedItemId -= DEBUG_BROWSER_PAGE_STEP;
-			redraw = 1;
+			redraw          = 1;
 			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		sySynch(1);
@@ -730,17 +746,17 @@ static void dbMenuTestSelectItem(void)
 	mnWindowClose(details, 1);
 }
 
-/* Talking to ACTOR_SECOND_FELIX in Japanese: the item browser. */
+// Talking to ACTOR_SECOND_FELIX in Japanese: the item browser.
 UNUSED static void dbMenuTestOpenItemBrowser(void)
 {
 	dbMenuTestSelectItem();
 }
 
-/* Talking to ACTOR_MENARDI: gives the four treasure, eleven Game Tickets and
-   eight Lucky Medals among it. */
+// Talking to ACTOR_MENARDI: gives the four treasure, eleven Game Tickets and eight Lucky Medals
+// among it.
 static void dbMenuTestGiveTreasureTestStock(void)
 {
-	/* "You got treasure!" */
+	// "You got treasure!"
 	mnFieldMessageShow(MsgDebugGotTreasure, FIELD_MESSAGE_ZOOM);
 	gmInventoryAddItem(ISAAC, ITEM_HERMES_WATER);
 	gmInventoryAddItem(ISAAC, ITEM_HALT_GEM);
@@ -789,17 +805,17 @@ static void dbMenuTestGiveTreasureTestStock(void)
 	dbMenuTestRecalculateParty();
 }
 
-/* Sets up the room: Isaac, Garet, Mia and Ivan as the party, a stock of rare
-   items for the shops, everyone's levels, and in Japanese 777,777 coins. */
+// Sets up the room: Isaac, Garet, Mia and Ivan as the party, a stock of rare items for the shops,
+// everyone's levels, and in Japanese 777,777 coins.
 Sint32 scInit(void)
 {
-	/* Jenna leaves; Garet, Mia and Ivan join. */
+	// Jenna leaves; Garet, Mia and Ivan join.
 	gmPartyRemoveMember(JENNA);
 	gmPartyAddMember(GARET);
 	gmPartyAddMember(MIA);
 	gmPartyAddMember(IVAN);
-	/* How many of each rare item the shops may sell: three Shamshirs, two
-	   Silver Blades, a Masamune and eight rare pieces of armor. */
+	// How many of each rare item the shops may sell: three Shamshirs, two Silver Blades, a Masamune
+	// and eight rare pieces of armor.
 	gmItemAdjustRareItemStock(ITEM_SHAMSHIR, 1);
 	gmItemAdjustRareItemStock(ITEM_SHAMSHIR, 1);
 	gmItemAdjustRareItemStock(ITEM_SHAMSHIR, 1);
@@ -825,15 +841,14 @@ Sint32 scInit(void)
 	return 0;
 }
 
-/* Talking to ACTOR_IVY: the icon browser. */
+// Talking to ACTOR_IVY: the icon browser.
 static Sint32 dbMenuTestOpenIconBrowser(void)
 {
 	return mnDebugBrowserIcons();
 }
 
 #if !DEBUG_SHOP_MESSAGE_BROWSER
-/* Talking to ACTOR_FELIX in Japanese: the party member chooser, whose choice
-   nothing uses. */
+// Talking to ACTOR_FELIX in Japanese: the party member chooser, whose choice nothing uses.
 static Sint32 dbMenuTestSelectCharacter(void)
 {
 	return mnPartyMemberChooserOpen();
@@ -841,7 +856,7 @@ static Sint32 dbMenuTestSelectCharacter(void)
 #endif
 
 #if !DEBUG_SECOND_DORA_NUT_GIFT
-/* Talking to ACTOR_SECOND_DORA in Japanese, English and German: the sanctum. */
+// Talking to ACTOR_SECOND_DORA in Japanese, English and German: the sanctum.
 static Sint32 dbMenuTestOpenSanctum(Sint32 unitId)
 {
 	return mnSanctumRun(unitId);
@@ -850,129 +865,231 @@ static Sint32 dbMenuTestOpenSanctum(Sint32 unitId)
 
 #include "test_rows.c"
 
-char MenuTestItemPrompt[12] = "Item No:";
+char           MenuTestItemPrompt[12] = "Item No:";
 
-char MenuTestItemHelp[24] = "A:Get Item  B:Return";
+char           MenuTestItemHelp[24]   = "A:Get Item  B:Return";
 
-char MenuTestItemFull[20] = "ITEM FULL........";
+char           MenuTestItemFull[20]   = "ITEM FULL........";
 
-SCENE_ENTRANCE MenuTestEntrances[] = {
-	{0, CONDITION_ALWAYS, 60, 0, 94, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-	{SCENE_TABLE_END},
+SCENE_ENTRANCE MenuTestEntrances[]    = {
+    {0, CONDITION_ALWAYS, 60, 0, 94, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
-/* No exits. */
+// No exits.
 Uint32 MenuTestExits[] = {
 	SCENE_EXITS_END,
 };
 
 ACTOR_PLACE MenuTestActorPlacements[] = {
-	ACTOR_PLACEMENT(GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 48,
-		FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 80,
-		FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 112,
-		FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 144,
-		FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0,
-		48, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0,
-		80, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80,
-		0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80,
-		0, 144, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS,
-		MOVEMENT_TYPE_STAND, 120, 0, 48, FACING_SOUTHEAST, TALK_FACING_PARTY,
-		0),
-	ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0,
-		80, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120,
-		0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0,
-		144, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
-		48, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
-		80, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(GARET,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    40,
+                    0,
+                    48,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(JENNA,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    40,
+                    0,
+                    80,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(IVAN,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    40,
+                    0,
+                    112,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(MIA,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    40,
+                    0,
+                    144,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_KRADEN,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    80,
+                    0,
+                    48,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_DORA,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    80,
+                    0,
+                    80,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_SATUROS,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    80,
+                    0,
+                    112,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_MENARDI,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    80,
+                    0,
+                    144,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    120,
+                    0,
+                    48,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_DORA,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    120,
+                    0,
+                    80,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_SATUROS,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    120,
+                    0,
+                    112,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_IVY,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    120,
+                    0,
+                    144,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_FELIX,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    160,
+                    0,
+                    48,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
+	ACTOR_PLACEMENT(SPRITE_FELIX,
+                    CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND,
+                    160,
+                    0,
+                    80,
+                    FACING_SOUTHEAST,
+                    TALK_FACING_PARTY,
+                    0),
 	{SCENE_TABLE_END},
 };
 
-/* Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia Isaac's
-   name, and the placed actors (MENU_TEST_ACTOR_ID) the rest. */
+// Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia Isaac's name, and the placed
+// actors (MENU_TEST_ACTOR_ID) the rest.
 CUE MenuTestCues[] = {
 	{CUE_TALK, GARET, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestRaisePartyLevels)},
-	{CUE_TALK, JENNA, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestGiveEquipmentTestStock)},
-	{CUE_TALK, IVAN, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestGiveConsumableTestStock)},
+	{CUE_TALK, JENNA, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestGiveEquipmentTestStock)},
+	{CUE_TALK, IVAN, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestGiveConsumableTestStock)},
 	{CUE_TALK, MIA, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestEditIsaacName)},
-	{CUE_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestOpenItemPicker)},
-	{CUE_TALK, ACTOR_DORA, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestGivePartyDjinn)},
-	{CUE_TALK, ACTOR_SATUROS, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestDamageAndAfflictParty)},
-	{CUE_TALK, ACTOR_MENARDI, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestGiveTreasureTestStock)},
-	{CUE_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestOpenDebugShop)},
+	{CUE_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestOpenItemPicker)},
+	{CUE_TALK, ACTOR_DORA, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestGivePartyDjinn)},
+	{CUE_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestDamageAndAfflictParty)},
+	{CUE_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestGiveTreasureTestStock)},
+	{CUE_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestOpenDebugShop)},
 #if DEBUG_SECOND_DORA_NUT_GIFT && !DEBUG_SECOND_DORA_DANGER_MESSAGE
-	{CUE_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestGiveItemToParty)},
+	{CUE_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestGiveItemToParty)},
 #elif DEBUG_SECOND_DORA_DANGER_MESSAGE
-	{CUE_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
-		MSGNO(MsgTolbiTolbiShipThenTheyAreDangerous)},
+	{CUE_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbiShipThenTheyAreDangerous)},
 #else
-	{CUE_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestOpenSanctum)},
+	{CUE_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestOpenSanctum)},
 #endif
-	{CUE_TALK, ACTOR_SECOND_SATUROS, CONDITION_ALWAYS,
-		MSGNO(MsgValeKyleAbleStop)},
-	{CUE_TALK, ACTOR_IVY, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestOpenIconBrowser)},
+	{CUE_TALK, ACTOR_SECOND_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeKyleAbleStop)},
+	{CUE_TALK, ACTOR_IVY, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestOpenIconBrowser)},
 #if !DEBUG_SHOP_MESSAGE_BROWSER
-	{CUE_TALK, ACTOR_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestSelectCharacter)},
-	{CUE_TALK, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestOpenItemBrowser)},
+	{CUE_TALK, ACTOR_FELIX, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestSelectCharacter)},
+	{CUE_TALK, ACTOR_SECOND_FELIX, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestOpenItemBrowser)},
 #else
-	{TALK_CUE_FACING(FACING_NORTH), ACTOR_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestBrowseWeaponShopMessages)},
-	{TALK_CUE_FACING(FACING_WEST), ACTOR_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestBrowseArmorShopMessages)},
-	{TALK_CUE_FACING(FACING_EAST), ACTOR_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestBrowseItemShopMessages)},
-	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestBrowseSanctumMessages)},
-	{TALK_CUE_FACING(FACING_NORTH), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestBrowseWarriorShopMessages)},
-	{TALK_CUE_FACING(FACING_WEST), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestBrowseWarriorArmorShopMessages)},
-	{TALK_CUE_FACING(FACING_EAST), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestBrowseWarriorItemShopMessages)},
-#if DEBUG_SECOND_FELIX_MESSAGE_TEST
-	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestRunMessageTest)},
+	{TALK_CUE_FACING(FACING_NORTH),
+     ACTOR_FELIX,
+     CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestBrowseWeaponShopMessages)},
+	{TALK_CUE_FACING(FACING_WEST),
+     ACTOR_FELIX,
+     CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestBrowseArmorShopMessages)},
+	{TALK_CUE_FACING(FACING_EAST),
+     ACTOR_FELIX,
+     CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestBrowseItemShopMessages)},
+	{TALK_CUE_FACING(FACING_SOUTH),
+     ACTOR_FELIX,
+     CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestBrowseSanctumMessages)},
+	{TALK_CUE_FACING(FACING_NORTH),
+     ACTOR_SECOND_FELIX,
+     CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestBrowseWarriorShopMessages)},
+	{TALK_CUE_FACING(FACING_WEST),
+     ACTOR_SECOND_FELIX,
+     CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestBrowseWarriorArmorShopMessages)},
+	{TALK_CUE_FACING(FACING_EAST),
+     ACTOR_SECOND_FELIX,
+     CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestBrowseWarriorItemShopMessages)},
+#	if DEBUG_SECOND_FELIX_MESSAGE_TEST
+	{TALK_CUE_FACING(FACING_SOUTH),
+     ACTOR_SECOND_FELIX,
+     CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestRunMessageTest)},
+#	endif
 #endif
-#endif
-	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestIgnorePsynergy)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_IVY, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestIgnorePsynergy)},
-	{PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_IVY, CONDITION_ALWAYS,
-		SCRIPT_REF(dbMenuTestIgnorePsynergy)},
+	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
+     ACTOR_IVY, CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestIgnorePsynergy)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FORCE),
+     ACTOR_IVY, CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestIgnorePsynergy)},
+	{PSYNERGY_ON_ACTOR(ABILITY_CATCH),
+     ACTOR_IVY, CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestIgnorePsynergy)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
-		ACTOR_IVY, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestKeepIvyInPlace)},
+     ACTOR_IVY, CONDITION_ALWAYS,
+     SCRIPT_REF(dbMenuTestKeepIvyInPlace)},
 	{CUE_TABLE_END},
 };
 
-/* The level dbMenuTestRaisePartyLevels levels the four to next: 10 at first,
-   ten more after each use. */
-Sint32 MenuTestNextLevel = 10;
+// The level dbMenuTestRaisePartyLevels levels the four to next: 10 at first, ten more after each
+// use.
+Sint32 MenuTestNextLevel  = 10;
 
-/* One less than the character the Japanese loop of dbMenuTestGivePartyDjinn
-   fills with: 'A' at first, so 'B', one more each pass, and back to 'A' when it
-   reaches 'a'. */
+// One less than the character the Japanese loop of dbMenuTestGivePartyDjinn fills with: 'A' at
+// first, so 'B', one more each pass, and back to 'A' when it reaches 'a'.
 Sint32 MenuTestFillLetter = 'A';

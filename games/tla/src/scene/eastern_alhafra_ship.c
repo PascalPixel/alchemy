@@ -1,15 +1,13 @@
-/* Briggs's ship at Alhafra's eastern harbour: the cabin the party enters from
-   the deck, the rooms down its stairs, and a back room behind a tall crate.
-   Below, the party overhears Briggs and his mate learn that Madra's mayor has
-   come (scEasternAlhafraShipMayorArrives) and fights Briggs and a Sea Fighter;
-   after the battle Briggs gives himself up and the mayors of Madra and Alhafra
-   settle his fate and his ship's (scEasternAlhafraShipBriggsIsCaught). His wife
-   Chaucha and their baby Eoleo then stay aboard, where Eoleo lifts a vase of
-   flowers with Psynergy (scEasternAlhafraShipEoleoLifts). Move or a push shifts
-   the tall crate from the doorway to the back room, and Tremor knocks the Large
-   Bread down from the crates stacked inside
-   (scEasternAlhafraShipKnockDownTheBread): given to the crying boy in Alhafra,
-   it has his father let the party into the Alhafran Cave. */
+// Briggs's ship at Alhafra's eastern harbour: the cabin the party enters from the deck, the rooms
+// down its stairs, and a back room behind a tall crate. Below, the party overhears Briggs and his
+// mate learn that Madra's mayor has come (scEasternAlhafraShipMayorArrives) and fights Briggs and a
+// Sea Fighter; after the battle Briggs gives himself up and the mayors of Madra and Alhafra settle
+// his fate and his ship's (scEasternAlhafraShipBriggsIsCaught). His wife Chaucha and their baby
+// Eoleo then stay aboard, where Eoleo lifts a vase of flowers with Psynergy
+// (scEasternAlhafraShipEoleoLifts). Move or a push shifts the tall crate from the doorway to the
+// back room, and Tremor knocks the Large Bread down from the crates stacked inside
+// (scEasternAlhafraShipKnockDownTheBread): given to the crying boy in Alhafra, it has his father
+// let the party into the Alhafran Cave.
 
 #include "field/field_mode.h"
 #include "game/game.h"
@@ -20,73 +18,76 @@
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
 
-/* The tall crate pushed or Moved off the back room's door, east onto metatile
-   (24, 40). */
-#define FLAG_CRATE_MOVED		0x900
-/* Tremor has shaken the stacked crates down off the crate under them and
-   knocked the Large Bread to the floor. */
+// The tall crate pushed or Moved off the back room's door, east onto metatile (24, 40).
+#define FLAG_CRATE_MOVED        0x900
+// Tremor has shaken the stacked crates down off the crate under them and knocked the Large Bread to
+// the floor.
 #define FLAG_BREAD_KNOCKED_DOWN 0x901
-/* The Large Bread has been picked up. */
-#define FLAG_BREAD_TAKEN		0x902
-/* Set the first time the baby Eoleo lifts the vase with Psynergy; his mother
-   tells of his power only then. */
-#define FLAG_EOLEO_LIFTED		0x8ae
+// The Large Bread has been picked up.
+#define FLAG_BREAD_TAKEN        0x902
+// Set the first time the baby Eoleo lifts the vase with Psynergy; his mother tells of his power
+// only then.
+#define FLAG_EOLEO_LIFTED       0x8ae
 
-/* Due north and due south nudged by the least angle (a 65536th of a turn)
-   toward the west or the east. */
-#define FACING_NORTH_BY_WEST (FACING_NORTH - 1)
-#define FACING_NORTH_BY_EAST (FACING_NORTH + 1)
-#define FACING_SOUTH_BY_WEST (FACING_SOUTH + 1)
+// Due north and due south nudged by the least angle (a 65536th of a turn) toward the west or the
+// east.
+#define FACING_NORTH_BY_WEST    (FACING_NORTH - 1)
+#define FACING_NORTH_BY_EAST    (FACING_NORTH + 1)
+#define FACING_SOUTH_BY_WEST    (FACING_SOUTH + 1)
 
-/* Where the party comes back after the battle with Briggs and a Sea Fighter of
-   his crew, numbered 99 as The Broken Seal's Altin Peak numbers its own, and
-   the entrance it then counts as: the foot of the stairs down from the room the
-   party boards into. */
-enum { ENTRANCE_FOOT_OF_STAIRS = 3, ENTRANCE_AFTER_BRIGGS_BATTLE = 99 };
+// Where the party comes back after the battle with Briggs and a Sea Fighter of his crew, numbered
+// 99 as The Broken Seal's Altin Peak numbers its own, and the entrance it then counts as: the foot
+// of the stairs down from the room the party boards into.
+enum
+{
+	ENTRANCE_FOOT_OF_STAIRS      = 3,
+	ENTRANCE_AFTER_BRIGGS_BATTLE = 99
+};
 
-/* The metatiles just below the foot of those stairs, (28, 24) and (29, 24),
-   where the party first overhears Briggs (scEasternAlhafraShipMayorArrives). */
-enum { METATILE_BELOW_THE_STAIRS = 20 };
+// The metatiles just below the foot of those stairs, (28, 24) and (29, 24), where the party first
+// overhears Briggs (scEasternAlhafraShipMayorArrives).
+enum
+{
+	METATILE_BELOW_THE_STAIRS = 20
+};
 
-/* The people and things aboard, numbering the rows of
-   EasternAlhafraShipActorPlacements whose sprites are not the party's. */
-typedef enum EASTERN_ALHAFRA_SHIP_ACTOR_ID {
+// The people and things aboard, numbering the rows of EasternAlhafraShipActorPlacements whose
+// sprites are not the party's.
+typedef enum EASTERN_ALHAFRA_SHIP_ACTOR_ID
+{
 	ACTOR_BRIGGS = ACTOR_FIRST_PLACED,
-	/* Briggs's mate in the cabin: "He knew we needed a ship, and he knew we
-	   went east." */
+	// Briggs's mate in the cabin: "He knew we needed a ship, and he knew we went east."
 	ACTOR_BRIGGS_MATE,
 	ACTOR_CHAUCHA,
 	ACTOR_EOLEO,
-	/* The vase of flowers Eoleo lifts with Psynergy. */
+	// The vase of flowers Eoleo lifts with Psynergy.
 	ACTOR_VASE,
-	/* The tall crate before the back room's door, which Move or a push shifts
-	   aside (FLAG_CRATE_MOVED). */
+	// The tall crate before the back room's door, which Move or a push shifts aside
+	// (FLAG_CRATE_MOVED).
 	ACTOR_TALL_CRATE,
-	/* The stacked crates standing on another in the back room, which Tremor
-	   shakes down beside it. */
+	// The stacked crates standing on another in the back room, which Tremor shakes down beside it.
 	ACTOR_STACKED_CRATES,
-	/* The Large Bread on top of them, an item icon on an unseen marker. */
+	// The Large Bread on top of them, an item icon on an unseen marker.
 	ACTOR_LARGE_BREAD,
-	/* Those who come aboard after the battle, waiting off the map until
-	   then. */
+	// Those who come aboard after the battle, waiting off the map until then.
 	ACTOR_ALHAFRAS_MAYOR,
 	ACTOR_MADRAS_MAYOR,
 	ACTOR_MADRAS_ELDER,
 	ACTOR_MADRAN_SOLDIER,
-	/* Alhafra's soldiers. */
+	// Alhafra's soldiers.
 	ACTOR_ALHAFRAN_SOLDIER,
 	ACTOR_SECOND_ALHAFRAN_SOLDIER,
-	/* The rest of Briggs's crew, who come aboard with him after the battle. */
+	// The rest of Briggs's crew, who come aboard with him after the battle.
 	ACTOR_FIRST_PIRATE,
 	ACTOR_SECOND_PIRATE,
 	ACTOR_THIRD_PIRATE,
 	ACTOR_KRADEN
 } EASTERN_ALHAFRA_SHIP_ACTOR_ID;
 
-extern ACTOR_PLACE EasternAlhafraShipActorPlacements[];
-void			   scEasternAlhafraShipBriggsIsCaught(void);
-extern Uint32	   EasternAlhafraShipBriggsRunsScript[];
-extern Sint32	   EasternAlhafraShipMateRunsScript[];
+extern ACTOR_PLACE    EasternAlhafraShipActorPlacements[];
+void                  scEasternAlhafraShipBriggsIsCaught(void);
+extern Uint32         EasternAlhafraShipBriggsRunsScript[];
+extern Sint32         EasternAlhafraShipMateRunsScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -108,31 +109,29 @@ Sint32 scGetActorPlacements(void)
 	return (Sint32)EasternAlhafraShipActorPlacements;
 }
 
-/* Nothing visible happens as Felix begins to push or Move the tall crate in
-   front of the back room's door; the push or Move goes on as anywhere else. */
+// Nothing visible happens as Felix begins to push or Move the tall crate in front of the back
+// room's door; the push or Move goes on as anywhere else.
 void scEasternAlhafraShipStartMovingCrate(void)
 {
 }
 
-/* Felix pushes or Moves the tall crate standing against the north wall below
-   the stairs. Shifted east to metatile (24, 40), it uncovers a dark doorway in
-   the wall to the back room, and stays aside when the party comes back; shifted
-   back west to (23, 40), it covers the doorway again. */
+// Felix pushes or Moves the tall crate standing against the north wall below the stairs. Shifted
+// east to metatile (24, 40), it uncovers a dark doorway in the wall to the back room, and stays
+// aside when the party comes back; shifted back west to (23, 40), it covers the doorway again.
 void scEasternAlhafraShipFinishMovingCrate(Sint32 unused, Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
-	Sint32 x = FIELD_METATILE(actor->x.fixed);
-	Sint32 z = FIELD_METATILE(actor->z.fixed);
+	Sint32 x     = FIELD_METATILE(actor->x.fixed);
+	Sint32 z     = FIELD_METATILE(actor->z.fixed);
 
-	if(x == 24 && z == 40)
+	if (x == 24 && z == 40)
 		syGameFlagSet(FLAG_CRATE_MOVED);
-	if(x == 23 && z == 40)
+	if (x == 23 && z == 40)
 		syGameFlagClear(FLAG_CRATE_MOVED);
 }
 
-/* Felix casts Tremor on the stacked crates in the back room: he hops back as
-   they shift down beside the crate under them, and the Large Bread on top falls
-   to the floor, where he can pick it up. */
+// Felix casts Tremor on the stacked crates in the back room: he hops back as they shift down beside
+// the crate under them, and the Large Bread on top falls to the floor, where he can pick it up.
 void scEasternAlhafraShipKnockDownTheBread(void)
 {
 	syGameFlagSet(FLAG_BREAD_KNOCKED_DOWN);
@@ -146,27 +145,24 @@ void scEasternAlhafraShipKnockDownTheBread(void)
 	sySoundPlay(SE_POUND);
 	fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_STAND);
-	fdActorFaceDirectionById(
-		MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
+	fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 	fdScriptWait(20);
 	fdActorWaitForMoveById(ACTOR_LARGE_BREAD);
 	sySoundPlay(SE_DOOR_CLOSE);
 	return;
 }
 
-/* Felix picks up the Large Bread that Tremor knocked to the floor of the back
-   room. */
+// Felix picks up the Large Bread that Tremor knocked to the floor of the back room.
 void scEasternAlhafraShipTakeTheBread(Sint32 id)
 {
 	fdScriptPickUpItem(id, ITEM_LARGE_BREAD, FLAG_BREAD_TAKEN);
 	return;
 }
 
-/* Felix talks to the baby Eoleo, who stays aboard with his mother Chaucha once
-   Briggs is caught: "Goo goo ga ga!" He lifts the vase of flowers beside him
-   with Psynergy and drops it with a splash. The first time, Chaucha says he
-   only lately started doing that. The screen is tinted toward yellow
-   (`fdStartColorTransition`) while he holds the vase up. */
+// Felix talks to the baby Eoleo, who stays aboard with his mother Chaucha once Briggs is caught:
+// "Goo goo ga ga!" He lifts the vase of flowers beside him with Psynergy and drops it with a
+// splash. The first time, Chaucha says he only lately started doing that. The screen is tinted
+// toward yellow (`fdStartColorTransition`) while he holds the vase up.
 void scEasternAlhafraShipEoleoLifts(Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(ACTOR_VASE);
@@ -176,40 +172,39 @@ void scEasternAlhafraShipEoleoLifts(Sint32 id)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)MsgGooGooGa);
-	/* "Goo goo ga ga!" */
+	// "Goo goo ga ga!"
 	fdScriptShowMessageAndWait(ACTOR_EOLEO, 0);
 	fdStartColorTransition(8, RGB(16, 16, 4));
 	fdBattleEffectStartArcEffect();
-	/* Eoleo cycles through colours with swelling arcs, as a caster does. */
-	fdBattleEffectSetObjectUpdateMode(
-		(Sint32)fdActorGetById(id), CASTER_LOOK_CYCLING_COLORS);
+	// Eoleo cycles through colours with swelling arcs, as a caster does.
+	fdBattleEffectSetObjectUpdateMode((Sint32)fdActorGetById(id), CASTER_LOOK_CYCLING_COLORS);
 	sySoundPlay(SE_ASCEND);
 	fdScriptWait(30);
-	flags = &actor->motionFlags;
+	flags  = &actor->motionFlags;
 	*flags = ACTOR_FLOATS;
-	for(i = 0; i < 40; i++) {
+	for (i = 0; i < 40; i++)
+	{
 		actor->y.fixed += toFIXED(1) / 5;
 		fdScriptWait(1);
 	}
 	fdScriptWait(70);
-	fdBattleEffectSetObjectUpdateMode(
-		(Sint32)fdActorGetById(id), CASTER_LOOK_NORMAL);
+	fdBattleEffectSetObjectUpdateMode((Sint32)fdActorGetById(id), CASTER_LOOK_NORMAL);
 	fdBattleEffectWaitForArcGroups();
 	fdBattleEffectEndArcEffect();
 	fdStartPaletteTransition(8);
-	*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	*flags         = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	actor->gravity = toFIXED(1) / 2;
 	fdScriptWait(5);
 	sySoundPlay(SE_WATER);
-	if(fdScriptGetFlag(FLAG_EOLEO_LIFTED) == 0) {
+	if (fdScriptGetFlag(FLAG_EOLEO_LIFTED) == 0)
+	{
 		syGameFlagSet(FLAG_EOLEO_LIFTED);
 		fdScriptWait(30);
 		fdActorFaceDirectionById(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHEAST, 0);
 		fdScriptWait(30);
 		fdActorRunRepeatedMotion(ACTOR_CHAUCHA, 2);
 		fdScriptWait(10);
-		/* "Eoleo's only just recently started doing that... After that
-		   gem..." */
+		// "Eoleo's only just recently started doing that... After that gem..."
 		fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 		fdActorFaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST - 1, 0);
 	}
@@ -221,57 +216,64 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-/* Sets up the ship as the story stands: back from the battle, Briggs gives
-   himself up; once he is caught his crew are gone, and Chaucha and Eoleo stay
-   aboard after their visit to him, until the mast is cleared; and the tall
-   crate, the stacked crates and the Large Bread are where the party left
-   them. */
+// Sets up the ship as the story stands: back from the battle, Briggs gives himself up; once he is
+// caught his crew are gone, and Chaucha and Eoleo stay aboard after their visit to him, until the
+// mast is cleared; and the tall crate, the stacked crates and the Large Bread are where the party
+// left them.
 Sint32 scInit(void)
 {
 	ACTOR *actor;
 
-	FieldStateWork->transition =
-		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	if(MainRoutineStateWork.entrance == ENTRANCE_AFTER_BRIGGS_BATTLE) {
+	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	if (MainRoutineStateWork.entrance == ENTRANCE_AFTER_BRIGGS_BATTLE)
+	{
 		syGameFlagSet(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
 		syGameFlagSet(FLAG_BRIGGS_CAUGHT);
 		MainRoutineStateWork.returnEntrance = ENTRANCE_FOOT_OF_STAIRS;
-		MainRoutineStateWork.entrance = ENTRANCE_FOOT_OF_STAIRS;
+		MainRoutineStateWork.entrance       = ENTRANCE_FOOT_OF_STAIRS;
 		scEasternAlhafraShipBriggsIsCaught();
 	}
-	if(syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED)) {
+	if (syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED))
+	{
 		fdActorSetPos(ACTOR_CHAUCHA, 0, 0);
 		fdActorSetPos(ACTOR_EOLEO, 0, 0);
 		fdActorSetPos(ACTOR_BRIGGS, 0, 0);
 		fdActorSetPos(ACTOR_BRIGGS_MATE, 0, 0);
-	} else if(syGameFlagGet(FLAG_BRIGGS_CAUGHT)) {
+	}
+	else if (syGameFlagGet(FLAG_BRIGGS_CAUGHT))
+	{
 		fdActorSetPos(ACTOR_BRIGGS, 0, 0);
 		fdActorSetPos(ACTOR_BRIGGS_MATE, 0, 0);
-		if(!syGameFlagGet(FLAG_FAMILY_VISITED_BRIGGS)) {
+		if (!syGameFlagGet(FLAG_FAMILY_VISITED_BRIGGS))
+		{
 			fdActorSetPos(ACTOR_CHAUCHA, 0, 0);
 			fdActorSetPos(ACTOR_EOLEO, 0, 0);
 		}
-	} else {
+	}
+	else
+	{
 		fdActorSetPos(ACTOR_CHAUCHA, 0, 0);
 		fdActorSetPos(ACTOR_EOLEO, 0, 0);
 	}
-	if(syGameFlagGet(FLAG_CRATE_MOVED))
+	if (syGameFlagGet(FLAG_CRATE_MOVED))
 		fdActorSetPos(ACTOR_TALL_CRATE, 392, 648);
-	fdActorGetById(ACTOR_TALL_CRATE)->priorityFlags |=
-		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGetById(ACTOR_TALL_CRATE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorShowItemIconById(ACTOR_LARGE_BREAD, ITEM_LARGE_BREAD);
-	if(!syGameFlagGet(FLAG_BREAD_KNOCKED_DOWN)) {
-		if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
-			fdActorGetById(ACTOR_STACKED_CRATES)->priorityFlags |=
-				ACTOR_PRIORITY_PLATFORM;
-			actor = fdActorGetById(ACTOR_LARGE_BREAD);
+	if (!syGameFlagGet(FLAG_BREAD_KNOCKED_DOWN))
+	{
+		if (!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
+		{
+			fdActorGetById(ACTOR_STACKED_CRATES)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+			actor                 = fdActorGetById(ACTOR_LARGE_BREAD);
 			actor->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-			actor->y.fixed += toFIXED(16);
-			actor->groundHeight += toFIXED(16);
+			actor->y.fixed       += toFIXED(16);
+			actor->groundHeight  += toFIXED(16);
 		}
-	} else {
+	}
+	else
+	{
 		fdActorSetPos(ACTOR_STACKED_CRATES, 136, 475);
-		if(!syGameFlagGet(FLAG_BREAD_TAKEN))
+		if (!syGameFlagGet(FLAG_BREAD_TAKEN))
 			fdActorSetPos(ACTOR_LARGE_BREAD, 120, 472);
 		else
 			fdActorSetPos(ACTOR_LARGE_BREAD, 0, 0);
@@ -292,25 +294,24 @@ extern Uint32 QuestionMarkScript[];
 
 extern Uint32 EasternAlhafraShipLeaveUpTheStairsScript[];
 
-/* Walking down from the foot of the stairs (metatiles (28, 24) and (29, 24)) on
-   the first visit, the party overhears Briggs and his mate: Madra's mayor has
-   come to Alhafra after them. Jenna's outburst gives the party away, and Briggs
-   and a Sea Fighter of his crew fight it. */
-void scEasternAlhafraShipMayorArrives(void)
+// Walking down from the foot of the stairs (metatiles (28, 24) and (29, 24)) on the first visit,
+// the party overhears Briggs and his mate: Madra's mayor has come to Alhafra after them. Jenna's
+// outburst gives the party away, and Briggs and a Sea Fighter of his crew fight it.
+void          scEasternAlhafraShipMayorArrives(void)
 {
 	MAP_STATE *map;
-	Sint32	   result;
+	Sint32     result;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)MsgTheMayorOf);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	map = RamHeapSlots->mapGrid;
+	map       = RamHeapSlots->mapGrid;
 	map->minX = 0;
 	map->maxX = toFIXED(1024);
 	map->minZ = 0;
 	map->maxZ = toFIXED(1024);
-	/* "The mayor of Madra? Here?" */
+	// "The mayor of Madra? Here?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorWalkToAndWait(ACTOR_FELIX, 456, 408);
 	scFieldActorLaunchFromLeader(ACTOR_KRADEN, 0, -16, FACING_SOUTH);
@@ -334,71 +335,68 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "You're certain?" */
+	// "You're certain?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS_MATE, ANIM_NOD);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
 	fdScriptWait(30);
-	/* "How did he know we came to Alhafra?" */
+	// "How did he know we came to Alhafra?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorJump(ACTOR_BRIGGS_MATE, 6, 15);
 	fdActorJump(ACTOR_BRIGGS_MATE, 6, 23);
-	/* "He knew we needed a ship, and he knew we went east. It seems
-	   pretty..." */
+	// "He knew we needed a ship, and he knew we went east. It seems pretty..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_SOUTH, 0);
 	fdScriptWait(20);
-	/* "Arr... Well, yeah... When you put it that way, it does make sense..." */
+	// "Arr... Well, yeah... When you put it that way, it does make sense..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS_MATE, ANIM_NOD);
 	fdScriptWait(10);
-	/* "He was looking to find the mayor of Alhafra..." */
+	// "He was looking to find the mayor of Alhafra..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-	/* "He must be hoping the mayor will tell him where we are..." */
+	// "He must be hoping the mayor will tell him where we are..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS_MATE, 2);
 	fdScriptWait(10);
-	/* "He'll probably tell the Alhafrans we're pirates, too, huh?" */
+	// "He'll probably tell the Alhafrans we're pirates, too, huh?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
 	fdScriptWait(30);
-	/* "Pirates!? That seems a little unfair!" */
+	// "Pirates!? That seems a little unfair!"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-	/* "What do you mean? We...are pirates, aren't we? I mean, we've
-	   taken..." */
+	// "What do you mean? We...are pirates, aren't we? I mean, we've taken..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_SOUTH, 0);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "That's only because everyone in Champa would starve otherwise! We..." */
+	// "That's only because everyone in Champa would starve otherwise! We..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-	/* "Ah..." */
+	// "Ah..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
 	fdScriptWait(10);
-	/* "And even then, it's never a lot." */
+	// "And even then, it's never a lot."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-	/* "Wha-What's not?" */
+	// "Wha-What's not?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
-	/* "The stuff we take. We never take too much from any one town." */
+	// "The stuff we take. We never take too much from any one town."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS_MATE, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Yeah, I guess not..." */
+	// "Yeah, I guess not..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-	/* "And why do you think that is?" */
+	// "And why do you think that is?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorStartRepeatedMotion(ACTOR_BRIGGS_MATE, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_BRIGGS_MATE, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_BRIGGS_MATE, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
 	fdActorFaceDirectionById(ACTOR_BRIGGS_MATE, FACING_SOUTH_SOUTHEAST, 0);
 	fdScriptWait(30);
@@ -407,53 +405,46 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdActorShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 	fdActorFaceDirectionById(ACTOR_BRIGGS_MATE, FACING_NORTH_NORTHEAST, 0);
 	fdScriptWait(30);
-	/* "Er... Why?" */
+	// "Er... Why?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Because you never can tell how these wealthy towns will react.
-	   It's..." */
+	// "Because you never can tell how these wealthy towns will react. It's..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS_MATE, 2);
 	fdScriptWait(10);
-	/* "Hey, yeah! Which is why we didn't steal anything from Alhafra..." */
+	// "Hey, yeah! Which is why we didn't steal anything from Alhafra..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Right! That's why we avoid the risky towns and just take what we..." */
+	// "Right! That's why we avoid the risky towns and just take what we..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-	/* "See? That's why you're our captain, Briggs! You've got brains
-	   coming..." */
+	// "See? That's why you're our captain, Briggs! You've got brains coming..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-	/* "Hmph! There's nothing brainy about that!" */
+	// "Hmph! There's nothing brainy about that!"
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
 	fdActorFaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
 	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_KRADEN, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_KRADEN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_KRADEN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorStartRepeatedMotion(ACTOR_FELIX, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(30);
 	fdActorFaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_BRIGGS_MATE, FACING_EAST, 0);
 	fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-	fdActorShowEmoteById(
-		ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+	fdActorShowEmoteById(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 	fdScriptWait(20);
-	/* "Did you hear that? It sounded like a girl! Who's out there!?" */
+	// "Did you hear that? It sounded like a girl! Who's out there!?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorSetSpeed(ACTOR_BRIGGS, 1.5);
 	fdActorSetSpeed(ACTOR_BRIGGS_MATE, 1.5);
-	fdActorSetMovementTypeById(
-		ACTOR_BRIGGS_MATE, (Sint32)EasternAlhafraShipMateRunsScript);
+	fdActorSetMovementTypeById(ACTOR_BRIGGS_MATE, (Sint32)EasternAlhafraShipMateRunsScript);
 	fdScriptWait(5);
-	fdActorSetMovementTypeById(
-		ACTOR_BRIGGS, (Sint32)EasternAlhafraShipBriggsRunsScript);
+	fdActorSetMovementTypeById(ACTOR_BRIGGS, (Sint32)EasternAlhafraShipBriggsRunsScript);
 	fdActorWaitForScriptEndById(ACTOR_BRIGGS);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
@@ -464,19 +455,18 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdScriptWait(20);
 	fdActorJump(ACTOR_BRIGGS_MATE, 6, 15);
 	fdActorJump(ACTOR_BRIGGS_MATE, 6, 23);
-	/* "What do you think you're doing?" */
+	// "What do you think you're doing?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 	fdScriptWait(20);
-	/* "Don't you know that someone has been falsely imprisoned for your
-	   crimes?" */
+	// "Don't you know that someone has been falsely imprisoned for your crimes?"
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-	/* "Er... What's your point?" */
+	// "Er... What's your point?"
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_JENNA, 2);
 	fdScriptWait(10);
-	/* "You have to come with us and attest to that man's innocence!" */
+	// "You have to come with us and attest to that man's innocence!"
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_BRIGGS_MATE, FACING_WEST, 0);
@@ -484,7 +474,7 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
 	fdActorFaceDirectionById(ACTOR_BRIGGS_MATE, FACING_NORTH_NORTHWEST, 0);
 	fdScriptWait(20);
-	/* "And...why would I want to do something like that?" */
+	// "And...why would I want to do something like that?"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
 	fdScriptWait(30);
@@ -493,8 +483,7 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
 	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_KRADEN, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_KRADEN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_KRADEN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
 	fdActorFaceDirectionById(ACTOR_JENNA, FACING_NORTHWEST, 0);
 	fdScriptWait(30);
@@ -503,68 +492,62 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-	/* "Oh-ho! I was hoping we could avoid any ugliness, but you leave us
-	   no..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "Oh-ho! I was hoping we could avoid any ugliness, but you leave us no..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdActorFaceDirectionById(ACTOR_SHEBA, FACING_SOUTH, 0);
 	fdScriptWait(20);
 	fdActorJump(ACTOR_KRADEN, 6, 15);
 	fdActorJump(ACTOR_KRADEN, 6, 23);
-	/* "We'll bring you in against your will if we must, but either way..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "We'll bring you in against your will if we must, but either way..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 50);
-	/* "Isn't that right, Felix?" */
+	// "Isn't that right, Felix?"
 	fdScriptOpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
 	result = syFieldScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0);
-	if(result == 0) {
+	if (result == 0)
+	{
 		fdScriptWait(20);
 		fdActorFaceDirectionById(ACTOR_JENNA, FACING_WEST, 0);
 		fdScriptWait(20);
-		/* Yes: "Good for you! Let's teach these guys a lesson!" */
+		// Yes: "Good for you! Let's teach these guys a lesson!"
 		fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 		FieldStateWork->msg++;
-	} else {
+	}
+	else
+	{
 		scEasternAlhafraShipCountAnswer();
 		fdScriptWait(20);
 		fdActorFaceDirectionById(ACTOR_JENNA, FACING_WEST, 0);
 		fdScriptWait(20);
 		FieldStateWork->msg++;
-		/* No: "After what they've done? Come on, we need to make them fess
-		   up!" */
+		// No: "After what they've done? Come on, we need to make them fess up!"
 		fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	}
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdActorJump(ACTOR_BRIGGS_MATE, 6, 15);
 	fdActorJump(ACTOR_BRIGGS_MATE, 6, 23);
-	/* "You don't stand a chance! We're hardened criminal types! We eat
-	   punks..." */
+	// "You don't stand a chance! We're hardened criminal types! We eat punks..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "Watch yourselves, you self-righteous little brats! You're the
-	   ones..." */
+	// "Watch yourselves, you self-righteous little brats! You're the ones..."
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorWalkBy(ACTOR_BRIGGS, 0, -16);
 	fdActorWalkByById(ACTOR_BRIGGS_MATE, 0, -16);
 	fdScriptWait(10);
-	fdScriptSetAfterBattleDestination(
-		SCENE_EASTERN_ALHAFRA_SHIP, ENTRANCE_AFTER_BRIGGS_BATTLE);
+	fdScriptSetAfterBattleDestination(SCENE_EASTERN_ALHAFRA_SHIP, ENTRANCE_AFTER_BRIGGS_BATTLE);
 
 	MainRoutineStateWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-	fdRequestBattleFromEncounterTable(
-		ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 1);
+	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 1);
 	fdScriptEnd();
 }
 
-/* After the battle Briggs gives himself up. Chaucha pleads for him, and the
-   mayors of Madra and Alhafra settle what becomes of him and his crew and take
-   his ship for Madra. */
+// After the battle Briggs gives himself up. Chaucha pleads for him, and the mayors of Madra and
+// Alhafra settle what becomes of him and his crew and take his ship for Madra.
 void scEasternAlhafraShipBriggsIsCaught(void)
 {
 	ACTOR *emote;
@@ -622,22 +605,20 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Well, that takes care of that!" */
+	// "Well, that takes care of that!"
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "And I'm willing to bet everyone Briggs has been harassing will be..." */
+	// "And I'm willing to bet everyone Briggs has been harassing will be..."
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
 	fdScriptWait(10);
-	/* "This should set everyone in Indra at ease... They all seemed to
-	   fear..." */
+	// "This should set everyone in Indra at ease... They all seemed to fear..."
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "We lost..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "We lost..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH_BY_WEST, 0);
 	fdActorFaceDirectionById(ACTOR_JENNA, FACING_NORTH_BY_EAST, 0);
 	fdScriptWait(50);
@@ -645,44 +626,43 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorFaceDirectionById(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_SHAKE_HEAD);
-	/* "Even pirates have honor... I'll go quietly. I won't make a scene..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "Even pirates have honor... I'll go quietly. I won't make a scene..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "Go on... Hand us over to Madra or Alhafra or whoever..." */
+	// "Go on... Hand us over to Madra or Alhafra or whoever..."
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_JENNA, 2);
 	fdScriptWait(10);
-	/* "Good... First off, you can tell the Madrans that the man called..." */
+	// "Good... First off, you can tell the Madrans that the man called..."
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Fine. So, what, I just have to say that Piers isn't one of my men?" */
+	// "Fine. So, what, I just have to say that Piers isn't one of my men?"
 	fdScriptOpenMessage(ACTOR_BRIGGS, 0);
-	if(syFieldScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+	if (syFieldScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0)
+	{
 		fdScriptWait(30);
 		fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 		fdScriptWait(10);
-		/* Yes: "That's right. You tell the Madrans that, and they can
-		   release..." */
+		// Yes: "That's right. You tell the Madrans that, and they can release..."
 		fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 		FieldStateWork->msg += 1;
-	} else {
+	}
+	else
+	{
 		fdScriptWait(40);
 		fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
 		fdScriptWait(10);
 		FieldStateWork->msg += 1;
-		/* No: "Saying Piers is innocent won't clear you of your own
-		   crimes..." */
+		// No: "Saying Piers is innocent won't clear you of your own crimes..."
 		fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	}
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	fdScriptWait(10);
-	/* "We've secured Briggs's vow... We should take him to the Madrans..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
-	/* "Wait!" */
+	// "We've secured Briggs's vow... We should take him to the Madrans..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "Wait!"
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -697,30 +677,26 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdCameraMoveTo(464, CAMERA_KEEP, 408, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(10);
-	/* "Can't you find it in your hearts to forgive Briggs and his men?" */
+	// "Can't you find it in your hearts to forgive Briggs and his men?"
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-	/* "And who are you?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "And who are you?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorStartRepeatedMotion(ACTOR_CHAUCHA, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_CHAUCHA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_CHAUCHA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
-	/* "My name is Chaucha. I am Briggs's wife." */
+	// "My name is Chaucha. I am Briggs's wife."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-	/* "So you're a pirate, too?" */
+	// "So you're a pirate, too?"
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "No! Chaucha hasn't done a thing! Let her be!" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "No! Chaucha hasn't done a thing! Let her be!"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-	/* "I know Briggs and his men have caused some great trouble with
-	   their..." */
+	// "I know Briggs and his men have caused some great trouble with their..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_JENNA, ANIM_NOD);
@@ -729,15 +705,14 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "And I know their crimes cannot be ignored..." */
+	// "And I know their crimes cannot be ignored..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
 	fdScriptWait(10);
-	/* "If you know all that, then how can you ask us just to forgive him?" */
+	// "If you know all that, then how can you ask us just to forgive him?"
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_CHAUCHA, ANIM_SHAKE_HEAD);
-	/* "The only reason Briggs became a pirate was to help the people of
-	   Champa." */
+	// "The only reason Briggs became a pirate was to help the people of Champa."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 15);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH_BY_WEST, 0);
 	fdActorFaceDirectionById(ACTOR_JENNA, FACING_NORTH_BY_EAST, 0);
@@ -747,82 +722,69 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_CHAUCHA, 2);
 	fdScriptWait(10);
-	/* "We Champa are a seafaring folk. Our livelihood depends entirely
-	   upon..." */
+	// "We Champa are a seafaring folk. Our livelihood depends entirely upon..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "But in recent years, the sea has changed... We can't live the life
-	   we..." */
+	// "But in recent years, the sea has changed... We can't live the life we..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "The oceans have warmed, and the fish have vanished from our waters." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "The oceans have warmed, and the fish have vanished from our waters."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorSetAnimationById(ACTOR_JENNA, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_CHAUCHA, ANIM_SHAKE_HEAD);
-	/* "The soil in Champa is rocky and barren. No crops can grow there." */
+	// "The soil in Champa is rocky and barren. No crops can grow there."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	fdScriptWait(10);
-	/* "No crops? So you have no grains? And no meat? It sounds like life
-	   in..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
-	emote = (ACTOR *)fdActorShowEmote(
-		ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+	// "No crops? So you have no grains? And no meat? It sounds like life in..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	emote         = (ACTOR *)fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
 	emote->update = 0;
-	fdActorSetPosAndResetMotion(emote, (emote->x.fixed + toFIXED(22)),
-		(emote->y.fixed + toFIXED(8)), emote->z.fixed);
+	fdActorSetPosAndResetMotion(
+		emote, (emote->x.fixed + toFIXED(22)), (emote->y.fixed + toFIXED(8)), emote->z.fixed);
 	fdScriptWait(30);
-	/* "It's not hard! It's unbearable! Our children can't eat! Our
-	   village..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "It's not hard! It's unbearable! Our children can't eat! Our village..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorFaceDirection(ACTOR_CHAUCHA, FACING_WEST, 0);
 	fdScriptWait(20);
-	/* "These men promised to return with food enough for all our people,
-	   but..." */
+	// "These men promised to return with food enough for all our people, but..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_JENNA, 2);
 	fdScriptWait(10);
-	/* "So you became pirates...thieves..." */
+	// "So you became pirates...thieves..."
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorFaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-	/* "We don't know where Champa is..." */
+	// "We don't know where Champa is..."
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
 	fdScriptWait(20);
-	/* "It sits on the southeast corner of Angara..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "It sits on the southeast corner of Angara..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
 	fdScriptWait(20);
-	/* "Southeast Angara? Isn't that near Xian and Lama Temple?" */
+	// "Southeast Angara? Isn't that near Xian and Lama Temple?"
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-	/* "You have a good memory! If you were to head south through the..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "You have a good memory! If you were to head south through the..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-	/* "That's so far away..." */
+	// "That's so far away..."
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "Well, yeah! You think we could be successful pirates so close to
-	   home?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "Well, yeah! You think we could be successful pirates so close to home?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
@@ -830,22 +792,18 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "If they raided any towns near Champa, it would be obvious to all
-	   who..." */
+	// "If they raided any towns near Champa, it would be obvious to all who..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_SHAKE_HEAD);
-	/* "And no one back home could forgive me if they knew. Not even my..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 20);
+	// "And no one back home could forgive me if they knew. Not even my..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 20);
 	fdActorWalkByById(ACTOR_ALHAFRAS_MAYOR, 0, 8);
-	/* "But where does that leave us? Are we simply to accept your
-	   looting..." */
+	// "But where does that leave us? Are we simply to accept your looting..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
-	emote = (ACTOR *)fdActorShowEmote(
-		ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+	emote         = (ACTOR *)fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	emote->update = 0;
-	fdActorSetPosAndResetMotion(emote, (emote->x.fixed + toFIXED(22)),
-		(emote->y.fixed + toFIXED(8)), emote->z.fixed);
+	fdActorSetPosAndResetMotion(
+		emote, (emote->x.fixed + toFIXED(22)), (emote->y.fixed + toFIXED(8)), emote->z.fixed);
 	fdActorShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -863,95 +821,84 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "I'm shocked, I tell you. Shocked!" */
+	// "I'm shocked, I tell you. Shocked!"
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
 	fdActorFaceDirection(ACTOR_MADRAS_ELDER, FACING_SOUTHEAST, 0);
 	fdScriptWait(20);
-	/* "What's so shocking?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "What's so shocking?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdActorShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-	/* "It looks like they really are pirates, just like you said..." */
+	// "It looks like they really are pirates, just like you said..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-	/* "Mister Mayor, I am appalled that you could not take our word for it!" */
+	// "Mister Mayor, I am appalled that you could not take our word for it!"
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-	/* "He probably wouldn't even have believed we were from Madra if the..." */
+	// "He probably wouldn't even have believed we were from Madra if the..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH, 0);
 	fdScriptWait(10);
-	/* "Am I supposed to believe the accusations of a complete stranger?" */
+	// "Am I supposed to believe the accusations of a complete stranger?"
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-	/* "Is this your position, Mayor?" */
+	// "Is this your position, Mayor?"
 	fdScriptShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(10);
-	/* "How can I be expected to believe a tidal wave could wash Indra
-	   into..." */
+	// "How can I be expected to believe a tidal wave could wash Indra into..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_MADRAN_SOLDIER, 2);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Or that a group of men could walk on foot! from Madra all the way
-	   to..." */
+	// "Or that a group of men could walk on foot! from Madra all the way to..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAN_SOLDIER, ANIM_SHAKE_HEAD);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
 	fdScriptWait(10);
-	/* "It sounds to me like you had forgotten about us altogether!" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "It sounds to me like you had forgotten about us altogether!"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-	/* "I'm not sure you remember the last time we met. Do you?" */
+	// "I'm not sure you remember the last time we met. Do you?"
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdActorShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-	/* "We met when I was just a child... It must have been more than ten..." */
+	// "We met when I was just a child... It must have been more than ten..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHEAST, 0);
 	fdScriptWait(20);
-	/* "Twenty years! It's been twenty years since I last saw you." */
+	// "Twenty years! It's been twenty years since I last saw you."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
 	fdScriptWait(10);
-	/* "Has it really been so long?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "Has it really been so long?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
 	fdScriptWait(20);
-	/* "It's been a long time indeed!" */
+	// "It's been a long time indeed!"
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_MADRAN_SOLDIER, 2);
 	fdScriptWait(10);
-	/* "I guess we can't blame you for forgetting his face." */
+	// "I guess we can't blame you for forgetting his face."
 	fdScriptShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH, 0);
 	fdScriptWait(20);
-	fdActorShowEmote(
-		ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-	/* "Don't be silly! I didn't forget his face! His face merely...
-	   changed!" */
+	fdActorShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+	// "Don't be silly! I didn't forget his face! His face merely... changed!"
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorStartRepeatedMotion(ACTOR_MADRAS_ELDER, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_MADRAS_ELDER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_MADRAS_ELDER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
-	/* "Ahem! Forgive my interrupting your interruption, but..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
-	fdActorShowEmote(
-		ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+	// "Ahem! Forgive my interrupting your interruption, but..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	fdActorShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-	fdActorShowEmote(
-		ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+	fdActorShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_MADRAS_MAYOR, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_MADRAS_ELDER, FACING_SOUTH, 0);
@@ -962,21 +909,19 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	fdScriptWait(10);
-	/* "Would I be correct in assuming that I am speaking to the leaders
-	   of..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "Would I be correct in assuming that I am speaking to the leaders of..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorWalkByAndWaitById(ACTOR_MADRAS_MAYOR, 0, 16);
 	fdScriptWait(10);
-	/* "You are correct! I am the mayor of Madra." */
+	// "You are correct! I am the mayor of Madra."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorWalkByById(ACTOR_ALHAFRAS_MAYOR, 0, 16);
 	fdActorWalkByAndWaitById(ACTOR_MADRAS_ELDER, 0, 16);
 	fdActorSetAnimationById(ACTOR_ALHAFRAS_MAYOR, ANIM_STAND);
 	fdScriptWait(10);
-	/* "And I..." and "I am..." */
-	syFieldScriptShowTwoMessagesAndWait(ACTOR_MADRAS_ELDER, 13, 1, 13, 4,
-		ACTOR_ALHAFRAS_MAYOR, 17, 11, 22, 6, 0);
+	// "And I..." and "I am..."
+	syFieldScriptShowTwoMessagesAndWait(
+		ACTOR_MADRAS_ELDER, 13, 1, 13, 4, ACTOR_ALHAFRAS_MAYOR, 17, 11, 22, 6, 0);
 	fdActorStartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
 	fdScriptWait(20);
@@ -984,8 +929,7 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
 	fdScriptWait(30);
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-	fdActorShowEmote(
-		ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 60);
+	fdActorShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 60);
 	fdActorShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
 	fdActorSetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_SHAKE_HEAD);
 	fdActorShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
@@ -1000,17 +944,15 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(10);
-	/* "I am the mayor of Alhafra." */
+	// "I am the mayor of Alhafra."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_ELDER, ANIM_NOD);
 	fdScriptWait(10);
-	/* "I am Madra's town elder." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "I am Madra's town elder."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_MADRAN_SOLDIER, 2);
 	fdScriptWait(10);
-	/* "And I am a close personal friend of Shin, whose lover was injured
-	   by..." */
+	// "And I am a close personal friend of Shin, whose lover was injured by..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTH - 1, 0);
@@ -1020,25 +962,23 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
 	fdScriptWait(10);
-	/* "I am the scholar Kraden." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "I am the scholar Kraden."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_SOUTH - 1, 0);
 	fdScriptWait(20);
-	/* "He is Felix, the leader of our group." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "He is Felix, the leader of our group."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
 	fdScriptWait(20);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_NORTH, 0);
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "I am Jenna, Felix's sister." */
+	// "I am Jenna, Felix's sister."
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "I am called Sheba. I come from the town of Lalivero." */
+	// "I am called Sheba. I come from the town of Lalivero."
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorSetAnimationById(ACTOR_ALHAFRAS_MAYOR, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_MADRAS_MAYOR, ANIM_NOD);
@@ -1047,20 +987,18 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Now, what errand has brought you all here?" */
+	// "Now, what errand has brought you all here?"
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorStartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "We came for Briggs..." and "The mayor of Madra claims..." */
-	syFieldScriptShowTwoMessagesAndWait(ACTOR_MADRAS_MAYOR, 12, 1, 25, 4,
-		ACTOR_ALHAFRAS_MAYOR, 9, 11, 14, 6, 0);
+	// "We came for Briggs..." and "The mayor of Madra claims..."
+	syFieldScriptShowTwoMessagesAndWait(
+		ACTOR_MADRAS_MAYOR, 12, 1, 25, 4, ACTOR_ALHAFRAS_MAYOR, 9, 11, 14, 6, 0);
 	fdActorStartRepeatedMotion(ACTOR_MADRAS_MAYOR, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_MADRAS_MAYOR, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_MADRAS_MAYOR, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorStartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 3);
-	fdEffectSetAttached(
-		ACTOR_ALHAFRAS_MAYOR, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdEffectSetAttached(ACTOR_ALHAFRAS_MAYOR, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHEAST, 0);
 	fdActorFaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
@@ -1073,23 +1011,21 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "We followed Briggs here from Madra." */
+	// "We followed Briggs here from Madra."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-	/* "Of course, we have good reason to suspect them of being pirates." */
+	// "Of course, we have good reason to suspect them of being pirates."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdCameraMoveTo(464, CAMERA_KEEP, 432, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-	emote = (ACTOR *)fdActorShowEmote(
-		ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+	emote = (ACTOR *)fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
 	{
-		FIXED x = emote->x.fixed;
-		FIXED y = emote->y.fixed;
+		FIXED x       = emote->x.fixed;
+		FIXED y       = emote->y.fixed;
 		emote->update = 0;
-		fdActorSetPosAndResetMotion(
-			emote, x + toFIXED(22), y + toFIXED(8), emote->z.fixed);
+		fdActorSetPosAndResetMotion(emote, x + toFIXED(22), y + toFIXED(8), emote->z.fixed);
 	}
 	fdScriptWait(50);
 	fdCameraMoveTo(464, CAMERA_KEEP, 344, 1);
@@ -1097,61 +1033,48 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "Ahem! And I was honestly taken aback to hear a businessman being..." */
+	// "Ahem! And I was honestly taken aback to hear a businessman being..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_SHAKE_HEAD);
-	/* "If they truly are pirates, then why would they go to the trouble
-	   of..." */
+	// "If they truly are pirates, then why would they go to the trouble of..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorJump(ACTOR_MADRAS_ELDER, 6, 15);
 	fdActorJump(ACTOR_MADRAS_ELDER, 6, 23);
-	/* "Because the very funds they used to purchase the ship were
-	   pillaged..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "Because the very funds they used to purchase the ship were pillaged..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdCameraMoveTo(464, CAMERA_KEEP, 424, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS, 2);
 	fdScriptWait(10);
-	/* "If the ship was bought with Madran gold, then it belongs to the
-	   Madrans!" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "If the ship was bought with Madran gold, then it belongs to the Madrans!"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
 	fdScriptWait(30);
-	/* "What do you say? If you give them the ship, will that fix
-	   everything?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "What do you say? If you give them the ship, will that fix everything?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	briggs = fdActorGetById(ACTOR_BRIGGS);
-	fdActorSetPos(ACTOR_BRIGGS, briggs->x.part[0].integer + 20,
-		briggs->z.part[0].integer + 8);
+	fdActorSetPos(ACTOR_BRIGGS, briggs->x.part[0].integer + 20, briggs->z.part[0].integer + 8);
 	fdActorSetSpriteRotationById(ACTOR_BRIGGS, 0);
-	fdActorSetSpriteFlags(
-		(Sint32)fdActorGetById(ACTOR_BRIGGS), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_BRIGGS), SPRITE_FLAG_SHADOW);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
 	fdActorJump(ACTOR_BRIGGS, 6, 40);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_SHAKE_HEAD);
 	fdActorSetPos(ACTOR_BRIGGS_MATE, 456, 440);
 	fdActorSetSpriteRotationById(ACTOR_BRIGGS_MATE, 0);
-	fdActorSetSpriteFlags(
-		(Sint32)fdActorGetById(ACTOR_BRIGGS_MATE), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_BRIGGS_MATE), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_FIRST_PIRATE, 456, 456);
 	fdActorSetSpriteRotationById(ACTOR_FIRST_PIRATE, 0);
-	fdActorSetSpriteFlags(
-		(Sint32)fdActorGetById(ACTOR_FIRST_PIRATE), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_FIRST_PIRATE), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_SECOND_PIRATE, 424, 424);
 	fdActorSetSpriteRotationById(ACTOR_SECOND_PIRATE, 0);
-	fdActorSetSpriteFlags(
-		(Sint32)fdActorGetById(ACTOR_SECOND_PIRATE), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_SECOND_PIRATE), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_THIRD_PIRATE, 408, 440);
 	fdActorSetSpriteRotationById(ACTOR_THIRD_PIRATE, 0);
-	fdActorSetSpriteFlags(
-		(Sint32)fdActorGetById(ACTOR_THIRD_PIRATE), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_THIRD_PIRATE), SPRITE_FLAG_SHADOW);
 	fdActorFaceDirection(ACTOR_BRIGGS_MATE, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_FIRST_PIRATE, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_SECOND_PIRATE, FACING_NORTH, 0);
@@ -1170,18 +1093,15 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "Then where will you go?" */
+	// "Then where will you go?"
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_SHAKE_HEAD);
-	/* "I won't run, and I won't hide. ...Actually, I don't feel up for
-	   much..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "I won't run, and I won't hide. ...Actually, I don't feel up for much..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
 	fdScriptWait(10);
-	/* "Then you probably won't mind being locked up, will you?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "Then you probably won't mind being locked up, will you?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdCameraMoveTo(464, CAMERA_KEEP, 400, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(20);
@@ -1190,19 +1110,18 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_CHAUCHA, FACING_WEST, 0);
 	fdScriptWait(20);
-	/* "Briggs..." */
+	// "Briggs..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Don't worry, Chaucha! I'll be back!" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+	// "Don't worry, Chaucha! I'll be back!"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_CHAUCHA, 2);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_HEART, 40);
-	/* "Take care of Eoleo!" */
+	// "Take care of Eoleo!"
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
 	fdScriptWait(30);
@@ -1246,12 +1165,10 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorFaceDirection(ACTOR_SECOND_PIRATE, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_WEST, 0);
 	fdScriptWait(20);
-	/* "Your strange powers surprised me, but even without them, you
-	   would..." */
+	// "Your strange powers surprised me, but even without them, you would..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorStartRepeatedMotion(ACTOR_FELIX, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
 	fdScriptWait(20);
@@ -1279,19 +1196,19 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "We'll be taking that boat, then." */
+	// "We'll be taking that boat, then."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_BRIGGS_MATE, 2);
 	fdScriptWait(10);
-	/* "You're taking our ship!? You're worse than we ever were!" */
+	// "You're taking our ship!? You're worse than we ever were!"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
 	fdActorShowEmote(ACTOR_FIRST_PIRATE, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-	/* "Aren't you at least going to pay us for the boat!?" */
+	// "Aren't you at least going to pay us for the boat!?"
 	fdScriptShowMessageThenWait(ACTOR_FIRST_PIRATE, 0, 10);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(30);
 	fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-	/* "Quiet! All of you!" */
+	// "Quiet! All of you!"
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorShowEmote(ACTOR_FIRST_PIRATE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 	fdActorShowEmote(ACTOR_SECOND_PIRATE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1301,7 +1218,7 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Do as you must, but I have one request..." */
+	// "Do as you must, but I have one request..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(20);
@@ -1309,16 +1226,14 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdCameraWaitForArrival();
 	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_CHAUCHA, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_CHAUCHA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_CHAUCHA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(50);
 	fdCameraMoveTo(464, CAMERA_KEEP, 336, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(20);
 	fdActorFaceDirectionById(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
 	fdScriptWait(30);
-	/* "You have to let Chaucha and Eoleo stay in the boat until it's
-	   repaired." */
+	// "You have to let Chaucha and Eoleo stay in the boat until it's repaired."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(20);
@@ -1340,14 +1255,12 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "You haven't done Alhafra any harm, Briggs..." */
-	fdScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR, 0, 10);
+	// "You haven't done Alhafra any harm, Briggs..."
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_ELDER, ANIM_NOD);
 	fdScriptWait(10);
-	/* "At least keep him locked up until the boat is repaired..." */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "At least keep him locked up until the boat is repaired..."
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdActorFaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_NOD);
@@ -1370,22 +1283,19 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_MADRAN_SOLDIER, 2);
 	fdScriptWait(10);
-	/* "And our prisoner, Piers... Is he one of your men?" */
+	// "And our prisoner, Piers... Is he one of your men?"
 	fdScriptShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
 	fdActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-	/* "I don't know any Piers! Sounds to me like you've made a pretty
-	   big..." */
+	// "I don't know any Piers! Sounds to me like you've made a pretty big..."
 	fdScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
 	fdActorFaceDirectionById(ACTOR_MADRAS_ELDER, FACING_NORTHEAST, 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_ELDER, ANIM_NOD);
 	fdScriptWait(10);
-	/* "See! It's just as I said! Piers is innocent!" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "See! It's just as I said! Piers is innocent!"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdActorStartRepeatedMotion(ACTOR_MADRAN_SOLDIER, 3);
-	fdActorSetAttachedEffect(
-		ACTOR_MADRAN_SOLDIER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdActorSetAttachedEffect(ACTOR_MADRAN_SOLDIER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
 	fdActorFaceDirectionById(ACTOR_MADRAN_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(20);
@@ -1393,22 +1303,20 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
 	fdScriptWait(10);
-	/* "You must return to Madra and free him immediately!" */
-	fdScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+	// "You must return to Madra and free him immediately!"
+	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
 	fdActorShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-	/* "...Me? What, alone?!?" */
+	// "...Me? What, alone?!?"
 	fdScriptShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
 	fdActorFaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "Only two of us will remain here. You can return to Madra with the
-	   others." */
+	// "Only two of us will remain here. You can return to Madra with the others."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAN_SOLDIER, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Understood! We'll return immediately!" */
+	// "Understood! We'll return immediately!"
 	fdScriptShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
 	fdActorSetAnimationById(ACTOR_MADRAS_MAYOR, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_ELDER, ANIM_NOD);
@@ -1422,27 +1330,22 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_ALHAFRAN_SOLDIER, 2);
 	fdScriptWait(10);
-	/* "Can you come with us? ...Please?" */
+	// "Can you come with us? ...Please?"
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAN_SOLDIER, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
 	fdScriptWait(20);
 	fdActorSetMovementTypeById(ACTOR_SECOND_ALHAFRAN_SOLDIER,
-		EasternAlhafraShipLeaveUpTheStairsScript);
+	                           EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
-	fdActorSetMovementTypeById(
-		ACTOR_BRIGGS, EasternAlhafraShipLeaveUpTheStairsScript);
+	fdActorSetMovementTypeById(ACTOR_BRIGGS, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
-	fdActorSetMovementTypeById(
-		ACTOR_BRIGGS_MATE, EasternAlhafraShipLeaveUpTheStairsScript);
+	fdActorSetMovementTypeById(ACTOR_BRIGGS_MATE, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
-	fdActorSetMovementTypeById(
-		ACTOR_FIRST_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
+	fdActorSetMovementTypeById(ACTOR_FIRST_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
-	fdActorSetMovementTypeById(
-		ACTOR_SECOND_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
+	fdActorSetMovementTypeById(ACTOR_SECOND_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
-	fdActorSetMovementTypeById(
-		ACTOR_THIRD_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
+	fdActorSetMovementTypeById(ACTOR_THIRD_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(75);
 	fdActorWalkByAndWaitById(ACTOR_ALHAFRAN_SOLDIER, 16, 0);
 	fdActorWalkByAndWait(ACTOR_ALHAFRAN_SOLDIER, 0, -32);
@@ -1454,11 +1357,11 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "It looks like that wraps this whole mess up..." */
+	// "It looks like that wraps this whole mess up..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
 	fdScriptWait(20);
-	/* "Let us return to my mansion for a nice cup of tea..." */
+	// "Let us return to my mansion for a nice cup of tea..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_ELDER, ANIM_NOD);
 	fdScriptWait(10);
@@ -1469,11 +1372,10 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorFaceDirection(ACTOR_MADRAS_ELDER, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
 	fdScriptWait(10);
-	fdActorShowEmote(
-		ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+	fdActorShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 	fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH, 0);
 	fdScriptWait(20);
-	/* "You say your name is Kraden?" */
+	// "You say your name is Kraden?"
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdCameraMoveTo(464, CAMERA_KEEP, 320, 1);
 	fdCameraWaitForArrival();
@@ -1493,19 +1395,17 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Thank you very much for the help with Briggs." */
+	// "Thank you very much for the help with Briggs."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-	/* "If you have the time, please come see me at my mansion before you
-	   go..." */
+	// "If you have the time, please come see me at my mansion before you go..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
 	fdActorSetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(10);
-	/* "It's nothing special, but I would like to thank you for
-	   everything..." */
+	// "It's nothing special, but I would like to thank you for everything..."
 	fdScriptShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorFaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_WEST, 0);
 	fdScriptWait(20);
@@ -1525,14 +1425,13 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
 	fdScriptWait(30);
-	/* "Why do I get the feeling the mayor of Alhafra prefers to deal with
-	   my..." */
+	// "Why do I get the feeling the mayor of Alhafra prefers to deal with my..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorFaceDirection(ACTOR_MADRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Thank all of you very much." */
+	// "Thank all of you very much."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_SHEBA, ANIM_NOD);
@@ -1541,7 +1440,7 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "Due to your efforts, Piers is going to be released." */
+	// "Due to your efforts, Piers is going to be released."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirectionById(ACTOR_SHEBA, FACING_SOUTH_BY_WEST, 0);
@@ -1573,33 +1472,36 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorWalkByAndWaitById(ACTOR_MADRAS_MAYOR, 16, 16);
 	fdActorFaceDirection(ACTOR_MADRAS_MAYOR, FACING_SOUTH, 0);
 	fdScriptWait(20);
-	/* "And now, this fine ship belongs to Madra." */
+	// "And now, this fine ship belongs to Madra."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(10);
-	/* "None of this would have come to pass were it not for you. Thank you." */
+	// "None of this would have come to pass were it not for you. Thank you."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
 	fdScriptWait(10);
-	/* "Unfortunately, I don't have any reward I can offer you here..." */
+	// "Unfortunately, I don't have any reward I can offer you here..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_SOUTH, 0);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	fdScriptWait(10);
-	/* "Oh, pish posh! We don't need any reward, do we, Felix?" */
+	// "Oh, pish posh! We don't need any reward, do we, Felix?"
 	fdScriptOpenMessage(ACTOR_KRADEN, 0);
-	if(syFieldScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+	if (syFieldScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0)
+	{
 		fdScriptWait(30);
 		fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
 		fdScriptWait(10);
 		fdActorFaceDirectionById(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
 		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_SHAKE_HEAD);
-		/* Yes: "Ha! Your honesty is refreshing, Felix!" */
+		// Yes: "Ha! Your honesty is refreshing, Felix!"
 		fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 		FieldStateWork->msg += 1;
-	} else {
+	}
+	else
+	{
 		fdScriptWait(40);
 		scEasternAlhafraShipCountAnswer();
 		fdActorFaceDirectionById(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
@@ -1607,22 +1509,22 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 		fdActorSetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
 		fdScriptWait(20);
 		FieldStateWork->msg += 1;
-		/* No: "That's as may be, but I still feel quite indebted to you." */
+		// No: "That's as may be, but I still feel quite indebted to you."
 		fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	}
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-	/* "So, what shall we do?" */
+	// "So, what shall we do?"
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	scActorPopQuestionMarks(ACTOR_MADRAS_MAYOR);
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
-	/* "I know... Come to Madra after our boat has been fixed and we've..." */
+	// "I know... Come to Madra after our boat has been fixed and we've..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(10);
-	/* "We are still recovering from the effects of the tidal wave, so it..." */
+	// "We are still recovering from the effects of the tidal wave, so it..."
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-	/* "Well, shall we be going?" */
+	// "Well, shall we be going?"
 	fdScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
 	fdScriptWait(20);
@@ -1639,7 +1541,7 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdCameraWaitForArrival();
 	fdScriptWait(30);
 	fdActorShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-	/* "I see, so..." */
+	// "I see, so..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
@@ -1648,14 +1550,13 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorShowEmoteById(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
 	fdActorStartRepeatedMotion(ACTOR_CHAUCHA, 3);
-	fdEffectSetAttached(
-		ACTOR_CHAUCHA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+	fdEffectSetAttached(ACTOR_CHAUCHA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(40);
-	/* "Oh! N-Nothing. Never mind..." */
+	// "Oh! N-Nothing. Never mind..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "I do get to stay on the boat, right? At least until it's repaired?" */
+	// "I do get to stay on the boat, right? At least until it's repaired?"
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
 	fdActorSetAnimationById(ACTOR_SHEBA, ANIM_NOD);
@@ -1664,7 +1565,7 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "Yes. That's where I'll be if you need me. ...With Eoleo..." */
+	// "Yes. That's where I'll be if you need me. ...With Eoleo..."
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
 	fdActorWalkToAndWait(ACTOR_CHAUCHA, 472, 376);
 	fdCameraFollowActor(ACTOR_CHAUCHA, 1);
@@ -1687,12 +1588,11 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorWalkToAndWait(ACTOR_CHAUCHA, 440, 264);
 	fdActorSetPos(ACTOR_CHAUCHA, 0, 0);
 	fdScriptWait(30);
-	/* "I feel kind of bad for Chaucha." */
+	// "I feel kind of bad for Chaucha."
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_JENNA, 2);
 	fdScriptWait(10);
-	/* "What can we do about it? After all, she's the one married to a
-	   pirate." */
+	// "What can we do about it? After all, she's the one married to a pirate."
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
 	fdScriptWait(25);
@@ -1700,51 +1600,49 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(10);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_SOUTH, 0);
 	fdScriptWait(20);
-	/* "So, what should we do now?" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "So, what should we do now?"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-	/* "I suggest that we try to find Piers. He could prove enlightening!" */
-	syFieldScriptShowMessageThenWait(
-		SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+	// "I suggest that we try to find Piers. He could prove enlightening!"
+	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 	fdScriptWait(10);
-	/* "That's true... He seems to be a Water Adept. He might be able to
-	   tell..." */
+	// "That's true... He seems to be a Water Adept. He might be able to tell..."
 	fdScriptShowMessageThenWait(ACTOR_SHEBA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_JENNA, FACING_WEST, 0);
 	fdScriptWait(20);
-	/* "Do you think we should help them fix the boat?" */
+	// "Do you think we should help them fix the boat?"
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	fdActorFaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
 	fdScriptWait(20);
-	/* "Say, if we help with the boat, maybe they'll give us a ride back
-	   to..." */
+	// "Say, if we help with the boat, maybe they'll give us a ride back to..."
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
 	fdActorFaceDirectionById(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_SHEBA, 2);
 	fdScriptWait(10);
-	/* "What do you say, Felix?" */
+	// "What do you say, Felix?"
 	fdScriptOpenMessage(ACTOR_SHEBA, 0);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
-	if(syFieldScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+	if (syFieldScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0)
+	{
 		fdScriptWait(30);
 		fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
 		fdScriptWait(20);
-		/* Yes: "All right! Let's go see what we can do to get this thing..." */
+		// Yes: "All right! Let's go see what we can do to get this thing..."
 		fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 		FieldStateWork->msg += 1;
-	} else {
+	}
+	else
+	{
 		fdScriptWait(40);
 		fdActorSetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
 		FieldStateWork->msg += 1;
-		/* No: "You're opposed to it? Well, since you seem to have your
-		   own..." */
+		// No: "You're opposed to it? Well, since you seem to have your own..."
 		fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 10);
 	}
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
@@ -1754,7 +1652,8 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorSetSpeed(ACTOR_JENNA, 1.2);
 	fdActorSetAnimationById(ACTOR_JENNA, ANIM_WALK);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(leader != 0) {
+	if (leader != 0)
+	{
 		fdActorSetDestinationById(
 			ACTOR_JENNA, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
@@ -1763,7 +1662,8 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorSetSpeed(ACTOR_SHEBA, 1.2);
 	fdActorSetAnimationById(ACTOR_SHEBA, ANIM_WALK);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(leader != 0) {
+	if (leader != 0)
+	{
 		fdActorSetDestinationById(
 			ACTOR_SHEBA, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
@@ -1772,7 +1672,8 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorSetSpeed(ACTOR_KRADEN, 1.2);
 	fdActorSetAnimationById(ACTOR_KRADEN, ANIM_WALK);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(leader != 0) {
+	if (leader != 0)
+	{
 		fdActorSetDestinationById(
 			ACTOR_KRADEN, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
@@ -1783,9 +1684,8 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	return;
 }
 
-/* clang-format off */
-/* Briggs and his mate running out to the party once Jenna gives it away */
-/* (scEasternAlhafraShipMayorArrives). */
+// clang-format off
+// Briggs and his mate running out to the party once Jenna gives it away (scEasternAlhafraShipMayorArrives).
 Uint32 EasternAlhafraShipBriggsRunsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(32, 0, 0),
@@ -1822,8 +1722,7 @@ Sint32 EasternAlhafraShipMateRunsScript[] = {
 	SC_END,
 };
 
-/* The way up the stairs and off the ship that Briggs, his crew and their */
-/* guard take once he is caught. */
+// The way up the stairs and off the ship that Briggs, his crew and their guard take once he is caught.
 Uint32 EasternAlhafraShipLeaveUpTheStairsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(472, 0, 264),
@@ -1871,7 +1770,7 @@ ACTOR_PLACE EasternAlhafraShipActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
-/* clang-format on */
+// clang-format on
 
 CUE SceneCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
@@ -1879,31 +1778,27 @@ CUE SceneCues[] = {
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
 	{CUE_EXIT, 4, CONDITION_ALWAYS, 4},
 	{CUE_EXIT, 5, CONDITION_ALWAYS, 5},
-	{CUE_STEP, METATILE_BELOW_THE_STAIRS, FLAG_MAYOR_ARRIVED_AT_THE_SHIP,
-		SCRIPT_REF(scEasternAlhafraShipMayorArrives)},
-	{CUE_TALK, ACTOR_EOLEO, CONDITION_ALWAYS,
-		SCRIPT_REF(scEasternAlhafraShipEoleoLifts)},
+	{CUE_STEP,
+     METATILE_BELOW_THE_STAIRS, FLAG_MAYOR_ARRIVED_AT_THE_SHIP,
+     SCRIPT_REF(scEasternAlhafraShipMayorArrives)},
+	{CUE_TALK, ACTOR_EOLEO, CONDITION_ALWAYS, SCRIPT_REF(scEasternAlhafraShipEoleoLifts)},
 	{CUE_TALK, ACTOR_CHAUCHA, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EOLEO, CONDITION_ALWAYS,
-		MSGNO(MsgIMGonna)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHAUCHA, CONDITION_ALWAYS,
-		MSGNO(MsgIfEoleoGets)},
-	{CUE_TALK, ACTOR_LARGE_BREAD, CONDITION_ALWAYS,
-		SCRIPT_REF(scEasternAlhafraShipTakeTheBread)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EOLEO, CONDITION_ALWAYS, MSGNO(MsgIMGonna)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHAUCHA, CONDITION_ALWAYS, MSGNO(MsgIfEoleoGets)},
+	{CUE_TALK, ACTOR_LARGE_BREAD, CONDITION_ALWAYS, SCRIPT_REF(scEasternAlhafraShipTakeTheBread)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-		ACTOR_TALL_CRATE, CONDITION_ALWAYS,
-		SCRIPT_REF(scEasternAlhafraShipStartMovingCrate)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TALL_CRATE, CONDITION_ALWAYS,
-		SCRIPT_REF(scEasternAlhafraShipFinishMovingCrate)},
-	/* CUE_PUSH and CUE_PUSHED answer any target (fdFindCue):
-	   their 30 is never compared. */
-	{CUE_PUSH, 30, CONDITION_ALWAYS,
-		SCRIPT_REF(scEasternAlhafraShipStartMovingCrate)},
-	{CUE_PUSHED, 30, CONDITION_ALWAYS,
-		SCRIPT_REF(scEasternAlhafraShipFinishMovingCrate)},
-	{PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_STACKED_CRATES,
-		FLAG_BREAD_KNOCKED_DOWN,
-		SCRIPT_REF(scEasternAlhafraShipKnockDownTheBread)},
+     ACTOR_TALL_CRATE, CONDITION_ALWAYS,
+     SCRIPT_REF(scEasternAlhafraShipStartMovingCrate)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE),
+     ACTOR_TALL_CRATE, CONDITION_ALWAYS,
+     SCRIPT_REF(scEasternAlhafraShipFinishMovingCrate)},
+	// CUE_PUSH and CUE_PUSHED answer any target (fdFindCue):
+    // their 30 is never compared.
+	{CUE_PUSH, 30, CONDITION_ALWAYS, SCRIPT_REF(scEasternAlhafraShipStartMovingCrate)},
+	{CUE_PUSHED, 30, CONDITION_ALWAYS, SCRIPT_REF(scEasternAlhafraShipFinishMovingCrate)},
+	{PSYNERGY_ON_ACTOR(ABILITY_TREMOR),
+     ACTOR_STACKED_CRATES, FLAG_BREAD_KNOCKED_DOWN,
+     SCRIPT_REF(scEasternAlhafraShipKnockDownTheBread)},
 	{CUE_TABLE_END},
 };
 

@@ -1,11 +1,11 @@
-/* Timber Rooms A (Suhalla) and Timber Rooms B and C (Lalivero). */
+// Timber Rooms A (Suhalla) and Timber Rooms B and C (Lalivero).
 
-/* The party leaves by the touched exit, with the exit sound: the exit numbered
-   as the step cue the party walked into. */
+// The party leaves by the touched exit, with the exit sound: the exit numbered as the step cue the
+// party walked into.
 static void scLeaveByExit(void)
 {
 	FIELD_STATE *state = FieldStateWork;
-	Sint16		*cue = (Sint16 *)&state->stepCue;
+	Sint16      *cue   = (Sint16 *)&state->stepCue;
 
 	syImportScriptSetExitRequest(*cue);
 	sySoundPlay(SE_MAP_EXIT);

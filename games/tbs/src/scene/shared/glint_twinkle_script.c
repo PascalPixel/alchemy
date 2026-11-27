@@ -1,8 +1,8 @@
-/* Mercury Lighthouse, its entrance and Venus Lighthouse: the glints that
-   twinkle in rising water and spray. */
+// Mercury Lighthouse, its entrance and Venus Lighthouse: the glints that twinkle in rising water
+// and spray.
 
-/* A SPRITE_GLINT's life: it shrinks from full size to a quarter and back, four
-   times over 24 ticks each, then is released. */
+// A SPRITE_GLINT's life: it shrinks from full size to a quarter and back, four times over 24 ticks
+// each, then is released.
 Sint32 GlintTwinkleScript[] = {
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_SET(SW_SCALE_X, toFIXED(1)),

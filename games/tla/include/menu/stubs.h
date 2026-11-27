@@ -1,30 +1,28 @@
 #ifndef ALCHEMY_MENU_STUBS_H
 #define ALCHEMY_MENU_STUBS_H
 
-/* The stub calls into the menu module, as the other modules' code calls
-   them. */
+// The stub calls into the menu module, as the other modules' code calls them.
 
 #include "types.h"
 
 struct WINDOW_SPR;
-/* Turns an icon's window sprite on and copies its screen position into its OAM
-   attributes, with no affine matrix. */
+// Turns an icon's window sprite on and copies its screen position into its OAM attributes, with no
+// affine matrix.
 void mnIconShowStub(struct WINDOW_SPR *object);
-/* Describes item in window with the entry's own count. */
+// Describes item in window with the entry's own count.
 void mnItemMenuDrawItemDetailsStub(void *window, Sint32 item);
-/* Describes an item (an inventory entry) in window, one 8-pixel row a line,
-   with count as its count. */
-void mnItemMenuDrawItemDetailsWithCountStub(
-	void *window, Sint32 item, Sint32 count);
-/* Lends HIGHLIGHT_PALETTE to the element icons. */
+// Describes an item (an inventory entry) in window, one 8-pixel row a line, with count as its
+// count.
+void mnItemMenuDrawItemDetailsWithCountStub(void *window, Sint32 item, Sint32 count);
+// Lends HIGHLIGHT_PALETTE to the element icons.
 void mnPaletteLoadIconsIntoHighlightStub(void);
-/* Creates the first four party members' figures in a row from tile (originX,
-   originY) inside window, three tiles apart. */
+// Creates the first four party members' figures in a row from tile (originX, originY) inside
+// window, three tiles apart.
 void mnShowPartyFiguresStub(void *window, Sint32 originX, Sint32 originY);
-/* Replaces the menu's party figures with up to four party members' figures,
-   from party place first on. */
+// Replaces the menu's party figures with up to four party members' figures, from party place first
+// on.
 void mnCreatePartyFiguresStub(Sint32 first);
-/* Destroys the menu's party figures and stops placing them. */
+// Destroys the menu's party figures and stops placing them.
 void mnReleasePartyFiguresStub(void);
 
 #endif

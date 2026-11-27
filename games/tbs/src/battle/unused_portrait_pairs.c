@@ -1,13 +1,12 @@
-/* Unused: two tables pairing a speaker with a portrait, which no code names.
-   The window code's own, PortraitCharacterMap and PortraitSpriteMap, are the
-   ones the game reads. */
+// Unused: two tables pairing a speaker with a portrait, which no code names. The window code's own,
+// PortraitCharacterMap and PortraitSpriteMap, are the ones the game reads.
 
 #include "game/character_ids.h"
 #include "sprite_ids.h"
 #include "types.h"
 
-/* clang-format off */
-/* {character, portrait} pairs, as in PortraitCharacterMap. */
+// clang-format off
+// {character, portrait} pairs, as in PortraitCharacterMap.
 const Sint16 BattleUnusedCharacterPortraits[][2] = {
 	{SPRITE_ISAAC_CHILD, PORTRAIT_ISAAC_CHILD},
 	{GARET, PORTRAIT_GARET},
@@ -20,8 +19,7 @@ const Sint16 BattleUnusedCharacterPortraits[][2] = {
 	{-1, -1},
 };
 
-/* {sprite, portrait} pairs, as in PortraitSpriteMap: portrait n is the row */
-/* PORTRAIT_JUPITER_DJINNI + n. */
+// {sprite, portrait} pairs, as in PortraitSpriteMap: portrait n is the row PORTRAIT_JUPITER_DJINNI + n.
 const Sint16 BattleUnusedSpritePortraits[][2] = {
 	{SPRITE_JUPITER_DJINNI, 0},
 	{SPRITE_VENUS_DJINNI, 1},
@@ -74,4 +72,4 @@ const Sint16 BattleUnusedSpritePortraits[][2] = {
 	{SPRITE_FARAN, 48},
 	{-1, -1},
 };
-/* clang-format on */
+// clang-format on

@@ -1,50 +1,46 @@
-/* Vault Cave, the optional cave under Vault that the party can explore once it
-   comes back to the town (SceneIdVaultRevisit), with the Vambrace in a chest
-   and Sap, the Venus Djinni, waiting outside its far end. Its three parts are
-   scenes of their own, all named Vault Cave (area 31).
-
-   The way in is the passage Reveal uncovers among Vault's six gravestones,
-   where the dog jumps once given a Bone; a ladder leads down from it. The way
-   out is a cave mouth in the town's north-east cliff, above which the bell sent
-   Sap.
-
-   The cave is a side trip of puzzles for Move, Frost and Whirlwind. No one
-   speaks, and the only messages are "The door is tightly locked." and "Isaac
-   flipped the switch."
-
-   - SceneIdVaultCavePassage holds the foot of the ladder from Vault
-	 (VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT; Retreat leads there too). Its
-	 right-hand branch ends at a chest that is a Mimic (FIND_MIMIC). Its pool
-	 room has a switch on a ledge: flipping it shakes the cave and drains the
-	 pool (scVaultCaveFlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED), and the
-	 water runs down into the floor of the northern room of
-	 SceneIdVaultCaveVambrace, which scInit draws dry until then.
-	 Coming down the ladder from Vault again resets the switch.
-   - SceneIdVaultCaveVambrace is up the left-hand branch. In the room of two
-	 burning torches, Isaac pushes or Moves the west torch east onto the tile
-	 with a fire crest (scVaultCavePushSouthernPillar,
-	 scVaultCaveMoveSouthernPillar): the puzzle chime plays and the wooden gate
-	 beyond opens (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). North of it is the
-	 room of six puddles, where drops of water fall from the ceiling one at a
-	 time. Frost freezes a puddle into a tall ice pillar whose top Isaac can
-	 leap across, and frozen pillars make a way over the room; a drop landing
-	 on one stops on its top. Up on the room's ledge, Whirlwind blows away the
-	 ivy over the way to the Vambrace's chest (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY,
-	 kept while the party stays in the cave).
-   - SceneIdVaultCaveMouth leads out to the cave mouth
-	 (VAULT_CAVE_MOUTH_TO_VAULT_REVISIT). In its room of three torches, Isaac
-	 must get the lower burning torch north onto the fire crest below the
-	 wooden gate, past the unlit torch in the way, while drops of water fall
-	 on a fixed beat (VaultCaveScheduleTicks). A drop that lands on the
-	 burning torch puts its flame out (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK),
-	 and an unlit torch opens nothing until the room is entered again and the
-	 flame comes back.
-
-   Each room has a door that only says it is locked (scVaultCaveShowLockedDoor).
-
-   The pushes share scVaultCavePushPillarAhead, which moves the torch the leader
-   faces one metatile unless another actor or the rock is in the way. The water
-   drops run as events started by scInit. */
+// Vault Cave, the optional cave under Vault that the party can explore once it comes back to the
+// town (SceneIdVaultRevisit), with the Vambrace in a chest and Sap, the Venus Djinni, waiting
+// outside its far end. Its three parts are scenes of their own, all named Vault Cave (area 31).
+//
+// The way in is the passage Reveal uncovers among Vault's six gravestones, where the dog jumps once
+// given a Bone; a ladder leads down from it. The way out is a cave mouth in the town's north-east
+// cliff, above which the bell sent Sap.
+//
+// The cave is a side trip of puzzles for Move, Frost and Whirlwind. No one speaks, and the only
+// messages are "The door is tightly locked." and "Isaac flipped the switch."
+//
+// - SceneIdVaultCavePassage holds the foot of the ladder from Vault
+//       (VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT; Retreat leads there too). Its
+//       right-hand branch ends at a chest that is a Mimic (FIND_MIMIC). Its
+// pool room has a switch on a ledge: flipping it shakes the cave and drains the
+//       pool (scVaultCaveFlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED), and the
+//       water runs down into the floor of the northern room of
+//       SceneIdVaultCaveVambrace, which scInit draws dry until then.
+//       Coming down the ladder from Vault again resets the switch.
+// - SceneIdVaultCaveVambrace is up the left-hand branch. In the room of two
+//       burning torches, Isaac pushes or Moves the west torch east onto the
+// tile with a fire crest (scVaultCavePushSouthernPillar,
+//       scVaultCaveMoveSouthernPillar): the puzzle chime plays and the wooden
+// gate beyond opens (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). North of it is the room of six
+// puddles, where drops of water fall from the ceiling one at a
+//       time. Frost freezes a puddle into a tall ice pillar whose top Isaac can
+//       leap across, and frozen pillars make a way over the room; a drop
+// landing on one stops on its top. Up on the room's ledge, Whirlwind blows away the ivy over the
+// way to the Vambrace's chest (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY,
+//       kept while the party stays in the cave).
+// - SceneIdVaultCaveMouth leads out to the cave mouth
+//       (VAULT_CAVE_MOUTH_TO_VAULT_REVISIT). In its room of three torches,
+// Isaac must get the lower burning torch north onto the fire crest below the
+//       wooden gate, past the unlit torch in the way, while drops of water fall
+//       on a fixed beat (VaultCaveScheduleTicks). A drop that lands on the
+//       burning torch puts its flame out (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK),
+//       and an unlit torch opens nothing until the room is entered again and
+// the flame comes back.
+//
+// Each room has a door that only says it is locked (scVaultCaveShowLockedDoor).
+//
+// The pushes share scVaultCavePushPillarAhead, which moves the torch the leader faces one metatile
+// unless another actor or the rock is in the way. The water drops run as events started by scInit.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -59,122 +55,120 @@
 #include "game/system_call.h"
 #include "text/msg_ids.h"
 
-extern const Sint32		 VaultCaveSplashScript[];
-extern SCENE_ENTRANCE	 VaultCavePassageEntrances[];
-extern SCENE_ENTRANCE	 VaultCaveVambraceEntrances[];
-extern SCENE_ENTRANCE	 VaultCaveMouthEntrances[];
+extern const Sint32      VaultCaveSplashScript[];
+extern SCENE_ENTRANCE    VaultCavePassageEntrances[];
+extern SCENE_ENTRANCE    VaultCaveVambraceEntrances[];
+extern SCENE_ENTRANCE    VaultCaveMouthEntrances[];
 extern SCENE_EXIT_REGION VaultCaveRegions[];
-extern Uint32			 VaultCaveFallbackExits[];
-extern Uint32			 VaultCavePassageExits[];
-extern Uint32			 VaultCaveVambraceExits[];
-extern Uint32			 VaultCaveMouthExits[];
-extern ACTOR_PLACE		 VaultCaveFallbackActorPlacements[];
-extern ACTOR_PLACE		 VaultCavePassageActorPlacements[];
-extern ACTOR_PLACE		 VaultCaveVambraceActorPlacements[];
-extern ACTOR_PLACE		 VaultCaveMouthActorPlacements[];
-extern CUE				 VaultCaveFallbackCues[];
-extern CUE				 VaultCavePassageCues[];
-extern CUE				 VaultCaveVambraceCues[];
-extern CUE				 VaultCaveMouthCues[];
-extern Uint32			 VaultCaveScheduleTicks[];
-extern Sint32			 VaultCaveScheduleTimer;
-extern Sint32			 VaultCaveScheduleIndex;
-extern Sint32			 VaultCaveDropTicks;
-extern Sint32			 VaultCaveSelectedDrop;
+extern Uint32            VaultCaveFallbackExits[];
+extern Uint32            VaultCavePassageExits[];
+extern Uint32            VaultCaveVambraceExits[];
+extern Uint32            VaultCaveMouthExits[];
+extern ACTOR_PLACE       VaultCaveFallbackActorPlacements[];
+extern ACTOR_PLACE       VaultCavePassageActorPlacements[];
+extern ACTOR_PLACE       VaultCaveVambraceActorPlacements[];
+extern ACTOR_PLACE       VaultCaveMouthActorPlacements[];
+extern CUE               VaultCaveFallbackCues[];
+extern CUE               VaultCavePassageCues[];
+extern CUE               VaultCaveVambraceCues[];
+extern CUE               VaultCaveMouthCues[];
+extern Uint32            VaultCaveScheduleTicks[];
+extern Sint32            VaultCaveScheduleTimer;
+extern Sint32            VaultCaveScheduleIndex;
+extern Sint32            VaultCaveDropTicks;
+extern Sint32            VaultCaveSelectedDrop;
 
-static void scVaultCaveApplySouthernSwitchMetatiles(void);
-static void scVaultCaveUseUnderfootFrostPriorities(void);
-static void scVaultCaveUseAutomaticFrostPriorities(void);
-static void scVaultCaveSpawnSplash(ACTOR *src);
+static void              scVaultCaveApplySouthernSwitchMetatiles(void);
+static void              scVaultCaveUseUnderfootFrostPriorities(void);
+static void              scVaultCaveUseAutomaticFrostPriorities(void);
+static void              scVaultCaveSpawnSplash(ACTOR *src);
 
-/* The map metatile a 16.16 coordinate lies in, by division: the same as
-   FIELD_METATILE's shift but for a coordinate below 0, which it rounds toward
-   metatile 0. */
+// The map metatile a 16.16 coordinate lies in, by division: the same as FIELD_METATILE's shift but
+// for a coordinate below 0, which it rounds toward metatile 0.
 #define METATILE_OF(position) ((position) / toFIXED(16))
 
-/* The metatile behaviors of the metatiles the scripts answer. */
-typedef enum VAULT_CAVE_METATILE_BEHAVIOR {
-	/* The switch on the ledge in the pool room: metatile (28, 29). */
-	METATILE_BEHAVIOR_VAULT_CAVE_SWITCH = 20,
-	/* The floor of the room of three torches, where Isaac pushes them:
-	   metatiles (12, 14) to (20, 17) and the crest's metatile (16, 12). */
+// The metatile behaviors of the metatiles the scripts answer.
+typedef enum VAULT_CAVE_METATILE_BEHAVIOR
+{
+	// The switch on the ledge in the pool room: metatile (28, 29).
+	METATILE_BEHAVIOR_VAULT_CAVE_SWITCH          = 20,
+	// The floor of the room of three torches, where Isaac pushes them: metatiles (12, 14) to (20,
+	// 17) and the crest's metatile (16, 12).
 	METATILE_BEHAVIOR_VAULT_CAVE_NORTHERN_PILLAR = 50,
-	/* The floor of the room of two torches, where Isaac pushes them: metatiles
-	   (10, 55) to (16, 55) and the rows either side. */
+	// The floor of the room of two torches, where Isaac pushes them: metatiles (10, 55) to (16, 55)
+	// and the rows either side.
 	METATILE_BEHAVIOR_VAULT_CAVE_SOUTHERN_PILLAR = 60,
-	METATILE_BEHAVIOR_VAULT_CAVE_LOCKED_DOOR = 99,
-	METATILE_BEHAVIOR_VAULT_CAVE_CHEST = 100
+	METATILE_BEHAVIOR_VAULT_CAVE_LOCKED_DOOR     = 99,
+	METATILE_BEHAVIOR_VAULT_CAVE_CHEST           = 100
 } VAULT_CAVE_METATILE_BEHAVIOR;
 
-/* Scene flags, and one area flag. The six puddles of SceneIdVaultCaveVambrace
-   keep their frozen state in six flags in a row, read by index as well. */
-enum {
-	/* The upper western puddle, the first of the six. */
-	FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
-	FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
+// Scene flags, and one area flag. The six puddles of SceneIdVaultCaveVambrace keep their frozen
+// state in six flags in a row, read by index as well.
+enum
+{
+	// The upper western puddle, the first of the six.
+	FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN       = FLAG_SCENE_TEMP_00,
+	FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN       = FLAG_SCENE_TEMP_01,
 	FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_02,
-	FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_03,
-	FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
-	FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN = FLAG_SCENE_TEMP_05,
-	/* A drop of water has put out the flame of the lower torch in the room of
-	   three torches. The drop's metatile matched the torch's
-	   (scVaultCaveResetFallingActorAtActorMetatile). */
-	FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
-	/* Whirlwind has blown the ivy away. */
-	FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_AREA_TEMP_00
+	FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN       = FLAG_SCENE_TEMP_03,
+	FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN       = FLAG_SCENE_TEMP_04,
+	FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN         = FLAG_SCENE_TEMP_05,
+	// A drop of water has put out the flame of the lower torch in the room of three torches. The
+	// drop's metatile matched the torch's (scVaultCaveResetFallingActorAtActorMetatile).
+	FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK            = FLAG_SCENE_TEMP_07,
+	// Whirlwind has blown the ivy away.
+	FLAG_VAULT_CAVE_IVY_BLOWN_AWAY                 = FLAG_AREA_TEMP_00
 };
 
-/* SPRITE_FLAME_PILLAR's animations (flame_pillar.tsv). */
-typedef enum FLAME_PILLAR_ANIMATION {
-	FLAME_PILLAR_ANIMATION_UNLIT = 1,  /* the pillar, no flame on top */
-	FLAME_PILLAR_ANIMATION_BURNING = 2 /* a flame flickering on top */
+// SPRITE_FLAME_PILLAR's animations (flame_pillar.tsv).
+typedef enum FLAME_PILLAR_ANIMATION
+{
+	FLAME_PILLAR_ANIMATION_UNLIT   = 1, // the pillar, no flame on top
+	FLAME_PILLAR_ANIMATION_BURNING = 2  // a flame flickering on top
 } FLAME_PILLAR_ANIMATION;
 
-/* The actors of SceneIdVaultCaveVambrace, numbering the rows of
-   VaultCaveVambraceActorPlacements. */
-typedef enum VAULT_CAVE_VAMBRACE_ACTOR_ID {
-	/* The burning torch beside the wooden gate in the room of two torches, two
-	   metatiles east of the fire crest. It is drawn underfoot when the party
-	   arrives by VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
-	   VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM. */
+// The actors of SceneIdVaultCaveVambrace, numbering the rows of VaultCaveVambraceActorPlacements.
+typedef enum VAULT_CAVE_VAMBRACE_ACTOR_ID
+{
+	// The burning torch beside the wooden gate in the room of two torches, two metatiles east of
+	// the fire crest. It is drawn underfoot when the party arrives by
+	// VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
+	// VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM.
 	ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH = ACTOR_FIRST_PLACED,
-	/* The west torch, which goes onto the fire crest at metatile (15, 54). */
+	// The west torch, which goes onto the fire crest at metatile (15, 54).
 	ACTOR_SOUTHERN_PILLAR,
-	/* The first of six drops of water that fall at random, one every 64 ticks
-	   (scVaultCaveUpdateFrostControlledFallingActors). scVaultCaveSpawnSplash
-	   also uses their sprite for the splash where one lands. */
+	// The first of six drops of water that fall at random, one every 64 ticks
+	// (scVaultCaveUpdateFrostControlledFallingActors). scVaultCaveSpawnSplash also uses their
+	// sprite for the splash where one lands.
 	ACTOR_FIRST_WATER_DROP,
-	/* The six puddles under the drops, in their order and in the order of their
-	   flags (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
-	   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). Frost freezes each into an ice
-	   pillar, as in bilibin_cave.c, and a drop landing on one stops on its top,
-	   32 pixels up. */
+	// The six puddles under the drops, in their order and in the order of their flags
+	// (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). Frost
+	// freezes each into an ice pillar, as in bilibin_cave.c, and a drop landing on one stops on its
+	// top, 32 pixels up.
 	ACTOR_WEST_UPPER_PUDDLE = ACTOR_FIRST_WATER_DROP + 6,
 	ACTOR_WEST_LOWER_PUDDLE,
 	ACTOR_INNER_WEST_LOWER_PUDDLE,
 	ACTOR_EAST_UPPER_PUDDLE,
 	ACTOR_EAST_LOWER_PUDDLE,
 	ACTOR_FAR_EAST_PUDDLE,
-	/* The ivy on the ledge above the room of six puddles, over the way to the
-	   Vambrace's chest (SPRITE_IVY, as in bilibin.c, drawn half as tall again).
-	   It is placed until Whirlwind blows it away
-	   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY). */
+	// The ivy on the ledge above the room of six puddles, over the way to the Vambrace's chest
+	// (SPRITE_IVY, as in bilibin.c, drawn half as tall again). It is placed until Whirlwind blows
+	// it away (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY).
 	ACTOR_IVY
 } VAULT_CAVE_VAMBRACE_ACTOR_ID;
 
-/* The actors of SceneIdVaultCaveMouth, numbering the rows of
-   VaultCaveMouthActorPlacements. The fire crest in the room of three torches
-   is map metatile (16, 12). */
-typedef enum VAULT_CAVE_MOUTH_ACTOR_ID {
-	/* The burning torch beside the wooden gate, two metatiles east of the fire
-	   crest. */
+// The actors of SceneIdVaultCaveMouth, numbering the rows of VaultCaveMouthActorPlacements. The
+// fire crest in the room of three torches is map metatile (16, 12).
+typedef enum VAULT_CAVE_MOUTH_ACTOR_ID
+{
+	// The burning torch beside the wooden gate, two metatiles east of the fire crest.
 	ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH = ACTOR_FIRST_PLACED,
-	/* The unlit torch two metatiles south of the fire crest, in the way. */
+	// The unlit torch two metatiles south of the fire crest, in the way.
 	ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH,
-	/* The lower burning torch, which goes onto the fire crest. */
+	// The lower burning torch, which goes onto the fire crest.
 	ACTOR_NORTHERN_PILLAR,
-	/* The first of four drops of water that fall on a fixed schedule
-	   (scVaultCaveUpdateTimedFallingActors). */
+	// The first of four drops of water that fall on a fixed schedule
+	// (scVaultCaveUpdateTimedFallingActors).
 	ACTOR_FIRST_TIMED_WATER_DROP
 } VAULT_CAVE_MOUTH_ACTOR_ID;
 
@@ -182,19 +176,22 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_VAULT_CAVE_PASSAGE) {
+	if (sceneId == SCENE_VAULT_CAVE_PASSAGE)
+	{
 		return VaultCavePassageEntrances;
 	}
-	if(sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
+	if (sceneId == SCENE_VAULT_CAVE_VAMBRACE)
+	{
 		return VaultCaveVambraceEntrances;
 	}
-	if(sceneId == SCENE_VAULT_CAVE_MOUTH) {
+	if (sceneId == SCENE_VAULT_CAVE_MOUTH)
+	{
 		return VaultCaveMouthEntrances;
 	}
 	return SceneFallbackEntrances;
 }
 
-/* Returns the region boxes used by the cave's exits. */
+// Returns the region boxes used by the cave's exits.
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
 	return VaultCaveRegions;
@@ -204,202 +201,205 @@ const Uint32 *scGetExits(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_VAULT_CAVE_PASSAGE) {
+	if (sceneId == SCENE_VAULT_CAVE_PASSAGE)
+	{
 		return VaultCavePassageExits;
 	}
-	if(sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
+	if (sceneId == SCENE_VAULT_CAVE_VAMBRACE)
+	{
 		return VaultCaveVambraceExits;
 	}
-	if(sceneId == SCENE_VAULT_CAVE_MOUTH) {
+	if (sceneId == SCENE_VAULT_CAVE_MOUTH)
+	{
 		return VaultCaveMouthExits;
 	}
 	return VaultCaveFallbackExits;
 }
 
-/* Selects the torches, drops of water, puddles and ivy of the room. */
+// Selects the torches, drops of water, puddles and ivy of the room.
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_VAULT_CAVE_PASSAGE) {
+	if (sceneId == SCENE_VAULT_CAVE_PASSAGE)
+	{
 		return VaultCavePassageActorPlacements;
 	}
-	if(sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
+	if (sceneId == SCENE_VAULT_CAVE_VAMBRACE)
+	{
 		return VaultCaveVambraceActorPlacements;
 	}
-	if(sceneId == SCENE_VAULT_CAVE_MOUTH) {
+	if (sceneId == SCENE_VAULT_CAVE_MOUTH)
+	{
 		return VaultCaveMouthActorPlacements;
 	}
 	return VaultCaveFallbackActorPlacements;
 }
 
-/* Finds a placed actor with collision enabled at the requested map metatile. */
-static ACTOR *scVaultCaveFindCollidableActorAtMetatile(
-	Sint32 column, Sint32 row)
+// Finds a placed actor with collision enabled at the requested map metatile.
+static ACTOR *scVaultCaveFindCollidableActorAtMetatile(Sint32 column, Sint32 row)
 {
 	FIELD_STATE *state = FieldStateWork;
-	Uint32		 actorSlot;
+	Uint32       actorSlot;
 
-	for(actorSlot = ACTOR_FIRST_PLACED; actorSlot <= ACTOR_LAST_ID;
-		actorSlot++) {
+	for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= ACTOR_LAST_ID; actorSlot++)
+	{
 		ACTOR *actor = state->actors[actorSlot];
 
-		/* UB: map creation leaves unused actor slots NULL. */
-		if(
+		// UB: map creation leaves unused actor slots NULL.
+		if (
 #if FIX_NULL_DEREFERENCE
 			actor != NULL &&
 #endif
-			column == FIELD_METATILE(actor->x.fixed) &&
-			row == FIELD_METATILE(actor->z.fixed) &&
-			actor->collisionFlags != 0) {
+			column == FIELD_METATILE(actor->x.fixed) && row == FIELD_METATILE(actor->z.fixed)
+			&& actor->collisionFlags != 0)
+		{
 			return actor;
 		}
 	}
 	return NULL;
 }
 
-/* Pushes the torch Isaac faces one metatile, unless another torch or the rock
-   is in the way. */
+// Pushes the torch Isaac faces one metatile, unless another torch or the rock is in the way.
 static void scVaultCavePushPillarAhead(void)
 {
-	ACTOR	 *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32	  direction = FACING_INDEX(leader->facing);
-	ACTOR	 *pillar;
-	ACTOR	 *beyond;
+	ACTOR    *leader    = fdActorGet(ACTOR_PARTY_LEADER);
+	Sint32    direction = FACING_INDEX(leader->facing);
+	ACTOR    *pillar;
+	ACTOR    *beyond;
 	FIELD_POS dest;
-	Sint32	  fallingIndex;
-	Sint32	  column;
-	Sint32	  row;
+	Sint32    fallingIndex;
+	Sint32    column;
+	Sint32    row;
 
-	column = (leader->x.part[0].integer +
-				 (FIXEDtoINT(PushedActorDirectionSteps[direction]))) >>
-		4;
-	row = (leader->z.part[0].integer +
-			  (Sint16)PushedActorDirectionSteps[direction]) >>
-		4;
+	column = (leader->x.part[0].integer + (FIXEDtoINT(PushedActorDirectionSteps[direction]))) >> 4;
+	row    = (leader->z.part[0].integer + (Sint16)PushedActorDirectionSteps[direction]) >> 4;
 	pillar = scVaultCaveFindCollidableActorAtMetatile(column, row);
-	/* UB: the pillar's collisionFlags is read before the test for no pillar. */
+	// UB: the pillar's collisionFlags is read before the test for no pillar.
 #if FIX_NULL_DEREFERENCE
-	if(pillar == NULL || pillar->collisionFlags == 0) {
+	if (pillar == NULL || pillar->collisionFlags == 0)
+	{
 #else
-	if(pillar->collisionFlags == 0 || pillar == NULL) {
+	if (pillar->collisionFlags == 0 || pillar == NULL)
+	{
 #endif
 		return;
 	}
-	/* SceneIdVaultCaveMouth's water drops are never pushed; in
-	   SceneIdVaultCaveVambrace these slots hold water drops too. */
-	for(fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-		if(pillar == fdActorGet(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP)) {
+	// SceneIdVaultCaveMouth's water drops are never pushed; in SceneIdVaultCaveVambrace these slots
+	// hold water drops too.
+	for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++)
+	{
+		if (pillar == fdActorGet(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP))
+		{
 			return;
 		}
 	}
-	column = (pillar->x.part[0].integer +
-				 (FIXEDtoINT(PushedActorDirectionSteps[direction]))) >>
-		4;
-	row = (pillar->z.part[0].integer +
-			  (Sint16)PushedActorDirectionSteps[direction]) >>
-		4;
+	column = (pillar->x.part[0].integer + (FIXEDtoINT(PushedActorDirectionSteps[direction]))) >> 4;
+	row    = (pillar->z.part[0].integer + (Sint16)PushedActorDirectionSteps[direction]) >> 4;
 	beyond = scVaultCaveFindCollidableActorAtMetatile(column, row);
-	if(beyond != NULL && (beyond->collisionFlags & ACTOR_SOLID)) {
+	if (beyond != NULL && (beyond->collisionFlags & ACTOR_SOLID))
+	{
 		return;
 	}
 	pillar->layer = 2;
 	fdActorStepFrom(&dest, pillar, PushedActorDirectionSteps[direction]);
-	if(syFieldActorCheckMovementCollision(pillar, &dest) > 0) {
+	if (syFieldActorCheckMovementCollision(pillar, &dest) > 0)
+	{
 		return;
 	}
 	fdActorSelectAnimation(leader, ANIM_PUSH);
 	sySynch(15);
 	sySoundPlay(SE_PUSH_STEP);
-	pillar->speedLimit = toFIXED(1) / 5;
+	pillar->speedLimit   = toFIXED(1) / 5;
 	pillar->acceleration = toFIXED(1) / 5;
 	syFieldActorSetMoveTargetFX(pillar, dest.x, dest.y, dest.z);
-	leader->speedLimit = toFIXED(1) / 5;
+	leader->speedLimit   = toFIXED(1) / 5;
 	leader->acceleration = toFIXED(1) / 5;
 	syFieldActorSetMoveTargetFX(leader, dest.x, dest.y, dest.z);
 	fdActorWaitForMove(pillar);
 	sySoundPlay(SE_STOP_ACTION_SE);
-	pillar->x.fixed = dest.x;
-	pillar->z.fixed = dest.z;
+	pillar->x.fixed   = dest.x;
+	pillar->z.fixed   = dest.z;
 	pillar->velocityX = 0;
 	pillar->velocityZ = 0;
 	leader->velocityX = 0;
 	leader->velocityZ = 0;
-	leader->targetX = ACTOR_NO_TARGET;
-	leader->targetZ = ACTOR_NO_TARGET;
+	leader->targetX   = ACTOR_NO_TARGET;
+	leader->targetZ   = ACTOR_NO_TARGET;
 	fdActorSelectAnimation(leader, ANIM_STAND);
 }
 
-/* Whirlwind on the ivy on the ledge above the room of six puddles blows it
-   away, opening the way to the Vambrace's chest. */
+// Whirlwind on the ivy on the ledge above the room of six puddles blows it away, opening the way to
+// the Vambrace's chest.
 static void scVaultCaveUseWhirlwind(void)
 {
 	gmFlagSet(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);
 }
 
-/* Searching a locked door in Vault Cave: "The door is tightly locked." */
+// Searching a locked door in Vault Cave: "The door is tightly locked."
 static void scVaultCaveShowLockedDoor(void)
 {
 	mnFieldMessageShow(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
-/* Selects the cave scene's examine cues, movement checks and Psynergy
-   callbacks. */
+// Selects the cave scene's examine cues, movement checks and Psynergy callbacks.
 const CUE *scGetCues(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
 
-	if(sceneId == SCENE_VAULT_CAVE_PASSAGE) {
+	if (sceneId == SCENE_VAULT_CAVE_PASSAGE)
+	{
 		return VaultCavePassageCues;
 	}
-	if(sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
+	if (sceneId == SCENE_VAULT_CAVE_VAMBRACE)
+	{
 		return VaultCaveVambraceCues;
 	}
-	if(sceneId == SCENE_VAULT_CAVE_MOUTH) {
+	if (sceneId == SCENE_VAULT_CAVE_MOUTH)
+	{
 		return VaultCaveMouthCues;
 	}
 	return VaultCaveFallbackCues;
 }
 
-/* Whether the west torch of the room of two torches stands on the fire
-   crest. */
+// Whether the west torch of the room of two torches stands on the fire crest.
 static Bool scVaultCaveIsSouthernPillarOnSwitch(void)
 {
 	ACTOR *pillar = fdActorGet(ACTOR_SOUTHERN_PILLAR);
-	Sint32 row = pillar->z.fixed / toFIXED(16);
+	Sint32 row    = pillar->z.fixed / toFIXED(16);
 	Sint32 column = pillar->x.fixed / toFIXED(16);
 
-	if(column == 15 && row == 54) {
+	if (column == 15 && row == 54)
+	{
 		return TRUE;
 	}
 	return FALSE;
 }
 
-/* Once the torch is on the fire crest, plays the puzzle chime and opens the
-   wooden gate. */
+// Once the torch is on the fire crest, plays the puzzle chime and opens the wooden gate.
 static inline void scVaultCaveCompleteSouthernSwitch(void)
 {
-	if(scVaultCaveIsSouthernPillarOnSwitch() != 0) {
+	if (scVaultCaveIsSouthernPillarOnSwitch() != 0)
+	{
 		gmFlagSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH);
 		sySoundPlay(MUS_PUZZLE_SOLVED);
 		scVaultCaveApplySouthernSwitchMetatiles();
 	}
 }
 
-/* In the room of two burning torches, up the left-hand branch, Isaac pushes a
-   torch a metatile. Once the west torch reaches the tile with the fire crest
-   (metatile (15, 54)), the puzzle chime plays and the wooden gate north of it
-   opens. */
+// In the room of two burning torches, up the left-hand branch, Isaac pushes a torch a metatile.
+// Once the west torch reaches the tile with the fire crest (metatile (15, 54)), the puzzle chime
+// plays and the wooden gate north of it opens.
 static void scVaultCavePushSouthernPillar(void)
 {
-	if(fdScriptGetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
+	if (fdScriptGetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0)
+	{
 		scVaultCavePushPillarAhead();
 		scVaultCaveCompleteSouthernSwitch();
 	}
 }
 
-/* Draws the room of two torches' wooden gate open and lets the party through
-   it. */
+// Draws the room of two torches' wooden gate open and lets the party through it.
 static void scVaultCaveApplySouthernSwitchMetatiles(void)
 {
 	fdMapGridCopyMetatiles(87, 50, 2, 4, 80, 50);
@@ -407,12 +407,12 @@ static void scVaultCaveApplySouthernSwitchMetatiles(void)
 	fdMapGridCopyMetatileAttributes(16, 52, 1, 1, 16, 53);
 }
 
-/* In the room of two burning torches, Isaac uses Move on the west torch: a
-   great hand slides it a metatile, and if that puts it on the fire crest the
-   puzzle chime plays and the wooden gate opens. */
+// In the room of two burning torches, Isaac uses Move on the west torch: a great hand slides it a
+// metatile, and if that puts it on the fire crest the puzzle chime plays and the wooden gate opens.
 static void scVaultCaveMoveSouthernPillar(void)
 {
-	if(fdScriptGetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
+	if (fdScriptGetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0)
+	{
 		scVaultCaveCompleteSouthernSwitch();
 	}
 }
@@ -421,8 +421,7 @@ static void UNUSED scVaultCaveUnusedNoOperation(void)
 {
 }
 
-/* Draws the room of three torches' wooden gate open and lets the party through
-   it. */
+// Draws the room of three torches' wooden gate open and lets the party through it.
 static void scVaultCaveApplyNorthernSwitchMetatiles(void)
 {
 	fdMapGridCopyMetatiles(90, 9, 2, 3, 80, 9);
@@ -430,27 +429,29 @@ static void scVaultCaveApplyNorthernSwitchMetatiles(void)
 	fdMapGridCopyMetatileAttributes(17, 10, 1, 1, 17, 11);
 }
 
-/* Whether the lower torch of the room of three torches stands on the fire
-   crest. */
+// Whether the lower torch of the room of three torches stands on the fire crest.
 static Bool scVaultCaveIsNorthernPillarOnSwitch(void)
 {
 	ACTOR *pillar = fdActorGet(ACTOR_NORTHERN_PILLAR);
-	Sint32 row = pillar->z.fixed / toFIXED(16);
+	Sint32 row    = pillar->z.fixed / toFIXED(16);
 	Sint32 column = pillar->x.fixed / toFIXED(16);
 
-	if(column == 16 && row == 12) {
+	if (column == 16 && row == 12)
+	{
 		return TRUE;
 	}
 	return FALSE;
 }
 
-/* Opens the gate only for a torch on the fire crest whose flame no drop has put
-   out. */
+// Opens the gate only for a torch on the fire crest whose flame no drop has put out.
 static inline void scVaultCaveCompleteNorthernSwitch(void)
 {
-	if(gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
-		if(scVaultCaveIsNorthernPillarOnSwitch() != 0) {
-			if(gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
+	if (gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0)
+	{
+		if (scVaultCaveIsNorthernPillarOnSwitch() != 0)
+		{
+			if (gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0)
+			{
 				sySoundPlay(MUS_PUZZLE_SOLVED);
 				scVaultCaveApplyNorthernSwitchMetatiles();
 				gmFlagSet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH);
@@ -459,224 +460,231 @@ static inline void scVaultCaveCompleteNorthernSwitch(void)
 	}
 }
 
-/* In the room of three torches, on the way to the cave mouth, Isaac pushes a
-   torch a metatile. If the lower torch reaches the fire crest below the wooden
-   gate (metatile (16, 12)) still burning, the puzzle chime plays and the gate
-   opens; if a drop of water has put its flame out, nothing happens. */
+// In the room of three torches, on the way to the cave mouth, Isaac pushes a torch a metatile. If
+// the lower torch reaches the fire crest below the wooden gate (metatile (16, 12)) still burning,
+// the puzzle chime plays and the gate opens; if a drop of water has put its flame out, nothing
+// happens.
 static void scVaultCavePushNorthernPillar(void)
 {
 	scVaultCavePushPillarAhead();
 	scVaultCaveCompleteNorthernSwitch();
 }
 
-/* In the room of three torches, Isaac uses Move on the unlit torch just south
-   of the fire crest. The great hand slides it a metatile like any torch, even
-   onto the crest, but an unlit torch opens nothing.
-
-   The script itself is empty: Move does the sliding. */
+// In the room of three torches, Isaac uses Move on the unlit torch just south of the fire crest.
+// The great hand slides it a metatile like any torch, even onto the crest, but an unlit torch opens
+// nothing.
+//
+// The script itself is empty: Move does the sliding.
 static void scVaultCaveMoveUnlitTorch(void)
 {
 }
 
-/* In the room of three torches, Isaac uses Move on the lower burning torch: a
-   great hand slides it a metatile, and if that puts it on the fire crest still
-   burning, the puzzle chime plays and the wooden gate opens. */
+// In the room of three torches, Isaac uses Move on the lower burning torch: a great hand slides it
+// a metatile, and if that puts it on the fire crest still burning, the puzzle chime plays and the
+// wooden gate opens.
 static void scVaultCaveMoveNorthernPillar(void)
 {
 	scVaultCaveCompleteNorthernSwitch();
 }
 
-/* In the room of six puddles, Isaac casts Frost on the north-west puddle
-   (metatile (23, 32)), and it freezes into a tall ice pillar whose top Isaac
-   can leap across. */
+// In the room of six puddles, Isaac casts Frost on the north-west puddle (metatile (23, 32)), and
+// it freezes into a tall ice pillar whose top Isaac can leap across.
 static void scVaultCaveFreezeWestUpperPuddle(void)
 {
 	ACTOR *target = fdActorGet(ACTOR_WEST_UPPER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 23, 32);
 
-	if(target != NULL) {
+	if (target != NULL)
+	{
 		fdActorGet(ACTOR_WEST_UPPER_PUDDLE)->motionFlags = 0;
-		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		target->priorityFlags                            = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN);
 }
 
-/* In the room of six puddles, Isaac casts Frost on the south-west puddle
-   (metatile (23, 34)), and it freezes into a tall ice pillar whose top Isaac
-   can leap across. */
+// In the room of six puddles, Isaac casts Frost on the south-west puddle (metatile (23, 34)), and
+// it freezes into a tall ice pillar whose top Isaac can leap across.
 static void scVaultCaveFreezeWestLowerPuddle(void)
 {
 	ACTOR *target = fdActorGet(ACTOR_WEST_LOWER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 23, 34);
 
-	if(target != NULL) {
+	if (target != NULL)
+	{
 		fdActorGet(ACTOR_WEST_LOWER_PUDDLE)->motionFlags = 0;
-		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		target->priorityFlags                            = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN);
 }
 
-/* In the room of six puddles, Isaac casts Frost on the puddle just east of the
-   south-west one (metatile (24, 34)), and it freezes into a tall ice pillar
-   whose top Isaac can leap across. */
+// In the room of six puddles, Isaac casts Frost on the puddle just east of the south-west one
+// (metatile (24, 34)), and it freezes into a tall ice pillar whose top Isaac can leap across.
 static void scVaultCaveFreezeInnerWestLowerPuddle(void)
 {
 	ACTOR *target = fdActorGet(ACTOR_INNER_WEST_LOWER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 24, 34);
 
-	if(target != NULL) {
+	if (target != NULL)
+	{
 		fdActorGet(ACTOR_INNER_WEST_LOWER_PUDDLE)->motionFlags = 0;
-		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		target->priorityFlags                                  = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN);
 }
 
-/* In the room of six puddles, Isaac casts Frost on the north-east puddle
-   (metatile (26, 32)), and it freezes into a tall ice pillar whose top Isaac
-   can leap across. */
+// In the room of six puddles, Isaac casts Frost on the north-east puddle (metatile (26, 32)), and
+// it freezes into a tall ice pillar whose top Isaac can leap across.
 static void scVaultCaveFreezeEastUpperPuddle(void)
 {
 	ACTOR *target = fdActorGet(ACTOR_EAST_UPPER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 26, 32);
 
-	if(target != NULL) {
+	if (target != NULL)
+	{
 		fdActorSetSpriteFlags(target, 0);
 
 		fdActorGet(ACTOR_EAST_UPPER_PUDDLE)->motionFlags = 0;
-		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		target->priorityFlags                            = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN);
 }
 
-/* In the room of six puddles, Isaac casts Frost on the south-east puddle
-   (metatile (26, 34)), and it freezes into a tall ice pillar whose top Isaac
-   can leap across. */
+// In the room of six puddles, Isaac casts Frost on the south-east puddle (metatile (26, 34)), and
+// it freezes into a tall ice pillar whose top Isaac can leap across.
 static void scVaultCaveFreezeEastLowerPuddle(void)
 {
 	ACTOR *target = fdActorGet(ACTOR_EAST_LOWER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 26, 34);
 
-	if(target != NULL) {
+	if (target != NULL)
+	{
 		fdActorSetSpriteFlags(target, 0);
 
 		fdActorGet(ACTOR_EAST_LOWER_PUDDLE)->motionFlags = 0;
-		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		target->priorityFlags                            = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN);
 }
 
-/* In the room of six puddles, Isaac casts Frost on the far east puddle
-   (metatile (28, 33)), and it freezes into a tall ice pillar whose top Isaac
-   can leap across. */
+// In the room of six puddles, Isaac casts Frost on the far east puddle (metatile (28, 33)), and it
+// freezes into a tall ice pillar whose top Isaac can leap across.
 static void scVaultCaveFreezeFarEastPuddle(void)
 {
 	ACTOR *target = fdActorGet(ACTOR_FAR_EAST_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 28, 33);
 
-	if(target != NULL) {
+	if (target != NULL)
+	{
 		fdActorSetSpriteFlags(target, 0);
 
 		fdActorGet(ACTOR_FAR_EAST_PUDDLE)->motionFlags = 0;
-		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		target->priorityFlags                          = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN);
 }
 
-/* Keeps the ice pillars drawn under Isaac while he is up on top of one. */
+// Keeps the ice pillars drawn under Isaac while he is up on top of one.
 static void scVaultCaveUpdatePuddlePriorities(void)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-	if(leader->y.fixed >= toFIXED(16)) {
+	if (leader->y.fixed >= toFIXED(16))
+	{
 		scVaultCaveUseUnderfootFrostPriorities();
-	} else {
+	}
+	else
+	{
 		scVaultCaveUseAutomaticFrostPriorities();
 	}
 }
 
-/* Keeps all six puddles beneath the leader's feet. */
+// Keeps all six puddles beneath the leader's feet.
 static void scVaultCaveUseUnderfootFrostPriorities(void)
 {
 	Sint32 targetIndex;
 	Sint32 actorSlot;
 
 	actorSlot = ACTOR_WEST_UPPER_PUDDLE;
-	for(targetIndex = 0; targetIndex < 6; targetIndex++) {
+	for (targetIndex = 0; targetIndex < 6; targetIndex++)
+	{
 		fdActorGet(actorSlot)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		actorSlot++;
 	}
 }
 
-/* Restores automatic draw priority for the same six puddles. */
+// Restores automatic draw priority for the same six puddles.
 static void scVaultCaveUseAutomaticFrostPriorities(void)
 {
 	Sint32 targetIndex;
 	Sint32 actorSlot;
 
 	actorSlot = ACTOR_WEST_UPPER_PUDDLE;
-	for(targetIndex = 0; targetIndex < 6; targetIndex++) {
+	for (targetIndex = 0; targetIndex < 6; targetIndex++)
+	{
 		fdActorGet(actorSlot)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 		actorSlot++;
 	}
 }
 
-/* The cave rumbles and shakes for eight seconds while the pool's water churns,
-   then the water fades away and the drained pool is drawn. */
+// The cave rumbles and shakes for eight seconds while the pool's water churns, then the water fades
+// away and the drained pool is drawn.
 static void scVaultCaveRunRumble(void)
 {
-	MAP_GRID_LAYER_SCROLL *layer =
-		&((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
-	Sint32 frame;
-	Sint32 fadeLevel;
-	Sint32 lowFadeLevel;
-	Sint32 upperFadeBits;
+	MAP_GRID_LAYER_SCROLL *layer = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
+	Sint32                 frame;
+	Sint32                 fadeLevel;
+	Sint32                 lowFadeLevel;
+	Sint32                 upperFadeBits;
 
 	fdScriptStart();
-	if(TickCount & 1) {
+	if (TickCount & 1)
+	{
 		layer->speedX = 1;
 		layer->speedY = 1;
-	} else {
+	}
+	else
+	{
 		layer->speedX = -1;
 		layer->speedY = -1;
 	}
 	fdMapGridSetShake(3, 3, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	sySoundPlay(SE_RUSH);
-	/* The water churns, its layer drifting by 0.04 to 0.07 of a pixel a
-	   tick. */
-	for(frame = 0; frame < 480; frame++) {
+	// The water churns, its layer drifting by 0.04 to 0.07 of a pixel a tick.
+	for (frame = 0; frame < 480; frame++)
+	{
 		Uint32 scrollDrift = syRandomBelow(2048);
 
-		layer->phaseY =
-			(double)layer->phaseY - (4718.592 - (double)scrollDrift);
+		layer->phaseY      = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
 		fdScriptWait(1);
 	}
-	fadeLevel = 6;
-	lowFadeLevel = 6;
-	frame = 0;
-	/* The water fades off the floor in four steps, one every 20 ticks. The
-	   blend is packed as if it were a colour, the levels in RGB's three fields:
-	   REG_BLDALPHA reads lowFadeLevel as the water's weight and the first
-	   level, in the blue field, as the floor's, 24, above full; the green field
-	   falls in unused bits. */
+	fadeLevel     = 6;
+	lowFadeLevel  = 6;
+	frame         = 0;
+	// The water fades off the floor in four steps, one every 20 ticks. The blend is packed as if it
+	// were a colour, the levels in RGB's three fields: REG_BLDALPHA reads lowFadeLevel as the
+	// water's weight and the first level, in the blue field, as the floor's, 24, above full; the
+	// green field falls in unused bits.
 	upperFadeBits = fadeLevel << BLUE_SHIFT;
-	for(; frame <= 69; frame++) {
+	for (; frame <= 69; frame++)
+	{
 		syIOWriteQueueStore16((Uint32)&REG_BLDALPHA,
-			upperFadeBits | (fadeLevel << GREEN_SHIFT) | lowFadeLevel);
+		                      upperFadeBits | (fadeLevel << GREEN_SHIFT) | lowFadeLevel);
 		fdScriptWait(1);
-		if(frame % 20 == 0) {
+		if (frame % 20 == 0)
+		{
 			lowFadeLevel--;
 			fadeLevel--;
 		}
@@ -688,18 +696,17 @@ static void scVaultCaveRunRumble(void)
 	fdScriptEnd();
 }
 
-/* Isaac flips the switch on the ledge in the pool room (metatile (28, 29)).
-   "Isaac flipped the switch." The cave rumbles and shakes, and the pool drains
-   away, and its water runs down into the northern room of
-   SceneIdVaultCaveVambrace below, whose floor scInit draws dry until then.
-
-   The switch can be flipped once each time the party comes down the ladder from
-   Vault. */
+// Isaac flips the switch on the ledge in the pool room (metatile (28, 29)). "Isaac flipped the
+// switch." The cave rumbles and shakes, and the pool drains away, and its water runs down into the
+// northern room of SceneIdVaultCaveVambrace below, whose floor scInit draws dry until then.
+//
+// The switch can be flipped once each time the party comes down the ladder from Vault.
 static void scVaultCaveFlipSwitch(void)
 {
 	Sint32 destColumn;
 
-	if(fdScriptGetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
+	if (fdScriptGetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0)
+	{
 		mnFieldMessageShow(MSGNO(MsgFieldFlippedSwitch), 1);
 		gmFlagSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
 		destColumn = 92;
@@ -718,28 +725,30 @@ static void scVaultCaveFlipSwitch(void)
 	}
 }
 
-/* Whether a drop of water about to land is over the given actor's metatile; if
-   so, the drop is sent back up to fall again. */
+// Whether a drop of water about to land is over the given actor's metatile; if so, the drop is sent
+// back up to fall again.
 static Sint32 scVaultCaveResetFallingActorAtActorMetatile(Sint32 subjectActorId)
 {
 	ACTOR *subject = fdActorGet(subjectActorId);
 	Sint32 fallingIndex;
 
-	for(fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-		ACTOR *fallingActor =
-			fdActorGet(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
+	for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++)
+	{
+		ACTOR *fallingActor = fdActorGet(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
-		if(fallingActor->y.fixed > 0 && fallingActor->y.fixed < toFIXED(16)) {
-			Sint32 fallingRow = METATILE_OF(fallingActor->z.fixed);
+		if (fallingActor->y.fixed > 0 && fallingActor->y.fixed < toFIXED(16))
+		{
+			Sint32 fallingRow    = METATILE_OF(fallingActor->z.fixed);
 			Sint32 fallingColumn = METATILE_OF(fallingActor->x.fixed);
-			Sint32 subjectRow = METATILE_OF(subject->z.fixed);
+			Sint32 subjectRow    = METATILE_OF(subject->z.fixed);
 			Sint32 subjectColumn = METATILE_OF(subject->x.fixed);
-			Sint32 zDelta = subjectRow - fallingRow;
-			Sint32 xDelta = subjectColumn - fallingColumn;
+			Sint32 zDelta        = subjectRow - fallingRow;
+			Sint32 xDelta        = subjectColumn - fallingColumn;
 
-			if(xDelta == 0 && zDelta == 0) {
-				fallingActor->y.fixed = toFIXED(255);
-				fallingActor->gravity = 0;
+			if (xDelta == 0 && zDelta == 0)
+			{
+				fallingActor->y.fixed   = toFIXED(255);
+				fallingActor->gravity   = 0;
 				fallingActor->velocityY = 0;
 				return 1;
 			}
@@ -749,9 +758,8 @@ static Sint32 scVaultCaveResetFallingActorAtActorMetatile(Sint32 subjectActorId)
 	return 0;
 }
 
-/* In the room of three torches, lets the four drops of water fall on their
-   fixed beat, splashing where they land and putting out the lower torch's flame
-   if one lands on it. */
+// In the room of three torches, lets the four drops of water fall on their fixed beat, splashing
+// where they land and putting out the lower torch's flame if one lands on it.
 static void scVaultCaveUpdateTimedFallingActors(void)
 {
 	Sint32 fallingIndex;
@@ -760,54 +768,61 @@ static void scVaultCaveUpdateTimedFallingActors(void)
 	Sint32 scheduleIndex;
 
 	paused = fdActorGet(ACTOR_NORTHERN_PILLAR)->paused;
-	if(paused == 0) {
-		if(++VaultCaveScheduleTimer > 190) {
+	if (paused == 0)
+	{
+		if (++VaultCaveScheduleTimer > 190)
+		{
 			VaultCaveScheduleTimer = 0;
 		}
 		scheduleIndex = VaultCaveScheduleIndex;
-		if(VaultCaveScheduleTicks[scheduleIndex] == VaultCaveScheduleTimer) {
-			fallingActor =
-				fdActorGet((scheduleIndex + ACTOR_FIRST_TIMED_WATER_DROP));
+		if (VaultCaveScheduleTicks[scheduleIndex] == VaultCaveScheduleTimer)
+		{
+			fallingActor          = fdActorGet((scheduleIndex + ACTOR_FIRST_TIMED_WATER_DROP));
 			fallingActor->gravity = toFIXED(1) / 25;
-			if(++VaultCaveScheduleIndex > 3) {
+			if (++VaultCaveScheduleIndex > 3)
+			{
 				VaultCaveScheduleIndex = 0;
 			}
 		}
-		for(fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-			fallingActor =
-				fdActorGet((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
-			if(fallingActor->velocityY >= 0) {
-				if(fallingActor->y.fixed < toFIXED(1)) {
+		for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++)
+		{
+			fallingActor = fdActorGet((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
+			if (fallingActor->velocityY >= 0)
+			{
+				if (fallingActor->y.fixed < toFIXED(1))
+				{
 					scVaultCaveSpawnSplash(fallingActor);
-					fallingActor->y.fixed = toFIXED(255);
-					fallingActor->gravity = 0;
+					fallingActor->y.fixed   = toFIXED(255);
+					fallingActor->gravity   = 0;
 					fallingActor->velocityY = 0;
-					fallingActor->paused = 0;
+					fallingActor->paused    = 0;
 					sySoundPlay(SE_DRIP);
 				}
 			}
 		}
-		/* A water drop landing on either movable pillar restarts at the top. */
-		if(scVaultCaveResetFallingActorAtActorMetatile(ACTOR_NORTHERN_PILLAR) !=
-			0) {
-			fdActorSetAnimation(
-				ACTOR_NORTHERN_PILLAR, FLAME_PILLAR_ANIMATION_UNLIT);
-			if(fdScriptGetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
+		// A water drop landing on either movable pillar restarts at the top.
+		if (scVaultCaveResetFallingActorAtActorMetatile(ACTOR_NORTHERN_PILLAR) != 0)
+		{
+			fdActorSetAnimation(ACTOR_NORTHERN_PILLAR, FLAME_PILLAR_ANIMATION_UNLIT);
+			if (fdScriptGetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0)
+			{
 				gmFlagSet(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
 				sySoundPlay(SE_DUST_PUFF);
-			} else {
+			}
+			else
+			{
 				sySoundPlay(SE_DRIP);
 			}
 		}
-		if(scVaultCaveResetFallingActorAtActorMetatile(
-			   ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
+		if (scVaultCaveResetFallingActorAtActorMetatile(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0)
+		{
 			sySoundPlay(SE_DRIP);
 		}
 	}
 }
 
-/* In the room of six puddles, lets a drop of water chosen at random fall every
-   64 ticks, onto its puddle or onto the top of its ice pillar. */
+// In the room of six puddles, lets a drop of water chosen at random fall every 64 ticks, onto its
+// puddle or onto the top of its ice pillar.
 static void scVaultCaveUpdateFrostControlledFallingActors(void)
 {
 	Sint32 fallingIndex;
@@ -815,52 +830,60 @@ static void scVaultCaveUpdateFrostControlledFallingActors(void)
 	Sint32 frozen;
 
 	fallingActor = fdActorGet(ACTOR_FIRST_WATER_DROP);
-	if(fallingActor->paused == 0) {
-		if((++VaultCaveDropTicks & 63) == 0) {
+	if (fallingActor->paused == 0)
+	{
+		if ((++VaultCaveDropTicks & 63) == 0)
+		{
 			VaultCaveSelectedDrop = syMathRemainderUnsigned(syRandomNext(), 6);
-			fallingActor =
-				fdActorGet(VaultCaveSelectedDrop + ACTOR_FIRST_WATER_DROP);
+			fallingActor          = fdActorGet(VaultCaveSelectedDrop + ACTOR_FIRST_WATER_DROP);
 			fallingActor->gravity = toFIXED(1) / 25;
 		}
-		/* A drop goes back up once it reaches its puddle, or the top of the ice
-		   pillar 32 pixels up when the puddle is frozen. */
-		for(fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
+		// A drop goes back up once it reaches its puddle, or the top of the ice pillar 32 pixels up
+		// when the puddle is frozen.
+		for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++)
+		{
 			fallingActor = fdActorGet((fallingIndex + ACTOR_FIRST_WATER_DROP));
-			frozen = gmFlagGet(
-				(fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
-			if(frozen != 0) {
-				if(fallingActor->velocityY <= 0) {
-					if(fallingActor->y.fixed >= toFIXED(33)) {
+			frozen       = gmFlagGet((fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
+			if (frozen != 0)
+			{
+				if (fallingActor->velocityY <= 0)
+				{
+					if (fallingActor->y.fixed >= toFIXED(33))
+					{
 						continue;
 					}
 				}
-				fallingActor->y.fixed = toFIXED(255);
-				fallingActor->gravity = 0;
+				fallingActor->y.fixed   = toFIXED(255);
+				fallingActor->gravity   = 0;
 				fallingActor->velocityY = 0;
 				sySoundPlay(SE_DRIP);
-			} else {
-				if(fallingActor->velocityY <= 0) {
-					if(fallingActor->y.fixed >= toFIXED(1)) {
+			}
+			else
+			{
+				if (fallingActor->velocityY <= 0)
+				{
+					if (fallingActor->y.fixed >= toFIXED(1))
+					{
 						continue;
 					}
 				}
-				/* Both stop: frozen is 0 here. */
-				fallingActor->gravity = frozen;
+				// Both stop: frozen is 0 here.
+				fallingActor->gravity   = frozen;
 				fallingActor->velocityY = frozen;
-				fallingActor->y.fixed = toFIXED(255);
+				fallingActor->y.fixed   = toFIXED(255);
 				sySoundPlay(SE_DRIP);
 			}
 		}
 	}
 }
 
-/* Offsets an actor's current position by a polar displacement. */
-static void scVaultCaveOffsetActorRadially(
-	ACTOR *actor, Sint32 radius, Sint32 angle)
+// Offsets an actor's current position by a polar displacement.
+static void scVaultCaveOffsetActorRadially(ACTOR *actor, Sint32 radius, Sint32 angle)
 {
 	Sint32 dest[3];
 
-	if(actor == NULL) {
+	if (actor == NULL)
+	{
 		return;
 	}
 	SET_VECTOR(dest, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -868,22 +891,22 @@ static void scVaultCaveOffsetActorRadially(
 	syFieldActorSetMoveTargetFX(actor, dest[0], dest[1], dest[2]);
 }
 
-/* Splashes up to four little drops around a drop of water where it lands. */
+// Splashes up to four little drops around a drop of water where it lands.
 static void scVaultCaveSpawnSplash(ACTOR *src)
 {
 	ACTOR *drop;
 	Sint32 dropIndex;
 
-	for(dropIndex = 0; dropIndex < 4; dropIndex++) {
-		drop = syFieldActorCreate(
-			SPRITE_DROPLET, src->x.fixed, src->y.fixed, src->z.fixed);
-		if(drop == NULL)
+	for (dropIndex = 0; dropIndex < 4; dropIndex++)
+	{
+		drop = syFieldActorCreate(SPRITE_DROPLET, src->x.fixed, src->y.fixed, src->z.fixed);
+		if (drop == NULL)
 			break;
-		drop->scaleY = toFIXED(11) / 20;
-		drop->scaleX = toFIXED(11) / 20;
-		drop->motionFlags = ACTOR_FALLS;
-		drop->velocityY = -toFIXED(1);
-		drop->speedLimit = syRandomNext() + toFIXED(4) / 5;
+		drop->scaleY         = toFIXED(11) / 20;
+		drop->scaleX         = toFIXED(11) / 20;
+		drop->motionFlags    = ACTOR_FALLS;
+		drop->velocityY      = -toFIXED(1);
+		drop->speedLimit     = syRandomNext() + toFIXED(4) / 5;
 		drop->collisionFlags = ACTOR_SOLID;
 		scVaultCaveOffsetActorRadially(drop, toFIXED(32), syRandomNext());
 		drop->wait = 8;
@@ -891,204 +914,203 @@ static void scVaultCaveSpawnSplash(ACTOR *src)
 	}
 }
 
-/* Readies the room of six puddles' drops of water and starts them falling. */
+// Readies the room of six puddles' drops of water and starts them falling.
 static void scVaultCaveStartFrostControlledFalls(void)
 {
 	Sint32 actorSlot = ACTOR_FIRST_WATER_DROP;
 	Sint32 i;
 
-	for(i = 0; i < 6; i++) {
+	for (i = 0; i < 6; i++)
+	{
 		ACTOR *fallingActor;
 
 		fdActorSetSpriteFlags(fdActorGet(actorSlot), 0);
-		fallingActor = fdActorGet(actorSlot);
-		fallingActor->bounce = toFIXED(1) / 10;
+		fallingActor          = fdActorGet(actorSlot);
+		fallingActor->bounce  = toFIXED(1) / 10;
 		fallingActor->gravity = 0;
 		fallingActor->y.fixed = toFIXED(255);
 		actorSlot++;
 	}
 
-	sySetTickEvent(
-		scVaultCaveUpdateFrostControlledFallingActors, EVENT_PASS_TICK);
+	sySetTickEvent(scVaultCaveUpdateFrostControlledFallingActors, EVENT_PASS_TICK);
 }
 
-/* Readies the room of three torches' drops of water and starts them falling. */
+// Readies the room of three torches' drops of water and starts them falling.
 static void scVaultCaveStartTimedFalls(void)
 {
-	Sint32 actorSlot = ACTOR_FIRST_TIMED_WATER_DROP;
+	Sint32 actorSlot    = ACTOR_FIRST_TIMED_WATER_DROP;
 	Sint32 fallingIndex = 0;
 
-	do {
+	do
+	{
 		ACTOR *fallingActor;
 
 		fdActorSetSpriteFlags(fdActorGet(actorSlot), 0);
-		fallingActor = fdActorGet(actorSlot);
-		fallingActor->bounce = toFIXED(1) / 10;
+		fallingActor          = fdActorGet(actorSlot);
+		fallingActor->bounce  = toFIXED(1) / 10;
 		fallingActor->gravity = 0;
 		fallingActor->y.fixed = toFIXED(255);
-		fdActorSetSpritePriority(
-			fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP, 1);
+		fdActorSetSpritePriority(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP, 1);
 		fallingIndex++;
 		actorSlot++;
-	} while(fallingIndex <= 3);
+	} while (fallingIndex <= 3);
 
 	sySetTickEvent(scVaultCaveUpdateTimedFallingActors, EVENT_PASS_TICK);
 }
 
-/* Arriving in any room of Vault Cave restores the room's puzzles and actors. It
-   then sets the Retreat destination, the foot of the ladder from Vault. */
+// Arriving in any room of Vault Cave restores the room's puzzles and actors. It then sets the
+// Retreat destination, the foot of the ladder from Vault.
 Sint32 scInit(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	if(MainRoutineStateWork.next == SCENE_VAULT_CAVE_PASSAGE) {
-		switch(MainRoutineStateWork.entrance) {
-		case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
-		case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
-		case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST:
-		case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST:
-		case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST:
-			if(gmFlagGet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
-				fdMapGridCopyMetatileAttributes(22, 29, 1, 1, 21, 29);
-			} else {
-				fdMapGridCopyMetatiles(108, 27, 1, 1, 92, 27);
+	if (MainRoutineStateWork.next == SCENE_VAULT_CAVE_PASSAGE)
+	{
+		switch (MainRoutineStateWork.entrance)
+		{
+			case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
+			case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
+			case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST:
+			case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST:
+			case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST:
+				if (gmFlagGet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0)
+				{
+					fdMapGridCopyMetatileAttributes(22, 29, 1, 1, 21, 29);
+				}
+				else
+				{
+					fdMapGridCopyMetatiles(108, 27, 1, 1, 92, 27);
+					sySynch(1);
+					fdMapGridCopyMetatiles(19, 83, 15, 8, 19, 91);
+					sySynch(1);
+					fdMapGridCopyMetatiles(2, 24, 1, 2, 25, 27);
+				}
+				fdMapGridCenterOnFollowedPoint();
 				sySynch(1);
-				fdMapGridCopyMetatiles(19, 83, 15, 8, 19, 91);
-				sySynch(1);
-				fdMapGridCopyMetatiles(2, 24, 1, 2, 25, 27);
-			}
-			fdMapGridCenterOnFollowedPoint();
-			sySynch(1);
-			break;
-		case VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT:
-			gmFlagClear(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
-			break;
+				break;
+			case VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT:
+				gmFlagClear(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
+				break;
 		}
 	}
-	if(MainRoutineStateWork.next == SCENE_VAULT_CAVE_VAMBRACE) {
-		if(gmFlagGet(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
+	if (MainRoutineStateWork.next == SCENE_VAULT_CAVE_VAMBRACE)
+	{
+		if (gmFlagGet(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0)
+		{
 			fdActorGet(ACTOR_IVY)->scaleY = toFIXED(3) / 2;
 		}
-		switch(MainRoutineStateWork.entrance) {
-		case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
-		case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH:
-		case VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM:
-		case VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST:
-			if(gmFlagGet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
-				fdMapGridCopyMetatiles(5, 81, 11, 7, 5, 73);
-			} else {
-				fdMapGridCopyMetatileAttributes(5, 12, 1, 1, 6, 12);
-				fdMapGridCopyMetatileAttributes(12, 10, 1, 1, 12, 11);
-			}
-			break;
-		case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_NORTH:
-		case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_SOUTH:
-		case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST:
-			scVaultCaveStartFrostControlledFalls();
-			if(gmFlagGet(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN) != 0) {
-				fdActorSetAnimation(
-					ACTOR_WEST_UPPER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-				scVaultCaveFreezeWestUpperPuddle();
-			}
-			if(gmFlagGet(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN) != 0) {
-				fdActorSetAnimation(
-					ACTOR_WEST_LOWER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-				scVaultCaveFreezeWestLowerPuddle();
-			}
-			if(gmFlagGet(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN) != 0) {
-				fdActorSetAnimation(
-					ACTOR_INNER_WEST_LOWER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-				scVaultCaveFreezeInnerWestLowerPuddle();
-			}
-			if(gmFlagGet(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN) != 0) {
-				fdActorSetAnimation(
-					ACTOR_EAST_UPPER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-				scVaultCaveFreezeEastUpperPuddle();
-			}
-			if(gmFlagGet(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN) != 0) {
-				fdActorSetAnimation(
-					ACTOR_EAST_LOWER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-				scVaultCaveFreezeEastLowerPuddle();
-			}
-			if(gmFlagGet(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN) != 0) {
-				fdActorSetAnimation(
-					ACTOR_FAR_EAST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-				scVaultCaveFreezeFarEastPuddle();
-			}
-			sySetTickEvent(scVaultCaveUpdatePuddlePriorities, EVENT_PASS_TICK);
-			break;
-		case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH:
-		case VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM:
-			if(gmFlagGet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
-				scVaultCaveApplySouthernSwitchMetatiles();
-				fdActorSetPos(ACTOR_SOUTHERN_PILLAR, 248, 876);
-			}
-			fdActorGet(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH)->priorityFlags =
-				ACTOR_PRIORITY_UNDERFOOT;
-			break;
+		switch (MainRoutineStateWork.entrance)
+		{
+			case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
+			case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH:
+			case VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM:
+			case VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST:
+				if (gmFlagGet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0)
+				{
+					fdMapGridCopyMetatiles(5, 81, 11, 7, 5, 73);
+				}
+				else
+				{
+					fdMapGridCopyMetatileAttributes(5, 12, 1, 1, 6, 12);
+					fdMapGridCopyMetatileAttributes(12, 10, 1, 1, 12, 11);
+				}
+				break;
+			case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_NORTH:
+			case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_SOUTH:
+			case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST:
+				scVaultCaveStartFrostControlledFalls();
+				if (gmFlagGet(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN) != 0)
+				{
+					fdActorSetAnimation(ACTOR_WEST_UPPER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+					scVaultCaveFreezeWestUpperPuddle();
+				}
+				if (gmFlagGet(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN) != 0)
+				{
+					fdActorSetAnimation(ACTOR_WEST_LOWER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+					scVaultCaveFreezeWestLowerPuddle();
+				}
+				if (gmFlagGet(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN) != 0)
+				{
+					fdActorSetAnimation(ACTOR_INNER_WEST_LOWER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+					scVaultCaveFreezeInnerWestLowerPuddle();
+				}
+				if (gmFlagGet(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN) != 0)
+				{
+					fdActorSetAnimation(ACTOR_EAST_UPPER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+					scVaultCaveFreezeEastUpperPuddle();
+				}
+				if (gmFlagGet(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN) != 0)
+				{
+					fdActorSetAnimation(ACTOR_EAST_LOWER_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+					scVaultCaveFreezeEastLowerPuddle();
+				}
+				if (gmFlagGet(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN) != 0)
+				{
+					fdActorSetAnimation(ACTOR_FAR_EAST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+					scVaultCaveFreezeFarEastPuddle();
+				}
+				sySetTickEvent(scVaultCaveUpdatePuddlePriorities, EVENT_PASS_TICK);
+				break;
+			case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH:
+			case VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM:
+				if (gmFlagGet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0)
+				{
+					scVaultCaveApplySouthernSwitchMetatiles();
+					fdActorSetPos(ACTOR_SOUTHERN_PILLAR, 248, 876);
+				}
+				fdActorGet(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH)->priorityFlags =
+					ACTOR_PRIORITY_UNDERFOOT;
+				break;
 		}
-		fdActorSetAnimation(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH,
-			FLAME_PILLAR_ANIMATION_BURNING);
-		fdActorSetAnimation(
-			ACTOR_SOUTHERN_PILLAR, FLAME_PILLAR_ANIMATION_BURNING);
-		fdActorSetSpriteFlags(
-			fdActorGet(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
+		fdActorSetAnimation(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH, FLAME_PILLAR_ANIMATION_BURNING);
+		fdActorSetAnimation(ACTOR_SOUTHERN_PILLAR, FLAME_PILLAR_ANIMATION_BURNING);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_SOUTHERN_PILLAR), 0);
 		fdActorGet(ACTOR_SOUTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
 	}
-	if(MainRoutineStateWork.next == SCENE_VAULT_CAVE_MOUTH) {
-		fdActorSetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH,
-			FLAME_PILLAR_ANIMATION_BURNING);
-		if(gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
-			fdActorSetAnimation(
-				ACTOR_NORTHERN_PILLAR, FLAME_PILLAR_ANIMATION_BURNING);
+	if (MainRoutineStateWork.next == SCENE_VAULT_CAVE_MOUTH)
+	{
+		fdActorSetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH, FLAME_PILLAR_ANIMATION_BURNING);
+		if (gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0)
+		{
+			fdActorSetAnimation(ACTOR_NORTHERN_PILLAR, FLAME_PILLAR_ANIMATION_BURNING);
 		}
-		fdActorSetSpriteFlags(
-			fdActorGet(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
 		fdActorSetSpriteFlags(fdActorGet(ACTOR_NORTHERN_PILLAR), 0);
-		fdActorSetSpriteFlags(
-			fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH), 0);
-		fdActorGet(ACTOR_NORTHERN_PILLAR)->collisionFlags |=
-			ACTOR_BLOCKED_BY_SOLID;
-		fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |=
-			ACTOR_BLOCKED_BY_SOLID;
-		switch(MainRoutineStateWork.entrance) {
-		case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
-		case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
-			scVaultCaveStartTimedFalls();
-			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP)->collisionFlags =
-				ACTOR_PUSHABLE;
-			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 1)->collisionFlags =
-				ACTOR_PUSHABLE;
-			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 2)->collisionFlags =
-				ACTOR_PUSHABLE;
-			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 3)->collisionFlags =
-				ACTOR_PUSHABLE;
-			fdActorGet(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH)->collisionFlags =
-				ACTOR_SOLID;
-			fdActorGet(ACTOR_NORTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
-			fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags =
-				ACTOR_SOLID;
-			if(gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
-				scVaultCaveApplyNorthernSwitchMetatiles();
-				fdActorSetPos(ACTOR_NORTHERN_PILLAR, 264, 204);
-			}
-			break;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH), 0);
+		fdActorGet(ACTOR_NORTHERN_PILLAR)->collisionFlags                 |= ACTOR_BLOCKED_BY_SOLID;
+		fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
+		switch (MainRoutineStateWork.entrance)
+		{
+			case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
+			case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
+				scVaultCaveStartTimedFalls();
+				fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP)->collisionFlags          = ACTOR_PUSHABLE;
+				fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 1)->collisionFlags      = ACTOR_PUSHABLE;
+				fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 2)->collisionFlags      = ACTOR_PUSHABLE;
+				fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 3)->collisionFlags      = ACTOR_PUSHABLE;
+				fdActorGet(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH)->collisionFlags  = ACTOR_SOLID;
+				fdActorGet(ACTOR_NORTHERN_PILLAR)->collisionFlags                 = ACTOR_SOLID;
+				fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags = ACTOR_SOLID;
+				if (gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0)
+				{
+					scVaultCaveApplyNorthernSwitchMetatiles();
+					fdActorSetPos(ACTOR_NORTHERN_PILLAR, 264, 204);
+				}
+				break;
 		}
 	}
-	/* Retreat always returns to the foot of SceneIdVaultCavePassage's ladder
-	   from Vault. */
-	MainRoutineStateWork.retreatEntrance =
-		VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
-	MainRoutineStateWork.retreatScene = SCENE_VAULT_CAVE_PASSAGE;
+	// Retreat always returns to the foot of SceneIdVaultCavePassage's ladder from Vault.
+	MainRoutineStateWork.retreatEntrance = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
+	MainRoutineStateWork.retreatScene    = SCENE_VAULT_CAVE_PASSAGE;
 	return 0;
 }
 
-/* The cave keeps its pushed-actor steps with its read-only data, though they
-   are not const: the pushes read the step again after each call. */
+// The cave keeps its pushed-actor steps with its read-only data, though they are not const: the
+// pushes read the step again after each call.
 #define PUSHED_ACTOR_TABLES_READ_ONLY
 #include "shared/pushed_actor_direction_steps.c"
-/* clang-format off */
+// clang-format off
 
 const Sint32 VaultCaveSplashScript[] = {
 	SC_RELEASE,
@@ -1164,8 +1186,7 @@ Uint32 VaultCavePassageExits[] = {
 	SCENE_EXIT(VAULT_CAVE_PASSAGE_WATER_ROOM_TO_CHEST, VaultCavePassage, VAULT_CAVE_PASSAGE_CHEST_FROM_WATER_ROOM),
 	SCENE_EXIT(VAULT_CAVE_PASSAGE_CHEST_TO_WATER_ROOM, VaultCavePassage, VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST),
 	SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE),
-	/* A second VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, to */
-	/* VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST. */
+	// A second VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, to VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST.
 	SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, VaultCavePassage, VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST),
 	SCENE_EXIT(VAULT_CAVE_PASSAGE_LADDER_TO_CHEST, VaultCavePassage, VAULT_CAVE_PASSAGE_CHEST_FROM_LADDER),
 	SCENE_EXIT(VAULT_CAVE_PASSAGE_CHEST_TO_LADDER, VaultCavePassage, VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST),
@@ -1328,18 +1349,18 @@ CUE VaultCaveMouthCues[] = {
 	{ CUE_TABLE_END },
 };
 
-/* The tick of the 191-tick beat at which each timed drop falls. */
+// The tick of the 191-tick beat at which each timed drop falls.
 Uint32 VaultCaveScheduleTicks[] = {
 	20, 80, 115, 170,
 };
-/* clang-format on */
+// clang-format on
 
-/* The tick of the drops' 191-tick beat, and the timed drop that falls next
-   when it reaches that drop's tick in VaultCaveScheduleTicks. */
+// The tick of the drops' 191-tick beat, and the timed drop that falls next when it reaches that
+// drop's tick in VaultCaveScheduleTicks.
 Sint32 VaultCaveScheduleTimer = 0;
 Sint32 VaultCaveScheduleIndex = 0;
 
-/* The ticks counted for the random drops, one picked every 64 ticks, and the
-   one picked, from the first of the six. */
-Sint32 VaultCaveDropTicks = 0;
-Sint32 VaultCaveSelectedDrop = 0;
+// The ticks counted for the random drops, one picked every 64 ticks, and the one picked, from the
+// first of the six.
+Sint32 VaultCaveDropTicks     = 0;
+Sint32 VaultCaveSelectedDrop  = 0;

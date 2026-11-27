@@ -1,4 +1,4 @@
-/* The Djinn menu's labels, as each edition words them. */
+// The Djinn menu's labels, as each edition words them.
 
 #include "types.h"
 

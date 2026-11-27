@@ -1,6 +1,6 @@
-/* The actor scripts the field's commands start: launching and turning, the dust
-   puffs, the emote bubble and the movement types fdActorSetMovementType starts
-   by number; and, among them, the message voice's rates. */
+// The actor scripts the field's commands start: launching and turning, the dust puffs, the emote
+// bubble and the movement types fdActorSetMovementType starts by number; and, among them, the
+// message voice's rates.
 
 #include "battle/battle.h"
 #include "field/actor_script.h"
@@ -8,7 +8,7 @@
 #include "field/field.h"
 #include "window/message_speed.h"
 
-/* clang-format off */
+// clang-format off
 const Sint32 ActorLaunchScript[] = {
 	SC_SYNC,
 	SC_WAIT(1),
@@ -16,7 +16,7 @@ const Sint32 ActorLaunchScript[] = {
 	SC_CALL(fdActorStepAngle),
 	SC_END,
 };
-/* clang-format on */
+// clang-format on
 
 const Sint32 FieldEffectBurstParticleScriptA[] = {
 	SC_WAIT(1),
@@ -35,16 +35,15 @@ const Sint32 ActorStepAngleScript[] = {
 	SC_END,
 };
 
-/* The ticks between the voice's sounds, by message speed option. */
+// The ticks between the voice's sounds, by message speed option.
 const Uint8 MessageSpeedVoiceRates[] = {
-	[MESSAGE_SPEED_SLOW] = 1,
+	[MESSAGE_SPEED_SLOW]   = 1,
 	[MESSAGE_SPEED_NORMAL] = 3,
-	[MESSAGE_SPEED_FAST] = 10,
+	[MESSAGE_SPEED_FAST]   = 10,
 };
 
-/* The emote bubble's pop: it appears squashed to half its width and a quarter
-   taller, springs back in smaller swings every 2 ticks until it is square,
-   stays 30 ticks and is released. */
+// The emote bubble's pop: it appears squashed to half its width and a quarter taller, springs back
+// in smaller swings every 2 ticks until it is square, stays 30 ticks and is released.
 const Sint32 EmoteBubbleScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 2),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 4),
@@ -103,7 +102,7 @@ const Sint32 MovementTypeWanderScript[] = {
 	SC_END,
 };
 
-const Sint32 MovementTypeStandScript[] = {SC_END};
+const Sint32 MovementTypeStandScript[]       = {SC_END};
 
 const Sint32 MovementTypeResetActionScript[] = {
 	SC_CALL(fdActorClearSpriteAndCollisionFlags),

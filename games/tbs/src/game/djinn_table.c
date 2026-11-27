@@ -1,10 +1,9 @@
-/* The 80 Djinn, 20 of each element in element order. Each name is the English
-   release's. */
+// The 80 Djinn, 20 of each element in element order. Each name is the English release's.
 
 #include "ability_ids.h"
 #include "game/game.h"
 
-/* clang-format off */
+// clang-format off
 const DJINN_DEFINITION DjinnDefinitionTable[] = {
 	[DJINNI_FLINT] = {
 		.abilityId = ABILITY_DJINNI_FIRST,
@@ -49,8 +48,7 @@ const DJINN_DEFINITION DjinnDefinitionTable[] = {
 		.hp = 12,
 		.attack = 4,
 	},
-	/* Each element's Djinn after its seventh are spares, which hold only their */
-	/* abilities; the text names both "=". */
+	// Each element's Djinn after its seventh are spares, which hold only their abilities; the text names both "=".
 	[DJINNI_BANE + 1] = {.abilityId = ABILITY_BANE + 1},
 	[DJINNI_BANE + 2] = {.abilityId = ABILITY_BANE + 2},
 	[DJINNI_BANE + 3] = {.abilityId = ABILITY_BANE + 3},
@@ -233,4 +231,4 @@ const DJINN_DEFINITION DjinnDefinitionTable[] = {
 	[DJINNI_LUFF + 12] = {.abilityId = ABILITY_LUFF + 12},
 	[DJINNI_LUFF + 13] = {.abilityId = ABILITY_LUFF + 13},
 };
-/* clang-format on */
+// clang-format on
